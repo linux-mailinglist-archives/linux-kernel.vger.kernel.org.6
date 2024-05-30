@@ -1,229 +1,184 @@
-Return-Path: <linux-kernel+bounces-195293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AC438D4A54
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 13:20:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 712CA8D4A57
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 13:20:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC668282E67
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 11:20:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29C3128308D
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 11:20:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5A4717D345;
-	Thu, 30 May 2024 11:19:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VyctFN6X"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0493317D36A;
+	Thu, 30 May 2024 11:19:07 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE9BD178362
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 11:19:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08B7D17836D
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 11:19:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717067944; cv=none; b=KdnjaMzVPPW3ER93sEjSBfcgseIIETwh4YkyUk/F6kQPu7RVk7xbpBhsX4ZDVdh//ljSm0o4fYO6q/XaNULIizY5sXbMFsQayc78y8vjdF5a4s2mLPnr0udtJCTHhf9l20hREKBUGY6ihh0vofP64cmiVwIu2ASu28pZubdsvE0=
+	t=1717067946; cv=none; b=lZPFCs6ZL3ZLVhBB5vpXGDF1CUJ+02QZrkiOIUmqwA0mmCPD2r7W0tLsLq4ehnOtB+mhIoT6MKyJ+UbvP1yGeg3PB+jANiEMQT3CbFAT2farMDjrKvnedCBisvFnNLULM0ZzO6FaGlgT+gI5US/xJOIOMoboinWFy7Rbseu+JXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717067944; c=relaxed/simple;
-	bh=NUlEbNyavhHOhkm2XeeaMoGtHkkSo3W7X85piRfwEBA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I/noDmBhCEUGWSaQJb1/cZsF5lUPDxziUjyUeCfwQw6S8K5Wo0Jz4xzCXxGAlroUZ6PKlF7oYW0ZfHuFfMFzMQub7vTRxyPjH1C+X9EIT5ulYikwKMYhNv5CQEmZ6FEzTinu7i3dqmjpSnPl10dy0Xxb4z4DpxhK+Ml1bMO4wJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VyctFN6X; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52b7ebb2668so678372e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 04:19:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717067941; x=1717672741; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=N14dolJ0PkU7EYoMUWicS8K8p72D3KTXUMbK9wMcK6w=;
-        b=VyctFN6XObrjQ3GVUZa+6V+eO/9vtLTrK1h015pBxF9IPyc5bIALLRB6XrljtQ/spB
-         gCqv+xbVZ1nTpAtG/kO0utnBGDYz5yACIaeO2ejPeJm1JRvotnCwK42utB+dcJsERvUw
-         XwPf5voxr/MqFEmq3JfYqfk8Fhgm2FXs79+bircx7O2ITjZplTQSs6F5r48xOCNKDNuh
-         dOHWEemgDF3mdzmUhb0uJcYS1a0V5g1SpW2rwNBxk8pilF61bnQAjO4s1PLyXC/9LMmq
-         lMC5HuGhNftC8FQW6NNgdXE0A5/Aq+w7DOC8i+ct7BC1Gut3PFjpjx/p9N7sDS6WqroC
-         17JQ==
+	s=arc-20240116; t=1717067946; c=relaxed/simple;
+	bh=TZtErRrn9BuJ/shP328m+ALlU8XeK7qyK1b+NpnFhSI=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Anq88AQbwLf/KstwvSN+hEYDDCL3JIgFw43sxbpTu5IBahQCA6T83+30Z3YR/hCUjbr7kYdef4s1BKpJ8+oXT0qu+3dAWd+5PBAdxhfmU8k+60GUXOBHQig1FL/aydDX0gr2ETIA7u0CNLTiHx6FFgjsfnGxSpPz075IwsnvgDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7eada05bd3bso92300739f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 04:19:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717067941; x=1717672741;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=N14dolJ0PkU7EYoMUWicS8K8p72D3KTXUMbK9wMcK6w=;
-        b=GzLUV1BPc3lJdalE++DGkdNXWxVE9glkLFfHJSqRFIdG7+rfzy5y2m0rZFlFioFtk4
-         wTiVg8+JykvKinzlVzyLylRgBazWWDB73LUDOFTbRNqqdpyzXGkLkAEFxQy+DSU61aRI
-         E/k8uKIIaXB4cBw59wZmnapJ8eeNVm1SdBKTr2kGU7d2yoA1iYRxGIlz7aba+qLwFoAm
-         ny3czbOO2/qYA+ctJ+LsjJ1tgU2LhMRXb2VuzBp2ser913PWphrGW5nT01NjLeY/M7L+
-         P55pysgfg+TF2yGxLrmGoH01wzJG4/I5XjYtcytrHL94IkYqRRP4+R8CoAdtPuRaQWaj
-         6DKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXrQ02+htA6q8SUXTSNyv8jtezRolH+ba+S+oOAEpfhhBn4ZVQgt2dKXwwpwp30AU1Wjrx55NE3KnezVQr8c6AXWYbDFIc+75Alz1FO
-X-Gm-Message-State: AOJu0Yxjfpoo3wyq4S2npRWFR0u4brLi0BQQGsud6MUvWCK+2XNQfu6a
-	fFLamfM5f64FQ6+FGRKoaDI/zxR/TgOEN8yS81LOMhaCXF0tBScV6sGKanOrzdE=
-X-Google-Smtp-Source: AGHT+IHSkn8193QJ7bhYwashD1ckamm7z3rtCun6DGwToGY7eMTbmvAcTfjkx9QJktZvIttJ4it7/w==
-X-Received: by 2002:a05:6512:2f4:b0:529:b6c3:be9e with SMTP id 2adb3069b0e04-52b7d419a3dmr1648588e87.9.1717067940962;
-        Thu, 30 May 2024 04:19:00 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-529b7360d1fsm964214e87.157.2024.05.30.04.19.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 May 2024 04:19:00 -0700 (PDT)
-Date: Thu, 30 May 2024 14:18:58 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
-Cc: Rob Clark <robdclark@gmail.com>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, will@kernel.org, robin.murphy@arm.com, joro@8bytes.org, 
-	jsnitsel@redhat.com, quic_bjorande@quicinc.com, mani@kernel.org, 
-	quic_eberman@quicinc.com, robdclark@chromium.org, u.kleine-koenig@pengutronix.de, 
-	robh@kernel.org, vladimir.oltean@nxp.com, quic_pkondeti@quicinc.com, 
-	quic_molvera@quicinc.com, linux-arm-msm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v9 3/5] iommu/arm-smmu: introduction of ACTLR for custom
- prefetcher settings
-Message-ID: <tvlhu6kvlektss3kb52zxiynwz7ivte4al43pcgx3ratdxxeos@pkwwq4eecii7>
-References: <20240123144543.9405-1-quic_bibekkum@quicinc.com>
- <20240123144543.9405-4-quic_bibekkum@quicinc.com>
- <CAF6AEGs3_wBNo58EbGicFoQuq8--fDohTGv1JSFgoViygLS5Lg@mail.gmail.com>
- <f2222714-1e00-424e-946d-c314d55541b8@quicinc.com>
- <51b2bd40-888d-4ee4-956f-c5239c5be9e9@linaro.org>
- <0a867cd1-8d99-495e-ae7e-a097fc9c00e9@quicinc.com>
- <7140cdb8-eda4-4dcd-b5e3-c4acdd01befb@linaro.org>
- <omswcicgc2kqd6gp4bebd43sklfs2wqyaorhfyb2wumoeo6v74@gaay3p5m46xi>
- <CAF6AEGub2b5SRw7kDUGfKQQ35VSsMkQ9LNExSkyHHczdFa2T4Q@mail.gmail.com>
- <9992067e-51c5-4a55-8d66-55a102a001b6@quicinc.com>
+        d=1e100.net; s=20230601; t=1717067944; x=1717672744;
+        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=r1L0yw6JjJQlCzbvwK7356fjD9g4ArNEcx738vKMeXw=;
+        b=me1Cyk87j7nyaqGMapSIkHdGW3z0apqtZLGMOukoZhDBu0Y2up6yFJzhxCFDj2Ihy7
+         sgRvzgMteuEDk3+cWvWfr4iWrtkZ3fJ3uHGYJKiiv7Nub1LmO1cXBldE63s3uEZXdDWT
+         svwEZsrlpLrNRbUBhAHoQhUg2i8/KvuqEXhAvZXOq2dYpQCk4Rk3VIn/Vl8SU+bGVSxR
+         s235nMOwcn+WXwaim+8412auyOkueb1U1V0RFK5dEy2tbc05GYizhDtezLSdMlGqDqsE
+         UOUpR5/+60hZbkcKBMCLrs69JkUbuPz4miN6Q/zSaavgGaDSkjNGVABgqAew7oKbSQ6Z
+         0XwA==
+X-Forwarded-Encrypted: i=1; AJvYcCV6LffoUnhkFoo/IyJ94KP2Ce4dJQHj4Et3CkIG5YuX4pmo5QREb5ALoRi8WxH4xYk3+8Ig6PV8TIGzbygA/87H6IAWbQpN06w0LOIL
+X-Gm-Message-State: AOJu0Yw2nqZZ7sEmN+r9iBIwBwHiYZvF4qkp518egjyoU7GNGHSvA5yT
+	iePiJR2jrwbZGo8u0MUfuzHzxos32TB5iroxncOTqFxhfe5LzovypeXE3jx0wvVkAdbm3ojtSC+
+	mR/PoPXM/s/Is1VIKM4W1fzXj9NgJ9DAp6Cqsjx/Hs7iapmfC/HlpTGU=
+X-Google-Smtp-Source: AGHT+IGoruQB8wc9P6Fc34Pgy2yGZlJ0WxM82Qhla7Kg4rsoY2Qau3B865zduG5CuwoWwkr18e5imYir+RPrwWNGzzhIQV5BXKPg
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <9992067e-51c5-4a55-8d66-55a102a001b6@quicinc.com>
+X-Received: by 2002:a92:cd84:0:b0:36c:5c1b:2051 with SMTP id
+ e9e14a558f8ab-3747dff6adcmr1315115ab.6.1717067944216; Thu, 30 May 2024
+ 04:19:04 -0700 (PDT)
+Date: Thu, 30 May 2024 04:19:04 -0700
+In-Reply-To: <20240530103435.3077-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000dedcea0619aa08aa@google.com>
+Subject: Re: [syzbot] [net?] INFO: rcu detected stall in packet_release
+From: syzbot <syzbot+a7d2b1d5d1af83035567@syzkaller.appspotmail.com>
+To: edumazet@google.com, hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, radoslaw.zielonek@gmail.com, 
+	syzkaller-bugs@googlegroups.com, vinicius.gomes@intel.com, 
+	vladimir.oltean@nxp.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 30, 2024 at 02:51:56PM +0530, Bibek Kumar Patro wrote:
-> 
-> 
-> On 5/28/2024 9:38 PM, Rob Clark wrote:
-> > On Tue, May 28, 2024 at 6:06 AM Dmitry Baryshkov
-> > <dmitry.baryshkov@linaro.org> wrote:
-> > > 
-> > > On Tue, May 28, 2024 at 02:59:51PM +0200, Konrad Dybcio wrote:
-> > > > 
-> > > > 
-> > > > On 5/15/24 15:59, Bibek Kumar Patro wrote:
-> > > > > 
-> > > > > 
-> > > > > On 5/10/2024 6:32 PM, Konrad Dybcio wrote:
-> > > > > > On 10.05.2024 2:52 PM, Bibek Kumar Patro wrote:
-> > > > > > > 
-> > > > > > > 
-> > > > > > > On 5/1/2024 12:30 AM, Rob Clark wrote:
-> > > > > > > > On Tue, Jan 23, 2024 at 7:00 AM Bibek Kumar Patro
-> > > > > > > > <quic_bibekkum@quicinc.com> wrote:
-> > > > > > > > > 
-> > > > > > > > > Currently in Qualcomm  SoCs the default prefetch is set to 1 which allows
-> > > > > > > > > the TLB to fetch just the next page table. MMU-500 features ACTLR
-> > > > > > > > > register which is implementation defined and is used for Qualcomm SoCs
-> > > > > > > > > to have a custom prefetch setting enabling TLB to prefetch the next set
-> > > > > > > > > of page tables accordingly allowing for faster translations.
-> > > > > > > > > 
-> > > > > > > > > ACTLR value is unique for each SMR (Stream matching register) and stored
-> > > > > > > > > in a pre-populated table. This value is set to the register during
-> > > > > > > > > context bank initialisation.
-> > > > > > > > > 
-> > > > > > > > > Signed-off-by: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
-> > > > > > > > > ---
-> > > > > > 
-> > > > > > [...]
-> > > > > > 
-> > > > > > > > > +
-> > > > > > > > > +               for_each_cfg_sme(cfg, fwspec, j, idx) {
-> > > > > > > > > +                       smr = &smmu->smrs[idx];
-> > > > > > > > > +                       if (smr_is_subset(smr, id, mask)) {
-> > > > > > > > > +                               arm_smmu_cb_write(smmu, cbndx, ARM_SMMU_CB_ACTLR,
-> > > > > > > > > +                                               actlrcfg[i].actlr);
-> > > > > > > > 
-> > > > > > > > So, this makes ACTLR look like kind of a FIFO.  But I'm looking at
-> > > > > > > > downstream kgsl's PRR thing (which we'll need to implement vulkan
-> > > > > > > > sparse residency), and it appears to be wanting to set BIT(5) in ACTLR
-> > > > > > > > to enable PRR.
-> > > > > > > > 
-> > > > > > > >            val = KGSL_IOMMU_GET_CTX_REG(ctx, KGSL_IOMMU_CTX_ACTLR);
-> > > > > > > >            val |= FIELD_PREP(KGSL_IOMMU_ACTLR_PRR_ENABLE, 1);
-> > > > > > > >            KGSL_IOMMU_SET_CTX_REG(ctx, KGSL_IOMMU_CTX_ACTLR, val);
-> > > > > > > > 
-> > > > > > > > Any idea how this works?  And does it need to be done before or after
-> > > > > > > > the ACTLR programming done in this patch?
-> > > > > > > > 
-> > > > > > > > BR,
-> > > > > > > > -R
-> > > > > > > > 
-> > > > > > > 
-> > > > > > > Hi Rob,
-> > > > > > > 
-> > > > > > > Can you please help provide some more clarification on the FIFO part? By FIFO are you referring to the storing of ACTLR data in the table?
-> > > > > > > 
-> > > > > > > Thanks for pointing to the downstream implementation of kgsl driver for
-> > > > > > > the PRR bit. Since kgsl driver is already handling this PRR bit's
-> > > > > > > setting, this makes setting the PRR BIT(5) by SMMU driver redundant.
-> > > > > > 
-> > > > > > The kgsl driver is not present upstream.
-> > > > > > 
-> > > > > 
-> > > > > Right kgsl is not present upstream, it would be better to avoid configuring the PRR bit and can be handled by kgsl directly in downstream.
-> > > > 
-> > > > No! Upstream is not a dumping ground to reduce your technical debt.
-> > > > 
-> > > > There is no kgsl driver upstream, so this ought to be handled here, in
-> > > > the iommu driver (as poking at hardware A from driver B is usually not good
-> > > > practice).
-> > > 
-> > > I'd second the request here. If another driver has to control the
-> > > behaviour of another driver, please add corresponding API for that.
-> > 
-> > We have adreno_smmu_priv for this purpose ;-)
-> > 
-> 
-> Thanks Rob for pointing to this private interface structure between smmu
-> and gpu. I think it's similar to what you're trying to implement here
-> https://lore.kernel.org/all/CAF6AEGtm-KweFdMFvahH1pWmpOq7dW_p0Xe_13aHGWt0jSbg8w@mail.gmail.com/#t
-> I can add an api "set_actlr_prr()" with smmu_domain cookie, page pointer as
-> two parameters. This api then can be used by drm/msm driver to carry out the
-> prr implementation by simply calling this.
-> Would this be okay Rob,Konrad,Dmitry?
+Hello,
 
-SGTM
+syzbot tried to test the proposed patch but the build/boot failed:
 
-> Let me know if any other suggestions you have in mind as well regarding
-> parameters and placement.
-> 
-> Thanks & regards,
-> Bibek
-> 
-> > BR,
-> > -R
-> > 
-> > > > 
-> > > > > 
-> > > > > > > Thanks for bringing up this point.
-> > > > > > > I will send v10 patch series removing this BIT(5) setting from the ACTLR
-> > > > > > > table.
-> > > > > > 
-> > > > > > I think it's generally saner to configure the SMMU from the SMMU driver..
-> > > > > 
-> > > > > Yes, agree on this. But since PRR bit is not directly related to SMMU
-> > > > > configuration so I think it would be better to remove this PRR bit
-> > > > > setting from SMMU driver based on my understanding.
-> > > > 
-> > > > Why is it not related? We still don't know what it does.
-> > > > 
-> > > > Konrad
-> > > 
-> > > --
-> > > With best wishes
-> > > Dmitry
+lost connection to test machine
 
--- 
-With best wishes
-Dmitry
+
+
+
+
+syzkaller build log:
+go env (err=3D<nil>)
+GO111MODULE=3D'auto'
+GOARCH=3D'amd64'
+GOBIN=3D''
+GOCACHE=3D'/syzkaller/.cache/go-build'
+GOENV=3D'/syzkaller/.config/go/env'
+GOEXE=3D''
+GOEXPERIMENT=3D''
+GOFLAGS=3D''
+GOHOSTARCH=3D'amd64'
+GOHOSTOS=3D'linux'
+GOINSECURE=3D''
+GOMODCACHE=3D'/syzkaller/jobs-2/linux/gopath/pkg/mod'
+GONOPROXY=3D''
+GONOSUMDB=3D''
+GOOS=3D'linux'
+GOPATH=3D'/syzkaller/jobs-2/linux/gopath'
+GOPRIVATE=3D''
+GOPROXY=3D'https://proxy.golang.org,direct'
+GOROOT=3D'/usr/local/go'
+GOSUMDB=3D'sum.golang.org'
+GOTMPDIR=3D''
+GOTOOLCHAIN=3D'auto'
+GOTOOLDIR=3D'/usr/local/go/pkg/tool/linux_amd64'
+GOVCS=3D''
+GOVERSION=3D'go1.21.4'
+GCCGO=3D'gccgo'
+GOAMD64=3D'v1'
+AR=3D'ar'
+CC=3D'gcc'
+CXX=3D'g++'
+CGO_ENABLED=3D'1'
+GOMOD=3D'/syzkaller/jobs-2/linux/gopath/src/github.com/google/syzkaller/go.=
+mod'
+GOWORK=3D''
+CGO_CFLAGS=3D'-O2 -g'
+CGO_CPPFLAGS=3D''
+CGO_CXXFLAGS=3D'-O2 -g'
+CGO_FFLAGS=3D'-O2 -g'
+CGO_LDFLAGS=3D'-O2 -g'
+PKG_CONFIG=3D'pkg-config'
+GOGCCFLAGS=3D'-fPIC -m64 -pthread -Wl,--no-gc-sections -fmessage-length=3D0=
+ -ffile-prefix-map=3D/tmp/go-build1459151336=3D/tmp/go-build -gno-record-gc=
+c-switches'
+
+git status (err=3D<nil>)
+HEAD detached at 4f9530a3b
+nothing to commit, working tree clean
+
+
+tput: No value for $TERM and no -T specified
+tput: No value for $TERM and no -T specified
+Makefile:32: run command via tools/syz-env for best compatibility, see:
+Makefile:33: https://github.com/google/syzkaller/blob/master/docs/contribut=
+ing.md#using-syz-env
+go list -f '{{.Stale}}' ./sys/syz-sysgen | grep -q false || go install ./sy=
+s/syz-sysgen
+make .descriptions
+tput: No value for $TERM and no -T specified
+tput: No value for $TERM and no -T specified
+bin/syz-sysgen
+touch .descriptions
+GOOS=3Dlinux GOARCH=3Damd64 go build "-ldflags=3D-s -w -X github.com/google=
+/syzkaller/prog.GitRevision=3D4f9530a3b62297342999c9097c77dde726522618 -X '=
+github.com/google/syzkaller/prog.gitRevisionDate=3D20231220-163507'" "-tags=
+=3Dsyz_target syz_os_linux syz_arch_amd64 " -o ./bin/linux_amd64/syz-fuzzer=
+ github.com/google/syzkaller/syz-fuzzer
+GOOS=3Dlinux GOARCH=3Damd64 go build "-ldflags=3D-s -w -X github.com/google=
+/syzkaller/prog.GitRevision=3D4f9530a3b62297342999c9097c77dde726522618 -X '=
+github.com/google/syzkaller/prog.gitRevisionDate=3D20231220-163507'" "-tags=
+=3Dsyz_target syz_os_linux syz_arch_amd64 " -o ./bin/linux_amd64/syz-execpr=
+og github.com/google/syzkaller/tools/syz-execprog
+GOOS=3Dlinux GOARCH=3Damd64 go build "-ldflags=3D-s -w -X github.com/google=
+/syzkaller/prog.GitRevision=3D4f9530a3b62297342999c9097c77dde726522618 -X '=
+github.com/google/syzkaller/prog.gitRevisionDate=3D20231220-163507'" "-tags=
+=3Dsyz_target syz_os_linux syz_arch_amd64 " -o ./bin/linux_amd64/syz-stress=
+ github.com/google/syzkaller/tools/syz-stress
+mkdir -p ./bin/linux_amd64
+gcc -o ./bin/linux_amd64/syz-executor executor/executor.cc \
+	-m64 -O2 -pthread -Wall -Werror -Wparentheses -Wunused-const-variable -Wfr=
+ame-larger-than=3D16384 -Wno-stringop-overflow -Wno-array-bounds -Wno-forma=
+t-overflow -Wno-unused-but-set-variable -Wno-unused-command-line-argument -=
+static-pie -fpermissive -w -DGOOS_linux=3D1 -DGOARCH_amd64=3D1 \
+	-DHOSTGOOS_linux=3D1 -DGIT_REVISION=3D\"4f9530a3b62297342999c9097c77dde726=
+522618\"
+
+
+
+Tested on:
+
+commit:         13c7c941 netdev: add qstat for csum complete
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.=
+git main
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3D98a238b2569af6d
+dashboard link: https://syzkaller.appspot.com/bug?extid=3Da7d2b1d5d1af83035=
+567
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debia=
+n) 2.40
+
+Note: no patches were applied.
 
