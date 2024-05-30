@@ -1,110 +1,137 @@
-Return-Path: <linux-kernel+bounces-195387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 402F68D4BFB
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:48:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CD668D4C06
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:51:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 705B21C21E46
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 12:48:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79E621C22FD1
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 12:51:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA18E17F50F;
-	Thu, 30 May 2024 12:48:40 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DF8B17F4E0;
-	Thu, 30 May 2024 12:48:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 562CC17F506;
+	Thu, 30 May 2024 12:51:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="gXQYtdz1"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9890517F4E3;
+	Thu, 30 May 2024 12:51:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717073320; cv=none; b=Rus7Bsop/+rNaP40GfyTbEX8gkvzysANlcc/h+Y6bgWM+TQw2rpgCsYviGUuGKhMNfnEPgWDIeEgikPDQ5r7PmlqQiJGgU+ElSVDsFCpxHHm+Um06cFWjE62GBqXlKW22TN3EgDWpZc6ObhtIhm7P333mSA5sbjHAhYbtzCCToI=
+	t=1717073476; cv=none; b=RBr3WJQFi/Qdx94z0raOYLVVSO0dRJJQAQFKSjFwmyZGIVdvHfJ2SHlkzeGbJlPOMkA2dANMT+yN9kC3aXrZ4REgARGDP86bDDuj2iKWszWVD4yqJF9nEgX+MNLwWmiXTAoY33kmf/QPwVkop1dr3xJUmc/Bb2/jQWmNrVjHoJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717073320; c=relaxed/simple;
-	bh=0rQl/cKLRRzbfB91lX5MRST7yhxeLasHy+xqZ8/GUBg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WAIFhGOIHfkq7f/evysA1u7AUuE/lMVD4zA6BoR51oyGcgrLeYQXtUpcubppDeLnzjs/luKthxuCaJ4p21ZgUO27Cw/Fj7DQkcp3+JkvKkRu9NtQfKL/Lz0ggo7V2gMjM4KWvx+UyPPieOSBQMea6dSeoCMZw4Yk1CQhzfS62zw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E643B339;
-	Thu, 30 May 2024 05:49:01 -0700 (PDT)
-Received: from [192.168.1.100] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D93613F792;
-	Thu, 30 May 2024 05:48:35 -0700 (PDT)
-Message-ID: <aee9254e-81c1-464a-8a28-f971615baffc@arm.com>
-Date: Thu, 30 May 2024 13:48:38 +0100
+	s=arc-20240116; t=1717073476; c=relaxed/simple;
+	bh=FM/o12UO78tssoamv7cLYoLJcwoDUK6wJjjfANsu2WI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GqmMzR2q2c5QMVrt1sYnF8JCa6jrpyp0bN3l3TVK3KpLiaDd4dNsIrJCo0ikKji/jYkUYAVVJ+1CXU2PA+vcAq6kX0vE9bP1Vz6KYMSp9C4nMN3Qd4u2R3MauQPv8nz8nyg5RMsxWELNzPgt1Uf/sPp3THGdwexj/ue16W+I9No=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=gXQYtdz1; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=R1lF1wuasm5jFlbWmNPDithSHl/LG9a64ccE2zsJSIo=; b=gXQYtdz193aVp73jZH9Gw6CyYL
+	7mdQGhJE3gKkmibVaS500roNOY6CeeXKed4RkbYypg+cH+B1wQT+bdHDTTbeBUpYyMmb9e3bvO7tW
+	TFw9HsK6SuPszPSZQSRhIuVkNV4Cl5B9tyfbdXfsAcdlbbyKzRgT3u92tbV/vOjc8QW4=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sCfF6-00GLY9-Te; Thu, 30 May 2024 14:50:52 +0200
+Date: Thu, 30 May 2024 14:50:52 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Xiaolei Wang <xiaolei.wang@windriver.com>
+Cc: linux@armlinux.org.uk, alexandre.torgue@foss.st.com,
+	joabreu@synopsys.com, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, mcoquelin.stm32@gmail.com,
+	netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [net v2 PATCH] net: stmmac: Update CBS parameters when speed
+ changes after linking up
+Message-ID: <f8b0843f-7900-4ad0-9e70-c16175e893d9@lunn.ch>
+References: <20240530061453.561708-1-xiaolei.wang@windriver.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] perf evlist: Force adding default events only to core
- PMUs
-To: Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Leo Yan <leo.yan@linux.dev>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Kan Liang <kan.liang@linux.intel.com>,
- Dominique Martinet <asmadeus@codewreck.org>,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240525152927.665498-1-irogers@google.com>
- <CAHk-=wgYxi_+Q1OpZKg2F9=eem7VQjYnoqN6sA1+uUt-0JqQKQ@mail.gmail.com>
- <CAHk-=wi5Ri=yR2jBVk-4HzTzpoAWOgstr1LEvg_-OXtJvXXJOA@mail.gmail.com>
- <20240527105842.GB33806@debian-dev>
- <CAP-5=fXfidyF_e=yMNi26ScgY-VbJPfxN8M7OiK9ELa3qTfXPQ@mail.gmail.com>
- <ZlY0F_lmB37g10OK@x1>
- <CAP-5=fWM8LxrcR4Nf+e2jRtJ-jC0Sa-HYPf56pU5GW8ySdX1CQ@mail.gmail.com>
- <d79b18d7-6930-41fd-8157-eaa55b52df86@arm.com> <Zld3dlJHjFMFG02v@x1>
- <CAP-5=fXKnQzfwDSr3zVeo6ChJe3+xwpBfyAi0ExmPEdhcde4ww@mail.gmail.com>
- <CAM9d7chV8YOCj8=SGs0f60UGtf+N2+X=U+Brg246bFoPXBXS+g@mail.gmail.com>
-Content-Language: en-US
-From: James Clark <james.clark@arm.com>
-In-Reply-To: <CAM9d7chV8YOCj8=SGs0f60UGtf+N2+X=U+Brg246bFoPXBXS+g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240530061453.561708-1-xiaolei.wang@windriver.com>
 
+>  static void stmmac_configure_cbs(struct stmmac_priv *priv)
+>  {
+>  	u32 tx_queues_count = priv->plat->tx_queues_to_use;
+>  	u32 mode_to_use;
+>  	u32 queue;
+> +	u32 ptr, speed_div;
+> +	u64 value;
+> +
+> +	/* Port Transmit Rate and Speed Divider */
+> +	switch (priv->speed) {
+> +	case SPEED_10000:
+> +		ptr = 32;
+> +		speed_div = 10000000;
+> +		break;
+> +	case SPEED_5000:
+> +		ptr = 32;
+> +		speed_div = 5000000;
+> +		break;
+> +	case SPEED_2500:
+> +		ptr = 8;
+> +		speed_div = 2500000;
+> +		break;
+> +	case SPEED_1000:
+> +		ptr = 8;
+> +		speed_div = 1000000;
+> +		break;
+> +	case SPEED_100:
+> +		ptr = 4;
+> +		speed_div = 100000;
+> +		break;
+> +	default:
 
+No SPEED_10 ?
 
-On 30/05/2024 06:35, Namhyung Kim wrote:
-> On Wed, May 29, 2024 at 12:25 PM Ian Rogers <irogers@google.com> wrote:
->> We can fix the arm_dsu bug by renaming cycles there. If that's too
->> hard to land, clearing up ambiguity by adding a PMU name has always
->> been the way to do this. My preference for v6.10 is revert the revert,
->> then add either a rename of the arm_dsu event and/or the change here.
->>
->> We can make perf record tolerant and ignore opening events on PMUs
->> that don't support sampling, but I think it is too big a thing to do
->> for v6.10.
-> 
-> How about adding a flag to parse_event_option_args so that we
-> can check if it's for sampling events.  And then we might skip
-> uncore PMUs easily (assuming arm_dsu PMU is uncore).
+> +		netdev_dbg(priv->dev, "link speed is not known\n");
+> +	}
+>  
+>  	/* queue 0 is reserved for legacy traffic */
+>  	for (queue = 1; queue < tx_queues_count; queue++) {
+> @@ -3196,6 +3231,12 @@ static void stmmac_configure_cbs(struct stmmac_priv *priv)
+>  		if (mode_to_use == MTL_QUEUE_DCB)
+>  			continue;
+>  
+> +		value = div_s64(priv->old_idleslope[queue] * 1024ll * ptr, speed_div);
+> +		priv->plat->tx_queues_cfg[queue].idle_slope = value & GENMASK(31, 0);
 
-It's uncore yes.
+Rather than masking off the top bits, shouldn't you be looking for
+overflow? that indicates the configuration is not possible. You don't
+have a good way to report the problem, since there is no user action
+on link up, so you cannot return -EINVAL or -EOPNOTSUPP. So you
+probably want to set the hardware as close as possible.
 
-Couldn't we theoretically have a core PMU that still doesn't support
-sampling though? And then we'd end up in the same situation. Attempting
-to open the event is the only sure way of knowing, rather than trying to
-guess with some heuristic in userspace?
+Also, what happens if the result of the div is 0? Does 0 have a
+special meaning?
 
-Maybe a bit too hypothetical but still worth considering.
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
+> index 222540b55480..d3526ad91aff 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
+> @@ -355,6 +355,9 @@ static int tc_setup_cbs(struct stmmac_priv *priv,
+>  	if (!priv->dma_cap.av)
+>  		return -EOPNOTSUPP;
+>  
+> +	if (!netif_carrier_ok(priv->dev))
+> +		return -ENETDOWN;
+> +
 
-> 
-> It might not be a perfect solution but it could be a simple one.
-> Ideally I think it'd be nice if the kernel exports more information
-> about the PMUs like sampling and exclude capabilities.
-> > Thanks,
-> Namhyung
+Now that you are configuring the hardware on link up, does that
+matter?
 
-That seems like a much better suggestion. Especially with the ever
-expanding retry/fallback mechanism that can never really take into
-account every combination of event attributes that can fail.
-
-James
+	Andrew
 
