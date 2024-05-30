@@ -1,123 +1,134 @@
-Return-Path: <linux-kernel+bounces-195801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 505888D5200
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 20:51:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4E758D5203
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 20:53:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C8BB2820DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 18:51:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 991E31F22264
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 18:53:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D5EA5029E;
-	Thu, 30 May 2024 18:51:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 301B851C49;
+	Thu, 30 May 2024 18:52:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VM4ZTOZl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="saj2RiVv";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="hM8qkLOr"
+Received: from wfout6-smtp.messagingengine.com (wfout6-smtp.messagingengine.com [64.147.123.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A5AC1CF9C;
-	Thu, 30 May 2024 18:51:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1CAC51031;
+	Thu, 30 May 2024 18:52:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717095061; cv=none; b=qY7Y2eXrbmFNKGiyLnA6Djgq/mRfCTfDMM9gj9PZ4+ljUrf5bO8dyQJ98l7Kf6u0QNE+ih4+7uwB6RwT1kKZQb2LKiCtCdzHHnVXhbnbiPse8hAFyzCuA1zEvTtHmSh0SSl/XJ2PxX7n+cOJOforkSbzNsx9YjN+/TtBFHtAXy0=
+	t=1717095178; cv=none; b=E50zeI/Ph+HXv2XsaCPFIiLG5HlPgrHKcJcZUxwIeRxa8qQ3IOskgdGYlWtd9N0FE83Gmt0rJZeuBGaB/5IpOl9Yj5GbFNY/Oi3YrFNZM6gLlNkijPSXGYn5kP+vZGAcMjm2ThMdPw1rOR9fTifbLFPhDJPK1UlZgMBAYwgzuzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717095061; c=relaxed/simple;
-	bh=8fVaAaz0nBL6sCELN6DFm76IC/rF/vDW/oIDjSMgjxE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HVNpji5Y1actyJZDQMnrNAsKTsNkDfraTbIwzazN9hRE6wICUJQBjjB/Vn5V4eyfbNuMGrBQcJCITKb0JA7mDX3hhWMxz9+YU3IwQlmv2vNiH/WprWW3Grp+lXM6tXp7ssVuUp0C0gqDAKoyf7HM9TWvQ+jBsWp7bVkTGlweSOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VM4ZTOZl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43BC1C2BBFC;
-	Thu, 30 May 2024 18:51:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717095061;
-	bh=8fVaAaz0nBL6sCELN6DFm76IC/rF/vDW/oIDjSMgjxE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=VM4ZTOZliO7rqBRbkRKSrNspz9A4brezzKYrjEbCmvv1rMH/PeMQrGAMpfz7YWJfQ
-	 hfwctQLSslWg6Cw1MKuLnqmsD6OJYKYPdnIGWhyu3+1ev83icN2mkcwsY6508O0bE8
-	 u/20l6gVqhMHC1Y+RNnifo3I+P+FX/qQ1W5YE3/EEu3qAcVCRZcXfmE+vuyEBepKYG
-	 BpVCt5AQgm5OJm5b8ia6D8nFlaenWeCyawPmPyi2yyEaZVY8XwERfyZF52SGrG/wkG
-	 oJUqA2Q6ERhMoHbQBIWkQLz8kxqLMNBZPXKv5+L1LBi4Iv0WLVLiQrYEj6W44k0XRo
-	 zhVmNgDe1TqwQ==
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Saravana Kannan <saravanak@google.com>
-Cc: Andreas Larsson <andreas@gaisler.com>,
-	Sam Ravnborg <sam@ravnborg.org>,
-	sparclinux@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] of: WARN on using default root node #address-cells/#size-cells
-Date: Thu, 30 May 2024 13:50:48 -0500
-Message-ID: <20240530185049.2851617-1-robh@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1717095178; c=relaxed/simple;
+	bh=n5yEaDAh85vw8ZKD60Eh+Rvf0Ok6TETJpl9orVLc7xQ=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=GaciaaSxXt9TjpZEi/+XHiUTJcnPazcRzu+NsspgEwLIy08zV7Via/OIAJofeWz3kGKrOXoq0G9iOnaWzl9Yv8xcVXSuR2A8NJdzZmDaatLoecnBEUcuLl8uuN80Sg1JFMwl+tbJKsaCo/U2bCmQH+Lm7R2n8p4lHm/j42TM3c8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=saj2RiVv; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=hM8qkLOr; arc=none smtp.client-ip=64.147.123.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfout.west.internal (Postfix) with ESMTP id D7C3A1C000F7;
+	Thu, 30 May 2024 14:52:54 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Thu, 30 May 2024 14:52:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm3; t=1717095174; x=1717181574; bh=ih0LJP0eTW
+	o3jPdc63FceSZpgfHI9w8pQsCt99us9WY=; b=saj2RiVvQLK23cP1CAeUgPulpt
+	wnSKXsJZrICOjtdskVelrPr6Q66yxii2/X5FOzsExYwxTvQVQLpRlVQoPho073Ou
+	agzJcRZ+pjMhkC/tJJYwD4DhhTvtofUyD/S28oJ3ubfAZSmqz33iN7z7HtChRNJK
+	YXOb4x2SvWuMS2JFHEmpYS2YgQVELwRvnQPxXGY0AkwMlz2cFSqcKjxsnlVncu3N
+	yAwk+7OFa0KBQj+oiL3oM2s8VpD6j/0ysycMGRJ6TpC7R12X0jPNQGaeqdEKFIAJ
+	o5RhuocgUU2s1ayH5bMGx6HfJU1Xl7inyiPf56FC8hn/0WlOFvHBjqrOSb0w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1717095174; x=1717181574; bh=ih0LJP0eTWo3jPdc63FceSZpgfHI
+	9w8pQsCt99us9WY=; b=hM8qkLOr7CoqZj7EoF0jloLefsrz6WHOXDAHegooitKW
+	9vwmO9TUpVpXlgkcXGAAfuBP9NyDthCVXz0hfj1v5A7N5Fd9dd6iRnatacy+1oB8
+	nOPLSi7GcvUOC9cak8VMjJ5jjV9g3rQqUK1ZWsw6Ezlo2w250CkIsjZIc98nbM0I
+	6S2krBllJZdYLCh8Muxl3LZdpwLdy0xzNs2LzskVwd+8ehygZGgmwyK0xnjPwaWv
+	1EfgJdebxRP4r3PNCCJrHLyJGmP7gJmbMzLpNjNsI/eix2WWWp467+SSCrBx9058
+	ru1L1tJ2R+BWgl1Fsi57nF1qrH1d8Ba5UwevnHL1OQ==
+X-ME-Sender: <xms:BctYZs_zEup7A-Gx9CVtg3vopdZXDPi8pmUVe1k4W3CP_b0F9kD0Ig>
+    <xme:BctYZkvl5z32aAo_jzc7V7f1tCo41eXV41HmFZGl1THAKzSMEN1k8jTR5AuZ7CWAh
+    A8DUYrQglFJydEfze0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdekgedguddviecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdet
+    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
+    htthgvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedt
+    keetffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    grrhhnugesrghrnhgusgdruggv
+X-ME-Proxy: <xmx:BctYZiBbQhYaBt3oioLdfqjo8wX669DHosYELUSf18iJ5H1hz3wIkw>
+    <xmx:BctYZsf4gh62r58HWYh8JVwrumJTuxiBi9SBKzCbw-0d5Mxk6v97gA>
+    <xmx:BctYZhN7_s7LKpo5LxDDiZcNlnam9xs_SidBmVDKNlXjHxMdWvk1HA>
+    <xmx:BctYZmkVWDXlf0yI7Zi1FQFY-A42dn57ezA8oRgtT33K1ExdCzGZ7g>
+    <xmx:BstYZixUqDh26kmjoIuKIWLTVBhQeAkHIV5hCP3tDGQBFTddQTQyByHO>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 51CDEB6008D; Thu, 30 May 2024 14:52:53 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-491-g033e30d24-fm-20240520.001-g033e30d2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-Id: <866cb878-47fa-4bb9-ba93-6a0c0e70a4f7@app.fastmail.com>
+In-Reply-To: <2f1603fa-d03c-412c-895c-bc4afa06834b@intel.com>
+References: <20240528152527.2148092-1-arnd@kernel.org>
+ <2f1603fa-d03c-412c-895c-bc4afa06834b@intel.com>
+Date: Thu, 30 May 2024 20:52:32 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Jacob Keller" <jacob.e.keller@intel.com>,
+ "Arnd Bergmann" <arnd@kernel.org>, "Sunil Goutham" <sgoutham@marvell.com>,
+ "Geetha sowjanya" <gakula@marvell.com>,
+ "Subbaraya Sundeep Bhatta" <sbhatta@marvell.com>,
+ hariprasad <hkelam@marvell.com>
+Cc: "David S . Miller" <davem@davemloft.net>,
+ "Eric Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>,
+ "Paolo Abeni" <pabeni@redhat.com>,
+ "Richard Cochran" <richardcochran@gmail.com>,
+ "Suman Ghosh" <sumang@marvell.com>, "Simon Horman" <horms@kernel.org>,
+ "Anthony L Nguyen" <anthony.l.nguyen@intel.com>,
+ "Jiri Pirko" <jiri@resnulli.us>,
+ "Mateusz Polchlopek" <mateusz.polchlopek@intel.com>,
+ Netdev <netdev@vger.kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ethernet: octeontx2: avoid linking objects into multiple modules
+Content-Type: text/plain
 
-While OpenFirmware originally allowed default values of #address-cells
-and #size-cells, FDT has long required explicit values. It's been a
-warning in dtc for the root node since the beginning (2005) and for
-any parent node since 2007. Of course, not all FDT uses dtc, but that
-should be the majority by far. The various extracted OF devicetrees I
-have dating back to the 1990s (various PowerMac, OLPC, PASemi Nemo)
-all have explicit root node properties.
+On Thu, May 30, 2024, at 19:54, Jacob Keller wrote:
+> On 5/28/2024 8:25 AM, Arnd Bergmann wrote:
+>> From: Arnd Bergmann <arnd@arndb.de>
+>> 
+>> Each object file contains information about which module it gets linked
+>> into, so linking the same file into multiple modules now causes a warning:
+>> 
+>> scripts/Makefile.build:254: drivers/net/ethernet/marvell/octeontx2/nic/Makefile: otx2_devlink.o is added to multiple modules: rvu_nicpf rvu_nicvf
+>> 
+>
+> When I tried to build, I don't see any warnings produced on the current
+> net-next with W=1. Is this something new and not yet in net-next tree?
+> If not, how do I enable this warning in my local build?
 
-I have no idea what exists for Sparc, so disabling the warning for it.
-If any other platforms hit the warning, then the warning can be
-disabled for them.
+The warning has been around with W=1 for over a year now, it still
+shows up here:
 
-Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
----
-Sparc folks, If anyone can dump DTs from some Sparc systems it would be
-helpful.
----
- drivers/of/base.c | 2 ++
- drivers/of/fdt.c  | 2 ++
- 2 files changed, 4 insertions(+)
+make ARCH=arm64 allmodconfig drivers/net/ethernet/marvell/octeontx2/ -skj20
+scripts/Makefile.build:236: drivers/net/ethernet/marvell/octeontx2/nic/Makefile: otx2_devlink.o is added to multiple modules: rvu_nicpf rvu_nicvf
+scripts/Makefile.build:236: drivers/net/ethernet/marvell/octeontx2/nic/Makefile: otx2_dcbnl.o is added to multiple modules: rvu_nicpf rvu_nicvf
 
-diff --git a/drivers/of/base.c b/drivers/of/base.c
-index 61fff13bbee5..6930aa29fec1 100644
---- a/drivers/of/base.c
-+++ b/drivers/of/base.c
-@@ -96,6 +96,7 @@ int of_bus_n_addr_cells(struct device_node *np)
- 			return cells;
- 
- 	/* No #address-cells property for the root node */
-+	WARN_ONCE(!IS_ENABLED(CONFIG_SPARC), "Only listed platforms should rely on default '#address-cells'\n");
- 	return OF_ROOT_NODE_ADDR_CELLS_DEFAULT;
- }
- 
-@@ -116,6 +117,7 @@ int of_bus_n_size_cells(struct device_node *np)
- 			return cells;
- 
- 	/* No #size-cells property for the root node */
-+	WARN_ONCE(!IS_ENABLED(CONFIG_SPARC), "Only listed platforms should rely on default '#size-cells'\n");
- 	return OF_ROOT_NODE_SIZE_CELLS_DEFAULT;
- }
- 
-diff --git a/drivers/of/fdt.c b/drivers/of/fdt.c
-index a8a04f27915b..568a3fca4c27 100644
---- a/drivers/of/fdt.c
-+++ b/drivers/of/fdt.c
-@@ -961,11 +961,13 @@ int __init early_init_dt_scan_root(void)
- 	prop = of_get_flat_dt_prop(node, "#size-cells", NULL);
- 	if (prop)
- 		dt_root_size_cells = be32_to_cpup(prop);
-+	WARN(!prop, "No '#size-cells' in root node\n");
- 	pr_debug("dt_root_size_cells = %x\n", dt_root_size_cells);
- 
- 	prop = of_get_flat_dt_prop(node, "#address-cells", NULL);
- 	if (prop)
- 		dt_root_addr_cells = be32_to_cpup(prop);
-+	WARN(!prop, "No '#address-cells' in root node\n");
- 	pr_debug("dt_root_addr_cells = %x\n", dt_root_addr_cells);
- 
- 	return 0;
--- 
-2.43.0
 
+    Arnd
 
