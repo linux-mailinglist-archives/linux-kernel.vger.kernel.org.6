@@ -1,150 +1,179 @@
-Return-Path: <linux-kernel+bounces-195333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BB508D4B36
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:01:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF5C98D49B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 12:32:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DA5C1F21C78
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 12:01:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D36301C2252C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 10:32:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90C7B1822D3;
-	Thu, 30 May 2024 12:01:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TgmusCt4"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 322E217C7AA;
+	Thu, 30 May 2024 10:32:03 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 569905337C;
-	Thu, 30 May 2024 12:01:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A45C2183965;
+	Thu, 30 May 2024 10:32:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717070473; cv=none; b=gvyECefIffET0JdmpWV3/0XMh9JSuMhIqzIkTnZm4LELILIMMZxsUkCpB3sanbvHAMSROu414tNE7aNmKp6OYGDWLTkOLNdQvNBxlNH49r9rfaH+E6CjZmph9mv929yoCEZH1W2cF4kubye2OQc15B6c2YhisKYda+HL7+ALpvY=
+	t=1717065122; cv=none; b=XSp1YS2I6aHTW3JuHhZ8ckVZPSfT+1kzuxQDgt0/qQM9dRwS15AFJ9po6eIdkmH9y8voX8d7O/956ZwnBLpBNOnbWrRw8pJeLZ8icqK1o/lycABOgcp8qNgsiXz0QmRFbxZuW1X4A82ppyp0aAAEWh7oHovW8+IjftsAXCx0hAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717070473; c=relaxed/simple;
-	bh=XLJKre9lM4Hdi9pCiyx7IxOa/7RTj7xY1R9XAnRJ+C8=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
-	 MIME-Version:Content-Type; b=CBwNrqRUU1kz9gqwRkf8gXnd7k50Hh2o1xp25qJi1TMngzeXbvfUB6DWSZTINBf5lLpbrNTh9T+qHu6s3Ox4cjy2YZJPqHV7LYRNjJDyXIH/MHzijQHpvMCLfXJMy+452By7iH7ePdtiWQiKDPydcXTqal9rNmsbB95WDiZRtbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TgmusCt4; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-421124a04d6so8574765e9.3;
-        Thu, 30 May 2024 05:01:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717070471; x=1717675271; darn=vger.kernel.org;
-        h=mime-version:user-agent:references:message-id:date:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=WEQrqGnC7qOz5yKXUSVLSaKtdozBtcwCP1LShsXqGBo=;
-        b=TgmusCt46PwBW/2WNE0XYOyqI6/0yIJzy+ZnRBb4dZSrgUHBNRVXd9KaVelFqCMa/3
-         nLc9Q+Na/Nyzs0ALjkp93GuV3WCLuRTsO8YNlaScFOXiQRyiHRTTRFqJi9MurWyiDaw/
-         F35uRxZXyCBWpqGpxZgnKVeGRqJ9OPEqyYOErBEeRUl1T1XG38EuHCv1oWJy6I8YqkPA
-         xDy6tK3QMry/KR8Yh6yHfAceWbUej7zrnUuPAiZwxK6p00sH80OXfJW9UzKGaD0eLqi4
-         Q965AqdurkeUp5iKDWMR4gOCG2lZBFqiSli06yd7cTj4KBJqjRewzv80b4GKWwFVPqlj
-         E+EA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717070471; x=1717675271;
-        h=mime-version:user-agent:references:message-id:date:in-reply-to
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WEQrqGnC7qOz5yKXUSVLSaKtdozBtcwCP1LShsXqGBo=;
-        b=G2uLJ7mD0lkoAliPBbAkt0C/raW5G9ZxbhIejRNlEvcnVxk+gpNWdq6tRmofYYCeQ9
-         zOTU2aI9rMOCGrQdJOkNcCx9y01oUztJ/V/kllBcUvNEdfT328N2g649x/+FiMTBakN3
-         dakJF1chfvyBcLXvttPqM/ewn4pLCsGrG5/kNXRy/439ndiroJSU2wZr/bcGJlS71V2X
-         s5KrytcwbksPct3YCVDjRaP5AnKkjRqwN7IBtl8uoCvShzIHj9QXXtWQJW9EGdAVsNfP
-         Dee6gPZd2aZiKs2FdztVKu/zWE3s05shJztbVXAYue8bziHZbBdBA/5nREV2Ij4Bm+US
-         ISqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUjXSMKAJZ6ZVmjICaqd+J3Aq2dx9Z64hoY0kwHYs/pyFKQsgMq/p9NemIY5DWLH2zF1oFHn99JjQwd/6k2hfN2Py7jqgGLh2EGLcJOx9gkJsyEbnUVk+PdEkV1xJS3nl6w+yVY
-X-Gm-Message-State: AOJu0YwKoAGiLdcfzoFqwBtx63EkSdV0BPTL+namGc4vDuRhNAH3/MM6
-	lsKuXZ9u2Q0HOq9MhAnR7f3lw+iWH5dszzCzUa0LaDO5Ro3mbAwEb7CgtnDz
-X-Google-Smtp-Source: AGHT+IHQqtiMBnCHQwIS+myk5eOGoXwO6b/L0RfVeHWUZv+ApdJ5ZPZNJeNe1sB76GA+qbdt6tUmTQ==
-X-Received: by 2002:a5d:60c3:0:b0:355:513:f08b with SMTP id ffacd0b85a97d-35dc0091800mr1260771f8f.27.1717070470393;
-        Thu, 30 May 2024 05:01:10 -0700 (PDT)
-Received: from imac ([2a02:8010:60a0:0:c8da:756f:fe9d:41b5])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3557a09031esm17156567f8f.49.2024.05.30.05.01.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 May 2024 05:01:09 -0700 (PDT)
-From: Donald Hunter <donald.hunter@gmail.com>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: "David S. Miller" <davem@davemloft.net>,  Eric Dumazet
- <edumazet@google.com>,  Jakub Kicinski <kuba@kernel.org>,  Paolo Abeni
- <pabeni@redhat.com>,  Oleksij Rempel <o.rempel@pengutronix.de>,  Thomas
- Petazzoni <thomas.petazzoni@bootlin.com>,  linux-kernel@vger.kernel.org,
-  netdev@vger.kernel.org,  Dent Project <dentproject@linuxfoundation.org>,
-  kernel@pengutronix.de
-Subject: Re: [PATCH 3/8] netlink: specs: Expand the PSE netlink command with
- C33 new features
-In-Reply-To: <20240529-feature_poe_power_cap-v1-3-0c4b1d5953b8@bootlin.com>
-	(Kory Maincent's message of "Wed, 29 May 2024 16:09:30 +0200")
-Date: Thu, 30 May 2024 11:31:09 +0100
-Message-ID: <m2o78nd21e.fsf@gmail.com>
-References: <20240529-feature_poe_power_cap-v1-0-0c4b1d5953b8@bootlin.com>
-	<20240529-feature_poe_power_cap-v1-3-0c4b1d5953b8@bootlin.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1717065122; c=relaxed/simple;
+	bh=YLlmJ33QAXAGokrUhIV1Wqhjw+NfUL8PMllVM2CeyzM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IhrZk/u+cHQJRGOh3Sn448gfjgMfl3hUnrqAja6U7QBeQ+V2e1jgFul5L1rvUf7IcShVE8BkZ8yCbxVqscNaE2OxyXYLympcWY3Djl8ykECkDniXJn0l96HTDx+cu9qsu0zgfVvCgk6UUon2u6EttDaeVaUoYxKMpxnnAdYpGlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13286C2BBFC;
+	Thu, 30 May 2024 10:32:00 +0000 (UTC)
+Message-ID: <a962e94f-a669-40e1-8b28-9ef077cf69be@xs4all.nl>
+Date: Thu, 30 May 2024 12:31:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] media: uapi: v4l: Change V4L2_TYPE_IS_CAPTURE
+ condition
+To: Nas Chung <nas.chung@chipsnmedia.com>, mchehab@kernel.org,
+ linux-media@vger.kernel.org, sebastian.fricke@collabora.com,
+ m.tretter@pengutronix.de
+Cc: linux-kernel@vger.kernel.org
+References: <20240528020425.4994-1-nas.chung@chipsnmedia.com>
+Content-Language: en-US, nl
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Autocrypt: addr=hverkuil@xs4all.nl; keydata=
+ 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
+In-Reply-To: <20240528020425.4994-1-nas.chung@chipsnmedia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Kory Maincent <kory.maincent@bootlin.com> writes:
-
-> From: "Kory Maincent (Dent Project)" <kory.maincent@bootlin.com>
->
-> Expand the c33 PSE attributes with PSE class, status message and power
-> consumption.
->
-> ./ynl/cli.py --spec netlink/specs/ethtool.yaml --no-schema --do pse-get
-> 	     --json '{"header":{"dev-name":"eth0"}}'
-> {'c33-pse-actual-pw': 1800,
->  'c33-pse-admin-state': 3,
->  'c33-pse-pw-class': 4,
->  'c33-pse-pw-d-status': 4,
->  'c33-pse-pw-status-msg': b'2P Port delivering IEEE.\x00',
->  'header': {'dev-index': 4, 'dev-name': 'eth0'}}
->
-> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
+On 28/05/2024 04:04, Nas Chung wrote:
+> Explicitly compare a buffer type only with valid buffer types,
+> to avoid matching the buffer type outside of valid buffer
+> type set.
+> 
+> Signed-off-by: Nas Chung <nas.chung@chipsnmedia.com>
 > ---
->  Documentation/netlink/specs/ethtool.yaml | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
->
-> diff --git a/Documentation/netlink/specs/ethtool.yaml b/Documentation/netlink/specs/ethtool.yaml
-> index 00dc61358be8..bb51c293435d 100644
-> --- a/Documentation/netlink/specs/ethtool.yaml
-> +++ b/Documentation/netlink/specs/ethtool.yaml
-> @@ -922,6 +922,18 @@ attribute-sets:
->          name: c33-pse-pw-d-status
->          type: u32
->          name-prefix: ethtool-a-
-> +      -
-> +        name: c33-pse-pw-status-msg
-> +        type: binary
+>  include/uapi/linux/videodev2.h | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+> index fe6b67e83751..fa2b7086e480 100644
+> --- a/include/uapi/linux/videodev2.h
+> +++ b/include/uapi/linux/videodev2.h
+> @@ -157,6 +157,10 @@ enum v4l2_buf_type {
+>  	V4L2_BUF_TYPE_PRIVATE              = 0x80,
+>  };
+>  
+> +#define V4L2_TYPE_IS_VALID(type)		\
+> +	((type) >= V4L2_BUF_TYPE_VIDEO_CAPTURE	\
+> +	 && (type) <= V4L2_BUF_TYPE_META_OUTPUT)
+> +
+>  #define V4L2_TYPE_IS_MULTIPLANAR(type)			\
+>  	((type) == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE	\
+>  	 || (type) == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE)
+> @@ -171,7 +175,8 @@ enum v4l2_buf_type {
+>  	 || (type) == V4L2_BUF_TYPE_SDR_OUTPUT			\
+>  	 || (type) == V4L2_BUF_TYPE_META_OUTPUT)
+>  
+> -#define V4L2_TYPE_IS_CAPTURE(type) (!V4L2_TYPE_IS_OUTPUT(type))
+> +#define V4L2_TYPE_IS_CAPTURE(type)	\
+> +	(V4L2_TYPE_IS_VALID(type) && !V4L2_TYPE_IS_OUTPUT(type))
+>  
+>  enum v4l2_tuner_type {
+>  	V4L2_TUNER_RADIO	     = 1,
 
-Shouldn't this be type: string ?
+This patch introduced this warning:
 
-> +        name-prefix: ethtool-a-
-> +      -
-> +        name: c33-pse-pw-class
-> +        type: u32
-> +        name-prefix: ethtool-a-
-> +      -
-> +        name: c33-pse-actual-pw
-> +        type: u32
-> +        name-prefix: ethtool-a-
->    -
->      name: rss
->      attributes:
-> @@ -1611,6 +1623,9 @@ operations:
->              - c33-pse-admin-state
->              - c33-pse-admin-control
->              - c33-pse-pw-d-status
-> +            - c33-pse-pw-status-msg
-> +            - c33-pse-pw-class
-> +            - c33-pse-actual-pw
->        dump: *pse-get-op
->      -
->        name: pse-set
+In function 'find_format_by_index',
+    inlined from 'vdec_enum_fmt' at drivers/media/platform/qcom/venus/vdec.c:452:8:
+drivers/media/platform/qcom/venus/vdec.c:172:32: warning: 'valid' may be used uninitialized [-Wmaybe-uninitialized]
+  172 |                 if (k == index && valid)
+      |                     ~~~~~~~~~~~^~~~~~~~
+drivers/media/platform/qcom/venus/vdec.c: In function 'vdec_enum_fmt':
+drivers/media/platform/qcom/venus/vdec.c:157:22: note: 'valid' was declared here
+  157 |                 bool valid;
+      |                      ^~~~~
+
+This driver does this:
+
+	bool valid;
+
+        if (V4L2_TYPE_IS_OUTPUT(type)) {
+                valid = venus_helper_check_codec(inst, fmt[i].pixfmt);
+        } else if (V4L2_TYPE_IS_CAPTURE(type)) {
+                valid = venus_helper_check_format(inst, fmt[i].pixfmt);
+
+With your patch both V4L2_TYPE_IS_OUTPUT(type) and V4L2_TYPE_IS_CAPTURE(type)
+can return false, something that wasn't possible without this patch.
+
+In this driver the fix would just be to drop the second 'if' altogether, so just
+'} else {'.
+
+Since these defines are part of the public API, this change introduces a subtle
+behavior difference that can affect applications.
+
+That said, I do consider this an improvement.
+
+I would like some changes, though:
+
+1) Just after "V4L2_BUF_TYPE_META_OUTPUT          = 14," in enum v4l2_buf_type,
+   add a comment saying that V4L2_TYPE_IS_VALID and (for output types)
+   V4L2_TYPE_IS_OUTPUT must be updated if a new type is added. It's all
+   too easy to forget that otherwise.
+2) Add a patch fixing the venus/vdec.c code.
+3) Something else I noticed, but I think this change should be in a separate patch:
+   V4L2_TYPE_IS_OUTPUT() returns true for V4L2_BUF_TYPE_VIDEO_OVERLAY, but that
+   definitely belongs to CAPTURE. Nobody really uses that type anymore, but still,
+   it should be fixed.
+
+Regards,
+
+	Hans
 
