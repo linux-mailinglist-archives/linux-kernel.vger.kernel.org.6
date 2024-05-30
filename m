@@ -1,108 +1,96 @@
-Return-Path: <linux-kernel+bounces-194867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B66A8D4346
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 04:01:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D36FF8D433E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 04:00:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6339C1C2333B
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 02:01:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8FBB1C23292
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 02:00:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE0F718054;
-	Thu, 30 May 2024 02:01:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B3DC1BF47;
+	Thu, 30 May 2024 02:00:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eQloIB07"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ph7h1rCP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6E4F18036
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 02:01:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5A5314286;
+	Thu, 30 May 2024 02:00:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717034476; cv=none; b=HsibG+qWx/ezxOkq8v6A0I7LCipof+XJGuEwmCdeEJTpkoojYHAPWCeng5py66EMz+ST/WcbTQ0MGrupwtVHngrYgaPJT+HuYkVEOccg/nuVandErWhyZSq3K+vLY4zng3x1KxwL8jv0N1q/pSwrfIumieVT2nKAe0UHIR3+TV0=
+	t=1717034432; cv=none; b=u1e+VKwpj7A25VOE2rIJzSp5aKCdqaGk2OBp0jeWLCMRt8jHPy7Z47MZMK8c9n9i7Uy1pnBU2uXE9Uyi5YDRSVUO6BpPGqvbeGyJh2Y7CP32Kj+roW63ci6nooVgMVqIlviTwKVmWUrTypQcKYFCR50p1i7a7UeppYh4MtVSMXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717034476; c=relaxed/simple;
-	bh=z8p2Fbv7q51FsTbE9Q6ou8CNMBaz3vo4l9U9rPdC/fQ=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=JmsrClx11ZpQbGDf+3tcD/WgMm7yEQ72dvMN0/NQuu48kDsnwd/qxlU4ihOo5lXd6Jsx1FeSh1gx1qoZ9pKe178n/Rnnsp58RBiPcvb0xI9BO4BMtioXj8Ujv6bF0tJ/uJEU+IsUAGBJqzRprJZEtLYEMseBp3lX/NU1Yuqnv8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eQloIB07; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717034475; x=1748570475;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=z8p2Fbv7q51FsTbE9Q6ou8CNMBaz3vo4l9U9rPdC/fQ=;
-  b=eQloIB07xk7bWidVKWBLmJKM+f7L8p5yH0sPXC0AsUkN0d0XhcjQmDBL
-   CAmEoaz5WAv0KfE1sceese5arqQZvd8hlG+H85R4fhtggMqS2xFVlicBK
-   lNfsIoHRbqsL0qkklC3xfOUxpJmQLES4itvdrbpUTOk6U5g9TomNoB4Ji
-   YmyOYTup+0fY0n1fLD403SYelfL/xUe1u7s34dE4kUp6SJ2ciPDAxb9VH
-   wcT4Jwgzc+hI6nq7Qygh2X4srf0xPmnlqO1wtSHq1rURUuQqnx+UbieLU
-   9Vkfdmj/eUnBf5q88B0uPxNWbMC62zrF4xyMWx+JfFPRqiiYrn7+daJfV
-   A==;
-X-CSE-ConnectionGUID: PyAbSVyFRImQ1sCQjXFIiA==
-X-CSE-MsgGUID: HwjKXVkNRPGq0UHP5Ktb1A==
-X-IronPort-AV: E=McAfee;i="6600,9927,11087"; a="13604237"
-X-IronPort-AV: E=Sophos;i="6.08,199,1712646000"; 
-   d="scan'208";a="13604237"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2024 19:01:15 -0700
-X-CSE-ConnectionGUID: TQJC9/b/QlCc2uUz6FLNVg==
-X-CSE-MsgGUID: bbMexaIEQZisW9zr+4pHDA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,199,1712646000"; 
-   d="scan'208";a="35737900"
-Received: from unknown (HELO [10.239.159.127]) ([10.239.159.127])
-  by fmviesa010.fm.intel.com with ESMTP; 29 May 2024 19:01:11 -0700
-Message-ID: <dc9fa861-628f-4a96-ae37-e419b23c6ea0@linux.intel.com>
-Date: Thu, 30 May 2024 09:59:03 +0800
+	s=arc-20240116; t=1717034432; c=relaxed/simple;
+	bh=giUOLxIduZvTBVTj8dQhszO7U46VjwbPQTAZbzSBxX8=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=l1qO7pSLI/RJpQj0wd/wo8ZwEhkVUxoYs4UxSNOAI1f7qRac1lRinwJTPaegGk3+Ii0IWWFRVTshXnn3VdflKexLoakgrIxZA4rtLMWAIX+PaWbQkwr0/hcIBODomkIYPlWjCYjoOcqvOKXpvhPv9+wKxe88CVGbbqhYPQWSJF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ph7h1rCP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 58363C32782;
+	Thu, 30 May 2024 02:00:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717034432;
+	bh=giUOLxIduZvTBVTj8dQhszO7U46VjwbPQTAZbzSBxX8=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=ph7h1rCPZiI6AWd1luIlQY43/fXJIM2064EvMijjM2RbaUqF6sM4vDJlS8Bf0Ucgo
+	 Cfc2BGIYFpzQTcMvZDYo1/Kl416wW8TsmSRGikm0Goe5tW8cXd445Q2SCT9jIdOE4Z
+	 7qjjJbiTf8D0MJTVBICU6WfJeW2KPACbejv9WusV8gTBL9FGmeRcv8xhHwF7Zg0qJo
+	 CqpwvTdw1a9zXQd+T6s4GAyuG2HheJlSemG7vfPYS8thnC+5rA8izbRJyLtUsQa9xA
+	 bR56e1LOyDAl2xNr5nRaHO3RNCS2wtn79lBlpv/rqfu7/GC2pNoXFjs58eGrxKCUpd
+	 8q2zVv7DZJudA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 46821D84BD0;
+	Thu, 30 May 2024 02:00:32 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>, Kalle Valo <kvalo@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- Alex Williamson <alex.williamson@redhat.com>, mst@redhat.com,
- Jason Wang <jasowang@redhat.com>, Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Mikko Perttunen <mperttunen@nvidia.com>, iommu@lists.linux.dev,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 05/20] iommu: Add iommu_paging_domain_alloc() interface
-To: Yi Liu <yi.l.liu@intel.com>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>
-References: <20240529053250.91284-1-baolu.lu@linux.intel.com>
- <20240529053250.91284-6-baolu.lu@linux.intel.com>
- <eedb1df0-e745-4b48-9261-faa0ff320ee9@intel.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <eedb1df0-e745-4b48-9261-faa0ff320ee9@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net] ipv4: correctly iterate over the target netns in
+ inet_dump_ifaddr()
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <171703443228.3291.4714432873121553067.git-patchwork-notify@kernel.org>
+Date: Thu, 30 May 2024 02:00:32 +0000
+References: <20240528203030.10839-1-aleksandr.mikhalitsyn@canonical.com>
+In-Reply-To: <20240528203030.10839-1-aleksandr.mikhalitsyn@canonical.com>
+To: Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Cc: edumazet@google.com, kuba@kernel.org, dsahern@kernel.org,
+ pabeni@redhat.com, stgraber@stgraber.org, brauner@kernel.org,
+ davem@davemloft.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 5/29/24 5:04 PM, Yi Liu wrote:
-> On 2024/5/29 13:32, Lu Baolu wrote:
->> Commit <17de3f5fdd35> ("iommu: Retire bus ops") removes iommu ops from
->> bus. The iommu subsystem no longer relies on bus for operations. So the
->> bus parameter in iommu_domain_alloc() is no longer relevant.
->>
->> Add a new interface named iommu_paging_domain_alloc(), which explicitly
->> indicates the allocation of a paging domain for DMA managed by a kernel
->> driver. The new interface takes a device pointer as its parameter, that
->> better aligns with the current iommu subsystem.
+Hello:
+
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Tue, 28 May 2024 22:30:30 +0200 you wrote:
+> A recent change to inet_dump_ifaddr had the function incorrectly iterate
+> over net rather than tgt_net, resulting in the data coming for the
+> incorrect network namespace.
 > 
-> you may want to move this patch before patch 03/04.
+> Fixes: cdb2f80f1c10 ("inet: use xa_array iterator to implement inet_dump_ifaddr()")
+> Reported-by: Stéphane Graber <stgraber@stgraber.org>
+> Closes: https://github.com/lxc/incus/issues/892
+> Bisected-by: Stéphane Graber <stgraber@stgraber.org>
+> Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+> Tested-by: Stéphane Graber <stgraber@stgraber.org>
+> 
+> [...]
 
-Emm, why?
+Here is the summary with links:
+  - [net] ipv4: correctly iterate over the target netns in inet_dump_ifaddr()
+    https://git.kernel.org/netdev/net/c/b8c8abefc07b
 
-Best regards,
-baolu
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
