@@ -1,129 +1,148 @@
-Return-Path: <linux-kernel+bounces-194888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7F598D43C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 04:38:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25BA98D43C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 04:45:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C382285636
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 02:38:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57BFC1C21A23
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 02:45:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD2C41CA9E;
-	Thu, 30 May 2024 02:38:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="F9BvcxNL"
-Received: from smtp.cecloud.com (unknown [1.203.97.246])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C51E117545;
-	Thu, 30 May 2024 02:38:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.203.97.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A88461BF3A;
+	Thu, 30 May 2024 02:45:26 +0000 (UTC)
+Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB1998480;
+	Thu, 30 May 2024 02:45:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717036715; cv=none; b=NYiAcVCYjNHDZYHssIbkx+J3E2BsvtGk+T7UZH4OivS/Kwt7xxWiM5AgL5VS3OZXgJUxM/ld8wREKnQHzimvFZSUgZ9uOfnMBPuspT3+ouqyZHiUy3DH1JxL/sIFjMUdaRbWtm3ni/M3jKqQoTvTt5tVlZMb2WzkD/J+zwv70eE=
+	t=1717037126; cv=none; b=FuoAUMtApcIjtyhmDp1y5Y74hYYp8mC+a82SelrK3HWaia2L/B6/yszGZFVgXxqGlpYsrqeTQ8iDEaB4XzbQyzATFUVMA0VPs/+0XDYjRx1GziG0zlfNWh3Aah8Kr9AID66usFGxw4kMJs2J1SScB2gaD60X5g0ursonLYVYBRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717036715; c=relaxed/simple;
-	bh=TNoVU3TtSf6bcIdcXsfbZYo/x8ibozTXW6/eh8jkNaU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TNBsBZHXjrYQCvEmSeDKtY69i/yFiFkJaGyciKrgNGPacsuCuDttf7xrTITZS3sXc1batEvTrdzVSH4VMQ4M80tSPoQ0S1KImnyxHw7tm2RvVKyKWcohu74CD5OncxP3eNkUyjwe97/l1CToCLyIzueilATYSDkYQ5fjJf+2o3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cestc.cn; spf=pass smtp.mailfrom=cestc.cn; dkim=fail (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=F9BvcxNL reason="signature verification failed"; arc=none smtp.client-ip=209.85.214.174; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; arc=none smtp.client-ip=1.203.97.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cestc.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cestc.cn
-Received: from localhost (localhost [127.0.0.1])
-	by smtp.cecloud.com (Postfix) with ESMTP id A879C7C012C;
-	Thu, 30 May 2024 10:33:09 +0800 (CST)
-X-MAIL-GRAY:0
-X-MAIL-DELIVERY:1
-X-ANTISPAM-LEVEL:2
-X-SKE-CHECKED:1
-X-ABS-CHECKED:1
-Received: from localhost.localdomain (unknown [111.48.58.12])
-	by smtp.cecloud.com (postfix) whith ESMTP id P1860752T281471823376752S1717036388286019_;
-	Thu, 30 May 2024 10:33:09 +0800 (CST)
-X-IP-DOMAINF:1
-X-RL-SENDER:liuwei09@cestc.cn
-X-SENDER:liuwei09@cestc.cn
-X-LOGIN-NAME:liuwei09@cestc.cn
-X-FST-TO:liuwei09@cestc.cn
-X-RCPT-COUNT:9
-X-LOCAL-RCPT-COUNT:1
-X-MUTI-DOMAIN-COUNT:0
-X-SENDER-IP:111.48.58.12
-X-ATTACHMENT-NUM:0
-X-UNIQUE-TAG:<ab71a20c679e9c04ec8ec16fdd219dda>
-X-System-Flag:0
-From: Liu Wei <liuwei09@cestc.cn>
-To: liuwei09@cestc.cn
-Cc: akpm@linux-foundation.org,
-	hch@lst.de,
-	jack@suse.cz,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	rgoldwyn@suse.com,
-	willy@infradead.org,
-	Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH] mm/filemap: invalidating pages is still necessary when io with IOCB_NOWAIT
-Date: Thu, 30 May 2024 10:33:04 +0800
-Message-ID: <c66ca795-da93-437c-bb11-718801f8114a@kernel.dk>
-X-Mailer: git-send-email 2.42.1
-In-Reply-To: <20240527100908.49913-1-liuwei09@cestc.cn>
-References: <024b9a30-ad3b-4063-b5c8-e6c948ad6b2e@kernel.dk> <20240527100908.49913-1-liuwei09@cestc.cn>
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174]) (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits)) (No client certificate requested) by smtp.subspace.kernel.org (Postfix) with ESMTPS id A493717E8E2 for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 15:36:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1f4c043d2f6so35095ad.2 for <linux-kernel@vger.kernel.org>; Mon, 27 May 2024 08:36:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1716824187; x=1717428987; darn=vger.kernel.org; h=content-transfer-encoding:in-reply-to:from:content-language :references:cc:to:subject:user-agent:mime-version:date:message-id :from:to:cc:subject:date:message-id:reply-to; bh=FGMRKGoSYUA5y3/8ZCfrZ1xp7rqzMx12hKUQWEXXdwY=; b=F9BvcxNLHbFCL5XfHLnGTxQs/kbGpALZnSl2DYjNA/21xx0FBmmySwAJN/5dtkPhZV IwwKjcqRB9pV10OOLL6wHdu5znp/6PE86Vas57cBS/wuAbBw2UZndM8t2ducr7YYWm6Y qK9hMREyXKjeBhZWSjTI2InCbzAtbz3PLAwXmX2LUbmD27CV84Ld62XttJh+nGQRapAs b070pptuUluTj7BrbyTY7tkobVJKFo/9qxvErZHnOMlm8wItNpZuLUNC8RDdtzThAB2N KMJsW+YN/2uWpInjYvnpvDqSoW6Kn8DylQoMu4CqVNrueusLUWYFZNSZk1pdxY03zMc1 k2IA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=1e100.net; s=20230601; t=1716824187; x=1717428987; h=content-transfer-encoding:in-reply-to:from:content-language :references:cc:to:subject:user-agent:mime-version:date:message-id :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to; bh=FGMRKGoSYUA5y3/8ZCfrZ1xp7rqzMx12hKUQWEXXdwY=; b=CPhMhbHOK9YffoFiKDtV0Khpu+NfyscXGdbauR7ikW2SVhyGiJpw4+uaH2oTdxcQJp 8n4PLLZijcpA7uhY6eSngYbNg9W0N8GVCb0k+Es5NqFIDwRGN5hQ53IWyAuavf8MxoPQ gyf/CMAUI2l4mRd6ebTUPSgYTPvl+YPTsWJWI6RVFTvYrWMlXaDm72KLOUADWEQhAvtZ wIQt3RivAEe6aaeIkaFXSlkvu3/TkmFqvry2kOWIMCJuavmmBTFM+6Jm8zt1wOhuvRDX KeT9zlF1L0CSx7G6Eu0CQqpNUPji9HMjieOGHhgPLFFXAc1685CBAslFxHZSSIx3CZi6 rypw==
-X-Forwarded-Encrypted: i=1; AJvYcCUMOG1hqfcAj8O+U8OYJhDCzufVhCbdgAbARsyGquOUCPGzb4/qlUWfi1GmEWjyNPXVWjcnOAIwkpkfqK1b0Rr2kWyMri0yOsSYAgLj
-X-Gm-Message-State: AOJu0YzKpYHq7uA5B37LhUsrmqqOlmSrPE30ly9kbznTlXurSaloSBil CUW6yqJdNri6W8/hPsAPPODhw+jVKov//aV6VQLQxPVoTmgOmj9khDGcyWUQ8lk=
-X-Google-Smtp-Source: AGHT+IHTxIPNAK3HsNoC9uItVsCnZCK8MD3ThRKVvVNi4TwdQa2YRFJqyU+MaLPmqStXfF6Dl3dotQ==
-X-Received: by 2002:a17:902:e810:b0:1f2:fd9a:dbf8 with SMTP id d9443c01a7336-1f449907a09mr116945035ad.5.1716824186842; Mon, 27 May 2024 08:36:26 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.194]) by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c970058sm64280955ad.121.2024.05.27.08.36.25 (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128); Mon, 27 May 2024 08:36:26 -0700 (PDT)
-Precedence: bulk
+	s=arc-20240116; t=1717037126; c=relaxed/simple;
+	bh=1w47dG6iwVStuKGBIonKiM24BQI7knvVqfrf478mb6A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aB6mPK13KQdYvKGhethz9fJSq6ib/hDrXPeBSmb44JHQlU2UnMLApiSz9z9L8EkH8xpVVChoaBIwzZsed8OGIjjThpjUrd1V/+HTy6SFxGthfQg1qLC1SrZ7hUYB0jQwXnz0wYgVdeu1o4Jr/IoXjkjBTdpNgnVlzas90IP72RA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-24ca03ad307so237171fac.3;
+        Wed, 29 May 2024 19:45:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717037124; x=1717641924;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CnKJIrmXi20YB0E74oQIBvd6GDGh12oCc6N2c/VdEwU=;
+        b=wlIaBbyOfNCjmBRbbHmrb4cIEoOpTwbc6v7j+2SBKng09Ch8xiXu7RlFDWRrvgGEnV
+         xrr0lTbLWaCZ4zlSl6LigONWEY49oSZolZmgdUvEKH2EgvEMy+Jwvo4AD3xzSucGzUO7
+         7J/ylT/ZePPv4ywcj7hfA/gnrQXKhksU5cWW4LlIhOPMtxp+XBvywl1FXYF5ifViUnOD
+         bn9gG8LOesqV4L0wGDwtLYxK4ixFv0v2ThmGQBsKjgmPTr+oW8ZgJC3c7yrHEjmSRN4F
+         y9uaw4UdsTugPWQb0JJEpKd7ZkFnIjJg4KsO00fNhyyWgTt7izfecLagXNA/RqelUl8U
+         018g==
+X-Forwarded-Encrypted: i=1; AJvYcCUpOTeu9A/IayOnplUxM6+aCwAwehVFS3Y1HzrOkOEOMsbxRdvdQhstxlk5K1N980NEH5YCREs/rNh/jfOZ4d9kWBWgcQz1P+eM2nw9nDQJ4ySMHvMjCNPrOvdpJ5Y9gYgN2DnmTPteZk0e
+X-Gm-Message-State: AOJu0YzEizco+Bac82twzJa6DomOuyYfboJj8qvP8uCPPBkejOw/dOwM
+	3E7QpUkurZ3pk2H9WQSjxsWWs+M7PCR7i4rccR7u+YDoUWJigGPXgHlMNw==
+X-Google-Smtp-Source: AGHT+IGw0sWYovwEDI5ep8+8wprw2L01K+uPlFM0wC4C9zzWPOiCl6Xyrj4D7Rr0Nh5BacT3McxW2A==
+X-Received: by 2002:a05:6870:d24e:b0:24f:da39:f649 with SMTP id 586e51a60fabf-25060de9e3cmr1155409fac.50.1717037123354;
+        Wed, 29 May 2024 19:45:23 -0700 (PDT)
+Received: from liuwe-devbox-debian-v2 ([20.69.120.36])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7023009490esm389361b3a.78.2024.05.29.19.45.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 May 2024 19:45:22 -0700 (PDT)
+Date: Thu, 30 May 2024 02:45:18 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: Michael Kelley <mhklinux@outlook.com>
+Cc: Aditya Nagesh <adityanagesh@linux.microsoft.com>,
+	"adityanagesh@microsoft.com" <adityanagesh@microsoft.com>,
+	"kys@microsoft.com" <kys@microsoft.com>,
+	"haiyangz@microsoft.com" <haiyangz@microsoft.com>,
+	"wei.liu@kernel.org" <wei.liu@kernel.org>,
+	"decui@microsoft.com" <decui@microsoft.com>,
+	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5] Drivers: hv: Cosmetic changes for hv.c and balloon.c
+Message-ID: <ZlfoPlGF40dc8u4f@liuwe-devbox-debian-v2>
+References: <1716998695-32135-1-git-send-email-adityanagesh@linux.microsoft.com>
+ <SN6PR02MB41572A8E15A990EB162C60FCD4F22@SN6PR02MB4157.namprd02.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SN6PR02MB41572A8E15A990EB162C60FCD4F22@SN6PR02MB4157.namprd02.prod.outlook.com>
 
-From: Jens Axboe <axboe@kernel.dk>
-
-On 5/27/24 4:09 AM, Liu Wei wrote:
-> > I am a newer, thanks for the reminder.
+On Wed, May 29, 2024 at 04:29:17PM +0000, Michael Kelley wrote:
+> From: Aditya Nagesh <adityanagesh@linux.microsoft.com> Sent: Wednesday, May 29, 2024 9:05 AM
 > > 
-> >>
-> >> I don't think WB_SYNC_NONE tells it not to block, it just says not to
-> >> wait for it... So this won't work as-is.
+> > Fix issues reported by checkpatch.pl script in hv.c and
+> > balloon.c
+> >  - Remove unnecessary parentheses
+> >  - Remove extra newlines
+> >  - Remove extra spaces
+> >  - Add spaces between comparison operators
+> >  - Remove comparison with NULL in if statements
 > > 
-> > Yes, but I think an asynchronous writex-back is better than simply
-> > return EAGAIN. By using __filemap_fdatawrite_range to trigger a
-> > writeback, subsequent retries may have a higher chance of success. 
+> > No functional changes intended
+> > 
+> > Signed-off-by: Aditya Nagesh <adityanagesh@linux.microsoft.com>
+> > Reviewed-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+> > ---
+> > [V5]
+> > Rebase to hyperv-fixes
+> > 
+> > [V4]
+> > Fix Alignment issue and revert a line since 100 characters are allowed in a line
+> > 
+> > [V3]
+> > Fix alignment issues in multiline function parameters.
+> > 
+> > [V2]
+> > Change Subject from "Drivers: hv: Fix Issues reported by checkpatch.pl script"
+> >  to "Drivers: hv: Cosmetic changes for hv.c and balloon.c"
+> >  drivers/hv/hv.c         |  37 +++++++-------
+> >  drivers/hv/hv_balloon.c | 105 ++++++++++++++--------------------------
+> >  2 files changed, 53 insertions(+), 89 deletions(-)
+> > 
 > 
-> And what's the application supposed to do, just hammer on the same
-> IOCB_NOWAIT submission until it then succeeds? The only way this can
-> reasonably work for that would be if yo can do:
+> [snip]
 > 
-> 1) Issue IOCB_NOWAIT IO
-> 2) Get -EAGAIN
-> 3) Sync kick off writeback, wait for it to be done
-> 4) Issue IOCB_NOWAIT IO again
-> 5) Success
+> > @@ -999,21 +984,14 @@ static void hot_add_req(struct work_struct *dummy)
+> >  	rg_start = dm->ha_wrk.ha_region_range.finfo.start_page;
+> >  	rg_sz = dm->ha_wrk.ha_region_range.finfo.page_cnt;
+> > 
+> > -	if ((rg_start == 0) && (!dm->host_specified_ha_region)) {
+> > +	if (rg_start == 0 && !dm->host_specified_ha_region) {
+> >  		/*
+> > -		 * The host has not specified the hot-add region.
+> >  		 * Based on the hot-add page range being specified,
+> > -		 * compute a hot-add region that can cover the pages
+> > -		 * that need to be hot-added while ensuring the alignment
+> > -		 * and size requirements of Linux as it relates to hot-add.
+> > -		 */
+> > -		rg_start = ALIGN_DOWN(pg_start, ha_pages_in_chunk);
+> > -		rg_sz = ALIGN(pfn_cnt, ha_pages_in_chunk);
 > 
-> If you just kick it off, then you'd repeat steps 1..2 ad nauseam until
-> it works out, not tenable.
-> 
-> And this doesn't even include the other point I mentioned, which is
-> __filemap_fdatawrite_range() IO issue blocking in the first place.
-> 
-> So no, NAK on this patch.
->
+> Hmmm.  The above is not a cosmetic change.  Looks like this
+> delta was erroneously introduced in the v5 version.  It wasn't
+> there in v4.
 
-I know, thanks for your patient explanation.
+This also breaks the build, since now the comment is not terminated.
 
+Please fix this and resubmit.
 
+In general, you should always build test your code before submission.
+
+Thanks,
+Wei.
+
+> 
+> Everything else LGTM.
+> 
+> Michael
 
