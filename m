@@ -1,166 +1,186 @@
-Return-Path: <linux-kernel+bounces-195653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAF168D4FC9
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 18:25:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BF648D4FC8
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 18:24:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A8A81C2319F
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:25:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C0EC1C21E75
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:24:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F145322619;
-	Thu, 30 May 2024 16:25:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25DCD22F17;
+	Thu, 30 May 2024 16:24:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xeBf/g4V"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1VW6tcj8";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dlTcygrV"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89B0020B3E
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 16:24:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 150A8219F6;
+	Thu, 30 May 2024 16:24:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717086300; cv=none; b=QMiNeNLm5f5OI/kPFSlmsjTlAUl0t8yS2fGN4Wvx/oRBa/krqFHw4OOyWsFxphGAfjzmauDJaJPGPN5+DBF9ulhw8m+mdcpL9SnRt0Tq3fTCGtPmeSJaGOhgU3KXlqw1cXHqjhM7IMv7q+qzSWzWas7xetMI8j306qtBIdVHhGM=
+	t=1717086284; cv=none; b=W055kUA8bkbBkUdfStG3Mw80uj/R75nhrij4wRxkqgS14S7RbovOY5ScT+6+FfirAZqmi8grhLgQ3oBjXMRVbOXCSilVkpQPrpTXQA32KDwkMly6j+2+hALU/Lz9Jkb1fwrZn8IevKKpH4tiJGmqRCG5+NWAFX/8Sd8MCCDtW+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717086300; c=relaxed/simple;
-	bh=8o0ZIK2d5CAvM/zF5h5sybmXtMx4wa2NagpYFQt5FTQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cLzONU7EJdujgUeK2j95fLI2wqAl+UuDsf53oPAnw9HSDDseviXLHY9qQj03nxFV63Oo8XudaYZQKSjUg73CxcwTsuCfAoy9FtYK7JPBNj8X2FHno0SRFN+pv+ZBqRv/VSWcuumk0E6prHMb0RwKb6SVrA/2eydpURXPuyMKJwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xeBf/g4V; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a59a352bbd9so174901066b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 09:24:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717086297; x=1717691097; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5FNesVw/sAj7Em9Zy23GdchPLFbPVXVlEFF3WazTuoo=;
-        b=xeBf/g4VNEmcG5qnve1j3Hs4brvsuNRt3w5anaZUN+7liuix5UeRzbIZIB/0699Ku4
-         s4ZnMuETvVrIoDdp5ojcw7b52/GHeRCt8UvHHUfuL/ZS6NpzaFgR4uMAZHFtNYGBX7QB
-         DYl5O2MPIz9nzJa31IiDhUBsXdtc0bWMlvTjcplpT+EwN8hPDBXF+9uQhguJ+t6EZ+10
-         6IkQsDOpA8RTVwc4OHE6AWPGShQocTJtN3tGJKc7zoSwXeUUbKM9vqmnG3ZXyHIvvhEw
-         IN0CmR+wlYdDhQf1tLD7HEk7WDczrmFy6sTNK2YfdZ+FkMxSNj6ugZyK/L/noNGHNLuD
-         Q3dw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717086297; x=1717691097;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5FNesVw/sAj7Em9Zy23GdchPLFbPVXVlEFF3WazTuoo=;
-        b=no8shPb+a317Ra6iOuzdsmt9uEhAN3lfNvVUAvPGc8Ujgt9QxAafSYvv+18oF8FYaQ
-         A2H6JpIi4BMgcOPds5NBDcNsI1Pfg7GQ4U1Z/GLh6DIk/Jb89xfJmD9kvii2HNAtQIh8
-         vU7H0dYQd/YwtqdTZX/5wtXWBtjuMAHnjyhfv0qbJPDVuTl7k3Ro7RiygDVZtYISPpry
-         FWkfPqBpOz0pEsxygS8JdwFZEBBzXXTTAZLG2G3yNFbtgu6La12/nayr0H4Y+aM9Bidk
-         XHjHJEGJgM/zKVeMdoPKeTZ8a46/K40GOOdRSa4bX8VeVemyg9PS9ufXVMfNN8hTF3+W
-         O1gQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWOnM8Qza/SYBJq80biK5WFXr+DADX+dWDqO38SIT7GfHNvT8mjA3R91FLzFPeJfp7N8ihJQhloCR+XA1Nd2yfAskgjq3G/0P0pJaZj
-X-Gm-Message-State: AOJu0Yyz0xsCBdO05RuPcuGCaUFstI4g8zKHJMEMZNyCU/IUpZ9jCHjO
-	lpX382CENnXBh5syootlWn76njr6I2n0SKz5LciIQVHw+03nqSbX6TbZXCjSPYKkKjdldNab93M
-	Tj0FRplR3Si6uf3/AlDLzLifeMVBuRnYw6gUX
-X-Google-Smtp-Source: AGHT+IFwLT2oLWqkwAVjuKHT0oAS13N6O5emKTnqOQ4nc8/3wmrmPqfIXiLZwyctW/dHf5j6sSQb8/kI/xPKl5Vb++s=
-X-Received: by 2002:a17:906:f143:b0:a59:be21:3587 with SMTP id
- a640c23a62f3a-a65f0918c9cmr184816566b.8.1717086296523; Thu, 30 May 2024
- 09:24:56 -0700 (PDT)
+	s=arc-20240116; t=1717086284; c=relaxed/simple;
+	bh=vXWTXGZIzOjj6SO56PbBHSdngFth82k1cfiLOtC6JKI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=tKUieBYdTzyw99ag/BcpuedkKx2hi+MBbBmzgzp+NK0R/BWbL46xcsqBb0iroImfK0yz/5nqbZymc2Pg5dKWy3Doa+3avtQk8SzkxtJaLvKtP13LANPMEt0RWIMapOLA3YD4X3mQla3Q3Xm9OokqMMwEzLPkOuNd4H/kbWDioyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1VW6tcj8; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dlTcygrV; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1717086281;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=su+nBpg+I//Su4qJT5o+I2Xt7bzzHBxGQXv4g2dGYMs=;
+	b=1VW6tcj85D/9Rn/mj6JEpzRAiK5GP8ZWQTlhFkL8PZwhIbwZInZ5VCYIJOWuBCKjQCNCYy
+	7fGWWLd3i305NyzYV0dGY7UqA0Gzl+v3zQKHcRyT65f6xvTnxnNM794z05JFVHbrpYLZFH
+	ZA1COKQJExm9AEQ9e7nhMtQKhSfdYfH6WWxrC5co8Krpo2Y1dJAcuq1OJIWPJ1cHrCkOw5
+	+Em7rhn1IoKGBa880/fjgt7DILsh5XSHg23J1/q/DTnivbYRVMkP+fSZh0S7koFiqGO8Hy
+	AEJHxUabb9+o/31dVH1ZGb53cB0uvTM4bvjaUjyNsyKpoP5QFAuJ+bkixEQJyQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1717086281;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=su+nBpg+I//Su4qJT5o+I2Xt7bzzHBxGQXv4g2dGYMs=;
+	b=dlTcygrV0LHqp6LzvKBkScrYdBB2Ubuu4Y459H4noqSYzuOyO2U4dEwVtUopkQld0T5RJ9
+	j/DF0JgPa4eUzGDQ==
+To: Peter Schneider <pschneider1968@googlemail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
+ stable@vger.kernel.org, regressions@lists.linux.dev
+Subject: Re: Kernel 6.9 regression: X86: Bogus messages from topology detection
+In-Reply-To: <87o78n8fe2.ffs@tglx>
+References: <877cffcs7h.ffs@tglx>
+ <16cd76b1-a512-4a7b-a304-5e4e31af3c8a@googlemail.com>
+ <ce3abe01-4c37-416e-a5ed-25703318318a@googlemail.com>
+ <87zfs78zxq.ffs@tglx>
+ <76b1e0b9-26ae-4915-920d-9093f057796b@googlemail.com>
+ <87r0dj8ls4.ffs@tglx> <87o78n8fe2.ffs@tglx>
+Date: Thu, 30 May 2024 18:24:39 +0200
+Message-ID: <87le3r8dyw.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240530102126.357438-1-usamaarif642@gmail.com>
- <20240530102126.357438-2-usamaarif642@gmail.com> <20240530122715.GB1222079@cmpxchg.org>
-In-Reply-To: <20240530122715.GB1222079@cmpxchg.org>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Thu, 30 May 2024 09:24:20 -0700
-Message-ID: <CAJD7tkYcTV_GOZV3qR6uxgFEvYXw1rP-h7WQjDnsdwM=g9cpAw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] mm: store zero pages to be swapped out in a bitmap
-To: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Usama Arif <usamaarif642@gmail.com>, akpm@linux-foundation.org, nphamcs@gmail.com, 
-	chengming.zhou@linux.dev, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	kernel-team@meta.com, Hugh Dickins <hughd@google.com>, Huang Ying <ying.huang@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Thu, May 30, 2024 at 5:27=E2=80=AFAM Johannes Weiner <hannes@cmpxchg.org=
-> wrote:
+On Thu, May 30 2024 at 17:53, Thomas Gleixner wrote:
+> On Thu, May 30 2024 at 15:35, Thomas Gleixner wrote:
+>> On Thu, May 30 2024 at 12:06, Peter Schneider wrote:
+>> Now the million-dollar question is what unlocks CPUID to read the proper
+>> value of EAX of leaf 0. All I could come up with is to sprinkle a dozen
+>> of printks into that code. Updated debug patch below.
 >
-> On Thu, May 30, 2024 at 11:19:07AM +0100, Usama Arif wrote:
-> > Approximately 10-20% of pages to be swapped out are zero pages [1].
-> > Rather than reading/writing these pages to flash resulting
-> > in increased I/O and flash wear, a bitmap can be used to mark these
-> > pages as zero at write time, and the pages can be filled at
-> > read time if the bit corresponding to the page is set.
-> > With this patch, NVMe writes in Meta server fleet decreased
-> > by almost 10% with conventional swap setup (zswap disabled).
-> >
-> > [1]https://lore.kernel.org/all/20171018104832epcms5p1b2232e2236258de3d0=
-3d1344dde9fce0@epcms5p1/
-> >
-> > Signed-off-by: Usama Arif <usamaarif642@gmail.com>
+> Don't bother. Dave pointed out to me that this is unlocked in
+> early_init_intel() via MSR_IA32_MISC_ENABLE_LIMIT_CPUID...
 >
-> This is awesome.
->
-> > ---
-> >  include/linux/swap.h |  1 +
-> >  mm/page_io.c         | 86 ++++++++++++++++++++++++++++++++++++++++++--
-> >  mm/swapfile.c        | 10 ++++++
-> >  3 files changed, 95 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/include/linux/swap.h b/include/linux/swap.h
-> > index a11c75e897ec..e88563978441 100644
-> > --- a/include/linux/swap.h
-> > +++ b/include/linux/swap.h
-> > @@ -299,6 +299,7 @@ struct swap_info_struct {
-> >       signed char     type;           /* strange name for an index */
-> >       unsigned int    max;            /* extent of the swap_map */
-> >       unsigned char *swap_map;        /* vmalloc'ed array of usage coun=
-ts */
-> > +     unsigned long *zeromap;         /* vmalloc'ed bitmap to track zer=
-o pages */
->
-> One bit per swap slot, so 1 / (4096 * 8) =3D 0.003% static memory
-> overhead for configured swap space. That seems reasonable for what
-> appears to be a fairly universal 10% reduction in swap IO.
->
-> An alternative implementation would be to reserve a bit in
-> swap_map. This would be no overhead at idle, but would force
-> continuation counts earlier on heavily shared page tables, and AFAICS
-> would get complicated in terms of locking, whereas this one is pretty
-> simple (atomic ops protect the map, swapcache lock protects the bit).
->
-> So I prefer this version. But a few comments below:
+> Let me figure out how to fix that sanely.
 
-I am wondering if it's even possible to take this one step further and
-avoid reclaiming zero-filled pages in the first place. Can we just
-unmap them and let the first read fault allocate a zero'd page like
-uninitialized memory, or point them at the zero page and make them
-read-only, or something? Then we could free them directly without
-going into the swap code to begin with.
+The original code just worked because it was reevaluating this stuff
+over and over until it magically became "correct".
 
-That's how I thought about it initially when I attempted to support
-only zero-filled pages in zswap. It could be a more complex
-implementation though.
+The proper fix is obviously to unlock CPUID on Intel _before_ anything
+which depends on cpuid_level is evaluated.
 
-[..]
-> > +
-> > +static void swap_zeromap_folio_set(struct folio *folio)
-> > +{
-> > +     struct swap_info_struct *sis =3D swp_swap_info(folio->swap);
-> > +     swp_entry_t entry;
-> > +     unsigned int i;
-> > +
-> > +     for (i =3D 0; i < folio_nr_pages(folio); i++) {
-> > +             entry =3D page_swap_entry(folio_page(folio, i));
-> > +             bitmap_set(sis->zeromap, swp_offset(entry), 1);
->
-> This should be set_bit(). bitmap_set() isn't atomic, so it would
-> corrupt the map on concurrent swapping of other zero pages. And you
-> don't need a range op here anyway.
+Thanks,
 
-It's a shame there is no range version of set_bit(). I suspect we can
-save a few atomic operations on large folios if we write them in
-chunks rather than one by one.
+        tglx
+---
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -969,7 +969,7 @@ static void init_speculation_control(str
+ 	}
+ }
+ 
+-void get_cpu_cap(struct cpuinfo_x86 *c)
++static void get_cpu_cap(struct cpuinfo_x86 *c)
+ {
+ 	u32 eax, ebx, ecx, edx;
+ 
+@@ -1585,6 +1585,7 @@ static void __init early_identify_cpu(st
+ 	if (have_cpuid_p()) {
+ 		cpu_detect(c);
+ 		get_cpu_vendor(c);
++		intel_unlock_cpuid_leafs(c);
+ 		get_cpu_cap(c);
+ 		setup_force_cpu_cap(X86_FEATURE_CPUID);
+ 		get_cpu_address_sizes(c);
+@@ -1744,7 +1745,7 @@ static void generic_identify(struct cpui
+ 	cpu_detect(c);
+ 
+ 	get_cpu_vendor(c);
+-
++	intel_unlock_cpuid_leafs(c);
+ 	get_cpu_cap(c);
+ 
+ 	get_cpu_address_sizes(c);
+--- a/arch/x86/kernel/cpu/cpu.h
++++ b/arch/x86/kernel/cpu/cpu.h
+@@ -61,14 +61,15 @@ extern __ro_after_init enum tsx_ctrl_sta
+ 
+ extern void __init tsx_init(void);
+ void tsx_ap_init(void);
++void intel_unlock_cpuid_leafs(struct cpuinfo_x86 *c);
+ #else
+ static inline void tsx_init(void) { }
+ static inline void tsx_ap_init(void) { }
++static inline void intel_unlock_cpuid_leafs(struct cpuinfo_x86 *c) { }
+ #endif /* CONFIG_CPU_SUP_INTEL */
+ 
+ extern void init_spectral_chicken(struct cpuinfo_x86 *c);
+ 
+-extern void get_cpu_cap(struct cpuinfo_x86 *c);
+ extern void get_cpu_address_sizes(struct cpuinfo_x86 *c);
+ extern void cpu_detect_cache_sizes(struct cpuinfo_x86 *c);
+ extern void init_scattered_cpuid_features(struct cpuinfo_x86 *c);
+--- a/arch/x86/kernel/cpu/intel.c
++++ b/arch/x86/kernel/cpu/intel.c
+@@ -269,19 +269,26 @@ static void detect_tme_early(struct cpui
+ 	c->x86_phys_bits -= keyid_bits;
+ }
+ 
++void intel_unlock_cpuid_leafs(struct cpuinfo_x86 *c)
++{
++	if (boot_cpu_data.x86_vendor != X86_VENDOR_INTEL)
++		return;
++
++	if (c->x86 < 6 || (c->x86 == 6 && c->x86_model < 0xd))
++		return;
++
++	/*
++	 * The BIOS can have limited CPUID to leaf 2, which breaks feature
++	 * enumeration. Unlock it and update the maximum leaf info.
++	 */
++	if (msr_clear_bit(MSR_IA32_MISC_ENABLE, MSR_IA32_MISC_ENABLE_LIMIT_CPUID_BIT) > 0)
++		c->cpuid_level = cpuid_eax(0);
++}
++
+ static void early_init_intel(struct cpuinfo_x86 *c)
+ {
+ 	u64 misc_enable;
+ 
+-	/* Unmask CPUID levels if masked: */
+-	if (c->x86 > 6 || (c->x86 == 6 && c->x86_model >= 0xd)) {
+-		if (msr_clear_bit(MSR_IA32_MISC_ENABLE,
+-				  MSR_IA32_MISC_ENABLE_LIMIT_CPUID_BIT) > 0) {
+-			c->cpuid_level = cpuid_eax(0);
+-			get_cpu_cap(c);
+-		}
+-	}
+-
+ 	if ((c->x86 == 0xf && c->x86_model >= 0x03) ||
+ 		(c->x86 == 0x6 && c->x86_model >= 0x0e))
+ 		set_cpu_cap(c, X86_FEATURE_CONSTANT_TSC);
+
+
+
+
 
