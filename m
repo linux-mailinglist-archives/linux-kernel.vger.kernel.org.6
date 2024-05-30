@@ -1,168 +1,116 @@
-Return-Path: <linux-kernel+bounces-195607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EF258D4F3C
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 17:38:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E45B8D4F3F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 17:39:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F023C1F2218A
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 15:38:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12ECDB26B2F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 15:38:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D03D182D3F;
-	Thu, 30 May 2024 15:38:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12614183079;
+	Thu, 30 May 2024 15:38:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JYxu47Zu";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PVycF0Nc"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bTA3S5kn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB70F182D2D;
-	Thu, 30 May 2024 15:38:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CBCB182D2D;
+	Thu, 30 May 2024 15:38:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717083503; cv=none; b=ZWgdGD+5w0o3XKNM9axTNMcmVhaZM7fz3xl1PX7ypjMaCHY40nCWw38rOGSd5uFHF6P+IGRKXKVkg1fMjt8Ep5lW3x5fU5M3CY64x3GRGaKePIgjh7ihi8zxx5reg4ERqupc+/zUYtuccyyjaqjfv5DHu2u22SJ1o9hNa1CE2xg=
+	t=1717083530; cv=none; b=uZg4fLJlRYW1LNNaqK9jw2aWPdCE04VpKlZVF1+1imNVoosXDiWP156TLK9p1nRMHslsh2HIg5gzS1KkCIIqga0XC2rZWysYuBroKWlZc/41t5yChCFwF5M5y5UIZiFbmbJlHqC/JRnlhtG6Y3yewzkxSPvdcjAky+heUvYW7UE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717083503; c=relaxed/simple;
-	bh=kJUgEnnB1j6Tpeo+jUM1Mg4mIz8PPZ73v26DSU8OP/A=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=BSJRMJDsBK3Wb1XlcchCFciTpO7IY2wfX5oi/3Z81mbE17/PQCMBl9lyE6t9AFL8+WQzWefNNFhfL66fy/CsJZAEfMpGtei6+O7vmSlRpi+qSwnGlm/Wzii2/j4/zCT/dpP1x+g/TqXT0LRWUEAUARbQMBodYTzBvAIbQoXXbs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JYxu47Zu; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PVycF0Nc; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 30 May 2024 15:38:19 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1717083499;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=VB8BVFevT06lKaWEfV21IkEQ1bl6YGSl1ka9f+ApiMM=;
-	b=JYxu47ZuAb/NdDXUDFB5+N+fBV5Rz/B2dT8/433zltXUaufDXiRSt9pP3gi4S7pIOCKDkK
-	BjXKDr9RXSSHdSYnnRU10iWjbodzxeR4HxOaLZOKzD4SMNy1Wivmf76qmSAr/uKlp5UssV
-	dEgPeqhSHrKjJwoyUWb9EXRI48CMC5WadaYcRFgTKSQ6UUiwZXCQVmNBHGHIisx1kE1gSg
-	vVQJs8T510mOW6Auu0vKnKkTuFiBLnURf6U7bAnagof1+hQd+KAWQwfugIDe/wvSgctIDr
-	6vGMh287FtqZxtWKfqc25oAVbxLPQ+d/zDHPaYG4ETlN/QDmqTvg451T48il1w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1717083499;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=VB8BVFevT06lKaWEfV21IkEQ1bl6YGSl1ka9f+ApiMM=;
-	b=PVycF0NcgHXIHpSH2tiFTYdCkiefL1iaQaBZmKg3kSZqXXgV3GQ41lqvp+q2kxFXujSOcB
-	nG1LEqRtwRJ3GZDg==
-From: "tip-bot2 for Dave Hansen" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: x86/urgent] x86/cpu: Provide default cache line size if not enumerated
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Dave Hansen <dave.hansen@linux.intel.com>, osmanx@heusipp.de,
- stable@vger.kernel.org, x86@kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1717083530; c=relaxed/simple;
+	bh=euUKL3giV/ho/PPa2wLumzm+nzQsUuxb34Rbrl9xhq4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KvWpyT2mNFVvakDkSHSeMITG2hzs/LduGLPqFYoyBTXa2vtQkWXHXBl+e3UX7KAMkdLTuM44w8F9aZQh/7tvHTxZ16tYqXsNTLHsDB1ZG8Gq6x+17gEdHmFfSL333kFqYRdJZ1VHuYhf+lB+oYST+eJBTM14na1KcYLrHMs2OUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bTA3S5kn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EDDCC2BBFC;
+	Thu, 30 May 2024 15:38:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717083529;
+	bh=euUKL3giV/ho/PPa2wLumzm+nzQsUuxb34Rbrl9xhq4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bTA3S5kn8ZlDjfTHAJ2im+bwNbQ1fjIQ6OiYCMdv8ybz9xvAoNcDz5vXlakFzfcZs
+	 zHC/+M8zb/rCdvbDJh5gjPenw0N90iz3U3UxXH0BCllvkroQC9wY5Gs8KTgQwx0Ap2
+	 JGwR4/e00D0nYeHNcyuSCmLP3rn43yFocmV308q+/RBjIWASDzyZLOMjbzcsVDeIkr
+	 JMAgaPyGXD9tAOejZl8wwWRyXzD8qSV/qrqMxzr5rhOHaTTCTgsgwF07SKuJ6H+l79
+	 6KTxARwkFXBaOSsDu3vQcpPBJv6LMWuqdMqNdjS4+UYmGvSOd9j+XascoQ4e7q6AcY
+	 NHvo6eobGTuDA==
+Date: Thu, 30 May 2024 16:38:43 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: Frank Binns <frank.binns@imgtec.com>,
+	Matt Coster <matt.coster@imgtec.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/6] dt-bindings: gpu: powervr-rogue: Add MediaTek MT8173
+ GPU
+Message-ID: <20240530-reptilian-revolver-a8cb1f2af8ba@spud>
+References: <20240530083513.4135052-1-wenst@chromium.org>
+ <20240530083513.4135052-4-wenst@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <171708349914.10875.4285177308487469311.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="u4tlLkr2QYvGk/ip"
+Content-Disposition: inline
+In-Reply-To: <20240530083513.4135052-4-wenst@chromium.org>
+
+
+--u4tlLkr2QYvGk/ip
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-The following commit has been merged into the x86/urgent branch of tip:
+On Thu, May 30, 2024 at 04:35:02PM +0800, Chen-Yu Tsai wrote:
+> The MediaTek MT8173 comes with a PowerVR Rogue GX6250, which is one
+> of the Series6XT GPUs, another sub-family of the Rogue family.
+>=20
+> This was part of the very first few versions of the PowerVR submission,
+> but was later dropped. The compatible string has been updated to follow
+> the new naming scheme adopted for the AXE series.
+>=20
+> In a previous iteration of the PowerVR binding submission [1], the
+> number of clocks required for the 6XT family was mentioned to be
+> always 3. This is also reflected here.
+>=20
+> [1] https://lore.kernel.org/dri-devel/6eeccb26e09aad67fb30ffcd523c793a43c=
+79c2a.camel@imgtec.com/
+>=20
+> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
 
-Commit-ID:     2a38e4ca302280fdcce370ba2bee79bac16c4587
-Gitweb:        https://git.kernel.org/tip/2a38e4ca302280fdcce370ba2bee79bac16=
-c4587
-Author:        Dave Hansen <dave.hansen@linux.intel.com>
-AuthorDate:    Fri, 17 May 2024 13:05:34 -07:00
-Committer:     Dave Hansen <dave.hansen@linux.intel.com>
-CommitterDate: Thu, 30 May 2024 08:29:45 -07:00
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 
-x86/cpu: Provide default cache line size if not enumerated
+Thanks,
+Conor.
 
-tl;dr: CPUs with CPUID.80000008H but without CPUID.01H:EDX[CLFSH]
-will end up reporting cache_line_size()=3D=3D0 and bad things happen.
-Fill in a default on those to avoid the problem.
+--u4tlLkr2QYvGk/ip
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Long Story:
+-----BEGIN PGP SIGNATURE-----
 
-The kernel dies a horrible death if c->x86_cache_alignment (aka.
-cache_line_size() is 0.  Normally, this value is populated from
-c->x86_clflush_size.
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZlidgwAKCRB4tDGHoIJi
+0jEUAP9dytPUMftkwmUYeOy5IxYQ34BgC+UeoK8voSx1buveXgEA3if/Ue6idDKS
+pCr8yS7NaLjlC7pujPpYExaUI9Mb/gk=
+=y4xH
+-----END PGP SIGNATURE-----
 
-Right now the code is set up to get c->x86_clflush_size from two
-places.  First, modern CPUs get it from CPUID.  Old CPUs that don't
-have leaf 0x80000008 (or CPUID at all) just get some sane defaults
-from the kernel in get_cpu_address_sizes().
-
-The vast majority of CPUs that have leaf 0x80000008 also get
-->x86_clflush_size from CPUID.  But there are oddballs.
-
-Intel Quark CPUs[1] and others[2] have leaf 0x80000008 but don't set
-CPUID.01H:EDX[CLFSH], so they skip over filling in ->x86_clflush_size:
-
-	cpuid(0x00000001, &tfms, &misc, &junk, &cap0);
-	if (cap0 & (1<<19))
-		c->x86_clflush_size =3D ((misc >> 8) & 0xff) * 8;
-
-So they: land in get_cpu_address_sizes() and see that CPUID has level
-0x80000008 and jump into the side of the if() that does not fill in
-c->x86_clflush_size.  That assigns a 0 to c->x86_cache_alignment, and
-hilarity ensues in code like:
-
-        buffer =3D kzalloc(ALIGN(sizeof(*buffer), cache_line_size()),
-                         GFP_KERNEL);
-
-To fix this, always provide a sane value for ->x86_clflush_size.
-
-Big thanks to Andy Shevchenko for finding and reporting this and also
-providing a first pass at a fix. But his fix was only partial and only
-worked on the Quark CPUs.  It would not, for instance, have worked on
-the QEMU config.
-
-1. https://raw.githubusercontent.com/InstLatx64/InstLatx64/master/GenuineInte=
-l/GenuineIntel0000590_Clanton_03_CPUID.txt
-2. You can also get this behavior if you use "-cpu 486,+clzero"
-   in QEMU.
-
-[ dhansen: remove 'vp_bits_from_cpuid' reference in changelog
-	   because bpetkov brutally murdered it recently. ]
-
-Fixes: fbf6449f84bf ("x86/sev-es: Set x86_virt_bits to the correct value stra=
-ight away, instead of a two-phase approach")
-Reported-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Tested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Tested-by: J=C3=B6rn Heusipp <osmanx@heusipp.de>
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/all/20240516173928.3960193-1-andriy.shevchenko@=
-linux.intel.com/
-Link: https://lore.kernel.org/lkml/5e31cad3-ad4d-493e-ab07-724cfbfaba44@heusi=
-pp.de/
-Link: https://lore.kernel.org/all/20240517200534.8EC5F33E%40davehans-spike.os=
-tc.intel.com
----
- arch/x86/kernel/cpu/common.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 2b170da..e31293c 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -1075,6 +1075,10 @@ void get_cpu_address_sizes(struct cpuinfo_x86 *c)
-=20
- 		c->x86_virt_bits =3D (eax >> 8) & 0xff;
- 		c->x86_phys_bits =3D eax & 0xff;
-+
-+		/* Provide a sane default if not enumerated: */
-+		if (!c->x86_clflush_size)
-+			c->x86_clflush_size =3D 32;
- 	}
-=20
- 	c->x86_cache_bits =3D c->x86_phys_bits;
+--u4tlLkr2QYvGk/ip--
 
