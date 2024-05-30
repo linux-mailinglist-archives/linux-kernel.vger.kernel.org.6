@@ -1,64 +1,64 @@
-Return-Path: <linux-kernel+bounces-195998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34C238D55DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 01:01:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 961988D55DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 01:01:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2BEC3B24535
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 23:01:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 369441F23973
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 23:01:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1963186293;
-	Thu, 30 May 2024 23:00:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94FD018399D;
+	Thu, 30 May 2024 23:00:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EI/Hz/WE"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UJ6Bx5Cm"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C508B15D5CB;
-	Thu, 30 May 2024 23:00:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16D346F2E8;
+	Thu, 30 May 2024 23:00:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717110053; cv=none; b=NAr1W8h8gAueU6B6/whBWmqpp/l5giA/xHAu0mIDRtRS5V3pfZt+TTTMoDQm+KNSSqZ3W7O+P8eFhBnrN7GNIokX/gHRrxShQG8O6o3KWzSAQhJpWNIS7v6/w4yCHyHFJ1sqwWJkig3rDXoR4+/35kbaKR9X7wY/4+Ck6GzfO2U=
+	t=1717110051; cv=none; b=MfjUMim9VvW/aa/OeogFGyRRlkjYzANj+54zj1+Cf79nLfa5KJxTPN4C047X8/UFOlFIC+YJAxi1yieu6eLl+gvbe0yN/6mrCyYKaphUy3cCrUiEbUC/5Qu9+IS+yxTN/3osJXUNMZFU+8BxRvL4G/9nz6JyvhSWdLrnasI7DK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717110053; c=relaxed/simple;
-	bh=j//q7PxjjHf16S9qzs6ZEZBUjOL4lL+BxQBw8TkTaeo=;
+	s=arc-20240116; t=1717110051; c=relaxed/simple;
+	bh=81hqptQlE/LEM/MdYuEb48YnMieQd2hcNEosrso0DUw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NMVKgwR3Hqzdry6lT8Ki4gkPW3ptZh/6X8uuG8G/rhQl7kW9pknDiFS9MoSY+p7kt/LHgPZCicP2l3zeCTdsr2HtHSLgXDYepzll/UoPkmHWn1k97zgKos8RIvA08TbOTVaD1tB5gn+TCkgR3VSQXSUZGQKxfS9YqeeBewxcHOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EI/Hz/WE; arc=none smtp.client-ip=198.175.65.11
+	 MIME-Version; b=csyKYruOZzvOj3SgSvsqzAvWTYm9gSB+ychs8ahBhZrhT3tncd8Jk1ThIsOzqhU3t6fP/fNtkrKop0+IG2n0poRgfByHeiaKzS4ZGhB+5yJ5lEBaxACdgtieffpxXigQXVu441I0TYiapaeps+TjTDaz42JQ+d/xK8yAzHvW9o4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UJ6Bx5Cm; arc=none smtp.client-ip=192.198.163.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717110053; x=1748646053;
+  t=1717110050; x=1748646050;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=j//q7PxjjHf16S9qzs6ZEZBUjOL4lL+BxQBw8TkTaeo=;
-  b=EI/Hz/WEWqzbmMkZNCNJ8izptMwIFP6nslF9ETSKsmsgwhgz/9CnG6DI
-   jItkvRgcC5xnzY2jYou4Zt/TF0w9IilOYkv3uMO/8VKTsz3gq0mXH09HZ
-   91UeytBSwwmgIy205VRnyI2bl7YmKd078jf+Ps3t+pDAqSjCjmm8HyN1E
-   JWjz8w6JDf7PabgOTXrBcaXMiuJkQ7XDhTNNdJZe45870GUYmp7Zvf5hp
-   l9/ruBv5gtSo74GoWX6ofvq6UTgAHFqbJbrhgMIZPEOml3WzjRGe6QiDn
-   PfbNrTsuK460erpnXBCi7WKzAt+aoD7nZxXWopXpFcXgFROzNAUrCGm7J
-   Q==;
-X-CSE-ConnectionGUID: RT+q9Ne0Sly7M/qopuYgCw==
-X-CSE-MsgGUID: do4I71rBQpO2v5lRExw0VA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="24195266"
+  bh=81hqptQlE/LEM/MdYuEb48YnMieQd2hcNEosrso0DUw=;
+  b=UJ6Bx5Cmx8my0VTONST6RZWQYxiSMwkUns68JCVX7NeejNiFyqyNhKw5
+   BlPXNp+qye0YBhoQR5OHXQpIxlOsE9TVEBJDgaatg+nvwjckhasWMJzKd
+   6JHqxom4ZCaJwgOIkE6YfE5Ec2jbLPqpNavHDCZgkurzwGutNPsfiVJCX
+   0y/JAdZZ7TMDMeHjbutLI7Froc6KwXfDsSXRvMDw9PaG3sirMvn3Yyuan
+   1kEm6G8vFArkIFFAfXZNMb1y0M/NqVrUZ7/f6ziM9gEAiO9b7MQ8b/8z8
+   uE0M7Y59h9DomGZ240FTcNwmRbKIqPcdKYyftGXSiPV7WQOqBuC2qH7DO
+   g==;
+X-CSE-ConnectionGUID: iIN1eIoySsyNrWnDDYyYVQ==
+X-CSE-MsgGUID: A/woEHMjT0mH8ynz+t8nrQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="24299005"
 X-IronPort-AV: E=Sophos;i="6.08,202,1712646000"; 
-   d="scan'208";a="24195266"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 16:00:51 -0700
-X-CSE-ConnectionGUID: cGbSoxG4TkOhjSI0HA6DRA==
-X-CSE-MsgGUID: VAH1aJ7mQbC9k70Lz6+POQ==
+   d="scan'208";a="24299005"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 16:00:49 -0700
+X-CSE-ConnectionGUID: ppAMvIboShW3rdupJXGmfw==
+X-CSE-MsgGUID: YE22diODSCqeXIU3YdF4gg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,202,1712646000"; 
-   d="scan'208";a="40895195"
+   d="scan'208";a="59152829"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa003.jf.intel.com with ESMTP; 30 May 2024 16:00:41 -0700
+  by fmviesa002.fm.intel.com with ESMTP; 30 May 2024 16:00:41 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 3BB072DC; Fri, 31 May 2024 02:00:40 +0300 (EEST)
+	id 49EA837D; Fri, 31 May 2024 02:00:40 +0300 (EEST)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Rob Herring <robh@kernel.org>,
 	Weidong Wang <wangweidong.a@awinic.com>,
@@ -97,9 +97,9 @@ Cc: Liam Girdwood <lgirdwood@gmail.com>,
 	Pengutronix Kernel Team <kernel@pengutronix.de>,
 	Heiko Stuebner <heiko@sntech.de>,
 	Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v1 2/6] ASoC: fsl: Remove unused of_gpio.h
-Date: Fri, 31 May 2024 01:58:48 +0300
-Message-ID: <20240530230037.1156253-3-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 3/6] ASoC: rockchip: Remove unused of_gpio.h
+Date: Fri, 31 May 2024 01:58:49 +0300
+Message-ID: <20240530230037.1156253-4-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 In-Reply-To: <20240530230037.1156253-1-andriy.shevchenko@linux.intel.com>
 References: <20240530230037.1156253-1-andriy.shevchenko@linux.intel.com>
@@ -116,36 +116,34 @@ don't use it, simply remove the unused header.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- sound/soc/fsl/imx-es8328.c | 1 -
- sound/soc/fsl/imx-rpmsg.c  | 2 --
- 2 files changed, 3 deletions(-)
+ sound/soc/rockchip/rockchip_i2s.c   | 1 -
+ sound/soc/rockchip/rockchip_spdif.c | 1 -
+ 2 files changed, 2 deletions(-)
 
-diff --git a/sound/soc/fsl/imx-es8328.c b/sound/soc/fsl/imx-es8328.c
-index 5b9648f3b087..3ef92f6dfc6b 100644
---- a/sound/soc/fsl/imx-es8328.c
-+++ b/sound/soc/fsl/imx-es8328.c
-@@ -8,7 +8,6 @@
+diff --git a/sound/soc/rockchip/rockchip_i2s.c b/sound/soc/rockchip/rockchip_i2s.c
+index b0c3ef030e06..b378f870b3ad 100644
+--- a/sound/soc/rockchip/rockchip_i2s.c
++++ b/sound/soc/rockchip/rockchip_i2s.c
+@@ -11,7 +11,6 @@
+ #include <linux/mfd/syscon.h>
+ #include <linux/delay.h>
  #include <linux/of.h>
- #include <linux/of_platform.h>
- #include <linux/i2c.h>
 -#include <linux/of_gpio.h>
- #include <sound/soc.h>
- #include <sound/jack.h>
- 
-diff --git a/sound/soc/fsl/imx-rpmsg.c b/sound/soc/fsl/imx-rpmsg.c
-index 0f1ad7ad7d27..ce98d2288193 100644
---- a/sound/soc/fsl/imx-rpmsg.c
-+++ b/sound/soc/fsl/imx-rpmsg.c
-@@ -5,9 +5,7 @@
- #include <linux/of_platform.h>
- #include <linux/of_reserved_mem.h>
- #include <linux/i2c.h>
--#include <linux/of_gpio.h>
- #include <linux/slab.h>
--#include <linux/gpio.h>
  #include <linux/clk.h>
- #include <sound/soc.h>
- #include <sound/jack.h>
+ #include <linux/pinctrl/consumer.h>
+ #include <linux/pm_runtime.h>
+diff --git a/sound/soc/rockchip/rockchip_spdif.c b/sound/soc/rockchip/rockchip_spdif.c
+index 1a24b78e9e02..eb9d5dee196e 100644
+--- a/sound/soc/rockchip/rockchip_spdif.c
++++ b/sound/soc/rockchip/rockchip_spdif.c
+@@ -11,7 +11,6 @@
+ 
+ #include <linux/module.h>
+ #include <linux/delay.h>
+-#include <linux/of_gpio.h>
+ #include <linux/clk.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/mfd/syscon.h>
 -- 
 2.43.0.rc1.1336.g36b5255a03ac
 
