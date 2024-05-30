@@ -1,91 +1,81 @@
-Return-Path: <linux-kernel+bounces-196031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CAA18D5644
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 01:28:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A8148D564A
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 01:31:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53C6C283344
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 23:28:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 376491C23067
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 23:31:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A54881836CE;
-	Thu, 30 May 2024 23:28:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 016CC184124;
+	Thu, 30 May 2024 23:31:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DjI/dAlB"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xsZwkpy+"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 027F4548E0
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 23:28:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91A8417D346
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 23:30:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717111728; cv=none; b=HjpqEGvNjMq2f/i9oCAriE22jh0xn3xhjStcv0t5W3mcEToByvPu7oQI96QnyOcP7ajGG7Ypg9WrFSIsSlOqJ3op/2I24yKmHx4SNvKQwfdvTyl5tj+BorWB2lMEgYlXeoIGJFX/FFI5gUofY2HbaLgibWZY6N9JL2Ut4VJgJdQ=
+	t=1717111859; cv=none; b=fqxBfuoakkc1MrbUFHDbt8Z5wskjVaWDS177WGHELUEAW/72zkku5TEKNkbAh/zY3cHuYqH5EkMyHmqkY+nxDwKBdZBpV8t7DQpHXpTaE/cm+Ngb6DdwobkaaLlwQuHdzxAU5KknaUI5rDqGaq2Qhqw6Y+Jse3hu7WcZcyW91NI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717111728; c=relaxed/simple;
-	bh=RIABYRcYixUaE+nYQ3b+8JyX2TmFsDbNaT4r/ftmIT8=;
+	s=arc-20240116; t=1717111859; c=relaxed/simple;
+	bh=KSRSDmHQyX2bSI500aqnRNknWla/y1id5hPtxj9FCZY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DY2ysvCviA/0SaPVPaHolacSazc+ZQfvYAphbtXE8KIS2FcZxGdHOYLBAXp4+1aekfdUFVFD40WR4jq3DMZK14sfLBbHYDtbPImHdlQxPQutTFh5UQRLaJh6aCVDRxFHFh4UnhG5m0E7K1VnUO8980qIyi8Hq4SZu4DjBCjhqm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DjI/dAlB; arc=none smtp.client-ip=209.85.167.44
+	 Content-Type:Content-Disposition:In-Reply-To; b=rv6ghu8KjWsqnzo6LKKwUDvPaUGBtsYxRZbTM0Z5E+3OE+kvRWN2JztdArTnTIPx/wxQqrIUDqfajn6ePWLFF99pAx3Qeq2sgkEo0XPnavI6jE4s1cAexXP1ZCNwmGfiR0Sd6k1aYYk60y+6QbAMtS564kZmkGQLE5OrNbxrkdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xsZwkpy+; arc=none smtp.client-ip=209.85.167.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5241b49c0daso1751993e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 16:28:46 -0700 (PDT)
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52b78ef397bso1491365e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 16:30:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717111725; x=1717716525; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1717111856; x=1717716656; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7LUpNqpykyyYuvmP0uLho5gdKJeFweCzQq7EBpg3+34=;
-        b=DjI/dAlBhnxstS8q6OvGoN033Zqp5SkLa3DkltQCJosIkEXdlSnPJcDca8CsVnjls5
-         nUaP00fSTodkUhoXqosSUCTdpznO3tLlnnDqLHtNzeQziwayhBhJ0TOAQcWk9aFdlC6E
-         QRG5iM7jEtnV0doXnoEAo5IebxREr+hcytVC4H+XUBd7XRS1gyIm5/mnc9Yf34bs7ZrR
-         HU3zF3y4fBuaSltUZGO3z//MwtuNs60+65/8zsuctGEys+ZeOmolkEXDNKvufIZ33wYZ
-         Y5cG1aRur8CqQOYssezpVbaujpGCoDg22IifthldympGMNGDro7Vv8RDulqhStbKGfbO
-         uhtA==
+        bh=Yy768pJR9cLFIdd6Yx5kMuhYcotmFOIkzIsvZV+Yils=;
+        b=xsZwkpy+ww+Ulb4TucEZ/+rvFxPJ7Fo4aCxgjUJTEs3/N6dWfBsTYSCGtApbKJtTUs
+         q1gP1eIBXEJmDzMrWsqMM0cxfaLbU8AREBVkCkthPoD8Mpd3mPB/qdWr/Fmzayt1U9HC
+         Lk0VlV3EGplzOgXo2Zs6FJCOQj0DH/KomFvefCNnjFs07E8S3CGeqqX4DqpwhBQRkbCl
+         OEwIaygI3hRL8Eea+d1JZYdDa0PCMt7zlXetM6OJ0b3abZLMuWlx3CwCsXsTPX1Pa6RT
+         fXmmLLK8IGlWNSrR2DuA5XFAZhI2jJJm4rvin+QE3afH02Ey+d4f8fWXZi2zRp4I9N6q
+         Obuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717111725; x=1717716525;
+        d=1e100.net; s=20230601; t=1717111856; x=1717716656;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7LUpNqpykyyYuvmP0uLho5gdKJeFweCzQq7EBpg3+34=;
-        b=fnld7phwndxfX5g638WmrbpLZvkfQIt/S3x/wkMRvp/QQR3DwEEQStaRlfHSOPYSmo
-         9oGz6+CXoanQZUzlyg7h4B5sf9yn2SpGkshkQhlZbdtAdClx+k1rwgAyvtZ9RGqd2+ZE
-         qz2QeJ0UH2BIPrjjrGPZjuUuLe9ara4BNNxoNl1U7aoCp2QnHmNdMeGLAx0AE24d+FzE
-         OhAsNZrz+YEGyZik3o3YrgwItB0F5qf/06v0aGdY7un/1gp02dFg5K6rL9LlAoFVtmch
-         6fMn0iLA2lKttFwLVV2hdUzalLZAl39MMkfoQnaJ+5n1/6babuFLj08J13h5b6YSzne1
-         M1IQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXEhg/PDecklYKSFzWQw4zH1jKPPFAeOmvT9mrwxQXp+yiFzZQStvQSi3khuuepzpd9loR6oepF9OYbffKt/z0jG/m7Wpa7jQTU+CMu
-X-Gm-Message-State: AOJu0YzbWUPIFfvxt2Ldmbaoai1JM06kFx9gB2z8PEnLZvmGtjLbpE37
-	9+0ssWJGoih58T3h1dT9anPH9FITIeF2tluHE1gBq+PzU0hpdWGBWD0RNxz58Jk=
-X-Google-Smtp-Source: AGHT+IGa/ojKXc66wpAfWuxk4HgYGFgTZnQfXpj5AA1rgr0wmFDvVEGQhLhftSzOtCB14seoOdZnGQ==
-X-Received: by 2002:a05:6512:3694:b0:51d:aae8:646 with SMTP id 2adb3069b0e04-52b89569467mr64620e87.11.1717111724861;
-        Thu, 30 May 2024 16:28:44 -0700 (PDT)
+        bh=Yy768pJR9cLFIdd6Yx5kMuhYcotmFOIkzIsvZV+Yils=;
+        b=FGPkEVV8uLgQe3Chy6vovqdOB565zpskU5ikK6tLVHPUl/rbpx10Ch7DWzjUDk6pzE
+         sX/2zvPpfLLa34CzAsSV90CW8PhFHMFEsxmU4T4Ritu3ykbnrAUnK++BEABTc4qL1EGr
+         IfXXqCZRsekzbn98Mh+nrHJpdTYFuuvpDguctEoUtLU9U/5y6aM12LCA5iQrMuhLxjFr
+         NnM4s25kWGGrOfZhEtOTYyoClvQbY/rwp7A8YswqwpmGatjWmHGZdVCc2UI+3wVjRrcS
+         Rcq0NPoPtMf2zJJtosCFtOZV4GMZBZKnt2CJ3ohv5GOdQecbevWwg51dmdd2fdjLUSln
+         vsEg==
+X-Gm-Message-State: AOJu0YwpcWeMD66yXfxt5kTh6zLsDqbLg8rSC6W09xcd6J8Ag61O8rtX
+	IqBEVgn1+vromay3w3GvKeDOSBxiH5rtWeSSeVuJ5vvJN/KLvvw291rhkGPlln8=
+X-Google-Smtp-Source: AGHT+IGsB/ugPpgy96+NIEx08Z2+CgvenCRumuYN/yJDk0qMmI250mrqJk9/efH0D//O6Mmos4Qqaw==
+X-Received: by 2002:a19:5504:0:b0:52b:6a18:5b00 with SMTP id 2adb3069b0e04-52b8878cc6bmr104632e87.34.1717111855617;
+        Thu, 30 May 2024 16:30:55 -0700 (PDT)
 Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52b84d828a1sm120108e87.221.2024.05.30.16.28.44
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52b84d75fa0sm123961e87.143.2024.05.30.16.30.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 May 2024 16:28:44 -0700 (PDT)
-Date: Fri, 31 May 2024 02:28:42 +0300
+        Thu, 30 May 2024 16:30:55 -0700 (PDT)
+Date: Fri, 31 May 2024 02:30:53 +0300
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Aradhya Bhatia <a-bhatia1@ti.com>
-Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Jyri Sarha <jyri.sarha@iki.fi>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	DRI Development List <dri-devel@lists.freedesktop.org>, Linux Kernel List <linux-kernel@vger.kernel.org>, 
-	Sam Ravnborg <sam@ravnborg.org>, Thierry Reding <treding@nvidia.com>, 
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, Nishanth Menon <nm@ti.com>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, Praneeth Bajjuri <praneeth@ti.com>, Udit Kumar <u-kumar1@ti.com>, 
-	Devarsh Thakkar <devarsht@ti.com>, Jayesh Choudhary <j-choudhary@ti.com>, 
-	Jai Luthra <j-luthra@ti.com>
-Subject: Re: [PATCH v2 8/9] drm/atomic-helper: Re-order bridge chain
- pre-enable and post-disable
-Message-ID: <b4khibg3mcj3c4lssh2qrhaz76eb4j6nu6in6vq3chyacnfkcj@2jnfyr2g5n2k>
-References: <20240530093621.1925863-1-a-bhatia1@ti.com>
- <20240530093621.1925863-9-a-bhatia1@ti.com>
+To: Jayesh Choudhary <j-choudhary@ti.com>, Chris Healy <cphealy@gmail.com>
+Cc: linux-kernel@vger.kernel.org, andrzej.hajda@intel.com, 
+	neil.armstrong@linaro.org, rfoss@kernel.org, Laurent.pinchart@ideasonboard.com, 
+	mripard@kernel.org, sam@ravnborg.org, jonas@kwiboo.se, jernej.skrabec@gmail.com, 
+	maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch, 
+	a-bhatia1@ti.com, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v4 1/2] drm/bridge: sii902x: Fix mode_valid hook
+Message-ID: <qiu6rar4ebaxceufmy6rppxetjqi7goajc46c63aadd5o2uwjw@ctsfmqk5fdvb>
+References: <20240530092930.434026-1-j-choudhary@ti.com>
+ <20240530092930.434026-2-j-choudhary@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,110 +84,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240530093621.1925863-9-a-bhatia1@ti.com>
+In-Reply-To: <20240530092930.434026-2-j-choudhary@ti.com>
 
-On Thu, May 30, 2024 at 03:06:20PM +0530, Aradhya Bhatia wrote:
-> Move the bridge pre_enable call before crtc enable, and the bridge
-> post_disable call after the crtc disable.
+On Thu, May 30, 2024 at 02:59:29PM +0530, Jayesh Choudhary wrote:
+> Currently, mode_valid hook returns all mode as valid and it is
+> defined only in drm_connector_helper_funcs. With the introduction of
+> 'DRM_BRIDGE_ATTACH_NO_CONNECTOR', connector is not initialized in
+> bridge_attach call for cases when the encoder has this flag enabled.
+> So move the mode_valid hook to drm_bridge_funcs with proper clock
+> checks for maximum and minimum pixel clock supported by the bridge.
 > 
-> The sequence of enable after this patch will look like:
-> 
-> 	bridge[n]_pre_enable
-> 	...
-> 	bridge[1]_pre_enable
-> 
-> 	crtc_enable
-> 	encoder_enable
-> 
-> 	bridge[1]_enable
-> 	...
-> 	bridge[n]__enable
-> 
-> and vice-versa for the bridge chain disable sequence.
-> 
-> The definition of bridge pre_enable hook says that,
-> "The display pipe (i.e. clocks and timing signals) feeding this bridge
-> will not yet be running when this callback is called".
-> 
-> Since CRTC is also a source feeding the bridge, it should not be enabled
-> before the bridges in the pipeline are pre_enabled. Fix that by
-> re-ordering the sequence of bridge pre_enable and bridge post_disable.
-> 
-> Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
+> Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
 > ---
->  drivers/gpu/drm/drm_atomic_helper.c | 70 +++++++++++++++++++++++++++--
->  1 file changed, 67 insertions(+), 3 deletions(-)
+>  drivers/gpu/drm/bridge/sii902x.c | 32 +++++++++++++++++++++++---------
+>  1 file changed, 23 insertions(+), 9 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
-> index fb97b51b38f1..02e093950218 100644
-> --- a/drivers/gpu/drm/drm_atomic_helper.c
-> +++ b/drivers/gpu/drm/drm_atomic_helper.c
-> @@ -1186,8 +1186,6 @@ disable_outputs(struct drm_device *dev, struct drm_atomic_state *old_state)
->  			else if (funcs->dpms)
->  				funcs->dpms(encoder, DRM_MODE_DPMS_OFF);
->  		}
-> -
-> -		drm_atomic_bridge_chain_post_disable(bridge, old_state);
->  	}
->  
->  	for_each_oldnew_crtc_in_state(old_state, crtc, old_crtc_state, new_crtc_state, i) {
-> @@ -1234,6 +1232,49 @@ disable_outputs(struct drm_device *dev, struct drm_atomic_state *old_state)
->  		if (ret == 0)
->  			drm_crtc_vblank_put(crtc);
->  	}
-> +
-> +	for_each_oldnew_connector_in_state(old_state, connector, old_conn_state,
-> +					   new_conn_state, i) {
-> +		struct drm_encoder *encoder;
-> +		struct drm_bridge *bridge;
-> +
-> +		/*
-> +		 * Shut down everything that's in the changeset and currently
-> +		 * still on. So need to check the old, saved state.
-> +		 */
-> +		if (!old_conn_state->crtc)
-> +			continue;
-> +
-> +		old_crtc_state = drm_atomic_get_old_crtc_state(old_state, old_conn_state->crtc);
-> +
-> +		if (new_conn_state->crtc)
-> +			new_crtc_state = drm_atomic_get_new_crtc_state(old_state,
-> +								       new_conn_state->crtc);
-> +		else
-> +			new_crtc_state = NULL;
-> +
-> +		if (!crtc_needs_disable(old_crtc_state, new_crtc_state) ||
-> +		    !drm_atomic_crtc_needs_modeset(old_conn_state->crtc->state))
-> +			continue;
-> +
-> +		encoder = old_conn_state->best_encoder;
-> +
-> +		/* We shouldn't get this far if we didn't previously have
-> +		 * an encoder.. but WARN_ON() rather than explode.
-> +		 */
-> +		if (WARN_ON(!encoder))
-> +			continue;
-> +
-> +		drm_dbg_atomic(dev, "disabling [ENCODER:%d:%s]\n",
-> +			       encoder->base.id, encoder->name);
 
-This duplicates the code in the loop around
-drm_atomic_bridge_chain_disable(). Can it be extracted to a separate
-function? Code duplication is nearly always a bad idea.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-The same comment applies to the next chunk too.
-
-> +
-> +		/*
-> +		 * Each encoder has at most one connector (since we always steal
-> +		 * it away), so we won't call disable hooks twice.
-> +		 */
-> +		bridge = drm_bridge_chain_get_first_bridge(encoder);
-> +		drm_atomic_bridge_chain_post_disable(bridge, old_state);
-> +	}
->  }
->  
->  /**
+Chris, you might be interested in testing this series.
 
 -- 
 With best wishes
