@@ -1,207 +1,230 @@
-Return-Path: <linux-kernel+bounces-195694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 543F28D5062
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 19:02:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA3848D5065
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 19:02:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B9DA288606
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 17:02:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FB621F2794B
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 17:02:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC24E3FBA5;
-	Thu, 30 May 2024 17:02:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A78F4502D;
+	Thu, 30 May 2024 17:02:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jQNbUlNO"
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ELRmdWVc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7105F2E620
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 17:02:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FC5E4437F;
+	Thu, 30 May 2024 17:02:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717088523; cv=none; b=q+CtuhYTsM4TWnSSa4sQ78IbrwD5ow7y0UwqEzVsfo4THzhpmydGFNEYeapjBhaI0pFf1MW77e1r560l0ES27efT7m+hWP5ylC08MX2XxCZdjN+7rD30KKONVcGz5Z4wh3F+qkPsRk8nMjfrpuXWaCWQSfvd9NxsdKgsJPdBN68=
+	t=1717088531; cv=none; b=A+79mXaA5IE/aCmKW2cGlCaBjia1YLZwAs2zmH+WhjHXuccUL91kN04BUWsg36ig+vyA4J5qxNWQB899i0DXXENdgHn51T9ilh9qOHz/lG8CuAtXErJ1MRWzhF7aNDVKeZyb5rsHPGjncn5ReBOxP6AODP077+4UYGLLd8VWTaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717088523; c=relaxed/simple;
-	bh=Gqy/sZ3D2l/jo2B+eHz+uLxuyS7+sy8fk7hAzmAFXHk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fKF+eK562vUDqIQuKFB55z89w3+m7UdD6j/QhQqTLJI4jCW7zsC6+hSKUYagZk9PilAaUUs0NS72nz47BN1TblPei0EbFwx1x1I4E+Q4y73SvdzSkLfYcJUZVKALDJE9/HKI9p+RznT9XYFfc29mcDnXuKyiw/c882u2ahYVv1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jQNbUlNO; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-43dfe020675so11171cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 10:02:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717088520; x=1717693320; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=r+MrYC3M359zN++AcvPSJthoFBLMWtCnEv2B4iFCbx8=;
-        b=jQNbUlNOGp1VIeOwe7XhrQrUkKwf/mvh0G8YLfAgi38OG9+evDVUvXrYta7rIUS1Oa
-         8sJn66T4Hv70e/EvatABRO6xqMshj9HqZi/CScf6mVLwCWdQJcVqbAXl6ROu9gNHsEDv
-         iJk0B2E7HMSkGDGs+5dOitBGqGoZJvgEp3XrsW0AjsRiU73YLjpaekJ0+Bcp7IOcMpkS
-         D2ou+sYKlSa4MH2qEIZo6uhMkKb0jkMjSYvwyqQC1xX6+SkBvvnDIvWMGHezSWESl8pp
-         h+ZFC5DQb74LCv9BEUEqkNh05KHJK8v7yHZD1UABZsyROK+G6155rsyjrfUNyTSloYYy
-         8eBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717088520; x=1717693320;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=r+MrYC3M359zN++AcvPSJthoFBLMWtCnEv2B4iFCbx8=;
-        b=wsBxxmG1qM6Mmk3Uh/VxVpsPRF2MOFdFqGRf4wm1uJr9aYVg23LGi5F24FeBvQXhvB
-         7iLiY2UaIQzFo/FREO2LEWR/BeH7R7+X9Q0Keux1qjIPGvAylAfbAwWQeB1u7JkhOb2x
-         xmyjWDAA2eh3zTTlqXaX/pJihwwjkXUrI/qyR1AgXz9hL1RL+X2ZRKg09HndCvvWhkO2
-         YALpBbl2eCbGGHIIn6wVw9OrXfCEu/5VG0LhlszvWNkB+VdHO2/nyJWQlv/4jAB4oTb6
-         FAWl3W236n0uzCicFTqMVel54tzsAFSosjyWON/37Dg37yJjG9EGwLjUz/z0elQEe7XD
-         pgdA==
-X-Forwarded-Encrypted: i=1; AJvYcCVO5jVqP7ZGTWL4MCirnbImHaUU8FbzfiKxibw61W4VAiz3XE68ECblqxAdus49HUa3gwLIk3Rp94waiUGRjps0gayY2QrDI+DN3S7k
-X-Gm-Message-State: AOJu0YylW5X7C/v8bCWIHK1IVxFwDL8FVgsZTbQxmdQ/kx8HFmMxhAGK
-	KLFegmcbPf/JV8mapDfp6QxVUoXuYnrH5BgRrFEVizUwOBZcz1vUlIneVvpueWQf7rlnd7eRrq0
-	IZBQ5T0OdQspT/CoN8bTAw7ztHPo7M4pqeOjt
-X-Google-Smtp-Source: AGHT+IESwOyb8Fu+cuoP33CBCWGRmvM3tUIbJvUHi9lhnICwbUxtHAj53g8OQ+2W4m2QjcMyfdvUNrVNWUg3UJstZNY=
-X-Received: by 2002:a05:622a:544e:b0:43a:b51c:46ca with SMTP id
- d75a77b69052e-43feb5182fdmr3288611cf.29.1717088519844; Thu, 30 May 2024
- 10:01:59 -0700 (PDT)
+	s=arc-20240116; t=1717088531; c=relaxed/simple;
+	bh=Y+dNeNwHLWJuDYTR22EuD82dxXfuR5X20/eIghxEJvI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=OixitlUfCntUrVk2dBn9Eh4+wdFcNqS73s3fyLcVNXQYYGGjnqTtPdEQBKwZG9g/+v7osadOcXqe+t6qCqQbsQfc2Hu4ALn2ppdbAMurCGUOOrNQ3lUOILA1ogocCeVtP0Wln6u/pjYw0t38USmCiJWg5qg7wlxYxg5YECIWKF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ELRmdWVc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAE11C2BBFC;
+	Thu, 30 May 2024 17:02:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717088531;
+	bh=Y+dNeNwHLWJuDYTR22EuD82dxXfuR5X20/eIghxEJvI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=ELRmdWVcVht3hQRkSSBZBhP0GKj+v0E66aLlM0y8OWMOD3qkHfD1/y3cvV6Uq2J6d
+	 A4YwA5h+cSfd5x4pPrDcLyXV5DG4E0VJkNYEaKxaF3cSqkfzYYEi+EpOGUACXp02fW
+	 SUTt+Yp8icr4XQlw9mHVWwnMdODAQZJCJOw2nz5R5ljxNR46Jf7qOYcsqDzlA9+7K3
+	 8qcbGdvXaL7Hcd3cMR+Ph/jR0ASo7Boc5/FvTi+xkSaAwhqkqjpsUOQg6U6m+u6fof
+	 1KrSOt7k/jIMncy+/kbGP72BFGdMqOTqsTWSvd8PmEP7EfGUGLwiiU36Tin/Z5OBWO
+	 MN5BRP59C/gFQ==
+Date: Thu, 30 May 2024 12:02:08 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Shashank Babu Chinta Venkata <quic_schintav@quicinc.com>
+Cc: jingoohan1@gmail.com, gustavo.pimentel@synopsys.com,
+	manivannan.sadhasivam@linaro.org, andersson@kernel.org,
+	agross@kernel.org, konrad.dybcio@linaro.org, mani@kernel.org,
+	quic_msarkar@quicinc.com, quic_kraravin@quicinc.com,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Serge Semin <fancer.lancer@gmail.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v4 2/3] PCI: qcom: Add equalization settings for 16 GT/s
+Message-ID: <20240530170208.GA550711@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240519181716.4088459-1-irogers@google.com> <CAM9d7chxsyZ+vnPXj0gc-mbADzwzQYi3qUwUohW-7He5KwMvHg@mail.gmail.com>
- <CAP-5=fXME3cjNK-P9qk+kY0dA1Xkwvz6Su=99nY7CgcKrQTb2w@mail.gmail.com> <CAM9d7ch7GidVscUxQh+CZRuo1U1KiDiFiuOZN3FnqbrPDbaVNw@mail.gmail.com>
-In-Reply-To: <CAM9d7ch7GidVscUxQh+CZRuo1U1KiDiFiuOZN3FnqbrPDbaVNw@mail.gmail.com>
-From: Ian Rogers <irogers@google.com>
-Date: Thu, 30 May 2024 10:01:47 -0700
-Message-ID: <CAP-5=fV9a2CrM0suQ7_VgG=6DoAAi+A6JyTK=kVivNmSZmg7aQ@mail.gmail.com>
-Subject: Re: [PATCH v1] tools api io: Move filling the io buffer to its own function
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240501163610.8900-3-quic_schintav@quicinc.com>
 
-On Thu, May 30, 2024 at 9:44=E2=80=AFAM Namhyung Kim <namhyung@kernel.org> =
-wrote:
->
-> On Thu, May 23, 2024 at 9:47=E2=80=AFPM Ian Rogers <irogers@google.com> w=
-rote:
-> >
-> > On Thu, May 23, 2024 at 4:25=E2=80=AFPM Namhyung Kim <namhyung@kernel.o=
-rg> wrote:
-> > >
-> > > On Sun, May 19, 2024 at 11:17=E2=80=AFAM Ian Rogers <irogers@google.c=
-om> wrote:
-> > > >
-> > > > In general a read fills 4kb so filling the buffer is a 1 in 4096
-> > > > operation, move it out of the io__get_char function to avoid some
-> > > > checking overhead and to better hint the function is good to inline=
-.
-> > > >
-> > > > For perf's IO intensive internal (non-rigorous) benchmarks there's =
-a
-> > > > near 8% improvement to kallsyms-parsing with a default build.
-> > >
-> > > Oh, is it just from removing the io->eof check?  Otherwise I don't
-> > > see any difference.
-> >
-> > I was hoping that by moving the code out-of-line then the hot part of
-> > the function could be inlined into things like reading the hex
-> > character. I didn't see that, presumably there are too many callers
-> > and so that made the inliner think sharing would be best even though
-> > the hot code is a compare, pointer dereference and an increment. I
-> > tried forcing inlining but it didn't seem to win over just having the
-> > code out-of-line. The eof check should be very well predicted. The
-> > out-of-line code was branched over forward, which should be 1
-> > mispredict but again not a huge deal. I didn't do a more thorough
-> > analysis as I still prefer to have the cold code out-of-line.
->
-> Ok, I don't see much difference with this change.  But the change itself
-> looks fine.
->
-> Thanks,
-> Namhyung
->
->
-> Before:
->
-> # Running internals/synthesize benchmark...
-> Computing performance of single threaded perf event synthesis by
-> synthesizing events on the perf process itself:
->   Average synthesis took: 237.274 usec (+- 0.066 usec)
->   Average num. events: 24.000 (+- 0.000)
->   Average time per event 9.886 usec
->   Average data synthesis took: 241.126 usec (+- 0.087 usec)
->   Average num. events: 128.000 (+- 0.000)
->   Average time per event 1.884 usec
->
-> # Running internals/kallsyms-parse benchmark...
->   Average kallsyms__parse took: 184.374 ms (+- 0.022 ms)
->
-> # Running internals/inject-build-id benchmark...
->   Average build-id injection took: 20.096 msec (+- 0.115 msec)
->   Average time per event: 1.970 usec (+- 0.011 usec)
->   Average memory usage: 11574 KB (+- 29 KB)
->   Average build-id-all injection took: 13.477 msec (+- 0.100 msec)
->   Average time per event: 1.321 usec (+- 0.010 usec)
->   Average memory usage: 11160 KB (+- 0 KB)
->
-> # Running internals/evlist-open-close benchmark...
->   Number of cpus:    64
->   Number of threads:    1
->   Number of events:    1 (64 fds)
->   Number of iterations:    100
-> evlist__open: Permission denied
->
-> # Running internals/pmu-scan benchmark...
-> Computing performance of sysfs PMU event scan for 100 times
->   Average core PMU scanning took: 135.880 usec (+- 0.249 usec)
->   Average PMU scanning took: 816.745 usec (+- 48.293 usec)
->
->
-> After:
->
-> # Running internals/synthesize benchmark...
-> Computing performance of single threaded perf event synthesis by
-> synthesizing events on the perf process itself:
->   Average synthesis took: 235.711 usec (+- 0.067 usec)
->   Average num. events: 24.000 (+- 0.000)
->   Average time per event 9.821 usec
->   Average data synthesis took: 240.992 usec (+- 0.058 usec)
->   Average num. events: 128.000 (+- 0.000)
->   Average time per event 1.883 usec
->
-> # Running internals/kallsyms-parse benchmark...
->   Average kallsyms__parse took: 179.664 ms (+- 0.043 ms)
+On Wed, May 01, 2024 at 09:35:33AM -0700, Shashank Babu Chinta Venkata wrote:
+> During high data transmission rates such as 16 GT/s , there is an
 
-So this is still 2%. I was building without options like DEBUG=3D1
-enabled, so perhaps that'd explain the difference. Anyway, if you're
-more comfortable with a commit message saying a 2% performance win I
-don't mind it being updated or I can upload a v2. It's likely this is
-being over-thought given the change :-)
+s|GT/s ,|GT/s,|
 
-Thanks,
-Ian
+> increased risk of signal loss due to poor channel quality and
+> interference. This can impact receiver's ability to capture signals
+> accurately. Hence, signal compensation is achieved through appropriate
+> lane equilization settings at both transmitter and receiver. This will
 
-> # Running internals/inject-build-id benchmark...
->   Average build-id injection took: 19.901 msec (+- 0.117 msec)
->   Average time per event: 1.951 usec (+- 0.011 usec)
->   Average memory usage: 12163 KB (+- 10 KB)
->   Average build-id-all injection took: 13.627 msec (+- 0.086 msec)
->   Average time per event: 1.336 usec (+- 0.008 usec)
->   Average memory usage: 11160 KB (+- 0 KB)
->
-> # Running internals/evlist-open-close benchmark...
->   Number of cpus:    64
->   Number of threads:    1
->   Number of events:    1 (64 fds)
->   Number of iterations:    100
-> evlist__open: Permission denied
->
-> # Running internals/pmu-scan benchmark...
-> Computing performance of sysfs PMU event scan for 100 times
->   Average core PMU scanning took: 136.540 usec (+- 0.294 usec)
->   Average PMU scanning took: 819.415 usec (+- 48.437 usec)
+s/equilization/equalization/
+
+How do you get these settings at both transmitter and receiver?  Or
+maybe you mean this patch sets the equalization settings in the qcom
+device, whether the device is a Root Port or an Endpoint?
+
+I don't see this patch updating "dev" and "pci_upstream_bridge(dev)",
+so if you have a qcom Root Port leading to some non-qcom Endpoint,
+AFAICS only the Root Port would be updated.  If that's all that's
+necessary, that's perfectly fine.  It's just that the commit log
+suggests that we update both ends of a link, and the patch only
+appears to update one end (unless you have a qcom Root Port leading to
+a qcom Endpoint, and the Endpoint is operated by an embedded Linux
+running the qcom-ep driver, of course).
+
+> result in increasing PCIe signal strength.
+> 
+> Signed-off-by: Shashank Babu Chinta Venkata <quic_schintav@quicinc.com>
+> ---
+>  drivers/pci/controller/dwc/pcie-designware.h  | 12 ++++++
+>  drivers/pci/controller/dwc/pcie-qcom-common.c | 37 +++++++++++++++++++
+>  drivers/pci/controller/dwc/pcie-qcom-common.h |  1 +
+>  drivers/pci/controller/dwc/pcie-qcom-ep.c     |  3 ++
+>  drivers/pci/controller/dwc/pcie-qcom.c        |  3 ++
+>  5 files changed, 56 insertions(+)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
+> index 26dae4837462..ed0045043847 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware.h
+> +++ b/drivers/pci/controller/dwc/pcie-designware.h
+> @@ -122,6 +122,18 @@
+>  #define GEN3_RELATED_OFF_RATE_SHADOW_SEL_SHIFT	24
+>  #define GEN3_RELATED_OFF_RATE_SHADOW_SEL_MASK	GENMASK(25, 24)
+>  
+> +#define GEN3_EQ_CONTROL_OFF			0x8a8
+
+s/0x8a8/0x8A8/ to follow existing style of file.
+
+> +#define GEN3_EQ_CONTROL_OFF_FB_MODE		GENMASK(3, 0)
+> +#define GEN3_EQ_CONTROL_OFF_PHASE23_EXIT_MODE	BIT(4)
+> +#define GEN3_EQ_CONTROL_OFF_PSET_REQ_VEC	GENMASK(23, 8)
+> +#define GEN3_EQ_CONTROL_OFF_FOM_INC_INITIAL_EVAL	BIT(24)
+> +
+> +#define GEN3_EQ_FB_MODE_DIR_CHANGE_OFF          0x8ac
+
+s/0x8ac/0x8AC/ to follow existing style of file.
+
+> +#define GEN3_EQ_FMDC_T_MIN_PHASE23		GENMASK(4, 0)
+> +#define GEN3_EQ_FMDC_N_EVALS			GENMASK(9, 5)
+> +#define GEN3_EQ_FMDC_MAX_PRE_CUSROR_DELTA	GENMASK(13, 10)
+> +#define GEN3_EQ_FMDC_MAX_POST_CUSROR_DELTA	GENMASK(17, 14)
+> +
+>  #define PCIE_PORT_MULTI_LANE_CTRL	0x8C0
+>  #define PORT_MLTI_UPCFG_SUPPORT		BIT(7)
+>  
+> diff --git a/drivers/pci/controller/dwc/pcie-qcom-common.c b/drivers/pci/controller/dwc/pcie-qcom-common.c
+> index 228d9eec0222..16c277b2e9d4 100644
+> --- a/drivers/pci/controller/dwc/pcie-qcom-common.c
+> +++ b/drivers/pci/controller/dwc/pcie-qcom-common.c
+> @@ -16,6 +16,43 @@
+>  #define QCOM_PCIE_LINK_SPEED_TO_BW(speed) \
+>  		Mbps_to_icc(PCIE_SPEED2MBS_ENC(pcie_link_speed[speed]))
+>  
+> +void qcom_pcie_common_set_16gt_eq_settings(struct dw_pcie *pci)
+> +{
+> +	u32 reg;
+> +
+> +	/*
+> +	 * GEN3_RELATED_OFF register is repurposed to apply equilaztion
+
+s/equilaztion/equalization/
+
+> +	 * settings at various data transmission rates through registers
+> +	 * namely GEN3_EQ_*. RATE_SHADOW_SEL bit field of GEN3_RELATED_OFF
+> +	 * determines data rate for which this equilization settings are
+
+s/this/these/
+s/equilization/equalization/
+
+> +	 * applied.
+> +	 */
+> +	reg = dw_pcie_readl_dbi(pci, GEN3_RELATED_OFF);
+> +	reg &= ~GEN3_RELATED_OFF_GEN3_ZRXDC_NONCOMPL;
+> +	reg &= ~GEN3_RELATED_OFF_RATE_SHADOW_SEL_MASK;
+> +	reg |= FIELD_PREP(GEN3_RELATED_OFF_RATE_SHADOW_SEL_MASK, 0x1);
+> +	dw_pcie_writel_dbi(pci, GEN3_RELATED_OFF, reg);
+> +
+> +	reg = dw_pcie_readl_dbi(pci, GEN3_EQ_FB_MODE_DIR_CHANGE_OFF);
+> +	reg &= ~(GEN3_EQ_FMDC_T_MIN_PHASE23 |
+> +		GEN3_EQ_FMDC_N_EVALS |
+> +		GEN3_EQ_FMDC_MAX_PRE_CUSROR_DELTA |
+> +		GEN3_EQ_FMDC_MAX_POST_CUSROR_DELTA);
+> +	reg |= FIELD_PREP(GEN3_EQ_FMDC_T_MIN_PHASE23, 0x1) |
+> +		FIELD_PREP(GEN3_EQ_FMDC_N_EVALS, 0xd) |
+> +		FIELD_PREP(GEN3_EQ_FMDC_MAX_PRE_CUSROR_DELTA, 0x5) |
+> +		FIELD_PREP(GEN3_EQ_FMDC_MAX_POST_CUSROR_DELTA, 0x5);
+> +	dw_pcie_writel_dbi(pci, GEN3_EQ_FB_MODE_DIR_CHANGE_OFF, reg);
+> +
+> +	reg = dw_pcie_readl_dbi(pci, GEN3_EQ_CONTROL_OFF);
+> +	reg &= ~(GEN3_EQ_CONTROL_OFF_FB_MODE |
+> +		GEN3_EQ_CONTROL_OFF_PHASE23_EXIT_MODE |
+> +		GEN3_EQ_CONTROL_OFF_FOM_INC_INITIAL_EVAL |
+> +		GEN3_EQ_CONTROL_OFF_PSET_REQ_VEC);
+> +	dw_pcie_writel_dbi(pci, GEN3_EQ_CONTROL_OFF, reg);
+> +}
+> +EXPORT_SYMBOL_GPL(qcom_pcie_common_set_16gt_eq_settings);
+> +
+>  struct icc_path *qcom_pcie_common_icc_get_resource(struct dw_pcie *pci, const char *path)
+>  {
+>  	struct icc_path *icc_mem_p;
+> diff --git a/drivers/pci/controller/dwc/pcie-qcom-common.h b/drivers/pci/controller/dwc/pcie-qcom-common.h
+> index da1760c7e164..5c01f6c18b3b 100644
+> --- a/drivers/pci/controller/dwc/pcie-qcom-common.h
+> +++ b/drivers/pci/controller/dwc/pcie-qcom-common.h
+> @@ -10,3 +10,4 @@
+>  struct icc_path *qcom_pcie_common_icc_get_resource(struct dw_pcie *pci, const char *path);
+>  int qcom_pcie_common_icc_init(struct dw_pcie *pci, struct icc_path *icc_mem);
+>  void qcom_pcie_common_icc_update(struct dw_pcie *pci, struct icc_path *icc_mem);
+> +void qcom_pcie_common_set_16gt_eq_settings(struct dw_pcie *pci);
+> diff --git a/drivers/pci/controller/dwc/pcie-qcom-ep.c b/drivers/pci/controller/dwc/pcie-qcom-ep.c
+> index f0c61d847643..7940222d35f6 100644
+> --- a/drivers/pci/controller/dwc/pcie-qcom-ep.c
+> +++ b/drivers/pci/controller/dwc/pcie-qcom-ep.c
+> @@ -438,6 +438,9 @@ static int qcom_pcie_perst_deassert(struct dw_pcie *pci)
+>  		goto err_disable_resources;
+>  	}
+>  
+> +	if (pcie_link_speed[pci->link_gen] == PCIE_SPEED_16_0GT)
+> +		qcom_pcie_common_set_16gt_eq_settings(pci);
+> +
+>  	/*
+>  	 * The physical address of the MMIO region which is exposed as the BAR
+>  	 * should be written to MHI BASE registers.
+> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+> index 0095c42aeee0..525942f2cf98 100644
+> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> @@ -263,6 +263,9 @@ static int qcom_pcie_start_link(struct dw_pcie *pci)
+>  {
+>  	struct qcom_pcie *pcie = to_qcom_pcie(pci);
+>  
+> +	if (pcie_link_speed[pci->link_gen] == PCIE_SPEED_16_0GT)
+> +		qcom_pcie_common_set_16gt_eq_settings(pci);
+> +
+>  	/* Enable Link Training state machine */
+>  	if (pcie->cfg->ops->ltssm_enable)
+>  		pcie->cfg->ops->ltssm_enable(pcie);
+> -- 
+> 2.43.2
+> 
 
