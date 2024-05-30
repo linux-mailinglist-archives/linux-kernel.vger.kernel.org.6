@@ -1,270 +1,96 @@
-Return-Path: <linux-kernel+bounces-195851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42B8C8D52CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 22:04:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B40088D52D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 22:05:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D83551F251BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 20:04:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 54118B23855
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 20:05:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 097F5158A01;
-	Thu, 30 May 2024 20:04:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F11D55588B;
+	Thu, 30 May 2024 20:05:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="U21UJ24Y"
-Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ButqOVXN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A9424D8DA
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 20:04:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FD6418641
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 20:05:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717099468; cv=none; b=kA6RyKS20wKoYqVMdfqGXYXg3jHjuFgoiGm8iXVjl9bDVt81KgM1jwr76Csft1L+ChwiNzvtniy7ajZ1zmsekFILrTbFBhHjlpwo9j4ss7QRGEfaaLr7RI1arSyPFutpi7TRN5xReiWU32YQLoDQ2FgijjHNZEqgcKln5CgphiE=
+	t=1717099543; cv=none; b=A8lf9/PqZ8gFylb8UPC0I9JKlcK4K7WeT6fE6PotxZzCmSVizpvrNOhmhr0YXETwBsFeULdAwi4NjCXhlWi3+qAgm8wkTfOeUap/45BDUpItLUMCDoOGjU3565bluc+4vCpU3fRbUlAKsfiMW5mBrjbgCJZXFPCF+90xK3unMs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717099468; c=relaxed/simple;
-	bh=5lFF6p0O69z4wHRkB64rk3uIhtL67Ko8YP8HkVc2LlA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=jhFniypL4/G0DtfQls9GtZ6+yXQDiMpdBr50k4kNrc2bTGzwUfLd4xZuAfsEWomFClwQvzcNHa+rmYr86yZIwjRJ87zV7o5rMZ8sNbqcgJA2BbObyNcP2uG3hFCwAXqY8naeZUTNilcUk8OGRqIatX6uxwcLfvJJlyZ1xCv8E9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca; spf=none smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=U21UJ24Y; arc=none smtp.client-ip=209.85.167.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ndufresne.ca
-Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-3d19dfb3dceso696790b6e.1
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 13:04:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1717099464; x=1717704264; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=uFw/j4seytBxaJCy4ixcT30Pk8/ifigB662hDMKPRHo=;
-        b=U21UJ24YHvSMPBGJw2+GuAYw48RtuRZgZDQHThgSIQ9qAzgd895q/MWPSbuMEkJWfA
-         WJ8izGODQUgcnyTYk5SZTOUQZKYyyo3oqfe59J5LXc5NlsjZsXEMjIRQwd/Pu16WTBr+
-         Ytoh5vG3WSfGJRm22AWPLg0qwCdgJXhLqIHyf23cCEox567VW7g1+YL1AsBT/XkDtgNv
-         EiAANIaV59Xv46FbCXicczb2eJgkNbY+bQZJ1WavJNYmBvCtJOwXklKahALs4/Neauy4
-         YqZT08XL6aGoV60H/ostFyRn9ejm6DJsp46+pIuCEpV3+Wy+EROIiQSCSKjno9G/iwU7
-         8qnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717099464; x=1717704264;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uFw/j4seytBxaJCy4ixcT30Pk8/ifigB662hDMKPRHo=;
-        b=u8b92K3aZhZralkECdLtEjghXv++q2PQsZpYtQXO6sSt+7JAXlXltGlC0vr6+jryYz
-         N65sSTTtyCkjsmLYPZ3bHXhS//z3LJg015EEApT43BYc2qOs70N6U/XWiJFZhGvqxDpC
-         rp+a6PxswCy8AC4PTWC+YGBORE1qXFgnVkl+xgRAkSmTzG7AIYF59PWb5fqUc63ZJyin
-         asSF3Khqy4Xee48OicJo7KxQL6yY/wKAXoGAIjYaSbw9k53z7+G5PjJ1iHlWj7PYa+On
-         MzL/IoISLKrDi+8mzxBEOWqdXBnjK9XjyaiC9vbbDFjNLVt5vIkIRGGTiRnMZU+Mha/p
-         cyUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWX3BURnmRVwtzqsCkTWpkg0eZtBLoBdcvooH3PRactAknHjELqDgTRGMeoEOApfczhdWpjR2V4ZGNXzvKlBQjdoUzaob3JGLlFfk6d
-X-Gm-Message-State: AOJu0YzTAI3/RdxbCNcQHJ7AupCX1lVtx5PBazVEoNWx8vDez5UK/V6N
-	/u/w3yxrqm1fUDMvCDW8j0TbbRAar/78ROeNuWQLFAxCOIgwEbSGqQes6Ly8pWNKiDIUbkhuPfi
-	y
-X-Google-Smtp-Source: AGHT+IEeHFLSPwf7tam8MwxOtasZyt1ms8G84I1mO9sNkFBGZnem8YjKGIIj10MDppdu/IDcKOmG1w==
-X-Received: by 2002:aca:905:0:b0:3d1:d34d:2775 with SMTP id 5614622812f47-3d1dcca5216mr2773765b6e.15.1717099464455;
-        Thu, 30 May 2024 13:04:24 -0700 (PDT)
-Received: from nicolas-tpx395.lan ([2606:6d00:17:5985::7a9])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ae4b40621fsm1301016d6.103.2024.05.30.13.04.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 May 2024 13:04:24 -0700 (PDT)
-Message-ID: <83f8a280f6835d9ac65fc18f7d1c88ccc90c6e65.camel@ndufresne.ca>
-Subject: Re: [RESEND PATCH v4 4/4] media: chips-media: wave5: Support YUV422
- raw pixel-formats on the encoder.
-From: Nicolas Dufresne <nicolas@ndufresne.ca>
-To: Jackson Lee <jackson.lee@chipsnmedia.com>, mchehab@kernel.org, 
-	sebastian.fricke@collabora.com
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	hverkuil@xs4all.nl, nas.chung@chipsnmedia.com, lafley.kim@chipsnmedia.com, 
-	b-brnich@ti.com
-Date: Thu, 30 May 2024 16:04:20 -0400
-In-Reply-To: <20240510112252.800-5-jackson.lee@chipsnmedia.com>
-References: <20240510112252.800-1-jackson.lee@chipsnmedia.com>
-	 <20240510112252.800-5-jackson.lee@chipsnmedia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.1 (3.52.1-1.fc40) 
+	s=arc-20240116; t=1717099543; c=relaxed/simple;
+	bh=kRBwLlYCuKNk3Fl0J0lD/a6vXcmLqtYeu1cqzVACock=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=KmS/SSwJJjxU9C2jejiQfc9AM53Cry7i7mj0Uc3VHnWEvrQ9oiK08iIKmWy7m/qbES8satk7R1zj8t4G/M4Pf45pg41T8+Tdnd2kBC3TcqMSNLs3qXMGxEK2bu+egD4MDzdNmamN9kZyjkACtQMFlM4tWOAR9dsW6/a4YsKtdAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ButqOVXN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44CCAC2BBFC;
+	Thu, 30 May 2024 20:05:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1717099542;
+	bh=kRBwLlYCuKNk3Fl0J0lD/a6vXcmLqtYeu1cqzVACock=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ButqOVXNDS+TCCelEMmoNeITCkjmvKoaPnVCR1oqMNKRNyy/ojaP70KejUyYhVR5L
+	 oKgk0iKAshkcBnZeSMx2bLClJgskdhV22Jluwx6Z/GD9ykQferXI6Gr5borcBHpUK5
+	 XWh5m37/X/nJIDKsQ9uu1OVUbgvb5O0MSlex87LA=
+Date: Thu, 30 May 2024 13:05:41 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: <hailong.liu@oppo.com>
+Cc: <urezki@gmail.com>, <hch@infradead.org>, <lstoakes@gmail.com>,
+ <21cnbao@gmail.com>, <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+ <xiang@kernel.org>, <guangye.yang@mediatek.com>,
+ <zhaoyang.huang@unisoc.com>, "Hailong . Liu" <liuhailong@oppo.com>
+Subject: Re: [RFC PATCH] mm/vmalloc: fix vbq->free breakage
+Message-Id: <20240530130541.c615fcfc1e6f211199315e13@linux-foundation.org>
+In-Reply-To: <20240530093108.4512-1-hailong.liu@oppo.com>
+References: <20240530093108.4512-1-hailong.liu@oppo.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Le vendredi 10 mai 2024 =C3=A0 20:22 +0900, Jackson Lee a =C3=A9crit=C2=A0:
-> From: "Jackson.lee" <jackson.lee@chipsnmedia.com>
->=20
-> Add support for the YUV422P, NV16, NV61, YUV422M, NV16M,
-> NV61M raw pixel-formats to the Wave5 encoder.
->=20
-> All these formats have a chroma subsampling ratio of 4:2:2 and
-> therefore require a new image size calculation as the driver
-> previously only handled a ratio of 4:2:0.
->=20
-> Signed-off-by: Jackson.lee <jackson.lee@chipsnmedia.com>
-> Signed-off-by: Nas Chung <nas.chung@chipsnmedia.com>
+On Thu, 30 May 2024 17:31:08 +0800 <hailong.liu@oppo.com> wrote:
 
-Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-
+> From: "hailong.liu" <hailong.liu@oppo.com>
+> 
+> The function xa_for_each() in _vm_unmap_aliases() loops through all
+> vbs. However, since commit 062eacf57ad9 ("mm: vmalloc: remove a global
+> vmap_blocks xarray") the vb from xarray may not be on the corresponding
+> CPU vmap_block_queue. Consequently, purge_fragmented_block() might
+> use the wrong vbq->lock to protect the free list, leading to vbq->free
+> breakage.
+> 
+> ...
+>
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -2269,10 +2269,9 @@ static void _vm_unmap_aliases(unsigned long start, unsigned long end, int flush)
+>  	for_each_possible_cpu(cpu) {
+>  		struct vmap_block_queue *vbq = &per_cpu(vmap_block_queue, cpu);
+>  		struct vmap_block *vb;
+> -		unsigned long idx;
+> 
+>  		rcu_read_lock();
+> -		xa_for_each(&vbq->vmap_blocks, idx, vb) {
+> +		list_for_each_entry_rcu(vb, &vbq->free, free_list) {
+>  			spin_lock(&vb->lock);
+> 
+>  			/*
 > ---
->  .../chips-media/wave5/wave5-vpu-enc.c         | 81 +++++++++++++++----
->  1 file changed, 67 insertions(+), 14 deletions(-)
->=20
-> diff --git a/drivers/media/platform/chips-media/wave5/wave5-vpu-enc.c b/d=
-rivers/media/platform/chips-media/wave5/wave5-vpu-enc.c
-> index 75d230df45f6..3f148e1b0513 100644
-> --- a/drivers/media/platform/chips-media/wave5/wave5-vpu-enc.c
-> +++ b/drivers/media/platform/chips-media/wave5/wave5-vpu-enc.c
-> @@ -66,6 +66,24 @@ static const struct vpu_format enc_fmt_list[FMT_TYPES]=
-[MAX_FMTS] =3D {
->  			.v4l2_pix_fmt =3D V4L2_PIX_FMT_NV21M,
->  			.v4l2_frmsize =3D &enc_frmsize[VPU_FMT_TYPE_RAW],
->  		},
-> +		{
-> +			.v4l2_pix_fmt =3D V4L2_PIX_FMT_YUV422P,
-> +		},
-> +		{
-> +			.v4l2_pix_fmt =3D V4L2_PIX_FMT_NV16,
-> +		},
-> +		{
-> +			.v4l2_pix_fmt =3D V4L2_PIX_FMT_NV61,
-> +		},
-> +		{
-> +			.v4l2_pix_fmt =3D V4L2_PIX_FMT_YUV422M,
-> +		},
-> +		{
-> +			.v4l2_pix_fmt =3D V4L2_PIX_FMT_NV16M,
-> +		},
-> +		{
-> +			.v4l2_pix_fmt =3D V4L2_PIX_FMT_NV61M,
-> +		},
->  	}
->  };
-> =20
-> @@ -109,13 +127,26 @@ static int start_encode(struct vpu_instance *inst, =
-u32 *fail_res)
->  	struct vb2_v4l2_buffer *dst_buf;
->  	struct frame_buffer frame_buf;
->  	struct enc_param pic_param;
-> -	u32 stride =3D ALIGN(inst->dst_fmt.width, 32);
-> -	u32 luma_size =3D (stride * inst->dst_fmt.height);
-> -	u32 chroma_size =3D ((stride / 2) * (inst->dst_fmt.height / 2));
-> +	const struct v4l2_format_info *info;
-> +	u32 stride =3D inst->src_fmt.plane_fmt[0].bytesperline;
-> +	u32 luma_size =3D 0;
-> +	u32 chroma_size =3D 0;
-> =20
->  	memset(&pic_param, 0, sizeof(struct enc_param));
->  	memset(&frame_buf, 0, sizeof(struct frame_buffer));
-> =20
-> +	info =3D v4l2_format_info(inst->src_fmt.pixelformat);
-> +	if (!info)
-> +		return -EINVAL;
-> +
-> +	if (info->mem_planes =3D=3D 1) {
-> +		luma_size =3D stride * inst->dst_fmt.height;
-> +		chroma_size =3D luma_size / (info->hdiv * info->vdiv);
-> +	} else {
-> +		luma_size =3D inst->src_fmt.plane_fmt[0].sizeimage;
-> +		chroma_size =3D inst->src_fmt.plane_fmt[1].sizeimage;
-> +	}
-> +
->  	dst_buf =3D v4l2_m2m_next_dst_buf(m2m_ctx);
->  	if (!dst_buf) {
->  		dev_dbg(inst->dev->dev, "%s: No destination buffer found\n", __func__)=
-;
-> @@ -479,6 +510,7 @@ static int wave5_vpu_enc_s_fmt_out(struct file *file,=
- void *fh, struct v4l2_form
->  {
->  	struct vpu_instance *inst =3D wave5_to_vpu_inst(fh);
->  	const struct vpu_format *vpu_fmt;
-> +	const struct v4l2_format_info *info;
->  	int i, ret;
-> =20
->  	dev_dbg(inst->dev->dev, "%s: fourcc: %u width: %u height: %u num_planes=
-: %u field: %u\n",
-> @@ -500,16 +532,20 @@ static int wave5_vpu_enc_s_fmt_out(struct file *fil=
-e, void *fh, struct v4l2_form
->  		inst->src_fmt.plane_fmt[i].sizeimage =3D f->fmt.pix_mp.plane_fmt[i].si=
-zeimage;
->  	}
-> =20
-> -	if (inst->src_fmt.pixelformat =3D=3D V4L2_PIX_FMT_NV12 ||
-> -	    inst->src_fmt.pixelformat =3D=3D V4L2_PIX_FMT_NV12M) {
-> -		inst->cbcr_interleave =3D true;
-> -		inst->nv21 =3D false;
-> -	} else if (inst->src_fmt.pixelformat =3D=3D V4L2_PIX_FMT_NV21 ||
-> -		   inst->src_fmt.pixelformat =3D=3D V4L2_PIX_FMT_NV21M) {
-> -		inst->cbcr_interleave =3D true;
-> +	info =3D v4l2_format_info(inst->src_fmt.pixelformat);
-> +	if (!info)
-> +		return -EINVAL;
-> +
-> +	inst->cbcr_interleave =3D (info->comp_planes =3D=3D 2) ? true : false;
-> +
-> +	switch (inst->src_fmt.pixelformat) {
-> +	case V4L2_PIX_FMT_NV21:
-> +	case V4L2_PIX_FMT_NV21M:
-> +	case V4L2_PIX_FMT_NV61:
-> +	case V4L2_PIX_FMT_NV61M:
->  		inst->nv21 =3D true;
-> -	} else {
-> -		inst->cbcr_interleave =3D false;
-> +		break;
-> +	default:
->  		inst->nv21 =3D false;
->  	}
-> =20
-> @@ -1095,13 +1131,23 @@ static void wave5_vpu_enc_buf_queue(struct vb2_bu=
-ffer *vb)
->  	v4l2_m2m_buf_queue(m2m_ctx, vbuf);
->  }
-> =20
-> -static void wave5_set_enc_openparam(struct enc_open_param *open_param,
-> +static int wave5_set_enc_openparam(struct enc_open_param *open_param,
->  				    struct vpu_instance *inst)
->  {
->  	struct enc_wave_param input =3D inst->enc_param;
-> +	const struct v4l2_format_info *info;
->  	u32 num_ctu_row =3D ALIGN(inst->dst_fmt.height, 64) / 64;
->  	u32 num_mb_row =3D ALIGN(inst->dst_fmt.height, 16) / 16;
-> =20
-> +	info =3D v4l2_format_info(inst->src_fmt.pixelformat);
-> +	if (!info)
-> +		return -EINVAL;
-> +
-> +	if (info->hdiv =3D=3D 2 && info->vdiv =3D=3D 1)
-> +		open_param->src_format =3D FORMAT_422;
-> +	else
-> +		open_param->src_format =3D FORMAT_420;
-> +
->  	open_param->wave_param.gop_preset_idx =3D PRESET_IDX_IPP_SINGLE;
->  	open_param->wave_param.hvs_qp_scale =3D 2;
->  	open_param->wave_param.hvs_max_delta_qp =3D 10;
-> @@ -1190,6 +1236,8 @@ static void wave5_set_enc_openparam(struct enc_open=
-_param *open_param,
->  			open_param->wave_param.intra_refresh_arg =3D num_ctu_row;
->  	}
->  	open_param->wave_param.forced_idr_header_enable =3D input.forced_idr_he=
-ader_enable;
-> +
-> +	return 0;
->  }
-> =20
->  static int initialize_sequence(struct vpu_instance *inst)
-> @@ -1285,7 +1333,12 @@ static int wave5_vpu_enc_start_streaming(struct vb=
-2_queue *q, unsigned int count
-> =20
->  		memset(&open_param, 0, sizeof(struct enc_open_param));
-> =20
-> -		wave5_set_enc_openparam(&open_param, inst);
-> +		ret =3D wave5_set_enc_openparam(&open_param, inst);
-> +		if (ret) {
-> +			dev_dbg(inst->dev->dev, "%s: wave5_set_enc_openparam, fail: %d\n",
-> +				__func__, ret);
-> +			goto return_buffers;
-> +		}
-> =20
->  		ret =3D wave5_vpu_enc_open(inst, &open_param);
->  		if (ret) {
+> https://lore.kernel.org/all/20240530025144.1570865-1-zhaoyang.huang@unisoc.com/
+> BTW, zhangyang also encounter the same issue, maybe revert commit not a
+> better solution. we need a map to get vbq from vb.
+
+I borrowed the Fixes: from that patch and added cc:stable, pending
+confirmation that the runtime effects are significant.
 
 
