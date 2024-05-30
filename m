@@ -1,138 +1,161 @@
-Return-Path: <linux-kernel+bounces-195766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1DAB8D519C
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 20:04:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D96258D51FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 20:49:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D32E41C21AE5
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 18:04:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E69091C23151
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 18:49:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 084974B5A6;
-	Thu, 30 May 2024 18:04:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fEmKXiJ9"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC9FA4E1DA;
+	Thu, 30 May 2024 18:49:14 +0000 (UTC)
+Received: from mail-m2411.xmail.ntesmail.com (mail-m2411.xmail.ntesmail.com [45.195.24.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D7C51D531;
-	Thu, 30 May 2024 18:04:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E36FE4D595;
+	Thu, 30 May 2024 18:49:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.195.24.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717092248; cv=none; b=bDZP5hRTtTs/XvGYRQ0lZcjC33oVVdQWN+t5+9Hz1473dxpI8jMGIRbfbomDjGygYGWTePpQzu8o+yrHuSfPl+WCzpWVHaeh50eKjUwHQU2G2NtyUFvEuVJTHtZV2jgodDIY3sWhBu3ZcCg4cGnSoPGML2M1lWoVHvAmQgkw/os=
+	t=1717094954; cv=none; b=bMeEfJWxs8LYMycjCMK/HP/dDuQhPtAogPa5OgfEdAD69GxpnFMM76XUNoumO/TrVuZHJ2Xv8ud5v5uHdIAVXjD2HJJZaGs6DijCFUoern4DI7CRS657P3x79Nc2AvTejEKReKnTI5trGzIQSwMahFoqxUWxSfCqUwq/VzicMEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717092248; c=relaxed/simple;
-	bh=BEIEhrG9qX9RIUaoual1xQdHFV9ZgAZNbmY16Qsocp4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Aj30lVGyTE3JrzBG78vasgqdchlKVfmwg57M+ro3D4N7MZ1v+FYrA8PRF9066Mo59lRQFMTLqG8ZS1fNrFr6+EJADcpK9W+9K3URqND/Ii9QXcCvNDkPPpgU/v+K7IZt5P7+mHXQbKN3AnX8U2mGTKDKlzQ7w5IS7GIY4qDcvrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fEmKXiJ9; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717092245; x=1748628245;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=BEIEhrG9qX9RIUaoual1xQdHFV9ZgAZNbmY16Qsocp4=;
-  b=fEmKXiJ9a9KI3LhofMaAmYU2k8sEPfaU4GdHcnShcAfaj92M5ql6eyQz
-   qYuHLiqLc2NopnOvRsmpXGECdwTY3ydpErSDRmmZYNV79Ke1i6YkLxTaE
-   wtv1smQNGzQXt1So3L81lyo+f4N8AFlPI2NSfFZU9/99M4+ritZOvErL4
-   /remByHzWARVQA1d7NqREm7RYQmo8RMmwLodlplc8cOWRx5maBK5I4ZAs
-   5DynTB/V2Jm65MbCOTmEc1/PGyXo3w9hoxNcrdZ/1mBGBieqSzxVZy0Tg
-   ilSFhqjQjHteY5LSWpauNhnP7PmZHpBnBbDRriqDqWmqdiUM3QittDvbO
-   Q==;
-X-CSE-ConnectionGUID: xXJLHjC1SDWX9ETATQY+NA==
-X-CSE-MsgGUID: 6LRcVIqjT4+Oui8mue5SWg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="13828132"
-X-IronPort-AV: E=Sophos;i="6.08,202,1712646000"; 
-   d="scan'208";a="13828132"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 11:04:05 -0700
-X-CSE-ConnectionGUID: zucVqWpJR0mBCJBFt7Bqzw==
-X-CSE-MsgGUID: p3huy5JiRFKNX17xuU9R6w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,202,1712646000"; 
-   d="scan'208";a="36389437"
-Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
-  by orviesa006.jf.intel.com with ESMTP; 30 May 2024 11:04:00 -0700
-Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sCk85-000For-1p;
-	Thu, 30 May 2024 18:03:57 +0000
-Date: Fri, 31 May 2024 02:03:33 +0800
-From: kernel test robot <lkp@intel.com>
-To: Chen-Yu Tsai <wenst@chromium.org>, Frank Binns <frank.binns@imgtec.com>,
-	Matt Coster <matt.coster@imgtec.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: oe-kbuild-all@lists.linux.dev, Chen-Yu Tsai <wenst@chromium.org>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/6] clk: mediatek: Add mt8173-mfgtop driver
-Message-ID: <202405310123.KWoPspRr-lkp@intel.com>
-References: <20240530083513.4135052-3-wenst@chromium.org>
+	s=arc-20240116; t=1717094954; c=relaxed/simple;
+	bh=P2bO5JWCsGZMtS8zS4ZP9PbUQbMPfPvnLfoGhj5y2VA=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=rLKuO4GF0WaxwM621f0rwhq6hMIWLKQpiBNqeVkOlU6+3TWPYjTn0IlXLkOB0PCvNc/EFLEATmz9tIrcqVh8Q/cMLL7QdmyQ+uQy+XXObNhRBil+B9hcSOyvmS5ILFV9cBq8vrNjgdHGbI5ZEDO67xjhlW9yv/DwjdQudMZiKqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=easystack.cn; spf=pass smtp.mailfrom=easystack.cn; arc=none smtp.client-ip=45.195.24.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=easystack.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=easystack.cn
+Received: from [192.168.122.189] (unknown [218.94.118.90])
+	by smtp.qiye.163.com (Hmail) with ESMTPA id 3882D860313;
+	Thu, 30 May 2024 14:59:39 +0800 (CST)
+Subject: Re: [PATCH RFC 0/7] block: Introduce CBD (CXL Block Device)
+To: Gregory Price <gregory.price@memverge.com>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>, John Groves
+ <John@groves.net>, axboe@kernel.dk, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
+ nvdimm@lists.linux.dev
+References: <20240503105245.00003676@Huawei.com>
+ <5b7f3700-aeee-15af-59a7-8e271a89c850@easystack.cn>
+ <20240508131125.00003d2b@Huawei.com>
+ <ef0ee621-a2d2-e59a-f601-e072e8790f06@easystack.cn>
+ <20240508164417.00006c69@Huawei.com>
+ <3d547577-e8f2-8765-0f63-07d1700fcefc@easystack.cn>
+ <20240509132134.00000ae9@Huawei.com>
+ <a571be12-2fd3-e0ee-a914-0a6e2c46bdbc@easystack.cn>
+ <664cead8eb0b6_add32947d@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+ <8f161b2d-eacd-ad35-8959-0f44c8d132b3@easystack.cn>
+ <ZldIzp0ncsRX5BZE@memverge.com>
+From: Dongsheng Yang <dongsheng.yang@easystack.cn>
+Message-ID: <5db870de-ecb3-f127-f31c-b59443b4fbb4@easystack.cn>
+Date: Thu, 30 May 2024 14:59:38 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240530083513.4135052-3-wenst@chromium.org>
-
-Hi Chen-Yu,
-
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Chen-Yu-Tsai/dt-bindings-clock-mediatek-Add-mt8173-mfgtop/20240530-163739
-base:   1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
-patch link:    https://lore.kernel.org/r/20240530083513.4135052-3-wenst%40chromium.org
-patch subject: [PATCH 2/6] clk: mediatek: Add mt8173-mfgtop driver
-config: x86_64-buildonly-randconfig-002-20240531 (https://download.01.org/0day-ci/archive/20240531/202405310123.KWoPspRr-lkp@intel.com/config)
-compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240531/202405310123.KWoPspRr-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405310123.KWoPspRr-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/pmdomain/core.c:2965:34: warning: 'idle_state_match' defined but not used [-Wunused-const-variable=]
-    2965 | static const struct of_device_id idle_state_match[] = {
-         |                                  ^~~~~~~~~~~~~~~~
-
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for PM_GENERIC_DOMAINS_OF
-   Depends on [n]: PM_GENERIC_DOMAINS [=y] && OF [=n]
-   Selected by [y]:
-   - COMMON_CLK_MT8173_MFGTOP [=y] && COMMON_CLK [=y] && (ARCH_MEDIATEK || COMPILE_TEST [=y]) && COMMON_CLK_MT8173 [=y]
+In-Reply-To: <ZldIzp0ncsRX5BZE@memverge.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFJQjdXWS1ZQUlXWQ8JGhUIEh9ZQVkaThpMVkxDTENJTR5NQkNCTVUZERMWGhIXJBQOD1
+	lXWRgSC1lBWUlKQ1VCT1VKSkNVQktZV1kWGg8SFR0UWUFZT0tIVUpNT0lMTlVKS0tVSkJLS1kG
+X-HM-Tid: 0a8fc84c11d1023ckunm3882d860313
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6OjY6DBw6MDcZPi8fExwQNy4S
+	MQhPCx9VSlVKTEpMS05JSENLSEtLVTMWGhIXVR8UFRwIEx4VHFUCGhUcOx4aCAIIDxoYEFUYFUVZ
+	V1kSC1lBWUlKQ1VCT1VKSkNVQktZV1kIAVlBTUlDTDcG
 
 
-vim +/idle_state_match +2965 drivers/pmdomain/core.c
 
-5d6be70add65e3 drivers/base/power/domain.c Ulf Hansson 2018-06-29  2964  
-30f604283e05d3 drivers/base/power/domain.c Lina Iyer   2016-10-14 @2965  static const struct of_device_id idle_state_match[] = {
-598da548ef7892 drivers/base/power/domain.c Lina Iyer   2016-11-03  2966  	{ .compatible = "domain-idle-state", },
-30f604283e05d3 drivers/base/power/domain.c Lina Iyer   2016-10-14  2967  	{ }
-30f604283e05d3 drivers/base/power/domain.c Lina Iyer   2016-10-14  2968  };
-30f604283e05d3 drivers/base/power/domain.c Lina Iyer   2016-10-14  2969  
+在 2024/5/29 星期三 下午 11:25, Gregory Price 写道:
+> On Wed, May 22, 2024 at 02:17:38PM +0800, Dongsheng Yang wrote:
+>>
+>>
+>> 在 2024/5/22 星期三 上午 2:41, Dan Williams 写道:
+>>> Dongsheng Yang wrote:
+>>>
+>>> What guarantees this property? How does the reader know that its local
+>>> cache invalidation is sufficient for reading data that has only reached
+>>> global visibility on the remote peer? As far as I can see, there is
+>>> nothing that guarantees that local global visibility translates to
+>>> remote visibility. In fact, the GPF feature is counter-evidence of the
+>>> fact that writes can be pending in buffers that are only flushed on a
+>>> GPF event.
+>>
+>> Sounds correct. From what I learned from GPF, ADR, and eADR, there would
+>> still be data in WPQ even though we perform a CPU cache line flush in the
+>> OS.
+>>
+>> This means we don't have a explicit method to make data puncture all caches
+>> and land in the media after writing. also it seems there isn't a explicit
+>> method to invalidate all caches along the entire path.
+>>
+>>>
+>>> I remain skeptical that a software managed inter-host cache-coherency
+>>> scheme can be made reliable with current CXL defined mechanisms.
+>>
+>>
+>> I got your point now, acorrding current CXL Spec, it seems software managed
+>> cache-coherency for inter-host shared memory is not working. Will the next
+>> version of CXL spec consider it?
+>>>
+> 
+> Sorry for missing the conversation, have been out of office for a bit.
+> 
+> It's not just a CXL spec issue, though that is part of it. I think the
+> CXL spec would have to expose some form of puncturing flush, and this
+> makes the assumption that such a flush doesn't cause some kind of
+> race/deadlock issue.  Certainly this needs to be discussed.
+> 
+> However, consider that the upstream processor actually has to generate
+> this flush.  This means adding the flush to existing coherence protocols,
+> or at the very least a new instruction to generate the flush explicitly.
+> The latter seems more likely than the former.
+> 
+> This flush would need to ensure the data is forced out of the local WPQ
+> AND all WPQs south of the PCIE complex - because what you really want to
+> know is that the data has actually made it back to a place where remote
+> viewers are capable of percieving the change.
+> 
+> So this means:
+> 1) Spec revision with puncturing flush
+> 2) Buy-in from CPU vendors to generate such a flush
+> 3) A new instruction added to the architecture.
+> 
+> Call me in a decade or so.
+> 
+> 
+> But really, I think it likely we see hardware-coherence well before this.
+> For this reason, I have become skeptical of all but a few memory sharing
+> use cases that depend on software-controlled cache-coherency.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Hi Gregory,
+
+	From my understanding, we actually has the same idea here. What I am 
+saying is that we need SPEC to consider this issue, meaning we need to 
+describe how the entire software-coherency mechanism operates, which 
+includes the necessary hardware support. Additionally, I agree that if 
+software-coherency also requires hardware support, it seems that 
+hardware-coherency is the better path.
+> 
+> There are some (FAMFS, for example). The coherence state of these
+> systems tend to be less volatile (e.g. mappings are read-only), or
+> they have inherent design limitations (cacheline-sized message passing
+> via write-ahead logging only).
+
+Can you explain more about this? I understand that if the reader in the 
+writer-reader model is using a readonly mapping, the interaction will be 
+much simpler. However, after the writer writes data, if we don't have a 
+mechanism to flush and invalidate puncturing all caches, how can the 
+readonly reader access the new data?
+> 
+> ~Gregory
+> 
 
