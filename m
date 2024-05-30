@@ -1,139 +1,178 @@
-Return-Path: <linux-kernel+bounces-195533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58A928D4E23
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:38:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC6EB8D4E1D
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:37:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16A782819BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:38:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41E1A1F23EA7
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:37:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B615E17F517;
-	Thu, 30 May 2024 14:37:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CEAB17C22D;
+	Thu, 30 May 2024 14:37:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="SxP13fgI";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="Zt3GU4BX"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="XNpmgt/O"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F9C417D881
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 14:37:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11967186E57
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 14:37:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717079867; cv=none; b=kdSbnLRW1Uc3YG3FRmTYfo//uW5KpwOuPYsTCu5QULbv/ANT0p4mdlG2lt8k6T5sZBXKDswg7tSOhB8j6ISH46BglJVczr4uVPW40eZB9kzAyNqnrPIte2ZLQfrEhGgII+RvSd26+BPfUY4XZFcwf2lsUGdpyHaIPAYC4ITxt4c=
+	t=1717079862; cv=none; b=N59uEBboD74HqwtBgHAUpwRKdYvEsYbB9DfuIOzTORB+UDFiM9VCVBvG7npTZeCTx/RVcEyA8U+NjRU9li8UCP7ngryBFabu0vrj/er/66DtY7Hb4FpAeI1Zp736ekzx3SQi0hZulOwwn3U0yFHLXLzrJJ2nZUg1wmECDyo9wvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717079867; c=relaxed/simple;
-	bh=Hd/kqSDVWjaerU0649WRAuzQ3rjHR4d2hAZJKd4XRPQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kLVxE4H6Z7vPlpwt1f57mC4F1i/aCYgot7JwmjeQyB+whfecekTZiDcNWNQB25vfG9TiYQs+5oLJ6OzZCUheu0YE6nWM8HjzLF9bQq8G7/TJ7PDtOOc9V+xtwtvtPmJHAMWCd0mMVVy7zFjIBG8TWwPoNAKxFEoY7V0H6oTNNOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=SxP13fgI; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=Zt3GU4BX reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+	s=arc-20240116; t=1717079862; c=relaxed/simple;
+	bh=U3LbKVgqL/u1hQeuo5yC32Kn/VinvVfWfYKY8hhTfFI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i6CXD6isbdgiQrlSNcsHyOBwcV3KzSqmjKOFO6pWfYUOHtlLwF8fOehJKioUNjrrwZ+mvQ8HrTZRf5m1zwrFIURxxdDpzZzLE08tJgJYhIEyzk7Bm4kcUPi8VtWwA4FHdVeccWycXPw4WrWM3hwiGQ/JboxejZOnmYeqv0MwEwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=XNpmgt/O; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1f480624d04so8774105ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 07:37:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1717079864; x=1748615864;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=+RNcrHzh6WcQ1ij3/nOnEX9lVFjkLoJCZA6UagyL3GY=;
-  b=SxP13fgI9SB1eRAYHCJcu2m3uRKeblYO9RaKhGE87juZ7kCSPAC2ajdE
-   oruQs/aoWuRZV4k8vYZn8bohHlndPMT9re4qfwbPzdezMoO4mi4qhrNwP
-   z+Rc9euztCDyjXbYumr9JAGFLkDGy9/cW6ifYYloMkNxXjHa8/W9T9MY5
-   tBcyu7SwYzBFqIQ/XW2VBxF3wxhgxKtfUJJ3Dc7pWJbNwK4UdhjYu1jAw
-   k9eRIKBwOPJtXArcRYq9uA6knoWLR1X6nczegeWHJlXQjFRhg86W9fL/L
-   XPOtyEkLzN9h2Bc2d7wKoMa+kNOkmf+ACW9En/3izTmJY48zoi2OLoWC0
-   g==;
-X-CSE-ConnectionGUID: 7tIcQiyWQ2SwyuQ/0ELpnA==
-X-CSE-MsgGUID: /eBcSUNjTae86ULERTy5AA==
-X-IronPort-AV: E=Sophos;i="6.08,201,1712613600"; 
-   d="scan'208";a="37145456"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 30 May 2024 16:37:36 +0200
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 1B2DE1664CE;
-	Thu, 30 May 2024 16:37:29 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1717079851; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding; bh=+RNcrHzh6WcQ1ij3/nOnEX9lVFjkLoJCZA6UagyL3GY=;
-	b=Zt3GU4BXKdbne7lC9yXfqM3IojJq90MdHrexZzn3tmy21JasnwEhPfjiAZnZtJPjEWazVP
-	+ME6Ymz/4Vhi+B2pRu2hOB3Vhwj4XzLY7QZFDUxvGGZwx6damyfG5vWdVvHChCFg+1LW8y
-	tAN0SWcAfcfTH6gvRxzcRXNFWO/czqflkK9XvadFiFNUiFHBFvRf1KzBDQ0Z2qsMCGx9UX
-	ZVXzH5NVpqNWbsZWg2EkZM8LngAq/mal0HRtfLuTPhe993O0SNmEXMhOFBlXWTW/nNu0N8
-	Wxh8E6VMUyhK5l64eV/axMJaM1YuimXjcbXFSTVbw8sF7kTzswRCT8QuIkW9OQ==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Russell King <linux@armlinux.org.uk>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>
-Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
-	linux-arm-kernel@lists.infradead.org,
-	imx@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1] ARM: imx_v6_v7_defconfig: Enable drivers for TQMa7x/MBa7x
-Date: Thu, 30 May 2024 16:37:22 +0200
-Message-Id: <20240530143722.834264-1-alexander.stein@ew.tq-group.com>
-X-Mailer: git-send-email 2.34.1
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1717079860; x=1717684660; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Dr7MGcIZCht+4Sl3Mt64k5vSbdLUfxkiP98jMWV/Dt8=;
+        b=XNpmgt/OCJUPuhZl+INdzQay53hz0AM0dPZfBA7y6E0fMenHxBAnyL63Q+sO5YHZ0c
+         N13gj8ia4eCgTy42l1C/c0/qJnzE/p2bZ+PktrFA5bmpTmKG4pris905n5c/cvx1T5Qq
+         aDZbrBT9r5d6/r4yWEO0rAgmlwMXFXrjFEuQD1/sQiu2pROLCVrDPGraSJTdnWuNAM/M
+         jC1UJJZfLLLmRj1f2Y3cCdRrkVpM9Mu3VlrvGyuBWIFhDeYI80Dhgtg/NcpnrrOGzYlH
+         fwkwj+DeS/UQ6q/NA6+pa7NIzjRGOdXxhbHUh2C645X+cozIdbI6QgL6lrIbVzKRWsHq
+         1Fig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717079860; x=1717684660;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Dr7MGcIZCht+4Sl3Mt64k5vSbdLUfxkiP98jMWV/Dt8=;
+        b=wdq3JzShdpo1IMWPJWNxGWLBrv6HNqgQ/fueyQBBmuktjbO8lR9aINCI7REp+BJXUY
+         w8yNjSPSZ6vwnNOYtUR2ZrcH3/31KhgToeYltY9wg7fxkmeUei2mBjW7sY+RRXIlw6DZ
+         RSakt9nFwO4VqX/neKurQGUb66ykEX3mE5xUDZuwhpfTnAKIFbdVtWEp+kqRi9D9Atp+
+         yoe6LymGoyf4iBxP2UR8pyQPuQuCUAbza7Eq4yPYBLF8OEnkP2lDJ8Zlhq9HKVm4AG5T
+         GpEpeSb6Oyj+FPGw9lpkdCNovGiIYjaQWJU/eKzUizAwezpY8smzHacPxSEnmOekYned
+         Bg4w==
+X-Forwarded-Encrypted: i=1; AJvYcCXlGSIQdO3FqQZneZjIZ08HwA2KlEWFi1PRZl1gnIGRmWNLp9tjFAHK27vyPyHKRf0JWMtkC8c7U4rd+S99Zi/sPJGuIO/lc9NWSA/S
+X-Gm-Message-State: AOJu0YyEw2yHz5yDQUV3EwsC3EIdNqE4HmXM39yQ6AHgzLH5OlseXOL3
+	ooJYN62KOUb5vIkIvVMmfm9Fzh6hQZVXOz46TnJLOd6MVFq+eCbJxU7dWAa2uck=
+X-Google-Smtp-Source: AGHT+IG+P79rec/1kndzK6QyUvlapORFmbEhzvdcFqf7CsaBcI6jLUT7w4JzgE6GE/lZheH1bs1ucw==
+X-Received: by 2002:a17:903:2307:b0:1f4:98f4:4763 with SMTP id d9443c01a7336-1f619932a97mr28337145ad.53.1717079860232;
+        Thu, 30 May 2024 07:37:40 -0700 (PDT)
+Received: from ghost (mobile-166-137-160-039.mycingular.net. [166.137.160.39])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f466d30277sm103103765ad.63.2024.05.30.07.37.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 May 2024 07:37:39 -0700 (PDT)
+Date: Thu, 30 May 2024 07:37:35 -0700
+From: Charlie Jenkins <charlie@rivosinc.com>
+To: =?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <cleger@rivosinc.com>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Anup Patel <anup@brainfault.org>, Shuah Khan <shuah@kernel.org>,
+	Atish Patra <atishp@atishpatra.org>, linux-doc@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, kvm@vger.kernel.org,
+	kvm-riscv@lists.infradead.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v5 02/16] riscv: add ISA extension parsing for Zimop
+Message-ID: <ZliPL4yXBAir5pr2@ghost>
+References: <20240517145302.971019-1-cleger@rivosinc.com>
+ <20240517145302.971019-3-cleger@rivosinc.com>
+ <ZlenZ+NvXxOxvqEO@ghost>
+ <ZleqVUhDW+xgiTwu@ghost>
+ <4d23f17e-cc1e-45e3-9ca2-a884baacf207@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+In-Reply-To: <4d23f17e-cc1e-45e3-9ca2-a884baacf207@rivosinc.com>
 
-Enable drivers for devices/features used on MBa7x.
+On Thu, May 30, 2024 at 10:12:39AM +0200, Clément Léger wrote:
+> 
+> 
+> On 30/05/2024 00:21, Charlie Jenkins wrote:
+> > On Wed, May 29, 2024 at 03:08:39PM -0700, Charlie Jenkins wrote:
+> >> On Fri, May 17, 2024 at 04:52:42PM +0200, Clément Léger wrote:
+> >>> Add parsing for Zimop ISA extension which was ratified in commit
+> >>> 58220614a5f of the riscv-isa-manual.
+> >>>
+> >>> Signed-off-by: Clément Léger <cleger@rivosinc.com>
+> >>> ---
+> >>>  arch/riscv/include/asm/hwcap.h | 1 +
+> >>>  arch/riscv/kernel/cpufeature.c | 1 +
+> >>>  2 files changed, 2 insertions(+)
+> >>>
+> >>> diff --git a/arch/riscv/include/asm/hwcap.h b/arch/riscv/include/asm/hwcap.h
+> >>> index 1f2d2599c655..b1896dade74c 100644
+> >>> --- a/arch/riscv/include/asm/hwcap.h
+> >>> +++ b/arch/riscv/include/asm/hwcap.h
+> >>> @@ -80,6 +80,7 @@
+> >>>  #define RISCV_ISA_EXT_ZFA		71
+> >>>  #define RISCV_ISA_EXT_ZTSO		72
+> >>>  #define RISCV_ISA_EXT_ZACAS		73
+> >>> +#define RISCV_ISA_EXT_ZIMOP		74
+> >>
+> >> Since my changes for removing xandespmu haven't landed here yet I think
+> >> you should keep RISCV_ISA_EXT_XANDESPMU in the diff here and make
+> >> RISCV_ISA_EXT_ZIMOP have a key of 75. Palmer can probably resolve the
+> >> conflicting keys when these two series are merged.
+> >>
+> >> - Charlie
+> > 
+> > I missed that other patches in this series were based off my
+> > xtheadvector changes. It's not in the cover letter that there is a
+> > dependency though. What do you need from that series for this series to
+> > work?
+> 
+> Hey Charlie, I'm not based directly on any of your series, but on
+> riscv/for-next which probably already contains your patches.
+> 
+> Clément
 
-Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
----
- arch/arm/configs/imx_v6_v7_defconfig | 5 +++++
- 1 file changed, 5 insertions(+)
+There was some churn here so I didn't expect those to be merged, it
+looks like a subset of the patches were added to riscv/for-next, sorry
+for the confusion!
 
-diff --git a/arch/arm/configs/imx_v6_v7_defconfig b/arch/arm/configs/imx_v6_v7_defconfig
-index 8e93e637ee139..61206ac584088 100644
---- a/arch/arm/configs/imx_v6_v7_defconfig
-+++ b/arch/arm/configs/imx_v6_v7_defconfig
-@@ -133,6 +133,7 @@ CONFIG_SMSC911X=y
- # CONFIG_NET_VENDOR_STMICRO is not set
- CONFIG_MICREL_PHY=y
- CONFIG_AT803X_PHY=y
-+CONFIG_DP83867_PHY=y
- CONFIG_CAN_FLEXCAN=y
- CONFIG_USB_PEGASUS=m
- CONFIG_USB_RTL8150=m
-@@ -180,6 +181,7 @@ CONFIG_TOUCHSCREEN_SX8654=y
- CONFIG_TOUCHSCREEN_COLIBRI_VF50=y
- CONFIG_INPUT_MISC=y
- CONFIG_INPUT_MMA8450=y
-+CONFIG_INPUT_GPIO_BEEPER=m
- CONFIG_SERIO_SERPORT=m
- # CONFIG_LEGACY_PTYS is not set
- CONFIG_SERIAL_IMX=y
-@@ -211,6 +213,7 @@ CONFIG_GPIO_SIOX=m
- CONFIG_GPIO_VF610=y
- CONFIG_GPIO_MAX732X=y
- CONFIG_GPIO_PCA953X=y
-+CONFIG_GPIO_PCA953X_IRQ=y
- CONFIG_GPIO_PCF857X=y
- CONFIG_GPIO_BD71815=y
- CONFIG_GPIO_STMPE=y
-@@ -226,6 +229,7 @@ CONFIG_RN5T618_POWER=m
- CONFIG_SENSORS_MC13783_ADC=y
- CONFIG_SENSORS_GPIO_FAN=y
- CONFIG_SENSORS_IIO_HWMON=y
-+CONFIG_SENSORS_LM75=m
- CONFIG_SENSORS_PWM_FAN=y
- CONFIG_SENSORS_SY7636A=y
- CONFIG_THERMAL_STATISTICS=y
-@@ -282,6 +286,7 @@ CONFIG_DRM_PANEL_LVDS=y
- CONFIG_DRM_PANEL_SIMPLE=y
- CONFIG_DRM_PANEL_EDP=y
- CONFIG_DRM_PANEL_SEIKO_43WVF1G=y
-+CONFIG_DRM_LVDS_CODEC=m
- CONFIG_DRM_TI_TFP410=y
- CONFIG_DRM_DW_HDMI_AHB_AUDIO=m
- CONFIG_DRM_DW_HDMI_CEC=y
--- 
-2.34.1
+Reviewed-by: Charlie Jenkins <charlie@rivosinc.com>
 
+> 
+> > 
+> > - Charlie
+> > 
+> >>
+> >>>  
+> >>>  #define RISCV_ISA_EXT_XLINUXENVCFG	127
+> >>>  
+> >>> diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeature.c
+> >>> index 2993318b8ea2..41f8ae22e7a0 100644
+> >>> --- a/arch/riscv/kernel/cpufeature.c
+> >>> +++ b/arch/riscv/kernel/cpufeature.c
+> >>> @@ -241,6 +241,7 @@ const struct riscv_isa_ext_data riscv_isa_ext[] = {
+> >>>  	__RISCV_ISA_EXT_DATA(zihintntl, RISCV_ISA_EXT_ZIHINTNTL),
+> >>>  	__RISCV_ISA_EXT_DATA(zihintpause, RISCV_ISA_EXT_ZIHINTPAUSE),
+> >>>  	__RISCV_ISA_EXT_DATA(zihpm, RISCV_ISA_EXT_ZIHPM),
+> >>> +	__RISCV_ISA_EXT_DATA(zimop, RISCV_ISA_EXT_ZIMOP),
+> >>>  	__RISCV_ISA_EXT_DATA(zacas, RISCV_ISA_EXT_ZACAS),
+> >>>  	__RISCV_ISA_EXT_DATA(zfa, RISCV_ISA_EXT_ZFA),
+> >>>  	__RISCV_ISA_EXT_DATA(zfh, RISCV_ISA_EXT_ZFH),
+> >>> -- 
+> >>> 2.43.0
+> >>>
+> >>>
+> >>> _______________________________________________
+> >>> linux-riscv mailing list
+> >>> linux-riscv@lists.infradead.org
+> >>> http://lists.infradead.org/mailman/listinfo/linux-riscv
+> >>
 
