@@ -1,140 +1,188 @@
-Return-Path: <linux-kernel+bounces-194804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23F368D424F
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 02:22:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B29BD8D4252
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 02:23:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 552F41C2144D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 00:22:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A764B21C88
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 00:23:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1004C8C06;
-	Thu, 30 May 2024 00:22:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E51A848A;
+	Thu, 30 May 2024 00:23:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b="VrM+HlWy"
-Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HsvZMt/e"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 477DD23B1
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 00:22:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DF94DDA0;
+	Thu, 30 May 2024 00:23:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717028557; cv=none; b=Q+FYTBDUYWnCtng1YX+vMltWGrWv0Zpv1OJqCERNWJn8IZvno15F9yI/0YSzi0o+IiduelbCgASxY82rnODUMezIRpDeXsm5Dm1iRkhdlkf5lTnuj30LQCimdaCIlZF4A9Xbwn2uyeBdI1naNNwKOMTIcNdqktYXOMdQLTujysQ=
+	t=1717028608; cv=none; b=O/zh4SFFTojc8/wUc6vuZ3UvUe2851YtuKTqjawGiIia2ViqzVyvlstqvTeRIKQeCxpgYJ68NpP2oj2D5CSSfiOYAgMcLaS3TY9384TkvlGDq+mBHtwNqTC5G1GG9bXB/Ele2ASoQSpHCRk+r9xha94Lywh8zDMBz/76ekrYHQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717028557; c=relaxed/simple;
-	bh=3YvoyIyeHlPcQ+qP7FZ8wCiJvObylauJHrD8vHHeh8w=;
-	h=Date:From:Subject:To:Cc:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=L2MSsEEKdtafMZqth2El8Rp3ioKdzldfZAf5EufZAgQh9881VGPYjwmKfBvBVQWNYOVKRYBqXFjzhy2JWZ9DrTtHcuMRiUzdj6pmq2PhgvijGs/hMxeD4elk7bXOd2GcF0S+64raxEkQgzR059nf20t1EpEfM9n1I87uHC6qBxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool; spf=pass smtp.mailfrom=packett.cool; dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b=VrM+HlWy; arc=none smtp.client-ip=95.215.58.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=packett.cool
-X-Envelope-To: mehdi.djait.k@gmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=packett.cool;
-	s=key1; t=1717028553;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WWdQIaU8VD8eDUpjBsSBJEcY19/AoaLeCk5Wvm3mzf0=;
-	b=VrM+HlWyax8yE8du0ddSo7hL+gPaJ8485nub0XbhB1+7vFVx4hVHwMe1j9m49RIHfW3cFC
-	kOEgzpgTMwI9hjkZXf84Nf96rgNQdVpl9JEuyiShO8RzjjP2emOHh/aaqOiPAUy8HsDCB0
-	kzcUkuendu4YJhlifvv/nte9ZUCmvgk9gTSypXQU2eB0QkwsKpCXc5y7M326dsLT/mhkEi
-	01p5j+N0h1ugqFEYBrqJw6QWtniSz7l+lQmzEIiJaLjriJYgbEJhfNCTdHN5xGUrBAJUnw
-	PnwagxmnvWaRtys58OOjQjgznNQh18K6wEBI5216PvVYbfaw8O3zTeAYVKzpiA==
-X-Envelope-To: mchehab@kernel.org
-X-Envelope-To: heiko@sntech.de
-X-Envelope-To: hverkuil-cisco@xs4all.nl
-X-Envelope-To: krzysztof.kozlowski+dt@linaro.org
-X-Envelope-To: robh+dt@kernel.org
-X-Envelope-To: conor+dt@kernel.org
-X-Envelope-To: linux-media@vger.kernel.org
-X-Envelope-To: devicetree@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: thomas.petazzoni@bootlin.com
-X-Envelope-To: alexandre.belloni@bootlin.com
-X-Envelope-To: maxime.chevallier@bootlin.com
-X-Envelope-To: paul.kocialkowski@bootlin.com
-X-Envelope-To: michael.riesch@wolfvision.net
-X-Envelope-To: laurent.pinchart@ideasonboard.com
-X-Envelope-To: mehdi.djait@bootlin.com
-Date: Wed, 29 May 2024 21:22:07 -0300
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Val Packett <val@packett.cool>
-Subject: Re: [RESEND Patch v13 2/3] media: rockchip: Add a driver for
- Rockchip's camera interface
-To: Mehdi Djait <mehdi.djait.k@gmail.com>
-Cc: mchehab@kernel.org, heiko@sntech.de, hverkuil-cisco@xs4all.nl,
-	krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org, conor+dt@kernel.org,
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
-	alexandre.belloni@bootlin.com, maxime.chevallier@bootlin.com,
-	paul.kocialkowski@bootlin.com, michael.riesch@wolfvision.net,
-	laurent.pinchart@ideasonboard.com, Mehdi Djait <mehdi.djait@bootlin.com>
-Message-Id: <VOV9ES.1808A7M5SYMM3@packett.cool>
-In-Reply-To: <715d89214d1ed6a8bb16cbb6268718a737485560.1707677804.git.mehdi.djait.k@gmail.com>
-References: <cover.1707677804.git.mehdi.djait.k@gmail.com>
-	<715d89214d1ed6a8bb16cbb6268718a737485560.1707677804.git.mehdi.djait.k@gmail.com>
+	s=arc-20240116; t=1717028608; c=relaxed/simple;
+	bh=QZpWvBQm5wa1ZfmIbuhChOcTaeWGKOXgUukqfa9ROgQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=OASLG2jtcElILIQhPX04ep32BzYmwGOFXUEFDeeAma5wDBYVTiDyE801hxJ58FajKcBYK3LWftzC3b1pcUpALbiYG5UwAF+vVkFBCH+3v7vWERuyUeHFUbMRSCpILMOyO6+Un8/iJATJvzltvfyGfEMVJC7H71O3L7vxUONPDX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HsvZMt/e; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44TJElIn023423;
+	Thu, 30 May 2024 00:23:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	gnCcEVcIOLG+Va5Q/fAdIlKwhUCGBARo+6jRoxzbDbw=; b=HsvZMt/eQMLXHu2U
+	7ZFLrBT1WxlzrIQI2C5jOKmwXjAqu4wpd8NJQgwwjGxAcCUh61m9LlMvCYkTnMcp
+	OVe3SvtHDU57MFb5rKP9WR9j5jpOzOo8T3n5StJybsJI0SjLhtTR5yzcgWa1MbhA
+	uzOTiGHP9ezIzkvV4CbTCqTF36mR0PHapnS42sfbEZIRGhSM4MzwTxbv89GXTcPM
+	fcww1uj/7bTkFc7MWdPzu35MQDVIKiYNNW0EeWwu+WGnBOKgZhJipsqebKgP56Vv
+	TExx5gApDUK2qot4X+ngslbNW49C+o+cqr1z03q2+DhxeH1gC3thihOJdyr7hlCY
+	tYwTYA==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yb9yjaqxw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 30 May 2024 00:23:23 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44U0NLRN010008
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 30 May 2024 00:23:21 GMT
+Received: from [10.239.132.204] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 29 May
+ 2024 17:23:16 -0700
+Message-ID: <2701e669-3dc3-43c5-93e3-c64dbb2344a9@quicinc.com>
+Date: Thu, 30 May 2024 08:23:14 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=windows-1251; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Migadu-Flow: FLOW_OUT
-
-Hi,
-
-On Sun, Feb 11 2024 at 20:03:31 +01:00:00, Mehdi Djait=20
-<mehdi.djait.k@gmail.com> wrote:
-> This introduces a V4L2 driver for the Rockchip CIF video capture=20
-> controller.
->=20
-> This controller can be found on RK3066, PX30, RK1808, RK3128 and=20
-> RK3288,
-> but for now it's only been tested on the PX30.
-
-I've been testing it on an RK3066 tablet I'm bringing up mainline on,=20
-recently figured out the clock situation that made the cameras appear=20
-on I2C and got a camera driver to attach, but still not getting a frame=20
-and will need to debug more.. Since you're familiar with the hardware,=20
-could you quickly tell me what exactly causes the CIF interrupt to=20
-fire? Is it a signal from the camera?
-
-Anyway, two things I noticed with the code:
-
-> +static int cif_enum_input(struct file *file, void *priv,
-> +			  struct v4l2_input *input)
-> +{
-> +	struct cif_stream *stream =3D video_drvdata(file);
-> +	struct v4l2_subdev *sd =3D stream->cifdev->remote.sd;
-> +	int ret;
-> +
-> +	if (input->index > 0)
-> +		return -EINVAL;
-> +
-> +	ret =3D v4l2_subdev_call(sd, video, g_input_status, &input->status);
-> +	if (ret && ret !=3D -EOPNOTSUPP)
-> +		return ret;
-
-v4l2_subdev_call actually returns -ENOIOCTLCMD when the camera driver=20
-does not handle the requested call.
-
-> +static int cif_plat_probe(struct platform_device *pdev)
-> +{
-[=85]
-> +	ret =3D devm_clk_bulk_get(dev, cif_dev->match_data->clks_num,
-> +				cif_dev->match_data->clks);
-
-This looks like it's just modifying the `static` clocks array shared=20
-between all instances of the driver and not copying the clock=20
-references into the instance's private struct.
-
-Thanks,
-~val
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] arm64: dts: qcom: sm8550: Remove usb default
+ dr_mode
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: <andersson@kernel.org>, <konrad.dybcio@linaro.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>
+References: <20240529100256.3158447-1-quic_tengfan@quicinc.com>
+ <20240529100256.3158447-3-quic_tengfan@quicinc.com>
+ <ugrhu62zhh5u6bdhnik3sphwvnwrttyin3kd2ae7i7g5mahcsj@hiimi2uorauh>
+From: Tengfei Fan <quic_tengfan@quicinc.com>
+In-Reply-To: <ugrhu62zhh5u6bdhnik3sphwvnwrttyin3kd2ae7i7g5mahcsj@hiimi2uorauh>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 4P3HXBKjVYB0jOxYF-eFGw1rE_sLynp9
+X-Proofpoint-ORIG-GUID: 4P3HXBKjVYB0jOxYF-eFGw1rE_sLynp9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-29_16,2024-05-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ adultscore=0 mlxscore=0 phishscore=0 mlxlogscore=502 spamscore=0
+ clxscore=1015 impostorscore=0 bulkscore=0 suspectscore=0 malwarescore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405300000
 
 
+
+On 5/29/2024 8:49 PM, Dmitry Baryshkov wrote:
+> On Wed, May 29, 2024 at 06:02:56PM +0800, Tengfei Fan wrote:
+>> Otg is default usb dr_mode, so this property can be removed.
+> 
+> OTG, not Otg.
+
+I will update Otg to OTG.
+
+> 
+> With that fixed:
+> 
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> 
+>>
+>> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
+>> ---
+>>   arch/arm64/boot/dts/qcom/sm8550-hdk.dts                     | 4 ----
+>>   arch/arm64/boot/dts/qcom/sm8550-mtp.dts                     | 4 ----
+>>   arch/arm64/boot/dts/qcom/sm8550-qrd.dts                     | 4 ----
+>>   arch/arm64/boot/dts/qcom/sm8550-sony-xperia-yodo-pdx234.dts | 4 ----
+>>   4 files changed, 16 deletions(-)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/sm8550-hdk.dts b/arch/arm64/boot/dts/qcom/sm8550-hdk.dts
+>> index 411de3451db8..e0dc03a97771 100644
+>> --- a/arch/arm64/boot/dts/qcom/sm8550-hdk.dts
+>> +++ b/arch/arm64/boot/dts/qcom/sm8550-hdk.dts
+>> @@ -1253,10 +1253,6 @@ &usb_1 {
+>>   	status = "okay";
+>>   };
+>>   
+>> -&usb_1_dwc3 {
+>> -	dr_mode = "otg";
+>> -};
+>> -
+>>   &usb_1_dwc3_hs {
+>>   	remote-endpoint = <&pmic_glink_hs_in>;
+>>   };
+>> diff --git a/arch/arm64/boot/dts/qcom/sm8550-mtp.dts b/arch/arm64/boot/dts/qcom/sm8550-mtp.dts
+>> index 84d16227ef80..26dfca0c3e05 100644
+>> --- a/arch/arm64/boot/dts/qcom/sm8550-mtp.dts
+>> +++ b/arch/arm64/boot/dts/qcom/sm8550-mtp.dts
+>> @@ -946,10 +946,6 @@ &usb_1 {
+>>   	status = "okay";
+>>   };
+>>   
+>> -&usb_1_dwc3 {
+>> -	dr_mode = "otg";
+>> -};
+>> -
+>>   &usb_1_dwc3_hs {
+>>   	remote-endpoint = <&pmic_glink_hs_in>;
+>>   };
+>> diff --git a/arch/arm64/boot/dts/qcom/sm8550-qrd.dts b/arch/arm64/boot/dts/qcom/sm8550-qrd.dts
+>> index e20c6240f76d..d27820fb5fc0 100644
+>> --- a/arch/arm64/boot/dts/qcom/sm8550-qrd.dts
+>> +++ b/arch/arm64/boot/dts/qcom/sm8550-qrd.dts
+>> @@ -1115,10 +1115,6 @@ &usb_1 {
+>>   	status = "okay";
+>>   };
+>>   
+>> -&usb_1_dwc3 {
+>> -	dr_mode = "otg";
+>> -};
+>> -
+>>   &usb_1_dwc3_hs {
+>>   	remote-endpoint = <&pmic_glink_hs_in>;
+>>   };
+>> diff --git a/arch/arm64/boot/dts/qcom/sm8550-sony-xperia-yodo-pdx234.dts b/arch/arm64/boot/dts/qcom/sm8550-sony-xperia-yodo-pdx234.dts
+>> index 6dd5232da9f9..85d487ef80a0 100644
+>> --- a/arch/arm64/boot/dts/qcom/sm8550-sony-xperia-yodo-pdx234.dts
+>> +++ b/arch/arm64/boot/dts/qcom/sm8550-sony-xperia-yodo-pdx234.dts
+>> @@ -737,10 +737,6 @@ &usb_1 {
+>>   	status = "okay";
+>>   };
+>>   
+>> -&usb_1_dwc3 {
+>> -	dr_mode = "otg";
+>> -};
+>> -
+>>   &usb_1_dwc3_hs {
+>>   	remote-endpoint = <&pmic_glink_hs_in>;
+>>   };
+>> -- 
+>> 2.25.1
+>>
+> 
+
+-- 
+Thx and BRs,
+Tengfei Fan
 
