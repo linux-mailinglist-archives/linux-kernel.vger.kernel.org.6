@@ -1,82 +1,73 @@
-Return-Path: <linux-kernel+bounces-195555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 328A78D4E77
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:56:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B67598D4E80
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 16:58:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C2FFB23276
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:56:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48DF3B22D40
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 14:58:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD67117D892;
-	Thu, 30 May 2024 14:55:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D428517D892;
+	Thu, 30 May 2024 14:58:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="c9z0U+yQ"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="ukpzFHxV"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 254B6186E38
-	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 14:55:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C827A186E5C
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 14:58:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717080953; cv=none; b=SVro2NBH5y17wd+1tynJSOEjjDx7PN5m6zm14UnPRW9TrspIkBZdrrfkvHFOGrYVvUHZhRYEczzPaoJOYvH/W6DXYQNDvGHPHTlY3jDM+tDucbJrRJxkuIBn7unltPVzSIjUeVxk/nKO7KaQz5r1207rmH8jN2xW634LC5XF6CU=
+	t=1717081127; cv=none; b=m0Ll2KAnZuItUmOhZ7w66pme90b2ZyV3KYUpR1oc0OsD68VchHJRpUGeuwEyelXGkJ4QKBtwzWwf4S1/+0AmZ7jKgvI8YJ1YtKQVGUpybpYJUXCjjDk/a+4eZLjHs37fEbTaY0CecvP3pKlsC0wkos3oPvGxqm5tQ/BFszHVYGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717080953; c=relaxed/simple;
-	bh=w1Nw0nZzuw9ioh1PWzH+4KPx2457IuPjvzKZkwIX78M=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nGC5Ph/ltfwcHu43Uzvf6MpZEHRi34IYe5EpSIGX/HCcFJXDQU0CaqrORDoctFeoVNjWh1AOOvkQtEjojhWu6dWFnI9VY8a4g/pMmSd4RaSK8ccbQZ4gN+B1AdxyRJeaa7kQzhiD1z+02hQDXzxZiaPSI8Vl1AZup2EcXUpjblU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=c9z0U+yQ; arc=none smtp.client-ip=209.85.128.54
+	s=arc-20240116; t=1717081127; c=relaxed/simple;
+	bh=sdD5EKvPawDfwF33sGxeusqZlqiuH15jx7QlM/a78pU=;
+	h=Subject:Date:Message-ID:MIME-Version:Cc:From:To; b=etHI6cXzigntheGRHU/QJi4RG4gfxFUw1a845IycCeq84U+Amd52dioKDIOgKvTFMuD+RK0St8lwKDLLp0y3xblwfmr/oXwD7Wwo0m4rX4fKoz8+gWHiMpoZSU/XnJDOIRwY09m/KgRi0IqCM9mu8OkOVFO8SgA5/hQJuHhEqmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=ukpzFHxV; arc=none smtp.client-ip=209.85.214.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4211245e889so9588115e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 07:55:50 -0700 (PDT)
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1f62fae8c1aso620425ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 07:58:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1717080949; x=1717685749; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=kF9KjPkj/1zZtp+GEuMgpwBghf6s7Q8QVJOIdZrAtlI=;
-        b=c9z0U+yQiFfVjcvZDlzxnlt1gtxEOLOyJNThJloNkvL3MTT+wDsBy2n3P6QRdh+49q
-         qb/hD/cO9JPIhH4+yVd4POoHf0wR72CiAKJgD8KNXdWLeKUMpriLXydSA2Ei+X8EtxSw
-         0pSYdiEyA98YRnMbK8u8wcrUHl54RF80Wsfm0P5djdoLahEOHgOsEbfsrV6QGT6s6g+w
-         xN2bfu1o4iGKNTxdy3ZQrdaJiqNy20Qgm5XueYeb52QFQwfp10Azz3rbVfSw4zj8Pl9P
-         v8+6ygWLRpAJzmNf7mL35wkJQUywwejBckq+RK6E0rObNjKxkZWNfq8ZOW+jKwGdIZIA
-         cDbA==
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1717081125; x=1717685925; darn=vger.kernel.org;
+        h=to:from:cc:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:to:cc:subject:date:message-id:reply-to;
+        bh=l5khecYMdKDHw89iJpsW1yiXKEfGunwm3+6Z9OsK0so=;
+        b=ukpzFHxVSgxINPRQ7Si+DPOVZBMyXrt5b3d6ycfwB56rvGeUiX4s6JPM3P8eas05p6
+         BVicx51UH3pnosWWR6TqqDaQECVtUJzXKLl86JcbmKPX9U0vU3I21+XDMVoT5NoVVpDe
+         x8wUmzsOjvUaEiLFgIgZiQSq2WghFlNNahzl8vvLYckamoiyydc7e4M8xj5buPemQHQG
+         gWSViWRdh5mgJWyJB5gnNxXjOjw2BCe7iuwd602yzveGDw8GYuBlJmN1Y2FWSttn9Q9g
+         fY1bkRNeUuV4Kiv+iKkVbKJ81neNsZBV0vaW2sybSGPA4jKryCr8KnLlvuvGck6F8/tq
+         /Yag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717080949; x=1717685749;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1717081125; x=1717685925;
+        h=to:from:cc:content-transfer-encoding:mime-version:message-id:date
+         :subject:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=kF9KjPkj/1zZtp+GEuMgpwBghf6s7Q8QVJOIdZrAtlI=;
-        b=jdhKBiic2TnIlSvdD2EMqJFfB89yNFgASsv2hnEbXY/8JFX8Lysyxa2MrW/+Z+9vSQ
-         5mNlMNH3u4lzTaruogVjMWkt84Y7zEEGnD1/bEj+QKBVjxxjFIx+Y1p7i7IKeOUxHxdS
-         rO23hyQU9lF38A3G9sgEAkWSNcdLyoOHabmYqetJ7fH5kYFW2+U2a+T9J5V++dyDtX0V
-         IVbAHUxn59Yoqg1H8zm2ZY6m1tljijGxDejwVGXW4ubB9lYjXv7c/xoFGwGQsmPWUHLB
-         5gzwC9uhwYCIl6GmgAbV2wnkct5HQ0hjKOFusQzbd/rqql7pOiR/mh6nliLCQQvARDTh
-         SRZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXsx5FrOuj66BUdro9pKJJ2vBZnr8pHiOYWDW6qMY53QzUXgKSOthsxSBb5AIbfIHHQm2AnHXGNYnDxrrHDgeHzQVIdpm10y9MFtBRG
-X-Gm-Message-State: AOJu0YwVHmx1TBmNZLHWll7aB7a5HpMkUpYK3F6jMQw2o3/zHVHc9mck
-	4L+LR4IME8Vwu0GxWOcnZEe32NbISXicp7VhHViyekGFQOBtEfwhL3NF8EMd5AI=
-X-Google-Smtp-Source: AGHT+IG9d2Dhr06uBPNVTlyZtrq3fR1la7qkTtdMZ9XARQizEYKDs2DfO+7rmvJ5eCSaU68b9UjyXw==
-X-Received: by 2002:a05:600c:4f8f:b0:418:f991:713f with SMTP id 5b1f17b1804b1-4212781b9bbmr23791285e9.23.1717080949418;
-        Thu, 30 May 2024 07:55:49 -0700 (PDT)
-Received: from localhost.localdomain (amontpellier-656-1-456-62.w92-145.abo.wanadoo.fr. [92.145.124.62])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-421270553c9sm27435975e9.8.2024.05.30.07.55.48
+        bh=l5khecYMdKDHw89iJpsW1yiXKEfGunwm3+6Z9OsK0so=;
+        b=Hug3uV3yoZx0qdXBGLHmKBdDVv8J68J6vH2+Heyj89XUhRa8b1r7l0ZkyoFOLIsHQt
+         JnCWpLZ1Ujay8lfiB4/UycgJ580rJU7IxnaY2anXk+JtMp2IoCgn7AZeLpkJbY2yQIXr
+         LMfWbB2yZEBfMR6fpWd6V0Qey76LX9Sp6vWGxVOWxVryN3ilojkG82f25knlDcuB5lS8
+         1tmVVj+zO0Y4dE+M6+H/bYHItkszB9eZedJoVgBb7LdA7Ch9pSn4AGjmFXP978USu+9x
+         FG3zaqpUhmPkFypTRsoXVWQII4Eg570aF+0olb5Lt2zLMUCfDp2Clytm6q72Q9q38HMr
+         kAyA==
+X-Forwarded-Encrypted: i=1; AJvYcCXAHmKn5JPxUd8MdtPkaAIOq9WFardf7JaLlVWUs2Emae+oFFN7tPd0YOIpkGQiH8DbU1wltJ9rK8oPx1mEQo90uiJl9epxkLANXYdq
+X-Gm-Message-State: AOJu0Yw51fGAnL2adARMpndFC+4T83IIwBRJ2BG9IHhRjJGFGXZRU8hz
+	qRYW+svdRPEA27jV2okaIGOda89pp+Rg8G+mXnA5t0WNWI+AWlL/QFe3vrgDlR8=
+X-Google-Smtp-Source: AGHT+IEKvEjoLbbrN4JdqK6X02tKZ1Vg/fjeNLYXxvvVYtupVhUWAkZyf5sli6+XANrywg1P87S/sw==
+X-Received: by 2002:a17:902:ea0b:b0:1f4:8190:33a5 with SMTP id d9443c01a7336-1f61a3dd9ebmr24276305ad.56.1717081124823;
+        Thu, 30 May 2024 07:58:44 -0700 (PDT)
+Received: from localhost ([50.145.13.30])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c967975sm119659155ad.152.2024.05.30.07.58.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 May 2024 07:55:49 -0700 (PDT)
-From: Alexandre Ghiti <alexghiti@rivosinc.com>
-To: Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Leonardo Bras <leobras@redhat.com>,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Andrea Parri <parri.andrea@gmail.com>
-Subject: [PATCH -fixes v2] riscv: Fix fully ordered LR/SC xchg[8|16]() implementations
-Date: Thu, 30 May 2024 16:55:46 +0200
-Message-Id: <20240530145546.394248-1-alexghiti@rivosinc.com>
-X-Mailer: git-send-email 2.39.2
+        Thu, 30 May 2024 07:58:44 -0700 (PDT)
+Subject: [PATCH] drm/amd/display: Increase frame-larger-than warning limit
+Date: Thu, 30 May 2024 07:57:42 -0700
+Message-ID: <20240530145741.7506-2-palmer@rivosinc.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,101 +75,49 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Cc: harry.wentland@amd.com, sunpeng.li@amd.com, Rodrigo.Siqueira@amd.com,
+  christian.koenig@amd.com, Xinhui.Pan@amd.com, airlied@gmail.com, daniel@ffwll.ch, Qingqing.Zhuo@amd.com,
+  nathan@kernel.org, Palmer Dabbelt <palmer@rivosinc.com>, hamza.mahfooz@amd.com,
+  chenhuacai@kernel.org, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+  linux-kernel@vger.kernel.org
+From: Palmer Dabbelt <palmer@rivosinc.com>
+To: alexander.deucher@amd.com
 
-The fully ordered versions of xchg[8|16]() using LR/SC lack the
-necessary memory barriers to guarantee the order.
+From: Palmer Dabbelt <palmer@rivosinc.com>
 
-Fix this by matching what is already implemented in the fully ordered
-versions of cmpxchg() using LR/SC.
+I get a handful of build errors along the lines of
 
-Suggested-by: Andrea Parri <parri.andrea@gmail.com>
-Reported-by: Andrea Parri <parri.andrea@gmail.com>
-Closes: https://lore.kernel.org/linux-riscv/ZlYbupL5XgzgA0MX@andrea/T/#u
-Fixes: a8ed2b7a2c13 ("riscv/cmpxchg: Implement xchg for variables of size 1 and 2")
-Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+    linux/drivers/gpu/drm/amd/amdgpu/../display/dc/dml/dcn32/display_mode_vba_32.c:58:13: error: stack frame size (2352) exceeds limit (2048) in 'DISPCLKDPPCLKDCFCLKDeepSleepPrefetchParametersWatermarksAndPerformanceCalculation' [-Werror,-Wframe-larger-than]
+    static void DISPCLKDPPCLKDCFCLKDeepSleepPrefetchParametersWatermarksAndPerformanceCalculation(
+                ^
+    linux/drivers/gpu/drm/amd/amdgpu/../display/dc/dml/dcn32/display_mode_vba_32.c:1724:6: error: stack frame size (2096) exceeds limit (2048) in 'dml32_ModeSupportAndSystemConfigurationFull' [-Werror,-Wframe-larger-than]
+    void dml32_ModeSupportAndSystemConfigurationFull(struct display_mode_lib *mode_lib)
+         ^
+
+as of 6.10-rc1.
+
+Signed-off-by: Palmer Dabbelt <palmer@rivosinc.com>
 ---
+ drivers/gpu/drm/amd/display/dc/dml/Makefile | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Changes in v2:
-- Remove the superfluous full barrier introduced in v1 for xchg32/64() (Andrea)
-- Use RISCV_FULL_BARRIER instead of the corresponding string (Andrea)
-
- arch/riscv/include/asm/cmpxchg.h | 22 ++++++++++++----------
- 1 file changed, 12 insertions(+), 10 deletions(-)
-
-diff --git a/arch/riscv/include/asm/cmpxchg.h b/arch/riscv/include/asm/cmpxchg.h
-index ddb002ed89de..808b4c78462e 100644
---- a/arch/riscv/include/asm/cmpxchg.h
-+++ b/arch/riscv/include/asm/cmpxchg.h
-@@ -10,7 +10,7 @@
+diff --git a/drivers/gpu/drm/amd/display/dc/dml/Makefile b/drivers/gpu/drm/amd/display/dc/dml/Makefile
+index c4a5efd2dda5..b2bd72e63734 100644
+--- a/drivers/gpu/drm/amd/display/dc/dml/Makefile
++++ b/drivers/gpu/drm/amd/display/dc/dml/Makefile
+@@ -62,9 +62,9 @@ endif
  
- #include <asm/fence.h>
+ ifneq ($(CONFIG_FRAME_WARN),0)
+ ifeq ($(filter y,$(CONFIG_KASAN)$(CONFIG_KCSAN)),y)
+-frame_warn_flag := -Wframe-larger-than=3072
++frame_warn_flag := -Wframe-larger-than=4096
+ else
+-frame_warn_flag := -Wframe-larger-than=2048
++frame_warn_flag := -Wframe-larger-than=3072
+ endif
+ endif
  
--#define __arch_xchg_masked(prepend, append, r, p, n)			\
-+#define __arch_xchg_masked(sc_sfx, prepend, append, r, p, n)		\
- ({									\
- 	u32 *__ptr32b = (u32 *)((ulong)(p) & ~0x3);			\
- 	ulong __s = ((ulong)(p) & (0x4 - sizeof(*p))) * BITS_PER_BYTE;	\
-@@ -25,7 +25,7 @@
- 	       "0:	lr.w %0, %2\n"					\
- 	       "	and  %1, %0, %z4\n"				\
- 	       "	or   %1, %1, %z3\n"				\
--	       "	sc.w %1, %1, %2\n"				\
-+	       "	sc.w" sc_sfx " %1, %1, %2\n"			\
- 	       "	bnez %1, 0b\n"					\
- 	       append							\
- 	       : "=&r" (__retx), "=&r" (__rc), "+A" (*(__ptr32b))	\
-@@ -46,7 +46,8 @@
- 		: "memory");						\
- })
- 
--#define _arch_xchg(ptr, new, sfx, prepend, append)			\
-+#define _arch_xchg(ptr, new, sc_sfx, swap_sfx, prepend,			\
-+		   sc_append, swap_append)				\
- ({									\
- 	__typeof__(ptr) __ptr = (ptr);					\
- 	__typeof__(*(__ptr)) __new = (new);				\
-@@ -55,15 +56,15 @@
- 	switch (sizeof(*__ptr)) {					\
- 	case 1:								\
- 	case 2:								\
--		__arch_xchg_masked(prepend, append,			\
-+		__arch_xchg_masked(sc_sfx, prepend, sc_append,		\
- 				   __ret, __ptr, __new);		\
- 		break;							\
- 	case 4:								\
--		__arch_xchg(".w" sfx, prepend, append,			\
-+		__arch_xchg(".w" swap_sfx, prepend, swap_append,	\
- 			      __ret, __ptr, __new);			\
- 		break;							\
- 	case 8:								\
--		__arch_xchg(".d" sfx, prepend, append,			\
-+		__arch_xchg(".d" swap_sfx, prepend, swap_append,	\
- 			      __ret, __ptr, __new);			\
- 		break;							\
- 	default:							\
-@@ -73,16 +74,17 @@
- })
- 
- #define arch_xchg_relaxed(ptr, x)					\
--	_arch_xchg(ptr, x, "", "", "")
-+	_arch_xchg(ptr, x, "", "", "", "", "")
- 
- #define arch_xchg_acquire(ptr, x)					\
--	_arch_xchg(ptr, x, "", "", RISCV_ACQUIRE_BARRIER)
-+	_arch_xchg(ptr, x, "", "", "",					\
-+		   RISCV_ACQUIRE_BARRIER, RISCV_ACQUIRE_BARRIER)
- 
- #define arch_xchg_release(ptr, x)					\
--	_arch_xchg(ptr, x, "", RISCV_RELEASE_BARRIER, "")
-+	_arch_xchg(ptr, x, "", "", RISCV_RELEASE_BARRIER, "", "")
- 
- #define arch_xchg(ptr, x)						\
--	_arch_xchg(ptr, x, ".aqrl", "", "")
-+	_arch_xchg(ptr, x, ".rl", ".aqrl", "", RISCV_FULL_BARRIER, "")
- 
- #define xchg32(ptr, x)							\
- ({									\
 -- 
-2.39.2
+2.45.1
 
 
