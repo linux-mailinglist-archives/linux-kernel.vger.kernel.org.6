@@ -1,49 +1,92 @@
-Return-Path: <linux-kernel+bounces-195230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BB578D494A
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 12:10:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 513FD8D4952
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 12:12:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C72228879A
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 10:10:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B62471F23936
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 10:12:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A36D176AA1;
-	Thu, 30 May 2024 10:10:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14238176AC8;
+	Thu, 30 May 2024 10:11:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RTNgVc1C"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="NAnUriZG"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0E8418399A;
-	Thu, 30 May 2024 10:10:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ECE91761AA
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 10:11:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717063829; cv=none; b=KTDxrMasa1tE++36YoHU3tOnfEH0WA9eHKR1WAbAnn28PBKh3NOaKFp4H+ECQ5snCCO6vVCCuR7nOpYqiUfoxFA0aTvx3KbE8pHM6YdggmdDtfUF3zr49RID7PDMkIbYll4X0u/Rsp8jXpqgSDXD928Yk/ClGVctW645QNfmKRg=
+	t=1717063914; cv=none; b=DLtQep+Wb1iZI+bnc+/x2r3GUpNZfpDbFO+dNS4pHuMuSy/zht8dOnhocyBj1ydZ1tBMeTLD3Duhljp4637/9MeDlWEMuLqrejwY9kAz2NSHS5xKkJ/GhT4zrBSneGnh821GYSoY16BxfgHxL3P7TbjxZjW5E8UBCdJq61roD6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717063829; c=relaxed/simple;
-	bh=0YkPHJJ6K449wpbhi1+CxFc/+STh7XNQcY/cT/hnD+U=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=oEY9W5j8uxT8BkQzFo4mWZ5LZ5m4ewzeGgprsdMQGHILTjqmqRdq0Vl3l23IMFg8jUymzRIy/+Lv+3jknQHcBXEm/ySUia0jCAq3cwuBOLyMOulXQBSotVREnDIPdGk66jhQN1GASccsQqGlTmlu07FcjuCRVjM+BZwdaPTOKPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RTNgVc1C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 02167C3277B;
-	Thu, 30 May 2024 10:10:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717063829;
-	bh=0YkPHJJ6K449wpbhi1+CxFc/+STh7XNQcY/cT/hnD+U=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=RTNgVc1CKxZ1Ww5Pmwez5c6dZ4ctr5vJemqyqD97lTlN6sqi7dh6WhlEpiOgwd330
-	 mD48TuQjp/mt3HSrbltNYY6wAIsY2Mys8QrXbLeAv+ny0aP9fqbpGPeTCCuBOmZMbc
-	 BdnJHcEDSElVSb0X+qcVdPKkGvcKTfm/yrUSnn6u/Ct69w3yJnrmPxJp8cF2N8QbMc
-	 gB8RL2VP/a7GkHHezjEwd59Ve8YAjHfJcH4mhlIihS2D0RVCePyVctoEL2lNrdzJJt
-	 gRQxUpbgwjrJmeA7wN/GeaqIrtecOhvd7Z+dskz+5900MNIfIniaquXIMf5/P7+jjT
-	 5kqZfjMgjKhMg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id E52B3CF21F2;
-	Thu, 30 May 2024 10:10:28 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1717063914; c=relaxed/simple;
+	bh=92/FkRio4/WYku6w5ld6Cy4lbH0kdpRAHSqAB0MsR34=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ECaE0CtB51nLNqkbFuttZKgE8xFgcFzP/TpnUFA+IgTgkfU81Sm28RYcfyAjDmV+OiqMdEc9pN07kHTWIOrJZXzXlotdujvt/bMABzKDv6WQ3/qBWl5R+KlqCiLdLyEqdmja1fCS+0DdBmONL9GQrCe0YCU5bo3EXgixsm7zz/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=NAnUriZG; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-57a2406f951so387748a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 03:11:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1717063910; x=1717668710; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WxB6vVIAxKAJRnWfHDwiheUcKLANimvzznXfGKQj6Bk=;
+        b=NAnUriZG0gLKvDDis9XdftbiHPRbndNSK6RAxmFZAEgNYSOE70wqO7zV0k7ixVPVli
+         hYuhBTfVnj6fU9v2ssgBrNlmfayNPjQfEkm7sCm/oBQ1PKYD96rh8rz/qiV4W3fdu9xX
+         8tKxZs4xWLF+v7TSeHvr+f1uDOns7DhbL3TXyzxyzS655CKrr2yMTLrtdvHfWcX2BQRY
+         +zShPYfefJwh+IV00RE6HKXIQaV8QdWbOIxlIQVGEIeoc/AR0XJ1woDV3Q3481yXkuQY
+         3ET8FbdvZoQ5AJOd2r95YkrlftyIkRMJi1n05sPtYhhgCzC4HWY16hcCycx8aC2Q3vF8
+         zB8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717063910; x=1717668710;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WxB6vVIAxKAJRnWfHDwiheUcKLANimvzznXfGKQj6Bk=;
+        b=r+3Q50QTd8khg3jBrfOUka4lFVjwq0qSuobvCaeXW4g01gWfT9FCQcRTUGDA+Dvpvv
+         D69dJxXdAT13FeriYxdcz+YYqVmdOvWUR7DP7lon/ARP/uVSq2/bz/ZHBD4KrB3NiWOR
+         DCxAHlXvLr0Qdi2rpY0e+kg3QOQXnnBRPPQX5kgfJoFGozcXLAkyuepKP7lGPuJ9p5Vx
+         +qQNODwk5gbSmeA+XDce1oN1hDXvs48SdVLCgmsMc4FFO4mSfOIUMV9ETqyGDNGn6ziY
+         6EmEQNl1JHdQfuuKsa94tjxWOMNfBj/7/pzYnwnmViK290SRJK7ybMcT77sQXgyuAOmG
+         A0XA==
+X-Forwarded-Encrypted: i=1; AJvYcCVG2+6BH9dWhIFUiCgmFXRfzQCeP3Z11+hOYRyjakIgO7HtnvW/AJwFkIUyYOB3dUJH9BtFNQZfhNS6rL/l5RRL7NFKPZnq6p3r7X7L
+X-Gm-Message-State: AOJu0YzX9PtG4m88VI2Vu02rCZDX02TVbzEP+5FaskixkzDom50BiFf4
+	0pmREArqu7kEd2jZhS+1h9RoCU/d+Hj050GyhFI/p5gAQLxonbkrttZ+/lDdplk=
+X-Google-Smtp-Source: AGHT+IGAqVcwnQPl/3CgZD4XLSZ6kROjcJ3UsjrJVNy/fPCBJ8FCqFEl8EuImSsnZcB+tM1Cmf75Lg==
+X-Received: by 2002:a50:9b57:0:b0:578:610d:b889 with SMTP id 4fb4d7f45d1cf-57a17806552mr1075945a12.24.1717063910225;
+        Thu, 30 May 2024 03:11:50 -0700 (PDT)
+Received: from localhost (host-87-16-233-11.retail.telecomitalia.it. [87.16.233.11])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-579c3bbee4asm6727551a12.76.2024.05.30.03.11.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 May 2024 03:11:49 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kamal Dasu <kamal.dasu@broadcom.com>,
+	Al Cooper <alcooperx@gmail.com>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	devicetree@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-mmc@vger.kernel.org
+Cc: Andrea della Porta <andrea.porta@suse.com>
+Subject: [PATCH v5 0/4] Add minimal boot support for Raspberry Pi 5
+Date: Thu, 30 May 2024 12:11:57 +0200
+Message-ID: <cover.1717061147.git.andrea.porta@suse.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,78 +94,133 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v2] ipvlan: Dont Use skb->sk in
- ipvlan_process_v{4,6}_outbound
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171706382893.341.2212459840285450534.git-patchwork-notify@kernel.org>
-Date: Thu, 30 May 2024 10:10:28 +0000
-References: <20240529095633.613103-1-yuehaibing@huawei.com>
-In-Reply-To: <20240529095633.613103-1-yuehaibing@huawei.com>
-To: Yue Haibing <yuehaibing@huawei.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, maheshb@google.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
 
-Hello:
+Hi,
 
-This patch was applied to netdev/net.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
+This patchset adds minimal support for the Broadcom BCM2712 SoC and for
+the on-board SDHCI controller on Broadcom BCM2712 in order to make it
+possible to boot (particularly) a Raspberry Pi 5 from SD card and get a
+console through uart.
+Changes to arm64/defconfig are not needed since the actual options work
+as they are.
+This work is heavily based on downstream contributions.
 
-On Wed, 29 May 2024 17:56:33 +0800 you wrote:
-> Raw packet from PF_PACKET socket ontop of an IPv6-backed ipvlan device will
-> hit WARN_ON_ONCE() in sk_mc_loop() through sch_direct_xmit() path.
-> 
-> WARNING: CPU: 2 PID: 0 at net/core/sock.c:775 sk_mc_loop+0x2d/0x70
-> Modules linked in: sch_netem ipvlan rfkill cirrus drm_shmem_helper sg drm_kms_helper
-> CPU: 2 PID: 0 Comm: swapper/2 Kdump: loaded Not tainted 6.9.0+ #279
-> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
-> RIP: 0010:sk_mc_loop+0x2d/0x70
-> Code: fa 0f 1f 44 00 00 65 0f b7 15 f7 96 a3 4f 31 c0 66 85 d2 75 26 48 85 ff 74 1c
-> RSP: 0018:ffffa9584015cd78 EFLAGS: 00010212
-> RAX: 0000000000000011 RBX: ffff91e585793e00 RCX: 0000000002c6a001
-> RDX: 0000000000000000 RSI: 0000000000000040 RDI: ffff91e589c0f000
-> RBP: ffff91e5855bd100 R08: 0000000000000000 R09: 3d00545216f43d00
-> R10: ffff91e584fdcc50 R11: 00000060dd8616f4 R12: ffff91e58132d000
-> R13: ffff91e584fdcc68 R14: ffff91e5869ce800 R15: ffff91e589c0f000
-> FS:  0000000000000000(0000) GS:ffff91e898100000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f788f7c44c0 CR3: 0000000008e1a000 CR4: 00000000000006f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
-> <IRQ>
->  ? __warn (kernel/panic.c:693)
->  ? sk_mc_loop (net/core/sock.c:760)
->  ? report_bug (lib/bug.c:201 lib/bug.c:219)
->  ? handle_bug (arch/x86/kernel/traps.c:239)
->  ? exc_invalid_op (arch/x86/kernel/traps.c:260 (discriminator 1))
->  ? asm_exc_invalid_op (./arch/x86/include/asm/idtentry.h:621)
->  ? sk_mc_loop (net/core/sock.c:760)
->  ip6_finish_output2 (net/ipv6/ip6_output.c:83 (discriminator 1))
->  ? nf_hook_slow (net/netfilter/core.c:626)
->  ip6_finish_output (net/ipv6/ip6_output.c:222)
->  ? __pfx_ip6_finish_output (net/ipv6/ip6_output.c:215)
->  ipvlan_xmit_mode_l3 (drivers/net/ipvlan/ipvlan_core.c:602) ipvlan
->  ipvlan_start_xmit (drivers/net/ipvlan/ipvlan_main.c:226) ipvlan
->  dev_hard_start_xmit (net/core/dev.c:3594)
->  sch_direct_xmit (net/sched/sch_generic.c:343)
->  __qdisc_run (net/sched/sch_generic.c:416)
->  net_tx_action (net/core/dev.c:5286)
->  handle_softirqs (kernel/softirq.c:555)
->  __irq_exit_rcu (kernel/softirq.c:589)
->  sysvec_apic_timer_interrupt (arch/x86/kernel/apic/apic.c:1043)
-> 
-> [...]
+Tested on Tumbleweed substituting the stock kernel with upstream one,
+either chainloading uboot+grub+kernel or directly booting the kernel
+from 1st stage bootloader. Steps to reproduce:
+- prepare an SD card from a Raspberry enabled raw image, mount the first
+  FAT partition.
+- make sure the FAT partition is big enough to contain the kernel,
+  anything bigger than 64Mb is usually enough, depending on your kernel
+  config options.
+- build the kernel and dtbs making sure that the support for your root
+  fs type is compiled as builtin.
+- copy the kernel image in your FAT partition overwriting the older one
+  (e.g. kernel*.img for Raspberry Pi OS or u-boot.bin for Tumbleweed).
+- copy arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb on FAT partition.
+- make sure you have a cmdline.txt file in FAT partition with the
+  following content:
+  # cat /boot/efi/cmdline.txt
+  root=/dev/mmcblk0p3 rootwait rw console=tty ignore_loglevel earlycon
+  console=ttyAMA10,115200
+- if you experience random SD issues during boot, try to set
+  initial_turbo=0 in config.txt.
 
-Here is the summary with links:
-  - [net,v2] ipvlan: Dont Use skb->sk in ipvlan_process_v{4,6}_outbound
-    https://git.kernel.org/netdev/net/c/b3dc6e8003b5
 
-You are awesome, thank you!
+Changes in V5:
+
+DTS:
+- axi node merged into soc node
+- redefined the mapping ranges of the soc node to have proper translation,
+  and a narrower address and size cell number for child nodes.Child nodes
+  reg properties adjusted accordingly
+- augemented the comment in 'gio_aon' node
+
+sdhci-brcmstb.c:
+- removed unused 'base_clk_mhz' variable
+
+
+Changes in V4:
+
+sdhci-brcmstb.c:
+- dropped the last 4 lines of sdhci_brcmstb_cfginit_2712() function
+  to avoid setting the SDIO_CFG_CQ_CAPABILITY register. The rationale
+  behind this can be found in [4] and subsequent comments
+
+DT-bindings:
+- simplified the compatible item list for 'brcm,bcm2712-sdhci' as per [5]
+
+
+Changes in V3:
+
+DTS:
+- uart0 renamed to uart10 to reflect the current indexing (ttyAMA10
+  and serial10)
+- updated the license to (GPL-2.0 OR MIT)
+- sd_io_1v8_reg 'states' property have second cells as decimal instead
+  of hex.
+- root node has size-cells=<2> now to accommodate for the DRAM controller
+  and the address bus mapping that goes beyond 4GB. As a consequence,
+  memory, axi and reserved-memory nodes have also size-cells=<2> and
+  subnodes reg and ranges properties have been updated accordingly
+- ranges property in 'axi' node has been fixed, reg properties of sdio1
+  and gicv2 subnodes have been adjusted according to the new mapping
+- 'interrupt-controller@7d517000' node is now enabled by default
+- dropped 'arm,cpu-registers-not-fw-configured' as it is no longer
+  relevant on A76 core
+- l2 cache nodes moved under respective cpus, since they are per-cpu
+- dropped psci cpu functions properties
+- added the hypervisor EL2 virtual timer interrupt to the 'timer' node
+- splitted-lines url are now on a single line
+
+sdhci-brcmstb.c:
+- simplified MMC_CAP_HSE_MASK leveraging already existing definitions
+- MMC_CAP_UHS_MASK renamed to MMC_CAP_UHS_I_SDR_MASK to better reflect
+  its purpose. Added also a comment.
+- sdhci_brcmstb_set_power() replaced with the already existing (and
+  equivalent) sdhci_set_power_and_bus_voltage()
+
+DT-bindings:
+- removed the BCM2712 specific example, as per Rob's request
+
+
+Changes in V2:
+
+- the patchshet has been considerably simplified, both in terms of dts and
+  driver code. Notably, the pinctrl/pinmux driver (and associated binding)
+  was not strictly needed to use the SD card so it has been dropped
+- dropped the optional SD express support patch
+- the patches order has been revisited
+- pass all checks (binding, dtb, checkpatch)
+
+
+Many thanks,
+Andrea
+
+References:
+[1] - Link to V1: https://lore.kernel.org/all/cover.1713036964.git.andrea.porta@suse.com/
+[2] - Link to V2: https://lore.kernel.org/all/cover.1715332922.git.andrea.porta@suse.com/
+[3] - Link to V3: https://lore.kernel.org/all/cover.1716277695.git.andrea.porta@suse.com/
+[4] - https://lore.kernel.org/all/ZlF5dQbNpZ921e66@apocalypse/
+[5] - https://lore.kernel.org/all/bc1eb98c-9d49-4424-ab89-16be6c67c3f5@gmx.net/#t
+
+Andrea della Porta (4):
+  dt-bindings: arm: bcm: Add BCM2712 SoC support
+  dt-bindings: mmc: Add support for BCM2712 SD host controller
+  mmc: sdhci-brcmstb: Add BCM2712 support
+  arm64: dts: broadcom: Add minimal support for Raspberry Pi 5
+
+ .../devicetree/bindings/arm/bcm/bcm2835.yaml  |   6 +
+ .../bindings/mmc/brcm,sdhci-brcmstb.yaml      |   1 +
+ arch/arm64/boot/dts/broadcom/Makefile         |   1 +
+ .../boot/dts/broadcom/bcm2712-rpi-5-b.dts     |  64 ++++
+ arch/arm64/boot/dts/broadcom/bcm2712.dtsi     | 283 ++++++++++++++++++
+ drivers/mmc/host/sdhci-brcmstb.c              |  60 ++++
+ 6 files changed, 415 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts
+ create mode 100644 arch/arm64/boot/dts/broadcom/bcm2712.dtsi
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.35.3
 
 
