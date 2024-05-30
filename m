@@ -1,74 +1,127 @@
-Return-Path: <linux-kernel+bounces-195803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D1628D5205
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 20:55:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B15D48D520C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 21:03:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18D02283015
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 18:55:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCEAC1C2136B
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 19:03:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 481CB535B8;
-	Thu, 30 May 2024 18:55:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 994C75677C;
+	Thu, 30 May 2024 19:03:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="iw1pGLR2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="QMPlwtAB"
+Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58B1752F92;
-	Thu, 30 May 2024 18:55:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5984D5674E
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 19:03:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717095319; cv=none; b=MFu5IY2oUao+z5YIgnZUbW0Eo1rHfjoaG74Mu7hxH0dmCIUf6+safNkpBMOz4w38cBYMPVFIR/GtgTAI9sCfZW3Rkt+FNHFVIuUNSXXKhsi3wQUN5YzWCBdVaJcPEWZDz0/NA+EWQWbezjc16oH4lh+sNQ8xY+QlxghHlIKx2WI=
+	t=1717095808; cv=none; b=D3EOD4Yz66gM/XVL/+wh28y4rcee9rxr612Lrmon07YXdhTlp1KVazy9cnAbd6jd3t2hqj/flerHJ3nJ12QPjGk1g+/GB64mgKTGtT56IeYvrv3cJc5LTRt8FLiNSv8wepjtqOIzX4Sc25C+bXTVXkWQhRmPNn5yQqDJjdaKPvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717095319; c=relaxed/simple;
-	bh=4hWBQo8mKhTDOaJg0ytrw+HQ2Vee7IeEmNaUpqVR9Rw=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=BYE2m0lyj6iKMgI5c6Brz5+qOu8O9wUdgEJCpUci6iw692X/jMBl+ypEDRbXZTu83oxU9DhUYc+Tp8nzo+azS9fp7Ec/zmd2FKuRD59QeDSlU6uA1MCJaA7PelMOq18dGdgnEe7AXU4rsjWsx3oxiHLGfQL4cVb3eHi2xU3vUGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=iw1pGLR2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7642C32781;
-	Thu, 30 May 2024 18:55:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1717095319;
-	bh=4hWBQo8mKhTDOaJg0ytrw+HQ2Vee7IeEmNaUpqVR9Rw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=iw1pGLR2r+v8CUGMhN5abhUVsfMLtQajfepQTw58H/C9SEHWTdsQJVctscnEg4Fk2
-	 UMUHY7LTTHkyxx+aSBivctH9wxOl3HmMhOYzWmgqAPXp1AKtF81keyxJRcvRMe1mQj
-	 IfyrrC1diBcUuv0nb0GJjvggBECt8mTxNLJJOTh0=
-Date: Thu, 30 May 2024 11:55:18 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: Kemeng Shi <shikemeng@huaweicloud.com>, willy@infradead.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/8] Add helper functions to remove repeated code and
- improve readability of cgroup writeback
-Message-Id: <20240530115518.a4be2d0afa4139e346407583@linux-foundation.org>
-In-Reply-To: <ZljG2aq2jRM86BbA@slm.duckdns.org>
-References: <20240514125254.142203-1-shikemeng@huaweicloud.com>
-	<ZljG2aq2jRM86BbA@slm.duckdns.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1717095808; c=relaxed/simple;
+	bh=gVV3+IFYD1OxH/Wqhf1iWQFzYnfj7Ay2H+idOty2pyc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uK2fHIVhp1nOQyZ0ocxYeKSWLxGnlqlpNRHxDEBQ0f7QpIeRCCo140nE5sqdM3jG7eOyIxFlv0lg9hKythjZRznqotH6Rl32oKMuD6MpGBE1EnRlmIjhWszzvQ+Fseev3avH0+CPElWIpdPiVnd5XWc48RblBCkWBsLmlRFnA0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=QMPlwtAB; arc=none smtp.client-ip=209.85.166.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-7eaf9e5681aso4939439f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 12:03:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1717095805; x=1717700605; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0ypmVzNDeZplp2odL/zLGgH80NvTjOKRz+Qmx+RXyRY=;
+        b=QMPlwtABxb6varGIhZXdwk8f3EDnI1006FUZPLFIKKF4WFUZ0ajsRmAx3Y8YeDUc6/
+         pEKSrZveI7r7KVAyTnfFEZFwI8W1IB9Byry98YkCRKEbUqC92RDPTzFnqta33dw8iXRu
+         mcBmoCY26bFlGuyVzqV4eEC4Mu1A+qowzCgTk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717095805; x=1717700605;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0ypmVzNDeZplp2odL/zLGgH80NvTjOKRz+Qmx+RXyRY=;
+        b=dDrXED6C1fTnc8URIaCq1mCFeNgWWxz5o+c3/l4L+5GjqPPB3r/+Q1DI+2W0x+19rH
+         lVLlx8h4ms1jPr3wBbVLTHrIxkzmvWC17bkT23vP7oPnOSItKGdIvAvT/XfCZBXkfptU
+         IvQRtjK3gR8PBq53HE918+XSN1QJXqiUzFlhbZiQZdPUzldv2OkGmZKN/VsurmNTKUyA
+         AJ3V2ukhylsAbWfNAXAUX2rPYnFTE69cER3MPfKcao0fj6O4SPLi30g7gqgbXugzQDXY
+         FoeY/3U8ZbQbKzmeKJSNeE9FQ7ASULZEbbVjsbViKHg4Knk3q2wgkRpa1NKRkoxj8TLm
+         zdNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUJMgJCkOEcwyKPvlbDi2Be/SeZZsvwzmOM3PQLYyCTB2OL1ImzW4KBBwABghP6OtQywypxDZCiK0vS1HKmKg12h2Wa0SkevyXlczkJ
+X-Gm-Message-State: AOJu0YxXL3JdfSVAeaJ5r0tgaX6DLIRQNEKvgCoOusNU4xYay/WG6f7z
+	rp3wuwI5loiIeLnUJZgoDZVII6t2geuOs6D4MamZLziz5blsMTwiPoj5WsRkjb4=
+X-Google-Smtp-Source: AGHT+IHL2RIktWzDYsXqMYxWTYOSCdmd0gSX4cuLtu57cIFNBVH+YBART6vih1ekHP9lPpA0zCGiCg==
+X-Received: by 2002:a05:6602:3344:b0:7de:b279:fb3e with SMTP id ca18e2360f4ac-7eaf5d6865bmr293265239f.1.1717095804736;
+        Thu, 30 May 2024 12:03:24 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4b48b8a6db0sm61826173.98.2024.05.30.12.03.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 30 May 2024 12:03:24 -0700 (PDT)
+Message-ID: <ceb9182e-b6d4-4f6d-bb53-87efe5337230@linuxfoundation.org>
+Date: Thu, 30 May 2024 13:03:23 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] selftests/futex: don't redefine .PHONY targets
+ (all, clean)
+To: John Hubbard <jhubbard@nvidia.com>, Shuah Khan <shuah@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>,
+ Davidlohr Bueso <dave@stgolabs.net>, Edward Liaw <edliaw@google.com>,
+ =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>,
+ "Nysal Jan K . A" <nysal@linux.ibm.com>, Mark Brown <broonie@kernel.org>,
+ Valentin Obst <kernel@valentinobst.de>, linux-kselftest@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>, llvm@lists.linux.dev,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240529022938.129624-1-jhubbard@nvidia.com>
+ <20240529022938.129624-2-jhubbard@nvidia.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240529022938.129624-2-jhubbard@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Thu, 30 May 2024 08:35:05 -1000 Tejun Heo <tj@kernel.org> wrote:
-
-> Hello,
-> 
-> Sorry about the long delay. The first seven patches look fine to me and
-> improve code readability quite a bit. Andrew, would you mind applying the
-> first seven?
+On 5/28/24 20:29, John Hubbard wrote:
+> The .PHONY targets "all" and "clean"  are both defined in the file that
+> is included in the very next line: ../lib.mk.
 > 
 
-Thanks.  All 8 are in the mm-unstable branch of mm.git.  I've added a
-note to the eighth, to wait and see how that unfolds.
+What problems are you seeing without this patch?
+If I recall correctly, futex needs these defined.
 
+Please provide information on why this change is
+needed.
+
+> Reviewed-by: Davidlohr Bueso <dave@stgolabs.net>
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+> ---
+>   tools/testing/selftests/futex/Makefile | 2 --
+>   1 file changed, 2 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/futex/Makefile b/tools/testing/selftests/futex/Makefile
+> index 11e157d7533b..78ab2cd111f6 100644
+> --- a/tools/testing/selftests/futex/Makefile
+> +++ b/tools/testing/selftests/futex/Makefile
+> @@ -3,8 +3,6 @@ SUBDIRS := functional
+>   
+>   TEST_PROGS := run.sh
+>   
+> -.PHONY: all clean
+> -
+>   include ../lib.mk
+>   
+>   all:
+
+thanks,
+-- Shuah
 
