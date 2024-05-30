@@ -1,116 +1,289 @@
-Return-Path: <linux-kernel+bounces-195608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E45B8D4F3F
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 17:39:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 09F778D4F41
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 17:40:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12ECDB26B2F
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 15:38:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53E57B26DFD
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 15:40:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12614183079;
-	Thu, 30 May 2024 15:38:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3DA7182D3C;
+	Thu, 30 May 2024 15:40:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bTA3S5kn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZQgInN7Y"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CBCB182D2D;
-	Thu, 30 May 2024 15:38:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E62E5182D2D
+	for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 15:40:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717083530; cv=none; b=uZg4fLJlRYW1LNNaqK9jw2aWPdCE04VpKlZVF1+1imNVoosXDiWP156TLK9p1nRMHslsh2HIg5gzS1KkCIIqga0XC2rZWysYuBroKWlZc/41t5yChCFwF5M5y5UIZiFbmbJlHqC/JRnlhtG6Y3yewzkxSPvdcjAky+heUvYW7UE=
+	t=1717083641; cv=none; b=AVey9OjNuh3h/d/ttt8pEMIRbbeQDz3krhxtf8gUcP1JuxK49ZXzm2mHUbrgmtHis31EjP7ep/nCyuvkPM6cWJLl9fdGqfYhTjNzlD/TaaRqFyud7rC8hR84gYE5qkB/hyzOMZrNJRTp5OkJHfLBMohlHKjH7nG1tvvmMnNSFas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717083530; c=relaxed/simple;
-	bh=euUKL3giV/ho/PPa2wLumzm+nzQsUuxb34Rbrl9xhq4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KvWpyT2mNFVvakDkSHSeMITG2hzs/LduGLPqFYoyBTXa2vtQkWXHXBl+e3UX7KAMkdLTuM44w8F9aZQh/7tvHTxZ16tYqXsNTLHsDB1ZG8Gq6x+17gEdHmFfSL333kFqYRdJZ1VHuYhf+lB+oYST+eJBTM14na1KcYLrHMs2OUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bTA3S5kn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EDDCC2BBFC;
-	Thu, 30 May 2024 15:38:45 +0000 (UTC)
+	s=arc-20240116; t=1717083641; c=relaxed/simple;
+	bh=RjrKb2LDRXMJMgv4262CU5d3QeX+oRtdcwDrIaVrcxo=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Qbt5V/3B12P1MRtdwFBBzTCekIemetaU5IVeO/XJd7zDS+X0mRdYzImihcxOy9d4dmznccFnsV60ZEyjgRy+pCkKeMnsZnIj+ksZlHcZOIsuL7L/YB3Mih/mdskMG6tIUsxnfsprx5t//MztZq9N4E7lxEMpnnqio4Z6qzTXnXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZQgInN7Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 763B1C2BBFC;
+	Thu, 30 May 2024 15:40:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717083529;
-	bh=euUKL3giV/ho/PPa2wLumzm+nzQsUuxb34Rbrl9xhq4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bTA3S5kn8ZlDjfTHAJ2im+bwNbQ1fjIQ6OiYCMdv8ybz9xvAoNcDz5vXlakFzfcZs
-	 zHC/+M8zb/rCdvbDJh5gjPenw0N90iz3U3UxXH0BCllvkroQC9wY5Gs8KTgQwx0Ap2
-	 JGwR4/e00D0nYeHNcyuSCmLP3rn43yFocmV308q+/RBjIWASDzyZLOMjbzcsVDeIkr
-	 JMAgaPyGXD9tAOejZl8wwWRyXzD8qSV/qrqMxzr5rhOHaTTCTgsgwF07SKuJ6H+l79
-	 6KTxARwkFXBaOSsDu3vQcpPBJv6LMWuqdMqNdjS4+UYmGvSOd9j+XascoQ4e7q6AcY
-	 NHvo6eobGTuDA==
-Date: Thu, 30 May 2024 16:38:43 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Frank Binns <frank.binns@imgtec.com>,
-	Matt Coster <matt.coster@imgtec.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/6] dt-bindings: gpu: powervr-rogue: Add MediaTek MT8173
- GPU
-Message-ID: <20240530-reptilian-revolver-a8cb1f2af8ba@spud>
-References: <20240530083513.4135052-1-wenst@chromium.org>
- <20240530083513.4135052-4-wenst@chromium.org>
+	s=k20201202; t=1717083640;
+	bh=RjrKb2LDRXMJMgv4262CU5d3QeX+oRtdcwDrIaVrcxo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ZQgInN7Yz59LtyGiZYk29Qv6j1Q9Pid0Y5m3R7Q3jTlFg8wQmOz6akpfib+F2kn41
+	 v4YrQCsb/qGrevlwDfFA0Ru7mJT3n1Y2vJmQvw1KPpHqXUYTQg/KH58LjV2zBkirBF
+	 I0wWSM3iYV1hUB0fgs63nr18fnZv3ktQtCGZ8LjCAUx0nIusBaZz5fT8PGHmvmdifI
+	 kBAUZpIxiTYwyOVzlp15kK1q+5nVmZvCbiXsNrKG2I7q1Nuu9ohsxQne89HssDbJxU
+	 SJZI3WPI5yUKPOapLXwqB12MwtkIRf69PvlUO4ECbwUhc2bIRNb92BZiW8CskyHGEJ
+	 VbC2HY/59OMDg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sChtO-00Gw2M-2x;
+	Thu, 30 May 2024 16:40:38 +0100
+Date: Thu, 30 May 2024 16:40:37 +0100
+Message-ID: <86v82vl34a.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Hagar Hemdan <hagarhem@amazon.com>
+Cc: Maximilian Heyne <mheyne@amazon.de>,
+	Norbert Manthey <nmanthey@amazon.de>,
+	"Thomas\
+ Gleixner" <tglx@linutronix.de>,
+	Eric Auger <eric.auger@redhat.com>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] irqchip/gic-v3-its: Fix potential race condition in its_vlpi_prop_update()
+In-Reply-To: <20240530105713.18552-1-hagarhem@amazon.com>
+References: <20240530105713.18552-1-hagarhem@amazon.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.2
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="u4tlLkr2QYvGk/ip"
-Content-Disposition: inline
-In-Reply-To: <20240530083513.4135052-4-wenst@chromium.org>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: hagarhem@amazon.com, mheyne@amazon.de, nmanthey@amazon.de, tglx@linutronix.de, eric.auger@redhat.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
+Hi Hagar,
 
---u4tlLkr2QYvGk/ip
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, 30 May 2024 11:57:13 +0100,
+Hagar Hemdan <hagarhem@amazon.com> wrote:
+> 
+> Similar to commit 046b5054f566 ("irqchip/gic-v3-its: Lock VLPI map array
+> before translating it"), its_vlpi_prop_update() calls lpi_write_config()
+> which obtains the mapping information for a VLPI.
+> This should always be done with vlpi_lock for this device held. Otherwise,
+> its_vlpi_prop_update() could race with its_vlpi_unmap().
 
-On Thu, May 30, 2024 at 04:35:02PM +0800, Chen-Yu Tsai wrote:
-> The MediaTek MT8173 comes with a PowerVR Rogue GX6250, which is one
-> of the Series6XT GPUs, another sub-family of the Rogue family.
->=20
-> This was part of the very first few versions of the PowerVR submission,
-> but was later dropped. The compatible string has been updated to follow
-> the new naming scheme adopted for the AXE series.
->=20
-> In a previous iteration of the PowerVR binding submission [1], the
-> number of clocks required for the 6XT family was mentioned to be
-> always 3. This is also reflected here.
->=20
-> [1] https://lore.kernel.org/dri-devel/6eeccb26e09aad67fb30ffcd523c793a43c=
-79c2a.camel@imgtec.com/
->=20
-> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+Thanks for reporting this. Note that this issue is not the same as the
+one you refer to (what you have here is a total absence of locking,
+while 046b5054f566 fixed a call to get_vlpi_map() outside of an
+existing critical section).
 
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+> 
+> This bug was discovered and resolved using Coverity Static Analysis
+> Security Testing (SAST) by Synopsys, Inc.
 
-Thanks,
-Conor.
+Should we get a scrolling banner for this kind of advertisements? ;-)
 
---u4tlLkr2QYvGk/ip
-Content-Type: application/pgp-signature; name="signature.asc"
+> 
+> Fixes: 015ec0386ab6 ("irqchip/gic-v3-its: Add VLPI configuration handling")
+> Signed-off-by: Hagar Hemdan <hagarhem@amazon.com>
+> ---
+>  drivers/irqchip/irq-gic-v3-its.c | 12 +++++++++---
+>  1 file changed, 9 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+> index 40ebf1726393..ecaad1786345 100644
+> --- a/drivers/irqchip/irq-gic-v3-its.c
+> +++ b/drivers/irqchip/irq-gic-v3-its.c
+> @@ -1970,9 +1970,13 @@ static int its_vlpi_unmap(struct irq_data *d)
+>  static int its_vlpi_prop_update(struct irq_data *d, struct its_cmd_info *info)
+>  {
+>  	struct its_device *its_dev = irq_data_get_irq_chip_data(d);
+> +	int ret = 0;
+>  
+> -	if (!its_dev->event_map.vm || !irqd_is_forwarded_to_vcpu(d))
+> -		return -EINVAL;
+> +	raw_spin_lock(&its_dev->event_map.vlpi_lock);
+> +	if (!its_dev->event_map.vm || !irqd_is_forwarded_to_vcpu(d)) {
+> +		ret = -EINVAL;
+> +		goto out;
+> +	}
+>  
+>  	if (info->cmd_type == PROP_UPDATE_AND_INV_VLPI)
+>  		lpi_update_config(d, 0xff, info->config);
+> @@ -1980,7 +1984,9 @@ static int its_vlpi_prop_update(struct irq_data *d, struct its_cmd_info *info)
+>  		lpi_write_config(d, 0xff, info->config);
+>  	its_vlpi_set_doorbell(d, !!(info->config & LPI_PROP_ENABLED));
+>  
+> -	return 0;
+> +out:
+> +	raw_spin_unlock(&its_dev->event_map.vlpi_lock);
+> +	return ret;
+>  }
+>  
+>  static int its_irq_set_vcpu_affinity(struct irq_data *d, void *vcpu_info)
 
------BEGIN PGP SIGNATURE-----
+As it turns out, all the calls from its_irq_set_vcpu_affinity()
+require the same lock to be held. So instead of peppering the locking
+all over the place, we could (should?) hoist the locking into
+its_irq_set_vcpu_affinity() and avoid future bugs. It also results in
+a negative diffstat.
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZlidgwAKCRB4tDGHoIJi
-0jEUAP9dytPUMftkwmUYeOy5IxYQ34BgC+UeoK8voSx1buveXgEA3if/Ue6idDKS
-pCr8yS7NaLjlC7pujPpYExaUI9Mb/gk=
-=y4xH
------END PGP SIGNATURE-----
+Something like the hack below (compile-tested only), which I'm sure
+the "Coverity Static Analysis Security Testing (SAST) by Synopsys,
+Inc" will be able to verify...
 
---u4tlLkr2QYvGk/ip--
+	M.
+
+diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+index 40ebf1726393..abc1fb360ce4 100644
+--- a/drivers/irqchip/irq-gic-v3-its.c
++++ b/drivers/irqchip/irq-gic-v3-its.c
+@@ -1851,23 +1851,18 @@ static int its_vlpi_map(struct irq_data *d, struct its_cmd_info *info)
+ 	if (!info->map)
+ 		return -EINVAL;
+ 
+-	raw_spin_lock(&its_dev->event_map.vlpi_lock);
+-
+ 	if (!its_dev->event_map.vm) {
+ 		struct its_vlpi_map *maps;
+ 
+ 		maps = kcalloc(its_dev->event_map.nr_lpis, sizeof(*maps),
+ 			       GFP_ATOMIC);
+-		if (!maps) {
+-			ret = -ENOMEM;
+-			goto out;
+-		}
++		if (!maps)
++			return -ENOMEM;
+ 
+ 		its_dev->event_map.vm = info->map->vm;
+ 		its_dev->event_map.vlpi_maps = maps;
+ 	} else if (its_dev->event_map.vm != info->map->vm) {
+-		ret = -EINVAL;
+-		goto out;
++		return -EINVAL;
+ 	}
+ 
+ 	/* Get our private copy of the mapping information */
+@@ -1899,8 +1894,6 @@ static int its_vlpi_map(struct irq_data *d, struct its_cmd_info *info)
+ 		its_dev->event_map.nr_vlpis++;
+ 	}
+ 
+-out:
+-	raw_spin_unlock(&its_dev->event_map.vlpi_lock);
+ 	return ret;
+ }
+ 
+@@ -1910,20 +1903,14 @@ static int its_vlpi_get(struct irq_data *d, struct its_cmd_info *info)
+ 	struct its_vlpi_map *map;
+ 	int ret = 0;
+ 
+-	raw_spin_lock(&its_dev->event_map.vlpi_lock);
+-
+ 	map = get_vlpi_map(d);
+ 
+-	if (!its_dev->event_map.vm || !map) {
+-		ret = -EINVAL;
+-		goto out;
+-	}
++	if (!its_dev->event_map.vm || !map)
++		return -EINVAL;
+ 
+ 	/* Copy our mapping information to the incoming request */
+ 	*info->map = *map;
+ 
+-out:
+-	raw_spin_unlock(&its_dev->event_map.vlpi_lock);
+ 	return ret;
+ }
+ 
+@@ -1933,12 +1920,8 @@ static int its_vlpi_unmap(struct irq_data *d)
+ 	u32 event = its_get_event_id(d);
+ 	int ret = 0;
+ 
+-	raw_spin_lock(&its_dev->event_map.vlpi_lock);
+-
+-	if (!its_dev->event_map.vm || !irqd_is_forwarded_to_vcpu(d)) {
+-		ret = -EINVAL;
+-		goto out;
+-	}
++	if (!its_dev->event_map.vm || !irqd_is_forwarded_to_vcpu(d))
++		return -EINVAL;
+ 
+ 	/* Drop the virtual mapping */
+ 	its_send_discard(its_dev, event);
+@@ -1962,8 +1945,6 @@ static int its_vlpi_unmap(struct irq_data *d)
+ 		kfree(its_dev->event_map.vlpi_maps);
+ 	}
+ 
+-out:
+-	raw_spin_unlock(&its_dev->event_map.vlpi_lock);
+ 	return ret;
+ }
+ 
+@@ -1987,29 +1968,41 @@ static int its_irq_set_vcpu_affinity(struct irq_data *d, void *vcpu_info)
+ {
+ 	struct its_device *its_dev = irq_data_get_irq_chip_data(d);
+ 	struct its_cmd_info *info = vcpu_info;
++	int ret;
+ 
+ 	/* Need a v4 ITS */
+ 	if (!is_v4(its_dev->its))
+ 		return -EINVAL;
+ 
++	raw_spin_lock(&its_dev->event_map.vlpi_lock);
++
+ 	/* Unmap request? */
+-	if (!info)
+-		return its_vlpi_unmap(d);
++	if (!info) {
++		ret = its_vlpi_unmap(d);
++		goto out;
++	}
+ 
+ 	switch (info->cmd_type) {
+ 	case MAP_VLPI:
+-		return its_vlpi_map(d, info);
++		ret = its_vlpi_map(d, info);
++		break;
+ 
+ 	case GET_VLPI:
+-		return its_vlpi_get(d, info);
++		ret = its_vlpi_get(d, info);
++		break;
+ 
+ 	case PROP_UPDATE_VLPI:
+ 	case PROP_UPDATE_AND_INV_VLPI:
+-		return its_vlpi_prop_update(d, info);
++		ret = its_vlpi_prop_update(d, info);
++		break;
+ 
+ 	default:
+-		return -EINVAL;
++		ret = -EINVAL;
+ 	}
++
++out:
++	raw_spin_unlock(&its_dev->event_map.vlpi_lock);
++	return ret;
+ }
+ 
+ static struct irq_chip its_irq_chip = {
+
+-- 
+Without deviation from the norm, progress is not possible.
 
