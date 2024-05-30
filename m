@@ -1,230 +1,199 @@
-Return-Path: <linux-kernel+bounces-194918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-194916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37F758D443E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 05:39:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3131E8D4436
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 05:38:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6AC91F22F8A
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 03:39:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83B37B24B84
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 03:37:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4782B139CFE;
-	Thu, 30 May 2024 03:39:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76FEF139D03;
+	Thu, 30 May 2024 03:37:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="FKFqrS3j"
-Received: from out162-62-58-211.mail.qq.com (out162-62-58-211.mail.qq.com [162.62.58.211])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="2JA1JT5/"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2046.outbound.protection.outlook.com [40.107.93.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50118139CE3;
-	Thu, 30 May 2024 03:39:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.211
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717040387; cv=none; b=JkrSHEDpVswJuMOYg9sqZvhNvu8cDk0oY4PqFE0/sWO6Usv+8YEqx4U+sBGmWoxxiCa3tSRVoA9a8Z3RNGH0+zP3DMbK2DGaQkovGNX577NbHFt29gCrcAGi4p0F+zYu/P3Asqf61AVrcB14Y2KuNrWOTbehGSNTKMcZfQ1stnA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717040387; c=relaxed/simple;
-	bh=W+5Ks2nSljVj8pYcDqby5hGNu9Ghhwrfc6A07R0SAhQ=;
-	h=Message-ID:Content-Type:Mime-Version:Subject:From:In-Reply-To:
-	 Date:Cc:References:To; b=alp36N/rDURZVd72ZeFHmeYLL2yRDBiLu4qtTLHlUxXAaiVLZZAaK6+ILaPkIJIJUlBV7oIq25WCNn2o1dY7rwOXZ6LTrCtEAl+npxXz5yrp8ART4rMnus+KMCDXP/pY2OVwd7VmuPzNKlK9Dbuk7dHIvbwNcA4ytuA3iyim868=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name; spf=none smtp.mailfrom=cyyself.name; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=FKFqrS3j; arc=none smtp.client-ip=162.62.58.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cyyself.name
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1717040372; bh=W+5Ks2nSljVj8pYcDqby5hGNu9Ghhwrfc6A07R0SAhQ=;
-	h=Subject:From:In-Reply-To:Date:Cc:References:To;
-	b=FKFqrS3j1RoFBSUkSreTg0fwKG/h4vqEAuHwKtmweFQJOhgE8b2GuKAnCPgaAeBtU
-	 CKT3tE1Ev7wuYI7GvwxySsx+q+5ks3t7YA8KtDik6QSS/5Nb/9qAxQmeSyk4uS9Hbb
-	 oZIjZEgnMhs3kd89ZBHHQJ3Gap+r5XD80HH170eU=
-Received: from smtpclient.apple ([2408:8207:18a0:162f:64ab:dad6:af9f:27b2])
-	by newxmesmtplogicsvrsza15-1.qq.com (NewEsmtp) with SMTP
-	id 93BB5C3A; Thu, 30 May 2024 11:36:59 +0800
-X-QQ-mid: xmsmtpt1717040219t0woo2fy3
-Message-ID: <tencent_C5BBD6F106D73F662084BD91904F54504805@qq.com>
-X-QQ-XMAILINFO: M79JLxWTMB1h2KmKdGdTSvzFCeQgQlHjNQ+9jX7TiUQ/waSoCje4RE7QVI5LyL
-	 6+gfl1aJiH2luTL0EegevsOBf2YN64de+BAHGvNykYNmxYgYEss0DiRcvo1MyBxz7r/10zUbHyF5
-	 FYPT1igb/Bk3U8TfJp2gCgQ/lvofOwh95DU3U1sn0nrUDPqKdxqytJZ++u5QdS6+jhz0M4tw5cgN
-	 Z8eeRlHmo7DB8owyGW8jmymZ24mJJEbVKb9wCsI7ttIz1FKhVmDhUw5e1opLaaNx+IKenwTtmLDD
-	 TCiwPAK+3ZyW/3vpvd9WjbfkrkN7YMQrV1PCto48y77kUWTGhup/l14fVX9XBzo0mYuygO5iZng5
-	 JmdbFB1+OTodbJdxWjoJv0NKPv4xtCMYiDt8Pd4iEquB3zYphMiQtNWQcpqTcmNV5n5I2S5lyzLQ
-	 rR+iNYsU5ge5y4LI/5JMNyDROpeeozN9FvaT6nGinTwycdU+T+aURcfoLzkZyJZLyQziOIqZUVoN
-	 fNP13btjlBNhwVWkYyZSvkSO9+ko1p4m4QLGXj7EnvAa26Li8tuEYlt8ArRZ5/UZRWvUv43SSvTu
-	 gAsARXT8u+Ib9qLHj2Io4vbYaovuZDtcUDxv02JTDkM6aNxh0ESQ+rxn+IqSV2Dlnw4XwLb9ljjF
-	 aClPDHiHZQeSgQEvjR3Byxur/miE8BNPrwJLaYzRutNxWeyDstqsX2hXnFMgvxqKTzCDgHgyxiip
-	 k15o/bG0cSX6nZwbp1f5chwTueYg38QQhJwylmwPSzOGFWwA2OC5js0p7n+086cDUt3ewhDaI86M
-	 HPKjbhWomC0jsIXVPRBUlWGM43sOxr7Z/m/z2BoctKg9d3jl/rERFcGce+IaJBqv6Wuu/h9yTkgr
-	 N55Tno5FGxS2dji2DW0gN9ku0CyG0yCTT1iPEDB3gqAciSAYf7zeLTETE3NFhMP0aadGLDg84f1R
-	 iCvl37TOKehlKEbFmJVx6MxdtjuP6UscReRyd1uvJoWJsqUbBCJGGFxMI8dQHv
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-Content-Type: text/plain;
-	charset=us-ascii
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DB9442AAB;
+	Thu, 30 May 2024 03:37:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717040269; cv=fail; b=WuLOeTYaQFnrA0Y1ahoSgehFFRYGaOnmR5dA1sWRXTongFer4TpqKpp9yqmh/rfyX+AU7zKve+Bq708uheuH5PiKSP/f4PDPBn5ivUfCITNUbKpnRJiArkGaocWBEMal6PX+KtgLxHb7VYjF7HEkAKFyepqEkeIytaSrfZattQ4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717040269; c=relaxed/simple;
+	bh=jWz6e5rgZi5jwCDJ+Gd/9/ZpRt3djwpdddUpUNOLWwk=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=uN+Jx8WpRyMzVWKH8+Go5kdVoMPXtplGS8HTZB9mHoIcfHuHptscl4xNg9Uikq9ZMPIZKWZbaBXWd70ENLxqn7ZJy/dic/X3ef7DuZJR3f+zJbD+61cU7Mfmg1cbWlGs16A3JjAabbh2AfKq/90eldRIHKQOPIp52crBkO9qFtc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=2JA1JT5/; arc=fail smtp.client-ip=40.107.93.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=C2/Tw/zXfhe54FXktaUVViZfzOccxYEaQjNt6kt+mm0XbTDYRfakCuz1fOaYRag1l8pv2KzmaVg5dGBL/sspjSsMIHR1Ofq8y5RkjebWZdwyRYfm+dCWlfdsNjL56xuftHxq9kErEs6N9dDl3d267OWfgbvlAFxDyF3lVmrPE1rJT+b7XoWrMh0KVB+nULsAxz2Pg7RjqjQdp0eKhrQzoNJI+d5yflbkuBSZ+ZCblV1h36krw7Qh1Iz8fwV4AS4PbEd0rNcHOeKJf7MBHTlsks8MfsW4gTIeCW+TgeHA22FzDUJYVORirbDJXKVLbgPV+Lzb+ec/E4fyLfTYk//YRg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nxWx8I6PlRSQbJZyFg0mT+2rU6HbmqcN4iVEg9ljpyY=;
+ b=ADSEiGHGEuYjsrVOXaFHCBfvaGeogJMPOP3DsSySrKda3z5E8USfO7B+XGx25kAyCncYxJD21yNeaf+DNY+YgJtpPKdaDAtL+JBFAueXe1YK5w6e2IEDDhfqgOHF3veDUshkDr5+wOMkqVItjXllPG6+WHH3gTr/4+HTX7ginnneVrAgLeIhzaXx17VbXT5ftcu9q2Gv65DMJVJMdJJdlhJxSuBTHy8UkAwilIpPbw0DnOIn74+/IVI40cRmlnwnkpS32GyueUz5tCI5BHA8oVpHdwwt4um6LzGtTA4lEl7Kwf64/B65WcC3ltN/MjObBC6tuDR9KDdikJQsuHTM8Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nxWx8I6PlRSQbJZyFg0mT+2rU6HbmqcN4iVEg9ljpyY=;
+ b=2JA1JT5/jkb5r+zhzHB/RX0kaI9cU+OPPC9rU9agwo3KA2NYe81JTi/vkLRm1wDnGZjmtbVacHnpDCz7qV1tkAEgtj+nT9d1SoPUF7Dbo94KmiBMlJbPHxjOKAuCL7JWd99B2i3JaW1PtSM2bCCQ4ji/PxrXb4sGxBy+rvyEcc4=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB6588.namprd12.prod.outlook.com (2603:10b6:510:210::10)
+ by IA1PR12MB8262.namprd12.prod.outlook.com (2603:10b6:208:3f6::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.19; Thu, 30 May
+ 2024 03:37:44 +0000
+Received: from PH7PR12MB6588.namprd12.prod.outlook.com
+ ([fe80::5e9c:4117:b5e0:cf39]) by PH7PR12MB6588.namprd12.prod.outlook.com
+ ([fe80::5e9c:4117:b5e0:cf39%6]) with mapi id 15.20.7633.018; Thu, 30 May 2024
+ 03:37:43 +0000
+Message-ID: <75f6aba1-8ed6-4ef8-8811-de40ae40be90@amd.com>
+Date: Thu, 30 May 2024 09:07:30 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf/x86/amd: check event before enable to avoid GPF
+To: George Kennedy <george.kennedy@oracle.com>
+Cc: harshit.m.mogalapalli@oracle.com, peterz@infradead.org, mingo@redhat.com,
+ acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
+ alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com,
+ adrian.hunter@intel.com, kan.liang@linux.intel.com, tglx@linutronix.de,
+ bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ ravi.bangoria@amd.com
+References: <1716990659-2427-1-git-send-email-george.kennedy@oracle.com>
+Content-Language: en-US
+From: Ravi Bangoria <ravi.bangoria@amd.com>
+In-Reply-To: <1716990659-2427-1-git-send-email-george.kennedy@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MA0P287CA0002.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:a01:d9::8) To PH7PR12MB6588.namprd12.prod.outlook.com
+ (2603:10b6:510:210::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
-Subject: Re: [PATCH] RISC-V: hwprobe: Add MISALIGNED_PERF key
-From: Yangyu Chen <cyy@cyyself.name>
-In-Reply-To: <20240529182649.2635123-1-evan@rivosinc.com>
-Date: Thu, 30 May 2024 11:36:45 +0800
-Cc: Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>,
- Andrew Jones <ajones@ventanamicro.com>,
- Andy Chiu <andy.chiu@sifive.com>,
- =?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>,
- Conor Dooley <conor.dooley@microchip.com>,
- Costa Shulyupin <costa.shul@redhat.com>,
- Jonathan Corbet <corbet@lwn.net>,
- Paul Walmsley <paul.walmsley@sifive.com>,
- Sami Tolvanen <samitolvanen@google.com>,
- linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org
-Content-Transfer-Encoding: quoted-printable
-X-OQ-MSGID: <4AAEA79D-BC7A-43A1-BD4E-B8CE355DEC0D@cyyself.name>
-References: <20240529182649.2635123-1-evan@rivosinc.com>
-To: Evan Green <evan@rivosinc.com>
-X-Mailer: Apple Mail (2.3774.500.171.1.1)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB6588:EE_|IA1PR12MB8262:EE_
+X-MS-Office365-Filtering-Correlation-Id: e5a312e3-2588-495e-76f7-08dc8059dd6d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|7416005|1800799015|376005|366007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?UkFjanB4WERTSlAyc25JU3lGODFuRC9XeG5MMTRUMXdFSTRTT3BCRkNCVm5h?=
+ =?utf-8?B?bUhialhPTzUzbyt2aUk4MERpUlZRU3dJNzZ6S2UwMm13RVpreWw2U3A4M2NE?=
+ =?utf-8?B?OEJ0TmhaeFpTOVF2S0pMaTNQckNZZzNDODdiYXFjaFhITkhDM3pWQ2MzNENV?=
+ =?utf-8?B?Ri8rMGk0eFo3UWc5NTY5STk2K0RnajZsRHdHM2pmcnBwcXJvYVkvMGFKTUhu?=
+ =?utf-8?B?Y0cxSzV1Yk5YKzVyNGZXM1JuZDdteWwvb0dWWDlVd2FkU2d1YTFiR1IySElp?=
+ =?utf-8?B?cjNqZS9XcnJWZzNwcnRYNWprUldiZHZ2SjlEWi9kK2wvL1FCRmZyY0UyTm5K?=
+ =?utf-8?B?WkRQa29GWmxBUGpEZjBGR1NKSVhXSzIzOTZ5eUdtV1lCbUw0REdtaTV0QzRQ?=
+ =?utf-8?B?UDF1ZXlvWE5EZzhhbzVEdmUrZVA0b2xVZ2NOelc0M0xMaUIxTi9rSll1NG1X?=
+ =?utf-8?B?N091d1BCVkdySzlVOTNFaDZEeTMxQmI4Z1FENnQ5MTBxQkN1ZkFQOXRHL3Ax?=
+ =?utf-8?B?TTRPb2dwbGZjS3NHRUtmOVlNT1lrRmVhOEg1NVJlTXRIMmxDa09Lczk2Y1I4?=
+ =?utf-8?B?Vk1OV0krL2RvS0VBQXNFMlgvb3ppZ1hQRDNZYitxUG5wNE54UHl4OXJHSVFB?=
+ =?utf-8?B?WldxZGxaSGRJcjlnakJsUWdJMlJtZkhEUmtMblc1Nk9VbkFtUk0ySDQ1OWV6?=
+ =?utf-8?B?bGFiMWJaZWpNdDh1NXJCS011THJsREhmcG55ZVhkZmova2V1TElmbnQvUFlD?=
+ =?utf-8?B?TUlUQU9RMGpQdU5MdE0rR3c4d3p6bGd3VDRqaS9Ja0dXSlUvUllBSW05b1ZC?=
+ =?utf-8?B?ckJIaTkzTUNGVUVrcklLbEk4UXNxdkNiZ0xhMkZjOHdTd1cwQit3MEkwZ1Vy?=
+ =?utf-8?B?MVIwRWVYZGFEQjlWTi9LQi83ZUpaVFgwbXRzTUIrSlBiOHpJYk1qNWZrL1Uz?=
+ =?utf-8?B?RHo3bE1WNWhobUtkNHhneEdwQnpjaW1lMXVoaWFFSlVMSU9ZR0xPY2dQUFF0?=
+ =?utf-8?B?QkVWTTlFdGZoaVZlcWF5TE53dDduSDhOOWNVU1ZwWUIydVpoM2ViM050bTJ3?=
+ =?utf-8?B?ZkZROERRQXpyUDhUMVNlQzZudUErSGtEUDh3bWJBbTcrMkllaHVDdm5TTHhN?=
+ =?utf-8?B?UUtha0tFTlZNcjMvWVZhL0JTS3lpVTIwQktmUkpkakdnVFQyRDFDaEU1VE8x?=
+ =?utf-8?B?MlV4WDlTeGtpamhqSmpwY2hIOC9CYVdGZVRRbGRDUlRNZ2dRK3JpU0JTMGVk?=
+ =?utf-8?B?RXVjWE5rN3pqb1JCYU9GSlRtaUVnOE9sTjcrNTVjb2N5N3loOGpicHVubHlN?=
+ =?utf-8?B?WkYvOXQ3VFEycmoxTVNjMzZweW45czAvRE4wbElhN1pjU0VpVEg0UDBLM1ZG?=
+ =?utf-8?B?SlhWK0xaanVhVjFKUllvR3VPNmcwMXFsTUpicEh4RFNzUHRWdlMvT1lGSHBx?=
+ =?utf-8?B?eGtQUS9tcTlZKzJJTS9KMnQ0bFFOVVQrSktmQTRyeU5tRDFzNGovZkI4QnJG?=
+ =?utf-8?B?YWpoTW5heCtvRktCb2lZQ1UwL2I5QXVMUjNqa3A4czlvNTZCaEtuQUhqc0pM?=
+ =?utf-8?B?aUZMZFRQSlBCWGRaZ1pXaE1LWVVmN24xNUpOSk4rNzlvRllaWitNTittOEtp?=
+ =?utf-8?B?cjhWV2R2S2NINERnaFVqWUdRMmg1cllSdTZibVgvUlFlbFRlUy9va0ZtL2tU?=
+ =?utf-8?B?MnpBT2JKZUtvcFIva3JRTFp6RGEzMDJPYlV5anVGbjg1VUt4Vk1aVWVnPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB6588.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7416005)(1800799015)(376005)(366007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?MkMvaFV1UXRmVmdCdnJUamNxN0o1ZW9WZU9xNERkeWdBeGh6dExzcmZTUXU1?=
+ =?utf-8?B?eURWTWc5bUFUWkU5alIwUmEveURBYmxiK2tDbzhkTldWOGh2eUFUcFpyVlVo?=
+ =?utf-8?B?cDRHM05ueVlVZXZraTFmRFdSelh4eDhqNUZUN2JTNzlaR1BTM2hiSnhIbFow?=
+ =?utf-8?B?cDU2YmRPcnVNOENZSURlZ1RNK3B0eTlqVkdaTjFHbVEyM2I4RlE5ZWtmRGZO?=
+ =?utf-8?B?YUtzQ09Pd0gvYmQ5SGJESlZHaTh1YVpSWndvK2JrV1RxL0VQTFdNbGFGMHRz?=
+ =?utf-8?B?ajN3TSs2UjNLM3p1ZkFRcVpxV1hmN3JlRHNwNVpDV1B5RzdWR3BsWDJjdXpa?=
+ =?utf-8?B?RzA4YUd6MUR2OVhaNG8rVHY0YlZlSTdKM3l6THRhSGJZS3pZcnQ0OGJsSmFY?=
+ =?utf-8?B?MGlNZWwwZUVRMktwTUg1Nm1MdjEyalIzQ1pFUHRjWlJUZUZHbExhc0NQT0c4?=
+ =?utf-8?B?NlJnOVlUbkc5UlJ5Njl6WHNiU3htN1ZncmpTTHJIUXZNQS9xYkV3VEFCYTRM?=
+ =?utf-8?B?YTV6cUJ3OHExdndWcS9La2hSZ3gyZmZzMWFvUndKZjNNeE5NeE9zdm5wOWpy?=
+ =?utf-8?B?Uy9CMUp3V20wTE1BbnBvM0xqUjJDOTBFUmltTi9PSUtPcU1rRGY1YllFa3V3?=
+ =?utf-8?B?bXExQ3paY1ozSW5lVHF5enNtUUZFY0d6b3B2TXdYa2hvRlJtU3B1WGhmSlB6?=
+ =?utf-8?B?WWxqeEIwREpjbDlvblF0amx0N04xOWpkSGVYTUU3RnV1Si9BaGVwbmpSLzVo?=
+ =?utf-8?B?aVBKRzNBdUdZNDh0U3B5MVJ3cnMzNHFuSFF2RHpvU2Y5WUQxQVRPbDZpcmVI?=
+ =?utf-8?B?SzJLSnQrbi8weHdSYTZSSjZVUTdTVHIyTnl2M3Z2a0w2MVp4YjZReDNYRWRv?=
+ =?utf-8?B?N1ROTXZSSnNGVlllbGZJL2swYmh5SlpXSzVySXJ2M1ZxM2lwUzN4blBqRkFX?=
+ =?utf-8?B?WUcxa2RiaFpHcy83Z3V4WUY5UGNUT2pxWTBDVmdwYm1QK3BWcTFncDVrTlh6?=
+ =?utf-8?B?V1ZhbGR6cnZKV3JOMDhRUG5oOGFnQWpKaTNJVU05bGhXUERnMUpGMlprNzZa?=
+ =?utf-8?B?MlNISWJJZzJKTmZLT0g4OXJHbmVqVVdNQmRRSHluODRmWExUMml2UnFaR3Fr?=
+ =?utf-8?B?a0d0UEFCTWljV29QN3hZcXk4RG1EZEswWUpiVlhqVkpudzZJU2ZNUEhXdmNB?=
+ =?utf-8?B?dU5Udld2UzhvUGFlTnlXdEFlM2JlV2ZEVkpvZkJncGNEMVEvU2JydW5jd0tJ?=
+ =?utf-8?B?ZklweWNPaTM0eTRGb01xanVZNFBwWkxyZnRsR3hNUnljbmRYQ0FvbGduQVhy?=
+ =?utf-8?B?cEhIRnpSczRQUmthMW5jeUMvV05zcEpHVmNNM2pFVEFrMHhnTUJQOWxXSGRF?=
+ =?utf-8?B?WDA3eUhmNG1SVFR6RHJMUzdLek8zL1VDTVVZemsvaDUrKzFqd01tR0JOUzI5?=
+ =?utf-8?B?L1NYajlyTjhOY2Z0Zy92ZWJZYy9TM1g2OHpwbitDRGlFT0VlVUgrNkd0T3V6?=
+ =?utf-8?B?azBxNC9hdlVDaGJucUc4Q3NkQnlwZXAyZmdtN2hIaEhOTU1PTWhSTkI2ejhJ?=
+ =?utf-8?B?eG1EeURiNWlxN0JRNzZaZ05MdmhLYVhZdFNnTHdhQWhreXplWUFUbE9ZYUI4?=
+ =?utf-8?B?bWx5SVVKdTd5bm84dGVSUlVraWpabGVRaE94UllZMFc4SUpiSXlSOEFNUHRp?=
+ =?utf-8?B?UEVTLzAwb1N5UWV1Wm5DSHM3YzdWVjVFeWNWZ3JZWFM3MjVub0ZITHU5UVE5?=
+ =?utf-8?B?VkZEd3hvckZaNzYzQ2ZSc0k2ekk0VndJSTJPRXBRd2Z2OWI5RWZLVTBTbjRr?=
+ =?utf-8?B?RkFDVTdPZ2pVb2xTYVlCU0pjMHFlUEJBU21HelpKTDNwY1lOcVVPT2Uzdmh5?=
+ =?utf-8?B?V0pzK0ZhazAxMmQycFg0dGdQQlNybjlpdEgrWVpPTnBFdit5NFJOWVNFMGh0?=
+ =?utf-8?B?ajh5by9nZzBXeUVuS201eTV5NmdTcHNpa0lGMWRwTG9hZEF1bFlRbU9KM2lQ?=
+ =?utf-8?B?ODVWQ215bnVxSUI3N1dCR2duQ2UrUzlaNFNEUjV0QmlmdW5hWkFwTXlqYTlu?=
+ =?utf-8?B?VE1rV3pRd1NJQUVTRi9TQWp2anVBc1pOYkV1Nms1cXdtcVBtditrbndZZmNm?=
+ =?utf-8?Q?kc4yw8WVeckj+gdKCmeX9QQym?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e5a312e3-2588-495e-76f7-08dc8059dd6d
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB6588.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 May 2024 03:37:43.8694
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ai26Av4pp+svvaB6QR2kh64OgRcMNsns7QhPtAGhZx9Gh6UjWz3SV8C0ze14xfV9xgpqc2g63fBh9/aXFY1iMQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB8262
 
-On 2024/5/30 02:26, Evan Green wrote:
-> RISCV_HWPROBE_KEY_CPUPERF_0 was mistakenly flagged as a bitmask in
-> hwprobe_key_is_bitmask(), when in reality it was an enum value. This
-> causes problems when used in conjunction with =
-RISCV_HWPROBE_WHICH_CPUS,
-> since SLOW, FAST, and EMULATED have values whose bits overlap with
-> each other. If the caller asked for the set of CPUs that was SLOW or
-> EMULATED, the returned set would also include CPUs that were FAST.
->=20
-> Introduce a new hwprobe key, RISCV_HWPROBE_KEY_MISALIGNED_PERF, which
-> returns the same values in response to a direct query (with no flags),
-> but is properly handled as an enumerated value. As a result, SLOW,
-> FAST, and EMULATED are all correctly treated as distinct values under
-> the new key when queried with the WHICH_CPUS flag.
->=20
-> Leave the old key in place to avoid disturbing applications which may
-> have already come to rely on the broken behavior.
->=20
-> Fixes: e178bf146e4b ("RISC-V: hwprobe: Introduce which-cpus flag")
-> Signed-off-by: Evan Green <evan@rivosinc.com>
->=20
-> ---
->=20
->=20
-> Note: Yangyu also has a fix out for this issue at [1]. That fix is =
-much
-> tidier, but comes with the slight risk that some very broken userspace
-> application may break now that FAST cpus are not included for the =
-query
-> of which cpus are SLOW or EMULATED.
+Hi George,
 
-Indeed. Since the value of FAST is 0b11, the SLOW and EMULATED are 0b10 =
-and
-0b01 respectively.
+> Events can be deleted and the entry can be NULL.
 
-When this key is treated as a bitmask and query with
-RISCV_HWPROBE_WHICH_CPUS if a CPU has a superset bitmask of the =
-requested
-value on the requested key, it will remain in the CPU mask. Otherwise, =
-the
-CPU will be clear in the CPU mask. But when a key is treated as a value, =
-we
-will just do a comparison. if it is not equal, then the CPU will be =
-clear
-in the CPU. That's why FAST cpus are included when querying with SLOW or
-EMULATED with RISCV_HWPROBE_KEY_CPUPERF_0 key now.
+Can you please also explain "how".
 
-For me, deprecating the original hwprobe key and introducing a new key
-would be a better solution than changing the behavior as my patch did.
+> Check event for NULL in amd_pmu_enable_all() before enable to avoid a GPF.
+> This appears to be an AMD only issue.
+> 
+> Syzkaller reported a GPF in amd_pmu_enable_all.
 
-> I wanted to get this fix out so that
-> we have both as options, and can discuss. These fixes are mutually
-> exclusive, don't take both.
+Can you please provide a bug report link? Also, any reproducer?
 
-It's better to note this strange behavior on
-Documentation/arch/riscv/hwprobe.rst so users can quickly understand the
-differences on the behavior of these two keys.
+> @@ -760,7 +760,8 @@ static void amd_pmu_enable_all(int added)
+>  		if (!test_bit(idx, cpuc->active_mask))
+>  			continue;
+>  
+> -		amd_pmu_enable_event(cpuc->events[idx]);
+> +		if (cpuc->events[idx])
+> +			amd_pmu_enable_event(cpuc->events[idx]);
 
-The C code part looks good to me.
+What if cpuc->events[idx] becomes NULL after if (cpuc->events[idx]) but
+before amd_pmu_enable_event(cpuc->events[idx])?
 
->=20
-> [1] =
-https://lore.kernel.org/linux-riscv/tencent_01F8E0050FB4B11CC170C3639E43F4=
-1A1709@qq.com/
->=20
-> ---
-> Documentation/arch/riscv/hwprobe.rst | 8 ++++++--
-> arch/riscv/include/asm/hwprobe.h | 2 +-
-> arch/riscv/include/uapi/asm/hwprobe.h | 1 +
-> arch/riscv/kernel/sys_hwprobe.c | 1 +
-> 4 files changed, 9 insertions(+), 3 deletions(-)
->=20
-> diff --git a/Documentation/arch/riscv/hwprobe.rst =
-b/Documentation/arch/riscv/hwprobe.rst
-> index 204cd4433af5..616ee372adaf 100644
-> --- a/Documentation/arch/riscv/hwprobe.rst
-> +++ b/Documentation/arch/riscv/hwprobe.rst
-> @@ -192,8 +192,12 @@ The following keys are defined:
-> supported as defined in the RISC-V ISA manual starting from commit
-> d8ab5c78c207 ("Zihintpause is ratified").
->=20
-> -* :c:macro:`RISCV_HWPROBE_KEY_CPUPERF_0`: A bitmask that contains =
-performance
-> - information about the selected set of processors.
-> +* :c:macro:`RISCV_HWPROBE_KEY_CPUPERF_0`: Deprecated. Returns similar =
-values to
-> + :c:macro:`RISCV_HWPROBE_KEY_MISALIGNED_PERF`, but the key was =
-mistakenly
-> + classified as a bitmask rather than a value.
-> +
-> +* :c:macro:`RISCV_HWPROBE_KEY_MISALIGNED_PERF`: An enum value =
-describing the
-> + performance of misaligned scalar accesses on the selected set of =
-processors.
->=20
-> * :c:macro:`RISCV_HWPROBE_MISALIGNED_UNKNOWN`: The performance of =
-misaligned
-> accesses is unknown.
-> diff --git a/arch/riscv/include/asm/hwprobe.h =
-b/arch/riscv/include/asm/hwprobe.h
-> index 630507dff5ea..150a9877b0af 100644
-> --- a/arch/riscv/include/asm/hwprobe.h
-> +++ b/arch/riscv/include/asm/hwprobe.h
-> @@ -8,7 +8,7 @@
->=20
-> #include <uapi/asm/hwprobe.h>
->=20
-> -#define RISCV_HWPROBE_MAX_KEY 6
-> +#define RISCV_HWPROBE_MAX_KEY 7
->=20
-> static inline bool riscv_hwprobe_key_is_valid(__s64 key)
-> {
-> diff --git a/arch/riscv/include/uapi/asm/hwprobe.h =
-b/arch/riscv/include/uapi/asm/hwprobe.h
-> index dda76a05420b..bc34e33fef23 100644
-> --- a/arch/riscv/include/uapi/asm/hwprobe.h
-> +++ b/arch/riscv/include/uapi/asm/hwprobe.h
-> @@ -68,6 +68,7 @@ struct riscv_hwprobe {
-> #define RISCV_HWPROBE_MISALIGNED_UNSUPPORTED (4 << 0)
-> #define RISCV_HWPROBE_MISALIGNED_MASK (7 << 0)
-> #define RISCV_HWPROBE_KEY_ZICBOZ_BLOCK_SIZE 6
-> +#define RISCV_HWPROBE_KEY_MISALIGNED_PERF 7
-> /* Increase RISCV_HWPROBE_MAX_KEY when adding items. */
->=20
-> /* Flags */
-> diff --git a/arch/riscv/kernel/sys_hwprobe.c =
-b/arch/riscv/kernel/sys_hwprobe.c
-> index 969ef3d59dbe..c8b7d57eb55e 100644
-> --- a/arch/riscv/kernel/sys_hwprobe.c
-> +++ b/arch/riscv/kernel/sys_hwprobe.c
-> @@ -208,6 +208,7 @@ static void hwprobe_one_pair(struct riscv_hwprobe =
-*pair,
-> break;
->=20
-> case RISCV_HWPROBE_KEY_CPUPERF_0:
-> + case RISCV_HWPROBE_KEY_MISALIGNED_PERF:
-> pair->value =3D hwprobe_misaligned(cpus);
-> break;
->=20
-
+Thanks,
+Ravi
 
