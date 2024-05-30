@@ -1,162 +1,118 @@
-Return-Path: <linux-kernel+bounces-195433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-195435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73C1D8D4CEE
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 15:40:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26CD48D4CF7
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 15:41:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9702E1C22357
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 13:40:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 337A8B22B94
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2024 13:41:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CFBA17D371;
-	Thu, 30 May 2024 13:39:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32EAB17D8A9;
+	Thu, 30 May 2024 13:40:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iipscyTg"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="AGaNDk5n"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D06F17C200;
-	Thu, 30 May 2024 13:39:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 181E717C200;
+	Thu, 30 May 2024 13:40:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717076398; cv=none; b=Rz+1ztAVFmP6dnMgJa80oz3XSq/ClHfYzbM05d/XjOx/Du6PUg9T2OLkCX+LZIMVm+NyFigkP12nhc87o0TgpUu2EQVJAwIN2XQhvlGtsxDiWYbzcLUkQN+eWeeyFUVt16wM2A1H4ShM1lHOK6BYBBtEAzuyf0N7yJudBBVc+ws=
+	t=1717076455; cv=none; b=QWMaeESRBlF12nQVPa4yGbcNWcV1fei8DK3YIZRiSZAJWPDboDheHOPKQ4gxRFGqTYjWznyRm16aOfv6jdZ4smVE3YdfXpHUh9Xz0KzU0dqc+Xt9Xr5p2Wd3z9e7eA2C1mi7tN1A6vF4LZbke3J+HUvXPysTA7My7wpQmIoyWZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717076398; c=relaxed/simple;
-	bh=vdl+hlvda1VNPCNhE7V3H2i6xxcS9eJcOFE70BPwwro=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=QXejzQ0xrV0gZHwVE+UPWSkxCJlnRcX97dxIrOU9VDlCaKQlkpZNQEWHWp4UXJ3/pYpWv8E+Rjt5xiGQPR0DBGjdKdBaFpNCnocDze/IiBTdgWj3c+ixcf5A5QKrqNC+O2TF+m56aqVXjhdcLivnjSylKJ1Bkl2MyPo71jBHa0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iipscyTg; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1f480624d10so7808735ad.1;
-        Thu, 30 May 2024 06:39:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717076397; x=1717681197; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=6Eqbr3wqn+4lYYOVXXLehfT1FJdyVyvpa2OXRq6NjGk=;
-        b=iipscyTgEx1J47tEHXlZS4JytxZmIlHkhvO6/j9d9s2xej06V/H8Ox9Ivr+lFMTsvW
-         ts1IAeQDlAZsRpi75pTCQbAl0Idqfu/ZaeVoqrBXnnS+GUAomAHT3leajuuIdthX3gg/
-         I5FbFGtnbeJEuz0MDs7DQweRjmI6xVAZUIe+ZMsMQtnwcrK3kme1MeE8NkFMzTWbM2AO
-         kB/o2v4hjSiBskC0KYKIm8fw+X8Ns91bD4liQYsLjG9eF5WlVY+8RoN31/CtoXbiW6qf
-         CGr1OIHM3Zm6zQxxDzCxbLySxNSxikzT0EACReP6TNhTEx1Qt7Dlic2+yhy1YNF31qfK
-         7ppw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717076397; x=1717681197;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6Eqbr3wqn+4lYYOVXXLehfT1FJdyVyvpa2OXRq6NjGk=;
-        b=ln/eDmt0aumeQIzk1e5QUNKQ6iFZjcpsvEGwp1k4Srz3TfJKoFtVkXxMpR21eFsTh6
-         Ho/yQvGLNTx03r3LFEVfPzEqKpQJvi1k81N8w1QF/olsQ8+f7fmOW5HJMGxHw7dCYWTm
-         ob9qScMJVvixbS6heG0g4lUp3mswe6u98TtI2zU4/OnlwKi5ySrIYZiYthXtSpVcUZ0+
-         wUFxl5A3LeNPelAioRTeCfPJ0s/QACZOZni1eIh+c21yLHGP2E1y8RuA+yMovRmkQxGm
-         6I4wwUnKEgxR2fspKrmphYKymR8BADXjJy7ng4/WjcZcuh47e5QvQcV5Pd4494/l8PfO
-         J4lA==
-X-Forwarded-Encrypted: i=1; AJvYcCWTZ1NcRKxk+kPpDpW8lsLat29DuWWx6ojcpO5B3GaEbxmaCbPwC7LipfUjGdjr0UHO2bmCWeLKlEbJmOsxOwrCSBPry+Yo+5esCz95ngbE8vgZk7FvtfjyiiNIpjqxR72GJBbaS32uXEuSf9+bjf5jIA6S4AyrUT3t/jcVecZkwd6YGcj0
-X-Gm-Message-State: AOJu0YwIboFdPjMtcJMutavqiGtFweudIz12UcuQjPqxtAjJ60QQh4Mj
-	LFjBrfABkJZDVch9JWt1vfsOZxUaWk7AR7yoyBiZWevy0201Qy5U
-X-Google-Smtp-Source: AGHT+IHQRr9JUuuGAyna4EN850H08cetSaZI6QlJLjUi9mlq2c8HiRFVeq+jcv9kOA6TkoyVOTUp2A==
-X-Received: by 2002:a17:902:ec81:b0:1f3:4f23:455d with SMTP id d9443c01a7336-1f61973a61fmr24529315ad.49.1717076396799;
-        Thu, 30 May 2024 06:39:56 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c75f61asm118864945ad.19.2024.05.30.06.39.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 May 2024 06:39:56 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <bd197671-4fef-4cdb-8472-b46151e9008b@roeck-us.net>
-Date: Thu, 30 May 2024 06:39:46 -0700
+	s=arc-20240116; t=1717076455; c=relaxed/simple;
+	bh=X4OHNBsHVoGtFA4w7g07P20hxNbyWOejP4Y+I4eynSE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hgz1OsJMSJ03ifFv91E7BFpC0Q34HwzQOUW7R3G6KlRqYTgLbimmcZv+hT6ytEg0qrssghHzk4MotgHK2EqQzspTcyJ3/OVOZZ/Tu0ApHyYdcrswL8Zb7iku2JTpj1Rr30t9A9Cki8wBjBEvsU6XhSEfVMK9wCqcbzT4L3c7rxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=AGaNDk5n; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=mmi/oPyl5q1rKk3gHuGZWVFStdI6ds13q4SnwsFA8rY=; b=AGaNDk5nnmiuhsMqeP++v1QD9s
+	yrdtM8myaqUjTgdkOh1hiupqCArcihHSLr6Rdf9QE030xY+9ACoxPvq8dLmgQDLJsLaOfTLwXQ6nD
+	DuhYd5tENewAtUkJlQoj+n980k2QZN9Xk06IKRMLPX8G4D9qai9zZe4m8vVi7dtStGWs/vnVuzfh7
+	osbQgnm4Qx/xYm/rITK5K9XhPSF6wh2wXznz6W0o+nGGGcrDgSx+PX1J5OFL47qGVEoTe9Kk8ROtO
+	M4Xu/UocdMrcOqiwLzK//o4yB2PlfMIjoV4mlAwXK8IfGF6cKxvvzNOLhosG3frhCNvl+F4ybsTnn
+	gOnwTUVQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:33130)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sCg1A-0007RJ-1z;
+	Thu, 30 May 2024 14:40:32 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sCg19-0005Bq-2P; Thu, 30 May 2024 14:40:31 +0100
+Date: Thu, 30 May 2024 14:40:30 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Vladimir Oltean <olteanv@gmail.com>
+Cc: Xiaolei Wang <xiaolei.wang@windriver.com>, Andrew Lunn <andrew@lunn.ch>,
+	alexandre.torgue@foss.st.com, joabreu@synopsys.com,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, mcoquelin.stm32@gmail.com,
+	netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [net v2 PATCH] net: stmmac: Update CBS parameters when speed
+ changes after linking up
+Message-ID: <ZliBzo7eETml/+bl@shell.armlinux.org.uk>
+References: <20240530061453.561708-1-xiaolei.wang@windriver.com>
+ <f8b0843f-7900-4ad0-9e70-c16175e893d9@lunn.ch>
+ <20240530132822.xv23at32wj73hzfj@skbuf>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] hwmon: Add support for SPD5118 compliant temperature
- sensors
-From: Guenter Roeck <linux@roeck-us.net>
-To: Armin Wolf <W_Armin@gmx.de>, linux-hwmon@vger.kernel.org
-Cc: Hristo Venev <hristo@venev.name>, =?UTF-8?Q?Ren=C3=A9_Rebe?=
- <rene@exactcode.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Radu Sabau <radu.sabau@analog.com>
-References: <20240529205204.81208-1-linux@roeck-us.net>
- <20240529205204.81208-3-linux@roeck-us.net>
- <fa79f3c2-666f-48b8-b39a-f598107b2293@gmx.de>
- <0dc7a7c6-a426-424a-8321-471569ee6835@roeck-us.net>
-Content-Language: en-US
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <0dc7a7c6-a426-424a-8321-471569ee6835@roeck-us.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240530132822.xv23at32wj73hzfj@skbuf>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On 5/30/24 06:23, Guenter Roeck wrote:
-> On 5/30/24 01:08, Armin Wolf wrote:
-> [ ... ]
->>> +obj-$(CONFIG_SENSORS_SPD51118)    += spd5118.o
->>
->> Hi,
->>
->> thank you for working on this, i am currently testing the driver on my machine.
->> I already noticed the kconfig option is wrong, the correct one would be CONFIG_SENSORS_SPD5118.
->>
+On Thu, May 30, 2024 at 04:28:22PM +0300, Vladimir Oltean wrote:
+> On Thu, May 30, 2024 at 02:50:52PM +0200, Xiaolei Wang wrote:
+> > When the port is relinked, if the speed changes, the CBS parameters
+> > should be updated, so saving the user transmission parameters so
+> > that idle_slope and send_slope can be recalculated after the speed
+> > changes after linking up can help reconfigure CBS after the speed
+> > changes.
+> > 
+> > Fixes: 1f705bc61aee ("net: stmmac: Add support for CBS QDISC")
+> > Signed-off-by: Xiaolei Wang <xiaolei.wang@windriver.com>
+> > ---
+> > v1 -> v2
+> >  - Update CBS parameters when speed changes
 > 
-> Oops. Thanks for noticing!
-> 
+> May I ask what is the point of this patch? The bandwidth fraction, as
+> IEEE 802.1Q defines it, it a function of idleSlope / portTransmitRate,
+> the latter of which is a runtime variant. If the link speed changes at
+> runtime, which is entirely possible, I see no alternative than to let
+> user space figure out that this happened, and decide what to do. This is
+> a consequence of the fact that the tc-cbs UAPI takes the raw idleSlope
+> as direct input, rather than something more high level like the desired
+> bandwidth for the stream itself, which could be dynamically computed by
+> the kernel.
 
-I fixed this up. I'll send v2 in a couple of days, probably early next week.
+So what should be the behaviour here? Refuse setting CBS parameters if
+the link is down, and clear the hardware configuration of the CBS
+parameters each and every time there is a link-down event? Isn't that
+going to make the driver's in-use settings inconsistent with what the
+kernel thinks have been set? AFAIK, tc qdisc's don't vanish from the
+kernel just because the link went down.
 
-If it is not too much trouble, could you send me a register dump ?
+I think what you're proposing leads to the hardware being effectively
+"de-programmed" for CBS while "tc qdisc show" will probably report
+that CBS is active on the interface - which clearly would be absurd.
 
-Thanks,
-Guenter
-
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
