@@ -1,143 +1,117 @@
-Return-Path: <linux-kernel+bounces-197096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E4928D661F
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:52:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 005EF8D6623
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:53:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F34A1C23401
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 15:52:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2EF91F238B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 15:53:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2B1F157E82;
-	Fri, 31 May 2024 15:52:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5D39157478;
+	Fri, 31 May 2024 15:52:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z/oMHs0B"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Jl2PWOGq"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8AC85381A;
-	Fri, 31 May 2024 15:52:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B80C24A0E
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 15:52:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717170738; cv=none; b=KZ8s5+dNcYF3xTZSWcVAq6uwixJzQCjJg5XuwJRR0ClHIZmrCJHMbSw+b2dNmr1Z4m1hvnYDCKJOloIDScDdaHrDZe7jK4nMOh40cqNULsNwFYyZLqkQ4BSDOvjCcATZcT3NFEVPYJ+JU+0FvR13u418dRUVceIqRHS2Sc+G4ns=
+	t=1717170766; cv=none; b=YbUjygnEO2SsC8ViXAkTMoR+ASjf18U9bQkWQyVG5AaXiTUCN0RCKMnrNEvtMhoAPcCn3sAk6+QrzqWAWO4jKEkdJiYQ6vWmo2DtUiTpJWPKkOWk3vYtoxuioWI4MN3qH4/upEbHb/9QAjHh2hCReaLahRVFDvbPDmRAYp8eYKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717170738; c=relaxed/simple;
-	bh=9n/HcMCH5RfGL2g1X6Nd8u6p6mPRRHmonc8msy5CFLY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sREljtYNg05K0mtjpK0E+/cXImZ56F7SRO5/d5FZ+SIwu2RwzdEPh6N9DqPxzExW05xdhfkX1sA5iYqpPPhIeT4Uk+E7BkOTJI9YQqiMqpnBw4l6Wzd8vPfLWhGmtgnHWYkDrcHx/QIG81pIIlXJr623yCk2YQ2huWRbBve8GBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z/oMHs0B; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5785f7347cdso2339159a12.0;
-        Fri, 31 May 2024 08:52:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717170735; x=1717775535; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=B1+QjxjxBPrIugYD0OZnRQMiPTgmwtCBI97ys8OyOiU=;
-        b=Z/oMHs0BrnuWlD2bNsp9D8bo0m/ftvTp30fTx3xmDxsrKDne3sU+4tpXEhLSr6nLvf
-         MCJ2j+nRACARomAf67QSVEBvd2H1BbM2zzDlatHRjYNG0xFGSIbCIWrz97S/tXZXhm3V
-         cla9OquNGKS8ECa9id4FiYDn6wgQjMdeFrC3VATLn2dbp+LKo8YXqGwEhSY1SJsdrw/O
-         kPe74KZPPrJs+5/w2jIwH95Wd8LSWVycevFevGSXPaiBFUmNl1iVsoRKlIreQ6dLWdLU
-         bFeXJCwsbi9t+7pCHkdwPoxxSVN1hN/SwSTr3XjS3h9YF10PvoPWm5awX6Vd7ThJ3SAZ
-         Medg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717170735; x=1717775535;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=B1+QjxjxBPrIugYD0OZnRQMiPTgmwtCBI97ys8OyOiU=;
-        b=BUKzZO2jTKQIK2dJ1FrMqAKZ72U+qDGLTXiyK8R75wBLk66lsA+3iI5STQuvqC01hA
-         y3rwhhnSR6OrXCnzDm62obxWLIGHqw1c0AcRkf28ME3LzxfLtmgi4hOVY+D/IXj7pnbq
-         k7NNQbec+WkLWAsQ6/YbcmV1kaHxk4QdBuvZA5EvCoeKMccxCXPPGvpUQuRnXgjaR9kW
-         eIB3B9u5Hmn2fZdbG5fUTIRAQit7Or2y+IED9QyjD/00kLyY9TD+ptH75bLxkUJTptBG
-         YfzX+Vfj3r1oXI+2xA9Xey6ZkUoU+kO1tnrhbIhkAgYHWxstDzJaFleOEZiWN1O2XlQF
-         VnHw==
-X-Forwarded-Encrypted: i=1; AJvYcCUsGVph7JGPLn3T4alt7Hx98xhk4KWWTo+8QwNolIOPyuPVp+bP+rGKPzrwApgRW1eO1bHjgZTKIvWj840pHxyGyYBNjxXXIi49oyrAbqEhuMN23CNbmaN5hMoGdu6n3KnMJqx8O+xaCIxbVBM+JGAj+ZQW8ymG2cibVY1enqwMeQa3Zg==
-X-Gm-Message-State: AOJu0YyGEEjNzizW4l2osGKwEpGUqT/AhdYMJMIXSOipVR3JCB0djoyO
-	VCXpB8LYHCuG0K+vVRlzAFUUtnvfk+95NU3223303L0urg3N0U4t
-X-Google-Smtp-Source: AGHT+IGbfRp1452zzCRnB9sJc29htGrbuzhsS6g6C0EBQQxO8KLQ7fkvTbV09Id0Zo9VJiu87sACYg==
-X-Received: by 2002:a50:d4d2:0:b0:56e:99e:1fac with SMTP id 4fb4d7f45d1cf-57a365a0b9cmr1818306a12.39.1717170734692;
-        Fri, 31 May 2024 08:52:14 -0700 (PDT)
-Received: from andrea ([151.76.32.59])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57a31b98e01sm1135963a12.16.2024.05.31.08.52.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 May 2024 08:52:14 -0700 (PDT)
-Date: Fri, 31 May 2024 17:52:09 +0200
-From: Andrea Parri <parri.andrea@gmail.com>
-To: Alexandre Ghiti <alex@ghiti.fr>
-Cc: Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
-	Arnd Bergmann <arnd@arndb.de>, Leonardo Bras <leobras@redhat.com>,
-	Guo Ren <guoren@kernel.org>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-arch@vger.kernel.org
-Subject: Re: [PATCH 7/7] riscv: Add qspinlock support based on Zabha extension
-Message-ID: <ZlnyKclZOQdrJTtU@andrea>
-References: <20240528151052.313031-1-alexghiti@rivosinc.com>
- <20240528151052.313031-8-alexghiti@rivosinc.com>
- <ZlZ8/Nv3QS99AgY9@andrea>
- <39a9b28c-2792-45ce-a8c6-1703cab0f2de@ghiti.fr>
+	s=arc-20240116; t=1717170766; c=relaxed/simple;
+	bh=J0kbwRHmV/+gyGrwgRmUSbnanlbcmQ5Rx6idzys8fSY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P2CKZywyx91eXuf1iazH8bb4A1czDq58q/ZyFcSWJM8IYksWpldmwa7/l8+hITwJsNNhIKSEV6u2jGRsVl0yc+LKEhG7/UJdtB77sIEoUIybYUi8k/tldikIQoClqXCyesuvDspHVCIiif/TK/f+Rs1mMVxPpjiLK+tCKGLowQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Jl2PWOGq; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717170763; x=1748706763;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=J0kbwRHmV/+gyGrwgRmUSbnanlbcmQ5Rx6idzys8fSY=;
+  b=Jl2PWOGqwdkMrLN1My//9lWF1ambVxcY/K1yi6qsTFLWlICy3N4ZkbkS
+   57/rtrxFR4yAjgjve8YcHMnXDG1cEIsi6y78vGHYwrlcD3YFoVygN4pcp
+   wOXCSNasoHliv7srXA7xp3Xq9mlje97dz8xvrYTflmZ4N0N5RGo/s1KXc
+   D/wrxBFwgCZKVyoGaz8vjG8my3mzs9J9gSTYoAI66u3w+iFalRvufY6LO
+   3GHKBAjQQ26GyQuuxDXCFqAj+9SGY/R+2fz8Nt+1nfS9UoCiHvMjhwU+M
+   bcBkSUHWfhiNrDoU7DBkPCN+FR5Fj7RCol1u17moNgrmNoKrqWf9xG020
+   A==;
+X-CSE-ConnectionGUID: hgUEzJKkRVWaXU+foNpeoA==
+X-CSE-MsgGUID: x+kZR9e0RJi9I7cZTj7I9A==
+X-IronPort-AV: E=McAfee;i="6600,9927,11089"; a="13587514"
+X-IronPort-AV: E=Sophos;i="6.08,204,1712646000"; 
+   d="scan'208";a="13587514"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 08:52:43 -0700
+X-CSE-ConnectionGUID: zpuuR3eiRQ60zgBo3cKqcg==
+X-CSE-MsgGUID: +jYVfnZySUSdu642MgqtqQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,204,1712646000"; 
+   d="scan'208";a="59376531"
+Received: from djiang5-mobl3.amr.corp.intel.com (HELO [10.125.108.62]) ([10.125.108.62])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 08:52:42 -0700
+Message-ID: <457b2e1c-00b7-45d5-9c66-6d03c39586d5@intel.com>
+Date: Fri, 31 May 2024 08:52:41 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <39a9b28c-2792-45ce-a8c6-1703cab0f2de@ghiti.fr>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next] ntb: Fix kernel-doc param for
+ ntb_transport_create_queue
+To: Yang Li <yang.lee@linux.alibaba.com>, jdmason@kudzu.us, allenbh@gmail.com
+Cc: ntb@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20240531072124.64352-1-yang.lee@linux.alibaba.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20240531072124.64352-1-yang.lee@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-> > > +	select ARCH_USE_QUEUED_SPINLOCKS if TOOLCHAIN_HAS_ZABHA
-> > IIUC, we should make sure qspinlocks run with ARCH_WEAK_RELEASE_ACQUIRE,
-> > perhaps a similar select for the latter?  (not a kconfig expert)
+
+
+On 5/31/24 12:21 AM, Yang Li wrote:
+> The patch updates the function documentation comment for
+> ntb_transport_create_queue to adhere to the kernel-doc specification.
+
+I wouldn't say it's not adhering to kernel-doc specification but rather that it's documenting the incorrect/out of date parameters. So maybe something like:
+
+Update ntb_transport_create_queue() kdoc header to specify the correct input parameters used by the function.
 > 
+> Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
+
+Besides the commit log change,
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+
+> ---
+>  drivers/ntb/ntb_transport.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
 > 
-> Where did you see this dependency? And if that is really a dependency of
-> qspinlocks, shouldn't this be under CONFIG_QUEUED_SPINLOCKS? (not a Kconfig
-> expert too).
-
-The comment on smp_mb__after_unlock_lock() in include/linux/rcupdate.h
-(the barrier is currently only used by the RCU subsystem) recalls:
-
-  /*
-   * Place this after a lock-acquisition primitive to guarantee that
-   * an UNLOCK+LOCK pair acts as a full barrier.  This guarantee applies
-   * if the UNLOCK and LOCK are executed by the same CPU or if the
-   * UNLOCK and LOCK operate on the same lock variable.
-   */
-  #ifdef CONFIG_ARCH_WEAK_RELEASE_ACQUIRE
-  #define smp_mb__after_unlock_lock()	smp_mb()  /* Full ordering for lock. */
-  #else /* #ifdef CONFIG_ARCH_WEAK_RELEASE_ACQUIRE */
-  #define smp_mb__after_unlock_lock()	do { } while (0)
-  #endif /* #else #ifdef CONFIG_ARCH_WEAK_RELEASE_ACQUIRE */
-
-Architectures whose UNLOCK+LOCK implementation does not (already) meet
-the required "full barrier" ordering property (currently, only powerpc)
-can overwrite the "default"/common #define for this barrier (NOP) and
-meet the ordering by opting in for ARCH_WEAK_RELEASE_ACQUIRE.
-
-The (current) "generic" ticket lock implementation provides "the full
-barrier" in its LOCK operations (hence in part. in UNLOCK+LOCK), cf.
-
-  arch_spin_trylock() -> atomic_try_cmpxchg()
-  arch_spin_lock() -> atomic_fetch_add()
-                   -> atomic_cond_read_acquire(); smp_mb()
-
-but the "UNLOCK+LOCK pairs act as a full barrier" property doesn't hold
-true for riscv (and powerpc) when switching over to queued spinlocks.
-OTOH, I see no particular reason for other "users" of queued spinlocks
-(notably, x86 and arm64) for selecting ARCH_WEAK_RELEASE_ACQUIRE.
-
-But does this address your concern?  Let me know if I misunderstood it.
-
-  Andrea
+> diff --git a/drivers/ntb/ntb_transport.c b/drivers/ntb/ntb_transport.c
+> index f9e7847a378e..5d466a3f117b 100644
+> --- a/drivers/ntb/ntb_transport.c
+> +++ b/drivers/ntb/ntb_transport.c
+> @@ -1966,9 +1966,10 @@ static bool ntb_dma_filter_fn(struct dma_chan *chan, void *node)
+>  
+>  /**
+>   * ntb_transport_create_queue - Create a new NTB transport layer queue
+> - * @rx_handler: receive callback function
+> - * @tx_handler: transmit callback function
+> - * @event_handler: event callback function
+> + * @data: user-defined data to associate with the queue
+> + * @client_dev: the device structure of the NTB client
+> + * @handlers: structure containing receive, transmit, and event callback
+> + *	      functions
+>   *
+>   * Create a new NTB transport layer queue and provide the queue with a callback
+>   * routine for both transmit and receive.  The receive callback routine will be
 
