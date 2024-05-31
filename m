@@ -1,294 +1,373 @@
-Return-Path: <linux-kernel+bounces-197047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCB6F8D6575
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:14:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7EA68D6571
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:14:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 189D91F274C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 15:14:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B0CE28F350
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 15:14:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9E357BB15;
-	Fri, 31 May 2024 15:14:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2629C770F5;
+	Fri, 31 May 2024 15:13:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=onsemi.com header.i=@onsemi.com header.b="nMVOdp7I";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=onsemi.onmicrosoft.com header.i=@onsemi.onmicrosoft.com header.b="6qEiFc4d"
-Received: from mx0a-00183b01.pphosted.com (mx0b-00183b01.pphosted.com [67.231.157.42])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KCEpMIhy"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13EF97442E;
-	Fri, 31 May 2024 15:14:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.157.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717168456; cv=fail; b=XvYPhkngV5Hny1SPYX6VHTvnUh3M4/FZvOh3IP2SIKAQVFEMrPU+oTEtaF0p3ZscjDElJZLIIRh0NpiAA02UpZtnQRptEROTPR5x5329kxs9JDIXoq74hC480HM5T189IL7JHD2uKfntsVdhVg7e6CZrKoT26Ao9OHb/m4PQloE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717168456; c=relaxed/simple;
-	bh=Aw5t6EowC9fFGMmf2DlfHMJe5/aa7W8ochlh5Rs/+/A=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=gLeYcrTxZG/MKxl0e8FloVGbOe07FQ+ZME1zWxxCfYUPhHdjcxivC9XtYTMxk3UHp39qhvFr7LxBvSGyxPMyi2dB3uE1DuC94/m3F6wVOq0CrPyJhzXHfb0+k3qzvZnUPlJe9AUiXeZgUF4vwBzjJ87xoDwAd1JHkEYVZHRcC48=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=onsemi.com; spf=pass smtp.mailfrom=onsemi.com; dkim=pass (2048-bit key) header.d=onsemi.com header.i=@onsemi.com header.b=nMVOdp7I; dkim=pass (1024-bit key) header.d=onsemi.onmicrosoft.com header.i=@onsemi.onmicrosoft.com header.b=6qEiFc4d; arc=fail smtp.client-ip=67.231.157.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=onsemi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onsemi.com
-Received: from pps.filterd (m0048103.ppops.net [127.0.0.1])
-	by mx0b-00183b01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44V7cqa5003593;
-	Fri, 31 May 2024 09:13:19 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onsemi.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	pphosted-onsemi; bh=4MCHxlPW0tvPrzMvOXUliXuyrUP6g/xGPOK83AZ1bDc=; b=
-	nMVOdp7IvgYDFtmdYlGplW3GLP2NhZ4cTf3mjd3RUTyn763CtxJXBzQq3OBgRgY5
-	vgTu90bUSWPZfQZka75OUVFKbx6Q60AXdgEWucrepmvbY2AUVgVNt5Nlw1G0jefh
-	qYLBbVAHrI2uKK+mFAFWsU5qgE/E6UgjUQhcNeecl1iYLyYvZIS8PbKWGI9iVmQX
-	2184PsGCdtybHAbbyuH5QOnhDpaXBccyjHRUnWRE+TN+tLmk6eJE6KD8AtPbTgPV
-	xkptQzk7qCyBshYggJqT+ujxVsgMFOG/4sMKoZNq4Bo3NFX3B/RHIzM8hsI4RtOC
-	h87C1nvOCSNy20yatq6LLw==
-Received: from nam04-dm6-obe.outbound.protection.outlook.com (mail-dm6nam04lp2041.outbound.protection.outlook.com [104.47.73.41])
-	by mx0b-00183b01.pphosted.com (PPS) with ESMTPS id 3ybcw66db2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 31 May 2024 09:13:18 -0600 (MDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=R+80tdxhvrUV9psUXJukxoM2SYwRkesbMCt9zEwI79XAHM0IVfFW+wvbSImzp5ejvawStoLv4Rp8gW1giKOp15O1D8bLQfjxRChNzH0FQ5Y82eAH1CSigxzO/qrY3ys8uuSFTTBiPZXWFsisNRarRULsusRktuqSwauKEgd1jHG9gRjtdEgO7D78Ec+eB0w5n+UOXFqFBHC/bLU1/OpLtVpD/wx55Dbuub/1RuwP27+fVra9xAvckjXz3JYt9f5LGk+0JuZOi5YZz5UMbgB1hgH7tnv04mG4FEwfdp91fZwtAehwvxl5QxKxVG2OO3cF1nfmDhHxqyt4WqiMJWRHEA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4MCHxlPW0tvPrzMvOXUliXuyrUP6g/xGPOK83AZ1bDc=;
- b=k/ejTAfN9TYwPuMcSbMWVXLYFhhpT8oKNh+KFzk4GrB7S4tuoHoa2SC0scOhlPGoJB6ij3Tq+DHRLSc3kMOiwKprLC5kRLjfUnWOuszvcg4bPbe2Uq1aVxjIGK4RllC45hTBAFHMHpcADDUHUFruOjX4sD8fhpDmhbZk2A2YMYXit/7mbLrEqiXoKslLrkxh81Sc43/higfn0txhJQXIV8qccXcf5n4Si3UX+JzuiFT5musX7unfopLqhW5I49fv6pWzwW7742RD7vgXJ8n1tF37tFmICx4wpnan0W34IGPiUOaALlcBRxgCB4uvbq/NXrqAgIg8qWk/23Z3NPaV9A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=onsemi.com; dmarc=pass action=none header.from=onsemi.com;
- dkim=pass header.d=onsemi.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=onsemi.onmicrosoft.com; s=selector2-onsemi-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4MCHxlPW0tvPrzMvOXUliXuyrUP6g/xGPOK83AZ1bDc=;
- b=6qEiFc4dgGSAYVKbbyyvqMqNUHhndqHS9wSAsaaQNXrMCg4lFqfKRs3Ug83yWzx2HVx+6Gl5H7PNzPVp5XOK+qCCn8E/8kvRqNmJNU9vRF0Z1L7ipW8pVRPNLMP/bbFN2aIUJMvSCSxrSjtd22AT+ZLA0Lxd6iLgQuQxj3VmZvw=
-Received: from BY5PR02MB6786.namprd02.prod.outlook.com (2603:10b6:a03:210::11)
- by CH3PR02MB10217.namprd02.prod.outlook.com (2603:10b6:610:1be::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.24; Fri, 31 May
- 2024 15:13:15 +0000
-Received: from BY5PR02MB6786.namprd02.prod.outlook.com
- ([fe80::5308:8de6:b03e:3a47]) by BY5PR02MB6786.namprd02.prod.outlook.com
- ([fe80::5308:8de6:b03e:3a47%3]) with mapi id 15.20.7633.021; Fri, 31 May 2024
- 15:13:15 +0000
-From: Piergiorgio Beruto <Pier.Beruto@onsemi.com>
-To: Andrew Lunn <andrew@lunn.ch>,
-        "Parthiban.Veerasooran@microchip.com"
-	<Parthiban.Veerasooran@microchip.com>
-CC: Selvamani Rajagopal <Selvamani.Rajagopal@onsemi.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "edumazet@google.com"
-	<edumazet@google.com>,
-        "kuba@kernel.org" <kuba@kernel.org>,
-        "pabeni@redhat.com" <pabeni@redhat.com>,
-        "horms@kernel.org"
-	<horms@kernel.org>,
-        "saeedm@nvidia.com" <saeedm@nvidia.com>,
-        "anthony.l.nguyen@intel.com" <anthony.l.nguyen@intel.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "linux-doc@vger.kernel.org"
-	<linux-doc@vger.kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
-        "conor+dt@kernel.org" <conor+dt@kernel.org>,
-        "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>,
-        "Horatiu.Vultur@microchip.com"
-	<Horatiu.Vultur@microchip.com>,
-        "ruanjinjie@huawei.com"
-	<ruanjinjie@huawei.com>,
-        "Steen.Hegelund@microchip.com"
-	<Steen.Hegelund@microchip.com>,
-        "vladimir.oltean@nxp.com"
-	<vladimir.oltean@nxp.com>,
-        "UNGLinuxDriver@microchip.com"
-	<UNGLinuxDriver@microchip.com>,
-        "Thorsten.Kummermehr@microchip.com"
-	<Thorsten.Kummermehr@microchip.com>,
-        "Nicolas.Ferre@microchip.com"
-	<Nicolas.Ferre@microchip.com>,
-        "benjamin.bigler@bernformulastudent.ch"
-	<benjamin.bigler@bernformulastudent.ch>,
-        Viliam Vozar
-	<Viliam.Vozar@onsemi.com>,
-        Arndt Schuebel <Arndt.Schuebel@onsemi.com>
-Subject: RE: [PATCH net-next v4 00/12] Add support for OPEN Alliance
- 10BASE-T1x MACPHY Serial Interface
-Thread-Topic: [PATCH net-next v4 00/12] Add support for OPEN Alliance
- 10BASE-T1x MACPHY Serial Interface
-Thread-Index: 
- AQHakZAxosrycArunkaHEujJo3A4abF0voeAgAA2YYCAGHiwAIAAQuMAgAFPWgCAAH78AIAA9q2AgBaf7QCAAAnBAIAAAr5ggAAE7gCACKAxgIABvdeAgAAGhgCAACs4gA==
-Date: Fri, 31 May 2024 15:13:15 +0000
-Message-ID: 
- <BY5PR02MB6786649AEE8D66E4472BB9679DFC2@BY5PR02MB6786.namprd02.prod.outlook.com>
-References: <6ba7e1c8-5f89-4a0e-931f-3c117ccc7558@lunn.ch>
- <8b9f8c10-e6bf-47df-ad83-eaf2590d8625@microchip.com>
- <44cd0dc2-4b37-4e2f-be47-85f4c0e9f69c@lunn.ch>
- <b941aefd-dbc5-48ea-b9f4-30611354384d@microchip.com>
- <BYAPR02MB5958A4D667D13071E023B18F83F52@BYAPR02MB5958.namprd02.prod.outlook.com>
- <6e4c8336-2783-45dd-b907-6b31cf0dae6c@lunn.ch>
- <BY5PR02MB6786619C0A0FCB2BEDC2F90D9DF52@BY5PR02MB6786.namprd02.prod.outlook.com>
- <0581b64a-dd7a-43d7-83f7-657ae93cefe5@lunn.ch>
- <BY5PR02MB6786FC4808B2947CA03977429DF32@BY5PR02MB6786.namprd02.prod.outlook.com>
- <39a62649-813a-426c-a2a6-4991e66de36e@microchip.com>
- <585d7709-bcee-4a0e-9879-612bf798ed45@lunn.ch>
-In-Reply-To: <585d7709-bcee-4a0e-9879-612bf798ed45@lunn.ch>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BY5PR02MB6786:EE_|CH3PR02MB10217:EE_
-x-ms-office365-filtering-correlation-id: bec7774d-b570-464b-577f-08dc81843235
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: 
- BCL:0;ARA:13230031|376005|7416005|1800799015|366007|38070700009;
-x-microsoft-antispam-message-info: 
- =?us-ascii?Q?ZONTsivknfWcFMJJryE2rE4nt2NgPDQ3x7G/w/vsZLRo1GwENdH5cSCnX1G/?=
- =?us-ascii?Q?IWgz7LEQNwwq3bC+TfkAJJY+Zro0JhxkGhl0fDfrTnRkChQKdoeZy0sQnNMa?=
- =?us-ascii?Q?EwLnuNldzwijhzZhMvcPr/ZDI4faW1k2rNP3lJjm8RvkWO6WlI4OkmJT97uF?=
- =?us-ascii?Q?YOLIga7zF8WJsgvrFIe/uP5oMZru5i1CLq0ppcVsIpcHyHcnKh9BPuh0S1JJ?=
- =?us-ascii?Q?ZrVNwg3y0GaVVgxuSusBevZkN/elMFZXSmUZtrtgS7CIkeRKHcM/qlpCUZJe?=
- =?us-ascii?Q?iu20ZkaP2tqbPtQqi/sVJk2YoQ8sTNDcZWYqgHiYdaT3GuTG8+/AwmaMqz2F?=
- =?us-ascii?Q?HAjFruGAI9zQmsXARW1HeZrgggPQce9TSzmDupEbey1r81MO7GzwD22bJzgJ?=
- =?us-ascii?Q?7S2hBH85/ZXkxFNFy/G7+7UvR/24MaH4884uvoqe92S2NVQdGCUb5GkIfOZz?=
- =?us-ascii?Q?FMDGKrsiXxpdbD0/WL3SCf83zelcnmpcwt8Dhax7ZlpzkLKNMQoAJBxLLAEg?=
- =?us-ascii?Q?f6ebJuDqF5N7FpErfJ1Qqgqu2mCbyQnq9I1l0edurZbEg1aP8UOY2YnlcRP0?=
- =?us-ascii?Q?XGZy8sGB2JHTKACRkb32j5KJAngzVHpp+mJZ2wLrk1E1Un4plr6lW5rBntT8?=
- =?us-ascii?Q?+ow5ay2I2xNUGHwXucPcRhoAQ5K1EFrDA04CfbLnzPsXf6PlVyzGId0YMGji?=
- =?us-ascii?Q?ehx1VC/7wg6NyJWdkLktY//WYiu/IHVCwzgSq5KoYAsJRq18E6HGWgCYeC7j?=
- =?us-ascii?Q?pZMm6H6Rj3g336Eh/BgOo6XtohnZi3YmOL67ShLMP0zsR9LeVm1EGCKFcOhf?=
- =?us-ascii?Q?IPXxHnKYV7JLVnWTkCB3dIfl1axzL198n4o8GnqBfFsOCEafcgMk392WEuTh?=
- =?us-ascii?Q?CKPk01GvXGizvKXnsBR8uSouvkovb71vu0+AdhgfScPpPpgVaW4Z9e9FlNBG?=
- =?us-ascii?Q?EIypo3HiInBN3lD3MbrgX25bgijSOlV3+hjGt7PVjGJdKjRrJRuWS5elNa75?=
- =?us-ascii?Q?Ww3uGeEcDsKciEDMUCvHwwcUud5AycMhIWPdmvpbsDUcKInTPTqFCogH0KIf?=
- =?us-ascii?Q?/vABYVYOfO7/q9LyTx4UWgETU0ohF99lV6TNZMmzvAtkopnVCDUv50KOJlIN?=
- =?us-ascii?Q?K12XdwKA0XZKl6fpRDokdsbuzjqUTySC/9LaKxLVU2ztEBKEmZg4q7vnOBfb?=
- =?us-ascii?Q?QAjL+tyChXYy+QJoBXwsL0RY3V85kzSI9oGwEZsvy7nNxwOTXIAdAidvR5zP?=
- =?us-ascii?Q?P0/5OMVQpdVDWpW7zC4FeiPRbS4cMzTKypGF3c23VA=3D=3D?=
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR02MB6786.namprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(7416005)(1800799015)(366007)(38070700009);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?us-ascii?Q?/NzU5ajPv7Gbt2nQ6WyhRDmCyOHTCg5li/sasxEfG4DE+ZNIpOxHbd7faD0b?=
- =?us-ascii?Q?2gqe7KvSfB2u4fp338Vb2Fsnvi480dowkc1um+r+2OO0NZjchLRohaXOdZpN?=
- =?us-ascii?Q?xzYt/T2ss+2xDLchhqZWYD0Z0MsZSiWNaQ2bnKmT0Yk5oxVAB5A9eX9DroC3?=
- =?us-ascii?Q?vd0OPqxzvpRZJ7tvnzc6LkkslmGXF3MAoI3pOkRGgN7AJaWHzNMU4JlfOQg4?=
- =?us-ascii?Q?Nb0Zpym5tROp1rUiCOgHSR3yk76ly6ubsCFpyFyzi1GVD1AVcAGH6s1Q30X9?=
- =?us-ascii?Q?cXbmTJ/UkRyMdYQdZQIoovd7dvCHl3xTPf98eTZSZtTd4NBQIEfuOcezh/0e?=
- =?us-ascii?Q?YHl4w8+/oRW7o4Rbzd4R/xOGrzP+eOH22h1pjzXqOn8csymtTxfy8PgknY3G?=
- =?us-ascii?Q?bUJ7842wQmsgHujLwUrTvyNvCNa1BsETDjZ6+FqG1cdf3F2UZHoULV+dnv4o?=
- =?us-ascii?Q?+7XBgoTuzrlAOdGVAQTiAvD0TRT7V31Pm/iq/Fg5mJNZ+6fyswauIyMMUw0M?=
- =?us-ascii?Q?q6OR3OIOq4IxCOipB09xiquAda1aVvZd3X5V+8UK4BoWJE2r2PSL/s/EMYge?=
- =?us-ascii?Q?tkQ7dKlCici1SGCZnKSiRal5IeqCLUb1m/mp2o77dbuyeVYTkqS+ojH/0U2w?=
- =?us-ascii?Q?/N3wCCC0Rh+h7JIg1LeOb3Pm8MlhhxB9z6zywsr3K9QKTMmf53tzTPv9XSqb?=
- =?us-ascii?Q?UoJ7Hisgn3we2is6kilDBu06gZINwoeVRzDSKjgAkVkO8JTkrhVxYcSpLeVi?=
- =?us-ascii?Q?jnfOP0+i625F3i5fu2PPtizg68dyORx32mqirOYX1PHL4jlJofqtKgnBeITu?=
- =?us-ascii?Q?Io6lH0mVx/8Zm52araGacTn8Ff6OgfBbBdntoW3A4Mrb2y1PB0sPngUD0ut7?=
- =?us-ascii?Q?5CPsB2z6vbgaWAALMv8IWo1nMtRsmD702whHZ4P6DKrKqgVac47etpShhUcO?=
- =?us-ascii?Q?WrOP5/QtkMcggo2cewgzkJFvYaPDVMZuv7H1RSxIC1kJzBLpHnWmixVs2/ic?=
- =?us-ascii?Q?au8RepqbbTtPTyGyYM98lA5hwRN5+obuMJ3Jko7imeWD3EjcYm6pHjnO6gR8?=
- =?us-ascii?Q?cagXMXJH4IU0swJTwXLOgGoq9pRb+Mh93EPqkrpG6YM4VX6gorpjpGYZyPtj?=
- =?us-ascii?Q?YD4q2DskIytZTmgI7H8EUiiThmB/0bBj8ipzaUFyyqbjWTUvD2yb3G8R77vz?=
- =?us-ascii?Q?CMjXKJTpt7uOsxgqq0B6o/PkOkgmslTWUvwXgnQtHNbrovQyQ7IYK9AFIhhl?=
- =?us-ascii?Q?i/inGA6s+2qAx21KiNfWEdxRy08nTirrmS86vtSJ25REJYqZjYai+So7OwZB?=
- =?us-ascii?Q?dbeRZ2gNDV7+Iq/M42sfX/UsTeRnYZF7QmFvlqJUekLc0c2JBXIiU1qt+y6i?=
- =?us-ascii?Q?oL9Gipb1AYAbROIgH7OgXiK5NECNeHe43W+y5mMzbQl6UNoKmoadEn3LVYKh?=
- =?us-ascii?Q?BWhnP+ktWfcCSnjlXg8uA1++1RF2PD16gW/5ALxKVTRpmyqQkyQCa8VKPJ+7?=
- =?us-ascii?Q?sfqqfCbwGzyfl9+g1k6lyTK3eKiGDw9jk5dCdhF9Qk++hWxKREHDKiokTJvH?=
- =?us-ascii?Q?oPxNv8en5Zag65+3F2RbM8iC++fkBhnx8nq3X+rL?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EC4074E3D;
+	Fri, 31 May 2024 15:13:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717168418; cv=none; b=jt19rj4W6FypS99RqxawNb26ul+TKj+ExbSg5ziUZlmsufjtUj7gE9DfsJ9ZMet0TkMaTntIxsbBzJp6WXoDNNepL3iUf+4xw9Unk76QxBcal5yvjtKl+pvbaw5dCEwXCALliPscCTNRmqxjOoZC6oqKthQ4+m0sWmzZ6876wDo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717168418; c=relaxed/simple;
+	bh=6nPDK0mxpYsWJ6HFcH3NKwrXj8AR0/HGDru3QUYz1Fo=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=jT1oua5l2/vkdu6q/4v+u2Ev8i+1ocJ7ok/KZqV5tX8QKRlx+m1YeYKizt1F4IQsPTjJpWUHvgb429ERlEeZi9TNDE4vY58HGUEDSEifUJA82aqtk7JF1D642oXJ90i1E2OBPPwy9TyaUjtt6jdDwclYnk2EqaYeGUSD9ayGq6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KCEpMIhy; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717168416; x=1748704416;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=6nPDK0mxpYsWJ6HFcH3NKwrXj8AR0/HGDru3QUYz1Fo=;
+  b=KCEpMIhyRDM9sXd7CCkm485JX4fa/F7kThFL+kmWfwRxQKeiwQ5rtjvh
+   Neyt+8ArSBCq7EudRbrPqqvau9ZpfN7oj+6lr0Pcyb6+qpun8v4lC/hSU
+   W2eFFbiv60Iov1jiaIOV7NUDODLOckgBnqJEPEGDmOyTs3ohVhV8G5CDp
+   /aaPmTkRRPdT650hdTSEBW//jiOx4ty1EFdF/Qbl/eCuNYeYnqslFzY4+
+   2x7FJiDPsx894flZqyeoN5utytu7iLUMiCtodfz8LUnlaq2U/20IRChl3
+   AFJcmtAEHTbGTzJltuHZVpa5/EQu5bR03KXdAvwXDL7pJZW7bv2Zxk5Lf
+   w==;
+X-CSE-ConnectionGUID: +eDpn7WDT7O1fDODteqhzg==
+X-CSE-MsgGUID: O/sXWrZ6Qd+wLsiivzn4cw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="13534190"
+X-IronPort-AV: E=Sophos;i="6.08,204,1712646000"; 
+   d="scan'208";a="13534190"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 08:13:35 -0700
+X-CSE-ConnectionGUID: XDBG4tgmTxesqIo669ObQA==
+X-CSE-MsgGUID: PFZaJqeiR5Kf5OSbn4Yn9Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,204,1712646000"; 
+   d="scan'208";a="36271538"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.152])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 08:13:30 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Fri, 31 May 2024 18:13:26 +0300 (EEST)
+To: Douglas Anderson <dianders@chromium.org>
+cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+    Jiri Slaby <jirislaby@kernel.org>, linux-arm-msm@vger.kernel.org, 
+    John Ogness <john.ogness@linutronix.de>, 
+    =?ISO-8859-15?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, 
+    Tony Lindgren <tony@atomide.com>, Stephen Boyd <swboyd@chromium.org>, 
+    linux-serial <linux-serial@vger.kernel.org>, 
+    Yicong Yang <yangyicong@hisilicon.com>, 
+    Johan Hovold <johan+linaro@kernel.org>, 
+    LKML <linux-kernel@vger.kernel.org>, 
+    Bjorn Andersson <andersson@kernel.org>, 
+    Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+    Konrad Dybcio <konrad.dybcio@linaro.org>, 
+    Vijaya Krishna Nivarthi <quic_vnivarth@quicinc.com>
+Subject: Re: [PATCH v2 6/7] serial: qcom-geni: Fix suspend while active UART
+ xfer
+In-Reply-To: <20240530154553.v2.6.I0f81a5baa37d368f291c96ee4830abca337e3c87@changeid>
+Message-ID: <5e4b2c9a-aa78-6ee6-f570-baf343cf2569@linux.intel.com>
+References: <20240530224603.730042-1-dianders@chromium.org> <20240530154553.v2.6.I0f81a5baa37d368f291c96ee4830abca337e3c87@changeid>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: onsemi.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BY5PR02MB6786.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bec7774d-b570-464b-577f-08dc81843235
-X-MS-Exchange-CrossTenant-originalarrivaltime: 31 May 2024 15:13:15.7519
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 04e1674b-7af5-4d13-a082-64fc6e42384c
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: TZjmorrIgnExOJaiMHZuFlsK6G4dtH58fUQKss9ZiLKvQ7CC2fOGUyks0GVK6TfZ0YkIOZdZEVfqTDaPOzfakQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR02MB10217
-X-Proofpoint-ORIG-GUID: Gc3KMUy8PgzJfzHF_QGZTcS_WwWucuyG
-X-Proofpoint-GUID: Gc3KMUy8PgzJfzHF_QGZTcS_WwWucuyG
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-31_11,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 suspectscore=0
- lowpriorityscore=0 priorityscore=1501 phishscore=0 clxscore=1015
- spamscore=0 malwarescore=0 mlxlogscore=999 bulkscore=0 impostorscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2405310114
+Content-Type: text/plain; charset=US-ASCII
 
-Hi Andrew,
-We're currently working on re-factoring our driver onto the framework.
-I will make sure we can give you a feedback ASAP.
+On Thu, 30 May 2024, Douglas Anderson wrote:
 
-We're also trying to asses the performance difference between what we have =
-now and what we can achieve after re-factorng.
+> On devices using Qualcomm's GENI UART it is possible to get the UART
+> stuck such that it no longer outputs data. Specifically, I could
+> reproduce this problem by logging in via an agetty on the debug serial
+> port (which was _not_ used for kernel console) and running:
+>   cat /var/log/messages
+> ...and then (via an SSH session) forcing a few suspend/resume cycles.
+> 
+> Digging into this showed a number of problems that are all related.
+> 
+> The root of the problems was with qcom_geni_serial_stop_tx_fifo()
+> which is called as part of the suspend process. Specific problems with
+> that function:
+> - When we cancel an in-progress "tx" command it doesn't appear to
+>   fully drain the FIFO. That meant qcom_geni_serial_tx_empty()
+>   continued to report that the FIFO wasn't empty. The
+>   qcom_geni_serial_start_tx_fifo() function didn't re-enable
+>   interrupts in this case so we'd never start transferring again.
+> - We cancelled the current "tx" command but we forgot to zero out
+>   "tx_remaining". This confused logic elsewhere in the driver
+> - From experimentation, it appears that cancelling the "tx" command
+>   could drop some of the queued up bytes. While maybe not the end of
+>   the world, it doesn't seem like we should be dropping bytes when
+>   stopping the FIFO, which is defined more of a "pause".
+> 
+> One idea to fix the above would be to add FIFO draining to
+> qcom_geni_serial_stop_tx_fifo(). However, digging into the
+> documentation in serial_core.h for stop_tx() makes this seem like the
+> wrong choice. Specifically stop_tx() is called with local interrupts
+> disabled. Waiting for a FIFO (which might be 64 bytes big) to drain at
+> 115.2 kbps doesn't seem like a wise move.
+> 
+> Ideally qcom_geni_serial_stop_tx_fifo() would be able to pause the
+> transmitter, but nothing in the documentation for the GENI UART makes
+> me believe that is possible.
+> 
+> Given the lack of better choices, we'll change
+> qcom_geni_serial_stop_tx_fifo() to simply disable the
+> TX_FIFO_WATERMARK interrupt and call it a day. This seems OK as per
+> the serial core docs since stop_tx() is supposed to stop transferring
+> bytes "as soon as possible" and there doesn't seem to be any possible
+> way to stop transferring sooner. As part of this, get rid of some of
+> the extra conditions on qcom_geni_serial_start_tx_fifo() which simply
+> weren't needed and are now getting in the way. It's always fine to
+> turn the interrupts on if we want to receive and it'll be up to the
+> IRQ handler to turn them back off if somehow they're not needed. This
+> works fine.
+> 
+> Unfortunately, doing just the above change causes new/different
+> problems with suspend/resume. Now if you suspend while an active
+> transfer is happening you can find that after resume time you're no
+> longer receiving UART interrupts at all. It appears to be important to
+> drain the FIFO and send a "cancel" command if the UART is active to
+> avoid this. Since we've already decided that
+> qcom_geni_serial_stop_tx_fifo() shouldn't be doing this, let's add the
+> draining / cancelling logic to the shutdown() call where it should be
+> OK to delay a bit. This is called as part of the suspend process via
+> uart_suspend_port().
+> 
+> Finally, with all of the above, the test case where we're spamming the
+> UART with data and going through suspend/resume cycles doesn't kill
+> the UART and doesn't drop bytes.
+> 
+> NOTE: though I haven't gone back and validated on ancient code, it
+> appears from code inspection that many of these problems have existed
+> since the start of the driver. In the very least, I could reproduce
+> the problems on vanilla v5.15. The problems don't seem to reproduce
+> when using the serial port for kernel console output and also don't
+> seem to reproduce if nothing is being printed to the console at
+> suspend time, so this is presumably why they were not noticed until
+> now.
 
-Thanks,
-Piergiorgio
+Hi,
 
------Original Message-----
-From: Andrew Lunn <andrew@lunn.ch>
-Sent: 31 May, 2024 14:37
-To: Parthiban.Veerasooran@microchip.com
-Cc: Piergiorgio Beruto <Pier.Beruto@onsemi.com>; Selvamani Rajagopal <Selva=
-mani.Rajagopal@onsemi.com>; davem@davemloft.net; edumazet@google.com; kuba@=
-kernel.org; pabeni@redhat.com; horms@kernel.org; saeedm@nvidia.com; anthony=
-l.nguyen@intel.com; netdev@vger.kernel.org; linux-kernel@vger.kernel.org; =
-corbet@lwn.net; linux-doc@vger.kernel.org; robh+dt@kernel.org; krzysztof.ko=
-zlowski+dt@linaro.org; conor+dt@kernel.org; devicetree@vger.kernel.org; Hor=
-atiu.Vultur@microchip.com; ruanjinjie@huawei.com; Steen.Hegelund@microchip.=
-com; vladimir.oltean@nxp.com; UNGLinuxDriver@microchip.com; Thorsten.Kummer=
-mehr@microchip.com; Nicolas.Ferre@microchip.com; benjamin.bigler@bernformul=
-astudent.ch; Viliam Vozar <Viliam.Vozar@onsemi.com>; Arndt Schuebel <Arndt.=
-Schuebel@onsemi.com>
-Subject: Re: [PATCH net-next v4 00/12] Add support for OPEN Alliance 10BASE=
--T1x MACPHY Serial Interface
+This was quite tiring to read. :-) It's has lots of useful information but 
+it could be structured better.
 
-[External Email]: This email arrived from an external source - Please exerc=
-ise caution when opening any attachments or clicking on links.
+Could you try to rewrite this entire description so that it's easier to 
+find the problem and final solution information from it. Start with those 
+two things, and in that part, try to avoid detouring to extra branches you 
+took while finding and solving the problem.
 
-> So I would request all of you to give your comments on the existing
-> implementation in the patch series to improve better. Once this
-> version is mainlined we will discuss further to implement further
-> features supported. I feel the current discussion doesn't have any
-> impact on the existing implementation which supports basic 10Base-T1S
-> Ethernet communication.
+You can place how the problem can be reproduced after you've described the 
+root cause & final solution first. Extra information why some other 
+approaches do not work is also useful information, but please place it 
+after the final solution has been covered first.
 
-Agreed. Lets focus on what we have now.
+Also, try to avoid I/you/we, use imperative tone.
 
-https://urldefense.com/v3/__https://patchwork.kernel.org/project/netdevbpf/=
-patch/20240418125648.372526-2-Parthiban.Veerasooran@microchip.com/__;!!KkVu=
-bWw!n9QOIA72sKA9z72UFogHeBRnA8Hse9gmIqzNv27f7Tc-4dYH1KA__DfMSmln-uBotO-bnw3=
-PC2qXbfRn$
+-- 
+ i.
 
-Version 4 failed to apply. So we are missing all the CI tests. We need a v5=
- which cleanly applies to net-next in order for those tests to run.
 
-I think we should disable vendor interrupts by default, since we currently =
-have no way to handle them.
-
-I had a quick look at the comments on the patches. I don't think we have an=
-y other big issues not agreed on. So please post a v5 with them all address=
-ed and we will see what the CI says.
-
-Piergiorgio, if you have any real problems getting basic support for your d=
-evice working with this framework, now would be a good time to raise the pr=
-oblems.
-
-        Andrew
+> Fixes: c4f528795d1a ("tty: serial: msm_geni_serial: Add serial driver support for GENI based QUP")
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> ---
+> There are still a number of problems with GENI UART after this but
+> I've kept this change separate to make it easier to understand.
+> Specifically on mainline just hitting "Ctrl-C" after dumping
+> /var/log/messages to the serial port hangs things after the kfifo
+> changes. Those issues will be addressed in future patches.
+> 
+> Changes in v2:
+> - Totally rework / rename patch to handle suspend while active xfer
+> 
+>  drivers/tty/serial/qcom_geni_serial.c | 97 +++++++++++++++++++++------
+>  1 file changed, 75 insertions(+), 22 deletions(-)
+> 
+> diff --git a/drivers/tty/serial/qcom_geni_serial.c b/drivers/tty/serial/qcom_geni_serial.c
+> index d7814f9e5c26..10aeb0313f9b 100644
+> --- a/drivers/tty/serial/qcom_geni_serial.c
+> +++ b/drivers/tty/serial/qcom_geni_serial.c
+> @@ -131,6 +131,7 @@ struct qcom_geni_serial_port {
+>  	bool brk;
+>  
+>  	unsigned int tx_remaining;
+> +	unsigned int tx_total;
+>  	int wakeup_irq;
+>  	bool rx_tx_swap;
+>  	bool cts_rts_swap;
+> @@ -337,11 +338,14 @@ static bool qcom_geni_serial_poll_bit(struct uart_port *uport,
+>  
+>  static void qcom_geni_serial_setup_tx(struct uart_port *uport, u32 xmit_size)
+>  {
+> +	struct qcom_geni_serial_port *port = to_dev_port(uport);
+>  	u32 m_cmd;
+>  
+>  	writel(xmit_size, uport->membase + SE_UART_TX_TRANS_LEN);
+>  	m_cmd = UART_START_TX << M_OPCODE_SHFT;
+>  	writel(m_cmd, uport->membase + SE_GENI_M_CMD0);
+> +
+> +	port->tx_total = xmit_size;
+>  }
+>  
+>  static void qcom_geni_serial_poll_tx_done(struct uart_port *uport)
+> @@ -361,6 +365,64 @@ static void qcom_geni_serial_poll_tx_done(struct uart_port *uport)
+>  	writel(irq_clear, uport->membase + SE_GENI_M_IRQ_CLEAR);
+>  }
+>  
+> +static void qcom_geni_serial_drain_tx_fifo(struct uart_port *uport)
+> +{
+> +	struct qcom_geni_serial_port *port = to_dev_port(uport);
+> +
+> +	/*
+> +	 * If the main sequencer is inactive it means that the TX command has
+> +	 * been completed and all bytes have been sent. Nothing to do in that
+> +	 * case.
+> +	 */
+> +	if (!qcom_geni_serial_main_active(uport))
+> +		return;
+> +
+> +	/*
+> +	 * Wait until the FIFO has been drained. We've already taken bytes out
+> +	 * of the higher level queue in qcom_geni_serial_send_chunk_fifo() so
+> +	 * if we don't drain the FIFO but send the "cancel" below they seem to
+> +	 * get lost.
+> +	 */
+> +	qcom_geni_serial_poll_bitfield(uport, SE_GENI_M_GP_LENGTH, 0xffffffff,
+> +				       port->tx_total - port->tx_remaining);
+> +
+> +	/*
+> +	 * If clearing the FIFO made us inactive then we're done--no need for
+> +	 * a cancel.
+> +	 */
+> +	if (!qcom_geni_serial_main_active(uport))
+> +		return;
+> +
+> +	/*
+> +	 * Cancel the current command. After this the main sequencer will
+> +	 * stop reporting that it's active and we'll have to start a new
+> +	 * transfer command.
+> +	 *
+> +	 * If we skip doing this cancel and then continue with a system
+> +	 * suspend while there's an active command in the main sequencer
+> +	 * then after resume time we won't get any more interrupts on the
+> +	 * main sequencer until we send the cancel.
+> +	 */
+> +	geni_se_cancel_m_cmd(&port->se);
+> +	if (!qcom_geni_serial_poll_bit(uport, SE_GENI_M_IRQ_STATUS,
+> +				       M_CMD_CANCEL_EN, true)) {
+> +		/* The cancel failed; try an abort as a fallback. */
+> +		geni_se_abort_m_cmd(&port->se);
+> +		qcom_geni_serial_poll_bit(uport, SE_GENI_M_IRQ_STATUS,
+> +						M_CMD_ABORT_EN, true);
+> +		writel(M_CMD_ABORT_EN, uport->membase + SE_GENI_M_IRQ_CLEAR);
+> +	}
+> +	writel(M_CMD_CANCEL_EN, uport->membase + SE_GENI_M_IRQ_CLEAR);
+> +
+> +	/*
+> +	 * We've cancelled the current command. "tx_remaining" stores how
+> +	 * many bytes are left to finish in the current command so we know
+> +	 * when to start a new command. Since the command was cancelled we
+> +	 * need to zero "tx_remaining".
+> +	 */
+> +	port->tx_remaining = 0;
+> +}
+> +
+>  static void qcom_geni_serial_abort_rx(struct uart_port *uport)
+>  {
+>  	u32 irq_clear = S_CMD_DONE_EN | S_CMD_ABORT_EN;
+> @@ -681,37 +743,18 @@ static void qcom_geni_serial_start_tx_fifo(struct uart_port *uport)
+>  {
+>  	u32 irq_en;
+>  
+> -	if (qcom_geni_serial_main_active(uport) ||
+> -	    !qcom_geni_serial_tx_empty(uport))
+> -		return;
+> -
+>  	irq_en = readl(uport->membase +	SE_GENI_M_IRQ_EN);
+>  	irq_en |= M_TX_FIFO_WATERMARK_EN | M_CMD_DONE_EN;
+> -
+>  	writel(irq_en, uport->membase +	SE_GENI_M_IRQ_EN);
+>  }
+>  
+>  static void qcom_geni_serial_stop_tx_fifo(struct uart_port *uport)
+>  {
+>  	u32 irq_en;
+> -	struct qcom_geni_serial_port *port = to_dev_port(uport);
+>  
+>  	irq_en = readl(uport->membase + SE_GENI_M_IRQ_EN);
+>  	irq_en &= ~(M_CMD_DONE_EN | M_TX_FIFO_WATERMARK_EN);
+>  	writel(irq_en, uport->membase + SE_GENI_M_IRQ_EN);
+> -	/* Possible stop tx is called multiple times. */
+> -	if (!qcom_geni_serial_main_active(uport))
+> -		return;
+> -
+> -	geni_se_cancel_m_cmd(&port->se);
+> -	if (!qcom_geni_serial_poll_bit(uport, SE_GENI_M_IRQ_STATUS,
+> -						M_CMD_CANCEL_EN, true)) {
+> -		geni_se_abort_m_cmd(&port->se);
+> -		qcom_geni_serial_poll_bit(uport, SE_GENI_M_IRQ_STATUS,
+> -						M_CMD_ABORT_EN, true);
+> -		writel(M_CMD_ABORT_EN, uport->membase + SE_GENI_M_IRQ_CLEAR);
+> -	}
+> -	writel(M_CMD_CANCEL_EN, uport->membase + SE_GENI_M_IRQ_CLEAR);
+>  }
+>  
+>  static void qcom_geni_serial_handle_rx_fifo(struct uart_port *uport, bool drop)
+> @@ -1093,7 +1136,15 @@ static int setup_fifos(struct qcom_geni_serial_port *port)
+>  }
+>  
+>  
+> -static void qcom_geni_serial_shutdown(struct uart_port *uport)
+> +static void qcom_geni_serial_shutdown_dma(struct uart_port *uport)
+> +{
+> +	disable_irq(uport->irq);
+> +
+> +	qcom_geni_serial_stop_tx(uport);
+> +	qcom_geni_serial_stop_rx(uport);
+> +}
+> +
+> +static void qcom_geni_serial_shutdown_fifo(struct uart_port *uport)
+>  {
+>  	disable_irq(uport->irq);
+>  
+> @@ -1102,6 +1153,8 @@ static void qcom_geni_serial_shutdown(struct uart_port *uport)
+>  
+>  	qcom_geni_serial_stop_tx(uport);
+>  	qcom_geni_serial_stop_rx(uport);
+> +
+> +	qcom_geni_serial_drain_tx_fifo(uport);
+>  }
+>  
+>  static int qcom_geni_serial_port_setup(struct uart_port *uport)
+> @@ -1560,7 +1613,7 @@ static const struct uart_ops qcom_geni_console_pops = {
+>  	.startup = qcom_geni_serial_startup,
+>  	.request_port = qcom_geni_serial_request_port,
+>  	.config_port = qcom_geni_serial_config_port,
+> -	.shutdown = qcom_geni_serial_shutdown,
+> +	.shutdown = qcom_geni_serial_shutdown_fifo,
+>  	.type = qcom_geni_serial_get_type,
+>  	.set_mctrl = qcom_geni_serial_set_mctrl,
+>  	.get_mctrl = qcom_geni_serial_get_mctrl,
+> @@ -1582,7 +1635,7 @@ static const struct uart_ops qcom_geni_uart_pops = {
+>  	.startup = qcom_geni_serial_startup,
+>  	.request_port = qcom_geni_serial_request_port,
+>  	.config_port = qcom_geni_serial_config_port,
+> -	.shutdown = qcom_geni_serial_shutdown,
+> +	.shutdown = qcom_geni_serial_shutdown_dma,
+>  	.type = qcom_geni_serial_get_type,
+>  	.set_mctrl = qcom_geni_serial_set_mctrl,
+>  	.get_mctrl = qcom_geni_serial_get_mctrl,
+> 
 
