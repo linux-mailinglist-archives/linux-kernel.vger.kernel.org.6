@@ -1,211 +1,290 @@
-Return-Path: <linux-kernel+bounces-197248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E16B38D6821
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 19:26:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DECB68D6826
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 19:28:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51C631C250D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:26:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E1ED8B2825F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:28:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5675E17B404;
-	Fri, 31 May 2024 17:25:59 +0000 (UTC)
-Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C99517836A;
+	Fri, 31 May 2024 17:28:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HJCuDGtJ"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64C7355E4C;
-	Fri, 31 May 2024 17:25:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C7A37BAE7
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 17:28:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717176358; cv=none; b=ta8FjahfJ/VsiEH16ivs/PJ8gwfEBfAlfUiumfbNOr7E0+JZr6JH0K8WZGxqQGCb0NiJZfqjNqSEzu7oXlqLSMyBQSeg3uRHuSasoso/+MUnFCGtQKGxmR9w7vLOB2hrEroAKQKZvZduhlwl9n+ut4NpKft+rE/7wtORa78Etb8=
+	t=1717176519; cv=none; b=biNEAkNWaeZPaz00MB+1jW7h+VSOYQosnsTJZ/PR+AzwYIEnFa9yDSll8HBwZcReozJUlhXgMND5z7MV3UKoeSCjtdotKiQdKCxI9eEtspIBJvtCTC4NgFZx5FC9NK1TdOTyPWvHhpZL/FnDGKU6q819lKDH1Pqki+pn7EbG0Vw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717176358; c=relaxed/simple;
-	bh=ZWgpS0W3Gu1vL+QPpeRCpIdJcGFrwbbUpa/7iI5oy58=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=UrMObpx+EolmuH+c44FvirMTm2b+/RTcFaXnwOnk8NXQRXCCXbaUXQ9UwLcrqqJKQFAt8I/6WWNeulWp/+15A45FVu8611kyPQ/m/cv2/9HOoS9gyxf81xcDULaO2iib6vM/4SJxEsDlDIe7ehIzq49uqdKMtJc8B5bubQQM1Gg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
-Received: from [192.168.1.105] (178.176.78.69) by msexch01.omp.ru
- (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Fri, 31 May
- 2024 20:25:33 +0300
-Subject: Re: [net-next PATCH v4 7/7] net: ravb: Allocate RX buffers via page
- pool
-To: Paul Barker <paul.barker.ct@bp.renesas.com>, "David S. Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	=?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-CC: Biju Das <biju.das.jz@bp.renesas.com>, Claudiu Beznea
-	<claudiu.beznea.uj@bp.renesas.com>, Yoshihiro Shimoda
-	<yoshihiro.shimoda.uh@renesas.com>, <netdev@vger.kernel.org>,
-	<linux-renesas-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240528150339.6791-1-paul.barker.ct@bp.renesas.com>
- <20240528150339.6791-8-paul.barker.ct@bp.renesas.com>
- <eefce0af-2771-a56c-753d-85fe991fdf31@omp.ru>
- <e7cf9dd8-9c67-476b-a892-b8dbe9312c4c@bp.renesas.com>
-From: Sergey Shtylyov <s.shtylyov@omp.ru>
-Organization: Open Mobile Platform
-Message-ID: <a59baa2d-0f00-18b9-bdea-0206b7a93f52@omp.ru>
-Date: Fri, 31 May 2024 20:25:33 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+	s=arc-20240116; t=1717176519; c=relaxed/simple;
+	bh=mE8SRr5pmWDgEPgzOnI666xlXsAzv9fUYw/yNBrhUXU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BhZW5skZpc1fl2EkTHJZwTRomKK5eVyWvxO45cK3cxJG6dwFwxYx1SUVSXCKR5ydFy4YF4tOsiXKVCdRUx+1CzUPUgMozuU70nVCCeUoMaYu12Iyr9w5QLl325GvBj1URgPtqn0F1E+Djj2fqfpxbPBl3g4mdpSL55o2fLdlSSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HJCuDGtJ; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1f44b594deeso17484525ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 10:28:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717176517; x=1717781317; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=PIW/+d3pyitNysbRb4C74Z7GshTp0lM3THuiLkgE5rU=;
+        b=HJCuDGtJtCzo4THLud6XJB5tCQfyEnAuCVMUMGcd+1UkrvLVWInuZ4NepimFc5Zy98
+         VzpAzXcS6K42un8YTixwH2pxJ8SAtRJRi3AQ9R2nP70j0NOcihDwGf36ZMn49/UKhRYA
+         oAvbyW8DdsFe+6HYCODRgalDrCYdRAeo37IO9IUPHwNha5LUGXSkhOnMmq1kKc7aTeue
+         6YK0AGlXRY7OtoEFZvCHU2nPbQ01NegwbMfw1knl7eYUPziEm2Niuom9r1AYntSC/04S
+         3+zJ3jKVmFVRD1I/zVoL0pVeqEwq9JQhSWIZ6gV8NDlhjrXmSBE7ufzQQMR+/eY6DAQ6
+         n/5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717176517; x=1717781317;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PIW/+d3pyitNysbRb4C74Z7GshTp0lM3THuiLkgE5rU=;
+        b=ioW4AW2wQm+UzxMaOHe7F7Urr3V5axhz4xtIs9QHpplKxFr1B0zMvaw/p8oxkmJeIQ
+         vBIW+naC25xTOhFUWk95rif8BijpPPOHXk6U62ekD36Jmk3AhFPe51CaRSq1g8SIT2a2
+         aUhErniWVchbC6keG2AffEfkZhp0SKt/OKFBrMln7m2ex16QLWt0Gb4nTCkVH3ro3j34
+         pNKVzzmsjZwtXiVqruGdoo6ToeP2Dbwn2qlw+y087/I3Ih1npwqTt1ku3osdmEe9KHwq
+         5tPL6MonYYXB7klCRWJEUwXJfefi5YhPVCDcCTCz+Xctk2Cl68DMlIjnNwFOi3dkalDg
+         sdBg==
+X-Forwarded-Encrypted: i=1; AJvYcCUvkrVFIy1TkqvXX/LKltzUcJnibsuzU9BTh7Ahs/3kncwfPWecr0tdybr4zn912nb9UpEhEPMew8pOhCoECCSKhvdedvgBxysFrBtG
+X-Gm-Message-State: AOJu0YyT4qVzdspEsK7ZFbKEMjWPczcoQErThYOibgx5PhdPlRkiGyqG
+	A9UTHbGIQlv5niQqzMnqCftGuO385QeLuZrbfHung7xEWKgMhZU2FlX1gz9k+FXnFUO+Pqq/KrX
+	4
+X-Google-Smtp-Source: AGHT+IHG+0RWeJvA4tpJNVMwbh8CPAHQBFYqLRjlNpPaCFJjsm76snXQhY0qYZq7twlxmQWy0+IYBQ==
+X-Received: by 2002:a17:902:d30d:b0:1f4:990c:5ef1 with SMTP id d9443c01a7336-1f6370250c8mr24670045ad.31.1717176516593;
+        Fri, 31 May 2024 10:28:36 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:a236:3f96:dc60:48b4])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6323ded40sm19286015ad.169.2024.05.31.10.28.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 May 2024 10:28:36 -0700 (PDT)
+Date: Fri, 31 May 2024 11:28:33 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH v5 5/7] remoteproc: core: support of the tee interface
+Message-ID: <ZloIwfFwkpKYLU9k@p14s>
+References: <20240521081001.2989417-1-arnaud.pouliquen@foss.st.com>
+ <20240521081001.2989417-6-arnaud.pouliquen@foss.st.com>
+ <ZlZM/hgSO4EeRVqS@p14s>
+ <d9e1356a-d8bf-40a3-9a78-424ead8089a9@foss.st.com>
+ <ZleReEIgD8O5zATO@p14s>
+ <5b3f8346-d6db-4da3-9613-20cf9f3c226b@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <e7cf9dd8-9c67-476b-a892-b8dbe9312c4c@bp.renesas.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
- (10.188.4.12)
-X-KSE-ServerInfo: msexch01.omp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.0, Database issued on: 05/31/2024 17:10:09
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 59
-X-KSE-AntiSpam-Info: Lua profiles 185664 [May 31 2024]
-X-KSE-AntiSpam-Info: Version: 6.1.0.4
-X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
-X-KSE-AntiSpam-Info: LuaCore: 20 0.3.20
- 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f
-X-KSE-AntiSpam-Info: {rep_avail}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: {relay has no DNS name}
-X-KSE-AntiSpam-Info: {SMTP from is not routable}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 178.176.78.69 in (user)
- b.barracudacentral.org}
-X-KSE-AntiSpam-Info:
-	omp.ru:7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1
-X-KSE-AntiSpam-Info: ApMailHostAddress: 178.176.78.69
-X-KSE-AntiSpam-Info: {DNS response errors}
-X-KSE-AntiSpam-Info: Rate: 59
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
- smtp.mailfrom=omp.ru;dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 05/31/2024 17:14:00
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 5/31/2024 12:02:00 PM
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5b3f8346-d6db-4da3-9613-20cf9f3c226b@foss.st.com>
 
-On 5/30/24 12:21 PM, Paul Barker wrote:
-[...]
-
->>> This patch makes multiple changes that can't be separated:
->>>
->>>   1) Allocate plain RX buffers via a page pool instead of allocating
->>>      SKBs, then use build_skb() when a packet is received.
->>>   2) For GbEth IP, reduce the RX buffer size to 2kB.
->>>   3) For GbEth IP, merge packets which span more than one RX descriptor
->>>      as SKB fragments instead of copying data.
->>>
->>> Implementing (1) without (2) would require the use of an order-1 page
->>> pool (instead of an order-0 page pool split into page fragments) for
->>> GbEth.
->>>
->>> Implementing (2) without (3) would leave us no space to re-assemble
->>> packets which span more than one RX descriptor.
->>>
->>> Implementing (3) without (1) would not be possible as the network stack
->>> expects to use put_page() or page_pool_put_page() to free SKB fragments
->>> after an SKB is consumed.
->>>
->>> RX checksum offload support is adjusted to handle both linear and
->>> nonlinear (fragmented) packets.
->>>
->>> This patch gives the following improvements during testing with iperf3.
->>>
->>>   * RZ/G2L:
->>>     * TCP RX: same bandwidth at -43% CPU load (70% -> 40%)
->>>     * UDP RX: same bandwidth at -17% CPU load (88% -> 74%)
->>>
->>>   * RZ/G2UL:
->>>     * TCP RX: +30% bandwidth (726Mbps -> 941Mbps)
->>>     * UDP RX: +417% bandwidth (108Mbps -> 558Mbps)
->>>
->>>   * RZ/G3S:
->>>     * TCP RX: +64% bandwidth (562Mbps -> 920Mbps)
->>>     * UDP RX: +420% bandwidth (90Mbps -> 468Mbps)
->>>
->>>   * RZ/Five:
->>>     * TCP RX: +217% bandwidth (145Mbps -> 459Mbps)
->>>     * UDP RX: +470% bandwidth (20Mbps -> 114Mbps)
->>>
->>> There is no significant impact on bandwidth or CPU load in testing on
->>> RZ/G2H or R-Car M3N.
->>>
->>> Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
-[...]
-
->>> diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
->>> index dd92f074881a..bb7f7d44be6e 100644
->>> --- a/drivers/net/ethernet/renesas/ravb_main.c
->>> +++ b/drivers/net/ethernet/renesas/ravb_main.c
-[...]
->>> +	return 0;
->>> +}
->>> +
->>>  static u32
->>>  ravb_rx_ring_refill(struct net_device *ndev, int q, u32 count, gfp_t gfp_mask)
->>>  {
->>>  	struct ravb_private *priv = netdev_priv(ndev);
->>> -	const struct ravb_hw_info *info = priv->info;
->>>  	struct ravb_rx_desc *rx_desc;
->>> -	dma_addr_t dma_addr;
->>>  	u32 i, entry;
->>>  
->>>  	for (i = 0; i < count; i++) {
->>>  		entry = (priv->dirty_rx[q] + i) % priv->num_rx_ring[q];
->>>  		rx_desc = ravb_rx_get_desc(priv, q, entry);
->>> -		rx_desc->ds_cc = cpu_to_le16(info->rx_max_desc_use);
->>>  
->>> -		if (!priv->rx_skb[q][entry]) {
->>> -			priv->rx_skb[q][entry] = ravb_alloc_skb(ndev, info, gfp_mask);
->>> -			if (!priv->rx_skb[q][entry])
->>> +		if (!priv->rx_buffers[q][entry].page) {
->>> +			if (unlikely(ravb_alloc_rx_buffer(ndev, q, entry,
->>
->>    Well, IIRC Greg KH is against using unlikely() unless you have actually
->> instrumented the code and this gives an improvement... have you? :-)
+On Thu, May 30, 2024 at 09:42:26AM +0200, Arnaud POULIQUEN wrote:
+> Hello Mathieu,
 > 
-> My understanding was that we should use unlikely() for error checking in
-> hot code paths where we want the "good" path to be optimised. I can drop
-> this if I'm wrong though.
-
-   OK, keep it... :-)
-
-[...]
->>> @@ -865,7 +894,16 @@ static int ravb_rx_gbeth(struct net_device *ndev, int budget, int q)
->>>  				stats->rx_bytes += skb->len;
->>>  				napi_gro_receive(&priv->napi[q], skb);
->>>  				rx_packets++;
->>> +
->>> +				/* Clear rx_1st_skb so that it will only be
->>> +				 * non-NULL when valid.
->>> +				 */
->>> +				if (die_dt == DT_FEND)
->>> +					priv->rx_1st_skb = NULL;
->>
->>    Hm, can't we do this under *case* DT_FEND above?
+> On 5/29/24 22:35, Mathieu Poirier wrote:
+> > On Wed, May 29, 2024 at 09:13:26AM +0200, Arnaud POULIQUEN wrote:
+> >> Hello Mathieu,
+> >>
+> >> On 5/28/24 23:30, Mathieu Poirier wrote:
+> >>> On Tue, May 21, 2024 at 10:09:59AM +0200, Arnaud Pouliquen wrote:
+> >>>> 1) on start:
+> >>>> - Using the TEE loader, the resource table is loaded by an external entity.
+> >>>> In such case the resource table address is not find from the firmware but
+> >>>> provided by the TEE remoteproc framework.
+> >>>> Use the rproc_get_loaded_rsc_table instead of rproc_find_loaded_rsc_table
+> >>>> - test that rproc->cached_table is not null before performing the memcpy
+> >>>>
+> >>>> 2)on stop
+> >>>> The use of the cached_table seems mandatory:
+> >>>> - during recovery sequence to have a snapshot of the resource table
+> >>>>   resources used,
+> >>>> - on stop to allow  for the deinitialization of resources after the
+> >>>>   the remote processor has been shutdown.
+> >>>> However if the TEE interface is being used, we first need to unmap the
+> >>>> table_ptr before setting it to rproc->cached_table.
+> >>>> The update of rproc->table_ptr to rproc->cached_table is performed in
+> >>>> tee_remoteproc.
+> >>>>
+> >>>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> >>>> ---
+> >>>>  drivers/remoteproc/remoteproc_core.c | 31 +++++++++++++++++++++-------
+> >>>>  1 file changed, 23 insertions(+), 8 deletions(-)
+> >>>>
+> >>>> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> >>>> index 42bca01f3bde..3a642151c983 100644
+> >>>> --- a/drivers/remoteproc/remoteproc_core.c
+> >>>> +++ b/drivers/remoteproc/remoteproc_core.c
+> >>>> @@ -1267,6 +1267,7 @@ EXPORT_SYMBOL(rproc_resource_cleanup);
+> >>>>  static int rproc_set_rsc_table_on_start(struct rproc *rproc, const struct firmware *fw)
+> >>>>  {
+> >>>>  	struct resource_table *loaded_table;
+> >>>> +	struct device *dev = &rproc->dev;
+> >>>>  
+> >>>>  	/*
+> >>>>  	 * The starting device has been given the rproc->cached_table as the
+> >>>> @@ -1276,12 +1277,21 @@ static int rproc_set_rsc_table_on_start(struct rproc *rproc, const struct firmwa
+> >>>>  	 * this information to device memory. We also update the table_ptr so
+> >>>>  	 * that any subsequent changes will be applied to the loaded version.
+> >>>>  	 */
+> >>>> -	loaded_table = rproc_find_loaded_rsc_table(rproc, fw);
+> >>>> -	if (loaded_table) {
+> >>>> -		memcpy(loaded_table, rproc->cached_table, rproc->table_sz);
+> >>>> -		rproc->table_ptr = loaded_table;
+> >>>> +	if (rproc->tee_interface) {
+> >>>> +		loaded_table = rproc_get_loaded_rsc_table(rproc, &rproc->table_sz);
+> >>>> +		if (IS_ERR(loaded_table)) {
+> >>>> +			dev_err(dev, "can't get resource table\n");
+> >>>> +			return PTR_ERR(loaded_table);
+> >>>> +		}
+> >>>> +	} else {
+> >>>> +		loaded_table = rproc_find_loaded_rsc_table(rproc, fw);
+> >>>>  	}
+> >>>>  
+> >>>> +	if (loaded_table && rproc->cached_table)
+> >>>> +		memcpy(loaded_table, rproc->cached_table, rproc->table_sz);
+> >>>> +
+> >>>
+> >>> Why is this not part of the else {} above as it was the case before this patch?
+> >>> And why was an extra check for ->cached_table added?
+> >>
+> >> Here we have to cover 2 use cases if rproc->tee_interface is set.
+> >> 1) The remote processor is in stop state
+> >>      - loaded_table points to the resource table in the remote memory and
+> >>      -  rproc->cached_table is null
+> >>      => no memcopy
+> >> 2) crash recovery
+> >>      - loaded_table points to the resource table in the remote memory
+> >>      - rproc-cached_table point to a copy of the resource table
+> > 
+> > A cached_table exists because it was created in rproc_reset_rsc_table_on_stop().
+> > But as the comment says [1], that part of the code was meant to be used for the
+> > attach()/detach() use case.  Mixing both will become extremely confusing and
+> > impossible to maintain.
 > 
-> It makes more logical sense to me to do this as the last step, but I
-> guess it's a little more optimal to do it earlier. I'll move it.
+> i am not sure to understand your point here... the cached_table table was
+> already existing for the "normal" case[2]. Seems to me that the cache table is
+> needed on stop in all scenarios.
+> 
+> [2]
+> https://elixir.bootlin.com/linux/v4.20.17/source/drivers/remoteproc/remoteproc_core.c#L1402
+> 
+> > 
+> > I think the TEE scenario should be as similar as the "normal" one where TEE is
+> > not involved.  To that end, I suggest to create a cached_table in
+> > tee_rproc_parse_fw(), exactly the same way it is done in
+> > rproc_elf_load_rsc_table().  That way the code path in
+> > rproc_set_rsc_table_on_start() become very similar and we have a cached_table to
+> > work with when the remote processor is recovered.  In fact we may not need
+> > rproc_set_rsc_table_on_start() at all but that needs to be asserted.
+> 
+> This is was I proposed in my V4 [3]. Could you please confirm that this aligns
+> with what you have in mind?
 
-   Looking at it once more, we can't... unless I'm missing s/th. :-)
+After spending more time on this I have the following 3 observations:
 
+1) We need a ->cached_table, otherwise the crash recovery path gets really
+messy.
+
+2) It _might_ be a good idea to rename tee_rproc_get_loaded_rsc_table() to
+tee_rproc_find_loaded_rsc_table() to be aligned with the scenario where the
+firmware is loaded by the remoteproc core.  I think you had
+tee_rproc_find_loaded_rsc_table() in the first place and I asked you to change
+it.  If so, apologies - reviewing patches isn't an exact science.
+
+3) The same way ->cached_table is created in rproc_elf_load_rsc_table(), which
+is essentially ops::parse_fw(), we should create one in tee_rproc_parse_fw()
+with a kmemdup().  Exactly the same as in rproc_elf_load_rsc_table().  In
+tee_rproc_parse_fw(), @rsc_table should be iounmap'ed right away so that we
+don't need to keep a local variable to free it later.  In rproc_start() the call
+to rproc_find_loaded_rsc_table() will get another mapped handle to the resource
+table in memory.  It might be a little unefficient but it sure beats doing a lot
+of modifications in the core.
+
+As I said above this isn't an exact science and we may need to changes more
+things but at least it should take us a little further.
+
+Thanks,
+Mathieu
+
+> In such a case, should I keep the updates below in
+> rproc_reset_rsc_table_on_stop(), or should I revert to using rproc->rsc_table to
+> store the pointer to the resource table in tee_remoteproc for the associated
+> memory map/unmap?"
+> 
+> [3]
+> https://patchwork.kernel.org/project/linux-remoteproc/patch/20240308144708.62362-2-arnaud.pouliquen@foss.st.com/
+> 
 > Thanks,
-
-MBR, Sergey
+> Arnaud
+> 
+> > 
+> > [1]. https://elixir.bootlin.com/linux/v6.10-rc1/source/drivers/remoteproc/remoteproc_core.c#L1565
+> > 
+> >>      => need to perform the memcpy to reapply settings in the resource table
+> >>
+> >> I can duplicate the memcpy in if{} and else{} but this will be similar code
+> >> as needed in both case.
+> >> Adding rproc->cached_table test if proc->tee_interface=NULL seems also
+> >> reasonable as a memcpy from 0 should not be performed.
+> >>
+> >>
+> >>>
+> >>> This should be a simple change, i.e introduce an if {} else {} block to take
+> >>> care of the two scenarios.  Plus the comment is misplaced now. 
+> >>
+> >> What about split it in 2 patches?
+> >> - one adding the test on rproc->cached_table for the memcpy
+> >> - one adding the if {} else {}?
+> >>
+> >> Thanks,
+> >> Arnaud
+> >>
+> >>
+> >>>
+> >>> More comments tomorrow.
+> >>>
+> >>> Thanks,
+> >>> Mathieu
+> >>>
+> >>>> +	rproc->table_ptr = loaded_table;
+> >>>> +
+> >>>>  	return 0;
+> >>>>  }
+> >>>>  
+> >>>> @@ -1318,11 +1328,16 @@ static int rproc_reset_rsc_table_on_stop(struct rproc *rproc)
+> >>>>  	kfree(rproc->clean_table);
+> >>>>  
+> >>>>  out:
+> >>>> -	/*
+> >>>> -	 * Use a copy of the resource table for the remainder of the
+> >>>> -	 * shutdown process.
+> >>>> +	/* If the remoteproc_tee interface is used, then we have first to unmap the resource table
+> >>>> +	 * before updating the proc->table_ptr reference.
+> >>>>  	 */
+> >>>> -	rproc->table_ptr = rproc->cached_table;
+> >>>> +	if (!rproc->tee_interface) {
+> >>>> +		/*
+> >>>> +		 * Use a copy of the resource table for the remainder of the
+> >>>> +		 * shutdown process.
+> >>>> +		 */
+> >>>> +		rproc->table_ptr = rproc->cached_table;
+> >>>> +	}
+> >>>>  	return 0;
+> >>>>  }
+> >>>>  
+> >>>> -- 
+> >>>> 2.25.1
+> >>>>
 
