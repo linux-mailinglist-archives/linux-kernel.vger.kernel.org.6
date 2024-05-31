@@ -1,98 +1,106 @@
-Return-Path: <linux-kernel+bounces-196070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49A388D56D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 02:20:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C1218D56DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 02:21:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA2DD1F250B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 00:20:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AE961C24285
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 00:21:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 729C94C7B;
-	Fri, 31 May 2024 00:20:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4C7A17FE;
+	Fri, 31 May 2024 00:21:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ILCAb2Ic"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="dq7ijHWB"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE828A2D;
-	Fri, 31 May 2024 00:20:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6755FA2D;
+	Fri, 31 May 2024 00:21:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717114831; cv=none; b=MBlbi8X97t9vut9r/A+zLlQzKjVjMWmA1av5EKlrYW0CHDLOkefM2JHFzbZK/NI28d4/i8LbuuFrO/hIkiskcLf2+5oTrNhQEBCbRbFUJKcr1Zka0RAVwvETWq6+Egf7c+QKAXNYwXoRbDlcnvyXZZ3/rfP76BeVxqC3mDeqbcQ=
+	t=1717114898; cv=none; b=DGyyVPY+x19LCZwJgFqEoTiovCqK7vdl4QJfFJujZFb7OmvlStw/wFjY/lcr66ZhtBhfP5gYwJPObr5oqcEjql+UW2n3gMwSKj/RsdDs0qJ5K8CncLSw+a8s1jHJgDPP1CZrnd7yqv1TiL+SciGoDuHu91N/sqD+BxjYkaRvP/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717114831; c=relaxed/simple;
-	bh=j0HvBqn5IKZiXp3LRFTLsljJRdzd49X2RalUE+YYhfk=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=Jt/yaIYMJiL1hazKjIQY6lwfx9jSIP2xK3n8Rpii1nZQS5Q+NeqL33ABW/tiilfA70U8AR5jNQ1wgQTGk3Sn9mQqtOAvuvXhliIW8+g/aUmMqc52JhNgtd/UH+kdd/ezHoy47Ty2aa/tKqbxk0xJ5R+MBVPtHcoY+V2wNSUoAmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ILCAb2Ic; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id EA90EC32786;
-	Fri, 31 May 2024 00:20:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717114831;
-	bh=j0HvBqn5IKZiXp3LRFTLsljJRdzd49X2RalUE+YYhfk=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=ILCAb2IccRj9vrmoq5Kpj6TYbP/Xp0UuBC5hdzu/5iKlTD4GztOJ5i3P5k8Og1UYb
-	 KSy6G6Ab9Jue0IaSHqkWhxKvF0hsRCGlsPDOP9i3fxM91POfVKk2fqT0sPjdL2lOp6
-	 AH1X1NH6GWtQfHb3ZiUa26U/zs4lyYGTQEugdDuo/FJgMYZirZjbCN0G2nuRy5GoPo
-	 TFu7spm3Wj5paR25ckZR1dhbNpN0DzJSteAaNAv+ii1+4jQoud/969YVXNzSjDdxKz
-	 jgU41pPS3cRueFc8Y7F6z4C8+z2QOA2Q5OtqS0BxKd8AkXn8xUDh1LAqeK6cygZkJv
-	 7kv5kcskKWAVg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id D837ACF21F3;
-	Fri, 31 May 2024 00:20:30 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1717114898; c=relaxed/simple;
+	bh=NOXl7/Ve3EE2bBRgzqep8YBgsCpgg0lI+Bjy7stINs8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=b1AXP6CKUn6PMyabyWd3EC8RsqNZ1hIhLAKMS6spWxd7FqmLeXb8lyWCi76uqh+PGRW2R183MbHTP+e1PuZj/zaDh6wkWlcTUvGjqgGYkuvIAcmiZNKqgM7mFMbtqqkgEQZCzp/fi302cuPjx0eHF+vLY2/8pUkVy16QpHKv9Qw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=dq7ijHWB; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1717114889;
+	bh=NOXl7/Ve3EE2bBRgzqep8YBgsCpgg0lI+Bjy7stINs8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=dq7ijHWBrx9P5qXNc9HcS+/vvWHzKTXSQoDMMBxNv7Dz4O+tWdMRmR2lmrfipXESh
+	 n2p1bFYzP4wyfVL8wpoNQ/PRh+PKWyMFyOk7TdRX09N+Q/rbwicjcxTDgrsIynDNQE
+	 zuWi8/IaOSiZkYi5wP0YuEbJQCtUrWH630bryafokUAHQNm4ZOL5T3f/Ogq/hfpzde
+	 Tn6W5d25a15CV89m9SXgXT0WwuFZvU7tySxJIsv8jGJd6iGg2kR45valJkdfn0235J
+	 4I68rxT2r+obDppkbgEDFWjAPeDrPK535PANALOo5Re5J/Eg+VtycdxajVgtIq2fgw
+	 oAP5D7Vt4ulig==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Vr3h92sb3z4wcl;
+	Fri, 31 May 2024 10:21:28 +1000 (AEST)
+Date: Fri, 31 May 2024 10:21:28 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: the fetch of the tomoyo tree failed
+Message-ID: <20240531102128.6145461e@canb.auug.org.au>
+In-Reply-To: <31a20541-d5a2-43c7-8225-adc6d44f6e41@I-love.SAKURA.ne.jp>
+References: <20231017163242.62af10b3@canb.auug.org.au>
+	<20231114144510.49fd3688@canb.auug.org.au>
+	<7c814d59-fd95-40f4-80ba-237bead3de69@I-love.SAKURA.ne.jp>
+	<20231114161611.256f0239@canb.auug.org.au>
+	<31a20541-d5a2-43c7-8225-adc6d44f6e41@I-love.SAKURA.ne.jp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v6 0/3] mlx4: Add support for netdev-genl API
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171711483088.6873.3753766001129411194.git-patchwork-notify@kernel.org>
-Date: Fri, 31 May 2024 00:20:30 +0000
-References: <20240528181139.515070-1-jdamato@fastly.com>
-In-Reply-To: <20240528181139.515070-1-jdamato@fastly.com>
-To: Joe Damato <jdamato@fastly.com>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, nalramli@fastly.com,
- mkarsten@uwaterloo.ca, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, linux-rdma@vger.kernel.org, pabeni@redhat.com,
- tariqt@nvidia.com
+Content-Type: multipart/signed; boundary="Sig_/ZRpUpm8Q60DMFY2rWMf7ieB";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Hello:
+--Sig_/ZRpUpm8Q60DMFY2rWMf7ieB
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Hi Tetsuo,
 
-On Tue, 28 May 2024 18:11:35 +0000 you wrote:
-> Greetings:
-> 
-> Welcome to v6.
-> 
-> There are no functional changes from v5, which I mistakenly sent right
-> after net-next was closed (oops). This revision, however, includes
-> Tariq's Reviewed-by tags of the v5 in each commit message. See the
-> changelog below.
-> 
-> [...]
+On Fri, 31 May 2024 07:06:57 +0900 Tetsuo Handa <penguin-kernel@I-love.SAKU=
+RA.ne.jp> wrote:
+>
+> Since OSDN does not revive, I moved TOMOYO's repository
+> to git://git.code.sf.net/p/tomoyo/tomoyo.git .
 
-Here is the summary with links:
-  - [net-next,v6,1/3] net/mlx4: Track RX allocation failures in a stat
-    https://git.kernel.org/netdev/net-next/c/6166bb0cacb6
-  - [net-next,v6,2/3] net/mlx4: link NAPI instances to queues and IRQs
-    https://git.kernel.org/netdev/net-next/c/64b62146ba9e
-  - [net-next,v6,3/3] net/mlx4: support per-queue statistics via netlink
-    https://git.kernel.org/netdev/net-next/c/a5602c6edf7c
+I have updated where I fetch from.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+--=20
+Cheers,
+Stephen Rothwell
 
+--Sig_/ZRpUpm8Q60DMFY2rWMf7ieB
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZZGAgACgkQAVBC80lX
+0Gxwwgf/Ti7etITfvpNApcDs16UVDnI22iWWID8NWcCFH/tRWrVGQetVHAnUSoow
+i96WMJjtHb/Np3PM0lrOaTdQjcFp3SmQyIZYU+Uu/DTDKdP00oiB1TmTqT2AXVbO
+XTxaHdclO7SBXF0bx5IuAsfm7VMI9yqdICZIC6gbMUlE74K2veULDEWqEf7Ar0Lp
++Vdkh3hxkPaMlUrju3e7L1itoJoPEoBJyORd+TDbrQ3PtlNtfeXVMZWUatFXIadg
+moQXxULY6pZXzgq0v6HETxMEvJv3vpIZfqt/82KDB6oGTnAWNeOtRSQIewKFFd/M
+bhjL8uRg5jOXdSaFj/t720dkDl4gCA==
+=U3FJ
+-----END PGP SIGNATURE-----
+
+--Sig_/ZRpUpm8Q60DMFY2rWMf7ieB--
 
