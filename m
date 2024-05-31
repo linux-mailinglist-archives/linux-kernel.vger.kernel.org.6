@@ -1,153 +1,121 @@
-Return-Path: <linux-kernel+bounces-196169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CE3C8D5855
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 03:47:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 733218D5862
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 03:48:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D7B41F24AC5
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 01:47:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3107F288155
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 01:48:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C77915AF6;
-	Fri, 31 May 2024 01:47:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VUgrZurj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53C7317550;
+	Fri, 31 May 2024 01:48:13 +0000 (UTC)
+Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA8517FF;
-	Fri, 31 May 2024 01:47:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0C18134AB;
+	Fri, 31 May 2024 01:48:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717120025; cv=none; b=vGBidPA+0mnfiUlZNCDJsFshDKK6KqV2XN3sZUViqrXHS7VCempdCrGT6K5QGsR2W5jD2ZXocea6gvOLTiFwq5zUi3uct7dbV8y0MZI1pZhetUxDQb+u58LqFajjs4ezoMt9JHAjohiKY9ha//khxWSYFrVKlD9YMkUtwlq4boQ=
+	t=1717120092; cv=none; b=NBZ81qT9wc5HVrHeGgnf+Nz7+6Xu4bJT+1j2NHUyy4gMmL3+XoBuCsrbQ/bLKfjGgvRZbeR0bd4M/X7jTSX6mj65odlrz2uNiFg4pqSy/OfcYjbH98qIM72Sap3mM6Sjhvx77DIgy6BtT29pRbS1nua7BeDXqlF7fvCegWaT/x8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717120025; c=relaxed/simple;
-	bh=sm4tOvPgFiYREVqJv7hB+doGfUq4iZtbeO6LKvut3/k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NGVLFB0jbTSEpo37+ZWomLg/2k9fbZlaPiyDIFK615BkKq9rUvL8lqZfl7DbqEeoyOtyDmOkWwSOfk+pGROaQBvXojRpmmnVgSM/wBYv94bOQuf2p73OdVRLPVL+c3fR3qUgmRFO0QpLybAqjM2kw3g/SubLhkxXyE1LwnHJ2Ko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VUgrZurj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3730AC32789;
-	Fri, 31 May 2024 01:47:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717120024;
-	bh=sm4tOvPgFiYREVqJv7hB+doGfUq4iZtbeO6LKvut3/k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VUgrZurjV332keL/lETXjBTJdXtAkFcwGZtnyMQiCLkqDoD8PmGXGJ498cY+/JeTt
-	 tpdnQYsV1xXfKqk2XGmoj6b4Bi43LPEmh2mXB8L2xGCozzmDxvuOT2HvoXPrQq6mdf
-	 VD9u8OjpHerNmUcIE9VZro13YCwv2DHyWnXZXWkBSl1iQ/f4fgtOV6mJjSIsxSJdE9
-	 VqsnDKHMBs6h4qq/HYHkiO5l515Dxcwp1PNkUuTq3K9JNuwHMWyRj+uBoB1uXUHm42
-	 pexH+rvlB+3u88dpLfcHKEex0PVt8MGovihIfEcY6elOxFj8R7tt35zQhnYjH3giPS
-	 OnhXqIoAeaydg==
-Date: Thu, 30 May 2024 20:47:03 -0500
-From: Rob Herring <robh@kernel.org>
-To: Witold Sadowski <wsadowski@marvell.com>
-Cc: linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-	devicetree@vger.kernel.org, broonie@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-	pthombar@cadence.com
-Subject: Re: [PATCH v7 1/4] spi: dt-bindings: cadence: Add Marvell overlay
- bindings documentation for Cadence XSPI
-Message-ID: <20240531014703.GA3691352-robh@kernel.org>
-References: <20240529220026.1644986-1-wsadowski@marvell.com>
- <20240529220026.1644986-2-wsadowski@marvell.com>
+	s=arc-20240116; t=1717120092; c=relaxed/simple;
+	bh=XXFs9+w+leXFOGcTVJZF03joneWjmglFEMPKRibsnIM=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KhKhWsabNk3eGhwU8uJE//AuRoDgDEX+JzMkMMttOcVkrHQKpee2EbNYA8BPMK77wabddG/YLp1ylvAIh/MbUCtRbNIO3ERrvM8GnXhKGQv/LTInYwbi3MP2935V5DS1YDvQjntYVwBAjwcgi+C2Fx/7uaiaJNHb91MhZrkMSnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.166.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250809.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44V1l1oB006715;
+	Thu, 30 May 2024 18:47:52 -0700
+Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 3yf56c0023-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Thu, 30 May 2024 18:47:52 -0700 (PDT)
+Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 30 May 2024 18:47:51 -0700
+Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
+ 15.1.2507.39 via Frontend Transport; Thu, 30 May 2024 18:47:48 -0700
+From: Lizhi Xu <lizhi.xu@windriver.com>
+To: <ebiggers@kernel.org>
+CC: <coreteam@netfilter.org>, <davem@davemloft.net>, <fw@strlen.de>,
+        <jaegeuk@kernel.org>, <kadlec@netfilter.org>, <kuba@kernel.org>,
+        <linux-fscrypt@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <lizhi.xu@windriver.com>, <netdev@vger.kernel.org>,
+        <netfilter-devel@vger.kernel.org>, <pablo@netfilter.org>,
+        <syzbot+340581ba9dceb7e06fb3@syzkaller.appspotmail.com>,
+        <syzkaller-bugs@googlegroups.com>, <tytso@mit.edu>
+Subject: Re: [PATCH] ext4: add casefolded file check
+Date: Fri, 31 May 2024 09:47:47 +0800
+Message-ID: <20240531014747.1386219-1-lizhi.xu@windriver.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240531010513.GA9629@sol.localdomain>
+References: <20240531010513.GA9629@sol.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240529220026.1644986-2-wsadowski@marvell.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: IR-rrk4oZSkM4-YLtYKV04o7RY55hJG5
+X-Proofpoint-GUID: IR-rrk4oZSkM4-YLtYKV04o7RY55hJG5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-30_21,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
+ mlxscore=0 impostorscore=0 clxscore=1015 bulkscore=0 phishscore=0
+ mlxlogscore=957 lowpriorityscore=0 spamscore=0 priorityscore=1501
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.21.0-2405170001 definitions=main-2405310013
 
-On Wed, May 29, 2024 at 03:00:23PM -0700, Witold Sadowski wrote:
-> Add new bindings for the v2 Marvell xSPI overlay: marvell,cn10-xspi-nor
-> compatible string. This new compatible string distinguishes between the
-> original and modified xSPI block.
+On Thu, 30 May 2024 18:05:13 -0700, Eric Biggers wrote:
+> > The file name that needs to calculate the siphash must have both flags casefolded
+> > and dir at the same time, so before calculating it, confirm that the flag meets
+> > the conditions.
+> >
+> > Reported-by: syzbot+340581ba9dceb7e06fb3@syzkaller.appspotmail.com
+> > Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
+> > ---
+> >  fs/ext4/hash.c | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> >
+> > diff --git a/fs/ext4/hash.c b/fs/ext4/hash.c
+> > index deabe29da7fb..c8840cfc01dd 100644
+> > --- a/fs/ext4/hash.c
+> > +++ b/fs/ext4/hash.c
+> > @@ -265,6 +265,10 @@ static int __ext4fs_dirhash(const struct inode *dir, const char *name, int len,
+> >  		__u64	combined_hash;
+> >
+> >  		if (fscrypt_has_encryption_key(dir)) {
+> > +			if (!IS_CASEFOLDED(dir)) {
+> > +				ext4_warning_inode(dir, "Siphash requires Casefolded file");
+> > +				return -2;
+> > +			}
+> >  			combined_hash = fscrypt_fname_siphash(dir, &qname);
+> >  		} else {
+> >  			ext4_warning_inode(dir, "Siphash requires key");
 > 
-> Also add an optional base for the xfer register set with an additional
-> reg field to allocate the xSPI Marvell overlay XFER block.
+> First, this needs to be sent to the ext4 mailing list (and not to irrelevant
+> mailing lists such as netdev).  Please use ./scripts/get_maintainer.pl, as is
+> recommended by Documentation/process/submitting-patches.rst.
 > 
-> Signed-off-by: Witold Sadowski <wsadowski@marvell.com>
+> Second, ext4 already checks for the directory being casefolded before allowing
+> siphash.  This is done by dx_probe().  Evidently syzbot found some way around
+> that, so what needs to be done is figure out why that happened and what is the
+> best fix to prevent it.  This is not necessarily the patch you've proposed, as
+> the real issue might actually be a missing check at some earlier time like when
+> reading the inode from disk or when mounting the filesystem.
+I have confirmed that there is no casefolded feature when creating the directory.
+I agree with your statement that it should be checked for casefold features when
+mounting or reading from disk.
 
-Missing a tag.
-
-But since you want it reviewed again...
-
-> ---
->  .../devicetree/bindings/spi/cdns,xspi.yaml    | 32 ++++++++++++++++---
->  1 file changed, 28 insertions(+), 4 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/spi/cdns,xspi.yaml b/Documentation/devicetree/bindings/spi/cdns,xspi.yaml
-> index eb0f92468185..49c6a2c82fc4 100644
-> --- a/Documentation/devicetree/bindings/spi/cdns,xspi.yaml
-> +++ b/Documentation/devicetree/bindings/spi/cdns,xspi.yaml
-> @@ -15,24 +15,27 @@ description: |
->    single, dual, quad or octal wire transmission modes for
->    read/write access to slaves such as SPI-NOR flash.
->  
-> -allOf:
-> -  - $ref: spi-controller.yaml#
-> -
->  properties:
->    compatible:
-> -    const: cdns,xspi-nor
-> +    enum:
-> +      - cdns,xspi-nor
-> +      - marvell,cn10-xspi-nor
->  
->    reg:
->      items:
->        - description: address and length of the controller register set
->        - description: address and length of the Slave DMA data port
->        - description: address and length of the auxiliary registers
-> +      - description: address and length of the xfer registers
-> +    minItems: 3
->  
->    reg-names:
->      items:
->        - const: io
->        - const: sdma
->        - const: aux
-> +      - const: xferbase
-
-'base' is redundant.
-
-> +    minItems: 3
->  
->    interrupts:
->      maxItems: 1
-> @@ -42,6 +45,27 @@ required:
->    - reg
->    - interrupts
->  
-> +allOf:
-> +  - $ref: spi-controller.yaml#
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - marvell,cn10-xspi-nor
-> +    then:
-> +      properties:
-> +        reg:
-> +          minItems: 4
-> +        reg-names:
-> +          minItems: 4
-> +    else:
-> +      properties:
-> +        reg:
-> +          maxItems: 3
-> +        reg-names:
-> +          maxItems: 3
-> +
->  unevaluatedProperties: false
->  
->  examples:
-> -- 
-> 2.43.0
-> 
+Lizhi
 
