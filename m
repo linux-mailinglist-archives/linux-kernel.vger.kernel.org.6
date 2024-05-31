@@ -1,184 +1,208 @@
-Return-Path: <linux-kernel+bounces-197058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A86708D658D
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:16:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 140BA8D657F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:15:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E5081F2756B
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 15:16:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD62028E578
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 15:15:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13936176AAA;
-	Fri, 31 May 2024 15:15:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA8D5770EA;
+	Fri, 31 May 2024 15:15:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="cFpkplWf"
-Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
+	dkim=fail reason="signature verification failed" (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Q6PLaDRJ"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D35FE155C8B;
-	Fri, 31 May 2024 15:15:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B082173502;
+	Fri, 31 May 2024 15:15:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717168533; cv=none; b=T9y5kUF8YMptrDIoZB9P418Xb4fGI7MYp4n++VbudPtRvr1zyA5cYxAqkk3OjupCqIKlVDnIFHGp1U7hgVOu6ROZyut4O84u4B5yPys2R//YX673uywT1qmXrGsUVw7PU4IeTaAeqBrTkyqkEbd28A8eNqZ0AYOp9XkUc5K/cHw=
+	t=1717168523; cv=none; b=d8dfh4gi1ixO1u5Eq8GyDTa1QH1HTb2l4UWEnYFgCt5KjGClgUPKE1784pN6pDzPm2ABod76Qos0+LEkHyuYy0LFW8wClfyaMvaXDSc7jpZza9ZLb23H1h9YQQiCvmeJ4Bh86lqL3VaNJmXILeDFrlqgSy05SOTc0qhUYVb7N0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717168533; c=relaxed/simple;
-	bh=3gi9ZseK69241gs30CZ/3efH7Ik+gin5YhpjQoFRXKo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RrRwQSgQ/8SjDNLInn2QIZElJOHHySGkSKT3OMw5FPHyKHgOJisoeqQvO88bygtsQxjaucqV7DGvYe+50Gay5puKgXRDZ6QtBaUX4JCLRzUcg6cXTWHYGbwKrP5XC8nrwsijRv2mnhbpgOVsRPrRuC4qdN9EkwT/pqCSWzQl0hk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=cFpkplWf; arc=none smtp.client-ip=67.231.152.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44VB0WSw017940;
-	Fri, 31 May 2024 10:15:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	PODMain02222019; bh=3QEuMPZ58UQQ/qZnvQF2UXA4/Nl17NjGc0XYDAapMeM=; b=
-	cFpkplWfGxOwUz3vnOXcDZGerlktCy8PNK24Bl/mh3PF0Z8vxGAmTtS3PQ3C81L2
-	PKzk5UJ1hlp2MJuUwVG19lqKDy1Je/cG+Jxyo8pnCwDRxnuzgBCVO4gIeVerQxl9
-	RbUYr8qcj9KHirOnikEzWk1ZkKmdBve8IeMnvW/ZSFVZHluK7SjX/7iQ6tR6I4BO
-	1pRn+Y6dGWqPuU2FgAHQiXMhbd+g48pohhSqSODASzepHtDxu84ssui47KzFTYMc
-	Kp82/oSAPA/cLaARCNFQJngAIBSczu/DP2q9GwbTD3hVJ7kILUn0oYyyPpLhcEsi
-	tAQVe5ejMTniXAeQae7yXQ==
-Received: from ediex01.ad.cirrus.com ([84.19.233.68])
-	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 3ybcdhe0a3-6
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 31 May 2024 10:15:15 -0500 (CDT)
-Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 31 May
- 2024 16:15:12 +0100
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
- 15.2.1544.9 via Frontend Transport; Fri, 31 May 2024 16:15:12 +0100
-Received: from EDIN6ZZ2FY3.ad.cirrus.com (EDIN6ZZ2FY3.ad.cirrus.com [198.61.65.72])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 2874882024B;
-	Fri, 31 May 2024 15:15:12 +0000 (UTC)
-From: Simon Trimmer <simont@opensource.cirrus.com>
-To: <tiwai@suse.com>
-CC: <linux-sound@vger.kernel.org>, <alsa-devel@alsa-project.org>,
-        <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>,
-        <soyer@irl.hu>, <shenghao-ding@ti.com>, <kevin-lu@ti.com>,
-        <baojun.xu@ti.com>, <kailang@realtek.com>,
-        Simon Trimmer
-	<simont@opensource.cirrus.com>
-Subject: [PATCH 7/7] ALSA: hda: hda_component: Protect shared data with a mutex
-Date: Fri, 31 May 2024 16:14:09 +0100
-Message-ID: <20240531151409.80284-8-simont@opensource.cirrus.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240531151409.80284-1-simont@opensource.cirrus.com>
-References: <20240531151409.80284-1-simont@opensource.cirrus.com>
+	s=arc-20240116; t=1717168523; c=relaxed/simple;
+	bh=KuFosQ9xJS3QXwL9rRdDEjEMEUkYQVI21lZRTP74w5k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qiNmm65nPXEDhDp56xITCm2WqlDnWH+ZXAjxrYVkkdlBO0Zwxj+Z/7EXEkXp4KdmQ9BO6KX8+4U6qN3X+Zhh8NPrsvRNq3lp1lAKz2Y+4EJFDQQHNlX3+OYgRK+uUSFEJSSj3P11PXl3zdTLths0cXoINfGAlCCJdO8YOBsoHFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Q6PLaDRJ; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 2049540E0192;
+	Fri, 31 May 2024 15:15:19 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id FSUEfZbijwTn; Fri, 31 May 2024 15:15:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1717168515; bh=CimpYdG8QQl3X2QgMhhHzMQn8EofMmTYe+oEbL8ZrvM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Q6PLaDRJ86E0OGNAGCUojT3CX1WrSdqZh8RMU8h1+IyOWZ5wR7SbnPUJ9+JopYOFv
+	 q6Fp7di+pKi+J6Crq/DKHAQ+2EGmF+N1koju13pL4DfyJYqefqB3sQqgJYx5+HGISW
+	 6VTzbQeP6POrjfvVR4P5rrQ4oMqOWFKQMIaeAOFhJuA0/PMPI9HWMMxKWusnekNmCP
+	 QoYmcSSfNhePOXGbxoOtwzrcQYoBCx9bspLdrll9T0F+xNAgYMNOVZnjGuqkMGspDP
+	 RN/A/cW8YUxtgTdzfkaxdOMYbTI7Uh2v4FI/FEVyho3WEtZMnSoTAzFSg1vHRQ64A7
+	 cstm5aWVt74OCKGk5mh9a4lKEnCEVC39eTqTx8O7vMWhhRHSwHkN5CpUvbi/5XWzaY
+	 TO9nnirQSbxwiRXDOUP09aArD1c1hXdVDCEGCKIOKLRFL47YJnlcsdICo8O558IfgS
+	 BXElZk75qTe+R78bwi/7qQnfjxrvjasBQoFstD5smrSvO1W7O3NNBxNjMWkFAm6JFd
+	 aap8w2d0O7pwC1loUtrtasJ1MhDev3vvHWwJsG53Bva9khDOU5UmXgkROfJBQMpaNA
+	 8uawK2joAgByCDPLKKjLV+41+FquZPhLac+8bRKLlYLRPDhtPFDm4ptYa0YYyOxThQ
+	 eHGxqsqNGnZSsEix9vDbesbc=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 9041840E01E8;
+	Fri, 31 May 2024 15:14:48 +0000 (UTC)
+Date: Fri, 31 May 2024 17:14:42 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	Elena Reshetova <elena.reshetova@intel.com>,
+	Jun Nakajima <jun.nakajima@intel.com>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	"Kalra, Ashish" <ashish.kalra@amd.com>,
+	Sean Christopherson <seanjc@google.com>,
+	"Huang, Kai" <kai.huang@intel.com>,
+	Ard Biesheuvel <ardb@kernel.org>, Baoquan He <bhe@redhat.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>, kexec@lists.infradead.org,
+	linux-hyperv@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Tao Liu <ltao@redhat.com>
+Subject: Re: [PATCHv11 11/19] x86/tdx: Convert shared memory back to private
+ on kexec
+Message-ID: <20240531151442.GMZlnpYkDCRlg1_YS0@fat_crate.local>
+References: <20240528095522.509667-1-kirill.shutemov@linux.intel.com>
+ <20240528095522.509667-12-kirill.shutemov@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: nGfCjYqswV3BL8JY5UN8bmtU3PwI8r7i
-X-Proofpoint-ORIG-GUID: nGfCjYqswV3BL8JY5UN8bmtU3PwI8r7i
-X-Proofpoint-Spam-Reason: safe
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240528095522.509667-12-kirill.shutemov@linux.intel.com>
 
-The hda_component contains information shared from the amp drivers to
-the codec that can be altered (for example as the driver unloads). Guard
-the update and use of these to prevent use of stale data.
+On Tue, May 28, 2024 at 12:55:14PM +0300, Kirill A. Shutemov wrote:
+> +static void tdx_kexec_finish(void)
+> +{
+> +	unsigned long addr, end;
+> +	long found = 0, shared;
+> +
+> +	lockdep_assert_irqs_disabled();
+> +
+> +	addr = PAGE_OFFSET;
+> +	end  = PAGE_OFFSET + get_max_mapped();
+> +
+> +	while (addr < end) {
+> +		unsigned long size;
+> +		unsigned int level;
+> +		pte_t *pte;
+> +
+> +		pte = lookup_address(addr, &level);
+> +		size = page_level_size(level);
+> +
+> +		if (pte && pte_decrypted(*pte)) {
+> +			int pages = size / PAGE_SIZE;
+> +
+> +			/*
+> +			 * Touching memory with shared bit set triggers implicit
+> +			 * conversion to shared.
+> +			 *
+> +			 * Make sure nobody touches the shared range from
+> +			 * now on.
+> +			 */
+> +			set_pte(pte, __pte(0));
+> +
 
-Signed-off-by: Simon Trimmer <simont@opensource.cirrus.com>
----
- sound/pci/hda/hda_component.c | 14 +++++++++++++-
- sound/pci/hda/hda_component.h |  4 ++++
- 2 files changed, 17 insertions(+), 1 deletion(-)
+Format the below into a comment here:
 
-diff --git a/sound/pci/hda/hda_component.c b/sound/pci/hda/hda_component.c
-index 84add31408f7..21cd6a5eb6b1 100644
---- a/sound/pci/hda/hda_component.c
-+++ b/sound/pci/hda/hda_component.c
-@@ -21,11 +21,13 @@ void hda_component_acpi_device_notify(struct hda_component_parent *parent,
- 	struct hda_component *comp;
- 	int i;
- 
-+	mutex_lock(&parent->mutex);
- 	for (i = 0; i < ARRAY_SIZE(parent->comps); i++) {
- 		comp = hda_component_from_index(parent, i);
- 		if (comp->dev && comp->acpi_notify)
- 			comp->acpi_notify(acpi_device_handle(comp->adev), event, comp->dev);
- 	}
-+	mutex_unlock(&parent->mutex);
- }
- EXPORT_SYMBOL_NS_GPL(hda_component_acpi_device_notify, SND_HDA_SCODEC_COMPONENT);
- 
-@@ -87,6 +89,7 @@ void hda_component_manager_playback_hook(struct hda_component_parent *parent, in
- 	struct hda_component *comp;
- 	int i;
- 
-+	mutex_lock(&parent->mutex);
- 	for (i = 0; i < ARRAY_SIZE(parent->comps); i++) {
- 		comp = hda_component_from_index(parent, i);
- 		if (comp->dev && comp->pre_playback_hook)
-@@ -102,6 +105,7 @@ void hda_component_manager_playback_hook(struct hda_component_parent *parent, in
- 		if (comp->dev && comp->post_playback_hook)
- 			comp->post_playback_hook(comp->dev, action);
- 	}
-+	mutex_unlock(&parent->mutex);
- }
- EXPORT_SYMBOL_NS_GPL(hda_component_manager_playback_hook, SND_HDA_SCODEC_COMPONENT);
- 
-@@ -134,11 +138,19 @@ static int hda_comp_match_dev_name(struct device *dev, void *data)
- int hda_component_manager_bind(struct hda_codec *cdc,
- 			       struct hda_component_parent *parent)
- {
-+	int ret;
-+
- 	/* Init shared and component specific data */
- 	memset(parent, 0, sizeof(parent));
-+	mutex_init(&parent->mutex);
- 	parent->codec = cdc;
- 
--	return component_bind_all(hda_codec_dev(cdc), parent);
-+
-+	mutex_lock(&parent->mutex);
-+	ret = component_bind_all(hda_codec_dev(cdc), parent);
-+	mutex_unlock(&parent->mutex);
-+
-+	return ret;
- }
- EXPORT_SYMBOL_NS_GPL(hda_component_manager_bind, SND_HDA_SCODEC_COMPONENT);
- 
-diff --git a/sound/pci/hda/hda_component.h b/sound/pci/hda/hda_component.h
-index dd4dabeae9ee..9f786608144c 100644
---- a/sound/pci/hda/hda_component.h
-+++ b/sound/pci/hda/hda_component.h
-@@ -11,6 +11,7 @@
- 
- #include <linux/acpi.h>
- #include <linux/component.h>
-+#include <linux/mutex.h>
- #include <sound/hda_codec.h>
- 
- #define HDA_MAX_COMPONENTS	4
-@@ -28,6 +29,7 @@ struct hda_component {
- };
- 
- struct hda_component_parent {
-+	struct mutex mutex;
- 	struct hda_codec *codec;
- 	struct hda_component comps[HDA_MAX_COMPONENTS];
- };
-@@ -93,7 +95,9 @@ static inline struct hda_component *hda_component_from_index(struct hda_componen
- static inline void hda_component_manager_unbind(struct hda_codec *cdc,
- 						struct hda_component_parent *parent)
- {
-+	mutex_lock(&parent->mutex);
- 	component_unbind_all(hda_codec_dev(cdc), parent);
-+	mutex_unlock(&parent->mutex);
- }
- 
- #endif /* ifndef __HDA_COMPONENT_H__ */
+/* 
+
+The only thing one can do at this point on failure is panic. It is
+reasonable to proceed, especially for the crash case because the
+kexec-ed kernel is using a different page table so there won't be
+a mismatch between shared/private marking of the page so it doesn't
+matter.
+
+Also, even if the failure is real and the page cannot be touched as
+private, the kdump kernel will boot fine as it uses pre-reserved memory.
+What happens next depends on what the dumping process does and there's
+a reasonable chance to produce useful dump on crash.
+
+Regardless, the print leaves a trace in the log to give a clue for
+debug.
+
+One possible reason for the failure is if kdump raced with memory
+conversion. In this case shared bit in page table got set (or not
+cleared form shared->private conversion), but the page is actually
+private. So this failure is not going to affect the kexec'ed kernel.
+
+*/
+
+<---
+
+> +			if (!tdx_enc_status_changed(addr, pages, true)) {
+> +				pr_err("Failed to unshare range %#lx-%#lx\n",
+> +				       addr, addr + size);
+> +			}
+> +
+> +			found += pages;
+> +		}
+> +
+> +		addr += size;
+> +	}
+> +
+> +	__flush_tlb_all();
+> +
+> +	shared = atomic_long_read(&nr_shared);
+> +	if (shared != found) {
+> +		pr_err("shared page accounting is off\n");
+> +		pr_err("nr_shared = %ld, nr_found = %ld\n", shared, found);
+> +	}
+> +}
+
+..
+
+>  static int __set_memory_enc_dec(unsigned long addr, int numpages, bool enc)
+>  {
+> -	if (cc_platform_has(CC_ATTR_MEM_ENCRYPT))
+> -		return __set_memory_enc_pgtable(addr, numpages, enc);
+> +	int ret = 0;
+>  
+> -	return 0;
+> +	if (cc_platform_has(CC_ATTR_MEM_ENCRYPT)) {
+> +		if (!down_read_trylock(&mem_enc_lock))
+> +			return -EBUSY;
+> +
+> +		ret = __set_memory_enc_pgtable(addr, numpages, enc);
+> +
+> +		up_read(&mem_enc_lock);
+> +	}
+
+So CC_ATTR_MEM_ENCRYPT is set for SEV* guests too. You need to change
+that code here to take the lock only on TDX, where you want it, not on
+the others.
+
+Thx.
+
 -- 
-2.34.1
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
