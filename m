@@ -1,117 +1,141 @@
-Return-Path: <linux-kernel+bounces-196521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8CE18D5D52
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:57:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFE248D5D56
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:57:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9346E28C306
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 08:57:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7478B28CA3F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 08:57:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92987156238;
-	Fri, 31 May 2024 08:57:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 544D4137757;
+	Fri, 31 May 2024 08:57:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b="FdFmxZna"
-Received: from mickerik.phytec.de (mickerik.phytec.de [91.26.50.163])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tiKDy1B2"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CEA3155CBE
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 08:57:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.26.50.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF7A381AC1
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 08:57:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717145830; cv=none; b=FCG4GaZ4U5tn/YuAW41TVleIYWxnrkAGWXpP+6AniJfXuPoPFQBv6EW+hYjQJtPFLQLDxjHDiOuVfOrsvEpzNSZEwqWME+tYk2kyvpqcyKhyjRjxC90tTECF+YG7U4n6TvmAfWkSlQ4FJ7O5hvuTXGQGvXAM6f41BSM3uBhGtXE=
+	t=1717145863; cv=none; b=EoEN5/YFFmzf7KKbWiW9L8ES7T+u7/CSdrvwmJLtEEX2TnQT9if9MI5ClNvjZIh3cGlFpYuD8BS8XOOPXK6VPnjyq8DNgzuKTVUriHpAtZ2azMCDS8UNtV5UpfkKcThXAVYo0IF2ZxV7U4RoqRBtE5SruMaXQr8QsBa3kxFQduk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717145830; c=relaxed/simple;
-	bh=ZYOlG0hwgWe5lrDt9mHHOsFVcz6sCCOwrpcikGWc4S4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=RBYfy6mMoeVThRCM11Y6zgJaEFMYwyM2ecRSe1qyZt0FXDtXYqgdhVs3+7gSpJg5d/d+9dZwBTbhW3M9u6aJUfq/2c8X2HXSMlx3fU/uR/0LDsNfVFQEyuTf5qt+2Thk+SqIYsa0UqlakSh+CcTSYhlr+0R+h7b6RBfLSdnDohA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de; spf=pass smtp.mailfrom=phytec.de; dkim=pass (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b=FdFmxZna; arc=none smtp.client-ip=91.26.50.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.de
-DKIM-Signature: v=1; a=rsa-sha256; d=phytec.de; s=a4; c=relaxed/simple;
-	q=dns/txt; i=@phytec.de; t=1717145827; x=1719737827;
-	h=From:Sender:Reply-To:Subject:Date:Message-ID:To:CC:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=ZYOlG0hwgWe5lrDt9mHHOsFVcz6sCCOwrpcikGWc4S4=;
-	b=FdFmxZnawh/TD1MkaccEmqqS5OL7MJqgwaXPUNa4v/l80ym2oVBsnMXvUjII3d3N
-	lwekOINCl2ltiMV4rNtA+nkNjB/QGoSJLm+EeuUmXw2yt0EmhVTafzuC4DU31Zug
-	NGntx3Vl/8yTtA3R3UlsGit6EBhU0Vm/H0P1pElwKok=;
-X-AuditID: ac14000a-03251700000021bc-e1-665990e346f9
-Received: from berlix.phytec.de (Unknown_Domain [172.25.0.12])
-	(using TLS with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(Client did not present a certificate)
-	by mickerik.phytec.de (PHYTEC Mail Gateway) with SMTP id D9.75.08636.3E099566; Fri, 31 May 2024 10:57:07 +0200 (CEST)
-Received: from [172.25.39.28] (172.25.0.11) by Berlix.phytec.de (172.25.0.12)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.6; Fri, 31 May
- 2024 10:57:05 +0200
-Message-ID: <158261b3-bf77-46a6-836b-c996267d8d16@phytec.de>
-Date: Fri, 31 May 2024 10:57:05 +0200
+	s=arc-20240116; t=1717145863; c=relaxed/simple;
+	bh=jGp5xMVbjd0tUmykpevDlhzB7AOsvsUsk6fB4tAJBRs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Cm9G7rGbrc6yIxJwq3aBHs0ncXkVAvr7Zq68ziHEY4BiK7B9ipDr262Z/2XBS/Pvh21heaCK0x5tlyY389KjsUj3iY+i+CvzNyVE3rbSnrlyA7Ajt5035dAK3aRRfKGbee2dNS4p4LXXeRRcwkQ+hoWQSgNOkSwsRX1ihDcSs04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tiKDy1B2; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2bde007cc57so1313386a91.2
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 01:57:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717145861; x=1717750661; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=nPlAccRu1ht0ugLS/YX5R85LXm4AvuNcIW8FJ60Xapc=;
+        b=tiKDy1B2hwFCqw6xuI3fWATDtD3MomsjOn2FlwD1SnPrzBOdxV/w8s7Zb5rkAoR+C9
+         7YgbN5QzrEkrWOToAQJ3XFjNPeYEk07Lqk8a12l6i7+W6C7u4jIOcaTlVXq2NhxwUCPg
+         gFdfuPJ3eyJ0hxHZnfB0ro/3LLVoz7qSqUkVLDKGuM6rFqDRnNiZACt8sL1vclKQuLmf
+         v3sBRq1bUyS6Ro5K8Yt0uyH4ObkjqiDkYXdcq0Bbs1ayXKXZSSlIhhr6lkS4kN7P44mf
+         o7QdSvYXB5nw8GtvWQsUfaWi8Dboxt7J/7Ibgtw5rrNTnVQ8490QigWXFGuKeq4eCJPx
+         hpgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717145861; x=1717750661;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nPlAccRu1ht0ugLS/YX5R85LXm4AvuNcIW8FJ60Xapc=;
+        b=MfXirAu5uwkEl4KWwMtmtwYmcamGVnGf59rS2b21I5t9QGq08AjDzW+A0iXM1jYH5B
+         BD3q8IQKbJtnfWxTELjFT5nLMQaMjnqwBf1zgxpFfJ0zs81991BmkQNZBuV5607WtX8Q
+         h/vIjLb0LUwTitZNpHHqwRQ2QkG6RkGB1LAjdFzumChbUhDvEs+PI5YgUkgBVfOFN5a3
+         /zFEzRHDZVX3egvNrYkMazD9h73WTYxvGFaCD75ANVqnJTDel0jjdC0RhgMOSs476Hhh
+         q85QEdkFVy/+x1qVM+hnofvRcKl6/JQGb9aSJS8sSyOd5CFHMN6jbgwrUGGuDfGVF8z3
+         xxbg==
+X-Forwarded-Encrypted: i=1; AJvYcCWk5TncWkYda3dEMOJa8wvADaznSBrexnrs4DYcgjkNc2G+obzzxDaq5oahP/HPFnmI+Fe8I39h7o/81CV+0+A8BfH47I/J7WmvVZu9
+X-Gm-Message-State: AOJu0Yzyo/51ouA7r2UOA9EfoJhZvD/Bwkz9xsW3K6ysKmDKfhz4DK+l
+	l+rw2aLG7IGKmcBhWd9xHNsB+Cv43Qs6SHrgDgoFg2f8ilSjTRZR5ZcXqjCxBEafR38Bp21TcLV
+	aGczB9eJQrMqiBfuX8fxY2jLt0h+bET0lJSyzjg==
+X-Google-Smtp-Source: AGHT+IEk0xAq4H6amqfMwetzDZJPVGDcv7FZKBb2l9gcvP6xSw2q5lzmYnt2+a5eGjhW4z3tZcMHkEzVbz+bKslsKVY=
+X-Received: by 2002:a17:90a:bf16:b0:2be:9547:41a8 with SMTP id
+ 98e67ed59e1d1-2c1dc5d9f17mr1081334a91.48.1717145860631; Fri, 31 May 2024
+ 01:57:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] arm64: dts: ti: k3-am64-phycore-som: Add
- serial_flash label
-To: Krzysztof Kozlowski <krzk@kernel.org>, Nathan Morrisson
-	<nmorrisson@phytec.com>, <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>,
-	<robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <upstream@lists.phytec.de>
-References: <20240528225137.3629698-1-nmorrisson@phytec.com>
- <20240528225137.3629698-2-nmorrisson@phytec.com>
- <bd062517-4756-4ba3-b937-c3a2db7a9855@phytec.de>
- <99bed183-9b3e-437a-8c35-8a345f4a3558@kernel.org>
-Content-Language: en-US
-From: Wadim Egorov <w.egorov@phytec.de>
-In-Reply-To: <99bed183-9b3e-437a-8c35-8a345f4a3558@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: Berlix.phytec.de (172.25.0.12) To Berlix.phytec.de
- (172.25.0.12)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprBIsWRmVeSWpSXmKPExsWyRpKBR/fxhMg0gy9X2SzW7D3HZDH/yDlW
-	i+WfZ7NbvJx1j83i/PkN7BabHl9jtbi8aw6bxZsfZ5ksPjRuZrP4v2cHu0X3O3WL/2c/sDvw
-	eGxa1cnmsXlJvUd/dwurx5+L71g9jt/YzuTxeZNcAFsUl01Kak5mWWqRvl0CV8bVFZtYCv6x
-	VFxc/ZO5gfE3cxcjJ4eEgInErK+fgWwuDiGBJUwSG44cYAJJCAncZZRoeeIHYvMK2EjsmtLB
-	DmKzCKhKNG7fywYRF5Q4OfMJC4gtKiAvcf/WDLAaYYFIie+vZoANFRE4wyixc8ZVRhCHWaCN
-	UeLJwwNQ664xSlz+3Ae2jllAXOLWk/lgNpuAusSdDd9Yuxg5ODgF7CTWHtKHKLGQWPzmIDuE
-	LS+x/e0cZohL5SVeXFrOAvGOvMS0c6+hXguV2PplO9MERuFZSI6dhWTbLCRjZyEZu4CRZRWj
-	UG5mcnZqUWa2XkFGZUlqsl5K6iZGUOyJMHDtYOyb43GIkYmD8RCjBAezkgjvr/SINCHelMTK
-	qtSi/Pii0pzU4kOM0hwsSuK8qzuCU4UE0hNLUrNTUwtSi2CyTBycUg2MAf4JL1Z9E54iuHlR
-	/NUzZ9leFT4K1Ls+qS1x6VG7i0+4V5wRLH9h1qU1STqD72wP8wzbgOw/a7l3cijN1i6afdLS
-	wi5i5V7DR11Rsw+yLXa9eWlS6bSv0ZNtTxVdLA5h32WY9OTV35cb65p64x9P4li/vYd3yY+T
-	QXP/evJs1D6tePiJrPN/RiWW4oxEQy3mouJEANh+KkerAgAA
+References: <20230105145159.1089531-1-kajetan.puchalski@arm.com>
+ <20230105145159.1089531-3-kajetan.puchalski@arm.com> <20230711175814.zfavcn7xn3ia5va4@airbuntu>
+ <ZLZ/btJw5LNVxVy8@e126311.manchester.arm.com> <20230718132432.w5xoxbqm54jmu6n5@airbuntu>
+ <20230917010516.54dgcmms44wyfrvx@airbuntu> <CAKfTPtA6ZzRR-zMN7sodOW+N_P+GqwNv4tGR+aMB5VXRT2b5bg@mail.gmail.com>
+ <d54d6115-a4d6-466b-a4a2-9c064194f06e@arm.com> <CAKfTPtB21aY9cgi5dSHB0jRp6pE85AfGcHrHjrcpMwi3fJL0FA@mail.gmail.com>
+ <4cd905e8-594e-4858-89df-a501184ee521@arm.com>
+In-Reply-To: <4cd905e8-594e-4858-89df-a501184ee521@arm.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Fri, 31 May 2024 10:57:27 +0200
+Message-ID: <CAKfTPtCUZfpunq1C9n=3tkjsSSdmd8jhf6kR523NONKvEcxOpQ@mail.gmail.com>
+Subject: Re: [PATCH v6 2/2] cpuidle: teo: Introduce util-awareness
+To: Christian Loehle <christian.loehle@arm.com>
+Cc: Lukasz Luba <lukasz.luba@arm.com>, Kajetan Puchalski <kajetan.puchalski@arm.com>, rafael@kernel.org, 
+	daniel.lezcano@linaro.org, Dietmar.Eggemann@arm.com, dsmythies@telus.net, 
+	yu.chen.surf@gmail.com, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, 
+	Ulf Hansson <ulf.hansson@linaro.org>, Qais Yousef <qyousef@layalina.io>
+Content-Type: text/plain; charset="UTF-8"
 
+On Wed, 29 May 2024 at 15:09, Christian Loehle <christian.loehle@arm.com> wrote:
+>
+> On 5/28/24 15:07, Vincent Guittot wrote:
+> > On Tue, 28 May 2024 at 11:59, Lukasz Luba <lukasz.luba@arm.com> wrote:
+> >>
+> >> Hi Vincent,
+> >>
+> >> On 5/28/24 10:29, Vincent Guittot wrote:
+> >>> Hi All,
+> >>>
+> >>> I'm quite late on this thread but this patchset creates a major
+> >>> regression for psci cpuidle driver when using the OSI mode (OS
+> >>> initiated mode).  In such a case, cpuidle driver takes care only of
+> >>> CPUs power state and the deeper C-states ,which includes cluster and
+> >>> other power domains, are handled with power domain framework. In such
+> >>> configuration ,cpuidle has only 2 c-states : WFI and cpu off states
+> >>> and others states that include the clusters, are managed by genpd and
+> >>> its governor.
+> >>>
+> >>> This patch selects cpuidle c-state N-1 as soon as the utilization is
+> >>> above CPU capacity / 64 which means at most a level of 16 on the big
+> >>> core but can be as low as 4 on little cores. These levels are very low
+> >>> and the main result is that as soon as there is very little activity
+> >>> on a CPU, cpuidle always selects WFI states whatever the estimated
+> >>> sleep duration and which prevents any deeper states. Another effect is
+> >>> that it also keeps the tick firing every 1ms in my case.
+> >>
+> >> Thanks for reporting this.
+> >> Could you add what regression it's causing, please?
+> >> Performance or higher power?
+> >
+> > It's not a perf but rather a power regression. I don't have a power
+> > counter so it's difficult to give figures but I found it while running
+> > a unitary test below on my rb5:
+> > run 500us every 19457ms on medium core (uclamp_min: 600).
+>
+> Is that supposed to say 19.457ms?
 
+Yes, it's a mistake.  it's 19.457ms I forgot to put the dot when
+copying the value from the rt-app json file
 
-Am 31.05.24 um 10:53 schrieb Krzysztof Kozlowski:
-> On 31/05/2024 10:28, Wadim Egorov wrote:
->>
->>
->> Am 29.05.24 um 00:51 schrieb Nathan Morrisson:
->>> Label the spi nor as serial_flash. This allows us to disable the
->>> flash with an overlay common to all am6xx-phycore-som boards.
->>>
->>> Signed-off-by: Nathan Morrisson <nmorrisson@phytec.com>
->>
->> For all 3 patches,
->>
->> Reviewed-by: Wadim Egorov <w.egorov@phytec.de>
-> 
-> Tooling does not work like this. You need to review each or provide tag
-> for 4 (not three) in cover letter.
-
-4 patches, you are right. Missed that.
-
-> 
-> Best regards,
-> Krzysztof
-> 
+> (Because below you say idle time is >18ms and total test time 5sec)
+> Is the utilisation more like 1/20000 or 1/20?
+> In any case what you describe is probably an issue, I'll try to reproduce.
+> Note also my findings here:
+> https://lore.kernel.org/lkml/0ce2d536-1125-4df8-9a5b-0d5e389cd8af@arm.com/
+>
+> Kind Regards,
+> Christian
+>
 
