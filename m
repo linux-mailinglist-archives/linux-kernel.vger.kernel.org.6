@@ -1,123 +1,98 @@
-Return-Path: <linux-kernel+bounces-196071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E895A8D56DA
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 02:20:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49A388D56D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 02:20:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 853D21F2503D
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 00:20:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA2DD1F250B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 00:20:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD3B34C62;
-	Fri, 31 May 2024 00:20:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 729C94C7B;
+	Fri, 31 May 2024 00:20:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CsB7Gz+M"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ILCAb2Ic"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5A78A2D;
-	Fri, 31 May 2024 00:20:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE828A2D;
+	Fri, 31 May 2024 00:20:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717114845; cv=none; b=qrYsf/336mjAVcRumIy2G2hfuO4i87xViFeUizHC7XrTIocBRYZStNYYN6XL7dMbUtpleM0XL/N4Npznw1MWtmWbCEbCabXM8N2ff8hk/DyNH5w0D6ezwx7aYqw6BHW31P/Re7nCJiOOGjlPtoB5wFJ8OfiZm7f7TFpVz9bKxmE=
+	t=1717114831; cv=none; b=MBlbi8X97t9vut9r/A+zLlQzKjVjMWmA1av5EKlrYW0CHDLOkefM2JHFzbZK/NI28d4/i8LbuuFrO/hIkiskcLf2+5oTrNhQEBCbRbFUJKcr1Zka0RAVwvETWq6+Egf7c+QKAXNYwXoRbDlcnvyXZZ3/rfP76BeVxqC3mDeqbcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717114845; c=relaxed/simple;
-	bh=6eCfvSnM0YaO9SBtIYu/Zfal1XzOnsjkl0HaGq9pawI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=dOZhwPYPkvf6HKrz4oO/RjWuedo8Ltuminj6VU1CylZSo0a69kDMnwmheHFhWR54ibMGHPbHFdtYIbRwa199iV4v4e7uSuqn7udtLVtAkcRCLjYIclaIono3qxyBOEkltvGm09tseB4v2nR92mGYy5LTOeR2sZGlNLNdSW5GLE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CsB7Gz+M; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44UGrZdV025517;
-	Fri, 31 May 2024 00:20:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=gynQjfPIoxN/mtapgaztZK
-	5d/ROaq3hN0sTXGHXwRZ4=; b=CsB7Gz+MxQ9qQLiB8oxPsLjvwEArgGaqy7ZXR/
-	y2y8C56hcutEaf+9WUOvR3VqIHNENb/o+zRqPlQL6JgQPeAoRCD65YX7K918EGj0
-	TY9KKnW4yiNMAmeklac/ibFiTmBkQGcIgv3ruUP8x+X52nVt2jPUdxChce1BO/PN
-	PvPFa/tGg+qHix1ucPucPMFMAd4PBLDBxAzjDNydffXtrOiw1ffrezowPahwWnbL
-	Y+usbYPOZNEUZstJbbl5OkA8KzPCDwdxFfdhOZ8tVtkF7MI5qg0ca3Owprys9ug2
-	MpUQzC6lQkQllQm5ZoLtj3x2gMc3h4HZvRN5iessfket23GA==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba2pwh3a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 31 May 2024 00:20:28 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44V0KP64028232
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 31 May 2024 00:20:25 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 30 May
- 2024 17:20:25 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Thu, 30 May 2024 17:20:20 -0700
-Subject: [PATCH] x86/mce/inject: add missing MODULE_DESCRIPTION()
+	s=arc-20240116; t=1717114831; c=relaxed/simple;
+	bh=j0HvBqn5IKZiXp3LRFTLsljJRdzd49X2RalUE+YYhfk=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=Jt/yaIYMJiL1hazKjIQY6lwfx9jSIP2xK3n8Rpii1nZQS5Q+NeqL33ABW/tiilfA70U8AR5jNQ1wgQTGk3Sn9mQqtOAvuvXhliIW8+g/aUmMqc52JhNgtd/UH+kdd/ezHoy47Ty2aa/tKqbxk0xJ5R+MBVPtHcoY+V2wNSUoAmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ILCAb2Ic; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id EA90EC32786;
+	Fri, 31 May 2024 00:20:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717114831;
+	bh=j0HvBqn5IKZiXp3LRFTLsljJRdzd49X2RalUE+YYhfk=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=ILCAb2IccRj9vrmoq5Kpj6TYbP/Xp0UuBC5hdzu/5iKlTD4GztOJ5i3P5k8Og1UYb
+	 KSy6G6Ab9Jue0IaSHqkWhxKvF0hsRCGlsPDOP9i3fxM91POfVKk2fqT0sPjdL2lOp6
+	 AH1X1NH6GWtQfHb3ZiUa26U/zs4lyYGTQEugdDuo/FJgMYZirZjbCN0G2nuRy5GoPo
+	 TFu7spm3Wj5paR25ckZR1dhbNpN0DzJSteAaNAv+ii1+4jQoud/969YVXNzSjDdxKz
+	 jgU41pPS3cRueFc8Y7F6z4C8+z2QOA2Q5OtqS0BxKd8AkXn8xUDh1LAqeK6cygZkJv
+	 7kv5kcskKWAVg==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id D837ACF21F3;
+	Fri, 31 May 2024 00:20:30 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240530-md-x86-mce-inject-v1-1-2a9dc998f709@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAMMXWWYC/x3MQQrCMBCF4auUWTsQk6YVryJdpMloR0yUmSqB0
- rsbXX483r+BkjApnLsNhD6s/CwNx0MHcQnlRsipGayxvfHOYE5YTwPm2JZyp7iic6Ox49B7nxK
- 030voyvXfvEzNc1DCWUKJy6/04PKumIOuJLDvX+Kx1/CCAAAA
-To: Tony Luck <tony.luck@intel.com>, Borislav Petkov <bp@alien8.de>,
-        "Thomas
- Gleixner" <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Dave Hansen
-	<dave.hansen@linux.intel.com>, <x86@kernel.org>,
-        "H. Peter Anvin"
-	<hpa@zytor.com>
-CC: <linux-edac@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: qiczb4UyaajCO-QvZnSNknv_ofnxowc7
-X-Proofpoint-ORIG-GUID: qiczb4UyaajCO-QvZnSNknv_ofnxowc7
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-30_21,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- malwarescore=0 spamscore=0 adultscore=0 clxscore=1011 bulkscore=0
- mlxscore=0 suspectscore=0 priorityscore=1501 phishscore=0 mlxlogscore=837
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2405310001
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v6 0/3] mlx4: Add support for netdev-genl API
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <171711483088.6873.3753766001129411194.git-patchwork-notify@kernel.org>
+Date: Fri, 31 May 2024 00:20:30 +0000
+References: <20240528181139.515070-1-jdamato@fastly.com>
+In-Reply-To: <20240528181139.515070-1-jdamato@fastly.com>
+To: Joe Damato <jdamato@fastly.com>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, nalramli@fastly.com,
+ mkarsten@uwaterloo.ca, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, linux-rdma@vger.kernel.org, pabeni@redhat.com,
+ tariqt@nvidia.com
 
-make W=1 C=1 warns:
-WARNING: modpost: missing MODULE_DESCRIPTION() in arch/x86/kernel/cpu/mce/mce-inject.o
+Hello:
 
-Add the missing MODULE_DESCRIPTION().
+This series was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- arch/x86/kernel/cpu/mce/inject.c | 1 +
- 1 file changed, 1 insertion(+)
+On Tue, 28 May 2024 18:11:35 +0000 you wrote:
+> Greetings:
+> 
+> Welcome to v6.
+> 
+> There are no functional changes from v5, which I mistakenly sent right
+> after net-next was closed (oops). This revision, however, includes
+> Tariq's Reviewed-by tags of the v5 in each commit message. See the
+> changelog below.
+> 
+> [...]
 
-diff --git a/arch/x86/kernel/cpu/mce/inject.c b/arch/x86/kernel/cpu/mce/inject.c
-index 94953d749475..4ade2a3ba312 100644
---- a/arch/x86/kernel/cpu/mce/inject.c
-+++ b/arch/x86/kernel/cpu/mce/inject.c
-@@ -795,4 +795,5 @@ static void __exit inject_exit(void)
- 
- module_init(inject_init);
- module_exit(inject_exit);
-+MODULE_DESCRIPTION("Machine check injection support");
- MODULE_LICENSE("GPL");
+Here is the summary with links:
+  - [net-next,v6,1/3] net/mlx4: Track RX allocation failures in a stat
+    https://git.kernel.org/netdev/net-next/c/6166bb0cacb6
+  - [net-next,v6,2/3] net/mlx4: link NAPI instances to queues and IRQs
+    https://git.kernel.org/netdev/net-next/c/64b62146ba9e
+  - [net-next,v6,3/3] net/mlx4: support per-queue statistics via netlink
+    https://git.kernel.org/netdev/net-next/c/a5602c6edf7c
 
----
-base-commit: 4a4be1ad3a6efea16c56615f31117590fd881358
-change-id: 20240530-md-x86-mce-inject-3370276455dd
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
