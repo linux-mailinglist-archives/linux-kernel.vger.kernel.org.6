@@ -1,167 +1,167 @@
-Return-Path: <linux-kernel+bounces-196584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6EEC8D5E52
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 11:32:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A57978D5E57
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 11:33:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 163861C212E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 09:32:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E9E71F228FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 09:33:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0101181724;
-	Fri, 31 May 2024 09:32:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 550D684FA0;
+	Fri, 31 May 2024 09:33:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fKqVlq7i"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q87Wh0Uq"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 549C04AEF0;
-	Fri, 31 May 2024 09:32:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEADA7581D
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 09:33:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717147936; cv=none; b=X65tX7Gh6orMOhhsBHoeQoO/9gGM69/SIOB6J9I467sFPCbfr8WAIJPyERkaW7s+GXQsADKsO3F0xT2G/Tt010rLnjUiUR5hxLW0QHgObqe3Qw0mD1YRTbJyKquWXnwjqttBcTCqcn2/6vvwk4n39rPkmc17TiBt+EkYVxUyHQg=
+	t=1717148014; cv=none; b=IZh/ySBirnfH2elZe+7KvGz4lfDx7gLGJVx5qqhQ2tKJFVtgAFJKW8HJ6q+ug0X15gVHK3D34BHQ2/7hC3IYZk6NR9Aqc2uf7/Q+EswSGFyzN/dq37afXQuWME9qJPuofQlnWRxEBUgJX3BoOfXupbnOBlMawkyyvkf9eAEof64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717147936; c=relaxed/simple;
-	bh=0vwqKpkncSpsCyCyMgQpurm3nWtR24dS2s/8mqJ8EIE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=trlHohFsv+zCZm+utUCYFPNbzgzKhME5DEAjCDq0OyCM7QGL7Q+ex/YV1Skm8/aOyGVKLWtgxPEKQITd+EjwsmgBquyVce5VnFDtVbW2Cq4tH2FEbqFFbyPjiS1tVa88+QaW2MEGeM5mxuBPpMRg0vEUyOL7WC6jXZvFgrG8dRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fKqVlq7i; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-42120fc8cbfso8313515e9.2;
-        Fri, 31 May 2024 02:32:14 -0700 (PDT)
+	s=arc-20240116; t=1717148014; c=relaxed/simple;
+	bh=zvfDNrLm2R/lNmQf1Z5UPnKn0BPnoDGVqQlqTMVdjq0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tfJGRmSJ6CNHUK3Og/wEEZdlTxRHTu1j/SfjZB2F0u0utqokmEzGYRhL0P1aZuukYczgEQjAnUsMlwmaeON9kYl0ps2o7hKAKhn3newDYXHxM+bhIbtiY3Spp4H4FhWaxNFEgCT0VxjHfOy+WFdYWhTZCVZeCehrquPpirEEzms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=q87Wh0Uq; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3550134ef25so1840629f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 02:33:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717147933; x=1717752733; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=plB5SAM6IxvDio+P+8hN6eVaq+FHOovulQhKLCG8UQo=;
-        b=fKqVlq7izt1c55qstEHBE2KjAqZjEYifNyvPDWSHYd6A0MXR+Cd2GVuQWebTnj9UjO
-         AIAkDXprx1okUt9D/Ro5XqwnCHPthzcetqUrQrc9WGs9g4m44os1iHjgXt2eSvJZ9oTx
-         wg8FtoDf7Ia0lbOJSWj3xoKvqiV7GmRjJoPTA4bKP5wfP5QMM4j0IMb3161IUId66ddq
-         dTNUOYAn7snf205I+d1V/cG9p4Vb6WIPj4pqE4QGudnm7VRy8OS0dqKiQcpQm8R09qYb
-         Iz3z3dHB+pKzB0qLhBPYc5/T2DXxSYymhQJRxe/tvNnXk3WPPNf0B5JDI+0JYOINcAqM
-         t0Cg==
+        d=linaro.org; s=google; t=1717148011; x=1717752811; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3NWC5UvA3PX+lrjXy8TOdybdxeWSIoSynZtnq1QH028=;
+        b=q87Wh0UqRuz/4OCgDSm1YGkg1p0TocbJ6mR9OQp16ysnEWqcxGcttIhXFAQrC0e30+
+         e+VdNOUd7osxQlbDm0X8FEPcoRBK8lQe9MpT/P6Hbn3vqcbqEr0KSMBiSSbrf7j1dv7/
+         pR3pR/hMCkhLXLkz1goqoXXmwPcVTuaKTrgc3n+qn5g8KxebhRxlr5alS/Bst3n3HHBH
+         6GTl4egwrfC5V2+SWElSJtRpMTe0y2m7PFzaWzp7Aw97CCFBq5rHZg30RwNSlD0u02/Z
+         4B2DSMJbmAeVWbmOGeLXfSNfE5o/y+HdIZY+IALfTx8TXAcHkhYMz3uv9jmqXoQw1IEy
+         Cz+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717147933; x=1717752733;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=plB5SAM6IxvDio+P+8hN6eVaq+FHOovulQhKLCG8UQo=;
-        b=I6gq//6Z/f1Xoi6005JF8Jt+MezzzBaewma05WcZdAJg0otQtqSSI9R6diNkWbmK4o
-         nCawdyUU5iyuPpP+F56cfknIkzOtvYeehtzhBvA9fUJrL+q5s77sbrbx1w4ZQlr0Qo1m
-         D9we8+E6Gc6oblU/jZFmPTCqPNY23uSECZPn6gDD0w+YlFfZl9k8U909xSR2qpndQOG7
-         xoJSyyc7S6F85Q+8SsPSL6SRQe36Q63ysYMDvl6Zw6Z+CamHjaLvw5boXAcobCJa0c56
-         D8UbwBY3FMgfR7snuC2+V9fgLUEioEL3cmSUoNksYleke0uXHqEGMSiFDPlpFuR5eqJA
-         FT1w==
-X-Forwarded-Encrypted: i=1; AJvYcCWzenjyFCsdaJs5etrQhRbbMSkGO8U3wnsvCZchSNjAyE7j3vZsh1vs683bIjwZwC9Q1JoIt19WKvbVxUkfEVfALOOEgimOec5GlKZZ
-X-Gm-Message-State: AOJu0Yyo+7Wm7tkM/8iw9Kpd400W8EUWiMRq1or6G29YBXTQiwFhc3Zw
-	fOcbfV4w1771R1EO5CpwNLDDdOThWVwH6+r/FtoDpRKH/rKXksYb
-X-Google-Smtp-Source: AGHT+IE0bKHCwG5bfyvuPS7N7Apz8rTAjCab6PPLcxedkbysqK6uLhGHr5+E0AiGg3Sxa4fUof6gSg==
-X-Received: by 2002:a05:600c:4f95:b0:420:151e:b205 with SMTP id 5b1f17b1804b1-4212e0d30cdmr12779385e9.39.1717147932369;
-        Fri, 31 May 2024 02:32:12 -0700 (PDT)
-Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4212709d4c7sm49326525e9.38.2024.05.31.02.32.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 May 2024 02:32:11 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Harry Wentland <harry.wentland@amd.com>,
-	Leo Li <sunpeng.li@amd.com>,
-	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Xinhui.Pan@amd.com,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Alex Hung <alex.hung@amd.com>,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/amd/display: Fix a handful of spelling mistakes
-Date: Fri, 31 May 2024 10:32:11 +0100
-Message-Id: <20240531093211.498880-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        d=1e100.net; s=20230601; t=1717148011; x=1717752811;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3NWC5UvA3PX+lrjXy8TOdybdxeWSIoSynZtnq1QH028=;
+        b=GtUZ6uO2U80lpfV5Pmh3sb6fVvLySSGAou+29hilk3vRofYR/0PFBRyz09kkER2iJE
+         S7M+J8IrLt0on0u6ZYdvbc1gTl/xmWwiDAzsDf3eHQ3a+UJYQHsE4fl4XBaOVexoCdwf
+         1J0HluA/SpdqPSV2Fg5VeBZsA/4GWJv2cX49xBHVnzN6jkDmUzoON4OUIqIK9H5a7/YD
+         efBMcv2EZTKPyi/tgGKD0RBpUXfvswZ+caH+RD/S/h+ECe8mlV4g77659lqENQeKDA55
+         son3xvZeL/meDv9JOdUNL06efQjy97qyT/QGXmtNGeCPVjMhcYHbSaD3aBwezxt0M8oR
+         3++g==
+X-Forwarded-Encrypted: i=1; AJvYcCWjAPFDsxi6LbST4v0uLLt6HeXGHEEDIuQXhiphouASlxdkEXJU2kCvySGxnTHrSrpdxPBoZc0dW03/4YfgDX3/vxf1EOdBA9NkkxxC
+X-Gm-Message-State: AOJu0YyeAQo5H/t2Ogqm9P0aIYTwABGvVGOqP3TCCWctMnt8WWP8EFv5
+	Ip9IXJVgY1T1gcufc0qXMBUHRK2CsIDoofts8cTffsprxG9dHlGsiNdXwtUBbU4=
+X-Google-Smtp-Source: AGHT+IEG1fEEuxHoaL+fZBj37w61ECXaZTpWHpl0KSl26+8N2yWpwFbQjEkez/6TmMZRhlH8H5ZxwA==
+X-Received: by 2002:a5d:6291:0:b0:354:f724:6412 with SMTP id ffacd0b85a97d-35e0f25e125mr754333f8f.3.1717148011164;
+        Fri, 31 May 2024 02:33:31 -0700 (PDT)
+Received: from [192.168.86.191] ([5.133.47.210])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-35dd04c0d6csm1446440f8f.1.2024.05.31.02.33.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 31 May 2024 02:33:30 -0700 (PDT)
+Message-ID: <32750882-2e4c-44b7-af6d-a1ec0857b69a@linaro.org>
+Date: Fri, 31 May 2024 10:33:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/9] misc: fastrpc: Fix DSP capabilities request
+To: Ekansh Gupta <quic_ekangupt@quicinc.com>, linux-arm-msm@vger.kernel.org
+Cc: gregkh@linuxfoundation.org, quic_bkumar@quicinc.com,
+ linux-kernel@vger.kernel.org, quic_chennak@quicinc.com,
+ stable <stable@kernel.org>
+References: <20240530102032.27179-1-quic_ekangupt@quicinc.com>
+ <20240530102032.27179-3-quic_ekangupt@quicinc.com>
+Content-Language: en-US
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+In-Reply-To: <20240530102032.27179-3-quic_ekangupt@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-There are a few spelling mistakes in dml2_printf messages. Fix them.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- .../dc/dml2/dml21/src/dml2_core/dml2_core_dcn4_calcs.c      | 6 +++---
- .../display/dc/dml2/dml21/src/dml2_core/dml2_core_shared.c  | 6 +++---
- 2 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_dcn4_calcs.c b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_dcn4_calcs.c
-index 8062144a5a6d..e7e6751f4477 100644
---- a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_dcn4_calcs.c
-+++ b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_dcn4_calcs.c
-@@ -5731,7 +5731,7 @@ static bool CalculatePrefetchSchedule(struct dml2_core_internal_scratch *scratch
- 		dml2_printf("DML: Tvm: %fus - time to fetch vm\n", s->TimeForFetchingVM);
- 		dml2_printf("DML: Tr0: %fus - time to fetch first row of data pagetables\n", s->TimeForFetchingRowInVBlank);
- 		dml2_printf("DML: Tsw: %fus = time to fetch enough pixel data and cursor data to feed the scalers init position and detile\n", (double)s->LinesToRequestPrefetchPixelData * s->LineTime);
--		dml2_printf("DML: To: %fus - time for propogation from scaler to optc\n", (*p->DSTYAfterScaler + ((double)(*p->DSTXAfterScaler) / (double)p->myPipe->HTotal)) * s->LineTime);
-+		dml2_printf("DML: To: %fus - time for propagation from scaler to optc\n", (*p->DSTYAfterScaler + ((double)(*p->DSTXAfterScaler) / (double)p->myPipe->HTotal)) * s->LineTime);
- 		dml2_printf("DML: Tvstartup - TSetup - Tcalc - TWait - Tpre - To > 0\n");
- 		dml2_printf("DML: Tslack(pre): %fus - time left over in schedule\n", p->VStartup * s->LineTime - s->TimeForFetchingVM - 2 * s->TimeForFetchingRowInVBlank - (*p->DSTYAfterScaler + ((double)(*p->DSTXAfterScaler) / (double)p->myPipe->HTotal)) * s->LineTime - p->TWait - p->TCalc - *p->TSetup);
- 		dml2_printf("DML: row_bytes = dpte_row_bytes (per_pipe) = PixelPTEBytesPerRow = : %u\n", p->PixelPTEBytesPerRow);
-@@ -8268,7 +8268,7 @@ static bool dml_core_mode_support(struct dml2_core_calcs_mode_support_ex *in_out
- 	dml2_printf("DML::%s: mode_lib->ms.DCFCLK = %f\n", __func__, mode_lib->ms.DCFCLK);
- 	dml2_printf("DML::%s: mode_lib->ms.FabricClock = %f\n", __func__, mode_lib->ms.FabricClock);
- 	dml2_printf("DML::%s: mode_lib->ms.uclk_freq_mhz = %f\n", __func__, mode_lib->ms.uclk_freq_mhz);
--	dml2_printf("DML::%s: urgent latency tolarance = %f\n", __func__, ((mode_lib->ip.rob_buffer_size_kbytes - mode_lib->ip.pixel_chunk_size_kbytes) * 1024 / (mode_lib->ms.DCFCLK * mode_lib->soc.return_bus_width_bytes)));
-+	dml2_printf("DML::%s: urgent latency tolerance = %f\n", __func__, ((mode_lib->ip.rob_buffer_size_kbytes - mode_lib->ip.pixel_chunk_size_kbytes) * 1024 / (mode_lib->ms.DCFCLK * mode_lib->soc.return_bus_width_bytes)));
- #endif
- 
- 	mode_lib->ms.support.OutstandingRequestsSupport = true;
-@@ -11089,7 +11089,7 @@ static bool dml_core_mode_programming(struct dml2_core_calcs_mode_programming_ex
- 				if (display_cfg->plane_descriptors[k].immediate_flip && mode_lib->mp.ImmediateFlipSupportedForPipe[k] == false) {
- 					mode_lib->mp.ImmediateFlipSupported = false;
- #ifdef __DML_VBA_DEBUG__
--					dml2_printf("DML::%s: Pipe %0d not supporing iflip!\n", __func__, k);
-+					dml2_printf("DML::%s: Pipe %0d not supporting iflip!\n", __func__, k);
- #endif
- 				}
- 			}
-diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_shared.c b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_shared.c
-index f2e2250d28d3..6eb3fec87ec1 100644
---- a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_shared.c
-+++ b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_shared.c
-@@ -1988,7 +1988,7 @@ bool dml2_core_shared_mode_support(struct dml2_core_calcs_mode_support_ex *in_ou
- 	dml2_printf("DML::%s: mode_lib->ms.FabricClock = %f\n", __func__, mode_lib->ms.FabricClock);
- 	dml2_printf("DML::%s: mode_lib->ms.uclk_freq_mhz = %f\n", __func__, mode_lib->ms.uclk_freq_mhz);
- 	dml2_printf("DML::%s: max_urgent_latency_us = %f\n", __func__, mode_lib->ms.support.max_urgent_latency_us);
--	dml2_printf("DML::%s: urgent latency tolarance = %f\n", __func__, ((mode_lib->ip.rob_buffer_size_kbytes - mode_lib->ip.pixel_chunk_size_kbytes) * 1024 / (mode_lib->ms.DCFCLK * mode_lib->soc.return_bus_width_bytes)));
-+	dml2_printf("DML::%s: urgent latency tolerance = %f\n", __func__, ((mode_lib->ip.rob_buffer_size_kbytes - mode_lib->ip.pixel_chunk_size_kbytes) * 1024 / (mode_lib->ms.DCFCLK * mode_lib->soc.return_bus_width_bytes)));
- #endif
- 
- 	mode_lib->ms.support.OutstandingRequestsSupport = true;
-@@ -8131,7 +8131,7 @@ static bool CalculatePrefetchSchedule(struct dml2_core_internal_scratch *scratch
- 		dml2_printf("DML: Tvm: %fus - time to fetch vm\n", s->TimeForFetchingVM);
- 		dml2_printf("DML: Tr0: %fus - time to fetch first row of data pagetables\n", s->TimeForFetchingRowInVBlank);
- 		dml2_printf("DML: Tsw: %fus = time to fetch enough pixel data and cursor data to feed the scalers init position and detile\n", (double)s->LinesToRequestPrefetchPixelData * s->LineTime);
--		dml2_printf("DML: To: %fus - time for propogation from scaler to optc\n", (*p->DSTYAfterScaler + ((double)(*p->DSTXAfterScaler) / (double)p->myPipe->HTotal)) * s->LineTime);
-+		dml2_printf("DML: To: %fus - time for propagation from scaler to optc\n", (*p->DSTYAfterScaler + ((double)(*p->DSTXAfterScaler) / (double)p->myPipe->HTotal)) * s->LineTime);
- 		dml2_printf("DML: Tvstartup - TSetup - Tcalc - TWait - Tpre - To > 0\n");
- 		dml2_printf("DML: Tslack(pre): %fus - time left over in schedule\n", p->VStartup * s->LineTime - s->TimeForFetchingVM - 2 * s->TimeForFetchingRowInVBlank - (*p->DSTYAfterScaler + ((double)(*p->DSTXAfterScaler) / (double)p->myPipe->HTotal)) * s->LineTime - p->TWait - p->TCalc - *p->TSetup);
- 		dml2_printf("DML: row_bytes = dpte_row_bytes (per_pipe) = PixelPTEBytesPerRow = : %u\n", p->PixelPTEBytesPerRow);
-@@ -10959,7 +10959,7 @@ bool dml2_core_shared_mode_programming(struct dml2_core_calcs_mode_programming_e
- 				if (display_cfg->plane_descriptors[k].immediate_flip && mode_lib->mp.ImmediateFlipSupportedForPipe[k] == false) {
- 					mode_lib->mp.ImmediateFlipSupported = false;
- #ifdef __DML_VBA_DEBUG__
--					dml2_printf("DML::%s: Pipe %0d not supporing iflip!\n", __func__, k);
-+					dml2_printf("DML::%s: Pipe %0d not supporting iflip!\n", __func__, k);
- #endif
- 				}
- 			}
--- 
-2.39.2
+On 30/05/2024 11:20, Ekansh Gupta wrote:
+> Incorrect remote arguments are getting passed when requesting for
+> capabilities from DSP. Also there is no requirement to update the
+> PD type as it might cause problems for any PD other than user PD.
+> In addition to this, the collected capability information is not
+> getting copied properly to user. Add changes to address these
+> problems and get correct DSP capabilities.
+> 
+> Fixes: 6c16fd8bdd40 ("misc: fastrpc: Add support to get DSP capabilities")
+> Cc: stable <stable@kernel.org>
+> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
+> ---
+>   drivers/misc/fastrpc.c | 7 +++----
+>   1 file changed, 3 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
+> index 4028cb96bcf2..61389795f498 100644
+> --- a/drivers/misc/fastrpc.c
+> +++ b/drivers/misc/fastrpc.c
+> @@ -1700,9 +1700,8 @@ static int fastrpc_get_info_from_dsp(struct fastrpc_user *fl, uint32_t *dsp_attr
+>   	args[0].length = sizeof(dsp_attr_buf_len);
+>   	args[0].fd = -1;
+>   	args[1].ptr = (u64)(uintptr_t)&dsp_attr_buf[1];
+> -	args[1].length = dsp_attr_buf_len;
+> +	args[1].length = dsp_attr_buf_len * sizeof(uint32_t);
+This does not look correct,
 
+we have allocated buffer of size FASTRPC_MAX_DSP_ATTRIBUTES_LEN which is
+already (sizeof(u32) * FASTRPC_MAX_DSP_ATTRIBUTES)
+
+now this patch multiplies with again sizeof(uint32_t), this is going to 
+send dsp incorrect size for buffer and overrun the buffer size.
+
+
+
+>   	args[1].fd = -1;
+> -	fl->pd = USER_PD;
+another patch may be.
+
+>   
+>   	return fastrpc_internal_invoke(fl, true, FASTRPC_DSP_UTILITIES_HANDLE,
+>   				       FASTRPC_SCALARS(0, 1, 1), args);
+> @@ -1730,7 +1729,7 @@ static int fastrpc_get_info_from_kernel(struct fastrpc_ioctl_capability *cap,
+>   	if (!dsp_attributes)
+>   		return -ENOMEM;
+>   
+> -	err = fastrpc_get_info_from_dsp(fl, dsp_attributes, FASTRPC_MAX_DSP_ATTRIBUTES_LEN);
+> +	err = fastrpc_get_info_from_dsp(fl, dsp_attributes, FASTRPC_MAX_DSP_ATTRIBUTES);
+
+You change this again to send FASTRPC_MAX_DSP_ATTRIBUTES instead of 
+FASTRPC_MAX_DSP_ATTRIBUTES_LEN but why?
+
+
+>   	if (err == DSP_UNSUPPORTED_API) {
+>   		dev_info(&cctx->rpdev->dev,
+>   			 "Warning: DSP capabilities not supported on domain: %d\n", domain);
+> @@ -1783,7 +1782,7 @@ static int fastrpc_get_dsp_info(struct fastrpc_user *fl, char __user *argp)
+>   	if (err)
+>   		return err;
+>   
+> -	if (copy_to_user(argp, &cap.capability, sizeof(cap.capability)))
+> +	if (copy_to_user(argp, &cap, sizeof(cap)))
+
+Why are we copying the full struct here? All that user needs is 
+cap.capability?
+
+
+
+--srini
+
+
+>   		return -EFAULT;
+>   
+>   	return 0;
 
