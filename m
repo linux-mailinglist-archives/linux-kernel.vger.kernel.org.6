@@ -1,106 +1,87 @@
-Return-Path: <linux-kernel+bounces-196072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C1218D56DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 02:21:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B8BB8D56DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 02:22:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AE961C24285
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 00:21:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 059E028A1C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 00:22:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4C7A17FE;
-	Fri, 31 May 2024 00:21:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C6544C62;
+	Fri, 31 May 2024 00:21:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="dq7ijHWB"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="2z/xM3GY"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6755FA2D;
-	Fri, 31 May 2024 00:21:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 624C4A3D;
+	Fri, 31 May 2024 00:21:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717114898; cv=none; b=DGyyVPY+x19LCZwJgFqEoTiovCqK7vdl4QJfFJujZFb7OmvlStw/wFjY/lcr66ZhtBhfP5gYwJPObr5oqcEjql+UW2n3gMwSKj/RsdDs0qJ5K8CncLSw+a8s1jHJgDPP1CZrnd7yqv1TiL+SciGoDuHu91N/sqD+BxjYkaRvP/0=
+	t=1717114914; cv=none; b=ROng1vCCN0cCZieCLkS9pheeS1R3JIivO5hX154qDMKvFIPgMprVwEWPioFew81OLm8YhIIiqsCGFB/a3xIEp0suU3srPw3DrHu4e6b3PQfg/esK+2JTytDolhbssHSjwjNC7QoruAqpUdnlN6qNDui2cufQChD9R/7jvL2+rHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717114898; c=relaxed/simple;
-	bh=NOXl7/Ve3EE2bBRgzqep8YBgsCpgg0lI+Bjy7stINs8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=b1AXP6CKUn6PMyabyWd3EC8RsqNZ1hIhLAKMS6spWxd7FqmLeXb8lyWCi76uqh+PGRW2R183MbHTP+e1PuZj/zaDh6wkWlcTUvGjqgGYkuvIAcmiZNKqgM7mFMbtqqkgEQZCzp/fi302cuPjx0eHF+vLY2/8pUkVy16QpHKv9Qw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=dq7ijHWB; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1717114889;
-	bh=NOXl7/Ve3EE2bBRgzqep8YBgsCpgg0lI+Bjy7stINs8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=dq7ijHWBrx9P5qXNc9HcS+/vvWHzKTXSQoDMMBxNv7Dz4O+tWdMRmR2lmrfipXESh
-	 n2p1bFYzP4wyfVL8wpoNQ/PRh+PKWyMFyOk7TdRX09N+Q/rbwicjcxTDgrsIynDNQE
-	 zuWi8/IaOSiZkYi5wP0YuEbJQCtUrWH630bryafokUAHQNm4ZOL5T3f/Ogq/hfpzde
-	 Tn6W5d25a15CV89m9SXgXT0WwuFZvU7tySxJIsv8jGJd6iGg2kR45valJkdfn0235J
-	 4I68rxT2r+obDppkbgEDFWjAPeDrPK535PANALOo5Re5J/Eg+VtycdxajVgtIq2fgw
-	 oAP5D7Vt4ulig==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Vr3h92sb3z4wcl;
-	Fri, 31 May 2024 10:21:28 +1000 (AEST)
-Date: Fri, 31 May 2024 10:21:28 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: the fetch of the tomoyo tree failed
-Message-ID: <20240531102128.6145461e@canb.auug.org.au>
-In-Reply-To: <31a20541-d5a2-43c7-8225-adc6d44f6e41@I-love.SAKURA.ne.jp>
-References: <20231017163242.62af10b3@canb.auug.org.au>
-	<20231114144510.49fd3688@canb.auug.org.au>
-	<7c814d59-fd95-40f4-80ba-237bead3de69@I-love.SAKURA.ne.jp>
-	<20231114161611.256f0239@canb.auug.org.au>
-	<31a20541-d5a2-43c7-8225-adc6d44f6e41@I-love.SAKURA.ne.jp>
+	s=arc-20240116; t=1717114914; c=relaxed/simple;
+	bh=rm48JD8+zTQAEVtlC6KRVk0RK56MJgDn3fJMxSO/ivI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NDXLxE37/1XkRwjoMjl9iW789riCe1swm/G9wuf153tB9XcEmYTGCIznAC1SmxDd+QUiT0yxIgqq892mERNGNR1Nm6zSjyIUugyOc+T5mLA3307Isx72PG5f3GAruY6HxWdQHz53wO2bXYPE26Qmi5d05RyxsluJ3slckEizEjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=2z/xM3GY; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=vp67wFYTbUwXuSwLjkdoCHGgsqLcjt0B0qRwZL8jd6c=; b=2z/xM3GYZDbajIFLk3vtUBEX1v
+	eIJvVNVuK0I4Fqhcthga6J4wnrB3L45RNQZ9/NuSua/4rTw1fOp+8Z6K/R/VVXXEktwzc/YjIzRqM
+	52L7d9u+3LSIYNXE1WBoLOe4BWGGBmUsCoBZFFu70p+Odu4ODEYJtOGZl2VkgYl9KWrI=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sCq1X-00GQ74-Oc; Fri, 31 May 2024 02:21:35 +0200
+Date: Fri, 31 May 2024 02:21:35 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Tristram.Ha@microchip.com
+Cc: pabeni@redhat.com, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, UNGLinuxDriver@microchip.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Arun.Ramadoss@microchip.com, Woojung.Huh@microchip.com,
+	vivien.didelot@gmail.com, f.fainelli@gmail.com, olteanv@gmail.com
+Subject: Re: [PATCH net] net: dsa: microchip: fix KSZ9477 set_ageing_time
+ function
+Message-ID: <78e2e9b1-e980-4e67-b2a2-352a06619411@lunn.ch>
+References: <1716932192-3555-1-git-send-email-Tristram.Ha@microchip.com>
+ <4a467adcdb3ca8e272bd3ae1be54272610aabc9b.camel@redhat.com>
+ <BYAPR11MB3558F5B1EEAB802476D36F9CECF32@BYAPR11MB3558.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/ZRpUpm8Q60DMFY2rWMf7ieB";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <BYAPR11MB3558F5B1EEAB802476D36F9CECF32@BYAPR11MB3558.namprd11.prod.outlook.com>
 
---Sig_/ZRpUpm8Q60DMFY2rWMf7ieB
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+> > Is the additional accuracy worthy the added complexity WRT:
+> > 
+> >         mult = DIV_ROUND_UP(secs, 0xff);
+> > 
+> > ?
+> 
+> I do not know much accuracy is expected of this function.  I do not know
+> whether users can easily specify the amount, but the default is 3 seconds
+> which is the same as the hardware default where the multiplier is 4 and
+> the count is 75.  So most of the time the rest of the code will not be
+> executed.
 
-Hi Tetsuo,
+Are you sure it is 3 seconds?
 
-On Fri, 31 May 2024 07:06:57 +0900 Tetsuo Handa <penguin-kernel@I-love.SAKU=
-RA.ne.jp> wrote:
->
-> Since OSDN does not revive, I moved TOMOYO's repository
-> to git://git.code.sf.net/p/tomoyo/tomoyo.git .
+#define BR_DEFAULT_AGEING_TIME	(300 * HZ)
 
-I have updated where I fetch from.
+Fast ageing, after a topology change, is i think 15 seconds.
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/ZRpUpm8Q60DMFY2rWMf7ieB
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZZGAgACgkQAVBC80lX
-0Gxwwgf/Ti7etITfvpNApcDs16UVDnI22iWWID8NWcCFH/tRWrVGQetVHAnUSoow
-i96WMJjtHb/Np3PM0lrOaTdQjcFp3SmQyIZYU+Uu/DTDKdP00oiB1TmTqT2AXVbO
-XTxaHdclO7SBXF0bx5IuAsfm7VMI9yqdICZIC6gbMUlE74K2veULDEWqEf7Ar0Lp
-+Vdkh3hxkPaMlUrju3e7L1itoJoPEoBJyORd+TDbrQ3PtlNtfeXVMZWUatFXIadg
-moQXxULY6pZXzgq0v6HETxMEvJv3vpIZfqt/82KDB6oGTnAWNeOtRSQIewKFFd/M
-bhjL8uRg5jOXdSaFj/t720dkDl4gCA==
-=U3FJ
------END PGP SIGNATURE-----
-
---Sig_/ZRpUpm8Q60DMFY2rWMf7ieB--
+     Andrew
 
