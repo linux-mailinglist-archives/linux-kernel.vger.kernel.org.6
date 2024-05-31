@@ -1,60 +1,86 @@
-Return-Path: <linux-kernel+bounces-196073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B8BB8D56DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 02:22:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E3CAD8D56E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 02:23:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 059E028A1C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 00:22:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96B1428A71F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 00:23:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C6544C62;
-	Fri, 31 May 2024 00:21:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9F6BA3D;
+	Fri, 31 May 2024 00:22:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="2z/xM3GY"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VXLlzU0i"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 624C4A3D;
-	Fri, 31 May 2024 00:21:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF63C139E
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 00:22:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717114914; cv=none; b=ROng1vCCN0cCZieCLkS9pheeS1R3JIivO5hX154qDMKvFIPgMprVwEWPioFew81OLm8YhIIiqsCGFB/a3xIEp0suU3srPw3DrHu4e6b3PQfg/esK+2JTytDolhbssHSjwjNC7QoruAqpUdnlN6qNDui2cufQChD9R/7jvL2+rHs=
+	t=1717114974; cv=none; b=ClyQ4dUe2kAwohxolfx9NxC3dtWzB04S5Lgl6gT69JtOliiVa+r/P9aVo4rFiyDo2Y4wozWcQwhAi14Ysz/AocKZSdkpWDDM8XBc+mrdrNxOo0+30uBU1BDkr9jCxXLYycR9A7yGc/w4ladNq5/2cDdyviA7PIEiLC38ZjXZSl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717114914; c=relaxed/simple;
-	bh=rm48JD8+zTQAEVtlC6KRVk0RK56MJgDn3fJMxSO/ivI=;
+	s=arc-20240116; t=1717114974; c=relaxed/simple;
+	bh=a+MTHRbQZmyET4RE0SkjiFYdjs368VfVHQLAD7aFXJg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NDXLxE37/1XkRwjoMjl9iW789riCe1swm/G9wuf153tB9XcEmYTGCIznAC1SmxDd+QUiT0yxIgqq892mERNGNR1Nm6zSjyIUugyOc+T5mLA3307Isx72PG5f3GAruY6HxWdQHz53wO2bXYPE26Qmi5d05RyxsluJ3slckEizEjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=2z/xM3GY; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=vp67wFYTbUwXuSwLjkdoCHGgsqLcjt0B0qRwZL8jd6c=; b=2z/xM3GYZDbajIFLk3vtUBEX1v
-	eIJvVNVuK0I4Fqhcthga6J4wnrB3L45RNQZ9/NuSua/4rTw1fOp+8Z6K/R/VVXXEktwzc/YjIzRqM
-	52L7d9u+3LSIYNXE1WBoLOe4BWGGBmUsCoBZFFu70p+Odu4ODEYJtOGZl2VkgYl9KWrI=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sCq1X-00GQ74-Oc; Fri, 31 May 2024 02:21:35 +0200
-Date: Fri, 31 May 2024 02:21:35 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Tristram.Ha@microchip.com
-Cc: pabeni@redhat.com, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, UNGLinuxDriver@microchip.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Arun.Ramadoss@microchip.com, Woojung.Huh@microchip.com,
-	vivien.didelot@gmail.com, f.fainelli@gmail.com, olteanv@gmail.com
-Subject: Re: [PATCH net] net: dsa: microchip: fix KSZ9477 set_ageing_time
- function
-Message-ID: <78e2e9b1-e980-4e67-b2a2-352a06619411@lunn.ch>
-References: <1716932192-3555-1-git-send-email-Tristram.Ha@microchip.com>
- <4a467adcdb3ca8e272bd3ae1be54272610aabc9b.camel@redhat.com>
- <BYAPR11MB3558F5B1EEAB802476D36F9CECF32@BYAPR11MB3558.namprd11.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=IoFexvgzHX4MHErMZFdceZZxrKJrO3XnaksLvObxLWLm+D/8UWnP1XKZaNeueQXx7E0bQwhvNnTD7yccEipT0SQVtvBSObQrYS9thTt81gbGqHffotWj24Rn913WBjigwjwFKXbXuz6W9lsMS5xcuHkcEDW+S8Y4bzwor/dXsSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VXLlzU0i; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52b840a001dso1020591e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 17:22:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717114971; x=1717719771; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0yVVKFhmIVyi/gwbSmn3VSSTQQqssFlSlOSpKOH7IJg=;
+        b=VXLlzU0i3WzR4ZBScI9I1du86ITe1/++yytMBiCicYyoFgn5TWyQP/KBM8rBaX7bEm
+         K6X0Y/FBV6iTa4pyok/4/JubT0CDILaA5q55YO2zSgSzDNvnyW7ILJXs/9jvvJnr4ZRP
+         yw1cCmjHxxmzHZh146HwrENngKNQAeCVBVfqSkYavcbv8N2b6X0PDxz3gBNIQKI+sEPZ
+         OwHgrhkFNezkr9m9VWel7Xj1tXPB0d5sbw+mNgfcdU5jxiyWRi63hLABcUzGKRc2hRYM
+         KYPyiyrLFw/RkGnIzHA4ic+kRP6NT2wj2TbJKroz2MCM5Tn0GJwDRuijKAovNCAB8e0s
+         Y9cw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717114971; x=1717719771;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0yVVKFhmIVyi/gwbSmn3VSSTQQqssFlSlOSpKOH7IJg=;
+        b=nZvUqIg5GxrA5rsyzum5u64+g2uVzsKknWtsMra34EOBa55+WbazsOjxh4bVvtFXAV
+         OyV8hnuFAsgvYZcmAhqxoShnIRgGfVJ5JkPYcjJoubwYcec9R8DUez4HlNf7lrIcQ6t9
+         r1hUF0tHI5YjJ3j4meanzY/AMNjTnP1vEfs42f8b4tYtNQNWElzBrretSY1XC6coAkqr
+         zoHkNsbud96mLANNpHpruUXRP4gYbOHEq1DQtAnUSHnwlJ2c3f+CTA0WnIVlQU63dnIb
+         vPPMS76euaUeSke/bWKHoYFzqp8uZ2APX8No3m0zNLZj/9rJKOL7BsmqY+TOKYC06im3
+         gGBw==
+X-Forwarded-Encrypted: i=1; AJvYcCWB90k0ag+7k8xmJ2XOBGpD9lhU55lNzBNC0/q+E/U2pPDlR9B5vh98eyT0yCvWlCXHtMu3wMbribTeE/fUjwy2ElAmnOc+oCCeCgiv
+X-Gm-Message-State: AOJu0YyMCyFB1iR9h6bn/tPFKNi9ENB/94bHC8tn38vUnNpTLyvu3jJo
+	cX5uBri4CnvkIfk2YRMQjk06CEKNiX7pcf4CMcK/aGSBCYu8twTgp47FxEuasVY=
+X-Google-Smtp-Source: AGHT+IGwyTjaK7sTOD0lwTEcc8h2FpDlgvXSpJCoPLo5Nq2Xn4TWRqpsowc5anXlgkfZ9x1bVaT+CA==
+X-Received: by 2002:a19:7519:0:b0:523:9811:b0d6 with SMTP id 2adb3069b0e04-52b8959c577mr100931e87.15.1717114970664;
+        Thu, 30 May 2024 17:22:50 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52b84d34cdasm135780e87.50.2024.05.30.17.22.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 May 2024 17:22:49 -0700 (PDT)
+Date: Fri, 31 May 2024 03:22:48 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Hans de Goede <hdegoede@redhat.com>, 
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	platform-driver-x86@vger.kernel.org, linux-usb@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	Nikita Travkin <nikita@trvn.ru>
+Subject: Re: [PATCH v4 3/6] usb: typec: ucsi: add Lenovo Yoga C630 glue driver
+Message-ID: <bo6jvoew3s37g753nclbx3badpnnhxs53myuaqb3whr5zb4tf3@fcra5ic6y6wo>
+References: <20240528-yoga-ec-driver-v4-0-4fa8dfaae7b6@linaro.org>
+ <20240528-yoga-ec-driver-v4-3-4fa8dfaae7b6@linaro.org>
+ <afed0bee-de6e-4e86-8437-0518c616bd2c@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,25 +89,214 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <BYAPR11MB3558F5B1EEAB802476D36F9CECF32@BYAPR11MB3558.namprd11.prod.outlook.com>
+In-Reply-To: <afed0bee-de6e-4e86-8437-0518c616bd2c@linaro.org>
 
-> > Is the additional accuracy worthy the added complexity WRT:
+On Wed, May 29, 2024 at 04:41:40PM +0100, Bryan O'Donoghue wrote:
+> On 28/05/2024 21:44, Dmitry Baryshkov wrote:
+> > The Lenovo Yoga C630 WOS laptop provides implements UCSI interface in
+> > the onboard EC. Add glue driver to interface the platform's UCSI
+> > implementation.
 > > 
-> >         mult = DIV_ROUND_UP(secs, 0xff);
+> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > ---
+> >   drivers/usb/typec/ucsi/Kconfig          |   9 ++
+> >   drivers/usb/typec/ucsi/Makefile         |   1 +
+> >   drivers/usb/typec/ucsi/ucsi_yoga_c630.c | 189 ++++++++++++++++++++++++++++++++
+> >   3 files changed, 199 insertions(+)
 > > 
-> > ?
+> > diff --git a/drivers/usb/typec/ucsi/Kconfig b/drivers/usb/typec/ucsi/Kconfig
+> > index bdcb1764cfae..680e1b87b152 100644
+> > --- a/drivers/usb/typec/ucsi/Kconfig
+> > +++ b/drivers/usb/typec/ucsi/Kconfig
+> > @@ -69,4 +69,13 @@ config UCSI_PMIC_GLINK
+> >   	  To compile the driver as a module, choose M here: the module will be
+> >   	  called ucsi_glink.
+> > +config UCSI_LENOVO_YOGA_C630
+> > +	tristate "UCSI Interface Driver for Lenovo Yoga C630"
+> > +	depends on EC_LENOVO_YOGA_C630
+> > +	help
+> > +	  This driver enables UCSI support on the Lenovo Yoga C630 laptop.
+> > +
+> > +	  To compile the driver as a module, choose M here: the module will be
+> > +	  called ucsi_yoga_c630.
+> > +
+> >   endif
+> > diff --git a/drivers/usb/typec/ucsi/Makefile b/drivers/usb/typec/ucsi/Makefile
+> > index b4679f94696b..aed41d23887b 100644
+> > --- a/drivers/usb/typec/ucsi/Makefile
+> > +++ b/drivers/usb/typec/ucsi/Makefile
+> > @@ -21,3 +21,4 @@ obj-$(CONFIG_UCSI_ACPI)			+= ucsi_acpi.o
+> >   obj-$(CONFIG_UCSI_CCG)			+= ucsi_ccg.o
+> >   obj-$(CONFIG_UCSI_STM32G0)		+= ucsi_stm32g0.o
+> >   obj-$(CONFIG_UCSI_PMIC_GLINK)		+= ucsi_glink.o
+> > +obj-$(CONFIG_UCSI_LENOVO_YOGA_C630)	+= ucsi_yoga_c630.o
+> > diff --git a/drivers/usb/typec/ucsi/ucsi_yoga_c630.c b/drivers/usb/typec/ucsi/ucsi_yoga_c630.c
+> > new file mode 100644
+> > index 000000000000..ca1ab5c81b87
+> > --- /dev/null
+> > +++ b/drivers/usb/typec/ucsi/ucsi_yoga_c630.c
+> > @@ -0,0 +1,189 @@
+> > +// SPDX-License-Identifier: GPL-2.0-only
+> > +/*
+> > + * Copyright (c) 2022-2024, Linaro Ltd
+> > + * Authors:
+> > + *    Bjorn Andersson
+> > + *    Dmitry Baryshkov
+> > + */
+> > +#include <linux/auxiliary_bus.h>
+> > +#include <linux/module.h>
+> > +#include <linux/platform_data/lenovo-yoga-c630.h>
+> > +
+> > +#include "ucsi.h"
+> > +
+> > +struct yoga_c630_ucsi {
+> > +	struct yoga_c630_ec *ec;
+> > +	struct ucsi *ucsi;
+> > +	struct notifier_block nb;
+> > +	struct completion complete;
+> > +	unsigned long flags;
+> > +#define UCSI_C630_COMMAND_PENDING	0
+> > +#define UCSI_C630_ACK_PENDING		1
+> > +	u16 version;
+> > +};
+> > +
+> > +static  int yoga_c630_ucsi_read(struct ucsi *ucsi, unsigned int offset,
+> > +				void *val, size_t val_len)
+> > +{
+> > +	struct yoga_c630_ucsi *uec = ucsi_get_drvdata(ucsi);
+> > +	u8 buf[YOGA_C630_UCSI_READ_SIZE];
+> > +	int ret;
+> > +
+> > +	ret = yoga_c630_ec_ucsi_read(uec->ec, buf);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	if (offset == UCSI_VERSION) {
+> > +		memcpy(val, &uec->version, min(val_len, sizeof(uec->version)));
+> > +		return 0;
+> > +	}
+> > +
+> > +	if (offset == UCSI_CCI)
+> > +		memcpy(val, buf,
+> > +		       min(val_len, YOGA_C630_UCSI_CCI_SIZE));
+> > +	else if (offset == UCSI_MESSAGE_IN)
+> > +		memcpy(val, buf + YOGA_C630_UCSI_CCI_SIZE,
+> > +		       min(val_len, YOGA_C630_UCSI_DATA_SIZE));
 > 
-> I do not know much accuracy is expected of this function.  I do not know
-> whether users can easily specify the amount, but the default is 3 seconds
-> which is the same as the hardware default where the multiplier is 4 and
-> the count is 75.  So most of the time the rest of the code will not be
-> executed.
+> For some reason I believe multi-lines like this, including function calls
+> that are split over lines should be encapsulated with {}
+> 
+> else if(x) {
+>     memcpy(x,y,
+>            z);
+> }
+> 
+> If checkpatch doesn't complain about it feel free not to do that though.
 
-Are you sure it is 3 seconds?
+No, checkpatch --strict doesn't complain
 
-#define BR_DEFAULT_AGEING_TIME	(300 * HZ)
+> 
+> > +	else
+> > +		return -EINVAL;
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static  int yoga_c630_ucsi_async_write(struct ucsi *ucsi, unsigned int offset,
+> > +				       const void *val, size_t val_len)
+> > +{
+> > +	struct yoga_c630_ucsi *uec = ucsi_get_drvdata(ucsi);
+> > +
+> > +	if (offset != UCSI_CONTROL ||
+> > +	    val_len != YOGA_C630_UCSI_WRITE_SIZE)
+> > +		return -EINVAL;
+> > +
+> > +	return yoga_c630_ec_ucsi_write(uec->ec, val);
+> > +}
+> > +
+> > +static  int yoga_c630_ucsi_sync_write(struct ucsi *ucsi, unsigned int offset,
+> > +				      const void *val, size_t val_len)
+> > +{
+> > +	struct yoga_c630_ucsi *uec = ucsi_get_drvdata(ucsi);
+> > +	bool ack = UCSI_COMMAND(*(u64 *)val) == UCSI_ACK_CC_CI;
+> > +	int ret;
+> > +
+> > +	if (ack)
+> > +		set_bit(UCSI_C630_ACK_PENDING, &uec->flags);
+> > +	else
+> > +		set_bit(UCSI_C630_COMMAND_PENDING, &uec->flags);
+> > +
+> > +	reinit_completion(&uec->complete);
+> > +
+> > +	ret = yoga_c630_ucsi_async_write(ucsi, offset, val, val_len);
+> > +	if (ret)
+> > +		goto out_clear_bit;
+> > +
+> > +	if (!wait_for_completion_timeout(&uec->complete, 5 * HZ))
+> > +		ret = -ETIMEDOUT;
+> > +
+> > +out_clear_bit:
+> > +	if (ack)
+> > +		clear_bit(UCSI_C630_ACK_PENDING, &uec->flags);
+> > +	else
+> > +		clear_bit(UCSI_C630_COMMAND_PENDING, &uec->flags);
+> > +
+> > +	return ret;
+> > +}
+> > +
+> > +const struct ucsi_operations yoga_c630_ucsi_ops = {
+> > +	.read = yoga_c630_ucsi_read,
+> > +	.sync_write = yoga_c630_ucsi_sync_write,
+> > +	.async_write = yoga_c630_ucsi_async_write,
+> > +};
+> > +
+> > +static int yoga_c630_ucsi_notify(struct notifier_block *nb,
+> > +				 unsigned long action, void *data)
+> > +{
+> > +	struct yoga_c630_ucsi *uec = container_of(nb, struct yoga_c630_ucsi, nb);
+> > +	u32 cci;
+> > +	int ret;
+> > +
+> > +	if (action == LENOVO_EC_EVENT_USB || action == LENOVO_EC_EVENT_HPD) {
+> > +		ucsi_connector_change(uec->ucsi, 1);
+> > +		return NOTIFY_OK;
+> > +	}
+> > +
+> > +	if (action != LENOVO_EC_EVENT_UCSI)
+> > +		return NOTIFY_DONE;
+> 
+> Is this disjunction on action a good candidate for a switch(){}
 
-Fast ageing, after a topology change, is i think 15 seconds.
+Ack, refactored the function by extracting the UCSI notification code
+and then using the switch-case.
 
-     Andrew
+> > +
+> > +	ret = uec->ucsi->ops->read(uec->ucsi, UCSI_CCI, &cci, sizeof(cci));
+> > +	if (ret)
+> > +		return NOTIFY_DONE;
+> > +
+> > +	if (UCSI_CCI_CONNECTOR(cci))
+> > +		ucsi_connector_change(uec->ucsi, UCSI_CCI_CONNECTOR(cci));
+> > +
+> > +	if (cci & UCSI_CCI_ACK_COMPLETE &&
+> > +	    test_bit(UCSI_C630_ACK_PENDING, &uec->flags))
+> > +		complete(&uec->complete);
+> > +	if (cci & UCSI_CCI_COMMAND_COMPLETE &&
+> > +	    test_bit(UCSI_C630_COMMAND_PENDING, &uec->flags))
+> > +		complete(&uec->complete);
+> 
+> IMO these multi-line clauses should end up with a {} around the complete
+> even though its not required.
+> 
+> Emphasis on the O.
+
+I added an empty line inbetween, then it's easier to comprehent event
+without curly brackets.
+
+> 
+> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+
+-- 
+With best wishes
+Dmitry
 
