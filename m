@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-197121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01F6C8D6679
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:14:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BAEF8D667C
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:14:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51395B2A5D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:14:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F0BA1F25F8F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:14:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42A7A172BA2;
-	Fri, 31 May 2024 16:13:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7D72176AC1;
+	Fri, 31 May 2024 16:13:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="g0BEU0Z5"
-Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="w2FIGB0I"
+Received: from out-187.mta0.migadu.com (out-187.mta0.migadu.com [91.218.175.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6114158D9C
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 16:13:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6376B158DD3
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 16:13:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717172033; cv=none; b=Rn1jfsOfHVPKwVXTTh9hPCZoLzejHvycHCUxDYFV8kF5co3uhZOzsYuW18hnjJbTwOGBfxizjZErn8ePNJKREsAVEOTkBMVOj6+DcCOLVtoENpcMmxw78YbvG0ieJLaOtphcA173M590vVz+rVkwdeap27KYLV3tnPVrSrEimXA=
+	t=1717172036; cv=none; b=SW5sAkH3r297CJGi3Htxl+pJkyWx6ctj5CHZgyPZUQSAvBpHRRAKSJvlvvTnczGhqA1sP7Tc6EI81PGmS9FxjYN9yInXp0O92cRBdXpUm+rA4IFU/oegHgOBl2+CkV/i3FSmmJy4pfy97AeF9+2ta21dmvN/PfA/WWMrJ3wI5fE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717172033; c=relaxed/simple;
-	bh=EzyIjuJj/J5dssuEwuYMPWZIo1X0zzcFoeRzZ79QhU0=;
+	s=arc-20240116; t=1717172036; c=relaxed/simple;
+	bh=XYS6GElq0yArJgxoxvyHPMS3W4BDecfj/Oq019zf3Gc=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=h5mZ+uRvm8zl7emSSYkuA30GoNBULfEc5pTv4c+BNjskGWchIxPnEyevD0F1s+eKXpz2zx+C7zeZzqZ4NjLYlF54YqOm2YKTXgXo1+lgqUtzNuxpqagyOgmGJ0uFN/Hgbr4MKwPpLmT/FJgY6+tGTP0zBAf4WqhZA+h804rPszU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=g0BEU0Z5; arc=none smtp.client-ip=91.218.175.177
+	 MIME-Version; b=hdk0pqFE7c+5jrw8MRflqgr0PkAyWUP5sOLVeG6x4o3ZdNvt+EW4CQ6dZ29THZwxaaH/3LKJgIji5CMoCiHdxAFrtAtN1Hu+BKC1VhkufOd/wtftE5NwP40JAc9NyI3mPB47xVLyF5Q9kDr+BAqQathPOvH+7V5e+a4pvdeUEWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=w2FIGB0I; arc=none smtp.client-ip=91.218.175.187
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Envelope-To: lpieralisi@kernel.org
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1717172030;
+	t=1717172032;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=cZqpbYK0acYzL/XrtMy6W52K47SmPfVIoW1GfOOCZgI=;
-	b=g0BEU0Z5fo+CppAYRK/JgTR3WszFtmSJ9G6hMLCOCNO3acaJebGGoixYy1870PiBsFGFeg
-	/VBB6X04H4RjW/ksrKfq/tfWAs+DEVye/TL1ckZZuI5dvg/cPgh8mJIW0lOM/pqNdaF0cb
-	FMMmwkT2k712z9wAN9HokGMzc53/UeA=
+	bh=Qaf7wlJcbuaI5XLr7jlnJohIFPCzjuNsqqKvlQY7mnY=;
+	b=w2FIGB0INIhu6VVvsFM5KwIGw4z7lIFwD8CKxzGHIC739QzQmk2STRcVji1Ca84PW+sl91
+	0zp2Uiw5YUmH0jFB5Hf4777v2LPsoFbDiYlQJbIEr0B+3F2pr+gOPfQ+usbw2psr2x9opw
+	uMROgDK+ucm0Dla8+Dj4+FOVc5xZXvQ=
 X-Envelope-To: kw@linux.com
 X-Envelope-To: robh@kernel.org
 X-Envelope-To: linux-pci@vger.kernel.org
@@ -52,9 +52,9 @@ X-Envelope-To: linux-kernel@vger.kernel.org
 X-Envelope-To: bhelgaas@google.com
 X-Envelope-To: michal.simek@amd.com
 X-Envelope-To: sean.anderson@linux.dev
-X-Envelope-To: conor+dt@kernel.org
-X-Envelope-To: krzysztof.kozlowski+dt@linaro.org
-X-Envelope-To: devicetree@vger.kernel.org
+X-Envelope-To: stable@vger.kernel.org
+X-Envelope-To: bharatku@xilinx.com
+X-Envelope-To: helgaas@kernel.org
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 From: Sean Anderson <sean.anderson@linux.dev>
 To: Lorenzo Pieralisi <lpieralisi@kernel.org>,
@@ -69,12 +69,12 @@ Cc: Thippeswamy Havalige <thippeswamy.havalige@amd.com>,
 	Bjorn Helgaas <bhelgaas@google.com>,
 	Michal Simek <michal.simek@amd.com>,
 	Sean Anderson <sean.anderson@linux.dev>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	devicetree@vger.kernel.org
-Subject: [PATCH v4 1/7] dt-bindings: pci: xilinx-nwl: Add phys property
-Date: Fri, 31 May 2024 12:13:31 -0400
-Message-Id: <20240531161337.864994-2-sean.anderson@linux.dev>
+	stable@vger.kernel.org,
+	Bharat Kumar Gogada <bharatku@xilinx.com>,
+	Bjorn Helgaas <helgaas@kernel.org>
+Subject: [PATCH v4 2/7] PCI: xilinx-nwl: Fix off-by-one in IRQ handler
+Date: Fri, 31 May 2024 12:13:32 -0400
+Message-Id: <20240531161337.864994-3-sean.anderson@linux.dev>
 In-Reply-To: <20240531161337.864994-1-sean.anderson@linux.dev>
 References: <20240531161337.864994-1-sean.anderson@linux.dev>
 Precedence: bulk
@@ -86,58 +86,73 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-Add phys properties so Linux can power-on/configure the GTR
-transceivers (xlnx,zynqmp-psgtr-v1.1).
+MSGF_LEG_MASK is laid out with INTA in bit 0, INTB in bit 1, INTC in bit
+2, and INTD in bit 3. Hardware IRQ numbers start at 0, and we register
+PCI_NUM_INTX irqs. So to enable INTA (aka hwirq 0) we should set bit 0.
+Remove the subtraction of one.
 
+This bug would cause legacy interrupts not to be delivered, as enabling
+INTB would actually enable INTA, and enabling INTA wouldn't enable
+anything at all. It is likely that this got overlooked for so long since
+most PCIe hardware uses MSIs. This fixes the following UBSAN error:
+
+UBSAN: shift-out-of-bounds in ../drivers/pci/controller/pcie-xilinx-nwl.c:389:11
+shift exponent 18446744073709551615 is too large for 32-bit type 'int'
+CPU: 1 PID: 61 Comm: kworker/u10:1 Not tainted 6.6.20+ #268
+Hardware name: xlnx,zynqmp (DT)
+Workqueue: events_unbound deferred_probe_work_func
+Call trace:
+dump_backtrace (arch/arm64/kernel/stacktrace.c:235)
+show_stack (arch/arm64/kernel/stacktrace.c:242)
+dump_stack_lvl (lib/dump_stack.c:107)
+dump_stack (lib/dump_stack.c:114)
+__ubsan_handle_shift_out_of_bounds (lib/ubsan.c:218 lib/ubsan.c:387)
+nwl_unmask_leg_irq (drivers/pci/controller/pcie-xilinx-nwl.c:389 (discriminator 1))
+irq_enable (kernel/irq/internals.h:234 kernel/irq/chip.c:170 kernel/irq/chip.c:439 kernel/irq/chip.c:432 kernel/irq/chip.c:345)
+__irq_startup (kernel/irq/internals.h:239 kernel/irq/chip.c:180 kernel/irq/chip.c:250)
+irq_startup (kernel/irq/chip.c:270)
+__setup_irq (kernel/irq/manage.c:1800)
+request_threaded_irq (kernel/irq/manage.c:2206)
+pcie_pme_probe (include/linux/interrupt.h:168 drivers/pci/pcie/pme.c:348)
+<snip>
+
+Fixes: 9a181e1093af ("PCI: xilinx-nwl: Modify IRQ chip for legacy interrupts")
+Cc: <stable@vger.kernel.org>
 Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 ---
 
 Changes in v4:
-- Clarify commit subject/message
+- Explain likely effects of the off-by-one error
+- Trim down UBSAN backtrace
 
 Changes in v3:
-- Document phys property
+- Expand commit message
 
-Changes in v2:
-- Remove phy-names
-- Add an example
+ drivers/pci/controller/pcie-xilinx-nwl.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
- Documentation/devicetree/bindings/pci/xlnx,nwl-pcie.yaml | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/pci/xlnx,nwl-pcie.yaml b/Documentation/devicetree/bindings/pci/xlnx,nwl-pcie.yaml
-index 426f90a47f35..cc50795d170b 100644
---- a/Documentation/devicetree/bindings/pci/xlnx,nwl-pcie.yaml
-+++ b/Documentation/devicetree/bindings/pci/xlnx,nwl-pcie.yaml
-@@ -61,6 +61,11 @@ properties:
-   interrupt-map:
-     maxItems: 4
+diff --git a/drivers/pci/controller/pcie-xilinx-nwl.c b/drivers/pci/controller/pcie-xilinx-nwl.c
+index 0408f4d612b5..437927e3bcca 100644
+--- a/drivers/pci/controller/pcie-xilinx-nwl.c
++++ b/drivers/pci/controller/pcie-xilinx-nwl.c
+@@ -371,7 +371,7 @@ static void nwl_mask_intx_irq(struct irq_data *data)
+ 	u32 mask;
+ 	u32 val;
  
-+  phys:
-+    minItems: 1
-+    maxItems: 4
-+    description: One phy per logical lane, in order
-+
-   power-domains:
-     maxItems: 1
+-	mask = 1 << (data->hwirq - 1);
++	mask = 1 << data->hwirq;
+ 	raw_spin_lock_irqsave(&pcie->leg_mask_lock, flags);
+ 	val = nwl_bridge_readl(pcie, MSGF_LEG_MASK);
+ 	nwl_bridge_writel(pcie, (val & (~mask)), MSGF_LEG_MASK);
+@@ -385,7 +385,7 @@ static void nwl_unmask_intx_irq(struct irq_data *data)
+ 	u32 mask;
+ 	u32 val;
  
-@@ -110,6 +115,7 @@ examples:
-   - |
-     #include <dt-bindings/interrupt-controller/arm-gic.h>
-     #include <dt-bindings/interrupt-controller/irq.h>
-+    #include <dt-bindings/phy/phy.h>
-     #include <dt-bindings/power/xlnx-zynqmp-power.h>
-     soc {
-         #address-cells = <2>;
-@@ -138,6 +144,7 @@ examples:
-                             <0x0 0x0 0x0 0x3 &pcie_intc 0x3>,
-                             <0x0 0x0 0x0 0x4 &pcie_intc 0x4>;
-             msi-parent = <&nwl_pcie>;
-+            phys = <&psgtr 0 PHY_TYPE_PCIE 0 0>;
-             power-domains = <&zynqmp_firmware PD_PCIE>;
-             iommus = <&smmu 0x4d0>;
-             pcie_intc: legacy-interrupt-controller {
+-	mask = 1 << (data->hwirq - 1);
++	mask = 1 << data->hwirq;
+ 	raw_spin_lock_irqsave(&pcie->leg_mask_lock, flags);
+ 	val = nwl_bridge_readl(pcie, MSGF_LEG_MASK);
+ 	nwl_bridge_writel(pcie, (val | mask), MSGF_LEG_MASK);
 -- 
 2.35.1.1320.gc452695387.dirty
 
