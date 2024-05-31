@@ -1,135 +1,103 @@
-Return-Path: <linux-kernel+bounces-197487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F6C98D6B48
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 23:10:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36F168D6B4D
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 23:11:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60FD51C20D97
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 21:10:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC0771F2A9AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 21:11:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0072378C87;
-	Fri, 31 May 2024 21:10:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8066676413;
+	Fri, 31 May 2024 21:10:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="hO0+5HwC"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JBMuE6+/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F985200B7;
-	Fri, 31 May 2024 21:10:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFA15200B7;
+	Fri, 31 May 2024 21:10:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717189831; cv=none; b=j5nI2NzZDyJ1AdgtgmOBrsOmfFsJdFX5S/FZN50qTMXntIkQJh8tnMbu3km+ZymDm56WGRtTlQ166fY+Q2QnhS+qBtnk50e7Pp9AAa8bgE9LFgd2nReGhqG7DkxioW9z4ArliVfPTMpYtpqsO3Q4G7/Rypkz92gimxLc0j8DLis=
+	t=1717189849; cv=none; b=pyoQfbtdrNZ/Qa2kk37MKDDm39zHQe33kmfqAcvHKYveT5OTAUs6SD0SbuoJsghvqlPFqGaBuSqT7Ktol1yaO/Pc9fCVhCT+h5OKE+xer6CzxdDULymWlVKcz3BchWMZNHs5a8rM4aI7nIH7N7zMMAZZLt1ujW15Oj2uhbs2adY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717189831; c=relaxed/simple;
-	bh=MPXXnKDh2aZ6B2laaAKBhfY3JjGwgsV8usQmQv+N7Gw=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=FI3b1poGoCXQCx1bCw2uszGz8/ZpkI3eYHUXsUHXMlc2alZ5khEwamxsCP0L0NhULx5att7wzON+oklakPcQkuDCFhakbkHW/9j6bh985MwXZN2PBr/yVwjiciqtOENKvkESg38j7K0gCmAEbj6C3iaDfBPsAbA0Llf0kco+4sI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=hO0+5HwC; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44VKjlQs003440;
-	Fri, 31 May 2024 21:10:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc :
- content-transfer-encoding : content-type : date : from : in-reply-to :
- message-id : mime-version : references : subject : to; s=pp1;
- bh=rA8cLUV+37eItOYNc5h1LCYPwTbIyEdRLeqhTlQuMEs=;
- b=hO0+5HwC7D139vrOI1ZibjPY1kt2/Tqj0mRtxNt1v5MS4ojs4hQ1Sh4KfQYn1CW21voF
- VdgkrLDShVQj+K6KL2ULpme4OR3m7dYKGmK5yk4XfsCnTK+JNetD4HglxBLVOWG9yQYe
- YUCeU71n26KLYuUm2YeOSNQRn6znQubjE/twiiigw1GCIw2ImozuY8/j02r8dur3XNLM
- 17o5xs3dFtZtYC5YjzaxxScDlWVyyHDU/B5COBMWPLikhFTNM+JzVMEua8wfIW89oOEJ
- zgOcItZH+z4vFZHdj/+UOLAu4F0EpuzBAIuCwKi9n68ARJ+YC56cWqUZ3FFXzhRzXyZM bQ== 
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yfnd103a8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 31 May 2024 21:10:10 +0000
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 44VJZ1uq002437;
-	Fri, 31 May 2024 21:10:09 GMT
-Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3ydpb123f6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 31 May 2024 21:10:09 +0000
-Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
-	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 44VLA68811797172
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 31 May 2024 21:10:08 GMT
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id ADAE658071;
-	Fri, 31 May 2024 21:10:06 +0000 (GMT)
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B11E958076;
-	Fri, 31 May 2024 21:10:05 +0000 (GMT)
-Received: from [9.67.180.145] (unknown [9.67.180.145])
-	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 31 May 2024 21:10:05 +0000 (GMT)
-Message-ID: <cc3c8213-cf64-4eb5-9508-8d80b1ce6333@linux.ibm.com>
-Date: Fri, 31 May 2024 16:10:05 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/3] crypto: X25519 supports for ppc64le
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: linux-crypto@vger.kernel.org, leitao@debian.org, nayna@linux.ibm.com,
-        appro@cryptogams.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, mpe@ellerman.id.au,
-        ltcgcw@linux.vnet.ibm.com, dtsen@us.ibm.com
-References: <20240516151957.2215-1-dtsen@linux.ibm.com>
- <Zlmkgisql2NxPcXi@gondor.apana.org.au>
-Content-Language: en-US
-From: Danny Tsen <dtsen@linux.ibm.com>
-In-Reply-To: <Zlmkgisql2NxPcXi@gondor.apana.org.au>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 0-CDeAQI6eP4-dv1vUzumlx09OVAU8yg
-X-Proofpoint-ORIG-GUID: 0-CDeAQI6eP4-dv1vUzumlx09OVAU8yg
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1717189849; c=relaxed/simple;
+	bh=xlaiIZVQpnoQLjq8KYZChb3XAXfcj6FcTOal5RecnCg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lpCSr7wVCHaKY/FnlarQ7ZUIEG7qLyCDhb6vryKJSC8+zJEKj6prp8bsN+FcTbdyMNd+n5E4FRt2S6pwC+bDp74smjFZ2wnBjfDwdDWBYAzPMuhCyCl1xX9Rphq35BrZlfKYDbExJtxFl7j21maaOVfSMfBWEq0BtG71tkvS1bU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JBMuE6+/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52F6AC116B1;
+	Fri, 31 May 2024 21:10:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717189849;
+	bh=xlaiIZVQpnoQLjq8KYZChb3XAXfcj6FcTOal5RecnCg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JBMuE6+/4uK+TfBRp2VQ6gOoUwebGVgcqfhkoGHoUJefQqxh51QCzFI3Z5dbVWeLD
+	 1+Ha3PBzT2cZZ2kOrQAjGytheeq4zZw2jArSBrd0pZBvsyH6gBFr5vo8V9/k79eMHj
+	 rS+wliQZ4+w6cNAXFlLmFUMhyC4P+3Gb4PiJCKhJUiga77YamxslvCAy6Z0CtJUQSp
+	 LPQkiDQGV/M7AHdsKb8BBMobicc3+8zROKqAmKU/TxWZL7t2+PdnyNRYcEl8qad5yy
+	 aVZgYR2KWthC1Gt+72WCMsvracEBsCZ283+kvtfTazzYMTTizVHOwglKyqE8pTF2Nd
+	 LwGpAGJcspjkw==
+Date: Fri, 31 May 2024 15:10:45 -0600
+From: Keith Busch <kbusch@kernel.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: Sathya Prakash <sathya.prakash@broadcom.com>,
+	Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
+	Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>, leit@meta.com,
+	"open list:LSILOGIC MPT FUSION DRIVERS (FC/SAS/SPI)" <MPT-FusionLinux.pdl@broadcom.com>,
+	"open list:LSILOGIC MPT FUSION DRIVERS (FC/SAS/SPI)" <linux-scsi@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mpt3sas: Avoid test/set_bit() operating in non-allocated
+ memory
+Message-ID: <Zlo81SBdvflQ_38O@kbusch-mbp.dhcp.thefacebook.com>
+References: <20240531180055.950704-1-leitao@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-31_14,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 adultscore=0
- lowpriorityscore=0 mlxscore=0 priorityscore=1501 phishscore=0 spamscore=0
- impostorscore=0 suspectscore=0 malwarescore=0 clxscore=1015
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2405010000 definitions=main-2405310161
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240531180055.950704-1-leitao@debian.org>
 
-Thanks Herbert.
+On Fri, May 31, 2024 at 11:00:54AM -0700, Breno Leitao wrote:
+> diff --git a/drivers/scsi/mpt3sas/mpt3sas_base.c b/drivers/scsi/mpt3sas/mpt3sas_base.c
+> index 258647fc6bdd..fe9f4a4175d1 100644
+> --- a/drivers/scsi/mpt3sas/mpt3sas_base.c
+> +++ b/drivers/scsi/mpt3sas/mpt3sas_base.c
+> @@ -8512,6 +8512,12 @@ mpt3sas_base_attach(struct MPT3SAS_ADAPTER *ioc)
+>  	ioc->pd_handles_sz = (ioc->facts.MaxDevHandle / 8);
+>  	if (ioc->facts.MaxDevHandle % 8)
+>  		ioc->pd_handles_sz++;
+> +	/* pd_handles_sz should have, at least, the minimal room
+> +	 * for set_bit()/test_bit(), otherwise out-of-memory touch
+> +	 * may occur
+> +	 */
+> +	ioc->pd_handles_sz = ALIGN(ioc->pd_handles_sz, sizeof(unsigned long));
+> +
+>  	ioc->pd_handles = kzalloc(ioc->pd_handles_sz,
+>  	    GFP_KERNEL);
+>  	if (!ioc->pd_handles) {
+> @@ -8529,6 +8535,12 @@ mpt3sas_base_attach(struct MPT3SAS_ADAPTER *ioc)
+>  	ioc->pend_os_device_add_sz = (ioc->facts.MaxDevHandle / 8);
+>  	if (ioc->facts.MaxDevHandle % 8)
+>  		ioc->pend_os_device_add_sz++;
+> +
+> +	/* pend_os_device_add_sz should have, at least, the minimal room
+> +	 * for set_bit()/test_bit(), otherwise out-of-memory may occur
+> +	 */
+> +	ioc->pend_os_device_add_sz = ALIGN(ioc->pend_os_device_add_sz,
+> +					   sizeof(unsigned long));
+>  	ioc->pend_os_device_add = kzalloc(ioc->pend_os_device_add_sz,
+>  	    GFP_KERNEL);
+>  	if (!ioc->pend_os_device_add) {
 
-
-On 5/31/24 5:20 AM, Herbert Xu wrote:
-> On Thu, May 16, 2024 at 11:19:54AM -0400, Danny Tsen wrote:
->> This patch series provide X25519 support for ppc64le with a new module
->> curve25519-ppc64le.
->>
->> The implementation is based on CRYPTOGAMs perl output from x25519-ppc64.pl.
->> (see https://github.com/dot-asm/cryptogams/)
->> Modified and added 4 supporting functions.
->>
->> This patch has passed the selftest by running modprobe
->> curve25519-ppc64le.
->>
->> Danny Tsen (3):
->>    X25519 low-level primitives for ppc64le.
->>    X25519 core functions for ppc64le
->>    Update Kconfig and Makefile for ppc64le x25519.
->>
->>   arch/powerpc/crypto/Kconfig                   |  11 +
->>   arch/powerpc/crypto/Makefile                  |   2 +
->>   arch/powerpc/crypto/curve25519-ppc64le-core.c | 299 ++++++++
->>   arch/powerpc/crypto/curve25519-ppc64le_asm.S  | 671 ++++++++++++++++++
->>   4 files changed, 983 insertions(+)
->>   create mode 100644 arch/powerpc/crypto/curve25519-ppc64le-core.c
->>   create mode 100644 arch/powerpc/crypto/curve25519-ppc64le_asm.S
->>
->> -- 
->> 2.31.1
-> All applied.  Thanks.
+Do we need similiar ALIGN for _base_check_ioc_facts_changes() too?
+Otherwise, yeah, the {test,set,clear}_bit() ops expect an address to
+something aligned to 'unsigned long'.
 
