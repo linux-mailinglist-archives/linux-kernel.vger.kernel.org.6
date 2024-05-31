@@ -1,96 +1,165 @@
-Return-Path: <linux-kernel+bounces-196664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1C598D5F91
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:23:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BFFC18D5F8F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:23:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFDE21C223E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:23:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBCCC1C222FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:23:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4158156238;
-	Fri, 31 May 2024 10:22:59 +0000 (UTC)
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9A59155740;
+	Fri, 31 May 2024 10:22:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="ep6e/K3h"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84F0B155CB4;
-	Fri, 31 May 2024 10:22:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 635E82595;
+	Fri, 31 May 2024 10:22:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717150979; cv=none; b=dF6uWopavHsffhBCcEZkHuxp1vXm7f905dqYVQY9kgGIaPtUfYqRzAFyzbMXouxxWp+dQITgMhfmsUJ2GJMKB06wOrITuDjJtGkqeu9dOjXPlIoQVlFaF1v/wJd2zjLYbAN+BzLNshC/FXal4OVetg/cgyzwK7RD4SqmpGdZZso=
+	t=1717150973; cv=none; b=I2Ym++BwT3hhIedrNyMgcY0WSYzSZkZCTuVgGF+gs/9ZF9znrnAXY95QH50iDqRrkVfMxzGoTMVeiEV4jjsZZBIPVLXDNcRiXATG5iGrplACl/LfcWqFj2APXeahSy+L9HwLcPjrs7G4r65Mph9pt6DuFjbTf0sYXjgVEx+NykM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717150979; c=relaxed/simple;
-	bh=xYpytp4RPEOTOfmpevCnvYlQNEgIkwZVkY/fX6ZBt0M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kxKsP4X2ZNktlm6wxkjQwc36DRXL14+dK2RHVKCHILvHjElZMqlEaUCgr72FYyxC+40cDbmSZ71JvmsuBezhIVQl44Z0WXTvSfbZWNXG1lmqr35IYEyBpxscDAXu49WWeAZ4fbBAI8THrO2bSMOUeNQWlFanOvLoJAYCjk2fMBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1sCzPH-004Akv-2z;
-	Fri, 31 May 2024 18:22:45 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 31 May 2024 18:22:46 +0800
-Date: Fri, 31 May 2024 18:22:46 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Mark Brown <broonie@kernel.org>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
-	linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64/crypto: Raise priority of NEON crct10dif
- implementation
-Message-ID: <Zlmk9ty7gPmlL6vq@gondor.apana.org.au>
-References: <20240521-arm64-crct10dif-neon-prio-v1-1-e2975754b8f3@kernel.org>
+	s=arc-20240116; t=1717150973; c=relaxed/simple;
+	bh=iX1V57jDLgMREVkFfskIpTYcZyg45SX9yjiElYuhwxs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=L5rvGA9f9crZPMImkpV4iq7sZWzHjrk//Sr0GaBOcGQm86HliwJCk03j72vLwZkHhMRXwMAt7luTMw8SkGhDEECi5iSfelMfHrzMEVV64+4dG2RPS69XV0GElVAtMBh9XtJXHrA2d5JhKLVNnc8GBDzUOeommAIFcjikhtXP8ZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=ep6e/K3h; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-57a32b0211aso772873a12.2;
+        Fri, 31 May 2024 03:22:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1717150971; x=1717755771; darn=vger.kernel.org;
+        h=in-reply-to:autocrypt:from:references:cc:to:content-language
+         :subject:user-agent:mime-version:date:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=iX1V57jDLgMREVkFfskIpTYcZyg45SX9yjiElYuhwxs=;
+        b=ep6e/K3h3tfW2SQzvSzuay13SY16S2AA5eQZw9J8LEwdM3LkQkhgPoTquvZzRt1Lfg
+         Kh3JkpZYUWWiNZS3mT6HWIGMVDgNtCrm3FsLReGVvuJwtraBjXYCQEP+StvTZB9CTOad
+         o7A5KBJbhPIXNDYP/tquyKVm84OZjh23v2WbP7qBJGBlwsBXaMwM6QkZnxBHqHGW+RnM
+         bt0HgnoqgMUX8GU/J3mcvVYZBMO2FvgTbfI2mqgYmaQHejrRiH//M29YAxb9hKnotA7g
+         Pu7biOyRJtxKC44orfqvo9jAOUk/atlP9TQVBDjBmrHehMkx/wpDIxjbaxrlvE3uHPvW
+         z52Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717150971; x=1717755771;
+        h=in-reply-to:autocrypt:from:references:cc:to:content-language
+         :subject:user-agent:mime-version:date:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=iX1V57jDLgMREVkFfskIpTYcZyg45SX9yjiElYuhwxs=;
+        b=Uh5+oxCaj9ygI0gG4Si/0o5efQtf6zw0rwRngY8uQhDCw/336F85654qVXRFiq2Cq2
+         5+0OImuTkgQr3W3FEs9OHQ706WgLjDR86OEP+uUqdsBF16glTpaYRbgxxbj4uxvyERKn
+         acHV5DSOvYYMrUYfH0vK6Y4XL+ypdOoIjPg8Z5GJtAWcGjCJ5Vas6hWROnitGtwCAfJX
+         lN8jrC/QLx++7GUJLDJhzSmOA/Y2lrHyE5C2viLSJ9Adx4UpaV0g4rNR/RSM/l/WBUBP
+         fzCku9eZeQGrt5uGiFKUbB/tDXKmtmHDDF/CN81MIcNJ+ognfge+VMU6pG4qtgYrYZ/o
+         1QBw==
+X-Forwarded-Encrypted: i=1; AJvYcCX+qAS+AiFskdEqpKuPi2CVoBuvr/OkHM86dpYJUNlZ4FkzFBprgT/7bt/LawuMQZTGkGMMt9+33vHKgGLazIcsmiGH8i73
+X-Gm-Message-State: AOJu0YwLmfy65gOKcQn+AMe1mfshGtw4B8sgW1BmnFBmsIVSBgDAGNMO
+	K4BuL4t8om1viC2UiNWz20SDb34OYpZ2SCCCrpMgLmbUF/kSUiw=
+X-Google-Smtp-Source: AGHT+IFuMYzqfhNSFhwaKmLyEgvxP5ZmnHZyJrIkynCZwcnKHgQXZVBbL78/zLlD4a7W9mN07VvfwQ==
+X-Received: by 2002:a17:906:68e:b0:a66:a24f:13e with SMTP id a640c23a62f3a-a682022f7a6mr80974366b.29.1717150970372;
+        Fri, 31 May 2024 03:22:50 -0700 (PDT)
+Received: from [192.168.1.3] (p5b0573e1.dip0.t-ipconnect.de. [91.5.115.225])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a67ea67b4a7sm71738366b.99.2024.05.31.03.22.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 31 May 2024 03:22:48 -0700 (PDT)
+Message-ID: <6cd58ea3-c980-4178-91fd-021f7861a7ba@googlemail.com>
+Date: Fri, 31 May 2024 12:22:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240521-arm64-crct10dif-neon-prio-v1-1-e2975754b8f3@kernel.org>
+User-Agent: Betterbird (Windows)
+Subject: Re: Kernel 6.9 regression: X86: Bogus messages from topology
+ detection
+Content-Language: de-DE
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
+ stable@vger.kernel.org, regressions@lists.linux.dev, christian@heusel.eu
+References: <877cffcs7h.ffs@tglx>
+ <16cd76b1-a512-4a7b-a304-5e4e31af3c8a@googlemail.com>
+ <ce3abe01-4c37-416e-a5ed-25703318318a@googlemail.com> <87zfs78zxq.ffs@tglx>
+ <76b1e0b9-26ae-4915-920d-9093f057796b@googlemail.com> <87r0dj8ls4.ffs@tglx>
+ <87o78n8fe2.ffs@tglx> <87le3r8dyw.ffs@tglx>
+ <bd7ff2f3-bf2c-4431-9848-8eb41e7422c6@googlemail.com> <87ikyu8jp4.ffs@tglx>
+ <87frty8j9p.ffs@tglx> <087b4298-6564-40ad-a4fb-32dbb2f74a43@googlemail.com>
+ <87zfs670s0.ffs@tglx>
+From: Peter Schneider <pschneider1968@googlemail.com>
+Autocrypt: addr=pschneider1968@googlemail.com; keydata=
+ xjMEY58biBYJKwYBBAHaRw8BAQdADPnoGTrfCUCyH7SZVkFtnlzsFpeKANckofR4WVLMtMzN
+ L1BldGVyIFNjaG5laWRlciA8cHNjaG5laWRlcjE5NjhAZ29vZ2xlbWFpbC5jb20+wpwEExYK
+ AEQCGyMFCQW15qgFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQSjgovXlszhGoyt6IZu
+ OpLJLD/yRAUCY58b8AIZAQAKCRBuOpLJLD/yRIeIAQD0+/LMdKHM6AJdPCt+e9Z92BMybfnN
+ RtGqkdZWtvdhDQD9FJkGh/3PFtDinimB8UOB7Gi6AGxt9Nu9ne7PvHa0KQXOOARjnxuIEgor
+ BgEEAZdVAQUBAQdAw2GRwTf5HJlO6CCigzqH6GUKOjqR1xJ+3nR5EbBze0sDAQgHwn4EGBYK
+ ACYWIQSjgovXlszhGoyt6IZuOpLJLD/yRAUCY58biAIbDAUJBbXmqAAKCRBuOpLJLD/yRONS
+ AQCwB9qiEQoSnxHodu8kRuvUxXKIqN7701W+INXtFGtJygEAyPZH3/vSBJ4A7GUG7BZyQRcr
+ ryS0CUq77B7ZkcI1Nwo=
+In-Reply-To: <87zfs670s0.ffs@tglx>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------TEkbWb247Mv3hhQ1tGArGZ3y"
 
-On Tue, May 21, 2024 at 09:22:49PM +0100, Mark Brown wrote:
-> The NEON implementation of crctd10dif is registered with a priority of 100
-> which is identical to that used by the generic C implementation. Raise the
-> priority to 150, half way between the PMULL based implementation and the
-> NEON one, so that it will be preferred over the generic implementation.
-> 
-> Signed-off-by: Mark Brown <broonie@kernel.org>
-> ---
->  arch/arm64/crypto/crct10dif-ce-glue.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/crypto/crct10dif-ce-glue.c b/arch/arm64/crypto/crct10dif-ce-glue.c
-> index 09eb1456aed4..59016518f44d 100644
-> --- a/arch/arm64/crypto/crct10dif-ce-glue.c
-> +++ b/arch/arm64/crypto/crct10dif-ce-glue.c
-> @@ -98,7 +98,7 @@ static struct shash_alg crc_t10dif_alg[] = {{
->  
->  	.base.cra_name		= "crct10dif",
->  	.base.cra_driver_name	= "crct10dif-arm64-neon",
-> -	.base.cra_priority	= 100,
-> +	.base.cra_priority	= 150,
->  	.base.cra_blocksize	= CRC_T10DIF_BLOCK_SIZE,
->  	.base.cra_module	= THIS_MODULE,
->  }, {
-> 
-> ---
-> base-commit: a38297e3fb012ddfa7ce0321a7e5a8daeb1872b6
-> change-id: 20240521-arm64-crct10dif-neon-prio-894a9350ec1e
-> 
-> Best regards,
-> -- 
-> Mark Brown <broonie@kernel.org>
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------TEkbWb247Mv3hhQ1tGArGZ3y
+Content-Type: multipart/mixed; boundary="------------at82P3C0DcAOB0FpImiT00MA";
+ protected-headers="v1"
+From: Peter Schneider <pschneider1968@googlemail.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
+ stable@vger.kernel.org, regressions@lists.linux.dev, christian@heusel.eu
+Message-ID: <6cd58ea3-c980-4178-91fd-021f7861a7ba@googlemail.com>
+Subject: Re: Kernel 6.9 regression: X86: Bogus messages from topology
+ detection
+References: <877cffcs7h.ffs@tglx>
+ <16cd76b1-a512-4a7b-a304-5e4e31af3c8a@googlemail.com>
+ <ce3abe01-4c37-416e-a5ed-25703318318a@googlemail.com> <87zfs78zxq.ffs@tglx>
+ <76b1e0b9-26ae-4915-920d-9093f057796b@googlemail.com> <87r0dj8ls4.ffs@tglx>
+ <87o78n8fe2.ffs@tglx> <87le3r8dyw.ffs@tglx>
+ <bd7ff2f3-bf2c-4431-9848-8eb41e7422c6@googlemail.com> <87ikyu8jp4.ffs@tglx>
+ <87frty8j9p.ffs@tglx> <087b4298-6564-40ad-a4fb-32dbb2f74a43@googlemail.com>
+ <87zfs670s0.ffs@tglx>
+In-Reply-To: <87zfs670s0.ffs@tglx>
 
-Patch applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+--------------at82P3C0DcAOB0FpImiT00MA
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
+
+QW0gMzEuMDUuMjAyNCB1bSAxMjowNyBzY2hyaWViIFRob21hcyBHbGVpeG5lcjoNCiA+IFRo
+YW5rcyBhIGxvdCBmb3IgdGVzdGluZyBhbmQgcHJvdmlkaW5nIGFsbCB0aGUgaW5mb3JtYXRp
+b24hDQoNClJlZmFjdG9yaW5nIG1lc3N5IGxlZ2FjeSBjb2RlIGlzIG5vdCBhbiBlYXN5IHRh
+c2suIEknbSBnbGFkIEkgY291bGQgaGVscCBhIHRpbnkgbGl0dGxlIGJpdCANCnNvIHRoYXQg
+eW91IGNhbiBnZXQgdGhpcyBkb25lIHJpZ2h0IQ0KDQpCZXN0ZSBHcsO8w59lLA0KUGV0ZXIg
+U2NobmVpZGVyDQoNCi0tIA0KQ2xpbWIgdGhlIG1vdW50YWluIG5vdCB0byBwbGFudCB5b3Vy
+IGZsYWcsIGJ1dCB0byBlbWJyYWNlIHRoZSBjaGFsbGVuZ2UsDQplbmpveSB0aGUgYWlyIGFu
+ZCBiZWhvbGQgdGhlIHZpZXcuIENsaW1iIGl0IHNvIHlvdSBjYW4gc2VlIHRoZSB3b3JsZCwN
+Cm5vdCBzbyB0aGUgd29ybGQgY2FuIHNlZSB5b3UuICAgICAgICAgICAgICAgICAgICAtLSBE
+YXZpZCBNY0N1bGxvdWdoIEpyLg0KDQpPcGVuUEdQOiAgMHhBMzgyOEJENzk2Q0NFMTFBOENB
+REU4ODY2RTNBOTJDOTJDM0ZGMjQ0DQpEb3dubG9hZDogaHR0cHM6Ly93d3cucGV0ZXJzLW5l
+dHpwbGF0ei5kZS9kb3dubG9hZC9wc2NobmVpZGVyMTk2OF9wdWIuYXNjDQpodHRwczovL2tl
+eXMubWFpbHZlbG9wZS5jb20vcGtzL2xvb2t1cD9vcD1nZXQmc2VhcmNoPXBzY2huZWlkZXIx
+OTY4QGdvb2dsZW1haWwuY29tDQpodHRwczovL2tleXMubWFpbHZlbG9wZS5jb20vcGtzL2xv
+b2t1cD9vcD1nZXQmc2VhcmNoPXBzY2huZWlkZXIxOTY4QGdtYWlsLmNvbQ0K
+
+--------------at82P3C0DcAOB0FpImiT00MA--
+
+--------------TEkbWb247Mv3hhQ1tGArGZ3y
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+wnsEABYIACMWIQSjgovXlszhGoyt6IZuOpLJLD/yRAUCZlmk9wUDAAAAAAAKCRBuOpLJLD/yRIw+
+AQDe4ogWtnV3Yu62+wjht22a+GlKXVMwQEOJZlQr9fLLlAEA08JnqsCTGRMjL67KrfbQGk9NcGoA
+RXNwX8NMVktlLwM=
+=2RTt
+-----END PGP SIGNATURE-----
+
+--------------TEkbWb247Mv3hhQ1tGArGZ3y--
 
