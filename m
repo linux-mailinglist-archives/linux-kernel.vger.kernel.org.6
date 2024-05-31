@@ -1,204 +1,115 @@
-Return-Path: <linux-kernel+bounces-196192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A5278D58A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 04:37:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2C5C8D58AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 04:38:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E4FC1C23535
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 02:37:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60C502864EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 02:38:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5476578285;
-	Fri, 31 May 2024 02:37:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6887278C68;
+	Fri, 31 May 2024 02:38:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BLp4FjPy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="UxBobHUs"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E3111F16B;
-	Fri, 31 May 2024 02:37:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C53311F16B;
+	Fri, 31 May 2024 02:38:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717123046; cv=none; b=Ctv2DbgCSCR9MBrueKZ1H/8RSW1vjU72iR0WDFcKKamyuW+dHxK4UnQE3dt4YTYG4Nbm7TTAVkxGohKuSR5FW3weEe0iiyn/FlT+xinRyB11l/JgXsHnT0kmson6zozZuPmY3GZaFdTnjnj7gdDBYMjkaokXm0MzQlnA/DKoOM8=
+	t=1717123117; cv=none; b=WtVksWWePbUuo7FED+ePlaQtLXUIdEuzt0UkFDuFPdhUgOJqi/rFQYDwVc77hOMMZn/3etxPaQfy6Auj8nUK1GTp28w9KaM8PttXRm6yr2YxJuZ95PrlF3B+Fho4srtZJChKMaMk3qw+ZNzusuOt/YHyw6E8EzBqXDN/XUgIYYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717123046; c=relaxed/simple;
-	bh=25NiTbvE2NzMasFL8W/zwIAxAosWFfxZafXz8WmfOPQ=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=ZywkbKJyYbaYzFcVoGWGE6dCsksug3XS/v2xIkykHVpOPg8oQqruMBnkqRk0c0uPL7VPJo9Td2B6p1ysiLD7c4YGuc6J1Bfzn2/fZ3Y1oc2Mn0LURfNAemrrVIBfCGkzAL6Rv71TS5ALFYSbY6aQjuqHhoo+Bh4hQcXeNofoodY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BLp4FjPy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F6DFC2BBFC;
-	Fri, 31 May 2024 02:37:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717123045;
-	bh=25NiTbvE2NzMasFL8W/zwIAxAosWFfxZafXz8WmfOPQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=BLp4FjPyHwL+h/cA7S8LBPh8vsMNy7+9gGPFH7z04VKN9JuYXJfANIJev/nEdFVsW
-	 AiXBGSekzI7kg5z2h4N8aNmqOG8Zyt2BiRnc2l6mgwcs9s8nFtEKTKsb/V1sISOK58
-	 6Xi64WweIzZxAzCx+OefTDFlnoiZ1PSzDRAOZVH8SO8XMdkRtw5jTBqv5w/vijtmNN
-	 GaK4Roy3GMaHNOiRPnDCKE08Lviw0IJA2suEr3hS5r1m9RXRTlpA4aTTobDOgf763x
-	 av6meTzr4X7bX9f1RdUaObai8WS7xMGRCi4xcGyx/hbh5E6vX5o2TEziqVMeVyUXRd
-	 8mkJYoIRwphUQ==
-Date: Fri, 31 May 2024 11:37:21 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Tom Zanussi <tom.zanussi@linux.intel.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, LKML
- <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/3] tracing: Fix some selftest issues
-Message-Id: <20240531113721.c0314e0cdb3beb70c1a6ba7d@kernel.org>
-In-Reply-To: <3a7e679712fb47b6c75af84163b5d3ea252f4da9.camel@linux.intel.com>
-References: <171671825710.39694.6859036369216249956.stgit@devnote2>
-	<20240527192907.49c9220f@rorschach.local.home>
-	<20240529014640.3a04f7301f12eb44738f9f2d@kernel.org>
-	<20240529083818.b7835de167191d4567405ce6@kernel.org>
-	<3a7e679712fb47b6c75af84163b5d3ea252f4da9.camel@linux.intel.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1717123117; c=relaxed/simple;
+	bh=rxh9sVn7HASgC784iwT/sLpCZlAS7XWdGXXksQAs2nI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=iOoAV6t3rlPc9eeMGAdVeLH3vrjCc9ZA6quKs8PmRzAD2qVD8jQihqvN3PUvWcGNADxQ73if1NnDBtPulpFyy5MOYcZsKpWd6jWo2/wFQ+T5zEGsE9+GKUA2HBYpxvHxpK9qHoyJuZaBLRbcOLwxGHrl0h7fbZU3K3xdlhoQk00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=UxBobHUs; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1717123107;
+	bh=eMFPK0u+EsMV50uPGvRYMXzeCximC+x+ai1u0XQ0Y9I=;
+	h=Date:From:To:Cc:Subject:From;
+	b=UxBobHUslnwQhnRqFvXypMWyXjzSaB6W4+nKmzshxM7VzuFm5POpQ7DcY51+HkKml
+	 XXgphJ7juZdVuciGJXTjZaytjkNc3DKHjGzxB8tr2cFwYBmB4qBEzQmFksg/znk+Nu
+	 D9DKehl0YlBvYzzwtu9XHIeVtUgl/eqs/V1B7lH0FC5u21nvkyZtoDuBldeuCJtFY2
+	 ZrsAkpXywRbIARuEIpOCyD2ZiLGWWFe4tGotAWHM+EcIGj4FvdhE7GI1vyun9VAS1X
+	 BKVFgTsiXuG6uFsOWkEr1hXLzUmvX5l9cuob0Vp1ZSiTRqmLdzy68fGd7ZqSXbbhgl
+	 hgoJXTGUof4AQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Vr6kB70Y6z4wyQ;
+	Fri, 31 May 2024 12:38:26 +1000 (AEST)
+Date: Fri, 31 May 2024 12:38:22 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>
+Cc: Networking <netdev@vger.kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, MD Danish Anwar <danishanwar@ti.com>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Message-ID: <20240531123822.3bb7eadf@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/T_qxduSg5ONj0V1Rt.aIDlL";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Wed, 29 May 2024 11:01:43 -0500
-Tom Zanussi <tom.zanussi@linux.intel.com> wrote:
+--Sig_/T_qxduSg5ONj0V1Rt.aIDlL
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> Hi Masami,
-> 
-> On Wed, 2024-05-29 at 08:38 +0900, Masami Hiramatsu wrote:
-> > On Wed, 29 May 2024 01:46:40 +0900
-> > Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
-> > 
-> > > On Mon, 27 May 2024 19:29:07 -0400
-> > > Steven Rostedt <rostedt@goodmis.org> wrote:
-> > > 
-> > > > On Sun, 26 May 2024 19:10:57 +0900
-> > > > "Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
-> > > > 
-> > > > > Hi,
-> > > > > 
-> > > > > Here is a series of some fixes/improvements for the test
-> > > > > modules and boot
-> > > > > time selftest of kprobe events. I found a WARNING message with
-> > > > > some boot 
-> > > > > time selftest configuration, which came from the combination of
-> > > > > embedded
-> > > > > kprobe generate API tests module and ftrace boot-time selftest.
-> > > > > So the main
-> > > > > problem is that the test module should not be built-in. But I
-> > > > > also think
-> > > > > this WARNING message is useless (because there are warning
-> > > > > messages already)
-> > > > > and the cleanup code is redundant. This series fixes those
-> > > > > issues.
-> > > > 
-> > > > Note, when I enable trace tests as builtin instead of modules, I
-> > > > just
-> > > > disable the bootup self tests when it detects this. This helps
-> > > > with
-> > > > doing tests via config options than having to add user space code
-> > > > that
-> > > > loads modules.
-> > > > 
-> > > > Could you do something similar?
-> > > 
-> > > OK, in that case, I would like to move the test cleanup code in
-> > > module_exit function into the end of module_init function. 
-> > > It looks there is no reason to split those into 2 parts.
-> > 
-> > Wait, I would like to hear Tom's opinion. I found following usage
-> > comments
-> > in the code.
-> > 
-> >  * Following that are a few examples using the created events to test
-> >  * various ways of tracing a synthetic event.
-> >  *
-> >  * To test, select CONFIG_SYNTH_EVENT_GEN_TEST and build the module.
-> >  * Then:
-> >  *
-> >  * # insmod kernel/trace/synth_event_gen_test.ko
-> >  * # cat /sys/kernel/tracing/trace
-> >  *
-> >  * You should see several events in the trace buffer -
-> >  * "create_synth_test", "empty_synth_test", and several instances of
-> >  * "gen_synth_test".
-> >  *
-> >  * To remove the events, remove the module:
-> >  *
-> >  * # rmmod synth_event_gen_test
-> > 
-> > Tom, is that intended behavior ? and are you expected to reuse these
-> > events outside of the module? e.g. load the test module and run some
-> > test script in user space which uses those events?
-> > 
-> 
-> Yeah, this module was meant as a sample module showing how to create
-> and generate synthetic events in-kernel.
-> 
-> So the interested user insmods the module, looks at the trace stream
-> and sees, ok the events are there as expected, so it does work, great,
-> let's remove the module to get rid of them and go write our own.
-> 
-> Having both the creation and cleanup in module_init() wouldn't allow
-> the user the opportunity to do that i.e. verify the results by reading
-> the trace file.
+Hi all,
 
-So, in summary, it is designed to be a module. Steve, I think these tests
-should be kept as modules. There are many reason to do so.
+Today's linux-next merge of the net-next tree got a conflict in:
 
- - This test is designed to be used as module.
- - This can conflict with other boot time selftest if it is embedded.
- - We can make these tests and boot time selftest mutable exclusive but
-   if we make these tests as modules, we can build and run both tests
-   safely.
- - Embedding these tests leave new events when the kernel boot, which
-   user must be cleaned up by manual.
+  drivers/net/ethernet/ti/icssg/icssg_classifier.c
 
-What would you think?
+between commit:
 
+  56a5cf538c3f ("net: ti: icssg-prueth: Fix start counter for ft1 filter")
 
-Thank you,
-> 
-> Tom 
-> 
-> > As far as I can see, those tests are not intended to be embedded in
-> > the
-> > kernel because those are expected to be removed.
-> > 
-> > Thank you,
-> > 
-> > > 
-> > > Thank you,
-> > > 
-> > > > 
-> > > > -- Steve
-> > > > 
-> > > > 
-> > > > > 
-> > > > > Thank you,
-> > > > > 
-> > > > > ---
-> > > > > 
-> > > > > Masami Hiramatsu (Google) (3):
-> > > > >       tracing: Build event generation tests only as modules
-> > > > >       tracing/kprobe: Remove unneeded WARN_ON_ONCE() in
-> > > > > selftests
-> > > > >       tracing/kprobe: Remove cleanup code unrelated to selftest
-> > > > > 
-> > > 
-> > > 
-> > > -- 
-> > > Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> > 
-> > 
-> 
-> 
+from the net tree and commit:
 
+  abd5576b9c57 ("net: ti: icssg-prueth: Add support for ICSSG switch firmwa=
+re")
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+from the net-next tree.
+
+I fixed it up (I used the former (they both did effectively the same thing
+in this spot) and can carry the fix as necessary. This is now fixed as
+far as linux-next is concerned, but any non trivial conflicts should be
+mentioned to your upstream maintainer when your tree is submitted for
+merging.  You may also want to consider cooperating with the maintainer
+of the conflicting tree to minimise any particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/T_qxduSg5ONj0V1Rt.aIDlL
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZZOB4ACgkQAVBC80lX
+0Gy1lgf/eM2kx7/2qvfoIi/+xQqFA5KD1pNrYChv0LPgol2Bi+tsINergmWJHAJ5
+JuthhHDNXnJFnVCXIlKX3tXd0suOmHHFV3RyzECxv5Alv3BGy6H+9sLbPMtQ2i/K
+sbFJZFClGUG43IwFf5nbo4ce7PJ6lfbZo3PCbYqoOilKyowvVSgu9ZzGMIgDxV5Z
+G2cRfVZj9JFXrXjCoTUsXKtgtQHaTBmrrs6x3qdzg4TuYtyxAyaNe0U/29xsl/aT
+ppxWkeAp2fcaqha9IbxkRhQdrDpbqcmqrBRnrTHg4oldVE30SvMIFLnUrqq8Z1q9
++4a7OKXC4Y4PUyCUK/juU2ZyuvskMg==
+=7LFf
+-----END PGP SIGNATURE-----
+
+--Sig_/T_qxduSg5ONj0V1Rt.aIDlL--
 
