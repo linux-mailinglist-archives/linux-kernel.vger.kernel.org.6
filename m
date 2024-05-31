@@ -1,199 +1,104 @@
-Return-Path: <linux-kernel+bounces-197042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 076698D6563
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:12:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2ED08D652D
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:08:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 634661F26D59
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 15:12:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 301751C23E68
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 15:08:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5425717C7B5;
-	Fri, 31 May 2024 15:10:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C545374BE4;
+	Fri, 31 May 2024 15:08:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="peC9MGhE"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WF34Tse6"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C972275813;
-	Fri, 31 May 2024 15:10:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB36A7483
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 15:08:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717168234; cv=none; b=B7gqxXtS67sgdSoOANgixL2p2qpVIPrvBMQlair3YO2vpz0RN9anm1C8EdImlkWsD0xp1xAQfU+YjANPtNK1Ft7+1a0apI3gT5U0taX95whNKDdNpKXZe8v1n7+dKZ7l67MpQuVSgYMC2EBkTgS1xf3GpfTfzbQ6UE7r7LM96yg=
+	t=1717168121; cv=none; b=TgidMjBsCV/1LwsYC/iUNp5yhdFUEunhNsdJw0pd9DYI8eBG9bHlQMA3iyFhpvrgLKw2fW+dTIOdnZVsIpA0L176NQf7fi46XTmblBfFNFqQaBWqespZGy67iaOkUGrcPS6K940kYE0NQxWS9A31idAZQnfLux37Hp4P56jk85U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717168234; c=relaxed/simple;
-	bh=TKS9LmYbFwjp2MUSdXV2zexdSBQweAgFB0m9/hGMZz8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MwIGRx30Xi4Ac/0tmzYSOpIqHG2K8yYEoOyEFNW3cg3bKwJEKYZcncx9UiJQgMNCKk9BETQE+TFYZfyZUZLPiXVN2DWbaMicxKKNycyNKMaq8VgzIfvDw3YlOwFWEiJ1VtLjjTWxynbET1ABT10IIXQO4nTphHMQTPBH86RroA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=peC9MGhE; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44VDZK5e007807;
-	Fri, 31 May 2024 17:10:15 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	FVHtdzKA2sppQoWavJijXHpDzRsfcU/8ElYuAcmbkXg=; b=peC9MGhE+j/d3KLr
-	1iIjldHXhY1Ogu8M7Eqt0q1p5v+ueVCoPEw6bPIZvit+iDA8QyncuQMq+3L/U8Gt
-	+7t+Vx8PDVPJscUGLYlsUy0JHu9vF8XWgZwxnxT1a3gBQsakaEzgirRh7yGhF9VD
-	c8Qye3F2BwBd/+ibgNlic9Kb2zgLZNpH/ZFbo97wkQlEqdz3eIY4nB7fyKjCIEZQ
-	8j4f3wOAWirjZFEKgtkzzM2wY0oQPK11pctAsh5aAUcksrphans5+nJPapk7g70P
-	6h29VJfPoCIjM+9+JcHrmGIA6ZtmuEqQQ9939VjO4sjDmj/Kh/r00TQ0ijaMbZbn
-	P1zKaQ==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3yb9ykd76q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 31 May 2024 17:10:15 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 1091640049;
-	Fri, 31 May 2024 17:10:11 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id D207C208009;
-	Fri, 31 May 2024 17:09:25 +0200 (CEST)
-Received: from localhost (10.252.27.179) by SHFDAG1NODE3.st.com (10.75.129.71)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Fri, 31 May
- 2024 17:09:25 +0200
-From: Amelie Delaunay <amelie.delaunay@foss.st.com>
-To: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof
- Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre
- Torgue <alexandre.torgue@foss.st.com>
-CC: <dmaengine@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-hardening@vger.kernel.org>,
-        Amelie Delaunay
-	<amelie.delaunay@foss.st.com>
-Subject: [PATCH v4 12/12] arm64: dts: st: add HPDMA nodes on stm32mp251
-Date: Fri, 31 May 2024 17:07:12 +0200
-Message-ID: <20240531150712.2503554-13-amelie.delaunay@foss.st.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240531150712.2503554-1-amelie.delaunay@foss.st.com>
-References: <20240531150712.2503554-1-amelie.delaunay@foss.st.com>
+	s=arc-20240116; t=1717168121; c=relaxed/simple;
+	bh=HSwJT7e7LZkft2xg3k1dYrfRx/d2rdv7pyi/sG/FWc0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eIiWYCjiTWNjXa3nEW3tspzC1u+WuKb7ED9qMSB+rCXrjC/fZCiRR407v+bkfmYw6VjSG1S4xqBdnP4/OBNWztYOJvGaAjtA+klIZexroK51PczL5rnD0VFbfpMF1wTTWaSNIPe7zcVFXt5GLbCKtvHTIxybobaZN9UrMATRj14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WF34Tse6; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717168119; x=1748704119;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=HSwJT7e7LZkft2xg3k1dYrfRx/d2rdv7pyi/sG/FWc0=;
+  b=WF34Tse6E7MZxk5cBTkT0lI0136ra3ImDk8gJbGif7ay4S7eTvEwQHMu
+   y6hlmTK+bG3nz9gVHEcVSkFwbjhgHu7gte8uLP/BXlsZjuvRsbISiwaS2
+   0ziY7/3aXeYyhbiyANL4+WjiqazNa8iIg2Oyr5fRfG0qbnWkT5nCpoQIR
+   OjKr47+XZqaVhSHXjDVHaQmgBqJxUJX7hCrl9aealZCbxDfRnfzzNSOr1
+   OSv66JBB+26VYYffW2NsFTeTdnXThRtbaM7tYl6ZETxWL5sO87H8duQNU
+   UHaNqWydyQ5liuqWWyfeNp7ML+FDF7f+/LRkm6h+BQeeaADcYUQJSy5En
+   g==;
+X-CSE-ConnectionGUID: STpFZiMJTeW3P9CiIPWMvQ==
+X-CSE-MsgGUID: VN30nbgQR3erE6huW4Gp4A==
+X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="24837310"
+X-IronPort-AV: E=Sophos;i="6.08,204,1712646000"; 
+   d="scan'208";a="24837310"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 08:08:39 -0700
+X-CSE-ConnectionGUID: vmhnK+isRrmlKRkVQk5Ceg==
+X-CSE-MsgGUID: dYKVAP75Qaqswh4ESQU+PA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,204,1712646000"; 
+   d="scan'208";a="36806647"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 08:08:39 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sD3rv-0000000CV6I-2HVJ;
+	Fri, 31 May 2024 18:08:35 +0300
+Date: Fri, 31 May 2024 18:08:35 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Lee Jones <lee@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v1 1/2] mfd: lm3533: Hide legacy platform data in the
+ driver
+Message-ID: <Zlnn89KPSHSCp3Bh@smile.fi.intel.com>
+References: <20240508104848.846580-1-andriy.shevchenko@linux.intel.com>
+ <20240508104848.846580-2-andriy.shevchenko@linux.intel.com>
+ <20240531150048.GO1005600@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
- (10.75.129.71)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-31_11,2024-05-30_01,2024-05-17_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240531150048.GO1005600@google.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-The High Performance Direct Memory Access (HPDMA) controller is used to
-perform programmable data transfers between memory-mapped peripherals
-and memories (or between memories) via linked-lists.
+On Fri, May 31, 2024 at 04:00:48PM +0100, Lee Jones wrote:
+> On Wed, 08 May 2024, Andy Shevchenko wrote:
+> 
+> > First of all, there is no user for the platform data in the kernel.
+> > Second, it needs a lot of updates to follow the modern standards
+> > of the kernel, including proper Device Tree bindings and device
+> > property handling.
+> > 
+> > For now, just hide the legacy platform data in the driver's code.
+> 
+> Why not just rip it out entirely?
 
-There are 3 instances of HPDMA on stm32mp251, using stm32-dma3 driver, with
-16 channels per instance and with one interrupt per channel.
-Channels 0 to 7 are implemented with a FIFO of 8 bytes.
-Channels 8 to 11 are implemented with a FIFO of 32 bytes.
-Channels 12 to 15 are implemented with a FIFO of 128 bytes.
-Thanks to stm32-dma3 bindings, the user can ask for a channel with specific
-FIFO size.
+You mean the driver?
 
-Signed-off-by: Amelie Delaunay <amelie.delaunay@foss.st.com>
----
-v4: use SCMI clocks now that they are available
-
-v2: use SoC specific compatible st,stm32mp25-dma3
----
- arch/arm64/boot/dts/st/stm32mp251.dtsi | 69 ++++++++++++++++++++++++++
- 1 file changed, 69 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/st/stm32mp251.dtsi b/arch/arm64/boot/dts/st/stm32mp251.dtsi
-index dcd0656d67a8..d057dcee2534 100644
---- a/arch/arm64/boot/dts/st/stm32mp251.dtsi
-+++ b/arch/arm64/boot/dts/st/stm32mp251.dtsi
-@@ -107,6 +107,75 @@ soc@0 {
- 		interrupt-parent = <&intc>;
- 		ranges = <0x0 0x0 0x0 0x80000000>;
- 
-+		hpdma: dma-controller@40400000 {
-+			compatible = "st,stm32mp25-dma3";
-+			reg = <0x40400000 0x1000>;
-+			interrupts = <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&scmi_clk CK_SCMI_HPDMA1>;
-+			#dma-cells = <3>;
-+		};
-+
-+		hpdma2: dma-controller@40410000 {
-+			compatible = "st,stm32mp25-dma3";
-+			reg = <0x40410000 0x1000>;
-+			interrupts = <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 61 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 63 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&scmi_clk CK_SCMI_HPDMA2>;
-+			#dma-cells = <3>;
-+		};
-+
-+		hpdma3: dma-controller@40420000 {
-+			compatible = "st,stm32mp25-dma3";
-+			reg = <0x40420000 0x1000>;
-+			interrupts = <GIC_SPI 65 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 66 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&scmi_clk CK_SCMI_HPDMA3>;
-+			#dma-cells = <3>;
-+		};
-+
- 		rifsc: bus@42080000 {
- 			compatible = "st,stm32mp25-rifsc", "simple-bus";
- 			reg = <0x42080000 0x1000>;
 -- 
-2.25.1
+With Best Regards,
+Andy Shevchenko
+
 
 
