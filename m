@@ -1,153 +1,160 @@
-Return-Path: <linux-kernel+bounces-196893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E11D78D6328
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 15:37:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 822608D632F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 15:37:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA9E91C23A31
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 13:37:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A53301C227CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 13:37:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E391B159214;
-	Fri, 31 May 2024 13:36:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 799CE158DC6;
+	Fri, 31 May 2024 13:37:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hAvRLJD4"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="mlwv+AxA"
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01olkn2035.outbound.protection.outlook.com [40.92.52.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9737158D9F
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 13:36:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717162611; cv=none; b=a8xXvVKWyoKes4jagYz7kwgaEPsJNxmuY1qGNVCzhnYlhA1jW6yDsBO6ubCOX4tq5SFxjb/6DYUWw/gBBFqkqL1ru/an5Gcp9Lf1Hl1tvj/omblI08XmlqcnJsslQ0snWIDbybHkJyR9MaVH4BqEJ9nkBFkCkCIu/DjVVCgbEvs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717162611; c=relaxed/simple;
-	bh=fHZWsCZgLehsBmHUlJSI0XG6+oxgaHq5c/G9th2fkKA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p0ys/slujG58H7+/J2oLkaf2kzAP8tGg0wEQRxNrRR8FriHaRKBvj5cq2JneiqyqBEgGzokUHEhMG1olc4YwhlWTWZujcbOxjC9R6Z4AN8akdxt5zSTRcQSMK4r3/JQOdzkFwpf2Vna7tLjpXrbeiARARy4Y+Sdc2KfolNxMdww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hAvRLJD4; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717162608;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xiMkkJB35GmuPxh7rMmIJANRZ/YYuyNN0vLhNarAFs4=;
-	b=hAvRLJD4Z8aUAMYU/o9YSpblpLjWo1sT4/TAQIrkZHwKoFhFwDD2AhL7g/57JRark6QEcR
-	pWPD9taMYnXGyO4S+sV0ZEIN8R66JqjGkxDkwKodmX7Mc85wB1Ue1cVvkrIbsh3VlXC9fz
-	wFzNhfoHxKJAXzwIOBdPxxnA/xiG5s0=
-Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
- [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-530-BV7u3-QFP9-7Npzdef5oHA-1; Fri, 31 May 2024 09:36:47 -0400
-X-MC-Unique: BV7u3-QFP9-7Npzdef5oHA-1
-Received: by mail-lf1-f69.google.com with SMTP id 2adb3069b0e04-52b8b680f16so494862e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 06:36:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717162605; x=1717767405;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xiMkkJB35GmuPxh7rMmIJANRZ/YYuyNN0vLhNarAFs4=;
-        b=wRM+vp5a9/tbX6pQQwiypOAKPmAyzQ3i+GpGmA1uqh2KqHMyx29lrZrFeiPsLKPuFP
-         t18cuPViSeB0ME+cXOMyw2ZB0CVMLFXoMaxbOk/cRQfBlura84GcOZA0SoFshSuK2MTo
-         qpIowvMfvuQUVSeSI3mgeT6uCKelnxQX8XVslJpOsm9lkXZ4aybY/KI1LuUtQhCSHtAT
-         afSuTrjR2LBpAKXX201iMyEvHfEm2tpDW0hGeOw1OPUurVRm6lUHIdECWtXPxTUqSq59
-         brgi054CTdeKDBd9ceNvkEgbcgYF9/yIcBLSlUw8tFi2evdBF1KZFzuIhYYaZ2zvG9Jr
-         ZPuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWHbhKO1BiGoKWHKroYrneszFgpldGPoxF427/HabP7jVizUJJFox6D86pu2svH0OvbVVWN/EdQ1Dl05idA2761CIAcLNxhWEVq9rqJ
-X-Gm-Message-State: AOJu0YzhZR5gwnf5X/oJpjK+dXo3kjeZBbgl3T5VQW6i0K/J7rbiULML
-	IrTmsDF2yd4MayAKxE0Qu5ZjUdvQaYd/bcRYcUoBNFJ71LHKMgEO4MBKHrbMho+DcuOEpJnXWDM
-	Ij4cdxAm1kn+ydUNyf2xOaJDNEAd4iaHAJJc5SMv730dEPKrOqQwLVIC4olwpCg==
-X-Received: by 2002:a05:6512:4ce:b0:52b:7a5f:817f with SMTP id 2adb3069b0e04-52b8956b5bemr1133054e87.19.1717162605716;
-        Fri, 31 May 2024 06:36:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEro17MUNy0FfJuJni5QfWCgWFnnZ+g2Nai9cZuxNwB9y0ZSsPWHEN4eW5raMCs3pl5xLc2dg==
-X-Received: by 2002:a05:6512:4ce:b0:52b:7a5f:817f with SMTP id 2adb3069b0e04-52b8956b5bemr1133036e87.19.1717162605234;
-        Fri, 31 May 2024 06:36:45 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57a31c6d4b6sm1005484a12.74.2024.05.31.06.36.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 31 May 2024 06:36:44 -0700 (PDT)
-Message-ID: <d8341ffe-c0d9-4a37-869a-956cc1425f74@redhat.com>
-Date: Fri, 31 May 2024 15:36:43 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA101158DA3;
+	Fri, 31 May 2024 13:37:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.52.35
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717162636; cv=fail; b=bLKzVIZhTgS+E1alVDV+pbRunyhvj+6oW+7QosZInR9iJgu6KveUN79gRohJKgBPHte07pnqxqKdf45MJ3OcydJkfWaLlPtPO505PDG4olVtHzRDp02qVC6W2hNV90C2ZryRw28RTVHrKFR2dD8coY07uR3ip6jbyEMANHPbgt8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717162636; c=relaxed/simple;
+	bh=nRjzIyUJt8sYsXdf8hcJuJk88727I0lkbEEkwb/RQeQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Vln4jd8WNm5fAdOK8WPsC5klmPB4phUbN+W5IHmxeBe7mX0TUtTsmtyH3pi5WFzB/QOHD4KuFbuJoFsBwCfRLe+Mt1ACoY2p/NV/qzGn+v+1+Xm0i+qk+7e/5BQFqALqTQmFRWFv2gc76AAqjrzBjiPua/FYSD3AOxDnh53fFNg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=mlwv+AxA; arc=fail smtp.client-ip=40.92.52.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=YwL4e4zjjboXtaHU8JicBTSPkVNMm1Qe61v1iZSLcmSiV7buHzNIdDCF9pl4sr8wyv+qeg2YfODnTie4UMiHUhHuGTiIb4G2zHi6jVx+txhu94bxzkPB0I3FCJRiL0OjzeinUhVouqZ98O3cFuIoiLqX9y/ko5Prt41Z/uTZvxd3JI2IE9+34VK0w0ENHI6Z4jsRjN7mbfEqNvb9i9LqtclswtT+MPSMRiaVCZ0hhYL6oJCXXr7xYKXYeXuqKF+SUqaEyQxnprcQPrxgiXXdlPvtzSFatS6KFRtdF+hzzETIrobeQPM+SXF7voGWuEzn5nhvwHU2yy+We2sqy/Vxsg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=U9zxmRao9l9SE475DOEqCwqZFjIsiB7yZZBnk8dlHT0=;
+ b=EqOmPKbCFUjw9z2VB/UbT1fKCEMRnwV3VQs1MzYbb3ySfh5gSvsEMimPVdEWva36MWxTquodn+h8R+HyxInvaQgFXWAtw9gTPRyw5t8GGCltDl7F+X3n6EVahcIPNDpVyLE2yZiF8rf2hPyZaR9De+pqs8v077QPCJ7BJBTzDXHUqDyP9VicfILrF2ZEPESkz6264CRca9VWdJfd8sOTtVmAX1T0MSn/1z/DClpcV9u07T55gKJOnpghsaUNGr35hQ7MWje+QfSsO9BMJRE5FtkpBD3hY4UO+kA9Rm6rW69SVf574ItUc7DNasB5tbOCNzmTB6Anl8W/t+Nk/rSC8w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=U9zxmRao9l9SE475DOEqCwqZFjIsiB7yZZBnk8dlHT0=;
+ b=mlwv+AxAo1nkNehFmiGTgZ6buCe1bl0sKHBpZ7w4/INV+fCm8hPvIi4e4kQlXdZ2q2fWK3OdsE8oLX243Hw01EPZqGle1kH2LCKOp+3cAG4oazIgGVWukPrZ5utQtDtuG5B1EE3q8Pb1Jx8q+yL+WyHvT6mAmKnOe5nU5bbpO3wC4fNkruknLEN6PXU9cpwSNfmEud49jwgYB2ndB/9uA8IidQC4ozftfVzhdTDUCvMFXig/0uHXgMeELM/dei67M3DBqBJfup/UB8LwwX2UvR5M8cVTkwYVM0bgdObtr5VSy4F7+WsFI+sc+OwVoYLfFmqeqveZcRtw9m6vRQqiYA==
+Received: from SEYPR01MB4221.apcprd01.prod.exchangelabs.com
+ (2603:1096:101:56::12) by TYZPR01MB5352.apcprd01.prod.exchangelabs.com
+ (2603:1096:400:33a::6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.27; Fri, 31 May
+ 2024 13:37:09 +0000
+Received: from SEYPR01MB4221.apcprd01.prod.exchangelabs.com
+ ([fe80::b674:8f70:6e29:3756]) by SEYPR01MB4221.apcprd01.prod.exchangelabs.com
+ ([fe80::b674:8f70:6e29:3756%4]) with mapi id 15.20.7611.030; Fri, 31 May 2024
+ 13:37:09 +0000
+Date: Fri, 31 May 2024 13:37:01 +0000
+From: Haylen Chu <heylenay@outlook.com>
+To: Inochi Amaoto <inochiama@outlook.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Jisheng Zhang <jszhang@kernel.org>
+Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH 3/3] thermal: cv180x: Add cv180x thermal driver support
+Message-ID:
+ <SEYPR01MB4221A59D51DDA225207D23F6D7FC2@SEYPR01MB4221.apcprd01.prod.exchangelabs.com>
+References: <SEYPR01MB422119B40F4CF05B823F93DCD7F32@SEYPR01MB4221.apcprd01.prod.exchangelabs.com>
+ <SEYPR01MB4221BEBBF659F8495BF0E831D7F32@SEYPR01MB4221.apcprd01.prod.exchangelabs.com>
+ <IA1PR20MB49533177BEFC431FC16D1AB8BBF32@IA1PR20MB4953.namprd20.prod.outlook.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <IA1PR20MB49533177BEFC431FC16D1AB8BBF32@IA1PR20MB4953.namprd20.prod.outlook.com>
+X-TMN: [0rxHIWOowPJDrBHsEI5KBWG8UqX5rXCJ]
+X-ClientProxiedBy: SI2P153CA0017.APCP153.PROD.OUTLOOK.COM
+ (2603:1096:4:140::10) To SEYPR01MB4221.apcprd01.prod.exchangelabs.com
+ (2603:1096:101:56::12)
+X-Microsoft-Original-Message-ID: <ZlnSfVBtz8mVQrGw@ketchup>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Hung tasks due to a AB-BA deadlock between the leds_list_lock
- rwsem and the rtnl mutex
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Linux regressions mailing list <regressions@lists.linux.dev>,
- Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
- Linux LEDs <linux-leds@vger.kernel.org>,
- Heiner Kallweit <hkallweit1@gmail.com>, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, johanneswueller@gmail.com,
- "Russell King (Oracle)" <linux@armlinux.org.uk>,
- Genes Lists <lists@sapience.com>
-References: <9d189ec329cfe68ed68699f314e191a10d4b5eda.camel@sapience.com>
- <15a0bbd24cd01bd0b60b7047958a2e3ab556ea6f.camel@sapience.com>
- <ZliHhebSGQYZ/0S0@shell.armlinux.org.uk>
- <42d498fc-c95b-4441-b81a-aee4237d1c0d@leemhuis.info>
- <618601d8-f82a-402f-bf7f-831671d3d83f@redhat.com>
- <01fc2e30-eafe-495c-a62d-402903fd3e2a@lunn.ch>
- <2a6045e2-031a-46b6-9943-eaae21d85e37@redhat.com>
- <e6800715-6bc0-49a0-bd00-5a75b852ea9d@lunn.ch>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <e6800715-6bc0-49a0-bd00-5a75b852ea9d@lunn.ch>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEYPR01MB4221:EE_|TYZPR01MB5352:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2956057a-2179-475a-5453-08dc8176c4e1
+X-Microsoft-Antispam: BCL:0;ARA:14566002|461199019|440099019|3412199016;
+X-Microsoft-Antispam-Message-Info:
+	pUOgQFPqvkNvIaZnq+jikw+H/9q4ZBjnQMKWK3UEXTMDDhGVIgVbVJicVxrEhujIbE0MQpxKpfILhJoLYI90+sKhQsh2Enc8rY8BeQ6bbPd1Ntp91GbZQYVYiZpEJ1Kza5bmSMU2bjqy+yQgUO+ilkGe+5+wmwfSG0SwHDrqJd2jFDJdHdbnx7JmPFosU2bE/jsF1j9z43Kqd3A2lP/eGrxh97GEiXCAoVMSSe6jmATDMeZNUomEbe9U+NsMGs88DdG/ix61Tcw0kAvGwPFrdjkjA5vSkmuYc9T0furxemNkLl/om2C3sJwGNKfs4wlqvw11xLHJnQBXRPn9afJGXDcn8rLTipdtu/UltGtU3dAYXgrTXVl6t6cWDw/y+0BOGqQ2K8ebjtsZGzwee2is0kQUk3CFv1krY6rk3ZeRWYimmpLt/R6c04a+yQWL8EdRx29NY9paZEDDwkr3LpOP65NEWsUsEOZp5jXJDF6FZuuUTCe7fE3FZ5x9SixDvvMc34CmI04FGMY47t8RV+7U0qgNm0Pq13YjqoghvMYtY2FZ2Sn7nUbSmLaQt45xXb/6
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?5gQ779AlKCXe2PZogGI1XKB3w7peobAzjzzwz2bN7M5G3IWpuW8aeNVCx4WN?=
+ =?us-ascii?Q?POYn1tQeHvirvS6BLRs69qWcNDaDP9QAs1UPovyFnwM8PjIzsOxUpmk2a37A?=
+ =?us-ascii?Q?dCTmxnVFJWcmNtH3A7gn0yqGKEmqJcduDq5RxnlO3PeWLI1PC8NScbyF7m6v?=
+ =?us-ascii?Q?oLpJsU4ltylGQ8x/CsSi1PNnng8tvfJpv5JN+MB/1vSnB1mHsll4mxs1haSG?=
+ =?us-ascii?Q?de506ihI/FTvspV1ivsgxLOW8Q2kBRVo6b5dxv0Zdz9sNEV2zZYIYvXFQ/ji?=
+ =?us-ascii?Q?DKu2UDpTf481gTlNZLV19/1PgyoTEYFWy8cvzKYyCaUtyIG2CvABe3iGVfq/?=
+ =?us-ascii?Q?1vQTsHARJsTi5NnPSCz/J76bz9QvO1OEX5HiZ3TPJ3m3T2Q42oyP05AKtEgP?=
+ =?us-ascii?Q?w27G0c5J+ezU4jFlL2wWd1GbjYmzzvROgCj+IopAoYBzsIcDHDIT8ujA9pf9?=
+ =?us-ascii?Q?dzRPXM42WFDnVl8kMuyENqUgWHIa/oWL/zo/HI5PGwOIkAneQPbuWQnBNI3a?=
+ =?us-ascii?Q?UXv29ceOhorByPI9iN8larKiV/4vuAmQoa72AMtEwLNKe4xuz6SBvBIblE9J?=
+ =?us-ascii?Q?PTRvTr8PwuONWDmaYuXp9pgKS2pcNt33oAu0rLcJTQuJdSqvVjnx6lSNPJFT?=
+ =?us-ascii?Q?bRGuKJbLqaTFCDiBHKcRBCp4CejVes8NtKR+9u3sFXTbiojDGw5MwyDyuuHx?=
+ =?us-ascii?Q?xE67qVUhdKtD5S40CvywM0qjnCNh/nxYHD9SYfHu/419xSdh1p/Vi87WvDvX?=
+ =?us-ascii?Q?NSBDKEkQpoOgSNL8bhyWyyqhjj/0DHxTpwN1tddIvCB3KwXAjNHyclvkAOX4?=
+ =?us-ascii?Q?Nek8mFuOf1EUb55Yyitc4p8EadR4Rjsx06jeotZKJhWpeOP2Z1h0EGk4R1HS?=
+ =?us-ascii?Q?hS2owUnr7jQrM0N4bieeWom96B796sqa5L5xX+mrt7bpgcoMv60eOF4Wlenp?=
+ =?us-ascii?Q?8G9gOasVjEzfnQoiGsfQlzqMafVCis8pMesZs72ztpA1mYCYGoKdxW2CAUPK?=
+ =?us-ascii?Q?8puLSatFcPFpsCbMG1z2Mpiz9UJVwNYyQZnTunRxZ/KtiRGHGqvFZyJ+Oikx?=
+ =?us-ascii?Q?9WyNjup6nuYMeh5hXw76nBXP7niw3cs+v82j6HHCIAVOfqWs23zaeh31t4GS?=
+ =?us-ascii?Q?+qcX/joIEni4S6oXJBGuCRUhI1RaiMfmovnp7PsooSwN6TJlQYnTjedV2zO1?=
+ =?us-ascii?Q?4lnPe5+9tITb+h1s4z0omRAEa1RMrjwoqKqbBuLlu+32nwspjtymHsqhEck?=
+ =?us-ascii?Q?=3D?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2956057a-2179-475a-5453-08dc8176c4e1
+X-MS-Exchange-CrossTenant-AuthSource: SEYPR01MB4221.apcprd01.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 May 2024 13:37:09.1772
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR01MB5352
 
-Hi,
+Sorry, I forgot add cc and to in the last email. This is a resend.
 
-On 5/31/24 3:29 PM, Andrew Lunn wrote:
->>> drivers/net/ethernet/realtek/r8169_leds.c:	led_cdev->hw_control_trigger = "netdev";
->>> drivers/net/ethernet/realtek/r8169_leds.c:	led_cdev->hw_control_trigger = "netdev";
->>> drivers/net/ethernet/intel/igc/igc_leds.c:	led_cdev->hw_control_trigger = "netdev";
->>> drivers/net/dsa/qca/qca8k-leds.c:		port_led->cdev.hw_control_trigger = "netdev";
->>> drivers/net/phy/phy_device.c:		cdev->hw_control_trigger = "netdev";
->>
->> Well those drivers combined, esp. with the generic phy_device in there
->> does mean that the ledtrig-netdev module now gets loaded on a whole lot
->> of x86 machines where before it would not.
-> 
-> phy_device will only do something if there is the needed Device Tree
-> properties. Given that very few systems use DT on x86, that should not
-> be an issue.
+On Fri, May 31, 2024 at 07:45:37AM +0800, Inochi Amaoto wrote:
+> The sensors of CV1800 support various periods, I think you should add
+> support for all of them and let user select them. The configuration
+> you use now can be left as the default.
 
-That is good to know.
+I will make sample period configurable in next revision.
 
-> So only x86 systems with r8169 and igc should have the
-> trigger module loaded because of this.
+> > +{
+> > +   return ((result * 1000) * 716 / 2048 - 273000);
+> > +}
+>
+> Why these magic number, I have not see any info in the document.
 
-Those are very popular NICs though, so that is still a lot of
-systems.
+Actually, there is no document of calculating real temperature from raw
+register value. The equation above is extracted from code provided by
+Sophgo.
 
-> It would be good to understand
-> why other systems have the trigger loaded.
+I have figured out meaning of part of the equation and could add some
+comments to document it.
 
-Actually my system has a RTL8168 ethernet NIC so the netdev trigger
-getting loaded there is expected.
-
-> However, as you say, this
-> will not fix the underlying deadlock, it will just limit it to systems with r8169
-> and igc...
-
-Right, given on the above discussion I believe that it likely already
-is limited to systems with Realtek r8169 or Intel i225 / i226 NICs.
-
-Regards,
-
-Hans
-
-
+---
+Haylen Chu
 
 
