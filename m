@@ -1,139 +1,345 @@
-Return-Path: <linux-kernel+bounces-196067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DDC58D56CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 02:15:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E11668D56D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 02:17:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 223C91F2446B
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 00:15:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CF3D1C22DB7
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 00:17:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07C584689;
-	Fri, 31 May 2024 00:15:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5784C17E9;
+	Fri, 31 May 2024 00:17:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="V9sq7c6a"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="qPRbn3vx"
+Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04B78A2D
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 00:15:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E862A2D;
+	Fri, 31 May 2024 00:17:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.120
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717114530; cv=none; b=twGlQ6xxTSJcpz6+vtMIHSIH68YQDBmXQy0wuqDjxl7gkDpoVYOmxE4Onrbn4bdVrpq6z6sM+MuqHMZ2dE/bEFTX0fODR8GrUC7DGa5FPwySL8mlvNtGCLVkQBmVFfVgLqJNyFJGSDatMNmxNqqSa36XdcLEHSzD476FhV6odBQ=
+	t=1717114653; cv=none; b=ujbSZZqv2TRMvUerodPq1QsgpANKimMQbeVo07gySHbNCPK9SjUFciEJvH7nrctNfQsOzIzE5UEJZhAX3iesldV8oLCXe6YXH209Im7/LubZLm59bPD9oGzdPyd++oTsrlg1cSQfW3rerOkqi3hvTnQpiLgR3rYZKyiwZpTzLbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717114530; c=relaxed/simple;
-	bh=7nKP05IzWghTs+/Gw47J0KfC5h+/qykfWVcjDmjOfu8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NlHXMGy2JaLlBi4TQe77XO0xTC2FrHFXv0qfNNXBbWGgbDLZ3SW6Z8+RBGGZBBcaPlULzO0LAeqnILM1SsYgg3Za1mhLdEK/8vojkfUDPkDD5XnZB3AVeg8g3SXigMLRv9E+IUhMSYiIZe0h3PvqHUnlAlyxLtH6h3DITdgnxjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=V9sq7c6a; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-702342c60dfso743842b3a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 17:15:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1717114528; x=1717719328; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ly6Hg6fq3SFJdw/SABaUUxx1i9TM3ssbdYm2uvWA8wY=;
-        b=V9sq7c6aAJFu0FRUa9ZGFMt/wWFYjH4y19K+ZzI9Megkm+kTIt2rpje98pCQSkgHIt
-         ZwnAxDJVpkUPyAIYxANwgtj2az6hcokddH8XJwEZya0SbdYUJsnnEc2Qg24SciAysxBe
-         9o+dY0jV5IWXg427KI3l5I54hvi9HpPTIGmPI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717114528; x=1717719328;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ly6Hg6fq3SFJdw/SABaUUxx1i9TM3ssbdYm2uvWA8wY=;
-        b=isUg3FJ1Hf3hArIZYX8AmRYFoy+lm/FVW7wL8mCLwUua7lfNrrwcDh32Ekch2pT7/y
-         zOGQCwnlY2ghId+0kZG6x9XwBJStagf4SN10RkbhEjKdsUw88OhfhCsaK9ZXQ6rLLA0s
-         GK250FYWQZRVd3S5Qq0udcL8wC33gJAz9vFH2V+cJBbxwLkZa9G4VeVEAnf8l9Lct4BI
-         91Dp1+uXXAtjA8jTEee3xnmEI2S2TeujTddpVz8H3+grjw6xpBjJG9wUJFX5hKLA5GV+
-         MXDI/QxL0ohNcZ6/qcbnK9CnnJwnpWCgjvAK4SLnpeaHyr3P/fs4PAFPiKJ1kNtyMRm4
-         tzzA==
-X-Gm-Message-State: AOJu0Ywos9fh1mtG7W1mISDdZIM2r1GyfF7zA6pTwSJtJMyawz/AtBDx
-	OM2ZlvU4JPYPcW8k9cwlwXPcYT9EApcqGhqVnmsV+nII2Psf0xB9qwIEI5t6QvU=
-X-Google-Smtp-Source: AGHT+IHeb2aBfkXVR2aVMGQWVHLHXhM/2FGmIHVkBpGH3BSzIwhsyflA8mjCjhg/M2bV3TLxm84qyg==
-X-Received: by 2002:a05:6a20:748a:b0:1b0:2826:9e2 with SMTP id adf61e73a8af0-1b26f16e5a1mr699040637.31.1717114528237;
-        Thu, 30 May 2024 17:15:28 -0700 (PDT)
-Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70242b0554csm308321b3a.170.2024.05.30.17.15.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 May 2024 17:15:27 -0700 (PDT)
-Date: Thu, 30 May 2024 17:15:25 -0700
-From: Joe Damato <jdamato@fastly.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	nalramli@fastly.com, "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	"open list:MELLANOX MLX5 core VPI driver" <linux-rdma@vger.kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Tariq Toukan <tariqt@nvidia.com>
-Subject: Re: [RFC net-next v3 0/2] mlx5: Add netdev-genl queue stats
-Message-ID: <ZlkWnXirc-NhQERA@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Jakub Kicinski <kuba@kernel.org>, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, nalramli@fastly.com,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	"open list:MELLANOX MLX5 core VPI driver" <linux-rdma@vger.kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Tariq Toukan <tariqt@nvidia.com>
-References: <20240529031628.324117-1-jdamato@fastly.com>
- <20240530171128.35bd0ee2@kernel.org>
+	s=arc-20240116; t=1717114653; c=relaxed/simple;
+	bh=H7tCCVPEhtbVNCp47eDFZGYYT2iVVSxxkPn8RyfoXbM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Bx7zvSy8BPQtbp0jy+rLwLF/4vVTPgY7OYEwuCGal/EOD7zpOLkEI336CdVUV0FK6c+ogi8cEAQoMxv95upWq8n/OPP8BxrqV8sTLKkBeiffxJ6DWFt7TwNOhCs3LOGzE4QaFoywpuqnCAwaCryh1D0UsmDcLzIZJVnNvKPE3DU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=qPRbn3vx; arc=none smtp.client-ip=185.125.188.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from [192.168.192.85] (unknown [50.39.103.33])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 6FB443F2D3;
+	Fri, 31 May 2024 00:17:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1717114642;
+	bh=LWLkudTUIuhdr50r/C/g2pBg3HcFsKT1WiMKmlwEVFU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type;
+	b=qPRbn3vxH5dx6ZFmd/zg+seQpPz7EBpsmIyv4LQQsZ70yYHE9TZqWervrheK1lNNC
+	 oUZY2WYwc1O4Bn2mgMigyE+/GHI0FYxA5LFGgJxycsG5ay2oq0u5//DZj8FcjQRwMI
+	 JVnDATv1j2m0kK9LePsSKxkIr4bulLjAAh9jB9il2LOajQfjgBGAgU1sxyeEuvI0TB
+	 wsyf+yYnTBXEIqyUV6dKu1lQ2d1XTVff4lbDPVFK9sqo4Et6IXmJhDNn/OBZmRYMSX
+	 POV94ssh4RPi79nE88syHpN7/M4mfEHEYXEMHiwpkaAsg8w9idr5l7MZ+zQDgcccvm
+	 VMX09rVcrMAWA==
+Message-ID: <9bfaeec2-535d-4401-8244-7560f660a065@canonical.com>
+Date: Thu, 30 May 2024 17:17:17 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240530171128.35bd0ee2@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC 0/9] Nginx refcount scalability issue with Apparmor enabled
+ and potential solutions
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>, paul@paul-moore.com,
+ jmorris@namei.org, serge@hallyn.com, linux-security-module@vger.kernel.org,
+ linux-kernel@vger.kernel.org, "Gautham R. Shenoy" <gautham.shenoy@amd.com>,
+ "Shukla, Santosh" <Santosh.Shukla@amd.com>,
+ "Narayan, Ananth" <Ananth.Narayan@amd.com>,
+ raghavendra.kodsarathimmappa@amd.com, koverstreet@google.com,
+ paulmck@kernel.org, boqun.feng@gmail.com, vinicius.gomes@intel.com
+References: <f184a2d6-7892-4e43-a0cd-cab638c3d5c2@amd.com>
+ <096178c9-91de-4752-bdc4-6a31bcdcbaf8@amd.com>
+ <4871a305-5d45-47d2-85f2-d718c423db80@canonical.com>
+ <CAGudoHFkDmGuPQDLf6rfiJxUdqFxjeeM-_9rFCApSrBYzfyRmA@mail.gmail.com>
+ <3b880c7c-0d19-4bb6-9f0f-fb69047f41cd@canonical.com>
+ <CAGudoHEycK3iTO2Rrsqr56_Lm69rCzMRaYz11NLrOcn5gKB3RA@mail.gmail.com>
+ <5c94947b-1f1f-44a7-8b9c-b701c78350b4@canonical.com>
+ <CAGudoHFxma+H_iHPV8+gfEkHc0uwFD8=rJtFy7ZE3TH+7tGiwQ@mail.gmail.com>
+ <78cfe966-33ec-4858-b114-57697e478109@canonical.com>
+ <82556a16-3390-4867-89b6-23e5ff168b89@amd.com>
+ <f9215243-5610-4838-a31c-5894b75905e6@canonical.com>
+ <CAGudoHH44-StgWJ_A8nLRT0g8p+-E0Ajen7Ns5-QRe17cohY0A@mail.gmail.com>
+Content-Language: en-US
+From: John Johansen <john.johansen@canonical.com>
+Autocrypt: addr=john.johansen@canonical.com; keydata=
+ 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 lT9Q
+Organization: Canonical
+In-Reply-To: <CAGudoHH44-StgWJ_A8nLRT0g8p+-E0Ajen7Ns5-QRe17cohY0A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, May 30, 2024 at 05:11:28PM -0700, Jakub Kicinski wrote:
-> On Wed, 29 May 2024 03:16:25 +0000 Joe Damato wrote:
-> > Worth noting that Tariq suggested I also export HTB/QOS stats in
-> > mlx5e_get_base_stats.
+On 5/30/24 02:47, Mateusz Guzik wrote:
+> On Thu, May 30, 2024 at 7:59 AM John Johansen
+> <john.johansen@canonical.com> wrote:
+>>
+>> On 5/29/24 21:19, Neeraj Upadhyay wrote:
+>>> Hi John,
+>>>
+>>> Thanks for taking a look at the series!
+>>>
+>>> On 5/29/2024 6:07 AM, John Johansen wrote:
+>>>> On 5/28/24 06:29, Mateusz Guzik wrote:
+>>>>> On Fri, May 24, 2024 at 11:52 PM John Johansen
+>>>>> <john.johansen@canonical.com> wrote:
+>>>>>>
+>>>>>> On 5/24/24 14:10, Mateusz Guzik wrote:
+>>>>>>> On Fri, Mar 8, 2024 at 9:09 PM John Johansen
+>>>>>>> <john.johansen@canonical.com> wrote:
+>>>>>>>>
+>>>>>>>> On 3/2/24 02:23, Mateusz Guzik wrote:
+>>>>>>>>> On 2/9/24, John Johansen <john.johansen@canonical.com> wrote:
+>>>>>>>>>> On 2/6/24 20:40, Neeraj Upadhyay wrote:
+>>>>>>>>>>> Gentle ping.
+>>>>>>>>>>>
+>>>>>>>>>>> John,
+>>>>>>>>>>>
+>>>>>>>>>>> Could you please confirm that:
+>>>>>>>>>>>
+>>>>>>>>>>> a. The AppArmor refcount usage described in the RFC is correct?
+>>>>>>>>>>> b. Approach taken to fix the scalability issue is valid/correct?
+>>>>>>>>>>>
+>>>>>>>>>>
+>>>>>>>>>> Hi Neeraj,
+>>>>>>>>>>
+>>>>>>>>>> I know your patchset has been waiting on review for a long time.
+>>>>>>>>>> Unfortunately I have been very, very busy lately. I will try to
+>>>>>>>>>> get to it this weekend, but I can't promise that I will be able
+>>>>>>>>>> to get the review fully done.
+>>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> Gentle prod.
+>>>>>>>>>
+>>>>>>>>> Any chances of this getting reviewed in the foreseeable future? Would
+>>>>>>>>> be a real bummer if the patchset fell through the cracks.
+>>>>>>>>>
+>>>>>>>>
+>>>>>>>> yes, sorry I have been unavailable for the last couple of weeks. I am
+>>>>>>>> now back, I have a rather large backlog to try catching up on but this
+>>>>>>>> is has an entry on the list.
+>>>>>>>>
+>>>>>>>
+>>>>>>> So where do we stand here?
+>>>>>>>
+>>>>>> sorry I am still trying to dig out of my backlog, I will look at this,
+>>>>>> this weekend.
+>>>>>>
+>>>>>
+>>>>> How was the weekend? ;)
+>>>>>
+>>>>
+>>>> lets say it was busy. Have I looked at this, yes. I am still digesting it.
+>>>> I don't have objections to moving towards percpu refcounts, but the overhead
+>>>> of a percpu stuct per label is a problem when we have thousands of labels
+>>>> on the system. That is to say, this would have to be a config option. We
+>>>> moved buffers from kmalloc to percpu to reduce memory overhead to reduce
+>>>> contention. The to percpu, to a global pool because the percpu overhead was
+>>>> too high for some machines, and then from a global pool to a hybrid scheme
+>>>> because of global lock contention. I don't see a way of doing that with the
+>>>> label, which means a config would be the next best thing.
+>>>>
+>>>
+>>> For the buffers, what was the percpu overhead roughly? For
+>>> thousands of labels, I think, the extra memory overhead roughly would
+>>> be in the range of few MBs (need to be profiled though). This extra
+>>> label overhead would be considered high for the machines where percpu
+>>> buffer overhead was considered high?
+>>>
+>>
+>> It of course varies. It was fixed at 2-8K per cpu core depending on the buffer
+>> size. So on a 192 cpu machine you we are talking a couple MBs. Obviously more
+>> on bigger machines. The problem here is say the percpu refcount while smaller
+>> per label, will be more in situations with lots of cpus. Which is fine if that
+>> is what it needs to be, but for other use cases tuning it to be smaller would
+>> be nice.
+>>
+>>
+>>> Please correct me here, so you are proposing that we use a kconfig to
+>>> use either 'struct percpu_ref' or a 'struct kref' (using a union maybe)
+>>> inside the 'struct aa_label' and update the refcount operations accordingly?
+>>> If yes, I will work on a patch with this kconfig based selection of
+>>> refcounting mode to see how it pans out.
+>>>
+>> possibly, I am still mulling over how we want to approach this
+>>
+>>> @Mateusz can you share the dynamic switching counter mode patch series please?
+>>>
+>> yes I am interested in looking at this as well.
+>>
 > 
-> Why to base, and not report them as queue stats?
+> https://lore.kernel.org/lkml/1356573611-18590-26-git-send-email-koverstreet@google.com/
 > 
-> Judging by mlx5e_update_tx_netdev_queues() calls sprinkled in
-> ../mlx5/core/en/htb.c it seems that the driver will update the
-> real_num_tx_queues accordingly. And from mlx5e_qid_from_qos()
-> it seems like the inverse calculation is:
+>>> In addition, for long term, there is an ongoing work (by Paul, Boqun and myself)
+>>> on implementing hazard pointers as a scalable refcounting scheme [1] in kernel,
+>>> which would not have memory usage overhead as in percpu refcount. At this point the
+>>> API design/implementation is in early prototype stage.
+>>>
+>>>
+>>> [1] https://docs.google.com/document/d/113WFjGlAW4m72xNbZWHUSE-yU2HIJnWpiXp91ShtgeE/edit?usp=sharing
+>>
+>> okay, I will take a look
+>>
+>>>
+>>>> Not part of your patch but something to be considered is that the label tree
+>>>> needs a rework, its locking needs to move to read side a read side lock less
+>>>> scheme, and the plan was to make it also use a linked list such that new
+>>>> labels are always queued at the end, allowing dynamically created labels to
+>>>> be lazily added to the tree.
+>>>>
+>>>
+>>> Read side would be rcu read lock protected in this scheme?
+>>> The linked list would store the dynamically created compound labels?
+>>> What is the advantage of using this lazy addition to the tree? We optimize
+>>> on the label search, addition/deletion for dynamic labels? The lazy addition
+>>> to the tree is done when a label find operation on the list succeeds?
+>>>
+>> there are contexts where we are creating labels, and do not want to wait on
+>> some of the longer tree walk profile updates/replacements. If a replacement is
+>> on going the idea is to just add the label to the end of a list and let the
+>> process that is doing the tree update take the hit of inserting and rebalancing
+>> the tree.
+>>
+>>
+>>>> I see the use of the kworker as problematic as well, especially if we are
+>>>> talking using kconfig to switch reference counting modes. I am futzing with
+>>>> some ideas, on how to deal with this.
+>>>>
+>>>
+>>> We can disable queuing of label reclaim work for non-percpu case?
+>>>
+>> maybe, I am pondering ways we can deal with this. I have been pondering the
+>> if we might be able to leverage a seqlock here, but I will also take a look
+>> at hazard pointers.
+>>
 > 
-> i - (chs->params.num_channels + is_ptp)*mlx5e_get_dcb_num_tc(&chs->params)
+> Since there is some elaborate talk going about this, let me throw in
+> my own $0,03 -- I may happen to have a simple solution which will sort
+> it out and it boils down to storing local ref updates in task_struct.
 > 
-> But really, isn't it enough to use priv->txq2sq[i] for the active
-> queues, and not active ones you've already covered?
+> Here is the context: creds are always refed and unrefed when creating
+> and destroying a file object. Should you have one instance of
+> credentials for a given user across different processes they would
+> serialize on updating the ref. Linux mostly dodges the problem by
+> always creating a copy on fork, thus only serializing within threads
+> of a given process. Even then that induces avoidable overhead if only
+> from single-threaded standpoint -- that's 2 atomics slapped for every
+> open/close cycle.
+> 
+so the apparmor label can and will update beyond the open/close cycle.
+Yes they are used in the cred as well but, for more than that. The
+apparmor label on file can be updated by other tasks, for various
+reasons.
 
-This is what I proposed in the thread for the v2, but Tariq
-suggested a different approach he liked more, please see this
-message for more details:
-
-  https://lore.kernel.org/netdev/68225941-f3c3-4335-8f3d-edee43f59033@gmail.com/
-
-I attempted to implement option 1 as he described in his message.
- 
-> > I am open to doing this, but I think if I were to do that, HTB/QOS queue
-> > stats should also be exported by rtnl so that the script above will
-> > continue to show that the output is correct.
-> > 
-> > I'd like to propose: adding HTB/QOS to both rtnl *and* the netdev-genl
-> > code together at the same time, but a later time, separate from this
-> > change.
+> $elsewhere I devised an idea where cred ref updates to creds matching
+> current->cred only modify a local counter. They get rolled up when
+> current->creds is changed. That is to say there is 0 atomics or
+> modifying memory seen by other cpus as long as the process does not
+> change creds, which almost never happens compared to how often refing
+> and unrefing is implemented.
 > 
-> Hm, are HTB queues really not counted in rtnl? That'd be pretty wrong.
+right, we do something like this for the task cred with a crit section
+marked out by
 
-As far as I can tell (and I could be wrong) I didn't see them
-included in the rtnl stats, but I'll take another look now.
+label = begin_current_label_crit_section()
+
+end_current_label_crit_section(label);
+
+if everything works out, no reference counts are taken. The purpose
+of the fns is to deal with the cases where for one reason or another
+a refcount needs to be taken (generally because of live policy
+replacement, and the task hasn't been able to update its cred yet).
+
+> In struct cred apart from regular refs you would have "user" counter
+> and "distributed" counter. switching user to > 0 grabs a normal ref on
+> creds, the value of the "distributed" counter is arbitrary as long as
+> user > 0. users going back to 0 means we can release the special ref
+> held for that purpose.
+> 
+So I don't see how this will generally help for labels which exist
+on many different objects.
+
+> I was considering implementing this for Linux. In my original code all
+> cred handling is augmented like this, but for Linux one could add a
+> dedicated get_cred_localref or similar machinery.
+> 
+
+sure, but I am not sure its needed. The rules for task creds is only
+task can update its cred. The task can look at its cred and do most
+things without having to take a count. Most cred refs should just
+be being taken for objects.
+
+> Skimming through apparmor suggests the bit which does cause
+> performance problems can be sorted out in the same manner.
+> 
+I don't see it. The file cred is very much updated live, async to
+the task cred. And while currently it always starts as the task
+cred, that won't even be true much longer.
+
+> Maybe i'll hack it up as a demo just for apparmor.
+> 
+> This would come with some extra space usage in task_struct which on
+> the surface may sounds like a non-starter. However, should you take a
+> look at the struct with pahole you will find it is riddles with
+> padding. If I wanted to I could add all fields I need to the struct
+> and not grow it on LP64.
+> 
+
 
