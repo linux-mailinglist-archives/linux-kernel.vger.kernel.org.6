@@ -1,176 +1,181 @@
-Return-Path: <linux-kernel+bounces-197210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 791AC8D6790
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 19:01:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CACD8D6792
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 19:01:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C6E41C24ED3
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:01:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AAD11F272CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:01:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9DEC1761B8;
-	Fri, 31 May 2024 17:00:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79F52172777;
+	Fri, 31 May 2024 17:01:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HGQc1jhI"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DA0rfTWW"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F63D171E4D
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 17:00:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00D92770FC
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 17:01:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717174845; cv=none; b=KkHbDv1xEXita0+7W7qSpVmQXGVw6I8cqjNa7BBbOMZxsmNGmZ1WnseszOkYDrYPTgwLaupUmRHuOZlz5KyP4vxjf3v3mPkV2tZvHBG7bKR/2Hdf5NUV2FuyQGs/bwKVhCo0dgRME7lRlwMoDywo7of+usjgv81NkU+xG/RSrBc=
+	t=1717174872; cv=none; b=HvMsTgp1cTKFk9EgdgLfTgzir+mC6+ZrRUazkYUx2a7LWGwv0BXxlH+gcQJvMUsabFVrghRQNTnn52rNG75pvqzPE6+y7N3BlAsc+GtbyicSY4hyzyb/qB3ZvZAw53IQCS/wNk36HfyKs7NAKFPwL/ifG2qwDRLLHLOfyNi/5+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717174845; c=relaxed/simple;
-	bh=1pUM/4LzJCDPYUEd3pPvnIewA7UpkqQbAeUUXYz1Tjc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=hUBBsTH3gayrF9fD9pPBKCzfGxN5PUvmetc1DNNfeL37nwgc40NYH5Oio3FNR2DigoEygaSSiSXnRXyhbzStdjTY8j1YAt8Cv+UUnbM3AUHsJ++EvjN/Zo9YfTGP4zMqSBUuw/+VVOhSz5piWtoG41EYOatzKAZFucwRxOafTtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HGQc1jhI; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a635a74e031so298073066b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 10:00:44 -0700 (PDT)
+	s=arc-20240116; t=1717174872; c=relaxed/simple;
+	bh=MCVV0IUaW6kQ8ECcAxm/dAlg6y+EfifG6LVOd37rQi8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aloX3b4oZmS49sFuMNQuZkvjYSqrGBbf6QlNFCUcZbfKLpUWrI+C35RBf1n7rtVZvfsR4xhNzdLwn1gybLVFOjNgg4MR+hjOmjvFo1SJv80R6ZYL+Z1Ll+ZQKKWoU+cKZ07lDki0iL743aXtBt/SlnuJzaldgVsoX8v8VJxBymo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DA0rfTWW; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52b03d66861so2525483e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 10:01:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717174843; x=1717779643; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8RvWgfQcQbuDCgGWUKetp1c/1qaJujsfwtgdILldRIk=;
-        b=HGQc1jhIZa45G1Do3u6Mubox6kNJFbD7R2BLfw0X6jclCSKob40l0+fmaa+sQWqyOD
-         X3OyAuM2QnVGzztRrrQtc0PoUhDFVbXKJPxFsl4Vw6jTPbVQM3Cnge6BIR2GXg+efdDQ
-         rlF9y924UsoalRO25HEReRuH6JosyWeqC2/Vmn26XQ5eK6Xrq2Divr40ZPl2GZQXMNi+
-         LW36KtJR4aDqSCQKW1/Ye7xgEgAwjFKfn3oEDc6wsFKMdG+bTh+8YrdhGKG4DXkoEz0u
-         R84VZJF5KFImLHp/BAnREXNail0nKKTxWB1BTrI9npvglALMsA75lSTCeF7NJTNRxb/A
-         MGMA==
+        d=gmail.com; s=20230601; t=1717174869; x=1717779669; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Kk2OxyZMtbnZSm/LI3qv3dX7yiLbidrXsgXiEDTxDig=;
+        b=DA0rfTWWcvBvcBoNvMczGEq2EA1zSt0lhuwkTXpqsyrYwEOEoSTQiQ+qdxCAJpwj/0
+         2cPW8GojcRxWyxUQVX+a5y9ONBFlXCKcfRUJr0CIHURKfb4rb/LSlMYzya/sQI67QQpK
+         Bp3mfK+fqI3bmi1McqJJ+1iJrp8exZfOkQC8Jq8SjOK5Cc8IOtSJjQBwhM1SqaHbgfX4
+         A7TxOH2LddqRxFok6hBIurO0L9eHRTZNtQ6RtOU8Iy3RUyDkmIEfylR3DHlndLRl6mfL
+         BwCzvGXfObZWATE0Col1sZEGNVpBAoAw5mzGgM9gBp/5fG2o58oYPjYFMgMv/b1yg31s
+         i0ag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717174843; x=1717779643;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1717174869; x=1717779669;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=8RvWgfQcQbuDCgGWUKetp1c/1qaJujsfwtgdILldRIk=;
-        b=KhsO3y1bcAKoOtJGPqFS+5PyQEowkV12u4FpEcuKBdJB3qD64kaiTzRUYD17N3O9+X
-         Y3I1mwgETNIGEgRg5osZhlTlH+fa6NDoNiupEB/NToZ5gSc2VrkRMUj3U3WLStghWA3O
-         bhHlGSFbt8Q7wvVFBToFtIZf3uYb4FRAg7f7+XfjEg/4yLiXB9O+o0Cj/NCovk0AXzJ9
-         mtYKEZ8ApXCM4Pl9ri+UoGkoV7mzB9iQ7cIOcWW9eao9+qo1DlFLPcgpAdnfA2qcilR/
-         /pzOKBCotUf36V8ghRJ2GQ6fOOevB8gVE0Wu71uMZzUjnNuw5Q4Ww1OcOBgadw+mcu+1
-         +0Fg==
-X-Forwarded-Encrypted: i=1; AJvYcCVjkp9T6mOI/ylgFNbsljYMEJi7ysH3M5mrmEZZNi3O5FRHVdXYFgNH/QaTB1DxmWK/mEnz4ReIGsxd0derz3vEKzQhsBITzCzVZBCt
-X-Gm-Message-State: AOJu0YxGTvuWDUcV6CsRlTgKVL9DBP5++0qvt5XrYWqrcqaiDXGUkhAU
-	uoVCLtOoCccCEGtLR1RoQwjSd97AmC5VnOXUa/gjvZ0o7ATzQvG6y7aQt5WO2Og=
-X-Google-Smtp-Source: AGHT+IFcQZGWvx4mTX70DHfOXQ6Y+dwwpe+FVJqr1aoFnH3uCubXyjdfCw4LL1F4v3RTRsM9ShdDCA==
-X-Received: by 2002:a17:906:3c06:b0:a5a:1a:b0e6 with SMTP id a640c23a62f3a-a681fc5ce7emr219899766b.9.1717174842576;
-        Fri, 31 May 2024 10:00:42 -0700 (PDT)
-Received: from [127.0.1.1] ([188.27.161.69])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a67e73f9a22sm105533166b.60.2024.05.31.10.00.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 May 2024 10:00:42 -0700 (PDT)
-From: Abel Vesa <abel.vesa@linaro.org>
-Date: Fri, 31 May 2024 20:00:32 +0300
-Subject: [PATCH 2/2] arm64: dts: qcom: x1e80100: Make the PCIe 6a PHY
- support 4 lanes mode
+        bh=Kk2OxyZMtbnZSm/LI3qv3dX7yiLbidrXsgXiEDTxDig=;
+        b=EdUtFNpOwJHFxDFBqtDC8Hiovfsf2mbNiYm8XP31jhfqDPaoOZcsBsmQkz32GyoLQo
+         8zgEsaqPM+BlIj1kTuEunaw0sLs/TJtMmS7vqOrKx2X/eeY78bnM0QQp8pO5JmrB3+at
+         kwjxRY+C8Bcc5Je/PkqKIn2FD1AVTrXyvdwdXKcVotHOkjonRFggDs2PYWYMcXD5YQf4
+         3MmnWajS6dIGtmGLEwTUqwsma3Ek19QXsr6zcmWwVB0hAfxJUEoNrOX/yNZ8ZnPJYpDQ
+         pTgP0d15adGBgOI2KLnATn4EbiyoIk0U1YOIYoJuiz6DdiH0s9HnGsAJkpSsUalpluyM
+         Svlw==
+X-Forwarded-Encrypted: i=1; AJvYcCUIQ05vy2DegHYNBnQ+32f7fMPmGtVLvlKnXYuJYOsXzaNUegYUA/XN9zceSVY40yaiA/PbEPCrgwZcXRq9h2YOPbNByY3XUxvdMy0P
+X-Gm-Message-State: AOJu0YzizrJjp2FYaT2iPCPBNY2IalwEBJ6iquLsnq8gaG235kFXuJdT
+	oT+MeuFUCtlBuLx61eJIbdqv39a2DLr3+JRkEXVFK2WMFtNzhbyBdYN4WQgNTWCrw/b2R7b6oe1
+	5paGmYZUK/PkA0FqXMso8+DComVdSiS8=
+X-Google-Smtp-Source: AGHT+IHxCIgS6NYmvG5MEiRmRGa6oGdPbwXQEDnCthSbwzaPYTdBq5ujEa1G9dE1/1TycMBDAriadVrN+vFmEGzfsiI=
+X-Received: by 2002:a05:6512:21c:b0:52b:8610:a7fd with SMTP id
+ 2adb3069b0e04-52b8980f6a3mr1349589e87.67.1717174868719; Fri, 31 May 2024
+ 10:01:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240531-x1e80100-dts-fixes-pcie6a-v1-2-1573ebcae1e8@linaro.org>
-References: <20240531-x1e80100-dts-fixes-pcie6a-v1-0-1573ebcae1e8@linaro.org>
-In-Reply-To: <20240531-x1e80100-dts-fixes-pcie6a-v1-0-1573ebcae1e8@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Rajendra Nayak <quic_rjendra@quicinc.com>, 
- Sibi Sankar <quic_sibis@quicinc.com>
-Cc: Johan Hovold <johan@kernel.org>, linux-arm-msm@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Abel Vesa <abel.vesa@linaro.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2178; i=abel.vesa@linaro.org;
- h=from:subject:message-id; bh=1pUM/4LzJCDPYUEd3pPvnIewA7UpkqQbAeUUXYz1Tjc=;
- b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBmWgI1Bd6Eclj0ezKyGl5ZYD3aiJquCHn6Dl6gM
- uuosgL7RCKJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZloCNQAKCRAbX0TJAJUV
- Viq2EADDwrkm5p1u8yij7aGc/LcZuRSWiPorDu7esQ/BXsaJLSmxP1BBF+Nlh9N6I5PSSnitYJA
- dJmdRstqSUF+anohoOndw4wcDoUIU6heLHGuTbmx8FCGU1NtJNoajiThIQcl81jVEf+qfx621Z0
- blDM3qcr1mxaQ5HEmP7cdZmR+dbmBCKITbHe0u5wdIZco1bRXM7PYVz/FMB7Derrx/oBJZt0p0G
- Qv6FNXwDwQC2UYmnm7rJlWar+1ZdxBn8K8giX4+KMybsEzBskNdPI7nKCmkEsds/zdmRJmBrpWo
- OUb44CgiicxAo58xTore8URPrxnWPA8Q0fWLXLUauXusDgigoppaOCvfYWja7ocum6+pQe6ANSu
- SYo8aG8uP8vutoR8WYZotYBL/HOmVTzHUR7/kET1cQcbHlG1WzoZ7Rnc1gXllt5+CQmdU70Mhxw
- IBkG8ZMpQHZYuVblyxqWdoWxTsz+MMBrZTObIlMWbao54It4q6K7cLe2nAg/+bV7pMZk29fanU8
- Zxq9JjKsAPZ7luoGxgKpvepKXuJOPnp1Cp4WC5ar/Cqc1rkbbb0rggqfG1bSBVuDD96nc+v/Klv
- l+yq0HBZEHBMdFqdYZXlBpPqnogQvJByWtP8zQu3I0tgr8UCaY3DbdTaYna7wji97q/VlJR/9uZ
- d4ury2UCo6h8Row==
-X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
- fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
+References: <20240531123512.21427-1-bp@kernel.org> <20240531123512.21427-11-bp@kernel.org>
+In-Reply-To: <20240531123512.21427-11-bp@kernel.org>
+From: Brian Gerst <brgerst@gmail.com>
+Date: Fri, 31 May 2024 13:00:55 -0400
+Message-ID: <CAMzpN2i4oJ-Dv0qO46Fd-DxNv5z9=x+vO+8g=47NiiAf8QEJYA@mail.gmail.com>
+Subject: Re: [PATCH 10/14] x86/alternative: Convert ALTERNATIVE_3()
+To: Borislav Petkov <bp@kernel.org>
+Cc: X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	"Borislav Petkov (AMD)" <bp@alien8.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-So the PCIe 6 can be configured in 4-lane mode or 2-lane mode. For
-4-lane mode, it fetches the lanes provided by PCIe 6b. For 2-lane mode,
-PCIe 6a uses 2 lanes and then PCIe 6b uses the other 2 lanes. Configure
-it in 4-lane mode and then each board can configure it depending on the
-design. Both the QCP and CRD boards, currently upstream, use the 6a for
-NVMe in 4-lane mode. Also, mark the controller as 4-lane as well.
+On Fri, May 31, 2024 at 8:41=E2=80=AFAM Borislav Petkov <bp@kernel.org> wro=
+te:
+>
+> From: "Borislav Petkov (AMD)" <bp@alien8.de>
+>
+> Fixup label numbering too as the new macros have new label numbers.
+>
+> Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+> ---
+>  arch/x86/include/asm/alternative.h | 24 ++++--------------------
+>  arch/x86/kernel/fpu/xstate.h       |  4 ++--
+>  2 files changed, 6 insertions(+), 22 deletions(-)
+>
+> diff --git a/arch/x86/include/asm/alternative.h b/arch/x86/include/asm/al=
+ternative.h
+> index 73ee18705ef1..0df99855e003 100644
+> --- a/arch/x86/include/asm/alternative.h
+> +++ b/arch/x86/include/asm/alternative.h
+> @@ -277,26 +277,10 @@ static inline int alternatives_text_reserved(void *=
+start, void *end)
+>         N_ALTERNATIVE_2(oldinstr, newinstr_no, X86_FEATURE_ALWAYS,      \
+>                       newinstr_yes, ft_flags)
+>
+> -#define ALTERNATIVE_3(oldinsn, newinsn1, ft_flags1, newinsn2, ft_flags2,=
+ \
+> -                       newinsn3, ft_flags3)                            \
+> -       OLDINSTR_3(oldinsn, 1, 2, 3)                                    \
+> -       ".pushsection .altinstructions,\"a\"\n"                         \
+> -       ALTINSTR_ENTRY(ft_flags1, 1)                                    \
+> -       ALTINSTR_ENTRY(ft_flags2, 2)                                    \
+> -       ALTINSTR_ENTRY(ft_flags3, 3)                                    \
+> -       ".popsection\n"                                                 \
+> -       ".pushsection .altinstr_replacement, \"ax\"\n"                  \
+> -       ALTINSTR_REPLACEMENT(newinsn1, 1)                               \
+> -       ALTINSTR_REPLACEMENT(newinsn2, 2)                               \
+> -       ALTINSTR_REPLACEMENT(newinsn3, 3)                               \
+> -       ".popsection\n"
+> -
+> -
+> -#define N_ALTERNATIVE_3(oldinst, newinst1, flag1, newinst2, flag2,     \
+> -                     newinst3, flag3)                                  \
+> -       N_ALTERNATIVE(N_ALTERNATIVE_2(oldinst, newinst1, flag1, newinst2,=
+ flag2), \
+> -                     newinst3, flag3)
+> -
+> +#define ALTERNATIVE_3(oldinstr, newinstr1, ft_flags1, newinstr2, ft_flag=
+s2, \
+> +                       newinstr3, ft_flags3)                           \
+> +       N_ALTERNATIVE(N_ALTERNATIVE_2(oldinstr, newinstr1, ft_flags1, new=
+instr2, ft_flags2), \
+> +                     newinstr3, ft_flags3)
+>  /*
+>   * Alternative instructions for different CPU types or capabilities.
+>   *
+> diff --git a/arch/x86/kernel/fpu/xstate.h b/arch/x86/kernel/fpu/xstate.h
+> index 05df04f39628..4fe8501efc6c 100644
+> --- a/arch/x86/kernel/fpu/xstate.h
+> +++ b/arch/x86/kernel/fpu/xstate.h
+> @@ -108,7 +108,7 @@ static inline u64 xfeatures_mask_independent(void)
+>   *
+>   * We use XSAVE as a fallback.
+>   *
+> - * The 661 label is defined in the ALTERNATIVE* macros as the address of=
+ the
+> + * The 771 label is defined in the ALTERNATIVE* macros as the address of=
+ the
+>   * original instruction which gets replaced. We need to use it here as t=
+he
+>   * address of the instruction where we might get an exception at.
+>   */
+> @@ -120,7 +120,7 @@ static inline u64 xfeatures_mask_independent(void)
+>                      "\n"                                               \
+>                      "xor %[err], %[err]\n"                             \
+>                      "3:\n"                                             \
+> -                    _ASM_EXTABLE_TYPE_REG(661b, 3b, EX_TYPE_EFAULT_REG, =
+%[err]) \
+> +                    _ASM_EXTABLE_TYPE_REG(771b, 3b, EX_TYPE_EFAULT_REG, =
+%[err]) \
+>                      : [err] "=3Dr" (err)                                =
+ \
+>                      : "D" (st), "m" (*st), "a" (lmask), "d" (hmask)    \
+>                      : "memory")
+> --
+> 2.43.0
+>
+>
 
-Fixes: 5eb83fc10289 ("arm64: dts: qcom: x1e80100: Add PCIe nodes")
-Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
----
- arch/arm64/boot/dts/qcom/x1e80100.dtsi | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+Just add a label at the start of this macro, so it doesn't depend on
+the internal labels of ALTERNATIVE().  Something like:
+    asm volatile("1:" ALTERNATIVE_3(XSAVE, \
+    ...
+     _ASM_EXTABLE_TYPE_REG(1b, 3b, EX_TYPE_EFAULT_REG, %[err]) \
+    ...
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-index fe7ca2a73f9d..17e4c5cda22d 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-+++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-@@ -2838,7 +2838,7 @@ pcie6a: pci@1bf8000 {
- 			dma-coherent;
- 
- 			linux,pci-domain = <7>;
--			num-lanes = <2>;
-+			num-lanes = <4>;
- 
- 			interrupts = <GIC_SPI 773 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 774 IRQ_TYPE_LEVEL_HIGH>,
-@@ -2903,19 +2903,21 @@ &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
- 		};
- 
- 		pcie6a_phy: phy@1bfc000 {
--			compatible = "qcom,x1e80100-qmp-gen4x2-pcie-phy";
--			reg = <0 0x01bfc000 0 0x2000>;
-+			compatible = "qcom,x1e80100-qmp-gen4x4-pcie-phy";
-+			reg = <0 0x01bfc000 0 0x2000>,
-+			      <0 0x01bfe000 0 0x2000>;
- 
- 			clocks = <&gcc GCC_PCIE_6A_PHY_AUX_CLK>,
- 				 <&gcc GCC_PCIE_6A_CFG_AHB_CLK>,
- 				 <&rpmhcc RPMH_CXO_CLK>,
- 				 <&gcc GCC_PCIE_6A_PHY_RCHNG_CLK>,
--				 <&gcc GCC_PCIE_6A_PIPE_CLK>;
-+				 <&gcc GCC_PCIE_6A_PIPEDIV2_CLK>;
- 			clock-names = "aux",
- 				      "cfg_ahb",
- 				      "ref",
- 				      "rchng",
--				      "pipe";
-+				      "pipe",
-+				      "pipediv2";
- 
- 			resets = <&gcc GCC_PCIE_6A_PHY_BCR>,
- 				 <&gcc GCC_PCIE_6A_NOCSR_COM_PHY_BCR>;
-@@ -2927,6 +2929,8 @@ pcie6a_phy: phy@1bfc000 {
- 
- 			power-domains = <&gcc GCC_PCIE_6_PHY_GDSC>;
- 
-+			qcom,4ln-config-sel = <&tcsr 0x1a000 0>;
-+
- 			#clock-cells = <0>;
- 			clock-output-names = "pcie6a_pipe_clk";
- 
 
--- 
-2.34.1
-
+Brian Gerst
 
