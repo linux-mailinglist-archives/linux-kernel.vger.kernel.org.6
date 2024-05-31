@@ -1,170 +1,107 @@
-Return-Path: <linux-kernel+bounces-197347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4C2A8D6993
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 21:17:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53D488D6996
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 21:17:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3495FB26558
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 19:17:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C2F02838D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 19:17:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 011D7183986;
-	Fri, 31 May 2024 19:15:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 819A417D376;
+	Fri, 31 May 2024 19:15:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rfluF7TZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="REdAg7gc"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D29D17DE1D;
-	Fri, 31 May 2024 19:14:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 567C98063C;
+	Fri, 31 May 2024 19:15:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717182900; cv=none; b=WaKzJlZWHVqp8DvmBAZedB/KNJF8Axe0Q4N06u/0FgyGgn+gKIA7FrZ/GW71+a8VR6X3DkkXGBjhkeM3mJK9M5GOESRd6L334GfVIqhEFbWnw3R0IWYpwGOINK3GOvONpY8gxD6o0e+1FHoQDMsNICGIWaJ8AN1G85Rdw2DHhM4=
+	t=1717182918; cv=none; b=Ft6Nm2WkI21vZGjOhgL3h+GI2s6uE2FjFdr44HddbUGrfuG8YuRGgfCFbIYWXceKiDqFcGjncytRxQX4KPAn56/CZE4+VZT0P7dixOepdFl/T7lS3VowFjOXu3DvQQuBGBaZMTGdR/yL+m38KVnm+H+jhn9YWcOBkhow6gsRoJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717182900; c=relaxed/simple;
-	bh=Mz67Iw49GR9dHuxCXZEK5DP7jtaPkYbVmfaXomUh4Hg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=X2VBwwyT6chmqpgkNmbCJ2a8Nb0MdB/yIxzPymQ7boXn4mbsdASgy42hUbnBfXD9NQO37v9QjgYUaIIBg0H8MvjtStc/jgHUCFCuRUqaBFjIY+oysDGcz2aRjXsU9VDU45VcpdnTrihrKY0fAjuEU1QlGxfrVjVGdDHzNoKXS5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rfluF7TZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C83B3C4AF14;
-	Fri, 31 May 2024 19:14:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717182899;
-	bh=Mz67Iw49GR9dHuxCXZEK5DP7jtaPkYbVmfaXomUh4Hg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=rfluF7TZUaUoGLyXwpABguT3qbLtGxJfRuvK1/sobxp2PtxVb1OvM+4f6W0OqHeBZ
-	 HVCzHLuNgSXNbiDvOWo9b7sp150CFJMu2u5Um36A0qhgQrBPy7TMnrLGv3uzbjkyag
-	 ETb5sbk1uj1K2LerZ6n2j87yVt5dO/HIggUL9fZR7Aul0NbBjm/n43QC1+Hv51nB1k
-	 mp09o+nVaHmN5D0x1KPcjGlapgB2ZG4WFgEWl5AlJB9c52+E8mPLywMYlQsclIHxnr
-	 9KCd1BNYNPs9QuW+MPJzXFiKHsSxEdrofPeS5TkNIhK1n3PkfEQEpc0GwQ/T7EUEsr
-	 q8HVHOW9Ln5Yw==
-From: Kees Cook <kees@kernel.org>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Kees Cook <kees@kernel.org>,
-	"GONG, Ruiqi" <gongruiqi@huaweicloud.com>,
-	Xiu Jianfeng <xiujianfeng@huawei.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	Jann Horn <jannh@google.com>,
-	Matteo Rizzo <matteorizzo@google.com>,
-	jvoisin <julien.voisin@dustri.org>,
-	linux-mm@kvack.org,
-	Christoph Lameter <cl@linux.com>,
-	Pekka Enberg <penberg@kernel.org>,
-	David Rientjes <rientjes@google.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-	Thomas Graf <tgraf@suug.ch>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [PATCH v4 6/6] mm/util: Use dedicated slab buckets for memdup_user()
-Date: Fri, 31 May 2024 12:14:58 -0700
-Message-Id: <20240531191458.987345-6-kees@kernel.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240531191304.it.853-kees@kernel.org>
-References: <20240531191304.it.853-kees@kernel.org>
+	s=arc-20240116; t=1717182918; c=relaxed/simple;
+	bh=DUlJAMG6VtwvoyO4lKU2qtv4Guzyd5yLV54zhkBQpLU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Brg5A8Bjg7BTqw2wKVYD3AjVM84P6/1X4Y3grG9/jjmaJLW30v6lJ5KhBMt3rUygJuH60D3zPfJh8FSsUoXwIppNZXHddGfmudf3Mu8uWsiKC8vDy1nTZsahSJt+OA4OJk9j0WzvNqI0FDs3lBR/RfsNPFWAsR+6RXUCTZbDOz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=REdAg7gc; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=u/g1j5mYG7Zir9s2o+HTGAW2a6hjFEiH6+1szjteCnM=; b=REdAg7gcqz7o0aDLXsHBfdUAKm
+	dMQye5x6Cg/sTyaN2LgZPWLcQCXBi5N1sMfl1vBsqep8+qae8DmlDu/Knj9Pjl0aytbFbzYKOZkYG
+	3mx8cJrHSqb+Kef+HbwTaV3AvRis9iBPCxIcpTYprbif9Q5LORgiDtPxnDU5656xX0XUqVbXnGNqG
+	J70a80uI9zh2UOLhiyCxZuH/JusIiLqTOlfzcG1vQxaMPBl78ggV9Emr/340N1mmS3lbzZKnRlzhF
+	3WX06z4JAVIxEtsksR/gEQMvQp6m7J+x3/V9KtA/27wZVB75paUBrx7NRfwrWSOImhHM76FR1hn4d
+	vrs7hs4g==;
+Received: from [50.53.4.147] (helo=[192.168.254.15])
+	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sD7ie-0000000BDZx-3TST;
+	Fri, 31 May 2024 19:15:16 +0000
+Message-ID: <d3f7e1c5-5945-48c0-b263-e09979a987a3@infradead.org>
+Date: Fri, 31 May 2024 12:15:16 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3128; i=kees@kernel.org; h=from:subject; bh=Mz67Iw49GR9dHuxCXZEK5DP7jtaPkYbVmfaXomUh4Hg=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBmWiGxTogF+aXNFJapX/Rt8xhEoMFuFnyE/DJdq wqt+/Xyp5mJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCZlohsQAKCRCJcvTf3G3A JjfaD/9HhI1ZsSAtkAsPWK/ezBjLTmg9GWtl4cRE5dSCRoRpeonv9zJFzQSi/z6q8G0WsUdqG3O q3/OwvDkzuj5PVGBcnx18cxE+4jWy8wzjmDguTWCRaey3mtxit/8c4XHxisL60NntcKaMbwh1TN oi5hUUUDQgI71vHIiuoXRO7zD2LY7dCXiUhbTkKyehfUbQRNzSdc/2Pk73vDhtorWRkwDBJmAt0 uJkgJBPYxsUVHdzXRNgA49jdAloxUMLEOmlZE05GQz2kMjakueNT/8zW4hXJ7jhtvqRqOReYkWa CEnpQa2OzgwYHWFfEWJWI7MsyPy4M4h8Wy4r9jHIAPv1ZI/zkUTPZU9UmIpqDWi86FrEhYHDeqP 4CzdIm2QHlf9rFaFB3G8u+OmTO+U4UQPGxK10sZ/JNM5bmYPRvtF136Lz2cZZp6pDXpW5RIA31c pW3P212pGt3TZNiDXGRd6TG/m06XADFHeuA1H2z1/DCG0Pn0C2r1aG4jC/EWrlOH+81naGmWRHk YVXH7L3KauzmbodVlUZRHUYFlOFEtHjHjfnJWGZw1CIhpNZexJHeN8T4/Fl3NWTgqC6GdfKMkWI xvelqd86qCJCCvYtZVCbFr4MHOoTH1oyU+I8dvyKYQlqyqeJi07lpI6JnOevOTL03LyuLUsgq9e +5WiQK2W0zfBIpA==
-X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v16 4/5] random: introduce generic vDSO getrandom()
+ implementation
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>, linux-kernel@vger.kernel.org,
+ patches@lists.linux.dev, tglx@linutronix.de
+Cc: linux-crypto@vger.kernel.org, linux-api@vger.kernel.org, x86@kernel.org,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
+ Carlos O'Donell <carlos@redhat.com>, Florian Weimer <fweimer@redhat.com>,
+ Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
+ Christian Brauner <brauner@kernel.org>,
+ David Hildenbrand <dhildenb@redhat.com>
+References: <20240528122352.2485958-1-Jason@zx2c4.com>
+ <20240528122352.2485958-5-Jason@zx2c4.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20240528122352.2485958-5-Jason@zx2c4.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Both memdup_user() and vmemdup_user() handle allocations that are
-regularly used for exploiting use-after-free type confusion flaws in
-the kernel (e.g. prctl() PR_SET_VMA_ANON_NAME[1] and setxattr[2][3][4]
-respectively).
 
-Since both are designed for contents coming from userspace, it allows
-for userspace-controlled allocation sizes. Use a dedicated set of kmalloc
-buckets so these allocations do not share caches with the global kmalloc
-buckets.
 
-After a fresh boot under Ubuntu 23.10, we can see the caches are already
-in active use:
+On 5/28/24 5:19 AM, Jason A. Donenfeld wrote:
+> +/**
+> + * __cvdso_getrandom_data - Generic vDSO implementation of getrandom() syscall.
+> + * @rng_info:		Describes state of kernel RNG, memory shared with kernel.
+> + * @buffer:		Destination buffer to fill with random bytes.
+> + * @len:		Size of @buffer in bytes.
+> + * @flags:		Zero or more GRND_* flags.
+> + * @opaque_state:	Pointer to an opaque state area.
+> + *
+> + * This implements a "fast key erasure" RNG using ChaCha20, in the same way that the kernel's
+> + * getrandom() syscall does. It periodically reseeds its key from the kernel's RNG, at the same
+> + * schedule that the kernel's RNG is reseeded. If the kernel's RNG is not ready, then this always
+> + * calls into the syscall.
+> + *
+> + * @opaque_state *must* be allocated using the vgetrandom_alloc() syscall.  Unless external locking
+> + * is used, one state must be allocated per thread, as it is not safe to call this function
+> + * concurrently with the same @opaque_state. However, it is safe to call this using the same
+> + * @opaque_state that is shared between main code and signal handling code, within the same thread.
+> + *
+> + * Returns the number of random bytes written to @buffer, or a negative value indicating an error.
 
- # grep ^memdup /proc/slabinfo
- memdup_user-8k         4      4   8192    4    8 : ...
- memdup_user-4k         8      8   4096    8    8 : ...
- memdup_user-2k        16     16   2048   16    8 : ...
- memdup_user-1k         0      0   1024   16    4 : ...
- memdup_user-512        0      0    512   16    2 : ...
- memdup_user-256        0      0    256   16    1 : ...
- memdup_user-128        0      0    128   32    1 : ...
- memdup_user-64       256    256     64   64    1 : ...
- memdup_user-32       512    512     32  128    1 : ...
- memdup_user-16      1024   1024     16  256    1 : ...
- memdup_user-8       2048   2048      8  512    1 : ...
- memdup_user-192        0      0    192   21    1 : ...
- memdup_user-96       168    168     96   42    1 : ...
+    * Returns:
 
-Link: https://starlabs.sg/blog/2023/07-prctl-anon_vma_name-an-amusing-heap-spray/ [1]
-Link: https://duasynt.com/blog/linux-kernel-heap-spray [2]
-Link: https://etenal.me/archives/1336 [3]
-Link: https://github.com/a13xp0p0v/kernel-hack-drill/blob/master/drill_exploit_uaf.c [4]
-Signed-off-by: Kees Cook <kees@kernel.org>
----
-Cc: "GONG, Ruiqi" <gongruiqi@huaweicloud.com>
-Cc: Xiu Jianfeng <xiujianfeng@huawei.com>
-Cc: Suren Baghdasaryan <surenb@google.com>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Jann Horn <jannh@google.com>
-Cc: Matteo Rizzo <matteorizzo@google.com>
-Cc: jvoisin <julien.voisin@dustri.org>
-Cc: linux-mm@kvack.org
----
- mm/util.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
 
-diff --git a/mm/util.c b/mm/util.c
-index 53f7fc5912bd..f30460c82641 100644
---- a/mm/util.c
-+++ b/mm/util.c
-@@ -198,6 +198,16 @@ char *kmemdup_nul(const char *s, size_t len, gfp_t gfp)
- }
- EXPORT_SYMBOL(kmemdup_nul);
- 
-+static kmem_buckets *user_buckets __ro_after_init;
-+
-+static int __init init_user_buckets(void)
-+{
-+	user_buckets = kmem_buckets_create("memdup_user", 0, 0, 0, INT_MAX, NULL);
-+
-+	return 0;
-+}
-+subsys_initcall(init_user_buckets);
-+
- /**
-  * memdup_user - duplicate memory region from user space
-  *
-@@ -211,7 +221,7 @@ void *memdup_user(const void __user *src, size_t len)
- {
- 	void *p;
- 
--	p = kmalloc_track_caller(len, GFP_USER | __GFP_NOWARN);
-+	p = kmem_buckets_alloc_track_caller(user_buckets, len, GFP_USER | __GFP_NOWARN);
- 	if (!p)
- 		return ERR_PTR(-ENOMEM);
- 
-@@ -237,7 +247,7 @@ void *vmemdup_user(const void __user *src, size_t len)
- {
- 	void *p;
- 
--	p = kvmalloc(len, GFP_USER);
-+	p = kmem_buckets_valloc(user_buckets, len, GFP_USER);
- 	if (!p)
- 		return ERR_PTR(-ENOMEM);
- 
+> + */
+
 -- 
-2.34.1
-
+#Randy
+https://people.kernel.org/tglx/notes-about-netiquette
+https://subspace.kernel.org/etiquette.html
 
