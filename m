@@ -1,88 +1,117 @@
-Return-Path: <linux-kernel+bounces-196401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A0B08D5B57
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 09:25:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F3E88D5B5A
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 09:25:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC33E1C20DD6
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 07:25:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91ACE1C2157E
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 07:25:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C98F781204;
-	Fri, 31 May 2024 07:24:59 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19A5081724;
+	Fri, 31 May 2024 07:25:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="YPIXj5EK"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E3747FBDA;
-	Fri, 31 May 2024 07:24:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD44F7FBDA;
+	Fri, 31 May 2024 07:25:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717140299; cv=none; b=HCrYWVa183QucSZ+aYWYZyRYord2YCPxqqjX7A4NO2RUSfhTCGywnApZORqNmesVMhMfBqCBbHVbfbWqC4h8MA8A3EiP7jMqnPayqZf4vjxGEZbcZyDy1yen82SRlGbs9QBkGRmMOxVh/zWlmw8SPSXSqMYV4692sXb///61O6I=
+	t=1717140349; cv=none; b=uV2oeV2SgxT+cVkMzZqZ/8bvqzJwZZcaUuYOJbhHOPYglltyTyQYv3LY3WQ37d/q74LYn3A0x1F5jMWEmm6LegcSM0aH9kyllsQ1TbCtzebt+1HY38wHmvn9L3SfZ3RajK5i/Q0i3RBVsI1w0eu80AO1zifINPb/cgXAE4pq7NE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717140299; c=relaxed/simple;
-	bh=V35cqtk9XTo/2IpnTDToiE7mqkZ1wlRTu8Z37svt7cY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cZSMfJrImO7zOWu57pX7a726Cbm3DSRupxXpRsQCKhIiKqvi8vIBRW5BRT9mXTFxd/LU/rVpWZEZLW4EfHF4HJ3UnCWWGwE9GOmJiRX/cD+NdNi03fJ8lAcbtTijSWriTe8yH448T/FI3JTGJ9zVLsCyMz61EEVoxVIY46uregs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2C7CC116B1;
-	Fri, 31 May 2024 07:24:57 +0000 (UTC)
-Date: Fri, 31 May 2024 03:24:25 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: Tom Zanussi <tom.zanussi@linux.intel.com>, LKML
- <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/3] tracing: Fix some selftest issues
-Message-ID: <20240531032425.3635dc93@rorschach.local.home>
-In-Reply-To: <20240531113721.c0314e0cdb3beb70c1a6ba7d@kernel.org>
-References: <171671825710.39694.6859036369216249956.stgit@devnote2>
-	<20240527192907.49c9220f@rorschach.local.home>
-	<20240529014640.3a04f7301f12eb44738f9f2d@kernel.org>
-	<20240529083818.b7835de167191d4567405ce6@kernel.org>
-	<3a7e679712fb47b6c75af84163b5d3ea252f4da9.camel@linux.intel.com>
-	<20240531113721.c0314e0cdb3beb70c1a6ba7d@kernel.org>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1717140349; c=relaxed/simple;
+	bh=9hfWcXMuYGMPfhmaRRJ51XoHYVqx1Ee7zCNj8NIgJbA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eBeO3Vw1+HGpjX0uMxHjbFXmI5jDX72SWr70N/q9vTmp8GPxcA0DQ9geDbJVyU1nu1BvliDZxLZIGwbxTb4K5CR7HPPxDOBovH2G+BVaie7NViOCg0Mcv9PZNR3kxsNczjbNoQN6hmN9WwNfurPfFtEteDYPvlvQWUkfxVse4tc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=YPIXj5EK; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1717140346;
+	bh=9hfWcXMuYGMPfhmaRRJ51XoHYVqx1Ee7zCNj8NIgJbA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YPIXj5EK4gw4TuewdLSslkB1LtTSIi/e9jlIde0LJynoRt8Uep9SW6IBY3ev49rVt
+	 RdvUbqtXpb4ykAoni8wv8RsI/6yAJhMU35Y0kt5qsVdikH8MfjEnKps3k7G5BA1PID
+	 ggVBhkZgK8iL0XUQgbDDgFHigOg404V4QiF8PKhOAr8sLRPBzrBFj4OHKpCh+97wQF
+	 NN4HIemgc3A9Hvyk/sX3oNldHGiL39/www8y3achbAWC5wIIC/wLaqyC/e7EohC0jC
+	 DBgxeamNl9g1MOm2zwerZEdScGI/rVUuMgUUDWcdvJziKsW+koNRUWFEeZ8ElqyMlM
+	 UJlhiKf0+eiMw==
+Received: from localhost (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sebastianfricke)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id B508B37820CD;
+	Fri, 31 May 2024 07:25:45 +0000 (UTC)
+Date: Fri, 31 May 2024 09:25:44 +0200
+From: Sebastian Fricke <sebastian.fricke@collabora.com>
+To: Nas Chung <nas.chung@chipsnmedia.com>
+Cc: mchehab@kernel.org, linux-media@vger.kernel.org,
+	m.tretter@pengutronix.de, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] media: uapi: v4l: Change V4L2_TYPE_IS_CAPTURE
+ condition
+Message-ID: <20240531072544.c3tw2uy25zctgs2j@basti-XPS-13-9310>
+References: <20240528020425.4994-1-nas.chung@chipsnmedia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20240528020425.4994-1-nas.chung@chipsnmedia.com>
 
-On Fri, 31 May 2024 11:37:21 +0900
-Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
+Hey Nas,
 
-> So, in summary, it is designed to be a module. Steve, I think these tests
-> should be kept as modules. There are many reason to do so.
-> 
->  - This test is designed to be used as module.
->  - This can conflict with other boot time selftest if it is embedded.
->  - We can make these tests and boot time selftest mutable exclusive but
->    if we make these tests as modules, we can build and run both tests
->    safely.
->  - Embedding these tests leave new events when the kernel boot, which
->    user must be cleaned up by manual.
-> 
-> What would you think?
+just before you send out V3 ...
 
-I was mostly following what Ingo told me long ago, where having it
-built in is just one more way to test it ;-)
+On 28.05.2024 11:04, Nas Chung wrote:
+>Explicitly compare a buffer type only with valid buffer types,
+>to avoid matching the buffer type outside of valid buffer
+>type set.
 
-But that said, from your first patch, you show the stack dump and
-mention:
+s/matching the buffer type outside of valid buffer type set/
+   matching a buffer type outside of the valid buffer type set/
 
-> Since the kprobes and synth event generation tests adds and enable
-> generated events in init_module() and delete it in exit_module(),
-> if we make it as built-in, those events are left in kernel and cause
-> kprobe event self-test failure.
+Regards,
+Sebastian
 
-But you don't explain what exactly the conflict is. What about those
-events causes kprobe selftests to fail?
-
-
--- Steve
+>Signed-off-by: Nas Chung <nas.chung@chipsnmedia.com>
+>---
+> include/uapi/linux/videodev2.h | 7 ++++++-
+> 1 file changed, 6 insertions(+), 1 deletion(-)
+>
+>diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+>index fe6b67e83751..fa2b7086e480 100644
+>--- a/include/uapi/linux/videodev2.h
+>+++ b/include/uapi/linux/videodev2.h
+>@@ -157,6 +157,10 @@ enum v4l2_buf_type {
+> 	V4L2_BUF_TYPE_PRIVATE              = 0x80,
+> };
+>
+>+#define V4L2_TYPE_IS_VALID(type)		\
+>+	((type) >= V4L2_BUF_TYPE_VIDEO_CAPTURE	\
+>+	 && (type) <= V4L2_BUF_TYPE_META_OUTPUT)
+>+
+> #define V4L2_TYPE_IS_MULTIPLANAR(type)			\
+> 	((type) == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE	\
+> 	 || (type) == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE)
+>@@ -171,7 +175,8 @@ enum v4l2_buf_type {
+> 	 || (type) == V4L2_BUF_TYPE_SDR_OUTPUT			\
+> 	 || (type) == V4L2_BUF_TYPE_META_OUTPUT)
+>
+>-#define V4L2_TYPE_IS_CAPTURE(type) (!V4L2_TYPE_IS_OUTPUT(type))
+>+#define V4L2_TYPE_IS_CAPTURE(type)	\
+>+	(V4L2_TYPE_IS_VALID(type) && !V4L2_TYPE_IS_OUTPUT(type))
+>
+> enum v4l2_tuner_type {
+> 	V4L2_TUNER_RADIO	     = 1,
+>-- 
+>2.25.1
+>
 
