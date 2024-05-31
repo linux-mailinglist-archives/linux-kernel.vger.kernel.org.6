@@ -1,106 +1,131 @@
-Return-Path: <linux-kernel+bounces-197607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 785B88D6D03
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 01:50:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 562CC8D6D06
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 01:52:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09F991F26E46
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 23:50:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1144C2861F7
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 23:52:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28F7912FB27;
-	Fri, 31 May 2024 23:50:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BA5212FB34;
+	Fri, 31 May 2024 23:52:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="VZZYs8IA"
-Received: from out-175.mta1.migadu.com (out-175.mta1.migadu.com [95.215.58.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="W/NKUwPr"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D74FD79DC7
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 23:50:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAB0779DC7
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 23:52:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717199420; cv=none; b=joYA187BysaVAohfTt/YhDPJgo4D+dUGzsCKlTy5lvRXaWTsOpvk5Xyep4qw+7YMjEDoIMkWJJCHHkNbbkFPRREjoq6QWDHQfhFmeG+tarjCZ6XYqcxpk7xoV2bZcP6ji3LATDl/ujInVZzHtHM0KwmkFjziqnuFLxVH7Ms2CCs=
+	t=1717199533; cv=none; b=o2HNdo3Vn6AtTW7kEEhjq2hOqThRpx+sM5dAIGdG9SLSkZJ3+fT+IO2W1hEQ9xr2+N0E98gC5cZVz0cvwU4NHon4EHwZEG8GInkG1k5waHbP9cc4K4WiC5nPEzGUKfHGXMrV9p13F8d1Tqc9Tg+NHiQJJFmeU3TDnsTtk1BTeu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717199420; c=relaxed/simple;
-	bh=dZ7ulaDL1L2Ln+oRixcSBYL60i42q924rAbH5hzLhbE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gV5VjT6SJKZaPOPyWLPXSwfQZSNXB3GrqHDErmKQHFzZ6GhVI5w/F86Gkk7Was2DEVyLEJ/qLGkdj9Vf64+NAXIxkXBm43X1h3qAvEgyro1h1iNwEy2pY4DlqrAT4Xr4wNVbfmNeOdKlw1nyF7OX1erscpGItcqYyjdxxALwi0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=VZZYs8IA; arc=none smtp.client-ip=95.215.58.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: vbabka@suse.cz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1717199416;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OOzuz+/J94mPHKcym5sz7qWGkxJUxusMsJxo0OWXA48=;
-	b=VZZYs8IAXHU6CDmJjarLjJsXvhN8jM9uiQvKBToynuQEa8o1avQIzeaqUnTzdhZ9zKuNxU
-	O6yvG6sRdeRcoieO77vPyOTnuteFJMbfS+DqkRWuzyCIhFKxPHHZU/66DtrUdFmwhr4mUb
-	DlGemm0en859BbplOObWVKtDfyn4FJ0=
-X-Envelope-To: akinobu.mita@gmail.com
-X-Envelope-To: cl@linux.com
-X-Envelope-To: rientjes@google.com
-X-Envelope-To: ast@kernel.org
-X-Envelope-To: daniel@iogearbox.net
-X-Envelope-To: andrii@kernel.org
-X-Envelope-To: naveen.n.rao@linux.ibm.com
-X-Envelope-To: anil.s.keshavamurthy@intel.com
-X-Envelope-To: davem@davemloft.net
-X-Envelope-To: mhiramat@kernel.org
-X-Envelope-To: rostedt@goodmis.org
-X-Envelope-To: mark.rutland@arm.com
-X-Envelope-To: jolsa@kernel.org
-X-Envelope-To: 42.hyeyoo@gmail.com
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: linux-mm@kvack.org
-X-Envelope-To: bpf@vger.kernel.org
-X-Envelope-To: linux-trace-kernel@vger.kernel.org
-Date: Fri, 31 May 2024 16:50:11 -0700
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Akinobu Mita <akinobu.mita@gmail.com>, Christoph Lameter <cl@linux.com>,
-	David Rientjes <rientjes@google.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-	Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mark Rutland <mark.rutland@arm.com>, Jiri Olsa <jolsa@kernel.org>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, bpf@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 4/4] mm, page_alloc: add static key for
- should_fail_alloc_page()
-Message-ID: <ZlpiMx96XRHU9508@P9FQF9L96D.corp.robot.car>
-References: <20240531-fault-injection-statickeys-v1-0-a513fd0a9614@suse.cz>
- <20240531-fault-injection-statickeys-v1-4-a513fd0a9614@suse.cz>
+	s=arc-20240116; t=1717199533; c=relaxed/simple;
+	bh=ZmsfPMM9uOGyUAO76Ls6fr5SxZ5hReAihaGJqwMyKIY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=e5jWsB4qc5NzrljOYV2xJKV+wHcTGSpSv/jyv7UY3m3RjjOz+JHYp+Tn7VBgknLtpymthqpY/6Vl9TAz1NM3sV+D29etsAB1Bxa+R/RlGc8jvNnSVZvERwYyM6jS4O5Ke6+yaJap6nG8gX5kVl4QO9FfRjI2rTtrxfHBsa+dVa0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=W/NKUwPr; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2e73359b8fbso35216111fa.2
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 16:52:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1717199529; x=1717804329; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Tfv/vnmuw2YufZGBKZOJtjIGxgQZexP+H8Zy3MNYB2Q=;
+        b=W/NKUwPrj21LIGBdjBn4CeP9MbrpMRX39ByWVXTGLY5hHdoSHGexTclVwDeNYHlI0/
+         BX1X+U3Ow5cMDF5oRX1D0iq10jGnYtSEtymZnPsqqYoA/EZz8bhYCqhoce075WIfQTD4
+         v+zyvcI8qKCI8k8P9updtEb2oHCaD/Ay/iJqwtTbO22zEFO3/sj1PP2oS1BRgrUMbpkE
+         fYlRFge2SrbAg5rPxX44dQ8m0YUSw1QkPor7ZQzE/bwoZckt0/czxTslFOKbI2KfIznI
+         yuphxT4jKhMz8B2wKdVvqh2W/3pVH7knk2oXUmWsyXdMUAcVrShrd/hggenSo/78cPXJ
+         2xhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717199529; x=1717804329;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Tfv/vnmuw2YufZGBKZOJtjIGxgQZexP+H8Zy3MNYB2Q=;
+        b=xQxDFoqM0eG0s1D9AsetyW1wgheVExKHgPtov2UD7qpJ0WgPOolr4n4gCaKCqhk8Bk
+         Q/CR1OIuSzz5XmA76Se0mhMmXRwwkPHFSOeNFsmF77AyCF5Ws2qQBEI433NTa4wxNCnI
+         FWV6xg4T0BW4AewLS8RNN/PfCXLld1Z85AF+ouo2oeQ0LB731HLxYluYN5hqc4XAhOMV
+         Pf3iCUkn+8UNhcWjuTZIaXnPuORZ/Fr/oMglP1MPHgoaXIlHUN60FOGoa0XE3KWctcsY
+         i3Y4qDVjUrvAyCnm+R6bkl2PV4G5454QHPjuHwenUtiwKrQbQh92AtCSx4WK+Qm25a0a
+         ZdEA==
+X-Forwarded-Encrypted: i=1; AJvYcCVKZhNiZiC0QvD77XWWNXJNFqG6W93OULF111Y/roRjt8UQrf4fYF2XFIjBZbln3mW1QN+E38vHDN1s2ZRYjrBqpJSwvyvDNJhfw7s0
+X-Gm-Message-State: AOJu0YwspUxBjYhy8FPFyYu3Aj2jaOxQj4JE9eHU8SMUAytSWbg0K68A
+	kRVGTojaQsHJUwp7N1NRru3S1fqYQnALdkN4p73UjGlrOtyOKfOZc6L9HtIvc9E=
+X-Google-Smtp-Source: AGHT+IFuJQrPAsydUXf78vOkTA58ZN5pXm2unppiD/h4cuYDM2wW7UzBxxe+BskawQvwfKbbBCmuFw==
+X-Received: by 2002:a2e:96d6:0:b0:2ea:906e:6ac7 with SMTP id 38308e7fff4ca-2ea9516109bmr27097691fa.22.1717199528652;
+        Fri, 31 May 2024 16:52:08 -0700 (PDT)
+Received: from fedora.fritz.box (aftr-82-135-80-160.dynamic.mnet-online.de. [82.135.80.160])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57a31c9ea4bsm1492064a12.97.2024.05.31.16.52.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 May 2024 16:52:08 -0700 (PDT)
+From: Thorsten Blum <thorsten.blum@toblux.com>
+To: Marcel Holtmann <marcel@holtmann.org>,
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Cc: linux-bluetooth@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Thorsten Blum <thorsten.blum@toblux.com>
+Subject: [PATCH] Bluetooth: btintel_pcie: Remove unnecessary memset(0) calls
+Date: Sat,  1 Jun 2024 01:51:33 +0200
+Message-ID: <20240531235132.664665-2-thorsten.blum@toblux.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240531-fault-injection-statickeys-v1-4-a513fd0a9614@suse.cz>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-On Fri, May 31, 2024 at 11:33:35AM +0200, Vlastimil Babka wrote:
-> Similarly to should_failslab(), remove the overhead of calling the
-> noinline function should_fail_alloc_page() with a static key that guards
-> the allocation hotpath callsite and is controlled by the fault and error
-> injection frameworks.
-> 
-> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+Remove memset(0) after dma_alloc_coherent(), which already zeroes out
+the memory, and fix the following two Coccinelle/coccicheck warnings
+reported by zalloc-simple.cocci:
 
-Reviewed-by: Roman Gushchin <roman.gushchin@linux.dev>
+btintel_pcie.c:837:19-37: WARNING: dma_alloc_coherent used in
 
-Thanks!
+	/* Allocate full chunk of data buffer for DMA first and do indexing and
+	 * initialization next, so it can be freed easily
+	 */
+	rxq->buf_v_addr   already zeroes out memory, so memset is not needed
+
+btintel_pcie.c:792:19-37: WARNING: dma_alloc_coherent used in
+
+	/* Allocate full chunk of data buffer for DMA first and do indexing and
+	 * initialization next, so it can be freed easily
+	 */
+	txq->buf_v_addr   already zeroes out memory, so memset is not needed
+
+Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+---
+ drivers/bluetooth/btintel_pcie.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/bluetooth/btintel_pcie.c b/drivers/bluetooth/btintel_pcie.c
+index 5b6805d87fcf..237d4b27f5d8 100644
+--- a/drivers/bluetooth/btintel_pcie.c
++++ b/drivers/bluetooth/btintel_pcie.c
+@@ -797,7 +797,6 @@ static int btintel_pcie_setup_txq_bufs(struct btintel_pcie_data *data,
+ 		kfree(txq->bufs);
+ 		return -ENOMEM;
+ 	}
+-	memset(txq->buf_v_addr, 0, txq->count * BTINTEL_PCIE_BUFFER_SIZE);
+ 
+ 	/* Setup the allocated DMA buffer to bufs. Each data_buf should
+ 	 * have virtual address and physical address
+@@ -842,7 +841,6 @@ static int btintel_pcie_setup_rxq_bufs(struct btintel_pcie_data *data,
+ 		kfree(rxq->bufs);
+ 		return -ENOMEM;
+ 	}
+-	memset(rxq->buf_v_addr, 0, rxq->count * BTINTEL_PCIE_BUFFER_SIZE);
+ 
+ 	/* Setup the allocated DMA buffer to bufs. Each data_buf should
+ 	 * have virtual address and physical address
+-- 
+2.45.1
+
 
