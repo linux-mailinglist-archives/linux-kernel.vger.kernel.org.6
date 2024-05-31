@@ -1,83 +1,84 @@
-Return-Path: <linux-kernel+bounces-197407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39C088D6A2C
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 21:50:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C712E8D6A2F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 21:55:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E911828A6BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 19:50:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E57991C22EDD
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 19:55:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0E1B17D363;
-	Fri, 31 May 2024 19:50:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0F6517D343;
+	Fri, 31 May 2024 19:55:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nUJoSd55"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EGRRAnyn"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAE8D7F7CA
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 19:50:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51A4B79B84
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 19:55:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717185033; cv=none; b=pSiewsQLRKvJjzJoU1jsSlR7QYFkIGgke7LN0N4w5WRp9Skc8kiQON/Xg9BAKZgzfzZoQNLG4gZoE4wGli6owg1FwKqW0SkXWIBIKckGa1jsoEPyzagG33KQcPZUDJnhzj1AZhwrND+orhjvOVwJUZLbQsjf50BgOvYkqUfWwf4=
+	t=1717185334; cv=none; b=mFbcMWUeJLAmFJY2HKM0Mh7Nshyx9X5f6EL7x8d1vPZX008O9DWicddF5q8FCWfuJ5VKo7WhEUWzCADRpfd5l7TTQ9EX6d8smqGL2VVlu3pSnBGXheXf61RcL/Y3CXR2qFa0UWC7PsI5t+Nwiw12DhS1GNOuaWHya2GtEj+X35g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717185033; c=relaxed/simple;
-	bh=f1akKPVORkIyg550KoLiKCAWrsfKqsVFxRZIPvcbZPk=;
+	s=arc-20240116; t=1717185334; c=relaxed/simple;
+	bh=X+W2TzIrXrsijhv99v8qX9im0q8qFS0iVU1HH5EZ9Uk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j1A+rNe3mrHbBPXxdi2dbblnRjmHPK0ryTJqFOPTx4SsvuZ52rIqqJEv8htHFYOdBM9zGLD+SFySRhwQi41/EBJqlURIN3QZAkgnvLdAkriF2/oeL7kzqHowONJRev3pOBga7d2WyIyhyORIENrtMlpH5XtnHXh1U23SzBFsMJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nUJoSd55; arc=none smtp.client-ip=209.85.167.54
+	 Content-Type:Content-Disposition:In-Reply-To; b=W0HWdAq1l+Bf6vpmENlQZZbHplB/ESRrY+gLg0JxnrO3mAWgIL6MOIQfPZsy0ZSQDYfr4RnGpqFnJ7wGGQs20CXPVhE3DfCgAhwj7DlAWeSiR5rIHEBMPnj5Ftz1nLxqbuWM7Bz1zvJUjnDNklpWRQENJQzXG/HoGilABJVuh8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EGRRAnyn; arc=none smtp.client-ip=209.85.167.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52aea6067c8so2962013e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 12:50:30 -0700 (PDT)
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52b82d57963so2033524e87.2
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 12:55:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717185029; x=1717789829; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1717185330; x=1717790130; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZU2ryqJo2RbqRp0VMOW55np9IwacuNJWvzcVOo4CArU=;
-        b=nUJoSd55JPTRyfeQ8dBevZkwESFBStpRt6xex/T+Sl1NTf1vWzMY8UxL4FSD1kPkSa
-         Tu+5nnLS7Sh2sMfywQHLxB2IyEwLv7Men8VZTrbpBUeZQbkWcG5kGllkwGXYH35mzFyf
-         sylGXcIZ7ArzRvV5AqxSOOt1ZaSdQWMnbOw/kZ2Ut5o+7LcuTq4qq0eQBEV18g9JqBsc
-         Ol2bEmQHNe1wqOFf+mllnovV+m/uqpLefprlaBZRI9YYdgdkEOR+VEhwsvIYQBkBeZuB
-         eSqyPkFinCZCxqC7FbQBXsyYK0dEGVrnDyPM7bIiPXkAK7yOZAsTzax/CLUXXVzaJzay
-         DHtQ==
+        bh=vDm4GFL7/RAcoZja5ASG+bsrJl52LSpMWwgkVjK9dlM=;
+        b=EGRRAnynOKkNqHNuGaIXlZ2RqwvsBMz4FFULoHaXJYkcAXflVNCvgNRutYEjQyiZxB
+         yDpDVSDZfOw1Fo25oWpvDHQaPaxqw52LxEueF6duovh5esxJ5Qp5lN37waX/vfCVzaoo
+         trIqiKKc9aQ+p0BGAnCNwHnJeeLrdou7YQ8ZfFZdo4rBfehQFsBXp4V4PiAF7WfPaOj3
+         8YANCjs/KgSUrFb/rQx65oFmNHziHXi3xn4nUam57Cz44KNFBQtpP0U6QA5lzmPWAgTg
+         +3S59BNY/riJhiGrRoWN1bxJBbajcMpZoGykZD6EXp/zMFXceTmyaZxNQ0S7CZXyExBS
+         IM7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717185029; x=1717789829;
+        d=1e100.net; s=20230601; t=1717185330; x=1717790130;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ZU2ryqJo2RbqRp0VMOW55np9IwacuNJWvzcVOo4CArU=;
-        b=nf6P7pIPHW8AckKhI149xlDEF6Ukc7hwJRlNHYIk+MFmB02mp+nrewOCenlFkFf2vf
-         4Q9TpGXSpKuDAYSHCc+HDQfVyj5Hqwj+JrLXycM/AavUoWpYti0tgxBuInfypWGVr3AF
-         tfqufavae7u/qXa9G6LwVlz4jld+ni5JvpkmxwuIcxTk+2ivfigYR2re4MYodjl74n8/
-         NuuT0jeHxZqgQTxlKzDKNxU+E0kxvX0xFej4WKrMKqhn8lOlX1XGXZxHrWSh/WBCn+LQ
-         keSfpdUNvmhaumkygRCsD/WjBe9LZflISi5q7EptzoWlqq5swD6BpsCaLcXIC2WGZGtM
-         srRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV1Z2QTi3sXtLIshYtwQmWzNisKU3CKE8vroWpjuX3AHtmwCxVWYz3pEcgCgQ1IHj3xgDX0gPYCocJMTVAm3Hni+tocGnnLssEQerKE
-X-Gm-Message-State: AOJu0YxF450IasGxbsznimdMBq4OEzMhq4fAl9yLmRpZZ/yYrIYYz4PC
-	aBGkm4+VN0id9pYnUIrFxVMIE0Tse+VTOXc1v8j77GgUdgZ3UvL+A9Of/RdIi9U=
-X-Google-Smtp-Source: AGHT+IFFrDCc8S7OXqYwwrRK/3LCw6k22ohK8j3g2b44ginDvhYF+tDr/CvgM1Z8qwHTb7dniJuQ7g==
-X-Received: by 2002:ac2:5101:0:b0:52b:797d:efd4 with SMTP id 2adb3069b0e04-52b8959c55fmr1680065e87.16.1717185028871;
-        Fri, 31 May 2024 12:50:28 -0700 (PDT)
+        bh=vDm4GFL7/RAcoZja5ASG+bsrJl52LSpMWwgkVjK9dlM=;
+        b=efM4O8mRtgSaXzsJ61hojKjv7+y51YAWCy7apDvCRL0PoircEwrSoXMnjtkTt51N4K
+         9cHDgu9wMU0q/TpfJJm188zAfFa35k0zzJv3h1auRkZyhi4biVdrn7UpKfxj7fNPDAzQ
+         dEwSHqexKkM60Dcce1kXJAmtJUqtpYif7oCWZNHuR17zf1d4w47ld5QHdyruat5lTWBV
+         hrplvSsKyMuoBlQbZZiRUzRc/Y/r6pomyTuFZKjpYUid/gpRMOgDzRG4XoCQqzDZRGjG
+         jaRHMSzgp1+jcSQuI93DT9i3423uyiMpnu6LZTIyJjv1f7lIWtbpK4gQfJeEj4/Mgzx3
+         HlDw==
+X-Forwarded-Encrypted: i=1; AJvYcCVuNJp92Edg4BT1PvhPaTVbtciqRG/rsuAApjAX/Zfjm5Gea5f8C2bF9esGqCszA+A+tjC3U+h07x7lTfUpYf2gxlbtAOaqWANSN8lR
+X-Gm-Message-State: AOJu0YwVtC7Bkevl/6AyEYnFyS7ERp5n4NEQG371Wshd8hPW4FfjIEL9
+	pxq0qDDGTw3D6DHCaJHB2j+W5cOuLLpjrnrxug0wwdPGBym8CePacMSEvGVGvRs=
+X-Google-Smtp-Source: AGHT+IHXtouAwX7+XSqiud/KH4Qt8bdHoyhHs20i1HvALR/kGNz0/Jitv9ceS0LX3AcIuCNwRck8pg==
+X-Received: by 2002:ac2:46f1:0:b0:52b:7c7e:303 with SMTP id 2adb3069b0e04-52b896da828mr1585439e87.49.1717185330369;
+        Fri, 31 May 2024 12:55:30 -0700 (PDT)
 Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52b8beaf911sm206658e87.20.2024.05.31.12.50.28
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52b84d89743sm426201e87.263.2024.05.31.12.55.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 May 2024 12:50:28 -0700 (PDT)
-Date: Fri, 31 May 2024 22:50:26 +0300
+        Fri, 31 May 2024 12:55:30 -0700 (PDT)
+Date: Fri, 31 May 2024 22:55:28 +0300
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Vinod Koul <vkoul@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Johan Hovold <johan@kernel.org>, linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] phy: qcom: qmp-pcie: Add X1E80100 Gen4 4-lane mode
- support
-Message-ID: <ubyvrmv3giartl6pnen5dbis2yz6y7r6zvihorsqzsfof7q7la@e6xc52ss5qyr>
-References: <20240531-x1e80100-phy-add-gen4x4-v1-0-5c841dae7850@linaro.org>
- <20240531-x1e80100-phy-add-gen4x4-v1-2-5c841dae7850@linaro.org>
+	Rajendra Nayak <quic_rjendra@quicinc.com>, Sibi Sankar <quic_sibis@quicinc.com>, 
+	Johan Hovold <johan@kernel.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] arm64: dts: qcom: x1e80100: Make the PCIe 6a PHY
+ support 4 lanes mode
+Message-ID: <myy42ljw4wz4kwxonio5lktlq52uuqmshhg7bql5raau4kh7ol@6w72pm5k2pzm>
+References: <20240531-x1e80100-dts-fixes-pcie6a-v1-0-1573ebcae1e8@linaro.org>
+ <20240531-x1e80100-dts-fixes-pcie6a-v1-2-1573ebcae1e8@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,20 +87,77 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240531-x1e80100-phy-add-gen4x4-v1-2-5c841dae7850@linaro.org>
+In-Reply-To: <20240531-x1e80100-dts-fixes-pcie6a-v1-2-1573ebcae1e8@linaro.org>
 
-On Fri, May 31, 2024 at 07:06:45PM +0300, Abel Vesa wrote:
-> The PCIe 6th instance from X1E80100 can be used in both 4-lane mode or
-> 2-lane mode. Add the configuration and compatible for the 4-lane mode.
+On Fri, May 31, 2024 at 08:00:32PM +0300, Abel Vesa wrote:
+> So the PCIe 6 can be configured in 4-lane mode or 2-lane mode. For
+> 4-lane mode, it fetches the lanes provided by PCIe 6b. For 2-lane mode,
+> PCIe 6a uses 2 lanes and then PCIe 6b uses the other 2 lanes. Configure
+> it in 4-lane mode and then each board can configure it depending on the
+> design. Both the QCP and CRD boards, currently upstream, use the 6a for
+> NVMe in 4-lane mode. Also, mark the controller as 4-lane as well.
 > 
+> Fixes: 5eb83fc10289 ("arm64: dts: qcom: x1e80100: Add PCIe nodes")
 > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
 > ---
->  drivers/phy/qualcomm/phy-qcom-qmp-pcie.c | 42 ++++++++++++++++++++++++++++++++
->  1 file changed, 42 insertions(+)
+>  arch/arm64/boot/dts/qcom/x1e80100.dtsi | 14 +++++++++-----
+>  1 file changed, 9 insertions(+), 5 deletions(-)
 > 
+> diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> index fe7ca2a73f9d..17e4c5cda22d 100644
+> --- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> @@ -2838,7 +2838,7 @@ pcie6a: pci@1bf8000 {
+>  			dma-coherent;
+>  
+>  			linux,pci-domain = <7>;
+> -			num-lanes = <2>;
+> +			num-lanes = <4>;
+>  
+>  			interrupts = <GIC_SPI 773 IRQ_TYPE_LEVEL_HIGH>,
+>  				     <GIC_SPI 774 IRQ_TYPE_LEVEL_HIGH>,
+> @@ -2903,19 +2903,21 @@ &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
+>  		};
+>  
+>  		pcie6a_phy: phy@1bfc000 {
+> -			compatible = "qcom,x1e80100-qmp-gen4x2-pcie-phy";
+> -			reg = <0 0x01bfc000 0 0x2000>;
+> +			compatible = "qcom,x1e80100-qmp-gen4x4-pcie-phy";
+> +			reg = <0 0x01bfc000 0 0x2000>,
+> +			      <0 0x01bfe000 0 0x2000>;
+>  
+>  			clocks = <&gcc GCC_PCIE_6A_PHY_AUX_CLK>,
+>  				 <&gcc GCC_PCIE_6A_CFG_AHB_CLK>,
+>  				 <&rpmhcc RPMH_CXO_CLK>,
+>  				 <&gcc GCC_PCIE_6A_PHY_RCHNG_CLK>,
+> -				 <&gcc GCC_PCIE_6A_PIPE_CLK>;
+> +				 <&gcc GCC_PCIE_6A_PIPEDIV2_CLK>;
+>  			clock-names = "aux",
+>  				      "cfg_ahb",
+>  				      "ref",
+>  				      "rchng",
+> -				      "pipe";
+> +				      "pipe",
+> +				      "pipediv2";
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+I see 5 clocks and 6 clock-names here.
 
+>  
+>  			resets = <&gcc GCC_PCIE_6A_PHY_BCR>,
+>  				 <&gcc GCC_PCIE_6A_NOCSR_COM_PHY_BCR>;
+> @@ -2927,6 +2929,8 @@ pcie6a_phy: phy@1bfc000 {
+>  
+>  			power-domains = <&gcc GCC_PCIE_6_PHY_GDSC>;
+>  
+> +			qcom,4ln-config-sel = <&tcsr 0x1a000 0>;
+> +
+>  			#clock-cells = <0>;
+>  			clock-output-names = "pcie6a_pipe_clk";
+>  
+> 
+> -- 
+> 2.34.1
+> 
 
 -- 
 With best wishes
