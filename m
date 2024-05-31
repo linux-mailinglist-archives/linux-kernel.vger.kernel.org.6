@@ -1,103 +1,92 @@
-Return-Path: <linux-kernel+bounces-197488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36F168D6B4D
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 23:11:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A70D8D6B50
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 23:13:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC0771F2A9AF
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 21:11:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30A661C20C54
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 21:13:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8066676413;
-	Fri, 31 May 2024 21:10:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5142A78C8E;
+	Fri, 31 May 2024 21:13:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JBMuE6+/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pe2xJwua"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFA15200B7;
-	Fri, 31 May 2024 21:10:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DA91200B7;
+	Fri, 31 May 2024 21:13:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717189849; cv=none; b=pyoQfbtdrNZ/Qa2kk37MKDDm39zHQe33kmfqAcvHKYveT5OTAUs6SD0SbuoJsghvqlPFqGaBuSqT7Ktol1yaO/Pc9fCVhCT+h5OKE+xer6CzxdDULymWlVKcz3BchWMZNHs5a8rM4aI7nIH7N7zMMAZZLt1ujW15Oj2uhbs2adY=
+	t=1717189991; cv=none; b=hqw+Gtl5ORUuxdNjYEwZq/gPgEcfqRAO6hYG4YkdqwORXLv2gkE8+7CDxbRpj07SCa3L7dIRZUtjQLE2EWJZrMYs9YX9/0an/R3+YP1pihZbqX/a8EWNOKLDOlUJtlngLsZWjhtVHlOh3KrU0iRq5u6YcmE/XF+m+h3Gu5DVtQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717189849; c=relaxed/simple;
-	bh=xlaiIZVQpnoQLjq8KYZChb3XAXfcj6FcTOal5RecnCg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lpCSr7wVCHaKY/FnlarQ7ZUIEG7qLyCDhb6vryKJSC8+zJEKj6prp8bsN+FcTbdyMNd+n5E4FRt2S6pwC+bDp74smjFZ2wnBjfDwdDWBYAzPMuhCyCl1xX9Rphq35BrZlfKYDbExJtxFl7j21maaOVfSMfBWEq0BtG71tkvS1bU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JBMuE6+/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52F6AC116B1;
-	Fri, 31 May 2024 21:10:48 +0000 (UTC)
+	s=arc-20240116; t=1717189991; c=relaxed/simple;
+	bh=q87t1fyI81/pnxHXVoZD7reYrMZyoN6TiS1axuFNJXU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YMaAlF3vJWrwiH8/ICK8TUGtMd2pOTlAfpRn6ox4UBxJYd8SGAy3GGtXV40qimGMCLonUbVqrk/1SskQ9mY7Ji7+6bYBRjjcJP2/fqeYsBEk4xUlsolt2dVUWkuTYpK/eM5JPMFHug10avrwq+qUl7tI/BxgFAXydSp/kTj/cS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pe2xJwua; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C47B9C116B1;
+	Fri, 31 May 2024 21:13:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717189849;
-	bh=xlaiIZVQpnoQLjq8KYZChb3XAXfcj6FcTOal5RecnCg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JBMuE6+/4uK+TfBRp2VQ6gOoUwebGVgcqfhkoGHoUJefQqxh51QCzFI3Z5dbVWeLD
-	 1+Ha3PBzT2cZZ2kOrQAjGytheeq4zZw2jArSBrd0pZBvsyH6gBFr5vo8V9/k79eMHj
-	 rS+wliQZ4+w6cNAXFlLmFUMhyC4P+3Gb4PiJCKhJUiga77YamxslvCAy6Z0CtJUQSp
-	 LPQkiDQGV/M7AHdsKb8BBMobicc3+8zROKqAmKU/TxWZL7t2+PdnyNRYcEl8qad5yy
-	 aVZgYR2KWthC1Gt+72WCMsvracEBsCZ283+kvtfTazzYMTTizVHOwglKyqE8pTF2Nd
-	 LwGpAGJcspjkw==
-Date: Fri, 31 May 2024 15:10:45 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: Sathya Prakash <sathya.prakash@broadcom.com>,
-	Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
-	Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>, leit@meta.com,
-	"open list:LSILOGIC MPT FUSION DRIVERS (FC/SAS/SPI)" <MPT-FusionLinux.pdl@broadcom.com>,
-	"open list:LSILOGIC MPT FUSION DRIVERS (FC/SAS/SPI)" <linux-scsi@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] mpt3sas: Avoid test/set_bit() operating in non-allocated
- memory
-Message-ID: <Zlo81SBdvflQ_38O@kbusch-mbp.dhcp.thefacebook.com>
-References: <20240531180055.950704-1-leitao@debian.org>
+	s=k20201202; t=1717189991;
+	bh=q87t1fyI81/pnxHXVoZD7reYrMZyoN6TiS1axuFNJXU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=pe2xJwuamwa/dQKxOqu4BhE5A6mUs5qG1ZImePDO4uD0jOAIM9ZTjDeRGWRClZATP
+	 Cw8miAiMavv81KFN64fzbCU5oRYflY11KvW1xRr7bvaSRE9wGzcImu+4go8lzDHdc+
+	 JGQMHk21Qh6DsZyb+YDKp0GmicPqOsFNWI4WcqS6nhgJG7UzPBf4ob8/i2Gh/IRApZ
+	 Y5+L+mG3ymEdGhHRdZGHMLL4zytyxYpjCGsZfWGESPk9tVFT+wtYuL76XaOXxrK6XZ
+	 YvqdXobrqqpAXGb9SiUZKQv4CHtuUFiZGFd64MTVReMo9ZdqCUsAaicfxDm6E9j4ZR
+	 BVfvdyTcgfbyw==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Changbin Du <changbin.du@huawei.com>,
+	Peter Zijlstra <peterz@infradead.org>
+Cc: Ian Rogers <irogers@google.com>,
+	linux-kernel@vger.kernel.org,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-perf-users@vger.kernel.org,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [RESEND PATCH v3 0/2] Always show mmap prot even though PROT_NONE
+Date: Fri, 31 May 2024 14:13:03 -0700
+Message-ID: <171718991316.2179562.5066672693392732715.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.45.1.288.g0e0cd299f1-goog
+In-Reply-To: <20240522033542.1359421-1-changbin.du@huawei.com>
+References: <20240522033542.1359421-1-changbin.du@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240531180055.950704-1-leitao@debian.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Fri, May 31, 2024 at 11:00:54AM -0700, Breno Leitao wrote:
-> diff --git a/drivers/scsi/mpt3sas/mpt3sas_base.c b/drivers/scsi/mpt3sas/mpt3sas_base.c
-> index 258647fc6bdd..fe9f4a4175d1 100644
-> --- a/drivers/scsi/mpt3sas/mpt3sas_base.c
-> +++ b/drivers/scsi/mpt3sas/mpt3sas_base.c
-> @@ -8512,6 +8512,12 @@ mpt3sas_base_attach(struct MPT3SAS_ADAPTER *ioc)
->  	ioc->pd_handles_sz = (ioc->facts.MaxDevHandle / 8);
->  	if (ioc->facts.MaxDevHandle % 8)
->  		ioc->pd_handles_sz++;
-> +	/* pd_handles_sz should have, at least, the minimal room
-> +	 * for set_bit()/test_bit(), otherwise out-of-memory touch
-> +	 * may occur
-> +	 */
-> +	ioc->pd_handles_sz = ALIGN(ioc->pd_handles_sz, sizeof(unsigned long));
-> +
->  	ioc->pd_handles = kzalloc(ioc->pd_handles_sz,
->  	    GFP_KERNEL);
->  	if (!ioc->pd_handles) {
-> @@ -8529,6 +8535,12 @@ mpt3sas_base_attach(struct MPT3SAS_ADAPTER *ioc)
->  	ioc->pend_os_device_add_sz = (ioc->facts.MaxDevHandle / 8);
->  	if (ioc->facts.MaxDevHandle % 8)
->  		ioc->pend_os_device_add_sz++;
-> +
-> +	/* pend_os_device_add_sz should have, at least, the minimal room
-> +	 * for set_bit()/test_bit(), otherwise out-of-memory may occur
-> +	 */
-> +	ioc->pend_os_device_add_sz = ALIGN(ioc->pend_os_device_add_sz,
-> +					   sizeof(unsigned long));
->  	ioc->pend_os_device_add = kzalloc(ioc->pend_os_device_add_sz,
->  	    GFP_KERNEL);
->  	if (!ioc->pend_os_device_add) {
+On Wed, 22 May 2024 11:35:40 +0800, Changbin Du wrote:
+> Before: PROT_NONE is not shown for prot 0.
+> $ sudo perf trace -e syscalls:sys_enter_mmap --filter prot==0  -- ls
+>      0.000 ls/2979231 syscalls:sys_enter_mmap(len: 4220888, flags: PRIVATE|ANONYMOUS)
+> 
+> After: PROT_NONE is displayed.
+> $ sudo perf trace -e syscalls:sys_enter_mmap --filter prot==0  -- ls
+>      0.000 ls/2975708 syscalls:sys_enter_mmap(len: 4220888, prot: NONE, flags: PRIVATE|ANONYMOUS)
+> 
+> [...]
 
-Do we need similiar ALIGN for _base_check_ioc_facts_changes() too?
-Otherwise, yeah, the {test,set,clear}_bit() ops expect an address to
-something aligned to 'unsigned long'.
+Applied to perf-tools-next, thanks!
+
+[1/2] perf trace beauty: Always show param if show_zero is set
+      commit: 92968dcc037fed045dab5c8e52b51255d77f5432
+[2/2] perf trace beauty: Always show mmap prot even though PROT_NONE
+      commit: f975c13d2a34a335fc559aeff76dcaba456cced0
+
+Best regards,
+-- 
+Namhyung Kim <namhyung@kernel.org>
 
