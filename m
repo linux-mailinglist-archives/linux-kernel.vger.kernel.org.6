@@ -1,119 +1,165 @@
-Return-Path: <linux-kernel+bounces-196208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C28458D58CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 05:03:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08C2F8D58D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 05:05:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C3A81F25824
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 03:03:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1CE81F258E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 03:05:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D2F37B3E5;
-	Fri, 31 May 2024 03:03:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="ShTKNhQn"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28A5378C6C;
+	Fri, 31 May 2024 03:05:49 +0000 (UTC)
+Received: from SHSQR01.spreadtrum.com (mx1.unisoc.com [222.66.158.135])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 271447580A;
-	Fri, 31 May 2024 03:03:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00B2A36134
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 03:05:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717124602; cv=none; b=cJz++ThR6CQQmOcCb9JDbsmZtcQ9TIeyVkFVSZ3kpPb64EbMYedlygphFSpj7MNdYCI5p7eannR6khUbkoZJYFTvZAA873l+3NsYoGTOqMGIpRWy9XpKtlF3Hwry6MICjxYOX8i+SJzheFyP5ux4ZwG3uQOAH1g7NbAAOU8ZJP0=
+	t=1717124748; cv=none; b=FTDSwvB/YjsSPXWDXkpFP37/HO5l3D8HEb4av/kRd7bxEbmFZmasjltcPsQAZ+hVAcFv8SScloN17uFwD0gVkiGoZI8/syfdd69JxRJUsu6eMiwoUxAKtIq/aaGUB+33D3tDB/O5ad8cdC2/M41zolt9T210Day445w/Xxz7ORQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717124602; c=relaxed/simple;
-	bh=laFNtMsFWaGO0tor3UYZWR+hz+iaDjqDjSLUrP6a4Gk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=rF4zp0Usn3csjZCM3R7Iwb+fYdj5l0Em/8qkNgwfQ1g/YtuybHCBSKq1OD5FYpgVsAZjgccnbEldZdQzz8xwQxO71d3FnHS2xOguK9GFUrsUf7TAfXl2Bw5qNjYx4cUBYm4/2G7jw8+naumX0l4OeJK0mQjFc9LPV3zP2+AervY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=fail (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=ShTKNhQn reason="signature verification failed"; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-Received: from [127.0.1.1] (ppp118-210-171-248.adl-adc-lon-bras34.tpg.internode.on.net [118.210.171.248])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 79F58203FE;
-	Fri, 31 May 2024 11:03:12 +0800 (AWST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1717124593;
-	bh=k1N7e/FjyGAeYdRbAGj1Fx0zqCZhv/g+FUwcaumYRs4=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=ShTKNhQnRUthkyPyWHBC1uP/46XIhgrddJloKwMvOfVX9Nj1zArKcGV2jxfz4jmGm
-	 iYAGbiDTC1ZfSxUqOe0uKxSgH22IzXLUgn6Q65rxKPW7NKysvcZ2pwl8h41WKWveCW
-	 nJlGcG87ika31jj0wSUIApQ5txiOTrn6JUC6GkfVCCuQQC1jSKenYqzatQhMHe3fwu
-	 4OBNZWD0m85FXjiVYpFT8TrRtETaflznIWl7MlbpvYSlUrAmI4cS4y12PDKWgQYHiL
-	 c4jkT5WOIKwjI5jgxbThLR/TdXO6mVo0L0LkPEoqvV3JnHYPMvuEJ4wJ6vVSbBw5Ka
-	 ML+9Z2Uw52+HA==
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-Date: Fri, 31 May 2024 12:32:49 +0930
-Subject: [PATCH 3/3] dt-bindings: pinctrl: aspeed,ast2600-pinctrl: Describe
- I3C, USB
+	s=arc-20240116; t=1717124748; c=relaxed/simple;
+	bh=PcOaiwMIy0o3e+ZmFIWOayujeWmn4r2cX5BRChXf8t4=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IKMzW2JnHzGFo8ENW3h58+bM4H4wY13S8T6+UhBXSh+4v72nKvyONU94XAutQGqVl7PCMPXsz4PFLlXMzLAQQ1c/9p+UOp06CppZRSVIXk9MU8kdwMDwCeLqTCmlU3a7/G4JAV4Bhm7JQoElsJOkPNCAoZpV/VQpOowBZq7Qsb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
+Received: from dlp.unisoc.com ([10.29.3.86])
+	by SHSQR01.spreadtrum.com with ESMTP id 44V35RmE064534;
+	Fri, 31 May 2024 11:05:27 +0800 (+08)
+	(envelope-from zhaoyang.huang@unisoc.com)
+Received: from SHDLP.spreadtrum.com (bjmbx01.spreadtrum.com [10.0.64.7])
+	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4Vr7Dw3fpPz2QLg51;
+	Fri, 31 May 2024 11:01:36 +0800 (CST)
+Received: from bj03382pcu01.spreadtrum.com (10.0.73.40) by
+ BJMBX01.spreadtrum.com (10.0.64.7) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.23; Fri, 31 May 2024 11:05:24 +0800
+From: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+        Uladzislau Rezki
+	<urezki@gmail.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Lorenzo Stoakes
+	<lstoakes@gmail.com>, Baoquan He <bhe@redhat.com>,
+        Thomas Gleixner
+	<tglx@linutronix.de>,
+        hailong liu <hailong.liu@oppo.com>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>,
+        Zhaoyang Huang
+	<huangzhaoyang@gmail.com>, <steve.kang@unisoc.com>
+Subject: [PATCHv3] mm: fix incorrect vbq reference in purge_fragmented_block
+Date: Fri, 31 May 2024 11:05:20 +0800
+Message-ID: <20240531030520.1615833-1-zhaoyang.huang@unisoc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240531-dt-warnings-gpio-ast2600-pinctrl-funcs-groups-v1-3-a6fe2281a1b8@codeconstruct.com.au>
-References: <20240531-dt-warnings-gpio-ast2600-pinctrl-funcs-groups-v1-0-a6fe2281a1b8@codeconstruct.com.au>
-In-Reply-To: <20240531-dt-warnings-gpio-ast2600-pinctrl-funcs-groups-v1-0-a6fe2281a1b8@codeconstruct.com.au>
-To: Andrew Jeffery <andrew@codeconstruct.com.au>, 
- Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>
-Cc: linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org, 
- linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-X-Mailer: b4 0.13.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
+ BJMBX01.spreadtrum.com (10.0.64.7)
+X-MAIL:SHSQR01.spreadtrum.com 44V35RmE064534
 
-I3C1 and I3C2 become muxed functions in the mass production release of
-the AST2600. Also document the USB2A device and USB2B HID mux options.
+From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
 
-Squash warnings such as:
+vmalloc area runs out in our ARM64 system during an erofs test as
+vm_map_ram failed[1]. By following the debug log, we find that
+vm_map_ram()->vb_alloc() will allocate new vb->va which corresponding
+to 4MB vmalloc area as list_for_each_entry_rcu returns immediately
+when vbq->free->next points to vbq->free. That is to say, 65536 times
+of page fault after the list's broken will run out of the whole
+vmalloc area. This should be introduced by one vbq->free->next point to
+vbq->free which makes list_for_each_entry_rcu can not iterate the list
+and find the BUG.
 
-    arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-elbert.dtb: pinctrl: usb2ad_default:function:0: 'USB2AD' is not one of ['ADC0', 'ADC1', 'ADC10', 'ADC11', 'ADC12', 'ADC13', 'ADC14', 'ADC15', 'ADC2', 'ADC3', 'ADC4', 'ADC5', 'ADC6', 'ADC7', 'ADC8', 'ADC9', 'BMCINT', 'EMMC', 'ESPI', 'ESPIALT', 'FSI1', 'FSI2', 'FWQSPI', 'FWSPIABR', 'FWSPID', 'FWSPIWP', 'GPIT0', 'GPIT1', 'GPIT2', 'GPIT3', 'GPIT4', 'GPIT5', 'GPIT6', 'GPIT7', 'GPIU0', 'GPIU1', 'GPIU2', 'GPIU3', 'GPIU4', 'GPIU5', 'GPIU6', 'GPIU7', 'I2C1', 'I2C10', 'I2C11', 'I2C12', 'I2C13', 'I2C14', 'I2C15', 'I2C16', 'I2C2', 'I2C3', 'I2C4', 'I2C5', 'I2C6', 'I2C7', 'I2C8', 'I2C9', 'I3C3', 'I3C4', 'I3C5', 'I3C6', 'JTAGM', 'LHPD', 'LHSIRQ', 'LPC', 'LPCHC', 'LPCPD', 'LPCPME', 'LPCSMI', 'LSIRQ', 'MACLINK1', 'MACLINK2', 'MACLINK3', 'MACLINK4', 'MDIO1', 'MDIO2', 'MDIO3', 'MDIO4', 'NCTS1', 'NCTS2', 'NCTS3', 'NCTS4', 'NDCD1', 'NDCD2', 'NDCD3', 'NDCD4', 'NDSR1', 'NDSR2', 'NDSR3', 'NDSR4', 'NDTR1', 'NDTR2', 'NDTR3', 'NDTR4', 'NRI1', 'NRI2', 'NRI3', 'NR
- I4', 'NRTS1', 'NRTS2', 'NRTS3', 'NRTS4', 'OSCCLK', 'PEWAKE', 'PWM0', 'PWM1', 'PWM10', 'PWM11', 'PWM12', 'PWM13', 'PWM14', 'PWM15', 'PWM2', 'PWM3', 'PWM4', 'PWM5', 'PWM6', 'PWM7', 'PWM8', 'PWM9', 'RGMII1', 'RGMII2', 'RGMII3', 'RGMII4', 'RMII1', 'RMII2', 'RMII3', 'RMII4', 'RXD1', 'RXD2', 'RXD3', 'RXD4', 'SALT1', 'SALT10', 'SALT11', 'SALT12', 'SALT13', 'SALT14', 'SALT15', 'SALT16', 'SALT2', 'SALT3', 'SALT4', 'SALT5', 'SALT6', 'SALT7', 'SALT8', 'SALT9', 'SD1', 'SD2', 'SGPM1', 'SGPM2', 'SGPS1', 'SGPS2', 'SIOONCTRL', 'SIOPBI', 'SIOPBO', 'SIOPWREQ', 'SIOPWRGD', 'SIOS3', 'SIOS5', 'SIOSCI', 'SPI1', 'SPI1ABR', 'SPI1CS1', 'SPI1WP', 'SPI2', 'SPI2CS1', 'SPI2CS2', 'TACH0', 'TACH1', 'TACH10', 'TACH11', 'TACH12', 'TACH13', 'TACH14', 'TACH15', 'TACH2', 'TACH3', 'TACH4', 'TACH5', 'TACH6', 'TACH7', 'TACH8', 'TACH9', 'THRU0', 'THRU1', 'THRU2', 'THRU3', 'TXD1', 'TXD2', 'TXD3', 'TXD4', 'UART10', 'UART11', 'UART12', 'UART13', 'UART6', 'UART7', 'UART8', 'UART9', 'USBAD', 'USBADP', 'USB2AH', 'USB2AHP', 'USB
- 2BD', 'USB2BH', 'VB', 'VGAHS', 'VGAVS', 'WDTRST1', 'WDTRST2', 'WDTRST3', 'WDTRST4']
+[1]
+PID: 1        TASK: ffffff80802b4e00  CPU: 6    COMMAND: "init"
+ #0 [ffffffc08006afe0] __switch_to at ffffffc08111d5cc
+ #1 [ffffffc08006b040] __schedule at ffffffc08111dde0
+ #2 [ffffffc08006b0a0] schedule at ffffffc08111e294
+ #3 [ffffffc08006b0d0] schedule_preempt_disabled at ffffffc08111e3f0
+ #4 [ffffffc08006b140] __mutex_lock at ffffffc08112068c
+ #5 [ffffffc08006b180] __mutex_lock_slowpath at ffffffc08111f8f8
+ #6 [ffffffc08006b1a0] mutex_lock at ffffffc08111f834
+ #7 [ffffffc08006b1d0] reclaim_and_purge_vmap_areas at ffffffc0803ebc3c
+ #8 [ffffffc08006b290] alloc_vmap_area at ffffffc0803e83fc
+ #9 [ffffffc08006b300] vm_map_ram at ffffffc0803e78c0
 
-Signed-off-by: Andrew Jeffery <andrew@codeconstruct.com.au>
+Fixes: fc1e0d980037 ("mm/vmalloc: prevent stale TLBs in fully utilized blocks")
+
+Suggested-by: Hailong.Liu <hailong.liu@oppo.com>
+Signed-off-by: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
 ---
- .../devicetree/bindings/pinctrl/aspeed,ast2600-pinctrl.yaml         | 6 ++++++
- 1 file changed, 6 insertions(+)
+v2: introduce cpu in vmap_block to record the right CPU number
+v3: use get_cpu/put_cpu to prevent schedule between core
+---
+---
+ mm/vmalloc.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/aspeed,ast2600-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/aspeed,ast2600-pinctrl.yaml
-index d0a9cc2027f8..00b6974a5ed3 100644
---- a/Documentation/devicetree/bindings/pinctrl/aspeed,ast2600-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/aspeed,ast2600-pinctrl.yaml
-@@ -88,6 +88,8 @@ additionalProperties:
-         - I2C7
-         - I2C8
-         - I2C9
-+        - I3C1
-+        - I3C2
-         - I3C3
-         - I3C4
-         - I3C5
-@@ -232,6 +234,8 @@ additionalProperties:
-         - UART7
-         - UART8
-         - UART9
-+        - USB11BHID
-+        - USB2AD
-         - USB2AH
-         - USB2AHP
-         - USB2BD
-@@ -310,6 +314,8 @@ additionalProperties:
-         - I2C7
-         - I2C8
-         - I2C9
-+        - I3C1
-+        - I3C2
-         - I3C3
-         - I3C4
-         - I3C5
-
+diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+index 22aa63f4ef63..ecdb75d10949 100644
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@ -2458,6 +2458,7 @@ struct vmap_block {
+ 	struct list_head free_list;
+ 	struct rcu_head rcu_head;
+ 	struct list_head purge;
++	unsigned int cpu;
+ };
+ 
+ /* Queue of free and dirty vmap blocks, for allocation and flushing purposes */
+@@ -2586,10 +2587,12 @@ static void *new_vmap_block(unsigned int order, gfp_t gfp_mask)
+ 		return ERR_PTR(err);
+ 	}
+ 
++	vb->cpu = get_cpu();
+ 	vbq = raw_cpu_ptr(&vmap_block_queue);
+ 	spin_lock(&vbq->lock);
+ 	list_add_tail_rcu(&vb->free_list, &vbq->free);
+ 	spin_unlock(&vbq->lock);
++	put_cpu();
+ 
+ 	return vaddr;
+ }
+@@ -2614,9 +2617,10 @@ static void free_vmap_block(struct vmap_block *vb)
+ }
+ 
+ static bool purge_fragmented_block(struct vmap_block *vb,
+-		struct vmap_block_queue *vbq, struct list_head *purge_list,
+-		bool force_purge)
++		struct list_head *purge_list, bool force_purge)
+ {
++	struct vmap_block_queue *vbq = &per_cpu(vmap_block_queue, vb->cpu);
++
+ 	if (vb->free + vb->dirty != VMAP_BBMAP_BITS ||
+ 	    vb->dirty == VMAP_BBMAP_BITS)
+ 		return false;
+@@ -2664,7 +2668,7 @@ static void purge_fragmented_blocks(int cpu)
+ 			continue;
+ 
+ 		spin_lock(&vb->lock);
+-		purge_fragmented_block(vb, vbq, &purge, true);
++		purge_fragmented_block(vb, &purge, true);
+ 		spin_unlock(&vb->lock);
+ 	}
+ 	rcu_read_unlock();
+@@ -2801,7 +2805,7 @@ static void _vm_unmap_aliases(unsigned long start, unsigned long end, int flush)
+ 			 * not purgeable, check whether there is dirty
+ 			 * space to be flushed.
+ 			 */
+-			if (!purge_fragmented_block(vb, vbq, &purge_list, false) &&
++			if (!purge_fragmented_block(vb, &purge_list, false) &&
+ 			    vb->dirty_max && vb->dirty != VMAP_BBMAP_BITS) {
+ 				unsigned long va_start = vb->va->va_start;
+ 				unsigned long s, e;
 -- 
-2.39.2
+2.25.1
 
 
