@@ -1,109 +1,123 @@
-Return-Path: <linux-kernel+bounces-196183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB15F8D5890
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 04:17:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 96B778D588E
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 04:17:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 914DD1F259D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 02:17:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C88E1F25AB0
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 02:17:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A59278C75;
-	Fri, 31 May 2024 02:17:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95F1777F1B;
+	Fri, 31 May 2024 02:17:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TqIFkSET"
-Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hkaByAMr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 434984C6D;
-	Fri, 31 May 2024 02:17:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C74E84C6D;
+	Fri, 31 May 2024 02:16:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717121827; cv=none; b=KY8Rrrdo3ZNqithj9yxsd5tsMkjwBvyENm3h7BTBX0mAjbOVEZUHOp7tQlB7PSiMxmsc/zCVdWAAhU5PvqnRd8eSvh6UJOilw5wMnQK4dmXH8T0Ukt/ctPcNihggxcJwPDmlFkmwVWqtrBif694LVhVG17IwQgr8NePYBolHPJs=
+	t=1717121819; cv=none; b=htacjHei9MURWTIIl7GEQgGhabsO7UwBiRSP03Ob9UfHiy4guG+5cv0UB81LpWmvchkM8puk0bPWZheogiXb0Xgu+kkrONa3kYG2zabNnQLtXBpRxpSQLBZYk6j2Kwmi7uNX54PwjMPcSoz/HfT3/rgh6YVE9u2Fc+tuld+aWgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717121827; c=relaxed/simple;
-	bh=ChFmsqTuhqCWj9Q0CuDq9Et2eZr78DFDG1R2WzdOpxM=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=GslapNbfGQqb+IvHTM11rFcD770loFEZsMwW4ld9Dc7/LJJ/45KMP0ffHrqyZ/+6g4xVWfdkQS6qvStVdQ6IqpinZPl1ZDt3Ix38rOdepPl7kX/1gV2SOY/fsGs1pP/gKj8s6i0SMBQXJ5UKSuee7Q/hjmOORZ0Zb+S26HZg9xI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TqIFkSET; arc=none smtp.client-ip=209.85.161.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-5b9817a135aso847119eaf.0;
-        Thu, 30 May 2024 19:17:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717121825; x=1717726625; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ChFmsqTuhqCWj9Q0CuDq9Et2eZr78DFDG1R2WzdOpxM=;
-        b=TqIFkSETR9+ZWUkCnZrs8BSlKVMoyqnhUbvTSzgIILIWwr3NOuB8XrlvPTzaAgRG9C
-         lrWZP7XAg2A9PthqFzDku/eATS0v33GGG5yf64edw+hKbnvTGIv5mw6k4RUyULQYL9U8
-         ziirKPMF5Cs6nuM0MQQ12YLDYuMIpD3ZMBOTAfXpcw78PIT9KzJDX3o1fsgECZIztJYl
-         gFDQB2mEUEBAOywOq5+x0j3pk31gnH7wWIKRiXAnaGF4AMzPSSZmQwNGArsRHjchXj5K
-         tGXChVFoKXX+bUZq1WvDsdbyikP2sF4Z9NCjffpQHU3ILTH5AANjgQb9j3SYUTxcTl1s
-         M07Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717121825; x=1717726625;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ChFmsqTuhqCWj9Q0CuDq9Et2eZr78DFDG1R2WzdOpxM=;
-        b=wPr3z38u6SOdOHCtLthPesm/TKSH4dwYrPxyW3hE6XwRXJH0rMpzIxqz+fAiXskPfk
-         ec3BdfBtW+IOE9EsiYtmemyg9AXM9jVuIrD07S8OeBceIjPpyFhVGs930mdTI9S4w9XD
-         sJn8Ry0RQxwVSUy6lzPMgBi8xNfU+Hfnvf9jXJyGoqfa2fvkj3twmteQ3H8T6jPcZoZP
-         msAnPlkodqzVYav3Kh3g3ZzBWf1U7XDlOC60SKS0SNdZ2UJwzKpi/XpooSoQNKBPy5O8
-         c/6vRS/F0aXHaKf7RbqiaKvTSerR2iFh41/Iav6oyX3CNA3BUM2qLXZMzSX2NHfpadGg
-         1GDA==
-X-Forwarded-Encrypted: i=1; AJvYcCXAReCo0mE9vNE9aN0Ou5Ecm82ILtYGbARfFhc88EYv88CB3k94JwI570irGzvK+guHDBKQmAKby1ppwJsT0vM9LiyE8i4hf80DeE31KGeLfspFeuoFWKgEBh8ghyPCHl0YXOJssBoFEi+1aQ==
-X-Gm-Message-State: AOJu0Yzvnb0VyHdMeyqTk0vHtGSije1pIP0pJc0XiuXO1nbsgB/5R9Ab
-	93n3N0RlZfP9YI+lyovcnogRFLdzL66Ibwmm3hnXdnrfDRwDNUUr
-X-Google-Smtp-Source: AGHT+IFWDmPVOfAz9M39oJcVLgklrgfEF71/eAZOJCXmybnDydmg1DxI6zz9lMLjRV4/a8gX34adLg==
-X-Received: by 2002:a05:6358:6f05:b0:198:e35d:6800 with SMTP id e5c5f4694b2df-19b489cd7d7mr92627655d.3.1717121825093;
-        Thu, 30 May 2024 19:17:05 -0700 (PDT)
-Received: from smtpclient.apple ([198.11.178.15])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6c359564fcfsm373594a12.75.2024.05.30.19.17.01
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 May 2024 19:17:04 -0700 (PDT)
-Content-Type: text/plain;
-	charset=us-ascii
+	s=arc-20240116; t=1717121819; c=relaxed/simple;
+	bh=P5d/0b92iEEWWrKJQ67tqG3rp+vdYxJZiUvaostorGY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nS65dhGE3Ncm1XPRHuXXGaRIeFSt4C+dVJhEsg2txL+S8/pu0kiz8Brmw4B4liC6jxwpnyz49+88sG0hZS9G+yHYBxSfn/fVhWsz9OY5XuBs8C6TAkx34n4Z/AmGJcRSHVW6n0UwUhibXhknCK7Z4q9MgbEYdo2np0Ij7mpBQlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hkaByAMr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E9C8C2BBFC;
+	Fri, 31 May 2024 02:16:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717121819;
+	bh=P5d/0b92iEEWWrKJQ67tqG3rp+vdYxJZiUvaostorGY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hkaByAMrS7s3R8mRhw3b+e4esv4ruad8pwZal97P7yPssH0JV1AZh/jIKAQTk6Tu+
+	 JS1Bcf42qlwozPi845OchFKmaFQBRLqLd5IbpLo33CwKwmKGGFe4caWgrY+BF6I3Oo
+	 lQvzd7s68N16zgT+eX1feCQkUFxpflo7srOsfgGO5Nuu3GlQXMIjaZH3HK4tB4440c
+	 GoqHWACn0iwEfylTG+VXzj9wuwAN+hfKFtYP4YBMVwebVRc6/hx6mLpjLqG0qGlEEW
+	 X+Fvudlzs2OvFvkw16SPZ8f9OE+vPr6XP+zhRE/XXACoJ4CmeoxbHv5oyuab8yZeqJ
+	 3rAnt80rtWJDg==
+Date: Thu, 30 May 2024 19:16:56 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Ross Philipson <ross.philipson@oracle.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+	linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-crypto@vger.kernel.org, kexec@lists.infradead.org,
+	linux-efi@vger.kernel.org, iommu@lists.linux-foundation.org,
+	dpsmith@apertussolutions.com, tglx@linutronix.de, mingo@redhat.com,
+	bp@alien8.de, hpa@zytor.com, dave.hansen@linux.intel.com,
+	ardb@kernel.org, mjg59@srcf.ucam.org,
+	James.Bottomley@hansenpartnership.com, peterhuewe@gmx.de,
+	jarkko@kernel.org, jgg@ziepe.ca, luto@amacapital.net,
+	nivedita@alum.mit.edu, herbert@gondor.apana.org.au,
+	davem@davemloft.net, corbet@lwn.net, ebiederm@xmission.com,
+	dwmw2@infradead.org, baolu.lu@linux.intel.com,
+	kanth.ghatraju@oracle.com, andrew.cooper3@citrix.com,
+	trenchboot-devel@googlegroups.com
+Subject: Re: [PATCH v9 06/19] x86: Add early SHA-1 support for Secure Launch
+ early measurements
+Message-ID: <20240531021656.GA1502@sol.localdomain>
+References: <20240531010331.134441-1-ross.philipson@oracle.com>
+ <20240531010331.134441-7-ross.philipson@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
-Subject: Re: [PATCH] livepatch: introduce klp_func called interface
-From: zhang warden <zhangwarden@gmail.com>
-In-Reply-To: <ZkxVlIPj9VZ9NJC4@pathway.suse.cz>
-Date: Fri, 31 May 2024 10:16:46 +0800
-Cc: Miroslav Benes <mbenes@suse.cz>,
- Josh Poimboeuf <jpoimboe@kernel.org>,
- Jiri Kosina <jikos@kernel.org>,
- Joe Lawrence <joe.lawrence@redhat.com>,
- live-patching@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <2551BBD9-735E-4D1E-B1AE-F5A3F0C38815@gmail.com>
-References: <20240520005826.17281-1-zhangwarden@gmail.com>
- <alpine.LSU.2.21.2405200845130.11413@pobox.suse.cz>
- <BBD2A553-6D44-4CD5-94DD-D8B2D5536F94@gmail.com>
- <alpine.LSU.2.21.2405210823590.4805@pobox.suse.cz>
- <ZkxVlIPj9VZ9NJC4@pathway.suse.cz>
-To: Petr Mladek <pmladek@suse.com>
-X-Mailer: Apple Mail (2.3774.500.171.1.1)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240531010331.134441-7-ross.philipson@oracle.com>
 
+On Thu, May 30, 2024 at 06:03:18PM -0700, Ross Philipson wrote:
+> From: "Daniel P. Smith" <dpsmith@apertussolutions.com>
+> 
+> For better or worse, Secure Launch needs SHA-1 and SHA-256. The
+> choice of hashes used lie with the platform firmware, not with
+> software, and is often outside of the users control.
+> 
+> Even if we'd prefer to use SHA-256-only, if firmware elected to start us
+> with the SHA-1 and SHA-256 backs active, we still need SHA-1 to parse
+> the TPM event log thus far, and deliberately cap the SHA-1 PCRs in order
+> to safely use SHA-256 for everything else.
+> 
+> The SHA-1 code here has its origins in the code from the main kernel:
+> 
+> commit c4d5b9ffa31f ("crypto: sha1 - implement base layer for SHA-1")
+> 
+> A modified version of this code was introduced to the lib/crypto/sha1.c
+> to bring it in line with the SHA-256 code and allow it to be pulled into the
+> setup kernel in the same manner as SHA-256 is.
+> 
+> Signed-off-by: Daniel P. Smith <dpsmith@apertussolutions.com>
+> Signed-off-by: Ross Philipson <ross.philipson@oracle.com>
 
-Hi Bros,
+Thanks.  This explanation doesn't seem to have made it into the actual code or
+documentation.  Can you please get it into a more permanent location?
 
-How about my patch? I do think it is a viable feature to show the state =
-of the patched function. If we add an unlikely branch test before we set =
-the 'called' state, once this function is called, there maybe no =
-negative effect to the performance.
+Also, can you point to where the "deliberately cap the SHA-1 PCRs" thing happens
+in the code?
 
-Please give me some advice.
+That paragraph is also phrased as a hypothetical, "Even if we'd prefer to use
+SHA-256-only".  That implies that you do not, in fact, prefer SHA-256 only.  Is
+that the case?  Sure, maybe there are situations where you *have* to use SHA-1,
+but why would you not at least *prefer* SHA-256?
 
-Regards,
-Wardenjohn=
+> /*
+>  * An implementation of SHA-1's compression function.  Don't use in new code!
+>  * You shouldn't be using SHA-1, and even if you *have* to use SHA-1, this isn't
+>  * the correct way to hash something with SHA-1 (use crypto_shash instead).
+>  */
+> #define SHA1_DIGEST_WORDS	(SHA1_DIGEST_SIZE / 4)
+> #define SHA1_WORKSPACE_WORDS	16
+> void sha1_init(__u32 *buf);
+> void sha1_transform(__u32 *digest, const char *data, __u32 *W);
+>+void sha1(const u8 *data, unsigned int len, u8 *out);
+
+Also, the comment above needs to be updated.
+
+- Eric
 
