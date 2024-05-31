@@ -1,119 +1,121 @@
-Return-Path: <linux-kernel+bounces-196440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CF648D5C52
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:08:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AF988D5C56
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:08:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02F7A1F24BCC
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 08:08:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E54E3289724
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 08:08:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E52E7CF3A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C919A81211;
 	Fri, 31 May 2024 08:07:55 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rqGodKff"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3355077F10;
-	Fri, 31 May 2024 08:07:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A6D078274;
+	Fri, 31 May 2024 08:07:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717142874; cv=none; b=UW4EXn/RzCYNhlP2Ne5qTFg7GNmKVatzCsc7BtMm1qE3vUbg9NN78MNXdyE+3n3ryH//tK5/1ctPLlYRHxCmswfrLClLmcsgDiylhDs1DRlqaziWzvboeKC7vyz0mjTL/pjG6nzeu0CLculI9FjHw06LRBxv8ebq8ti0EMEp5HI=
+	t=1717142875; cv=none; b=qaFlr8xFGTyu1DSkTXmEojQD7oiEuT7QOkt2XIqHleA9tWZa/INjIp0Yaoh0lTyQYhUURjYcmYivz/DA2Oq2JgFsBV2blbcFqr2ywZ79DBF5RdRC8LZtUKVsV+/hy2RKxA/jUibvo77TZlxSf6BY1mmvOT/dsssQH7S9RcuuYds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717142874; c=relaxed/simple;
-	bh=vsNgwHvZRQwmQctv8l3O/7QfMvyCgHzZeFs9HeynMFw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jt3oAybZAH5k0j6a8phv5qjQlF6bFAFR8m8TV+WVovneb1iQnuSt5sYAe+YSuLkSw3Qc8sNTBHgCnMTHMomTkdMxPa0K5zUYlZPtaIHOT3u5OJ8i7YDqhmDlZsprdRFn8Ukh9A6q7fyqRd5wM+JH4Q9eQNzuuw6EDt3py9fFTcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: dc4ececc1f2411ef9305a59a3cc225df-20240531
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:71caded7-58ec-4b1f-8584-4f013905d8e5,IP:10,
-	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACTI
-	ON:release,TS:-5
-X-CID-INFO: VERSION:1.1.38,REQID:71caded7-58ec-4b1f-8584-4f013905d8e5,IP:10,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:-5
-X-CID-META: VersionHash:82c5f88,CLOUDID:d5a16ab178cbfb61a30cf038e50e53f0,BulkI
-	D:2405311607473M99V4K1,BulkQuantity:0,Recheck:0,SF:66|24|17|19|44|102,TC:n
-	il,Content:0,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,CO
-	L:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI
-X-UUID: dc4ececc1f2411ef9305a59a3cc225df-20240531
-Received: from mail.kylinos.cn [(39.156.73.10)] by mailgw.kylinos.cn
-	(envelope-from <jiangyunshui@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 558551494; Fri, 31 May 2024 16:07:44 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id 78DF3E000EB9;
-	Fri, 31 May 2024 16:07:44 +0800 (CST)
-X-ns-mid: postfix-66598550-342445703
-Received: from kylin-pc.. (unknown [172.25.130.133])
-	by mail.kylinos.cn (NSMail) with ESMTPA id 4CDE2E000EB9;
-	Fri, 31 May 2024 16:07:42 +0800 (CST)
-From: Yunshui Jiang <jiangyunshui@kylinos.cn>
-To: linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-wpan@vger.kernel.org
-Cc: alex.aring@gmail.com,
-	stefan@datenfreihafen.org,
-	miquel.raynal@bootlin.com,
-	davem@davemloft.net,
-	Yunshui Jiang <jiangyunshui@kylinos.cn>
-Subject: [PATCH] net: mac802154: Fix racy device stats updates by DEV_STATS_INC() and DEV_STATS_ADD()
-Date: Fri, 31 May 2024 16:07:39 +0800
-Message-Id: <20240531080739.2608969-1-jiangyunshui@kylinos.cn>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1717142875; c=relaxed/simple;
+	bh=VxI4hfrXrXA0xAIuC3B7s0C6dsDYxzaR+hTj2hBKvgw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sG7+2+WTN9LnWnIhYagH9Lh9J9SFwFDhLdWLAGy4u4pNBtmL4C8FQHCUq7DFEWsJXzyIktlgmb5VDUO04dezLfzGBFCjRm9AuV9GCtsNYBT/NmrVw9aELqy6p7FSBnF4/a/Bw1ukXfcK+RAn01/IA8sNyuhIXYqPc4EAJUZm490=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rqGodKff; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24086C116B1;
+	Fri, 31 May 2024 08:07:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717142874;
+	bh=VxI4hfrXrXA0xAIuC3B7s0C6dsDYxzaR+hTj2hBKvgw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=rqGodKffy4jUR2w3TxDrYqMeBHRujhARMAlSjWmFmL1v2ZBR0qoltU95Q5k4bkcVW
+	 lup6BccLpopaRKfolfGkCYoe0L07DQmIZ208c87zHJwM0QbFAyF2ou5/jIHXLa8Lwb
+	 VL6SjGo7jB8UPbVOi8vLWkDCiS8+H6jGt2spn7TmuIz7RiUDdBIfWvgjfhzGvTFRiS
+	 YjMa1FJbZHkOqlPwGT1ROk9PobG9S5zMCkDA6I/Vzbt8eHaXoMN/WFWR/47CLoEmQQ
+	 C8iCbQ1WHrvQKPWRhOmBkBmPvASwP0yfo8+aV9hZjCSEG8I3JKsUp+pUAnTx2xDQpY
+	 /oYjqOdxQFJtw==
+Message-ID: <9f3603d2-daff-435e-866d-ca07e47c3ccc@kernel.org>
+Date: Fri, 31 May 2024 10:07:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/1] dt-bindings: gpio: mpc8xxx: Convert to yaml format
+To: Frank Li <Frank.Li@nxp.com>, robh@kernel.org
+Cc: brgl@bgdev.pl, conor+dt@kernel.org, devicetree@vger.kernel.org,
+ imx@lists.linux.dev, krzk+dt@kernel.org, linus.walleij@linaro.org,
+ linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240530165424.3173673-1-Frank.Li@nxp.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240530165424.3173673-1-Frank.Li@nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-mac802154 devices update their dev->stats fields locklessly. Therefore
-these counters should be updated atomically. Adopt SMP safe DEV_STATS_INC=
-()
-and DEV_STATS_ADD() to achieve this.
+On 30/05/2024 18:54, Frank Li wrote:
+> Convert binding doc from txt to yaml.
+> 
+> Remove redundated "gpio1: gpio@2300000" example.
+> Add gpio-controller at example "gpio@1100".
+> 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
 
-Signed-off-by: Yunshui Jiang <jiangyunshui@kylinos.cn>
----
- net/mac802154/tx.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-diff --git a/net/mac802154/tx.c b/net/mac802154/tx.c
-index 2a6f1ed763c9..6fbed5bb5c3e 100644
---- a/net/mac802154/tx.c
-+++ b/net/mac802154/tx.c
-@@ -34,8 +34,8 @@ void ieee802154_xmit_sync_worker(struct work_struct *wo=
-rk)
- 	if (res)
- 		goto err_tx;
-=20
--	dev->stats.tx_packets++;
--	dev->stats.tx_bytes +=3D skb->len;
-+	DEV_STATS_INC(dev, tx_packets);
-+	DEV_STATS_ADD(dev, tx_bytes, skb->len);
-=20
- 	ieee802154_xmit_complete(&local->hw, skb, false);
-=20
-@@ -90,8 +90,8 @@ ieee802154_tx(struct ieee802154_local *local, struct sk=
-_buff *skb)
- 		if (ret)
- 			goto err_wake_netif_queue;
-=20
--		dev->stats.tx_packets++;
--		dev->stats.tx_bytes +=3D len;
-+		DEV_STATS_INC(dev, tx_packets);
-+		DEV_STATS_ADD(dev, tx_bytes, len);
- 	} else {
- 		local->tx_skb =3D skb;
- 		queue_work(local->workqueue, &local->sync_tx_work);
---=20
-2.34.1
+Best regards,
+Krzysztof
 
 
