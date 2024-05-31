@@ -1,84 +1,97 @@
-Return-Path: <linux-kernel+bounces-197318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDF818D6942
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 20:53:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8EB68D6946
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 20:55:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73FA71F23871
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:53:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 884E31F267F7
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:55:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A1567F7FD;
-	Fri, 31 May 2024 18:53:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A3BE7FBA3;
+	Fri, 31 May 2024 18:55:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LPU2yyuK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pdFtuEiW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CCA17E761;
-	Fri, 31 May 2024 18:53:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 385E57E563;
+	Fri, 31 May 2024 18:55:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717181610; cv=none; b=W4jm0eq++NEXv+5UBt8brub9Lk+e/uYv7SAiq5OByUj9ODwKi0y2d4LPeOZLV+QE5kLqVpiZFYLDwYcYUo5jBChYhGS3UasZ22h/caUZvvKdFLJcLcPDQZb9jUAPKKggfbvMpsRPYnklelK70V3YWFVHB4Y18EcFvtuFPAnxdOM=
+	t=1717181722; cv=none; b=MLbKcALVr+E961c9UexKbAVYW/Bo5LoFjaZTXsrZ7DF6diJCs2UAlqdWYBiYoFpRUsR68MCWhfh+iaSSs86Lfa0OQAggGk1e/NOBICoo6gR+T6EPiwvgg/m2aVrBpl0TfsQUNf3Tqi+uvtEBsuAxVQMNQ1LqNr3Dlz5EpO3fTxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717181610; c=relaxed/simple;
-	bh=kP2teycQbL2Gc6/fKZ6aB8TWymQ7VtmJws0fyRjuoSs=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=QpVd5S9qxuCTuObxuiVBJLyjR8az3756BIZndaOxYPebQ6WmycfbHuLsN8XxXquVwAS6HV80cok97cD3aFOc5Ec7vcCFAFkfkQasn+4BY6DQMiKF1abldf0fMUukfWihCPt3T5krZbpkAC/03/WxoWfG6trTwEiYIidPu4tTxxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LPU2yyuK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05CCCC116B1;
-	Fri, 31 May 2024 18:53:26 +0000 (UTC)
+	s=arc-20240116; t=1717181722; c=relaxed/simple;
+	bh=WuHvG2oalIqTM1m9wO4kdurTHHM8QmXjw2z7bpGaImo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ojhUmt/DmMfJgn0pgIWhKXHAVONnAcMt3yT8Np7nlpeMxDPBx29PdUO6UEMcbrOeQ0fE/XChLiBZbCZ4VxURGTWZb75bJjWfByW5kLcCJ6nT+vX6P/aLpUyqUiXO6rF9w0mEZNppOwXe7UP8gGtdX6xUFE5nIhYv3bustnUyGIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pdFtuEiW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35C0CC116B1;
+	Fri, 31 May 2024 18:55:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717181610;
-	bh=kP2teycQbL2Gc6/fKZ6aB8TWymQ7VtmJws0fyRjuoSs=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-	b=LPU2yyuKc1kxS15QMNDL0ebEIhqNUtLH5hw1khLndbJVeXI/e4OBBbK7z3kn+9OhP
-	 BT5PD/PIsBAdW4rDlLBe3gQjqFShgjLw6TvJoqd6zUH8r7IvMwaf72SCgQ9kQhsRMu
-	 56XdZg8e2r2leNQZ8wfNsNpMrykucZ+gUXN91EOZNHmyaGMh/rTxR179x5AtQRwhxC
-	 MoUbH1oGToEwEhUo+KbEKgPmQQ7xMUAMhjCtLYC8ngeeDd4bp3i6JbLdL+spBaWCR8
-	 cN2/tDvITUgArD5GbLNmMb0pB+ZGXNc23+SutWhroGl0hggOT1SrIuPW6y1QV+W018
-	 u1AUCaZI/Y/pg==
-From: Kalle Valo <kvalo@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,  Konrad Dybcio
- <konrad.dybcio@linaro.org>,  Loic Poulain <loic.poulain@linaro.org>,
-  Mathieu Poirier <mathieu.poirier@linaro.org>,  Rob Herring
- <robh@kernel.org>,  Krzysztof Kozlowski <krzk+dt@kernel.org>,  Conor
- Dooley <conor+dt@kernel.org>,  linux-kernel@vger.kernel.org,
-  linux-arm-msm@vger.kernel.org,  wcn36xx@lists.infradead.org,
-  linux-wireless@vger.kernel.org,  linux-remoteproc@vger.kernel.org,
-  devicetree@vger.kernel.org,  Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 02/12] wifi: wcn36xx: make use of QCOM_FW_HELPER
-References: <20240521-qcom-firmware-name-v1-0-99a6d32b1e5e@linaro.org>
-	<20240521-qcom-firmware-name-v1-2-99a6d32b1e5e@linaro.org>
-Date: Fri, 31 May 2024 21:53:25 +0300
-In-Reply-To: <20240521-qcom-firmware-name-v1-2-99a6d32b1e5e@linaro.org>
-	(Dmitry Baryshkov's message of "Tue, 21 May 2024 12:45:22 +0300")
-Message-ID: <87ed9hvmmy.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=k20201202; t=1717181721;
+	bh=WuHvG2oalIqTM1m9wO4kdurTHHM8QmXjw2z7bpGaImo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pdFtuEiWRBKlfEt/Jm+TBEnM6gGoF36pGUFRi4tb9EVzO6olRyIFpl0O69mkQTL3f
+	 0+hZ8ujtQuNzH60tS+YF63MfwgBlzTzHKhSnx8BW3d9zP8ZSbe/itTaaFRN17sPTJa
+	 nmvPQhPnVJ5DPQw/+VU2Cy4a2nisulJAuX2/odWcPUCmAhQuXvz4sm+eGhJS11l4Dm
+	 AYonGo0podM6AOrSbned+4JgEE8qDwUByNsSr2sumJT+9yB8tXTFmjd/9VLcy9+cbC
+	 B++2BZCQm8he9i6zMtEcC+rzqdnwpiaFxdmyNikGzBoC2HRVszGzD7l/T93snXwgon
+	 dNQu5mmzQ1izQ==
+Date: Fri, 31 May 2024 11:55:19 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Lizhi Xu <lizhi.xu@windriver.com>
+Cc: lkp@intel.com, coreteam@netfilter.org, davem@davemloft.net,
+	fw@strlen.de, jaegeuk@kernel.org, kadlec@netfilter.org,
+	kuba@kernel.org, linux-fscrypt@vger.kernel.org,
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+	netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+	oe-kbuild-all@lists.linux.dev, pablo@netfilter.org,
+	syzbot+340581ba9dceb7e06fb3@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com, tytso@mit.edu
+Subject: Re: [PATCH V4] ext4: check hash version and filesystem casefolded
+ consistent
+Message-ID: <20240531185519.GB1153@sol.localdomain>
+References: <202405311607.yQR7dozp-lkp@intel.com>
+ <20240531090611.2972737-1-lizhi.xu@windriver.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240531090611.2972737-1-lizhi.xu@windriver.com>
 
-Dmitry Baryshkov <dmitry.baryshkov@linaro.org> writes:
+On Fri, May 31, 2024 at 05:06:11PM +0800, 'Lizhi Xu' via syzkaller-bugs wrote:
+> When mounting the ext4 filesystem, if the hash version and casefolded are not
+> consistent, exit the mounting.
+> 
+> Reported-by: syzbot+340581ba9dceb7e06fb3@syzkaller.appspotmail.com
+> Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
+> ---
+>  fs/ext4/super.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+> index c682fb927b64..0ad326504c50 100644
+> --- a/fs/ext4/super.c
+> +++ b/fs/ext4/super.c
+> @@ -5262,6 +5262,11 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
+>  		goto failed_mount;
+>  
+>  	ext4_hash_info_init(sb);
+> +	if (es->s_def_hash_version == DX_HASH_SIPHASH && 
+> +	    !ext4_has_feature_casefold(sb)) {
+> +		err = -EINVAL;
+> +		goto failed_mount;
+> +	}
 
-> Make the driver use qcom_fw_helper to autodetect the path to the
-> calibration data file.
->
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+For the third time: you need to use the correct mailing lists.
+Please follow Documentation/process/submitting-patches.rst.
 
-Not a fan of one sentence commit messages. It would be nice to explain a
-bit more in the commit message, for instance answering to the question
-'why?' and maybe provide a short example how this is supposed to work?
-
--- 
-https://patchwork.kernel.org/project/linux-wireless/list/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+- Eric
 
