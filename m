@@ -1,1011 +1,1688 @@
-Return-Path: <linux-kernel+bounces-196704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A43C8D601E
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 13:00:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 243058D6025
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 13:00:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BE811C228AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 11:00:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9F58287AA7
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 11:00:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67027156F3B;
-	Fri, 31 May 2024 11:00:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63999157467;
+	Fri, 31 May 2024 11:00:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B+5sgyNW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A3C9156980;
-	Fri, 31 May 2024 11:00:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1643155CB4;
+	Fri, 31 May 2024 11:00:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717153204; cv=none; b=TZo2evtPmyyJ/y1bed3kviyPcNLK9BQhPHlO6TrxC9JqMIjwXev4eOWxxraF3TIXSr6cDDoF+1taUmxwVNoDY3RDGNzuNWvy6LUC/dEhFqzQfreKiVyfG/owiBX+FJSGODbmPVKhVMrK7C90vThN1n/qcjc94N/Jhh4aWS668X8=
+	t=1717153225; cv=none; b=Mzl9JwXV5H6O6TnBVJIRYeviuAcItNfwXezxh6cDKQmg06TCOp/1suOkzIqnreNNfwKND8nIzjRP//eSXBAtFS3NCeymWp1jDjsEmNB8WSBPPMnlLY5HIl4VmJ/HNAsgK9GbxTezrdrHt5/i7TahnphQViPxOLwzbuVQmEqv6bo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717153204; c=relaxed/simple;
-	bh=s+gECQtJy94RMybFqok+gv8BllRla9j5zHsGFKwbgLM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cdvMUGKgPrKtuoQjGduHSz4nft3dCKSZdru7tNWnDIG2YvpKBfHqgccsUeEAry5lM093OaMs5tq2rbU96/kdk7bd30+l1jeJdUdhRIAciOx2+c5bz3MhmNjU1fPpAGQFk2eERovvjf10lOpyxbkH2nypxOXP5wottE3TgmB3fC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA795C116B1;
-	Fri, 31 May 2024 11:00:01 +0000 (UTC)
-Message-ID: <72bf0aef-e9a1-416c-a537-61892fb8dfa3@xs4all.nl>
-Date: Fri, 31 May 2024 13:00:00 +0200
+	s=arc-20240116; t=1717153225; c=relaxed/simple;
+	bh=NAV3HkUJXOmQIwGZZIcqxaB0Rqo5+gudPmIsbeyUdgc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ooxC1jDIK8/gNmbwM7Bmgh3gwDI4J9IWg/INm5XHZjyQWs6geP/bSBWn1OErqGFr0cYyLV8+z3foGIrlPUoaFVjHuzwynTwdGF51gVT3zdVZw6H+C09gQW0YndtFh7gkGYoWJEmpYdqcgbNln5eWLXH58c29DNanhC4kdc7lBrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B+5sgyNW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 855C4C4AF11;
+	Fri, 31 May 2024 11:00:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717153224;
+	bh=NAV3HkUJXOmQIwGZZIcqxaB0Rqo5+gudPmIsbeyUdgc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=B+5sgyNWpZsZ3cImSCdQGDUs0fyMP3L4gUgbaWYQk14Pu9L7xai/0Nr+LT1YcO2xs
+	 5NhJDJmufjAAWtuBbKqh0jZyvDQw0m/zH2aio9uEVKtLLvevRmhgEHMGfZKV4ILcvI
+	 RUjYy4QXGSpRy7IiylPuGZirKv8D/RcU9aUIFt06fr6jn+sinHydhOFlkFi1i4nRtr
+	 1SOBh5Lmq+URLxGvksrPSr7xAQZBDIOy5RqodrY3wNHmxix30sKPhNBg8HzSMzKmNd
+	 m5wtgXQ3sJL9EU3eZG/dEGns40crcwWHsswxVAeeIcjqrlfytABvojiKrOwHtuja5v
+	 MGKeP6fRTJCxA==
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2e3efa18e6aso16155701fa.0;
+        Fri, 31 May 2024 04:00:24 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVZCWcWXL1clKcQqLR01Odj8P/IviyjJ85G25kbmLW/2hh9LfmHDAcE1Pi1mj66vOi5gJfbuDUGsf8I53ew7ORPuyUCH2DlrzG9ZbnmxdwQfCNtWnJ9k0KTyAtYnS4gmoUscWwXsbdousbYfNCvSgzglY18Wl4gPq0P0OLenlyi9vTh1qEISu9hn4xmCuigU7tYuHOLNTNbNoq5pmVrc1vJFXSf
+X-Gm-Message-State: AOJu0YwhpL4VDmTUrgUgQYY8QRImWqBjeZmO/+vnvyqaEc5DDhcP8Sp/
+	oewhiwlWqH7OK7dJ5dqiiYgf1lDTBYijU1p8M1H5doj15CwpK48pFcqII8EfCWnhKyRHVMIAQhL
+	RvHbD5fWCqaVWK5Dqfb1JkMNCURE=
+X-Google-Smtp-Source: AGHT+IHsmSlCXsjqFJfA2lOyTy2rBBM3OWUrlLyaxlzEMEVyFulvYZZXNLTzLi27XnP8neyJ0yzfLj++BgbYkPpH7WY=
+X-Received: by 2002:a05:651c:21a:b0:2e9:7f96:3d56 with SMTP id
+ 38308e7fff4ca-2ea950a67demr5241201fa.3.1717153222207; Fri, 31 May 2024
+ 04:00:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 4/6] media: platform: visconti: add streaming
- interface for ISP parameters and status
-To: Yuji Ishikawa <yuji2.ishikawa@toshiba.co.jp>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
- Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240424024215.1624299-1-yuji2.ishikawa@toshiba.co.jp>
- <20240424024215.1624299-5-yuji2.ishikawa@toshiba.co.jp>
-Content-Language: en-US, nl
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Autocrypt: addr=hverkuil@xs4all.nl; keydata=
- xsFNBFQ84W0BEAC7EF1iL4s3tY8cRTVkJT/297h0Hz0ypA+ByVM4CdU9sN6ua/YoFlr9k0K4
- BFUlg7JzJoUuRbKxkYb8mmqOe722j7N3HO8+ofnio5cAP5W0WwDpM0kM84BeHU0aPSTsWiGR
- yw55SOK2JBSq7hueotWLfJLobMWhQii0Zd83hGT9SIt9uHaHjgwmtTH7MSTIiaY6N14nw2Ud
- C6Uykc1va0Wqqc2ov5ihgk/2k2SKa02ookQI3e79laOrbZl5BOXNKR9LguuOZdX4XYR3Zi6/
- BsJ7pVCK9xkiVf8svlEl94IHb+sa1KrlgGv3fn5xgzDw8Z222TfFceDL/2EzUyTdWc4GaPMC
- E/c1B4UOle6ZHg02+I8tZicjzj5+yffv1lB5A1btG+AmoZrgf0X2O1B96fqgHx8w9PIpVERN
- YsmkfxvhfP3MO3oHh8UY1OLKdlKamMneCLk2up1Zlli347KMjHAVjBAiy8qOguKF9k7HOjif
- JCLYTkggrRiEiE1xg4tblBNj8WGyKH+u/hwwwBqCd/Px2HvhAsJQ7DwuuB3vBAp845BJYUU3
- 06kRihFqbO0vEt4QmcQDcbWINeZ2zX5TK7QQ91ldHdqJn6MhXulPKcM8tCkdD8YNXXKyKqNl
- UVqXnarz8m2JCbHgjEkUlAJCNd6m3pfESLZwSWsLYL49R5yxIwARAQABzSFIYW5zIFZlcmt1
- aWwgPGh2ZXJrdWlsQHhzNGFsbC5ubD7CwZUEEwECACgFAlQ84W0CGwMFCRLMAwAGCwkIBwMC
- BhUIAgkKCwQWAgMBAh4BAheAACEJEL0tYUhmFDtMFiEEBSzee8IVBTtonxvKvS1hSGYUO0wT
- 7w//frEmPBAwu3OdvAk9VDkH7X+7RcFpiuUcJxs3Xl6jpaA+SdwtZra6W1uMrs2RW8eXXiq/
- 80HXJtYnal1Y8MKUBoUVhT/+5+KcMyfVQK3VFRHnNxCmC9HZV+qdyxAGwIscUd4hSlweuU6L
- 6tI7Dls6NzKRSTFbbGNZCRgl8OrF01TBH+CZrcFIoDgpcJA5Pw84mxo+wd2BZjPA4TNyq1od
- +slSRbDqFug1EqQaMVtUOdgaUgdlmjV0+GfBHoyCGedDE0knv+tRb8v5gNgv7M3hJO3Nrl+O
- OJVoiW0G6OWVyq92NNCKJeDy8XCB1yHCKpBd4evO2bkJNV9xcgHtLrVqozqxZAiCRKN1elWF
- 1fyG8KNquqItYedUr+wZZacqW+uzpVr9pZmUqpVCk9s92fzTzDZcGAxnyqkaO2QTgdhPJT2m
- wpG2UwIKzzi13tmwakY7OAbXm76bGWVZCO3QTHVnNV8ku9wgeMc/ZGSLUT8hMDZlwEsW7u/D
- qt+NlTKiOIQsSW7u7h3SFm7sMQo03X/taK9PJhS2BhhgnXg8mOa6U+yNaJy+eU0Lf5hEUiDC
- vDOI5x++LD3pdrJVr/6ZB0Qg3/YzZ0dk+phQ+KlP6HyeO4LG662toMbFbeLcBjcC/ceEclII
- 90QNEFSZKM6NVloM+NaZRYVO3ApxWkFu+1mrVTXOwU0EVDzhbQEQANzLiI6gHkIhBQKeQaYs
- p2SSqF9c++9LOy5x6nbQ4s0X3oTKaMGfBZuiKkkU6NnHCSa0Az5ScRWLaRGu1PzjgcVwzl5O
- sDawR1BtOG/XoPRNB2351PRp++W8TWo2viYYY0uJHKFHML+ku9q0P+NkdTzFGJLP+hn7x0RT
- DMbhKTHO3H2xJz5TXNE9zTJuIfGAz3ShDpijvzYieY330BzZYfpgvCllDVM5E4XgfF4F/N90
- wWKu50fMA01ufwu+99GEwTFVG2az5T9SXd7vfSgRSkzXy7hcnxj4IhOfM6Ts85/BjMeIpeqy
- TDdsuetBgX9DMMWxMWl7BLeiMzMGrfkJ4tvlof0sVjurXibTibZyfyGR2ricg8iTbHyFaAzX
- 2uFVoZaPxrp7udDfQ96sfz0hesF9Zi8d7NnNnMYbUmUtaS083L/l2EDKvCIkhSjd48XF+aO8
- VhrCfbXWpGRaLcY/gxi2TXRYG9xCa7PINgz9SyO34sL6TeFPSZn4bPQV5O1j85Dj4jBecB1k
- z2arzwlWWKMZUbR04HTeAuuvYvCKEMnfW3ABzdonh70QdqJbpQGfAF2p4/iCETKWuqefiOYn
- pR8PqoQA1DYv3t7y9DIN5Jw/8Oj5wOeEybw6vTMB0rrnx+JaXvxeHSlFzHiD6il/ChDDkJ9J
- /ejCHUQIl40wLSDRABEBAAHCwXwEGAECAA8FAlQ84W0CGwwFCRLMAwAAIQkQvS1hSGYUO0wW
- IQQFLN57whUFO2ifG8q9LWFIZhQ7TA1WD/9yxJvQrpf6LcNrr8uMlQWCg2iz2q1LGt1Itkuu
- KaavEF9nqHmoqhSfZeAIKAPn6xuYbGxXDrpN7dXCOH92fscLodZqZtK5FtbLvO572EPfxneY
- UT7JzDc/5LT9cFFugTMOhq1BG62vUm/F6V91+unyp4dRlyryAeqEuISykhvjZCVHk/woaMZv
- c1Dm4Uvkv0Ilelt3Pb9J7zhcx6sm5T7v16VceF96jG61bnJ2GFS+QZerZp3PY27XgtPxRxYj
- AmFUeF486PHx/2Yi4u1rQpIpC5inPxIgR1+ZFvQrAV36SvLFfuMhyCAxV6WBlQc85ArOiQZB
- Wm7L0repwr7zEJFEkdy8C81WRhMdPvHkAIh3RoY1SGcdB7rB3wCzfYkAuCBqaF7Zgfw8xkad
- KEiQTexRbM1sc/I8ACpla3N26SfQwrfg6V7TIoweP0RwDrcf5PVvwSWsRQp2LxFCkwnCXOra
- gYmkrmv0duG1FStpY+IIQn1TOkuXrciTVfZY1cZD0aVxwlxXBnUNZZNslldvXFtndxR0SFat
- sflovhDxKyhFwXOP0Rv8H378/+14TaykknRBIKEc0+lcr+EMOSUR5eg4aURb8Gc3Uc7fgQ6q
- UssTXzHPyj1hAyDpfu8DzAwlh4kKFTodxSsKAjI45SLjadSc94/5Gy8645Y1KgBzBPTH7Q==
-In-Reply-To: <20240424024215.1624299-5-yuji2.ishikawa@toshiba.co.jp>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240531010331.134441-1-ross.philipson@oracle.com> <20240531010331.134441-9-ross.philipson@oracle.com>
+In-Reply-To: <20240531010331.134441-9-ross.philipson@oracle.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Fri, 31 May 2024 13:00:10 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXHaH6atsvwr6oVPdZuhR5YEXU33-2kYEn6xb1e=gidOCw@mail.gmail.com>
+Message-ID: <CAMj1kXHaH6atsvwr6oVPdZuhR5YEXU33-2kYEn6xb1e=gidOCw@mail.gmail.com>
+Subject: Re: [PATCH v9 08/19] x86: Secure Launch kernel early boot stub
+To: Ross Philipson <ross.philipson@oracle.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, 
+	linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-crypto@vger.kernel.org, kexec@lists.infradead.org, 
+	linux-efi@vger.kernel.org, iommu@lists.linux-foundation.org, 
+	dpsmith@apertussolutions.com, tglx@linutronix.de, mingo@redhat.com, 
+	bp@alien8.de, hpa@zytor.com, dave.hansen@linux.intel.com, mjg59@srcf.ucam.org, 
+	James.Bottomley@hansenpartnership.com, peterhuewe@gmx.de, jarkko@kernel.org, 
+	jgg@ziepe.ca, luto@amacapital.net, nivedita@alum.mit.edu, 
+	herbert@gondor.apana.org.au, davem@davemloft.net, corbet@lwn.net, 
+	ebiederm@xmission.com, dwmw2@infradead.org, baolu.lu@linux.intel.com, 
+	kanth.ghatraju@oracle.com, andrew.cooper3@citrix.com, 
+	trenchboot-devel@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Yuji,
+Hello Ross,
 
-Some small comments:
-
-On 24/04/2024 04:42, Yuji Ishikawa wrote:
-> Add support to Image Signal Processors of Visconti's Video Input Interface.
-> This patch adds two streaming interfaces;
-> one for passing parameters to the signal processor,
-> the other for receiving status.
-> 
-> Signed-off-by: Yuji Ishikawa <yuji2.ishikawa@toshiba.co.jp>
+On Fri, 31 May 2024 at 03:32, Ross Philipson <ross.philipson@oracle.com> wrote:
+>
+> The Secure Launch (SL) stub provides the entry point for Intel TXT (and
+> later AMD SKINIT) to vector to during the late launch. The symbol
+> sl_stub_entry is that entry point and its offset into the kernel is
+> conveyed to the launching code using the MLE (Measured Launch
+> Environment) header in the structure named mle_header. The offset of the
+> MLE header is set in the kernel_info. The routine sl_stub contains the
+> very early late launch setup code responsible for setting up the basic
+> environment to allow the normal kernel startup_32 code to proceed. It is
+> also responsible for properly waking and handling the APs on Intel
+> platforms. The routine sl_main which runs after entering 64b mode is
+> responsible for measuring configuration and module information before
+> it is used like the boot params, the kernel command line, the TXT heap,
+> an external initramfs, etc.
+>
+> Signed-off-by: Ross Philipson <ross.philipson@oracle.com>
 > ---
-> Changelog v2:
-> - Resend v1 because a patch exceeds size limit.
-> 
-> Changelog v3:
-> - Adapted to media control framework
-> - Introduced ISP subdevice, capture device
-> - Remove private IOCTLs and add vendor specific V4L2 controls
-> - Change function name avoiding camelcase and uppercase letters
-> 
-> Changelog v4:
-> - Split patches because the v3 patch exceeds size limit
-> - Stop using ID number to identify driver instance:
->   - Use dynamically allocated structure to hold HW specific context,
->     instead of static one.
->   - Call HW layer functions with the context structure instead of ID number
-> 
-> Changelog v5:
-> - no change
-> 
-> Changelog v6:
-> - remove unused macros
-> - removed hwd_ and HWD_ prefix
-> - update source code documentation
-> - Suggestion from Hans Verkuil
->   - pointer to userland memory is removed from uAPI arguments
->     - style of structure is now "nested" instead of "chained by pointer";
->   - use div64_u64 for 64bit division
->   - vendor specific controls support TRY_EXT_CTRLS
->   - add READ_ONLY flag to GET_CALIBRATION_STATUS control and similar ones
->   - human friendry control names for vendor specific controls
->   - add initial value to each vendor specific control
->   - GET_LAST_CAPTURE_STATUS control is updated asyncnously from workqueue
->   - remove EXECUTE_ON_WRITE flag of vendor specific control
->   - uAPI: return value of GET_CALIBRATION_STATUS follows common rules of error codes
->   - applied v4l2-compliance
-> - Suggestion from Sakari Ailus
->   - use div64_u64 for 64bit division
->   - update copyright's year
->   - remove redandunt cast
->   - use bool instead of HWD_VIIF_ENABLE/DISABLE
->   - simplify comparison to 0
->   - simplify statements with trigram operator
->   - remove redundant local variables
->   - use general integer types instead of u32/s32
-> - Suggestion from Laurent Pinchart
->   - moved VIIF driver to driver/platform/toshiba/visconti
->   - change register access: struct-style to macro-style
->   - remove unused type definitions
->   - define enums instead of successive macro constants
->   - remove redundant parenthesis of macro constant
->   - embed struct hwd_res into struct viif_device
->   - use xxx_dma instead of xxx_paddr for variable names of IOVA
->   - literal value: just 0 instead of 0x0
->   - use literal 1 or 0 instead of HWD_VIIF_ENABLE, DISABLE for register access
->   - use true or false instead of HWD_VIIF_ENABLE, DISABLE for function calls
->   - uAPI: return value of GET_CALIBRATION_STATUS follows common rules of error codes
-> 
-> Changelog v7:
-> - remove unused variables
-> - split long statements which have multiple logical-OR and trigram operators
-> 
-> Changelog v8:
-> - define constant V4L2_CTRL_TYPE_VISCONTI_ISP for datatype
->   of Visconti specific controls
-> - Suggestion from Hans Verkuil
->   - remove pr_info()
->   - use pm_runtime_get_if_in_use() to get power status
-> 
-> Changelog v9:
-> - fix warning for cast between ptr and dma_addr_t
-> 
-> Changelog v10:
-> - use parameter buffer instead of vendor specific compound controls
->   - add viif_params interface for passing ISP parameters
->   - add viif_stats interface for passing ISP status
-> - remove parameter validation routine; moved to userland library
-> 
->  .../media/platform/toshiba/visconti/Makefile  |    2 +-
->  .../media/platform/toshiba/visconti/viif.c    |   28 +-
->  .../platform/toshiba/visconti/viif_isp.c      |    7 +
->  .../platform/toshiba/visconti/viif_params.c   | 2026 +++++++++++++++++
->  .../platform/toshiba/visconti/viif_params.h   |   19 +
->  .../platform/toshiba/visconti/viif_stats.c    |  334 +++
->  .../platform/toshiba/visconti/viif_stats.h    |   14 +
->  7 files changed, 2427 insertions(+), 3 deletions(-)
->  create mode 100644 drivers/media/platform/toshiba/visconti/viif_params.c
->  create mode 100644 drivers/media/platform/toshiba/visconti/viif_params.h
->  create mode 100644 drivers/media/platform/toshiba/visconti/viif_stats.c
->  create mode 100644 drivers/media/platform/toshiba/visconti/viif_stats.h
-> 
+>  Documentation/arch/x86/boot.rst        |  21 +
+>  arch/x86/boot/compressed/Makefile      |   3 +-
+>  arch/x86/boot/compressed/head_64.S     |  30 +
+>  arch/x86/boot/compressed/kernel_info.S |  34 ++
+>  arch/x86/boot/compressed/sl_main.c     | 577 ++++++++++++++++++++
+>  arch/x86/boot/compressed/sl_stub.S     | 725 +++++++++++++++++++++++++
+>  arch/x86/include/asm/msr-index.h       |   5 +
+>  arch/x86/include/uapi/asm/bootparam.h  |   1 +
+>  arch/x86/kernel/asm-offsets.c          |  20 +
+>  9 files changed, 1415 insertions(+), 1 deletion(-)
+>  create mode 100644 arch/x86/boot/compressed/sl_main.c
+>  create mode 100644 arch/x86/boot/compressed/sl_stub.S
+>
+> diff --git a/Documentation/arch/x86/boot.rst b/Documentation/arch/x86/boot.rst
+> index 4fd492cb4970..295cdf9bcbdb 100644
+> --- a/Documentation/arch/x86/boot.rst
+> +++ b/Documentation/arch/x86/boot.rst
+> @@ -482,6 +482,14 @@ Protocol:  2.00+
+>             - If 1, KASLR enabled.
+>             - If 0, KASLR disabled.
+>
+> +  Bit 2 (kernel internal): SLAUNCH_FLAG
+> +
+> +       - Used internally by the setup kernel to communicate
+> +         Secure Launch status to kernel proper.
+> +
+> +           - If 1, Secure Launch enabled.
+> +           - If 0, Secure Launch disabled.
+> +
+>    Bit 5 (write): QUIET_FLAG
+>
+>         - If 0, print early messages.
+> @@ -1028,6 +1036,19 @@ Offset/size:     0x000c/4
+>
+>    This field contains maximal allowed type for setup_data and setup_indirect structs.
+>
+> +============   =================
+> +Field name:    mle_header_offset
+> +Offset/size:   0x0010/4
+> +============   =================
+> +
+> +  This field contains the offset to the Secure Launch Measured Launch Environment
+> +  (MLE) header. This offset is used to locate information needed during a secure
+> +  late launch using Intel TXT. If the offset is zero, the kernel does not have
+> +  Secure Launch capabilities. The MLE entry point is called from TXT on the BSP
+> +  following a success measured launch. The specific state of the processors is
+> +  outlined in the TXT Software Development Guide, the latest can be found here:
+> +  https://www.intel.com/content/dam/www/public/us/en/documents/guides/intel-txt-software-development-guide.pdf
+> +
+>
 
-<snip>
+Could we just repaint this field as the offset relative to the start
+of kernel_info rather than relative to the start of the image? That
+way, there is no need for patch #1, and given that the consumer of
+this field accesses it via kernel_info, I wouldn't expect any issues
+in applying this offset to obtain the actual address.
 
-> diff --git a/drivers/media/platform/toshiba/visconti/viif_params.c b/drivers/media/platform/toshiba/visconti/viif_params.c
+
+>  The Image Checksum
+>  ==================
+> diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
+> index 9189a0e28686..9076a248d4b4 100644
+> --- a/arch/x86/boot/compressed/Makefile
+> +++ b/arch/x86/boot/compressed/Makefile
+> @@ -118,7 +118,8 @@ vmlinux-objs-$(CONFIG_EFI) += $(obj)/efi.o
+>  vmlinux-objs-$(CONFIG_EFI_MIXED) += $(obj)/efi_mixed.o
+>  vmlinux-objs-$(CONFIG_EFI_STUB) += $(objtree)/drivers/firmware/efi/libstub/lib.a
+>
+> -vmlinux-objs-$(CONFIG_SECURE_LAUNCH) += $(obj)/early_sha1.o $(obj)/early_sha256.o
+> +vmlinux-objs-$(CONFIG_SECURE_LAUNCH) += $(obj)/early_sha1.o $(obj)/early_sha256.o \
+> +       $(obj)/sl_main.o $(obj)/sl_stub.o
+>
+>  $(obj)/vmlinux: $(vmlinux-objs-y) FORCE
+>         $(call if_changed,ld)
+> diff --git a/arch/x86/boot/compressed/head_64.S b/arch/x86/boot/compressed/head_64.S
+> index 1dcb794c5479..803c9e2e6d85 100644
+> --- a/arch/x86/boot/compressed/head_64.S
+> +++ b/arch/x86/boot/compressed/head_64.S
+> @@ -420,6 +420,13 @@ SYM_CODE_START(startup_64)
+>         pushq   $0
+>         popfq
+>
+> +#ifdef CONFIG_SECURE_LAUNCH
+> +       /* Ensure the relocation region is coverd by a PMR */
+
+covered
+
+> +       movq    %rbx, %rdi
+> +       movl    $(_bss - startup_32), %esi
+> +       callq   sl_check_region
+> +#endif
+> +
+>  /*
+>   * Copy the compressed kernel to the end of our buffer
+>   * where decompression in place becomes safe.
+> @@ -462,6 +469,29 @@ SYM_FUNC_START_LOCAL_NOALIGN(.Lrelocated)
+>         shrq    $3, %rcx
+>         rep     stosq
+>
+> +#ifdef CONFIG_SECURE_LAUNCH
+> +       /*
+> +        * Have to do the final early sl stub work in 64b area.
+> +        *
+> +        * *********** NOTE ***********
+> +        *
+> +        * Several boot params get used before we get a chance to measure
+> +        * them in this call. This is a known issue and we currently don't
+> +        * have a solution. The scratch field doesn't matter. There is no
+> +        * obvious way to do anything about the use of kernel_alignment or
+> +        * init_size though these seem low risk with all the PMR and overlap
+> +        * checks in place.
+> +        */
+> +       movq    %r15, %rdi
+> +       callq   sl_main
+> +
+> +       /* Ensure the decompression location is covered by a PMR */
+> +       movq    %rbp, %rdi
+> +       movq    output_len(%rip), %rsi
+> +       callq   sl_check_region
+> +#endif
+> +
+> +       pushq   %rsi
+
+This looks like a rebase error.
+
+>         call    load_stage2_idt
+>
+>         /* Pass boot_params to initialize_identity_maps() */
+> diff --git a/arch/x86/boot/compressed/kernel_info.S b/arch/x86/boot/compressed/kernel_info.S
+> index c18f07181dd5..e199b87764e9 100644
+> --- a/arch/x86/boot/compressed/kernel_info.S
+> +++ b/arch/x86/boot/compressed/kernel_info.S
+> @@ -28,6 +28,40 @@ SYM_DATA_START(kernel_info)
+>         /* Maximal allowed type for setup_data and setup_indirect structs. */
+>         .long   SETUP_TYPE_MAX
+>
+> +       /* Offset to the MLE header structure */
+> +#if IS_ENABLED(CONFIG_SECURE_LAUNCH)
+> +       .long   rva(mle_header)
+
+.. so this could just be mle_header - kernel_info, and the consumer
+can do the math instead.
+
+> +#else
+> +       .long   0
+> +#endif
+> +
+>  kernel_info_var_len_data:
+>         /* Empty for time being... */
+>  SYM_DATA_END_LABEL(kernel_info, SYM_L_LOCAL, kernel_info_end)
+> +
+> +#if IS_ENABLED(CONFIG_SECURE_LAUNCH)
+> +       /*
+> +        * The MLE Header per the TXT Specification, section 2.1
+> +        * MLE capabilities, see table 4. Capabilities set:
+> +        * bit 0: Support for GETSEC[WAKEUP] for RLP wakeup
+> +        * bit 1: Support for RLP wakeup using MONITOR address
+> +        * bit 2: The ECX register will contain the pointer to the MLE page table
+> +        * bit 5: TPM 1.2 family: Details/authorities PCR usage support
+> +        * bit 9: Supported format of TPM 2.0 event log - TCG compliant
+> +        */
+> +SYM_DATA_START(mle_header)
+> +       .long   0x9082ac5a  /* UUID0 */
+> +       .long   0x74a7476f  /* UUID1 */
+> +       .long   0xa2555c0f  /* UUID2 */
+> +       .long   0x42b651cb  /* UUID3 */
+> +       .long   0x00000034  /* MLE header size */
+> +       .long   0x00020002  /* MLE version 2.2 */
+> +       .long   rva(sl_stub_entry) /* Linear entry point of MLE (virt. address) */
+
+and these should perhaps be relative to mle_header?
+
+> +       .long   0x00000000  /* First valid page of MLE */
+> +       .long   0x00000000  /* Offset within binary of first byte of MLE */
+> +       .long   rva(_edata) /* Offset within binary of last byte + 1 of MLE */
+
+and here
+
+> +       .long   0x00000227  /* Bit vector of MLE-supported capabilities */
+> +       .long   0x00000000  /* Starting linear address of command line (unused) */
+> +       .long   0x00000000  /* Ending linear address of command line (unused) */
+> +SYM_DATA_END(mle_header)
+> +#endif
+> diff --git a/arch/x86/boot/compressed/sl_main.c b/arch/x86/boot/compressed/sl_main.c
 > new file mode 100644
-> index 0000000000..5170d371c2
+> index 000000000000..61e9baf410fd
 > --- /dev/null
-> +++ b/drivers/media/platform/toshiba/visconti/viif_params.c
-> @@ -0,0 +1,2026 @@
-
-<snip>
-
-> +static const struct viif_l1_hdrc_config
-> +	defval_l1_set_hdrc = { .enable = 1,
-> +			       .param = {
-> +				       .hdrc_ratio = 0x0E + VIIF_L1_HDRC_RATIO_OFFSET,
-> +				       .hdrc_pt_ratio = 7,
-> +				       .hdrc_pt_sat = 0xFFC0,
-> +				       .hdrc_tn_type = 1,
-> +			       } };
-
-Strange layout, can you write this like almost all other structs?
-
-static const struct viif_l1_hdrc_config defval_l1_set_hdrc = {
-	.enable = 1,
-        .param = {
-	       .hdrc_ratio = 0x0E + VIIF_L1_HDRC_RATIO_OFFSET,
-	       .hdrc_pt_ratio = 7,
-	       .hdrc_pt_sat = 0xFFC0,
-	       .hdrc_tn_type = 1,
-	}
-};
-
-> +
-> +static const struct viif_l1_hdrc_ltm_config defval_l1_set_hdrc_ltm = {
-> +	.tnp_max = 0x3FFFFF,
-> +	.tnp_mag = 0x40,
-> +	.tnp_fil = { 0x88, 0x84, 0x7A, 0x6A, 0x54 },
-> +};
-> +
-> +static const struct viif_l1_gamma_config defval_l1_set_gamma = {
-> +	.enable = 1,
-> +	.param = {
-> +		.gam_p = {
-> +			0x02F, 0x01B, 0x02A, 0x023, 0x020, 0x037, 0x031, 0x057, 0x04D, 0x088,
-> +			0x078, 0x0D6, 0x0BD, 0x14F, 0x12A, 0x20D, 0x1D3, 0x1AB, 0x18D, 0x2DC,
-> +			0x29E, 0x271, 0x47C, 0x41B, 0x3D4, 0x70A, 0x672, 0x601, 0xB0C, 0xA1D,
-> +			0x96C, 0x8E2, 0x874, 0xFDD, 0xEC9, 0xDF2, 0xD42, 0xCB1, 0xC35, 0xBC9,
-> +			0xB6A, 0xB16, 0xACB, 0xA86},
-> +		.blkadj = 0x1000,
-> +	},
-> +};
-> +
-> +static const struct viif_l1_img_quality_adjustment_config defval_l1_set_img_quality_adjustment = {
-> +	.enable = 0,
-> +	.coef_cb = 0x9078,
-> +	.coef_cr = 0xB699,
-> +	.brightness = 0,
-> +	.linear_contrast = 128,
-> +};
-> +
-> +static const struct viif_l1_avg_lum_generation_config defval_l1_set_avg_lum_generation = {
-> +	.enable = 0
-> +};
-> +
-> +static const struct viif_l2_undist_config defval_l2_set_undist = { .param = {
-> +									   .through_mode = 1,
-> +									   .roi_mode = { 0, 0 },
-> +									   .grid_node_num_h = 0x10,
-> +									   .grid_node_num_v = 0x10,
-> +								   } };
-
-Another weird layout.
-
-> +
-> +static const struct viif_l2_roi_config defval_l2_set_roi = {
-> +	.roi_num = 1,
-> +	.roi_scale = { 65536, 65536 },
-> +	.roi_scale_inv = { 65536, 65536 },
-> +	.corrected_wo_scale_hsize = { 0x80, 0x80 },
-> +	.corrected_hsize = { 0x80, 0x80 },
-> +	.corrected_wo_scale_vsize = { 0x80, 0x80 },
-> +	.corrected_vsize = { 0x80, 0x80 },
-> +};
-> +
-> +static const struct viif_l2_gamma_config defval_l2_set_gamma = { 0 };
-> +
-> +static void viif_apply_default_parameter(struct viif_device *viif_dev)
-> +{
-> +	viif_l1_set_input_mode(viif_dev, &defval_l1_set_input_mode);
-> +	viif_l1_set_rgb_to_y_coef(viif_dev, &defval_l1_set_rgb_to_y_coef);
-> +	viif_l1_set_ag_mode(viif_dev, &defval_l1_set_ag_mode);
-> +	viif_l1_set_ag(viif_dev, &defval_l1_set_ag);
-> +	viif_l1_set_hdre(viif_dev, &defval_l1_set_hdre);
-> +	viif_l1_set_img_extraction(viif_dev, &defval_l1_set_img_extraction);
-> +	viif_l1_set_dpc(viif_dev, &defval_l1_set_dpc);
-> +	viif_l1_set_preset_white_balance(viif_dev, &defval_l1_set_preset_white_balance);
-> +	viif_l1_set_raw_color_noise_reduction(viif_dev, &defval_l1_set_raw_color_noise_reduction);
-> +	viif_l1_set_hdrs(viif_dev, &defval_l1_set_hdrs);
-> +	viif_l1_set_black_level_correction(viif_dev, &defval_l1_set_black_level_correction);
-> +	viif_l1_set_lsc(viif_dev, &defval_l1_set_lsc);
-> +	viif_l1_set_main_process(viif_dev, &defval_l1_set_main_process);
-> +	viif_l1_set_awb(viif_dev, &defval_l1_set_awb);
-> +	viif_l1_lock_awb_gain(viif_dev, &defval_l1_lock_awb_gain);
-> +	viif_l1_set_hdrc(viif_dev, &defval_l1_set_hdrc);
-> +	viif_l1_set_hdrc_ltm(viif_dev, &defval_l1_set_hdrc_ltm);
-> +	viif_l1_set_gamma(viif_dev, &defval_l1_set_gamma);
-> +	viif_l1_set_img_quality_adjustment(viif_dev, &defval_l1_set_img_quality_adjustment);
-> +	viif_l1_set_avg_lum_generation(viif_dev, &defval_l1_set_avg_lum_generation);
-> +	viif_l2_set_undist(viif_dev, &defval_l2_set_undist);
-> +	viif_l2_set_roi_wrap(viif_dev, &defval_l2_set_roi);
-> +	viif_l2_set_gamma(viif_dev, CAPTURE_PATH_MAIN_POST0, &defval_l2_set_gamma);
-> +	viif_l2_set_gamma(viif_dev, CAPTURE_PATH_MAIN_POST1, &defval_l2_set_gamma);
-> +}
-> +
-> +/*=======================================================================*/
-> +/* parameter buffer streaming interface */
-> +/*=======================================================================*/
-> +struct viif_buffer {
-> +	struct vb2_v4l2_buffer vb;
-> +	struct list_head queue;
-> +};
-> +
-> +static bool viif_params_get_buffer(struct params_dev *params_dev, struct viif_buffer **buf,
-> +				   struct visconti_viif_isp_config **cfg)
-> +{
-> +	if (list_empty(&params_dev->params_queue))
-> +		return false;
-> +
-> +	*buf = list_first_entry(&params_dev->params_queue, struct viif_buffer, queue);
-> +	*cfg = vb2_plane_vaddr(&(*buf)->vb.vb2_buf, 0);
-> +
-> +	return true;
-> +}
-> +
-> +static int viif_apply_queued_parameter(struct viif_device *viif_dev, bool initial_cfg)
-> +{
-> +	struct params_dev *params_dev = &viif_dev->params_dev;
-> +	struct visconti_viif_isp_config *new_params;
-> +	struct viif_buffer *cur_buf;
-> +	int ret = 0;
-> +
-> +	spin_lock(&params_dev->params_lock);
-> +
-> +	if (!viif_params_get_buffer(params_dev, &cur_buf, &new_params)) {
-> +		ret = 1;
-> +		goto unlock;
-> +	}
-> +
-> +	/* evaluate new_params */
-> +	if (initial_cfg) {
-> +		if (new_params->update_cfg & VISCONTI_VIIF_CFG_ISP_L1_INPUT_MODE)
-> +			viif_l1_set_input_mode(viif_dev, &new_params->l1_input_mode);
-> +	}
-> +	if (new_params->update_cfg & VISCONTI_VIIF_CFG_ISP_L1_RGB_TO_Y_COEF)
-> +		viif_l1_set_rgb_to_y_coef(viif_dev, &new_params->l1_rgb_to_y_coef);
-> +	if (new_params->update_cfg & VISCONTI_VIIF_CFG_ISP_L1_AG_MODE)
-> +		viif_l1_set_ag_mode(viif_dev, &new_params->l1_ag_mode);
-> +	if (new_params->update_cfg & VISCONTI_VIIF_CFG_ISP_L1_AG)
-> +		viif_l1_set_ag(viif_dev, &new_params->l1_ag);
-> +	if (new_params->update_cfg & VISCONTI_VIIF_CFG_ISP_L1_HDRE)
-> +		viif_l1_set_hdre(viif_dev, &new_params->l1_hdre);
-> +	if (new_params->update_cfg & VISCONTI_VIIF_CFG_ISP_L1_IMG_EXTRACTION)
-> +		viif_l1_set_img_extraction(viif_dev, &new_params->l1_img_extraction);
-> +	if (new_params->update_cfg & VISCONTI_VIIF_CFG_ISP_L1_DPC)
-> +		viif_l1_set_dpc(viif_dev, &new_params->l1_dpc);
-> +	if (new_params->update_cfg & VISCONTI_VIIF_CFG_ISP_L1_PRESET_WHITE_BALANCE)
-> +		viif_l1_set_preset_white_balance(viif_dev, &new_params->l1_preset_white_balance);
-> +	if (new_params->update_cfg & VISCONTI_VIIF_CFG_ISP_L1_RAW_COLOR_NOISE_REDUCTION)
-> +		viif_l1_set_raw_color_noise_reduction(viif_dev,
-> +						      &new_params->l1_raw_color_noise_reduction);
-> +	if (new_params->update_cfg & VISCONTI_VIIF_CFG_ISP_L1_HDRS)
-> +		viif_l1_set_hdrs(viif_dev, &new_params->l1_hdrs);
-> +	if (new_params->update_cfg & VISCONTI_VIIF_CFG_ISP_L1_BLACK_LEVEL_CORRECTION)
-> +		viif_l1_set_black_level_correction(viif_dev,
-> +						   &new_params->l1_black_level_correction);
-> +	if (new_params->update_cfg & VISCONTI_VIIF_CFG_ISP_L1_LSC)
-> +		viif_l1_set_lsc(viif_dev, &new_params->l1_lsc);
-> +	if (new_params->update_cfg & VISCONTI_VIIF_CFG_ISP_L1_MAIN_PROCESS)
-> +		viif_l1_set_main_process(viif_dev, &new_params->l1_main_process);
-> +	if (new_params->update_cfg & VISCONTI_VIIF_CFG_ISP_L1_AWB)
-> +		viif_l1_set_awb(viif_dev, &new_params->l1_awb);
-> +	if (new_params->update_cfg & VISCONTI_VIIF_CFG_ISP_L1_LOCK_AWB_GAIN)
-> +		viif_l1_lock_awb_gain(viif_dev, &new_params->lock_awb_gain);
-> +	if (new_params->update_cfg & VISCONTI_VIIF_CFG_ISP_L1_HDRC)
-> +		viif_l1_set_hdrc(viif_dev, &new_params->l1_hdrc);
-> +	if (new_params->update_cfg & VISCONTI_VIIF_CFG_ISP_L1_HDRC_LTM)
-> +		viif_l1_set_hdrc_ltm(viif_dev, &new_params->l1_hdrc_ltm);
-> +	if (new_params->update_cfg & VISCONTI_VIIF_CFG_ISP_L1_GAMMA)
-> +		viif_l1_set_gamma(viif_dev, &new_params->l1_gamma);
-> +	if (new_params->update_cfg & VISCONTI_VIIF_CFG_ISP_L1_IMG_QUALITY_ADJUSTMENT)
-> +		viif_l1_set_img_quality_adjustment(viif_dev,
-> +						   &new_params->l1_img_quality_adjustment);
-> +	if (new_params->update_cfg & VISCONTI_VIIF_CFG_ISP_L1_AVG_LUM_GENERATION)
-> +		viif_l1_set_avg_lum_generation(viif_dev, &new_params->l1_avg_lum_generation);
-> +	if (new_params->update_cfg & VISCONTI_VIIF_CFG_ISP_L2_UNDIST)
-> +		viif_l2_set_undist(viif_dev, &new_params->l2_undist);
-> +	if (new_params->update_cfg & VISCONTI_VIIF_CFG_ISP_L2_ROI)
-> +		viif_l2_set_roi_wrap(viif_dev, &new_params->l2_roi);
-> +	if (new_params->update_cfg & VISCONTI_VIIF_CFG_ISP_L2_GAMMA_POST0)
-> +		viif_l2_set_gamma(viif_dev, CAPTURE_PATH_MAIN_POST0, &new_params->l2_gamma_post0);
-> +	if (new_params->update_cfg & VISCONTI_VIIF_CFG_ISP_L2_GAMMA_POST1)
-> +		viif_l2_set_gamma(viif_dev, CAPTURE_PATH_MAIN_POST1, &new_params->l2_gamma_post1);
-> +
-> +	/* release buffer */
-> +	list_del(&cur_buf->queue);
-> +	cur_buf->vb.sequence = 0;
-> +	vb2_buffer_done(&cur_buf->vb.vb2_buf, VB2_BUF_STATE_DONE);
-> +
-> +unlock:
-> +	spin_unlock(&params_dev->params_lock);
-> +	return ret;
-> +}
-> +
-> +void visconti_viif_params_isr(struct viif_device *viif_dev)
-> +{
-> +	viif_apply_queued_parameter(viif_dev, false);
-> +}
-> +
-> +void visconti_viif_params_eval_queue(struct viif_device *viif_dev)
-> +{
-> +	if (viif_apply_queued_parameter(viif_dev, true))
-> +		viif_apply_default_parameter(viif_dev);
-> +}
-> +
-> +static int viif_params_enum_fmt_meta_out(struct file *file, void *priv, struct v4l2_fmtdesc *f)
-> +{
-> +	struct video_device *vdev = video_devdata(file);
-> +
-> +	if (f->index > 0 || f->type != vdev->queue->type)
-> +		return -EINVAL;
-> +
-> +	f->pixelformat = V4L2_META_FMT_VISCONTI_VIIF_PARAMS;
-> +
-> +	return 0;
-> +}
-> +
-> +static int viif_params_g_fmt_meta_out(struct file *file, void *fh, struct v4l2_format *f)
-> +{
-> +	struct video_device *vdev = video_devdata(file);
-> +	struct v4l2_meta_format *meta = &f->fmt.meta;
-> +
-> +	if (f->type != vdev->queue->type)
-> +		return -EINVAL;
-> +
-> +	memset(meta, 0, sizeof(*meta));
-> +	meta->dataformat = V4L2_META_FMT_VISCONTI_VIIF_PARAMS;
-> +	meta->buffersize = sizeof(struct visconti_viif_isp_config);
-> +
-> +	return 0;
-> +}
-> +
-> +static int viif_params_querycap(struct file *file, void *priv, struct v4l2_capability *cap)
-> +{
-> +	struct video_device *vdev = video_devdata(file);
-> +
-> +	strscpy(cap->driver, VIIF_DRIVER_NAME, sizeof(cap->driver));
-> +	strscpy(cap->card, vdev->name, sizeof(cap->card));
-> +	strscpy(cap->bus_info, VIIF_BUS_INFO_BASE "-0", sizeof(cap->bus_info));
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct v4l2_ioctl_ops viif_params_ioctl = {
-> +	.vidioc_reqbufs = vb2_ioctl_reqbufs,
-> +	.vidioc_querybuf = vb2_ioctl_querybuf,
-> +	.vidioc_create_bufs = vb2_ioctl_create_bufs,
-> +	.vidioc_qbuf = vb2_ioctl_qbuf,
-> +	.vidioc_dqbuf = vb2_ioctl_dqbuf,
-> +	.vidioc_prepare_buf = vb2_ioctl_prepare_buf,
-> +	.vidioc_expbuf = vb2_ioctl_expbuf,
-> +	.vidioc_streamon = vb2_ioctl_streamon,
-> +	.vidioc_streamoff = vb2_ioctl_streamoff,
-> +	.vidioc_enum_fmt_meta_out = viif_params_enum_fmt_meta_out,
-> +	.vidioc_g_fmt_meta_out = viif_params_g_fmt_meta_out,
-> +	.vidioc_s_fmt_meta_out = viif_params_g_fmt_meta_out,
-> +	.vidioc_try_fmt_meta_out = viif_params_g_fmt_meta_out,
-> +	.vidioc_querycap = viif_params_querycap,
-> +	.vidioc_subscribe_event = v4l2_ctrl_subscribe_event,
-> +	.vidioc_unsubscribe_event = v4l2_event_unsubscribe,
-> +};
-> +
-> +static const struct v4l2_file_operations viif_params_fops = { .mmap = vb2_fop_mmap,
-> +							      .unlocked_ioctl = video_ioctl2,
-> +							      .poll = vb2_fop_poll,
-> +							      .open = v4l2_fh_open,
-> +							      .release = vb2_fop_release };
-
-Weird layout.
-
-> +
-> +static int viif_params_vb2_queue_setup(struct vb2_queue *q, unsigned int *num_buffers,
-> +				       unsigned int *num_planes, unsigned int sizes[],
-> +				       struct device *alloc_devs[])
-> +{
-> +	*num_buffers = clamp_t(u32, *num_buffers, 2, 8);
-> +	*num_planes = 1;
-> +	sizes[0] = sizeof(struct visconti_viif_isp_config);
-> +	return 0;
-> +}
-> +
-> +static inline struct viif_buffer *vb2_to_viif(struct vb2_v4l2_buffer *vbuf)
-> +{
-> +	return container_of(vbuf, struct viif_buffer, vb);
-> +}
-> +
-> +static inline struct params_dev *vb2queue_to_paramsdev(struct vb2_queue *vq)
-> +{
-> +	return (struct params_dev *)vb2_get_drv_priv(vq);
-> +}
-> +
-> +static void viif_params_vb2_buf_queue(struct vb2_buffer *vb)
-> +{
-> +	struct params_dev *params_dev = vb2queue_to_paramsdev(vb->vb2_queue);
-> +	struct vb2_v4l2_buffer *vbuf = to_vb2_v4l2_buffer(vb);
-> +	struct viif_buffer *buf = vb2_to_viif(vbuf);
-> +
-> +	spin_lock_irq(&params_dev->params_lock);
-> +	list_add_tail(&buf->queue, &params_dev->params_queue);
-> +	spin_unlock_irq(&params_dev->params_lock);
-> +}
-> +
-> +static int viif_params_vb2_buf_prepare(struct vb2_buffer *vb)
-> +{
-> +	if (vb2_plane_size(vb, 0) < sizeof(struct visconti_viif_isp_config))
-> +		return -EINVAL;
-> +
-> +	vb2_set_plane_payload(vb, 0, sizeof(struct visconti_viif_isp_config));
-> +	return 0;
-> +}
-> +
-> +static int viif_params_vb2_start_streaming(struct vb2_queue *q, unsigned int arg)
-> +{
-> +	return 0;
-> +}
-> +
-> +static void viif_params_vb2_stop_streaming(struct vb2_queue *q)
-> +{
-> +	struct params_dev *params_dev = vb2queue_to_paramsdev(q);
-> +	struct viif_buffer *buf;
-> +	LIST_HEAD(tmp_list);
-> +
-> +	spin_lock_irq(&params_dev->params_lock);
-> +	list_splice_init(&params_dev->params_queue, &tmp_list);
-> +	spin_unlock_irq(&params_dev->params_lock);
-> +
-> +	list_for_each_entry(buf, &tmp_list, queue)
-> +		vb2_buffer_done(&buf->vb.vb2_buf, VB2_BUF_STATE_ERROR);
-> +}
-> +
-> +static const struct vb2_ops viif_params_vb2_ops = {
-> +	.queue_setup = viif_params_vb2_queue_setup,
-> +	.wait_prepare = vb2_ops_wait_prepare,
-> +	.wait_finish = vb2_ops_wait_finish,
-> +	.buf_queue = viif_params_vb2_buf_queue,
-> +	.buf_prepare = viif_params_vb2_buf_prepare,
-> +	.start_streaming = viif_params_vb2_start_streaming,
-> +	.stop_streaming = viif_params_vb2_stop_streaming,
-> +};
-> +
-> +int visconti_viif_params_register(struct viif_device *viif_dev)
-> +{
-> +	struct params_dev *params_dev = &viif_dev->params_dev;
-> +	struct video_device *vdev = &params_dev->vdev;
-> +	struct vb2_queue *q = &params_dev->vb2_vq;
-> +	int ret;
-> +
-> +	mutex_init(&params_dev->vlock);
-> +	INIT_LIST_HEAD(&params_dev->params_queue);
-> +	spin_lock_init(&params_dev->params_lock);
-> +
-> +	strscpy(vdev->name, "viif_params", sizeof(vdev->name));
-> +
-> +	/* Register the video device */
-> +	video_set_drvdata(vdev, params_dev);
-> +	vdev->ioctl_ops = &viif_params_ioctl;
-> +	vdev->fops = &viif_params_fops;
-> +	vdev->release = video_device_release_empty;
-> +	vdev->lock = &params_dev->vlock;
-> +	vdev->v4l2_dev = &viif_dev->v4l2_dev;
-> +	vdev->queue = &params_dev->vb2_vq;
-> +	vdev->device_caps = V4L2_CAP_STREAMING | V4L2_CAP_META_OUTPUT;
-> +	vdev->vfl_dir = VFL_DIR_TX;
-> +
-> +	/* Initialize vb2 queue */
-> +	q->type = V4L2_BUF_TYPE_META_OUTPUT;
-> +	q->io_modes = VB2_MMAP | VB2_USERPTR | VB2_DMABUF;
-
-Why do you want to support VB2_USERPTR? While not officially deprecated,
-we do discourage it for new drivers.
-
-> +	q->drv_priv = params_dev;
-> +	q->ops = &viif_params_vb2_ops;
-> +	q->mem_ops = &vb2_vmalloc_memops;
-> +	q->buf_struct_size = sizeof(struct viif_buffer);
-> +	q->timestamp_flags = V4L2_BUF_FLAG_TIMESTAMP_MONOTONIC;
-> +	q->lock = &params_dev->vlock;
-> +	q->dev = viif_dev->v4l2_dev.dev;
-> +
-> +	ret = vb2_queue_init(q);
-> +	if (ret)
-> +		return ret;
-> +
-> +	params_dev->params_pad.flags = MEDIA_PAD_FL_SOURCE;
-> +	ret = media_entity_pads_init(&vdev->entity, VIIF_PARAMS_PAD_NUM, &params_dev->params_pad);
-> +	if (ret)
-> +		goto error;
-> +
-> +	ret = video_register_device(vdev, VFL_TYPE_VIDEO, -1);
-> +	if (ret) {
-> +		dev_err(viif_dev->v4l2_dev.dev, "video_register_device failed: %d\n", ret);
-> +		goto error;
-> +	}
-> +
-> +	return 0;
-> +
-> +error:
-> +	media_entity_cleanup(&vdev->entity);
-> +	mutex_destroy(&params_dev->vlock);
-> +
-> +	return ret;
-> +}
-> +
-> +void visconti_viif_params_unregister(struct viif_device *viif_dev)
-> +{
-> +	struct params_dev *params = &viif_dev->params_dev;
-> +	struct video_device *vdev = &params->vdev;
-> +
-> +	if (!video_is_registered(vdev))
-> +		return;
-> +
-> +	vb2_video_unregister_device(vdev);
-> +	media_entity_cleanup(&vdev->entity);
-> +	mutex_destroy(&params->vlock);
-> +}
-
-<snip>
-
-> diff --git a/drivers/media/platform/toshiba/visconti/viif_stats.c b/drivers/media/platform/toshiba/visconti/viif_stats.c
-> new file mode 100644
-> index 0000000000..28cd879b5f
-> --- /dev/null
-> +++ b/drivers/media/platform/toshiba/visconti/viif_stats.c
-> @@ -0,0 +1,334 @@
-> +// SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause
-> +/* Toshiba Visconti Video Capture Support
+> +++ b/arch/x86/boot/compressed/sl_main.c
+> @@ -0,0 +1,577 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Secure Launch early measurement and validation routines.
 > + *
-> + * (C) Copyright 2023 TOSHIBA CORPORATION
-> + * (C) Copyright 2023 Toshiba Electronic Devices & Storage Corporation
+> + * Copyright (c) 2024, Oracle and/or its affiliates.
 > + */
 > +
-> +#include <linux/delay.h>
-> +#include <linux/pm_runtime.h>
-> +#include <media/v4l2-common.h>
-> +#include <media/v4l2-subdev.h>
-> +#include <media/videobuf2-vmalloc.h>
+> +#include <linux/init.h>
+> +#include <linux/string.h>
+> +#include <linux/linkage.h>
+> +#include <asm/segment.h>
+> +#include <asm/boot.h>
+> +#include <asm/msr.h>
+> +#include <asm/mtrr.h>
+> +#include <asm/processor-flags.h>
+> +#include <asm/asm-offsets.h>
+> +#include <asm/bootparam.h>
+> +#include <asm/bootparam_utils.h>
+> +#include <linux/slr_table.h>
+> +#include <linux/slaunch.h>
+> +#include <crypto/sha1.h>
+> +#include <crypto/sha2.h>
 > +
-> +#include "viif.h"
-> +#include "viif_csi2rx.h"
-> +#include "viif_isp.h"
-> +#include "viif_common.h"
-> +#include "viif_regs.h"
-> +#include "viif_stats.h"
+> +#define CAPS_VARIABLE_MTRR_COUNT_MASK  0xff
 > +
-> +struct viif_buffer {
-> +	struct vb2_v4l2_buffer vb;
-> +	struct list_head queue;
-> +};
+> +#define SL_TPM12_LOG           1
+> +#define SL_TPM20_LOG           2
 > +
-> +static void read_isp_capture_regs(struct viif_l1_info *l1_info, struct viif_device *viif_dev)
+> +#define SL_TPM20_MAX_ALGS      2
+> +
+> +#define SL_MAX_EVENT_DATA      64
+> +#define SL_TPM12_LOG_SIZE      (sizeof(struct tcg_pcr_event) + \
+> +                               SL_MAX_EVENT_DATA)
+> +#define SL_TPM20_LOG_SIZE      (sizeof(struct tcg_pcr_event2_head) + \
+> +                               SHA1_DIGEST_SIZE + SHA256_DIGEST_SIZE + \
+> +                               sizeof(struct tcg_event_field) + \
+> +                               SL_MAX_EVENT_DATA)
+> +
+> +static void *evtlog_base;
+> +static u32 evtlog_size;
+> +static struct txt_heap_event_log_pointer2_1_element *log20_elem;
+> +static u32 tpm_log_ver = SL_TPM12_LOG;
+> +static struct tcg_efi_specid_event_algs tpm_algs[SL_TPM20_MAX_ALGS] = {0};
+> +
+> +extern u32 sl_cpu_type;
+> +extern u32 sl_mle_start;
+> +
+> +static u64 sl_txt_read(u32 reg)
 > +{
-> +	unsigned long irqflags;
-> +	int i, j;
-> +	u32 val;
-> +
-> +	spin_lock_irqsave(&viif_dev->regbuf_lock, irqflags);
-> +	hwd_viif_isp_guard_start(viif_dev);
-> +
-> +	/* change register buffer to regbuf0 where driver gets information */
-> +	viif_capture_write(viif_dev, REG_L1_CRGBF_ACC_CONF, VAL_L1_CRGBF_ACC_CONF_MODE_BUFFER0);
-> +
-> +	/* get AWB info */
-> +	l1_info->awb_ave_u = viif_capture_read(viif_dev, REG_L1_AWHB_AVE_USIG);
-> +	l1_info->awb_ave_v = viif_capture_read(viif_dev, REG_L1_AWHB_AVE_VSIG);
-> +	l1_info->awb_accumulated_pixel = viif_capture_read(viif_dev, REG_L1_AWHB_NUM_UVON);
-> +	l1_info->awb_gain_r = viif_capture_read(viif_dev, REG_L1_AWHB_AWBGAINR);
-> +	l1_info->awb_gain_g = viif_capture_read(viif_dev, REG_L1_AWHB_AWBGAING);
-> +	l1_info->awb_gain_b = viif_capture_read(viif_dev, REG_L1_AWHB_AWBGAINB);
-> +	val = viif_capture_read(viif_dev, REG_L1_AWHB_R_CTR_STOP);
-> +	l1_info->awb_status_u = (FIELD_GET(BIT(1), val) != 0);
-> +	l1_info->awb_status_v = (FIELD_GET(BIT(0), val) != 0);
-> +
-> +	/* get average luminance info */
-> +	l1_info->avg_lum_weight = viif_capture_read(viif_dev, REG_L1_AEXP_RESULT_AVE);
-> +	val = viif_capture_read(viif_dev, REG_L1_AEXP_SATUR_BLACK_PIXNUM);
-> +	l1_info->avg_satur_pixnum = FIELD_GET(GENMASK(31, 16), val);
-> +	l1_info->avg_black_pixnum = FIELD_GET(GENMASK(15, 0), val);
-> +	for (i = 0; i < 8; i++) {
-> +		for (j = 0; j < 8; j++) {
-> +			l1_info->avg_lum_block[i][j] =
-> +				viif_capture_read(viif_dev, REG_L1_AEXP_AVE(i, j));
-> +		}
-> +	}
-> +	l1_info->avg_lum_four_line_lum[0] = viif_capture_read(viif_dev, REG_L1_AEXP_AVE4LINES0);
-> +	l1_info->avg_lum_four_line_lum[1] = viif_capture_read(viif_dev, REG_L1_AEXP_AVE4LINES1);
-> +	l1_info->avg_lum_four_line_lum[2] = viif_capture_read(viif_dev, REG_L1_AEXP_AVE4LINES2);
-> +	l1_info->avg_lum_four_line_lum[3] = viif_capture_read(viif_dev, REG_L1_AEXP_AVE4LINES3);
-> +
-> +	/* revert to register access from register buffer access */
-> +	viif_capture_write(viif_dev, REG_L1_CRGBF_ACC_CONF, VAL_L1_CRGBF_ACC_CONF_MODE_BYPASS);
-> +
-> +	hwd_viif_isp_guard_end(viif_dev);
-> +	spin_unlock_irqrestore(&viif_dev->regbuf_lock, irqflags);
+> +       return readq((void *)(u64)(TXT_PRIV_CONFIG_REGS_BASE + reg));
 > +}
 > +
-> +static const struct viif_csi2rx_dphy_calibration_status calib_status_not_streaming = {
-> +	.term_cal_with_rext = -EAGAIN,
-> +	.clock_lane_offset_cal = -EAGAIN,
-> +	.data_lane0_offset_cal = -EAGAIN,
-> +	.data_lane1_offset_cal = -EAGAIN,
-> +	.data_lane2_offset_cal = -EAGAIN,
-> +	.data_lane3_offset_cal = -EAGAIN,
-> +	.data_lane0_ddl_tuning_cal = -EAGAIN,
-> +	.data_lane1_ddl_tuning_cal = -EAGAIN,
-> +	.data_lane2_ddl_tuning_cal = -EAGAIN,
-> +	.data_lane3_ddl_tuning_cal = -EAGAIN,
-> +};
-> +
-> +static const struct viif_csi2rx_err_status csi_err_not_streaming;
-> +
-> +void visconti_viif_stats_isr(struct viif_device *viif_dev, unsigned int sequence, u64 timestamp)
+> +static void sl_txt_write(u32 reg, u64 val)
 > +{
-> +	struct visconti_viif_isp_stat *cur_stat_buf;
-> +	struct stats_dev *stats_dev = &viif_dev->stats_dev;
-> +	struct viif_buffer *cur_buf;
-> +
-> +	spin_lock(&stats_dev->stats_lock);
-> +
-> +	if (list_empty(&stats_dev->stats_queue))
-> +		goto done;
-> +
-> +	cur_buf = list_first_entry(&stats_dev->stats_queue, struct viif_buffer, queue);
-> +	list_del(&cur_buf->queue);
-> +	cur_stat_buf = (struct visconti_viif_isp_stat *)vb2_plane_vaddr(&cur_buf->vb.vb2_buf, 0);
-> +
-> +	if (!vb2_start_streaming_called(&viif_dev->cap_dev0.vb2_vq)) {
-> +		cur_stat_buf->csi2rx_dphy_calibration = calib_status_not_streaming;
-> +	} else {
-> +		visconti_viif_csi2rx_get_calibration_status(viif_dev,
-> +							    &cur_stat_buf->csi2rx_dphy_calibration);
-> +	}
-> +
-> +	if (!vb2_is_streaming(&viif_dev->cap_dev0.vb2_vq))
-> +		cur_stat_buf->csi2rx_err = csi_err_not_streaming;
-> +	else
-> +		visconti_viif_csi2rx_get_err_status(viif_dev, &cur_stat_buf->csi2rx_err);
-> +
-> +	read_isp_capture_regs(&cur_stat_buf->isp_capture.l1_info, viif_dev);
-> +
-> +	cur_stat_buf->errors.main = viif_dev->reported_err_main;
-> +	cur_stat_buf->errors.sub = viif_dev->reported_err_sub;
-> +	cur_stat_buf->errors.csi2rx = viif_dev->reported_err_csi2rx;
-> +	viif_dev->reported_err_main = 0;
-> +	viif_dev->reported_err_sub = 0;
-> +	viif_dev->reported_err_csi2rx = 0;
-> +
-> +	vb2_set_plane_payload(&cur_buf->vb.vb2_buf, 0, sizeof(struct visconti_viif_isp_stat));
-> +
-> +	cur_buf->vb.sequence = sequence;
-> +	cur_buf->vb.vb2_buf.timestamp = timestamp;
-> +	vb2_buffer_done(&cur_buf->vb.vb2_buf, VB2_BUF_STATE_DONE);
-> +
-> +done:
-> +	spin_unlock(&stats_dev->stats_lock);
+> +       writeq(val, (void *)(u64)(TXT_PRIV_CONFIG_REGS_BASE + reg));
 > +}
 > +
-> +static int viif_stats_enum_fmt_meta_cap(struct file *file, void *priv, struct v4l2_fmtdesc *f)
+> +static void __noreturn sl_txt_reset(u64 error)
 > +{
-> +	struct video_device *vdev = video_devdata(file);
+> +       /* Reading the E2STS register acts as a barrier for TXT registers */
+> +       sl_txt_write(TXT_CR_ERRORCODE, error);
+> +       sl_txt_read(TXT_CR_E2STS);
+> +       sl_txt_write(TXT_CR_CMD_UNLOCK_MEM_CONFIG, 1);
+> +       sl_txt_read(TXT_CR_E2STS);
+> +       sl_txt_write(TXT_CR_CMD_RESET, 1);
 > +
-> +	if (f->index > 0 || f->type != vdev->queue->type)
-> +		return -EINVAL;
+> +       for ( ; ; )
+> +               asm volatile ("hlt");
 > +
-> +	f->pixelformat = V4L2_META_FMT_VISCONTI_VIIF_STATS;
-> +
-> +	return 0;
+> +       unreachable();
 > +}
 > +
-> +static int viif_stats_g_fmt_meta_cap(struct file *file, void *priv, struct v4l2_format *f)
+> +static u64 sl_rdmsr(u32 reg)
 > +{
-> +	struct video_device *vdev = video_devdata(file);
-> +	struct v4l2_meta_format *meta = &f->fmt.meta;
+> +       u64 lo, hi;
 > +
-> +	if (f->type != vdev->queue->type)
-> +		return -EINVAL;
+> +       asm volatile ("rdmsr" : "=a" (lo), "=d" (hi) : "c" (reg));
 > +
-> +	memset(meta, 0, sizeof(*meta));
-> +	meta->dataformat = V4L2_META_FMT_VISCONTI_VIIF_STATS;
-> +	meta->buffersize = sizeof(struct visconti_viif_isp_stat);
-> +
-> +	return 0;
+> +       return (hi << 32) | lo;
 > +}
 > +
-> +static int viif_stats_querycap(struct file *file, void *priv, struct v4l2_capability *cap)
+> +static struct slr_table *sl_locate_and_validate_slrt(void)
 > +{
-> +	struct video_device *vdev = video_devdata(file);
+> +       struct txt_os_mle_data *os_mle_data;
+> +       struct slr_table *slrt;
+> +       void *txt_heap;
 > +
-> +	strscpy(cap->driver, VIIF_DRIVER_NAME, sizeof(cap->driver));
-> +	strscpy(cap->card, vdev->name, sizeof(cap->card));
-> +	strscpy(cap->bus_info, VIIF_BUS_INFO_BASE "-0", sizeof(cap->bus_info));
+> +       txt_heap = (void *)sl_txt_read(TXT_CR_HEAP_BASE);
+> +       os_mle_data = txt_os_mle_data_start(txt_heap);
 > +
-> +	return 0;
+> +       if (!os_mle_data->slrt)
+> +               sl_txt_reset(SL_ERROR_INVALID_SLRT);
+> +
+> +       slrt = (struct slr_table *)os_mle_data->slrt;
+> +
+> +       if (slrt->magic != SLR_TABLE_MAGIC)
+> +               sl_txt_reset(SL_ERROR_INVALID_SLRT);
+> +
+> +       if (slrt->architecture != SLR_INTEL_TXT)
+> +               sl_txt_reset(SL_ERROR_INVALID_SLRT);
+> +
+> +       return slrt;
 > +}
 > +
-> +static const struct v4l2_ioctl_ops viif_stats_ioctl = {
-> +	.vidioc_reqbufs = vb2_ioctl_reqbufs,
-> +	.vidioc_querybuf = vb2_ioctl_querybuf,
-> +	.vidioc_create_bufs = vb2_ioctl_create_bufs,
-> +	.vidioc_qbuf = vb2_ioctl_qbuf,
-> +	.vidioc_dqbuf = vb2_ioctl_dqbuf,
-> +	.vidioc_prepare_buf = vb2_ioctl_prepare_buf,
-> +	.vidioc_expbuf = vb2_ioctl_expbuf,
-> +	.vidioc_streamon = vb2_ioctl_streamon,
-> +	.vidioc_streamoff = vb2_ioctl_streamoff,
-> +	.vidioc_enum_fmt_meta_cap = viif_stats_enum_fmt_meta_cap,
-> +	.vidioc_g_fmt_meta_cap = viif_stats_g_fmt_meta_cap,
-> +	.vidioc_s_fmt_meta_cap = viif_stats_g_fmt_meta_cap,
-> +	.vidioc_try_fmt_meta_cap = viif_stats_g_fmt_meta_cap,
-> +	.vidioc_querycap = viif_stats_querycap,
-> +	.vidioc_subscribe_event = v4l2_ctrl_subscribe_event,
-> +	.vidioc_unsubscribe_event = v4l2_event_unsubscribe,
-> +};
+> +static void sl_check_pmr_coverage(void *base, u32 size, bool allow_hi)
+> +{
+> +       struct txt_os_sinit_data *os_sinit_data;
+> +       void *end = base + size;
+> +       void *txt_heap;
 > +
-> +static const struct v4l2_file_operations viif_stats_fops = { .mmap = vb2_fop_mmap,
-> +							     .unlocked_ioctl = video_ioctl2,
-> +							     .poll = vb2_fop_poll,
-> +							     .open = v4l2_fh_open,
-> +							     .release = vb2_fop_release };
+> +       if (!(sl_cpu_type & SL_CPU_INTEL))
+> +               return;
+> +
+> +       txt_heap = (void *)sl_txt_read(TXT_CR_HEAP_BASE);
+> +       os_sinit_data = txt_os_sinit_data_start(txt_heap);
+> +
+> +       if ((end >= (void *)0x100000000ULL) && (base < (void *)0x100000000ULL))
+> +               sl_txt_reset(SL_ERROR_REGION_STRADDLE_4GB);
+> +
+> +       /*
+> +        * Note that the late stub code validates that the hi PMR covers
+> +        * all memory above 4G. At this point the code can only check that
+> +        * regions are within the hi PMR but that is sufficient.
+> +        */
+> +       if ((end > (void *)0x100000000ULL) && (base >= (void *)0x100000000ULL)) {
 
-Weird layout.
+Better to put the cast on the pointers, given that we are doing
+arithmetic, and use SZ_4G instead of open coding this constant 4
+times.
 
-> +
-> +static int viif_stats_vb2_queue_setup(struct vb2_queue *vq, unsigned int *num_buffers,
-> +				      unsigned int *num_planes, unsigned int sizes[],
-> +				      struct device *alloc_devs[])
-> +{
-> +	*num_planes = 1;
-> +	*num_buffers = clamp_t(u32, *num_buffers, 2, 8);
-> +	sizes[0] = sizeof(struct visconti_viif_isp_stat);
-> +
-> +	return 0;
-> +}
-> +
-> +static inline struct viif_buffer *vb2_to_viif(struct vb2_v4l2_buffer *vbuf)
-> +{
-> +	return container_of(vbuf, struct viif_buffer, vb);
-> +}
-> +
-> +static inline struct stats_dev *vb2queue_to_statsdev(struct vb2_queue *q)
-> +{
-> +	return (struct stats_dev *)vb2_get_drv_priv(q);
-> +}
-> +
-> +static void viif_stats_vb2_buf_queue(struct vb2_buffer *vb)
-> +{
-> +	struct stats_dev *stats_dev = vb2queue_to_statsdev(vb->vb2_queue);
-> +	struct vb2_v4l2_buffer *vbuf = to_vb2_v4l2_buffer(vb);
-> +	struct viif_buffer *buf = vb2_to_viif(vbuf);
-> +
-> +	spin_lock_irq(&stats_dev->stats_lock);
-> +	list_add_tail(&buf->queue, &stats_dev->stats_queue);
-> +	spin_unlock_irq(&stats_dev->stats_lock);
-> +}
-> +
-> +static int viif_stats_vb2_buf_prepare(struct vb2_buffer *vb)
-> +{
-> +	if (vb2_plane_size(vb, 0) < sizeof(struct visconti_viif_isp_stat))
-> +		return -EINVAL;
-> +
-> +	vb2_set_plane_payload(vb, 0, sizeof(struct visconti_viif_isp_stat));
-> +
-> +	return 0;
-> +}
-> +
-> +static void viif_stats_vb2_stop_streaming(struct vb2_queue *q)
-> +{
-> +	struct stats_dev *stats_dev = vb2queue_to_statsdev(q);
-> +	struct viif_buffer *buf;
-> +	unsigned int i;
-> +
-> +	spin_lock_irq(&stats_dev->stats_lock);
-> +	for (i = 0; i < 8; i++) {
-> +		if (list_empty(&stats_dev->stats_queue))
-> +			break;
-> +		buf = list_first_entry(&stats_dev->stats_queue, struct viif_buffer, queue);
-> +		list_del(&buf->queue);
-> +		vb2_buffer_done(&buf->vb.vb2_buf, VB2_BUF_STATE_ERROR);
-> +	}
-> +	spin_unlock_irq(&stats_dev->stats_lock);
-> +}
-> +
-> +static const struct vb2_ops viif_stats_vb2_ops = {
-> +	.queue_setup = viif_stats_vb2_queue_setup,
-> +	.wait_prepare = vb2_ops_wait_prepare,
-> +	.wait_finish = vb2_ops_wait_finish,
-> +	.buf_queue = viif_stats_vb2_buf_queue,
-> +	.buf_prepare = viif_stats_vb2_buf_prepare,
-> +	.stop_streaming = viif_stats_vb2_stop_streaming,
-> +};
-> +
-> +int visconti_viif_stats_register(struct viif_device *viif_dev)
-> +{
-> +	struct stats_dev *stats_dev = &viif_dev->stats_dev;
-> +	struct video_device *vdev = &stats_dev->vdev;
-> +	struct vb2_queue *q = &stats_dev->vb2_vq;
-> +	int ret;
-> +
-> +	mutex_init(&stats_dev->vlock);
-> +	INIT_LIST_HEAD(&stats_dev->stats_queue);
-> +	spin_lock_init(&stats_dev->stats_lock);
-> +
-> +	strscpy(vdev->name, "viif_stats", sizeof(vdev->name));
-> +
-> +	/* Register the video device */
-> +	video_set_drvdata(vdev, stats_dev);
-> +	vdev->ioctl_ops = &viif_stats_ioctl;
-> +	vdev->fops = &viif_stats_fops;
-> +	vdev->release = video_device_release_empty;
-> +	vdev->lock = &stats_dev->vlock;
-> +	vdev->v4l2_dev = &viif_dev->v4l2_dev;
-> +	vdev->queue = &stats_dev->vb2_vq;
-> +	vdev->device_caps = V4L2_CAP_META_CAPTURE | V4L2_CAP_STREAMING;
-> +	vdev->vfl_dir = VFL_DIR_RX;
-> +
-> +	/* Initialize vb2 queue */
-> +	q->type = V4L2_BUF_TYPE_META_CAPTURE;
-> +	q->io_modes = VB2_MMAP | VB2_USERPTR | VB2_DMABUF;
 
-Same question regarding VB2_USERPTR: do you really need this?
 
-> +	q->drv_priv = stats_dev;
-> +	q->ops = &viif_stats_vb2_ops;
-> +	q->mem_ops = &vb2_vmalloc_memops;
-> +	q->buf_struct_size = sizeof(struct viif_buffer);
-> +	q->timestamp_flags = V4L2_BUF_FLAG_TIMESTAMP_MONOTONIC;
-> +	q->lock = &stats_dev->vlock;
-> +	q->dev = viif_dev->v4l2_dev.dev;
+> +               if (allow_hi) {
+> +                       if (end >= (void *)(os_sinit_data->vtd_pmr_hi_base +
+> +                                          os_sinit_data->vtd_pmr_hi_size))
+> +                               sl_txt_reset(SL_ERROR_BUFFER_BEYOND_PMR);
+> +               } else {
+> +                       sl_txt_reset(SL_ERROR_REGION_ABOVE_4GB);
+> +               }
+> +       }
 > +
-> +	ret = vb2_queue_init(q);
-> +	if (ret)
-> +		return ret;
-> +
-> +	stats_dev->stats_pad.flags = MEDIA_PAD_FL_SINK;
-> +	ret = media_entity_pads_init(&vdev->entity, VIIF_STATS_PAD_NUM, &stats_dev->stats_pad);
-> +	if (ret)
-> +		goto error;
-> +
-> +	ret = video_register_device(vdev, VFL_TYPE_VIDEO, -1);
-> +	if (ret) {
-> +		dev_err(viif_dev->v4l2_dev.dev, "video_register_device failed: %d\n", ret);
-> +		goto error;
-> +	}
-> +
-> +	return 0;
-> +
-> +error:
-> +	media_entity_cleanup(&vdev->entity);
-> +	mutex_destroy(&stats_dev->vlock);
-> +
-> +	return ret;
+> +       if (end >= (void *)os_sinit_data->vtd_pmr_lo_size)
+> +               sl_txt_reset(SL_ERROR_BUFFER_BEYOND_PMR);
 > +}
 > +
-> +void visconti_viif_stats_unregister(struct viif_device *viif_dev)
-> +{
-> +	struct stats_dev *stats_dev = &viif_dev->stats_dev;
-> +	struct video_device *vdev = &stats_dev->vdev;
-> +
-> +	if (!video_is_registered(vdev))
-> +		return;
-> +
-> +	vb2_video_unregister_device(vdev);
-> +	media_entity_cleanup(&vdev->entity);
-> +	mutex_destroy(&stats_dev->vlock);
-> +}
-> diff --git a/drivers/media/platform/toshiba/visconti/viif_stats.h b/drivers/media/platform/toshiba/visconti/viif_stats.h
-> new file mode 100644
-> index 0000000000..3f778c58ef
-> --- /dev/null
-> +++ b/drivers/media/platform/toshiba/visconti/viif_stats.h
-> @@ -0,0 +1,14 @@
-> +/* SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause */
-> +/* Toshiba Visconti Video Capture Support
-> + *
-> + * (C) Copyright 2023 TOSHIBA CORPORATION
-> + * (C) Copyright 2023 Toshiba Electronic Devices & Storage Corporation
+> +/*
+> + * Some MSRs are modified by the pre-launch code including the MTRRs.
+> + * The early MLE code has to restore these values. This code validates
+> + * the values after they are measured.
 > + */
+> +static void sl_txt_validate_msrs(struct txt_os_mle_data *os_mle_data)
+> +{
+> +       struct slr_txt_mtrr_state *saved_bsp_mtrrs;
+> +       u64 mtrr_caps, mtrr_def_type, mtrr_var;
+> +       struct slr_entry_intel_info *txt_info;
+> +       u64 misc_en_msr;
+> +       u32 vcnt, i;
 > +
-> +#ifndef VIIF_STATS_H
-> +#define VIIF_STATS_H
+> +       txt_info = (struct slr_entry_intel_info *)os_mle_data->txt_info;
+> +       saved_bsp_mtrrs = &txt_info->saved_bsp_mtrrs;
 > +
-> +void visconti_viif_stats_isr(struct viif_device *viif_dev, unsigned int sequence, u64 timestamp);
-> +int visconti_viif_stats_register(struct viif_device *viif_dev);
-> +void visconti_viif_stats_unregister(struct viif_device *viif_dev);
-> +#endif /* VIIF_STATS_H */
+> +       mtrr_caps = sl_rdmsr(MSR_MTRRcap);
+> +       vcnt = (u32)(mtrr_caps & CAPS_VARIABLE_MTRR_COUNT_MASK);
+> +
+> +       if (saved_bsp_mtrrs->mtrr_vcnt > vcnt)
+> +               sl_txt_reset(SL_ERROR_MTRR_INV_VCNT);
+> +       if (saved_bsp_mtrrs->mtrr_vcnt > TXT_OS_MLE_MAX_VARIABLE_MTRRS)
+> +               sl_txt_reset(SL_ERROR_MTRR_INV_VCNT);
+> +
+> +       mtrr_def_type = sl_rdmsr(MSR_MTRRdefType);
+> +       if (saved_bsp_mtrrs->default_mem_type != mtrr_def_type)
+> +               sl_txt_reset(SL_ERROR_MTRR_INV_DEF_TYPE);
+> +
+> +       for (i = 0; i < saved_bsp_mtrrs->mtrr_vcnt; i++) {
+> +               mtrr_var = sl_rdmsr(MTRRphysBase_MSR(i));
+> +               if (saved_bsp_mtrrs->mtrr_pair[i].mtrr_physbase != mtrr_var)
+> +                       sl_txt_reset(SL_ERROR_MTRR_INV_BASE);
+> +               mtrr_var = sl_rdmsr(MTRRphysMask_MSR(i));
+> +               if (saved_bsp_mtrrs->mtrr_pair[i].mtrr_physmask != mtrr_var)
+> +                       sl_txt_reset(SL_ERROR_MTRR_INV_MASK);
+> +       }
+> +
+> +       misc_en_msr = sl_rdmsr(MSR_IA32_MISC_ENABLE);
+> +       if (txt_info->saved_misc_enable_msr != misc_en_msr)
+> +               sl_txt_reset(SL_ERROR_MSR_INV_MISC_EN);
+> +}
+> +
+> +static void sl_find_drtm_event_log(struct slr_table *slrt)
+> +{
+> +       struct txt_os_sinit_data *os_sinit_data;
+> +       struct slr_entry_log_info *log_info;
+> +       void *txt_heap;
+> +
+> +       log_info = slr_next_entry_by_tag(slrt, NULL, SLR_ENTRY_LOG_INFO);
+> +       if (!log_info)
+> +               sl_txt_reset(SL_ERROR_SLRT_MISSING_ENTRY);
+> +
+> +       evtlog_base = (void *)log_info->addr;
+> +       evtlog_size = log_info->size;
+> +
+> +       txt_heap = (void *)sl_txt_read(TXT_CR_HEAP_BASE);
+> +
+> +       /*
+> +        * For TPM 2.0, the event log 2.1 extended data structure has to also
+> +        * be located and fixed up.
+> +        */
+> +       os_sinit_data = txt_os_sinit_data_start(txt_heap);
+> +
+> +       /*
+> +        * Only support version 6 and later that properly handle the
+> +        * list of ExtDataElements in the OS-SINIT structure.
+> +        */
+> +       if (os_sinit_data->version < 6)
+> +               sl_txt_reset(SL_ERROR_OS_SINIT_BAD_VERSION);
+> +
+> +       /* Find the TPM2.0 logging extended heap element */
+> +       log20_elem = tpm20_find_log2_1_element(os_sinit_data);
+> +
+> +       /* If found, this implies TPM20 log and family */
+> +       if (log20_elem)
+> +               tpm_log_ver = SL_TPM20_LOG;
+> +}
+> +
+> +static void sl_validate_event_log_buffer(void)
+> +{
+> +       struct txt_os_sinit_data *os_sinit_data;
+> +       void *txt_heap, *txt_end;
+> +       void *mle_base, *mle_end;
+> +       void *evtlog_end;
+> +
+> +       if ((u64)evtlog_size > (LLONG_MAX - (u64)evtlog_base))
+> +               sl_txt_reset(SL_ERROR_INTEGER_OVERFLOW);
+> +       evtlog_end = evtlog_base + evtlog_size;
+> +
+> +       txt_heap = (void *)sl_txt_read(TXT_CR_HEAP_BASE);
+> +       txt_end = txt_heap + sl_txt_read(TXT_CR_HEAP_SIZE);
+> +       os_sinit_data = txt_os_sinit_data_start(txt_heap);
+> +
+> +       mle_base = (void *)(u64)sl_mle_start;
+> +       mle_end = mle_base + os_sinit_data->mle_size;
+> +
+> +       /*
+> +        * This check is to ensure the event log buffer does not overlap with
+> +        * the MLE image.
+> +        */
+> +       if (evtlog_base >= mle_end && evtlog_end > mle_end)
+> +               goto pmr_check; /* above */
+> +
+> +       if (evtlog_end <= mle_base && evtlog_base < mle_base)
+> +               goto pmr_check; /* below */
+> +
+> +       sl_txt_reset(SL_ERROR_MLE_BUFFER_OVERLAP);
+> +
+> +pmr_check:
+> +       /*
+> +        * The TXT heap is protected by the DPR. If the TPM event log is
+> +        * inside the TXT heap, there is no need for a PMR check.
+> +        */
+> +       if (evtlog_base > txt_heap && evtlog_end < txt_end)
+> +               return;
+> +
+> +       sl_check_pmr_coverage(evtlog_base, evtlog_size, true);
+> +}
+> +
+> +static void sl_find_event_log_algorithms(void)
+> +{
+> +       struct tcg_efi_specid_event_head *efi_head =
+> +               (struct tcg_efi_specid_event_head *)(evtlog_base +
+> +                                       log20_elem->first_record_offset +
+> +                                       sizeof(struct tcg_pcr_event));
+> +
+> +       if (efi_head->num_algs == 0 || efi_head->num_algs > 2)
+> +               sl_txt_reset(SL_ERROR_TPM_NUMBER_ALGS);
+> +
+> +       memcpy(&tpm_algs[0], &efi_head->digest_sizes[0],
+> +              sizeof(struct tcg_efi_specid_event_algs) * efi_head->num_algs);
+> +}
+> +
+> +static void sl_tpm12_log_event(u32 pcr, u32 event_type,
+> +                              const u8 *data, u32 length,
+> +                              const u8 *event_data, u32 event_size)
+> +{
+> +       u8 sha1_hash[SHA1_DIGEST_SIZE] = {0};
+> +       u8 log_buf[SL_TPM12_LOG_SIZE] = {0};
+> +       struct tcg_pcr_event *pcr_event;
+> +       u32 total_size;
+> +
+> +       pcr_event = (struct tcg_pcr_event *)log_buf;
+> +       pcr_event->pcr_idx = pcr;
+> +       pcr_event->event_type = event_type;
+> +       if (length > 0) {
+> +               sha1(data, length, &sha1_hash[0]);
+> +               memcpy(&pcr_event->digest[0], &sha1_hash[0], SHA1_DIGEST_SIZE);
+> +       }
+> +       pcr_event->event_size = event_size;
+> +       if (event_size > 0)
+> +               memcpy((u8 *)pcr_event + sizeof(struct tcg_pcr_event),
+> +                      event_data, event_size);
+> +
+> +       total_size = sizeof(struct tcg_pcr_event) + event_size;
+> +
+> +       if (tpm12_log_event(evtlog_base, evtlog_size, total_size, pcr_event))
+> +               sl_txt_reset(SL_ERROR_TPM_LOGGING_FAILED);
+> +}
+> +
+> +static void sl_tpm20_log_event(u32 pcr, u32 event_type,
+> +                              const u8 *data, u32 length,
+> +                              const u8 *event_data, u32 event_size)
+> +{
+> +       u8 sha256_hash[SHA256_DIGEST_SIZE] = {0};
+> +       u8 sha1_hash[SHA1_DIGEST_SIZE] = {0};
+> +       u8 log_buf[SL_TPM20_LOG_SIZE] = {0};
+> +       struct sha256_state sctx256 = {0};
+> +       struct tcg_pcr_event2_head *head;
+> +       struct tcg_event_field *event;
+> +       u32 total_size;
+> +       u16 *alg_ptr;
+> +       u8 *dgst_ptr;
+> +
+> +       head = (struct tcg_pcr_event2_head *)log_buf;
+> +       head->pcr_idx = pcr;
+> +       head->event_type = event_type;
+> +       total_size = sizeof(struct tcg_pcr_event2_head);
+> +       alg_ptr = (u16 *)(log_buf + sizeof(struct tcg_pcr_event2_head));
+> +
+> +       for ( ; head->count < 2; head->count++) {
+> +               if (!tpm_algs[head->count].alg_id)
+> +                       break;
+> +
+> +               *alg_ptr = tpm_algs[head->count].alg_id;
+> +               dgst_ptr = (u8 *)alg_ptr + sizeof(u16);
+> +
+> +               if (tpm_algs[head->count].alg_id == TPM_ALG_SHA256 &&
+> +                   length) {
+> +                       sha256_init(&sctx256);
+> +                       sha256_update(&sctx256, data, length);
+> +                       sha256_final(&sctx256, &sha256_hash[0]);
+> +               } else if (tpm_algs[head->count].alg_id == TPM_ALG_SHA1 &&
+> +                          length) {
+> +                       sha1(data, length, &sha1_hash[0]);
+> +               }
+> +
+> +               if (tpm_algs[head->count].alg_id == TPM_ALG_SHA256) {
+> +                       memcpy(dgst_ptr, &sha256_hash[0], SHA256_DIGEST_SIZE);
+> +                       total_size += SHA256_DIGEST_SIZE + sizeof(u16);
+> +                       alg_ptr = (u16 *)((u8 *)alg_ptr + SHA256_DIGEST_SIZE + sizeof(u16));
+> +               } else if (tpm_algs[head->count].alg_id == TPM_ALG_SHA1) {
+> +                       memcpy(dgst_ptr, &sha1_hash[0], SHA1_DIGEST_SIZE);
+> +                       total_size += SHA1_DIGEST_SIZE + sizeof(u16);
+> +                       alg_ptr = (u16 *)((u8 *)alg_ptr + SHA1_DIGEST_SIZE + sizeof(u16));
+> +               } else {
+> +                       sl_txt_reset(SL_ERROR_TPM_UNKNOWN_DIGEST);
+> +               }
+> +       }
+> +
+> +       event = (struct tcg_event_field *)(log_buf + total_size);
+> +       event->event_size = event_size;
+> +       if (event_size > 0)
+> +               memcpy((u8 *)event + sizeof(struct tcg_event_field), event_data, event_size);
+> +       total_size += sizeof(struct tcg_event_field) + event_size;
+> +
+> +       if (tpm20_log_event(log20_elem, evtlog_base, evtlog_size, total_size, &log_buf[0]))
+> +               sl_txt_reset(SL_ERROR_TPM_LOGGING_FAILED);
+> +}
+> +
+> +static void sl_tpm_extend_evtlog(u32 pcr, u32 type,
+> +                                const u8 *data, u32 length, const char *desc)
+> +{
+> +       if (tpm_log_ver == SL_TPM20_LOG)
+> +               sl_tpm20_log_event(pcr, type, data, length,
+> +                                  (const u8 *)desc, strlen(desc));
+> +       else
+> +               sl_tpm12_log_event(pcr, type, data, length,
+> +                                  (const u8 *)desc, strlen(desc));
+> +}
+> +
+> +static struct setup_data *sl_handle_setup_data(struct setup_data *curr,
+> +                                              struct slr_policy_entry *entry)
+> +{
+> +       struct setup_indirect *ind;
+> +       struct setup_data *next;
+> +
+> +       if (!curr)
+> +               return NULL;
+> +
+> +       next = (struct setup_data *)(unsigned long)curr->next;
+> +
+> +       /* SETUP_INDIRECT instances have to be handled differently */
+> +       if (curr->type == SETUP_INDIRECT) {
+> +               ind = (struct setup_indirect *)((u8 *)curr + offsetof(struct setup_data, data));
+> +
+> +               sl_check_pmr_coverage((void *)ind->addr, ind->len, true);
+> +
+> +               sl_tpm_extend_evtlog(entry->pcr, TXT_EVTYPE_SLAUNCH,
+> +                                    (void *)ind->addr, ind->len,
+> +                                    entry->evt_info);
+> +
+> +               return next;
+> +       }
+> +
+> +       sl_check_pmr_coverage(((u8 *)curr) + sizeof(struct setup_data),
+> +                             curr->len, true);
+> +
+> +       sl_tpm_extend_evtlog(entry->pcr, TXT_EVTYPE_SLAUNCH,
+> +                            ((u8 *)curr) + sizeof(struct setup_data),
+> +                            curr->len,
+> +                            entry->evt_info);
+> +
+> +       return next;
+> +}
+> +
+> +static void sl_extend_setup_data(struct slr_policy_entry *entry)
+> +{
+> +       struct setup_data *data;
+> +
+> +       /*
+> +        * Measuring the boot params measured the fixed e820 memory map.
+> +        * Measure any setup_data entries including e820 extended entries.
+> +        */
+> +       data = (struct setup_data *)(unsigned long)entry->entity;
+> +       while (data)
+> +               data = sl_handle_setup_data(data, entry);
+> +}
+> +
+> +static void sl_extend_slrt(struct slr_policy_entry *entry)
+> +{
+> +       struct slr_table *slrt = (struct slr_table *)entry->entity;
+> +       struct slr_entry_intel_info *intel_info;
+> +
+> +       /*
+> +        * In revision one of the SLRT, the only table that needs to be
+> +        * measured is the Intel info table. Everything else is meta-data,
+> +        * addresses and sizes. Note the size of what to measure is not set.
+> +        * The flag SLR_POLICY_IMPLICIT_SIZE leaves it to the measuring code
+> +        * to sort out.
+> +        */
+> +       if (slrt->revision == 1) {
+> +               intel_info = slr_next_entry_by_tag(slrt, NULL, SLR_ENTRY_INTEL_INFO);
+> +               if (!intel_info)
+> +                       sl_txt_reset(SL_ERROR_SLRT_MISSING_ENTRY);
+> +
+> +               sl_tpm_extend_evtlog(entry->pcr, TXT_EVTYPE_SLAUNCH,
+> +                                    (void *)entry->entity, sizeof(struct slr_entry_intel_info),
+> +                                    entry->evt_info);
+> +       }
+> +}
+> +
+> +static void sl_extend_txt_os2mle(struct slr_policy_entry *entry)
+> +{
+> +       struct txt_os_mle_data *os_mle_data;
+> +       void *txt_heap;
+> +
+> +       txt_heap = (void *)sl_txt_read(TXT_CR_HEAP_BASE);
+> +       os_mle_data = txt_os_mle_data_start(txt_heap);
+> +
+> +       /*
+> +        * Version 1 of the OS-MLE heap structure has no fields to measure. It just
+> +        * has addresses and sizes and a scratch buffer.
+> +        */
+> +       if (os_mle_data->version == 1)
+> +               return;
+> +}
+> +
+> +static void sl_process_extend_policy(struct slr_table *slrt)
+> +{
+> +       struct slr_entry_policy *policy;
+> +       u16 i;
+> +
+> +       policy = slr_next_entry_by_tag(slrt, NULL, SLR_ENTRY_ENTRY_POLICY);
+> +       if (!policy)
+> +               sl_txt_reset(SL_ERROR_SLRT_MISSING_ENTRY);
+> +
+> +       for (i = 0; i < policy->nr_entries; i++) {
+> +               switch (policy->policy_entries[i].entity_type) {
+> +               case SLR_ET_SETUP_DATA:
+> +                       sl_extend_setup_data(&policy->policy_entries[i]);
+> +                       break;
+> +               case SLR_ET_SLRT:
+> +                       sl_extend_slrt(&policy->policy_entries[i]);
+> +                       break;
+> +               case SLR_ET_TXT_OS2MLE:
+> +                       sl_extend_txt_os2mle(&policy->policy_entries[i]);
+> +                       break;
+> +               case SLR_ET_UNUSED:
+> +                       continue;
+> +               default:
+> +                       sl_tpm_extend_evtlog(policy->policy_entries[i].pcr, TXT_EVTYPE_SLAUNCH,
+> +                                            (void *)policy->policy_entries[i].entity,
+> +                                            policy->policy_entries[i].size,
+> +                                            policy->policy_entries[i].evt_info);
+> +               }
+> +       }
+> +}
+> +
+> +static void sl_process_extend_uefi_config(struct slr_table *slrt)
+> +{
+> +       struct slr_entry_uefi_config *uefi_config;
+> +       u16 i;
+> +
+> +       uefi_config = slr_next_entry_by_tag(slrt, NULL, SLR_ENTRY_UEFI_CONFIG);
+> +
+> +       /* Optionally here depending on how SL kernel was booted */
+> +       if (!uefi_config)
+> +               return;
+> +
+> +       for (i = 0; i < uefi_config->nr_entries; i++) {
+> +               sl_tpm_extend_evtlog(uefi_config->uefi_cfg_entries[i].pcr, TXT_EVTYPE_SLAUNCH,
+> +                                    (void *)uefi_config->uefi_cfg_entries[i].cfg,
+> +                                    uefi_config->uefi_cfg_entries[i].size,
+> +                                    uefi_config->uefi_cfg_entries[i].evt_info);
+> +       }
+> +}
+> +
+> +asmlinkage __visible void sl_check_region(void *base, u32 size)
+> +{
+> +       sl_check_pmr_coverage(base, size, false);
+> +}
+> +
+> +asmlinkage __visible void sl_main(void *bootparams)
+> +{
+> +       struct boot_params *bp  = (struct boot_params *)bootparams;
+> +       struct txt_os_mle_data *os_mle_data;
+> +       struct slr_table *slrt;
+> +       void *txt_heap;
+> +
+> +       /*
+> +        * Ensure loadflags do not indicate a secure launch was done
+> +        * unless it really was.
+> +        */
+> +       bp->hdr.loadflags &= ~SLAUNCH_FLAG;
+> +
+> +       /*
+> +        * Currently only Intel TXT is supported for Secure Launch. Testing
+> +        * this value also indicates that the kernel was booted successfully
+> +        * through the Secure Launch entry point and is in SMX mode.
+> +        */
+> +       if (!(sl_cpu_type & SL_CPU_INTEL))
+> +               return;
+> +
+> +       slrt = sl_locate_and_validate_slrt();
+> +
+> +       /* Locate the TPM event log. */
+> +       sl_find_drtm_event_log(slrt);
+> +
+> +       /* Validate the location of the event log buffer before using it */
+> +       sl_validate_event_log_buffer();
+> +
+> +       /*
+> +        * Find the TPM hash algorithms used by the ACM and recorded in the
+> +        * event log.
+> +        */
+> +       if (tpm_log_ver == SL_TPM20_LOG)
+> +               sl_find_event_log_algorithms();
+> +
+> +       /*
+> +        * Sanitize them before measuring. Set the SLAUNCH_FLAG early since if
+> +        * anything fails, the system will reset anyway.
+> +        */
+> +       sanitize_boot_params(bp);
+> +       bp->hdr.loadflags |= SLAUNCH_FLAG;
+> +
+> +       sl_check_pmr_coverage(bootparams, PAGE_SIZE, false);
+> +
+> +       /* Place event log SL specific tags before and after measurements */
+> +       sl_tpm_extend_evtlog(17, TXT_EVTYPE_SLAUNCH_START, NULL, 0, "");
+> +
+> +       /* Process all policy entries and extend the measurements to the evtlog */
+> +       sl_process_extend_policy(slrt);
+> +
+> +       /* Process all EFI config entries and extend the measurements to the evtlog */
+> +       sl_process_extend_uefi_config(slrt);
+> +
+> +       sl_tpm_extend_evtlog(17, TXT_EVTYPE_SLAUNCH_END, NULL, 0, "");
+> +
+> +       /* No PMR check is needed, the TXT heap is covered by the DPR */
+> +       txt_heap = (void *)sl_txt_read(TXT_CR_HEAP_BASE);
+> +       os_mle_data = txt_os_mle_data_start(txt_heap);
+> +
+> +       /*
+> +        * Now that the OS-MLE data is measured, ensure the MTRR and
+> +        * misc enable MSRs are what we expect.
+> +        */
+> +       sl_txt_validate_msrs(os_mle_data);
+> +}
+> diff --git a/arch/x86/boot/compressed/sl_stub.S b/arch/x86/boot/compressed/sl_stub.S
+> new file mode 100644
+> index 000000000000..24b8f23d5dcc
+> --- /dev/null
+> +++ b/arch/x86/boot/compressed/sl_stub.S
+> @@ -0,0 +1,725 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +
+> +/*
+> + * Secure Launch protected mode entry point.
+> + *
+> + * Copyright (c) 2024, Oracle and/or its affiliates.
+> + */
+> +       .code32
+> +       .text
+> +#include <linux/linkage.h>
+> +#include <asm/segment.h>
+> +#include <asm/msr.h>
+> +#include <asm/apicdef.h>
+> +#include <asm/trapnr.h>
+> +#include <asm/processor-flags.h>
+> +#include <asm/asm-offsets.h>
+> +#include <asm/bootparam.h>
+> +#include <asm/page_types.h>
+> +#include <asm/irq_vectors.h>
+> +#include <linux/slr_table.h>
+> +#include <linux/slaunch.h>
+> +
+> +/* CPUID: leaf 1, ECX, SMX feature bit */
+> +#define X86_FEATURE_BIT_SMX    (1 << 6)
+> +
+> +#define IDT_VECTOR_LO_BITS     0
+> +#define IDT_VECTOR_HI_BITS     6
+> +
+> +/*
+> + * See the comment in head_64.S for detailed information on what this macro
+> + * and others like it are used for. The comment appears right at the top of
+> + * the file.
+> + */
+> +#define rva(X) ((X) - sl_stub_entry)
+> +
+> +/*
+> + * The GETSEC op code is open coded because older versions of
+> + * GCC do not support the getsec mnemonic.
+> + */
+> +.macro GETSEC leaf
+> +       pushl   %ebx
+> +       xorl    %ebx, %ebx      /* Must be zero for SMCTRL */
+> +       movl    \leaf, %eax     /* Leaf function */
+> +       .byte   0x0f, 0x37      /* GETSEC opcode */
+> +       popl    %ebx
+> +.endm
+> +
+> +.macro TXT_RESET error
+> +       /*
+> +        * Set a sticky error value and reset. Note the movs to %eax act as
+> +        * TXT register barriers.
+> +        */
+> +       movl    \error, (TXT_PRIV_CONFIG_REGS_BASE + TXT_CR_ERRORCODE)
+> +       movl    (TXT_PRIV_CONFIG_REGS_BASE + TXT_CR_E2STS), %eax
+> +       movl    $1, (TXT_PRIV_CONFIG_REGS_BASE + TXT_CR_CMD_NO_SECRETS)
+> +       movl    (TXT_PRIV_CONFIG_REGS_BASE + TXT_CR_E2STS), %eax
+> +       movl    $1, (TXT_PRIV_CONFIG_REGS_BASE + TXT_CR_CMD_UNLOCK_MEM_CONFIG)
+> +       movl    (TXT_PRIV_CONFIG_REGS_BASE + TXT_CR_E2STS), %eax
+> +       movl    $1, (TXT_PRIV_CONFIG_REGS_BASE + TXT_CR_CMD_RESET)
+> +1:
+> +       hlt
+> +       jmp     1b
+> +.endm
+> +
+> +       .code32
+> +SYM_FUNC_START(sl_stub_entry)
+> +       cli
+> +       cld
+> +
+> +       /*
+> +        * On entry, %ebx has the entry abs offset to sl_stub_entry. This
+> +        * will be correctly scaled using the rva macro and avoid causing
+> +        * relocations. Only %cs and %ds segments are known good.
 
-Regards,
+Could you please clarify this? 'scaling' is unidiomatic in this
+context, and actually means something different in my book. AIUI, %ebx
+is guaranteed to carry the actual address of sl_stub_entry(), and
+rva() is used to generate relative references using %ebx as a base, as
+to avoid /absolute/ relocations, which would require fixups at
+runtime.
 
-	Hans
+
+> +        */
+> +
+> +       /* Load GDT, set segment regs and lret to __SL32_CS */
+> +       leal    rva(sl_gdt_desc)(%ebx), %eax
+> +       addl    %eax, 2(%eax)
+> +       lgdt    (%eax)
+> +
+> +       movl    $(__SL32_DS), %eax
+> +       movw    %ax, %ds
+> +       movw    %ax, %es
+> +       movw    %ax, %fs
+> +       movw    %ax, %gs
+> +       movw    %ax, %ss
+> +
+> +       /*
+> +        * Now that %ss is known good, take the first stack for the BSP. The
+> +        * AP stacks are only used on Intel.
+> +        */
+> +       leal    rva(sl_stacks_end)(%ebx), %esp
+> +
+> +       leal    rva(.Lsl_cs)(%ebx), %eax
+> +       pushl   $(__SL32_CS)
+> +       pushl   %eax
+> +       lret
+> +
+> +.Lsl_cs:
+> +       /* Save our base pointer reg and page table for MLE */
+> +       pushl   %ebx
+> +       pushl   %ecx
+> +
+> +       /* See if SMX feature is supported. */
+> +       movl    $1, %eax
+> +       cpuid
+> +       testl   $(X86_FEATURE_BIT_SMX), %ecx
+> +       jz      .Ldo_unknown_cpu
+> +
+> +       popl    %ecx
+> +       popl    %ebx
+> +
+> +       /* Know it is Intel */
+> +       movl    $(SL_CPU_INTEL), rva(sl_cpu_type)(%ebx)
+> +
+> +       /* Locate the base of the MLE using the page tables in %ecx */
+> +       call    sl_find_mle_base
+> +
+> +       /* Increment CPU count for BSP */
+> +       incl    rva(sl_txt_cpu_count)(%ebx)
+> +
+> +       /*
+> +        * Enable SMI with GETSEC[SMCTRL] which were disabled by SENTER.
+> +        * NMIs were also disabled by SENTER. Since there is no IDT for the BSP,
+> +        * allow the mainline kernel re-enable them in the normal course of
+> +        * booting.
+> +        */
+> +       GETSEC  $(SMX_X86_GETSEC_SMCTRL)
+> +
+> +       /* Clear the TXT error registers for a clean start of day */
+> +       movl    $0, (TXT_PRIV_CONFIG_REGS_BASE + TXT_CR_ERRORCODE)
+> +       movl    $0xffffffff, (TXT_PRIV_CONFIG_REGS_BASE + TXT_CR_ESTS)
+> +
+> +       /* On Intel, the zero page address is passed in the TXT heap */
+> +       /* Read physical base of heap into EAX */
+> +       movl    (TXT_PRIV_CONFIG_REGS_BASE + TXT_CR_HEAP_BASE), %eax
+> +       /* Read the size of the BIOS data into ECX (first 8 bytes) */
+> +       movl    (%eax), %ecx
+> +       /* Skip over BIOS data and size of OS to MLE data section */
+> +       leal    8(%eax, %ecx), %eax
+> +
+> +       /* Need to verify the values in the OS-MLE struct passed in */
+> +       call    sl_txt_verify_os_mle_struct
+> +
+> +       /*
+> +        * Get the boot params address from the heap. Note %esi and %ebx MUST
+> +        * be preserved across calls and operations.
+> +        */
+> +       movl    SL_boot_params_addr(%eax), %esi
+> +
+> +       /* Save %ebx so the APs can find their way home */
+> +       movl    %ebx, (SL_mle_scratch + SL_SCRATCH_AP_EBX)(%eax)
+> +
+> +       /* Fetch the AP wake code block address from the heap */
+> +       movl    SL_ap_wake_block(%eax), %edi
+> +       movl    %edi, rva(sl_txt_ap_wake_block)(%ebx)
+> +
+> +       /* Store the offset in the AP wake block to the jmp address */
+> +       movl    $(sl_ap_jmp_offset - sl_txt_ap_wake_begin), \
+> +               (SL_mle_scratch + SL_SCRATCH_AP_JMP_OFFSET)(%eax)
+> +
+> +       /* Store the offset in the AP wake block to the AP stacks block */
+> +       movl    $(sl_stacks - sl_txt_ap_wake_begin), \
+> +               (SL_mle_scratch + SL_SCRATCH_AP_STACKS_OFFSET)(%eax)
+> +
+> +       /* %eax still is the base of the OS-MLE block, save it */
+> +       pushl   %eax
+> +
+> +       /* Relocate the AP wake code to the safe block */
+> +       call    sl_txt_reloc_ap_wake
+> +
+> +       /*
+> +        * Wake up all APs that are blocked in the ACM and wait for them to
+> +        * halt. This should be done before restoring the MTRRs so the ACM is
+> +        * still properly in WB memory.
+> +        */
+> +       call    sl_txt_wake_aps
+> +
+> +       /* Restore OS-MLE in %eax */
+> +       popl    %eax
+> +
+> +       /*
+> +        * %edi is used by this routine to find the MTRRs which are in the SLRT
+> +        * in the Intel info.
+> +        */
+> +       movl    SL_txt_info(%eax), %edi
+> +       call    sl_txt_load_regs
+> +
+> +       jmp     .Lcpu_setup_done
+> +
+> +.Ldo_unknown_cpu:
+> +       /* Non-Intel CPUs are not yet supported */
+> +       ud2
+> +
+> +.Lcpu_setup_done:
+> +       /*
+> +        * Don't enable MCE at this point. The kernel will enable
+> +        * it on the BSP later when it is ready.
+> +        */
+> +
+> +       /* Done, jump to normal 32b pm entry */
+> +       jmp     startup_32
+> +SYM_FUNC_END(sl_stub_entry)
+> +
+> +SYM_FUNC_START(sl_find_mle_base)
+> +       /* %ecx has PDPT, get first PD */
+> +       movl    (%ecx), %eax
+> +       andl    $(PAGE_MASK), %eax
+> +       /* Get first PT from first PDE */
+> +       movl    (%eax), %eax
+> +       andl    $(PAGE_MASK), %eax
+> +       /* Get MLE base from first PTE */
+> +       movl    (%eax), %eax
+> +       andl    $(PAGE_MASK), %eax
+> +
+> +       movl    %eax, rva(sl_mle_start)(%ebx)
+> +       ret
+> +SYM_FUNC_END(sl_find_mle_base)
+> +
+> +SYM_FUNC_START(sl_check_buffer_mle_overlap)
+> +       /* %ecx: buffer begin %edx: buffer end */
+> +       /* %ebx: MLE begin %edi: MLE end */
+> +       /* %eax: region may be inside MLE */
+> +
+> +       cmpl    %edi, %ecx
+> +       jb      .Lnext_check
+> +       cmpl    %edi, %edx
+> +       jbe     .Lnext_check
+> +       jmp     .Lvalid /* Buffer above MLE */
+> +
+> +.Lnext_check:
+> +       cmpl    %ebx, %edx
+> +       ja      .Linside_check
+> +       cmpl    %ebx, %ecx
+> +       jae     .Linside_check
+> +       jmp     .Lvalid /* Buffer below MLE */
+> +
+> +.Linside_check:
+> +       cmpl    $0, %eax
+> +       jz      .Linvalid
+> +       cmpl    %ebx, %ecx
+> +       jb      .Linvalid
+> +       cmpl    %edi, %edx
+> +       ja      .Linvalid
+> +       jmp     .Lvalid /* Buffer in MLE */
+> +
+> +.Linvalid:
+> +       TXT_RESET $(SL_ERROR_MLE_BUFFER_OVERLAP)
+> +
+> +.Lvalid:
+> +       ret
+> +SYM_FUNC_END(sl_check_buffer_mle_overlap)
+> +
+> +SYM_FUNC_START(sl_txt_verify_os_mle_struct)
+> +       pushl   %ebx
+> +       /*
+> +        * %eax points to the base of the OS-MLE struct. Need to also
+> +        * read some values from the OS-SINIT struct too.
+> +        */
+> +       movl    -8(%eax), %ecx
+> +       /* Skip over OS to MLE data section and size of OS-SINIT structure */
+> +       leal    (%eax, %ecx), %edx
+> +
+> +       /* Load MLE image base absolute offset */
+> +       movl    rva(sl_mle_start)(%ebx), %ebx
+> +
+> +       /* Verify the value of the low PMR base. It should always be 0. */
+> +       movl    SL_vtd_pmr_lo_base(%edx), %esi
+> +       cmpl    $0, %esi
+> +       jz      .Lvalid_pmr_base
+> +       TXT_RESET $(SL_ERROR_LO_PMR_BASE)
+> +
+> +.Lvalid_pmr_base:
+> +       /* Grab some values from OS-SINIT structure */
+> +       movl    SL_mle_size(%edx), %edi
+> +       addl    %ebx, %edi
+> +       jc      .Loverflow_detected
+> +       movl    SL_vtd_pmr_lo_size(%edx), %esi
+> +
+> +       /* Check the AP wake block */
+> +       movl    SL_ap_wake_block(%eax), %ecx
+> +       movl    SL_ap_wake_block_size(%eax), %edx
+> +       addl    %ecx, %edx
+> +       jc      .Loverflow_detected
+> +       pushl   %eax
+> +       xorl    %eax, %eax
+> +       call    sl_check_buffer_mle_overlap
+> +       popl    %eax
+> +       cmpl    %esi, %edx
+> +       ja      .Lbuffer_beyond_pmr
+> +
+> +       /*
+> +        * Check the boot params. Note during a UEFI boot, the boot
+> +        * params will be inside the MLE image. Test for this case
+> +        * in the overlap case.
+> +        */
+> +       movl    SL_boot_params_addr(%eax), %ecx
+> +       movl    $(PAGE_SIZE), %edx
+> +       addl    %ecx, %edx
+> +       jc      .Loverflow_detected
+> +       pushl   %eax
+> +       movl    $1, %eax
+> +       call    sl_check_buffer_mle_overlap
+> +       popl    %eax
+> +       cmpl    %esi, %edx
+> +       ja      .Lbuffer_beyond_pmr
+> +
+> +       /* Check that the AP wake block is big enough */
+> +       cmpl    $(sl_txt_ap_wake_end - sl_txt_ap_wake_begin), \
+> +               SL_ap_wake_block_size(%eax)
+> +       jae     .Lwake_block_ok
+> +       TXT_RESET $(SL_ERROR_WAKE_BLOCK_TOO_SMALL)
+> +
+> +.Lwake_block_ok:
+> +       popl    %ebx
+> +       ret
+> +
+> +.Loverflow_detected:
+> +       TXT_RESET $(SL_ERROR_INTEGER_OVERFLOW)
+> +
+> +.Lbuffer_beyond_pmr:
+> +       TXT_RESET $(SL_ERROR_BUFFER_BEYOND_PMR)
+> +SYM_FUNC_END(sl_txt_verify_os_mle_struct)
+> +
+> +SYM_FUNC_START(sl_txt_ap_entry)
+> +       cli
+> +       cld
+> +       /*
+> +        * The %cs and %ds segments are known good after waking the AP.
+> +        * First order of business is to find where we are and
+> +        * save it in %ebx.
+> +        */
+> +
+> +       /* Read physical base of heap into EAX */
+> +       movl    (TXT_PRIV_CONFIG_REGS_BASE + TXT_CR_HEAP_BASE), %eax
+> +       /* Read the size of the BIOS data into ECX (first 8 bytes) */
+> +       movl    (%eax), %ecx
+> +       /* Skip over BIOS data and size of OS to MLE data section */
+> +       leal    8(%eax, %ecx), %eax
+> +
+> +       /* Saved %ebx from the BSP and stash OS-MLE pointer */
+> +       movl    (SL_mle_scratch + SL_SCRATCH_AP_EBX)(%eax), %ebx
+> +
+> +       /* Save TXT info ptr in %edi for call to sl_txt_load_regs */
+> +       movl    SL_txt_info(%eax), %edi
+> +
+> +       /* Lock and get our stack index */
+> +       movl    $1, %ecx
+> +.Lspin:
+> +       xorl    %eax, %eax
+> +       lock cmpxchgl   %ecx, rva(sl_txt_spin_lock)(%ebx)
+> +       pause
+> +       jnz     .Lspin
+> +
+> +       /* Increment the stack index and use the next value inside lock */
+> +       incl    rva(sl_txt_stack_index)(%ebx)
+> +       movl    rva(sl_txt_stack_index)(%ebx), %eax
+> +
+> +       /* Unlock */
+> +       movl    $0, rva(sl_txt_spin_lock)(%ebx)
+> +
+> +       /* Location of the relocated AP wake block */
+> +       movl    rva(sl_txt_ap_wake_block)(%ebx), %ecx
+> +
+> +       /* Load reloc GDT, set segment regs and lret to __SL32_CS */
+> +       lgdt    (sl_ap_gdt_desc - sl_txt_ap_wake_begin)(%ecx)
+> +
+> +       movl    $(__SL32_DS), %edx
+> +       movw    %dx, %ds
+> +       movw    %dx, %es
+> +       movw    %dx, %fs
+> +       movw    %dx, %gs
+> +       movw    %dx, %ss
+> +
+> +       /* Load our reloc AP stack */
+> +       movl    $(TXT_BOOT_STACK_SIZE), %edx
+> +       mull    %edx
+> +       leal    (sl_stacks_end - sl_txt_ap_wake_begin)(%ecx), %esp
+> +       subl    %eax, %esp
+> +
+> +       /* Switch to AP code segment */
+> +       leal    rva(.Lsl_ap_cs)(%ebx), %eax
+> +       pushl   $(__SL32_CS)
+> +       pushl   %eax
+> +       lret
+> +
+> +.Lsl_ap_cs:
+> +       /* Load the relocated AP IDT */
+> +       lidt    (sl_ap_idt_desc - sl_txt_ap_wake_begin)(%ecx)
+> +
+> +       /* Fixup MTRRs and misc enable MSR on APs too */
+> +       call    sl_txt_load_regs
+> +
+> +       /* Enable SMI with GETSEC[SMCTRL] */
+> +       GETSEC $(SMX_X86_GETSEC_SMCTRL)
+> +
+> +       /* IRET-to-self can be used to enable NMIs which SENTER disabled */
+> +       leal    rva(.Lnmi_enabled_ap)(%ebx), %eax
+> +       pushfl
+> +       pushl   $(__SL32_CS)
+> +       pushl   %eax
+> +       iret
+> +
+> +.Lnmi_enabled_ap:
+> +       /* Put APs in X2APIC mode like the BSP */
+> +       movl    $(MSR_IA32_APICBASE), %ecx
+> +       rdmsr
+> +       orl     $(XAPIC_ENABLE | X2APIC_ENABLE), %eax
+> +       wrmsr
+> +
+> +       /*
+> +        * Basically done, increment the CPU count and jump off to the AP
+> +        * wake block to wait.
+> +        */
+> +       lock incl       rva(sl_txt_cpu_count)(%ebx)
+> +
+> +       movl    rva(sl_txt_ap_wake_block)(%ebx), %eax
+> +       jmp     *%eax
+> +SYM_FUNC_END(sl_txt_ap_entry)
+> +
+> +SYM_FUNC_START(sl_txt_reloc_ap_wake)
+> +       /* Save boot params register */
+> +       pushl   %esi
+> +
+> +       movl    rva(sl_txt_ap_wake_block)(%ebx), %edi
+> +
+> +       /* Fixup AP IDT and GDT descriptor before relocating */
+> +       leal    rva(sl_ap_idt_desc)(%ebx), %eax
+> +       addl    %edi, 2(%eax)
+> +       leal    rva(sl_ap_gdt_desc)(%ebx), %eax
+> +       addl    %edi, 2(%eax)
+> +
+> +       /*
+> +        * Copy the AP wake code and AP GDT/IDT to the protected wake block
+> +        * provided by the loader. Destination already in %edi.
+> +        */
+> +       movl    $(sl_txt_ap_wake_end - sl_txt_ap_wake_begin), %ecx
+> +       leal    rva(sl_txt_ap_wake_begin)(%ebx), %esi
+> +       rep movsb
+> +
+> +       /* Setup the IDT for the APs to use in the relocation block */
+> +       movl    rva(sl_txt_ap_wake_block)(%ebx), %ecx
+> +       addl    $(sl_ap_idt - sl_txt_ap_wake_begin), %ecx
+> +       xorl    %edx, %edx
+> +
+> +       /* Form the default reset vector relocation address */
+> +       movl    rva(sl_txt_ap_wake_block)(%ebx), %esi
+> +       addl    $(sl_txt_int_reset - sl_txt_ap_wake_begin), %esi
+> +
+> +1:
+> +       cmpw    $(NR_VECTORS), %dx
+> +       jz      .Lap_idt_done
+> +
+> +       cmpw    $(X86_TRAP_NMI), %dx
+> +       jz      2f
+> +
+> +       /* Load all other fixed vectors with reset handler */
+> +       movl    %esi, %eax
+> +       movw    %ax, (IDT_VECTOR_LO_BITS)(%ecx)
+> +       shrl    $16, %eax
+> +       movw    %ax, (IDT_VECTOR_HI_BITS)(%ecx)
+> +       jmp     3f
+> +
+> +2:
+> +       /* Load single wake NMI IPI vector at the relocation address */
+> +       movl    rva(sl_txt_ap_wake_block)(%ebx), %eax
+> +       addl    $(sl_txt_int_nmi - sl_txt_ap_wake_begin), %eax
+> +       movw    %ax, (IDT_VECTOR_LO_BITS)(%ecx)
+> +       shrl    $16, %eax
+> +       movw    %ax, (IDT_VECTOR_HI_BITS)(%ecx)
+> +
+> +3:
+> +       incw    %dx
+> +       addl    $8, %ecx
+> +       jmp     1b
+> +
+> +.Lap_idt_done:
+> +       popl    %esi
+> +       ret
+> +SYM_FUNC_END(sl_txt_reloc_ap_wake)
+> +
+> +SYM_FUNC_START(sl_txt_load_regs)
+> +       /* Save base pointer register */
+> +       pushl   %ebx
+> +
+> +       /*
+> +        * On Intel, the original variable MTRRs and Misc Enable MSR are
+> +        * restored on the BSP at early boot. Each AP will also restore
+> +        * its MTRRs and Misc Enable MSR.
+> +        */
+> +       pushl   %edi
+> +       addl    $(SL_saved_bsp_mtrrs), %edi
+> +       movl    (%edi), %ebx
+> +       pushl   %ebx /* default_mem_type lo */
+> +       addl    $4, %edi
+> +       movl    (%edi), %ebx
+> +       pushl   %ebx /* default_mem_type hi */
+> +       addl    $4, %edi
+> +       movl    (%edi), %ebx /* mtrr_vcnt lo, don't care about hi part */
+> +       addl    $8, %edi /* now at MTRR pair array */
+> +       /* Write the variable MTRRs */
+> +       movl    $(MSR_MTRRphysBase0), %ecx
+> +1:
+> +       cmpl    $0, %ebx
+> +       jz      2f
+> +
+> +       movl    (%edi), %eax /* MTRRphysBaseX lo */
+> +       addl    $4, %edi
+> +       movl    (%edi), %edx /* MTRRphysBaseX hi */
+> +       wrmsr
+> +       addl    $4, %edi
+> +       incl    %ecx
+> +       movl    (%edi), %eax /* MTRRphysMaskX lo */
+> +       addl    $4, %edi
+> +       movl    (%edi), %edx /* MTRRphysMaskX hi */
+> +       wrmsr
+> +       addl    $4, %edi
+> +       incl    %ecx
+> +
+> +       decl    %ebx
+> +       jmp     1b
+> +2:
+> +       /* Write the default MTRR register */
+> +       popl    %edx
+> +       popl    %eax
+> +       movl    $(MSR_MTRRdefType), %ecx
+> +       wrmsr
+> +
+> +       /* Return to beginning and write the misc enable msr */
+> +       popl    %edi
+> +       addl    $(SL_saved_misc_enable_msr), %edi
+> +       movl    (%edi), %eax /* saved_misc_enable_msr lo */
+> +       addl    $4, %edi
+> +       movl    (%edi), %edx /* saved_misc_enable_msr hi */
+> +       movl    $(MSR_IA32_MISC_ENABLE), %ecx
+> +       wrmsr
+> +
+> +       popl    %ebx
+> +       ret
+> +SYM_FUNC_END(sl_txt_load_regs)
+> +
+> +SYM_FUNC_START(sl_txt_wake_aps)
+> +       /* Save boot params register */
+> +       pushl   %esi
+> +
+> +       /* First setup the MLE join structure and load it into TXT reg */
+> +       leal    rva(sl_gdt)(%ebx), %eax
+> +       leal    rva(sl_txt_ap_entry)(%ebx), %ecx
+> +       leal    rva(sl_smx_rlp_mle_join)(%ebx), %edx
+> +       movl    %eax, SL_rlp_gdt_base(%edx)
+> +       movl    %ecx, SL_rlp_entry_point(%edx)
+> +       movl    %edx, (TXT_PRIV_CONFIG_REGS_BASE + TXT_CR_MLE_JOIN)
+> +
+> +       /* Another TXT heap walk to find various values needed to wake APs */
+> +       movl    (TXT_PRIV_CONFIG_REGS_BASE + TXT_CR_HEAP_BASE), %eax
+> +       /* At BIOS data size, find the number of logical processors */
+> +       movl    (SL_num_logical_procs + 8)(%eax), %edx
+> +       /* Skip over BIOS data */
+> +       movl    (%eax), %ecx
+> +       addl    %ecx, %eax
+> +       /* Skip over OS to MLE */
+> +       movl    (%eax), %ecx
+> +       addl    %ecx, %eax
+> +       /* At OS-SNIT size, get capabilities to know how to wake up the APs */
+> +       movl    (SL_capabilities + 8)(%eax), %esi
+> +       /* Skip over OS to SNIT */
+> +       movl    (%eax), %ecx
+> +       addl    %ecx, %eax
+> +       /* At SINIT-MLE size, get the AP wake MONITOR address */
+> +       movl    (SL_rlp_wakeup_addr + 8)(%eax), %edi
+> +
+> +       /* Determine how to wake up the APs */
+> +       testl   $(1 << TXT_SINIT_MLE_CAP_WAKE_MONITOR), %esi
+> +       jz      .Lwake_getsec
+> +
+> +       /* Wake using MWAIT MONITOR */
+> +       movl    $1, (%edi)
+> +       jmp     .Laps_awake
+> +
+> +.Lwake_getsec:
+> +       /* Wake using GETSEC(WAKEUP) */
+> +       GETSEC  $(SMX_X86_GETSEC_WAKEUP)
+> +
+> +.Laps_awake:
+> +       /*
+> +        * All of the APs are woken up and rendesvous in the relocated wake
+> +        * block starting at sl_txt_ap_wake_begin. Wait for all of them to
+> +        * halt.
+> +        */
+> +       pause
+> +       cmpl    rva(sl_txt_cpu_count)(%ebx), %edx
+> +       jne     .Laps_awake
+> +
+> +       popl    %esi
+> +       ret
+> +SYM_FUNC_END(sl_txt_wake_aps)
+> +
+> +/* This is the beginning of the relocated AP wake code block */
+> +       .global sl_txt_ap_wake_begin
+> +sl_txt_ap_wake_begin:
+> +
+> +       /* Get the LAPIC ID for each AP and stash it on the stack */
+> +       movl    $(MSR_IA32_X2APIC_APICID), %ecx
+> +       rdmsr
+> +       pushl   %eax
+> +
+> +       /*
+> +        * Get a pointer to the monitor location on this APs stack to test below
+> +        * after mwait returns. Currently %esp points to just past the pushed APIC
+> +        * ID value.
+> +        */
+> +       movl    %esp, %eax
+> +       subl    $(TXT_BOOT_STACK_SIZE - 4), %eax
+> +       movl    $0, (%eax)
+> +
+> +       /* Clear ecx/edx so no invalid extensions or hints are passed to monitor */
+> +       xorl    %ecx, %ecx
+> +       xorl    %edx, %edx
+> +
+> +       /*
+> +        * Arm the monitor and wait for it to be poked by he SMP bringup code. The mwait
+> +        * instruction can return for a number of reasons. Test to see if it returned
+> +        * because the monitor was written to.
+> +        */
+> +       monitor
+> +
+> +1:
+> +       mfence
+> +       mwait
+> +       movl    (%eax), %edx
+> +       testl   %edx, %edx
+> +       jz      1b
+> +
+> +       /*
+> +        * This is the long absolute jump to the 32b Secure Launch protected mode stub
+> +        * code in sl_trampoline_start32() in the rmpiggy. The jump address will be
+> +        * fixed in the SMP boot code when the first AP is brought up. This whole area
+> +        * is provided and protected in the memory map by the prelaunch code.
+> +        */
+> +       .byte   0xea
+> +sl_ap_jmp_offset:
+> +       .long   0x00000000
+> +       .word   __SL32_CS
+> +
+> +SYM_FUNC_START(sl_txt_int_nmi)
+> +       /* NMI context, just IRET */
+> +       iret
+> +SYM_FUNC_END(sl_txt_int_nmi)
+> +
+> +SYM_FUNC_START(sl_txt_int_reset)
+> +       TXT_RESET $(SL_ERROR_INV_AP_INTERRUPT)
+> +SYM_FUNC_END(sl_txt_int_reset)
+> +
+> +       .balign 8
+> +SYM_DATA_START_LOCAL(sl_ap_idt_desc)
+> +       .word   sl_ap_idt_end - sl_ap_idt - 1           /* Limit */
+> +       .long   sl_ap_idt - sl_txt_ap_wake_begin        /* Base */
+> +SYM_DATA_END_LABEL(sl_ap_idt_desc, SYM_L_LOCAL, sl_ap_idt_desc_end)
+> +
+> +       .balign 8
+> +SYM_DATA_START_LOCAL(sl_ap_idt)
+> +       .rept   NR_VECTORS
+> +       .word   0x0000          /* Offset 15 to 0 */
+> +       .word   __SL32_CS       /* Segment selector */
+> +       .word   0x8e00          /* Present, DPL=0, 32b Vector, Interrupt */
+> +       .word   0x0000          /* Offset 31 to 16 */
+> +       .endr
+> +SYM_DATA_END_LABEL(sl_ap_idt, SYM_L_LOCAL, sl_ap_idt_end)
+> +
+> +       .balign 8
+> +SYM_DATA_START_LOCAL(sl_ap_gdt_desc)
+> +       .word   sl_ap_gdt_end - sl_ap_gdt - 1
+> +       .long   sl_ap_gdt - sl_txt_ap_wake_begin
+> +SYM_DATA_END_LABEL(sl_ap_gdt_desc, SYM_L_LOCAL, sl_ap_gdt_desc_end)
+> +
+> +       .balign 8
+> +SYM_DATA_START_LOCAL(sl_ap_gdt)
+> +       .quad   0x0000000000000000      /* NULL */
+> +       .quad   0x00cf9a000000ffff      /* __SL32_CS */
+> +       .quad   0x00cf92000000ffff      /* __SL32_DS */
+> +SYM_DATA_END_LABEL(sl_ap_gdt, SYM_L_LOCAL, sl_ap_gdt_end)
+> +
+> +       /* Small stacks for BSP and APs to work with */
+> +       .balign 64
+> +SYM_DATA_START_LOCAL(sl_stacks)
+> +       .fill (TXT_MAX_CPUS * TXT_BOOT_STACK_SIZE), 1, 0
+> +SYM_DATA_END_LABEL(sl_stacks, SYM_L_LOCAL, sl_stacks_end)
+> +
+> +/* This is the end of the relocated AP wake code block */
+> +       .global sl_txt_ap_wake_end
+> +sl_txt_ap_wake_end:
+> +
+> +       .data
+> +       .balign 8
+> +SYM_DATA_START_LOCAL(sl_gdt_desc)
+> +       .word   sl_gdt_end - sl_gdt - 1
+> +       .long   sl_gdt - sl_gdt_desc
+> +SYM_DATA_END_LABEL(sl_gdt_desc, SYM_L_LOCAL, sl_gdt_desc_end)
+> +
+> +       .balign 8
+> +SYM_DATA_START_LOCAL(sl_gdt)
+> +       .quad   0x0000000000000000      /* NULL */
+> +       .quad   0x00cf9a000000ffff      /* __SL32_CS */
+> +       .quad   0x00cf92000000ffff      /* __SL32_DS */
+> +SYM_DATA_END_LABEL(sl_gdt, SYM_L_LOCAL, sl_gdt_end)
+> +
+> +       .balign 8
+> +SYM_DATA_START_LOCAL(sl_smx_rlp_mle_join)
+> +       .long   sl_gdt_end - sl_gdt - 1 /* GDT limit */
+> +       .long   0x00000000              /* GDT base */
+> +       .long   __SL32_CS       /* Seg Sel - CS (DS, ES, SS = seg_sel+8) */
+> +       .long   0x00000000      /* Entry point physical address */
+> +SYM_DATA_END(sl_smx_rlp_mle_join)
+> +
+> +SYM_DATA(sl_cpu_type, .long 0x00000000)
+> +
+> +SYM_DATA(sl_mle_start, .long 0x00000000)
+> +
+> +SYM_DATA_LOCAL(sl_txt_spin_lock, .long 0x00000000)
+> +
+> +SYM_DATA_LOCAL(sl_txt_stack_index, .long 0x00000000)
+> +
+> +SYM_DATA_LOCAL(sl_txt_cpu_count, .long 0x00000000)
+> +
+> +SYM_DATA_LOCAL(sl_txt_ap_wake_block, .long 0x00000000)
+> diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
+> index e022e6eb766c..37f6167f28ba 100644
+> --- a/arch/x86/include/asm/msr-index.h
+> +++ b/arch/x86/include/asm/msr-index.h
+> @@ -348,6 +348,9 @@
+>  #define MSR_IA32_RTIT_OUTPUT_BASE      0x00000560
+>  #define MSR_IA32_RTIT_OUTPUT_MASK      0x00000561
+>
+> +#define MSR_MTRRphysBase0              0x00000200
+> +#define MSR_MTRRphysMask0              0x00000201
+> +
+>  #define MSR_MTRRfix64K_00000           0x00000250
+>  #define MSR_MTRRfix16K_80000           0x00000258
+>  #define MSR_MTRRfix16K_A0000           0x00000259
+> @@ -849,6 +852,8 @@
+>  #define MSR_IA32_APICBASE_ENABLE       (1<<11)
+>  #define MSR_IA32_APICBASE_BASE         (0xfffff<<12)
+>
+> +#define MSR_IA32_X2APIC_APICID         0x00000802
+> +
+>  #define MSR_IA32_UCODE_WRITE           0x00000079
+>  #define MSR_IA32_UCODE_REV             0x0000008b
+>
+> diff --git a/arch/x86/include/uapi/asm/bootparam.h b/arch/x86/include/uapi/asm/bootparam.h
+> index 9b82eebd7add..7ce283a22d6b 100644
+> --- a/arch/x86/include/uapi/asm/bootparam.h
+> +++ b/arch/x86/include/uapi/asm/bootparam.h
+> @@ -12,6 +12,7 @@
+>  /* loadflags */
+>  #define LOADED_HIGH    (1<<0)
+>  #define KASLR_FLAG     (1<<1)
+> +#define SLAUNCH_FLAG   (1<<2)
+>  #define QUIET_FLAG     (1<<5)
+>  #define KEEP_SEGMENTS  (1<<6)
+>  #define CAN_USE_HEAP   (1<<7)
+> diff --git a/arch/x86/kernel/asm-offsets.c b/arch/x86/kernel/asm-offsets.c
+> index a98020bf31bb..925adce6e2c7 100644
+> --- a/arch/x86/kernel/asm-offsets.c
+> +++ b/arch/x86/kernel/asm-offsets.c
+> @@ -13,6 +13,8 @@
+>  #include <linux/hardirq.h>
+>  #include <linux/suspend.h>
+>  #include <linux/kbuild.h>
+> +#include <linux/slr_table.h>
+> +#include <linux/slaunch.h>
+>  #include <asm/processor.h>
+>  #include <asm/thread_info.h>
+>  #include <asm/sigframe.h>
+> @@ -120,4 +122,22 @@ static void __used common(void)
+>         OFFSET(ARIA_CTX_rounds, aria_ctx, rounds);
+>  #endif
+>
+> +#ifdef CONFIG_SECURE_LAUNCH
+> +       BLANK();
+> +       OFFSET(SL_txt_info, txt_os_mle_data, txt_info);
+> +       OFFSET(SL_mle_scratch, txt_os_mle_data, mle_scratch);
+> +       OFFSET(SL_boot_params_addr, txt_os_mle_data, boot_params_addr);
+> +       OFFSET(SL_ap_wake_block, txt_os_mle_data, ap_wake_block);
+> +       OFFSET(SL_ap_wake_block_size, txt_os_mle_data, ap_wake_block_size);
+> +       OFFSET(SL_saved_misc_enable_msr, slr_entry_intel_info, saved_misc_enable_msr);
+> +       OFFSET(SL_saved_bsp_mtrrs, slr_entry_intel_info, saved_bsp_mtrrs);
+> +       OFFSET(SL_num_logical_procs, txt_bios_data, num_logical_procs);
+> +       OFFSET(SL_capabilities, txt_os_sinit_data, capabilities);
+> +       OFFSET(SL_mle_size, txt_os_sinit_data, mle_size);
+> +       OFFSET(SL_vtd_pmr_lo_base, txt_os_sinit_data, vtd_pmr_lo_base);
+> +       OFFSET(SL_vtd_pmr_lo_size, txt_os_sinit_data, vtd_pmr_lo_size);
+> +       OFFSET(SL_rlp_wakeup_addr, txt_sinit_mle_data, rlp_wakeup_addr);
+> +       OFFSET(SL_rlp_gdt_base, smx_rlp_mle_join, rlp_gdt_base);
+> +       OFFSET(SL_rlp_entry_point, smx_rlp_mle_join, rlp_entry_point);
+> +#endif
+>  }
+> --
+> 2.39.3
+>
 
