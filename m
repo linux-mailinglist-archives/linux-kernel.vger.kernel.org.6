@@ -1,172 +1,157 @@
-Return-Path: <linux-kernel+bounces-196319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FF8A8D5A21
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 08:02:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB5E38D5A24
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 08:04:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F6E01C23FB3
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 06:02:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B975287E31
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 06:04:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B76274079;
-	Fri, 31 May 2024 06:02:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Yzp6GSIH"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FBDF7D08F;
+	Fri, 31 May 2024 06:04:23 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 635B21CD13
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 06:02:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13DA7EAE7;
+	Fri, 31 May 2024 06:04:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717135368; cv=none; b=aPPCekFXO45kpR3yXOB79nM01v6tPSOcaGLpES125IeevcSUEUENfpcVwBGhbZpRSwLb5fnlQ4993nciV5aeX1YceaY9/rSoYFcULHTswR1j4h7TY26QLY9MI2KAhrNvqw93SopoCva6+C9jdP35wNzelGYlEpD693qmhvgjMRs=
+	t=1717135463; cv=none; b=ClFjpgKybV2rWyqrOgc9fp7IUYxLZ7XZA5/gQA/+xxE6PiTxVB2FaOApZ1H57tZB8h7vYY9pOFUM1O6ZfcnbZf9/ECX21elpbu6qYrFP5sZP7rHl95CORy6h6C43aG1fRDC4QcPFC1BxnLsHlVDDhLl3F9chkaweUsntCRauo/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717135368; c=relaxed/simple;
-	bh=ybwUS6RtWP/25t4kttVVL9hVeT6Fp8bPYKJR9Xwq21Y=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=PL1ycyurrRrfmOdq0qIQS7QDFXM1G+z0LjiRaZFUgOYWjbquough/Rwobtggy3PBq4gt71Scm1323z+sOJdhfuWa0qani+HfZiFl+1+IgI24APAC8eHo9d8vRWsmPVr3atBBzh3MfXllLvn6lcRS4837nbIRTAm8V5YXaumKJMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Yzp6GSIH; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717135368; x=1748671368;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=ybwUS6RtWP/25t4kttVVL9hVeT6Fp8bPYKJR9Xwq21Y=;
-  b=Yzp6GSIHtBtJCByAn/q603xTx9521rxJ1J5jPnAUkF2P/BzEgMxSQrnM
-   uA62wfVilmRy3TzDR04L4qLzt1aZArKBtZkc8AY45puPzw2Tv7C4yeA3e
-   kAimg22aH9usD9xmKPuP7a6+rJs1zyXnGiRufApJKUPpC1z4ndbeakKHF
-   f5BCdLpE3TZXeFh5V+srNZJz4tC2joVwEUpHixxrZlsr0gPWNMgJ14DkS
-   aYaNMMP5F2lYzbhsq4OzzNZbtKWlwpOchbD1/aRNuGJ4NgNTFN72zrLYf
-   czRptdT41fXiAdXpK/FsNuce2w6FHNfiLfNOQZjrctUuM3zxPc88Nbo93
-   w==;
-X-CSE-ConnectionGUID: ec9oc40bSWihv7ehxNjEJQ==
-X-CSE-MsgGUID: qTCXWMk1QVuJuN5eRQ19aA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="13509421"
-X-IronPort-AV: E=Sophos;i="6.08,203,1712646000"; 
-   d="scan'208";a="13509421"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 23:02:47 -0700
-X-CSE-ConnectionGUID: fMZJ/pUwTXqKV30ojXQ/RA==
-X-CSE-MsgGUID: CO2gmYVVR3yFgXq5Fsh8Rw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,203,1712646000"; 
-   d="scan'208";a="41127729"
-Received: from unknown (HELO [10.239.159.127]) ([10.239.159.127])
-  by orviesa004.jf.intel.com with ESMTP; 30 May 2024 23:02:41 -0700
-Message-ID: <34d23852-ea68-414e-92ce-61dcfe6a0368@linux.intel.com>
-Date: Fri, 31 May 2024 14:00:34 +0800
+	s=arc-20240116; t=1717135463; c=relaxed/simple;
+	bh=Wt3I7rhRO7bYSol/ivwlZxEcVjCjrgihu846oW6r9sY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Fz2jl1AewlPs+RmLCyaNOsBPyk8+ciEGamvpSoRJNjlXp+GlemQstzSlA5z4EpdUA8dxyOo2+6FfzHjdUbLu6J2NfKVkTzhQikKGS2EeDbrsGsJ98lkFIPUXvT59DreRi0JtpwWByDnSJY35IedYLFf9/SDKgZMej0Da8ZGo9x8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 408E5C116B1;
+	Fri, 31 May 2024 06:04:18 +0000 (UTC)
+Date: Fri, 31 May 2024 02:03:46 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Mark
+ Rutland <mark.rutland@arm.com>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Alexei Starovoitov
+ <alexei.starovoitov@gmail.com>, Florent Revest <revest@chromium.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>, bpf <bpf@vger.kernel.org>, Sven
+ Schnelle <svens@linux.ibm.com>, Alexei Starovoitov <ast@kernel.org>, Jiri
+ Olsa <jolsa@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, Daniel
+ Borkmann <daniel@iogearbox.net>, Alan Maguire <alan.maguire@oracle.com>,
+ Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner
+ <tglx@linutronix.de>, Guo Ren <guoren@kernel.org>
+Subject: Re: [PATCH 10/20] function_graph: Have the instances use their own
+ ftrace_ops for filtering
+Message-ID: <20240531020346.6c13e2d4@rorschach.local.home>
+In-Reply-To: <20240531121241.c586189caad8d31d597f614d@kernel.org>
+References: <20240525023652.903909489@goodmis.org>
+	<20240525023742.786834257@goodmis.org>
+	<20240530223057.21c2a779@rorschach.local.home>
+	<20240531121241.c586189caad8d31d597f614d@kernel.org>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>, Kalle Valo <kvalo@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- Alex Williamson <alex.williamson@redhat.com>, mst@redhat.com,
- Jason Wang <jasowang@redhat.com>, Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Mikko Perttunen <mperttunen@nvidia.com>, iommu@lists.linux.dev,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/20] iommu: Refactoring domain allocation interface
-To: Yi Liu <yi.l.liu@intel.com>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>
-References: <20240529053250.91284-1-baolu.lu@linux.intel.com>
- <efd902f6-eafc-4a26-8057-bdd9d7d6e535@intel.com>
- <a1f2c08a-e92f-4080-b55e-8d6dbd94db78@linux.intel.com>
- <7af4fee2-1b37-4eb8-9d03-8b1a402ec00b@intel.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <7af4fee2-1b37-4eb8-9d03-8b1a402ec00b@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 5/31/24 11:16 AM, Yi Liu wrote:
-> On 2024/5/29 20:02, Baolu Lu wrote:
->> On 2024/5/29 17:03, Yi Liu wrote:
->>> On 2024/5/29 13:32, Lu Baolu wrote:
->>>> The IOMMU subsystem has undergone some changes, including the removal
->>>> of iommu_ops from the bus structure. Consequently, the existing domain
->>>> allocation interface, which relies on a bus type argument, is no longer
->>>> relevant:
->>>>
->>>>      struct iommu_domain *iommu_domain_alloc(struct bus_type *bus)
->>>>
->>>> This series is designed to refactor the use of this interface. It
->>>> proposes two new interfaces to replace iommu_domain_alloc():
->>>>
->>>> - iommu_user_domain_alloc(): This interface is intended for allocating
->>>>    iommu domains managed by userspace for device passthrough scenarios,
->>>>    such as those used by iommufd, vfio, and vdpa. It clearly indicates
->>>>    that the domain is for user-managed device DMA.
->>>
->>> user paging domain? It looks to me user domain includes the nested 
->>> domains
->>> as well.
->>
->> Yes, nested domain is a user domain. The iommu driver should implement
->> iommu_ops->domain_alloc_user for nested domain allocation.
+On Fri, 31 May 2024 12:12:41 +0900
+Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
+
+> On Thu, 30 May 2024 22:30:57 -0400
+> Steven Rostedt <rostedt@goodmis.org> wrote:
 > 
-> will it be more clear to name iommu_user_domain_alloc() be
-> iommu_user_paging_domain_alloc() as it is mainly for paging domain
-> allocation?
-
-That might be better; let's wait and see if there's another option.
-
+> > On Fri, 24 May 2024 22:37:02 -0400
+> > Steven Rostedt <rostedt@goodmis.org> wrote:
+> >   
+> > > From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+> > > 
+> > > Allow for instances to have their own ftrace_ops part of the fgraph_ops
+> > > that makes the funtion_graph tracer filter on the set_ftrace_filter file
+> > > of the instance and not the top instance.
+> > > 
+> > > Note that this also requires to update ftrace_graph_func() to call new
+> > > function_graph_enter_ops() instead of function_graph_enter() so that
+> > > it avoid pushing on shadow stack multiple times on the same function.  
+> > 
+> > So I found a major design flaw in this patch.
+> >   
+> > > 
+> > > Co-developed with Masami Hiramatsu:
+> > > Link: https://lore.kernel.org/linux-trace-kernel/171509102088.162236.15758883237657317789.stgit@devnote2
+> > > 
+> > > Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> > > Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > > Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> > > ---  
+> >   
+> > > diff --git a/arch/x86/kernel/ftrace.c b/arch/x86/kernel/ftrace.c
+> > > index 8da0e66ca22d..998558cb8f15 100644
+> > > --- a/arch/x86/kernel/ftrace.c
+> > > +++ b/arch/x86/kernel/ftrace.c
+> > > @@ -648,9 +648,24 @@ void ftrace_graph_func(unsigned long ip, unsigned long parent_ip,
+> > >  		       struct ftrace_ops *op, struct ftrace_regs *fregs)
+> > >  {
+> > >  	struct pt_regs *regs = &fregs->regs;
+> > > -	unsigned long *stack = (unsigned long *)kernel_stack_pointer(regs);
+> > > +	unsigned long *parent = (unsigned long *)kernel_stack_pointer(regs);
+> > > +	struct fgraph_ops *gops = container_of(op, struct fgraph_ops, ops);
+> > > +	int bit;
+> > > +
+> > > +	if (unlikely(ftrace_graph_is_dead()))
+> > > +		return;
+> > > +
+> > > +	if (unlikely(atomic_read(&current->tracing_graph_pause)))
+> > > +		return;
+> > >  
+> > > -	prepare_ftrace_return(ip, (unsigned long *)stack, 0);
+> > > +	bit = ftrace_test_recursion_trylock(ip, *parent);
+> > > +	if (bit < 0)
+> > > +		return;
+> > > +
+> > > +	if (!function_graph_enter_ops(*parent, ip, 0, parent, gops))  
+> > 
+> > So each registered graph ops has its own ftrace_ops which gets
+> > registered with ftrace, so this function does get called in a loop (by
+> > the ftrace iterator function). This means that we would need that code
+> > to detect the function_graph_enter_ops() getting called multiple times
+> > for the same function. This means each fgraph_ops gits its own retstack
+> > on the shadow stack.  
 > 
->>>
->>>>    If an IOMMU driver does not implement iommu_ops->domain_alloc_user,
->>>>    this interface will rollback to the generic paging domain 
->>>> allocation.
->>>>
->>>> - iommu_paging_domain_alloc(): This interface is for allocating iommu
->>>>    domains managed by kernel drivers for kernel DMA purposes. It 
->>>> takes a
->>>>    device pointer as a parameter, which better reflects the current
->>>>    design of the IOMMU subsystem.
->>>>
->>>> The majority of device drivers currently using iommu_domain_alloc() do
->>>> so to allocate a domain for a specific device and then attach that
->>>> domain to the device. These cases can be straightforwardly migrated to
->>>> the new interfaces.
->>>>
->>>> However, there are some drivers with more complex use cases that do
->>>> not fit neatly into this new scheme. For example:
->>>>
->>>> $ git grep "= iommu_domain_alloc"
->>>> arch/arm/mm/dma-mapping.c:      mapping->domain = 
->>>> iommu_domain_alloc(bus);
->>>> drivers/gpu/drm/rockchip/rockchip_drm_drv.c:    private->domain = 
->>>> iommu_domain_alloc(private->iommu_dev->bus);
->>>> drivers/gpu/drm/tegra/drm.c:            tegra->domain = 
->>>> iommu_domain_alloc(&platform_bus_type);
->>>> drivers/infiniband/hw/usnic/usnic_uiom.c:       pd->domain = domain 
->>>> = iommu_domain_alloc(dev->bus);
->>>>
->>>> This series leave those cases unchanged and keep iommu_domain_alloc()
->>>> for their usage. But new drivers should not use it anymore.
->>>
->>> does it mean there is still domains allocated via iommu_domain_alloc()
->>> on VT-d platform?
->>
->> I think the drivers mentioned above do not run on x86 platforms, or do
->> they?
+> Ah, that is my concern and the reason why I added bitmap and stack reuse
+> code in the ftrace_push_return_trace().
 > 
-> cool. BTW. I know out-of-tree drivers are not counted in upstream review.
-> Just out of curious, is there a formal way to let such drivers know it is
-> no longer allowed to use iommu_domain_alloc() on VT-d?
+> > 
+> > I find this a waste of shadow stack resources, and also complicates the
+> > code with having to deal with tail calls and all that.
+> > 
+> > BUT! There's good news! I also thought about another way of handling
+> > this. I have something working, but requires a bit of rewriting the
+> > code. I should have something out in a day or two.  
+> 
+> Hmm, I just wonder why you don't reocver my bitmap check and stack
+> reusing code. Are there any problem on it? (Too complicated?)
+> 
 
-As Robin suggested, we should try to remove iommu_domain_alloc() from
-the tree in this series.
+I actually dislike the use of ftrace itself to do the loop. I rather
+have fgraph be in control of it.
 
-Best regards,
-baolu
+I've come up with a new "subops" assignment, where you can have one
+ftrace_ops represent multiple sub ftrace_ops. Basically, each fgraph
+ops can register its own ftrace_ops under a single graph_ops
+ftrace_ops. The graph_ops will be used to decide what functions call
+the callback, and then the callback does the multiplexing.
+
+This removes the need to touch the architecture code. It can also be
+used by fprobes to handle the attachments to functions for several
+different sets of callbacks.
+
+I'll send out patches soon.
+
+-- Steve
 
