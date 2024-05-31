@@ -1,77 +1,80 @@
-Return-Path: <linux-kernel+bounces-196690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A1D68D5FFA
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:49:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C3AC8D6007
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:51:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FA4B1F2549A
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:49:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DD7A1C229B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:51:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB336156F4D;
-	Fri, 31 May 2024 10:49:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1990515666F;
+	Fri, 31 May 2024 10:50:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UF/4zd7t"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=t-8ch.de header.i=@t-8ch.de header.b="TfOFzbxn"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27719156C61;
-	Fri, 31 May 2024 10:49:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49B4D15099E
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 10:50:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717152574; cv=none; b=QDfc1X38PBG9cSVMXTfyvUCrE0zZUSyuxOJhzbhAObSPR4Ur4aMP2W+mseQEC9xmi7IKc1puv3N8Xx54sJJO+IzoTeOwNsCS3xpjgcNj+5+zwzID8ff973prDEkJ5xeNZvF9+z70CSB34RNIvjv7kXHHtBOL9lAnAUO6nrKywGo=
+	t=1717152637; cv=none; b=FOPCzy7Jp6w2Y4CBkJoZisCHOlRaav4SU5Xod4Galg2udqbHTnHGeFmuAn4hXB+Fqzi0F3DGy9BOLwiXH3CjKw5M6V38OmvHqqNkX2TTxoyHaKNBNIXihGsrTzMm1/doCKowJH8gK5Y2iwjsvf3zbkYG4RNgg5H/2mY9HeRDuh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717152574; c=relaxed/simple;
-	bh=RvBI/DO9eI7WJD7WUndKZjDzo6+ZcDcOvUjOEa8Tnzw=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=NKQT7meb0fdI6R7RvvELPKlCLcHGAV6WypSpAjtz5/sSEkYoqNKqWgWXKa85KQloWoqQZFcYld/OZIsA4Ux43OZ0Fp/W0VOAFTCishrgTxCaZXMrqZm4kyEjYNOI5E+7vk+Uy05kiPWWXcnn7V4ylUOeJNmJ04YNj1q6tf5vRSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UF/4zd7t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC192C32781;
-	Fri, 31 May 2024 10:49:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717152573;
-	bh=RvBI/DO9eI7WJD7WUndKZjDzo6+ZcDcOvUjOEa8Tnzw=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=UF/4zd7tDRqAnkqB4mox8pqpiNxLtNqV2OCAxS3m5sS+pZdDQoTrxqHwesjHWKaii
-	 fhFThejrqVg5XifCo2evMjzjl9ln237v277kDY9wltWD2WZWEMns66eqOMb7rZFhVk
-	 RHZDH7yepUjufwRY7gWQ5PvHbicQZZUjcyZaJ5q4NY+rHAtHbVEjNqD6HP3W9ZYJ6W
-	 MG+inZfHvYp/0/sgmEsKaBhofAxkRDfMOS7PA5KzwDwrfvkwcDmPR8GLmIzThpvoEr
-	 vC8NzkVpCpAutNq+lvdRkN/r5bMF7q+sMWXIZWfF5W/og50i1WtpCLM/73YA5qrawY
-	 dBdUwm3R+TOyg==
-From: Lee Jones <lee@kernel.org>
-To: linux-leds@vger.kernel.org, linux-doc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Aryabhatta Dey <aryabhattadey35@gmail.com>
-Cc: pavel@ucw.cz, lee@kernel.org, corbet@lwn.net, skhan@linuxfoundation.org, 
- javier.carrasco.cruz@gmail.com
-In-Reply-To: <qpnx2m6qo5abvbs65o452gicumxa7n5vnw42e3hxnnm7sou4xn@fvu52tilzujc>
-References: <qpnx2m6qo5abvbs65o452gicumxa7n5vnw42e3hxnnm7sou4xn@fvu52tilzujc>
-Subject: Re: (subset) [PATCH] docs: leds: fix typo in
- Documentation/leds/leds-blinkm.rst
-Message-Id: <171715257148.1033112.3919908889836604698.b4-ty@kernel.org>
-Date: Fri, 31 May 2024 11:49:31 +0100
+	s=arc-20240116; t=1717152637; c=relaxed/simple;
+	bh=UY1FqDHsZnYgoumOk3tPla3SZJqZ70NOtacqSwzZs+w=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=fQWdWjvrIncT9+7Qt/JGiG/ND5a1tFuSjc8iDuKZoEM1+2CwrRpTQypJMd2D+Z95jb0duqiIg/3bnwODFN6lK/SdDOhXSEO73H8ZAQS68PEdy3NsGuGbu/IwYRa0Db+N9/xty5Uq9eeg7xj2ISvKY6ePjZMAKwcqf20D+VPPWjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=t-8ch.de; spf=pass smtp.mailfrom=t-8ch.de; dkim=pass (1024-bit key) header.d=t-8ch.de header.i=@t-8ch.de header.b=TfOFzbxn; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=t-8ch.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-8ch.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=t-8ch.de; s=mail;
+	t=1717152633; bh=UY1FqDHsZnYgoumOk3tPla3SZJqZ70NOtacqSwzZs+w=;
+	h=Date:From:To:Cc:Subject:From;
+	b=TfOFzbxnIk5YzSVmKszx+/7eom1GXGZF9Ehz/5CKVW1+fMkEyJh+/h88ll1Mp4DhQ
+	 g24cdiB0pdgzwKVGlPvDiCwdzhcNLv2Y7PQ1on1hDZ/8H4PKorOZnrIXwcRh1s+PCE
+	 jCyYs2d/xUAlBFQy1nTzzxLDax/rS5P+YCQIT1qk=
+Date: Fri, 31 May 2024 12:50:32 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas@t-8ch.de>
+To: Joel Granados <j.granados@samsung.com>, 
+	Luis Chamberlain <mcgrof@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>
+Subject: Current state of the sysctl constification effort
+Message-ID: <7823ff95-1490-4c1b-b489-a9c05adad645@t-8ch.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.12.4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Wed, 08 May 2024 01:37:11 +0530, Aryabhatta Dey wrote:
-> Change 'dasy-chain' to 'daisy-chain'.
-> 
-> 
+Hi Joel, Hi Luis,
 
-Applied, thanks!
+most of the sysctl handler preparation patches have been picked up by
+the subsystem maintainers and are available in -next.
 
-[1/1] docs: leds: fix typo in Documentation/leds/leds-blinkm.rst
-      commit: 4324f97613d35ab3c1a3566ee4f29d863ba5f285
+Only two are missing:
 
---
-Lee Jones [李琼斯]
+* utsname: constify ctl_table arguments of utility function [0]
+* sysctl: constify ctl_table arguments of utility function [1]
 
+Both of them are going through the sysctl tree anyways.
+
+With this done it should be possible to also queue up 
+sysctl: treewide: constify the ctl_table argument of handlers [2]
+for the bots to chew on in -next.
+
+My local builds are still succeeding on the last submitted version of
+the patch.
+
+
+Thomas
+
+[0] https://lore.kernel.org/lkml/20240518-sysctl-const-handler-utsname-v1-1-27a6c8813620@weissschuh.net/
+[1] https://lore.kernel.org/lkml/20240513-jag-constfy_sysctl_proc_args-v1-1-bba870a480d5@samsung.com/
+[2] https://lore.kernel.org/lkml/20240423-sysctl-const-handler-v3-11-e0beccb836e2@weissschuh.net/
 
