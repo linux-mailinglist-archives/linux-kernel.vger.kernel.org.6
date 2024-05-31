@@ -1,123 +1,320 @@
-Return-Path: <linux-kernel+bounces-196777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D16D78D61BF
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:30:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B381A8D61C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:31:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F39A1F27A7B
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:30:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF0EB1C244AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:31:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E24DD15886E;
-	Fri, 31 May 2024 12:30:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05ADC158855;
+	Fri, 31 May 2024 12:30:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="E3KaQRf2"
-Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hp6XCIzj"
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDDA3158847
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 12:30:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41B161586C4
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 12:30:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717158616; cv=none; b=es79X9vZD14GsDULFtPXpL41idgvYShBrH05wFbjNGMcDDQcWq+5Fvc3yxPz1D5UkQHiSGCqHCY8TU3FdEO81juZWbdJyB+MgI1Kx8RoAE9lvZlBVjuV0bQfJwMcrI7vgJDs/XV9CRyyK3OHHz4T/ORmwk4B8hJ++WQjkNO4mMk=
+	t=1717158638; cv=none; b=bau1pYnKS2x1JAx7o323K9+4uvSg4yROg/3ccg3cFmT7uwBspLsVz70q/VWF/wV/ppY0zKqC8g5pWoVc5W/FXFQV2sBR/EviYvnf/Kj6zNW/Y3ot46b3tzLr0KJwOjL6G8tdicwEGVVnbx9JNZpsJianCYtCK7WLNmXKOfxWy7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717158616; c=relaxed/simple;
-	bh=PVDSnpGmRt8ijqYH04SdOAIHTZQoWdauoklqv/bpCjA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hFezoIOzKDAifdzk+HyYIGZNFF+NtpREqvoX4GW3CGe9rPQHLdHnb29/aXv3W/bOcgyWn39Sb0JtZ76Pg/3reLI7EV4WaBziIbhoqla/1SuAJJSRkYmpoeHjRnfB8vHhp11YeaW4EyaWkZlnANWGA0D+6S+vEIo6+Vbe59sXUc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=E3KaQRf2; arc=none smtp.client-ip=209.85.210.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-6f8ea563a46so1150692a34.2
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 05:30:14 -0700 (PDT)
+	s=arc-20240116; t=1717158638; c=relaxed/simple;
+	bh=Mr72enCel7LQ06KMcZmS4q5jw0z5xWmKZ97M5iPHoB8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ShCAlqDpS+IPq8F6mIxHhuR7v4R34osn5uYJe8wNYkiQzxnx417O9wzvMHzDwzen5dnyG5DpCsFhtIJaJUyCsayTpwqLai1UvdbGVakQW5dbkQA+bCz61yc+FDkkpXzSxl9eWskTuD/ADpfvoYT6wnG6DsA62apwpRBfmU/W6mU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hp6XCIzj; arc=none smtp.client-ip=209.85.222.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-80ac969db43so509737241.2
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 05:30:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1717158613; x=1717763413; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pobb+qKmbEVkLRW5gpiFE+2DxXv9n/WgMfYUIElZ6qQ=;
-        b=E3KaQRf2UlHTHr9r3E4Rws2pyv7MEsbWAVs+K9rj+dMpyqh1RnNeJpTwRwwZ1PiswN
-         VfFF1mHhHWGbYd/a+fjcRY2JTh0lJkD7j3r0B9LoazpsjbIMv0HNMNFpPQikFpVCGtWi
-         24qaPVV5j2CLd8f+C/Bd2HoFvMSaUU8m+NI/XOVMOhKtPa0xAp7HoZ6ecsfb3t4nTKC4
-         VLiLSV3QJuXUurs+Fw8lxe83RZ5A1bz7modJIU3NqADPKE5DwmIRkfvapcoxB+FoGPDs
-         chjS0VKJ9XaxMbRoavM90kXWg4xqgO3chgLl65T+sIHHNaPnmyf3mCnzYQgg5tJIsAqa
-         eTGQ==
+        d=gmail.com; s=20230601; t=1717158635; x=1717763435; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MqCPiV40FRCqL5KZ/1CQ42Axiq6JU3nKj3bRIMUuHKc=;
+        b=hp6XCIzjmisYZxO+/W8QmrELbrPvYILDhG5g9eMpZ8hGYB8yf8SaQN19BC8iWXHt5h
+         ViviWejx/7D/QdwUlfn1tMbfwG+rW5YLapbSRwT1YkVlEsvukFCETE0NWL7vDeNb4UwH
+         QzrXo6iuIqGmMe0WfNmVrFfkPIXKHkdLX/C/8TIoIPJl1VmyEAjugeB9uS9bktJly5+c
+         kAiOD8Z3d6q07PWPv58pTLiA0raZe4B5mnf9S2pJvPEC8AICiaZHxXJcibvkAHfhR0/S
+         CGp34Y+ggr1srlzAO4fPeSfRokCOX/HthV9ei2T/3sxJ+WdU444V8Ykf2TN/0bS4eMA2
+         cJ9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717158613; x=1717763413;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pobb+qKmbEVkLRW5gpiFE+2DxXv9n/WgMfYUIElZ6qQ=;
-        b=kqYYQS4CpQ01LAEYRWGnE3tk8/dvUblG3jG0KymN0ogkb5JIOfmkKXLle8U33uf7pX
-         50cs1Dt5o/jrXMVY7C7c4d9SQRAkT2jasENcn1EocsOP9SztmCP2Ixm2D4SSlTSG5bXA
-         fOSAZQ5BwrE4K0loKrqCAYY1z6gaBjNWbP2qJGuCyXzMgMYilq+dk4CQS8oOADJTu0ga
-         V4enfIn07PavvpKkDVzg/2Ut9ybCtapXNHTyq8PDGE99jgPgf0UZjutBf22QJZxITqDk
-         WzOv2ivLYV+17SQvI4ScwhQu8OBSrmyeTxDsIi0Y96dmJ4pSAxQcAbc0J+RBsGyy3ST9
-         OQwg==
-X-Forwarded-Encrypted: i=1; AJvYcCXzrJXzDvCuvC3AtU+4NGvqLaHUwwWpNpO5xnq5DGuIgjmyeYExTiHF+E4en2TPRMRrsRwqvkN3smqJFrIx/0cZr126Vm5muP1HY8fl
-X-Gm-Message-State: AOJu0YxmD4I4Zghf0mw50G8zZ3HVKJtDlvbl4Mf9HDic/LIdSQPinoJt
-	W8+FndoD4qa3RXLixzX3tOXVC0nsO60cS+/81tRJ/IshuuB+0CCbXh1RApltlcI=
-X-Google-Smtp-Source: AGHT+IGeo7tqAnMa9JIVWwH4HjMXc/fO4mXZB9xlsqbbsjuQhrqcsOkModTThzMO7MtphiKdpMdQXg==
-X-Received: by 2002:a05:6358:33a2:b0:199:28f7:c247 with SMTP id e5c5f4694b2df-19b48c28251mr203744155d.9.1717158613508;
-        Fri, 31 May 2024 05:30:13 -0700 (PDT)
-Received: from [10.4.66.249] ([139.177.225.230])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6c354b945a8sm1181633a12.23.2024.05.31.05.30.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 31 May 2024 05:30:13 -0700 (PDT)
-Message-ID: <7f7c3bbe-e250-420d-a7d5-89508d881f0b@bytedance.com>
-Date: Fri, 31 May 2024 20:30:08 +0800
+        d=1e100.net; s=20230601; t=1717158635; x=1717763435;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MqCPiV40FRCqL5KZ/1CQ42Axiq6JU3nKj3bRIMUuHKc=;
+        b=EvPP1t7/Q+EvOwiR3hZ9pSHDSgXqoUUfGXtsO5RKpTPjrVEP5zgeZKwaS8+qTVxCPM
+         bhfsQZ669Fy4vZaeLXfIeLeJ6Zu0/g6psZ0IG57yNn6N0N3V8ocVNc4GT0KD2KaAA8AU
+         GS4XhgvPXHvlvAYNZBtMKAmYLUHsEDhk8nSyV73vTdybJh5fZG3bFMZmCM/QW30wUaM9
+         agQ5ut5MvLsKCT8l1B5qDUcWMEfdsnm031sobSFqruOoXrZenBFXGr5nafQlqm29QvsL
+         rxIPjfWZVTcbHQzCAmKUIg+pEOY8zSqrkKnuq7cxgZDN7QAfA4/Jp4tO0ndIwWvs9n8M
+         7zuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW/RNHyAvZAVw7Uik4Qs/PdO0vT2TFibShF90CmtBw/vQoPmHjxn74V2BUT0z7NhlCHa+w5RG0XL5LO0qErqNu5dN1QfHw69FxmkmMv
+X-Gm-Message-State: AOJu0Yxx1KfhPZil2z+3+EKd+9ePAiVJEqtaw1Rza6THUDk1Hmq2CSX7
+	HvWa0CEjWHwjMXCWVajikhTXOotQreUbzeqA1D7tRia6wdWkt6kHf+ITDijYwjqlVKH4UBT3UgY
+	W48BVjR1A8ESxbAolco7bihkovZY=
+X-Google-Smtp-Source: AGHT+IF4M93lrQW5Fsa+giSnqh14rcaRZpYxJ+MPoqduDV6r4sAWty6AusRycWj39BSyyyaDQIlbZEOxnzHCdJzk6Yc=
+X-Received: by 2002:a67:ef84:0:b0:47f:251c:61df with SMTP id
+ ada2fe7eead31-48bc23b40d2mr1662359137.27.1717158633456; Fri, 31 May 2024
+ 05:30:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [External] Re: [QUESTION] mm: Redundant const parameter?
-Content-Language: en-US
-To: Dev Jain <dev.jain@arm.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- Anshuman.Khandual@arm.com
-References: <e5f01ffe-de51-4079-a87f-2886788422f9@arm.com>
- <e6b7858b-39cd-432d-9206-4ccbd153baa2@arm.com>
-From: Chengming Zhou <zhouchengming@bytedance.com>
-In-Reply-To: <e6b7858b-39cd-432d-9206-4ccbd153baa2@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240531104819.140218-1-21cnbao@gmail.com> <87ac9610-5650-451f-aa54-e634a6310af4@redhat.com>
+ <CAGsJ_4zgf8j0oRnVBhe-__=K2RFDHTCo-JnMak95HTvxtMUwnQ@mail.gmail.com>
+ <d4c1a9ad-4945-40d7-9b7a-5b02df805884@redhat.com> <CAGsJ_4xpDwTTbwzMx8ipmpCyNmVmABpRN1f9yfZfFiOaGMKiew@mail.gmail.com>
+In-Reply-To: <CAGsJ_4xpDwTTbwzMx8ipmpCyNmVmABpRN1f9yfZfFiOaGMKiew@mail.gmail.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Sat, 1 Jun 2024 00:30:22 +1200
+Message-ID: <CAGsJ_4yX52k=Wx2x3jwXzNBG=rDGJrzGNwGCAh0puUP7zby=QA@mail.gmail.com>
+Subject: Re: [RFC PATCH] mm: swap: reuse exclusive folio directly instead of
+ wp page faults
+To: David Hildenbrand <david@redhat.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, chrisl@kernel.org, 
+	surenb@google.com, kasong@tencent.com, minchan@kernel.org, 
+	willy@infradead.org, ryan.roberts@arm.com, linux-kernel@vger.kernel.org, 
+	Barry Song <v-songbaohua@oppo.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024/5/31 19:31, Dev Jain wrote:
-> I guess it would be better if I send this as a patch and wait for comments.
+On Sat, Jun 1, 2024 at 12:20=E2=80=AFAM Barry Song <21cnbao@gmail.com> wrot=
+e:
+>
+> On Sat, Jun 1, 2024 at 12:10=E2=80=AFAM David Hildenbrand <david@redhat.c=
+om> wrote:
+> >
+> > On 31.05.24 13:55, Barry Song wrote:
+> > > On Fri, May 31, 2024 at 11:08=E2=80=AFPM David Hildenbrand <david@red=
+hat.com> wrote:
+> > >>
+> > >> On 31.05.24 12:48, Barry Song wrote:
+> > >>> From: Barry Song <v-songbaohua@oppo.com>
+> > >>>
+> > >>> After swapping out, we perform a swap-in operation. If we first rea=
+d
+> > >>> and then write, we encounter a major fault in do_swap_page for read=
+ing,
+> > >>> along with additional minor faults in do_wp_page for writing. Howev=
+er,
+> > >>> the latter appears to be unnecessary and inefficient. Instead, we c=
+an
+> > >>> directly reuse in do_swap_page and completely eliminate the need fo=
+r
+> > >>> do_wp_page.
+> > >>>
+> > >>> This patch achieves that optimization specifically for exclusive fo=
+lios.
+> > >>> The following microbenchmark demonstrates the significant reduction=
+ in
+> > >>> minor faults.
+> > >>>
+> > >>>    #define DATA_SIZE (2UL * 1024 * 1024)
+> > >>>    #define PAGE_SIZE (4UL * 1024)
+> > >>>
+> > >>>    static void *read_write_data(char *addr)
+> > >>>    {
+> > >>>            char tmp;
+> > >>>
+> > >>>            for (int i =3D 0; i < DATA_SIZE; i +=3D PAGE_SIZE) {
+> > >>>                    tmp =3D *(volatile char *)(addr + i);
+> > >>>                    *(volatile char *)(addr + i) =3D tmp;
+> > >>>            }
+> > >>>    }
+> > >>>
+> > >>>    int main(int argc, char **argv)
+> > >>>    {
+> > >>>            struct rusage ru;
+> > >>>
+> > >>>            char *addr =3D mmap(NULL, DATA_SIZE, PROT_READ | PROT_WR=
+ITE,
+> > >>>                            MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
+> > >>>            memset(addr, 0x11, DATA_SIZE);
+> > >>>
+> > >>>            do {
+> > >>>                    long old_ru_minflt, old_ru_majflt;
+> > >>>                    long new_ru_minflt, new_ru_majflt;
+> > >>>
+> > >>>                    madvise(addr, DATA_SIZE, MADV_PAGEOUT);
+> > >>>
+> > >>>                    getrusage(RUSAGE_SELF, &ru);
+> > >>>                    old_ru_minflt =3D ru.ru_minflt;
+> > >>>                    old_ru_majflt =3D ru.ru_majflt;
+> > >>>
+> > >>>                    read_write_data(addr);
+> > >>>                    getrusage(RUSAGE_SELF, &ru);
+> > >>>                    new_ru_minflt =3D ru.ru_minflt;
+> > >>>                    new_ru_majflt =3D ru.ru_majflt;
+> > >>>
+> > >>>                    printf("minor faults:%ld major faults:%ld\n",
+> > >>>                            new_ru_minflt - old_ru_minflt,
+> > >>>                            new_ru_majflt - old_ru_majflt);
+> > >>>            } while(0);
+> > >>>
+> > >>>            return 0;
+> > >>>    }
+> > >>>
+> > >>> w/o patch,
+> > >>> / # ~/a.out
+> > >>> minor faults:512 major faults:512
+> > >>>
+> > >>> w/ patch,
+> > >>> / # ~/a.out
+> > >>> minor faults:0 major faults:512
+> > >>>
+> > >>> Minor faults decrease to 0!
+> > >>>
+> > >>> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+> > >>> ---
+> > >>>    mm/memory.c | 7 ++++---
+> > >>>    1 file changed, 4 insertions(+), 3 deletions(-)
+> > >>>
+> > >>> diff --git a/mm/memory.c b/mm/memory.c
+> > >>> index eef4e482c0c2..e1d2e339958e 100644
+> > >>> --- a/mm/memory.c
+> > >>> +++ b/mm/memory.c
+> > >>> @@ -4325,9 +4325,10 @@ vm_fault_t do_swap_page(struct vm_fault *vmf=
+)
+> > >>>         */
+> > >>>        if (!folio_test_ksm(folio) &&
+> > >>>            (exclusive || folio_ref_count(folio) =3D=3D 1)) {
+> > >>> -             if (vmf->flags & FAULT_FLAG_WRITE) {
+> > >>> -                     pte =3D maybe_mkwrite(pte_mkdirty(pte), vma);
+> > >>> -                     vmf->flags &=3D ~FAULT_FLAG_WRITE;
+> > >>> +             if (vma->vm_flags & VM_WRITE) {
+> > >>> +                     pte =3D pte_mkwrite(pte_mkdirty(pte), vma);
+> > >>> +                     if (vmf->flags & FAULT_FLAG_WRITE)
+> > >>> +                             vmf->flags &=3D ~FAULT_FLAG_WRITE;
+> > >>
+> > >> This implies, that even on a read fault, you would mark the pte dirt=
+y
+> > >> and it would have to be written back to swap if still in the swap ca=
+che
+> > >> and only read.
+> > >>
+> > >> That is controversial.
+> > >>
+> > >> What is less controversial is doing what mprotect() via
+> > >> change_pte_range()/can_change_pte_writable() would do: mark the PTE
+> > >> writable but not dirty.
+> > >>
+> > >> I suggest setting the pte only dirty if FAULT_FLAG_WRITE is set.
+> > >
+> > > Thanks!
+> > >
+> > > I assume you mean something as below?
+> >
+> > It raises an important point: uffd-wp must be handled accordingly.
+> >
+> > >
+> > > diff --git a/mm/memory.c b/mm/memory.c
+> > > index eef4e482c0c2..dbf1ba8ccfd6 100644
+> > > --- a/mm/memory.c
+> > > +++ b/mm/memory.c
+> > > @@ -4317,6 +4317,10 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+> > >          add_mm_counter(vma->vm_mm, MM_SWAPENTS, -nr_pages);
+> > >          pte =3D mk_pte(page, vma->vm_page_prot);
+> > >
+> > > +       if (pte_swp_soft_dirty(vmf->orig_pte))
+> > > +               pte =3D pte_mksoft_dirty(pte);
+> > > +       if (pte_swp_uffd_wp(vmf->orig_pte))
+> > > +               pte =3D pte_mkuffd_wp(pte);
+> > >          /*
+> > >           * Same logic as in do_wp_page(); however, optimize for page=
+s that are
+> > >           * certainly not shared either because we just allocated the=
+m without
+> > > @@ -4325,18 +4329,19 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+> > >           */
+> > >          if (!folio_test_ksm(folio) &&
+> > >              (exclusive || folio_ref_count(folio) =3D=3D 1)) {
+> > > -               if (vmf->flags & FAULT_FLAG_WRITE) {
+> > > -                       pte =3D maybe_mkwrite(pte_mkdirty(pte), vma);
+> > > -                       vmf->flags &=3D ~FAULT_FLAG_WRITE;
+> > > +               if (vma->vm_flags & VM_WRITE) {
+> > > +                       if (vmf->flags & FAULT_FLAG_WRITE) {
+> > > +                               pte =3D pte_mkwrite(pte_mkdirty(pte),=
+ vma);
+> > > +                               vmf->flags &=3D ~FAULT_FLAG_WRITE;
+> > > +                       } else if ((!vma_soft_dirty_enabled(vma) ||
+> > > pte_soft_dirty(pte))
+> > > +                                   && !userfaultfd_pte_wp(vma, pte))=
+ {
+> > > +                                       pte =3D pte_mkwrite(pte, vma)=
+;
+> >
+> > Even with FAULT_FLAG_WRITE we must respect uffd-wp and *not* do a
+> > pte_mkwrite(pte). So we have to catch and handle that earlier (I could
+> > have sworn we handle that somehow).
+> >
+> > Note that the existing
+> >         pte =3D pte_mkuffd_wp(pte);
+> >
+> > Will fix that up because it does an implicit pte_wrprotect().
+>
+> This is exactly what I have missed as I am struggling with why WRITE_FAUL=
+T
+> blindly does mkwrite without checking userfaultfd_pte_wp().
+>
+> >
+> >
+> > So maybe what would work is
+> >
+> >
+> > if ((vma->vm_flags & VM_WRITE) && !userfaultfd_pte_wp(vma, pte) &&
+> >      !vma_soft_dirty_enabled(vma)) {
+> >         pte =3D pte_mkwrite(pte);
+> >
+> >         /* Only set the PTE dirty on write fault. */
+> >         if (vmf->flags & FAULT_FLAG_WRITE) {
+> >                 pte =3D pte_mkdirty(pte);
+> >                 vmf->flags &=3D ~FAULT_FLAG_WRITE;
+> >         }
 
-Ah, you're right. I think it should be:
+WRITE_FAULT has a pte_mkdirty, so it doesn't need to check
+"!vma_soft_dirty_enabled(vma)"?
+Maybe I thought too much, just the simple code below should work?
 
-	return folio_test_workingset(slab_folio(slab));
+        if (!folio_test_ksm(folio) &&
+            (exclusive || folio_ref_count(folio) =3D=3D 1)) {
+                if (vma->vm_flags & VM_WRITE) {
+                        if (vmf->flags & FAULT_FLAG_WRITE) {
+                                pte =3D pte_mkwrite(pte_mkdirty(pte), vma);
+                                vmf->flags &=3D ~FAULT_FLAG_WRITE;
+                        } else {
+                                pte =3D pte_mkwrite(pte, vma);
+                        }
+                }
+                rmap_flags |=3D RMAP_EXCLUSIVE;
+        }
 
-Right? Don't notice there isn't any build warning about this "const" discard.
+        if (pte_swp_soft_dirty(vmf->orig_pte))
+                pte =3D pte_mksoft_dirty(pte);
+        if (pte_swp_uffd_wp(vmf->orig_pte))
+                pte =3D pte_mkuffd_wp(pte);
 
-Thanks.
+This still uses the implicit wrprotect of pte_mkuffd_wp.
 
-> 
-> On 5/31/24 16:42, Dev Jain wrote:
->> Hi Chengming,
->>
->> In mm/slub.c, you had defined slab_test_node_partial() to take a const parameter.
->>
->> Is there any point of taking in a const, when you are anyways typecasting it to
->>
->> a (struct folio *) from (const struct folio *) ? In fact, at the place where you call
->>
->> slab_test_node_partial(), the struct slab *slab is not const.
->>
->> Please comment.
->>
->>
->> Thanks
->>
->> DJ
->>
->>
->>
->>
+> > }
+> >
+>
+> looks good!
+>
+> > --
+> > Cheers,
+> >
+> > David / dhildenb
+> >
+>
+> Thanks
+> Barry
 
