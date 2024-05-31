@@ -1,111 +1,130 @@
-Return-Path: <linux-kernel+bounces-197148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D30238D66D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:30:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D73E98D66D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:29:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4164FB2C45F
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:28:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D20BB27461
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:29:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2927A15D5A0;
-	Fri, 31 May 2024 16:28:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EED6D15CD7F;
+	Fri, 31 May 2024 16:29:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tA6mqYpF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LwphYhcW"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6530F158DD7;
-	Fri, 31 May 2024 16:28:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD487156242;
+	Fri, 31 May 2024 16:29:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717172907; cv=none; b=ZnvkIYzUkY+YZzuvrL6FuawAeP0Yjbbe9vqI9rQO7k+o5Q71REvFv3xfGk9y7bhxN+r/vYbM6zxbL4AaoMs5HZr82y7W8OL1k80e/hkr7XhuBX3sP2PfEOEatTz3ZEmTjuhBnrtUjcIdO1UaVirc5d+Tx8LX0MU+0nXVtDrb+Xs=
+	t=1717172952; cv=none; b=R3ie9zjsgjevyWHCzPNWVFYuARbCFUQZQDL42aJSE4OraThqDach1yQeUjS9Qlg+M+HK5k138QMB9YyDL/Uh7uuPOPxpg7qXmV5C98RFJsfIxs76PM2gQs0C4hEwYSnZlpzP3L+DsyW3hi2TllFSGG7sqkfqlgDNakh9t0pGMpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717172907; c=relaxed/simple;
-	bh=G9YBmBIaLtAXZPjNyAagf7B6fv+FKzsPzY489k3bd2w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SYYlLZggJJ2qPZorQOkHFgD+Vm9hqSuKW/aYoVU6B1Fmt/Z2iXLbMQJej0FPiP8KgzyN3yBVCjgwL7AepVgoZN4cG27nEPqrhk0bVJ284gNUfXqRQTl4+hf6bYinU7EMIS7Pxr+10hURT8zQCsJbW7Y4qHI/4fTlC3qC2PDFSx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tA6mqYpF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5BD9C116B1;
-	Fri, 31 May 2024 16:28:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717172907;
-	bh=G9YBmBIaLtAXZPjNyAagf7B6fv+FKzsPzY489k3bd2w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tA6mqYpF5paicZvv4vbBxYXrwWg4Vc0trMhm7CIfgnWMnRm9BhL+yS6yqLy3y/otu
-	 JSossMlgG5yHYJlcHphb5UiFnccarJ0LeWYyswSJ4JebhPYg2e61p06n4+upaf+Ae5
-	 5NnbxbrDZuW6o/FRuQjhCBblw0XCe6zcdJ7m1EO+UmzT5chmuiX4Fag00a0tvvqzrB
-	 FvY2L5Q+z00Wy3llSN+DALsqpOY2QvLmvgCUTnAMLeMQOOV5EBMp7KVACEkAI00v7z
-	 En3ZmWds/j+hCt1HQ1YTDpyBwEY6eVCclba2DD0rbYg74ZQyWRqp/eXyboixaXNQv5
-	 3I6F5qaGhOtsw==
-Date: Fri, 31 May 2024 09:28:26 -0700
-From: Kees Cook <kees@kernel.org>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Nikolay Borisov <nik.borisov@suse.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] x86/boot: add prototype for __fortify_panic()
-Message-ID: <202405310923.78257B2B3@keescook>
-References: <20240529-fortify_panic-v1-1-9923d5c77657@quicinc.com>
- <0d3f7c58-7fc0-4e8b-b6fb-c4d0d9969ce7@suse.com>
- <e42c4984-d4a2-45b1-b93d-7471000766b7@quicinc.com>
+	s=arc-20240116; t=1717172952; c=relaxed/simple;
+	bh=/dieNpAffYfF3j9dI+41BjDdn/AE2ZDNZQ0kdYwkDMc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=a60LPVuV5L8jFNHnPyIoRleCeyXYp4ijWUuDNlh0XaNclmEGModOFfYm2FPiwaoC/TrSsEMPBwDOId6oz+fTsFmBIyOk7dAwtCzT3WZO4/WInmJGkzMsoxmXWOfB3JdZ35gqAVtW/ITt4w0sgsj/8elYqB24Wt/KGws9ITxSpi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LwphYhcW; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44V8osjB019859;
+	Fri, 31 May 2024 16:28:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=Hy60RPDaCxUwgwf6FF4cUM
+	FAxBZJ9nOouJL9XB+bIOs=; b=LwphYhcWNWDUGD+VCVPOV4qhRMCC5wSnj1Gtpr
+	vfLdITbOFqcgT6ghpWOCOjrG8ZZkn11gzuvKVYchZovzs6zBZToCr8sBI0qPpBWS
+	ABZp0b/melukEgJvKznpGOFzfQUJYko1H0hL1D9iKqNfPNhm2e8jYPTAInjDazTp
+	2XCldF6eIySEC5h+MQCdy49x6aX8rGMs9I6YU/JC0WdKkWQp7IBn0Sr4RlQPMaL0
+	QGUhBuIxS/wBOxFIlPLU4RTJPY7QCR0iycKrnXIZQQCsRtc0lmZvEMKRMkrAp0mb
+	0FNZujvhAW5VfsQdCNH9xBrYsV9Iv57dZypEOV95Sm3qPG0Q==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba0qqfj8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 31 May 2024 16:28:51 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44VGSnDI032720
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 31 May 2024 16:28:49 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 31 May
+ 2024 09:28:49 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Fri, 31 May 2024 09:28:43 -0700
+Subject: [PATCH] test_bpf: add missing MODULE_DESCRIPTION()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e42c4984-d4a2-45b1-b93d-7471000766b7@quicinc.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240531-md-lib-test_bpf-v1-1-868e4bd2f9ed@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIALr6WWYC/x3M0Q6CMAxA0V8hfbYJbCrqrxBjOlakCUzSTkNC+
+ Henj+fh3g2MVdjgVm2g/BGTVypoDhX0I6Uno8RicLU71iff4BxxkoCZLT/CMqBrz/HKvvUXclC
+ qRXmQ9X/s7sWBjDEopX78fSZJ7xVnsswK+/4FUKXiuoAAAAA=
+To: Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann
+	<daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau
+	<martin.lau@linux.dev>,
+        Eduard Zingerman <eddyz87@gmail.com>, Song Liu
+	<song@kernel.org>,
+        Yonghong Song <yonghong.song@linux.dev>,
+        John Fastabend
+	<john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>, Stanislav Fomichev
+	<sdf@google.com>,
+        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+CC: <linux-kernel@vger.kernel.org>, <bpf@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: eDUSwnBGnFEXi0bqGp1p8h-0FvhzUD9D
+X-Proofpoint-ORIG-GUID: eDUSwnBGnFEXi0bqGp1p8h-0FvhzUD9D
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-31_12,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ suspectscore=0 lowpriorityscore=0 impostorscore=0 clxscore=1011 mlxscore=0
+ mlxlogscore=960 malwarescore=0 spamscore=0 adultscore=0 bulkscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405310123
 
-On Thu, May 30, 2024 at 09:23:36AM -0700, Jeff Johnson wrote:
-> On 5/30/2024 8:42 AM, Nikolay Borisov wrote:
-> > 
-> > 
-> > On 29.05.24 г. 21:09 ч., Jeff Johnson wrote:
-> >> As discussed in [1] add a prototype for __fortify_panic() to fix the
-> >> 'make W=1 C=1' warning:
-> >>
-> >> arch/x86/boot/compressed/misc.c:535:6: warning: symbol '__fortify_panic' was not declared. Should it be static?
-> > 
-> > Actually doesn't it make sense to have this defined under ../string.h ? 
-> > Actually given that we don't have any string fortification under the 
-> > boot/  why have the fortify _* functions at all ?
-> 
-> I'll let Kees answer these questions since I just took guidance from him :)
+make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_bpf.o
 
-Ah-ha, I see what's happening. When not built with
-CONFIG_FORTIFY_SOURCE, fortify-string.h isn't included. But since misc.c
-has the function definition, we get a warning that the function
-declaration was never seen. This is likely the better solution:
+Add the missing invocation of the MODULE_DESCRIPTION() macro.
 
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ lib/test_bpf.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/x86/boot/compressed/misc.c b/arch/x86/boot/compressed/misc.c
-index b70e4a21c15f..3f21a5e218f8 100644
---- a/arch/x86/boot/compressed/misc.c
-+++ b/arch/x86/boot/compressed/misc.c
-@@ -532,7 +532,9 @@ asmlinkage __visible void *extract_kernel(void *rmode, unsigned char *output)
- 	return output + entry_offset;
- }
+diff --git a/lib/test_bpf.c b/lib/test_bpf.c
+index 207ff87194db..ce5716c3999a 100644
+--- a/lib/test_bpf.c
++++ b/lib/test_bpf.c
+@@ -15706,4 +15706,5 @@ static void __exit test_bpf_exit(void)
+ module_init(test_bpf_init);
+ module_exit(test_bpf_exit);
  
-+#ifdef CONFIG_FORTIFY_SOURCE
- void __fortify_panic(const u8 reason, size_t avail, size_t size)
- {
- 	error("detected buffer overflow");
- }
-+#endif
++MODULE_DESCRIPTION("Testsuite for BPF interpreter and BPF JIT compiler");
+ MODULE_LICENSE("GPL");
 
+---
+base-commit: 4a4be1ad3a6efea16c56615f31117590fd881358
+change-id: 20240531-md-lib-test_bpf-276d9e3738a2
 
-Jeff, can you test this? (I still haven't been able to reproduce the
-warning.)
-
--- 
-Kees Cook
 
