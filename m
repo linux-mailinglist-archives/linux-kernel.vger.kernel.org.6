@@ -1,116 +1,115 @@
-Return-Path: <linux-kernel+bounces-196221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D04388D58FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 05:24:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06DB18D5902
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 05:31:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 805FB1F253CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 03:24:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 412B31C2285B
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 03:31:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CEED10A16;
-	Fri, 31 May 2024 03:24:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BQ6nBjLv"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DD4E79DC5;
+	Fri, 31 May 2024 03:31:09 +0000 (UTC)
+Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21E1B38DEC;
-	Fri, 31 May 2024 03:24:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75DF61859;
+	Fri, 31 May 2024 03:31:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717125844; cv=none; b=jIEIk3wtysuBuAmXcL+oagcvrH/f1mYNaPPcQecbDkGeGI/Gh1iiJs5uDLQyT/ZkNmlWbvIjNfht8Vjevs8AGtUWUEki/yMqdAtIs1LQ4aKst4oZihfXRXn7orb0+7UOvY9Y9GeFNtjRUS31u19avd7Xdk317jmMtWCTZEcjLuQ=
+	t=1717126268; cv=none; b=W5c+d5pFk1tI/rV76amOi5tsD4vhbCG9fGHLT1W1py5OI9TJY4HvtsVLQ/581rfFwwIbiKytBQ8z1dR+lirdl9rhCzHPM4LbEqegYelsJO5r9utgulJb2XTCRw/sfWTl5Ygh3i6v5tY3fI3D63/NWIuEppPRqh3B+hwVnNI8yqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717125844; c=relaxed/simple;
-	bh=UhIrDzGXxaH/4eLKhF+wSTfeSDPdvRTxVsZ2+c6Oy+k=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=Ubalu6KXD1ZyHNxlmPvbLApa7HMxHVz+9SRxSAL/PoYdlX6Y2fYiNqJbD6n1sy+RmGQpUAgHNSV/OIihFByfJTgJf2S00t7VNvQbWIz5yN93rGylQYVOUcZHdLdjDVbf4KK4E9fwxZH2lm+Mxn4+/NmXwo7g8dPxt5jTmOnwtWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BQ6nBjLv; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44UGdlpN004947;
-	Fri, 31 May 2024 03:24:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=QZtDSP74aeLFitfPMT6+TP
-	Pem9ghJVk6TDToxbNY/do=; b=BQ6nBjLv53QSRZfGQRd+FEDNriqL+DD6n2WQB2
-	uo9x4fV3TdF/IOToFYUX1sQMlTmzm3Mk/bAqG2Mn1NN8dbc2laOsVh+o4aieydkX
-	rAHjf2JpXPv+XZ2szpak3y3x/Vnf3WWrHCIjXnCwwcmffcavUcjyErq+zPd5Y6Ie
-	oioqFMfrLjnJ0DAwDHUqgOEuSbcb1SzQNoXMj/1Zg+/6DFNKB/hL3pqbGGbZ3vGN
-	6j6nD6++Vyl0C+CAqIma4niu4nn0cWmsk1+II6B1M8bKOvjyiz3yWIYzqKE1j1Dd
-	C1yL5608TMRjz+0I2NYHHblV8Zyo8FMJNm1UuXQ3aTV25X9g==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba2pwtr0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 31 May 2024 03:23:59 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44V3Nxw8006634
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 31 May 2024 03:23:59 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 30 May
- 2024 20:23:58 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Thu, 30 May 2024 20:23:34 -0700
-Subject: [PATCH] cdrom: Add missing MODULE_DESCRIPTION()
+	s=arc-20240116; t=1717126268; c=relaxed/simple;
+	bh=VN37GgGuXPBWyk83hD9HQb2kdUtj96POc9bp1dtCrfc=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TSJLCPBjcehspE7G96M9HeZ2CYfRWmU24krD+1YAePbIc1u2R6zoIgYQLjCMjZTWmB+uJjPuLbe8/iBXyzn2+i4I/efRMj346p6BgCzjv837mWcqHkXMjYEWE3mwrfnZcyLWYanZ8irhcdeyhcp2QyOE/u23gqjmv7+ySaRvnwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.166.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250810.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44V2hxpJ005945;
+	Thu, 30 May 2024 20:30:51 -0700
+Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 3yf619r0xj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Thu, 30 May 2024 20:30:51 -0700 (PDT)
+Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 30 May 2024 20:30:50 -0700
+Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
+ 15.1.2507.39 via Frontend Transport; Thu, 30 May 2024 20:30:45 -0700
+From: Lizhi Xu <lizhi.xu@windriver.com>
+To: <ebiggers@kernel.org>
+CC: <coreteam@netfilter.org>, <davem@davemloft.net>, <fw@strlen.de>,
+        <jaegeuk@kernel.org>, <kadlec@netfilter.org>, <kuba@kernel.org>,
+        <linux-fscrypt@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <lizhi.xu@windriver.com>, <netdev@vger.kernel.org>,
+        <netfilter-devel@vger.kernel.org>, <pablo@netfilter.org>,
+        <syzbot+340581ba9dceb7e06fb3@syzkaller.appspotmail.com>,
+        <syzkaller-bugs@googlegroups.com>, <tytso@mit.edu>,
+        <adilger.kernel@dilger.ca>, <linux-ext4@vger.kernel.org>
+Subject: Re: [PATCH V2] ext4: add casefolded feature check before setup encrypted info
+Date: Fri, 31 May 2024 11:30:44 +0800
+Message-ID: <20240531033044.1335098-1-lizhi.xu@windriver.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240531010513.GA9629@sol.localdomain>
+References: <20240531010513.GA9629@sol.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240530-cdrom-v1-1-51579c5c240a@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIALVCWWYC/x3MQQqDQAyF4atI1g2M47jxKqWLmIk1oGNJWhHEu
- 3fa5Qf/eye4mIrD0JxgsqvrViraWwM8U3kKaq6GGGIKfReQs20r9qnjzFNsMyWo7ctk0uP/c39
- Uj+SCo1Hh+bdetHwOXMnfYnBdX8Yc25R2AAAA
-To: Phillip Potter <phil@philpotter.co.uk>, Jens Axboe <axboe@kernel.dk>
-CC: <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        "Jeff
- Johnson" <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: jNWqRU5lj_obl9MbM_Lo2Srzlzs7C1jX
-X-Proofpoint-ORIG-GUID: jNWqRU5lj_obl9MbM_Lo2Srzlzs7C1jX
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: 2QUEJlUMOIKHUAdBzqQWNO_hAxpyzaIF
+X-Proofpoint-ORIG-GUID: 2QUEJlUMOIKHUAdBzqQWNO_hAxpyzaIF
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
  definitions=2024-05-30_21,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- malwarescore=0 spamscore=0 adultscore=0 clxscore=1011 bulkscore=0
- mlxscore=0 suspectscore=0 priorityscore=1501 phishscore=0 mlxlogscore=927
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2405310024
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 bulkscore=0
+ lowpriorityscore=0 priorityscore=1501 impostorscore=0 mlxscore=0
+ adultscore=0 phishscore=0 mlxlogscore=974 clxscore=1011 spamscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.21.0-2405170001 definitions=main-2405310025
 
-make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cdrom/cdrom.o
+On Thu, 30 May 2024 20:11:33 -0700, Eric Biggers wrote:
+> > Due to the current file system not supporting the casefolded feature, only 
+> > i_crypt_info was initialized when creating encrypted information, without actually
+> > setting the sighash. Therefore, when creating an inode, if the system does not 
+> > support the casefolded feature, encrypted information will not be created.
+> > 
+> > Reported-by: syzbot+340581ba9dceb7e06fb3@syzkaller.appspotmail.com
+> > Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
+> > ---
+> >  fs/ext4/ialloc.c | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/fs/ext4/ialloc.c b/fs/ext4/ialloc.c
+> > index e9bbb1da2d0a..47b75589fdf4 100644
+> > --- a/fs/ext4/ialloc.c
+> > +++ b/fs/ext4/ialloc.c
+> > @@ -983,7 +983,8 @@ struct inode *__ext4_new_inode(struct mnt_idmap *idmap,
+> >  		ei->i_projid = make_kprojid(&init_user_ns, EXT4_DEF_PROJID);
+> >  
+> >  	if (!(i_flags & EXT4_EA_INODE_FL)) {
+> > -		err = fscrypt_prepare_new_inode(dir, inode, &encrypt);
+> > +		if (ext4_has_feature_casefold(inode->i_sb))
+> > +			err = fscrypt_prepare_new_inode(dir, inode, &encrypt);
+> >  		if (err)
+> >  			goto out;
+> 
+> No, this is not correct at all.  This just disables encryption on filesystems
+> with the casefold feature.
+If filesystems not support casefold feature, Why do I need to setup encrypted
+information when creating a directory? Can encrypted information not include *hash?
+> 
+> As I said before, please also use the correct mailing lists.
+Added.
 
-Add the missing MODULE_DESCRIPTION() macro invocation.
-
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/cdrom/cdrom.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/cdrom/cdrom.c b/drivers/cdrom/cdrom.c
-index 20c90ebb3a3f..b6ee9ae36653 100644
---- a/drivers/cdrom/cdrom.c
-+++ b/drivers/cdrom/cdrom.c
-@@ -3708,4 +3708,5 @@ static void __exit cdrom_exit(void)
- 
- module_init(cdrom_init);
- module_exit(cdrom_exit);
-+MODULE_DESCRIPTION("Uniform CD-ROM driver for Linux");
- MODULE_LICENSE("GPL");
-
----
-base-commit: 4a4be1ad3a6efea16c56615f31117590fd881358
-change-id: 20240530-cdrom-543cdcf21da4
-
+Lizhi
 
