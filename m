@@ -1,136 +1,107 @@
-Return-Path: <linux-kernel+bounces-197312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F39608D6922
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 20:43:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 284768D692A
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 20:45:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E5FA1F268D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:43:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D16052855C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:45:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2236158D78;
-	Fri, 31 May 2024 18:43:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3A057F7D1;
+	Fri, 31 May 2024 18:45:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CTEsoS62"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bdXAuIEy"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C4667D40D;
-	Fri, 31 May 2024 18:43:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD8501CA89;
+	Fri, 31 May 2024 18:45:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717181011; cv=none; b=JAMxEuEMvuCZ+t5LOk/haOLepQ0g01nkUo2eXttq/5JzWKSMcljwOaae1eAES/la62pH0pptipMSzDSWWhOiQT8MKdJTmsj8IbeKZ9GB1IgpPPa+NCoDiK3CYh6bPS/93jMuWLld4Nh2BFWOiTSyzWBIXeq4cPlhaQfHxYX+zvM=
+	t=1717181117; cv=none; b=WhLRfFHV0NFAb+m6OZFBjZSHz6WkhGWbhJs1ymo6PMO+jz7dyC+cbKiJwykSHhc2pL0YIiAbt+X5O1gunGeAXaeYjRfayevmgU/ZdlArDl5zZIhtOT9+EOmnyDGlKtk1LKcz6QVylepHQUJ85HdpcoO8EHn1qX0VB0dc0ODHMOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717181011; c=relaxed/simple;
-	bh=2998ZpVyEGYSKDxYSM479TmMh5OPYVOX8crtu3Z6n7M=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=rWArWKB8fKAsLQPA+W9HviuSAZFMtgVCTrRt5F1RBcYfSTAWS77NCa0Q4wFcsoyXl7uve2AKIQR/NWVLZ3hlitXg0gj0V55qDhSFkokjx+ggLadHZSpX06Fjq/ZM4JsFNqyAqgGKQUDwQDi3mj8qg06ulIMPi+OiXsJ+hD51xkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CTEsoS62; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717181010; x=1748717010;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=2998ZpVyEGYSKDxYSM479TmMh5OPYVOX8crtu3Z6n7M=;
-  b=CTEsoS624FJb/BCp/Xwn5WHBfwabCbtOzXhn7n/Al6F3128qj9SbhNb2
-   O7iAWPq9KIWpM9U5x0GeXG3NKMKvdFrjaoJrcy+0YHglRawZPICEUp+RS
-   CML7rzhjFVvcsCEvkMlxiTSxJav/giswcGj3vfLzEIGdqLpAIwsg87lhc
-   xtVtt5/TVIpTT9JApSMzd8FlXyTUaodAZFiD7b81mQ8TFXKPDtpOFJF32
-   lld6FnM8LyhhTrvqFJviTFPJqa/AABeDRZY91puW704vmBXm2cgm6yqCA
-   c8vVGj8r+LdgpO0WgAJiqXWYvPlCA/sTDrd9ks4W9tdUYfg1QEOJwWmm5
-   g==;
-X-CSE-ConnectionGUID: cvU3lHYdRrme9z3CGwZZug==
-X-CSE-MsgGUID: eFUmf9jcRVydTQ5W77qtig==
-X-IronPort-AV: E=McAfee;i="6600,9927,11089"; a="13906099"
-X-IronPort-AV: E=Sophos;i="6.08,205,1712646000"; 
-   d="scan'208";a="13906099"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 11:43:30 -0700
-X-CSE-ConnectionGUID: XalLKdCvTZiIXlO2BFstSA==
-X-CSE-MsgGUID: x6tLlc2wR5SjtXITRwjjtw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,205,1712646000"; 
-   d="scan'208";a="41322240"
-Received: from bergbenj-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.190])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 11:43:20 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Maxime Ripard <mripard@kernel.org>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
- <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter
- <daniel@ffwll.ch>, Jonathan Corbet <corbet@lwn.net>, Sandy Huang
- <hjc@rock-chips.com>, Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>,
- Chen-Yu Tsai
- <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland
- <samuel@sholland.org>, Andy Yan <andy.yan@rock-chips.com>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>, Sebastian Wick
- <sebastian.wick@redhat.com>, Ville =?utf-8?B?U3lyasOkbMOk?=
- <ville.syrjala@linux.intel.com>, dri-devel@lists.freedesktop.org,
- linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-sunxi@lists.linux.dev, Maxime
- Ripard <mripard@kernel.org>, Dave Stevenson
- <dave.stevenson@raspberrypi.com>, Sui Jingfeng <sui.jingfeng@linux.dev>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Pekka Paalanen
- <pekka.paalanen@collabora.com>, =?utf-8?Q?Ma=C3=ADra?= Canal
- <mcanal@igalia.com>, Andy Yan
- <andyshrk@163.com>
-Subject: Re: [PATCH v15 00/29] drm/connector: Create HDMI Connector
- infrastructure
-In-Reply-To: <20240527-kms-hdmi-connector-state-v15-0-c5af16c3aae2@kernel.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20240527-kms-hdmi-connector-state-v15-0-c5af16c3aae2@kernel.org>
-Date: Fri, 31 May 2024 21:43:16 +0300
-Message-ID: <874jadesaj.fsf@intel.com>
+	s=arc-20240116; t=1717181117; c=relaxed/simple;
+	bh=SCjsIE5+zvS9rP3n0m54mGHXZqab+yIT8w0uoj6U6sw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mfJ3Qdw3+xfWXXWLjvruac50E+fBd2hAoh7A38TaVNF7c7YB8ycxWPgxnJCYDo3OuEjfUMJvcNqyPMGLCOmFPwzgyshvdAHlL65VBD2EhIUHEKd8TREwQltVAfXhrGKcS1QeBo0nVWv3ESeihXDVlC8SI2nrJUhUwW7PNTjsu5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bdXAuIEy; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52b894021cbso1312562e87.0;
+        Fri, 31 May 2024 11:45:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717181114; x=1717785914; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SCjsIE5+zvS9rP3n0m54mGHXZqab+yIT8w0uoj6U6sw=;
+        b=bdXAuIEyGLKzCFri4i8auI032pLiV3ZTKkpVRUEQJAxDAIvNIcSZhqEQMWD/ODWQSl
+         lOAqn5Qp8JbknC3vEAA5bAjUAk20oo4veAExuJmD3TUROeWNHiKeYqV7DQTNxqcs4RY6
+         1E78I2Oh3m1LQsjZZ9M5rorILs2WO8tBRe2/VS2g7xpo1cJDV8Neo1etoGsmOM6GnIFg
+         N6XbrpNrD+vjt0y+X5rM4kmAOqbfLkA7CifR+6ppHlXBUPNSRLDMjiHXMJaEbRIGkOD3
+         Rhtq/FFU9znwC3R9FI9/Eug4bx8+kZ37bPCYfr+lvD25vWfd2w1wtrqBhgRHD1YE79Dp
+         XT7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717181114; x=1717785914;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SCjsIE5+zvS9rP3n0m54mGHXZqab+yIT8w0uoj6U6sw=;
+        b=JPEXv1qvpELcn5w1+yei8x4MAmNr0ETGLymKW2tfv75CsFiDXiIsffDkeYxPZOkRen
+         uwKLqWUqTUsnCvgue5FxPe5a13A8nAPAtG2VIYE4lv6lCsSQAXHwRGwGRWLB9YUJ6OvT
+         0SPWiBYmVaX1kS1VDODXb5fPmNqitE0s6ILQwi+DUcCdZuze5ML6E1CtTL+jaoWDli4E
+         5BZUexNgkQNKsGGzdtEzsGIDxH3yQTtTwRoIkfZxqv1IjBCF3tY8YtB14VEVzKfUzYBO
+         dKwz6cRkQ/l/sRr5FaCOvDz0xzcM82XyYOETLrdi8nKy13tZD7KU7mof9UlsEoMiJsOS
+         kt8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW3xAPZ6Y36CedVV66wEgi+JuKaJgvw86t3k1HNu7vyh2n66I0Cr3O8FJ9e+YzhChWU0j0aXqC9oN14pafA91o0r9qgx/NlfV+CwiOjG1BGPTxK66y9Hk3X8VtcA4JF5DkkeZuAU5GM66bQaV2yG5qM/r5BAVKhMFBaOGOMpnz1PJ3fh6lKRNrJZ7ZwXfKIW9tIgapY9CSXM8dsYhmOl66ZRWSM
+X-Gm-Message-State: AOJu0YxN0fSrrhZ9K17pGtGh7eAXo4GnvqqLo3FnYzF518a49U9WuAdX
+	785EvKHMDf3tAEqqNtwTwto41yLhXHbl3lLRtopufM3eQLtxxjyYJtBLXcIX1bea4Sy3dYGLelx
+	IcEptuL17+qkhjqiZkuLNZ3jVsfEAokea9Oo=
+X-Google-Smtp-Source: AGHT+IGPFx3SbX46u6FcgWqP3HyDQn7qBgWc59dS9IF2/z8xp+8k/UHwXL/kVWGoHL5Vft+Iz0XBX4M1m/N2R+4uAmc=
+X-Received: by 2002:a05:6512:250a:b0:52b:8728:5ea6 with SMTP id
+ 2adb3069b0e04-52b89596257mr2511384e87.19.1717181113392; Fri, 31 May 2024
+ 11:45:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20240529162958.18081-1-johan+linaro@kernel.org>
+ <20240529162958.18081-13-johan+linaro@kernel.org> <20240531170837.GC1204315@google.com>
+In-Reply-To: <20240531170837.GC1204315@google.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Fri, 31 May 2024 21:44:36 +0300
+Message-ID: <CAHp75VfMS8dYbG=bmzkaq2M8SMXu+HbT6D+BP_iY9Ep3VsR2wQ@mail.gmail.com>
+Subject: Re: [PATCH v2 12/14] mfd: pm8008: rework driver
+To: Lee Jones <lee@kernel.org>
+Cc: Johan Hovold <johan+linaro@kernel.org>, Mark Brown <broonie@kernel.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Das Srinagesh <quic_gurus@quicinc.com>, 
+	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, Stephen Boyd <swboyd@chromium.org>, 
+	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 27 May 2024, Maxime Ripard <mripard@kernel.org> wrote:
-> Let me know what you think,
+On Fri, May 31, 2024 at 8:08=E2=80=AFPM Lee Jones <lee@kernel.org> wrote:
+>
+> Please improve the subject line.
+>
+> I'll come back to review the whole set once Andy has had his wicked way w=
+ith you!
 
-Sorry to report that this series generates a bunch of kernel-doc
-warnings in include/drm/drm_connector.h. Documenting nested struct
-members doesn't work as smoothly as you'd expect:
+I guess we came to the equilibrium, I still disagree on some points,
+but Johan has a strong opinion to not follow my comments. So, it's up
+to you now :)
 
-./include/drm/drm_connector.h:1138: warning: Excess struct member 'broadcast_rgb' description in 'drm_connector_state'
-./include/drm/drm_connector.h:1138: warning: Excess struct member 'infoframes' description in 'drm_connector_state'
-./include/drm/drm_connector.h:1138: warning: Excess struct member 'avi' description in 'drm_connector_state'
-./include/drm/drm_connector.h:1138: warning: Excess struct member 'hdr_drm' description in 'drm_connector_state'
-./include/drm/drm_connector.h:1138: warning: Excess struct member 'spd' description in 'drm_connector_state'
-./include/drm/drm_connector.h:1138: warning: Excess struct member 'vendor' description in 'drm_connector_state'
-./include/drm/drm_connector.h:1138: warning: Excess struct member 'is_limited_range' description in 'drm_connector_state'
-./include/drm/drm_connector.h:1138: warning: Excess struct member 'output_bpc' description in 'drm_connector_state'
-./include/drm/drm_connector.h:1138: warning: Excess struct member 'output_format' description in 'drm_connector_state'
-./include/drm/drm_connector.h:1138: warning: Excess struct member 'tmds_char_rate' description in 'drm_connector_state'
-./include/drm/drm_connector.h:2112: warning: Excess struct member 'vendor' description in 'drm_connector'
-./include/drm/drm_connector.h:2112: warning: Excess struct member 'product' description in 'drm_connector'
-./include/drm/drm_connector.h:2112: warning: Excess struct member 'supported_formats' description in 'drm_connector'
-./include/drm/drm_connector.h:2112: warning: Excess struct member 'infoframes' description in 'drm_connector'
-./include/drm/drm_connector.h:2112: warning: Excess struct member 'lock' description in 'drm_connector'
-./include/drm/drm_connector.h:2112: warning: Excess struct member 'audio' description in 'drm_connector'
-
-Noticed this when I was rebasing [1]. Having that merged would find
-issues in headers at build time instead of 'make htmldocs'.
-
-In the mean time, this is the quick reproducer:
-
-$ scripts/kernel-doc -none include/drm/drm_connector.h
-
-
-BR,
-Jani.
-
-[1] https://lore.kernel.org/r/20240402140136.1722533-1-jani.nikula@intel.com
-
-
--- 
-Jani Nikula, Intel
+--=20
+With Best Regards,
+Andy Shevchenko
 
