@@ -1,110 +1,126 @@
-Return-Path: <linux-kernel+bounces-197602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45F4C8D6CF4
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 01:44:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 081FA8D6CFA
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 01:45:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEF7B1F266AD
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 23:44:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF7491F266E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 23:45:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99A1C12F592;
-	Fri, 31 May 2024 23:44:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F69E12FF76;
+	Fri, 31 May 2024 23:45:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="JM4VUaWy"
-Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="ZklNmP1Y"
+Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41DB612C499
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 23:44:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12EB57C6D5;
+	Fri, 31 May 2024 23:45:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717199067; cv=none; b=Rth04IkGBp6UM8tHabIxRRnlbtyUNG+adOeiM3cmJMXQ15Lk4UBFhyIA63WE1BY1dX9EnQJh9bwyBijrafXva1CJQRxz6IROhLQC8HJisZ3WLx7h9L5zLU3cHhJgmrH57zMEP1yU1Gx8gGBWkZoj5owMnMwuvK9oMEfiIMU7utQ=
+	t=1717199118; cv=none; b=EtTodAiFhV09TEaztIXfaQztDTOit6V4QM2YJVyco9pp2GON4bXwJDQbKUPzqTK7ehaUZ5UWVcM61tsYjC7v0vps2slpKERmDrvnIHIVQPLEeLfW1bCnmx3qDgy92vcGNubC0SYZ+c2bSwNTmRs5TWk5rizVqN9LxyGxfui+K8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717199067; c=relaxed/simple;
-	bh=+1lYI39XvWKgc3DpuRrlaTX27AIFQ1b7IGpUMM1waoU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lPDToCwvd8yU/A9Ovq2irMjKEpsuLuP0YdAQbeDpSvsLXBLj4lfyEM7zm6Xnq1qlV250eRFX8rq2kXMoPDiU7ulaollEnehW3ps/Gg7jAPOUG25zdTBx/54l/rfBsC1qv+1PMwXwgg/D1omBvcRiIyEYYyuQSjUIUrmpa8eL4xQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=JM4VUaWy; arc=none smtp.client-ip=95.215.58.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: vbabka@suse.cz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1717199064;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QQSw4uPQgRlAk3kSFCT2kJLdIQ/8AieJ62AywbPlN10=;
-	b=JM4VUaWyXQA4oPsqLQCYJRQ+U5ltEWNYbqydiC0118Lvw8ARSRQKxDtoz/LXNP3l36eZfL
-	/0+mD9xqfT1uKyARczwtW716OzeJDqc/dzWzcB7fmug0ExijVA7JmuW/f4IgXve4nDh6uQ
-	An09w1e8j9woSKGsMHLCxhQsgpbmDFs=
-X-Envelope-To: akinobu.mita@gmail.com
-X-Envelope-To: cl@linux.com
-X-Envelope-To: rientjes@google.com
-X-Envelope-To: ast@kernel.org
-X-Envelope-To: daniel@iogearbox.net
-X-Envelope-To: andrii@kernel.org
-X-Envelope-To: naveen.n.rao@linux.ibm.com
-X-Envelope-To: anil.s.keshavamurthy@intel.com
-X-Envelope-To: davem@davemloft.net
-X-Envelope-To: mhiramat@kernel.org
-X-Envelope-To: rostedt@goodmis.org
-X-Envelope-To: mark.rutland@arm.com
-X-Envelope-To: jolsa@kernel.org
-X-Envelope-To: 42.hyeyoo@gmail.com
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: linux-mm@kvack.org
-X-Envelope-To: bpf@vger.kernel.org
-X-Envelope-To: linux-trace-kernel@vger.kernel.org
-Date: Fri, 31 May 2024 16:44:16 -0700
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Akinobu Mita <akinobu.mita@gmail.com>, Christoph Lameter <cl@linux.com>,
-	David Rientjes <rientjes@google.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-	Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mark Rutland <mark.rutland@arm.com>, Jiri Olsa <jolsa@kernel.org>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, bpf@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 3/4] mm, slab: add static key for should_failslab()
-Message-ID: <Zlpg0OFOsOSxrh9I@P9FQF9L96D.corp.robot.car>
-References: <20240531-fault-injection-statickeys-v1-0-a513fd0a9614@suse.cz>
- <20240531-fault-injection-statickeys-v1-3-a513fd0a9614@suse.cz>
+	s=arc-20240116; t=1717199118; c=relaxed/simple;
+	bh=l3t+BmfLmI+otY4MKq9hvWi5XN6CrB1zj/HPdbzHnk8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=E7TLD/hdxQGY5pQypxdz8Iu3Y3RaHlFZzpxbFz3BPvLgbQ7TcaFgVY6z6dRF/pDEMfHT11m+mLDcqRepRl9FTsea6PqhJVW8RLWjZyuQG9rUzDpoO3fF9rIAE7KiWq5UnsRSxFe8pEeGkRdrlziMPVDBrwCd7WzIj/+YvdX1WUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=ZklNmP1Y; arc=none smtp.client-ip=199.89.1.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 009.lax.mailroute.net (Postfix) with ESMTP id 4Vrfqw2d4jzlgMVh;
+	Fri, 31 May 2024 23:45:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1717199108; x=1719791109; bh=zkochTf1pJt/Am6auJvVyeUO
+	0m/clb0l/O7D9nMG788=; b=ZklNmP1YJ5I6wZoLhUGC2GqLb9lFFx6n2ktRI1Kx
+	Nl7eRqzK72L7iylss28HRyQRn55MXa33iQtDbhVYdGuOsrbsfxQUH0MQI/q/83NC
+	naGlUr7nOXCs+ynUYr7Us7SG/yw/CDkSBGpU6kffWxO+L13RE1xW0d+wScKyYd5C
+	8UbYw7VREWul20bnYqKuPoFAWHgcTgTfaYNDtti/zlVZ3sPgIwaaIQqSPOY35Vzl
+	fKeYl7k4q3U2Af6xUuNuWM+ySy4ooBHWAZubP7KHqeU/R9xLQ8aENAiol+5dzy2y
+	j20Zy90y6kCex0Hcv++PGtzTMByipGkBfQjmyB2khsUy+Q==
+X-Virus-Scanned: by MailRoute
+Received: from 009.lax.mailroute.net ([127.0.0.1])
+ by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id ho3liOON33iq; Fri, 31 May 2024 23:45:08 +0000 (UTC)
+Received: from [100.96.154.26] (unknown [104.132.0.90])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4Vrfqk2qcnzlgMVf;
+	Fri, 31 May 2024 23:45:06 +0000 (UTC)
+Message-ID: <967ec49b-3298-4db2-8f59-c5cd8abf366b@acm.org>
+Date: Fri, 31 May 2024 16:45:05 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240531-fault-injection-statickeys-v1-3-a513fd0a9614@suse.cz>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v20 02/12] Add infrastructure for copy offload in block
+ and request layer.
+To: Nitesh Shetty <nj.shetty@samsung.com>
+Cc: Damien Le Moal <dlemoal@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+ Jonathan Corbet <corbet@lwn.net>, Alasdair Kergon <agk@redhat.com>,
+ Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka <mpatocka@redhat.com>,
+ Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
+ Sagi Grimberg <sagi@grimberg.me>, Chaitanya Kulkarni <kch@nvidia.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ martin.petersen@oracle.com, david@fromorbit.com, hare@suse.de,
+ damien.lemoal@opensource.wdc.com, anuj20.g@samsung.com, joshi.k@samsung.com,
+ nitheshshetty@gmail.com, gost.dev@samsung.com, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ dm-devel@lists.linux.dev, linux-nvme@lists.infradead.org,
+ linux-fsdevel@vger.kernel.org
+References: <20240520102033.9361-1-nj.shetty@samsung.com>
+ <CGME20240520102842epcas5p4949334c2587a15b8adab2c913daa622f@epcas5p4.samsung.com>
+ <20240520102033.9361-3-nj.shetty@samsung.com>
+ <eda6c198-3a29-4da4-94db-305cfe28d3d6@acm.org>
+ <20240529061736.rubnzwkkavgsgmie@nj.shetty@samsung.com>
+ <9f1ec1c1-e1b8-48ac-b7ff-8efb806a1bc8@kernel.org>
+ <a866d5b5-5b01-44a2-9ccb-63bf30aa8a51@acm.org>
+ <665850bd.050a0220.a5e6b.5b72SMTPIN_ADDED_BROKEN@mx.google.com>
+ <abe8c209-d452-4fb5-90eb-f77b5ec1a2dc@acm.org>
+ <6659b691.630a0220.90195.d0ebSMTPIN_ADDED_BROKEN@mx.google.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <6659b691.630a0220.90195.d0ebSMTPIN_ADDED_BROKEN@mx.google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 31, 2024 at 11:33:34AM +0200, Vlastimil Babka wrote:
-> Since commit 4f6923fbb352 ("mm: make should_failslab always available for
-> fault injection") should_failslab() is unconditionally a noinline
-> function. This adds visible overhead to the slab allocation hotpath,
-> even if the function is empty. With CONFIG_FAILSLAB=y there's additional
-> overhead when the functionality is not enabled by a boot parameter or
-> debugfs.
-> 
-> The overhead can be eliminated with a static key around the callsite.
-> Fault injection and error injection frameworks can now be told that the
-> this function has a static key associated, and are able to enable and
-> disable it accordingly.
-> 
-> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+On 5/31/24 03:17, Nitesh Shetty wrote:
+> I see the following challenges with bio-chained approach.
+> 1. partitioned device:
+>  =C2=A0=C2=A0=C2=A0=C2=A0We need to add the code which iterates over al=
+l bios and adjusts
+>  =C2=A0=C2=A0=C2=A0=C2=A0the sectors offsets.
+> 2. dm/stacked device:
+>  =C2=A0=C2=A0=C2=A0=C2=A0We need to make major changes in dm, such as a=
+llocating cloned
+>  =C2=A0=C2=A0=C2=A0=C2=A0bios, IO splits, IO offset mappings. All of wh=
+ich need to
+>  =C2=A0=C2=A0=C2=A0=C2=A0iterate over chained BIOs.
+>=20
+> Overall with chained BIOs we need to add a special handling only for co=
+py
+> to iterate over chained BIOs and do the same thing which is being done
+> for single BIO at present.
+> Or am I missing something here ?
 
-Reviewed-by: Roman Gushchin <roman.gushchin@linux.dev>
+Hmm ... aren't chained bios submitted individually? See e.g.
+bio_chain_and_submit(). In other words, it shouldn't be necessary to
+add any code that iterates over bio chains.
+
+Thanks,
+
+Bart.
+
 
