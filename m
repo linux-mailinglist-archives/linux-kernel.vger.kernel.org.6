@@ -1,189 +1,123 @@
-Return-Path: <linux-kernel+bounces-197112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A17BB8D6656
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:07:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC3068D664C
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:06:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EA901F27090
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:07:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61ECA28C891
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:06:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CE2C16D4EF;
-	Fri, 31 May 2024 16:07:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E5AF158D78;
+	Fri, 31 May 2024 16:06:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MN3R1Dn0"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="X2iXABms"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69B2915884F
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 16:06:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C6ED225DA
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 16:06:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717171620; cv=none; b=Qi55sxpp5zikGzsCxNDdSh5tPi+XVZHp8OHMEWOzHuxvM3FXjMtQma/WZzBR7lryOSLXuZshjb51AyGrYys3QOeQ2eGfr82hsigFb6DPf+TLMdqsnPjS3+D6megFmwVmWhSrTLhx1QUU/fHYAKTGld0WO28teYqtUTLAu4e65UQ=
+	t=1717171612; cv=none; b=HQpj7UEP9eBNxyjSllY/NLdadx86r/p/j0YEnUJI8cwNxkRzNAlI1dJPpXameMkpxe73b4Titvvl0+Yis7bpP/hM3vPdhAXcRnmFcB4Oq5B/wvMTJXEhBuwhIoVmnTfJfRdvfnXl7opfAD8j5ZcMtqDu1djriV0ssKpZSXxkT9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717171620; c=relaxed/simple;
-	bh=JJsL5OqAlyz9O2TqvokIzCODnIdsn9g7a8asMj9Q3QI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=UUGR3ZXzfL2wFCR2h3gv5tMFiEMn4OUzsZtlfkNwLE/wdTbO7g2G+FPBWDrmGxToawo3eG4d5VritK6Eh/5EW9wn5vowVcw5msoQ4EZQ4ugluZtVDd2Qcxn8CVDHS2/KALJlIi/2O+U8oqR079UPvjdg85XceBm7f9uQmdczJNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MN3R1Dn0; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52b80e5688aso2705297e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 09:06:58 -0700 (PDT)
+	s=arc-20240116; t=1717171612; c=relaxed/simple;
+	bh=7mwVVurPzUNChHUh1iMgSK0YI+J7pOF0uwbRcRDKm6E=;
+	h=Date:Subject:CC:From:To:Message-ID; b=gBEmwdoAf/DfJK6VAjrcEEBInKDTNy8M8vc0pIamX7GtuGldHhB8YHu8U9c4XGZydb6kYtV+UUl2jPNAle53U7d8oklMCPUcw6MzIufoViGeNSQwAJYuF4365BcdVBiOpbFtuYqwGQ9qwBrzuRg9el4Papb42lziBy7tzfOiqzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=X2iXABms; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2c19baaf564so1716817a91.0
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 09:06:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717171616; x=1717776416; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=G6//FEP7cApjoaJ6/xp+H/xK3TdzcTfbzf8Zzgf+lsQ=;
-        b=MN3R1Dn0Gr1L3oL4fjeCZf/wywVvKejzscUp5F6pHfdlRnMqj+O+bE6GbLoZ83WzB8
-         m3l3vWMoQMElyRpGL/hhfboItniYwAKBq3MWugu9BHvCIMRRdoB1W/Eol20pRpcQquL+
-         4+1UnWKHj1CBGBtB+2P3EOGSH2836pg6QPz+pYhyIjzDr8zoDIYLOY/fwc6b+UCLlWmn
-         ui1C752OT6hDcrlPzIKX0v1DJ/Y/b8Oyu5A6dLn0ECaEeOETfcql4VSfQ4lc/naeSA4p
-         fyqNW/PGa7qaSVNjr3kBcs8p1Nuzr6JW7JvkuCSKuJ03z1vKlGG19Pcikg9kryUccO0p
-         MKfg==
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1717171609; x=1717776409; darn=vger.kernel.org;
+        h=message-id:to:from:cc:subject:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=59bPOkit/bk/X5CUNpKpOBEpf+FwqR7nda+qLGURm8M=;
+        b=X2iXABmstgQMbta4/lnXBKKLEROTnHb2NErMyj+ChHqqcGam1fFJIftVnrgpjDEPi6
+         3k82+tKXFDXgZqXtSpJzuw5ZIx5MLxLZMPGWtFvzLwa16g9KYLtwD70OrR2csp9PwjC7
+         TdKEds6QDwwK0Dp0MSbU9aSa4wGzcwNsoLpLXUFKcgLAYmeP4yRVju23QKxxwiNPGlAB
+         J68A0om4DqFgCgewIuO1zHuAC/J4DqTs/tCJBoF2ewEq+gfBnl9VZ2o4kfSiuly2ey6b
+         6nRE5S0O5P9/foRGhpYiPDDGCFmq5ouaJUhe2VbriAEclGXDyM4mL939Hecd2Sx1s3Cb
+         wfXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717171616; x=1717776416;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1717171609; x=1717776409;
+        h=message-id:to:from:cc:subject:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=G6//FEP7cApjoaJ6/xp+H/xK3TdzcTfbzf8Zzgf+lsQ=;
-        b=n4o/Dn4fosBXJ2ZjGuxUwFcz4XXn3gZ2y1dv/10wJiYTBCVQBjTqfNg+tNAHKr22vb
-         cZCc80rdE8nNPssOz0LeK78LOwP9s52lepCzGWiMQjj98YfGw3P3fHDZgseZfAiANKp+
-         Um8wWGrhlZv5aeNJtbSDihXCep4vmP5UJF3cRJNcyO08yXfMxeBqTAJPXm4mqCgid4FU
-         qrq0ulrVENQU6yuNm50jFaBvU2TDeoHzXe2S6w5/TrlyhzIyy+OwELnlIdlEiWS/rc7d
-         3w7Uy5YJn6IwvLkKLXjt3jqJlIYPEA1jLRiwsos6fSDk3KzJds7cuatmfHu1A+oAZ+wf
-         SvsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUxE/mYh2Aqp4acN8EF5QHPHRDEbycbHatYyJJLjHWlJhBRCQCd95qvmFBLEyH5sdbLjEU0+W0AImDUTKaZTohzxl+aJP2yxhHM6xld
-X-Gm-Message-State: AOJu0YzQ+wj/kUm5EwuMXfpSXnx548TCQ+qNbGJbN5e2wVVXK8EG1t/j
-	u1tH5o5wrKitCFhbjWduAXthc1mJVKoXVq4hn+UOOIBl9Ud5qeaiwgVVvGTvZIaIaAc2y7xMoLV
-	j
-X-Google-Smtp-Source: AGHT+IEHWKpPL+jhfqZavVDoxTOPOV5YFGaBjgLYXJxMXGRrq6wSeFgdwO7LUe8FIhStMBVRPg7hJg==
-X-Received: by 2002:a19:7501:0:b0:52a:7d01:84cd with SMTP id 2adb3069b0e04-52b89563555mr2122032e87.30.1717171616398;
-        Fri, 31 May 2024 09:06:56 -0700 (PDT)
-Received: from [127.0.1.1] ([188.27.161.69])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a67e73fc1b3sm100802566b.74.2024.05.31.09.06.55
+        bh=59bPOkit/bk/X5CUNpKpOBEpf+FwqR7nda+qLGURm8M=;
+        b=PvlYTL+mtP1M5SoTD6eQiJq0d9oKF5DNkGQJ44PlAJEk3ItTWAQp31abSlnDIDwwGx
+         luTXCt6m/Ee+QoYcn3KENLAnU73ozWGmM74Uwf0NXPtybP28p5Rfzqje7f13svoMmQP9
+         z+LQKv64g9/iIELRK8BR2bmq+TriAzxCUyR+O/3glTfvwdEGneo5qsHBQiRYpXbULSeI
+         WXkhq6MMtUUVa2PruMgmjZLUsNu+62XRq+hxERLuMHWGRVbSRUT8tqW9OnksiwH6s/En
+         oSEWZxjnR+x//YY56f66cihV27bb3i6ZjM6U0ekLnHr416Ui1isaxNIVHBQ0aMJKuNdF
+         IRKw==
+X-Forwarded-Encrypted: i=1; AJvYcCUfG1AlE65FKkO+xQ5fKt3/np2JZqIJ8ppVsHxWkDOZmNXpJU0iIJ7W1UCP6MuoD8rynav5nP4lhi9rEQCdu69rtG6SGnQVXyMpfGqJ
+X-Gm-Message-State: AOJu0YwidVMZDNpb0JLOVyU6XYNIGO32T2iTIG3cckaXugcI1TD4VkLU
+	7YOFN+QhM1YXE4fkMKH4yBcjjv4XrHUbSSYOaNs5jFpGlsDNiDeQOCGdf18IXmA=
+X-Google-Smtp-Source: AGHT+IEMigNfn1r6huzicsFKt2kn2Nt7nxSoyfkxZfZCNNTaNpu9jKUKM5YvL/KwFqdKX7px3NAhtg==
+X-Received: by 2002:a17:90a:d593:b0:2ab:eff6:e2ce with SMTP id 98e67ed59e1d1-2c1dc4b3f75mr2568823a91.0.1717171609109;
+        Fri, 31 May 2024 09:06:49 -0700 (PDT)
+Received: from localhost ([192.184.165.199])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c1c28450d4sm1651552a91.55.2024.05.31.09.06.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 May 2024 09:06:55 -0700 (PDT)
-From: Abel Vesa <abel.vesa@linaro.org>
-Date: Fri, 31 May 2024 19:06:45 +0300
-Subject: [PATCH 2/2] phy: qcom: qmp-pcie: Add X1E80100 Gen4 4-lane mode
- support
+        Fri, 31 May 2024 09:06:48 -0700 (PDT)
+Date: Fri, 31 May 2024 09:06:48 -0700 (PDT)
+X-Google-Original-Date: Fri, 31 May 2024 09:06:37 PDT (-0700)
+Subject: [GIT PULL] RISC-V Fixes for 6.10-rc2
+CC:         linux-riscv@lists.infradead.org,        linux-kernel@vger.kernel.org
+From: Palmer Dabbelt <palmer@rivosinc.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Message-ID: <mhng-d5ff54e8-e0e4-4b50-8461-c23eeb95b31d@palmer-ri-x1c9>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240531-x1e80100-phy-add-gen4x4-v1-2-5c841dae7850@linaro.org>
-References: <20240531-x1e80100-phy-add-gen4x4-v1-0-5c841dae7850@linaro.org>
-In-Reply-To: <20240531-x1e80100-phy-add-gen4x4-v1-0-5c841dae7850@linaro.org>
-To: Vinod Koul <vkoul@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: Johan Hovold <johan@kernel.org>, linux-arm-msm@vger.kernel.org, 
- linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3148; i=abel.vesa@linaro.org;
- h=from:subject:message-id; bh=JJsL5OqAlyz9O2TqvokIzCODnIdsn9g7a8asMj9Q3QI=;
- b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBmWfWbZ+v0JzeD+G1ezXOkdmTUgYe7zkYCZUaJp
- AT4TPNHSUGJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZln1mwAKCRAbX0TJAJUV
- Vl4JEACZlz6/FX72IPvoBV2KhG9rc7UqNay9v/AWlqtoOrFjkUGKYrtfWDzoLf3V72U2WR4b6Ae
- GgtBzkEufTBZgAzbfmRTCt9E1VT621Pu6y3hn7OMCrntVyvFtKfVETkJjEjx4AJwLIakN/AU4pU
- +JBmRNMQO/+ICih7/FEZFAF0u1rvMSs5ET+DBA6Jt15xr/iUKysZ8iRBNgKoWnKcjP1fyhW8sJG
- 1c6DJt5A3h92cxz8nCDaPWX3f1JXlirD7VtvB3YsAo4fJOJQERAi080O5OelHN3sWK85GKQ9CnK
- vSIxq3pzAY8ncjabYrsnUWv+Cci6GNYl0r//kHSX2tMNyAIYoYBrkjxnEF1uyh7SKCfyU9ydEoY
- Ekih3Td7WE1OZjVnQoNXaLSDPTud+530/R1cqUs0DcYfyEDU0G7brmDhlkr9ay3bzRd8eLQp1HT
- u8ozVsQNXsXBJAkNHJXmEanYl0HX7DTn1oddemGnycsRiff/5Bgxowm2G6SX2LqbbJCMpbdibHb
- dZvzTtHB/ng8d3BysFfcyeL+wakfNnt8Zzn7hVd1wJ85A9Uqdv+uot1siNWybEwqMCxgrsyV+xI
- fTjL1qevRegswKsItjvnFuOSb1cEYyvkKrQFIaD+iVnfAivE9OK9iO+vz0HTdQXD8eb1Z9q9WZA
- jKpObCZO6iOhRig==
-X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
- fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
 
-The PCIe 6th instance from X1E80100 can be used in both 4-lane mode or
-2-lane mode. Add the configuration and compatible for the 4-lane mode.
+The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
 
-Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
----
- drivers/phy/qualcomm/phy-qcom-qmp-pcie.c | 42 ++++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+  Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
 
-diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c b/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
-index 6c796723c8f5..4e0b28da69a7 100644
---- a/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
-+++ b/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
-@@ -1028,6 +1028,10 @@ static const struct qmp_phy_init_tbl x1e80100_qmp_gen4x2_pcie_ln_shrd_tbl[] = {
- 	QMP_PHY_INIT_CFG(QSERDES_V6_LN_SHRD_RX_MARG_COARSE_THRESH6_RATE3, 0x1f),
- };
- 
-+static const struct qmp_phy_init_tbl x1e80100_qmp_gen4x4_pcie_serdes_4ln_tbl[] = {
-+	QMP_PHY_INIT_CFG(QSERDES_V6_COM_PLL_BIAS_EN_CLK_BUFLR_EN, 0x1c),
-+};
-+
- static const struct qmp_phy_init_tbl x1e80100_qmp_gen4x2_pcie_tx_tbl[] = {
- 	QMP_PHY_INIT_CFG(QSERDES_V6_20_TX_RES_CODE_LANE_OFFSET_TX, 0x1d),
- 	QMP_PHY_INIT_CFG(QSERDES_V6_20_TX_RES_CODE_LANE_OFFSET_RX, 0x03),
-@@ -3342,6 +3346,41 @@ static const struct qmp_phy_cfg x1e80100_qmp_gen4x2_pciephy_cfg = {
- 		.ln_shrd		= x1e80100_qmp_gen4x2_pcie_ln_shrd_tbl,
- 		.ln_shrd_num		= ARRAY_SIZE(x1e80100_qmp_gen4x2_pcie_ln_shrd_tbl),
- 	},
-+
-+	.reset_list		= sdm845_pciephy_reset_l,
-+	.num_resets		= ARRAY_SIZE(sdm845_pciephy_reset_l),
-+	.vreg_list		= sm8550_qmp_phy_vreg_l,
-+	.num_vregs		= ARRAY_SIZE(sm8550_qmp_phy_vreg_l),
-+	.regs			= pciephy_v6_regs_layout,
-+
-+	.pwrdn_ctrl		= SW_PWRDN | REFCLK_DRV_DSBL,
-+	.phy_status		= PHYSTATUS_4_20,
-+	.has_nocsr_reset	= true,
-+};
-+
-+static const struct qmp_phy_cfg x1e80100_qmp_gen4x4_pciephy_cfg = {
-+	.lanes = 4,
-+
-+	.offsets		= &qmp_pcie_offsets_v6_20,
-+
-+	.tbls = {
-+		.serdes			= x1e80100_qmp_gen4x2_pcie_serdes_tbl,
-+		.serdes_num		= ARRAY_SIZE(x1e80100_qmp_gen4x2_pcie_serdes_tbl),
-+		.tx			= x1e80100_qmp_gen4x2_pcie_tx_tbl,
-+		.tx_num			= ARRAY_SIZE(x1e80100_qmp_gen4x2_pcie_tx_tbl),
-+		.rx			= x1e80100_qmp_gen4x2_pcie_rx_tbl,
-+		.rx_num			= ARRAY_SIZE(x1e80100_qmp_gen4x2_pcie_rx_tbl),
-+		.pcs			= x1e80100_qmp_gen4x2_pcie_pcs_tbl,
-+		.pcs_num		= ARRAY_SIZE(x1e80100_qmp_gen4x2_pcie_pcs_tbl),
-+		.pcs_misc		= x1e80100_qmp_gen4x2_pcie_pcs_misc_tbl,
-+		.pcs_misc_num		= ARRAY_SIZE(x1e80100_qmp_gen4x2_pcie_pcs_misc_tbl),
-+		.ln_shrd		= x1e80100_qmp_gen4x2_pcie_ln_shrd_tbl,
-+		.ln_shrd_num		= ARRAY_SIZE(x1e80100_qmp_gen4x2_pcie_ln_shrd_tbl),
-+	},
-+
-+	.serdes_4ln_tbl		= x1e80100_qmp_gen4x4_pcie_serdes_4ln_tbl,
-+	.serdes_4ln_num		= ARRAY_SIZE(x1e80100_qmp_gen4x4_pcie_serdes_4ln_tbl),
-+
- 	.reset_list		= sdm845_pciephy_reset_l,
- 	.num_resets		= ARRAY_SIZE(sdm845_pciephy_reset_l),
- 	.vreg_list		= sm8550_qmp_phy_vreg_l,
-@@ -4108,6 +4147,9 @@ static const struct of_device_id qmp_pcie_of_match_table[] = {
- 	}, {
- 		.compatible = "qcom,x1e80100-qmp-gen4x2-pcie-phy",
- 		.data = &x1e80100_qmp_gen4x2_pciephy_cfg,
-+	}, {
-+		.compatible = "qcom,x1e80100-qmp-gen4x4-pcie-phy",
-+		.data = &x1e80100_qmp_gen4x4_pciephy_cfg,
- 	},
- 	{ },
- };
+are available in the Git repository at:
 
--- 
-2.34.1
+  git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git tags/riscv-for-linus-6.10-rc2
 
+for you to fetch changes up to 1d84afaf02524d2558e8ca3ca169be2ef720380b:
+
+  riscv: Fix fully ordered LR/SC xchg[8|16]() implementations (2024-05-30 09:43:14 -0700)
+
+----------------------------------------------------------------
+RISC-V Fixes for 6.10-rc2
+
+* A fix to avoid pt_regs aliasing with idle thread stacks on secondary
+  harts.
+* HAVE_ARCH_HUGE_VMAP is enabled on XIP kernels, which fixes boot issues
+  on XIP systems with huge pages.
+* An update to the uABI documentation clarifying that only scalar
+  misaligned accesses were grandfathered in as supported, as the vector
+  extension did not exist at the time the uABI was frozen.
+* A fix for the recently-added byte/half atomics to avoid losing the
+  fully ordered decorations.
+
+----------------------------------------------------------------
+Alexandre Ghiti (1):
+      riscv: Fix fully ordered LR/SC xchg[8|16]() implementations
+
+Nam Cao (1):
+      riscv: enable HAVE_ARCH_HUGE_VMAP for XIP kernel
+
+Palmer Dabbelt (1):
+      Documentation: RISC-V: uabi: Only scalar misaligned loads are supported
+
+Sergey Matyukevich (1):
+      riscv: prevent pt_regs corruption for secondary idle threads
+
+ Documentation/arch/riscv/uabi.rst    |  4 +++-
+ arch/riscv/Kconfig                   |  2 +-
+ arch/riscv/include/asm/cmpxchg.h     | 22 ++++++++++++----------
+ arch/riscv/kernel/cpu_ops_sbi.c      |  2 +-
+ arch/riscv/kernel/cpu_ops_spinwait.c |  3 +--
+ 5 files changed, 18 insertions(+), 15 deletions(-)
 
