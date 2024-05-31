@@ -1,249 +1,196 @@
-Return-Path: <linux-kernel+bounces-196075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F2F78D56E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 02:26:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9E118D56E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 02:26:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EA761C23C51
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 00:26:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2735F1C24277
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 00:26:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F26A31848;
-	Fri, 31 May 2024 00:26:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11A674C79;
+	Fri, 31 May 2024 00:26:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bw96Wql6"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XyzF3D0W"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78F061103
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 00:26:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A76EE17E9
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 00:26:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717115167; cv=none; b=sQDsD5cHTow3Y3y/HwjctKUqDFGTcX+QLkBFCaC9f7p2lQFl+Q+3OJ7lPZMYBKB/DXkajDY3URSd5zWwFRXUTuCQxnYiBb+eWC0H75N9R2qx6AMjXN45jqgDMZv42trQFRIHfxf2hCanC0yDc9gkq3uYVx5qyWol1jg4UVDs5oE=
+	t=1717115194; cv=none; b=eTmc0eYvF6YjADtHRbyEMYNg6abc1FCH/3zdUYeFB6OURv8jSwPlVhnDEtKztTy8h4nqNHSyw0/djB+E0aav4suKoWk6pf/fgR/QW5A9kvn895fv/3ZiJMj25ElYb94fOeBA87/vaStUng4yKmoqemaTJY/QBTEzFfB77ny3LAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717115167; c=relaxed/simple;
-	bh=2Ky422DEIg3Jw2hTeXVdbGZmfah7IqL0/fd8RjVrXYQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fXVtyz+s9QDEOErsdY3rl+e3HKbX/L94Dp6FGK62V6dn7PTZ1uWMBnQVgSjtVEpy1AhPUqzh+HG/ujlb3k/LYLrxouDPX/WHJt9MGG+rxaM+1NKHQEzC+bATJzIVe9ZRkwNU6JFQ7Cgf6t9+2zaM1/12rxIzqCTLLZ+3tPwgF/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bw96Wql6; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717115166; x=1748651166;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=2Ky422DEIg3Jw2hTeXVdbGZmfah7IqL0/fd8RjVrXYQ=;
-  b=bw96Wql6p9A2pYMVBIXbr+vg5HN8h0jheMR7d+/8UmSrQjLjYPGnXqhk
-   nGge/yOn1Y5syDNLy4p3W3fleDeUsMmrOxW96piQAfZkJifd2+V7zh0+7
-   R2RDpACg8oGIqtLWFmHZ/bnzNKiUrXh73UU8ecX4b1Pa2tQB1HidBVlw3
-   g2KFcS2YWyGe2XsepXGcnCF364tshAyjb7cD1lBm1+kOqjDajuob3QHeh
-   Q1JrUR8WgNa2lY5pbZ+/8yqq6mqSgASDbc0NLlsF6t3gE8rxol0wGXw64
-   ux6/tNBppwV9x5fuWlA221mv5w5t46ljzgao/1oIzQXwLe+6ciyg2V7WQ
-   Q==;
-X-CSE-ConnectionGUID: npR27lYaSkWusslgCz1Lvg==
-X-CSE-MsgGUID: JKBtuZj7RpGbj4NmxCEfjQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="31174383"
-X-IronPort-AV: E=Sophos;i="6.08,202,1712646000"; 
-   d="scan'208";a="31174383"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 17:26:05 -0700
-X-CSE-ConnectionGUID: t983usbUQuSTBLOpcIAgLA==
-X-CSE-MsgGUID: K5mKGmECQnWD1/FSUh7mbg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,202,1712646000"; 
-   d="scan'208";a="35952940"
-Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 17:26:04 -0700
-Date: Thu, 30 May 2024 17:26:03 -0700
-From: Tony Luck <tony.luck@intel.com>
-To: Reinette Chatre <reinette.chatre@intel.com>
-Cc: Fenghua Yu <fenghua.yu@intel.com>,
-	Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
-	Peter Newman <peternewman@google.com>,
-	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>,
-	Drew Fustini <dfustini@baylibre.com>,
-	Dave Martin <Dave.Martin@arm.com>, x86@kernel.org,
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev
-Subject: Re: [PATCH v19 08/20] x86/resctrl: Prepare for new Sub-NUMA Cluster
- (SNC) monitor files
-Message-ID: <ZlkZG5bgsU6hY0Ok@agluck-desk3.sc.intel.com>
-References: <20240528222006.58283-1-tony.luck@intel.com>
- <20240528222006.58283-9-tony.luck@intel.com>
- <fe9a4cd5-f74d-4c89-8667-8b5b1841b84e@intel.com>
+	s=arc-20240116; t=1717115194; c=relaxed/simple;
+	bh=yF+ay1y7SPCrJDKzpmXB3jKBVDA5cGjvnwHThdq9z8Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Gs0thwNqZ5/38YhtlahQ4nTF9oqK9bJxWIHyvbuhNWOpwE1BWXsz2V57A1nQ34NCW20cB6Kcc9bmfjNFDWV36FsV4M+vnYWd0KeRdN9mdeRk2jGP1gT8cFgKhgAmNfLNYK8CE1XWPZ5vZAOjtZLxrBm3ArDxaHtDHKJ//iiq3zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XyzF3D0W; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717115191;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aipVkvfwSPi3x65R9DjuBZzar5P1bHnBi9T0bdxSFnE=;
+	b=XyzF3D0WAifnUGfONUgCKrpWuKKRe4XZURVDySyNIFlFxfCKiSznH2OM5BDU/jWSDNb8O8
+	q5lbseymdRvYgyoqC4IGUMc3fYflZyreONZSNr4n7qNrDEj0u6A1NWJFQvFCR9Nd7whFWQ
+	vDUWR1vsQP5JtdAGXl40JoTXtcD4pJU=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-44-SCqrJ5bkMRCm3z5FhLq8CA-1; Thu, 30 May 2024 20:26:30 -0400
+X-MC-Unique: SCqrJ5bkMRCm3z5FhLq8CA-1
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2bf7dd49cbaso1224232a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 17:26:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717115189; x=1717719989;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aipVkvfwSPi3x65R9DjuBZzar5P1bHnBi9T0bdxSFnE=;
+        b=qwJcyKxUchC7nkQMtl/0Ez3lPGQGAwJl1XUkKkzW53vK1e46pStPXuODY855Xi3IzH
+         RTqDXJwtgiHLIDFVf7KldsdR1Ip21Q32ClSpkW2zkz+ONkeWFbx1ssLigrA6QX3vGwvu
+         CLx7EhAGQGva8CexVNvzTYE4m0rVhde9bJ+Ws99qYmq6n2FKkW7gB5j3zzOY6FBXhFI8
+         AEnssEdYknQTVZ7maQqHeIRZB+seHfFp90PFf9HiGOpnqv/7/VK9wSoF0Y1Vp7hyYoa5
+         FYI5l8AoxjMofBpXubSxMCDHGUaaChA/pobeELUEkl8RYZoaw53EN+88XK39MGMK+7wa
+         VJrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWXOdeIcXNElUFSiL63AKllCrzwH23Hk5MRpUp38RnM2Id1fJvI/eWRI9XtyycLcANULI/y1Nnn0NrF49nuxc/qCB9BGF9TWZy+j4sN
+X-Gm-Message-State: AOJu0YzSxoSw4HqNciBnBOJuvP3L6TRSSNizGluud/6nxSF64cdm8/qZ
+	NP/6zchY/1idGOsiwxEf/3mkgFeHcvpBRx/Jk4fJYcpi/Rez+aIr4Shv2YEKMSH14GPQW2QPmoQ
+	NcPpsGa/GkuuCE2X4mOyQ4LevdIuCiMgDoXKFooHMXuN5XoaH0sA4+ycIp9eebNkhTqIdoxE5/w
+	HOLOKwhG/4M4DcQj6WXUaRViYGDVv84cU5EGVI
+X-Received: by 2002:a17:90a:ee8d:b0:2c1:903a:70c0 with SMTP id 98e67ed59e1d1-2c1dc56da0cmr314180a91.7.1717115188981;
+        Thu, 30 May 2024 17:26:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG+FKtWSIuvG8wEVIw8VPXf4nzjC1uorNnBomYozkOp7iti04ZRCzNVR/yD4JfFeLec7XdUQrES9X+D7O9driQ=
+X-Received: by 2002:a17:90a:ee8d:b0:2c1:903a:70c0 with SMTP id
+ 98e67ed59e1d1-2c1dc56da0cmr314157a91.7.1717115188478; Thu, 30 May 2024
+ 17:26:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <fe9a4cd5-f74d-4c89-8667-8b5b1841b84e@intel.com>
+References: <1717026141-25716-1-git-send-email-si-wei.liu@oracle.com>
+ <CACGkMEugdcKjxMA_3+-gfh4wKOP5vTvYOb2V+MP7VxDiZ6EhiA@mail.gmail.com> <490d42c8-5361-4db4-a5d1-3f992f4b8003@oracle.com>
+In-Reply-To: <490d42c8-5361-4db4-a5d1-3f992f4b8003@oracle.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Fri, 31 May 2024 08:26:17 +0800
+Message-ID: <CACGkMEvdyFxL1dW81H+=uEqZWqH5-AVOE_0y3DCO-pK4ap==fg@mail.gmail.com>
+Subject: Re: [PATCH] net: tap: validate metadata and length for XDP buff
+ before building up skb
+To: Si-Wei Liu <si-wei.liu@oracle.com>
+Cc: willemdebruijn.kernel@gmail.com, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, mst@redhat.com, 
+	boris.ostrovsky@oracle.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 30, 2024 at 01:21:01PM -0700, Reinette Chatre wrote:
-> Hi Tony,
-> 
-> On 5/28/24 3:19 PM, Tony Luck wrote:
-> > When SNC is enabled monitoring data is collected at the SNC node
-> > granularity, but must be reported at L3-cache granularity for
-> > backwards compatibility in addition to reporting at the node
-> > level.
-> > 
-> > Add a "ci" field to the rdt_mon_domain structure to save the
-> > cache information about the enclosing L3 cache for the domain.
-> > This provides:
-> > 
-> > 1) The cache id which is needed to compose the name of the legacy
-> > monitoring directory, and to determine which domains should be
-> > summed to provide L3-scoped data.
-> > 
-> > 2) The shared_cpu_map which is needed to determine which CPUs can
-> > be used to read the RMID counters with the MSR interface.
-> > 
-> > This is the first step to an eventual goal of monitor reporting files
-> > like this (for a system with two SNC nodes per L3):
-> > 
-> > $ cd /sys/fs/resctrl/mon_data
-> > $ tree mon_L3_00
-> > mon_L3_00			<- 00 here is L3 cache id
-> > ├── llc_occupancy		\  These files provide legacy support
-> > ├── mbm_local_bytes		 > for non-SNC aware monitor apps
-> > ├── mbm_total_bytes		/  that expect data at L3 cache level
-> > ├── mon_sub_L3_00		<- 00 here is SNC node id
-> > │   ├── llc_occupancy		\  These files are finer grained
-> > │   ├── mbm_local_bytes		 > data from each SNC node
-> > │   └── mbm_total_bytes		/
-> > └── mon_sub_L3_01
-> >      ├── llc_occupancy		\
-> >      ├── mbm_local_bytes		 > As above, but for node 1.
-> >      └── mbm_total_bytes		/
-> > 
-> > Signed-off-by: Tony Luck <tony.luck@intel.com>
-> > ---
-> >   include/linux/resctrl.h                   |  2 ++
-> >   arch/x86/kernel/cpu/resctrl/internal.h    | 21 +++++++++++++++++++++
-> >   arch/x86/kernel/cpu/resctrl/core.c        |  7 ++++++-
-> >   arch/x86/kernel/cpu/resctrl/pseudo_lock.c |  1 -
-> >   arch/x86/kernel/cpu/resctrl/rdtgroup.c    |  1 -
-> >   5 files changed, 29 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/include/linux/resctrl.h b/include/linux/resctrl.h
-> > index 64b6ad1b22a1..d733e1f6485d 100644
-> > --- a/include/linux/resctrl.h
-> > +++ b/include/linux/resctrl.h
-> > @@ -96,6 +96,7 @@ struct rdt_ctrl_domain {
-> >   /**
-> >    * struct rdt_mon_domain - group of CPUs sharing a resctrl monitor resource
-> >    * @hdr:		common header for different domain types
-> > + * @ci:			cache info for this domain
-> >    * @rmid_busy_llc:	bitmap of which limbo RMIDs are above threshold
-> >    * @mbm_total:		saved state for MBM total bandwidth
-> >    * @mbm_local:		saved state for MBM local bandwidth
-> > @@ -106,6 +107,7 @@ struct rdt_ctrl_domain {
-> >    */
-> >   struct rdt_mon_domain {
-> >   	struct rdt_domain_hdr		hdr;
-> > +	struct cacheinfo		*ci;
-> >   	unsigned long			*rmid_busy_llc;
-> >   	struct mbm_state		*mbm_total;
-> >   	struct mbm_state		*mbm_local;
-> > diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
-> > index 135190e0711c..eb70d3136ced 100644
-> > --- a/arch/x86/kernel/cpu/resctrl/internal.h
-> > +++ b/arch/x86/kernel/cpu/resctrl/internal.h
-> > @@ -2,6 +2,7 @@
-> >   #ifndef _ASM_X86_RESCTRL_INTERNAL_H
-> >   #define _ASM_X86_RESCTRL_INTERNAL_H
-> > +#include <linux/cacheinfo.h>
-> >   #include <linux/resctrl.h>
-> >   #include <linux/sched.h>
-> >   #include <linux/kernfs.h>
-> > @@ -509,6 +510,26 @@ static inline bool resctrl_arch_get_cdp_enabled(enum resctrl_res_level l)
-> >   int resctrl_arch_set_cdp_enabled(enum resctrl_res_level l, bool enable);
-> > +/*
-> > + * Get the cacheinfo structure of the cache associated with @cpu at level @level.
-> > + * cpuhp lock must be held.
-> > + */
-> > +static inline struct cacheinfo *get_cpu_cacheinfo_level(int cpu, int level)
-> > +{
-> > +	struct cpu_cacheinfo *ci = get_cpu_cacheinfo(cpu);
-> > +	int i;
-> > +
-> > +	for (i = 0; i < ci->num_leaves; i++) {
-> > +		if (ci->info_list[i].level == level) {
-> > +			if (ci->info_list[i].attributes & CACHE_ID)
-> > +				return &ci->info_list[i];
-> > +			break;
-> > +		}
-> > +	}
-> > +
-> > +	return NULL;
-> > +}
-> > +
-> 
-> This does not belong in resctrl. It really looks to partner well with existing
-> cache helpers in include/linux/cacheinfo.h that already contains get_cpu_cacheinfo_id().
-> Considering the existing naming get_cpu_cacheinfo() may be more appropriate.
+On Fri, May 31, 2024 at 5:05=E2=80=AFAM Si-Wei Liu <si-wei.liu@oracle.com> =
+wrote:
+>
+>
+>
+> On 5/29/2024 7:26 PM, Jason Wang wrote:
+> > On Thu, May 30, 2024 at 8:54=E2=80=AFAM Si-Wei Liu <si-wei.liu@oracle.c=
+om> wrote:
+> >> The cited commit missed to check against the validity of the length
+> >> and various pointers on the XDP buff metadata in the tap_get_user_xdp(=
+)
+> >> path, which could cause a corrupted skb to be sent downstack. For
+> >> instance, tap_get_user() prohibits short frame which has the length
+> >> less than Ethernet header size from being transmitted, while the
+> >> skb_set_network_header() in tap_get_user_xdp() would set skb's
+> >> network_header regardless of the actual XDP buff data size. This
+> >> could either cause out-of-bound access beyond the actual length, or
+> >> confuse the underlayer with incorrect or inconsistent header length
+> >> in the skb metadata.
+> >>
+> >> Propose to drop any frame shorter than the Ethernet header size just
+> >> like how tap_get_user() does. While at it, validate the pointers in
+> >> XDP buff to avoid potential size overrun.
+> >>
+> >> Fixes: 0efac27791ee ("tap: accept an array of XDP buffs through sendms=
+g()")
+> >> Cc: jasowang@redhat.com
+> >> Signed-off-by: Si-Wei Liu <si-wei.liu@oracle.com>
+> >> ---
+> >>   drivers/net/tap.c | 7 +++++++
+> >>   1 file changed, 7 insertions(+)
+> >>
+> >> diff --git a/drivers/net/tap.c b/drivers/net/tap.c
+> >> index bfdd3875fe86..69596479536f 100644
+> >> --- a/drivers/net/tap.c
+> >> +++ b/drivers/net/tap.c
+> >> @@ -1177,6 +1177,13 @@ static int tap_get_user_xdp(struct tap_queue *q=
+, struct xdp_buff *xdp)
+> >>          struct sk_buff *skb;
+> >>          int err, depth;
+> >>
+> >> +       if (unlikely(xdp->data < xdp->data_hard_start ||
+> >> +                    xdp->data_end < xdp->data ||
+> >> +                    xdp->data_end - xdp->data < ETH_HLEN)) {
+> >> +               err =3D -EINVAL;
+> >> +               goto err;
+> >> +       }
+> > For ETH_HLEN check, is it better to do it in vhost-net?
+> Not sure. Initially I thought about this as well, but changed mind.
+> Although the TUN_MSG_PTR interface was specifically customized for
+> vhost-net in the kernel, could there be any userspace app do sendmsg()
+> also with customized TUN_MSG_PTR control message over tap's fd? If
+> that's possible in reality, I guess limiting the fix to only vhost-net
+> in the kernel is narrow scoped.
 
-Reinette,
+I think not, sendmsg() can't be used for tuntap.
 
-The name get_cpu_cacheinfo() already exists and does something different
-(returns a "struct cpu_cacheinfo *" rather than a "struct cacheinfo *").
+>
+> Additionally, it seems just the skb delivery path in the tap driver (or
+> tuntap) that populates the relevant skb field needs the ETH_HLEN check,
+> the XDP fast path can just transmit or forward xdp buff as-is without
+> having to check the (header) length of payload data. That said, it may
+> break some guest applications that intentionally send out short frames
+> (for test purpose?)
 
-How does this look for the change to <linux/cacheinfo.h> ... add a new
-function get_cpu_cacheinfo_level() and then use it as a helper for the
-existing get_cpu_cacheinfo_id()
+I don't think so, various hypervisors will just drop short ethernet frames.
 
--Tony
+> if unconditionally drop all of them from the vhost-net.
+>
+> > It seems tuntap suffers from this as well.
+> True, theoretically I can fix tuntap as well, but I don't have a setup
+> to test out the code change thoroughly. Any volunteer here to do so
+> (test it or fix it)?
 
----
+It should be easier than the tap. If you can't find one, I can test.
 
-diff --git a/include/linux/cacheinfo.h b/include/linux/cacheinfo.h
-index 2cb15fe4fe12..301b0b24f446 100644
---- a/include/linux/cacheinfo.h
-+++ b/include/linux/cacheinfo.h
-@@ -113,10 +113,10 @@ int acpi_get_cache_info(unsigned int cpu,
- const struct attribute_group *cache_get_priv_group(struct cacheinfo *this_leaf);
- 
- /*
-- * Get the id of the cache associated with @cpu at level @level.
-+ * Get the cacheinfo structure for cache associated with @cpu at level @level.
-  * cpuhp lock must be held.
-  */
--static inline int get_cpu_cacheinfo_id(int cpu, int level)
-+static inline struct cacheinfo *get_cpu_cacheinfo_level(int cpu, int level)
- {
- 	struct cpu_cacheinfo *ci = get_cpu_cacheinfo(cpu);
- 	int i;
-@@ -124,12 +124,23 @@ static inline int get_cpu_cacheinfo_id(int cpu, int level)
- 	for (i = 0; i < ci->num_leaves; i++) {
- 		if (ci->info_list[i].level == level) {
- 			if (ci->info_list[i].attributes & CACHE_ID)
--				return ci->info_list[i].id;
--			return -1;
-+				return &ci->info_list[i];
-+			return NULL;
- 		}
- 	}
- 
--	return -1;
-+	return NULL;
-+}
-+
-+/*
-+ * Get the id of the cache associated with @cpu at level @level.
-+ * cpuhp lock must be held.
-+ */
-+static inline int get_cpu_cacheinfo_id(int cpu, int level)
-+{
-+	struct cacheinfo *ci = get_cpu_cacheinfo_level(cpu, level);
-+
-+	return ci ? ci->id : -1;
- }
- 
- #ifdef CONFIG_ARM64
+>
+> >
+> > And for the check for other xdp fields, it deserves a BUG_ON() or at
+> > least WARN_ON() as they are set by vhost-net.
+> Hmmm, WARN_ON may be fine (I don't see userspace is prevented from
+> fabricating such invalid addresses through the TUN_MSG_PTR uAPI).
+
+Tap doesn't export socket objects to userspace, so it's not an uAPI.
+
+Thanks
+
+>
+> -Siwei
+> >
+> > Thanks
+> >
+> >> +
+> >>          if (q->flags & IFF_VNET_HDR)
+> >>                  vnet_hdr_len =3D READ_ONCE(q->vnet_hdr_sz);
+> >>
+> >> --
+> >> 2.39.3
+> >>
+>
+
 
