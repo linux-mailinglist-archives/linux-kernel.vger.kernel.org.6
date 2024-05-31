@@ -1,131 +1,94 @@
-Return-Path: <linux-kernel+bounces-196558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFE9F8D5DFC
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 11:15:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 285C28D5E07
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 11:17:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94D161F256B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 09:15:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1BCF1F26049
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 09:17:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A02F78C99;
-	Fri, 31 May 2024 09:15:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F998768EE;
+	Fri, 31 May 2024 09:17:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EfT5/H4t"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Q9wU3dHf"
+Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCE054D131;
-	Fri, 31 May 2024 09:15:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AA9C219E0
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 09:16:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717146925; cv=none; b=nvsbK7ktCt1/pW1XexTfYtrKSlEAZ5Tdrkok/EdNmHgbTaYhShxY0nbV/PbssmKS8Am2/wBgj0sJ7HBhc1SAh6zh8hbA3XH6NKi1/at2TvypKU3Qftvw4MuNXfiUIjwSzdx9cJzjf6UhYgUfXcaB0pqP8xh+uA0NPOqmTml+vGE=
+	t=1717147023; cv=none; b=aHz1TkqSyLCOlI71OuSlqRe9xCNVwBpgIhUDLLTchK6PRR5PXfiiMBOZZq7CE3n8vNA0Og2FlEAHPlrDTUTx/Pnacw8xjnP0wcyicoIELAQtQceSRVpGiI1zrOsOYMnm/OyQ5TCVi+akh4dOFq+j1rXADNDhNuBdFAOAwIPXuBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717146925; c=relaxed/simple;
-	bh=PyR0XjPdnkaxswAyYJJbl/Iobpv9s0NKRAixdimfjk4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UtmxUwOlbiztUq8ILiSILPP8yuF/9GHUjWf20vkjkqJNU7A1/KAFkTIoqXNQQT7wV8VsUwVFnhGoJz4tA1dC9s4AjcmfshGxlUfPQNgSj3TOg34WthEowP5Yis1KR6T+MmxFZN1MUCVMyQpJOWzo7u2C54rzN887SS8ks0LxDdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EfT5/H4t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F91CC116B1;
-	Fri, 31 May 2024 09:15:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717146925;
-	bh=PyR0XjPdnkaxswAyYJJbl/Iobpv9s0NKRAixdimfjk4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=EfT5/H4tC/WrtDz+i+BizRaZnhIlHUrRFbR1aIVTnDuCDssYRtb/ghCBPlmeNeEqz
-	 gAaR+FsB7pM987JJTI2V8iPx6rebNzFb7QKUi1AxkkZszJGfyXt3rXMM5i9li1NIzX
-	 9p0t/S4yl15eVqPagYAmPkR0FTTKKhHVz5yx+mdEZWX6codYJKed99JTAjv9fIvtx0
-	 NZ6QRl4IfMRcSQ2se4aM9TzVuwEYKuTiEEti2QK6/GUzJicK1idmBXVMPekh+sf9W+
-	 dfqJNgK4ti3VvVD41gmCXMgmHjnhrbgCjJ4mmchLT7VOWjVE0BUPYqSv4nKHKXvx5l
-	 L9utNymb1jgbw==
-Message-ID: <2adcdb22-4524-4c5e-b2cc-66de1e8a2fd4@kernel.org>
-Date: Fri, 31 May 2024 11:15:19 +0200
+	s=arc-20240116; t=1717147023; c=relaxed/simple;
+	bh=ga8xlJ50EjCZk3NCeaXWFZ1iuZTpf8TMYwOh7vCcsYU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=duoeZ4/bQ2fzIxwQt95wdvucTFFJE9cRu3ZtpR7ympzWQNZgXyu8pE8H+L8RXENpK5Fkb9m5HNALTxCZ3Y415WfXpp4ZYGNQAzsCOLCU3VnlyMP1izCQ6hkfOUgEPmOknpFVpwucVh4IzJMAkKBwz4wUc1geeYl7GDPNfzkO6KQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Q9wU3dHf; arc=none smtp.client-ip=115.124.30.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1717147012; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=QxHkEYftDlz/KeEpN4FX7pbniR6z89NxwWd3eLvuSoc=;
+	b=Q9wU3dHf+tdA/dZt+i0IhlHCuem5FtuFhmITSD7+TojUK1PKjPFdV41QBTUNKzU8AHcXGRu2IOl/2Ohxs2kcFlR/oNyxwLT7eMyuxrDKLVYoSsAo5uY1V4H+Elv7+ccw/+lsMAoW//radMx4FiFlR12rUYBNiYt8S21Ge5qblIU=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067109;MF=jiapeng.chong@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0W7ZLw8K_1717147005;
+Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0W7ZLw8K_1717147005)
+          by smtp.aliyun-inc.com;
+          Fri, 31 May 2024 17:16:51 +0800
+From: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+To: akpm@linux-foundation.org
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
+	Abaci Robot <abaci@linux.alibaba.com>
+Subject: [PATCH] mm: userfaultfd: Use swap() in double_pt_lock()
+Date: Fri, 31 May 2024 17:16:43 +0800
+Message-Id: <20240531091643.67778-1-jiapeng.chong@linux.alibaba.com>
+X-Mailer: git-send-email 2.20.1.7.g153144c
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 02/11] dt-bindings: power: supply: max77693: Add
- maxim,usb-connector property
-To: Artur Weber <aweber.kernel@gmail.com>,
- Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, linux-pm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- ~postmarketos/upstreaming@lists.sr.ht, Henrik Grimler <henrik@grimler.se>,
- Wolfgang Wiedmeyer <wolfgit@wiedmeyer.de>,
- Denis 'GNUtoo' Carikli <GNUtoo@cyberdimension.org>
-References: <20240530-max77693-charger-extcon-v1-0-dc2a9e5bdf30@gmail.com>
- <20240530-max77693-charger-extcon-v1-2-dc2a9e5bdf30@gmail.com>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240530-max77693-charger-extcon-v1-2-dc2a9e5bdf30@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 30/05/2024 10:55, Artur Weber wrote:
-> Allow for specifying a USB connector to use for charger type/OTG cable
-> detection.
-> 
-> The way this is done is inspired by the rt5033-charger implementation.
-> 
-> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
-> ---
+Use existing swap() function rather than duplicating its implementation.
 
+/mm/userfaultfd.c:1006:13-14: WARNING opportunity for swap()
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=9266
+Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+---
+ mm/userfaultfd.c | 10 ++--------
+ 1 file changed, 2 insertions(+), 8 deletions(-)
 
-Best regards,
-Krzysztof
+diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+index defa5109cc62..5e7f2801698a 100644
+--- a/mm/userfaultfd.c
++++ b/mm/userfaultfd.c
+@@ -995,14 +995,8 @@ void double_pt_lock(spinlock_t *ptl1,
+ 	__acquires(ptl1)
+ 	__acquires(ptl2)
+ {
+-	spinlock_t *ptl_tmp;
+-
+-	if (ptl1 > ptl2) {
+-		/* exchange ptl1 and ptl2 */
+-		ptl_tmp = ptl1;
+-		ptl1 = ptl2;
+-		ptl2 = ptl_tmp;
+-	}
++	if (ptl1 > ptl2)
++		swap(ptl1, ptl2);
+ 	/* lock in virtual address order to avoid lock inversion */
+ 	spin_lock(ptl1);
+ 	if (ptl1 != ptl2)
+-- 
+2.20.1.7.g153144c
 
 
