@@ -1,107 +1,132 @@
-Return-Path: <linux-kernel+bounces-196520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DB358D5D51
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:57:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3169C8D5D53
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:57:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C86B1C21E01
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 08:57:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0FC2B22458
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 08:57:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66CD8155C9B;
-	Fri, 31 May 2024 08:57:08 +0000 (UTC)
-Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F441156250;
+	Fri, 31 May 2024 08:57:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VBw/Yiis"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88EA843154;
-	Fri, 31 May 2024 08:57:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E67E43154
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 08:57:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717145828; cv=none; b=paP0dVHoklQ2o2GtqvRbACJSPW+6aaNFjal8RNod+Jv7pUmAH1+SS2iBqKhz0dDUSyyrQ/qG7vRsAjw6A2D+Xhh1QeW0/jVXJ3goSEjHKit6JAboSbX4aLWDzSkDaT/ROjO8GSd3YPnA4F7LiV9KZlj8BS5qDWkVe6p5rvkka0Y=
+	t=1717145831; cv=none; b=ZM/VDhTdQlxradsMEDsXdI+LpxgXZGMLcGqjIOifbDEprTyv7pcXJsIyiPU/vhNR+B01T9kYkk4qxYeDCz1Gm9Rl9fPGd0rOk1MBuWkhQTWdsnTll0UM+/Ycn2pcg+/EJUY0H4XD/bPqFDcjr/cmOLhFaDloJ8BkggSmchlshLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717145828; c=relaxed/simple;
-	bh=kPaFz5uK0ZOx/rIMQz/T/Y/SU8NEW+MLiaH5hug2usI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PkG6KFxOVBkAHc7mrtzu5bELm+so2l9OJVK2/cc6YtR0ZJtynLv1rg0A5su0ndwLhKW3NRigOE3Ko/fT0e5LK7NZJkJcP3NMsFeD4a39kC+DObrPsatIcjFYEla6FVCSnxPlwEErMzJ3thUOvLN3z0tAwOtgu0GqTujVyWF2jeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44V4tQal022085;
-	Fri, 31 May 2024 08:56:54 GMT
-Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 3yf5ydg88n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Fri, 31 May 2024 08:56:53 +0000 (GMT)
-Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 31 May 2024 01:56:52 -0700
-Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
- 15.1.2507.39 via Frontend Transport; Fri, 31 May 2024 01:56:48 -0700
-From: Lizhi Xu <lizhi.xu@windriver.com>
-To: <ebiggers@kernel.org>
-CC: <adilger.kernel@dilger.ca>, <coreteam@netfilter.org>,
-        <davem@davemloft.net>, <fw@strlen.de>, <jaegeuk@kernel.org>,
-        <kadlec@netfilter.org>, <kuba@kernel.org>,
-        <linux-ext4@vger.kernel.org>, <linux-fscrypt@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <lizhi.xu@windriver.com>,
-        <netdev@vger.kernel.org>, <netfilter-devel@vger.kernel.org>,
-        <pablo@netfilter.org>,
-        <syzbot+340581ba9dceb7e06fb3@syzkaller.appspotmail.com>,
-        <syzkaller-bugs@googlegroups.com>, <tytso@mit.edu>
-Subject: [PATCH V3] ext4: check hash version and filesystem casefolded consistent
-Date: Fri, 31 May 2024 16:56:47 +0800
-Message-ID: <20240531085647.2918240-1-lizhi.xu@windriver.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240531033407.GB6505@sol.localdomain>
-References: <20240531033407.GB6505@sol.localdomain>
+	s=arc-20240116; t=1717145831; c=relaxed/simple;
+	bh=RMhOq0e80xkHIOos311ef0InQ1+OuX+zK7Yy4hvNt5I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aSLVJhbnUoIDQc6ZYCCwEkbb6306IynlVDOXiHVr2a8Kx/yhPyTmdmpd/2m2uPHOt+PVHOQylrJhNDKHIX5zeeKJLYUFMJkO/UgyWyImnwXXTWN8f/Pz3gnwB6t87iEL6etDriMmKZgCf7qnU4eNuetRTy+YtlifJqI8RPxinjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VBw/Yiis; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717145831; x=1748681831;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=RMhOq0e80xkHIOos311ef0InQ1+OuX+zK7Yy4hvNt5I=;
+  b=VBw/YiisbFl9FSKzgNr9+GyQ6MH8xst3qMt/aQjlhneoWcWSoCgoT0Qg
+   HlJmfjHf+1RUFnvDjHqHS60vvbYtrkZxy4s1lsmAW/UOh8ORe0sW2/qlf
+   NOzAgBNpOGPWbUr6oqI4eN8X14EIO4h0hlPJhQ8kqd2a29j9OzdNmTfPX
+   8+6WeGk+Yr5TAFNDDZOto7ts0111zm4DbR6q2MOev0GIJbJ/wI6WXj0KH
+   gMiloh4phzvUUATpX+3hmoQXN8AnYWB8WBFKcP0L+ITIdNHFqgLvRyvrh
+   bqHndx4JlyjhQdF0dOhJlqVNzeyhVphatsot/4O0hemNAXKqVD8sxOTws
+   g==;
+X-CSE-ConnectionGUID: GigziEflTaiLhvu1r16AIQ==
+X-CSE-MsgGUID: A/C22HOcR+Sp+N1n2j9CYg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="24802613"
+X-IronPort-AV: E=Sophos;i="6.08,203,1712646000"; 
+   d="scan'208";a="24802613"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 01:57:10 -0700
+X-CSE-ConnectionGUID: zlNN3HCQRCO/ESfZhJtDKA==
+X-CSE-MsgGUID: um8Yq5J8TUGDJ2jy96E4GQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,203,1712646000"; 
+   d="scan'208";a="36583456"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 01:57:07 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sCy4O-0000000CQFP-07an;
+	Fri, 31 May 2024 11:57:04 +0300
+Date: Fri, 31 May 2024 11:57:03 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Chia-I Wu <olvaffe@gmail.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	christian.koenig@amd.com, alexander.deucher@amd.com,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>, Baoquan He <bhe@redhat.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kernel/resource: optimize find_next_iomem_res
+Message-ID: <ZlmQ3_wcL3cgp4Hb@smile.fi.intel.com>
+References: <20240531053704.2009827-1-olvaffe@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: BCm3wry5b9WNN3q2iVIUrHzGri0mMOPg
-X-Proofpoint-GUID: BCm3wry5b9WNN3q2iVIUrHzGri0mMOPg
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-31_05,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
- lowpriorityscore=0 bulkscore=0 mlxlogscore=999 impostorscore=0
- priorityscore=1501 spamscore=0 malwarescore=0 suspectscore=0 clxscore=1015
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.21.0-2405170001 definitions=main-2405310066
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240531053704.2009827-1-olvaffe@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-When mounting the ext4 filesystem, if the hash version and casefolded are not
-consistent, exit the mounting.
+On Thu, May 30, 2024 at 10:36:57PM -0700, Chia-I Wu wrote:
+> We can skip children resources when the parent resource does not cover
+> the range.
+> 
+> This should help vmf_insert_* users on x86, such as several DRM drivers.
+> On my AMD Ryzen 5 7520C, when streaming data from cpu memory into amdgpu
+> bo, the throughput goes from 5.1GB/s to 6.6GB/s.  perf report says
+> 
+>   34.69%--__do_fault
+>   34.60%--amdgpu_gem_fault
+>   34.00%--ttm_bo_vm_fault_reserved
+>   32.95%--vmf_insert_pfn_prot
+>   25.89%--track_pfn_insert
+>   24.35%--lookup_memtype
+>   21.77%--pat_pagerange_is_ram
+>   20.80%--walk_system_ram_range
+>   17.42%--find_next_iomem_res
+> 
+> before this change, and
+> 
+>   26.67%--__do_fault
+>   26.57%--amdgpu_gem_fault
+>   25.83%--ttm_bo_vm_fault_reserved
+>   24.40%--vmf_insert_pfn_prot
+>   14.30%--track_pfn_insert
+>   12.20%--lookup_memtype
+>   9.34%--pat_pagerange_is_ram
+>   8.22%--walk_system_ram_range
+>   5.09%--find_next_iomem_res
+> 
+> after.
 
-Reported-by: syzbot+340581ba9dceb7e06fb3@syzkaller.appspotmail.com
-Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
----
- fs/ext4/super.c | 3 +++
- 1 file changed, 3 insertions(+)
+Is there any documentation that explicitly says that the children resources
+must not overlap parent's one? Do we have some test cases? (Either way they
+needs to be added / expanded).
 
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index c682fb927b64..c0036e3922c2 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -5262,6 +5262,9 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
- 		goto failed_mount;
- 
- 	ext4_hash_info_init(sb);
-+	if (es->s_def_hash_version == DX_HASH_SIPHASH && 
-+	    !ext4_has_feature_casefold(sb))
-+		goto failed_mount;
- 
- 	err = ext4_handle_clustersize(sb);
- 	if (err)
+P.S> I'm not so sure about this change. It needs a thoroughly testing, esp.
+in PCI case. Cc'ing to Ilpo.
+
 -- 
-2.43.0
+With Best Regards,
+Andy Shevchenko
+
 
 
