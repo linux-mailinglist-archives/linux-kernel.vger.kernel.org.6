@@ -1,111 +1,125 @@
-Return-Path: <linux-kernel+bounces-196512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 539908D5D34
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:54:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 792478D5D44
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:55:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8243F1C23FDB
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 08:54:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EFBB3B263A1
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 08:55:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E783155CA1;
-	Fri, 31 May 2024 08:53:52 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACE29155CA8;
+	Fri, 31 May 2024 08:54:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="E6Q56tQl"
+Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D3EC136E23;
-	Fri, 31 May 2024 08:53:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23406155A53;
+	Fri, 31 May 2024 08:54:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717145631; cv=none; b=Z/SUYBzO9VxdtMLLpoEejPRDGJymTf/ZNW4FSjuYF0tgd70ysfpnDex5sPBkzpC/WK5KbpH+Kj11rO77STQXDzY+uFT5rpx7paEQu2WgDN09tvLJ9LOTc9AkBvawJeISQmmqxZ3G8ciDiARyEO65yE0ZWtIZDKX9Hs7/1PNAEG8=
+	t=1717145682; cv=none; b=jXpHZXaN/U1O3vSaFI1/67CDQKE7H5hOsWKw790vI884KeH92tjoVqeLC8bvWaZTpmFU8BlKnR4FbxB4l56VaKSrlolTyBWZNIQ2e3zwXw3PT56XP4HgGi9EJ9ssZfbgmA9I468jQV11J/LpwxC6o6F3ezAyAMUMJ836mIjUXQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717145631; c=relaxed/simple;
-	bh=GX83tVnVrrE7CbGvDzxEtC/0sBHxwKgPFSeDxJFmwi8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Td/7gsLMbQ2u5DPa2UQ8uSkIjeh6/hg8V/kTX34D5tTO/xA9MEPqf47v3S+iZo0K8rrzYLrunEfcP59HTUDPKYIz1IX+OUlw0XHF6fCsMXFKDuvwqGTECOsQDHtALVwivw0DDMuBaaW+VbM+4e07pb55cyJy3UUlQ/b8qUgucCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4VrH1h05sZz1xs93;
-	Fri, 31 May 2024 16:52:24 +0800 (CST)
-Received: from dggpemd100001.china.huawei.com (unknown [7.185.36.94])
-	by mail.maildlp.com (Postfix) with ESMTPS id EA5701A016C;
-	Fri, 31 May 2024 16:53:41 +0800 (CST)
-Received: from [10.67.120.108] (10.67.120.108) by
- dggpemd100001.china.huawei.com (7.185.36.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Fri, 31 May 2024 16:53:41 +0800
-Message-ID: <d4b6ed9b-8beb-025b-fc60-078a3fd7e471@huawei.com>
-Date: Fri, 31 May 2024 16:53:41 +0800
+	s=arc-20240116; t=1717145682; c=relaxed/simple;
+	bh=JFEYnpKVhC3OKPMmlFbiYqQ6JmpSsmBSmRlLuUInyTk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XgbkS4HAlyQ0OnmJmHoHmYamjzNqY8zDvGmjCMax69iXQgIjEUJkps17Mi/XubLUGtJWmE1aDaDRWyS4jfyh6bUcGBseQmf1SSHBHPU864cdKdtvQSgKJ8v0PTANvMRPAopzoRxAHJSXx7rL87rYPRoU26xkYtOzBu6jAXl3VZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=E6Q56tQl; arc=none smtp.client-ip=115.124.30.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1717145670; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=u45yl/ongPk3D/+8eUViTWu0t7iGmxovN58bXNXSZhI=;
+	b=E6Q56tQlOz9ZCIS3rCuk651obBOfEO9XZciEF0mskSpsVfJUJmcdtKnarL748g57sjlYfVvfjzqKrsndHPT3177ZyxjhR61/Xkeb07324ZVsZLewgVYxpLs6jX7PyhM4DczHEP5Bnln2OHMYFW1R7CjPg5xQ0HEgmTwEQS6JQGg=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033045075189;MF=guwen@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0W7ZRJhf_1717145657;
+Received: from localhost(mailfrom:guwen@linux.alibaba.com fp:SMTPD_---0W7ZRJhf_1717145657)
+          by smtp.aliyun-inc.com;
+          Fri, 31 May 2024 16:54:30 +0800
+From: Wen Gu <guwen@linux.alibaba.com>
+To: gbayer@linux.ibm.com,
+	wenjia@linux.ibm.com,
+	jaka@linux.ibm.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: alibuda@linux.alibaba.com,
+	tonylu@linux.alibaba.com,
+	guwen@linux.alibaba.com,
+	linux-s390@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net] net/smc: avoid overwriting when adjusting sock bufsizes
+Date: Fri, 31 May 2024 16:54:17 +0800
+Message-Id: <20240531085417.43104-1-guwen@linux.alibaba.com>
+X-Mailer: git-send-email 2.32.0.3.g01195cf9f
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.1
-Subject: Re: [PATCH v2] scsi: libsas: Fix exp-attached end device cannot be
- scanned in again after probe failed
-Content-Language: en-CA
-To: John Garry <john.g.garry@oracle.com>, <yanaijie@huawei.com>,
-	<jejb@linux.ibm.com>, <martin.petersen@oracle.com>,
-	<damien.lemoal@opensource.wdc.com>
-CC: <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linuxarm@huawei.com>, <prime.zeng@hisilicon.com>,
-	<chenxiang66@hisilicon.com>, <kangfenglong@huawei.com>
-References: <20240424080807.8469-1-yangxingui@huawei.com>
- <824c34aa-7c4c-4edd-b41c-f9b5ff5aff03@oracle.com>
- <12ea14e9-5821-b2b5-16c1-ac48985927d7@huawei.com>
- <a8b18cea-cc04-47d0-8ff0-b02dd087dc73@oracle.com>
-From: yangxingui <yangxingui@huawei.com>
-In-Reply-To: <a8b18cea-cc04-47d0-8ff0-b02dd087dc73@oracle.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggpemm100003.china.huawei.com (7.185.36.68) To
- dggpemd100001.china.huawei.com (7.185.36.94)
 
+When copying smc settings to clcsock, avoid setting clcsock's sk_sndbuf
+to sysctl_tcp_wmem[1], since this may overwrite the value set by
+tcp_sndbuf_expand() in TCP connection establishment.
 
-Hi John,
-On 2024/5/28 18:11, John Garry wrote:
-> On 25/05/2024 04:08, yangxingui wrote:
->>> Why do these new additions not cover the same job which those calls 
->>> to the same functions @out covers?
->> For asynchronous probes like sata, the failure occurs after @out. 
->> After adding the device to port_delete_list, the port is not deleted 
->> immediately. This may cause the device to fail to create a new port 
->> because the previous port has not been deleted when the device 
->> attached again. as follow:
->>
->> 1. REVALIDATING DOMAIN
->> 2. new device attached
->> 3. ata_sas_async_probe
->> 4. done REVALIDATING DOMAIN
->> 5. @out, handle parent->port->sas_port_del_list
->> 6. sata probe failed
->> 7. add phy->port->list to parent->port->sas_port_del_list // port 
->> won't delete now
->>
->> 8、REVALIDATING DOMAIN
->> 9、new device attached
->> 10、new port create failed, as port already exits.
->>
-> ok, so next please consider these items:
-> 
-> - add a helper for calling sas_destruct_devices() and sas_destruct_ports().
-> 
-> - add a comment on why we have this new extra call to 
-> sas_destruct_devices() and sas_destruct_ports()
-> 
-> - can we put the new call to sas_destruct_devices() and 
-> sas_destruct_ports() after 7, above? i.e. the
-> sas_probe_devices() call? It would look a bit neater.
+And the other setting sk_{snd|rcv}buf to sysctl value in
+smc_adjust_sock_bufsizes() can also be omitted since the initialization
+of smc sock and clcsock has set sk_{snd|rcv}buf to smc.sysctl_{w|r}mem
+or ipv4_sysctl_tcp_{w|r}mem[1].
 
-Yes, this is much simpler. I will test it more according to your suggestion.
+Fixes: 30c3c4a4497c ("net/smc: Use correct buffer sizes when switching between TCP and SMC")
+Link: https://lore.kernel.org/r/5eaf3858-e7fd-4db8-83e8-3d7a3e0e9ae2@linux.alibaba.com
+Signed-off-by: Wen Gu <guwen@linux.alibaba.com>
+---
+FYI,
+The detailed motivation and testing can be found in the link above.
+---
+ net/smc/af_smc.c | 22 ++--------------------
+ 1 file changed, 2 insertions(+), 20 deletions(-)
 
-Thanks,
-Xingui
+diff --git a/net/smc/af_smc.c b/net/smc/af_smc.c
+index 9389f0cfa374..a35281153067 100644
+--- a/net/smc/af_smc.c
++++ b/net/smc/af_smc.c
+@@ -459,29 +459,11 @@ static int smc_bind(struct socket *sock, struct sockaddr *uaddr,
+ static void smc_adjust_sock_bufsizes(struct sock *nsk, struct sock *osk,
+ 				     unsigned long mask)
+ {
+-	struct net *nnet = sock_net(nsk);
+-
+ 	nsk->sk_userlocks = osk->sk_userlocks;
+-	if (osk->sk_userlocks & SOCK_SNDBUF_LOCK) {
++	if (osk->sk_userlocks & SOCK_SNDBUF_LOCK)
+ 		nsk->sk_sndbuf = osk->sk_sndbuf;
+-	} else {
+-		if (mask == SK_FLAGS_SMC_TO_CLC)
+-			WRITE_ONCE(nsk->sk_sndbuf,
+-				   READ_ONCE(nnet->ipv4.sysctl_tcp_wmem[1]));
+-		else
+-			WRITE_ONCE(nsk->sk_sndbuf,
+-				   2 * READ_ONCE(nnet->smc.sysctl_wmem));
+-	}
+-	if (osk->sk_userlocks & SOCK_RCVBUF_LOCK) {
++	if (osk->sk_userlocks & SOCK_RCVBUF_LOCK)
+ 		nsk->sk_rcvbuf = osk->sk_rcvbuf;
+-	} else {
+-		if (mask == SK_FLAGS_SMC_TO_CLC)
+-			WRITE_ONCE(nsk->sk_rcvbuf,
+-				   READ_ONCE(nnet->ipv4.sysctl_tcp_rmem[1]));
+-		else
+-			WRITE_ONCE(nsk->sk_rcvbuf,
+-				   2 * READ_ONCE(nnet->smc.sysctl_rmem));
+-	}
+ }
+ 
+ static void smc_copy_sock_settings(struct sock *nsk, struct sock *osk,
+-- 
+2.32.0.3.g01195cf9f
+
 
