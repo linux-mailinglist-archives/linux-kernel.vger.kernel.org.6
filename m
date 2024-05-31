@@ -1,107 +1,284 @@
-Return-Path: <linux-kernel+bounces-196335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C74008D5A5D
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 08:12:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3BCE8D5A67
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 08:17:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5DBBBB250CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 06:12:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 008AB1C24052
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 06:17:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B74627D40B;
-	Fri, 31 May 2024 06:12:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0C4F1F614;
+	Fri, 31 May 2024 06:16:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arinc9.com header.i=@arinc9.com header.b="D0mi+kUA"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="Ch+D15+1";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="Y9oqFuNv"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D97DB3F8FB;
-	Fri, 31 May 2024 06:12:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D60A736B;
+	Fri, 31 May 2024 06:16:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717135934; cv=none; b=l1P0vafh52J/Fhh4ATlSMGer0ZU9Whz0AbDpv2YtLm5PuxXxi3k5MFzGL+J/anr9v29aRxizF/uANrb88Senzt1HZA/HBWiZ5QRWtDxaLAQmD3J0zWEj6UMlg4SluAYx4wG5ZPJ93Iwk13VcvoZjdgMi5W8N0S2w016ltNGA39I=
+	t=1717136215; cv=none; b=KQHF9YihQnIljBHysiUkVIgMb7xVLDYsbKGHv1GYwVls4TfH0mp5AfS/KuwIHyddfGn5ACa36QUoBMATC/+8toMh6w++yop05h3ScyQALfmoeiryKfR3cjHYKxJ56XfB4M7jW0FzQQqHMLLw1UI+DIdHvVRAInCHv+L6xampetg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717135934; c=relaxed/simple;
-	bh=IuPngLtZwZOcdvzTEyXnPo1R5atzTCaIjZbLuOCpQIg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T78MYOVs07HQPil/uDkAiSo+YRQHGBH3hfvlMLhYXbHY74SE1s6h14nRsknFGwc00CyN0ip1/wbBaNmsr//lwsnvx2H8NHz4NM76BvG0ea0TB8RgvAbL2sEjpTlctT/5bMN+bmqbDA6SZnvwXajOV/fMgNsSztGyXC7sfQMsjKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arinc9.com; spf=pass smtp.mailfrom=arinc9.com; dkim=pass (2048-bit key) header.d=arinc9.com header.i=@arinc9.com header.b=D0mi+kUA; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arinc9.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arinc9.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id A12161C0004;
-	Fri, 31 May 2024 06:12:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arinc9.com; s=gm1;
-	t=1717135930;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ogNqXL0ApIs13zC/uLEPr6wCJVu7uWiXb0gYZeNG97o=;
-	b=D0mi+kUARIW/Xiq4qgyPzhxwk2SU672KDO6+AgpFmL1CaodK3HoZxficaZsRgKxd+Y6ld4
-	xTgv207ezmVW/JUCqfr7ts5OZaIl9J62KLyWJ7Cw07ev+gknGRuxB9NOM86jV7jo+EOcEO
-	qqGiFpFFJTtXWcAqdCTEvPvqvq7mf0K/UTxfjLED4uuP7pKMsCMIDkLGukpDiyCNa5t1Bt
-	gSllCuRStlW+yiCQpv+e8AUZeYFKwwWeEeeImrUMsqncDGXSDplQAZg1ePVa2XxvR8zsrI
-	oPgVCSLqGDIOiS9Undmxf6hCgATSJ29i/+f7ycdAjVYaVB/RkhPXXd6lCAl36g==
-Message-ID: <aaaeb4b2-e57e-4d7b-b598-a664cc05b0cf@arinc9.com>
-Date: Fri, 31 May 2024 09:12:06 +0300
+	s=arc-20240116; t=1717136215; c=relaxed/simple;
+	bh=PU9wADAmKFnxGMyTJINBlux3WHrl1/71rCrm4yjDdt0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PbQl8J7bASsh9MhcniM6ffzN4zfzpZpw+Cbb7Yexrca76HkZLsLCPX0vb8q8vJ7fzctpPSefwPjBTeCPADRynVy6WB5J4frVtDGJ/yOcLrHmx1n0T3nCTuJp9Dct6kuliIhE21dEnyWsvXABcPROn/1Qbs8UJJIytesyxAwAk44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=Ch+D15+1; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=Y9oqFuNv reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1717136212; x=1748672212;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=BplqydDYpMobXdQpqqvJqm0UHLjyRhrsf41yh2GGcfE=;
+  b=Ch+D15+1KTm+eEptbQtQkOqJsU/kFfIhrhyZRLGfOk4gOOJnt3eL5uej
+   C1XAcPofinYETv4jjQTfVFuB4Zmn4fQimE9Y6gAUnxV98ToFlnqkuoQgE
+   5WPpfCOtxCaFjWbvMo+wrf+Eb/kmZPGojMBM86fbKBbWBcYEyN0OkI6hC
+   ZjPXMmRYOJVXww8qzHq42oXk4KUgZPwOHeqybIOIasI7Dge8L38xgfWy4
+   JOHfmQMdNgwbaBblrMvxC/VD8SwsMlSS/eJqLHlk9YcY+5I7Y56EncJ1e
+   iRAFxOLP4V2WSnsoA8L9BIFq62DBMHCmSPtpDIPWmCJJj2Olmog3qBXfn
+   w==;
+X-CSE-ConnectionGUID: 1UsTIyD4RAyP9gPTIO8Oww==
+X-CSE-MsgGUID: yfHIr/PMTrGQsrQuGrwdeg==
+X-IronPort-AV: E=Sophos;i="6.08,203,1712613600"; 
+   d="scan'208";a="37152332"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 31 May 2024 08:16:49 +0200
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 77C9E1669A9;
+	Fri, 31 May 2024 08:16:44 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1717136205;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=BplqydDYpMobXdQpqqvJqm0UHLjyRhrsf41yh2GGcfE=;
+	b=Y9oqFuNvNbB9GDHQMUxmVtQ4IbFlKbdQPusTXelQmIa26dGXG8W6MbOezTfq7JIgGAZ2PM
+	HO+0OLxuQ6wfwiMRR4gfUjmHpCXwmCRXTLRwbbb/vd+Z5OZ99eLdK8UR8sSk2Wb9TzYhi8
+	yVuswT7H9OgaSBm8k+i6ps1pbHbRKUXv9grtY6YfGouWlgueYCEI/3QfstsL5CiE4wZXXZ
+	Ze1Bs3maywRBl0UXlAv8faK/JCB85YbN4qs+L7d7665OlfBAxQK/kNssmqj84YFFt9ejEg
+	OtV0OvHUIklWrOFdibgQmzywHO1J5WhIgoK0SOfxy6I6PVw5fPhik6a0CIdXlg==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: robh@kernel.org, Frank Li <Frank.Li@nxp.com>
+Cc: Frank.Li@nxp.com, brgl@bgdev.pl, conor+dt@kernel.org, devicetree@vger.kernel.org, imx@lists.linux.dev, krzk+dt@kernel.org, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/1] dt-bindings: gpio: mpc8xxx: Convert to yaml format
+Date: Fri, 31 May 2024 08:16:44 +0200
+Message-ID: <2408577.ElGaqSPkdT@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <20240530165424.3173673-1-Frank.Li@nxp.com>
+References: <20240530165424.3173673-1-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: mt7622: fix switch probe on bananapi-r64
-To: frank-w@public-files.de, Frank Wunderlich <linux@fw-web.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
- <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- Daniel Golle <daniel@makrotopia.org>
-References: <20240516204847.171029-1-linux@fw-web.de>
- <a29dd7d1-40a8-4c88-99aa-651a3305b640@arinc9.com>
- <5AEE5668-0C8E-4EE4-A398-66CB99DF5650@public-files.de>
-Content-Language: en-US
-From: =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>
-In-Reply-To: <5AEE5668-0C8E-4EE4-A398-66CB99DF5650@public-files.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: arinc.unal@arinc9.com
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 17/05/2024 09.27, Frank Wunderlich wrote:
-> Am 17. Mai 2024 04:17:47 MESZ schrieb "Arınç ÜNAL" <arinc.unal@arinc9.com>:
->> On 16/05/2024 23:48, Frank Wunderlich wrote:
->>> From: Frank Wunderlich <frank-w@public-files.de>
->>>
->>> After commit 868ff5f4944a
->>> ("net: dsa: mt7530-mdio: read PHY address of switch from device tree")
->>> the mt7531 switch on Bananapi-R64 was not detected.
->>>
->>> mt7530-mdio mdio-bus:00: reset timeout
->>> mt7530-mdio mdio-bus:00: probe with driver mt7530-mdio failed with error -110
->>>
->>> Fix this by adding phy address in devicetree.
->>>
->>> Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
->>
->> I don't like the mention of the Linux kernel driver on the patch log. What
->> you're fixing is the incorrect description of the switch's PHY address on
->> the DTS file. Whether or not any driver from any project is actually
->> reading it from the DTS file is irrelevant to this patch. That said, I
->> already have a patch series I've been meaning to send the next version of
->> that already addresses this. Please wait for that.
->>
->> Arınç
-> 
-> Hi arinc,
-> 
->  From my PoV it is a regression in next/6.10 because the driver change was merged (without "broadcast" fallback) and the dts patch [1] is not.
+Hi Frank,
 
-What is a broadcast fallback? 0x1f is just another PHY address.
+thanks for your patch.
 
-Arınç
+Am Donnerstag, 30. Mai 2024, 18:54:24 CEST schrieb Frank Li:
+> Convert binding doc from txt to yaml.
+>=20
+> Remove redundated "gpio1: gpio@2300000" example.
+> Add gpio-controller at example "gpio@1100".
+>=20
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>=20
+> Notes:
+>     Change from v1 to v2
+>      - Add gpio-controller at example "gpio@1100". to fix bot error.
+>     Strangely, I can't reproduce locally.
+>    =20
+>     Pass dt_binding_check
+>     make dt_binding_check DT_SCHEMA_FILES=3Dfsl,qoriq-gpio.yaml
+>       SCHEMA  Documentation/devicetree/bindings/processed-schema.json
+>       CHKDT   Documentation/devicetree/bindings
+>       LINT    Documentation/devicetree/bindings
+>       DTC_CHK Documentation/devicetree/bindings/gpio/fsl,qoriq-gpio.examp=
+le.dtb
+>=20
+>  .../bindings/gpio/fsl,qoriq-gpio.yaml         | 82 +++++++++++++++++++
+>  .../devicetree/bindings/gpio/gpio-mpc8xxx.txt | 53 ------------
+>  2 files changed, 82 insertions(+), 53 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/gpio/fsl,qoriq-gpio=
+=2Eyaml
+>  delete mode 100644 Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.t=
+xt
+>=20
+> diff --git a/Documentation/devicetree/bindings/gpio/fsl,qoriq-gpio.yaml b=
+/Documentation/devicetree/bindings/gpio/fsl,qoriq-gpio.yaml
+> new file mode 100644
+> index 0000000000000..adc955679d066
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/gpio/fsl,qoriq-gpio.yaml
+> @@ -0,0 +1,82 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/gpio/fsl,qoriq-gpio.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Freescale MPC512x/MPC8xxx/QorIQ/Layerscape GPIO controller
+> +
+> +maintainers:
+> +  - Frank Li <Frank.Li@nxp.com>
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - enum:
+> +          - fsl,mpc5121-gpio
+> +          - fsl,mpc5125-gpio
+> +          - fsl,mpc8349-gpio
+> +          - fsl,mpc8572-gpio
+> +          - fsl,mpc8610-gpio
+> +          - fsl,pq3-gpio
+> +      - items:
+> +          - enum:
+> +              - fsl,ls1021a-gpio
+> +              - fsl,ls1028a-gpio
+> +              - fsl,ls1043a-gpio
+> +              - fsl,ls1088a-gpio
+> +              - fsl,ls2080a-gpio
+> +          - const: fsl,qoriq-gpio
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  "#gpio-cells":
+> +    const: 2
+> +
+> +  gpio-controller: true
+> +
+> +  interrupt-controller: true
+> +
+> +  "#interrupt-cells":
+> +    const: 2
+> +
+> +  little-endian:
+> +    $ref: /schemas/types.yaml#/definitions/flag
+> +    description:
+> +      GPIO registers are used as little endian. If not
+> +      present registers are used as big endian by default.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - "#gpio-cells"
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    gpio@1100 {
+> +        compatible =3D "fsl,mpc5125-gpio";
+> +        reg =3D <0x1100 0x080>;
+> +        interrupts =3D <78 0x8>;
+> +        gpio-controller;
+> +        #gpio-cells =3D <2>;
+> +    };
+> +
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    gpio@2300000 {
+> +        compatible =3D "fsl,ls2080a-gpio", "fsl,qoriq-gpio";
+> +        reg =3D <0x2300000 0x10000>;
+> +        interrupts =3D <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
+> +        gpio-controller;
+> +        little-endian;
+> +        #gpio-cells =3D <2>;
+
+Please keep 'gpio-controller' and '#gpio-cells' together. I would move
+little-endian either below reg directly or below interrupts.
+
+Thanks
+Alexander
+
+> +        interrupt-controller;
+> +        #interrupt-cells =3D <2>;
+> +    };
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt b/Do=
+cumentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt
+> deleted file mode 100644
+> index cd28e932bf50e..0000000000000
+> --- a/Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt
+> +++ /dev/null
+> @@ -1,53 +0,0 @@
+> -* Freescale MPC512x/MPC8xxx/QorIQ/Layerscape GPIO controller
+> -
+> -Required properties:
+> -- compatible : Should be "fsl,<soc>-gpio"
+> -  The following <soc>s are known to be supported:
+> -	mpc5121, mpc5125, mpc8349, mpc8572, mpc8610, pq3, qoriq,
+> -	ls1021a, ls1043a, ls2080a, ls1028a, ls1088a.
+> -- reg : Address and length of the register set for the device
+> -- interrupts : Should be the port interrupt shared by all 32 pins.
+> -- #gpio-cells : Should be two.  The first cell is the pin number and
+> -  the second cell is used to specify the gpio polarity:
+> -      0 =3D active high
+> -      1 =3D active low
+> -
+> -Optional properties:
+> -- little-endian : GPIO registers are used as little endian. If not
+> -                  present registers are used as big endian by default.
+> -
+> -Example of gpio-controller node for a mpc5125 SoC:
+> -
+> -gpio0: gpio@1100 {
+> -	compatible =3D "fsl,mpc5125-gpio";
+> -	#gpio-cells =3D <2>;
+> -	reg =3D <0x1100 0x080>;
+> -	interrupts =3D <78 0x8>;
+> -};
+> -
+> -Example of gpio-controller node for a ls2080a SoC:
+> -
+> -gpio0: gpio@2300000 {
+> -	compatible =3D "fsl,ls2080a-gpio", "fsl,qoriq-gpio";
+> -	reg =3D <0x0 0x2300000 0x0 0x10000>;
+> -	interrupts =3D <0 36 0x4>; /* Level high type */
+> -	gpio-controller;
+> -	little-endian;
+> -	#gpio-cells =3D <2>;
+> -	interrupt-controller;
+> -	#interrupt-cells =3D <2>;
+> -};
+> -
+> -
+> -Example of gpio-controller node for a ls1028a/ls1088a SoC:
+> -
+> -gpio1: gpio@2300000 {
+> -	compatible =3D "fsl,ls1028a-gpio", "fsl,ls1088a-gpio", "fsl,qoriq-gpio";
+> -	reg =3D <0x0 0x2300000 0x0 0x10000>;
+> -	interrupts =3D <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
+> -	gpio-controller;
+> -	#gpio-cells =3D <2>;
+> -	interrupt-controller;
+> -	#interrupt-cells =3D <2>;
+> -	little-endian;
+> -};
+>=20
+
+
+=2D-=20
+TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht M=FCnchen, HRB 105018
+Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
+http://www.tq-group.com/
+
+
 
