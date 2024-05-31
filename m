@@ -1,127 +1,203 @@
-Return-Path: <linux-kernel+bounces-196097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1C2C8D574A
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 02:44:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A9ECF8D574D
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 02:46:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5794E287DE3
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 00:44:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61EF5283ACA
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 00:46:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1F1E10A3D;
-	Fri, 31 May 2024 00:43:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aL+I4kcJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 062B35221;
+	Fri, 31 May 2024 00:46:32 +0000 (UTC)
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8A44C8E9;
-	Fri, 31 May 2024 00:43:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717116204; cv=none; b=XbnH2XFsGz3VYksgngGQwBo2TKEie3tMsNJbYPnwGkRZCVio8vjkXYsY2tTgrAtTxIzS6k1//oJD8SejceyNVle0oQj+7kqrVH09wy+4kNyNjtAq2Zl0x0IFGamK4vlCCSKzhy3NF1b7VIMfzavB7ZUm5EMsl76ssza7R3mqMxI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717116204; c=relaxed/simple;
-	bh=Si8XOeHALztLMCNRy0WVUR6eEdJsznZcIFbxAADO+ws=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t6mFcna2KcbI4CdYz3HgExVYO6j+3xgXfT52pPWNViVMNYFZo2WXY+RuYoxenvFD9JLcaur1Gjar1JSgyNh8bRHuUftwbn3Y9YuBDIjqJlXQA1dtVHXIl6kBO7o8Gteq1WZCU5II6QFlumAV0NLnzx8+s7SWKA97H4gNAUckDcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aL+I4kcJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D22D7C2BBFC;
-	Fri, 31 May 2024 00:43:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717116203;
-	bh=Si8XOeHALztLMCNRy0WVUR6eEdJsznZcIFbxAADO+ws=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aL+I4kcJ/OXypWoEww0Gcs/K6q+ipdHIFStSTPXEusvtmwsVT6Y5Gx+hB/Z8NFvcg
-	 kk0aN5Ya2M3CtobxjGIO/J8URF8KA8GPPSqmdaRS/J0LLdEfPA0O12JA7q/hQ6fGfX
-	 SwfuTm0oJ+BUOIpXNNN9GK0rAuZVJsxMYF0i/EoIwfnBnWjEOag1O0HrcFn3kbyYtd
-	 t1OTPhgcjJPrqXeKo5kubhG5AO+qWl+nsDbFvnc17W78pikT8ci40gbrCQjnnwBQH1
-	 AzakKGpI2SiDbCV3seJHFg22s50U9W40RxniIrslsdhtv3JRiZLu3+h/ThTs7xM5SB
-	 Kvdqh9bknwLeQ==
-Date: Thu, 30 May 2024 17:43:21 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Fan Wu <wufan@linux.microsoft.com>, corbet@lwn.net, zohar@linux.ibm.com,
-	jmorris@namei.org, serge@hallyn.com, tytso@mit.edu, axboe@kernel.dk,
-	agk@redhat.com, snitzer@kernel.org, mpatocka@redhat.com,
-	eparis@redhat.com, linux-doc@vger.kernel.org,
-	linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org, fsverity@lists.linux.dev,
-	linux-block@vger.kernel.org, dm-devel@lists.linux.dev,
-	audit@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Deven Bowers <deven.desai@linux.microsoft.com>
-Subject: Re: [PATCH v19 15/20] fsverity: expose verified fsverity built-in
- signatures to LSMs
-Message-ID: <20240531004321.GA1238@sol.localdomain>
-References: <1716583609-21790-1-git-send-email-wufan@linux.microsoft.com>
- <1716583609-21790-16-git-send-email-wufan@linux.microsoft.com>
- <CAHC9VhRsnGjZATBj7-evK6Gdryr54raTTKMYO_vup8AGXLwjQg@mail.gmail.com>
- <20240530030605.GA29189@sol.localdomain>
- <CAHC9VhRySQ0c16UZz5xKT-y5Tn39wXxe4-f7LNjFY+ROGGxpaQ@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4771139E;
+	Fri, 31 May 2024 00:46:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717116391; cv=fail; b=CncqhvhLqaiYf2z3iQEyvnzdrsWk7+onaKCd+iJphDL2SWpbZbY1xEmRRbJs9KNdPZPzL/nLJCT+COdUDx+BYxWTL8JjHYNVHuv8YKc45WWjS6Hi0wdn4aVM2ZfNwn2N30VdToGFif5aDSPlLYtWphrCXTBEFiMKr++/DLXV0vw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717116391; c=relaxed/simple;
+	bh=X8oOsxW0ZmEBKTnilqN8FBmGs/DWb6QW6BUKdtbdwts=;
+	h=To:Cc:Subject:From:In-Reply-To:Message-ID:References:Date:
+	 Content-Type:MIME-Version; b=RAbzucs45IEQUxyRQH/xBDQweVWu92suhcNw2ZkEU+OehNIX0R++UKtdfVfNRNbE3AEESOE8lQQi9plpGc8R3sUP2ndCtrLmOQ0MSE4y+GAbcxolAEySOPkE4AWML4CsomNAfjuXvvFCCYcAQgJRATk633L2c35NugPsK2qpER8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44UF0OWg019718;
+	Fri, 31 May 2024 00:46:20 GMT
+DKIM-Signature: =?UTF-8?Q?v=3D1;_a=3Drsa-sha256;_c=3Drelaxed/relaxed;_d=3Doracle.com;_h?=
+ =?UTF-8?Q?=3Dcc:content-type:date:from:in-reply-to:message-id:mime-versio?=
+ =?UTF-8?Q?n:references:subject:to;_s=3Dcorp-2023-11-20;_bh=3DxB1rl8XgQJI+?=
+ =?UTF-8?Q?rfRW+JCmBoJyE4fD/cRvobN2XEsWvzA=3D;_b=3DQnd+gYfNwE8+b236CVreXgj?=
+ =?UTF-8?Q?P/EgDFS4jrMWheYqqTD+hGzNx8gTO4PignPREGpwReT8D_tk7FJHTCGHTvxVPCc?=
+ =?UTF-8?Q?/busfGsFtR0kDlx12SRTfokMwnHPkZD7J2loYKGh4YfaCxq5DeF_bFwQF3r/X3S?=
+ =?UTF-8?Q?r49ss93fZH+O75lZ0pP5uueTEyIjCqCsA9xHearysqakU1BYtQR+Mmt3O_JliF9?=
+ =?UTF-8?Q?/UIBj7o23I/wHNpQE7eVa9yPBQ2DtrTcn+Yce50ZynRKEEUUQC0461xWIMThuOy?=
+ =?UTF-8?Q?_kVeI0Ot0Lk8mEaRNzJG4B0rfXYm5FBdQIYyKFaEzg+NbtioRNy3INfdvr6hL+2?=
+ =?UTF-8?Q?k+FR/S_Rw=3D=3D_?=
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3yb8g9tb2f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 31 May 2024 00:46:20 +0000
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 44UNYG3Y015137;
+	Fri, 31 May 2024 00:46:19 GMT
+Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2169.outbound.protection.outlook.com [104.47.57.169])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3yc538u93h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 31 May 2024 00:46:19 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=A3+kiT4qOPIvq/Mj3oQ/JjucGfM1mm5dYhMOiBOvpot+VtTa+SJ2asohQ1h93RCptt/NklHIoAIreREbDsjZ90oqe9MXfVzdrSF1XdGLwMBe6EeqtoIzxHrxU0+HjmwAKNkosRFQyb4uvLtjH1grgUMkjyLCtd/hGUSmmimrQ6bpjZUneawmRWnXdaBxrPwHFD6xQUzhaKsI43m7uYPLFU5ZqON2N489ZnUR3IMa0c9ZtIOUYBYlOJgQp05yeGeJ4jYQvj/8bKWTxWFetwqGf4yJ9f5G5T8F5rAJnk3XPky9v6jDWmqRLvQUDdx4Lto5N2Sygz8bZHkL5A6l/GHRsQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=xB1rl8XgQJI+rfRW+JCmBoJyE4fD/cRvobN2XEsWvzA=;
+ b=S0ITaRmonU4X9Vy7+pa5EwcOZgDDJ0jkTT/wxo2h6orc9R5KIn4F/Tr3JZjDBYGmlQJBg5UAt5gktW2eZ4dtAxUuT4EM04cikqQPimbM0WW6W4W4rxKR+6GlRUm5Brr6D+8lNxm+2SWoe5/R8RVCCTobennClMtt4VNsaSRZC9iMZXoTlVg5j0NQ6owi29iLE7tiFTkKNatsz63TC5TDBTmKXBhK7TI2UPIUhDACC0ThA6a/vXEy7Q+FZMeh7u2JB26g29GAgZ+MuWZ0OGahtimHSlQUMszeMYnOy3Zua7K20XrLnAa9GKIqZpiZXAy7Kbm1V0dGiBuisO3kGlOudw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xB1rl8XgQJI+rfRW+JCmBoJyE4fD/cRvobN2XEsWvzA=;
+ b=ApLL7m1uaob9GbeDC23mrWsuPn2BOPnUMqgoxNSh09SPW8yleNhNGcarQ3Jo6riyL8YPRQ5HCC1bfVgDFP7o6UBeloddYPmLBL6/HS6FEg1EUaIXU7tpNxdWvzKPEUKZNlEYL0EMVqBdT7Jq5eBDfavMNcqiaY6KUPmg4xejbo4=
+Received: from PH0PR10MB4759.namprd10.prod.outlook.com (2603:10b6:510:3d::12)
+ by SA1PR10MB5867.namprd10.prod.outlook.com (2603:10b6:806:233::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.28; Fri, 31 May
+ 2024 00:46:17 +0000
+Received: from PH0PR10MB4759.namprd10.prod.outlook.com
+ ([fe80::5c74:6a24:843e:e8f7]) by PH0PR10MB4759.namprd10.prod.outlook.com
+ ([fe80::5c74:6a24:843e:e8f7%4]) with mapi id 15.20.7633.021; Fri, 31 May 2024
+ 00:46:17 +0000
+To: Minwoo Im <minwoo.im@samsung.com>
+Cc: "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Alim Akhtar
+ <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Bart Van
+ Assche <bvanassche@acm.org>, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Joel Granados <j.granados@samsung.com>,
+        gost.dev@samsung.com, Asutosh Das <quic_asutoshd@quicinc.com>
+Subject: Re: [PATCH v2 0/2] ufs: mcq: Fix and cleanup unsafe macros
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+In-Reply-To: <20240519221457.772346-1-minwoo.im@samsung.com> (Minwoo Im's
+	message of "Mon, 20 May 2024 07:14:55 +0900")
+Organization: Oracle Corporation
+Message-ID: <yq1ttieerlv.fsf@ca-mkp.ca.oracle.com>
+References: <CGME20240519222604epcas2p3d427f2f5b3b0156881f6840443210931@epcas2p3.samsung.com>
+	<20240519221457.772346-1-minwoo.im@samsung.com>
+Date: Thu, 30 May 2024 20:46:15 -0400
+Content-Type: text/plain
+X-ClientProxiedBy: BLAPR03CA0073.namprd03.prod.outlook.com
+ (2603:10b6:208:329::18) To PH0PR10MB4759.namprd10.prod.outlook.com
+ (2603:10b6:510:3d::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhRySQ0c16UZz5xKT-y5Tn39wXxe4-f7LNjFY+ROGGxpaQ@mail.gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH0PR10MB4759:EE_|SA1PR10MB5867:EE_
+X-MS-Office365-Filtering-Correlation-Id: 83d6f485-05d3-4eeb-932b-08dc810b14a2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|7416005|1800799015|376005|366007;
+X-Microsoft-Antispam-Message-Info: 
+	=?us-ascii?Q?gzosVJzdqJJ2NhR0whnsSuHg3P3HRV2DOTulZGSjNEArIFMt0d8JVeToMFnT?=
+ =?us-ascii?Q?TLn8rcIyQ7Pu8udKmj4JIABJpnGqUrzHitK7l9DgAb6jTMsA28XHfJRpAP7C?=
+ =?us-ascii?Q?oBiC9m56h1RxeCvW9W7lv5TiMFPqqT25Z/wn8O+bYx/M3449m4WvvUf3QLiK?=
+ =?us-ascii?Q?RHO/+aKEUcMSebBEfJNHWcJtzfZprXXCvgo5IPm/2uwUTnMGgQu5T2x/TDAA?=
+ =?us-ascii?Q?+bLzMdANXoTBTVCPeQCi+/T1zaPixVfPb1od8Z0oHstNfLylP4UXKTfaPZ5g?=
+ =?us-ascii?Q?6c1JtZ3Byg56efiP21kezQCCnvpX0qbC1owdGUpu1bdMaVmzhvdkVIbTgCyX?=
+ =?us-ascii?Q?SpLYYAri9tmVV4J50Y7jSWFGNUz6fZiXej8PW6IWYgYdPmw3woj+gBhfIyYC?=
+ =?us-ascii?Q?QhBIRvYQteBrbOuKs25xi/EV7UrStc66J3OvlkIjfZbZaBgk6ocsDunP2tyk?=
+ =?us-ascii?Q?FRt71OvC5xfss+4bbmj2jf+zWUn5CthF3BTOKwobCuUfHikP1XAjrEfxRyhM?=
+ =?us-ascii?Q?pa9VHEAw9JS8b4VDU9IR9k00pyH/WkYJb0Vwg6EYe8+3Oqv0JHPxmTSBq7Eh?=
+ =?us-ascii?Q?vBnEBNzrbNEkiuQ2cF4viDqlZ+jkXk/g6VS/N/hfeBxUjmzAfWnaFBcfJh1i?=
+ =?us-ascii?Q?Y4C3QrXQpci1fiANvI1fcFBbnRtnqTMo+/NNyfuES3xI68n9Z11/1EAEjq4v?=
+ =?us-ascii?Q?4itOOU7tcL0eEeQFvNvyMxFB8tWKf3ckJS3iIJ15m/Q3kSCFwMhRoZjD/MAh?=
+ =?us-ascii?Q?gr13NQziTxINvGMNVfJct8MyTPwZpau2XgfvOTLuuz5L/3BTobtdbwGKSFLU?=
+ =?us-ascii?Q?5+cju4Op7IMGj+0KwL+TD2K4wX2hfVs8WWwfFAQ2P80mr5R+Zv3Xuc2VQJTi?=
+ =?us-ascii?Q?mrrC4PSxdmrl3NF5/D5XurN4SFGJMYSqrjvNjE6kQEw2Wc+VAObPmIx5LyoA?=
+ =?us-ascii?Q?lUGx9g4mFxCosjhIouqxJfKNmWGYm5VRHeUmN/4Z0kpH/wsCmIGvJgWTokDA?=
+ =?us-ascii?Q?MFynici32cjvde04UpLltYl2ckzypaZ+B5eagJDZq6G881hGEssdxtoWRoqK?=
+ =?us-ascii?Q?MyKgTXdPDk4bbGl2o1MYtj6bYfpxKFzMx2gH4vdA8oK8ItYPVw6vViTKMipd?=
+ =?us-ascii?Q?h1+wh4jxeTNQNBEZo/HafRA6sM9FME/KupRgw0SjEVqihoRvAn6ziut+zDtz?=
+ =?us-ascii?Q?Z6SlwcWJGVmzWNtoovdf5R9NQ/dfrO/w8LTHaY5KtbvggEgqPUw6/JAxAo0Q?=
+ =?us-ascii?Q?3TsmdMpkmM2pR67jiKFqmkfQEqs77x/DowN5TTHrvQ=3D=3D?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB4759.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7416005)(1800799015)(376005)(366007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?us-ascii?Q?grQVejPyuWj3KOibaHeYTxuYN03hdlFVjkbkZlqJbs06u9gVum4LbHazp+zv?=
+ =?us-ascii?Q?743Jd9aqlnAq1XMSC8Fn9AH++oo45NBay6rbOgXN6RFcd+PbWu0Jr81KsC9B?=
+ =?us-ascii?Q?TQZeLW25OsizOkhEgyx5ckH+BFKk741RNAlGtyYx2PhfLQ+Ogu28TZhvmCLA?=
+ =?us-ascii?Q?QE0bUlVuH0v4TfwfRla1e7tXsBjwTknzOLYaVFC0KnNf3yg7Q5jwsFY7U9lY?=
+ =?us-ascii?Q?OD2Y6mFXH7jg5Fz5o1ZvrBO1UfJVbl2lVn/XE0/FtP3jQMdFuMG+kU+ol/Iy?=
+ =?us-ascii?Q?WQVUykZxhKV8mtzwLyrv8doObOOIu/EgIdon1yjVavV4nz8K7bHNSYn4lGgX?=
+ =?us-ascii?Q?vqWj8VBEhX/ex2eFOErlp7Cf3cdy4X5o+bUQNRuTgAudLWQ+YW2xKjQwWgUe?=
+ =?us-ascii?Q?RPJIl/nb2P5aXqabikSVFmf1WfkQyPJQTQgInL3PdtgagYbLBzWgrUFmabk9?=
+ =?us-ascii?Q?gBTdI/zPjGB+6cKPDZXaxMlmdT5ogPw8tTRi5wxtaBSnDMr+efGhWF2uAkrK?=
+ =?us-ascii?Q?fYe8HS5TFrsL/Rck8HPMkLSA8fBDTtnYnN8GPJmOPBDOUWytadcErwWO0Xzi?=
+ =?us-ascii?Q?HkewEDYC62mWlHR4TfcYEzUMQazP76s3QCfJcj+SccR5Ym7BeAjW1zsYPYN7?=
+ =?us-ascii?Q?V17zgA8RcCZR+7P6MoVOG1JzT0Z3RC/hLbWle0PpdCLOHRKspgjVThhGAMcl?=
+ =?us-ascii?Q?BzyXQ0HTuqYWwEfMGpvhmrWD5MpHuDiOvLGSH8ook82UiPcUzmsg8kmdfNRH?=
+ =?us-ascii?Q?b6TEhx5479Q+MKWB0jPumZxCliMpHJQ/rkalryedd/nHY4LrJ18RLf/AgIfk?=
+ =?us-ascii?Q?vg8Z9b8keCvodApB3OrfwwxVnlhjMlkoak7dPWvVcOKRaNGnCvnAIDvRoPJ1?=
+ =?us-ascii?Q?G7/iLlBvcFbzefxUOqZ7/dOasUb46ABaQ6Ht6/rP8YkefytfwXuRs+u93k1l?=
+ =?us-ascii?Q?NGks0KRsx3xh3db0WQW+uBTHqS/Z9/xVjPFAlramwQBIcGUqy8aGOU2VkELF?=
+ =?us-ascii?Q?/H1Xg4wD/GxQBYKv2bQTYNFlpqnvFc7K+8bVJWSDD90KjxA7wZ7pgEBk0MAv?=
+ =?us-ascii?Q?3hVff67uXeZBuxRvUFDPzpbdm47DiZi6hYvRQ1CE9O0RaHHyWSqRtrpLi3vI?=
+ =?us-ascii?Q?I2TYd2reSWr5+/7OnQlpdePF6/xPV8Dr7A4pl/QeGtRTKlvIvuuEVwkuzo2U?=
+ =?us-ascii?Q?RBJj+qy04A6lYDrbfXeT0yXF1ynabdt0ISs6NYWS21/lsrfdvvVPL36k7xjX?=
+ =?us-ascii?Q?hiV9ZFQh9mm/R7mnzLmDAm+ubr9Cu6I5Lh33VN6+C7y/7dZDnSqdWbwhbiHl?=
+ =?us-ascii?Q?2cKcDa3grnODifIbR/M3X1a5OIUFdLOlQlMop0gfL3hx4QQLi1lIT6YKFr+4?=
+ =?us-ascii?Q?7pCGbn1ux0CpmgVVfXQM8xVv5LdSKeYX2b5jIV8hmIUTbE2XnREnfTX3JcnS?=
+ =?us-ascii?Q?54eNKTR6No4eJDBKbu1OO8WxA9zKUitxQmZTZrxHIuG2r3HhFzTP5wM2zCfu?=
+ =?us-ascii?Q?pBGA6Hdpm2rQhpDz45hqnhvarh3G2mlM9LTjI6gqjnfDX+oMRorFaRza7UQ9?=
+ =?us-ascii?Q?ZN8Rd8qkHTAet44ZNuoUgV4fOLQDTYDouNV4zLJCDSkEkezqWS/rBVvAQhnE?=
+ =?us-ascii?Q?Eg=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	32v5Q2zwogp9FWa7xNT1ifsmeOaYyhKgg3nVQvk/5J4mq4UV2+EzmmFyuDnkIfp7OINtuV08F1LXSGPk05j4vYt9a8CgTGJGvP/MHTEhApPVWjk7vuVnzyIu0oV26ZIHF9+ZfyvRVO/yV1Qx6GpsTjJuwJADn6xP26ijJOTkp72Wk1bhouwcv6XX32ZYqTySHpgw79pTUvk5fhWhVgbbDdlACW7VegHZIgllLaxU2wMGncLXkiFEy8Qcq6bnsIjA8awXOsWNytfvRkX0P9O8bUbHaQkMyywbfkPoaLv3lj4V1arFU+kIMpFRMNO2D+eiZ0LQ8lU66jIjZM0ao4jb2fO5MTIohvVIsuTCjZzWEff9w3ujKp/mmjL/k+Peb7OcwyXBWsIifEZyR/ziR6VeFnqF3W864PCdtfcYajAuP6Mc34lE6lngDTJYJtuFZwsp1/SgOpPhGQNTPbg2qVLgOefSCnu0GMVN6Ye7SO/rwsBiLpZKzmSdeuKyzzTx8vXTyGxtBaxVmn3GZ9Y4P9vercgFBfm5cQ0Cc8sHlzeACtuoF+5AEgwQ0g18HuKO+2Ec98HfCdYItz8ldcPpiJ8nAQZ2oumUiW5fFlFjF6ba+4c=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 83d6f485-05d3-4eeb-932b-08dc810b14a2
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB4759.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 May 2024 00:46:17.1464
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: oSOgSdLUC+nBgn2SZy1y/NMjidqDwBgHoEBeUAd0zP62ca/zdd4weS3FPpN4a7k5dtms1EZEAuvsuHYlRinwCFiqQ2E5N3+RkoNN06y6Kvo=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR10MB5867
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-30_21,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=580 spamscore=0
+ phishscore=0 bulkscore=0 malwarescore=0 adultscore=0 mlxscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2405010000 definitions=main-2405310004
+X-Proofpoint-GUID: 1ErXzDJLCAKeXdSDplev00_B14NI0bvM
+X-Proofpoint-ORIG-GUID: 1ErXzDJLCAKeXdSDplev00_B14NI0bvM
 
-On Thu, May 30, 2024 at 04:54:37PM -0400, Paul Moore wrote:
-> On Wed, May 29, 2024 at 11:06 PM Eric Biggers <ebiggers@kernel.org> wrote:
-> > On Wed, May 29, 2024 at 09:46:57PM -0400, Paul Moore wrote:
-> > > On Fri, May 24, 2024 at 4:46 PM Fan Wu <wufan@linux.microsoft.com> wrote:
-> > > >
-> > > > This patch enhances fsverity's capabilities to support both integrity and
-> > > > authenticity protection by introducing the exposure of built-in
-> > > > signatures through a new LSM hook. This functionality allows LSMs,
-> > > > e.g. IPE, to enforce policies based on the authenticity and integrity of
-> > > > files, specifically focusing on built-in fsverity signatures. It enables
-> > > > a policy enforcement layer within LSMs for fsverity, offering granular
-> > > > control over the usage of authenticity claims. For instance, a policy
-> > > > could be established to permit the execution of all files with verified
-> > > > built-in fsverity signatures while restricting kernel module loading
-> > > > from specified fsverity files via fsverity digests.
-> 
-> ...
-> 
-> > > Eric, can you give this patch in particular a look to make sure you
-> > > are okay with everything?  I believe Fan has addressed all of your
-> > > previous comments and it would be nice to have your Ack/Review tag if
-> > > you are okay with the current revision.
-> >
-> > Sorry, I've just gotten a bit tired of finding so many basic issues in this
-> > patchset even after years of revisions.
-> >
-> > This patch in particular is finally looking better.  There are a couple issues
-> > that I still see.  (BTW, you're welcome to review it too to help find these
-> > things, given that you seem to have an interest in getting this landed...):
-> 
-> I too have been reviewing this patchset across multiple years and have
-> worked with Fan to fix locking issues, parsing issues, the initramfs
-> approach, etc.  
 
-Sure, but none of the patches actually have your Reviewed-by.
+Minwoo,
 
-> My interest in getting this landed is simply a
-> combination of fulfilling my role as LSM maintainer as well as being
-> Fan's coworker.  While I realize you don't work with Fan, you are
-> listed as the fs-verity maintainer and as such I've been looking to
-> you to help review and authorize the fs-verity related code.  If you
-> are too busy, frustrated, or <fill in the blank> to continue reviewing
-> this patchset it would be helpful if you could identify an authorized
-> fs-verity reviewer.  I don't see any besides you and Ted listed in the
-> MAINTAINERS file, but perhaps the fs-verity entry is dated.
-> 
-> Regardless, I appreciate your time and feedback thus far and I'm sure
-> Fan does as well.
+> This patch set fixes an potential bug for further usages in ufs-mcq.c
+> and contains a simple clean-up converting macro to an inline function.
 
-Maintainers are expected to do reviews and acks, but not to the extent of
-extensive hand-holding of a half-baked submission.
+Applied to 6.11/scsi-staging, thanks!
 
-- Eric
+-- 
+Martin K. Petersen	Oracle Linux Engineering
 
