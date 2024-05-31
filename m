@@ -1,158 +1,141 @@
-Return-Path: <linux-kernel+bounces-196104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B2138D575B
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 02:51:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43D828D575F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 02:53:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46BEB288BA2
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 00:51:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C176AB21C86
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 00:53:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBF15187566;
-	Fri, 31 May 2024 00:50:46 +0000 (UTC)
-Received: from SHSQR01.spreadtrum.com (mx1.unisoc.com [222.66.158.135])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B88C5695;
+	Fri, 31 May 2024 00:53:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BkA9m2NT"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DB96F4F1
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 00:50:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CD9D322A;
+	Fri, 31 May 2024 00:53:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717116646; cv=none; b=kZJmabvfSpvj786UYDkL4EJXOprvtR9lidL1rjJusGi6H+R7yVK93ZMP7wKw8WdTNQNmnC6uchr4L5VXIgx6uFvPbZ2shOmhP4bY5h3qlSfWdA7YUSgIxiE0/CACZ/W2SV/4v2WhobqK3QEofNff/AU+nEBTgr4tFB9/SaNWkzI=
+	t=1717116817; cv=none; b=VDRWwag/j9jAxAXG8p++HYktu/01s5IR6oE9imxtvAD2hW4661TPh0etGGfaUyvtG6LoC8gpTMGbCBQYxPeDnWDRSnDACpgLtl6gPRFCrQm/+4logoZpkTeyqrTWQwyKTGmEu7H0ZbQjXDJTmy5aUqpZdP/NeRbBhUQidAIqxa0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717116646; c=relaxed/simple;
-	bh=PXP3qouM95Yb/Z4GJB6s+wDC+hU13simptL+d3AX5Oo=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jJ95ZkQJYJebgtPHo1mg4nN7rX8TwE+Qm0hkiNoz72ihqW/4o4GO6COEj4KtxdZbQHsHmZ5b9Siv/bAIecQQhCJrahv36EWdt3THMINf4elmzKo2qKIDKIYuNFGkz86gwQ+w4kqFmm8znrV5sWkiwTmrqJu/0No/Uzod1jwXVbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
-Received: from dlp.unisoc.com ([10.29.3.86])
-	by SHSQR01.spreadtrum.com with ESMTP id 44V0oCZS010395;
-	Fri, 31 May 2024 08:50:12 +0800 (+08)
-	(envelope-from zhaoyang.huang@unisoc.com)
-Received: from SHDLP.spreadtrum.com (bjmbx01.spreadtrum.com [10.0.64.7])
-	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4Vr4Ds5lq3z2Mx64R;
-	Fri, 31 May 2024 08:46:21 +0800 (CST)
-Received: from bj03382pcu01.spreadtrum.com (10.0.73.40) by
- BJMBX01.spreadtrum.com (10.0.64.7) with Microsoft SMTP Server (TLS) id
- 15.0.1497.23; Fri, 31 May 2024 08:50:09 +0800
-From: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-        Uladzislau Rezki
-	<urezki@gmail.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Lorenzo Stoakes
-	<lstoakes@gmail.com>, Baoquan He <bhe@redhat.com>,
-        Thomas Gleixner
-	<tglx@linutronix.de>,
-        hailong liu <hailong.liu@oppo.com>, <linux-mm@kvack.org>,
-        <linux-kernel@vger.kernel.org>,
-        Zhaoyang Huang
-	<huangzhaoyang@gmail.com>, <steve.kang@unisoc.com>
-Subject: [PATCHv2] mm: fix incorrect vbq reference in purge_fragmented_block
-Date: Fri, 31 May 2024 08:50:07 +0800
-Message-ID: <20240531005007.1600287-1-zhaoyang.huang@unisoc.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1717116817; c=relaxed/simple;
+	bh=Mw1oL9sdafUoY4MhV8f9PQm63vS1qe+VApJa7ikXoM8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=PsEDxFTZJAZfVnkkzRsP/Z5RfCFL8FNx0aO1fPRAgJauzhIaFTx6ZxlRbEHkRKpY3MEoOpqX+NlhXY3GR3zoKdGXInZeMgfUG3HmCu5i5wrFPmye4y4P7G08al+2rvUQ9Mx07GG2tMRvcIB+faL/nq+JLrfdOW3Ri9vf/KD9meo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BkA9m2NT; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44UJ6iKa012837;
+	Fri, 31 May 2024 00:53:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=8N4sIf9xZAt909SNCE1IP2
+	Br36KKZ3iY6WzOZ4HpDR0=; b=BkA9m2NT7nJeTKV9jh3w2EFTqHspAPlU2a+Fg5
+	x15O7oxn7TvlFf1YHDYh68L9+tTEsl7XN8WI8dDsRozxnVV9ndstZvUtyrkMU5Is
+	beixQvAs0yKn40fCOTnSO3TBFgVhUvJD7j0rambN6OSzxykg/Q0xkbg9a4c2MFbJ
+	+K2RuGrfwXhfVC6w2e9luKsr956XxPY/o+P0oDqoCeT6TkJCsYlGUYzqCkMSp2qQ
+	s7Btye1LqJ/wGDZa8oMjApzcuRsAQ0BZ0B4Yl5slNBG4A7z8mNoQvN4MQySSztQF
+	NAIe4R+iAmviCgBeMnS1i2iOzvlb1bGSUHWYYsus3yiDCzGg==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba0qnetn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 31 May 2024 00:53:18 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44V0rHKF007129
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 31 May 2024 00:53:17 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 30 May
+ 2024 17:53:17 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Thu, 30 May 2024 17:53:17 -0700
+Subject: [PATCH] crypto: x86 - add missing MODULE_DESCRIPTION() macros
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
- BJMBX01.spreadtrum.com (10.0.64.7)
-X-MAIL:SHSQR01.spreadtrum.com 44V0oCZS010395
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240530-md-x86-crypto-v1-1-b480cbcc6bdf@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAHwfWWYC/x3MwQ6CMAyA4VchPdtkTlmMr2I8lK1KExmkBTNCe
+ Hemx+/w/xsYq7DBvdlA+SsmY644nxqIPeU3o6Rq8M5fXXtxOCQst4BR12keMVEg8q5NHAPUZlJ
+ +Sfn/Hs/qjoyxU8qx/10+kpeCA9nMCvt+AH+zadh+AAAA
+To: Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
+	<mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen
+	<dave.hansen@linux.intel.com>, <x86@kernel.org>,
+        "H. Peter Anvin"
+	<hpa@zytor.com>
+CC: <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: IwbYgAE4N56bvjZ05olor3sQg6bMlXBr
+X-Proofpoint-ORIG-GUID: IwbYgAE4N56bvjZ05olor3sQg6bMlXBr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-30_21,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ suspectscore=0 lowpriorityscore=0 impostorscore=0 clxscore=1015 mlxscore=0
+ mlxlogscore=999 malwarescore=0 spamscore=0 adultscore=0 bulkscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405310004
 
-From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
+On x86, make allmodconfig && make W=1 C=1 warns:
 
-vmalloc area runs out in our ARM64 system during an erofs test as
-vm_map_ram failed[1]. By following the debug log, we find that
-vm_map_ram()->vb_alloc() will allocate new vb->va which corresponding
-to 4MB vmalloc area as list_for_each_entry_rcu returns immediately
-when vbq->free->next points to vbq->free. That is to say, 65536 times
-of page fault after the list's broken will run out of the whole
-vmalloc area. This should be introduced by one vbq->free->next point to
-vbq->free which makes list_for_each_entry_rcu can not iterate the list
-and find the BUG.
+WARNING: modpost: missing MODULE_DESCRIPTION() in arch/x86/crypto/crc32-pclmul.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in arch/x86/crypto/curve25519-x86_64.o
 
-[1]
-PID: 1        TASK: ffffff80802b4e00  CPU: 6    COMMAND: "init"
- #0 [ffffffc08006afe0] __switch_to at ffffffc08111d5cc
- #1 [ffffffc08006b040] __schedule at ffffffc08111dde0
- #2 [ffffffc08006b0a0] schedule at ffffffc08111e294
- #3 [ffffffc08006b0d0] schedule_preempt_disabled at ffffffc08111e3f0
- #4 [ffffffc08006b140] __mutex_lock at ffffffc08112068c
- #5 [ffffffc08006b180] __mutex_lock_slowpath at ffffffc08111f8f8
- #6 [ffffffc08006b1a0] mutex_lock at ffffffc08111f834
- #7 [ffffffc08006b1d0] reclaim_and_purge_vmap_areas at ffffffc0803ebc3c
- #8 [ffffffc08006b290] alloc_vmap_area at ffffffc0803e83fc
- #9 [ffffffc08006b300] vm_map_ram at ffffffc0803e78c0
+Add the missing MODULE_DESCRIPTION() macro invocations.
 
-Fixes: fc1e0d980037 ("mm/vmalloc: prevent stale TLBs in fully utilized blocks")
-
-Signed-off-by: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 ---
-v2: introduce cpu in vmap_block to record the right CPU number
----
----
- mm/vmalloc.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ arch/x86/crypto/crc32-pclmul_glue.c | 1 +
+ arch/x86/crypto/curve25519-x86_64.c | 1 +
+ 2 files changed, 2 insertions(+)
 
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index 22aa63f4ef63..ca962b554fa0 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -2458,6 +2458,7 @@ struct vmap_block {
- 	struct list_head free_list;
- 	struct rcu_head rcu_head;
- 	struct list_head purge;
-+	unsigned int cpu;
- };
+diff --git a/arch/x86/crypto/crc32-pclmul_glue.c b/arch/x86/crypto/crc32-pclmul_glue.c
+index 98cf3b4e4c9f..9f5e342b9845 100644
+--- a/arch/x86/crypto/crc32-pclmul_glue.c
++++ b/arch/x86/crypto/crc32-pclmul_glue.c
+@@ -195,6 +195,7 @@ module_init(crc32_pclmul_mod_init);
+ module_exit(crc32_pclmul_mod_fini);
  
- /* Queue of free and dirty vmap blocks, for allocation and flushing purposes */
-@@ -2574,6 +2575,7 @@ static void *new_vmap_block(unsigned int order, gfp_t gfp_mask)
- 	vb->dirty = 0;
- 	vb->dirty_min = VMAP_BBMAP_BITS;
- 	vb->dirty_max = 0;
-+	vb->cpu = smp_processor_id();
- 	bitmap_set(vb->used_map, 0, (1UL << order));
- 	INIT_LIST_HEAD(&vb->free_list);
+ MODULE_AUTHOR("Alexander Boyko <alexander_boyko@xyratex.com>");
++MODULE_DESCRIPTION("CRC32 algorithm (IEEE 802.3) accelerated with PCLMULQDQ");
+ MODULE_LICENSE("GPL");
  
-@@ -2614,9 +2616,10 @@ static void free_vmap_block(struct vmap_block *vb)
- }
+ MODULE_ALIAS_CRYPTO("crc32");
+diff --git a/arch/x86/crypto/curve25519-x86_64.c b/arch/x86/crypto/curve25519-x86_64.c
+index d55fa9e9b9e6..dcfc0de333de 100644
+--- a/arch/x86/crypto/curve25519-x86_64.c
++++ b/arch/x86/crypto/curve25519-x86_64.c
+@@ -1720,5 +1720,6 @@ module_exit(curve25519_mod_exit);
  
- static bool purge_fragmented_block(struct vmap_block *vb,
--		struct vmap_block_queue *vbq, struct list_head *purge_list,
--		bool force_purge)
-+		struct list_head *purge_list, bool force_purge)
- {
-+	struct vmap_block_queue *vbq = &per_cpu(vmap_block_queue, vb->cpu);
-+
- 	if (vb->free + vb->dirty != VMAP_BBMAP_BITS ||
- 	    vb->dirty == VMAP_BBMAP_BITS)
- 		return false;
-@@ -2664,7 +2667,7 @@ static void purge_fragmented_blocks(int cpu)
- 			continue;
- 
- 		spin_lock(&vb->lock);
--		purge_fragmented_block(vb, vbq, &purge, true);
-+		purge_fragmented_block(vb, &purge, true);
- 		spin_unlock(&vb->lock);
- 	}
- 	rcu_read_unlock();
-@@ -2801,7 +2804,7 @@ static void _vm_unmap_aliases(unsigned long start, unsigned long end, int flush)
- 			 * not purgeable, check whether there is dirty
- 			 * space to be flushed.
- 			 */
--			if (!purge_fragmented_block(vb, vbq, &purge_list, false) &&
-+			if (!purge_fragmented_block(vb, &purge_list, false) &&
- 			    vb->dirty_max && vb->dirty != VMAP_BBMAP_BITS) {
- 				unsigned long va_start = vb->va->va_start;
- 				unsigned long s, e;
--- 
-2.25.1
+ MODULE_ALIAS_CRYPTO("curve25519");
+ MODULE_ALIAS_CRYPTO("curve25519-x86");
++MODULE_DESCRIPTION("Curve25519 algorithm, ADX optimized");
+ MODULE_LICENSE("GPL v2");
+ MODULE_AUTHOR("Jason A. Donenfeld <Jason@zx2c4.com>");
+
+---
+base-commit: 4a4be1ad3a6efea16c56615f31117590fd881358
+change-id: 20240530-md-x86-crypto-da6aa205dec6
 
 
