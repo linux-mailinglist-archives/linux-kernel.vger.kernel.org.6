@@ -1,125 +1,352 @@
-Return-Path: <linux-kernel+bounces-197549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFD1F8D6C60
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 00:22:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41ED78D6C62
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 00:26:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A6152827B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 22:22:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C23451F22F48
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 22:26:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D58381207;
-	Fri, 31 May 2024 22:22:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AEB781AB1;
+	Fri, 31 May 2024 22:26:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k9vDvH85"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nr0G5XWI"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 270EA380;
-	Fri, 31 May 2024 22:22:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14D27380;
+	Fri, 31 May 2024 22:26:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717194132; cv=none; b=hyb/4H8xbm3HN4l5l5cd3MpjnXGDZ3eOP1x/Rq03evjq0vxkFb9a5mPiWn7Ljtu+iBoZlOzIIOLcoC4xut1mTFY4UOgqYWurSnYx9+eKALKFAXF/ppcsx8oc6K/GTVljq2K7+1wPazJNvJtFjB6N4/YNSY0fCSKZcEo0y4CoIs4=
+	t=1717194394; cv=none; b=qEA1RcIG4Gunr7KaPlpWt4igThYKlCC89ktDI/Z+fFoiIHMtbEv3yP0GcaWk+UEARyl+HR8f3++Or2tDEYWHaBOQsRgJ8ZqTo5SG8xZTVN+62EJvAYsoKSvOcAGA9pZgH585kbjT2OZxC6sTao/IgREW70pJ2s64/EdVOIfNHw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717194132; c=relaxed/simple;
-	bh=8aasfJYMSp7Rca3V+snQkwV21X6/KhsdEbYfIRJapRY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CX4jrjkPU+z12AzksBID/v0aeifZ4yZka6W+L6EWUHJ5UGLb0pS4XuUUcvK8c3I0pdob7ltZpD8m267/g8d+QVYMpKXyjFBGkcEefdZytBhut6Xx0hDG7KBV2RwTMzQLeMd2DqRuf/N8KQlC1w2P8ZyiYEoSHEz1Gg+pMYuvQ/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k9vDvH85; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7022cabdc0aso1950217b3a.1;
-        Fri, 31 May 2024 15:22:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717194130; x=1717798930; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1AgJOdQzaSF+x48xZPHcAex543/+XUv+ldPOnodDgaw=;
-        b=k9vDvH85Qd63mMOrJllfS3gTTq/6UNcxyh5mizvlMZCsfYT1GAQkFZOXR1Xcf+G4Vd
-         4m1RrZ+Bi/7YcratdILT2xL61N3NcsWJZdtxwjGlnpOjX4WFdRePYCcoIYz08K4gJCO2
-         XCStNONf8MtK6XwpVFoL0niBynQCu90Rwou8iCeBAGiNEyL7Dp2aTdWt6t3tJtlLZxTm
-         fT1LlaWPgyTHT2x2PeQ1lALsDfaSrC4eMNBbwSLGex7ke0vh4fJaksQXAB52GFpD5bx0
-         JWtASpsWdxdAWXkHenFR/09s9drCsXuen+aprAQ/GPvgWRzLImpx5xm7dD7fTjIs68Ri
-         XkFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717194130; x=1717798930;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1AgJOdQzaSF+x48xZPHcAex543/+XUv+ldPOnodDgaw=;
-        b=F11xRWnrB4vNHvbuIFPROiC2FIgNTI4gDbeNcnCK8UOR/aAokOtvGTEvoExEmrbHFa
-         W3psy+WJhh/v03Liz/l/tgOhHdXAzMGXFSc0BbmyWMFxBnVVujBetS4bJiD8LzDuPh5h
-         EvVJBsotwcyfv5oqXtAmFsXc1n0rutxILdtjcj7FKVKsk18X/IsIbpL7MySi33ooaGqx
-         DiJqEGXU86Rqq6Ka3zbjz27DX6NSpPTFsjUL4Lkv+lWDIsDH9FtiESN0paq+YUIE/m4J
-         BjU96JR9uq4ggkmW03zfORpA3aId2IBHSTu/aKFE/x17uzEx2u2UpZAvcX02D/p+0JEh
-         B13A==
-X-Forwarded-Encrypted: i=1; AJvYcCUPVJJjS5tYIaFQFC77VhE4L7zkcuA8izvc/Ka/IK18k2Nfn/HirPZrgyBlJKZENPHTgZSnAfCMfaaOW8xvggMwDW9WWFOAq/6pJT0xLGNVmJBT5WU+sqloa85/zAm0+CB3nhQKgKK+tFQJoOUbQXKEUhDN8z7lb3wrVPLLOt+vY7nspQ==
-X-Gm-Message-State: AOJu0YxFZ7gXK+Pv1Lh1cfDmGeszLXY7tO7ih34/XI+kqUW2krK3fuuh
-	g4Iz5DEj56ZUTclQ1O3yLSzKsfwdjFa3uVdTT3baJRtvFjr2bbJdo1nl73gKCP4=
-X-Google-Smtp-Source: AGHT+IGONFMeWhM6DGloHHRuKEmzh8MdNpvj9MZ2WZCIpzVApBH6H+bkiHK1nnz7IgrFO2mwTWMvmg==
-X-Received: by 2002:a05:6a21:3a4a:b0:1af:86e4:bc99 with SMTP id adf61e73a8af0-1b26f12ce72mr4643339637.10.1717194130200;
-        Fri, 31 May 2024 15:22:10 -0700 (PDT)
-Received: from archlinux ([189.101.162.253])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70242b2c438sm1834252b3a.202.2024.05.31.15.22.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 May 2024 15:22:09 -0700 (PDT)
-Date: Fri, 31 May 2024 19:22:02 -0300
-From: Gustavo Silva <gustavograzs@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: jic23@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, lars@metafoo.de, christophe.jaillet@wanadoo.fr, 
-	devicetree@vger.kernel.org, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/6] dt-bindings: vendor-prefixes: add ScioSense
-Message-ID: <kluu6wchcz47duw5kdamlhacvms3bielepees7gjx5hhoqz4dh@bktawzj73nan>
-References: <20240529001504.33648-1-gustavograzs@gmail.com>
- <8e27c8da-d856-4fab-bb12-3af07e13838e@kernel.org>
+	s=arc-20240116; t=1717194394; c=relaxed/simple;
+	bh=NSDi71gOLTNp7zBvv36RkR90dy07CER23yL9Aj+0/cA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WVto4FoiPFuLK5OJfZlSu1Zm06umZUB33bDGE+yePWMowGWfUvAOJAXLrY1R+MpFBYnfe/yuLxrhlwkrXwais4D8vs9O0AVpzAGeI/gAS7IdyeBLICZ4us+MFQW3HmFiCOaC582GVYCmr7KzivX6KaYcuM/VWEz6/6XD4Mbr5qw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nr0G5XWI; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717194392; x=1748730392;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=NSDi71gOLTNp7zBvv36RkR90dy07CER23yL9Aj+0/cA=;
+  b=nr0G5XWI/0iIPhW8gLBqZeTrzsYddXXYmBz6fqfLqiXbIJS3QWqxEQPY
+   o331K7RkCyShDjNUULZP9TA01hmyELp/Z6AY75bvTFEKQGpqujn7bNbS0
+   EDH3br7Xi6E6ymwr5fwH0W5LCQv82uTBUbLnMT/PWfg+4Yq0fn4R3LYQk
+   Y2HVvGNsG37Q9KjhgM7HniiCfxl+XMuc4oyx1UfxEp77fmgmTN/FIt3+P
+   J+SLYqby0VbYCoLRQWC7Jss9K2WH9CnkiWS4pCrfNbhyl2VZP8uOSuWEx
+   /27S5oQfczDnfZZPGP12bVLNmhR8a16eKBd5F3ihRH0JMSDGvb/7FYl6u
+   Q==;
+X-CSE-ConnectionGUID: CtxJS3CQTa+60MdUMhVbJQ==
+X-CSE-MsgGUID: FwG+Vn0DSIWN14cj3mCKcw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11089"; a="13949721"
+X-IronPort-AV: E=Sophos;i="6.08,205,1712646000"; 
+   d="scan'208";a="13949721"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 15:26:31 -0700
+X-CSE-ConnectionGUID: oVkdzAGKSFq0gKMZReBVjg==
+X-CSE-MsgGUID: agA4LE8ARHidBPdAJzkNTg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,205,1712646000"; 
+   d="scan'208";a="40736912"
+Received: from b4969161e530.jf.intel.com ([10.165.56.46])
+  by fmviesa005.fm.intel.com with ESMTP; 31 May 2024 15:26:30 -0700
+From: Haitao Huang <haitao.huang@linux.intel.com>
+To: jarkko@kernel.org,
+	dave.hansen@linux.intel.com,
+	kai.huang@intel.com,
+	tj@kernel.org,
+	mkoutny@suse.com,
+	linux-kernel@vger.kernel.org,
+	linux-sgx@vger.kernel.org,
+	x86@kernel.org,
+	cgroups@vger.kernel.org,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	hpa@zytor.com,
+	sohil.mehta@intel.com,
+	tim.c.chen@linux.intel.com
+Cc: zhiquan1.li@intel.com,
+	kristen@linux.intel.com,
+	seanjc@google.com,
+	zhanb@microsoft.com,
+	anakrish@microsoft.com,
+	mikko.ylinen@linux.intel.com,
+	yangjie@microsoft.com,
+	chrisyan@microsoft.com
+Subject: [PATCH v14 00/14]  Add Cgroup support for SGX EPC memory
+Date: Fri, 31 May 2024 15:26:16 -0700
+Message-Id: <20240531222630.4634-1-haitao.huang@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8e27c8da-d856-4fab-bb12-3af07e13838e@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Wed, May 29, 2024 at 09:29:54AM GMT, Krzysztof Kozlowski wrote:
-> On 29/05/2024 02:14, Gustavo Silva wrote:
-> > Add vendor prefix for ScioSense B.V.
-> > https://www.sciosense.com/
-> > 
-> > Signed-off-by: Gustavo Silva <gustavograzs@gmail.com>
-> > ---
-> 
-> This is a friendly reminder during the review process.
-> 
-> It looks like you received a tag and forgot to add it.
-> 
-> If you do not know the process, here is a short explanation:
-> Please add Acked-by/Reviewed-by/Tested-by tags when posting new
-> versions, under or above your Signed-off-by tag. Tag is "received", when
-> provided in a message replied to you on the mailing list. Tools like b4
-> can help here. However, there's no need to repost patches *only* to add
-> the tags. The upstream maintainer will do that for tags received on the
-> version they apply.
-> 
-> https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
-> 
-> If a tag was not added on purpose, please state why and what changed.
-> 
-> Best regards,
-> Krzysztof
-> 
+SGX Enclave Page Cache (EPC) memory allocations are separate from normal
+RAM allocations, and are managed solely by the SGX subsystem. The existing
+cgroup memory controller cannot be used to limit or account for SGX EPC
+memory, which is a desirable feature in some environments, e.g., support
+for pod level control in a Kubernates cluster on a VM or bare-metal host
+[1,2].
+ 
+This patchset implements the support for sgx_epc memory within the misc
+cgroup controller. A user can use the misc cgroup controller to set and
+enforce a max limit on total EPC usage per cgroup. The implementation
+reports current usage and events of reaching the limit per cgroup as well
+as the total system capacity.
+ 
+Much like normal system memory, EPC memory can be overcommitted via virtual
+memory techniques and pages can be swapped out of the EPC to their backing
+store, which are normal system memory allocated via shmem and accounted by
+the memory controller. Similar to per-cgroup reclamation done by the memory
+controller, the EPC misc controller needs to implement a per-cgroup EPC
+reclaiming process: when the EPC usage of a cgroup reaches its hard limit
+('sgx_epc' entry in the 'misc.max' file), the cgroup starts swapping out
+some EPC pages within the same cgroup to make room for new allocations.
+ 
+For that, this implementation tracks reclaimable EPC pages in a separate
+LRU list in each cgroup, and below are more details and justification of
+this design. 
+ 
+Track EPC pages in per-cgroup LRUs (from Dave)
+----------------------------------------------
+ 
+tl;dr: A cgroup hitting its limit should be as similar as possible to the
+system running out of EPC memory. The only two choices to implement that
+are nasty changes the existing LRU scanning algorithm, or to add new LRUs.
+The result: Add a new LRU for each cgroup and scans those instead. Replace
+the existing global cgroup with the root cgroup's LRU (only when this new
+support is compiled in, obviously).
+ 
+The existing EPC memory management aims to be a miniature version of the
+core VM where EPC memory can be overcommitted and reclaimed. EPC
+allocations can wait for reclaim. The alternative to waiting would have
+been to send a signal and let the enclave die.
+ 
+This series attempts to implement that same logic for cgroups, for the same
+reasons: it's preferable to wait for memory to become available and let
+reclaim happen than to do things that are fatal to enclaves.
+ 
+There is currently a global reclaimable page SGX LRU list. That list (and
+the existing scanning algorithm) is essentially useless for doing reclaim
+when a cgroup hits its limit because the cgroup's pages are scattered
+around that LRU. It is unspeakably inefficient to scan a linked list with
+millions of entries for what could be dozens of pages from a cgroup that
+needs reclaim.
+ 
+Even if unspeakably slow reclaim was accepted, the existing scanning
+algorithm only picks a few pages off the head of the global LRU. It would
+either need to hold the list locks for unreasonable amounts of time, or be
+taught to scan the list in pieces, which has its own challenges.
+ 
+Unreclaimable Enclave Pages
+---------------------------
+ 
+There are a variety of page types for enclaves, each serving different
+purposes [5]. Although the SGX architecture supports swapping for all
+types, some special pages, e.g., Version Array(VA) and Secure Enclave
+Control Structure (SECS)[5], holds meta data of reclaimed pages and
+enclaves. That makes reclamation of such pages more intricate to manage.
+The SGX driver global reclaimer currently does not swap out VA pages. It
+only swaps the SECS page of an enclave when all other associated pages have
+been swapped out. The cgroup reclaimer follows the same approach and does
+not track those in per-cgroup LRUs and considers them as unreclaimable
+pages. The allocation of these pages is counted towards the usage of a
+specific cgroup and is subject to the cgroup's set EPC limits.
+ 
+Earlier versions of this series implemented forced enclave-killing to
+reclaim VA and SECS pages. That was designed to enforce the 'max' limit,
+particularly in scenarios where a user or administrator reduces this limit
+post-launch of enclaves. However, subsequent discussions [3, 4] indicated
+that such preemptive enforcement is not necessary for the misc-controllers.
+Therefore, reclaiming SECS/VA pages by force-killing enclaves were removed,
+and the limit is only enforced at the time of new EPC allocation request.
+When a cgroup hits its limit but nothing left in the LRUs of the subtree,
+i.e., nothing to reclaim in the cgroup, any new attempt to allocate EPC
+within that cgroup will result in an 'ENOMEM'.
+ 
+Unreclaimable Guest VM EPC Pages
+--------------------------------
+ 
+The EPC pages allocated for guest VMs by the virtual EPC driver are not
+reclaimable by the host kernel [6]. Therefore an EPC cgroup also treats
+those as unreclaimable and returns ENOMEM when its limit is hit and nothing
+reclaimable left within the cgroup. The virtual EPC driver translates the
+ENOMEM error resulted from an EPC allocation request into a SIGBUS to the
+user process exactly the same way handling host running out of physical
+EPC.
+ 
+This work was originally authored by Sean Christopherson a few years ago,
+and previously modified by Kristen C. Accardi to utilize the misc cgroup
+controller rather than a custom controller. I have been updating the
+patches based on review comments since V2 [7-18], simplified the
+implementation/design, added selftest scripts, fixed some stability issues
+found from testing.
+ 
+Thanks to all for the review/test/tags/feedback provided on the previous
+versions. 
+ 
+I appreciate your further reviewing/testing and providing tags if
+appropriate.
+ 
+---
+V14:
+- modified sgx_cgroup_reclaim_pages() to return the next node. Caller can use it as the new
+  starting node for next round of reclamation attempt if needed. This is to fix a corner case
+where a super busy top level cgroup may block reclamation in lower level cgroups. (Kai)
+- Move renaming of sgx_should_reclaim_global() to the patch 'x86/sgx: Add basic EPC reclamation
+flow for cgroup'. (Kai)
 
-Hi Krzysztof,
+v13:
+- Only allocate workqueue for SGX cgroup when misc is enabled and BUG_ON() when allocation fails
+- Add more tags
+- Commit logs and style improvements (Kai)
+- Test script improvements (Jarkko)
+ 
+V12:
+- Integrate test scripts to kselftests "run_tests" target. (Jarkko)
+- Remove CGROUP_SGX_EPC kconfig, conditionally compile with CGROUP_MISC enabled. (Jarkko)
+- Explain why taking 'struct misc_cg *cg' as parameter, but not 'struct misc_res *res' in the
+  changelog for patch #2. (Kai)
+- Remove "unlikely" in patch #2 (Kai)
+  
+V11:
+- Update copyright years and use c style (Kai)
+- Improve and simplify test scripts: remove cgroup-tools and bash dependency, drop cgroup v1.
+  (Jarkko, Michal)
+- Add more stub/wrapper functions to minimize #ifdefs in c file. (Kai)
+- Revise commit message for patch #8 to clarify design rational (Kai)
+- Print error instead of WARN for init failure. (Kai)
+- Add check for need to queue an async reclamation before returning from
+  sgx_cgroup_try_charge(), do so if needed.
 
-Sorry, I totally forgot to add the tag. If we need a new version of
-this patch series, I'll make sure to add it.
+V10:
+- Use enum instead of boolean for the 'reclaim' parameters in
+  sgx_alloc_epc_page(). (Dave, Jarkko)
+- Pass mm struct instead of a boolean 'indirect'. (Dave, Jarkko)
+- Add comments/macros to clarify the cgroup async reclaimer design. (Kai)
+- Simplify sgx_reclaim_pages() signature, removing a pointer passed in.
+  (Kai)
+- Clarify design of sgx_cgroup_reclaim_pages(). (Kai)
+	- Does not return a value for callers to check.
+	- Its usage pattern is similar to that of sgx_reclaim_pages() now
+- Add cond_resched() in the loop in the cgroup reclaimer to improve
+  liveliness.
+- Add logic for cgroup level reclamation in sgx_reclaim_direct()
+- Restructure V9 patches 7-10 to make them flow better. (Kai)
+- Disable cgroup if workqueue allocation failed during init. (Kai)
+- Shorten names for EPC cgroup functions, structures and variables.
+  (Jarkko)
+- Separate out a helper for for addressing single iteration of the loop in
+  sgx_cgroup_try_charge(). (Jarkko)
+- More cleanup/clarifying/comments/style fixes. (Kai, Jarkko)  
+ 
+V9:
+- Add comments for static variables outside functions. (Jarkko)
+- Remove unnecessary ifs. (Tim)
+- Add more Reviewed-By: tags from Jarkko and TJ.
+ 
+V8:
+- Style fixes. (Jarkko)
+- Abstract _misc_res_free/alloc() (Jarkko)
+- Remove unneeded NULL checks. (Jarkko)
+ 
+V7:
+- Split the large patch for the final EPC implementation, #10 in V6, into
+  smaller ones. (Dave, Kai)
+- Scan and reclaim one cgroup at a time, don't split sgx_reclaim_pages()
+  into two functions (Kai)
+- Removed patches to introduce the EPC page states, list for storing
+  candidate pages for reclamation. (not needed due to above changes)
+- Make ops one per resource type and store them in array (Michal)
+- Rename the ops struct to misc_res_ops, and enforce the constraints of
+  required callback functions (Jarkko)
+- Initialize epc cgroup in sgx driver init function. (Kai)
+- Moved addition of priv field to patch 4 where it was used first. (Jarkko)
+- Split sgx_get_current_epc_cg() out of sgx_epc_cg_try_charge() (Kai)
+- Use a static for root cgroup (Kai)
+ 
+[1]https://lore.kernel.org/all/DM6PR21MB11772A6ED915825854B419D6C4989@DM6PR21MB1177.namprd21.prod.outlook.com/
+[2]https://lore.kernel.org/all/ZD7Iutppjj+muH4p@himmelriiki/
+[3]https://lore.kernel.org/lkml/7a1a5125-9da2-47b6-ba0f-cf24d84df16b@intel.com/
+[4]https://lore.kernel.org/lkml/yz44wukoic3syy6s4fcrngagurkjhe2hzka6kvxbajdtro3fwu@zd2ilht7wcw3/
+[5]Documentation/arch/x86/sgx.rst, Section"Enclave Page Types"
+[6]Documentation/arch/x86/sgx.rst, Section "Virtual EPC"
+[7]v2: https://lore.kernel.org/all/20221202183655.3767674-1-kristen@linux.intel.com/
+[8]v3: https://lore.kernel.org/linux-sgx/20230712230202.47929-1-haitao.huang@linux.intel.com/
+[9]v4: https://lore.kernel.org/all/20230913040635.28815-1-haitao.huang@linux.intel.com/
+[10]v5: https://lore.kernel.org/all/20230923030657.16148-1-haitao.huang@linux.intel.com/
+[11]v6: https://lore.kernel.org/linux-sgx/20231030182013.40086-1-haitao.huang@linux.intel.com/
+[12]v7: https://lore.kernel.org/linux-sgx/20240122172048.11953-1-haitao.huang@linux.intel.com/T/#t
+[13]v8: https://lore.kernel.org/linux-sgx/20240130020938.10025-1-haitao.huang@linux.intel.com/T/#t
+[14]v9: https://lore.kernel.org/lkml/20240205210638.157741-1-haitao.huang@linux.intel.com/T/
+[15]v10: https://lore.kernel.org/linux-sgx/20240328002229.30264-1-haitao.huang@linux.intel.com/T/#t
+[16]v11: https://lore.kernel.org/lkml/20240410182558.41467-1-haitao.huang@linux.intel.com/
+[17]v12: https://lore.kernel.org/lkml/20240416032011.58578-1-haitao.huang@linux.intel.com/
+[18]v13: https://lore.kernel.org/lkml/20240430195108.5676-1-haitao.huang@linux.intel.com/ 
 
-Also, thank you for mentioning b4, I'll definitely give it a try.
+Haitao Huang (3):
+  x86/sgx: Replace boolean parameters with enums
+  x86/sgx: Charge mem_cgroup for per-cgroup reclamation
+  selftests/sgx: Add scripts for EPC cgroup testing
 
-Best regards,
-Gustavo
+Kristen Carlson Accardi (9):
+  cgroup/misc: Add per resource callbacks for CSS events
+  cgroup/misc: Export APIs for SGX driver
+  cgroup/misc: Add SGX EPC resource type
+  x86/sgx: Implement basic EPC misc cgroup functionality
+  x86/sgx: Abstract tracking reclaimable pages in LRU
+  x86/sgx: Add basic EPC reclamation flow for cgroup
+  x86/sgx: Abstract check for global reclaimable pages
+  x86/sgx: Implement async reclamation for cgroup
+  x86/sgx: Turn on per-cgroup EPC reclamation
+
+Sean Christopherson (2):
+  x86/sgx: Add sgx_epc_lru_list to encapsulate LRU list
+  Docs/x86/sgx: Add description for cgroup support
+
+ Documentation/arch/x86/sgx.rst                |  83 +++++
+ arch/x86/kernel/cpu/sgx/Makefile              |   1 +
+ arch/x86/kernel/cpu/sgx/encl.c                |  41 +-
+ arch/x86/kernel/cpu/sgx/encl.h                |   7 +-
+ arch/x86/kernel/cpu/sgx/epc_cgroup.c          | 351 ++++++++++++++++++
+ arch/x86/kernel/cpu/sgx/epc_cgroup.h          | 106 ++++++
+ arch/x86/kernel/cpu/sgx/ioctl.c               |  10 +-
+ arch/x86/kernel/cpu/sgx/main.c                | 243 +++++++++---
+ arch/x86/kernel/cpu/sgx/sgx.h                 |  50 ++-
+ arch/x86/kernel/cpu/sgx/virt.c                |   2 +-
+ include/linux/misc_cgroup.h                   |  41 ++
+ kernel/cgroup/misc.c                          | 107 +++++-
+ tools/testing/selftests/sgx/Makefile          |   3 +-
+ tools/testing/selftests/sgx/README            | 109 ++++++
+ tools/testing/selftests/sgx/ash_cgexec.sh     |  16 +
+ tools/testing/selftests/sgx/config            |   4 +
+ .../selftests/sgx/run_epc_cg_selftests.sh     | 295 +++++++++++++++
+ tools/testing/selftests/sgx/settings          |   2 +
+ .../selftests/sgx/watch_misc_for_tests.sh     |  11 +
+ 19 files changed, 1371 insertions(+), 111 deletions(-)
+ create mode 100644 arch/x86/kernel/cpu/sgx/epc_cgroup.c
+ create mode 100644 arch/x86/kernel/cpu/sgx/epc_cgroup.h
+ create mode 100644 tools/testing/selftests/sgx/README
+ create mode 100755 tools/testing/selftests/sgx/ash_cgexec.sh
+ create mode 100644 tools/testing/selftests/sgx/config
+ create mode 100755 tools/testing/selftests/sgx/run_epc_cg_selftests.sh
+ create mode 100644 tools/testing/selftests/sgx/settings
+ create mode 100755 tools/testing/selftests/sgx/watch_misc_for_tests.sh
+
+
+base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
+-- 
+2.25.1
+
 
