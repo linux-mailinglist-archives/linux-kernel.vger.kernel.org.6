@@ -1,89 +1,47 @@
-Return-Path: <linux-kernel+bounces-196411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BF9C8D5B93
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 09:35:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A17648D5B95
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 09:35:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6EBA91C21060
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 07:35:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BDC81F23106
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 07:35:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5FFC74053;
-	Fri, 31 May 2024 07:34:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8658374402;
+	Fri, 31 May 2024 07:35:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="VKD6M52X";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="YyQpY4S2";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="VKD6M52X";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="YyQpY4S2"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lfElxK7C"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 375115588D
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 07:34:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96C0D74047;
+	Fri, 31 May 2024 07:35:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717140898; cv=none; b=kVdYPQJBa3pH0jQZPdz8XlzvNRMi5CaZD7MvufIWZHbKbFPvTywG/qf0wode95MjiLpwl1hZ4BxpHhyM45gkbteKTq5HMUmzqN6EvpUj9G9f6hZlm3yN4iFgMsKWEyp0Y0o3wGk+O/a9OPc0uZcwEj4AEJBWqEdlmnGh0eULhoE=
+	t=1717140908; cv=none; b=iQMKHxOLRHJUbewAFsKJg2VPZVj32bE960Mg3Sq+/cp0IUPen6WKbObkmEOo2aRYruXaIefGDgRMMwbHOwH+MRenCAxYgL73xa19wgwSi6P00w9U+Ts4PBQSS3QY4AzYV8bmNFV6JzR6LlzmQWjvoS7jZgDnLTzHzNx+5qg14NQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717140898; c=relaxed/simple;
-	bh=1lnIZASLm+ru8cQu+USK4EnZwmyXLStJ8z6PTbytneQ=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=mM9rs+Z/Km3VxCeHiExCTZWwag0Hv2Hm7q2w1UIDNZdElej9949DUCjqi8kKTKk2gqL+ac1q8Tas6H2EHFEflr731OuYdUPwmfVMBVVEJ9ss8S5Tmx7aSuoLxsyr2KKLRJINTaJHJZ3WQv3fta5/U3vPCNjmVyjWpacCXuoMUM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=VKD6M52X; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=YyQpY4S2; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=VKD6M52X; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=YyQpY4S2; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 494F321A9D;
-	Fri, 31 May 2024 07:34:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1717140894; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
-	bh=+9p5tJAUBHauloVX/9/E4+eTFjpI9g68kf37SQumDek=;
-	b=VKD6M52XFz5yPlDvZ6TBSFCG7CJGRsALGW93DTXTozE13NKbUWj1O+dX0SrEWKnMg5Iyxk
-	VcvRoaYmK60fQeBvD4gIc7nkU0et4phPi5MkftGt21UT1mOG5aQxPJUB2oQdPiQ6RnL9ph
-	5dy4Gy7DodwMSLaMN8/Ea2VZJmfSX4E=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1717140894;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
-	bh=+9p5tJAUBHauloVX/9/E4+eTFjpI9g68kf37SQumDek=;
-	b=YyQpY4S2wIf7XuXSHEEtrlvnLcQGeBkZncB3/uZwROKwlusOMShCkG+/LJeYfCeDDEd3tK
-	v+sgh8CElHzxnqDw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1717140894; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
-	bh=+9p5tJAUBHauloVX/9/E4+eTFjpI9g68kf37SQumDek=;
-	b=VKD6M52XFz5yPlDvZ6TBSFCG7CJGRsALGW93DTXTozE13NKbUWj1O+dX0SrEWKnMg5Iyxk
-	VcvRoaYmK60fQeBvD4gIc7nkU0et4phPi5MkftGt21UT1mOG5aQxPJUB2oQdPiQ6RnL9ph
-	5dy4Gy7DodwMSLaMN8/Ea2VZJmfSX4E=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1717140894;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
-	bh=+9p5tJAUBHauloVX/9/E4+eTFjpI9g68kf37SQumDek=;
-	b=YyQpY4S2wIf7XuXSHEEtrlvnLcQGeBkZncB3/uZwROKwlusOMShCkG+/LJeYfCeDDEd3tK
-	v+sgh8CElHzxnqDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 39E48132C2;
-	Fri, 31 May 2024 07:34:54 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 0V2rDZ59WWZrdwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Fri, 31 May 2024 07:34:54 +0000
-Message-ID: <ffc05b5d-9fd0-4926-807f-04f90adff255@suse.cz>
-Date: Fri, 31 May 2024 09:34:54 +0200
+	s=arc-20240116; t=1717140908; c=relaxed/simple;
+	bh=FcnVBrBbVGC7mRLxRj7oghdJQTffvfVGCO/SyOTquqA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PHWYfZpEhCaHOzwi+d4TfGn/6MsJD7rT9f8NozntOXdjBDwD1EBcPy+HRWN36a2Du8JNOL2YJOG1nCrfBeqFabxHtiKoa3tbbedB5tMC0v8ifKu/9BENX0BfJaf0+HMyt8VXvZpyhsp/hzNc8Mo3gXlB20OgYEsOQMGpvRYdrDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lfElxK7C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9339C116B1;
+	Fri, 31 May 2024 07:35:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717140908;
+	bh=FcnVBrBbVGC7mRLxRj7oghdJQTffvfVGCO/SyOTquqA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=lfElxK7CSmmItFg/3fv/OQEkZMUw91XC7sbno6BalS5q5T0N6Si382+KmsPSlJa4H
+	 +PuT2WSCc09ikx+RJlSu6gTsflx40RccLamZMHPmtzp4APJiA6UfxupW3wuu+HspWx
+	 kAUwT6L1V484CjC19dfn6nl7N6Ir+nqmppJ47+7NJMnuU8t2WkLGBqfwTP+LbYvT2A
+	 WS9PmEkpj+qk6jU4fT4PTs2qHliXp2ChYyy7vJDlZjQw0w+hq9WkQ1VMWqtVOGaCuL
+	 qgnFTbK+8AF2oQkp7Z2PkybC3XAl8GpyQtw1mMB+tzUbU6Os+QKpnX0X5HSxFWqSxt
+	 46+5+FVFd1Rxg==
+Message-ID: <97d8acf9-6cb3-4da7-ad4e-0f2d0a63c172@kernel.org>
+Date: Fri, 31 May 2024 09:35:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,121 +49,167 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Vlastimil Babka <vbabka@suse.cz>
-Subject: [CFP LPC 2024] Kernel Memory Management Microconference
-To: "linux-mm@kvack.org" <linux-mm@kvack.org>
-Cc: Matthew Wilcox <willy@infradead.org>, Mike Rapoport <rppt@kernel.org>,
- LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 08/17] Add main.c
+To: "Nemanov, Michael" <michael.nemanov@ti.com>, Kalle Valo
+ <kvalo@kernel.org>, Johannes Berg <johannes.berg@intel.com>,
+ Breno Leitao <leitao@debian.org>, Justin Stitt <justinstitt@google.com>,
+ Kees Cook <keescook@chromium.org>, linux-wireless@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Sabeeh Khan <sabeeh-khan@ti.com>
+References: <20240521171841.884576-1-michael.nemanov@ti.com>
+ <20240521171841.884576-9-michael.nemanov@ti.com>
+ <cfe33bf1-9df3-4d02-b4ed-e29a430b106d@kernel.org>
+ <456c8076-1e3a-4cc9-895c-e707e68fe610@ti.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-Autocrypt: addr=vbabka@suse.cz; keydata=
- xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
- KxRWDHX0R2tgpFDXHnzZcQywawu8eSq0LxzxFNYMvtB7sV1pxYwej2qx9B75qW2plBs+7+YB
- 87tMFA+u+L4Z5xAzIimfLD5EKC56kJ1CsXlM8S/LHcmdD9Ctkn3trYDNnat0eoAcfPIP2OZ+
- 9oe9IF/R28zmh0ifLXyJQQz5ofdj4bPf8ecEW0rhcqHfTD8k4yK0xxt3xW+6Exqp9n9bydiy
- tcSAw/TahjW6yrA+6JhSBv1v2tIm+itQc073zjSX8OFL51qQVzRFr7H2UQG33lw2QrvHRXqD
- Ot7ViKam7v0Ho9wEWiQOOZlHItOOXFphWb2yq3nzrKe45oWoSgkxKb97MVsQ+q2SYjJRBBH4
- 8qKhphADYxkIP6yut/eaj9ImvRUZZRi0DTc8xfnvHGTjKbJzC2xpFcY0DQbZzuwsIZ8OPJCc
- LM4S7mT25NE5kUTG/TKQCk922vRdGVMoLA7dIQrgXnRXtyT61sg8PG4wcfOnuWf8577aXP1x
- 6mzw3/jh3F+oSBHb/GcLC7mvWreJifUL2gEdssGfXhGWBo6zLS3qhgtwjay0Jl+kza1lo+Cv
- BB2T79D4WGdDuVa4eOrQ02TxqGN7G0Biz5ZLRSFzQSQwLn8fbwARAQABzSBWbGFzdGltaWwg
- QmFia2EgPHZiYWJrYUBzdXNlLmN6PsLBlAQTAQoAPgIbAwULCQgHAwUVCgkICwUWAgMBAAIe
- AQIXgBYhBKlA1DSZLC6OmRA9UCJPp+fMgqZkBQJkBREIBQkRadznAAoJECJPp+fMgqZkNxIQ
- ALZRqwdUGzqL2aeSavbum/VF/+td+nZfuH0xeWiO2w8mG0+nPd5j9ujYeHcUP1edE7uQrjOC
- Gs9sm8+W1xYnbClMJTsXiAV88D2btFUdU1mCXURAL9wWZ8Jsmz5ZH2V6AUszvNezsS/VIT87
- AmTtj31TLDGwdxaZTSYLwAOOOtyqafOEq+gJB30RxTRE3h3G1zpO7OM9K6ysLdAlwAGYWgJJ
- V4JqGsQ/lyEtxxFpUCjb5Pztp7cQxhlkil0oBYHkudiG8j1U3DG8iC6rnB4yJaLphKx57NuQ
- PIY0Bccg+r9gIQ4XeSK2PQhdXdy3UWBr913ZQ9AI2usid3s5vabo4iBvpJNFLgUmxFnr73SJ
- KsRh/2OBsg1XXF/wRQGBO9vRuJUAbnaIVcmGOUogdBVS9Sun/Sy4GNA++KtFZK95U7J417/J
- Hub2xV6Ehc7UGW6fIvIQmzJ3zaTEfuriU1P8ayfddrAgZb25JnOW7L1zdYL8rXiezOyYZ8Fm
- ZyXjzWdO0RpxcUEp6GsJr11Bc4F3aae9OZtwtLL/jxc7y6pUugB00PodgnQ6CMcfR/HjXlae
- h2VS3zl9+tQWHu6s1R58t5BuMS2FNA58wU/IazImc/ZQA+slDBfhRDGYlExjg19UXWe/gMcl
- De3P1kxYPgZdGE2eZpRLIbt+rYnqQKy8UxlszsBNBFsZNTUBCACfQfpSsWJZyi+SHoRdVyX5
- J6rI7okc4+b571a7RXD5UhS9dlVRVVAtrU9ANSLqPTQKGVxHrqD39XSw8hxK61pw8p90pg4G
- /N3iuWEvyt+t0SxDDkClnGsDyRhlUyEWYFEoBrrCizbmahOUwqkJbNMfzj5Y7n7OIJOxNRkB
- IBOjPdF26dMP69BwePQao1M8Acrrex9sAHYjQGyVmReRjVEtv9iG4DoTsnIR3amKVk6si4Ea
- X/mrapJqSCcBUVYUFH8M7bsm4CSxier5ofy8jTEa/CfvkqpKThTMCQPNZKY7hke5qEq1CBk2
- wxhX48ZrJEFf1v3NuV3OimgsF2odzieNABEBAAHCwXwEGAEKACYCGwwWIQSpQNQ0mSwujpkQ
- PVAiT6fnzIKmZAUCZAUSmwUJDK5EZgAKCRAiT6fnzIKmZOJGEACOKABgo9wJXsbWhGWYO7mD
- 8R8mUyJHqbvaz+yTLnvRwfe/VwafFfDMx5GYVYzMY9TWpA8psFTKTUIIQmx2scYsRBUwm5VI
- EurRWKqENcDRjyo+ol59j0FViYysjQQeobXBDDE31t5SBg++veI6tXfpco/UiKEsDswL1WAr
- tEAZaruo7254TyH+gydURl2wJuzo/aZ7Y7PpqaODbYv727Dvm5eX64HCyyAH0s6sOCyGF5/p
- eIhrOn24oBf67KtdAN3H9JoFNUVTYJc1VJU3R1JtVdgwEdr+NEciEfYl0O19VpLE/PZxP4wX
- PWnhf5WjdoNI1Xec+RcJ5p/pSel0jnvBX8L2cmniYnmI883NhtGZsEWj++wyKiS4NranDFlA
- HdDM3b4lUth1pTtABKQ1YuTvehj7EfoWD3bv9kuGZGPrAeFNiHPdOT7DaXKeHpW9homgtBxj
- 8aX/UkSvEGJKUEbFL9cVa5tzyialGkSiZJNkWgeHe+jEcfRT6pJZOJidSCdzvJpbdJmm+eED
- w9XOLH1IIWh7RURU7G1iOfEfmImFeC3cbbS73LQEFGe1urxvIH5K/7vX+FkNcr9ujwWuPE9b
- 1C2o4i/yZPLXIVy387EjA6GZMqvQUFuSTs/GeBcv0NjIQi8867H3uLjz+mQy63fAitsDwLmR
- EP+ylKVEKb0Q2A==
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <456c8076-1e3a-4cc9-895c-e707e68fe610@ti.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.17 / 50.00];
-	BAYES_HAM(-2.89)[99.53%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.19)[-0.961];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -4.17
-X-Spam-Flag: NO
 
-Hi,
+On 30/05/2024 13:54, Nemanov, Michael wrote:
+> 
+> 
+> On 5/22/2024 12:46 PM, Krzysztof Kozlowski wrote:
+>> ... > +} > + > +static int read_version_info(struct cc33xx *cc) > +{ > 
+>> + int ret; > + > + cc33xx_info("Wireless driver version %s", 
+>> DRV_VERSION); Drop > + > + ret = cc33xx_acx_init_get_fw_versions(cc); 
+>>> + if (ret < 0) { > + cc33xx_error("Get FW version FAILED!"); > + 
+>> return ret; > + } > + > + cc33xx_info("Wireless firmware version 
+>> %u.%u.%u.%u", > + cc->all_versions.fw_ver->major_version, > + 
+>> cc->all_versions.fw_ver->minor_version, > + 
+>> cc->all_versions.fw_ver->api_version, > + 
+>> cc->all_versions.fw_ver->build_version); > + > + cc33xx_info("Wireless 
+>> PHY version %u.%u.%u.%u.%u.%u", > + 
+>> cc->all_versions.fw_ver->phy_version[5], > + 
+>> cc->all_versions.fw_ver->phy_version[4], > + 
+>> cc->all_versions.fw_ver->phy_version[3], > + 
+>> cc->all_versions.fw_ver->phy_version[2], > + 
+>> cc->all_versions.fw_ver->phy_version[1], > + 
+>> cc->all_versions.fw_ver->phy_version[0]); > + > + 
+>> cc->all_versions.driver_ver = DRV_VERSION; Drop
+> You mean drop the trace? Will exposing FW/PHY versions via debugfs be OK?
 
-this year there will be another instance of the
+It's impossible to read your email.
 
-	Kernel Memory Management Microconference
+I have no clue what you are referring to.
 
-co-lead by Matthew Wilcox and myself at the Linux Plumbers Conference
-(LPC), September 18-20, Vienna, Austria, or remotely.
 
-This microconference supplements the recently concluded LSF/MM event
-by providing an opportunity to discuss current topics with a different
-audience, on a different continent, and at a different time of year.
-We would like to discuss current problems in memory management,
-for example:
+>>> +} > + > +static int cc33xx_remove(struct platform_device *pdev) Why 
+>> remove callback is before probe? Please follow standard driver 
+>> convention. This goes immediately after probe.
+> Will fix
+> 
+> [...]
+>>> +{ > + struct cc33xx_platdev_data *pdev_data = 
+>> dev_get_platdata(&pdev->dev); > + struct cc33xx *cc = 
+>> platform_get_drvdata(pdev); > + > + 
+>> set_bit(CC33XX_FLAG_DRIVER_REMOVED, &cc->flags); ?!?! Your code is 
+>> seriously buggy if you depend on setting bit in remove callback.
+> If removal of the CC33xx driver was caused by the removal of its parent 
+> SDIO device then all I/O operations will fail as SDIO transport is no 
+> longer available. This will eventually trigger the recovery mechanism 
+> which in this case is futile. If this flag is set, no recovery is attempted.
+> 
+> [...]
+>>> + return -EINVAL; > + } > + > + hw = 
+>> cc33xx_alloc_hw(CC33XX_AGGR_BUFFER_SIZE); > + if (IS_ERR(hw)) { > + 
+>> cc33xx_error("can't allocate hw"); Heh? Since when do we print memory 
+>> allocation failures? Since when memory allocation returns ERR ptr?
+> Will fix
+>>> +}; > +MODULE_DEVICE_TABLE(platform, cc33xx_id_table); > + > +static 
+>> struct platform_driver cc33xx_driver = { > + .probe = cc33xx_probe, > 
+>> + .remove = cc33xx_remove, > + .id_table = cc33xx_id_table, > + 
+>> .driver = { > + .name = "cc33xx_driver", > + } > +}; > + > +u32 
+>> cc33xx_debug_level = DEBUG_NO_DATAPATH; Why this is global? Why u32? 
+>> Why global variable is defined at the end of the file?!?!
+> cc33xx_debug_level together with cc33xx_debug/info/error() macros is how 
+> all traces were done in drivers/net/wireless/ti/wlcore/ (originally was 
+> wl1271_debug/info etc.) It enables / disables traces without rebuilding 
+> or even reloading which is very helpful for remote support. These macros 
+> map to dynamic_pr_debug / pr_debug. I saw similar wrappers in other 
+> wireless drivers (ath12k). This is also why there are plenty of 
+> cc33xx_debug() all over the code, most are silent by default.
+>>> +
+>>> +module_platform_driver(cc33xx_driver);
+>>> +
+>>> +module_param_named(debug_level, cc33xx_debug_level, uint, 0600);
+>>> +MODULE_PARM_DESC(debug_level, "cc33xx debugging level");
+>>> +
+>>> +MODULE_PARM_DESC(secure_boot_enable, "Enables secure boot and FW downlaod");
+>>
+>> Eh? why secure boot is module param?
+>>
+>>> +
+>>> +module_param_named(fwlog, fwlog_param, charp, 0);
+>>> +MODULE_PARM_DESC(fwlog, "FW logger options: continuous, dbgpins or disable");
+>>> +
+>>> +module_param(no_recovery, int, 0600);
+>>> +MODULE_PARM_DESC(no_recovery, "Prevent HW recovery. FW will remain stuck.");
+>>> +
+>>> +module_param_named(ht_mode, ht_mode_param, charp, 0400);
+>>> +MODULE_PARM_DESC(ht_mode, "Force HT mode: wide or siso20");
+>>
+>> Does not look like suitable for module params.
+> Was useful during development but can be removed
+>>> +
+>>> +MODULE_LICENSE("GPL v2");
+>>> +MODULE_DESCRIPTION("Texas Instruments CC33xx WLAN driver");
+>>> +MODULE_AUTHOR("Michael Nemanov <michael.nemanov@ti.com>");
+>>> +MODULE_AUTHOR("Sabeeh Khan <sabeeh-khan@ti.com>");
+>>> +
+>>> +MODULE_VERSION(DRV_VERSION);
+>>
+>> Drop.
+> I saw other drivers use this, is it no longer allowed?
 
-* Should we add memory policy zones?
+Was never allowed. There is only one version: the kernel version. There
+were many comments already explaining why "driver version" is
+wrong/meaningless.
 
-* How far should we go to support CXL?
+Best regards,
+Krzysztof
 
-* How do we handle page allocation in a memdesc world?
-
-* Should we switch the slab allocator from partial slabs to sheaves?
-
-* Can we get rid of non-compound multi-page allocations?
-
-* What other improvements might we see from mTHP?
-
-* How might we make allocations guaranteed to not fail?
-
-* Can we share the pagecache between reflinked files?
-
-* Is there a better way to share page tables between processes than hugetlb?
-
-Please submit your proposals at:
-
-	https://lpc.events/event/18/abstracts/
-
-and select "Kernel Memory Management MC" as the track.
-Please do that by the 5th of July to allow us to plan the schedule on time.
-
-We're looking forward to your proposals and seeing you either in Vienna
-or virtually!
-
-Thanks,
-Vlastimil
 
