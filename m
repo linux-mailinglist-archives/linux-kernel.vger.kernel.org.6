@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-196461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7F6E8D5C93
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:18:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A5AC8D5C9A
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:19:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10BE1B23697
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 08:18:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EB361C20EA4
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 08:19:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA4BC81721;
-	Fri, 31 May 2024 08:17:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48F4442071;
+	Fri, 31 May 2024 08:19:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Kc+uG2no"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Aqs2jdLH"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE85181207
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 08:17:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D903733993
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 08:19:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717143445; cv=none; b=r0cnoxg6qMmEI3kX6Q2px3SUtlCGUXhg+et6qhTzU9ju9HNFYA2b1rvABOR2kiYVLtQBoGQg411fUci0k8axwrT9PKqbryqomsc5zcJcMmL/I7513YhIliCIas9AZJJFmzcmJctu8cd40gxNt+PNk8nAJe47uk4TpBHHlgExH/c=
+	t=1717143559; cv=none; b=DhGTBAsE6qKy3C3zE9X9XInQpVyJBadrOrK26wmjlpQr57gKves3DVfjKySBLhHcQcNYIiz3G7kPzPICMxqLrcuParHGkjZeOtZnFg/dTnFoMHt/1s5Wf+7ZNVys/xB7v9sS9pB1D33qIPdWi33KhSPS9SeJ432ideUkF5bJ9WI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717143445; c=relaxed/simple;
-	bh=196fQGP4agJPNc38zICivRifeGfbJzBQQdNFJxG+Pis=;
+	s=arc-20240116; t=1717143559; c=relaxed/simple;
+	bh=/1LErDsp0dac+5zXSqBZN4+xwJ3at4BsPOQIvMtW9+s=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Uc/q1zaSTVhobtIcSTpQvSrd8xyUyF92Qv8XTj+R7fwRx8AMRPxyeZ2kR/1czvqC5vYbRqzkHR2bVo1emQXTQgN1cspoKxWeS5J4mlNTYDMF7R92IGJDV+3r2aefM3V0x/SPld90NURN1rBRZfnQjIW7+ynBuC4H2bT07znDWRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Kc+uG2no; arc=none smtp.client-ip=209.85.128.43
+	 In-Reply-To:Content-Type; b=UwUMOR2EABBRY2OWr7sDY/Xl3plX7unnF7fjvPlwJQiWwased2EJkBfedssEFNw2gR1cgU2GLdi9EeeuiSa2BFSlM4HgTJ31FVk3/If4IQG99kPvnL64ki3dRkkfgbohN9Yj2TRN1+gT09TJX/xMYguq2QUI0DZY1YoTJ27aZQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Aqs2jdLH; arc=none smtp.client-ip=209.85.221.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4202c1d19d5so17201435e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 01:17:22 -0700 (PDT)
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-35dcc681f70so632939f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 01:19:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717143441; x=1717748241; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1717143556; x=1717748356; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=JBw8DWm839MHz5bbNRZXSxIhrJCj0UDcgL29Qz5LZlY=;
-        b=Kc+uG2noq2YPf5HRtBYRiBhHHNUuybW9JdQHLAGHyPcJl/8PTmPMuKuWT17Lzb71Nq
-         I+eASkCE8w4vUoSbjXxQKUEDUSuZOSE9GvFajRqtS8mTeo6lkz6lUzVrpSC4H5tU3mVA
-         V+aah3/BFiDOahDtVk+gFaEd2PAzqVZ7Kw73gN5XdfXMcCGkD27QbLc/EttDD0XH3Y65
-         yWP3ShiF72GOdwfcvl4YAEEmSr/BZoA0FOnSMeqhzNBoIJz/Mb4Ofnb3WjXe1sTZrdpO
-         tWSSLxashWgF0d0XYjNDu5o2XOejySEjyQhHTtSMNIZjMkV8e/RLWpLbOgqY3VXJ4KZQ
-         TCBw==
+        bh=uekMz47pKS3vx9ijIAmITr9JeXRjL7yHxGIu+2L4LrM=;
+        b=Aqs2jdLHYajOdB7MIaAdalyhJ0hSQEExOTMiOpzA3UmDQgkN1owVxJveNEA98KvcZ/
+         hx3CueJLyMW0S+hOhGgMEQ5c1JSMXAfksHmuNxv4Zhtw5cVl4C9wi7buKFdig/eaX6Fg
+         R7O4uZGLn5TSARtRYVjBrtdtkqhIcUp3amg63F/ue57U3tHny1F0IvjdhSEYg1wTD8rm
+         9Qo0uoTWuC819WLGmfUKovaOXLjieTvVeQV0f+2VMlJcmA80dBrARIWogsL0aCGr5ey1
+         kLrDeeWoDdnmEnQKQdtbkAXTaLGSbhKJeC94BItTbDXZQZx7xrXfRPSofSKZKk9CkUmK
+         tXmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717143441; x=1717748241;
+        d=1e100.net; s=20230601; t=1717143556; x=1717748356;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=JBw8DWm839MHz5bbNRZXSxIhrJCj0UDcgL29Qz5LZlY=;
-        b=hfLYSzQIb7vQ8lSku5AjD7jS2cfrUr/I7E56eirYvOt9gp3xcG2VrTmS8K0hbjLUCx
-         nue7ti8/a4f7w5/LnIwrMxBXcxsMa9+NrHo4TCAMWvr2qyP7LREAgVLNBhA2t05YRKDJ
-         8eidtSeJbfPXJrBi8kry2/g9KL589VhH4i0FabXbFxhhhgUCeQC6WzoO8E9ruo9sbMeA
-         ZdmPnt5dbbRG7EOSzPyhDOLWse7l5aKrYoK/sadPXDFCjdCeG/KsSqAzFCp0cHch+gHc
-         2XvYjlbTBpKD6Uccds2guoVrSsTppbRZpdM2ZyGFJq4I/sJPzVeywv4u6y/bVeMvI24L
-         H6sQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWM2FH4/iUx3GwesuLrPmcA5kgeSuLgT0qnHJCPKrVNDgI+hKJKNN7Ev5mLqSWmrC1kxH9HTqoUQVp2dgkxNa7kivHO/wGwLmAY26t+
-X-Gm-Message-State: AOJu0YwUSHstROeGrZPcsZgoXFVAh7O1a8pIlC+DK8zJGT+6gzK6jtYE
-	ebkSZDP4GRsKszDtiiWcXcJyjbpcEOm1zH/0DYuzmikYfx/ufvIH2SNktpuKtE0=
-X-Google-Smtp-Source: AGHT+IGpDwp2EWK3m1qVQqIQxkd6fKFf8L0rnuKip1SJjgp471q/tAxEOOOz3B3Ia3lIVO7X/cGoEg==
-X-Received: by 2002:a05:600c:19c9:b0:420:1375:95ae with SMTP id 5b1f17b1804b1-4212e076755mr10189375e9.24.1717143441296;
-        Fri, 31 May 2024 01:17:21 -0700 (PDT)
+        bh=uekMz47pKS3vx9ijIAmITr9JeXRjL7yHxGIu+2L4LrM=;
+        b=gWGXPf/voI6NOlvlx7iH8P2GBoymolHsBvTM2nkXsPINgjbreCD9wwEKG0hZzvpgd8
+         0B3NI1rdL1buN5OV1CXRIjeXtFqy+/Ruzbgf5v5fUcPotVmi7Yc4H90B+KKDl8qwTSsJ
+         mu7675YhRyPkn/OX7AOXaJetkhy6BlZMlH1h93sTvQ1Y9F7M3B3vbwtGufxpOj1xO+c+
+         DbE9eQwaMYiRjWc1ZiyY+VIhf2CksGZyiiF4MRk94pO9L1kUTQAk5vjjPeiYYpAE4F8E
+         LCTAiDzRgKbYgMrw6+MfZjmHynjnEZFUPYsQ8jXvC04c/tPiXv28JF8yZ1P6R6JZOsBK
+         Yqrg==
+X-Forwarded-Encrypted: i=1; AJvYcCWRzbjW2c4zXyXJhx3eG6t0EjN5SYM6hUyI9YZyjQ1bB1Myke1MwEDqx8JlaV7XciGTGBPr9hsyn6OoT/mo2DzZLEh/aZC0H57Aeppi
+X-Gm-Message-State: AOJu0Yz++bIn5U3quCKRIutohZaQqo8AUG1n3jYLleZPOWOIPnquEAbP
+	Zn6UBx7Slh1fyZGHfgFiAZY8Y7cQc86APXWLHyrxMGHjx8YjRLFIhnsEGAA8SgE=
+X-Google-Smtp-Source: AGHT+IHbY4akhnUCtegHUqtEGrBvCHmy2V2qMqt+Q8CZOSLydrghUIK0J+EoTajINJ9zjr1hWHoWVA==
+X-Received: by 2002:adf:f704:0:b0:354:f984:3b83 with SMTP id ffacd0b85a97d-35e0f33e90cmr696625f8f.63.1717143556304;
+        Fri, 31 May 2024 01:19:16 -0700 (PDT)
 Received: from [192.168.2.24] ([110.93.11.116])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42127056366sm47416585e9.3.2024.05.31.01.17.20
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35dd04c0f57sm1303386f8f.12.2024.05.31.01.19.15
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 31 May 2024 01:17:20 -0700 (PDT)
-Message-ID: <d596abcd-8374-4a6f-ad98-c5a04416865d@linaro.org>
-Date: Fri, 31 May 2024 10:17:19 +0200
+        Fri, 31 May 2024 01:19:15 -0700 (PDT)
+Message-ID: <dd695535-8aef-4bc6-814e-27db9e4a697d@linaro.org>
+Date: Fri, 31 May 2024 10:19:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,15 +76,14 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: arm: qcom: Add LG G4 (h815)
-To: Alexander Reimelt <alexander.reimelt@posteo.de>, andersson@kernel.org,
- petr.vorel@gmail.com, konrad.dybcio@linaro.org, robh+dt@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240403104415.30636-1-alexander.reimelt@posteo.de>
- <20240530135922.23326-1-alexander.reimelt@posteo.de>
- <20240530135922.23326-2-alexander.reimelt@posteo.de>
+Subject: Re: [PATCH v2] dt-bindings: remoteproc: k3-dsp: correct optional sram
+ properties for AM62A SoCs
+To: Hari Nagalla <hnagalla@ti.com>, andersson@kernel.org,
+ mathieu.poirier@linaro.org, robh+dt@kernel.org, devarsht@ti.com,
+ s-anna@ti.com, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+References: <20240530164816.1051-1-hnagalla@ti.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
@@ -131,19 +130,50 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240530135922.23326-2-alexander.reimelt@posteo.de>
+In-Reply-To: <20240530164816.1051-1-hnagalla@ti.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 30/05/2024 15:57, Alexander Reimelt wrote:
-> International variant of the LG G4 from 2015.
+On 30/05/2024 18:48, Hari Nagalla wrote:
+> The C7xv-dsp on AM62A have 32KB L1 I-cache and a 64KB L1 D-cache. It
+> does not have an addressable l1dram . So, remove this optional sram
+> property from the bindings to fix device tree build warnings.
 > 
-> Signed-off-by: Alexander Reimelt <alexander.reimelt@posteo.de>
+> Signed-off-by: Hari Nagalla <hnagalla@ti.com>
 > ---
->  Documentation/devicetree/bindings/arm/qcom.yaml | 1 +
->  1 file changed, 1 insertion(+)
+> Changes from v1 to v2:
+> *) Kept back memory-regions property, as it is unrelated to this patch
+>    correcting the sram property for AM62A C7xv-dsp nodes.
+> 
+> DT binding check log:
+> https://paste.sr.ht/~hnagalla/cb26237560a572a17c0874b687353e00b400285a
+> 
+> v1: https://lore.kernel.org/all/20230810110545.11644-1-hnagalla@ti.com/
+> 
+>  .../bindings/remoteproc/ti,k3-dsp-rproc.yaml      | 15 ++++++++++++++-
+>  1 file changed, 14 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
+> index 9768db8663eb..771cfceb5458 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
+> @@ -111,7 +111,6 @@ else:
+>      properties:
+>        compatible:
+>          enum:
+> -          - ti,am62a-c7xv-dsp
+>            - ti,j721e-c71-dsp
+>            - ti,j721s2-c71-dsp
+>    then:
+> @@ -124,6 +123,20 @@ else:
+>          items:
+>            - const: l2sram
+>            - const: l1dram
+> +  else:
+> +    if:
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Please use allOf (move top one to bottom) and define separate ifs for
+each variant instead of nesting them.
 
 Best regards,
 Krzysztof
