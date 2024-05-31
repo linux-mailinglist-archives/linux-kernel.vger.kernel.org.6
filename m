@@ -1,240 +1,175 @@
-Return-Path: <linux-kernel+bounces-196963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8866F8D6443
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:17:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6C018D6451
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:19:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5CEA1C21858
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:17:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65253B27456
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:18:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D5D51CAAF;
-	Fri, 31 May 2024 14:16:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BC491864C;
+	Fri, 31 May 2024 14:18:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b="Ymhg4CfO"
-Received: from mx08-001d1705.pphosted.com (mx08-001d1705.pphosted.com [185.183.30.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bwTlxMu/"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7459217C6D;
-	Fri, 31 May 2024 14:16:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=185.183.30.70
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717165011; cv=fail; b=P9/Os4FFeDzdabTCHonPjbPnSkxYilgvkg3eB7/rI5Cm39oyiI+Es1vamW9SZSDy5i0+dQiYvnR8NQXlQbs5cjuKjePW3Lvo+ZluBYxl368cJuGW2KKD+FHxKBDQPY/kM0nFFRR4hQXuj9BHtH4NQnQRJ6uYvCaKXucsY8vN6O0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717165011; c=relaxed/simple;
-	bh=R4nlkTgsstnYK9KNlTh+4bSeNYjMz2NT6LwR848U6M8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=ble/Mf97T1J+HLkiHYt8BqLtWLKNuW4kEJi0bRaVVAAtCHNyqNKxgtvHP0FKgShL2TciyIOa2glbab28+6dSEwdmHuP53NAztwWDwRwtiZKFhkhz0/zric6bRrI/2ViJHNReCb5UM4WDSZFD5ht/+Pm2jeXtyIFuzOevHOZIbwE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com; spf=pass smtp.mailfrom=sony.com; dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b=Ymhg4CfO; arc=fail smtp.client-ip=185.183.30.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sony.com
-Received: from pps.filterd (m0209319.ppops.net [127.0.0.1])
-	by mx08-001d1705.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44VDmAgs010947;
-	Fri, 31 May 2024 14:15:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sony.com; h=from
-	:to:cc:subject:date:message-id:references:in-reply-to
-	:mime-version:content-type:content-transfer-encoding; s=S1; bh=4
-	JfxeYUib4r80+LRn4uz1T1evCuxs6AjhCmaUNJdSec=; b=Ymhg4CfO9ZUEyvNGi
-	dHJFFKAdXDDsayWFIKLG/U49gmKu3LOUWcTwYo9y0j491ErWG9i3slVcoajJEptX
-	VwbpdHnqhdgRGng+HmPrE0KEbgzrCWCc+jkqxRJlGfzMzwYNpowqirtxXuuYrQJM
-	N1m2DtyJxTO2QDZNCjNMu9hCg/bIEPZit7Kud4Iq4NyTKI/bAeVh19LgaGwm5+sk
-	andD8unQY3GhmMNUpZTF6aoYFGKmNmFx7AxH7/tX36mu+hEgkJHGa1G6aE8P5VdQ
-	ne5OJqn1uDSArYyY5yP8Hx/cMOBdxH78erUyGdzP17aH5sKUJKNgUpXGr2iRP3mI
-	bC/AA==
-Received: from jpn01-os0-obe.outbound.protection.outlook.com (mail-os0jpn01lp2107.outbound.protection.outlook.com [104.47.23.107])
-	by mx08-001d1705.pphosted.com (PPS) with ESMTPS id 3yb8cp60r6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 31 May 2024 14:15:58 +0000 (GMT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=kIokBFNNY9xj0oQDUBEcF1aJRHxEhopZeQFxpb+MmU5ELpYMWoJ3/ZStSWdieeQljj/UW7wT8ibpvZCOotXleMk+1Nv85jKp2mIgmeBWSWBReHBmOwQf2k27vJw2BYJGeNJrQkOuICD70fguKFOHe/lPVYZqp34ybmxFKxT4nZPCwXvKP+bSaMIYT/PzbiJPsfVfAeBvE20+P+7u+MGjbPFSMjJK2saT9lvlyufQX3DL/Amk6/riCtBFpN7neJQBSnkcNHQ9r9X6KA4TcWtW/nuUC8p/TXqV/kmsfga4GwS1Q1Y8VCFQxewGuM9YtmQBwUa9ZUJT3EALC4+GktyGUg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4JfxeYUib4r80+LRn4uz1T1evCuxs6AjhCmaUNJdSec=;
- b=SyG9z+C0OVJ6gzX5zNVA1rdwwbVrlFbf/zS4xwPEyjISNe0EWuTjrsmykcZp6lN4QPJJcD/sBlGmKwpvRDEyFrEjtBoodmyhGbJOATjEMzyUJ6CAVIavPWd1+THltjITlnGlaUeErWsnh+A21Xct3VGwUXddXg+t7n5BwqRZe/s5E5UlVLh8R2353ke7Un38257UBZhjp2G4K7TXl2BcQyjp61qCKIMh8venY7zUzo/6CrAZWuh/QAMuhzS/5jFbFPYLHdJuWTY9zvSKULOe3ENKEPM9KBcCxojXpfL0gcfYB/XvuGTGwgOqXwSgEfh0+r4fLA90y2EtiIymDG69rA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=sony.com; dmarc=pass action=none header.from=sony.com;
- dkim=pass header.d=sony.com; arc=none
-Received: from TYAPR01MB4048.jpnprd01.prod.outlook.com (2603:1096:404:c9::14)
- by OSAPR01MB7255.jpnprd01.prod.outlook.com (2603:1096:604:141::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.30; Fri, 31 May
- 2024 14:15:44 +0000
-Received: from TYAPR01MB4048.jpnprd01.prod.outlook.com
- ([fe80::3244:9b6b:9792:e6f1]) by TYAPR01MB4048.jpnprd01.prod.outlook.com
- ([fe80::3244:9b6b:9792:e6f1%3]) with mapi id 15.20.7633.018; Fri, 31 May 2024
- 14:15:44 +0000
-From: "Sukrit.Bhatnagar@sony.com" <Sukrit.Bhatnagar@sony.com>
-To: Christoph Hellwig <hch@infradead.org>
-CC: Pavel Machek <pavel@ucw.cz>, "Rafael J. Wysocki" <rafael@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        "Darrick J. Wong"
-	<djwong@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>
-Subject: RE: [PATCH 0/2] Improve dmesg output for swapfile+hibernation
-Thread-Topic: [PATCH 0/2] Improve dmesg output for swapfile+hibernation
-Thread-Index: 
- AQHarBuqqIQ7Mttzp0e7Oah3njC7eLGlO2CAgAW3O9CAAATqAIAABjfQgAAVSQCABlmkcA==
-Date: Fri, 31 May 2024 14:15:43 +0000
-Message-ID: 
- <TYAPR01MB4048E8F253CBFE44EBF9836CF6FC2@TYAPR01MB4048.jpnprd01.prod.outlook.com>
-References: <20240522074658.2420468-1-Sukrit.Bhatnagar@sony.com>
- <Zk+c532nfSCcjx+u@duo.ucw.cz>
- <TYAPR01MB4048D805BA4F8DEC1A12374DF6F02@TYAPR01MB4048.jpnprd01.prod.outlook.com>
- <ZlRseMV1HgI4zXNJ@infradead.org>
- <TYAPR01MB40481A5A5DC3FA97917404E2F6F02@TYAPR01MB4048.jpnprd01.prod.outlook.com>
- <ZlSDinoWgqLt21QD@infradead.org>
-In-Reply-To: <ZlSDinoWgqLt21QD@infradead.org>
-Accept-Language: en-US, ja-JP, en-GB
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYAPR01MB4048:EE_|OSAPR01MB7255:EE_
-x-ms-office365-filtering-correlation-id: f0efda80-2d3a-4eb9-dfe8-08dc817c2884
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: 
- BCL:0;ARA:13230031|366007|376005|1800799015|7416005|38070700009;
-x-microsoft-antispam-message-info: 
- =?us-ascii?Q?trcLOkBjn37b/rMCNDsLz8OowTXsQxhKAgr+EtLq2A7VORexjH7nuFT3d//1?=
- =?us-ascii?Q?cfWJs4xcTEc0svtITkSVczSno09Iyv4fpBFI/M5RMFKqw00eQxrLxd/OGVdY?=
- =?us-ascii?Q?5B6t/CIvPV0jeUhM2OysTIGFKwKPB/v9S7/8VYvn6CNZmz4Zv1wPPAE8/YBs?=
- =?us-ascii?Q?hYu19nXnTwbhZTbJHFqvQXrgefEkFOltXYdU7WtnFGDghuU79kqKTm0ZcltI?=
- =?us-ascii?Q?UWePJ3TVLEswmkdzdogHP7RFUi+A9O1jKkxAYOwibFEE4n/DNfDsBQVoXlEB?=
- =?us-ascii?Q?vVk1xcwlZ7AqD/MuHtr6VQAZXZmF5qddbCNfC7lw1b0zuc/2CZzZr5QtDhKt?=
- =?us-ascii?Q?UgGmSSFed5P/9XK09JORzIqcAAQBZP+lB6wYRNlH7MTuGvOiyhDgj8Y0rChr?=
- =?us-ascii?Q?RxoFoq83iARNSqe2gjI2C5rHyIp67XDlduJE3LlPiMcodyY+FyRE2+4sw5dd?=
- =?us-ascii?Q?4fE3/oQAhEOP9Ba4F7lVrcumaWvb2lNFSQ+kvd87M1NofNV1QSRYro6kcbhW?=
- =?us-ascii?Q?2z/FPIHjV3VowRPllIWEWw0fYV6jYNrrht60ZF1HvKKuxMaPoGozbyD6dMb0?=
- =?us-ascii?Q?uhOUoerZDF/BAgj5yCUhSLAscxBGrvBIxX5XmbP5H4w9FjaXUlsDU1svZaoT?=
- =?us-ascii?Q?thH9cxjB+M4lipIqL8qE7INjA7MNobOZL3f2bx9ppbSW74CrWFvwn6ndW/Hq?=
- =?us-ascii?Q?KdWlnSNlgSPGIA4M8Rc4q8//eZoEV6ag0P2zPVCvBPx6T7HuJlJiECqm5jnV?=
- =?us-ascii?Q?NSR0cMKnOQAw+WgLVDnBkfeDr+M7v0CSWpq7AcEc0SE20Ib6RllQAQC9wPTY?=
- =?us-ascii?Q?OEdmwjTSjk119sQj1TKhrMuJf7xqPAO2n8q5vRqooasFX+/g8EcuLTxG3rnR?=
- =?us-ascii?Q?anXaxS/VpyHsSVxdWOKUAhlSBgB7vO+uXA0tcB3FDP8gMD1AApZKRPY/ad1D?=
- =?us-ascii?Q?5T9dAS9uXaF/fTMyr7c+Qpfla5fLT7tY5XvWHhi6oj1DWbZ9JVh69uFd1+iA?=
- =?us-ascii?Q?IbmqRrJL6dRfzSxSv24ttZU90415JWxNVMNEriUGChYPFrj/tpz8gCPS8MM0?=
- =?us-ascii?Q?B/3Uqofjw7wZffZCW/kuAGqfhMyOvT2KRkIu375YvGsuzK+70qDM3mo113tK?=
- =?us-ascii?Q?Ru8UVMjBMgdxGKSJyGZ4yhRUj3XWiou+Y5EbVr4HfOM4jY20Kor2+hIlFdqx?=
- =?us-ascii?Q?aSK/9JplOqTJyO622ZBtCcpTa7B0u/PBSG8G3f77setWNs/H7vLUatiugpPz?=
- =?us-ascii?Q?Ag6N0bgOTSRMkEQgcgnnB310p/2AgE+ZUXYJxgZ9we3Lc2qe0KnL6AXh4C1+?=
- =?us-ascii?Q?aoAG4yA257nijZ32FaHcuQabGfo2XIZ0yT+UEsdDsJLc7A=3D=3D?=
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYAPR01MB4048.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(1800799015)(7416005)(38070700009);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?us-ascii?Q?Ss6XjYY/p9NA0XtUICifgUNKLGnTq1KXcRoxTDr1fI5nP/hg05p9PBYPoYyi?=
- =?us-ascii?Q?PSxNN4zTncatqd+nG+bIlcEi9ZfSqT7TWayNWkpWHfgCs33jTyEiZ8hqwUsz?=
- =?us-ascii?Q?iv2OBjbaWR2VMoo84lg2B/XhJnoX3FLnoPJ8XESxNVmT7Tu3suWrqGVLBSu8?=
- =?us-ascii?Q?X8eN6d6vxaLdSThAE/Jq+/RLcR9TGVOmCmG2iV3cGNCiuE553R1Z+gY4cxs4?=
- =?us-ascii?Q?TrVp8UwVz+F/mDbf6skrqqmWUKGFliGFifo/UaWFUri5g5K8tfdYVjlX/L27?=
- =?us-ascii?Q?thhKUPBHfERs7uU2DSX7IrBmcKkSjbcB4+MThTL954FMkvya5mckVOUaSnr+?=
- =?us-ascii?Q?/SliI5j6niu5xiBXpo3oKC3zfgnIVcRsCCsrPDEkF2G5LUl1QRqHKORg30y7?=
- =?us-ascii?Q?s5ER4dqQqvLp4Zc8enKbJoe5a4TBVDk2EayEuDn9i8WuRvAI+hfNbeKgFd2E?=
- =?us-ascii?Q?oxrJU3V1WW+Tye8OXl7VKOwpKOMOp7GtwK6nbNHvg+M6HgdssvPK3RBNNOBT?=
- =?us-ascii?Q?5CyN3nkMrESdOC9/jTnYkC4ZDrkI2AGTGLrKT8JUA4pJaHqx71NKZLfG8/kG?=
- =?us-ascii?Q?L4/b2K1NP1PppQ/vfAGhEtsLJqRxtsnmjsU5F6vnDppR2wy/ctUiVXeU8f/V?=
- =?us-ascii?Q?sTSZNNe4g1VU+0fCWECpAcoQk2nVS+hvPZC/KhyEaZbN6cXdtwrZyELMYOS2?=
- =?us-ascii?Q?hoJeGIEmF3K6OOU4bkBwp3HBPoG1JT1wlsu8Ocbn/REfWMGz5Q7dQfYx0AIq?=
- =?us-ascii?Q?/V1dPuylpnKHRuNNQG73pifi1M3nxhFC2z0IjmUgOgFFxvoWqCgNcB7VrW4Q?=
- =?us-ascii?Q?qOeuJfKW57DHZzO/XGvF/r4V9nYXRz1qHhjyw7pmuu/Xq+2iXKNa5qrnGPgy?=
- =?us-ascii?Q?BXd3TLfX614oSujyJUl8g2yUjnPFAwIhT01F6qQSZ4HJq2PZC56NLivR4ZJU?=
- =?us-ascii?Q?PI+B+51zP1hJqrND6VOlpCkeke6kL3z8UA5AAxggxrf7j7cdXbnbYq8DVaxj?=
- =?us-ascii?Q?UAzsiggrucNZw7ZfWnJc8QZEgK/XTrnietdpFMzAzdgKBuhD0sk/OjBCHaQz?=
- =?us-ascii?Q?sROd5gppVt56kF6V+sK/+h+Q5G+2i55DdaOy8LwN2XrzGg1SjV2qDqMTzKjD?=
- =?us-ascii?Q?MVBzCzfE1MNFAqEP65s/PQYIcn8VlXO3dz6i3zsSG43j6TujUDQWKOmp9Ftd?=
- =?us-ascii?Q?O/lirkoeMrcfg+gr5S/PhTjWiTBTvxJLodKIpn0sD+Fw5J9A2w3gcXc005RP?=
- =?us-ascii?Q?iAx86CRK48M4/cuoCd9WSnWgK69qfe50sZBUQ1hPuFQGL6jsSgODrEGBvEe0?=
- =?us-ascii?Q?ZoXoX703Kd461EBSosvxLxv+uNeoSwoQD9+2HG5SBwLFOPDkAqyVaijzU3U/?=
- =?us-ascii?Q?YRGbDEf4uXZWHgXeu0mzv2WJGgiqBtkzcjGvKCENibRp2NJ0CLF1+qvaazCR?=
- =?us-ascii?Q?U0mNGTEqXnexd4KdFYVT3jHkiR6Tfv827nB0PceCf9mDvwzjw2ykvj2gMdFV?=
- =?us-ascii?Q?2oUcp2aMaPHLhTjbNiXBHAewNcBz5TJENJPDlGKLBq7T3/Hm5rVGMp6GNBIf?=
- =?us-ascii?Q?cFjC2N3jm/VOamOoO9cmJO2QJ4OPwUf0YAAcy9lo?=
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70B15C8E9
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 14:18:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717165096; cv=none; b=qrhBan92jVsDyAP+mbHhHDAQlfzww01B+Ma96vWqQPxo1vNkMdIJgVzwkfVndLrvDuT0ECwg/V383L4wOdLw4mgelnv548WXquCpsOdInDWc6H/rPfRY/GAK6/+56qXoyvWyO8QE6+vH2CbD1Lo6Fm/l9/oHE/OsGmoOXAYdlog=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717165096; c=relaxed/simple;
+	bh=1AbmZJJmSN77rtAE02BmHA4N/qXy1QsUr6jrIfOx+yU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FO4wVHUCKVo0lvdG6wOwMHu4gDz4X6SLJKjhrHctErVGM4k5bDdR7UFdGmGAWNZXofRT65qJhAPrl+sN9nqeD2aJB8rfNQsCoQrW32QAYpwbU2uMXZjKidiwY+1/3fEx7vQ/RLSxFF6uw8UHPC2X1Y9RKzwMbA7wk3P9JPOkIlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=bwTlxMu/; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a59a352bbd9so338792166b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 07:18:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1717165092; x=1717769892; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VrOr8lCmG5hi8Hyg8YEcbjrnGL2py1NkA3gWzmJrOa0=;
+        b=bwTlxMu/tRaCQqlJh/M4vzyT31egrazq+ykv76cWkGn6lOayf+ZWIxxQv6k7Do/VKn
+         tda9edTlyTgnYgpu92yjPbxPcJsgsXswVGC4orVkyp+y/T2TyxVP1akJdJLaBvep4AOT
+         0H/qtai6pKL3GlSHeujIuLo+Ta6aS8iyKUcmU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717165092; x=1717769892;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VrOr8lCmG5hi8Hyg8YEcbjrnGL2py1NkA3gWzmJrOa0=;
+        b=JAZ9xJx2eOOQ/WBdEf/0R45HVVGidryH9OUGtvPItoO+ja+haubX1qsZLXYXkMPj1F
+         WvRrhT8fwJCZaw4QGmVhRy67Joy42Tyou1SkfeChPySuIAoOpMjYSvtXkdbaacGIuo+H
+         OEYvntE6GrRvj7Rdb5PMaWalJRi5URNATso2sjMcVMh6cjWBfMIbdK9cqmCU24tiSbS7
+         YkkZ/XN5PGufDnc9V/bJR4mfuc4qmae8kUcWlu0cLo3K6U55h94lSdaCPS4eCVbZDfde
+         1CCBlfUmz+eumPJb3pSv6e0CMTmXaS/hx9tjAXB836Q0/PYvyzS5QOj9bhV6KN3u+mSe
+         rPVw==
+X-Forwarded-Encrypted: i=1; AJvYcCVhCOGwnysTqTeWkxv3oubk7kf1jvGZl6Z2kiC2dKJzF0DbWvGIRxXCFVHsAHrq75AwRkz5ieQKuBEsFYJeZe/HHCmOE4DeUjHeFniF
+X-Gm-Message-State: AOJu0Yw8136shbFkYUGYQrdSxwRO4nAejVdYYRw0yclQ6b7LYhAI7WMO
+	CTimmL4rfSNIPHQb90e7/a8HTDG+WDjSct4oxLVu/KmSlwC6qC29zo2G+TwFHPRW54EvlHr7g4R
+	A+YWM
+X-Google-Smtp-Source: AGHT+IHuGp1BT0CbTec7orbINX4iRWaN/Lwd3XlxsNvRXKhDT0FvBKEtDrP/dqOJYt5QvBhpE+RbLg==
+X-Received: by 2002:a17:906:2592:b0:a68:92a8:e86b with SMTP id a640c23a62f3a-a6892a8e960mr52086366b.15.1717165091908;
+        Fri, 31 May 2024 07:18:11 -0700 (PDT)
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com. [209.85.128.46])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a67e6f0bfdcsm91405766b.32.2024.05.31.07.18.10
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 31 May 2024 07:18:10 -0700 (PDT)
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-420107286ecso82715e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 07:18:10 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUq1X+GL2QTUJkdSqk6zIgnD5+PLBJa5//DlzzKaAf9uavPJFMRiovWHdIWvrBy4h5EV4gQvOqk6UXhpIxtC0syUcvOgiMHO6MhVNG8
+X-Received: by 2002:a05:600c:ac5:b0:41b:e55c:8dca with SMTP id
+ 5b1f17b1804b1-4212e0d6c60mr1426815e9.7.1717165090095; Fri, 31 May 2024
+ 07:18:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
-	V6tuBXVDJ6SUmedlhJI/X8uk6guc/LPfzL0dohzakzmnMKC1WUiVJdsWyKAvL+k7o6qaICqX2vxZUNLFoIqEnDgfoSIWNRd6w5VgLHoZ9zrOVUxr6uJpVVGaBQkcjr8rs9usaUIYTYULBt/coRLTahgiOSFFfkfcHz1Ezi7zqbCIpOXiyTemyADhkG8ttd6rcKhzuMN8PiKp22VJED0Mj2LL1f5O08qMkvsqrhdVUS2Avg6pIgwDBN2gow8m4pyKBrMPxK1Xrus4tStffGei1KJq3ElEjVGnjOQmxyAVrUvtyjUwNexTxQwbd9FvnpEta4ChPLkV52T6w6BQpXD21J6Heb2fLfg2NH9zOSV1FzYEkV9PByHvuM2RV77jBPgk8mVkAsa4OlAs621uIelNI+WqsNYNrtF5foWxJSmUY6PYdx7gLLSIJJ9cDunIXDK4SzutMXch5quXUoZVXVJY8BtoKpO9dAhRw/Vda6whE+xwOAUd8iBvYO0ooK00cNMjYoks7Cz50Cgkv2VL6dSDWMJB+7T3Aaue+/IKtQonEA0m1aFvu6Jzi2L9JonS/APBZM4fVquH9dajenSSjfujNRSJFzdlAvbDNAzjMnqltuUAyucHPw4ZlJDEyE+7+Cv6
-X-OriginatorOrg: sony.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYAPR01MB4048.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f0efda80-2d3a-4eb9-dfe8-08dc817c2884
-X-MS-Exchange-CrossTenant-originalarrivaltime: 31 May 2024 14:15:43.5225
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 66c65d8a-9158-4521-a2d8-664963db48e4
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 5EZcmHSV1n1qpPL3kkAN/8403/d5cG36v9cXFP3li6SiMjzHSDPn7iKOugXvK9C+4FtBAAZjuzIaG6bpTq9MYKKRDpjiej3ZqC7WhwzENBM=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSAPR01MB7255
-X-Proofpoint-ORIG-GUID: fv4UwVxttMOYqwiwpLRvG-HE3bEr2uwB
-X-Proofpoint-GUID: fv4UwVxttMOYqwiwpLRvG-HE3bEr2uwB
-Content-Type: text/plain; charset="us-ascii"
+References: <20240530082556.2960148-1-quic_kriskura@quicinc.com>
+ <CAD=FV=UhrCKCv5R-LAAugrLXFp=cDcj2=Pp9-N3qk5pk2=sGEg@mail.gmail.com> <e732257d-cd16-4e81-9a20-af481184ce0e@linaro.org>
+In-Reply-To: <e732257d-cd16-4e81-9a20-af481184ce0e@linaro.org>
+From: Doug Anderson <dianders@chromium.org>
+Date: Fri, 31 May 2024 07:17:52 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=XO_8SwDLJfoNwwCKEO6CZyMRMY_BdsWMLPBkpczErppA@mail.gmail.com>
+Message-ID: <CAD=FV=XO_8SwDLJfoNwwCKEO6CZyMRMY_BdsWMLPBkpczErppA@mail.gmail.com>
+Subject: Re: [PATCH 0/2] Disable SS instances in park mode for SC7180/ SC7280
+To: Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: Krishna Kurapati <quic_kriskura@quicinc.com>, cros-qcom-dts-watchers@chromium.org, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Stephen Boyd <swboyd@chromium.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Matthias Kaehlcke <mka@chromium.org>, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	quic_ppratap@quicinc.com, quic_jackp@quicinc.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Sony-Outbound-GUID: fv4UwVxttMOYqwiwpLRvG-HE3bEr2uwB
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-31_10,2024-05-30_01,2024-05-17_01
 
-On 2024-05-27 21:58, Christoph Hellwig wrote:
-> On Mon, May 27, 2024 at 12:51:07PM +0000, Sukrit.Bhatnagar@sony.com wrote=
-:
->> In my understanding, the resume offset in hibernate is used as follows.
->>=20
->> Suspend
->> - Hibernate looks up the swap/swapfile using the details we pass in the
->>   sysfs entries, in the function swsusp_swap_check():
->>   * /sys/power/resume - path/uuid/major:minor of the swap partition (or
->>                         non-swap partition for swapfile)
->>   * /sys/power/resume_offset - physical offset of the swapfile in that
->>                                partition
->>   * If no resume device is specified, it just uses the first available
->>   swap! - It then proceeds to write the image to the specified swap.
->>   (The allocation of swap pages is done by the swapfile code
->>   internally.)
->=20
-> Where "it" is userspace code?  If so, that already seems unsafe for
-> a swap device, but definitely is a no-go for a swapfile.
+Hi,
 
-By "it", I meant the hibernate code running in kernel space.
-Once userspace triggers hibernation by `echo disk > /sys/power/state`
-or a systemd wrapper program etc., and userspace tasks are frozen,
-everything happens within kernel context.
+On Fri, May 31, 2024 at 5:33=E2=80=AFAM Konrad Dybcio <konrad.dybcio@linaro=
+org> wrote:
+>
+> On 30.05.2024 3:34 PM, Doug Anderson wrote:
+> > Hi,
+> >
+> > On Thu, May 30, 2024 at 1:26=E2=80=AFAM Krishna Kurapati
+> > <quic_kriskura@quicinc.com> wrote:
+> >>
+> >> When working in host mode, in certain conditions, when the USB
+> >> host controller is stressed, there is a HC died warning that comes up.
+> >> Fix this up by disabling SS instances in park mode for SC7280 and SC71=
+80.
+> >>
+> >> Krishna Kurapati (2):
+> >>   arm64: dts: qcom: sc7180: Disable SS instances in park mode
+> >>   arm64: dts: qcom: sc7280: Disable SS instances in park mode
+> >>
+> >>  arch/arm64/boot/dts/qcom/sc7180.dtsi | 1 +
+> >>  arch/arm64/boot/dts/qcom/sc7280.dtsi | 1 +
+> >>  2 files changed, 2 insertions(+)
+> >
+> > FWIW, the test case I used to reproduce this:
+> >
+> > 1. Plug in a USB dock w/ Ethernet
+> > 2. Plug a USB 3 SD card reader into the dock.
+> > 3. Use lsusb -t to confirm both Ethernet and card reader are on USB3.
+> > 4. From a shell, run for i in $(seq 5); do dd if=3D/dev/sdb of=3D/dev/n=
+ull
+> > bs=3D4M; done to read from the card reader.
+> > 5. At the same time, stress the Internet. If you've got a very fast
+> > Internet connection then running Google's "Internet speed test" did
+> > it, but I could also reproduce by just running this from a PC
+> > connected to the same network as my DUT: ssh ${DUT} "dd of=3D/dev/null"
+> > < /dev/zero
+> >
+> > I would also note that, though I personally reproduced this on sc7180
+> > and sc7280 boards and thus Krishna posted the patch for those boards,
+> > there's no reason to believe that this problem doesn't affect all of
+> > Qualcomm's SoCs. It would be nice if someone at Qualcomm could post a
+> > followup patch fixing this everywhere.
+>
+> Right, this sounds like a more widespread issue
+>
+> That said, I couldn't reproduce it on SC8280XP / X13s (which does NOT mea=
+n
+> 8280 isn't affected). My setup was:
+>
+> - USB3 5GB/s hub plugged into one of the side USBs
+>   - on-hub 1 Gb /s network hub connected straight to my router with a
+>     600 / 60 Mbps link, spamming speedtest-cli and dd-over-ssh
+>   - M.2 SSD connected over a USB adapter, nearing 280 MB/s speeds (the
+>     adapter isn't particularly speedy)
+>
+> So it stands to reason that it might not have been enough to trigger it.
 
->> - Hibernate gets the partition and offset values from kernel command-lin=
-e
->>   parameters "resume" and "resume_offset" (which must be set from
->>   userspace, not ideal).
->=20
-> Or is it just for these parameters?  In which case we "only" need to
-> specify the swap file, which would then need code in the file system
-> driver to resolve the logical to physical mapping as swap files don't
-> need to be contiguous.
+In my case I wasn't using anything nearly as fast as a M.2 SSD. I was
+just using a normal USB3 SD card reader. That being said, multiple
+people at Qualcomm were able to replicate the issue without lots of
+back and forth, so I'd guess that the problem isn't that sensitive to
+the exact storage device. I will also note that it's not sensitive to
+the exact network device as I replicated it with two Ethernet adapters
+with very different chipsets.
 
-Yes, it is just for setting these parameters in sysfs entries and in kernel
-commandline.
-I think specifying the swapfile path *may* not work because when we resume
-from hibernation, the filesystems are not yet mounted (except for the case
-when someone is resuming from initramfs stage).
-Using the block device + physical offset, this procedure becomes Independen=
-t
-of the filesystem and the mounted status.
-And since the system swap information is lost on reboot/shutdown, the kerne=
-l
-which loads the hibernation image will not know what swaps were enabled
-when the image was created.
+My only guess is that somehow SC8280XP is faster and that changes the
+timing of how it handles interrupts. I guess you could try capping
+your cpufreq in sysfs and see if that makes a difference in
+reproducing. ;-) ...or maybe somehow SC8280XP has a newer version of
+the IP where they've fixed this?
 
---
-Sukrit
+It would be interesting if someone with a SDM845 dragonboard could try
+replicating since that seems highly likely to reproduce, at least.
+
+-Doug
 
