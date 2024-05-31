@@ -1,107 +1,223 @@
-Return-Path: <linux-kernel+bounces-197251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D521E8D682B
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 19:31:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07B018D682E
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 19:33:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99932281126
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:31:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F9B5B22F28
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:33:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27B7417B404;
-	Fri, 31 May 2024 17:31:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61D3717C233;
+	Fri, 31 May 2024 17:33:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rGf8CKyH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KRFkAU7s"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B1DA80C1F;
-	Fri, 31 May 2024 17:31:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBB5F80C1F
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 17:32:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717176674; cv=none; b=thZ6iRy07nOUFNTzGaktEOia7DXAXHTjqQboSjU2kLsbQfzp2pmVLA30JWrRfWs7dQiuuXY1DPt00x01mRz9gtdshtReSdbcVX492xYJJ4l3WyzCrcO/lH+x8foirs0wSA/bMmOBey9v45NhALBJe7vSZgFIuR242Lj55020CSg=
+	t=1717176779; cv=none; b=IB3odjOS9PEQx9c+cEAxwRm9z1840tk/chpIqLTlcTOoEDab/m6a2eC0VfSjsIOG7r/be47t7aYcw0KzCsbko5EOdsUrxZbjpH/qfinyfEwV0YCbQpJvC6N/JSskigUucSe25TKvHAt1JPAwGTb2eGm/uQVOgRF25bbP/HpkxFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717176674; c=relaxed/simple;
-	bh=ugKsI1n0ps5BfECIOYx/A6IymgUIGBxwn3EHv/Id8mE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Wd810kmF6q5Zg6VWoqIPyl8gwHH41PMPY+Ay0+pgOqfpUYY0Gz5rlDsofUqI+jO/tCBCmKmugoDf/BZbrOFOOt5iHmujs6gplCPgKPBJh0tSenX+/fGhC9H/0lEPYBqGBLLSZpsihsN+HEEYOswbEwXAS5VmTotZ1ViYEwOVkZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rGf8CKyH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8966DC2BD10;
-	Fri, 31 May 2024 17:31:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717176674;
-	bh=ugKsI1n0ps5BfECIOYx/A6IymgUIGBxwn3EHv/Id8mE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rGf8CKyHFijgLDSqYePnQ5BCTYnBTXCTIR7yFEJknvnNOQ/hdxJ2qZAs0M7kcsxLm
-	 pk76gkHxefmIVBYIrtYbxwMb5x2CbUZ7sqalM1gvrqc4uMBNY+Z7fH1UBhsXarwcxp
-	 FTLaEWHCxtKiJzjjNd0CIsJJe+3tiWuqjfkoRefwjTFy3PCs6UTm7hi4YqP1XzHG1g
-	 eaJ/meSnXuj1Li4yDdzDFHZ0XctqhnbxhWTcPCLffmGOaXdTeCkPH2pEnFnBHvLe51
-	 10OondmOCzovC/AY9gpGpxUzdQJSI2OuorxHNORYMDnuHTBbAoNMtyYN5NLjetfX7A
-	 OEaogdLCfTaBg==
-Date: Fri, 31 May 2024 18:31:09 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Jesse Taube <jesse@rivosinc.com>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev, Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@rivosinc.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Masahiro Yamada <masahiroy@kernel.org>
-Subject: Re: [PATCH v0] RISC-V: Use Zkr to seed KASLR base address
-Message-ID: <20240531-uselessly-spied-262ecf44e694@spud>
-References: <20240531162327.2436962-1-jesse@rivosinc.com>
+	s=arc-20240116; t=1717176779; c=relaxed/simple;
+	bh=Yjwu0m+erAt8XFKFMLD6Bnxw1BqoPUA8ibnGos7ynxI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gGqHTnzDQaVlAHzOLUSN4hbCFXi8QyVndiHK8RMe9NpFUsSnhdrM0tJ2VZ31q66YXW9cAHLDUjiYua/IXKbQx7+i0LRUdcAPbiHQN9fJxQyZ/oX7f28SmF6BsY5bWq1rq2sekuqw0h+ODjMxZ7LmdrTKTp7yNiFPryO7sl1vUjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KRFkAU7s; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-57a22af919cso843a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 10:32:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1717176776; x=1717781576; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OMppGFFrT5MnAdCHtOHnnUXgbQ/hA3PsMnZtuj4qBMk=;
+        b=KRFkAU7st43Cdiq4nVUn5JGa6MxYne7t9z/z4hoIkUhr4ERXBz6LctBHaW90cbNCYX
+         m/qnrRnvDUof3V1psMG9Qfd0qGtlF2i/fqZHlsmQ9dazFEplzTrhAIPCXfMDMbz9eIHs
+         7TjQhHynZOqwxYcRt7OJU8fi2wA9XKLJUDC7YuiahiK27dYnEHW3OKZTMTFMb8VEiwCR
+         HhQk7M0MTcvDGP7aQWNgKUcDqT55p5mstWMIyzO6h+oGzKjXvHQvhWerIEqI0Mow5TDg
+         i027iyUVFrMg9oprSDjToQyTORLdxlYzG17kGJ3h9K54t1WSslEB8al8jl3Sp1xKexpl
+         BqGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717176776; x=1717781576;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OMppGFFrT5MnAdCHtOHnnUXgbQ/hA3PsMnZtuj4qBMk=;
+        b=VNO9HWqUPfCQmPzU+MWor96qxlrWEEFJS5GpUGVp09/kvNwBnKO/1dhpI3uP+GpDpv
+         Fhf6G/lYBwbQY0ZhWb2VINNrF6YvlvjSGPFnOUH7APT3yU2Xhd24t/PQM14L8KY05kqg
+         MYQyCvEMkFSm3RTY7OoWPz6T/9ciqgnDqryR+bOEKrHBvJxFRILW9AW3jj4jFjn7Qvms
+         eN72/U79Nhk3ztjpiBmLAjvtqj/z/pJYxGMzfvNVtuT9YTwXZG3WhslCNRCQFLMz/cV7
+         oofjmiMx+vL71jHK+rQO7OfNRoJM4r3GJ5sTRLj2Qq8mqMjGRYo8lzDNItG1iQzXRPIr
+         6GDA==
+X-Forwarded-Encrypted: i=1; AJvYcCXLhPyIrwQlCC8CKh7K7fotyvMBGtzvYRPn5R8P4E7Jg9XhM53yAR7o7aQo7HrnSvm6N0dg6ZNb5dS9hbjZ0iGSkucaZfMTPiZASV2v
+X-Gm-Message-State: AOJu0YwhJ6dph7mYfP/g4Z94YZbAnFV/u/FCX6Eh2hyk81zQ3UY6Ivd2
+	ACSlzzLgSISbSYH7X1RANv61FkN0BtljZXsYCNQxU03VssO33V9JxQKl0zv/pKVM4nU3LskM6k3
+	6Sb1zw2ohxz4CpHqD4N/lL2uQeah4mTpYMP/1
+X-Google-Smtp-Source: AGHT+IHjgVhIXQvVdwtHzJuyaNq2GU/GVBnM8Bv/P4NUq/vSKvPAUzqUKZazgAiWkdEk2muNzf0p2aUiASM34KOmnMk=
+X-Received: by 2002:a05:6402:682:b0:57a:3103:9372 with SMTP id
+ 4fb4d7f45d1cf-57a37923832mr160622a12.7.1717176773754; Fri, 31 May 2024
+ 10:32:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="xt66x2nsbKVBAiZs"
-Content-Disposition: inline
-In-Reply-To: <20240531162327.2436962-1-jesse@rivosinc.com>
-
-
---xt66x2nsbKVBAiZs
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <cover.1717105215.git.yan@cloudflare.com> <9be3733eee16bb81a7e8e2e57ebcc008f95cae08.1717105215.git.yan@cloudflare.com>
+ <CANn89iLo6A__U5HqeA65NuBnrg36jpt9EOUC7T0fLdNEpa6eRQ@mail.gmail.com> <CAO3-PboQ68+xFe4Z10L-s-k3NCgciGXNWM00-3wgqbPmGaBB9A@mail.gmail.com>
+In-Reply-To: <CAO3-PboQ68+xFe4Z10L-s-k3NCgciGXNWM00-3wgqbPmGaBB9A@mail.gmail.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Fri, 31 May 2024 19:32:40 +0200
+Message-ID: <CANn89iJ_rd_vUH1LPbby5vV=s=jWdpzvDKnm6H1YK=wRPWBiyw@mail.gmail.com>
+Subject: Re: [RFC net-next 1/6] net: add kfree_skb_for_sk function
+To: Yan Zhai <yan@cloudflare.com>
+Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	David Ahern <dsahern@kernel.org>, Abhishek Chauhan <quic_abchauha@quicinc.com>, 
+	Mina Almasry <almasrymina@google.com>, Florian Westphal <fw@strlen.de>, 
+	Alexander Lobakin <aleksander.lobakin@intel.com>, David Howells <dhowells@redhat.com>, 
+	Jiri Pirko <jiri@resnulli.us>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Lorenzo Bianconi <lorenzo@kernel.org>, 
+	Pavel Begunkov <asml.silence@gmail.com>, linux-kernel@vger.kernel.org, 
+	kernel-team@cloudflare.com, Jesper Dangaard Brouer <hawk@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 31, 2024 at 12:23:27PM -0400, Jesse Taube wrote:
-> Dectect the Zkr extension and use it to seed the kernel base address.
->=20
-> Detection of the extension can not be done in the typical fashion, as
-> this is very early in the boot process. Instead, add a trap handler
-> and run it to see if the extension is present.
+On Fri, May 31, 2024 at 6:58=E2=80=AFPM Yan Zhai <yan@cloudflare.com> wrote=
+:
+>
+> Hi Eric,
+>
+>  Thanks for the feedback.
+>
+> On Fri, May 31, 2024 at 1:51=E2=80=AFAM Eric Dumazet <edumazet@google.com=
+> wrote:
+> >
+> > On Thu, May 30, 2024 at 11:46=E2=80=AFPM Yan Zhai <yan@cloudflare.com> =
+wrote:
+> > >
+> > > Implement a new kfree_skb_for_sk to replace kfree_skb_reason on a few
+> > > local receive path. The function accepts an extra receiving socket
+> > > argument, which will be set in skb->cb for kfree_skb/consume_skb
+> > > tracepoint consumption. With this extra bit of information, it will b=
+e
+> > > easier to attribute dropped packets to netns/containers and
+> > > sockets/services for performance and error monitoring purposes.
+> >
+> > This is a lot of code churn...
+> >
+> > I have to ask : Why not simply adding an sk parameter to an existing
+> > trace point ?
+> >
+> Modifying a signature of the current tracepoint seems like a breaking
+> change, that's why I was saving the context inside skb->cb, hoping to
+> not impact any existing programs watching this tracepoint. But
+> thinking it twice, it might not cause a problem if the signature
+> becomes:
+>
+>  trace_kfree_skb(const struct sk_buff *skb, void *location, enum
+> skb_drop_reason reason, const struct sock *sk)
+>
+> As return values are usually not a thing for tracepoints, it is
+> probably still compatible. The cons is that the last "sk" still breaks
+> the integrity of naming. How about making a "kfree_skb_context"
+> internal struct and putting it as the last argument to "hide" the
+> naming confusion?
+>
+> > If this not possible, I would rather add new tracepoints, adding new cl=
+asses,
+> > because it will ease your debugging :
+> >
+> > When looking for TCP drops, simply use a tcp_event_sk_skb_reason instan=
+ce,
+> > and voila, no distractions caused by RAW/ICMP/ICMPv6/af_packet drops.
+> >
+> > DECLARE_EVENT_CLASS(tcp_event_sk_skb_reason,
+> >
+> >      TP_PROTO(const struct sock *sk, const struct sk_buff *skb, enum
+> > skb_drop_reason reason),
+> > ...
+> > );
+>
+> The alternative of adding another tracepoint could indeed work, we had
+> a few cases like that in the past, e.g.
+>
+> https://lore.kernel.org/lkml/20230711043453.64095-1-ivan@cloudflare.com/
+> https://lore.kernel.org/netdev/20230707043923.35578-1-ivan@cloudflare.com=
+/
+>
+> But it does feel like a whack-a-mole thing. The problems are solvable
+> if we extend the kfree_skb tracepoint, so I would prefer to not add a
+> new tracepoint.
 
-You can't rely on the lack of a trap meaning that Zkr is present unless
-you know that the platform implements Ssstrict. The CSR with that number
-could do anything if not Ssstrict compliant, so this approach gets a
-nak from me. Unfortunately, Ssstrict doesn't provide a way to detect
-it, so you're stuck with getting that information from firmware.
+Solvable with many future merge conflicts for stable teams.
 
-For DT systems, you can actually parse the DT in the pi, we do it to get
-the kaslr seed if present, so you can actually check for Zkr. With ACPI
-I have no idea how you can get that information, I amn't an ACPI-ist.
 
-Thanks,
-Conor.
+>
+> >
+> > Also, the name ( kfree_skb_for_sk) and order of parameters is confusing=
+.
+> >
+> > I always prefer this kind of ordering/names :
+> >
+> > void sk_skb_reason_drop( [struct net *net ] // not relevant here, but
+> > to expand the rationale
+> >               struct sock *sk, struct sk_buff *skb, enum skb_drop_reaso=
+n reason)
+> >
+> > Looking at the name, we immediately see the parameter order.
+> >
+> > The consume one (no @reason there) would be called
+> >
+> > void sk_skb_consume(struct sock *sk, struct sk_buff *skb);
+>
+> I was intending to keep the "kfree_skb" prefix initially since it
+> would appear less surprising to kernel developers who used kfree_skb
+> and kfree_skb_reason. But your points do make good sense. How about
+> "kfree_sk_skb_reason" and "consume_sk_skb" here?
+>
 
---xt66x2nsbKVBAiZs
-Content-Type: application/pgp-signature; name="signature.asc"
+IMO kfree_skb() and consume_skb() were a wrong choice. We have to live
+with them.
 
------BEGIN PGP SIGNATURE-----
+It should have been skb_free(), skb_consume(), skb_alloc(),
+to be consistent.
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZloJXQAKCRB4tDGHoIJi
-0q+NAQDg7dQm4yIuqIpJJUx6xVHNdm7QHRH1oZhb6KTvKdauPAEAjlDPmXth3suH
-EyUEa4xRA2F6Bpo7l3BF2i0FndH74gw=
-=J8qv
------END PGP SIGNATURE-----
+Following (partial) list was much better:
 
---xt66x2nsbKVBAiZs--
+skb_add_rx_frag_netmem, skb_coalesce_rx_frag, skb_pp_cow_data,
+skb_cow_data_for_xdp,
+skb_dump, skb_tx_error, skb_morph, skb_zerocopy_iter_stream, skb_copy_ubufs=
+,
+skb_clone, skb_headers_offset_update, skb_copy_header, skb_copy,
+skb_realloc_headroom, skb_expand_head, skb_copy_expand, skb_put,
+skb_push, skb_pull, skb_pull_data, skb_trim, skb_copy_bits,
+skb_splice_bits, skb_send_sock_locked, skb_store_bits,
+skb_checksum, skb_copy_and_csum_bits, skb_zerocopy_headlen,
+skb_zerocopy, skb_copy_and_csum_dev, skb_dequeue,
+skb_dequeue_tail, skb_queue_purge_reason, skb_errqueue_purge,
+skb_queue_head, skb_queue_tail, skb_unlink, skb_append,
+skb_split, skb_prepare_seq_read, skb_seq_read, skb_abort_seq_read,
+skb_find_text, skb_append_pagefrags, skb_pull_rcsum, skb_segment_list,
+skb_segment, skb_to_sgvec, skb_to_sgvec_nomark, skb_cow_data, skb_clone_sk,
+skb_complete_tx_timestamp, skb_tstamp_tx, skb_complete_wifi_ack,
+skb_partial_csum_set, skb_checksum_setup, skb_checksum_trimmed,
+skb_try_coalesce, skb_scrub_packet, skb_vlan_untag, skb_ensure_writable,
+skb_ensure_writable_head_tail, skb_vlan_pop, skb_vlan_push, skb_eth_pop,
+skb_eth_push, skb_mpls_push, skb_mpls_pop, skb_mpls_update_lse,
+skb_mpls_dec_ttl, skb_condense, skb_ext_add, skb_splice_from_iter
+
+(just to make my point very very clear)
+
+Instead we have a myriad of functions with illogical parameter
+ordering vs their names.
+
+I see no reason to add more confusion for new helpers.
 
