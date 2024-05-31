@@ -1,94 +1,142 @@
-Return-Path: <linux-kernel+bounces-196805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 582FF8D61FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:40:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F0EB8D61FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:40:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E92211F2238A
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:40:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0C2B287C4E
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:40:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F059D15AACD;
-	Fri, 31 May 2024 12:38:22 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59C32158206
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 12:38:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CE2115884D;
+	Fri, 31 May 2024 12:38:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ouPDBjzw";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="0hRp0J1l";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ouPDBjzw";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="0hRp0J1l"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E318B1581ED;
+	Fri, 31 May 2024 12:38:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717159102; cv=none; b=Awdz5lVxzDJyo/8RGx8YcIiQt/TfF0XpFVnzizxtMVZrZrH6iAKebebeYNNDqKOHSeDwKo2u9T3XiOWZ9tSdJJsVV7IDsXgQy4kBVbsctNjaAExP2RI9KhznpSqt+ejeHuKKs0Fa7MqpzpSrvpymIjP5ZiaP1R6Y2B1CvRz6K5g=
+	t=1717159128; cv=none; b=clqC6WBl8e64BmbbE1xvo7jXMhv6JJNqitD8NfQrWVd09ZLtofR48Ghy4/67zmXTG9fGwYOIPWC7awl8dniB+qPzm+zWtsx0EF9gneMZJDwUmAXq+cxB+A8h1PyWnXmMXepwaoXpFiGLHrTxyrftni0XRYNwvSFTw4P2McgL1sk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717159102; c=relaxed/simple;
-	bh=7BKfN6/AoLY4VubHJyLreI/VATH/d4iqbNxSWMuyoOs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rimOHn7+jusL5nhrKvFcki75wXAiNWA1ZHyhV8n1N2s6c9sqNIHXC37qzanFhI+sU8OqCeRkubrW582HLoSIRr7N3nAWWSgU1eHKrNzX4ur+nxvXX8aceeHm8kM+4vj7Y9eq+s/FWIeunmM2XeH5LNs2F3lSuBkSrs6G7MuzRFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B32661424;
-	Fri, 31 May 2024 05:38:43 -0700 (PDT)
-Received: from [10.162.41.15] (e116581.arm.com [10.162.41.15])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E1F043F792;
-	Fri, 31 May 2024 05:38:17 -0700 (PDT)
-Message-ID: <7be21e02-9ddc-4fea-9301-6f80eed5ad0e@arm.com>
-Date: Fri, 31 May 2024 18:08:14 +0530
+	s=arc-20240116; t=1717159128; c=relaxed/simple;
+	bh=4MiyUforjyB3VfuRbKh44YTCsg7n4QA1jPNVui+GC3w=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OtOvf5nL7wabih3GzyRchQ2+awtUHfon5JXDgFiXGIIW1H60ObpXwokEHkcVvXRlT/OjOlADF1RezXjauN/+lGS4Q91pMUNiJAOWseXOjA5icvq9wOcTEsd0DDNsGN+OrQqveDsPabi1iVLuyLtSuyWJJFznA0UlvWltjTYHaIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ouPDBjzw; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=0hRp0J1l; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ouPDBjzw; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=0hRp0J1l; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 08FE221BCB;
+	Fri, 31 May 2024 12:38:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1717159125; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=P5BzJwpGnxTW/HqgTgsLDeSdFdC9YNrVOg8pJXtP7aQ=;
+	b=ouPDBjzw2s4BW9b24KvY0QnKPV1QSAqto123uhFPmCO5TON1K6ZmUVO21548Ia1hKrgirw
+	oJNRol4KSBz5bKTQvNXyXC93xovvRJBRFARwhCeFSg0XaJkdfZk0I03PwvestE0kAytGQz
+	rI1ysyJ/RVnut1XZTsf8wZuLvWxZrro=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1717159125;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=P5BzJwpGnxTW/HqgTgsLDeSdFdC9YNrVOg8pJXtP7aQ=;
+	b=0hRp0J1lxEnwNk20tou4WnZAWy3w8Vb/bdPAKBrJJOBMhxePyiVGXnUR9eM9En50dsisdH
+	tFJ77Lyp+TvtPIDw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1717159125; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=P5BzJwpGnxTW/HqgTgsLDeSdFdC9YNrVOg8pJXtP7aQ=;
+	b=ouPDBjzw2s4BW9b24KvY0QnKPV1QSAqto123uhFPmCO5TON1K6ZmUVO21548Ia1hKrgirw
+	oJNRol4KSBz5bKTQvNXyXC93xovvRJBRFARwhCeFSg0XaJkdfZk0I03PwvestE0kAytGQz
+	rI1ysyJ/RVnut1XZTsf8wZuLvWxZrro=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1717159125;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=P5BzJwpGnxTW/HqgTgsLDeSdFdC9YNrVOg8pJXtP7aQ=;
+	b=0hRp0J1lxEnwNk20tou4WnZAWy3w8Vb/bdPAKBrJJOBMhxePyiVGXnUR9eM9En50dsisdH
+	tFJ77Lyp+TvtPIDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C30E9137C3;
+	Fri, 31 May 2024 12:38:44 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id LvouLtTEWWbOVQAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Fri, 31 May 2024 12:38:44 +0000
+Date: Fri, 31 May 2024 14:39:07 +0200
+Message-ID: <8734py40lw.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Simon Trimmer <simont@opensource.cirrus.com>
+Cc: <tiwai@suse.com>,
+	<linux-sound@vger.kernel.org>,
+	<alsa-devel@alsa-project.org>,
+	<linux-kernel@vger.kernel.org>,
+	<patches@opensource.cirrus.com>
+Subject: Re: [PATCH] ALSA: hda: cs35l56: Fix lifecycle of codec pointer
+In-Reply-To: <20240531112716.25323-1-simont@opensource.cirrus.com>
+References: <20240531112716.25323-1-simont@opensource.cirrus.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [External] Re: [QUESTION] mm: Redundant const parameter?
-To: Chengming Zhou <zhouchengming@bytedance.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- Anshuman.Khandual@arm.com
-References: <e5f01ffe-de51-4079-a87f-2886788422f9@arm.com>
- <e6b7858b-39cd-432d-9206-4ccbd153baa2@arm.com>
- <7f7c3bbe-e250-420d-a7d5-89508d881f0b@bytedance.com>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <7f7c3bbe-e250-420d-a7d5-89508d881f0b@bytedance.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.21 / 50.00];
+	BAYES_HAM(-2.91)[99.62%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCPT_COUNT_FIVE(0.00)[6];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -3.21
+X-Spam-Flag: NO
 
-Yes; Matthew just did a wider fix:
+On Fri, 31 May 2024 13:27:16 +0200,
+Simon Trimmer wrote:
+> 
+> The codec should be cleared when the amp driver is unbound and when
+> resuming it should be tested to prevent loading firmware into the device
+> and ALSA in a partially configured system state.
+> 
+> Signed-off-by: Simon Trimmer <simont@opensource.cirrus.com>
 
-https://lore.kernel.org/all/20240531122904.2790052-1-willy@infradead.org/
+Thanks, applied.
 
 
-On 5/31/24 18:00, Chengming Zhou wrote:
-> On 2024/5/31 19:31, Dev Jain wrote:
->> I guess it would be better if I send this as a patch and wait for comments.
-> Ah, you're right. I think it should be:
->
-> 	return folio_test_workingset(slab_folio(slab));
->
-> Right? Don't notice there isn't any build warning about this "const" discard.
->
-> Thanks.
->
->> On 5/31/24 16:42, Dev Jain wrote:
->>> Hi Chengming,
->>>
->>> In mm/slub.c, you had defined slab_test_node_partial() to take a const parameter.
->>>
->>> Is there any point of taking in a const, when you are anyways typecasting it to
->>>
->>> a (struct folio *) from (const struct folio *) ? In fact, at the place where you call
->>>
->>> slab_test_node_partial(), the struct slab *slab is not const.
->>>
->>> Please comment.
->>>
->>>
->>> Thanks
->>>
->>> DJ
->>>
->>>
->>>
->>>
+Takashi
 
