@@ -1,125 +1,217 @@
-Return-Path: <linux-kernel+bounces-197141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A6438D66B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:23:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 610F78D66B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:23:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA846B268CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:23:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD0CB1F23470
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:23:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFE55158DA1;
-	Fri, 31 May 2024 16:23:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A512158D78;
+	Fri, 31 May 2024 16:23:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vCbZLHh/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="m0mKu5CV"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE6962CCB7;
-	Fri, 31 May 2024 16:23:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D0E615623B
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 16:23:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717172601; cv=none; b=sS2Jsj4vSjIhwecejCOrzzCZcoi7A26+s9jGznuOvJj9V/WvTrPL92XFQJnXzVtTU3HPb/wwKIUw0XYm5o9GFlcwauWiMBNEmZ+jIx3gICwZQuFfo/GVhbqiX9hHdLAanm24slzE4iSPceyjZOSEua8FwTjTvdyiE+doS51JY9Q=
+	t=1717172622; cv=none; b=U9mFEIedmvrR4hYwPh72t6pojaoFV72U3fTLXJ5by7B8hDrscAFaQBoq1YubYNxtOlFGsImV3kkM7mgY5NESGXcauQAG2x3MVKzCWRbtUpyuQDNM8iAWdNZzBY9qDZP3cLjzgib+R/YslYjJNmIa5HNJ3zXVd5yK+OVv8ElRRYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717172601; c=relaxed/simple;
-	bh=0Yll1u3xF/5pjuPZJNst1GbEIDvRQiGhZfDd/FjcG5w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iYbAj/Uvhf5RHhLD3p/DF/53l/hjSeOwMU0vk42tHgKpbnCpXWm3VXgH6DtyKly5u6tCh7QteGDVuKReOklKktJyKDy9M8y2SpkmRujnEyVKTcWJeTwXtPK8t9lTYxQdzdv/1bhriMs3UDbztdzm78agpBKW6KPUQf0MT0XdKsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vCbZLHh/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD6A4C116B1;
-	Fri, 31 May 2024 16:23:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717172600;
-	bh=0Yll1u3xF/5pjuPZJNst1GbEIDvRQiGhZfDd/FjcG5w=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=vCbZLHh/AFM3s2oqLk+9QJoHhacThE8FxHNuq36qopNnnH3XoUCAUqCfog/jxE1T/
-	 123byU2dPZXABxd6mVOoee3DM7e+ptWAJgA4T8gCTFZGRUiR726Y2vpxRuiF+OMnZU
-	 DaJQ+Z83uBLpaZbYNOMzvztU1T4Ra3+sZUB5nex0La+KZ7N/eFbAQ4xVox1VPph8lI
-	 53SvTEvzkqEQCZbNXenwv90cPCenC1h+QYTIhfHSd0qT1x27r2n5y+1CYxihGk/Sby
-	 pUYkUPxhjz8Xm3pO+QUIArGJCGgjFrvka98ODtK3oA3nm5VChb73vlcxXZ3ry5qElt
-	 B1E+o5S44KVng==
-Message-ID: <3a92817a-46c2-4413-b93f-28e7c3f1a518@kernel.org>
-Date: Fri, 31 May 2024 18:23:15 +0200
+	s=arc-20240116; t=1717172622; c=relaxed/simple;
+	bh=bIfxEfz4EBdKnjco6iVqwTUBBvuXdTOs9eUQkf5mKfk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LfzPpGA7uvvn3PvN9DSCgAJCop2psFte8yVUcudO9q3hpehdH8h213XUj0s4tz4n8Z0jkopM1FII9isaDCS3yzHvjybHCxdOFQpYSYQ+VLWZlNVwszFjvRPSL6c13I3b5Zg3dCao6gZycfYYsNOQeKvb6ADBrIARz9pZ24/NmpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=m0mKu5CV; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-7024d560b32so438007b3a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 09:23:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1717172619; x=1717777419; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rsKkVgyABm2zSwFdUDJOXq7adWq0Ho5JZ/Z2NJ4mJiU=;
+        b=m0mKu5CVn+pLzVMcwdpFvKkTQ6WrMVuUpfbhqh4KWOF6uV10ceMpG6B4AGWH5AgwFM
+         ua2279BSwFHUeI/FK2ngex6MBuhEK+RpZa4XZ6+kZZuqj8f5wntudyAFwyXTAN8jKlTm
+         L98Hcg7lsqTbz3DqW7o4owIkKw89qY9u4fMYl7jlphdBupl5T6IAxaZDoKktM4U6P+57
+         yjST7Oarp5tVf0KnBq9gUYo8eHxowCjlSvoLQkeGTkpXSFwwfA6BCSGRMdGB+6WcfXbM
+         M40Zang0vzVqsTI2I9rGmJZac0+XpcUM93XgIWe1S2m1f398R/iX8e+8kNCQ+093YgTT
+         FGQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717172619; x=1717777419;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rsKkVgyABm2zSwFdUDJOXq7adWq0Ho5JZ/Z2NJ4mJiU=;
+        b=H0YDnCtp0yT0XfYK0bvnxL3j8vUqfRp8ZgAK0sBMPZyHC8RR6avrsygVNk0picGS9y
+         sdvf+nPBFRoIVG/Oe+J6vpDuJKiRtmegf8Cy7uMM9ZOVh8wTw99Qq2wvMOvPb/Lh9n08
+         zBqOqtoX7uwnNSR50dZrDaTPBQgeNyl8rvRPnJblNxdZGAH5h3YgBCBl1abPyeY8OrIL
+         /yMURHJcdZh2TrIfXD88Vqa02NL7kKxm6wjzLBDrH8M0GI+Mb8PWmLZiaTwLWFU3OPnI
+         7HWQvLNf6nPBP6oqxUVOnQGvj0wzC7ArnEGMSyLpAuGyau7EGFbMBFdgcN03hqhd7nKO
+         wtCQ==
+X-Gm-Message-State: AOJu0YyVAwmq+vyRpSVKPf7YYq7wN48WEP0cGYCVpYnqm+SROVOUa5UN
+	YobYKsQiv94I0TfXTJ0BQkQvyTBS+rBT1HOLj5KN4v1NymakOmwNo2Kw8t077Pw=
+X-Google-Smtp-Source: AGHT+IHpgxDFAp5J7T641RR+0mVW8V2Nn0gbrQcP9lUx8oojqxJVe9W67kxVGgNI9Mv6tX6A5vxQdg==
+X-Received: by 2002:a05:6a21:3a4a:b0:1af:86e4:bc99 with SMTP id adf61e73a8af0-1b26f12ce72mr3535729637.10.1717172618783;
+        Fri, 31 May 2024 09:23:38 -0700 (PDT)
+Received: from jesse-desktop.. (pool-108-26-179-17.bstnma.fios.verizon.net. [108.26.179.17])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-702423cb6eesm1572398b3a.6.2024.05.31.09.23.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 May 2024 09:23:38 -0700 (PDT)
+From: Jesse Taube <jesse@rivosinc.com>
+To: linux-riscv@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev,
+	Jesse Taube <jesse@rivosinc.com>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	=?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@rivosinc.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Masahiro Yamada <masahiroy@kernel.org>
+Subject: [PATCH v0] RISC-V: Use Zkr to seed KASLR base address
+Date: Fri, 31 May 2024 12:23:27 -0400
+Message-ID: <20240531162327.2436962-1-jesse@rivosinc.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] dt-bindings: soc: ti: pruss: Add documentation for
- PA_STATS support
-To: MD Danish Anwar <danishanwar@ti.com>, Suman Anna <s-anna@ti.com>,
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, srk@ti.com,
- Vignesh Raghavendra <vigneshr@ti.com>, r-gunasekaran@ti.com,
- Roger Quadros <rogerq@kernel.org>
-References: <20240529115149.630273-1-danishanwar@ti.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240529115149.630273-1-danishanwar@ti.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 29/05/2024 13:51, MD Danish Anwar wrote:
-> Add documentation for pa-stats node which is syscon regmap for
-> PA_STATS registers. This will be used to dump statistics maintained by
-> ICSSG firmware.
-> 
-> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
-> ---
-> Changes from v1 to v2:
-> *) Added ^ in pa-stats as suggested by Krzysztof Kozlowski
+Dectect the Zkr extension and use it to seed the kernel base address.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Detection of the extension can not be done in the typical fashion, as
+this is very early in the boot process. Instead, add a trap handler
+and run it to see if the extension is present.
 
-Best regards,
-Krzysztof
+Signed-off-by: Jesse Taube <jesse@rivosinc.com>
+---
+ arch/riscv/kernel/pi/Makefile           |  2 +-
+ arch/riscv/kernel/pi/archrandom_early.c | 71 +++++++++++++++++++++++++
+ arch/riscv/mm/init.c                    |  3 ++
+ 3 files changed, 75 insertions(+), 1 deletion(-)
+ create mode 100644 arch/riscv/kernel/pi/archrandom_early.c
+
+diff --git a/arch/riscv/kernel/pi/Makefile b/arch/riscv/kernel/pi/Makefile
+index 50bc5ef7dd2f..9025eb52945a 100644
+--- a/arch/riscv/kernel/pi/Makefile
++++ b/arch/riscv/kernel/pi/Makefile
+@@ -32,5 +32,5 @@ $(obj)/string.o: $(srctree)/lib/string.c FORCE
+ $(obj)/ctype.o: $(srctree)/lib/ctype.c FORCE
+ 	$(call if_changed_rule,cc_o_c)
+ 
+-obj-y		:= cmdline_early.pi.o fdt_early.pi.o string.pi.o ctype.pi.o lib-fdt.pi.o lib-fdt_ro.pi.o
++obj-y		:= cmdline_early.pi.o fdt_early.pi.o string.pi.o ctype.pi.o lib-fdt.pi.o lib-fdt_ro.pi.o archrandom_early.pi.o
+ extra-y		:= $(patsubst %.pi.o,%.o,$(obj-y))
+diff --git a/arch/riscv/kernel/pi/archrandom_early.c b/arch/riscv/kernel/pi/archrandom_early.c
+new file mode 100644
+index 000000000000..311be9388b5c
+--- /dev/null
++++ b/arch/riscv/kernel/pi/archrandom_early.c
+@@ -0,0 +1,71 @@
++// SPDX-License-Identifier: GPL-2.0-only
++
++/*
++ * To avoid rewriteing code include asm/archrandom.h and create macros
++ * for the functions that won't be included.
++ */
++
++#define riscv_has_extension_likely(...) false
++#define pr_err_once(...)
++
++#include <linux/types.h>
++#include <asm/hwcap.h>
++#include <asm/archrandom.h>
++
++/*
++ * Asm goto is needed so that the compiler does not remove the label.
++ */
++
++#define csr_goto_swap(csr, val)						\
++({									\
++	unsigned long __v;						\
++	__asm__ __volatile__ goto("csrrw %0, " __ASM_STR(csr) ", %1"	\
++				  : "=r" (__v) : "rK" (&&val)		\
++				  : "memory" : val);			\
++	__v;								\
++})
++
++/*
++ * Declare the functions that are exported (but prefixed) here so that LLVM
++ * does not complain it lacks the 'static' keyword (which, if added, makes
++ * LLVM complain because the function is actually unused in this file).
++ */
++
++u64 get_kaslr_seed_zkr(void);
++
++/*
++ * This function is called by setup_vm to check if the kernel has the ZKR.
++ * Traps haven't been set up yet, but save and restore the TVEC to avoid
++ * any side effects.
++ */
++
++static inline bool __must_check riscv_has_zkr(void)
++{
++	unsigned long tvec;
++
++	tvec = csr_goto_swap(CSR_TVEC, not_zkr);
++	csr_swap(CSR_SEED, 0);
++	csr_write(CSR_TVEC, tvec);
++	return true;
++not_zkr:
++	csr_write(CSR_TVEC, tvec);
++	return false;
++}
++
++u64 get_kaslr_seed_zkr(void)
++{
++	const int needed_seeds = sizeof(u64) / sizeof(long);
++	int i = 0;
++	u64 seed = 0;
++	long *entropy = (long *)(&seed);
++
++	if (!riscv_has_zkr())
++		return 0;
++
++	for (i = 0; i < needed_seeds; i++) {
++		if (!csr_seed_long(&entropy[i]))
++			return 0;
++	}
++
++	return seed;
++}
+diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
+index 9940171c79f0..8ef1edd2cddd 100644
+--- a/arch/riscv/mm/init.c
++++ b/arch/riscv/mm/init.c
+@@ -1025,6 +1025,7 @@ static void __init pt_ops_set_late(void)
+ #ifdef CONFIG_RANDOMIZE_BASE
+ extern bool __init __pi_set_nokaslr_from_cmdline(uintptr_t dtb_pa);
+ extern u64 __init __pi_get_kaslr_seed(uintptr_t dtb_pa);
++extern u64 __init __pi_get_kaslr_seed_zkr(void);
+ 
+ static int __init print_nokaslr(char *p)
+ {
+@@ -1049,6 +1050,8 @@ asmlinkage void __init setup_vm(uintptr_t dtb_pa)
+ 		u32 kernel_size = (uintptr_t)(&_end) - (uintptr_t)(&_start);
+ 		u32 nr_pos;
+ 
++		if (kaslr_seed == 0)
++			kaslr_seed = __pi_get_kaslr_seed_zkr();
+ 		/*
+ 		 * Compute the number of positions available: we are limited
+ 		 * by the early page table that only has one PUD and we must
+-- 
+2.43.0
 
 
