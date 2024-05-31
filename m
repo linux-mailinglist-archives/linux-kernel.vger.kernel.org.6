@@ -1,117 +1,154 @@
-Return-Path: <linux-kernel+bounces-196483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 072308D5CDC
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:37:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B2DC8D5CE1
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:37:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5F2B288619
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 08:37:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D4391C24800
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 08:37:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0898152196;
-	Fri, 31 May 2024 08:36:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74C621509AB;
+	Fri, 31 May 2024 08:36:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mGHiXMM3"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="meMAKXV6"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A86041514DB;
-	Fri, 31 May 2024 08:36:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D42BC14F9FA;
+	Fri, 31 May 2024 08:36:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717144565; cv=none; b=CL+QQysemsn0H6aTB7Jpakv0aGwiySXYfjqAE7L9eo5kMKYZTOKD/sx/Joo4rMdGLUnAs5sg+h9eyrCGtsjqzY4YzAdhGN0PQ7q5wpKJoE1mSdfTEXBk4exDHbXybxLYDhooS6iSz5RsFIdVlEkFEFAlHYAtE8zwHl1ixT1lIzY=
+	t=1717144606; cv=none; b=Lsh7xY7qLUWFwGRRFc5w2JV9REZMuHEDv4XuHwbcibHDmGQVGYAms+MUJFW41HNvphQNGJlAnpC9tutAYuvgwOaOFQngEl7bqAnUQcrR4alB3pKH4V4sXh0tUyCa5pWXSLVaiSjCqpd6gWpMLBlU0JynnSLpQLRpgfkmaRv67s4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717144565; c=relaxed/simple;
-	bh=AjD0KgKUTNk/qht295XZG6rAGKTm2KqnG8awsW8O1ow=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pYqOxRODuJvqJy/W6HCyauXUK1z5lsdaWNEWJCaOHSNoUrgnzinSwkAKZe6fOofriI9Z1tdojfY+ed8slI6vR3SThHKpyowJpgMx1IZWTfZJuOX6BIuJdKAzGHnWKPIE2f4CT+QVcy1u9rAaw4+NtyPU1wNbdeHX0ffBqeOiIg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mGHiXMM3; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717144564; x=1748680564;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=AjD0KgKUTNk/qht295XZG6rAGKTm2KqnG8awsW8O1ow=;
-  b=mGHiXMM3uItbSmdmn5R+Fm9hxLlriJUf0jc3S0H+FwFEX6U2T77wE+VH
-   xb9Pqhswipw5rJPeIoz/aDYTkBp8mDcGVoiyCUxUdIkiv0CuqiReSeSE+
-   yfcwC7BL1jH+i+FQAI+OBxia5PfzTxhQqV/EprJbMwg7GqMCrMFHtfn6h
-   /GuP1OVcdBQkTC8tH6qvXHbmVKIcvQuSsmv3znwnypJBLGbfv8uR9TGTg
-   6BEGrGFQt4JKq3In2x6DQDkbX8P2i7axGOU2BbiSTliqpAE18TTy6ziK1
-   IOyjZ8ZD4LZYAX51fn+Vk9mP/2t6ZK/7UUmqGNnTzC/0v6PJnxCJpnY9e
-   g==;
-X-CSE-ConnectionGUID: lc/f5RZ5QKKq/osUW5FWjw==
-X-CSE-MsgGUID: C1nU6ZZIQjSwkykIltOvuw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="13495954"
-X-IronPort-AV: E=Sophos;i="6.08,203,1712646000"; 
-   d="scan'208";a="13495954"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 01:36:00 -0700
-X-CSE-ConnectionGUID: qjIXNYGLS7muvdOWx6t1XQ==
-X-CSE-MsgGUID: 8xIiutGhSgO7Onbd+mLuhA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,203,1712646000"; 
-   d="scan'208";a="36193455"
-Received: from spandruv-desk.jf.intel.com ([10.54.75.19])
-  by fmviesa009.fm.intel.com with ESMTP; 31 May 2024 01:36:00 -0700
-From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-To: hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com
-Cc: platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	andriy.shevchenko@linux.intel.com,
-	rui.zhang@intel.com,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: [PATCH v2 3/3] platform/x86: ISST: Use only TPMI interface when present
-Date: Fri, 31 May 2024 01:35:48 -0700
-Message-ID: <20240531083554.1313110-4-srinivas.pandruvada@linux.intel.com>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240531083554.1313110-1-srinivas.pandruvada@linux.intel.com>
-References: <20240531083554.1313110-1-srinivas.pandruvada@linux.intel.com>
+	s=arc-20240116; t=1717144606; c=relaxed/simple;
+	bh=TfQdA2XCPGkN/zEB747sTwVs1wSBXHbq/hbPTp30TYs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=gD5JYgRbTD8WZDlp8qp8CJsqrcFYEsKHZyePgx5lTOdCfcMW1uE+HHyInq3X2hbnlO9H7L3fKCw9ZZDulnYqRQrye26/AloU4dBZVx8ghlFP5ZkGxvdn4SWpK0ojRA3ZfJoIqEjxaEAF6C3u+BNpS9LRbnFbkDbY6MtavUPkiF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=meMAKXV6; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44V8aMR9042855;
+	Fri, 31 May 2024 03:36:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1717144582;
+	bh=S0ukmk1g2waDrHjd+R+8zkx4KdRvWUrWFxGLS+wgH5o=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=meMAKXV66h+EykWFPDoMgyrkHcRwg0+dFJ/xtgo6dy/5/lpt8EuwgxEeH80KIrnSG
+	 U940IDV5SC45+69YFr2knqGlDA+G9lN0oYWmsx5AYL2M74hR/3iaqCyPhvJg8TOfCf
+	 sK7vMOV9TYdPqU1Kx/Gd3bBUepEm8LLSZ9pPOv+E=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44V8aMc9051757
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 31 May 2024 03:36:22 -0500
+Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 31
+ May 2024 03:36:22 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 31 May 2024 03:36:22 -0500
+Received: from [172.24.227.193] (devarsht.dhcp.ti.com [172.24.227.193] (may be forged))
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44V8aEXd052311;
+	Fri, 31 May 2024 03:36:14 -0500
+Message-ID: <7bed5792-db9d-3bc8-5325-7333076822e9@ti.com>
+Date: Fri, 31 May 2024 14:06:13 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH v10 06/11] math.h: Add macros for rounding to closest
+ value
+Content-Language: en-US
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+CC: <mchehab@kernel.org>, <hverkuil-cisco@xs4all.nl>,
+        <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <benjamin.gaignard@collabora.com>, <sebastian.fricke@collabora.com>,
+        <akpm@linux-foundation.org>, <gregkh@linuxfoundation.org>,
+        <adobriyan@gmail.com>, <jani.nikula@intel.com>,
+        <p.zabel@pengutronix.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
+        <dri-devel@lists.freedesktop.org>, <laurent.pinchart@ideasonboard.com>,
+        <praneeth@ti.com>, <nm@ti.com>, <vigneshr@ti.com>, <a-bhatia1@ti.com>,
+        <j-luthra@ti.com>, <b-brnich@ti.com>, <detheridge@ti.com>,
+        <p-mantena@ti.com>, <vijayp@ti.com>, <andrzej.p@collabora.com>,
+        <nicolas@ndufresne.ca>, <davidgow@google.com>, <dlatypov@google.com>
+References: <20240530165925.2715837-1-devarsht@ti.com>
+ <20240530171225.2749312-1-devarsht@ti.com>
+ <ZljRSXtXWdOyCJaB@smile.fi.intel.com>
+From: Devarsh Thakkar <devarsht@ti.com>
+In-Reply-To: <ZljRSXtXWdOyCJaB@smile.fi.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-When the TPMI interface is present, use this interface instead of legacy.
-On some systems legacy IO device is also present. Using both interfaces
-together is confusing and may set the hardware in inconsistent state.
+Hi Andy,
 
-When TPMI interface is present, don't load legacy drivers.
+Thanks for the review.
 
-Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Reviewed-by: Zhang Rui <rui.zhang@intel.com>
-Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
----
-Previously 2/2, now 3/3
-No change except reviewed-by Ilpo.
+On 31/05/24 00:49, Andy Shevchenko wrote:
+> On Thu, May 30, 2024 at 10:42:25PM +0530, Devarsh Thakkar wrote:
+>> Add below rounding related macros:
+>>
+>> round_closest_up(x, y) : Rounds x to closest multiple of y where y is a
+>> power of 2, with a preference to round up in case two nearest values are
+>> possible.
+>>
+>> round_closest_down(x, y) : Rounds x to closest multiple of y where y is a
+>> power of 2, with a preference to round down in case two nearest values are
+>> possible.
+>>
+>> roundclosest(x, y) : Rounds x to closest multiple of y, this macro should
+>> generally be used only when y is not multiple of 2 as otherwise
+>> round_closest* macros should be used which are much faster.
+>>
+>> Examples:
+>>  * round_closest_up(17, 4) = 16
+>>  * round_closest_up(15, 4) = 16
+>>  * round_closest_up(14, 4) = 16
+>>  * round_closest_down(17, 4) = 16
+>>  * round_closest_down(15, 4) = 16
+>>  * round_closest_down(14, 4) = 12
+>>  * roundclosest(21, 5) = 20
+>>  * roundclosest(19, 5) = 20
+>>  * roundclosest(17, 5) = 15
+> 
+> ...
+> 
+>> + * Examples :
+> 
+> It's inconsistent with the other one below.
+> 
+>> + * 	round_closest_up(17, 4) = 16
+>> + *
+>> + * 	round_closest_up(15, 4) = 16
+>> + *
+>> + * 	round_closest_up(14, 4) = 16
+> 
+> The three have TABs/spaces mixture.
+> 
+> I believe you wanted:
+> 
+>  * Examples::
+>  * * round_closest_up(17, 4) = 16
+>  * * round_closest_up(15, 4) = 16
+>  * * round_closest_up(14, 4) = 16
+> 
 
- drivers/platform/x86/intel/speed_select_if/isst_if_common.c | 3 +++
- 1 file changed, 3 insertions(+)
+I initially referred the style from this link [1] but probably missed to
+remove extra space from my patch.
 
-diff --git a/drivers/platform/x86/intel/speed_select_if/isst_if_common.c b/drivers/platform/x86/intel/speed_select_if/isst_if_common.c
-index 7ea058571ab5..10e21563fa46 100644
---- a/drivers/platform/x86/intel/speed_select_if/isst_if_common.c
-+++ b/drivers/platform/x86/intel/speed_select_if/isst_if_common.c
-@@ -775,6 +775,9 @@ int isst_if_cdev_register(int device_type, struct isst_if_cmd_cb *cb)
- 	if (device_type >= ISST_IF_DEV_MAX)
- 		return -EINVAL;
- 
-+	if (device_type < ISST_IF_DEV_TPMI && isst_hpm_support)
-+		return -ENODEV;
-+
- 	mutex_lock(&punit_misc_dev_open_lock);
- 	/* Device is already open, we don't want to add new callbacks */
- 	if (misc_device_open) {
--- 
-2.40.1
+But what you suggested looks better, I will go with what you suggested.
 
+[1]  https://elixir.bootlin.com/linux/v6.9/source/include/linux/int_log.h#L22
+
+Regards
+Devarsh
 
