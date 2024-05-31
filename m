@@ -1,54 +1,63 @@
-Return-Path: <linux-kernel+bounces-196707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0FA68D602B
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 13:03:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AEFE8D602E
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 13:04:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C6A71C215F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 11:03:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11C05283F68
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 11:03:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADB67156C7B;
-	Fri, 31 May 2024 11:03:19 +0000 (UTC)
-Received: from mail114-240.sinamail.sina.com.cn (mail114-240.sinamail.sina.com.cn [218.30.114.240])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30F3A156F4A;
+	Fri, 31 May 2024 11:03:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Lk+qwqSC";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="z7ose9lI"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEF821386B4
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 11:03:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.114.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25B2F1386B4;
+	Fri, 31 May 2024 11:03:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717153399; cv=none; b=PVIh/4lslzA9nmwQVVVGlNOVznwKANJclptPkGfIib3nue7VB/3wPhWAznU1WlK0Qa8O/C8eeMlZyK4ZcMGSWR1J995/4GhmWsHOx14hhLjXBLb8kcymxP3FcNfjCGs2Oph0Bldfvn3Y//2/T+SABts6j4wcDv+RT/lt3zLZ1Lw=
+	t=1717153432; cv=none; b=MC6Wtv46XNrfDQemBPIvjHGA2nv3Hhl0Nzlu2nuBikjl6GMnNjoP4DVNvKwsxgmmAIAD5PcyYv8LF3ILn1F6CDKtjvExHNxhAbYW0LPkUaPdLv1+wVfkVCcESg9NWy2zlUkTEeKkl0fxkb3jUAV0i1H9ND60X8rdSui0JOOLY3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717153399; c=relaxed/simple;
-	bh=9QsDpjp3XZJ9SDKeVxkaUb+EuBoHnOO1JqN2vIeJk5s=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=UzA3PjRxqpuZvImvE54/1RvPZI9lUR7NJILVKYdGqGZGhgbzapp7jKYVx/qpLTKf1M/Rb+Ih+9zCmB5hJ8YTuRLCPFoZKVbFLi2KbAlRX7uuIRfJ+H0yMfQBq4EDD/o83WgtGFckM9PPfpeAbLWfxGYdTSShxQjtgAism1knulQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.114.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([113.118.65.235])
-	by sina.com (172.16.235.24) with ESMTP
-	id 6659AE6200004D80; Fri, 31 May 2024 19:03:01 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 21153545089563
-X-SMAIL-UIID: BF36D2333AD1401597E3C103EF7CA842-20240531-190301-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+1acbadd9f48eeeacda29@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [kasan?] [mm?] INFO: rcu detected stall in __run_timer_base
-Date: Fri, 31 May 2024 19:02:50 +0800
-Message-Id: <20240531110250.3333-1-hdanton@sina.com>
-In-Reply-To: <00000000000022a23c061604edb3@google.com>
-References: 
+	s=arc-20240116; t=1717153432; c=relaxed/simple;
+	bh=u2XM75t4IvA2pCbU6k8ocA0j7B1oVUN41SVqxqtDTms=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=t0eoo65uvWtM38hz6itJNzoLhlYSBUcT59FX8N4UvkP5IQHoSqipi+kv9uPaXUd1RM+jrtv3fPy6B5wxp1SKl+k7g2riqLzjJS7ZT1Tp/ehxZIVZmQad8XUs9/DkKgooWrTStfakPal01ZL8vixo44JSuJfgmGJDZpfnLPQXuRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Lk+qwqSC; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=z7ose9lI; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Nam Cao <namcao@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1717153429;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ilNHlPRGRrx6lQXkZab5wH5B1TU8D7A+BitRKeb8hDc=;
+	b=Lk+qwqSC/+aH3JkkLiIp1JziwqOO5ppnj0DxcbmOqyJsG+nzqL0OTlpayMNciHkhN65EtC
+	Hqxd9JwBsYD1vkpYAAL9J+S+MkYcORO/VNSqpFVIEJq3wWpwLkkL4JkmAoe/QBe73E3ebm
+	SQQ+9oy80rtaufmYcdhcvSu2XVEY9kTtiAMKYIjsfnTok8m+ODpmqTT2kaf+UrL4t391Kj
+	I2Sn5PX2TAdGFNxH5DUdpTHrWHOZMyE59r9wQm1Hj0S1hteiV0C/eSLjQu7lQygNMhJwdc
+	EBsJTsxhBFLZXLJULMbkLR6O9lCO7tvgaZcqhE6gcS8z3B2sF8azGOJNXoBB/Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1717153429;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ilNHlPRGRrx6lQXkZab5wH5B1TU8D7A+BitRKeb8hDc=;
+	b=z7ose9lIBs8WgZTceQpfqST8NihAeZLAQR/WoBT1syJwD0umZDss3o960jtYVHejWNIpyu
+	TkFsJvMpaeAC0GBw==
+To: Bjorn Helgaas <bhelgaas@google.com>,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Nam Cao <namcao@linutronix.de>,
+	stable@vger.kernel.org
+Subject: [PATCH] PCI: Bail out if bus number overflows during scan
+Date: Fri, 31 May 2024 13:03:43 +0200
+Message-Id: <20240531110343.3800767-1-namcao@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,58 +66,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On Sat, 13 Apr 2024 19:04:34 -0700
-> syzbot found the following issue on:
-> 
-> HEAD commit:    fe46a7dd189e Merge tag 'sound-6.9-rc1' of git://git.kernel..
-> git tree:       upstream
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=111600cb180000
+In function pci_scan_bridge_extend(), if the variable next_busnr gets to
+256, "child = pci_find_bus()" will return bus 0 (root bus). Consequently,
+we have a circular PCI topology. The scan will then go in circle until the
+kernel crashes due to stack overflow.
 
-#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git  fe46a7dd189e
+This can be reproduced with:
+    qemu-system-x86_64 -machine pc-q35-2.10 \
+    -kernel bzImage \
+    -m 2048 -smp 1 -enable-kvm \
+    -append "console=ttyS0 root=/dev/sda debug" \
+    -nographic \
+    -device pcie-root-port,bus=pcie.0,slot=1,id=rp1,bus-reserve=253 \
+    -device pcie-root-port,bus=pcie.0,slot=2,id=rp2,bus-reserve=0 \
+    -device pcie-root-port,bus=pcie.0,slot=3,id=rp3,bus-reserve=0
 
---- x/net/sched/sch_taprio.c
-+++ y/net/sched/sch_taprio.c
-@@ -1150,11 +1150,6 @@ static int parse_taprio_schedule(struct
- 		list_for_each_entry(entry, &new->entries, list)
- 			cycle = ktime_add_ns(cycle, entry->interval);
+Check if next_busnr "overflow" and bail out if this is the case.
+
+Signed-off-by: Nam Cao <namcao@linutronix.de>
+Cc: stable@vger.kernel.org # all
+---
+This bug exists since the beginning of git history. So I didn't bother
+tracing beyond git to see which patch introduced this.
+---
+ drivers/pci/probe.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+index 1325fbae2f28..03caae76337c 100644
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -1382,6 +1382,9 @@ static int pci_scan_bridge_extend(struct pci_bus *bus, struct pci_dev *dev,
+ 		else
+ 			next_busnr = max + 1;
  
--		if (!cycle) {
--			NL_SET_ERR_MSG(extack, "'cycle_time' can never be 0");
--			return -EINVAL;
--		}
--
- 		if (cycle < 0 || cycle > INT_MAX) {
- 			NL_SET_ERR_MSG(extack, "'cycle_time' is too big");
- 			return -EINVAL;
-@@ -1163,6 +1158,11 @@ static int parse_taprio_schedule(struct
- 		new->cycle_time = cycle;
- 	}
- 
-+	if (new->cycle_time < new->num_entries * length_to_duration(q, ETH_ZLEN)) {
-+		NL_SET_ERR_MSG(extack, "'cycle_time' is too small");
-+		return -EINVAL;
-+	}
++		if (next_busnr == 256)
++			goto out;
 +
- 	taprio_calculate_gate_durations(q, new);
- 
- 	return 0;
-@@ -1850,6 +1850,9 @@ static int taprio_change(struct Qdisc *s
- 	}
- 	q->flags = taprio_flags;
- 
-+	/* Needed for length_to_duration() during netlink attribute parsing */
-+	taprio_set_picos_per_byte(dev, q);
-+
- 	err = taprio_parse_mqprio_opt(dev, mqprio, extack, q->flags);
- 	if (err < 0)
- 		return err;
-@@ -1909,7 +1912,6 @@ static int taprio_change(struct Qdisc *s
- 	if (err < 0)
- 		goto free_sched;
- 
--	taprio_set_picos_per_byte(dev, q);
- 	taprio_update_queue_max_sdu(q, new_admin, stab);
- 
- 	if (FULL_OFFLOAD_IS_ENABLED(q->flags))
---
+ 		/*
+ 		 * Prevent assigning a bus number that already exists.
+ 		 * This can happen when a bridge is hot-plugged, so in this
+-- 
+2.39.2
+
 
