@@ -1,192 +1,203 @@
-Return-Path: <linux-kernel+bounces-197243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B1CC8D6812
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 19:18:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DC388D6815
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 19:18:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E9841C273E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:18:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2F981C27890
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:18:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F1AF1779BD;
-	Fri, 31 May 2024 17:18:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF2EC17C20E;
+	Fri, 31 May 2024 17:18:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="n4P59IhM"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1w8vZTdk"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFDE9176AAE;
-	Fri, 31 May 2024 17:17:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F0B755E4C
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 17:18:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717175880; cv=none; b=bfL8BXQjDs/UkEAEVzQBumPqUfZKrHeY2YR581Lqylrzls43/tpe72MEtpguT7GbJWCZOh6t1yI8olTDEaZlCt8B1GpNyfPMlnRBAFLhmLl0ALTYF1WF4Frt8hJ7gcQwMnuu/b47FbuiCEslgk1kfBsjsK9/AS6YiY5x2bdBt6g=
+	t=1717175919; cv=none; b=HQaQ+tPePpPrjJzEp+obqwlA9eINqRQrN1k5bg3hTVT2BbT9aiJrU10092cuku2vYZtUr5YbQ6Ihqx/R7Dl1IZj4fB+buav1zBWKuA0CrjEIdfVY405Gnem7854lYQ+/HvXUwxDniiaFBySn0LFyOFQnW2Pnyv2ABBHVCyFJTvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717175880; c=relaxed/simple;
-	bh=7e0GOFdaAz4w7RhFyaN+0Pdb+JMcepp6j/U93Lin27M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=TsyZo9mnvHVfLuG4uW6fIs5sJY9VDQre1vpyy7hEFJRJ8+v4Yk+Rh/bL6IiaPQYBbZgFizKIpUk1L/KRkTbwN1KiCq3ine7GkmWWHM9YP/ReZV2og+NXDyS/yAgE880dfy86h1XQGnl3/j8YzU11sgDhMwbr4M5a3gzAeiXp5m8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=n4P59IhM; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44V8rvuo027031;
-	Fri, 31 May 2024 17:17:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	SGYwVXLuJsO0EuoHM+Hb27z+fptn96KmO30dpEai5aU=; b=n4P59IhMe+BZsxKi
-	L76zu1H4Zgpv4pIYHs/X9wR9p9ejD9W+VAYRfDrRWgmjW9xaWbnFoZatecc+KsQa
-	1FYsE8oWaOmnza9+QhSf/3v7R3lv2xLG/Er7xWIMW3UQM4M/ZG8ERFQLku9WaYZe
-	VQS87xGLKbC0Q5VEOVjBlQ9/DB0RMtTe3FrMB9Nv8OzyHCou5iOp5MeQ2Sdkw2X5
-	DHvCo+ipgxHErvJfP9EfWWNh2RJyh+RaH5PB2n5BRMjlL+Zbxd8M5yLWS00ObKaP
-	fk7+SLMhxMJv9lxC5MZiYtbicQcu58BZ0ezKmiAdIV3T8T/qKrHiPsjP7ZeWgS9i
-	W3hLUQ==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba2hfgd3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 31 May 2024 17:17:40 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44VHHeiE021373
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 31 May 2024 17:17:40 GMT
-Received: from [10.71.108.229] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 31 May
- 2024 10:17:39 -0700
-Message-ID: <fdd2a53c-d7a1-45aa-b169-776fe0b016cf@quicinc.com>
-Date: Fri, 31 May 2024 10:17:38 -0700
+	s=arc-20240116; t=1717175919; c=relaxed/simple;
+	bh=DS0hDZfNJZkkzFy8Yct62SEoWnrdxNIojjUrc12e2eA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UZduVcogQYE/3StwGy6tX97tB11IBfgdAchgRo68xS+t+C93T7rqyvjzxcKEECQsR1XB1SDBhU9dDOyFMT6YDfXJTcZwkgbWeXWbj29LpSk6dxLmEYZp05H7hFiM5xty1vt6lWZYNtMjanGrXBJ19oUq3jfWfq2palri9PO7Fq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1w8vZTdk; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a63359aaaa6so289252266b.2
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 10:18:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1717175916; x=1717780716; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=knmodrcY3ruf2qGktj4YBIa4Hu+EWJ5K27FOck3RpeQ=;
+        b=1w8vZTdkn+mPNnfeaWCWFNEU2c0f10pXctds/U0m7HG321kIqRwKj7ZzOISd/4CFbo
+         0Qbb0C43thFfBQ/XGsE/onPkA/f7t8pi9JWwq1JN8Ngl7X+ruw3hQmfOFiWhqsLnNzS5
+         OBCvVAbg9a+tQoCO/5ggZt+VwHVs9xnzRtUXiMEaLuNMklAk7CBhnWORDhd/Q9S6vygi
+         GD6Qyz6ucJSPj0Y50j1WL+MF4Wnki2JP35aph5oXkc6X8OzyQawOa5tNM/6FBQ3wGLb7
+         t3918HXF74NBmQ07gKJ+4DcgFiL3pjccK6f0wXtM7U3pLLAuYavoR900EBrtbxehHdtq
+         P58g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717175916; x=1717780716;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=knmodrcY3ruf2qGktj4YBIa4Hu+EWJ5K27FOck3RpeQ=;
+        b=VtSVTLV7BdY3Hu/xLOwyrQCnqYS+NeIkVjwDpSmydCenPwEJcM8kSZxtAG10qwiZ5C
+         EuV1PRuzcEAalJ2reTMTXd0ZDSPnG4DHIUekICYjpUYdynh06+76FRy3yr9OhTv/Pbf3
+         gz3PyHRT7jYsHZEhtiG2EoYsYDHIK9sG2ER3+G/oo7LqvC6In4b32NTsgHKeKx1vn0e1
+         zyggT5cS/sblgkumoEDcWpogeWvQXVrH20Npc9Cf1RGDTe9wuQVyhTsp/zrp94QcqLV0
+         S4ex2fwdB9+vaRsdj2UCz/kvEdTPkgVRLNE4V605ilwKZVznOVm+fEEiP8WERbsnNnXH
+         EZUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUneiFP2BafVh5wnyQNJqkzU6jJQtYBT/qmFi9ztm9tyuNE6xuknJJ0G8qjUFgeJsRdM/Oa2SzJv1QMIkhFuzeoLZ7jrlKpGFhoqPTJ
+X-Gm-Message-State: AOJu0YxeaLvdBdXk9pAZv1f05MrKoP+XEBa0CKg2lSHzYYgKIgEh8Bhd
+	ZXAkpIU2Brg/tD6FxonmmbSv469RIpefF2HKLgyVvXDzQsvj3KpOr+7GYW+2O1vHN2JFd85GaR6
+	ZNMUrmywm+5HrK0FF1CVA49oLz8dQls3dMC3G
+X-Google-Smtp-Source: AGHT+IFq57opgQgUB+TA+18B1Szt8imqxEQZcxRZEyIW0myS+jg9WzpqrrZiKo7rqzk0TmUBniiGQ6+5D9+jhENDG1U=
+X-Received: by 2002:a17:906:a1c5:b0:a67:b440:e50f with SMTP id
+ a640c23a62f3a-a68224472c9mr177860866b.63.1717175915378; Fri, 31 May 2024
+ 10:18:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 3/6] drm/msm/dpu: enable compression bit in cfg2 for
- DSC
-Content-Language: en-US
-To: Jun Nie <jun.nie@linaro.org>, Rob Clark <robdclark@gmail.com>,
-        "Abhinav
- Kumar" <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, "Daniel
- Vetter" <daniel@ffwll.ch>,
-        Vinod Koul <vkoul@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        "Neil
- Armstrong" <neil.armstrong@linaro.org>
-References: <20240530-msm-drm-dsc-dsi-video-upstream-4-v6-0-2ab1d334c657@linaro.org>
- <20240530-msm-drm-dsc-dsi-video-upstream-4-v6-3-2ab1d334c657@linaro.org>
-From: Jessica Zhang <quic_jesszhan@quicinc.com>
-In-Reply-To: <20240530-msm-drm-dsc-dsi-video-upstream-4-v6-3-2ab1d334c657@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: CPr-yzlPCDGI4ohCXAJedTBR_mI58iC7
-X-Proofpoint-ORIG-GUID: CPr-yzlPCDGI4ohCXAJedTBR_mI58iC7
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-31_12,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
- malwarescore=0 priorityscore=1501 impostorscore=0 suspectscore=0
- phishscore=0 bulkscore=0 mlxscore=0 lowpriorityscore=0 spamscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2405310131
+References: <20240531-fault-injection-statickeys-v1-0-a513fd0a9614@suse.cz>
+ <20240531-fault-injection-statickeys-v1-3-a513fd0a9614@suse.cz> <CAADnVQJ=bNg9nWQPXGjJ11pZnmjntt=zLBqtJng3328T1L-u0g@mail.gmail.com>
+In-Reply-To: <CAADnVQJ=bNg9nWQPXGjJ11pZnmjntt=zLBqtJng3328T1L-u0g@mail.gmail.com>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Fri, 31 May 2024 10:17:57 -0700
+Message-ID: <CAJD7tkbvjhtFoycNvqbXVzKh2c=RE_cih7k8tnpDRFXSx7tatg@mail.gmail.com>
+Subject: Re: [PATCH RFC 3/4] mm, slab: add static key for should_failslab()
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>, Akinobu Mita <akinobu.mita@gmail.com>, 
+	Christoph Lameter <cl@linux.com>, David Rientjes <rientjes@google.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>, 
+	Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>, "David S. Miller" <davem@davemloft.net>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
+	LKML <linux-kernel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>, 
+	bpf <bpf@vger.kernel.org>, 
+	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, May 31, 2024 at 9:44=E2=80=AFAM Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
+>
+> On Fri, May 31, 2024 at 2:33=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> =
+wrote:
+> >
+> > Since commit 4f6923fbb352 ("mm: make should_failslab always available f=
+or
+> > fault injection") should_failslab() is unconditionally a noinline
+> > function. This adds visible overhead to the slab allocation hotpath,
+> > even if the function is empty. With CONFIG_FAILSLAB=3Dy there's additio=
+nal
+> > overhead when the functionality is not enabled by a boot parameter or
+> > debugfs.
+> >
+> > The overhead can be eliminated with a static key around the callsite.
+> > Fault injection and error injection frameworks can now be told that the
+> > this function has a static key associated, and are able to enable and
+> > disable it accordingly.
+> >
+> > Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+> > ---
+> >  mm/failslab.c |  2 +-
+> >  mm/slab.h     |  3 +++
+> >  mm/slub.c     | 10 +++++++---
+> >  3 files changed, 11 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/mm/failslab.c b/mm/failslab.c
+> > index ffc420c0e767..878fd08e5dac 100644
+> > --- a/mm/failslab.c
+> > +++ b/mm/failslab.c
+> > @@ -9,7 +9,7 @@ static struct {
+> >         bool ignore_gfp_reclaim;
+> >         bool cache_filter;
+> >  } failslab =3D {
+> > -       .attr =3D FAULT_ATTR_INITIALIZER,
+> > +       .attr =3D FAULT_ATTR_INITIALIZER_KEY(&should_failslab_active.ke=
+y),
+> >         .ignore_gfp_reclaim =3D true,
+> >         .cache_filter =3D false,
+> >  };
+> > diff --git a/mm/slab.h b/mm/slab.h
+> > index 5f8f47c5bee0..792e19cb37b8 100644
+> > --- a/mm/slab.h
+> > +++ b/mm/slab.h
+> > @@ -11,6 +11,7 @@
+> >  #include <linux/memcontrol.h>
+> >  #include <linux/kfence.h>
+> >  #include <linux/kasan.h>
+> > +#include <linux/jump_label.h>
+> >
+> >  /*
+> >   * Internal slab definitions
+> > @@ -160,6 +161,8 @@ static_assert(IS_ALIGNED(offsetof(struct slab, free=
+list), sizeof(freelist_aba_t)
+> >   */
+> >  #define slab_page(s) folio_page(slab_folio(s), 0)
+> >
+> > +DECLARE_STATIC_KEY_FALSE(should_failslab_active);
+> > +
+> >  /*
+> >   * If network-based swap is enabled, sl*b must keep track of whether p=
+ages
+> >   * were allocated from pfmemalloc reserves.
+> > diff --git a/mm/slub.c b/mm/slub.c
+> > index 0809760cf789..3bb579760a37 100644
+> > --- a/mm/slub.c
+> > +++ b/mm/slub.c
+> > @@ -3874,13 +3874,15 @@ static __always_inline void maybe_wipe_obj_free=
+ptr(struct kmem_cache *s,
+> >                         0, sizeof(void *));
+> >  }
+> >
+> > +DEFINE_STATIC_KEY_FALSE(should_failslab_active);
+> > +
+> >  noinline int should_failslab(struct kmem_cache *s, gfp_t gfpflags)
+> >  {
+> >         if (__should_failslab(s, gfpflags))
+> >                 return -ENOMEM;
+> >         return 0;
+> >  }
+> > -ALLOW_ERROR_INJECTION(should_failslab, ERRNO);
+> > +ALLOW_ERROR_INJECTION_KEY(should_failslab, ERRNO, &should_failslab_act=
+ive);
+> >
+> >  static __fastpath_inline
+> >  struct kmem_cache *slab_pre_alloc_hook(struct kmem_cache *s, gfp_t fla=
+gs)
+> > @@ -3889,8 +3891,10 @@ struct kmem_cache *slab_pre_alloc_hook(struct km=
+em_cache *s, gfp_t flags)
+> >
+> >         might_alloc(flags);
+> >
+> > -       if (unlikely(should_failslab(s, flags)))
+> > -               return NULL;
+> > +       if (static_branch_unlikely(&should_failslab_active)) {
+> > +               if (should_failslab(s, flags))
+> > +                       return NULL;
+> > +       }
+>
+> makes sense.
+> Acked-by: Alexei Starovoitov <ast@kernel.org>
+>
+> Do you have any microbenchmark numbers before/after this optimization?
 
-
-On 5/29/2024 10:56 PM, Jun Nie wrote:
-> Enable compression bit in cfg2 register for DSC in the DSI case
-> per hardware version.
-> 
-> Signed-off-by: Jun Nie <jun.nie@linaro.org>
-> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8550-QRD
-> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-QRD
-> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-HDK
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-
-Hi Jun,
-
-LGTM
-
-Reviewed-by: Jessica Zhang <quic_jesszhan@quicinc.com>
-
-Thanks,
-
-Jessica Zhang
-
-> ---
->   drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c | 3 ++-
->   drivers/gpu/drm/msm/disp/dpu1/dpu_hw_intf.c          | 8 +++++++-
->   drivers/gpu/drm/msm/disp/dpu1/dpu_hw_intf.h          | 3 ++-
->   3 files changed, 11 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c
-> index 925ec6ada0e1..f2aab3e7c783 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c
-> @@ -307,7 +307,8 @@ static void dpu_encoder_phys_vid_setup_timing_engine(
->   
->   	spin_lock_irqsave(phys_enc->enc_spinlock, lock_flags);
->   	phys_enc->hw_intf->ops.setup_timing_gen(phys_enc->hw_intf,
-> -			&timing_params, fmt);
-> +			&timing_params, fmt,
-> +			phys_enc->dpu_kms->catalog->mdss_ver);
->   	phys_enc->hw_ctl->ops.setup_intf_cfg(phys_enc->hw_ctl, &intf_cfg);
->   
->   	/* setup which pp blk will connect to this intf */
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_intf.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_intf.c
-> index f97221423249..fa6debda0774 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_intf.c
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_intf.c
-> @@ -98,7 +98,8 @@
->   
->   static void dpu_hw_intf_setup_timing_engine(struct dpu_hw_intf *intf,
->   		const struct dpu_hw_intf_timing_params *p,
-> -		const struct msm_format *fmt)
-> +		const struct msm_format *fmt,
-> +		const struct dpu_mdss_version *mdss_ver)
->   {
->   	struct dpu_hw_blk_reg_map *c = &intf->hw;
->   	u32 hsync_period, vsync_period;
-> @@ -177,6 +178,11 @@ static void dpu_hw_intf_setup_timing_engine(struct dpu_hw_intf *intf,
->   	if (p->wide_bus_en && !dp_intf)
->   		data_width = p->width >> 1;
->   
-> +	/* TODO: handle DSC+DP case, we only handle DSC+DSI case so far */
-> +	if (p->compression_en && !dp_intf &&
-> +	    mdss_ver->core_major_ver >= 7)
-> +		intf_cfg2 |= INTF_CFG2_DCE_DATA_COMPRESS;
-> +
->   	hsync_data_start_x = hsync_start_x;
->   	hsync_data_end_x =  hsync_start_x + data_width - 1;
->   
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_intf.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_intf.h
-> index f9015c67a574..ef947bf77693 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_intf.h
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_intf.h
-> @@ -81,7 +81,8 @@ struct dpu_hw_intf_cmd_mode_cfg {
->   struct dpu_hw_intf_ops {
->   	void (*setup_timing_gen)(struct dpu_hw_intf *intf,
->   			const struct dpu_hw_intf_timing_params *p,
-> -			const struct msm_format *fmt);
-> +			const struct msm_format *fmt,
-> +			const struct dpu_mdss_version *mdss_ver);
->   
->   	void (*setup_prg_fetch)(struct dpu_hw_intf *intf,
->   			const struct dpu_hw_intf_prog_fetch *fetch);
-> 
-> -- 
-> 2.34.1
-> 
+There are numbers in the cover letter for the entire series:
+https://lore.kernel.org/lkml/20240531-fault-injection-statickeys-v1-0-a513f=
+d0a9614@suse.cz/
 
