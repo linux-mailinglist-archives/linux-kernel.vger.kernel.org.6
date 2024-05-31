@@ -1,143 +1,197 @@
-Return-Path: <linux-kernel+bounces-196909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7BDC8D6372
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 15:47:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AB838D6377
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 15:49:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D0E61F281CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 13:47:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8331B1C20873
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 13:49:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23C8615B106;
-	Fri, 31 May 2024 13:47:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CN39ajse"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79A6915AAD8;
+	Fri, 31 May 2024 13:49:31 +0000 (UTC)
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0CE7158DD3
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 13:47:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BB6E156F42
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 13:49:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717163252; cv=none; b=Y1RIPMZJ6sNaxO1hk07e50o8jwfVcpP58hECd/ufko5ohd6DSa75EJ0nt6bscbZ3+5s5cnN/+/wUsbSF5DfKHr/RuqsPRIPN1lN5vvru+UFHF4OPdJDJ6T0TfTuVlj+uHes5aNgjx/JkIo8ocPMBH5syd1w9zJ1Fn6aprzBHvqE=
+	t=1717163370; cv=none; b=cN1MSYR33xmnV5m6ROkUj+4jv446HhFdOgE80a7/Vzb5WowpGTZvkVtJxcComAthM4xGVvB+LiH8UABvOUbmwpeBOrCOG5358tN4pBWfXej3kCs1b3mnTfxQUCxS0efmyNwoS6kYYL0JabvNwBhegYvk9QANHQnx0Y0zEYKNi3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717163252; c=relaxed/simple;
-	bh=5feJ7ZEmv4EJwuqBxghGKUN0BUHRdtWsEgNJdAM7cuY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uxGI4nEcjulo2HsPZikQQ1/UwF5erMqWDks7fLEFAQ1dxIZzQVRCxwqLJbxV+6T0WExtC8V88pFLczJyNjI13gd5GW6UjjYLPSB3eTZYgAQxrNnpIHgEkoNlVZdfd5HGEjz7/C4Oh6VN1JOUcWNohJchbLCW2tukCbD2Q1QWkKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CN39ajse; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-57a033c2e9fso2566968a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 06:47:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717163248; x=1717768048; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=AUXJX6MLu7XxJUxxk0t9YkkaBVZ3COqZgFFC8OBMAac=;
-        b=CN39ajsexWIlKj7jwrFPvQmnSKRTt2UhvK7UJBBCaLMz9AAdlk6vzGT3sYpV7Ay6SJ
-         aMStn5sS0jtBh715SyR/NrcoHzOjRHQmmWVKdUJDit7dO3t4qeW/DCowK1i+NBuA7X1W
-         m6teIOY74vKlv1p1sMoYak9HYyfWslj24cayKVkhGLMPx3j/dkwh1pVj7cwLN+5Dd314
-         HRgWUJVk9OiKbKtIJfVIAhNPJISaEZfRcSbiQq7UfWAz0m/4tGllHat77M46QkMVJOCe
-         rRn65Q/njmf+/xbMeWYYl9BKlnmipaXE9RNpuemZb55rJjHrfIKa3nodgrREd6y4d0Ee
-         V2qQ==
+	s=arc-20240116; t=1717163370; c=relaxed/simple;
+	bh=UZSV4Q93sZCFr3iDOHYk6nerLnAPVzKN6Pp+05lA/WY=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=IY7/IKyFQFo1orjKyAJiobHXU130SvmeNTOCE9oVoJ5gkThAY7/1ggndENYj4rayrI58OzvMuzqIYTG7mR+mr9yKkMqOX900m0+WCmjvkF2z26JbPqVFE0kQXg/XkriaDBUrwL0lZGZsflRcH9u7oCdqo4XAUObBn/NLqqR9bow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-373809cc942so24558545ab.2
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 06:49:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717163248; x=1717768048;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AUXJX6MLu7XxJUxxk0t9YkkaBVZ3COqZgFFC8OBMAac=;
-        b=BsF3jflfqFxQxGSa0YYPCJ99spA7PciqS/KM7UW6IWFRQntHw7ez6JeM3giRxrZ39s
-         VGIGQh6sx8ibD6JlRjuC6HDPbG4uyBGkTjP0uPW1rUjAJELnVPb2QZ85uxlA0c+MWXhg
-         JGzMYbsgaHX9dmklqd0Ckfcd5Ivk1PzbAwzMtAZ3zHYrZo4/42PPKR6/hCO+Cvt+AtMG
-         YUI6OhaNYqA/QzgQpP0VL1zfPaB3b7B3G9sNqReFQhFExxnnj1/WraX2KElX8HJrwY3k
-         xXHEdce848aV5yu0nDSmNvcWAKu4/OuOkxQYslFNlBpD9P4VcnK4UOa+9OFSIcuOCUxc
-         pz8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWiEA2R3tXRWwU9FvAd7Y9uZaS+it834Ruf1XHfCiBHRX6DBSlr77T/SRN/KYTrYETxa/7gZ2O881Mny3HBG8uWt2r6l9Qf79BxQ7tX
-X-Gm-Message-State: AOJu0YxuG/z2D19luMFRPY8ScH9n3R6VSifPs7HyiKIeGRGwm8Jxy671
-	bLDt3F51GRyBVBsBZM4KhckBXUxQr8mAEM4weISNrmRVgek8woQx/N3D48Vcs1s=
-X-Google-Smtp-Source: AGHT+IFEKgShmJiRX+ACSDPbuyV/im0mFwK1uQ6oHENuOcbpoVAKiaQZwo6t/ABMGdICow7uXN2O/w==
-X-Received: by 2002:a50:9fe6:0:b0:578:59a9:c6eb with SMTP id 4fb4d7f45d1cf-57a364479f0mr1758273a12.15.1717163248095;
-        Fri, 31 May 2024 06:47:28 -0700 (PDT)
-Received: from [192.168.128.139] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57a31c9c0f1sm1034228a12.80.2024.05.31.06.47.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 31 May 2024 06:47:27 -0700 (PDT)
-Message-ID: <d9d33632-36de-4f9a-88f7-980ae9a1a017@linaro.org>
-Date: Fri, 31 May 2024 15:47:25 +0200
+        d=1e100.net; s=20230601; t=1717163368; x=1717768168;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=RI5YL3tOD/Rmu/yEiqghDR3Te1rvZPl499ZxyvXchlo=;
+        b=gU2ICU2dBch/mDbaoc70rJZCmxAjO3vnL6kkqSWl3MtRKW5kHA+hNPi7/d0saBzFUW
+         GQcI1ghtxl79+JVqMBJN4deaTauWoK/ZI1aRnZmr2/EQ75D0ViHFaVgmbguSFmqPRY/U
+         clyrXCmcTKhsKgytTPr8VQmARVELuZs1WuDfM5pwBC06jaRSqd09L8M/GGmY6JPRDrOv
+         hRHJwiSNx3mfgVquQdgVyU9M1gygFLmoZScBGIw7WKzl+oG++UhLgICcE41uXxmR0c4I
+         QAbSCQT2Za9sLMPoUglWjQ0zulncHfq6+pVggumM4PeMsq6u/1ZjE1o32CDz4aR7M09Y
+         JyZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUsZ4Pa6y+PgBqqwGIm4SD4yZANPXRehna1rgSJdIqCHjykhwvSJRmR+cOxC1nH7GGMqgZB3dEEMxnU9aN7oHca+g1u7rv5Vuccg5Gi
+X-Gm-Message-State: AOJu0YzWhtgRubLOAROsKpTraNnCtd+fCem58gRuNqtZAvCYNgEbTv++
+	V8BIBicwWEzPQHxg0UXRQVHWvaFO4vFR8l1GTIWRu2HN3omXQ5PAkFFetUPoYSZib7HHFhsvY/F
+	iaDhkqjxLI1nIkPdgxA4nDTBQx3WPIxP1VrIXWAyqPEY2Djxs92JQXME=
+X-Google-Smtp-Source: AGHT+IHj1HqxN8+cYdq+EB2qHeahM6+WdhWMXtSf+i3w0rGvDTcODcBMclSscj69NfT7dGMACi4dMA8IQ7uUeLRDzrOBwNJ+CFcu
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: sm8650-hdk: remove redundant properties
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240530-sm8650-hdk-redundant-v1-1-c39c2ae65f3b@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20240530-sm8650-hdk-redundant-v1-1-c39c2ae65f3b@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:12cf:b0:36c:4b17:e05d with SMTP id
+ e9e14a558f8ab-3748b9ea14emr935895ab.4.1717163368686; Fri, 31 May 2024
+ 06:49:28 -0700 (PDT)
+Date: Fri, 31 May 2024 06:49:28 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000009cb7480619c04045@google.com>
+Subject: [syzbot] [block?] WARNING: locking bug in mempool_alloc_noprof
+From: syzbot <syzbot+c8ae2cacba71e6145314@syzkaller.appspotmail.com>
+To: axboe@kernel.dk, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 30.05.2024 10:31 AM, Dmitry Baryshkov wrote:
-> The coomits 65931e59e039 ("arm64: dts: qcom: sm8650: move USB graph to
-> the SoC dtsi") and fbb22a182267 ("arm64: dts: qcom: sm8650: move PHY's
-> orientation-switch to SoC dtsi") have moved some of the properties from
-> the board DT files to the sm8650.dtsi. As the patch for sm8650 HDK
-> predates those commits, it still had those properties inside.
-> 
-> Drop these duplicate proerties from the sm8650-hdk.dts.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
+Hello,
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+syzbot found the following issue on:
 
-Konrad
+HEAD commit:    4a4be1ad3a6e Revert "vfs: Delete the associated dentry whe..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12765f72980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=733cc7a95171d8e7
+dashboard link: https://syzkaller.appspot.com/bug?extid=c8ae2cacba71e6145314
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: i386
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-4a4be1ad.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/a9bbdc63efe9/vmlinux-4a4be1ad.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/ed08b308e5d6/bzImage-4a4be1ad.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+c8ae2cacba71e6145314@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+Looking for class "c->lock" with key __key.0, but found a different class "&c->lock" with the same key
+WARNING: CPU: 1 PID: 6462 at kernel/locking/lockdep.c:932 look_up_lock_class+0x133/0x140 kernel/locking/lockdep.c:932
+Modules linked in:
+CPU: 1 PID: 6462 Comm: syz-executor.2 Not tainted 6.10.0-rc1-syzkaller-00027-g4a4be1ad3a6e #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+RIP: 0010:look_up_lock_class+0x133/0x140 kernel/locking/lockdep.c:932
+Code: c7 c7 a0 b7 2c 8b e8 ec a3 74 f6 90 0f 0b 90 90 90 31 db eb be c6 05 74 d6 ef 04 01 90 48 c7 c7 c0 ba 2c 8b e8 ce a3 74 f6 90 <0f> 0b 90 90 e9 62 ff ff ff 0f 1f 40 00 90 90 90 90 90 90 90 90 90
+RSP: 0018:ffffc90002f6edc8 EFLAGS: 00010086
+RAX: 0000000000000000 RBX: ffffffff941f9940 RCX: ffffc9000cb53000
+RDX: 0000000000040000 RSI: ffffffff81510236 RDI: 0000000000000001
+RBP: ffffffff94aedd50 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000000 R11: 000000006b6f6f4c R12: ffffe8ffad169870
+R13: 0000000000000000 R14: 0000000000000000 R15: ffffffff94ad5be0
+FS:  0000000000000000(0000) GS:ffff88802c100000(0063) knlGS:00000000f5effb40
+CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
+CR2: 0000000020002000 CR3: 000000005f492000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ register_lock_class+0xb1/0x1230 kernel/locking/lockdep.c:1284
+ __lock_acquire+0x111/0x3b30 kernel/locking/lockdep.c:5014
+ lock_acquire kernel/locking/lockdep.c:5754 [inline]
+ lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
+ local_lock_acquire include/linux/local_lock_internal.h:29 [inline]
+ ___slab_alloc+0x7bb/0x1870 mm/slub.c:3715
+ __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3756
+ __slab_alloc_node mm/slub.c:3809 [inline]
+ slab_alloc_node mm/slub.c:3988 [inline]
+ kmem_cache_alloc_noprof+0x2ae/0x2f0 mm/slub.c:4007
+ mempool_alloc_noprof+0x176/0x390 mm/mempool.c:402
+ bio_alloc_bioset+0x480/0x8b0 block/bio.c:554
+ bch2_writepage_io_alloc fs/bcachefs/fs-io-buffered.c:476 [inline]
+ __bch2_writepage+0x107e/0x2500 fs/bcachefs/fs-io-buffered.c:610
+ write_cache_pages+0xb0/0x130 mm/page-writeback.c:2591
+ bch2_writepages+0x11f/0x200 fs/bcachefs/fs-io-buffered.c:650
+ do_writepages+0x1a3/0x7f0 mm/page-writeback.c:2634
+ filemap_fdatawrite_wbc mm/filemap.c:397 [inline]
+ filemap_fdatawrite_wbc+0x148/0x1c0 mm/filemap.c:387
+ __filemap_fdatawrite_range+0xba/0x100 mm/filemap.c:430
+ file_write_and_wait_range+0xd0/0x140 mm/filemap.c:788
+ bch2_fsync+0xa1/0x2c0 fs/bcachefs/fs-io.c:197
+ vfs_fsync_range+0x141/0x230 fs/sync.c:188
+ generic_write_sync include/linux/fs.h:2794 [inline]
+ bch2_buffered_write fs/bcachefs/fs-io-buffered.c:1128 [inline]
+ bch2_write_iter+0x756/0x3180 fs/bcachefs/fs-io-buffered.c:1136
+ new_sync_write fs/read_write.c:497 [inline]
+ vfs_write+0x6b6/0x1140 fs/read_write.c:590
+ ksys_write+0x12f/0x260 fs/read_write.c:643
+ do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+ __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
+ do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
+ entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+RIP: 0023:0xf730d579
+Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d b4 26 00 00 00 00 8d b4 26 00 00 00 00
+RSP: 002b:00000000f5eff5ac EFLAGS: 00000292 ORIG_RAX: 0000000000000004
+RAX: ffffffffffffffda RBX: 0000000000000005 RCX: 0000000020000180
+RDX: 0000000000002000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+ </TASK>
+----------------
+Code disassembly (best guess), 2 bytes skipped:
+   0:	10 06                	adc    %al,(%rsi)
+   2:	03 74 b4 01          	add    0x1(%rsp,%rsi,4),%esi
+   6:	10 07                	adc    %al,(%rdi)
+   8:	03 74 b0 01          	add    0x1(%rax,%rsi,4),%esi
+   c:	10 08                	adc    %cl,(%rax)
+   e:	03 74 d8 01          	add    0x1(%rax,%rbx,8),%esi
+  1e:	00 51 52             	add    %dl,0x52(%rcx)
+  21:	55                   	push   %rbp
+  22:	89 e5                	mov    %esp,%ebp
+  24:	0f 34                	sysenter
+  26:	cd 80                	int    $0x80
+* 28:	5d                   	pop    %rbp <-- trapping instruction
+  29:	5a                   	pop    %rdx
+  2a:	59                   	pop    %rcx
+  2b:	c3                   	ret
+  2c:	90                   	nop
+  2d:	90                   	nop
+  2e:	90                   	nop
+  2f:	90                   	nop
+  30:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
+  37:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
