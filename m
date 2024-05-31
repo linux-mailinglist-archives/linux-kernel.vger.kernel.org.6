@@ -1,112 +1,147 @@
-Return-Path: <linux-kernel+bounces-196373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD2588D5AE4
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 08:55:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 866278D5AE8
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 08:56:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 893BF1F25A61
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 06:55:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7F7C1C22ED1
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 06:56:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CC6780637;
-	Fri, 31 May 2024 06:54:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF36980C09;
+	Fri, 31 May 2024 06:56:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BcVRHzov"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ns1sVLA7"
+Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 168E07FBAE;
-	Fri, 31 May 2024 06:54:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D63A7FBAE
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 06:56:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717138498; cv=none; b=Ip7+UhdlfVkBCv+keSJ/NzzrYK1E3K7Lt7dMcfryv8hkeJW6t92TQt+Dxm2AUMUkKbH0Q9fUESau58OAeKkC77DKRrL4KFEzjr+ildxobEN72t28BykTsjhWBx/EozHQPgy+2HZDGicP/lDOY3SvZ284WN0KJfqQ6S5UZvlEH18=
+	t=1717138573; cv=none; b=RPzF+mj38dCbe0+Btb7NUF10LcwPB+CFlipbQpOpt0bIgTRhjoz3e+V520vidTpiGW3WzDJnrkn8RkaiuYeL6nEIg8GIM4YJ7QkgdUNlT6zGpb2F3EovDcrVmZl+DrYeTOZURJFYqdFpBPMliwTYZxCQ4cA05znU82THrANqI+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717138498; c=relaxed/simple;
-	bh=vj/iKG5SOv70qFtt9ZacYP3jJGUG03ItpLbMK39Ejt8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mEVxeDd7GZjlvLxTzxo8mDVsPgqMbOK5QbeUCQgAbz6C4qGf1DYtcQ8L1ctag5XUTq1BTKvzwYYz938FevAz2GSQI3wJkgFbhWXnRUt2EBEb52RzgQoE27IpB8OO7jDOLNt9o/7TWuM2YEWr3zVxlU/78qE1fGL4jj8aD2Z1ZIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BcVRHzov; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717138497; x=1748674497;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=vj/iKG5SOv70qFtt9ZacYP3jJGUG03ItpLbMK39Ejt8=;
-  b=BcVRHzovUhu8czM/PT5y8VV+EVAdY4Q8XEKIl6GWnJTrhVK7havS+Ks3
-   PYO2Djc8o4MxuAw9Aqe6M2zcL2II3uHHD7WxF8f1OttZ7NdrzPnnBEXhV
-   PL+A25/45kL0Ds01VIzxTwTuu8BK3dkCPMbDjMOI2c+MZ48GxDD7Toloa
-   dRl6PxdWVAUJYLPzxogj6nRI9bAtxUKgrYku33Dqa4BDqwS0iqaMzA+kQ
-   l1q4I+y2zouLRFkb8Ducme5lAWFy/N+FK4noGF2mI7uHoKSv/EmZyhwFg
-   +/NyRebqxboLU85oNBG/tbMZH4CIVk4VEbBt8SlefvL4iWQSiGmjL5Rax
-   w==;
-X-CSE-ConnectionGUID: 0auM96zMRDO20Koa43zoOQ==
-X-CSE-MsgGUID: 6ndYnhpjRiO1SP16efHrrg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="13507510"
-X-IronPort-AV: E=Sophos;i="6.08,203,1712646000"; 
-   d="scan'208";a="13507510"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 23:54:57 -0700
-X-CSE-ConnectionGUID: 7bYeZLVjRP201gzqW9q7GA==
-X-CSE-MsgGUID: inShIAHCT7W0bVAdMoLxrw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,203,1712646000"; 
-   d="scan'208";a="73549945"
-Received: from rrware-mobl.amr.corp.intel.com (HELO tlindgre-MOBL1) ([10.125.108.14])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 23:54:50 -0700
-Date: Fri, 31 May 2024 09:54:42 +0300
-From: Tony Lindgren <tony.lindgren@linux.intel.com>
-To: Petr Mladek <pmladek@suse.com>
-Cc: Tony Lindgren <tony@atomide.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	"David S . Miller" <davem@davemloft.net>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Dhruva Gole <d-gole@ti.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Johan Hovold <johan@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Vignesh Raghavendra <vigneshr@ti.com>, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org, Sebastian Reichel <sre@kernel.org>,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH v7 1/7] printk: Save console options for
- add_preferred_console_match()
-Message-ID: <Zll0Mg-Ovqx0n7Zd@tlindgre-MOBL1>
-References: <20240327110021.59793-1-tony@atomide.com>
- <20240327110021.59793-2-tony@atomide.com>
- <ZlC6_Um4P4b-_WQE@pathway.suse.cz>
+	s=arc-20240116; t=1717138573; c=relaxed/simple;
+	bh=rDjU5whvSyy64bLjX3EGuXwyqnk2V2gqwwhRXFsUETA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KJOA1nKgePWY4UzLJIBMGgvRfuh01SLB3NaS0amtX7oFmDBezJNrOjxpT2mKItjwV1PgWVqUxKjvNVA7gwEgEFjesOFg20Yh5hAI37heGe9xN/1Ho7tc92k1xCQhqLX45eybwrmdoeLGMdTqClb9ZjeiY+Nuz2mxDBtyQId5oZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ns1sVLA7; arc=none smtp.client-ip=209.85.160.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-24c10207d15so825616fac.2
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 23:56:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717138570; x=1717743370; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UmmGEIEiP+RXWcqXsFf6qa0SBKaXKreUvEwc8aJmwc8=;
+        b=Ns1sVLA757IUcl5uaoIapMZII//mkRPvI9si+oftZ5cqQhEdRb8KCsMf/icAldqiDr
+         2TSmL2pUDulhSniM05awV2sjYWePoRfOFk7aFxBt0aGFWH5otyCbXMRJzvl9hltli6h+
+         OseHAtScgKbhAAmS6NqoR3S9Ok4u9/4ldjK8zgVr0Dp962ZVd6d6GRhHVfYkDKgy8AUR
+         mxfL94Kfr+tQEbhdXjmdVemWlAxCJ2eM7n1Lfjy94X2nhn80pTRCqYUbnAP6U6xeoaud
+         QPCEYBIeomwn3S1jvKA82JOUPBbJs2q9zjHrOcjfW5ejBD7ImuPasYrTtTQAUA57TGGC
+         l1TA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717138570; x=1717743370;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UmmGEIEiP+RXWcqXsFf6qa0SBKaXKreUvEwc8aJmwc8=;
+        b=nSw0nBX3YArhM3PSQmsttFr/uPZIlV0OD9x9e9NrkjbfiYCGuz5cPbsBRZVNdqET5U
+         7MifxdvBsvS/WcKlVIR/1x5chKbmyLB8aYnvnnnXVCeygZxBPjQT9i7d3kjshQaR8RXi
+         Ln9SzZejAEI9RNLaT9T2sGT3SnNK/HlsdZj10lLmmQRfOv5mujXsh2kYvBfVj6hBk6w1
+         ymn943X8K1cub/kxY2LnzHUPYXO9HLp/GmO+R6U/s2sEMydgyE7zUj6VsnjE2yqhSgBn
+         Twsn5jo+ms6i41dZpgDwPfCWHexC93iI+vymwRZU4eOHjbll6Hr3vZcIXNM8rjf9FTKK
+         lMtw==
+X-Forwarded-Encrypted: i=1; AJvYcCWVTYNjFpxKkWWvepCy2IOby5SWp9+0Ee7HtypDne/Owt/cCazllb/ijCUURrKbqEoEc7N2sWOfA0MufvGQ1nGEAf1MC8LlJgez4SjU
+X-Gm-Message-State: AOJu0YzgGe98vD2Kww+m4OI3a93jZOvlKvxV/kNKWtljzDwDG01DZBq9
+	Oa3jGfQchaILYKaTaY8wIIZ1I6R8e9DOI4CGiMsfqOg+zIFNe1C7U8Svyt0VXQxD9XxXpGHBjur
+	aDj4JjTSLXZiEPkT5vJYxc98T0g/NbeNVu8zKHl+Xe4khG88PP28=
+X-Google-Smtp-Source: AGHT+IEtLc8q750EW+lhfvstjGAuhAQBsRVsWSDNxtmSoDQYn3O6DHfwpdwQD3UPV6TyURClBWGTjrlbf6AI7cLNbeU=
+X-Received: by 2002:a05:6870:724a:b0:250:8255:e793 with SMTP id
+ 586e51a60fabf-2508b993d50mr1295191fac.23.1717138570065; Thu, 30 May 2024
+ 23:56:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZlC6_Um4P4b-_WQE@pathway.suse.cz>
+References: <20240507020037.14009-1-gavin.liu@mediatek.com>
+ <CAFA6WYN79E8Hyxsaxu20hkyNebMqBWV7az5ByekTuii7Y7qjng@mail.gmail.com>
+ <929512b561536d4ddfaeda518f2ce306b899f3a9.camel@mediatek.com> <CAFA6WYNRVa_oem2TdyjoaUOTmW+vED-7LOC4wFjqG+puptg8tQ@mail.gmail.com>
+In-Reply-To: <CAFA6WYNRVa_oem2TdyjoaUOTmW+vED-7LOC4wFjqG+puptg8tQ@mail.gmail.com>
+From: Jens Wiklander <jens.wiklander@linaro.org>
+Date: Fri, 31 May 2024 08:55:58 +0200
+Message-ID: <CAHUa44Hpfq+6qsuZ9NYUB55br=5H0Bi1p7ALoAY3Cad5egOcdg@mail.gmail.com>
+Subject: Re: [PATCH v3] optee: add timeout value to optee_notif_wait() to
+ support timeout
+To: Sumit Garg <sumit.garg@linaro.org>
+Cc: =?UTF-8?B?R2F2aW4gTGl1ICjlionlk7Llu7cp?= <Gavin.Liu@mediatek.com>, 
+	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>, 
+	"op-tee@lists.trustedfirmware.org" <op-tee@lists.trustedfirmware.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 24, 2024 at 06:06:21PM +0200, Petr Mladek wrote:
-> A solution might be to store "devname" separately in
-> struct console_cmdline and allow empty "name". We could
-> implement then a function similar to
-> add_preferred_console_match() which would try to match
-> "devname" and set/update "name", "index" value when matched.
+On Thu, May 23, 2024 at 9:35=E2=80=AFAM Sumit Garg <sumit.garg@linaro.org> =
+wrote:
+>
+> On Tue, 21 May 2024 at 14:16, Gavin Liu (=E5=8A=89=E5=93=B2=E5=BB=B7) <Ga=
+vin.Liu@mediatek.com> wrote:
+> >
+> > Hi, Sumit,
+> >
+> > The corresponding OPTEE-OS pull request and change is here.
+> >
+> > https://github.com/OP-TEE/optee_os/pull/6641
+>
+> As this is an ABI change where I see backwards compatibility is
+> maintained. However, the forwards compatibility requires this change
+> to be backported to stable releases. So for the next version please CC
+> stable ML.
+>
+> >
+> > On Mon, 2024-05-20 at 16:16 +0530, Sumit Garg wrote:
+> > >
+> > > External email : Please do not click links or open attachments until
+> > > you have verified the sender or the content.
+> > >  Hi,
+> > >
+> > > On Tue, 7 May 2024 at 07:31, gavin.liu <gavin.liu@mediatek.com>
+> > > wrote:
+> > > >
+> > > > From: Gavin Liu <gavin.liu@mediatek.com>
+> > > >
+> > > > Add timeout value to support self waking when timeout to avoid
+> > > waiting
+> > > > indefinitely.
+> > > >
+> > > > Signed-off-by: Gavin Liu <gavin.liu@mediatek.com>
+> > > > ---
+> > > > change in v3:
+> > > > 1. change the comment in optee_rpc_cmd.h
+> > > > 2. add macro for "TEE_ERROR_TIMEOUT"
+> > > > 3. change from "TEEC_ERROR_BUSY" to "TEE_ERROR_TIMEOUT"
+> > > > ---
+> > > >  drivers/tee/optee/notif.c         |  9 +++++++--
+> > > >  drivers/tee/optee/optee_private.h |  5 ++++-
+> > > >  drivers/tee/optee/optee_rpc_cmd.h |  1 +
+> > > >  drivers/tee/optee/rpc.c           | 10 ++++++++--
+> > > >  4 files changed, 20 insertions(+), 5 deletions(-)
+> > > >
+>
+> FWIW:
+>
+> Reviewed-by: Sumit Garg <sumit.garg@linaro.org>
 
-This sounds nice, the empty name can be used to defer consoles that
-are not known early. And on console_setup() we only set the devname
-for such cases.
+I'm picking up this.
 
-To me it seems we additionally still need to save the kernel command
-line position of the console too in struct kernel_cmdline so we can
-set the preferred_console for the deferred cases.
-
-Regards,
-
-Tony
+Thanks,
+Jens
 
