@@ -1,166 +1,101 @@
-Return-Path: <linux-kernel+bounces-197268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33E1F8D6875
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 19:49:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14BDD8D6879
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 19:51:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 515351C21A80
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:49:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C241B26FC7
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:51:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ADF017C9F4;
-	Fri, 31 May 2024 17:49:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADB1617C7DC;
+	Fri, 31 May 2024 17:50:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b="ZA4T4lzH"
-Received: from mickerik.phytec.de (mickerik.phytec.de [91.26.50.163])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V40jc/UK"
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91E8C17C21B
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 17:48:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.26.50.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B168F1DFCB;
+	Fri, 31 May 2024 17:50:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717177741; cv=none; b=IkTCa3PNXZmL3g9CEP7uXCe74r9pdS4m3YTlqRqwg8qlpBGJsdiso0zYqSPDXruu67aDbQ22LCnjZCQpcZR6tRfvOZMvBt1Do0VrjOIqxSnHvHaEB+ET1lgincPUrbt22/n+p1nFIZObtKRUtH2ZULzic6M13/UEWAc7qWIwo0g=
+	t=1717177852; cv=none; b=JPrw0+LncEPLtzGpakUrRw9iSQtdkkA5L8l5cJbrVXc6RdVzIj2fNEK+Tveu3svUVRT9LKV6u1EDnitdHVsu7GTwo8tlL8anLzGtByfEE0ZBs3CngdFybYX9IJrFtNAFiYflWnpDR/1KdQAkjC23t5mimQ0nKPxpmFGGyf/g8a4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717177741; c=relaxed/simple;
-	bh=MXqn0xeA2HqxHTRc1nTtDIQVZRm+olzLnPAvyUPI2QM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=TDGZGcjpZTfLyUScYdwFM7rvE42/4wU4M29lGtbpqT2sYNsLsLTaZJDrfeKjYlJtUvCizzhUpInzMI5I0FmK+k7n9vlvrkX7Hw+IkS0yYgXU9WqKMK+3Xc12E+VtaNEIbXZZiOC2H8TgwVJu6gv6HCKpmtYc5m0QmBsENecCBN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de; spf=pass smtp.mailfrom=phytec.de; dkim=pass (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b=ZA4T4lzH; arc=none smtp.client-ip=91.26.50.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.de
-DKIM-Signature: v=1; a=rsa-sha256; d=phytec.de; s=a4; c=relaxed/simple;
-	q=dns/txt; i=@phytec.de; t=1717177731; x=1719769731;
-	h=From:Sender:Reply-To:Subject:Date:Message-ID:To:CC:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=MXqn0xeA2HqxHTRc1nTtDIQVZRm+olzLnPAvyUPI2QM=;
-	b=ZA4T4lzH7QGt3f0O18jjmVSizCsSkHJeh8ODoezaUrRyxH2WDOjhbe1gS5Om20h4
-	VO6JPByrwj38Iaj9PfKt8XaUaxaTQTceU1XgW7KvKsN/xotJb3Ti6Y0w+zHlbVBn
-	rEk32qSBgVfjc/Ft04H34G8+lsmdsZHDkbXxKK6Rb/s=;
-X-AuditID: ac14000a-03251700000021bc-eb-665a0d834430
-Received: from berlix.phytec.de (Unknown_Domain [172.25.0.12])
-	(using TLS with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(Client did not present a certificate)
-	by mickerik.phytec.de (PHYTEC Mail Gateway) with SMTP id 55.77.08636.38D0A566; Fri, 31 May 2024 19:48:51 +0200 (CEST)
-Received: from [10.0.0.42] (172.25.0.11) by Berlix.phytec.de (172.25.0.12)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.6; Fri, 31 May
- 2024 19:48:43 +0200
-Message-ID: <828e0af0-bad4-4012-b519-2d292f0035a5@phytec.de>
-Date: Fri, 31 May 2024 19:48:38 +0200
+	s=arc-20240116; t=1717177852; c=relaxed/simple;
+	bh=Atau1URvHwfFT5T7PHKE6HiDVTXw/ms+8/vtB9x/KUk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=D6vBRTwyndUT5JDZh3xabpBZzxoS9xBruMbQ0uHt0stQAFcDGRjJFEdY3KzqvTiCXQJfZujeGzsEVHz8BX8V2E4YCrKHnkvtG90TOhxW1nqk0FLqnZ1U7ZoPwxnpyzVfPYvtlTZu9d6pzpCUfYBECLLcEYYCo/6BlyNBzJ6JMUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V40jc/UK; arc=none smtp.client-ip=209.85.219.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-df7722171bcso2293018276.3;
+        Fri, 31 May 2024 10:50:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717177850; x=1717782650; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Atau1URvHwfFT5T7PHKE6HiDVTXw/ms+8/vtB9x/KUk=;
+        b=V40jc/UKtLJ2RDuZV8l0A3TVM3Q7LpX1f5uSaHlZAL5KAiv0Tv7rQpXreSQCd94Cka
+         JIU0xVqTyQAnjIQU8G2WYrecsxSe1uKbpzU7u3VRjiZydlkJxpfA1kLbQaga3o3D/x8+
+         XMVirN16ok0OJdhMyPa4MEuXVd2OO0bp+TqLCvTjvFVy3M/dm5YT3wfbrddJpxBpN7Al
+         Ub659gBOFCe3FDMA8Q4+BqIIYhaTXU5TwJNoL1/KqrAG2SkgPReczLJJl7ogV7qcCFdy
+         d2y6o77zE1euCWjpnoeSXWTM8Il33KHXveDlSRCmCjthfwUSMWlHnufV03d9BLjrmTGd
+         jqqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717177850; x=1717782650;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Atau1URvHwfFT5T7PHKE6HiDVTXw/ms+8/vtB9x/KUk=;
+        b=nnz2RPYreXabMlUynkbjpX83jS9Vjj04bdYMHhpwiXimzIgJsDbN8rZdJlTn8s+IZy
+         KCRHl8uvGbmnUQWfpBUdrYo6K+q7QI3KtHNcv7/qhmuu2Qh23tBIHsulMcGtRO2V9fsF
+         dFGb0XvCV6qW+8rLbVgptrFHAuX0UMTG4wg7uhqCDmXHvmVAi6EO2E8t+oOLoRcm0wGQ
+         TjKG04Rg3jdd+towfBjX9Fbbs8m8kCwJHguQMUxDL+IIsG2o5fPGhuZjJ6qHqtzlIyQW
+         rPRbXSbzxwvWc8mQUqKIPSzOruZ1jmYf2wfdTtMXcbrJuNLBMgOY1bGOEdqMMq+IKiVn
+         +KJg==
+X-Forwarded-Encrypted: i=1; AJvYcCXwFwy5fvDyMSvrKVxOhv/7fJ7E4V0PeF0fYt4srMNyy0RbYi8odChqYZdwVgNVIF45VIjhJLIkYft8XVG4sHFRmJEh2sDXnE2G59Ajv7abIuo5EIdIr0rOhhY5IIufGm2W+vB3xQ==
+X-Gm-Message-State: AOJu0YygogWtt8+bkdV1Vx98ADZbt1HkhBYuHcdUdDSGnRof/upjC18w
+	vP4jHa8QDJYLqyYbhVBDZXfKI3pyfaY/Zz25d0u7qguAiUnj0IQ/MFd9kkAm3hPSWKxwchuRqZE
+	yveUQ1xEiqkNcM4jB70tx+1S7sLk=
+X-Google-Smtp-Source: AGHT+IGfpgVBtSJVjCqXGnH8H64qsE/dutU25hN1mvv7gHBogYjfdAizPMz6GykYygm4KbQ5mpPzr4sUablf1PT9yKU=
+X-Received: by 2002:a25:e0cf:0:b0:dfa:4adc:e91c with SMTP id
+ 3f1490d57ef6-dfa73db1bc5mr2847810276.48.1717177849523; Fri, 31 May 2024
+ 10:50:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] dt-bindings: net: dp8386x: Add MIT license along with
- GPL-2.0
-To: Udit Kumar <u-kumar1@ti.com>, <vigneshr@ti.com>, <nm@ti.com>,
-	<tglx@linutronix.de>, <tpiepho@impinj.com>
-CC: <andrew@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <netdev@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, Kip Broadhurst <kbroadhurst@ti.com>
-References: <20240531165725.1815176-1-u-kumar1@ti.com>
-Content-Language: en-US
-From: Wadim Egorov <w.egorov@phytec.de>
-In-Reply-To: <20240531165725.1815176-1-u-kumar1@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: Berlix.phytec.de (172.25.0.12) To Berlix.phytec.de
- (172.25.0.12)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrGIsWRmVeSWpSXmKPExsWyRpKBR7eZNyrNoG2PtMX5u4eYLdbsPcdk
-	Med8C4vF/CPnWC2eHnvEbrH+q6TFy1n32CwubOtjtdj0+BqrxeVdc9gsji0Qs3jz4yyTxbfT
-	bxgt/u/ZwW6xedNUZoslcx+yW0zbO4PZ4v/ZD+wOQh5bVt5k8liwqdTjzYTbTB6bVnWyebw7
-	d47dY/OSeo+dOz4zebzfd5XN4/iN7UwenzfJBXBFcdmkpOZklqUW6dslcGWsmXGUpeCeaMWj
-	R/oNjLcEuxg5OSQETCT2r7jB0sXIxSEksIRJYvHPyUwQzi1GiaWbL7KBVPEK2EgcbVsFZrMI
-	qEqsWbidFSIuKHFy5hMWEFtUQF7i/q0Z7CC2sEC4xIpru4HiHBwiAnkSB6ZVgcxkFrjOJNHw
-	aCNYvZCAmcTWg3eZQWxmAXGJW0/mM4HYbALqEnc2fAObzylgLjHn8Xc2iBoLicVvDrJD2PIS
-	29/OYYaYIy/x4tJyFohv5CWmnXvNDGGHSmz9sp1pAqPwLCSnzkKybhaSsbOQjF3AyLKKUSg3
-	Mzk7tSgzW68go7IkNVkvJXUTIyiuRRi4djD2zfE4xMjEwXiIUYKDWUmE91d6RJoQb0piZVVq
-	UX58UWlOavEhRmkOFiVx3tUdwalCAumJJanZqakFqUUwWSYOTqkGRgkHU6bV9779uCu2/0cZ
-	R7mjZ3yl37Vzh/dbfw36+XWGeeav2fOvP+RirlnTzNkWGCu/+LvM3OajT7Qsj382CHn9TNLX
-	2mWiL2N28WaD+d4q11csF+20U9mls+hNr8cxYc65mWtWPds2RSuau7HBWERl56b9PWEWChuq
-	+jnWfPa6b7zOK3nXUiWW4oxEQy3mouJEAIKNn37ZAgAA
+References: <20240531141152.327592-1-kikuchan98@gmail.com> <20240531141152.327592-4-kikuchan98@gmail.com>
+ <18d98f83-aeee-4022-b418-ed6e81988d27@kernel.org>
+In-Reply-To: <18d98f83-aeee-4022-b418-ed6e81988d27@kernel.org>
+From: Hironori KIKUCHI <kikuchan98@gmail.com>
+Date: Sat, 1 Jun 2024 02:50:37 +0900
+Message-ID: <CAG40kxE-gwJ3O5LWb5FfQm5UwFGgdvNgQoeNRJTZHi-uT92pOQ@mail.gmail.com>
+Subject: Re: [PATCH 3/5] dt-bindings: pwm: sun20i: Add compatible string for
+ Allwinner H616 PWM
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Samuel Holland <samuel@sholland.org>, Aleksandr Shubin <privatesub2@gmail.com>, 
+	Cheo Fusi <fusibrandon13@gmail.com>, linux-pwm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
+Hello Krzysztof,
+Thank you for your reply.
 
+> There is no such file and there is no dependency (lore link) neither
+> here nor in cover letter.
 
-Am 31.05.24 um 18:57 schrieb Udit Kumar:
-> Modify license to include dual licensing as GPL-2.0-only OR MIT
-> license for TI specific phy header files. This allows for Linux
-> kernel files to be used in other Operating System ecosystems
-> such as Zephyr or FreeBSD.
-> 
-> While at this, update the GPL-2.0 to be GPL-2.0-only to be in sync
-> with latest SPDX conventions (GPL-2.0 is deprecated).
-> 
-> While at this, update the TI copyright year to sync with current year
-> to indicate license change.
-> 
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Trent Piepho <tpiepho@impinj.com>
-> Cc: Wadim Egorov <w.egorov@phytec.de>
-> Cc: Kip Broadhurst <kbroadhurst@ti.com>
-> Signed-off-by: Udit Kumar <u-kumar1@ti.com>
+I'm so sorry, it's based on the patch series:
+https://lore.kernel.org/linux-sunxi/20240520184227.120956-1-privatesub2@gmail.com/T/#u
 
-Acked-by: Wadim Egorov <w.egorov@phytec.de>
-
-> ---
-> Changelog:
-> Changes in v2:
-> - Updated Copyright information as per review comments of v1
-> - Added all authors[0] in CC list of patch
-> - Extended patch to LAKML list
-> v1 link: https://lore.kernel.org/all/20240517104226.3395480-1-u-kumar1@ti.com/
-> 
-> [0] Patch cc list is based upon (I am representing @ti.com for this patch)
-> git log --no-merges --pretty="%ae" $files|grep -v "@ti.com"
-> 
-> Requesting Acked-by, from the CC list of patch at the earliest
-> 
-> 
->   include/dt-bindings/net/ti-dp83867.h | 4 ++--
->   include/dt-bindings/net/ti-dp83869.h | 4 ++--
->   2 files changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/include/dt-bindings/net/ti-dp83867.h b/include/dt-bindings/net/ti-dp83867.h
-> index 6fc4b445d3a1..b8a4f3ff4a3b 100644
-> --- a/include/dt-bindings/net/ti-dp83867.h
-> +++ b/include/dt-bindings/net/ti-dp83867.h
-> @@ -1,10 +1,10 @@
-> -/* SPDX-License-Identifier: GPL-2.0-only */
-> +/* SPDX-License-Identifier: GPL-2.0-only OR MIT */
->   /*
->    * Device Tree constants for the Texas Instruments DP83867 PHY
->    *
->    * Author: Dan Murphy <dmurphy@ti.com>
->    *
-> - * Copyright:   (C) 2015 Texas Instruments, Inc.
-> + * Copyright (C) 2015-2024 Texas Instruments Incorporated - https://www.ti.com/
->    */
->   
->   #ifndef _DT_BINDINGS_TI_DP83867_H
-> diff --git a/include/dt-bindings/net/ti-dp83869.h b/include/dt-bindings/net/ti-dp83869.h
-> index 218b1a64e975..917114aad7d0 100644
-> --- a/include/dt-bindings/net/ti-dp83869.h
-> +++ b/include/dt-bindings/net/ti-dp83869.h
-> @@ -1,10 +1,10 @@
-> -/* SPDX-License-Identifier: GPL-2.0-only */
-> +/* SPDX-License-Identifier: GPL-2.0-only OR MIT */
->   /*
->    * Device Tree constants for the Texas Instruments DP83869 PHY
->    *
->    * Author: Dan Murphy <dmurphy@ti.com>
->    *
-> - * Copyright:   (C) 2019 Texas Instruments, Inc.
-> + * Copyright (C) 2015-2024 Texas Instruments Incorporated - https://www.ti.com/
->    */
->   
->   #ifndef _DT_BINDINGS_TI_DP83869_H
+Best regards,
+kikuchan.
 
