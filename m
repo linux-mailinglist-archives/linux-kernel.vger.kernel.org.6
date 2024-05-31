@@ -1,166 +1,136 @@
-Return-Path: <linux-kernel+bounces-196636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 926278D5F25
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:00:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 387EE8D5F28
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:00:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0FC49B25305
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:00:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E0DA1C22089
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:00:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B4FC14F9FF;
-	Fri, 31 May 2024 10:00:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7CFB1422DA;
+	Fri, 31 May 2024 10:00:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A55Jxqdt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="rgua9hSZ"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCF78140395;
-	Fri, 31 May 2024 10:00:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C49D71422B8;
+	Fri, 31 May 2024 10:00:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717149606; cv=none; b=qbBrxWYQe9A744E19T/TSe/h6wVt0BrweXSQsE4ejhE4roaBdQtJ1QMdOZXSkCiJLssZAyyHRJZl0LTtG1/Utl4cFwWSn0jqGhEGwiuYY1hQTiEgjxM0jU7pFotiauxk2Zt3Eo/QA52K66BPYe3hJw8sUCUZrpnAVDpXL2pzqBQ=
+	t=1717149631; cv=none; b=feYn8aXkgMk+j92uhGwaORI6AaZagBDhS3AvD/gWXyE/0slbB3P0ZetZgQm8KCk2wMU9K2FZkuUcxY2CiHs2jglBfu0IXRvm03U5M2yb7XVO5kJ/b8SDl55dAW6JrmivWLM1iED5c+Q5axmS2WxE1UNnTjWMAiPE5YYYtjjp2ho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717149606; c=relaxed/simple;
-	bh=z8yB8OQXjB3WlTE06q4oT4336b2IkSpm9Wv5WCeHpmI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jae+72AI0sQe3/GY2MROEVI3wHTsHQZl0sKtfYv3gtkc4bdcZRb3fWWi0XGSa8fgb7kPa2OgfYelMumyZRmmqZKQ9ssdh4rtj/PKgN+7/RsdlDkmUOmuGpXQbRzC/Mebpf0UdlHt02+/Za8D9ccPd7ClU+LWAcMVpnaNxCgp7eA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A55Jxqdt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C2A7C116B1;
-	Fri, 31 May 2024 10:00:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717149606;
-	bh=z8yB8OQXjB3WlTE06q4oT4336b2IkSpm9Wv5WCeHpmI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=A55JxqdtPnzbguBZIRJmtvMXADNpUnaLsEmY0IAHpj6ZV+6tiIPXUmnz2Tvfrl1bL
-	 +s9YHlAOg4WnstWxVbnj3onii2SjbW73HgJcS+aVXaWDeM9zkLOQ5AzsS3WcyrW+wt
-	 FFoHAjY7OkJll6v5q2ETvBrPB4vMi9NGzIuF6Ya6VEZ1cEiCmc5MSfMMwjPu54/Q1R
-	 dsf5wV9KzBtzxE1eEEuRiwirUz1CfvO9P7azt2kaWGkkbri3fAK7rEgPkLaHpq+U8N
-	 D5siFuY2U04AwfwbFpzojxEOnK1s9RzVLkBUQGwdnCWkOhjBrAQuRuTIJomdvVIghF
-	 6EBNvFSCugpig==
-Date: Fri, 31 May 2024 13:00:00 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Anand Khoje <anand.a.khoje@oracle.com>
-Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-	rama.nichanamatlu@oracle.com, manjunath.b.patil@oracle.com,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Subject: Re: [PATCH 1/1] RDMA/mlx5: Release CPU for other processes in
- mlx5_free_cmd_msg()
-Message-ID: <20240531100000.GG3884@unreal>
-References: <20240522033256.11960-1-anand.a.khoje@oracle.com>
- <20240522033256.11960-2-anand.a.khoje@oracle.com>
- <20240530171440.GE3884@unreal>
- <f6d81694-c321-470e-8b53-dcdf24d67c9b@oracle.com>
+	s=arc-20240116; t=1717149631; c=relaxed/simple;
+	bh=GjsznghdysZp68H0iTM8WCUDR6RX6D4R9WpQ0Uw4Jfw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Aun5znI5Ka6vpWXrEfJwYbjCKuHX7M9KPmnJ0x21ak1rG3IdVgL9v+H60ga9/YE+4Akodz07udI2MLrYeeFo8FycYoA1id8M4z5Z/+x7S8nVhcbAQiL2uDmVUO4DK3LqewdqNoTyjwx1iq9iMmmbKzR5jTT3SfRx65c77yeHBaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=rgua9hSZ; arc=none smtp.client-ip=212.227.15.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1717149611; x=1717754411; i=wahrenst@gmx.net;
+	bh=SKMrSxZi6YJ6irKfb+bbvyw+6ypZ+N02Wwss1x87j0Y=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=rgua9hSZaZRfKQaAkFlyrTwkc9ISFT4I26hD62wr0fvrqgo40ejg9l5SGL4pmwVn
+	 hB3b6uZAc+5rF1SbMNWnsqPLOAOn3zwxP/NKHNP9Z0NOW8RGkTvunipbl/w4AuzSU
+	 jkiqsASmxE5HVdW6d+KvC+boVh3euSP8MmpSn6Ciqx0+qtvyycr11k10IDHST+HzV
+	 KfIxTkAWmszASYIVxWvaLbLl0UB63xBAgBwUJ1SyeD4Qrpg7TwQqavZgyui7jEhLc
+	 UZI3Lk+Ha/WJ9qxDBo7kmyBp3r57KSIibrj7WDfLyoCWDMYeIQDks6+Zbhca7u9XO
+	 7s0q38Ym/Dnh0C+6uA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.1.127] ([37.4.248.43]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MPXhA-1rraK83SKY-00Md8t; Fri, 31
+ May 2024 12:00:10 +0200
+Message-ID: <36642bd8-c981-4190-9f44-072ac3c97c6b@gmx.net>
+Date: Fri, 31 May 2024 12:00:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f6d81694-c321-470e-8b53-dcdf24d67c9b@oracle.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 0/4] Add minimal boot support for Raspberry Pi 5
+To: Andrea della Porta <andrea.porta@suse.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
+ <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Ulf Hansson
+ <ulf.hansson@linaro.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ Kamal Dasu <kamal.dasu@broadcom.com>, Al Cooper <alcooperx@gmail.com>,
+ devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-mmc@vger.kernel.org
+References: <cover.1717061147.git.andrea.porta@suse.com>
+Content-Language: en-US
+From: Stefan Wahren <wahrenst@gmx.net>
+In-Reply-To: <cover.1717061147.git.andrea.porta@suse.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:NC3U7PPJiwkY9pDq8eAw5WVvbNo2mtziqFH6WTnEhDW2yoCcFkS
+ +0IhCR/H/Xq44Pl5QAT5O/TH25E7U0auv2ztbEvHfCDuGzND/yGPdvN9p4t/5e6MSwq1DcS
+ /U6+BXowocckNKyxA/D2HXeRwOPgRitFEMY9vw4QW8uQ8vOazViSYwi5mvczuymgbUQVcvH
+ AC5wHh1FAWxf7XqLC7PvQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:2aASMyPySck=;cYE8SQEXYO6YSrrCHXAMmcampT4
+ eEw2/zrBMA7oAeTdxF6JThFFGVzhtgSS5LEtbRsHbXSpvnTZM5bOA4FSEFRzaAN2jjuUYp06M
+ mHdZoXq3ERumQcJHouZugNYY1RaKE6cZo8EQClzDdg712I6ymYtrRZWxdsMRaiFXrOyMX4GAk
+ i0lhwWfd7hLSG9NbTqOR++z+TCfKCFb5x/Z8pb/dd9AnuCxjU6EvkiGij4jbHzzuR61OX503M
+ SBbgUbwhwjeqIa8iyNweqZHCKlG+EiWrur/vyIT6FZKHT7Sr1GoBAThm5oQ4EKr3ax7GhF4mR
+ /CrMYM7J/ozCF8BGjWKjR4DqEcn2W0iAcsc6NMdhSEOE3id2lQxl4KnOXgXoBK69n8YLggDqR
+ diHf05aOQt1EUcZ3+Bdnf+++suqeJQYK2hdstduzQrQhRTtiSVeSDXdj/Kyrddz7NyqBOboyP
+ xz64yHm+j0PVTaP0sfmVIIdUWY5RmDj0QcWYXyDXiOQhc8CBGFrmWponv/Mx+gcwfdeZsoYIW
+ BBHsReMIxV5R5XywUjlHMXCQnYK8hFBmN+xwd5R1yUs4yl37jp2e28UhCc7vf3G1c5kaMZMnQ
+ We+7Rwa0ruyQPeCBfsgA2UjbYyVmBl8isCQxRU2JPgEws5tvh12SL76PR/qcp7TZxk5EKjD2n
+ REU6yjP/AUoot/2LjsLryq197AuJsi1LAS6uazyN6KY6YDIFtcMmlyVlzhZF08akiI30NCPqg
+ m33adAzpk8cWNq13pNNK0SF3UWo9r5uN3ew4qU8ahh8XvCdamBFLBK2xbUpCMYXkUQXP03DUp
+ 53Ul7kflx8f0fPh8spd0PC/IwWoCnQnzvbFBR8C14fgek=
 
-On Fri, May 31, 2024 at 10:21:39AM +0530, Anand Khoje wrote:
-> 
-> On 5/30/24 22:44, Leon Romanovsky wrote:
-> > On Wed, May 22, 2024 at 09:02:56AM +0530, Anand Khoje wrote:
-> > > In non FLR context, at times CX-5 requests release of ~8 million device pages.
-> > > This needs humongous number of cmd mailboxes, which to be released once
-> > > the pages are reclaimed. Release of humongous number of cmd mailboxes
-> > > consuming cpu time running into many secs, with non preemptable kernels
-> > > is leading to critical process starving on that cpu’s RQ. To alleviate
-> > > this, this patch relinquishes cpu periodically but conditionally.
-> > > 
-> > > Orabug: 36275016
-> > > 
-> > > Signed-off-by: Anand Khoje <anand.a.khoje@oracle.com>
-> > > ---
-> > >   drivers/net/ethernet/mellanox/mlx5/core/cmd.c | 7 +++++++
-> > >   1 file changed, 7 insertions(+)
-> > > 
-> > > diff --git a/drivers/net/ethernet/mellanox/mlx5/core/cmd.c b/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
-> > > index 9c21bce..9fbf25d 100644
-> > > --- a/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
-> > > +++ b/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
-> > > @@ -1336,16 +1336,23 @@ static struct mlx5_cmd_msg *mlx5_alloc_cmd_msg(struct mlx5_core_dev *dev,
-> > >   	return ERR_PTR(err);
-> > >   }
-> > > +#define RESCHED_MSEC 2
-> > >   static void mlx5_free_cmd_msg(struct mlx5_core_dev *dev,
-> > >   			      struct mlx5_cmd_msg *msg)
-> > >   {
-> > >   	struct mlx5_cmd_mailbox *head = msg->next;
-> > >   	struct mlx5_cmd_mailbox *next;
-> > > +	unsigned long start_time = jiffies;
-> > >   	while (head) {
-> > >   		next = head->next;
-> > >   		free_cmd_box(dev, head);
-> > Did you consider to make this function asynchronous and parallel?
-> > 
-> > Thanks
-> 
-> Hi Leon,
-> 
-> Thanks for reviewing this patch.
-> 
-> Here, all page related methods give_pages/reclaim_pages/release_all_pages
-> are executed in a worker thread through pages_work_handler().
-> 
-> Doesn't that mean it is already asynchronous?
+Hi Andrea,
 
-You didn't provide any performance data, so I can't say if it is related to work_handlers.
+Am 30.05.24 um 12:11 schrieb Andrea della Porta:
+> Hi,
+>
+> This patchset adds minimal support for the Broadcom BCM2712 SoC and for
+> the on-board SDHCI controller on Broadcom BCM2712 in order to make it
+> possible to boot (particularly) a Raspberry Pi 5 from SD card and get a
+> console through uart.
+> Changes to arm64/defconfig are not needed since the actual options work
+> as they are.
+> This work is heavily based on downstream contributions.
+>
+> Tested on Tumbleweed substituting the stock kernel with upstream one,
+> either chainloading uboot+grub+kernel or directly booting the kernel
+> from 1st stage bootloader. Steps to reproduce:
+> - prepare an SD card from a Raspberry enabled raw image, mount the first
+>    FAT partition.
+> - make sure the FAT partition is big enough to contain the kernel,
+>    anything bigger than 64Mb is usually enough, depending on your kernel
+>    config options.
+> - build the kernel and dtbs making sure that the support for your root
+>    fs type is compiled as builtin.
+> - copy the kernel image in your FAT partition overwriting the older one
+>    (e.g. kernel*.img for Raspberry Pi OS or u-boot.bin for Tumbleweed).
+> - copy arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb on FAT partition.
+> - make sure you have a cmdline.txt file in FAT partition with the
+>    following content:
+>    # cat /boot/efi/cmdline.txt
+>    root=/dev/mmcblk0p3 rootwait rw console=tty ignore_loglevel earlycon
+>    console=ttyAMA10,115200
+> - if you experience random SD issues during boot, try to set
+>    initial_turbo=0 in config.txt.
+was this an issue since the beginning of this series?
 
-For example, we can be in this loop when we call to mlx5_cmd_disable()
-and it will cause to synchronous calls to dma_pool_free() which holds
-the spinlock.
+What kind of SD issues?
 
-Also pages_work_handler() runs through single threaded workqueue, it is
-not asynchronous.
-
-> 
-> When the worker thread, in this case it is processing reclaim_pages(), is
-> taking a long time - it is starving other processes on the processor that it
-> is running on. Oracle UEK being a non-preemptible kernel, these other
-> processes that are getting starved do not get CPU until the worker
-> relinquishes the CPU. This applies to even processes that are time critical
-> and high priority. These processes when starved of CPU for a long time,
-> trigger a kernel panic.
-
-Please add kernel panic and perf data to your commit message.
-
-> 
-> Hence, this patch implements a time based relinquish of CPU using
-> cond_resched().
-> 
-> Shay Dori, had a suggestion to tune the time (which we have made 2 msec), to
-> reduce too frequent context switching and find a balance in processing of
-> these mailbox objects. I am presently running some tests on the basis of
-> this suggestion.
-
-You will have better results if you parallel page release.
-
-Thanks
-
-> 
-> Thanks,
-> 
-> Anand
-> 
-> > >   		head = next;
-> > > +		if (time_after(jiffies, start_time + msecs_to_jiffies(RESCHED_MSEC))) {
-> > > +			mlx5_core_warn_rl(dev, "Spent more than %d msecs, yielding CPU\n", RESCHED_MSEC);
-> > > +			cond_resched();
-> > > +			start_time = jiffies;
-> > > +		}
-> > >   	}
-> > >   	kfree(msg);
-> > >   }
-> > > -- 
-> > > 1.8.3.1
-> > > 
-> > > 
+Is there a downstream reference?
 
