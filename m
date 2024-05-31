@@ -1,120 +1,123 @@
-Return-Path: <linux-kernel+bounces-196287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06B8C8D59C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 07:13:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72CD18D59C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 07:16:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99AFD1F25301
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 05:13:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4A551C20939
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 05:16:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A14F7A15A;
-	Fri, 31 May 2024 05:13:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B72F945022;
+	Fri, 31 May 2024 05:16:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Qly1+aQX"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RR5iUIL0"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FD3F381BD;
-	Fri, 31 May 2024 05:13:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B52B54405;
+	Fri, 31 May 2024 05:16:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717132392; cv=none; b=iXamH+lDr8H79E3hklKcRBVQ/N8WUDvB0ZASxwJZOXWVu6p2AkvHXU2gaLYDd8+Y3BmjnKKaJEGoIkuB444+GntdN1C8Tbz8FgL+7CelCAEUOQ1/9vSaGcvnvlu4t5I6HOzdsAr7KCT/gh6w/6vfF/VaZ0ksq+quiRdfovR1gvM=
+	t=1717132606; cv=none; b=oc+0Rhf1g7LU6LJmSGB/mNUaQHXccu9dKnFpTZ9AunZ55nR065CjSAiiiMEuxDPlYkyp0su0f2ki9WNbkrd8yTMows06FbEZdSgWid7tSSIhaT6oyIRdDkTnv5ez5fj8WKf422oxTVGAZFT7DLMqGfUAav+FWLI+77QRhYV4z6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717132392; c=relaxed/simple;
-	bh=b5oTgEHypoLU04Soul9aD7/hN3gfq8N62zQkzfMozmA=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=mWtOPcj5s4m/T2wgkwP+P6zorpvt7X7+pa6IW55f0nPAMrJzaN90W8hJTeKzqMb5DxQ+CPPpnf2rY1AdN0WMvoj5n0CiGiUtAfevYNymnMdYR8pVWm7b2xqVzi4hLcvPHvOorPzhLAVchTwgKyZ8k5LO9L0tFIOvs+EaF0XY/9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Qly1+aQX; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1717132384;
-	bh=b5oTgEHypoLU04Soul9aD7/hN3gfq8N62zQkzfMozmA=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=Qly1+aQXX+Q9QgvNB6YeqqXdk4JqGbpD0uuhzzy05r9DOHW8wPXb7/Sv2ntceoBoM
-	 FRZn63gay2StC0J25Fj6TYYBeArWWgBWAGuXzf/TTfiGAym/cd5S8aefJ9FIKjh5au
-	 onKX4mHg5NGZbM3MNeChtdrknXfVjlRBZVnuUoQEkLWjJHq0tpp65DQ7Ue9C0o6Li/
-	 zbo5st5AAGtdkRsTUVnKsqKpU2bILqVz78Q/jgJkU/QPmi/I8jmzAs3WFAHnUiLTNe
-	 o+4EKaP8U6PnVBIHqBR3dOWh/yDk8E7AGYTanKScQqJUHrks7KVKmKRZJ9lM0BlEOI
-	 2pXht4AEkkerg==
-Received: from [100.113.15.66] (ec2-34-240-57-77.eu-west-1.compute.amazonaws.com [34.240.57.77])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: usama.anjum)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 40D4D378148F;
-	Fri, 31 May 2024 05:12:56 +0000 (UTC)
-Message-ID: <046d2d1d-3583-426b-b745-59f3696fb418@collabora.com>
-Date: Fri, 31 May 2024 10:12:26 +0500
+	s=arc-20240116; t=1717132606; c=relaxed/simple;
+	bh=rc9coK1EQVuMySMkXLylr5VmrSIA6HyYoHiydHI2IjE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=KgwUS6eDAmS7VwwMN1ApX6GY++dJcAXo1Arp3q4SI3Va1thXCFc1uSVcv5qnULj9QNbUVIGsPXu7zpJS7B+ijwWHsPjmt2ktkYgvfLBOcY0TKvsJ1m1HJgnKCG3FFEZHXGxwh7v+t5NRniHseuU+c5P03cP8/zX+P9kTBnjPhtg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RR5iUIL0; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44UGrmlB019268;
+	Fri, 31 May 2024 05:16:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=TB351GK1yk9ksnTo9pyYUF
+	IaEZ/tPZBjG4F83Nt1RJw=; b=RR5iUIL0zxd/MJJt4HLuaanWfAB/R2BaeMU707
+	E2qvrczFGdyRImVtS55yQ8IVd0EMWHw5vEw61Qhto351dFkLcaOnX97je18+WL5L
+	A8kebgv6/B8GKdnUd1C5OguKDWQmc+KSetd3jfiLV5nflT5agrI+JxH8ocduUjBs
+	HxZICfu4aiznPVbOlV4xmYnFCyzqGZjumFyl2NT+70TtSy434criub9tw+MhZDUH
+	fPvnc+sh5Ycltzpt7p1IvEEGyM35HMXp4O3PvacTr6eTNVMi3h0rowGHQa/6IBwJ
+	9LPbQrSb04HF4u2k54oSYYPKLLjV+tVtFfaZbpjBVOdN6Ihg==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba0ge3jv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 31 May 2024 05:16:08 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44V5G6n2003381
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 31 May 2024 05:16:06 GMT
+Received: from [169.254.0.1] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 30 May
+ 2024 22:16:05 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Thu, 30 May 2024 22:16:04 -0700
+Subject: [PATCH] nvme-apple: add missing MODULE_DESCRIPTION()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
- angquan yu <angquan21@gmail.com>,
- "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
- Ingo Molnar <mingo@kernel.org>, Binbin Wu <binbin.wu@linux.intel.com>,
- Alexey Dobriyan <adobriyan@gmail.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>,
- Sohil Mehta <sohil.mehta@intel.com>, Yu-cheng Yu <yu-cheng.yu@intel.com>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- Valentin Obst <kernel@valentinobst.de>, linux-kselftest@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>, llvm@lists.linux.dev, x86@kernel.org
-Subject: Re: [PATCH v2 0/6] selftests/x86: fix build errors and warnings found
- via clang
-To: John Hubbard <jhubbard@nvidia.com>, Dave Hansen <dave.hansen@intel.com>,
- Shuah Khan <shuah@kernel.org>
-References: <20240527210042.220315-1-jhubbard@nvidia.com>
- <4d2c93e8-5ab0-4b28-af24-c00d57f359fe@intel.com>
- <44428518-4d21-4de7-8587-04eceefb330d@nvidia.com>
-Content-Language: en-US
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <44428518-4d21-4de7-8587-04eceefb330d@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240530-md-nvme-apple-v1-1-b8b7ca569660@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIABNdWWYC/x3MywqDMBBG4VeRWXcgtQrqq5QucvlbB0waJlYE8
+ d2bdvktzjmoQAWFpuYgxSZF3qniemnIzza9wBKqqTVtZ/qb4Rg4bRFsc17AMAhudOPgu55qkxV
+ P2f+/+6Pa2QJ2apOff5dF0mfnaMsKpfP8Auu9pCt+AAAA
+To: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
+        "Alyssa
+ Rosenzweig" <alyssa@rosenzweig.io>,
+        Keith Busch <kbusch@kernel.org>, "Jens
+ Axboe" <axboe@kernel.dk>,
+        Christoph Hellwig <hch@lst.de>, Sagi Grimberg
+	<sagi@grimberg.me>
+CC: <asahi@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-nvme@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: mP3ETysDdDj1tLBnR_cxY8-ywO1_2p3-
+X-Proofpoint-ORIG-GUID: mP3ETysDdDj1tLBnR_cxY8-ywO1_2p3-
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-31_02,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
+ priorityscore=1501 bulkscore=0 phishscore=0 adultscore=0 spamscore=0
+ mlxlogscore=999 malwarescore=0 lowpriorityscore=0 clxscore=1011
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405310039
 
-On 5/31/24 1:00 AM, John Hubbard wrote:
-> On 5/30/24 12:46 PM, Dave Hansen wrote:
->> On 5/27/24 14:00, John Hubbard wrote:
->>> John Hubbard (6):
->>>    selftests/x86: build test_FISTTP.c with clang
->>>    selftests/x86: build fsgsbase_restore.c with clang
->>>    selftests/x86: build sysret_rip.c with clang
->>>    selftests/x86: avoid -no-pie warnings from clang during compilation
->>>    selftests/x86: remove (or use) unused variables and functions
->>>    selftests/x86: fix printk warnings reported by clang
->>
->> John, could you and Muhammad have a chat and perhaps settle on a series
->> series that gets acks from both of you?
->>
->>> https://lore.kernel.org/all/20240501122918.3831734-1-usama.anjum@collabora.com/
->>
->> I had Muhammad's in my queue and didn't realize we had two overlapping
->> series' bouncing around until now.
-> 
-> Aha OK. Muhummad, after looking through this, I see that our
-> test_FISTTP.c fix is identical, and that's about it. My series goes
-> a bit deeper IMHO and completely fixes all the errors; the tradeoff
-> is that it is more intrusive. Which I think is appropriate.
-> 
-> Would you be OK with my posting v3 that uses your patch for
-> test_FISTTP.c [1], and the rest of my patches for the rest?
-Yeah, sure go ahead. I'll test/review the v3 series.
+make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/nvme/host/nvme-apple.o
 
-> 
-> 
-> [1]
-> https://lore.kernel.org/all/20240501122918.3831734-7-usama.anjum@collabora.com/
-> 
-> thanks,
+Add the missing invocation of the MODULE_DESCRIPTION() macro.
 
--- 
-BR,
-Muhammad Usama Anjum
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ drivers/nvme/host/apple.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/nvme/host/apple.c b/drivers/nvme/host/apple.c
+index dd6ec0865141..0cfa39361d3b 100644
+--- a/drivers/nvme/host/apple.c
++++ b/drivers/nvme/host/apple.c
+@@ -1602,4 +1602,5 @@ static struct platform_driver apple_nvme_driver = {
+ module_platform_driver(apple_nvme_driver);
+ 
+ MODULE_AUTHOR("Sven Peter <sven@svenpeter.dev>");
++MODULE_DESCRIPTION("Apple ANS NVM Express device driver");
+ MODULE_LICENSE("GPL");
+
+---
+base-commit: 4a4be1ad3a6efea16c56615f31117590fd881358
+change-id: 20240530-md-nvme-apple-e0edb9b98c45
+
 
