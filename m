@@ -1,151 +1,126 @@
-Return-Path: <linux-kernel+bounces-196524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2629D8D5D5B
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:58:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C409B8D5D67
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 11:00:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D674328D013
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 08:58:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 017D31C21944
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 09:00:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13DDF13210E;
-	Fri, 31 May 2024 08:58:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDF1015623B;
+	Fri, 31 May 2024 08:59:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZIDRtLGm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MP/0lW7Z"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C089224E8;
-	Fri, 31 May 2024 08:58:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85FF915575F
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 08:59:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717145914; cv=none; b=uUzSnyK9JxKz6cK6uIbeAfl9EB3w3ZcYONMz4GBSeQ9yp5ZfqFKkYQ8iEpE0oyrUp7ebX7ZtX9NabmefHN27zaAmBuyYl9cUkD8LUJ375nJ/aLpSmNhSI6VuF0YKy0qfVVqdvk2lka4/9+hAq3ri9Axe2gcj0LBv5dFy62Fg9AI=
+	t=1717145987; cv=none; b=AvBegitdI516qgSDuGCaZjRGR9nsQ87Kz07lnXsUB7Y623cDGaum+4Hjp1DGU6CNB0AEck7ZIFWoCXdVTMO5epNKb7Kq7fDljibSbBvjRs3e/PpFPb/XG7uJkkj9+cwpadxYvuKYDuHmiIN6S9czG/rLCmEphkprF2XnG4xNqFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717145914; c=relaxed/simple;
-	bh=e6NBTqHgSmIb0zVlvTQjhTndBEZojNhEaQQzpcViO5Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YYryVgbagKGI+PE3HG9BPFwanKLAKR4jvCTTAHzgjx9+HuszfTVz5LGx37si4aitFDJ2Dx2d9QxPVjmwhcH8WO+WvMajqi/UoqJ19s0tmvy/zvqUyxogIM1fxnTZXbJ65OBDz8miGCWMRsZkoBQAlKVspe4Fjsaecayt/qHeLkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZIDRtLGm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E139C116B1;
-	Fri, 31 May 2024 08:58:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717145913;
-	bh=e6NBTqHgSmIb0zVlvTQjhTndBEZojNhEaQQzpcViO5Y=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ZIDRtLGmyywyrafWrsDWFkhQvMHZnlC82TLOzdpe46dYG4wS9T+RmVq7Etov0D4YM
-	 u4cz7EWyE+uGTd51uAQS1qxSa+RG+UXYB5pn9okK2eHMNYKOYJoBNmbP8l+S2K9gwy
-	 tCzJpBZKItpZImDMoOey7JaClP//JRYxOh49vm2NJlSyymda/xiNT9HIQhZFBCfpZt
-	 lS9P4F8GyV2OaWPvL9kHMfhIg9ByvbvU4Zi7ditRMV/BOl5HOQNt+hilm2UGwfzzY6
-	 +mRpmlTcwqIFSDruhSI9idLQOTN5DvekE3BtVTYubiiOz8l1elNatoI1C+g7Jw68Tb
-	 4hDLFbTzFdb3A==
-Message-ID: <7845bb1c-47d5-41f6-bf08-bd7b357df02c@kernel.org>
-Date: Fri, 31 May 2024 10:58:29 +0200
+	s=arc-20240116; t=1717145987; c=relaxed/simple;
+	bh=jOivSIzkd4jtGmFStyLd/I4XqpFlRP41SuJUQMMG2sU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eHKVzqxSu+JKyfJDn2BBK5fc6SDNrp1vcbbPMZMj1KkTxB7Stv8PZXI2jfiWqodqJFGYQnEEHaTzfhXld12O8qfDAHnkMbAOwWsMjTc8BWM5UXNqHjbFDcpg04Gxc7mmBfDYs3J+puPX9cUBazcXK9WB40P6wEMKNmhN3vXKNV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MP/0lW7Z; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-579fa270e53so2178584a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 01:59:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717145984; x=1717750784; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=AEAJOPIhEWOmImkEnnoVh+jLPad4uMXeH/NY3H2GRI0=;
+        b=MP/0lW7Z7Gx7/lw/h/sW3uhHQB3eVQSX9BbobHhUfN4vFm6oIzytGz1b+7N/9Zx6AV
+         r5d4UMWjKYoqik4cmwDKP78Hv1HaZgj2K8HJ9a+VFmpovr1RTDc3MWdVWmWKD7x3J+fH
+         FuP//KfOjqJR7PvUVxnrXQnVrp42Y6ch5tv4SVhDp+jB5bqGQpF8v/Jh6zG4r34mv72h
+         /6wXe4WD1kHBhAM4mxuSo/GK1gNxPvhWWCwpPkJXP04V1Mt/3g1gEGK6OYvaTlwRDxt6
+         S73FtD+MLwj83nyRNMVd9pSXUwwNdV7jY3t3w5khU3Ql2f7+uXcTeh6uSpBToPfl0Hcy
+         4z2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717145984; x=1717750784;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AEAJOPIhEWOmImkEnnoVh+jLPad4uMXeH/NY3H2GRI0=;
+        b=mEAJKaVyRh2QMKUnZrzmbix60G0XjRubZJTOHYQSkxESEF6+dW/S9A5mDmvs85ztA5
+         kZu2ZJ5Z5ToMVMK7y1NYk3hwPJnHTTegWw5P1hUETtcVZXEsEtz23gjbWA05vui0V1bp
+         d5T8P2X7AK83cnvo2y7xQfbFiAuikxr97o73Da7KKPZxuVQcSvBsGs/ud2P3SKnW0UIk
+         nHoVHRWezww+WTaNfKxrbtjFZ8qNz7pdb48ajDpCwVExObLNzOayyCdfqr1vtWM1Xfo/
+         oXKfYoRnl1YOCIVbHoU72GoYSMmRxwDGGePVCzKeahV9w5yx/BBqu94rN79AuwnHVBt9
+         HOqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVCmL2RwOsCSu4UEb7LCgOOVPpzukSTCFbAxI/PtLdC8pGo2lDN03ISiCaBG6LAtpQIwkYjP35wDK2uBmYVYxRDG0XGupBy5tkuHvov
+X-Gm-Message-State: AOJu0YwtmLIE135fw4kWRh5Gbzp8E+q+jWP5xqOjaZ/9bd7T20GK9WVM
+	AX5rnLNxQoWKFFnxHdrVn1BxozRdNxzXo6vTnf3QV6jAhR6rWMBBe4mO8o2vpY8=
+X-Google-Smtp-Source: AGHT+IF/+rHvuamC5rV6HuoONHpBWDQh8Vzl/UQvPqxXxUfAJx1CxKPhaOOB+FzJQ17g2/141Srb7w==
+X-Received: by 2002:a50:a414:0:b0:579:7b6c:5ab3 with SMTP id 4fb4d7f45d1cf-57a364e3615mr984027a12.22.1717145983629;
+        Fri, 31 May 2024 01:59:43 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57a31c9c125sm770024a12.90.2024.05.31.01.59.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 May 2024 01:59:43 -0700 (PDT)
+Date: Fri, 31 May 2024 11:59:39 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Andrew Ballance <andrewjballance@gmail.com>
+Cc: syzbot+07762f019fd03d01f04c@syzkaller.appspotmail.com,
+	benjamin.tissoires@redhat.com, bentiss@kernel.org, jikos@kernel.org,
+	jkosina@suse.com, linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	luke@ljones.dev, syzkaller-bugs@googlegroups.com,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	skhan@linuxfoundation.org
+Subject: Re: [PATCH] hid: asus: asus_report_fixup: fix potential read out of
+ bounds
+Message-ID: <d87335b8-9eae-4689-87b4-b581c0b28c9b@moroto.mountain>
+References: <000000000000915d550619389e8a@google.com>
+ <20240528050555.1150628-1-andrewjballance@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6] ASoC: dt-bindings: omap-mcpdm: Convert to DT schema
-To: Mighty <bavishimithil@gmail.com>
-Cc: peter.ujfalusi@gmail.com, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Lopez Cruz <misael.lopez@ti.com>,
- linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240530111205.1764-1-bavishimithil@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240530111205.1764-1-bavishimithil@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240528050555.1150628-1-andrewjballance@gmail.com>
 
-On 30/05/2024 13:12, Mighty wrote:
-> From: Mithil Bavishi <bavishimithil@gmail.com>
+On Tue, May 28, 2024 at 12:05:39AM -0500, Andrew Ballance wrote:
+> #syz test
 > 
-> Convert the OMAP4+ McPDM bindings to DT schema.
+> there may be a read out of the bounds of rdesc.
+> this adds bounds checks
 > 
-> Signed-off-by: Mithil Bavishi <bavishimithil@gmail.com>
+> Signed-off-by: Andrew Ballance <andrewjballance@gmail.com>
+> ---
+>  drivers/hid/hid-asus.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
+> index 02de2bf4f790..37e6d25593c2 100644
+> --- a/drivers/hid/hid-asus.c
+> +++ b/drivers/hid/hid-asus.c
+> @@ -1204,8 +1204,8 @@ static __u8 *asus_report_fixup(struct hid_device *hdev, __u8 *rdesc,
+>  	}
+>  
+>  	/* match many more n-key devices */
+> -	if (drvdata->quirks & QUIRK_ROG_NKEY_KEYBOARD) {
+> -		for (int i = 0; i < *rsize + 1; i++) {
+> +	if (drvdata->quirks & QUIRK_ROG_NKEY_KEYBOARD && *rsize > 15) {
+> +		for (int i = 0; i < *rsize - 15; i++) {
 
-> +
-> +properties:
-> +  compatible:
-> +    const: ti,omap4-mcpdm
-> +
-> +  reg:
-> +    items:
-> +      - description: MPU access base address
-> +      - description: L3 interconnect address
-> +
-> +  reg-names:
-> +    items:
-> +      - const: mpu
-> +      - const: dma
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  dmas:
-> +    maxItems: 2
-> +
-> +  dma-names:
-> +    items:
-> +      - const: up_link
-> +      - const: dn_link
+Yep.  This looks correct.  Please resend with a complete commit message
+and a fixes tag etc.
 
-Please mention in the commit msg all changes (and explain why!) done
-during conversion (comparing to original binding). I am pretty sure I
-gave this feedback already.
+>  			/* offset to the count from 0x5a report part always 14 */
+>  			if (rdesc[i] == 0x85 && rdesc[i + 1] == 0x5a &&
+>  			    rdesc[i + 14] == 0x95 && rdesc[i + 15] == 0x05) {
 
-
-Best regards,
-Krzysztof
-
+regards,
+dan carpenter
 
