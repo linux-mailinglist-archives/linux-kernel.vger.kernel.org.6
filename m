@@ -1,138 +1,85 @@
-Return-Path: <linux-kernel+bounces-197113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81A248D665D
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:08:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6559F8D6662
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:08:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1D521C2603D
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:08:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92F361C261BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:08:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A1A515B99F;
-	Fri, 31 May 2024 16:07:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43BDC158848;
+	Fri, 31 May 2024 16:08:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jmIiCxm0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MdTrXkOO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8395515B975;
-	Fri, 31 May 2024 16:07:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 850E754784
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 16:08:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717171661; cv=none; b=APmPY90k9fpzxHeHN+2dVWkadtM1t7vEEEwYJ8+MGFJak+cINXs6ETujlEMm0Et/2aQOFIdklhmvOwglBHKgM4dpsYbStVBbNMwrf3VXzOvRR1rp/blRe0vi1kGRRx7bKjTaq8J2m8Q62lBSXvlHoQUgmf+FBlqtHNtjziZ1YjM=
+	t=1717171719; cv=none; b=VkAu4kVQO0aQx9rLA9tJh3TQhHkFfn258rcM754tUc3ajEsM4laJIlzju8YSSWIK944/T/HDQlq9AYM3QbeA4Pfsi9DvsKxq7JvM0F6PYWU4T2RJYz+7RVNfL5QGFLmp0e8Rse92JEevF7922WrVv3G6E9DNI6sdr8NdORKvROI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717171661; c=relaxed/simple;
-	bh=mE0OUhJiQMMzHxfgx0IOqHje5tQRxYiF+OB7kIk7BQE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SBpx7JfOHpgvCfE3KBfb8P9kfE5v50jC0iXwQIfZAUgFchHUWThy7VYoufTa4eoOPHPLRpjaXZLjn4Lp4xaBN+Ae96lWLg7nxiVX27jdIbbPgUEEi14WrGkrOEAL8yU1caCTvRNZy/c5PwlUZfR4aKuGGfo6Tkz7NbRLggMnXy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jmIiCxm0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BD16C2BD10;
-	Fri, 31 May 2024 16:07:34 +0000 (UTC)
+	s=arc-20240116; t=1717171719; c=relaxed/simple;
+	bh=xEi5iZJ9Hl8689P4byTA9g1DsfJGBtnSSzg1K+jD764=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=kXiYnJ50HJvg9rgR8HREROJfKfx9jZOgN77/hndlhoIpVBQaoOlyl3YN6oHrdvOeLs7G2y/uNMS74e42y+gy0ecsTM7AOSaao3WXIj9hyzq3FEiVpQNCISymRAcyVJnwe35FLv9c7R1KycelIXa8eYquqcuZXUN6KOmvif8G7RY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MdTrXkOO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8671BC116B1;
+	Fri, 31 May 2024 16:08:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717171661;
-	bh=mE0OUhJiQMMzHxfgx0IOqHje5tQRxYiF+OB7kIk7BQE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jmIiCxm0t+WW0oDLFbzpb97vsloCQOGygqInun3z/KqgTGXTl0X8sb6iu/GPspD+F
-	 NPEMmQfMP5NPkWPOQfPn+ZR01fhntn9dZ4xZJyreUlb5Jt3XqhrOCAgx2X6+3Qar+1
-	 sJl0/nS6GLx6bYMl5Q3Nq8TsaS4qvADsYam0QoK25lv4+38tki18s91Ryxs5eCPMLt
-	 08S6l5f4C1YPnmOk20oswNPJxj3VLzNXpY8FiHClDIxWUsDgs51ThFWVSM4JmnzSow
-	 5xhTgwGIfx6iTjLHyFhjj5oJWbEIomg04B1e5uyTuV9M8mBApgf8D8PsEm0x8SadNf
-	 bNMxEUZUv5Mxg==
-Date: Fri, 31 May 2024 17:07:32 +0100
+	s=k20201202; t=1717171719;
+	bh=xEi5iZJ9Hl8689P4byTA9g1DsfJGBtnSSzg1K+jD764=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=MdTrXkOO3KoS+yxH36W6mXnfbi7S/ML40qTGlO0cDrGo08QFmoUZArD/212pp+fEg
+	 Ijbnhh7JkIBsLgf+vhGCo30Gxb80w2phCjWf56aTO+ZZWloPMAE2JrZY52tQufiMdn
+	 5nqsVJE4wWiGV3YchuTX/HRIh6rb/sl2WvD7KCu6UWk/SuE4KISZoIrh58fDgCYhoe
+	 RMbBUohRGcZzWAnB4Zsv503CJvIBQmG4Slj8VK+mAJrlnxwVnH0ij2qgkcWVX5tAEk
+	 1ldKv9+LsTQ5HUkBjAGdfr43ujerP35CtNUFwtRaKBcr7QDElmrIzyvZ5THyHwdXq3
+	 AJePuWPtOavKA==
 From: Lee Jones <lee@kernel.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory Clement <gregory.clement@bootlin.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, UNGLinuxDriver@microchip.com,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Yisen Zhuang <yisen.zhuang@huawei.com>,
-	Salil Mehta <salil.mehta@huawei.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-mips@vger.kernel.org, linux-mtd@lists.infradead.org,
-	netdev@vger.kernel.org, linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH] dt-bindings: mfd: syscon: Add more simple compatibles
-Message-ID: <20240531160732.GT1005600@google.com>
-References: <20240510123018.3902184-1-robh@kernel.org>
- <20240531134536.GK1005600@google.com>
- <CAL_Jsq+Cu9PSFwp-6cT5svqP+GZ8rp5hBgXA2=cgqQYYUDDKDA@mail.gmail.com>
+To: Lee Jones <lee@kernel.org>, Min Li <min.li.xe@renesas.com>, 
+ Arnd Bergmann <arnd@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, 
+ Charles Keepax <ckeepax@opensource.cirrus.com>, 
+ Okan Sahin <okan.sahin@analog.com>, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240529094856.1869543-1-arnd@kernel.org>
+References: <20240529094856.1869543-1-arnd@kernel.org>
+Subject: Re: (subset) [PATCH] mfd: rsmu: split core code into separate
+ module
+Message-Id: <171717171729.1180844.1171417974798338130.b4-ty@kernel.org>
+Date: Fri, 31 May 2024 17:08:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAL_Jsq+Cu9PSFwp-6cT5svqP+GZ8rp5hBgXA2=cgqQYYUDDKDA@mail.gmail.com>
+X-Mailer: b4 0.12.4
 
-On Fri, 31 May 2024, Rob Herring wrote:
-
-> On Fri, May 31, 2024 at 8:45 AM Lee Jones <lee@kernel.org> wrote:
-> >
-> > On Fri, 10 May 2024, Rob Herring (Arm) wrote:
-> >
-> > > Add another batch of various "simple" syscon compatibles which were
-> > > undocumented or still documented with old text bindings. Remove the old
-> > > text binding docs for the ones which were documented.
-> > >
-> > > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> > > ---
-> > > This batch is mostly from arm32 platforms.
-> > > ---
-> > >  .../bindings/arm/amlogic/analog-top.txt       | 20 -------------
-> > >  .../bindings/arm/amlogic/assist.txt           | 17 -----------
-> > >  .../bindings/arm/amlogic/bootrom.txt          | 17 -----------
-> > >  .../devicetree/bindings/arm/amlogic/pmu.txt   | 18 ------------
-> > >  .../devicetree/bindings/arm/atmel-sysregs.txt | 29 -------------------
-> > >  .../devicetree/bindings/arm/axis.txt          | 16 ----------
-> > >  .../arm/cpu-enable-method/al,alpine-smp       | 10 -------
-> > >  .../arm/freescale/fsl,vf610-mscm-cpucfg.txt   | 14 ---------
-> > >  .../bindings/arm/marvell/marvell,dove.txt     | 15 ----------
-> > >  .../devicetree/bindings/arm/spear-misc.txt    |  9 ------
-> > >  .../bindings/clock/ti-keystone-pllctrl.txt    | 20 -------------
-> > >  .../devicetree/bindings/mfd/syscon.yaml       | 29 +++++++++++++++++++
-> > >  .../devicetree/bindings/mips/mscc.txt         | 17 -----------
-> > >  .../devicetree/bindings/mtd/atmel-nand.txt    |  9 ------
-> > >  .../bindings/net/hisilicon-hip04-net.txt      | 10 -------
-> > >  15 files changed, 29 insertions(+), 221 deletions(-)
-> > >  delete mode 100644 Documentation/devicetree/bindings/arm/amlogic/analog-top.txt
-> > >  delete mode 100644 Documentation/devicetree/bindings/arm/amlogic/assist.txt
-> > >  delete mode 100644 Documentation/devicetree/bindings/arm/amlogic/bootrom.txt
-> > >  delete mode 100644 Documentation/devicetree/bindings/arm/amlogic/pmu.txt
-> > >  delete mode 100644 Documentation/devicetree/bindings/arm/freescale/fsl,vf610-mscm-cpucfg.txt
-> > >  delete mode 100644 Documentation/devicetree/bindings/arm/spear-misc.txt
-> > >  delete mode 100644 Documentation/devicetree/bindings/clock/ti-keystone-pllctrl.txt
-> >
-> > No longer applies.  Please rebase and I'll promptly hoover this up.
+On Wed, 29 May 2024 11:48:47 +0200, Arnd Bergmann wrote:
+> Linking a file into two modules can have unintended side-effects
+> and produces a W=1 warning:
 > 
-> I can't find where it doesn't. Fine on next, v6.10-rc1, your current
-> branch. Maybe something you applied today and haven't pushed out?
+> scripts/Makefile.build:236: drivers/mfd/Makefile: rsmu_core.o is added to multiple modules: rsmu-i2c rsmu-spi
+> 
+> Make this one a separate module instead.
+> 
+> [...]
 
-That could well be the case.
+Applied, thanks!
 
-I just pushed for-mfd-next for you.
+[1/1] mfd: rsmu: split core code into separate module
+      commit: d84bcadf16b103f4a3970f70034e9eb8d53878b1
 
-Thanks.
-
--- 
+--
 Lee Jones [李琼斯]
+
 
