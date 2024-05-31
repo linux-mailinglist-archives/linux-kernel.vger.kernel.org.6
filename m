@@ -1,220 +1,334 @@
-Return-Path: <linux-kernel+bounces-196498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E604C8D5D0A
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:45:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C38F78D5D11
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:47:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35393B22878
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 08:45:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 385931F22394
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 08:47:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B15A4155A23;
-	Fri, 31 May 2024 08:45:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EC20155A43;
+	Fri, 31 May 2024 08:47:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="VN5QrlX8"
-Received: from EUR02-DB5-obe.outbound.protection.outlook.com (mail-db5eur02on2077.outbound.protection.outlook.com [40.107.249.77])
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="GYGEn6rB"
+Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6387155732;
-	Fri, 31 May 2024 08:45:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.249.77
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717145129; cv=fail; b=T6DM7jhZAubvlBzZ2Hq4c1oraN3MumHovgX5i2/EsgeUFdjwBuXpua0qKgaFp4cKKay7qaih0IkMbsexZNVaLSjUKUrlkCb0vjvMo6Pn27tePZ+ofercQzgl2xnwKtDTPrDqA7okI3obNckpW3vsxdISkuhygAK0TOJVtl2sOAU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717145129; c=relaxed/simple;
-	bh=Y1F0U5M3YjrSgQQ4kqiyEMcUwqkmExIgbYJoAQF9hZo=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=RMwehTfPlKGIHZzIu1J0YmyKZ5iMXbspGeD6Xh6FlJWC72YC1oOkj8oGx8lBAjaaJWTl3xJmD2u6O/xQXeKRjxoBWzPWXyygQZFLLhGDBgiRBabxbzFtobnG00knpgmfAzqKNOORzyY1huKSeQQZjoKDraj5RyZOl6I+FZLeh4s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=VN5QrlX8; arc=fail smtp.client-ip=40.107.249.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=SiReTg0bMBhnZCGeBdE25+RjK2I+nqu+hGdxQpBRDvQ3tWodz7DK3PZpy4dosmuNp2zkVDR5MAOudqYQduSZeJ89lgAUAWNUQKBX00XJp+WkAzRiRV/mmD1YB+bVQwKeRjErfqJD5p9nGo4UnvsGa2rzLaIHp592RzxNIV+p/XRqgtFrXQkVUXoJcCqva/ZSYrhQcPYB9I3s3W5++GWFKac9sl7MeQsezl2NnRNk1OccfoyFLxvoF5A8XxlG5sANWEvhEqcT5HzxwjiUOwO3VdL7gWqa7/cXQYfY4qhwqOUSsJiXm9wKCpmmCMPO/c9I/ULrV2PfVrIk20upu0p1Nw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Y1F0U5M3YjrSgQQ4kqiyEMcUwqkmExIgbYJoAQF9hZo=;
- b=lEWteX4F35kXRlMLzB5JXdc8In91YGSemI1WN5BmtAh4QN+rOJWf53Y9g5Fpc2dMmQW7SwiZlrQFs7IUdwuAcz78tCaX7x7bGURV8gNqocXTWY6cPaeYU+na2Scxy1b39v4RJSNRzBYJvRxuhVbyTVYZpFuTOQyRpj6KBtx4Ohrjo++9sRrvXCRO5CN0i3SI/GI6glgVPONOuNYJe6Ac3Y0BeIEpB6wM8MHNmFBOi6PJtJFxtMUpCq91kcplJkEe7kkb2i2khSYAC9wCv2tvIrY+WgR5IryhhTfks9xZ/eyMo+6b/E16VFaJKNGcaepgXY5sseYal7RhZDEFt7G2cA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Y1F0U5M3YjrSgQQ4kqiyEMcUwqkmExIgbYJoAQF9hZo=;
- b=VN5QrlX8DH7flXOfdUwzh+qZVwSAwLoCV1EeECIn7fU3Go0h9Bh5fGL273jliYB32xL24JYBaNuBWfqMbFm3nXt5Dro+c+F9HY7IfMZK+zAsY2mXpdPSosgg64qJLFK1pJXgTZ3Hld1z0tGzs8z3V0hmrDsYqKizss+BZ+C6Xfk=
-Received: from DU0PR04MB9299.eurprd04.prod.outlook.com (2603:10a6:10:356::7)
- by AM9PR04MB8084.eurprd04.prod.outlook.com (2603:10a6:20b:3ec::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.22; Fri, 31 May
- 2024 08:45:24 +0000
-Received: from DU0PR04MB9299.eurprd04.prod.outlook.com
- ([fe80::9271:bc93:9fc9:d427]) by DU0PR04MB9299.eurprd04.prod.outlook.com
- ([fe80::9271:bc93:9fc9:d427%4]) with mapi id 15.20.7633.021; Fri, 31 May 2024
- 08:45:24 +0000
-From: Aisheng Dong <aisheng.dong@nxp.com>
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, Sudeep Holla
-	<sudeep.holla@arm.com>, Cristian Marussi <cristian.marussi@arm.com>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
-	<s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Linus Walleij <linus.walleij@linaro.org>,
-	Jacky Bai <ping.bai@nxp.com>
-CC: "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Peng Fan
-	<peng.fan@nxp.com>
-Subject: RE: [PATCH 0/3] pinctrl: scmi: support i.MX95 OEM extensions with
- fsl,pins property
-Thread-Topic: [PATCH 0/3] pinctrl: scmi: support i.MX95 OEM extensions with
- fsl,pins property
-Thread-Index: AQHaq0Z/KEGcJHMPLkO9ZIHa2wOlLrGxFuwA
-Date: Fri, 31 May 2024 08:45:24 +0000
-Message-ID:
- <DU0PR04MB9299C792462E5674EFC4F19480FC2@DU0PR04MB9299.eurprd04.prod.outlook.com>
-References: <20240521-pinctrl-scmi-imx95-v1-0-9a1175d735fd@nxp.com>
-In-Reply-To: <20240521-pinctrl-scmi-imx95-v1-0-9a1175d735fd@nxp.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DU0PR04MB9299:EE_|AM9PR04MB8084:EE_
-x-ms-office365-filtering-correlation-id: 97f82ff0-7814-4d79-3bab-08dc814e035a
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230031|7416005|366007|376005|1800799015|38070700009|921011;
-x-microsoft-antispam-message-info:
- =?utf-8?B?anNuaURlR0ExZ2IyV1JNVWhuRmRkVWtrRlVpc25QYmhrSXRENGVxVFVROWVZ?=
- =?utf-8?B?clpzV0ZJejNaMEZNQ0FFSmpkUjlvQ2pZVjZOZEhFUGw1U2IweXVHc2FTQStC?=
- =?utf-8?B?VHljSTY5Yy9rQ0R4Ym5MR2JGcVhmWktOVDg5ZjF6bHZablk2V3FNellSbG0r?=
- =?utf-8?B?SnBKYlBWRzJ4SkpjVUZZOVZKbW5naDY1cTRLTGFaQjdCaWR0N2h2bGlhR3oy?=
- =?utf-8?B?Ti90SHp5NE9Td2dzcFhkNElzMDRXNXRqMnZBWGhKU3hST21zTkRINTlRVzNY?=
- =?utf-8?B?MmxOZ0k0RFBlcHFVOWg1aTNHbHhnOWYralFJR3FIZitjajYwRlNNUUZBQlNh?=
- =?utf-8?B?SFVFcmVkczRCaDFaMkFrMHhKTWdqVVFsdnQrSDI2ZGpIQlhpTW5rc2k0VkxE?=
- =?utf-8?B?bjUxQWdLcjNpNms5cCsvcmZEYVdKUUZwM1pBMWthUk00UjJiaTRYbGh1d3lJ?=
- =?utf-8?B?Qzl3c1A3c0dXTThhMEgvOTJOM0trenVFYnZGbGRSVmVJdElVcXhMUlY0bEZU?=
- =?utf-8?B?TnB4WWxjNXExTGhVak0wU1g5V21kamExM3FtWWx4eEZNdm9kYTlYK3c4SFIz?=
- =?utf-8?B?M09rTDFSZUUwNjYrZlJTc0JkQXk4TmtMcUMvM3VNSUNjck02OHozOTNGRkN2?=
- =?utf-8?B?V29CTjZJTC9oVmtFeHlJYTROcXJEVUJqbEQ1VjFDTmg3TllyRUFWWWFkR3hW?=
- =?utf-8?B?OFd1MVZkZTRhR3p3dC9pbmNpdWM4UUdJRmNyd0Y5ZWYyZXFjSkIwOTdrSTlz?=
- =?utf-8?B?ajJjS0hjUmRiODZZemd3MXRCbXNsbzFvTHNBRlJjVjVDYlgwLzBvWkpISi9P?=
- =?utf-8?B?Mjc3U2lZWUtuSk9kT2lBM2hNckVvbFdVY01EU2M2QjYzdlhiZW1FMGI4WE1X?=
- =?utf-8?B?NE9pelBGcm5XNGJmUmhYYVQ2M29mV2JNOFVGdDJHbDJMdmhESTl5OWJzMHVu?=
- =?utf-8?B?YWNRZTJ6dzNFQ2hBNGE1Q0UyOUUyUUtSZ2FnaFFpaHRyYW9aY1k0bjB1aFJo?=
- =?utf-8?B?ZmlJL0xBeGxzdHdnVllvUWR2dFNvVnR4MUdwQ2FQSUp6MkxHMmg3M0pCanlz?=
- =?utf-8?B?cTJhQXZWY0FrK2djaG1tUmNmeUF5STYvMm1GdE1CdVgraGNjY2YvcjFGVzJk?=
- =?utf-8?B?UWNCZ0JpdncvMVgyK2RrTjYrWGJXT09wR2JGbEk0ZlZXbGhoMWh1N0J2TWI3?=
- =?utf-8?B?Z1FzNWNBZndYTlRDbEhzR013YWhIbU1qeE9HYkhPOTZFbUNSemxQRERHRjFY?=
- =?utf-8?B?bHZvQTg2OGdjdDFlQkwzazZWVjRmTVZ3OFgyb1VnenJLYnlmZTNlRG9lSDNo?=
- =?utf-8?B?NFoyV2NBKzIrdldrTmRhcWdPZTBteXkrYjFKSDYvaG42dTZBYkxGZmdkVDdK?=
- =?utf-8?B?alB6ZkduRDJkWm1reThvL1RPaXE1czdDcC9GTUhZOUd0Y2JjRmtacUNPQmF2?=
- =?utf-8?B?eGpqOHo4MzlkZVlIYnA2K2FXd0JnV3Y4NlpKUVk0bTYwUS84NUpNMjk1L1ow?=
- =?utf-8?B?d0ZSclY1Y0R5bXk2elBYYmk5K2N2ZnQ0R2tHck1RUXRQakRKOU9vZjR0dGRX?=
- =?utf-8?B?SFMydlFTTFdpNk9yKzJxeGs0ZnpzdnF3N2JqQVViWFFoK2JSQmdHeEdxWHN2?=
- =?utf-8?B?cHNXYWJPbGpDQkx2c2U5S3BycEd4N3dQTGxnV21wR3R5aklnU3hJV2JVK0pW?=
- =?utf-8?B?VllzNVQzemFISjhjTVdaVlJIN2V3aVh3WmFacTJuak1CaDUvRm42dlJIWGlW?=
- =?utf-8?Q?+4zgyDJZRHKOvww8zY=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9299.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7416005)(366007)(376005)(1800799015)(38070700009)(921011);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?SDhTVjVlMTZaTDNBM2d0amRWWlhTaUtTM1lCNGxNSUl2T01GQWtJMksweWQ2?=
- =?utf-8?B?RUg0V25IWVQ5bmJMblg0NzBjYys3NS8vUmNMZ1p1MDFuSEZTL2ZnQmp6U2Iw?=
- =?utf-8?B?UXRXZ3pyTE9GaFRUR0RwWW53U1BSYlNXNmVVYzdienJZc3lDRzFveS8zV1E3?=
- =?utf-8?B?d2dwb0d3dlRwYk10cWZtazczMjNVU2FHRi9VaWlwSHA4b1JqakQ4cWx4Qnll?=
- =?utf-8?B?VjVxTnlDU05OMkIxRlZUVytBSjhEMS82emFjYzhERkcxOE5rdUxzVXRWRzlx?=
- =?utf-8?B?S0dLMmdDaStJY2ZTOWxtakI4UUNIVm05aGZHa2RzT0EzTmNkM2JIUUZGNmZ2?=
- =?utf-8?B?Q1crUDBoamhrK2J5Y0NlaHA1Tk5iem5KYXFkNU1FRXMvRnN3NWhaT0tIMWF0?=
- =?utf-8?B?RHRPYkhVc1pBTzBiQThaRDVJbnJxUnJwalk5VEtEMXRBOCswcWY1dVlONTQ0?=
- =?utf-8?B?Y0tKREkvMTc5VXJyc0VBNkdNMUdrQjc2empvYU01QXdnb2tTKytpYmovZE1Y?=
- =?utf-8?B?eHk0dStyWmR0QXZXVTM0R09hbWl1ZEo3YTJnSUphWGtxVGUzUERpTmJCNW44?=
- =?utf-8?B?RjdUc0svbnd0Nkd0SUVjcHROOVVjYmF1UWI2TWNCdExuUWZ1VGxEc1B4TEdr?=
- =?utf-8?B?QzFIK1BITDdRS0l5ZGFlZk11QUt5SHp2MjhvN1VmZTJsWUZvcVpRVkR6SGMz?=
- =?utf-8?B?My92VTVHMjkzcklsbzdIZTdrQmFPYllhWktETHhON0FsMDRBakdpVm5VTkdR?=
- =?utf-8?B?VytkUDhDWC9kNEM0a09HQWFtQ0FzQ2hiY2cwU2lMT2tyNGVWM0loOUtlMXFJ?=
- =?utf-8?B?Z0xmNlRVc285Rk9xaVZwM3paTDVJMnNuQ1I4Y2JWSyt4ZTkrRHBXSGdTNS8y?=
- =?utf-8?B?UzZhcW1Cb25WTjdXemdRbG9nRnBvblJPRTI1TUhHNktka0NyRnpNMCs4bkN1?=
- =?utf-8?B?MHhJa2hsTGI3VExLVEUvTW8zaEozNlNKVVYvQ2ttUHZXOXBVa0J2YWFiKzN6?=
- =?utf-8?B?K1Rsek1sb2xTVVJaS2ZGRkdPbFAvMWpKcmZ5aDQrYWJ1Zy9FTVVTOHNWMFA1?=
- =?utf-8?B?eVdxTDgrcEk0SUNSaHNqWWE1Z05LK0dkRnFsYzNjYTRLZG9rcm9tZC8xc2Ro?=
- =?utf-8?B?dU1aYklGYy8yVVBKWVRTY0dmNXM0bEFncUszL0VxWm92TUs4ODFJOUlaWHk5?=
- =?utf-8?B?ejNDenFBazhxbFdJYWg0eXNKdExLNU5LbEliUjJNRzkwWU1wY1JjbnJEeEQ4?=
- =?utf-8?B?L1FRL0NQRVVmUFUwVWxTQklUbWVMQUw4K2Z6MlczNUR1K25HNlhtNlduY1F0?=
- =?utf-8?B?TDdvUzU3SEt2MFNua0V3TTB3VjJIZGRDR3Y4aHdMZld3dUFscG82bTZvQ2Rm?=
- =?utf-8?B?SkpwRERkeXdKNmwvRUpldTk0SXRvSTdDSGx6UTg2S3VSREJwbUpIL0c2STVF?=
- =?utf-8?B?YkNMUzFsL3Fnem5sdkNUYXZFQjlHdlFVTW90OEFIaWlYVVFMK1Jlb1NEZGRi?=
- =?utf-8?B?ZXgzK1lyWElEN25PcFYvQzZVZ05TUlRDTDF2ZU9DbVQyU3NhK0MvcFUxVkk1?=
- =?utf-8?B?YXVTdjNPMEVjUmkxYU56ZDNVbURLbU1scy85VnVGRTk3dzIyUUhxQVVOWExk?=
- =?utf-8?B?MEk3QWthMWgvaThpK3o5RkMycXhzbHZUZitxNFNtbm9PN1NFQThXcStNcFBn?=
- =?utf-8?B?aFd3K3AzV2U5bjlUWDFaM2FOeC90azlMbUh3a04xR1cvYktJaklMQUliVUhu?=
- =?utf-8?B?bDJITlErOUxqdjQ4eFVwUTU1SVJZb2FFT3huY0tDWCsvN3l3VlFqYjl2YlRx?=
- =?utf-8?B?aXlZNU56VkoyWG5mKzRxbURkcmJ0dlY2QS9Na2JTY3hDZUNad2RMaEhnUisy?=
- =?utf-8?B?RDkydGNWVm45SmlqbmlOSlVFa3J3OGVCTWVubDkxTXoxZVZYQlJ6Mlgxa29P?=
- =?utf-8?B?UytJVjZoL3VkQW5NYmI1ekhFK1hmTjJUaGo5TDE1R0t4eE52bDhyb3ZpSEp5?=
- =?utf-8?B?eTBCWjdXYU9JUFRGWUxXdlFJRjRZWGl1Yk5iN2xWeTE2UDdrenFYeENFMlor?=
- =?utf-8?B?Wkg4RFpvOEZ3dys0MENKTGxONHY2NFhoTkJSUkdwKzNaSE4zWEFCRklvMzIx?=
- =?utf-8?Q?MR5w2qEJ+y31duEtxzv4u3LhT?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98928762D0;
+	Fri, 31 May 2024 08:47:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717145248; cv=none; b=mendaMBJUOKi2PkI/EMtEmPnscovWC3cJv3ZO0nksnKsjdVhNEos+29w5sdcSfeI+ZNP2hr/JiW3cOOPcxVrksF8jl+vowei3IjpRQ+yexAKn2OeAN9aEzBRV737jSvO8RDR8wp4iY1Gtfxwzk6sKzZ354g9/2u2vOcMB7obZn8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717145248; c=relaxed/simple;
+	bh=YIMxgbIBKA/bQc04vaweWwut+0w6tL08S/RLf90TwtI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=elcpqKPTCrn8qBQ6qyyQSO2n2W9yPl2NqclL+QDSgSXjifiTgdp9a9miYh0Gv6g3MezubHOu9j0BFrNKSQ2ioiqLMEf/Cx5aQSuX0gelnJ4Lv5IrO4ivmnjYvImvZWXXpXwQQ5O+/4re9GidSNx+1QRdHG2/ABfhvOHqBVxUALU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=GYGEn6rB; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
+	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44V8Nq6G013196;
+	Fri, 31 May 2024 04:47:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=BfOvY2XFvLZ55QcFRnNAA1SivDB
+	6mZk+DCeAdeMBKPk=; b=GYGEn6rBTOkSfLFVSm8F1mXWIG0ExWgn/ZgK1h2KRfl
+	Mb6MxlW3jvXvndq+ufhEjptv+v8CuKmvtOJ/HfmV1840yaxCbdOu5eON1qOK4vhO
+	hSG9yrV2EELGKSJtqPcQdrNximXFJW6inkcnGXOjFzcQctwl9ritkW6Bq/E9BYpu
+	oYTEstIOsCX/CFFgUBJ5vWs+dKrunlXbKbK2pmuVYr1FvUh1anbmDmnamLBU4oxM
+	92a4yV3c7jIRYuSA9jc5i5cR8jicdVts9oFcePWiiuDHD3ACnUjhXeiPR8c5zgiy
+	Kmz9xhp8m7kgRFiybMwq9SrGSkGUvwwEKBck4TMF09g==
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 3yf60qh2q7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 31 May 2024 04:47:07 -0400 (EDT)
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 44V8l52g039322
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 31 May 2024 04:47:05 -0400
+Received: from ASHBCASHYB5.ad.analog.com (10.64.17.133) by
+ ASHBMBX8.ad.analog.com (10.64.17.5) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.14; Fri, 31 May 2024 04:47:05 -0400
+Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by
+ ASHBCASHYB5.ad.analog.com (10.64.17.133) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.14; Fri, 31 May 2024 04:47:04 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Fri, 31 May 2024 04:47:04 -0400
+Received: from radu.ad.analog.com ([10.48.65.189])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 44V8kshd031459;
+	Fri, 31 May 2024 04:46:56 -0400
+From: Radu Sabau <radu.sabau@analog.com>
+To: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
+        Jonathan Corbet <corbet@lwn.net>, <linux-hwmon@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Radu Sabau <radu.sabau@analog.com>, Nuno Sa <nuno.sa@analog.com>
+Subject: [PATCH v6 1/2] hwmon: Add PEC attribute support to hardware monitoring core
+Date: Fri, 31 May 2024 11:46:43 +0300
+Message-ID: <20240531084645.12935-1-radu.sabau@analog.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9299.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 97f82ff0-7814-4d79-3bab-08dc814e035a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 31 May 2024 08:45:24.2834
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: CWG8LEmO4tfllEcd5Px5FFEgB5Q+ZVvg9luvE/bCHhv0SERRC81Zz/m9hVfBPNBXh/fQAas7oCtX1da7trdN/Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8084
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-ORIG-GUID: jkIseQdnZ54Zs506JX4nCrbqLBUdkAoP
+X-Proofpoint-GUID: jkIseQdnZ54Zs506JX4nCrbqLBUdkAoP
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-31_04,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ lowpriorityscore=0 suspectscore=0 malwarescore=0 mlxlogscore=999
+ mlxscore=0 priorityscore=1501 bulkscore=0 adultscore=0 phishscore=0
+ clxscore=1015 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405310064
 
-PiBGcm9tOiBQZW5nIEZhbiAoT1NTKSA8cGVuZy5mYW5Ab3NzLm54cC5jb20+DQo+IFNlbnQ6IDIw
-MjTlubQ15pyIMjHml6UgMTQ6MjYNCj4gDQo+IEFsbDoNCj4gIFRoZXJlIHdhcyBhIHY2IHRoYXQg
-dXNlIGdlbmVyaWMgcHJvcGVydGllcywgYnV0IGF0IGEgbGF0ZSBzdGFnZSwgTlhQICBpbnRlcm5h
-bHMNCj4gZGVjaWRlcyB0byBzd2l0Y2ggdG8gZnNsLHBpbnMgcHJvcGVydHkgdG8gYWxpZ24gd2l0
-aCBvdGhlciAgaS5NWHMuIFNpbmNlIG5ldw0KPiBwcm9wZXJ0aWVzLCBkcml2ZXJzIHJld3JpdGUs
-IEkgc3RhcnQgdGhpcyBwYXRjaHNldCAgZnJvbSB2MSB3aXRoIGEgbmV3IHBhdGNoIHRpdGxlLg0K
-PiBBIFJGQyBwYXRjaCBmb3IgYmluZGluZyB3YXMgcG9zdGVkLCAgc2luY2UgUm9iIHNhaWQgaGUg
-aXMgZmluZSwgc28gcG9zdCB0aGlzDQo+IHBhdGNoc2V0IG91dC4NCj4gDQo+ICBXaGV0aGVyIHY2
-IG9yIHRoaXMgcGF0Y2hzZXQsIHBhdGNoIDIgaXMgYSBtdXN0IGFuZCB3YXMgbm90IGNoYW5nZWQg
-ZnJvbQ0KPiB2Ni4NCj4gDQo+ICBUaGUgcGluY3RybCBzdHVmZiBoYXMgYmVlbiBwZW5kaW5nIGZv
-ciBxdWl0ZSBzb21ldGltZSwgSSB3b3VsZCBiZQ0KPiBhcHByZWNhaXRlZCBpZiBhbnkgcXVpY2sg
-Y29tbWVudHMuDQo+IA0KPiB2NjoNCj4gDQo+IGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2FsbC8y
-MDI0MDUxMy1waW5jdHJsLXNjbWktb2VtLXYzLXY2LTAtOTA0OTc1Yzk5Y2M0DQo+IEBueHAuY29t
-Lw0KPiBSRkM6DQo+ICBodHRwczovL2xvcmUua2VybmVsLm9yZy9hbGwvMjAyNDA1MjAxOTQ5NDIu
-R0ExMzc0NzA1LXJvYmhAa2VybmVsLm9yZy8NCj4gDQo+IFRoYW5rcywNCj4gUGVuZy4NCj4gDQo+
-IEFSTSBTQ01JIHYzLjIgVGFibGUgMjQgUGluIENvbmZpZ3VyYXRpb24gVHlwZSBhbmQgRW51bWVy
-YXRpb25zOg0KPiAnMTkyIC0yNTUgT0VNIHNwZWNpZmljIHVuaXRzJy4NCj4gDQo+IGkuTVg5NSBT
-eXN0ZW0gTWFuYWdlciBGVyBzdXBwb3J0cyBTQ01JIFBJTkNUUkwgcHJvdG9jb2wsIGJ1dCBpdCBo
-YXMgemVybw0KPiBmdW5jdGlvbnMsIGdyb3Vwcy4gU28gcGluY3RybC1zY21pLmMgY291bGQgbm90
-IGJlIHJldXNlZCBmb3IgaS5NWDk1Lg0KPiBCZWNhdXNlIG54cCxwaW4tZnVuYywgbnhwLHBpbi1j
-b25mIHByb3BlcnRpZXMgYXJlIHJlamVjdGVkIGJ5IGR0IG1haW50YWluZXJzLA0KPiBzbyB1c2Ug
-J2ZzbCxwaW5zJyB3aGljaCByZXF1aXJlcyBhIG5ldyBkcml2ZXIgcGluY3RybC1pbXgtc2NtaS5j
-DQo+IA0KPiBUaGUgbm9kZSB3aWxsIGJlIGFzIGJlbG93Og0KPiBwaW5jdHJsX3VzZGhjMTogdXNk
-aGMxZ3JwIHsNCj4gCWZzbCxwaW5zID0gPA0KPiAJCUlNWDk1X1BBRF9TRDFfQ0xLX19VU0RIQzFf
-Q0xLCQkJCTB4MTU4ZQ0KPiAJCUlNWDk1X1BBRF9TRDFfQ01EX19VU0RIQzFfQ01ECQkJCTB4MTM4
-ZQ0KPiAJCUlNWDk1X1BBRF9TRDFfREFUQTBfX1VTREhDMV9EQVRBMAkJCTB4MTM4ZQ0KPiAJCUlN
-WDk1X1BBRF9TRDFfREFUQTFfX1VTREhDMV9EQVRBMQkJCTB4MTM4ZQ0KPiAJCUlNWDk1X1BBRF9T
-RDFfREFUQTJfX1VTREhDMV9EQVRBMgkJCTB4MTM4ZQ0KPiAJCUlNWDk1X1BBRF9TRDFfREFUQTNf
-X1VTREhDMV9EQVRBMwkJCTB4MTM4ZQ0KPiAJCUlNWDk1X1BBRF9TRDFfREFUQTRfX1VTREhDMV9E
-QVRBNAkJCTB4MTM4ZQ0KPiAJCUlNWDk1X1BBRF9TRDFfREFUQTVfX1VTREhDMV9EQVRBNQkJCTB4
-MTM4ZQ0KPiAJCUlNWDk1X1BBRF9TRDFfREFUQTZfX1VTREhDMV9EQVRBNgkJCTB4MTM4ZQ0KPiAJ
-CUlNWDk1X1BBRF9TRDFfREFUQTdfX1VTREhDMV9EQVRBNwkJCTB4MTM4ZQ0KPiAJCUlNWDk1X1BB
-RF9TRDFfU1RST0JFX19VU0RIQzFfU1RST0JFCQkJMHgxNThlDQo+IAk+Ow0KPiB9Ow0KPiANCj4g
-U2lnbmVkLW9mZi1ieTogUGVuZyBGYW4gPHBlbmcuZmFuQG54cC5jb20+DQoNCkZvciB0aGUgc2Vy
-aWVzOg0KUmV2aWV3ZWQtYnk6IERvbmcgQWlzaGVuZyA8YWlzaGVuZy5kb25nQG54cC5jb20+DQoN
-ClJlZ2FyZHMNCkFpc2hlbmcNCg==
+From: Guenter Roeck <linux@roeck-us.net>
+
+Several hardware monitoring chips optionally support Packet Error Checking
+(PEC). For some chips, PEC support can be enabled simply by setting
+I2C_CLIENT_PEC in the i2c client data structure. Others require chip
+specific code to enable or disable PEC support.
+
+Introduce hwmon_chip_pec and HWMON_C_PEC to simplify adding configurable
+PEC support for hardware monitoring drivers. A driver can set HWMON_C_PEC
+in its chip information data to indicate PEC support. If a chip requires
+chip specific code to enable or disable PEC support, the driver only needs
+to implement support for the hwmon_chip_pec attribute to its write
+function.
+
+The hardware monitoring core does not depend on the I2C subsystem after
+this change. However, the I2C subsystem needs to be reachable. This
+requires a new HWMON dependency to ensure that HWMON can only be built
+as module if I2C is built as module. This should not make a practical
+difference.
+
+Cc: Radu Sabau <radu.sabau@analog.com>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Acked-by: Nuno Sa <nuno.sa@analog.com>
+---
+ drivers/hwmon/Kconfig |   1 +
+ drivers/hwmon/hwmon.c | 136 +++++++++++++++++++++++++++++++++++++-----
+ include/linux/hwmon.h |   2 +
+ 3 files changed, 123 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
+index e14ae18a973b..7f384a2494c9 100644
+--- a/drivers/hwmon/Kconfig
++++ b/drivers/hwmon/Kconfig
+@@ -6,6 +6,7 @@
+ menuconfig HWMON
+ 	tristate "Hardware Monitoring support"
+ 	depends on HAS_IOMEM
++	depends on I2C || I2C=n
+ 	default y
+ 	help
+ 	  Hardware monitoring devices let you monitor the hardware health
+diff --git a/drivers/hwmon/hwmon.c b/drivers/hwmon/hwmon.c
+index 3b259c425ab7..1fdea8b1ec91 100644
+--- a/drivers/hwmon/hwmon.c
++++ b/drivers/hwmon/hwmon.c
+@@ -14,6 +14,7 @@
+ #include <linux/err.h>
+ #include <linux/gfp.h>
+ #include <linux/hwmon.h>
++#include <linux/i2c.h>
+ #include <linux/idr.h>
+ #include <linux/kstrtox.h>
+ #include <linux/list.h>
+@@ -309,6 +310,103 @@ static int hwmon_attr_base(enum hwmon_sensor_types type)
+ 	return 1;
+ }
+ 
++/*
++ * PEC support
++ *
++ * The 'pec' attribute is attached to I2C client devices. It is only provided
++ * if the i2c controller supports PEC.
++ *
++ * The mutex ensures that PEC configuration between i2c device and the hardware
++ * is consistent. Use a single mutex because attribute writes are supposed to be
++ * rare, and maintaining a separate mutex for each hardware monitoring device
++ * would add substantial complexity to the driver for little if any gain.
++ *
++ * The hardware monitoring device is identified as child of the i2c client
++ * device. This assumes that only a single hardware monitoring device is
++ * attached to an i2c client device.
++ */
++
++static DEFINE_MUTEX(hwmon_pec_mutex);
++
++static int hwmon_match_device(struct device *dev, void *data)
++{
++	return dev->class == &hwmon_class;
++}
++
++static ssize_t pec_show(struct device *dev, struct device_attribute *dummy,
++			char *buf)
++{
++	struct i2c_client *client = to_i2c_client(dev);
++
++	return sprintf(buf, "%d\n", !!(client->flags & I2C_CLIENT_PEC));
++}
++
++static ssize_t pec_store(struct device *dev, struct device_attribute *devattr,
++			 const char *buf, size_t count)
++{
++	struct i2c_client *client = to_i2c_client(dev);
++	struct hwmon_device *hwdev;
++	struct device *hdev;
++	bool val;
++	int err;
++
++	err = kstrtobool(buf, &val);
++	if (err < 0)
++		return err;
++
++	hdev = device_find_child(dev, NULL, hwmon_match_device);
++	if (!hdev)
++		return -ENODEV;
++
++	mutex_lock(&hwmon_pec_mutex);
++
++	/*
++	 * If there is no write function, we assume that chip specific
++	 * handling is not required.
++	 */
++	hwdev = to_hwmon_device(hdev);
++	if (hwdev->chip->ops->write) {
++		err = hwdev->chip->ops->write(hdev, hwmon_chip, hwmon_chip_pec, 0, val);
++		if (err && err != -EOPNOTSUPP)
++			goto unlock;
++	}
++
++	if (!val)
++		client->flags &= ~I2C_CLIENT_PEC;
++	else
++		client->flags |= I2C_CLIENT_PEC;
++
++	err = count;
++unlock:
++	mutex_unlock(&hwmon_pec_mutex);
++	put_device(hdev);
++
++	return err;
++}
++
++static DEVICE_ATTR_RW(pec);
++
++static void hwmon_remove_pec(void *dev)
++{
++	device_remove_file(dev, &dev_attr_pec);
++}
++
++static int hwmon_pec_register(struct device *hdev)
++{
++	struct i2c_client *client = i2c_verify_client(hdev->parent);
++	int err;
++
++	if (!client ||
++	    !i2c_check_functionality(client->adapter, I2C_FUNC_SMBUS_PEC))
++		return 0;
++
++	err = device_create_file(&client->dev, &dev_attr_pec);
++	if (err)
++		return err;
++
++	return devm_add_action_or_reset(hdev, hwmon_remove_pec, &client->dev);
++}
++
+ /* sysfs attribute management */
+ 
+ static ssize_t hwmon_attr_show(struct device *dev,
+@@ -397,10 +495,6 @@ static struct attribute *hwmon_genattr(const void *drvdata,
+ 	const char *name;
+ 	bool is_string = is_string_attr(type, attr);
+ 
+-	/* The attribute is invisible if there is no template string */
+-	if (!template)
+-		return ERR_PTR(-ENOENT);
+-
+ 	mode = ops->is_visible(drvdata, type, attr, index);
+ 	if (!mode)
+ 		return ERR_PTR(-ENOENT);
+@@ -712,8 +806,8 @@ static int hwmon_genattrs(const void *drvdata,
+ 
+ 			attr = __ffs(attr_mask);
+ 			attr_mask &= ~BIT(attr);
+-			if (attr >= template_size)
+-				return -EINVAL;
++			if (attr >= template_size || !templates[attr])
++				continue;	/* attribute is invisible */
+ 			a = hwmon_genattr(drvdata, info->type, attr, i,
+ 					  templates[attr], ops);
+ 			if (IS_ERR(a)) {
+@@ -849,16 +943,26 @@ __hwmon_device_register(struct device *dev, const char *name, void *drvdata,
+ 	INIT_LIST_HEAD(&hwdev->tzdata);
+ 
+ 	if (hdev->of_node && chip && chip->ops->read &&
+-	    chip->info[0]->type == hwmon_chip &&
+-	    (chip->info[0]->config[0] & HWMON_C_REGISTER_TZ)) {
+-		err = hwmon_thermal_register_sensors(hdev);
+-		if (err) {
+-			device_unregister(hdev);
+-			/*
+-			 * Don't worry about hwdev; hwmon_dev_release(), called
+-			 * from device_unregister(), will free it.
+-			 */
+-			goto ida_remove;
++	    chip->info[0]->type == hwmon_chip) {
++		u32 config = chip->info[0]->config[0];
++
++		if (config & HWMON_C_REGISTER_TZ) {
++			err = hwmon_thermal_register_sensors(hdev);
++			if (err) {
++				device_unregister(hdev);
++				/*
++				 * Don't worry about hwdev; hwmon_dev_release(),
++				 * called from device_unregister(), will free it.
++				 */
++				goto ida_remove;
++			}
++		}
++		if (config & HWMON_C_PEC) {
++			err = hwmon_pec_register(hdev);
++			if (err) {
++				device_unregister(hdev);
++				goto ida_remove;
++			}
+ 		}
+ 	}
+ 
+diff --git a/include/linux/hwmon.h b/include/linux/hwmon.h
+index edf96f249eb5..e94314760aab 100644
+--- a/include/linux/hwmon.h
++++ b/include/linux/hwmon.h
+@@ -45,6 +45,7 @@ enum hwmon_chip_attributes {
+ 	hwmon_chip_power_samples,
+ 	hwmon_chip_temp_samples,
+ 	hwmon_chip_beep_enable,
++	hwmon_chip_pec,
+ };
+ 
+ #define HWMON_C_TEMP_RESET_HISTORY	BIT(hwmon_chip_temp_reset_history)
+@@ -60,6 +61,7 @@ enum hwmon_chip_attributes {
+ #define HWMON_C_POWER_SAMPLES		BIT(hwmon_chip_power_samples)
+ #define HWMON_C_TEMP_SAMPLES		BIT(hwmon_chip_temp_samples)
+ #define HWMON_C_BEEP_ENABLE		BIT(hwmon_chip_beep_enable)
++#define HWMON_C_PEC			BIT(hwmon_chip_pec)
+ 
+ enum hwmon_temp_attributes {
+ 	hwmon_temp_enable,
+-- 
+2.34.1
+
 
