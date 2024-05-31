@@ -1,506 +1,123 @@
-Return-Path: <linux-kernel+bounces-196413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADAE98D5B9D
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 09:37:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF5818D5BA1
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 09:38:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58166287937
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 07:37:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E2121F2494E
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 07:38:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBCC174071;
-	Fri, 31 May 2024 07:37:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 459A674069;
+	Fri, 31 May 2024 07:38:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="bALMnNzG"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A8B95588D;
-	Fri, 31 May 2024 07:37:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="BCPckN5Y"
+Received: from m15.mail.163.com (m15.mail.163.com [45.254.50.220])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F6F174057;
+	Fri, 31 May 2024 07:38:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.50.220
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717141049; cv=none; b=dZxEL0PsmuOILO4gq0ZF63kVch2kfU7fnmQX2ZVNDFu2xX26PZKsebzvwbS0xhkkyheQXvSKUsQziLyVgak07odYXQjgjZBz1511Jcf849n/hypVP1mzTAZnjczfRZUdDAkwr1zgMPvmQ65gjMZM19zWRBR19AwC6moylsvxenE=
+	t=1717141105; cv=none; b=JDEiK/vOybc72MiAyuPESHERbu1XT2KWvC+xsmzRkdUFzo4m9lRxhlc7S3NosmFk7KsKmmyT5DL6zQeVNaU/1Y1t6O2sndApvHI5/11ZGF3DwM53+/DefYRWQu438V2QciN2fqM6a3+uWDYNqrtMcvGUYoOI3IeVuoDeYz25XtQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717141049; c=relaxed/simple;
-	bh=1Y1xbqjaEjTZ/pN6vHCnPOFrHlGwFVGVOqCzuduS3GE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IlfnaGexrQK/3/EefuUx/l91oIq44twqamFSqZFazk/vZ+pHWAS0CUWdS1iHJaqkTd3xe1ouJMrMBcj8iv4J530SKeA1afxNlHagelS5AmLoSlKR2NGZg9ZpWMX2tcnT0LcVENHyHR0IXVYIkGYyXPSCCby06hRu6HkY/8GCsYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=bALMnNzG; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1717141045;
-	bh=1Y1xbqjaEjTZ/pN6vHCnPOFrHlGwFVGVOqCzuduS3GE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=bALMnNzG+87La+4Fs466WUM/0gwzZH5tutD5UFAi9k4OItl0klqYtVHrPAaYtMhuM
-	 g8RHqh9zzbC/ufBDRNXLNVrqGafZIdw+ZZKprmymKkkMjtLkvcCfnMy4iiDiViwz2d
-	 WtUuW5vuAiWK+yirOzMm3xWCEczaBD+mNdgXNHE5H4RyHmklvuJn726LQ6kNrfzTib
-	 3BNPvjBmfgytUB4xGjrn8Y5mPugWmGu46qqO1wivdhqgoA7B9HEPACppRoyzWz+yGw
-	 EuC9ld+76sKY1Pd4meiEz5fQOPzQP20AVUBaGxf4hXeYkSFswRE00SrEAcbQeFTZDk
-	 8EzHBf00tnDwA==
-Received: from [100.95.196.182] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: andrzej.p)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 8218937820CD;
-	Fri, 31 May 2024 07:37:24 +0000 (UTC)
-Message-ID: <a4b04982-6fac-4492-8454-0878a143d80f@collabora.com>
-Date: Fri, 31 May 2024 09:37:23 +0200
+	s=arc-20240116; t=1717141105; c=relaxed/simple;
+	bh=js5resTiNiwmEEem06d/OuXesOvzyPwOVOw2TBNTQbI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=ANIlJ+vJcX7JK5REfh91i7hkdmZwUZa8ev9CLiR/ILtrS3T43Bql87qHsfbEjhc4N/MXabgjF45JS4AgO77s7lYiLxP+xf2Y9dXPZYXccSuDKzA9vRnk8IY0EIz+/Eaw5TZBuhZ/iNNDUnr2hv87iCJZtEiNqk5eSdHmZsUb12U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=BCPckN5Y reason="signature verification failed"; arc=none smtp.client-ip=45.254.50.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=0RpQFpiJt8CzmW+XjzYB0uoC6szcClZV35OrD8T37uk=; b=B
+	CPckN5YRlbjf2sLpOtaYcpqabr6qCrqYwbbpbR1hMt+0JKVIVPQ0hWzL8B9aP2DP
+	DOyKx5aH4cfFS7D1o2Jw06BjgoNxuWIHAr4olB8lx9Q3y6E3fc3hYG1xeqR9F4Rr
+	VOnP7oilp9x1pWCz4yiDjEAiJ1AC3Lg+OLrYYFNjfo=
+Received: from slark_xiao$163.com ( [112.97.59.81] ) by
+ ajax-webmail-wmsvr-40-117 (Coremail) ; Fri, 31 May 2024 15:37:44 +0800
+ (CST)
+Date: Fri, 31 May 2024 15:37:44 +0800 (CST)
+From: "Slark Xiao" <slark_xiao@163.com>
+To: manivannan.sadhasivam@linaro.org, loic.poulain@linaro.org
+Cc: mhi@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re:[PATCH v2] bus: mhi: host: Add Foxconn SDX72 related support
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20230109(dcb5de15)
+ Copyright (c) 2002-2024 www.mailtech.cn 163com
+In-Reply-To: <20240520070633.308913-1-slark_xiao@163.com>
+References: <20240520070633.308913-1-slark_xiao@163.com>
+X-NTES-SC: AL_Qu2aBf2fvkgt4iaYZOkfm0kaj+c/WMGzu/8m3oFXO51wjD/pywQrRn54L3f89cW2Ey6orCOsUCBfx8BTf4BKYYY0gpe02UgZEjAjz22mxWjh+A==
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=GBK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 3/3] tools: usb: p9_fwd: add usb gadget packet
- forwarder script
-To: Michael Grzeschik <mgr@pengutronix.de>
-Cc: Eric Van Hensbergen <ericvh@kernel.org>,
- Latchesar Ionkov <lucho@ionkov.net>,
- Dominique Martinet <asmadeus@codewreck.org>,
- Christian Schoenebeck <linux_oss@crudebyte.com>,
- Jonathan Corbet <corbet@lwn.net>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, v9fs@lists.linux.dev,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-usb@vger.kernel.org, kernel@pengutronix.de,
- Jan Luebbe <jlu@pengutronix.de>
-References: <20240116-ml-topic-u9p-v5-0-5ed0abd53ef5@pengutronix.de>
- <20240116-ml-topic-u9p-v5-3-5ed0abd53ef5@pengutronix.de>
- <50c62db3-060d-4b21-ae28-629003611e1a@collabora.com>
- <ZlehszQxJ5I0AvcE@pengutronix.de>
-Content-Language: en-US
-From: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-In-Reply-To: <ZlehszQxJ5I0AvcE@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Message-ID: <1ecf7fb9.74d7.18fcd954b9e.Coremail.slark_xiao@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:_____wD3n39IfllmFNUdAA--.22369W
+X-CM-SenderInfo: xvod2y5b0lt0i6rwjhhfrp/1tbiNQjvZGV4H26udAAAsA
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-Hi,
-
-W dniu 29.05.2024 o 23:44, Michael Grzeschik pisze:
-> On Tue, May 28, 2024 at 08:41:12PM +0200, Andrzej Pietrasiewicz wrote:
->> Hi,
->>
->> W dniu 28.05.2024 o 00:08, Michael Grzeschik pisze:
->>> This patch is adding an small python tool to forward 9pfs requests
->>> from the USB gadget to an existing 9pfs TCP server. Since currently all
->>> 9pfs servers lack support for the usb transport this tool is an useful
->>> helper to get started.
->>>
->>> Refer the Documentation section "USBG Example" in
->>> Documentation/filesystems/9p.rst on how to use it.
->>>
->>> Signed-off-by: Jan Luebbe <jlu@pengutronix.de>
->>> Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
->>>
->>> ---
->>> v4 -> v5:
->>>   - updated documentation for new subcommands list/connect
->>>   - run ruff format
->>>   - make vid and pid parameterized
->>
->> Thanks for adding that.
->>
->>>   - add list as subcommand to scan for devices
->>>   - move connect to extra subcommand
->>> v3 -> v4: -
->>> v2 -> v3: -
->>> v1 -> v2:
->>>   - added usbg 9pfs detailed instructions to 9p.rst doc
->>> ---
->>>  Documentation/filesystems/9p.rst |  41 +++++++
->>>  tools/usb/p9_fwd.py              | 243 +++++++++++++++++++++++++++++++++++++++
->>>  2 files changed, 284 insertions(+)
->>>
->>> diff --git a/Documentation/filesystems/9p.rst b/Documentation/filesystems/9p.rst
->>> index 10cf79dc287f8..2cc85f3e8659f 100644
->>> --- a/Documentation/filesystems/9p.rst
->>> +++ b/Documentation/filesystems/9p.rst
->>> @@ -67,6 +67,47 @@ To mount a 9p FS on a USB Host accessible via the gadget as root filesystem::
->>>  where <device> is the tag associated by the usb gadget transport.
->>>  It is defined by the configfs instance name.
->>> +USBG Example
->>> +============
->>> +
->>> +The USB host exports a filesystem, while the gadget on the USB device
->>> +side makes it mountable.
->>> +
->>> +Diod (9pfs server) and the forwarder are on the development host, where
->>> +the root filesystem is actually stored. The gadget is initialized during
->>> +boot (or later) on the embedded board. Then the forwarder will find it
->>> +on the USB bus and start forwarding requests.
->>> +
->>> +In this case the 9p requests come from the device and are handled by the
->>> +host. The reason is that USB device ports are normally not available on
->>> +PCs, so a connection in the other direction would not work.
->>> +
->>> +When using the usbg transport, for now there is no native usb host
->>> +service capable to handle the requests from the gadget driver. For
->>> +this we have to use the extra python tool p9_fwd.py from tools/usb.
->>> +
->>> +Just start the 9pfs capable network server like diod/nfs-ganesha e.g.:
->>> +
->>> +        $ diod -f -n -d 0 -S -l 0.0.0.0:9999 -e $PWD
->>> +
->>> +Optionaly scan your bus if there are more then one usbg gadgets to find their path:
->>> +
->>> +        $ python $kernel_dir/tools/usb/p9_fwd.py list
->>> +
->>> +        Bus | Addr | Manufacturer     | Product          | ID        | Path
->>> +        --- | ---- | ---------------- | ---------------- | --------- | ----
->>> +          2 |   67 | unknown          | unknown          | 1d6b:0109 | 2-1.1.2
->>> +          2 |   68 | unknown          | unknown          | 1d6b:0109 | 2-1.1.3
->>> +
->>> +Then start the python transport:
->>> +
->>> +        $ python $kernel_dir/tools/usb/p9_fwd.py --path 2-1.1.2 connect -p 9999
->>> +
->>> +After that the gadget driver can be used as described above.
->>> +
->>> +One use-case is to use it as an alternative to NFS root booting during
->>> +the development of embedded Linux devices.
->>> +
->>>  Options
->>>  =======
->>> diff --git a/tools/usb/p9_fwd.py b/tools/usb/p9_fwd.py
->>> new file mode 100755
->>> index 0000000000000..7bedefce75c7b
->>> --- /dev/null
->>> +++ b/tools/usb/p9_fwd.py
->>> @@ -0,0 +1,243 @@
->>> +#!/usr/bin/env python3
->>> +# SPDX-License-Identifier: GPL-2.0
->>> +
->>> +import argparse
->>> +import errno
->>> +import logging
->>> +import socket
->>> +import struct
->>> +import time
->>> +
->>> +import usb.core
->>> +import usb.util
->>> +
->>> +
->>> +def path_from_usb_dev(dev):
->>> +    """Takes a pyUSB device as argument and returns a string.
->>> +    The string is a Path representation of the position of the USB device on the USB bus tree.
->>> +
->>> +    This path is used to find a USB device on the bus or all devices connected to a HUB.
->>> +    The path is made up of the number of the USB controller followed be the ports of the HUB tree."""
->>> +    if dev.port_numbers:
->>> +        dev_path = ".".join(str(i) for i in dev.port_numbers)
->>> +        return f"{dev.bus}-{dev_path}"
->>> +    return ""
->>> +
->>> +
->>> +HEXDUMP_FILTER = "".join(chr(x).isprintable() and chr(x) or "." for x in range(128)) + "." * 128
->>> +
->>> +
->>> +class Forwarder:
->>> +    @staticmethod
->>> +    def _log_hexdump(data):
->>> +        if not logging.root.isEnabledFor(logging.TRACE):
->>> +            return
->>> +        L = 16
->>> +        for c in range(0, len(data), L):
->>> +            chars = data[c : c + L]
->>> +            dump = " ".join(f"{x:02x}" for x in chars)
->>> +            printable = "".join(HEXDUMP_FILTER[x] for x in chars)
->>> +            line = f"{c:08x}  {dump:{L*3}s} |{printable:{L}s}|"
->>> +            logging.root.log(logging.TRACE, "%s", line)
->>> +
->>> +    def __init__(self, server, vid, pid, path):
->>> +        self.stats = {
->>> +            "c2s packets": 0,
->>> +            "c2s bytes": 0,
->>> +            "s2c packets": 0,
->>> +            "s2c bytes": 0,
->>> +        }
->>> +        self.stats_logged = time.monotonic()
->>> +
->>> +        def find_filter(dev):
->>> +            dev_path = path_from_usb_dev(dev)
->>> +            if path is not None:
->>> +                return dev_path == path
->>> +            return True
->>> +
->>> +        dev = usb.core.find(idVendor=vid, idProduct=pid, custom_match=find_filter)
->>> +        if dev is None:
->>> +            raise ValueError("Device not found")
->>> +
->>> +        logging.info(f"found device: {dev.bus}/{dev.address} located at {path_from_usb_dev(dev)}")
->>> +
->>> +        # dev.set_configuration() is not necessary since g_multi has only one
->>> +        usb9pfs = None
->>> +        # g_multi adds 9pfs as last interface
->>> +        cfg = dev.get_active_configuration()
->>> +        for intf in cfg:
->>> +            # we have to detach the usb-storage driver from multi gadget since
->>> +            # stall option could be set, which will lead to spontaneous port
->>> +            # resets and our transfers will run dead
->>> +            if intf.bInterfaceClass == 0x08:
->>> +                if dev.is_kernel_driver_active(intf.bInterfaceNumber):
->>> +                    dev.detach_kernel_driver(intf.bInterfaceNumber)
->>> +
->>> +            if intf.bInterfaceClass == 0xFF and intf.bInterfaceSubClass == 0xFF and intf.bInterfaceProtocol == 0x09:
->>> +                usb9pfs = intf
->>> +        if usb9pfs is None:
->>> +            raise ValueError("Interface not found")
->>> +
->>> +        logging.info(f"claiming interface:\n{usb9pfs}")
->>> +        usb.util.claim_interface(dev, usb9pfs.bInterfaceNumber)
->>> +        ep_out = usb.util.find_descriptor(
->>> +            usb9pfs,
->>> +            custom_match=lambda e: usb.util.endpoint_direction(e.bEndpointAddress) == usb.util.ENDPOINT_OUT,
->>> +        )
->>> +        assert ep_out is not None
->>> +        ep_in = usb.util.find_descriptor(
->>> +            usb9pfs,
->>> +            custom_match=lambda e: usb.util.endpoint_direction(e.bEndpointAddress) == usb.util.ENDPOINT_IN,
->>> +        )
->>> +        assert ep_in is not None
->>> +        logging.info("interface claimed")
->>> +
->>> +        self.ep_out = ep_out
->>> +        self.ep_in = ep_in
->>> +        self.dev = dev
->>> +
->>> +        # create and connect socket
->>> +        self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
->>> +        self.s.connect(server)
->>> +
->>> +        logging.info("connected to server")
->>> +
->>> +    def c2s(self):
->>> +        """forward a request from the USB client to the TCP server"""
->>> +        data = None
->>> +        while data is None:
->>> +            try:
->>> +                logging.log(logging.TRACE, "c2s: reading")
->>> +                data = self.ep_in.read(self.ep_in.wMaxPacketSize)
->>> +            except usb.core.USBTimeoutError:
->>> +                logging.log(logging.TRACE, "c2s: reading timed out")
->>> +                continue
->>> +            except usb.core.USBError as e:
->>> +                if e.errno == errno.EIO:
->>> +                    logging.debug("c2s: reading failed with %s, retrying", repr(e))
->>> +                    time.sleep(0.5)
->>> +                    continue
->>> +                logging.error("c2s: reading failed with %s, aborting", repr(e))
->>> +                raise
->>> +        size = struct.unpack("<I", data[:4])[0]
->>> +        while len(data) < size:
->>> +            data += self.ep_in.read(size - len(data))
->>> +        logging.log(logging.TRACE, "c2s: writing")
->>> +        self._log_hexdump(data)
->>> +        self.s.send(data)
->>> +        logging.debug("c2s: forwarded %i bytes", size)
->>> +        self.stats["c2s packets"] += 1
->>> +        self.stats["c2s bytes"] += size
->>> +
->>> +    def s2c(self):
->>> +        """forward a response from the TCP server to the USB client"""
->>> +        logging.log(logging.TRACE, "s2c: reading")
->>> +        data = self.s.recv(4)
->>> +        size = struct.unpack("<I", data[:4])[0]
->>> +        while len(data) < size:
->>> +            data += self.s.recv(size - len(data))
->>> +        logging.log(logging.TRACE, "s2c: writing")
->>> +        self._log_hexdump(data)
->>> +        while data:
->>> +            written = self.ep_out.write(data)
->>> +            assert written > 0
->>> +            data = data[written:]
->>> +        if size % self.ep_out.wMaxPacketSize == 0:
->>> +            logging.log(logging.TRACE, "sending zero length packet")
->>> +            self.ep_out.write(b"")
->>> +        logging.debug("s2c: forwarded %i bytes", size)
->>> +        self.stats["s2c packets"] += 1
->>> +        self.stats["s2c bytes"] += size
->>> +
->>> +    def log_stats(self):
->>> +        logging.info("statistics:")
->>> +        for k, v in self.stats.items():
->>> +            logging.info(f"  {k+':':14s} {v}")
->>> +
->>> +    def log_stats_interval(self, interval=5):
->>> +        if (time.monotonic() - self.stats_logged) < interval:
->>> +            return
->>> +
->>> +        self.log_stats()
->>> +        self.stats_logged = time.monotonic()
->>> +
->>> +
->>> +def try_get_usb_str(dev, name):
->>> +    try:
->>> +        with open(f"/sys/bus/usb/devices/{dev.bus}-{dev.address}/{name}") as f:
->>> +            return f.read().strip()
->>> +    except FileNotFoundError:
->>> +        return None
->>> +
->>> +
->>> +def list_usb(args):
->>> +    vid, pid = [int(x, 16) for x in args.id.split(":", 1)]
->>> +
->>> +    print("Bus | Addr | Manufacturer     | Product          | ID        | Path")
->>> +    print("--- | ---- | ---------------- | ---------------- | --------- | ----")
->>> +    for dev in usb.core.find(find_all=True, idVendor=vid, idProduct=pid):
->>> +        path = path_from_usb_dev(dev) or ""
->>> +        manufacturer = try_get_usb_str(dev, "manufacturer") or "unknown"
->>> +        product = try_get_usb_str(dev, "product") or "unknown"
->>> +        print(
->>> +            f"{dev.bus:3} | {dev.address:4} | {manufacturer:16} | {product:16} | {dev.idVendor:04x}:{dev.idProduct:04x} | {path:18}"
->>> +        )
->>> +
->>> +
->>> +def connect(args):
->>> +    vid, pid = [int(x, 16) for x in args.id.split(":", 1)]
->>> +
->>> +    f = Forwarder(server=(args.server, args.port), vid=vid, pid=pid, path=args.path)
->>> +
->>> +    try:
->>> +        while True:
->>> +            f.c2s()
->>> +            f.s2c()
->>> +            f.log_stats_interval()
->>> +    finally:
->>> +        f.log_stats()
->>> +
->>> +
->>> +def main():
->>> +    parser = argparse.ArgumentParser(
->>> +        description="Forward 9PFS requests from USB to TCP",
->>> +    )
->>> +
->>> +    parser.add_argument("--id", type=str, default="1d6b:0109", help="vid:pid of target device")
->>> +    parser.add_argument("--path", type=str, default="", help="path of target device")
->>
->> I had to specify both --id and --path, otherwise I was getting
->> "device not found".
-> 
-> This is odd. What was your list command saying about the available
-> devices?
-> 
-
-<snip>
-
-[ 4260.577064] usb 3-1.3.3.5.4: new high-speed USB device number 25 using xhci_hcd
-[ 4260.677769] usb 3-1.3.3.5.4: New USB device found, idVendor=abcd, idProduct=ef01, bcdDevice= 6.09
-[ 4260.677788] usb 3-1.3.3.5.4: New USB device strings: Mfr=0, Product=0, SerialNumber=0
-
-<snip>
-
-$ sudo python3 tools/usb/p9_fwd.py --id 0xabcd:0xef01 list
-Bus | Addr | Manufacturer     | Product          | ID        | Path
---- | ---- | ---------------- | ---------------- | --------- | ----
-   3 |   25 | unknown          | unknown          | abcd:ef01 | 3-1.3.3.5.4
-
-
-$ sudo python3 tools/usb/p9_fwd.py --id 0xabcd:0xef01 connect -p 9999
-Traceback (most recent call last):
-   File "/home/ap/Collabora/kernel-rk/tools/usb/p9_fwd.py", line 243, in <module>
-     main()
-   File "/home/ap/Collabora/kernel-rk/tools/usb/p9_fwd.py", line 239, in main
-     args.func(args)
-   File "/home/ap/Collabora/kernel-rk/tools/usb/p9_fwd.py", line 190, in connect
-     f = Forwarder(server=(args.server, args.port), vid=vid, pid=pid, path=args.path)
-   File "/home/ap/Collabora/kernel-rk/tools/usb/p9_fwd.py", line 60, in __init__
-     raise ValueError("Device not found")
-ValueError: Device not found
-
-$ sudo python3 tools/usb/p9_fwd.py --path 3-1.3.3.5.4 connect -p 9999
-Traceback (most recent call last):
-   File "/home/ap/Collabora/kernel-rk/tools/usb/p9_fwd.py", line 243, in <module>
-     main()
-   File "/home/ap/Collabora/kernel-rk/tools/usb/p9_fwd.py", line 239, in main
-     args.func(args)
-   File "/home/ap/Collabora/kernel-rk/tools/usb/p9_fwd.py", line 190, in connect
-     f = Forwarder(server=(args.server, args.port), vid=vid, pid=pid, path=args.path)
-   File "/home/ap/Collabora/kernel-rk/tools/usb/p9_fwd.py", line 60, in __init__
-     raise ValueError("Device not found")
-ValueError: Device not found
-
-$ sudo python3 tools/usb/p9_fwd.py --id 0xabcd:0xef01 --path 3-1.3.3.5.4 connect -p 9999
-2024-05-31 09:34:44,047 INFO     found device: 3/25 located at 3-1.3.3.5.4
-2024-05-31 09:34:44,053 INFO     claiming interface:
-     INTERFACE 0: Vendor Specific ===========================
-      bLength            :    0x9 (9 bytes)
-      bDescriptorType    :    0x4 Interface
-      bInterfaceNumber   :    0x0
-      bAlternateSetting  :    0x0
-      bNumEndpoints      :    0x2
-      bInterfaceClass    :   0xff Vendor Specific
-      bInterfaceSubClass :   0xff
-      bInterfaceProtocol :    0x9
-      iInterface         :    0x1 usb9pfs input to output
-       ENDPOINT 0x81: Bulk IN ===============================
-        bLength          :    0x7 (7 bytes)
-        bDescriptorType  :    0x5 Endpoint
-        bEndpointAddress :   0x81 IN
-        bmAttributes     :    0x2 Bulk
-        wMaxPacketSize   :  0x200 (512 bytes)
-        bInterval        :    0x0
-       ENDPOINT 0x1: Bulk OUT ===============================
-        bLength          :    0x7 (7 bytes)
-        bDescriptorType  :    0x5 Endpoint
-        bEndpointAddress :    0x1 OUT
-        bmAttributes     :    0x2 Bulk
-        wMaxPacketSize   :  0x200 (512 bytes)
-        bInterval        :    0x0
-2024-05-31 09:34:44,054 INFO     interface claimed
-2024-05-31 09:34:44,054 INFO     connected to server
-
-Regards,
-
-Andrzej
-
-> I tested this with the default vid:pid as described above (1d6b:0109)
-> which worked fine with path alone.
-> 
-> Michael
-> 
->>> +    parser.add_argument("-v", "--verbose", action="count", default=0)
->>> +
->>> +    subparsers = parser.add_subparsers()
->>> +    subparsers.required = True
->>> +    subparsers.dest = "command"
->>> +
->>> +    parser_list = subparsers.add_parser("list", help="List all connected 9p gadgets")
->>> +    parser_list.set_defaults(func=list_usb)
->>> +
->>> +    parser_connect = subparsers.add_parser(
->>> +        "connect", help="Forward messages between the usb9pfs gadget and the 9p server"
->>> +    )
->>> +    parser_connect.set_defaults(func=connect)
->>> +    connect_group = parser_connect.add_argument_group()
->>> +    connect_group.required = True
->>> +    parser_connect.add_argument("-s", "--server", type=str, default="127.0.0.1", help="server hostname")
->>> +    parser_connect.add_argument("-p", "--port", type=int, default=564, help="server port")> +
->>> +    args = parser.parse_args()
->>> +
->>> +    logging.TRACE = logging.DEBUG - 5
->>> +    logging.addLevelName(logging.TRACE, "TRACE")
->>> +
->>> +    if args.verbose >= 2:
->>> +        level = logging.TRACE
->>> +    elif args.verbose:
->>> +        level = logging.DEBUG
->>> +    else:
->>> +        level = logging.INFO
->>> +    logging.basicConfig(level=level, format="%(asctime)-15s %(levelname)-8s %(message)s")
->>> +
->>> +    args.func(args)
->>> +
->>> +
->>> +if __name__ == "__main__":
->>> +    main()
->>>
->>
->>
-> 
-
+SGkgTWFuaSwKRG8geW91IG1pc3MgdGhpcyBjb21taXQ/CkkgZGlkbid0IGdldCBhbnkgcmVzcG9u
+c2UgeWV0LiAKCkF0IDIwMjQtMDUtMjAgMTU6MDY6MzMsICJTbGFyayBYaWFvIiA8c2xhcmtfeGlh
+b0AxNjMuY29tPiB3cm90ZToKPkFsaWduIHdpdGggUWNvbSBTRFg3MiwgYWRkIHJlYWR5IHRpbWVv
+dXQgaXRlbSBmb3IgRm94Y29ubiBTRFg3Mi4KPkFuZCBhbHNvLCBhZGQgZmlyZWhvc2Ugc3VwcG9y
+dCBzaW5jZSBTRFg3Mi4KPgo+U2lnbmVkLW9mZi1ieTogU2xhcmsgWGlhbyA8c2xhcmtfeGlhb0Ax
+NjMuY29tPgo+LS0tCj52MjogKDEpLiBVcGRhdGUgdGhlIGVkbCBmaWxlIHBhdGggYW5kIG5hbWUg
+KDIpLiBTZXQgU0RYNzIgc3VwcG9ydAo+dHJpZ2dlciBlZGwgbW9kZSBieSBkZWZhdWx0Cj4tLS0K
+PiBkcml2ZXJzL2J1cy9taGkvaG9zdC9wY2lfZ2VuZXJpYy5jIHwgMzIgKysrKysrKysrKysrKysr
+KysrKysrKysrKysrKysrCj4gMSBmaWxlIGNoYW5nZWQsIDMyIGluc2VydGlvbnMoKykKPgo+ZGlm
+ZiAtLWdpdCBhL2RyaXZlcnMvYnVzL21oaS9ob3N0L3BjaV9nZW5lcmljLmMgYi9kcml2ZXJzL2J1
+cy9taGkvaG9zdC9wY2lfZ2VuZXJpYy5jCj5pbmRleCAwODg0NGVlNzk2NTQuLjBiNDgzYzdjNzZh
+MSAxMDA2NDQKPi0tLSBhL2RyaXZlcnMvYnVzL21oaS9ob3N0L3BjaV9nZW5lcmljLmMKPisrKyBi
+L2RyaXZlcnMvYnVzL21oaS9ob3N0L3BjaV9nZW5lcmljLmMKPkBAIC0zOTksNiArMzk5LDggQEAg
+c3RhdGljIGNvbnN0IHN0cnVjdCBtaGlfY2hhbm5lbF9jb25maWcgbWhpX2ZveGNvbm5fc2R4NTVf
+Y2hhbm5lbHNbXSA9IHsKPiAJTUhJX0NIQU5ORUxfQ09ORklHX0RMKDEzLCAiTUJJTSIsIDMyLCAw
+KSwKPiAJTUhJX0NIQU5ORUxfQ09ORklHX1VMKDMyLCAiRFVOIiwgMzIsIDApLAo+IAlNSElfQ0hB
+Tk5FTF9DT05GSUdfREwoMzMsICJEVU4iLCAzMiwgMCksCj4rCU1ISV9DSEFOTkVMX0NPTkZJR19V
+TF9GUCgzNCwgIkZJUkVIT1NFIiwgMzIsIDApLAo+KwlNSElfQ0hBTk5FTF9DT05GSUdfRExfRlAo
+MzUsICJGSVJFSE9TRSIsIDMyLCAwKSwKPiAJTUhJX0NIQU5ORUxfQ09ORklHX0hXX1VMKDEwMCwg
+IklQX0hXMF9NQklNIiwgMTI4LCAyKSwKPiAJTUhJX0NIQU5ORUxfQ09ORklHX0hXX0RMKDEwMSwg
+IklQX0hXMF9NQklNIiwgMTI4LCAzKSwKPiB9Owo+QEAgLTQxOSw2ICs0MjEsMTYgQEAgc3RhdGlj
+IGNvbnN0IHN0cnVjdCBtaGlfY29udHJvbGxlcl9jb25maWcgbW9kZW1fZm94Y29ubl9zZHg1NV9j
+b25maWcgPSB7Cj4gCS5ldmVudF9jZmcgPSBtaGlfZm94Y29ubl9zZHg1NV9ldmVudHMsCj4gfTsK
+PiAKPitzdGF0aWMgY29uc3Qgc3RydWN0IG1oaV9jb250cm9sbGVyX2NvbmZpZyBtb2RlbV9mb3hj
+b25uX3NkeDcyX2NvbmZpZyA9IHsKPisJLm1heF9jaGFubmVscyA9IDEyOCwKPisJLnRpbWVvdXRf
+bXMgPSAyMDAwMCwKPisJLnJlYWR5X3RpbWVvdXRfbXMgPSA1MDAwMCwKPisJLm51bV9jaGFubmVs
+cyA9IEFSUkFZX1NJWkUobWhpX2ZveGNvbm5fc2R4NTVfY2hhbm5lbHMpLAo+KwkuY2hfY2ZnID0g
+bWhpX2ZveGNvbm5fc2R4NTVfY2hhbm5lbHMsCj4rCS5udW1fZXZlbnRzID0gQVJSQVlfU0laRSht
+aGlfZm94Y29ubl9zZHg1NV9ldmVudHMpLAo+KwkuZXZlbnRfY2ZnID0gbWhpX2ZveGNvbm5fc2R4
+NTVfZXZlbnRzLAo+K307Cj4rCj4gc3RhdGljIGNvbnN0IHN0cnVjdCBtaGlfcGNpX2Rldl9pbmZv
+IG1oaV9mb3hjb25uX3NkeDI0X2luZm8gPSB7Cj4gCS5uYW1lID0gImZveGNvbm4tc2R4MjQiLAo+
+IAkuY29uZmlnID0gJm1vZGVtX2ZveGNvbm5fc2R4NTVfY29uZmlnLAo+QEAgLTQ0OCw2ICs0NjAs
+MTcgQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBtaGlfcGNpX2Rldl9pbmZvIG1oaV9mb3hjb25uX3Nk
+eDY1X2luZm8gPSB7Cj4gCS5zaWRlYmFuZF93YWtlID0gZmFsc2UsCj4gfTsKPiAKPitzdGF0aWMg
+Y29uc3Qgc3RydWN0IG1oaV9wY2lfZGV2X2luZm8gbWhpX2ZveGNvbm5fc2R4NzJfaW5mbyA9IHsK
+PisJLm5hbWUgPSAiZm94Y29ubi1zZHg3MiIsCj4rCS5lZGwgPSAiZm94L3NkeDcybS9lZGwubWJu
+IiwKPisJLmVkbF90cmlnZ2VyID0gdHJ1ZSwKPisJLmNvbmZpZyA9ICZtb2RlbV9mb3hjb25uX3Nk
+eDcyX2NvbmZpZywKPisJLmJhcl9udW0gPSBNSElfUENJX0RFRkFVTFRfQkFSX05VTSwKPisJLmRt
+YV9kYXRhX3dpZHRoID0gMzIsCj4rCS5tcnVfZGVmYXVsdCA9IDMyNzY4LAo+Kwkuc2lkZWJhbmRf
+d2FrZSA9IGZhbHNlLAo+K307Cj4rCj4gc3RhdGljIGNvbnN0IHN0cnVjdCBtaGlfY2hhbm5lbF9j
+b25maWcgbWhpX212M3hfY2hhbm5lbHNbXSA9IHsKPiAJTUhJX0NIQU5ORUxfQ09ORklHX1VMKDAs
+ICJMT09QQkFDSyIsIDY0LCAwKSwKPiAJTUhJX0NIQU5ORUxfQ09ORklHX0RMKDEsICJMT09QQkFD
+SyIsIDY0LCAwKSwKPkBAIC02ODAsNiArNzAzLDE1IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgcGNp
+X2RldmljZV9pZCBtaGlfcGNpX2lkX3RhYmxlW10gPSB7Cj4gCS8qIERXNTkzMmUgKHNkeDYyKSwg
+Tm9uLWVTSU0gKi8KPiAJeyBQQ0lfREVWSUNFKFBDSV9WRU5ET1JfSURfRk9YQ09OTiwgMHhlMGY5
+KSwKPiAJCS5kcml2ZXJfZGF0YSA9IChrZXJuZWxfdWxvbmdfdCkgJm1oaV9mb3hjb25uX3NkeDY1
+X2luZm8gfSwKPisJLyogVDk5VzUxNSAoc2R4NzIpICovCj4rCXsgUENJX0RFVklDRShQQ0lfVkVO
+RE9SX0lEX0ZPWENPTk4sIDB4ZTExOCksCj4rCQkuZHJpdmVyX2RhdGEgPSAoa2VybmVsX3Vsb25n
+X3QpICZtaGlfZm94Y29ubl9zZHg3Ml9pbmZvIH0sCj4rCS8qIERXNTkzNGUoc2R4NzIpLCBXaXRo
+IGVTSU0gKi8KPisJeyBQQ0lfREVWSUNFKFBDSV9WRU5ET1JfSURfRk9YQ09OTiwgMHhlMTFkKSwK
+PisJCS5kcml2ZXJfZGF0YSA9IChrZXJuZWxfdWxvbmdfdCkgJm1oaV9mb3hjb25uX3NkeDcyX2lu
+Zm8gfSwKPisJLyogRFc1OTM0ZShzZHg3MiksIE5vbi1lU0lNICovCj4rCXsgUENJX0RFVklDRShQ
+Q0lfVkVORE9SX0lEX0ZPWENPTk4sIDB4ZTExZSksCj4rCQkuZHJpdmVyX2RhdGEgPSAoa2VybmVs
+X3Vsb25nX3QpICZtaGlfZm94Y29ubl9zZHg3Ml9pbmZvIH0sCj4gCS8qIE1WMzEtVyAoQ2ludGVy
+aW9uKSAqLwo+IAl7IFBDSV9ERVZJQ0UoUENJX1ZFTkRPUl9JRF9USEFMRVMsIDB4MDBiMyksCj4g
+CQkuZHJpdmVyX2RhdGEgPSAoa2VybmVsX3Vsb25nX3QpICZtaGlfbXYzMV9pbmZvIH0sCj4tLSAK
+PjIuMjUuMQo=
 
