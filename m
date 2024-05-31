@@ -1,127 +1,197 @@
-Return-Path: <linux-kernel+bounces-196699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B8838D6011
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:53:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24AC68D6013
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:54:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B5A81C2364B
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:53:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3DCB1F25ACF
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:54:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC1AE156991;
-	Fri, 31 May 2024 10:53:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 602A8156863;
+	Fri, 31 May 2024 10:54:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FJdklNI9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ocDdwhwh"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBD5718756A;
-	Fri, 31 May 2024 10:53:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2557F18756A;
+	Fri, 31 May 2024 10:54:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717152828; cv=none; b=q3gvwPuUZoCTzPeiAYdWpMQIQN8VuXIBm06sr9c87iXZ8Nt5Kh6w/HaJjFp4wmovD7F08hlmxs5H+535W19VbAbxXrcn6RFa3IYSzYZ+YSBTExDMnCHUlcuEm1g/KxBVocIN5bVqNj2ZlBn7jwjQf8/psMPfS43lPpoYIJ7vyXA=
+	t=1717152882; cv=none; b=pOw6rZLOOqEo+QupE59P/1aeislo0dB7SRItY0eL1MaJdPGyCAyLNW5dc4RcpTp89Cg+PSGpfnLsg5vizGXjLlCNiAOQIsoPXccoXupJbuIfFGNPAlZVTcOW6RFFqOwP8OAFoTumWV5gSr65v7RQ75M94qOBioxjv4TlhIeQmgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717152828; c=relaxed/simple;
-	bh=/83MRsrVM2oXbn4uDqS5AZEsC8HOFGZW98TOiO7QvWE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P23DD+79AwLtJwFIPDvL+di31k0gJ7VWCoOR/EQhK5t+AHraqL/Qk5ALVX9yqyUSUUXTKq1OpfZj34UfVspGCfZ+AwMigTnscchtDdKMy/WZ3EKvEeO/cfEaWh2ObRg0PNH/OgNYNC9Z6AyRoD7CktOf35gnx9z2iBTB2k/FP6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FJdklNI9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DE82C116B1;
-	Fri, 31 May 2024 10:53:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717152827;
-	bh=/83MRsrVM2oXbn4uDqS5AZEsC8HOFGZW98TOiO7QvWE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FJdklNI9mY98pW4dslMeCf4x1bFelOC+wFysWrqtrEwEcn/ZFDCI1M5X9KuXTH9vp
-	 CbwoLjv3WDYJ7XF4AbVe7H0Etg9Cbdvm5wLrobjZ0g7wqAXnsCuhFOyXJv91JJbs1h
-	 KE3Ia1HpuW3oaXkDEQceYJRdcc+UrIC2Qt5YUXSu7xye5GEBcIh6Ej8TbDEgEnxvM5
-	 w0itoiDNGFzjfRUisZXF6hdSmNmfxVIp60Z3c2QCibOIbtdIPn5n5fv6ZMMD0bSzV8
-	 A0+ConCSk2qfZ41tjTcTFbbXbGEPEr2+wJQRQo9mTTLz0T+WjhPk7xvAufRHwTKkHd
-	 /tYKTsjglulIg==
-Date: Fri, 31 May 2024 11:53:39 +0100
-From: Simon Horman <horms@kernel.org>
-To: Yunsheng Lin <linyunsheng@huawei.com>
-Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Alexander Duyck <alexander.duyck@gmail.com>,
-	Mat Martineau <martineau@kernel.org>,
-	Ayush Sawal <ayush.sawal@chelsio.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-	Jason Wang <jasowang@redhat.com>, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Daniel Bristot de Oliveira <bristot@redhat.com>,
-	Valentin Schneider <vschneid@redhat.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Jakub Sitnicki <jakub@cloudflare.com>,
-	David Ahern <dsahern@kernel.org>,
-	Matthieu Baerts <matttbe@kernel.org>,
-	Geliang Tang <geliang@kernel.org>,
-	Jamal Hadi Salim <jhs@mojatatu.com>,
-	Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>,
-	Boris Pismenny <borisp@nvidia.com>, bpf@vger.kernel.org,
-	mptcp@lists.linux.dev
-Subject: Re: [PATCH net-next v5 11/13] net: replace page_frag with
- page_frag_cache
-Message-ID: <20240531105339.GA491852@kernel.org>
-References: <20240528125604.63048-1-linyunsheng@huawei.com>
- <20240528125604.63048-12-linyunsheng@huawei.com>
+	s=arc-20240116; t=1717152882; c=relaxed/simple;
+	bh=k2udwgRnRNnhEpAUX0hw5im1I9SWALjW5nHxAe+CqDk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=l2vm+0LQqjiW1xyB4p9dzKzCbbljikWouGdKrWvtPhDfyIwq/xpVxnOi19VGYV8GAyLS6FEwiwTOvQsjpsDMoX482znSp7C4lJL6z0+14v7EdTY9ImcgYr4/vr1O0WCnRAjdcpPtazLtwet6b4XhfEeJEBze8zH17wUVw4Wufqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ocDdwhwh; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44V73dN9019268;
+	Fri, 31 May 2024 10:54:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=40IoWb0CnW8ZkNBhg8uS3w
+	2AH/q/T00qehZjBzQ97gI=; b=ocDdwhwhB/rC3UYe6aXvGB0KD3UrxNwaQvDnHZ
+	n/PxNhRjI8ha9BbfOW7unoaJYziM7Wrb2tvFekW8TYVpI+vafxE/+qN1kRVt/Ukd
+	HSH0tX/oxSVT+3fnG4IIG56rck8sqnGlY9StqJnGH66RWYbHF02xefyfRJQRe4by
+	IfqrbiiqolFkYrpYjgj9yRyySZ2YKmbx+s3zIsqDYg1wa0HELmBUmBtsFV+//VBj
+	JJ/0g/Y3n/u6dxJsb9nfGkRCw8TfazOO9qUkmLEfqEMbFVclv4KjzTq/XbG1KxTs
+	Ar4ZvrVBzb3Gvirb2hcOxKUpWdkc0kqklnSQvm8GNE28ESQA==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba0geunx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 31 May 2024 10:54:36 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44VAsZv1020943
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 31 May 2024 10:54:35 GMT
+Received: from hu-kshivnan-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 31 May 2024 03:54:32 -0700
+From: Shivnandan Kumar <quic_kshivnan@quicinc.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        "Ramakrishna Gottimukkula" <quic_rgottimu@quicinc.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        Shivnandan Kumar <quic_kshivnan@quicinc.com>
+Subject: [PATCH] soc: qcom: icc-bwmon: Add tracepoints in bwmon_intr_thread
+Date: Fri, 31 May 2024 16:24:04 +0530
+Message-ID: <20240531105404.879267-1-quic_kshivnan@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240528125604.63048-12-linyunsheng@huawei.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: X2amfJl0g7t4mpCldKxR6Y5wA1USnbPj
+X-Proofpoint-ORIG-GUID: X2amfJl0g7t4mpCldKxR6Y5wA1USnbPj
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-31_07,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
+ priorityscore=1501 bulkscore=0 phishscore=0 adultscore=0 spamscore=0
+ mlxlogscore=999 malwarescore=0 lowpriorityscore=0 clxscore=1015
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405310080
 
-On Tue, May 28, 2024 at 08:56:01PM +0800, Yunsheng Lin wrote:
-> Use the newly introduced prepare/probe/commit API to
-> replace page_frag with page_frag_cache for sk_page_frag().
-> 
-> CC: Alexander Duyck <alexander.duyck@gmail.com>
-> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
-> Acked-by: Mat Martineau <martineau@kernel.org>
+Add tracepoint for tracing the measured traffic, up_kbps
+and down_kbps in bwmon. This information is valuable for
+understanding what bwmon hw measures at the system cache
+level and at the DDR level which is helpful in debugging
+bwmon behavior.
 
-Hi Yunsheng Lin,
+Signed-off-by: Shivnandan Kumar <quic_kshivnan@quicinc.com>
+---
+ MAINTAINERS                        |  1 +
+ drivers/soc/qcom/icc-bwmon.c       |  4 ++-
+ drivers/soc/qcom/trace_icc-bwmon.h | 49 ++++++++++++++++++++++++++++++
+ 3 files changed, 53 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/soc/qcom/trace_icc-bwmon.h
 
-Unfortunately this seems to break W=1 allmodconfig builds (on x8_64).
-I'm suspecting this relates to some missing includes, but I am unsure.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 9ed4d3868539..dc864e3870b1 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -18135,6 +18135,7 @@ M:	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+ L:	linux-arm-msm@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/interconnect/qcom,msm8998-bwmon.yaml
++F:	drivers/soc/qcom/trace_icc-bwmon.h
+ F:	drivers/soc/qcom/icc-bwmon.c
 
-With clang-18 I see:
+ QUALCOMM IOMMU
+diff --git a/drivers/soc/qcom/icc-bwmon.c b/drivers/soc/qcom/icc-bwmon.c
+index 656706259353..dedf0070654b 100644
+--- a/drivers/soc/qcom/icc-bwmon.c
++++ b/drivers/soc/qcom/icc-bwmon.c
+@@ -17,6 +17,8 @@
+ #include <linux/pm_opp.h>
+ #include <linux/regmap.h>
+ #include <linux/sizes.h>
++#define CREATE_TRACE_POINTS
++#include "trace_icc-bwmon.h"
 
-In file included from net/ipv4/ip_output.c:46:
-In file included from ./include/linux/uaccess.h:8:
-In file included from ./include/linux/sched.h:48:
-/include/linux/page_frag_cache.h:176:2: error: call to undeclared function 'VM_BUG_ON'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-  176 |         VM_BUG_ON(fragsz > nc->remaining || !nc->pagecnt_bias);
+ /*
+  * The BWMON samples data throughput within 'sample_ms' time. With three
+@@ -681,7 +683,7 @@ static irqreturn_t bwmon_intr_thread(int irq, void *dev_id)
 
-..
+ 	if (bwmon->target_kbps == bwmon->current_kbps)
+ 		goto out;
+-
++	trace_qcom_bwmon_update(dev_name(bwmon->dev), bw_kbps, up_kbps, down_kbps);
+ 	dev_pm_opp_set_opp(bwmon->dev, target_opp);
+ 	bwmon->current_kbps = bwmon->target_kbps;
 
-In file included from net/ipv4/ip_output.c:47:
-In file included from ./include/linux/module.h:19:
-In file included from ./include/linux/elf.h:6:
-In file included from ./arch/x86/include/asm/elf.h:10:
-In file included from ./arch/x86/include/asm/ia32.h:7:
-In file included from ./include/linux/compat.h:17:
-In file included from ./include/linux/fs.h:33:
-In file included from ./include/linux/percpu-rwsem.h:7:
-In file included from ./include/linux/rcuwait.h:6:
-In file included from ./include/linux/sched/signal.h:6:
-/include/linux/signal.h:98:11: warning: array index 3 is past the end of the array (that has type 'unsigned long[1]') [-Warray-bounds]
-   98 |                 return (set->sig[3] | set->sig[2] |
-      |                         ^        ~
-/arch/x86/include/asm/signal.h:24:2: note: array 'sig' declared here
-   24 |         unsigned long sig[_NSIG_WORDS];
-      |         ^
+diff --git a/drivers/soc/qcom/trace_icc-bwmon.h b/drivers/soc/qcom/trace_icc-bwmon.h
+new file mode 100644
+index 000000000000..977e46ade4b8
+--- /dev/null
++++ b/drivers/soc/qcom/trace_icc-bwmon.h
+@@ -0,0 +1,49 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
++ */
++
++#undef TRACE_SYSTEM
++#define TRACE_SYSTEM icc_bwmon
++
++#if !defined(_TRACE_ICC_BWMON_H) || defined(TRACE_HEADER_MULTI_READ)
++#define _TRACE_ICC_BWMON_H
++#include <linux/tracepoint.h>
++
++TRACE_EVENT(qcom_bwmon_update,
++
++	TP_PROTO(const char *name,
++		 unsigned int meas_kbps, unsigned int up_kbps, unsigned int down_kbps),
++
++	TP_ARGS(name, meas_kbps, up_kbps, down_kbps),
++
++	TP_STRUCT__entry(
++		__string(name, name)
++		__field(unsigned int, meas_kbps)
++		__field(unsigned int, up_kbps)
++		__field(unsigned int, down_kbps)
++	),
++
++	TP_fast_assign(
++		__assign_str(name, name);
++		__entry->meas_kbps = meas_kbps;
++		__entry->up_kbps = up_kbps;
++		__entry->down_kbps = down_kbps;
++	),
++
++	TP_printk("name=%s meas_kbps=%u up_kbps=%u down_kbps=%u",
++		__get_str(name),
++		__entry->meas_kbps,
++		__entry->up_kbps,
++		__entry->down_kbps)
++);
++
++#endif /* _TRACE_ICC_BWMON_H */
++
++#undef TRACE_INCLUDE_PATH
++#define TRACE_INCLUDE_PATH ../../drivers/soc/qcom/
++
++#undef TRACE_INCLUDE_FILE
++#define TRACE_INCLUDE_FILE trace_icc-bwmon
++
++#include <trace/define_trace.h>
+--
+2.25.1
 
-..
 
