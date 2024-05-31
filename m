@@ -1,142 +1,224 @@
-Return-Path: <linux-kernel+bounces-197014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43E448D64EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:54:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 110A08D64F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:54:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 742931C256F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:54:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69C5C28B238
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:54:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2ADC5C8FC;
-	Fri, 31 May 2024 14:54:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECBC957CA7;
+	Fri, 31 May 2024 14:54:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OK7s6oD6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="W0I6x00J"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F06681CF9B;
-	Fri, 31 May 2024 14:54:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 842EF54656
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 14:54:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717167242; cv=none; b=ciOILIKeQJJttFzILm1XSxlNuL4jeljSwo8bGjRrOLFhRRdtX6kLDIVI2MyVJ+evqe2amN/WSftL6U6ShiR9zkVvy0FAo6+SICNwnNQrvxeP0upp5duQd2Gd0f1+DfAbkOVfkh4aJx9IUCLTsuLAEKbohIhb94V83fa0huxBwBc=
+	t=1717167290; cv=none; b=On4QGM2Zevxskx2t2Jn4mUP4Dj1hKjwBtgl6apr5RwaQgcjs1FfoAeN+w03DyNvRFM/XHREUw4YvwEl5Db3Qc5m3cknhrocWnmQj6ZskhDhfMDDBmL3ngzYrihn8jpjdPOGCJDrSATwBoFGWTs0BfkmgEjhgvwmaBc+SL+3QcqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717167242; c=relaxed/simple;
-	bh=5fZlWsVChO9de455++itdnUm8abWuXufPQEk6Jo6n/E=;
+	s=arc-20240116; t=1717167290; c=relaxed/simple;
+	bh=nE6E5FLTG/e2GjVjjRLiE2nCKGeY5JRM73xX44CiF2I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pXpCFwVMCT7B5NK4K7nHM1J1GBaUaVKzFOcIvpO+Jza18t8TK8LtEGjdGfnaKi/bid2kC2TgyCkOEL9+nDvrzkCZmHr6tZKWf/y5Ly1T2008NfBkQVsikJhuyow0YMYOB4Y3HDb9ncehLQKcgeS2Vd6C0uJ80J2mFWaCSEMl7pA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OK7s6oD6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 598BBC116B1;
-	Fri, 31 May 2024 14:53:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717167241;
-	bh=5fZlWsVChO9de455++itdnUm8abWuXufPQEk6Jo6n/E=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=ok+X3lbnpjl8HZwhek8iR9v30ZCayiaeg6ykUmIDKf+l215dY2tuiHm/0V7CqoXDOwfg4IJzNJScDVI1I/0wzkX+ev7PIKrx9eaamIzlDBZjR2q27KJ3Fxg7TznlIo5s5sNfPzM+Q9fPVONWKY9zvQgbUIfUQm9FfIbyHqnGniE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=W0I6x00J; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 60BC340E0192;
+	Fri, 31 May 2024 14:54:46 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id qvqEUXbV9wpc; Fri, 31 May 2024 14:54:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1717167283; bh=58EpTMbYkdabimCKAYW9OCshcGz6t3rQsUDOZo5HP9E=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OK7s6oD6igiliCnbwcsOXieG8i+nZDOb34iAd6aa/7aOJE1dG2CaCV4q3nm2/HJiW
-	 o/M9R2Z4WwpZ+L3GKI7kc9fGgc/xxKr1lfgSnRv65NxIBI/lZRL5BR6bMjo5ppVgpu
-	 36hy1uyR1IEPJSHisdZOc0NNIJh37O51lUWdohFJD9M8/cCGu4U+vK7UuXgjGzpoll
-	 kPX3cJKif0vDuDlcSmw/X4PgHanxvVKg5Lacewt8c9kN8AEzNRl4+Fe9on3VjpWQKa
-	 wkDg5RQiQtDARHpFZ0o+iYetorZOItoglxwZOaNwUlNKFl2/ro5l8Tp7WhyffLtFjE
-	 pGc696/46GO+g==
-Date: Fri, 31 May 2024 15:53:57 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Ramona Alexandra Nechita <ramona.nechita@analog.com>
-Cc: linux-iio@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 1/1] dt-bindings: iio: adc: add a7779 doc
-Message-ID: <20240531-relocate-sassy-fd31e418845b@spud>
-References: <20240531133604.1380-1-ramona.nechita@analog.com>
- <20240531133604.1380-2-ramona.nechita@analog.com>
- <20240531-dairy-king-5a4e6c09b670@spud>
+	b=W0I6x00J/49wxEJY5mcGi+Ee/7ux9OkCg8FKdonfy6EHM4jhdUVuzdONymdlpKvoa
+	 GC8SiOP7VGH+GsJb9WHz3jJAhEYw24DoZ3L8lc3oS1SEna9SpKZV0cl8AQ3qLKGRBH
+	 pblskE9F1L3aHhMiNkV23IRI16CfGEMtMXzgXWsQaSozT/QEzI2BUOXdfqeP3Hef/b
+	 yYlqImxFw692YnUyWCX34dNyJlQSGj9+LpJdleiNjzYjmuSiF+eDD2p6V0w4rFEXZR
+	 QtUFUvPOxesHvbFgsKtQkq1BVEQdpash+aQUG4CB31lNGuG/g14OVNzrgNZZ35PIGv
+	 TRtfkm5uNgHXVhmFGokaTjZpTpeJfijDwgWQcITARdycPmJpfZXcXYeUjsqvpGUcY7
+	 ChmllTTE/rw3uLw9e3Bla1reamgTVCTBmj7Hia3f+FR2C2NcVtWklys1aK5QX1ddiR
+	 5pKL6DuP/fHP08iXsMEZXYExJu9jieS4Gig6F+vSqbDuPvgclVwANMax9xrUSHPmy4
+	 NW4zWpYjcl0dOiBYF3xfKFxiOlcoHUyMgm+aXcMPfTrigItdAYfzL+R/TjVodZD8X+
+	 wCf/UJJDCSPfgKzzDcXtAxrurLzqETi3D1fzENYGR2p46Tw3f1MT9tzVJDow/ivMV3
+	 yor/Ui+B20oEvb7+cOgWJMaU=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id EB2BC40E01E8;
+	Fri, 31 May 2024 14:54:28 +0000 (UTC)
+Date: Fri, 31 May 2024 16:54:23 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+	linux-coco@lists.linux.dev, svsm-devel@coconut-svsm.dev,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Michael Roth <michael.roth@amd.com>,
+	Ashish Kalra <ashish.kalra@amd.com>
+Subject: Re: [PATCH v4 15/15] x86/sev: Allow non-VMPL0 execution when an SVSM
+ is present
+Message-ID: <20240531145423.GLZlnkn4JHSyh4-G8P@fat_crate.local>
+References: <cover.1713974291.git.thomas.lendacky@amd.com>
+ <e377d148acac799f6905fc544fbb8bf2ed76e078.1713974291.git.thomas.lendacky@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="3hx+xfsV8K1ufwsd"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240531-dairy-king-5a4e6c09b670@spud>
+In-Reply-To: <e377d148acac799f6905fc544fbb8bf2ed76e078.1713974291.git.thomas.lendacky@amd.com>
 
+On Wed, Apr 24, 2024 at 10:58:11AM -0500, Tom Lendacky wrote:
+> @@ -624,8 +626,12 @@ void sev_enable(struct boot_params *bp)
+>  		 * modifies permission bits, it is still ok to do so currently because Linux
+>  		 * SNP guests running at VMPL0 only run at VMPL0, so VMPL1 or higher
+>  		 * permission mask changes are a don't-care.
+> +		 *
+> +		 * Running at VMPL0 is not required if an SVSM is present and the hypervisor
+> +		 * supports the required SVSM GHCB events.
+>  		 */
+> -		if (rmpadjust((unsigned long)&boot_ghcb_page, RMP_PG_SIZE_4K, 1))
+> +		if (rmpadjust((unsigned long)&boot_ghcb_page, RMP_PG_SIZE_4K, 1) &&
+> +		    !(vmpl && (hv_features & GHCB_HV_FT_SNP_MULTI_VMPL)))
+>  			sev_es_terminate(SEV_TERM_SET_LINUX, GHCB_TERM_NOT_VMPL0);
+>  	}
 
---3hx+xfsV8K1ufwsd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Let's make that more readable:
 
-On Fri, May 31, 2024 at 03:51:56PM +0100, Conor Dooley wrote:
-> On Fri, May 31, 2024 at 04:35:52PM +0300, Ramona Alexandra Nechita wrote:
-> > Add dt bindings for adc ad7779.
-> >=20
-> > Signed-off-by: Ramona Alexandra Nechita <ramona.nechita@analog.com>
-> > ---
-> >  .../ABI/testing/sysfs-bus-iio-adc-ad777x      | 23 +++++
-> >  .../bindings/iio/adc/adi,ad7779.yaml          | 87 +++++++++++++++++++
-> >  2 files changed, 110 insertions(+)
-> >  create mode 100644 Documentation/ABI/testing/sysfs-bus-iio-adc-ad777x
-> >  create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ad777=
-9.yaml
-> >=20
-> > diff --git a/Documentation/ABI/testing/sysfs-bus-iio-adc-ad777x b/Docum=
-entation/ABI/testing/sysfs-bus-iio-adc-ad777x
-> > new file mode 100644
-> > index 000000000000..0a57fda598e6
-> > --- /dev/null
-> > +++ b/Documentation/ABI/testing/sysfs-bus-iio-adc-ad777x
-> > @@ -0,0 +1,23 @@
-> > +What:		/sys/bus/iio/devices/iio:deviceX/filter_type_available
-> > +KernelVersion:  6.1
-> > +Contact:	linux-iio@vger.kernel.org
-> > +Description:
-> > +		Reading returns a list with the possible filter modes. Only supporte=
-d by
-> > +		AD7771.
-> > +
-> > +		  * "sinc3"	- The digital sinc3 filter implements three main notches=
-, one at
-> > +				the maximum ODR (128 kHz or 32 kHz, depending on the
-> > +				power mode) and another two at the ODR frequency selected to
-> > +				stop noise aliasing into the pass band.
-> > +
-> > +		  * "sinc5"	- The sinc5 filter implements five notches, one at
-> > +				the maximum ODR (128 kHz or 32 kHz, depending on the
-> > +				power mode) and another four at the ODR frequency
-> > +				selected to stop noise aliasing into the pass band.
-> > +
-> > +What:		/sys/bus/iio/devices/iio:deviceX/filter_type
-> > +KernelVersion:  6.1
-> > +Contact:	linux-iio@vger.kernel.org
-> > +Description:
-> > +		Set the filter mode of the differential channel. The current samplin=
-g_frequency
-> > +		is set according to the filter range. Only supported by AD7771.
->=20
-> This patch is really confusing to me. Why is there a file documenting
-> the sysfs interface for a driver that isn't in the tree? Shouldn't this
-> patch be part of a series that adds the driver? I suggest you speak to
-> Nuno or another collogue about how to submit a series.
+diff --git a/arch/x86/boot/compressed/sev.c b/arch/x86/boot/compressed/sev.c
+index fb1e60165cd1..157f749faba0 100644
+--- a/arch/x86/boot/compressed/sev.c
++++ b/arch/x86/boot/compressed/sev.c
+@@ -610,8 +610,10 @@ void sev_enable(struct boot_params *bp)
+ 	 * features.
+ 	 */
+ 	if (sev_status & MSR_AMD64_SEV_SNP_ENABLED) {
+-		u64 hv_features = get_hv_features();
++		u64 hv_features;
++		int rmpadj_ret;
+ 
++		hv_features = get_hv_features();
+ 		if (!(hv_features & GHCB_HV_FT_SNP))
+ 			sev_es_terminate(SEV_TERM_SET_GEN, GHCB_SNP_UNSUPPORTED);
+ 
+@@ -626,11 +628,15 @@ void sev_enable(struct boot_params *bp)
+ 		 * modifies permission bits, it is still ok to do so currently because Linux
+ 		 * SNP guests running at VMPL0 only run at VMPL0, so VMPL1 or higher
+ 		 * permission mask changes are a don't-care.
+-		 *
++		 */
++		rmpadj_ret = rmpadjust((unsigned long)&boot_ghcb_page, RMP_PG_SIZE_4K, 1);
++
++		/*
+ 		 * Running at VMPL0 is not required if an SVSM is present and the hypervisor
+ 		 * supports the required SVSM GHCB events.
+ 		 */
+-		if (rmpadjust((unsigned long)&boot_ghcb_page, RMP_PG_SIZE_4K, 1) &&
++
++		if (rmpadj_ret &&
+ 		    !(vmpl && (hv_features & GHCB_HV_FT_SNP_MULTI_VMPL)))
+ 			sev_es_terminate(SEV_TERM_SET_LINUX, GHCB_TERM_NOT_VMPL0);
+ 	}
 
-Colleague*, auto accepting vim's first spelling suggestion strikes again
-:)
+> -static int __init report_cpuid_table(void)
+> +static void __init report_cpuid_table(void)
+>  {
+>  	const struct snp_cpuid_table *cpuid_table = snp_cpuid_get_table();
+>  
+>  	if (!cpuid_table->count)
+> -		return 0;
+> +		return;
+>  
+>  	pr_info("Using SNP CPUID table, %d entries present.\n",
+>  		cpuid_table->count);
+>  
+>  	if (sev_cfg.debug)
+>  		dump_cpuid_table();
+> +}
+> +
+> +static void __init report_vmpl_level(void)
+> +{
+> +	if (!cc_platform_has(CC_ATTR_GUEST_SEV_SNP))
+> +		return;
+> +
+> +	pr_info("SNP running at VMPL%u.\n", vmpl);
+> +}
+> +
+> +static int __init report_snp_info(void)
+> +{
+> +	report_vmpl_level();
+> +	report_cpuid_table();
+>  
+>  	return 0;
+>  }
+> -arch_initcall(report_cpuid_table);
+> +arch_initcall(report_snp_info);
 
---3hx+xfsV8K1ufwsd
-Content-Type: application/pgp-signature; name="signature.asc"
+Zap one more silly helper:
 
------BEGIN PGP SIGNATURE-----
+diff --git a/arch/x86/kernel/sev.c b/arch/x86/kernel/sev.c
+index 7955c024d5d7..ff5a32b0b21c 100644
+--- a/arch/x86/kernel/sev.c
++++ b/arch/x86/kernel/sev.c
+@@ -2356,32 +2356,23 @@ static void dump_cpuid_table(void)
+  * sort of indicator, and there's not really any other good place to do it,
+  * so do it here.
+  */
+-static void __init report_cpuid_table(void)
++static int __init report_snp_info(void)
+ {
+ 	const struct snp_cpuid_table *cpuid_table = snp_cpuid_get_table();
+ 
+ 	if (!cpuid_table->count)
+-		return;
++		return 0;
+ 
+ 	pr_info("Using SNP CPUID table, %d entries present.\n",
+ 		cpuid_table->count);
+ 
+ 	if (sev_cfg.debug)
+ 		dump_cpuid_table();
+-}
+ 
+-static void __init report_vmpl_level(void)
+-{
+ 	if (!cc_platform_has(CC_ATTR_GUEST_SEV_SNP))
+-		return;
++		return 0;
+ 
+ 	pr_info("SNP running at VMPL%u.\n", vmpl);
+-}
+-
+-static int __init report_snp_info(void)
+-{
+-	report_vmpl_level();
+-	report_cpuid_table();
+ 
+ 	return 0;
+ }
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZlnkhQAKCRB4tDGHoIJi
-0nXXAP966lZ8z3VVf9rnxuQw1i1VXpZKPKxSQiG466XA5dsYqAD+I8LN4L4lVZig
-X0B+rTyY5jhEO206qTbesfcpsvoivQ4=
-=D6pP
------END PGP SIGNATURE-----
+-- 
+Regards/Gruss,
+    Boris.
 
---3hx+xfsV8K1ufwsd--
+https://people.kernel.org/tglx/notes-about-netiquette
 
