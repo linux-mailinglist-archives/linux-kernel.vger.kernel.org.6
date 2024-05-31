@@ -1,89 +1,74 @@
-Return-Path: <linux-kernel+bounces-196772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 808948D61AF
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:26:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2E3B8D61B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:26:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B23251C240A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:26:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E0B9281EC1
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:26:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB33715884E;
-	Fri, 31 May 2024 12:25:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A3AE1586D5;
+	Fri, 31 May 2024 12:26:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mff.cuni.cz header.i=@mff.cuni.cz header.b="ZuTSZMJe"
-Received: from smtp1.ms.mff.cuni.cz (smtp-in1.ms.mff.cuni.cz [195.113.20.234])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="vBCRKEsd"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8C2F39FF3;
-	Fri, 31 May 2024 12:25:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.113.20.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC9271581F5;
+	Fri, 31 May 2024 12:26:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717158343; cv=none; b=GNaWJVw7e2M0N/UctZhd+v3q6BkjFfAkDBL7WbcimOSplnAS9aaQHAJL+Ez3vatMsvKi/oBZQPsMBBgAmc/NbFZLbgDkHAkBtjmOsD4SnKwOVZU76mpOY/tKp7hILogWIpCgSEotHuKNO7JnqN9/wdYe6Vj1Xcl7azlcrOO0cbQ=
+	t=1717158408; cv=none; b=Cr0hP6LblxC0VZqifwL08oBfwBdlcMNwimCDM5iz9FmnSuCLU0de232vyDrg56Gc2jk/OzEI0q4x1ABAHpR0pb5MCRbsD3zZGX4/kk8pwv2TDI6jCzgBzVq3n0aqBkfOFpr+yuhAt/VTiHy96G/bWQzxVCE5g6TooKv9u2JxFlc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717158343; c=relaxed/simple;
-	bh=j3zELr11wAr2T/LDeGR4AWOm8DUZXiiI/tAHtsZJGPY=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:Cc:Subject:To:
-	 References:In-Reply-To; b=CcdDjGYXDFCfV5xFavtaXGSjFX8VyjV/OLihfAwD2CI+mprW31huf/AxqbhgHKIaj4V7ckw5wsfWm6lFJkUUsNKdnGKH4g0MAm1fD88YxYAbtS2dT6O3Ph5uk5jL3NFa+f5BsfVFfmQH8GYIOPeq2KG3iKpO1KT4rrgnMKXhxEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=matfyz.cz; spf=pass smtp.mailfrom=matfyz.cz; dkim=pass (2048-bit key) header.d=mff.cuni.cz header.i=@mff.cuni.cz header.b=ZuTSZMJe; arc=none smtp.client-ip=195.113.20.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=matfyz.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=matfyz.cz
-X-SubmittedBy: id balejk@matfyz.cz subject /postalCode=110+2000/O=Univerzita+20Karlova/street=Ovocn+5CxC3+5CxBD+20trh+20560/5/ST=Praha,+20Hlavn+5CxC3+5CxAD+20m+5CxC4+5Cx9Bsto/C=CZ/CN=Karel+20Balej/emailAddress=balejk@matfyz.cz
-	serial F5FD910E8FE2121B897F7E55B84E351D
-	issued by /C=NL/O=GEANT+20Vereniging/CN=GEANT+20Personal+20CA+204
-	auth type TLS.CUNI
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mff.cuni.cz;
-	s=submission; t=1717158298; x=1718458298;
-	bh=j3zELr11wAr2T/LDeGR4AWOm8DUZXiiI/tAHtsZJGPY=; h=From;
-	b=ZuTSZMJet4i9VeXGsgo6zjXsySY2GbUUibTJC7Ft3KWuulP+uEAjcRIVaR7yd0rWS
-	 pQZiAX0yX3t2C3tjqCVbpjVj9Sgj+CmTwmtrE4qai92Ft1BH9smPUNoxQjFj9NVfQ5
-	 cClmSeUjBJTEOfUUCJBkkFBrvjf1IB+hRpV5DHwInaGLREbDFNMjvLdb3IQuNJnjUy
-	 WA+sFZEZgggocfo044c45cOFkBnjadDcFtKkHthi3QDR+r3rMmv4oet2gA39RuBNjr
-	 Q/46nAXZ2whnqDJoo1RnF0cewzUE83si5m4xubDbf1tFChkiImtzQqlIdtn3Uu0q+4
-	 HbD8YLenRzV5g==
-Received: from localhost (koleje-wifi-0030.koleje.cuni.cz [78.128.191.30])
-	(authenticated)
-	by smtp1.ms.mff.cuni.cz (8.16.1/8.16.1) with ESMTPS id 44VCOusK091417
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=OK);
-	Fri, 31 May 2024 14:24:58 +0200 (CEST)
-	(envelope-from balejk@matfyz.cz)
+	s=arc-20240116; t=1717158408; c=relaxed/simple;
+	bh=tyjiJhJUky+P95f/gBMZegAOq44q9U06Rmp8c34+qxU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gTDNjAZiUdrqRTM6+5n0+BPe988BDTeqCKvTHw0ko4f5olYYZkaH7cPVYvR+J0VcHIRvIpMVU2MJBXLS/5I9odrnqCjRelj7SpyQBtK9A+KC9K5oD9etM0R0WWl2wmHF4e4uWaKGrs8Ou4CPIcp+/IWWZ4+WKcP850Q0BoKA/xk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=vBCRKEsd; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Ya0JKaaN/iqn+GC8hMfSZ/1c+tmy47dUnxaIMYg9sxE=; b=vBCRKEsd4jIRlt9sE5TtUB94xC
+	EWnNrKH7Kej4zEeq1Aeex2t1LFk6yqgwXPCfV4axCY8NaMugJlioi2Q3Vlmv7YS+S+H9OaPDlKW7y
+	YKoK6LpAmvdwAqA1YroY6vYlrpGf37yB1fruVBrckHLj+DZlBdJxX/X5wcgGczK0AqBDz5XMvB37s
+	gf/wQ8xRIFPJelgti81P4TC+Sh3wn95nwmmTUwvy+mOsCrz7P1uZIgQNxOEfA8jxLdUxRtnX7y8me
+	Fqkyyybz3FBACwGlYRyv5QF5szIvVBLiLGtx++5gxFBIuISkNdUsR/+9rwSoduQ4NPkLf9mdMZ/5U
+	JAvT1jGA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sD1LG-0000000ABnv-3ddw;
+	Fri, 31 May 2024 12:26:42 +0000
+Date: Fri, 31 May 2024 05:26:42 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, djwong@kernel.org, hch@infradead.org,
+	brauner@kernel.org, david@fromorbit.com, chandanbabu@kernel.org,
+	jack@suse.cz, willy@infradead.org, yi.zhang@huawei.com,
+	chengzhihao1@huawei.com, yukuai3@huawei.com
+Subject: Re: [RFC PATCH v4 0/8] iomap/xfs: fix stale data exposure when
+ truncating realtime inodes
+Message-ID: <ZlnCAo0aM8tP__hc@infradead.org>
+References: <20240529095206.2568162-1-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 31 May 2024 14:25:35 +0200
-Message-Id: <D1NTTT150IQO.CG5KVUTS4BU7@matfyz.cz>
-From: "Karel Balej" <balejk@matfyz.cz>
-Cc: "Rob Herring" <robh@kernel.org>,
-        "Krzysztof Kozlowski"
- <krzk+dt@kernel.org>,
-        "Conor Dooley" <conor+dt@kernel.org>,
-        "Dmitry
- Torokhov" <dmitry.torokhov@gmail.com>,
-        "Liam Girdwood"
- <lgirdwood@gmail.com>,
-        "Mark Brown" <broonie@kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-input@vger.kernel.org>,
-        =?utf-8?q?Duje_Mihanovi=C4=87?=
- <duje.mihanovic@skole.hr>,
-        <~postmarketos/upstreaming@lists.sr.ht>, <phone-devel@vger.kernel.org>
-Subject: Re: [PATCH v6 2/5] mfd: add driver for Marvell 88PM886 PMIC
-To: "Lee Jones" <lee@kernel.org>
-References: <20240504194632.2456-1-balejk@matfyz.cz>
- <20240504194632.2456-3-balejk@matfyz.cz>
- <20240531102409.GB1005600@google.com>
-In-Reply-To: <20240531102409.GB1005600@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240529095206.2568162-1-yi.zhang@huaweicloud.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Lee Jones, 2024-05-31T11:24:52+01:00:
-> Are you planning on seeing to Mark's review comments?
+Procedural question before I get into the actual review:  given we
+are close to -rc3 and there is no user of the iomap change yet,
+should we revert that for 6.10 and instead try again in 6.11 when
+the XFS bits are sorted out?
 
-Indeed, I'm hoping that I will be able to send it over the weekend.
-
-K. B.
 
