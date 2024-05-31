@@ -1,161 +1,232 @@
-Return-Path: <linux-kernel+bounces-197048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CF4E8D6579
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:15:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8870C8D6596
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:17:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0212C28DC40
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 15:15:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 029DA1F23E1F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 15:17:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0790752F71;
-	Fri, 31 May 2024 15:15:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A39D976EEA;
+	Fri, 31 May 2024 15:17:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EXb9hhmW"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="QYmjaZ6Y"
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A1022B9CE
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 15:15:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C1D76CDA3
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 15:17:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717168502; cv=none; b=sj0Zx07wBImMg2tXZg0XiLR3cGT3CWW3vwNfM5pJurGpFlWtFyn8P6O21iti/ZSGfEKJWTrKcp5xD8x4F1aPYUOAbloeNHtmLjEOO+YXSzWXGwXM3xStIc5fSBzv72Ve/q0FhmiwLf0zH1TyiRTnuMRfFctoulFspY47JV1Y818=
+	t=1717168671; cv=none; b=XkooxlLgc58ZRqa5XZFxvaSd4ir2uxvgYLlT5aiklzXwMQKkawGNS44zB3J6FTVubg3HCG77xzKbAPK9mpWuB+10ZSxA/tanJs5MajqjkP6NE+yCCMjKwng9TEydQTTe3mrT/4qJGTAkcB85AeIRJ7fWAKh+2Ufuayq4X/GrLzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717168502; c=relaxed/simple;
-	bh=6AWdQDWgGJAq7nQG8SBrgo8ckqxBhzid+AdmIGtHuRQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EJN8JWOjer6tqNHrtKBfTL8lAuVuBq/AA+tagZm4mHJHOzuakDLVFXE4Qqk1E1m6AhHsiSj8siFYBj4SSqqNcceaiCz7nFBuK10DKX5TOchAsC5taGJhmESHvuzC3sunv6pFXsgL93WoNVL9KvvbLPvz8GoK8KaMFu68imRi0RA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EXb9hhmW; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52b7b829bc7so2558405e87.2
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 08:15:00 -0700 (PDT)
+	s=arc-20240116; t=1717168671; c=relaxed/simple;
+	bh=2FbQqlVM8oqZ+0S3oyHvew+8sHHSKI9UUtypYdVKFeg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=imV9t9RaH/ybw5KLQlYs2eapGuCSvu3vhruAoL14p8bpz5yZsrMl5CC/S7jsjRtNDfzFhnWqI0PsN4ZN1lcLkJBUfReu94NcUcuq8uEVHmoABtocyEfrVU9Gs0rRd8NeDGH0aTotewb6rnSgcHjQKqhbkLd+8RhzJhCV/bLa5+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=QYmjaZ6Y; arc=none smtp.client-ip=209.85.128.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-627ea4e0becso20979367b3.0
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 08:17:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717168499; x=1717773299; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cYZlx/SHZV2mJQqNcs4xl6IWMBcVCucCDsZplS2erlM=;
-        b=EXb9hhmWLiGJLp3skyXGhVYbUHyhoAQn9Ni162xNDd40WZd2jU0lLjCKnnqyFTrjIC
-         23fzJAWFtxb+4LIKz4WcFwju72Hl5k+qYjHVE0p+uUbkpGImfK5tzGmStKUIA8gtRW1O
-         u74msF8YHz70Eso+3WWOmwmPYbBT2So4WCEuHK5jXY9lFjZvUiwtRcTmPDZzlpKgU870
-         DfgF+3XtvYuHp9ukjsYtv7DMHW6ROkxFvLLoKjuPkR6+vyALV0IDYCP8pYTlS67v2UGR
-         jk+GAtS3hHIMRjXBh8/Nx9OwYEZWh+5n9EYw7xt3Skjh/a0qkf+fFcOYX6i/dE6dVii6
-         1Zbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717168499; x=1717773299;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1717168668; x=1717773468; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cYZlx/SHZV2mJQqNcs4xl6IWMBcVCucCDsZplS2erlM=;
-        b=hmRUevf5Z8BUo1nnxubBcTRplEhCEhst5bNpGnr0uGMNVQSYofqM/pRt5xxRW+85XY
-         hlsoQ+VreIi3XOqzFL556HMPzrD/EZQEieRfMFa8vFthHzhC8vD7iO4NDn0T2l6TuQLn
-         rV5qLMyfiKGF0ed3gRjS+mOplfKF6p6CoriUts5FPbPIO7GQFozu3YpuaYQu5GC3r23m
-         bm5tV/iY6tRPcv7ucQneX4H6sW6p5HDG5qUJThYlKdlJprwnt78tAKZEyWqNtxpS9/w1
-         pkW3/n+y3xy52vF0VkVbdPx1FAcm7nYEJjvHCYItxGRUnDSYweedj4SLcXNhvWqCi6CZ
-         5zYA==
-X-Forwarded-Encrypted: i=1; AJvYcCW514KjivdT7IPY28M9Vu0a6GEsd4SdMI4tfp4FilN60tvrrjSNz4bZDhioY73Jip1RfOn+pGy6C9Z7IJOOKVEcekIjA9pnw7Qfl+r+
-X-Gm-Message-State: AOJu0YxPj2JIVj1zZ/B5xAujMQivwhV79cSl0l5zaAQg2OKABsBNABwK
-	zUGE8qRhjlj40jmPg9agTPHrY4aFixD/IJl7RwmrtOnJTxgCA5qIfrog4BfHyfI=
-X-Google-Smtp-Source: AGHT+IF3amjM7QbVKYZ487znDKdasgDtKWEpQZIm7AlZ0+nSfEili6eJCyHnqfDTJiqUUlkLLYvqFw==
-X-Received: by 2002:ac2:4568:0:b0:525:502a:acc6 with SMTP id 2adb3069b0e04-52b896bfa82mr1410726e87.52.1717168498685;
-        Fri, 31 May 2024 08:14:58 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52b84d7efa3sm357687e87.199.2024.05.31.08.14.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 May 2024 08:14:58 -0700 (PDT)
-Date: Fri, 31 May 2024 18:14:56 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Taniya Das <quic_tdas@quicinc.com>, Konrad Dybcio <konrad.dybcio@somainline.org>, 
-	Jonathan Marek <jonathan@marek.ca>, Del Regno <angelogioacchino.delregno@somainline.org>, 
-	Loic Poulain <loic.poulain@linaro.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/16] dt-bindings: clock: qcom: reference qcom-gcc.yaml
-Message-ID: <l73uszlhnhyamfuwm7f6bbmockttwihsylkkgbyedkdseznlka@mtr5c7r4nqt4>
-References: <20240531-dt-bindings-qcom-gcc-v1-0-b37d49fe1421@linaro.org>
+        bh=bqvRq7yENLDnnpdEq2cw3Le9KvoZpYlA6wAP6e79glQ=;
+        b=QYmjaZ6Yg0mFfGbb7js5zrKK1mF2xybYHbBaIW/NM/5lmicmtWPtnoGZzeQXpV5GHN
+         ERlxz0E0mxuPruAccJskiag+BE9YC0fFQa5jeq6zHZAJ9p4sPBX+WB8MCa7wSiSuWnT/
+         7Bh9P82EaRgy7VoF2nINxTNV/XQKJcKphJJZM6bVSC32yJvUMYK4q9OqmZ0twVLWOZlp
+         PAptdxaQ35qPL7Rw/c+tsNUT/R0n/ZvWm33x6pybbinc5i3RtugI9qXxR4EO2UcvGp23
+         ao2OCA6OLSCzqXXMZF6dVcuQDdKG4Ti35AXIQL0Ua0IEdZdjRe8pyXi4Ec+AMMd5sNUU
+         aAyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717168668; x=1717773468;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bqvRq7yENLDnnpdEq2cw3Le9KvoZpYlA6wAP6e79glQ=;
+        b=Gh70b8+lOHuTWy9W3W0+ZPsYkv73qRDjm2m6r7i8fIUWZ9QlZjhZSkLEUL7ZQW6nZg
+         eHQKhE9oFDe9Zbl1vLyX+N1qzR34QOuq2WuefOEu9nGbnx5cSc97D/x515VzPP0Gmh4c
+         Hv86m1nR8U6DGGd41+KrfUPux+OvBzqMoHHne8/GxG1otXlrYxPIT2YPBxUgY1tN/lZR
+         UJn6Nkcyewj6Hxevcqv/kCqeVXp69cVPsB68P50ZiG/Cw8wcgjF2sUpegRFPVC9G0X81
+         BWe8C/if3BGOR+Ra4iRFaEwQh6//AdkBxncbAzdcbH1CrRknbKle0h45hzKHMecCN1jD
+         27iA==
+X-Forwarded-Encrypted: i=1; AJvYcCX76OaoREQzrFwrGTdAKjopjLsj/PvCl3u6eKR0oAiWj6U99sqW/aFWEg/vZ+6Gfr0FIGIDkWyJRTEpcAAp34pp4x+9I1rvtW8rZrXT
+X-Gm-Message-State: AOJu0Yz8SHta1iJTKfHlkcbUx5/S4ozGC9IdbxSlZTicu/kTUL3cSCbP
+	whg4L+wnOebAnOQSE93QRx3V1XobZEhC3vv58xLUOBDiDckFBfWLYshMKWsXe5ayt7C/KMDOBOU
+	3PG136HZ3y+f/m6sojBf70n+UZazo1V44xotQUEB8sYoLHlt7a9A=
+X-Google-Smtp-Source: AGHT+IGoBZVRTn8ZPER/V7J2reQJ1YQXw2ghQEo3AzlqRvr5HIsKCAfC+0w/WBOKqoJQt56aaKBXQrPQC8Zk6per3zM=
+X-Received: by 2002:a81:f90f:0:b0:620:33dc:8357 with SMTP id
+ 00721157ae682-62c79708611mr20130947b3.18.1717168668126; Fri, 31 May 2024
+ 08:17:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240531-dt-bindings-qcom-gcc-v1-0-b37d49fe1421@linaro.org>
+References: <6d33a50a-eea5-4a40-8976-fd6beff191ad@gmail.com> <5d188452-fe93-48b3-9eb7-e0fbcb5e3648@famille-lp.fr>
+In-Reply-To: <5d188452-fe93-48b3-9eb7-e0fbcb5e3648@famille-lp.fr>
+From: Josef Bacik <josef@toxicpanda.com>
+Date: Fri, 31 May 2024 11:17:37 -0400
+Message-ID: <CAEzrpqfg6V5Pc-CcMqgceRapUWfb-HjAkFU9TUSEAoBNXbToFA@mail.gmail.com>
+Subject: Re: [BUG REPORT][BLOCK/NBD] Error when accessing qcow2 image through NBD
+To: Michel LAFON-PUYO <michel@famille-lp.fr>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org, nbd@other.debian.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 31, 2024 at 03:52:18PM +0200, Krzysztof Kozlowski wrote:
-> Hi,
-> 
-> Unify Qualcomm clock controllers by referencing qcom,gcc.yaml where
-> applicable.  Several existing bindings for these display/GPU/CAM clock
-> controllers already do it.
+On Fri, May 31, 2024 at 1:48=E2=80=AFAM Michel LAFON-PUYO <michel@famille-l=
+p.fr> wrote:
+>
+> Hi!
+>
+>
+> When switching from version 6.8.x to version 6.9.x, I've noticed errors w=
+hen mounting NBD device:
+>
+> mount: /tmp/test: can't read superblock on /dev/nbd0.
+>         dmesg(1) may have more information after failed mount system call=
+.
+>
+> dmesg shows this kind of messages:
+>
+> [    5.138056] mount: attempt to access beyond end of device
+>                 nbd0: rw=3D4096, sector=3D2, nr_sectors =3D 2 limit=3D0
+> [    5.138062] EXT4-fs (nbd0): unable to read superblock
+> [    5.140097] nbd0: detected capacity change from 0 to 1024000
+>
+> or
+>
+> [  144.431247] blk_print_req_error: 61 callbacks suppressed
+> [  144.431250] I/O error, dev nbd0, sector 0 op 0x0:(READ) flags 0x0 phys=
+_seg 4 prio class 0
+> [  144.431254] buffer_io_error: 66 callbacks suppressed
+> [  144.431255] Buffer I/O error on dev nbd0, logical block 0, async page =
+read
+> [  144.431258] Buffer I/O error on dev nbd0, logical block 1, async page =
+read
+> [  144.431259] Buffer I/O error on dev nbd0, logical block 2, async page =
+read
+> [  144.431260] Buffer I/O error on dev nbd0, logical block 3, async page =
+read
+> [  144.431273] I/O error, dev nbd0, sector 0 op 0x0:(READ) flags 0x0 phys=
+_seg 1 prio class 0
+> [  144.431275] Buffer I/O error on dev nbd0, logical block 0, async page =
+read
+> [  144.431278] I/O error, dev nbd0, sector 2 op 0x0:(READ) flags 0x0 phys=
+_seg 1 prio class 0
+> [  144.431279] Buffer I/O error on dev nbd0, logical block 1, async page =
+read
+> [  144.431282] I/O error, dev nbd0, sector 4 op 0x0:(READ) flags 0x0 phys=
+_seg 1 prio class 0
+> [  144.431283] Buffer I/O error on dev nbd0, logical block 2, async page =
+read
+> [  144.431286] I/O error, dev nbd0, sector 6 op 0x0:(READ) flags 0x0 phys=
+_seg 1 prio class 0
+> [  144.431287] Buffer I/O error on dev nbd0, logical block 3, async page =
+read
+> [  144.431289]  nbd0: unable to read partition table
+> [  144.435144] I/O error, dev nbd0, sector 0 op 0x0:(READ) flags 0x0 phys=
+_seg 1 prio class 0
+> [  144.435154] Buffer I/O error on dev nbd0, logical block 0, async page =
+read
+> [  144.435161] I/O error, dev nbd0, sector 2 op 0x0:(READ) flags 0x0 phys=
+_seg 1 prio class 0
+> [  144.435166] Buffer I/O error on dev nbd0, logical block 1, async page =
+read
+> [  144.435170] I/O error, dev nbd0, sector 4 op 0x0:(READ) flags 0x0 phys=
+_seg 1 prio class 0
+> [  144.436007] I/O error, dev nbd0, sector 6 op 0x0:(READ) flags 0x0 phys=
+_seg 1 prio class 0
+> [  144.436023] I/O error, dev nbd0, sector 0 op 0x0:(READ) flags 0x0 phys=
+_seg 1 prio class 0
+> [  144.436034]  nbd0: unable to read partition table
+> [  144.437036]  nbd0: unable to read partition table
+> [  144.438712]  nbd0: unable to read partition table
+>
+> It can be reproduced on v6.10-rc1.
+>
+> I've bisected the commits between v6.8 tag and v6.9 tag on vanilla master=
+ branch and found out that commit 242a49e5c8784e93a99e4dc4277b28a8ba85eac5 =
+seems to introduce this regression. When reverting this commit, everything =
+seems fine.
+>
+> There is only one change in this commit in drivers/block/nbd.c.
+>
+> -static int nbd_set_size(struct nbd_device *nbd, loff_t bytesize,
+> +static int __nbd_set_size(struct nbd_device *nbd, loff_t bytesize,
+>
+> +static int nbd_set_size(struct nbd_device *nbd, loff_t bytesize,
+> +               loff_t blksize)
+> +{
+> +       int error;
+> +
+> +       blk_mq_freeze_queue(nbd->disk->queue);
+> +       error =3D __nbd_set_size(nbd, bytesize, blksize);
+> +       blk_mq_unfreeze_queue(nbd->disk->queue);
+> +
+> +       return error;
+> +}
+> +
+>
+> To reproduce the issue, you need qemu-img and qemu-nbd. Executing the fol=
+lowing script (as root) triggers the issue. This is not systematic but runn=
+ing the script once or twice is generally sufficient to get an error.
+>
+> qemu-img create -f qcow2 test.img 500M
+> qemu-nbd -c /dev/nbd0 test.img
+> mkfs.ext4 /dev/nbd0
+> qemu-nbd -d /dev/nbd0
+> mkdir /tmp/test
+>
+> for i in {1..20} ; do
+>      qemu-nbd -c /dev/nbd0 test.img
+>      mount /dev/nbd0 /tmp/test
+>      umount /dev/nbd0
+>      qemu-nbd -d /dev/nbd0
+>      sleep 0.5
+> done
+>
+> Output of the script is similar to:
+>
+> /dev/nbd0 disconnected
+> /dev/nbd0 disconnected
+> /dev/nbd0 disconnected
+> /dev/nbd0 disconnected
+> /dev/nbd0 disconnected
+> /dev/nbd0 disconnected
+> /dev/nbd0 disconnected
+> mount: /tmp/test: can't read superblock on /dev/nbd0.
+>         dmesg(1) may have more information after failed mount system call=
+.
+>
+> Can you please have a look at this issue?
+> I can help at testing patches.
+>
 
-The series looks good to me with a single point in mind. You are writing
-that dispcc/videocc/etc are a variant of GCC. However GCC is a Global
-Clock Controller. What about renaming qcom,gcc.yaml to
-qcom,cc-common.yaml ? Then the rest makes total sense to me.
+This is just you racing with the connection being ready and the device
+being ready and you trying to mount it.  The timing has changed, if
+you look at this patch that I added for blk-tests you'll see the sort
+of thing that needs to be done
 
-> 
-> No external dependencies, this CAN be applied independently, but require
-> power-domain-cells in each binding, just like Dmitry's new set is doing.
-> 
-> https://lore.kernel.org/all/20240529-qcom-gdscs-v2-0-69c63d0ae1e7@linaro.org/
-> 
-> Best regards,
-> Krzysztof
-> 
-> ---
-> Krzysztof Kozlowski (16):
->       dt-bindings: clock: qcom,sm8450-videocc: reference qcom,gcc.yaml
->       dt-bindings: clock: qcom,videocc: reference qcom,gcc.yaml
->       dt-bindings: clock: qcom,dispcc-sc8280xp: reference qcom,gcc.yaml
->       dt-bindings: clock: qcom,dispcc-sm6350: reference qcom,gcc.yaml
->       dt-bindings: clock: qcom,dispcc-sm8x50: reference qcom,gcc.yaml
->       dt-bindings: clock: qcom,gpucc-sdm660: reference qcom,gcc.yaml
->       dt-bindings: clock: qcom,gpucc: reference qcom,gcc.yaml
->       dt-bindings: clock: qcom,msm8998-gpucc: reference qcom,gcc.yaml
->       dt-bindings: clock: qcom,qcm2290-dispcc: reference qcom,gcc.yaml
->       dt-bindings: clock: qcom,sc7180-dispcc: reference qcom,gcc.yaml
->       dt-bindings: clock: qcom,sc7280-dispcc: reference qcom,gcc.yaml
->       dt-bindings: clock: qcom,sdm845-dispcc: reference qcom,gcc.yaml
->       dt-bindings: clock: qcom,sm6115-dispcc: reference qcom,gcc.yaml
->       dt-bindings: clock: qcom,sm8450-dispcc: reference qcom,gcc.yaml
->       dt-bindings: clock: qcom,sm8550-dispcc: reference qcom,gcc.yaml
->       dt-bindings: clock: qcom,sm8450-gpucc: reference qcom,gcc.yaml
-> 
->  .../bindings/clock/qcom,dispcc-sc8280xp.yaml         | 20 ++++----------------
->  .../bindings/clock/qcom,dispcc-sm6350.yaml           | 20 ++++----------------
->  .../bindings/clock/qcom,dispcc-sm8x50.yaml           | 18 ++----------------
->  .../devicetree/bindings/clock/qcom,gpucc-sdm660.yaml | 20 ++++----------------
->  .../devicetree/bindings/clock/qcom,gpucc.yaml        | 20 ++++----------------
->  .../bindings/clock/qcom,msm8998-gpucc.yaml           | 20 ++++----------------
->  .../bindings/clock/qcom,qcm2290-dispcc.yaml          | 20 ++++----------------
->  .../bindings/clock/qcom,sc7180-dispcc.yaml           | 20 ++++----------------
->  .../bindings/clock/qcom,sc7280-dispcc.yaml           | 20 ++++----------------
->  .../bindings/clock/qcom,sdm845-dispcc.yaml           | 20 ++++----------------
->  .../bindings/clock/qcom,sm6115-dispcc.yaml           | 20 ++++----------------
->  .../bindings/clock/qcom,sm8450-dispcc.yaml           | 20 ++++----------------
->  .../devicetree/bindings/clock/qcom,sm8450-gpucc.yaml | 20 ++++----------------
->  .../bindings/clock/qcom,sm8450-videocc.yaml          | 20 ++++----------------
->  .../bindings/clock/qcom,sm8550-dispcc.yaml           | 20 ++++----------------
->  .../devicetree/bindings/clock/qcom,videocc.yaml      | 19 +++----------------
->  16 files changed, 61 insertions(+), 256 deletions(-)
-> ---
-> base-commit: b0afb900b7d235d879f8e8e4babfe77d9db76f2f
-> change-id: 20240531-dt-bindings-qcom-gcc-e2955fd60004
-> 
-> Best regards,
-> -- 
-> Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
+https://github.com/osandov/blktests/commit/698f1a024cb4d69b4b6cd5500b72efa7=
+58340d05
 
--- 
-With best wishes
-Dmitry
+A better option for you is to load the module with devices=3D0, and use
+the netlink thing so that the device doesn't show up until it's
+actually connected.  This problem exists because historically we used
+the device itself to get configured, instead of a control device that
+would then add the device once it is ready.  We can't change the old
+way, but going forward to avoid this style of problem you'll want to
+use nbds_max=3D0 and then use the netlink interface for configuration,
+that'll give you a much more "normal" experience.  Thanks,
+
+Josef
 
