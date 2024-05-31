@@ -1,84 +1,95 @@
-Return-Path: <linux-kernel+bounces-197026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D56D8D651F
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:05:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 753AE8D6523
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:07:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A0C91F270C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 15:05:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E94A528A4D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 15:07:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0EDC74068;
-	Fri, 31 May 2024 15:05:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D68FE745E7;
+	Fri, 31 May 2024 15:07:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FDKF8ibz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b="pmfaOblV"
+Received: from stravinsky.debian.org (stravinsky.debian.org [82.195.75.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFA5E7483;
-	Fri, 31 May 2024 15:05:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B32B61848;
+	Fri, 31 May 2024 15:07:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=82.195.75.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717167939; cv=none; b=XQ61WCNaCKpWdeaGR9/y/yFtTFczRUV6krZwujh95KBSzdURnsOc0Zx4UXEtHdf2e53AnE+8uiTUSvoYGoncN6kuZtsSpmZKozRN3xA9Ilf6TNLmGsBZji8ZyyJyk7Jar7V9xzwoXBDm+WA+6oOZkp2yMyVeff5co52zzQVgOGg=
+	t=1717168037; cv=none; b=Y+w+rep5+C+4FsWznutSJWnA+9IiitGaSdlIqOY6LEDI3H1LHT/2lnjXoqcVzmYzHg4Es+ckPzTwntf8XQkImm+d07cH9/ll4sId67a/aUn+7jYd0wf8FMOGqH4cDzUDqdzNe57xbt4Uv5kUfgEFt7WeQ9eMcLCw07ttkarnmso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717167939; c=relaxed/simple;
-	bh=V4IL9FSiAAaLAbgQkaH0wiehW1wHmmkNYh1G0Mg9i/U=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=CWcF/jN8aN9GIViM9MH/yJvPuPqFXcKxtRcRiZs8tF1iYA/sq4mofuf5ntdU+cwtX01JxVxyaE5PTmJNQiFNwrwXmUYhJhnGSCDvutmiaS4Bw7n09AhXCRGWFE5u3w838HiBzciwZzNOwTGK8XkLDlcChWocrQCtqSMizAMAvbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FDKF8ibz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7FB5C116B1;
-	Fri, 31 May 2024 15:05:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717167938;
-	bh=V4IL9FSiAAaLAbgQkaH0wiehW1wHmmkNYh1G0Mg9i/U=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=FDKF8ibzRSbpSFndvIT0WdMV2FWGLP7O+n6psQ4tzFDDZ981mSapldkAF0l85vKwc
-	 r3FSfVhUbjS9Tt8cVSFTGbPLd2Y9Jco7o1z4ZQrDSV6lBz/m7KsLwTOUW1urzW/9pw
-	 qeX2rUIps6B8eG6IL7SnoxON0XeUodaY0h3kCL1WLknvRqj5eSN6BtsmjTRZX/Whqw
-	 HoDqHAE1/4dx9C53QWXpp7Pv7HpZwWwRtbd384kcC5OKsbK+FQ/6zCumWblMS2b6uO
-	 skiZqpOzdKucUb8Sa6klbupI+XoaPY/lsC8UPqREObXg2F7k5fsMzWIk2wM86x8l4T
-	 ENYrB6qrir6Gg==
-From: Lee Jones <lee@kernel.org>
-To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
- Dave Hansen <dave@sr71.net>, Richard Purdie <rpurdie@linux.intel.com>, 
- linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: stable@vger.kernel.org
-In-Reply-To: <20240527132700.14260-1-ilpo.jarvinen@linux.intel.com>
-References: <20240527132700.14260-1-ilpo.jarvinen@linux.intel.com>
-Subject: Re: (subset) [PATCH 1/1] leds: ss4200: Convert PCIBIOS_* return
- codes to errnos
-Message-Id: <171716793655.1148553.64082330680622077.b4-ty@kernel.org>
-Date: Fri, 31 May 2024 16:05:36 +0100
+	s=arc-20240116; t=1717168037; c=relaxed/simple;
+	bh=LtImTQMzLCUIj4hcTXTNSS+JNJevJKuaZQIJroG3UQw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U8adokrZfPTtf0WCJ1fAS18Tk3XDZpD6Aiqztl7aR7Eu4+enLnNuc7PBpn63f+j6WMTZk77Knx4G298YTRnvsfgb1oVNNnb6OvrloRYozO2xNGS0dYfYqfp+hT6MY2znaYg/0EKzlqda5pmBVtTqPGalCAP8Dn1wYdjGe70Ib9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=none smtp.mailfrom=debian.org; dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b=pmfaOblV; arc=none smtp.client-ip=82.195.75.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=debian.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=debian.org;
+	s=smtpauto.stravinsky; h=X-Debian-User:In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=XOEKCyYff7smOUYYkJLuXoJt3Ho26Em9sCrJHHsHOGI=; b=pmfaOblVFosevlHaOQjdECRgdo
+	/PxkYUITbH8QzPAI5KvZBNT4lnhKLQtp+IqmJbZ710dSq75WQ4+yKuRam4wWWQbVXhwi1IO2uXu4j
+	1ZJzf4Cq7KfHOMml7/amMOkBQUfsrZQnyntXJv6HXK6qzWyYKd4ItDegohYzw9FWaHbb/RxeKnVQt
+	f2egHiKFTw5pn5r9XXN0ORLE8I9th3uILtihxCgdt7fNQUSxKH2tJlc19fHOX/fYengt03lY1dv2P
+	GFzkZLDKAetLquRHOTcANHF6WE2i0tzAviW+G4vYfX09eoyV/HaSyyYAeRt7GMLXQg/GNllOcNrqm
+	Ypb4mfEw==;
+Received: from authenticated user
+	by stravinsky.debian.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.94.2)
+	(envelope-from <ema@debian.org>)
+	id 1sD3qP-0044Q3-SS; Fri, 31 May 2024 15:07:02 +0000
+Date: Fri, 31 May 2024 17:06:59 +0200
+From: Emanuele Rocca <ema@debian.org>
+To: David Howells <dhowells@redhat.com>
+Cc: Andrea Righi <andrea.righi@canonical.com>,
+	Jeff Layton <jlayton@kernel.org>, Steve French <smfrench@gmail.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Paulo Alcantara <pc@manguebit.com>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Eric Van Hensbergen <ericvh@kernel.org>,
+	Christian Brauner <christian@brauner.io>,
+	linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+	v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	Latchesar Ionkov <lucho@ionkov.net>,
+	Christian Schoenebeck <linux_oss@crudebyte.com>,
+	Luca Boccassi <bluca@debian.org>, TJ <linux@iam.tj>
+Subject: Re: [PATCH v5 40/40] 9p: Use netfslib read/write_iter
+Message-ID: <ZlnnkzXiPPuEK7EM@ariel.home>
+References: <Zj0ErxVBE3DYT2Ea@gpd>
+ <20231221132400.1601991-1-dhowells@redhat.com>
+ <20231221132400.1601991-41-dhowells@redhat.com>
+ <531994.1716450257@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.12.4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <531994.1716450257@warthog.procyon.org.uk>
+X-Debian-User: ema
 
-On Mon, 27 May 2024 16:27:00 +0300, Ilpo Järvinen wrote:
-> ich7_lpc_probe() uses pci_read_config_dword() that returns PCIBIOS_*
-> codes. The error handling code assumes incorrectly it's a normal errno
-> and checks for < 0. The return code is returned from the probe function
-> as is but probe functions should return normal errnos.
+Hi again,
+
+On 2024-05-23 08:44, David Howells wrote:
+> commit 39302c160390441ed5b4f4f7ad480c44eddf0962
+> Author: David Howells <dhowells@redhat.com>
+> Date:   Wed May 22 17:30:22 2024 +0100
 > 
-> Remove < 0 from the check and convert PCIBIOS_* returns code using
-> pcibios_err_to_errno() into normal errno before returning it.
-> 
-> [...]
+>     netfs, 9p: Fix race between umount and async request completion
 
-Applied, thanks!
+I have tried this patch on top of 6.10-rc1 and unfortunately the problem
+persists.
 
-[1/1] leds: ss4200: Convert PCIBIOS_* return codes to errnos
-      commit: c1f69631a8f438997621c9ff322452b744525048
-
---
-Lee Jones [李琼斯]
-
+Meanwhile TJ (in CC) has been doing a lot of further investigation and
+opened https://bugzilla.kernel.org/show_bug.cgi?id=218916.
 
