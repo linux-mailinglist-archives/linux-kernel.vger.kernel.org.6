@@ -1,182 +1,106 @@
-Return-Path: <linux-kernel+bounces-197315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 496128D6933
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 20:49:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ED6278D6936
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 20:50:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9151286187
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:49:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FF73286D80
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:50:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CD517F7F6;
-	Fri, 31 May 2024 18:48:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 674427F7C6;
+	Fri, 31 May 2024 18:49:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iRXOkkXF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="gsZM7OMH"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BA031CA89;
-	Fri, 31 May 2024 18:48:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FA327E58C
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 18:49:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717181333; cv=none; b=iu4ymB+wQK/o/T6h7h/MGZtIVRR077LE/3CO9m5Dmgpp9317ECERr+JDoiZkSj/WkBATebWliw6D+ozHLVyHxVF83Mn0fFMyNEDX0LJIsqWqD2V4L16hLABkQ9JyeDXB9bspcDHU4xO22IKPdd/1BOwmIh/5Gm3qLmIu/axxHWQ=
+	t=1717181398; cv=none; b=FoHnuolQ97kgK4PDo7SMeR+iXfYW0Q0tc1AbzPEOgPWIbSkYFixgHj3NIFSM72DmPer79cGhWY95EohuA3msutSl5NKjJoI6Yq84jebeCVs3yfoOapUEGO/jGWoc9eUQh+HmHjqq/JT5HYqhlKZ9WU9P4lNdxm0lVOBxWP/L5Bs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717181333; c=relaxed/simple;
-	bh=InHs5IlHaGH8QXWp5MZ3tO39zwGHEU52P7U+Epwe+Nk=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=mmk2ShhVbQH/ac34lOusYuHhlyqDXwSyT7mjERcAdWLgu5bBqA5l55xg+fkRAicdfED/V9GzHFsUizmNYrCymt3PwSh34dvNDShLiWrGHY3RcYQP017IXD75Q/BNfUpso6G3W0vh7L00lFv9Lz+PZNTcOHPfG4DhUnrGbYqsR6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iRXOkkXF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BC4BC116B1;
-	Fri, 31 May 2024 18:48:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717181333;
-	bh=InHs5IlHaGH8QXWp5MZ3tO39zwGHEU52P7U+Epwe+Nk=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-	b=iRXOkkXFwmarXd5Mto/pTf8VHhCebO7MFmwDWoSvgRRF76ubvDqW0E3zq+C/4LiYZ
-	 vGY2BuaKzVXJ2nl2lBT0TWYH+ettez0yzrIn3wqQQ7gD04LwAPmj5PXrtxsGMhfRnD
-	 BNNaaLSwMqm2+xKVL1S4wm82k3298hgqDehtn7G90wiv+AZhuUeORVeI9g7jnkowSQ
-	 MJfP5pQH8VRafBAbO5mLD6gAAo5m+oOq31uTDhNltDxxfEdpOCiGlqy9oG8esdYYRq
-	 ikq15qgeLJRKQMXVgFU4NFY492ixFMuan1bl6jsxGR3/Cwtmn6Pf+SxNumdyTybWep
-	 pLZ4+oZNXRxlw==
-From: Kalle Valo <kvalo@kernel.org>
-To: Bjorn Andersson <andersson@kernel.org>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,  Bjorn Andersson
- <quic_bjorande@quicinc.com>,  neil.armstrong@linaro.org,  Konrad Dybcio
- <konrad.dybcio@linaro.org>,  Loic Poulain <loic.poulain@linaro.org>,
-  Mathieu Poirier <mathieu.poirier@linaro.org>,  Rob Herring
- <robh@kernel.org>,  Krzysztof Kozlowski <krzk+dt@kernel.org>,  Conor
- Dooley <conor+dt@kernel.org>,  linux-kernel@vger.kernel.org,
-  linux-arm-msm@vger.kernel.org,  wcn36xx@lists.infradead.org,
-  linux-wireless@vger.kernel.org,  linux-remoteproc@vger.kernel.org,
-  devicetree@vger.kernel.org,  Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 01/12] soc: qcom: add firmware name helper
-References: <20240521-qcom-firmware-name-v1-0-99a6d32b1e5e@linaro.org>
-	<20240521-qcom-firmware-name-v1-1-99a6d32b1e5e@linaro.org>
-	<a45b53f3-b2a5-4094-af5a-1281e0f94d2f@linaro.org>
-	<CAA8EJprxYsoug0ipRHTmX45vaFLzJCUF0dQWOc=QLs4y6uZ1rA@mail.gmail.com>
-	<878r03csxn.fsf@kernel.org>
-	<CAA8EJpqkgpCb57DGka0ckbPz=2YiaHzxmiNzG39ad5y6smgO5A@mail.gmail.com>
-	<Zk52IHqAfOnVDm50@hu-bjorande-lv.qualcomm.com>
-	<CAA8EJpogG5wW2mUUkYFtnnZLMVuneU4Wie6GBfYytSYe0zQ77Q@mail.gmail.com>
-	<pd3jgsd2ps73qd2h4rdxavd4zmyeqrqmslkbuwtgwlotm4tzgb@bb5japc6opcq>
-Date: Fri, 31 May 2024 21:48:47 +0300
-In-Reply-To: <pd3jgsd2ps73qd2h4rdxavd4zmyeqrqmslkbuwtgwlotm4tzgb@bb5japc6opcq>
-	(Bjorn Andersson's message of "Tue, 28 May 2024 21:28:54 -0500")
-Message-ID: <87ikytvmuo.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1717181398; c=relaxed/simple;
+	bh=+k2+ICccda+4JfnoM3HmzO3GJ/eyjrpDMyrYptT3BPc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZSVkX6c1uP0WREpQHnLBRO6LWoqRmPy1/pJ167P612TS4XtEJxMPK6I7c3GuxWNheyMJGD2X2Y7rOpRwVPMni9YMXBDlB1VwUYmPSqcjQ3d4PfeMYkPaSysKtAl8Ii02PlfOkONXYaY8se2k0uzZNFnplauTM+ao2zbfwsczb7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=gsZM7OMH; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a673a60f544so178853566b.3
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 11:49:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1717181395; x=1717786195; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=itW9AwEPlcHDr0HplS3dAf2ENLgkkIePx+3YdEWFfiU=;
+        b=gsZM7OMHVamDezpAJVj0Ago5LPa1Xqw1zIlsZq8lGZdxrhhdnAri5q1i7SoWQsmFkR
+         swBiVpQEW6C5J0DS/4x3tenDX9BAPTXtwYLD2+fInxHxB5mP5ncvnCJjfaeHN3z37RYe
+         AuaEJDo+yLIhgdX0yCbnTiO8qDECpAkd8D1do=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717181395; x=1717786195;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=itW9AwEPlcHDr0HplS3dAf2ENLgkkIePx+3YdEWFfiU=;
+        b=R72BUgUyJoM0hfsc786heyvFz0Ug4FkqzUWIYsTAssbvuiy6lF/lKdAiu9eRRifQ1O
+         Ced31WuZ0yOvaUNFx8cBw1ZkDRbQdQjvRvZhXr/qKtS9uGQ3grrsVWEGx8QoFBZQkEma
+         DK+buWT735hNKSVcDfM1jOQH6c1Q3VID2Uaiib1A7eGNLQFGZAK/O5Ldf/KULxc9AsJ/
+         593uqTFT0/lB0m8Fgp7nycuBYqeguJAkFDCnAeX8ieYqx0EnN3t/M4ukxWoB9qorUOBa
+         joluApa2aCWs3YjiI6uMD+dGOI2bz6r4FdWNqBmpUUjHI0P75O/oaWLvDq9wLyisOhsg
+         aF+A==
+X-Forwarded-Encrypted: i=1; AJvYcCWfyYdgakXC8LnZN5lMdNmJPEFZa3h0x6l8rfR3lovK9AEdZ4U57PMsWvrn1u0C//rdQJR8PJWIHVfyHhgbajUusgd/MB0kTUn4wEAY
+X-Gm-Message-State: AOJu0YwMjW8JwanLXf/I18+msYy9uu7K3+TG0t8fPka1yvQxm4krEeps
+	7/99FA6VgNw7C3xOLELahmPRu75y4XYCV540oN054g8W3DtSSwyq71ylmHHDMz+Yufl+p9Eg1XW
+	DlJnKSA==
+X-Google-Smtp-Source: AGHT+IEA0mabx5sjylXmqvd0/pRXRGMO7pRdj7JJRx5y5a/j78fiWo6CjCD7tKl59tOgIRRXffXXbA==
+X-Received: by 2002:a17:906:158c:b0:a62:2ef9:13d with SMTP id a640c23a62f3a-a681c5f1057mr192883366b.0.1717181395341;
+        Fri, 31 May 2024 11:49:55 -0700 (PDT)
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com. [209.85.218.54])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a67eab85f1asm112951566b.182.2024.05.31.11.49.54
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 31 May 2024 11:49:54 -0700 (PDT)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a6265d3ba8fso223141266b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 11:49:54 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXK4xCBF4hp5gI1UgLV7hkaZOkYhL7MXbmnk1eQyfNF4SjdaG/m7h4B985VhATe7bDHBbT2ApTjNiw1TfcMxTpGh4o8C1Rs5plxqzVD
+X-Received: by 2002:a17:906:378c:b0:a59:9db2:d988 with SMTP id
+ a640c23a62f3a-a6821d647bdmr200744566b.50.1717181394333; Fri, 31 May 2024
+ 11:49:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20240530132944.37714-1-pabeni@redhat.com> <171718117960.32259.11784216389309914917.pr-tracker-bot@kernel.org>
+In-Reply-To: <171718117960.32259.11784216389309914917.pr-tracker-bot@kernel.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 31 May 2024 11:49:38 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wh13CTo4vhVUMPSxEZsxJa8JW68Dv8=-Sd6V9Sg4fA42g@mail.gmail.com>
+Message-ID: <CAHk-=wh13CTo4vhVUMPSxEZsxJa8JW68Dv8=-Sd6V9Sg4fA42g@mail.gmail.com>
+Subject: Re: [GIT PULL] Networking for v6.10-rc2
+To: pr-tracker-bot@kernel.org
+Cc: Paolo Abeni <pabeni@redhat.com>, kuba@kernel.org, davem@davemloft.net, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Bjorn Andersson <andersson@kernel.org> writes:
-
-> On Mon, May 27, 2024 at 02:42:44PM GMT, Dmitry Baryshkov wrote:
+On Fri, 31 May 2024 at 11:46, <pr-tracker-bot@kernel.org> wrote:
 >
->> On Thu, 23 May 2024 at 01:48, Bjorn Andersson <quic_bjorande@quicinc.com> wrote:
->> >
->> > On Tue, May 21, 2024 at 03:08:31PM +0200, Dmitry Baryshkov wrote:
->> > > On Tue, 21 May 2024 at 13:20, Kalle Valo <kvalo@kernel.org> wrote:
->> > > >
->> > > > Dmitry Baryshkov <dmitry.baryshkov@linaro.org> writes:
->> > > >
->> > > > > On Tue, 21 May 2024 at 12:52, <neil.armstrong@linaro.org> wrote:
->> > > > >>
->> > > > >> On 21/05/2024 11:45, Dmitry Baryshkov wrote:
->> > > > >> > Qualcomm platforms have different sets of the firmware files, which
->> > > > >> > differ from platform to platform (and from board to board, due to the
->> > > > >> > embedded signatures). Rather than listing all the firmware files,
->> > > > >> > including full paths, in the DT, provide a way to determine firmware
->> > > > >> > path based on the root DT node compatible.
->> > > > >>
->> > > > >> Ok this looks quite over-engineered but necessary to handle the legacy,
->> > > > >> but I really think we should add a way to look for a board-specific path
->> > > > >> first and fallback to those SoC specific paths.
->> > > > >
->> > > > > Again, CONFIG_FW_LOADER_USER_HELPER => delays.
->> > > >
->> > > > To me this also looks like very over-engineered, can you elaborate more
->> > > > why this is needed? Concrete examples would help to understand better.
->> > >
->> > > Sure. During the meeting last week Arnd suggested evaluating if we can
->> > > drop firmware-name from the board DT files. Several reasons for that:
->> > > - DT should describe the hardware, not the Linux-firmware locations
->> > > - having firmware name in DT complicates updating the tree to use
->> > > different firmware API (think of mbn vs mdt vs any other format)
->> > > - If the DT gets supplied by the vendor (e.g. for
->> > > SystemReady-certified devices), there should be a sync between the
->> > > vendor's DT, linux kernel and the rootfs. Dropping firmware names from
->> > > DT solves that by removing one piece of the equation
->> > >
->> > > Now for the complexity of the solution. Each SoC family has their own
->> > > firmware set. This includes firmware for the DSPs, for modem, WiFi
->> > > bits, GPU shader, etc.
->> > > For the development boards these devices are signed by the testing key
->> > > and the actual signature is not validated against the root of trust
->> > > certificate.
->> > > For the end-user devices the signature is actually validated against
->> > > the bits fused to the SoC during manufacturing process. CA certificate
->> > > (and thus the fuses) differ from vendor to vendor (and from the device
->> > > to device)
->> > >
->> > > Not all of the firmware files are a part of the public linux-firmware
->> > > tree. However we need to support the rootfs bundled with the firmware
->> > > for different platforms (both public and vendor). The non-signed files
->> > > come from the Adreno GPU and can be shared between platforms. All
->> > > other files are SoC-specific and in some cases device-specific.
->> > >
->> > > So for example the SDM845 db845c (open device) loads following firmware files:
->> > > Not signed:
->> > > - qcom/a630_sqe.fw
->> > > - qcom/a630_gmu.bin
->> > >
->> > > Signed, will work for any non-secured sdm845 device:
->> > > - qcom/sdm845/a630_zap.mbn
->> > > - qcom/sdm845/adsp.mbn
->> > > - qcom/sdm845/cdsp.mbn
->> > > - qcom/sdm485/mba.mbn
->> > > - qcom/sdm845/modem.mbn
->> > > - qcom/sdm845/wlanmdsp.mbn (loaded via TQFTP)
->> > > - qcom/venus-5.2/venus.mbn
->> > >
->> > > Signed, works only for DB845c.
->> > > - qcom/sdm845/Thundercomm/db845c/slpi.mbn
->> > >
->> > > In comparison, the SDM845 Pixel-3 phone (aka blueline) should load the
->> > > following firmware files:
->> > > - qcom/a630_sqe.fw (the same, non-signed file)
->> > > - qcom/a630_gmu.bin (the same, non-signed file)
->> > > - qcom/sdm845/Google/blueline/a630_zap.mbn
->> >
->> > How do you get from "a630_zap.mbn" to this? By extending the lookup
->> > table for every target, or what am I missing?
->> 
->> More or less so. Matching the root OF node gives us the firmware
->> location, then it gets prepended to all firmware targets. Not an ideal
->> solution, as there is no fallback support, but at least it gives us
->> some points to discuss (and to decide whether to move to some
->> particular direction or to abandon the idea completely, making Arnd
->> unhappy again).
->> 
+> The pull request you sent on Thu, 30 May 2024 15:29:44 +0200:
 >
-> I understand the desire to not put linux-firmware-specific paths in the
-> DeviceTree
+> > git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git net-6.10-rc2
+>
+> has been merged into torvalds/linux.git:
 
-Me too.
+Technically it was merged 24+ hours ago, but I spent yesterday looking
+at the arm64 user access functions and for some reason had just
+forgotten to push out.
 
-> but I think I'm less keen on having a big lookup table in the
-> kernel...
+Oops.
 
-Yeah, also for me this feels wrong. But on the other hand I don't have
-anything better to suggest either...
-
--- 
-https://patchwork.kernel.org/project/linux-wireless/list/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+           Linus
 
