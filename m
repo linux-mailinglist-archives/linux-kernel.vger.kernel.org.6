@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-196441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AF988D5C56
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:08:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A74C8D5C60
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:09:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E54E3289724
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 08:08:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 060F2285862
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 08:09:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C919A81211;
-	Fri, 31 May 2024 08:07:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D133777114;
+	Fri, 31 May 2024 08:09:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rqGodKff"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y4UF9eOB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A6D078274;
-	Fri, 31 May 2024 08:07:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16957770E5;
+	Fri, 31 May 2024 08:09:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717142875; cv=none; b=qaFlr8xFGTyu1DSkTXmEojQD7oiEuT7QOkt2XIqHleA9tWZa/INjIp0Yaoh0lTyQYhUURjYcmYivz/DA2Oq2JgFsBV2blbcFqr2ywZ79DBF5RdRC8LZtUKVsV+/hy2RKxA/jUibvo77TZlxSf6BY1mmvOT/dsssQH7S9RcuuYds=
+	t=1717142944; cv=none; b=kkmhmaT51BbPCMWSgyIsZ82txPMwO5/bgcmS7KbL90aGa5gNV9qbgRzVCZXoN19eMTHa/KAzntdxAVMwvPqdIhL+91tPkZKGTZu+bQ+wiey6SsbxmDTNQPtWkjQL8XVRo7h713giHPCCMfz/uZSP8B5SJBg+Jut0nsrJquFKW3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717142875; c=relaxed/simple;
-	bh=VxI4hfrXrXA0xAIuC3B7s0C6dsDYxzaR+hTj2hBKvgw=;
+	s=arc-20240116; t=1717142944; c=relaxed/simple;
+	bh=6XdougGUT3zGlnahZrvQhK5ChOQxBPLkx7c4/tuNwFY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sG7+2+WTN9LnWnIhYagH9Lh9J9SFwFDhLdWLAGy4u4pNBtmL4C8FQHCUq7DFEWsJXzyIktlgmb5VDUO04dezLfzGBFCjRm9AuV9GCtsNYBT/NmrVw9aELqy6p7FSBnF4/a/Bw1ukXfcK+RAn01/IA8sNyuhIXYqPc4EAJUZm490=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rqGodKff; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24086C116B1;
-	Fri, 31 May 2024 08:07:51 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=tOjE99LMMixbdNgfGvMyejr69JYTXX0t59svrfisyPhLyJhXRYK+ToMDwranO0HCeHnUfQVggQzf2dm6TLr2SQKoi+PLS5pWhXj5fYQqvEsrjt3yuaLSn1O4Ilky7HZIZX/msDDzKCFRdi1J29GnyEJu59tvqY++wauMjMY9v9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y4UF9eOB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F516C116B1;
+	Fri, 31 May 2024 08:09:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717142874;
-	bh=VxI4hfrXrXA0xAIuC3B7s0C6dsDYxzaR+hTj2hBKvgw=;
+	s=k20201202; t=1717142943;
+	bh=6XdougGUT3zGlnahZrvQhK5ChOQxBPLkx7c4/tuNwFY=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=rqGodKffy4jUR2w3TxDrYqMeBHRujhARMAlSjWmFmL1v2ZBR0qoltU95Q5k4bkcVW
-	 lup6BccLpopaRKfolfGkCYoe0L07DQmIZ208c87zHJwM0QbFAyF2ou5/jIHXLa8Lwb
-	 VL6SjGo7jB8UPbVOi8vLWkDCiS8+H6jGt2spn7TmuIz7RiUDdBIfWvgjfhzGvTFRiS
-	 YjMa1FJbZHkOqlPwGT1ROk9PobG9S5zMCkDA6I/Vzbt8eHaXoMN/WFWR/47CLoEmQQ
-	 C8iCbQ1WHrvQKPWRhOmBkBmPvASwP0yfo8+aV9hZjCSEG8I3JKsUp+pUAnTx2xDQpY
-	 /oYjqOdxQFJtw==
-Message-ID: <9f3603d2-daff-435e-866d-ca07e47c3ccc@kernel.org>
-Date: Fri, 31 May 2024 10:07:50 +0200
+	b=Y4UF9eOBR1k6i1zHta8/DjaE1GqN3wNWE0ezC/BNossRc0uY72I5FT7pXgEswRTBv
+	 S0m5ethws5ymP+ckXCS0m9/k8f1BT8OUJ8wDXnpzWomo8doRd+nK+7K+DK27hiPsUe
+	 TnYZsCuvA2Dd0b3QSjuRy1pVFVafrSTDz2bjNZwuEOc7RTmKlKBJlpUV2vBvU3AWAq
+	 xSbnEMjLOHM4IIB4ACYdb2HxEItFm6/UvfVudyZJMb1uZWoMHTE9cz2QOrpcpHM/Q7
+	 HvoVjEAtPUjypqns4JRp1+hnqyWuACU+RMIPqyQs+3binWZYx0d1ZrS1Q1XoYR011y
+	 dp74O4zZgLlDw==
+Message-ID: <9b819121-55a9-4c53-b390-69931ba292e0@kernel.org>
+Date: Fri, 31 May 2024 10:08:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,12 +49,16 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] dt-bindings: gpio: mpc8xxx: Convert to yaml format
-To: Frank Li <Frank.Li@nxp.com>, robh@kernel.org
-Cc: brgl@bgdev.pl, conor+dt@kernel.org, devicetree@vger.kernel.org,
- imx@lists.linux.dev, krzk+dt@kernel.org, linus.walleij@linaro.org,
- linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240530165424.3173673-1-Frank.Li@nxp.com>
+Subject: Re: [PATCH 1/1] dt-bindings: pwm: fsl-ftm: Convert to yaml format
+To: Frank Li <Frank.Li@nxp.com>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
+ <ukleinek@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, "open list:PWM SUBSYSTEM"
+ <linux-pwm@vger.kernel.org>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Cc: imx@lists.linux.dev
+References: <20240528202025.2919358-1-Frank.Li@nxp.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -100,18 +104,20 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240530165424.3173673-1-Frank.Li@nxp.com>
+In-Reply-To: <20240528202025.2919358-1-Frank.Li@nxp.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 30/05/2024 18:54, Frank Li wrote:
-> Convert binding doc from txt to yaml.
+On 28/05/2024 22:20, Frank Li wrote:
+> Convert dt-bindings pwm-fsl-ftm.txt to yaml format.
 > 
-> Remove redundated "gpio1: gpio@2300000" example.
-> Add gpio-controller at example "gpio@1100".
+> Additional change during convert:
+> - "big-endian" is not required property.
+> - Add "sleep" to pinctrl-names.
+> - Change pinctrl-NNN to pinctrl-0 and pinctrl-1.
+> - Remove label "pwm0" in example.
 > 
 > Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
 
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
