@@ -1,126 +1,126 @@
-Return-Path: <linux-kernel+bounces-196950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 925798D6417
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:11:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D90238D641F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:12:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4686F1F27F19
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:11:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77DEC1F283AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:12:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CA5B15CD63;
-	Fri, 31 May 2024 14:11:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 724A616F282;
+	Fri, 31 May 2024 14:12:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZgtKZD3i"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="etrY+1R5"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04367145328;
-	Fri, 31 May 2024 14:11:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78CAC16D9AC;
+	Fri, 31 May 2024 14:12:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717164680; cv=none; b=hvh110ahmfzWiXP9tXv9vu/3SNvtu+3BLEceq3NV+yOGDP7xtnI2gOda0M7/eJCDPrEEaRKppWFeuWNeSC3VtbsNjXGugFPFySIY/jtJgcvzsl9YAa6j4s/X0gD1jVBladwAdLq12niF5+FZMdp88g2gOPZFfRGy+gm35rkEKOM=
+	t=1717164735; cv=none; b=Xlf9mPYPCUhjoOnF/JA5N4LNA4yvDsntXc4GRDkdGrl5JtTSjvMJfI4zR+nUaDWtf8G2ESFbU2NCiYNA0VI+5eLXZ/hW0ngfy+w0DkQpVKNj6w5JM4LXqabMQur4/C4iye38aO69SSmBNwkLnulLmcpfh+wg9DM758P8FEB0hE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717164680; c=relaxed/simple;
-	bh=yjI3iFmouPnWBxFK1wKDvl5O5Q+G36gJJ/9ZqesnSCI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rIopRBwty9+y1SdE7GIlCrU14qwrc/kEdT5Z/C6FzH1+MYYKeaPb+yaxyJSX4i35pdcabLhJ+DX2GwCogQ0I0PWW7uT7jqz6OXjy8V54ATLgnWzQQcpnrbQkjhRijhNCy1Aih3BLpFJShcILr1G968+RlideXGkzgrqMGKqioRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZgtKZD3i; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717164679; x=1748700679;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=yjI3iFmouPnWBxFK1wKDvl5O5Q+G36gJJ/9ZqesnSCI=;
-  b=ZgtKZD3iuebC2RNZ9aqqyBMwtC0E6plWdlhnt1cZOv9SihspKn7iE8Xk
-   GurqEwhIfyXKezz24wjHYE4FUkHcCF+kQsO+XciBbmLBDi5L30iEZS//M
-   N2S+6ssjmUQR0P/HMFqWBlCdxmobvCXtrKDPf70aE9R9LhVu+J00ONm3S
-   UMGXllLLgwz7GcST8UcBDZfPS3gO3B6H6lortrD1hWwyDYAU0vZOqC5gK
-   rj8tuXdXpWKwcbFKNR8xfgDEDl1ejA1oEOuscaujgh58U0y7uDnBpPlsx
-   PvSW5gjrWJhcoTy3di9hiXf68Z/PJBH0qnnYHbIyweLTPe3Wwutiw2mba
-   w==;
-X-CSE-ConnectionGUID: 0m/SIMn/QyCxetEIOlc5IQ==
-X-CSE-MsgGUID: 9/Jh7PtITnOVLFxRGhTXRA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="24370456"
-X-IronPort-AV: E=Sophos;i="6.08,204,1712646000"; 
-   d="scan'208";a="24370456"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 07:11:17 -0700
-X-CSE-ConnectionGUID: irsAJJ7oQDa/yNZcDVjIsQ==
-X-CSE-MsgGUID: AGIeMMVEQZOp7mUnq6TRog==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,204,1712646000"; 
-   d="scan'208";a="40724187"
-Received: from ls.sc.intel.com (HELO localhost) ([172.25.112.54])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 07:11:17 -0700
-Date: Fri, 31 May 2024 07:11:16 -0700
-From: Isaku Yamahata <isaku.yamahata@intel.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
-	"isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>,
-	"seanjc@google.com" <seanjc@google.com>,
-	"Huang, Kai" <kai.huang@intel.com>,
-	"sagis@google.com" <sagis@google.com>,
-	"isaku.yamahata@linux.intel.com" <isaku.yamahata@linux.intel.com>,
-	"Zhao, Yan Y" <yan.y.zhao@intel.com>,
-	"Aktas, Erdem" <erdemaktas@google.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"dmatlack@google.com" <dmatlack@google.com>,
-	"Yamahata, Isaku" <isaku.yamahata@intel.com>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>
-Subject: Re: [PATCH 10/16] KVM: x86/tdp_mmu: Support TDX private mapping for
- TDP MMU
-Message-ID: <20240531141116.GI386318@ls.amr.corp.intel.com>
-References: <9bc661643e3ce11f32f0bac78a2dbfd62d9cd283.camel@intel.com>
- <20240522234754.GD212599@ls.amr.corp.intel.com>
- <4a6e393c6a1f99ee45b9020fbd2ac70f48c980b4.camel@intel.com>
- <20240523000100.GE212599@ls.amr.corp.intel.com>
- <35b63d56fe6ebd98c61b7c7ca1680da91c28a4d0.camel@intel.com>
- <20240524075519.GF212599@ls.amr.corp.intel.com>
- <31a2b098797b3837597880d5827a727fee9be11e.camel@intel.com>
- <CABgObfa+vx3euEXwopBBzt7BEVT8MV7HuuLayRKxURnopO3f=w@mail.gmail.com>
- <b6217ba2f75366d25ff46cd72dcf671cdc57f340.camel@intel.com>
- <CABgObfYCnC2qoMHmKx7QK=pEoARfcGw=F-epXYT4z6uoJeH_-w@mail.gmail.com>
+	s=arc-20240116; t=1717164735; c=relaxed/simple;
+	bh=XLqZFjlEoqxOyPl9bFUh7Jqa2hmuAmBz32zTzjZrBpo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZyYEaKIYWaXc8LnJ6aiNKx4oWLHfyX6T/CGxqMXV44dajr67AkXsie3+qQzAwNYQC0xHxEeQQou+uJp7tDxT/cMlRDvzGb1y3Dd+5FOsCbNjhIV2RaGI3RubGNvxs6Q7oERM9rF81SVYbt7CaVGIaJ/yLLrABf3zPS1spGAB5A4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=etrY+1R5; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-701ae8698d8so1701899b3a.0;
+        Fri, 31 May 2024 07:12:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717164734; x=1717769534; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ykvp/0wm2JKYn1VhbfeNlnxDMxT2k1KfiM797oH+i0A=;
+        b=etrY+1R5LOUSB1HRNYYB/4c8RoCUD1HHCRZQ5PmTZiDeJdWD6HCfVAZKlx3pHJYSQ0
+         SQgHdbsqaQOySbeG5tv01869eBF0flTdOKMUQLMbRxhyfs0QpMeLgjIgZYTcxRoqPHXa
+         UQccCyK/8IiIfN3Lw7QozOKp7ryOim25M4GmBEb/KeSmbNRUh/pHIsGT9ru2Qwp5lwh2
+         kI4U6mJbCRNp4qmzzox0qwfiH2h+9h3/CjY/dhHn8snwjC7IncYl2AVXuabxHS3jbx6V
+         Gx05VQxHAjgREq/O6jM3CWoezVidQKxoQC3JJr7I15usUEwwifxjwMEZMGu5yA+4YOTC
+         lOIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717164734; x=1717769534;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ykvp/0wm2JKYn1VhbfeNlnxDMxT2k1KfiM797oH+i0A=;
+        b=iv0hqqewBZLg0sPJE0nad5fOIDN3mPN4Hqfvm/OkzCBqFZeIHUUz7C/kdxcD1Ox9n/
+         yOkaHfaFVIurmWkvsuBVrw0i5DyfF2mYvxeyqsWuf5/qfoN0UFEV2NdhMCr2K7pRzmsa
+         9Sn9c9/oTA9hoMvyRLOesYaCK2sxfqYQpKpBtYUr/eEUUtMx3uGKaiP5BzG1pn1raF9o
+         uuo6DCuZRtZx/L72H40bMdsdmui/RP0ZGB+b6nHSdX+axEDRi+zsooTKfgikxAvkqNqr
+         97S+BCre0GqEGjTVxScrrICD0vQ294GoYAGr3dOgbcJAfCjBFIDnHJkj2sCaLBPZyMiS
+         LKlw==
+X-Forwarded-Encrypted: i=1; AJvYcCV9JtLJ/RB8e3sTGjY9NZFu2bXEOYor/70iJ87RuzcWJ21JcKutpmnKtv9I1cd3VZgxGIvSOpww+upoZ64BVJaxK4rjD22flENU9/0tKYMCcu75zO4exHx+AbYOecCK6YWf/3x0GQ==
+X-Gm-Message-State: AOJu0Yw1/2r2tZ4Eu4OK8Vbmm5FoBBjOXex4U2poakwQuUrso+d6R4bX
+	dyuagqOpwIgaNZ8TpTNHHInb5PtCJxWg1MzhOnDd72EHXozsPBtDK959b68G7/8=
+X-Google-Smtp-Source: AGHT+IF9QK1BGyLlONfFHI2NZ/q0q6TlP168YBjy8Girmb88VacbO8e/f7OnxTM2vSORBcmJgAyihA==
+X-Received: by 2002:a05:6a00:1785:b0:6ea:f05d:d2ec with SMTP id d2e1a72fcca58-702477c2abamr2233447b3a.2.1717164733748;
+        Fri, 31 May 2024 07:12:13 -0700 (PDT)
+Received: from noel.flets-west.jp ([2405:6586:4480:a10:167:9818:d778:5c14])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70242b057besm1418103b3a.162.2024.05.31.07.12.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 May 2024 07:12:13 -0700 (PDT)
+From: Hironori KIKUCHI <kikuchan98@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Hironori KIKUCHI <kikuchan98@gmail.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Aleksandr Shubin <privatesub2@gmail.com>,
+	Cheo Fusi <fusibrandon13@gmail.com>,
+	linux-pwm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev
+Subject: [PATCH 0/5] Add support for Allwinner H616 PWM
+Date: Fri, 31 May 2024 23:11:32 +0900
+Message-ID: <20240531141152.327592-1-kikuchan98@gmail.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CABgObfYCnC2qoMHmKx7QK=pEoARfcGw=F-epXYT4z6uoJeH_-w@mail.gmail.com>
 
-On Wed, May 29, 2024 at 09:25:46AM +0200,
-Paolo Bonzini <pbonzini@redhat.com> wrote:
+Add support for the Allwinner H616 PWM, building on top of Aleksandr's
+Allwinner D1 PWM driver v9.
 
-> On Wed, May 29, 2024 at 4:14 AM Edgecombe, Rick P
-> <rick.p.edgecombe@intel.com> wrote:
-> >
-> > On Tue, 2024-05-28 at 19:47 +0200, Paolo Bonzini wrote:
-> > > On Tue, May 28, 2024 at 6:27 PM Edgecombe, Rick P
-> > > <rick.p.edgecombe@intel.com> wrote:
-> > > > > I don't see benefit of x86_ops.max_gfn() compared to kvm->arch.max_gfn.
-> > > > > But I don't have strong preference. Either way will work.
-> > > >
-> > > > The non-TDX VM's won't need per-VM data, right? So it's just unneeded extra
-> > > > state per-vm.
-> > >
-> > > It's just a cached value like there are many in the MMU. It's easier
-> > > for me to read code without the mental overhead of a function call.
-> >
-> > Ok. Since this has (optimization) utility beyond TDX, maybe it's worth splitting
-> > it off as a separate patch? I think maybe we'll pursue this path unless there is
-> > objection.
-> 
-> Yes, absolutely.
+Additionally, the 4th and 5th patches implement the proposed method
+for delegating the clock source and DIV_M selection to the Device Tree.
+While it works well without these patches with the original behavior,
+applying them enables fine-grained control of PWM resolution and
+prevents non-deterministic behavior dependent on the enabling order.
 
-Ok, let me cook an independent patch series for kvm-coco-queue. 
+I have only been able to test on H700 (H616 variant) using an
+oscilloscope. I would greatly appreciate it if someone could test
+this patch series on the D1 or other models.
+
+Regards,
+kikuchan.
+
+Hironori KIKUCHI (5):
+  pwm: sun20i: Use devm_pwmchip_alloc() helper
+  pwm: sun20i: Add support for Allwinner H616 PWM
+  dt-bindings: pwm: sun20i: Add compatible string for Allwinner H616 PWM
+  pwm: sun20i: Delegating the clock source and DIV_M to the Device Tree
+  dt-bindings: pwm: sun20i: Add options to select a clock source and
+    DIV_M
+
+ .../bindings/pwm/allwinner,sun20i-pwm.yaml    |  20 ++
+ drivers/pwm/pwm-sun20i.c                      | 326 ++++++++++--------
+ 2 files changed, 201 insertions(+), 145 deletions(-)
+
 -- 
-Isaku Yamahata <isaku.yamahata@intel.com>
+2.45.1
+
 
