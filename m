@@ -1,81 +1,62 @@
-Return-Path: <linux-kernel+bounces-196481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ED558D5CDA
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:36:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D1B28D5CCF
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:36:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C17AC1C2253C
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 08:36:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85C15B27CF5
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 08:36:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1C6E150985;
-	Fri, 31 May 2024 08:36:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 714231509A6;
+	Fri, 31 May 2024 08:35:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b="sKIM6G6W"
-Received: from EUR04-HE1-obe.outbound.protection.outlook.com (mail-he1eur04on2053.outbound.protection.outlook.com [40.107.7.53])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ec2Jh6WU"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D083814F9F9;
-	Fri, 31 May 2024 08:35:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.7.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717144563; cv=fail; b=dANZHARqG8kMa1nHH7p4hZ3imf2ejr3GTUvgTsdLvAI+iHMDxBTth65mOvkG1YswZxMa1foBGekM0/R+pTqPgsgZucbOgvrm5H+/SIKOvXw2j3xYEOG70gwfbWXIqheZbF6jm8dGEra0jtbaS+QlVCgezmSqHQNZ+mqN3vYaxYw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717144563; c=relaxed/simple;
-	bh=KklarpOiiIqqDhsmxtmSJPZNqcSKrY2BgIpQpqgWZig=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2A73150985;
+	Fri, 31 May 2024 08:35:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717144555; cv=none; b=VaB1P+Aj80Jz/V+FAua0OtO2GK1DqdXid/vHOZNd+IAtYPspf14h2VDXVcQyQOCgzHk+V/9FEnTFDrlqq4v13SEOlm2Ts2gOMStoZo4r4ASj33E3SXg38nhWWjaUudm44C0X74EHa0nvChznFlSSxNj34BZQL4b1Hh9+cLOlWbM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717144555; c=relaxed/simple;
+	bh=84Nm2YWQ5fO4QCzYRqYrIDHylCt4gvVooCTA+Wm8L54=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=LsXdvNq+yrhDXi0qr83BaFJxFyv8ciF8Bw6/g+0JnpicMcwKdGwVGOGJMLSEbUL1I+aY8Mz9o6jsokHx4JW0Qwtb307uvWe7pMLNqEfvPFmCHx4702XLIZtabil63Yz/EyzyjpsU4mMbZuSCy4/ouPsZWc41mwkOqoU1M9ot1FY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com; spf=pass smtp.mailfrom=de.bosch.com; dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b=sKIM6G6W; arc=fail smtp.client-ip=40.107.7.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=de.bosch.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=f7gJnVz0XrRgFQEsB3RKCjKHAF/2nvDwpqLVt81sBo0RRYXnzNfBb2g6kS2NxdO0Io4NR3Wo1zsqMcKimWONYZGE4J2ZNfS15lu1FIW3bAM1TKKQXtj1hmFRW1QJg6Wa44ZRC/Tjz3JzrU3EgqW0RKDz0FdTXKWNQbGph/Hg4VAhU17wx6Mk7wLARqtWCUODKZf5UvzCxwb0L5kSEOcjCQnvB9yAC13xm2vqIDsjkuiDvWT839hn5JM9IxKP2VgIXeRVF6oNmfW1oB0vPbzed7fSW8SmwiYh5rouVHAXZSt5GNuxBHjtSRwjSqtne2+Tjwos4uVox4i94RctaisYxA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xmS+E6WGFfUm0ZLVmaJK08+yN75qeoY93Jm0IrhoaWc=;
- b=Sm08FMqGcbCzB3ldIRHguOFo8VxbypjTgUS0DpSWh5RLxzbqtrI9A0YqaWCn0i42VS669FlUuCbQd2ZBc8dDlNuiLrlgSJKkupdUog0B0AHZRKg+9mBjruLKI0MidczPf8ctV2ygdB0Wv7rfE+/rStLitZfAlcAFCn3Zg04MBjHXITybrJP06m8dbwEXQCEt+/yQw1M//GVoPxYV2V3DoeHkbjHBOHQnjDUrJ11aiEbSu3ooF0Jzoo4qoaObq69VssjKUOVaBi3KiDep32GsSsUDrmVVBqb3+ELoj5vWnNghT0znESlskCSCdikYUYzWc5GBwJv5TabABf7TINeCZQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 139.15.153.205) smtp.rcpttodomain=redhat.com smtp.mailfrom=de.bosch.com;
- dmarc=pass (p=reject sp=none pct=100) action=none header.from=de.bosch.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=de.bosch.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xmS+E6WGFfUm0ZLVmaJK08+yN75qeoY93Jm0IrhoaWc=;
- b=sKIM6G6WO9dsg/ZMVYQQ9SCbOx5ZVWXiXBzfGR4XN+GGx80OHDuoBAoIXCsaCbUj/UNS+hbbaTx1qxpIL5soGB9/KLStyp3BP7YU32WzbmzEh4/odRAv903emXIfDHadihpL0UbnIbiV7FzgfiTL61bddbIqL0/QNbBuZghhzEBuKDoPFRdqspONrJkOXngr/JqAT8TeFW0KMFCGCPTBJTRfA1ev/NZYZLex+67INlOk46ZoEX1fv8AYRlL8VVOsjDKLwUyOB9nSVLSaEyOgJ9fluBTtjrMNRfmTP+SRVIJT6jljnlorks7m96sPbTuJBQjSPFJg2GX6qvx//aKmqg==
-Received: from AS9P251CA0011.EURP251.PROD.OUTLOOK.COM (2603:10a6:20b:50f::13)
- by GV1PR10MB8027.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:a1::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.24; Fri, 31 May
- 2024 08:35:55 +0000
-Received: from AM1PEPF000252DD.eurprd07.prod.outlook.com
- (2603:10a6:20b:50f:cafe::b2) by AS9P251CA0011.outlook.office365.com
- (2603:10a6:20b:50f::13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.24 via Frontend
- Transport; Fri, 31 May 2024 08:35:54 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 139.15.153.205)
- smtp.mailfrom=de.bosch.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=de.bosch.com;
-Received-SPF: Pass (protection.outlook.com: domain of de.bosch.com designates
- 139.15.153.205 as permitted sender) receiver=protection.outlook.com;
- client-ip=139.15.153.205; helo=eop.bosch-org.com; pr=C
-Received: from eop.bosch-org.com (139.15.153.205) by
- AM1PEPF000252DD.mail.protection.outlook.com (10.167.16.55) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7633.15 via Frontend Transport; Fri, 31 May 2024 08:35:54 +0000
-Received: from SI-EXCAS2001.de.bosch.com (10.139.217.202) by eop.bosch-org.com
- (139.15.153.205) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 31 May
- 2024 10:35:46 +0200
-Received: from [10.34.222.178] (10.139.217.196) by SI-EXCAS2001.de.bosch.com
- (10.139.217.202) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 31 May
- 2024 10:35:46 +0200
-Message-ID: <f397640b-23ed-412a-a1ac-59b7c56e5110@de.bosch.com>
-Date: Fri, 31 May 2024 10:35:35 +0200
+	 In-Reply-To:Content-Type; b=gTFP8sxkRYbWCHseXgJj9kLcPLDc7eVksugclg3yRIIUeGk66sy85Lg25/E3Va4FzMYBPex65f9ObocatZEH3pGXxIF5MqRS3eoOQREQi6nR/UoRozUMb3Ukt+qpMeZLB8CaZT15I+8BikewLPWIx0IpwfrII57KcPMP4QtAOTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ec2Jh6WU; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44V8CDMY010291;
+	Fri, 31 May 2024 08:35:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Dyan4G698Omco8Bulo5Sv+xvqHs+ooLOsBp/5AYjPmI=; b=ec2Jh6WU0Ttqn35o
+	0Qajs+FsqVxabKCOhVcHCHlyagLT26qfgbpj4dz2KI7b28xpqPpAXXU9WSQCwBeE
+	TmxyDEtpqTQp3UBsv3eeyHhu3X6t5lWwbLiPgwG3SKHPXj4g7oS9O2vp8DjSrIgT
+	7CH4aupDxJj6TYu208ISjfzMttQ0OhdZcw+5k+ofb0A842HuOisovFKhJhHSs4za
+	xL6g7vN1gFNGQd/DqS/t2aHbfGbnc+wvNIIOEs/uv4uX/0Qq/N+f1eCs57mIKpYt
+	143t/bcoGNDSIrOPl5TCYsWi4gThykIJBIVoCFSXsIV4SVxCPvGfjRptPSKh+KND
+	fgRk2w==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ybadxedw9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 31 May 2024 08:35:49 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44V8ZloU031219
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 31 May 2024 08:35:47 GMT
+Received: from [10.239.132.204] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 31 May
+ 2024 01:35:40 -0700
+Message-ID: <205de8b7-507f-45c9-83ce-6eceb1466cb2@quicinc.com>
+Date: Fri, 31 May 2024 16:35:38 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,159 +64,166 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 05/11] rust: add revocable objects
-To: Danilo Krummrich <dakr@redhat.com>, <gregkh@linuxfoundation.org>,
-	<rafael@kernel.org>, <bhelgaas@google.com>, <ojeda@kernel.org>,
-	<alex.gaynor@gmail.com>, <wedsonaf@gmail.com>, <boqun.feng@gmail.com>,
-	<gary@garyguo.net>, <bjorn3_gh@protonmail.com>, <benno.lossin@proton.me>,
-	<a.hindborg@samsung.com>, <aliceryhl@google.com>, <airlied@gmail.com>,
-	<fujita.tomonori@gmail.com>, <lina@asahilina.net>, <pstanner@redhat.com>,
-	<ajanulgu@redhat.com>, <lyude@redhat.com>
-CC: <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-pci@vger.kernel.org>
-References: <20240520172554.182094-1-dakr@redhat.com>
- <20240520172554.182094-6-dakr@redhat.com>
-Content-Language: en-US
-From: Dirk Behme <dirk.behme@de.bosch.com>
-In-Reply-To: <20240520172554.182094-6-dakr@redhat.com>
+Subject: Re: [PATCH v9 4/4] arm64: dts: qcom: aim300: add AIM300 AIoT
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: <andersson@kernel.org>, <konrad.dybcio@linaro.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>,
+        Qiang Yu <quic_qianyu@quicinc.com>,
+        Ziyue Zhang
+	<quic_ziyuzhan@quicinc.com>, <quic_chenlei@quicinc.com>
+References: <20240529100926.3166325-1-quic_tengfan@quicinc.com>
+ <20240529100926.3166325-5-quic_tengfan@quicinc.com>
+ <s5gt3p6zsd5ebrkop4dhd33tykln33f6ahu3pibymecxsmakyd@lg5wfgec6dat>
+From: Tengfei Fan <quic_tengfan@quicinc.com>
+In-Reply-To: <s5gt3p6zsd5ebrkop4dhd33tykln33f6ahu3pibymecxsmakyd@lg5wfgec6dat>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM1PEPF000252DD:EE_|GV1PR10MB8027:EE_
-X-MS-Office365-Filtering-Correlation-Id: cb294c52-74b4-42f7-d3d3-08dc814cafd9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|376005|36860700004|7416005|1800799015|82310400017|921011;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WFArelh1K1daSlNMZlZPTW04UWNtOENTdTJYa21mTW9GN3gwWkE1UDFiakFT?=
- =?utf-8?B?QVJjTE90aDQwZjU4UUVvZWlPaDltVVBGZUFGTFJZRVQxMGlBQVI2NTVnSHNT?=
- =?utf-8?B?RHB2N2RNQ2dPa3I2L1hYSnc2ajR2OFZ5Qk5maXYzL1Z1ekJ0UTJOR0g5dWRn?=
- =?utf-8?B?VU1EYWR2bVVaZWJSSk1OcGsxTTRrRzFTRksrZDByTzMzMVJUazZ5SW1QWFo2?=
- =?utf-8?B?a2RUQUxGRmI5V1FjNW5seHhZa2F5YmJrSC9OVWJ6ZzZ0ajF4dzdrQnNiMFFP?=
- =?utf-8?B?R3U1bTBCYVhiYzdpc0hjYlVLRjVXYWxjVloxVU0wN1M3WTJyNlpub1MrYWlB?=
- =?utf-8?B?TU9SeElRZWhlMGZKZ2JucS95YWFBZUVmaEw0YVgyWW1PYjk2R3llUEgxd0ZR?=
- =?utf-8?B?ZUlIeEtOWitJckR4N3NmbGkzMFE5QlpGdEVRWnRDY21YTnc0TnZRSFMrWmU3?=
- =?utf-8?B?TmR2L2hKQ2RRSWFxNlBzWEpuNHJIODBveUZSbys4cENJbFd3VWNBUHRFZnlo?=
- =?utf-8?B?NVFHWXBPZ2tkQ3loL3R1ZElBWVlPckxzdFVjZFZMNzliakV2Q28zamQ0YTMr?=
- =?utf-8?B?OFNCckxmZ1pEUGdJRTA4MWRWZHJtVDRLcEdXdkRmSmhrVWdaY3YxUHFXSldZ?=
- =?utf-8?B?eGl5ZStuSzI3M1Y0MnVKWFlvdjBkeXRXQXlCMzB6ek8yR2hvb3F2ZEdRK1RG?=
- =?utf-8?B?RVovRkQrTDNnSjBWc01HQ25QQ3dPOXdSK29ZTFBPVVJKbUx1Z2dLRW5LY1Jv?=
- =?utf-8?B?OHNUREthL2ZUcCs1WDVDWFI1akdsc09VMnVyOUNWczhUMVptYmI1aG1uMlRX?=
- =?utf-8?B?R1VVQkFUaUJrRi9janZYM3Q0ajVHYmFpUG90cXY5R05zN1VCK2txSDg0d0JT?=
- =?utf-8?B?N0EvaExlL0hENzVyeFcxTEJXRWRMNENvaHdaTnZQbGt3WHdLRUgveDBhNUtC?=
- =?utf-8?B?ait4NFpsaHo3U1NCdnFzeWNZWmNKZGtnc0VkR1RaR2VLNmxOVXQzTk82ZnRO?=
- =?utf-8?B?UGJMcDFRSFhNSHczRExNUktiaHNpVDVBK1kyRTRDc29KT0RZTVpRUGcwbDNx?=
- =?utf-8?B?OE9ub0RvaU0xcSszUUprZEk3VTk0R2hqN2x1Uzh5endHeXN1TWM5WEUzN3Vh?=
- =?utf-8?B?OWd4K3p3Zng5UHlLTE4xRGlubTZlbjAvZXdOSFpWL3FUcEMza1RzVzI1UThF?=
- =?utf-8?B?dUFqUHhQNWJNMTRpK1dqd2JUUUVneC9qVm85dVB1dTNnT0EvR3JRM2ZEaDdP?=
- =?utf-8?B?TFVXRjgrN09xalNkbVhuKzNNY3hIOFFBenVMSjdHeFMrT3NwQXBDUkxHTFJ4?=
- =?utf-8?B?VFJiaXhUYjJNMGRrWUhiRHhZRlduYkZkRVlPYXBFNGMzTkVsamxZN2FtWlhj?=
- =?utf-8?B?eUhybm9QYVJsdk9GVXRhRGdvQWltRXhZSzRQa2VtMXgxY0taOENzaFFQVWFG?=
- =?utf-8?B?MG0zS2xXOXZQald6aG4rekt4VXNmMHQ4NVdPRk9sZ3V5ald1SFQvbUowaWVK?=
- =?utf-8?B?M015ak9rMVZmeFVzWGNGaCtJTDF3NFlWVytMQmZrWTVDVG1PNTdweXlnUXg5?=
- =?utf-8?B?VkUxUVFOY0dlUXZZUmhhbWlBRDlsdFZSQkRtOHA2QjNlUnpPdVlEQ3F4N0ZU?=
- =?utf-8?B?QkZmUXMzUnoyMlM5VGtmejdHRGF4dHRxMEJwQ2NDQlQ5eGlscGZBSllyUnIv?=
- =?utf-8?B?dWw1WTJQLzUrSmJvVGJkSFZmbDhnU1A1Y0VDWEpmcldyS3A0R0FFSGpKUm9S?=
- =?utf-8?B?dmtNcU1vV3BxNEMrdENweVZwOWZ0dER1VWMvbUdqcFBwcG1jWEc4S3kzaVRn?=
- =?utf-8?B?QUpTM3pPNmpLbHFibnhWeDlBWGovWkVqOG02UFhjY08vWnA5K2liVWFya3c5?=
- =?utf-8?Q?EK2jZf0QBX83S?=
-X-Forefront-Antispam-Report:
-	CIP:139.15.153.205;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:eop.bosch-org.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(376005)(36860700004)(7416005)(1800799015)(82310400017)(921011);DIR:OUT;SFP:1101;
-X-OriginatorOrg: de.bosch.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 May 2024 08:35:54.6928
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: cb294c52-74b4-42f7-d3d3-08dc814cafd9
-X-MS-Exchange-CrossTenant-Id: 0ae51e19-07c8-4e4b-bb6d-648ee58410f4
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0ae51e19-07c8-4e4b-bb6d-648ee58410f4;Ip=[139.15.153.205];Helo=[eop.bosch-org.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	AM1PEPF000252DD.eurprd07.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR10MB8027
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Gv9fmC6ds-DDJJ7xdKga8-Gdz-CjJBwt
+X-Proofpoint-GUID: Gv9fmC6ds-DDJJ7xdKga8-Gdz-CjJBwt
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-31_04,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 phishscore=0
+ impostorscore=0 bulkscore=0 mlxlogscore=841 malwarescore=0
+ priorityscore=1501 mlxscore=0 suspectscore=0 spamscore=0
+ lowpriorityscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2405170001 definitions=main-2405310063
 
-On 20.05.2024 19:25, Danilo Krummrich wrote:
-> From: Wedson Almeida Filho <wedsonaf@gmail.com>
+
+
+On 5/29/2024 11:18 PM, Dmitry Baryshkov wrote:
+> On Wed, May 29, 2024 at 06:09:26PM +0800, Tengfei Fan wrote:
+>> Add AIM300 AIoT Carrier board DTS support, including usb, UART, PCIe,
+>> I2C functions support.
+>> Here is a diagram of AIM300 AIoT Carrie Board and SoM
+>>   +--------------------------------------------------+
+>>   |             AIM300 AIOT Carrier Board            |
+>>   |                                                  |
+>>   |           +-----------------+                    |
+>>   |power----->| Fixed regulator |---------+          |
+>>   |           +-----------------+         |          |
+>>   |                                       |          |
+>>   |                                       v VPH_PWR  |
+>>   | +----------------------------------------------+ |
+>>   | |                          AIM300 SOM |        | |
+>>   | |                                     |VPH_PWR | |
+>>   | |                                     v        | |
+>>   | |   +-------+       +--------+     +------+    | |
+>>   | |   | UFS   |       | QCS8550|     |PMIC  |    | |
+>>   | |   +-------+       +--------+     +------+    | |
+>>   | |                                              | |
+>>   | +----------------------------------------------+ |
+>>   |                                                  |
+>>   |                    +----+          +------+      |
+>>   |                    |USB |          | UART |      |
+>>   |                    +----+          +------+      |
+>>   +--------------------------------------------------+
+>>
+>> Co-developed-by: Qiang Yu <quic_qianyu@quicinc.com>
+>> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
+>> Co-developed-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
+>> Signed-off-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
+>> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
+>> ---
+>>   arch/arm64/boot/dts/qcom/Makefile             |   1 +
+>>   .../boot/dts/qcom/qcs8550-aim300-aiot.dts     | 322 ++++++++++++++++++
+>>   2 files changed, 323 insertions(+)
+>>   create mode 100644 arch/arm64/boot/dts/qcom/qcs8550-aim300-aiot.dts
 > 
-> This implements the Revocable and AsyncRevocable types.
+> [trimmed]
 > 
-> Revocable allows access to objects to be safely revoked at run time.
+>> +&remoteproc_adsp {
+>> +	firmware-name = "qcom/qcs8550/adsp.mbn",
+>> +			"qcom/qcs8550/adsp_dtbs.elf";
 > 
-> This is useful, for example, for resources allocated during device probe;
-> when the device is removed, the driver should stop accessing the device
-> resources even if other state is kept in memory due to existing
-> references (i.e., device context data is ref-counted and has a non-zero
-> refcount after removal of the device).
+> Please excuse me, I think I missed those on the previous run.
 > 
-> AsyncRevocable allows access to objects to be revoked without having to
-> wait for existing users to complete. This will be used to drop futures
-> in tasks when executors are being torn down.
+> adsp_dtb.mbn
+
+Currently, waht we have released is adsp_dtbs.elf. If we modify it to 
+adsp_dtb.mbn, it may cause the ADSP functionality can not boot normally.
+
 > 
-> Co-developed-by: Andreas Hindborg <a.hindborg@samsung.com>
-> Signed-off-by: Andreas Hindborg <a.hindborg@samsung.com>
-> Signed-off-by: Wedson Almeida Filho <wedsonaf@gmail.com>
-> Signed-off-by: Danilo Krummrich <dakr@redhat.com>
-> ---
->   rust/kernel/lib.rs       |   1 +
->   rust/kernel/revocable.rs | 441 +++++++++++++++++++++++++++++++++++++++
->   2 files changed, 442 insertions(+)
->   create mode 100644 rust/kernel/revocable.rs
+>> +	status = "okay";
+>> +};
+>> +
+>> +&remoteproc_cdsp {
+>> +	firmware-name = "qcom/qcs8550/cdsp.mbn",
+>> +			"qcom/qcs8550/cdsp_dtbs.elf";
 > 
-> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-> index 698121c925f3..d7d415429517 100644
-> --- a/rust/kernel/lib.rs
-> +++ b/rust/kernel/lib.rs
-> @@ -40,6 +40,7 @@
->   pub mod net;
->   pub mod prelude;
->   pub mod print;
-> +pub mod revocable;
->   mod static_assert;
->   #[doc(hidden)]
->   pub mod std_vendor;
-> diff --git a/rust/kernel/revocable.rs b/rust/kernel/revocable.rs
-> new file mode 100644
-> index 000000000000..71408039a117
-> --- /dev/null
-> +++ b/rust/kernel/revocable.rs
-> @@ -0,0 +1,441 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +//! Revocable objects.
-> +//!
-> +//! The [`Revocable`] type wraps other types and allows access to them to be revoked. The existence
-> +//! of a [`RevocableGuard`] ensures that objects remain valid.
-> +
-> +use crate::{
-> +    bindings,
-> +    init::{self},
-> +    prelude::*,
-> +    sync::rcu,
-> +};
-> +use core::{
-> +    cell::UnsafeCell,
-> +    marker::PhantomData,
-> +    mem::MaybeUninit,
-> +    ops::Deref,
-> +    ptr::drop_in_place,
-> +    sync::atomic::{fence, AtomicBool, AtomicU32, Ordering},
-> +};
-> +
-> +/// An object that can become inaccessible at runtime.
-> +///
-> +/// Once access is revoked and all concurrent users complete (i.e., all existing instances of
-> +/// [`RevocableGuard`] are dropped), the wrapped object is also dropped.
-> +///
-> +/// # Examples
+> cdsp_dtb.mbn
 
-You might want to enable the doctest and check if the Examples are at 
-least compiling ;) Here and in devres as well.
+CDSP also as above ADSP.
 
-Best regards
+> 
+>> +	status = "okay";
+>> +};
+>> +
+>> +&swr1 {
+>> +	status = "okay";
+>> +};
+>> +
+>> +&swr2 {
+>> +	status = "okay";
+>> +};
+>> +
+>> +&tlmm {
+>> +	gpio-reserved-ranges = <32 8>;
+>> +
+>> +	dsi_active: dsi-active-state {
+>> +		pins = "gpio133";
+>> +		function = "gpio";
+>> +		drive-strength = <8>;
+>> +		bias-disable;
+>> +	};
+> 
+> s/dsi/panel[-_]reset/
 
-Dirk
+I will update this (like: "dsi_active" to "panel_resest_active") as your 
+recommendation.
 
+> 
+>> +
+>> +	dsi_suspend: dsi-suspend-state {
+>> +		pins = "gpio133";
+>> +		function = "gpio";
+>> +		drive-strength = <2>;
+>> +		bias-pull-down;
+>> +	};
 
+This also do update as "s/dsi/panel[-_]reset/".
 
+>> +
+>> +	te_active: te-active-state {
+>> +		pins = "gpio86";
+>> +		function = "mdp_vsync";
+>> +		drive-strength = <2>;
+>> +		bias-pull-down;
+>> +	};
+>> +
+>> +	te_suspend: te-suspend-state {
+>> +		pins = "gpio86";
+>> +		function = "mdp_vsync";
+>> +		drive-strength = <2>;
+>> +		bias-pull-down;
+>> +	};
+> 
+> What is the difference between these two?
+
+TE pin needs to be pulled down for both active and suspend states. There 
+is no difference.
+
+> 
+>> +};
+> 
+
+-- 
+Thx and BRs,
+Tengfei Fan
 
