@@ -1,84 +1,114 @@
-Return-Path: <linux-kernel+bounces-197107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 407768D6647
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:06:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EAC08D664A
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:06:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70FE11C22801
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:06:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAABC1C23B2F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:06:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2082157E82;
-	Fri, 31 May 2024 16:06:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C544115884F;
+	Fri, 31 May 2024 16:06:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WAxhsaTk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oNn7ecS+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BDBD225DA;
-	Fri, 31 May 2024 16:06:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E62232C8C;
+	Fri, 31 May 2024 16:06:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717171579; cv=none; b=Lf5T+VYVFLzJI/2by1+hy2ci+WKhZQMCMiz/VWgX9Qstg7ufF10SPdPS20MYB3q2u7oQEGunXNcCMVsoHssWl+WMbA8afGqEWttK7lRw9CKssamdTNIbaeYVS+pMBZLi+lOcyPYgDZW7lTuTCJuVMZF2Od1msDD7HYhL5gZLjGI=
+	t=1717171597; cv=none; b=s0l7n/q935QjI9Pu5Fv03+247kMsIaQD14f+gKMB16opIFZFkhIw3XESNJDDWHCR54RXbMB5Kq28yjyqTudRLWSCDwJAB97JDZUYno8PvoP0c0ynr/Yd41GRkID54mmDYaI3m2cj0lWh1TgNtNHJGeFnfieyDeTywfaqgMDFB/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717171579; c=relaxed/simple;
-	bh=LQCvrP06+ub0WmZb5H0EUGQ/V5k2fp3n8C159L6sKk0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Hnsx9J1LQTyyN3zgASX8i1843HvEVnts9733/3sM5OQ8a/oBJu36ABNyw5ECNjFUffgdTmiNqvfxQAEFCU/ZE37w46pw2nMKzJoT0/m/NOVU7pYQysQM6DmBOiRrslSIx1rtpLGJ+WGewW0ehIZtU4gNwmpOVrGP4SP4q1G9QrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WAxhsaTk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED515C116B1;
-	Fri, 31 May 2024 16:06:15 +0000 (UTC)
+	s=arc-20240116; t=1717171597; c=relaxed/simple;
+	bh=xEdqlVv+yc6xxPC8F436pV7MA4qGjyS+19cc5fL/qdE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dP40/Gp94eTPs433eKhW9aPDIQybEPTj1en8F4PrXoRNda2yvOkGbGtq07K0RejYS0Y4DrETw/xora7HnzXxC3NjvgSZyRASBo6txzn9poKn2/DOFR9l+oAsIwRLU/y+L3+QnCYrgPnoVztkn9ecqlGyG2M0ZYhvj1IXvLEmHPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oNn7ecS+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60699C116B1;
+	Fri, 31 May 2024 16:06:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717171578;
-	bh=LQCvrP06+ub0WmZb5H0EUGQ/V5k2fp3n8C159L6sKk0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=WAxhsaTkS9yWeXMhPapwzNNnByCB1HUy4EmmTmQRdlifk9fQWPYQAF05Ny1ahOdx9
-	 4Sq7deBPc78KVmzQpNpO8TlfltYrLo9yN4dFlRfa8MFWcMHa72ck/vVpQL0lAw199b
-	 G8ZV7hEyCPsiz89pFXJBq196R+CguB2UGMDfn7xqDW53ggaXTj8g2mbppsyiRTA0yX
-	 GDZZvsSLV0FhWYjtJ0Kqt3eLF2GxOCsm1yHAWpsLApB7CI9jElOLamzo5KjSNTVsxP
-	 BQfcPMXUqll9Uthd8RgA1OZQWNVHmLBnqywPBkxV8dGPQtVzrVYdhGGzlkVuu4fvMO
-	 uAeBvmibunfVA==
-From: Lee Jones <lee@kernel.org>
-To: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
- Benson Leung <bleung@chromium.org>, Lee Jones <lee@kernel.org>, 
- Tzung-Bi Shih <tzungbi@kernel.org>, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Cc: Guenter Roeck <groeck@chromium.org>, linux-kernel@vger.kernel.org, 
- linux-hwmon@vger.kernel.org, chrome-platform@lists.linux.dev, 
- Dustin Howett <dustin@howett.net>, 
- Mario Limonciello <mario.limonciello@amd.com>, 
- Moritz Fischer <mdf@kernel.org>, Stephen Horvath <s.horvath@outlook.com.au>, 
- Rajas Paranjpe <paranjperajas@gmail.com>
-In-Reply-To: <20240529-cros_ec-hwmon-v4-3-5cdf0c5db50a@weissschuh.net>
-References: <20240529-cros_ec-hwmon-v4-0-5cdf0c5db50a@weissschuh.net>
- <20240529-cros_ec-hwmon-v4-3-5cdf0c5db50a@weissschuh.net>
-Subject: Re: (subset) [PATCH v4 3/3] mfd: cros_ec: Register hardware
- monitoring subdevice
-Message-Id: <171717157570.1179352.10771084624581761418.b4-ty@kernel.org>
-Date: Fri, 31 May 2024 17:06:15 +0100
+	s=k20201202; t=1717171596;
+	bh=xEdqlVv+yc6xxPC8F436pV7MA4qGjyS+19cc5fL/qdE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oNn7ecS+B1fnRsmy8+fl1HimszXdSyd42J3hvvDH6VHJHwaci4o+Ez3/vR/y4flHT
+	 8aUVVrsXUEvmDdPEU3VsuOQAI6pib0urxj+kBakXS48rdyvD121L3v4+MlurlMs8q/
+	 wkWU6mJcQCzyHSjOteiZcxQrXIAZU/nkb4DxRUGwSq0hBuUUZH37mkrkgT7NKDkGT9
+	 AfgSO6wzjvces+aADq3LHoZdBoVTd/yqSQI2pvLq2lHLyb2BuiFxO2Gvq/I10XY++m
+	 JzSw1s/zlo+7ZCXH99HZfZkwnpPe7283pyOHoxgiKzxImKdYesyl0n9HteStQ6EIyV
+	 xjGVLgjyF8uXw==
+Date: Fri, 31 May 2024 17:06:30 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Elinor Montmasson <elinor.montmasson@savoirfairelinux.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	shengjiu wang <shengjiu.wang@gmail.com>,
+	Xiubo Lee <Xiubo.Lee@gmail.com>, Fabio Estevam <festevam@gmail.com>,
+	Nicolin Chen <nicoleotsuka@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	linux-sound <linux-sound@vger.kernel.org>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	alsa-devel <alsa-devel@alsa-project.org>,
+	linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Subject: Re: [PATCHv4 9/9] ASoC: dt-bindings: fsl-asoc-card: add compatible
+ for generic codec
+Message-ID: <47a7a618-31d5-4dfc-9b6b-9426c6409e80@sirena.org.uk>
+References: <20240515135411.343333-1-elinor.montmasson@savoirfairelinux.com>
+ <20240515135411.343333-10-elinor.montmasson@savoirfairelinux.com>
+ <ce9a87c6-4a5c-4f0a-a8df-1fdce8c1f5df@sirena.org.uk>
+ <599489232.349333.1715936741672.JavaMail.zimbra@savoirfairelinux.com>
+ <500db9de-6113-4e73-ba92-6e52ea292b32@sirena.org.uk>
+ <1598202415.701258.1717159684103.JavaMail.zimbra@savoirfairelinux.com>
+ <291daed8-a2e1-44d4-9a71-5bca2c585720@sirena.org.uk>
+ <1220272166.706254.1717166894551.JavaMail.zimbra@savoirfairelinux.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.12.4
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="yZnX6EMpaBNVB9zA"
+Content-Disposition: inline
+In-Reply-To: <1220272166.706254.1717166894551.JavaMail.zimbra@savoirfairelinux.com>
+X-Cookie: Serving suggestion.
 
-On Wed, 29 May 2024 08:27:13 +0200, Thomas Weißschuh wrote:
-> Add ChromeOS EC-based hardware monitoring as EC subdevice.
-> 
-> 
 
-Applied, thanks!
+--yZnX6EMpaBNVB9zA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-[3/3] mfd: cros_ec: Register hardware monitoring subdevice
-      commit: 27e669820cda845d6d4c505809711ef6b4cff9a1
+On Fri, May 31, 2024 at 10:48:14AM -0400, Elinor Montmasson wrote:
+> From: "Mark Brown" <broonie@kernel.org>
 
---
-Lee Jones [李琼斯]
+> > Why not just use the existing compatible - why would someone not want to
+> > be able to use the ASRC if it's available in their system?
 
+> That's true but it will be a problem if both `fsl-asoc-card.c` and
+> `imx-spdif.c` drivers have the same compatible, and they don't
+> have the same DT properties.
+
+So merge the two then?
+
+--yZnX6EMpaBNVB9zA
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZZ9YUACgkQJNaLcl1U
+h9Ah0wf9F6py9uWrUIg1Rnm8ihwTDC9bWMpewQrTH27b7Ps5H2TxzLO6KV2GCTHH
+bAcv+oyDym09iXKcPq3vvTrenJ0iPIaZWSOOwYS38JtGL5dAMnv07C3R6iWJJd98
+z94n+vvDb3EL3UBU2+atXg0gUN5e4ekRdLRf7MmkjlGRszzVTuUafLdHUue4uPRw
+gKDNcu2v2gC2e3OaZnA5jQh5ypP74fLrnWxyktzZg8acu482DkDBA7h13lSFCF7H
+sZb+MsvHM7euPdKQ9nwfFk7bVErS0yb3PEPvNrd0ZJNvEE2aClUiFgNlKfNUY1hu
+PvxfhbZEbZGiNyV8WXYwqtqGyzHB9w==
+=o/G2
+-----END PGP SIGNATURE-----
+
+--yZnX6EMpaBNVB9zA--
 
