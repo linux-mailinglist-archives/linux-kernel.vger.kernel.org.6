@@ -1,86 +1,85 @@
-Return-Path: <linux-kernel+bounces-196812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66C378D620B
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:42:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 502A78D6210
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:42:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7516B2491F
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:42:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E57EA1F23C6E
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:42:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14FC5158845;
-	Fri, 31 May 2024 12:41:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2AE4158842;
+	Fri, 31 May 2024 12:42:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QIbLskln"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OGMKFbLI"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53ECE142E90;
-	Fri, 31 May 2024 12:41:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3532B1E498;
+	Fri, 31 May 2024 12:42:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717159313; cv=none; b=LMTWbHhtGNIe9tgh71V9on2Z7DwxGYdNV49popUrwhgB3ejAui/M7KpurmyEaAqku8FBQgblAEgxDc7zx/ESxM+UHoUW26LQ1GONQH/FEnrwwv1hZEHpBIphRHnM9hssHnR3J/ky+de2kj8llifz3qVB06cjl0fC044uaJxdoRo=
+	t=1717159359; cv=none; b=Z+E8Gvd9ANDFqMo7ggsnzTbQB0QE5AN7Obodj+Sdig90FX0UoqjnG6H6yQ7hHnSKh2aloKzvQKPorTQbDM9EmTIun1jKB8wk8AgixPPNZ5j87Dd4zF65E+YwgKazXCdBMFuF5ke40lpC3DhjqhdhuTWlVL0MA7mRbyMxMxIycH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717159313; c=relaxed/simple;
-	bh=fLDVnRp2IAtKkjqB1ZtUbEIJaqZKDsXV1q6SM1xR+VY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=bXU4+VlpNy346uT03kMQnc1aWq2TTLfWMgm+MtpQk9KSG9p8aZc9GG2XnRBUwSLDLrdOkoREz8fUDxzOhSInNlCd0XXtl5GGyB4uUIJHmujaUSfikmBbvry/zc4QcnFzctezw1EslDmlQKWfrnJ6gqTRtWvGbhB0puAscVMJgLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QIbLskln; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38218C116B1;
-	Fri, 31 May 2024 12:41:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717159312;
-	bh=fLDVnRp2IAtKkjqB1ZtUbEIJaqZKDsXV1q6SM1xR+VY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=QIbLskln7cBxtaQm+S7TcJ1tq4kECx//N3wO8PdN2u4JxQIbloEappMANjQnfu292
-	 OYYPBZjdYls+EUgs4OqVKJRuWTB3ieijOY0TBzVs3Nj6pwDXiCpDTYTIc8pA/+N9SF
-	 pKy2PHoJmmIHattoDi8SardiF8D/FHhEyZyk9cptlotMIuk2oLN/4epRvFk2e7NVC2
-	 Wfw9tet685AR+8HWFUk9tUcVigCWxaOa8SqQb1VTNMN7llqDhRY4TMbqXA03ex/BZt
-	 vGEUDODK6v561vrRqzpUaPIMsgJs9jHxnMbiP0d+9UjAOAtcad0Cf9Jx2+ScPN/CCP
-	 NmxtZ6yN9VeHA==
-From: Lee Jones <lee@kernel.org>
-To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Aradhya Bhatia <a-bhatia1@ti.com>
-Cc: Devicetree List <devicetree@vger.kernel.org>, 
- Linux Kernel List <linux-kernel@vger.kernel.org>, Andrew Davis <afd@ti.com>, 
- Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, 
- Praneeth Bajjuri <praneeth@ti.com>, Udit Kumar <u-kumar1@ti.com>, 
- Devarsh Thakkar <devarsht@ti.com>, Jai Luthra <j-luthra@ti.com>
-In-Reply-To: <20240512143824.1862290-1-a-bhatia1@ti.com>
-References: <20240512143824.1862290-1-a-bhatia1@ti.com>
-Subject: Re: (subset) [PATCH] dt-bindings: mfd: syscon: Add
- ti,am625-dss-oldi-io-ctrl compatible
-Message-Id: <171715930996.1070129.13768578039000408095.b4-ty@kernel.org>
-Date: Fri, 31 May 2024 13:41:49 +0100
+	s=arc-20240116; t=1717159359; c=relaxed/simple;
+	bh=qTBh2HpM9SAloF1wlUWaGIyEti34WcbewwJilEn4a5Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uqy4fy2Eov7dY1zi/lSwdicR9kNjIB/YJiBDMvyDJnIzSAZngaPwsE7rbtz7S6leXvuK2v+xsYOLtX99bivOGdoF1WqNtmayWSQVUggMDqYIwenqom3K6O9OoC1wWqm+jxqolLpxhjptQ3Mwhp+G01kVl4/HUGlxzyhyhpDHCsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=OGMKFbLI; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=PG064AjeQrSESy4LpL2Nyv1xiftbRyDQaqAqFgklnuI=; b=OGMKFbLIoQflKOSrBsT7/12+Nj
+	cIhVbEUocTGZ6Oey/QUjOhfM1ozm2dour/2V+UKtcOm/NUF6OXtojXsQnaGmaDWE9opLNXCSU6rTf
+	evp5MprXAKSAPHwLEGpXpYcDFsOqd8CWv/BiEI0rkayaq/VnleRyRMAaNvjIjah56UT85I1NehNo/
+	bsAiekXOld1RFYVyMb2uyJgXrxSIwHin3+YUbbOxe+wPQ8muw8nX3qqpDHvkGMgnJei5RDhjbTjFw
+	iSP3QLH0NEr8QX/vP4X7X6Ng0UewlEHjLhaCfHF86+to9Ty+O+KgDpVJyAq/31FCVjrCqmgr/z7rO
+	oaCdQhYQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sD1af-0000000AEip-35Oh;
+	Fri, 31 May 2024 12:42:37 +0000
+Date: Fri, 31 May 2024 05:42:37 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, djwong@kernel.org, hch@infradead.org,
+	brauner@kernel.org, david@fromorbit.com, chandanbabu@kernel.org,
+	jack@suse.cz, willy@infradead.org, yi.zhang@huawei.com,
+	chengzhihao1@huawei.com, yukuai3@huawei.com
+Subject: Re: [RFC PATCH v4 7/8] xfs: reserve blocks for truncating realtime
+ inode
+Message-ID: <ZlnFvWsvfrR1HBZW@infradead.org>
+References: <20240529095206.2568162-1-yi.zhang@huaweicloud.com>
+ <20240529095206.2568162-8-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.12.4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240529095206.2568162-8-yi.zhang@huaweicloud.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Sun, 12 May 2024 20:08:24 +0530, Aradhya Bhatia wrote:
-> Add TI DSS OLDI-IO control registers compatible for AM625 DSS. This is a
-> region of 10 32bit registers found in the TI AM625 CTRL_MMR0 register
-> space[0]. They are used to control the characteristics of the OLDI
-> DATA/CLK IO as needed by the OLDI TXes controller node.
-> 
-> [0]: https://www.ti.com/lit/pdf/spruiv7
-> 
-> [...]
+> -	error = xfs_trans_alloc(mp, &M_RES(mp)->tr_itruncate, 0, 0, 0, &tp);
+> +	resblks = XFS_IS_REALTIME_INODE(ip) ? XFS_DIOSTRAT_SPACE_RES(mp, 0) : 0;
 
-Applied, thanks!
+This probably wants a comment explaining that we need the block
+reservation for bmap btree block allocations / splits that can happen
+because we can split a written extent into one written and one
+unwritten, while for the data fork we'll always just shorten or
+remove extents.
 
-[1/1] dt-bindings: mfd: syscon: Add ti,am625-dss-oldi-io-ctrl compatible
-      commit: a49338cd99221f63804417838ea241290c921e39
+I'd also find this more readable if resblks was initialized to 0,
+and this became a:
 
---
-Lee Jones [李琼斯]
+	if (XFS_IS_REALTIME_INODE(ip))
+		resblks = XFS_DIOSTRAT_SPACE_RES(mp, 0);
 
 
