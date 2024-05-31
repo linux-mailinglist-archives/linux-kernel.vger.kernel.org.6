@@ -1,241 +1,297 @@
-Return-Path: <linux-kernel+bounces-197330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47A558D6962
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 21:05:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 171988D6965
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 21:07:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBAFF1F277A6
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 19:05:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7EE67B228E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 19:07:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0374815AD93;
-	Fri, 31 May 2024 19:05:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66CE680626;
+	Fri, 31 May 2024 19:07:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="LhVIrZAi"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m85DD2ha"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638FD4653C
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 19:05:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46B4A7F7D1
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 19:06:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717182331; cv=none; b=NIOBighe8tmOHV+e/XT2Ikr7OxfHAxsYKiSjMF5L92/oygoFoYrz3ZP8ShLWdKrLHPvHfTF3U+F3U+oHuwJ7ZIV/GCg9nHuDiui5ZiT/cjC4j1UOQIDF8zVxF4gbAHyQMZy1YbBTdrY0pUfFPZv40dTZTW7UL5rzvrCPaC6Xb0c=
+	t=1717182420; cv=none; b=We0ZIZ182+9CQ2Cv+ykTDfd+Lls54uugl3s1X3HWsq6zL6SeWvz3A6g/l+IekOCEL//orXVY08dfZY7NZ+YgAh5+bAh9VPlAPztfmvNmIvCGslGVCbXLwiTQmSHv8QKcRgNcSb6cADoZXZeXr72SfQ6U4aw73v9/6uEgyMUGOWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717182331; c=relaxed/simple;
-	bh=JLgUk4/H0I49wI7AFpjfE5SBqXIrl4DmbD4W1JvveUQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sXETYv5Dw5/USlMFAlMWe2tJ3r7YJR6j7RapXnRsOc0yAcbJtXMHit/MchQdvE5zwyHa/KlLhDZDfmDw4pIAvLtSCurrse+Yag1c7Mgmn4kxu9AuroYPnmED2K2p6Kf+MLys8h1/Kdxr4e9vg98D5H6P/Crx/3QPbPCFl3lG/No=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=LhVIrZAi; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-578517c7ae9so2631678a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 12:05:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1717182328; x=1717787128; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XI3ySpP1YuGuRU+0r2fjh+wjdLvP3upJGIzwxGrKcXs=;
-        b=LhVIrZAiHb7iMJSGRxvYzuyS37uhblIV4+4flec2xUd0h9+pTRbsY6S4E1cRvrORPH
-         jH3wgPoZVNRSrLa1erSkHI44EtEqEYqBhCSvrBg7kSAbQvB0M9Ry2Qv8xYmDoDTOPIDr
-         /fjGQjac5/PT8FxjEb5NO+Vri925HWedruGDHcBobRcrJWZ7Bb/dTSCqxXbUNGs3lZV2
-         UxUefJ9UHX83icT+tfjtNoWYvSypj8EL+IDbyQUzHVLWkP1yAze33zV57m0xWNF8UOMX
-         +R/cBr5aqrGHNrv4+j8ix/BGlbzngEVcPvVGhSdWHYRv026D2OKiszL+7KUnjizxx8J9
-         CNkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717182328; x=1717787128;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XI3ySpP1YuGuRU+0r2fjh+wjdLvP3upJGIzwxGrKcXs=;
-        b=CptmGrey+RO73EnWIVqZkrllsEh15Y5ydx4u2AClzAUyf2wT773sIaYweqf6V5/nRy
-         vjmqX5i+31dRwZPj9/eeh5BI9JGTrmePxvVSJieT2WjmIDqhgjVJ2i3i897aaqqerLUA
-         Y7VoxIHD1D1L8mjN/ibT7i9e9ZDTl3EYrzDwgAFc0dAZlzZbaowoNSonCivR593/ilH/
-         f0fLCibpgh9+AI9HplfzZ5ZCHoqcSGpo0XBC9P2INEJmaxmU6rEJsVckpMWzbKgs+f5H
-         p+J4H3kMAj1xP5JmsuCdaV8iajQkyH0ITKpj3aEmcCMt7zhlW6BCzZmvPjB3vjS5OblT
-         F1Fg==
-X-Forwarded-Encrypted: i=1; AJvYcCU3jSanRMEKQUvT2ScqTsL53VRL9t2l5mrI7xIbSIFGOGsRnzLJUs5jhGrOsgMwysC/TUXDb28zGAEFpzHfCJNSfOyABRq5b56Er5Au
-X-Gm-Message-State: AOJu0YwjR5kmknKcOjU488uHkJKkRhHb8n4Cc8+kQfd4dog2bwR9FCvl
-	l7u7ge0Kpmu0yJIKRpmHejTK6ZC33nsY376tR9jfwLP3R279ayec1RXUUrcUXb9PVPeblLSX3U+
-	IxbqWckxob8jLncPcl8S2mgADDGaXtqgtTn/Pqw==
-X-Google-Smtp-Source: AGHT+IGHM+cFCKr3cD4qLfBdzN50PJ4EDyUgAhS4Wnkb4lkIVrzCC1xfhFir50c+Rban7OD/Mp5ebucWbvjCKDVrJhg=
-X-Received: by 2002:a50:9f22:0:b0:57a:2bfd:82b3 with SMTP id
- 4fb4d7f45d1cf-57a36430e90mr1727721a12.23.1717182327616; Fri, 31 May 2024
- 12:05:27 -0700 (PDT)
+	s=arc-20240116; t=1717182420; c=relaxed/simple;
+	bh=b9zkIPm0Q41h9yizlZcbHrq3kKY0bnOaXtgMig1j4dM=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=JeWduNONi2qGw/51DhTdcwp+rMgDeIfQaa24RJ5DN5VbzEZH1MAnXPgOmhuNMTwrRESqRd7iAW/KslTh2/zVQyoSpNtzfqZybXxFEYGTjYDculgEE+x6+Px98hFzOgjpMc7lwlWaJGqHNB4+m0EPV21TXRzLu2W0nvK6jE8yTTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m85DD2ha; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717182419; x=1748718419;
+  h=date:from:to:cc:subject:message-id;
+  bh=b9zkIPm0Q41h9yizlZcbHrq3kKY0bnOaXtgMig1j4dM=;
+  b=m85DD2haRL55eQCTg8JkRvtyKSeWfTwde9Qj8OaLmA2leFg8AFcCSN+c
+   EhggFvBPlMl7Cs+ZQ3760ORU9Sa1GkaM/w3WDLBoMDDLZ/j8jfsGzQ9Sm
+   bzfR+K9oJmVe3dN1RTaLV+W7RFCEkgV3hCPnQaS4S4wUdvh2fcGnT6OXM
+   O3pBAUtE0FGEH7Cky7yFZq+7bGCLnI2k+wuo0EbS1RWp1BoTPZ0/dEBD5
+   l+GJOiyq46VHM21sD2N2nDWMWnhAW5deRnLhsr7wSox6D2iw4Ux9bFL0N
+   YZxB0Szgbtvsq8eCZNbp3FCZa94s4NL87tE8EOWQ5InmpXzhNUYVUkchU
+   A==;
+X-CSE-ConnectionGUID: UMH6oRe5TYanKPPvrWY1lQ==
+X-CSE-MsgGUID: DT6TjcTZSLuchgo04BB6hw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11089"; a="13496641"
+X-IronPort-AV: E=Sophos;i="6.08,205,1712646000"; 
+   d="scan'208";a="13496641"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 12:06:58 -0700
+X-CSE-ConnectionGUID: HwDMiUxNTNir9qG8SBE3Bw==
+X-CSE-MsgGUID: M3AM6EzGRTS0L0Fqj7cAgQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,205,1712646000"; 
+   d="scan'208";a="73728977"
+Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
+  by orviesa001.jf.intel.com with ESMTP; 31 May 2024 12:06:57 -0700
+Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sD7aX-000Hgd-2m;
+	Fri, 31 May 2024 19:06:53 +0000
+Date: Sat, 01 Jun 2024 03:06:29 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [paulmck-rcu:rcu/next] BUILD SUCCESS
+ 237ae317ab3fa06c612f8734d6c397085d2bf811
+Message-ID: <202406010327.FlgllhFF-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <cover.1717105215.git.yan@cloudflare.com> <9be3733eee16bb81a7e8e2e57ebcc008f95cae08.1717105215.git.yan@cloudflare.com>
- <CANn89iLo6A__U5HqeA65NuBnrg36jpt9EOUC7T0fLdNEpa6eRQ@mail.gmail.com>
- <CAO3-PboQ68+xFe4Z10L-s-k3NCgciGXNWM00-3wgqbPmGaBB9A@mail.gmail.com> <CANn89iJ_rd_vUH1LPbby5vV=s=jWdpzvDKnm6H1YK=wRPWBiyw@mail.gmail.com>
-In-Reply-To: <CANn89iJ_rd_vUH1LPbby5vV=s=jWdpzvDKnm6H1YK=wRPWBiyw@mail.gmail.com>
-From: Yan Zhai <yan@cloudflare.com>
-Date: Fri, 31 May 2024 14:05:16 -0500
-Message-ID: <CAO3-PbqaiqWvc1vgHzj2-DEQUPCxTByp4r+zTBWyo-XP4u1G4A@mail.gmail.com>
-Subject: Re: [RFC net-next 1/6] net: add kfree_skb_for_sk function
-To: Eric Dumazet <edumazet@google.com>
-Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	David Ahern <dsahern@kernel.org>, Abhishek Chauhan <quic_abchauha@quicinc.com>, 
-	Mina Almasry <almasrymina@google.com>, Florian Westphal <fw@strlen.de>, 
-	Alexander Lobakin <aleksander.lobakin@intel.com>, David Howells <dhowells@redhat.com>, 
-	Jiri Pirko <jiri@resnulli.us>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Lorenzo Bianconi <lorenzo@kernel.org>, 
-	Pavel Begunkov <asml.silence@gmail.com>, linux-kernel@vger.kernel.org, 
-	kernel-team@cloudflare.com, Jesper Dangaard Brouer <hawk@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 31, 2024 at 12:32=E2=80=AFPM Eric Dumazet <edumazet@google.com>=
- wrote:
->
-> On Fri, May 31, 2024 at 6:58=E2=80=AFPM Yan Zhai <yan@cloudflare.com> wro=
-te:
-> >
-> > Hi Eric,
-> >
-> >  Thanks for the feedback.
-> >
-> > On Fri, May 31, 2024 at 1:51=E2=80=AFAM Eric Dumazet <edumazet@google.c=
-om> wrote:
-> > >
-> > > On Thu, May 30, 2024 at 11:46=E2=80=AFPM Yan Zhai <yan@cloudflare.com=
-> wrote:
-> > > >
-> > > > Implement a new kfree_skb_for_sk to replace kfree_skb_reason on a f=
-ew
-> > > > local receive path. The function accepts an extra receiving socket
-> > > > argument, which will be set in skb->cb for kfree_skb/consume_skb
-> > > > tracepoint consumption. With this extra bit of information, it will=
- be
-> > > > easier to attribute dropped packets to netns/containers and
-> > > > sockets/services for performance and error monitoring purposes.
-> > >
-> > > This is a lot of code churn...
-> > >
-> > > I have to ask : Why not simply adding an sk parameter to an existing
-> > > trace point ?
-> > >
-> > Modifying a signature of the current tracepoint seems like a breaking
-> > change, that's why I was saving the context inside skb->cb, hoping to
-> > not impact any existing programs watching this tracepoint. But
-> > thinking it twice, it might not cause a problem if the signature
-> > becomes:
-> >
-> >  trace_kfree_skb(const struct sk_buff *skb, void *location, enum
-> > skb_drop_reason reason, const struct sock *sk)
-> >
-> > As return values are usually not a thing for tracepoints, it is
-> > probably still compatible. The cons is that the last "sk" still breaks
-> > the integrity of naming. How about making a "kfree_skb_context"
-> > internal struct and putting it as the last argument to "hide" the
-> > naming confusion?
-> >
-> > > If this not possible, I would rather add new tracepoints, adding new =
-classes,
-> > > because it will ease your debugging :
-> > >
-> > > When looking for TCP drops, simply use a tcp_event_sk_skb_reason inst=
-ance,
-> > > and voila, no distractions caused by RAW/ICMP/ICMPv6/af_packet drops.
-> > >
-> > > DECLARE_EVENT_CLASS(tcp_event_sk_skb_reason,
-> > >
-> > >      TP_PROTO(const struct sock *sk, const struct sk_buff *skb, enum
-> > > skb_drop_reason reason),
-> > > ...
-> > > );
-> >
-> > The alternative of adding another tracepoint could indeed work, we had
-> > a few cases like that in the past, e.g.
-> >
-> > https://lore.kernel.org/lkml/20230711043453.64095-1-ivan@cloudflare.com=
-/
-> > https://lore.kernel.org/netdev/20230707043923.35578-1-ivan@cloudflare.c=
-om/
-> >
-> > But it does feel like a whack-a-mole thing. The problems are solvable
-> > if we extend the kfree_skb tracepoint, so I would prefer to not add a
-> > new tracepoint.
->
-> Solvable with many future merge conflicts for stable teams.
->
-I don't quite follow it. I think this specific commit using skb->cb is
-unnecessary so I am going to re-work it. As you initially mentioned,
-maybe I should just extend kfree_skb tracepoint. I saw a similar
-change dd1b527831a3("net: add location to trace_consume_skb()"), is it
-something I might follow, or do you specifically mean changes like
-this can annoy stable teams?
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git rcu/next
+branch HEAD: 237ae317ab3fa06c612f8734d6c397085d2bf811  Merge branches 'cmpxchg.2024.05.30a' and 'tsc.2024.05.27a' into HEAD
 
->
-> >
-> > >
-> > > Also, the name ( kfree_skb_for_sk) and order of parameters is confusi=
-ng.
-> > >
-> > > I always prefer this kind of ordering/names :
-> > >
-> > > void sk_skb_reason_drop( [struct net *net ] // not relevant here, but
-> > > to expand the rationale
-> > >               struct sock *sk, struct sk_buff *skb, enum skb_drop_rea=
-son reason)
-> > >
-> > > Looking at the name, we immediately see the parameter order.
-> > >
-> > > The consume one (no @reason there) would be called
-> > >
-> > > void sk_skb_consume(struct sock *sk, struct sk_buff *skb);
-> >
-> > I was intending to keep the "kfree_skb" prefix initially since it
-> > would appear less surprising to kernel developers who used kfree_skb
-> > and kfree_skb_reason. But your points do make good sense. How about
-> > "kfree_sk_skb_reason" and "consume_sk_skb" here?
-> >
->
-> IMO kfree_skb() and consume_skb() were a wrong choice. We have to live
-> with them.
->
-> It should have been skb_free(), skb_consume(), skb_alloc(),
-> to be consistent.
->
-> Following (partial) list was much better:
->
-> skb_add_rx_frag_netmem, skb_coalesce_rx_frag, skb_pp_cow_data,
-> skb_cow_data_for_xdp,
-> skb_dump, skb_tx_error, skb_morph, skb_zerocopy_iter_stream, skb_copy_ubu=
-fs,
-> skb_clone, skb_headers_offset_update, skb_copy_header, skb_copy,
-> skb_realloc_headroom, skb_expand_head, skb_copy_expand, skb_put,
-> skb_push, skb_pull, skb_pull_data, skb_trim, skb_copy_bits,
-> skb_splice_bits, skb_send_sock_locked, skb_store_bits,
-> skb_checksum, skb_copy_and_csum_bits, skb_zerocopy_headlen,
-> skb_zerocopy, skb_copy_and_csum_dev, skb_dequeue,
-> skb_dequeue_tail, skb_queue_purge_reason, skb_errqueue_purge,
-> skb_queue_head, skb_queue_tail, skb_unlink, skb_append,
-> skb_split, skb_prepare_seq_read, skb_seq_read, skb_abort_seq_read,
-> skb_find_text, skb_append_pagefrags, skb_pull_rcsum, skb_segment_list,
-> skb_segment, skb_to_sgvec, skb_to_sgvec_nomark, skb_cow_data, skb_clone_s=
-k,
-> skb_complete_tx_timestamp, skb_tstamp_tx, skb_complete_wifi_ack,
-> skb_partial_csum_set, skb_checksum_setup, skb_checksum_trimmed,
-> skb_try_coalesce, skb_scrub_packet, skb_vlan_untag, skb_ensure_writable,
-> skb_ensure_writable_head_tail, skb_vlan_pop, skb_vlan_push, skb_eth_pop,
-> skb_eth_push, skb_mpls_push, skb_mpls_pop, skb_mpls_update_lse,
-> skb_mpls_dec_ttl, skb_condense, skb_ext_add, skb_splice_from_iter
->
-> (just to make my point very very clear)
->
-> Instead we have a myriad of functions with illogical parameter
-> ordering vs their names.
->
-> I see no reason to add more confusion for new helpers.
+elapsed time: 1472m
 
-ACK. Thanks for clarifying.
+configs tested: 205
+configs skipped: 82
 
-Yan
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+tested configs:
+alpha                             allnoconfig   gcc  
+alpha                            allyesconfig   gcc  
+alpha                               defconfig   gcc  
+arc                              allmodconfig   gcc  
+arc                               allnoconfig   gcc  
+arc                              allyesconfig   gcc  
+arc                          axs101_defconfig   gcc  
+arc                                 defconfig   gcc  
+arc                   randconfig-001-20240531   gcc  
+arc                   randconfig-001-20240601   gcc  
+arc                   randconfig-002-20240531   gcc  
+arc                   randconfig-002-20240601   gcc  
+arm                              allmodconfig   gcc  
+arm                               allnoconfig   clang
+arm                              allyesconfig   gcc  
+arm                                 defconfig   clang
+arm                            mmp2_defconfig   gcc  
+arm                        multi_v5_defconfig   gcc  
+arm                           omap1_defconfig   gcc  
+arm                       omap2plus_defconfig   gcc  
+arm                   randconfig-001-20240531   clang
+arm                   randconfig-002-20240531   clang
+arm                   randconfig-003-20240531   clang
+arm                   randconfig-003-20240601   gcc  
+arm                   randconfig-004-20240531   clang
+arm                   randconfig-004-20240601   gcc  
+arm                        vexpress_defconfig   gcc  
+arm                         wpcm450_defconfig   gcc  
+arm64                            allmodconfig   clang
+arm64                             allnoconfig   gcc  
+arm64                            allyesconfig   clang
+arm64                               defconfig   gcc  
+arm64                 randconfig-001-20240601   gcc  
+arm64                 randconfig-003-20240531   gcc  
+arm64                 randconfig-004-20240531   gcc  
+arm64                 randconfig-004-20240601   gcc  
+csky                             allmodconfig   gcc  
+csky                              allnoconfig   gcc  
+csky                             allyesconfig   gcc  
+csky                                defconfig   gcc  
+csky                  randconfig-001-20240531   gcc  
+csky                  randconfig-001-20240601   gcc  
+csky                  randconfig-002-20240531   gcc  
+csky                  randconfig-002-20240601   gcc  
+hexagon                          allmodconfig   clang
+hexagon                           allnoconfig   clang
+hexagon                          allyesconfig   clang
+hexagon                             defconfig   clang
+i386                             allmodconfig   gcc  
+i386                              allnoconfig   gcc  
+i386                             allyesconfig   gcc  
+i386         buildonly-randconfig-001-20240531   clang
+i386         buildonly-randconfig-002-20240531   gcc  
+i386         buildonly-randconfig-003-20240531   gcc  
+i386         buildonly-randconfig-004-20240531   clang
+i386         buildonly-randconfig-005-20240531   gcc  
+i386         buildonly-randconfig-006-20240531   clang
+i386                                defconfig   clang
+i386                  randconfig-001-20240531   gcc  
+i386                  randconfig-002-20240531   clang
+i386                  randconfig-003-20240531   clang
+i386                  randconfig-004-20240531   gcc  
+i386                  randconfig-005-20240531   clang
+i386                  randconfig-006-20240531   clang
+i386                  randconfig-011-20240531   clang
+i386                  randconfig-012-20240531   gcc  
+i386                  randconfig-013-20240531   gcc  
+i386                  randconfig-014-20240531   clang
+i386                  randconfig-015-20240531   gcc  
+i386                  randconfig-016-20240531   clang
+loongarch                        allmodconfig   gcc  
+loongarch                         allnoconfig   gcc  
+loongarch                        allyesconfig   gcc  
+loongarch                           defconfig   gcc  
+loongarch             randconfig-001-20240531   gcc  
+loongarch             randconfig-001-20240601   gcc  
+loongarch             randconfig-002-20240531   gcc  
+loongarch             randconfig-002-20240601   gcc  
+m68k                             allmodconfig   gcc  
+m68k                              allnoconfig   gcc  
+m68k                             allyesconfig   gcc  
+m68k                         amcore_defconfig   gcc  
+m68k                                defconfig   gcc  
+microblaze                       allmodconfig   gcc  
+microblaze                        allnoconfig   gcc  
+microblaze                       allyesconfig   gcc  
+microblaze                          defconfig   gcc  
+mips                             allmodconfig   gcc  
+mips                              allnoconfig   gcc  
+mips                             allyesconfig   gcc  
+mips                  decstation_64_defconfig   gcc  
+mips                          malta_defconfig   gcc  
+nios2                            allmodconfig   gcc  
+nios2                             allnoconfig   gcc  
+nios2                            allyesconfig   gcc  
+nios2                               defconfig   gcc  
+nios2                 randconfig-001-20240531   gcc  
+nios2                 randconfig-001-20240601   gcc  
+nios2                 randconfig-002-20240531   gcc  
+nios2                 randconfig-002-20240601   gcc  
+openrisc                         allmodconfig   gcc  
+openrisc                          allnoconfig   gcc  
+openrisc                            defconfig   gcc  
+openrisc                    or1ksim_defconfig   gcc  
+parisc                            allnoconfig   gcc  
+parisc                              defconfig   gcc  
+parisc                randconfig-001-20240531   gcc  
+parisc                randconfig-001-20240601   gcc  
+parisc                randconfig-002-20240531   gcc  
+parisc                randconfig-002-20240601   gcc  
+parisc64                            defconfig   gcc  
+powerpc                    adder875_defconfig   gcc  
+powerpc                           allnoconfig   gcc  
+powerpc                          allyesconfig   clang
+powerpc                      ppc64e_defconfig   gcc  
+powerpc               randconfig-001-20240601   gcc  
+powerpc               randconfig-002-20240601   gcc  
+powerpc               randconfig-003-20240531   gcc  
+powerpc               randconfig-003-20240601   gcc  
+powerpc                  storcenter_defconfig   gcc  
+powerpc                     tqm8560_defconfig   gcc  
+powerpc64             randconfig-003-20240531   gcc  
+powerpc64             randconfig-003-20240601   gcc  
+riscv                            allmodconfig   clang
+riscv                             allnoconfig   gcc  
+riscv                            allyesconfig   clang
+riscv                               defconfig   clang
+riscv                 randconfig-002-20240601   gcc  
+s390                              allnoconfig   clang
+s390                             allyesconfig   gcc  
+s390                                defconfig   clang
+s390                  randconfig-001-20240531   gcc  
+s390                  randconfig-001-20240601   gcc  
+s390                  randconfig-002-20240531   gcc  
+s390                  randconfig-002-20240601   gcc  
+sh                               allmodconfig   gcc  
+sh                                allnoconfig   gcc  
+sh                               allyesconfig   gcc  
+sh                                  defconfig   gcc  
+sh                          polaris_defconfig   gcc  
+sh                    randconfig-001-20240531   gcc  
+sh                    randconfig-001-20240601   gcc  
+sh                    randconfig-002-20240531   gcc  
+sh                    randconfig-002-20240601   gcc  
+sh                           se7343_defconfig   gcc  
+sh                   secureedge5410_defconfig   gcc  
+sparc                            allmodconfig   gcc  
+sparc                             allnoconfig   gcc  
+sparc                            allyesconfig   gcc  
+sparc                               defconfig   gcc  
+sparc64                          allmodconfig   gcc  
+sparc64                          allyesconfig   gcc  
+sparc64                             defconfig   gcc  
+sparc64               randconfig-001-20240531   gcc  
+sparc64               randconfig-001-20240601   gcc  
+sparc64               randconfig-002-20240531   gcc  
+sparc64               randconfig-002-20240601   gcc  
+um                               allmodconfig   clang
+um                                allnoconfig   clang
+um                               allyesconfig   gcc  
+um                                  defconfig   clang
+um                             i386_defconfig   gcc  
+um                    randconfig-001-20240531   gcc  
+um                    randconfig-001-20240601   gcc  
+um                    randconfig-002-20240531   clang
+um                           x86_64_defconfig   clang
+x86_64                           alldefconfig   gcc  
+x86_64                            allnoconfig   clang
+x86_64                           allyesconfig   clang
+x86_64       buildonly-randconfig-001-20240531   clang
+x86_64       buildonly-randconfig-002-20240531   gcc  
+x86_64       buildonly-randconfig-003-20240531   clang
+x86_64       buildonly-randconfig-004-20240531   clang
+x86_64       buildonly-randconfig-005-20240531   gcc  
+x86_64       buildonly-randconfig-006-20240531   clang
+x86_64                              defconfig   gcc  
+x86_64                randconfig-001-20240531   gcc  
+x86_64                randconfig-002-20240531   clang
+x86_64                randconfig-003-20240531   gcc  
+x86_64                randconfig-004-20240531   gcc  
+x86_64                randconfig-005-20240531   gcc  
+x86_64                randconfig-006-20240531   gcc  
+x86_64                randconfig-011-20240531   clang
+x86_64                randconfig-012-20240531   gcc  
+x86_64                randconfig-013-20240531   gcc  
+x86_64                randconfig-014-20240531   clang
+x86_64                randconfig-015-20240531   gcc  
+x86_64                randconfig-016-20240531   gcc  
+x86_64                randconfig-071-20240531   clang
+x86_64                randconfig-072-20240531   gcc  
+x86_64                randconfig-073-20240531   gcc  
+x86_64                randconfig-074-20240531   gcc  
+x86_64                randconfig-075-20240531   clang
+x86_64                randconfig-076-20240531   gcc  
+x86_64                          rhel-8.3-rust   clang
+x86_64                               rhel-8.3   gcc  
+xtensa                            allnoconfig   gcc  
+xtensa                           allyesconfig   gcc  
+xtensa                  audio_kc705_defconfig   gcc  
+xtensa                       common_defconfig   gcc  
+xtensa                randconfig-001-20240531   gcc  
+xtensa                randconfig-001-20240601   gcc  
+xtensa                randconfig-002-20240531   gcc  
+xtensa                randconfig-002-20240601   gcc  
+xtensa                    xip_kc705_defconfig   gcc  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
