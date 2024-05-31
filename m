@@ -1,201 +1,304 @@
-Return-Path: <linux-kernel+bounces-197116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3CC08D6668
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:13:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9274C8D666F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:13:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45F741F262F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:13:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B340E1C233AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:13:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1A96158D8D;
-	Fri, 31 May 2024 16:13:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A0B0158DD7;
+	Fri, 31 May 2024 16:13:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="I/LLZrdU"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NAxREMTP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20A3354784
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 16:13:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED02C1586C7;
+	Fri, 31 May 2024 16:13:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717171990; cv=none; b=ONlrOghPwbvpBtSXC6jSDPHWiKgTgmJmFdN0+RuskC3IronlXcrgiRDfIDwnxVXZ2wE4OGz7hiwv9yDPJ7iVQi8XZruHGGnoR97nq3PNp0QzZduxs7HELbt6T34B3UTaSpTA0MI6YTNG9l4LNxWGjO9h4bCudReUSN1bXv2ko0g=
+	t=1717172019; cv=none; b=aIvuBxiRJTHQETRQ/o6fX4YAeMsZFo3U2026NmbyU/JIG08ZyZyZH7QAoyzIrX7oCphCD5G+OWE4r2mKky1XPcDzzn/pm8BWkkOIjdmYJDl6lkem9uGg5fPVCmcoXfuGaNzqic/hrxZ6AAa9mAxLVZnEnqvFkLepamKaiB0kV74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717171990; c=relaxed/simple;
-	bh=7T8wP/o3cgJtL1+OvLDrTpH/pVY43kVpMfxcGleEXLE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JXeIGMq2rXcvdNBkShzZXIY5uqWvmxjqogL1kQ8u7uqj3b1E+pex8q7MN8GzAz7Az3fVVbsSa+rYUUA9yjkKRQ2b16BBNpKw/mVSwlZsdbMQo9JVgZhMpQlsJGJdnf0CpuVHxN2Wq4O8ETNN6D5yjciKZytDJVdpnrfO3Gq/tpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=I/LLZrdU; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717171989; x=1748707989;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=7T8wP/o3cgJtL1+OvLDrTpH/pVY43kVpMfxcGleEXLE=;
-  b=I/LLZrdUpqsDCHcdWjPgqXCvoFKP2thpiyUKncxNzZCi8hySyO5C8Q6K
-   bliXJxRmcXVwWrToQeT1wwjQM/4TUXTzx2q0cWuPp9VnQ9/rgoS+T97y1
-   H1Fesk+l3Jlh2u6hfCmFLog7I/asv5FJEwAPUVB2OlyWzL/E4f16kQCm3
-   4nJ+8DikJyy7wpom3P0w3VSU9aHlIwpB/bG9u3UsUlnYWxPilCj2Zwu2g
-   UzD6XpiTvdcRp2cyiF9GL8d4rqe88PBaNuIv6bwv2le5drcrrf/qSBro2
-   kf9CBinIvTja8+lRWB2nbYFqduB0+6ZzXzZedw6eEEW96ltIBVKdEYDxz
-   A==;
-X-CSE-ConnectionGUID: fgR4e2cBTQOTssMFv4a1aA==
-X-CSE-MsgGUID: U1hyGYfXRviidNGCE9RqZQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11089"; a="13590273"
-X-IronPort-AV: E=Sophos;i="6.08,204,1712646000"; 
-   d="scan'208";a="13590273"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 09:12:43 -0700
-X-CSE-ConnectionGUID: btdZbbZcSEKI3pzJF3+3JQ==
-X-CSE-MsgGUID: hWvexQpLSeak9c2RRXYCzA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,204,1712646000"; 
-   d="scan'208";a="59384503"
-Received: from uaeoff-desk1.amr.corp.intel.com (HELO [10.125.108.48]) ([10.125.108.48])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 09:12:43 -0700
-Message-ID: <fab1dd64-c652-4160-93b4-7b483a8874da@intel.com>
-Date: Fri, 31 May 2024 09:12:42 -0700
+	s=arc-20240116; t=1717172019; c=relaxed/simple;
+	bh=OySnbPc6UVv/reKSxeK8MOWc11UeJDwjByK9U8yHIzI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NMXDdAuJCpuWkS5Pa9T/IBub+rR+TDsT++aiucq0sl4pd9ln8X8Kbx79ko3rTcAHFjN6WrEKyPz444VnAGPNBTp7p6eYT1zQ94cqVFIXxDA+VZC0rZjTtI+7tAiRuP+goGh64fCaVZUzS5dDZ+MCxFHPTQoNv+d7kTj4zpQVSEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NAxREMTP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38C6EC32786;
+	Fri, 31 May 2024 16:13:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717172018;
+	bh=OySnbPc6UVv/reKSxeK8MOWc11UeJDwjByK9U8yHIzI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=NAxREMTPWHqhaU8R1S55TlP3HuEC5G7LwTaKEMMi9HuweKPwYUUqdwFUhdgIDnL/K
+	 lS9UMOlDWjLjmbXmPx0U0qLSOVeXTtufAihDuQpUINtK+5IglTljgNXxqy5SnCBgMj
+	 nqfeuEds4OKgRgwVFz18di47zcXuk+Kiptcx46fF59FyztogZyQE/lht/M3rA+fPpb
+	 8mZCUUnWr+++QUjaU8HbA7YvAeCSWqO1MYWnFcKN57m5uqHV8eYfJP8RT2XKV+N7LL
+	 KUHT0OsslLjadT7DRjsHhH0Nzr4hGeNYPwt2LXB/xhXw6YKBrSd82Gvbo/fcnK/Pxi
+	 hYY0swloNk4gg==
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2e78fe9fc2bso29523171fa.3;
+        Fri, 31 May 2024 09:13:38 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWUfo0YsQfqc+QhB74QcJLPk8soydmz5i5AD7UJvW5N5hk0Yx2eBPbFqlLL0KdQNAgQIrCNRZhiJ5kN8oiDdjqxHWHNg35aJugFaKA2PkhLCAcu1GwEBX5JvDh6iAXj3FL5HT/S40jim2pVKLQNZP5j3yLgdGZcI3YAI0Me4TETzreMwfJD8cKx5BL8GCHRp33SKdmqY5RjF61RaJ+YzUJvFLdc
+X-Gm-Message-State: AOJu0Yz5VBABxt+PoZq42PlsHi4C0r8W3zb8R2E393XRDyizjRVtNYzg
+	DfT+XHT1GiIe1QeHYpUiE6q6PdHneLGn0JAuhC92ktZ9vDiMjcsrI+9p7DVrMv8f1ZNxZ+CQDd9
+	5Fc3m64eD6Lg7YASXI+gYsFOuivg=
+X-Google-Smtp-Source: AGHT+IECLN3X8XT9MHYx24XRIKCtlCSj+BlFO7KASDL/WzT13Bh7Sty53AINjpSpvaEARac/+aczsAueKU5AR4IevdU=
+X-Received: by 2002:a05:651c:89:b0:2e9:862d:afcd with SMTP id
+ 38308e7fff4ca-2ea95160296mr15978871fa.25.1717172016497; Fri, 31 May 2024
+ 09:13:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 09/12] mm: implement LUF(Lazy Unmap Flush) defering
- tlb flush when folios get unmapped
-To: Byungchul Park <byungchul@sk.com>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-Cc: kernel_team@skhynix.com, akpm@linux-foundation.org, ying.huang@intel.com,
- vernhao@tencent.com, mgorman@techsingularity.net, hughd@google.com,
- willy@infradead.org, david@redhat.com, peterz@infradead.org,
- luto@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, rjgolo@gmail.com
-References: <20240531092001.30428-1-byungchul@sk.com>
- <20240531092001.30428-10-byungchul@sk.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20240531092001.30428-10-byungchul@sk.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240531010331.134441-1-ross.philipson@oracle.com>
+ <20240531010331.134441-9-ross.philipson@oracle.com> <CAMj1kXHaH6atsvwr6oVPdZuhR5YEXU33-2kYEn6xb1e=gidOCw@mail.gmail.com>
+ <CAMj1kXHcYOPTLTh-hEtfHk+JaORGK+fEatTT+UOqLJww+_cNTg@mail.gmail.com> <CAMj1kXH3AwSiq8K6VZEp83uF-W6mtODqrCKROQZ6VqAsFGVBbg@mail.gmail.com>
+In-Reply-To: <CAMj1kXH3AwSiq8K6VZEp83uF-W6mtODqrCKROQZ6VqAsFGVBbg@mail.gmail.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Fri, 31 May 2024 18:13:24 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXHu_P9Wn5sBejcSCKedAnxKzcjJGuo4jgbRc-Pr9FVgEQ@mail.gmail.com>
+Message-ID: <CAMj1kXHu_P9Wn5sBejcSCKedAnxKzcjJGuo4jgbRc-Pr9FVgEQ@mail.gmail.com>
+Subject: Re: [PATCH v9 08/19] x86: Secure Launch kernel early boot stub
+To: Ross Philipson <ross.philipson@oracle.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, 
+	linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-crypto@vger.kernel.org, kexec@lists.infradead.org, 
+	linux-efi@vger.kernel.org, iommu@lists.linux-foundation.org, 
+	dpsmith@apertussolutions.com, tglx@linutronix.de, mingo@redhat.com, 
+	bp@alien8.de, hpa@zytor.com, dave.hansen@linux.intel.com, mjg59@srcf.ucam.org, 
+	James.Bottomley@hansenpartnership.com, peterhuewe@gmx.de, jarkko@kernel.org, 
+	jgg@ziepe.ca, luto@amacapital.net, nivedita@alum.mit.edu, 
+	herbert@gondor.apana.org.au, davem@davemloft.net, corbet@lwn.net, 
+	ebiederm@xmission.com, dwmw2@infradead.org, baolu.lu@linux.intel.com, 
+	kanth.ghatraju@oracle.com, andrew.cooper3@citrix.com, 
+	trenchboot-devel@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 5/31/24 02:19, Byungchul Park wrote:
-..
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 0283cf366c2a..03683bf66031 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -2872,6 +2872,12 @@ static inline void file_end_write(struct file *file)
->  	if (!S_ISREG(file_inode(file)->i_mode))
->  		return;
->  	sb_end_write(file_inode(file)->i_sb);
-> +
-> +	/*
-> +	 * XXX: If needed, can be optimized by avoiding luf_flush() if
-> +	 * the address space of the file has never been involved by luf.
-> +	 */
-> +	luf_flush();
->  }
-..
-> +void luf_flush(void)
-> +{
-> +	unsigned long flags;
-> +	unsigned short int ugen;
-> +
-> +	/*
-> +	 * Obtain the latest ugen number.
-> +	 */
-> +	spin_lock_irqsave(&luf_lock, flags);
-> +	ugen = luf_gen;
-> +	spin_unlock_irqrestore(&luf_lock, flags);
-> +
-> +	check_luf_flush(ugen);
-> +}
+On Fri, 31 May 2024 at 16:04, Ard Biesheuvel <ardb@kernel.org> wrote:
+>
+> On Fri, 31 May 2024 at 15:33, Ard Biesheuvel <ardb@kernel.org> wrote:
+> >
+> > On Fri, 31 May 2024 at 13:00, Ard Biesheuvel <ardb@kernel.org> wrote:
+> > >
+> > > Hello Ross,
+> > >
+> > > On Fri, 31 May 2024 at 03:32, Ross Philipson <ross.philipson@oracle.com> wrote:
+> > > >
+> > > > The Secure Launch (SL) stub provides the entry point for Intel TXT (and
+> > > > later AMD SKINIT) to vector to during the late launch. The symbol
+> > > > sl_stub_entry is that entry point and its offset into the kernel is
+> > > > conveyed to the launching code using the MLE (Measured Launch
+> > > > Environment) header in the structure named mle_header. The offset of the
+> > > > MLE header is set in the kernel_info. The routine sl_stub contains the
+> > > > very early late launch setup code responsible for setting up the basic
+> > > > environment to allow the normal kernel startup_32 code to proceed. It is
+> > > > also responsible for properly waking and handling the APs on Intel
+> > > > platforms. The routine sl_main which runs after entering 64b mode is
+> > > > responsible for measuring configuration and module information before
+> > > > it is used like the boot params, the kernel command line, the TXT heap,
+> > > > an external initramfs, etc.
+> > > >
+> > > > Signed-off-by: Ross Philipson <ross.philipson@oracle.com>
+> > > > ---
+> > > >  Documentation/arch/x86/boot.rst        |  21 +
+> > > >  arch/x86/boot/compressed/Makefile      |   3 +-
+> > > >  arch/x86/boot/compressed/head_64.S     |  30 +
+> > > >  arch/x86/boot/compressed/kernel_info.S |  34 ++
+> > > >  arch/x86/boot/compressed/sl_main.c     | 577 ++++++++++++++++++++
+> > > >  arch/x86/boot/compressed/sl_stub.S     | 725 +++++++++++++++++++++++++
+> > > >  arch/x86/include/asm/msr-index.h       |   5 +
+> > > >  arch/x86/include/uapi/asm/bootparam.h  |   1 +
+> > > >  arch/x86/kernel/asm-offsets.c          |  20 +
+> > > >  9 files changed, 1415 insertions(+), 1 deletion(-)
+> > > >  create mode 100644 arch/x86/boot/compressed/sl_main.c
+> > > >  create mode 100644 arch/x86/boot/compressed/sl_stub.S
+> > > >
+> > > > diff --git a/Documentation/arch/x86/boot.rst b/Documentation/arch/x86/boot.rst
+> > > > index 4fd492cb4970..295cdf9bcbdb 100644
+> > > > --- a/Documentation/arch/x86/boot.rst
+> > > > +++ b/Documentation/arch/x86/boot.rst
+> > > > @@ -482,6 +482,14 @@ Protocol:  2.00+
+> > > >             - If 1, KASLR enabled.
+> > > >             - If 0, KASLR disabled.
+> > > >
+> > > > +  Bit 2 (kernel internal): SLAUNCH_FLAG
+> > > > +
+> > > > +       - Used internally by the setup kernel to communicate
+> > > > +         Secure Launch status to kernel proper.
+> > > > +
+> > > > +           - If 1, Secure Launch enabled.
+> > > > +           - If 0, Secure Launch disabled.
+> > > > +
+> > > >    Bit 5 (write): QUIET_FLAG
+> > > >
+> > > >         - If 0, print early messages.
+> > > > @@ -1028,6 +1036,19 @@ Offset/size:     0x000c/4
+> > > >
+> > > >    This field contains maximal allowed type for setup_data and setup_indirect structs.
+> > > >
+> > > > +============   =================
+> > > > +Field name:    mle_header_offset
+> > > > +Offset/size:   0x0010/4
+> > > > +============   =================
+> > > > +
+> > > > +  This field contains the offset to the Secure Launch Measured Launch Environment
+> > > > +  (MLE) header. This offset is used to locate information needed during a secure
+> > > > +  late launch using Intel TXT. If the offset is zero, the kernel does not have
+> > > > +  Secure Launch capabilities. The MLE entry point is called from TXT on the BSP
+> > > > +  following a success measured launch. The specific state of the processors is
+> > > > +  outlined in the TXT Software Development Guide, the latest can be found here:
+> > > > +  https://www.intel.com/content/dam/www/public/us/en/documents/guides/intel-txt-software-development-guide.pdf
+> > > > +
+> > > >
+> > >
+> > > Could we just repaint this field as the offset relative to the start
+> > > of kernel_info rather than relative to the start of the image? That
+> > > way, there is no need for patch #1, and given that the consumer of
+> > > this field accesses it via kernel_info, I wouldn't expect any issues
+> > > in applying this offset to obtain the actual address.
+> > >
+> > >
+> > > >  The Image Checksum
+> > > >  ==================
+> > > > diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
+> > > > index 9189a0e28686..9076a248d4b4 100644
+> > > > --- a/arch/x86/boot/compressed/Makefile
+> > > > +++ b/arch/x86/boot/compressed/Makefile
+> > > > @@ -118,7 +118,8 @@ vmlinux-objs-$(CONFIG_EFI) += $(obj)/efi.o
+> > > >  vmlinux-objs-$(CONFIG_EFI_MIXED) += $(obj)/efi_mixed.o
+> > > >  vmlinux-objs-$(CONFIG_EFI_STUB) += $(objtree)/drivers/firmware/efi/libstub/lib.a
+> > > >
+> > > > -vmlinux-objs-$(CONFIG_SECURE_LAUNCH) += $(obj)/early_sha1.o $(obj)/early_sha256.o
+> > > > +vmlinux-objs-$(CONFIG_SECURE_LAUNCH) += $(obj)/early_sha1.o $(obj)/early_sha256.o \
+> > > > +       $(obj)/sl_main.o $(obj)/sl_stub.o
+> > > >
+> > > >  $(obj)/vmlinux: $(vmlinux-objs-y) FORCE
+> > > >         $(call if_changed,ld)
+> > > > diff --git a/arch/x86/boot/compressed/head_64.S b/arch/x86/boot/compressed/head_64.S
+> > > > index 1dcb794c5479..803c9e2e6d85 100644
+> > > > --- a/arch/x86/boot/compressed/head_64.S
+> > > > +++ b/arch/x86/boot/compressed/head_64.S
+> > > > @@ -420,6 +420,13 @@ SYM_CODE_START(startup_64)
+> > > >         pushq   $0
+> > > >         popfq
+> > > >
+> > > > +#ifdef CONFIG_SECURE_LAUNCH
+> > > > +       /* Ensure the relocation region is coverd by a PMR */
+> > >
+> > > covered
+> > >
+> > > > +       movq    %rbx, %rdi
+> > > > +       movl    $(_bss - startup_32), %esi
+> > > > +       callq   sl_check_region
+> > > > +#endif
+> > > > +
+> > > >  /*
+> > > >   * Copy the compressed kernel to the end of our buffer
+> > > >   * where decompression in place becomes safe.
+> > > > @@ -462,6 +469,29 @@ SYM_FUNC_START_LOCAL_NOALIGN(.Lrelocated)
+> > > >         shrq    $3, %rcx
+> > > >         rep     stosq
+> > > >
+> > > > +#ifdef CONFIG_SECURE_LAUNCH
+> > > > +       /*
+> > > > +        * Have to do the final early sl stub work in 64b area.
+> > > > +        *
+> > > > +        * *********** NOTE ***********
+> > > > +        *
+> > > > +        * Several boot params get used before we get a chance to measure
+> > > > +        * them in this call. This is a known issue and we currently don't
+> > > > +        * have a solution. The scratch field doesn't matter. There is no
+> > > > +        * obvious way to do anything about the use of kernel_alignment or
+> > > > +        * init_size though these seem low risk with all the PMR and overlap
+> > > > +        * checks in place.
+> > > > +        */
+> > > > +       movq    %r15, %rdi
+> > > > +       callq   sl_main
+> > > > +
+> > > > +       /* Ensure the decompression location is covered by a PMR */
+> > > > +       movq    %rbp, %rdi
+> > > > +       movq    output_len(%rip), %rsi
+> > > > +       callq   sl_check_region
+> > > > +#endif
+> > > > +
+> > > > +       pushq   %rsi
+> > >
+> > > This looks like a rebase error.
+> > >
+> > > >         call    load_stage2_idt
+> > > >
+> > > >         /* Pass boot_params to initialize_identity_maps() */
+> > > > diff --git a/arch/x86/boot/compressed/kernel_info.S b/arch/x86/boot/compressed/kernel_info.S
+> > > > index c18f07181dd5..e199b87764e9 100644
+> > > > --- a/arch/x86/boot/compressed/kernel_info.S
+> > > > +++ b/arch/x86/boot/compressed/kernel_info.S
+> > > > @@ -28,6 +28,40 @@ SYM_DATA_START(kernel_info)
+> > > >         /* Maximal allowed type for setup_data and setup_indirect structs. */
+> > > >         .long   SETUP_TYPE_MAX
+> > > >
+> > > > +       /* Offset to the MLE header structure */
+> > > > +#if IS_ENABLED(CONFIG_SECURE_LAUNCH)
+> > > > +       .long   rva(mle_header)
+> > >
+> > > ... so this could just be mle_header - kernel_info, and the consumer
+> > > can do the math instead.
+> > >
+> > > > +#else
+> > > > +       .long   0
+> > > > +#endif
+> > > > +
+> > > >  kernel_info_var_len_data:
+> > > >         /* Empty for time being... */
+> > > >  SYM_DATA_END_LABEL(kernel_info, SYM_L_LOCAL, kernel_info_end)
+> > > > +
+> > > > +#if IS_ENABLED(CONFIG_SECURE_LAUNCH)
+> > > > +       /*
+> > > > +        * The MLE Header per the TXT Specification, section 2.1
+> > > > +        * MLE capabilities, see table 4. Capabilities set:
+> > > > +        * bit 0: Support for GETSEC[WAKEUP] for RLP wakeup
+> > > > +        * bit 1: Support for RLP wakeup using MONITOR address
+> > > > +        * bit 2: The ECX register will contain the pointer to the MLE page table
+> > > > +        * bit 5: TPM 1.2 family: Details/authorities PCR usage support
+> > > > +        * bit 9: Supported format of TPM 2.0 event log - TCG compliant
+> > > > +        */
+> > > > +SYM_DATA_START(mle_header)
+> > > > +       .long   0x9082ac5a  /* UUID0 */
+> > > > +       .long   0x74a7476f  /* UUID1 */
+> > > > +       .long   0xa2555c0f  /* UUID2 */
+> > > > +       .long   0x42b651cb  /* UUID3 */
+> > > > +       .long   0x00000034  /* MLE header size */
+> > > > +       .long   0x00020002  /* MLE version 2.2 */
+> > > > +       .long   rva(sl_stub_entry) /* Linear entry point of MLE (virt. address) */
+> > >
+> > > and these should perhaps be relative to mle_header?
+> > >
+> > > > +       .long   0x00000000  /* First valid page of MLE */
+> > > > +       .long   0x00000000  /* Offset within binary of first byte of MLE */
+> > > > +       .long   rva(_edata) /* Offset within binary of last byte + 1 of MLE */
+> > >
+> > > and here
+> > >
+> >
+> > Ugh never mind - these are specified externally.
+>
+> OK, so instead of patch #1, please use the linker script to generate
+> these constants.
+>
+> I.e., add this to arch/x86/boot/compressed/vmlinux.lds.S
+>
+> #ifdef CONFIG_SECURE_LAUNCH
+> PROVIDE(mle_header_offset       = mle_header - startup_32);
+> PROVIDE(sl_stub_entry_offset    = sl_stub_entry - startup_32);
+> PROVIDE(_edata_offset           = _edata - startup_32);
+> #endif
+>
+> and use the symbols on the left hand side in the code.
 
-Am I reading this right?  There's now an unconditional global spinlock
-acquired in the sys_write() path?  How can this possibly scale?
-
-So, yeah, I think an optimization is absolutely needed.  But, on a more
-fundamental level, I just don't believe these patches are being tested.
-Even a simple microbenchmark should show a pretty nasty regression on
-any decently large system:
-
-> https://github.com/antonblanchard/will-it-scale/blob/master/tests/write1.c
-
-Second, I was just pointing out sys_write() as an example of how the
-page cache could change.  Couldn't a separate, read/write mmap() of the
-file do the same thing and *not* go through sb_end_write()?
-
-So:
-
-	fd = open("foo");
-	ptr1 = mmap(fd, PROT_READ);
-	ptr2 = mmap(fd, PROT_READ|PROT_WRITE);
-
-	foo = *ptr1; // populate the page cache
-	... page cache page is reclaimed and LUF'd
-	*ptr2 = bar; // new page cache page is allocated and written to
-
-	printk("*ptr1: %d\n", *ptr1);
-
-Doesn't the printk() see stale data?
-
-I think tglx would call all of this "tinkering".  The approach to this
-series is to "fix" narrow, specific cases that reviewers point out, make
-it compile, then send it out again, hoping someone will apply it.
-
-So, for me, until the approach to this series changes: NAK, for x86.
-Andrew, please don't take this series.  Or, if you do, please drop the
-patch enabling it on x86.
-
-I also have the feeling our VFS friends won't take kindly to having
-random luf_foo() hooks in their hot paths, optimized or not.  I don't
-see any of them on cc.
+Bah this works with Clang but not with GCC/ld.bfd
 
