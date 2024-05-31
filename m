@@ -1,175 +1,166 @@
-Return-Path: <linux-kernel+bounces-197267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9981A8D6870
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 19:47:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33E1F8D6875
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 19:49:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50CD328B667
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:47:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 515351C21A80
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:49:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 616E217D361;
-	Fri, 31 May 2024 17:47:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ADF017C9F4;
+	Fri, 31 May 2024 17:49:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M4BwxNqu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b="ZA4T4lzH"
+Received: from mickerik.phytec.de (mickerik.phytec.de [91.26.50.163])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 597E117CA0B;
-	Fri, 31 May 2024 17:47:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91E8C17C21B
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 17:48:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.26.50.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717177633; cv=none; b=G/LiKh0Q7CLbGzdVtxBjpFRcD/lCIwiWCvQ+r7UDCt4rzgLGqhKV07kWGF2d/wZlrpc6xn1RbtfzQ6MaRlZjB5J1/omyE3pItCUadSx81I9V+p9pp/Djv17PyV5Yq6+qEvYpf7ryju7nuy2nnDkUKb96xFA20biGHn+A31Y6SFg=
+	t=1717177741; cv=none; b=IkTCa3PNXZmL3g9CEP7uXCe74r9pdS4m3YTlqRqwg8qlpBGJsdiso0zYqSPDXruu67aDbQ22LCnjZCQpcZR6tRfvOZMvBt1Do0VrjOIqxSnHvHaEB+ET1lgincPUrbt22/n+p1nFIZObtKRUtH2ZULzic6M13/UEWAc7qWIwo0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717177633; c=relaxed/simple;
-	bh=21LSgTExidJOfb9UA4FlB1VpQJ4ptiqM3M6lPGstxwE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XvPZi3xYPfoWg3lYON7LZK8LCF755Vwirer+Fn8da5Fog03MkaMzJYesmRIYQr0p8ceRHAKBPaTNGepPHigZi1r+WDuGnKHf3b+2bKHvPsdpayoCnMGa5FrKtYmpcfUd9aVGLqIYsQXRKcOfg765Imo1NWQcj7REYz7Iipif80s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M4BwxNqu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C999C116B1;
-	Fri, 31 May 2024 17:47:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717177632;
-	bh=21LSgTExidJOfb9UA4FlB1VpQJ4ptiqM3M6lPGstxwE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=M4BwxNquzh28rbTZt9KxjLyZLSvSTUEVYSPItGYpHKgF/llgtUdz7spzjZ1qDWfGa
-	 gKO93Wzjs8Vx+T8V7cNOyauHIs3UPX+aRXdcfko+GnDigHqMnATPDylVjCYUbIalCu
-	 mLK9weStMKWstAV1+MOMVnDgh0XnsGGB0giWmHjEA+/CpLAcZ/MnvoduJIbPJUQR47
-	 OMjgYtOyL1c0PuJ+BD+6oBCQtj7WuFB/ZZM9kuhxilKjJWYp8n0ptSfDTR2GWqS4Hy
-	 v3VLBCY65eRALsv2ivwmueMxnocgcpQHy8qIu0uRVOh2SVw9hwMi7BOqKdB89RIP2S
-	 HBkfZ4plenMPw==
-Date: Fri, 31 May 2024 10:47:10 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Fan Wu <wufan@linux.microsoft.com>, corbet@lwn.net, zohar@linux.ibm.com,
-	jmorris@namei.org, serge@hallyn.com, tytso@mit.edu, axboe@kernel.dk,
-	agk@redhat.com, snitzer@kernel.org, mpatocka@redhat.com,
-	eparis@redhat.com, linux-doc@vger.kernel.org,
-	linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org, fsverity@lists.linux.dev,
-	linux-block@vger.kernel.org, dm-devel@lists.linux.dev,
-	audit@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Deven Bowers <deven.desai@linux.microsoft.com>
-Subject: Re: [PATCH v19 15/20] fsverity: expose verified fsverity built-in
- signatures to LSMs
-Message-ID: <20240531174710.GA1199@sol.localdomain>
-References: <1716583609-21790-1-git-send-email-wufan@linux.microsoft.com>
- <1716583609-21790-16-git-send-email-wufan@linux.microsoft.com>
- <CAHC9VhRsnGjZATBj7-evK6Gdryr54raTTKMYO_vup8AGXLwjQg@mail.gmail.com>
- <20240530030605.GA29189@sol.localdomain>
- <CAHC9VhRySQ0c16UZz5xKT-y5Tn39wXxe4-f7LNjFY+ROGGxpaQ@mail.gmail.com>
- <20240531004321.GA1238@sol.localdomain>
- <CAHC9VhRRuBdnv3u2VjKZCR672p4oj_smA72P-181ysdDXGJ-AA@mail.gmail.com>
+	s=arc-20240116; t=1717177741; c=relaxed/simple;
+	bh=MXqn0xeA2HqxHTRc1nTtDIQVZRm+olzLnPAvyUPI2QM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=TDGZGcjpZTfLyUScYdwFM7rvE42/4wU4M29lGtbpqT2sYNsLsLTaZJDrfeKjYlJtUvCizzhUpInzMI5I0FmK+k7n9vlvrkX7Hw+IkS0yYgXU9WqKMK+3Xc12E+VtaNEIbXZZiOC2H8TgwVJu6gv6HCKpmtYc5m0QmBsENecCBN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de; spf=pass smtp.mailfrom=phytec.de; dkim=pass (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b=ZA4T4lzH; arc=none smtp.client-ip=91.26.50.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.de
+DKIM-Signature: v=1; a=rsa-sha256; d=phytec.de; s=a4; c=relaxed/simple;
+	q=dns/txt; i=@phytec.de; t=1717177731; x=1719769731;
+	h=From:Sender:Reply-To:Subject:Date:Message-ID:To:CC:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=MXqn0xeA2HqxHTRc1nTtDIQVZRm+olzLnPAvyUPI2QM=;
+	b=ZA4T4lzH7QGt3f0O18jjmVSizCsSkHJeh8ODoezaUrRyxH2WDOjhbe1gS5Om20h4
+	VO6JPByrwj38Iaj9PfKt8XaUaxaTQTceU1XgW7KvKsN/xotJb3Ti6Y0w+zHlbVBn
+	rEk32qSBgVfjc/Ft04H34G8+lsmdsZHDkbXxKK6Rb/s=;
+X-AuditID: ac14000a-03251700000021bc-eb-665a0d834430
+Received: from berlix.phytec.de (Unknown_Domain [172.25.0.12])
+	(using TLS with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(Client did not present a certificate)
+	by mickerik.phytec.de (PHYTEC Mail Gateway) with SMTP id 55.77.08636.38D0A566; Fri, 31 May 2024 19:48:51 +0200 (CEST)
+Received: from [10.0.0.42] (172.25.0.11) by Berlix.phytec.de (172.25.0.12)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.6; Fri, 31 May
+ 2024 19:48:43 +0200
+Message-ID: <828e0af0-bad4-4012-b519-2d292f0035a5@phytec.de>
+Date: Fri, 31 May 2024 19:48:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhRRuBdnv3u2VjKZCR672p4oj_smA72P-181ysdDXGJ-AA@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] dt-bindings: net: dp8386x: Add MIT license along with
+ GPL-2.0
+To: Udit Kumar <u-kumar1@ti.com>, <vigneshr@ti.com>, <nm@ti.com>,
+	<tglx@linutronix.de>, <tpiepho@impinj.com>
+CC: <andrew@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <netdev@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, Kip Broadhurst <kbroadhurst@ti.com>
+References: <20240531165725.1815176-1-u-kumar1@ti.com>
+Content-Language: en-US
+From: Wadim Egorov <w.egorov@phytec.de>
+In-Reply-To: <20240531165725.1815176-1-u-kumar1@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: Berlix.phytec.de (172.25.0.12) To Berlix.phytec.de
+ (172.25.0.12)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrGIsWRmVeSWpSXmKPExsWyRpKBR7eZNyrNoG2PtMX5u4eYLdbsPcdk
+	Med8C4vF/CPnWC2eHnvEbrH+q6TFy1n32CwubOtjtdj0+BqrxeVdc9gsji0Qs3jz4yyTxbfT
+	bxgt/u/ZwW6xedNUZoslcx+yW0zbO4PZ4v/ZD+wOQh5bVt5k8liwqdTjzYTbTB6bVnWyebw7
+	d47dY/OSeo+dOz4zebzfd5XN4/iN7UwenzfJBXBFcdmkpOZklqUW6dslcGWsmXGUpeCeaMWj
+	R/oNjLcEuxg5OSQETCT2r7jB0sXIxSEksIRJYvHPyUwQzi1GiaWbL7KBVPEK2EgcbVsFZrMI
+	qEqsWbidFSIuKHFy5hMWEFtUQF7i/q0Z7CC2sEC4xIpru4HiHBwiAnkSB6ZVgcxkFrjOJNHw
+	aCNYvZCAmcTWg3eZQWxmAXGJW0/mM4HYbALqEnc2fAObzylgLjHn8Xc2iBoLicVvDrJD2PIS
+	29/OYYaYIy/x4tJyFohv5CWmnXvNDGGHSmz9sp1pAqPwLCSnzkKybhaSsbOQjF3AyLKKUSg3
+	Mzk7tSgzW68go7IkNVkvJXUTIyiuRRi4djD2zfE4xMjEwXiIUYKDWUmE91d6RJoQb0piZVVq
+	UX58UWlOavEhRmkOFiVx3tUdwalCAumJJanZqakFqUUwWSYOTqkGRgkHU6bV9779uCu2/0cZ
+	R7mjZ3yl37Vzh/dbfw36+XWGeeav2fOvP+RirlnTzNkWGCu/+LvM3OajT7Qsj382CHn9TNLX
+	2mWiL2N28WaD+d4q11csF+20U9mls+hNr8cxYc65mWtWPds2RSuau7HBWERl56b9PWEWChuq
+	+jnWfPa6b7zOK3nXUiWW4oxEQy3mouJEAIKNn37ZAgAA
 
-On Fri, May 31, 2024 at 11:51:47AM -0400, Paul Moore wrote:
-> On Thu, May 30, 2024 at 8:43 PM Eric Biggers <ebiggers@kernel.org> wrote:
-> > On Thu, May 30, 2024 at 04:54:37PM -0400, Paul Moore wrote:
-> > > On Wed, May 29, 2024 at 11:06 PM Eric Biggers <ebiggers@kernel.org> wrote:
-> > > > On Wed, May 29, 2024 at 09:46:57PM -0400, Paul Moore wrote:
-> > > > > On Fri, May 24, 2024 at 4:46 PM Fan Wu <wufan@linux.microsoft.com> wrote:
-> > > > > >
-> > > > > > This patch enhances fsverity's capabilities to support both integrity and
-> > > > > > authenticity protection by introducing the exposure of built-in
-> > > > > > signatures through a new LSM hook. This functionality allows LSMs,
-> > > > > > e.g. IPE, to enforce policies based on the authenticity and integrity of
-> > > > > > files, specifically focusing on built-in fsverity signatures. It enables
-> > > > > > a policy enforcement layer within LSMs for fsverity, offering granular
-> > > > > > control over the usage of authenticity claims. For instance, a policy
-> > > > > > could be established to permit the execution of all files with verified
-> > > > > > built-in fsverity signatures while restricting kernel module loading
-> > > > > > from specified fsverity files via fsverity digests.
-> > >
-> > > ...
-> > >
-> > > > > Eric, can you give this patch in particular a look to make sure you
-> > > > > are okay with everything?  I believe Fan has addressed all of your
-> > > > > previous comments and it would be nice to have your Ack/Review tag if
-> > > > > you are okay with the current revision.
-> > > >
-> > > > Sorry, I've just gotten a bit tired of finding so many basic issues in this
-> > > > patchset even after years of revisions.
-> > > >
-> > > > This patch in particular is finally looking better.  There are a couple issues
-> > > > that I still see.  (BTW, you're welcome to review it too to help find these
-> > > > things, given that you seem to have an interest in getting this landed...):
-> > >
-> > > I too have been reviewing this patchset across multiple years and have
-> > > worked with Fan to fix locking issues, parsing issues, the initramfs
-> > > approach, etc.
-> >
-> > Sure, but none of the patches actually have your Reviewed-by.
-> 
-> As a general rule I don't post Acked-by/Reviewed-by tags for patches
-> that are targeting a subsystem that I maintain.  The logic being that
-> I'm going to be adding my Signed-off-by tag to the patches and arguing
-> these in front of Linus, so adding a Acked-by/Reviewed-by simply
-> creates more work later on where I have to strip them off and replace
-> them with my sign-off.
-> 
-> If the lack of a Reviewed-by tag is *really* what is preventing you
-> from reviewing the fs-verity patch, I can post that starting with the
-> next revision, but I'm guessing the lack of my tag isn't your core
-> issue (or at least I would argue it shouldn't be).
->
-> > > My interest in getting this landed is simply a
-> > > combination of fulfilling my role as LSM maintainer as well as being
-> > > Fan's coworker.  While I realize you don't work with Fan, you are
-> > > listed as the fs-verity maintainer and as such I've been looking to
-> > > you to help review and authorize the fs-verity related code.  If you
-> > > are too busy, frustrated, or <fill in the blank> to continue reviewing
-> > > this patchset it would be helpful if you could identify an authorized
-> > > fs-verity reviewer.  I don't see any besides you and Ted listed in the
-> > > MAINTAINERS file, but perhaps the fs-verity entry is dated.
-> > >
-> > > Regardless, I appreciate your time and feedback thus far and I'm sure
-> > > Fan does as well.
-> >
-> > Maintainers are expected to do reviews and acks, but not to the extent of
-> > extensive hand-holding of a half-baked submission.
-> 
-> Considering the current state of this patchset I don't believe that
-> verdict to be fair, or very considerate.
-> 
-> We clearly have different styles and approaches towards subsystem
-> maintainer roles.  I've had the good fortune to work with both hostile
-> and helpful senior developers during the early years of my time
-> working in the Linux kernel, and it helped reinforce the impact
-> patience and mentoring can have on contributors who are new to the
-> Linux kernel or perhaps system programming in general.  While I'm far
-> from perfect in this regard, I do hope and recommend that all of us in
-> maintainer, or senior developer, roles remember to exercise some
-> additional patience and education when working with new contributors.
-> 
 
-It's not clear to me that you've done a close review of the verity related
-patches, including not just this one but the dm-verity related ones and the
-fsverity and dm-verity support in IPE itself, given the issues that I've been
-finding in them in the last couple months.  As I said before, I'm not too
-enthusiastic about IPE myself, for various reasons I've explained, so I've
-really been looking to the people who actually want it to help drive it forward.
 
-Anyway, as I also said, the fsverity and dm-verity support does seem to be
-improved now after all the rounds of feedback, and I think it's close to the
-finish line.  I just hope you can understand that I'm also a bit burnt out now,
-and getting asked for an ack on this patch again and then seeing a bug in it
-(despite it having been simplified to only a few lines now) and also still
-misleading information in the commit message that I asked to be fixed before, is
-a bit frustrating.  I think it's reasonable to expect a bit better, especially
-for a security oriented feature.
+Am 31.05.24 um 18:57 schrieb Udit Kumar:
+> Modify license to include dual licensing as GPL-2.0-only OR MIT
+> license for TI specific phy header files. This allows for Linux
+> kernel files to be used in other Operating System ecosystems
+> such as Zephyr or FreeBSD.
+> 
+> While at this, update the GPL-2.0 to be GPL-2.0-only to be in sync
+> with latest SPDX conventions (GPL-2.0 is deprecated).
+> 
+> While at this, update the TI copyright year to sync with current year
+> to indicate license change.
+> 
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Trent Piepho <tpiepho@impinj.com>
+> Cc: Wadim Egorov <w.egorov@phytec.de>
+> Cc: Kip Broadhurst <kbroadhurst@ti.com>
+> Signed-off-by: Udit Kumar <u-kumar1@ti.com>
 
-Thanks,
+Acked-by: Wadim Egorov <w.egorov@phytec.de>
 
-- Eric
+> ---
+> Changelog:
+> Changes in v2:
+> - Updated Copyright information as per review comments of v1
+> - Added all authors[0] in CC list of patch
+> - Extended patch to LAKML list
+> v1 link: https://lore.kernel.org/all/20240517104226.3395480-1-u-kumar1@ti.com/
+> 
+> [0] Patch cc list is based upon (I am representing @ti.com for this patch)
+> git log --no-merges --pretty="%ae" $files|grep -v "@ti.com"
+> 
+> Requesting Acked-by, from the CC list of patch at the earliest
+> 
+> 
+>   include/dt-bindings/net/ti-dp83867.h | 4 ++--
+>   include/dt-bindings/net/ti-dp83869.h | 4 ++--
+>   2 files changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/include/dt-bindings/net/ti-dp83867.h b/include/dt-bindings/net/ti-dp83867.h
+> index 6fc4b445d3a1..b8a4f3ff4a3b 100644
+> --- a/include/dt-bindings/net/ti-dp83867.h
+> +++ b/include/dt-bindings/net/ti-dp83867.h
+> @@ -1,10 +1,10 @@
+> -/* SPDX-License-Identifier: GPL-2.0-only */
+> +/* SPDX-License-Identifier: GPL-2.0-only OR MIT */
+>   /*
+>    * Device Tree constants for the Texas Instruments DP83867 PHY
+>    *
+>    * Author: Dan Murphy <dmurphy@ti.com>
+>    *
+> - * Copyright:   (C) 2015 Texas Instruments, Inc.
+> + * Copyright (C) 2015-2024 Texas Instruments Incorporated - https://www.ti.com/
+>    */
+>   
+>   #ifndef _DT_BINDINGS_TI_DP83867_H
+> diff --git a/include/dt-bindings/net/ti-dp83869.h b/include/dt-bindings/net/ti-dp83869.h
+> index 218b1a64e975..917114aad7d0 100644
+> --- a/include/dt-bindings/net/ti-dp83869.h
+> +++ b/include/dt-bindings/net/ti-dp83869.h
+> @@ -1,10 +1,10 @@
+> -/* SPDX-License-Identifier: GPL-2.0-only */
+> +/* SPDX-License-Identifier: GPL-2.0-only OR MIT */
+>   /*
+>    * Device Tree constants for the Texas Instruments DP83869 PHY
+>    *
+>    * Author: Dan Murphy <dmurphy@ti.com>
+>    *
+> - * Copyright:   (C) 2019 Texas Instruments, Inc.
+> + * Copyright (C) 2015-2024 Texas Instruments Incorporated - https://www.ti.com/
+>    */
+>   
+>   #ifndef _DT_BINDINGS_TI_DP83869_H
 
