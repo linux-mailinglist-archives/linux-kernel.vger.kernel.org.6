@@ -1,136 +1,206 @@
-Return-Path: <linux-kernel+bounces-196263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2595E8D597C
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 06:36:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 861AA8D5996
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 06:46:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8EECB25047
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 04:36:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DCD92B225C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 04:46:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1E017F49B;
-	Fri, 31 May 2024 04:34:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DFC97CF3E;
+	Fri, 31 May 2024 04:45:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="AqbnsYY+"
-Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="eSRk4B6v"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3D8E7C082
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 04:34:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3345200DE;
+	Fri, 31 May 2024 04:45:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717130064; cv=none; b=tWiSajnBr9GlMlqEPYqFZ7SORqAEZjcJDfggg5Tt2ofHgnDZgqCrUhRXS4nSLOgGdYU5YhM0Cz5AkN+2JvWuD4VrM7Pi2nmc59pp+CZIFAKn1aEp2WzmAYSUbyOHsKhNLe11esG/+93kB+rTLuPcdZyaEXYGtLV6taYs78Fyjek=
+	t=1717130749; cv=none; b=sm7TVitLWjevv94dXHzUHzUi23AfauwuivQWcBvgToFXqZPLKJqYY+jEpRKvfKAq2NSrkiFizPfJJMZwvVND6pLNZQVVXAA8V9ajN6sNQ7aQVkqekkR4/aBUBYpRarnN2ghxL3wiHJ74yMf1Erb0AFk2Mh9oXS+35O2zO4WCUxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717130064; c=relaxed/simple;
-	bh=JbXFS0Fgv/0TnV1TSruhy4/VftWuFz4YNvlVR+xTgiA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BJ2gGxnn/UXg/VMF0s3MVRuL6yJtGyuGkxjmWtxQGRIjXy3UJK4QWeL+pRlsPqHbVl2QEGZSJv8SiRxTlUG4RuQ5zDv3dOwIf63mPQPInVky4rX3ub/SSLXarL37gGlHtFcMLoIbbkvrO64X39mIbrxYf1O2M5sxnOK5+ghicW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=AqbnsYY+; arc=none smtp.client-ip=209.85.166.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
-Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-7eacb1bc636so77719239f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 21:34:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1717130061; x=1717734861; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9aojvCCZI7oDG8nQF+lVjR38DWbQN1/i4Dj6O/Uiios=;
-        b=AqbnsYY+ZJqS25mKTXXbsEc+6PFAz4NGuL7fyC1LDyYey/h+41o2HgGplLyyvddlh4
-         JE5CGhKsnv8T1HoLBWS0OY+pItTr/wOir+sr8Fd16+3dXLpnaQHED5wFD3WjCNpPfynM
-         PEU1m3BHIWQSv8ZOTEStHfqMXZbxR71boo9DysqGQdH7JA+G0tkt1EfRcTRTN2w6un7w
-         5LAZnJu1A5vOOR6kQbo9E3oZEfdwHxKd4rOcCdSUM9FtajBHgk4j1YifDa1DzUh41Fpu
-         BzDbYHfymX6YGCkLomGatWYsPPBEPPZQuYNmYKxxh8WV9M9EVQNFNXfoBuIgYVBGuipB
-         K2GA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717130061; x=1717734861;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9aojvCCZI7oDG8nQF+lVjR38DWbQN1/i4Dj6O/Uiios=;
-        b=Fc43I1ceXVrNMG8eysSaX99xVgAwr0XNPkLQEYK0u7HCtrLsa9QI4T5qht/VUH4rgO
-         p3Oihvf3671o+BLGt9uV05PniWgABaAhqqxJknPXUH+B9y0uS7wF2Afkg9F6OvMYOcH2
-         RXa0fQzua92lcTD+HOEAzxwBK3/LDM/Rx+d93/8NdI5c9/EzuTG2sM4ijyfzjJzethxC
-         fIGTReeBus1S1xtqRcatJx+ITUB9/hc7UjTbYu3yroA/LJ2lkVYFbvm3WF6wiL/x5DYz
-         8WsAnzPL2uk87ej7hyhxcOZ79yJVdoiIpdi1Oqg0Q5pb5r3CpnbauDmRbM3l7GS5E9GA
-         URDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUiRNBMPyphsjFbceGYfhIs2ArjAl/U4Hp4BClWRcOQ6/5frE1DL1alB/fwqRzolSQ/ZAHO2dz+ud6+LrFQc8v4WciL/RgBgJEj6exT
-X-Gm-Message-State: AOJu0YxJaWWG18NI3BoOg+2N5OJG0N+hz9J+X6BmYKfZzPCasgH3r8Yh
-	ThpnwVroQ3hxBin7QcMXeYuGOtfl8jOQUq3BezXPhEGK/j/Mio5seCxNKpV8sUR8CDtwjzlI9U4
-	nG7DQR9meyN4nZkS7qhBU1av5LbKE240sW7z7Ig==
-X-Google-Smtp-Source: AGHT+IFumUwOVBhqm9jSSegtfTbBsWrL7+wRv2hHDnozjQHdKdEmqi3s7UpbRv2rHVzdr2XDkO13liv49fwxH13T3Ws=
-X-Received: by 2002:a05:6602:3425:b0:7de:c59f:2151 with SMTP id
- ca18e2360f4ac-7eaffe71e50mr101316239f.3.1717130060742; Thu, 30 May 2024
- 21:34:20 -0700 (PDT)
+	s=arc-20240116; t=1717130749; c=relaxed/simple;
+	bh=AcQjH0Tv+ds/w/G6RFoYZcCzZe6XNzxHUHykPWMypY0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qvRNDzvJwN9JW8q3rM1YjibpQUHEZoL/KKT+y4wyo2Zu9u7Ek7XFe6m7fTHZ3F9s2PR8LX7lutyQernPqsv+eeq1R3wrNJ9ukAgr0OYKRgl+2UKxSDU+pIJsRDifa+A7wavnbhSFjtnu3HrlgBH/N5U04G1N2DANExQWNLspM8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=eSRk4B6v; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44V4jHpV092443;
+	Thu, 30 May 2024 23:45:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1717130717;
+	bh=mNKiM5U/rsPEaic2/48KPNyIn8o3PwqoEUPJCxassRk=;
+	h=From:To:CC:Subject:Date;
+	b=eSRk4B6vXMdQ4a5sQcdPvJOmfIOdutd9bt0FjzeLGsvUZSJrlyk7i5aJXHkBjwv5S
+	 P/w2P5oeuJgxGqVv2B4h0OR18Z57F4fPqT1OuSEWGnJeY6QpMEetNEEAEH7d4oc7V9
+	 dVaAhpIw28ujYW7b4TXxljkaIe9b6DdLtS0D/9R0=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44V4jH8u120082
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 30 May 2024 23:45:17 -0500
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 30
+ May 2024 23:45:16 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 30 May 2024 23:45:16 -0500
+Received: from fllv0122.itg.ti.com (fllv0122.itg.ti.com [10.247.120.72])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44V4jG4r035650;
+	Thu, 30 May 2024 23:45:16 -0500
+Received: from localhost (danish-tpc.dhcp.ti.com [10.24.69.25])
+	by fllv0122.itg.ti.com (8.14.7/8.14.7) with ESMTP id 44V4jFPZ023385;
+	Thu, 30 May 2024 23:45:16 -0500
+From: MD Danish Anwar <danishanwar@ti.com>
+To: Jan Kiszka <jan.kiszka@siemens.com>,
+        Dan Carpenter
+	<dan.carpenter@linaro.org>,
+        Andrew Lunn <andrew@lunn.ch>, Simon Horman
+	<horms@kernel.org>,
+        Diogo Ivo <diogo.ivo@siemens.com>,
+        Wolfram Sang
+	<wsa+renesas@sang-engineering.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Niklas Schnelle <schnelle@linux.ibm.com>,
+        Vladimir Oltean
+	<vladimir.oltean@nxp.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Richard
+ Cochran <richardcochran@gmail.com>,
+        Roger Quadros <rogerq@kernel.org>,
+        MD
+ Danish Anwar <danishanwar@ti.com>, Paolo Abeni <pabeni@redhat.com>,
+        Jakub
+ Kicinski <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>,
+        "David S.
+ Miller" <davem@davemloft.net>
+CC: <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <srk@ti.com>,
+        Jacob Keller
+	<jacob.e.keller@intel.com>
+Subject: [PATCH net-next v9 0/2] Add TAPRIO offload support for ICSSG driver
+Date: Fri, 31 May 2024 10:15:10 +0530
+Message-ID: <20240531044512.981587-1-danishanwar@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240415064905.25184-1-yongxuan.wang@sifive.com>
-In-Reply-To: <20240415064905.25184-1-yongxuan.wang@sifive.com>
-From: Anup Patel <anup@brainfault.org>
-Date: Fri, 31 May 2024 10:04:09 +0530
-Message-ID: <CAAhSdy0STe67n6TB2ZH1OYZCTQ+yPycmsQ+8Ay0KsorwVYEo6w@mail.gmail.com>
-Subject: Re: [PATCH 1/1] RISC-V: KVM: No need to use mask when hart-index-bit
- is 0
-To: Yong-Xuan Wang <yongxuan.wang@sifive.com>
-Cc: linux-riscv@lists.infradead.org, kvm-riscv@lists.infradead.org, 
-	greentime.hu@sifive.com, vincent.chen@sifive.com, 
-	Atish Patra <atishp@atishpatra.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Mon, Apr 15, 2024 at 12:19=E2=80=AFPM Yong-Xuan Wang
-<yongxuan.wang@sifive.com> wrote:
->
-> When the maximum hart number within groups is 1, hart-index-bit is set to
-> 0. Consequently, there is no need to restore the hart ID from IMSIC
-> addresses and hart-index-bit settings. Currently, QEMU and kvmtool do not
-> pass correct hart-index-bit values when the maximum hart number is a
-> power of 2, thereby avoiding this issue. Corresponding patches for QEMU
-> and kvmtool will also be dispatched.
->
-> Fixes: 89d01306e34d ("RISC-V: KVM: Implement device interface for AIA irq=
-chip")
-> Signed-off-by: Yong-Xuan Wang <yongxuan.wang@sifive.com>
+This series adds taprio offload support for ICSSG driver.
 
-Queued this patch for Linux-6.10-rcX fixes.
+Patch [1/2] of the series moves some structures and API definition to .h
+files so that these can be accessed by taprio (icssg_qos.c) file.
 
-Thanks,
-Anup
+Patch [2/2] of the series introduces the taprio support for icssg driver.
 
-> ---
->  arch/riscv/kvm/aia_device.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
->
-> diff --git a/arch/riscv/kvm/aia_device.c b/arch/riscv/kvm/aia_device.c
-> index 0eb689351b7d..5cd407c6a8e4 100644
-> --- a/arch/riscv/kvm/aia_device.c
-> +++ b/arch/riscv/kvm/aia_device.c
-> @@ -237,10 +237,11 @@ static gpa_t aia_imsic_ppn(struct kvm_aia *aia, gpa=
-_t addr)
->
->  static u32 aia_imsic_hart_index(struct kvm_aia *aia, gpa_t addr)
->  {
-> -       u32 hart, group =3D 0;
-> +       u32 hart =3D 0, group =3D 0;
->
-> -       hart =3D (addr >> (aia->nr_guest_bits + IMSIC_MMIO_PAGE_SHIFT)) &
-> -               GENMASK_ULL(aia->nr_hart_bits - 1, 0);
-> +       if (aia->nr_hart_bits)
-> +               hart =3D (addr >> (aia->nr_guest_bits + IMSIC_MMIO_PAGE_S=
-HIFT)) &
-> +                      GENMASK_ULL(aia->nr_hart_bits - 1, 0);
->         if (aia->nr_group_bits)
->                 group =3D (addr >> aia->nr_group_shift) &
->                         GENMASK_ULL(aia->nr_group_bits - 1, 0);
-> --
-> 2.17.1
->
+Changes from v8 to v9:
+*) Rebased the series on latest net-next/main as the series was not
+   cleanly applying because of [1] as mentioned by Jacob Keller
+   <jacob.e.keller@intel.com>. Now the seires can be cleanly applied on
+   net-next with or without [1].
+*) No other changes done in this series.
+
+Changes from v7 to v8:
+*) Modified commit message of patch 2/2 to state both ICSSG Switch and
+   dual-emac firmware supports taprio offload as pointed out by
+   Andrew Lunn <andrew@lunn.ch>
+*) Rebased on latest net-next/main
+
+Changes from v6 to v7:
+*) Rebased on 6.10-rc1.
+*) Removed RFC tag, no functional changes.
+
+Changes from v5 to v6:
+*) Added RFC tag as net-next is closed now.
+*) Created a new patch for "the struct definition move" and made this
+   series instead of single patch as suggested by
+   Paolo Abeni <pabeni@redhat.com>.
+*) Removed est_new structure as that is no longer used.
+*) Freeing qos.tas.taprio_admin using taprio_offload_free() as suggested
+   by Paolo Abeni <pabeni@redhat.com>
+*) Clearing taprio_admin and taprio in error case in emac_taprio_replace()
+   API using goto label taprio_clear.
+*) Added RB tag of Simon Horman <horms@kernel.org> 
+
+Changes from v4 to v5:
+*) Rebased on latest net-next/main [commit 5c4c0edca68a]
+*) Moved icss_iep structure to icss_iep.h file so that iep wraparound time
+   which is stored in iep->def_inc, can be accessed by qos file.
+*) Added comment about IEP wraparound time compensation in icssg_qos.c
+*) Moved icssg_qos_tas_init() to prueth_netdev_init() so that icssg_qos_tas_init()
+   gets called even if interface is down.
+*) Fixed print statements as suggested by Vladimir Oltean <vladimir.oltean@nxp.com>
+*) Added taprio_offload_get() and taprio_offload_free() in emac_taprio_replace()
+   and emac_taprio_destory() respectively.
+
+Changes from v3 to v4:
+*) Rebased on the latest next-20231005 linux-next.
+*) Addressed Roger and Vinicius' comments and moved all the validations to
+   emac_taprio_replace() API.
+*) Modified emac_setup_taprio() API to use switch case based on taprio->cmd
+   and added emac_taprio_destroy() and emac_taprio_replace() APIs.
+*) Modified the documentation of structs / enums in icssg_qos.h by using
+   the correct kdoc format.
+
+Changes from v2 to v3:
+*) Rebased on the latest next-20230928 linux-next.
+*) Retained original authorship of the patch.
+*) Addressed Roger's comments and modified emac_setup_taprio() and
+   emac_set_taprio() APIs accordingly.
+*) Removed netif_running() check from emac_setup_taprio().
+*) Addressed Vinicius' comments and added check for MIN and MAX cycle time.
+*) Added check for allocation failure of est_new in emac_setup_taprio().
+
+Changes from v1 to v2:
+*) Rebased on the latest next-20230921 linux-next.
+*) Dropped the RFC tag as merge window is open now.
+*) Splitted this patch from the switch mode series [v1].
+*) Removed TODO comment as asked by Andrew and Roger.
+*) Changed Copyright to 2023 as asked by Roger.
+
+v8: https://lore.kernel.org/all/20240529110551.620907-1-danishanwar@ti.com/
+v7: https://lore.kernel.org/all/20240527055300.154563-1-danishanwar@ti.com/
+v6: https://lore.kernel.org/all/20240515065042.2852877-1-danishanwar@ti.com/
+v5: https://lore.kernel.org/all/20240429103022.808161-1-danishanwar@ti.com/
+v4: https://lore.kernel.org/all/20231006102028.3831341-1-danishanwar@ti.com/
+v3: https://lore.kernel.org/all/20230928103000.186304-1-danishanwar@ti.com/
+v2: https://lore.kernel.org/all/20230921070031.795788-1-danishanwar@ti.com/
+v1: https://lore.kernel.org/all/20230830110847.1219515-1-danishanwar@ti.com/
+[1] https://lore.kernel.org/netdev/20240528113734.379422-1-danishanwar@ti.com/
+
+MD Danish Anwar (1):
+  net: ti: icssg: Move icss_iep structure
+
+Roger Quadros (1):
+  net: ti: icssg_prueth: add TAPRIO offload support
+
+ drivers/net/ethernet/ti/Kconfig              |   1 +
+ drivers/net/ethernet/ti/Makefile             |   1 +
+ drivers/net/ethernet/ti/icssg/icss_iep.c     |  72 -----
+ drivers/net/ethernet/ti/icssg/icss_iep.h     |  73 ++++-
+ drivers/net/ethernet/ti/icssg/icssg_prueth.c |   5 +-
+ drivers/net/ethernet/ti/icssg/icssg_prueth.h |   4 +
+ drivers/net/ethernet/ti/icssg/icssg_qos.c    | 288 +++++++++++++++++++
+ drivers/net/ethernet/ti/icssg/icssg_qos.h    | 113 ++++++++
+ 8 files changed, 483 insertions(+), 74 deletions(-)
+ create mode 100644 drivers/net/ethernet/ti/icssg/icssg_qos.c
+ create mode 100644 drivers/net/ethernet/ti/icssg/icssg_qos.h
+
+
+base-commit: ccf23c916ca35239a924ec8649cc88b1ef25d3d9
+-- 
+2.34.1
+
 
