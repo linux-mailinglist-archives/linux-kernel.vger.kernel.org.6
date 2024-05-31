@@ -1,108 +1,183 @@
-Return-Path: <linux-kernel+bounces-196493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3CA18D5CFC
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:42:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A5A38D5CFE
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:42:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 011D51C244BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 08:42:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1438B21FE6
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 08:42:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0AE3153BEE;
-	Fri, 31 May 2024 08:42:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC77E153BF7;
+	Fri, 31 May 2024 08:42:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="UfYrAAWd"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZyDRhXPg";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zj0DMVpE"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F48C153BC1
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 08:42:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 074EF15383F;
+	Fri, 31 May 2024 08:42:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717144934; cv=none; b=cBVcTz4QP8CB5ZMhTgd5UmufrbUz6xMpsoHmtomgPql8CIK6p3dsqyWPQ6rd8T+Lh171PwBvde9CLED4O69/uU3/uSB6dtO9qXbUvuHuntHxGTLBeSxNMrmQmBdb6rYx7xATgHQpAmZJt1sxEmsFxqhveTlTJzKCtAUWMjJSEow=
+	t=1717144953; cv=none; b=pP/l74I7D288FmmV1kpwocKrzE1bEYdk76nv/+B48r3LJXZBDFrM4XDW9xLi83nCIExi6NEtFSm1vJ8bxmu1CDzXXxW1Fmz2bUtheEcDQ3OJgGucsM+cBeA2+PnxcUmUFTfSTI9QsA2H16KyE2kQHfzQDUlE9KsycS7/Ob3Yvjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717144934; c=relaxed/simple;
-	bh=4yK9SyBdW0zgwmNl9s3wi8n2UWcuNwjF8EG8EoaUDU0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X60YUuaDI3ADC/5pCFczcPMVYa2nPndIsxhdFtQtE/aC30ExBYjOxUWfQBQiCpsqDYZkfFFlpFFKfzvOdRIKj4u8Fu+je7aD+IC2BbWJ1gM5SYyxYryAZmY4aorYkFifzkqm7QVXmbfqJv4BqiP+kimvmBszbaIuXbe7NcOaf8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=UfYrAAWd; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-57a20c600a7so1811615a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 01:42:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1717144929; x=1717749729; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fnEJF5YFjXx3H2Urn60X/VuHjAoAlnqwvGpoDCqgBZM=;
-        b=UfYrAAWdHylShCEbxzOoeOw0Y8FuzftgA7pjjJVrdlGGvFxn9WYr3PQfb0URxtY+Zv
-         c54xnW/qxO+Cd9eaBn95RZb4oQe0P/tEznbVq9qRwYtEO5oktDtr4zEr50SeQP05PUTK
-         2bPkqA36Ip+O4cFSsDliBm3Va39q9pxcb15pDvGRXNdJWsBMRCZ8wn7BycR7x7FHa2YX
-         Wjs2vLsrqQMTQjLbu/MSRKqBCQZ15TNVYiY3KNd422BTzPjPsuu4BNyFgA+8jAcjTRuG
-         BTaAi7F9lBZn6EM7YdY7ozLgm6dfIXOWwINt1AVOLTsGXFn7qssTjEQfU0jKFvXGY4Vv
-         9cqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717144929; x=1717749729;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fnEJF5YFjXx3H2Urn60X/VuHjAoAlnqwvGpoDCqgBZM=;
-        b=BDcARi/xjXKY1j0hOmaZTci8zcgRzZ5bDMscElQ+WiRP4mcLw8vjEFdUiYCjBPcrNr
-         kpOlaeWX79puQ1reh4DHjKkgrMK75jIb4sMMHscacZ1Rl3HZk8cvKgWWRsksqj2EUyBD
-         lQOyKP767Lu8TDwiBEfn0tCJCGVRN0xIdETkJyp6ZqNU6b5Qmmp6ZdwLcW3kTSUMRZP2
-         4rBfJpMUYMMpBAFZJTnssfTFDCJG1mMp/ZRuJ8BsMc9yIenm7ilm6PErBjfJubQ8ovNM
-         1NlZG+Ga9P+2ic+AzkJGq8SIN5SGlewW3sQHnfuPqTsYLZ/XhzgqKB9FsRDWKPiCX5mP
-         MuZg==
-X-Forwarded-Encrypted: i=1; AJvYcCWgesIMmIiN3XXdTMlwBrDemJAy66jCEmIjQgUB6ET9b2Ju9ucCMl3G5pHYgcLCGRMvvMm0MpOzzge/L0KfFc4lj0GxQkKLnmcebCZl
-X-Gm-Message-State: AOJu0YzRYqrFucSfC4xb0OU1XwR0inUUFcs6QUbNUrZvfrFTz9wamOU+
-	cVxKMFYvXGCA9v6AuZvcQRbasQPHY82mczR5j4x+Me0OfjIJk4Wt/KcsWwwU0a0=
-X-Google-Smtp-Source: AGHT+IFaI4U2rH2Rd9l/+r9yzVCwe48OPbQ3/TkHlZBslQk9PqBEy0Gw2qtSg9KR6sBLoLVxmyYr1A==
-X-Received: by 2002:a50:d4d9:0:b0:573:5c18:c2d5 with SMTP id 4fb4d7f45d1cf-57a36382781mr872799a12.3.1717144929374;
-        Fri, 31 May 2024 01:42:09 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57a31bb8282sm734725a12.25.2024.05.31.01.42.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 May 2024 01:42:09 -0700 (PDT)
-Date: Fri, 31 May 2024 10:42:07 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Ryan Sullivan <rysulliv@redhat.com>
-Cc: live-patching@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org, mpdesouza@suse.com,
-	jpoimboe@kernel.org, jikos@kernel.org, mbenes@suse.cz,
-	joe.lawrence@redhat.com, shuah@kernel.org
-Subject: Re: [PATCH] tools/testing/selftests/livepatch: define max
- test-syscall processes
-Message-ID: <ZlmNX78SCFX2Kj3O@pathway.suse.cz>
-References: <20240529201941.13968-1-rysulliv@redhat.com>
+	s=arc-20240116; t=1717144953; c=relaxed/simple;
+	bh=obwRrHdSQhE14E+BPljTdaZz9fKGC+Z7OnPMryGR2y8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=PekerXdkOVx+s53ZPsvau32FQpmGAnEkDUfUUL8BAFp5tXSzB2BGAU9gKyfch7TNddO0FYnkxYYSR/grNlSe/QVQcKL5NRjbGNUVjl0VDWo3mToECD4doQxr6l16dGZD1qmAQHj0l92em+I5T6oOFSS5pmqFgpjt+rew5QaOH9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZyDRhXPg; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zj0DMVpE; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1717144949;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UTI2c/7A6hRiAbpj/yTEs+WThsy6r51M1QAj2Eqyrrg=;
+	b=ZyDRhXPgyl2XW/yooSOsdQ55MOqnXLyLFf2E/VAy4KSp1SqXxaVecb7H/YTa84VYTApx2K
+	xUx4Hfyi5t6R/hIwKPbi01d/Nf5Gwwb3M2XuvpwQtkyYRTw501NzadvNy3UAmmC7DPzqnQ
+	1zC2+CIjm1MfL/DwvpixyYyI/aLhNJNGwDV0y1ANM5z4GY4r3OOfmiKCaNmF3+JV6KCQkE
+	iCQ8mlWHs5C+gUV5d2kZwQemcVkKJo+HREfTXt/GGSoPqHiFAQOlebPw152TlrBBELbKwz
+	FeFuJJSPlH6SgNS7azztVK5yxNF5uSQgC+X2F0rPtc7aO+3NibanFlrIEHkltg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1717144949;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UTI2c/7A6hRiAbpj/yTEs+WThsy6r51M1QAj2Eqyrrg=;
+	b=zj0DMVpEcS1FhmVzjIGd6qojtWrfTT+MCPhya0GJh0aB1AhB2VInHBvzy8phpzBkbP4pqH
+	2noxYHUMGO0A+xDg==
+To: Peter Schneider <pschneider1968@googlemail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
+ stable@vger.kernel.org, regressions@lists.linux.dev
+Subject: Re: Kernel 6.9 regression: X86: Bogus messages from topology detection
+In-Reply-To: <87ikyu8jp4.ffs@tglx>
+References: <877cffcs7h.ffs@tglx>
+ <16cd76b1-a512-4a7b-a304-5e4e31af3c8a@googlemail.com>
+ <ce3abe01-4c37-416e-a5ed-25703318318a@googlemail.com>
+ <87zfs78zxq.ffs@tglx>
+ <76b1e0b9-26ae-4915-920d-9093f057796b@googlemail.com>
+ <87r0dj8ls4.ffs@tglx> <87o78n8fe2.ffs@tglx> <87le3r8dyw.ffs@tglx>
+ <bd7ff2f3-bf2c-4431-9848-8eb41e7422c6@googlemail.com>
+ <87ikyu8jp4.ffs@tglx>
+Date: Fri, 31 May 2024 10:42:26 +0200
+Message-ID: <87frty8j9p.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240529201941.13968-1-rysulliv@redhat.com>
+Content-Type: text/plain
 
-On Wed 2024-05-29 16:19:41, Ryan Sullivan wrote:
-> Define a maximum allowable number of pids that can be livepatched in
-> test-syscall.sh as with extremely large machines the output from a
-> large number of processes overflows the dev/kmsg "expect" buffer in
-> the "check_result" function and causes a false error.
-> 
-> Reported-by: CKI Project <cki-project@redhat.com>
-> Signed-off-by: Ryan Sullivan <rysulliv@redhat.com>
+On Fri, May 31 2024 at 10:33, Thomas Gleixner wrote:
 
-Looks reasonable.
+Clearly coffee did not set in yet.
 
-Reviewed-by: Petr Mladek <pmladek@suse.com>
+Thanks,
 
-Best Regards,
-Petr
+         tglx
+---
+Subject: x86/topology/intel: Unlock CPUID before evaluating anything
+From: Thomas Gleixner <tglx@linutronix.de>
+Date: Thu, 30 May 2024 17:29:18 +0200
 
-PS: I am going to queue it for 6.11. I will add it into
-    a pull request for 6.10-rcX if there will be another more
-    critical fix which would need such a pull request.
+Intel CPUs have a MSR bit to limit CPUID enumeration to leaf two. If this
+bit is set by the BIOS then CPUID evaluation including topology enumeration
+does not work correctly as the evaluation code does not try to analyze any
+leaf greater than two.
+
+This went unnoticed before because the original topology code just repeated
+evaluation several times and managed to overwrite the initial limited
+information with the correct one later. The new evaluation code does it
+once and therefore ends up with the limited and wrong information.
+
+Cure this by unlocking CPUID right before evaluating anything which depends
+on the maximum CPUID leaf being greater than two instead of rereading stuff
+after unlock.
+
+Fixes: 22d63660c35e ("x86/cpu: Use common topology code for Intel")
+Reported-by: Peter Schneider <pschneider1968@googlemail.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+---
+ arch/x86/kernel/cpu/common.c |    3 ++-
+ arch/x86/kernel/cpu/cpu.h    |    2 ++
+ arch/x86/kernel/cpu/intel.c  |   25 ++++++++++++++++---------
+ 3 files changed, 20 insertions(+), 10 deletions(-)
+
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -1585,6 +1585,7 @@ static void __init early_identify_cpu(st
+ 	if (have_cpuid_p()) {
+ 		cpu_detect(c);
+ 		get_cpu_vendor(c);
++		intel_unlock_cpuid_leafs(c);
+ 		get_cpu_cap(c);
+ 		setup_force_cpu_cap(X86_FEATURE_CPUID);
+ 		get_cpu_address_sizes(c);
+@@ -1744,7 +1745,7 @@ static void generic_identify(struct cpui
+ 	cpu_detect(c);
+ 
+ 	get_cpu_vendor(c);
+-
++	intel_unlock_cpuid_leafs(c);
+ 	get_cpu_cap(c);
+ 
+ 	get_cpu_address_sizes(c);
+--- a/arch/x86/kernel/cpu/cpu.h
++++ b/arch/x86/kernel/cpu/cpu.h
+@@ -61,9 +61,11 @@ extern __ro_after_init enum tsx_ctrl_sta
+ 
+ extern void __init tsx_init(void);
+ void tsx_ap_init(void);
++void intel_unlock_cpuid_leafs(struct cpuinfo_x86 *c);
+ #else
+ static inline void tsx_init(void) { }
+ static inline void tsx_ap_init(void) { }
++static inline void intel_unlock_cpuid_leafs(struct cpuinfo_x86 *c) { }
+ #endif /* CONFIG_CPU_SUP_INTEL */
+ 
+ extern void init_spectral_chicken(struct cpuinfo_x86 *c);
+--- a/arch/x86/kernel/cpu/intel.c
++++ b/arch/x86/kernel/cpu/intel.c
+@@ -269,19 +269,26 @@ static void detect_tme_early(struct cpui
+ 	c->x86_phys_bits -= keyid_bits;
+ }
+ 
++void intel_unlock_cpuid_leafs(struct cpuinfo_x86 *c)
++{
++	if (boot_cpu_data.x86_vendor != X86_VENDOR_INTEL)
++		return;
++
++	if (c->x86 < 6 || (c->x86 == 6 && c->x86_model < 0xd))
++		return;
++
++	/*
++	 * The BIOS can have limited CPUID to leaf 2, which breaks feature
++	 * enumeration. Unlock it and update the maximum leaf info.
++	 */
++	if (msr_clear_bit(MSR_IA32_MISC_ENABLE, MSR_IA32_MISC_ENABLE_LIMIT_CPUID_BIT) > 0)
++		c->cpuid_level = cpuid_eax(0);
++}
++
+ static void early_init_intel(struct cpuinfo_x86 *c)
+ {
+ 	u64 misc_enable;
+ 
+-	/* Unmask CPUID levels if masked: */
+-	if (c->x86 > 6 || (c->x86 == 6 && c->x86_model >= 0xd)) {
+-		if (msr_clear_bit(MSR_IA32_MISC_ENABLE,
+-				  MSR_IA32_MISC_ENABLE_LIMIT_CPUID_BIT) > 0) {
+-			c->cpuid_level = cpuid_eax(0);
+-			get_cpu_cap(c);
+-		}
+-	}
+-
+ 	if ((c->x86 == 0xf && c->x86_model >= 0x03) ||
+ 		(c->x86 == 0x6 && c->x86_model >= 0x0e))
+ 		set_cpu_cap(c, X86_FEATURE_CONSTANT_TSC);
 
