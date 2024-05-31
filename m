@@ -1,44 +1,46 @@
-Return-Path: <linux-kernel+bounces-196388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FCC58D5B1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 09:03:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B357E8D5B1B
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 09:03:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19A0F28A08B
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 07:03:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0CA81C2399C
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 07:02:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01A5C81724;
-	Fri, 31 May 2024 07:02:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E7DD80C15;
+	Fri, 31 May 2024 07:02:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=monom.org header.i=@monom.org header.b="GLl5Fui5"
+	dkim=pass (2048-bit key) header.d=monom.org header.i=@monom.org header.b="jLIva+GY"
 Received: from mail.nearlyone.de (mail.nearlyone.de [49.12.199.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59C1517E9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59C3D26AC8;
 	Fri, 31 May 2024 07:02:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.199.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717138971; cv=none; b=DuTfzidxijfAZKVCtOaakqdl3qAzOqx07/smgOoRRsEkEKyRGTpIdoE4hBftJLOtzPoAhkTZDrJJqdbt1TKjuDvHYPvDnwZAFu1ioRdnKE+C556xaz9ACQNmA7VWw2O7A4lR6Nc8dOedyr3hy76nNMmWWHhsCOQyiqMnJ+VGbZs=
+	t=1717138970; cv=none; b=fIbqCPtlkC84y6GceLSvCvqjt2mCYGTnlZ5hhMcDJfDn6/iY7bz/S2MJHrN2nzOC7x02xv4Kc0jxLrXiZWgGyU20WaJv2YD7oFhqK3Y054bDaRm2oQpga23F2JbraVP9mFYLYgCOjuPSnE7GcxsIvwwvlagXZt5IoFpocBKt7pw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717138971; c=relaxed/simple;
-	bh=e2RvwCRHl4GX1kG7Nh6RBjRI/S4ovW6oenUsZihDIGc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=i/T4PkKT8K8JCj83NaTV0RE0I334pcaHj8X/gW4lwJgr80D+eu5OBlgZh9oE2M/ES3i3FBEQzlE6wHq8N/zr5aaGMu1Ze1whVJ0uBP5SKZLau9KCIRDsGjM6yXaeZaLhn1Vr6RMBd/KM55M2MzoMKa8VXCkEXddcff68qHh2JjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=monom.org; spf=pass smtp.mailfrom=monom.org; dkim=pass (2048-bit key) header.d=monom.org header.i=@monom.org header.b=GLl5Fui5; arc=none smtp.client-ip=49.12.199.46
+	s=arc-20240116; t=1717138970; c=relaxed/simple;
+	bh=+qj0pjsVrP5Du0E6LXt9MVesXit8cTR7SOTl6erev3I=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ATW9o7AodlN0sPgToaYj2/qMYRIvOBm5Gqe3CRFygz7gJFQyaiD7rwz/8ytmUnVbRISKrc5uaIVptNLIOgtSx/LGWJx2wzbxWR/eFZP3fdG2tOTQh76N3WBhCWEtBiYfXDHmUx0sDBbm96lExZTGWxlTS5CsAxygIwAkZi/O33w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=monom.org; spf=pass smtp.mailfrom=monom.org; dkim=pass (2048-bit key) header.d=monom.org header.i=@monom.org header.b=jLIva+GY; arc=none smtp.client-ip=49.12.199.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=monom.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=monom.org
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 11EA1DB443;
-	Fri, 31 May 2024 08:57:13 +0200 (CEST)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 27F9BDB46D;
+	Fri, 31 May 2024 08:57:18 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monom.org; s=dkim;
-	t=1717138637; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding; bh=otNz7CvTivnwC3/a202OFaijRwix1c06Gyv3iiaPrKY=;
-	b=GLl5Fui505TSUq7sB9KDl/19kGs9kyFuKW+WQA94xThCPArtL/GkM84z1Rx51cBnv4VYQU
-	/kWYdjIVkuSZ4+Z3o+po7b3hvIJHkdUS5xfpWLkf87VupCI76hIpx+CKAAumP0a555h+e3
-	phyuEfQc5DYnQGYiPvKy6cYp35Ibqa3ItNM/VYxPmV1luue4x2Iz00Gt4ZJ+JvOWE7E9uP
-	e3HG41PM98UEzQ0brs67mPZFbpSwtLD+fP0F0k+NV0hiQwOHDcI+H2Zlq69Ze2NhedGoq2
-	TDU7kxTQFybezFbRguuxQsOphdlUmw2Ih15XhXj84uTIvPcd9BL80fNZmO0l6g==
+	t=1717138638; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=LcHxNAVjNi8r6vtfjQ5RqoVt1L/zZdSoO2z8g2Scxlw=;
+	b=jLIva+GY+Sa47mlJFKz99TeYtXAr+e9NzlP//nxx7JQ9ymha6eGn9uUQRJcUg5Ahd23l1V
+	Rh1UahdU1Z3uiCRsGdFEDBQyle/vCdpy60sOm+jUUmOB0YFCTCDE6v2o1PmxpVcySa7K94
+	o4nLHkIlvRxca2OX7SJ+aM25YOy83iH2GfZl9bnCAzCMirjiSYrY2NectIp54L7lW+OT2I
+	7rD4XKzFodLXU4xIB0tUr7tT4hlcvvBcWZd5Dhr/F88Z61Zvf75R25vvym9D3EWfv2bJI9
+	C7TPMZT5xldWkkp5sviiWHxacj2iqzZZrJ9Ixdqx81aATONSbxU7ghZMlClwPA==
 From: Daniel Wagner <wagi@monom.org>
 To: LKML <linux-kernel@vger.kernel.org>,
 	 <linux-rt-users@vger.kernel.org>,
@@ -49,10 +51,12 @@ To: LKML <linux-kernel@vger.kernel.org>,
 	Tom Zanussi <tom.zanussi@linux.intel.com>,
 	Clark Williams <williams@redhat.com>
 Cc: Daniel Wagner <wagi@monom.org>
-Subject: [PATCH RT 0/1] Linux v4.19.315-rt135-rc1
-Date: Fri, 31 May 2024 08:57:10 +0200
-Message-ID: <20240531065711.32484-1-wagi@monom.org>
+Subject: [PATCH RT 1/1] Linux 4.19.315-rt135
+Date: Fri, 31 May 2024 08:57:11 +0200
+Message-ID: <20240531065711.32484-2-wagi@monom.org>
 X-Mailer: git-send-email 2.45.1
+In-Reply-To: <20240531065711.32484-1-wagi@monom.org>
+References: <20240531065711.32484-1-wagi@monom.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,43 +66,24 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Last-TLS-Session-Version: TLSv1.3
 
-Dear RT Folks,
+v4.19.315-rt135-rc1 stable review patch.
+If anyone has any objections, please let me know.
 
-This is the RT stable review cycle of patch 4.19.315-rt135-rc1.
-
-Please scream at me if I messed something up. Please test the patches
-too.
-
-The -rc release is also available on kernel.org
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
-
-on the v4.19-rt-next branch.
-
-If all goes well, this patch will be converted to the next main
-release on 2024-06-07.
-
-Signing key fingerprint:
-
-  5BF6 7BC5 0826 72CA BB45  ACAE 587C 5ECA 5D0A 306C
-
-All keys used for the above files and repositories can be found on the
-following git repository:
-
-   git://git.kernel.org/pub/scm/docs/kernel/pgpkeys.git
-
-Enjoy!
-Daniel
-
-Changes from v4.19.312-rt134:
+-----------
 
 
-Daniel Wagner (1):
-  Linux 4.19.315-rt135
-
+Signed-off-by: Daniel Wagner <wagi@monom.org>
+---
  localversion-rt | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/localversion-rt b/localversion-rt
+index 6067da4c8c99..e3026053f01e 100644
+--- a/localversion-rt
++++ b/localversion-rt
+@@ -1 +1 @@
+--rt134
++-rt135
 -- 
 2.45.1
 
