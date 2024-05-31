@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-197434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E75B98D6A89
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 22:13:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 303498D6A91
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 22:15:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15A101C256B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 20:13:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9BD31F22212
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 20:15:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8867917D374;
-	Fri, 31 May 2024 20:13:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2588C17D8B2;
+	Fri, 31 May 2024 20:15:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="z11G02qy"
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="1GMMFMCX"
 Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 722041946F
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 20:13:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3A5B16D304;
+	Fri, 31 May 2024 20:15:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717186393; cv=none; b=JB8jhyrMJCea7X6/T9S9mE3hpayQnq4O5Y3Gp/ojEK7yPy2NJ4dkMtDsL1CpcZ91fQyfmPKtB/w00Up4lK+du03OkQ4RBqHRkhHXIFmosJ6VOas4xHksLhmA9OH9Ls9e6IgdAZPjzSuYrcb9G2AtqM2+O+QC86RJalHDk4mifUg=
+	t=1717186521; cv=none; b=P5hVyiVJEi4JVxSEjoBUwEyd6FVA9HTpcT4W8dwQlOdzbRbtbjJQAMOrs8qeEl3EFR6zX62gLtSppHIOSBzrSWh0/0b8ATMUJWK9d/qDDvvwslcWVMgHkvrtTItjY0aUCdUIWpAdHBirX6Ohs4ejgBqqqNt0jweR/IFiwNi/VK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717186393; c=relaxed/simple;
-	bh=owRelOuZ9GUsLTm5zFW5nkRRmeAS9ZJO4Lf1/VSYga0=;
+	s=arc-20240116; t=1717186521; c=relaxed/simple;
+	bh=d6aGW+pIDFiapL3UW/sPgZqq4PujkHfCSTQjOBLWN2k=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Q3iTeTlDMLTMaNX5uCLKQ7PwMapn1iQg3oxqoQ5QJkGiZFewqT4Ukvgd3mhX0xn4rLDcQ07B+Yh8ryejddBiUEw4iacQ+TGDqqEJaIsnLcaXoTRCFQL6ebkVk55Bj4E2yXq6LN/uOHEgqD7ARadBDgCf5EakRJIyvV6SE2C8hoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=z11G02qy; arc=none smtp.client-ip=199.89.1.11
+	 In-Reply-To:Content-Type; b=m1DmLTntO0ItnmW/PZFvLSlKh8WM4pJDYHYM52DeBkMmLFGaeGJSaAHHIaP05oQpr9dI+fV8v8USjLqav/aC8Xqgtk2NOOKHpiYrPKWYbe/ZI4l1kRZkfrOXGOnjXSSMZUVEO9BkWfo+YPYk0r11ZociFtdPCmgtd7Dgb0fjCyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=1GMMFMCX; arc=none smtp.client-ip=199.89.1.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
 Received: from localhost (localhost [127.0.0.1])
-	by 008.lax.mailroute.net (Postfix) with ESMTP id 4VrZ7C6HB4z6CmR43;
-	Fri, 31 May 2024 20:13:11 +0000 (UTC)
+	by 008.lax.mailroute.net (Postfix) with ESMTP id 4VrZ9f20bMz6Cnk9T;
+	Fri, 31 May 2024 20:15:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
 	content-transfer-encoding:content-type:content-type:in-reply-to
 	:from:from:content-language:references:subject:subject
 	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1717186389; x=1719778390; bh=dZtTBY5FcMwiGk2Tdn2cq8Zh
-	A5BMk/yzSD0uHXVEwp8=; b=z11G02qy8Yu34iUu3zZ3RWgZJsyYnQXIWPfvcTsZ
-	SfP2zoPwAGKx+cyTieNWrbkacL3d+zJ82RApFpHl6NmPNYnBOGuer/NbMVmqw848
-	5YH3+6wA26SWGvFmUjIfkpQSFs+ifpwsKq6fDON9fuPTGV4tvsSaxHeuUMInehKj
-	aufpWHQSLWbGXKo2R+k8Su6yKpqNNILJBIHQtNOgrxuVWpWCGMLIeYdqxPSZ1P3B
-	gScTcSrXgB3Y1KPT45dyRm0g1Jy5i9QBLVp4lbeXeiT0fdkAeJvRpA2yFQ1XQ5u+
-	8Ky43uLPyAIpcPK05mFEQDtuqFgZsn/sJrwLQEIfXsO7Ng==
+	 s=mr01; t=1717186513; x=1719778514; bh=2Y3Pe3+LfI0xR2unWHqUImjm
+	wshLFsOW5x2A6pIes50=; b=1GMMFMCXT+P9gnOBuPFYb2L/TYRRoLPVo8Jl4aRr
+	vAt/X1sBc9d3yR53LfY5Kw0ECcW0o3VFr3sFYBaR7ewoDWPscSq1J5thociLR8QP
+	/sSaIgZXNMpxwBPC4xkIDQp7nxwYQvLOecWNE67tOxUH9Rb6G2VwLVHrnI1nhDB7
+	TjdLdAyrf3E79PtOi/mLrKQYS3doa/r65h1Fy7dDs0ln6PtiLvMC43bBrAr0GHg7
+	mSeulHIcyY96E6Zz2cr1x4XG108rhvaDx2X8FYGO3DVT8TSYwPIKP5RRGAtbkVG1
+	FHSuOWGGbDbu2xMCNRbdeQDGstSL0MPR974MLIEJIFmk+Q==
 X-Virus-Scanned: by MailRoute
 Received: from 008.lax.mailroute.net ([127.0.0.1])
  by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id wgAnnmK_mDdK; Fri, 31 May 2024 20:13:09 +0000 (UTC)
+ id rkVFpO69MbnZ; Fri, 31 May 2024 20:15:13 +0000 (UTC)
 Received: from [100.96.154.26] (unknown [104.132.0.90])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: bvanassche@acm.org)
-	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4VrZ785DNVz6Cnk9B;
-	Fri, 31 May 2024 20:13:08 +0000 (UTC)
-Message-ID: <e1719623-a42e-4394-b840-2741975ead37@acm.org>
-Date: Fri, 31 May 2024 13:13:07 -0700
+	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4VrZ9X43HRz6Cnk9F;
+	Fri, 31 May 2024 20:15:12 +0000 (UTC)
+Message-ID: <d3d2d848-e70c-462b-bbb2-f5a2308646fd@acm.org>
+Date: Fri, 31 May 2024 13:15:11 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,58 +64,81 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] block: uapi: Fix compliation warning of using
- IOPRIO_PRIO_DATA
-To: Zhiguo Niu <zhiguo.niu@unisoc.com>, axboe@kernel.dk
-Cc: dlemoal@kernel.org, linux-kernel@vger.kernel.org, niuzhiguo84@gmail.com,
- ke.wang@unisoc.com
-References: <1717155071-20409-1-git-send-email-zhiguo.niu@unisoc.com>
+Subject: Re: [PATCH 1/3] ufs: mcq: Add ufshcd_mcq_queue_cfg_addr helper
+To: Minwoo Im <minwoo.im@samsung.com>,
+ "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K . Petersen" <martin.petersen@oracle.com>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>,
+ gost.dev@samsung.com, linux-scsi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Jeuk Kim <jeuk20.kim@samsung.com>
+References: <20240531103821.1583934-1-minwoo.im@samsung.com>
+ <CGME20240531104947epcas2p1cd477921c1cd307d84f9ffc25b2c08a8@epcas2p1.samsung.com>
+ <20240531103821.1583934-2-minwoo.im@samsung.com>
 Content-Language: en-US
 From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <1717155071-20409-1-git-send-email-zhiguo.niu@unisoc.com>
+In-Reply-To: <20240531103821.1583934-2-minwoo.im@samsung.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 
-On 5/31/24 04:31, Zhiguo Niu wrote:
-> Generally, the input of IOPRIO_PRIO_DATA has 16 bits. If use format "%d=
-"
-> to printk IOPRIO_PRIO_DATA, there will be the following warning or erro=
-r.
->=20
-> fs/f2fs/sysfs.c:348:31: warning: format =E2=80=98%d=E2=80=99 expects ar=
-gument of type =E2=80=98int=E2=80=99, but argument 4 has type =E2=80=98lo=
-ng unsigned int=E2=80=99 [-Wformat=3D]
->     return sysfs_emit(buf, "%s,%d\n",
->                                ~^
->                                %ld
->=20
-> This is because the output of IOPRIO_PRIO_DATA is converted to "UL" fro=
-m
-> IOPRIO_PRIO_MASK, which is not reasonable. unsigned int is more suitabl=
-e.
->=20
-> Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+On 5/31/24 03:38, Minwoo Im wrote:
+> This helper returns an offset address of MCQ queue configuration
+> registers.  This is a prep patch for the following patch.
+> 
+> Signed-off-by: Minwoo Im <minwoo.im@samsung.com>
 > ---
->   include/uapi/linux/ioprio.h | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/include/uapi/linux/ioprio.h b/include/uapi/linux/ioprio.h
-> index bee2bdb0..9ead07f 100644
-> --- a/include/uapi/linux/ioprio.h
-> +++ b/include/uapi/linux/ioprio.h
-> @@ -11,7 +11,7 @@
->   #define IOPRIO_CLASS_SHIFT	13
->   #define IOPRIO_NR_CLASSES	8
->   #define IOPRIO_CLASS_MASK	(IOPRIO_NR_CLASSES - 1)
-> -#define IOPRIO_PRIO_MASK	((1UL << IOPRIO_CLASS_SHIFT) - 1)
-> +#define IOPRIO_PRIO_MASK	((1U << IOPRIO_CLASS_SHIFT) - 1)
->  =20
->   #define IOPRIO_PRIO_CLASS(ioprio)	\
->   	(((ioprio) >> IOPRIO_CLASS_SHIFT) & IOPRIO_CLASS_MASK)
+>   drivers/ufs/core/ufs-mcq.c | 14 ++++++++++++++
+>   include/ufs/ufshcd.h       |  1 +
+>   2 files changed, 15 insertions(+)
+> 
+> diff --git a/drivers/ufs/core/ufs-mcq.c b/drivers/ufs/core/ufs-mcq.c
+> index 52210c4c20dc..46faa54aea94 100644
+> --- a/drivers/ufs/core/ufs-mcq.c
+> +++ b/drivers/ufs/core/ufs-mcq.c
+> @@ -18,6 +18,7 @@
+>   #include <linux/iopoll.h>
+>   
+>   #define MAX_QUEUE_SUP GENMASK(7, 0)
+> +#define QCFGPTR GENMASK(23, 16)
+>   #define UFS_MCQ_MIN_RW_QUEUES 2
+>   #define UFS_MCQ_MIN_READ_QUEUES 0
+>   #define UFS_MCQ_MIN_POLL_QUEUES 0
+> @@ -116,6 +117,19 @@ struct ufs_hw_queue *ufshcd_mcq_req_to_hwq(struct ufs_hba *hba,
+>   	return &hba->uhq[hwq];
+>   }
+>   
+> +/**
+> + * ufshcd_mcq_queue_cfg_addr - get an start address of the MCQ Queue Config
+> + * Registers.
+> + * @hba: per adapter instance
+> + *
+> + * Return: Start address of MCQ Queue Config Registers in HCI
+> + */
+> +unsigned int ufshcd_mcq_queue_cfg_addr(struct ufs_hba *hba)
+> +{
+> +	return FIELD_GET(QCFGPTR, hba->mcq_capabilities) * 0x200;
+> +}
+> +EXPORT_SYMBOL_GPL(ufshcd_mcq_queue_cfg_addr);
+> +
+>   /**
+>    * ufshcd_mcq_decide_queue_depth - decide the queue depth
+>    * @hba: per adapter instance
+> diff --git a/include/ufs/ufshcd.h b/include/ufs/ufshcd.h
+> index df68fb1d4f3f..9e0581115b34 100644
+> --- a/include/ufs/ufshcd.h
+> +++ b/include/ufs/ufshcd.h
+> @@ -1278,6 +1278,7 @@ void ufshcd_update_evt_hist(struct ufs_hba *hba, u32 id, u32 val);
+>   void ufshcd_hba_stop(struct ufs_hba *hba);
+>   void ufshcd_schedule_eh_work(struct ufs_hba *hba);
+>   void ufshcd_mcq_config_mac(struct ufs_hba *hba, u32 max_active_cmds);
+> +unsigned int ufshcd_mcq_queue_cfg_addr(struct ufs_hba *hba);
+>   u32 ufshcd_mcq_read_cqis(struct ufs_hba *hba, int i);
+>   void ufshcd_mcq_write_cqis(struct ufs_hba *hba, u32 val, int i);
+>   unsigned long ufshcd_mcq_poll_cqe_lock(struct ufs_hba *hba,
 
-This change is safe even if the mask is applied to an expression with mor=
-e bits
-than an int because of the integer promotion rules. Hence:
+New functions should not be introduced as a separate patch but instead should
+be introduced in the first patch that adds a caller to the new function.
 
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+Thanks,
+
+Bart.
 
