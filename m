@@ -1,67 +1,67 @@
-Return-Path: <linux-kernel+bounces-197544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 626728D6C52
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 00:10:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 489F78D6C55
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 00:11:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 029DC1F238F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 22:10:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A688A285142
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 22:11:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDD067EF10;
-	Fri, 31 May 2024 22:10:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D55E78120F;
+	Fri, 31 May 2024 22:11:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YOAb47UN"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Rqya7Xjh"
+Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD7F224B4A
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 22:10:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11B8B24B4A
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 22:11:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717193406; cv=none; b=pjoCSPZVDNCP3J85ZxcDo5G6xhNq/n9H9BV+HXeneqDQxgIUijDZjzCCrN5cCt48+f7qEPPIEUQ0zHzNFrBSfZjjgCcr7Mre/f7+3DXQK2OVzMSiN+nYHVz4xb8PAX+d2sRzg+1tkRSo+Df3X8TQdioGgH5RQ+yqNoLMMwkxiKA=
+	t=1717193508; cv=none; b=kF7w4oNU11uzjW3Ew3TiRlhNA5iYTB7yqFHjgu/v86iunr84CC0BpogcwoItCbZzL5osY3AYwFc6aMyhxPbaC2scjhH59kYjzfqIcwqX/wwh/Q0bDVmlJ2L1fYx0Z19/pbNqHWc0EkHtwo/rtS5KWbM7C4ZCay5k8EfSX6liu9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717193406; c=relaxed/simple;
-	bh=neMthn+my1WAJWqEpUsCTbkhD0SCbK/9kqeYHZgSIWQ=;
+	s=arc-20240116; t=1717193508; c=relaxed/simple;
+	bh=N4wW+7bTRwqJCWqumNvlz2syET/F3JCFTu2RMfc9AIA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cXneCoUxFxVrYy23A8PpnDyXUoim80sOgL7v+c5+cI19wwEvftcM9ZTOIqfncMBoMao88K9WybOK0bl5PzC5rh/708igP8ixQzu3SacEKuix4l0bhg+v881p/QkKIzSM3Y+tA5R/YRJ/McIKB23FQTwXyA12BcuvlvnbUPmxU5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=YOAb47UN; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=MkS6taIPYxq4oexTWP4Nym8gBT1BhbKY0UZv23zB09c=; b=YOAb47UNG4kr8fjujJxJLocaah
-	gAD8nRmrJmfY16d/vHGhG/ULklZSzFjKDEQj5Jsvt6jNIBVa2xYYwK0g9e5tZ9eyi1BEkZQPMEUXu
-	LYjXw/PsVwoiWXHEwmTlg6s8+eWAFGraVhRyXIB2rHlue3eyQU7efWdgwvMux7vX9jSJfw95vIuW0
-	CDxs+adDaRuBRPjULIb1qHKNhi5q4CxrlWJAisHnMltsxKLWucQZ0ynCzb0VVxreZfGYyVDv8jxs8
-	7Dl1Q8BGXCO/5sDZ/TqL9Q2dBpe+kPcp9lMyAsWeT25aYFO5bjLIyDsUTu3mN3M0FUC8EZqR/RFFA
-	AyLcaXPQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sDARW-0000000C4jN-2aQL;
-	Fri, 31 May 2024 22:09:46 +0000
-Date: Fri, 31 May 2024 23:09:46 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Byungchul Park <lkml.byungchul.park@gmail.com>,
-	Byungchul Park <byungchul@sk.com>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, kernel_team@skhynix.com,
-	akpm@linux-foundation.org, ying.huang@intel.com,
-	vernhao@tencent.com, mgorman@techsingularity.net, hughd@google.com,
-	david@redhat.com, peterz@infradead.org, luto@kernel.org,
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, rjgolo@gmail.com
-Subject: Re: [PATCH v11 09/12] mm: implement LUF(Lazy Unmap Flush) defering
- tlb flush when folios get unmapped
-Message-ID: <ZlpKqrm7d57gmoG5@casper.infradead.org>
-References: <20240531092001.30428-1-byungchul@sk.com>
- <20240531092001.30428-10-byungchul@sk.com>
- <fab1dd64-c652-4160-93b4-7b483a8874da@intel.com>
- <CAHyrMpxETdVewTH3MCS4qPyD6Xf1zRUfWZf-8SCdpCFj2Pj_Wg@mail.gmail.com>
- <f17f33e8-1c1f-460f-8c5a-713476f524a3@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KxNddiU5XgT+boD4cAS+MuOw7sBNh+yf4bFxUWJuHUfMjPddl6gJBHPtx5ePkuhDUwPLU75vPjfLitzlWHp+f7VhY3c5Ta1rf4kqD78KdgSCTE0xV7HBOGxv33GL+8Jf3bYgh1isDbS6h65euXdDNC8euLAlDL8AY8pMDiMNVt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Rqya7Xjh; arc=none smtp.client-ip=91.218.175.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: technoboy85@gmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1717193502;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nBnF/4yXH0rOH3TjrZYGoTuyn2JfhCmeI33/Ncg2NT0=;
+	b=Rqya7XjhWIKnIIz3ZpcFiziD9xcIDntei/ZA6lQ0ANRBJonR/m74Dx4mcnj7PuJZjNTfj5
+	vlaPM6XgOcybLrtDnWaUTlbsROT9MZQbIKVAuGSL2xWFD4mgC9ctTwFWv25ofBTOPCBltD
+	xa1rzZuzK8DMDQZezig+cS97bTZkcZc=
+X-Envelope-To: netdev@vger.kernel.org
+X-Envelope-To: davem@davemloft.net
+X-Envelope-To: edumazet@google.com
+X-Envelope-To: kuba@kernel.org
+X-Envelope-To: pabeni@redhat.com
+X-Envelope-To: shuah@kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: linux-kselftest@vger.kernel.org
+X-Envelope-To: teknoraver@meta.com
+Date: Fri, 31 May 2024 15:11:36 -0700
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: technoboy85@gmail.com
+Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, Matteo Croce <teknoraver@meta.com>
+Subject: Re: [PATCH net-next v2 1/2] net: make
+ net.core.{r,w}mem_{default,max} namespaced
+Message-ID: <kza36u3rvnxjl5bodh3ecgrkcnm2x3qolzi6j7o24tfoboonap@z7o6xwv6oimt>
+References: <20240530232722.45255-1-technoboy85@gmail.com>
+ <20240530232722.45255-2-technoboy85@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,30 +70,23 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f17f33e8-1c1f-460f-8c5a-713476f524a3@intel.com>
+In-Reply-To: <20240530232722.45255-2-technoboy85@gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, May 31, 2024 at 02:46:23PM -0700, Dave Hansen wrote:
-> On 5/31/24 11:04, Byungchul Park wrote:
-> ...
-> > I don't believe you do not agree with the concept itself.  Thing is
-> > the current version is not good enough.  I will do my best by doing
-> > what I can do.
+On Fri, May 31, 2024 at 01:27:21AM GMT, technoboy85@gmail.com wrote:
+> From: Matteo Croce <teknoraver@meta.com>
 > 
-> More performance is good.  I agree with that.
+> The following sysctl are global and can't be read from a netns:
 > 
-> But it has to be weighed against the risk and the complexity.  The more
-> I look at this approach, the more I think this is not a good trade off.
-> There's a lot of risk and a lot of complexity and we haven't seen the
-> full complexity picture.  The gaps are being fixed by adding complexity
-> in new subsystems (the VFS in this case).
+> net.core.rmem_default
+> net.core.rmem_max
+> net.core.wmem_default
+> net.core.wmem_max
 > 
-> There are going to be winners and losers, and this version for example
-> makes file writes lose performance.
+> Make the following sysctl parameters available readonly from within a
+> network namespace, allowing a container to read them.
 > 
-> Just to be crystal clear: I disagree with the concept of leaving stale
-> TLB entries in place in an attempt to gain performance.
+> Signed-off-by: Matteo Croce <teknoraver@meta.com>
 
-FWIW, I agree with Dave.  This feels insanely dangerous and I don't
-think you're paranoid enough about things that can go wrong.
-
+Reviewed-by: Shakeel Butt <shakeel.butt@linux.dev>
 
