@@ -1,196 +1,232 @@
-Return-Path: <linux-kernel+bounces-197585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D96B8D6CCE
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 01:15:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 556D28D6CD2
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 01:25:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA4631F237B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 23:15:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C31881F24B40
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 23:25:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 582B284E0D;
-	Fri, 31 May 2024 23:15:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CD9F84DE4;
+	Fri, 31 May 2024 23:25:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="eluFq7dW"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MvkLwDMq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E06BB8287C
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 23:15:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADE1078C6B
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 23:25:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717197322; cv=none; b=Fz8Zg2PAcPWZxhD8UzKd1YTzJFq800ZFAr7Duo2Zkdk6OlPIsHE+3zplHxdzDE7UaXDznfbyDDvkLnDg7w2AIpiH7AmkxT6ei9FYPMf6stM7lDTpRpKawYIgD+LTnkF1uwWxEdro4w9jABrNE6IjmK4cqjP2FMOL729x3lwvVZg=
+	t=1717197904; cv=none; b=uEoCdfuSykOlmsToi3qKxYlXQjcJnGEFd+5SpUSdk4q77ijwMifSxgM1kxJwoo5McYgiu4ZE5Kz8FIb+P52uA4PBSABLdxC8mUNvDyNtwBt0jjuswRxowkItinUynDF6vvYbiPG9qPVuiy33AHuM+e1XsCiG/pNjqR7qcvAIwQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717197322; c=relaxed/simple;
-	bh=ZEP4WV2Hz3N7FDd90cgmwrRwy533OH85Lf+6xaB9wqk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pEcT4QguxHq29ReIrZb5q6lmVHZiJUG2lScNd/PsWKHfCiN4Xk1TIRfyO2AVHC8jvIGhxhwfoxm12k2TpPOuYhpGc2JlFWGXvYJx7E3p0+iWJxumi2kaj/CMHElUsvu0zNRzzrcJshJT77CbWM/aIFh/Xk7H+i2Zb6C0ZqYIbZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=eluFq7dW; arc=none smtp.client-ip=149.28.215.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
- Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
- s=fe-e1b5cab7be; t=1717197310;
- bh=NT5VlfpAzQy5RqRKCg0k7PinYB0pq9c+JH44HfHvY7g=;
- b=eluFq7dWDBPkW+exCejdkAN4T+k2Y9LF/M8JHAC2ell/udmPgto3k/ewXzaafSlaa5EGEGY4+
- QZe1o426QDPplYp3Hw1+4UTC1zuLAKb4s06xn7ke5zNoprAk8wogymAERT/AhwrIzJkdijiD/Y6
- m43Z0asJr2R1xJKf4R35tjNUgTdF+znt4+U6ic/8rtOpCe5B0y9YzW68gsVzMpBod84zzMFep+n
- etLENzhCsIgcLWXnS4Mo5Ug/PYrXFJ2DHjo+MsbY/zt4owuMqmjgkIyRRPEcpZWXoY/rmuBabWS
- oibkrfBV+Yd7gsA1QNHdm2wXX5KEUXZORKWbp8PtkmOw==
-Message-ID: <33ee8446-aa01-47df-8e20-5ae2d384ed0e@kwiboo.se>
-Date: Sat, 1 Jun 2024 01:15:03 +0200
+	s=arc-20240116; t=1717197904; c=relaxed/simple;
+	bh=NujItm6IZDZ/VF5Y8JbKIbrmn8wRurNxB4bIYtveC2o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jgQlXBvdWwyBrE52wSpkYKJJzcm+V+vAM5mJ1+SorHN0lq2/kjT3XL/mPcxWw1DKtP/19nnbyYyQFeGvZTafJcn7bBRkRoP7WxCgB5T88BBXQl4fZAQmnpHJOL4odLyvH34OqzMgsE+Na+kMjHC5+SNAQrns6ZyKI3iDGWdBZCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MvkLwDMq; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717197901;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9OswPDDFUjIMOdynPoqOpjOBcZ9Oh6NGxWSjBgab9jQ=;
+	b=MvkLwDMqppXlajW1t3JluZynl/j+v5lptd/gmvzj3WWYq845galTTIGWgTYk2SIBoyfpun
+	ntoEexLFAOEcKSqNJJdAXyn7QQG2PVBAD3JOo79SbWHgVtGoGiJ2xu2AWpbiu8Kg/7o4A2
+	RiwLrHz5RZZnbdncvvAZ2ZecMnvAm78=
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
+ [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-611-cSXTHYMdNHibX59OtCOq0g-1; Fri, 31 May 2024 19:25:00 -0400
+X-MC-Unique: cSXTHYMdNHibX59OtCOq0g-1
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6ae60738262so5356936d6.3
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 16:24:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717197899; x=1717802699;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9OswPDDFUjIMOdynPoqOpjOBcZ9Oh6NGxWSjBgab9jQ=;
+        b=WEumNfUnIjUyn2OX9YN3Qx1Ldr+RqA3S7FXtoHt9IWOIlWENaj/Q5vQN+uVjWZM+Z5
+         KbqvG8kTkL3jvAyBOUtDtalU3IUgET3Wru+RUpJMt3EENobYU7yE1SML4cVi/9Og8UA+
+         cSWL6xIpBb4/LbDnRRn7sso3SamWCIRGhmlT7cL0lKFgnx1KBW3i75DSSeZleI6PZ+QQ
+         F73TqyMB5sfmD6/TWQBvj/XOiyQqxLz90T9tN5OwBnyl2o8bcZv7LhFOXyiU3Yd02vNO
+         zy7biRYDkObfnl2qCKPcKyYwQomEPbgCRRYNXkfqtS+zJiJN9ViRyuoriQhHXSGmczRH
+         SrWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU7yFc/k9ZUCgRAiI29NVmN/sREoMCr6IvE2Oh/cyb2EuTjZNA/8/4vnSNdSTniZtr2zarPDSHQfyiYUQDMHrJKPuTpYtiEG5BUrr3/
+X-Gm-Message-State: AOJu0YysTdV/2oa4xamhCrl/D863GLOvDhX17F7Ia0RYANjkfvX5ywGU
+	Eo7pod6t3SHa3OQbXkjZT0pq0PRQPzeIeGTKkk6c9N0OQMubSia4tli6X89a15dZI1VFmy8ol3/
+	D9tRWET6FxKUWGRbeUz+ez+e6KD6K4mw2LfGDyjL9LE7oDWSHrDrZa8g5ttOcDg==
+X-Received: by 2002:a05:6214:f6e:b0:6ad:8c3b:6aed with SMTP id 6a1803df08f44-6aecd599f82mr36367526d6.2.1717197898391;
+        Fri, 31 May 2024 16:24:58 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFz+7XbQjDZ9os1V3c/5X75LCTcRQverrG6zGj/NwlvNEnqx93sPhKf/BgLleDFbNQtcwzDPg==
+X-Received: by 2002:a05:6214:f6e:b0:6ad:8c3b:6aed with SMTP id 6a1803df08f44-6aecd599f82mr36367206d6.2.1717197897510;
+        Fri, 31 May 2024 16:24:57 -0700 (PDT)
+Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ae4b4065a1sm10327056d6.94.2024.05.31.16.24.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 May 2024 16:24:57 -0700 (PDT)
+Date: Fri, 31 May 2024 19:24:54 -0400
+From: Peter Xu <peterx@redhat.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Yang Shi <shy828301@gmail.com>,
+	kernel test robot <oliver.sang@intel.com>,
+	Jason Gunthorpe <jgg@nvidia.com>,
+	Vivek Kasireddy <vivek.kasireddy@intel.com>,
+	Rik van Riel <riel@surriel.com>, oe-lkp@lists.linux.dev,
+	lkp@intel.com, linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Christopher Lameter <cl@linux.com>, linux-mm@kvack.org
+Subject: Re: [linus:master] [mm] efa7df3e3b:
+ kernel_BUG_at_include/linux/page_ref.h
+Message-ID: <ZlpcRnuZUEYJJ0JA@x1n>
+References: <202405311534.86cd4043-lkp@intel.com>
+ <CAHbLzkpMhEuGkQDGWrK1LhvZ-ZxTJkV1xjmn-nRGZMH4U+F5ZA@mail.gmail.com>
+ <890e5a79-8574-4a24-90ab-b9888968d5e5@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] arm64: dts: rockchip: Make preparations for
- per-RK3588-variant OPPs
-To: Dragan Simic <dsimic@manjaro.org>
-Cc: Alexey Charkov <alchark@gmail.com>, linux-rockchip@lists.infradead.org,
- heiko@sntech.de, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, robh+dt@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, linux-kernel@vger.kernel.org,
- quentin.schulz@cherry.de, wens@kernel.org, daniel.lezcano@linaro.org,
- didi.debian@cknow.org, krzysztof.kozlowski+dt@linaro.org,
- viresh.kumar@linaro.org
-References: <673dcf47596e7bc8ba065034e339bb1bbf9cdcb0.1716948159.git.dsimic@manjaro.org>
- <CABjd4YxD41DEkBCZfkznLboEY9ZVOfTCLcj4S_kkcsVswbANyQ@mail.gmail.com>
- <8f8623e29a479c4108141302e708dc3b@manjaro.org>
- <CABjd4Yy4RMg+6-4ygV0MSwJj5LReY-ymbctq4PPfVZ6L+c1tsw@mail.gmail.com>
- <166cc4e46f31644a50306625b2ab18a6@manjaro.org>
- <CABjd4YzDNQa45=KC_t0xnTDrH+g-oUrcpgP55oOj7JcAuu7uFw@mail.gmail.com>
- <82db817a908b761d8c3d73ea04714314@manjaro.org>
- <607f4da8-99b2-4379-9567-4bfd2744eab3@kwiboo.se>
- <66677077acf4e970444cea829436fd0a@manjaro.org>
-Content-Language: en-US
-From: Jonas Karlman <jonas@kwiboo.se>
-In-Reply-To: <66677077acf4e970444cea829436fd0a@manjaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Report-Abuse-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-ForwardEmail-Version: 0.4.40
-X-ForwardEmail-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 149.28.215.223
-X-ForwardEmail-ID: 665a59fe0b82eeef13908f0a
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <890e5a79-8574-4a24-90ab-b9888968d5e5@redhat.com>
 
-Hello Dragan,
+On Fri, May 31, 2024 at 07:46:41PM +0200, David Hildenbrand wrote:
+> try_grab_folio()->try_get_folio()->folio_ref_try_add_rcu()
+> 
+> Is called (mm-unstable) from:
+> 
+> (1) gup_fast function, here IRQs are disable
+> (2) gup_hugepte(), possibly problematic
+> (3) memfd_pin_folios(), possibly problematic
+> (4) __get_user_pages(), likely problematic
+> 
+> (1) should be fine.
+> 
+> (2) is possibly problematic on the !fast path. If so, due to commit
+>     a12083d721d7 ("mm/gup: handle hugepd for follow_page()") ? CCing Peter.
+> 
+> (3) is possibly wrong. CCing Vivek.
+> 
+> (4) is what we hit here
 
-On 2024-05-31 23:24, Dragan Simic wrote:
-> Hello Jonas,
-> 
-> On 2024-05-31 13:27, Jonas Karlman wrote:
->> On 2024-05-30 21:31, Dragan Simic wrote:
->> [snip]
->>
->>>>>>> That way we'll have no roadblocks if, at some point, we end up 
->>>>>>> with
->>>>>>> having
->>>>>>> different OPPs defined for the RK3588 and the RK3588S variants.  
->>>>>>> Or
->>>>>>> maybe
->>>>>>> even for the RK3582, which we don't know much about yet.
->>>>>>
->>>>>> Guess we'll deal with that one once we stumble upon an actual 
->>>>>> RK3582
->>>>>> board out in the wild and heading to the mainline kernel tree :)
->>>>>
->>>>> Of course, that was just an example for the future use.
->>>>
->>>> In fact, I've just discovered that Radxa has recently released Rock 
->>>> 5C
->>>> Lite which is based on RK3582, and starts at just $29 for the 1GB
->>>> version, making it interesting for tinkering. Especially given that
->>>> its GPU, one of the big-core clusters and one of the VPU cores seem 
->>>> to
->>>> be disabled in software (u-boot) rather than in hardware, which means
->>>> there is some chance that a particular SoC specimen would actually
->>>> have them in a working condition and possible to re-enable at no 
->>>> cost.
->>>> Ordered myself one to investigate :)
->>>
->>> Yes, I also saw the RK3582-based ROCK 5C Lite a couple of days ago. :)
->>> It seems that the disabled IP blocks are detected as defective during
->>> the manufacturing, which means that they might work correctly, or 
->>> might
->>> actually misbehave.  It seems similar to the way old three-core AMD
->>> Phenom II CPUs could sometimes be made quad-core.
->>
->> I can confirm that the RK3582 include ip-state in OTP indicating
->> unusable cores, any unusable cpu core cannot be taken online and stalls
->> Linux kernel a few extra seconds during boot.
-> 
-> Thanks for this confirmation!
-> 
->> Started working on a patch for U-Boot to remove any broken cpu core
->> and/or cluster nodes, similar to what vendor U-Boot does, adopted to
->> work with a mainline DT for RK3588.
-> 
-> Nice, thanks for working on that. :)
-> 
->> On one of my ROCK 5C Lite board one of the cpu cores is unusable, 
->> U-Boot
->> removes the related cpu cluster nodes. On another ROCK 5C Lite board 
->> one
->> rkvdec core is only marked unusable and all cpu cores can be taken
->> online, U-Boot does nothing in this case. Guessing we should apply
->> similar policy as vendor U-Boot and disable cores anyway.
-> 
-> Just checking, you're referring to disabling the rkvdec core only,
-> for the latter case?
+I guess it was overlooked because try_grab_folio() didn't have any comment
+or implication on RCU or IRQ internal helpers being used, hence a bit
+confusing.  E.g. it has different context requirement on try_grab_page(),
+even though they look like sister functions.  It might be helpful to have a
+better name, something like try_grab_folio_rcu() in this case.
 
-No, the vendor U-Boot will remove cluster2 if no cpu core is bad.
+Btw, none of above cases (2-4) have real bug, but we're looking at some way
+to avoid triggering the sanity check, am I right?  I hope besides the host
+splash I didn't overlook any other side effect this issue would cause, and
+the splash IIUC should so far be benign, as either gup slow (2,4) or the
+newly added memfd_pin_folios() (3) look like to have the refcount stablized
+anyway.
 
-RK3582 policy:
-- always remove gpu node
-- always remove both rkvdec nodes
-- remove bad rkvenc node, if both are normal, remove rkvenc1 anyway
+Yang's patch in the other email looks sane to me, just that then we'll add
+quite some code just to avoid this sanity check in paths 2-4 which seems
+like an slight overkill.
 
-RK3583 policy:
-- remove bad rkvdec node, if both are normal, remove rkvdec1 anyway
-- remove bad rkvenc node, if both are normal, remove rkvenc1 anyway
+One thing I'm thinking is whether folio_ref_try_add_rcu() can get rid of
+its RCU limitation. It boils down to whether we can use atomic_add_unless()
+on TINY_RCU / UP setup too?  I mean, we do plenty of similar things
+(get_page_unless_zero, etc.) in generic code and I don't understand why
+here we need to treat folio_ref_try_add_rcu() specially.
 
-CPU core policy:
-- remove both cores within a cluster having a bad core
-- if core4~7 are all normal, remove core6 and core7 anyway
+IOW, the assertions here we added:
 
-Regards,
-Jonas
+	VM_BUG_ON(!in_atomic() && !irqs_disabled());
 
-> 
->> Following commit contains early work-in-progress and some debug output.
->>
->> https://github.com/Kwiboo/u-boot-rockchip/commit/8cdf606e616baa36751f3b4adcfaefc781126c8c
->>
->> Booting ROCK 5C Lite boards using U-Boot generic-rk3588_defconfig:
->>
->> ROCK 5C Lite v1.1 (RK3582 with 1 bad cpu core):
->>
->>   cpu-code: 3582
->>   cpu-version: 08 10
->>   data: fe 21
->>   package: 11
->>   specification: 01
->>   ip-state: 10 00 00
->>   bad-state: cpu core 4
->>
->> ROCK 5C Lite v1.1 (RK3582 with 1 bad rkvdec core):
->>
->>   cpu-code: 3582
->>   cpu-version: 08 00
->>   data: fe 21
->>   package: 11
->>   specification: 01
->>   ip-state: 00 80 00
->>   bad-state: rkvdec core 1
-> 
-> Thanks again for these nice details!
+Is because we need atomicity of below sequences:
+
+	VM_BUG_ON_FOLIO(folio_ref_count(folio) == 0, folio);
+	folio_ref_add(folio, count);
+
+But atomic ops avoids it.
+
+This chunk of code was (mostly) originally added in 2008 in commit
+e286781d5f2e ("mm: speculative page references").
+
+In short, I'm wondering whether something like below would make sense and
+easier:
+
+===8<===
+diff --git a/include/linux/page_ref.h b/include/linux/page_ref.h
+index 1acf5bac7f50..c89a67d239d1 100644
+--- a/include/linux/page_ref.h
++++ b/include/linux/page_ref.h
+@@ -258,26 +258,9 @@ static inline bool folio_try_get(struct folio *folio)
+ 	return folio_ref_add_unless(folio, 1, 0);
+ }
+ 
+-static inline bool folio_ref_try_add_rcu(struct folio *folio, int count)
+-{
+-#ifdef CONFIG_TINY_RCU
+-	/*
+-	 * The caller guarantees the folio will not be freed from interrupt
+-	 * context, so (on !SMP) we only need preemption to be disabled
+-	 * and TINY_RCU does that for us.
+-	 */
+-# ifdef CONFIG_PREEMPT_COUNT
+-	VM_BUG_ON(!in_atomic() && !irqs_disabled());
+-# endif
+-	VM_BUG_ON_FOLIO(folio_ref_count(folio) == 0, folio);
+-	folio_ref_add(folio, count);
+-#else
+-	if (unlikely(!folio_ref_add_unless(folio, count, 0))) {
+-		/* Either the folio has been freed, or will be freed. */
+-		return false;
+-	}
+-#endif
+-	return true;
++static inline bool folio_ref_try_add(struct folio *folio, int count)
++{
++	return folio_ref_add_unless(folio, count, 0);
+ }
+ 
+ /**
+@@ -305,7 +288,7 @@ static inline bool folio_ref_try_add_rcu(struct folio *folio, int count)
+  */
+ static inline bool folio_try_get_rcu(struct folio *folio)
+ {
+-	return folio_ref_try_add_rcu(folio, 1);
++	return folio_ref_try_add(folio, 1);
+ }
+ 
+ static inline int page_ref_freeze(struct page *page, int count)
+diff --git a/mm/gup.c b/mm/gup.c
+index e17466fd62bb..17f89e8d31f1 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -78,7 +78,7 @@ static inline struct folio *try_get_folio(struct page *page, int refs)
+ 	folio = page_folio(page);
+ 	if (WARN_ON_ONCE(folio_ref_count(folio) < 0))
+ 		return NULL;
+-	if (unlikely(!folio_ref_try_add_rcu(folio, refs)))
++	if (unlikely(!folio_ref_try_add(folio, refs)))
+ 		return NULL;
+ 
+ 	/*
+===8<===
+
+So instead of adding new code, we fix it by removing some.  There might be
+some implication on TINY_RCU / UP config on using the atomic_add_unless()
+to replace one atomic_add(), but I'm not sure whether that's a major issue.
+
+The benefit is try_get_folio() then don't need a renaming then, because the
+rcu implication just went away.
+
+Thanks,
+
+-- 
+Peter Xu
 
 
