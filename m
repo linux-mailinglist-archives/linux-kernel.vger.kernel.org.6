@@ -1,109 +1,105 @@
-Return-Path: <linux-kernel+bounces-196126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DFD28D57AD
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 03:16:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47CE88D57B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 03:19:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6EE851C23137
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 01:16:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8A4A1F24BBE
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 01:19:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D762848D;
-	Fri, 31 May 2024 01:16:36 +0000 (UTC)
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C99D7484;
+	Fri, 31 May 2024 01:19:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OhwSnPGD"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4E6C4C7B;
-	Fri, 31 May 2024 01:16:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34417613D
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 01:19:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717118196; cv=none; b=QyOlQA2B0tVhzEe6ivliY5f7NUleMhQmagVYs3CV5RsVXju7U8cbNhpVlbmEcOV5NA1j5BUQuQ3t/4FGiA2G1V2s717cZj53tMtZ3T8vPK6IgCbl96uCiCgoa657asi1X5Dbg1nTmTXjAtsE+jm+26YP8ALdOtrAjQRY7n8D5AU=
+	t=1717118356; cv=none; b=ZibBq7xyEzuYqO71Csf1YiMZA3+ugEy4lCjc0sIulgO0w7BOTIU6ASRxbPtQMWE+CX1S2dlBmj/We16oZJius/KA2+kN46/cnO2rfqT3GebLdvgLC1VKaF7sReRODjyY8FEL2VY7d6Tao1AT+OlmdfcCMb8yktmqsH6U1OaM+II=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717118196; c=relaxed/simple;
-	bh=ZXpDPuU8btt1ZFC3F39jk5VEbo6WXmRE18sLPg/xHSw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ece60b0RGA6CblDNc+bLlUKVgL/mxDcN7N/2C9PsFr+VxQhxGcuNmck7BOifBXyPXu6QmbGRfi1RaNkuRIaqghaaUDmamz7SrBgzLCDTBc6r/TwOf3XcoXUELldPNf9uzBcvn56C9/YOCrg0omuqIz8RP+wiTrl93nAzxEyysJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44UFTfkq005999;
-	Fri, 31 May 2024 01:16:27 GMT
-DKIM-Signature: =?UTF-8?Q?v=3D1;_a=3Drsa-sha256;_c=3Drelaxed/relaxed;_d=3Doracle.com;_h?=
- =?UTF-8?Q?=3Dcc:content-transfer-encoding:content-type:date:from:in-reply?=
- =?UTF-8?Q?-to:message-id:mime-version:references:subject:to;_s=3Dcorp-202?=
- =?UTF-8?Q?3-11-20;_bh=3DgOqugPLXSKN/Hqjf5gEqkV//LtZrIZw7lNbXHa7PE5s=3D;_b?=
- =?UTF-8?Q?=3DQiOY8mgtdgIeMfw7K2xmMEuisY53s8uYXMK6QkOKUPtSuGZADDSQLvp2RFF/?=
- =?UTF-8?Q?EjJhTR9v_bnlZjXTS5BRIgfHxGqgYSlQM0x6bPQ7UfwmTjoy1YLWcRMnvoGhrwG?=
- =?UTF-8?Q?e5AC7oojQ/ljRF_N6Fkje5SV1jvHEz8SL/Qv/A3kmH4RjekQmstpeM7ztfogj48?=
- =?UTF-8?Q?dcD3OdueuRfD6twCt095_LahYHVHkRXbXiso1LeoAz8Pqw3XYR4kO3op6rL3Rmu?=
- =?UTF-8?Q?qTULIFe/2sQfGigMkk5eAcKYmN_nbJ7HvrSihGUphSu+HeCPfAqwO9mM0bVXn3r?=
- =?UTF-8?Q?s+CKC3MLpRVHwBba/1EKdY2Op9U7IIta_NQ=3D=3D_?=
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3yb8hga6mv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 31 May 2024 01:16:26 +0000
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 44UMdgOw010772;
-	Fri, 31 May 2024 01:16:25 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3yc511ba2b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 31 May 2024 01:16:25 +0000
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 44V1GO0b005442;
-	Fri, 31 May 2024 01:16:24 GMT
-Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 3yc511ba28-1;
-	Fri, 31 May 2024 01:16:24 +0000
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-To: alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org,
-        James.Bottomley@HansenPartnership.com, quic_nguyenb@quicinc.com,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Chanwoo Lee <cw9316.lee@samsung.com>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>
-Subject: Re: [PATCH v2] ufs:mcq:Fixing Error Output and cleanup for ufshcd_mcq_abort
-Date: Thu, 30 May 2024 21:15:49 -0400
-Message-ID: <171711788756.3706380.7009680386444419702.b4-ty@oracle.com>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240524015904.1116005-1-cw9316.lee@samsung.com>
-References: <CGME20240524015907epcas1p2598a2ba8a81529b6639cff007fe9106b@epcas1p2.samsung.com> <20240524015904.1116005-1-cw9316.lee@samsung.com>
+	s=arc-20240116; t=1717118356; c=relaxed/simple;
+	bh=LFRDMDUTn01WZjrLsF2FrdVRP8HD0U8X+Q6SBR2aAQ0=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=HhSAI+HFSBVa58sScJUzf8TiRhuaCSnmNUmRRSqmovwDcga4KZQJb6diB+hA8mJ3n0owdS8goxPtmWfqATCQjDyiKePvVFDpbBLbBaq6pVfbkYGRDvMCX/+WCI0q343qeIKfNSIb+ElTzCfeIGIE4rMsLq8n5fPeeZCgzx3oOOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OhwSnPGD; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717118356; x=1748654356;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=LFRDMDUTn01WZjrLsF2FrdVRP8HD0U8X+Q6SBR2aAQ0=;
+  b=OhwSnPGDvOImctGtHWGxg1cFV+Pav3YjXmwFmMkshTlfC/NGwr34NLpj
+   PjGgcNIMo1mN+8jB6TjDTeKbIfrkpWWpuInhWe9esDp1EEHHZlTdXkdld
+   hmDuXGcNjcOMOiZr4NQjjrg1dUToNJl5C684uR8ctIDCVwEVsk3tEtCO4
+   oQOTeXUFMAvBF6Ljw45WhhBOoovHydncxFcMkj4i6yP646kF2djYTeoHV
+   eGdiEHulYk71+Vpp30Kglh77nmg0jIvlHgIl/+Q9fFDhCXyAitGQpydfV
+   X8FmONohW6LbCNx+cIzHbWqYdaXS4JpqQp0/j3lRADQYh+rJd3uCam0++
+   g==;
+X-CSE-ConnectionGUID: r7GCS1WNSIyq9jEgjdgyHQ==
+X-CSE-MsgGUID: svBJEapZSI6r0vIV17zceg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="13771006"
+X-IronPort-AV: E=Sophos;i="6.08,202,1712646000"; 
+   d="scan'208";a="13771006"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 18:19:15 -0700
+X-CSE-ConnectionGUID: AcSUE+0cROSDB+Rbre3XqQ==
+X-CSE-MsgGUID: oQQ1JPt2RCKqgao01z8BHA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,202,1712646000"; 
+   d="scan'208";a="40571285"
+Received: from unknown (HELO [10.239.159.127]) ([10.239.159.127])
+  by fmviesa004.fm.intel.com with ESMTP; 30 May 2024 18:19:13 -0700
+Message-ID: <b6ebac8d-02f5-4153-b687-a4d40056f697@linux.intel.com>
+Date: Fri, 31 May 2024 09:17:05 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-30_21,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=631 malwarescore=0
- spamscore=0 adultscore=0 mlxscore=0 phishscore=0 suspectscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2405010000 definitions=main-2405310008
-X-Proofpoint-GUID: Om4A4TWW4AZZFO8QNYAd4Opo9oZeIwf7
-X-Proofpoint-ORIG-GUID: Om4A4TWW4AZZFO8QNYAd4Opo9oZeIwf7
+User-Agent: Mozilla Thunderbird
+Cc: baolu.lu@linux.intel.com, Robin Murphy <robin.murphy@arm.com>,
+ iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: device_def_domain_type documentation header does not match
+ implementation
+To: Diederik de Haas <didi.debian@cknow.org>,
+ David Woodhouse <dwmw2@infradead.org>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>
+References: <14311965.TaHA55BQu8@bagend>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <14311965.TaHA55BQu8@bagend>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, 24 May 2024 10:59:04 +0900, Chanwoo Lee wrote:
-
-> An error unrelated to ufshcd_try_to_abort_task is being output and
-> can cause confusion. So, I modified it to output the result of abort
-> fail.
->   * dev_err(hba->dev, "%s: device abort failed %d\n", __func__, err);
+On 5/30/24 9:57 PM, Diederik de Haas wrote:
+> While looking into ``drivers/iommu/intel/iommu.c::device_def_domain_type``
+> function I noticed a discrepancy between the documentation header and the
+> implementation.
 > 
-> And for readability,I modified it to return immediately instead of 'goto'.
+> ``@startup: true if this is during early boot``
+> 0e31a7266508 ("iommu/vt-d: Remove startup parameter from
+> device_def_domain_type()")
+> removed the ``startup`` function parameter
 > 
-> [...]
+> returns ``IOMMU_DOMAIN_DMA: device requires a dynamic mapping domain``
+> 28b41e2c6aeb ("iommu: Move def_domain type check for untrusted device into
+> core")
+> moved the possible return of ``IOMMU_DOMAIN_DMA`` to ``drivers/iommu/iommu.c``
+> 
+> But neither updated the documentation header.
 
-Applied to 6.10/scsi-fixes, thanks!
+Yeah, I think the @startup line should be removed. It is irrelevant.
+Others remain good to me.
 
-[1/1] ufs:mcq:Fixing Error Output and cleanup for ufshcd_mcq_abort
-      https://git.kernel.org/mkp/scsi/c/d53b681ce9ca
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+Best regards,
+baolu
 
