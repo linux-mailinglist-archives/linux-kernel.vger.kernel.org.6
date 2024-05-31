@@ -1,123 +1,109 @@
-Return-Path: <linux-kernel+bounces-197573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 966C88D6CA0
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 01:00:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0ED7A8D6CA6
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 01:02:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32EF3B25CC5
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 23:00:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0B351F28A59
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 23:02:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EECB984E08;
-	Fri, 31 May 2024 23:00:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A9C1839E2;
+	Fri, 31 May 2024 23:02:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="a3Y7BDn/"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IT0ggGGC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81A22824BD;
-	Fri, 31 May 2024 23:00:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 769BA381BD;
+	Fri, 31 May 2024 23:02:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717196417; cv=none; b=Y6SLu9WuQIjGSMU1TxWtn7XNYD4E/pWwyFxykYRM5uLXCYlsxBlsCJprR5VUBigFM+BSuh+0Fl0yh2XcupqU5UYdTi7Gg2JVt1S7ADj12x4mDssu8yWNcR0OpZPoRoa5WuDxbkGht9vqghzmcTQaLZnfzAkeTGqmFZ4PQ5ijwFw=
+	t=1717196526; cv=none; b=eyBujr5JstwUjl1crmMcDv9QiFaqGh4SOLfvt9h1uIrrzuAFCyVzKvoGqJ0LNvLpBhEw+Dg7UZykCr+7kG+JDgihJLto4O2aMOD1Si66R4iSxMuOs5inQze8xaOIB+yQ6PJXQmyqc8yDOdZjGByEWSfZ/S0STw3kUcRGnkzWurA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717196417; c=relaxed/simple;
-	bh=UBKKEvM9H27lQntnnS2zBRYXzaOTwI7iiVKSj/re3/E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YyWPqcxf4brdD8xeML2r7Tphj1M8XYwGQ2YvUPNNCwscHskPlkp0sBX+FAE/gSav2CtZGMuSabdMzlaIt9e0qu6fyuu79ZTRM17jCY9kr+4ybhwpBEtBl8X05V4my6sfOKyJqMM5woR27iO4tkjBPyoq5WYriIqpgdsjnHAUtJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=a3Y7BDn/; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717196412; x=1748732412;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=UBKKEvM9H27lQntnnS2zBRYXzaOTwI7iiVKSj/re3/E=;
-  b=a3Y7BDn/tzgIoMEPgQyXFyKmPZdnEctDzOxbNxcC37XWUXbco6dbHUj4
-   blYcOoN/SaFUHviitBZa0HEA/W3N/5M6LJxa9V68sdTOQD83W/vf+ZjWI
-   2Qw1HYfHWUySOHWx6r+kpaFyuXNI2Az4VoCMU+lY/WF6K7ogWpbrDn1K8
-   xhqL2K4JxRKMH47jjVLKKeoi4PrD+yiDd1ciF0yOKjyO/aJyBCUeibEFj
-   bbhGQ1lzEALCHchEPa+E5yBWSaRI14nNDYl10XhQkma2kOVJJgDuBJc17
-   ApRrUDSuWRijR9xl0deUQK54wDRGOXKNaPf0dNtjZ9qGV995hMCkDhLI4
-   w==;
-X-CSE-ConnectionGUID: qO0d2jO4TbiMx6GH0xzu7Q==
-X-CSE-MsgGUID: eGATJ6nWSlygH5XJdv16NA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11089"; a="13514278"
-X-IronPort-AV: E=Sophos;i="6.08,205,1712646000"; 
-   d="scan'208";a="13514278"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 16:00:11 -0700
-X-CSE-ConnectionGUID: Q352bnSrRZi8XXTsWTcQTA==
-X-CSE-MsgGUID: ViEn5M/oRPm/8BztsJPpEw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,205,1712646000"; 
-   d="scan'208";a="41226739"
-Received: from spandruv-desk.jf.intel.com ([10.54.75.19])
-  by orviesa005.jf.intel.com with ESMTP; 31 May 2024 16:00:10 -0700
-From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-To: rafael@kernel.org,
-	viresh.kumar@linaro.org
-Cc: linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH] cpufreq: intel_pstate: Fix unchecked HWP MSR access
-Date: Fri, 31 May 2024 16:00:04 -0700
-Message-ID: <20240531230004.1334127-1-srinivas.pandruvada@linux.intel.com>
-X-Mailer: git-send-email 2.44.0
+	s=arc-20240116; t=1717196526; c=relaxed/simple;
+	bh=TIq2oxFZ0F5FduDHYaUGP8LeNkvPsFc5NiUBBapUT5M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PRBWSMAlZTCsvpTogGPqAszwZY1SkrIA8bVMwo1EkaodDdhwxGPrZ0/R/ksdiybq8VVpVZDYhvU2Ut/Qv/sSuacoEPcLdpfCrX2U7e51ZlHfshDx6/oi30n73GmhlR0Nw0E74fe3at/sHtbqi7jBXVBKVLVTzY9DSKfbaFYqtrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IT0ggGGC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B26F7C116B1;
+	Fri, 31 May 2024 23:02:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717196526;
+	bh=TIq2oxFZ0F5FduDHYaUGP8LeNkvPsFc5NiUBBapUT5M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IT0ggGGCjifOXXPJfY0DnkI9p3PEq9J1uGadB5fL0fcLg68IYmnIe896J2sd02Bv8
+	 9WPJaUbR4043Uz6cqS/wfOqEKPXagsbo1ukaBSseB+CSfhBv0pu4lAVjaoZW/tJ83a
+	 VtWQL4PFh44/8Dudk6XpnoHqC2oE8wYbRCXplStcASeSJ71aFyqBHOYym1ZOiNwKDt
+	 PYwzZF56IgUxZuFP4Z/I+1V7wbkyiPZuMC2o4r6Mmd4MK+wuAGn3VNQ/rM/hk6+SfC
+	 zE+bwl5caqjTpY4GGQTmxa8PIgfa2pF9TMkERbjIt1pHf7bcl2omjbyEgaZyPG3Ioo
+	 1AK5calN1FIdA==
+Date: Fri, 31 May 2024 18:02:02 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Krishna Kurapati <quic_kriskura@quicinc.com>
+Cc: cros-qcom-dts-watchers@chromium.org, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Stephen Boyd <swboyd@chromium.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Matthias Kaehlcke <mka@chromium.org>, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, quic_ppratap@quicinc.com, quic_jackp@quicinc.com, 
+	Doug Anderson <dianders@google.com>, stable@vger.kernel.org
+Subject: Re: [PATCH 1/2] arm64: dts: qcom: sc7180: Disable SS instances in
+ park mode
+Message-ID: <ctmgikoes6p2sbvdxp3jmiseipzqsinbxjg7xewxl5jurh7r7w@s4lxchehtork>
+References: <20240530082556.2960148-1-quic_kriskura@quicinc.com>
+ <20240530082556.2960148-2-quic_kriskura@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240530082556.2960148-2-quic_kriskura@quicinc.com>
 
-Fix unchecked MSR access error for processors with no HWP support. On
-such processors, maximum frequency can be changed by the system firmware
-using ACPI event ACPI_PROCESSOR_NOTIFY_HIGEST_PERF_CHANGED. This results
-in accessing HWP MSR 0x771.
+On Thu, May 30, 2024 at 01:55:55PM GMT, Krishna Kurapati wrote:
+> On SC7180, in host mode, it is observed that stressing out controller
+> in host mode results in HC died error and only restarting the host
 
-Call Trace:
-	<TASK>
-	generic_exec_single+0x58/0x120
-	smp_call_function_single+0xbf/0x110
-	rdmsrl_on_cpu+0x46/0x60
-	intel_pstate_get_hwp_cap+0x1b/0x70
-	intel_pstate_update_limits+0x2a/0x60
-	acpi_processor_notify+0xb7/0x140
-	acpi_ev_notify_dispatch+0x3b/0x60
+Could you please include a copy of that error message, so that others
+searching for that error message will be able to find this commit?
 
-HWP MSR 0x771 can be only read on a CPU which supports HWP and enabled.
-Hence intel_pstate_get_hwp_cap() can only be called when hwp_active is
-true.
+Also, there's three "in host mode"s in this sentence.
 
-Reported-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Closes: https://lore.kernel.org/linux-pm/20240529155740.Hq2Hw7be@linutronix.de/
-Fixes: e8217b4bece3 ("cpufreq: intel_pstate: Update the maximum CPU frequency consistently")
-Tested-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
----
- drivers/cpufreq/intel_pstate.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+> mode fixes it. Disable SS instances in park mode for these targets to
 
-diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
-index 4b986c044741..65d3f79104bd 100644
---- a/drivers/cpufreq/intel_pstate.c
-+++ b/drivers/cpufreq/intel_pstate.c
-@@ -1153,7 +1153,8 @@ static void intel_pstate_update_policies(void)
- static void __intel_pstate_update_max_freq(struct cpudata *cpudata,
- 					   struct cpufreq_policy *policy)
- {
--	intel_pstate_get_hwp_cap(cpudata);
-+	if (hwp_active)
-+		intel_pstate_get_hwp_cap(cpudata);
- 
- 	policy->cpuinfo.max_freq = READ_ONCE(global.no_turbo) ?
- 			cpudata->pstate.max_freq : cpudata->pstate.turbo_freq;
--- 
-2.25.1
+Please spell SS SuperSpeed.
 
+Regards,
+Bjorn
+
+> avoid host controller being dead.
+> 
+> Reported-by: Doug Anderson <dianders@google.com>
+> Cc: <stable@vger.kernel.org>
+> Fixes: 0b766e7fe5a2 ("arm64: dts: qcom: sc7180: Add USB related nodes")
+> Signed-off-by: Krishna Kurapati <quic_kriskura@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/sc7180.dtsi | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+> index 2b481e20ae38..cc93b5675d5d 100644
+> --- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+> @@ -3063,6 +3063,7 @@ usb_1_dwc3: usb@a600000 {
+>  				iommus = <&apps_smmu 0x540 0>;
+>  				snps,dis_u2_susphy_quirk;
+>  				snps,dis_enblslpm_quirk;
+> +				snps,parkmode-disable-ss-quirk;
+>  				phys = <&usb_1_hsphy>, <&usb_1_qmpphy QMP_USB43DP_USB3_PHY>;
+>  				phy-names = "usb2-phy", "usb3-phy";
+>  				maximum-speed = "super-speed";
+> -- 
+> 2.34.1
+> 
 
