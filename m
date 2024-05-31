@@ -1,108 +1,142 @@
-Return-Path: <linux-kernel+bounces-197263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCC738D685A
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 19:45:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79A5F8D685E
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 19:46:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D33D81C262DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:45:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29CB61F28BD2
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:46:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05EF917C7DC;
-	Fri, 31 May 2024 17:45:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7192B17C7CD;
+	Fri, 31 May 2024 17:46:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VoWbjLoE"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MP9wjwLi"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 008161E498;
-	Fri, 31 May 2024 17:45:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 723011DFCB;
+	Fri, 31 May 2024 17:46:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717177539; cv=none; b=ulG9IM1d/RFaHVyHBIeatjv0mUYCLejNe+SfB6aUAablR/iIv8eIzGk0DIkNQFprLwyE70d/RRo4xjgOQTvfJitceEQYAg23guLhlYumAq1aSMNEsGYIPM0nBv56oK+y3zVc/XVpl8nrZnI1/0LsHBcTkFmG3Ae4VOfA+FoCaj4=
+	t=1717177581; cv=none; b=D4AXmd0c8FmgL3pcp+n/pvTsi4FWRVkhMRx//rdD4/Dp8KUzOyvhbkcCMK3Af4gmcbdxICjqmP0d/T+gTaC2mfePK704wxtNripr+3hcrIUp42Y1E3yKpHo/Z+5QS8WaYAQyJ99PhV9sq9fVKqYvl12uVgbSIcuz7p7EUExqmgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717177539; c=relaxed/simple;
-	bh=8uonPPCIU7uZNQbdkZyb9jwo0cqAvt7xE/tAD1lP0ac=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WOh40BGW7osE3GrrbKFpQ9q+Mk6KyTRyeGpJtVS1QYxS16ymGJnz6uhDfGOy8AUF/4LLHhHaaAX047mEGtz5IHW/qreNdolX25PU/cFl3vgQ4G9+PkmmiGd8vFtqYMLYE6GpX/4NDEQl+AkWq0Zt9wYNlCvYTcY0cso/aOYTl78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VoWbjLoE; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-6c3b5c5e32cso711318a12.1;
-        Fri, 31 May 2024 10:45:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717177537; x=1717782337; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=q7HKazcb61yz9oY8O5HoJeBzR+SVYPCPLsjJ+eQygtI=;
-        b=VoWbjLoEt8k/wehOvtbZsIkCNzEOSMRXRFSrpWx4DFq39hIkUwP1M9ZmDKeOBXT6/0
-         Tv5c4A35ur+CHwhUQLTF3t1oq1TD3W7XHn5Ok88zcMvXbPSBsQ7+tHLcanNeB1kPo2a+
-         DarDb85A40oGcJdMRPjh/5dbsPG+SJW2Q87yNYF6H4ipPRwHRG1IX/93qqM1vdSF6h72
-         rk3TUqBVCT+I8A6/mTvr/uP9jqNNL0L/fGhGMQDgS+LhFSTdJcw6jmkox4u9Ho5uQWdd
-         ZKauoOYaMHESPs3QnsItj+QyX7dBfY9c1SPBNnzDoGfwUZoklliLxptTUZpympwDpo1R
-         skIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717177537; x=1717782337;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=q7HKazcb61yz9oY8O5HoJeBzR+SVYPCPLsjJ+eQygtI=;
-        b=bNGm9dpWRdOBNMpq0zKf+tPtcm0StJqpOvuXuatJMmRa0tKeVTZrF6szdMHNEViljp
-         wcE6TPA/2p6cgsTi1Wove47xelz95edOYIUiFL05QrRiLOXTEcvIEjtjwC+BW1b5OpSR
-         jzpStWnK9U34M5S0Yw1uzwo9CDUy5HQCcx80ZW5mPhGvL0G9xbvWIo81Mk5aBp78Gle8
-         ddtPOSq9RmY0F6iSm+UxA/bx9txho0ALC++/1nI9A8ikxlQxIf4EnT9TZdVT3Em7Fx4/
-         pY+caBUbVjVAJ/Og/6z3Xdtp6vsbf+XkDDYka/n0ExmjfYPqsvyy83T5jvJh2Gi1lk/h
-         XuZw==
-X-Forwarded-Encrypted: i=1; AJvYcCVxh8ihFrDQHaKDkUW6T1BuHEnGPIne3luEd3BGTzQOHoIX/L+88IiSi3RZHAyw85T45q8tetFFtiioRJmMQnkyoPNyRzCMUbwINo3oZ8zbeTf/HQoXu0C/2Zy3rKfPDPGmiUeSPj0NUA==
-X-Gm-Message-State: AOJu0YzU4sEr2nkDDECLz2A1yDuLeGGlGHZEEaPpGxYqyDJRJ6o52XYo
-	u6Yd4ZZ7F3OmIgPP9LtgOnzugdObFhiUccEymc2H+y2Qqka39VeV
-X-Google-Smtp-Source: AGHT+IGKVEf3SggRRe7B4QoYHPNd1gQP0k1Loic9F6+cziMEQAW6QIzs+ebAlDz6APTEzDCec2g6sA==
-X-Received: by 2002:a17:903:1112:b0:1f4:b2ce:8dbe with SMTP id d9443c01a7336-1f636fe892amr29376645ad.9.1717177537107;
-        Fri, 31 May 2024 10:45:37 -0700 (PDT)
-Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6323f76dcsm19331635ad.228.2024.05.31.10.45.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 May 2024 10:45:36 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Fri, 31 May 2024 07:45:35 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>, linux-kernel@vger.kernel.org,
-	Gal Pressman <gal@nvidia.com>, Tariq Toukan <tariqt@nvidia.com>,
-	RDMA mailing list <linux-rdma@vger.kernel.org>
-Subject: Re: [PATCH -rc] workqueue: Reimplement UAF fix to avoid lockdep
- worning
-Message-ID: <ZloMv29mmAKNPTrg@slm.duckdns.org>
-References: <4c4f1fb769a609a61010cb6d884ab2841ef716d3.1716885172.git.leon@kernel.org>
- <ZljyqODpCD0_5-YD@slm.duckdns.org>
- <20240531034851.GF3884@unreal>
+	s=arc-20240116; t=1717177581; c=relaxed/simple;
+	bh=Y4T7SfHtyt2wfB248WjeW5VIVUYqLwsf3jldjamaeFU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=WgQU2YMj88yQr0vwBpzZBBwQkoApiAA/5qVCCLuIXEFONh//rOARuMSHlYo5XcK9OWzh2HhAVrbLjXYkquq0D4mEi7MKSEDNz/P6Ncw1E1ASHXI5HG0UETSYHJe/81+UXp/VfxWPv7lpimLUMqr86NpEnfiDBCR5KLSK077Uu9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MP9wjwLi; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44V9eD7k015957;
+	Fri, 31 May 2024 17:46:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	zDggzVShflqQw+bpQBvpfshxpqbJqcejeDnhzjwPzK8=; b=MP9wjwLioEOXZgKb
+	ep9UN9V7rvQdz4tILrb0vIlIXAMLDefc9rSQkSAGZFopK9aYr6NQBclJVCqHtyVt
+	wz+Rtkg6vXlVnzHQcFGmzjm84KdegD+9+bqf+kdl7V5hBAF58OdOlCM8THIFP+Ws
+	jVjS87vTnvDDLj+j/aJ3OdjrUUu6sJngQs85pMwH3fFCfvx6iRYxqeO/i7yWhWax
+	k4z5VQds9M7q2nLd66GcJJ6k5vifis9z2MoidIzF9cbK1N43Hp0RfVdk7cxTIzEE
+	j0Y3H/C8cB33pP58alr2WH14SgfSJMSzJBTNgP6A/H9oO6cB++ohUgfU7S53OWkz
+	6VWh4g==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yf23stk49-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 31 May 2024 17:46:05 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44VHk1iE004296
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 31 May 2024 17:46:01 GMT
+Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 31 May
+ 2024 10:46:00 -0700
+Message-ID: <871ef640-c5fe-69d5-2b15-286db6845dc8@quicinc.com>
+Date: Fri, 31 May 2024 11:46:00 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240531034851.GF3884@unreal>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.0
+Subject: Re: [PATCH v3 0/3] drm/panel-edp: remove several legacy compatibles
+ used by the driver
+Content-Language: en-US
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Douglas Anderson <dianders@chromium.org>,
+        Neil Armstrong
+	<neil.armstrong@linaro.org>,
+        Jessica Zhang <quic_jesszhan@quicinc.com>,
+        "Sam
+ Ravnborg" <sam@ravnborg.org>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-rockchip@lists.infradead.org>
+References: <20240531-edp-panel-drop-v3-0-4c98b2b95e3a@linaro.org>
+ <7428a2f7-befc-6db8-76f4-3ca8dc12d31c@quicinc.com>
+ <6kmhrxip4xb44bspptwdaoqsod5gm7ccr27fn3jr4ouh4jszi4@fuxht25n5wki>
+From: Jeffrey Hugo <quic_jhugo@quicinc.com>
+In-Reply-To: <6kmhrxip4xb44bspptwdaoqsod5gm7ccr27fn3jr4ouh4jszi4@fuxht25n5wki>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: durUuZ7aWnVn__pqXTtLIFPO6Bca352L
+X-Proofpoint-GUID: durUuZ7aWnVn__pqXTtLIFPO6Bca352L
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-31_12,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
+ adultscore=0 spamscore=0 lowpriorityscore=0 priorityscore=1501
+ impostorscore=0 phishscore=0 mlxlogscore=999 bulkscore=0 mlxscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405310133
 
-Hello,
+On 5/31/2024 11:43 AM, Dmitry Baryshkov wrote:
+> On Fri, May 31, 2024 at 10:18:07AM -0600, Jeffrey Hugo wrote:
+>> On 5/30/2024 5:12 PM, Dmitry Baryshkov wrote:
+>>> There are two ways to describe an eDP panel in device tree. The
+>>> recommended way is to add a device on the AUX bus, ideally using the
+>>> edp-panel compatible. The legacy way is to define a top-level platform
+>>> device for the panel.
+>>>
+>>> Document that adding support for eDP panels in a legacy way is strongly
+>>> discouraged (if not forbidden at all).
+>>>
+>>> While we are at it, also drop legacy compatible strings and bindings for
+>>> five panels. These compatible strings were never used by a DT file
+>>> present in Linux kernel and most likely were never used with the
+>>> upstream Linux kernel.
+>>>
+>>> The following compatibles were never used by the devices supported by
+>>> the upstream kernel and are a subject to possible removal:
+>>>
+>>> - lg,lp097qx1-spa1
+>>> - samsung,lsn122dl01-c01
+>>> - sharp,ld-d5116z01b
+>>
+>> Ok to drop the sharp one I added.  It should be able to be handled by the
+>> (newish) edp-panel, but I think the TI bridge driver needs some work for the
+>> specific platform (no I2C connection) to verify.
+> 
+> Thanks. I'm tempted to merge the series as is now and drop
+> sharp,ld-d5116z01b once you can confirm that it can be handled by
+> edp-panel on your platform.
+> 
 
-On Fri, May 31, 2024 at 06:48:51AM +0300, Leon Romanovsky wrote:
-> We have similar issues but with different workqueue.
+Sounds good to me.
 
-So, the problem with the proposed patch is that pwq may still be in use by
-then (due to async freeing) and thus can't be freed immediately. I still
-don't understand why KASAN is triggering there. I tried to repro by
-introducing a pwq alloc failure but couldn't. Can you please share the
-repro?
-
-Thanks.
-
--- 
-tejun
+-Jeff
 
