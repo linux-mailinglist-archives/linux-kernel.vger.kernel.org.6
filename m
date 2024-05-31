@@ -1,133 +1,194 @@
-Return-Path: <linux-kernel+bounces-197279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AABC8D689F
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 20:01:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03BB28D68AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 20:05:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 809801C23E73
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:01:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E3C3B287A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:05:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4271176258;
-	Fri, 31 May 2024 18:01:15 +0000 (UTC)
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2E9617C9EB;
+	Fri, 31 May 2024 18:04:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CM8EZ1uk"
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD95B52F6A;
-	Fri, 31 May 2024 18:01:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B06515B99F
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 18:04:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717178475; cv=none; b=m9R10sqBiKZxCnrHlDsGnd2V5P+KtuxXwqigqUVifNb+1WZ+6W4S8yF7LYSiker4Atk49NWy8JQ3L1qrD0/E+Y60keGUs6xqF5L1oiWsFqILDiDespNlJd01F9QTTyX9gfoOHvddR/4WZ5VEgD9HYWN4+xPi6YaYtqRv1JiHmuc=
+	t=1717178678; cv=none; b=DmGFJNNUQM92zVm6p2p0Uq17Vy6cfHMIB7WlKjoJHqdjj1PbQtf2Shu2BgM+YGYOVzZCHYzUOQXnEA+xpyzahYOCoLu/FGE3CLVolMQzH07k1EErJ4aBDpdyB+hI92VYPUEj3IjpbTeHXTtarC0Upm0KXvLkxkpBkRa+fTE0kBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717178475; c=relaxed/simple;
-	bh=tao2gQx02AeKmIGyjONY5RmwcqU8wLfetOD0u4K3fTs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BxwXcizAZgGQmPaoXMSoMHWMT4GbtLFXJl4wntL2v80FFBXHMMIszVtMcYNcHM/66Rz+UNjibpK2gURCkBs6k70/NM8T+UfOZFQgfPXfdbp3ukuR4dc8W5TusE0RGIETRWH3OqwTMPwFLTK+CMgsVJ6BLZ+QP3NXWMzwe2ARBRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+	s=arc-20240116; t=1717178678; c=relaxed/simple;
+	bh=EzjE65Kz4LvJT4hRxLlPgk+qCuo0nSvK1ZnNuO/vDQs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Cggc3RloxDVz63tf7/aPIyQnf8IA7a4nNeBOFBuXd1vKmgA/ZSP30vvBTiqaW0MdqAu2Ca4U/GK/LuHcaJQSMDvr6hiTvV0UYlRKeDaIaAmuBsdFdOz7cr3CNfqAi5ZgEUI67ALAZOPNA7T+ozzX0doKqOIrVsNiO/qGi2U/4RE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CM8EZ1uk; arc=none smtp.client-ip=209.85.219.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a689ad8d1f6so43957566b.2;
-        Fri, 31 May 2024 11:01:13 -0700 (PDT)
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-dfa72e97dfeso1033875276.1
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 11:04:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717178676; x=1717783476; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=HfTfA1pAaQTMxSVE2Twz55nEqsHzsr+JodUe0ZaWjik=;
+        b=CM8EZ1ukwGgZG+xY9cDzakQhebF8yotGttvHtk4rC71/G7iw8bvJlS8AM8PXSIw105
+         GGLjQQ2hAOjP5Up1MqgjviRfPuij5uBDKRxqmg1wGp3q0T/6gfFFYx6ifHMaUvPpEvMq
+         AK1SIv1cGAezS/ZuQ0LAw2odYQHBQAwGgZpzwFhRntcQuwodIE8taeqXW1PKgjiMZ9ic
+         8DZFtv5pNNWz+SaCkEm+kpt7CsdPeL34fhd3ePoR4Mmh2SNC/yzUehFUHLOEcxSpWsKs
+         ZDXfBVQn5pAuTX5bWiImVsP+ZgWcurzE7bh9UYOBKgqwnjIiTVGs4+TpCFA7dzPqKDkO
+         QOlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717178472; x=1717783272;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1717178676; x=1717783476;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=NLstpYo8ImkDRhndA7onVdU+VCFInAIg26uWhetlb/4=;
-        b=qd50BoiellVvY9Tk518r8zO5FBNhXkhwT4/vG3zo9ti1vGS2maj5CX9n4Dj4VN+26N
-         SNvL/aeZ3dFWGKGtEvKemJAvdWQWWZ3L0sGNTpPQkfhu48TnnGqY3SpNRM/bi9emCbC4
-         sJfdIyDA4TC9Fke4vk91sqqD0PGr5AdWHrADw4+zN5F8gclHWcTh+uPm9l8SfqGeycpp
-         79QOaWvUKk3YvEiO2//NgPfRAWROKTkN+2NpSjkdlFrA1ZshUvRragW2GbR1CBr3/4mQ
-         Irrpz9OR6U+SA8PbYDQKKpokLdrt/cFdIFEfda1P7cYWnidkJI7uf9Nwij94zzac6cBl
-         Fq6g==
-X-Forwarded-Encrypted: i=1; AJvYcCXdRjO5sJc350rCUygN0bbS1vHWZCP0XMZz4kKnAWrVz+YJLGTt4vlOMjx/th8s9yKHClrwDxBv3fqjB080uVx7c1MBzg916/woPtzxPv21hY/7MBO9rWYny3ffob2rj3vGYu975eNcfw==
-X-Gm-Message-State: AOJu0YxEWg41A9FxbtBiF3baWWsi6ww502ONDm0kcMt7naGrOy/sWLAi
-	GMR3tIotiYb+N0ZOo70RbZora5swHQpGZUHCifV6vEAxllVaNlpMU86Neg==
-X-Google-Smtp-Source: AGHT+IEwj0Slis4hrfiXkf85Fgrd/rBKf2ysY5uKFQK+X1tj3scLLSTZDhlMTJfDT4aeViNuRgIDvA==
-X-Received: by 2002:a17:906:b0d2:b0:a5a:88ff:fe81 with SMTP id a640c23a62f3a-a6820136cd7mr180720766b.20.1717178471779;
-        Fri, 31 May 2024 11:01:11 -0700 (PDT)
-Received: from localhost (fwdproxy-lla-001.fbsv.net. [2a03:2880:30ff:1::face:b00c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6848423bc9sm86641566b.147.2024.05.31.11.01.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 May 2024 11:01:11 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-To: Sathya Prakash <sathya.prakash@broadcom.com>,
-	Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
-	Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>,
-	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: leit@meta.com,
-	Keith Busch <kbusch@kernel.org>,
-	MPT-FusionLinux.pdl@broadcom.com (open list:LSILOGIC MPT FUSION DRIVERS (FC/SAS/SPI)),
-	linux-scsi@vger.kernel.org (open list:LSILOGIC MPT FUSION DRIVERS (FC/SAS/SPI)),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] mpt3sas: Avoid test/set_bit() operating in non-allocated memory
-Date: Fri, 31 May 2024 11:00:54 -0700
-Message-ID: <20240531180055.950704-1-leitao@debian.org>
-X-Mailer: git-send-email 2.43.0
+        bh=HfTfA1pAaQTMxSVE2Twz55nEqsHzsr+JodUe0ZaWjik=;
+        b=fcKKvQzAwrTbUqzdjrO3xj8BJkgTcEFcrCBvZ2sKnwWKzY0OgSlevaTcZ1ZKTiSafN
+         YEvf+W0BzKTVD4SF1+5gyqlSQCGa8L06P9oJNmB5tfg6FDaD6CnuVVnENWkRdmKX55El
+         ZSbZqK5l4oIcJCmKrwzDJpc43DNo+JBlaV4oNXk9Las7YWcuwYKcedclkgdCIUgIYYVR
+         eB3PRXBrinf7DnVQOUG8gDMWPsW9DsazipaQx7l4yrnwnxgtG/IT6phkH4MJ0a/WmmDu
+         1j2oSQK2T64Eu92A4wF7U+AHdikHFNnfDUwHa+GQZGpFJCYmPusG1mu4eg/4QTGQjhat
+         dj7g==
+X-Forwarded-Encrypted: i=1; AJvYcCX8O76yoYKGMe9/6S0O8BTNwVqqq9f+0wY1Dp8QvOohkqNoGZm/zxAqVoR0SBFHFnbiVxTzyHAcTbACsa9uOB20r0WLKe0M2LPQ470y
+X-Gm-Message-State: AOJu0YznsNqKR0YlHR6hDBlpsnsv2fLyPdVbhqcvqXUyDBtO5UIggV0e
+	Q1rDOTnzYjGUKBK4yObwtwiogBIfvx8/x2NBqq7XpjPrgKSLqZwMuyrnVyzDjoiGBbnq9lCnK3M
+	PS8xRg7Q3LWhPXHyuTISen4nwh8E=
+X-Google-Smtp-Source: AGHT+IHZ7DzbFO/XPeTe08EYDWHAjg5vZfkwMpAq2QcBpNCFaEg5A5YyrZzevmndi7U2DXiwqUlyRPv+8X4RDj+5MhI=
+X-Received: by 2002:a25:c58b:0:b0:de5:5bca:ecb0 with SMTP id
+ 3f1490d57ef6-dfa72ec2cf9mr2624477276.0.1717178675951; Fri, 31 May 2024
+ 11:04:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240531092001.30428-1-byungchul@sk.com> <20240531092001.30428-10-byungchul@sk.com>
+ <fab1dd64-c652-4160-93b4-7b483a8874da@intel.com>
+In-Reply-To: <fab1dd64-c652-4160-93b4-7b483a8874da@intel.com>
+From: Byungchul Park <lkml.byungchul.park@gmail.com>
+Date: Sat, 1 Jun 2024 03:04:24 +0900
+Message-ID: <CAHyrMpxETdVewTH3MCS4qPyD6Xf1zRUfWZf-8SCdpCFj2Pj_Wg@mail.gmail.com>
+Subject: Re: [PATCH v11 09/12] mm: implement LUF(Lazy Unmap Flush) defering
+ tlb flush when folios get unmapped
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Byungchul Park <byungchul@sk.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	kernel_team@skhynix.com, akpm@linux-foundation.org, ying.huang@intel.com, 
+	vernhao@tencent.com, mgorman@techsingularity.net, hughd@google.com, 
+	willy@infradead.org, david@redhat.com, peterz@infradead.org, luto@kernel.org, 
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, rjgolo@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-There is a potential out-of-bounds access when using test_bit() on a
-single word. The test_bit() and set_bit() functions operate on long
-values, and when testing or setting a single word, they can exceed the
-word boundary. KASAN detects this issue and produces a dump:
+Dave Hansen <dave.hansen@intel.com> wrote:
+>
+> On 5/31/24 02:19, Byungchul Park wrote:
+> ..
+> > diff --git a/include/linux/fs.h b/include/linux/fs.h
+> > index 0283cf366c2a..03683bf66031 100644
+> > --- a/include/linux/fs.h
+> > +++ b/include/linux/fs.h
+> > @@ -2872,6 +2872,12 @@ static inline void file_end_write(struct file *file)
+> >       if (!S_ISREG(file_inode(file)->i_mode))
+> >               return;
+> >       sb_end_write(file_inode(file)->i_sb);
+> > +
+> > +     /*
+> > +      * XXX: If needed, can be optimized by avoiding luf_flush() if
+> > +      * the address space of the file has never been involved by luf.
+> > +      */
+> > +     luf_flush();
+> >  }
+> ..
+> > +void luf_flush(void)
+> > +{
+> > +     unsigned long flags;
+> > +     unsigned short int ugen;
+> > +
+> > +     /*
+> > +      * Obtain the latest ugen number.
+> > +      */
+> > +     spin_lock_irqsave(&luf_lock, flags);
+> > +     ugen = luf_gen;
+> > +     spin_unlock_irqrestore(&luf_lock, flags);
+> > +
+> > +     check_luf_flush(ugen);
+> > +}
+>
+> Am I reading this right?  There's now an unconditional global spinlock
 
-	 BUG: KASAN: slab-out-of-bounds in _scsih_add_device.constprop.0 (./arch/x86/include/asm/bitops.h:60 ./include/asm-generic/bitops/instrumented-atomic.h:29 drivers/scsi/mpt3sas/mpt3sas_scsih.c:7331) mpt3sas
+It looked *too much* to split the lock to several locks as rcu does until
+version 11.  However, this code introduced in v11 looks problematic.
 
-	 Write of size 8 at addr ffff8881d26e3c60 by task kworker/u1536:2/2965
+> acquired in the sys_write() path?  How can this possibly scale?
 
-For full log, please look at [1].
+I should find a better way.
 
-Make the allocation at least the size of sizeof(unsigned long) so that
-set_bit() and test_bit() have sufficient room for read/write operations
-without overwriting unallocated memory.
+> So, yeah, I think an optimization is absolutely needed.  But, on a more
+> fundamental level, I just don't believe these patches are being tested.
+> Even a simple microbenchmark should show a pretty nasty regression on
+> any decently large system:
+>
+> > https://github.com/antonblanchard/will-it-scale/blob/master/tests/write1.c
+>
+> Second, I was just pointing out sys_write() as an example of how the
+> page cache could change.  Couldn't a separate, read/write mmap() of the
+> file do the same thing and *not* go through sb_end_write()?
+>
+> So:
+>
+>         fd = open("foo");
+>         ptr1 = mmap(fd, PROT_READ);
+>         ptr2 = mmap(fd, PROT_READ|PROT_WRITE);
+>
+>         foo = *ptr1; // populate the page cache
+>         ... page cache page is reclaimed and LUF'd
+>         *ptr2 = bar; // new page cache page is allocated and written to
 
-[1] Link: https://lore.kernel.org/all/ZkNcALr3W3KGYYJG@gmail.com/
+I think this part would work but I'm not convinced.  I will check again.
 
-Suggested-by: Keith Busch <kbusch@kernel.org>
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
- drivers/scsi/mpt3sas/mpt3sas_base.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+>         printk("*ptr1: %d\n", *ptr1);
+>
+> Doesn't the printk() see stale data?
+>
+> I think tglx would call all of this "tinkering".  The approach to this
+> series is to "fix" narrow, specific cases that reviewers point out, make
+> it compile, then send it out again, hoping someone will apply it.
 
-diff --git a/drivers/scsi/mpt3sas/mpt3sas_base.c b/drivers/scsi/mpt3sas/mpt3sas_base.c
-index 258647fc6bdd..fe9f4a4175d1 100644
---- a/drivers/scsi/mpt3sas/mpt3sas_base.c
-+++ b/drivers/scsi/mpt3sas/mpt3sas_base.c
-@@ -8512,6 +8512,12 @@ mpt3sas_base_attach(struct MPT3SAS_ADAPTER *ioc)
- 	ioc->pd_handles_sz = (ioc->facts.MaxDevHandle / 8);
- 	if (ioc->facts.MaxDevHandle % 8)
- 		ioc->pd_handles_sz++;
-+	/* pd_handles_sz should have, at least, the minimal room
-+	 * for set_bit()/test_bit(), otherwise out-of-memory touch
-+	 * may occur
-+	 */
-+	ioc->pd_handles_sz = ALIGN(ioc->pd_handles_sz, sizeof(unsigned long));
-+
- 	ioc->pd_handles = kzalloc(ioc->pd_handles_sz,
- 	    GFP_KERNEL);
- 	if (!ioc->pd_handles) {
-@@ -8529,6 +8535,12 @@ mpt3sas_base_attach(struct MPT3SAS_ADAPTER *ioc)
- 	ioc->pend_os_device_add_sz = (ioc->facts.MaxDevHandle / 8);
- 	if (ioc->facts.MaxDevHandle % 8)
- 		ioc->pend_os_device_add_sz++;
-+
-+	/* pend_os_device_add_sz should have, at least, the minimal room
-+	 * for set_bit()/test_bit(), otherwise out-of-memory may occur
-+	 */
-+	ioc->pend_os_device_add_sz = ALIGN(ioc->pend_os_device_add_sz,
-+					   sizeof(unsigned long));
- 	ioc->pend_os_device_add = kzalloc(ioc->pend_os_device_add_sz,
- 	    GFP_KERNEL);
- 	if (!ioc->pend_os_device_add) {
--- 
-2.43.0
+Sorry for not perfect work and bothering you but you know what?  I
+can see what is happening in this community too.  Of course, I bet
+you would post better quality mm patches from the 1st version than
+me but might not in other subsystems.
 
+> So, for me, until the approach to this series changes: NAK, for x86.
+
+I understand why you got mad and feel sorry but I couldn't expect
+the regression you mentioned above.  And I admit the patches have
+had problems I couldn't find in advance until you, Hildenbrand and
+Ying.  I will do better.
+
+> Andrew, please don't take this series.  Or, if you do, please drop the
+> patch enabling it on x86.
+
+I don't want to ask to merge either, if there are still issues.
+
+> I also have the feeling our VFS friends won't take kindly to having
+
+That is also what I thought it was.  What should I do then?
+I don't believe you do not agree with the concept itself.  Thing is
+the current version is not good enough.  I will do my best by doing
+what I can do.
+
+> random luf_foo() hooks in their hot paths, optimized or not.  I don't
+> see any of them on cc.
+
+Yes.  I should've cc'd them.  I will.
+
+        Byungchul
 
