@@ -1,97 +1,80 @@
-Return-Path: <linux-kernel+bounces-196165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BCA38D5842
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 03:40:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 778A08D5847
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 03:42:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C42A1C22BDE
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 01:40:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C2211F23E49
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 01:42:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E6881946F;
-	Fri, 31 May 2024 01:40:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B17B13FF9;
+	Fri, 31 May 2024 01:41:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RwHOnC3j"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wm6x+fuF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82047EAE7;
-	Fri, 31 May 2024 01:40:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCC3EE56A;
+	Fri, 31 May 2024 01:41:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717119633; cv=none; b=k5L1GRaO6uzWzSPlHkSUA5R+HjC6ggknzXgzpKJKymV8qSGcOFZLPuLnHOXF8bCvzli9C2Ngwvbz222Nzf3xt4C6G1OVSFFt026LUL9IYPPAaHq6c9/IBpF23jehCNn8w2goSiVjxqTP76YrIy1kw9e53JaFXcRosfi+4HwRq/8=
+	t=1717119712; cv=none; b=nMtd0xuzBm+qSLCBCb1CKaWT9RMJGAnoSwI5HuiUlP5urjGzJvqiYZj4MMO3k0COhshxxysg1NfIFWylM6PeSvagNkdV+wgF/7t6DQxMgEH01rUoIgiXPragDCNzbjAFf7IW951AQAcxkKk62W00FedsD2kDh/pa6bU2shaDwlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717119633; c=relaxed/simple;
-	bh=0QcoVA6kHXD2J3K8hFxrVZXAMa5lJRX2YC7JyYwXKB8=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=mY9vbFOKXBk4qkOZRWx0Ok73mUF5PEaCnJ1AzH7rlFv5FNhHTKUtws1ikTAx3CYi0+IIiywF0oJtgjSkBn1YHoTQaz5153ZBlirA5qLy6xSBRHhdPRvvo/pjq/qmzYgQJwwwdN84c5IFEB23MguCcSdOKLprrs19CjzjQBRkZXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RwHOnC3j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 1A338C4AF08;
-	Fri, 31 May 2024 01:40:33 +0000 (UTC)
+	s=arc-20240116; t=1717119712; c=relaxed/simple;
+	bh=55yn3OtPaMw1a7Vf5v4d+0TZywmDuWK/8w+Q8FRDWTU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mk6yY5RhjpzENtvmLei+UYrPpPoN+BCXV/nvViN7BvqN7qcQOGGaFvoA87ceip0pXn0ELgP12gopZgxSrr4aJm2/DQ3QsJdO4AoezMuU67UkAiloCIrUoMrYcMNrtkp7qjva8oQ1rezqPsEOtc4gdmbwmxBBe4DnUU1gAWNnxjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wm6x+fuF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 769ECC2BBFC;
+	Fri, 31 May 2024 01:41:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717119633;
-	bh=0QcoVA6kHXD2J3K8hFxrVZXAMa5lJRX2YC7JyYwXKB8=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=RwHOnC3jCNFDY2o1kGmkqDFFHKEx8K1DgJYFqW7iRywvaOtMQn66lKn2Lw///RetX
-	 yk4JuXK12EUNLxAgEzwvRDRbYOpUv+K5czj4SzmJc76m5ja5M/lEyRpxAaZc2TFraN
-	 Q4jOAC9BHWrWS0U7cUJfGJlzhsCqGHuKhqI6FMfrZnz5C5WFn2FWjUkku03mtPAgiG
-	 6N6q0PxRGlK99RpULvdMohKWbjNH2pVaBbEKIkNuBKxTJgPq5H7gxhkiYnS2OgKahE
-	 ++/FVWbvEv92GBHoPeyzLxgC1hF7cpdQxtSki31DXbEdq9meRe1vH0YVaBqLMFOJ6/
-	 3IvrNtY5Bqlzg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 0CD4AD84BD0;
-	Fri, 31 May 2024 01:40:33 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1717119712;
+	bh=55yn3OtPaMw1a7Vf5v4d+0TZywmDuWK/8w+Q8FRDWTU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Wm6x+fuFMAvfI6dngXA+Q+DFmbCIW3Bvtg16Vt5ouK55OBJ3nwEOUgOfnG1SBmEYQ
+	 cbDT2Xp1ZKcUMyuJyF7sVr1BGTepI6oPJ61EzROCI75YKu5NJd1KV0bem0uM97L+Kq
+	 ccIOfZXAf/6isyVY5UYnORVHgc8jg9p7K8Dt7KTptYk8UyIrvIIV9ERh+CGZ0xNXhg
+	 QqVponSy+cpO7W5wK1xGhkOOxbEFGk0nyPWu5yzF//orfrder4stjLoOUFoO4WkJBQ
+	 CTcficFtffW1TpbbDtibH21kV/C3PsnyV0cg6fx1P9cYFHUWDB18WfrG27H/m4RI0n
+	 9RXwAl/WoApnA==
+Date: Thu, 30 May 2024 20:41:51 -0500
+From: Rob Herring <robh@kernel.org>
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: konrad.dybcio@linaro.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	Tengfei Fan <quic_tengfan@quicinc.com>,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel@quicinc.com
+Subject: Re: (subset) [PATCH 0/3] arm64: qcom: SA8775p: Add llcc support
+Message-ID: <20240531014151.GA3684019-robh@kernel.org>
+References: <20240529101534.3166507-1-quic_tengfan@quicinc.com>
+ <171703961686.615222.7092607304287257293.b4-ty@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2] dt-bindings: net: ti: icssg_prueth: Add documentation for
- PA_STATS support
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171711963304.18580.11844749195457939777.git-patchwork-notify@kernel.org>
-Date: Fri, 31 May 2024 01:40:33 +0000
-References: <20240529115225.630535-1-danishanwar@ti.com>
-In-Reply-To: <20240529115225.630535-1-danishanwar@ti.com>
-To: MD Danish Anwar <danishanwar@ti.com>
-Cc: conor+dt@kernel.org, krzk+dt@kernel.org, robh@kernel.org,
- pabeni@redhat.com, kuba@kernel.org, edumazet@google.com, davem@davemloft.net,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org, srk@ti.com,
- vigneshr@ti.com, r-gunasekaran@ti.com, rogerq@kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <171703961686.615222.7092607304287257293.b4-ty@kernel.org>
 
-Hello:
-
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Wed, 29 May 2024 17:22:25 +0530 you wrote:
-> Add documentation for ti,pa-stats property which is syscon regmap for
-> PA_STATS registers. This will be used to dump statistics maintained by
-> ICSSG firmware.
+On Wed, May 29, 2024 at 10:27:00PM -0500, Bjorn Andersson wrote:
 > 
-> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
-> ---
-> Changes from v1 to v2:
-> *) Updated description of ti,pa-stats to explain the purpose of PA_STATS
->    module in context of ICSSG.
+> On Wed, 29 May 2024 18:15:31 +0800, Tengfei Fan wrote:
+> > The SA8775p platform has LLCC as the system cache controller. It
+> > includes 6 LLCC instances and 1 broadcast interface.
+> > 
+> > 
 > 
-> [...]
+> Applied, thanks!
+> 
+> [3/3] arm64: dts: qcom: sa8775p: Add llcc support for the SA8775p platform
+>       commit: 809c20b1ffc80200bfcbbeceb0d946a3e0eed3a4
 
-Here is the summary with links:
-  - [v2] dt-bindings: net: ti: icssg_prueth: Add documentation for PA_STATS support
-    https://git.kernel.org/netdev/net-next/c/2f19a795e1f9
+I'm confused why you didn't pick up the driver and binding?
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Rob
 
