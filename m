@@ -1,163 +1,166 @@
-Return-Path: <linux-kernel+bounces-197478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EAEB8D6B2A
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 23:05:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6894C8D6B1B
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 22:52:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF797B21E6E
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 21:05:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24E3F28869B
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 20:52:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE5A978286;
-	Fri, 31 May 2024 21:05:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3FDD23777;
+	Fri, 31 May 2024 20:52:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="f0AmkXmS"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e0FcRpT5"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D9421DDEA
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 21:05:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30C78208D4
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 20:52:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717189532; cv=none; b=X3fwa2HA1d8G3scRYObXAr1NeL89PWLFgMoaKag/8aa2eMFUjDDiO7IfhN2YjOOIKn8AmmVU/AHvdD8FVgW6WUdCLQMh1zSwuN+Uq2guGyYkCR65R/WPULortecbsZ8CLLvspn/VQgJ3uFT6jmiCkijgt2N4+0YVYfTCulXz9z0=
+	t=1717188747; cv=none; b=ay3bp+Z7vp5i+5AhS8AKZbU1nAF7QuhVv44H8C2pudxvVhOFMeneDs7QS7LiKWz9Phm2bWK2/ueUFRgOJZReuLrZcC7WULyb8/PA0Tkx1IN8n8N0P7XT0npQjbPgapaPDiwZvRKaxQTk03+wV0vbUod6UoFXwSuBLYqWXA3KPrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717189532; c=relaxed/simple;
-	bh=9Kud6uzvuj0hnJN8KHr7WJrJqsGZFdiigr5ZDDXvWDU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
-	 Content-Type:References; b=oXJ5Krjc8NhaOKybbTXo3FF40CHff9gtiAoAa/zLK+ujbw4WXH6iCzRq+R50nzqg7/Ri9SjOGri9vKRPU0gMnt9Qd6/+9CYm8wwqpudljEK4NWx4m6PKeqbwwzzY7aYz+hWaoqfyEZDTS9gBrXePmMElPiAa0RRcP3YY13cCPYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=f0AmkXmS; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240531210526epoutp02def82ef787ee12aa627dcd525b03330d~UrsbXFl5S0235502355epoutp02F
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 21:05:26 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240531210526epoutp02def82ef787ee12aa627dcd525b03330d~UrsbXFl5S0235502355epoutp02F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1717189527;
-	bh=T/Yvi9n3cu2buoY4RtAZnVN2Z9u40bwEUvEisKol0Qw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=f0AmkXmSxE5BEPlJwpQH5rHrxjneBjPrYiCuUXhYqSe4X4fKFuBrVSFfKIkY/0hdO
-	 +FjdFIUcnT7HGWI7Y4CKys0kpgZ4Pjntz/JV1jHhK6G+GkqSfrfOPMDMW9NEH3Z/ph
-	 EefTTExjGOAni5DWcoHfdqg0At4SBjqa4kmSEnr0=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas2p1.samsung.com (KnoxPortal) with ESMTP id
-	20240531210526epcas2p136b08261a04c99836ea70be2d1f39504~UrsayI9dV2297922979epcas2p1p;
-	Fri, 31 May 2024 21:05:26 +0000 (GMT)
-Received: from epsmges2p1.samsung.com (unknown [182.195.36.91]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4VrbHT4648z4x9Pp; Fri, 31 May
-	2024 21:05:25 +0000 (GMT)
-Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
-	epsmges2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	2B.31.09848.59B3A566; Sat,  1 Jun 2024 06:05:25 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
-	20240531210524epcas2p4f37dff4362ebd7990da782ad8ef1688e~UrsZXnXQH2270222702epcas2p4J;
-	Fri, 31 May 2024 21:05:24 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240531210524epsmtrp29fe616e5481d3e7d27acb10f73213112~UrsZWvw0I2325523255epsmtrp2k;
-	Fri, 31 May 2024 21:05:24 +0000 (GMT)
-X-AuditID: b6c32a45-447fe70000002678-03-665a3b95c6d3
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	39.56.07412.49B3A566; Sat,  1 Jun 2024 06:05:24 +0900 (KST)
-Received: from localhost (unknown [10.229.54.230]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20240531210524epsmtip1c6d5bc1ca098a501f26eed5017cb3a0b~UrsZKP0sG1393813938epsmtip1i;
-	Fri, 31 May 2024 21:05:24 +0000 (GMT)
-Date: Sat, 1 Jun 2024 05:54:03 +0900
-From: Minwoo Im <minwoo.im@samsung.com>
-To: Bart Van Assche <bvanassche@acm.org>
-Cc: "James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
-	"Martin K . Petersen" <martin.petersen@oracle.com>, Alim Akhtar
-	<alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>,
-	gost.dev@samsung.com, linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Jeuk Kim <jeuk20.kim@samsung.com>, Minwoo Im
-	<minwoo.im@samsung.com>
-Subject: Re: [PATCH 2/3] ufs: pci: Add support MCQ for QEMU-based UFS
-Message-ID: <Zlo467UhZ2aAMV0A@localhost>
+	s=arc-20240116; t=1717188747; c=relaxed/simple;
+	bh=x4yRE+8eJOrqN0Tg8eCdRDR/ydVszAFAvviD2pLZoPA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=krwOx7X2sr9nmv0zTlBvqXzonuX2VaDPr1ouP5/fBpoaexPKCD3+EJkMvDDP06l0Xl0Esn3aclXMtRoP4ORICdKCqOv+k1RKdDhCuaq+FwwI29CMfIdcayw9juVx1sGVwe3Uaad9zbPL6E5OHcDGxt4P1wB31YH+NadihPc8i7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e0FcRpT5; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717188745; x=1748724745;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=x4yRE+8eJOrqN0Tg8eCdRDR/ydVszAFAvviD2pLZoPA=;
+  b=e0FcRpT5c94Oxjql0fTbKOkGLC10gfmFivPdM2/rxtg8goXK1U1J8T2X
+   mwItITVBLFfjAziWMepcIukEafVDPoNQUXSxQ4/iUR56qJ+8un4C77YWC
+   Cj8Sp5etqNNUfoVXYOhKEPOvnvoRlJ69iNoFNPnsguiGViAXv6NR1/m8J
+   Ux6CeQ2O4ZTXsR0eK8iJ7VJq/QKsJgUEqIphqS2pnf4Zc7HN/bfyeW3m3
+   6+1bsSd2kPVUwuR+aT4jtrWFASOB7TfZ+JJW1Xv516LtLoGAm7v413cSq
+   bImRHLuDh/VGdBZIIcNGKGiOHBJ9rcTS3KRRTAyVZLYey2wdjC2fXUleW
+   w==;
+X-CSE-ConnectionGUID: ERis017UQhSZlHa11bN1Fg==
+X-CSE-MsgGUID: FLN+L6e2Tkec3GcQfW50gg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11089"; a="13873119"
+X-IronPort-AV: E=Sophos;i="6.08,205,1712646000"; 
+   d="scan'208";a="13873119"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 13:52:25 -0700
+X-CSE-ConnectionGUID: 2nRCBILhRv+cgSARzCATcQ==
+X-CSE-MsgGUID: PeXTGiktRPaD88FL+iSStA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,205,1712646000"; 
+   d="scan'208";a="36726557"
+Received: from b04f130c83f2.jf.intel.com ([10.165.154.98])
+  by orviesa006.jf.intel.com with ESMTP; 31 May 2024 13:52:25 -0700
+From: Tim Chen <tim.c.chen@linux.intel.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>
+Cc: Tim Chen <tim.c.chen@linux.intel.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	linux-kernel@vger.kernel.org,
+	Chen Yu <yu.c.chen@intel.com>,
+	Vinicius Gomes <vinicius.gomes@intel.com>
+Subject: [PATCH] sched/balance: Skip unnecessary updates to idle load balancer's flags
+Date: Fri, 31 May 2024 13:54:52 -0700
+Message-Id: <20240531205452.65781-1-tim.c.chen@linux.intel.com>
+X-Mailer: git-send-email 2.32.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <6052a799-88c4-4efa-a59e-d560a091a5a0@acm.org>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprLJsWRmVeSWpSXmKPExsWy7bCmme5U66g0gxvdMhYP5m1js3j58yqb
-	xbQPP5ktbh7YyWSxsZ/D4v7Wa4wWl3fNYbPovr6DzWL58X9MFs9OH2B24PK4fMXbY9qkU2we
-	H5/eYvHo27KK0ePzJjmP9gPdTAFsUdk2GamJKalFCql5yfkpmXnptkrewfHO8aZmBoa6hpYW
-	5koKeYm5qbZKLj4Bum6ZOUCHKSmUJeaUAoUCEouLlfTtbIryS0tSFTLyi0tslVILUnIKzAv0
-	ihNzi0vz0vXyUkusDA0MjEyBChOyM44fuc5U0MJW8ebvNJYGxn8sXYycHBICJhKTzmxh62Lk
-	4hAS2MEosfTMGhYI5xOjxKZzv6Gcb4wSm3dcZYVpuT+hnREisZdRYv3h3awQznNGiXVb7zKB
-	VLEIqEj8alkNtoRNQF2iYeorMFtEQEPi24PlYGOZBR4zSSx+9IgRJCEs4Crx6tFysGZeoKKz
-	6/4zQ9iCEidnPgFr5hSwlnh3dBbYagmBTg6J3vu3oG5ykVh/+RkzhC0s8er4FnYIW0ri87u9
-	bBB2ucTPN5MYIewKiYOzbgPFOYBse4lrz1NAwswCGRIPTv1ghQgrSxy5xQIR5pPoOPyXHSLM
-	K9HRJgQxRFni46FDUEslJZZfeg21yEPi2ee10AD6wijxZWUf2wRGuVlIvpmFZNssoLHMApoS
-	63fpQ5jSEsv/cSCJLmBkXcUollpQnJueWmxUYAiP4OT83E2M4HSq5bqDcfLbD3qHGJk4GA8x
-	SnAwK4nw/kqPSBPiTUmsrEotyo8vKs1JLT7EaAqMmonMUqLJ+cCEnlcSb2hiaWBiZmZobmRq
-	YK4kznuvdW6KkEB6YklqdmpqQWoRTB8TB6dUA5OviZnyyf8lO94ZyC3MKe+Ze6ai8G2Q0Prj
-	/D84lV/ls0tyBGw8f9B2R8NM9yMLY876+9255nXuWIvTb1l754y8UyzrJl36xyVlo3q2qcVz
-	xlGtq1eeMkSK8kvlf3PkNXx/ZGFu5FmudTdenXrw8bD1z6RfSzfVcQtPVNNM53u87ei/aZfe
-	sqb8evfvpmLjNc8fxgt+3JqvcOrNnKLtGvyPYh482aIVoGkgpusQaxZzetnMF3MiJxpIGB0z
-	++IkIuZa/Veupm89T8xhp/3HWnhPKTJ4z7+vYlOXpvj+Q1PuYtuVdx22ql7rOXCqpe6K3WLf
-	F+b/9q/uvS12ifHXXM2Ftx4dv+wtWMFnEPHO6MtEJZbijERDLeai4kQAdLXIrjAEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrCLMWRmVeSWpSXmKPExsWy7bCSnO4U66g0g73ntC0ezNvGZvHy51U2
-	i2kffjJb3Dywk8liYz+Hxf2t1xgtLu+aw2bRfX0Hm8Xy4/+YLJ6dPsDswOVx+Yq3x7RJp9g8
-	Pj69xeLRt2UVo8fnTXIe7Qe6mQLYorhsUlJzMstSi/TtErgyHn3oYiw4zlwxq0OygfEWUxcj
-	J4eEgInE/QntjF2MXBxCArsZJc6t2MYMkZCU2Hf6JiuELSxxv+UIK0TRU0aJXTObGEESLAIq
-	Er9aVrOA2GwC6hINU1+B2SICGhLfHixnAWlgFnjKJHH951qwdcICrhKvHi0Hs3mBis6u+88M
-	MfULo8Sa/nmMEAlBiZMzn4BNYgaa+mfeJaAiDiBbWmL5Pw6QMKeAtcS7o7MYJzAKzELSMQtJ
-	xyyEjgWMzKsYJVMLinPTc5MNCwzzUsv1ihNzi0vz0vWS83M3MYIjQktjB+O9+f/0DjEycTAe
-	YpTgYFYS4f2VHpEmxJuSWFmVWpQfX1Sak1p8iFGag0VJnNdwxuwUIYH0xJLU7NTUgtQimCwT
-	B6dUA9POjp+X//gLnNZc9eTVXsEXfu5XLVd5vwidbLjVVyVTa/uj30frAvfpiV7f8T/Ujv3z
-	kaytBfE+/HpuT7Pi1ZtXRBzZHCyxZlXrsx2c808/7/m/8YXnxEv74xtEL+cJWyf2XMtYqG18
-	zPSLyxMDo9xtZoEZ+bpqPtt+8f97/+rJqyfSuksti6Xfz/G7/5RZTa9lgYiiBfcE1ZjetNsC
-	51P3eWyQtHw4hXVdV/6VG6rCdXcubmT8nFj4soz9YGrC+x2vPiuUl39jmPpg8xwGsf/PHXV6
-	3y3kMzte+Nx2Fif3u4uqTyYdVVKwq3c4s3ibC+cy2ZxW9zNb6wIdSqYwBEVIzPARkXfy2VfA
-	KOI5TVuJpTgj0VCLuag4EQBhQbGh9wIAAA==
-X-CMS-MailID: 20240531210524epcas2p4f37dff4362ebd7990da782ad8ef1688e
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-	boundary="----He.yNZkzpBak.xuDKC9auljxNssTvAfbOgKyc16DCg-DQrdx=_28dde_"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240531104947epcas2p30506632eb56025711dfb5768e2f77154
-References: <20240531103821.1583934-1-minwoo.im@samsung.com>
-	<CGME20240531104947epcas2p30506632eb56025711dfb5768e2f77154@epcas2p3.samsung.com>
-	<20240531103821.1583934-3-minwoo.im@samsung.com>
-	<6052a799-88c4-4efa-a59e-d560a091a5a0@acm.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-------He.yNZkzpBak.xuDKC9auljxNssTvAfbOgKyc16DCg-DQrdx=_28dde_
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
+We observed that the overhead on trigger_load_balance(), now renamed
+sched_balance_trigger(), has risen with a system's core counts.
 
-On 24-05-31 13:16:40, Bart Van Assche wrote:
-> On 5/31/24 03:38, Minwoo Im wrote:
-> > +static int ufs_redhat_get_hba_mac(struct ufs_hba *hba)
-> > +{
-> > +	return MAX_SUPP_MAC;
-> > +}
-> 
-> Why the prefix "ufs_redhat" instead of "ufs_qemu"?
+For an OLTP workload running 6.8 kernel on a 2 socket x86 systems
+having 96 cores/socket, we saw that 0.7% cpu cycles are spent in
+trigger_load_balance(). On older systems with fewer cores/socket, this
+function's overhead was less than 0.1%.
 
-I thouogh I had to use the same name pattern as ufs_intel_* for the name of
-vendor ID of the PCI device.  I will update it in the next version.
+The cause of this overhead was that there are multiple cpus calling
+kick_ilb(flags), updating the balancing work needed to a common idle
+load balancer cpu. The ilb_cpu's flags field got updated unconditionally
+with atomic_fetch_or().  The atomic read and writes to ilb_cpu's flags
+causes much cache bouncing and cpu cycles overhead. This is seen in the
+annotated profile below.
 
-Thanks for the review.
+             kick_ilb():
+             if (ilb_cpu < 0)
+               test   %r14d,%r14d
+             ↑ js     6c
+             flags = atomic_fetch_or(flags, nohz_flags(ilb_cpu));
+               mov    $0x2d600,%rdi
+               movslq %r14d,%r8
+               mov    %rdi,%rdx
+               add    -0x7dd0c3e0(,%r8,8),%rdx
+             arch_atomic_read():
+  0.01         mov    0x64(%rdx),%esi
+ 35.58         add    $0x64,%rdx
+             arch_atomic_fetch_or():
 
-> 
-> Thanks,
-> 
-> Bart.
-> 
+             static __always_inline int arch_atomic_fetch_or(int i, atomic_t *v)
+             {
+             int val = arch_atomic_read(v);
 
-------He.yNZkzpBak.xuDKC9auljxNssTvAfbOgKyc16DCg-DQrdx=_28dde_
-Content-Type: text/plain; charset="utf-8"
+             do { } while (!arch_atomic_try_cmpxchg(v, &val, val | i));
+  0.03  157:   mov    %r12d,%ecx
+             arch_atomic_try_cmpxchg():
+             return arch_try_cmpxchg(&v->counter, old, new);
+  0.00         mov    %esi,%eax
+             arch_atomic_fetch_or():
+             do { } while (!arch_atomic_try_cmpxchg(v, &val, val | i));
+               or     %esi,%ecx
+             arch_atomic_try_cmpxchg():
+             return arch_try_cmpxchg(&v->counter, old, new);
+  0.01         lock   cmpxchg %ecx,(%rdx)
+ 42.96       ↓ jne    2d2
+             kick_ilb():
 
+With instrumentation, we found that 81% of the updates do not result in
+any change in the ilb_cpu's flags.  That is, multiple cpus are asking
+the ilb_cpu to do the same things over and over again, before the ilb_cpu
+has a chance to run NOHZ load balance.
 
-------He.yNZkzpBak.xuDKC9auljxNssTvAfbOgKyc16DCg-DQrdx=_28dde_--
+Skip updates to ilb_cpu's flags if no new work needs to be done.
+Such updates do not change ilb_cpu's NOHZ flags.  This requires an extra
+atomic read but it is less expensive than frequent unnecessary atomic
+updates that generate cache bounces.
+
+We saw that on the OLTP workload, cpu cycles from trigger_load_balance()
+(or sched_balance_trigger()) got reduced from 0.7% to 0.2%.
+
+Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
+---
+ kernel/sched/fair.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 8a5b1ae0aa55..9ab6dff6d8ac 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -11891,6 +11891,13 @@ static void kick_ilb(unsigned int flags)
+ 	if (ilb_cpu < 0)
+ 		return;
+ 
++	/*
++	 * Don't bother if no new NOHZ balance work items for ilb_cpu,
++	 * i.e. all bits in flags are already set in ilb_cpu.
++	 */
++	if ((atomic_read(nohz_flags(ilb_cpu)) & flags) == flags)
++		return;
++
+ 	/*
+ 	 * Access to rq::nohz_csd is serialized by NOHZ_KICK_MASK; he who sets
+ 	 * the first flag owns it; cleared by nohz_csd_func().
+-- 
+2.32.0
+
 
