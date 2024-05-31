@@ -1,107 +1,194 @@
-Return-Path: <linux-kernel+bounces-196553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC09D8D5DE2
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 11:12:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 649488D5DE7
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 11:12:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CAF71F27548
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 09:12:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 883CB1C247DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 09:12:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 543D478297;
-	Fri, 31 May 2024 09:11:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2A5B15665C;
+	Fri, 31 May 2024 09:12:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="W5Nd9uOs";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4iODCH1i"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bt/SNztV"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B71578C7E;
-	Fri, 31 May 2024 09:11:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4467C13774C
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 09:12:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717146704; cv=none; b=Zvn/DR1EHSlH178FxzyVQLYk5w8yUL8Z1qFErS7JvwD4U+qQkYK+u2wM4/iRl7jwbhFPWdLNKQgvBO3Icmw8HG5+Ah5GoxweZfl2ORudif7QNsfuY+pdKOUbDEBI0JY+CyctCM2QTR4wpMV9fbvPvmZi1FigNBslGwWbvEtZQ8k=
+	t=1717146722; cv=none; b=KftVsFpeGHdzTKLRScXu0OUJmbFohUjc1cNhUGHlar6T4dDVbDCxk68cHzYXEqkws4MTH8HpVOavDlxLaow/ectQemzLXAqHk0R6oQTel/4u3+xHGLqpOaCDKGkxSNC4KVHOahz6kQfkCr4G3s50oChv8nvAWowhESG+0Vz/mvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717146704; c=relaxed/simple;
-	bh=3MKARfDmtI2u29OtqOPhdYMoaiEH48p6RYJTh3QxfXc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=uDCHrQROEow+R5fdfwcIJZYwMfU5YEnM40TJuHtnwpkI3DMs5eP8LiRqhxgUsyI2bh4IlXAIXEuJmWcDPn3cDrKaoo7rc3n6AvUPFobvb1io9svhCTVx770qHibngxfCTFVNFjNxE3ptuIHjaKHWQO97upMpNdWyZWDBB89HdRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=W5Nd9uOs; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4iODCH1i; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1717146701;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Y4tAbLrn87lubgmSwcqSrkzH+jbS/RnpUcK1nCwo9UI=;
-	b=W5Nd9uOsBusdsFPOogLbTJSbJQfL3TzPTLvlLUTClpQVzdia94h/2qSgn37XGEiEBxAD5R
-	gAtoVlflxBMDwbTv0DMONZccCkhN0I20HAVIzJYLOek3rzr7Ns3vkYz8T69C4bQaYkM6zv
-	A3wuDUd2/LQycqHm3TVRCDX2D4krBi7XennaZ1T7ghjRGVyAU1U5+MBlJiRLwGTcKgthl6
-	VzcqJQwxOyfhQlc+uKJoqeuyAtuYYw+yyOJsSNO6XlrELy6jE8qDauP1Vu/gHCHQHSpD60
-	q0ik3toGn99nwOppkPXdSgZNtQSYoa38xCTM9hiaaScIgDGexAN3KoRZBuvu1g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1717146701;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Y4tAbLrn87lubgmSwcqSrkzH+jbS/RnpUcK1nCwo9UI=;
-	b=4iODCH1id724KVSLj6r8kirf0aErz4+hzh35lExxWE65tokMy9UQCoCDol01d7GZkTDjDh
-	rfshM0bR9NPopBCw==
-To: Christian Heusel <christian@heusel.eu>
-Cc: Peter Schneider <pschneider1968@googlemail.com>, LKML
- <linux-kernel@vger.kernel.org>, x86@kernel.org, stable@vger.kernel.org,
- regressions@lists.linux.dev
-Subject: Re: Kernel 6.9 regression: X86: Bogus messages from topology detection
-In-Reply-To: <87cyp28j0b.ffs@tglx>
-References: <877cffcs7h.ffs@tglx>
- <16cd76b1-a512-4a7b-a304-5e4e31af3c8a@googlemail.com>
- <ce3abe01-4c37-416e-a5ed-25703318318a@googlemail.com>
- <87zfs78zxq.ffs@tglx>
- <76b1e0b9-26ae-4915-920d-9093f057796b@googlemail.com>
- <87r0dj8ls4.ffs@tglx> <87o78n8fe2.ffs@tglx> <87le3r8dyw.ffs@tglx>
- <4171899b-78cb-4fe2-a0b6-e06844554ed5@heusel.eu>
- <20ec1c1a-b804-408f-b279-853579bffc24@heusel.eu> <87cyp28j0b.ffs@tglx>
-Date: Fri, 31 May 2024 11:11:39 +0200
-Message-ID: <875xuu8hx0.ffs@tglx>
+	s=arc-20240116; t=1717146722; c=relaxed/simple;
+	bh=5mtRAJODRoRRW7DQ4SAOIQDPLWDoHRI78Zad6G6Afwk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qGquXGmjd2pPQ8DaKihA9++tdSjGV4OtcS6io++yafbcuZFKjLohEpqwqPRauaNo9AlPRGwt9tUzXb5ip2lbW3PIASJ1J2kMVtinYCJTWvaDzKkVHGHsXvvf9s7hRZEdROWT/zxvSchaEdDDwapcUwugUrWDLcYDR6dLJoF7bPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bt/SNztV; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2e95a883101so23139711fa.3
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 02:11:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717146718; x=1717751518; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DDTL4Ai9HAUKZeXb8qttk1mqXc5B8kPTvJ/FkRqwff4=;
+        b=bt/SNztV60qwIsyBc9c2BLBfdq1FUUMeqwpaPKOtAUMNpXFGZaX7bN/PERTfewfJoS
+         YhZJuqD/EH5IqcjRzWH5JxDDDKHJrKjyo6mn2BLDTu/P7JX+YNi+G67ARHTiQK1OzaMY
+         w5Wle0XL7beA3zpsbnrI1J0PJAGldqp5ue5aGtEbAyjCsPO8o9ZbZdoC+pQwh2RVOgyG
+         a/szqk6NEMDCEr3I2u/IW84ymXfzEYJxEPJM/hJOdfE6FFIYm4c6nyY1oHFy54fBcVn6
+         vNHkasPzNFEzkOk5a6bZhyfbGN1UF8Uz28G3N4wSON9eONsUelXYAc57+yr8Pyz79HyC
+         W9uQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717146718; x=1717751518;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DDTL4Ai9HAUKZeXb8qttk1mqXc5B8kPTvJ/FkRqwff4=;
+        b=tmpEQU505ouyPDNSFQ+cHubaLfrJMqKGj+11lFL930iwb8vvvPho1Bfy+CmwnI3fuc
+         yGAWUIjJzqGAxP8K0WT3cKoYocxx3z+rBLjTon8pjZiyysPJPVrcQHTsJoJtOzweH6/H
+         YKr7YkDNg/eg1p5FUP9R2/n3Qt1uS80XBIvPjmzSzKpopRV/FnHxCTt5gnZv+U2IVCzK
+         JcXk838j2L4J8jESalX1B58KlRjU4A/q6YQKQ0dBviTimhNtTUXKMAvcHJEjBNZiCgoo
+         eSV9N1YR+Jt5P3LyZxPi5VzjR9yTqfHYT/u3m+678RHCTJ7XslV4SOxg3AmbJct7jvcB
+         iLTA==
+X-Forwarded-Encrypted: i=1; AJvYcCVrTY+LDEnwRWhmvE843e4aryzXyZVxSTz7LbvfdCrPHvdVsfJnsKmBK8Cyk1F/N2Xe56Epwc53NzKrXWWbNDzRDh6iEHT185Wwe2pA
+X-Gm-Message-State: AOJu0YyLKvOD9mWY/TM8RdwVr+LFMVEGUiSqBqt1vJDD6M9laGiuIvA9
+	JnDOVFYkUqM/p83nThRDoVCubu3NxbK5g04CMZEom9aDxAuZYFRamPpA2migD2N3vieulznVG+Y
+	R/psqWlxUYj5UfeoX1/g2H1OFSRk=
+X-Google-Smtp-Source: AGHT+IGvOJMSovM0rMQhVTi97Ctg/NxKx43UQuMGogjYUJXvlYBBL74TBPWdW1JHxE2/8U2nmyzJ1QfpYFBRznw2pP4=
+X-Received: by 2002:a2e:3c15:0:b0:2e9:5ad5:2bb6 with SMTP id
+ 38308e7fff4ca-2ea951d54d6mr8934101fa.47.1717146718095; Fri, 31 May 2024
+ 02:11:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20240531030520.1615833-1-zhaoyang.huang@unisoc.com> <ZlmEp9nxKiG9gWFj@pc636>
+In-Reply-To: <ZlmEp9nxKiG9gWFj@pc636>
+From: Zhaoyang Huang <huangzhaoyang@gmail.com>
+Date: Fri, 31 May 2024 17:11:45 +0800
+Message-ID: <CAGWkznGak0txoOEq1SYL9Ymax04Tac2nVCSYiC+L8qQ6bqryZQ@mail.gmail.com>
+Subject: Re: [PATCHv3] mm: fix incorrect vbq reference in purge_fragmented_block
+To: Uladzislau Rezki <urezki@gmail.com>
+Cc: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Christoph Hellwig <hch@infradead.org>, Lorenzo Stoakes <lstoakes@gmail.com>, Baoquan He <bhe@redhat.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, hailong liu <hailong.liu@oppo.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, steve.kang@unisoc.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 31 2024 at 10:48, Thomas Gleixner wrote:
-
-> Christian!
+On Fri, May 31, 2024 at 4:05=E2=80=AFPM Uladzislau Rezki <urezki@gmail.com>=
+ wrote:
 >
-> On Fri, May 31 2024 at 10:16, Christian Heusel wrote:
->>> One of the reporters in the Arch Bugtracker with an Intel Core i7-7700k
->>> has tested a modified version of this fix[0] with the static change
->>> reversed on top of the 6.9.2 stable kernel and reports that the patch
->>> does not fix the issue for them. I have attached their output for the
->>> patched (dmesg6.9.2-1.5.log) and nonpatched (dmesg6.9.2-1.log) kernel.
->>> 
->>> Should we also get them to test the mainline version or do you need any
->>> other debug output?
+> On Fri, May 31, 2024 at 11:05:20AM +0800, zhaoyang.huang wrote:
+> > From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
+> >
+> > vmalloc area runs out in our ARM64 system during an erofs test as
+> > vm_map_ram failed[1]. By following the debug log, we find that
+> > vm_map_ram()->vb_alloc() will allocate new vb->va which corresponding
+> > to 4MB vmalloc area as list_for_each_entry_rcu returns immediately
+> > when vbq->free->next points to vbq->free. That is to say, 65536 times
+> > of page fault after the list's broken will run out of the whole
+> > vmalloc area. This should be introduced by one vbq->free->next point to
+> > vbq->free which makes list_for_each_entry_rcu can not iterate the list
+> > and find the BUG.
+> >
+> > [1]
+> > PID: 1        TASK: ffffff80802b4e00  CPU: 6    COMMAND: "init"
+> >  #0 [ffffffc08006afe0] __switch_to at ffffffc08111d5cc
+> >  #1 [ffffffc08006b040] __schedule at ffffffc08111dde0
+> >  #2 [ffffffc08006b0a0] schedule at ffffffc08111e294
+> >  #3 [ffffffc08006b0d0] schedule_preempt_disabled at ffffffc08111e3f0
+> >  #4 [ffffffc08006b140] __mutex_lock at ffffffc08112068c
+> >  #5 [ffffffc08006b180] __mutex_lock_slowpath at ffffffc08111f8f8
+> >  #6 [ffffffc08006b1a0] mutex_lock at ffffffc08111f834
+> >  #7 [ffffffc08006b1d0] reclaim_and_purge_vmap_areas at ffffffc0803ebc3c
+> >  #8 [ffffffc08006b290] alloc_vmap_area at ffffffc0803e83fc
+> >  #9 [ffffffc08006b300] vm_map_ram at ffffffc0803e78c0
+> >
+> > Fixes: fc1e0d980037 ("mm/vmalloc: prevent stale TLBs in fully utilized =
+blocks")
+> >
+> > Suggested-by: Hailong.Liu <hailong.liu@oppo.com>
+> > Signed-off-by: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
+> >
+> Is a problem related to run out of vmalloc space _only_ or it is a proble=
+m
+> with broken list? From the commit message it is hard to follow the reason=
+.
 >
-> Can I get:
+> Could you please post a full trace or panic?
+Please refer to the below scenario for how vbq->free broken.
+step 1: new_vmap_block is called in CPU0 and get vb->va->addr =3D
+0xffffffc000400000
+step 2: vb is added to CPU1's vbq->vmap_block(xarray) by xa =3D
+addr_to_vb_xa(va->va_start);
+            fc1e0d980037 ("mm/vmalloc: prevent stale TLBs in fully
+utilized blocks") introduce a per_cpu like xarray mechanism to have vb
+be added to the corresponding CPU's xarray but not local.
+step 3: vb is added to CPU0's vbq->free by
+list_add_tail_rcu(&vb->free_list, &vbq->free);
+step 4 : purge_fragmented_blocks get vbq of CPU1 and then get above vb
+step 5 : purge_fragmented_blocks delete vb from CPU0's list with
+taking the vbq->lock of CPU1
+step 5': vb_alloc on CPU0 could race with step5 and break the CPU0's vbq->f=
+ree
+
+As fc1e0d980037 solved the problem of staled TLB issue, we need to
+introduce a new variable to record the CPU in vmap_block instead of
+reverting to iterate the list(will leave wrong TLB entry)
 >
->     - dmesg from 6.8.y kernel
->     - output of cpuid -r
->     - content of /sys/kernel/debug/x86/topo/cpus/* (on 6.9.y)
+> > ---
+> > v2: introduce cpu in vmap_block to record the right CPU number
+> > v3: use get_cpu/put_cpu to prevent schedule between core
+> > ---
+> > ---
+> >  mm/vmalloc.c | 12 ++++++++----
+> >  1 file changed, 8 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> > index 22aa63f4ef63..ecdb75d10949 100644
+> > --- a/mm/vmalloc.c
+> > +++ b/mm/vmalloc.c
+> > @@ -2458,6 +2458,7 @@ struct vmap_block {
+> >       struct list_head free_list;
+> >       struct rcu_head rcu_head;
+> >       struct list_head purge;
+> > +     unsigned int cpu;
+> >  };
+> >
+> >  /* Queue of free and dirty vmap blocks, for allocation and flushing pu=
+rposes */
+> > @@ -2586,10 +2587,12 @@ static void *new_vmap_block(unsigned int order,=
+ gfp_t gfp_mask)
+> >               return ERR_PTR(err);
+> >       }
+> >
+> > +     vb->cpu =3D get_cpu();
+> >       vbq =3D raw_cpu_ptr(&vmap_block_queue);
+> >       spin_lock(&vbq->lock);
+> >       list_add_tail_rcu(&vb->free_list, &vbq->free);
+> >       spin_unlock(&vbq->lock);
+> > +     put_cpu();
+> >
+> Why do you need get_cpu() here? Can you go with raw_smp_processor_id()
+> and then access the per-cpu "vmap_block_queue"? get_cpu() disables
+> preemption and then a spin-lock is take within this critical section.
+> From the first glance PREEMPT_RT is broken in this case.
+get_cpu here is to prevent current task from being migrated to other
+COREs before we get the per_cpu vmap_block_queue. Could you please
+suggest a correct way of doing this?
+
 >
-> please?
-
-It seems there are two different issues here. The dmesg you provided is
-from a i7-1255U, which is a hybrid CPU. The i7-7700k has 4 cores (8
-threads) and there is not necessarily the same root cause.
-
-Thanks,
-
-        tglx
+> I am on a vacation, responds can be with delays.
+>
+> --
+> Uladzislau Rezki
 
