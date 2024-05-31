@@ -1,183 +1,142 @@
-Return-Path: <linux-kernel+bounces-196494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A5A38D5CFE
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:42:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CA2E8D5D00
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:43:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1438B21FE6
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 08:42:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E1491C24845
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 08:43:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC77E153BF7;
-	Fri, 31 May 2024 08:42:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZyDRhXPg";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zj0DMVpE"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D0DE153BEF;
+	Fri, 31 May 2024 08:43:33 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 074EF15383F;
-	Fri, 31 May 2024 08:42:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8913D152E0C
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 08:43:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717144953; cv=none; b=pP/l74I7D288FmmV1kpwocKrzE1bEYdk76nv/+B48r3LJXZBDFrM4XDW9xLi83nCIExi6NEtFSm1vJ8bxmu1CDzXXxW1Fmz2bUtheEcDQ3OJgGucsM+cBeA2+PnxcUmUFTfSTI9QsA2H16KyE2kQHfzQDUlE9KsycS7/Ob3Yvjg=
+	t=1717145012; cv=none; b=TEDUSswaSmtRdZ70cjjH3Dx0slD1DDTkU5+SVTnd1t4w5Gi7El0T1vMgZWGoeWrKRpI0YSu8koUT6KgBuIMrvyS+1L0xv6Iy/n2ZPuQd/aiLas2kRvUV9Ks7TaffaC0VAkbAdD/dz3yiQ7058EwqWx3YE2KfLF+dhn9h1Hg2u2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717144953; c=relaxed/simple;
-	bh=obwRrHdSQhE14E+BPljTdaZz9fKGC+Z7OnPMryGR2y8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=PekerXdkOVx+s53ZPsvau32FQpmGAnEkDUfUUL8BAFp5tXSzB2BGAU9gKyfch7TNddO0FYnkxYYSR/grNlSe/QVQcKL5NRjbGNUVjl0VDWo3mToECD4doQxr6l16dGZD1qmAQHj0l92em+I5T6oOFSS5pmqFgpjt+rew5QaOH9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZyDRhXPg; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zj0DMVpE; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1717144949;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UTI2c/7A6hRiAbpj/yTEs+WThsy6r51M1QAj2Eqyrrg=;
-	b=ZyDRhXPgyl2XW/yooSOsdQ55MOqnXLyLFf2E/VAy4KSp1SqXxaVecb7H/YTa84VYTApx2K
-	xUx4Hfyi5t6R/hIwKPbi01d/Nf5Gwwb3M2XuvpwQtkyYRTw501NzadvNy3UAmmC7DPzqnQ
-	1zC2+CIjm1MfL/DwvpixyYyI/aLhNJNGwDV0y1ANM5z4GY4r3OOfmiKCaNmF3+JV6KCQkE
-	iCQ8mlWHs5C+gUV5d2kZwQemcVkKJo+HREfTXt/GGSoPqHiFAQOlebPw152TlrBBELbKwz
-	FeFuJJSPlH6SgNS7azztVK5yxNF5uSQgC+X2F0rPtc7aO+3NibanFlrIEHkltg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1717144949;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UTI2c/7A6hRiAbpj/yTEs+WThsy6r51M1QAj2Eqyrrg=;
-	b=zj0DMVpEcS1FhmVzjIGd6qojtWrfTT+MCPhya0GJh0aB1AhB2VInHBvzy8phpzBkbP4pqH
-	2noxYHUMGO0A+xDg==
-To: Peter Schneider <pschneider1968@googlemail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
- stable@vger.kernel.org, regressions@lists.linux.dev
-Subject: Re: Kernel 6.9 regression: X86: Bogus messages from topology detection
-In-Reply-To: <87ikyu8jp4.ffs@tglx>
-References: <877cffcs7h.ffs@tglx>
- <16cd76b1-a512-4a7b-a304-5e4e31af3c8a@googlemail.com>
- <ce3abe01-4c37-416e-a5ed-25703318318a@googlemail.com>
- <87zfs78zxq.ffs@tglx>
- <76b1e0b9-26ae-4915-920d-9093f057796b@googlemail.com>
- <87r0dj8ls4.ffs@tglx> <87o78n8fe2.ffs@tglx> <87le3r8dyw.ffs@tglx>
- <bd7ff2f3-bf2c-4431-9848-8eb41e7422c6@googlemail.com>
- <87ikyu8jp4.ffs@tglx>
-Date: Fri, 31 May 2024 10:42:26 +0200
-Message-ID: <87frty8j9p.ffs@tglx>
+	s=arc-20240116; t=1717145012; c=relaxed/simple;
+	bh=agPUhxW6soqUMyXYvSibS2RxfpN3ujFQ4lqCBq9F3Vw=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=M48yxAXrzCOcxDhWHummahkaVlLBzGWjQHFUBErZ+QdRW2b2yDjbAMq6re3E3NTTIBpvcJbfXT6NADaEiWJ7OXrxHYaHzxThKNT5KFcGKvRxxkrO1ZAnxqEemTxSEE6Q7suEqovQTj1XQ7IBJf3Dl+ZsI9swksbvrb8/ukvAjW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-7eafdb25dbbso129908739f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 01:43:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717145010; x=1717749810;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SmkQm0PNehAJCURi9HNibb8suumwIfxlJyp9F3gc+1M=;
+        b=O4u3ptZ1Hi8V1HdYKsd2sqLf96ZAokMnCmcvi7olE7jgJpnd3mTE0PPgdGJWqKjs1u
+         QzDqMG/+BWL0Ei6zz9Apx0zWLXsrGLMhxt1kI5PGTye4djoDP4EDCuTT4K31pr2u7YSn
+         GCyuD6ttdKZPiTSPLuKVezW39Qgr2CAei9PODU+nXTkngcSuBl28Oq5HGAjq1kkFlsB7
+         y0u732dUrPFP3TIfdeqISqFW6UAHN5jVCCEaBzfww68F/Ph7k1A4rcAG6HYgowxxWGaS
+         CaffDWDiDhNeeExe6ZoYqySSpQgN0DBrdt4vXG8+iO+k7qrdKd61PFG1oPLSL32on+hD
+         tl3w==
+X-Forwarded-Encrypted: i=1; AJvYcCWHyvG3jkiRGFk4SF3Xe+20/xM27GPEV53g2swsHlW1rX8E2tGdj01sPopf4xmzb4bW442ObyzZZrlxv8XOf07lEwHaoSmu7xQovszN
+X-Gm-Message-State: AOJu0YxipCjbh/z9hIpkLr5GS8tGcaIzyOGei92AABDVKBiXconae/IK
+	zlJ6oDA2QtEM2CcaBIeVVyyQLZCr0sQH4FfHrhjChOGwi23lanx9/HgHunNtlE698jukPBFnBox
+	WQePcjT8lA2s6vv3eXqo01AZrTYmRwQCNVYH9Yvkj7Zx4ErdFLBJlF9g=
+X-Google-Smtp-Source: AGHT+IEJ9W64so0BiCi3IrDjDGCcdUZETq7z0/a+2bklaRdKRU4svmNce05UUA5GcBSsTAGZHheySetDtKVRJyMzKD33tuSVXlQq
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-Received: by 2002:a05:6e02:1e03:b0:36c:4c5b:ce1 with SMTP id
+ e9e14a558f8ab-3748ba0b74dmr953845ab.5.1717145010631; Fri, 31 May 2024
+ 01:43:30 -0700 (PDT)
+Date: Fri, 31 May 2024 01:43:30 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000006304400619bbfae2@google.com>
+Subject: [syzbot] [bcachefs?] INFO: task hung in bch2_copygc_stop
+From: syzbot <syzbot+c6fd966ebbdea1e8ff08@syzkaller.appspotmail.com>
+To: bfoster@redhat.com, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, May 31 2024 at 10:33, Thomas Gleixner wrote:
+Hello,
 
-Clearly coffee did not set in yet.
+syzbot found the following issue on:
 
-Thanks,
+HEAD commit:    e0cce98fe279 Merge tag 'tpmdd-next-6.10-rc2' of git://git...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1783e2fc980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=47d282ddffae809f
+dashboard link: https://syzkaller.appspot.com/bug?extid=c6fd966ebbdea1e8ff08
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-         tglx
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/830865207351/disk-e0cce98f.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/2b2afbee0859/vmlinux-e0cce98f.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/a2eaac9c0eb1/bzImage-e0cce98f.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+c6fd966ebbdea1e8ff08@syzkaller.appspotmail.com
+
+INFO: task syz-executor.0:28112 blocked for more than 143 seconds.
+      Not tainted 6.10.0-rc1-syzkaller-00021-ge0cce98fe279 #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor.0  state:D stack:20592 pid:28112 tgid:28112 ppid:1      flags:0x00004006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5408 [inline]
+ __schedule+0x1796/0x49d0 kernel/sched/core.c:6745
+ __schedule_loop kernel/sched/core.c:6822 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6837
+ schedule_timeout+0xb0/0x310 kernel/time/timer.c:2557
+ do_wait_for_common kernel/sched/completion.c:95 [inline]
+ __wait_for_common kernel/sched/completion.c:116 [inline]
+ wait_for_common kernel/sched/completion.c:127 [inline]
+ wait_for_completion+0x355/0x620 kernel/sched/completion.c:148
+ kthread_stop+0x19e/0x630 kernel/kthread.c:710
+ bch2_copygc_stop+0x4f/0x150 fs/bcachefs/movinggc.c:399
+ __bch2_fs_read_only+0x47/0x430 fs/bcachefs/super.c:266
+ bch2_fs_read_only+0xb52/0x1210 fs/bcachefs/super.c:356
+ __bch2_fs_stop+0x105/0x540 fs/bcachefs/super.c:613
+ generic_shutdown_super+0x136/0x2d0 fs/super.c:642
+ bch2_kill_sb+0x41/0x50 fs/bcachefs/fs.c:2026
+ deactivate_locked_super+0xc4/0x130 fs/super.c:473
+ cleanup_mnt+0x41f/0x4b0 fs/namespace.c:1267
+ task_work_run+0x24f/0x310 kernel/task_work.c:180
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x168/0x370 kernel/entry/common.c:218
+ do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
+
+
 ---
-Subject: x86/topology/intel: Unlock CPUID before evaluating anything
-From: Thomas Gleixner <tglx@linutronix.de>
-Date: Thu, 30 May 2024 17:29:18 +0200
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Intel CPUs have a MSR bit to limit CPUID enumeration to leaf two. If this
-bit is set by the BIOS then CPUID evaluation including topology enumeration
-does not work correctly as the evaluation code does not try to analyze any
-leaf greater than two.
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-This went unnoticed before because the original topology code just repeated
-evaluation several times and managed to overwrite the initial limited
-information with the correct one later. The new evaluation code does it
-once and therefore ends up with the limited and wrong information.
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-Cure this by unlocking CPUID right before evaluating anything which depends
-on the maximum CPUID leaf being greater than two instead of rereading stuff
-after unlock.
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-Fixes: 22d63660c35e ("x86/cpu: Use common topology code for Intel")
-Reported-by: Peter Schneider <pschneider1968@googlemail.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
----
- arch/x86/kernel/cpu/common.c |    3 ++-
- arch/x86/kernel/cpu/cpu.h    |    2 ++
- arch/x86/kernel/cpu/intel.c  |   25 ++++++++++++++++---------
- 3 files changed, 20 insertions(+), 10 deletions(-)
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -1585,6 +1585,7 @@ static void __init early_identify_cpu(st
- 	if (have_cpuid_p()) {
- 		cpu_detect(c);
- 		get_cpu_vendor(c);
-+		intel_unlock_cpuid_leafs(c);
- 		get_cpu_cap(c);
- 		setup_force_cpu_cap(X86_FEATURE_CPUID);
- 		get_cpu_address_sizes(c);
-@@ -1744,7 +1745,7 @@ static void generic_identify(struct cpui
- 	cpu_detect(c);
- 
- 	get_cpu_vendor(c);
--
-+	intel_unlock_cpuid_leafs(c);
- 	get_cpu_cap(c);
- 
- 	get_cpu_address_sizes(c);
---- a/arch/x86/kernel/cpu/cpu.h
-+++ b/arch/x86/kernel/cpu/cpu.h
-@@ -61,9 +61,11 @@ extern __ro_after_init enum tsx_ctrl_sta
- 
- extern void __init tsx_init(void);
- void tsx_ap_init(void);
-+void intel_unlock_cpuid_leafs(struct cpuinfo_x86 *c);
- #else
- static inline void tsx_init(void) { }
- static inline void tsx_ap_init(void) { }
-+static inline void intel_unlock_cpuid_leafs(struct cpuinfo_x86 *c) { }
- #endif /* CONFIG_CPU_SUP_INTEL */
- 
- extern void init_spectral_chicken(struct cpuinfo_x86 *c);
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -269,19 +269,26 @@ static void detect_tme_early(struct cpui
- 	c->x86_phys_bits -= keyid_bits;
- }
- 
-+void intel_unlock_cpuid_leafs(struct cpuinfo_x86 *c)
-+{
-+	if (boot_cpu_data.x86_vendor != X86_VENDOR_INTEL)
-+		return;
-+
-+	if (c->x86 < 6 || (c->x86 == 6 && c->x86_model < 0xd))
-+		return;
-+
-+	/*
-+	 * The BIOS can have limited CPUID to leaf 2, which breaks feature
-+	 * enumeration. Unlock it and update the maximum leaf info.
-+	 */
-+	if (msr_clear_bit(MSR_IA32_MISC_ENABLE, MSR_IA32_MISC_ENABLE_LIMIT_CPUID_BIT) > 0)
-+		c->cpuid_level = cpuid_eax(0);
-+}
-+
- static void early_init_intel(struct cpuinfo_x86 *c)
- {
- 	u64 misc_enable;
- 
--	/* Unmask CPUID levels if masked: */
--	if (c->x86 > 6 || (c->x86 == 6 && c->x86_model >= 0xd)) {
--		if (msr_clear_bit(MSR_IA32_MISC_ENABLE,
--				  MSR_IA32_MISC_ENABLE_LIMIT_CPUID_BIT) > 0) {
--			c->cpuid_level = cpuid_eax(0);
--			get_cpu_cap(c);
--		}
--	}
--
- 	if ((c->x86 == 0xf && c->x86_model >= 0x03) ||
- 		(c->x86 == 0x6 && c->x86_model >= 0x0e))
- 		set_cpu_cap(c, X86_FEATURE_CONSTANT_TSC);
+If you want to undo deduplication, reply with:
+#syz undup
 
