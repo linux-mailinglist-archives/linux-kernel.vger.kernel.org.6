@@ -1,140 +1,153 @@
-Return-Path: <linux-kernel+bounces-197011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F0498D64E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:52:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB1B18D64E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:53:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A071A1C2565E
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:52:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A2982821D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:53:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9D5B74435;
-	Fri, 31 May 2024 14:52:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FBC3762EB;
+	Fri, 31 May 2024 14:52:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CUPuWP/N"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="nJN1++Xq"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04EA56BB5B;
-	Fri, 31 May 2024 14:52:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BB79770EA;
+	Fri, 31 May 2024 14:52:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717167121; cv=none; b=hPaxruyDykBhhB3YanQeaIKWZJnbHc+BZJukBkQ+eARxnWpk+8nwkYVzmu7cnFJ+Wwlb8ufIXBDRjxl2WF9yppbzNMDisDJmvclFu7rHez4Oehx/cvwFD+CYKSsc7xu2CdSRUQiupfqNCllxW5xWNIsjeRQWW0mdZ9yHozVlJA4=
+	t=1717167140; cv=none; b=WTiozne9sb1hvG0nHOm3apJ6Ulqden/r9wTpzwYyakrEviZuAieqIYDRY9zmPXS96Q70Gw+nBchtBXvTrQdQHTNBxF0iKHFu0h5z1JV5PlrC4j87Wzt0uPVF6EmzwlEDuJ4MXqCRvl0RIm4NIZ+ednTxNhmcF0TYQvHFHmh0hrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717167121; c=relaxed/simple;
-	bh=Ae/1bmVsvqbG6B0tErv/VXtZn0uXW6lgfBUNSSQ8+WY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SI6fD5geVys2M6WVbsNeAHuopYsd7LhN2RK7dp0FSzz9kgHrVwr86MRqdu7NTLkyzBaDjamb1Gqr02s0t7WRJcr1pmfGJ0KLKkXvS3Pb4JQSS07kNv+N4Jk/DOL1Y+DZ8v5pA0qjI/VBKKF1iGki7CjV+AFG0O4sekBlP8u+Wsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CUPuWP/N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A9B7C116B1;
-	Fri, 31 May 2024 14:51:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717167120;
-	bh=Ae/1bmVsvqbG6B0tErv/VXtZn0uXW6lgfBUNSSQ8+WY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CUPuWP/NDWVhvoLbj8KjV6psJrmPnhMlanG7TZaEzkQQi4aOi5CWURBgKHd3lV+dG
-	 CBD0wObeYLSplCbJTbIBTR5Nbtbbk1WwKB8fxITOqnKAdc8soCoMb6ZqfEWX6uCoBC
-	 qir5TTbY47RHYjy3CpVnb8z5k+fSyvBGYgYbXs08UXLXCprOEB8Mwb7arhsduTcp/e
-	 BCul6CSJQHh9hGc8m4qWSPiz83P1061AgFVWeAUoaAny/U6mkxvrOn/QdWnmaMZC/y
-	 f1qwAoBO6RI5P2bWY/B6wOXQwPaopyVzXI8QOEeWJzEXoiYH7fr/Im0poQyylJpA46
-	 BG2cwdEX45GMQ==
-Date: Fri, 31 May 2024 15:51:56 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Ramona Alexandra Nechita <ramona.nechita@analog.com>
-Cc: linux-iio@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 1/1] dt-bindings: iio: adc: add a7779 doc
-Message-ID: <20240531-dairy-king-5a4e6c09b670@spud>
-References: <20240531133604.1380-1-ramona.nechita@analog.com>
- <20240531133604.1380-2-ramona.nechita@analog.com>
+	s=arc-20240116; t=1717167140; c=relaxed/simple;
+	bh=ZFiZrue0HN69gCDWqYdx8oP2j7lujcCjKuWNJDuzz/k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=tNEvB0VP2Jqy26BVAMSaKsRNACjUDvh+SGOySVje1cHumx/nhDyaT0aaIrUmtSAMrjXutgSbOQZD29ZY+2HiCuCxLJDd7ouTHz/L40CgiGweq+7vh2WszDVI3rVZmm0qSPJuFIKCRxCU5fFiWJQAIaxEca+LMHuam95PIooLAgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=nJN1++Xq; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44VA1HDx015725;
+	Fri, 31 May 2024 14:52:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	nKoGiFE8U0Hz4us4ZPo+aD6AjWEeN1VhK7zaTrNaG20=; b=nJN1++XqrFI+Cgfy
+	CJFgZlhGHABmA2O+la9RaEu4drjNcFxT3+BFzZ7ufltNMxWniuCHkUJqREtInLcT
+	newhkSlCGEYL7KPCX2948f9bpwg0Do/dn/PpBDlFPAqFd9Z/6qEJnP4TV2QHwuVM
+	scfn5MreAtraXhI3rmww5S6jiHPBrh4SxUfWgZZGy9wA9xmI1cMZaOIiNxxXJV1G
+	3jzlFHtrOf0Urmi8NAhfdukBSmBuIvzuKU2jh0pPSYSOY5o1nmAwWqBejtFxhzNR
+	1AH/ft/8UcTxtC6B61EppYjgD5f8UyfuUTGrDpbOZqmFOisXgDdfW2TIVqWes0c7
+	tpsL0g==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba0qq6rw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 31 May 2024 14:52:13 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44VEqC1q017847
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 31 May 2024 14:52:12 GMT
+Received: from [10.216.8.21] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 31 May
+ 2024 07:52:06 -0700
+Message-ID: <68621b7a-0079-49ad-adf0-71d1fe24bcf0@quicinc.com>
+Date: Fri, 31 May 2024 20:22:02 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="rxHMfQVAKZ8I7VeB"
-Content-Disposition: inline
-In-Reply-To: <20240531133604.1380-2-ramona.nechita@analog.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] Disable SS instances in park mode for SC7180/ SC7280
+To: Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Doug Anderson
+	<dianders@chromium.org>
+CC: <cros-qcom-dts-watchers@chromium.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Rob Herring <robh@kernel.org>, Bjorn Andersson
+	<andersson@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Stephen Boyd
+	<swboyd@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Matthias Kaehlcke <mka@chromium.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <quic_ppratap@quicinc.com>, <quic_jackp@quicinc.com>
+References: <20240530082556.2960148-1-quic_kriskura@quicinc.com>
+ <CAD=FV=UhrCKCv5R-LAAugrLXFp=cDcj2=Pp9-N3qk5pk2=sGEg@mail.gmail.com>
+ <e732257d-cd16-4e81-9a20-af481184ce0e@linaro.org>
+ <CAD=FV=XO_8SwDLJfoNwwCKEO6CZyMRMY_BdsWMLPBkpczErppA@mail.gmail.com>
+ <d61ede0b-f689-46af-9bc8-e715784b86c0@quicinc.com>
+ <CAD=FV=Xwf4eW+zwPecDg5855nVEY2NQMqpvHu59_e2xma6=wxQ@mail.gmail.com>
+ <33db558f-2863-4246-a06a-d94ae2efc0a1@linaro.org>
+Content-Language: en-US
+From: Krishna Kurapati PSSNV <quic_kriskura@quicinc.com>
+In-Reply-To: <33db558f-2863-4246-a06a-d94ae2efc0a1@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 1kEPteRDxgoOvPuEcZz1qwzckogaa9tO
+X-Proofpoint-ORIG-GUID: 1kEPteRDxgoOvPuEcZz1qwzckogaa9tO
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-31_10,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ suspectscore=0 lowpriorityscore=0 impostorscore=0 clxscore=1015 mlxscore=0
+ mlxlogscore=874 malwarescore=0 spamscore=0 adultscore=0 bulkscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405310110
 
 
---rxHMfQVAKZ8I7VeB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 31, 2024 at 04:35:52PM +0300, Ramona Alexandra Nechita wrote:
-> Add dt bindings for adc ad7779.
->=20
-> Signed-off-by: Ramona Alexandra Nechita <ramona.nechita@analog.com>
-> ---
->  .../ABI/testing/sysfs-bus-iio-adc-ad777x      | 23 +++++
->  .../bindings/iio/adc/adi,ad7779.yaml          | 87 +++++++++++++++++++
->  2 files changed, 110 insertions(+)
->  create mode 100644 Documentation/ABI/testing/sysfs-bus-iio-adc-ad777x
->  create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ad7779.=
-yaml
->=20
-> diff --git a/Documentation/ABI/testing/sysfs-bus-iio-adc-ad777x b/Documen=
-tation/ABI/testing/sysfs-bus-iio-adc-ad777x
-> new file mode 100644
-> index 000000000000..0a57fda598e6
-> --- /dev/null
-> +++ b/Documentation/ABI/testing/sysfs-bus-iio-adc-ad777x
-> @@ -0,0 +1,23 @@
-> +What:		/sys/bus/iio/devices/iio:deviceX/filter_type_available
-> +KernelVersion:  6.1
-> +Contact:	linux-iio@vger.kernel.org
-> +Description:
-> +		Reading returns a list with the possible filter modes. Only supported =
-by
-> +		AD7771.
-> +
-> +		  * "sinc3"	- The digital sinc3 filter implements three main notches, =
-one at
-> +				the maximum ODR (128 kHz or 32 kHz, depending on the
-> +				power mode) and another two at the ODR frequency selected to
-> +				stop noise aliasing into the pass band.
-> +
-> +		  * "sinc5"	- The sinc5 filter implements five notches, one at
-> +				the maximum ODR (128 kHz or 32 kHz, depending on the
-> +				power mode) and another four at the ODR frequency
-> +				selected to stop noise aliasing into the pass band.
-> +
-> +What:		/sys/bus/iio/devices/iio:deviceX/filter_type
-> +KernelVersion:  6.1
-> +Contact:	linux-iio@vger.kernel.org
-> +Description:
-> +		Set the filter mode of the differential channel. The current sampling_=
-frequency
-> +		is set according to the filter range. Only supported by AD7771.
+On 5/31/2024 8:11 PM, Konrad Dybcio wrote:
+> On 31.05.2024 4:31 PM, Doug Anderson wrote:
+>> Hi,
+>>
+>> On Fri, May 31, 2024 at 7:27 AM Krishna Kurapati PSSNV
+>> <quic_kriskura@quicinc.com> wrote:
+>>>
+>>>> My only guess is that somehow SC8280XP is faster and that changes the
+>>>> timing of how it handles interrupts. I guess you could try capping
+>>>> your cpufreq in sysfs and see if that makes a difference in
+>>>> reproducing. ;-) ...or maybe somehow SC8280XP has a newer version of
+>>>> the IP where they've fixed this?
+>>>>
+>>>> It would be interesting if someone with a SDM845 dragonboard could try
+>>>> replicating since that seems highly likely to reproduce, at least.
+>>>>
+>>>
+>>> Hi Konrad, Doug,
+>>>
+>>>    Usually on downstream we set this quirk only for all Gen-1 targets
+>>> (not particularly for this testcase) but to avoid these kind of
+>>> controller going dead issues. I can filter out the gen-1 targets (other
+>>> than sc7280/sc7180) and send a separate series to add this quirk in all
+>>> of them.
+>>
+>> Sounds like a plan to me!
+> 
+> Yep!
+> 
+> In case there are more gen1 platforms than what we have upstream, it would
+> be of great utility if you could list them all, so that we can have a reference
+> for future additions, Krishna.
+> 
 
-This patch is really confusing to me. Why is there a file documenting
-the sysfs interface for a driver that isn't in the tree? Shouldn't this
-patch be part of a series that adds the driver? I suggest you speak to
-Nuno or another collogue about how to submit a series.
+I am not sure if I can give out info on targets that are not on 
+upstream. I will check internally if I can do that. Else we can just 
+ensure that from now on whenever a Gen-1 target is getting upstreamed, 
+this quirk is set.
 
-Thanks,
-Conor.
-
---rxHMfQVAKZ8I7VeB
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZlnkDAAKCRB4tDGHoIJi
-0ictAPsGZBONtNVkwdopjcHTZfSSRPRg2VpecEAmz7u/SHamQgEAmtnrs3jl3KAr
-cjQW7yIlAi71HXWZ6fEPLKCYc98DOgc=
-=J4bf
------END PGP SIGNATURE-----
-
---rxHMfQVAKZ8I7VeB--
+Regards,
+Krishna,
 
