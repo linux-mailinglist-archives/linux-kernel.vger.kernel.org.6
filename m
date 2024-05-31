@@ -1,144 +1,293 @@
-Return-Path: <linux-kernel+bounces-196730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19F718D6095
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 13:23:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E90D78D6099
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 13:25:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3AD2F1C22547
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 11:23:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17D061C234AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 11:25:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F07915749D;
-	Fri, 31 May 2024 11:23:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B0E0157473;
+	Fri, 31 May 2024 11:25:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qmbr8yo0";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Anhu6J0N";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qmbr8yo0";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Anhu6J0N"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Cv9TEttt"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6C3D15747E;
-	Fri, 31 May 2024 11:23:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2471415575A;
+	Fri, 31 May 2024 11:25:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717154603; cv=none; b=F9av93fivBWrZ9Rgkf/wOsp/Y7OtMOj8kIJZp87V2N90XjuMfeSX0cMMnmeYOXBMUXitLeNrpO1Z6aEhXN9K4xlHGTq1fT5YhtVOPARSphTdP4W+tco/Y5FEu+8PWIy0ZzFowZgwWwVj3Qky2hDk1fq8pf98dhG488YNJWAlpcM=
+	t=1717154743; cv=none; b=NunbCoasuH6IEc2/mlwE3bse2nRuqghZNoyxQ5gtM8/xy36V9AWqWwAbiMzHbjkWWLKlND9eunDU1P7sajV3B5Hyi7fQxLJFpnJafDQQNA6ILcpvVaZW+U1/BQQPYy9PgTQIbb42kILEnQaIjvGhbD7Iz8/CIlHhnXIV33YCF00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717154603; c=relaxed/simple;
-	bh=hFTTo4upWynDpVmGWm97HDuVGESaQYBs+I+iJ6ux5Ag=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=gcpHUqAZHUbm5zzeD8VYsKXs/aTPYcxHbfAS6SBdba9kdPgsVVcni2oXNxYzkq4xkHJ3Fs5sLUJyQJEoHWQY7NlKH0EyZj28OcXHZO+GWVWG2gsjCdzgAI9kVRHKBDx2n6ZQ7a8ttxKDRyX50itL3WGxnifQGKOFY9lgOI4bUoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qmbr8yo0; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Anhu6J0N; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qmbr8yo0; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Anhu6J0N; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from pobox.suse.cz (unknown [10.100.2.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id D2E7C21B8A;
-	Fri, 31 May 2024 11:23:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1717154598; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6MKGKYsRXHwrNrAl3lmaoTrrWO0EY8d++5MCut8e92c=;
-	b=qmbr8yo0Gq+BW0dE0XgxZnBveXjcbXuC/33fhYxYTSInVa3QazRXnQ4pOBTktKkBEYSgmK
-	CEHTG1mlrxvLuGLkcjD2oG3u4CV48nP0EzWr0poqucR+dOtn0LrZQ6eaatX0Q9qZW3uHEn
-	F2+XEcrOHNa/jlSqoOcRCJAIRzRu0SA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1717154598;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6MKGKYsRXHwrNrAl3lmaoTrrWO0EY8d++5MCut8e92c=;
-	b=Anhu6J0Ns+2+NuIR8OjzqS6TAb1VZ7tSxPSgrPH0f0oy06aG2WJvhpZfSCdlGov9lfRXix
-	Tyc6VMhFiWmQ3KCA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1717154598; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6MKGKYsRXHwrNrAl3lmaoTrrWO0EY8d++5MCut8e92c=;
-	b=qmbr8yo0Gq+BW0dE0XgxZnBveXjcbXuC/33fhYxYTSInVa3QazRXnQ4pOBTktKkBEYSgmK
-	CEHTG1mlrxvLuGLkcjD2oG3u4CV48nP0EzWr0poqucR+dOtn0LrZQ6eaatX0Q9qZW3uHEn
-	F2+XEcrOHNa/jlSqoOcRCJAIRzRu0SA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1717154598;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6MKGKYsRXHwrNrAl3lmaoTrrWO0EY8d++5MCut8e92c=;
-	b=Anhu6J0Ns+2+NuIR8OjzqS6TAb1VZ7tSxPSgrPH0f0oy06aG2WJvhpZfSCdlGov9lfRXix
-	Tyc6VMhFiWmQ3KCA==
-Date: Fri, 31 May 2024 13:23:18 +0200 (CEST)
-From: Miroslav Benes <mbenes@suse.cz>
-To: Joe Lawrence <joe.lawrence@redhat.com>
-cc: live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] livepatch: Add compiler optimization
- disclaimer/docs
-In-Reply-To: <20200721161407.26806-1-joe.lawrence@redhat.com>
-Message-ID: <alpine.LSU.2.21.2405311319090.8344@pobox.suse.cz>
-References: <20200721161407.26806-1-joe.lawrence@redhat.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+	s=arc-20240116; t=1717154743; c=relaxed/simple;
+	bh=8rvouJXSTI4Pm7kS/trxN1GuwWPDuIYI3MqGF8IM4eE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=a8QUzmN0fcGWyJ89tBD4u2FtOd4tEtMMTQiTcLhIvfc6IZOXmBcv8oI6dI8BcYawD3BLOC0KYG/06w1Ojnw3uo6OV4BJwSEiGPtml/lYX47aUc1R+4oC8M4ec574Mmf9Ht0OKi5FA+zszOLkPO1bWG+9RE7sEKqyuPlwBW7Fg9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Cv9TEttt; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717154741; x=1748690741;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=8rvouJXSTI4Pm7kS/trxN1GuwWPDuIYI3MqGF8IM4eE=;
+  b=Cv9TEtttqn1D+ZYS4iIpUZbvlJJVlggevmk9d1Sx1ONYiyRopsQgcjVm
+   t7T7u6Rn8M9wQOFlSYV/0ql87u5SwLTmqjtFPNv3Ud+0n8++kE2evl/Hj
+   494mXNJlZU2Fx5XGEBRpRmhB+Y0ypMYMdqb8PFaVTplRR4IT27NhYp660
+   f+NVWA/KuWxLW7ph9IyEs1d9XsWTONpbjhGXRXT2v5Sc24YdGziKAchIK
+   heb/SzV02wzyH+Jp4E4tjR0OfcozssPrZSNjM+GoCWGJInpKIIMYuonfD
+   m7VVoM0SVs2ksscs8th+uMZ85HAGJnYybEJDwGB76a4fQIyi02F8n96Rb
+   g==;
+X-CSE-ConnectionGUID: fLejgK87QGW19IpwjfMmzw==
+X-CSE-MsgGUID: l8ZdtoDUTXiRc40UXErvHg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="13916927"
+X-IronPort-AV: E=Sophos;i="6.08,204,1712646000"; 
+   d="scan'208";a="13916927"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 04:25:39 -0700
+X-CSE-ConnectionGUID: s/V0LCyfQgubFb97mBSlCQ==
+X-CSE-MsgGUID: sIKyOqq8S72f1xaIKEPK5Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,204,1712646000"; 
+   d="scan'208";a="36232672"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.41.28])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 04:25:36 -0700
+Message-ID: <a4542d2a-490f-40ab-a2a8-a42b921d2656@intel.com>
+Date: Fri, 31 May 2024 14:25:30 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.980];
-	MIME_GOOD(-0.10)[text/plain];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_ZERO(0.00)[0];
-	ARC_NA(0.00)[];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCPT_COUNT_THREE(0.00)[3]
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V16 12/23] mmc: sdhci-uhs2: add reset function function
+To: Victor Shih <victorshihgli@gmail.com>
+Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ benchuanggli@gmail.com, HL.Liu@genesyslogic.com.tw,
+ Greg.tu@genesyslogic.com.tw, dlunev@chromium.org,
+ Ben Chuang <ben.chuang@genesyslogic.com.tw>,
+ Victor Shih <victor.shih@genesyslogic.com.tw>, ulf.hansson@linaro.org
+References: <20240522110909.10060-1-victorshihgli@gmail.com>
+ <20240522110909.10060-13-victorshihgli@gmail.com>
+ <42f2b1d4-e6c2-4860-956d-4f10c3b05529@intel.com>
+ <CAK00qKBA81zx=QmU7m=pZXOzdY4syOht4p_-SU7fdw+-an0ciQ@mail.gmail.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <CAK00qKBA81zx=QmU7m=pZXOzdY4syOht4p_-SU7fdw+-an0ciQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi,
-
-On Tue, 21 Jul 2020, Joe Lawrence wrote:
-
-> In light of [PATCH] Revert "kbuild: use -flive-patching when
-> CONFIG_LIVEPATCH is enabled" [1], we should add some loud disclaimers
-> and explanation of the impact compiler optimizations have on
-> livepatching.
+On 31/05/24 13:32, Victor Shih wrote:
+> On Fri, May 24, 2024 at 3:23 PM Adrian Hunter <adrian.hunter@intel.com> wrote:
+>>
+>> On 22/05/24 14:08, Victor Shih wrote:
+>>> From: Victor Shih <victor.shih@genesyslogic.com.tw>
+>>>
+>>> Sdhci_uhs2_reset() does a UHS-II specific reset operation.
+>>>
+>>> Signed-off-by: Ben Chuang <ben.chuang@genesyslogic.com.tw>
+>>> Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
+>>> Signed-off-by: Victor Shih <victor.shih@genesyslogic.com.tw>
+>>> ---
+>>>
+>>> Updates in V15:
+>>>  - Refer the SD Host Controller Standard Specification Section 3.10
+>>>    to add reset command data mechanism.
+>>>
+>>> Updates in V14:
+>>>  - Since mmc_card_uhs2() is the same as sdhci_uhs2_mode(), so drop
+>>>    sdhci_uhs2_mode() and use mmc_card_uhs2() instead of sdhci_uhs2_mode().
+>>>
+>>> Updates in V13:
+>>>  - Use ios timing to stead MMC_UHS2_SUPPORT for indicate the UHS2 mode.
+>>>
+>>> Updates in V8:
+>>>  - Adjust the position of matching brackets.
+>>>
+>>> Updates in V6:
+>>>  - Remove unnecessary functions and simplify code.
+>>>
+>>> ---
+>>>
+>>>  drivers/mmc/host/sdhci-uhs2.c | 57 +++++++++++++++++++++++++++++++++++
+>>>  drivers/mmc/host/sdhci-uhs2.h |  1 +
+>>>  drivers/mmc/host/sdhci.c      |  3 +-
+>>>  drivers/mmc/host/sdhci.h      |  1 +
+>>>  4 files changed, 61 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/mmc/host/sdhci-uhs2.c b/drivers/mmc/host/sdhci-uhs2.c
+>>> index 9cb0f1b2a37d..7652158ea151 100644
+>>> --- a/drivers/mmc/host/sdhci-uhs2.c
+>>> +++ b/drivers/mmc/host/sdhci-uhs2.c
+>>> @@ -10,7 +10,9 @@
+>>>   *  Author: AKASHI Takahiro <takahiro.akashi@linaro.org>
+>>>   */
+>>>
+>>> +#include <linux/delay.h>
+>>>  #include <linux/module.h>
+>>> +#include <linux/iopoll.h>
+>>>
+>>>  #include "sdhci.h"
+>>>  #include "sdhci-uhs2.h"
+>>> @@ -21,6 +23,8 @@
+>>>  #define SDHCI_UHS2_DUMP(f, x...) \
+>>>       pr_err("%s: " DRIVER_NAME ": " f, mmc_hostname(host->mmc), ## x)
+>>>
+>>> +#define UHS2_RESET_TIMEOUT_100MS             100000
+>>> +
+>>>  void sdhci_uhs2_dump_regs(struct sdhci_host *host)
+>>>  {
+>>>       if (!(mmc_card_uhs2(host->mmc)))
+>>> @@ -49,6 +53,57 @@ void sdhci_uhs2_dump_regs(struct sdhci_host *host)
+>>>  }
+>>>  EXPORT_SYMBOL_GPL(sdhci_uhs2_dump_regs);
+>>>
+>>> +/*****************************************************************************\
+>>> + *                                                                           *
+>>> + * Low level functions                                                       *
+>>> + *                                                                           *
+>>> +\*****************************************************************************/
+>>> +
+>>> +/**
+>>> + * sdhci_uhs2_reset - invoke SW reset
+>>> + * @host: SDHCI host
+>>> + * @mask: Control mask
+>>> + *
+>>> + * Invoke SW reset, depending on a bit in @mask and wait for completion.
+>>> + */
+>>> +void sdhci_uhs2_reset(struct sdhci_host *host, u16 mask)
+>>> +{
+>>> +     u32 val;
+>>> +
+>>> +     sdhci_writew(host, mask, SDHCI_UHS2_SW_RESET);
+>>> +
+>>> +     if (mask & SDHCI_UHS2_SW_RESET_FULL)
+>>> +             host->clock = 0;
+>>> +
+>>> +     /* hw clears the bit when it's done */
+>>> +     if (read_poll_timeout_atomic(sdhci_readw, val, !(val & mask), 10,
+>>> +                                  UHS2_RESET_TIMEOUT_100MS, true, host, SDHCI_UHS2_SW_RESET)) {
+>>> +             pr_warn("%s: %s: Reset 0x%x never completed. %s: clean reset bit.\n", __func__,
+>>> +                     mmc_hostname(host->mmc), (int)mask, mmc_hostname(host->mmc));
+>>> +             sdhci_writeb(host, 0, SDHCI_UHS2_SW_RESET);
+>>> +             return;
+>>> +     }
+>>> +}
+>>> +EXPORT_SYMBOL_GPL(sdhci_uhs2_reset);
+>>> +
+>>> +static void sdhci_uhs2_reset_cmd_data(struct mmc_host *mmc)
+>>> +{
+>>> +     struct sdhci_host *host = mmc_priv(mmc);
+>>> +
+>>> +     sdhci_do_reset(host, SDHCI_RESET_CMD | SDHCI_RESET_DATA);
+>>> +
+>>> +     if (host->mmc->ios.timing == MMC_TIMING_UHS2_SPEED_A ||
+>>> +         host->mmc->ios.timing == MMC_TIMING_UHS2_SPEED_A_HD ||
+>>> +         host->mmc->ios.timing == MMC_TIMING_UHS2_SPEED_B ||
+>>> +         host->mmc->ios.timing == MMC_TIMING_UHS2_SPEED_B_HD) {
+>>
+>> Please use mmc_card_uhs2()
+>>
 > 
-> The first commit provides detailed explanations and examples.  The list
-> was taken mostly from Miroslav's LPC talk a few years back.  This is a
-> bit rough, so corrections and additional suggestions welcome.  Expanding
-> upon the source-based patching approach would be helpful, too.
+> Hi, Adrian
 > 
-> The second commit adds a small README.rst file in the livepatch samples
-> directory pointing the reader to the doc introduced in the first commit.
+>      I will update this in the v17 version.
 > 
-> I didn't touch the livepatch kselftests yet as I'm still unsure about
-> how to best account for IPA here.  We could add the same README.rst
-> disclaimer here, too, but perhaps we have a chance to do something more.
-> Possibilities range from checking for renamed functions as part of their
-> build, or the selftest scripts, or even adding something to the kernel
-> API.  I think we'll have a better idea after reviewing the compiler
-> considerations doc.
+> Thanks, Victor Shih
+> 
+>>> +             sdhci_uhs2_reset(host, SDHCI_UHS2_SW_RESET_SD);
+>>> +
+>>> +             sdhci_writel(host, host->ier, SDHCI_INT_ENABLE);
+>>> +             sdhci_writel(host, host->ier, SDHCI_SIGNAL_ENABLE);
+>>> +             sdhci_uhs2_clear_set_irqs(host, SDHCI_INT_ALL_MASK, SDHCI_UHS2_INT_ERROR_MASK);
+>>> +     }
+>>> +}
+>>> +
+>>>  /*****************************************************************************\
+>>>   *                                                                           *
+>>>   * Driver init/exit                                                          *
+>>> @@ -57,6 +112,8 @@ EXPORT_SYMBOL_GPL(sdhci_uhs2_dump_regs);
+>>>
+>>>  static int sdhci_uhs2_host_ops_init(struct sdhci_host *host)
+>>>  {
+>>> +     host->mmc_host_ops.uhs2_reset_cmd_data = sdhci_uhs2_reset_cmd_data;
+>>
+>> As noted for patch 8, any host controller resets needed
+>> should be done before completing the request, so a call
+>> back function should not be needed.
+>>
+> 
+> Hi, Adrian
+> 
+>      I want to confirm further, so can I call
+> sdhci_uhs2_reset_cmd_data() directly
+>      in the mmc_wait_for_req_done()?
 
-thanks to Marcos for resurrecting this.
+No
 
-Joe, do you have an updated version by any chance? Some things have 
-changed since July 2020 so it calls for a new review. If there was an 
-improved version, it would be easier. If not, no problem at all.
+>      Am I understanding something wrong?
 
-Miroslav
+See the response to your questions over patch 8.
+
+> 
+> Thanks, Victor Shih
+> 
+>>> +
+>>>       return 0;
+>>>  }
+>>>
+>>> diff --git a/drivers/mmc/host/sdhci-uhs2.h b/drivers/mmc/host/sdhci-uhs2.h
+>>> index 2bfe18d29bca..caaf9fba4975 100644
+>>> --- a/drivers/mmc/host/sdhci-uhs2.h
+>>> +++ b/drivers/mmc/host/sdhci-uhs2.h
+>>> @@ -177,5 +177,6 @@
+>>>  struct sdhci_host;
+>>>
+>>>  void sdhci_uhs2_dump_regs(struct sdhci_host *host);
+>>> +void sdhci_uhs2_reset(struct sdhci_host *host, u16 mask);
+>>>
+>>>  #endif /* __SDHCI_UHS2_H */
+>>> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+>>> index 8fc3e001db74..f212da6dc2aa 100644
+>>> --- a/drivers/mmc/host/sdhci.c
+>>> +++ b/drivers/mmc/host/sdhci.c
+>>> @@ -236,7 +236,7 @@ void sdhci_reset(struct sdhci_host *host, u8 mask)
+>>>  }
+>>>  EXPORT_SYMBOL_GPL(sdhci_reset);
+>>>
+>>> -static bool sdhci_do_reset(struct sdhci_host *host, u8 mask)
+>>> +bool sdhci_do_reset(struct sdhci_host *host, u8 mask)
+>>>  {
+>>>       if (host->quirks & SDHCI_QUIRK_NO_CARD_NO_RESET) {
+>>>               struct mmc_host *mmc = host->mmc;
+>>> @@ -249,6 +249,7 @@ static bool sdhci_do_reset(struct sdhci_host *host, u8 mask)
+>>>
+>>>       return true;
+>>>  }
+>>> +EXPORT_SYMBOL_GPL(sdhci_do_reset);
+>>>
+>>>  static void sdhci_reset_for_all(struct sdhci_host *host)
+>>>  {
+>>> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+>>> index 13703f1a3710..83d994c8d89e 100644
+>>> --- a/drivers/mmc/host/sdhci.h
+>>> +++ b/drivers/mmc/host/sdhci.h
+>>> @@ -845,6 +845,7 @@ void sdhci_request(struct mmc_host *mmc, struct mmc_request *mrq);
+>>>  int sdhci_request_atomic(struct mmc_host *mmc, struct mmc_request *mrq);
+>>>  void sdhci_set_bus_width(struct sdhci_host *host, int width);
+>>>  void sdhci_reset(struct sdhci_host *host, u8 mask);
+>>> +bool sdhci_do_reset(struct sdhci_host *host, u8 mask);
+>>>  void sdhci_set_uhs_signaling(struct sdhci_host *host, unsigned timing);
+>>>  int sdhci_execute_tuning(struct mmc_host *mmc, u32 opcode);
+>>>  int __sdhci_execute_tuning(struct sdhci_host *host, u32 opcode);
+>>
+
 
