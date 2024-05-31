@@ -1,253 +1,181 @@
-Return-Path: <linux-kernel+bounces-197139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30B018D66B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:22:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C5F78D66B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:23:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 531551C245EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:22:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83F87B24026
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:23:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A396815623B;
-	Fri, 31 May 2024 16:22:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5CD0158DC5;
+	Fri, 31 May 2024 16:22:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="R3yoT+pG"
-Received: from smtp-fw-52005.amazon.com (smtp-fw-52005.amazon.com [52.119.213.156])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="b7vMdJSK"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A1ED158D78
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 16:22:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BA65145328
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 16:22:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717172527; cv=none; b=cQrzwZrpMWbtpPKHYvGr0+Y1RHaOl3L0b7g13/YTsYUHoh/BVJLRtMPHCXJ6Jwjl24efyO9tm5eaB8iCa1g+vKXBZ68mvd6A+17Qqzivj/SaRBBHTt4QGgM+4zG9rg5c/BqkEItWioRyFz+FxGu8OxNnEmjxQsDfeQ+UIRGkXFI=
+	t=1717172577; cv=none; b=GbBD2w6XRyA0YG6XK8YxlIb2ULEptMhlRsUeRknzXG2a2vhwrk0fGX3J7HjnbF+QE9yReGXOUwNFHCceWHW6KcMrBupkfNKMEDlJCTTNax56DO5oxNGWyYv9KcopnWbl38OJkcdObL8MIMd8tAjP8Cn+x2jhzoIZH92oWncJ0fw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717172527; c=relaxed/simple;
-	bh=mkb/nVcUv3NFAWt/4Kf8HdacRVGvAVCG1SNRZH1Zy8E=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZkPH+AVTfQ1r6OldoEDODdL5nxPQoZXfXr4FeuKyyKV2XyrejjMHuJOdARSabYRs8D6sh/VjbhD6zuclF4C5Tcb2Sw+RGGZN/sL+JsSsX/Q+zSbVyGhdUQomEsd3HeT2TWd0odZaPyWhGZtRSXlTnMtYc+u+sIba345jezT1bCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=R3yoT+pG; arc=none smtp.client-ip=52.119.213.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+	s=arc-20240116; t=1717172577; c=relaxed/simple;
+	bh=wRuzukfHTuY9txqqlUqVEoBDYzEHtslcBcqDMPuKaD4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jWFrPTQVStVXhPiJXFLY2hx4p0C5TfpmZa+JplXGhNUjM7JkHlVlNdPxAMF+QlCcHqhsVa7dIGunGWZR3Fx6tjkCWZOwmyCjfqPzMIpD3dc/+UmWov7eib/R+2Yr+fGkJnUaMj112PTJemsdLx+p7s4t2XHAl3O4GFbvKty1xOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=b7vMdJSK; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52b03d66861so2476392e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 09:22:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1717172527; x=1748708527;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=Kkjdm7vLzgsvxwTIl6a+cQaY/194/UYr9RfyTUcw400=;
-  b=R3yoT+pGSPNzWSY1vjdBBl53E0gvZbg+mXEUSHk0WUUEPVF67rc00LqG
-   S7MFf987nH1K/u5ZOns6T9Ve1fEyWWQCcYR97JIlt8yuQjOXBPQFUsE6h
-   Aripyz56m2lkpD7zYM8An15I7TdJji1WpSAXZ5/zKGF6uk5snXyQkVcsB
-   0=;
-X-IronPort-AV: E=Sophos;i="6.08,204,1712620800"; 
-   d="scan'208";a="657753334"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-52005.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 16:22:04 +0000
-Received: from EX19MTAEUB001.ant.amazon.com [10.0.10.100:27507]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.8.93:2525] with esmtp (Farcaster)
- id 61aea3b8-f33e-485c-8066-25d0973a7946; Fri, 31 May 2024 16:22:02 +0000 (UTC)
-X-Farcaster-Flow-ID: 61aea3b8-f33e-485c-8066-25d0973a7946
-Received: from EX19D002EUA001.ant.amazon.com (10.252.50.66) by
- EX19MTAEUB001.ant.amazon.com (10.252.51.28) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.28; Fri, 31 May 2024 16:22:02 +0000
-Received: from EX19MTAUWA001.ant.amazon.com (10.250.64.204) by
- EX19D002EUA001.ant.amazon.com (10.252.50.66) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.28; Fri, 31 May 2024 16:22:01 +0000
-Received: from dev-dsk-hagarhem-1b-b868d8d5.eu-west-1.amazon.com
- (10.253.65.58) by mail-relay.amazon.com (10.250.64.204) with Microsoft SMTP
- Server id 15.2.1258.28 via Frontend Transport; Fri, 31 May 2024 16:22:01
- +0000
-Received: by dev-dsk-hagarhem-1b-b868d8d5.eu-west-1.amazon.com (Postfix, from userid 23002382)
-	id EA07320BED; Fri, 31 May 2024 16:22:00 +0000 (UTC)
-From: Hagar Hemdan <hagarhem@amazon.com>
-To:
-CC: Maximilian Heyne <mheyne@amazon.de>, Norbert Manthey <nmanthey@amazon.de>,
-	Hagar Hemdan <hagarhem@amazon.com>, Marc Zyngier <maz@kernel.org>, "Thomas
- Gleixner" <tglx@linutronix.de>, Eric Auger <eric.auger@redhat.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v4] irqchip/gic-v3-its: Fix potential race condition in its_vlpi_prop_update()
-Date: Fri, 31 May 2024 16:21:44 +0000
-Message-ID: <20240531162144.28650-1-hagarhem@amazon.com>
-X-Mailer: git-send-email 2.40.1
+        d=linaro.org; s=google; t=1717172573; x=1717777373; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WU9HOi116oLiCRDppMSgfPzQnRzV0fHJZl34KYHTbeo=;
+        b=b7vMdJSKFvZpNoxy84XjSRcL1tNkGMKbKpvyS1mepLDzgMus7le6Y4/RQ25AmYTfMB
+         wMvDr294PtddE75Ninc7+aoJBa2GUHHdEIT0Us38MKGE9iJ7BdwErHoJYZF00azHZd2t
+         3WQp82CNLCTm9kNZTeBFvrrnCYGBZXZT/Hb6s7BMc9R6ELzh0+NpuLiaK3jdXeDl0KQU
+         F3B66cW2uadQ7XhCUyt1AH4ReuXvKKOkgKHn/IX6JAP6N7sC9nFa57yBxw1t0G6ncOsf
+         sZZw6b5GbJBt3pKyEq7wk2kyTPGG2qqUDh0knIu/gbjadK/sM5YTWiWFoyhohSz2E9ls
+         ziCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717172573; x=1717777373;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WU9HOi116oLiCRDppMSgfPzQnRzV0fHJZl34KYHTbeo=;
+        b=a6yb7L8vc+rMkG9ZzZ19ZQdJ29A6gAebF5/DAOAN53zKvuDOyobnW8Jz3suJuvBZ42
+         N4OWtkyIffaxC2xcp0Q97vBZrc/8Y0Kv7jEch8Lhm1B4I9iZZzvAotifIH05MUB0c68b
+         6Yvga7mTZPzj2K0TKuIeg8IXFfXkK07UqPSpIUYt9DAFqcTZdHeKu/S1esQIQg9iyC75
+         SeOTxfkoriK7coQUOPf8Fb3X1IORvD5EZxPKGXVXhmxArQD95Jb9Yu1YmKW+2SG987/G
+         XLHJBVVXV6V+83bmWofkX03EpRAp9ZK4DtGq2T34envGpk7UnONqfxyrV9Jf0T1bbX9w
+         v4hw==
+X-Forwarded-Encrypted: i=1; AJvYcCXa0DkniMeFngNXH5fn/65DjTBOC0KdIlkx9dbBdooA1M7AX0yEhPosD+aTrINySM+Xt+VrbogyaYBHsasCnMinbqB1ONyOqVIHbRPl
+X-Gm-Message-State: AOJu0YxOEmERzPWOeYHPFtAeTFmINIcLLZQUboblHVFVrSvsI8ocKZAl
+	SqyPC2mQqUpEaLQAWNJLDgtzI3AGA8n8NV24TJ9J8QzIxwyPfbuuImbzhZv4xR910pucYsxlAgY
+	6QDS/jA==
+X-Google-Smtp-Source: AGHT+IGZUoNx/1dQAVFESaKpl/hXh+mkCRbaj3zxnaE0lHE3CM6IhRyVNT/hOJYxM6CIhhcE2RwxhQ==
+X-Received: by 2002:ac2:4d90:0:b0:529:b6b4:7e3c with SMTP id 2adb3069b0e04-52b8970c17dmr1550674e87.45.1717172573230;
+        Fri, 31 May 2024 09:22:53 -0700 (PDT)
+Received: from [192.168.0.3] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35dd064bba6sm2161697f8f.104.2024.05.31.09.22.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 31 May 2024 09:22:52 -0700 (PDT)
+Message-ID: <3f9e58f2-86e4-4ac4-bf48-22d12d5ae4e9@linaro.org>
+Date: Fri, 31 May 2024 17:22:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 02/14] mfd: pm8008: fix regmap irq chip initialisation
+To: Johan Hovold <johan+linaro@kernel.org>, Lee Jones <lee@kernel.org>,
+ Mark Brown <broonie@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>
+Cc: Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Das Srinagesh <quic_gurus@quicinc.com>,
+ Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+ Stephen Boyd <swboyd@chromium.org>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Andy Shevchenko <andy.shevchenko@gmail.com>, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-gpio@vger.kernel.org
+References: <20240529162958.18081-1-johan+linaro@kernel.org>
+ <20240529162958.18081-3-johan+linaro@kernel.org>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20240529162958.18081-3-johan+linaro@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-its_vlpi_prop_update() calls lpi_write_config() which obtains the
-mapping information for a VLPI without lock held. So it could race
-with its_vlpi_unmap().
-Since all calls from its_irq_set_vcpu_affinity() require the same
-lock to be held. So instead of peppering the locking all over the
-place, we hoist the locking into its_irq_set_vcpu_affinity().
+On 29/05/2024 17:29, Johan Hovold wrote:
+> The regmap irq array is potentially shared between multiple PMICs and
+> should only contain static data.
+> 
+> Use a custom macro to initialise also the type fields and drop the
+> unnecessary updates on each probe.
+> 
+> Fixes: 6b149f3310a4 ("mfd: pm8008: Add driver for QCOM PM8008 PMIC")
+> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+> ---
+>   drivers/mfd/qcom-pm8008.c | 64 ++++++++++++++-------------------------
+>   1 file changed, 23 insertions(+), 41 deletions(-)
+> 
+> diff --git a/drivers/mfd/qcom-pm8008.c b/drivers/mfd/qcom-pm8008.c
+> index 3ac3742f438b..f71c490f25c8 100644
+> --- a/drivers/mfd/qcom-pm8008.c
+> +++ b/drivers/mfd/qcom-pm8008.c
+> @@ -56,15 +56,25 @@ static unsigned int pm8008_config_regs[] = {
+>   	INT_POL_LOW_OFFSET,
+>   };
+>   
+> -static struct regmap_irq pm8008_irqs[] = {
+> -	REGMAP_IRQ_REG(PM8008_IRQ_MISC_UVLO,	PM8008_MISC,	BIT(0)),
+> -	REGMAP_IRQ_REG(PM8008_IRQ_MISC_OVLO,	PM8008_MISC,	BIT(1)),
+> -	REGMAP_IRQ_REG(PM8008_IRQ_MISC_OTST2,	PM8008_MISC,	BIT(2)),
+> -	REGMAP_IRQ_REG(PM8008_IRQ_MISC_OTST3,	PM8008_MISC,	BIT(3)),
+> -	REGMAP_IRQ_REG(PM8008_IRQ_MISC_LDO_OCP,	PM8008_MISC,	BIT(4)),
+> -	REGMAP_IRQ_REG(PM8008_IRQ_TEMP_ALARM,	PM8008_TEMP_ALARM, BIT(0)),
+> -	REGMAP_IRQ_REG(PM8008_IRQ_GPIO1,	PM8008_GPIO1,	BIT(0)),
+> -	REGMAP_IRQ_REG(PM8008_IRQ_GPIO2,	PM8008_GPIO2,	BIT(0)),
+> +#define _IRQ(_irq, _off, _mask, _types)			\
+> +	[_irq] = {					\
+> +		.reg_offset = (_off),			\
+> +		.mask = (_mask),			\
+> +		.type = {				\
+> +			.type_reg_offset = (_off),	\
+> +			.types_supported = (_types),	\
+> +		},					\
+> +	}
+> +
+> +static const struct regmap_irq pm8008_irqs[] = {
+> +	_IRQ(PM8008_IRQ_MISC_UVLO,    PM8008_MISC,	BIT(0), IRQ_TYPE_EDGE_RISING),
+> +	_IRQ(PM8008_IRQ_MISC_OVLO,    PM8008_MISC,	BIT(1), IRQ_TYPE_EDGE_RISING),
+> +	_IRQ(PM8008_IRQ_MISC_OTST2,   PM8008_MISC,	BIT(2), IRQ_TYPE_EDGE_RISING),
+> +	_IRQ(PM8008_IRQ_MISC_OTST3,   PM8008_MISC,	BIT(3), IRQ_TYPE_EDGE_RISING),
+> +	_IRQ(PM8008_IRQ_MISC_LDO_OCP, PM8008_MISC,	BIT(4), IRQ_TYPE_EDGE_RISING),
+> +	_IRQ(PM8008_IRQ_TEMP_ALARM,   PM8008_TEMP_ALARM,BIT(0), IRQ_TYPE_SENSE_MASK),
+> +	_IRQ(PM8008_IRQ_GPIO1,	      PM8008_GPIO1,	BIT(0), IRQ_TYPE_SENSE_MASK),
+> +	_IRQ(PM8008_IRQ_GPIO2,	      PM8008_GPIO2,	BIT(0), IRQ_TYPE_SENSE_MASK),
+>   };
+>   
+>   static const unsigned int pm8008_periph_base[] = {
+> @@ -143,38 +153,9 @@ static struct regmap_config qcom_mfd_regmap_cfg = {
+>   	.max_register	= 0xFFFF,
+>   };
+>   
+> -static int pm8008_probe_irq_peripherals(struct device *dev,
+> -					struct regmap *regmap,
+> -					int client_irq)
+> -{
+> -	int rc, i;
+> -	struct regmap_irq_type *type;
+> -	struct regmap_irq_chip_data *irq_data;
+> -
+> -	for (i = 0; i < ARRAY_SIZE(pm8008_irqs); i++) {
+> -		type = &pm8008_irqs[i].type;
+> -
+> -		type->type_reg_offset = pm8008_irqs[i].reg_offset;
+> -
+> -		if (type->type_reg_offset == PM8008_MISC)
+> -			type->types_supported = IRQ_TYPE_EDGE_RISING;
+> -		else
+> -			type->types_supported = (IRQ_TYPE_EDGE_BOTH |
+> -				IRQ_TYPE_LEVEL_HIGH | IRQ_TYPE_LEVEL_LOW);
+> -	}
+ick
 
-This bug was discovered using Coverity Static Analysis
-Security Testing (SAST) by Synopsys, Inc.
+A no-brainer improvement.
 
-Fixes: 015ec0386ab6 ("irqchip/gic-v3-its: Add VLPI configuration handling")
-Suggested-by: Marc Zyngier <maz@kernel.org>
-Signed-off-by: Hagar Hemdan <hagarhem@amazon.com>
----
-v4: modified the commit msg.
-Only compile-tested, no access to HW.
----
- drivers/irqchip/irq-gic-v3-its.c | 65 +++++++++++++-------------------
- 1 file changed, 27 insertions(+), 38 deletions(-)
-
-diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-index 40ebf1726393..f9e824ad1523 100644
---- a/drivers/irqchip/irq-gic-v3-its.c
-+++ b/drivers/irqchip/irq-gic-v3-its.c
-@@ -1846,28 +1846,22 @@ static int its_vlpi_map(struct irq_data *d, struct its_cmd_info *info)
- {
- 	struct its_device *its_dev = irq_data_get_irq_chip_data(d);
- 	u32 event = its_get_event_id(d);
--	int ret = 0;
- 
- 	if (!info->map)
- 		return -EINVAL;
- 
--	raw_spin_lock(&its_dev->event_map.vlpi_lock);
--
- 	if (!its_dev->event_map.vm) {
- 		struct its_vlpi_map *maps;
- 
- 		maps = kcalloc(its_dev->event_map.nr_lpis, sizeof(*maps),
- 			       GFP_ATOMIC);
--		if (!maps) {
--			ret = -ENOMEM;
--			goto out;
--		}
-+		if (!maps)
-+			return -ENOMEM;
- 
- 		its_dev->event_map.vm = info->map->vm;
- 		its_dev->event_map.vlpi_maps = maps;
- 	} else if (its_dev->event_map.vm != info->map->vm) {
--		ret = -EINVAL;
--		goto out;
-+		return -EINVAL;
- 	}
- 
- 	/* Get our private copy of the mapping information */
-@@ -1899,46 +1893,32 @@ static int its_vlpi_map(struct irq_data *d, struct its_cmd_info *info)
- 		its_dev->event_map.nr_vlpis++;
- 	}
- 
--out:
--	raw_spin_unlock(&its_dev->event_map.vlpi_lock);
--	return ret;
-+	return 0;
- }
- 
- static int its_vlpi_get(struct irq_data *d, struct its_cmd_info *info)
- {
- 	struct its_device *its_dev = irq_data_get_irq_chip_data(d);
- 	struct its_vlpi_map *map;
--	int ret = 0;
--
--	raw_spin_lock(&its_dev->event_map.vlpi_lock);
- 
- 	map = get_vlpi_map(d);
- 
--	if (!its_dev->event_map.vm || !map) {
--		ret = -EINVAL;
--		goto out;
--	}
-+	if (!its_dev->event_map.vm || !map)
-+		return -EINVAL;
- 
- 	/* Copy our mapping information to the incoming request */
- 	*info->map = *map;
- 
--out:
--	raw_spin_unlock(&its_dev->event_map.vlpi_lock);
--	return ret;
-+	return 0;
- }
- 
- static int its_vlpi_unmap(struct irq_data *d)
- {
- 	struct its_device *its_dev = irq_data_get_irq_chip_data(d);
- 	u32 event = its_get_event_id(d);
--	int ret = 0;
- 
--	raw_spin_lock(&its_dev->event_map.vlpi_lock);
--
--	if (!its_dev->event_map.vm || !irqd_is_forwarded_to_vcpu(d)) {
--		ret = -EINVAL;
--		goto out;
--	}
-+	if (!its_dev->event_map.vm || !irqd_is_forwarded_to_vcpu(d))
-+		return -EINVAL;
- 
- 	/* Drop the virtual mapping */
- 	its_send_discard(its_dev, event);
-@@ -1962,9 +1942,7 @@ static int its_vlpi_unmap(struct irq_data *d)
- 		kfree(its_dev->event_map.vlpi_maps);
- 	}
- 
--out:
--	raw_spin_unlock(&its_dev->event_map.vlpi_lock);
--	return ret;
-+	return 0;
- }
- 
- static int its_vlpi_prop_update(struct irq_data *d, struct its_cmd_info *info)
-@@ -1987,29 +1965,40 @@ static int its_irq_set_vcpu_affinity(struct irq_data *d, void *vcpu_info)
- {
- 	struct its_device *its_dev = irq_data_get_irq_chip_data(d);
- 	struct its_cmd_info *info = vcpu_info;
-+	int ret;
- 
- 	/* Need a v4 ITS */
- 	if (!is_v4(its_dev->its))
- 		return -EINVAL;
- 
-+	raw_spin_lock(&its_dev->event_map.vlpi_lock);
-+
- 	/* Unmap request? */
--	if (!info)
--		return its_vlpi_unmap(d);
-+	if (!info) {
-+		ret = its_vlpi_unmap(d);
-+		goto out;
-+	}
- 
- 	switch (info->cmd_type) {
- 	case MAP_VLPI:
--		return its_vlpi_map(d, info);
-+		ret = its_vlpi_map(d, info);
-+		break;
- 
- 	case GET_VLPI:
--		return its_vlpi_get(d, info);
-+		ret = its_vlpi_get(d, info);
-+		break;
- 
- 	case PROP_UPDATE_VLPI:
- 	case PROP_UPDATE_AND_INV_VLPI:
--		return its_vlpi_prop_update(d, info);
-+		ret = its_vlpi_prop_update(d, info);
-+		break;
- 
- 	default:
--		return -EINVAL;
-+		ret = -EINVAL;
- 	}
-+out:
-+	raw_spin_unlock(&its_dev->event_map.vlpi_lock);
-+	return ret;
- }
- 
- static struct irq_chip its_irq_chip = {
--- 
-2.40.1
-
+Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
