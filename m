@@ -1,212 +1,246 @@
-Return-Path: <linux-kernel+bounces-196629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2CB28D5EF6
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 11:56:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77E4B8D5F01
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 11:57:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9943F282B9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 09:56:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AE3F1C21F0F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 09:57:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B24513FD95;
-	Fri, 31 May 2024 09:56:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 631BA1422D9;
+	Fri, 31 May 2024 09:57:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pe4mqUkk"
-Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com [209.85.217.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hu5bMmVB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28B1313774B
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 09:56:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D3CF1CD35;
+	Fri, 31 May 2024 09:57:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717149370; cv=none; b=gcVqu+sqITchwTHtL9Cg8xksZxn1m1l/1uSr0zhQlsDIraSGYIqjtGNgxdJUmRKCVAwUf5bajIL52dD7iPheV1ynYzQ8QtK4mcTo4GbKCcrObFB/4BYKclWyGOfZ/a9Mkq31X2W1LweAKRQTr3zonXiZCRWuMW4My0rCOREgTwY=
+	t=1717149425; cv=none; b=G3XdTga2krT/U3hOn7davQ/wxbcVaccYs1RIR6zOWy/ymL1O18Uxk2TnmpfKewfBaXHgCVy6YGkBnowmQg99yLuNZdQvRU0Fph2w6xYo/pYgjNns2IQUEB3btyerL+v/4VCirNJQiQ6aZcQu34S2YtjEacbmSYGTZXKlYIyLGww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717149370; c=relaxed/simple;
-	bh=wdnSz7hPG16Mf1CquMbTgjUO3TBxrLJE3vX/KeX7zF8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SOTaH4arBk70Gvu+QbO7kqIWPcoVmu8cyW2iQkGlhCynzVqWHnI4cs0vKZYxDlQePXQyeztlI1it52CkNIloYMyOxmPQSv5uyIvKWQtzPdlYI+ebl517WzJjyJRpVjWlGZj9uOBHjHjh6m17ThygWzwfLN1oOS2AbpkHNzFmtUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pe4mqUkk; arc=none smtp.client-ip=209.85.217.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-48bc3314cddso111561137.1
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 02:56:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717149368; x=1717754168; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tKVx7XGBm+o8Fw6YnGhdz2zXhlTIlCI4yh9naXhDehg=;
-        b=Pe4mqUkkERbqXhH2ic+Vc0f1ZZxKRk+Pk7+15cPARx1QwvdZH/jlwkxlu/2NQExPCC
-         PvdV+Jg+8+TKElAWuOKgEjnRtYJNrDOlsEZ5c8Yvy86LRSDvXcy1afjK0SK5Tp83hlUD
-         fF0T7V8t8HFIPplNyAGrth6wCEP52v+QdL0xkMyySPAmG6p4uciqX1mg3cZRBpcedlls
-         IniW8i8cPwj7YPTVpnEAq0Md7gYuZGv+sTjm/R7+WtUaomNdsAhttXsFLllzfpGKPYsi
-         3tWC8l958Y+GM+3SBmZPMYwg0Qtk3+BWANIKXk/0SmkiZkn/Ovsun1b9k8SOnx+Dx7nn
-         ni8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717149368; x=1717754168;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tKVx7XGBm+o8Fw6YnGhdz2zXhlTIlCI4yh9naXhDehg=;
-        b=sLJeEmgp7Pf6MQ20Y46vmc5r9m0x4W9O8TmYCxi1zFfZwf+W9BjH6M8U6eqldtOIg2
-         x/eGDXGZfl6XZrM5thLCvJMhJUlfJ9vLAmhBBLi91f8qeyb9/9DtOtrecYmrk+crrFYk
-         5dWE5gzghDuZIeZnraR5i9jCV+XYnPrOC9trItbve32qaLL9vfwoMWmJW4CHCIuniHfT
-         m6jxmeZ9y/CCvCdKGEKEMHvr8vdUgKzStR4My3UCKYHyghZHXqoOa10bSS27KFr+ty24
-         qbEFeSDD8nmJeO+O7gWmqNYb+FL1lzd3Uuvk8orcd6hAmIB2d3Nc5/0taT/kiru1fB3g
-         FLBA==
-X-Forwarded-Encrypted: i=1; AJvYcCU8tgrIh3rOAjL8kL7Jhyi1Y9c8upnhisQVm+kPnVUF3R2OaOpF3m3xjkyLkknB6CSiDXVldzI7oixouu5CSiFNtNUTYsBajbISn1pQ
-X-Gm-Message-State: AOJu0YzhyBQsS9ANpqHowui8UqiVLDPnaCXMeJZazIxV2G20scGSvH6u
-	3GQY2xzfY8FXEvos3l22dLJ/YvfUbHdXJlLslju2QRqxG6j7MCm24tPToyrPbC8i71AmRGvRBfL
-	1XYp68yJ7sbxknPvoXtsBBcIsTWs=
-X-Google-Smtp-Source: AGHT+IE7QADRzsDSKxZVcKYQmnfV+eZbaOv5G9hqVWSP9YXpgJiCW/5H7Z953Bi7OzB6+gQ7jiXAAbTT+R029c1AXVw=
-X-Received: by 2002:a05:6102:4c0b:b0:47b:bea0:bdf7 with SMTP id
- ada2fe7eead31-48bc234666cmr1446622137.27.1717149368007; Fri, 31 May 2024
- 02:56:08 -0700 (PDT)
+	s=arc-20240116; t=1717149425; c=relaxed/simple;
+	bh=pG1FuJNpg4iD5VvuUxyaJG1TPUBzdsFzeembK8i33cE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QSooPByyUkRjkWzBjLh9BoUUR0xWLdDPQmL7VUmXupIGXM6npxUaaZ4ppyNso7km0sJopNLEs4TVdEg5IgahXYmSWpUKq5934p0e6xDaSUltaW92PinNGwqv020vsZa3iIBGASytf3rySiuJNqEWwmCnncAqwLZ6wB96oRCi8RE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hu5bMmVB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65A56C116B1;
+	Fri, 31 May 2024 09:56:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717149424;
+	bh=pG1FuJNpg4iD5VvuUxyaJG1TPUBzdsFzeembK8i33cE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hu5bMmVBc986akPDt9Ge9tIAY28LTFO3zwiOt/Joe+hTEGWcqkK1uspvfXfUgXXxe
+	 37xIAg+mkLYdlb3Hs9WdiXpCF1VeQrUhl78CihP1szlXYNSBa15MdkJ/xVV25GxxSe
+	 GoFHLTigYu0YGr12LUzpQPJDP6vTnVpL49ILbXi3zxAMPLAoxFNkYdK1EVTmNJFn7f
+	 CA1vM3tFKh3BQ8+a2Mrj8F6+o+ltODCoNMa/d4HHrTNiLP+FE/f+tft+dne1biNKt8
+	 EM2SBRlBln82aT4Aeemi64mL4//CHv+Iem7UQVhtCKN9l9VGh3B5qbmCfUa1q0Ty4h
+	 r2ZCGXufem1Qw==
+Date: Fri, 31 May 2024 10:56:50 +0100
+From: Lee Jones <lee@kernel.org>
+To: Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: linux-sh@vger.kernel.org, Damien Le Moal <dlemoal@kernel.org>,
+	Niklas Cassel <cassel@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Rich Felker <dalias@libc.org>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Helge Deller <deller@gmx.de>,
+	Heiko Stuebner <heiko.stuebner@cherry.de>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Chris Morgan <macromorgan@hotmail.com>,
+	Sebastian Reichel <sre@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Masahiro Yamada <masahiroy@kernel.org>, Baoquan He <bhe@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Kefeng Wang <wangkefeng.wang@huawei.com>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Azeem Shaikh <azeemshaikh38@gmail.com>, Guo Ren <guoren@kernel.org>,
+	Max Filippov <jcmvbkbc@gmail.com>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Anup Patel <apatel@ventanamicro.com>,
+	Jacky Huang <ychuang3@nuvoton.com>,
+	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Sam Ravnborg <sam@ravnborg.org>,
+	Javier Martinez Canillas <javierm@redhat.com>,
+	Sergey Shtylyov <s.shtylyov@omp.ru>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	linux-ide@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-pci@vger.kernel.org, linux-serial@vger.kernel.org,
+	linux-fbdev@vger.kernel.org
+Subject: Re: [DO NOT MERGE v8 23/36] mfd: sm501: Convert platform_data to OF
+ property
+Message-ID: <20240531095650.GD8682@google.com>
+References: <cover.1716965617.git.ysato@users.sourceforge.jp>
+ <c139d3a42c61d978296aa2e513de073c643e4fbe.1716965617.git.ysato@users.sourceforge.jp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240531030520.1615833-1-zhaoyang.huang@unisoc.com>
- <ZlmEp9nxKiG9gWFj@pc636> <CAGWkznGak0txoOEq1SYL9Ymax04Tac2nVCSYiC+L8qQ6bqryZQ@mail.gmail.com>
-In-Reply-To: <CAGWkznGak0txoOEq1SYL9Ymax04Tac2nVCSYiC+L8qQ6bqryZQ@mail.gmail.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Fri, 31 May 2024 21:55:55 +1200
-Message-ID: <CAGsJ_4ywu+WgOz_nxaeCa2qzv2=qDa8ZJWOUYb4LqVUq2qeCxQ@mail.gmail.com>
-Subject: Re: [PATCHv3] mm: fix incorrect vbq reference in purge_fragmented_block
-To: Zhaoyang Huang <huangzhaoyang@gmail.com>
-Cc: Uladzislau Rezki <urezki@gmail.com>, "zhaoyang.huang" <zhaoyang.huang@unisoc.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Christoph Hellwig <hch@infradead.org>, 
-	Lorenzo Stoakes <lstoakes@gmail.com>, Baoquan He <bhe@redhat.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, hailong liu <hailong.liu@oppo.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, steve.kang@unisoc.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <c139d3a42c61d978296aa2e513de073c643e4fbe.1716965617.git.ysato@users.sourceforge.jp>
 
-On Fri, May 31, 2024 at 9:13=E2=80=AFPM Zhaoyang Huang <huangzhaoyang@gmail=
-com> wrote:
->
-> On Fri, May 31, 2024 at 4:05=E2=80=AFPM Uladzislau Rezki <urezki@gmail.co=
-m> wrote:
-> >
-> > On Fri, May 31, 2024 at 11:05:20AM +0800, zhaoyang.huang wrote:
-> > > From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
-> > >
-> > > vmalloc area runs out in our ARM64 system during an erofs test as
-> > > vm_map_ram failed[1]. By following the debug log, we find that
-> > > vm_map_ram()->vb_alloc() will allocate new vb->va which corresponding
-> > > to 4MB vmalloc area as list_for_each_entry_rcu returns immediately
-> > > when vbq->free->next points to vbq->free. That is to say, 65536 times
-> > > of page fault after the list's broken will run out of the whole
-> > > vmalloc area. This should be introduced by one vbq->free->next point =
-to
-> > > vbq->free which makes list_for_each_entry_rcu can not iterate the lis=
-t
-> > > and find the BUG.
-> > >
-> > > [1]
-> > > PID: 1        TASK: ffffff80802b4e00  CPU: 6    COMMAND: "init"
-> > >  #0 [ffffffc08006afe0] __switch_to at ffffffc08111d5cc
-> > >  #1 [ffffffc08006b040] __schedule at ffffffc08111dde0
-> > >  #2 [ffffffc08006b0a0] schedule at ffffffc08111e294
-> > >  #3 [ffffffc08006b0d0] schedule_preempt_disabled at ffffffc08111e3f0
-> > >  #4 [ffffffc08006b140] __mutex_lock at ffffffc08112068c
-> > >  #5 [ffffffc08006b180] __mutex_lock_slowpath at ffffffc08111f8f8
-> > >  #6 [ffffffc08006b1a0] mutex_lock at ffffffc08111f834
-> > >  #7 [ffffffc08006b1d0] reclaim_and_purge_vmap_areas at ffffffc0803ebc=
-3c
-> > >  #8 [ffffffc08006b290] alloc_vmap_area at ffffffc0803e83fc
-> > >  #9 [ffffffc08006b300] vm_map_ram at ffffffc0803e78c0
-> > >
-> > > Fixes: fc1e0d980037 ("mm/vmalloc: prevent stale TLBs in fully utilize=
-d blocks")
-> > >
-> > > Suggested-by: Hailong.Liu <hailong.liu@oppo.com>
-> > > Signed-off-by: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
-> > >
-> > Is a problem related to run out of vmalloc space _only_ or it is a prob=
-lem
-> > with broken list? From the commit message it is hard to follow the reas=
-on.
-> >
-> > Could you please post a full trace or panic?
-> Please refer to the below scenario for how vbq->free broken.
-> step 1: new_vmap_block is called in CPU0 and get vb->va->addr =3D
-> 0xffffffc000400000
-> step 2: vb is added to CPU1's vbq->vmap_block(xarray) by xa =3D
-> addr_to_vb_xa(va->va_start);
->             fc1e0d980037 ("mm/vmalloc: prevent stale TLBs in fully
-> utilized blocks") introduce a per_cpu like xarray mechanism to have vb
-> be added to the corresponding CPU's xarray but not local.
-> step 3: vb is added to CPU0's vbq->free by
-> list_add_tail_rcu(&vb->free_list, &vbq->free);
-> step 4 : purge_fragmented_blocks get vbq of CPU1 and then get above vb
-> step 5 : purge_fragmented_blocks delete vb from CPU0's list with
-> taking the vbq->lock of CPU1
-> step 5': vb_alloc on CPU0 could race with step5 and break the CPU0's vbq-=
->free
->
-> As fc1e0d980037 solved the problem of staled TLB issue, we need to
-> introduce a new variable to record the CPU in vmap_block instead of
-> reverting to iterate the list(will leave wrong TLB entry)
-> >
-> > > ---
-> > > v2: introduce cpu in vmap_block to record the right CPU number
-> > > v3: use get_cpu/put_cpu to prevent schedule between core
-> > > ---
-> > > ---
-> > >  mm/vmalloc.c | 12 ++++++++----
-> > >  1 file changed, 8 insertions(+), 4 deletions(-)
-> > >
-> > > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> > > index 22aa63f4ef63..ecdb75d10949 100644
-> > > --- a/mm/vmalloc.c
-> > > +++ b/mm/vmalloc.c
-> > > @@ -2458,6 +2458,7 @@ struct vmap_block {
-> > >       struct list_head free_list;
-> > >       struct rcu_head rcu_head;
-> > >       struct list_head purge;
-> > > +     unsigned int cpu;
-> > >  };
-> > >
-> > >  /* Queue of free and dirty vmap blocks, for allocation and flushing =
-purposes */
-> > > @@ -2586,10 +2587,12 @@ static void *new_vmap_block(unsigned int orde=
-r, gfp_t gfp_mask)
-> > >               return ERR_PTR(err);
-> > >       }
-> > >
-> > > +     vb->cpu =3D get_cpu();
-> > >       vbq =3D raw_cpu_ptr(&vmap_block_queue);
-> > >       spin_lock(&vbq->lock);
-> > >       list_add_tail_rcu(&vb->free_list, &vbq->free);
-> > >       spin_unlock(&vbq->lock);
-> > > +     put_cpu();
-> > >
-> > Why do you need get_cpu() here? Can you go with raw_smp_processor_id()
-> > and then access the per-cpu "vmap_block_queue"? get_cpu() disables
-> > preemption and then a spin-lock is take within this critical section.
-> > From the first glance PREEMPT_RT is broken in this case.
-> get_cpu here is to prevent current task from being migrated to other
-> COREs before we get the per_cpu vmap_block_queue. Could you please
-> suggest a correct way of doing this?
+On Wed, 29 May 2024, Yoshinori Sato wrote:
 
-not quite sure if you have to pay the price of disabling preempt.
-Does the below Hailong suggested fix your problem?
+> Various parameters of SM501 can be set using platform_data,
+> so parameters cannot be passed in the DeviceTree target.
+> Expands the parameters set in platform_data so that they can be
+> specified using DeviceTree properties.
+> 
+> Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
+> ---
+>  drivers/mfd/sm501.c           | 238 ++++++++++++++++++++++++++++++++++
+>  drivers/video/fbdev/sm501fb.c |  87 +++++++++++++
+>  2 files changed, 325 insertions(+)
+> 
+> diff --git a/drivers/mfd/sm501.c b/drivers/mfd/sm501.c
+> index b3592982a83b..d373aded0c3b 100644
+> --- a/drivers/mfd/sm501.c
+> +++ b/drivers/mfd/sm501.c
+> @@ -20,6 +20,7 @@
+>  #include <linux/gpio/driver.h>
+>  #include <linux/gpio/machine.h>
+>  #include <linux/slab.h>
+> +#include <linux/clk.h>
+>  
+>  #include <linux/sm501.h>
+>  #include <linux/sm501-regs.h>
+> @@ -82,6 +83,16 @@ struct sm501_devdata {
+>  	unsigned int			 rev;
+>  };
+>  
+> +struct sm501_config_props_uint {
+> +	char *name;
+> +	u32 shift;
+> +};
+> +
+> +struct sm501_config_props_flag {
+> +	char *clr_name;
+> +	char *set_name;
+> +	u32 bit;
+> +};
+>  
+>  #define MHZ (1000 * 1000)
+>  
+> @@ -1370,6 +1381,227 @@ static int sm501_init_dev(struct sm501_devdata *sm)
+>  	return 0;
+>  }
+>  
+> +#define FIELD_WIDTH 4
+> +struct dt_values {
+> +	char *name;
+> +	unsigned int offset;
+> +	unsigned int width;
+> +	char *val[(1 << FIELD_WIDTH) + 1];
+> +};
+> +
+> +#define fld(_name, _offset, _width, ...)	\
+> +	{ \
+> +		.name = _name, \
+> +		.offset = _offset, \
+> +		.width = _width,	\
+> +		.val = { __VA_ARGS__, NULL},	\
+> +	}
+> +
+> +static const struct dt_values misc_timing[] = {
+> +	fld("ex", 28, 4,
+> +	    "none", "16", "32", "48", "64", "80", "96", "112",
+> +	    "128", "144", "160", "176", "192", "208", "224", "240"),
+> +	fld("xc", 24, 2, "internal-pll", "hclk", "gpio30"),
+> +	fld("us", 23, 1, "disable", "enable"),
+> +	fld("ssm1", 20, 1, "288", "divider"),
+> +	fld("sm1", 16, 4,
+> +	    "1", "2", "4", "8", "16", "32", "64", "128",
+> +	    "3", "6", "12", "24", "48", "96", "192", "384"),
+> +	fld("ssm0", 12, 1, "288", "divider"),
+> +	fld("sm0", 8, 4,
+> +	    "1", "2", "4", "8", "16", "32", "64", "128",
+> +	    "3", "6", "12", "24", "48", "96", "192", "384"),
+> +	fld("deb", 7, 1, "input-reference", "output"),
+> +	fld("a", 6, 1, "no-acpi", "acpi"),
+> +	fld("divider", 4, 2, "336", "288", "240", "192"),
+> +	fld("u", 3, 1, "normal", "simulation"),
+> +	fld("delay", 0, 3, "none", "0.5", "1.0", "1.5", "2.0", "2.5"),
+> +	{ .name = NULL },
+> +};
+> +
+> +static const struct dt_values misc_control[] = {
+> +	fld("pad", 30, 2, "24", "12", "8"),
+> +	fld("usbclk", 28, 2, "xtal", "96", "48"),
+> +	fld("ssp", 27, 1, "uart1", "ssp1"),
+> +	fld("lat", 26, 1, "disable", "enable"),
+> +	fld("fp", 25, 1, "18", "24"),
+> +	fld("freq", 24, 1, "24", "12"),
+> +	fld("refresh", 21, 2, "8", "16", "32", "64"),
+> +	fld("hold", 18, 3, "fifo-empty", "8", "16", "24", "32"),
+> +	fld("sh", 17, 1, "active-low", "active-high"),
+> +	fld("ii", 16, 1, "normal", "inverted"),
+> +	fld("pll", 15, 1, "disable", "enable"),
+> +	fld("gap", 13, 2, "0"),
+> +	fld("dac", 12, 1, "enable", "disable"),
+> +	fld("mc", 11, 1, "cpu", "8051"),
+> +	fld("bl", 10, 8, "1"),
+> +	fld("usb", 9, 1, "master", "slave"),
+> +	fld("vr", 4, 1, "0x1e00000", "0x3e00000"),
+> +	{ .name = NULL },
+> +};
 
-vb->cpu =3D raw_smp_processor_id();
-vbq =3D per_cpu_ptr(&vmap_block_queue, vb->cpu);
+I've been avoiding this set for a while now!
 
->
-> >
-> > I am on a vacation, responds can be with delays.
-> >
-> > --
-> > Uladzislau Rezki
+I appreciate the amount of work that you've put into this, but this is a
+bit of a disaster.  It's a hell of lot of over-complex infrastructure
+just to pull out some values from DT.
 
-Thanks
-Barry
+Forgive me if I have this wrong, but it looks like you're defining
+various structs then populating static versions with hard-coded offsets
+into DT arrays!  Then you have a bunch of hoop-jumpy functions to
+firstly parse the offset-structs, then conduct look-ups to pull the
+final value which in turn gets shifted into an encoded variable ready
+for to write out to the registers.  Bonkers.
+
+What does 'timing' even mean in this context?  Clocks?
+
+What other devices require this kind of handling?  Why is this device so
+different from all other supported devices to date?  Instead of
+attempting to shoehorn this into a 20 year old driver, why not reshape
+it to bring it into alignment with how we do things today?
+
+E.g. handle all clocking from the clock driver, all display settings
+(including timing?) from the display driver, etc.
+
+-- 
+Lee Jones [李琼斯]
 
