@@ -1,139 +1,103 @@
-Return-Path: <linux-kernel+bounces-197187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C20008D6735
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:48:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C771A8D6738
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:49:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CC7928D7D5
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:48:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 662701F23E71
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:49:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AA58179951;
-	Fri, 31 May 2024 16:47:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2D4017C7DC;
+	Fri, 31 May 2024 16:47:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AO8JJnSN"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RMZmCS90"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D47302135B;
-	Fri, 31 May 2024 16:47:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D40E4158204;
+	Fri, 31 May 2024 16:47:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717174036; cv=none; b=HADCIWRJ1rLh1eWV7GFC9/TsIwQ71B+33ANYzD7FEe6X5hJuOQ++0/rPbZsHQsdv+zlI70nAbI0TbhDh26Xgs3qETTAgcFQfIEBX+ndWJFVThZcLF5NYMv3UclQ60/j1l5Jpo8a6hgngqExJPYium7+6iA4tK/a7NlCdM/S+ezA=
+	t=1717174057; cv=none; b=ne1wMzS226Zx4oqivCo3Di86pqM5yOr6auee0skVWgPGrFHeyw5kZA3gCzcl0bNW/plQ5K0ryd6Sl6cdLOnOXEit4wgzLHIMLd+QkunceafTBXFNdCCdvmmgjvjUaqBE+aJ4/y4BlAQCzrCqf6b3I+yFiU3FnqESDfUd2QzvAtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717174036; c=relaxed/simple;
-	bh=2SgEjOmuNFBLLe0+7SAyTs4SGWcjz9Pq67jh9WJ2Fts=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=HlagHx1ztqAnarSpW5YeB2XfBbNTv62CAu9tfm/vpt6t4bIPePnsiRFBekcN6hKHJ6/vMabwvQIg34U9bap8ooY3AE1uEazH0GMecqDYQTA19mxqaw9gPkgwGoSX/sQasoS2ZTUdzdkhOnaw+MY5y/GJLuVG2JFwUmZK0niqi2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AO8JJnSN; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717174035; x=1748710035;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=2SgEjOmuNFBLLe0+7SAyTs4SGWcjz9Pq67jh9WJ2Fts=;
-  b=AO8JJnSNh0fRZIFgWRMPugHIFT/4Mv7xfwOdN+vFTsY+X7xl+jifm5K/
-   yYVZ+QfeHVADG0uRbpAW5vmMaZnAvz6TiS15mVAzjqUeyNwYNzh+bMSVU
-   +lE36bh4ohXotjWUHrloax+SLjG6E5meh0PG2dpaHc+ys02qnTldsTdU8
-   VH5fLjAcrZ17aoPkHUSsqawZdw5HL0tlRJ1NzFduP1jSfvntdS/C/1mqw
-   N/nyJfeWiSwV0o9JkGFQEys4wFLZhhsKiExps5JfOHXPO3DGvwNg92ky+
-   JgqMVMqMXpWHdeKVqSnR/IcuM/AA1/ozeBgqF5EbEF0XQX5SpI7dyvMHi
-   A==;
-X-CSE-ConnectionGUID: SC9SZymLSNuqO08Shf/Q5A==
-X-CSE-MsgGUID: iXkBcWBGSV6XpTZIjMOXmQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11089"; a="24358154"
-X-IronPort-AV: E=Sophos;i="6.08,204,1712646000"; 
-   d="scan'208";a="24358154"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 09:47:14 -0700
-X-CSE-ConnectionGUID: cCaAQX5DSi6Q4UTMRDa0tw==
-X-CSE-MsgGUID: 6hS50wyWTPSehV0W41e76w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,204,1712646000"; 
-   d="scan'208";a="67060896"
-Received: from lfiedoro-mobl.ger.corp.intel.com ([10.245.246.178])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 09:47:12 -0700
-Message-ID: <e2ff917300939bb017b8f587a66a93022f3d1eeb.camel@linux.intel.com>
-Subject: Re: [PATCH v2 3/6] platform/x86/intel: TPMI domain id and CPU
- mapping
-From: Tero Kristo <tero.kristo@linux.intel.com>
-To: Ilpo =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: srinivas.pandruvada@linux.intel.com, Hans de Goede
- <hdegoede@redhat.com>,  platform-driver-x86@vger.kernel.org, LKML
- <linux-kernel@vger.kernel.org>,  Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>
-Date: Fri, 31 May 2024 19:47:08 +0300
-In-Reply-To: <e56885a4-3344-b9f9-92d5-33c9af00636d@linux.intel.com>
-References: <8646d7dbeb507ce28b6ddca1222ee3c9892d61cc.camel@linux.intel.com>
-	 <20240528073457.497816-1-tero.kristo@linux.intel.com>
-	 <e56885a4-3344-b9f9-92d5-33c9af00636d@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.0-1build2 
+	s=arc-20240116; t=1717174057; c=relaxed/simple;
+	bh=oqcC5FJvmRrpt+Q4bwnChJ2q35ucR7vYxjPB38IK/vk=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=FrpcuavoZwwWJWwMen1sJQbxuk959IkiUMHXT6UGeaY9OJ9s/uxBuPZtww/gGgZthITMwzgJVe3nz1FruXjF4y88rwALiZT5HpiBDDomsUliH84/bBDCZuS78uYqYFxq/HQ8GczE/OKvCizCYpD5inYQltDwXf1tGYiO9VUHVow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RMZmCS90; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62BF6C116B1;
+	Fri, 31 May 2024 16:47:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717174056;
+	bh=oqcC5FJvmRrpt+Q4bwnChJ2q35ucR7vYxjPB38IK/vk=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+	b=RMZmCS90hvuAyg69z06WDbLwF228fxxOaWP0skxxUNsRpSZB9dwE7y4Dudwk9FYwk
+	 gJyqQUGxNWCRvl9VIOoeGQDfALTKGloW3V94GTEtPUitX3Npki6BuZ0WF8xH8eN0zJ
+	 9lX9AQbxRApKCdkRneS9NjCrGstD679r3O8b/5ygm2qPM6WOsTe6KjkPO93BtFhTu2
+	 Bd6+BI/6RVeoMdCCN9nGCJ0MDDHSuZnhmwoldG0u+3iQvWsSYVLX7G7zKBQWfw9uaJ
+	 h1qU9jOBj5zlPOdKnFoWc09uooaj4qj+285mcZ+yhLL42LIs4OKqllYoBiMzEkkpEU
+	 +fp30/koV94Uw==
+From: Kalle Valo <kvalo@kernel.org>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: Dave Jiang <dave.jiang@intel.com>,  Bjorn Helgaas <bhelgaas@google.com>,
+  <linux-wireless@vger.kernel.org>,  <ath11k@lists.infradead.org>,
+  <regressions@lists.linux.dev>,  Jeff Johnson <quic_jjohnson@quicinc.com>,
+  <linux-kernel@vger.kernel.org>,  <linux-cxl@vger.kernel.org>,
+  <linux-pci@vger.kernel.org>
+Subject: Re: [regression] BUG: KASAN: use-after-free in
+ lockdep_register_key+0x755/0x8f0
+References: <87v82y6wvi.fsf@kernel.org> <87wmncwqxf.fsf@kernel.org>
+	<87sexzx02f.fsf@kernel.org>
+	<66582bee45da8_6ec329496@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+	<87jzjbwxin.fsf@kernel.org> <87frtzww57.fsf@kernel.org>
+	<6659ee8b8dfd_166872941c@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+Date: Fri, 31 May 2024 19:47:32 +0300
+In-Reply-To: <6659ee8b8dfd_166872941c@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+	(Dan Williams's message of "Fri, 31 May 2024 08:36:43 -0700")
+Message-ID: <87y17qudwb.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain
 
-On Fri, 2024-05-31 at 16:45 +0300, Ilpo J=C3=A4rvinen wrote:
-> On Tue, 28 May 2024, Tero Kristo wrote:
->=20
-> > From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-> >=20
-> > Each TPMI power domain includes a group of CPUs. Several power
-> > management settings in this case applicable to a group of CPUs.
-> > There can be several power domains in a CPU package. So, provide
-> > interfaces for:
-> > - Get power domain id for a Linux CPU
-> > - Get mask of Linux CPUs in a power domain
-> >=20
-> > Hardware Punit uses different CPU numbering, which is not based on
-> > APIC (Advanced Programmable Interrupt Controller) CPU numbering.
-> > The Linux CPU numbering is based on APIC CPU numbering. Some PM
-> > features
-> > like Intel Speed Select, the CPU core mask provided by the hardware
-> > is
-> > based on the Punit CPU numbering. To use the core mask, this mask
-> > needs to be converted to a Linux CPUs mask. So, provide interfaces
-> > for:
-> > - Convert to a Linux CPU number from a Punit CPU number
-> > - Convert to a Punit CPU number from a Linux CPU number
-> >=20
-> > On each CPU online, MSR 0x54 is used to read the mapping and stores
-> > in
-> > a per cpu array. Create a hash for faster searching of a Linux CPU
-> > number
-> > from a Punit CPU number.
-> >=20
-> > Signed-off-by: Srinivas Pandruvada
-> > <srinivas.pandruvada@linux.intel.com>
-> > [tero.kristo: minor updates]
-> > Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
-> > Signed-off-by: Tero Kristo <tero.kristo@linux.intel.com>
-> > ---
-> > v2:
-> > =C2=A0 * changed to use X86_MATCH_VFM() instead of
-> > X86_MATCH_INTEL_FAM6_MODEL()
->=20
-> I've applied this v2 + the other patches from v1 series now to
-> review-ilpo=20
-> branch.
->=20
-> For the record, I removed "All rights reserved." lines from the
-> patches=20
-> while applying. I asking first (privately) a permission from Tero
-> whether=20
-> it's okay with him I remove those lines.
->=20
+Dan Williams <dan.j.williams@intel.com> writes:
 
-Thanks Ilpo!
+> Kalle Valo wrote:
+> [..]
+>> >> The proposed fix for that is here:
+>> >>
+>> >> http://lore.kernel.org/r/66560aa9dbedb_195e294b0@dwillia2-mobl3.amr.corp.intel.com.notmuch
+>> >
+>> > I get "Not Found" from that link, is there a typo?
+>> 
+>> I found this fix from for-linus branch:
+>> 
+>> # PCI: Fix missing lockdep annotation for pci_cfg_access_trylock()for-linus
+>> https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/commit/?h=for-linus&id=f941b9182c54a885a9d5d4cfd97af66873c98560
+>> 
+>> But at least that doesn't fix my crash.
+>
+> Sorry for the broken link I mistakenly used a message-id from an
+> internal thread with the intel.com reporter. However, it is moot now
+> because the new direction is to revert the lockdep infrastructure:
+>
+> https://lore.kernel.org/r/171711745834.1628941.5259278474013108507.stgit@dwillia2-xfh.jf.intel.com
+>
+> (that link works...)
 
--Tero
+Thanks, that links works :) I did a quick test with the three patches
+and I didn't see any crashes anymore. But to be confident I need to run
+overnight tests, I'll provide my Tested-by after that.
+
+-- 
+https://patchwork.kernel.org/project/linux-wireless/list/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
