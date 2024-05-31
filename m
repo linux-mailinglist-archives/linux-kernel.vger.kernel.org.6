@@ -1,302 +1,249 @@
-Return-Path: <linux-kernel+bounces-196074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3CAD8D56E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 02:23:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F2F78D56E7
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 02:26:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96B1428A71F
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 00:23:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EA761C23C51
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 00:26:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9F6BA3D;
-	Fri, 31 May 2024 00:22:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F26A31848;
+	Fri, 31 May 2024 00:26:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VXLlzU0i"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bw96Wql6"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF63C139E
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 00:22:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78F061103
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 00:26:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717114974; cv=none; b=ClyQ4dUe2kAwohxolfx9NxC3dtWzB04S5Lgl6gT69JtOliiVa+r/P9aVo4rFiyDo2Y4wozWcQwhAi14Ysz/AocKZSdkpWDDM8XBc+mrdrNxOo0+30uBU1BDkr9jCxXLYycR9A7yGc/w4ladNq5/2cDdyviA7PIEiLC38ZjXZSl8=
+	t=1717115167; cv=none; b=sQDsD5cHTow3Y3y/HwjctKUqDFGTcX+QLkBFCaC9f7p2lQFl+Q+3OJ7lPZMYBKB/DXkajDY3URSd5zWwFRXUTuCQxnYiBb+eWC0H75N9R2qx6AMjXN45jqgDMZv42trQFRIHfxf2hCanC0yDc9gkq3uYVx5qyWol1jg4UVDs5oE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717114974; c=relaxed/simple;
-	bh=a+MTHRbQZmyET4RE0SkjiFYdjs368VfVHQLAD7aFXJg=;
+	s=arc-20240116; t=1717115167; c=relaxed/simple;
+	bh=2Ky422DEIg3Jw2hTeXVdbGZmfah7IqL0/fd8RjVrXYQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IoFexvgzHX4MHErMZFdceZZxrKJrO3XnaksLvObxLWLm+D/8UWnP1XKZaNeueQXx7E0bQwhvNnTD7yccEipT0SQVtvBSObQrYS9thTt81gbGqHffotWj24Rn913WBjigwjwFKXbXuz6W9lsMS5xcuHkcEDW+S8Y4bzwor/dXsSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VXLlzU0i; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52b840a001dso1020591e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 17:22:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717114971; x=1717719771; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0yVVKFhmIVyi/gwbSmn3VSSTQQqssFlSlOSpKOH7IJg=;
-        b=VXLlzU0i3WzR4ZBScI9I1du86ITe1/++yytMBiCicYyoFgn5TWyQP/KBM8rBaX7bEm
-         K6X0Y/FBV6iTa4pyok/4/JubT0CDILaA5q55YO2zSgSzDNvnyW7ILJXs/9jvvJnr4ZRP
-         yw1cCmjHxxmzHZh146HwrENngKNQAeCVBVfqSkYavcbv8N2b6X0PDxz3gBNIQKI+sEPZ
-         OwHgrhkFNezkr9m9VWel7Xj1tXPB0d5sbw+mNgfcdU5jxiyWRi63hLABcUzGKRc2hRYM
-         KYPyiyrLFw/RkGnIzHA4ic+kRP6NT2wj2TbJKroz2MCM5Tn0GJwDRuijKAovNCAB8e0s
-         Y9cw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717114971; x=1717719771;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0yVVKFhmIVyi/gwbSmn3VSSTQQqssFlSlOSpKOH7IJg=;
-        b=nZvUqIg5GxrA5rsyzum5u64+g2uVzsKknWtsMra34EOBa55+WbazsOjxh4bVvtFXAV
-         OyV8hnuFAsgvYZcmAhqxoShnIRgGfVJ5JkPYcjJoubwYcec9R8DUez4HlNf7lrIcQ6t9
-         r1hUF0tHI5YjJ3j4meanzY/AMNjTnP1vEfs42f8b4tYtNQNWElzBrretSY1XC6coAkqr
-         zoHkNsbud96mLANNpHpruUXRP4gYbOHEq1DQtAnUSHnwlJ2c3f+CTA0WnIVlQU63dnIb
-         vPPMS76euaUeSke/bWKHoYFzqp8uZ2APX8No3m0zNLZj/9rJKOL7BsmqY+TOKYC06im3
-         gGBw==
-X-Forwarded-Encrypted: i=1; AJvYcCWB90k0ag+7k8xmJ2XOBGpD9lhU55lNzBNC0/q+E/U2pPDlR9B5vh98eyT0yCvWlCXHtMu3wMbribTeE/fUjwy2ElAmnOc+oCCeCgiv
-X-Gm-Message-State: AOJu0YyMCyFB1iR9h6bn/tPFKNi9ENB/94bHC8tn38vUnNpTLyvu3jJo
-	cX5uBri4CnvkIfk2YRMQjk06CEKNiX7pcf4CMcK/aGSBCYu8twTgp47FxEuasVY=
-X-Google-Smtp-Source: AGHT+IGwyTjaK7sTOD0lwTEcc8h2FpDlgvXSpJCoPLo5Nq2Xn4TWRqpsowc5anXlgkfZ9x1bVaT+CA==
-X-Received: by 2002:a19:7519:0:b0:523:9811:b0d6 with SMTP id 2adb3069b0e04-52b8959c577mr100931e87.15.1717114970664;
-        Thu, 30 May 2024 17:22:50 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52b84d34cdasm135780e87.50.2024.05.30.17.22.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 May 2024 17:22:49 -0700 (PDT)
-Date: Fri, 31 May 2024 03:22:48 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Hans de Goede <hdegoede@redhat.com>, 
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	platform-driver-x86@vger.kernel.org, linux-usb@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	Nikita Travkin <nikita@trvn.ru>
-Subject: Re: [PATCH v4 3/6] usb: typec: ucsi: add Lenovo Yoga C630 glue driver
-Message-ID: <bo6jvoew3s37g753nclbx3badpnnhxs53myuaqb3whr5zb4tf3@fcra5ic6y6wo>
-References: <20240528-yoga-ec-driver-v4-0-4fa8dfaae7b6@linaro.org>
- <20240528-yoga-ec-driver-v4-3-4fa8dfaae7b6@linaro.org>
- <afed0bee-de6e-4e86-8437-0518c616bd2c@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fXVtyz+s9QDEOErsdY3rl+e3HKbX/L94Dp6FGK62V6dn7PTZ1uWMBnQVgSjtVEpy1AhPUqzh+HG/ujlb3k/LYLrxouDPX/WHJt9MGG+rxaM+1NKHQEzC+bATJzIVe9ZRkwNU6JFQ7Cgf6t9+2zaM1/12rxIzqCTLLZ+3tPwgF/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bw96Wql6; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717115166; x=1748651166;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=2Ky422DEIg3Jw2hTeXVdbGZmfah7IqL0/fd8RjVrXYQ=;
+  b=bw96Wql6p9A2pYMVBIXbr+vg5HN8h0jheMR7d+/8UmSrQjLjYPGnXqhk
+   nGge/yOn1Y5syDNLy4p3W3fleDeUsMmrOxW96piQAfZkJifd2+V7zh0+7
+   R2RDpACg8oGIqtLWFmHZ/bnzNKiUrXh73UU8ecX4b1Pa2tQB1HidBVlw3
+   g2KFcS2YWyGe2XsepXGcnCF364tshAyjb7cD1lBm1+kOqjDajuob3QHeh
+   Q1JrUR8WgNa2lY5pbZ+/8yqq6mqSgASDbc0NLlsF6t3gE8rxol0wGXw64
+   ux6/tNBppwV9x5fuWlA221mv5w5t46ljzgao/1oIzQXwLe+6ciyg2V7WQ
+   Q==;
+X-CSE-ConnectionGUID: npR27lYaSkWusslgCz1Lvg==
+X-CSE-MsgGUID: JKBtuZj7RpGbj4NmxCEfjQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="31174383"
+X-IronPort-AV: E=Sophos;i="6.08,202,1712646000"; 
+   d="scan'208";a="31174383"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 17:26:05 -0700
+X-CSE-ConnectionGUID: t983usbUQuSTBLOpcIAgLA==
+X-CSE-MsgGUID: K5mKGmECQnWD1/FSUh7mbg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,202,1712646000"; 
+   d="scan'208";a="35952940"
+Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 17:26:04 -0700
+Date: Thu, 30 May 2024 17:26:03 -0700
+From: Tony Luck <tony.luck@intel.com>
+To: Reinette Chatre <reinette.chatre@intel.com>
+Cc: Fenghua Yu <fenghua.yu@intel.com>,
+	Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
+	Peter Newman <peternewman@google.com>,
+	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>,
+	Drew Fustini <dfustini@baylibre.com>,
+	Dave Martin <Dave.Martin@arm.com>, x86@kernel.org,
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Subject: Re: [PATCH v19 08/20] x86/resctrl: Prepare for new Sub-NUMA Cluster
+ (SNC) monitor files
+Message-ID: <ZlkZG5bgsU6hY0Ok@agluck-desk3.sc.intel.com>
+References: <20240528222006.58283-1-tony.luck@intel.com>
+ <20240528222006.58283-9-tony.luck@intel.com>
+ <fe9a4cd5-f74d-4c89-8667-8b5b1841b84e@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <afed0bee-de6e-4e86-8437-0518c616bd2c@linaro.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <fe9a4cd5-f74d-4c89-8667-8b5b1841b84e@intel.com>
 
-On Wed, May 29, 2024 at 04:41:40PM +0100, Bryan O'Donoghue wrote:
-> On 28/05/2024 21:44, Dmitry Baryshkov wrote:
-> > The Lenovo Yoga C630 WOS laptop provides implements UCSI interface in
-> > the onboard EC. Add glue driver to interface the platform's UCSI
-> > implementation.
+On Thu, May 30, 2024 at 01:21:01PM -0700, Reinette Chatre wrote:
+> Hi Tony,
+> 
+> On 5/28/24 3:19 PM, Tony Luck wrote:
+> > When SNC is enabled monitoring data is collected at the SNC node
+> > granularity, but must be reported at L3-cache granularity for
+> > backwards compatibility in addition to reporting at the node
+> > level.
 > > 
-> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > Add a "ci" field to the rdt_mon_domain structure to save the
+> > cache information about the enclosing L3 cache for the domain.
+> > This provides:
+> > 
+> > 1) The cache id which is needed to compose the name of the legacy
+> > monitoring directory, and to determine which domains should be
+> > summed to provide L3-scoped data.
+> > 
+> > 2) The shared_cpu_map which is needed to determine which CPUs can
+> > be used to read the RMID counters with the MSR interface.
+> > 
+> > This is the first step to an eventual goal of monitor reporting files
+> > like this (for a system with two SNC nodes per L3):
+> > 
+> > $ cd /sys/fs/resctrl/mon_data
+> > $ tree mon_L3_00
+> > mon_L3_00			<- 00 here is L3 cache id
+> > ├── llc_occupancy		\  These files provide legacy support
+> > ├── mbm_local_bytes		 > for non-SNC aware monitor apps
+> > ├── mbm_total_bytes		/  that expect data at L3 cache level
+> > ├── mon_sub_L3_00		<- 00 here is SNC node id
+> > │   ├── llc_occupancy		\  These files are finer grained
+> > │   ├── mbm_local_bytes		 > data from each SNC node
+> > │   └── mbm_total_bytes		/
+> > └── mon_sub_L3_01
+> >      ├── llc_occupancy		\
+> >      ├── mbm_local_bytes		 > As above, but for node 1.
+> >      └── mbm_total_bytes		/
+> > 
+> > Signed-off-by: Tony Luck <tony.luck@intel.com>
 > > ---
-> >   drivers/usb/typec/ucsi/Kconfig          |   9 ++
-> >   drivers/usb/typec/ucsi/Makefile         |   1 +
-> >   drivers/usb/typec/ucsi/ucsi_yoga_c630.c | 189 ++++++++++++++++++++++++++++++++
-> >   3 files changed, 199 insertions(+)
+> >   include/linux/resctrl.h                   |  2 ++
+> >   arch/x86/kernel/cpu/resctrl/internal.h    | 21 +++++++++++++++++++++
+> >   arch/x86/kernel/cpu/resctrl/core.c        |  7 ++++++-
+> >   arch/x86/kernel/cpu/resctrl/pseudo_lock.c |  1 -
+> >   arch/x86/kernel/cpu/resctrl/rdtgroup.c    |  1 -
+> >   5 files changed, 29 insertions(+), 3 deletions(-)
 > > 
-> > diff --git a/drivers/usb/typec/ucsi/Kconfig b/drivers/usb/typec/ucsi/Kconfig
-> > index bdcb1764cfae..680e1b87b152 100644
-> > --- a/drivers/usb/typec/ucsi/Kconfig
-> > +++ b/drivers/usb/typec/ucsi/Kconfig
-> > @@ -69,4 +69,13 @@ config UCSI_PMIC_GLINK
-> >   	  To compile the driver as a module, choose M here: the module will be
-> >   	  called ucsi_glink.
-> > +config UCSI_LENOVO_YOGA_C630
-> > +	tristate "UCSI Interface Driver for Lenovo Yoga C630"
-> > +	depends on EC_LENOVO_YOGA_C630
-> > +	help
-> > +	  This driver enables UCSI support on the Lenovo Yoga C630 laptop.
-> > +
-> > +	  To compile the driver as a module, choose M here: the module will be
-> > +	  called ucsi_yoga_c630.
-> > +
-> >   endif
-> > diff --git a/drivers/usb/typec/ucsi/Makefile b/drivers/usb/typec/ucsi/Makefile
-> > index b4679f94696b..aed41d23887b 100644
-> > --- a/drivers/usb/typec/ucsi/Makefile
-> > +++ b/drivers/usb/typec/ucsi/Makefile
-> > @@ -21,3 +21,4 @@ obj-$(CONFIG_UCSI_ACPI)			+= ucsi_acpi.o
-> >   obj-$(CONFIG_UCSI_CCG)			+= ucsi_ccg.o
-> >   obj-$(CONFIG_UCSI_STM32G0)		+= ucsi_stm32g0.o
-> >   obj-$(CONFIG_UCSI_PMIC_GLINK)		+= ucsi_glink.o
-> > +obj-$(CONFIG_UCSI_LENOVO_YOGA_C630)	+= ucsi_yoga_c630.o
-> > diff --git a/drivers/usb/typec/ucsi/ucsi_yoga_c630.c b/drivers/usb/typec/ucsi/ucsi_yoga_c630.c
-> > new file mode 100644
-> > index 000000000000..ca1ab5c81b87
-> > --- /dev/null
-> > +++ b/drivers/usb/typec/ucsi/ucsi_yoga_c630.c
-> > @@ -0,0 +1,189 @@
-> > +// SPDX-License-Identifier: GPL-2.0-only
+> > diff --git a/include/linux/resctrl.h b/include/linux/resctrl.h
+> > index 64b6ad1b22a1..d733e1f6485d 100644
+> > --- a/include/linux/resctrl.h
+> > +++ b/include/linux/resctrl.h
+> > @@ -96,6 +96,7 @@ struct rdt_ctrl_domain {
+> >   /**
+> >    * struct rdt_mon_domain - group of CPUs sharing a resctrl monitor resource
+> >    * @hdr:		common header for different domain types
+> > + * @ci:			cache info for this domain
+> >    * @rmid_busy_llc:	bitmap of which limbo RMIDs are above threshold
+> >    * @mbm_total:		saved state for MBM total bandwidth
+> >    * @mbm_local:		saved state for MBM local bandwidth
+> > @@ -106,6 +107,7 @@ struct rdt_ctrl_domain {
+> >    */
+> >   struct rdt_mon_domain {
+> >   	struct rdt_domain_hdr		hdr;
+> > +	struct cacheinfo		*ci;
+> >   	unsigned long			*rmid_busy_llc;
+> >   	struct mbm_state		*mbm_total;
+> >   	struct mbm_state		*mbm_local;
+> > diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
+> > index 135190e0711c..eb70d3136ced 100644
+> > --- a/arch/x86/kernel/cpu/resctrl/internal.h
+> > +++ b/arch/x86/kernel/cpu/resctrl/internal.h
+> > @@ -2,6 +2,7 @@
+> >   #ifndef _ASM_X86_RESCTRL_INTERNAL_H
+> >   #define _ASM_X86_RESCTRL_INTERNAL_H
+> > +#include <linux/cacheinfo.h>
+> >   #include <linux/resctrl.h>
+> >   #include <linux/sched.h>
+> >   #include <linux/kernfs.h>
+> > @@ -509,6 +510,26 @@ static inline bool resctrl_arch_get_cdp_enabled(enum resctrl_res_level l)
+> >   int resctrl_arch_set_cdp_enabled(enum resctrl_res_level l, bool enable);
 > > +/*
-> > + * Copyright (c) 2022-2024, Linaro Ltd
-> > + * Authors:
-> > + *    Bjorn Andersson
-> > + *    Dmitry Baryshkov
+> > + * Get the cacheinfo structure of the cache associated with @cpu at level @level.
+> > + * cpuhp lock must be held.
 > > + */
-> > +#include <linux/auxiliary_bus.h>
-> > +#include <linux/module.h>
-> > +#include <linux/platform_data/lenovo-yoga-c630.h>
-> > +
-> > +#include "ucsi.h"
-> > +
-> > +struct yoga_c630_ucsi {
-> > +	struct yoga_c630_ec *ec;
-> > +	struct ucsi *ucsi;
-> > +	struct notifier_block nb;
-> > +	struct completion complete;
-> > +	unsigned long flags;
-> > +#define UCSI_C630_COMMAND_PENDING	0
-> > +#define UCSI_C630_ACK_PENDING		1
-> > +	u16 version;
-> > +};
-> > +
-> > +static  int yoga_c630_ucsi_read(struct ucsi *ucsi, unsigned int offset,
-> > +				void *val, size_t val_len)
+> > +static inline struct cacheinfo *get_cpu_cacheinfo_level(int cpu, int level)
 > > +{
-> > +	struct yoga_c630_ucsi *uec = ucsi_get_drvdata(ucsi);
-> > +	u8 buf[YOGA_C630_UCSI_READ_SIZE];
-> > +	int ret;
+> > +	struct cpu_cacheinfo *ci = get_cpu_cacheinfo(cpu);
+> > +	int i;
 > > +
-> > +	ret = yoga_c630_ec_ucsi_read(uec->ec, buf);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	if (offset == UCSI_VERSION) {
-> > +		memcpy(val, &uec->version, min(val_len, sizeof(uec->version)));
-> > +		return 0;
+> > +	for (i = 0; i < ci->num_leaves; i++) {
+> > +		if (ci->info_list[i].level == level) {
+> > +			if (ci->info_list[i].attributes & CACHE_ID)
+> > +				return &ci->info_list[i];
+> > +			break;
+> > +		}
 > > +	}
 > > +
-> > +	if (offset == UCSI_CCI)
-> > +		memcpy(val, buf,
-> > +		       min(val_len, YOGA_C630_UCSI_CCI_SIZE));
-> > +	else if (offset == UCSI_MESSAGE_IN)
-> > +		memcpy(val, buf + YOGA_C630_UCSI_CCI_SIZE,
-> > +		       min(val_len, YOGA_C630_UCSI_DATA_SIZE));
-> 
-> For some reason I believe multi-lines like this, including function calls
-> that are split over lines should be encapsulated with {}
-> 
-> else if(x) {
->     memcpy(x,y,
->            z);
-> }
-> 
-> If checkpatch doesn't complain about it feel free not to do that though.
-
-No, checkpatch --strict doesn't complain
-
-> 
-> > +	else
-> > +		return -EINVAL;
-> > +
-> > +	return 0;
+> > +	return NULL;
 > > +}
 > > +
-> > +static  int yoga_c630_ucsi_async_write(struct ucsi *ucsi, unsigned int offset,
-> > +				       const void *val, size_t val_len)
-> > +{
-> > +	struct yoga_c630_ucsi *uec = ucsi_get_drvdata(ucsi);
-> > +
-> > +	if (offset != UCSI_CONTROL ||
-> > +	    val_len != YOGA_C630_UCSI_WRITE_SIZE)
-> > +		return -EINVAL;
-> > +
-> > +	return yoga_c630_ec_ucsi_write(uec->ec, val);
-> > +}
-> > +
-> > +static  int yoga_c630_ucsi_sync_write(struct ucsi *ucsi, unsigned int offset,
-> > +				      const void *val, size_t val_len)
-> > +{
-> > +	struct yoga_c630_ucsi *uec = ucsi_get_drvdata(ucsi);
-> > +	bool ack = UCSI_COMMAND(*(u64 *)val) == UCSI_ACK_CC_CI;
-> > +	int ret;
-> > +
-> > +	if (ack)
-> > +		set_bit(UCSI_C630_ACK_PENDING, &uec->flags);
-> > +	else
-> > +		set_bit(UCSI_C630_COMMAND_PENDING, &uec->flags);
-> > +
-> > +	reinit_completion(&uec->complete);
-> > +
-> > +	ret = yoga_c630_ucsi_async_write(ucsi, offset, val, val_len);
-> > +	if (ret)
-> > +		goto out_clear_bit;
-> > +
-> > +	if (!wait_for_completion_timeout(&uec->complete, 5 * HZ))
-> > +		ret = -ETIMEDOUT;
-> > +
-> > +out_clear_bit:
-> > +	if (ack)
-> > +		clear_bit(UCSI_C630_ACK_PENDING, &uec->flags);
-> > +	else
-> > +		clear_bit(UCSI_C630_COMMAND_PENDING, &uec->flags);
-> > +
-> > +	return ret;
-> > +}
-> > +
-> > +const struct ucsi_operations yoga_c630_ucsi_ops = {
-> > +	.read = yoga_c630_ucsi_read,
-> > +	.sync_write = yoga_c630_ucsi_sync_write,
-> > +	.async_write = yoga_c630_ucsi_async_write,
-> > +};
-> > +
-> > +static int yoga_c630_ucsi_notify(struct notifier_block *nb,
-> > +				 unsigned long action, void *data)
-> > +{
-> > +	struct yoga_c630_ucsi *uec = container_of(nb, struct yoga_c630_ucsi, nb);
-> > +	u32 cci;
-> > +	int ret;
-> > +
-> > +	if (action == LENOVO_EC_EVENT_USB || action == LENOVO_EC_EVENT_HPD) {
-> > +		ucsi_connector_change(uec->ucsi, 1);
-> > +		return NOTIFY_OK;
-> > +	}
-> > +
-> > +	if (action != LENOVO_EC_EVENT_UCSI)
-> > +		return NOTIFY_DONE;
 > 
-> Is this disjunction on action a good candidate for a switch(){}
+> This does not belong in resctrl. It really looks to partner well with existing
+> cache helpers in include/linux/cacheinfo.h that already contains get_cpu_cacheinfo_id().
+> Considering the existing naming get_cpu_cacheinfo() may be more appropriate.
 
-Ack, refactored the function by extracting the UCSI notification code
-and then using the switch-case.
+Reinette,
 
-> > +
-> > +	ret = uec->ucsi->ops->read(uec->ucsi, UCSI_CCI, &cci, sizeof(cci));
-> > +	if (ret)
-> > +		return NOTIFY_DONE;
-> > +
-> > +	if (UCSI_CCI_CONNECTOR(cci))
-> > +		ucsi_connector_change(uec->ucsi, UCSI_CCI_CONNECTOR(cci));
-> > +
-> > +	if (cci & UCSI_CCI_ACK_COMPLETE &&
-> > +	    test_bit(UCSI_C630_ACK_PENDING, &uec->flags))
-> > +		complete(&uec->complete);
-> > +	if (cci & UCSI_CCI_COMMAND_COMPLETE &&
-> > +	    test_bit(UCSI_C630_COMMAND_PENDING, &uec->flags))
-> > +		complete(&uec->complete);
-> 
-> IMO these multi-line clauses should end up with a {} around the complete
-> even though its not required.
-> 
-> Emphasis on the O.
+The name get_cpu_cacheinfo() already exists and does something different
+(returns a "struct cpu_cacheinfo *" rather than a "struct cacheinfo *").
 
-I added an empty line inbetween, then it's easier to comprehent event
-without curly brackets.
+How does this look for the change to <linux/cacheinfo.h> ... add a new
+function get_cpu_cacheinfo_level() and then use it as a helper for the
+existing get_cpu_cacheinfo_id()
 
-> 
-> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+-Tony
 
--- 
-With best wishes
-Dmitry
+---
+
+diff --git a/include/linux/cacheinfo.h b/include/linux/cacheinfo.h
+index 2cb15fe4fe12..301b0b24f446 100644
+--- a/include/linux/cacheinfo.h
++++ b/include/linux/cacheinfo.h
+@@ -113,10 +113,10 @@ int acpi_get_cache_info(unsigned int cpu,
+ const struct attribute_group *cache_get_priv_group(struct cacheinfo *this_leaf);
+ 
+ /*
+- * Get the id of the cache associated with @cpu at level @level.
++ * Get the cacheinfo structure for cache associated with @cpu at level @level.
+  * cpuhp lock must be held.
+  */
+-static inline int get_cpu_cacheinfo_id(int cpu, int level)
++static inline struct cacheinfo *get_cpu_cacheinfo_level(int cpu, int level)
+ {
+ 	struct cpu_cacheinfo *ci = get_cpu_cacheinfo(cpu);
+ 	int i;
+@@ -124,12 +124,23 @@ static inline int get_cpu_cacheinfo_id(int cpu, int level)
+ 	for (i = 0; i < ci->num_leaves; i++) {
+ 		if (ci->info_list[i].level == level) {
+ 			if (ci->info_list[i].attributes & CACHE_ID)
+-				return ci->info_list[i].id;
+-			return -1;
++				return &ci->info_list[i];
++			return NULL;
+ 		}
+ 	}
+ 
+-	return -1;
++	return NULL;
++}
++
++/*
++ * Get the id of the cache associated with @cpu at level @level.
++ * cpuhp lock must be held.
++ */
++static inline int get_cpu_cacheinfo_id(int cpu, int level)
++{
++	struct cacheinfo *ci = get_cpu_cacheinfo_level(cpu, level);
++
++	return ci ? ci->id : -1;
+ }
+ 
+ #ifdef CONFIG_ARM64
 
