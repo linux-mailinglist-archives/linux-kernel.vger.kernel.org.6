@@ -1,56 +1,58 @@
-Return-Path: <linux-kernel+bounces-197588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AAD28D6CD5
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 01:26:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFA8E8D6CD9
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 01:29:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46C7F283FAF
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 23:26:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBB8F1C21EAC
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 23:29:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE45E12FB3C;
-	Fri, 31 May 2024 23:26:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B3C412F382;
+	Fri, 31 May 2024 23:29:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="kwYlGvyp"
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="oBeaRRpv"
 Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54B2878C6B;
-	Fri, 31 May 2024 23:26:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14C98168DA;
+	Fri, 31 May 2024 23:29:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717197980; cv=none; b=uevjUV9IsjhubeKEr8b3g1A6HNJ84GD3VgX8w+x6I37nSGkaSWOscMHwp6J1pgUrzfoWGrupBKDtyMPej4HG16dBrxcoRZL+VVdvQsMKX0Dy9UeGiUwjdGfJJjRxwDEsVyNI1qZFrzvL1Vcei3mGkY50gJJNit74ntszfBZo4D4=
+	t=1717198168; cv=none; b=Ge/8Pv5wBwSbT0WwxhRKnNwg/WDWbXpU65q4xo5y+V3vLKBZTXqLafYcKtyLvWoKlQcK4ihkXFf6MN2Vi4z4BmpoOYvQBfnLwfr5pRaG67HEk76ISU2m7b/BRz2bQ5AM3bwCKyoqVrOIYlCTuAVLNC+w1tH1LXsk7nSnFXZBfq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717197980; c=relaxed/simple;
-	bh=B0pPDbnAb7hRdzyB8cEx37CKFq5iJ/SosfuXcRSxFGw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XKDeatvfsnQtz4ArMwJuKKzr6FN/QtyOFKp+vNr2vGjbHSlzSy+s0xEoYY28CUvV8RFGsJiWBYIGHphiFvmQK8CZ9/yxf7aXLfRk3meuQw5/sGMH7PGk0DKeSxnGFcc6FY/aPv1SR22rg2Dsjye+VLpuyl/1KcajnUYyLuSamJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=kwYlGvyp; arc=none smtp.client-ip=46.235.229.95
+	s=arc-20240116; t=1717198168; c=relaxed/simple;
+	bh=fxw6B70FoOVHtyTlYXBc6aAzqLvR9TS1xLMCWUQqPgQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qm/HBVCFf2F8zt0aGYrHoHHTNKfzqC1fmK/kKdzHHq+6y1wx78gKOpPq04Y2a/mFMGsm011jmDMugrTeicGses0ahZ5w7kMViiVLM6tsfgIKXdyETlwV+WNh+1wiEOc6AyLj3OTfla+jMQh2W8waggfHxrijGqksWO59nGH15hU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=oBeaRRpv; arc=none smtp.client-ip=46.235.229.95
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
 	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=D0aUf4VLrYRqzhX0VDVQARX/uQ0oFHnPScKI/A6/dNo=; b=kwYlGvypq49DTgi8
-	BefjOjYXjAQd67rKGQj5iHX3o+66pY4WGYI9DSDU4lRg9LCQHk0dgimvlwLlEGpVUqAaptrRDZjKA
-	JzyxI3eT+HJ8+mHHBB4m3wSRilnzFH+mIw+fQl0kN9WtV0ibC5xuFZbPJraRWyHMQKNK8UnsXCNou
-	Yv65tU8nu6GZBIZ4UTSvxQY2JhZ9XxlTPs/JCFa2jD6raVF86ZW1kA4XokBpwhI/NKignde4DRvI1
-	R9oIbPKC013UCgHF1bvKgDcaBh7x6EUWiQoA5beITq5LSWVqEhk60uarTPM0F1lGSN474M52BWh8O
-	o6oZnJBejBhthIL1oA==;
+	:Subject; bh=LHsHHWwS81QuUEO9BxZ97COZKyQ2LJ0ITfj9uotAElo=; b=oBeaRRpvvRUorjtd
+	kRgY/2XFiAiMKflmRoFnGG1x9CQ/RhIZDrDqUmLSGpPBZ+somJwlexH0wIVJN9LVzbgbx2QqhuqAM
+	sMONU6ZkcXD1y1twmR/8ltXhQHzz3bxiU0oGJN+HbwV7AS4abmjOn+6lH4vqlmEWVOMMtXnu4kW9B
+	9CKgBfmjKsu3KZmkeDmBpOs2HCNf+08mKZYzt1ipZh+2dv4L0lC60napmL+oaQWyFyD31xS+/v/Ti
+	0BiCD4zSMrOH3RV3KkQooL+NWq43ncO8mysE8Pl92rvlvqpO1dLrXkyq0GFi9CozBaXIoCBZQb5UY
+	6yHH50wAdBw0Kq3Nsw==;
 Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
 	by mx.treblig.org with esmtp (Exim 4.96)
 	(envelope-from <linux@treblig.org>)
-	id 1sDBdW-003gRb-20;
-	Fri, 31 May 2024 23:26:15 +0000
+	id 1sDBgT-003gTW-2w;
+	Fri, 31 May 2024 23:29:18 +0000
 From: linux@treblig.org
-To: marcel@holtmann.org,
-	johan.hedberg@gmail.com
-Cc: linux-bluetooth@vger.kernel.org,
+To: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] Bluetooth: iso: remove unused struct 'iso_list_data'
-Date: Sat,  1 Jun 2024 00:26:14 +0100
-Message-ID: <20240531232614.302215-1-linux@treblig.org>
+Subject: [PATCH] net: caif: remove unused structs
+Date: Sat,  1 Jun 2024 00:29:17 +0100
+Message-ID: <20240531232917.302386-1-linux@treblig.org>
 X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -62,32 +64,51 @@ Content-Transfer-Encoding: 8bit
 
 From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-'iso_list_data' has been unused since the original
-commit ccf74f2390d6 ("Bluetooth: Add BTPROTO_ISO socket type").
+'cfpktq' has been unused since
+commit 73d6ac633c6c ("caif: code cleanup").
 
-Remove it.
+'caif_packet_funcs' is declared but never defined.
+
+Remove both of them.
 
 Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 ---
- net/bluetooth/iso.c | 5 -----
- 1 file changed, 5 deletions(-)
+ include/net/caif/caif_layer.h | 2 --
+ net/caif/cfpkt_skbuff.c       | 7 -------
+ 2 files changed, 9 deletions(-)
 
-diff --git a/net/bluetooth/iso.c b/net/bluetooth/iso.c
-index cc055b952ce6..e439c5d15092 100644
---- a/net/bluetooth/iso.c
-+++ b/net/bluetooth/iso.c
-@@ -1721,11 +1721,6 @@ static void iso_sock_ready(struct sock *sk)
- 	release_sock(sk);
- }
+diff --git a/include/net/caif/caif_layer.h b/include/net/caif/caif_layer.h
+index 51f7bb42a936..0f45d875905f 100644
+--- a/include/net/caif/caif_layer.h
++++ b/include/net/caif/caif_layer.h
+@@ -11,9 +11,7 @@
  
--struct iso_list_data {
--	struct hci_conn *hcon;
--	int count;
+ struct cflayer;
+ struct cfpkt;
+-struct cfpktq;
+ struct caif_payload_info;
+-struct caif_packet_funcs;
+ 
+ #define CAIF_LAYER_NAME_SZ 16
+ 
+diff --git a/net/caif/cfpkt_skbuff.c b/net/caif/cfpkt_skbuff.c
+index 7796414d47e5..2ae8cfa3df88 100644
+--- a/net/caif/cfpkt_skbuff.c
++++ b/net/caif/cfpkt_skbuff.c
+@@ -21,13 +21,6 @@ do {					   \
+ 	pr_warn(errmsg);		   \
+ } while (0)
+ 
+-struct cfpktq {
+-	struct sk_buff_head head;
+-	atomic_t count;
+-	/* Lock protects count updates */
+-	spinlock_t lock;
 -};
 -
- static bool iso_match_big(struct sock *sk, void *data)
- {
- 	struct hci_evt_le_big_sync_estabilished *ev = data;
+ /*
+  * net/caif/ is generic and does not
+  * understand SKB, so we do this typecast
 -- 
 2.45.1
 
