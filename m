@@ -1,154 +1,163 @@
-Return-Path: <linux-kernel+bounces-197168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B7748D6701
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:37:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DAAE8D6705
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:38:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6708E1C230D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:37:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6AA729199C
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:38:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F75315CD63;
-	Fri, 31 May 2024 16:37:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 467D016E867;
+	Fri, 31 May 2024 16:38:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pbx5tB6E"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BrhqG8en"
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C368156242;
-	Fri, 31 May 2024 16:37:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 127B015884F
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 16:38:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717173470; cv=none; b=fCnF8tfuXmInUjYstBgD9fnQMdVZRHs11qbzWsLZ1H/uTaHNeA9QSWxFR4mqaGvS2gwnWtjorvu0cQXburXkG36yPzZW7F4fiYAHvMez4Nc50Yk3vpiIJignvFNFxVUl8a0cWmO8ms5dXp0K+2Bl9rHLz5NPa4DvthyCyy1Ti5k=
+	t=1717173497; cv=none; b=Qryvb6rADWBcsC4g4JV3Hv8BQLADLmaSU660BN+qohFKMWdT60YISVF9XGBKZ3eyjUMsWrvWlKf7+nxNWfM3XDVn8ujB3NjOiPIVFksuaKpnUQw08jMJXMiJgaT7X1Efim5I2f9otAQQy5NihAdiTmvTsnndt3IrkIqp6dM2Vlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717173470; c=relaxed/simple;
-	bh=yJj+uTKHabFp9ExqWi8oH1v5GAHx4lefIOwY+fHlkHM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QjLWutvcTTIZkRXgElzDtwn5fIIfqmCZHcRAh4+TZkvpsvYWk3a/d7svcyEXzI2Mb6d6tqdrIilXnYVZRisi13ceDGN3KWRdqazLYZR1jQyj11RsJFElAkaTprv6RNV4lm9g2bvSnWyt9hfzSR+ANgIjzprKBbEP7ro0BfO+0v8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pbx5tB6E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB5EAC116B1;
-	Fri, 31 May 2024 16:37:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717173470;
-	bh=yJj+uTKHabFp9ExqWi8oH1v5GAHx4lefIOwY+fHlkHM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pbx5tB6EjU8+CQhUNFFeLFjkG6M4wf7N1ZqBBfLq34zjyuW3Q9dzlO310MNFIqwdW
-	 BVI0NbqZQBJeT7JNfabPA9WPA0ssc377p6MAh54bu75FD6S2zbqla569thgaFQ5ZGG
-	 RT/LWTZU+podZE/cBP+kBG+/Ne1q/Zga+E5AAtUk8m2UpcxN7umEYpZyWpvIz3+OeB
-	 BJZ1+fk9pAF6gs5E9k9hIOY+fqMSRCWXz5/7ctlKHYxt0E0L1o7wSzq9juCJgOjrcL
-	 4j52ZL+o/Fudtohd6jUmHask27nHWgPyjXlu8oTQJPjfq7F+pExslZ8UaIZMWOjBrH
-	 bX/3M+xxfgaCw==
-Date: Fri, 31 May 2024 09:37:49 -0700
-From: Kees Cook <kees@kernel.org>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
-	David Rientjes <rientjes@google.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
-	"GONG, Ruiqi" <gongruiqi@huaweicloud.com>,
-	Xiu Jianfeng <xiujianfeng@huawei.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	Jann Horn <jannh@google.com>, Matteo Rizzo <matteorizzo@google.com>,
-	Thomas Graf <tgraf@suug.ch>,
-	Herbert Xu <herbert@gondor.apana.org.au>, julien.voisin@dustri.org,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v3 4/6] mm/slab: Introduce kmem_buckets_create() and
- family
-Message-ID: <202405310932.B47B632@keescook>
-References: <20240424213019.make.366-kees@kernel.org>
- <20240424214104.3248214-4-keescook@chromium.org>
- <eab4f90c-bfb2-4595-9f52-f88146310c6f@suse.cz>
+	s=arc-20240116; t=1717173497; c=relaxed/simple;
+	bh=k6V/f1+BsCmlpZVVeAjfyvro0dNzpctVLuN3eNRB7DY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TIO/MkDsjB2ivg+pRLbE8IH3JgKF2ljYTg1C89A38sMepy12lXQlHQpc/N20TuZVtQU4VGYym8YpMf+BdMaKuUSEyinTLQRmBEip1FhFFPvB9sI+dwCWCIQbf7Jstmo8xMk3iPWHEFlJXl+xP0YoT+jYhzJTYUcK4TFiiH9LjQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BrhqG8en; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-43e14f0bd75so141cf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 09:38:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1717173495; x=1717778295; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+a/elQ/DVLq9OarBTd3P+ramDxjQmELz1kHVgXiQECk=;
+        b=BrhqG8en2PMj59jQ+vrqDCxCP/sdUbmqQdLVcdLxmH9UCiP1K9an0rlm6ApkUBmJc/
+         0PwaUOq8Ubr5QVvQmg827kmXAwqNeWPYVK0epBNNMd8DUemE5eSmMi5/W7GkJ23+THDn
+         6VCBTgb1XCS3qs1JP9Kc6d3SUoo0hFa5VQw5GgqFdkl0ik/74WdBroQ9ilmKJOIO+Lou
+         yJ+CgiHlnfBCjvJHkFNrpnqFqb6QZnGFUcM9vxdU2OiglTprZLJP4yfkgpOePwh89BUH
+         YMelG+mDhG3cdVSWb02L5HFwq2buHHkJCL4kmLyXPsSNl28RwcS7p6Cw9BIpsLcTKPwo
+         Qw0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717173495; x=1717778295;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+a/elQ/DVLq9OarBTd3P+ramDxjQmELz1kHVgXiQECk=;
+        b=K7wfbOiXiAObW6jWbZYbLsh9n6kWPQ0JVvt4znX80VL5wIp1EgZVlBUeZUidu0ZTac
+         BWf3N7mC5L35IS7kXiX9oQ3rvIfunwRMit8VqZgqvB7mFq/b7EoE+PxEz/m/SIctIOkF
+         UhMzwKfRo47CZ/JBJjQ5oo4rbeSUVkH0wCqwfwgjJLMjvevfmT0rYqs15VktsZTtNxhW
+         HQRlnLn6CxVCRmMwJTI+hx75LXdKOZbHhjHKFy0/uORuukcW7njkqfXBwXQpOg2Ns0mA
+         5U7laWOCiXqy77+n+LlCHbShC4OiKNbn9St5L4yN0Stq81qbMsGq5QFB9013e20EQjih
+         luCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUtscborqy4Mm+KuCKAh0sic7pJFR8a5LHfYrZlkykslDCxvGGv1Mbggke6SuiaW7xE/rAs6pcx8IRZAKOvneBhchgWUvikxB/gF8tH
+X-Gm-Message-State: AOJu0Yx08E3YMN7o+cFxQed7cFrAzCpb4AYxGt+u/YVOnOgdvJDJqxJ9
+	TI+cAcPwX76HevwAXsVFCbam1KA9jZRUIUKqyOy6mkkZkiztO2hoEqrXDkvS0giC+hIsl9Gp2LZ
+	7owg/q37Z2uLRh6038V84jmTnzEXPNa2covBB
+X-Google-Smtp-Source: AGHT+IEUvq8IrfxBqobB0qnsPcM/t9xGiOwgW/rm8obnqr7xsT5g6O6XEVnLgbOG+qBuq25Erbdj7agTEdB59tYJqCI=
+X-Received: by 2002:a05:622a:4a14:b0:43f:b19e:d3ba with SMTP id
+ d75a77b69052e-43ff2c5399bmr3098651cf.8.1717173494634; Fri, 31 May 2024
+ 09:38:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <eab4f90c-bfb2-4595-9f52-f88146310c6f@suse.cz>
+References: <20240525013021.436430-2-irogers@google.com> <202405311548.1e881dea-oliver.sang@intel.com>
+In-Reply-To: <202405311548.1e881dea-oliver.sang@intel.com>
+From: Ian Rogers <irogers@google.com>
+Date: Fri, 31 May 2024 09:38:01 -0700
+Message-ID: <CAP-5=fX7ZyT82=W8uSZbT7c76E5+1JaoR5-y_gcj7A_=Js1YfA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] perf jevents: Autogenerate empty-pmu-events.c
+To: kernel test robot <oliver.sang@intel.com>
+Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Weilin Wang <weilin.wang@intel.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	Jing Zhang <renyu.zj@linux.alibaba.com>, John Garry <john.g.garry@oracle.com>, 
+	Sandipan Das <sandipan.das@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 24, 2024 at 03:43:33PM +0200, Vlastimil Babka wrote:
-> On 4/24/24 11:41 PM, Kees Cook wrote:
-> > Dedicated caches are available for fixed size allocations via
-> > kmem_cache_alloc(), but for dynamically sized allocations there is only
-> > the global kmalloc API's set of buckets available. This means it isn't
-> > possible to separate specific sets of dynamically sized allocations into
-> > a separate collection of caches.
-> > 
-> > This leads to a use-after-free exploitation weakness in the Linux
-> > kernel since many heap memory spraying/grooming attacks depend on using
-> > userspace-controllable dynamically sized allocations to collide with
-> > fixed size allocations that end up in same cache.
-> > 
-> > While CONFIG_RANDOM_KMALLOC_CACHES provides a probabilistic defense
-> > against these kinds of "type confusion" attacks, including for fixed
-> > same-size heap objects, we can create a complementary deterministic
-> > defense for dynamically sized allocations that are directly user
-> > controlled. Addressing these cases is limited in scope, so isolation these
-> > kinds of interfaces will not become an unbounded game of whack-a-mole. For
-> > example, pass through memdup_user(), making isolation there very
-> > effective.
-> > 
-> > In order to isolate user-controllable sized allocations from system
-> > allocations, introduce kmem_buckets_create(), which behaves like
-> > kmem_cache_create(). Introduce kmem_buckets_alloc(), which behaves like
-> > kmem_cache_alloc(). Introduce kmem_buckets_alloc_track_caller() for
-> > where caller tracking is needed. Introduce kmem_buckets_valloc() for
-> > cases where vmalloc callback is needed.
-> > 
-> > Allows for confining allocations to a dedicated set of sized caches
-> > (which have the same layout as the kmalloc caches).
-> > 
-> > This can also be used in the future to extend codetag allocation
-> > annotations to implement per-caller allocation cache isolation[1] even
-> > for dynamic allocations.
-> > 
-> > Memory allocation pinning[2] is still needed to plug the Use-After-Free
-> > cross-allocator weakness, but that is an existing and separate issue
-> > which is complementary to this improvement. Development continues for
-> > that feature via the SLAB_VIRTUAL[3] series (which could also provide
-> > guard pages -- another complementary improvement).
-> > 
-> > Link: https://lore.kernel.org/lkml/202402211449.401382D2AF@keescook [1]
-> > Link: https://googleprojectzero.blogspot.com/2021/10/how-simple-linux-kernel-memory.html [2]
-> > Link: https://lore.kernel.org/lkml/20230915105933.495735-1-matteorizzo@google.com/ [3]
-> > Signed-off-by: Kees Cook <keescook@chromium.org>
-> 
-> So this seems like it's all unconditional and not depending on a config
-> option? I'd rather see one, as has been done for all similar functionality
-> before, as not everyone will want this trade-off.
+On Fri, May 31, 2024 at 1:16=E2=80=AFAM kernel test robot <oliver.sang@inte=
+l.com> wrote:
+>
+>
+> hi, Ian Rogers,
+>
+> we actually want to seek your advice. in our env, there is no problem to =
+build
+> parent.
+>
+> * 3249f8b84526d (linux-review/Ian-Rogers/perf-jevents-Autogenerate-empty-=
+pmu-events-c/20240525-093240) perf jevents: Autogenerate empty-pmu-events.c
+> * 7d88bd0d22746 perf jevents: Use name for special find value   <--- pare=
+nt
+>
+> however, failed to build perf upon 3249f8b84526d. but there is not many u=
+seful
+> information in below detail log.
+>
+> is there any dependency or env setting for us to build this commit? Thank=
+s!
 
-Okay, sure, I can do that. Since it was changing some of the core APIs
-to pass in the target buckets (instead of using the global buckets), it
-seemed less complex to me to just make the simple changes unconditional.
+Hi Oliver,
 
-> Also AFAIU every new user (patches 5, 6) will add new bunch of lines to
-> /proc/slabinfo? And when you integrate alloc tagging, do you expect every
+Thanks for the report and the work testing! Seeing the output:
 
-Yes, that's true, but that's the goal: they want to live in a separate
-bucket collection. At present, it's only two, and arguable almost
-everything that the manual isolation provides should be using the
-mem_from_user() interface anyway.
+[..snip..]
+> --- pmu-events/empty-pmu-events.c       2024-05-30 08:20:10.000000000 +00=
+00
+> +++ pmu-events/test-empty-pmu-events.c  2024-05-30 15:55:37.332495538 +00=
+00
+> @@ -136,7 +136,7 @@
+>  { 2623 }, /* M3\000\0001 / M3\000\000\000\000\000\000\000\00000 */
+>  { 2078 }, /* cache_miss_cycles\000group1\000dcache_miss_cpi + icache_mis=
+s_cycles\000\000\000\000\000\000\000\00000 */
+>  { 1947 }, /* dcache_miss_cpi\000\000l1d\\-loads\\-misses / inst_retired.=
+any\000\000\000\000\000\000\000\00000 */
+> -{ 2011 }, /* icache_miss_cycles\000\000l1i\\-loads\\-misses / inst_retir=
+edany\000\000\000\000\000\000\000\00000 */
+> +{ 2011 }, /* icache_miss_cycles\000\000l1i\\-loads\\-misses / inst_retir=
+ed.any\000\000\000\000\000\000\000\00000 */
+>
+>  };
+>
+> @@ -373,7 +373,7 @@
+[..snip..]
 
-> callsite will do that as well? Any idea how many there would be and what
-> kind of memory overhead it will have in the end?
+It appears the version of empty-pmu-events.c the patch adds and the
+version generated in your test configuration are differing because of
+whitespace. Perhaps a hex editor will show what the exact difference
+is, it must relate to locales or something. Like you mention this
+could be resolved by an env change.
 
-I haven't measured the per-codetag-site overhead, but I don't expect it
-to have giant overhead. If the buckets are created on demand, it should
-be small.
+> The kernel config and materials to reproduce are available at:
+> https://download.01.org/0day-ci/archive/20240531/202405311548.1e881dea-ol=
+iver.sang@intel.com
 
-But one step at a time. This provides the infrastructure needed to
-immediately solve the low-hanging exploitable fruit and to pave the way
-for the per-codetag-site automation.
+I didn't see the generated test-empty-pmu-events.c there and so
+couldn't follow up on the locale/env exploration. I wonder that a
+suitable workaround is to change from the patch:
 
--Kees
++$(EMPTY_PMU_EVENTS_TEST_LOG): $(EMPTY_PMU_EVENTS_C) $(TEST_EMPTY_PMU_EVENT=
+S_C)
++       $(call rule_mkdir)
++       $(Q)$(call echo-cmd,test)diff -u $? 2> $@ || (cat $@ && false)
 
--- 
-Kees Cook
+to instead of invoking "diff -u" to invoke "diff -w -u", that is to
+ignore whitespace. I can send a v3 with this.
+
+Thanks,
+Ian
 
