@@ -1,194 +1,119 @@
-Return-Path: <linux-kernel+bounces-197280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03BB28D68AB
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 20:05:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26A8A8D68B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 20:06:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E3C3B287A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:05:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4BD328784A
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:06:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2E9617C9EB;
-	Fri, 31 May 2024 18:04:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDB1B17C9F0;
+	Fri, 31 May 2024 18:06:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CM8EZ1uk"
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="FxR+oEX2"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B06515B99F
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 18:04:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72C057BB01;
+	Fri, 31 May 2024 18:06:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717178678; cv=none; b=DmGFJNNUQM92zVm6p2p0Uq17Vy6cfHMIB7WlKjoJHqdjj1PbQtf2Shu2BgM+YGYOVzZCHYzUOQXnEA+xpyzahYOCoLu/FGE3CLVolMQzH07k1EErJ4aBDpdyB+hI92VYPUEj3IjpbTeHXTtarC0Upm0KXvLkxkpBkRa+fTE0kBs=
+	t=1717178807; cv=none; b=pt2mDCBvJVM62u0+IUvJbtX/f47omBx1mIq7nJdv+1VQfuzMw5stx5oenndjEXPj+Nx6a25j3DBu1J5lDBOMXEP6MAqiXjjeVGEKYSaYHTZ7wc2nyFsDEwApAh4r2Y28n7WyhXMVO8pkBA4Nokl6ss7ffr1KJUcIKLRUTpILYS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717178678; c=relaxed/simple;
-	bh=EzjE65Kz4LvJT4hRxLlPgk+qCuo0nSvK1ZnNuO/vDQs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Cggc3RloxDVz63tf7/aPIyQnf8IA7a4nNeBOFBuXd1vKmgA/ZSP30vvBTiqaW0MdqAu2Ca4U/GK/LuHcaJQSMDvr6hiTvV0UYlRKeDaIaAmuBsdFdOz7cr3CNfqAi5ZgEUI67ALAZOPNA7T+ozzX0doKqOIrVsNiO/qGi2U/4RE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CM8EZ1uk; arc=none smtp.client-ip=209.85.219.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-dfa72e97dfeso1033875276.1
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 11:04:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717178676; x=1717783476; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=HfTfA1pAaQTMxSVE2Twz55nEqsHzsr+JodUe0ZaWjik=;
-        b=CM8EZ1ukwGgZG+xY9cDzakQhebF8yotGttvHtk4rC71/G7iw8bvJlS8AM8PXSIw105
-         GGLjQQ2hAOjP5Up1MqgjviRfPuij5uBDKRxqmg1wGp3q0T/6gfFFYx6ifHMaUvPpEvMq
-         AK1SIv1cGAezS/ZuQ0LAw2odYQHBQAwGgZpzwFhRntcQuwodIE8taeqXW1PKgjiMZ9ic
-         8DZFtv5pNNWz+SaCkEm+kpt7CsdPeL34fhd3ePoR4Mmh2SNC/yzUehFUHLOEcxSpWsKs
-         ZDXfBVQn5pAuTX5bWiImVsP+ZgWcurzE7bh9UYOBKgqwnjIiTVGs4+TpCFA7dzPqKDkO
-         QOlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717178676; x=1717783476;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HfTfA1pAaQTMxSVE2Twz55nEqsHzsr+JodUe0ZaWjik=;
-        b=fcKKvQzAwrTbUqzdjrO3xj8BJkgTcEFcrCBvZ2sKnwWKzY0OgSlevaTcZ1ZKTiSafN
-         YEvf+W0BzKTVD4SF1+5gyqlSQCGa8L06P9oJNmB5tfg6FDaD6CnuVVnENWkRdmKX55El
-         ZSbZqK5l4oIcJCmKrwzDJpc43DNo+JBlaV4oNXk9Las7YWcuwYKcedclkgdCIUgIYYVR
-         eB3PRXBrinf7DnVQOUG8gDMWPsW9DsazipaQx7l4yrnwnxgtG/IT6phkH4MJ0a/WmmDu
-         1j2oSQK2T64Eu92A4wF7U+AHdikHFNnfDUwHa+GQZGpFJCYmPusG1mu4eg/4QTGQjhat
-         dj7g==
-X-Forwarded-Encrypted: i=1; AJvYcCX8O76yoYKGMe9/6S0O8BTNwVqqq9f+0wY1Dp8QvOohkqNoGZm/zxAqVoR0SBFHFnbiVxTzyHAcTbACsa9uOB20r0WLKe0M2LPQ470y
-X-Gm-Message-State: AOJu0YznsNqKR0YlHR6hDBlpsnsv2fLyPdVbhqcvqXUyDBtO5UIggV0e
-	Q1rDOTnzYjGUKBK4yObwtwiogBIfvx8/x2NBqq7XpjPrgKSLqZwMuyrnVyzDjoiGBbnq9lCnK3M
-	PS8xRg7Q3LWhPXHyuTISen4nwh8E=
-X-Google-Smtp-Source: AGHT+IHZ7DzbFO/XPeTe08EYDWHAjg5vZfkwMpAq2QcBpNCFaEg5A5YyrZzevmndi7U2DXiwqUlyRPv+8X4RDj+5MhI=
-X-Received: by 2002:a25:c58b:0:b0:de5:5bca:ecb0 with SMTP id
- 3f1490d57ef6-dfa72ec2cf9mr2624477276.0.1717178675951; Fri, 31 May 2024
- 11:04:35 -0700 (PDT)
+	s=arc-20240116; t=1717178807; c=relaxed/simple;
+	bh=VWCDVEqpi15SHunGQViPjo+WwhIMz+rFMlZ3zNVC0rw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MxvnZZiUl/t38/KBxAOR2q5lFU2eQZjOZQ2V3MzyGP2BiD82YoXrsw0DbXB4I3SpUohwmiPAkqYkQ4w3Fkbz9TuNL3Cx/5tX2nzlBJgHI8tUdM7TzBNs7vr/MPKIPDVx8es+10bCvshwz09B9Ww7QzOpxdJbgQhNcO6cFR5LsQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=FxR+oEX2; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id EE39040E02B2;
+	Fri, 31 May 2024 18:06:40 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id m6MIu8_PAQTt; Fri, 31 May 2024 18:06:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1717178796; bh=A27r4FWltFYQLEwV274qXhTGvbQe8LtfwbJef5gbm3c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FxR+oEX2YaMrYOfacRiEJfU04L3Q36UzDdt4OclAKTWGprF3XaaHfqd2kdpUnuJtY
+	 UR6zJT7Hu2gg+RU3VJntQmg2tDHvtd6BliJI5+ro0iJYe74T4AoJP1bCA7zjdu9akg
+	 L7GAMxdO7bE3FYyjwOAJ0fH3xUoXW3I6wkq3gkAzXc8w6N6205NccyQ/M0fRmmnyXJ
+	 jj3nO/s0GyYlKl0Dq889EPpdXJmMhIYuNiG4R3AY32tvhnu9cyBQniz1k2sEOnEcnv
+	 myEaiUAc9APw/VOwvFk7ghtryNB2C/zBxjS4lFenHBncAh+cIOdRJ3HJC6xdrRW4BO
+	 fl1Mdv4vQdjYcNi9lCW5vaAzhHKte8kyhqRIMKax6gDoKsiVe3uvMG/EfaYeVlvaJZ
+	 /Y4sjViJ+7UuWSv0p7RMu29slFoB7h3GaY3iOJQSu6F2lIGb0JHPGJncv4dhPgkL1u
+	 FwuXH6HE8oQlpns540LGY2kEPYbx0qpwWb0b+YIh6CN3uNVvRnV4np0d3fA99EZ3m9
+	 r7jhw5jXFlW3b4QVVzr1gu6x9LFnfLBXPz/3dhadvh1M6kMToWuQYDrn163BFZFOpc
+	 oo9Xa67Z6ESrSd+rmNYcKwbMV59zk0nGZyqBQBghH1dCpFqU6FbHThjGrH4dudhQBD
+	 DKs+NDxUxb0GqFLMSbaHN5HU=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 6FA1740E02B7;
+	Fri, 31 May 2024 18:06:09 +0000 (UTC)
+Date: Fri, 31 May 2024 20:06:02 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: "Kalra, Ashish" <ashish.kalra@amd.com>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	Elena Reshetova <elena.reshetova@intel.com>,
+	Jun Nakajima <jun.nakajima@intel.com>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Sean Christopherson <seanjc@google.com>,
+	"Huang, Kai" <kai.huang@intel.com>,
+	Ard Biesheuvel <ardb@kernel.org>, Baoquan He <bhe@redhat.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>, kexec@lists.infradead.org,
+	linux-hyperv@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Tao Liu <ltao@redhat.com>
+Subject: Re: [PATCHv11 11/19] x86/tdx: Convert shared memory back to private
+ on kexec
+Message-ID: <20240531180602.GIZloRisrPdjLhaVBG@fat_crate.local>
+References: <20240528095522.509667-1-kirill.shutemov@linux.intel.com>
+ <20240528095522.509667-12-kirill.shutemov@linux.intel.com>
+ <20240531151442.GMZlnpYkDCRlg1_YS0@fat_crate.local>
+ <75cb309b-b05c-42a0-a3ca-de08fa1cae59@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240531092001.30428-1-byungchul@sk.com> <20240531092001.30428-10-byungchul@sk.com>
- <fab1dd64-c652-4160-93b4-7b483a8874da@intel.com>
-In-Reply-To: <fab1dd64-c652-4160-93b4-7b483a8874da@intel.com>
-From: Byungchul Park <lkml.byungchul.park@gmail.com>
-Date: Sat, 1 Jun 2024 03:04:24 +0900
-Message-ID: <CAHyrMpxETdVewTH3MCS4qPyD6Xf1zRUfWZf-8SCdpCFj2Pj_Wg@mail.gmail.com>
-Subject: Re: [PATCH v11 09/12] mm: implement LUF(Lazy Unmap Flush) defering
- tlb flush when folios get unmapped
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Byungchul Park <byungchul@sk.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	kernel_team@skhynix.com, akpm@linux-foundation.org, ying.huang@intel.com, 
-	vernhao@tencent.com, mgorman@techsingularity.net, hughd@google.com, 
-	willy@infradead.org, david@redhat.com, peterz@infradead.org, luto@kernel.org, 
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, rjgolo@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <75cb309b-b05c-42a0-a3ca-de08fa1cae59@amd.com>
 
-Dave Hansen <dave.hansen@intel.com> wrote:
->
-> On 5/31/24 02:19, Byungchul Park wrote:
-> ..
-> > diff --git a/include/linux/fs.h b/include/linux/fs.h
-> > index 0283cf366c2a..03683bf66031 100644
-> > --- a/include/linux/fs.h
-> > +++ b/include/linux/fs.h
-> > @@ -2872,6 +2872,12 @@ static inline void file_end_write(struct file *file)
-> >       if (!S_ISREG(file_inode(file)->i_mode))
-> >               return;
-> >       sb_end_write(file_inode(file)->i_sb);
-> > +
-> > +     /*
-> > +      * XXX: If needed, can be optimized by avoiding luf_flush() if
-> > +      * the address space of the file has never been involved by luf.
-> > +      */
-> > +     luf_flush();
-> >  }
-> ..
-> > +void luf_flush(void)
-> > +{
-> > +     unsigned long flags;
-> > +     unsigned short int ugen;
-> > +
-> > +     /*
-> > +      * Obtain the latest ugen number.
-> > +      */
-> > +     spin_lock_irqsave(&luf_lock, flags);
-> > +     ugen = luf_gen;
-> > +     spin_unlock_irqrestore(&luf_lock, flags);
-> > +
-> > +     check_luf_flush(ugen);
-> > +}
->
-> Am I reading this right?  There's now an unconditional global spinlock
+On Fri, May 31, 2024 at 12:34:49PM -0500, Kalra, Ashish wrote:
+> SNP guest kexec patches are based on top of this patch-series and SNP guests
+> also need this exclusive mem_enc_lock protection, so CC_ATTR_MEM_ENCRYPT
+> makes sense to be used here.
 
-It looked *too much* to split the lock to several locks as rcu does until
-version 11.  However, this code introduced in v11 looks problematic.
+Well, for the future, I'd encourage you to always send an Acked-by: you
+or Reviewed-by: you as a reply to such patches so that it is clear that
+such a change is desired.
 
-> acquired in the sys_write() path?  How can this possibly scale?
+Thx.
 
-I should find a better way.
+-- 
+Regards/Gruss,
+    Boris.
 
-> So, yeah, I think an optimization is absolutely needed.  But, on a more
-> fundamental level, I just don't believe these patches are being tested.
-> Even a simple microbenchmark should show a pretty nasty regression on
-> any decently large system:
->
-> > https://github.com/antonblanchard/will-it-scale/blob/master/tests/write1.c
->
-> Second, I was just pointing out sys_write() as an example of how the
-> page cache could change.  Couldn't a separate, read/write mmap() of the
-> file do the same thing and *not* go through sb_end_write()?
->
-> So:
->
->         fd = open("foo");
->         ptr1 = mmap(fd, PROT_READ);
->         ptr2 = mmap(fd, PROT_READ|PROT_WRITE);
->
->         foo = *ptr1; // populate the page cache
->         ... page cache page is reclaimed and LUF'd
->         *ptr2 = bar; // new page cache page is allocated and written to
-
-I think this part would work but I'm not convinced.  I will check again.
-
->         printk("*ptr1: %d\n", *ptr1);
->
-> Doesn't the printk() see stale data?
->
-> I think tglx would call all of this "tinkering".  The approach to this
-> series is to "fix" narrow, specific cases that reviewers point out, make
-> it compile, then send it out again, hoping someone will apply it.
-
-Sorry for not perfect work and bothering you but you know what?  I
-can see what is happening in this community too.  Of course, I bet
-you would post better quality mm patches from the 1st version than
-me but might not in other subsystems.
-
-> So, for me, until the approach to this series changes: NAK, for x86.
-
-I understand why you got mad and feel sorry but I couldn't expect
-the regression you mentioned above.  And I admit the patches have
-had problems I couldn't find in advance until you, Hildenbrand and
-Ying.  I will do better.
-
-> Andrew, please don't take this series.  Or, if you do, please drop the
-> patch enabling it on x86.
-
-I don't want to ask to merge either, if there are still issues.
-
-> I also have the feeling our VFS friends won't take kindly to having
-
-That is also what I thought it was.  What should I do then?
-I don't believe you do not agree with the concept itself.  Thing is
-the current version is not good enough.  I will do my best by doing
-what I can do.
-
-> random luf_foo() hooks in their hot paths, optimized or not.  I don't
-> see any of them on cc.
-
-Yes.  I should've cc'd them.  I will.
-
-        Byungchul
+https://people.kernel.org/tglx/notes-about-netiquette
 
