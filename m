@@ -1,196 +1,178 @@
-Return-Path: <linux-kernel+bounces-196654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D78A08D5F54
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:13:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 255348D5F5C
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:16:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0B8EB22C5F
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:13:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7FF63B21F13
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:16:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17789149C76;
-	Fri, 31 May 2024 10:13:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E1EE1509AF;
+	Fri, 31 May 2024 10:16:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="J3sf852S"
-Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="oWRW3qCV"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B714152186
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 10:13:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46FD980BE5
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 10:16:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717150391; cv=none; b=rK1QkXQghiADCqQQci/PJcKm3szqkwKZ8AKOomwfGv+iIIaj1++Xkg2bLsg54vp7tW7nA8jy3iS8wTW8DTJqOj0TSXa46S1Xrlga33M+jncitqIac4dQe2Wo0O4ycgYFGHNgWPEsRswl4NvJwSNvc9yn9fkgz88W6iitm6RsIiI=
+	t=1717150581; cv=none; b=fH5KZI4aNZ4187uKk3lBz6wb6pkdNL7DvDELordpPzBwK8/Hv3fMduv67rEA50VXE/APQ7QxcDpD05LOePqCcJjl3/GNLjH5NdDFymKHzgmMdSmESCjC/lp2SuQ3CgsgazVuadnVomdyxZEwuefYPudzDtyKOWyNgqtkE2+aQHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717150391; c=relaxed/simple;
-	bh=QCtHZZ14X/rB1pYgsmDPVD/uninqZ3pM1vj5fz8+dkk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MX23Y+4hMyB+1a770H+WAcOLn/kfAcnaAmsfCpiAgOO9wzLHNoinurvtAglePpumIoYLOoKsRQhReuccMMOlaAUqZtQrcXKj1bbQrkKugqMSRogJOrzqxUtjAtaxztshOpVSqKeQUbsEvmvUOu/f8v7VUK01r8KM9/2fRWAMe1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=J3sf852S; arc=none smtp.client-ip=115.124.30.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1717150386; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=4u3Py3hl45dIuxCPAqHpFkSudYL9AInU3+rNe13UhMI=;
-	b=J3sf852S7ea4wzm7ZgAG6FZwUAoGgAbnIuB8ryGPJ3djmRK4bZP78Av4vetAl3v4b1cDNN6pHi+GpSFbyr9Es+toLgLAX0yupIwfnbIZAb556q8ki6gpmeX9EyerxQpefZGqUqXrB5IeB79mItVUuziKG6jzYrMxMBYOUZDsSB8=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067113;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=15;SR=0;TI=SMTPD_---0W7ZXhau_1717150384;
-Received: from 30.97.56.62(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W7ZXhau_1717150384)
-          by smtp.aliyun-inc.com;
-          Fri, 31 May 2024 18:13:04 +0800
-Message-ID: <db3517d0-54b1-4d3a-b798-1c13572d07be@linux.alibaba.com>
-Date: Fri, 31 May 2024 18:13:03 +0800
+	s=arc-20240116; t=1717150581; c=relaxed/simple;
+	bh=QHgyjjJaCiC23glQhIuoKAJ2DmNT6bQlQnJB0Ht2ZpQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=SoKiAsic97voeg8c5C+KpPB/h/QfG3RC8wgnrUqNyv/wyJZs3wX7R3UK7picmPOSz/ZnapRKs9WNB82L+edy1P8KenX42pJOBZk1KYkulUk1NIExruaL1ogNFziSv4oqdSJZKu+2AFOS3x4zchKtlqKARfBrDGeON8taqq7i6cc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=oWRW3qCV; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240531101617epoutp010b7e13e6da739af16bf6b0feac2066c8~Ui1olNgKP0128601286epoutp01X
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 10:16:17 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240531101617epoutp010b7e13e6da739af16bf6b0feac2066c8~Ui1olNgKP0128601286epoutp01X
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1717150577;
+	bh=/KU+xOxNrt2ZnfYjFJ1+VO+CSsfLs3zgl8VpEFUWhc4=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=oWRW3qCV0QFNuHCCi+pkAhuHqUIH+LGMv2bP1VPZFwZcFswcsuk/eHwwumdovBrg0
+	 ppww107fNIvCHCkVks5OV9Mzq6WdcXMQZzYkcfTvJL8ibuHr1LduRNvJ+z/ZWY4YKm
+	 6QurtSXo6CltubY3RNZXCjT+859TgGPiZY8KBTQA=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+	20240531101616epcas1p3ae240bce1c93c1ce35fc32475543ce16~Ui1n_uCWD1793917939epcas1p3R;
+	Fri, 31 May 2024 10:16:16 +0000 (GMT)
+Received: from epsmgec1p1.samsung.com (unknown [182.195.36.226]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4VrJtS1SbNz4x9Pw; Fri, 31 May
+	2024 10:16:16 +0000 (GMT)
+Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
+	epsmgec1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	70.A8.08602.073A9566; Fri, 31 May 2024 19:16:16 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+	20240531101615epcas1p3f0085b563af62c7f83699b0135cc832a~Ui1nRqTi81794517945epcas1p3R;
+	Fri, 31 May 2024 10:16:15 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240531101615epsmtrp1b3b592a72c12134a5c6ab76b4ed8049a~Ui1nQ4tgJ0964109641epsmtrp1o;
+	Fri, 31 May 2024 10:16:15 +0000 (GMT)
+X-AuditID: b6c32a33-c9f8da800000219a-40-6659a3708afb
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	3C.0E.07412.F63A9566; Fri, 31 May 2024 19:16:15 +0900 (KST)
+Received: from u20pb1-0435.tn.corp.samsungelectronics.net (unknown
+	[10.91.133.14]) by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240531101615epsmtip296f408870311044c8070f1ac3fc2da5e~Ui1nDfC7B0954209542epsmtip2d;
+	Fri, 31 May 2024 10:16:15 +0000 (GMT)
+From: Sungjong Seo <sj1557.seo@samsung.com>
+To: linkinjeon@kernel.org, sj1557.seo@samsung.com
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	syzbot+412a392a2cd4a65e71db@syzkaller.appspotmail.com
+Subject: [PATCH] exfat: fix potential deadlock on __exfat_get_dentry_set
+Date: Fri, 31 May 2024 19:14:44 +0900
+Message-Id: <20240531101444.1874926-1-sj1557.seo@samsung.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/6] add mTHP support for anonymous shmem
-To: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org,
- hughd@google.com
-Cc: willy@infradead.org, wangkefeng.wang@huawei.com, ying.huang@intel.com,
- 21cnbao@gmail.com, ryan.roberts@arm.com, shy828301@gmail.com,
- ziy@nvidia.com, ioworker0@gmail.com, da.gomez@samsung.com,
- p.raghav@samsung.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <cover.1717033868.git.baolin.wang@linux.alibaba.com>
- <f1783ff0-65bd-4b2b-8952-52b6822a0835@redhat.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <f1783ff0-65bd-4b2b-8952-52b6822a0835@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrDJsWRmVeSWpSXmKPExsWy7bCmvm7B4sg0g6+vWC0mTlvKbLFn70kW
+	i8u75rBZbPl3hNViwcZHjBbHWtazOrB5bFrVyebRt2UVo8fMt2oenzfJBbBENTDaJBYlZ2SW
+	pSqk5iXnp2TmpdsqhYa46VooKWTkF5fYKkUbGhrpGRqY6xkZGemZGsVaGZkqKeQl5qbaKlXo
+	QvUqKRQlFwDV5lYWAw3ISdWDiusVp+alOGTll4IcrFecmFtcmpeul5yfq6RQlphTCjRCST/h
+	G2PGrq9XGQvO81W8/L+DvYFxJ1cXIyeHhICJROORNaxdjFwcQgI7GCW+zf/EDOF8YpSYdeQK
+	VOYbo8ST3s1MMC2PNz+ESuxllJjbsIoFwmlnkpj/8gwzSBWbgLbE8qZlYLaIgKHEjCO3wIqY
+	BSYxSlxtOAE2SljAQ2LOnHNsIDaLgKrEnnW7WEBsXgFbicXHrjJCrJOXmHnpOztEXFDi5Mwn
+	YDXMQPHmrbPBjpUQ2Mcu8efnKWaIBheJ9dc+sELYwhKvjm9hh7ClJF72t7FDNHQzShz/+I4F
+	IjGDUWJJhwOEbS/R3NoMdBEH0AZNifW79CGW8Um8+9oDNVNQ4vS1bmaQEgkBXomONiGIsIrE
+	9w87WWBWXflxFRpcHhJvmk6D/SIkECvR82EW2wRG+VlI3pmF5J1ZCIsXMDKvYhRLLSjOTU9N
+	NiwwRI7aTYzghKllvIPx8vx/eocYmTgYDzFKcDArifD+So9IE+JNSaysSi3Kjy8qzUktPsSY
+	DAzgicxSosn5wJSdVxJvaGZmaWFpZGJobGZoSFjYxNLAxMzIxMLY0thMSZz3zJWyVCGB9MSS
+	1OzU1ILUIpgtTBycUg1MDue3LFA3EfvXEeAb8Uar1v3+Vp5IHdltZydLlr2qFz8eVXNlR9Xz
+	o7tmLXy3UZczyatNd9FEp+2R/Mdcps37MDXl4Gf9M5YF6S3XXZbek3huv4R9KbO18uq1l8wF
+	0szlbL4Xzzt44h+zeNqXzkenLXKua/tvEHTseJubeKbodatJW91MiQ9nH6+5++1z7HSHZxER
+	fhM7snfWBhmZvM8/d37u059tz2xSa9elKagK/eJLfHWsUpBfNeRMadhetSXBbBIFMXfyHgeU
+	73l5pDrFcdHl51diazOW7UqXqQ5nM9t0MST/Qp731e6OPxqM8wQ46q49kkpe+cpb5PmqAMbd
+	F3/e0O725hHP2rBDTm+NEktxRqKhFnNRcSIADeEhAU8EAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrELMWRmVeSWpSXmKPExsWy7bCSvG7+4sg0g6bvGhYTpy1lttiz9ySL
+	xeVdc9gstvw7wmqxYOMjRotjLetZHdg8Nq3qZPPo27KK0WPmWzWPz5vkAliiuGxSUnMyy1KL
+	9O0SuDJ2fb3KWHCer+Ll/x3sDYw7uboYOTkkBEwkHm9+yApiCwnsZpTYepW/i5EDKC4lcXCf
+	JoQpLHH4cHEXIxdQRSuTxKrPT5lBytkEtCWWNy0Ds0UEjCUenWtmBSliFpjCKHH53RawmcIC
+	HhJz5pxjA7FZBFQl9qzbxQJi8wrYSiw+dpUR4gZ5iZmXvrNDxAUlTs58AlbDDBRv3jqbeQIj
+	3ywkqVlIUgsYmVYxSqYWFOem5yYbFhjmpZbrFSfmFpfmpesl5+duYgQHo5bGDsZ78//pHWJk
+	4mA8xCjBwawkwvsrPSJNiDclsbIqtSg/vqg0J7X4EKM0B4uSOK/hjNkpQgLpiSWp2ampBalF
+	MFkmDk6pBqa12oYt/83mffK8J71csP2/XOdt1TpmJ5PwkOuvz3f8EMkuKt0hPkVu2j6hPUzc
+	n3TK94u5ZWobGEvuz85mffDEqmadq2VP2Ow36S8t7zBtWZxaPLNfS5nx1tXt67afWv/jM4OO
+	/b87vnLvBFu/uvqlfxY+tEzdS1G+/MSGL7M6Zd5me523Y9sSckWtK5Gru8rt8rODZgynJhVv
+	M6h4pBveNH3C8/UzzISLj9++semNk9u6PgvnJ9vUPlhtVAi8UzxtWl7Val/RlDWcPkuun5b2
+	Fav3l2nXu/yrpEP0Sl7PgYmeXv/2rGb7cab8QyNDp7viz9KXn6taXBOMwouPvugQ6/lnf799
+	tt7iushZyUosxRmJhlrMRcWJAP0cIv21AgAA
+X-CMS-MailID: 20240531101615epcas1p3f0085b563af62c7f83699b0135cc832a
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+X-ArchiveUser: EV
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240531101615epcas1p3f0085b563af62c7f83699b0135cc832a
+References: <CGME20240531101615epcas1p3f0085b563af62c7f83699b0135cc832a@epcas1p3.samsung.com>
 
+When accessing a file with more entries than ES_MAX_ENTRY_NUM, the bh-array
+is allocated in __exfat_get_entry_set. The problem is that the bh-array is
+allocated with GFP_KERNEL. It does not make sense. In the following cases,
+a deadlock for sbi->s_lock between the two processes may occur.
 
+       CPU0                CPU1
+       ----                ----
+  kswapd
+   balance_pgdat
+    lock(fs_reclaim)
+                      exfat_iterate
+                       lock(&sbi->s_lock)
+                       exfat_readdir
+                        exfat_get_uniname_from_ext_entry
+                         exfat_get_dentry_set
+                          __exfat_get_dentry_set
+                           kmalloc_array
+                            ...
+                            lock(fs_reclaim)
+    ...
+    evict
+     exfat_evict_inode
+      lock(&sbi->s_lock)
 
-On 2024/5/31 17:35, David Hildenbrand wrote:
-> On 30.05.24 04:04, Baolin Wang wrote:
->> Anonymous pages have already been supported for multi-size (mTHP) 
->> allocation
->> through commit 19eaf44954df, that can allow THP to be configured 
->> through the
->> sysfs interface located at 
->> '/sys/kernel/mm/transparent_hugepage/hugepage-XXkb/enabled'.
->>
->> However, the anonymous shmem will ignore the anonymous mTHP rule 
->> configured
->> through the sysfs interface, and can only use the PMD-mapped THP, that 
->> is not
->> reasonable. Many implement anonymous page sharing through 
->> mmap(MAP_SHARED |
->> MAP_ANONYMOUS), especially in database usage scenarios, therefore, 
->> users expect
->> to apply an unified mTHP strategy for anonymous pages, also including the
->> anonymous shared pages, in order to enjoy the benefits of mTHP. For 
->> example,
->> lower latency than PMD-mapped THP, smaller memory bloat than 
->> PMD-mapped THP,
->> contiguous PTEs on ARM architecture to reduce TLB miss etc.
->>
->> The primary strategy is similar to supporting anonymous mTHP. Introduce
->> a new interface '/mm/transparent_hugepage/hugepage-XXkb/shmem_enabled',
->> which can have all the same values as the top-level
->> '/sys/kernel/mm/transparent_hugepage/shmem_enabled', with adding a new
->> additional "inherit" option. By default all sizes will be set to "never"
->> except PMD size, which is set to "inherit". This ensures backward 
->> compatibility
->> with the anonymous shmem enabled of the top level, meanwhile also allows
->> independent control of anonymous shmem enabled for each mTHP.
->>
->> Use the page fault latency tool to measure the performance of 1G 
->> anonymous shmem
->> with 32 threads on my machine environment with: ARM64 Architecture, 32 
->> cores,
->> 125G memory:
->> base: mm-unstable
->> user-time    sys_time    faults_per_sec_per_cpu     faults_per_sec
->> 0.04s        3.10s         83516.416                  2669684.890
->>
->> mm-unstable + patchset, anon shmem mTHP disabled
->> user-time    sys_time    faults_per_sec_per_cpu     faults_per_sec
->> 0.02s        3.14s         82936.359                  2630746.027
->>
->> mm-unstable + patchset, anon shmem 64K mTHP enabled
->> user-time    sys_time    faults_per_sec_per_cpu     faults_per_sec
->> 0.08s        0.31s         678630.231                 17082522.495
->>
->>  From the data above, it is observed that the patchset has a minimal 
->> impact when
->> mTHP is not enabled (some fluctuations observed during testing). When 
->> enabling 64K
->> mTHP, there is a significant improvement of the page fault latency.
-> 
-> Let me summarize the takeaway from the bi-weekly MM meeting as I 
-> understood it, that includes Hugh's feedback on per-block tracking vs. 
+To fix this, let's allocate bh-array with GFP_NOFS.
 
-Thanks David for the summarization.
+Fixes: a3ff29a95fde ("exfat: support dynamic allocate bh for exfat_entry_set_cache")
+Cc: stable@vger.kernel.org # v6.2+
+Reported-by: syzbot+412a392a2cd4a65e71db@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/lkml/000000000000fef47e0618c0327f@google.com
+Signed-off-by: Sungjong Seo <sj1557.seo@samsung.com>
+---
+ fs/exfat/dir.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> mTHP:
-> 
-> (1) Per-block tracking
-> 
-> Per-block tracking is currently considered unwarranted complexity in 
-> shmem.c. We should try to get it done without that. For any test cases 
-> that fail, we should consider if they are actually valid for shmem.
-> 
-> To optimize FALLOC_FL_PUNCH_HOLE for the cases where splitting+freeing
-> is not possible at fallcoate() time, detecting zeropages later and
-> retrying to split+free might be an option, without per-block tracking.
-> 
-> (2) mTHP controls
-> 
-> As a default, we should not be using large folios / mTHP for any shmem, 
-> just like we did with THP via shmem_enabled. This is what this series 
-> currently does, and is aprt of the whole mTHP user-space interface design.
-> 
-> Further, the mTHP controls should control all of shmem, not only 
-> "anonymous shmem".
+diff --git a/fs/exfat/dir.c b/fs/exfat/dir.c
+index 84572e11cc05..7446bf09a04a 100644
+--- a/fs/exfat/dir.c
++++ b/fs/exfat/dir.c
+@@ -813,7 +813,7 @@ static int __exfat_get_dentry_set(struct exfat_entry_set_cache *es,
+ 
+ 	num_bh = EXFAT_B_TO_BLK_ROUND_UP(off + num_entries * DENTRY_SIZE, sb);
+ 	if (num_bh > ARRAY_SIZE(es->__bh)) {
+-		es->bh = kmalloc_array(num_bh, sizeof(*es->bh), GFP_KERNEL);
++		es->bh = kmalloc_array(num_bh, sizeof(*es->bh), GFP_NOFS);
+ 		if (!es->bh) {
+ 			brelse(bh);
+ 			return -ENOMEM;
+-- 
+2.25.1
 
-Yes, that's what I thought and in my TODO list.
-
-> 
-> Also, we should properly fallback within the configured sizes, and not 
-> jump "over" configured sizes. Unless there is a good reason.
-> 
-> (3) khugepaged
-> 
-> khugepaged needs to handle larger folios properly as well. Until fixed, 
-> using smaller THP sizes as fallback might prohibit collapsing a 
-> PMD-sized THP later. But really, khugepaged needs to be fixed to handle 
-> that. >
-> (4) force/disable
-> 
-> These settings are rather testing artifacts from the old ages. We should 
-> not add them to the per-size toggles. We might "inherit" it from the 
-> global one, though.
-
-Sorry, I missed this. So I thould remove the 'force' and 'deny' option 
-for each mTHP, right?
-
-> 
-> "within_size" might have value, and especially for consistency, we 
-> should have them per size.
-> 
-> 
-> 
-> So, this series only tackles anonymous shmem, which is a good starting 
-> point. Ideally, we'd get support for other shmem (especially during 
-> fault time) soon afterwards, because we won't be adding separate toggles 
-> for that from the interface POV, and having inconsistent behavior 
-> between kernel versions would be a bit unfortunate.
-> 
-> 
-> @Baolin, this series likely does not consider (4) yet. And I suggest we 
-> have to take a lot of the "anonymous thp" terminology out of this 
-> series, especially when it comes to documentation.
-
-Sure. I will remove the "anonymous thp" terminology from the 
-documentation, but want to still keep it in the commit message, cause I 
-want to start from the anonymous shmem.
-
-> 
-> @Daniel, Pankaj, what are your plans regarding that? It would be great 
-> if we could get an understanding on the next steps on !anon shmem.
-> 
 
