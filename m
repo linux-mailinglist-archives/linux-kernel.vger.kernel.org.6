@@ -1,290 +1,166 @@
-Return-Path: <linux-kernel+bounces-197249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DECB68D6826
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 19:28:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E61FF8D6829
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 19:30:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E1ED8B2825F
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:28:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 665E5B21A07
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:30:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C99517836A;
-	Fri, 31 May 2024 17:28:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97700179654;
+	Fri, 31 May 2024 17:29:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HJCuDGtJ"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YUsMRg9G"
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C7A37BAE7
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 17:28:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 593E06CDA3
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 17:29:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717176519; cv=none; b=biNEAkNWaeZPaz00MB+1jW7h+VSOYQosnsTJZ/PR+AzwYIEnFa9yDSll8HBwZcReozJUlhXgMND5z7MV3UKoeSCjtdotKiQdKCxI9eEtspIBJvtCTC4NgFZx5FC9NK1TdOTyPWvHhpZL/FnDGKU6q819lKDH1Pqki+pn7EbG0Vw=
+	t=1717176595; cv=none; b=HhOI7h/lwAs8TIpsSiju+Y894Lty62BlX4Sseww5SjynRsDlQpLFHYh1ZfUBocU7TtCWSa33idU7fOMQFgSAEFbJzsLlWkpkVQi1OhwIw/kLVc9hU4yKYxbiRJjl2Iq0ii+hNSw+4MLsBfdZbR0jeMZC/QgQ/JjyZq978NNtys4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717176519; c=relaxed/simple;
-	bh=mE8SRr5pmWDgEPgzOnI666xlXsAzv9fUYw/yNBrhUXU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BhZW5skZpc1fl2EkTHJZwTRomKK5eVyWvxO45cK3cxJG6dwFwxYx1SUVSXCKR5ydFy4YF4tOsiXKVCdRUx+1CzUPUgMozuU70nVCCeUoMaYu12Iyr9w5QLl325GvBj1URgPtqn0F1E+Djj2fqfpxbPBl3g4mdpSL55o2fLdlSSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HJCuDGtJ; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1f44b594deeso17484525ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 10:28:37 -0700 (PDT)
+	s=arc-20240116; t=1717176595; c=relaxed/simple;
+	bh=Ocg7q0Va02+8OuCbKzPdbCjlO9z/WVg+JwJKRjv2Xek=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=u2fTIF73yxPSGFKQ+l7qY6ze0yRYAMqw0U3hBHTlcp+LbUp3Kz9ZKtSkMTqa6fDX7p2j0JnMHEDFWWqygRLvCiZgNvh7HmVX98WSh6n4MV7ilYG+Ql8NR42lVeoUf18D2YnjnT0bcXgbDfMpLjM3w5C+lj73f1qWj6tWuh9V2ns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=YUsMRg9G; arc=none smtp.client-ip=209.85.219.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6ae2f1a08a8so5224706d6.1
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 10:29:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717176517; x=1717781317; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=PIW/+d3pyitNysbRb4C74Z7GshTp0lM3THuiLkgE5rU=;
-        b=HJCuDGtJtCzo4THLud6XJB5tCQfyEnAuCVMUMGcd+1UkrvLVWInuZ4NepimFc5Zy98
-         VzpAzXcS6K42un8YTixwH2pxJ8SAtRJRi3AQ9R2nP70j0NOcihDwGf36ZMn49/UKhRYA
-         oAvbyW8DdsFe+6HYCODRgalDrCYdRAeo37IO9IUPHwNha5LUGXSkhOnMmq1kKc7aTeue
-         6YK0AGlXRY7OtoEFZvCHU2nPbQ01NegwbMfw1knl7eYUPziEm2Niuom9r1AYntSC/04S
-         3+zJ3jKVmFVRD1I/zVoL0pVeqEwq9JQhSWIZ6gV8NDlhjrXmSBE7ufzQQMR+/eY6DAQ6
-         n/5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717176517; x=1717781317;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=chromium.org; s=google; t=1717176591; x=1717781391; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=PIW/+d3pyitNysbRb4C74Z7GshTp0lM3THuiLkgE5rU=;
-        b=ioW4AW2wQm+UzxMaOHe7F7Urr3V5axhz4xtIs9QHpplKxFr1B0zMvaw/p8oxkmJeIQ
-         vBIW+naC25xTOhFUWk95rif8BijpPPOHXk6U62ekD36Jmk3AhFPe51CaRSq1g8SIT2a2
-         aUhErniWVchbC6keG2AffEfkZhp0SKt/OKFBrMln7m2ex16QLWt0Gb4nTCkVH3ro3j34
-         pNKVzzmsjZwtXiVqruGdoo6ToeP2Dbwn2qlw+y087/I3Ih1npwqTt1ku3osdmEe9KHwq
-         5tPL6MonYYXB7klCRWJEUwXJfefi5YhPVCDcCTCz+Xctk2Cl68DMlIjnNwFOi3dkalDg
-         sdBg==
-X-Forwarded-Encrypted: i=1; AJvYcCUvkrVFIy1TkqvXX/LKltzUcJnibsuzU9BTh7Ahs/3kncwfPWecr0tdybr4zn912nb9UpEhEPMew8pOhCoECCSKhvdedvgBxysFrBtG
-X-Gm-Message-State: AOJu0YyT4qVzdspEsK7ZFbKEMjWPczcoQErThYOibgx5PhdPlRkiGyqG
-	A9UTHbGIQlv5niQqzMnqCftGuO385QeLuZrbfHung7xEWKgMhZU2FlX1gz9k+FXnFUO+Pqq/KrX
-	4
-X-Google-Smtp-Source: AGHT+IHG+0RWeJvA4tpJNVMwbh8CPAHQBFYqLRjlNpPaCFJjsm76snXQhY0qYZq7twlxmQWy0+IYBQ==
-X-Received: by 2002:a17:902:d30d:b0:1f4:990c:5ef1 with SMTP id d9443c01a7336-1f6370250c8mr24670045ad.31.1717176516593;
-        Fri, 31 May 2024 10:28:36 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:a236:3f96:dc60:48b4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6323ded40sm19286015ad.169.2024.05.31.10.28.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 May 2024 10:28:36 -0700 (PDT)
-Date: Fri, 31 May 2024 11:28:33 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH v5 5/7] remoteproc: core: support of the tee interface
-Message-ID: <ZloIwfFwkpKYLU9k@p14s>
-References: <20240521081001.2989417-1-arnaud.pouliquen@foss.st.com>
- <20240521081001.2989417-6-arnaud.pouliquen@foss.st.com>
- <ZlZM/hgSO4EeRVqS@p14s>
- <d9e1356a-d8bf-40a3-9a78-424ead8089a9@foss.st.com>
- <ZleReEIgD8O5zATO@p14s>
- <5b3f8346-d6db-4da3-9613-20cf9f3c226b@foss.st.com>
+        bh=dm7zqDMgip+WJ2XM2t5p8Qmnl2zluKwd7L3ZaHXLQCo=;
+        b=YUsMRg9GB5G+3ft6NgQfVZig8GtdwWcP/ruK6iE+/uXSEa7u07pvp5CJzw9Ci8BQI+
+         5NR2/VPzaXf6qogEdWIKLAmfa+8QyPzop0CX6LPFK+PncJO76ooNIJ76ziYyB5AfKCm7
+         CDDONoP13deAfu8cV64dIqr3cuU7eCLUHhfJ4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717176591; x=1717781391;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dm7zqDMgip+WJ2XM2t5p8Qmnl2zluKwd7L3ZaHXLQCo=;
+        b=kLlxPN9J2UfrPJHDSK/ryE/JFN5NHxpStE48381/2nQkesKfE9ry1bleAWDqcsekX3
+         wRbXBPPXNQ7dVvguLqS10fJuH3IQk1nNjoSho3gwy7Nm7Hy0TMq2DwLu7ErIEBJe/Y2T
+         azhEMgXGNv9WDdo4nPE+k9hrhwSYChxb2n2UK3VmDWFtpjKk4eTRr1xbegYJ91vA15IF
+         M7GmURLOxD7mGiO3ToRhkyq90dZfxr2UJYwBTLpvAexCvWEXBkevnFlgNQfeeFwnm7Yk
+         nF6w1plC/OxDj/ULJe9Vn9V8yujikDgdvUvs3PFMcmkWOW1beFH9tTkc8/ED2UwFSiH0
+         lKFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUjareKedxPSR4aZNB3YRjKAeELgXfzEz1KBg3j/MlK3+7/0PIj/wSGoURo6KN7/9xWpPFwznkibDVBwEeO8xvMx5X6lixFx7B6AKxg
+X-Gm-Message-State: AOJu0YyWGHumpk5iD/YiCLtCHLjfWave4/65prYJIp48/KlveBBbmB/P
+	mIyrwJdNUjUQqoBUMqXhJx/fXF6t1HxVGOrKHB3ie3xXLHcTrb0Zso29m2gXj/c+2OXAqe6W/JK
+	MgCMY
+X-Google-Smtp-Source: AGHT+IHiJa7qaRIMQV0jDiAYTglTphUk2cRdx4k952ZD58yMTEKCrMYV9KQahMf3TvYlfIBea8gwyA==
+X-Received: by 2002:a05:6214:932:b0:6ae:d2d2:116d with SMTP id 6a1803df08f44-6aed2d211b5mr20536996d6.21.1717176591272;
+        Fri, 31 May 2024 10:29:51 -0700 (PDT)
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com. [209.85.160.178])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ae4a750436sm8051296d6.72.2024.05.31.10.29.49
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 31 May 2024 10:29:50 -0700 (PDT)
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-43dfe020675so20881cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 10:29:49 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUzKzBuWSWb8U83O04ZIF24IwMj5MWh27rkV8sla8TB3rOG0LMXmKyspf3UwhJFgvqDqmWWWkG98vd92WYEsxLsoeMFsFfphW3xoMnD
+X-Received: by 2002:a05:622a:4ac9:b0:43e:33f7:600c with SMTP id
+ d75a77b69052e-43ff4f8dc64mr3254021cf.19.1717176589297; Fri, 31 May 2024
+ 10:29:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5b3f8346-d6db-4da3-9613-20cf9f3c226b@foss.st.com>
+References: <20240531-edp-panel-drop-v3-0-4c98b2b95e3a@linaro.org>
+ <7428a2f7-befc-6db8-76f4-3ca8dc12d31c@quicinc.com> <CAD=FV=Xcq-p5OxSnDJVF-Wp88ZfXOaOKJmh941ymy-f0wkhdhw@mail.gmail.com>
+ <197777e0-e6e1-7004-be27-edb98f8a235e@quicinc.com>
+In-Reply-To: <197777e0-e6e1-7004-be27-edb98f8a235e@quicinc.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Fri, 31 May 2024 10:29:33 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=UUmnKuBCwLLjrg69kCi7MTjMDYAVtdWEb3yqeZc=-5iQ@mail.gmail.com>
+Message-ID: <CAD=FV=UUmnKuBCwLLjrg69kCi7MTjMDYAVtdWEb3yqeZc=-5iQ@mail.gmail.com>
+Subject: Re: [PATCH v3 0/3] drm/panel-edp: remove several legacy compatibles
+ used by the driver
+To: Jeffrey Hugo <quic_jhugo@quicinc.com>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-rockchip@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 30, 2024 at 09:42:26AM +0200, Arnaud POULIQUEN wrote:
-> Hello Mathieu,
-> 
-> On 5/29/24 22:35, Mathieu Poirier wrote:
-> > On Wed, May 29, 2024 at 09:13:26AM +0200, Arnaud POULIQUEN wrote:
-> >> Hello Mathieu,
+Hi,
+
+On Fri, May 31, 2024 at 9:51=E2=80=AFAM Jeffrey Hugo <quic_jhugo@quicinc.co=
+m> wrote:
+>
+> On 5/31/2024 10:20 AM, Doug Anderson wrote:
+> > Hi,
+> >
+> > On Fri, May 31, 2024 at 9:18=E2=80=AFAM Jeffrey Hugo <quic_jhugo@quicin=
+c.com> wrote:
 > >>
-> >> On 5/28/24 23:30, Mathieu Poirier wrote:
-> >>> On Tue, May 21, 2024 at 10:09:59AM +0200, Arnaud Pouliquen wrote:
-> >>>> 1) on start:
-> >>>> - Using the TEE loader, the resource table is loaded by an external entity.
-> >>>> In such case the resource table address is not find from the firmware but
-> >>>> provided by the TEE remoteproc framework.
-> >>>> Use the rproc_get_loaded_rsc_table instead of rproc_find_loaded_rsc_table
-> >>>> - test that rproc->cached_table is not null before performing the memcpy
-> >>>>
-> >>>> 2)on stop
-> >>>> The use of the cached_table seems mandatory:
-> >>>> - during recovery sequence to have a snapshot of the resource table
-> >>>>   resources used,
-> >>>> - on stop to allow  for the deinitialization of resources after the
-> >>>>   the remote processor has been shutdown.
-> >>>> However if the TEE interface is being used, we first need to unmap the
-> >>>> table_ptr before setting it to rproc->cached_table.
-> >>>> The update of rproc->table_ptr to rproc->cached_table is performed in
-> >>>> tee_remoteproc.
-> >>>>
-> >>>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-> >>>> ---
-> >>>>  drivers/remoteproc/remoteproc_core.c | 31 +++++++++++++++++++++-------
-> >>>>  1 file changed, 23 insertions(+), 8 deletions(-)
-> >>>>
-> >>>> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> >>>> index 42bca01f3bde..3a642151c983 100644
-> >>>> --- a/drivers/remoteproc/remoteproc_core.c
-> >>>> +++ b/drivers/remoteproc/remoteproc_core.c
-> >>>> @@ -1267,6 +1267,7 @@ EXPORT_SYMBOL(rproc_resource_cleanup);
-> >>>>  static int rproc_set_rsc_table_on_start(struct rproc *rproc, const struct firmware *fw)
-> >>>>  {
-> >>>>  	struct resource_table *loaded_table;
-> >>>> +	struct device *dev = &rproc->dev;
-> >>>>  
-> >>>>  	/*
-> >>>>  	 * The starting device has been given the rproc->cached_table as the
-> >>>> @@ -1276,12 +1277,21 @@ static int rproc_set_rsc_table_on_start(struct rproc *rproc, const struct firmwa
-> >>>>  	 * this information to device memory. We also update the table_ptr so
-> >>>>  	 * that any subsequent changes will be applied to the loaded version.
-> >>>>  	 */
-> >>>> -	loaded_table = rproc_find_loaded_rsc_table(rproc, fw);
-> >>>> -	if (loaded_table) {
-> >>>> -		memcpy(loaded_table, rproc->cached_table, rproc->table_sz);
-> >>>> -		rproc->table_ptr = loaded_table;
-> >>>> +	if (rproc->tee_interface) {
-> >>>> +		loaded_table = rproc_get_loaded_rsc_table(rproc, &rproc->table_sz);
-> >>>> +		if (IS_ERR(loaded_table)) {
-> >>>> +			dev_err(dev, "can't get resource table\n");
-> >>>> +			return PTR_ERR(loaded_table);
-> >>>> +		}
-> >>>> +	} else {
-> >>>> +		loaded_table = rproc_find_loaded_rsc_table(rproc, fw);
-> >>>>  	}
-> >>>>  
-> >>>> +	if (loaded_table && rproc->cached_table)
-> >>>> +		memcpy(loaded_table, rproc->cached_table, rproc->table_sz);
-> >>>> +
+> >> On 5/30/2024 5:12 PM, Dmitry Baryshkov wrote:
+> >>> There are two ways to describe an eDP panel in device tree. The
+> >>> recommended way is to add a device on the AUX bus, ideally using the
+> >>> edp-panel compatible. The legacy way is to define a top-level platfor=
+m
+> >>> device for the panel.
 > >>>
-> >>> Why is this not part of the else {} above as it was the case before this patch?
-> >>> And why was an extra check for ->cached_table added?
-> >>
-> >> Here we have to cover 2 use cases if rproc->tee_interface is set.
-> >> 1) The remote processor is in stop state
-> >>      - loaded_table points to the resource table in the remote memory and
-> >>      -  rproc->cached_table is null
-> >>      => no memcopy
-> >> 2) crash recovery
-> >>      - loaded_table points to the resource table in the remote memory
-> >>      - rproc-cached_table point to a copy of the resource table
-> > 
-> > A cached_table exists because it was created in rproc_reset_rsc_table_on_stop().
-> > But as the comment says [1], that part of the code was meant to be used for the
-> > attach()/detach() use case.  Mixing both will become extremely confusing and
-> > impossible to maintain.
-> 
-> i am not sure to understand your point here... the cached_table table was
-> already existing for the "normal" case[2]. Seems to me that the cache table is
-> needed on stop in all scenarios.
-> 
-> [2]
-> https://elixir.bootlin.com/linux/v4.20.17/source/drivers/remoteproc/remoteproc_core.c#L1402
-> 
-> > 
-> > I think the TEE scenario should be as similar as the "normal" one where TEE is
-> > not involved.  To that end, I suggest to create a cached_table in
-> > tee_rproc_parse_fw(), exactly the same way it is done in
-> > rproc_elf_load_rsc_table().  That way the code path in
-> > rproc_set_rsc_table_on_start() become very similar and we have a cached_table to
-> > work with when the remote processor is recovered.  In fact we may not need
-> > rproc_set_rsc_table_on_start() at all but that needs to be asserted.
-> 
-> This is was I proposed in my V4 [3]. Could you please confirm that this aligns
-> with what you have in mind?
-
-After spending more time on this I have the following 3 observations:
-
-1) We need a ->cached_table, otherwise the crash recovery path gets really
-messy.
-
-2) It _might_ be a good idea to rename tee_rproc_get_loaded_rsc_table() to
-tee_rproc_find_loaded_rsc_table() to be aligned with the scenario where the
-firmware is loaded by the remoteproc core.  I think you had
-tee_rproc_find_loaded_rsc_table() in the first place and I asked you to change
-it.  If so, apologies - reviewing patches isn't an exact science.
-
-3) The same way ->cached_table is created in rproc_elf_load_rsc_table(), which
-is essentially ops::parse_fw(), we should create one in tee_rproc_parse_fw()
-with a kmemdup().  Exactly the same as in rproc_elf_load_rsc_table().  In
-tee_rproc_parse_fw(), @rsc_table should be iounmap'ed right away so that we
-don't need to keep a local variable to free it later.  In rproc_start() the call
-to rproc_find_loaded_rsc_table() will get another mapped handle to the resource
-table in memory.  It might be a little unefficient but it sure beats doing a lot
-of modifications in the core.
-
-As I said above this isn't an exact science and we may need to changes more
-things but at least it should take us a little further.
-
-Thanks,
-Mathieu
-
-> In such a case, should I keep the updates below in
-> rproc_reset_rsc_table_on_stop(), or should I revert to using rproc->rsc_table to
-> store the pointer to the resource table in tee_remoteproc for the associated
-> memory map/unmap?"
-> 
-> [3]
-> https://patchwork.kernel.org/project/linux-remoteproc/patch/20240308144708.62362-2-arnaud.pouliquen@foss.st.com/
-> 
-> Thanks,
-> Arnaud
-> 
-> > 
-> > [1]. https://elixir.bootlin.com/linux/v6.10-rc1/source/drivers/remoteproc/remoteproc_core.c#L1565
-> > 
-> >>      => need to perform the memcpy to reapply settings in the resource table
-> >>
-> >> I can duplicate the memcpy in if{} and else{} but this will be similar code
-> >> as needed in both case.
-> >> Adding rproc->cached_table test if proc->tee_interface=NULL seems also
-> >> reasonable as a memcpy from 0 should not be performed.
-> >>
-> >>
+> >>> Document that adding support for eDP panels in a legacy way is strong=
+ly
+> >>> discouraged (if not forbidden at all).
 > >>>
-> >>> This should be a simple change, i.e introduce an if {} else {} block to take
-> >>> care of the two scenarios.  Plus the comment is misplaced now. 
-> >>
-> >> What about split it in 2 patches?
-> >> - one adding the test on rproc->cached_table for the memcpy
-> >> - one adding the if {} else {}?
-> >>
-> >> Thanks,
-> >> Arnaud
-> >>
-> >>
+> >>> While we are at it, also drop legacy compatible strings and bindings =
+for
+> >>> five panels. These compatible strings were never used by a DT file
+> >>> present in Linux kernel and most likely were never used with the
+> >>> upstream Linux kernel.
 > >>>
-> >>> More comments tomorrow.
+> >>> The following compatibles were never used by the devices supported by
+> >>> the upstream kernel and are a subject to possible removal:
 > >>>
-> >>> Thanks,
-> >>> Mathieu
-> >>>
-> >>>> +	rproc->table_ptr = loaded_table;
-> >>>> +
-> >>>>  	return 0;
-> >>>>  }
-> >>>>  
-> >>>> @@ -1318,11 +1328,16 @@ static int rproc_reset_rsc_table_on_stop(struct rproc *rproc)
-> >>>>  	kfree(rproc->clean_table);
-> >>>>  
-> >>>>  out:
-> >>>> -	/*
-> >>>> -	 * Use a copy of the resource table for the remainder of the
-> >>>> -	 * shutdown process.
-> >>>> +	/* If the remoteproc_tee interface is used, then we have first to unmap the resource table
-> >>>> +	 * before updating the proc->table_ptr reference.
-> >>>>  	 */
-> >>>> -	rproc->table_ptr = rproc->cached_table;
-> >>>> +	if (!rproc->tee_interface) {
-> >>>> +		/*
-> >>>> +		 * Use a copy of the resource table for the remainder of the
-> >>>> +		 * shutdown process.
-> >>>> +		 */
-> >>>> +		rproc->table_ptr = rproc->cached_table;
-> >>>> +	}
-> >>>>  	return 0;
-> >>>>  }
-> >>>>  
-> >>>> -- 
-> >>>> 2.25.1
-> >>>>
+> >>> - lg,lp097qx1-spa1
+> >>> - samsung,lsn122dl01-c01
+> >>> - sharp,ld-d5116z01b
+> >>
+> >> Ok to drop the sharp one I added.  It should be able to be handled by
+> >> the (newish) edp-panel, but I think the TI bridge driver needs some wo=
+rk
+> >> for the specific platform (no I2C connection) to verify.
+> >
+> > Is the platform supported upstream? If so, which platform is it? Is
+> > the TI bridge chip the ti-sn65dsi86? If so, I'm confused how you could
+> > use that bridge chip without an i2c connection, but perhaps I'm
+> > misunderstanding. :-P
+>
+> Yes, the platform is upstream.  The 8998 laptops (clamshell).  It is the
+> ti-sn65si86.  I suspect the I2C connection was not populated for cost
+> reasons, then determined its much more convenient to have it as every
+> generation after that I've seen has the I2C.
+>
+> If you check the datasheet closely, the I2C connection is optional.  You
+> can also configure the bridge inband using DSI commands.  This is what
+> the FW and Windows does.
+>
+> So, the DT binding needs to make the I2C property optional (this should
+> be backwards compatible).  The driver needs to detect that the I2C
+> connection is not provided, and fall back to DSI commands.  Regmap would
+> be nice for this, but I got pushback on the proposal.  Then I got
+> sidetracked looking at other issues.
+
+Crazy! I'm sure I've skimmed over that part of the ti-sn65dsi86
+datasheet before but I don't think I internalized it. I guess if you
+did it this way then you'd instantiate it as a platform device instead
+of an i2c device and that would be how you'd detect the difference. I
+could imagine this being a bit of a challenge to get working in the
+driver.
 
