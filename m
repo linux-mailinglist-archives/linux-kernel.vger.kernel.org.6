@@ -1,92 +1,71 @@
-Return-Path: <linux-kernel+bounces-196614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C6B78D5EB1
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 11:44:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98FF88D5EBD
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 11:47:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7738B26F50
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 09:44:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51DE028504A
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 09:47:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 115D9140369;
-	Fri, 31 May 2024 09:43:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p+4d0iY2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7D5113F437;
+	Fri, 31 May 2024 09:47:09 +0000 (UTC)
+Received: from fgw22-7.mail.saunalahti.fi (fgw22-7.mail.saunalahti.fi [62.142.5.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EC7A133993;
-	Fri, 31 May 2024 09:43:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 190871CD35
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 09:47:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.83
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717148631; cv=none; b=shlGpXaWcLASdr66tpRDDa+xRJNBloRnYeMiu02s84ulB3BxtF+1uq4PmvexvxW/1+22dUyYXob8QwbtrHjoiQs1k/o1x20uCTmugHuE1wj3fns1gzkRMeNm55H1JaNntJ3MAOJgI2RqI4zjmOEkgSyLhZsUb52YNtG0Tw2QKA8=
+	t=1717148829; cv=none; b=QkUUy24ORLqV9y1EGpRht68yf5GSvr13I4PG8roYknEtmRncndU9lyU5HLv6NzccxRE+PVB4HuUDbjI2ULNjflF1iZyxzdNbDP48ETf53s6NFyi2SlbgiHlTNP5eESQgUxS5aNJHS3SjFxa7fDy7Sn4VoA4g5hpT8QwLm1Y6jJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717148631; c=relaxed/simple;
-	bh=Ji/BCrczZrXFzdJ9KBTdLjwgMFK+b2bHwQAPjUjuiF0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gRhIAo39hmE7SZYOPadQcyTcB2V1zBxVbGoyZVbrJpo65mY6rgdRwPzaip7qtTqmbZPq9vTYUH6c6akSt7HlTfcYrZvvmHcCeCHpiSQ4MOYzKgFk4sO20B+/q5O9RB48Net3Cc8FIkCgfxntrgu7Wm8ACmDzkB2XwDpL9TX10S8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p+4d0iY2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71019C116B1;
-	Fri, 31 May 2024 09:43:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717148631;
-	bh=Ji/BCrczZrXFzdJ9KBTdLjwgMFK+b2bHwQAPjUjuiF0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=p+4d0iY2y4Jo1b9nwvfmTfqGVsA5/JeClcvI1M1tX1bS2C5KXjcqZwTp6Vq06c48S
-	 wrMTRPvJVID5Xt89uFTbo4ADWegnJRdcon9tPHknmaQNE/BES6SCutOjMCXKDC2G5G
-	 B4gq4P+QJNb8eVnZWYTFC1VeCtNSDJmkMwt4AWafOd4Us18f4idAX0eoifa14g8KGf
-	 BAdlrRdg/X+GmK0cCl/UrE5+yybqgWWUz5nwEx6xxJeqcifdJnD6paTxI/X5B9Chl2
-	 OTtoPF0obQmt86/r/jObajHDXLbHNFwkc+EOdBm/Fs+u/YzYwiSFa8gPCFGQ3fpjyX
-	 ldqRx67ejfbSg==
-From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Shuah Khan <shuah@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	mhiramat@kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: [PATCH 2/2] selftests/tracing: Fix to check the required syscall event
-Date: Fri, 31 May 2024 18:43:47 +0900
-Message-Id: <171714862700.198407.14000969067636098427.stgit@devnote2>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <171714860864.198407.18416314586430149538.stgit@devnote2>
-References: <171714860864.198407.18416314586430149538.stgit@devnote2>
-User-Agent: StGit/0.19
+	s=arc-20240116; t=1717148829; c=relaxed/simple;
+	bh=v2i+5oujx3B3U03PNEXhRz8hllVMowViGOQ746GnLCU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RJRFlM+Oq6RCSRAYLuGkvPSI6ldNPnPjuizNguXidmw8c6uRo7zQUBcIyGmAQ0r9vea9/QllupQieKNNJbsXZOW044i9Ijo5SrtIXFn3PUBH+JdOqZ8rWovLFBhy+TBeGG6KquU+IYcBCL+A6U3Nzjqolh8oYL9oAjNPoF0vhmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
+Received: from localhost (88-113-26-230.elisa-laajakaista.fi [88.113.26.230])
+	by fgw21.mail.saunalahti.fi (Halon) with ESMTP
+	id b9c3de8b-1f32-11ef-aafc-005056bdd08f;
+	Fri, 31 May 2024 12:46:59 +0300 (EEST)
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+To: Mark Brown <broonie@kernel.org>,
+	linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: =?UTF-8?q?N=C3=ADcolas=20F=20=2E=20R=20=2E=20A=20=2E=20Prado?= <nfraprado@collabora.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: [PATCH v1 0/2] spi: Make dummy SG handling robust
+Date: Fri, 31 May 2024 12:44:31 +0300
+Message-ID: <20240531094658.1598969-1-andy.shevchenko@gmail.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+There's an unreliable code to handle DMA mappings on unidirection transfers.
+This series does two things:
+- it reverts the seemingly unnecessary change
+- it reworks dummy SG list handling
 
-Since test_duplicates.tc depends on syscalls/sys_enter_openat event,
-it must add the event file to `requires`.
-Without this fix, the test fails if CONFIG_FTRACE_SYSCALLS=n.
+There is no need to backport that AFAIU, but no harm to apply for v6.10 aka
+the current release cycle. Guys, please test these. 
 
-Fixes: 297e1dcdca3d ("selftests/ftrace: Add selftest for testing duplicate eprobes and kprobes")
-Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
----
- .../ftrace/test.d/dynevent/test_duplicates.tc      |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Andy Shevchenko (2):
+  spi: Revert "Check if transfer is mapped before calling DMA sync APIs"
+  spi: Do not rely on the SG table and respective API implementations
 
-diff --git a/tools/testing/selftests/ftrace/test.d/dynevent/test_duplicates.tc b/tools/testing/selftests/ftrace/test.d/dynevent/test_duplicates.tc
-index d3a79da215c8..5f72abe6fa79 100644
---- a/tools/testing/selftests/ftrace/test.d/dynevent/test_duplicates.tc
-+++ b/tools/testing/selftests/ftrace/test.d/dynevent/test_duplicates.tc
-@@ -1,7 +1,7 @@
- #!/bin/sh
- # SPDX-License-Identifier: GPL-2.0
- # description: Generic dynamic event - check if duplicate events are caught
--# requires: dynamic_events "e[:[<group>/][<event>]] <attached-group>.<attached-event> [<args>]":README
-+# requires: dynamic_events "e[:[<group>/][<event>]] <attached-group>.<attached-event> [<args>]":README events/syscalls/sys_enter_openat
- 
- echo 0 > events/enable
- 
+ drivers/spi/spi.c | 46 +++++++++++++++++-----------------------------
+ 1 file changed, 17 insertions(+), 29 deletions(-)
+
+-- 
+2.45.1
 
 
