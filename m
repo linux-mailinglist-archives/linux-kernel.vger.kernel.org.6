@@ -1,207 +1,151 @@
-Return-Path: <linux-kernel+bounces-196745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 681CE8D610A
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 13:55:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B5558D610D
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 13:56:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C0A31C22794
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 11:55:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A3EAB2289C
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 11:56:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEC97158209;
-	Fri, 31 May 2024 11:55:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 074B81581F0;
+	Fri, 31 May 2024 11:55:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b="eNSQVIMw";
-	dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b="oQXCzoNL"
-Received: from s1.sapience.com (s1.sapience.com [72.84.236.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="w4BCKKTE"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40B39157A6C;
-	Fri, 31 May 2024 11:55:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=72.84.236.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717156528; cv=fail; b=UlNqtztWtQCokVGm17pG4fBbDPCyC/h6/o6lCQvIse7HgCo8DGQ9m+e6LTLqrhIrzwDWjstn+3MsYqPuAGazVpEzHRAwnvKtPhPo4M0icVl7TM9G28Ej8aWTng5lCJNWrp5stYAE4wLTiiAJZi1zmGudBvbI19rfko95GaldgCQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717156528; c=relaxed/simple;
-	bh=Bd3KZ+yFQSeCtmXYqYm3VH6yU8fRiWgc3mbKerK/UhU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=mWRU5mLtfTdpmDaebTwZhg6gu1XiK7Xi4xtrctPrmnr4H0E9teCS/BvRnt21iy1ordXvhTketm0NgrnCRsl5uThaPu64D4+Wg8EY2+Rd1LOsf12aQaOLMlSZtUh6LyXZH5QT5Iw4/heEKUl9ZH+CiqTpWLUGndcJYW46aOcUujQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com; spf=pass smtp.mailfrom=sapience.com; dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b=eNSQVIMw; dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b=oQXCzoNL; arc=fail smtp.client-ip=72.84.236.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sapience.com
-Authentication-Results: dkim-srvy7; dkim=pass (Good ed25519-sha256 
-   signature) header.d=sapience.com header.i=@sapience.com 
-   header.a=ed25519-sha256; dkim=pass (Good 2048 bit rsa-sha256 signature) 
-   header.d=sapience.com header.i=@sapience.com header.a=rsa-sha256
-Received: from srv8.sapience.com (srv8.sapience.com [x.x.x.x])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (secp384r1) server-digest SHA384)
-	(No client certificate requested)
-	by s1.sapience.com (Postfix) with ESMTPS id 07690480A2E;
-	Fri, 31 May 2024 07:55:25 -0400 (EDT)
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=sapience.com;
- i=@sapience.com; q=dns/txt; s=dk-ed25519-220413; t=1717156525;
- h=message-id : subject : from : to : cc : date : in-reply-to :
- references : content-type : mime-version : from;
- bh=Bd3KZ+yFQSeCtmXYqYm3VH6yU8fRiWgc3mbKerK/UhU=;
- b=eNSQVIMwKba7IepHL2th/FwZ/XAvK4Mu2K78TT8lDkCvIFwzw8G4ziIpHBJoQ06JZynSD
- mYGz6Beg5VWZlUtCQ==
-ARC-Seal: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412; t=1717156525;
-	cv=none; b=DQRufJH8RG0EtfdpGLg3OscZNCvXlRob9CHXc58/zcFeIqlGOpDzAUHSrhKzgsQmsVDK87Hux0UqZ07EdKjihtZiDGoaRTlQFlO8gg3bwRG0vVZcxS7oDd9Y489xspb4VXwMNxOH55KyZ4Y1qRx0m+ErY5w3aJWoROmZYagD8KI4Rj6BHqDM3yVw1hGKowvE32CCkOZlGR2gDR5nDU8cefH8T3wVfkRVNI8Pv+UAwc6l78HYJv1gdUDAVU59CLC3ME4B32hf0ReI3+VvoS7pHxHtiisnfCrpnzBIGo9h6VjHPmSuJRCtDSEuZ3cvYnPb67+hXMWYeg4lRhYehbV2mg==
-ARC-Message-Signature: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412;
-	t=1717156525; c=relaxed/simple;
-	bh=Bd3KZ+yFQSeCtmXYqYm3VH6yU8fRiWgc3mbKerK/UhU=;
-	h=DKIM-Signature:DKIM-Signature:Message-ID:Subject:From:To:Cc:Date:
-	 In-Reply-To:References:Autocrypt:Content-Type:User-Agent:
-	 MIME-Version; b=Ur5FWX81IzOOX/7AMkWfZBbo2GA0zlTYHf2yG8vwwXWGmZSuqO0gYTCs8Bh6Nozz/2fmc7HsUnBvo2KzCo46io7xQ0HGWYSyXPoM55QEj4SnEa9UFMM8FOZDiEQfkHPJfIiT771Zc9ocfG9UvANIGpnWLd9ieLIcfMh2VeUy5nyzn2sE5MgWUr4GD3X38XNMjeygv++lCW/0FfmB7Ad+eY2BK1ZndT8o8L5yzsShmWtLhi3yGzQRm3Di7bOC/MYxCjbWZtHFdEORWoCuns4yBHj3sY7Ulf/kr21ULSgp41Ocpm+9OZY+EYEheTVkiIMIqlPS6dJZxMe+HxG91RAA5Q==
-ARC-Authentication-Results: i=1; arc-srv8.sapience.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sapience.com;
- i=@sapience.com; q=dns/txt; s=dk-rsa-220413; t=1717156525;
- h=message-id : subject : from : to : cc : date : in-reply-to :
- references : content-type : mime-version : from;
- bh=Bd3KZ+yFQSeCtmXYqYm3VH6yU8fRiWgc3mbKerK/UhU=;
- b=oQXCzoNLpXEAKjmy4+GQ2r0RA7pkqKeTmXo0aLajKdOo1GGUQWVHGDlU5yRsTcSEhOM4L
- t21GgvxgsZ1MqO+V0D56TlmdvrjkHu+mOXDNJMcWhm/oAySHzBXRHUpqRnajW91DCBJrHn6
- j6cNAeuLQdwwNr7RUsTVpuWMUYavCpKBCxehQNjBS4aKwN79bN2etnnE1GXYKkBlGJyeI3Q
- lOzQcck1qtJChwy0pSOCz/2HWSVq7zBPNs6FX3By/s9NKLp2K7FgBjaLZnSTRJrzLQQvCM9
- o/Zyr1KLCDallirjgJzDCLLML1LsKGAiOQXnaOHv/Iwy3dqylbn3w+1/CWvw==
-Received: from lap7.sapience.com (lap7w.sapience.com [x.x.x.x])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature ECDSA (secp384r1) server-digest SHA384)
-	(No client certificate requested)
-	by srv8.sapience.com (Postfix) with ESMTPS id B69D4280016;
-	Fri, 31 May 2024 07:55:25 -0400 (EDT)
-Message-ID: <69d0c5f0b237990fd2c7cd88768aa2a70a5ee83a.camel@sapience.com>
-Subject: Re: Hung tasks due to a AB-BA deadlock between the leds_list_lock
- rwsem and the rtnl mutex
-From: Genes Lists <lists@sapience.com>
-To: Hans de Goede <hdegoede@redhat.com>, Linux regressions mailing list
-	 <regressions@lists.linux.dev>, Pavel Machek <pavel@ucw.cz>, Lee Jones
-	 <lee@kernel.org>, Linux LEDs <linux-leds@vger.kernel.org>, Heiner Kallweit
-	 <hkallweit1@gmail.com>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, andrew@lunn.ch, 
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com,  johanneswueller@gmail.com, "Russell King (Oracle)"
- <linux@armlinux.org.uk>
-Date: Fri, 31 May 2024 07:55:25 -0400
-In-Reply-To: <618601d8-f82a-402f-bf7f-831671d3d83f@redhat.com>
-References: <9d189ec329cfe68ed68699f314e191a10d4b5eda.camel@sapience.com>
-	 <15a0bbd24cd01bd0b60b7047958a2e3ab556ea6f.camel@sapience.com>
-	 <ZliHhebSGQYZ/0S0@shell.armlinux.org.uk>
-	 <42d498fc-c95b-4441-b81a-aee4237d1c0d@leemhuis.info>
-	 <618601d8-f82a-402f-bf7f-831671d3d83f@redhat.com>
-Autocrypt: addr=lists@sapience.com; prefer-encrypt=mutual;
- keydata=mDMEXSY9GRYJKwYBBAHaRw8BAQdAwzFfmp+m0ldl2vgmbtPC/XN7/k5vscpADq3BmRy5R
- 7y0LU1haWwgTGlzdHMgKEwwIDIwMTkwNzEwKSA8bGlzdHNAc2FwaWVuY2UuY29tPoiWBBMWCAA+Ah
- sBBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAFiEE5YMoUxcbEgQOvOMKc+dlCv6PxQAFAmPJfooFCRl
- vRHEACgkQc+dlCv6PxQAc/wEA/Dbmg91DOGXll0OW1GKaZQGQDl7fHibMOKRGC6X/emoA+wQR5FIz
- BnV/PrXbao8LS/h0tSkeXgPsYxrzvfZInIAC
-Content-Type: multipart/signed; micalg="pgp-sha384";
-	protocol="application/pgp-signature"; boundary="=-Y2OqDd5dYDgI7spdeu7K"
-User-Agent: Evolution 3.52.2 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98050157E82
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 11:55:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717156555; cv=none; b=rrM1WKjth+vrSpUAE+c5dEh2Mhk9tGREj90E2eDrPe7kK33oZo6nLxW6mMnKE+Y+WiFnv2Mqs3bHUo9n/QaY/Wap3wxxzLBbwOuIzRxLY1QzdZ5enENJbgBbEyQ2afNu/RZLFGQPepGFv5L/FL13sprAELzuf88pCSK8LtIiOkg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717156555; c=relaxed/simple;
+	bh=MTwwBV2T5cVxGloQBIIu8tZJst21kS52eDYdXv08W78=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qWv8hg+iKAB4xsKLQRNafwZ7pPvxC8cYh7krqpPHVIT8LpHYmQH0OBFjPy0ebFfCxpHFyrbG0Sv2I8JR2b2nSsOvgq3Uj7g37522RYDuLgN/LzeCh49dgsgNHKFCNMrdRn50AkKwq6/nestlIHVpe81DDsoLZDXloELix3btSgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=w4BCKKTE; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-57a1fe63a96so1588828a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 04:55:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717156552; x=1717761352; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=MTwwBV2T5cVxGloQBIIu8tZJst21kS52eDYdXv08W78=;
+        b=w4BCKKTEIFROBX2zBoqFw+WPVN30ZB9yETNZPQOSsREam0/dTsQY6rdUQv3nwDa8jx
+         dKEjhNI5BAW2YUjnxe3P7K5nSDMccjZZqTvpx4+HH+eWY5lqlblOO4FRGrLwu7BXI/lc
+         PWmupmDmHCNs5bboA1qeyOKnywLvrgtDsijXRFwvhr5eEkcUCidbx4erivA1+dRm70Bq
+         Lxo2uJ6IkFvuLuuIDG/kEH74Lf+jGidO25T06RZotjem2OIsie1SLIwJBvyZssRQTWB7
+         wKr+PCB7kgea1Olvsk9pX3sH//tqJ21kNaVnUrgBJcUEp/THaBE8eunt1rMsWZ63NObi
+         pJDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717156552; x=1717761352;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MTwwBV2T5cVxGloQBIIu8tZJst21kS52eDYdXv08W78=;
+        b=Gim4nASsAnj4GE/oRPRL/yoEW+ByHYqri6RXt73d3U+3O+/q7TYqha3fQ9oHeMVJtp
+         YGvg+9qrXleDbE8SgrTtNxR/OafPmQr1IcRec+6T+CMAUD0Dy3pdrp+1UUNBEjTdZ3+d
+         pB9b0Z5V3uTAX+Hw1n5NM0hn3a23XeaNLoumsvfHH8vdXF3gjRaae86yUACuF9VFF3YI
+         pn9FXZuRvSeOSjluK/X/sILQVvjWuxc9lyeEclSB6RyFVcL8xJwevV89WPCBPGCwLfKp
+         1rNm8k/FXMFwA/Ya39zUmq3Z8FB/ErfWFeTVnWZcPDdqiYlaIpyDoPTnNj5H6Oo9YHKo
+         SZWg==
+X-Forwarded-Encrypted: i=1; AJvYcCUNi9LOhOjzHJg/WMV50M71J0r7S8A4FF7xogHf1U7ePs/NCeB6UXSgPH7er/J+9k6luMmj80J8cmR5FvtQgRF5zfqkHlyYZEDJGErG
+X-Gm-Message-State: AOJu0YwTaR27xGbEIaBKopLNiwsH6JNWSneVhHc63zQIPAbRiPp3d9KM
+	5DNKnRQ6Ca52aHL9L4s2AokO/pCyaJrocll8p5vebCZR1tbcVfW1t2U0L+PIzYA=
+X-Google-Smtp-Source: AGHT+IHocPLIN+ojTku/nwSK4uiv5CIu5ToaTHs7R9ZMZ7XNlrQDXD32rVzSuLvxytyaUDULDp4eWA==
+X-Received: by 2002:a50:aa93:0:b0:57a:2537:a730 with SMTP id 4fb4d7f45d1cf-57a36382342mr1270321a12.4.1717156551670;
+        Fri, 31 May 2024 04:55:51 -0700 (PDT)
+Received: from [192.168.128.139] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57a31c6d4absm914236a12.72.2024.05.31.04.55.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 31 May 2024 04:55:51 -0700 (PDT)
+Message-ID: <7fb5511e-e20b-47dd-8cc3-fb2975db7c63@linaro.org>
+Date: Fri, 31 May 2024 13:55:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: qcom: gcc-x1e80100: Fix halt_check for all 3 USB PHY
+ pipe clocks
+To: Abel Vesa <abel.vesa@linaro.org>, Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rajendra Nayak <quic_rjendra@quicinc.com>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: Sibi Sankar <quic_sibis@quicinc.com>, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240530-x1e80100-clk-gcc-fix-halt-check-for-usb-phy-pipe-clks-v1-1-16c6f4dccbd5@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <20240530-x1e80100-clk-gcc-fix-halt-check-for-usb-phy-pipe-clks-v1-1-16c6f4dccbd5@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 30.05.2024 6:48 PM, Abel Vesa wrote:
+> Since the pipe clocks are fed by the QMP PHYs, they are not under the
+> GCC control, therefore the halt bit might not get. This will lead to
+> the clock driver reporting the clock as stuck, but that is inaccurate.
+> So instead of waiting for the halt bit to get set, just use the
+> HALT_DELAY flag.
 
---=-Y2OqDd5dYDgI7spdeu7K
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+I can see this being a good fix, however the commit message could use
+some massaging.
 
-On Fri, 2024-05-31 at 11:50 +0200, Hans de Goede wrote:
-> Hi,
->=20
-> ...
+The issue you're facing is that you can't toggle these branch clocks before
+the QMPPHY has been fully initialized (as that initialization sequence
+contains, among other things, setting up the internal PLL). We're doing the
+HALT_SKIP thing to hack away the complexity of coming back to this. In a
+perfect world, we'd "defer" the toggle requests and all code that makes
+these, but it sounds overly complex for what it is. So in essence, the
+clock could really be stuck.
 
-> I actually have been looking at a ledtrig-netdev lockdep warning
-> yesterday
-> which I believe is the same thing. I'll include the lockdep trace
-> below.
->=20
-> According to lockdep there indeed is a ABBA (ish) cyclic deadlock
-> with
-> the rtnl mutex vs led-triggers related locks. I believe that this
-> problem
-> may be a pre-existing problem but this now actually gets hit in
-> kernels >=3D
-> 6.9 because of commit 66601a29bb23 ("leds: class: If no default
-> trigger is
-> given, make hw_control trigger the default trigger"). Before that
-> commit
-> the "netdev" trigger would not be bound / set as phy LEDs trigger by
-> default.
->=20
-> +Cc Heiner Kallweit who authored that commit.
->=20
-> The netdev trigger typically is not needed because the PHY LEDs are
-> typically
-> under hw-control and the netdev trigger even tries to leave things
-> that way
-> so setting it as the active trigger for the LED class device is
-> basically
-> a no-op. I guess the goal of that commit is correctly have the
-> triggers
-> file content reflect that the LED is controlled by a netdev and to
-> allow
-> changing the hw-control mode without the user first needing to set
-> netdev
-> as trigger before being able to change the mode.
->=20
-> But there is a price to this, besides the locking problem this also
-> causes the ledtrig-netdev module to load on pretty much everyones
-> systems (when build as a module) even though 99.999% of our users
-> likely does not need this at all...
->=20
-> Given this price and the troubles this is causing I think it might be
-> best
-> to revert 66601a29bb23. There might still be a locking issue when
-> setting
-> the trigger to netdev manually (I'll check and follow up) but this
-> should
-> fix the regression users are hitting since typically users do not set
-> the trigger manually.
->=20
-> Gene, as the original reporter of this can you do "modinfo
-> ledtrig_netdev"
-> and if this shows that ledtrig_netdev is a module for you try
-> blacklisting
-> ledtrig_netdev ?=C2=A0 And if it is not a module can you try building a
-> 6.9
-> kernel with commit 66601a29bb23 reverted and see if that helps ?
+And FWIW, you missed gcc_usb3_mp_phy_pipe_[01]_clk, and these are orphans
+which could use some fixing up as well.
 
-Thank you - I've blacklisted ledtrig_netdev and will report back if
-anything interesting happens.
-
-best
-
-gene
-
->=20
->=20
-> Regards,
->=20
-> Hans
-
---=20
-Gene
-
-
---=-Y2OqDd5dYDgI7spdeu7K
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYJAB0WIQRByXNdQO2KDRJ2iXo5BdB0L6Ze2wUCZlm6rQAKCRA5BdB0L6Ze
-2ztQAP9qMQRR3zWotstYwUJgtGTnC8aBJ+98ER37vLWOQ8tUfwD/YXQxaCPd9Swg
-ncFhq3xPmLoOpSikgJb3evYfVsGEzQU=
-=tg5T
------END PGP SIGNATURE-----
-
---=-Y2OqDd5dYDgI7spdeu7K--
+Konrad
 
