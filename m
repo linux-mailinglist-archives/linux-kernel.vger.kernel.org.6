@@ -1,97 +1,79 @@
-Return-Path: <linux-kernel+bounces-196757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C9CD8D6183
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:15:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C2AB8D6185
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:17:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B63F9B241A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:15:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13C11B2394C
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:17:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46652158215;
-	Fri, 31 May 2024 12:15:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE809157A68;
+	Fri, 31 May 2024 12:17:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HBGkownq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HDY9ElEZ"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E7A1156642;
-	Fri, 31 May 2024 12:15:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39116138490
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 12:17:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717157748; cv=none; b=U2KWD2b5sOgkcV3WeDM7P6wEznpUlmhG+AU+qaWq1w4r9E3/GGSiaLFRHkkW+i6MDA+ZMOusle2/k/qI9Nsb0GRgBeZV32Ho3duvp1X9lnssqh6NfM1N3Zx2boCaGEzkyqhWQSdwN1f+rrQRKNO8doCK4rHidpDgpmnbKUW4hRM=
+	t=1717157836; cv=none; b=ZF1DPzdhSVcPwUeX5dYUd+QO3Gcb05G9DnBU5m59KY3WzjXQZQS3c6zwwlMaS9vcd1k5uDUKm9eNHdtf78HmzZxDTFKTcODdCsIEKj+FASESiTYCInfxq9anzg0O5G094uAIxvvDIWzKLQjpDsZuYLegMuohKyCNO4EbNfXRXiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717157748; c=relaxed/simple;
-	bh=C6xB1nDESVx0Syg7LxSCeyhpZd+rSFV/xbxquUbHsuU=;
+	s=arc-20240116; t=1717157836; c=relaxed/simple;
+	bh=C/2Lyf7Lg4rbLPYaZKO6th7rS/4OXvr6QR1MXCxp5OM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FZ4VoIGo4CM38YaepR4CGPCh7+r98S8BIclBphXnewTvDJkq9n3kG5C0PlV9TWLzdRhC1Tf9ncbXzdqHOkihfiXfuBWGQi0isbupa7WVEeAKEB5SPtHTgbNbAJQMzmNU5Sj6X32xBddDXTEQi9nzefTtGs3GYqkQZlu6i34y/Uo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HBGkownq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC407C116B1;
-	Fri, 31 May 2024 12:15:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717157748;
-	bh=C6xB1nDESVx0Syg7LxSCeyhpZd+rSFV/xbxquUbHsuU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HBGkownqQ6neOy7hYpoxpmiBICuPMhYSOZi45SlhM2C7jVosQ0witSgdOv4Jresxn
-	 tJDgr9Llh/aUEhB0/SKSoO/aFLYvhQk5sjqlPSrY/8j7v0PkW1sAcUWkLsOBEmXRmI
-	 iheLVnYKYiW6d5ES7WOnNz88hVQ1yF1pHgmE2/yIf8VVHeOgrp1b4aQUjRo/gR6+IH
-	 zGjkC5ryRDHmZvjN3tt+LlNojv120nAuZYNT5qc8yvhfbebgPmevK3+2EHAZoAdBjd
-	 UqlUANUpXpKnwiMutnzPUnOU5XikzNFI4AOfDCgzCtKjVvHTO4CAx2ScCizORIVXXa
-	 zVnn/G+zJ5j4A==
-Date: Fri, 31 May 2024 13:15:43 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	=?iso-8859-1?Q?N=EDcolas_F_=2E_R_=2E_A_=2E?= Prado <nfraprado@collabora.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH v1 1/2] spi: Revert "Check if transfer is mapped before
- calling DMA sync APIs"
-Message-ID: <3305f8ef-ccc4-4f95-8141-67c7adeeb21f@sirena.org.uk>
-References: <20240531094658.1598969-1-andy.shevchenko@gmail.com>
- <20240531094658.1598969-2-andy.shevchenko@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=et17lg7wXkAKLDe2872G09LhdJ6kRy423+GBsh43GIDQehvdpH/vfoe3NMcaWdI2XuSaTPY2sADjbxdUwJRRaqeRGEK3RichG4tUj9sGsCpEEffGZNLFKTubWZPF0vCxfpdQ5Pe6QGLNzwTJTZQu2pYEoYqJXyYItafdE8MXjdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=HDY9ElEZ; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=jyAihqKd6Hda45CnlrSOdjqk2oTnBzNCXKHWOSSfS08=; b=HDY9ElEZC9QCWO1z7fesMTuep6
+	qymvqqVoiC7kRrNdDlxkZWmkqgX+HmhEo4cqg8q0iosnF0EphRjsAhCWCKIMr6UhVjZ55ZRb0oH2L
+	6vYfFqpxLPaIjAvh4O2DJTXN2M3VTOL15AU0pmMdLJ8s/MDVTN5vppX0fCKSqHvtFHaKJpsP1NAls
+	71oIl2eab6ruBXI2bZK0Mtx1xHl0tinVPzn7gaH2Zg/p03dVaWsPmlvFSunecZathoOldAcdGVfIg
+	U0YU6d8J8KTEDQ/TCLqAlss2q7SRCsV/MISxgaCH96Znf0VN/1K7/3i5/zoWnzxqOWEg8CzVmb3s8
+	pi/U+okg==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sD1Bv-0000000BhRZ-0Vr8;
+	Fri, 31 May 2024 12:17:03 +0000
+Date: Fri, 31 May 2024 13:17:03 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Dev Jain <dev.jain@arm.com>
+Cc: zhouchengming@bytedance.com, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, Anshuman.Khandual@arm.com
+Subject: Re: [QUESTION] mm: Redundant const parameter?
+Message-ID: <Zlm_vlhYa91fA1wu@casper.infradead.org>
+References: <e5f01ffe-de51-4079-a87f-2886788422f9@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="wlFOObGIjMM2ZEC5"
-Content-Disposition: inline
-In-Reply-To: <20240531094658.1598969-2-andy.shevchenko@gmail.com>
-X-Cookie: Serving suggestion.
-
-
---wlFOObGIjMM2ZEC5
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <e5f01ffe-de51-4079-a87f-2886788422f9@arm.com>
 
-On Fri, May 31, 2024 at 12:44:32PM +0300, Andy Shevchenko wrote:
-> This reverts commit da560097c05612f8d360f86528f6213629b9c395.
+On Fri, May 31, 2024 at 04:42:59PM +0530, Dev Jain wrote:
+> Hi Chengming,
+> 
+> In mm/slub.c, you had defined slab_test_node_partial() to take a const
+> parameter.
+> 
+> Is there any point of taking in a const, when you are anyways typecasting it
+> to
+> 
+> a (struct folio *) from (const struct folio *) ? In fact, at the place where
+> you call
+> 
+> slab_test_node_partial(), the struct slab *slab is not const.
 
-Please include human readable descriptions of things like commits and
-issues being discussed in e-mail in your mails, this makes them much
-easier for humans to read especially when they have no internet access.
-I do frequently catch up on my mail on flights or while otherwise
-travelling so this is even more pressing for me than just being about
-making things a bit easier to read.
-
---wlFOObGIjMM2ZEC5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZZv28ACgkQJNaLcl1U
-h9BZEQf/YM+dycv11IP8yrggeWxGe/6YN8Z1d7tqkPcwT7dEt5KD230gcLXIN0zz
-G1ryFhGkmMp1kyxH0kVq208XsObvb261WhMMRtgnd/1ZYkqXCKKqduFKeLlPjSbu
-QM+AlW6lRmP+Wxeon4lU+Bnqf6V4oPPrlF1rPKU2qvXUtqp0zYzNsFzW8EVNF/sb
-fn8qH62Oan2GesHyMJcZrbm+A8jxT4IgOeXl9jI42RWTeZXOVKYOCDU/dwcFYhiv
-bzgNm0OZ15JlotEWE5jaqP9bBfK3/di1MiVyJQZHjWFcKXhyJVEGTW9/9OvoYYan
-bdSkJUO4ALnerVk99d3kAcfUWuREhg==
-=nfGh
------END PGP SIGNATURE-----
-
---wlFOObGIjMM2ZEC5--
+I have a patch to fix this; hang on a second ...
 
