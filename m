@@ -1,223 +1,94 @@
-Return-Path: <linux-kernel+bounces-197231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBFB78D67D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 19:12:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D7638D67D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 19:11:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EC0A28D692
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:12:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5916228C98E
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:11:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11A73176258;
-	Fri, 31 May 2024 17:11:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 334FD176AAE;
+	Fri, 31 May 2024 17:11:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="uTEqqbiz"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eo/Km3lf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9533A1761B9;
-	Fri, 31 May 2024 17:11:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 695A6156242;
+	Fri, 31 May 2024 17:11:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717175517; cv=none; b=OoeOQJt1XQjKhrW89P4v8gZRT7Z9tNIF7pk98Mxmz7oX82UIiMxZR90dsy2VuPlTkIYjwA+HwCJi3sIiLTwr2h/JS09KofSIqD3+8Bp+pH6dxfFFAOY+6bEtdEbIUsxr/oWFrziwi8YIWBiFkGeeSMEoQsZHFpFw3qaZADSE93A=
+	t=1717175507; cv=none; b=QPh0vy79NWKd5fDcTDC+RLzhHnUNQCFwfl/QmwyID3WzekBOhUC3RhDL+H6X1d+LW0rmqF/gp07HNA4UWc6I6lqQ6bcVkkqF82CNuRjPLi2p4eDjNdU10yDEDveM+HSJlks3Tcir86lrLaE4eP21r6wsyoYw/UaQawKuEr3ehTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717175517; c=relaxed/simple;
-	bh=a5x88MXbVCLXCAiju4n5+46kR3pspDVGqzq8PBXWolk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qEvs4h6s3RPKqoz4QwJ02tEMMH6PHAxvJfRdTGNWrKH3QYC5ia70rwJQOvVFusd6pJCmXK4zQQZmWjacQn+iY+p62d3TYdG8vckEIkI1lmKB7LwJtuUA6GQqe029O6ih0Tq3VrgmQbDHTkboMEeQcsygIfhyCnt78yNHHTwnmDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=uTEqqbiz; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44VHBcTw055970;
-	Fri, 31 May 2024 12:11:38 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1717175498;
-	bh=hw2Yrj4LcxBZgFZdTy8i462oQh9qD794bEc0WFHu3n0=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=uTEqqbizltqzZzbHUqqJyLSoJYe4geJv2fzCxbufFRUseKFkfPe31uh4ILbZXUNxC
-	 QERhrxgRF06GdCJvKU08Y3iMh6cKQHTihGG7L5cRyGgYC3OaJo638nKUoOaPsYt18E
-	 gK7IsCLD+bKe/myHEzMYBymY4eZ0pwTmuuWodNu4=
-Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44VHBca9022944
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 31 May 2024 12:11:38 -0500
-Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 31
- May 2024 12:11:38 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 31 May 2024 12:11:38 -0500
-Received: from localhost (ti.dhcp.ti.com [172.24.227.95] (may be forged))
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44VHBbwC050138;
-	Fri, 31 May 2024 12:11:38 -0500
-From: Devarsh Thakkar <devarsht@ti.com>
-To: <mchehab@kernel.org>, <hverkuil-cisco@xs4all.nl>,
-        <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <benjamin.gaignard@collabora.com>, <sebastian.fricke@collabora.com>,
-        <akpm@linux-foundation.org>, <gregkh@linuxfoundation.org>,
-        <andriy.shevchenko@linux.intel.com>, <adobriyan@gmail.com>,
-        <jani.nikula@intel.com>, <p.zabel@pengutronix.de>, <airlied@gmail.com>,
-        <daniel@ffwll.ch>, <dri-devel@lists.freedesktop.org>
-CC: <laurent.pinchart@ideasonboard.com>, <praneeth@ti.com>, <nm@ti.com>,
-        <vigneshr@ti.com>, <a-bhatia1@ti.com>, <j-luthra@ti.com>,
-        <b-brnich@ti.com>, <detheridge@ti.com>, <p-mantena@ti.com>,
-        <vijayp@ti.com>, <devarsht@ti.com>, <andrzej.p@collabora.com>,
-        <nicolas@ndufresne.ca>, <davidgow@google.com>, <dlatypov@google.com>
-Subject: [PATCH v11 06/11] math.h: Add macros for rounding to closest value
-Date: Fri, 31 May 2024 22:41:36 +0530
-Message-ID: <20240531171136.1293905-1-devarsht@ti.com>
-X-Mailer: git-send-email 2.39.1
-In-Reply-To: <20240531170229.1270828-1-devarsht@ti.com>
-References: <20240531170229.1270828-1-devarsht@ti.com>
+	s=arc-20240116; t=1717175507; c=relaxed/simple;
+	bh=vRrWMkAH52qDz5UNk2YwCTMMtgaG+6xrdICh2iBUvB8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jW4QzghW2RGx8DBdXYxLmqaAAz4GVvPuur22lLog357KjrFs93inmKxrcb9TApqzc6OEYki2SG5pMLh+ZM1ElxUCGQ8NrRj4hq9yJH9uKnSwyXEkJz3eoNtLzoxdn+HsR5A4lKKjQcsEBAiQOb04kpXgt3simfsDhMFEm9mjpig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eo/Km3lf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6879BC116B1;
+	Fri, 31 May 2024 17:11:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717175505;
+	bh=vRrWMkAH52qDz5UNk2YwCTMMtgaG+6xrdICh2iBUvB8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eo/Km3lfp/YbMP24tlquap/WYes+4pmLbjMt1DCaobPomWQIcBKGa/348vdbiA8n2
+	 aeftrm68i0G5DLe7mDjB+xO2ZSlOCxzZpZJXamCKxx7VeVnuAyUe5kWryoHMby094m
+	 oTB7tTxwI833iszxH6NGjlNmbhbb7h5AORzJ+xgZGQFagrYHMDZHtaIWSHw24PjXVI
+	 XuUtqlmwP84AABhJdxRJy0xhP8cQ9GlMxNiON7f6m+GA8Oy08y0i7YxhdheqRkGa6m
+	 bfuLdh+/Zs2/ctRCY0ylirQkoPJ0UxyB9RaBBdeMT82JU5554AzB5NoUU90vZAJDiA
+	 i71ErVtcPFMgw==
+Date: Fri, 31 May 2024 18:11:39 +0100
+From: Lee Jones <lee@kernel.org>
+To: Johan Hovold <johan+linaro@kernel.org>
+Cc: Mark Brown <broonie@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Das Srinagesh <quic_gurus@quicinc.com>,
+	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+	Stephen Boyd <swboyd@chromium.org>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2 00/14] arm64: dts: qcom: sc8280xp-x13s: enable pm8008
+ camera pmic
+Message-ID: <20240531171139.GD1204315@google.com>
+References: <20240529162958.18081-1-johan+linaro@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <20240529162958.18081-1-johan+linaro@kernel.org>
 
-Add below rounding related macros:
+On Wed, 29 May 2024, Johan Hovold wrote:
 
-round_closest_up(x, y) : Rounds x to closest multiple of y where y is a
-power of 2, with a preference to round up in case two nearest values are
-possible.
+> The Qualcomm PM8008 PMIC is a so called QPNP PMIC with seven LDO
+> regulators, a temperature alarm block and two GPIO pins (which are also
+> used for interrupt signalling and reset).
 
-round_closest_down(x, y) : Rounds x to closest multiple of y where y is a
-power of 2, with a preference to round down in case two nearest values are
-possible.
+I don't see any issues with the MFD commits.
 
-roundclosest(x, y) : Rounds x to closest multiple of y, this macro should
-generally be used only when y is not multiple of 2 as otherwise
-round_closest* macros should be used which are much faster.
+When you submit this, would you do me a favour and change the subject
+lines to match that of the subsystem.  I usually silently change them,
+but this is a large set and it'll become annoying real quick.
 
-Examples:
- * round_closest_up(17, 4) = 16
- * round_closest_up(15, 4) = 16
- * round_closest_up(14, 4) = 16
- * round_closest_down(17, 4) = 16
- * round_closest_down(15, 4) = 16
- * round_closest_down(14, 4) = 12
- * roundclosest(21, 5) = 20
- * roundclosest(19, 5) = 20
- * roundclosest(17, 5) = 15
+`git log --oneline -- <subsystem>` is your friend.
 
-Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
----
-NOTE: This patch is inspired from the Mentor Graphics IPU driver [1]
-which uses similar macro locally and which is updated in further patch
-in the series to use this generic macro instead along with other drivers
-having similar requirements.
+Thanks.
 
-[1]:
-https://elixir.bootlin.com/linux/v6.8.9/source/drivers/gpu/ipu-v3/ipu-image-convert.c#L480
-V11:
-- Fix commenting style per review comments and remove extra whitespace
-
-V10:
-- Update example comment to fix formatting issues as observed with html docs
-
-V9:
-- No change
-
-V8:
-- Add new macro to round to nearest value for non-multiple of 2
-- Update commit message as suggested:
-
-V1->V6 (No change, patch introduced in V7)
----
- include/linux/math.h | 63 ++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 63 insertions(+)
-
-diff --git a/include/linux/math.h b/include/linux/math.h
-index dd4152711de7..79e3dfda77fc 100644
---- a/include/linux/math.h
-+++ b/include/linux/math.h
-@@ -34,6 +34,52 @@
-  */
- #define round_down(x, y) ((x) & ~__round_mask(x, y))
- 
-+/**
-+ * round_closest_up - round closest to be multiple of specified value (which is
-+ *                    power of 2) with preference to rounding up
-+ * @x: the value to round
-+ * @y: multiple to round closest to (must be a power of 2)
-+ *
-+ * Rounds @x to closest multiple of @y (which must be a power of 2).
-+ * The value can be either rounded up or rounded down depending upon rounded
-+ * value's closeness to the specified value. If there are two closest possible
-+ * values, i.e. the difference between the specified value and it's rounded up
-+ * and rounded down values is same then preference is given to rounded up
-+ * value.
-+ *
-+ * To perform arbitrary rounding to closest value (not multiple of 2), use
-+ * roundclosest().
-+ *
-+ * Examples:
-+ * * round_closest_up(17, 4) = 16
-+ * * round_closest_up(15, 4) = 16
-+ * * round_closest_up(14, 4) = 16
-+ */
-+#define round_closest_up(x, y) round_down((x) + (y) / 2, (y))
-+
-+/**
-+ * round_closest_down - round closest to be multiple of specified value (which
-+ *			is power of 2) with preference to rounding down
-+ * @x: the value to round
-+ * @y: multiple to round closest to (must be a power of 2)
-+ *
-+ * Rounds @x to closest multiple of @y (which must be a power of 2).
-+ * The value can be either rounded up or rounded down depending upon rounded
-+ * value's closeness to the specified value. If there are two closest possible
-+ * values, i.e. the difference between the specified value and it's rounded up
-+ * and rounded down values is same then preference is given to rounded up
-+ * value.
-+ *
-+ * To perform arbitrary rounding to closest value (not multiple of 2), use
-+ * roundclosest().
-+ *
-+ * Examples:
-+ * * round_closest_down(17, 4) = 16
-+ * * round_closest_down(15, 4) = 16
-+ * * round_closest_down(14, 4) = 12
-+ */
-+#define round_closest_down(x, y) round_up((x) - (y) / 2, (y))
-+
- #define DIV_ROUND_UP __KERNEL_DIV_ROUND_UP
- 
- #define DIV_ROUND_DOWN_ULL(ll, d) \
-@@ -77,6 +123,23 @@
- }							\
- )
- 
-+/**
-+ * roundclosest - round to nearest multiple
-+ * @x: the value to round
-+ * @y: multiple to round nearest to
-+ *
-+ * Rounds @x to nearest multiple of @y.
-+ * The rounded value can be greater than or less than @x depending
-+ * upon it's nearness to @x. If @y will always be a power of 2, consider
-+ * using the faster round_closest_up() or round_closest_down().
-+ *
-+ * Examples:
-+ * * roundclosest(21, 5) = 20
-+ * * roundclosest(19, 5) = 20
-+ * * roundclosest(17, 5) = 15
-+ */
-+#define roundclosest(x, y) rounddown((x) + (y) / 2, (y))
-+
- /*
-  * Divide positive or negative dividend by positive or negative divisor
-  * and round to closest integer. Result is undefined for negative
 -- 
-2.39.1
-
+Lee Jones [李琼斯]
 
