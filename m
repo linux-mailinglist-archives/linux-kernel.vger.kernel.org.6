@@ -1,160 +1,151 @@
-Return-Path: <linux-kernel+bounces-196679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0B3D8D5FD2
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:38:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 636228D6001
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:50:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 759961F255EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:38:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86CEC1C227CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:50:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FCE8156F25;
-	Fri, 31 May 2024 10:38:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5B3015749F;
+	Fri, 31 May 2024 10:49:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="F0heMktW";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YN+uNLES"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Jw2SrlVB"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46900155C8E;
-	Fri, 31 May 2024 10:38:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B6AF156C7B
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 10:49:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717151892; cv=none; b=TKYVd6bDWSG2ZyRwwS/8Uj0nYUjNwQSXO2xjOQDZeJDcuN2CZ/fxrl5qNKxesf5S5t2EExkPOlhWxJ6DAzCOwQHkUA7kJFtCGXFhNhQNUjQV6Io+SIYp+5IUdSVCjA+JTaUQItGY2sHLzrXhAuWjL/idntnuyt9mi9XwAZo7O58=
+	t=1717152594; cv=none; b=PxpYczaBWIHXqixAYyRqdjYGiSVI48o6KjvCOAFrHpvDvrYsRktT8vW8HJjZBuu5et6mdBYhpXg29PMAsPE5m3SwK0DZN4Pm0HdHjBiHfCaAZZoFJuGlqLCdQatitq5I6TqpVu9vk2SDMP1/LA8UJye7g3rIYvpjxYGG5ZTVYxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717151892; c=relaxed/simple;
-	bh=pHEsO2qn1rcaa/CVVCC1rJCGrocpF3xq2ymrPBC1hyM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tVa84WxKhoNcvFLGRU7mPDvTn3SYjw7Slnhf/Dyb+0WDQn2nuyX/CyEOOcdFGupdMLE4fV5FfWWjkhxhMRZAQGXCFB31ElW2VCIPcM9z/of7iyW2vZHOO5h7TNkhyZTs+7mbWNfMcVeSI9oStdRlHmsJcVw3tIdVSM2TnMdcvjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=F0heMktW; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YN+uNLES; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 31 May 2024 12:38:07 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1717151889;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=s4acigBe027wOQx0luMaaon6tV311jRRizAmbiQqL3w=;
-	b=F0heMktWAuN3lpcjkR+BkoYknS08e++75PnvWStPB9mL2ifxNdHcKz5weNkFgwFB1j84Qw
-	QMYeUMqjHfYnQDfLmxfG2IMol2YmnIYoV9aDk3SIvCyO9iJc/PrYDZExR53KWU5eBit800
-	A/8ur4BgPCXyYAcK0arCAFyxTYkLdMSj9Go2Y8rByOr4PvmyKltCd8K6hxKDc8uxbiMzhS
-	O/0ecInyrCKM0d9uYSRkS3A/JOTNZ6Up+04k9Kl5vtbZutIm4rIE2mvgdJFOll5X/Ok3EF
-	Wu1wiB8LMEdDeFz3DMTP32t5qruIRsjPHFSDeoImxEjZtLmkFDty3EdUcpWWnA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1717151889;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=s4acigBe027wOQx0luMaaon6tV311jRRizAmbiQqL3w=;
-	b=YN+uNLESzX+WmX/Q2l0gLeQmgehpBRHwNK7BGf1Ci7es9A7xJHTFdbLQVw8obMJK45/1gV
-	40Y6OrLNtX5SqzCQ==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Eduard Zingerman <eddyz87@gmail.com>, Hao Luo <haoluo@google.com>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	Jiri Olsa <jolsa@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
-	Stanislav Fomichev <sdf@google.com>,
-	Yonghong Song <yonghong.song@linux.dev>, bpf@vger.kernel.org
-Subject: Re: [PATCH v3 net-next 14/15] net: Reference bpf_redirect_info via
- task_struct on PREEMPT_RT.
-Message-ID: <20240531103807.QjzIOAOh@linutronix.de>
-References: <20240529162927.403425-1-bigeasy@linutronix.de>
- <20240529162927.403425-15-bigeasy@linutronix.de>
- <87y17sfey6.fsf@toke.dk>
+	s=arc-20240116; t=1717152594; c=relaxed/simple;
+	bh=PVahwFJO8LJfhi0Pb1DQm5Wbf1qUqfCUUYbU04fLMbQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=M3n6mPPvRMPrVznNDs2wyVfcMag8ZAMjVAKSeAZNK6qAVfuIxMJViFgF5ar8/ewz4uNJuytm7OfiWqGqTOemGr6y3+YPSoJOCGtcGXDD/E3BdaOkiPRnEMevdXIwfgTAFPcuqHeC9FT//IOPXhBmHhmbWGyNviU7T4Pa++KTw9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Jw2SrlVB; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240531104949epoutp04a68bf5c3dd1dd630a963e7efb5e9d44a~UjS7FHAiE1362613626epoutp04v
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 10:49:49 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240531104949epoutp04a68bf5c3dd1dd630a963e7efb5e9d44a~UjS7FHAiE1362613626epoutp04v
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1717152589;
+	bh=AcrbxBR/K7PJ3gXtcaqiIgnaaJyMH+AxyYG1HcE+KEc=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=Jw2SrlVBe96l0VIwTvUvimolEx6xfoRrnxJpCIeeq+xahLWuXB1HPTfQXB2aBXnUk
+	 jcczoDobfJdoFPEPi4GqUcV0n0vIF1eXI+Waom+UsQ4kv4S/ASNzbBzsG0fyobFtBy
+	 NbNEVeS7gqHq2n27rZr+znmsUD2b/4Zo7gOsh3QY=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas2p4.samsung.com (KnoxPortal) with ESMTP id
+	20240531104949epcas2p4242f84969dbb7efad96611fb0989253b~UjS6xhCtb2486524865epcas2p49;
+	Fri, 31 May 2024 10:49:49 +0000 (GMT)
+Received: from epsmges2p3.samsung.com (unknown [182.195.36.68]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4VrKd85ysrz4x9Pw; Fri, 31 May
+	2024 10:49:48 +0000 (GMT)
+Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
+	epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+	2C.DC.09806.C4BA9566; Fri, 31 May 2024 19:49:48 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
+	20240531104947epcas2p31961bda5ee0eb313c0d9a7d63d5461ba~UjS5Ovjpm2726827268epcas2p37;
+	Fri, 31 May 2024 10:49:47 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240531104947epsmtrp1d4c5ca0f6ab041d6598a2556963eaf39~UjS5ODm9R2848028480epsmtrp10;
+	Fri, 31 May 2024 10:49:47 +0000 (GMT)
+X-AuditID: b6c32a47-ecbfa7000000264e-24-6659ab4ca463
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	F6.83.08336.B4BA9566; Fri, 31 May 2024 19:49:47 +0900 (KST)
+Received: from localhost.dsn.sec.samsung.com (unknown [10.229.54.230]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240531104947epsmtip1417f875e98bbe3be84cd9d52aa6dd9de~UjS49lsm00934709347epsmtip1J;
+	Fri, 31 May 2024 10:49:47 +0000 (GMT)
+From: Minwoo Im <minwoo.im@samsung.com>
+To: "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
+	"Martin K . Petersen" <martin.petersen@oracle.com>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman
+	<avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>, Minwoo Im
+	<minwoo.im@samsung.com>, gost.dev@samsung.com, linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Jeuk Kim <jeuk20.kim@samsung.com>
+Subject: [PATCH 0/3] ufs: pci: Add support UFSHCI 4.0 MCQ
+Date: Fri, 31 May 2024 19:38:18 +0900
+Message-Id: <20240531103821.1583934-1-minwoo.im@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <87y17sfey6.fsf@toke.dk>
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupjk+LIzCtJLcpLzFFi42LZdljTXNdndWSawYG1WhYP5m1js3j58yqb
+	xbQPP5ktbh7YyWSxsZ/D4v7Wa4wWl3fNYbPovr6DzWL58X9MFs9OH2B24PK4fMXbY9qkU2we
+	H5/eYvHo27KK0ePzJjmP9gPdTAFsUdk2GamJKalFCql5yfkpmXnptkrewfHO8aZmBoa6hpYW
+	5koKeYm5qbZKLj4Bum6ZOUCHKSmUJeaUAoUCEouLlfTtbIryS0tSFTLyi0tslVILUnIKzAv0
+	ihNzi0vz0vXyUkusDA0MjEyBChOyM+6c+sZasI694uD732wNjF9Yuxg5OCQETCQebJHpYuTk
+	EBLYwSixcXN+FyMXkP2JUWLn5ufsEM43RomeSYeZQKpAGub++ACV2Mso8WjHRUYI5zejxLTb
+	95hBqtgE1CUapr5iAbFFBKolNrf/ZQMpYhboY5Jonz2fFSQhLGAp0TT3EFgRi4CqxK7fi8BW
+	8ArYSCx72MoGsU5eYv/Bs8wQcUGJkzOfgNUzA8Wbt85mBhkqIfCSXeLhu2Z2iIdcJCbssYHo
+	FZZ4dXwLO4QtJfGyvw3KLpf4+WYSI4RdIXFw1m02iFZ7iWvPU0BMZgFNifW79CGiyhJHbkEt
+	5ZPoOPwXag+vREebEMQMZYmPhw4xQ9iSEssvvYa63UNi49YDrJDAjZV4P2kS+wRG+VlIXpmF
+	5JVZCHsXMDKvYhRLLSjOTU8tNiowhsdocn7uJkZwwtRy38E44+0HvUOMTByMhxglOJiVRHh/
+	pUekCfGmJFZWpRblxxeV5qQWH2I0BQbuRGYp0eR8YMrOK4k3NLE0MDEzMzQ3MjUwVxLnvdc6
+	N0VIID2xJDU7NbUgtQimj4mDU6qBye8VS94NkdjCaRvjnp2++LedlWOJur54+7zv9wvCd8z6
+	+Vf/Yxir0sPziocCkhuqZbNeVu6aq2HJ9G7Rqh/bhJ3nqUUvO1z/kKEkasHGbEabLc8m90St
+	Ug/tu+pyqLXhn6uVm76KTTy7fY7eNxfTH3KJ8hev+n+MX5A5s2b6xA2nmvtWNcXMD8tTyRHf
+	1+30LcH+enLnNoPJL2d94uy4KLeHwzrs7dw9P7wW1SlOlU7et3KlxprzFhvyOHbG7WCKfnTO
+	rDp5qcy1ee9kHn7d8nKRgUoJi2Zq1KfW0AV/WI+oRPGVVau+LRM5yfPXQyAtw6Q/OmFW43fl
+	LkU/+8rb2WcyLzYZSN/7eC+9YG6mEktxRqKhFnNRcSIAkmwgtyEEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrELMWRmVeSWpSXmKPExsWy7bCSnK736sg0g7XLjCwezNvGZvHy51U2
+	i2kffjJb3Dywk8liYz+Hxf2t1xgtLu+aw2bRfX0Hm8Xy4/+YLJ6dPsDswOVx+Yq3x7RJp9g8
+	Pj69xeLRt2UVo8fnTXIe7Qe6mQLYorhsUlJzMstSi/TtErgy7pz6xlqwjr3i4PvfbA2MX1i7
+	GDk5JARMJOb++MDexcjFISSwm1Hi0YStTBAJSYl9p29CFQlL3G85wgpR9JNRYvekmSwgCTYB
+	dYmGqa/AbBGBaonN7X/ZQIqYBaYxSSyaBdEtLGAp0TT3EFgRi4CqxK7fi8A28ArYSCx72MoG
+	sUFeYv/Bs8wQcUGJkzOfgNUzA8Wbt85mnsDINwtJahaS1AJGplWMkqkFxbnpucWGBYZ5qeV6
+	xYm5xaV56XrJ+bmbGMHBrKW5g3H7qg96hxiZOBgPMUpwMCuJ8P5Kj0gT4k1JrKxKLcqPLyrN
+	SS0+xCjNwaIkziv+ojdFSCA9sSQ1OzW1ILUIJsvEwSnVwLTj54eVMx7mRrsLFwlOOtO3aKpH
+	73Vvo6v/lzS/Yb6XvTy8faOq+4yPupKzd8xe+1fZ/fC6Of+53+xru3JuwxsL49U/S/xXi79N
+	nSL7Y3+AZM2t+w+lSye/X/t07cNlzAVKzw4emVRyt8+HQVDvps6GBQ7lfolGTp/Zpa6lOD1a
+	d17m595IjzaRO3FTdNV+3etavlK1hq/mX9GnLUXBr/wiL+6Qen5S0rHn3LoV6cUHpn4LObSu
+	eeuFB/52wSrhE69nKonPliteeWzrlRv2C1s4z5b32PJF/fGcoTGp1emrQeOybfUTdKID/s31
+	t7/6x7KzeREj24aJfoX73FfYPfe3uihdGXK0Svh4nNf+bv81SizFGYmGWsxFxYkA9Bl6mtUC
+	AAA=
+X-CMS-MailID: 20240531104947epcas2p31961bda5ee0eb313c0d9a7d63d5461ba
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240531104947epcas2p31961bda5ee0eb313c0d9a7d63d5461ba
+References: <CGME20240531104947epcas2p31961bda5ee0eb313c0d9a7d63d5461ba@epcas2p3.samsung.com>
 
-On 2024-05-30 00:09:21 [+0200], Toke H=C3=B8iland-J=C3=B8rgensen wrote:
-> [...]
-> > @@ -240,12 +240,14 @@ static int cpu_map_bpf_prog_run(struct bpf_cpu_ma=
-p_entry *rcpu, void **frames,
-> >  				int xdp_n, struct xdp_cpumap_stats *stats,
-> >  				struct list_head *list)
-> >  {
-> > +	struct bpf_net_context __bpf_net_ctx, *bpf_net_ctx;
-> >  	int nframes;
->=20
-> I think we need to zero-initialise all the context objects we allocate
-> on the stack.
->=20
-> The reason being that an XDP program can return XDP_REDIRECT without
-> calling any of the redirect helpers first; which will lead to
-> xdp_do_redirect() being called without any of the fields in struct
-> bpf_redirect_info having being set. This can lead to a crash if the
-> values happen to be the wrong value; and if we're not initialising the
-> stack space used by this struct, we have no guarantees about what value
-> they will end up with.
+This patchset introduces add support for MCQ introduced in UFSHCI 4.0.  The
+first patch adds a simple helper to get the address of MCQ queue config
+registers.  The second one enables MCQ feature by adding mandatory vops
+callback functions required at MCQ initialization phase.  The last one is to
+prevent a case where number of MCQ is given 1 since driver allocates poll_queues
+first rather than I/O queues to handle device commands.  Instead of causing
+exception handlers due to no I/O queue, failfast during the initialization time.
 
-Okay, I can do that.
+Minwoo Im (3):
+  ufs: mcq: Add ufshcd_mcq_queue_cfg_addr helper
+  ufs: pci: Add support MCQ for QEMU-based UFS
+  ufs: mcq: Prevent no I/O queue case for MCQ
 
-> >  void bpf_clear_redirect_map(struct bpf_map *map)
-> >  {
-> > -	struct bpf_redirect_info *ri;
-> > -	int cpu;
-> > -
-> > -	for_each_possible_cpu(cpu) {
-> > -		ri =3D per_cpu_ptr(&bpf_redirect_info, cpu);
-> > -		/* Avoid polluting remote cacheline due to writes if
-> > -		 * not needed. Once we pass this test, we need the
-> > -		 * cmpxchg() to make sure it hasn't been changed in
-> > -		 * the meantime by remote CPU.
-> > -		 */
-> > -		if (unlikely(READ_ONCE(ri->map) =3D=3D map))
-> > -			cmpxchg(&ri->map, map, NULL);
-> > -	}
-> > +	/* ri->map is assigned in __bpf_xdp_redirect_map() from within a eBPF
-> > +	 * program/ during NAPI callback. It is used during
-> > +	 * xdp_do_generic_redirect_map()/ __xdp_do_redirect_frame() from the
-> > +	 * redirect callback afterwards. ri->map is cleared after usage.
-> > +	 * The path has no explicit RCU read section but the local_bh_disable=
-()
-> > +	 * is also a RCU read section which makes the complete softirq callba=
-ck
-> > +	 * RCU protected. This in turn makes ri->map RCU protected and it is
-> > +	 * sufficient to wait a grace period to ensure that no "ri->map =3D=
-=3D map"
-> > +	 * exists. dev_map_free() removes the map from the list and then
-> > +	 * invokes synchronize_rcu() after calling this function.
-> > +	 */
-> >  }
->=20
-> With the zeroing of the stack variable mentioned above, I agree that
-> this is not needed anymore, but I think we should just get rid of the
-> function entirely and put a comment in devmap.c instead of the call to
-> the (now empty) function.
+ drivers/ufs/core/ufs-mcq.c    | 23 +++++++++++++++++
+ drivers/ufs/host/ufshcd-pci.c | 48 ++++++++++++++++++++++++++++++++++-
+ include/ufs/ufshcd.h          |  1 +
+ 3 files changed, 71 insertions(+), 1 deletion(-)
 
-I wasn't entirely sure if my reasoning is valid. In that case=E2=80=A6
+-- 
+2.34.1
 
-> -Toke
-
-Sebastian
 
