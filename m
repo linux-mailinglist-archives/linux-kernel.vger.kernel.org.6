@@ -1,159 +1,109 @@
-Return-Path: <linux-kernel+bounces-196549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 112288D5DCD
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 11:10:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC58D8D5DC9
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 11:09:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF654282D27
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 09:10:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F3501F23E3A
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 09:09:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2B7715747D;
-	Fri, 31 May 2024 09:06:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="ryKsgfTk";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="gGmLKhE9"
-Received: from fhigh2-smtp.messagingengine.com (fhigh2-smtp.messagingengine.com [103.168.172.153])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8735D156F4C;
+	Fri, 31 May 2024 09:06:36 +0000 (UTC)
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B687581D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC87DAD59;
 	Fri, 31 May 2024 09:06:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717146396; cv=none; b=gOzzaHufZkqbcrmkbwMqBbX2z18uo2uw4mr90LX0t1LfmcmteY9R6CM8Zf+eUWMIftrMENnwY/bhlKVH87AIBUdA+gwYiDc+AmzvqSV7uWdme8iKn20BsoWIAfLMc5fs5Pdb0ceVRnM+HWURU1Cr7vM6hZ7c35OpLzAbKysB+os=
+	t=1717146396; cv=none; b=No8sl52n7k2j+NT7qiAWMsnNbsbGhw3vuEPKcbBDfynlluh0eOvbXA2FloG6jHA7OEpOg+kMYkMLex8kew3TTpBbCTGp+f0J99fF7+XTUQtuxUMAZK2zyqk3msA9PlwC8qNIrMPBimB+4czLGWaUqtg3mhz/siWZbYCqX34ibnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1717146396; c=relaxed/simple;
-	bh=h1Za1JuA+/HJcBG2jH9CuHIjJ+/KJJ3mh3YHwo4KnW4=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=sVpDEB/mZzYEmKQJJEA/1OqEJiMsBnF2xQNqWhjPyuACYPdq+xXvpqnV25O/JrM4FGEV4M1SP05bjMbUNWLF6949ri0w6nxZPJicYNnq+c4Y5uLBOqcLcWVgu1SzOm8xtsbwp8YD0BZWAg36n2R+1s4/v+X9MBy+qkqx8fvYY/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=ryKsgfTk; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=gGmLKhE9; arc=none smtp.client-ip=103.168.172.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id BB33B11400E2;
-	Fri, 31 May 2024 05:06:33 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Fri, 31 May 2024 05:06:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1717146393;
-	 x=1717232793; bh=/skB/qyAAv0jb3sZQDhAVmjEY4b0H5zQ0AWXbXSTWoM=; b=
-	ryKsgfTkA01jdB1LMAm4X3WvoFCFddDHbVQL1CsiWZFUMj8ETJYcb+FcmRA8bVdH
-	W80ELPYf5yx+VCIUkZfsrZbvfJY8fdN2zR6O4Sty0N0VuiQoH5yGwfJmXpcf+oe3
-	3/32saBcikfG//sWRFPxaBF6vxguH6U546uh4BP7lj7nfWcysiM2wr7vFBeebWdd
-	n/QnA5J0dlGeBY4L2O7R3jgkJZcH7M5wgsMDT/YSnaD9FysL/g1lFzaMu8GzUDBJ
-	unqOso76vPVEuf114zpnJqex/hWGz4LO2c40aFPIdAES4YqEHBWBtGQElIraAiwm
-	UGJ62z1YNOvTPXZ5XJCKow==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1717146393; x=
-	1717232793; bh=/skB/qyAAv0jb3sZQDhAVmjEY4b0H5zQ0AWXbXSTWoM=; b=g
-	GmLKhE9hvIClnb+x1Z4m251SEUdJuj4CBZBC9+tkYJiNp65Halik554oSaQcvVVM
-	XlFSosc76KTXMmGC2iF7jI5P2rVlR9gX85x4ixV4Mrqt7XS7QFhglsP7c0dRukCJ
-	KAZNecvuzGzypu1GzT4nA+ubiUv5zyRAhV65wBnR0iy8jNQWCLBS8Sd/e869BYB/
-	/3ank/v86hZlz5r6ZrATcCCGxgdlXOCXkF5b2meSvOqaobrMGRq4E2RY2cKdN8EP
-	5JCFTY+pOCwghbjugQnox5VXuzXJP94WVRTFRY4rMS6Vqlg4wWPD470l05xy2i2e
-	lwhW9YdULEcyyYzWnb92A==
-X-ME-Sender: <xms:GZNZZoGHXGimyLdnzgzlroANuuPyRUgiDI6h51KAeFIc1G13IgvJQw>
-    <xme:GZNZZhW0BaLSKJSdrrNq1Ca2cY9Q-HY34mhjd86Y0zwujWgNmGonTyhZtW5IScf2q
-    9EJd3dro1dWBLHbIgI>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdekiedgudduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdet
-    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
-    htthgvrhhnpeffjeduieeuuddtiefgffejleeuudeukeffieejhfejueegueejudfgjeeu
-    udehudenucffohhmrghinhepphgrshhtvggsihhnrdgtohhmnecuvehluhhsthgvrhfuih
-    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:GZNZZiLj9EyjlZ7d5b_tu1XwbTmlWtbX8Fxqkr7gpP-sWv3twAQdQA>
-    <xmx:GZNZZqGtkOy6cO4g4rONLn7U-JjIzqlzjGQUO32tOysbm_23jlEDag>
-    <xmx:GZNZZuVXSKC1fmMue65btQsPFSQEJ3QMcTMTuSjwWmeMZnvm_jIKig>
-    <xmx:GZNZZtPGx1ui3IlPaevfvQr7pLylLV8a2RzdmQR1B2PtL1JfadbSig>
-    <xmx:GZNZZsyI3aoP-0QCWLrdZFt6TqPn3CjoUyF3jgOJ3edgAuNChsM9qb1v>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 7B0ABB6008D; Fri, 31 May 2024 05:06:33 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-491-g033e30d24-fm-20240520.001-g033e30d2
+	bh=uAJlqDMiuKeV1HJo6t1t12QkEwDuIC/XqQuiy4tqFGg=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aKSrMB9+zAgC1rA5rOpaQEcXkWwI7AGRH2/GvEGJOgaQNd2mXULjy8QHSU8X1/xbL1Oe4XVM3vCZhRaH4x0e4q4x/gwYqSB9ZIAuDslGrmDeASQ6vsxNEGSLvjdlF4MISqkRk6ID58IEGzPaEL4Ew+LpJXL82iKqRWY8L+WR7pI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44V5JcQe023664;
+	Fri, 31 May 2024 09:06:17 GMT
+Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 3yf5ydg8j7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Fri, 31 May 2024 09:06:17 +0000 (GMT)
+Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 31 May 2024 02:06:16 -0700
+Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
+ 15.1.2507.39 via Frontend Transport; Fri, 31 May 2024 02:06:12 -0700
+From: Lizhi Xu <lizhi.xu@windriver.com>
+To: <lkp@intel.com>
+CC: <coreteam@netfilter.org>, <davem@davemloft.net>, <ebiggers@kernel.org>,
+        <fw@strlen.de>, <jaegeuk@kernel.org>, <kadlec@netfilter.org>,
+        <kuba@kernel.org>, <linux-fscrypt@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <lizhi.xu@windriver.com>,
+        <llvm@lists.linux.dev>, <netdev@vger.kernel.org>,
+        <netfilter-devel@vger.kernel.org>, <oe-kbuild-all@lists.linux.dev>,
+        <pablo@netfilter.org>,
+        <syzbot+340581ba9dceb7e06fb3@syzkaller.appspotmail.com>,
+        <syzkaller-bugs@googlegroups.com>, <tytso@mit.edu>
+Subject: [PATCH V4] ext4: check hash version and filesystem casefolded consistent
+Date: Fri, 31 May 2024 17:06:11 +0800
+Message-ID: <20240531090611.2972737-1-lizhi.xu@windriver.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <202405311607.yQR7dozp-lkp@intel.com>
+References: <202405311607.yQR7dozp-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <e2054e49-c465-46c6-a14d-b48949a738c5@app.fastmail.com>
-In-Reply-To: 
- <CAK7LNAQOdQMi-4ODy69urh7mcfoGrwKt17LBDQLTujxWrj3xjw@mail.gmail.com>
-References: <20240506133544.2861555-1-masahiroy@kernel.org>
- <20240506133544.2861555-2-masahiroy@kernel.org>
- <0e8dee26-41cc-41ae-9493-10cd1a8e3268@app.fastmail.com>
- <CAK7LNAQOdQMi-4ODy69urh7mcfoGrwKt17LBDQLTujxWrj3xjw@mail.gmail.com>
-Date: Fri, 31 May 2024 11:05:54 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Masahiro Yamada" <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>,
- linux-kernel@vger.kernel.org, "Kees Cook" <keescook@chromium.org>
-Subject: Re: [PATCH 1/3] kbuild: provide reasonable defaults for tool coverage
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: ikRHvRvNQg2q9qQhjJ1hLVAsnzKq0Rdv
+X-Proofpoint-GUID: ikRHvRvNQg2q9qQhjJ1hLVAsnzKq0Rdv
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-31_05,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
+ lowpriorityscore=0 bulkscore=0 mlxlogscore=999 impostorscore=0
+ priorityscore=1501 spamscore=0 malwarescore=0 suspectscore=0 clxscore=1011
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.21.0-2405170001 definitions=main-2405310067
 
-On Fri, May 31, 2024, at 10:52, Masahiro Yamada wrote:
-> On Tue, May 28, 2024 at 8:36=E2=80=AFPM Arnd Bergmann <arnd@arndb.de> =
-wrote:
+When mounting the ext4 filesystem, if the hash version and casefolded are not
+consistent, exit the mounting.
 
->> I don't understand the nature of this warning, but I see
->> that your patch ended up dropping -fsanitize=3Dkernel-address
->> from the compiler flags because the lib/test_fortify/*.c files
->> don't match the $(is-kernel-object) rule. Adding back
->> -fsanitize=3Dkernel-address shuts up these warnings.
->
->
-> In my understanding, fortify-string is independent of KASAN.
->
-> I do not understand why -fsanitize=3Dkernel-address matters.
+Reported-by: syzbot+340581ba9dceb7e06fb3@syzkaller.appspotmail.com
+Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
+---
+ fs/ext4/super.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Right, this is something I've failed to understand as well
-so far.
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index c682fb927b64..0ad326504c50 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -5262,6 +5262,11 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
+ 		goto failed_mount;
+ 
+ 	ext4_hash_info_init(sb);
++	if (es->s_def_hash_version == DX_HASH_SIPHASH && 
++	    !ext4_has_feature_casefold(sb)) {
++		err = -EINVAL;
++		goto failed_mount;
++	}
+ 
+ 	err = ext4_handle_clustersize(sb);
+ 	if (err)
+-- 
+2.43.0
 
->> I've applied a local workaround in my randconfig tree
->>
->> diff --git a/lib/Makefile b/lib/Makefile
->> index ddcb76b294b5..d7b8fab64068 100644
->> --- a/lib/Makefile
->> +++ b/lib/Makefile
->> @@ -425,5 +425,7 @@ $(obj)/$(TEST_FORTIFY_LOG): $(addprefix $(obj)/, =
-$(TEST_FORTIFY_LOGS)) FORCE
->>
->>  # Fake dependency to trigger the fortify tests.
->>  ifeq ($(CONFIG_FORTIFY_SOURCE),y)
->> +ifndef CONFIG_KASAN
->>  $(obj)/string.o: $(obj)/$(TEST_FORTIFY_LOG)
->> +endif
->>  endif
->>
->>
->> which I don't think we want upstream. Can you and Kees come
->> up with a proper fix instead?
->
-> I set CONFIG_FORTIFY_SOURCE=3Dy and CONFIG_KASAN=3Dy,
-> but I did not observe such warnings.
-> Is this arch or compiler-specific?
->
->
-> Could you provide me with the steps to reproduce it?
-
-This is a randconfig .config file that shows it, but
-I've seen it in a lot of others:
-https://pastebin.com/raw/ESVzUeth
-
-If this doesn't reproduce it for you, I can try to narrow
-it down further.
-
-     Arnd
 
