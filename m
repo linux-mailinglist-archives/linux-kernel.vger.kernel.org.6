@@ -1,90 +1,121 @@
-Return-Path: <linux-kernel+bounces-196065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E5D38D56C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 02:11:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCFD08D56CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 02:15:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AAC9287E34
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 00:11:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDED61C23C94
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 00:15:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 650B433CA;
-	Fri, 31 May 2024 00:11:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25B28EC0;
+	Fri, 31 May 2024 00:15:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dY5l94zG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="Mvh9XmQa"
+Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DBDE291E;
-	Fri, 31 May 2024 00:11:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A377B360
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 00:14:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717114291; cv=none; b=Nj0XfAnbxi+v1ATte762YCgJPe/xEwqh9+AAiYzVexlYVuAQt/Cs8OkUEUP17uxW6IsFQQKBJHBXSSN84peFED922DB61GSQg95ZQVTlBkQHXYtb/4tP2GpT7X4Vht8RQmBV6RGDfjvnaE6u24sSgRD1smu2hBPfVx4QPnt8O+4=
+	t=1717114499; cv=none; b=LAh7RCqM+8YEhlJ4+CQi6Cq5VeqYbalskrl3SUfox8dm1FmzeCvB2m1KPHMXQQ3mxuJYhH+z3e1OQHhOxS740VoHu4EvayXT4KzcEuiybzhJPhYL8Wr7QL7/QDyDNQtjKLNeFTa3leh2kBtyQs7q9YHWAlmOZNtVY+wq3j/lZwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717114291; c=relaxed/simple;
-	bh=OTzwBlYP1KJ3xYENMOirCAwoMQNst4smvTkXup2Eafo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=q0Vk1CQCF3s3eGeEoFvuNEL1zmphK/hxhoRWJvk65K6A5ddljNwpwNFn+YrH40NLXDAsaUCv3cipOuzA4dlce5HKfmQ/CbJG/dSjtr8dMIuXGQ3iID4j98diCkK5yt9pQe0J6/mR4jMPtaxC6QWnJe1VUem8kdsw00dnS2IijQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dY5l94zG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C180C2BBFC;
-	Fri, 31 May 2024 00:11:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717114290;
-	bh=OTzwBlYP1KJ3xYENMOirCAwoMQNst4smvTkXup2Eafo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=dY5l94zGm4JDLYNgcmoG9Tc/GOBzM03fz+CH3KOKpIDLm0pzsk8czuh2SN3pU553l
-	 3pIlQkSeGdrKs0MoRfBqCu/iJD+dxC+RQ6QhaFWCURh1aku2NPS2Ah4I83DYZ9idjA
-	 3TKkZX/IHv68ijcSxb7ZO4YfXbjVegHYDAQVrjitOlIIvLGrqipsqnnLv/H1a+m/1y
-	 yN/aZQI7J9xNJLClPt0nzGfiSGK7v+VAXmKhleM6Plgj16lnOegjSgvWe8Y/evaoFc
-	 g92EChP4cfdrXemzexTDJl6pa/dr/+Qb4No6MqVDWLdcHIzBwsaGOerJEXThU01ZdZ
-	 rlEyFKy2utXYg==
-Date: Thu, 30 May 2024 17:11:28 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Joe Damato <jdamato@fastly.com>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- nalramli@fastly.com, "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Leon Romanovsky <leon@kernel.org>,
- linux-rdma@vger.kernel.org (open list:MELLANOX MLX5 core VPI driver), Paolo
- Abeni <pabeni@redhat.com>, Richard Cochran <richardcochran@gmail.com>,
- Saeed Mahameed <saeedm@nvidia.com>, Tariq Toukan <tariqt@nvidia.com>
-Subject: Re: [RFC net-next v3 0/2] mlx5: Add netdev-genl queue stats
-Message-ID: <20240530171128.35bd0ee2@kernel.org>
-In-Reply-To: <20240529031628.324117-1-jdamato@fastly.com>
-References: <20240529031628.324117-1-jdamato@fastly.com>
+	s=arc-20240116; t=1717114499; c=relaxed/simple;
+	bh=YlITfRGBGkiGQh2yf2/+rH6KbsrWEjN3IQxGzASO3WU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o8qOO65jdsPTngZCMgBTlo/itQzElQeD1sEXaO0fs9dWAtpdzF8yvKPAyDOQwZDNijs1b8VB3WFKCDOIeVjJnPAJoAqEDjDKwyOt72UGaG//9mjQRom7+hfWcDfYzwp85CDn5Z8sRV7Ab2ju+A2zwIix4tYiUIyppnefOVvfJ3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=Mvh9XmQa; arc=none smtp.client-ip=209.85.210.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-6f8d0a00a35so409703a34.2
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 17:14:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1717114497; x=1717719297; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=YlITfRGBGkiGQh2yf2/+rH6KbsrWEjN3IQxGzASO3WU=;
+        b=Mvh9XmQaBMDZYrSgJZQ/XsN7HJrFQtFCGWhQ5JX+uzN9iom+YUyQGSGfEQIBrRQRpU
+         KLiKViVidBTPCjeZKGriRRYVlZrLwFrFDOztuygIYXsE210zGXPMzmlifzqYcxL00lPg
+         esWDqlvCE8pvgqsIiaoYO0bIhMIy92P2CarfQnEntuSTlTpvhXHyjH3errNlMh6FfBCm
+         LJks1/V1xErhIVJYIZOaWSZcF59u83tp7qO6ot8HmksVscFeIPteykG14jiQPxywyi4N
+         s9OzuK7+27lQbDllPysg/Md7ITxp6UFyUknYxYKqfh0UcCCjxZ5nEDZJvKQxp14rW0qi
+         aNKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717114497; x=1717719297;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YlITfRGBGkiGQh2yf2/+rH6KbsrWEjN3IQxGzASO3WU=;
+        b=AkEraAWXgotj3UL7eTXaFj2bG7OEmrb8qruc3cjXCEA7SeZAw6liV3D21qN5pz2sxr
+         2LNQ2KA/V1hqBn//fH6huxR3T8+qQSCCHyZEbcMwJaRjzmWbhDEj00ipiiprnBeJdMq1
+         k1WioHGrnwUiiedNUVJ/B+q07VvUk+h7ch0ZGAV1DCWlMsLSfdcorxN5+Xfo7pKfc3Y7
+         2HmaKPcNZKV93FvLBphVoAG/sz+Sh/5DhJI2VdDhLDfPgMV9JQ9/uBKyHpm3I8162gt9
+         Ramdle5kEOXJsTMyYn7COwUwIvYYHK0L9Yhl59uzrojWyD7+OAuC8398n/8ygVyjkAu+
+         UDmA==
+X-Forwarded-Encrypted: i=1; AJvYcCWByV2TRIpaqgB1MzSK/uM+WkHiMg5KwqhsBA+lo0E+/TpSyMpD0qmZ4xTlYjb6EPKmi4HPz6eYJwk8ZH7/IAmzcPMHEZiLkj+dkFLs
+X-Gm-Message-State: AOJu0Yy/GRNHImQRVLOimbIcEG/pjnDPhFlvG17ZJ8iP3WHScJRiY3vQ
+	BEkOOxEVkVyl1MmksXVIfAmzV3egvuawVo+nhQvs9AVQIOzZAexFebqelDRyk1+VkCBkq77Lqvf
+	IMMXit/h30TUeTroQvQZCDqCwznUAVjqIlDlXwQ==
+X-Google-Smtp-Source: AGHT+IHIuwRQeRk5CYGQyxuRuiWFvJgO1VzcacllnlVILGDdy4DHdL8jJjRKfKHzE5KSa34bYlFWdG8b8BCrZGY7GeI=
+X-Received: by 2002:a9d:4e94:0:b0:6f1:17ef:ef11 with SMTP id
+ 46e09a7af769-6f911f48505mr375247a34.22.1717114496660; Thu, 30 May 2024
+ 17:14:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20240530170259.852088-1-pasha.tatashin@soleen.com> <cq7537bswpnbsmeiw3rh4ffrgqky4iufsaurukpk2flxts6jcu@6ctttkclvf3f>
+In-Reply-To: <cq7537bswpnbsmeiw3rh4ffrgqky4iufsaurukpk2flxts6jcu@6ctttkclvf3f>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Thu, 30 May 2024 20:14:17 -0400
+Message-ID: <CA+CK2bCuiDAv05Xu6OuKB=gqJ5NM20F_uUyJV8E=XH=r47ik=Q@mail.gmail.com>
+Subject: Re: [PATCH v3] vmstat: Kernel stack usage histogram
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: akpm@linux-foundation.org, jpoimboe@kernel.org, kent.overstreet@linux.dev, 
+	peterz@infradead.org, nphamcs@gmail.com, cerasuolodomenico@gmail.com, 
+	surenb@google.com, lizhijian@fujitsu.com, willy@infradead.org, vbabka@suse.cz, 
+	ziy@nvidia.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 29 May 2024 03:16:25 +0000 Joe Damato wrote:
-> Worth noting that Tariq suggested I also export HTB/QOS stats in
-> mlx5e_get_base_stats.
+Hi Shakeel,
 
-Why to base, and not report them as queue stats?
+> Couple of questions:
+>
+> 1. In future with your on-demand kstack allocation feature, will these
+> metrics still be useful? (I think so but I want to know your take)
 
-Judging by mlx5e_update_tx_netdev_queues() calls sprinkled in
-./mlx5/core/en/htb.c it seems that the driver will update the
-real_num_tx_queues accordingly. And from mlx5e_qid_from_qos()
-it seems like the inverse calculation is:
+It depends on how on-demand allocation is implemented. On hardware
+that supports faults on kernel stacks, we will have other metrics that
+show the total number of pages allocated for stacks. On hardware where
+faults are not supported, we will most likely have some optimization
+where only some threads are extended, and for those, these metrics
+will still be very useful.
 
-i - (chs->params.num_channels + is_ptp)*mlx5e_get_dcb_num_tc(&chs->params)
+> 2. With on-demand kstack allocation, the stack_not_used() needs to be
+> changed to not cause the allocation, right?
 
-But really, isn't it enough to use priv->txq2sq[i] for the active
-queues, and not active ones you've already covered?
+This is correct, in my WIP dynamic kernel tasks RFCv2 patch series, I
+have an optimized version of stack_not_used() that uses the number of
+allocated pages in the partially filled vmap to determine the last
+stack address.
 
-> I am open to doing this, but I think if I were to do that, HTB/QOS queue
-> stats should also be exported by rtnl so that the script above will
-> continue to show that the output is correct.
-> 
-> I'd like to propose: adding HTB/QOS to both rtnl *and* the netdev-genl
-> code together at the same time, but a later time, separate from this
-> change.
+> 3. Does the histogram get updated on exit only? What about long running
+> kernel threads whose will never exit?
 
-Hm, are HTB queues really not counted in rtnl? That'd be pretty wrong.
+Yes, for performance reasons, the histogram is updated only on exit.
+It would be too expensive to calculate for all running tasks. However,
+it could be extended to be queried on demand via a debugfs interface
+for all running threads. On machines where jobs come and go over time,
+this histogram will show the actual stack usage distribution.
+
+Thank you,
+Pasha
+
+> thanks,
+> Shakeel
 
