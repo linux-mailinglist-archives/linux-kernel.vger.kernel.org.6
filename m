@@ -1,237 +1,300 @@
-Return-Path: <linux-kernel+bounces-196940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C89F68D63EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:04:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 528878D63F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:04:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19DF41F2672A
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:04:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B76661F265ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:04:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C70515B96F;
-	Fri, 31 May 2024 14:04:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A9D215CD69;
+	Fri, 31 May 2024 14:04:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FFFsw1KE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IxwiIj7h"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E169155C8E;
-	Fri, 31 May 2024 14:03:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B43515B0EB;
+	Fri, 31 May 2024 14:04:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717164239; cv=none; b=LOpEhtEgVZlvn6mlLMWOgQDv+lPcrkd6X88dqLIJPY3OVB1MPT4O3FPaJ3PONbecqB6JkrPXwuiNWAlDQ059xMaPTn/KvZB7F1gi84DSKzQy2zDrm789FT3uowOxfXUbxcKQJbw+kuIQ9GWrUqTWxNj2gYl+qjNX6cn/Qum3Yug=
+	t=1717164267; cv=none; b=HxD+qXJwoEyjRToHKCz0NoiVpW8K7YhNtg2ctFhX5amRkEINgzz3WHLtgEqiZnEXIzg6yl/HM1ocmfEhAXswjVvCFvKQPktjMDt++MT0dYu4ZFyWGmiQyS+WkQfIM0byXtSfZPRZP589rWcrt+cmWpgfnpQfjjaUsWAadQX7YYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717164239; c=relaxed/simple;
-	bh=OR5TcAid10nxVjMKvTnf5psawQ+kB4xK6BcAmRyea1c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JXDB1+mptQJQL2xu7Uubqy6d3WU8VyoIT+ilXP8Rzd6iNCf2wYSRiUDH4kiBz17kcQXENCwuQEXPF/rPc3fcRufWFJ2Pi5cC2xIbs/3N8g8QnA/t+L5XlGdJSixZdKFj/6Lz++nFlvaI64Zro4ZBkcV1p1HiUuvnTnQKOau+CEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FFFsw1KE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEBC4C116B1;
-	Fri, 31 May 2024 14:03:58 +0000 (UTC)
+	s=arc-20240116; t=1717164267; c=relaxed/simple;
+	bh=9KO90g1YRgzZkliYyKsRBxOej6caKIqECjM2eDwUb/4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=G8MionbgRL8T0WXB23VrRqrf3FrhVGi8RgxEIMcdRBo94e8x168mjzT1KRwiwFV9Y8ela1iuaNKN7d7dgFQMKkBFPAWDX7GTGb/W0GwmCNGQ9NH9FGx8ZHSgh3z7dEcg2X9QhlhQXKebj+rSA484F6N5iyDLmRs2n3gfslDVLok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IxwiIj7h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C40E5C4AF0A;
+	Fri, 31 May 2024 14:04:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717164238;
-	bh=OR5TcAid10nxVjMKvTnf5psawQ+kB4xK6BcAmRyea1c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FFFsw1KE13cBSVF2ZFI9uk0KAKuzlQrCqop/BEXWXprSV00dzWLST+9JnszVIsWKB
-	 tH9cq83udcxZf0UltjzdgnB3b5T5dWP3WSNGu8tyN27taocyat5DgxNPuP4HfYx8lU
-	 aAPdQ+2D99XHoOnjBMZtPUYW1AHLkhd2bGBG6XUO72abikZAqYjXKY2MBlHAQbmEgo
-	 IoNNvhJOtuHSzihshNNXKT/sGQGNkhogqagJ+UnuSisaIfwQooFxKw2wRBJDJ4JnAO
-	 YufkmiWK8XyOOMDLvW/ShbkkUhXegNilrcpc3UaM5Nha7dZHxud3Pj2oHSqUBklnN6
-	 P1LErz+lf8k8g==
-Date: Fri, 31 May 2024 07:03:58 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Zhang Yi <yi.zhang@huaweicloud.com>, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	brauner@kernel.org, david@fromorbit.com, chandanbabu@kernel.org,
-	jack@suse.cz, willy@infradead.org, yi.zhang@huawei.com,
-	chengzhihao1@huawei.com, yukuai3@huawei.com
-Subject: Re: [RFC PATCH v4 1/8] iomap: zeroing needs to be pagecache aware
-Message-ID: <20240531140358.GF52987@frogsfrogsfrogs>
-References: <20240529095206.2568162-1-yi.zhang@huaweicloud.com>
- <20240529095206.2568162-2-yi.zhang@huaweicloud.com>
- <ZlnMfSJcm5k6Dg_e@infradead.org>
+	s=k20201202; t=1717164266;
+	bh=9KO90g1YRgzZkliYyKsRBxOej6caKIqECjM2eDwUb/4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=IxwiIj7hn26OUzhc6FSZSB2kxtIGSjsAeW5Zh+sYuxLbAdJ9teU77YZjrsMwWSVvE
+	 JskgRFo3bLQo3jL51TCy84Prr9b/mNr37OCjVWeyE/3nsS5VYvXY3d7/CwHtCDilGE
+	 ZMohF3b+X9kMilUSHlqYx7SrYWz2TYGEF52Velnk0guLlGlnTKVCrPyJrlbw7ogfy0
+	 iowBCq73Sb3dFiierOsA8eHkfh3Zbrj+9Tc7JC5hZm/lDsfhEAFgxuQpC3N6jNEHlR
+	 dMocnsvFi9u+S/KfWnm+H0cg4459PTwAlaCiyLYXtUtRxAP/t2IfC1d3FnJBBo4EMJ
+	 O2tVK1YYIXzww==
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2ea80a18094so20677401fa.0;
+        Fri, 31 May 2024 07:04:26 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUYIQsQa7is1UQTQ9sgYZdlRHb1qV2FuUqONlFHemkXMHOfqZX9cyoySfnPV7Bt9WXLWms/IwsJunC9642hG42bRiazCTukrHEw0P40OoMnsxrsriHMT2GxCOrhf16RMxg0KJNAvr8s74wH3sxyP8fh1N1Mzx0XHKmNIeiM83qw6IFD0TLVqjp4VfZPOjwcHMPBPEhu4lyiD+WWMgp+MNph+y8g
+X-Gm-Message-State: AOJu0YxtLuedKMul/bgoiyXEPLtXKeQ5BXCtyRy/OekMeLuwEBOsA224
+	5aaYRon9ZzHWB9apYTy9DtDCQ76ZYxCKO1x/hKv6QeRCdUpDgOfjOzILvDOGn7OJNOVAfYLCZYV
+	sMVHoFaeLbDkHYoBsnmCR5NVquXg=
+X-Google-Smtp-Source: AGHT+IFbP7OVn0ZNiY1Sts+anVAaa8RDVDPxkSqpiu2vgxx2AvOg9j2jGAYMn0LrlB2WLJt0hsrRkPoyyNw9Qy5thuo=
+X-Received: by 2002:a2e:a7c5:0:b0:2e2:6dd9:dd8a with SMTP id
+ 38308e7fff4ca-2ea84b1a993mr18049101fa.0.1717164265060; Fri, 31 May 2024
+ 07:04:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZlnMfSJcm5k6Dg_e@infradead.org>
+References: <20240531010331.134441-1-ross.philipson@oracle.com>
+ <20240531010331.134441-9-ross.philipson@oracle.com> <CAMj1kXHaH6atsvwr6oVPdZuhR5YEXU33-2kYEn6xb1e=gidOCw@mail.gmail.com>
+ <CAMj1kXHcYOPTLTh-hEtfHk+JaORGK+fEatTT+UOqLJww+_cNTg@mail.gmail.com>
+In-Reply-To: <CAMj1kXHcYOPTLTh-hEtfHk+JaORGK+fEatTT+UOqLJww+_cNTg@mail.gmail.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Fri, 31 May 2024 16:04:13 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXH3AwSiq8K6VZEp83uF-W6mtODqrCKROQZ6VqAsFGVBbg@mail.gmail.com>
+Message-ID: <CAMj1kXH3AwSiq8K6VZEp83uF-W6mtODqrCKROQZ6VqAsFGVBbg@mail.gmail.com>
+Subject: Re: [PATCH v9 08/19] x86: Secure Launch kernel early boot stub
+To: Ross Philipson <ross.philipson@oracle.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, 
+	linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-crypto@vger.kernel.org, kexec@lists.infradead.org, 
+	linux-efi@vger.kernel.org, iommu@lists.linux-foundation.org, 
+	dpsmith@apertussolutions.com, tglx@linutronix.de, mingo@redhat.com, 
+	bp@alien8.de, hpa@zytor.com, dave.hansen@linux.intel.com, mjg59@srcf.ucam.org, 
+	James.Bottomley@hansenpartnership.com, peterhuewe@gmx.de, jarkko@kernel.org, 
+	jgg@ziepe.ca, luto@amacapital.net, nivedita@alum.mit.edu, 
+	herbert@gondor.apana.org.au, davem@davemloft.net, corbet@lwn.net, 
+	ebiederm@xmission.com, dwmw2@infradead.org, baolu.lu@linux.intel.com, 
+	kanth.ghatraju@oracle.com, andrew.cooper3@citrix.com, 
+	trenchboot-devel@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, May 31, 2024 at 06:11:25AM -0700, Christoph Hellwig wrote:
-> On Wed, May 29, 2024 at 05:51:59PM +0800, Zhang Yi wrote:
-> > XXX: how do we detect a iomap containing a cow mapping over a hole
-> > in iomap_zero_iter()? The XFS code implies this case also needs to
-> > zero the page cache if there is data present, so trigger for page
-> > cache lookup only in iomap_zero_iter() needs to handle this case as
-> > well.
-> 
-> If there is no data in the page cache and either a whole or unwritten
-> extent it really should not matter what is in the COW fork, a there
-> obviously isn't any data we could zero.
-> 
-> If there is data in the page cache for something that is marked as
-> a hole in the srcmap, but we have data in the COW fork due to
-> COW extsize preallocation we'd need to zero it, but as the
-> xfs iomap ops don't return a separate srcmap for that case we
-> should be fine.  Or am I missing something?
+On Fri, 31 May 2024 at 15:33, Ard Biesheuvel <ardb@kernel.org> wrote:
+>
+> On Fri, 31 May 2024 at 13:00, Ard Biesheuvel <ardb@kernel.org> wrote:
+> >
+> > Hello Ross,
+> >
+> > On Fri, 31 May 2024 at 03:32, Ross Philipson <ross.philipson@oracle.com> wrote:
+> > >
+> > > The Secure Launch (SL) stub provides the entry point for Intel TXT (and
+> > > later AMD SKINIT) to vector to during the late launch. The symbol
+> > > sl_stub_entry is that entry point and its offset into the kernel is
+> > > conveyed to the launching code using the MLE (Measured Launch
+> > > Environment) header in the structure named mle_header. The offset of the
+> > > MLE header is set in the kernel_info. The routine sl_stub contains the
+> > > very early late launch setup code responsible for setting up the basic
+> > > environment to allow the normal kernel startup_32 code to proceed. It is
+> > > also responsible for properly waking and handling the APs on Intel
+> > > platforms. The routine sl_main which runs after entering 64b mode is
+> > > responsible for measuring configuration and module information before
+> > > it is used like the boot params, the kernel command line, the TXT heap,
+> > > an external initramfs, etc.
+> > >
+> > > Signed-off-by: Ross Philipson <ross.philipson@oracle.com>
+> > > ---
+> > >  Documentation/arch/x86/boot.rst        |  21 +
+> > >  arch/x86/boot/compressed/Makefile      |   3 +-
+> > >  arch/x86/boot/compressed/head_64.S     |  30 +
+> > >  arch/x86/boot/compressed/kernel_info.S |  34 ++
+> > >  arch/x86/boot/compressed/sl_main.c     | 577 ++++++++++++++++++++
+> > >  arch/x86/boot/compressed/sl_stub.S     | 725 +++++++++++++++++++++++++
+> > >  arch/x86/include/asm/msr-index.h       |   5 +
+> > >  arch/x86/include/uapi/asm/bootparam.h  |   1 +
+> > >  arch/x86/kernel/asm-offsets.c          |  20 +
+> > >  9 files changed, 1415 insertions(+), 1 deletion(-)
+> > >  create mode 100644 arch/x86/boot/compressed/sl_main.c
+> > >  create mode 100644 arch/x86/boot/compressed/sl_stub.S
+> > >
+> > > diff --git a/Documentation/arch/x86/boot.rst b/Documentation/arch/x86/boot.rst
+> > > index 4fd492cb4970..295cdf9bcbdb 100644
+> > > --- a/Documentation/arch/x86/boot.rst
+> > > +++ b/Documentation/arch/x86/boot.rst
+> > > @@ -482,6 +482,14 @@ Protocol:  2.00+
+> > >             - If 1, KASLR enabled.
+> > >             - If 0, KASLR disabled.
+> > >
+> > > +  Bit 2 (kernel internal): SLAUNCH_FLAG
+> > > +
+> > > +       - Used internally by the setup kernel to communicate
+> > > +         Secure Launch status to kernel proper.
+> > > +
+> > > +           - If 1, Secure Launch enabled.
+> > > +           - If 0, Secure Launch disabled.
+> > > +
+> > >    Bit 5 (write): QUIET_FLAG
+> > >
+> > >         - If 0, print early messages.
+> > > @@ -1028,6 +1036,19 @@ Offset/size:     0x000c/4
+> > >
+> > >    This field contains maximal allowed type for setup_data and setup_indirect structs.
+> > >
+> > > +============   =================
+> > > +Field name:    mle_header_offset
+> > > +Offset/size:   0x0010/4
+> > > +============   =================
+> > > +
+> > > +  This field contains the offset to the Secure Launch Measured Launch Environment
+> > > +  (MLE) header. This offset is used to locate information needed during a secure
+> > > +  late launch using Intel TXT. If the offset is zero, the kernel does not have
+> > > +  Secure Launch capabilities. The MLE entry point is called from TXT on the BSP
+> > > +  following a success measured launch. The specific state of the processors is
+> > > +  outlined in the TXT Software Development Guide, the latest can be found here:
+> > > +  https://www.intel.com/content/dam/www/public/us/en/documents/guides/intel-txt-software-development-guide.pdf
+> > > +
+> > >
+> >
+> > Could we just repaint this field as the offset relative to the start
+> > of kernel_info rather than relative to the start of the image? That
+> > way, there is no need for patch #1, and given that the consumer of
+> > this field accesses it via kernel_info, I wouldn't expect any issues
+> > in applying this offset to obtain the actual address.
+> >
+> >
+> > >  The Image Checksum
+> > >  ==================
+> > > diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
+> > > index 9189a0e28686..9076a248d4b4 100644
+> > > --- a/arch/x86/boot/compressed/Makefile
+> > > +++ b/arch/x86/boot/compressed/Makefile
+> > > @@ -118,7 +118,8 @@ vmlinux-objs-$(CONFIG_EFI) += $(obj)/efi.o
+> > >  vmlinux-objs-$(CONFIG_EFI_MIXED) += $(obj)/efi_mixed.o
+> > >  vmlinux-objs-$(CONFIG_EFI_STUB) += $(objtree)/drivers/firmware/efi/libstub/lib.a
+> > >
+> > > -vmlinux-objs-$(CONFIG_SECURE_LAUNCH) += $(obj)/early_sha1.o $(obj)/early_sha256.o
+> > > +vmlinux-objs-$(CONFIG_SECURE_LAUNCH) += $(obj)/early_sha1.o $(obj)/early_sha256.o \
+> > > +       $(obj)/sl_main.o $(obj)/sl_stub.o
+> > >
+> > >  $(obj)/vmlinux: $(vmlinux-objs-y) FORCE
+> > >         $(call if_changed,ld)
+> > > diff --git a/arch/x86/boot/compressed/head_64.S b/arch/x86/boot/compressed/head_64.S
+> > > index 1dcb794c5479..803c9e2e6d85 100644
+> > > --- a/arch/x86/boot/compressed/head_64.S
+> > > +++ b/arch/x86/boot/compressed/head_64.S
+> > > @@ -420,6 +420,13 @@ SYM_CODE_START(startup_64)
+> > >         pushq   $0
+> > >         popfq
+> > >
+> > > +#ifdef CONFIG_SECURE_LAUNCH
+> > > +       /* Ensure the relocation region is coverd by a PMR */
+> >
+> > covered
+> >
+> > > +       movq    %rbx, %rdi
+> > > +       movl    $(_bss - startup_32), %esi
+> > > +       callq   sl_check_region
+> > > +#endif
+> > > +
+> > >  /*
+> > >   * Copy the compressed kernel to the end of our buffer
+> > >   * where decompression in place becomes safe.
+> > > @@ -462,6 +469,29 @@ SYM_FUNC_START_LOCAL_NOALIGN(.Lrelocated)
+> > >         shrq    $3, %rcx
+> > >         rep     stosq
+> > >
+> > > +#ifdef CONFIG_SECURE_LAUNCH
+> > > +       /*
+> > > +        * Have to do the final early sl stub work in 64b area.
+> > > +        *
+> > > +        * *********** NOTE ***********
+> > > +        *
+> > > +        * Several boot params get used before we get a chance to measure
+> > > +        * them in this call. This is a known issue and we currently don't
+> > > +        * have a solution. The scratch field doesn't matter. There is no
+> > > +        * obvious way to do anything about the use of kernel_alignment or
+> > > +        * init_size though these seem low risk with all the PMR and overlap
+> > > +        * checks in place.
+> > > +        */
+> > > +       movq    %r15, %rdi
+> > > +       callq   sl_main
+> > > +
+> > > +       /* Ensure the decompression location is covered by a PMR */
+> > > +       movq    %rbp, %rdi
+> > > +       movq    output_len(%rip), %rsi
+> > > +       callq   sl_check_region
+> > > +#endif
+> > > +
+> > > +       pushq   %rsi
+> >
+> > This looks like a rebase error.
+> >
+> > >         call    load_stage2_idt
+> > >
+> > >         /* Pass boot_params to initialize_identity_maps() */
+> > > diff --git a/arch/x86/boot/compressed/kernel_info.S b/arch/x86/boot/compressed/kernel_info.S
+> > > index c18f07181dd5..e199b87764e9 100644
+> > > --- a/arch/x86/boot/compressed/kernel_info.S
+> > > +++ b/arch/x86/boot/compressed/kernel_info.S
+> > > @@ -28,6 +28,40 @@ SYM_DATA_START(kernel_info)
+> > >         /* Maximal allowed type for setup_data and setup_indirect structs. */
+> > >         .long   SETUP_TYPE_MAX
+> > >
+> > > +       /* Offset to the MLE header structure */
+> > > +#if IS_ENABLED(CONFIG_SECURE_LAUNCH)
+> > > +       .long   rva(mle_header)
+> >
+> > ... so this could just be mle_header - kernel_info, and the consumer
+> > can do the math instead.
+> >
+> > > +#else
+> > > +       .long   0
+> > > +#endif
+> > > +
+> > >  kernel_info_var_len_data:
+> > >         /* Empty for time being... */
+> > >  SYM_DATA_END_LABEL(kernel_info, SYM_L_LOCAL, kernel_info_end)
+> > > +
+> > > +#if IS_ENABLED(CONFIG_SECURE_LAUNCH)
+> > > +       /*
+> > > +        * The MLE Header per the TXT Specification, section 2.1
+> > > +        * MLE capabilities, see table 4. Capabilities set:
+> > > +        * bit 0: Support for GETSEC[WAKEUP] for RLP wakeup
+> > > +        * bit 1: Support for RLP wakeup using MONITOR address
+> > > +        * bit 2: The ECX register will contain the pointer to the MLE page table
+> > > +        * bit 5: TPM 1.2 family: Details/authorities PCR usage support
+> > > +        * bit 9: Supported format of TPM 2.0 event log - TCG compliant
+> > > +        */
+> > > +SYM_DATA_START(mle_header)
+> > > +       .long   0x9082ac5a  /* UUID0 */
+> > > +       .long   0x74a7476f  /* UUID1 */
+> > > +       .long   0xa2555c0f  /* UUID2 */
+> > > +       .long   0x42b651cb  /* UUID3 */
+> > > +       .long   0x00000034  /* MLE header size */
+> > > +       .long   0x00020002  /* MLE version 2.2 */
+> > > +       .long   rva(sl_stub_entry) /* Linear entry point of MLE (virt. address) */
+> >
+> > and these should perhaps be relative to mle_header?
+> >
+> > > +       .long   0x00000000  /* First valid page of MLE */
+> > > +       .long   0x00000000  /* Offset within binary of first byte of MLE */
+> > > +       .long   rva(_edata) /* Offset within binary of last byte + 1 of MLE */
+> >
+> > and here
+> >
+>
+> Ugh never mind - these are specified externally.
 
-It might be useful to skip the scan for dirty pagecache if both forks
-have holes, since (in theory) that's never possible on xfs.
+OK, so instead of patch #1, please use the linker script to generate
+these constants.
 
-OTOH maybe there are filesystems that allow dirty pagecache over a hole?
+I.e., add this to arch/x86/boot/compressed/vmlinux.lds.S
 
-> > + * Note: when zeroing unwritten extents, we might have data in the page cache
-> > + * over an unwritten extent. In this case, we want to do a pure lookup on the
-> > + * page cache and not create a new folio as we don't need to perform zeroing on
-> > + * unwritten extents if there is no cached data over the given range.
-> >   */
-> >  struct folio *iomap_get_folio(struct iomap_iter *iter, loff_t pos, size_t len)
-> >  {
-> >  	fgf_t fgp = FGP_WRITEBEGIN | FGP_NOFS;
-> >  
-> > +	if (iter->flags & IOMAP_ZERO) {
-> > +		const struct iomap *srcmap = iomap_iter_srcmap(iter);
-> > +
-> > +		if (srcmap->type == IOMAP_UNWRITTEN)
-> > +			fgp &= ~FGP_CREAT;
-> > +	}
-> 
-> Nit:  The comment would probably stand out a little better if it was
-> right next to the IOMAP_ZERO conditional instead of above the
-> function.
+#ifdef CONFIG_SECURE_LAUNCH
+PROVIDE(mle_header_offset       = mle_header - startup_32);
+PROVIDE(sl_stub_entry_offset    = sl_stub_entry - startup_32);
+PROVIDE(_edata_offset           = _edata - startup_32);
+#endif
 
-Agreed.
-
-> > +		if (status) {
-> > +			if (status == -ENOENT) {
-> > +				/*
-> > +				 * Unwritten extents need to have page cache
-> > +				 * lookups done to determine if they have data
-> > +				 * over them that needs zeroing. If there is no
-> > +				 * data, we'll get -ENOENT returned here, so we
-> > +				 * can just skip over this index.
-> > +				 */
-> > +				WARN_ON_ONCE(srcmap->type != IOMAP_UNWRITTEN);
-> 
-> I'd return -EIO if the WARN_ON triggers.
-> 
-> > +loop_continue:
-> 
-> While I'm no strange to gotos for loop control something trips me
-> up about jumping to the end of the loop.  Here is what I could come
-> up with instead.  Not arguing it's objectively better, but I somehow
-> like it a little better:
-> 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index 700b22d6807783..81378f7cd8d7ff 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -1412,49 +1412,56 @@ static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
->  		bool ret;
->  
->  		status = iomap_write_begin(iter, pos, bytes, &folio);
-> -		if (status) {
-> -			if (status == -ENOENT) {
-> -				/*
-> -				 * Unwritten extents need to have page cache
-> -				 * lookups done to determine if they have data
-> -				 * over them that needs zeroing. If there is no
-> -				 * data, we'll get -ENOENT returned here, so we
-> -				 * can just skip over this index.
-> -				 */
-> -				WARN_ON_ONCE(srcmap->type != IOMAP_UNWRITTEN);
-> -				if (bytes > PAGE_SIZE - offset_in_page(pos))
-> -					bytes = PAGE_SIZE - offset_in_page(pos);
-> -				goto loop_continue;
-> -			}
-> +		if (status && status != -ENOENT)
->  			return status;
-> -		}
-> -		if (iter->iomap.flags & IOMAP_F_STALE)
-> -			break;
->  
-> -		offset = offset_in_folio(folio, pos);
-> -		if (bytes > folio_size(folio) - offset)
-> -			bytes = folio_size(folio) - offset;
-> +		if (status == -ENOENT) {
-> +			/*
-> +			 * If we end up here, we did not find a folio in the
-> +			 * page cache for an unwritten extent and thus can
-> +			 * skip over the range.
-> +			 */
-> +			if (WARN_ON_ONCE(srcmap->type != IOMAP_UNWRITTEN))
-> +				return -EIO;
->  
-> -		/*
-> -		 * If the folio over an unwritten extent is clean (i.e. because
-> -		 * it has been read from), then it already contains zeros. Hence
-> -		 * we can just skip it.
-> -		 */
-> -		if (srcmap->type == IOMAP_UNWRITTEN &&
-> -		    !folio_test_dirty(folio)) {
-> -			folio_unlock(folio);
-> -			goto loop_continue;
-> +			/*
-> +			 * XXX: It would be nice if we could get the offset of
-> +			 * the next entry in the pagecache so that we don't have
-> +			 * to iterate one page at a time here.
-> +			 */
-> +			offset = offset_in_page(pos);
-> +			if (bytes > PAGE_SIZE - offset)
-> +				bytes = PAGE_SIZE - offset;
-
-Why is it PAGE_SIZE here and not folio_size() like below?
-
-(I know you're just copying the existing code; I'm merely wondering if
-this is some minor bug.)
-
---D
-
-> +		} else {
-> +			if (iter->iomap.flags & IOMAP_F_STALE)
-> +				break;
-> +
-> +			offset = offset_in_folio(folio, pos);
-> +			if (bytes > folio_size(folio) - offset)
-> +				bytes = folio_size(folio) - offset;
-> +		
-> +			/*
-> +			 * If the folio over an unwritten extent is clean (i.e.
-> +			 * because it has only been read from), then it already
-> +			 * contains zeros.  Hence we can just skip it.
-> +			 */
-> +			if (srcmap->type == IOMAP_UNWRITTEN &&
-> +			    !folio_test_dirty(folio)) {
-> +				folio_unlock(folio);
-> +				status = -ENOENT;
-> +			}
->  		}
->  
-> -		folio_zero_range(folio, offset, bytes);
-> -		folio_mark_accessed(folio);
-> +		if (status != -ENOENT) {
-> +			folio_zero_range(folio, offset, bytes);
-> +			folio_mark_accessed(folio);
->  
-> -		ret = iomap_write_end(iter, pos, bytes, bytes, folio);
-> -		__iomap_put_folio(iter, pos, bytes, folio);
-> -		if (WARN_ON_ONCE(!ret))
-> -			return -EIO;
-> +			ret = iomap_write_end(iter, pos, bytes, bytes, folio);
-> +			__iomap_put_folio(iter, pos, bytes, folio);
-> +			if (WARN_ON_ONCE(!ret))
-> +				return -EIO;
-> +		}
->  
-> -loop_continue:
->  		pos += bytes;
->  		length -= bytes;
->  		written += bytes;
-> 
+and use the symbols on the left hand side in the code.
 
