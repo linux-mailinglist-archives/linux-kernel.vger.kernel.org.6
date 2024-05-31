@@ -1,117 +1,120 @@
-Return-Path: <linux-kernel+bounces-196819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8DAC8D6220
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:48:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B4548D6223
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:48:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6D431C234D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:48:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D31691F27B2C
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:48:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADBAB158851;
-	Fri, 31 May 2024 12:47:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AB5D158864;
+	Fri, 31 May 2024 12:48:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vCP49Rj0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=savoirfairelinux.com header.i=@savoirfairelinux.com header.b="jAPZBpE5"
+Received: from mail.savoirfairelinux.com (mail.savoirfairelinux.com [208.88.110.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E17CB158845;
-	Fri, 31 May 2024 12:47:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CF821586D7;
+	Fri, 31 May 2024 12:48:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=208.88.110.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717159672; cv=none; b=LDPEj52QYYNjvzkM32m7yTELYTitH6W92jshFmAW/LeFUXrv0RwXu40vzGQ5GAS2yiAa+ydKaG6e69bgSG+3sQyAFxJ6cRIYDbonlczL6ccIRoXWXmNVJRoY7ZOnxmmP7tvFwld+z9xt/cWwlrusrhATKMTQW8Y6jxiUeS3CZ9E=
+	t=1717159687; cv=none; b=Ta7nCjIlVZzTzWl4b85EsXs0khb98mql5yhZaljRowpFjazSK59PaApqnl2g/GGHvyoGHbLjsDZoGSZ5rf7vou7xJXnUqTdqjt1cQ4X7mWEpGVwqvUBVTI0a/Tc1m2t0PiThST5nSxA0ZquKvGQ7HEhICIs25+SvRMQ5Azp7fpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717159672; c=relaxed/simple;
-	bh=smSrXrIOTm6C2xaV0U6WGYhPw32W+7RUuflt9biyoW8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OAyJb8FObFH2zWCS891+yXG6rCR7PGnVU0lYrpCGUOPkh/5abwRde8wZwJSK4UXjDhPE0Av1bZKIsrNV+OigH1R5vrA9o6P/OSqwvPkIlyRVPhJqMGb16BTfGTdluScE0RW7pZdkIu7Bqtp5Mm4JAnjpjSCuKdhQ3xoTuo0/XMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vCP49Rj0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1049FC116B1;
-	Fri, 31 May 2024 12:47:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717159671;
-	bh=smSrXrIOTm6C2xaV0U6WGYhPw32W+7RUuflt9biyoW8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vCP49Rj0r+TuWcuwoHGGzkDSNzXDVNc/dJV8Sx5k4Bm5GZpaLTQY5MMwNZvGhj1z+
-	 IyYsnkVCQEhdjFii5os6pzgxLHTGxHtovHpTi0DcQxAFONPrifEEzHE11/D5g0gcMY
-	 a2tRXfrCiANlRVbN8bplYNwvSial+L8ElTpVqRDnq6QxeU8CvJLTmoGtXEngyYUjKx
-	 qOAbqaNBfKrndprPlFuP6idtDenJieFqu9EnbGwvTfd7Y+qU6Q542IISqHlvfdkKCz
-	 g9cBE4GgIOqQOVeTUy8TSFiyero6CbN8APOUYCbwC3UdSl0/lptUdYiRK/tPAwPpgH
-	 hiZGtvggKBxZQ==
-Date: Fri, 31 May 2024 13:47:45 +0100
-From: Mark Brown <broonie@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Conor Dooley <conor@kernel.org>,
-	Nuno =?iso-8859-1?Q?S=E1?= <noname.nuno@gmail.com>,
-	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	David Jander <david@protonic.nl>,
-	Martin Sperl <kernel@martin.sperl.org>, linux-spi@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org
-Subject: Re: [PATCH RFC v2 1/8] spi: dt-bindings: spi-peripheral-props: add
- spi-offloads property
-Message-ID: <f67fadb2-03de-4f82-ae32-5e1c64fac027@sirena.org.uk>
-References: <20240516-rudder-reburial-dcf300504c0a@spud>
- <CAMknhBF_s0btus4yqPe-T=F3z7Asi9KkRGsGr7FHDFi=k4EQjw@mail.gmail.com>
- <20240519-abreast-haziness-096a57ef57d3@spud>
- <CAMknhBHvEse2FyDoBXR1PvymGpSGq8dotKfm+8XH+0+k+xKtQw@mail.gmail.com>
- <20240522-gullible-ibuprofen-cf9111c25f6f@spud>
- <5ad0b5782434eaf4cf565cffb0e4c14b7414ae38.camel@gmail.com>
- <20240526-peculiar-panama-badda4f02336@spud>
- <10991373cb9603803df63d8236c475807f6dde68.camel@gmail.com>
- <20240530-petunia-genre-2731493dbd0f@spud>
- <8ba46ea7-ad57-4ade-9a77-fc605710c14f@baylibre.com>
+	s=arc-20240116; t=1717159687; c=relaxed/simple;
+	bh=m2xAOXligU3lprYVSulk/dW89+JgHc9BI2bSgA7HNtk=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=EAwYkuJ/A/RcwFEmjCl1nfXYL4OcPNW24e7NxCv/QJx2jfFOXRxjcFEpfjmeVENsA43mxDvY5spPLSD8jVIA9gXsnbAQb9HTiC2a31Ck0lASvdIICkYvh8jlDLc+xcWR5o/OW8SFwEoCHZ9i8E+CSryu09wYVUfaMmwteQkZgVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=savoirfairelinux.com; spf=pass smtp.mailfrom=savoirfairelinux.com; dkim=pass (2048-bit key) header.d=savoirfairelinux.com header.i=@savoirfairelinux.com header.b=jAPZBpE5; arc=none smtp.client-ip=208.88.110.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=savoirfairelinux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=savoirfairelinux.com
+Received: from localhost (localhost [127.0.0.1])
+	by mail.savoirfairelinux.com (Postfix) with ESMTP id 098449C5848;
+	Fri, 31 May 2024 08:48:05 -0400 (EDT)
+Received: from mail.savoirfairelinux.com ([127.0.0.1])
+ by localhost (mail.savoirfairelinux.com [127.0.0.1]) (amavis, port 10032)
+ with ESMTP id 7N-5VYmiZOoY; Fri, 31 May 2024 08:48:04 -0400 (EDT)
+Received: from localhost (localhost [127.0.0.1])
+	by mail.savoirfairelinux.com (Postfix) with ESMTP id 5AD0E9C595F;
+	Fri, 31 May 2024 08:48:04 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.savoirfairelinux.com 5AD0E9C595F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=savoirfairelinux.com; s=DFC430D2-D198-11EC-948E-34200CB392D2;
+	t=1717159684; bh=h3D/uAawc+I8RbHTAiC8n84YabIXpASHjQyR/gpbrgE=;
+	h=Date:From:To:Message-ID:MIME-Version;
+	b=jAPZBpE5nA8mMRoFEtnR1W6Zxjja92p20x6h8UBQhn2VAhdjUCUIE99bWFtrG1SZ/
+	 2rgsowCsQ+qWOXBktjyvP8RHaKFXQcSvymNZ8xPQiwraAL7iv/ny7lk3Uw/65LmfMc
+	 MWyOEp9aGhNxCeSA8Mu8btlz266RwXJsZCEdehRlne92gwvkwt4HF6araHi24pt5wY
+	 hi8uxxjhd+7PJefByXIjys01r5vqtsBzJ8deyrqXfhIk/VcH8UJFnQWg/MlllBHreg
+	 hhBfmUo92dFl7h6dXXi6sWAx6e2mzSubC4yWqwWg4v5D/lu4UsnKjSX+zbBbjQ0jp0
+	 7b2bKmYaz/3LQ==
+X-Virus-Scanned: amavis at mail.savoirfairelinux.com
+Received: from mail.savoirfairelinux.com ([127.0.0.1])
+ by localhost (mail.savoirfairelinux.com [127.0.0.1]) (amavis, port 10026)
+ with ESMTP id 14T-wh3CS_eR; Fri, 31 May 2024 08:48:04 -0400 (EDT)
+Received: from mail.savoirfairelinux.com (mail.savoirfairelinux.com [192.168.48.237])
+	by mail.savoirfairelinux.com (Postfix) with ESMTP id 2249C9C58EA;
+	Fri, 31 May 2024 08:48:04 -0400 (EDT)
+Date: Fri, 31 May 2024 08:48:04 -0400 (EDT)
+From: Elinor Montmasson <elinor.montmasson@savoirfairelinux.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+	Conor Dooley <conor+dt@kernel.org>, 
+	shengjiu wang <shengjiu.wang@gmail.com>, 
+	Xiubo Lee <Xiubo.Lee@gmail.com>, Fabio Estevam <festevam@gmail.com>, 
+	Nicolin Chen <nicoleotsuka@gmail.com>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	linux-sound <linux-sound@vger.kernel.org>, 
+	devicetree <devicetree@vger.kernel.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, 
+	alsa-devel <alsa-devel@alsa-project.org>, 
+	linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Message-ID: <1598202415.701258.1717159684103.JavaMail.zimbra@savoirfairelinux.com>
+In-Reply-To: <500db9de-6113-4e73-ba92-6e52ea292b32@sirena.org.uk>
+References: <20240515135411.343333-1-elinor.montmasson@savoirfairelinux.com> <20240515135411.343333-10-elinor.montmasson@savoirfairelinux.com> <ce9a87c6-4a5c-4f0a-a8df-1fdce8c1f5df@sirena.org.uk> <599489232.349333.1715936741672.JavaMail.zimbra@savoirfairelinux.com> <500db9de-6113-4e73-ba92-6e52ea292b32@sirena.org.uk>
+Subject: Re: [PATCHv4 9/9] ASoC: dt-bindings: fsl-asoc-card: add compatible
+ for generic codec
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="J1Zz5On/pzKE0RsE"
-Content-Disposition: inline
-In-Reply-To: <8ba46ea7-ad57-4ade-9a77-fc605710c14f@baylibre.com>
-X-Cookie: Serving suggestion.
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: Zimbra 8.8.15_GA_4581 (ZimbraWebClient - GC112 (Linux)/8.8.15_GA_4581)
+Thread-Topic: ASoC: dt-bindings: fsl-asoc-card: add compatible for generic codec
+Thread-Index: +Nt1Jr68s5Clyi+hmHO4sX8bYCaHcg==
 
+From: "Mark Brown" <broonie@kernel.org>
+Sent: Friday, 17 May, 2024 13:11:43
+> On Fri, May 17, 2024 at 05:05:41AM -0400, Elinor Montmasson wrote:
+>> From: "Mark Brown" <broonie@kernel.org>
+> 
+>> > This description (and the code) don't feel like they're actually generic
+>> > - they're clearly specific to the bidrectional S/PDIF case.  I'd expect
+>> > something called -generic to cope with single CODECs as well as double,
+>> > and not to have any constraints on what those are.
+> 
+>> I proposed, in an reply of the v3 patch series to Krzysztof Kozlowski,
+>> the compatible "fsl,imx-audio-no-codec" instead of "generic".
+>> Krzysztof thought it was too generic, but it would convey more clearly
+>> that it is for cases without codec driver.
+>> Would this other compatible string be more appropriate ?
+> 
+> No.  There is very clearly a CODEC here, it physically exists, we can
+> point at it on the board and it has a software representation.  Your
+> code is also very specific to the two CODEC case.
 
---J1Zz5On/pzKE0RsE
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, May 30, 2024 at 04:28:38PM -0500, David Lechner wrote:
-
-> I think one of my colleagues was working on one in the last year that we
-> might still have lying around. But I don't know what we could use as the
-> SPI controller that would have offload support.=20
-
-David was using a Raspberry Pi, their DMA controller can happily write
-to the SPI controller registers so functions as an offload engine - I'd
-not be surprised if other SPI controllers and DMA controllers could
-interact in a similar fashion for the CAN or interrupt controller style
-use cases.
-
---J1Zz5On/pzKE0RsE
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZZxvAACgkQJNaLcl1U
-h9CAKgf9H9TgXJuGOIkZbFW3xhxadrFbeV8HASnWFZFRY12SLKHWJhu+HqypwaLl
-Ym6TSGQtsS3BpjB8IA9cs+SPl2HT4n0Z+h/aI4SX6oDa0CJ9Fk8BvC6SO+TSffel
-gb5N1FUPWdxMxUr+sFfa9OwPFFnHl7OobLYyw2BVC4A6oBFqxan5JbgALLXblnyT
-O+ojrcgqXgkAGMNxgFeym4FetZiI1IsSsmUbl4CcSP3dXQxb+jKp6V3v0dXHUWUx
-rNLpTYOwnpLrnB7csT3H0hr7ycqsuGIzrSdmy+Ag608uosK94/kXP+KOaQMG3/IY
-JlwEC0Fp+n84ef5Qm+kwNwbOUda62w==
-=YIXU
------END PGP SIGNATURE-----
-
---J1Zz5On/pzKE0RsE--
+Then maybe it's not be a good idea to make this compatible generic
+for this contribution.
+The original intention is to bring support for the S/PDIF,
+so maybe the contribution should focus on this use case?
+In that case, would changing the compatible for "fsl,imx-audio-spdif-card"
+be acceptable?
+"fsl,imx-audio-spdif" is already used for the `imx-spdif.c`
+which does not use the ASRC.
 
