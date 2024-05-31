@@ -1,131 +1,139 @@
-Return-Path: <linux-kernel+bounces-196816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11B538D6214
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:47:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F5ED8D6216
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:47:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F32BB215B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:47:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34E15B21F91
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:47:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB0AC158849;
-	Fri, 31 May 2024 12:47:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A364158A0D;
+	Fri, 31 May 2024 12:47:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=savoirfairelinux.com header.i=@savoirfairelinux.com header.b="oYkuGcIQ"
-Received: from mail.savoirfairelinux.com (mail.savoirfairelinux.com [208.88.110.44])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="nMJCspMC"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 512AC74404;
-	Fri, 31 May 2024 12:47:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=208.88.110.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE43A74404;
+	Fri, 31 May 2024 12:47:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717159628; cv=none; b=QB6+xVvONA1VxpYuzEeE7nRDLVsRsPNhUns/tEX606yVhiPmaipmNozlbIe+InvYM8b4DR6OmyQ1ZQYpx4NAGWUf1L2X7FfEAt9NcC8ghtTvhKckl64HVjE+0zHsTQdLfMYv1tLvy2F3TL6U59kX/LcsuUbdipwYF1g8twQ0CH0=
+	t=1717159635; cv=none; b=t1TcOOWrvkheLFp1PeE61wA0dS/uQDflLvTxj55K5V3FpNRQlX80pC5sj6b+xLr4uKE8K8xqWiOngBFYaAI7iFNGQWxPbZs2PqXoqkRzKWr/G+r2vgJks3YxWv1qYGDfyGKbXKlJBWX8Hf6Ut93AZUkWSWKMCaEb2xoEbaXW2IA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717159628; c=relaxed/simple;
-	bh=abiFUaW/IoT5wwmTdvZKLXT6azQhCAp2fplhjmPNpmY=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=eW1XPJkY5Mrp/3UwO+5sHpIQKa71GNrBrBijrKTL2EP+eFa4Kcn3LocLSiOb4uZeQHOP3OwBCZU6KMKhTWFNhEpKADKp1Viw0oyaxoB1Kn9gOtme9ERQk7HId8tssDp1VN7xCqk0jHMMHYXl/T4BHT0DTEEWrFtMtGs0NO/xbTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=savoirfairelinux.com; spf=pass smtp.mailfrom=savoirfairelinux.com; dkim=pass (2048-bit key) header.d=savoirfairelinux.com header.i=@savoirfairelinux.com header.b=oYkuGcIQ; arc=none smtp.client-ip=208.88.110.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=savoirfairelinux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=savoirfairelinux.com
-Received: from localhost (localhost [127.0.0.1])
-	by mail.savoirfairelinux.com (Postfix) with ESMTP id E8E739C096E;
-	Fri, 31 May 2024 08:46:56 -0400 (EDT)
-Received: from mail.savoirfairelinux.com ([127.0.0.1])
- by localhost (mail.savoirfairelinux.com [127.0.0.1]) (amavis, port 10032)
- with ESMTP id N0Q0BSSbY1Ew; Fri, 31 May 2024 08:46:56 -0400 (EDT)
-Received: from localhost (localhost [127.0.0.1])
-	by mail.savoirfairelinux.com (Postfix) with ESMTP id 1E8009C57BB;
-	Fri, 31 May 2024 08:46:56 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.savoirfairelinux.com 1E8009C57BB
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=savoirfairelinux.com; s=DFC430D2-D198-11EC-948E-34200CB392D2;
-	t=1717159616; bh=WZsGaXJZZy+fsZIWjtMJ5qii2e1R2StcjqgwWGh4rzM=;
-	h=Date:From:To:Message-ID:MIME-Version;
-	b=oYkuGcIQvuwxk6I666pfXOLWp7nkCgMUkaYIr2KQrs3bgmDsBR79pRVbnu0NEuXK8
-	 q1B2ZWcMdTjnepT9d9fsPLgYpVOCHaqsGy83oO81cewL2M1hDBv8Szy8h8yXPcm7YC
-	 tBsNPGu3J/wl3rmLcBWP4TTDRJcIzomA8ding+1cAd+wrKQ1eBEEtlt1EeRHwOQLIz
-	 sZEKu33lVdIXMbswKBJn+98Sajqt753aE8OXfOeEbtctkIkgY1i19mb+x0kyVAssjK
-	 D+vEcjxO1i116xIA3wQZodBgXfjI3joArFzWteHEidTw5afIbLsxqY/5izO0Sv7F56
-	 C1tukavT0XWFg==
-X-Virus-Scanned: amavis at mail.savoirfairelinux.com
-Received: from mail.savoirfairelinux.com ([127.0.0.1])
- by localhost (mail.savoirfairelinux.com [127.0.0.1]) (amavis, port 10026)
- with ESMTP id Dx2jCPthSXWX; Fri, 31 May 2024 08:46:55 -0400 (EDT)
-Received: from mail.savoirfairelinux.com (mail.savoirfairelinux.com [192.168.48.237])
-	by mail.savoirfairelinux.com (Postfix) with ESMTP id D57F99C096E;
-	Fri, 31 May 2024 08:46:55 -0400 (EDT)
-Date: Fri, 31 May 2024 08:46:55 -0400 (EDT)
-From: Elinor Montmasson <elinor.montmasson@savoirfairelinux.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-	Conor Dooley <conor+dt@kernel.org>, 
-	shengjiu wang <shengjiu.wang@gmail.com>, 
-	Xiubo Lee <Xiubo.Lee@gmail.com>, Fabio Estevam <festevam@gmail.com>, 
-	Nicolin Chen <nicoleotsuka@gmail.com>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	linux-sound <linux-sound@vger.kernel.org>, 
-	devicetree <devicetree@vger.kernel.org>, 
-	linux-kernel <linux-kernel@vger.kernel.org>, 
-	alsa-devel <alsa-devel@alsa-project.org>, 
-	linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Message-ID: <1660761484.701255.1717159615755.JavaMail.zimbra@savoirfairelinux.com>
-In-Reply-To: <da74d276-b028-448b-bb28-295de49dbcda@sirena.org.uk>
-References: <20240515135411.343333-1-elinor.montmasson@savoirfairelinux.com> <20240515135411.343333-8-elinor.montmasson@savoirfairelinux.com> <ffb3624f-2170-4642-aaa5-fb6736a75d59@sirena.org.uk> <822567441.349330.1715936735603.JavaMail.zimbra@savoirfairelinux.com> <da74d276-b028-448b-bb28-295de49dbcda@sirena.org.uk>
-Subject: Re: [PATCHv4 7/9] ASoC: fsl-asoc-card: add DT clock "cpu_sysclk"
- with generic codec
+	s=arc-20240116; t=1717159635; c=relaxed/simple;
+	bh=iW3CNwK1w77FA/ekGYhGcEUsJbEL6oKwZ2aHH3da/fY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ga9989MZgz8wn7vQWe+ptNzQNcSIXYH/KkjDXdAyxxRubp4JP8Z59yFpZUlIkTl+z0GAA26QyQvDodd+XAcWkhM1iLYQT0UmSAD7y/4cJf9N7tX+MXCg9kj9G6B8e3smFYXuv72IDLRrxQngGHj0JeYdeyyVxbLyuegytiDVJJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=nMJCspMC; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1717159630;
+	bh=iW3CNwK1w77FA/ekGYhGcEUsJbEL6oKwZ2aHH3da/fY=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=nMJCspMCwgj+AX5HCpHoS2O45tNHJjK1HppWZDKpt/HT5ymNCJrvo5t8DHASgqosc
+	 QZIBZ+gj+1S6uGNPuqktoxYdAlFFYBXUcBpC11wfRk0I6kPedKmwISfr5rkkzgxXhn
+	 CIPdeEZWFCFQRPGSz1crAbNxcAfRg2h/VR/ezyanJOv0hItqVyn+ADSVhQH05C0s0z
+	 /rfWdLvh3nPXbSDgQlTPZqO4Ij1v7QDfFSWdhurVLV69Ixol5lomhvLdLp8u0JrD64
+	 O0Pj2LGog4VDJth6oOhUBwtIswzHzynj/ztxPGFSqLNu0ErHNbCTgKQ/r31gxL2B48
+	 FN5C2FabIQumQ==
+Received: from nicolas-tpx395.localdomain (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nicolas)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 0271F378148F;
+	Fri, 31 May 2024 12:47:08 +0000 (UTC)
+Message-ID: <9f73dffc48394e6304263ac2293a2b18864ae3dd.camel@collabora.com>
+Subject: Re: [PATCH] media: mediatek: vcodec: Reduce msg queue trans buffer
+ size
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: Fei Shao <fshao@chromium.org>, AngeloGioacchino Del Regno
+	 <angelogioacchino.delregno@collabora.com>, Hans Verkuil
+	 <hverkuil-cisco@xs4all.nl>
+Cc: Yunfei Dong <yunfei.dong@mediatek.com>, Andrew-CT Chen
+ <andrew-ct.chen@mediatek.com>, Dan Carpenter <dan.carpenter@linaro.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Tiffany Lin <tiffany.lin@mediatek.com>, Xiaoyong Lu
+ <xiaoyong.lu@mediatek.com>,  linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org,  linux-media@vger.kernel.org,
+ linux-mediatek@lists.infradead.org
+Date: Fri, 31 May 2024 08:47:02 -0400
+In-Reply-To: <20240521095536.3869399-1-fshao@chromium.org>
+References: <20240521095536.3869399-1-fshao@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.1 (3.52.1-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: Zimbra 8.8.15_GA_4581 (ZimbraWebClient - GC112 (Linux)/8.8.15_GA_4581)
-Thread-Topic: ASoC: fsl-asoc-card: add DT clock "cpu_sysclk" with generic codec
-Thread-Index: fcftgDhNt5MliZw6sGsrnH7v0rWaiA==
 
-From: "Mark Brown" <broonie@kernel.org>
-Sent: Friday, 17 May, 2024 13:17:20
-> On Fri, May 17, 2024 at 05:05:35AM -0400, Elinor Montmasson wrote:
->> From: "Mark Brown" <broonie@kernel.org>
->> > On Wed, May 15, 2024 at 03:54:09PM +0200, Elinor Montmasson wrote:
-> 
->> >> +		struct clk *cpu_sysclk = clk_get(&pdev->dev, "cpu_sysclk");
->> >> +		if (!IS_ERR(cpu_sysclk)) {
->> >> +			priv->cpu_priv.sysclk_freq[TX] = clk_get_rate(cpu_sysclk);
->> >> +			priv->cpu_priv.sysclk_freq[RX] = priv->cpu_priv.sysclk_freq[TX];
->> >> +			clk_put(cpu_sysclk);
->> >> +		}
-> 
->> > I don't really understand the goal here - this is just reading whatever
->> > frequency happens to be set in the hardware when the driver starts up
->> > which if nothing else seems rather fragile?
-> 
->> The driver allow to set the sysclk frequency
->> of the CPU DAI through `priv->cpu_priv.sysclk_freq` when calling
->> `fsl_asoc_card_hw_params()`.
->> Currently it is hard-coded per use-case in the driver.
-> 
->> My reasoning was that with a generic codec/compatible, there might
->> be use-cases needing to use this parameter, so I exposed it here via DT.
-> 
->> Is it a bad idea to expose this parameter ? This is not a requirement for the
->> driver to work, most of the current compatibles do not use this parameter.
->> It is currently used only for `fsl,imx-audio-cs42888`.
->> In that case I can remove this commit.
-> 
-> I'm having a hard time connecting your reply here with my comment.  This
-> isn't as far as I can see allowing the frequency to be explicitly
-> configured, it's just using whatever value happens to be programmed in
-> the clock when the driver starts.
+Le mardi 21 mai 2024 =C3=A0 17:54 +0800, Fei Shao a =C3=A9crit=C2=A0:
+> In the MediaTek HW vcodec pipeline, the `trans` buffer is used to
+> transfer the data decoded by the lat decoder to the core decoder.
+>=20
+> In the beginning, 6MB and 30MB were allocated for the trans buffer to
+> handle FHD and higher-resolution contents respectively, but it turns out
+> that's more than enough in practice and there's room for improvement.
+>=20
+> The buffer sizes were reduced to 5MB / 8MB respectively and the decoders
+> have been validated to work normally on the MediaTek Android products.
+> It's time to adopt that change in the upstream MediaTek vcodec driver.
+>=20
+> Reduce the msg queue trans buffer size to 5MB / 8MB respectively to
+> optimize the memory usage per decoder instance and improve the overall
+> system performance.
 
-In v3 I used parameters `cpu-sysclk-freq-rx/tx` to explicitly
-set the frequency.
-In its review Rob Herring said that the clock bindings should
-be used, so that's why I changed it to use this `cpu_sysclk` clock.
+I don't disagree with the change, but it feels like this is has hack over a
+hack. We have an entropy decoder (LAT) metadata buffer, which of course is
+resolution dependent, for which we hardcore two sizes.
+
+Any chance Mediatek can document this blob, or at least document the proper
+relation between the size and the resolution ? This way we could dynamicall=
+y
+size the buffer for the chosen resolution and trust it to remain big enough=
+ for
+a long time. Removing the non scientific claim of "have been validated", wh=
+ich
+is producible for anyone hitting issue with that change in the future.
+
+Nicolas
+
+>=20
+> Signed-off-by: Fei Shao <fshao@chromium.org>
+>=20
+> CC: Yunfei Dong <yunfei.dong@mediatek.com>
+>=20
+> ---
+> I consulted Yunfei and he confirmed that these are the sizes they are
+> using today.
+>=20
+>  .../media/platform/mediatek/vcodec/decoder/vdec_msg_queue.c   | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/media/platform/mediatek/vcodec/decoder/vdec_msg_queu=
+e.c b/drivers/media/platform/mediatek/vcodec/decoder/vdec_msg_queue.c
+> index f283c4703dc6..e36741179a97 100644
+> --- a/drivers/media/platform/mediatek/vcodec/decoder/vdec_msg_queue.c
+> +++ b/drivers/media/platform/mediatek/vcodec/decoder/vdec_msg_queue.c
+> @@ -29,9 +29,9 @@
+>  static int vde_msg_queue_get_trans_size(int width, int height)
+>  {
+>  	if (width > 1920 || height > 1088)
+> -		return 30 * SZ_1M;
+> +		return 8 * SZ_1M;
+>  	else
+> -		return 6 * SZ_1M;
+> +		return 5 * SZ_1M;
+>  }
+> =20
+>  void vdec_msg_queue_init_ctx(struct vdec_msg_queue_ctx *ctx, int hardwar=
+e_index)
+
 
