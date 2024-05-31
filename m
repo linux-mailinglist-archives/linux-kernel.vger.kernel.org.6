@@ -1,123 +1,141 @@
-Return-Path: <linux-kernel+bounces-196288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72CD18D59C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 07:16:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C30D78D59CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 07:21:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4A551C20939
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 05:16:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 008C61C2148B
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 05:21:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B72F945022;
-	Fri, 31 May 2024 05:16:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C19B78269;
+	Fri, 31 May 2024 05:21:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RR5iUIL0"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="yHLSfYWG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B52B54405;
-	Fri, 31 May 2024 05:16:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D142249F5;
+	Fri, 31 May 2024 05:21:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717132606; cv=none; b=oc+0Rhf1g7LU6LJmSGB/mNUaQHXccu9dKnFpTZ9AunZ55nR065CjSAiiiMEuxDPlYkyp0su0f2ki9WNbkrd8yTMows06FbEZdSgWid7tSSIhaT6oyIRdDkTnv5ez5fj8WKf422oxTVGAZFT7DLMqGfUAav+FWLI+77QRhYV4z6k=
+	t=1717132887; cv=none; b=iY7dwRQI3PBwHoU0a+o1DTAGKIDQt4xKJ75O+5YXl/0+AuDCmymYXAKdj9fWyyPXvZBuQ1oKb6P3qwU2IyDK7xstIINjcO9LZiZJOjpBXCZsPi88YUChZQl4IHyszsqwkO5SFwjuxl6zD0R1oKPagFtSCgLwaiRSoA7ENm3aopY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717132606; c=relaxed/simple;
-	bh=rc9coK1EQVuMySMkXLylr5VmrSIA6HyYoHiydHI2IjE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=KgwUS6eDAmS7VwwMN1ApX6GY++dJcAXo1Arp3q4SI3Va1thXCFc1uSVcv5qnULj9QNbUVIGsPXu7zpJS7B+ijwWHsPjmt2ktkYgvfLBOcY0TKvsJ1m1HJgnKCG3FFEZHXGxwh7v+t5NRniHseuU+c5P03cP8/zX+P9kTBnjPhtg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RR5iUIL0; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44UGrmlB019268;
-	Fri, 31 May 2024 05:16:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=TB351GK1yk9ksnTo9pyYUF
-	IaEZ/tPZBjG4F83Nt1RJw=; b=RR5iUIL0zxd/MJJt4HLuaanWfAB/R2BaeMU707
-	E2qvrczFGdyRImVtS55yQ8IVd0EMWHw5vEw61Qhto351dFkLcaOnX97je18+WL5L
-	A8kebgv6/B8GKdnUd1C5OguKDWQmc+KSetd3jfiLV5nflT5agrI+JxH8ocduUjBs
-	HxZICfu4aiznPVbOlV4xmYnFCyzqGZjumFyl2NT+70TtSy434criub9tw+MhZDUH
-	fPvnc+sh5Ycltzpt7p1IvEEGyM35HMXp4O3PvacTr6eTNVMi3h0rowGHQa/6IBwJ
-	9LPbQrSb04HF4u2k54oSYYPKLLjV+tVtFfaZbpjBVOdN6Ihg==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba0ge3jv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 31 May 2024 05:16:08 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44V5G6n2003381
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 31 May 2024 05:16:06 GMT
-Received: from [169.254.0.1] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 30 May
- 2024 22:16:05 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Thu, 30 May 2024 22:16:04 -0700
-Subject: [PATCH] nvme-apple: add missing MODULE_DESCRIPTION()
+	s=arc-20240116; t=1717132887; c=relaxed/simple;
+	bh=WJYFVQABthkurcVYkwWrzXsplNA67V49oLFB3N0V99A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cNoWGM/iCfp4h2Dq1ZMddytrW5z2TO4m4XNO2HAAZwTZPP1YUb88WTcX3gGEPcIM04XuQfB2js8SQtAPHWMhJx589pGLB14md31alVMJCRDtbT//Y5iXMA3JF5/I9XBqaAMQk2AlziIKvEL+Zr4pQVk8QJww7yt/coLOF547QjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=yHLSfYWG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 192ECC116B1;
+	Fri, 31 May 2024 05:21:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1717132886;
+	bh=WJYFVQABthkurcVYkwWrzXsplNA67V49oLFB3N0V99A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=yHLSfYWGdwuyVoAzOb3yuif43BPrZEDs0ZasAB0wHoHw9z9XLTxEOlU5/1G2xtdlt
+	 JZCL7g824tOR0gzim1SlUUBo22tOf1HyjOFne88JQfUJPzQUx7ALFkC5Cwp3AGzn8h
+	 Nm/Gq6wVdmOe6ZbqQhG0iQH7ko+boNrUtbyw04k4=
+Date: Fri, 31 May 2024 07:21:31 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Douglas Anderson <dianders@chromium.org>
+Cc: Jiri Slaby <jirislaby@kernel.org>,
+	Johan Hovold <johan+linaro@kernel.org>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	John Ogness <john.ogness@linutronix.de>,
+	linux-arm-msm@vger.kernel.org, Tony Lindgren <tony@atomide.com>,
+	Guanbing Huang <albanhuang@tencent.com>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org
+Subject: Re: [PATCH v2] serial: port: Don't block system suspend even if
+ bytes are left to xmit
+Message-ID: <2024053112-subsonic-legibly-e386@gregkh>
+References: <20240530084841.v2.1.I2395e66cf70c6e67d774c56943825c289b9c13e4@changeid>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240530-md-nvme-apple-v1-1-b8b7ca569660@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIABNdWWYC/x3MywqDMBBG4VeRWXcgtQrqq5QucvlbB0waJlYE8
- d2bdvktzjmoQAWFpuYgxSZF3qniemnIzza9wBKqqTVtZ/qb4Rg4bRFsc17AMAhudOPgu55qkxV
- P2f+/+6Pa2QJ2apOff5dF0mfnaMsKpfP8Auu9pCt+AAAA
-To: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
-        "Alyssa
- Rosenzweig" <alyssa@rosenzweig.io>,
-        Keith Busch <kbusch@kernel.org>, "Jens
- Axboe" <axboe@kernel.dk>,
-        Christoph Hellwig <hch@lst.de>, Sagi Grimberg
-	<sagi@grimberg.me>
-CC: <asahi@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-nvme@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: mP3ETysDdDj1tLBnR_cxY8-ywO1_2p3-
-X-Proofpoint-ORIG-GUID: mP3ETysDdDj1tLBnR_cxY8-ywO1_2p3-
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-31_02,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
- priorityscore=1501 bulkscore=0 phishscore=0 adultscore=0 spamscore=0
- mlxlogscore=999 malwarescore=0 lowpriorityscore=0 clxscore=1011
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2405310039
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240530084841.v2.1.I2395e66cf70c6e67d774c56943825c289b9c13e4@changeid>
 
-make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/nvme/host/nvme-apple.o
+On Thu, May 30, 2024 at 08:48:46AM -0700, Douglas Anderson wrote:
+> Recently, suspend testing on sc7180-trogdor based devices has started
+> to sometimes fail with messages like this:
+> 
+>   port a88000.serial:0.0: PM: calling pm_runtime_force_suspend+0x0/0xf8 @ 28934, parent: a88000.serial:0
+>   port a88000.serial:0.0: PM: dpm_run_callback(): pm_runtime_force_suspend+0x0/0xf8 returns -16
+>   port a88000.serial:0.0: PM: pm_runtime_force_suspend+0x0/0xf8 returned -16 after 33 usecs
+>   port a88000.serial:0.0: PM: failed to suspend: error -16
+> 
+> I could reproduce these problems by logging in via an agetty on the
+> debug serial port (which was _not_ used for kernel console) and
+> running:
+>   cat /var/log/messages
+> ...and then (via an SSH session) forcing a few suspend/resume cycles.
+> 
+> Tracing through the code and doing some printf()-based debugging shows
+> that the -16 (-EBUSY) comes from the recently added
+> serial_port_runtime_suspend().
+> 
+> The idea of the serial_port_runtime_suspend() function is to prevent
+> the port from being _runtime_ suspended if it still has bytes left to
+> transmit. Having bytes left to transmit isn't a reason to block
+> _system_ suspend, though. If a serdev device in the kernel needs to
+> block system suspend it should block its own suspend and it can use
+> serdev_device_wait_until_sent() to ensure bytes are sent.
+> 
+> The DEFINE_RUNTIME_DEV_PM_OPS() used by the serial_port code means
+> that the system suspend function will be pm_runtime_force_suspend().
+> In pm_runtime_force_suspend() we can see that before calling the
+> runtime suspend function we'll call pm_runtime_disable(). This should
+> be a reliable way to detect that we're called from system suspend and
+> that we shouldn't look for busyness.
+> 
+> Fixes: 43066e32227e ("serial: port: Don't suspend if the port is still busy")
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> ---
+> In v1 [1] this was part of a 2-patch series. I'm now just sending this
+> patch on its own since the Qualcomm GENI serial driver has ended up
+> having a whole pile of problems that are taking a while to unravel.
+> It makes sense to disconnect the two efforts. The core problem fixed
+> by this patch and the geni problems never had any dependencies anyway.
+> 
+> [1] https://lore.kernel.org/r/20240523162207.1.I2395e66cf70c6e67d774c56943825c289b9c13e4@changeid/
+> 
 
-Add the missing invocation of the MODULE_DESCRIPTION() macro.
+Hi,
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/nvme/host/apple.c | 1 +
- 1 file changed, 1 insertion(+)
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
 
-diff --git a/drivers/nvme/host/apple.c b/drivers/nvme/host/apple.c
-index dd6ec0865141..0cfa39361d3b 100644
---- a/drivers/nvme/host/apple.c
-+++ b/drivers/nvme/host/apple.c
-@@ -1602,4 +1602,5 @@ static struct platform_driver apple_nvme_driver = {
- module_platform_driver(apple_nvme_driver);
- 
- MODULE_AUTHOR("Sven Peter <sven@svenpeter.dev>");
-+MODULE_DESCRIPTION("Apple ANS NVM Express device driver");
- MODULE_LICENSE("GPL");
+You are receiving this message because of the following common error(s)
+as indicated below:
 
----
-base-commit: 4a4be1ad3a6efea16c56615f31117590fd881358
-change-id: 20240530-md-nvme-apple-e0edb9b98c45
+- You have marked a patch with a "Fixes:" tag for a commit that is in an
+  older released kernel, yet you do not have a cc: stable line in the
+  signed-off-by area at all, which means that the patch will not be
+  applied to any older kernel releases.  To properly fix this, please
+  follow the documented rules in the
+  Documentation/process/stable-kernel-rules.rst file for how to resolve
+  this.
 
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
 
