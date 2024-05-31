@@ -1,105 +1,94 @@
-Return-Path: <linux-kernel+bounces-196060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E5398D56B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 02:00:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FA788D56B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 02:00:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC36A2875CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 00:00:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C088C284495
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 00:00:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17BC41FA1;
-	Fri, 31 May 2024 00:00:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8050A18E2A;
+	Fri, 31 May 2024 00:00:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="DU+9gQ+w"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="YOntawLv"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF631360;
-	Fri, 31 May 2024 00:00:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77376368;
+	Fri, 31 May 2024 00:00:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717113640; cv=none; b=iRPj92c2s0S/JRr3A5wwR/g8xNJ6ZbhhO2z4e7WTgxEPF+TutmMfi1IIGYNVZFjQJuwLPPSckWZm3DSCFWcZ03mBxP5i+dBk8yll0AXY31dzDsA4pkvnRUwrkXyVoSo5stQR295VxSIWNCwqqn0UOu4/SR/W7LJbuyz16MtAR04=
+	t=1717113641; cv=none; b=n+eOBVtYcmTjeaqnGmywE3V3AZcMl6d6xoXeOcplSBzgNVs9ouhU0gVfxAeeXlyMk3LsRdo+BRrNglv9me1TDr98dnSWbgkNZXrKXLDrkqtIk/vqLT4FdXHfu1wnTxy/m/TzJlBPqERWzTpQBJR96NB01LhH0BROxUDaWbEb9sQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717113640; c=relaxed/simple;
-	bh=MMsNsX65DEE3lXGuFMLnM/kFDnfQuOYkQuelC6hsATI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PtKr6RIEm0JcB6OF7BplZMIAL4H836+KGEJ3eqV4gsB3ys/UpLXsool5X74FBiwwn+VSjTJVgOLJZekSEU92kIo3dHQfFCB5Y3z6EwtmhPsF4QQz+MOvK6hxPqOzBtImShQNO5JCghXQGehZaG6vgZ8o3poke2u2nEpxTa55A9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=DU+9gQ+w; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1717113633;
-	bh=oGftOmbKWszy5NjUlVI8+2RN/TXT8cUR6ltFlseq6u8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=DU+9gQ+wALD/WSphdK7l/UDlAN6bA3sgDgxvx4zRWWgVs4W/56OqayoNhJQBbLUSm
-	 tHd6hn80TdGveVbqJ3OlM1zxuMcAu7fBZOR2MZy/2oFTnacl5rxpcIOgziEy9JcqYy
-	 KG/p7z5Gz0kGwKkE6s6wr000PJEz2dPdVnPgHho9TbfTvPDLpZFef1T7RSJ0tDWBjj
-	 Zm+FmRLTAwux1do+70azqFLbPuNPd1hob50Lo8hhjHmWa1Ec096AJrw2EFUNt+1XeA
-	 7Itd6cVGjneH+dOgPp9FVVU/e/vFr32Zcj2umiJBZ5CjllPl/Vj2kg+o5LAdvojMUP
-	 +6upmCATYA2Dg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Vr3D12p6sz4wyQ;
-	Fri, 31 May 2024 10:00:33 +1000 (AEST)
-Date: Fri, 31 May 2024 10:00:32 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andreas Gruenbacher <agruenba@redhat.com>
-Cc: Steven Whitehouse <swhiteho@redhat.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build warnings after merge of the gfs2 tree
-Message-ID: <20240531100032.4a112093@canb.auug.org.au>
-In-Reply-To: <CAHc6FU7MrnksU9vDvdAvc_tv5knukGpnxXEpqidvdfWqDf1p5Q@mail.gmail.com>
-References: <20240529142455.1c68e65a@canb.auug.org.au>
-	<CAHc6FU7MrnksU9vDvdAvc_tv5knukGpnxXEpqidvdfWqDf1p5Q@mail.gmail.com>
+	s=arc-20240116; t=1717113641; c=relaxed/simple;
+	bh=grXhQQtr9vpQiwenwMlqZFIzM4wHkpKpRwTg2CYNESI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QJcBeA3VLnYG1zhVecmZOXbF1XO/WMuxOIFXuqPZ75c2QvXf2aHZ8PTfmsf+8wlzC64FzJ+VwRc41AgW3eKJoM7dub105pRVwoSAXYoNJ+BOn93WWyv1nKUfSVTJhzGm0hxa0VMUhOTDz1dzZPcWbBgR76PkM90vrCygrFDGn8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=YOntawLv; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=vsfUdDW5lGoj7Gyyc/8nWW2POiRIc6CuyqQ3G9lMaqo=; b=YOntawLvov38kYpy
+	tjmxXj4D6qFX6PSFse96I9vEvzgeDmZc2Tkc2BJxbBjlHBgYbqkEZmg6fqUOClZ1FFGLq35O1ciZk
+	PEuTxrwWiFOTefQPz9YUIhNpN3sPXzOhw45ecKae+9/Zop5owIboOu5OyC3y6wnYGKCWrvRmv9TX7
+	ZddR0flm03D6XNyBmlig0TQ3T6e/H6tt93JUMAWwTZGfDnF4aCfPTe9OAKROelbgEfFwtB97T/g7Z
+	3WNtE7NXMPsLvoHHz6dRJHVwUjzpp8Nkqf+a0/QluK2X261TnmuvjnbuWskFgc3VXv4vj0y8SDfXR
+	NGv1QZ0+3j1Sk71e6A==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1sCphC-003T5a-0q;
+	Fri, 31 May 2024 00:00:34 +0000
+From: linux@treblig.org
+To: trond.myklebust@hammerspace.com,
+	anna@kernel.org
+Cc: linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH] NFS: remove unused struct 'mnt_fhstatus'
+Date: Fri, 31 May 2024 01:00:33 +0100
+Message-ID: <20240531000033.294044-1-linux@treblig.org>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/Wh/CGnl0irEtkEDzV7ngaJL";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/Wh/CGnl0irEtkEDzV7ngaJL
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-Hi Andreas,
+'mnt_fhstatus' has been unused since
+commit 065015e5efff ("NFS: Remove unused XDR decoder functions").
 
-On Wed, 29 May 2024 15:40:13 +0200 Andreas Gruenbacher <agruenba@redhat.com=
-> wrote:
->
-> Could you please remove Bob Peterson <rpeterso@redhat.com> from the
-> recipients of these notifications as that address no longer exists?
+Remove it.
 
-Done.  Who should actually be the contacts for this tree, I currently
-have only Steven Whitehouse listed.
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+ fs/nfs/mount_clnt.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
---=20
-Cheers,
-Stephen Rothwell
+diff --git a/fs/nfs/mount_clnt.c b/fs/nfs/mount_clnt.c
+index 68e76b626371..57c9dd700b58 100644
+--- a/fs/nfs/mount_clnt.c
++++ b/fs/nfs/mount_clnt.c
+@@ -128,11 +128,6 @@ struct mountres {
+ 	rpc_authflavor_t *auth_flavors;
+ };
+ 
+-struct mnt_fhstatus {
+-	u32 status;
+-	struct nfs_fh *fh;
+-};
+-
+ /**
+  * nfs_mount - Obtain an NFS file handle for the given host and path
+  * @info: pointer to mount request arguments
+-- 
+2.45.1
 
---Sig_/Wh/CGnl0irEtkEDzV7ngaJL
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZZEyAACgkQAVBC80lX
-0Gw+Dgf9FflcHQK0FTIE20EyRz3uglM65JysOwdlzAeln0dJOMhlnTrrON0kdfja
-JKCv9PHA9gYvPWF3CNnrhEFtAa06TdEm8nNx4dfJ00dR74V4vgrtEDml6/5z28uw
-8uEbtRh1noH1AJVEktl0Ni0tK3x0JrRg0Ep9Jw/cRTwZ4syGY19rhBkGLLgKlz7T
-rTEWmUC500ODCEFUwcxFz8rS4D2Nnbz4vofj+27A7i8qWM3NoMrMbren8/+okjrO
-DHYeTDT+iZWiHnOgUiJEzbHyT7PoZ34zBDn0G5Tcy3pWUUvJQ7I9S4PzfCmMHV5x
-ksKEeriEptBvc1rPrF6yVUjYt0OSbQ==
-=q7Px
------END PGP SIGNATURE-----
-
---Sig_/Wh/CGnl0irEtkEDzV7ngaJL--
 
