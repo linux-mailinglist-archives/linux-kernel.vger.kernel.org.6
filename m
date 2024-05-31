@@ -1,198 +1,168 @@
-Return-Path: <linux-kernel+bounces-197443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A1B48D6AAD
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 22:30:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6068E8D6ABA
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 22:32:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BEC021F25C0E
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 20:30:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6D731F24A70
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 20:32:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 022821779BD;
-	Fri, 31 May 2024 20:30:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51D2F17D8B0;
+	Fri, 31 May 2024 20:32:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g6CWUhfC"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0NBYD5ft"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F046D2940B;
-	Fri, 31 May 2024 20:30:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F38054D8DD
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 20:31:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717187420; cv=none; b=ceKOLuJK0M/u1T7lhn10qjxNk3e/BMqv/CmUKbbzFIGFTQYBeI1Zy+FrRA5Hejp4zT9ulbm+LoNXVk8eWHzu3qaVXrAy+pAd7MKJG9OPMqg9NAbzj5EoBK3KqdZguwOawXG1oEKa5vn7CUrtDL5jOYUpWbK34XRtiFqY9P5ivQY=
+	t=1717187519; cv=none; b=qTtjsd3OHJkVbgLzlJsfz7/EDrrL9ObvY4ME2SLwhz4E07rvQkmsHSLKrth4xwcUunM+tnWKJh8jaWM0HgGYuwkw0li1WxDT7cF2jdtGvjY8W/bdJcSKyYo8SP6fcQEYed6I1M+2QJLZ7ruYNpxqtA8iBgcRBClE8xypPPBnbNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717187420; c=relaxed/simple;
-	bh=FyXrGKtxtK1Ia++Up7p7wWt6dTZYsv9GlxJsgvwjMZ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TD1Ut9+zXQW37Gm8Nga6G6nHiTkcNzrf+pL4fV/neVhGtMvt4JyKVWtqqIw0eqzhoEvJApoOkRXpIprqL6rSwzwDFdLekEY7x/X3nIqAvdARAK3nmknWS+8wTDlAUD8uolxNdzcbaxR+eafn9Z0qOtV6Mr9nfb1is9s4ep/Qw+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g6CWUhfC; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717187418; x=1748723418;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=FyXrGKtxtK1Ia++Up7p7wWt6dTZYsv9GlxJsgvwjMZ0=;
-  b=g6CWUhfCoGHQpbhW0ZS+VnOw/11uR2qnPEHZug3sQoispNJO3eAcf8MQ
-   O3DaefJUpspBtTLyIMgo2Jgt+IG9ChmuvSbI6slCMc8fiDBfjPzDmjv76
-   d9f5nToxfPLWnYn1ETbwMhkuo3xZH0nIssWijGPTLLkFxA784l5/T6/dd
-   D3D6TJ4JOrAKPJgYBV/Y5EcbRM3o7KcD8X8DKCbVTY8hpaaieOQ6rcskv
-   5EQi9mScWMCq8FH3JKW+ywEjppjZFB63q1r/bBD18nWRSfd+bObreJGiN
-   sTDR7T5hwGq251DBnvERXUzPfMTdDeCZ01WVmT5wW5QNQ7oUvNdTfjrFX
-   A==;
-X-CSE-ConnectionGUID: eI1aGrTYRTeTduhvMjSsYA==
-X-CSE-MsgGUID: /a6n6twJTaWI9hOB3pdTew==
-X-IronPort-AV: E=McAfee;i="6600,9927,11089"; a="17544901"
-X-IronPort-AV: E=Sophos;i="6.08,205,1712646000"; 
-   d="scan'208";a="17544901"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 13:30:17 -0700
-X-CSE-ConnectionGUID: VFIwyAj9SgmeTuHViMNcug==
-X-CSE-MsgGUID: Og9p9johTY22w0ElFeLTWw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,205,1712646000"; 
-   d="scan'208";a="40711149"
-Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
-  by fmviesa003.fm.intel.com with ESMTP; 31 May 2024 13:30:15 -0700
-Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sD8tA-000Hmr-2d;
-	Fri, 31 May 2024 20:30:12 +0000
-Date: Sat, 1 Jun 2024 04:29:37 +0800
-From: kernel test robot <lkp@intel.com>
-To: Shivnandan Kumar <quic_kshivnan@quicinc.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Ramakrishna Gottimukkula <quic_rgottimu@quicinc.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	Shivnandan Kumar <quic_kshivnan@quicinc.com>
-Subject: Re: [PATCH] soc: qcom: icc-bwmon: Add tracepoints in
- bwmon_intr_thread
-Message-ID: <202406010409.xiR31FVt-lkp@intel.com>
-References: <20240531105404.879267-1-quic_kshivnan@quicinc.com>
+	s=arc-20240116; t=1717187519; c=relaxed/simple;
+	bh=InPM3IgrwlWAIe+nSHKsuhmVDndDnlj7rMcdOWuFi5w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FfOhsOJpTX1Nj+HJaFD1ng6e9Yt2jcDlKwtYXZPyo+TYpnVt4jspneuPiJGQN27mEGrlHEHoPKk6ErntmeO27YNNSbd0qUNocZzywg+qxxFsxNnJKoHvX9xMMY01KEOchAXP7IXoDbBw06cv3TUsVQ/9js67su9YJFqbHvL3iZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0NBYD5ft; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-41fef5dda72so4015e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 13:31:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1717187516; x=1717792316; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=InPM3IgrwlWAIe+nSHKsuhmVDndDnlj7rMcdOWuFi5w=;
+        b=0NBYD5ftjqzLMMU9S/ShWY0r9adcsacAYrM6QxiDfQawAq5CIU1qD7b8p/9X1Hh9Vn
+         lCeav7KbQTZC6WocF6DzhU0JB4kTTRoGMFPgYyLf6liDfGpbROuuf0wi9Ii3IF2Wp6ZH
+         LVAHYybeCo0IO6rGM34tdAhVTzb/Y/5xa6yThldfSM2fHLRpWf9tyD3zhhSPVOvMnQ5F
+         HsTmc2o2GZfb5q551QKtw3Su6tbc7M+8j+U/aPJi73PXxJ0zf4OgSd+qNvvQsbGx64r9
+         MyGt8lz5GklSwzrPofU6xaiWPHie5vbk9RrAhk6LaMlnayWdQ6y7x3a9KE9fRKZisF3z
+         z+Lw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717187516; x=1717792316;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=InPM3IgrwlWAIe+nSHKsuhmVDndDnlj7rMcdOWuFi5w=;
+        b=Ji43EJzaPQG2Av5NLh/7F5TG7ihhQWsmM6WgBNq7l5t2kGw0PPh73ywWXiAtnKnJDs
+         QSDlzjhiiFpwtqyKnlt7ZFxEkJVKcPd9YXmvxWd74oYg/PJ39hUzFf3GD10tT9dfLpKR
+         Q027ZITa3gEYyWoIzTtfi5Dx8lhTnHkvrotzY7xy+5W9w5ChMuPORIsPrw5cAKNpDGFf
+         8cTrdLUlQXZnPkp8WkBs8hzbbvohmZEAc1+6/3Gl2SfVPJ8VMWwB4qUpVY++a5Gg0+XP
+         KPLvp2v/e8zlbacixJut2TgFAbCXrRpNU1TvlcMBbpoZF50e7Tyn7KZVEZ+K9gTdG4uv
+         i0zQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVbREVtrwQdgrqGry7QFCTt4Zp8by6JFbOCbUIOKmteG1BAfeQPTkwtLVAMe2BhaB5mRCX7QvIQE2B39JuPziobCwRowOScOFBo1FCg
+X-Gm-Message-State: AOJu0Yw4msXbDSak9Eduh9VuOuenYcTGpI3V7vfu4G9jk6Fpt4ll7b3C
+	XQ+oZxt+Mdzo4OUXWG1XkRCPHw/20xwu9ZNAYTchUvYh5SPY0FOD2RAERGpjdPwF8nTz8Zf60fu
+	eZ5wJ3OYgO/6pPzU4wp5dzFLJwo/ntnPtVqVP
+X-Google-Smtp-Source: AGHT+IECr7zScct/L9KDZG2FMT9+ZV9pueXumB1G4qrj8mkBEYnZr/Z/kM44zsq5c/gUQqURoi9spkN6RMIRJ4Ct+FE=
+X-Received: by 2002:a05:600c:299:b0:418:97c6:188d with SMTP id
+ 5b1f17b1804b1-421358ce41bmr41075e9.7.1717187515962; Fri, 31 May 2024 13:31:55
+ -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240531105404.879267-1-quic_kshivnan@quicinc.com>
+References: <20240529180510.2295118-1-jthoughton@google.com>
+ <20240529180510.2295118-3-jthoughton@google.com> <CAOUHufYFHKLwt1PWp2uS6g174GZYRZURWJAmdUWs5eaKmhEeyQ@mail.gmail.com>
+ <Zll7IuGYGG5uI20W@linux.dev>
+In-Reply-To: <Zll7IuGYGG5uI20W@linux.dev>
+From: Yu Zhao <yuzhao@google.com>
+Date: Fri, 31 May 2024 14:31:17 -0600
+Message-ID: <CAOUHufa50Dy8CJ5+D10Khs4NU-3Pv0B8qi-GYkcppctTVUkPcA@mail.gmail.com>
+Subject: Re: [PATCH v4 2/7] mm: multi-gen LRU: Have secondary MMUs participate
+ in aging
+To: Oliver Upton <oliver.upton@linux.dev>
+Cc: James Houghton <jthoughton@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Ankit Agrawal <ankita@nvidia.com>, Anup Patel <anup@brainfault.org>, 
+	Atish Patra <atishp@atishpatra.org>, Axel Rasmussen <axelrasmussen@google.com>, 
+	Bibo Mao <maobibo@loongson.cn>, Catalin Marinas <catalin.marinas@arm.com>, 
+	David Matlack <dmatlack@google.com>, David Rientjes <rientjes@google.com>, 
+	Huacai Chen <chenhuacai@kernel.org>, James Morse <james.morse@arm.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Nicholas Piggin <npiggin@gmail.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Raghavendra Rao Ananta <rananta@google.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Sean Christopherson <seanjc@google.com>, 
+	Shaoqin Huang <shahuang@redhat.com>, Shuah Khan <shuah@kernel.org>, 
+	Suzuki K Poulose <suzuki.poulose@arm.com>, Tianrui Zhao <zhaotianrui@loongson.cn>, 
+	Will Deacon <will@kernel.org>, Zenghui Yu <yuzenghui@huawei.com>, kvm-riscv@lists.infradead.org, 
+	kvm@vger.kernel.org, kvmarm@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-mips@vger.kernel.org, linux-mm@kvack.org, 
+	linux-riscv@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, 
+	loongarch@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Shivnandan,
+On Fri, May 31, 2024 at 1:24=E2=80=AFAM Oliver Upton <oliver.upton@linux.de=
+v> wrote:
+>
+> On Wed, May 29, 2024 at 03:03:21PM -0600, Yu Zhao wrote:
+> > On Wed, May 29, 2024 at 12:05=E2=80=AFPM James Houghton <jthoughton@goo=
+gle.com> wrote:
+> > >
+> > > Secondary MMUs are currently consulted for access/age information at
+> > > eviction time, but before then, we don't get accurate age information=
+.
+> > > That is, pages that are mostly accessed through a secondary MMU (like
+> > > guest memory, used by KVM) will always just proceed down to the oldes=
+t
+> > > generation, and then at eviction time, if KVM reports the page to be
+> > > young, the page will be activated/promoted back to the youngest
+> > > generation.
+> >
+> > Correct, and as I explained offline, this is the only reasonable
+> > behavior if we can't locklessly walk secondary MMUs.
+> >
+> > Just for the record, the (crude) analogy I used was:
+> > Imagine a large room with many bills ($1, $5, $10, ...) on the floor,
+> > but you are only allowed to pick up 10 of them (and put them in your
+> > pocket). A smart move would be to survey the room *first and then*
+> > pick up the largest ones. But if you are carrying a 500 lbs backpack,
+> > you would just want to pick up whichever that's in front of you rather
+> > than walk the entire room.
+> >
+> > MGLRU should only scan (or lookaround) secondary MMUs if it can be
+> > done lockless. Otherwise, it should just fall back to the existing
+> > approach, which existed in previous versions but is removed in this
+> > version.
+>
+> Grabbing the MMU lock for write to scan sucks, no argument there. But
+> can you please be specific about the impact of read lock v. RCU in the
+> case of arm64? I had asked about this before and you never replied.
+>
+> My concern remains that adding support for software table walkers
+> outside of the MMU lock entirely requires more work than just deferring
+> the deallocation to an RCU callback. Walkers that previously assumed
+> 'exclusive' access while holding the MMU lock for write must now cope
+> with volatile PTEs.
+>
+> Yes, this problem already exists when hardware sets the AF, but the
+> lock-free walker implementation needs to be generic so it can be applied
+> for other PTE bits.
 
-kernel test robot noticed the following build errors:
+Direct reclaim is multi-threaded and each reclaimer can take the mmu
+lock for read (testing the A-bit) or write (unmapping before paging
+out) on arm64. The fundamental problem of using the readers-writer
+lock in this case is priority inversion: the readers have lower
+priority than the writers, so ideally, we don't want the readers to
+block the writers at all.
 
-[auto build test ERROR on linus/master]
-[also build test ERROR on v6.10-rc1 next-20240531]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Using my previous (crude) analogy: puting the bill right in front of
+you (the writers) profits immediately whereas searching for the
+largest bill (the readers) can be futile.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Shivnandan-Kumar/soc-qcom-icc-bwmon-Add-tracepoints-in-bwmon_intr_thread/20240531-185658
-base:   linus/master
-patch link:    https://lore.kernel.org/r/20240531105404.879267-1-quic_kshivnan%40quicinc.com
-patch subject: [PATCH] soc: qcom: icc-bwmon: Add tracepoints in bwmon_intr_thread
-config: um-allyesconfig (https://download.01.org/0day-ci/archive/20240601/202406010409.xiR31FVt-lkp@intel.com/config)
-compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240601/202406010409.xiR31FVt-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406010409.xiR31FVt-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from include/trace/trace_events.h:419,
-                    from include/trace/define_trace.h:102,
-                    from drivers/soc/qcom/trace_icc-bwmon.h:49,
-                    from drivers/soc/qcom/icc-bwmon.c:21:
->> include/trace/../../drivers/soc/qcom//trace_icc-bwmon.h:39:1: error: macro "__assign_str" passed 2 arguments, but takes just 1
-      39 | );
-         | ^~             
-   In file included from include/trace/trace_events.h:375:
-   include/trace/stages/stage6_event_callback.h:34: note: macro "__assign_str" defined here
-      34 | #define __assign_str(dst)                                               \
-         | 
-   include/trace/../../drivers/soc/qcom//trace_icc-bwmon.h: In function 'trace_event_raw_event_qcom_bwmon_update':
->> include/trace/../../drivers/soc/qcom//trace_icc-bwmon.h:28:17: error: '__assign_str' undeclared (first use in this function)
-      28 |                 __assign_str(name, name);
-         |                 ^~~~~~~~~~~~
-   include/trace/trace_events.h:402:11: note: in definition of macro 'DECLARE_EVENT_CLASS'
-     402 |         { assign; }                                                     \
-         |           ^~~~~~
-   include/trace/trace_events.h:44:30: note: in expansion of macro 'PARAMS'
-      44 |                              PARAMS(assign),                   \
-         |                              ^~~~~~
-   include/trace/../../drivers/soc/qcom//trace_icc-bwmon.h:13:1: note: in expansion of macro 'TRACE_EVENT'
-      13 | TRACE_EVENT(qcom_bwmon_update,
-         | ^~~~~~~~~~~
-   include/trace/../../drivers/soc/qcom//trace_icc-bwmon.h:27:9: note: in expansion of macro 'TP_fast_assign'
-      27 |         TP_fast_assign(
-         |         ^~~~~~~~~~~~~~
-   include/trace/../../drivers/soc/qcom//trace_icc-bwmon.h:28:17: note: each undeclared identifier is reported only once for each function it appears in
-      28 |                 __assign_str(name, name);
-         |                 ^~~~~~~~~~~~
-   include/trace/trace_events.h:402:11: note: in definition of macro 'DECLARE_EVENT_CLASS'
-     402 |         { assign; }                                                     \
-         |           ^~~~~~
-   include/trace/trace_events.h:44:30: note: in expansion of macro 'PARAMS'
-      44 |                              PARAMS(assign),                   \
-         |                              ^~~~~~
-   include/trace/../../drivers/soc/qcom//trace_icc-bwmon.h:13:1: note: in expansion of macro 'TRACE_EVENT'
-      13 | TRACE_EVENT(qcom_bwmon_update,
-         | ^~~~~~~~~~~
-   include/trace/../../drivers/soc/qcom//trace_icc-bwmon.h:27:9: note: in expansion of macro 'TP_fast_assign'
-      27 |         TP_fast_assign(
-         |         ^~~~~~~~~~~~~~
-   In file included from include/trace/trace_events.h:469:
-   include/trace/../../drivers/soc/qcom//trace_icc-bwmon.h: At top level:
->> include/trace/../../drivers/soc/qcom//trace_icc-bwmon.h:39:1: error: macro "__assign_str" passed 2 arguments, but takes just 1
-      39 | );
-         | ^~             
-   include/trace/stages/stage6_event_callback.h:34: note: macro "__assign_str" defined here
-      34 | #define __assign_str(dst)                                               \
-         | 
-
-
-vim +/__assign_str +39 include/trace/../../drivers/soc/qcom//trace_icc-bwmon.h
-
-    14	
-    15		TP_PROTO(const char *name,
-    16			 unsigned int meas_kbps, unsigned int up_kbps, unsigned int down_kbps),
-    17	
-    18		TP_ARGS(name, meas_kbps, up_kbps, down_kbps),
-    19	
-    20		TP_STRUCT__entry(
-    21			__string(name, name)
-    22			__field(unsigned int, meas_kbps)
-    23			__field(unsigned int, up_kbps)
-    24			__field(unsigned int, down_kbps)
-    25		),
-    26	
-    27		TP_fast_assign(
-  > 28			__assign_str(name, name);
-    29			__entry->meas_kbps = meas_kbps;
-    30			__entry->up_kbps = up_kbps;
-    31			__entry->down_kbps = down_kbps;
-    32		),
-    33	
-    34		TP_printk("name=%s meas_kbps=%u up_kbps=%u down_kbps=%u",
-    35			__get_str(name),
-    36			__entry->meas_kbps,
-    37			__entry->up_kbps,
-    38			__entry->down_kbps)
-  > 39	);
-    40	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+As I said earlier, I prefer we drop the arm64 support for now, but I
+will not object to taking the mmu lock for read when clearing the
+A-bit, as long as we fully understand the problem here and document it
+clearly.
 
