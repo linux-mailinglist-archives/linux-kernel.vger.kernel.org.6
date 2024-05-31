@@ -1,104 +1,79 @@
-Return-Path: <linux-kernel+bounces-197200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 104258D6778
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:55:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 703428D6779
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:55:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 420741C23B9D
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:55:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D9B4282B35
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:55:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAFE5176224;
-	Fri, 31 May 2024 16:55:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 612AA16D304;
+	Fri, 31 May 2024 16:55:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="jCTyzD5S"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fYPRqj0E"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B38D45381A;
-	Fri, 31 May 2024 16:55:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8F9D5381A
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 16:55:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717174518; cv=none; b=DyGbV6HQgssJacOIWTpyyuOD0YlYAIGOzKS0KyVaRM35QspJdWkgw2x1g/bVz3BryKftJ+hUEj4PknLxLJFC4Dvi3IzchyYOPeEt5c6+qG2T/pC6Rm6T/ZA1lfwO8BHvXL05RiEgdaUHtBDiOQNKU7oEekWySlSfmfLJvZaiiKM=
+	t=1717174531; cv=none; b=NT1EcKn2tvCs5ANfGX4DPUgbhwSIfloTdpw0BsWdxNETpAbRARTILlXWHB9+ROsQpmriHyDORAqu8yF2oB8jGLpp5FtdaaulefT5CYT+9pS1cc252AQGLB1L3t8+46Q+qrlg+qHtgXxDxAMiFE73nAkiVmfIcZKn42sheSqPt3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717174518; c=relaxed/simple;
-	bh=wwDkFQlCmYaBWNt+sIQJ30LdSolr6sdRGekCzcglKQw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E7XVvZQkyZ4opPLwjFVWGNleCeQOUewe4BM7v8f+vpjuNvYdZkn9Go+ZLP/cJbijicQPm2aJYW1uFwR8UDLa12OwChLrZSIFbW/I6iAkM0q9YtyhGQWKckS51tkMRxmXYcizNQi555mg3a+7wXBNjFzGjtMBQEhiuloEseJ3m3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=jCTyzD5S; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 0525240002;
-	Fri, 31 May 2024 16:55:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1717174508;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eCyP3NsB6+TrwW+rJ92fdE1KqnkQyffJu7CwUmKcvjg=;
-	b=jCTyzD5S5jiQ2h1XLSSXcBzegACpsb4kPK6kpHDjYa3qU4eZXeg/54l25IVRE9oH5iXokx
-	mBXTvWrErcaFW9G+iqcTxPIxuxLLnBXFa8JPa76Ge+gtinBsSlpDKZWseUHYKIJX/3x2y5
-	PrztJFUE32LBoRTF7QLK4TZhci2PHa3kMydGuloEO0PBk/23fyGmGN8bfWqF/htKXPwGU2
-	8e2SbyVWMa/e3BPdfSKC4VitKht+H8g+8nQEg0cGFEYDM+BACQT3TUK00wrwR/IwPP1rsT
-	+qpW4eTTnAGSW5LeBvBsy7BXdEZvQ2EirMdjJusqh5+TAk8lVffyuhd+Zc/IPw==
-Message-ID: <42affba4-4600-4c44-ad88-926597cc2225@bootlin.com>
-Date: Fri, 31 May 2024 18:55:03 +0200
+	s=arc-20240116; t=1717174531; c=relaxed/simple;
+	bh=F/A2CW4eAiRKXDns0StAoqcIqApQXGBpkU8uTJ1NG4E=;
+	h=Message-ID:From:To:Cc:Subject:Date; b=sOgapTRCmIK/qLxeoS6hudYMgz4G0lPp6UFIs+A3f/yQeM6ftFgyZiqarOQS0ZQPM5XwxMjmpC4c6qmFP3TWBW/BuEUZrubX6pZtjWM0qYxc2s9Tq/WwIfUFnGWPMgnlWzR0dN/PayatG5LWT1NDyEmQGmjZ2L9V766woM8zk50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fYPRqj0E; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07DCDC116B1;
+	Fri, 31 May 2024 16:55:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717174530;
+	bh=F/A2CW4eAiRKXDns0StAoqcIqApQXGBpkU8uTJ1NG4E=;
+	h=From:To:Cc:Subject:Date:From;
+	b=fYPRqj0E85ra55+GGQNiHKTTwCeXXFdB0iadsQH1Mw+RUv7O+ECiuiCwa80fHFEji
+	 mVcqhqYkRmpS9Usce6E9zJVPUNZOlKUcOEZiPBrzCxs4yIkEFxpYo7slEZkgk1cOdf
+	 Gxw51rbK9jqNgK4eYDj9NkxkKfACYRuKv27C9/zKQWEiQmfsqiTCvc8OxF09GKiPj9
+	 uv4H4yxUtigq/N9tjpgUlBCMBtAN+GdPv8YEJgjFKPnL1M7sGHnPE21cQQDM4cTqR/
+	 8UPtBzeZRXgMJZipcL4c4ZRIpfw+I50OPgRNIx4hg6j1b42anqtCCafss+4j+14sa1
+	 FUoEkQ/C0NLhw==
+Message-ID: <95218454cfe88d47c47e2440865d09a8.broonie@kernel.org>
+From: Mark Brown <broonie@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Subject: [GIT PULL] regmap fixes for v6.10-rc1
+Date: Fri, 31 May 2024 17:55:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 00/12] Add suspend to ram support for PCIe on J7200
-To: Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Tony Lindgren <tony@atomide.com>,
- Aaro Koskinen <aaro.koskinen@iki.fi>,
- Janusz Krzysztofik <jmkrzyszt@gmail.com>, Vignesh R <vigneshr@ti.com>,
- Andi Shyti <andi.shyti@kernel.org>, Peter Rosin <peda@axentia.se>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- Siddharth Vadapalli <s-vadapalli@ti.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-omap@vger.kernel.org, linux-i2c@vger.kernel.org,
- linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- gregory.clement@bootlin.com, theo.lebrun@bootlin.com,
- thomas.petazzoni@bootlin.com, u-kumar1@ti.com,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
- Andy Shevchenko <andy.shevchenko@gmail.com>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Francesco Dolcini <francesco.dolcini@toradex.com>
-References: <20240102-j7200-pcie-s2r-v6-0-4656ef6e6d66@bootlin.com>
-Content-Language: en-US
-From: Thomas Richard <thomas.richard@bootlin.com>
-In-Reply-To: <20240102-j7200-pcie-s2r-v6-0-4656ef6e6d66@bootlin.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: thomas.richard@bootlin.com
 
-On 5/15/24 12:01, Thomas Richard wrote:
-> This adds suspend to ram support for the PCIe (RC mode) on J7200 platform.
-> 
+The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
 
-Hello,
+  Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
 
-Gentle ping.
-No merge conflict with 6.10-rc1.
-I know the patch for the gpio-pca953x driver causes a regression for one
-other platform.
-But most of the patches could be applied.
+are available in the Git repository at:
 
-Best Regards,
+  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git tags/regmap-fix-v6.10-rc1
 
-Thomas
+for you to fetch changes up to 611b7eb19d0a305d4de00280e4a71a1b15c507fc:
 
--- 
-Thomas Richard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+  regmap-i2c: Subtract reg size from max_write (2024-05-27 01:30:33 +0100)
 
+----------------------------------------------------------------
+regmap: Fix for v6.10
+
+The I2C bus was not taking account of the register and any padding bytes
+when handling maximum write sizes supported by an I2C adaptor, this
+patch from Jim Wylder fixes that.
+
+----------------------------------------------------------------
+Jim Wylder (1):
+      regmap-i2c: Subtract reg size from max_write
+
+ drivers/base/regmap/regmap-i2c.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
