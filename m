@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-197124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81F158D6680
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:15:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2CFE8D6682
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:15:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38ADF28C654
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:15:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2546E1F25CB6
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:15:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 978CB17C7CE;
-	Fri, 31 May 2024 16:14:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 344A417CA0C;
+	Fri, 31 May 2024 16:14:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Hg8s1bou"
-Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="m6msWpFG"
+Received: from out-175.mta0.migadu.com (out-175.mta0.migadu.com [91.218.175.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53F5A179654
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 16:13:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D68B215D5AA
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 16:14:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717172039; cv=none; b=J3/l5F2eV+SoPmnyqWv9LdRXciVi2GLR96wjSm3SvTMI6Q/a6XkPrfowGroeFck+2LzZstX+Z25B/2NtDxNTK57G9c7xjzMyMZJCKlAfmF4umtzGGhe3m/Pws3a5tOGAlNYWRAcXqjDlrqUQBXIvEogcajPArIo4QB4HUvj/jpk=
+	t=1717172043; cv=none; b=Y5kH9Jr2WsDgHgipHscptBEuriwTNp9RIONF9Mfb+0hazMw3Z/rWmgSqw3t+u7/D+US53KJ7EvLqtuuVbMYV01pkfNP2zcdd24wy/YLJpRY7qzerJYGp5UWByjkDN/r9/H9XMl6TQcdsyJXy8e5qima210bZrOtmOHmYMFyNEg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717172039; c=relaxed/simple;
-	bh=Z1/InqPro1U0+pj2thLeLheiLnUhwHnjffb+hYMRUik=;
+	s=arc-20240116; t=1717172043; c=relaxed/simple;
+	bh=Sv0kXO5U58sa8ekVvYxZwcS1u8+AOzbc+91VoW2BY08=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Usw+ydb0BupgVZVKCF4GdZhTYJa3pyAg8ar+CdTcCdSe1N5a6VtEaGuV257BFey98bhWVLAVtM1ixLHmL0iGmUffS3u+N6knWnpvQGNt23rkA1JU2oH4J92i/pI4t1PY9kBDB1oAs5UexXSw7uRJvYSC+3RfBSRIZgUBj2jh02M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Hg8s1bou; arc=none smtp.client-ip=91.218.175.188
+	 MIME-Version; b=qWqMfc31ZcYFKO1wvACSaeeqURdocBSnSScnWrtQxYbZhXm0lnZUQXUpwa9mVlgjLT5drPWDY2jOTcbhA0KezXxcNpc7dqV10+V/Oo21tlu59nJuv+uyZfedwKmwt9i9q4F6SpBPis5VzCmkSA40pBf3G+05JZ9rCUcYd8GxYJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=m6msWpFG; arc=none smtp.client-ip=91.218.175.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Envelope-To: lpieralisi@kernel.org
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1717172036;
+	t=1717172039;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=aQwH77/vqcL6nAroUqOCPsVDtJd7S7+cLJcYruhNakw=;
-	b=Hg8s1bouZl+ida3T6HXKTL1xqOvO37uDzdllecimHNNY7LSHrlVFqFCU2qYwP433yDukvA
-	uD8msPtQq/YKipvreuhjEuxd3dVw3P8/MNFw5P04AiPDrfq1KswWY5agap5Em8K6mbH593
-	dEk3ke4o69Agx4BLXpNCrnRyeODN4sM=
+	bh=I+69+SauXlRGr83vkRntKy+tG2GRCo2TNeZSKQRi5Ls=;
+	b=m6msWpFGkT0ZKL73//fG5tT1q77SGccs1qwOMNeHBsM2Lo6GiyTjmUxklipEv563PwqDmg
+	6aQrurBeO/FcbhMNypxa3TxV3FcY4jnwLZLsR5ifQYJ5o0K/eRRzPfrSuN6JsYPAuhpWmt
+	alRyRkFBE27d2sQzZutpxT0TORlIcBI=
 X-Envelope-To: kw@linux.com
 X-Envelope-To: robh@kernel.org
 X-Envelope-To: linux-pci@vger.kernel.org
@@ -52,6 +52,9 @@ X-Envelope-To: linux-kernel@vger.kernel.org
 X-Envelope-To: bhelgaas@google.com
 X-Envelope-To: michal.simek@amd.com
 X-Envelope-To: sean.anderson@linux.dev
+X-Envelope-To: bharat.kumar.gogada@xilinx.com
+X-Envelope-To: lorenzo.pieralisi@arm.com
+X-Envelope-To: michal.simek@xilinx.com
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 From: Sean Anderson <sean.anderson@linux.dev>
 To: Lorenzo Pieralisi <lpieralisi@kernel.org>,
@@ -65,10 +68,13 @@ Cc: Thippeswamy Havalige <thippeswamy.havalige@amd.com>,
 	linux-kernel@vger.kernel.org,
 	Bjorn Helgaas <bhelgaas@google.com>,
 	Michal Simek <michal.simek@amd.com>,
-	Sean Anderson <sean.anderson@linux.dev>
-Subject: [PATCH v4 4/7] PCI: xilinx-nwl: Rate-limit misc interrupt messages
-Date: Fri, 31 May 2024 12:13:34 -0400
-Message-Id: <20240531161337.864994-5-sean.anderson@linux.dev>
+	Sean Anderson <sean.anderson@linux.dev>,
+	Bharat Kumar Gogada <bharat.kumar.gogada@xilinx.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Michal Simek <michal.simek@xilinx.com>
+Subject: [PATCH v4 5/7] PCI: xilinx-nwl: Clean up clock on probe failure/removal
+Date: Fri, 31 May 2024 12:13:35 -0400
+Message-Id: <20240531161337.864994-6-sean.anderson@linux.dev>
 In-Reply-To: <20240531161337.864994-1-sean.anderson@linux.dev>
 References: <20240531161337.864994-1-sean.anderson@linux.dev>
 Precedence: bulk
@@ -80,71 +86,80 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-The conditions logged by the misc interrupt can occur repeatedly and
-continuously. Avoid rendering the console unusable by rate-limiting
-these messages.
+Make sure we turn off the clock on probe failure and device removal.
 
+Fixes: de0a01f52966 ("PCI: xilinx-nwl: Enable the clock through CCF")
 Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
 ---
 
-(no changes since v1)
+Changes in v4:
+- Move if to after pci_host_probe
 
- drivers/pci/controller/pcie-xilinx-nwl.c | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+ drivers/pci/controller/pcie-xilinx-nwl.c | 23 +++++++++++++++++++----
+ 1 file changed, 19 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/pci/controller/pcie-xilinx-nwl.c b/drivers/pci/controller/pcie-xilinx-nwl.c
-index ce881baac6d8..c0a60cebdb2e 100644
+index c0a60cebdb2e..e85158dc4e6c 100644
 --- a/drivers/pci/controller/pcie-xilinx-nwl.c
 +++ b/drivers/pci/controller/pcie-xilinx-nwl.c
-@@ -267,37 +267,37 @@ static irqreturn_t nwl_pcie_misc_handler(int irq, void *data)
- 		return IRQ_NONE;
+@@ -779,6 +779,7 @@ static int nwl_pcie_probe(struct platform_device *pdev)
+ 		return -ENODEV;
  
- 	if (misc_stat & MSGF_MISC_SR_RXMSG_OVER)
--		dev_err(dev, "Received Message FIFO Overflow\n");
-+		dev_err_ratelimited(dev, "Received Message FIFO Overflow\n");
+ 	pcie = pci_host_bridge_priv(bridge);
++	platform_set_drvdata(pdev, pcie);
  
- 	if (misc_stat & MSGF_MISC_SR_SLAVE_ERR)
--		dev_err(dev, "Slave error\n");
-+		dev_err_ratelimited(dev, "Slave error\n");
+ 	pcie->dev = dev;
  
- 	if (misc_stat & MSGF_MISC_SR_MASTER_ERR)
--		dev_err(dev, "Master error\n");
-+		dev_err_ratelimited(dev, "Master error\n");
+@@ -801,13 +802,13 @@ static int nwl_pcie_probe(struct platform_device *pdev)
+ 	err = nwl_pcie_bridge_init(pcie);
+ 	if (err) {
+ 		dev_err(dev, "HW Initialization failed\n");
+-		return err;
++		goto err_clk;
+ 	}
  
- 	if (misc_stat & MSGF_MISC_SR_I_ADDR_ERR)
--		dev_err(dev, "In Misc Ingress address translation error\n");
-+		dev_err_ratelimited(dev, "In Misc Ingress address translation error\n");
+ 	err = nwl_pcie_init_irq_domain(pcie);
+ 	if (err) {
+ 		dev_err(dev, "Failed creating IRQ Domain\n");
+-		return err;
++		goto err_clk;
+ 	}
  
- 	if (misc_stat & MSGF_MISC_SR_E_ADDR_ERR)
--		dev_err(dev, "In Misc Egress address translation error\n");
-+		dev_err_ratelimited(dev, "In Misc Egress address translation error\n");
+ 	bridge->sysdata = pcie;
+@@ -817,11 +818,24 @@ static int nwl_pcie_probe(struct platform_device *pdev)
+ 		err = nwl_pcie_enable_msi(pcie);
+ 		if (err < 0) {
+ 			dev_err(dev, "failed to enable MSI support: %d\n", err);
+-			return err;
++			goto err_clk;
+ 		}
+ 	}
  
- 	if (misc_stat & MSGF_MISC_SR_FATAL_AER)
--		dev_err(dev, "Fatal Error in AER Capability\n");
-+		dev_err_ratelimited(dev, "Fatal Error in AER Capability\n");
+-	return pci_host_probe(bridge);
++	err = pci_host_probe(bridge);
++	if (!err)
++		return 0;
++
++err_clk:
++	clk_disable_unprepare(pcie->clk);
++	return err;
++}
++
++static void nwl_pcie_remove(struct platform_device *pdev)
++{
++	struct nwl_pcie *pcie = platform_get_drvdata(pdev);
++
++	clk_disable_unprepare(pcie->clk);
+ }
  
- 	if (misc_stat & MSGF_MISC_SR_NON_FATAL_AER)
--		dev_err(dev, "Non-Fatal Error in AER Capability\n");
-+		dev_err_ratelimited(dev, "Non-Fatal Error in AER Capability\n");
- 
- 	if (misc_stat & MSGF_MISC_SR_CORR_AER)
--		dev_err(dev, "Correctable Error in AER Capability\n");
-+		dev_err_ratelimited(dev, "Correctable Error in AER Capability\n");
- 
- 	if (misc_stat & MSGF_MISC_SR_UR_DETECT)
--		dev_err(dev, "Unsupported request Detected\n");
-+		dev_err_ratelimited(dev, "Unsupported request Detected\n");
- 
- 	if (misc_stat & MSGF_MISC_SR_NON_FATAL_DEV)
--		dev_err(dev, "Non-Fatal Error Detected\n");
-+		dev_err_ratelimited(dev, "Non-Fatal Error Detected\n");
- 
- 	if (misc_stat & MSGF_MISC_SR_FATAL_DEV)
--		dev_err(dev, "Fatal Error Detected\n");
-+		dev_err_ratelimited(dev, "Fatal Error Detected\n");
- 
- 	if (misc_stat & MSGF_MISC_SR_LINK_AUTO_BWIDTH)
- 		dev_info(dev, "Link Autonomous Bandwidth Management Status bit set\n");
+ static struct platform_driver nwl_pcie_driver = {
+@@ -831,5 +845,6 @@ static struct platform_driver nwl_pcie_driver = {
+ 		.of_match_table = nwl_pcie_of_match,
+ 	},
+ 	.probe = nwl_pcie_probe,
++	.remove_new = nwl_pcie_remove,
+ };
+ builtin_platform_driver(nwl_pcie_driver);
 -- 
 2.35.1.1320.gc452695387.dirty
 
