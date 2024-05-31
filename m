@@ -1,85 +1,85 @@
-Return-Path: <linux-kernel+bounces-197260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D7E88D684F
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 19:43:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 326F48D6852
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 19:43:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E17AA1F25A71
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:43:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 637DB1C264A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:43:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 500DD17C7DC;
-	Fri, 31 May 2024 17:42:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24FE117C7D4;
+	Fri, 31 May 2024 17:43:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ezI5Syhq"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="m9wjN6eW"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49A931E4AD;
-	Fri, 31 May 2024 17:42:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C681F17C21B
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 17:43:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717177377; cv=none; b=HCEKMEbG06fWd/sC5eEiGzzPyuF++CZASqg/aE3zKZO+554ZKZMoj5fTr7CckSX5vSUmK15tnI9I0o0EqGRMWkRLRBLzmrYgXc6zoGnL3V8GY42jF/+358m8qUWrYOOIaKhZo5bnYQ/wATISaHt6HxfjY8S6cZ5URjh20nn3Fg0=
+	t=1717177422; cv=none; b=dQes7RUS2B0VETpGO23Me+vGk4M2I4ASxu/uTL3TCoDsCBBqQwyl6NEM5Q/ZKztksIh7QOkARc4so0KWEgARvStulstisy5fhO4xoXHQKW/sjfbPwcQuTFfaXuvhow8NoKtNjlx3LzlVKs5vgDFrtoEbQUVp0PWCPiT3YcVC4r8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717177377; c=relaxed/simple;
-	bh=3KEhrfextvC5rwr5916NhC2mHXO/ytPVGMei+vC/RAg=;
+	s=arc-20240116; t=1717177422; c=relaxed/simple;
+	bh=yazqncsssq1fUNb2/bAmcA/AMNGpD5O3/oksh1jttp8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OKoSufeJZAqaotC9herBnkgpbd6z0InEuYj8mamzGloteWK90GQjrsJviARHbdbocqb5T7Oz5nDBtupZKMupYawpecM8LRNoZjCOiYm1TqfEp5mmtOW6juUZydpPh2mdKFlquu3TYfmMZy1xkC1F64TfnFk7sukLKEPrOZ+RvIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ezI5Syhq; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717177376; x=1748713376;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=3KEhrfextvC5rwr5916NhC2mHXO/ytPVGMei+vC/RAg=;
-  b=ezI5SyhqB26IuRxOqYfJ+DRbDGcYLyJU1cfz02MXDddGaTqQU08fsEZv
-   DxYYrMkkF4kaxK6DcVsRYqg/7H4/JmOqjdOn2nrkv6EMoU/43devXlRh7
-   rKq+/vbF0+9mhVFS4skC1eVCYprayyPVwsYc3X0A29QTI6pigOstsUM7r
-   JEmNDekhE6OHjmUef28MlSKgZPBYg5AiM8JBtDvI+rK+Xj5No/iAvLZ04
-   9Rhxn2isisZngli3C+SJXf35vm+H/s+YU7Cnov8IruQDtPQtle5btdkWD
-   MVH3QeqA1jgkKhIhgWKUYOR/LYfMVYupVlkyI7U2dV4NJyQZjbJ23GOgM
-   Q==;
-X-CSE-ConnectionGUID: ngLklXjdRASCnbKdFuMf0w==
-X-CSE-MsgGUID: Qbp1SOUuRECuwm7pEdjs7Q==
-X-IronPort-AV: E=McAfee;i="6600,9927,11089"; a="24307803"
-X-IronPort-AV: E=Sophos;i="6.08,205,1712646000"; 
-   d="scan'208";a="24307803"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 10:42:55 -0700
-X-CSE-ConnectionGUID: 6CJF/SC+TdyRV/1op7y8+w==
-X-CSE-MsgGUID: 1zmOFBwkRO6RzSK5//qJew==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,205,1712646000"; 
-   d="scan'208";a="36247877"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 10:42:49 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sD6H8-0000000CXbb-0lgH;
-	Fri, 31 May 2024 20:42:46 +0300
-Date: Fri, 31 May 2024 20:42:45 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Devarsh Thakkar <devarsht@ti.com>
-Cc: mchehab@kernel.org, hverkuil-cisco@xs4all.nl,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	benjamin.gaignard@collabora.com, sebastian.fricke@collabora.com,
-	akpm@linux-foundation.org, gregkh@linuxfoundation.org,
-	adobriyan@gmail.com, jani.nikula@intel.com, p.zabel@pengutronix.de,
-	airlied@gmail.com, daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
-	laurent.pinchart@ideasonboard.com, praneeth@ti.com, nm@ti.com,
-	vigneshr@ti.com, a-bhatia1@ti.com, j-luthra@ti.com, b-brnich@ti.com,
-	detheridge@ti.com, p-mantena@ti.com, vijayp@ti.com,
-	andrzej.p@collabora.com, nicolas@ndufresne.ca, davidgow@google.com,
-	dlatypov@google.com
-Subject: Re: [PATCH v11 06/11] math.h: Add macros for rounding to closest
- value
-Message-ID: <ZloMFfGKLry6EWNL@smile.fi.intel.com>
-References: <20240531170229.1270828-1-devarsht@ti.com>
- <20240531171136.1293905-1-devarsht@ti.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=IapVDng95hc3L+xMspzdau/uXP9PGdIoQ3LvJgvf9zbp8pw8nbOzIwV7Q8tvR0yEPYo5At9GV5fcshZFsbhJ0PqQrjnsDvS/orJxRQCr0VeWYR0mmFA+HB3AKtn7tmYGlboKTeXJ9iJLnzCOr3lknFGKKKyvuhxGAL7221YW7Kc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=m9wjN6eW; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2e73359b8fbso31728241fa.2
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 10:43:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717177419; x=1717782219; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=++A9eRTepXKaQlX/n7y1YLYk+bRzmeV2OxSEniWyl9Y=;
+        b=m9wjN6eWKD0St2AG1ECC6DaelND/LIf+Vv+lL/ghbxctZAdx6IN0/W1ccCBUwRamOI
+         9PjC4T0DTkDb2EVtlv9fha6/AGjWPMj64mTyIr4aRi6NHkGWzTMd2pPkJF++iEkRbGJU
+         shTalWZmpreLstj9ulBS3NmxmGAxx+NMc21j/g0RAScjQwTtxpLUa+PhPyhcKi9a0BDL
+         nb6la93wP8qp1xRtnLndgjcZifBjv5bGk0NRoRJRrPjiNRy/ug9S1gMQmmWJEF/Ke7nh
+         sAanEJF2kkO/TZTgrTbcvHmZnsJFKyfyrAn+4zl5G0jDwWNfHIrCxRlU/T8XUdBbKSbi
+         x+Ag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717177419; x=1717782219;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=++A9eRTepXKaQlX/n7y1YLYk+bRzmeV2OxSEniWyl9Y=;
+        b=SW+zOAeaXnmFhDLI0Ko4q8d0xUBTb1JyvZGAfvUH2JOCg7/fqafTOQDdDJNHs5L/as
+         N8bhzBvu+wlc3KYj9sL4yezDPsb78ngy46zAPENd2S9jdMGjo2SAcbH0HIg//diciReB
+         4qN6Gt9O9u4IJNSIg/zx1hwzkWMPTUUnL7TDnqF9icGKuDz+4/2PHzPPx2Jv3ElCd1lK
+         HOBzhnASf5ijS/yUfSvTGvnyr5nZLYVSpMPXK63IvWhxM8q6QUTE+7fh4Uhv2GEO8DXD
+         PiZtSnfZIIvyXTmBtuScUzr+aJRiRi2xbNcEYan1/442Wi96wXRQPFv73LFgq5p8b0RQ
+         /ldw==
+X-Forwarded-Encrypted: i=1; AJvYcCWMC0ukvHdFzEZH4ylYxt9VOcLAlOSmxUOjc8YXPVevoNBqSw+Hsuzui3lQ+vxPCldkdVBoVeTL+m3ZeWqa0YMk1+lOXslGXob5wImF
+X-Gm-Message-State: AOJu0Yy+00yFsPds8tjMbd09zukvKhJtyviv6F7omb/V4un90wc2oyOj
+	CDQSXo/El3npyy6Qmrk+BXTxHNPzSZtXWKiwjjo1T4th2GqPq1K4xpkmTa3KW44=
+X-Google-Smtp-Source: AGHT+IFyvYzgg/xDu6GcGjRimu3ZdjRNTdvZZXX3T2C8F9djKPfbZ79k2XyO7ksg7mNcH2hCy7HTxQ==
+X-Received: by 2002:ac2:4354:0:b0:52b:404:914f with SMTP id 2adb3069b0e04-52b8958aed8mr1697776e87.34.1717177418909;
+        Fri, 31 May 2024 10:43:38 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52b8e43a5e2sm54511e87.298.2024.05.31.10.43.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 May 2024 10:43:38 -0700 (PDT)
+Date: Fri, 31 May 2024 20:43:37 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Jeffrey Hugo <quic_jhugo@quicinc.com>
+Cc: Douglas Anderson <dianders@chromium.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	Sam Ravnborg <sam@ravnborg.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH v3 0/3] drm/panel-edp: remove several legacy compatibles
+ used by the driver
+Message-ID: <6kmhrxip4xb44bspptwdaoqsod5gm7ccr27fn3jr4ouh4jszi4@fuxht25n5wki>
+References: <20240531-edp-panel-drop-v3-0-4c98b2b95e3a@linaro.org>
+ <7428a2f7-befc-6db8-76f4-3ca8dc12d31c@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,43 +88,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240531171136.1293905-1-devarsht@ti.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <7428a2f7-befc-6db8-76f4-3ca8dc12d31c@quicinc.com>
 
-On Fri, May 31, 2024 at 10:41:36PM +0530, Devarsh Thakkar wrote:
-> Add below rounding related macros:
+On Fri, May 31, 2024 at 10:18:07AM -0600, Jeffrey Hugo wrote:
+> On 5/30/2024 5:12 PM, Dmitry Baryshkov wrote:
+> > There are two ways to describe an eDP panel in device tree. The
+> > recommended way is to add a device on the AUX bus, ideally using the
+> > edp-panel compatible. The legacy way is to define a top-level platform
+> > device for the panel.
+> > 
+> > Document that adding support for eDP panels in a legacy way is strongly
+> > discouraged (if not forbidden at all).
+> > 
+> > While we are at it, also drop legacy compatible strings and bindings for
+> > five panels. These compatible strings were never used by a DT file
+> > present in Linux kernel and most likely were never used with the
+> > upstream Linux kernel.
+> > 
+> > The following compatibles were never used by the devices supported by
+> > the upstream kernel and are a subject to possible removal:
+> > 
+> > - lg,lp097qx1-spa1
+> > - samsung,lsn122dl01-c01
+> > - sharp,ld-d5116z01b
 > 
-> round_closest_up(x, y) : Rounds x to closest multiple of y where y is a
-> power of 2, with a preference to round up in case two nearest values are
-> possible.
-> 
-> round_closest_down(x, y) : Rounds x to closest multiple of y where y is a
-> power of 2, with a preference to round down in case two nearest values are
-> possible.
-> 
-> roundclosest(x, y) : Rounds x to closest multiple of y, this macro should
-> generally be used only when y is not multiple of 2 as otherwise
-> round_closest* macros should be used which are much faster.
-> 
-> Examples:
->  * round_closest_up(17, 4) = 16
->  * round_closest_up(15, 4) = 16
->  * round_closest_up(14, 4) = 16
->  * round_closest_down(17, 4) = 16
->  * round_closest_down(15, 4) = 16
->  * round_closest_down(14, 4) = 12
->  * roundclosest(21, 5) = 20
->  * roundclosest(19, 5) = 20
->  * roundclosest(17, 5) = 15
+> Ok to drop the sharp one I added.  It should be able to be handled by the
+> (newish) edp-panel, but I think the TI bridge driver needs some work for the
+> specific platform (no I2C connection) to verify.
 
-I don't know the estimation on how these will really useful or not, but I'm not
-objecting if people think it's needed API.
-
-Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Thanks. I'm tempted to merge the series as is now and drop
+sharp,ld-d5116z01b once you can confirm that it can be handled by
+edp-panel on your platform.
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+With best wishes
+Dmitry
 
