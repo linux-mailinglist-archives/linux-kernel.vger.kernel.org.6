@@ -1,166 +1,107 @@
-Return-Path: <linux-kernel+bounces-197250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E61FF8D6829
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 19:30:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D521E8D682B
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 19:31:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 665E5B21A07
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:30:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99932281126
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:31:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97700179654;
-	Fri, 31 May 2024 17:29:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27B7417B404;
+	Fri, 31 May 2024 17:31:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YUsMRg9G"
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rGf8CKyH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 593E06CDA3
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 17:29:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B1DA80C1F;
+	Fri, 31 May 2024 17:31:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717176595; cv=none; b=HhOI7h/lwAs8TIpsSiju+Y894Lty62BlX4Sseww5SjynRsDlQpLFHYh1ZfUBocU7TtCWSa33idU7fOMQFgSAEFbJzsLlWkpkVQi1OhwIw/kLVc9hU4yKYxbiRJjl2Iq0ii+hNSw+4MLsBfdZbR0jeMZC/QgQ/JjyZq978NNtys4=
+	t=1717176674; cv=none; b=thZ6iRy07nOUFNTzGaktEOia7DXAXHTjqQboSjU2kLsbQfzp2pmVLA30JWrRfWs7dQiuuXY1DPt00x01mRz9gtdshtReSdbcVX492xYJJ4l3WyzCrcO/lH+x8foirs0wSA/bMmOBey9v45NhALBJe7vSZgFIuR242Lj55020CSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717176595; c=relaxed/simple;
-	bh=Ocg7q0Va02+8OuCbKzPdbCjlO9z/WVg+JwJKRjv2Xek=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u2fTIF73yxPSGFKQ+l7qY6ze0yRYAMqw0U3hBHTlcp+LbUp3Kz9ZKtSkMTqa6fDX7p2j0JnMHEDFWWqygRLvCiZgNvh7HmVX98WSh6n4MV7ilYG+Ql8NR42lVeoUf18D2YnjnT0bcXgbDfMpLjM3w5C+lj73f1qWj6tWuh9V2ns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=YUsMRg9G; arc=none smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6ae2f1a08a8so5224706d6.1
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 10:29:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1717176591; x=1717781391; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dm7zqDMgip+WJ2XM2t5p8Qmnl2zluKwd7L3ZaHXLQCo=;
-        b=YUsMRg9GB5G+3ft6NgQfVZig8GtdwWcP/ruK6iE+/uXSEa7u07pvp5CJzw9Ci8BQI+
-         5NR2/VPzaXf6qogEdWIKLAmfa+8QyPzop0CX6LPFK+PncJO76ooNIJ76ziYyB5AfKCm7
-         CDDONoP13deAfu8cV64dIqr3cuU7eCLUHhfJ4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717176591; x=1717781391;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dm7zqDMgip+WJ2XM2t5p8Qmnl2zluKwd7L3ZaHXLQCo=;
-        b=kLlxPN9J2UfrPJHDSK/ryE/JFN5NHxpStE48381/2nQkesKfE9ry1bleAWDqcsekX3
-         wRbXBPPXNQ7dVvguLqS10fJuH3IQk1nNjoSho3gwy7Nm7Hy0TMq2DwLu7ErIEBJe/Y2T
-         azhEMgXGNv9WDdo4nPE+k9hrhwSYChxb2n2UK3VmDWFtpjKk4eTRr1xbegYJ91vA15IF
-         M7GmURLOxD7mGiO3ToRhkyq90dZfxr2UJYwBTLpvAexCvWEXBkevnFlgNQfeeFwnm7Yk
-         nF6w1plC/OxDj/ULJe9Vn9V8yujikDgdvUvs3PFMcmkWOW1beFH9tTkc8/ED2UwFSiH0
-         lKFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUjareKedxPSR4aZNB3YRjKAeELgXfzEz1KBg3j/MlK3+7/0PIj/wSGoURo6KN7/9xWpPFwznkibDVBwEeO8xvMx5X6lixFx7B6AKxg
-X-Gm-Message-State: AOJu0YyWGHumpk5iD/YiCLtCHLjfWave4/65prYJIp48/KlveBBbmB/P
-	mIyrwJdNUjUQqoBUMqXhJx/fXF6t1HxVGOrKHB3ie3xXLHcTrb0Zso29m2gXj/c+2OXAqe6W/JK
-	MgCMY
-X-Google-Smtp-Source: AGHT+IHiJa7qaRIMQV0jDiAYTglTphUk2cRdx4k952ZD58yMTEKCrMYV9KQahMf3TvYlfIBea8gwyA==
-X-Received: by 2002:a05:6214:932:b0:6ae:d2d2:116d with SMTP id 6a1803df08f44-6aed2d211b5mr20536996d6.21.1717176591272;
-        Fri, 31 May 2024 10:29:51 -0700 (PDT)
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com. [209.85.160.178])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ae4a750436sm8051296d6.72.2024.05.31.10.29.49
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 31 May 2024 10:29:50 -0700 (PDT)
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-43dfe020675so20881cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 10:29:49 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUzKzBuWSWb8U83O04ZIF24IwMj5MWh27rkV8sla8TB3rOG0LMXmKyspf3UwhJFgvqDqmWWWkG98vd92WYEsxLsoeMFsFfphW3xoMnD
-X-Received: by 2002:a05:622a:4ac9:b0:43e:33f7:600c with SMTP id
- d75a77b69052e-43ff4f8dc64mr3254021cf.19.1717176589297; Fri, 31 May 2024
- 10:29:49 -0700 (PDT)
+	s=arc-20240116; t=1717176674; c=relaxed/simple;
+	bh=ugKsI1n0ps5BfECIOYx/A6IymgUIGBxwn3EHv/Id8mE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wd810kmF6q5Zg6VWoqIPyl8gwHH41PMPY+Ay0+pgOqfpUYY0Gz5rlDsofUqI+jO/tCBCmKmugoDf/BZbrOFOOt5iHmujs6gplCPgKPBJh0tSenX+/fGhC9H/0lEPYBqGBLLSZpsihsN+HEEYOswbEwXAS5VmTotZ1ViYEwOVkZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rGf8CKyH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8966DC2BD10;
+	Fri, 31 May 2024 17:31:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717176674;
+	bh=ugKsI1n0ps5BfECIOYx/A6IymgUIGBxwn3EHv/Id8mE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rGf8CKyHFijgLDSqYePnQ5BCTYnBTXCTIR7yFEJknvnNOQ/hdxJ2qZAs0M7kcsxLm
+	 pk76gkHxefmIVBYIrtYbxwMb5x2CbUZ7sqalM1gvrqc4uMBNY+Z7fH1UBhsXarwcxp
+	 FTLaEWHCxtKiJzjjNd0CIsJJe+3tiWuqjfkoRefwjTFy3PCs6UTm7hi4YqP1XzHG1g
+	 eaJ/meSnXuj1Li4yDdzDFHZ0XctqhnbxhWTcPCLffmGOaXdTeCkPH2pEnFnBHvLe51
+	 10OondmOCzovC/AY9gpGpxUzdQJSI2OuorxHNORYMDnuHTBbAoNMtyYN5NLjetfX7A
+	 OEaogdLCfTaBg==
+Date: Fri, 31 May 2024 18:31:09 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Jesse Taube <jesse@rivosinc.com>
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev, Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@rivosinc.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Masahiro Yamada <masahiroy@kernel.org>
+Subject: Re: [PATCH v0] RISC-V: Use Zkr to seed KASLR base address
+Message-ID: <20240531-uselessly-spied-262ecf44e694@spud>
+References: <20240531162327.2436962-1-jesse@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240531-edp-panel-drop-v3-0-4c98b2b95e3a@linaro.org>
- <7428a2f7-befc-6db8-76f4-3ca8dc12d31c@quicinc.com> <CAD=FV=Xcq-p5OxSnDJVF-Wp88ZfXOaOKJmh941ymy-f0wkhdhw@mail.gmail.com>
- <197777e0-e6e1-7004-be27-edb98f8a235e@quicinc.com>
-In-Reply-To: <197777e0-e6e1-7004-be27-edb98f8a235e@quicinc.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Fri, 31 May 2024 10:29:33 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=UUmnKuBCwLLjrg69kCi7MTjMDYAVtdWEb3yqeZc=-5iQ@mail.gmail.com>
-Message-ID: <CAD=FV=UUmnKuBCwLLjrg69kCi7MTjMDYAVtdWEb3yqeZc=-5iQ@mail.gmail.com>
-Subject: Re: [PATCH v3 0/3] drm/panel-edp: remove several legacy compatibles
- used by the driver
-To: Jeffrey Hugo <quic_jhugo@quicinc.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-rockchip@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="xt66x2nsbKVBAiZs"
+Content-Disposition: inline
+In-Reply-To: <20240531162327.2436962-1-jesse@rivosinc.com>
+
+
+--xt66x2nsbKVBAiZs
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Fri, May 31, 2024 at 12:23:27PM -0400, Jesse Taube wrote:
+> Dectect the Zkr extension and use it to seed the kernel base address.
+>=20
+> Detection of the extension can not be done in the typical fashion, as
+> this is very early in the boot process. Instead, add a trap handler
+> and run it to see if the extension is present.
 
-On Fri, May 31, 2024 at 9:51=E2=80=AFAM Jeffrey Hugo <quic_jhugo@quicinc.co=
-m> wrote:
->
-> On 5/31/2024 10:20 AM, Doug Anderson wrote:
-> > Hi,
-> >
-> > On Fri, May 31, 2024 at 9:18=E2=80=AFAM Jeffrey Hugo <quic_jhugo@quicin=
-c.com> wrote:
-> >>
-> >> On 5/30/2024 5:12 PM, Dmitry Baryshkov wrote:
-> >>> There are two ways to describe an eDP panel in device tree. The
-> >>> recommended way is to add a device on the AUX bus, ideally using the
-> >>> edp-panel compatible. The legacy way is to define a top-level platfor=
-m
-> >>> device for the panel.
-> >>>
-> >>> Document that adding support for eDP panels in a legacy way is strong=
-ly
-> >>> discouraged (if not forbidden at all).
-> >>>
-> >>> While we are at it, also drop legacy compatible strings and bindings =
-for
-> >>> five panels. These compatible strings were never used by a DT file
-> >>> present in Linux kernel and most likely were never used with the
-> >>> upstream Linux kernel.
-> >>>
-> >>> The following compatibles were never used by the devices supported by
-> >>> the upstream kernel and are a subject to possible removal:
-> >>>
-> >>> - lg,lp097qx1-spa1
-> >>> - samsung,lsn122dl01-c01
-> >>> - sharp,ld-d5116z01b
-> >>
-> >> Ok to drop the sharp one I added.  It should be able to be handled by
-> >> the (newish) edp-panel, but I think the TI bridge driver needs some wo=
-rk
-> >> for the specific platform (no I2C connection) to verify.
-> >
-> > Is the platform supported upstream? If so, which platform is it? Is
-> > the TI bridge chip the ti-sn65dsi86? If so, I'm confused how you could
-> > use that bridge chip without an i2c connection, but perhaps I'm
-> > misunderstanding. :-P
->
-> Yes, the platform is upstream.  The 8998 laptops (clamshell).  It is the
-> ti-sn65si86.  I suspect the I2C connection was not populated for cost
-> reasons, then determined its much more convenient to have it as every
-> generation after that I've seen has the I2C.
->
-> If you check the datasheet closely, the I2C connection is optional.  You
-> can also configure the bridge inband using DSI commands.  This is what
-> the FW and Windows does.
->
-> So, the DT binding needs to make the I2C property optional (this should
-> be backwards compatible).  The driver needs to detect that the I2C
-> connection is not provided, and fall back to DSI commands.  Regmap would
-> be nice for this, but I got pushback on the proposal.  Then I got
-> sidetracked looking at other issues.
+You can't rely on the lack of a trap meaning that Zkr is present unless
+you know that the platform implements Ssstrict. The CSR with that number
+could do anything if not Ssstrict compliant, so this approach gets a
+nak from me. Unfortunately, Ssstrict doesn't provide a way to detect
+it, so you're stuck with getting that information from firmware.
 
-Crazy! I'm sure I've skimmed over that part of the ti-sn65dsi86
-datasheet before but I don't think I internalized it. I guess if you
-did it this way then you'd instantiate it as a platform device instead
-of an i2c device and that would be how you'd detect the difference. I
-could imagine this being a bit of a challenge to get working in the
-driver.
+For DT systems, you can actually parse the DT in the pi, we do it to get
+the kaslr seed if present, so you can actually check for Zkr. With ACPI
+I have no idea how you can get that information, I amn't an ACPI-ist.
+
+Thanks,
+Conor.
+
+--xt66x2nsbKVBAiZs
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZloJXQAKCRB4tDGHoIJi
+0q+NAQDg7dQm4yIuqIpJJUx6xVHNdm7QHRH1oZhb6KTvKdauPAEAjlDPmXth3suH
+EyUEa4xRA2F6Bpo7l3BF2i0FndH74gw=
+=J8qv
+-----END PGP SIGNATURE-----
+
+--xt66x2nsbKVBAiZs--
 
