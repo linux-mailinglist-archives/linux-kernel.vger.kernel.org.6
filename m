@@ -1,56 +1,76 @@
-Return-Path: <linux-kernel+bounces-196199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 034B98D58B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 04:49:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 960558D58B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 04:49:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3F2D287253
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 02:49:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15C03B251A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 02:49:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2402E7711F;
-	Fri, 31 May 2024 02:49:27 +0000 (UTC)
-Received: from r3-11.sinamail.sina.com.cn (r3-11.sinamail.sina.com.cn [202.108.3.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B95978C66;
+	Fri, 31 May 2024 02:49:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="S/ehFgOT"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35B9B78C7A
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 02:49:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAD00256D;
+	Fri, 31 May 2024 02:49:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717123766; cv=none; b=QgfROSjVy6ANjzqwtQrIyS3K7frgQs/VrlrM7aRF+4o7rCrpaMsyP234rz3EPZkB4pbPZ+evd8E6EmK3nMMZFgRmtTN6qZ/CkbqwrnyUycSp+D2iAeh4uyQWsRTR6mzjWww53HLShsMKvhAuUnuioRB0nDLRFawku4lsLOzPJt8=
+	t=1717123759; cv=none; b=uVIr0cl0Q8SMJJc5AhF19j9hUMZeWjyQe72NPjE2UIWaoOswZufFL2xTEvZz91kEQHCqHTfd771q26OCFghw7oMKd8iy8jbeJNW8EiNOChnBIWhr3cVX0mBE1tJfguKkeWx3K7inz8M6Zy3+l/sBepn0Ef+/HSs8rnql4KAMQmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717123766; c=relaxed/simple;
-	bh=yC+LB2Y6jUoQAATr+h19M50CQIqqD4nkhuJXFLuUmIk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jgj0NArw22IWj2VJ1tghXDz1YydgoNrS1MlZ41GkR/gXEwkIl0SBslcWGauJX+cmmDRfu0hDuEST0qDljSTCrf3M9N/FI+2y/xBWoPQ0I8My7CpeSzyyBkzTP4TgkIlWgNAvVHGtGwfOsYVfVfcuqcgNFD3I4M2ODElHCWX1sCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=202.108.3.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost
-Received: from unknown (HELO localhost)([101.132.132.191])
-	by sina.com (10.182.253.22) with ESMTP
-	id 66593A8700000D3E; Fri, 31 May 2024 10:48:41 +0800 (CST)
-X-Sender: ghostxavier@sina.com
-X-Auth-ID: ghostxavier@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=ghostxavier@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=ghostxavier@sina.com
-X-SMAIL-MID: 2472246816138
-X-SMAIL-UIID: C36FAEE0ECE84822B888075C91066179-20240531-104841-1
-From: Xavier <ghostxavier@sina.com>
-To: longman@redhat.com,
-	lizefan.x@bytedance.com,
-	tj@kernel.org,
-	hannes@cmpxchg.org
-Cc: cgroups@vger.kernel.org,
+	s=arc-20240116; t=1717123759; c=relaxed/simple;
+	bh=yJZvW2qrzhlTHgN4Czd0hgGPxDlbm44gS6ttGvjiGKk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aCuGkKajFznyAIEzyfGGVPws4jpoJGaYRw3kw8h1xd4RTnv8OxAg5KTe10gtqB0UIWwuP+T+qqkSvcN/rVHJLUECq3ot8MKgjwyHUMJP0dH9ShuKCuI4xxLVCaetYG49eHbWInn5//Ogm2kFOnlYjBUzGScOpcj8Th9VvvWNzsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=S/ehFgOT; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717123758; x=1748659758;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=yJZvW2qrzhlTHgN4Czd0hgGPxDlbm44gS6ttGvjiGKk=;
+  b=S/ehFgOTsyItp43SDYS+E6bszcsz9EO5Qty/xM1vzFGeeSoU7loY59Pe
+   2MgaBVJaNTCE76eb5fiDkOuNyv5Cvu0Es69Cvz7aTmCuB2i3hBXqOrwH0
+   SaeXMbciLZhTWdGgniNfn6w0VaT3w4Y7rB/+dk9yx2qhuuY41uUicHyQB
+   W3Czn6JsTCybwN9nn5R04GsCzeXANBmrtMYwhJH2z2JM/Wc+H2oLWKkf0
+   wOADV4hxqnrNWOFvhBzAsTm9s4rKHIzw7U6HbzBbMkiRw/+uqFFRyG/nN
+   +LnWWaXVO+alHLTszp1rXU26hsGjOQ1kVxgUblPtYDS+KTIq81oPdQorM
+   g==;
+X-CSE-ConnectionGUID: OnfA+sk/Q26nP7JAv9UObA==
+X-CSE-MsgGUID: KLhSyHQKQW+OlPoyXGrnmw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="17482896"
+X-IronPort-AV: E=Sophos;i="6.08,203,1712646000"; 
+   d="scan'208";a="17482896"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 19:49:17 -0700
+X-CSE-ConnectionGUID: PVooy1kcTReRDNmd4m/v9w==
+X-CSE-MsgGUID: FeZz8sAaTrq98CUvqOpLtQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,203,1712646000"; 
+   d="scan'208";a="40585981"
+Received: from unknown (HELO yhuang6-mobl2.ccr.corp.intel.com) ([10.255.30.35])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 19:49:14 -0700
+From: Huang Ying <ying.huang@intel.com>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: linux-cxl@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Xavier <ghostxavier@sina.com>
-Subject: [PATCH v2] cpuset: Optimize the number of iterations in the scheduling domain construction process
-Date: Fri, 31 May 2024 10:48:37 +0800
-Message-Id: <20240531024837.255293-1-ghostxavier@sina.com>
-X-Mailer: git-send-email 2.34.1
+	Huang Ying <ying.huang@intel.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Bharata B Rao <bharata@amd.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	"Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>
+Subject: [PATCH] cxl/region: Support to calculate memory tier abstract distance
+Date: Fri, 31 May 2024 10:48:52 +0800
+Message-Id: <20240531024852.282767-1-ying.huang@intel.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,193 +79,124 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The process of constructing scheduling domains involves multiple loops
-and repeated evaluations, leading to numerous redundant and ineffective
-assessments that impact code efficiency.
+To place memory nodes backed by CXL regions in the appropriate memory
+tiers.  So that, pages can be promoted/demoted with the existing
+memory tiering mechanism.
 
-Here, we use Union-Find to optimize the merging of cpumasks. By employing
-path compression and union by rank, we effectively reduce the number of
-lookups and merge comparisons.
+The abstract distance is calculated based on the memory access latency
+and bandwidth of CXL regions.  Which in turn comes from the HMAT
+and CDAT, etc.
 
-Signed-off-by: Xavier <ghostxavier@sina.com>
+Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: Dave Jiang <dave.jiang@intel.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Bharata B Rao <bharata@amd.com>
+Cc: Alistair Popple <apopple@nvidia.com>
+Cc: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
 ---
- kernel/cgroup/cpuset.c | 117 +++++++++++++++++++++++------------------
- 1 file changed, 66 insertions(+), 51 deletions(-)
+ drivers/cxl/core/region.c | 40 +++++++++++++++++++++++++++++++++++----
+ drivers/cxl/cxl.h         |  1 +
+ 2 files changed, 37 insertions(+), 4 deletions(-)
 
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index c12b9fdb2..4bea1c2db 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -891,6 +891,44 @@ static inline int nr_cpusets(void)
- 	return static_key_count(&cpusets_enabled_key.key) + 1;
+diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+index 00a9f0eef8dd..1f8f71a034ae 100644
+--- a/drivers/cxl/core/region.c
++++ b/drivers/cxl/core/region.c
+@@ -9,6 +9,7 @@
+ #include <linux/uuid.h>
+ #include <linux/sort.h>
+ #include <linux/idr.h>
++#include <linux/memory-tiers.h>
+ #include <cxlmem.h>
+ #include <cxl.h>
+ #include "core.h"
+@@ -2304,14 +2305,20 @@ static bool cxl_region_update_coordinates(struct cxl_region *cxlr, int nid)
+ 	return true;
  }
  
-+/*define a union find node struct*/
-+struct uf_node {
-+	int parent;
-+	int rank;
-+};
-+
-+static int find_root(struct uf_node *nodes, int x)
++static int cxl_region_nid(struct cxl_region *cxlr)
 +{
-+	int root = x;
-+	int parent;
++	struct cxl_region_params *p = &cxlr->params;
++	struct cxl_endpoint_decoder *cxled = p->targets[0];
++	struct cxl_decoder *cxld = &cxled->cxld;
 +
-+	/*Find the root node and perform path compression at the same time*/
-+	while (nodes[root].parent != root) {
-+		parent = nodes[root].parent;
-+		nodes[root].parent = nodes[parent].parent;
-+		root = parent;
-+	}
-+	return root;
++	return phys_to_target_node(cxld->hpa_range.start);
 +}
 +
-+/*Function to merge two sets, using union by rank*/
-+static void union_sets(struct uf_node *nodes, int a, int b)
+ static int cxl_region_perf_attrs_callback(struct notifier_block *nb,
+ 					  unsigned long action, void *arg)
+ {
+ 	struct cxl_region *cxlr = container_of(nb, struct cxl_region,
+ 					       memory_notifier);
+-	struct cxl_region_params *p = &cxlr->params;
+-	struct cxl_endpoint_decoder *cxled = p->targets[0];
+-	struct cxl_decoder *cxld = &cxled->cxld;
+ 	struct memory_notify *mnb = arg;
+ 	int nid = mnb->status_change_nid;
+ 	int region_nid;
+@@ -2319,7 +2326,7 @@ static int cxl_region_perf_attrs_callback(struct notifier_block *nb,
+ 	if (nid == NUMA_NO_NODE || action != MEM_ONLINE)
+ 		return NOTIFY_DONE;
+ 
+-	region_nid = phys_to_target_node(cxld->hpa_range.start);
++	region_nid = cxl_region_nid(cxlr);
+ 	if (nid != region_nid)
+ 		return NOTIFY_DONE;
+ 
+@@ -2329,6 +2336,27 @@ static int cxl_region_perf_attrs_callback(struct notifier_block *nb,
+ 	return NOTIFY_OK;
+ }
+ 
++static int cxl_region_calculate_adistance(struct notifier_block *nb,
++					  unsigned long nid, void *data)
 +{
-+	int root_a = find_root(nodes, a);
-+	int root_b = find_root(nodes, b);
++	struct cxl_region *cxlr = container_of(nb, struct cxl_region,
++					       adist_notifier);
++	int region_nid;
++	struct access_coordinate *perf;
++	int *adist = data;
 +
-+	if (root_a != root_b) {
-+		if (nodes[root_a].rank < nodes[root_b].rank) {
-+			nodes[root_a].parent = root_b;
-+		} else if (nodes[root_a].rank > nodes[root_b].rank) {
-+			nodes[root_b].parent = root_a;
-+		} else {
-+			nodes[root_b].parent = root_a;
-+			nodes[root_a].rank++;
-+		}
-+	}
++	region_nid = cxl_region_nid(cxlr);
++	if (nid != region_nid)
++		return NOTIFY_OK;
++
++	perf = &cxlr->coord[ACCESS_COORDINATE_CPU];
++
++	if (mt_perf_to_adistance(perf, adist))
++		return NOTIFY_OK;
++
++	return NOTIFY_STOP;
 +}
 +
- /*
-  * generate_sched_domains()
-  *
-@@ -950,13 +988,14 @@ static int generate_sched_domains(cpumask_var_t **domains,
- 	struct cpuset *cp;	/* top-down scan of cpusets */
- 	struct cpuset **csa;	/* array of all cpuset ptrs */
- 	int csn;		/* how many cpuset ptrs in csa so far */
--	int i, j, k;		/* indices for partition finding loops */
-+	int i, j;		/* indices for partition finding loops */
- 	cpumask_var_t *doms;	/* resulting partition; i.e. sched domains */
- 	struct sched_domain_attr *dattr;  /* attributes for custom domains */
- 	int ndoms = 0;		/* number of sched domains in result */
- 	int nslot;		/* next empty doms[] struct cpumask slot */
- 	struct cgroup_subsys_state *pos_css;
- 	bool root_load_balance = is_sched_load_balance(&top_cpuset);
-+	struct uf_node *nodes;
+ /**
+  * devm_cxl_add_region - Adds a region to a decoder
+  * @cxlrd: root decoder
+@@ -2380,6 +2408,10 @@ static struct cxl_region *devm_cxl_add_region(struct cxl_root_decoder *cxlrd,
+ 	cxlr->memory_notifier.priority = CXL_CALLBACK_PRI;
+ 	register_memory_notifier(&cxlr->memory_notifier);
  
- 	doms = NULL;
- 	dattr = NULL;
-@@ -1022,33 +1061,31 @@ static int generate_sched_domains(cpumask_var_t **domains,
- 	}
- 	rcu_read_unlock();
- 
--	for (i = 0; i < csn; i++)
--		csa[i]->pn = i;
--	ndoms = csn;
--
--restart:
--	/* Find the best partition (set of sched domains) */
--	for (i = 0; i < csn; i++) {
--		struct cpuset *a = csa[i];
--		int apn = a->pn;
-+	nodes = kmalloc_array(csn, sizeof(struct uf_node), GFP_KERNEL);
-+	if (!nodes)
-+		goto done;
- 
--		for (j = 0; j < csn; j++) {
--			struct cpuset *b = csa[j];
--			int bpn = b->pn;
- 
--			if (apn != bpn && cpusets_overlap(a, b)) {
--				for (k = 0; k < csn; k++) {
--					struct cpuset *c = csa[k];
-+	/* Each node is initially its own parent */
-+	for (i = 0; i < csn; i++) {
-+		nodes[i].parent = i;
-+		nodes[i].rank = 0;
-+	}
- 
--					if (c->pn == bpn)
--						c->pn = apn;
--				}
--				ndoms--;	/* one less element */
--				goto restart;
--			}
-+	/* Merge overlapping cpusets */
-+	for (i = 0; i < csn; i++) {
-+		for (j = i + 1; j < csn; j++) {
-+			if (cpusets_overlap(csa[i], csa[j]))
-+				union_sets(nodes, i, j);
- 		}
- 	}
- 
-+	/* Calculate the number of domains after merging */
-+	for (i = 0; i < csn; i++) {
-+		if (nodes[i].parent == i)
-+			ndoms++;
-+	}
++	cxlr->adist_notifier.notifier_call = cxl_region_calculate_adistance;
++	cxlr->adist_notifier.priority = 100;
++	register_mt_adistance_algorithm(&cxlr->adist_notifier);
 +
- 	/*
- 	 * Now we know how many domains to create.
- 	 * Convert <csn, csa> to <ndoms, doms> and populate cpu masks.
-@@ -1065,47 +1102,25 @@ static int generate_sched_domains(cpumask_var_t **domains,
- 			      GFP_KERNEL);
+ 	rc = devm_add_action_or_reset(port->uport_dev, unregister_region, cxlr);
+ 	if (rc)
+ 		return ERR_PTR(rc);
+diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
+index 603c0120cff8..6891f87f8ef7 100644
+--- a/drivers/cxl/cxl.h
++++ b/drivers/cxl/cxl.h
+@@ -534,6 +534,7 @@ struct cxl_region {
+ 	struct cxl_region_params params;
+ 	struct access_coordinate coord[ACCESS_COORDINATE_MAX];
+ 	struct notifier_block memory_notifier;
++	struct notifier_block adist_notifier;
+ };
  
- 	for (nslot = 0, i = 0; i < csn; i++) {
--		struct cpuset *a = csa[i];
--		struct cpumask *dp;
--		int apn = a->pn;
--
--		if (apn < 0) {
--			/* Skip completed partitions */
--			continue;
--		}
--
--		dp = doms[nslot];
--
--		if (nslot == ndoms) {
--			static int warnings = 10;
--			if (warnings) {
--				pr_warn("rebuild_sched_domains confused: nslot %d, ndoms %d, csn %d, i %d, apn %d\n",
--					nslot, ndoms, csn, i, apn);
--				warnings--;
--			}
--			continue;
--		}
-+		struct cpumask *dp = doms[nslot];
- 
- 		cpumask_clear(dp);
- 		if (dattr)
- 			*(dattr + nslot) = SD_ATTR_INIT;
- 		for (j = i; j < csn; j++) {
--			struct cpuset *b = csa[j];
-+			if (find_root(nodes, j) == i) {
-+				if (i == j)
-+					nslot++;
- 
--			if (apn == b->pn) {
--				cpumask_or(dp, dp, b->effective_cpus);
-+				cpumask_or(dp, dp, csa[j]->effective_cpus);
- 				cpumask_and(dp, dp, housekeeping_cpumask(HK_TYPE_DOMAIN));
- 				if (dattr)
--					update_domain_attr_tree(dattr + nslot, b);
--
--				/* Done with this partition */
--				b->pn = -1;
-+					update_domain_attr_tree(dattr + nslot, csa[j]);
- 			}
- 		}
--		nslot++;
- 	}
- 	BUG_ON(nslot != ndoms);
--
-+	kfree(nodes);
- done:
- 	kfree(csa);
- 
+ struct cxl_nvdimm_bridge {
 -- 
-2.34.1
+2.39.2
 
 
