@@ -1,79 +1,78 @@
-Return-Path: <linux-kernel+bounces-196758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C2AB8D6185
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:17:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EA5A8D6187
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:17:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13C11B2394C
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:17:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F55F1C241CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:17:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE809157A68;
-	Fri, 31 May 2024 12:17:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 362EC158210;
+	Fri, 31 May 2024 12:17:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HDY9ElEZ"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cdOL4nxM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39116138490
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 12:17:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77059157476;
+	Fri, 31 May 2024 12:17:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717157836; cv=none; b=ZF1DPzdhSVcPwUeX5dYUd+QO3Gcb05G9DnBU5m59KY3WzjXQZQS3c6zwwlMaS9vcd1k5uDUKm9eNHdtf78HmzZxDTFKTcODdCsIEKj+FASESiTYCInfxq9anzg0O5G094uAIxvvDIWzKLQjpDsZuYLegMuohKyCNO4EbNfXRXiQ=
+	t=1717157845; cv=none; b=lufdiumaUG8mj/E5TbjleRM+G3ZixXioYKKaT/BrfMH/OxAgYqeQ0I4VZiXNgLFnvn/n4YHf16MQOZN7DlLC4r6b06e8YRS0K/RGzIYEJtgaGsCDi4T62dhtrM/sB1ro45KltZCFZL4Lvntk/shSnP2ZjiPDgbpP7/nzgoyoetg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717157836; c=relaxed/simple;
-	bh=C/2Lyf7Lg4rbLPYaZKO6th7rS/4OXvr6QR1MXCxp5OM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=et17lg7wXkAKLDe2872G09LhdJ6kRy423+GBsh43GIDQehvdpH/vfoe3NMcaWdI2XuSaTPY2sADjbxdUwJRRaqeRGEK3RichG4tUj9sGsCpEEffGZNLFKTubWZPF0vCxfpdQ5Pe6QGLNzwTJTZQu2pYEoYqJXyYItafdE8MXjdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=HDY9ElEZ; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=jyAihqKd6Hda45CnlrSOdjqk2oTnBzNCXKHWOSSfS08=; b=HDY9ElEZC9QCWO1z7fesMTuep6
-	qymvqqVoiC7kRrNdDlxkZWmkqgX+HmhEo4cqg8q0iosnF0EphRjsAhCWCKIMr6UhVjZ55ZRb0oH2L
-	6vYfFqpxLPaIjAvh4O2DJTXN2M3VTOL15AU0pmMdLJ8s/MDVTN5vppX0fCKSqHvtFHaKJpsP1NAls
-	71oIl2eab6ruBXI2bZK0Mtx1xHl0tinVPzn7gaH2Zg/p03dVaWsPmlvFSunecZathoOldAcdGVfIg
-	U0YU6d8J8KTEDQ/TCLqAlss2q7SRCsV/MISxgaCH96Znf0VN/1K7/3i5/zoWnzxqOWEg8CzVmb3s8
-	pi/U+okg==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sD1Bv-0000000BhRZ-0Vr8;
-	Fri, 31 May 2024 12:17:03 +0000
-Date: Fri, 31 May 2024 13:17:03 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Dev Jain <dev.jain@arm.com>
-Cc: zhouchengming@bytedance.com, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, Anshuman.Khandual@arm.com
-Subject: Re: [QUESTION] mm: Redundant const parameter?
-Message-ID: <Zlm_vlhYa91fA1wu@casper.infradead.org>
-References: <e5f01ffe-de51-4079-a87f-2886788422f9@arm.com>
+	s=arc-20240116; t=1717157845; c=relaxed/simple;
+	bh=3y/kTaOl0Tpo0SIWfZ+g2D1ziVkcIhbxO7TYtmrKXDk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=I6QpmuSf/EWEW7CP8tsgHlLak7C6hM9PSBAzm/xul1TsiSAZS4QUqyU9HhhtwV49qqTLH5NvQC4ngArqh9u1t6OffhOTMLaglGF40r03NP3BxzY9fFuFidXVgjtRxxvphk9z1mc+NTNEgBbxgLLoBV2fInk335knvbXLr/Mshz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cdOL4nxM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B83AC116B1;
+	Fri, 31 May 2024 12:17:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717157845;
+	bh=3y/kTaOl0Tpo0SIWfZ+g2D1ziVkcIhbxO7TYtmrKXDk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=cdOL4nxMWY3nsAv7/WJ1YnydV/0nDJvR4ONdplNh6emfaANymXUvYOThN6Mew15SK
+	 SXr+pNQ0rKMFLiTrh5LuCvyvFMcVspR6S/ToJ5c7DWgwk8eMmrqsFNKjTfRXTKhdYR
+	 KdyDBtD6cy8vlyXiNGSigYQ19k9scBC+vlpQ3/IuvEqvRfyz9aoiv6FWG6zykX0lFn
+	 bQcyf1u9ujW5XJd+0D81QuBcYsW0zJHT5akRCKLaYd78ok3E5UCsClf9kvIt12p+eI
+	 XOnC7qZEzGbVaXO9pT+7xj8a570rU9I3X4IP7M04AeuWyrwvHFL0L2W8N2nrkB1nGg
+	 lJeeWR2nUbraw==
+From: Lee Jones <lee@kernel.org>
+To: Lee Jones <lee@kernel.org>, linux-omap@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Tony Lindgren <tony@atomide.com>
+In-Reply-To: <20240508114321.964374-1-andriy.shevchenko@linux.intel.com>
+References: <20240508114321.964374-1-andriy.shevchenko@linux.intel.com>
+Subject: Re: (subset) [PATCH v1 1/1] mfd: omap-usb-host: Remove unused
+ linux/gpio.h
+Message-Id: <171715784332.1056361.10294064130920640362.b4-ty@kernel.org>
+Date: Fri, 31 May 2024 13:17:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e5f01ffe-de51-4079-a87f-2886788422f9@arm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.12.4
 
-On Fri, May 31, 2024 at 04:42:59PM +0530, Dev Jain wrote:
-> Hi Chengming,
+On Wed, 08 May 2024 14:43:21 +0300, Andy Shevchenko wrote:
+> linux/gpio.h is deprecated and subject to remove.
+> The driver doesn't use it, simply remove the unused header.
 > 
-> In mm/slub.c, you had defined slab_test_node_partial() to take a const
-> parameter.
 > 
-> Is there any point of taking in a const, when you are anyways typecasting it
-> to
-> 
-> a (struct folio *) from (const struct folio *) ? In fact, at the place where
-> you call
-> 
-> slab_test_node_partial(), the struct slab *slab is not const.
 
-I have a patch to fix this; hang on a second ...
+Applied, thanks!
+
+[1/1] mfd: omap-usb-host: Remove unused linux/gpio.h
+      commit: 1b86176443dd808b1cbcf6729011484e55c42c7b
+
+--
+Lee Jones [李琼斯]
+
 
