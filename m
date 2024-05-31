@@ -1,116 +1,89 @@
-Return-Path: <linux-kernel+bounces-196943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1820A8D63FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:05:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC3528D6402
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:05:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 489B81C2787C
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:05:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9785F28CB8C
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:05:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BE6D1649BE;
-	Fri, 31 May 2024 14:04:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A42215B98C;
+	Fri, 31 May 2024 14:05:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="dcdxt/2v"
-Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TpMr8I+B"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0E5C155C8E
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 14:04:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CA5B155C8E;
+	Fri, 31 May 2024 14:05:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717164287; cv=none; b=arGaJ934bmcmyK5+5VwDIE3Tt95CyGnyU95atMNpkV1qC4K5mLZ3qky0GSzkeMmhUdPXotYj0G6cizEgmesA5hMqrCjUaaZA0t+b4VZ3M1fPLUCcSbFT6h5ci53x/EKQFIVLfR7xEJaV7cTq+Vbh6od0Mw4QNXjt9jUY9jwwZwE=
+	t=1717164341; cv=none; b=bFpCqp+wgiKcdyDtW9u6Ouo48B0xO0bq0dZAYc9SEqA6O1lKFiaWQjaJkLpMn6hZw5x2V9l8Qg2VQn1up7BV7p18d8kJEq0QIoBgLYz8280eqUlnyFNi+bT65bfjZj6vJgByA7nb6crWDNW+m+6sr3KfQLHkLAbj70Bl5a1eH6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717164287; c=relaxed/simple;
-	bh=9X3/+K4zOUhzNbutloj3w6yI0u7JNa7iWNyhISz2UUo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tPsLIn5zV0g28EY0iuFVhw3rVJKFNHlqJjCm2VHZC9aZDsDMu+YxXGRzmUsFCwCygKrPbCCrETQUlb/XFNo4hvqXrfVmMuM15VYor6DlUJsVxoKyMk9BTeXmqBvmLR+BXR2vPvYj1T9/tjczVc23ue7L3rJ9LENb2YVhFWBZjo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=dcdxt/2v; arc=none smtp.client-ip=91.218.175.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: sam@ravnborg.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1717164282;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=o/qvTrH1SiQj3MlmnfxDD66NKPm741DV2Sf6ZGRQjq0=;
-	b=dcdxt/2vKtqS3mvkvS2XwUo4rVK/Gi3jVopqG04THr1VzIf7XXW6pasFPOGn1fuDJAZp3Z
-	pM86B8Jg1dR0SbpIP0CqPk90+ackIQKmtNnD+v+Pq8GQ+jUZuXT6gB8/+9qgOksy9sYsAa
-	NrKgSHKf79u9c0ljICkoi5d5I1JCESU=
-X-Envelope-To: j-choudhary@ti.com
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: dmitry.baryshkov@linaro.org
-X-Envelope-To: andrzej.hajda@intel.com
-X-Envelope-To: neil.armstrong@linaro.org
-X-Envelope-To: rfoss@kernel.org
-X-Envelope-To: laurent.pinchart@ideasonboard.com
-X-Envelope-To: mripard@kernel.org
-X-Envelope-To: jonas@kwiboo.se
-X-Envelope-To: jernej.skrabec@gmail.com
-X-Envelope-To: maarten.lankhorst@linux.intel.com
-X-Envelope-To: tzimmermann@suse.de
-X-Envelope-To: airlied@gmail.com
-X-Envelope-To: daniel@ffwll.ch
-X-Envelope-To: a-bhatia1@ti.com
-X-Envelope-To: dri-devel@lists.freedesktop.org
-Message-ID: <955a6d94-9a4c-4f7d-974c-819261579f14@linux.dev>
-Date: Fri, 31 May 2024 22:04:29 +0800
+	s=arc-20240116; t=1717164341; c=relaxed/simple;
+	bh=8vBlPwHaxEwRcsYd9GsTqJI41u/YSqgeRaG06NEqjYw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tgEqp7rYtdD2lv3w8ZK6Tqy8l7z+2fKg2a5YoPNLoqFKWo/ZL3N6xj0xqSs+fvDWEmtv5mZYFOv/h950PlKw2SxCY7EapUg2hmmwGJPvZsPtrzX/ZIggsmh2ZkonmOoJZCzg9RiZEC1yNLpIgQqzr6e17B6scjmqYkLg4ePNIqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=TpMr8I+B; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=mc4Z71sdMwN4heTeb/sLKN+8AiLMl/vGU3VtZcBbWrU=; b=TpMr8I+BqMuG9Q7OUZAv02fo2f
+	RCBb9rRru+WRce4a9hKsgSCduC1wr5nOGCZFRw+ch8Jx1vk1aiJp/t+6a240b0osLAoxW0ggqhjfg
+	KBhmm2uL+iVI+piRMvuQOkqFVZp5kdDcLcBonf5oBFw9CICp6v2wLQl5f2IOQO4b7gqyUVmPCG52q
+	Di4EdawpL0Z+UI14ye0IfS/9cwhr+SvSiaTtXOjTavDIfqBoDQWWJRJ4Hq9POC6gB4vuMXYMGnliK
+	1HwZ+xB1g1OFMTAkUpWtUVM6XentAfqu1Qg8c2n4vETqysQi1s2gdfUyUZzfYb2CHvKzLeIZTaxKJ
+	8YlViJgA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sD2t0-0000000ARo2-3cxa;
+	Fri, 31 May 2024 14:05:38 +0000
+Date: Fri, 31 May 2024 07:05:38 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Christoph Hellwig <hch@infradead.org>,
+	Zhang Yi <yi.zhang@huaweicloud.com>, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	brauner@kernel.org, david@fromorbit.com, chandanbabu@kernel.org,
+	jack@suse.cz, willy@infradead.org, yi.zhang@huawei.com,
+	chengzhihao1@huawei.com, yukuai3@huawei.com
+Subject: Re: [RFC PATCH v4 1/8] iomap: zeroing needs to be pagecache aware
+Message-ID: <ZlnZMiBJ6Fapor5G@infradead.org>
+References: <20240529095206.2568162-1-yi.zhang@huaweicloud.com>
+ <20240529095206.2568162-2-yi.zhang@huaweicloud.com>
+ <ZlnMfSJcm5k6Dg_e@infradead.org>
+ <20240531140358.GF52987@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [v4,1/2] drm/bridge: sii902x: Fix mode_valid hook
-To: Sam Ravnborg <sam@ravnborg.org>, Jayesh Choudhary <j-choudhary@ti.com>
-Cc: linux-kernel@vger.kernel.org, dmitry.baryshkov@linaro.org,
- andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
- Laurent.pinchart@ideasonboard.com, mripard@kernel.org, jonas@kwiboo.se,
- jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
- tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch, a-bhatia1@ti.com,
- dri-devel@lists.freedesktop.org
-References: <20240530092930.434026-2-j-choudhary@ti.com>
- <e5ce13e6-1007-41c9-bedc-2045d6f75480@linux.dev>
- <20240531133324.GA1715839@ravnborg.org>
-Content-Language: en-US, en-AU
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sui Jingfeng <sui.jingfeng@linux.dev>
-In-Reply-To: <20240531133324.GA1715839@ravnborg.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240531140358.GF52987@frogsfrogsfrogs>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Hi, Jayesh
-
-
-On 5/31/24 21:33, Sam Ravnborg wrote:
-> Hi Jayesh,
+On Fri, May 31, 2024 at 07:03:58AM -0700, Darrick J. Wong wrote:
+> > +			/*
+> > +			 * XXX: It would be nice if we could get the offset of
+> > +			 * the next entry in the pagecache so that we don't have
+> > +			 * to iterate one page at a time here.
+> > +			 */
+> > +			offset = offset_in_page(pos);
+> > +			if (bytes > PAGE_SIZE - offset)
+> > +				bytes = PAGE_SIZE - offset;
 > 
->>> +
->>>    static const struct drm_bridge_funcs sii902x_bridge_funcs = {
->>>    	.attach = sii902x_bridge_attach,
->>>    	.mode_set = sii902x_bridge_mode_set,
->>> @@ -516,6 +529,7 @@ static const struct drm_bridge_funcs sii902x_bridge_funcs = {
->>>    	.atomic_destroy_state = drm_atomic_helper_bridge_destroy_state,
->>>    	.atomic_get_input_bus_fmts = sii902x_bridge_atomic_get_input_bus_fmts,
->>>    	.atomic_check = sii902x_bridge_atomic_check,
->>> +	.mode_valid = sii902x_bridge_mode_valid,
+> Why is it PAGE_SIZE here and not folio_size() like below?
 > 
-> As you have the possibility to test the driver, it would be nice with a
-> follow-up patch that replaces the use of enable() / disable() with the
-> atomic counterparts.
-> 
-> enable() / disable() are deprecated, so it is nice to reduce their use.
+> (I know you're just copying the existing code; I'm merely wondering if
+> this is some minor bug.)
 
-I agree with Sam.
+See the comment just above :)
 
-Please using atomic uniformally with a follow-up patch, the mixed
-using of atomic API and non atomic API is a little bit confusing IMO.
-
-
-> 	Sam
 
