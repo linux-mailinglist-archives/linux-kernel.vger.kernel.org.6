@@ -1,300 +1,136 @@
-Return-Path: <linux-kernel+bounces-196941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 528878D63F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:04:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8F3E8D63FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:04:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B76661F265ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:04:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E846F1C2760B
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:04:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A9D215CD69;
-	Fri, 31 May 2024 14:04:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DEE915CD55;
+	Fri, 31 May 2024 14:04:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IxwiIj7h"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nH1rEpv6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B43515B0EB;
-	Fri, 31 May 2024 14:04:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88E7615AAB6;
+	Fri, 31 May 2024 14:04:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717164267; cv=none; b=HxD+qXJwoEyjRToHKCz0NoiVpW8K7YhNtg2ctFhX5amRkEINgzz3WHLtgEqiZnEXIzg6yl/HM1ocmfEhAXswjVvCFvKQPktjMDt++MT0dYu4ZFyWGmiQyS+WkQfIM0byXtSfZPRZP589rWcrt+cmWpgfnpQfjjaUsWAadQX7YYI=
+	t=1717164283; cv=none; b=brikfm0nH3LT7A8ePvZWO5OMEGE/+tfWAtevoavFXtzMf3ovp+9F2UGUlTcl+OL2Y2W3bL1bnmNh45FkiSkpym/e7+jWQlX7OcxVhdxzq1EB6bxjaEpeRbzs9G3Uo2jRvUDap8RyRItdjgj8qK91XFpEynSCpdH/RCA97q8VZ0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717164267; c=relaxed/simple;
-	bh=9KO90g1YRgzZkliYyKsRBxOej6caKIqECjM2eDwUb/4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=G8MionbgRL8T0WXB23VrRqrf3FrhVGi8RgxEIMcdRBo94e8x168mjzT1KRwiwFV9Y8ela1iuaNKN7d7dgFQMKkBFPAWDX7GTGb/W0GwmCNGQ9NH9FGx8ZHSgh3z7dEcg2X9QhlhQXKebj+rSA484F6N5iyDLmRs2n3gfslDVLok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IxwiIj7h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C40E5C4AF0A;
-	Fri, 31 May 2024 14:04:26 +0000 (UTC)
+	s=arc-20240116; t=1717164283; c=relaxed/simple;
+	bh=b5qIPlknK8jeWDh3WleCY1vRy0w4FGugICdq2Y4YMvM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bX73YZsVLZ9z/QxvSRkdaxKfCJnhQ8lW91r75C2pgyA0ZnFmad+z3HXnhWpF9HH3MtDzd6awuO1doucnFG3Z4os9OPyYpSy0ndL0MuDGE1N0N1fgsA9w9sqY17tMsIV/8Fwf+74RocVyRw7t4ctQNXtBQh6s3k+KDkTRTx5/CNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nH1rEpv6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22FC9C116B1;
+	Fri, 31 May 2024 14:04:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717164266;
-	bh=9KO90g1YRgzZkliYyKsRBxOej6caKIqECjM2eDwUb/4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=IxwiIj7hn26OUzhc6FSZSB2kxtIGSjsAeW5Zh+sYuxLbAdJ9teU77YZjrsMwWSVvE
-	 JskgRFo3bLQo3jL51TCy84Prr9b/mNr37OCjVWeyE/3nsS5VYvXY3d7/CwHtCDilGE
-	 ZMohF3b+X9kMilUSHlqYx7SrYWz2TYGEF52Velnk0guLlGlnTKVCrPyJrlbw7ogfy0
-	 iowBCq73Sb3dFiierOsA8eHkfh3Zbrj+9Tc7JC5hZm/lDsfhEAFgxuQpC3N6jNEHlR
-	 dMocnsvFi9u+S/KfWnm+H0cg4459PTwAlaCiyLYXtUtRxAP/t2IfC1d3FnJBBo4EMJ
-	 O2tVK1YYIXzww==
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2ea80a18094so20677401fa.0;
-        Fri, 31 May 2024 07:04:26 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUYIQsQa7is1UQTQ9sgYZdlRHb1qV2FuUqONlFHemkXMHOfqZX9cyoySfnPV7Bt9WXLWms/IwsJunC9642hG42bRiazCTukrHEw0P40OoMnsxrsriHMT2GxCOrhf16RMxg0KJNAvr8s74wH3sxyP8fh1N1Mzx0XHKmNIeiM83qw6IFD0TLVqjp4VfZPOjwcHMPBPEhu4lyiD+WWMgp+MNph+y8g
-X-Gm-Message-State: AOJu0YxtLuedKMul/bgoiyXEPLtXKeQ5BXCtyRy/OekMeLuwEBOsA224
-	5aaYRon9ZzHWB9apYTy9DtDCQ76ZYxCKO1x/hKv6QeRCdUpDgOfjOzILvDOGn7OJNOVAfYLCZYV
-	sMVHoFaeLbDkHYoBsnmCR5NVquXg=
-X-Google-Smtp-Source: AGHT+IFbP7OVn0ZNiY1Sts+anVAaa8RDVDPxkSqpiu2vgxx2AvOg9j2jGAYMn0LrlB2WLJt0hsrRkPoyyNw9Qy5thuo=
-X-Received: by 2002:a2e:a7c5:0:b0:2e2:6dd9:dd8a with SMTP id
- 38308e7fff4ca-2ea84b1a993mr18049101fa.0.1717164265060; Fri, 31 May 2024
- 07:04:25 -0700 (PDT)
+	s=k20201202; t=1717164283;
+	bh=b5qIPlknK8jeWDh3WleCY1vRy0w4FGugICdq2Y4YMvM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nH1rEpv61HPwulSaOR9famkQ9Xic/cw0ly3cU/keRssOQgODRyvAQ8PV7WBD87yXU
+	 cFaFlfhSjKPQXGoNF1Zu94DAx40IXm2wtejn87Tvd+367xlR+fpKgCMu+88M2hdoLo
+	 986X5yaH4gi3KaZVPOZ+5b/zpWKOli1UvgsNSLXqEz3zZxYThmHgfhkUvDYPPHARJs
+	 PnY16UKVc9dfmQMLhvt/ZhJWQaz6gkxa3qSF1pm7lgMYaUdFvRvsDZD/LM2Teie5D6
+	 4Iu2Dwzc3/3/vJ3ju+2RoVpW02Srb29a9VzpvZ2oa/Un5KVIBm5l85gP1JGqn+LH0k
+	 2QziNQ48nuVXw==
+Date: Fri, 31 May 2024 07:04:42 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, hch@infradead.org, brauner@kernel.org,
+	david@fromorbit.com, chandanbabu@kernel.org, jack@suse.cz,
+	willy@infradead.org, yi.zhang@huawei.com, chengzhihao1@huawei.com,
+	yukuai3@huawei.com
+Subject: Re: [RFC PATCH v4 2/8] math64: add rem_u64() to just return the
+ remainder
+Message-ID: <20240531140442.GG52987@frogsfrogsfrogs>
+References: <20240529095206.2568162-1-yi.zhang@huaweicloud.com>
+ <20240529095206.2568162-3-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240531010331.134441-1-ross.philipson@oracle.com>
- <20240531010331.134441-9-ross.philipson@oracle.com> <CAMj1kXHaH6atsvwr6oVPdZuhR5YEXU33-2kYEn6xb1e=gidOCw@mail.gmail.com>
- <CAMj1kXHcYOPTLTh-hEtfHk+JaORGK+fEatTT+UOqLJww+_cNTg@mail.gmail.com>
-In-Reply-To: <CAMj1kXHcYOPTLTh-hEtfHk+JaORGK+fEatTT+UOqLJww+_cNTg@mail.gmail.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Fri, 31 May 2024 16:04:13 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXH3AwSiq8K6VZEp83uF-W6mtODqrCKROQZ6VqAsFGVBbg@mail.gmail.com>
-Message-ID: <CAMj1kXH3AwSiq8K6VZEp83uF-W6mtODqrCKROQZ6VqAsFGVBbg@mail.gmail.com>
-Subject: Re: [PATCH v9 08/19] x86: Secure Launch kernel early boot stub
-To: Ross Philipson <ross.philipson@oracle.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, 
-	linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-crypto@vger.kernel.org, kexec@lists.infradead.org, 
-	linux-efi@vger.kernel.org, iommu@lists.linux-foundation.org, 
-	dpsmith@apertussolutions.com, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, hpa@zytor.com, dave.hansen@linux.intel.com, mjg59@srcf.ucam.org, 
-	James.Bottomley@hansenpartnership.com, peterhuewe@gmx.de, jarkko@kernel.org, 
-	jgg@ziepe.ca, luto@amacapital.net, nivedita@alum.mit.edu, 
-	herbert@gondor.apana.org.au, davem@davemloft.net, corbet@lwn.net, 
-	ebiederm@xmission.com, dwmw2@infradead.org, baolu.lu@linux.intel.com, 
-	kanth.ghatraju@oracle.com, andrew.cooper3@citrix.com, 
-	trenchboot-devel@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240529095206.2568162-3-yi.zhang@huaweicloud.com>
 
-On Fri, 31 May 2024 at 15:33, Ard Biesheuvel <ardb@kernel.org> wrote:
->
-> On Fri, 31 May 2024 at 13:00, Ard Biesheuvel <ardb@kernel.org> wrote:
-> >
-> > Hello Ross,
-> >
-> > On Fri, 31 May 2024 at 03:32, Ross Philipson <ross.philipson@oracle.com> wrote:
-> > >
-> > > The Secure Launch (SL) stub provides the entry point for Intel TXT (and
-> > > later AMD SKINIT) to vector to during the late launch. The symbol
-> > > sl_stub_entry is that entry point and its offset into the kernel is
-> > > conveyed to the launching code using the MLE (Measured Launch
-> > > Environment) header in the structure named mle_header. The offset of the
-> > > MLE header is set in the kernel_info. The routine sl_stub contains the
-> > > very early late launch setup code responsible for setting up the basic
-> > > environment to allow the normal kernel startup_32 code to proceed. It is
-> > > also responsible for properly waking and handling the APs on Intel
-> > > platforms. The routine sl_main which runs after entering 64b mode is
-> > > responsible for measuring configuration and module information before
-> > > it is used like the boot params, the kernel command line, the TXT heap,
-> > > an external initramfs, etc.
-> > >
-> > > Signed-off-by: Ross Philipson <ross.philipson@oracle.com>
-> > > ---
-> > >  Documentation/arch/x86/boot.rst        |  21 +
-> > >  arch/x86/boot/compressed/Makefile      |   3 +-
-> > >  arch/x86/boot/compressed/head_64.S     |  30 +
-> > >  arch/x86/boot/compressed/kernel_info.S |  34 ++
-> > >  arch/x86/boot/compressed/sl_main.c     | 577 ++++++++++++++++++++
-> > >  arch/x86/boot/compressed/sl_stub.S     | 725 +++++++++++++++++++++++++
-> > >  arch/x86/include/asm/msr-index.h       |   5 +
-> > >  arch/x86/include/uapi/asm/bootparam.h  |   1 +
-> > >  arch/x86/kernel/asm-offsets.c          |  20 +
-> > >  9 files changed, 1415 insertions(+), 1 deletion(-)
-> > >  create mode 100644 arch/x86/boot/compressed/sl_main.c
-> > >  create mode 100644 arch/x86/boot/compressed/sl_stub.S
-> > >
-> > > diff --git a/Documentation/arch/x86/boot.rst b/Documentation/arch/x86/boot.rst
-> > > index 4fd492cb4970..295cdf9bcbdb 100644
-> > > --- a/Documentation/arch/x86/boot.rst
-> > > +++ b/Documentation/arch/x86/boot.rst
-> > > @@ -482,6 +482,14 @@ Protocol:  2.00+
-> > >             - If 1, KASLR enabled.
-> > >             - If 0, KASLR disabled.
-> > >
-> > > +  Bit 2 (kernel internal): SLAUNCH_FLAG
-> > > +
-> > > +       - Used internally by the setup kernel to communicate
-> > > +         Secure Launch status to kernel proper.
-> > > +
-> > > +           - If 1, Secure Launch enabled.
-> > > +           - If 0, Secure Launch disabled.
-> > > +
-> > >    Bit 5 (write): QUIET_FLAG
-> > >
-> > >         - If 0, print early messages.
-> > > @@ -1028,6 +1036,19 @@ Offset/size:     0x000c/4
-> > >
-> > >    This field contains maximal allowed type for setup_data and setup_indirect structs.
-> > >
-> > > +============   =================
-> > > +Field name:    mle_header_offset
-> > > +Offset/size:   0x0010/4
-> > > +============   =================
-> > > +
-> > > +  This field contains the offset to the Secure Launch Measured Launch Environment
-> > > +  (MLE) header. This offset is used to locate information needed during a secure
-> > > +  late launch using Intel TXT. If the offset is zero, the kernel does not have
-> > > +  Secure Launch capabilities. The MLE entry point is called from TXT on the BSP
-> > > +  following a success measured launch. The specific state of the processors is
-> > > +  outlined in the TXT Software Development Guide, the latest can be found here:
-> > > +  https://www.intel.com/content/dam/www/public/us/en/documents/guides/intel-txt-software-development-guide.pdf
-> > > +
-> > >
-> >
-> > Could we just repaint this field as the offset relative to the start
-> > of kernel_info rather than relative to the start of the image? That
-> > way, there is no need for patch #1, and given that the consumer of
-> > this field accesses it via kernel_info, I wouldn't expect any issues
-> > in applying this offset to obtain the actual address.
-> >
-> >
-> > >  The Image Checksum
-> > >  ==================
-> > > diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
-> > > index 9189a0e28686..9076a248d4b4 100644
-> > > --- a/arch/x86/boot/compressed/Makefile
-> > > +++ b/arch/x86/boot/compressed/Makefile
-> > > @@ -118,7 +118,8 @@ vmlinux-objs-$(CONFIG_EFI) += $(obj)/efi.o
-> > >  vmlinux-objs-$(CONFIG_EFI_MIXED) += $(obj)/efi_mixed.o
-> > >  vmlinux-objs-$(CONFIG_EFI_STUB) += $(objtree)/drivers/firmware/efi/libstub/lib.a
-> > >
-> > > -vmlinux-objs-$(CONFIG_SECURE_LAUNCH) += $(obj)/early_sha1.o $(obj)/early_sha256.o
-> > > +vmlinux-objs-$(CONFIG_SECURE_LAUNCH) += $(obj)/early_sha1.o $(obj)/early_sha256.o \
-> > > +       $(obj)/sl_main.o $(obj)/sl_stub.o
-> > >
-> > >  $(obj)/vmlinux: $(vmlinux-objs-y) FORCE
-> > >         $(call if_changed,ld)
-> > > diff --git a/arch/x86/boot/compressed/head_64.S b/arch/x86/boot/compressed/head_64.S
-> > > index 1dcb794c5479..803c9e2e6d85 100644
-> > > --- a/arch/x86/boot/compressed/head_64.S
-> > > +++ b/arch/x86/boot/compressed/head_64.S
-> > > @@ -420,6 +420,13 @@ SYM_CODE_START(startup_64)
-> > >         pushq   $0
-> > >         popfq
-> > >
-> > > +#ifdef CONFIG_SECURE_LAUNCH
-> > > +       /* Ensure the relocation region is coverd by a PMR */
-> >
-> > covered
-> >
-> > > +       movq    %rbx, %rdi
-> > > +       movl    $(_bss - startup_32), %esi
-> > > +       callq   sl_check_region
-> > > +#endif
-> > > +
-> > >  /*
-> > >   * Copy the compressed kernel to the end of our buffer
-> > >   * where decompression in place becomes safe.
-> > > @@ -462,6 +469,29 @@ SYM_FUNC_START_LOCAL_NOALIGN(.Lrelocated)
-> > >         shrq    $3, %rcx
-> > >         rep     stosq
-> > >
-> > > +#ifdef CONFIG_SECURE_LAUNCH
-> > > +       /*
-> > > +        * Have to do the final early sl stub work in 64b area.
-> > > +        *
-> > > +        * *********** NOTE ***********
-> > > +        *
-> > > +        * Several boot params get used before we get a chance to measure
-> > > +        * them in this call. This is a known issue and we currently don't
-> > > +        * have a solution. The scratch field doesn't matter. There is no
-> > > +        * obvious way to do anything about the use of kernel_alignment or
-> > > +        * init_size though these seem low risk with all the PMR and overlap
-> > > +        * checks in place.
-> > > +        */
-> > > +       movq    %r15, %rdi
-> > > +       callq   sl_main
-> > > +
-> > > +       /* Ensure the decompression location is covered by a PMR */
-> > > +       movq    %rbp, %rdi
-> > > +       movq    output_len(%rip), %rsi
-> > > +       callq   sl_check_region
-> > > +#endif
-> > > +
-> > > +       pushq   %rsi
-> >
-> > This looks like a rebase error.
-> >
-> > >         call    load_stage2_idt
-> > >
-> > >         /* Pass boot_params to initialize_identity_maps() */
-> > > diff --git a/arch/x86/boot/compressed/kernel_info.S b/arch/x86/boot/compressed/kernel_info.S
-> > > index c18f07181dd5..e199b87764e9 100644
-> > > --- a/arch/x86/boot/compressed/kernel_info.S
-> > > +++ b/arch/x86/boot/compressed/kernel_info.S
-> > > @@ -28,6 +28,40 @@ SYM_DATA_START(kernel_info)
-> > >         /* Maximal allowed type for setup_data and setup_indirect structs. */
-> > >         .long   SETUP_TYPE_MAX
-> > >
-> > > +       /* Offset to the MLE header structure */
-> > > +#if IS_ENABLED(CONFIG_SECURE_LAUNCH)
-> > > +       .long   rva(mle_header)
-> >
-> > ... so this could just be mle_header - kernel_info, and the consumer
-> > can do the math instead.
-> >
-> > > +#else
-> > > +       .long   0
-> > > +#endif
-> > > +
-> > >  kernel_info_var_len_data:
-> > >         /* Empty for time being... */
-> > >  SYM_DATA_END_LABEL(kernel_info, SYM_L_LOCAL, kernel_info_end)
-> > > +
-> > > +#if IS_ENABLED(CONFIG_SECURE_LAUNCH)
-> > > +       /*
-> > > +        * The MLE Header per the TXT Specification, section 2.1
-> > > +        * MLE capabilities, see table 4. Capabilities set:
-> > > +        * bit 0: Support for GETSEC[WAKEUP] for RLP wakeup
-> > > +        * bit 1: Support for RLP wakeup using MONITOR address
-> > > +        * bit 2: The ECX register will contain the pointer to the MLE page table
-> > > +        * bit 5: TPM 1.2 family: Details/authorities PCR usage support
-> > > +        * bit 9: Supported format of TPM 2.0 event log - TCG compliant
-> > > +        */
-> > > +SYM_DATA_START(mle_header)
-> > > +       .long   0x9082ac5a  /* UUID0 */
-> > > +       .long   0x74a7476f  /* UUID1 */
-> > > +       .long   0xa2555c0f  /* UUID2 */
-> > > +       .long   0x42b651cb  /* UUID3 */
-> > > +       .long   0x00000034  /* MLE header size */
-> > > +       .long   0x00020002  /* MLE version 2.2 */
-> > > +       .long   rva(sl_stub_entry) /* Linear entry point of MLE (virt. address) */
-> >
-> > and these should perhaps be relative to mle_header?
-> >
-> > > +       .long   0x00000000  /* First valid page of MLE */
-> > > +       .long   0x00000000  /* Offset within binary of first byte of MLE */
-> > > +       .long   rva(_edata) /* Offset within binary of last byte + 1 of MLE */
-> >
-> > and here
-> >
->
-> Ugh never mind - these are specified externally.
+On Wed, May 29, 2024 at 05:52:00PM +0800, Zhang Yi wrote:
+> From: Zhang Yi <yi.zhang@huawei.com>
+> 
+> Add a new helper rem_u64() to only get the remainder of unsigned 64bit
+> divide with 32bit divisor.
+> 
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 
-OK, so instead of patch #1, please use the linker script to generate
-these constants.
+Modulo hch's comments,
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
-I.e., add this to arch/x86/boot/compressed/vmlinux.lds.S
+--D
 
-#ifdef CONFIG_SECURE_LAUNCH
-PROVIDE(mle_header_offset       = mle_header - startup_32);
-PROVIDE(sl_stub_entry_offset    = sl_stub_entry - startup_32);
-PROVIDE(_edata_offset           = _edata - startup_32);
-#endif
-
-and use the symbols on the left hand side in the code.
+> ---
+>  include/linux/math64.h | 24 ++++++++++++++++++++++++
+>  1 file changed, 24 insertions(+)
+> 
+> diff --git a/include/linux/math64.h b/include/linux/math64.h
+> index d34def7f9a8c..618df4862091 100644
+> --- a/include/linux/math64.h
+> +++ b/include/linux/math64.h
+> @@ -3,6 +3,7 @@
+>  #define _LINUX_MATH64_H
+>  
+>  #include <linux/types.h>
+> +#include <linux/log2.h>
+>  #include <linux/math.h>
+>  #include <asm/div64.h>
+>  #include <vdso/math64.h>
+> @@ -12,6 +13,20 @@
+>  #define div64_long(x, y) div64_s64((x), (y))
+>  #define div64_ul(x, y)   div64_u64((x), (y))
+>  
+> +/**
+> + * rem_u64 - remainder of unsigned 64bit divide with 32bit divisor
+> + * @dividend: unsigned 64bit dividend
+> + * @divisor: unsigned 32bit divisor
+> + *
+> + * Return: dividend % divisor
+> + */
+> +static inline u32 rem_u64(u64 dividend, u32 divisor)
+> +{
+> +	if (is_power_of_2(divisor))
+> +		return dividend & (divisor - 1);
+> +	return dividend % divisor;
+> +}
+> +
+>  /**
+>   * div_u64_rem - unsigned 64bit divide with 32bit divisor with remainder
+>   * @dividend: unsigned 64bit dividend
+> @@ -86,6 +101,15 @@ static inline s64 div64_s64(s64 dividend, s64 divisor)
+>  #define div64_long(x, y) div_s64((x), (y))
+>  #define div64_ul(x, y)   div_u64((x), (y))
+>  
+> +#ifndef rem_u64
+> +static inline u32 rem_u64(u64 dividend, u32 divisor)
+> +{
+> +	if (is_power_of_2(divisor))
+> +		return dividend & (divisor - 1);
+> +	return do_div(dividend, divisor);
+> +}
+> +#endif
+> +
+>  #ifndef div_u64_rem
+>  static inline u64 div_u64_rem(u64 dividend, u32 divisor, u32 *remainder)
+>  {
+> -- 
+> 2.39.2
+> 
+> 
 
