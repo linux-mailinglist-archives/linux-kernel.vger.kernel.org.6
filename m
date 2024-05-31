@@ -1,123 +1,120 @@
-Return-Path: <linux-kernel+bounces-196518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B96A88D5D49
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:56:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 559258D5D4A
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:56:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAC971C21805
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 08:56:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5C12B20E4A
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 08:56:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75E8715575F;
-	Fri, 31 May 2024 08:56:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 814FD15382E;
+	Fri, 31 May 2024 08:56:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="pOc9AkPW"
-Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b="Wx7+K9I9"
+Received: from mickerik.phytec.de (mickerik.phytec.de [91.26.50.163])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 497DB43154;
-	Fri, 31 May 2024 08:56:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CCF8155CA6
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 08:56:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.26.50.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717145775; cv=none; b=SuIvGJNVZzGDdB19cnvauEKArhvqzNCZPvrD09gzGNpfKq69gkGyCUxbUftMZvbS9FW1nwNLWQVVgB8L/fEy6k/AB2qUXSLOewooNgvZ7rbCBFwefJlNF74sm0pzgeLlqRNPkqNJLKpnXbsjvrKf2aZVfnKX5MNblTJdPVdXcmw=
+	t=1717145780; cv=none; b=mGLoiyH6GvEl2asGWuo0O5pN9sHAFQEiOn68Z92fi6nTcwq3iYxzAypdyaDL510f9i0QO51Zpp/dpyl1EtB+EiwuKnnAOGJbAwo6A02yIA7peobLw+OQxY6nR4UpvVgu9Se8MHBP7Vts88VyDSzKP4T7QNt69++dJ5lfz8AXFgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717145775; c=relaxed/simple;
-	bh=uufcw6oujOLQl7VZgDVpVzPHP5RUxXfD8NilZSVUj/o=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OHqnlu2lHx3zZJqFaH5mhz+m5M5Pq0SNmSAlzsO2nkqyl1YaCp8nW6JKtCaxU5928QTSUUj/0aKnnzwVmiWZsWjrWAXs8pvtfFZVyKt5LwTmouRV2gzyh8DKBreQCzD7mR6QKzCvqfhG+QuOV/A6b0IPrdCj6q3fRAXt/7/VFQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=pOc9AkPW; arc=none smtp.client-ip=115.124.30.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1717145771; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=1MefsR+2pwQXl5/eKO2LWlo8tWSj5pqbqQVIYdsw+P0=;
-	b=pOc9AkPW6f7mEMhr3sSMtco6Sl5pPcxJ4gcq/R7uqXFAqqHlOyALQ2YASz8XIVutKkU1oCKbW933HLPW3DW7um3BcjTDlkl6Ivel3NuAEMcYI0WBdHR/l3ig9uc0qTFEZqwv7EAvTfvm+5U2eTFvtcGfarItpunPyezQS05nY2g=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R411e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033032014031;MF=jiapeng.chong@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0W7ZKHe9_1717145759;
-Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0W7ZKHe9_1717145759)
-          by smtp.aliyun-inc.com;
-          Fri, 31 May 2024 16:56:10 +0800
-From: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-To: djogorchock@gmail.com
-Cc: jikos@kernel.org,
-	bentiss@kernel.org,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
-	Abaci Robot <abaci@linux.alibaba.com>
-Subject: [PATCH] HID: nintendo: Remove some unused functions
-Date: Fri, 31 May 2024 16:55:59 +0800
-Message-Id: <20240531085559.129085-1-jiapeng.chong@linux.alibaba.com>
-X-Mailer: git-send-email 2.20.1.7.g153144c
+	s=arc-20240116; t=1717145780; c=relaxed/simple;
+	bh=jSkjoXfPxbztsavIR1Y+otMrT78U4JrWKZqw4zxCY/U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=CZmx28SiArW95TF81T/akGKV3necSPWWxlrXbtrRkCvUZp/0VkbOMZEPlS2usKmaBercGWIH/Oa9TSaH6Fs8ceD1DT//7VdaLFbdr91cPwZPWUZSO1vimQLoELwFNV2Sifd/NYjMJssPYIiV9jvthZ7uBwPg++vnTp1Z3mmELyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de; spf=pass smtp.mailfrom=phytec.de; dkim=pass (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b=Wx7+K9I9; arc=none smtp.client-ip=91.26.50.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.de
+DKIM-Signature: v=1; a=rsa-sha256; d=phytec.de; s=a4; c=relaxed/simple;
+	q=dns/txt; i=@phytec.de; t=1717145777; x=1719737777;
+	h=From:Sender:Reply-To:Subject:Date:Message-ID:To:CC:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=jSkjoXfPxbztsavIR1Y+otMrT78U4JrWKZqw4zxCY/U=;
+	b=Wx7+K9I9f5R7c91j9uFfAM5oQhAv6MrwIDkINTQUeShH874rdzLWk31ii6iqkU5y
+	ifm6JEqw7pFtcoB78JjwmkTGD5kSvozLJY8QLZTiaKWXL3JkAeltrjJnlSrLsydg
+	sQ8jKP9vAdEBGqpwJFRV0BlQnv3LC2v+vTQGRDvxHGM=;
+X-AuditID: ac14000a-03e52700000021bc-d4-665990b14a7c
+Received: from berlix.phytec.de (Unknown_Domain [172.25.0.12])
+	(using TLS with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(Client did not present a certificate)
+	by mickerik.phytec.de (PHYTEC Mail Gateway) with SMTP id B6.75.08636.1B099566; Fri, 31 May 2024 10:56:17 +0200 (CEST)
+Received: from [172.25.39.28] (172.25.0.11) by Berlix.phytec.de (172.25.0.12)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.6; Fri, 31 May
+ 2024 10:56:16 +0200
+Message-ID: <bc928849-7026-47b5-9160-908bfc6daecf@phytec.de>
+Date: Fri, 31 May 2024 10:56:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/4] Add overlays to disable optional hardware in
+ k3-am6xx-phycore-som boards
+To: Nathan Morrisson <nmorrisson@phytec.com>, <nm@ti.com>, <vigneshr@ti.com>,
+	<kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <upstream@lists.phytec.de>
+References: <20240528225137.3629698-1-nmorrisson@phytec.com>
+Content-Language: en-US
+From: Wadim Egorov <w.egorov@phytec.de>
+In-Reply-To: <20240528225137.3629698-1-nmorrisson@phytec.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: Berlix.phytec.de (172.25.0.12) To Berlix.phytec.de
+ (172.25.0.12)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprIIsWRmVeSWpSXmKPExsWyRpKBR3fjhMg0g7XNghZr9p5jsph/5Byr
+	xfLPs9ktXs66x2ax6fE1VovLu+awWbz5cZbJ4kPjZjaL/3t2sFt0v1O3+H/2A7sDt8emVZ1s
+	HpuX1Hv0d7ewevy5+I7V4/iN7UwenzfJBbBFcdmkpOZklqUW6dslcGX8XP2JrWA7V8WCXa0s
+	DYyHOLoYOTkkBEwkZnW+YgOxhQSWMEl0vwnpYuQCsu8yShxYtYwJJMErYCMx6dwbZhCbRUBV
+	4m77KRaIuKDEyZlPwGxRAXmJ+7dmsHcxcnAIC6RJXO4zApkjIrCUUeLxqh1MIA6zQBujxJOH
+	B5hBioSAhl67XArSyywgLnHryXywXWwC6hJ3NnxjBbE5BWwlPj5czQJRYyGx+M1BdghbXmL7
+	2znMEEfLS7y4tJwF4hl5iWnnXjND2KESW79sZ5rAKDwLyamzkKybhWTsLCRjFzCyrGIUys1M
+	zk4tyszWK8ioLElN1ktJ3cQIijYRBq4djH1zPA4xMnEwHmKU4GBWEuH9lR6RJsSbklhZlVqU
+	H19UmpNafIhRmoNFSZx3dUdwqpBAemJJanZqakFqEUyWiYNTqoEx1SZ75ot9TkxuKmmdLfPl
+	H/wqPG/74wvT5gd6lsftDE599no/ic2xSWS3VH8cqwP7zWoVRa5dNcbyny0rxfQNTJmFAo3u
+	8h7e0hC+/hL/0mePNh58/f7LSpeCO5eO3r7Utpqp7qrl7CsLXjNVzToZxKU067RKt5Xd/paz
+	zR8LmKVFHetuv5FSYinOSDTUYi4qTgQAESXbtaQCAAA=
 
-These functions are defined in the hid-nintendo.c file, but not
-called elsewhere, so delete these unused functions.
 
-drivers/hid/hid-nintendo.c:672:20: warning: unused function 'joycon_device_is_procon'.
-drivers/hid/hid-nintendo.c:682:20: warning: unused function 'joycon_device_is_snescon'.
-drivers/hid/hid-nintendo.c:687:20: warning: unused function 'joycon_device_is_gencon'.
-drivers/hid/hid-nintendo.c:692:20: warning: unused function 'joycon_device_is_n64con'.
 
-Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=9265
-Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
----
- drivers/hid/hid-nintendo.c | 21 ---------------------
- 1 file changed, 21 deletions(-)
+Am 29.05.24 um 00:51 schrieb Nathan Morrisson:
+> Add three overlays to disable the eth phy, rtc, and spi nor. These
+> overlays will be used to disable device tree nodes for components
+> that are optionally not populated.
+> 
+> v2:
+>    - Add build time tests in makefile
 
-diff --git a/drivers/hid/hid-nintendo.c b/drivers/hid/hid-nintendo.c
-index b4a97803eca3..be7f7e47d65f 100644
---- a/drivers/hid/hid-nintendo.c
-+++ b/drivers/hid/hid-nintendo.c
-@@ -658,7 +658,6 @@ struct joycon_ctlr {
- 	(ctlr->ctlr_type == JOYCON_CTLR_TYPE_JCR || \
- 	 ctlr->ctlr_type == JOYCON_CTLR_TYPE_PRO)
- 
--
- /*
-  * Controller device helpers
-  *
-@@ -669,31 +668,11 @@ struct joycon_ctlr {
-  * These helpers are most useful early during the HID probe or in conjunction
-  * with the capability helpers below.
-  */
--static inline bool joycon_device_is_procon(struct joycon_ctlr *ctlr)
--{
--	return ctlr->hdev->product == USB_DEVICE_ID_NINTENDO_PROCON;
--}
--
- static inline bool joycon_device_is_chrggrip(struct joycon_ctlr *ctlr)
- {
- 	return ctlr->hdev->product == USB_DEVICE_ID_NINTENDO_CHRGGRIP;
- }
- 
--static inline bool joycon_device_is_snescon(struct joycon_ctlr *ctlr)
--{
--	return ctlr->hdev->product == USB_DEVICE_ID_NINTENDO_SNESCON;
--}
--
--static inline bool joycon_device_is_gencon(struct joycon_ctlr *ctlr)
--{
--	return ctlr->hdev->product == USB_DEVICE_ID_NINTENDO_GENCON;
--}
--
--static inline bool joycon_device_is_n64con(struct joycon_ctlr *ctlr)
--{
--	return ctlr->hdev->product == USB_DEVICE_ID_NINTENDO_N64CON;
--}
--
- /*
-  * Controller type helpers
-  *
--- 
-2.20.1.7.g153144c
+For the whole series,
 
+Reviewed-by: Wadim Egorov <w.egorov@phytec.de>
+
+> 
+> Nathan Morrisson (4):
+>    arm64: dts: ti: k3-am64-phycore-som: Add serial_flash label
+>    arm64: dts: ti: k3-am6xx-phycore-som: Add overlay to disable eth phy
+>    arm64: dts: ti: k3-am6xx-phycore-som: Add overlay to disable rtc
+>    arm64: dts: ti: k3-am6xx-phycore-som: Add overlay to disabl spi nor
+> 
+>   arch/arm64/boot/dts/ti/Makefile               | 17 +++++++++++++++++
+>   .../boot/dts/ti/k3-am64-phycore-som.dtsi      |  2 +-
+>   .../ti/k3-am6xx-phycore-disable-eth-phy.dtso  | 19 +++++++++++++++++++
+>   .../dts/ti/k3-am6xx-phycore-disable-rtc.dtso  | 15 +++++++++++++++
+>   .../ti/k3-am6xx-phycore-disable-spi-nor.dtso  | 15 +++++++++++++++
+>   5 files changed, 67 insertions(+), 1 deletion(-)
+>   create mode 100644 arch/arm64/boot/dts/ti/k3-am6xx-phycore-disable-eth-phy.dtso
+>   create mode 100644 arch/arm64/boot/dts/ti/k3-am6xx-phycore-disable-rtc.dtso
+>   create mode 100644 arch/arm64/boot/dts/ti/k3-am6xx-phycore-disable-spi-nor.dtso
+> 
 
