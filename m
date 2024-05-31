@@ -1,87 +1,153 @@
-Return-Path: <linux-kernel+bounces-196891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0906F8D6323
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 15:36:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E11D78D6328
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 15:37:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6034BB24923
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 13:36:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA9E91C23A31
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 13:37:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1EF0158DA6;
-	Fri, 31 May 2024 13:36:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E391B159214;
+	Fri, 31 May 2024 13:36:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TSV3yx26"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hAvRLJD4"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1160E33CF1;
-	Fri, 31 May 2024 13:36:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9737158D9F
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 13:36:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717162589; cv=none; b=dk6tiDzEsd1hEJYcFMJuAISRyQpMutFrKcAmYTi9xZXGicQUYUzkkr7+zC7wq8WBhek6nm4t2DsSINVddS0wqjga8Ui7aqgfXjVGNTz81F9q/U7xwc1aK2Q/YvL+CmuIC6wR3vO3GJROHi//FNdrzeAvcl53pYU6TPh63rCcDKM=
+	t=1717162611; cv=none; b=a8xXvVKWyoKes4jagYz7kwgaEPsJNxmuY1qGNVCzhnYlhA1jW6yDsBO6ubCOX4tq5SFxjb/6DYUWw/gBBFqkqL1ru/an5Gcp9Lf1Hl1tvj/omblI08XmlqcnJsslQ0snWIDbybHkJyR9MaVH4BqEJ9nkBFkCkCIu/DjVVCgbEvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717162589; c=relaxed/simple;
-	bh=gf/hTHqh4wQYWgTtV+wMyboPa6r7AQpsapL7cucv+5w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h3DbZWFfV3yc5ZfgRoCZ08PCVySiS2AzyaLoW3H3uzqznaIOmN9bJeR0UJ9VQWuv56Z/BLNVoRDdZg5PblVEQMam9o4dmsNWHzvLitAskt5dd4cjUf9qpo8PW5g5vIHZbfTTPxcawzhLjDDokBjDsUb7M2nwrQUdXd6XcibMeHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TSV3yx26; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B068AC116B1;
-	Fri, 31 May 2024 13:36:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717162588;
-	bh=gf/hTHqh4wQYWgTtV+wMyboPa6r7AQpsapL7cucv+5w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TSV3yx26VoTRDb1Ue+c89VBR25aAMil7OSdarzxp8uu1olMLR1wx2wFiZJM0tLXA5
-	 1HoVYWU9dojMkKmYPkJzGGxfob6MmzXSm7i7knNnnY95qUJGUml1e3eXpxWNgW4C+g
-	 dpad2LIQvx6GDeFXByU/zlpzeUEkok/Sxq5EsS4z3W6NyKFEckq3BwkmEUQbVSMXir
-	 W60D540GfSzalwjnd+RBKuCoOVztS1Ds6w5mci0Ky/lvn2W1MAebJ86wbPzUmHWFA8
-	 DHvWmBdI4Fv+5HfmwwUEF2ntl9MMKiLG5cjrski+Ep2oo6x0CI3gAAxvTuOxqUolC7
-	 F8UXDeoXsjFCg==
-Date: Fri, 31 May 2024 14:36:24 +0100
-From: Lee Jones <lee@kernel.org>
-To: Richard Genoud <richard.genoud@bootlin.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Udit Kumar <u-kumar1@ti.com>,
-	Thomas Richard <thomas.richard@bootlin.com>,
-	Gregory CLEMENT <gregory.clement@bootlin.com>,
-	Esteban Blanc <eblanc@baylibre.com>, linux-rtc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/1] rtc: tps6594: Add power management support
-Message-ID: <20240531133624.GJ1005600@google.com>
-References: <20240515152827.80185-1-richard.genoud@bootlin.com>
- <20240515152827.80185-2-richard.genoud@bootlin.com>
+	s=arc-20240116; t=1717162611; c=relaxed/simple;
+	bh=fHZWsCZgLehsBmHUlJSI0XG6+oxgaHq5c/G9th2fkKA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=p0ys/slujG58H7+/J2oLkaf2kzAP8tGg0wEQRxNrRR8FriHaRKBvj5cq2JneiqyqBEgGzokUHEhMG1olc4YwhlWTWZujcbOxjC9R6Z4AN8akdxt5zSTRcQSMK4r3/JQOdzkFwpf2Vna7tLjpXrbeiARARy4Y+Sdc2KfolNxMdww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hAvRLJD4; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717162608;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xiMkkJB35GmuPxh7rMmIJANRZ/YYuyNN0vLhNarAFs4=;
+	b=hAvRLJD4Z8aUAMYU/o9YSpblpLjWo1sT4/TAQIrkZHwKoFhFwDD2AhL7g/57JRark6QEcR
+	pWPD9taMYnXGyO4S+sV0ZEIN8R66JqjGkxDkwKodmX7Mc85wB1Ue1cVvkrIbsh3VlXC9fz
+	wFzNhfoHxKJAXzwIOBdPxxnA/xiG5s0=
+Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
+ [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-530-BV7u3-QFP9-7Npzdef5oHA-1; Fri, 31 May 2024 09:36:47 -0400
+X-MC-Unique: BV7u3-QFP9-7Npzdef5oHA-1
+Received: by mail-lf1-f69.google.com with SMTP id 2adb3069b0e04-52b8b680f16so494862e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 06:36:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717162605; x=1717767405;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xiMkkJB35GmuPxh7rMmIJANRZ/YYuyNN0vLhNarAFs4=;
+        b=wRM+vp5a9/tbX6pQQwiypOAKPmAyzQ3i+GpGmA1uqh2KqHMyx29lrZrFeiPsLKPuFP
+         t18cuPViSeB0ME+cXOMyw2ZB0CVMLFXoMaxbOk/cRQfBlura84GcOZA0SoFshSuK2MTo
+         qpIowvMfvuQUVSeSI3mgeT6uCKelnxQX8XVslJpOsm9lkXZ4aybY/KI1LuUtQhCSHtAT
+         afSuTrjR2LBpAKXX201iMyEvHfEm2tpDW0hGeOw1OPUurVRm6lUHIdECWtXPxTUqSq59
+         brgi054CTdeKDBd9ceNvkEgbcgYF9/yIcBLSlUw8tFi2evdBF1KZFzuIhYYaZ2zvG9Jr
+         ZPuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWHbhKO1BiGoKWHKroYrneszFgpldGPoxF427/HabP7jVizUJJFox6D86pu2svH0OvbVVWN/EdQ1Dl05idA2761CIAcLNxhWEVq9rqJ
+X-Gm-Message-State: AOJu0YzhZR5gwnf5X/oJpjK+dXo3kjeZBbgl3T5VQW6i0K/J7rbiULML
+	IrTmsDF2yd4MayAKxE0Qu5ZjUdvQaYd/bcRYcUoBNFJ71LHKMgEO4MBKHrbMho+DcuOEpJnXWDM
+	Ij4cdxAm1kn+ydUNyf2xOaJDNEAd4iaHAJJc5SMv730dEPKrOqQwLVIC4olwpCg==
+X-Received: by 2002:a05:6512:4ce:b0:52b:7a5f:817f with SMTP id 2adb3069b0e04-52b8956b5bemr1133054e87.19.1717162605716;
+        Fri, 31 May 2024 06:36:45 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEro17MUNy0FfJuJni5QfWCgWFnnZ+g2Nai9cZuxNwB9y0ZSsPWHEN4eW5raMCs3pl5xLc2dg==
+X-Received: by 2002:a05:6512:4ce:b0:52b:7a5f:817f with SMTP id 2adb3069b0e04-52b8956b5bemr1133036e87.19.1717162605234;
+        Fri, 31 May 2024 06:36:45 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57a31c6d4b6sm1005484a12.74.2024.05.31.06.36.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 31 May 2024 06:36:44 -0700 (PDT)
+Message-ID: <d8341ffe-c0d9-4a37-869a-956cc1425f74@redhat.com>
+Date: Fri, 31 May 2024 15:36:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240515152827.80185-2-richard.genoud@bootlin.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: Hung tasks due to a AB-BA deadlock between the leds_list_lock
+ rwsem and the rtnl mutex
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Linux regressions mailing list <regressions@lists.linux.dev>,
+ Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
+ Linux LEDs <linux-leds@vger.kernel.org>,
+ Heiner Kallweit <hkallweit1@gmail.com>, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, johanneswueller@gmail.com,
+ "Russell King (Oracle)" <linux@armlinux.org.uk>,
+ Genes Lists <lists@sapience.com>
+References: <9d189ec329cfe68ed68699f314e191a10d4b5eda.camel@sapience.com>
+ <15a0bbd24cd01bd0b60b7047958a2e3ab556ea6f.camel@sapience.com>
+ <ZliHhebSGQYZ/0S0@shell.armlinux.org.uk>
+ <42d498fc-c95b-4441-b81a-aee4237d1c0d@leemhuis.info>
+ <618601d8-f82a-402f-bf7f-831671d3d83f@redhat.com>
+ <01fc2e30-eafe-495c-a62d-402903fd3e2a@lunn.ch>
+ <2a6045e2-031a-46b6-9943-eaae21d85e37@redhat.com>
+ <e6800715-6bc0-49a0-bd00-5a75b852ea9d@lunn.ch>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <e6800715-6bc0-49a0-bd00-5a75b852ea9d@lunn.ch>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, 15 May 2024, Richard Genoud wrote:
+Hi,
 
-> Add power management support to the driver. This allows a SoC to wake
-> from suspend using the nINT provided by the RTC.
-> It takes care of the case when the interrupt has not been caught because
-> the kernel has not yet woke up.
-> (This is the case when only edges interrupt are caught)
+On 5/31/24 3:29 PM, Andrew Lunn wrote:
+>>> drivers/net/ethernet/realtek/r8169_leds.c:	led_cdev->hw_control_trigger = "netdev";
+>>> drivers/net/ethernet/realtek/r8169_leds.c:	led_cdev->hw_control_trigger = "netdev";
+>>> drivers/net/ethernet/intel/igc/igc_leds.c:	led_cdev->hw_control_trigger = "netdev";
+>>> drivers/net/dsa/qca/qca8k-leds.c:		port_led->cdev.hw_control_trigger = "netdev";
+>>> drivers/net/phy/phy_device.c:		cdev->hw_control_trigger = "netdev";
+>>
+>> Well those drivers combined, esp. with the generic phy_device in there
+>> does mean that the ledtrig-netdev module now gets loaded on a whole lot
+>> of x86 machines where before it would not.
 > 
-> Signed-off-by: Richard Genoud <richard.genoud@bootlin.com>
-> ---
->  drivers/rtc/rtc-tps6594.c   | 46 +++++++++++++++++++++++++++++++++++++
->  include/linux/mfd/tps6594.h |  1 +
+> phy_device will only do something if there is the needed Device Tree
+> properties. Given that very few systems use DT on x86, that should not
+> be an issue.
 
-Acked-by: Lee Jones <lee@kernel.org>
+That is good to know.
 
->  2 files changed, 47 insertions(+)
+> So only x86 systems with r8169 and igc should have the
+> trigger module loaded because of this.
 
--- 
-Lee Jones [李琼斯]
+Those are very popular NICs though, so that is still a lot of
+systems.
+
+> It would be good to understand
+> why other systems have the trigger loaded.
+
+Actually my system has a RTL8168 ethernet NIC so the netdev trigger
+getting loaded there is expected.
+
+> However, as you say, this
+> will not fix the underlying deadlock, it will just limit it to systems with r8169
+> and igc...
+
+Right, given on the above discussion I believe that it likely already
+is limited to systems with Realtek r8169 or Intel i225 / i226 NICs.
+
+Regards,
+
+Hans
+
+
+
 
