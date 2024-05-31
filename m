@@ -1,188 +1,147 @@
-Return-Path: <linux-kernel+bounces-196873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 577548D62D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 15:20:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82B728D62D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 15:21:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3665B2806D
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 13:20:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12FA92818C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 13:21:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DF7D76026;
-	Fri, 31 May 2024 13:20:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFEB3158A2D;
+	Fri, 31 May 2024 13:20:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="MRL+4Y7r"
-Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
+	dkim=pass (1024-bit key) header.d=exactco.de header.i=@exactco.de header.b="n2F1nR1t"
+Received: from mx.exactcode.de (mx.exactcode.de [144.76.154.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B156F158D62
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 13:20:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E70976026;
+	Fri, 31 May 2024 13:20:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.154.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717161611; cv=none; b=lmzGCeCGFg0OqWAS2fFr2BBnNGbexPw8NNuBEcidY4yKuEd+NllwEp6UzuXsH7vLzvY/AQgPn/Nf+5NiGZvEzsPDYF/6tqvrldVWRNNWFPkCkbABpvIHYYiZded5mNpm7OBKLGXjHnlSg80yCU5cQJPxCGVNdee29DzcoFjXs+Y=
+	t=1717161654; cv=none; b=BvS3lOInMMGAUDxmrLW5SIERm3QtoH+TIhhxHmdpkbh57cSGGYbBEhRTSPdujI7+UmDoLyzq41PfdGAFksKvTrHtml7lLjDOIhSLTOTnqvv7MMpydjx9uvPb43KwZSfNvF191epeo2tad9rv0x1sDOWcJM2RcGYdlZ+/BY2tKLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717161611; c=relaxed/simple;
-	bh=+23NoZdbP3sDWrl/C4DDAWtc0doCEz8lA1bAx4ziuI4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=D1Hu8BagSMF8Ouc4kojt4wFJ0b1nom4VXF70llp1GtILzdZFWnHiasyP1yrM79HXqdK9iwyEYHxMgKht/c5OveR2HRqJHf4C2vBMfZyUMnd65mhGQP8sAEn+pxpXwLQAL14xS6p7+L4pteRnB/bbnyk2vHu2PoUQNpUXBau20nc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=MRL+4Y7r; arc=none smtp.client-ip=95.215.58.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: j-choudhary@ti.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1717161607;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kW7p+495kaagcNi9JTec3IGLF/Kn4TrnUM2RlI0AJJw=;
-	b=MRL+4Y7rXpq2+L//0TuE1nQaHxgRnVB1gOvWXiVZLdwlPT3yYinVNnndOllqygfGa/WBSf
-	xKxpv2I3JJ987ULBZNWp5r3sO8x3TBfLIv2lKb0vnRWMYuINVTwIrYnngl0Wzu+cBzobfO
-	edbO6ZDp3MwJqBBSu66ufFRJQg1s+BY=
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: dmitry.baryshkov@linaro.org
-X-Envelope-To: andrzej.hajda@intel.com
-X-Envelope-To: neil.armstrong@linaro.org
-X-Envelope-To: rfoss@kernel.org
-X-Envelope-To: laurent.pinchart@ideasonboard.com
-X-Envelope-To: mripard@kernel.org
-X-Envelope-To: sam@ravnborg.org
-X-Envelope-To: jonas@kwiboo.se
-X-Envelope-To: jernej.skrabec@gmail.com
-X-Envelope-To: maarten.lankhorst@linux.intel.com
-X-Envelope-To: tzimmermann@suse.de
-X-Envelope-To: airlied@gmail.com
-X-Envelope-To: daniel@ffwll.ch
-X-Envelope-To: a-bhatia1@ti.com
-X-Envelope-To: dri-devel@lists.freedesktop.org
-Message-ID: <e5ce13e6-1007-41c9-bedc-2045d6f75480@linux.dev>
-Date: Fri, 31 May 2024 21:20:00 +0800
+	s=arc-20240116; t=1717161654; c=relaxed/simple;
+	bh=dKmNE0E7ZviqScpi94wGgebczcb90IUx8m5/5bHX5Ws=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=n/ewiA6d8Sl2LwBIsH6d7R1ykE7maIqFGldBTrpgCpMA1X53NVNnM4VpMxjDxw9O8Tt7CtDmF6N1w1dseeSRFkDs4VrMu0lUFeP+826oK/RUtekC8k3zOvm6tOcvHIUCsesieD5ojB4OQtfJq/NvGJCVZFFrKB+QTPOL1eaWBzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=exactcode.de; spf=pass smtp.mailfrom=exactcode.de; dkim=pass (1024-bit key) header.d=exactco.de header.i=@exactco.de header.b=n2F1nR1t; arc=none smtp.client-ip=144.76.154.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=exactcode.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=exactcode.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=exactco.de; s=x;
+	h=To:References:Message-Id:Content-Transfer-Encoding:Cc:Date:In-Reply-To:From:Subject:Mime-Version:Content-Type; bh=Q6kQeXhhImb9rMJUOuoy86swbcuC/f501yBqI5RiV3g=;
+	b=n2F1nR1tSZ7c0W/+3REcThrguG+vW9GcMusMwpnJIc4qxkdYqA9heaS6Kb54r0LfqBo4tmcbO9aSHWf8oiyTz/91xlzh4JVgeKxsJXh88g6De3M1cU2wz5qaLvPaI4nC9TDFt0iS1aXFzMl98BqNg5iBLtP3nyvGvjKBzsx27Cw=;
+Received: from exactco.de ([90.187.5.221])
+	by mx.exactcode.de with esmtp (Exim 4.82)
+	(envelope-from <rene@exactcode.de>)
+	id 1sD2C8-00007J-Pt; Fri, 31 May 2024 13:21:20 +0000
+Received: from [192.168.2.131] (helo=smtpclient.apple)
+	by exactco.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+	(Exim 4.86_2)
+	(envelope-from <rene@exactcode.de>)
+	id 1sD2Ek-0005ig-1p; Fri, 31 May 2024 13:24:02 +0000
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Subject: Re: [v4,1/2] drm/bridge: sii902x: Fix mode_valid hook
-To: Jayesh Choudhary <j-choudhary@ti.com>, linux-kernel@vger.kernel.org,
- dmitry.baryshkov@linaro.org, andrzej.hajda@intel.com,
- neil.armstrong@linaro.org, rfoss@kernel.org,
- Laurent.pinchart@ideasonboard.com, mripard@kernel.org, sam@ravnborg.org
-Cc: jonas@kwiboo.se, jernej.skrabec@gmail.com,
- maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, airlied@gmail.com,
- daniel@ffwll.ch, a-bhatia1@ti.com, dri-devel@lists.freedesktop.org
-References: <20240530092930.434026-2-j-choudhary@ti.com>
-Content-Language: en-US, en-AU
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sui Jingfeng <sui.jingfeng@linux.dev>
-In-Reply-To: <20240530092930.434026-2-j-choudhary@ti.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.300.61.1.2\))
+Subject: Re: [PATCH 2/3] hwmon: Add support for SPD5118 compliant temperature
+ sensors
+From: =?utf-8?Q?Ren=C3=A9_Rebe?= <rene@exactcode.de>
+In-Reply-To: <ea135424-841c-4a5a-b881-a3295d87b64a@roeck-us.net>
+Date: Fri, 31 May 2024 15:20:38 +0200
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ =?utf-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@t-8ch.de>,
+ linux-hwmon@vger.kernel.org,
+ Hristo Venev <hristo@venev.name>,
+ Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Radu Sabau <radu.sabau@analog.com>,
+ Paul Menzel <pmenzel@molgen.mpg.de>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <151934EE-F826-4655-BEF1-2199B1AAAD5C@exactcode.de>
+References: <20240529205204.81208-1-linux@roeck-us.net>
+ <20240529205204.81208-3-linux@roeck-us.net>
+ <34a4292e-c4db-4b40-822e-b892e1444045@t-8ch.de>
+ <16e448f1-cfc9-4e88-b3f1-55e1856d1405@roeck-us.net>
+ <0a2ed64d-06d9-45e8-a054-4ded4429f952@t-8ch.de>
+ <ffd72953-ecd2-405a-ad6d-236143b26946@roeck-us.net>
+ <20240531093154.rna2vwbfx7csu2sj@ninjato>
+ <BA0B79E0-6582-45EA-8EA9-35E278B8CC42@exactcode.de>
+ <ea135424-841c-4a5a-b881-a3295d87b64a@roeck-us.net>
+To: Guenter Roeck <linux@roeck-us.net>
+X-Mailer: Apple Mail (2.3774.300.61.1.2)
+X-Spam-Score: -0.5 (/)
 
 Hi,
 
+> On May 31, 2024, at 15:14, Guenter Roeck <linux@roeck-us.net> wrote:
+>=20
+> Hi Ren=C3=A9,
+>=20
+> On 5/31/24 03:01, Ren=C3=A9 Rebe wrote:
+>> Hi,
+>> On May 31, 2024, at 11:31, Wolfram Sang =
+<wsa+renesas@sang-engineering.com> wrote:
+>>>=20
+>>> Hi all,
+>>>=20
+>>>>> Wolfgang seems to think it's important:
+>>>=20
+>>> Wolfram, please.
+>>>=20
+>>>>> =
+https://lore.kernel.org/lkml/tdia472d4pow2osabef24y2ujkkquplfajxmmtk5pnxll=
+sdxsz@wxzynz7llasr/
+>>>>>=20
+>>>>=20
+>>>> Ok, but that doesn't explain the reason. Wolfram, Paul, why do you
+>>>> think this is needed ? Note that I am not opposed to adding spd
+>>>> eeprom support, but I'd like to know why I am doing it before
+>>>> I spend time on it.
+>>>=20
+>>> A working eeprom driver is needed to get 'decode-dimms' from the
+>>> i2c-tools package working. Jean reported that EEPROM access for DDR5 =
+is
+>>> different from DDR4, so it needs a separate driver. And
+>>> i2c_register_spd() then needs to be updated to use the new driver =
+for
+>>> DDR5.
+>> Well my original downstream driver already had eeprom access:
+>> https://svn.exactcode.de/t2/trunk/package/kernel/linux/spd-5118.patch
+>=20
+> Yes, but you didn't send it upstream, so I took it, fixed a couple of =
+bugs,
 
-On 5/30/24 17:29, Jayesh Choudhary wrote:
-> Currently, mode_valid hook returns all mode as valid and it is
-> defined only in drm_connector_helper_funcs. With the introduction of
-> 'DRM_BRIDGE_ATTACH_NO_CONNECTOR', connector is not initialized in
-> bridge_attach call for cases when the encoder has this flag enabled.
-> So move the mode_valid hook to drm_bridge_funcs with proper clock
-> checks for maximum and minimum pixel clock supported by the bridge.
-> 
-> Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
+And I appreciate that!
 
+> dropped eeprom support since that is secondary for my use case as well =
+as the
 
-Acked-by: Sui Jingfeng <sui.jingfeng@linux.dev>
+I only said the original code had this implemented if someone wants to =
+re-add it
+to save them some time not having to re-write it from scratch ;-)
 
+> out-of-tree parity code, and submitted it. I'd be more than happy to =
+let you
+> take over if you like.
 
-> ---
->   drivers/gpu/drm/bridge/sii902x.c | 32 +++++++++++++++++++++++---------
->   1 file changed, 23 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/bridge/sii902x.c b/drivers/gpu/drm/bridge/sii902x.c
-> index 2fbeda9025bf..6a6055a4ccf9 100644
-> --- a/drivers/gpu/drm/bridge/sii902x.c
-> +++ b/drivers/gpu/drm/bridge/sii902x.c
-> @@ -163,6 +163,14 @@
->   
->   #define SII902X_AUDIO_PORT_INDEX		3
->   
-> +/*
-> + * The maximum resolution supported by the HDMI bridge is 1080p@60Hz
-> + * and 1920x1200 requiring a pixel clock of 165MHz and the minimum
-> + * resolution supported is 480p@60Hz requiring a pixel clock of 25MHz
-> + */
-> +#define SII902X_MIN_PIXEL_CLOCK_KHZ		25000
-> +#define SII902X_MAX_PIXEL_CLOCK_KHZ		165000
-> +
+I=E2=80=99m mostly out of time, so I appreciate you starting the =
+upstream process.
 
-This bridge can drive 2560x1080@75Hz monitor(LG 34BL650), the pixel
-clock can up to 181250 kHz. I remember that I have tested the native
-mode with LS2K1000 SoC, and it do works in practice. And there are
-also has 320x240 panels, maybe it's also usuable with this HDMI
-transmitter
+Thank you so much,
+	Ren=C3=A9
 
-Well, the datasheet mentioned that it supports up to 165 MHz
-dual-edge and single-edge modes. So I'm not against your patch,
-just mention it to let you know.
+--=20
+ExactCODE GmbH, Lietzenburger Str. 42, DE-10789 Berlin
+http://exactcode.com | http://exactscan.com | http://ocrkit.com
 
-
->   struct sii902x {
->   	struct i2c_client *i2c;
->   	struct regmap *regmap;
-> @@ -310,17 +318,8 @@ static int sii902x_get_modes(struct drm_connector *connector)
->   	return num;
->   }
->   
-> -static enum drm_mode_status sii902x_mode_valid(struct drm_connector *connector,
-> -					       struct drm_display_mode *mode)
-> -{
-> -	/* TODO: check mode */
-> -
-> -	return MODE_OK;
-> -}
-> -
->   static const struct drm_connector_helper_funcs sii902x_connector_helper_funcs = {
->   	.get_modes = sii902x_get_modes,
-> -	.mode_valid = sii902x_mode_valid,
->   };
->   
->   static void sii902x_bridge_disable(struct drm_bridge *bridge)
-> @@ -504,6 +503,20 @@ static int sii902x_bridge_atomic_check(struct drm_bridge *bridge,
->   	return 0;
->   }
->   
-> +static enum drm_mode_status
-> +sii902x_bridge_mode_valid(struct drm_bridge *bridge,
-> +			  const struct drm_display_info *info,
-> +			  const struct drm_display_mode *mode)
-> +{
-> +	if (mode->clock < SII902X_MIN_PIXEL_CLOCK_KHZ)
-> +		return MODE_CLOCK_LOW;
-> +
-> +	if (mode->clock > SII902X_MAX_PIXEL_CLOCK_KHZ)
-> +		return MODE_CLOCK_HIGH;
-> +
-> +	return MODE_OK;
-> +}
-> +
->   static const struct drm_bridge_funcs sii902x_bridge_funcs = {
->   	.attach = sii902x_bridge_attach,
->   	.mode_set = sii902x_bridge_mode_set,
-> @@ -516,6 +529,7 @@ static const struct drm_bridge_funcs sii902x_bridge_funcs = {
->   	.atomic_destroy_state = drm_atomic_helper_bridge_destroy_state,
->   	.atomic_get_input_bus_fmts = sii902x_bridge_atomic_get_input_bus_fmts,
->   	.atomic_check = sii902x_bridge_atomic_check,
-> +	.mode_valid = sii902x_bridge_mode_valid,
->   };
->   
->   static int sii902x_mute(struct sii902x *sii902x, bool mute)
-
--- 
-Best regards
-Sui
 
