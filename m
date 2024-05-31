@@ -1,122 +1,184 @@
-Return-Path: <linux-kernel+bounces-198015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42E4B8D7208
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 23:59:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2959E8D7292
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 00:49:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABF0C1F217B1
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 21:59:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 918831F21B29
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 22:49:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6878C20B0F;
-	Sat,  1 Jun 2024 21:59:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6316D2E414;
+	Sat,  1 Jun 2024 22:49:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=philpotter-co-uk.20230601.gappssmtp.com header.i=@philpotter-co-uk.20230601.gappssmtp.com header.b="yOsDUIe1"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="IAoiJYPj"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [167.172.40.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBEDA1DDD1
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Jun 2024 21:59:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82628224CC
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Jun 2024 22:49:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.172.40.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717279175; cv=none; b=YsnAJ7S/LoUx8f0jJuHTQtL3VWPEldRXCR6WCLZxdEVCBQOFZMgcJPFYr+Rn76y8XCv+IJW/PUZl9FCbPbySZ0eN8e99k2nkIVocJ+vfLs1p5yHdul3xvlVQGqJCveG3PuOelcsEhNMhYVyRRJofcqn9ViF9ykGTfQWW2Cwg3Co=
+	t=1717282181; cv=none; b=YbCSzXutJ849g9UYwzj2SZ0chsjHCQ5pSlRavGd0SOAtk1u+VWsfOEUZhvSeejxnUb12wnz3aBz+9DSLpQ9SGRQ6xssHfYKbWFOXpZsJwudOWM7OFMuU03cm/A7WL5F0AG7byPxqFBuB2Jn105Ac+T9oXWSwm8CvKGH0doj65Ds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717279175; c=relaxed/simple;
-	bh=PcYw8B0OwC576QVkyVNdU/zXFIKFiVP1GIPmCPuMW1k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zzkrcab6PA7v9rrtNy1ulpw3KovMojR0nJZxnUbP1ULQRB57Fzag0alB6w7WI0UWHMwX2wSYqWHYErotMPkKyaAYHc1NKrUtM9GLo6gbpo4rSrnlRPNoALCx3KTKl2YvL8NW0lNGGEaz+1JUi3IrCmuAlDzSvF87ZHW5UQLF3iA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=philpotter.co.uk; spf=pass smtp.mailfrom=philpotter.co.uk; dkim=pass (2048-bit key) header.d=philpotter-co-uk.20230601.gappssmtp.com header.i=@philpotter-co-uk.20230601.gappssmtp.com header.b=yOsDUIe1; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=philpotter.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=philpotter.co.uk
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4212f0444efso13189845e9.1
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Jun 2024 14:59:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=philpotter-co-uk.20230601.gappssmtp.com; s=20230601; t=1717279172; x=1717883972; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=sTOsbAZo8vNm0CKh7Mt5V21qlJPe4ljx7b2MR8QJYT0=;
-        b=yOsDUIe1Iv8XcIMWamR0N2hA3FtND21E3YUmg2Tr4LfFQNcZ2wsaibO7mvmWC8s88p
-         UW2z8Z1b9wggwW/mjfiFDhxIqVryoiRYzJef0bfCCA3d8BLNJxXJnvXG2XgThHBU8maB
-         +W8OoAGRf2Smk/QetTA/RNr8FzspvVYgHrPKmqS4Qr83Jlz4m7s6dvho4Rmo8D76V7da
-         shNiMQdNAo+em3B1mGh8M8LxtFW80LFI/l3taqgnS+JnFrfnd7fdmhrkXfB8e46E7uq6
-         cUVCD5UgMrL649kGsbHV7N0VQPyHYgEh8Yj6vxWL61Pk+kEelHQAeVClXTJARozh/I/g
-         H0Cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717279172; x=1717883972;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sTOsbAZo8vNm0CKh7Mt5V21qlJPe4ljx7b2MR8QJYT0=;
-        b=IirDpsMu+V6/Jt8K1xS5HejakcbQEB9OppjCIlES3o9oZNrlYP8t0Xb9RUl9Ox3UUU
-         X6YZTF20+IZIcnXqNpRYVwO45S5FaevsdLtvyD+CshnE7bxzTEdQ5XdhmDATFpYHE/Ky
-         cJ8adUZVVWDPeZ2muJdQqcH8DDxx2EkwEdMlb4yhaU4YHGk6gaDlQqmLEjIaEGc7HX+7
-         6X7BamxNLweBaYgo8tVpqGLoSA3xBb4bxmGZ5i5iy48IvOSSO9JiNJAmygVMLQodzK8x
-         rRxsrqxUE8lH1rYt1utymavg8Ek7SzP0eOSo8o8n4s6/0nQtc2w2Z5KMqUYiS62qXRjD
-         TPyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUKZ777NLTdi0NJSY+FR1LwaFj1vsMOHXO1lBRD9uECFbz5cZ6+HcBLq/nK8rJ/JKKwielztltbDNyLqUUq1ho+s4HMfYrG2v7Dnolk
-X-Gm-Message-State: AOJu0YyMk+6LwLrFuIyg3nEF3T+BMq/WfcCSrVf95jBVUgeF0Q+tTXAE
-	HJSu40y6KAuSMziG0KdUVRGEoepV/f90sO8B0/BK9xzApUOhbNt9a/97Tq2kpV8=
-X-Google-Smtp-Source: AGHT+IEA7wwDn+BdfBi/5KDwizeC8T0MeZncA4PG97jlcNb4dxq2IwYiWK6daHMf25J7vxM6Wc3kCg==
-X-Received: by 2002:a5d:4a0b:0:b0:355:3cf:49b1 with SMTP id ffacd0b85a97d-35e0f271884mr3457651f8f.19.1717279172011;
-        Sat, 01 Jun 2024 14:59:32 -0700 (PDT)
-Received: from KernelVM (3.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.6.1.f.d.0.b.8.0.1.0.0.2.ip6.arpa. [2001:8b0:df16::3])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35dd04c9d26sm4750470f8f.25.2024.06.01.14.59.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 01 Jun 2024 14:59:31 -0700 (PDT)
-Date: Sat, 1 Jun 2024 22:59:29 +0100
-From: Phillip Potter <phil@philpotter.co.uk>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Phillip Potter <phil@philpotter.co.uk>, Jens Axboe <axboe@kernel.dk>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	Jeff Johnson <quic_jjohnson@quicinc.com>
-Subject: Re: [PATCH] cdrom: Add missing MODULE_DESCRIPTION()
-Message-ID: <ZluYQbvrJkRlhnJC@KernelVM>
-References: <20240530-cdrom-v1-1-51579c5c240a@quicinc.com>
+	s=arc-20240116; t=1717282181; c=relaxed/simple;
+	bh=Jkb8Hqv95DRnRm/NxgOPNaIghiPJOHpb1eOciF3qDFY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=epzv7nRyMdAlcvgxJu7z7vFVodREnlri6m6fQ0Jdxq6Pk7NTsrNsSF3hZPuPj5nPDjm126W4x9rYOtlXEwNWpwVKpdcdMnvaE7e2Woqs050aQTwoqeINwCodBc2SJlriXV5Htl0YeQ9k0e81QIrS9YaMpc7izeRbVQRdXCywp/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=IAoiJYPj; arc=none smtp.client-ip=167.172.40.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1717282140;
+ bh=/k1PnOZIBQq7/TC/41KnYN6gtYkoZOfq1Q0coM4QxJ4=;
+ b=IAoiJYPjI70b9FQJs5+yPAOaADoe2lOr7mk54a47iJK6LaeVzR2nJkjDq6UjqUQQBh16oLSWp
+ OmRJwWHT34EDXPILh1QGR5YjCTwOMH01HciscOIbH3tC6FLs/j5k9D7n3pLWGwoFcbUJQaq5oN7
+ VpL5ScVekby+AqKHPUXblKBpcs29IyoO7bkofK8WRfKZt+bUarmEqrnIRSwLEwL6o51DdjatHKw
+ 9ngdlaRlPFkozI4PqSd2Qy0ugLtd9NlQaHrFsDcOglTKQRqwcJqUYb8/AYRtV+FGGT3hxn3Bu+X
+ rm3KRfIibp1Lrn9kcPqcE1genx0e0W02xye8Dlsl8BnQ==
+Message-ID: <e4e0c2a4-0d63-434f-ba52-6aaf571e30a5@kwiboo.se>
+Date: Sat, 1 Jun 2024 01:32:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240530-cdrom-v1-1-51579c5c240a@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] arm64: dts: rockchip: Make preparations for
+ per-RK3588-variant OPPs
+To: Alexey Charkov <alchark@gmail.com>
+Cc: Dragan Simic <dsimic@manjaro.org>, linux-rockchip@lists.infradead.org,
+ heiko@sntech.de, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, robh+dt@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, linux-kernel@vger.kernel.org,
+ quentin.schulz@cherry.de, wens@kernel.org, daniel.lezcano@linaro.org,
+ didi.debian@cknow.org, krzysztof.kozlowski+dt@linaro.org,
+ viresh.kumar@linaro.org
+References: <673dcf47596e7bc8ba065034e339bb1bbf9cdcb0.1716948159.git.dsimic@manjaro.org>
+ <CABjd4YxD41DEkBCZfkznLboEY9ZVOfTCLcj4S_kkcsVswbANyQ@mail.gmail.com>
+ <8f8623e29a479c4108141302e708dc3b@manjaro.org>
+ <CABjd4Yy4RMg+6-4ygV0MSwJj5LReY-ymbctq4PPfVZ6L+c1tsw@mail.gmail.com>
+ <166cc4e46f31644a50306625b2ab18a6@manjaro.org>
+ <CABjd4YzDNQa45=KC_t0xnTDrH+g-oUrcpgP55oOj7JcAuu7uFw@mail.gmail.com>
+ <82db817a908b761d8c3d73ea04714314@manjaro.org>
+ <607f4da8-99b2-4379-9567-4bfd2744eab3@kwiboo.se>
+ <CABjd4YxdM+cM+z7ou3=DF2SrFM0235DSTZ45o0NsKBwGrgW8Bg@mail.gmail.com>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <CABjd4YxdM+cM+z7ou3=DF2SrFM0235DSTZ45o0NsKBwGrgW8Bg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Report-Abuse-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-ForwardEmail-Version: 0.4.40
+X-ForwardEmail-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 167.172.40.54
+X-ForwardEmail-ID: 665a5e1290b1ee9784da9536
 
-On Thu, May 30, 2024 at 08:23:34PM -0700, Jeff Johnson wrote:
-> make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cdrom/cdrom.o
-> 
-> Add the missing MODULE_DESCRIPTION() macro invocation.
-> 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> ---
->  drivers/cdrom/cdrom.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/cdrom/cdrom.c b/drivers/cdrom/cdrom.c
-> index 20c90ebb3a3f..b6ee9ae36653 100644
-> --- a/drivers/cdrom/cdrom.c
-> +++ b/drivers/cdrom/cdrom.c
-> @@ -3708,4 +3708,5 @@ static void __exit cdrom_exit(void)
->  
->  module_init(cdrom_init);
->  module_exit(cdrom_exit);
-> +MODULE_DESCRIPTION("Uniform CD-ROM driver for Linux");
->  MODULE_LICENSE("GPL");
-> 
-> ---
-> base-commit: 4a4be1ad3a6efea16c56615f31117590fd881358
-> change-id: 20240530-cdrom-543cdcf21da4
-> 
+Hi Alexey,
 
-Hi Jeff,
+On 2024-05-31 13:44, Alexey Charkov wrote:
+> Hi Jonas,
+> 
+> On Fri, May 31, 2024 at 3:27 PM Jonas Karlman <jonas@kwiboo.se> wrote:
+>>
+>> Hi Alexey and Dragan,
+>>
+>> On 2024-05-30 21:31, Dragan Simic wrote:
+>>> Hello Alexey,
+>>>
+>>
+>> [snip]
+>>
+>>>>>>> That way we'll have no roadblocks if, at some point, we end up with
+>>>>>>> having
+>>>>>>> different OPPs defined for the RK3588 and the RK3588S variants.  Or
+>>>>>>> maybe
+>>>>>>> even for the RK3582, which we don't know much about yet.
+>>>>>>
+>>>>>> Guess we'll deal with that one once we stumble upon an actual RK3582
+>>>>>> board out in the wild and heading to the mainline kernel tree :)
+>>>>>
+>>>>> Of course, that was just an example for the future use.
+>>>>
+>>>> In fact, I've just discovered that Radxa has recently released Rock 5C
+>>>> Lite which is based on RK3582, and starts at just $29 for the 1GB
+>>>> version, making it interesting for tinkering. Especially given that
+>>>> its GPU, one of the big-core clusters and one of the VPU cores seem to
+>>>> be disabled in software (u-boot) rather than in hardware, which means
+>>>> there is some chance that a particular SoC specimen would actually
+>>>> have them in a working condition and possible to re-enable at no cost.
+>>>> Ordered myself one to investigate :)
+>>>
+>>> Yes, I also saw the RK3582-based ROCK 5C Lite a couple of days ago. :)
+>>> It seems that the disabled IP blocks are detected as defective during
+>>> the manufacturing, which means that they might work correctly, or might
+>>> actually misbehave.  It seems similar to the way old three-core AMD
+>>> Phenom II CPUs could sometimes be made quad-core.
+>>>
+>>
+>> I can confirm that the RK3582 include ip-state in OTP indicating
+>> unusable cores, any unusable cpu core cannot be taken online and stalls
+>> Linux kernel a few extra seconds during boot.
+>>
+>> Started working on a patch for U-Boot to remove any broken cpu core
+>> and/or cluster nodes, similar to what vendor U-Boot does, adopted to
+>> work with a mainline DT for RK3588.
+> 
+> Superb - it's great to have a patch for it already, thank you for working on it!
+> 
+>> On one of my ROCK 5C Lite board one of the cpu cores is unusable, U-Boot
+>> removes the related cpu cluster nodes. On another ROCK 5C Lite board one
+>> rkvdec core is only marked unusable and all cpu cores can be taken
+>> online, U-Boot does nothing in this case. Guessing we should apply
+>> similar policy as vendor U-Boot and disable cores anyway.
+> 
+> Is there any misbehavior / instability if you just keep all the
+> unmarked cores online?
 
-Thank you for the patch, looks good to me. I will send on for inclusion.
+I will run some tests during the weekend and get back with results later.
 
-Reviewed-by: Phillip Potter <phil@philpotter.co.uk>
+> 
+> I think from an end-user perspective it would be better to just enable
+> everything that works, as the reason to unconditionally disable some
+> IP blocks even when they are "good" is quite likely not a technical
+> one but rather a marketing one. It's hard to justify selling chips
+> with different sets of working IP blocks under the same label and the
+> same price, making it easier to just trim them all to a lowest common
+> denominator. On the other hand, once a person has already bought a
+> device where some IP blocks work even if they are not supposed to, why
+> not make use of them? It costs nothing, hurts noone...
+
+I agree, it is probably more related to marketing, licensing and/or
+what is tested.
+
+Vendor U-Boot apply following logic/policy for rk3582 (and rk3583).
+
+RK3582 policy:
+- always remove gpu
+- always remove both rkvdec cores
+- remove bad rkvenc core, if both are normal, remove rkvenc1 anyway
+
+RK3583 policy:
+- always keep gpu
+- remove bad rkvdec core, if both are normal, remove rkvdec1 anyway
+- remove bad rkvenc core, if both are normal, remove rkvenc1 anyway
+
+CPU core policy:
+- remove both cores within a cluster having a bad core
+- if core4~7 are all normal, remove core6 and core7 anyway
 
 Regards,
-Phil
+Jonas
+
+> 
+> Best regards,
+> Alexey
+
 
