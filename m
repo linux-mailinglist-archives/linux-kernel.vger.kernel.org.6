@@ -1,155 +1,241 @@
-Return-Path: <linux-kernel+bounces-196832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A8E18D6254
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 15:04:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54C7E8D6256
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 15:04:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9DBC1C229F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 13:04:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9AF41F25B32
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 13:04:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 969CE158852;
-	Fri, 31 May 2024 13:04:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DE3A15886E;
+	Fri, 31 May 2024 13:04:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="So3CyOX6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MA9yA1vH"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB6D5381AD
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 13:04:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BF7C1586F6
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 13:04:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717160667; cv=none; b=m39ifyWhxDhaOFgn3SCPeisvItnhl7Ameu/jfbHmQhX4OEqhU0/+g8jpbc/OeElZtCRKoq3uu5+Ee6BQ4mmEv367nmYDhfvwDVmeIQ5zSMeLVW30rwE9g1exrCyhwYeZNWKvs4uJgVk2FLUet4Yct240PuNLCkvOnn69xbdEsxc=
+	t=1717160677; cv=none; b=oVir+sbUaigW0gp77ViPth8RPciZY+YQXvcmgkKkTNqmJQDjGLWgQDEBRP/YDTitK91rkcUZqyMlas81AlqGU3RMmbsB0x0qQkdwtp4xMHASJAEUWanBqGr5HURNZatYAhaXRLI7m0GgDJqDA9bwLhZcYZRob//uoq6GPfQvoXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717160667; c=relaxed/simple;
-	bh=LNKu49pBwLUdjwHEeEVOwY8XyUhmJM4N5e1r0Vn3N1k=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=m5Eeoyy2FDb9JoJRRny+aoCcThj2mW5Oo74d6uXKNWPLfne2QuLZg5LIrONBJ7GLw5hTQOIyR07LyUhH6bxKuPC9TmhdZltu6FhyOttf70nAYuUODRHi4N0oNddtnD09L1rBnTsscF6xn/LgM6uyzTEaQjiqvWTzAiMiWXvhzrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=So3CyOX6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AECFC116B1;
-	Fri, 31 May 2024 13:04:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717160667;
-	bh=LNKu49pBwLUdjwHEeEVOwY8XyUhmJM4N5e1r0Vn3N1k=;
-	h=Date:From:To:Cc:Subject:From;
-	b=So3CyOX60GOdoCxGf3NvV8/qNtVRcJ7o0EaJfip/xyGgqA+HXyUu7RW2W77Enlw5j
-	 Mib1yqQzsIhPfCsUgF7i2Lhu9KOhtSqvnJci9c1iSgI+//BHfcBGQ0T/J2TEGh2k6m
-	 6WsjjtrfZ5SSrT9wOn4hSVOnYQmohDf7ANUnD9NljdBMMU9RCX+QaXQZdS0jC9NbLN
-	 O4ZZ/0OUd79oNfOGtlfhKcKfml4bLFHDyf5Soc7louLjbbzEhNPJ380SL+WdaCbGv0
-	 6TqlhKW6kWa8FmrXioHPcwKfV3dBrGiUoIQwNZuaXtO2pYLR+VXwQbE3LZLNsM8R7M
-	 9O4R8QtsSLcmA==
-Date: Fri, 31 May 2024 10:04:24 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: Adrian Hunter <adrian.hunter@intel.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	Namhyung Kim <namhyung@kernel.org>
-Subject: [PATCH 1/1 fyi] tools headers uapi: Sync linux/stat.h with the
- kernel sources to pick STATX_SUBVOL
-Message-ID: <ZlnK2Fmx_gahzwZI@x1>
+	s=arc-20240116; t=1717160677; c=relaxed/simple;
+	bh=39cWfu7iONUhwloM6DxnKDqOVZkPB+y6Ou1kBTZ3Ghc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dRx5lbym/JrHFBodkiOoMjmyMvVsgW2foLys3aezA3qW9gMV/9yFXxlfurjz10tvHgKaJaT+lH7+wC8fI4EJAKJ1GdCH6r3DXyk2AG4L8+COnQR7gnYL2aYDJ1J8pCvFMsd1FmGevWv1hifeJtOVuFz+8MmqpltHPhPcvTS0dG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MA9yA1vH; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717160675;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=31tAMzYWbLSmIpJDc+a9K6kwIp/gyego2JxLxPGlZ3g=;
+	b=MA9yA1vHYbg9bpzaRrfGzP9SLsaaos8IYoheV35Y078CI0UfMY9X2tn0rTVwMOlBQC9am1
+	V2+YpYrolBia6THLnW4zmdrl/NmHGl+C7W9OqncePesgnros7qCTqlrXQ3a57X7pYLvxHY
+	aQIKzEw3vj6z92TQJ2EoVW92PUjZ7p0=
+Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
+ [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-650-xcGjQchVPiWctyKrlofldA-1; Fri, 31 May 2024 09:04:32 -0400
+X-MC-Unique: xcGjQchVPiWctyKrlofldA-1
+Received: by mail-lj1-f198.google.com with SMTP id 38308e7fff4ca-2ea402284c1so7904551fa.3
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 06:04:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717160671; x=1717765471;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=31tAMzYWbLSmIpJDc+a9K6kwIp/gyego2JxLxPGlZ3g=;
+        b=dPDM7LZAWDqV/DXBYd9Ig0GL2+attwG3MNQ7p9usjB2LRbDfqlv7t8LmFXdUVe55EQ
+         xzixmGTtUC3HeFRbGUUvsJxr0uOq1+NeO6qXJjk/0fTTcKlZEqznEDiI8qnjNto67uMj
+         wiEgxunGZIesh51GnhsJMY9q2ywJ2bC6cvFSCqKQGWm/fBn0arE1jvFG5OPWpZawBQd0
+         FarF6cnM0XMKfO15MSx0tllpl01a/KhYS1flLppdGO2E3ILYiPNDqGrcs5imfAdXWq3p
+         vg/h7p3PWELHBAbyBeZVvp6TzDgfBnWg6+jyY2dBnZspsoxIdTvgQZJJIfLFUsTnSuCk
+         I12Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUHUHjVYit7YhNP+FYFGBULgBpGGUtVVaDFgdq3MwURmckpWOXK1t7OZvO0DQTflIWV07fhyrsKjXBH1FAdKUfBnjgTabgQxHTQAcxi
+X-Gm-Message-State: AOJu0Yysx30d9lmK/QbamYZG6KDZEMaqnLd5QkfFKPVXtyMYZArIgGPw
+	GzTvoAecZ80hTZwnD27igsnqPdxzhpgqHd2tcMW7DO7IS/tnwqJ8Kwz0ISYPbUdrnVembF+5sVR
+	SyoOXN7p7Zwajnt30144y20ab0fLGPZKAyOT6wXyt/QQIecvmqKsAhUkgQiBiIQ==
+X-Received: by 2002:a05:651c:1059:b0:2ea:8462:5927 with SMTP id 38308e7fff4ca-2ea950e5aebmr13136121fa.15.1717160671370;
+        Fri, 31 May 2024 06:04:31 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFXMKer5rU3TK9RvBOPWgQ2+Tr/qZmu51IvGwtWH45MdNVV7Vb6lPA1P6AkGTbCsyIjo3LtzA==
+X-Received: by 2002:a05:651c:1059:b0:2ea:8462:5927 with SMTP id 38308e7fff4ca-2ea950e5aebmr13135821fa.15.1717160670794;
+        Fri, 31 May 2024 06:04:30 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c717:a000:d4df:4b8f:37d4:59e4? (p200300cbc717a000d4df4b8f37d459e4.dip0.t-ipconnect.de. [2003:cb:c717:a000:d4df:4b8f:37d4:59e4])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-421270ad598sm54990385e9.41.2024.05.31.06.04.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 31 May 2024 06:04:30 -0700 (PDT)
+Message-ID: <fe37643c-93a0-4220-b547-a5cae36b3231@redhat.com>
+Date: Fri, 31 May 2024 15:04:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] mm/hugetlb: mm/memory_hotplug: use a folio in
+ scan_movable_pages()
+To: Sidhartha Kumar <sidhartha.kumar@oracle.com>,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Cc: akpm@linux-foundation.org, vishal.moola@oracle.com,
+ muchun.song@linux.dev, osalvador@suse.de, willy@infradead.org
+References: <20240530171427.242018-1-sidhartha.kumar@oracle.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20240530171427.242018-1-sidhartha.kumar@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-tldr; Just FYI, I'm carrying this on the perf tools tree.
+On 30.05.24 19:14, Sidhartha Kumar wrote:
+> By using a folio in scan_movable_pages() we convert the last user of the
+> page-based hugetlb information macro functions to the folio version.
+> After this conversion, we can safely remove the page-based definitions
+> from include/linux/hugetlb.h.
+> 
+> Signed-off-by: Sidhartha Kumar <sidhartha.kumar@oracle.com>
+> ---
+> 
+> v1 -> v2:
+> 	simplify pfn skipping logic with pfn |= folio_nr_pages(folio) - 1
+> 	per Matthew
+> 
+>   include/linux/hugetlb.h |  6 +-----
+>   mm/memory_hotplug.c     | 11 +++++------
+>   2 files changed, 6 insertions(+), 11 deletions(-)
+> 
+> diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+> index 15a58f69782c..279aca379b95 100644
+> --- a/include/linux/hugetlb.h
+> +++ b/include/linux/hugetlb.h
+> @@ -616,9 +616,7 @@ static __always_inline						\
+>   bool folio_test_hugetlb_##flname(struct folio *folio)		\
+>   	{	void *private = &folio->private;		\
+>   		return test_bit(HPG_##flname, private);		\
+> -	}							\
+> -static inline int HPage##uname(struct page *page)		\
+> -	{ return test_bit(HPG_##flname, &(page->private)); }
+> +	}
+>   
+>   #define SETHPAGEFLAG(uname, flname)				\
+>   static __always_inline						\
+> @@ -637,8 +635,6 @@ void folio_clear_hugetlb_##flname(struct folio *folio)		\
+>   #define TESTHPAGEFLAG(uname, flname)				\
+>   static inline bool						\
+>   folio_test_hugetlb_##flname(struct folio *folio)		\
+> -	{ return 0; }						\
+> -static inline int HPage##uname(struct page *page)		\
+>   	{ return 0; }
+>   
+>   #define SETHPAGEFLAG(uname, flname)				\
+> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+> index 431b1f6753c0..9c36eb3bbd3b 100644
+> --- a/mm/memory_hotplug.c
+> +++ b/mm/memory_hotplug.c
+> @@ -1731,8 +1731,8 @@ static int scan_movable_pages(unsigned long start, unsigned long end,
+>   	unsigned long pfn;
+>   
+>   	for (pfn = start; pfn < end; pfn++) {
+> -		struct page *page, *head;
+> -		unsigned long skip;
+> +		struct page *page;
+> +		struct folio *folio;
+>   
+>   		if (!pfn_valid(pfn))
+>   			continue;
+> @@ -1753,7 +1753,7 @@ static int scan_movable_pages(unsigned long start, unsigned long end,
+>   
+>   		if (!PageHuge(page))
+>   			continue;
+> -		head = compound_head(page);
+> +		folio = page_folio(page);
+>   		/*
+>   		 * This test is racy as we hold no reference or lock.  The
+>   		 * hugetlb page could have been free'ed and head is no longer
+> @@ -1761,10 +1761,9 @@ static int scan_movable_pages(unsigned long start, unsigned long end,
+>   		 * cases false positives and negatives are possible.  Calling
+>   		 * code must deal with these scenarios.
+>   		 */
+> -		if (HPageMigratable(head))
+> +		if (folio_test_hugetlb_migratable(folio))
+>   			goto found;
+> -		skip = compound_nr(head) - (pfn - page_to_pfn(head));
+> -		pfn += skip - 1;
+> +		pfn |= folio_nr_pages(folio) - 1;
 
-Full explanation:
+Likely not exactly what we want?
 
-There used to be no copies, with tools/ code using kernel headers
-directly. From time to time tools/perf/ broke due to legitimate kernel
-hacking. At some point Linus complained about such direct usage. Then we
-adopted the current model.
+pfn |= folio_nr_pages(folio);
 
-The way these headers are used in perf are not restricted to just
-including them to compile something.
+Would make sure that we are "one PFN before the start of the next 
+folio". The pfn++ before the next loop iteration would move us to the 
+next folio.
 
-There are sometimes used in scripts that convert defines into string
-tables, etc, so some change may break one of these scripts, or new MSRs
-may use some different #define pattern, etc.
+Or am I missing something?
 
-E.g.:
+It might be cleaner if we would handle the "pfn++;" on the "continue;" 
+paths inmstead, and simply here do something like
 
-  $ ls -1 tools/perf/trace/beauty/*.sh | head -5
-  tools/perf/trace/beauty/arch_errno_names.sh
-  tools/perf/trace/beauty/drm_ioctl.sh
-  tools/perf/trace/beauty/fadvise.sh
-  tools/perf/trace/beauty/fsconfig.sh
-  tools/perf/trace/beauty/fsmount.sh
-  $
-  $ tools/perf/trace/beauty/fadvise.sh
-  static const char *fadvise_advices[] = {
-        [0] = "NORMAL",
-        [1] = "RANDOM",
-        [2] = "SEQUENTIAL",
-        [3] = "WILLNEED",
-        [4] = "DONTNEED",
-        [5] = "NOREUSE",
-  };
-  $
+	pfn = ALIGN(pfn + 1, folio_nr_pages(folio));
 
-The tools/perf/check-headers.sh script, part of the tools/ build
-process, points out changes in the original files.
+instead.
 
-So its important not to touch the copies in tools/ when doing changes in
-the original kernel headers, that will be done later, when
-check-headers.sh inform about the change to the perf tools hackers.
-
-To pick the changes from:
-
-  2a82bb02941fb53d ("statx: stx_subvol")
-
-This silences this perf build warning:
-
-  Warning: Kernel ABI header differences:
-    diff -u tools/include/uapi/linux/stat.h include/uapi/linux/stat.h
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Ian Rogers <irogers@google.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lore.kernel.org/lkml/
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/include/uapi/linux/stat.h | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/tools/include/uapi/linux/stat.h b/tools/include/uapi/linux/stat.h
-index 2f2ee82d55175d05..67626d53531664d0 100644
---- a/tools/include/uapi/linux/stat.h
-+++ b/tools/include/uapi/linux/stat.h
-@@ -126,8 +126,9 @@ struct statx {
- 	__u64	stx_mnt_id;
- 	__u32	stx_dio_mem_align;	/* Memory buffer alignment for direct I/O */
- 	__u32	stx_dio_offset_align;	/* File offset alignment for direct I/O */
-+	__u64	stx_subvol;	/* Subvolume identifier */
- 	/* 0xa0 */
--	__u64	__spare3[12];	/* Spare space for future expansion */
-+	__u64	__spare3[11];	/* Spare space for future expansion */
- 	/* 0x100 */
- };
- 
-@@ -155,6 +156,7 @@ struct statx {
- #define STATX_MNT_ID		0x00001000U	/* Got stx_mnt_id */
- #define STATX_DIOALIGN		0x00002000U	/* Want/got direct I/O alignment info */
- #define STATX_MNT_ID_UNIQUE	0x00004000U	/* Want/got extended stx_mount_id */
-+#define STATX_SUBVOL		0x00008000U	/* Want/got stx_subvol */
- 
- #define STATX__RESERVED		0x80000000U	/* Reserved for future struct statx expansion */
- 
 -- 
-2.45.1
+Cheers,
+
+David / dhildenb
 
 
