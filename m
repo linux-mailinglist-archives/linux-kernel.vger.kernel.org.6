@@ -1,127 +1,159 @@
-Return-Path: <linux-kernel+bounces-197502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 954658D6B7D
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 23:22:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3CD48D6B9F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 23:34:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AD412860E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 21:22:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BE2C1F28104
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 21:34:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C93317CF1F;
-	Fri, 31 May 2024 21:20:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E8E54AEF0;
+	Fri, 31 May 2024 21:34:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="hTaeYk6A"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="tEJLx/Cj"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2DA51CAA6;
-	Fri, 31 May 2024 21:20:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB24378C90
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 21:34:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717190435; cv=none; b=jpXiJoyhh7KWAraqY0EPunPSsZxdOCABoiQWiSEFSlHBkj1PnL1BAmNOh25x4bdzQukjELlgfQTLr6re38/KdW7R+XmT7VOPjzwhwa3JQu8p0vTtBSBzvjeCZQuQesbKMoPnc1nHWQxP5QJoIa4KHC8kmQEORtBNeiSk1cEbkKA=
+	t=1717191272; cv=none; b=Wmh/tRcZEfBfEn5ZGyB9Or4EaIBuo3VV9AHQYZOlNM18Z8ayMUmZCjap/KR97Vu4+/92Z6Sn/shx44xcmEeK4Hrwh7mNSXfAIqFSSrplESDe52rErXREMRmvDi174UEfmbS/Vjwjw6OOAlIe9+e6D8R6DKbmxy2L26IACnBMKoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717190435; c=relaxed/simple;
-	bh=DYSIAFngwhG4d9k8FbXoD1jdg/3v/GIty7zsCQvOhJg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WihFjczqZe7tat1KXG3PD6vWxjWLhOHVunXMLNiR+7G3ca6Yom4wPjFihxq6HbpbsBN+KJf7X1W1LygXX1JNE+h7sHDnsnwedY5wv/u6uAH2MqBrh8yNcfVLKqFVwTfPJQsbVGLhOMn4NSyMc+JbJS1QwfksgsGqKOmiV5br878=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=hTaeYk6A; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 9CFE740E02B7;
-	Fri, 31 May 2024 21:20:30 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id zIDDVK4B_qjv; Fri, 31 May 2024 21:20:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1717190427; bh=tHY1hcVxCcJ3Qq0c+H5bGa1+YZfmU+M7Xl3/p2DIUBs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hTaeYk6AyvfPvE+7dWAnYrlEJpabckfPR2IFRUV7MWXhQXzwWmyAPipyIn25WQGrq
-	 YfN1dgS7k0tNp9oqolrTAkIyJSPfWGDoT/I0mm0/3AX5+lsc05oqU1ibyyBcpMRSG2
-	 9aOFeqnQa26loXt9nUtnn5SX7PWv/jTo2/YElkJEp9w+WcSVp+cTQ82YqEnkcG0yFG
-	 vuhkTUS75NAMqlEblf+T4gdVe2tireUE0+vbbKDDE64XbmGIR6JaLf4wYr+HgC64Rk
-	 lcmAOEDt/crzdzN0LuRlyxHTwmQi1KY0zqs4KILdyB9OfSwaLA8ZCNPJRib7t0Zxyw
-	 dXtPYsImuWS459i3/C/jP8YzwNV6XcIe9XJXP7QM2kR+Rr4CCgE06PIEI1LuXCLuBC
-	 uCRxzBLqlRarTZcrJOuoXEVITqovObIQlSXSsQAMkmCcQuu6/qJgKyFDolMl22MKY+
-	 JQWKuL1eFgCzFN3vQ579cif293o8oS13m4/jCnIoTlEY4oTQniYgZQoJs2poOmMKf5
-	 8J8QzruBWhvWYXsGb6ddk0NRoYVA8EWKb1vMkp0pUq4S6+cvL/HooJKJWE0wu0bf5t
-	 qHZ0mzjMlfxecPI28JYIM6TgovEczZNBcf72B4tBl8IzcBH3TsvnM2hcfzuzsgJDjk
-	 XpMHsJLTw75g1rwcrN2ur5MA=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 038DA40E02B2;
-	Fri, 31 May 2024 21:20:15 +0000 (UTC)
-Date: Fri, 31 May 2024 23:20:09 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Kees Cook <kees@kernel.org>
-Cc: Jeff Johnson <quic_jjohnson@quicinc.com>,
-	Nikolay Borisov <nik.borisov@suse.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] x86/boot: add prototype for __fortify_panic()
-Message-ID: <20240531212009.GOZlo_CV0lxZ1xviQW@fat_crate.local>
-References: <20240529-fortify_panic-v1-1-9923d5c77657@quicinc.com>
- <0d3f7c58-7fc0-4e8b-b6fb-c4d0d9969ce7@suse.com>
- <e42c4984-d4a2-45b1-b93d-7471000766b7@quicinc.com>
- <5658B525-6642-43A2-B14C-BC4AA916FBCC@alien8.de>
- <202405310951.56D9BD5C41@keescook>
- <20240531190816.GLZlogIGgpc5maOeLN@fat_crate.local>
- <202405311345.D91BF6E9@keescook>
- <20240531204947.GNZlo367G0YXVbOk1I@fat_crate.local>
- <202405311359.EFC7345EC@keescook>
+	s=arc-20240116; t=1717191272; c=relaxed/simple;
+	bh=Y7uG4pwdtEkmmnK3J+jlUy6sLyQYuEF3zOYH+EVSXTg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=aYjegEHVWG1auym9d4ePEs/RzoOcLxj2gKMAH6LpPEAOxZBqnCJxgD3QbtK/YnDZZnQSvG4V94HFd2lvPwI/fmNXGe07Esmf3glu8xaSCdsL7CkzWyMEgSJXvXCB73/MQD1QOGrrMe/FadfQ2PGTDivQCwDiIsLM/xfnbuCLKCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=tEJLx/Cj; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240531213428epoutp018b72f473e56b41d259342f5a3ae7613c~UsFw5p5X32372223722epoutp01f
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 21:34:28 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240531213428epoutp018b72f473e56b41d259342f5a3ae7613c~UsFw5p5X32372223722epoutp01f
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1717191268;
+	bh=4UCeOpS2gxGOtZ2m/Twam0+uQamLCIEw8CzQlgjVKts=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=tEJLx/CjtPh421bp7xcbwpwM7KBoD7UMjHnCmGlBKTPAHdND/DX6oNqHG9VbpWIH1
+	 sLYWV/X46c4FlCc7RitzOFEx0stlIAlv/va61Vr9VcNgfRMz0ZYLbxAYBJ6YAP9+qe
+	 RaBSqWsMwv0c544vQt+oVXw4FjC+NYLPQjdln5Ik=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas2p4.samsung.com (KnoxPortal) with ESMTP id
+	20240531213426epcas2p45e00bc21be45a7c255f109d8351b3f61~UsFvzXVGn2198821988epcas2p4D;
+	Fri, 31 May 2024 21:34:26 +0000 (GMT)
+Received: from epsmgec2p1-new.samsung.com (unknown [182.195.36.90]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4Vrbwy128pz4x9Pp; Fri, 31 May
+	2024 21:34:26 +0000 (GMT)
+Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
+	epsmgec2p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	8E.63.18956.1624A566; Sat,  1 Jun 2024 06:34:26 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240531213424epcas2p16d7360e12d310c9f299d449e66af07b3~UsFt8gW2M0661106611epcas2p1m;
+	Fri, 31 May 2024 21:34:24 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240531213424epsmtrp12e4929d5edf65f4217a98411789c6df0~UsFt7wCIA0490304903epsmtrp1h;
+	Fri, 31 May 2024 21:34:24 +0000 (GMT)
+X-AuditID: b6c32a4d-247ff70000004a0c-d6-665a4261e3ca
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	67.F6.07412.0624A566; Sat,  1 Jun 2024 06:34:24 +0900 (KST)
+Received: from localhost.dsn.sec.samsung.com (unknown [10.229.54.230]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240531213424epsmtip2add19db3793fafde8f2204283eb68324~UsFtucPsp1505315053epsmtip2s;
+	Fri, 31 May 2024 21:34:24 +0000 (GMT)
+From: Minwoo Im <minwoo.im@samsung.com>
+To: "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
+	"Martin K . Petersen" <martin.petersen@oracle.com>, Bart Van Assche
+	<bvanassche@acm.org>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman
+	<avri.altman@wdc.com>, Minwoo Im <minwoo.im@samsung.com>,
+	gost.dev@samsung.com, linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Jeuk Kim <jeuk20.kim@samsung.com>
+Subject: [PATCH v2 0/2] ufs: pci: Add support UFSHCI 4.0 MCQ
+Date: Sat,  1 Jun 2024 06:22:42 +0900
+Message-Id: <20240531212244.1593535-1-minwoo.im@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <202405311359.EFC7345EC@keescook>
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprCJsWRmVeSWpSXmKPExsWy7bCmmW6SU1SaQcdeZosH87axWbz8eZXN
+	YtqHn8wWNw/sZLLY2M9hcX/rNUaLy7vmsFl0X9/BZrH8+D8mi2enDzA7cHlcvuLtMW3SKTaP
+	j09vsXj0bVnF6PF5k5xH+4FupgC2qGybjNTElNQihdS85PyUzLx0WyXv4HjneFMzA0NdQ0sL
+	cyWFvMTcVFslF58AXbfMHKDDlBTKEnNKgUIBicXFSvp2NkX5pSWpChn5xSW2SqkFKTkF5gV6
+	xYm5xaV56Xp5qSVWhgYGRqZAhQnZGW1bFzIVvOasWL/8KHsD4xf2LkZODgkBE4mrl3YwdzFy
+	cQgJ7GGUWHN/GSOE84lRYsWy9awQzjdGiSvtJ9hgWrpXvIaq2ssoce5UP9gsIYHfjBJXt3OB
+	2GwC6hINU1+xgNgiAosZJeau5gNpYBZ4wSjxbeE8JpCEsICNxJS226wgNouAqsTn581gcV6g
+	+IeF06G2yUvsP3iWGSIuKHFy5hOwocxA8eats8EOlxB4yy6x7NxSqAYXiWlPzrNC2MISr45v
+	gfpUSuJlfxuUXS7x880kRgi7QuLgrNtAvRxAtr3EtecpICazgKbE+l36EFFliSO3oLbySXQc
+	/ssOEeaV6GgTgpihLPHx0CFmCFtSYvml11C3eEi0nu1ngoROrMTZRx1MExjlZyH5ZRaSX2Yh
+	7F3AyLyKUSq1oDg3PTXZqMBQNy+1HB6vyfm5mxjByVPLdwfj6/V/9Q4xMnEwHmKU4GBWEuH9
+	lR6RJsSbklhZlVqUH19UmpNafIjRFBjCE5mlRJPzgek7ryTe0MTSwMTMzNDcyNTAXEmc917r
+	3BQhgfTEktTs1NSC1CKYPiYOTqkGpgQTm8ovk7V+fMu3t1JdXNM1ZfPN4qJ9XPv3BBrvUXrv
+	Jf9+on2Ss07ptqufqlvPdZwuqWKe1eDi+Xan9pm8BQxHHLIef5D/UjfB/dfsqS+kc83/Frza
+	+Ij1cpnik5t/j3+u3hrwSb9Q6ZWadoj87i2nfHjPrm0u4eBgXCBquvj6ZZHsW5I6nWs4e423
+	XwxTelW0tfjpMofE2L2dbGXr9flcn4Z2vH2kEs69eU+L1Y0PNteTlLYl5eZN8E47dOjoSiH1
+	xMev/h/9ohLGVCx8KedUavimk/MFpnAaLZn18ZXeMjOm9aUGfOomm9cea+2bzfEkN3KD9IeZ
+	TSL+XQeCzx/okUvzUMzyPaR5VFj0jRJLcUaioRZzUXEiAMPibdonBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrMLMWRmVeSWpSXmKPExsWy7bCSvG6CU1SawaxXxhYP5m1js3j58yqb
+	xbQPP5ktbh7YyWSxsZ/D4v7Wa4wWl3fNYbPovr6DzWL58X9MFs9OH2B24PK4fMXbY9qkU2we
+	H5/eYvHo27KK0ePzJjmP9gPdTAFsUVw2Kak5mWWpRfp2CVwZbVsXMhW85qxYv/woewPjF/Yu
+	Rk4OCQETie4Vrxm7GLk4hAR2M0p8mrSVGSIhKbHv9E1WCFtY4n7LEVaIop+MElebnoEl2ATU
+	JRqmvmIBSYgILGaUeHLuDZjDLPCOUWL3nglMIFXCAjYSU9pug3WwCKhKfH7eDBbnBYp/WDid
+	DWKFvMT+g2eZIeKCEidnPmEBsZmB4s1bZzNPYOSbhSQ1C0lqASPTKkbJ1ILi3PTcZMMCw7zU
+	cr3ixNzi0rx0veT83E2M4HDW0tjBeG/+P71DjEwcjIcYJTiYlUR4f6VHpAnxpiRWVqUW5ccX
+	leakFh9ilOZgURLnNZwxO0VIID2xJDU7NbUgtQgmy8TBKdXApFP/yCU5cPq1uy5rOTqfW70z
+	jKlr9/U+/Y+pquu2u0jbnDD/Hwfjj/R9DTWoym3bUnJr1WbW1y/1Pf2/yW449exBvoHz1TBf
+	n3kf6tqn2cZVrrywQsBatSRN4/GGCJXjy2aaPRH5MMnzsf/kmDtmTz9uWVlZVMMzc9mfX47O
+	974s0tvEf2jXwb4UzYpU/RvyUq78bxhur1jL3Hyq+tmuQ90B59vfd12dfc1IUaX6Q+S3eXP7
+	ZM/cCFhT1dilVJx/KrDRW3nz5GsVsyRrlh+Zs3vDQ4ULhis+n9z8P3fenQzBM5Mj8jknP+w+
+	XR56+dLTIFf2F3M4Z/xymMTLuyslwfN5Uuz7VgaO5ZmrbgWk7lFiKc5INNRiLipOBAD95WYI
+	1gIAAA==
+X-CMS-MailID: 20240531213424epcas2p16d7360e12d310c9f299d449e66af07b3
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240531213424epcas2p16d7360e12d310c9f299d449e66af07b3
+References: <CGME20240531213424epcas2p16d7360e12d310c9f299d449e66af07b3@epcas2p1.samsung.com>
 
-On Fri, May 31, 2024 at 02:06:48PM -0700, Kees Cook wrote:
-> ...
-> or refactors and forgets to change some name, etc. It's all for catching
-> bugs before they happen, etc. And when source string lengths aren't
-> known, the runtime checking can kick in too.
+This patchset introduces add support for MCQ introduced in UFSHCI 4.0.  The
+first patch adds a simple helper to get the address of MCQ queue config
+registers.  The second one enables MCQ feature by adding mandatory vops
+callback functions required at MCQ initialization phase.  The last one is to
+prevent a case where number of MCQ is given 1 since driver allocates poll_queues
+first rather than I/O queues to handle device commands.  Instead of causing
+exception handlers due to no I/O queue, failfast during the initialization time.
 
-Aha, thanks for explaining.
+---
+v2:
+  - https://lore.kernel.org/linux-scsi/20240531103821.1583934-1-minwoo.im@samsung.com/T/#t
+  - Not separate the newly introduced function from the actuall caller in the
+    other patch by squash the second patch to the first one (Bart).
+  - Rename ufs_redhat_* in ufshcd-pci.c to ufs_qemu_* to represent that it's
+    for QEMU UFS PCI device (Bart).
 
-> It happens x86 boot doesn't have any of those (good!) so
-> __fortify_panic() goes unused there. But
+Minwoo Im (2):
+  ufs: pci: Add support MCQ for QEMU-based UFS
+  ufs: mcq: Prevent no I/O queue case for MCQ
 
-Exactly!
-
-> that's a larger topic covered by stuff like
-> CONFIG_LD_DEAD_CODE_DATA_ELIMINATION, etc.
-
-"... This option is not well tested yet, so use at your own risk."
-
-Oh well.
-
-So I get an allergic reaction everytime we wag the dog - i.e., fix the
-code because some tool or option can't handle it even if it is
-a perfectly fine code. In that case it is an unused symbol.
-
-And frankly, I'd prefer the silly warning to denote that fortify doesn't
-need to do any checking there vs shutting it up just because.
-
-So can we aim our efforts at real bugs please?
+ drivers/ufs/core/ufs-mcq.c    | 23 +++++++++++++++++
+ drivers/ufs/host/ufshcd-pci.c | 48 ++++++++++++++++++++++++++++++++++-
+ include/ufs/ufshcd.h          |  1 +
+ 3 files changed, 71 insertions(+), 1 deletion(-)
 
 -- 
-Regards/Gruss,
-    Boris.
+2.34.1
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
