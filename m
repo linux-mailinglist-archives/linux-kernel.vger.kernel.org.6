@@ -1,150 +1,249 @@
-Return-Path: <linux-kernel+bounces-196528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 892788D5D6B
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 11:02:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 693708D5D6E
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 11:03:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A5151F23E7C
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 09:02:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE122B2309F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 09:03:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE10C1420CC;
-	Fri, 31 May 2024 09:02:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF4BD14532D;
+	Fri, 31 May 2024 09:03:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nqQuEwDQ"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="oyuFEjCX"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBCE37EF09
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 09:02:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B37A7770FD;
+	Fri, 31 May 2024 09:03:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717146130; cv=none; b=j+HYOcM3yHiJG/6iULMwAKMA/yHNUuINHuRmKy5xorcr2ow14m29sS79GSMCAq62oPSilPKwi6hz3bZTuy32/q3hKe0REqGo5CuWgTmerWyrc0OOTlAk/pga2TNajTQ8+cSV+cfWJ9RNAuibApbzwRr10onLs7V5lB41irB5Dak=
+	t=1717146215; cv=none; b=JFUiNqikYv4+9i8nkANMFDuZElYz2B6OszOFCWqWTynKlHCReGqxVPcb+0bxPIX/nKeNWsR5OyFwJDAYp613QwzskAH19Ld/Xqn+vxMUar/0lEd57zl53II4y8Q9avP/DW1HuebBXbxTi+X9KXY1PB22TUcXkk+C7MIN7oQ9kVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717146130; c=relaxed/simple;
-	bh=6q0+QveQn5QuSf1ysE2YsK+MEXD55Sxc+h8vb2IM/uc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=srgwAIlQygaSj/mnx2fq56ZKU+9YriRDiuo+dCPJv8l2xCI3N+R3SwNFcfhXM/5WiU1MNoN3brET/hGhTZvw0EhZdHEpw+4/GETM+xukUvP2jp6osdkwYvnr5iZU5Dn3HZkEGOME8G6PRopTOaiZ1RIEfM5inuNl/2NwWRa+cqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nqQuEwDQ; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4210aa012e5so19512695e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 02:02:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717146126; x=1717750926; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=TTXr+xSsHyu5ij5RcIGy/AJermRyYvxwESBJmWGPSs4=;
-        b=nqQuEwDQntDWEEpuBY7FhAgQgVQB3UwU/sUtu9XzSJwLLuLIbeUP1FvLtb0YmtYZ/G
-         wwtstR8G5qRxR7Rfo1Zy+4fFeqP9zcpRxbf65mT3rvAm+ybAsnkWN1PvrPuC4Hm0rXxO
-         ggWNfssLjMTDusLIWZyq+yBPTka8zTTs0GyMOF89KcxHEl7pnU3eL899OH1CsbHlXKZI
-         3/LB+hyyPH4Na6ePSWXVEZNG6vVOquISbfQlwMrcQ41n5NyRxHTyv6ZihlGfyUri3UyH
-         vLolJ69e36wRUo9DD1yaSCNn7pskaLYjKPvLrFH9Glz0kPaPnhxweSYwXXvpYwJ0LM/j
-         Qndw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717146126; x=1717750926;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TTXr+xSsHyu5ij5RcIGy/AJermRyYvxwESBJmWGPSs4=;
-        b=pAoAAH1sPwLLSwJJPmjEh8KUS3Q0cHlF4xD9HEZp7QGi4hGa7t7E1xtXVwQojdz97B
-         QBK+oLNebfTqZaDEZVM4caweXbhYgH0+Tk5i05gJ/p7KHAVCZ/RgYKp0sCaE+/+NLeg8
-         4ijpGJ1asqxnlevd3lC4e4MfKuC2yduvA5iHV4WQ1KFEKgfRMVjtKT30JCsWfEsjOlAf
-         fqHPx+u8yZ1+vplhJoy8OihhMCuoLhGxuDT3sVo9+ZzZBMe5acc1yElUXat8KTTGGZUX
-         NBkrerfbSGE3gX1cOTK2XKtrMw1TmAASuQNXrPDNVJeMnl+gZbm0N0mJ5+95eCFy4YDu
-         +ngQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXrIteGT/8RFb+vXI5n5SOdVtNlVhufBX8GR0Q0GDI0DFdXyO12E9uXC1Jhxu5nQNdJ8kyrg8CFc+kKA12IP5AJcgG9zG1MZC88gjCi
-X-Gm-Message-State: AOJu0YylbT1dIfJIKwg5xD6J7hBermSDHnaiGKoUbaQ/URTX0Miuck83
-	wOJl5RsAl7gIKP6kIU06QkiA6wRRqoiMENiL5z93jmxe5t+9RM4Ar0C2m1qNDm4=
-X-Google-Smtp-Source: AGHT+IFxSaZmLdNyNJrRAZ/s878meKXqK4clH/qW7Uc/rZ3GtoBkSTJM3Ai2OijktpIgJNW8ufPECg==
-X-Received: by 2002:a05:600c:a0b:b0:420:215c:b010 with SMTP id 5b1f17b1804b1-4212e0c3065mr9179415e9.41.1717146126253;
-        Fri, 31 May 2024 02:02:06 -0700 (PDT)
-Received: from [192.168.2.24] ([110.93.11.116])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42127062149sm48366475e9.14.2024.05.31.02.02.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 31 May 2024 02:02:05 -0700 (PDT)
-Message-ID: <2429dd47-d528-4090-ab1c-994209d4b446@linaro.org>
-Date: Fri, 31 May 2024 11:02:03 +0200
+	s=arc-20240116; t=1717146215; c=relaxed/simple;
+	bh=S0ZKYYnPoHPKYkKOnAkf25zs6aVUOp2ahpjN8lCEaOg=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=M5j9dP8IPDCSt+vtN+SPxqw/XUL9Q/xmDitdiL6PzLQwLSbLlBP/tP+4IOdioNKBc8mb7mm8Y1MHum7h3kd0bNu1c0IKRsb4RGRXR/xmCGUPkeOXpjqNHaF4QL85w0yrKbej5fbth7wjcQt1zz/udK0AzJApEKQSi88/Dp5OMv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=oyuFEjCX; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353724.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44V8Pllt005650;
+	Fri, 31 May 2024 09:03:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc :
+ content-transfer-encoding : content-type : date : from : in-reply-to :
+ message-id : mime-version : references : subject : to; s=pp1;
+ bh=XydXLZ2izbHKZATJ4GMzAav3AkDiEapDJQW2XKsdEDE=;
+ b=oyuFEjCXTagFnA/OGazviomD5ka/oUQd+lq+gup2Ax6qeeB0YeLKqblXki480GxEAV0V
+ FwXgzlYvsW4xO7h8y3gikx7QfpphY8s5ObeQCvitewLGseG/A5oppgRZbDBKNrBvY9qh
+ kkgS3BQei/yFPZyRfGt8XLWAXBJpvjtp2RdnN9q/a9os54ynoK8hNLQncuGukf9svPvu
+ ux8IQz8oFgR5OK5QTOafkp5LpCERUBT97bcRbJMFuuitr+ds45kZfvGBY8q2uBQEW+6H
+ E1ZMEubB9WRSu3yDhGchqUZ+0WE6+LXyr/y/dA3lgQmsrwFG/Dm+dEHaQk3wZdFOLg8c SQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yfaatr6jx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 31 May 2024 09:03:27 +0000
+Received: from m0353724.ppops.net (m0353724.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 44V93Q9s031992;
+	Fri, 31 May 2024 09:03:26 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yfaatr6jt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 31 May 2024 09:03:26 +0000
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 44V8jkoM029003;
+	Fri, 31 May 2024 09:03:25 GMT
+Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3ydpayy168-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 31 May 2024 09:03:25 +0000
+Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
+	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 44V93MDu29164142
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 31 May 2024 09:03:24 GMT
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3AC4158065;
+	Fri, 31 May 2024 09:03:22 +0000 (GMT)
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id BBD815804B;
+	Fri, 31 May 2024 09:03:19 +0000 (GMT)
+Received: from [9.171.25.186] (unknown [9.171.25.186])
+	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 31 May 2024 09:03:19 +0000 (GMT)
+Message-ID: <0f590cb7-9b67-4dce-93a4-5da89812a075@linux.ibm.com>
+Date: Fri, 31 May 2024 11:03:18 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 0/2] Change the upper boundary of SMC-R's snd_buf
+ and rcv_buf to 512MB
+To: Guangguan Wang <guangguan.wang@linux.alibaba.com>, jaka@linux.ibm.com,
+        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com
+Cc: kgraul@linux.ibm.com, alibuda@linux.alibaba.com, tonylu@linux.alibaba.com,
+        guwen@linux.alibaba.com, linux-s390@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240528135138.99266-1-guangguan.wang@linux.alibaba.com>
+ <328ea674-0904-4c81-a6e2-7be3420ad578@linux.ibm.com>
+ <e2d0dae7-827e-41f8-bcd5-7d10fd7df594@linux.alibaba.com>
+Content-Language: en-US
+From: Wenjia Zhang <wenjia@linux.ibm.com>
+In-Reply-To: <e2d0dae7-827e-41f8-bcd5-7d10fd7df594@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: wgKl3mqkdsnyIbOV6nixZhSNyYNUSMOi
+X-Proofpoint-ORIG-GUID: GWWSKTeXVKpKorl7dO_hdR4akTS0zHmz
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/6] dt-bindings: crypto: Add Texas Instruments MCRC64
-To: kamlesh@ti.com, herbert@gondor.apana.org.au, kristo@kernel.org,
- will@kernel.org
-Cc: akpm@linux-foundation.org, davem@davemloft.net,
- mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com, robh@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, vigneshr@ti.com,
- catalin.marinas@arm.com, linux-kernel@vger.kernel.org,
- linux-crypto@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-References: <20240524-mcrc64-upstream-v3-0-24b94d8e8578@ti.com>
- <20240524-mcrc64-upstream-v3-3-24b94d8e8578@ti.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240524-mcrc64-upstream-v3-3-24b94d8e8578@ti.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-31_05,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxlogscore=999
+ mlxscore=0 impostorscore=0 suspectscore=0 malwarescore=0 clxscore=1015
+ lowpriorityscore=0 adultscore=0 priorityscore=1501 phishscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2405010000 definitions=main-2405310066
 
-On 30/05/2024 14:24, kamlesh@ti.com wrote:
-> From: Kamlesh Gurudasani <kamlesh@ti.com>
+
+
+On 31.05.24 10:15, Guangguan Wang wrote:
 > 
-> Add binding for Texas Instruments MCRC64
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Best regards,
-Krzysztof
-
+> 
+> On 2024/5/30 00:28, Wenjia Zhang wrote:
+>>
+>>
+>> On 28.05.24 15:51, Guangguan Wang wrote:
+>>> SMCR_RMBE_SIZES is the upper boundary of SMC-R's snd_buf and rcv_buf.
+>>> The maximum bytes of snd_buf and rcv_buf can be calculated by 2^SMCR_
+>>> RMBE_SIZES * 16KB. SMCR_RMBE_SIZES = 5 means the upper boundary is 512KB.
+>>> TCP's snd_buf and rcv_buf max size is configured by net.ipv4.tcp_w/rmem[2]
+>>> whose defalut value is 4MB or 6MB, is much larger than SMC-R's upper
+>>> boundary.
+>>>
+>>> In some scenarios, such as Recommendation System, the communication
+>>> pattern is mainly large size send/recv, where the size of snd_buf and
+>>> rcv_buf greatly affects performance. Due to the upper boundary
+>>> disadvantage, SMC-R performs poor than TCP in those scenarios. So it
+>>> is time to enlarge the upper boundary size of SMC-R's snd_buf and rcv_buf,
+>>> so that the SMC-R's snd_buf and rcv_buf can be configured to larger size
+>>> for performance gain in such scenarios.
+>>>
+>>> The SMC-R rcv_buf's size will be transferred to peer by the field
+>>> rmbe_size in clc accept and confirm message. The length of the field
+>>> rmbe_size is four bits, which means the maximum value of SMCR_RMBE_SIZES
+>>> is 15. In case of frequently adjusting the value of SMCR_RMBE_SIZES
+>>> in different scenarios, set the value of SMCR_RMBE_SIZES to the maximum
+>>> value 15, which means the upper boundary of SMC-R's snd_buf and rcv_buf
+>>> is 512MB. As the real memory usage is determined by the value of
+>>> net.smc.w/rmem, not by the upper boundary, set the value of SMCR_RMBE_SIZES
+>>> to the maximum value has no side affects.
+>>>
+>> Hi Guangguan,
+>>
+>> That is correct that the maximum buffer(snd_buf and rcv_buf) size of SMCR is much smaller than TCP's. If I remember correctly, that was because the 512KB was enough for the traffic and did not waist memory space after some experiment. Sure, that was years ago, and it could be very different nowadays. But I'm still curious if you have any concrete scenario with performance benchmark which shows the distinguish disadvantage of the current maximum buffer size.
+>>
+> 
+> Hi Wenjia,
+> 
+> The performance benchmark can be "Wide & Deep Recommender Model Training in TensorFlow" (https://github.com/NVIDIA/DeepLearningExamples/tree/master/TensorFlow/Recommendation/WideAndDeep).
+> The related paper here: https://arxiv.org/pdf/1606.07792.
+> 
+> The performance unit is steps/s, where a higher value indicates better performance.
+> 
+> 1) using 512KB snd_buf/recv_buf for SMC-R, default(4MB snd_buf/6MB recv_buf) for TCP:
+>   SMC-R performance vs TCP performance = 24.21 steps/s vs 24.85 steps/s
+> 
+> ps smcr stat:
+> RX Stats
+>    Data transmitted (Bytes)    37600503985 (37.60G)
+>    Total requests                   677841
+>    Buffer full                       40074 (5.91%)
+>              8KB    16KB    32KB    64KB   128KB   256KB   512KB  >512KB
+>    Bufs        0       0       0       0       0       0       4       0
+>    Reqs   178.2K  12.69K  8.125K  45.71K  23.51K  20.75K  60.16K       0
+> TX Stats
+>    Data transmitted (Bytes)   118471581684 (118.5G)
+>    Total requests                   874395
+>    Buffer full                      343080 (39.24%)
+>    Buffer full (remote)             468523 (53.58%)
+>    Buffer too small                 607914 (69.52%)
+>    Buffer too small (remote)        607914 (69.52%)
+>              8KB    16KB    32KB    64KB   128KB   256KB   512KB  >512KB
+>    Bufs        0       0       0       0       0       0       4       0
+>    Reqs   119.7K  3.169K  2.662K  5.583K  8.523K  21.55K  34.58K  318.0K
+> 
+> worker smcr stat:
+> RX Stats
+>    Data transmitted (Bytes)   118471581723 (118.5G)
+>    Total requests                   835959
+>    Buffer full                       99227 (11.87%)
+>              8KB    16KB    32KB    64KB   128KB   256KB   512KB  >512KB
+>    Bufs        0       0       0       0       0       0       4       0
+>    Reqs   125.4K  13.14K  17.49K  16.78K  34.27K  34.12K  223.8K       0
+> TX Stats
+>    Data transmitted (Bytes)    37600504139 (37.60G)
+>    Total requests                   606822
+>    Buffer full                       86597 (14.27%)
+>    Buffer full (remote)             156098 (25.72%)
+>    Buffer too small                 154218 (25.41%)
+>    Buffer too small (remote)        154218 (25.41%)
+>              8KB    16KB    32KB    64KB   128KB   256KB   512KB  >512KB
+>    Bufs        0       0       0       0       0       0       4       0
+>    Reqs   323.6K  13.26K  6.979K  50.84K  19.43K  14.46K  8.231K  81.80K
+> 
+> 2) using 4MB snd_buf and 6MB recv_buf for SMC-R, default(4MB snd_buf/6MB recv_buf) for TCP:
+>   SMC-R performance vs TCP performance = 29.35 steps/s vs 24.85 steps/s
+> 
+> ps smcr stat:
+> RX Stats
+>    Data transmitted (Bytes)   110853495554 (110.9G)
+>    Total requests                  1165230
+>    Buffer full                           0 (0.00%)
+>              8KB    16KB    32KB    64KB   128KB   256KB   512KB  >512KB
+>    Bufs        0       0       0       0       0       0       0       4
+>    Reqs   340.2K  29.65K  19.58K  76.32K  55.37K  39.15K  7.042K  43.88K
+> TX Stats
+>    Data transmitted (Bytes)   349072090590 (349.1G)
+>    Total requests                   922705
+>    Buffer full                      154765 (16.77%)
+>    Buffer full (remote)             309940 (33.59%)
+>    Buffer too small                  46896 (5.08%)
+>    Buffer too small (remote)         14304 (1.55%)
+>              8KB    16KB    32KB    64KB   128KB   256KB   512KB  >512KB
+>    Bufs        0       0       0       0       0       0       0       4
+>    Reqs   420.8K  11.15K  3.609K  12.28K  13.05K  26.08K  22.13K  240.3K
+> 
+> worker smcr stat:
+> RX Stats
+>    Data transmitted (Bytes)   349072090590 (349.1G)
+>    Total requests                   585165
+>    Buffer full                           0 (0.00%)
+>              8KB    16KB    32KB    64KB   128KB   256KB   512KB  >512KB
+>    Bufs        0       0       0       0       0       0       0       4
+>    Reqs   155.4K  13.42K  4.070K  4.462K  3.628K  9.720K  12.01K  165.0K
+> TX Stats
+>    Data transmitted (Bytes)   110854684711 (110.9G)
+>    Total requests                  1052628
+>    Buffer full                       34760 (3.30%)
+>    Buffer full (remote)              77630 (7.37%)
+>    Buffer too small                  22330 (2.12%)
+>    Buffer too small (remote)          7040 (0.67%)
+>              8KB    16KB    32KB    64KB   128KB   256KB   512KB  >512KB
+>    Bufs        0       0       0       0       0       0       0       4
+>    Reqs   666.3K  38.43K  20.65K  135.1K  54.19K  36.69K  3.948K  56.42K
+> 
+> 
+>  From the above smcr stat, we can see quantities send/recv with large size more than 512KB, and quantities send blocked due to
+> buffer full or buffer too small. And when configured with larger send/recv buffer, we get less send block and better performance.
+> 
+That is exactly what I asked for, thank you for the details! Please give 
+me some days to try by ourselves. If the performance is also significant 
+as yours and no other side effect, why not?!
 
