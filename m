@@ -1,222 +1,262 @@
-Return-Path: <linux-kernel+bounces-196574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D5558D5E20
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 11:22:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B9608D5E23
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 11:23:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6BAA1B21CAD
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 09:22:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0C4928824C
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 09:23:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F06680BE5;
-	Fri, 31 May 2024 09:20:34 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E2251420A8
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 09:20:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717147233; cv=none; b=K5bUleuUK+WH+PBor5GXjsMlKwASCNczPQ8Gxtd7L4Igw9iFJNcUS5J6Bcxl1I0Obrx8RBt4+CFmprJPaK9WY+CHL44OYMhr7SB31LAWVnnu8vd0//0s60edAmBnPX0iRsNtZRu6RR+S8Oo3F0Nq3krIv/QB1RgIgFbDQcCImIk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717147233; c=relaxed/simple;
-	bh=2qGNSW3KdM44HWff9yLzL1bREhePCprdjakSuzSQq5w=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=JxmpmLjgRYsP+9cqt9o2B2k6MUwM18ScrOGF9KfwwhSwdP2Z0oIay1rYtqIhG/aW5gKf433FbPbHF4YT8RcFMRsR3HaZwQo5JQs5WvITQBbwkpR8ivCkX2VbSgJiTZG1x8WK4r0QJ1ETESXiye1gLxWHf8BSsShTllYk3ebz8a0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-d85ff70000001748-7b-6659964cd3e1
-From: Byungchul Park <byungchul@sk.com>
-To: linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Cc: kernel_team@skhynix.com,
-	akpm@linux-foundation.org,
-	ying.huang@intel.com,
-	vernhao@tencent.com,
-	mgorman@techsingularity.net,
-	hughd@google.com,
-	willy@infradead.org,
-	david@redhat.com,
-	peterz@infradead.org,
-	luto@kernel.org,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	rjgolo@gmail.com
-Subject: [PATCH v11 12/12] mm, vmscan: apply luf mechanism to unmapping during folio reclaim
-Date: Fri, 31 May 2024 18:20:01 +0900
-Message-Id: <20240531092001.30428-13-byungchul@sk.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20240531092001.30428-1-byungchul@sk.com>
-References: <20240531092001.30428-1-byungchul@sk.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrCLMWRmVeSWpSXmKPExsXC9ZZnka7PtMg0g8Pr1SzmrF/DZvF5wz82
-	ixcb2hktvq7/xWzx9FMfi8XlXXPYLO6t+c9qcX7XWlaLHUv3MVlcOrCAyeJ47wEmi/n3PrNZ
-	bN40ldni+JSpjBa/fwAVn5w1mcVBwON7ax+Lx85Zd9k9Fmwq9di8Qstj8Z6XTB6bVnWyeWz6
-	NInd4925c+weJ2b8ZvGYdzLQ4/2+q2weW3/ZeTROvcbm8XmTXABfFJdNSmpOZllqkb5dAlfG
-	jFdXGQsuqlVs/zeDrYHxnHwXIweHhICJxLoXcV2MnGDmjqe72UFsNgF1iRs3fjKD2CICZhIH
-	W/+AxZkF7jJJHOhnA2kVFoiRmNsGFmYRUJX4faaBFcTmBSo/vfcYO8RIeYnVGw6AjeEEih/4
-	e4cRxBYSMJVY9L8XyOYCqnnPJrHn30w2iAZJiYMrbrBMYORdwMiwilEoM68sNzEzx0QvozIv
-	s0IvOT93EyMw7JfV/onewfjpQvAhRgEORiUe3oCKiDQh1sSy4srcQ4wSHMxKIry/0oFCvCmJ
-	lVWpRfnxRaU5qcWHGKU5WJTEeY2+lacICaQnlqRmp6YWpBbBZJk4OKUaGKNeWKy/Om+nn+ID
-	R8GFHXlp5xU9TapyL8XUhD2MPqIk2pm32WkpY4tW2cqAk2cW3z9vccEkMnFOQtMdvp7+gNIA
-	o241mX+ck0JeHQnyPr1YPz9D7rjz7hYJkQVtYm+33pz8a0LTRtnwN835gj/CA1/Fe/7U2cC3
-	+8GN5xltyeonBcTObL1dqMRSnJFoqMVcVJwIAK+DkQR3AgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrDLMWRmVeSWpSXmKPExsXC5WfdrOszLTLN4MBGGYs569ewWXze8I/N
-	4sWGdkaLr+t/MVs8/dTHYnF47klWi8u75rBZ3Fvzn9Xi/K61rBY7lu5jsrh0YAGTxfHeA0wW
-	8+99ZrPYvGkqs8XxKVMZLX7/ACo+OWsyi4Ogx/fWPhaPnbPusnss2FTqsXmFlsfiPS+ZPDat
-	6mTz2PRpErvHu3Pn2D1OzPjN4jHvZKDH+31X2TwWv/jA5LH1l51H49RrbB6fN8kF8Edx2aSk
-	5mSWpRbp2yVwZcx4dZWx4KJaxfZ/M9gaGM/JdzFyckgImEjseLqbHcRmE1CXuHHjJzOILSJg
-	JnGw9Q9YnFngLpPEgX62LkYODmGBGIm5bWBhFgFVid9nGlhBbF6g8tN7j7FDjJSXWL3hANgY
-	TqD4gb93GEFsIQFTiUX/exknMHItYGRYxSiSmVeWm5iZY6pXnJ1RmZdZoZecn7uJERjGy2r/
-	TNzB+OWy+yFGAQ5GJR7egIqINCHWxLLiytxDjBIczEoivL/SgUK8KYmVValF+fFFpTmpxYcY
-	pTlYlMR5vcJTE4QE0hNLUrNTUwtSi2CyTBycUg2MzfbJLtFvJyd0h0l0NtYEFppJFzVEpM+Z
-	ebh1xv/4+ZLy6anXpFgTEn5etXazS5Pk2RGS8GwJ5/J6LYVn14t48s7aRk9nmGXnecXAfonp
-	bmuNBXec3xpVvmJi8tFbyVGlqCLU/j/3OOPyg+zP5YROX3INunbiWJb0jbcH83MTK2zEH978
-	HK3EUpyRaKjFXFScCAARIRXIXwIAAA==
-X-CFilter-Loop: Reflected
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09FFD80BE5;
+	Fri, 31 May 2024 09:22:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="OBsBEjJz"
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2075.outbound.protection.outlook.com [40.107.95.75])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 634D17442E;
+	Fri, 31 May 2024 09:22:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.75
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717147368; cv=fail; b=TjPJoh0wEpqRhLBa7fFlPeMZi/gerv7QPEwiMd0Pna36tON4gw0IwCQFwLqSltkSgDD9pGaDx0H+7gIHttTDwJHDdX8EweDJZ3ci2tOKEJ2byaw8OH9DTY3aRhda+spCspCGEkUnujWfb/9sQ4s1Wl+DIJbDObeUOdyLrU0togI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717147368; c=relaxed/simple;
+	bh=BBnQRWomeufw8zlO2A160+UO9XH6jaOo5nUIjTU+mrI=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Hmu6faHQqoC+jJU/tt1jymKPsc6kKBRaACinD3YZmFcf2xlNrd+5UL3Q1amSuOy+9JEsf1MphxQnGPmEpr1laPFMHpesxLMEjkBVtK85EsxOEm14+nMAXZzZWUOydqidtGzBRZTvX2hD9XvWCe/p3ReFMIPL5yq55hABhLYfPTY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=OBsBEjJz; arc=fail smtp.client-ip=40.107.95.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=G/YCzabwsZAu+invrIxlapTWEMGkghYZhG311zv9GU9zNzNL68/5OSYZ7B2cLaeW7poL5/mhkqr5ofPNvQ3I+G1AVe6OvhdiCyQGSnKE/bDVwUkIO5m3Wjwd5xvYFcR9Xc178OGLmU+VUkf2wb6zE2q2q+c+mcc2NdYEQl9XrmNey7A+wxRgZein4hI2SDBCvJG4UMVBSgeiLelcoNEZ5Gdxxe6G9pPQsSsHHw+nJ/b9OqPD3YFOybcZkTvyHWLbF03KB4GyLY2S1/0pc0WtN9KzC/mSt7UsPRimtfgdKM44nnK6mkLqFKRAnkCG+DuBVbBtUWZ3d3q5NfY+mU1E0A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=MUVXD/wrvOhIw8YqiATz4DBgk3GKTIX1edwDMMiyWuw=;
+ b=Zub5wMtoy4G3uvuSQwgCHinxsTaGeSqVAyrO3cxAbyGVs5yx9SE0aS5d3RhUwL8JFIDpqcmtJI9DjuLUygLHjaoiXMaLaQYh6czZ+ZVp7wqUSnDn7621IJGNSE8Kn1OrsFnBflDHi6cBZi10suRXcMkt5X4S2SsSkI7eeFwmW5jB24VwOMm4pa4xcSAAzt8P/u52cOAPpxm0P6b0sDIBmnZRbq9yk7efusZQ+Cf1REPKJ9+V+70w3KusYDL7jZTSLbJOqrNvH0pYygQbBjKQc1DQSZb9uRq+dlSmIIViZh41lez15QazlevwxfLnxg2YN8c8HvWA8gL0GXlsd0+dow==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MUVXD/wrvOhIw8YqiATz4DBgk3GKTIX1edwDMMiyWuw=;
+ b=OBsBEjJzXVKe/oX6alj2O5b/PXYexOhOtc1zeOtf3lnvul6G4SqiYKktRTw8etJEmf9ZQRK9fcane2eh2rPTq59E3GnxFjCAcGr9wJFZEPpKC9b5OVLFj7jnuhSouCIUGetRRpN/b3o8O0L+dVB0NratDsiz8y8hIhRhKL7Afm4=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS7PR12MB6048.namprd12.prod.outlook.com (2603:10b6:8:9f::5) by
+ DS0PR12MB8341.namprd12.prod.outlook.com (2603:10b6:8:f8::10) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7633.22; Fri, 31 May 2024 09:22:45 +0000
+Received: from DS7PR12MB6048.namprd12.prod.outlook.com
+ ([fe80::6318:26e5:357a:74a5]) by DS7PR12MB6048.namprd12.prod.outlook.com
+ ([fe80::6318:26e5:357a:74a5%6]) with mapi id 15.20.7633.018; Fri, 31 May 2024
+ 09:22:45 +0000
+Message-ID: <6a612d9e-e488-4604-b3e2-801767115f2c@amd.com>
+Date: Fri, 31 May 2024 14:52:35 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/4] KVM: x86: Add vCPU stat for APICv interrupt
+ injections causing #VMEXIT
+To: Alejandro Jimenez <alejandro.j.jimenez@oracle.com>, kvm@vger.kernel.org
+Cc: seanjc@google.com, pbonzini@redhat.com, linux-kernel@vger.kernel.org,
+ suravee.suthikulpanit@amd.com, vashegde@amd.com, mlevitsk@redhat.com,
+ joao.m.martins@oracle.com, boris.ostrovsky@oracle.com, mark.kanda@oracle.com
+References: <20240429155738.990025-1-alejandro.j.jimenez@oracle.com>
+ <20240429155738.990025-5-alejandro.j.jimenez@oracle.com>
+Content-Language: en-US
+From: Vasant Hegde <vasant.hegde@amd.com>
+In-Reply-To: <20240429155738.990025-5-alejandro.j.jimenez@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PN2P287CA0003.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:c01:21b::17) To DS7PR12MB6048.namprd12.prod.outlook.com
+ (2603:10b6:8:9f::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB6048:EE_|DS0PR12MB8341:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7092feef-651d-4670-7d98-08dc81533ac5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|366007|1800799015;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?UG1BM0VaL1IrbTJNMWtZQjJacmtqTTJtaHBMTlpqVnA1Y3gvZ2JIak1DR3dt?=
+ =?utf-8?B?Q0ZxeW1DNVFIWGRWWndzZkJxNG40bFIyTVZWVDdzS1IrNHBqdFFRWTBNZm9v?=
+ =?utf-8?B?Z0g2cExPRDN0aUVXUiszc003L2d3ZWRia3luSGJ2UWNkMlVJUkFYWlhhWHRy?=
+ =?utf-8?B?cU13T2t5Vk1GQUI4UkI4ZlRPaG1EVmhKYVVwTWxrdW1HNHRSODU1QlVRbXYx?=
+ =?utf-8?B?T0JTWkZCak9qNURjU2s1NHNadWJPcCtrQUh4ZGk2bzFVWDl3aHpkVndvRkkv?=
+ =?utf-8?B?QWZ1SzRqU0hRUm1sOVRhMGJaS01uWEJlZGo3dTF1ZGw2bGxWTHdoWGVkUDNY?=
+ =?utf-8?B?OFNYNWJIMEdKYkdySjgxQ2I3NDJYQVF5alhlblc5aUFvNkk0YktxSlpvWHJr?=
+ =?utf-8?B?MDdVT3VNVVVmS0JnemExK1llSnhKQVdaZnAwbDl2QnRlYzVBeHdSTVp6U1p3?=
+ =?utf-8?B?ZGNqT2VJK2NHYnBFZDBFUENQV2ZNaUN6aXdJUVZEdVdabU9hVXdlb1JRemJN?=
+ =?utf-8?B?U1pzN0pkQWk1SmFrR2VQam41elZpeGtoSU5hVFNFQUU5YjUrSnV4YVlydktP?=
+ =?utf-8?B?Y3NJYkxDMXNWcitZZkk2TVdOZ29yWDM2ZEVQcm1DejRIL1V5YXBjM3NPeHVI?=
+ =?utf-8?B?UzExUGd6M0tsZ2Qydkc2N0pxTVVOWTFMWUd5ODBhY1dRV1pzaVZIUytncTNv?=
+ =?utf-8?B?eXZnaXFQQVEvRW5ORXpXaUU5TERKYTQxV0xRRlUvNXVZM1ZWY05mVFZJRHFh?=
+ =?utf-8?B?Q3NVK1pZRXRqQVdqZXFoUGZlVmd3SFNCRmZuV2Z4T2Jrbmp5WGV0T3diaGZj?=
+ =?utf-8?B?NjJhU1BScnhjbWN4dlZ1a254NC9nNGFESlhvb0YwNU5SZTlyMVZGakN4eXNK?=
+ =?utf-8?B?R002Qkx2ZlNyakFtQjV6OWJDaXRXK05ORFlwa1ZwY3NkSDNmSy8xcTRoQmVI?=
+ =?utf-8?B?djZ2djF2a2VuWGZRc25XN3BMMFhxOS9CSW95Mk5ubXRyRlR5U25Gcnl4M1JC?=
+ =?utf-8?B?OVVXa0RWNmVGazBWRHU5QVloSkYzYTNzeXBwL3JUb3FTM3JQQTVRaDZKd0Ro?=
+ =?utf-8?B?WU9vYUJVbUwxNzZIM2VVbkZDc1V3bVBhc2VBejFXQXlaQUxkc3lUZEdQWU11?=
+ =?utf-8?B?Nm82VlE5MVg2L3pubHFta1BQQ1JZelhqTVpjaVBkVjNDeTlhM0J4Z2g5Qk9G?=
+ =?utf-8?B?QmhyeDAxOWtOR0xDV2dDM0VST3IwT0tRTWhvV3ovVXRtUytJUGRHSHZvaWJR?=
+ =?utf-8?B?aTFXRmpnNVVRckhyZ0pSdXBMV1hEc2ZKU3FhVWxuQlErbnRTREg5R3VlTmVa?=
+ =?utf-8?B?OFlLK2txdDB4dm0rOFB0V01yVWx2WDFTZVhHbWVYL2FjM0ZzeDE4WXc1L0VB?=
+ =?utf-8?B?bXRmN2lVekMwajJvUHFlQnhrNlBUWW85MnhxVDdvcHYvWmJpS3dhd2U0TXA5?=
+ =?utf-8?B?UFVZQVVtdWErWkhyZjM0cGlQVEt3cG5MZjRmamFUVWNkUzIrQ2ZYOHA2NUpK?=
+ =?utf-8?B?STlUTHNqNWsrdnZ1dkxYTWdtNmtrT3hHeWhGeU9udEJCN0llTnN0WFdpanEr?=
+ =?utf-8?B?V3hjUG1Qakc3TDVTNnVhc1p6aEtyUXVqM3RoQUxQR2k1NktONFRIOVRRRUJx?=
+ =?utf-8?B?UERQYXk2Q1RzSXRKUGUzQk9JcEhEYk8vTUc4Tm9iS3kxbnduYy9JOFNEZE1a?=
+ =?utf-8?B?QTVsdFhQNUVXeXp1RmF5WVBvZ1dBbXVXRjRGUFRBSlAzQmJCRFV5WFl3PT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB6048.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(366007)(1800799015);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?S2NrT1k5VWRqYzA4Z3d6SG11NXJnOWJQaGovY245VVEzNUdkaVVoRXVPUUkw?=
+ =?utf-8?B?TEhjMm12TE5RMEd0cmU2ZVVzVk10ejEzZHFJYzkzWXEyczhEcSs0T2k5c2gv?=
+ =?utf-8?B?bUtOdHcrSjg3RStLV2RzZy9iNlpqTzRCREhzVnYrUDN1c01LMHFBUUx3S05Y?=
+ =?utf-8?B?dFFxTyswN3dJMXZLYWN5VWZiWlV0NXJTWm1RK1UzdzRMNHVjbTE4NWcyWmtU?=
+ =?utf-8?B?L3VENUI4NlRCZk1YZXZYc3hnbG5jL3JPZHZFalU2ZkhzdWZOSEE2S1pNMjJI?=
+ =?utf-8?B?b0I2TWF0aG9RWjl3VDI4Rk9PWHUrSUVvVk9qUFMvZ0lYR1k5d1kzSzZPbmow?=
+ =?utf-8?B?MDQ4RWxEcVVyMmhJK3V6MTVaZGl0b09uUkN2dEN1NllEYkFDdzZtZGtBbUFF?=
+ =?utf-8?B?TjJnUmVGUUFPbG42SHZZUmZzQ3ExK2ZwWHd4TDA0TlpFVzMySUllY0VQQThm?=
+ =?utf-8?B?UjE5bU1SanFFeVNWKzFqZzh1NVVpWURNVC9KYVc3bytZV0NOS3R0VmF2UDFo?=
+ =?utf-8?B?ejRjcDlQeFRYSHgzekVKMVVaY2IrKzN1OEQxczVaZzFaa0NjdzYwb2tVZmJj?=
+ =?utf-8?B?dFVsQzFxZEhiMEhYQkoxVldNWStUbEpMcHZOMWEvUTdhbFpIMWdOcytaQUxN?=
+ =?utf-8?B?TW1JVWJoNS9XVnBrYkJldnZvTkFycHNXTEJrSUxTNUV0eklqM2RURTNJM2Y5?=
+ =?utf-8?B?MzcvZkMyZmtEdEpFZHlZUnJBSER5TjhLeTRBaTh2TGNBYVNSWUxjTTNXZnB5?=
+ =?utf-8?B?ZktmUEQvMmtIV2hoT3htK2tXeUU3T3loSjFRVEdYN1dRRTNXZjRnRDA5U2FJ?=
+ =?utf-8?B?Zmsza0JsRWwyS1JSd2dwN2RBT0JUSVlJcUtNQTYvekVHM0tLbUNOcVZzUUhu?=
+ =?utf-8?B?R3NxdFpSNWZ6OWFEOE10QUMxOWFoOWl1RkJBUlRIRnBLRXcxaDBuTktUL3A0?=
+ =?utf-8?B?T3pUa0ViTFlhRUVGRmtrQ3orb3pTK0dsakQ4L1RQc0dsQll3bklMMy82RVp2?=
+ =?utf-8?B?eFpWdDlBeXo5MHB2WlRGK240dFI3c1IrcmUwcXhqWlA0UjFQV1QycFFkSXJE?=
+ =?utf-8?B?RnNNcGtNTnVxWGJvalVKaERjNVZNa1R3dUdjQlhDMzdYUW1idkMwOGhzWFk1?=
+ =?utf-8?B?SmFrN1NPelpYTW55NDZRaWhiejJhUURxcDFRSDBodDdGdnllN3pwYnhDV2t3?=
+ =?utf-8?B?bU4xcmJXT2pIZE42dXNFbmxkb1AwVTZ5Z3lvbXIvNnFIUzc4bXV0M0xtUzVQ?=
+ =?utf-8?B?L1ZHOHlhLzRsYm42dVlSVHBDbGVOSkdJWVFldkNJamVuV3BObjFHVk1JZW1V?=
+ =?utf-8?B?TnRodStwc2Z6ZC91SFk5NGxVWlZuK0N5ckRvTGVBUzBPejlYNTVnWUZtRjFW?=
+ =?utf-8?B?RUNJRXl3T2UxRWFvU0hRK0JwbmdtUlR4OGhiUXJMUnhtSEhNdlVkbm43YXJW?=
+ =?utf-8?B?Qmp4UFFaZjhpaWU4TE5GVzdyMjNyRHVFVDIyQkMrM0ZBWHF5Q3IxR0IyVm1J?=
+ =?utf-8?B?c0xyU0U0aVprQkJzaVB3cW1FQlVoSVBobndMUDEvRkk5NFliTnhSTjJYd0xZ?=
+ =?utf-8?B?QUZTekthWGtVcFplaVhwWlQ4UTE5VzVneUJpcGxjRFNJN0o5RndWSHc3RE5O?=
+ =?utf-8?B?dkwvSFEwTG1WY25kcllKdDNVVjdrQU1aTzFSVGxjQXpZWVZzMmdFS2RxTStR?=
+ =?utf-8?B?QXphemFJMVpKWXd1ZTgzcW5sMlRTNUJnRDNDVVBYN29qcURWQy8wd2FYeUdZ?=
+ =?utf-8?B?T01CWEhLRHdwYTc1T2JpMzdnYVZtdlp3ekc3TmR1VHF1RlExU3lFWFYrVm84?=
+ =?utf-8?B?aktPV1ZuSlRYb2MyOWdjSmRzdUJxbzBMYUpzblFPQjh2SkhVRHByMHdwVTdz?=
+ =?utf-8?B?dTRIdXNxUTlHVEJrMkhMd1Q5QmwwTWh3VUdYQ0hpWEhOSG5rQytNTGVITS8z?=
+ =?utf-8?B?Qmk2Wnp3ZmN3bEt4NFhockQybUE5VnZtUHUvdUpMWFROL0ZrL2tkZGxjQkJV?=
+ =?utf-8?B?OEtydW9UTUtZR0dHdERwdEhqanFXUWx6RGtoWUJ4bkRydkJrRjFpUWlYQk1j?=
+ =?utf-8?B?UHBKcUNBeXVpeDVlcE13OGtFTkRzdDhpVjFTdzZNMVEweHRsWnFoSlRrNjgz?=
+ =?utf-8?Q?bDWVxCJ6jwoaWVn4RgiuRPxp3?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7092feef-651d-4670-7d98-08dc81533ac5
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB6048.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 May 2024 09:22:45.1201
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: CDV7hi0FYyH7dkh+VFiliT0YSypudnLCkCDfnvuAnGVZBGNgzBizfjUTk4d9f9T+N8SfjNmte0V9ko2Ex0uPGA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8341
 
-A new mechanism, LUF(Lazy Unmap Flush), defers tlb flush until folios
-that have been unmapped and freed, eventually get allocated again.  It's
-safe for folios that had been mapped read only and were unmapped, since
-the contents of the folios don't change while staying in pcp or buddy
-so we can still read the data through the stale tlb entries.
+Hi Alejandro,
 
-Applied the mechanism to unmapping during folio reclaim.
 
-Signed-off-by: Byungchul Park <byungchul@sk.com>
----
- include/linux/rmap.h |  5 +++--
- mm/rmap.c            |  5 ++++-
- mm/vmscan.c          | 21 ++++++++++++++++++++-
- 3 files changed, 27 insertions(+), 4 deletions(-)
+On 4/29/2024 9:27 PM, Alejandro Jimenez wrote:
+> Even when APICv/AVIC is active, certain guest accesses to its local APIC(s)
+> cannot be fully accelerated, and cause a #VMEXIT to allow the VMM to
+> emulate the behavior and side effects. Expose a counter stat for these
+> specific #VMEXIT types.
+> 
+> Suggested-by: Paolo Bonzini <pbonzini@redhat.com>
+> Signed-off-by: Alejandro Jimenez <alejandro.j.jimenez@oracle.com>
 
-diff --git a/include/linux/rmap.h b/include/linux/rmap.h
-index 6aca569e342b..9f3e66239f0a 100644
---- a/include/linux/rmap.h
-+++ b/include/linux/rmap.h
-@@ -661,7 +661,7 @@ int folio_referenced(struct folio *, int is_locked,
- 			struct mem_cgroup *memcg, unsigned long *vm_flags);
- 
- bool try_to_migrate(struct folio *folio, enum ttu_flags flags);
--void try_to_unmap(struct folio *, enum ttu_flags flags);
-+bool try_to_unmap(struct folio *, enum ttu_flags flags);
- 
- int make_device_exclusive_range(struct mm_struct *mm, unsigned long start,
- 				unsigned long end, struct page **pages,
-@@ -770,8 +770,9 @@ static inline int folio_referenced(struct folio *folio, int is_locked,
- 	return 0;
- }
- 
--static inline void try_to_unmap(struct folio *folio, enum ttu_flags flags)
-+static inline bool try_to_unmap(struct folio *folio, enum ttu_flags flags)
- {
-+	return false;
- }
- 
- static inline int folio_mkclean(struct folio *folio)
-diff --git a/mm/rmap.c b/mm/rmap.c
-index b8b977278a1b..6f90c2adc4ae 100644
---- a/mm/rmap.c
-+++ b/mm/rmap.c
-@@ -2272,10 +2272,11 @@ static int folio_not_mapped(struct folio *folio)
-  * Tries to remove all the page table entries which are mapping this
-  * folio.  It is the caller's responsibility to check if the folio is
-  * still mapped if needed (use TTU_SYNC to prevent accounting races).
-+ * Return true if all the mappings are read-only, otherwise false.
-  *
-  * Context: Caller must hold the folio lock.
-  */
--void try_to_unmap(struct folio *folio, enum ttu_flags flags)
-+bool try_to_unmap(struct folio *folio, enum ttu_flags flags)
- {
- 	struct rmap_walk_control rwc = {
- 		.rmap_one = try_to_unmap_one,
-@@ -2300,6 +2301,8 @@ void try_to_unmap(struct folio *folio, enum ttu_flags flags)
- 		fold_ubc(tlb_ubc_luf, tlb_ubc_ro);
- 	else
- 		fold_ubc(tlb_ubc, tlb_ubc_ro);
-+
-+	return can_luf;
- }
- 
- /*
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 15efe6f0edce..d52a6e605183 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -1034,14 +1034,17 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
- 		struct reclaim_stat *stat, bool ignore_references)
- {
- 	struct folio_batch free_folios;
-+	struct folio_batch free_folios_luf;
- 	LIST_HEAD(ret_folios);
- 	LIST_HEAD(demote_folios);
- 	unsigned int nr_reclaimed = 0;
- 	unsigned int pgactivate = 0;
- 	bool do_demote_pass;
- 	struct swap_iocb *plug = NULL;
-+	unsigned short int ugen;
- 
- 	folio_batch_init(&free_folios);
-+	folio_batch_init(&free_folios_luf);
- 	memset(stat, 0, sizeof(*stat));
- 	cond_resched();
- 	do_demote_pass = can_demote(pgdat->node_id, sc);
-@@ -1053,6 +1056,7 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
- 		enum folio_references references = FOLIOREF_RECLAIM;
- 		bool dirty, writeback;
- 		unsigned int nr_pages;
-+		bool can_luf = false;
- 
- 		cond_resched();
- 
-@@ -1295,7 +1299,7 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
- 			if (folio_test_large(folio) && list_empty(&folio->_deferred_list))
- 				flags |= TTU_SYNC;
- 
--			try_to_unmap(folio, flags);
-+			can_luf = try_to_unmap(folio, flags);
- 			if (folio_mapped(folio)) {
- 				stat->nr_unmap_fail += nr_pages;
- 				if (!was_swapbacked &&
-@@ -1458,6 +1462,18 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
- 		nr_reclaimed += nr_pages;
- 
- 		folio_undo_large_rmappable(folio);
-+
-+		if (can_luf) {
-+			if (folio_batch_add(&free_folios_luf, folio) == 0) {
-+				mem_cgroup_uncharge_folios(&free_folios_luf);
-+				ugen = try_to_unmap_luf();
-+				if (!ugen)
-+					try_to_unmap_flush();
-+				free_unref_folios(&free_folios_luf, ugen);
-+			}
-+			continue;
-+		}
-+
- 		if (folio_batch_add(&free_folios, folio) == 0) {
- 			mem_cgroup_uncharge_folios(&free_folios);
- 			try_to_unmap_flush();
-@@ -1527,8 +1543,11 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
- 	pgactivate = stat->nr_activate[0] + stat->nr_activate[1];
- 
- 	mem_cgroup_uncharge_folios(&free_folios);
-+	mem_cgroup_uncharge_folios(&free_folios_luf);
-+	ugen = try_to_unmap_luf();
- 	try_to_unmap_flush();
- 	free_unref_folios(&free_folios, 0);
-+	free_unref_folios(&free_folios_luf, ugen);
- 
- 	list_splice(&ret_folios, folio_list);
- 	count_vm_events(PGACTIVATE, pgactivate);
--- 
-2.17.1
+Reviewed-by: Vasant Hegde <vasant.hegde@amd.com> # AMD
 
+-Vasant
+
+> ---
+>  arch/x86/include/asm/kvm_host.h | 1 +
+>  arch/x86/kvm/svm/avic.c         | 7 +++++++
+>  arch/x86/kvm/vmx/vmx.c          | 2 ++
+>  arch/x86/kvm/x86.c              | 1 +
+>  4 files changed, 11 insertions(+)
+> 
+> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+> index e7e3213cefae..388979dfe9f3 100644
+> --- a/arch/x86/include/asm/kvm_host.h
+> +++ b/arch/x86/include/asm/kvm_host.h
+> @@ -1576,6 +1576,7 @@ struct kvm_vcpu_stat {
+>  	u64 guest_mode;
+>  	u64 notify_window_exits;
+>  	u64 apicv_active;
+> +	u64 apicv_unaccelerated_inj;
+>  };
+>  
+>  struct x86_instruction_info;
+> diff --git a/arch/x86/kvm/svm/avic.c b/arch/x86/kvm/svm/avic.c
+> index 4b74ea91f4e6..274041d3cf66 100644
+> --- a/arch/x86/kvm/svm/avic.c
+> +++ b/arch/x86/kvm/svm/avic.c
+> @@ -517,6 +517,8 @@ int avic_incomplete_ipi_interception(struct kvm_vcpu *vcpu)
+>  			kvm_apic_write_nodecode(vcpu, APIC_ICR);
+>  		else
+>  			kvm_apic_send_ipi(apic, icrl, icrh);
+> +
+> +		++vcpu->stat.apicv_unaccelerated_inj;
+>  		break;
+>  	case AVIC_IPI_FAILURE_TARGET_NOT_RUNNING:
+>  		/*
+> @@ -525,6 +527,8 @@ int avic_incomplete_ipi_interception(struct kvm_vcpu *vcpu)
+>  		 * vcpus. So, we just need to kick the appropriate vcpu.
+>  		 */
+>  		avic_kick_target_vcpus(vcpu->kvm, apic, icrl, icrh, index);
+> +
+> +		++vcpu->stat.apicv_unaccelerated_inj;
+>  		break;
+>  	case AVIC_IPI_FAILURE_INVALID_BACKING_PAGE:
+>  		WARN_ONCE(1, "Invalid backing page\n");
+> @@ -704,6 +708,9 @@ int avic_unaccelerated_access_interception(struct kvm_vcpu *vcpu)
+>  
+>  	trace_kvm_avic_unaccelerated_access(vcpu->vcpu_id, offset,
+>  					    trap, write, vector);
+> +
+> +	++vcpu->stat.apicv_unaccelerated_inj;
+> +
+>  	if (trap) {
+>  		/* Handling Trap */
+>  		WARN_ONCE(!write, "svm: Handling trap read.\n");
+> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> index f10b5f8f364b..a7487f12ded1 100644
+> --- a/arch/x86/kvm/vmx/vmx.c
+> +++ b/arch/x86/kvm/vmx/vmx.c
+> @@ -5657,6 +5657,8 @@ static int handle_apic_write(struct kvm_vcpu *vcpu)
+>  {
+>  	unsigned long exit_qualification = vmx_get_exit_qual(vcpu);
+>  
+> +	++vcpu->stat.apicv_unaccelerated_inj;
+> +
+>  	/*
+>  	 * APIC-write VM-Exit is trap-like, KVM doesn't need to advance RIP and
+>  	 * hardware has done any necessary aliasing, offset adjustments, etc...
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index 03cb933920cb..c8730b0fac87 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -307,6 +307,7 @@ const struct _kvm_stats_desc kvm_vcpu_stats_desc[] = {
+>  	STATS_DESC_IBOOLEAN(VCPU, guest_mode),
+>  	STATS_DESC_COUNTER(VCPU, notify_window_exits),
+>  	STATS_DESC_IBOOLEAN(VCPU, apicv_active),
+> +	STATS_DESC_COUNTER(VCPU, apicv_unaccelerated_inj),
+>  };
+>  
+>  const struct kvm_stats_header kvm_vcpu_stats_header = {
 
