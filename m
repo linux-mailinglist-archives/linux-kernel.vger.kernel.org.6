@@ -1,137 +1,81 @@
-Return-Path: <linux-kernel+bounces-197044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4577F8D656A
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:13:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B9A6F8D656D
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:13:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEF8328EFC0
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 15:13:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74DF828610E
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 15:13:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DA05770FF;
-	Fri, 31 May 2024 15:11:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PhVY1QDU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 573D87483;
-	Fri, 31 May 2024 15:11:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A56691420D0;
+	Fri, 31 May 2024 15:13:00 +0000 (UTC)
+Received: from mail.bugwerft.de (mail.bugwerft.de [46.23.86.59])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D30A1848;
+	Fri, 31 May 2024 15:12:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.23.86.59
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717168279; cv=none; b=aO3Z3JFl0NLQ3eT/scJPnEvjteSH5gor5c/Xi1yGn+qfiAi7l4NXuS58kGD1ndFKGSTYMmSEMQXf7Mr3odO/S+8mEjDe2OJHyAlRZR4LyKYDHoIZJvT33dTNPQ9dchSjxQLjo0j9+Q/RPNL/C7iZZBUcQxZeB82WEpiqIqR4TIw=
+	t=1717168380; cv=none; b=tNSu7mFHU8iGZSChNgsD3S/r5nv+uelEBsBXlEpiRgDrPzqXa3yg8+4PZDgBAN/yn6l2Hl0J7GykSlyVHiOEzy8YbJc40+kZGvSn3lmPedduTtZ3ryWD7hEF+/btKC3RcAc2tnCI7nQ95nr5U6JYHHqMEhRGqolDjtJzxakbXeg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717168279; c=relaxed/simple;
-	bh=BGnnpDBcKYL3dKJjZSbZGcYNM5FmYIuUanB00h62RZY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ixyO+IWfnZl3xk2E5CU7dfT1HjX5ic/2JGchrFHSkk2BbS0j4G9NMkMia0vKjL6QdRbcmgHGnN7585zYjQlez/rtvXoF43FL9ZIyaVkGNk3qrOQprbu0D8Bmoj60h9OY9svl9TneRj30HK1WXGHTTnihc9ZBC60OF9PSFCNjfOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PhVY1QDU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62B9BC116B1;
-	Fri, 31 May 2024 15:11:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717168278;
-	bh=BGnnpDBcKYL3dKJjZSbZGcYNM5FmYIuUanB00h62RZY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PhVY1QDU+pk0ZiuCfmbyiENiKCKaBpbqyaTe087TxsNKREnXaqiYYkhZTSxI6wk1h
-	 j1TQiMRQN4/y5gdcUdM1Nl2GCByWf+Bp5nRm/ENGXrIuR85+rHtWrYjwirJbUuVgWd
-	 V4Jh1kBxdE3JHJUb/6QVtpSQ59yr0+bKFqjVrnSl+pDKFJ+V+enMDQaLbNUUnlPa1F
-	 eVM7Ms4+CviV96OPCO4SSoLHMCyQgZ9XglgaPN2qeUKQcCjjq4WBPHhyI8hAcrNzwX
-	 LqJwTprQkIDkgktw/BswwKu+7ub6hzGFxO6D9EO3Qkicf1cu6WapKhx4qyGWqKXQpQ
-	 LwiNnZVNVn0rg==
-Date: Fri, 31 May 2024 16:11:15 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Saravana Kannan <saravanak@google.com>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Sam Ravnborg <sam@ravnborg.org>, sparclinux@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] of: WARN on using default root node
- #address-cells/#size-cells
-Message-ID: <20240531-excursion-synapse-13c198fc61cb@spud>
-References: <20240530185049.2851617-1-robh@kernel.org>
- <20240530-surging-sprinkled-f209b2452395@spud>
- <CAL_JsqKC5kkMvWDHVdt-3gS-sW=t=cvLctVVbHhcvPXpe-2nSQ@mail.gmail.com>
+	s=arc-20240116; t=1717168380; c=relaxed/simple;
+	bh=/iWDpVJw1GK4gVih8nweVgtydmcqAVcnqRMEQTtTvtg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=L/vHNU60R6fUSndVGxxwOgs23z/oTP1OOu+vQERaqkrBNygqrnkqBoiwSYZSeP277VqOZR4R/dwTCxWN1cfJln+EjCvIA6q82ZggciZnvNaktlZXq55zqpDPE0HBbJ+5ZnHsKRdYS1P6nqCie9JmGfkWAEEy7xypjzBmbs1BCZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zonque.org; spf=pass smtp.mailfrom=zonque.org; arc=none smtp.client-ip=46.23.86.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zonque.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zonque.org
+Received: from [192.168.178.57] (pd95efb9d.dip0.t-ipconnect.de [217.94.251.157])
+	by mail.bugwerft.de (Postfix) with ESMTPSA id 47BE12806FF;
+	Fri, 31 May 2024 15:12:56 +0000 (UTC)
+Message-ID: <bc4d9470-340c-4559-b56f-7cce89c45d0b@zonque.org>
+Date: Fri, 31 May 2024 17:12:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="uyjlUp5eqmodPrmz"
-Content-Disposition: inline
-In-Reply-To: <CAL_JsqKC5kkMvWDHVdt-3gS-sW=t=cvLctVVbHhcvPXpe-2nSQ@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] serial: sc16is7xx: set driver name
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: hvilleneuve@dimonoff.com, linux-serial@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240531101959.181457-1-daniel@zonque.org>
+ <2024053127-custody-bankable-817d@gregkh>
+Content-Language: en-US
+From: Daniel Mack <daniel@zonque.org>
+In-Reply-To: <2024053127-custody-bankable-817d@gregkh>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+On 5/31/24 12:27, Greg KH wrote:
+> On Fri, May 31, 2024 at 12:19:59PM +0200, Daniel Mack wrote:
+>> Set the drv_name field of the driver struct so that the tty core
+>> registers a procfs entry for it. This is useful for debugging.
+>>
+>> Signed-off-by: Daniel Mack <daniel@zonque.org>
+>> ---
+>>  drivers/tty/serial/sc16is7xx.c | 1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> diff --git a/drivers/tty/serial/sc16is7xx.c b/drivers/tty/serial/sc16is7xx.c
+>> index bf0065d1c8e9..308edbacda7b 100644
+>> --- a/drivers/tty/serial/sc16is7xx.c
+>> +++ b/drivers/tty/serial/sc16is7xx.c
+>> @@ -351,6 +351,7 @@ static struct uart_driver sc16is7xx_uart = {
+>>  	.owner		= THIS_MODULE,
+>>  	.driver_name    = SC16IS7XX_NAME,
+>>  	.dev_name	= "ttySC",
+>> +	.driver_name	= SC16IS7XX_NAME,
+> 
+> Are you sure this patch is correct?  Look 2 lines up :)
+> 
+
+Oh, Hugo did that already. Sorry for the noise.
 
 
---uyjlUp5eqmodPrmz
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Daniel
 
-On Thu, May 30, 2024 at 07:33:57PM -0500, Rob Herring wrote:
-> On Thu, May 30, 2024 at 2:21=E2=80=AFPM Conor Dooley <conor@kernel.org> w=
-rote:
-> >
-> > On Thu, May 30, 2024 at 01:50:48PM -0500, Rob Herring (Arm) wrote:
-> > > While OpenFirmware originally allowed default values of #address-cells
-> > > and #size-cells, FDT has long required explicit values. It's been a
-> > > warning in dtc for the root node since the beginning (2005) and for
-> > > any parent node since 2007. Of course, not all FDT uses dtc, but that
-> > > should be the majority by far. The various extracted OF devicetrees I
-> > > have dating back to the 1990s (various PowerMac, OLPC, PASemi Nemo)
-> > > all have explicit root node properties.
-> > >
-> > > I have no idea what exists for Sparc, so disabling the warning for it.
-> > > If any other platforms hit the warning, then the warning can be
-> > > disabled for them.
-> > >
-> > > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> > > ---
-> > > Sparc folks, If anyone can dump DTs from some Sparc systems it would =
-be
-> > > helpful.
-> > > ---
-> > >  drivers/of/base.c | 2 ++
-> > >  drivers/of/fdt.c  | 2 ++
-> > >  2 files changed, 4 insertions(+)
-> > >
-> > > diff --git a/drivers/of/base.c b/drivers/of/base.c
-> > > index 61fff13bbee5..6930aa29fec1 100644
-> > > --- a/drivers/of/base.c
-> > > +++ b/drivers/of/base.c
-> > > @@ -96,6 +96,7 @@ int of_bus_n_addr_cells(struct device_node *np)
-> > >                       return cells;
-> > >
-> > >       /* No #address-cells property for the root node */
-> > > +     WARN_ONCE(!IS_ENABLED(CONFIG_SPARC), "Only listed platforms sho=
-uld rely on default '#address-cells'\n");
-> >
-> > I assume "listed platforms" means things in the first parameter of
-> > WARN_ONCE()? Since that's only SPARC, why not just say it? The error
-> > message is rather obtuse as-is I think.
->=20
-> My intent is if you hit this warning, add the platform here.
-
-Aye, I figured as much. My point was mostly that if you see this warning
-during boot etc the message doesn't make that much sense. It only really
-makes sense when you look at the kernel sources.
-
-> I imagine
-> it will be older stuff we can't or don't want to fix. Maybe I should
-> just say that as a comment instead.
-
---uyjlUp5eqmodPrmz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZlnokwAKCRB4tDGHoIJi
-0igyAP9ZMYa40yBgxnzlWirEDEOVEZkczT/VxnyqupfD+G1u1QD+LK3+LfsxDO2D
-LrADJ6wRuOK7XFE8wdPAexoqL7dTMgM=
-=uUF7
------END PGP SIGNATURE-----
-
---uyjlUp5eqmodPrmz--
 
