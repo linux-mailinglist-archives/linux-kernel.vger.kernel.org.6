@@ -1,272 +1,123 @@
-Return-Path: <linux-kernel+bounces-197572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BBCC8D6C9B
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 00:50:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 966C88D6CA0
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 01:00:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29AC8B27D41
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 22:49:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32EF3B25CC5
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 23:00:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11956824B9;
-	Fri, 31 May 2024 22:49:48 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EECB984E08;
+	Fri, 31 May 2024 23:00:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="a3Y7BDn/"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C6D9168DA;
-	Fri, 31 May 2024 22:49:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81A22824BD;
+	Fri, 31 May 2024 23:00:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717195787; cv=none; b=PS0R2U7N7GDkQpM98T99QOSXTWr9iGb0CjJd/pC1jE04oC69RvsOVOZxjJjdjSZcuFfxrH7No0MLazrgCzgFZHlXWSueER0yuVawedoifHnlHkOeej6th5onrmtUrnanO0OdJCh7EqcX6RPoGrltJQ/1O4vvRHbZQdnsmT3oKuw=
+	t=1717196417; cv=none; b=Y6SLu9WuQIjGSMU1TxWtn7XNYD4E/pWwyFxykYRM5uLXCYlsxBlsCJprR5VUBigFM+BSuh+0Fl0yh2XcupqU5UYdTi7Gg2JVt1S7ADj12x4mDssu8yWNcR0OpZPoRoa5WuDxbkGht9vqghzmcTQaLZnfzAkeTGqmFZ4PQ5ijwFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717195787; c=relaxed/simple;
-	bh=+UQy7NFH7cIoreL6KRBvahvgtAOgRsqyhcKdhRpeoNk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lpXlCAHIGQrs33NFnr89/bW8qY0TGjjshLgzNt6bvqmRkU080LnOObdWP2iZxziQMSkrFmY1MHV8MSiQ/ZonLnPRFx+riLG1VhawlDHTUGmKPEV0ZZVtlMLCyiwlfPXBVP3ASkWrihKotH8ulVywsjXAktGiMhYB1ciWPf1HuOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DB3AC116B1;
-	Fri, 31 May 2024 22:49:42 +0000 (UTC)
-Date: Fri, 31 May 2024 18:49:10 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Mark
- Rutland <mark.rutland@arm.com>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Andrew Morton
- <akpm@linux-foundation.org>, Alexei Starovoitov
- <alexei.starovoitov@gmail.com>, Florent Revest <revest@chromium.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, bpf <bpf@vger.kernel.org>, Sven
- Schnelle <svens@linux.ibm.com>, Alexei Starovoitov <ast@kernel.org>, Jiri
- Olsa <jolsa@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, Daniel
- Borkmann <daniel@iogearbox.net>, Alan Maguire <alan.maguire@oracle.com>,
- Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner
- <tglx@linutronix.de>, Guo Ren <guoren@kernel.org>
-Subject: Re: [PATCH 10/20] function_graph: Have the instances use their own
- ftrace_ops for filtering
-Message-ID: <20240531184910.799635e8@rorschach.local.home>
-In-Reply-To: <20240531235023.a0b2b207362eba2f8b5c16f7@kernel.org>
-References: <20240525023652.903909489@goodmis.org>
-	<20240525023742.786834257@goodmis.org>
-	<20240530223057.21c2a779@rorschach.local.home>
-	<20240531121241.c586189caad8d31d597f614d@kernel.org>
-	<20240531020346.6c13e2d4@rorschach.local.home>
-	<20240531235023.a0b2b207362eba2f8b5c16f7@kernel.org>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1717196417; c=relaxed/simple;
+	bh=UBKKEvM9H27lQntnnS2zBRYXzaOTwI7iiVKSj/re3/E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YyWPqcxf4brdD8xeML2r7Tphj1M8XYwGQ2YvUPNNCwscHskPlkp0sBX+FAE/gSav2CtZGMuSabdMzlaIt9e0qu6fyuu79ZTRM17jCY9kr+4ybhwpBEtBl8X05V4my6sfOKyJqMM5woR27iO4tkjBPyoq5WYriIqpgdsjnHAUtJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=a3Y7BDn/; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717196412; x=1748732412;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=UBKKEvM9H27lQntnnS2zBRYXzaOTwI7iiVKSj/re3/E=;
+  b=a3Y7BDn/tzgIoMEPgQyXFyKmPZdnEctDzOxbNxcC37XWUXbco6dbHUj4
+   blYcOoN/SaFUHviitBZa0HEA/W3N/5M6LJxa9V68sdTOQD83W/vf+ZjWI
+   2Qw1HYfHWUySOHWx6r+kpaFyuXNI2Az4VoCMU+lY/WF6K7ogWpbrDn1K8
+   xhqL2K4JxRKMH47jjVLKKeoi4PrD+yiDd1ciF0yOKjyO/aJyBCUeibEFj
+   bbhGQ1lzEALCHchEPa+E5yBWSaRI14nNDYl10XhQkma2kOVJJgDuBJc17
+   ApRrUDSuWRijR9xl0deUQK54wDRGOXKNaPf0dNtjZ9qGV995hMCkDhLI4
+   w==;
+X-CSE-ConnectionGUID: qO0d2jO4TbiMx6GH0xzu7Q==
+X-CSE-MsgGUID: eGATJ6nWSlygH5XJdv16NA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11089"; a="13514278"
+X-IronPort-AV: E=Sophos;i="6.08,205,1712646000"; 
+   d="scan'208";a="13514278"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 16:00:11 -0700
+X-CSE-ConnectionGUID: Q352bnSrRZi8XXTsWTcQTA==
+X-CSE-MsgGUID: ViEn5M/oRPm/8BztsJPpEw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,205,1712646000"; 
+   d="scan'208";a="41226739"
+Received: from spandruv-desk.jf.intel.com ([10.54.75.19])
+  by orviesa005.jf.intel.com with ESMTP; 31 May 2024 16:00:10 -0700
+From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+To: rafael@kernel.org,
+	viresh.kumar@linaro.org
+Cc: linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: [PATCH] cpufreq: intel_pstate: Fix unchecked HWP MSR access
+Date: Fri, 31 May 2024 16:00:04 -0700
+Message-ID: <20240531230004.1334127-1-srinivas.pandruvada@linux.intel.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Fri, 31 May 2024 23:50:23 +0900
-Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
+Fix unchecked MSR access error for processors with no HWP support. On
+such processors, maximum frequency can be changed by the system firmware
+using ACPI event ACPI_PROCESSOR_NOTIFY_HIGEST_PERF_CHANGED. This results
+in accessing HWP MSR 0x771.
 
-> So is it similar to the fprobe/kprobe, use shared signle ftrace_ops,
-> but keep each fgraph has own hash table?
+Call Trace:
+	<TASK>
+	generic_exec_single+0x58/0x120
+	smp_call_function_single+0xbf/0x110
+	rdmsrl_on_cpu+0x46/0x60
+	intel_pstate_get_hwp_cap+0x1b/0x70
+	intel_pstate_update_limits+0x2a/0x60
+	acpi_processor_notify+0xb7/0x140
+	acpi_ev_notify_dispatch+0x3b/0x60
 
-Sort of.
+HWP MSR 0x771 can be only read on a CPU which supports HWP and enabled.
+Hence intel_pstate_get_hwp_cap() can only be called when hwp_active is
+true.
 
-I created helper functions in ftrace that lets you have a "manager
-ftrace_ops" that will be used to assign to ftrace (with the function
-that will demultiplex), and then you can have "subops" that can be
-assigned that is per user. Here's a glimpse of the code:
+Reported-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Closes: https://lore.kernel.org/linux-pm/20240529155740.Hq2Hw7be@linutronix.de/
+Fixes: e8217b4bece3 ("cpufreq: intel_pstate: Update the maximum CPU frequency consistently")
+Tested-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+---
+ drivers/cpufreq/intel_pstate.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-/**
- * ftrace_startup_subops - enable tracing for subops of an ops
- * @ops: Manager ops (used to pick all the functions of its subops)
- * @subops: A new ops to add to @ops
- * @command: Extra commands to use to enable tracing
- *
- * The @ops is a manager @ops that has the filter that includes all the functions
- * that its list of subops are tracing. Adding a new @subops will add the
- * functions of @subops to @ops.
- */
-int ftrace_startup_subops(struct ftrace_ops *ops, struct ftrace_ops *subops, int command)
-{
-	struct ftrace_hash *filter_hash;
-	struct ftrace_hash *notrace_hash;
-	struct ftrace_hash *save_filter_hash;
-	struct ftrace_hash *save_notrace_hash;
-	int size_bits;
-	int ret;
+diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
+index 4b986c044741..65d3f79104bd 100644
+--- a/drivers/cpufreq/intel_pstate.c
++++ b/drivers/cpufreq/intel_pstate.c
+@@ -1153,7 +1153,8 @@ static void intel_pstate_update_policies(void)
+ static void __intel_pstate_update_max_freq(struct cpudata *cpudata,
+ 					   struct cpufreq_policy *policy)
+ {
+-	intel_pstate_get_hwp_cap(cpudata);
++	if (hwp_active)
++		intel_pstate_get_hwp_cap(cpudata);
+ 
+ 	policy->cpuinfo.max_freq = READ_ONCE(global.no_turbo) ?
+ 			cpudata->pstate.max_freq : cpudata->pstate.turbo_freq;
+-- 
+2.25.1
 
-	if (unlikely(ftrace_disabled))
-		return -ENODEV;
-
-	ftrace_ops_init(ops);
-	ftrace_ops_init(subops);
-
-	/* Make everything canonical (Just in case!) */
-	if (!ops->func_hash->filter_hash)
-		ops->func_hash->filter_hash = EMPTY_HASH;
-	if (!ops->func_hash->notrace_hash)
-		ops->func_hash->notrace_hash = EMPTY_HASH;
-	if (!subops->func_hash->filter_hash)
-		subops->func_hash->filter_hash = EMPTY_HASH;
-	if (!subops->func_hash->notrace_hash)
-		subops->func_hash->notrace_hash = EMPTY_HASH;
-
-	/* For the first subops to ops just enable it normally */
-	if (list_empty(&ops->subop_list)) {
-		/* Just use the subops hashes */
-		filter_hash = copy_hash(subops->func_hash->filter_hash);
-		notrace_hash = copy_hash(subops->func_hash->notrace_hash);
-		if (!filter_hash || !notrace_hash) {
-			free_ftrace_hash(filter_hash);
-			free_ftrace_hash(notrace_hash);
-			return -ENOMEM;
-		}
-
-		save_filter_hash = ops->func_hash->filter_hash;
-		save_notrace_hash = ops->func_hash->notrace_hash;
-
-		ops->func_hash->filter_hash = filter_hash;
-		ops->func_hash->notrace_hash = notrace_hash;
-		list_add(&subops->list, &ops->subop_list);
-		ret = ftrace_startup(ops, command);
-		if (ret < 0) {
-			list_del(&subops->list);
-			ops->func_hash->filter_hash = save_filter_hash;
-			ops->func_hash->notrace_hash = save_notrace_hash;
-			free_ftrace_hash(filter_hash);
-			free_ftrace_hash(notrace_hash);
-		} else {
-			free_ftrace_hash(save_filter_hash);
-			free_ftrace_hash(save_notrace_hash);
-			subops->flags |= FTRACE_OPS_FL_ENABLED;
-		}
-		return ret;
-	}
-
-	/*
-	 * Here there's already something attached. Here are the rules:
-	 *   o If either filter_hash is empty then the final stays empty
-	 *      o Otherwise, the final is a superset of both hashes
-	 *   o If either notrace_hash is empty then the final stays empty
-	 *      o Otherwise, the final is an intersection between the hashes
-	 */
-	if (ops->func_hash->filter_hash == EMPTY_HASH ||
-	    subops->func_hash->filter_hash == EMPTY_HASH) {
-		filter_hash = EMPTY_HASH;
-	} else {
-		size_bits = max(ops->func_hash->filter_hash->size_bits,
-				subops->func_hash->filter_hash->size_bits);
-		filter_hash = alloc_and_copy_ftrace_hash(size_bits, ops->func_hash->filter_hash);
-		if (!filter_hash)
-			return -ENOMEM;
-		ret = append_hash(&filter_hash, subops->func_hash->filter_hash);
-		if (ret < 0) {
-			free_ftrace_hash(filter_hash);
-			return ret;
-		}
-	}
-
-	if (ops->func_hash->notrace_hash == EMPTY_HASH ||
-	    subops->func_hash->notrace_hash == EMPTY_HASH) {
-		notrace_hash = EMPTY_HASH;
-	} else {
-		size_bits = max(ops->func_hash->filter_hash->size_bits,
-				subops->func_hash->filter_hash->size_bits);
-		notrace_hash = alloc_ftrace_hash(size_bits);
-		if (!notrace_hash) {
-			free_ftrace_hash(filter_hash);
-			return -ENOMEM;
-		}
-
-		ret = intersect_hash(&notrace_hash, ops->func_hash->filter_hash,
-				     subops->func_hash->filter_hash);
-		if (ret < 0) {
-			free_ftrace_hash(filter_hash);
-			free_ftrace_hash(notrace_hash);
-			return ret;
-		}
-	}
-
-	list_add(&subops->list, &ops->subop_list);
-
-	ret = ftrace_update_ops(ops, filter_hash, notrace_hash);
-	free_ftrace_hash(filter_hash);
-	free_ftrace_hash(notrace_hash);
-	if (ret < 0)
-		list_del(&subops->list);
-	return ret;
-}
-
-/**
- * ftrace_shutdown_subops - Remove a subops from a manager ops
- * @ops: A manager ops to remove @subops from
- * @subops: The subops to remove from @ops
- * @command: Any extra command flags to add to modifying the text
- *
- * Removes the functions being traced by the @subops from @ops. Note, it
- * will not affect functions that are being traced by other subops that
- * still exist in @ops.
- *
- * If the last subops is removed from @ops, then @ops is shutdown normally.
- */
-int ftrace_shutdown_subops(struct ftrace_ops *ops, struct ftrace_ops *subops, int command)
-{
-	struct ftrace_hash *filter_hash;
-	struct ftrace_hash *notrace_hash;
-	int ret;
-
-	if (unlikely(ftrace_disabled))
-		return -ENODEV;
-
-	list_del(&subops->list);
-
-	if (list_empty(&ops->subop_list)) {
-		/* Last one, just disable the current ops */
-
-		ret = ftrace_shutdown(ops, command);
-		if (ret < 0) {
-			list_add(&subops->list, &ops->subop_list);
-			return ret;
-		}
-
-		subops->flags &= ~FTRACE_OPS_FL_ENABLED;
-
-		free_ftrace_hash(ops->func_hash->filter_hash);
-		free_ftrace_hash(ops->func_hash->notrace_hash);
-		ops->func_hash->filter_hash = EMPTY_HASH;
-		ops->func_hash->notrace_hash = EMPTY_HASH;
-
-		return 0;
-	}
-
-	/* Rebuild the hashes without subops */
-	filter_hash = append_hashes(ops);
-	notrace_hash = intersect_hashes(ops);
-	if (!filter_hash || !notrace_hash) {
-		free_ftrace_hash(filter_hash);
-		free_ftrace_hash(notrace_hash);
-		list_add(&subops->list, &ops->subop_list);
-		return -ENOMEM;
-	}
-
-	ret = ftrace_update_ops(ops, filter_hash, notrace_hash);
-	if (ret < 0)
-		list_add(&subops->list, &ops->subop_list);
-	free_ftrace_hash(filter_hash);
-	free_ftrace_hash(notrace_hash);
-	return ret;
-}
-
-
-> 
-> > This removes the need to touch the architecture code. It can also be
-> > used by fprobes to handle the attachments to functions for several
-> > different sets of callbacks.
-> > 
-> > I'll send out patches soon.  
-> 
-> OK, I'll wait for that.
-
-I'm just cleaning it up. I'll post it tomorrow (your today).
-
--- Steve
 
