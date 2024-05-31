@@ -1,192 +1,152 @@
-Return-Path: <linux-kernel+bounces-196975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7FA48D6482
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:27:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 785948D6485
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:27:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C17B8B252D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:27:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 331A228B459
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:27:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FD391D52B;
-	Fri, 31 May 2024 14:27:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32E401D52B;
+	Fri, 31 May 2024 14:27:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YJ9dtygA"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Si7aWWYu"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE14D1B812;
-	Fri, 31 May 2024 14:27:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E061D1C680;
+	Fri, 31 May 2024 14:27:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717165645; cv=none; b=ba0PclPEU4fBjSWrmoRVkO+5w7ybbCdh1inLcw796EJM9yN9qsqr8LZA4uNtdTYcT0lmY+EY4KRQIJHhPvIXWpqoCN1nB5wYgzvvTAPVwqa9afWk5eNlAqOdmLthUrPeP1uxhr7ZvofA1D+TtaWBpDWKDSVMx/CAHCQAlFfWJjM=
+	t=1717165659; cv=none; b=R21cYDAAV3MTFRumpY26alROHuXIkv8UgBoVXaYxS8B0jE5X2TMODTz4M+mY2YHGwiXNDE2raO81PCExjWlpRs7cv0XsKBjzuhM9wVDqpuH0A0ZHu1AUnFWvIU+Ijzj25vmIjQOs0v5CAewYlxMQFtnx1OlzK/alxowZocS1AvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717165645; c=relaxed/simple;
-	bh=n7YEdd11QRP/OOwY4XoPE4WkASBPeP/8wqIEQykbh5Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=urMrZ5lx9yG2l8czVpQmEvC/v14/x0Fy6EOQrT/l7+LPe/dXcWrWKsXtaCxbCeG8QYGWoQhrFoQK959MYTonPcloTmrL3IJBHiRC54AP/YahDc7LhdQ/Zi8occyOsZSOcOLRCgmaFjUpOrYX+3QIBTZ+wJQvXr0fFyiF5F6089g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YJ9dtygA; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44V4lbgJ015681;
-	Fri, 31 May 2024 14:27:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	A4Mj8x/aCM3XhdQ9xf9ggG0TXxFkcWcMDxerZnHJ5eU=; b=YJ9dtygAMca15Jfs
-	No+ccb4/s5xhijZxvt6/W/M1wRskJy8P9aD50hgOwV86cShzsqwVdrVIcJAwbxlJ
-	xL3/BcXB3DRBse2dniIqkQ8E5N2qYbb4YE+1nA7WjF+v6h6UY5HRFmzt5VARYH16
-	HX0EBTNP1TVhICzIi33TIy35QD3gRMYb7a9riVaL/SLfnJwiK6a1jWy7S7ZqVQPB
-	Cl0ECXe+YLWzt7qV3H5a+jbbQznUoedKkMX5FsxozqoffJpJBsM2+RKc55gJt58n
-	Lz4odvaR/wiChsIJ9sEYRp92VRhmatxjJI+4/eamJKW1n2WXg2cVTimSaNUAPLO1
-	WS+hmw==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ydyws6rwf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 31 May 2024 14:27:11 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44VERAPj002260
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 31 May 2024 14:27:10 GMT
-Received: from [10.216.8.21] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 31 May
- 2024 07:27:05 -0700
-Message-ID: <d61ede0b-f689-46af-9bc8-e715784b86c0@quicinc.com>
-Date: Fri, 31 May 2024 19:57:01 +0530
+	s=arc-20240116; t=1717165659; c=relaxed/simple;
+	bh=lkb/Rx4zrkLYhHxsdd/vLu9gytYG5lviQ2YKGRXvvxE=;
+	h=Content-Type:Mime-Version:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=RxN9XZSb9JVJX+6Cklkx2mwQfYEFsdyoP1JSU1Y7s6l1Yqhzq05YbDAJZ9eK9eXl5PezcBkXgU7Km/2mhdme+rJFIJPza3eIVhcfo30+NxpliWuehgQ2dx944JkXiF9TB0D50dt6ULrmHGlKbAv35K/2+nTr8twqLyKWCcLUt90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Si7aWWYu; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52b8d483a08so344015e87.1;
+        Fri, 31 May 2024 07:27:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717165656; x=1717770456; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Vyw0QqWPLXQsbnv/eRXn+8SY3S8vBVQpvW4XtA6GV3o=;
+        b=Si7aWWYuDXVKKwro365NU/uRdPefukAnbs7Qki5z0DK7Nli7aUeE63cbE/0+L3x84w
+         Eck0iirv7auDCpgoctEBCi2mX9fA4BIHZEDBgeZUPKcgdtBk3YVj2hChXRLWiXNQbayu
+         PtTevYiq4lWoblJlKSg4GQRJI+hEjHJoFGOF8gNzZXlt6h1Mty+6jVXl+VeKo8OcX0hK
+         NoEHWSehWZA4me3nUJjRveRFeSXAFRPOdBAHcYUppjZSoW/zx3zdXkrOQmCPXKEnW6iF
+         dVwV0ASdOrfB4n/XsjcMVRyodZDOeb3eOWQq8rZEyRwW90lqJDONpKg/gbYSHMiv3joe
+         vsZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717165656; x=1717770456;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Vyw0QqWPLXQsbnv/eRXn+8SY3S8vBVQpvW4XtA6GV3o=;
+        b=nWk3I/W87Ycdm8UvT3hwEh+MJaPV5fxqdrqAR/wKsn6au4TC4OlMD7sk+loDlge6wG
+         bw+dfHj0w8mfZPXDsQWmZw0cxSNu8E/9bJd1WLcZ0L/jiJ2Upkg6yye1xTsND0JxXCoc
+         4R/g/U1VbhXP5UcBEk/S8jfSEzkKfSAmtVxgZ+dOwOwO9xHRHThS3087qdpcVchEczQm
+         rp748sRByPnK4DjrWipHfzfW1k7DXLalJIaxjor0igCu5OIiGPC3YLS2wH/1yEzgRrZH
+         R8L1JlO3LyURGm0nTbVnYOznOaMlEsFzQ+LEhM2eMDyiiLlriqsxc9VCM7LjjDId61Sd
+         UHRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVyAC3HBMUJHRWBrkxCY4Pcgz2SHwcIWFDGFvT37aCrF8OpW/ya8ePxEi5f3h8rJetOXTVzozpXcqvHceZPVAO68rLderOJ+mWbB8bdENDqrhyJbmjR2JUBwPUJ9nIfyzXMaBS26DpgMTc=
+X-Gm-Message-State: AOJu0YyMwFiiWhYDsF9JelK6hogpeui2tpCtK41+A9EiSmyF02ekQ1HP
+	x9+E2KK+ZYyvlsIapD8lyTxDb65dcg5sggfBnzJWJ3bio6WiBvd9
+X-Google-Smtp-Source: AGHT+IH0zYSB5eJp8kFtTsToiVflMdLkT85rkgoYUXCZj948c7VhsWgNQtDpuKO99TnvhDuMSxwjWw==
+X-Received: by 2002:a05:6512:45b:b0:52a:daba:f7f0 with SMTP id 2adb3069b0e04-52b896dc4abmr1244621e87.62.1717165655678;
+        Fri, 31 May 2024 07:27:35 -0700 (PDT)
+Received: from localhost (p200300e41f162000f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f16:2000:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57a31c9c10dsm1081440a12.87.2024.05.31.07.27.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 31 May 2024 07:27:35 -0700 (PDT)
+Content-Type: multipart/signed;
+ boundary=9ed8c5e261fb18701cc301be073920048b7c8d0a92cc9bbfda52553a915a;
+ micalg=pgp-sha256; protocol="application/pgp-signature"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] Disable SS instances in park mode for SC7180/ SC7280
-To: Doug Anderson <dianders@chromium.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>
-CC: <cros-qcom-dts-watchers@chromium.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Rob Herring <robh@kernel.org>, Bjorn Andersson
-	<andersson@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Stephen Boyd
-	<swboyd@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Matthias Kaehlcke <mka@chromium.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <quic_ppratap@quicinc.com>, <quic_jackp@quicinc.com>
-References: <20240530082556.2960148-1-quic_kriskura@quicinc.com>
- <CAD=FV=UhrCKCv5R-LAAugrLXFp=cDcj2=Pp9-N3qk5pk2=sGEg@mail.gmail.com>
- <e732257d-cd16-4e81-9a20-af481184ce0e@linaro.org>
- <CAD=FV=XO_8SwDLJfoNwwCKEO6CZyMRMY_BdsWMLPBkpczErppA@mail.gmail.com>
-Content-Language: en-US
-From: Krishna Kurapati PSSNV <quic_kriskura@quicinc.com>
-In-Reply-To: <CAD=FV=XO_8SwDLJfoNwwCKEO6CZyMRMY_BdsWMLPBkpczErppA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: VvL8KsKv2ymPW9_VKpspcZA-EDrhIw6_
-X-Proofpoint-GUID: VvL8KsKv2ymPW9_VKpspcZA-EDrhIw6_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-31_10,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 phishscore=0
- malwarescore=0 impostorscore=0 suspectscore=0 mlxscore=0 mlxlogscore=712
- priorityscore=1501 spamscore=0 lowpriorityscore=0 bulkscore=0
- clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2405310107
+Mime-Version: 1.0
+Date: Fri, 31 May 2024 16:27:34 +0200
+Message-Id: <D1NWF7ESKQ0X.25OZ9MTC2DSBS@gmail.com>
+Cc: <dri-devel@lists.freedesktop.org>, <linux-tegra@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <baijiaju1990@gmail.com>
+Subject: Re: [PATCH] drm/tegra: fix a possible null pointer dereference
+From: "Thierry Reding" <thierry.reding@gmail.com>
+To: "Huai-Yuan Liu" <qq810974084@gmail.com>, <mperttunen@nvidia.com>,
+ <airlied@gmail.com>, <daniel@ffwll.ch>, <jonathanh@nvidia.com>
+X-Mailer: aerc 0.16.0-1-0-g560d6168f0ed-dirty
+References: <20240531135608.194168-1-qq810974084@gmail.com>
+In-Reply-To: <20240531135608.194168-1-qq810974084@gmail.com>
 
+--9ed8c5e261fb18701cc301be073920048b7c8d0a92cc9bbfda52553a915a
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
+On Fri May 31, 2024 at 3:56 PM CEST, Huai-Yuan Liu wrote:
+> In malidp_tegra_crtc_reset, new memory is allocated with kzalloc, but=20
+> no check is performed. Before calling __drm_atomic_helper_crtc_reset,=20
+> mw_state should be checked to prevent possible null pointer dereferene.
 
-On 5/31/2024 7:47 PM, Doug Anderson wrote:
-> Hi,
-> 
-> On Fri, May 31, 2024 at 5:33 AM Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
->>
->> On 30.05.2024 3:34 PM, Doug Anderson wrote:
->>> Hi,
->>>
->>> On Thu, May 30, 2024 at 1:26 AM Krishna Kurapati
->>> <quic_kriskura@quicinc.com> wrote:
->>>>
->>>> When working in host mode, in certain conditions, when the USB
->>>> host controller is stressed, there is a HC died warning that comes up.
->>>> Fix this up by disabling SS instances in park mode for SC7280 and SC7180.
->>>>
->>>> Krishna Kurapati (2):
->>>>    arm64: dts: qcom: sc7180: Disable SS instances in park mode
->>>>    arm64: dts: qcom: sc7280: Disable SS instances in park mode
->>>>
->>>>   arch/arm64/boot/dts/qcom/sc7180.dtsi | 1 +
->>>>   arch/arm64/boot/dts/qcom/sc7280.dtsi | 1 +
->>>>   2 files changed, 2 insertions(+)
->>>
->>> FWIW, the test case I used to reproduce this:
->>>
->>> 1. Plug in a USB dock w/ Ethernet
->>> 2. Plug a USB 3 SD card reader into the dock.
->>> 3. Use lsusb -t to confirm both Ethernet and card reader are on USB3.
->>> 4. From a shell, run for i in $(seq 5); do dd if=/dev/sdb of=/dev/null
->>> bs=4M; done to read from the card reader.
->>> 5. At the same time, stress the Internet. If you've got a very fast
->>> Internet connection then running Google's "Internet speed test" did
->>> it, but I could also reproduce by just running this from a PC
->>> connected to the same network as my DUT: ssh ${DUT} "dd of=/dev/null"
->>> < /dev/zero
->>>
->>> I would also note that, though I personally reproduced this on sc7180
->>> and sc7280 boards and thus Krishna posted the patch for those boards,
->>> there's no reason to believe that this problem doesn't affect all of
->>> Qualcomm's SoCs. It would be nice if someone at Qualcomm could post a
->>> followup patch fixing this everywhere.
->>
->> Right, this sounds like a more widespread issue
->>
->> That said, I couldn't reproduce it on SC8280XP / X13s (which does NOT mean
->> 8280 isn't affected). My setup was:
->>
->> - USB3 5GB/s hub plugged into one of the side USBs
->>    - on-hub 1 Gb /s network hub connected straight to my router with a
->>      600 / 60 Mbps link, spamming speedtest-cli and dd-over-ssh
->>    - M.2 SSD connected over a USB adapter, nearing 280 MB/s speeds (the
->>      adapter isn't particularly speedy)
->>
->> So it stands to reason that it might not have been enough to trigger it.
-> 
-> In my case I wasn't using anything nearly as fast as a M.2 SSD. I was
-> just using a normal USB3 SD card reader. That being said, multiple
-> people at Qualcomm were able to replicate the issue without lots of
-> back and forth, so I'd guess that the problem isn't that sensitive to
-> the exact storage device. I will also note that it's not sensitive to
-> the exact network device as I replicated it with two Ethernet adapters
-> with very different chipsets.
-> 
-> My only guess is that somehow SC8280XP is faster and that changes the
-> timing of how it handles interrupts. I guess you could try capping
-> your cpufreq in sysfs and see if that makes a difference in
-> reproducing. ;-) ...or maybe somehow SC8280XP has a newer version of
-> the IP where they've fixed this?
-> 
-> It would be interesting if someone with a SDM845 dragonboard could try
-> replicating since that seems highly likely to reproduce, at least.
-> 
+Please check that all these variable name references actually are valid.
 
-Hi Konrad, Doug,
+Also, "dereference".
 
-  Usually on downstream we set this quirk only for all Gen-1 targets 
-(not particularly for this testcase) but to avoid these kind of 
-controller going dead issues. I can filter out the gen-1 targets (other 
-than sc7280/sc7180) and send a separate series to add this quirk in all 
-of them.
+> Fixes: b7e0b04ae450 ("drm/tegra: Convert to using __drm_atomic_helper_crt=
+c_reset() for reset.")
+> Signed-off-by: Huai-Yuan Liu <qq810974084@gmail.com>
+> ---
+>  drivers/gpu/drm/tegra/dc.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+> index be61c9d1a4f0..7648e129c212 100644
+> --- a/drivers/gpu/drm/tegra/dc.c
+> +++ b/drivers/gpu/drm/tegra/dc.c
+> @@ -1388,7 +1388,8 @@ static void tegra_crtc_reset(struct drm_crtc *crtc)
+>  	if (crtc->state)
+>  		tegra_crtc_atomic_destroy_state(crtc, crtc->state);
+> =20
+> -	__drm_atomic_helper_crtc_reset(crtc, &state->base);
+> +	if (state)
+> +		__drm_atomic_helper_crtc_reset(crtc, &state->base);
 
-Regards,
-Krishna,
+Looking at how other drivers do this, they call
+
+	__drm_atomic_helper_crtc_reset(crtc, NULL);
+
+if they fail to allocate a new state. Any reason why we wouldn't want to
+do the same thing here?
+
+Thierry
+
+--9ed8c5e261fb18701cc301be073920048b7c8d0a92cc9bbfda52553a915a
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmZZ3lcACgkQ3SOs138+
+s6H03Q//UuqlLodE4/rgaDezJNJcSpL48fqNEFNjdpOEm5Z5qwZUUojcBJj0GNaz
+QFYs6+i4594xyoSHq9zAsH/ytcMGRr59aFI/YZt0+RLs0gcJKshIRHgUaESdVXD6
+q8ZWe+X0C4YyHZDt7rx8JDtllCOQCqMrDLOaIWETAN5u1gJ23gFfgaU1GGnjgoQY
+eAvvPRLVpLDNZv6jgV8a2flO4UinNHbB0X+tYlA5LFPnz3vEyBQVEhpt722cCFVQ
+CQWYuUIz9pdelRSgDNJ/Fs8z1Nz8o7CAvVHZykFOY3jfgh9O78QKwM0phhTmB9gn
+TwaiFlHHf8vwI4JGEnUphoZhZIEi3Qy2C6W8R1ruGjyYZk4mm17vxBVCOsgmrgAN
+ptVh9hKMFfR1ke3tj8wZR3zfr+8aQw5IjxkeHjTI8LIlfWEaOL2rE+bjSfcCkh5L
+QVvvvbaCtgeXJ7SAPXIeH6LvRbzU49E8POvHyanYm5v4xDRXnt8ZVdh2luV4jxUN
+FdjMtQiTu8rFIOtuj85mjD3gwghaPimrC7w/cb4d2fX03R29psvr0Elsx36PJP8y
+LXZo9EhHJLixgHQj7fOT5hYTVDDhGbEuKdrTEfOH0se/HiVizeDP4PnkyzjoLRrh
+qGQb3mftwXpoyl+hN6iRNNmDh7dcPj9nuK99RTQQ0xNj9zJ3fWI=
+=JUB1
+-----END PGP SIGNATURE-----
+
+--9ed8c5e261fb18701cc301be073920048b7c8d0a92cc9bbfda52553a915a--
 
