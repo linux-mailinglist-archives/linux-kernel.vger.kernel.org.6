@@ -1,223 +1,162 @@
-Return-Path: <linux-kernel+bounces-196847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C11CF8D6282
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 15:12:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AED068D6285
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 15:12:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2E5C1C23582
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 13:12:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2CA75B21584
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 13:12:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B8EA158DCC;
-	Fri, 31 May 2024 13:11:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B467158A28;
+	Fri, 31 May 2024 13:12:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="f3YxeQ19"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AdgUtpL4"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 413B1158A14;
-	Fri, 31 May 2024 13:11:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E774E158A02;
+	Fri, 31 May 2024 13:11:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717161087; cv=none; b=VqOou36dHPbiO7QLdhLxHvYXRo9FDqSG+1v4scSX/cTDVf0yf04AdmyNCiXdI0LEX20JmmLeCmj62kSphmbZLFL6N92Y9jWjC42H3hFs96xpb1yjyrtW2I5puR8Qf+pNM3u/NJvGR2OxzskyK90bfA24zovGkBn++qai+OGX68k=
+	t=1717161119; cv=none; b=krX8fOCEj4xnqEAN7Gr37cOWcS8e1Q2HOfjOuPWNuRnx4LJ/20DNFWTmQnJ5dMbS66Fj0moG4WCm/OT1EwKqa5eEIiyDsO4t+0LOcxMrrscFcXg5szzbHklTD9NSS9MGQEBrJX04P4uIsUZKujHpOFxsXP4uPsRgbNB8vDEnXg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717161087; c=relaxed/simple;
-	bh=dbVpcj6lEF7ZMOUwEixLA9Qbf6Mjg1Vgndp9rKsWPHI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t7OTjbccyJdanPLYEyezdOk0R3LTiZcLpkXWGCO7X2Y9ZzS3lK1FdH3tV9q0G6V/p8HwQtE3UZe7VJkvYRY1Aws8KTDPK+IcgKxfsPfRqVHJwrEqVKvswXym0MVXNQlXbc7f4kzE8/1HqmPiaY9vWrMYjgRNHg9Q7A5ArgXHcdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=f3YxeQ19; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=B0njvbhUXTgT/K1JkeyWR7Yg/ve/W+DwUWJceKkwN2g=; b=f3YxeQ19IOyh8l3J31nByIOeej
-	4Z+pFrYHpfWjuj3txCiq25wcdH2aNEyj5HAyJlGFrmPLsWCst1ARjljPusb0Tmb3x7gGkvtp6SNCV
-	TE96z+8WsHW7thycrRIXPfQEJ59efHDnXIRrz64BIsX2DdJJzt/K9NtE7q2/dUAT1GOiw60Q6TDqt
-	bFC01CttF2tBa9F8HxAZLpk7HdGacP0ea7XKSpnTPdPrD/hu1RImXftEenBSYUBhbdhmF7K0VPLea
-	q5x/pvvWp4z55bMGeNfU6lTrrOJ7xR0vQWx5gbsSj6YNogNvhEttv00REiqrgEi2qQj04t+9Pyn73
-	LesLWjhQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sD22X-0000000AIKs-3B9D;
-	Fri, 31 May 2024 13:11:25 +0000
-Date: Fri, 31 May 2024 06:11:25 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, djwong@kernel.org, hch@infradead.org,
-	brauner@kernel.org, david@fromorbit.com, chandanbabu@kernel.org,
-	jack@suse.cz, willy@infradead.org, yi.zhang@huawei.com,
-	chengzhihao1@huawei.com, yukuai3@huawei.com
-Subject: Re: [RFC PATCH v4 1/8] iomap: zeroing needs to be pagecache aware
-Message-ID: <ZlnMfSJcm5k6Dg_e@infradead.org>
-References: <20240529095206.2568162-1-yi.zhang@huaweicloud.com>
- <20240529095206.2568162-2-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1717161119; c=relaxed/simple;
+	bh=upUyOSi88e6K6NHhyRUhd91/HYgA4M6ItJ1rlhZ0tb4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=hf2VP6VS80G5sgLKTjjFET0YlgkC8gPNDxBOoqj2eEZ0o4M2WrvoVK4IKENXYm0C/KxWu96owkMtm3+E4uWNagEhtMKOPNARvZ+7MiPDIs4w9fLtvSjL7NZVxYctWslWwJ78o1l4gdeRY5G1SMsb76+mr7rEzEMDjjKKffld1bI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AdgUtpL4; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717161118; x=1748697118;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=upUyOSi88e6K6NHhyRUhd91/HYgA4M6ItJ1rlhZ0tb4=;
+  b=AdgUtpL4Hz8MGje0ruPnyE9mGs3zz46Xb7+kIQGXfDvxU7fupIeNug1V
+   ivej/U34TP2jn098L2vMmzOXpxFBi7b+gPY89+24kpuWZANpflnEkjkYE
+   H93gObc3FAB0giQBPuQdGwn7uG27gWHae8JGMHL+Mo5ZRyaWX1U4qo4mY
+   2z+dMjQHcgWZGiVDsFBqRYKz/m+N3ndH2thSB9yGwm3fsuffjM8iRIlEq
+   UNt8EJCt8YDzXvbASBeb8aqaXTe+8zPZufbz7+pStT4UC7juwVNAZ6cZN
+   E0des44GwedvotJLaTGzFUTbjL5mK8RDR5wxO7mUhqLnnfZlKnEqW65Jd
+   g==;
+X-CSE-ConnectionGUID: AG7/L8DzT8SECI8uBBSWFg==
+X-CSE-MsgGUID: axDOpcEpQXKKIUke29wdGg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="24263191"
+X-IronPort-AV: E=Sophos;i="6.08,204,1712646000"; 
+   d="scan'208";a="24263191"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 06:11:57 -0700
+X-CSE-ConnectionGUID: 2XHUiKxzRaq0TJ88kgEpyg==
+X-CSE-MsgGUID: tTlNoEFDQ+e306Io3nOiBQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,204,1712646000"; 
+   d="scan'208";a="40595155"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.152])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 06:11:53 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: linux-kselftest@vger.kernel.org,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Babu Moger <babu.moger@amd.com>,
+	=?UTF-8?q?Maciej=20Wiecz=C3=B3r-Retman?= <maciej.wieczor-retman@intel.com>
+Cc: linux-kernel@vger.kernel.org,
+	Fenghua Yu <fenghua.yu@intel.com>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Subject: [PATCH v5 00/16] selftests/resctrl: resctrl_val() related cleanups & improvements
+Date: Fri, 31 May 2024 16:11:26 +0300
+Message-Id: <20240531131142.1716-1-ilpo.jarvinen@linux.intel.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240529095206.2568162-2-yi.zhang@huaweicloud.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, May 29, 2024 at 05:51:59PM +0800, Zhang Yi wrote:
-> XXX: how do we detect a iomap containing a cow mapping over a hole
-> in iomap_zero_iter()? The XFS code implies this case also needs to
-> zero the page cache if there is data present, so trigger for page
-> cache lookup only in iomap_zero_iter() needs to handle this case as
-> well.
+Hi all,
 
-If there is no data in the page cache and either a whole or unwritten
-extent it really should not matter what is in the COW fork, a there
-obviously isn't any data we could zero.
-
-If there is data in the page cache for something that is marked as
-a hole in the srcmap, but we have data in the COW fork due to
-COW extsize preallocation we'd need to zero it, but as the
-xfs iomap ops don't return a separate srcmap for that case we
-should be fine.  Or am I missing something?
-
-> + * Note: when zeroing unwritten extents, we might have data in the page cache
-> + * over an unwritten extent. In this case, we want to do a pure lookup on the
-> + * page cache and not create a new folio as we don't need to perform zeroing on
-> + * unwritten extents if there is no cached data over the given range.
->   */
->  struct folio *iomap_get_folio(struct iomap_iter *iter, loff_t pos, size_t len)
->  {
->  	fgf_t fgp = FGP_WRITEBEGIN | FGP_NOFS;
->  
-> +	if (iter->flags & IOMAP_ZERO) {
-> +		const struct iomap *srcmap = iomap_iter_srcmap(iter);
-> +
-> +		if (srcmap->type == IOMAP_UNWRITTEN)
-> +			fgp &= ~FGP_CREAT;
-> +	}
-
-Nit:  The comment would probably stand out a little better if it was
-right next to the IOMAP_ZERO conditional instead of above the
+This series does a number of cleanups into resctrl_val() and
+generalizes it by removing test name specific handling from the
 function.
 
-> +		if (status) {
-> +			if (status == -ENOENT) {
-> +				/*
-> +				 * Unwritten extents need to have page cache
-> +				 * lookups done to determine if they have data
-> +				 * over them that needs zeroing. If there is no
-> +				 * data, we'll get -ENOENT returned here, so we
-> +				 * can just skip over this index.
-> +				 */
-> +				WARN_ON_ONCE(srcmap->type != IOMAP_UNWRITTEN);
+Hopefully these reach also Shuah successfully as I've recently seen
+rejects for mail from @linux.intel.com to gmail addresses.
 
-I'd return -EIO if the WARN_ON triggers.
+v5:
+- Open mem bw file only once and use rewind().
+- Add \n to mem bw file read to allow reading fresh values from the file.
+- Return 0 if create_grp() is given NULL grp_name (matches the original
+  behavior). Mention this in function's kerneldoc.
+- Cast pid_t to int before printing with %d.
+- Caps/typo fixes to kerneldoc and commit messages.
+- Use imperative tone in commit messages and improve them based on points
+  that came up during review.
 
-> +loop_continue:
+v4:
+- Merged close fix into IMC READ+WRITE rework patch
+- Add loop to reset imc_counters_config fds to -1 to be able know which
+  need closing
+- Introduce perf_close_imc_mem_bw() to close fds
+- Open resctrl mem bw file (twice) beforehand to avoid opening it during
+  the test
+- Remove MBM .mongrp setup
+- Remove mongrp from CMT test
 
-While I'm no strange to gotos for loop control something trips me
-up about jumping to the end of the loop.  Here is what I could come
-up with instead.  Not arguing it's objectively better, but I somehow
-like it a little better:
+v3:
+- Rename init functions to <testname>_init()
+- Replace for loops with READ+WRITE statements for clarity
+- Don't drop Return: entry from perf_open_imc_mem_bw() func comment
+- New patch: Fix closing of IMC fds in case of error
+- New patch: Make "bandwidth" consistent in comments & prints
+- New patch: Simplify mem bandwidth file code
+- Remove wrong comment
+- Changed grp_name check to return -1 on fail (internal sanity check)
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 700b22d6807783..81378f7cd8d7ff 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -1412,49 +1412,56 @@ static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
- 		bool ret;
- 
- 		status = iomap_write_begin(iter, pos, bytes, &folio);
--		if (status) {
--			if (status == -ENOENT) {
--				/*
--				 * Unwritten extents need to have page cache
--				 * lookups done to determine if they have data
--				 * over them that needs zeroing. If there is no
--				 * data, we'll get -ENOENT returned here, so we
--				 * can just skip over this index.
--				 */
--				WARN_ON_ONCE(srcmap->type != IOMAP_UNWRITTEN);
--				if (bytes > PAGE_SIZE - offset_in_page(pos))
--					bytes = PAGE_SIZE - offset_in_page(pos);
--				goto loop_continue;
--			}
-+		if (status && status != -ENOENT)
- 			return status;
--		}
--		if (iter->iomap.flags & IOMAP_F_STALE)
--			break;
- 
--		offset = offset_in_folio(folio, pos);
--		if (bytes > folio_size(folio) - offset)
--			bytes = folio_size(folio) - offset;
-+		if (status == -ENOENT) {
-+			/*
-+			 * If we end up here, we did not find a folio in the
-+			 * page cache for an unwritten extent and thus can
-+			 * skip over the range.
-+			 */
-+			if (WARN_ON_ONCE(srcmap->type != IOMAP_UNWRITTEN))
-+				return -EIO;
- 
--		/*
--		 * If the folio over an unwritten extent is clean (i.e. because
--		 * it has been read from), then it already contains zeros. Hence
--		 * we can just skip it.
--		 */
--		if (srcmap->type == IOMAP_UNWRITTEN &&
--		    !folio_test_dirty(folio)) {
--			folio_unlock(folio);
--			goto loop_continue;
-+			/*
-+			 * XXX: It would be nice if we could get the offset of
-+			 * the next entry in the pagecache so that we don't have
-+			 * to iterate one page at a time here.
-+			 */
-+			offset = offset_in_page(pos);
-+			if (bytes > PAGE_SIZE - offset)
-+				bytes = PAGE_SIZE - offset;
-+		} else {
-+			if (iter->iomap.flags & IOMAP_F_STALE)
-+				break;
-+
-+			offset = offset_in_folio(folio, pos);
-+			if (bytes > folio_size(folio) - offset)
-+				bytes = folio_size(folio) - offset;
-+		
-+			/*
-+			 * If the folio over an unwritten extent is clean (i.e.
-+			 * because it has only been read from), then it already
-+			 * contains zeros.  Hence we can just skip it.
-+			 */
-+			if (srcmap->type == IOMAP_UNWRITTEN &&
-+			    !folio_test_dirty(folio)) {
-+				folio_unlock(folio);
-+				status = -ENOENT;
-+			}
- 		}
- 
--		folio_zero_range(folio, offset, bytes);
--		folio_mark_accessed(folio);
-+		if (status != -ENOENT) {
-+			folio_zero_range(folio, offset, bytes);
-+			folio_mark_accessed(folio);
- 
--		ret = iomap_write_end(iter, pos, bytes, bytes, folio);
--		__iomap_put_folio(iter, pos, bytes, folio);
--		if (WARN_ON_ONCE(!ret))
--			return -EIO;
-+			ret = iomap_write_end(iter, pos, bytes, bytes, folio);
-+			__iomap_put_folio(iter, pos, bytes, folio);
-+			if (WARN_ON_ONCE(!ret))
-+				return -EIO;
-+		}
- 
--loop_continue:
- 		pos += bytes;
- 		length -= bytes;
- 		written += bytes;
+v2:
+- Resolved conflicts with kselftest/next
+- Spaces -> tabs correction
+
+Ilpo Järvinen (16):
+  selftests/resctrl: Fix closing IMC fds on error and open-code R+W
+    instead of loops
+  selftests/resctrl: Calculate resctrl FS derived mem bw over sleep(1)
+    only
+  selftests/resctrl: Make "bandwidth" consistent in comments & prints
+  selftests/resctrl: Consolidate get_domain_id() into resctrl_val()
+  selftests/resctrl: Use correct type for pids
+  selftests/resctrl: Cleanup bm_pid and ppid usage & limit scope
+  selftests/resctrl: Rename measure_vals() to measure_mem_bw_vals() &
+    document
+  selftests/resctrl: Simplify mem bandwidth file code for MBA & MBM
+    tests
+  selftests/resctrl: Add ->measure() callback to resctrl_val_param
+  selftests/resctrl: Add ->init() callback into resctrl_val_param
+  selftests/resctrl: Simplify bandwidth report type handling
+  selftests/resctrl: Make some strings passed to resctrlfs functions
+    const
+  selftests/resctrl: Convert ctrlgrp & mongrp to pointers
+  selftests/resctrl: Remove mongrp from MBA test
+  selftests/resctrl: Remove mongrp from CMT test
+  selftests/resctrl: Remove test name comparing from
+    write_bm_pid_to_resctrl()
+
+ tools/testing/selftests/resctrl/cache.c       |  10 +-
+ tools/testing/selftests/resctrl/cat_test.c    |   5 +-
+ tools/testing/selftests/resctrl/cmt_test.c    |  22 +-
+ tools/testing/selftests/resctrl/mba_test.c    |  26 +-
+ tools/testing/selftests/resctrl/mbm_test.c    |  26 +-
+ tools/testing/selftests/resctrl/resctrl.h     |  49 ++-
+ tools/testing/selftests/resctrl/resctrl_val.c | 364 ++++++++----------
+ tools/testing/selftests/resctrl/resctrlfs.c   |  67 ++--
+ 8 files changed, 290 insertions(+), 279 deletions(-)
+
+-- 
+2.39.2
+
 
