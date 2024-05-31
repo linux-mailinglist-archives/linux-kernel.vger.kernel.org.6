@@ -1,109 +1,93 @@
-Return-Path: <linux-kernel+bounces-196907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC0C58D6359
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 15:46:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 634D48D635D
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 15:46:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46BFB1F27595
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 13:46:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9499E1C26884
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 13:46:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EBB915A4BD;
-	Fri, 31 May 2024 13:46:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E9C415B56F;
+	Fri, 31 May 2024 13:46:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BteDAl8A"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="my6Ym7N5"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31702158DDD;
-	Fri, 31 May 2024 13:45:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D2D5158D94;
+	Fri, 31 May 2024 13:46:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717163161; cv=none; b=cxDip9bEUfzteN/q9DwPzMUGMmDRC54W9g7VSOMqFLa7RpFyRKKcA1vSmtbjc8n9GCE1dDiT6exaBlpNz0BcWCNSxKDXXrXs/mSmgpG8JT8d3fw+ZZxtWyPzjCwg+hvX9QwPCf08RviqK8h52creEGGLGQcIT7zrarsawoXLr1I=
+	t=1717163174; cv=none; b=B0xy9t76AfZv2mo9NHrIEjFI24aXU3d58hLE/OCS0mB17XtQbCNsY1NZn8xcernfiAdbrt2ZefeEhoL9cjQA+SPIDyPojgtoCBebIToWn/XdwBxLkg33nptZT5UhEKwKBl2LKjjQpSN1o4zzTOnJy0OGC44bgaW/k81MWIQCLLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717163161; c=relaxed/simple;
-	bh=cWnIx0pyk+ybibf+oi8lx+duY34BnRyVbbOBK4s2TKY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=iOWqtOOVxSAxffzSQ/FuJnnL3MiJhKPyUOAFSzw69C3vCfdy8TwIETANrS1ANUW4Yigo2YA+pMeBdhMYj7cl9Umf9iSDnDsPeMvocYHVgXSxDyVJ8QPN/Ikbc16zZE55MFySffGhgI87EdR9VyPm/F7b4koVz8gF5KPPwiynOqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BteDAl8A; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717163159; x=1748699159;
-  h=from:to:cc:in-reply-to:references:subject:message-id:
-   date:mime-version:content-transfer-encoding;
-  bh=cWnIx0pyk+ybibf+oi8lx+duY34BnRyVbbOBK4s2TKY=;
-  b=BteDAl8ANcnivGM9Lg+leP3wmCAtengKEhIozpUNgZwQjcvCO/mhtQ4E
-   dI5cTUzXMlVDkY7e1HiZOxBeNbVaEtJ3bFx67aOq3d5vvH6Pa0s6aLxhM
-   bsfstks/QfzjUrB/9ro5lgDPwAuQTYEoXRZHAkRDiSG2ZOIf6/+OOfsTm
-   c4nSNNH5OjkaoKeFcLqPQxPmbV3C7yXx7mGo7BYVjerD0/xFffQ74HA/j
-   NFkM1y6HZk5u8dGesA/GH8JBZzcWmSwD6mTn5p07gKlw6bFqtAex2eFD5
-   p/jcksvkvj2PkLVtLeU6fX+A/BoY8en6LQuPiz+scKwPNGUkUJHya2eC8
-   g==;
-X-CSE-ConnectionGUID: 3xs3qAO9RGy6GGE6f19Mdg==
-X-CSE-MsgGUID: YBiQk6CyS1aIY2dGCSv+bg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="24366294"
-X-IronPort-AV: E=Sophos;i="6.08,204,1712646000"; 
-   d="scan'208";a="24366294"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 06:45:58 -0700
-X-CSE-ConnectionGUID: l47dWwZcSTaifA3MgLaYrg==
-X-CSE-MsgGUID: 5PmUI4yMS5mD5Da/DqHT5A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,204,1712646000"; 
-   d="scan'208";a="36631271"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.152])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 06:45:56 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: hdegoede@redhat.com, 
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, 
- andriy.shevchenko@linux.intel.com, rui.zhang@intel.com
-In-Reply-To: <20240531083554.1313110-1-srinivas.pandruvada@linux.intel.com>
-References: <20240531083554.1313110-1-srinivas.pandruvada@linux.intel.com>
-Subject: Re: [PATCH v2 0/3] SST improvements with TPMI
-Message-Id: <171716315056.14224.6737878292317791994.b4-ty@linux.intel.com>
-Date: Fri, 31 May 2024 16:45:50 +0300
+	s=arc-20240116; t=1717163174; c=relaxed/simple;
+	bh=/LONncp3AO+tmHozqvhG1bzguZyRoNp3DcO5tp/CUxU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rgmxwC0sB0SQ4Zd2Agrov4xW00wP2YDbCpEzIJ3mLTctT5GAAvnaFlDZdPDrojc59gFkFUPmzidPoGyYR5QuDnd6et7vz4Kge992ebGwvKNF1KXq0G080xoIzflidHUYmnqfGDGOqqxGEGeJRXG52sYI8Li867epCo9QJkRWoXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=my6Ym7N5; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=T0o85Dh6Rf+KB5Efb2D+maZs/SPUfL+PFS9preD6H9k=; b=my6Ym7N5mT5q5HFeIxdeZEM4FJ
+	/ipgy1rFUaARDe+xigX/P2IyDdk9ZtNrPhNC1YWFivCv0lcwPPBK23PSJMZfU+AP1Dt6xheE2m4OR
+	s3Xi7MmsYtciHW5wREALG5lyM7uIrSGp34HmDESqTlg+LoXjFGUPRbhx2xeS/TEIVDNq8XpZk4dgS
+	gZXpV16iu8UeS6ADCb3fN89KY5XKMaURL37u4en/I4co+5jEFbRC1X3k1z8yji/Fgb8pE3Ku1ieOp
+	+vXDUmLjZ05tVGvNeNOwNWcV3gxHX9gwKaJ007z9dyhStCOpMjEhIq6eDw76EPVnEGW+qwLs8Tksl
+	IGppF6+w==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sD2aA-0000000AOUG-3RUm;
+	Fri, 31 May 2024 13:46:11 +0000
+Date: Fri, 31 May 2024 06:46:10 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, djwong@kernel.org, hch@infradead.org,
+	brauner@kernel.org, david@fromorbit.com, chandanbabu@kernel.org,
+	jack@suse.cz, willy@infradead.org, yi.zhang@huawei.com,
+	chengzhihao1@huawei.com, yukuai3@huawei.com
+Subject: Re: [RFC PATCH v4 8/8] xfs: improve truncate on a realtime inode
+ with huge extsize
+Message-ID: <ZlnUorFO2Ptz5gcq@infradead.org>
+References: <20240529095206.2568162-1-yi.zhang@huaweicloud.com>
+ <20240529095206.2568162-9-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240529095206.2568162-9-yi.zhang@huaweicloud.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Fri, 31 May 2024 01:35:45 -0700, Srinivas Pandruvada wrote:
+> +/*
+> + * Decide if this file is a realtime file whose data allocation unit is larger
+> + * than default.
+> + */
+> +static inline bool xfs_inode_has_hugertalloc(struct xfs_inode *ip)
+> +{
+> +	struct xfs_mount *mp = ip->i_mount;
+> +
+> +	return XFS_IS_REALTIME_INODE(ip) &&
+> +	       mp->m_sb.sb_rextsize > XFS_B_TO_FSB(mp, XFS_DFL_RTEXTSIZE);
+> +}
 
-> These are some improvements to SST with TPMI, which makes sure that SST
-> is not available when all model specific parts are not ready and prevent
-> legacy SST driver to load on some platforms.
-> 
-> V2
-> Split V1 patch 1/2 to two patches
-> Use new family model check macros
-> 
-> [...]
+The default rtextsize is actually a single FSB unless we're on a striped
+volume in which case it is increased.
 
-
-Thank you for your contribution, it has been applied to my local
-review-ilpo branch. Note it will show up in the public
-platform-drivers-x86/review-ilpo branch only once I've pushed my
-local branch there, which might take a while.
-
-The list of commits applied:
-[1/3] platform/x86: ISST: Add model specific loading for common module
-      commit: 1630dc626c87b300627fe7591f4f63f8f136f935
-[2/3] platform/x86: ISST: Avoid some SkyLake server models
-      commit: 3ea025fb4b5f1a0b66df25eba50b2a1071f01080
-[3/3] platform/x86: ISST: Use only TPMI interface when present
-      commit: 2f9514f005530502452c34295e77bdfb395b5bc6
-
---
- i.
+I'll take care of removing the unused and confusing XFS_DFL_RTEXTSIZE,
+but for this patch we'd need to know the trade-off of when to just
+convert to unwritten.  For single-fsb rtextents we obviously don't need
+any special action.  But do you see a slowdown when converting to
+unwritten for small > 1 rtextsizes?  Because if not we could just
+always use that code path, which would significantly simplify things
+and remove yet another different to test code path.
 
 
