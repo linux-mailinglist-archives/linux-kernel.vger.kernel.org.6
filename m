@@ -1,79 +1,60 @@
-Return-Path: <linux-kernel+bounces-196884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76B4F8D6305
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 15:31:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 614288D6308
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 15:31:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C5B5283212
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 13:31:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A9682893B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 13:31:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 403B3158D9F;
-	Fri, 31 May 2024 13:31:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76E0E158DAD;
+	Fri, 31 May 2024 13:31:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bTOKIfKk"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="F9IakoLu"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED7A233CF1;
-	Fri, 31 May 2024 13:31:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C22833CF1;
+	Fri, 31 May 2024 13:31:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717162265; cv=none; b=PNQ36m9aDEyILUx68qbwH0LsXSpoQuDt8kJWQlGtPXZ9AANvjXB6pzg0PZywa9nt/PZHjUsUnK6OnP0C9Z8GieR4rZNfQY3By87VALJ0BYe0HBheEK7hDHTIdRgpvEBqWEk2Y1Jhoeo7dJxju90VFL4Wl+LG7mLV7+PzuCh8njs=
+	t=1717162300; cv=none; b=h6zhatydowizK41bYsZQGN5i3wS376LFP0nVXvLNGNe/8yaZPZfrYLBWB8jAuQ5OSgjDRmbPalqoUDi7nlj5zKiSJyrx8CKv9jLYcUbia3YwAK/IoCXlapxUXb7AI0odOJhX1U01fKVKGHST8vZvI1dD4EMAlu+8KR5K+4efRpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717162265; c=relaxed/simple;
-	bh=UIVFtugpdDW7odcIGQclSJsckzuuU62m9nGLP2gc+Q4=;
+	s=arc-20240116; t=1717162300; c=relaxed/simple;
+	bh=TkIEk5wzeceT/BFmLNrFp8yBH9ZXT5OYIGMv9WzP9kU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mh7RNo7bSPSOVkc5r+IqHUc8sIEO8LeK3RxRPB9KXmIfa268CC+iQwtq0E90RFE6SJFnVFROpTXzVN1xiit89rYJWEBPiuZT3quNcvz4436fcwYxzHDbhml5RnqreXicJLDpZAyrCZUwoHKihRcQEsb2q4iQ17CqNPKIX+TrlKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bTOKIfKk; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717162264; x=1748698264;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=UIVFtugpdDW7odcIGQclSJsckzuuU62m9nGLP2gc+Q4=;
-  b=bTOKIfKkbwE5QvB4OT/bu7zGcXYKStGK4fIJGv7m+aEkd1o9N7rQBlqs
-   AWGr/bH3mHRrm7qGIvUmuMzFOjTgNSz6JMYHm3UpOsdAq/zE1ENgfJBGM
-   yVYUnwNRcfOqsyr/H8x1YNpHKaybq4VrRH54CUd1D9XJn7BBESXBYY90O
-   R00JoIgXDBW+TKCI0VrnYnJapafg1Sdqhwfe3tBN5DZJ4NXhIo892LMcH
-   PhIl2t0wdjYlgzm7pKqtPmZbihYloiLJpuaHX3/d2ozDQU8QDb/4+Vk4c
-   UOcDwWcSXNg127bF7arDzAs0C3vURex/mjmHAkF8foLUAWy6XE+V5wDl0
-   g==;
-X-CSE-ConnectionGUID: h/nqHZrGSH2JwqkitKrhqw==
-X-CSE-MsgGUID: cSxzTceHRD2i5GtGxhtqPg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="17534273"
-X-IronPort-AV: E=Sophos;i="6.08,204,1712646000"; 
-   d="scan'208";a="17534273"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 06:31:03 -0700
-X-CSE-ConnectionGUID: q3+gWuuzT/CLe6wlNwW5nA==
-X-CSE-MsgGUID: efiSrgHZQ/GwxKNayJXjZw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,204,1712646000"; 
-   d="scan'208";a="36260869"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 06:31:01 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sD2LS-0000000CTTc-3L96;
-	Fri, 31 May 2024 16:30:58 +0300
-Date: Fri, 31 May 2024 16:30:58 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH v2 2/2] gpiolib: Show more info for interrupt only lines
- in debugfs
-Message-ID: <ZlnREkzvS0rnMUDv@smile.fi.intel.com>
-References: <20240530191418.1138003-1-andriy.shevchenko@linux.intel.com>
- <20240530191418.1138003-3-andriy.shevchenko@linux.intel.com>
- <7750850.EvYhyI6sBW@steina-w>
+	 Content-Type:Content-Disposition:In-Reply-To; b=htT2fdL2m4XnHW+g07gyl6M9obtODFgm6cieIhhXDQ8offiFYWs85g8C9m/w4WeOdtTD8axK0daSpALU93L+IJjIEeumCbLhKFVd5ApgTez21Yfysn36oG1Gt3X3v8XocymyZBk2l7umQvlZWttOcaL86Dn/DbWqDj2bZ9iDMIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=F9IakoLu; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=ZnYJekxqs+YixkIAFqhWnZz9hWHwrTGHYqUHWnP5PR8=; b=F9IakoLuCEZorXEUpiAIFC9CTn
+	OnQjknl1sgjgBHHW9/ahaYXquglI747gvuJWW/ZfHvmXSAWT0XrzsOvFK4Njs//5kxtCApNarBLxE
+	5JirlPwAXPmYC7ESlz8PPDMNu7s0zlAK1v39qGhGfrYsyCRwDCjsXW/q31u9K8uwOry5XDoQbsrvx
+	fzdl5mnhnux0J53XUutmnMkDb4gmAPnVavJbhDFs3bKlj0KtndGxP3UBm7BaGXftbNtFH2ibwcVBS
+	WLM9J32lo3mnyvt7VyoIzovD7V0Qk6zib3UV+SlOTW26wjhm6jN5KCCTwX4j2CVjfMhb8yuOaKtFw
+	fDT19pUQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sD2M4-0000000ALq6-1jvw;
+	Fri, 31 May 2024 13:31:36 +0000
+Date: Fri, 31 May 2024 06:31:36 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, djwong@kernel.org, hch@infradead.org,
+	brauner@kernel.org, david@fromorbit.com, chandanbabu@kernel.org,
+	jack@suse.cz, willy@infradead.org, yi.zhang@huawei.com,
+	chengzhihao1@huawei.com, yukuai3@huawei.com
+Subject: Re: [RFC PATCH v4 5/8] xfs: refactor the truncating order
+Message-ID: <ZlnRODP_b8bhXOEE@infradead.org>
+References: <20240529095206.2568162-1-yi.zhang@huaweicloud.com>
+ <20240529095206.2568162-6-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,40 +63,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7750850.EvYhyI6sBW@steina-w>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20240529095206.2568162-6-yi.zhang@huaweicloud.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Fri, May 31, 2024 at 01:19:56PM +0200, Alexander Stein wrote:
-> Am Donnerstag, 30. Mai 2024, 21:12:30 CEST schrieb Andy Shevchenko:
-> > Show more info for interrupt only lines in debugfs. It's useful
-> > to monitor the lines that have been never requested as GPIOs,
-> > but IRQs.
-> 
-> I was trying to test this on TQMa8MPQL (i.MX8MP) using gpio-mxc.c.
+> +	write_back = newsize > ip->i_disk_size && oldsize != ip->i_disk_size;
 
-Thank you for trying!
+Maybe need_writeback would be a better name for the variable?  Also no
+need to initialize it to false at declaration time if it is
+unconditionally set here.
 
-> But apparently this series only has an effect when gpiochip_lock_as_irq()
-> is called eventually. I'm wondering what needs to be done so IRQ only
-> GPIOs are listed in debugfs. Using irq_request_resources/irq_release_resources
-> similar to what pinctrl-at91.c is doing?
+> +		/*
+> +		 * Updating i_size after writing back to make sure the zeroed
+> +		 * blocks could been written out, and drop all the page cache
+> +		 * range that beyond blocksize aligned new EOF block.
+> +		 *
+> +		 * We've already locked out new page faults, so now we can
+> +		 * safely remove pages from the page cache knowing they won't
+> +		 * get refaulted until we drop the XFS_MMAP_EXCL lock after the
+> +		 * extent manipulations are complete.
+> +		 */
+> +		i_size_write(inode, newsize);
+> +		truncate_pagecache(inode, roundup_64(newsize, blocksize));
 
-I haven't looked deeply into this and I don't know if it's relevant, but...
-
-The idea is that GPIO driver has an IRQ chip that announces handle_bad_irq()
-as a handler and IRQ_TYPE_NONE as default type at probe stage. It also needs
-to implement ->set_irq_type() callback where actual handler is going to be
-locked.
-
-That's what I do not see implemented in the driver. Moreover, I do see it
-implements its own ->to_irq() callback which shouldn't be there.
-
-Taking all above into consideration _I think_ the drivers need a bit of
-refreshments.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+Any reason this open codes truncate_setsize()?
 
 
