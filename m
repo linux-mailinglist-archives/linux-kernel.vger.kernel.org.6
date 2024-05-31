@@ -1,110 +1,143 @@
-Return-Path: <linux-kernel+bounces-196803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFB948D61F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:39:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EDF98D61FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:40:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F2361F25A47
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:39:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA0D0B23421
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:40:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE93E158D97;
-	Fri, 31 May 2024 12:37:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17342158DD1;
+	Fri, 31 May 2024 12:38:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="40hxvKXr"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CZ74ppkH"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D29A1158A37;
-	Fri, 31 May 2024 12:37:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BF40158206
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 12:38:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717159055; cv=none; b=Xf5LbFQQODuweGdbI7RE/j2eqDZoIW7qIqH25m7bvBA8F//zJN7M0D5Lwd0RwSO/+2OTPUtpuPS3RFoV7i2VQyYMrkaa2HHvRmqxlBDlpTdxC3JVFPmeUpS7PnIIyUqaZRPuAX/fLNYbLr2OtIgWvxmaXivHZB11kDvQ0hVAy5s=
+	t=1717159091; cv=none; b=FzYwOf73wIEpCvsXTSEHAWk8o+G5tvnxilTL3bjLZtX5Fqro8NGs9a0xYiLhb/4ubAyCf82JGMLHd5Q5UTYbbzpysy+VUt72ywEI3ZIrNkmzHWolGQvMm+R6Pjz2QGrVtZNu6JHbl+PjSoL0W5ZSi5aSL5m+gGjixR5gIvBwR5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717159055; c=relaxed/simple;
-	bh=lw5lxYGG7QNyW/AQo8G8xHIGJcPJU+mNS8IZY8Z1Elo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qIUN6eCmdocWWFePWz9dHBq6aXMcje6AJKWnz7tBnxt734RzDa6orK+csTMkML5G4N/AA6w3XTVLnqClwCBqr1R8QSbyBzr2FjDiKi2rDRiNTjvVk73No8ppYyMiyOJunAynuxZWcHSiGdmZ/cw0qEMzXgBIbzZzWd98OULz5LA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=40hxvKXr; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=NwrTE5NFFBVwImdPHTY4kClZsQLoC7dc/JgAoHbMaR4=; b=40hxvKXrPYqzM6vIvfhc/ZzHk1
-	mpwPa/03mAu5dvWheuv3XnXeqokKCA3S1HKVHiBMVU1obW6dcLSReHztaUBLyM7cHlKTSP1FsGFOk
-	ADUbeWgy4N1/+6CztKY/FGVtX3pSP9diX/G5qurf5++x8DYnoqTls8m2bPIKca/SrOl4=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sD1VS-00GStD-49; Fri, 31 May 2024 14:37:14 +0200
-Date: Fri, 31 May 2024 14:37:14 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Parthiban.Veerasooran@microchip.com
-Cc: Pier.Beruto@onsemi.com, Selvamani.Rajagopal@onsemi.com,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, horms@kernel.org, saeedm@nvidia.com,
-	anthony.l.nguyen@intel.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, corbet@lwn.net,
-	linux-doc@vger.kernel.org, robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-	devicetree@vger.kernel.org, Horatiu.Vultur@microchip.com,
-	ruanjinjie@huawei.com, Steen.Hegelund@microchip.com,
-	vladimir.oltean@nxp.com, UNGLinuxDriver@microchip.com,
-	Thorsten.Kummermehr@microchip.com, Nicolas.Ferre@microchip.com,
-	benjamin.bigler@bernformulastudent.ch, Viliam.Vozar@onsemi.com,
-	Arndt.Schuebel@onsemi.com
-Subject: Re: [PATCH net-next v4 00/12] Add support for OPEN Alliance
- 10BASE-T1x MACPHY Serial Interface
-Message-ID: <585d7709-bcee-4a0e-9879-612bf798ed45@lunn.ch>
-References: <6ba7e1c8-5f89-4a0e-931f-3c117ccc7558@lunn.ch>
- <8b9f8c10-e6bf-47df-ad83-eaf2590d8625@microchip.com>
- <44cd0dc2-4b37-4e2f-be47-85f4c0e9f69c@lunn.ch>
- <b941aefd-dbc5-48ea-b9f4-30611354384d@microchip.com>
- <BYAPR02MB5958A4D667D13071E023B18F83F52@BYAPR02MB5958.namprd02.prod.outlook.com>
- <6e4c8336-2783-45dd-b907-6b31cf0dae6c@lunn.ch>
- <BY5PR02MB6786619C0A0FCB2BEDC2F90D9DF52@BY5PR02MB6786.namprd02.prod.outlook.com>
- <0581b64a-dd7a-43d7-83f7-657ae93cefe5@lunn.ch>
- <BY5PR02MB6786FC4808B2947CA03977429DF32@BY5PR02MB6786.namprd02.prod.outlook.com>
- <39a62649-813a-426c-a2a6-4991e66de36e@microchip.com>
+	s=arc-20240116; t=1717159091; c=relaxed/simple;
+	bh=4vLBGvVnHAnKmOa4OubUm5uxUfa+Q+USI+QFNvbihRU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sAGc1MomKyY+QnpLhsAl8WUkpxFCmN+ZA8MqgrYkBHRJ9hMecExptob1Lre6h9OQWjkEnz0zjq0pDZfE7rkT2Pwna5zWWYKQymaxJtvXTY61jDXBMxYLvZEtc5G4FPB8iljOBn1rY6RqFI8mATFHDFmdfv92jjWD+cmEQ57OdEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CZ74ppkH; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a634e03339dso123779466b.3
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 05:38:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717159088; x=1717763888; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=bKfOxPrq22Dykg9czPhtJUcNoZdQTkpeJKshafenJHk=;
+        b=CZ74ppkHcQGmkTxNWR8I0Gk/camysgG/HF9yvtzlpkaDgKqCqqnLUJ6n+2lXLX68mP
+         iE60xesSyjPsK+BVqIEb1nqx5nEEILVsuO8et9bcpOrRIMjhszD4YW4dcjiUmt8uODpk
+         74+hMtfFKGEt3Pj/Gx7e3LWCJqt5kjELKxMBosZ7OEabYKrp+DAe2vQVEXyLz1odBZ0C
+         JZCXcJN9kXNy7Ei68vXZwWRWFIPNItb9RUMC+/OwMMk4hf6Kf2Mi4VdVVjahXDRJSCEi
+         3/tgAR3Mzxl5PE55ht0fx7Q6QOUglqlSU4ButK6IKSNhR843TmYqz0202svXPJwgoWVB
+         /7Lw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717159088; x=1717763888;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bKfOxPrq22Dykg9czPhtJUcNoZdQTkpeJKshafenJHk=;
+        b=nNoLhK/WOhowy4HTFsftN87ei7smJwqMuk6t52etc99YeIgWOghjoZ5Gu8cGk8UXAh
+         5PWGjEiC4b8e+50ajWwBv2kojMtM5gePaho82Fy5FODuhjGmVvQ1ZQS8t2H3JtGuYCj1
+         woY8Rm31rLJUMagzo1H02hB8x1Bs8DtYox1iiDvVewVgChfl0Wc/mBqWpCC8QIF+xtp6
+         IDKeiaXXBPYRHJyAVUy4yBMd7mMBZc+Bynl9iazOIsuKjI86pKeTSRfghVQRGI1Z2IJq
+         Dw75FkLFmxfImqRSt//JUGJTS/s/Q29g+6WMD+TtHC0BI1mtbcjNgfDaI6MEQaOXilN5
+         dTHg==
+X-Forwarded-Encrypted: i=1; AJvYcCX/joLFnFoAhNTaCgQ18ZjlBgGZBIyBY2aSP0fDikDgD7mgvm0K8yaKQjul0wQXWrlt6sxDJYdS8dodvVdZT8adM4RHIyMQYkU5HD2X
+X-Gm-Message-State: AOJu0YzyH/17oJKxxaPYmymDYsREPqDT66LEPLddGU4/+k2213W8X049
+	+4Oj9uuwkP7iB/TqP+3lsT5P0nFCDtax/WdMc356SLn9qFtSyPrvbT15WER6vTY=
+X-Google-Smtp-Source: AGHT+IHuwxxm+rWgogEQN0YtMEo9BZiQVwkTCW9oGhNmBCYwplNp5EbKHHR2d5KwoRmDCRzbM5FccA==
+X-Received: by 2002:a17:906:1e55:b0:a63:36c0:eaaf with SMTP id a640c23a62f3a-a682022c9f4mr127263466b.20.1717159088042;
+        Fri, 31 May 2024 05:38:08 -0700 (PDT)
+Received: from [192.168.128.139] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a67e73f9bacsm82754766b.59.2024.05.31.05.38.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 31 May 2024 05:38:07 -0700 (PDT)
+Message-ID: <eaa0c93a-ed28-421e-8302-c98f862d1149@linaro.org>
+Date: Fri, 31 May 2024 14:38:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <39a62649-813a-426c-a2a6-4991e66de36e@microchip.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/3] arm64: dts: qcom: pm7250b: Add node for PMIC VBUS
+ booster
+To: Luca Weiss <luca.weiss@fairphone.com>,
+ Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+References: <20240530-fp4-tcpm-v3-0-612d4bbd5e09@fairphone.com>
+ <20240530-fp4-tcpm-v3-1-612d4bbd5e09@fairphone.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <20240530-fp4-tcpm-v3-1-612d4bbd5e09@fairphone.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-> So I would request all of you to give your comments on the existing 
-> implementation in the patch series to improve better. Once this version 
-> is mainlined we will discuss further to implement further features 
-> supported. I feel the current discussion doesn't have any impact on the 
-> existing implementation which supports basic 10Base-T1S Ethernet 
-> communication.
+On 30.05.2024 5:05 PM, Luca Weiss wrote:
+> Add the required DTS node for the USB VBUS output regulator, which is
+> available on PM7250B. This will provide the VBUS source to connected
+> peripherals.
+> 
+> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+> ---
 
-Agreed. Lets focus on what we have now.
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
-https://patchwork.kernel.org/project/netdevbpf/patch/20240418125648.372526-2-Parthiban.Veerasooran@microchip.com/
-
-Version 4 failed to apply. So we are missing all the CI tests. We need
-a v5 which cleanly applies to net-next in order for those tests to
-run.
-
-I think we should disable vendor interrupts by default, since we
-currently have no way to handle them.
-
-I had a quick look at the comments on the patches. I don't think we
-have any other big issues not agreed on. So please post a v5 with them
-all addressed and we will see what the CI says.
-
-Piergiorgio, if you have any real problems getting basic support for
-your device working with this framework, now would be a good time to
-raise the problems.
-
-	Andrew
+Konrad
 
