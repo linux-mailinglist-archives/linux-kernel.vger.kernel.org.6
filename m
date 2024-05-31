@@ -1,113 +1,118 @@
-Return-Path: <linux-kernel+bounces-197090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D12948D6601
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:44:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 00EA18D6607
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:47:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87AA6290BFC
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 15:44:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A74A3283B5A
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 15:47:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C526156242;
-	Fri, 31 May 2024 15:44:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5486155CA1;
+	Fri, 31 May 2024 15:47:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="G/6rSHcE"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F9n10dvg"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57D2113FD69
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 15:44:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB5D445016;
+	Fri, 31 May 2024 15:46:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717170287; cv=none; b=Uq2jS2eTIgu41BQcsYXAdZnF9vrIniOlzadq4wKWkNLJC7VtD2hYO37yPVR3EN4huMQq2cYL+dECfPri+TvDFYVXKZUD86HnV+Oqt4kEmxxfguQRKkrT5lOYHwkQ+9eFDbyUhbXwKmq1OTvf2DDnBl7Mlg6YbcGENlEi1BwmWCI=
+	t=1717170420; cv=none; b=dAgBe9jYFTLA6va0jUa2BLEXpoanR/xyw+1fIQy/clBVVD0FLQ/GcJQnyD0Vqjj0oQPa6yvXVzG6kLG2UD4RSyGIk4zcdk5qO9BvbN6WM76IGoeblCxnSDiNtk9GApgP/GheOuJqLFNluVa2NNDVnPC19lbv9pI6Jt5vM8i1Fdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717170287; c=relaxed/simple;
-	bh=IXRTBMJGT+iSuCCQAkiOZnTweB6qbKtOWyUhz+MPsEA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cKglEjptN6yp32+mEhM1nPtOtsQkm6hC0xBVamnLsXl2YrQil88iHU72cq0s24FRr34x+aeaZngWrcwvggbP2wPG0Bv3wIfKZGN0d89awo6FlG0hlCwI57X8DVl2n7bVW+Ov9ZZQmSys45mI15JJe1kOL0FzkMe/ymzvGYdYHXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=G/6rSHcE; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717170285;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Xxl866ZDHDKQJI6Eanti9jZI/91ugmixsdkqx9T3qKc=;
-	b=G/6rSHcEQQRjYd/f7VUvkl1dTb7USqBpPaG7wufFHAJVzC+rw3jSEcSJA/2BbviYMvrYhs
-	7XO33H7DF//MgiEjonXzo+4gBdfn2x2EwwknOH7Q1MNDPNFISQNC0BMLvtRLl3hoYL/fdZ
-	Q3PsP9hUex9rrDc2rcvSe++v3bfDjbQ=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-53-0_-x3j11OjGLwyrj4RtVfA-1; Fri, 31 May 2024 11:44:40 -0400
-X-MC-Unique: 0_-x3j11OjGLwyrj4RtVfA-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id E8060101A52C;
-	Fri, 31 May 2024 15:44:39 +0000 (UTC)
-Received: from bfoster (unknown [10.22.8.96])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id 6413D105480A;
-	Fri, 31 May 2024 15:44:39 +0000 (UTC)
-Date: Fri, 31 May 2024 11:44:57 -0400
-From: Brian Foster <bfoster@redhat.com>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: "Darrick J. Wong" <djwong@kernel.org>,
-	Zhang Yi <yi.zhang@huaweicloud.com>, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	brauner@kernel.org, david@fromorbit.com, chandanbabu@kernel.org,
-	jack@suse.cz, willy@infradead.org, yi.zhang@huawei.com,
-	chengzhihao1@huawei.com, yukuai3@huawei.com
-Subject: Re: [RFC PATCH v4 1/8] iomap: zeroing needs to be pagecache aware
-Message-ID: <ZlnweWTV4Y5STK-q@bfoster>
-References: <20240529095206.2568162-1-yi.zhang@huaweicloud.com>
- <20240529095206.2568162-2-yi.zhang@huaweicloud.com>
- <ZlnMfSJcm5k6Dg_e@infradead.org>
- <20240531140358.GF52987@frogsfrogsfrogs>
- <ZlnZMiBJ6Fapor5G@infradead.org>
+	s=arc-20240116; t=1717170420; c=relaxed/simple;
+	bh=SwCMaLnNOezhPRxRJXyYP48o4h5KECH13gYp5P8VBWA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jkbn99tS1fCWcDRRwnZBKqQfUqmbzk/Dngl4sFXjFbIURI4He3kgIHAIWie++kYY8lkulHYfzelBAx3hrYbgpZl8JZuB0NvMUkKtmVaBO8I0uIz+PeIbNcSgvhz1rlrcgGODa89P2UbFop9Rrs+ujSN0DyR4tJFGEgXk6f/gYbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F9n10dvg; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a6269885572so419003266b.1;
+        Fri, 31 May 2024 08:46:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717170417; x=1717775217; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=48EstrLpq9HK/FsTvnvsJGqmlUDmcchwC6PKHbWTt30=;
+        b=F9n10dvgebx8VsQai8jLPTGtuYGgrSxQO1su96cPywPrHHymFLXUKoxaF/G2mog1Fw
+         WGlT9C7bkIpyxqe9A77OC8GP+aZGOKRLc6DUnQyMdxJPahlAbE88NJmF1nliGv6LvO13
+         At93xyKK7K2zao9NUEoH9/vRoustqo5BJYdpukqQ1O7ZMAQc+N+R8pVyA/ojVYIqdzbN
+         JifdNWtfYpnRYhBQIEnDZRs83ZDHNEPLHn7CZjbH41qrBUMX6YLlKKz+7bzsisBadxw9
+         C+syfXKliwbIACwsII2c5doy6MLTog98ljXFB7l+M3V5a1HAN1YDtkpXIUyz7794vhr8
+         FPlA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717170417; x=1717775217;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=48EstrLpq9HK/FsTvnvsJGqmlUDmcchwC6PKHbWTt30=;
+        b=sRqySYwWv4cgNcvlF7S2scvoPIhifLzjAC4C0ndt/hKq6kz9M1njL4QUNglHxJuEb4
+         fb13cqId+O0707KqUdBHb0RiktexAWL4b9mHFoE6FGpz77bcInZXlKjgq8ACXuiPpz49
+         wFImwYxX8SUrYQPPUOlD4jJRCMkztPicCOLsB8ORZRkJipIjPL7J9R7nZ43pYkGSapdj
+         Q5T5jB803jVqjY45a5Asl7zMsp9UPvX5VVsxKTnUH6etU+EcSxlL8UqB4Yl2T1PXCqBY
+         VxizTLDeZghC9hOINX9hdE4qpl+kqvj5OdqOP+EE2g6Iyu21oTF/y7WYhwmS0z8dEfel
+         JEaw==
+X-Forwarded-Encrypted: i=1; AJvYcCVPfzNxDCwZ5LhhlMTRUBw2wIejimDTF9Zda+nRHNALQ+6KH9HMYIw9d40QESu5EdqqQYXosWPNS/K9ZJLo+BWHcbBLs5352Hyg1jnNFFXEyN4F++XSj4VkfYPm1ZCMccOGA5Wcxszf
+X-Gm-Message-State: AOJu0Yxm12rqEIaqTlplBWyJf6PS9xqVi6DoCcHrzb/hFOVFtESPGXrq
+	0YIWTq2ePbJh9OcYF514fDtsfp1014fFxy91THouNI7lQ/+hT6LvBIoa4aDo3JZRY2L/My58GNe
+	ozem5N1h0Y4/q082uSE0PwUcS0Ak9f1kma7U=
+X-Google-Smtp-Source: AGHT+IGPjiNCV2UUTK+ImDQEt15a4oaGfh3IHRwJvNBGRaBL6QD7adiqFpU0qW9oExT+rZrtNdKKeNbVE+jmeP7IKhg=
+X-Received: by 2002:a17:906:e907:b0:a5d:239:1a59 with SMTP id
+ a640c23a62f3a-a65f0911017mr463694266b.3.1717170416890; Fri, 31 May 2024
+ 08:46:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZlnZMiBJ6Fapor5G@infradead.org>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.3
+References: <20240531094658.1598969-1-andy.shevchenko@gmail.com> <1ea41944-a107-4528-8e8d-559c06907e3f@notapiano>
+In-Reply-To: <1ea41944-a107-4528-8e8d-559c06907e3f@notapiano>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Fri, 31 May 2024 18:46:20 +0300
+Message-ID: <CAHp75VeG9K3Ar4UJnGxus3zz_vtt4QfFdkYQ8=6D8pt2aB8kmA@mail.gmail.com>
+Subject: Re: [PATCH v1 0/2] spi: Make dummy SG handling robust
+To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>
+Cc: Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 31, 2024 at 07:05:38AM -0700, Christoph Hellwig wrote:
-> On Fri, May 31, 2024 at 07:03:58AM -0700, Darrick J. Wong wrote:
-> > > +			/*
-> > > +			 * XXX: It would be nice if we could get the offset of
-> > > +			 * the next entry in the pagecache so that we don't have
-> > > +			 * to iterate one page at a time here.
-> > > +			 */
-> > > +			offset = offset_in_page(pos);
-> > > +			if (bytes > PAGE_SIZE - offset)
-> > > +				bytes = PAGE_SIZE - offset;
-> > 
-> > Why is it PAGE_SIZE here and not folio_size() like below?
-> > 
-> > (I know you're just copying the existing code; I'm merely wondering if
-> > this is some minor bug.)
-> 
-> See the comment just above :)
-> 
-> 
+On Fri, May 31, 2024 at 5:37=E2=80=AFPM N=C3=ADcolas F. R. A. Prado
+<nfraprado@collabora.com> wrote:
+> On Fri, May 31, 2024 at 12:44:31PM +0300, Andy Shevchenko wrote:
+> > There's an unreliable code to handle DMA mappings on unidirection trans=
+fers.
+> > This series does two things:
+> > - it reverts the seemingly unnecessary change
+> > - it reworks dummy SG list handling
+> >
+> > There is no need to backport that AFAIU, but no harm to apply for v6.10=
+ aka
+> > the current release cycle. Guys, please test these.
+> >
+> > Andy Shevchenko (2):
+> >   spi: Revert "Check if transfer is mapped before calling DMA sync APIs=
+"
+> >   spi: Do not rely on the SG table and respective API implementations
 
-FWIW, something like the following is pretty slow with the current
-implementation on a quick test:
+> Hi Andy,
+>
+> applying either of these patches causes issues. See the traces for each o=
+ne
+> below. This was tested on top of next-20240531, which works fine.
 
-  xfs_io -fc "falloc -k 0 1t" -c "pwrite 1000g 4k" <file>
+Oh, thank you very much for prompt testing! Can you test just the
+second one without the revert?
 
-.. so I'd think you'd want some kind of data seek or something to more
-efficiently process the range.
+So, your patch seems needed for the sync API calls, while I considered
+only mapping APIs.
 
-Brian
-
+--=20
+With Best Regards,
+Andy Shevchenko
 
