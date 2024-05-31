@@ -1,54 +1,59 @@
-Return-Path: <linux-kernel+bounces-196900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 785178D633E
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 15:41:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B82E88D6342
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 15:42:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E96B7B2806C
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 13:41:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2BE21C21F3C
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 13:42:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0244158DB7;
-	Fri, 31 May 2024 13:41:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7202C158DD1;
+	Fri, 31 May 2024 13:41:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BSdRRlEc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gwTJNfFH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F479158D8C;
-	Fri, 31 May 2024 13:41:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1227158D69;
+	Fri, 31 May 2024 13:41:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717162875; cv=none; b=re6EgYkK7MTL5MqvMNfuQYptRjJ3LOSbV+Ma266dOawr73G7MsJ5BQTA5kZUZPxu8ZUaRaAzYpI6BMNI3Up2AV1hfMjYKa9fLMVPc/9oRDTw70NWp2bpx4eC5rNpObzyLL6b7Paz1hjqlTuJFE/8Rqy7G0/yQh74knLj0/K6MIE=
+	t=1717162912; cv=none; b=kI9WZYX8BgA8CuslLuwGkD0HZWSXMLC/xj9UCzR8tYVPvXbpWf/0kPtRAz+Xv3d9JPmwmXepTobbYSXX+hPJCFytNy9fuvCXJSQ6YK674lttpmeS4jfiXiWet8WaRphI99lOLxTcvF0gVhwDWWRQzo5nyX5G94NgCglBsrV3DOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717162875; c=relaxed/simple;
-	bh=Yoj8L34XzLixGmJmFUAlupo3t9Ynd7EgYk9zxBow8U8=;
+	s=arc-20240116; t=1717162912; c=relaxed/simple;
+	bh=Vp2KbDuLKKVnNB7kzomqZ0fbkXw6k3fEAd3Vv5s9tYc=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=p5GJ1fB+zF5qRcgf9aHkLfPCM97RUQXXol2fserUi1b14Z0zP1cK6cOfoZ5/ESiD8awFHq7grdsoqHV/GngiDC/GFew6zuY3EXcQYIuzuS3c5KKDMzbSTaPJWZprsJUQGxi8cuSFXDno355x1Xjlg5z+C7mgdPZABj314sfG46w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BSdRRlEc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95C6AC116B1;
-	Fri, 31 May 2024 13:41:12 +0000 (UTC)
+	 MIME-Version:Content-Type; b=CppWVjQPo3rq2xnEpaGH0UDb1NiRFFEAL8/IIfH2psGz1AYP+M/Irxm/tdOSWK4mhJ0RG4LrCKtg/P0fm3wIZQaTOJXr7NKR7zLT/sQufPyM6Kp5sdS0quFnuS2bPC0Vk7IvK1U67GSpaIS2c0fLf4bxhxIp4gIqfd24kmfhl/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gwTJNfFH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96267C116B1;
+	Fri, 31 May 2024 13:41:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717162874;
-	bh=Yoj8L34XzLixGmJmFUAlupo3t9Ynd7EgYk9zxBow8U8=;
+	s=k20201202; t=1717162912;
+	bh=Vp2KbDuLKKVnNB7kzomqZ0fbkXw6k3fEAd3Vv5s9tYc=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=BSdRRlEcX5HtGBIY3gljUR1RQ3sqaDxDZ7JytjSHcDCkOcM21OyT1+ysFe99ewDln
-	 RnE0TaJEtmWIr68uxUJz+FZJz27qi3Nfwmq/oGPdYBwHJrAzA57xtWD9NL12oVpsyR
-	 uy0cvezboQKRNDz0VDLTS7KI5MStbDLB8iB+ewsJA5GvyOdkO78Jg9BhgnXvSnz5N3
-	 ICFpQqfpp93/J4h4z0gaYKzRVYotdtZyC1QH+9Pu55XWa8kGvSYQwV7FDFguxkEdRL
-	 bu4ahMmnHnXBRj3MiDmTUFEzPyxr8Q20vEzEVaiHPt/fvApXq2CtPGP+N13fTUxahd
-	 dpZCAxJA0aZ4A==
+	b=gwTJNfFHI5bjLTJYZilqubv+4GhoEXbYMv4kWLWA2N2J9lsJXGxHhOay1gO/q++3S
+	 MA2ZMdmoyatl9cPpPFsQuzn+eAYPk/kwSd29Lxvq2SQfz106Q4NLys/LGIK9axTGM3
+	 oo43uOOtGr8eLKrYvpZoGTGCv9COUwBNLL3NUJScQssqVG0zgxKCvlU1cb4iNYBdVp
+	 6jh8ZMh4akkA+4OuxqBtYkekLHGu5fOP0qtZKIfJZoMTyKQkaaDsKqtrIoKE3AXBjA
+	 k+VdPxUWztut+TvGct8++8SlTGtaW/R8bvRRLiEPCT1N+O4GjKRo3BcuMKSIUkQ4TH
+	 gkcQO3StLHuSA==
 From: Lee Jones <lee@kernel.org>
-To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
+To: Gerd Haeussler <gerd.haeussler.ext@siemens.com>, 
+ Xing Tong Wu <xingtong.wu@siemens.com>, 
+ Tobias Schaffner <tobias.schaffner@siemens.com>, 
+ Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
  Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240517-md-leds-rt4505-v1-1-2f388ff6b672@quicinc.com>
-References: <20240517-md-leds-rt4505-v1-1-2f388ff6b672@quicinc.com>
-Subject: Re: (subset) [PATCH] leds: rt4505: add MODULE_DESCRIPTION()
-Message-Id: <171716287234.1098752.783506122059597195.b4-ty@kernel.org>
-Date: Fri, 31 May 2024 14:41:12 +0100
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel-janitors@vger.kernel.org
+In-Reply-To: <20240517-md-simatic-ipc-v1-1-bbbd199262b8@quicinc.com>
+References: <20240517-md-simatic-ipc-v1-1-bbbd199262b8@quicinc.com>
+Subject: Re: (subset) [PATCH] leds: simatic-ipc-leds: add missing
+ MODULE_DESCRIPTION() macros
+Message-Id: <171716291034.1099950.15998690070000422832.b4-ty@kernel.org>
+Date: Fri, 31 May 2024 14:41:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,17 +64,21 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 X-Mailer: b4 0.12.4
 
-On Fri, 17 May 2024 12:18:49 -0700, Jeff Johnson wrote:
-> Fix the 'make W=1" issue:
+On Fri, 17 May 2024 12:53:27 -0700, Jeff Johnson wrote:
+> Fix the 'make W=1' issues:
 > 
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/leds/flash/leds-rt4505.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/leds/simple/simatic-ipc-leds-gpio-apollolake.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/leds/simple/simatic-ipc-leds-gpio-core.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/leds/simple/simatic-ipc-leds-gpio-elkhartlake.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/leds/simple/simatic-ipc-leds-gpio-f7188x.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/leds/simple/simatic-ipc-leds.o
 > 
-> 
+> [...]
 
 Applied, thanks!
 
-[1/1] leds: rt4505: add MODULE_DESCRIPTION()
-      commit: c6c4c4ac239baab0fbc4ec62683ced34ce044ce6
+[1/1] leds: simatic-ipc-leds: add missing MODULE_DESCRIPTION() macros
+      commit: 81f32502c1cb4b850a01a1f108ae59f28f1c6155
 
 --
 Lee Jones [李琼斯]
