@@ -1,133 +1,69 @@
-Return-Path: <linux-kernel+bounces-196328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2B0B8D5A4A
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 08:09:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 196068D5A4E
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 08:09:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EA5E287EF9
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 06:09:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B404B25975
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 06:09:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF2A47E761;
-	Fri, 31 May 2024 06:08:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4600D7F7D3;
+	Fri, 31 May 2024 06:09:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="drmHw7DS"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Wh4HNVq/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8417574079;
-	Fri, 31 May 2024 06:08:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 699E318756E;
+	Fri, 31 May 2024 06:09:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717135717; cv=none; b=HDZNI4gUYcHB4w2vJUklWpWffJTrEPKkACEsIzzEPH1LYc7VVgcJJ3MYOXJKEn715XecgqWdEukdLh7bApTy74xOv/AYcXTH2h2NAfQqMqBZBpYPNcteBLxGanuWA3FMhjCrrwLAM5Lb06aDYs7nM1Eawy87qeekKBvfpX/bG8g=
+	t=1717135748; cv=none; b=KysXnRYmXGGwIahvZr75/Wy7+bfC7oG7UuaCIiC6SvNi6QGCnD5Ii9OOjsAMcG2xvHB94fi4/52rU3/xOPDjGmEaK8nPwOUhJ4GcSBLeMzjbXN9kMTJPFXUCixJicOh3xtxPdID/VIikWHfvFqNO2nz1tbIYzQVqtHd7TvKFpXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717135717; c=relaxed/simple;
-	bh=MzVxy5DlHw4ZX9PtL87OSyV4W4BtLW69gypnpUnB0wQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=LRbvfHQQLWm5MrpR74q5j9Dy5yzD9K0mla0y9kxKZ4e1VQpRCbi4WGsC8oyZibLqY1VGdQnEf4UH7luwa0xZnEmefBpznbe1ciIp5STlnWSE97nzx4SrnDAhIcTvDTyY5ZjwEXi8ltHVkH+HxwX1qPSo80ykEmsVE+KA2/nBWaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=drmHw7DS; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1717135711;
-	bh=W6d0zv9ygwQK7qUazX8KWdCWHVIy46WSYDpawXxywAw=;
-	h=Date:From:To:Cc:Subject:From;
-	b=drmHw7DS9rSq+IEkMa6A31xrP7HMg/uA2xDVBVpM0cM0TbiqVS30GW6a0lM1kLwMs
-	 qfHOU158ie2Eq74Wh9eHjSemA/NragUYuyiuHSyDWwWPU436WgfwisdCsD7QXFiKLt
-	 K1D8YLZb7L+IYFpoCT0albz3kMFLbAvM9lIJHpglSU8+e9Vmqbo8xvaR+Ofx3nj/kj
-	 MruzQzEYnzbctovXgEKEJF1CrRAIOODz0vKLqRwkVZcZqm8jna8i9onaCWgI1MDHdi
-	 mVKkdnHiip6ksLYNHWEjKm9nRnqhKuNpRwMhtO5qKrTrMnKsH2oiUZYvoqJy1S+d15
-	 v0OegcmmiPxFQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VrCNb1RlQz4x3q;
-	Fri, 31 May 2024 16:08:29 +1000 (AEST)
-Date: Fri, 31 May 2024 16:08:29 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: Fixes tag needs some work in the vfs-fixes tree
-Message-ID: <20240531160829.343479a6@canb.auug.org.au>
+	s=arc-20240116; t=1717135748; c=relaxed/simple;
+	bh=FOgJ1nWsKY1HqqT5AsZjlUD928VwEjzdZ/ngER5Sxw4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BVdClNVELJiij4KQm8VC6C4oDlLSpjNiawmpJFuF6Y2RZXiLQbv9utOM6j2uHV2Mic3x1TSZCFfEjSWmCDTEEltDnak8UoLgabH2LwHYcOuHoxYRyjpz5I827jObEIUgmV71yR9/A4nNqJSOSChUbnvougH3BMVQPFyiyy/4HVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Wh4HNVq/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C9F0C116B1;
+	Fri, 31 May 2024 06:09:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1717135747;
+	bh=FOgJ1nWsKY1HqqT5AsZjlUD928VwEjzdZ/ngER5Sxw4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Wh4HNVq/hiDTRYMJ7bdDbK4wcdDKh5OdWZzZKmevW5FqZHmWt+UmItoGmFWdGou18
+	 bB4W9jm5tlsSkdLcpiBaZaV6HjMjtZ53NJz0uy23NZ4diJELXYAOK4qG2s9SLWKdAv
+	 iUjeNCwevnjTI/8qrjAspMgMC1zhF+nCoiOZPqHc=
+Date: Fri, 31 May 2024 08:09:13 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Gautam Menghani <gautam@linux.ibm.com>
+Cc: mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu,
+	aneesh.kumar@kernel.org, naveen.n.rao@linux.ibm.com, corbet@lwn.net,
+	linuxppc-dev@lists.ozlabs.org, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] arch/powerpc/kvm: Fix doorbell emulation by adding DPDES
+ support
+Message-ID: <2024053143-wanted-legible-ca3f@gregkh>
+References: <20240522082838.121769-1-gautam@linux.ibm.com>
+ <rrsuqfqugrdowhws2f7ug7pzvimzkepx3g2cp36ijx2zhzokee@eitrr6vxp75w>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/mEqnJQNTZR5q./cIVggby_H";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <rrsuqfqugrdowhws2f7ug7pzvimzkepx3g2cp36ijx2zhzokee@eitrr6vxp75w>
 
---Sig_/mEqnJQNTZR5q./cIVggby_H
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, May 31, 2024 at 10:54:58AM +0530, Gautam Menghani wrote:
+> Hello,
+> 
+> Please review this patch and let me know if any changes are needed.
 
-Hi all,
-
-In commit
-
-  bba1f6758a9e ("lirc: rc_dev_get_from_fd(): fix file leak")
-
-Fixes tag
-
-  Fixes: 6a9d552483d50 "media: rc: bpf attach/detach requires write permiss=
-ion" # v6.9
-
-has these problem(s):
-
-  - Subject has leading but no trailing quotes
-  - Subject does not match target commit subject
-    Just use
-        git log -1 --format=3D'Fixes: %h ("%s")'
-
-Thus:
-
-Fixes: 6a9d552483d5 ("media: rc: bpf attach/detach requires write permissio=
-n")
-
-In commit
-
-  b4cf5fc01ce8 ("powerpc: fix a file leak in kvm_vcpu_ioctl_enable_cap()")
-
-Fixes tag
-
-  Fixes: eacc56bb9de3e # v5.2
-
-has these problem(s):
-
-  - Subject does not match target commit subject
-    Just use
-        git log -1 --format=3D'Fixes: %h ("%s")'
-
-Thus:
-
-Fixes: eacc56bb9de3 ("KVM: PPC: Book3S HV: XIVE: Introduce a new capability=
- KVM_CAP_PPC_IRQ_XIVE")
-
-
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/mEqnJQNTZR5q./cIVggby_H
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZZaV0ACgkQAVBC80lX
-0Gyd/Af/ck3DTMTIcL8TElPVGteCAykgZuOkZ25mNWrRjwbIVCrBwIRw4WHu0dum
-fhyO+dw5yTKF8nwUbISGjObvc3IKUPzX3UH9dVwMIVV6epCVwdPndRopYDx9Wbpx
-gbUKLUx7RpOy5ISr44gvk6V2eAlGQjfT+vbetXweGxMxs5CyCE/NmqrYBEkcKZOE
-xzpC57tE7DAkxgwbvoGN1nR+qc7sHhdcyzRhnpEAiHLBCfXhXCakGtbHCSkBQ03k
-fr0R9yBaufQQ2/fngiC6cqrGWQLzef0aXZRUhAAMFOnch7jJXnL9rKbj8IxNAwMg
-cK3qfAi9YKa6/uZVZ6Qm2tLcFCWofg==
-=aVAD
------END PGP SIGNATURE-----
-
---Sig_/mEqnJQNTZR5q./cIVggby_H--
+There already was review comments on it, why ignore them?
 
