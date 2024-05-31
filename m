@@ -1,109 +1,121 @@
-Return-Path: <linux-kernel+bounces-196825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16A6E8D6238
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:55:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 469E48D623A
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:55:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3CD61F268F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:54:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D82A11F268F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:55:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1719E15887C;
-	Fri, 31 May 2024 12:54:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5664E158869;
+	Fri, 31 May 2024 12:55:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="D3glK/XK"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="OUyqM52d"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEF9A139563;
-	Fri, 31 May 2024 12:54:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 507271E51E
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 12:55:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717160089; cv=none; b=ax82+b6824+vbKvC5Vbp+61xNnAvguUkW5LRIWaftjKYEjDwLfY5QleXtz9IGHjHf5Vd82cx6/iigf08v0hsWhimdbiSiXon3yze5IJScpcVAcRq5asJTEA7/uJ5adsmdBiXI5MkfypPZdfuehvvJwXrqmFMy8tTk9YoiIoS65Q=
+	t=1717160125; cv=none; b=Mk9mMahDOAGEIURxf2ZmhO1Ltu2O5jwo0duqo5f2iToihy/oR2p33tjSWSIAOYtQpZluuNpjlRCw4XWf8RJ46o97SU7WOvqAk9mXHdwiaTc7jnFk1l5MOEiB8I2pbM5zc433i/EBQAQI68rE2BqmOCVfQN+T1s9doFolWukNk/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717160089; c=relaxed/simple;
-	bh=4VK8yO8Vzzlncqg2eBUizfaA8skHINrWWG3LC67pr50=;
+	s=arc-20240116; t=1717160125; c=relaxed/simple;
+	bh=a/D3i575KXmjs7d3uP7ukJ/cbXpnBh5AO1m+44Pxc8M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TZaN+9j7rBlwyzEQ/5VAEdLDU7ev9N4/M+ieRqbs+ZKbvuh0IwfyBVExhSHPdVxqtpABfFURWS8M51W4jHJW4PHNm4jT0KqVR0IggmYDfQCNSBMW1pRp2NmvnNG0L/3N396efppTYOckrvNxny5cVhkD2qjkJbKTPKYw3vwAiuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=D3glK/XK; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=m4EVGLVuRYDFFu1v9PkMkfvFH9r0FgbSbS5eViwROIk=; b=D3glK/XK6cIb8dM8vuVGJ2fRGp
-	9JoeLoiHmidiZCmg2QSi0ygJiVBDpcp+wu/QIFPhY+Psx307dxOU3c797appn6IzMjvLe5qoPfOVo
-	drgmLQvV+Xt0zKNbuEDIxkT7LHaZ6qqQatTyKk0pb65FMsKO4ySMNfqQ/i/iHkJUWovA=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sD1mN-00GSwR-OY; Fri, 31 May 2024 14:54:43 +0200
-Date: Fri, 31 May 2024 14:54:43 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Linux regressions mailing list <regressions@lists.linux.dev>,
-	Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
-	Linux LEDs <linux-leds@vger.kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, johanneswueller@gmail.com,
-	"Russell King (Oracle)" <linux@armlinux.org.uk>,
-	Genes Lists <lists@sapience.com>
-Subject: Re: Hung tasks due to a AB-BA deadlock between the leds_list_lock
- rwsem and the rtnl mutex
-Message-ID: <01fc2e30-eafe-495c-a62d-402903fd3e2a@lunn.ch>
-References: <9d189ec329cfe68ed68699f314e191a10d4b5eda.camel@sapience.com>
- <15a0bbd24cd01bd0b60b7047958a2e3ab556ea6f.camel@sapience.com>
- <ZliHhebSGQYZ/0S0@shell.armlinux.org.uk>
- <42d498fc-c95b-4441-b81a-aee4237d1c0d@leemhuis.info>
- <618601d8-f82a-402f-bf7f-831671d3d83f@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QJzPYo9gIG4IODbIvrxgdDdgfL5/WtE66o6fvea0OZtYBZSt7wmUygdnjfpFxlEIXo6yrTEKM9rBIF+AG4uQ8zYqodNBuTKpGDs8kmiSc5c2wNcBEhjMAPu6cXVA+1+x6rcw1QhC1vLreM2kQfLokZXZVjr0eHhAO4FI2U/3Mio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=OUyqM52d; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 301C740E0192;
+	Fri, 31 May 2024 12:55:22 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id Luq9wZmn7Uji; Fri, 31 May 2024 12:55:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1717160118; bh=h5Et4vSVp4DVw+C0adJbFGCQ6V6GUn+XWLm+lVGgBnk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OUyqM52dum33Rm4bkKvFV9lT4IMRj5P2NLWy6zTjXV+somuQez7U/iNXj4yGu9+5Z
+	 QKLIswBH5ncCK/roq29gfqXlpblnYKR+4w3IzICvXJlgdd1udwQt4j5WES8uwaq9A7
+	 35n6J8MslwWOXlkHXbHJpSyRljZmJprqx8S7ohXHtS+imtVNyU2G9nSlAdn2U/WryH
+	 GjVsdhMrfa6toXJkT5IZ/C3kvq+FNmOk4c1bcbij8+m+hRQWVg5uGkaggdb5Q56mP6
+	 cT6X8V6OjNi5ZBuh2A+1A+CiK3Cww8N93/SSLFtTuZkTBlFYfBzB0WgIVTqWJ54i3i
+	 Rz1IZDKQC0p90Uonjpm17cWhpQoBin+uYYMCUwgsH5u9N31xR8sbQkUJCUBMH/0ccX
+	 sNZKooRz1SAXICFiE6w6Pgrv1aNrhO1s/iIBm76y20pKXbX5B/DJpUp9pprMjXDeZo
+	 r8k27UzJpUFmJ/2VF9TA8TZfH6F2RbylTbmOWVQLzLjVGwQPDoUdIjKppi5Lt1//k3
+	 fe4YKzPawWQtBKC7eBG2cB2oBlG8BjiETj4rtIw/4zQrtm5gIZBUnsltJ5CMl/Ey0c
+	 rTt9f9XT4oLKZ0I6z1Jn74FJ3c0p2p4LlDov/8kf+UcA8jOfZ27Ij477oqRMvD5r1L
+	 iLFIl0TfRKO3Q+VyYlXzLkPI=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id AE71140E0177;
+	Fri, 31 May 2024 12:55:04 +0000 (UTC)
+Date: Fri, 31 May 2024 14:55:03 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+	linux-coco@lists.linux.dev, svsm-devel@coconut-svsm.dev,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Michael Roth <michael.roth@amd.com>,
+	Ashish Kalra <ashish.kalra@amd.com>
+Subject: Re: [PATCH v4 10/15] virt: sev-guest: Choose the VMPCK key based on
+ executing VMPL
+Message-ID: <20240531125503.GEZlnIp7YobFu7g9iS@fat_crate.local>
+References: <cover.1713974291.git.thomas.lendacky@amd.com>
+ <b8508f57712e3194484aa8695494eea26abe1b73.1713974291.git.thomas.lendacky@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <618601d8-f82a-402f-bf7f-831671d3d83f@redhat.com>
+In-Reply-To: <b8508f57712e3194484aa8695494eea26abe1b73.1713974291.git.thomas.lendacky@amd.com>
 
-> I actually have been looking at a ledtrig-netdev lockdep warning yesterday
-> which I believe is the same thing. I'll include the lockdep trace below.
-> 
-> According to lockdep there indeed is a ABBA (ish) cyclic deadlock with
-> the rtnl mutex vs led-triggers related locks. I believe that this problem
-> may be a pre-existing problem but this now actually gets hit in kernels >=
-> 6.9 because of commit 66601a29bb23 ("leds: class: If no default trigger is
-> given, make hw_control trigger the default trigger"). Before that commit
-> the "netdev" trigger would not be bound / set as phy LEDs trigger by default.
-> 
-> +Cc Heiner Kallweit who authored that commit.
-> 
-> The netdev trigger typically is not needed because the PHY LEDs are typically
-> under hw-control and the netdev trigger even tries to leave things that way
-> so setting it as the active trigger for the LED class device is basically
-> a no-op. I guess the goal of that commit is correctly have the triggers
-> file content reflect that the LED is controlled by a netdev and to allow
-> changing the hw-control mode without the user first needing to set netdev
-> as trigger before being able to change the mode.
+On Wed, Apr 24, 2024 at 10:58:06AM -0500, Tom Lendacky wrote:
+> +int snp_get_vmpl(void)
+> +{
+> +	return vmpl;
 
-It was not the intention that this triggers is loaded for all
-systems. It should only be those that actually have LEDs which can be
-controlled:
+The vmpl doesn't change after init, right?
 
-drivers/net/ethernet/realtek/r8169_leds.c:	led_cdev->hw_control_trigger = "netdev";
-drivers/net/ethernet/realtek/r8169_leds.c:	led_cdev->hw_control_trigger = "netdev";
-drivers/net/ethernet/intel/igc/igc_leds.c:	led_cdev->hw_control_trigger = "netdev";
-drivers/net/dsa/qca/qca8k-leds.c:		port_led->cdev.hw_control_trigger = "netdev";
-drivers/net/phy/phy_device.c:		cdev->hw_control_trigger = "netdev";
+If so, you can make that vmpl variable __ro_after_init and drop yet
+another parrotting accessor.
 
-Reverting this patch does seem like a good way forward, but i would
-also like to give Heiner a little bit of time to see if he has a quick
-real fix.
+> -static u32 vmpck_id;
+> -module_param(vmpck_id, uint, 0444);
+> +static int vmpck_id = -1;
+> +module_param(vmpck_id, int, 0444);
+>  MODULE_PARM_DESC(vmpck_id, "The VMPCK ID to use when communicating with the PSP.");
 
-     Andrew
+Can the driver figure out the vmpck_id from the kernel directly instead
+of having to supply it with a module param?
+
+This is yet another silly module param which you have to go and engineer
+into the loading and have to know what you're doing.
+
+If you can automate that, then it is a win-win thing.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
