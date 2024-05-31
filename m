@@ -1,116 +1,81 @@
-Return-Path: <linux-kernel+bounces-196591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D0E48D5E63
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 11:35:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DF398D5E66
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 11:35:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E5C21C20F6B
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 09:35:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B50A2B290A1
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 09:35:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F80A13210C;
-	Fri, 31 May 2024 09:34:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="P9zrcy9y"
-Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55EE613A25F;
+	Fri, 31 May 2024 09:34:07 +0000 (UTC)
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 310EC824BF
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 09:33:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D998C13213A;
+	Fri, 31 May 2024 09:34:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717148042; cv=none; b=na2oHxJeUbaTf3MLQW7yqhHXT7Aub05kuSRGwbdy4vSliAvRWR5MWovJn+yei+C2VEPAUY/7BndtF2aZX2+u+aNbzxZLZs2jFdzUooD2jX8BI+ZUlocWkHBlFHE6kKE8WmQcrNW5ZmKA03+wpwMnZzKQnjRsO/3IKRwoVVJu7Gk=
+	t=1717148046; cv=none; b=qOWXJsJyQtGsJsvCZxU9GWMHtyXmLd/6fo43yFUOTqUm1b332nf1PzesxAw8WeSN/8s4KJ+ZzN/G7qdmEcZQzqHFehzT+5urjX6JJCeDVr6z4wi7s7Ey07o3nQavUBvCAk0x5i5uf+qBs92skqi9H46p5UsJ0iezf1sqtXossPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717148042; c=relaxed/simple;
-	bh=JQN8vGN5NbPIpNkHmec8YNy753gW6NcwFN8W1JPa84g=;
+	s=arc-20240116; t=1717148046; c=relaxed/simple;
+	bh=WXpD4wzZsZ0tO9sHjjJP1k1ZOFd/a4IsigefPl8BtoQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UQc3V/Pzbje3VCSEsyF2vmk+eW7MTgR/adGKcVBainILvLgddYOZxAk4gRWxUtDPZNMH86hkOndHPMX7yzAzsySYgtnPAbsa+/0KB1e3hGARodStYKkbHZ1IDR4SvPCSvwrrEReZLwMK0Bq9U4efpcbM0KyDLRwqhGDD1KNSo0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=P9zrcy9y; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=WNcS
-	K1rCqsvZKY5MRfZb1bjfU9kWa6S05ssjkBShWps=; b=P9zrcy9yGSDQ/kpQ+fGG
-	Shh0vbhHQooBwJ0HfM/WqPYpwncD6oLsDX760QBC1uo7M/G52T0hcCskBiiDUQQx
-	hnkeuhW3Q4QoEFzX6MJcrGjG/ARg3JkZAS31TL51UK2ZntBG3k7BeiLzgs5QHyV1
-	mxfsUzDxPpv1xtmIO4W3Nc/VyBZl3Qp0Did37Si4ZiLf+eRRjXS5dzSFrIL/3LXi
-	qIDWguAJnJAo4m2Z4wZkCK4YYXc25gKtFE4wEFgf0MD3UJl/+Zhm3LIVn5QeCddi
-	DdSKtU6c2Cqy0giosJJDdK6Tp0MRwdnMilSnk1Dgkse63fRfjCz3Z8T9nzgT2jqd
-	fA==
-Received: (qmail 1124759 invoked from network); 31 May 2024 11:33:58 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 31 May 2024 11:33:58 +0200
-X-UD-Smtp-Session: l3s3148p1@qYbRrrwZKsBehhtB
-Date: Fri, 31 May 2024 11:33:57 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Jean Delvare <jdelvare@suse.com>, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] i2c: piix4: Register SPDs
-Message-ID: <20240531093357.buoiyo64dp63vffk@ninjato>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Jean Delvare <jdelvare@suse.com>, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-References: <20240530-piix4-spd-v1-1-9cbf1abebf41@weissschuh.net>
- <c9de8d07-90dc-496a-9d7f-e7f0c00a934e@roeck-us.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YoyqfEdmGBVT7YPz6CCQBiGv+3UhlclU5ikCDVcysdu3iJutLS563RlEPglmN/CVjP+GBcWWps7zfUzs/JfT/b4m/ZScsik/tvAF7RWvQmhDAhHtURlhMk0Cp6zOlEeE1F/2iieeN3OI5iGyA/cEQUHgFZ/cYQf54EnUKnJHjOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1sCye5-0049jT-0V;
+	Fri, 31 May 2024 17:33:58 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 31 May 2024 17:33:59 +0800
+Date: Fri, 31 May 2024 17:33:59 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Chenghai Huang <huangchenghai2@huawei.com>
+Cc: davem@davemloft.net, linux-kernel@vger.kernel.org,
+	linux-crypto@vger.kernel.org, shenyang39@huawei.com,
+	liulongfang@huawei.com, qianweili@huawei.com
+Subject: Re: [PATCH 2/2] crypto: hisilicon/zip - optimize the address offset
+ of the reg query function
+Message-ID: <ZlmZh5d8RDo3C-HS@gondor.apana.org.au>
+References: <20240506115953.2282155-1-huangchenghai2@huawei.com>
+ <20240506115953.2282155-3-huangchenghai2@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="pgusl2dmdzkvehrx"
-Content-Disposition: inline
-In-Reply-To: <c9de8d07-90dc-496a-9d7f-e7f0c00a934e@roeck-us.net>
-
-
---pgusl2dmdzkvehrx
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240506115953.2282155-3-huangchenghai2@huawei.com>
 
+On Mon, May 06, 2024 at 07:59:53PM +0800, Chenghai Huang wrote:
+>
+> @@ -807,6 +786,18 @@ static int hisi_zip_regs_show(struct seq_file *s, void *unused)
+>  
+>  DEFINE_SHOW_ATTRIBUTE(hisi_zip_regs);
+>  
+> +static void __iomem *get_zip_core_addr(struct hisi_qm *qm, int core_num)
+> +{
+> +	u32 zip_comp_core_num = qm->cap_tables.dev_cap_table[ZIP_CLUSTER_COMP_NUM_CAP_IDX].cap_val;
+> +
+> +	if (core_num < zip_comp_core_num)
+> +		return qm->io_base + HZIP_CORE_DFX_BASE +
+> +			(core_num + 1) * HZIP_CORE_ADDR_INTRVL;
+> +
+> +	qm->io_base + HZIP_CORE_DFX_DECOMP_BASE +
+> +		(core_num - zip_comp_core_num) * HZIP_CORE_ADDR_INTRVL;
+> +}
+> +
 
-> Perfect. With this patch in place, I see:
->=20
-> [    6.679772] i2c i2c-0: Successfully instantiated SPD at 0x50
-> [    6.680341] i2c i2c-0: Successfully instantiated SPD at 0x51
-> [    6.680905] i2c i2c-0: Successfully instantiated SPD at 0x52
-> [    6.681466] i2c i2c-0: Successfully instantiated SPD at 0x53
->=20
-> on multiple AMD based systems with DDR4.
->=20
-> Tested-by: Guenter Roeck <linux@roeck-us.net>
-
-Yes, for DDR4 this should work out of the box.
-
-
---pgusl2dmdzkvehrx
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmZZmYUACgkQFA3kzBSg
-KbbtYg//XZMV0vr7VQtbUFbXN5Iys9lCkvI6BW+W3G8NViUb9TxJj6VtgrjuVe41
-dhoEXlTR7B1eWZsut9VDcDLC+lkeR8NbveETx+GNtj3grSYpIB7M0MVlplvs1vlK
-4BNQpatGFoMC4qmLjF23OE86Vq9EzN6Swk3REkR0oGXGDHIRgic9oLjBqLv5106d
-PGrxOe3vow0//kmLXe1tEzMruRSjGaTg+kRUpH/4u517VfeTDWgzHxr4YdkmkFV0
-B29s+Y0VMrR0/QDdWAd+FPBBDGG44lj+9vqT7MJfbp77vv2+rvP2ocCwCzoC2FiV
-exb9vmglFv5X/k5OV9uq3FcPe44Y5jXMO2TDUiaWfExa/M5I7ZAVfz1NmX3K7GJv
-A3GMTBL0Pfcrq8I+ie5TCzA16s+mpDahYhsY0y8RI7pJB6KdJ3YEGuySgxFUfhkL
-U8Vbp6VaBB9pOrx7OYaYFxDfXyJ6us5t/laPdxL5kU47oJkZdOSutLMjPJpFrpOk
-xgs4EIeBXwyZoWxx+eNYrVm8/g7A0UkOleEfBvQtAxh3Fqm+xe7NJLj9y6X5qzPr
-ugtr+LWScJyD+pB2CtcS8FPMIgNAwoQbz9LScyo/GzGqLyfrAa56zqaFvvJzDvng
-W9P00MK/934n+Jt3G8OWzblsOVjzkFzaq7kJkPsqH1tj6EZgAi4=
-=E+kY
------END PGP SIGNATURE-----
-
---pgusl2dmdzkvehrx--
+This doesn't even build.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
