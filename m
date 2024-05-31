@@ -1,105 +1,114 @@
-Return-Path: <linux-kernel+bounces-196233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DC528D5935
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 06:05:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 52C868D5937
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 06:06:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA2451F25560
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 04:05:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 090E11F255AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 04:06:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C6233BBC9;
-	Fri, 31 May 2024 04:05:50 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CD183BBE9;
+	Fri, 31 May 2024 04:06:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="hiSUtbAB"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5FB633C9
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 04:05:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28F0D187554;
+	Fri, 31 May 2024 04:06:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717128349; cv=none; b=mmyoIB5jMNguy6C+Q7EnVjCy758CLMuscqpg2utgv2h2iY1DgqJ939ogvsi+v9jad8pnXcgqWkBbF33f+OVqC+S+ebeL5Yl/VSOgx6H3cUUvzhDz6fz7A+P1TooLdgROTiW4JLpeAK8sUhQdJq+bEtONCa+vO2vi7Bk9bfsJsdM=
+	t=1717128393; cv=none; b=oDgfqVz0rdZD7CSATmXuAi94w1AXvZKAPw3kmTes5DKosabs1Vo/Wk6Fn4KuGwTL40sv7Fo8nafs7OS1aLClQYVcDWs/kuRyqVAJ35xllhShpkWTDw54GCYopT64rSAWcm4gkpP4iuDjotRt0G/yNnObHV8DfrLShJPEG3b6+q0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717128349; c=relaxed/simple;
-	bh=OdjpInGiHUr863daWuAQoy/PnJlO+T3esnvR7MSs2qs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ZkeuksvBUNK6vFrmnJA6FEN2Z3w+TiKPOWH0b/XypqXO/loRF6nSNKfaxgyHgxDY1tBiCEEqBuwK/PhupVA4FZB1I7mOrGRrfZFNRyvMaVkJh78bDqQbcgLYxqDI9/OzGGeN0QN4T/O71nrF9wGXKjkf6f6aG85mdITAnni0kfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4Vr8ZV57fbz1S8K9;
-	Fri, 31 May 2024 12:01:54 +0800 (CST)
-Received: from dggpemm100001.china.huawei.com (unknown [7.185.36.93])
-	by mail.maildlp.com (Postfix) with ESMTPS id 409AD140258;
-	Fri, 31 May 2024 12:05:44 +0800 (CST)
-Received: from [10.174.177.243] (10.174.177.243) by
- dggpemm100001.china.huawei.com (7.185.36.93) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Fri, 31 May 2024 12:05:43 +0800
-Message-ID: <51c9752c-5390-43a2-a800-7dc1043ac93c@huawei.com>
-Date: Fri, 31 May 2024 12:05:43 +0800
+	s=arc-20240116; t=1717128393; c=relaxed/simple;
+	bh=W/beC0Lg8hTQ0Cnsha9nLi79/0TKUBmSVnG3bl32q9A=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=abRb1Lf58B8q8D0fEU2Hqr4uy5lEmiMDftJ8z0rbt+PxrkuGBg/lEV5B4uA2QARE1whQoOkmyk7/Jm1r3hlr2TGR4/ZegL9yr/hfAjQK0zkNrUUyUylpYFszkDlL6JzKgEBFe9HtvANFO7opJ5QuJJeh3O1oD1rtBuptNKxqZLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=hiSUtbAB; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1717128384;
+	bh=3Jq2pWNDbbLkWCzZtS0M75onAxGRDfpRuDvRccdaAzk=;
+	h=Date:From:To:Cc:Subject:From;
+	b=hiSUtbAB/AvP8E9jJn0am81z5VXDryClE5+9MWz+eAOEkyHCH51gY4Ji7ClBRD+p/
+	 Wsb6UFcfeLbzbPxnkZtWlM7kCHMxOiXLNMv/HIHI20BIW4pR334NSi+hWSOEpxvXqO
+	 vfHr/rQXIxjVnXjuQuM4GvRJ4pYp8x8bbOq0KYwCaTNb+vGuPjYWP6ZCkB6YPBQ4fu
+	 AIN18NoYJt1YyYCGTV+qR31YarPMIOHQ5PkP1LiqMnLIBau00DnKXMteZTzj10pidQ
+	 UzKfc/ZPVoNmO4kdO0NlHvA/ZGk/X62oqQ01W4JwpPPKojgLYG0I8cpXaZiuZQU/ho
+	 q0yCpG+8QIv6g==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Vr8gh29whz4x1C;
+	Fri, 31 May 2024 14:06:24 +1000 (AEST)
+Date: Fri, 31 May 2024 14:06:21 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+Cc: Adam Rizkalla <ajarizzo@gmail.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Vasileios Amoiridis <vassilisamir@gmail.com>
+Subject: linux-next: manual merge of the iio tree with the iio-fixes tree
+Message-ID: <20240531140621.264f0848@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Revert "riscv: mm: accelerate pagefault when badaccess"
-Content-Language: en-US
-To: Palmer Dabbelt <palmer@rivosinc.com>, <linux-riscv@lists.infradead.org>
-CC: Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
-	<palmer@dabbelt.com>, <aou@eecs.berkeley.edu>, <surenb@google.com>,
-	<akpm@linux-foundation.org>, <alexghiti@rivosinc.com>, <jszhang@kernel.org>,
-	<ben@decadent.org.uk>, Bjorn Topel <bjorn@rivosinc.com>,
-	<willy@infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20240530164451.21336-1-palmer@rivosinc.com>
-From: Kefeng Wang <wangkefeng.wang@huawei.com>
-In-Reply-To: <20240530164451.21336-1-palmer@rivosinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- dggpemm100001.china.huawei.com (7.185.36.93)
+Content-Type: multipart/signed; boundary="Sig_/77uBBWuWW74Vr9XPqBfa2ox";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
+--Sig_/77uBBWuWW74Vr9XPqBfa2ox
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-On 2024/5/31 0:44, Palmer Dabbelt wrote:
-> From: Palmer Dabbelt <palmer@rivosinc.com>
-> 
-> I accidentally picked up an earlier version of this patch, which had
-> already landed via mm.  The patch  I picked up contains a bug, which I
-> kept as I thought it was a fix.  So let's just revert it.
-> 
-> This reverts commit 4c6c0020427a4547845a83f7e4d6085e16c3e24f.
+Today's linux-next merge of the iio tree got a conflict in:
 
+  drivers/iio/pressure/bmp280-core.c
 
-Yes, this one is the wrong v1.
+between commit:
 
-Reviewed-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+  0f0f6306617c ("iio: pressure: bmp280: Fix BMP580 temperature reading")
 
+from the iio-fixes tree and commit:
 
-> 
-> Fixes: 4c6c0020427a ("riscv: mm: accelerate pagefault when badaccess")
-> Signed-off-by: Palmer Dabbelt <palmer@rivosinc.com>
-> ---
->   arch/riscv/mm/fault.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/riscv/mm/fault.c b/arch/riscv/mm/fault.c
-> index b3fcf7d67efb..5224f3733802 100644
-> --- a/arch/riscv/mm/fault.c
-> +++ b/arch/riscv/mm/fault.c
-> @@ -293,8 +293,8 @@ void handle_page_fault(struct pt_regs *regs)
->   	if (unlikely(access_error(cause, vma))) {
->   		vma_end_read(vma);
->   		count_vm_vma_lock_event(VMA_LOCK_SUCCESS);
-> -		tsk->thread.bad_cause = SEGV_ACCERR;
-> -		bad_area_nosemaphore(regs, code, addr);
-> +		tsk->thread.bad_cause = cause;
-> +		bad_area_nosemaphore(regs, SEGV_ACCERR, addr);
->   		return;
->   	}
->   
+  d58479ff81c0 ("iio: pressure: bmp280: Generalize read_{temp,press,humid}(=
+) functions")
+
+from the iio tree.
+
+I fixed it up (I just used the latter) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/77uBBWuWW74Vr9XPqBfa2ox
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZZTL0ACgkQAVBC80lX
+0Gxoewf7BmUZwxfd7Wh6MEAwH514y3ObMGtjKDMPDw1H6bdKw/8duC50pAin2GDb
+58kf6CbbTcfEoZyWr/iuMRWWgK5eBbvtEjPF1m2lE3OH8DdoE2qjafardJ0nTDN9
+ULmrE4Som349wyLW56/75t9EaIBGFQumdFUD7UnGW+zrUWcpN1QnulN5Cm4Hbx7M
+ILgOop7LdIq0vd7WFDGFd/q3zzrC/ddZGszxCXBJVR+0tmXK5Jf05dAcJcNYl56R
+39nHus8z2lWgXefBEBl6tR0NeFywg3J7E4ze9XZROfScgJYlywhj5L1OKXu2OrE/
+mo8xLDPys97X5gL80jBYyosMiEH3ZQ==
+=fRZy
+-----END PGP SIGNATURE-----
+
+--Sig_/77uBBWuWW74Vr9XPqBfa2ox--
 
