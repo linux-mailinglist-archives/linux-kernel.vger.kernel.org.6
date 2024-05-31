@@ -1,293 +1,124 @@
-Return-Path: <linux-kernel+bounces-196732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E90D78D6099
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 13:25:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79C378D609A
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 13:26:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17D061C234AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 11:25:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00C8D1F24198
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 11:26:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B0E0157473;
-	Fri, 31 May 2024 11:25:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABEAA157496;
+	Fri, 31 May 2024 11:25:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Cv9TEttt"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="ppd2+7hU"
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2471415575A;
-	Fri, 31 May 2024 11:25:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A8BB15575A
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 11:25:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717154743; cv=none; b=NunbCoasuH6IEc2/mlwE3bse2nRuqghZNoyxQ5gtM8/xy36V9AWqWwAbiMzHbjkWWLKlND9eunDU1P7sajV3B5Hyi7fQxLJFpnJafDQQNA6ILcpvVaZW+U1/BQQPYy9PgTQIbb42kILEnQaIjvGhbD7Iz8/CIlHhnXIV33YCF00=
+	t=1717154753; cv=none; b=skjIaWXM+ARvXT/bnNslSMKiruZlFCD6yiGVA3soJrzU/JNtfqNyCd1WFpLtybERTmoc2B+oTPDj9uYTDPRZWKw6pHoFxklW+/i8o7AAD/RsylCMWjS0gMcJl74Cx1KQiv4G82yi13x9kNRUKV0ev1Pb5XJugF0KC8ayOzqDl2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717154743; c=relaxed/simple;
-	bh=8rvouJXSTI4Pm7kS/trxN1GuwWPDuIYI3MqGF8IM4eE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a8QUzmN0fcGWyJ89tBD4u2FtOd4tEtMMTQiTcLhIvfc6IZOXmBcv8oI6dI8BcYawD3BLOC0KYG/06w1Ojnw3uo6OV4BJwSEiGPtml/lYX47aUc1R+4oC8M4ec574Mmf9Ht0OKi5FA+zszOLkPO1bWG+9RE7sEKqyuPlwBW7Fg9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Cv9TEttt; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717154741; x=1748690741;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=8rvouJXSTI4Pm7kS/trxN1GuwWPDuIYI3MqGF8IM4eE=;
-  b=Cv9TEtttqn1D+ZYS4iIpUZbvlJJVlggevmk9d1Sx1ONYiyRopsQgcjVm
-   t7T7u6Rn8M9wQOFlSYV/0ql87u5SwLTmqjtFPNv3Ud+0n8++kE2evl/Hj
-   494mXNJlZU2Fx5XGEBRpRmhB+Y0ypMYMdqb8PFaVTplRR4IT27NhYp660
-   f+NVWA/KuWxLW7ph9IyEs1d9XsWTONpbjhGXRXT2v5Sc24YdGziKAchIK
-   heb/SzV02wzyH+Jp4E4tjR0OfcozssPrZSNjM+GoCWGJInpKIIMYuonfD
-   m7VVoM0SVs2ksscs8th+uMZ85HAGJnYybEJDwGB76a4fQIyi02F8n96Rb
-   g==;
-X-CSE-ConnectionGUID: fLejgK87QGW19IpwjfMmzw==
-X-CSE-MsgGUID: l8ZdtoDUTXiRc40UXErvHg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="13916927"
-X-IronPort-AV: E=Sophos;i="6.08,204,1712646000"; 
-   d="scan'208";a="13916927"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 04:25:39 -0700
-X-CSE-ConnectionGUID: s/V0LCyfQgubFb97mBSlCQ==
-X-CSE-MsgGUID: sIKyOqq8S72f1xaIKEPK5Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,204,1712646000"; 
-   d="scan'208";a="36232672"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.41.28])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 04:25:36 -0700
-Message-ID: <a4542d2a-490f-40ab-a2a8-a42b921d2656@intel.com>
-Date: Fri, 31 May 2024 14:25:30 +0300
+	s=arc-20240116; t=1717154753; c=relaxed/simple;
+	bh=PTcYzuOXIlbRXgshrnBY0/SLFiYOVAKnmSmP2I+XI48=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NSZPj0WP0RjHCEIfLkH2jFlP5m3LBYXyw0eGn9G/sA4jMXjRDVS8HAuxUs6u8DvoMaCLYCu73svFtbd1x8BgsDezJdI9aNzCTjGgOs5JmCLBj+fUB4sm3lEHUMVh0j8in9fQfUeL09hwX/4WCpQnXIOCDeKdcmMIzApqfqejoTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=ppd2+7hU; arc=none smtp.client-ip=209.85.166.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-374823e1c2bso5590485ab.2
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 04:25:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1717154750; x=1717759550; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iRu+fvt96wDh21HWdZk+AUFYcHjCXJ/UFo9OhBPmYL4=;
+        b=ppd2+7hUDcVX+OqQVYDt/gOrV3Ych2vIDHqsq/VJGLEMQLSxadOLha38PrzIb2nMhq
+         GSd1F5hpyOaN/aVIp5wzxtoLWzqTRRAJvznVf4zGd9QqRYopUaYt8AjPmF0gNsx9+QXF
+         Xdfhpn+GOWY41auXSJ18PcHrLQ5lakkp/d0cE7EzuR7qlGvpfZXIir0U6JDD/Eu71772
+         xnfNlMcfur3vXZZa526DQRPn4hc+IYgOJNAou1V5dsbFmInswVZDrRQOYjZF1h/JiM5c
+         IKbHRnfeRjVV7lB1VLNWBnABw40Lmtuf+S2s8tmna2efutfUCrSJIZg4OcXQA/GCg5L3
+         s3uA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717154750; x=1717759550;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iRu+fvt96wDh21HWdZk+AUFYcHjCXJ/UFo9OhBPmYL4=;
+        b=Nz9ENaMUfiMwNCgyE3ziFhXwt0uWb7dw0ZyY4htl9krC4JzABZeP38kWnR0ChOEQwo
+         xG2KmH3OU6lbiZ/zjeDOpt9LtVFlzUPRuFLQcgbUNfcnMdPl9rGBt1mmh4hhUSviYaso
+         /NA7/TWLQOmnkHbyhasftUsgbJjXdInJpKYUg1A90deWntVDAF9pycLJr4PjUdDbCRug
+         l0Xpzdn+zvDjjRPLqo6wKPQ0Xyeinf7Wk2M+LwnToKyf53j2OeMFSbUnLHaiAIS0ZUtX
+         6C2h9Pw+4MuCBBOZnFscMoqss34jGTLB9UbSSzAo8dsH0Mnzb/smbwLgO2TaKHiHAzuE
+         RqTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWh7C0vFdvFduu3XSLMMU42+FdLF1lKSdjFTdeSCseYh43lNJhaLcFtPOg5YwnsHsJix7nQVbA4JM5XBMuW6XVm8d3K4FvWEbkVqkGd
+X-Gm-Message-State: AOJu0YxzF4gjSTyds8Pq5sIHqAah/fnY2rXeeGTMAsOlB7XpY4QtqJHO
+	avQ5zslR+z0uA5iNxo/PTBEXS+wHDNAZmza2basnliUp9r1NmJ/w+s+3kZ0NHTLSORMV4a0nZdY
+	+jGmhuberNFAntnf3Stg8LnPYuPkUVT0InQWRcg==
+X-Google-Smtp-Source: AGHT+IERmtusbSx5VguMq+IRGISAME3Fo9I1nHszmWxBFaYwO8ur28ukLLI5CchbhXRWskUNyQH3RjcBWJXIgZMDsHc=
+X-Received: by 2002:a05:6e02:b27:b0:374:6472:d923 with SMTP id
+ e9e14a558f8ab-3748b8fd182mr18921045ab.0.1717154750045; Fri, 31 May 2024
+ 04:25:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V16 12/23] mmc: sdhci-uhs2: add reset function function
-To: Victor Shih <victorshihgli@gmail.com>
-Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
- benchuanggli@gmail.com, HL.Liu@genesyslogic.com.tw,
- Greg.tu@genesyslogic.com.tw, dlunev@chromium.org,
- Ben Chuang <ben.chuang@genesyslogic.com.tw>,
- Victor Shih <victor.shih@genesyslogic.com.tw>, ulf.hansson@linaro.org
-References: <20240522110909.10060-1-victorshihgli@gmail.com>
- <20240522110909.10060-13-victorshihgli@gmail.com>
- <42f2b1d4-e6c2-4860-956d-4f10c3b05529@intel.com>
- <CAK00qKBA81zx=QmU7m=pZXOzdY4syOht4p_-SU7fdw+-an0ciQ@mail.gmail.com>
-Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <CAK00qKBA81zx=QmU7m=pZXOzdY4syOht4p_-SU7fdw+-an0ciQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240411090639.237119-1-apatel@ventanamicro.com>
+In-Reply-To: <20240411090639.237119-1-apatel@ventanamicro.com>
+From: Anup Patel <anup@brainfault.org>
+Date: Fri, 31 May 2024 16:55:37 +0530
+Message-ID: <CAAhSdy3+q1aLgTro5N_UerXjaW7fTGxjpOPKkyR+-GMru-gZMw@mail.gmail.com>
+Subject: Re: [PATCH 0/2] KVM RISC-V HW IMSIC guest files
+To: Anup Patel <apatel@ventanamicro.com>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Atish Patra <atishp@atishpatra.org>, Andrew Jones <ajones@ventanamicro.com>, kvm@vger.kernel.org, 
+	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 31/05/24 13:32, Victor Shih wrote:
-> On Fri, May 24, 2024 at 3:23 PM Adrian Hunter <adrian.hunter@intel.com> wrote:
->>
->> On 22/05/24 14:08, Victor Shih wrote:
->>> From: Victor Shih <victor.shih@genesyslogic.com.tw>
->>>
->>> Sdhci_uhs2_reset() does a UHS-II specific reset operation.
->>>
->>> Signed-off-by: Ben Chuang <ben.chuang@genesyslogic.com.tw>
->>> Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
->>> Signed-off-by: Victor Shih <victor.shih@genesyslogic.com.tw>
->>> ---
->>>
->>> Updates in V15:
->>>  - Refer the SD Host Controller Standard Specification Section 3.10
->>>    to add reset command data mechanism.
->>>
->>> Updates in V14:
->>>  - Since mmc_card_uhs2() is the same as sdhci_uhs2_mode(), so drop
->>>    sdhci_uhs2_mode() and use mmc_card_uhs2() instead of sdhci_uhs2_mode().
->>>
->>> Updates in V13:
->>>  - Use ios timing to stead MMC_UHS2_SUPPORT for indicate the UHS2 mode.
->>>
->>> Updates in V8:
->>>  - Adjust the position of matching brackets.
->>>
->>> Updates in V6:
->>>  - Remove unnecessary functions and simplify code.
->>>
->>> ---
->>>
->>>  drivers/mmc/host/sdhci-uhs2.c | 57 +++++++++++++++++++++++++++++++++++
->>>  drivers/mmc/host/sdhci-uhs2.h |  1 +
->>>  drivers/mmc/host/sdhci.c      |  3 +-
->>>  drivers/mmc/host/sdhci.h      |  1 +
->>>  4 files changed, 61 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/mmc/host/sdhci-uhs2.c b/drivers/mmc/host/sdhci-uhs2.c
->>> index 9cb0f1b2a37d..7652158ea151 100644
->>> --- a/drivers/mmc/host/sdhci-uhs2.c
->>> +++ b/drivers/mmc/host/sdhci-uhs2.c
->>> @@ -10,7 +10,9 @@
->>>   *  Author: AKASHI Takahiro <takahiro.akashi@linaro.org>
->>>   */
->>>
->>> +#include <linux/delay.h>
->>>  #include <linux/module.h>
->>> +#include <linux/iopoll.h>
->>>
->>>  #include "sdhci.h"
->>>  #include "sdhci-uhs2.h"
->>> @@ -21,6 +23,8 @@
->>>  #define SDHCI_UHS2_DUMP(f, x...) \
->>>       pr_err("%s: " DRIVER_NAME ": " f, mmc_hostname(host->mmc), ## x)
->>>
->>> +#define UHS2_RESET_TIMEOUT_100MS             100000
->>> +
->>>  void sdhci_uhs2_dump_regs(struct sdhci_host *host)
->>>  {
->>>       if (!(mmc_card_uhs2(host->mmc)))
->>> @@ -49,6 +53,57 @@ void sdhci_uhs2_dump_regs(struct sdhci_host *host)
->>>  }
->>>  EXPORT_SYMBOL_GPL(sdhci_uhs2_dump_regs);
->>>
->>> +/*****************************************************************************\
->>> + *                                                                           *
->>> + * Low level functions                                                       *
->>> + *                                                                           *
->>> +\*****************************************************************************/
->>> +
->>> +/**
->>> + * sdhci_uhs2_reset - invoke SW reset
->>> + * @host: SDHCI host
->>> + * @mask: Control mask
->>> + *
->>> + * Invoke SW reset, depending on a bit in @mask and wait for completion.
->>> + */
->>> +void sdhci_uhs2_reset(struct sdhci_host *host, u16 mask)
->>> +{
->>> +     u32 val;
->>> +
->>> +     sdhci_writew(host, mask, SDHCI_UHS2_SW_RESET);
->>> +
->>> +     if (mask & SDHCI_UHS2_SW_RESET_FULL)
->>> +             host->clock = 0;
->>> +
->>> +     /* hw clears the bit when it's done */
->>> +     if (read_poll_timeout_atomic(sdhci_readw, val, !(val & mask), 10,
->>> +                                  UHS2_RESET_TIMEOUT_100MS, true, host, SDHCI_UHS2_SW_RESET)) {
->>> +             pr_warn("%s: %s: Reset 0x%x never completed. %s: clean reset bit.\n", __func__,
->>> +                     mmc_hostname(host->mmc), (int)mask, mmc_hostname(host->mmc));
->>> +             sdhci_writeb(host, 0, SDHCI_UHS2_SW_RESET);
->>> +             return;
->>> +     }
->>> +}
->>> +EXPORT_SYMBOL_GPL(sdhci_uhs2_reset);
->>> +
->>> +static void sdhci_uhs2_reset_cmd_data(struct mmc_host *mmc)
->>> +{
->>> +     struct sdhci_host *host = mmc_priv(mmc);
->>> +
->>> +     sdhci_do_reset(host, SDHCI_RESET_CMD | SDHCI_RESET_DATA);
->>> +
->>> +     if (host->mmc->ios.timing == MMC_TIMING_UHS2_SPEED_A ||
->>> +         host->mmc->ios.timing == MMC_TIMING_UHS2_SPEED_A_HD ||
->>> +         host->mmc->ios.timing == MMC_TIMING_UHS2_SPEED_B ||
->>> +         host->mmc->ios.timing == MMC_TIMING_UHS2_SPEED_B_HD) {
->>
->> Please use mmc_card_uhs2()
->>
-> 
-> Hi, Adrian
-> 
->      I will update this in the v17 version.
-> 
-> Thanks, Victor Shih
-> 
->>> +             sdhci_uhs2_reset(host, SDHCI_UHS2_SW_RESET_SD);
->>> +
->>> +             sdhci_writel(host, host->ier, SDHCI_INT_ENABLE);
->>> +             sdhci_writel(host, host->ier, SDHCI_SIGNAL_ENABLE);
->>> +             sdhci_uhs2_clear_set_irqs(host, SDHCI_INT_ALL_MASK, SDHCI_UHS2_INT_ERROR_MASK);
->>> +     }
->>> +}
->>> +
->>>  /*****************************************************************************\
->>>   *                                                                           *
->>>   * Driver init/exit                                                          *
->>> @@ -57,6 +112,8 @@ EXPORT_SYMBOL_GPL(sdhci_uhs2_dump_regs);
->>>
->>>  static int sdhci_uhs2_host_ops_init(struct sdhci_host *host)
->>>  {
->>> +     host->mmc_host_ops.uhs2_reset_cmd_data = sdhci_uhs2_reset_cmd_data;
->>
->> As noted for patch 8, any host controller resets needed
->> should be done before completing the request, so a call
->> back function should not be needed.
->>
-> 
-> Hi, Adrian
-> 
->      I want to confirm further, so can I call
-> sdhci_uhs2_reset_cmd_data() directly
->      in the mmc_wait_for_req_done()?
+On Thu, Apr 11, 2024 at 2:36=E2=80=AFPM Anup Patel <apatel@ventanamicro.com=
+> wrote:
+>
+> This series extends the HWACCEL and AUTO modes of AIA in-kernel irqchip
+> to use HW IMSIC guest files whenever underlying host supports it.
+>
+> This series depends upon the "Linux RISC-V AIA support" series which
+> is already queued for Linux-6.10.
+> (Refer, https://lore.kernel.org/lkml/20240307140307.646078-1-apatel@venta=
+namicro.com/)
+>
+> These patches can also be found in the riscv_kvm_aia_hwaccel_v1 branch
+> at: https://github.com/avpatel/linux.git
+>
+> Anup Patel (2):
+>   RISC-V: KVM: Share APLIC and IMSIC defines with irqchip drivers
+>   RISC-V: KVM: Use IMSIC guest files when available
 
-No
+Queued this series for Linux-6.11
 
->      Am I understanding something wrong?
+Regards,
+Anup
 
-See the response to your questions over patch 8.
-
-> 
-> Thanks, Victor Shih
-> 
->>> +
->>>       return 0;
->>>  }
->>>
->>> diff --git a/drivers/mmc/host/sdhci-uhs2.h b/drivers/mmc/host/sdhci-uhs2.h
->>> index 2bfe18d29bca..caaf9fba4975 100644
->>> --- a/drivers/mmc/host/sdhci-uhs2.h
->>> +++ b/drivers/mmc/host/sdhci-uhs2.h
->>> @@ -177,5 +177,6 @@
->>>  struct sdhci_host;
->>>
->>>  void sdhci_uhs2_dump_regs(struct sdhci_host *host);
->>> +void sdhci_uhs2_reset(struct sdhci_host *host, u16 mask);
->>>
->>>  #endif /* __SDHCI_UHS2_H */
->>> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
->>> index 8fc3e001db74..f212da6dc2aa 100644
->>> --- a/drivers/mmc/host/sdhci.c
->>> +++ b/drivers/mmc/host/sdhci.c
->>> @@ -236,7 +236,7 @@ void sdhci_reset(struct sdhci_host *host, u8 mask)
->>>  }
->>>  EXPORT_SYMBOL_GPL(sdhci_reset);
->>>
->>> -static bool sdhci_do_reset(struct sdhci_host *host, u8 mask)
->>> +bool sdhci_do_reset(struct sdhci_host *host, u8 mask)
->>>  {
->>>       if (host->quirks & SDHCI_QUIRK_NO_CARD_NO_RESET) {
->>>               struct mmc_host *mmc = host->mmc;
->>> @@ -249,6 +249,7 @@ static bool sdhci_do_reset(struct sdhci_host *host, u8 mask)
->>>
->>>       return true;
->>>  }
->>> +EXPORT_SYMBOL_GPL(sdhci_do_reset);
->>>
->>>  static void sdhci_reset_for_all(struct sdhci_host *host)
->>>  {
->>> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
->>> index 13703f1a3710..83d994c8d89e 100644
->>> --- a/drivers/mmc/host/sdhci.h
->>> +++ b/drivers/mmc/host/sdhci.h
->>> @@ -845,6 +845,7 @@ void sdhci_request(struct mmc_host *mmc, struct mmc_request *mrq);
->>>  int sdhci_request_atomic(struct mmc_host *mmc, struct mmc_request *mrq);
->>>  void sdhci_set_bus_width(struct sdhci_host *host, int width);
->>>  void sdhci_reset(struct sdhci_host *host, u8 mask);
->>> +bool sdhci_do_reset(struct sdhci_host *host, u8 mask);
->>>  void sdhci_set_uhs_signaling(struct sdhci_host *host, unsigned timing);
->>>  int sdhci_execute_tuning(struct mmc_host *mmc, u32 opcode);
->>>  int __sdhci_execute_tuning(struct sdhci_host *host, u32 opcode);
->>
-
+>
+>  arch/riscv/include/asm/kvm_aia_aplic.h | 58 --------------------------
+>  arch/riscv/include/asm/kvm_aia_imsic.h | 38 -----------------
+>  arch/riscv/kvm/aia.c                   | 35 +++++++++-------
+>  arch/riscv/kvm/aia_aplic.c             |  2 +-
+>  arch/riscv/kvm/aia_device.c            |  2 +-
+>  arch/riscv/kvm/aia_imsic.c             |  2 +-
+>  6 files changed, 24 insertions(+), 113 deletions(-)
+>  delete mode 100644 arch/riscv/include/asm/kvm_aia_aplic.h
+>  delete mode 100644 arch/riscv/include/asm/kvm_aia_imsic.h
+>
+> --
+> 2.34.1
+>
 
