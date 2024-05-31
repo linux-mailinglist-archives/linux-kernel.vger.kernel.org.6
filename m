@@ -1,231 +1,166 @@
-Return-Path: <linux-kernel+bounces-196837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3C728D6263
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 15:07:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A4388D6266
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 15:08:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A96EB23827
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 13:07:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 063F128382D
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 13:08:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EE0D158A0D;
-	Fri, 31 May 2024 13:07:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CEF8158A1B;
+	Fri, 31 May 2024 13:08:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=marvell.com header.i=@marvell.com header.b="pZMRzwHE"
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="34uRkWd2"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00A8E15886A;
-	Fri, 31 May 2024 13:07:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.148.174
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717160850; cv=fail; b=p466moGo7T/dyH2PbozrCu5qCMi6f1gcM0tcNrjMM6h4rt4uWQ5IHDAZtq253q5Xb+o7UXi2oKM5ZkUoEW4pikHEAmBj7FPtlp/i/pvLH+ROVgxCK7dogmMAzne121a3fd3gAY3VUM8G2povvG3bRH+9SwsN38Bp/gOnBscObQ4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717160850; c=relaxed/simple;
-	bh=D5ut+iS/KlyfUqSo7yUfudl+sQX2x9wGmWH1ExQa4qo=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=CV+7Fk2xd+Z4e/NakVJ1fM34qq9hf0efYAG3JSp2IOpT70wlth94m24MQSXp7sZZ5lPVZdbpgUOct/zRvOmS/rUcRK6OEwQozY+juci4WLOS3ZNYtnTysF3b/U/CDuO0yMSUYnSJEuCB9cehWDp1qAX7e/5hMTz4yel0gXf5J34=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (1024-bit key) header.d=marvell.com header.i=@marvell.com header.b=pZMRzwHE; arc=fail smtp.client-ip=67.231.148.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
-	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44V5Cq2E026661;
-	Fri, 31 May 2024 06:07:06 -0700
-Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2169.outbound.protection.outlook.com [104.47.58.169])
-	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 3yewt3bbg0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 31 May 2024 06:07:04 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=glx5jk9HjmngI+jG1CX5HPa5AZciiT3pOhj2VaEEJ2vHc8wcaSobAzFZopRGrkjhCJu9Chnmjx5khhqgOwJDSoe1851orfqXt/9vNBElvwcikrtIyk1czVicogWAISZ0OrHLb2jzPc537RnkD+TP9soAsZKN1rvZQ7TGuhNbyzJdueWtjDHrfP4NzMhBJYbf7l20frsiLr4n751Gui57I3EzR+LCEC1/eMMNSHVM3yjDeycW4bPey5ZZrjrs8ph0UQl6vi02eSqwZYBbIuRh2cdcFZBUTWcmJarxr32OezhIlLPLjEyAorbHPOAtKxxkNyazllxRAKKUrLyzPm6U1g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BlglHcRacfucXJ+JcP8S1NZ9KH8AkZSjTqK6ErZMXyk=;
- b=RMsAWZpqj1Ct/hhz8CWJDB/lQwuCQP38QxI4N16jYtZycsVnv5s/fMrc6wtw/pTP+5SCp5XNM495NPzluuSLKGb415cnAgqkNU8GwVfpLPffhIYV8AmL8gN/6NA59eyuGUtBdN3aSIiQEz+SQxaw2NRS9qH69CffKM6dUq4Y742pT4uN7Z8aTWnfYUFoRSBrE9qiPxoSWEysW9kzRKfhKWvTUiEP56NevgetwFR97VWSgbMLZeAEOPFOJFsi7WhA2Jrs/ovtdsFQVPqTELs0CKieoRqzQ4x0AMWVgYDvriaLRyy658Du82W8XaRdqmJtAo+5L5jCiR7hNBkPDx9epA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
- dkim=pass header.d=marvell.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BlglHcRacfucXJ+JcP8S1NZ9KH8AkZSjTqK6ErZMXyk=;
- b=pZMRzwHEevXKw8CtkRHtaUa8730xkTvcrNdPP+rqTl4FGR5FMqPPXYMHawyGePm5ZU03V5bFfzry7mS/1E7syQUG/0GOn/UhnmJETqMKLQnZ+DFj+MknnNB4dlxXCm7k/D1S0wOrHjYP9gRGbx+AsSTsmVT0phXT+bn/R9LClvk=
-Received: from CO1PR18MB4666.namprd18.prod.outlook.com (2603:10b6:303:e5::24)
- by PH7PR18MB5058.namprd18.prod.outlook.com (2603:10b6:510:15d::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.30; Fri, 31 May
- 2024 13:07:02 +0000
-Received: from CO1PR18MB4666.namprd18.prod.outlook.com
- ([fe80::b3e1:2252:a09b:a64e]) by CO1PR18MB4666.namprd18.prod.outlook.com
- ([fe80::b3e1:2252:a09b:a64e%7]) with mapi id 15.20.7633.021; Fri, 31 May 2024
- 13:07:02 +0000
-From: Subbaraya Sundeep Bhatta <sbhatta@marvell.com>
-To: Breno Leitao <leitao@debian.org>, Pravin B Shelar <pshelar@ovn.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>
-CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "horms@kernel.org"
-	<horms@kernel.org>,
-        "open list:OPENVSWITCH" <dev@openvswitch.org>,
-        open list
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [EXTERNAL] [PATCH net-next 2/2] openvswitch: Remove generic
- .ndo_get_stats64
-Thread-Topic: [EXTERNAL] [PATCH net-next 2/2] openvswitch: Remove generic
- .ndo_get_stats64
-Thread-Index: AQHas0wBf9yoYda2AkybQGVh8GPWCbGxT9+g
-Date: Fri, 31 May 2024 13:07:02 +0000
-Message-ID: 
- <CO1PR18MB4666072D5694E38AABDB8CEEA1FC2@CO1PR18MB4666.namprd18.prod.outlook.com>
-References: <20240531111552.3209198-1-leitao@debian.org>
- <20240531111552.3209198-2-leitao@debian.org>
-In-Reply-To: <20240531111552.3209198-2-leitao@debian.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CO1PR18MB4666:EE_|PH7PR18MB5058:EE_
-x-ms-office365-filtering-correlation-id: fa408da5-112d-4a3f-e950-08dc81729009
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: 
- BCL:0;ARA:13230031|7416005|376005|366007|1800799015|38070700009;
-x-microsoft-antispam-message-info: 
- =?us-ascii?Q?Ndei4a4N2ShAtJWiVHCcQcatLA819/ew2MhtDbJ8ldBppZCvPHOD3kR8NppD?=
- =?us-ascii?Q?o9cpgqQCNqDscmX8rOvOuhVgoc2b+lhMM5gSMFxDPGIpczgEDBnIcTZHsHGp?=
- =?us-ascii?Q?e0OOb0xAMBSYA/UVxOonIFhDk62Cg4Q/2K3+uzhRMlXAmC5OD6bxViUl3mOn?=
- =?us-ascii?Q?zzepL7WwmlhNOCfmazpz6Dj5fDU8yl8pBXlQ8x7/Fkzo/daVvyJwjrcgymWc?=
- =?us-ascii?Q?hvQ8/mKBnEdkFKYjwWlW0jMkPoAZAdJzHijbDJ7dJkam5c+FIPniDhPZvbyt?=
- =?us-ascii?Q?SiCz4Q9bL2jl2A6kUcMGrp+g3NIA+FHAhf+o1pSRDxdmTRXPeI+9deknZSUv?=
- =?us-ascii?Q?IRMtNjjgu7JN6QnUUXmkVrAGN6+tzHkHYXSqTHv/5O/CfAt8y16NMM8dFoH8?=
- =?us-ascii?Q?ppEA9AgYchYr6Sb2wMwQR7w7Vt5/bSQRX/uRvHsjUAYgo7f30zf9YLm8+1k4?=
- =?us-ascii?Q?rY47Xw+DC73j+KmJUbkXrsxZ/Ojp5h5bgaHiV5jNoV8jzxTpbF5xl0OzmbdT?=
- =?us-ascii?Q?bBkCket0yQYj/h76xPINk3ncD8iej3tay5KRE8Q0kZLLk/kvGdwsU3yEebY6?=
- =?us-ascii?Q?pFfS58tZGlxXL8DId9x+VtD9AzLWjsJwHcWPIS3r5+nVyvm/+n8hlxhzhi3i?=
- =?us-ascii?Q?8+JW6CheZBUQRKPzhwt1XADLHhZYMdp5kc4NtyTGy7uB9/KfZkmJa4GExnv+?=
- =?us-ascii?Q?tPr2OlTNty83/3I+kNaJm2iFMMMBSRNS2EwCOx0HZUlPDyPM138r9QcfHvSi?=
- =?us-ascii?Q?W4jFdDvrmOuSAFPS8bip0NCH/fmgzQoGd1xb8QLd4fIFUY9e099d3rguXcn7?=
- =?us-ascii?Q?ktaQEPjG1ZKDRmb/xjpGw6DE2xpZybJcnMl+a3W4iiOe93H/WfBr92l/1jW3?=
- =?us-ascii?Q?5bC0H+9wDlCQsKDKP75abpm/MKRZeEs+O91wW4WefsjEZ3J/lSLcJuiUT2w6?=
- =?us-ascii?Q?xfzsXJpQ9w7fVIkQ3RtwHv57V0ZiHI755mKV98eSyQmkIEvKjLtFPtcWu/5w?=
- =?us-ascii?Q?ARgw6cOedja/S7HX/T2WxE2G1c6t/n+DhfMPDY93hwEaOaHBBendtwdN2PVB?=
- =?us-ascii?Q?89Zituwvo440oRhsPt1+EX69xq0Vg8zLqRE3GHK8WRlr7/OJB+n5B9i3B+/o?=
- =?us-ascii?Q?NhxwW4AZssgl3BZia/qestEDkcr1MFEn7OTtDVBBWGrEoIpTGgqdSZvsVtP+?=
- =?us-ascii?Q?xGZfrfuPBQzWNt4aDy9F5WbLOl+WQ4iH09vyYCE8d3gHjClIXxmH8YjaCHvW?=
- =?us-ascii?Q?7q3eOuAI+bt2LaOJwvCYnUc5+oPOglnBZnbx7tYEHm0GLxitM85IVd4sUHze?=
- =?us-ascii?Q?Pe1mVdPLrw2BRfsuTA1fl5DQ92SuGR2RIK6zrPatHEie/w=3D=3D?=
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR18MB4666.namprd18.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7416005)(376005)(366007)(1800799015)(38070700009);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?us-ascii?Q?rqzuq0UMVrZMdqknogzp1730HTGrQ44yMQpWUZqwxQ6eB9uT1XLihR8pYoYM?=
- =?us-ascii?Q?v+Av0Gwuz1I096Rp37anXGM5crMvg5dc2FjNQnuFJmMvOtqVTTkVOVmamC5P?=
- =?us-ascii?Q?cRBy2oHEw9yzGxZoFVUD+qFmq9Yubc0rtsihgNUz6meTtTQQbNySqIv+Rfrd?=
- =?us-ascii?Q?/1vd+bsM0/72KNpS2YrL41hCMSAhFhNOl3T+84/x+QzFAN0zIB4dc/n3aw9i?=
- =?us-ascii?Q?s/9y7+vk/fOwNfCio39iVz3cv7B1Okp++eBu/FsSD5mffNseFuDdnLEjIsGL?=
- =?us-ascii?Q?W97lr5jR6O3rjdbe5z3rrokUUs6HZAexOnqvhBeMfsky9IoGK+6Q6dJc9MmD?=
- =?us-ascii?Q?pzP1ZCR9iHQbhaTEqXQcjebdAhcTcBAsqGPkLkhr8FJNKo2YhyC6v09KEQV6?=
- =?us-ascii?Q?dHBgZc1dY8bKgtbOiCL4i5q+3nn/Rn2BBrxnC9UtOtmpDzfReyoTHw9Ob5u3?=
- =?us-ascii?Q?skilO1U5sXrE6yDMo6nCrWfN1/6ukjpoZ5rpIA3NASd8pqtEuxgOx+g7eiKJ?=
- =?us-ascii?Q?TdlORMK1bjkhZMyPJcpevESYO8Ec2DydkigBqOqbkR4dbuTpDnbrWmNzTOJn?=
- =?us-ascii?Q?lxML86IJfCjTghp4PCo2vKDgHaSkmYqlmv5bFz0IUxdl6ls517+SYg5Ve/iU?=
- =?us-ascii?Q?6e2zwfFVOHxHF+I5r8Hf5NKVnpLW6o40XShFgHV1qzFaZSDIFeJ708qDX2Dh?=
- =?us-ascii?Q?NJ0K6oZyxfJFUzjiOwE3pK3WslFfadLvVPVfr3sycesTj2g/+T0T/I8E6Akg?=
- =?us-ascii?Q?17cHwZ91DDZsiFVZUct7Nk8i/dhOXe/KpAnSwKjg5Bz4N/D3dqShzcJZ9X8f?=
- =?us-ascii?Q?8oxd5aM5EvvWbrLZz7yhVgiG523AevIzgkYKgSmNaFBb5qBZCYOgj8/dqbPZ?=
- =?us-ascii?Q?/Nuw/5zRajhepuxlo6vu0jcxaEqQbjz941Dasfc1rmabquvs6hen927tYnkH?=
- =?us-ascii?Q?hOmG3l2MSM/vP4x5WKiQGhywkjr7y3t7DuVDpT2fbsElCtjWy5MZA18K7EM4?=
- =?us-ascii?Q?YGEqUKPUwUXjN2b98U2dGVHwOLHo63Q63cspf8lCwmtqDFvj+WRrPnvm/H/2?=
- =?us-ascii?Q?LuG6fs7LIPbd7LFv8fFxDygJy8TedEkqH0hM7B+hmUEn1UIOgRrDGIPADBOY?=
- =?us-ascii?Q?1F21f9QiNVN2zg5oIAf2hopg0D1gDoxP75N3Mi2ZTbRcngW7BVHms8kSn2NA?=
- =?us-ascii?Q?qnNWfLLva45O1eLsMXEIDmF9jyBcZ/tk0Q6veMoZj3sVlJGislRzaQANawzm?=
- =?us-ascii?Q?h4/ftAh6cLJyTBAdj7A/fciB2nwh64vivWT1M0sxOz55Q0Rwbm0gjFSa4BD6?=
- =?us-ascii?Q?sD3/bBxx57g6uEyuGL5JnLQHGFFN8Q1sO+FOIsIdZJ4WgaW6FWXpAEbvoNd7?=
- =?us-ascii?Q?8vjUmgGli2Q699YfXkAcSweXuUsZ+Z3Lh+8VJi2OKm6J+/d+SnC5qynwlBdy?=
- =?us-ascii?Q?eoLWOTj88I5FOfSx+XuEvOTuQbBJxLz7LhLfrH4mYNhCxFSrbml40hCB5Amh?=
- =?us-ascii?Q?s/hl6o6AJZ+fTqGM3jcpcgN8iud2OUF47RylwAVd5Fr3gG97PfW9y4mfyeUB?=
- =?us-ascii?Q?sVzL5kDvTBCDWvd37BQ=3D?=
-Content-Type: text/plain; charset="us-ascii"
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 161DE1F95A;
+	Fri, 31 May 2024 13:08:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717160917; cv=none; b=ucd539Lq1XLRI2ER2syHA7Lz9XJ6gy4zCki3eHI4yxiUhYfZyeA/qFmLk03n0AuO47K25aOxslF97WXbkWJ5pzu82xgUMnYzofBwa0WwtOSFA+HYphvAQagxBGIw+O3kQDJp9H6CAYvKU+UUI/QB1fmnJ2mvJIarPcZ/1pmgHLE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717160917; c=relaxed/simple;
+	bh=kJL81lgtIhtVj03x4PGIQjC8rszVUBsb9lNIZjrnrCA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=q5m9Jy1RCJ58U6M5rRRAy5px/wdKumI1sfSukb5U9X2MCPc92j5KqQOJ9KIhqUwKaSozm3wELAvG4rCFxx4gkhQOouZntO7+32TWi4LUlvpPcG+2D+QGM9lssMe71aQOmzpWjeQ5W8k777FkbLNE4HQt9n8tV4JRI5s89lriPi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=34uRkWd2; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1717160914;
+	bh=kJL81lgtIhtVj03x4PGIQjC8rszVUBsb9lNIZjrnrCA=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=34uRkWd227zQ4v3svcLUIKUry1ObSr3ERNtPGpw/1Nt/OPbLed+tyfAKDO7IfvN7o
+	 l289JLhqqGmd0VI44jpbZsRHWodBKpV6BosGnqlJXiajPRJ260/gm3U6pNINlYUcUp
+	 /Xj11bDsmiTtHSKfs7ihIWT3ypwcOmTeBbmxXmQ075uin3sIjlhZlNxoVhhkHrfLjS
+	 kN4ebHOzsSUqAAhd6ds1IPEPqxppHFW8vWXda6AzmfQlpvndevE/j7bKl2H9XNeHkv
+	 4Fx+ubyWdVwiqyvPJcpkmJ6AQzgKPvnoJr5DXTe6uVx3LqhgOeo8xRW7Nz8uhcXCWI
+	 f1fnXgcX6YTWQ==
+Received: from nicolas-tpx395.localdomain (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: nicolas)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 8DA4137821AD;
+	Fri, 31 May 2024 13:08:30 +0000 (UTC)
+Message-ID: <e28fa3d62d6c3f5a32aeb25390b8836e5185a993.camel@collabora.com>
+Subject: Re: [PATCH v6,15/24] media: mediatek: vcodec: Add one plane format
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: Yunfei Dong <yunfei.dong@mediatek.com>, Jeffrey Kardatzke
+ <jkardatzke@google.com>, =?ISO-8859-1?Q?N=EDcolas?= "F . R . A . Prado"
+ <nfraprado@collabora.com>, Nathan Hebert <nhebert@chromium.org>, Hans
+ Verkuil <hverkuil-cisco@xs4all.nl>, AngeloGioacchino Del Regno
+ <angelogioacchino.delregno@collabora.com>, Benjamin Gaignard
+ <benjamin.gaignard@collabora.com>, Sebastian Fricke
+ <sebastian.fricke@collabora.com>, Tomasz Figa <tfiga@chromium.org>, Mauro
+ Carvalho Chehab <mchehab@kernel.org>, Marek Szyprowski
+ <m.szyprowski@samsung.com>
+Cc: Chen-Yu Tsai <wenst@chromium.org>, Yong Wu <yong.wu@mediatek.com>, 
+ Hsin-Yi Wang <hsinyi@chromium.org>, Fritz Koenig <frkoenig@chromium.org>,
+ Daniel Vetter <daniel@ffwll.ch>,  Steve Cho <stevecho@chromium.org>, Sumit
+ Semwal <sumit.semwal@linaro.org>, Brian Starkey <Brian.Starkey@arm.com>,
+ John Stultz <jstultz@google.com>, "T . J . Mercier" <tjmercier@google.com>,
+ Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, Matthias
+ Brugger <matthias.bgg@gmail.com>,  linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org,  linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,  linux-mediatek@lists.infradead.org, 
+ Project_Global_Chrome_Upstream_Group@mediatek.com
+Date: Fri, 31 May 2024 09:08:24 -0400
+In-Reply-To: <20240516122102.16379-16-yunfei.dong@mediatek.com>
+References: <20240516122102.16379-1-yunfei.dong@mediatek.com>
+	 <20240516122102.16379-16-yunfei.dong@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.1 (3.52.1-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: marvell.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CO1PR18MB4666.namprd18.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fa408da5-112d-4a3f-e950-08dc81729009
-X-MS-Exchange-CrossTenant-originalarrivaltime: 31 May 2024 13:07:02.2354
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Fm0wElUbR2seXLslfTdzt0tzdjM0dpwFDmLVTjedsc/4e+dYPmbFdlp/hfbAKok6gTisBnuOiHnhZtTfBYuBlA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR18MB5058
-X-Proofpoint-ORIG-GUID: wQqBc5tpdH8YKW6UKr7cyNXKe585HIm1
-X-Proofpoint-GUID: wQqBc5tpdH8YKW6UKr7cyNXKe585HIm1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-31_08,2024-05-30_01,2024-05-17_01
 
-Hi,
+Le jeudi 16 mai 2024 =C3=A0 20:20 +0800, Yunfei Dong a =C3=A9crit=C2=A0:
+> Adding capture formats to support V4L2_PIX_FMT_MS21. This format has
+> one plane and only be used for secure video playback at current period.
 
->-----Original Message-----
->From: Breno Leitao <leitao@debian.org>
->Sent: Friday, May 31, 2024 4:46 PM
->To: Pravin B Shelar <pshelar@ovn.org>; David S. Miller <davem@davemloft.ne=
-t>;
->Eric Dumazet <edumazet@google.com>; Jakub Kicinski <kuba@kernel.org>; Paol=
-o
->Abeni <pabeni@redhat.com>
->Cc: netdev@vger.kernel.org; horms@kernel.org; open list:OPENVSWITCH
-><dev@openvswitch.org>; open list <linux-kernel@vger.kernel.org>
->Subject: [EXTERNAL] [PATCH net-next 2/2] openvswitch: Remove generic
->.ndo_get_stats64
->
->Commit 3e2f544dd8a33 ("net: get stats64 if device if driver is
->configured") moved the callback to dev_get_tstats64() to net core, so,
->unless the driver is doing some custom stats collection, it does not
->need to set .ndo_get_stats64.
->
->Since this driver is now relying in NETDEV_PCPU_STAT_TSTATS, then, it
->doesn't need to set the dev_get_tstats64() generic .ndo_get_stats64
->function pointer.
->
->Signed-off-by: Breno Leitao <leitao@debian.org>
+Please, replace "one plane" with "single allocation". This should disambigu=
+ate
+the message a little bit, since MS21 remains a semi-planar format with 2 pl=
+anes.
 
-Reviewed-by: Subbaraya Sundeep <sbhatta@marvell.com>
+Nicolas
 
-Thanks,
-Sundeep
-
->---
-> net/openvswitch/vport-internal_dev.c | 1 -
-> 1 file changed, 1 deletion(-)
->
->diff --git a/net/openvswitch/vport-internal_dev.c b/net/openvswitch/vport-
->internal_dev.c
->index 7daba6ac6912..4b33133cbdff 100644
->--- a/net/openvswitch/vport-internal_dev.c
->+++ b/net/openvswitch/vport-internal_dev.c
->@@ -85,7 +85,6 @@ static const struct net_device_ops internal_dev_netdev_o=
-ps
->=3D {
-> 	.ndo_stop =3D internal_dev_stop,
-> 	.ndo_start_xmit =3D internal_dev_xmit,
-> 	.ndo_set_mac_address =3D eth_mac_addr,
->-	.ndo_get_stats64 =3D dev_get_tstats64,
-> };
->
-> static struct rtnl_link_ops internal_dev_link_ops __read_mostly =3D {
->--
->2.43.0
->
+>=20
+> Signed-off-by: Yunfei Dong <yunfei.dong@mediatek.com>
+> ---
+>  .../platform/mediatek/vcodec/decoder/mtk_vcodec_dec.c    | 4 +++-
+>  .../mediatek/vcodec/decoder/mtk_vcodec_dec_stateless.c   | 9 ++++++++-
+>  2 files changed, 11 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_de=
+c.c b/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec.c
+> index 9107707de6c4..192b01ff3ede 100644
+> --- a/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec.c
+> +++ b/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec.c
+> @@ -49,7 +49,9 @@ static bool mtk_vdec_get_cap_fmt(struct mtk_vcodec_dec_=
+ctx *ctx, int format_inde
+>  		num_frame_count++;
+>  	}
+> =20
+> -	if (num_frame_count =3D=3D 1 || (!ctx->is_10bit_bitstream && fmt->fourc=
+c =3D=3D V4L2_PIX_FMT_MM21))
+> +	if ((!ctx->is_10bit_bitstream && fmt->fourcc =3D=3D V4L2_PIX_FMT_MM21) =
+||
+> +	    (ctx->is_secure_playback && fmt->fourcc =3D=3D V4L2_PIX_FMT_MS21) |=
+|
+> +	    num_frame_count =3D=3D 1)
+>  		return true;
+> =20
+>  	q_data =3D &ctx->q_data[MTK_Q_DATA_SRC];
+> diff --git a/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_de=
+c_stateless.c b/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_d=
+ec_stateless.c
+> index b903e39fee89..fbea00517565 100644
+> --- a/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_state=
+less.c
+> +++ b/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_state=
+less.c
+> @@ -229,7 +229,7 @@ static const struct mtk_stateless_control mtk_statele=
+ss_controls[] =3D {
+> =20
+>  #define NUM_CTRLS ARRAY_SIZE(mtk_stateless_controls)
+> =20
+> -static struct mtk_video_fmt mtk_video_formats[9];
+> +static struct mtk_video_fmt mtk_video_formats[10];
+> =20
+>  static struct mtk_video_fmt default_out_format;
+>  static struct mtk_video_fmt default_cap_format;
+> @@ -770,6 +770,11 @@ static void mtk_vcodec_add_formats(unsigned int four=
+cc,
+>  		mtk_video_formats[count_formats].type =3D MTK_FMT_FRAME;
+>  		mtk_video_formats[count_formats].num_planes =3D 2;
+>  		break;
+> +	case V4L2_PIX_FMT_MS21:
+> +		mtk_video_formats[count_formats].fourcc =3D fourcc;
+> +		mtk_video_formats[count_formats].type =3D MTK_FMT_FRAME;
+> +		mtk_video_formats[count_formats].num_planes =3D 1;
+> +		break;
+>  	default:
+>  		mtk_v4l2_vdec_err(ctx, "Can not add unsupported format type");
+>  		return;
+> @@ -798,6 +803,8 @@ static void mtk_vcodec_get_supported_formats(struct m=
+tk_vcodec_dec_ctx *ctx)
+>  		cap_format_count++;
+>  	}
+>  	if (ctx->dev->dec_capability & MTK_VDEC_FORMAT_MM21) {
+> +		mtk_vcodec_add_formats(V4L2_PIX_FMT_MS21, ctx);
+> +		cap_format_count++;
+>  		mtk_vcodec_add_formats(V4L2_PIX_FMT_MM21, ctx);
+>  		cap_format_count++;
+>  	}
 
 
