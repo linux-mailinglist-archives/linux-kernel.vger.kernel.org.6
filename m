@@ -1,132 +1,118 @@
-Return-Path: <linux-kernel+bounces-196129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3D808D57B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 03:19:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD4BC8D57B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 03:22:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A5DB1F2645B
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 01:19:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6363F1F26449
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 01:22:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C1B17489;
-	Fri, 31 May 2024 01:19:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 500747489;
+	Fri, 31 May 2024 01:21:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lyndeno.ca header.i=@lyndeno.ca header.b="t7LL0MZv";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="X3q6euZd"
-Received: from fhigh5-smtp.messagingengine.com (fhigh5-smtp.messagingengine.com [103.168.172.156])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cCRn7uNY"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BC2163C7;
-	Fri, 31 May 2024 01:19:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AD19134AB
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 01:21:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717118390; cv=none; b=jPj8bH4wIEMF0ubQdklTI2zFOoaLPkZpBkjyzFXRr7IEjTjPAwZqsj6QF28IaAonSM+3cLKgd5EIUNhgkcLGS8iv8M0z9K+mkAnrtyKoSmzxOKOiT/ys5ebghbE6X+dWfaxXAk7/Mw8GaElOX5bk98ONrCfxsqnKGMxPcJa+PgY=
+	t=1717118508; cv=none; b=MLhghcSF2+rAOCgmU93wpM2sUX9WWV4JGVFj7v06rYUNDbQsg89keKdbh9GC3gzrWwYduKMfL39zoql1SufIV9xb0IZDqGjNJjW+xXL2+KeDWal1bCJAV3cpj53mb+vP4GErkUQuTiqIeF1mpn0AaPO3mNMxIPS3jn9A/UhyQO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717118390; c=relaxed/simple;
-	bh=e5/NKjsM5ULYOYhot/Kcrf0uXGGr7Q2ErMsxZ8AbhNg=;
-	h=Date:From:Subject:To:Cc:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eSH09g6xHRB+UmglkbjgROtsciolwWNZuJpKBP7a1bIy5sU4QsjD49TVH/ctrn5dVi+9HOoGxRbtAgLcK7lBfIfTvz/uEkbug/mrPDBUn0i/IBNazILk2pXhmOGDI6Qv2+UlQnbM8CB2gzXOaKoP1PYteXhMf+gdrGkCGDFvJko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lyndeno.ca; spf=pass smtp.mailfrom=lyndeno.ca; dkim=pass (2048-bit key) header.d=lyndeno.ca header.i=@lyndeno.ca header.b=t7LL0MZv; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=X3q6euZd; arc=none smtp.client-ip=103.168.172.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lyndeno.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lyndeno.ca
-Received: from compute7.internal (compute7.nyi.internal [10.202.2.48])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 450861140183;
-	Thu, 30 May 2024 21:19:47 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute7.internal (MEProxy); Thu, 30 May 2024 21:19:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lyndeno.ca; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1717118387;
-	 x=1717204787; bh=5yJmV879YPZ2+qzVIS5sOrVKm0uZoMEEXgLMCx1poD4=; b=
-	t7LL0MZvW1jNfL47fgQk0BtOskjZFYY4xsj2o4QysAQA6CxHmsSn3Qp8sraA31Wm
-	82rJTaX0BmsADgS4jjebsMOsW2oWyZc6z/mVYDpbTu6s0Ius6l2xryFtDdh1vERG
-	/oE5MGMcI+n4dGqcxbQVEewkASakh0Lz/gsvRaSFg17gTX9gnCvUZQFD1qOOnt9G
-	1PVQjYy5yKTb0UghisAqYAkjzATCz3Hu67degCdAeoPTNr1fN0xdHUlKxJ/VvP1s
-	4KodTbTh2l2THRoWuDgMqi1YrH5HJMHw2SfuXjuzujL5X6YIS1CxigYb6tF88TY9
-	HMsqi2h9bIvfyrvmLMSn2Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1717118387; x=
-	1717204787; bh=5yJmV879YPZ2+qzVIS5sOrVKm0uZoMEEXgLMCx1poD4=; b=X
-	3q6euZdRcSJ9L82NWcjjmlvOUHNeTNGeUlCTiYlv+aYkSY1CgNmNKulQ1J42aKWT
-	tfJnEoMkvCFWCeOLYrgddNoj5zQQzrkh91H/O6hk7Th+Xaioq/bJHnjjl0yRQXzA
-	cYdHSOrnrtnJFiAGmRAPKG+Uum6/qcqj8cCZRNsw0VINH8cYkzMlD2DhH2sfqRVu
-	x3XVbm/1J5ddIO/D5dk2jWm/gZ4Cuxh/m3m3WzrwnDVgu9H7oHo57ncXtsUlcm1+
-	KVOISrZPxADh/7uI1Pw37iMsJWoVlFyNhlFc0A/oCzPTCMP+KWdfkhwY217VVy0s
-	OCJEfh58wwBW0wfj4ps7w==
-X-ME-Sender: <xms:siVZZjWxe6P1aqiXVIfF48_IZTo2a1YXZCvgrj-paahP-42B4K0KfA>
-    <xme:siVZZrktsld1OtgJjDSqZJ_B94rytQkIHHROpI2xs1UTa9ZQSlZmpHuoxu6e3Qpxg
-    7Z3QjRYypiB5H5_mRA>
-X-ME-Received: <xmr:siVZZvYF3vdW9lRkyRnjAu68DMX79zJEgJIO1HShsHEpPyPUdtvJKQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdekhedggeegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhuffvvefkjghfofggtgfgsehtqhertdertddunecuhfhrohhmpefnhihn
-    ughonhcuufgrnhgthhgvuceolhhsrghntghhvgeslhihnhguvghnohdrtggrqeenucggtf
-    frrghtthgvrhhnpedtvdefvdetfeeggeejgeejvdevteejvdehhedtueeugfelhfeuieff
-    ieehffetheenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
-    hmpehlshgrnhgthhgvsehlhihnuggvnhhordgtrg
-X-ME-Proxy: <xmx:siVZZuX5jhqfQLr1QqWzbt7Ah025Pmtag-r-O9UaKe1UB_LQ_wvb9g>
-    <xmx:siVZZtnow_TRZRrhr1sWLuMDeLzqH5Jqsx_KdhWHMctQEXqs54PkUQ>
-    <xmx:siVZZre2j5ECAOlqWuWgd_9gGuHKphodRk687MOR9eVQiQGsJ3KsYg>
-    <xmx:siVZZnHHqq3CADkutlUm9FeNh6oaJrtPFQHanlupiWdcv-ckhDljdw>
-    <xmx:syVZZtmVuUgtuHs-7GMhWRF36Cf_-lkiT-rQ7sIWkuBGknk4Wl3o7DAh>
-Feedback-ID: i1719461a:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 30 May 2024 21:19:44 -0400 (EDT)
-Date: Thu, 30 May 2024 19:19:36 -0600
-From: Lyndon Sanche <lsanche@lyndeno.ca>
-Subject: Re: [PATCH v8 3/3] platform/x86: dell-pc: Implement platform_profile
-To: Ilpo =?iso-8859-1?q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: mario.limonciello@amd.com, pali@kernel.org, W_Armin@gmx.de,
-	srinivas.pandruvada@linux.intel.com, lkp@intel.com, Hans de Goede
-	<hdegoede@redhat.com>, Yijun.Shen@dell.com, Matthew Garrett
-	<mjg59@srcf.ucam.org>, Vegard Nossum <vegard.nossum@oracle.com>, AceLan Kao
-	<acelan.kao@canonical.com>, Heiner Kallweit <hkallweit1@gmail.com>, LKML
-	<linux-kernel@vger.kernel.org>, platform-driver-x86@vger.kernel.org,
-	Dell.Client.Kernel@dell.com
-Message-Id: <O0TBES.JKXVC38VSDID@lyndeno.ca>
-In-Reply-To: <db3191b5-2f42-5075-a493-dedb34e578ad@linux.intel.com>
-References: <20240425172758.67831-1-lsanche@lyndeno.ca>
-	<20240529174843.13226-1-lsanche@lyndeno.ca>
-	<20240529174843.13226-4-lsanche@lyndeno.ca>
-	<db3191b5-2f42-5075-a493-dedb34e578ad@linux.intel.com>
-X-Mailer: geary/44.1
+	s=arc-20240116; t=1717118508; c=relaxed/simple;
+	bh=oduJrBgxC7GPahDyRFBPQ85EMmHXFVU+B7UUePfvsVo=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=lUvV466FpU7lZe69ugK2VUkdSfMtTuT0NZXhnb7QSPu2uCabWs+mym8gPrY+7E83D8a06cNvUaGnLXtcyrXG7FTpS2vpdlAqJHrg9kUaTQgEzbd6+zI3YHuAlTqwRLngkaTB7BBW39XgZhUYyW2yY0r0gckL4M4xqxcUyQyN/H0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cCRn7uNY; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717118507; x=1748654507;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=oduJrBgxC7GPahDyRFBPQ85EMmHXFVU+B7UUePfvsVo=;
+  b=cCRn7uNYwb++7opeutKEMEtve3gQ5saoOP3lC2d91ABFFa6pnae/XRFy
+   mjHqSzwyGHeX4PYzjUxKsZjrjyCsobIjfdqIIYOpVwE1x/iMN9642erh/
+   cwY1RqB9pC27qdDWs8iCikeXkIFX71z0CJ4ym2xyzNrxgm1reSnr4QMBQ
+   y0GnxIukSSAo+T1iBEG3CqmhIjc7GqQPxn6oky6IJfl2TtUSmlRL9YBvm
+   WY+NXWEWMIKMHalBdGN5rDCTCXBqfGw6qq/MVfgyCZcL7v+vqXQcyc4zQ
+   ugUF7kjuVf6r/TqHYnGBKnWor5cLSobQutZPjuhle8fy2I9E8UNNZMySg
+   A==;
+X-CSE-ConnectionGUID: cZ1Ln5KETVORVK3ccuXuDw==
+X-CSE-MsgGUID: BVnrqKdCTiOXh/cYf0a67w==
+X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="36180235"
+X-IronPort-AV: E=Sophos;i="6.08,202,1712646000"; 
+   d="scan'208";a="36180235"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 18:21:46 -0700
+X-CSE-ConnectionGUID: knuVU2IfRFWTjds6ES9ncg==
+X-CSE-MsgGUID: KOMsvPMzTfe0JmIFF4SbHQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,202,1712646000"; 
+   d="scan'208";a="40921229"
+Received: from unknown (HELO [10.239.159.127]) ([10.239.159.127])
+  by orviesa003.jf.intel.com with ESMTP; 30 May 2024 18:21:45 -0700
+Message-ID: <1333039e-ec61-467e-a0ee-d3cb86e769f5@linux.intel.com>
+Date: Fri, 31 May 2024 09:19:37 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Cc: baolu.lu@linux.intel.com, iommu@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+Subject: Re: device_def_domain_type documentation header does not match
+ implementation
+To: Robin Murphy <robin.murphy@arm.com>,
+ Diederik de Haas <didi.debian@cknow.org>,
+ David Woodhouse <dwmw2@infradead.org>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>
+References: <14311965.TaHA55BQu8@bagend>
+ <32921840-43d6-4ad9-99eb-aac32e67e04c@arm.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <32921840-43d6-4ad9-99eb-aac32e67e04c@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
+On 5/30/24 11:49 PM, Robin Murphy wrote:
+> On 30/05/2024 2:57 pm, Diederik de Haas wrote:
+>> Hi,
+>>
+>> While looking into 
+>> ``drivers/iommu/intel/iommu.c::device_def_domain_type``
+>> function I noticed a discrepancy between the documentation header and the
+>> implementation.
+>>
+>> ``@startup: true if this is during early boot``
+>> 0e31a7266508 ("iommu/vt-d: Remove startup parameter from
+>> device_def_domain_type()")
+>> removed the ``startup`` function parameter
+>>
+>> returns ``IOMMU_DOMAIN_DMA: device requires a dynamic mapping domain``
+>> 28b41e2c6aeb ("iommu: Move def_domain type check for untrusted device 
+>> into
+>> core")
+>> moved the possible return of ``IOMMU_DOMAIN_DMA`` to 
+>> ``drivers/iommu/iommu.c``
+>>
+>> But neither updated the documentation header.
+> 
+> TBH it could probably just be deleted now, since the 
+> iommu_ops::def_domain_type callback is properly documented in iommu.h, 
+> so individual implementations shouldn't need to repeat that. It's also 
+> never been actual kerneldoc either, since it's a regular "/*" comment. 
+> Feel free to send a patch 🙂
 
+Agreed. I will make a patch to remove it later.
 
-On Thu, May 30 2024 at 11:39:27 AM +03:00:00, Ilpo J=E4rvinen=20
-<ilpo.jarvinen@linux.intel.com> wrote:
-> Thanks for the update. I've now applied this into review-ilpo branch.
->=20
-> I reordered those headers into alphabetical order while applying. In
-> future, when adding new headers, try adhere to the alphabetical order.
->=20
-> --
->  i.
-
-Thank you for taking the time to review. Also thank you for letting me=20
-know about the header order, I will note that for next time.
-
-Please let me know if you need anything else on my end.
-
-Thank you,
-
-Lyndon Sanche
-
-
+Best regards,
+baolu
 
