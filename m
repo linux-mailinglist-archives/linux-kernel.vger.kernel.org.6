@@ -1,92 +1,118 @@
-Return-Path: <linux-kernel+bounces-197324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 526908D694E
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 20:57:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EDF18D6952
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 20:58:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07ECD1F26771
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:57:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D05591C21E52
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:58:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CCF77F7FD;
-	Fri, 31 May 2024 18:57:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 346497F7F6;
+	Fri, 31 May 2024 18:58:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LXqURVvo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="HHYVz9wH"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADFC17E774;
-	Fri, 31 May 2024 18:57:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF3BF7D40E;
+	Fri, 31 May 2024 18:58:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717181830; cv=none; b=A8t/Ma4k/cPu51qhi3N/7fxt5bvi0FmWazdttBRsecKVF3FVNWPTzC0YBGrsuYMredkdwfWXOHn9lFaguF3LFicOn0C8+sEa5hdorUAhHkZnDD4EC9K/DSiPPyM6oi40vMLlSBy6Ommtnw+rSRyL0uwrv78A9l7YFu1U4Ia92xQ=
+	t=1717181931; cv=none; b=Tn9Y+R6LJx0iJm/vu+bKM12lhKFk9WPjmnOH/Xtx0R13gM5SqY1Ci976zHqugju9ybE47Zajth5hxjcKM8J/1uAosWfYDLOc76pOBKbOzSmbi2oPEhkGt4I7bl4wazgHyCBlhMfJHrajMh+1kWdFzN7R6zqm4SvJFH6hkA4o2dc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717181830; c=relaxed/simple;
-	bh=AD6M0l/XhTHROLN84HPg7DK+mvf0+qhuriNkdX52eto=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=deVNsHD51wOPFVZZ74+uXvTTNkucRPdkrxBqz3CikQHUlX13Ksr5HMiPTWJlfQ/8g1Sm/ojx/vt4yWlg7xL26wSemxv9tYdbqE9R9MRHl+3H55yHlbhAhHXPwGe884+nxNYDDIpXpfJ47SpG7I99mFiIQGtTpWDP+gY9DyeCJsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LXqURVvo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25EC8C116B1;
-	Fri, 31 May 2024 18:57:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717181830;
-	bh=AD6M0l/XhTHROLN84HPg7DK+mvf0+qhuriNkdX52eto=;
-	h=From:To:Cc:Subject:Date:From;
-	b=LXqURVvonoO86l+SqVgDHx2+6B84YxN3Ty3Jalhip5f8LKmuDWXyaQKkN6oGxYISW
-	 cw/2cdWVvesB8ubTgklEC72ezwDndA7f3d3e1+Xo/M63Xi+Gfdm+wKu54NJsfmPC42
-	 MSXOXcVYgZ58Vf3f+EJgoyKiXhGmi9al0DMaD8HQeb2jCWMfibtUNoDaN2Y7C0BvWt
-	 U4LL61/4Ou5r1cMT6h05RtRM8nwghSLBHWuF+KTjlzvAhlbuVvz8UZtqlmxPCDPbfy
-	 KkPPa2GaCTC9pwPVf7n8sFmt2b+BUqwzAGlHP0nzdWljP+zHP31bS26cxzCzSkwhPA
-	 u2tJWJ/shle+g==
-From: Kees Cook <kees@kernel.org>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Kees Cook <kees@kernel.org>,
-	linux-mm@kvack.org,
-	linux-hardening@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] kunit/fortify: Remove __kmalloc_node() test
-Date: Fri, 31 May 2024 11:57:07 -0700
-Message-Id: <20240531185703.work.588-kees@kernel.org>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1717181931; c=relaxed/simple;
+	bh=mJQDp5OVE52hSetYA8xq+qtJdIpr+7mUyWY61xiyUKs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dL1Hpytp/D5SdO2N2P6IUzbZF9iVAn2dCNfanbepinnpbTuQ9LIQmUMZqB1nX1iTSm8zZBWOeD01zqvIQLY4oETSTyPsXBNSvT4DI0HuskkF6Na1h/vrbqWkAGfggNIMV4rp0EGiAdmdRyHdjEVeLk0N4I+chO5uLVesmHQ3Zyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=HHYVz9wH; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=J00hHbCv0tmWX3RsYRCdEYWH/PP4cQcPiWZYM0T92ck=; b=HHYVz9wHuEJdBcIo
+	WMaLl2zl1miSHNW8SWzfQ8zlbKPhzpnTRYCbSGom/Qg84Tce6JSpQ6CnsZqflASI4sKeFpCyID1Xq
+	2SDmzBFq0j6VcYuYM/+Uu+w48NyfzNz2ZZiPVBtyvVvaQ9oKVH2LeIqClHL8YpvHGgN0WdTr5gsVa
+	tI/MGPmrflJGKPGpDw5TojQwAlSaeYphyvD3j+9JybofM9SdtevWaBpav+5+4tx/h4vdSejXMX/Ol
+	WgnNnhn/Ea3x7Gwh2Qw+0va46CTBTClrDiTLXivI1fw/rqGZsTlCakCzbBe1b6HDHr6utrhGHfeBk
+	D2Q0XVuDBIOu1lu6qQ==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1sD7Sf-003drn-1k;
+	Fri, 31 May 2024 18:58:45 +0000
+Date: Fri, 31 May 2024 18:58:45 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: Muhammad Usama Anjum <usama.anjum@collabora.com>
+Cc: davidgow@google.com, linux-kselftest@vger.kernel.org,
+	kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] list: test: remove unused struct 'klist_test_struct'
+Message-ID: <Zlod5TMzmXinDu2X@gallifrey>
+References: <20240531151801.128792-1-linux@treblig.org>
+ <89e07c93-a54d-4cc2-8ee1-664389ffcdd7@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=912; i=kees@kernel.org; h=from:subject:message-id; bh=AD6M0l/XhTHROLN84HPg7DK+mvf0+qhuriNkdX52eto=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBmWh2DthOMchFi4h1JTCJc+Oc7ZIT8JDA+GPlTq O8+j+LvBiKJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCZlodgwAKCRCJcvTf3G3A Juc9EACBg7g0AciMJlxpgOkrIEkAgz4JxUyNzcnSH9uUoC2yv8MCXe94HbZEDY7e+twT+Kme7c3 P503Bd31wDK0odVa9x+AfYv7p+7hg6lnKrs0p8m9wybIJIYB12+9OVtY8ue4mXw80s4eDYT6iBt aowOPKrdFswzoOqQ0QItii6khvk9d5ODMhDeyUb9/W5+o+VNFIlb2m+PjQ/yYt0O7Dt0oWTtIf/ O4LV6hS8RBaE3FOmiHfkY60Umwvlj+vwH/KBHiEeauwlQKrfJrxvotXHIvrNWfz8gSz+BNvVqgj 0gfhB8TzgxCEwKYOuqthrYFdgEE+31THl5RocK7YZcIe+SRLHCWzfwSx92LMMLFH2x4rxsHFYqU hxHkhKIJNRI1x1TD0mlOjQZ++Kj7aZgzUWMZviF7iG9eCWOTSwwT2dwW2/XhRIcpfgPyXoe0PIu sf8O2HoLGy9am5QU8EN3AN46jUH/BiVwZ/3fHwiZyeGRKEmx3RvZQCPWzukEGIxsf7m0rLXSqfq dfw7ORnoDjBIeGUQIIz5H6L5WW/OvhDL5b1qLAvtqycwJIxsQzmcvGAxRKYqcHHaiuSQDsiUZrt fA57Ae3G0JbDrmzWaD4FAY2zYHnJH7w9XlpCumPcaUP1G/wJKGlV3ZPRAod7lqZKEUluB0jJJMs AnHqrlsFegIWnK
- g==
-X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <89e07c93-a54d-4cc2-8ee1-664389ffcdd7@collabora.com>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
+X-Uptime: 18:57:18 up 23 days,  6:11,  1 user,  load average: 0.15, 0.03, 0.01
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-__kmalloc_node() is considered an "internal" function to the Slab, so
-drop it from explicit testing.
+* Muhammad Usama Anjum (usama.anjum@collabora.com) wrote:
+> On 5/31/24 8:18 PM, linux@treblig.org wrote:
+> > From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> > 
+> > 'klist_test_struct' has been unused since the original
+> > commit 57b4f760f94d ("list: test: Test the klist structure").
+> Probably a fixes by tag would be needed here.
 
-Signed-off-by: Kees Cook <kees@kernel.org>
----
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: linux-mm@kvack.org
-Cc: linux-hardening@vger.kernel.org
----
- lib/fortify_kunit.c | 3 ---
- 1 file changed, 3 deletions(-)
+I'm generally avoiding fixes tags in this set of changes, since
+  a) They have no behavioural change at all.
+  b) Downstream and stable kernel people use fixes tags to indicate
+     stuff they should pick up if they have the original, and there's
+     no need for them to do that with this cleanup.
 
-diff --git a/lib/fortify_kunit.c b/lib/fortify_kunit.c
-index 39da5b3bc649..f9cc467334ce 100644
---- a/lib/fortify_kunit.c
-+++ b/lib/fortify_kunit.c
-@@ -235,9 +235,6 @@ static void fortify_test_alloc_size_##allocator##_dynamic(struct kunit *test) \
- 		kmalloc_array_node(alloc_size, 1, gfp, NUMA_NO_NODE),	\
- 		kfree(p));						\
- 	checker(expected_size, __kmalloc(alloc_size, gfp),		\
--		kfree(p));						\
--	checker(expected_size,						\
--		__kmalloc_node(alloc_size, gfp, NUMA_NO_NODE),		\
- 		kfree(p));						\
- 									\
- 	orig = kmalloc(alloc_size, gfp);				\
+Dave
+
+> > 
+> > Remove it.
+> > 
+> > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> > ---
+> >  lib/list-test.c | 6 ------
+> >  1 file changed, 6 deletions(-)
+> > 
+> > diff --git a/lib/list-test.c b/lib/list-test.c
+> > index 0cc27de9cec8..383ee0ad582e 100644
+> > --- a/lib/list-test.c
+> > +++ b/lib/list-test.c
+> > @@ -1201,12 +1201,6 @@ static struct kunit_suite hlist_test_module = {
+> >  };
+> >  
+> >  
+> > -struct klist_test_struct {
+> > -	int data;
+> > -	struct klist klist;
+> > -	struct klist_node klist_node;
+> > -};
+> > -
+> >  static int node_count;
+> >  static struct klist_node *last_node;
+> >  
+> 
+> -- 
+> BR,
+> Muhammad Usama Anjum
 -- 
-2.34.1
-
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
