@@ -1,128 +1,219 @@
-Return-Path: <linux-kernel+bounces-196743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E96ED8D60F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 13:46:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E6C48D6109
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 13:55:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26C311C23DDD
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 11:46:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC6D51F24A71
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 11:55:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12E4C1422DC;
-	Fri, 31 May 2024 11:46:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B6BD1581F7;
+	Fri, 31 May 2024 11:55:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YFH+bIWg"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JmqCSz+r"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B08E156899
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 11:46:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7966D156257;
+	Fri, 31 May 2024 11:55:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717155994; cv=none; b=MFGfqD2IEK4dtbKpCuZp5uzTuXwCVH9W2SZOJNPmixolH0NZ9LkjSWmCd4BdxfeIW0SRCBHANL4CdK70ne6LPFog8Uad1Xze+N04WgRC1jhC3JvakwSh/R6GpeHx/KCt64ABadukkGCqqDQWh0BnfxhBn1KHHnlYZZBs7XXTOLQ=
+	t=1717156528; cv=none; b=J+CKE9HKl8jM9eT5MCwk3nJ+c16Nnn7F/fDTwirgEOQ7mSX45i/omPMD/An8qfOForMq6QAapMVow17PXimB92RMpjfgwVF/yDSms573CxsFKZ6hWls8+kcdZWZCDnDXGq5BPHSHC2JbDS79vxj6xFlifFex4XnKAZSCELIT2o4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717155994; c=relaxed/simple;
-	bh=cZzInqUviBTYy37ASxA9p9wWZvIhStkg53piCJBUU3Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Emu9lm4WKSFzzDVOb/5k5xYIyXz5k1yX1ld1Iu53cfutkPUic2rqy4gHSiOg0rEzvDeVC6sVvHQdlaVwx4V9ae3kmxLOAIprtl0fNRs18i3t7QCRCBevvGmywmPMEtY+EGpFsUV9VmNkMn1drlIlGli0i/5d0/70YTqayUnPqHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YFH+bIWg; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717155992;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gr8k/Vm02ygPW32aJTJ9dTPWwg2hxQoQtvUykdUgDb4=;
-	b=YFH+bIWgrlK3omp36Gogj48UX9ZLf0dcnOEwDx1CQjylWB1NK9rE72GYI2y2/Qu4ppeZcL
-	0//qhJCjfEw8oWH4ZsX70gppPtm/YKGnEqT+1ruV6850ySZbz1K9kOJK/3xemTWtRZZwrC
-	tmzjSzZSFbZNwPCiDQ0BRM1YU/PJ0j0=
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
- [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-178-efbNjY1EOIu20L5-i0uA8g-1; Fri, 31 May 2024 07:46:30 -0400
-X-MC-Unique: efbNjY1EOIu20L5-i0uA8g-1
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2c1977f75d2so1635783a91.3
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 04:46:30 -0700 (PDT)
+	s=arc-20240116; t=1717156528; c=relaxed/simple;
+	bh=CBKzv3CRd2OOutXfqI+Jz8p5xY2ZBVrp7l2FWlg5yuU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=t0di56wJcl5AzUTGdZLuioQq5cnUW7fx3Y7LZ9M7kMRjbcHVNZQqu3uFHRmng3E1En24eCDGIM4uFDxScuAbLDlr1YEQ6LzyzfOB+/MpvnbsiUHYaD0konmG8709pQlJtgk+IvkvNh4zTw+mSrP9KoQG7opldf9cXRYgYoVAVL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JmqCSz+r; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a6267778b3aso168588766b.3;
+        Fri, 31 May 2024 04:55:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717156525; x=1717761325; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+4EQS2Qufu6k4fIxkqPPPmFNyZB1HQhHIFpQwHJxd/E=;
+        b=JmqCSz+rSaLUGIzYsRhSHeR0JTtikC021AzJ84mY++mAs9niq6X9v1J6kYh+tZoTQG
+         ycoTj/fdYr/Rn0SjbXwqM7WgL+HRPJtX6aOYbQeXok556C2nujHn+t9RnaV6tCKEPtv5
+         kxDWrLFDeysJ38OKTLWI83sqiIyw0Aj9yNCC209DROts8jQKhI8z3mKcSbWv5QQcBYKM
+         +3BtJc6dS7VtxLtxit0yfQ2aNmjguSXiRYrTq6CI056yOp4Uq9K97Zwvte3UZC1dJXyw
+         nacr+f0trsL10KcPSx2jL34UF0KkNfXm5r2rObq2okOGvGP9VKlYi6Q3WZI+wFG6HaP8
+         QF3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717155989; x=1717760789;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gr8k/Vm02ygPW32aJTJ9dTPWwg2hxQoQtvUykdUgDb4=;
-        b=i9eWbp7e+vcxCALAeGllk+poMixlLnv9byfZxgt2rtt3CIOdOvcchugnlPcuyvO4q6
-         EFOFeqQYQk24luiNB8RLs3D/m1jtF40r1BVeStR6TSZy3steTymg+lBQJVLFv4uoWncl
-         s+iieusmOnajBOZHmEAw+sdgcoVO8J7tv4ZEzrBgGB8tOjgSgxMc1L5/oSCE/4BlXshl
-         37+K5N14nVyZvZpKMH84fl++ye2gC3p+WfwuRRN5xkbgfb0dBLL4kqNrldsP3DNY/6a5
-         wo5xiauaaNxZ4Xax9ahhu+JSjt9YCk8o3eU0AcW8KqOj3eKID4LfuZDETqOSMOblqWfS
-         4OCw==
-X-Forwarded-Encrypted: i=1; AJvYcCXV9jc/jiS4rA2yV8ri4aO+hIQQ+x8vDLlu6MS+u8vQz4HNZRHZEIvEAvf6D84CH2tfKEWVBTujYNf7BHw+wTH8pHAb+jaDaeMOdWnf
-X-Gm-Message-State: AOJu0YwOYF6rhgLe4RCU296n4dzFpCrpTINMN8dGnzvN/QXmELx70WNB
-	TPS2AZ35CNk+IYhTWzE6lG2DcRV3wa9JO9wDSNEfVQbStQrxd57eP23iuSxcN3q3YHXtH1fii+r
-	oUQr6Hil0R8Ii36rQIRfRMWH57uGG6Zc535//3QNYTZWXvWx8ZEmFKFcUypH5Mqd03b3tF2xadM
-	dZ63QCob1QKT4ZFG4KBER126Yphi9uc9zk5p9x
-X-Received: by 2002:a17:90a:aa94:b0:2bd:f049:932a with SMTP id 98e67ed59e1d1-2c1dc5c8832mr1704313a91.34.1717155989418;
-        Fri, 31 May 2024 04:46:29 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGTq1sroVC/zyco89stsGzLWmiBt5HeZSFTphj0DZrCDCYOHtXNSLNxvKpXEsf8gGnY0WWV2gmiczJH02FvAx4=
-X-Received: by 2002:a17:90a:aa94:b0:2bd:f049:932a with SMTP id
- 98e67ed59e1d1-2c1dc5c8832mr1704291a91.34.1717155988960; Fri, 31 May 2024
- 04:46:28 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717156525; x=1717761325;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+4EQS2Qufu6k4fIxkqPPPmFNyZB1HQhHIFpQwHJxd/E=;
+        b=dzd829Zf9JTqSbX97JC+83IfkiJQhpvPMhWQYtnLjl8cjNiKB53qxKJFRDHx7gCNWE
+         b6fHSm8VqPfvo/R/Q4Y7i7djDsWKt3c2LdrAvqAD4PNJD2hF54UIBM8m2cA1rJYdSG20
+         XwGDGuqlJICmSLewJvHcREIwUANVF4D0o5RjVIEkgL/BnRNTsczylq7XKlGZ8rR6KFBI
+         SJNQhQm2ckifvDIdbrWu/Z6M2OZvNPFgCarhewBkgPM1BncZI8DEkeIdqIJLyBnuPJFk
+         6hcirKJmPA5+fCslLItV+jz7dmozhsnZ5L0+XMOr/bysFHHO7DaULA7whZbG9ablEmzW
+         LkDA==
+X-Forwarded-Encrypted: i=1; AJvYcCWVlFldybqtqnXbrja1d0JNAeN3gQhfY8o2SGBdKDgMHLHB04ujXDSQ5UMy30uF6F/NCfEdmD2nckU3VUyL/F5oI5bVaIbvBYeMZeEaPOUmSdcW1aL/DQoqnZy6xwTZJmZh7GwBn9ve3n9RjNp/28OIiVykPxknm+9+8f+KF3SXGv31cCaXMER5OZAQNtp18O1GZDKITFxcT9ypFBAfT4h2fEoBowg=
+X-Gm-Message-State: AOJu0YwcW8vpfrqyU5P4sx+F0Gj0MrD6k1lwsZxNvJx4aIxNRda6Bnx9
+	YBEi4zNI3syx7doBAcbWwG6WMSdm3ahr2Qx2UcG7T7FeXVDotyfa
+X-Google-Smtp-Source: AGHT+IF5s93wOrD7fv1QbKpmM06TGIoSvHaQfAxyubxSj+LQPazSFbI1YaveD5sUsyWaTvIT4JPZOA==
+X-Received: by 2002:a17:906:d109:b0:a63:535b:b316 with SMTP id a640c23a62f3a-a68208f0f9cmr134945966b.44.1717156524515;
+        Fri, 31 May 2024 04:55:24 -0700 (PDT)
+Received: from [192.168.50.244] (83.8.128.191.ipv4.supernova.orange.pl. [83.8.128.191])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a67eb34449bsm77607466b.213.2024.05.31.04.55.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 31 May 2024 04:55:24 -0700 (PDT)
+Message-ID: <0b611c4b-23d2-4c33-a6be-c15a04e8b99a@gmail.com>
+Date: Fri, 31 May 2024 13:55:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240530-md-nvme-apple-v1-1-b8b7ca569660@quicinc.com>
-In-Reply-To: <20240530-md-nvme-apple-v1-1-b8b7ca569660@quicinc.com>
-From: Eric Curtin <ecurtin@redhat.com>
-Date: Fri, 31 May 2024 12:45:53 +0100
-Message-ID: <CAOgh=Fwfab2W=6QzhuBfm4fazXMnNLudSQpWw3rmX5ZcSo36yA@mail.gmail.com>
-Subject: Re: [PATCH] nvme-apple: add missing MODULE_DESCRIPTION()
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>, 
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>, Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>, 
-	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, asahi@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-nvme@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 06/11] power: supply: max77693: Set charge current
+ limits during init
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, linux-pm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ ~postmarketos/upstreaming@lists.sr.ht, Henrik Grimler <henrik@grimler.se>,
+ Wolfgang Wiedmeyer <wolfgit@wiedmeyer.de>,
+ Denis 'GNUtoo' Carikli <GNUtoo@cyberdimension.org>
+References: <20240530-max77693-charger-extcon-v1-0-dc2a9e5bdf30@gmail.com>
+ <20240530-max77693-charger-extcon-v1-6-dc2a9e5bdf30@gmail.com>
+ <d740ff64-2de6-424c-9fc0-f1064f8c4f8b@kernel.org>
+Content-Language: en-US
+From: Artur Weber <aweber.kernel@gmail.com>
+In-Reply-To: <d740ff64-2de6-424c-9fc0-f1064f8c4f8b@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, 31 May 2024 at 06:25, Jeff Johnson <quic_jjohnson@quicinc.com> wrote:
->
-> make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/nvme/host/nvme-apple.o
->
-> Add the missing invocation of the MODULE_DESCRIPTION() macro.
->
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+On 31.05.2024 11:47, Krzysztof Kozlowski wrote:
+> On 30/05/2024 10:55, Artur Weber wrote:
+>> There are two charger current limit registers:
+>>
+>> - Fast charge current limit (which controls current going from the
+>>    charger to the battery);
+>> - CHGIN input current limit (which controls current going into the
+>>    charger through the cable, and is managed by the CHARGER regulator).
+>>
+>> Add functions for setting both of the values, and set them to a
+>> safe default value of 500mA at initialization.
+>>
+>> The default value for the fast charge current limit can be modified
+>> by setting the maxim,fast-charge-current-microamp DT property; the
+>> CHGIN input current limit will be set up later in the charger detection
+>> mechanism.
+>>
+>> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
+>> ---
+>>   drivers/power/supply/max77693_charger.c | 45 +++++++++++++++++++++++++++++++++
+>>   1 file changed, 45 insertions(+)
+>>
+>> diff --git a/drivers/power/supply/max77693_charger.c b/drivers/power/supply/max77693_charger.c
+>> index 894c35b750b3..d59b1524b0a4 100644
+>> --- a/drivers/power/supply/max77693_charger.c
+>> +++ b/drivers/power/supply/max77693_charger.c
+>> @@ -28,6 +28,7 @@ struct max77693_charger {
+>>   	u32 min_system_volt;
+>>   	u32 thermal_regulation_temp;
+>>   	u32 batttery_overcurrent;
+>> +	u32 fast_charge_current;
+>>   	u32 charge_input_threshold_volt;
+>>   };
+>>   
+>> @@ -591,6 +592,35 @@ static int max77693_set_batttery_overcurrent(struct max77693_charger *chg,
+>>   			CHG_CNFG_12_B2SOVRC_MASK, data);
+>>   }
+>>   
+>> +static int max77693_set_input_current_limit(struct max77693_charger *chg,
+>> +		unsigned int uamp)
+>> +{
+>> +	dev_dbg(chg->dev, "CHGIN input current limit: %u\n", uamp);
+> 
+> That's quite useless debug. It duplicates
+> max77693_set_fast_charge_current(). Just drop entire wrapper.
 
-Reviewed-by: Eric Curtin <ecurtin@redhat.com>
+It doesn't duplicate max77693_set_fast_charge_current, they modify two
+separate registers. Quote from the commit message:
 
-Is mise le meas/Regards,
+> There are two charger current limit registers:
+> 
+> - Fast charge current limit (which controls current going from the
+>  charger to the battery);
+> - CHGIN input current limit (which controls current going into the
+>   charger through the cable, and is managed by the CHARGER regulator).
 
-Eric Curtin
+max77693_set_fast_charge_current sets up the "fast charge current"
+register (in CNFG_02, CHG_CNFG_02_CC). The CHARGER regulators sets the
+CHGIN input current (in CNFG_09, CHG_CNFG_09_CHGIN_ILIM).
 
-> ---
->  drivers/nvme/host/apple.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/nvme/host/apple.c b/drivers/nvme/host/apple.c
-> index dd6ec0865141..0cfa39361d3b 100644
-> --- a/drivers/nvme/host/apple.c
-> +++ b/drivers/nvme/host/apple.c
-> @@ -1602,4 +1602,5 @@ static struct platform_driver apple_nvme_driver = {
->  module_platform_driver(apple_nvme_driver);
->
->  MODULE_AUTHOR("Sven Peter <sven@svenpeter.dev>");
-> +MODULE_DESCRIPTION("Apple ANS NVM Express device driver");
->  MODULE_LICENSE("GPL");
->
-> ---
-> base-commit: 4a4be1ad3a6efea16c56615f31117590fd881358
-> change-id: 20240530-md-nvme-apple-e0edb9b98c45
->
->
+(Apparently the CHARGER regulator is supposed to handle the fast
+charge current, but it does not; I wrote about this in the "CHARGER
+regulator" section of the patchset description.)
 
+>> +
+>> +	return regulator_set_current_limit(chg->regu, (int)uamp, (int)uamp);
+>> +}
+>> +
+>> +static int max77693_set_fast_charge_current(struct max77693_charger *chg,
+>> +		unsigned int uamp)
+>> +{
+>> +	unsigned int data;
+>> +
+>> +	data = (uamp / 1000) * 10 / 333; /* 0.1A/3 steps */
+>> +
+>> +	if (data > CHG_CNFG_02_CC_MASK) {
+>> +		dev_err(chg->dev, "Wrong value for fast charge current\n");
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	data <<= CHG_CNFG_02_CC_SHIFT;
+>> +
+>> +	dev_dbg(chg->dev, "Fast charge current: %u (0x%x)\n", uamp, data);
+>> +
+>> +	return regmap_update_bits(chg->max77693->regmap,
+>> +			MAX77693_CHG_REG_CHG_CNFG_02,
+>> +			CHG_CNFG_02_CC_MASK, data);
+> 
+> I am surprised that you set current limit via regulator but actual
+> charging current value here. I think both should go to regulator in such
+> case.
+
+As in, both fast charge current and input current should be set up by
+the CHARGER regulator? Sure, sounds good to me.
+
+I've noticed that on the original kernel, both of the values are
+modified together too (only exception is that fast charge current would
+be set to 0 when the cable was unplugged, but the input current stayed
+at 500mA. This doesn't seem to affect anything, though.).
+
+At one point I actually considered going the other way around - moving
+all charger register handling into the charger driver, instead of having
+it be a regulator. As far as I can tell, only some Samsung-submitted
+charger drivers (max77693, max8997, max8998, max14577) use a regulator
+to manage the charger current (if anything, some power supply drivers
+expose an OTG/VBUS regulator, might be something for us to consider as
+well...).
+
+I see you wrote at least the max14577 and part of the max77693 driver;
+out of curiosity, what's the benefit of doing it through a current
+regulator (as opposed to adding set functions for the relevant
+properties in the charger driver)? I've noticed the downstream driver
+has a very similar pattern[1], I wonder if it's just a port of that or
+if there's a more concrete reason.
+
+Best regards
+Artur
+
+[1] https://github.com/gr8nole/android_kernel_samsung_smdk4x12/blob/lineage-14.1/drivers/regulator/max77693.c (everything related to MAX77693_CHARGER)
 
