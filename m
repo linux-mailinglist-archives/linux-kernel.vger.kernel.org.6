@@ -1,247 +1,165 @@
-Return-Path: <linux-kernel+bounces-196355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D921A8D5A9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 08:41:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42D1F8D5AA0
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 08:42:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 655781F24C08
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 06:41:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F311C283065
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 06:41:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29CFC81AC1;
-	Fri, 31 May 2024 06:40:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="tT1Cfucn"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D69C80631;
+	Fri, 31 May 2024 06:41:07 +0000 (UTC)
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA93381AB1;
-	Fri, 31 May 2024 06:40:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEB1880029;
+	Fri, 31 May 2024 06:41:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717137647; cv=none; b=J/TOmKqeds8+pmAr5t1z5g2IjGPiruDpzeem+cIMkiYrJHf2jB7xjOAQzyy1LCtd+iZ2V69l5uMQQv3Qyj3R3H4EzrvVJO5h5uxI2JOGvUH4ajkljMGT8m0AL0+OA4QJOQE0iNJssRpNFrMCB1dtfdO0xKbp01ZHrP7XCtEpNC0=
+	t=1717137667; cv=none; b=nv1I5yD3cSNxOA/Ix4McOmiclMKYsv8u70HJLKadqG+KmFlNFcbX8xIRvqocV3WV1c5ciuB0F+EFEzzuV8jH66s9MX0mlkJFgIuEa6ewwwFGzNGU4No4vmDJVRLqxqMztPwOuKxKV+qJOTy73IiL01/h5xtP9ZWgdItFYc1/uD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717137647; c=relaxed/simple;
-	bh=BDZ/2pu/Wld29GlvisviBxejydCCeYCwVZ9eZWychX0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HDtdOaBGniJgoeDdu49hdc3CxEj79c4HtY5uL8ngOWJeEnM/xVnBci1izCoy2lbdAXaMWKaOPYAoWsAROiXq3WE2MJqS2+tcYmzQFR5DrSe6Dm25c5Y1/qgJRX7ytoZrLSGeT5/UR8dnFK1f1801xnbC3QHHCx0chVAUR/U/3fk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=tT1Cfucn; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44V6eEZR121219;
-	Fri, 31 May 2024 01:40:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1717137614;
-	bh=VMk29xvgHcoMkTC1JSC7HJ1lS34whDEDzI6Xz/EqtPg=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=tT1Cfucn0nGv8Mj2f7o58udB3wvuIffIYwndujWpq+6OKQCZkiO4aMhawV/kqX7Ub
-	 0+dNOB203GYksjnOgx1Jkg7drOge+l4T8aYe3j5VJ6ormN/p7LOcg+Xnq1mVTgw6pL
-	 ZR8eDbdbv6Y5Tf0LnjM4nX84JA8WM1oDWDQVL3Mw=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44V6eEYZ108428
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 31 May 2024 01:40:14 -0500
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 31
- May 2024 01:40:14 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 31 May 2024 01:40:14 -0500
-Received: from fllv0122.itg.ti.com (fllv0122.itg.ti.com [10.247.120.72])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44V6eEZN121499;
-	Fri, 31 May 2024 01:40:14 -0500
-Received: from localhost (linux-team-01.dhcp.ti.com [172.24.227.57])
-	by fllv0122.itg.ti.com (8.14.7/8.14.7) with ESMTP id 44V6eDvX010395;
-	Fri, 31 May 2024 01:40:14 -0500
-From: Yojana Mallik <y-mallik@ti.com>
-To: <y-mallik@ti.com>, <schnelle@linux.ibm.com>,
-        <wsa+renesas@sang-engineering.com>, <diogo.ivo@siemens.com>,
-        <rdunlap@infradead.org>, <horms@kernel.org>, <vigneshr@ti.com>,
-        <rogerq@ti.com>, <danishanwar@ti.com>, <pabeni@redhat.com>,
-        <kuba@kernel.org>, <edumazet@google.com>, <davem@davemloft.net>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <srk@ti.com>,
-        <rogerq@kernel.org>
-Subject: [PATCH net-next v2 3/3] net: ethernet: ti: icve: Add support for multicast filtering
-Date: Fri, 31 May 2024 12:10:06 +0530
-Message-ID: <20240531064006.1223417-4-y-mallik@ti.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20240531064006.1223417-1-y-mallik@ti.com>
-References: <20240531064006.1223417-1-y-mallik@ti.com>
+	s=arc-20240116; t=1717137667; c=relaxed/simple;
+	bh=/5AGhiPMoa8DA8+zCe5zB0MSwuL/3VLYSz1ac+hrezU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Z1y4ebeTRU23R1+rmHcLbL9upvcDH9GNJZGVa2H82VFdb1JUFfW1qxyfO1jNtt2a7V49uDjG9ffJ0W6I5ONfmmbeItLMOOBrG/e/9tLsKOo4E3pu2fqSmqymFgaZ3fzlY/l2nCpPXV+MlM94Q5na63/gZctparWviR8I4/2z4c0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2c195eb9af3so1253856a91.0;
+        Thu, 30 May 2024 23:41:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717137665; x=1717742465;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mu69OOs2tyNIzS9vQN8Sal9br//O/qQ7WPAbi99juhc=;
+        b=UvIH/4geRpuftQrwg/Igm6Q+WjM47UD+muw5eun2Xo5zlSbAeCtvAQnpf8inCgbP2y
+         CJGlyWUmpcIehNLmhgyzyVpn0rco3l7VczAhFu9lILLxqocVhP7OXjpFuB9Nyn4L6UgE
+         FivYW6NH/MkIEKIglacm3GP2TAvn3aIiThThKF1cF1aASeccC8pgw3nm7weJS/3cNOwm
+         spTAnqQF1X7VuW9H4A5oWtZDeJvs5TZFOI0ZjnyJPWvu7BUZW2VFu3BeW3KEL0AkezTs
+         p9IqZpcoVOlP4pVvCqd0yLBL03NPM+oJSKyOfx4vALA84ZE26RPb/U4hhshbAVpWPrfg
+         aa2w==
+X-Forwarded-Encrypted: i=1; AJvYcCWTD+WxaqJod1XlXMG9y8LsqGRT0OSpb6rT9M2z1O/GO09LbShvkAque22fjOCeXZ3oBhhnVv8n6G+072o9ExA9lQfbVV0bxbPvWGL5hwSSTznSfqo7lCDI+HFAfAaIt9Hok9S02EuZSiID8EsTRA==
+X-Gm-Message-State: AOJu0Yw+u6W4ydzNPcCftj56Qjtzb/bWBFUGD3YHqs5hHDOKTGUyb3ge
+	imH/pFk/yWe5+6uXAk9UQLikoifxfJK467NrI/+Fjya9pOMy2wREV6C2H8rs/EvPTlICpz0Ulky
+	JuiWVK8yQSrjKTMuKOCeL+Ht6MUdjAw==
+X-Google-Smtp-Source: AGHT+IEe+YhiyZoms6cTBOquHOL4MEQEpIxUTDw0tM2ObcqeullQwzmFFiEuu/7si8pb3Y1JcnG22qLFVk31XiWGY6o=
+X-Received: by 2002:a17:90a:8582:b0:2bd:e936:b28 with SMTP id
+ 98e67ed59e1d1-2c1dc583606mr932720a91.20.1717137665113; Thu, 30 May 2024
+ 23:41:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20240529064327.4080674-1-weilin.wang@intel.com> <20240529064327.4080674-4-weilin.wang@intel.com>
+In-Reply-To: <20240529064327.4080674-4-weilin.wang@intel.com>
+From: Namhyung Kim <namhyung@kernel.org>
+Date: Thu, 30 May 2024 23:40:53 -0700
+Message-ID: <CAM9d7cgSwZ3PU3H9VNvxQakocEZ_CQEqB9M1o3xTMdJ7F1sufQ@mail.gmail.com>
+Subject: Re: [RFC PATCH v10 3/8] perf stat: Fork and launch perf record when
+ perf stat needs to get retire latency value for a metric.
+To: weilin.wang@intel.com
+Cc: Ian Rogers <irogers@google.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Perry Taylor <perry.taylor@intel.com>, Samantha Alt <samantha.alt@intel.com>, 
+	Caleb Biggers <caleb.biggers@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add support for multicast filtering for ICVE driver. Implement the
-ndo_set_rx_mode callback as icve_set_rx_mode() API. rx_mode_workqueue is
-initialized in icve_rpmsg_probe() and queued in icve_set_rx_mode().
+On Tue, May 28, 2024 at 11:43=E2=80=AFPM <weilin.wang@intel.com> wrote:
+>
+> From: Weilin Wang <weilin.wang@intel.com>
+>
+> When retire_latency value is used in a metric formula, evsel would fork a=
+ perf
+> record process with "-e" and "-W" options. Perf record will collect requi=
+red
+> retire_latency values in parallel while perf stat is collecting counting =
+values.
+>
+> At the point of time that perf stat stops counting, evsel would stop perf=
+ record
+> by sending sigterm signal to perf record process. Sampled data will be pr=
+ocess
+> to get retire latency value.
+>
+> Another thread is required to synchronize between perf stat and perf reco=
+rd
+> when we pass data through pipe.
+>
+> Signed-off-by: Weilin Wang <weilin.wang@intel.com>
+> ---
+[SNIP]
+> +int tpebs_set_evsel(struct evsel *evsel, int cpu_map_idx, int thread)
+> +{
+> +       struct perf_counts_values *count;
+> +       struct tpebs_retire_lat *t;
+> +       bool found =3D false;
+> +       __u64 val;
+> +       int ret;
+> +
+> +       /* Non reitre_latency evsel should never enter this function. */
+> +       if (!evsel__is_retire_lat(evsel))
+> +               return -1;
+> +
+> +       ret =3D tpebs_stop();
+> +       if (ret)
+> +               return ret;
+> +
+> +       count =3D perf_counts(evsel->counts, cpu_map_idx, thread);
+> +
+> +       list_for_each_entry(t, &tpebs_results, nd) {
+> +               if (!strcmp(t->tpebs_name, evsel->name) || !strcmp(t->tpe=
+bs_name, evsel->metric_id)) {
+> +                       found =3D true;
+> +                       break;
+> +               }
+> +       }
+> +
+> +       /* Set ena and run to non-zero */
+> +       count->ena =3D count->run =3D 1;
+> +       count->lost =3D 0;
+> +
+> +       if (!found) {
+> +               /*
+> +                * Set default value or 0 when retire_latency for this ev=
+ent is
+> +                * not found from sampling data (enable_tpebs_recording n=
+ot set
+> +                * or 0 sample recorded).
+> +                */
+> +               val =3D 0;
+> +               return 0;
+> +       }
+> +
+> +       /*
+> +        * Only set retire_latency value to the first CPU and thread.
+> +        */
+> +       if (cpu_map_idx =3D=3D 0 && thread =3D=3D 0) {
+> +       /* Lost precision when casting from double to __u64. Any improvem=
+ent? */
 
-Signed-off-by: Yojana Mallik <y-mallik@ti.com>
----
- drivers/net/ethernet/ti/icve_rpmsg_common.h   |  4 ++
- drivers/net/ethernet/ti/inter_core_virt_eth.c | 63 ++++++++++++++++++-
- drivers/net/ethernet/ti/inter_core_virt_eth.h |  4 ++
- 3 files changed, 70 insertions(+), 1 deletion(-)
+As I said before I think you can set t->val * 1000 and then
+set the evsel->scale to 1e3 or 1e-3.
 
-diff --git a/drivers/net/ethernet/ti/icve_rpmsg_common.h b/drivers/net/ethernet/ti/icve_rpmsg_common.h
-index 2e3833de14bd..793baa93e135 100644
---- a/drivers/net/ethernet/ti/icve_rpmsg_common.h
-+++ b/drivers/net/ethernet/ti/icve_rpmsg_common.h
-@@ -19,10 +19,14 @@ enum icve_rpmsg_type {
- 	/* Request types */
- 	ICVE_REQ_SHM_INFO = 0,
- 	ICVE_REQ_SET_MAC_ADDR,
-+	ICVE_REQ_ADD_MC_ADDR,
-+	ICVE_REQ_DEL_MC_ADDR,
- 
- 	/* Response types */
- 	ICVE_RESP_SHM_INFO,
- 	ICVE_RESP_SET_MAC_ADDR,
-+	ICVE_RESP_ADD_MC_ADDR,
-+	ICVE_RESP_DEL_MC_ADDR,
- 
- 	/* Notification types */
- 	ICVE_NOTIFY_PORT_UP,
-diff --git a/drivers/net/ethernet/ti/inter_core_virt_eth.c b/drivers/net/ethernet/ti/inter_core_virt_eth.c
-index d96547d317fe..908425af0014 100644
---- a/drivers/net/ethernet/ti/inter_core_virt_eth.c
-+++ b/drivers/net/ethernet/ti/inter_core_virt_eth.c
-@@ -46,6 +46,11 @@ static int create_request(struct icve_common *common,
- 		ether_addr_copy(msg->req_msg.mac_addr.addr,
- 				common->port->ndev->dev_addr);
- 		break;
-+	case ICVE_REQ_ADD_MC_ADDR:
-+	case ICVE_REQ_DEL_MC_ADDR:
-+		ether_addr_copy(msg->req_msg.mac_addr.addr,
-+				common->mcast_addr);
-+		break;
- 	case ICVE_NOTIFY_PORT_UP:
- 	case ICVE_NOTIFY_PORT_DOWN:
- 		msg->msg_hdr.msg_type = ICVE_NOTIFY_MSG;
-@@ -87,6 +92,26 @@ static int icve_create_send_request(struct icve_common *common,
- 	return ret;
- }
- 
-+static int icve_add_mc_addr(struct net_device *ndev, const u8 *addr)
-+{
-+	struct icve_common *common = icve_ndev_to_common(ndev);
-+	int ret = 0;
-+
-+	ether_addr_copy(common->mcast_addr, addr);
-+	icve_create_send_request(common, ICVE_REQ_ADD_MC_ADDR, true);
-+	return ret;
-+}
-+
-+static int icve_del_mc_addr(struct net_device *ndev, const u8 *addr)
-+{
-+	struct icve_common *common = icve_ndev_to_common(ndev);
-+	int ret = 0;
-+
-+	ether_addr_copy(common->mcast_addr, addr);
-+	icve_create_send_request(common, ICVE_REQ_DEL_MC_ADDR, true);
-+	return ret;
-+}
-+
- static void icve_state_machine(struct work_struct *work)
- {
- 	struct delayed_work *dwork = to_delayed_work(work);
-@@ -211,6 +236,10 @@ static int icve_rpmsg_cb(struct rpmsg_device *rpdev, void *data, int len,
- 			break;
- 		case ICVE_RESP_SET_MAC_ADDR:
- 			break;
-+		case ICVE_RESP_ADD_MC_ADDR:
-+		case ICVE_RESP_DEL_MC_ADDR:
-+			complete(&common->sync_msg);
-+			break;
- 		}
- 
- 		break;
-@@ -395,10 +424,35 @@ static int icve_set_mac_address(struct net_device *ndev, void *addr)
- 	return ret;
- }
- 
-+static void icve_ndo_set_rx_mode_work(struct work_struct *work)
-+{
-+	struct icve_common *common;
-+	struct net_device *ndev;
-+
-+	common = container_of(work, struct icve_common, rx_mode_work);
-+	ndev = common->port->ndev;
-+
-+	/* make a mc list copy */
-+	netif_addr_lock_bh(ndev);
-+	__hw_addr_sync(&common->mc_list, &ndev->mc, ndev->addr_len);
-+	netif_addr_unlock_bh(ndev);
-+
-+	__hw_addr_sync_dev(&common->mc_list, ndev, icve_add_mc_addr,
-+			   icve_del_mc_addr);
-+}
-+
-+static void icve_set_rx_mode(struct net_device *ndev)
-+{
-+	struct icve_common *common = icve_ndev_to_common(ndev);
-+
-+	queue_work(common->cmd_wq, &common->rx_mode_work);
-+}
-+
- static const struct net_device_ops icve_netdev_ops = {
- 	.ndo_open = icve_ndo_open,
- 	.ndo_stop = icve_ndo_stop,
- 	.ndo_start_xmit = icve_start_xmit,
-+	.ndo_set_rx_mode = icve_set_rx_mode,
- 	.ndo_set_mac_address = icve_set_mac_address,
- };
- 
-@@ -491,7 +545,13 @@ static int icve_rpmsg_probe(struct rpmsg_device *rpdev)
- 	mutex_init(&common->state_lock);
- 	INIT_DELAYED_WORK(&common->state_work, icve_state_machine);
- 	init_completion(&common->sync_msg);
--
-+	__hw_addr_init(&common->mc_list);
-+	INIT_WORK(&common->rx_mode_work, icve_ndo_set_rx_mode_work);
-+	common->cmd_wq = create_singlethread_workqueue("icve_rx_work");
-+	if (!common->cmd_wq) {
-+		dev_err(dev, "Failure requesting workqueue\n");
-+		return -ENOMEM;
-+	}
- 	/* Register the network device */
- 	ret = icve_init_ndev(common);
- 	if (ret)
-@@ -506,6 +566,7 @@ static void icve_rpmsg_remove(struct rpmsg_device *rpdev)
- 
- 	netif_napi_del(&port->rx_napi);
- 	del_timer_sync(&port->rx_timer);
-+	destroy_workqueue(common->cmd_wq);
- 	dev_info(&rpdev->dev, "icve rpmsg client driver is removed\n");
- }
- 
-diff --git a/drivers/net/ethernet/ti/inter_core_virt_eth.h b/drivers/net/ethernet/ti/inter_core_virt_eth.h
-index 4fc420cb9eab..02c4d23395f5 100644
---- a/drivers/net/ethernet/ti/inter_core_virt_eth.h
-+++ b/drivers/net/ethernet/ti/inter_core_virt_eth.h
-@@ -47,7 +47,11 @@ struct icve_common {
- 	enum icve_state	state;
- 	struct mutex state_lock; /* Lock to be used while changing the interface state */
- 	struct delayed_work state_work;
-+	struct work_struct rx_mode_work;
-+	struct workqueue_struct *cmd_wq;
-+	struct netdev_hw_addr_list mc_list;
- 	struct completion sync_msg;
-+	u8 mcast_addr[ETH_ALEN];
- };
- 
- struct icve_ndev_priv {
--- 
-2.40.1
+Thanks,
+Namhyung
 
+
+> +               val =3D t->val;
+> +       } else
+> +               val =3D 0;
+> +
+> +       count->val =3D val;
+> +       return 0;
+> +}
+> +
 
