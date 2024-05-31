@@ -1,103 +1,100 @@
-Return-Path: <linux-kernel+bounces-197188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C771A8D6738
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:49:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0A188D673A
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:49:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 662701F23E71
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:49:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A1111C25C75
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:49:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2D4017C7DC;
-	Fri, 31 May 2024 16:47:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B692172777;
+	Fri, 31 May 2024 16:49:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RMZmCS90"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="eVhFnIzZ"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D40E4158204;
-	Fri, 31 May 2024 16:47:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F177A171E43
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 16:48:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717174057; cv=none; b=ne1wMzS226Zx4oqivCo3Di86pqM5yOr6auee0skVWgPGrFHeyw5kZA3gCzcl0bNW/plQ5K0ryd6Sl6cdLOnOXEit4wgzLHIMLd+QkunceafTBXFNdCCdvmmgjvjUaqBE+aJ4/y4BlAQCzrCqf6b3I+yFiU3FnqESDfUd2QzvAtM=
+	t=1717174142; cv=none; b=pR9n2ILAoWwT58s1hRWLYA7EB8IyUpC8CrJWy6i8qsnOY09U8nb4npqsdcsL5xsTlhkijbahbcM7cUdzprzSNrDcGXzjp2XYrbl+ughlq/5sUH5sqeyPoQCEBowqFG8YCUBneRmlvuHSmvslGkHmgfyPDi+AFO6YEhRcXohDzWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717174057; c=relaxed/simple;
-	bh=oqcC5FJvmRrpt+Q4bwnChJ2q35ucR7vYxjPB38IK/vk=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=FrpcuavoZwwWJWwMen1sJQbxuk959IkiUMHXT6UGeaY9OJ9s/uxBuPZtww/gGgZthITMwzgJVe3nz1FruXjF4y88rwALiZT5HpiBDDomsUliH84/bBDCZuS78uYqYFxq/HQ8GczE/OKvCizCYpD5inYQltDwXf1tGYiO9VUHVow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RMZmCS90; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62BF6C116B1;
-	Fri, 31 May 2024 16:47:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717174056;
-	bh=oqcC5FJvmRrpt+Q4bwnChJ2q35ucR7vYxjPB38IK/vk=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-	b=RMZmCS90hvuAyg69z06WDbLwF228fxxOaWP0skxxUNsRpSZB9dwE7y4Dudwk9FYwk
-	 gJyqQUGxNWCRvl9VIOoeGQDfALTKGloW3V94GTEtPUitX3Npki6BuZ0WF8xH8eN0zJ
-	 9lX9AQbxRApKCdkRneS9NjCrGstD679r3O8b/5ygm2qPM6WOsTe6KjkPO93BtFhTu2
-	 Bd6+BI/6RVeoMdCCN9nGCJ0MDDHSuZnhmwoldG0u+3iQvWsSYVLX7G7zKBQWfw9uaJ
-	 h1qU9jOBj5zlPOdKnFoWc09uooaj4qj+285mcZ+yhLL42LIs4OKqllYoBiMzEkkpEU
-	 +fp30/koV94Uw==
-From: Kalle Valo <kvalo@kernel.org>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: Dave Jiang <dave.jiang@intel.com>,  Bjorn Helgaas <bhelgaas@google.com>,
-  <linux-wireless@vger.kernel.org>,  <ath11k@lists.infradead.org>,
-  <regressions@lists.linux.dev>,  Jeff Johnson <quic_jjohnson@quicinc.com>,
-  <linux-kernel@vger.kernel.org>,  <linux-cxl@vger.kernel.org>,
-  <linux-pci@vger.kernel.org>
-Subject: Re: [regression] BUG: KASAN: use-after-free in
- lockdep_register_key+0x755/0x8f0
-References: <87v82y6wvi.fsf@kernel.org> <87wmncwqxf.fsf@kernel.org>
-	<87sexzx02f.fsf@kernel.org>
-	<66582bee45da8_6ec329496@dwillia2-mobl3.amr.corp.intel.com.notmuch>
-	<87jzjbwxin.fsf@kernel.org> <87frtzww57.fsf@kernel.org>
-	<6659ee8b8dfd_166872941c@dwillia2-mobl3.amr.corp.intel.com.notmuch>
-Date: Fri, 31 May 2024 19:47:32 +0300
-In-Reply-To: <6659ee8b8dfd_166872941c@dwillia2-mobl3.amr.corp.intel.com.notmuch>
-	(Dan Williams's message of "Fri, 31 May 2024 08:36:43 -0700")
-Message-ID: <87y17qudwb.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1717174142; c=relaxed/simple;
+	bh=Nm2i92xCQ67hmust2UuNX1G5OUmaFGTIU0aMJ1K4VeQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TPhkOvP1BDWA4GyPsmCX2OFroUlUjBWP93slLYRClN0Z7HjIBOxbL/qv6seQLcjLAiAthqqM4eCV0RTNz5kjgyT51pdZ80GQBISbOOaBpGLihIBd3qdZ87/lYwPpANc2TXd9EEvnkflDhNG4i4zkujzAU2K9Rzoqhpw23scPo8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=eVhFnIzZ; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 28E6CC0004;
+	Fri, 31 May 2024 16:48:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1717174132;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=v/yv4AtesztMvKs3Dy53Bfb+WU3NfhkM1gOgzOFjdC8=;
+	b=eVhFnIzZA5uZr4P0MdG5r9nKiFIhTwGlMX4q07Vog/BqFN091gujcv5FRN1W/k7IxXRrzD
+	NWceODQ4gDJql5tUanC459FNm/4gtlkHnWc+GXt5SsQQSgrDcUob2AeTLH5w230x3S/Irg
+	b004+S2UD5MCIjrvTOYxkYvRghqO2fjWPz8Dk7nUw+f4LwSWPniMu49ebqmf1CiOp9chrb
+	wI1/NCdIsu2aQIXcar/+hgtFXzfVsVFg7erMmPsmiSsb2O5UecOw9K6Kbyep7xp9dq36+I
+	X2N1wC0YOE1viVDBVRCZmZhNzdioQ7UC3t6izv8nfcx3e5TcGdgUv3vS4dcarQ==
+Message-ID: <13f4bbb5-272c-4f3a-9c75-90a8b3898cad@bootlin.com>
+Date: Fri, 31 May 2024 18:48:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/8] Add suspend and resume support for
+ phy-cadence-torrent and phy-j721e-wiz
+To: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
+ <kishon@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
+ gregory.clement@bootlin.com, theo.lebrun@bootlin.com,
+ thomas.petazzoni@bootlin.com, u-kumar1@ti.com
+References: <20240412-j7200-phy-s2r-v1-0-f15815833974@bootlin.com>
+Content-Language: en-US
+From: Thomas Richard <thomas.richard@bootlin.com>
+In-Reply-To: <20240412-j7200-phy-s2r-v1-0-f15815833974@bootlin.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: thomas.richard@bootlin.com
 
-Dan Williams <dan.j.williams@intel.com> writes:
+On 4/16/24 14:52, Thomas Richard wrote:
+> The patches of this series were originally in the series "Add suspend to
+> ram support for PCIe on J7200" [1].
+> They were moved in a separate series as requested by the PHY maintainer.
+> This series adds suspend and resume support for the phy-cadence-torrent and
+> phy-j721e-wiz drivers.
+> 
+> Compared to the PCIe series v4 [1], these PHY patches were rebased on Linux
+> v6.9-rc1.
+> The only change is for the patch "phy: cadence-torrent: extract calls to
+> clk_get from cdns_torrent_clk". Now the cadence-torrent driver supports
+> dual reference clock, so the patch was updated consequently.
+> 
+> [1] https://lore.kernel.org/all/20240102-j7200-pcie-s2r-v4-0-6f1f53390c85@bootlin.com/
 
-> Kalle Valo wrote:
-> [..]
->> >> The proposed fix for that is here:
->> >>
->> >> http://lore.kernel.org/r/66560aa9dbedb_195e294b0@dwillia2-mobl3.amr.corp.intel.com.notmuch
->> >
->> > I get "Not Found" from that link, is there a typo?
->> 
->> I found this fix from for-linus branch:
->> 
->> # PCI: Fix missing lockdep annotation for pci_cfg_access_trylock()for-linus
->> https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/commit/?h=for-linus&id=f941b9182c54a885a9d5d4cfd97af66873c98560
->> 
->> But at least that doesn't fix my crash.
->
-> Sorry for the broken link I mistakenly used a message-id from an
-> internal thread with the intel.com reporter. However, it is moot now
-> because the new direction is to revert the lockdep infrastructure:
->
-> https://lore.kernel.org/r/171711745834.1628941.5259278474013108507.stgit@dwillia2-xfh.jf.intel.com
->
-> (that link works...)
+Hello,
 
-Thanks, that links works :) I did a quick test with the three patches
-and I didn't see any crashes anymore. But to be confident I need to run
-overnight tests, I'll provide my Tested-by after that.
+Gentle ping.
+No merge conflict with 6.10-rc1.
+
+Best Regards,
+
+Thomas
 
 -- 
-https://patchwork.kernel.org/project/linux-wireless/list/
+Thomas Richard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
