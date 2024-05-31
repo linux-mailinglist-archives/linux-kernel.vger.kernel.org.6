@@ -1,166 +1,127 @@
-Return-Path: <linux-kernel+bounces-197298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F1A58D68F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 20:29:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48B028D68FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 20:30:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40C411C230BF
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:29:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F10FB1F26A29
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:30:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E88D17D373;
-	Fri, 31 May 2024 18:29:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16A7A7E0F0;
+	Fri, 31 May 2024 18:30:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mObYwxs7"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="hVxI+mdJ"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D92F17D352;
-	Fri, 31 May 2024 18:29:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C9403C08A
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 18:30:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717180158; cv=none; b=tdWu//FQInQBHDIn3sVBTMKVlpU+7G/p/i3Zn5BjQV0La2bVFAys2NFc+tfTWqC+AoMOjr9qubwX8YzfFXPFpzdyNx1QuulzYbER+QHvku/utHsJ8Y2p3pwoCZaCvRBD/B3vKFS/JbRmaJzFVCAG+fDCX4G5/dlTziGplVrZeK8=
+	t=1717180241; cv=none; b=MrncNsvscWoM5OQpXswA24kCyyHbOfziOv9Eo4zFGUsnC3lHtbD/3gpipRanLQYMhi6IRc63rm1ZYJSgXKYfM6uFOl6X3XXE/ogD7/NZ4qN4/GaTdbmPrImMe6VG+mX3a1HZ4KTKwJT/4P1ObdyqAQaCdIzTUzKNy59sY46i0oc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717180158; c=relaxed/simple;
-	bh=u9zusHs8iZfduvp0RRZolTeGcxZDFHG8eD1tE59rWqM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=d//0e0vuMkXRJJHDty6YQ3uAI1CCRQSNKOEbOiJtygsnysaQqjpPStZBHp946mDcV8b9uH2SxijNrJRX7zCa7MdbsNL6ymlV+3QcHosmSdTHOj68/qmlvggZ3ndGXYq/FgJc4eWdSUkgZJ8J47gcWQB0oyG7Hr4oTPGnpzK7P1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mObYwxs7; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44VEUVGd015681;
-	Fri, 31 May 2024 18:29:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	MUcVFMrpKY1dztBaKj7dGwSNTpNh6Q/jOBtrF11FzjA=; b=mObYwxs7d204TzJo
-	yyfz4m5Szp5Qg9hZ5uJiuzpev6mA+QSaHwEX/41tClFBTeBU/RwEi2VxLsSNr/rG
-	OX7k/mwvQW4qov/avwnkF1OPl2J2bQu3Z06kV54OR998AR5FryxRicX6+E/yWDA/
-	XmmwfTokXNINGI5iCH/Qa4cQkiw9ZZrhBonT/VlJ0Mo5fWF1doELlSWtSFNl46GF
-	EKcaNqKbiKS+FgCEtETzuUfT+ZmR1ZlXOiGMxC9hIDPNLVCwjnb9AJXAXNYIWJ1C
-	4cy2pTIuVjKhgjgVkBKxKs0bwpA0uQpGpQsWzOXpNzuDnfOwJdzxFmSmm+nZsgSB
-	qsmIkw==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ydyws7ksd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 31 May 2024 18:29:00 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44VIT0Zs013830
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 31 May 2024 18:29:00 GMT
-Received: from [10.110.11.230] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 31 May
- 2024 11:28:59 -0700
-Message-ID: <c19aa2df-adaa-463e-b3a4-843f04538a2b@quicinc.com>
-Date: Fri, 31 May 2024 11:28:58 -0700
+	s=arc-20240116; t=1717180241; c=relaxed/simple;
+	bh=YT/aQN35TGh8Chsjf5M28KpRij/hRyTR74fXiC+CKQs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FH/giJf0JldxR9AvSOk2zzEjmU6HiopkPDAPgmlnyvsPkMAKGeOy/aXagBaBBuCWNkvUmMa/V1CWAVZWX5CXXCxrb9fPWsW5oIf7rRRClHnGhUJ/EESRcU6Lkgaya/dlc03Lw2ROslN3JQXQxdpewFbBIaURo3FN7thaiXieRE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=hVxI+mdJ; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7024791a950so669191b3a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 11:30:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fastly.com; s=google; t=1717180239; x=1717785039; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QKzaRn43o/9ro5kVoZpov9f7l9ZGcLQ6ga/P6WrvCMw=;
+        b=hVxI+mdJ1JIHQavwKz0L9E3mr8D6Y24GZINoIG2f+HjNFD2oOo5KY+JwTC9U2I8Rwc
+         6KvUoKgH4SpFXFJnRcwhvFB5Ikwp38pMSgf/zPfWJTO2cBNPggJ5qy6rxr50BWUEot1q
+         NLlANUMtvCChSPin2ae+wVyWC1PdZJYt7n+Ew=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717180239; x=1717785039;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QKzaRn43o/9ro5kVoZpov9f7l9ZGcLQ6ga/P6WrvCMw=;
+        b=ovNGf9T3NjMTG7eoJ5WtTPvW0oIgaTk39D9lAjD9GuHCEXnKiQukgo8wCrEKACOH7O
+         /Dg5Eg7bcKLSgEqIteto4M7vUePEQBojZv1B0L0Y+vL8GyxIcqafDefUq60vqBpEAGNx
+         h88t2rgNAbGoNzP/Sb2mLpRNXxsHuWrZozuYKvyRIWi/VcGXp364NeIRkt2Dlu/cdyc9
+         c+6CcPuSve0zH6+JY8tZsijEPIfbRA3z/hZLnBJijhgyeoJ+PdEEA4DGnXGKMmO5roRw
+         v/psyXwHytn36fT+cwu072Nceu3cghiIIJF4fL4xUqc2MqIf6SIN9A1desHUFlihHd9t
+         4T7w==
+X-Gm-Message-State: AOJu0Yw29m+m5AD4++FONxel6nfvv/XqJYOKyTgGGL8LQcXWuilPC6md
+	wV4/LO5Cc625ZTG4aa4PcDnzHHp/m9CDC7axKKKKFdafzKv1pI/5F4qnN0QgcZs=
+X-Google-Smtp-Source: AGHT+IHDAof3GghhU3bST8irgoZ82PH9+1MMNRPtS18E3V7MNmIpQbpjcgm+hwpgfDuo91V5+iaOPA==
+X-Received: by 2002:a05:6a20:ce4b:b0:1af:58f8:1190 with SMTP id adf61e73a8af0-1b26f12a98bmr3112042637.12.1717180239224;
+        Fri, 31 May 2024 11:30:39 -0700 (PDT)
+Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70242b055dcsm1721722b3a.172.2024.05.31.11.30.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 May 2024 11:30:38 -0700 (PDT)
+Date: Fri, 31 May 2024 11:30:36 -0700
+From: Joe Damato <jdamato@fastly.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	nalramli@fastly.com, "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Leon Romanovsky <leon@kernel.org>,
+	"open list:MELLANOX MLX5 core VPI driver" <linux-rdma@vger.kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Tariq Toukan <tariqt@nvidia.com>
+Subject: Re: [RFC net-next v3 0/2] mlx5: Add netdev-genl queue stats
+Message-ID: <ZloXTJmCJlvh2AGP@LQ3V64L9R2>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	Jakub Kicinski <kuba@kernel.org>, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, nalramli@fastly.com,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Leon Romanovsky <leon@kernel.org>,
+	"open list:MELLANOX MLX5 core VPI driver" <linux-rdma@vger.kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Tariq Toukan <tariqt@nvidia.com>
+References: <20240529031628.324117-1-jdamato@fastly.com>
+ <20240530171128.35bd0ee2@kernel.org>
+ <ZlkWnXirc-NhQERA@LQ3V64L9R2>
+ <Zlki09qJi4h4l5xS@LQ3V64L9R2>
+ <20240530182630.55139604@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86/boot: add prototype for __fortify_panic()
-Content-Language: en-US
-To: Kees Cook <kees@kernel.org>
-CC: Nikolay Borisov <nik.borisov@suse.com>,
-        Thomas Gleixner
-	<tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov
-	<bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, <linux-kernel@vger.kernel.org>,
-        <linux-hardening@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        Dan
- Carpenter <dan.carpenter@linaro.org>
-References: <20240529-fortify_panic-v1-1-9923d5c77657@quicinc.com>
- <0d3f7c58-7fc0-4e8b-b6fb-c4d0d9969ce7@suse.com>
- <e42c4984-d4a2-45b1-b93d-7471000766b7@quicinc.com>
- <202405310923.78257B2B3@keescook>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <202405310923.78257B2B3@keescook>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 8QYmh73Z0jEAn_7gfYKIWx9EKMsE4QDb
-X-Proofpoint-GUID: 8QYmh73Z0jEAn_7gfYKIWx9EKMsE4QDb
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-31_12,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 phishscore=0
- malwarescore=0 impostorscore=0 suspectscore=0 mlxscore=0 mlxlogscore=999
- priorityscore=1501 spamscore=0 lowpriorityscore=0 bulkscore=0
- clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2405310140
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240530182630.55139604@kernel.org>
 
-On 5/31/2024 9:28 AM, Kees Cook wrote:
-> On Thu, May 30, 2024 at 09:23:36AM -0700, Jeff Johnson wrote:
->> On 5/30/2024 8:42 AM, Nikolay Borisov wrote:
->>>
->>>
->>> On 29.05.24 г. 21:09 ч., Jeff Johnson wrote:
->>>> As discussed in [1] add a prototype for __fortify_panic() to fix the
->>>> 'make W=1 C=1' warning:
->>>>
->>>> arch/x86/boot/compressed/misc.c:535:6: warning: symbol '__fortify_panic' was not declared. Should it be static?
->>>
->>> Actually doesn't it make sense to have this defined under ../string.h ? 
->>> Actually given that we don't have any string fortification under the 
->>> boot/  why have the fortify _* functions at all ?
->>
->> I'll let Kees answer these questions since I just took guidance from him :)
+On Thu, May 30, 2024 at 06:26:30PM -0700, Jakub Kicinski wrote:
+> On Thu, 30 May 2024 18:07:31 -0700 Joe Damato wrote:
+> > Unless I am missing something, I think mlx5e_fold_sw_stats64 would
+> > need code similar to mlx5e_stats_grp_sw_update_stats_qos and then
+> > rtnl would account for htb stats.
 > 
-> Ah-ha, I see what's happening. When not built with
-> CONFIG_FORTIFY_SOURCE, fortify-string.h isn't included. But since misc.c
-> has the function definition, we get a warning that the function
-> declaration was never seen. This is likely the better solution:
+> Hm, I think you're right. I'm just surprised this could have gone
+> unnoticed for so long.
 > 
+> > That said: since it seems the htb numbers are not included right
+> > now, I was proposing adding that in later both to rtnl and
+> > netdev-genl together, hoping that would keep the proposed
+> > simpler/easier to get accepted.
 > 
-> diff --git a/arch/x86/boot/compressed/misc.c b/arch/x86/boot/compressed/misc.c
-> index b70e4a21c15f..3f21a5e218f8 100644
-> --- a/arch/x86/boot/compressed/misc.c
-> +++ b/arch/x86/boot/compressed/misc.c
-> @@ -532,7 +532,9 @@ asmlinkage __visible void *extract_kernel(void *rmode, unsigned char *output)
->  	return output + entry_offset;
->  }
->  
-> +#ifdef CONFIG_FORTIFY_SOURCE
->  void __fortify_panic(const u8 reason, size_t avail, size_t size)
->  {
->  	error("detected buffer overflow");
->  }
-> +#endif
-> 
-> 
-> Jeff, can you test this? (I still haven't been able to reproduce the
-> warning.)
+> SGTM.
 
-Adding Dan since this comes during:
-  CHECK   arch/x86/boot/compressed/misc.c
+Cool, so based on that it seems like I just need to figure out the
+correct implementation for base and tx stats that is correct and
+that will be accepted.
 
-What version of smatch are you using? I'm using v0.5.0-8639-gff1cc4d453ff
-
-In the build where I'm seeing this issue I have:
-CONFIG_ARCH_HAS_FORTIFY_SOURCE=y
-CONFIG_FORTIFY_SOURCE=y
-CONFIG_FORTIFY_KUNIT_TEST=m
-
-So that conditional compilation won't make a difference.
-
-Also note that misc.c doesn't include the standard include/linux/string.h but
-instead includes the stripped down arch/x86/boot/string.h, so fortify-string.h
-isn't included.
-
-This seems to come back around to the question that Nikolay asked, which part
-of the boot code actually needs this?
-
-/jeff
-
+Hoping to hear back from them soon as I'd personally love to have
+this API available on our systems.
 
