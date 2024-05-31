@@ -1,126 +1,120 @@
-Return-Path: <linux-kernel+bounces-197603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 081FA8D6CFA
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 01:45:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F27848D6CFC
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 01:45:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF7491F266E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 23:45:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A77EE1F26875
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 23:45:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F69E12FF76;
-	Fri, 31 May 2024 23:45:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0BDD13210A;
+	Fri, 31 May 2024 23:45:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="ZklNmP1Y"
-Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WdPOP4Oq"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12EB57C6D5;
-	Fri, 31 May 2024 23:45:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C7427C6D5;
+	Fri, 31 May 2024 23:45:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717199118; cv=none; b=EtTodAiFhV09TEaztIXfaQztDTOit6V4QM2YJVyco9pp2GON4bXwJDQbKUPzqTK7ehaUZ5UWVcM61tsYjC7v0vps2slpKERmDrvnIHIVQPLEeLfW1bCnmx3qDgy92vcGNubC0SYZ+c2bSwNTmRs5TWk5rizVqN9LxyGxfui+K8c=
+	t=1717199125; cv=none; b=f7GZXsm27bY2AvKfXJakNKB/gdO9ujyTp2YR7CsSNidItTM76DJfVGmPuZ+jCzEQ+bWjFmWUUgkREzUyBgZOlb50mh7RuGh+9CZVFchjwFs6EMzAGFJCZZjFbJh5AJUjgPVXp11m5db9yaGGBr6Mc14y5UDIEe7yLtbn6bbBqms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717199118; c=relaxed/simple;
-	bh=l3t+BmfLmI+otY4MKq9hvWi5XN6CrB1zj/HPdbzHnk8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E7TLD/hdxQGY5pQypxdz8Iu3Y3RaHlFZzpxbFz3BPvLgbQ7TcaFgVY6z6dRF/pDEMfHT11m+mLDcqRepRl9FTsea6PqhJVW8RLWjZyuQG9rUzDpoO3fF9rIAE7KiWq5UnsRSxFe8pEeGkRdrlziMPVDBrwCd7WzIj/+YvdX1WUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=ZklNmP1Y; arc=none smtp.client-ip=199.89.1.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 009.lax.mailroute.net (Postfix) with ESMTP id 4Vrfqw2d4jzlgMVh;
-	Fri, 31 May 2024 23:45:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1717199108; x=1719791109; bh=zkochTf1pJt/Am6auJvVyeUO
-	0m/clb0l/O7D9nMG788=; b=ZklNmP1YJ5I6wZoLhUGC2GqLb9lFFx6n2ktRI1Kx
-	Nl7eRqzK72L7iylss28HRyQRn55MXa33iQtDbhVYdGuOsrbsfxQUH0MQI/q/83NC
-	naGlUr7nOXCs+ynUYr7Us7SG/yw/CDkSBGpU6kffWxO+L13RE1xW0d+wScKyYd5C
-	8UbYw7VREWul20bnYqKuPoFAWHgcTgTfaYNDtti/zlVZ3sPgIwaaIQqSPOY35Vzl
-	fKeYl7k4q3U2Af6xUuNuWM+ySy4ooBHWAZubP7KHqeU/R9xLQ8aENAiol+5dzy2y
-	j20Zy90y6kCex0Hcv++PGtzTMByipGkBfQjmyB2khsUy+Q==
-X-Virus-Scanned: by MailRoute
-Received: from 009.lax.mailroute.net ([127.0.0.1])
- by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id ho3liOON33iq; Fri, 31 May 2024 23:45:08 +0000 (UTC)
-Received: from [100.96.154.26] (unknown [104.132.0.90])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4Vrfqk2qcnzlgMVf;
-	Fri, 31 May 2024 23:45:06 +0000 (UTC)
-Message-ID: <967ec49b-3298-4db2-8f59-c5cd8abf366b@acm.org>
-Date: Fri, 31 May 2024 16:45:05 -0700
+	s=arc-20240116; t=1717199125; c=relaxed/simple;
+	bh=lKmrAoOUcOEbDxUzLRk3+YZK3TElbngdTHw7NxETvUs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=itGzEjGFlYnpcg71HIL61qbI1lxujmFu5trWDMRa94BHlojXtltOricApqTnw6OkHy8qIG/xHeJ21C8QJ9Rcs/qhB+UA2r7GzpydvMlaoDInf5HudabonPVsYCfQTSoVcTzLnmynbK6g1GdW5PKmO/4grPH2xalXHvN3BDe6X30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WdPOP4Oq; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44VGea94022880;
+	Fri, 31 May 2024 23:45:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=mubpV1GE2DfPJE/CDMmUIn
+	vdAS7wgTo0Z3KjCV6Kryc=; b=WdPOP4Oqd/qs38LP8ZhM87UNK/+Auan+u0vs6j
+	iRxxkYgCmvZE4mSrIyorZrUl3RyIzzq3bs0HhTTfGxXAKMcA7d8ZRoHBx9s/6z0V
+	zg4SbIikHodM1KuNw71hIRKibWACaEA6FxLN4bj8FB1HTIP7IXwpfB7Kvlv+cT9i
+	9+2EUY7xYqbq4TZ71LRFXR7QnbHxyidrJ9gtwmEZ/DeITHVJwuyqyMVqtc0eN6Az
+	sY2WKXDXch5QUZG9UvzMmeOJfFS9si5mol0NsAeLnklEUy3BTp/xjy+E3E7Vw8Mq
+	SIz7qpgKOJtbVOPTKSPSwFZG6imS0JrFOLtYUIR7ecwd2u1w==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfj9d920c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 31 May 2024 23:45:19 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44VNjHct025500
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 31 May 2024 23:45:17 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 31 May
+ 2024 16:45:17 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Fri, 31 May 2024 16:45:16 -0700
+Subject: [PATCH] lib/test_linear_ranges: add missing MODULE_DESCRIPTION()
+ macro
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v20 02/12] Add infrastructure for copy offload in block
- and request layer.
-To: Nitesh Shetty <nj.shetty@samsung.com>
-Cc: Damien Le Moal <dlemoal@kernel.org>, Jens Axboe <axboe@kernel.dk>,
- Jonathan Corbet <corbet@lwn.net>, Alasdair Kergon <agk@redhat.com>,
- Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka <mpatocka@redhat.com>,
- Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
- Sagi Grimberg <sagi@grimberg.me>, Chaitanya Kulkarni <kch@nvidia.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- martin.petersen@oracle.com, david@fromorbit.com, hare@suse.de,
- damien.lemoal@opensource.wdc.com, anuj20.g@samsung.com, joshi.k@samsung.com,
- nitheshshetty@gmail.com, gost.dev@samsung.com, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- dm-devel@lists.linux.dev, linux-nvme@lists.infradead.org,
- linux-fsdevel@vger.kernel.org
-References: <20240520102033.9361-1-nj.shetty@samsung.com>
- <CGME20240520102842epcas5p4949334c2587a15b8adab2c913daa622f@epcas5p4.samsung.com>
- <20240520102033.9361-3-nj.shetty@samsung.com>
- <eda6c198-3a29-4da4-94db-305cfe28d3d6@acm.org>
- <20240529061736.rubnzwkkavgsgmie@nj.shetty@samsung.com>
- <9f1ec1c1-e1b8-48ac-b7ff-8efb806a1bc8@kernel.org>
- <a866d5b5-5b01-44a2-9ccb-63bf30aa8a51@acm.org>
- <665850bd.050a0220.a5e6b.5b72SMTPIN_ADDED_BROKEN@mx.google.com>
- <abe8c209-d452-4fb5-90eb-f77b5ec1a2dc@acm.org>
- <6659b691.630a0220.90195.d0ebSMTPIN_ADDED_BROKEN@mx.google.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <6659b691.630a0220.90195.d0ebSMTPIN_ADDED_BROKEN@mx.google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240531-md-lib-test_linear_ranges-v1-1-053a1aad37c6@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAAthWmYC/x2MWwrCQAwAr1LybWC3Plq8ikjZR7SBdpVklULp3
+ U39HJiZFZSESeHarCD0ZeVXMfCHBtIYypOQszG0rj2589HjnHHiiJW0DhMXCjLI7ileetflFH1
+ PHYH1b6EHL//37W4cgxJGk9O4Hy3+LDgHrSSwbT8KYFjSigAAAA==
+To: Andrew Morton <akpm@linux-foundation.org>,
+        Mark Brown
+	<broonie@kernel.org>,
+        Matti Vaittinen <mazziesaccount@gmail.com>
+CC: <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        "Jeff
+ Johnson" <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: MKjnPy_UwisyynTfDeU34RmJOqR0kZet
+X-Proofpoint-ORIG-GUID: MKjnPy_UwisyynTfDeU34RmJOqR0kZet
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-31_14,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
+ priorityscore=1501 impostorscore=0 lowpriorityscore=0 clxscore=1011
+ bulkscore=0 suspectscore=0 mlxscore=0 malwarescore=0 adultscore=0
+ mlxlogscore=999 phishscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2405170001 definitions=main-2405310182
 
-On 5/31/24 03:17, Nitesh Shetty wrote:
-> I see the following challenges with bio-chained approach.
-> 1. partitioned device:
->  =C2=A0=C2=A0=C2=A0=C2=A0We need to add the code which iterates over al=
-l bios and adjusts
->  =C2=A0=C2=A0=C2=A0=C2=A0the sectors offsets.
-> 2. dm/stacked device:
->  =C2=A0=C2=A0=C2=A0=C2=A0We need to make major changes in dm, such as a=
-llocating cloned
->  =C2=A0=C2=A0=C2=A0=C2=A0bios, IO splits, IO offset mappings. All of wh=
-ich need to
->  =C2=A0=C2=A0=C2=A0=C2=A0iterate over chained BIOs.
->=20
-> Overall with chained BIOs we need to add a special handling only for co=
-py
-> to iterate over chained BIOs and do the same thing which is being done
-> for single BIO at present.
-> Or am I missing something here ?
+make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_linear_ranges.o
 
-Hmm ... aren't chained bios submitted individually? See e.g.
-bio_chain_and_submit(). In other words, it shouldn't be necessary to
-add any code that iterates over bio chains.
+Add the missing invocation of the MODULE_DESCRIPTION() macro.
 
-Thanks,
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ lib/test_linear_ranges.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Bart.
+diff --git a/lib/test_linear_ranges.c b/lib/test_linear_ranges.c
+index c18f9c0f1f25..f482be00f1bc 100644
+--- a/lib/test_linear_ranges.c
++++ b/lib/test_linear_ranges.c
+@@ -216,4 +216,5 @@ static struct kunit_suite range_test_module = {
+ 
+ kunit_test_suites(&range_test_module);
+ 
++MODULE_DESCRIPTION("KUnit test for the linear_ranges helper");
+ MODULE_LICENSE("GPL");
+
+---
+base-commit: b050496579632f86ee1ef7e7501906db579f3457
+change-id: 20240531-md-lib-test_linear_ranges-6807dcb18e7e
 
 
