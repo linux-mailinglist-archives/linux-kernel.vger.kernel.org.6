@@ -1,93 +1,207 @@
-Return-Path: <linux-kernel+bounces-196200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03B468D58B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 04:50:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA6C28D58C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 04:54:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 865C8B2522B
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 02:50:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F8E4287635
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 02:54:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2225D78C68;
-	Fri, 31 May 2024 02:50:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBC1974E3D;
+	Fri, 31 May 2024 02:54:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L2UmkRY1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Mi7WIbfA"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64166256D;
-	Fri, 31 May 2024 02:50:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7092E256D
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 02:54:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717123830; cv=none; b=H++iOnTel2tZ2hNVhpMUvO5ywfjGHRHsME1unIN/rlwockDvkC22y7dudKlDzoY0EOL22AFhXaLAd2Mx2dHSPHJsWYFfDgd2/JytqbCt5kf1c1lTwmdWZe2nt3oFj1SUlhZdoNRirSHTVSyEEY3ibp7lHTcCzkvuDeZL6563mkE=
+	t=1717124079; cv=none; b=rVYSc3fUwDBMr/WxNNVIvBvd2Z1ANCh0tlwGr8vhkSKE4cQDQesy/XGTsPYZ6wlsrFy3o2/HIVAsvrCTyy8wElf2SWV+6afIzKmh6Ua2su6O0kn+7b9a3cUa7xtdoZQ6RJer7+hiHL1xKyWvS6WLGbMPtUYkFxnqFvzZfU+kC2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717123830; c=relaxed/simple;
-	bh=QDJ8YbhmGXMyUNUrXuBhbp93iWFoaOop/TTLaiT4ujg=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=IVDg2Oyo/xnD+70dFJTCsRcPbLcaa2Kl/SRKRPB5IJIck7+aybHQFu/9K52laeUla22BALEzTTwevgLjC56BuYURPjGDbvzE20VnQo5S0CBpMYCPt6IRwN0wXqSmA9fUT5KU1dWCfq+WNeWafwZIu0mjk4r7XBvztEmVocT7uvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L2UmkRY1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id D46B0C3277B;
-	Fri, 31 May 2024 02:50:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717123829;
-	bh=QDJ8YbhmGXMyUNUrXuBhbp93iWFoaOop/TTLaiT4ujg=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=L2UmkRY1VKj10+fBWn8mmDVwJa/VkgYi2L08LDauF08mSq5fbqxw0PZxDkbJu2X66
-	 GZQK3tfftj4WJCggWnJnPDmQ55G3beoXwktsliEmMCNMqMBZ+t+S7xwZjbP7qYOvte
-	 swQJIvIksQi6vqS23sPWZlZ9o2bXWHPzA01XCT0FM30+wApHo4jQ0DYODTv6lC0BC8
-	 DFWS+9Kxv+sDnf6dMeRnbtw/LyyFyrBJgBVtJzTaAGs8nKVtsdDERMqzTV/8jcdP1U
-	 BYhbmkuSXvn2MYxk1gvXFtSgELY2LW4ZD0OzR+nadXu2JDaVManabNOO4Cu0Hu3dCs
-	 qsUjSOY7mlswA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id C2F19CF21F2;
-	Fri, 31 May 2024 02:50:29 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1717124079; c=relaxed/simple;
+	bh=3qoAmgqtvz5n2DFxkNTr1ulFou6xmODb43pmh5+qrGU=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=NyhRYayqf+AgJB/U6ChsKUSLRLP5Lyi87yWrJbCUw+y5dv2xQyR4aeYOZEyPWf4JWJ/24yLIwv5XiHkYEbTd5YIIQ6NQBpH2DgqiqXkgYG4vl4ZX1phdKod/SkWHBO5OAQRqD8n1DWJs1UIIr2jo4VcxLsDg2QogPZBdCbXGWGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Mi7WIbfA; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717124078; x=1748660078;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=3qoAmgqtvz5n2DFxkNTr1ulFou6xmODb43pmh5+qrGU=;
+  b=Mi7WIbfA2QtJZhjofhggdccIwvvQbhPexynK/DY0PlC24WRgZ2MYCPXg
+   toa7DdNgEd+hQ+J91jBguDvgbVBEj0ojVcfJoBAzsQyD1rtzEqVFw3Ope
+   ChBhziKyHsfWb6ZwVvgonCcHtr0vYBmVfYrTRHWItFkPiMa3Obe1wqFAi
+   ZmwGequ4vyG+vpGEHSauBheGGkDzAmj69lchvRa1JSpEWmCZi0GjkW9XW
+   5nWhWVmIZjOpWqQQXtA9kROjmnLH0B3MwvHOfE6Q0SgpaI3QnPhUQXXdh
+   uLzgAoQPqpQnlDzatGOBYuFSqEzE2b83XAx941YTLhCvKlwJIaYlNdvVx
+   Q==;
+X-CSE-ConnectionGUID: bLtUxMNZST6OKbE6mM3k1w==
+X-CSE-MsgGUID: h1/NaM3GRbS9Db+L+wqF7g==
+X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="25054812"
+X-IronPort-AV: E=Sophos;i="6.08,203,1712646000"; 
+   d="scan'208";a="25054812"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 19:54:38 -0700
+X-CSE-ConnectionGUID: C4V03CkPTL2PiPlQZwr4rA==
+X-CSE-MsgGUID: BRb7C+xcRqafLJFt/HMIsg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,203,1712646000"; 
+   d="scan'208";a="36067256"
+Received: from unknown (HELO [10.239.159.127]) ([10.239.159.127])
+  by fmviesa006.fm.intel.com with ESMTP; 30 May 2024 19:54:32 -0700
+Message-ID: <e5543715-a331-4fce-85c9-f4211eb0fab4@linux.intel.com>
+Date: Fri, 31 May 2024 10:52:25 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Cc: baolu.lu@linux.intel.com, Yi Liu <yi.l.liu@intel.com>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Kalle Valo <kvalo@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>,
+ Alex Williamson <alex.williamson@redhat.com>, mst@redhat.com,
+ Jason Wang <jasowang@redhat.com>, Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Mikko Perttunen <mperttunen@nvidia.com>, iommu@lists.linux.dev,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 00/20] iommu: Refactoring domain allocation interface
+To: Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Kevin Tian <kevin.tian@intel.com>
+References: <20240529053250.91284-1-baolu.lu@linux.intel.com>
+ <ac5d8f21-5fb7-4193-9a0b-cdaff39e8493@arm.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <ac5d8f21-5fb7-4193-9a0b-cdaff39e8493@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] riscv: fix overlap of allocated page and PTR_ERR
-From: patchwork-bot+linux-riscv@kernel.org
-Message-Id: 
- <171712382979.22953.17135876483679871225.git-patchwork-notify@kernel.org>
-Date: Fri, 31 May 2024 02:50:29 +0000
-References: <20240425115201.3044202-1-namcao@linutronix.de>
-In-Reply-To: <20240425115201.3044202-1-namcao@linutronix.de>
-To: Nam Cao <namcao@linutronix.de>
-Cc: linux-riscv@lists.infradead.org, paul.walmsley@sifive.com,
- palmer@dabbelt.com, aou@eecs.berkeley.edu, alexghiti@rivosinc.com,
- akpm@linux-foundation.org, bhe@redhat.com, samitolvanen@google.com,
- chenjiahao16@huawei.com, bjorn@rivosinc.com, linux-kernel@vger.kernel.org,
- rppt@kernel.org, bjorn@kernel.org, stable@vger.kernel.org
 
-Hello:
-
-This patch was applied to riscv/linux.git (fixes)
-by Palmer Dabbelt <palmer@rivosinc.com>:
-
-On Thu, 25 Apr 2024 13:52:01 +0200 you wrote:
-> On riscv32, it is possible for the last page in virtual address space
-> (0xfffff000) to be allocated. This page overlaps with PTR_ERR, so that
-> shouldn't happen.
+On 5/31/24 1:59 AM, Robin Murphy wrote:
+> On 29/05/2024 6:32 am, Lu Baolu wrote:
+>> The IOMMU subsystem has undergone some changes, including the removal
+>> of iommu_ops from the bus structure. Consequently, the existing domain
+>> allocation interface, which relies on a bus type argument, is no longer
+>> relevant:
+>>
+>>      struct iommu_domain *iommu_domain_alloc(struct bus_type *bus)
+>>
+>> This series is designed to refactor the use of this interface. It
+>> proposes two new interfaces to replace iommu_domain_alloc():
+>>
+>> - iommu_user_domain_alloc(): This interface is intended for allocating
+>>    iommu domains managed by userspace for device passthrough scenarios,
+>>    such as those used by iommufd, vfio, and vdpa. It clearly indicates
+>>    that the domain is for user-managed device DMA.
+>>
+>>    If an IOMMU driver does not implement iommu_ops->domain_alloc_user,
+>>    this interface will rollback to the generic paging domain allocation.
+>>
+>> - iommu_paging_domain_alloc(): This interface is for allocating iommu
+>>    domains managed by kernel drivers for kernel DMA purposes. It takes a
+>>    device pointer as a parameter, which better reflects the current
+>>    design of the IOMMU subsystem.
+>>
+>> The majority of device drivers currently using iommu_domain_alloc() do
+>> so to allocate a domain for a specific device and then attach that
+>> domain to the device. These cases can be straightforwardly migrated to
+>> the new interfaces.
 > 
-> There is already some code to ensure memblock won't allocate the last page.
-> However, buddy allocator is left unchecked.
+> Ooh, nice! This was rising back up my to-do list as well, but I concur 
+> it's rather more straightforward than my version that did devious things 
+> to keep the iommu_domain_alloc() name...
 > 
-> [...]
+>> However, there are some drivers with more complex use cases that do
+>> not fit neatly into this new scheme. For example:
+>>
+>> $ git grep "= iommu_domain_alloc"
+>> arch/arm/mm/dma-mapping.c:      mapping->domain = 
+>> iommu_domain_alloc(bus);
+> 
+> This one's simple enough, the refactor just needs to go one step deeper. 
+> I've just rebased and pushed my old patch for that, if you'd like it [1].
 
-Here is the summary with links:
-  - riscv: fix overlap of allocated page and PTR_ERR
-    https://git.kernel.org/riscv/c/a5e8a5b08a48
+Great! With this change, we can safely replace iommu_domain_alloc().
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
+index 52f9c56cc3cb..88c2d68a69c9 100644
+--- a/arch/arm/mm/dma-mapping.c
++++ b/arch/arm/mm/dma-mapping.c
+@@ -1585,9 +1585,11 @@ arm_iommu_create_mapping(struct device *dev, 
+dma_addr_t base, u64 size)
 
+         spin_lock_init(&mapping->lock);
 
+-       mapping->domain = iommu_domain_alloc(dev->bus);
+-       if (!mapping->domain)
++       mapping->domain = iommu_paging_domain_alloc(dev);
++       if (IS_ERR(mapping->domain)) {
++               err = PTR_ERR(mapping->domain);
+                 goto err4;
++       }
+
+         kref_init(&mapping->kref);
+         return mapping;
+
+> 
+>> drivers/gpu/drm/rockchip/rockchip_drm_drv.c:    private->domain = 
+>> iommu_domain_alloc(private->iommu_dev->bus);
+> 
+> Both this one and usnic_uiom_alloc_pd() should be OK - back when I did 
+> all the figuring out to clean up iommu_present(), I specifically 
+> reworked them into "dev->bus" style as a reminder that it *is* supposed 
+> to be the right device for doing this with, even if the attach is a bit 
+> more distant.
+
+Yeah! I will cleanup these two in the next version.
+
+> 
+>> drivers/gpu/drm/tegra/drm.c:            tegra->domain = 
+>> iommu_domain_alloc(&platform_bus_type);
+> 
+> This is the tricky one, where the device to hand may *not* be the right 
+> device for IOMMU API use [2]. FWIW my plan was to pull the "walk the 
+> platform bus to find any IOMMU-mapped device" trick into this code and 
+> use it both to remove the final iommu_present() and for a device-based 
+> domain allocation.
+
+I am not familiar with this driver, so the solution you mentioned above
+is the best option I can think of for now. I will incorporate this into
+the next version.
+
+> 
+>> drivers/infiniband/hw/usnic/usnic_uiom.c:       pd->domain = domain = 
+>> iommu_domain_alloc(dev->bus);
+>>
+>> This series leave those cases unchanged and keep iommu_domain_alloc()
+>> for their usage. But new drivers should not use it anymore.
+> 
+> I'd certainly be keen for it to be gone ASAP, since I'm seeing 
+> increasing demand for supporting multiple IOMMU drivers, and this is the 
+> last bus-based thing standing in the way of that.
+
+Agreed. With all iommu_domain_alloc() removed, iommu_domain_alloc()
+could be dropped.
+
+> 
+> Thanks,
+> Robin.
+> 
+> [1] 
+> https://gitlab.arm.com/linux-arm/linux-rm/-/commit/f048cc6a323d8641898025ca96071df7cbe8bd52
+> [2] 
+> https://lore.kernel.org/linux-iommu/add31812-50d5-6cb0-3908-143c523abd37@collabora.com/
+
+Best regards,
+baolu
 
