@@ -1,94 +1,107 @@
-Return-Path: <linux-kernel+bounces-196647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 396938D5F44
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:09:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC5768D5F46
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:09:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4F581F217E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:09:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6CE5CB2533D
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:09:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E423149C76;
-	Fri, 31 May 2024 10:09:11 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34363150980;
+	Fri, 31 May 2024 10:09:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vIriLKsu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D88B1514C9;
-	Fri, 31 May 2024 10:09:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77FF981ACB;
+	Fri, 31 May 2024 10:09:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717150150; cv=none; b=ObSNWx6goCqavKtVKuqgO8TGoco8US398E3zUnMckyh3SBDkyVbJeD4ongide46CRbNjgbtAqOnn7+++0s+wiwnVxvSnnTSwNeO32RLZKsrUM6HzYRtgWDgfNRp5DR8GRYjCdgny1evgCYlJuUi4+aYet3tTX1EKBwbBPSZEU/g=
+	t=1717150169; cv=none; b=FJlj7sh2P0pBcUs6L5HTN7xoqxmaaj1kftrTqP67S/qFSZ8iBW0Q6Rz3K70gxX4TCbMm50fDvQ9ZjRNiW64YmBMXKU4UBwumpJcsA0RlKr5F/C/1rpjMTg1l4TEc7pW1xKhaH3yiRcajqSoZgMiW+zfMkqIwmRb405BQBaISi/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717150150; c=relaxed/simple;
-	bh=XF4il905GMY808BbBdZMyijfqf/CpyqJ+mtFoZOf7GM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=CVSerbwS26M8VFAcmEamlpPXUfifa2sHfUMEw2PvZRyA7GAJ06KmGUY93ksllwDTJAdzqeUwT7VvOS5OKgs1eU0MmZkUDZHEP/k+k0Tu1bki3dQlUXpXlP6db17rFXXnHpXjRF8szJLYnprr92+jLShfT6DadP5cvV2ac42g8fY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4VrJfT043VzPpBF;
-	Fri, 31 May 2024 18:05:53 +0800 (CST)
-Received: from kwepemi500025.china.huawei.com (unknown [7.221.188.170])
-	by mail.maildlp.com (Postfix) with ESMTPS id E114918007A;
-	Fri, 31 May 2024 18:09:04 +0800 (CST)
-Received: from [10.67.120.171] (10.67.120.171) by
- kwepemi500025.china.huawei.com (7.221.188.170) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 31 May 2024 18:09:04 +0800
-Message-ID: <f1febadb-4cbd-4278-a3b0-dbb93d5af212@huawei.com>
-Date: Fri, 31 May 2024 18:09:03 +0800
+	s=arc-20240116; t=1717150169; c=relaxed/simple;
+	bh=Sic4nTyYw+kCcDlQNPaN6T+BaZh+LcAE+Y2eGY+gukY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=qXr7toifx3pYVegUaFGFRY5kEvRLJx5ArQeLWeAGkUugyYtK7+2gnbjEv+XdQx8GbNhVietJzOc7Rm2YdaATiQRupr0mNOZJfRTPejgcwQbT2GKMicWfnvmCuXcN6hSMnPKVJahy7bcXV0KLqAzPg9nRYZJS4C/VtxZ0hSkbVhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vIriLKsu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C436C116B1;
+	Fri, 31 May 2024 10:09:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717150169;
+	bh=Sic4nTyYw+kCcDlQNPaN6T+BaZh+LcAE+Y2eGY+gukY=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=vIriLKsuUHXGkrsZUN0rQhmXJkOT4PQO7k4YbXKYkM6uuLRjZYbpN3nxFxsfdzIJk
+	 e9449mBvDdvgjEv6GGP12Y6bHwVyz8snADTrF6Ffge40pa/X6xAhYpobIkLNQAk/NO
+	 YuxCMWH5vpAQEHul1AVXArcH5/ef1OpeS9SyZSjb4Vr77AXNby30wMES8gpYIh+LbY
+	 GkbGkG2MgFQKZpQK9xlScXMz6fTMSKR4O4DOlF8fGjSfIAcqZvAS393qTcviQwnOYf
+	 Uco2HWf+kMdfJWDusJ1DbObG7n4by4bnGlv2Iwqf5nJ1TCiQJVLvfCXJqAm9zkZNkG
+	 06g1keqRLdN+Q==
+Message-ID: <1922c6893fd78b5c9af1549ac109d097341c4b0e.camel@kernel.org>
+Subject: Re: [PATCH] NFSD: remove unused structs 'nfsd3_voidargs'
+From: Jeff Layton <jlayton@kernel.org>
+To: linux@treblig.org, chuck.lever@oracle.com, neilb@suse.de
+Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Fri, 31 May 2024 06:09:27 -0400
+In-Reply-To: <20240531000838.332082-1-linux@treblig.org>
+References: <20240531000838.332082-1-linux@treblig.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] crypto: hisilicon/zip - optimize the address offset
- of the reg query function
-To: Herbert Xu <herbert@gondor.apana.org.au>
-CC: <davem@davemloft.net>, <linux-kernel@vger.kernel.org>,
-	<linux-crypto@vger.kernel.org>, <shenyang39@huawei.com>,
-	<liulongfang@huawei.com>, <qianweili@huawei.com>
-References: <20240506115953.2282155-1-huangchenghai2@huawei.com>
- <20240506115953.2282155-3-huangchenghai2@huawei.com>
- <ZlmZh5d8RDo3C-HS@gondor.apana.org.au>
-From: huangchenghai <huangchenghai2@huawei.com>
-In-Reply-To: <ZlmZh5d8RDo3C-HS@gondor.apana.org.au>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemi500025.china.huawei.com (7.221.188.170)
 
+On Fri, 2024-05-31 at 01:08 +0100, linux@treblig.org wrote:
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+>=20
+> 'nfsd3_voidargs' in nfs[23]acl.c is unused since
+> commit 788f7183fba8 ("NFSD: Add common helpers to decode void args
+> and
+> encode void results").
+>=20
+> Remove them.
+>=20
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> ---
+> =C2=A0fs/nfsd/nfs2acl.c | 2 --
+> =C2=A0fs/nfsd/nfs3acl.c | 2 --
+> =C2=A02 files changed, 4 deletions(-)
+>=20
+> diff --git a/fs/nfsd/nfs2acl.c b/fs/nfsd/nfs2acl.c
+> index 12b2b9bc07bf..4e3be7201b1c 100644
+> --- a/fs/nfsd/nfs2acl.c
+> +++ b/fs/nfsd/nfs2acl.c
+> @@ -308,8 +308,6 @@ static void nfsaclsvc_release_access(struct
+> svc_rqst *rqstp)
+> =C2=A0	fh_put(&resp->fh);
+> =C2=A0}
+> =C2=A0
+> -struct nfsd3_voidargs { int dummy; };
+> -
+> =C2=A0#define ST 1		/* status*/
+> =C2=A0#define AT 21		/* attributes */
+> =C2=A0#define pAT (1+AT)	/* post attributes - conditional */
+> diff --git a/fs/nfsd/nfs3acl.c b/fs/nfsd/nfs3acl.c
+> index 73adca47d373..5e34e98db969 100644
+> --- a/fs/nfsd/nfs3acl.c
+> +++ b/fs/nfsd/nfs3acl.c
+> @@ -221,8 +221,6 @@ static void nfs3svc_release_getacl(struct
+> svc_rqst *rqstp)
+> =C2=A0	posix_acl_release(resp->acl_default);
+> =C2=A0}
+> =C2=A0
+> -struct nfsd3_voidargs { int dummy; };
+> -
+> =C2=A0#define ST 1		/* status*/
+> =C2=A0#define AT 21		/* attributes */
+> =C2=A0#define pAT (1+AT)	/* post attributes - conditional */
 
-在 2024/5/31 17:33, Herbert Xu 写道:
-> On Mon, May 06, 2024 at 07:59:53PM +0800, Chenghai Huang wrote:
->> @@ -807,6 +786,18 @@ static int hisi_zip_regs_show(struct seq_file *s, void *unused)
->>   
->>   DEFINE_SHOW_ATTRIBUTE(hisi_zip_regs);
->>   
->> +static void __iomem *get_zip_core_addr(struct hisi_qm *qm, int core_num)
->> +{
->> +	u32 zip_comp_core_num = qm->cap_tables.dev_cap_table[ZIP_CLUSTER_COMP_NUM_CAP_IDX].cap_val;
->> +
->> +	if (core_num < zip_comp_core_num)
->> +		return qm->io_base + HZIP_CORE_DFX_BASE +
->> +			(core_num + 1) * HZIP_CORE_ADDR_INTRVL;
->> +
->> +	qm->io_base + HZIP_CORE_DFX_DECOMP_BASE +
->> +		(core_num - zip_comp_core_num) * HZIP_CORE_ADDR_INTRVL;
->> +}
->> +
-> This doesn't even build.
-
-I'm so sorry, I forgot to build it. I'll build and verify it carefully next time.
-
-The second version will be corrected and send soon.
-
-Thanks,
-ChengHai
-
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
