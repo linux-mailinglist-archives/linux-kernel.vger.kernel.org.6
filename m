@@ -1,152 +1,191 @@
-Return-Path: <linux-kernel+bounces-196489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B94078D5CEB
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:39:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86F488D5CEE
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:39:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5E061C23B7D
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 08:39:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 406B51F21B49
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 08:39:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B132C1509AE;
-	Fri, 31 May 2024 08:38:52 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2860715098F;
+	Fri, 31 May 2024 08:39:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zDCj0g5c"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1B871509A0;
-	Fri, 31 May 2024 08:38:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E410215098D
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 08:39:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717144732; cv=none; b=ZlnX8HIhpcTulA4GKqORC3nsP1vYMngaBkK/r0dHQpuOxrl1EA437e28d5FRB2VRkyTOSS0oDtQiUGEGYIRtrozsVBwAjoKS0F7YtxX1oCZY0LmDz127uqoTVf4C6zjKuk5ir72JqnKmbhFPyUdt8p6+nqTZ5SCEIOpKDOyANGw=
+	t=1717144744; cv=none; b=i3MGjuqdtuoFh86jL3La637atC+i1KE6NcYVsJ1HKzTiCYLuqiWTirZsRmP8d8qYhMaSN5/q/OEg+boSD4W6pcmv+VKSQb5h2vRmKDWCfXVQmu3XotLoPA0wzBmDw2wWuDH370Z3ZYrLm4JWSjxlYZPMbIBHA0FnrI8IqQCFm6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717144732; c=relaxed/simple;
-	bh=EllydnyfeYldFu/EBpUAeZrS0zgaVpolpK1I6EowbuA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FmDhGOEPd6cJzN/hU3lPJNUp1hCerQkQzWpSpZYJs887D9/gNAeGns+eoYRLK3+9hBdnRy3iZQDK4Ui+7KwoTJKJxFtHeuapuSF/p7dYf+4bxzU3tsU+9GJHGJ6fah0aiBCxe3PZH2+H1RVr6ppXNCnLjRtAWhLW9WM1szM6vmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 3061b1421f2911ef9305a59a3cc225df-20240531
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:c99a51ee-a07a-4200-805f-7e8eaae0afd6,IP:20,
-	URL:0,TC:0,Content:0,EDM:-25,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,AC
-	TION:release,TS:-20
-X-CID-INFO: VERSION:1.1.38,REQID:c99a51ee-a07a-4200-805f-7e8eaae0afd6,IP:20,UR
-	L:0,TC:0,Content:0,EDM:-25,RT:0,SF:-15,FILE:0,BULK:0,RULE:EDM_GE969F26,ACT
-	ION:release,TS:-20
-X-CID-META: VersionHash:82c5f88,CLOUDID:18d63e66079d3071e08c677f7dc8762d,BulkI
-	D:240531163844I27RDKAM,BulkQuantity:0,Recheck:0,SF:19|44|66|24|17|102,TC:n
-	il,Content:0,EDM:1,IP:-2,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL
-	:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_FSI,TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD
-X-UUID: 3061b1421f2911ef9305a59a3cc225df-20240531
-Received: from mail.kylinos.cn [(39.156.73.10)] by mailgw.kylinos.cn
-	(envelope-from <jiangyunshui@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1258249045; Fri, 31 May 2024 16:38:43 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id 8160FE000EB9;
-	Fri, 31 May 2024 16:38:43 +0800 (CST)
-X-ns-mid: postfix-66598C93-390090898
-Received: from kylin-pc.. (unknown [172.25.130.133])
-	by mail.kylinos.cn (NSMail) with ESMTPA id 2C35DE000EB9;
-	Fri, 31 May 2024 16:38:42 +0800 (CST)
-From: Yunshui Jiang <jiangyunshui@kylinos.cn>
-To: linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	Yunshui Jiang <jiangyunshui@kylinos.cn>
-Subject: [PATCH] net: caif: use DEV_STATS_INC() and DEV_STATS_ADD()
-Date: Fri, 31 May 2024 16:38:40 +0800
-Message-Id: <20240531083840.2644162-1-jiangyunshui@kylinos.cn>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1717144744; c=relaxed/simple;
+	bh=ZFMmpYdHQGeJ/z9gZHfYAifXybdEhkawr1UnA1qVQ4Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WRYS4kFDL6K7dcijoskcl9dHwvdBQFvT+E6TOL/bP0ri3IiMf4hYDeS5EAmLzNfPnw7RJRECRm7AWfpuRY4JhO7PgN+Jmo8mWwHq683JisTfg0xZx2FF4Axnr/QUEk8E8OJ/rrYJk4FG54s5unqMmqvvgHZozv+Rgu3Up4tBWSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zDCj0g5c; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1f4a5344ec7so13571805ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 01:39:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717144741; x=1717749541; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=lnrY2pbNU0k+0zlhxzJD+ASA3BY00naiFRrmZ3gNEAM=;
+        b=zDCj0g5cPLeHHMm1K8ZNjnITlyqFja02cUVLPpIXwURvAehG+ss/gAgVfSB8fbQL9d
+         +muHz6OwOVjM641HWh/FLmrwxT+2aLF9nofx35ZNrLrDHa4yYYFJ82KtjCBO/3SNU0FY
+         phJICaw2bflPEPhzoYH/n6V3MatQi4l1wzNULnMRcJBiweuzILycH+ueUmdfhEtwHe0I
+         3OdwatEItB09rAHP5r/sBaRIz9YG+zBZWW/ajn4UqGgRinVu0Byp0FS8kgpu6GHfsqFi
+         yABXg669NWVP0rE3+KjVPcMVgq176gVqkjbSAfYKFffh7vxui861nI9roPnNv1o9WvkX
+         TESA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717144741; x=1717749541;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lnrY2pbNU0k+0zlhxzJD+ASA3BY00naiFRrmZ3gNEAM=;
+        b=XYdy5RbAvbYpMO3PvQu3BMCcYIq16m5yqVIrdlpRd2HNTzcVI7mibOTGzTx14u5phj
+         2fovfKDQPR6orlxYGynA0YVzBYjYtT9RQOI3uW+wwnbJDTDdw5O75pRDPfmzUHBrdN+C
+         s4dWNDY7dR73HTkCxOCQwk9XbIFpua6VhM6iZsjTQyBPIXFTXSeCqQBiTLhn2xNWoAOk
+         iooChEkNWVj17uywxpeCzyIDudjkg1xrZEBp4VXnJoSlRE92hfoRzmyfC1+bLdAJtLCi
+         jX5jbZZ6cCI4ymmOO3uBV9d2V0yzpPvamEXPd/bjLmSubOKScVsWE1zn+NBJyfmDvG1l
+         ExRg==
+X-Forwarded-Encrypted: i=1; AJvYcCW2263xghDX/F6XsTo503YNr9xx4xJtU76tycG5n8D5rreOkPt6Jw/hC/VahMpXMAymCUDK2/v0lZk08KommZ1ibmEf6RPOR+V5KpSs
+X-Gm-Message-State: AOJu0Yz9b3417ejUkhZKK1WukxQis6VO3sAD6I2bka214+q8VpN3RtIG
+	NW+y7WSKCmkKnZmZb4Cav5d+SslPQ7QU3RkIF/Wj3ElIkJeHFyUzdZSfReBMh17udWlnhyKgghM
+	8R1JGqJ6hnUyAipEq1bNZJg0CqK2BL0vWERsFOg==
+X-Google-Smtp-Source: AGHT+IG8vPZtTUMBJ/SeUxjWqwTa+oxGvQfRE7eRFeFHpKg0Ap4gr+tU2wNSF5RwNuTIuL/3twCwLRR9PNjRGv0nJ00=
+X-Received: by 2002:a17:902:ec92:b0:1f3:62c:247f with SMTP id
+ d9443c01a7336-1f61be15ccemr63399965ad.11.1717144741002; Fri, 31 May 2024
+ 01:39:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+References: <20240529100926.3166325-1-quic_tengfan@quicinc.com>
+ <20240529100926.3166325-5-quic_tengfan@quicinc.com> <s5gt3p6zsd5ebrkop4dhd33tykln33f6ahu3pibymecxsmakyd@lg5wfgec6dat>
+ <205de8b7-507f-45c9-83ce-6eceb1466cb2@quicinc.com>
+In-Reply-To: <205de8b7-507f-45c9-83ce-6eceb1466cb2@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Fri, 31 May 2024 11:38:48 +0300
+Message-ID: <CAA8EJpqFq=6YFcUpjdkKikN54iQ76i8Rk_z+mLH1Tt0zFFmciQ@mail.gmail.com>
+Subject: Re: [PATCH v9 4/4] arm64: dts: qcom: aim300: add AIM300 AIoT
+To: Tengfei Fan <quic_tengfan@quicinc.com>
+Cc: andersson@kernel.org, konrad.dybcio@linaro.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@quicinc.com, 
+	Qiang Yu <quic_qianyu@quicinc.com>, Ziyue Zhang <quic_ziyuzhan@quicinc.com>, 
+	quic_chenlei@quicinc.com
+Content-Type: text/plain; charset="UTF-8"
 
-CAIF devices update their dev->stats fields locklessly. Therefore
-these counters should be updated atomically. Adopt SMP safe DEV_STATS_INC=
-()
-and DEV_STATS_ADD() to achieve this.
+On Fri, 31 May 2024 at 11:35, Tengfei Fan <quic_tengfan@quicinc.com> wrote:
+>
+>
+>
+> On 5/29/2024 11:18 PM, Dmitry Baryshkov wrote:
+> > On Wed, May 29, 2024 at 06:09:26PM +0800, Tengfei Fan wrote:
+> >> Add AIM300 AIoT Carrier board DTS support, including usb, UART, PCIe,
+> >> I2C functions support.
+> >> Here is a diagram of AIM300 AIoT Carrie Board and SoM
+> >>   +--------------------------------------------------+
+> >>   |             AIM300 AIOT Carrier Board            |
+> >>   |                                                  |
+> >>   |           +-----------------+                    |
+> >>   |power----->| Fixed regulator |---------+          |
+> >>   |           +-----------------+         |          |
+> >>   |                                       |          |
+> >>   |                                       v VPH_PWR  |
+> >>   | +----------------------------------------------+ |
+> >>   | |                          AIM300 SOM |        | |
+> >>   | |                                     |VPH_PWR | |
+> >>   | |                                     v        | |
+> >>   | |   +-------+       +--------+     +------+    | |
+> >>   | |   | UFS   |       | QCS8550|     |PMIC  |    | |
+> >>   | |   +-------+       +--------+     +------+    | |
+> >>   | |                                              | |
+> >>   | +----------------------------------------------+ |
+> >>   |                                                  |
+> >>   |                    +----+          +------+      |
+> >>   |                    |USB |          | UART |      |
+> >>   |                    +----+          +------+      |
+> >>   +--------------------------------------------------+
+> >>
+> >> Co-developed-by: Qiang Yu <quic_qianyu@quicinc.com>
+> >> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
+> >> Co-developed-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
+> >> Signed-off-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
+> >> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
+> >> ---
+> >>   arch/arm64/boot/dts/qcom/Makefile             |   1 +
+> >>   .../boot/dts/qcom/qcs8550-aim300-aiot.dts     | 322 ++++++++++++++++++
+> >>   2 files changed, 323 insertions(+)
+> >>   create mode 100644 arch/arm64/boot/dts/qcom/qcs8550-aim300-aiot.dts
+> >
+> > [trimmed]
+> >
+> >> +&remoteproc_adsp {
+> >> +    firmware-name = "qcom/qcs8550/adsp.mbn",
+> >> +                    "qcom/qcs8550/adsp_dtbs.elf";
+> >
+> > Please excuse me, I think I missed those on the previous run.
+> >
+> > adsp_dtb.mbn
+>
+> Currently, waht we have released is adsp_dtbs.elf. If we modify it to
+> adsp_dtb.mbn, it may cause the ADSP functionality can not boot normally.
 
-Signed-off-by: Yunshui Jiang <jiangyunshui@kylinos.cn>
----
- net/caif/chnl_net.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+Released where? linux-firmware doesn't have such a file. And the modem
+partition most likely has a different path for it anyway.
 
-diff --git a/net/caif/chnl_net.c b/net/caif/chnl_net.c
-index 47901bd4def1..376f5abba88d 100644
---- a/net/caif/chnl_net.c
-+++ b/net/caif/chnl_net.c
-@@ -90,7 +90,7 @@ static int chnl_recv_cb(struct cflayer *layr, struct cf=
-pkt *pkt)
- 		break;
- 	default:
- 		kfree_skb(skb);
--		priv->netdev->stats.rx_errors++;
-+		DEV_STATS_INC(priv->netdev, rx_errors);
- 		return -EINVAL;
- 	}
-=20
-@@ -103,8 +103,8 @@ static int chnl_recv_cb(struct cflayer *layr, struct =
-cfpkt *pkt)
- 	netif_rx(skb);
-=20
- 	/* Update statistics. */
--	priv->netdev->stats.rx_packets++;
--	priv->netdev->stats.rx_bytes +=3D pktlen;
-+	DEV_STATS_INC(priv->netdev, rx_packets);
-+	DEV_STATS_ADD(priv->netdev, rx_bytes, pktlen);
-=20
- 	return 0;
- }
-@@ -206,14 +206,14 @@ static netdev_tx_t chnl_net_start_xmit(struct sk_bu=
-ff *skb,
- 	if (skb->len > priv->netdev->mtu) {
- 		pr_warn("Size of skb exceeded MTU\n");
- 		kfree_skb(skb);
--		dev->stats.tx_errors++;
-+		DEV_STATS_INC(dev, tx_errors);
- 		return NETDEV_TX_OK;
- 	}
-=20
- 	if (!priv->flowenabled) {
- 		pr_debug("dropping packets flow off\n");
- 		kfree_skb(skb);
--		dev->stats.tx_dropped++;
-+		DEV_STATS_INC(dev, tx_dropped);
- 		return NETDEV_TX_OK;
- 	}
-=20
-@@ -228,13 +228,13 @@ static netdev_tx_t chnl_net_start_xmit(struct sk_bu=
-ff *skb,
- 	/* Send the packet down the stack. */
- 	result =3D priv->chnl.dn->transmit(priv->chnl.dn, pkt);
- 	if (result) {
--		dev->stats.tx_dropped++;
-+		DEV_STATS_INC(dev, tx_dropped);
- 		return NETDEV_TX_OK;
- 	}
-=20
- 	/* Update statistics. */
--	dev->stats.tx_packets++;
--	dev->stats.tx_bytes +=3D len;
-+	DEV_STATS_INC(dev, tx_packets);
-+	DEV_STATS_ADD(dev, tx_bytes, len);
-=20
- 	return NETDEV_TX_OK;
- }
---=20
-2.34.1
+>
+> >
+> >> +    status = "okay";
+> >> +};
+> >> +
+> >> +&remoteproc_cdsp {
+> >> +    firmware-name = "qcom/qcs8550/cdsp.mbn",
+> >> +                    "qcom/qcs8550/cdsp_dtbs.elf";
+> >
+> > cdsp_dtb.mbn
+>
+> CDSP also as above ADSP.
+>
+> >
 
+> >> +
+> >> +    te_active: te-active-state {
+> >> +            pins = "gpio86";
+> >> +            function = "mdp_vsync";
+> >> +            drive-strength = <2>;
+> >> +            bias-pull-down;
+> >> +    };
+> >> +
+> >> +    te_suspend: te-suspend-state {
+> >> +            pins = "gpio86";
+> >> +            function = "mdp_vsync";
+> >> +            drive-strength = <2>;
+> >> +            bias-pull-down;
+> >> +    };
+> >
+> > What is the difference between these two?
+>
+> TE pin needs to be pulled down for both active and suspend states. There
+> is no difference.
+
+So why do you need two different states for it?
+
+
+
+
+
+-- 
+With best wishes
+Dmitry
 
