@@ -1,160 +1,264 @@
-Return-Path: <linux-kernel+bounces-197367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3A548D69C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 21:32:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37BC68D69C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 21:31:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30E681C23FA2
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 19:32:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1F9C1F28B90
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 19:31:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 653EF181BBE;
-	Fri, 31 May 2024 19:31:11 +0000 (UTC)
-Received: from EX-PRD-EDGE01.vmware.com (EX-PRD-EDGE01.vmware.com [208.91.3.33])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CA0517F4F6;
+	Fri, 31 May 2024 19:31:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VB7wcl3j"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66CD417D35A;
-	Fri, 31 May 2024 19:31:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=208.91.3.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A3781C6BD;
+	Fri, 31 May 2024 19:31:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717183870; cv=none; b=GfVa4XVVrD81PfK+Z/X1/rCfNJLIyXFs4m+Vx6czcNWpiKaJvBcvCeYmBCq6aEPrmNq6XTAMloNbhSigGmVzh/cHkFNOl1tzzCDeiLCwtRTp1OZG5InR7BXYzq8FazID/UboAp/HW3iN22kTjsWbLUf7dHMZE40Rydv1VzSsrP4=
+	t=1717183869; cv=none; b=ZQngLk/LRWY/UHWmtxWv3vVvloOCRaTWRqAkamubYQHsFjAMEJiPmookErKw2HFy5ypnmYd3/MkBTiZh2ObmmqafHS0fv84jrxLDZldmCVCJ931YtLuxkE3UStupYtegwMn2HbzbH4i/Tlvb8TjBH7pZrCSC6OQCavpuOvDLIzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717183870; c=relaxed/simple;
-	bh=z3TA2Pyh5iL5iHoyqIePu3tYmCwqk19EjybdfTrNXDg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=myAT24F/R6LFFfNufVVrvuBGM6aAqGOKFIx50efwdm7NUugQMW6gJA/Joe9woZBQzi6+d9D4jc2vii5BNvFN5Ky8dfoRus6bY1ojMhvpxF33xPHJg0K/hD+QrSn+IjkzASr0E/IM86OqIQFmsw6R+RB6+22OYYYD7ISO4S0QVeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com; spf=pass smtp.mailfrom=vmware.com; arc=none smtp.client-ip=208.91.3.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vmware.com
-Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
- EX-PRD-EDGE01.vmware.com (10.188.245.6) with Microsoft SMTP Server id
- 15.1.2375.34; Fri, 31 May 2024 12:30:35 -0700
-Received: from htb-1n-eng-dhcp122.eng.vmware.com (unknown [10.172.6.252])
-	by sc9-mailhost3.vmware.com (Postfix) with ESMTP id DA3E320175;
-	Fri, 31 May 2024 12:30:56 -0700 (PDT)
-Received: by htb-1n-eng-dhcp122.eng.vmware.com (Postfix, from userid 0)
-	id D6AB2B04D3; Fri, 31 May 2024 12:30:56 -0700 (PDT)
-From: Ronak Doshi <ronak.doshi@broadcom.com>
-To: <netdev@vger.kernel.org>
-CC: Ronak Doshi <ronak.doshi@broadcom.com>, Broadcom internal kernel review
- list <bcm-kernel-feedback-list@broadcom.com>, "David S. Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, open list
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 net-next 4/4] vmxnet3: update to version 9
-Date: Fri, 31 May 2024 12:30:49 -0700
-Message-ID: <20240531193050.4132-5-ronak.doshi@broadcom.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20240531193050.4132-1-ronak.doshi@broadcom.com>
-References: <20240531193050.4132-1-ronak.doshi@broadcom.com>
+	s=arc-20240116; t=1717183869; c=relaxed/simple;
+	bh=aQ8gzOeuRTghVVqbbLrrVe8iWbU0R6iLu7KgCeY1I2Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IK7dM1DRMYTjTr+tuWNGpPmP26NZnXjfWTGbzcf1X2/S0sIzGDzgXJDtRjtDQsYK7BtlcTHXHqi6jIS9OESX15JSspKHRA5Tnp9HdTetOIoXqHQvzkVf8O/Wk+KM1FC/UxyQIi7S4w4p/47o20z89lwVNreeavXJ0ktu8TkkbiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VB7wcl3j; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 770BDC4AF08;
+	Fri, 31 May 2024 19:31:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717183868;
+	bh=aQ8gzOeuRTghVVqbbLrrVe8iWbU0R6iLu7KgCeY1I2Y=;
+	h=From:To:Cc:Subject:Date:From;
+	b=VB7wcl3js0H751wiNr6J+mwUtsOprAHtIuWmBg0P2MvFNrF0/nKQtgpsxF63vDVwC
+	 HPcKYLhGD44OvOI1MpAghKd5Lk2AIdaNtkTFyWG2VbkDzfhqYTuv85DIlxS31mmBAb
+	 zV5URaNzB01Eh+XNQHLv726Sv3qXqair9/aomH+ug5PhaaWIN+5N5fZbBiUcC/ixGo
+	 c+BbD0aFrXcFZEbqbd+nMgokFQzxnDCTa9I9KqyTX1lYHhZ1TWiA71wwsCHrFB/XnX
+	 gDdYwIBL5+wmtlqQb8q0ZvLqjDUeHBjQnsY9EsdRth4zna6zQfSndmUar39Y002IA8
+	 KIjyddTRQTSgA==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Avi Fishman <avifishman70@gmail.com>,
+	Tomer Maimon <tmaimon77@gmail.com>,
+	Tali Perry <tali.perry1@gmail.com>,
+	Patrick Venture <venture@google.com>,
+	Nancy Yuen <yuenn@google.com>,
+	Benjamin Fair <benjaminfair@google.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: openbmc@lists.ozlabs.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] arm: dts: nuvoton: Use standard 'i2c' bus node name
+Date: Fri, 31 May 2024 14:31:04 -0500
+Message-ID: <20240531193104.3814663-1-robh@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Received-SPF: SoftFail (EX-PRD-EDGE01.vmware.com: domain of transitioning
- ronak.doshi@broadcom.com discourages use of 10.113.161.73 as permitted
- sender)
+Content-Transfer-Encoding: 8bit
 
-With all vmxnet3 version 9 changes incorporated in the vmxnet3 driver,
-the driver can configure emulation to run at vmxnet3 version 9, provided
-the emulation advertises support for version 9.
+The standard node name for I2C buses is 'i2c'.
 
-Signed-off-by: Ronak Doshi <ronak.doshi@broadcom.com>
-Acked-by: Guolin Yang <guolin.yang@broadcom.com>
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- drivers/net/vmxnet3/vmxnet3_drv.c | 46 ++++++++-------------------------------
- drivers/net/vmxnet3/vmxnet3_int.h |  4 ++--
- 2 files changed, 11 insertions(+), 39 deletions(-)
+ .../boot/dts/nuvoton/nuvoton-npcm730-kudo.dts | 22 +++++++++----------
+ .../nuvoton-npcm750-runbmc-olympus.dts        | 22 +++++++++----------
+ 2 files changed, 22 insertions(+), 22 deletions(-)
 
-diff --git a/drivers/net/vmxnet3/vmxnet3_drv.c b/drivers/net/vmxnet3/vmxnet3_drv.c
-index e26d223a659f..b16449671b8b 100644
---- a/drivers/net/vmxnet3/vmxnet3_drv.c
-+++ b/drivers/net/vmxnet3/vmxnet3_drv.c
-@@ -3951,7 +3951,7 @@ vmxnet3_probe_device(struct pci_dev *pdev,
- 	struct net_device *netdev;
- 	struct vmxnet3_adapter *adapter;
- 	u8 mac[ETH_ALEN];
--	int size;
-+	int size, i;
- 	int num_tx_queues;
- 	int num_rx_queues;
- 	int queues;
-@@ -4018,42 +4018,14 @@ vmxnet3_probe_device(struct pci_dev *pdev,
- 		goto err_alloc_pci;
+diff --git a/arch/arm/boot/dts/nuvoton/nuvoton-npcm730-kudo.dts b/arch/arm/boot/dts/nuvoton/nuvoton-npcm730-kudo.dts
+index 5787ae95d3b4..1f07ba382910 100644
+--- a/arch/arm/boot/dts/nuvoton/nuvoton-npcm730-kudo.dts
++++ b/arch/arm/boot/dts/nuvoton/nuvoton-npcm730-kudo.dts
+@@ -525,7 +525,7 @@ max31790@58 {
+ 			};
+ 		};
  
- 	ver = VMXNET3_READ_BAR1_REG(adapter, VMXNET3_REG_VRRS);
--	if (ver & (1 << VMXNET3_REV_7)) {
--		VMXNET3_WRITE_BAR1_REG(adapter,
--				       VMXNET3_REG_VRRS,
--				       1 << VMXNET3_REV_7);
--		adapter->version = VMXNET3_REV_7 + 1;
--	} else if (ver & (1 << VMXNET3_REV_6)) {
--		VMXNET3_WRITE_BAR1_REG(adapter,
--				       VMXNET3_REG_VRRS,
--				       1 << VMXNET3_REV_6);
--		adapter->version = VMXNET3_REV_6 + 1;
--	} else if (ver & (1 << VMXNET3_REV_5)) {
--		VMXNET3_WRITE_BAR1_REG(adapter,
--				       VMXNET3_REG_VRRS,
--				       1 << VMXNET3_REV_5);
--		adapter->version = VMXNET3_REV_5 + 1;
--	} else if (ver & (1 << VMXNET3_REV_4)) {
--		VMXNET3_WRITE_BAR1_REG(adapter,
--				       VMXNET3_REG_VRRS,
--				       1 << VMXNET3_REV_4);
--		adapter->version = VMXNET3_REV_4 + 1;
--	} else if (ver & (1 << VMXNET3_REV_3)) {
--		VMXNET3_WRITE_BAR1_REG(adapter,
--				       VMXNET3_REG_VRRS,
--				       1 << VMXNET3_REV_3);
--		adapter->version = VMXNET3_REV_3 + 1;
--	} else if (ver & (1 << VMXNET3_REV_2)) {
--		VMXNET3_WRITE_BAR1_REG(adapter,
--				       VMXNET3_REG_VRRS,
--				       1 << VMXNET3_REV_2);
--		adapter->version = VMXNET3_REV_2 + 1;
--	} else if (ver & (1 << VMXNET3_REV_1)) {
--		VMXNET3_WRITE_BAR1_REG(adapter,
--				       VMXNET3_REG_VRRS,
--				       1 << VMXNET3_REV_1);
--		adapter->version = VMXNET3_REV_1 + 1;
--	} else {
-+	for (i = VMXNET3_REV_9; i >= VMXNET3_REV_1; i--) {
-+		if (ver & (1 << i)) {
-+			VMXNET3_WRITE_BAR1_REG(adapter, VMXNET3_REG_VRRS, 1 << i);
-+			adapter->version = i + 1;
-+			break;
-+		}
-+	}
-+	if (i < VMXNET3_REV_1) {
- 		dev_err(&pdev->dev,
- 			"Incompatible h/w version (0x%x) for adapter\n", ver);
- 		err = -EBUSY;
-diff --git a/drivers/net/vmxnet3/vmxnet3_int.h b/drivers/net/vmxnet3/vmxnet3_int.h
-index 31e8db568db2..9f24d66dbb27 100644
---- a/drivers/net/vmxnet3/vmxnet3_int.h
-+++ b/drivers/net/vmxnet3/vmxnet3_int.h
-@@ -72,12 +72,12 @@
- /*
-  * Version numbers
-  */
--#define VMXNET3_DRIVER_VERSION_STRING   "1.7.0.0-k"
-+#define VMXNET3_DRIVER_VERSION_STRING   "1.9.0.0-k"
+-		i2c-bus@4 {
++		i2c@4 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			reg = <4>;
+@@ -537,7 +537,7 @@ lm75@5c {
+ 			};
+ 		};
  
- /* Each byte of this 32-bit integer encodes a version number in
-  * VMXNET3_DRIVER_VERSION_STRING.
-  */
--#define VMXNET3_DRIVER_VERSION_NUM      0x01070000
-+#define VMXNET3_DRIVER_VERSION_NUM      0x01090000
+-		i2c-bus@5 {
++		i2c@5 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			reg = <5>;
+@@ -549,7 +549,7 @@ lm75@5c {
+ 			};
+ 		};
  
- #if defined(CONFIG_PCI_MSI)
- 	/* RSS only makes sense if MSI-X is supported. */
+-		i2c-bus@6 {
++		i2c@6 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			reg = <6>;
+@@ -561,7 +561,7 @@ lm75@5c {
+ 			};
+ 		};
+ 
+-		i2c-bus@7 {
++		i2c@7 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			reg = <7>;
+@@ -580,7 +580,7 @@ i2c-mux@77 {
+ 		reg = <0x77>;
+ 		i2c-mux-idle-disconnect;
+ 
+-		i2c-bus@2 {
++		i2c@2 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			reg = <2>;
+@@ -620,7 +620,7 @@ i2c-mux@77 {
+ 		reg = <0x77>;
+ 		i2c-mux-idle-disconnect;
+ 
+-		i2c-bus@0 {
++		i2c@0 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			reg = <0>;
+@@ -632,7 +632,7 @@ adm1266@40 {
+ 			};
+ 		};
+ 
+-		i2c-bus@1 {
++		i2c@1 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			reg = <1>;
+@@ -691,7 +691,7 @@ i2c-mux@77 {
+ 		reg = <0x77>;
+ 		i2c-mux-idle-disconnect;
+ 
+-		i2c-bus@3 {
++		i2c@3 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			reg = <3>;
+@@ -703,7 +703,7 @@ lm75@28 {
+ 			};
+ 		};
+ 
+-		i2c-bus@4 {
++		i2c@4 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			reg = <4>;
+@@ -715,7 +715,7 @@ lm75@29 {
+ 			};
+ 		};
+ 
+-		i2c-bus@5 {
++		i2c@5 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			reg = <5>;
+@@ -726,7 +726,7 @@ lm75@28 {
+ 				reg = <0x28>;
+ 			};
+ 		};
+-		i2c-bus@6 {
++		i2c@6 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			reg = <6>;
+diff --git a/arch/arm/boot/dts/nuvoton/nuvoton-npcm750-runbmc-olympus.dts b/arch/arm/boot/dts/nuvoton/nuvoton-npcm750-runbmc-olympus.dts
+index baa39d0c1032..087f4ac43187 100644
+--- a/arch/arm/boot/dts/nuvoton/nuvoton-npcm750-runbmc-olympus.dts
++++ b/arch/arm/boot/dts/nuvoton/nuvoton-npcm750-runbmc-olympus.dts
+@@ -215,43 +215,43 @@ i2c-mux@70 {
+ 		reg = <0x70>;
+ 		i2c-mux-idle-disconnect;
+ 
+-		i2c_slot1a: i2c-bus@0 {
++		i2c_slot1a: i2c@0 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			reg = <0>;
+ 		};
+ 
+-		i2c_slot1b: i2c-bus@1 {
++		i2c_slot1b: i2c@1 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			reg = <1>;
+ 		};
+ 
+-		i2c_slot2a: i2c-bus@2 {
++		i2c_slot2a: i2c@2 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			reg = <2>;
+ 		};
+ 
+-		i2c_slot2b: i2c-bus@3 {
++		i2c_slot2b: i2c@3 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			reg = <3>;
+ 		};
+ 
+-		i2c_slot3: i2c-bus@4 {
++		i2c_slot3: i2c@4 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			reg = <4>;
+ 		};
+ 
+-		i2c_slot4: i2c-bus@5 {
++		i2c_slot4: i2c@5 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			reg = <5>;
+ 		};
+ 
+-		i2c_slot5: i2c-bus@6 {
++		i2c_slot5: i2c@6 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			reg = <6>;
+@@ -265,24 +265,24 @@ i2c-mux@71 {
+ 		#size-cells = <0>;
+ 		i2c-mux-idle-disconnect;
+ 
+-		i2c_m2_s1: i2c-bus@0 {
++		i2c_m2_s1: i2c@0 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			reg = <0>;
+ 		};
+ 
+-		i2c_m2_s2: i2c-bus@1 {
++		i2c_m2_s2: i2c@1 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			reg = <1>;
+ 		};
+-		i2c_m2_s3: i2c-bus@2 {
++		i2c_m2_s3: i2c@2 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			reg = <2>;
+ 		};
+ 
+-		i2c_m2_s4: i2c-bus@3 {
++		i2c_m2_s4: i2c@3 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			reg = <3>;
 -- 
-2.11.0
+2.43.0
 
 
