@@ -1,195 +1,230 @@
-Return-Path: <linux-kernel+bounces-196180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC1D58D5886
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 04:14:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C905F8D5887
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 04:15:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84927284436
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 02:14:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC1371C22B53
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 02:15:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1960F77F08;
-	Fri, 31 May 2024 02:14:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B033674E3D;
+	Fri, 31 May 2024 02:15:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="B8Y9Mju1"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WZu5SNF+"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF3E9745FD;
-	Fri, 31 May 2024 02:14:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EDF45221
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 02:15:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717121666; cv=none; b=U65aYQtO00mrbyb+LhLdaXdQfSFy16tP+ex4FsHKty0pPnJzJZfIYBs/Fkf4CLqDWfV1t4pVjBMfxYyGEzZEoVQrFU6pt3FaQiuK3ir2wj/tRW9IBT+2QktOPKKPgIScqhyrzJ+P9fsCuOweAt9pijKUFM+sqj3YDDyGaeDmAk8=
+	t=1717121751; cv=none; b=u0VU2yaG1FtNKpy5wl0WE/emsnJr78/GP4YZl2n1Wq+UOkbPCyN+cV1kqb45pBM4A7zE1jSueAOa5P9P0azhtw/0CgfiZwHjDdmqTQ9Myaaf7LXylxkb6sCQL4mAG9SrF6qzvqoI59sn49jrSkCt6H528Xq4ANBqxXvyR+I+95k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717121666; c=relaxed/simple;
-	bh=xn2rd7kJ5Qxtu2XGb+Wyt9/YczBrhI26LyxJ9KOGmdI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Iq7htJNv3if0rbwfi8DddmmNICNcPCxhkwhIdXSoL6xJFsLlB7hY+/yMBftO9LjfozRxZbGYw5/Ieh6QwhNRt4FIpG334VwVEwn5kF8RNrhLZBFLnJhZGAS8OXn4Wnt4gGo8lcgDK2xmAUcttDoQh6MiG366wP94PNg5tpvq+aI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=B8Y9Mju1; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717121664; x=1748657664;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=xn2rd7kJ5Qxtu2XGb+Wyt9/YczBrhI26LyxJ9KOGmdI=;
-  b=B8Y9Mju1QxJJyx4zpm87pB6i50bL+DbS8n0TJCuZO4iRcYX+0x0BTB6q
-   CwGL2OSkMwh+r8PrLCeMPX5uGGk3BffeMvhnCkD/t4KXJ50Bt1K4fUAO0
-   PF6lMBd0b1ouvC4LcAMCmS59GoCbxUtnsrnaGViTqIcc8RFIWct2J3ee+
-   LL4/otQ1JGvhdPXABSNglWGPqBz4xgayGHZaYyoWQp6ZjtRgzjdu+K4yu
-   Db91Ekz1pTT0G9efTBevw09/W8hkACmpPvqCJjaCiDU2ekynRTlTvb7/Y
-   TpqUnawiHRXCDVNCfxB5FZhIyPEQQLaadCij0hgykOujO7v5iCX8XPvLO
-   g==;
-X-CSE-ConnectionGUID: DnpVZpYLTB6bAPfYZinD1Q==
-X-CSE-MsgGUID: IxECV3rPQR2UesQamJ/9fA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="13521060"
-X-IronPort-AV: E=Sophos;i="6.08,202,1712646000"; 
-   d="scan'208";a="13521060"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 19:14:24 -0700
-X-CSE-ConnectionGUID: 7Y5+mafaTTav5NAg9Qp+cA==
-X-CSE-MsgGUID: SL2k1zsaQ36x4fwsYkhXkw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,202,1712646000"; 
-   d="scan'208";a="40466790"
-Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
-  by fmviesa005.fm.intel.com with ESMTP; 30 May 2024 19:14:20 -0700
-Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sCrmc-000GOH-02;
-	Fri, 31 May 2024 02:14:18 +0000
-Date: Fri, 31 May 2024 10:14:01 +0800
-From: kernel test robot <lkp@intel.com>
-To: Kamel Bouhara <kamel.bouhara@bootlin.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Henrik Rydberg <rydberg@bitmath.org>, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	Marco Felsch <m.felsch@pengutronix.de>,
-	Jeff LaBundy <jeff@labundy.com>
-Cc: oe-kbuild-all@lists.linux.dev, catalin.popescu@leica-geosystems.com,
-	mark.satterthwaite@touchnetix.com,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Gregory Clement <gregory.clement@bootlin.com>,
-	bsp-development.geo@leica-geosystems.com,
-	Kamel Bouhara <kamel.bouhara@bootlin.com>
-Subject: Re: [PATCH v12 3/3] Input: Add TouchNetix axiom i2c touchscreen
- driver
-Message-ID: <202405311035.5QZSREJv-lkp@intel.com>
-References: <20240529091004.107256-4-kamel.bouhara@bootlin.com>
+	s=arc-20240116; t=1717121751; c=relaxed/simple;
+	bh=ujqjt6nPYvhHkI8+PJNsQn1SZ1cTucvti8kPxHzCn1Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=q8Q4oddXjBuYyi1vbRlszB5TnXgJo8G4XB9zcIs9+wLGbRGm4bshYBFGFYYtiDUfno/UGZ5JNhuQq/GAKETJRvHqVly6GHkSxstcD8c6fgzH1RQHqc23czTFl1xyBmUSvlIa33WppPJvTH86owr/MfS5Exxn+A3vIViAHLFdMFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WZu5SNF+; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-35dc36b107fso639291f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 19:15:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717121748; x=1717726548; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SVZ+m5D5+txNLZWQ1wHkb88kpVVpmlzrHDUo9d6Wu3o=;
+        b=WZu5SNF+xMWhLNNyB9BRQ2L1QGPRbJ3/cPDE9dTVvz/XNGBeuuY4OPc1dYsQyUL9Vy
+         V2tnl5PBWw9JXnkWCOpeJcG9ofx/TZwH34YB2zbXHNAekioUFjReBiaqtVs4l1yMsloK
+         xWq/BdOH1DQGo5V2Sah4XiwV4BKOpqaLPW+7o9+ouVOEnpz0KFvUEvaidKLhbbUIeUb/
+         hA+w3MQf1xPT1S+RMVItKT9IYQTlyRpdpjWGPRRxTg5yFY4GnMQYgaRuODfFsqW5M2eh
+         aeQ/SefGD5dxULDi65yaU6bqdQB2v4FKbADSXRRY0QvLd9r16pB0mp1f3VxvOFNWTK3a
+         3CqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717121748; x=1717726548;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SVZ+m5D5+txNLZWQ1wHkb88kpVVpmlzrHDUo9d6Wu3o=;
+        b=dATEOOO9Kx6GpTduUWBfug9stxpQGKS298xRW103VlXUer6zGcgFaHoleLG248K8Q6
+         j6OrDzMwHX+ozTdfOflLLp+o7cv1gAz+hkk11+bNZoa2t2kT/ZGVfBM/4fP5j7fnVeLG
+         5HHS/Z0ife4O65TKRbCsuRIvT6KGwgG0pbRrQtALhRqcbtaqe02RWdxKF6fLeYhk6Oxr
+         TNI0D4wpi7wzNndVcUp3/ikZuL/fYGvSVMmVS9ku9+csKvSGVd0nM4qTqUwxoU7ZOblt
+         Gtb3QVxE2U+XptGdNVHaL2GoU/gnIN0NVl53VeWbq48WJ+ky2XXjR206W2WbBCZoEVXG
+         J0Ng==
+X-Forwarded-Encrypted: i=1; AJvYcCWbhpU8kdQDj8HuTJL6AdvDV1d7L1l20q9qxnCVomTeDdO2Iqq0JndxsWuluGw6VLOfyyqgUrqPB+YMqebaaCi+GNEqzIOLiSlrMOO4
+X-Gm-Message-State: AOJu0YzlkmeWJpUy9j9FqSma6gZbh46nBzuIjiDQ7f3/jNdDsqNEZEq9
+	fds8HPkx+A9fxP3kxuIocYw2PQ3b7PQn6MLIc297Dm2foLADRI5dSgV5+L7BHLBYoCR8272nIr3
+	+23iIJq1hF75qbjYC9wtSSRtSLHc=
+X-Google-Smtp-Source: AGHT+IHRWJN+gxDchzmDSqJk6zLAuQIT1nOSjWlbD6Rv+4uUgrbaWgOh/7ArTSHrMuvTdEVXCutlfFw3zw5BoONSCjE=
+X-Received: by 2002:a5d:4808:0:b0:354:fca5:4190 with SMTP id
+ ffacd0b85a97d-35e0f289f41mr212647f8f.41.1717121748147; Thu, 30 May 2024
+ 19:15:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240529091004.107256-4-kamel.bouhara@bootlin.com>
+References: <1716204978-29455-1-git-send-email-zhiguo.niu@unisoc.com>
+ <1d67715b-5f88-4940-969d-e098fd80ae2a@kernel.org> <CAHJ8P3LXYWQ+bLZHPn_5FLu3oi83ei8C9ZCzAXwa9oBdEKVDNA@mail.gmail.com>
+ <CAHJ8P3+ro9YsU7jZWeAfiUh9uNFEj_=Wiaf2YRLVLBD5_9fM0g@mail.gmail.com> <0a4b5b40-1532-44a4-a4d6-601ceced20a4@kernel.org>
+In-Reply-To: <0a4b5b40-1532-44a4-a4d6-601ceced20a4@kernel.org>
+From: Zhiguo Niu <niuzhiguo84@gmail.com>
+Date: Fri, 31 May 2024 10:15:36 +0800
+Message-ID: <CAHJ8P3J1_Yg3FAruR0zPQdDnbw_GbT7wOKON3-xzBr32+HU_6w@mail.gmail.com>
+Subject: Re: [PATCH] f2fs: enable atgc if atgc_age_threshold from user is less
+ than elapsed_time
+To: Chao Yu <chao@kernel.org>
+Cc: Zhiguo Niu <zhiguo.niu@unisoc.com>, jaegeuk@kernel.org, 
+	linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
+	ke.wang@unisoc.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Kamel,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on dtor-input/next]
-[also build test ERROR on dtor-input/for-linus robh/for-next krzk-dt/for-next linus/master v6.10-rc1 next-20240529]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Kamel-Bouhara/dt-bindings-vendor-prefixes-Add-TouchNetix-AS/20240529-171328
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git next
-patch link:    https://lore.kernel.org/r/20240529091004.107256-4-kamel.bouhara%40bootlin.com
-patch subject: [PATCH v12 3/3] Input: Add TouchNetix axiom i2c touchscreen driver
-config: x86_64-randconfig-103-20240531 (https://download.01.org/0day-ci/archive/20240531/202405311035.5QZSREJv-lkp@intel.com/config)
-compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240531/202405311035.5QZSREJv-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405311035.5QZSREJv-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   ld: drivers/input/touchscreen/touchnetix_axiom.o: in function `axiom_handle_events':
->> drivers/input/touchscreen/touchnetix_axiom.c:473:(.text+0x245f): undefined reference to `crc16'
-
-
-vim +473 drivers/input/touchscreen/touchnetix_axiom.c
-
-   442	
-   443	/*
-   444	 * Validates the crc and demultiplexes the axiom reports to the appropriate
-   445	 * report handler
-   446	 */
-   447	static int axiom_handle_events(struct axiom_data *ts)
-   448	{
-   449		struct input_dev *input_dev = ts->input_dev;
-   450		u8 *report_data = ts->rx_buf;
-   451		struct device *dev = ts->dev;
-   452		u16 crc_report;
-   453		u8 *crc_bytes;
-   454		u16 crc_calc;
-   455		int error;
-   456		u8 len;
-   457	
-   458		error = axiom_read(ts, AXIOM_REPORT_USAGE_ID, 0, report_data, ts->max_report_len);
-   459		if (error)
-   460			return error;
-   461	
-   462		len = (report_data[0] & AXIOM_COMMS_REPORT_LEN_MASK) << 1;
-   463		if (len <= 2) {
-   464			dev_err(dev, "Zero length report discarded.\n");
-   465			return -ENODATA;
-   466		}
-   467	
-   468		/* Validate the report CRC */
-   469		crc_bytes = &report_data[len];
-   470	
-   471		crc_report = get_unaligned_le16(crc_bytes - 2);
-   472		/* Length is in 16 bit words and remove the size of the CRC16 itself */
- > 473		crc_calc = crc16(0, report_data, (len - 2));
-   474	
-   475		if (crc_calc != crc_report) {
-   476			dev_err(dev,
-   477				"CRC mismatch! Expected: %#x, Calculated CRC: %#x.\n",
-   478				crc_report, crc_calc);
-   479			return -EINVAL;
-   480		}
-   481	
-   482		switch (report_data[1]) {
-   483		case AXIOM_USAGE_2DCTS_REPORT_ID:
-   484			if (axiom_process_u41_report(ts, &report_data[1])) {
-   485				input_mt_sync_frame(input_dev);
-   486				input_sync(input_dev);
-   487			}
-   488			break;
-   489	
-   490		case AXIOM_USAGE_2AUX_REPORT_ID:
-   491			/* This is an aux report (force) */
-   492			axiom_process_u46_report(ts, &report_data[1]);
-   493			input_mt_sync(input_dev);
-   494			input_sync(input_dev);
-   495			break;
-   496	
-   497		case AXIOM_USAGE_2HB_REPORT_ID:
-   498			/* This is a heartbeat report */
-   499			break;
-   500		default:
-   501			return -EINVAL;
-   502		}
-   503	
-   504		return 0;
-   505	}
-   506	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+On Fri, May 31, 2024 at 10:04=E2=80=AFAM Chao Yu <chao@kernel.org> wrote:
+>
+> On 2024/5/30 17:49, Zhiguo Niu wrote:
+> > On Mon, May 27, 2024 at 12:07=E2=80=AFPM Zhiguo Niu <niuzhiguo84@gmail.=
+com> wrote:
+> >>
+> >> On Mon, May 27, 2024 at 11:49=E2=80=AFAM Chao Yu <chao@kernel.org> wro=
+te:
+> >>>
+> >>> On 2024/5/20 19:36, Zhiguo Niu wrote:
+> >>>> Now atgc can be enabled based on the following conditions:
+> >>>> -ATGC mount option is set
+> >>>> -elapsed_time is more than atgc_age_threshold already
+> >>>> but these conditions are check when umounted->mounted device again.
+> >>>> If the device has not be umounted->mounted for a long time, atgc can
+> >>>> not work even the above conditions met.
+> >>>
+> >>> Zhiguo, I didn't get it, can you please explain more about this issue=
+?
+> >>>
+> >>> Thanks,
+> >> Hi Chao,
+> >>
+> >> At present, the point of atgc enale is checked during the mount
+> >> process. What I mean is that if a device has not been rebooted
+> >> (re-mounted) for a long time, even if the above two conditions are
+> >> met(ATGC mount option is set, and the device has been powered on long
+> >> enough=EF=BC=8C more than atgc default threshold ), atgc cannot be dyn=
+amically
+> >> enabled.
+> >>
+> >> If the user is used to not restarting the phone after turning it on,
+> >> it will be difficult to use atgc.
+> >> thanks!
+> > Hi Chao,
+> > Do you have any suggestions or comments on this?
+>
+> Zhiguo,
+>
+> I remember that atgc can not be enabled at runtime due to some reasons, b=
+ut
+> I need some time to recall and check the details...
+>
+> Thanks,
+Hi Chao,
+OK, Thanks for your help.
+>
+> > thanks=EF=BC=81
+> >
+> >>>
+> >>>>
+> >>>> It is better to enable atgc dynamiclly when user change atgc_age_thr=
+eshold
+> >>>> meanwhile this vale is less than elapsed_time and ATGC mount option =
+is on.
+> >>>>
+> >>>> Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+> >>>> ---
+> >>>>    fs/f2fs/f2fs.h    |  1 +
+> >>>>    fs/f2fs/segment.c |  9 ++++-----
+> >>>>    fs/f2fs/sysfs.c   | 16 ++++++++++++++++
+> >>>>    3 files changed, 21 insertions(+), 5 deletions(-)
+> >>>>
+> >>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> >>>> index 1974b6a..e441d2d 100644
+> >>>> --- a/fs/f2fs/f2fs.h
+> >>>> +++ b/fs/f2fs/f2fs.h
+> >>>> @@ -3694,6 +3694,7 @@ void f2fs_clear_prefree_segments(struct f2fs_s=
+b_info *sbi,
+> >>>>    int f2fs_init_inmem_curseg(struct f2fs_sb_info *sbi);
+> >>>>    void f2fs_save_inmem_curseg(struct f2fs_sb_info *sbi);
+> >>>>    void f2fs_restore_inmem_curseg(struct f2fs_sb_info *sbi);
+> >>>> +int f2fs_init_atgc_curseg(struct f2fs_sb_info *sbi);
+> >>>>    int f2fs_allocate_segment_for_resize(struct f2fs_sb_info *sbi, in=
+t type,
+> >>>>                                        unsigned int start, unsigned =
+int end);
+> >>>>    int f2fs_allocate_new_section(struct f2fs_sb_info *sbi, int type,=
+ bool force);
+> >>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> >>>> index 71dc8042..44923d4 100644
+> >>>> --- a/fs/f2fs/segment.c
+> >>>> +++ b/fs/f2fs/segment.c
+> >>>> @@ -2931,14 +2931,11 @@ static int get_atssr_segment(struct f2fs_sb_=
+info *sbi, int type,
+> >>>>        return ret;
+> >>>>    }
+> >>>>
+> >>>> -static int __f2fs_init_atgc_curseg(struct f2fs_sb_info *sbi)
+> >>>> +int f2fs_init_atgc_curseg(struct f2fs_sb_info *sbi)
+> >>>>    {
+> >>>>        struct curseg_info *curseg =3D CURSEG_I(sbi, CURSEG_ALL_DATA_=
+ATGC);
+> >>>>        int ret =3D 0;
+> >>>>
+> >>>> -     if (!sbi->am.atgc_enabled)
+> >>>> -             return 0;
+> >>>> -
+> >>>>        f2fs_down_read(&SM_I(sbi)->curseg_lock);
+> >>>>
+> >>>>        mutex_lock(&curseg->curseg_mutex);
+> >>>> @@ -2955,7 +2952,9 @@ static int __f2fs_init_atgc_curseg(struct f2fs=
+_sb_info *sbi)
+> >>>>    }
+> >>>>    int f2fs_init_inmem_curseg(struct f2fs_sb_info *sbi)
+> >>>>    {
+> >>>> -     return __f2fs_init_atgc_curseg(sbi);
+> >>>> +     if (!sbi->am.atgc_enabled)
+> >>>> +             return 0;
+> >>>> +     return f2fs_init_atgc_curseg(sbi);
+> >>>>    }
+> >>>>
+> >>>>    static void __f2fs_save_inmem_curseg(struct f2fs_sb_info *sbi, in=
+t type)
+> >>>> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+> >>>> index 09d3ecf..72676c5 100644
+> >>>> --- a/fs/f2fs/sysfs.c
+> >>>> +++ b/fs/f2fs/sysfs.c
+> >>>> @@ -673,6 +673,22 @@ static ssize_t __sbi_store(struct f2fs_attr *a,
+> >>>>                return count;
+> >>>>        }
+> >>>>
+> >>>> +     if (!strcmp(a->attr.name, "atgc_age_threshold")) {
+> >>>> +             if (t < 0)
+> >>>> +                     return -EINVAL;
+> >>>> +             sbi->am.age_threshold =3D t;
+> >>>> +             if (sbi->am.atgc_enabled)
+> >>>> +                     return count;
+> >>>> +
+> >>>> +             if (test_opt(sbi, ATGC) &&
+> >>>> +                     le64_to_cpu(sbi->ckpt->elapsed_time) >=3D t) {
+> >>>> +                     if (f2fs_init_atgc_curseg(sbi))
+> >>>> +                             return -EINVAL;
+> >>>> +                     sbi->am.atgc_enabled =3D true;
+> >>>> +             }
+> >>>> +             return count;
+> >>>> +     }
+> >>>> +
+> >>>>        if (!strcmp(a->attr.name, "gc_segment_mode")) {
+> >>>>                if (t < MAX_GC_MODE)
+> >>>>                        sbi->gc_segment_mode =3D t;
 
