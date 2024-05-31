@@ -1,63 +1,62 @@
-Return-Path: <linux-kernel+bounces-197466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1B968D6B0C
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 22:46:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABDA38D6B15
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 22:48:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F3261F25014
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 20:46:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6815E287A50
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 20:48:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E43DA78286;
-	Fri, 31 May 2024 20:46:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A9D478269;
+	Fri, 31 May 2024 20:48:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hqZqYxRo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cCV0st2r"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2737E24B4A;
-	Fri, 31 May 2024 20:46:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A140DD26A;
+	Fri, 31 May 2024 20:48:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717188399; cv=none; b=aZO2ncjuAulC2pgubdkpzDSEOkwBSFC7SClnwcuYqUjZv+I74u5WUEOhZFJCflwcJCgSO3b3FnQeWf6nMsvsmaYc5cxLkGU8SX2BzR1CIJc+ZwwjQY49akpEplUmMqaoCkfToPXpdFqQP4w8S0nxZPwVDLKeEtY9cODCkm2l1wI=
+	t=1717188524; cv=none; b=g33iwToOGa2Sd7eJLlK2ngkQE0KbLMa/kLIJ45B7yx3JIO+8atXXd/xRgA9hAM47G6R37UOxQqO+BoTSBStQTObG7QczHVvky5cJ6SJkr9D9d/yYehtXDBn9i+46S2GV0y2rjAnjuVfYQorp7oCgVFmF1q7u+BxIZKdfopE0gc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717188399; c=relaxed/simple;
-	bh=5v6WEVFSG+niPJT/ta0D1bzUViAOVqkrK/1t7rXf4ns=;
+	s=arc-20240116; t=1717188524; c=relaxed/simple;
+	bh=rFnHh2wJYNoB76Ml+22NnUsLEKD+h/GAxFGey/czVOQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D/ssJcxb0tmnKKXze/gWzyr/gqqQ+/he17EUfYvvT4yaOmHgr82J3mjnMNJnm2rVGlYT/ybWnqw590PEJJdU7/Gq1vgiya2HzjvbpZ+eHxwIEpOieOSuLLsLnVxsULzMrjvlVSDHquXOPIR3NgktwshDZkwDnooEuOpjtZGWyvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hqZqYxRo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A23B2C116B1;
-	Fri, 31 May 2024 20:46:38 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=u6bfn4W3V81iwPmpO3omBTG3wRIgBqaryg98uL3LOozJWOERAlX0XPNwB1L39PjP+dK1hPeCdqkI1CRcOQqzgaldGmSoX8WZlVE+uYLwsSHPXrem506APX7Q04TmgWOoRZXj7AfukOBzbMd80AmqwsYBEm2OzcZsm6TJ7Gy+UKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cCV0st2r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16EA2C116B1;
+	Fri, 31 May 2024 20:48:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717188398;
-	bh=5v6WEVFSG+niPJT/ta0D1bzUViAOVqkrK/1t7rXf4ns=;
+	s=k20201202; t=1717188524;
+	bh=rFnHh2wJYNoB76Ml+22NnUsLEKD+h/GAxFGey/czVOQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hqZqYxRovnC0m4WQ8+Ca+THQmZ4x2MfUnPaxMot6GWx5nRptmI9lolz3Ex0YJiGtz
-	 KRvmaCatWZ9eLaOK8I4yDkWZYoURfZthXL1tqgw9ElF4pIrzcIx229LnRDOGujvXtF
-	 pZQpGfKBQpMj/wpcjfkWH+2BnD05/X8SAlrrzvMvsbyCln8JbRMcCcLP/z+mwbzhP9
-	 h0ueQCrwwPXPmIw6WTCjwcr4JVh6TlKx5qiAjm6qywFuyVeCxEeHMXRmHmYHgBQkf5
-	 buPXqnFFgKNo+2VFggMMGDZs20INQLwE1ymRs6BdI0BHwvHSnEy9qKDsCGSTZIRnn2
-	 1BQoZNZX0MiKQ==
-Date: Fri, 31 May 2024 13:46:37 -0700
-From: Kees Cook <kees@kernel.org>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Jeff Johnson <quic_jjohnson@quicinc.com>,
-	Nikolay Borisov <nik.borisov@suse.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] x86/boot: add prototype for __fortify_panic()
-Message-ID: <202405311345.D91BF6E9@keescook>
-References: <20240529-fortify_panic-v1-1-9923d5c77657@quicinc.com>
- <0d3f7c58-7fc0-4e8b-b6fb-c4d0d9969ce7@suse.com>
- <e42c4984-d4a2-45b1-b93d-7471000766b7@quicinc.com>
- <5658B525-6642-43A2-B14C-BC4AA916FBCC@alien8.de>
- <202405310951.56D9BD5C41@keescook>
- <20240531190816.GLZlogIGgpc5maOeLN@fat_crate.local>
+	b=cCV0st2rQscuWQRRD66py/Md9Mf8mIse5f5jZSqyArOSjheLY3FWzSZ0nnPnPNuDe
+	 dX3NKU8cFLky+rp9zE1/dWqI9QumqMPadZXRguN/uqvqIy8JCxKqaT5mNWb2ddSTOP
+	 WW3nTZoNUs3ooPHdjzSuivJ9cfYPEbub+Xi5sXHD8VdV0/X3G2UgRyohnG3NOyg4xP
+	 HLW1WEdF0saOukDjTRCAHk8oZxhEhtrC+LbbXgmEUyHYqE4kDzV8OVVj9w3J3qszx/
+	 OuZc8w6Q7BVzPPGo29tNFxZb8EPKfAFfd/Cq3VAehojM71REySKXZqSyAjrLTJO2hM
+	 NBSeyCI3HYUHQ==
+Date: Fri, 31 May 2024 20:48:42 +0000
+From: Eric Biggers <ebiggers@kernel.org>
+To: Fan Wu <wufan@linux.microsoft.com>
+Cc: corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org,
+	serge@hallyn.com, tytso@mit.edu, axboe@kernel.dk, agk@redhat.com,
+	snitzer@kernel.org, mpatocka@redhat.com, eparis@redhat.com,
+	paul@paul-moore.com, linux-doc@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org, fsverity@lists.linux.dev,
+	linux-block@vger.kernel.org, dm-devel@lists.linux.dev,
+	audit@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Deven Bowers <deven.desai@linux.microsoft.com>
+Subject: Re: [PATCH v19 11/20] block,lsm: add LSM blob and new LSM hooks for
+ block device
+Message-ID: <20240531204842.GA2838215@google.com>
+References: <1716583609-21790-1-git-send-email-wufan@linux.microsoft.com>
+ <1716583609-21790-12-git-send-email-wufan@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,35 +65,97 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240531190816.GLZlogIGgpc5maOeLN@fat_crate.local>
+In-Reply-To: <1716583609-21790-12-git-send-email-wufan@linux.microsoft.com>
 
-On Fri, May 31, 2024 at 09:08:16PM +0200, Borislav Petkov wrote:
-> On Fri, May 31, 2024 at 09:53:28AM -0700, Kees Cook wrote:
-> > Under CONFIG_FORTIFY_SOURCE, the boot code *does* still uses
-> > fortify-string.h. It lets us both catch mistakes we can discover at
-> > compile and will catch egregious runtime mistakes, though the reporting
-> > is much simpler in the boot code.
+On Fri, May 24, 2024 at 01:46:40PM -0700, Fan Wu wrote:
+> From: Deven Bowers <deven.desai@linux.microsoft.com>
 > 
-> From where I'm standing, we're not catching anything in the
-> decompressor:
-> 
-> $  objdump -D arch/x86/boot/compressed/vmlinux | grep __fortify_panic
-> 0000000001bec250 <__fortify_panic>:
-> $
-> 
-> Sure, in vmlinux proper (allmodconfig) we do:
-> 
-> objdump -D vmlinux | grep __fortify_panic | wc -l
-> 1417
-> 
-> but not in the decompressor which is special anyway.
-> 
-> So we can just as well disable CONFIG_FORTIFY_SOURCE in the decompressor
-> and not do silly prototypes.
+> Some block devices have valuable security properties that is only
+> accessible during the creation time.
+>
+> For example, when creating a dm-verity block device, the dm-verity's
+> roothash and roothash signature, which are extreme important security
+> metadata, are passed to the kernel. However, the roothash will be saved
+> privately in dm-verity, which prevents the security subsystem to easily
+> access that information. Worse, in the current implementation the
+> roothash signature will be discarded after the verification, making it
+> impossible to utilize the roothash signature by the security subsystem.
 
-Please do not do this. It still benefits from compile-time sanity
-checking.
+This patch seems to be assuming that creating the block device == setting up
+dm-verity.  That's not how it actually works.  The way that device-mapper works
+is that first a device-mapper device is created, and then targets are loaded
+into it.  The targets can be changed later, any number of times.
 
--- 
-Kees Cook
+So, while the creation of the block device is when the LSM blob is allocated,
+it's not when the actual contents of it are initialized.  And its contents can
+vary over the lifetime of the block device, including changing from something
+the LSM "trusts" to something it doesn't "trust".
+
+I'm not sure if this is "just" a documentation issue or if there are bugs
+resulting from not handling changes properly.  The code itself *looks* correct,
+but seeing it's not clear how much this has been considered and that getting
+this wrong would allow the LSM checks to be bypassed, I thought I'd draw
+attention to it.  This is really something that ought to be called out
+explicitly in comments, for example.
+
+> For example, LSM can use the new LSM blob to save the roothash signature of a
+> dm-verity, and LSM can make access decision based on the data inside the
+> signature, like the signer certificate.
+
+This isn't what IPE actually does, though.  So this doesn't seem like a
+particularly useful example in this context.
+
+> For example, for dm-verity, LSMs can use this hook to save
+> the roothash signature of a dm-verity into the security blob,
+> and LSMs can make access decisions based on the data inside
+> the signature, like the signer certificate.
+
+Likewise.
+
+> diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
+> index 781c4500491b..eaa28f366d98 100644
+> --- a/include/linux/blk_types.h
+> +++ b/include/linux/blk_types.h
+> @@ -71,6 +71,9 @@ struct block_device {
+>  
+>  	struct partition_meta_info *bd_meta_info;
+>  	int			bd_writers;
+> +#ifdef CONFIG_SECURITY
+> +	void			*security;
+> +#endif
+
+All the other fields in struct block_device are prefixed with "bd_", so please
+use the same pattern for this new field (bd_security).
+
+> diff --git a/security/security.c b/security/security.c
+> index b419166979da..743652e5e893 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+[...]
+> +/**
+> + * security_bdev_setintegrity() - Set the device's integrity data
+> + * @bdev: block device
+> + * @type: type of integrity, e.g. hash digest, signature, etc
+> + * @value: the integrity value
+> + * @size: size of the integrity value
+> + *
+> + * Register a verified integrity measurement of a bdev with LSMs.
+> + * LSMs should free the previously saved data if @value is NULL.
+> + *
+> + * Return: Returns 0 on success, negative values on failure.
+> + */
+> +int security_bdev_setintegrity(struct block_device *bdev,
+> +			       enum lsm_integrity_type type, const void *value,
+> +			       size_t size)
+> +{
+> +	return call_int_hook(bdev_setintegrity, bdev, type, value, size);
+> +}
+> +EXPORT_SYMBOL(security_bdev_setintegrity);
+
+This might be a good place to explicitly document that the block device's
+integrity properties may change over the lifetime of the block device and that
+LSMs *must* (not "should") handle all possible types of updates, including
+updates from a non-NULL value of a property to a NULL value.
+
+- Eric
 
