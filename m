@@ -1,75 +1,143 @@
-Return-Path: <linux-kernel+bounces-197084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 903BC8D65EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:40:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 121898D65F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:43:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4AA61C24976
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 15:40:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 435A61C25CDB
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 15:43:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5A93145322;
-	Fri, 31 May 2024 15:40:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CE851509AF;
+	Fri, 31 May 2024 15:43:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PGX2c9r0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JvWsP3HR"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E26D124211;
-	Fri, 31 May 2024 15:40:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D95EC770FC;
+	Fri, 31 May 2024 15:43:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717170042; cv=none; b=G7ItL1LzEbK7Tz6xHWxAtKXShdh0eIk8Ei07s3oyA1e3Um32HzutC1GbYXtDfvR4gUi+wvGix15WiuiFdcdLlUaOu3hujSqPoj6iQBKcLYZY+xiVJhakAqVnJAB6lfXNummcTDXGUe1Fm+HcIRqH4DRj6JSGSWB9uFAIfZ+AqbQ=
+	t=1717170187; cv=none; b=V47wndxpjFsesgKfQxGWpt68Y+14Jl4ceGyTIbHYhw3gawUNZ6yY7e3xeXugQ16VTT7lnx1ROGMkj/y8I+Ik1FIFLAvKyDDAPzYKo08BlXDEK6HJ3opPNVJCSmlWbHf8V7wgDJppKIozhJFkJNabpY7nI+3KslwZmEXXshC8t6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717170042; c=relaxed/simple;
-	bh=2iHYKfuL3l56RbZBaOU3Nr5MMok8DdbaiiXFP7i97zo=;
+	s=arc-20240116; t=1717170187; c=relaxed/simple;
+	bh=zBfKRiTb3thRIUaH1yDSHFpa2a0pLOSkK6tnaNaFnEA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WqKbVJrqi0S44YLXcdipBq6wPh4F/+jLfCRVPSWDhp5BBYXIIrM7s5uVesRnvSbuZjBHXTKatGq37uvjin04qQH6xw2e866tLmIqkX/sKaBVR5xrFxc4MiqV3yIHidX+1Sv4tge1TJXXEwZmuwlzKASmDRBgZg2ZZEZ2kNjMN0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PGX2c9r0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 044E4C116B1;
-	Fri, 31 May 2024 15:40:39 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=h0BQkf4PucrAAsgLcQAXpvDHStj0DTebZxuNeyItV5CPiBbe8mwyEoBRFnHNjmqTcNfzHRmLFBS2TwXY+uF04MXbXqdM9fuQPIUzEd6BpBQVU2lhbQvY/wISGzPk0eiUwATEDXi53JT+gXY/V4vNoVv8+7jcHWzbewKH+cv4nvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JvWsP3HR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62583C116B1;
+	Fri, 31 May 2024 15:43:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717170041;
-	bh=2iHYKfuL3l56RbZBaOU3Nr5MMok8DdbaiiXFP7i97zo=;
+	s=k20201202; t=1717170186;
+	bh=zBfKRiTb3thRIUaH1yDSHFpa2a0pLOSkK6tnaNaFnEA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PGX2c9r0XXAXJKeHeYKqs0Y3aZ4y1EI1bYwLiyF78CiOrwThrUdl1+Lfr33Ubye98
-	 Np27t7EgmGMCtFOew9mrU/eToiY+pIA2RkvPg9B1EgwKzPIdYvxL0GvntMdhpp8UsO
-	 1MINWfnxJiESZeguZMwwV7TflmZbWHs0Q21ZBQDqWpmxjlao87oaJKtkR4nN/6Kn3L
-	 +yZ9Carl+qWubZsdQNrgZ0IfPvgs+bqGt3Pnkae/4tlllQrCL16QPzPl98xZwbYYqA
-	 0zXgNRlA7Uyef1w0Y73CUFMXCQGP41cprnQqgbYrWs00EpglDMPRhP9UgSxAbxN3ly
-	 1DEi2cG1VwuXw==
-Date: Fri, 31 May 2024 16:40:38 +0100
-From: Simon Horman <horms@kernel.org>
-To: linux@treblig.org
-Cc: mkl@pengutronix.de, mailhol.vincent@wanadoo.fr,
-	linux-can@vger.kernel.org, netdev@vger.kernel.org, wsa@kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] can: mscan: remove unused struct 'mscan_state'
-Message-ID: <20240531154038.GB491852@kernel.org>
-References: <20240525232509.191735-1-linux@treblig.org>
+	b=JvWsP3HR0PibCNkuVtCawazRSehMxHOIGbRVal2Mxwuh5BYBxtNdwpJTeRg7HVKbm
+	 JDWYJv7I1ZMX0w/N302ejbzZrEu08uxM6BMTrpWMLTcImtXkeVMIrLGLavlXvaFxXb
+	 lNsPj4Ys6zKqrzM4idZMQGhn2mKGRecsrGC0Rs3hnLBBl1Ez93jNTTZk+Qsieez7xs
+	 MjjuBvXtXKQmkf870igfsgLBApstdRjUi3cKoiJ1+vPKLueCNMETXG2hT40zZWgdZg
+	 4aOcrd0QxhnWMEDkNvizVkMAZDuuaIeQz+cibd1MKE8L/GZhYK9DR5NVXMKcxk5Y70
+	 3m9rlW+QiHMzw==
+Date: Fri, 31 May 2024 16:42:42 +0100
+From: Lee Jones <lee@kernel.org>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc: Pavel Machek <pavel@ucw.cz>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@weissschuh.net>,
+	Benson Leung <bleung@chromium.org>,
+	Guenter Roeck <groeck@chromium.org>, linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org, chrome-platform@lists.linux.dev,
+	Dustin Howett <dustin@howett.net>,
+	Mario Limonciello <mario.limonciello@amd.com>
+Subject: Re: [PATCH 1/5] leds: introduce led_color_name function
+Message-ID: <20240531154242.GQ1005600@google.com>
+References: <20240520-cros_ec-led-v1-0-4068fc5c051a@weissschuh.net>
+ <20240520-cros_ec-led-v1-1-4068fc5c051a@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240525232509.191735-1-linux@treblig.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240520-cros_ec-led-v1-1-4068fc5c051a@weissschuh.net>
 
-On Sun, May 26, 2024 at 12:25:09AM +0100, linux@treblig.org wrote:
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> 
-> 'mscan_state' is unused since the original
-> commit afa17a500a36 ("net/can: add driver for mscan family &
-> mpc52xx_mscan").
-> 
-> Remove it.
-> 
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+It would save me a lot of work if you could follow the conventions of
+the subsystem when drafting subjects.
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+`git log --online -- <subsystem>` is your friend.
 
+> This is similar to the existing led_colors array but is safer to use and
+> usable by everyone.
+
+Place spaces between paragraphs or don't line-break at all please.
+
+> Getting string representations of color ids is useful for drivers
+
+"IDs"
+
+> which are handling color ids anyways, for example for the multicolor API.
+> 
+> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+> ---
+>  drivers/leds/led-core.c |  9 +++++++++
+>  include/linux/leds.h    | 10 ++++++++++
+>  2 files changed, 19 insertions(+)
+> 
+> diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
+> index 89c9806cc97f..04a49958458e 100644
+> --- a/drivers/leds/led-core.c
+> +++ b/drivers/leds/led-core.c
+> @@ -534,6 +534,15 @@ int led_compose_name(struct device *dev, struct led_init_data *init_data,
+>  }
+>  EXPORT_SYMBOL_GPL(led_compose_name);
+>  
+> +const char *led_color_name(u8 color_id)
+
+led_get_color_name()
+
+> +{
+> +	if (color_id >= ARRAY_SIZE(led_colors))
+> +		return NULL;
+> +
+> +	return led_colors[color_id];
+> +}
+> +EXPORT_SYMBOL_GPL(led_color_name);
+> +
+>  enum led_default_state led_init_default_state_get(struct fwnode_handle *fwnode)
+>  {
+>  	const char *state = NULL;
+> diff --git a/include/linux/leds.h b/include/linux/leds.h
+> index db6b114bb3d9..0f1b955fa3f7 100644
+> --- a/include/linux/leds.h
+> +++ b/include/linux/leds.h
+> @@ -427,6 +427,16 @@ void led_sysfs_enable(struct led_classdev *led_cdev);
+>  int led_compose_name(struct device *dev, struct led_init_data *init_data,
+>  		     char *led_classdev_name);
+>  
+> +/**
+> + * led_color_name - get string representation of color id
+> + * @color_id: The LED_COLOR_ID_* constant
+> + *
+> + * Get the string name of a LED_COLOR_ID_* constant.
+> + *
+> + * Returns: A string constant or NULL on an invalid ID.
+> + */
+> +const char *led_color_name(u8 color_id);
+
+
+>  /**
+>   * led_sysfs_is_disabled - check if LED sysfs interface is disabled
+>   * @led_cdev: the LED to query
+> 
+> -- 
+> 2.45.1
+> 
+> 
+
+-- 
+Lee Jones [李琼斯]
 
