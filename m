@@ -1,181 +1,173 @@
-Return-Path: <linux-kernel+bounces-197211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CACD8D6792
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 19:01:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0774B8D6793
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 19:01:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AAD11F272CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:01:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B02F1C24E95
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:01:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79F52172777;
-	Fri, 31 May 2024 17:01:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 170DF171E59;
+	Fri, 31 May 2024 17:01:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DA0rfTWW"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="faGKBjHC"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00D92770FC
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 17:01:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B9316D304;
+	Fri, 31 May 2024 17:01:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717174872; cv=none; b=HvMsTgp1cTKFk9EgdgLfTgzir+mC6+ZrRUazkYUx2a7LWGwv0BXxlH+gcQJvMUsabFVrghRQNTnn52rNG75pvqzPE6+y7N3BlAsc+GtbyicSY4hyzyb/qB3ZvZAw53IQCS/wNk36HfyKs7NAKFPwL/ifG2qwDRLLHLOfyNi/5+U=
+	t=1717174894; cv=none; b=WFFmRKwqO6vpp0ZnaAfyqHrBYg7dqPEtxcL307f0DflW5TPKgsRRphdCBttOjmfcRfAej4Bnsu1bxpxgBHnXQsfiRdM4xzz7dPwuKeU6B6gLfua4OYSIt/9CmwuA9jOn0HPhx2qSqrvsFIiDzpWiegaRY71uTfNGV0JrNkObLGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717174872; c=relaxed/simple;
-	bh=MCVV0IUaW6kQ8ECcAxm/dAlg6y+EfifG6LVOd37rQi8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aloX3b4oZmS49sFuMNQuZkvjYSqrGBbf6QlNFCUcZbfKLpUWrI+C35RBf1n7rtVZvfsR4xhNzdLwn1gybLVFOjNgg4MR+hjOmjvFo1SJv80R6ZYL+Z1Ll+ZQKKWoU+cKZ07lDki0iL743aXtBt/SlnuJzaldgVsoX8v8VJxBymo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DA0rfTWW; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52b03d66861so2525483e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 10:01:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717174869; x=1717779669; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Kk2OxyZMtbnZSm/LI3qv3dX7yiLbidrXsgXiEDTxDig=;
-        b=DA0rfTWWcvBvcBoNvMczGEq2EA1zSt0lhuwkTXpqsyrYwEOEoSTQiQ+qdxCAJpwj/0
-         2cPW8GojcRxWyxUQVX+a5y9ONBFlXCKcfRUJr0CIHURKfb4rb/LSlMYzya/sQI67QQpK
-         Bp3mfK+fqI3bmi1McqJJ+1iJrp8exZfOkQC8Jq8SjOK5Cc8IOtSJjQBwhM1SqaHbgfX4
-         A7TxOH2LddqRxFok6hBIurO0L9eHRTZNtQ6RtOU8Iy3RUyDkmIEfylR3DHlndLRl6mfL
-         BwCzvGXfObZWATE0Col1sZEGNVpBAoAw5mzGgM9gBp/5fG2o58oYPjYFMgMv/b1yg31s
-         i0ag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717174869; x=1717779669;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Kk2OxyZMtbnZSm/LI3qv3dX7yiLbidrXsgXiEDTxDig=;
-        b=EdUtFNpOwJHFxDFBqtDC8Hiovfsf2mbNiYm8XP31jhfqDPaoOZcsBsmQkz32GyoLQo
-         8zgEsaqPM+BlIj1kTuEunaw0sLs/TJtMmS7vqOrKx2X/eeY78bnM0QQp8pO5JmrB3+at
-         kwjxRY+C8Bcc5Je/PkqKIn2FD1AVTrXyvdwdXKcVotHOkjonRFggDs2PYWYMcXD5YQf4
-         3MmnWajS6dIGtmGLEwTUqwsma3Ek19QXsr6zcmWwVB0hAfxJUEoNrOX/yNZ8ZnPJYpDQ
-         pTgP0d15adGBgOI2KLnATn4EbiyoIk0U1YOIYoJuiz6DdiH0s9HnGsAJkpSsUalpluyM
-         Svlw==
-X-Forwarded-Encrypted: i=1; AJvYcCUIQ05vy2DegHYNBnQ+32f7fMPmGtVLvlKnXYuJYOsXzaNUegYUA/XN9zceSVY40yaiA/PbEPCrgwZcXRq9h2YOPbNByY3XUxvdMy0P
-X-Gm-Message-State: AOJu0YzizrJjp2FYaT2iPCPBNY2IalwEBJ6iquLsnq8gaG235kFXuJdT
-	oT+MeuFUCtlBuLx61eJIbdqv39a2DLr3+JRkEXVFK2WMFtNzhbyBdYN4WQgNTWCrw/b2R7b6oe1
-	5paGmYZUK/PkA0FqXMso8+DComVdSiS8=
-X-Google-Smtp-Source: AGHT+IHxCIgS6NYmvG5MEiRmRGa6oGdPbwXQEDnCthSbwzaPYTdBq5ujEa1G9dE1/1TycMBDAriadVrN+vFmEGzfsiI=
-X-Received: by 2002:a05:6512:21c:b0:52b:8610:a7fd with SMTP id
- 2adb3069b0e04-52b8980f6a3mr1349589e87.67.1717174868719; Fri, 31 May 2024
- 10:01:08 -0700 (PDT)
+	s=arc-20240116; t=1717174894; c=relaxed/simple;
+	bh=Yjqo3hlhlx9yKevXhDT1MNENp9AFIIad+z8zrRdLuUs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZmHNnTs8yfM63sRsdAiqby4yW0MxfVjWNDHk68XfBUt9mqPQNhndAp1uqzoJzf1KS+XFzyHSL7vyYHuPkCEz7bbJZFyBXZ+C7EfTXjkNZ9OGGcGGtAmiQsIdzDGLRy+Zt+kJzkwhP9QT7r4zIs09TlhNJqOOsXRUD4oW6wN/Vek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=faGKBjHC; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717174891; x=1748710891;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Yjqo3hlhlx9yKevXhDT1MNENp9AFIIad+z8zrRdLuUs=;
+  b=faGKBjHCipfYarK+ZtyukSvXvuDJ9nLLhH83jsdCuoPRrcXL4V7i0QDX
+   KcQiwrp5uQyql6B0usuSccvDUAwWVCaBBp+8kNBzoa9HAFcAxmoNAT5XN
+   +JJGQ08xnXTI2qFu4Y+uQ2Dg+as0/V0lfE6kIw/WdvPsxQJ6rXNmLtSKd
+   lYbjN+ROiJ22MB5zzstaDoLd8qphUrMi1tg32HsiKJIfFUK6bWka5ByAN
+   k2l/e+gl0Q63f2JqkE95EbNRxROzWFI3D9T3NYSGA84FCyKETVbdv6/9C
+   51n3RUX6zDAQGEmL6uDNqv40pUeHcMr6GEO37OxGqQ50jZpGdD2MqFNcj
+   w==;
+X-CSE-ConnectionGUID: RDNgaDEyT9i9nmGA53wnEA==
+X-CSE-MsgGUID: BdTQM0E6Sdu81V7bxIsj+A==
+X-IronPort-AV: E=McAfee;i="6600,9927,11089"; a="31223123"
+X-IronPort-AV: E=Sophos;i="6.08,204,1712646000"; 
+   d="scan'208";a="31223123"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 10:01:31 -0700
+X-CSE-ConnectionGUID: kwv4Ne6VSaWer/Fbg//lww==
+X-CSE-MsgGUID: UWrQa+u+SWK1A29eqgaOlw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,204,1712646000"; 
+   d="scan'208";a="36800309"
+Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
+  by orviesa008.jf.intel.com with ESMTP; 31 May 2024 10:01:29 -0700
+Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sD5d8-000HUA-1N;
+	Fri, 31 May 2024 17:01:26 +0000
+Date: Sat, 1 Jun 2024 01:01:26 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	don <zds100@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, mhiramat@kernel.org
+Subject: Re: [PATCH] tracing/fprobe: Support raw tracepoint events on modules
+Message-ID: <202406010034.fsNP9Rsq-lkp@intel.com>
+References: <171714888633.198965.13093663631481169611.stgit@devnote2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240531123512.21427-1-bp@kernel.org> <20240531123512.21427-11-bp@kernel.org>
-In-Reply-To: <20240531123512.21427-11-bp@kernel.org>
-From: Brian Gerst <brgerst@gmail.com>
-Date: Fri, 31 May 2024 13:00:55 -0400
-Message-ID: <CAMzpN2i4oJ-Dv0qO46Fd-DxNv5z9=x+vO+8g=47NiiAf8QEJYA@mail.gmail.com>
-Subject: Re: [PATCH 10/14] x86/alternative: Convert ALTERNATIVE_3()
-To: Borislav Petkov <bp@kernel.org>
-Cc: X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	"Borislav Petkov (AMD)" <bp@alien8.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <171714888633.198965.13093663631481169611.stgit@devnote2>
 
-On Fri, May 31, 2024 at 8:41=E2=80=AFAM Borislav Petkov <bp@kernel.org> wro=
-te:
->
-> From: "Borislav Petkov (AMD)" <bp@alien8.de>
->
-> Fixup label numbering too as the new macros have new label numbers.
->
-> Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-> ---
->  arch/x86/include/asm/alternative.h | 24 ++++--------------------
->  arch/x86/kernel/fpu/xstate.h       |  4 ++--
->  2 files changed, 6 insertions(+), 22 deletions(-)
->
-> diff --git a/arch/x86/include/asm/alternative.h b/arch/x86/include/asm/al=
-ternative.h
-> index 73ee18705ef1..0df99855e003 100644
-> --- a/arch/x86/include/asm/alternative.h
-> +++ b/arch/x86/include/asm/alternative.h
-> @@ -277,26 +277,10 @@ static inline int alternatives_text_reserved(void *=
-start, void *end)
->         N_ALTERNATIVE_2(oldinstr, newinstr_no, X86_FEATURE_ALWAYS,      \
->                       newinstr_yes, ft_flags)
->
-> -#define ALTERNATIVE_3(oldinsn, newinsn1, ft_flags1, newinsn2, ft_flags2,=
- \
-> -                       newinsn3, ft_flags3)                            \
-> -       OLDINSTR_3(oldinsn, 1, 2, 3)                                    \
-> -       ".pushsection .altinstructions,\"a\"\n"                         \
-> -       ALTINSTR_ENTRY(ft_flags1, 1)                                    \
-> -       ALTINSTR_ENTRY(ft_flags2, 2)                                    \
-> -       ALTINSTR_ENTRY(ft_flags3, 3)                                    \
-> -       ".popsection\n"                                                 \
-> -       ".pushsection .altinstr_replacement, \"ax\"\n"                  \
-> -       ALTINSTR_REPLACEMENT(newinsn1, 1)                               \
-> -       ALTINSTR_REPLACEMENT(newinsn2, 2)                               \
-> -       ALTINSTR_REPLACEMENT(newinsn3, 3)                               \
-> -       ".popsection\n"
-> -
-> -
-> -#define N_ALTERNATIVE_3(oldinst, newinst1, flag1, newinst2, flag2,     \
-> -                     newinst3, flag3)                                  \
-> -       N_ALTERNATIVE(N_ALTERNATIVE_2(oldinst, newinst1, flag1, newinst2,=
- flag2), \
-> -                     newinst3, flag3)
-> -
-> +#define ALTERNATIVE_3(oldinstr, newinstr1, ft_flags1, newinstr2, ft_flag=
-s2, \
-> +                       newinstr3, ft_flags3)                           \
-> +       N_ALTERNATIVE(N_ALTERNATIVE_2(oldinstr, newinstr1, ft_flags1, new=
-instr2, ft_flags2), \
-> +                     newinstr3, ft_flags3)
->  /*
->   * Alternative instructions for different CPU types or capabilities.
->   *
-> diff --git a/arch/x86/kernel/fpu/xstate.h b/arch/x86/kernel/fpu/xstate.h
-> index 05df04f39628..4fe8501efc6c 100644
-> --- a/arch/x86/kernel/fpu/xstate.h
-> +++ b/arch/x86/kernel/fpu/xstate.h
-> @@ -108,7 +108,7 @@ static inline u64 xfeatures_mask_independent(void)
->   *
->   * We use XSAVE as a fallback.
->   *
-> - * The 661 label is defined in the ALTERNATIVE* macros as the address of=
- the
-> + * The 771 label is defined in the ALTERNATIVE* macros as the address of=
- the
->   * original instruction which gets replaced. We need to use it here as t=
-he
->   * address of the instruction where we might get an exception at.
->   */
-> @@ -120,7 +120,7 @@ static inline u64 xfeatures_mask_independent(void)
->                      "\n"                                               \
->                      "xor %[err], %[err]\n"                             \
->                      "3:\n"                                             \
-> -                    _ASM_EXTABLE_TYPE_REG(661b, 3b, EX_TYPE_EFAULT_REG, =
-%[err]) \
-> +                    _ASM_EXTABLE_TYPE_REG(771b, 3b, EX_TYPE_EFAULT_REG, =
-%[err]) \
->                      : [err] "=3Dr" (err)                                =
- \
->                      : "D" (st), "m" (*st), "a" (lmask), "d" (hmask)    \
->                      : "memory")
-> --
-> 2.43.0
->
->
+Hi Masami,
 
-Just add a label at the start of this macro, so it doesn't depend on
-the internal labels of ALTERNATIVE().  Something like:
-    asm volatile("1:" ALTERNATIVE_3(XSAVE, \
-    ...
-     _ASM_EXTABLE_TYPE_REG(1b, 3b, EX_TYPE_EFAULT_REG, %[err]) \
-    ...
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on linus/master]
+[also build test ERROR on v6.10-rc1 next-20240531]
+[cannot apply to rostedt-trace/for-next rostedt-trace/for-next-urgent]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Masami-Hiramatsu-Google/tracing-fprobe-Support-raw-tracepoint-events-on-modules/20240531-175013
+base:   linus/master
+patch link:    https://lore.kernel.org/r/171714888633.198965.13093663631481169611.stgit%40devnote2
+patch subject: [PATCH] tracing/fprobe: Support raw tracepoint events on modules
+config: s390-defconfig (https://download.01.org/0day-ci/archive/20240601/202406010034.fsNP9Rsq-lkp@intel.com/config)
+compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project bafda89a0944d947fc4b3b5663185e07a397ac30)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240601/202406010034.fsNP9Rsq-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406010034.fsNP9Rsq-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from kernel/tracepoint.c:5:
+   In file included from include/linux/module.h:19:
+   In file included from include/linux/elf.h:6:
+   In file included from arch/s390/include/asm/elf.h:173:
+   In file included from arch/s390/include/asm/mmu_context.h:11:
+   In file included from arch/s390/include/asm/pgalloc.h:18:
+   In file included from include/linux/mm.h:2253:
+   include/linux/vmstat.h:500:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     500 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     501 |                            item];
+         |                            ~~~~
+   include/linux/vmstat.h:507:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     507 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     508 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:514:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     514 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   include/linux/vmstat.h:519:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     519 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     520 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:528:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     528 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     529 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+>> kernel/tracepoint.c:751:34: error: no member named '__start___tracepoints_ptrs' in 'struct module'
+     751 |                 for_each_tracepoint_range(mod->__start___tracepoints_ptrs,
+         |                                           ~~~  ^
+   5 warnings and 1 error generated.
 
 
-Brian Gerst
+vim +751 kernel/tracepoint.c
+
+   738	
+   739	void for_each_module_tracepoint(void (*fct)(struct tracepoint *tp, void *priv),
+   740					void *priv)
+   741	{
+   742		struct tp_module *tp_mod;
+   743		struct module *mod;
+   744	
+   745		if (!mod->num_tracepoints)
+   746			return;
+   747	
+   748		mutex_lock(&tracepoint_module_list_mutex);
+   749		list_for_each_entry(tp_mod, &tracepoint_module_list, list) {
+   750			mod = tp_mod->mod;
+ > 751			for_each_tracepoint_range(mod->__start___tracepoints_ptrs,
+   752				mod->tracepoints_ptrs + mod->num_tracepoints,
+   753				fct, priv);
+   754		}
+   755		mutex_unlock(&tracepoint_module_list_mutex);
+   756	}
+   757	#endif /* CONFIG_MODULES */
+   758	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
