@@ -1,118 +1,223 @@
-Return-Path: <linux-kernel+bounces-196984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 463588D6497
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:33:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2847A8D64AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:40:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED1A428B9BF
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:33:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CE131F24034
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:40:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B5333FB96;
-	Fri, 31 May 2024 14:33:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="X/sce4D7"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C8E555C3A;
+	Fri, 31 May 2024 14:40:17 +0000 (UTC)
+Received: from hs01.dakr.org (hs01.dk-develop.de [173.249.23.66])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0BBE17758
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 14:33:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AAEF41C69;
+	Fri, 31 May 2024 14:40:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.249.23.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717165989; cv=none; b=fkk/4vowVVyXRGD3U+0KgfgX87/L3VjSoOSk1ctRG8Ii0A1JCU6uBRRyf+emwYXFhQsQIljsQxrxg1R+7cp7rKKeaK+9GNgZH7PVO9Bd8wNw26snRy4wVsxc01PjN3EhxJIwQ+A81n67t7EkWBBDOZrNcALn3HOqtOpxS6uMnqk=
+	t=1717166416; cv=none; b=Wp19KFH/WtNleM6m7mR6gOitjhbMiKGFNV7c52yeLcSQ7kgvkGWqSm3PrJIbMH21cZd6MQJ3NoEKVQS8DgX9xogOj62eLv0ogIRXi90cPhr7D3sUPOBxOjZhweDneiY46R8nNrrZ8RW/a/9m/iRUOAVt15uLmPBrwncm2dQwKOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717165989; c=relaxed/simple;
-	bh=/ybGb71D4r00IUnnKMB3xndfFp9T+1YpgNy/AAMZhWI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Doy6VpXA9sxgJ0Fz8hHCecUTjO6yVxbW3+6M0U/04hIx7Q6n9JtmfkfOQajNN+PMF5eJACTif8qikDiNUKs1f0KrOxJYAC4+cLcyxiFP/ulmFkdnYZbCh/jXqJPzuCSFWpcWIX7n6t5QAItB27TWKnmC81l882f0f7Fr7pFF7w4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=X/sce4D7; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 0849740E01E8;
-	Fri, 31 May 2024 14:33:00 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id H4Oojfp3Dg1E; Fri, 31 May 2024 14:32:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1717165976; bh=YQhuTQMib3XYb0Fnoq/gWXTobkZBhfftmNFNgwns6Fg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=X/sce4D7j/NmOMCg+fBeikOfAkcD0Qee/Vkbr/Vyxaaa5RtDwX04EVriwZdri3tBa
-	 5PBHP4r+g94qvgk8D8VmZGUPqGI97eAZcpGV0gqsgasmJjYlVf86nvOYHTnbRsxeO7
-	 K7jGZn4vOHY2i7H4X8Si1m7v8w+ae/OwyspbdSHr1kJ/dTlCYXbWuO8k8qyHLwGvDX
-	 dOZ2zM+oLhUguvrt1nG4e9T8vf31WdO4yNf1J/2AgVlC5T6XJBSOSPs7Nc5iQN19HK
-	 u37UZWC8kMoK3sLjd9wQ4kpobNi+R18kiEgm34NLoCpBv6aZWF6/u/krENZihVW5BH
-	 Hv9fR3HbP8UiqDau535n1Rcxpq/a/fIKBmouaLoUKJ3boMqFng4nFU50F0ADQFPruJ
-	 3XOMOB8un8cSUj/zSPMT68w2ZDjh+qMdg94x9a+J6eHx8Uh76Zs6J34/BSpmcRCLhh
-	 PsNqF8zGLaaVGcJhUEh1La6CQLoVSkzj6/AxbaVBriYzjSWjAtlinxsZXyXbdfujEa
-	 4C9rjgI/qcZKeFGU8n30virDqXrXIK7Rnc1KHjzYcn3uQCWxUtNZdiv+l+9BbI/uiY
-	 dr9X6dV1EDElD8vV3yGqfZrf+hLeeOXH4stqlUSZaegR0vFMgW0y9MOzEOELNxcX6V
-	 rOLF0DPaUHF/c8wLu0cajbyE=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0257F40E01A1;
-	Fri, 31 May 2024 14:32:50 +0000 (UTC)
-Date: Fri, 31 May 2024 16:32:44 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Uros Bizjak <ubizjak@gmail.com>
-Cc: Borislav Petkov <bp@kernel.org>, X86 ML <x86@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH 02/14] x86/alternatives: Add nested alternatives macros
-Message-ID: <20240531143244.GGZlnfjCYalemAZ_Fu@fat_crate.local>
-References: <20240531123512.21427-1-bp@kernel.org>
- <20240531123512.21427-3-bp@kernel.org>
- <3a86f790-3194-4ea0-de8d-0af231ec7525@gmail.com>
+	s=arc-20240116; t=1717166416; c=relaxed/simple;
+	bh=xlO1Mp3KBU+sq/6oeFxX6/VD7mrtgTn6P2Yuj2MlJiA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZaWzj8KSWYQwkgpPSZX7nQ1U+DDCPqT8hllVg7G7+WAWYZerVqwOxPKKiPv7HWZIWak+wtakC7ZxP7FAXH4WHDGKl3ChRymUiniRlsDihrKDhwe5muBY5X/bCf1ryCjZnFQU/i3DgdNrgalrd9qh9d8b3V6chL3x1Zxgoka0BAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dakr.org; spf=pass smtp.mailfrom=dakr.org; arc=none smtp.client-ip=173.249.23.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dakr.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dakr.org
+Message-ID: <38f11766-b601-410b-9025-1e6b4c2203e7@dakr.org>
+Date: Fri, 31 May 2024 16:34:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <3a86f790-3194-4ea0-de8d-0af231ec7525@gmail.com>
+Subject: Re: [RFC PATCH v2 00/30] Rust abstractions for VFS
+To: Wedson Almeida Filho <wedsonaf@gmail.com>
+Cc: Dave Chinner <david@fromorbit.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Matthew Wilcox <willy@infradead.org>,
+ Kent Overstreet <kent.overstreet@gmail.com>,
+ Christian Brauner <brauner@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-fsdevel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240514131711.379322-1-wedsonaf@gmail.com>
+Content-Language: en-US
+From: Danilo Krummrich <me@dakr.org>
+In-Reply-To: <20240514131711.379322-1-wedsonaf@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, May 31, 2024 at 04:30:31PM +0200, Uros Bizjak wrote:
-> Please don't resurrect the %P modifier, use %c instead.
+Hi Wedson,
+
+On 5/14/24 15:16, Wedson Almeida Filho wrote:
+> This series introduces Rust abstractions that allow read-only file systems to
+> be written in Rust.
 > 
-> > +
-> >   /*
-> >    * Like alternative_call, but there are two features and respective functions.
-> >    * If CPU has feature2, function2 is used.
-> > @@ -307,6 +376,15 @@ static inline int alternatives_text_reserved(void *start, void *end)
-> >   		: [old] "i" (oldfunc), [new1] "i" (newfunc1),		\
-> >   		  [new2] "i" (newfunc2), ## input)
-> > +#define n_alternative_call_2(oldfunc, newfunc1, ft_flags1, newfunc2, ft_flags2,   \
-> > +			   output, input...)				      \
-> > +	asm_inline volatile (N_ALTERNATIVE_2("call %P[old]", "call %P[new1]", ft_flags1,\
-> > +		"call %P[new2]", ft_flags2)				      \
-> > +		: output, ASM_CALL_CONSTRAINT				      \
-> > +		: [old] "i" (oldfunc), [new1] "i" (newfunc1),		      \
-> > +		  [new2] "i" (newfunc2), ## input)
+> There are three file systems implementations using these abstractions
+> abstractions: ext2, tarfs, and puzzlefs. The first two are part of this series.
 > 
-> Here too, %P should be avoided in favor of %c.
+> Rust file system modules can be declared with the `module_fs` macro and are
+> required to implement the following functions (which are part of the
+> `FileSystem` trait):
+> 
+>      fn fill_super(
+>          sb: &mut SuperBlock<Self, sb::New>,
+>          mapper: Option<inode::Mapper>,
+>      ) -> Result<Self::Data>;
+> 
+>      fn init_root(sb: &SuperBlock<Self>) -> Result<dentry::Root<Self>>;
+> 
+> They can optionally implement the following:
+> 
+>      fn read_xattr(
+>          _dentry: &DEntry<Self>,
+>          _inode: &INode<Self>,
+>          _name: &CStr,
+>          _outbuf: &mut [u8],
+>      ) -> Result<usize>;
+> 
+>      fn statfs(_dentry: &DEntry<Self>) -> Result<Stat>;
+> 
+> They may also choose the type of the data they can attach to superblocks and/or
+> inodes.
+> 
+> Lastly, file systems can implement inode, file, and address space operations
+> and attach them to inodes when they're created, similar to how C does it. They
+> can get a ro address space operations table from an implementation of iomap
+> operations, to be used with generic ro file operations.
+> 
+> A git tree is available here:
+>      git://github.com/wedsonaf/linux.git vfs-v2
+> 
+> Web:
+>      https://github.com/wedsonaf/linux/commits/vfs-v2
 
-Yeah, will do.
+This branch indicates that this patch series might have a few more dependencies
+that are not upstream yet, e.g. [1].
 
-We probably should update our patch checking scripts to catch such
-things in the future.
+Do you intend to send them in a separate series (soon)? In case they were already
+submitted somewhere and I just failed to find them, please be so kind an provide
+me with a pointer.
 
-/me adds to todo.
+[1] https://github.com/wedsonaf/linux/commit/96ef0376887f4194ebad608f9943eb41108cf255
 
-Thx.
+- Danilo
 
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+> 
+> ---
+> 
+> Changes in v2:
+> 
+> - Rebased to latest rust-next tree
+> - Removed buffer heads
+> - Added iomap support
+> - Removed `_pin` field from `Registration` as it's not needed anymore
+> - Renamed sample filesystem to match the module's name
+> - Using typestate instead of a separate type for superblock/new-superblock
+> - Created separate submodules for superblocks, inodes, dentries, and files
+> - Split out operations from FileSystem to inode/file/address_space ops, similar to how C does it
+> - Removed usages of folio_set_error
+> - Removed UniqueFolio, for now reading blocks from devices via the pagecache
+> - Changed map() to return the entire folio if not in highmem
+> - Added support for unlocking the folio asynchronously
+> - Added `from_raw` to all new ref-counted types
+> - Added explicit types in calls to cast()
+> - Added typestate to folio
+> - Added support for implementing get_link
+> - Fixed data race when reading inode->i_state
+> - Added nofs scope support during allocation
+> - Link to v1: https://lore.kernel.org/rust-for-linux/20231018122518.128049-1-wedsonaf@gmail.com/
+> 
+> ---
+> 
+> Wedson Almeida Filho (30):
+>    rust: fs: add registration/unregistration of file systems
+>    rust: fs: introduce the `module_fs` macro
+>    samples: rust: add initial ro file system sample
+>    rust: fs: introduce `FileSystem::fill_super`
+>    rust: fs: introduce `INode<T>`
+>    rust: fs: introduce `DEntry<T>`
+>    rust: fs: introduce `FileSystem::init_root`
+>    rust: file: move `kernel::file` to `kernel::fs::file`
+>    rust: fs: generalise `File` for different file systems
+>    rust: fs: add empty file operations
+>    rust: fs: introduce `file::Operations::read_dir`
+>    rust: fs: introduce `file::Operations::seek`
+>    rust: fs: introduce `file::Operations::read`
+>    rust: fs: add empty inode operations
+>    rust: fs: introduce `inode::Operations::lookup`
+>    rust: folio: introduce basic support for folios
+>    rust: fs: add empty address space operations
+>    rust: fs: introduce `address_space::Operations::read_folio`
+>    rust: fs: introduce `FileSystem::read_xattr`
+>    rust: fs: introduce `FileSystem::statfs`
+>    rust: fs: introduce more inode types
+>    rust: fs: add per-superblock data
+>    rust: fs: allow file systems backed by a block device
+>    rust: fs: allow per-inode data
+>    rust: fs: export file type from mode constants
+>    rust: fs: allow populating i_lnk
+>    rust: fs: add `iomap` module
+>    rust: fs: add memalloc_nofs support
+>    tarfs: introduce tar fs
+>    WIP: fs: ext2: add rust ro ext2 implementation
+> 
+>   fs/Kconfig                        |   2 +
+>   fs/Makefile                       |   2 +
+>   fs/rust-ext2/Kconfig              |  13 +
+>   fs/rust-ext2/Makefile             |   8 +
+>   fs/rust-ext2/defs.rs              | 173 +++++++
+>   fs/rust-ext2/ext2.rs              | 551 +++++++++++++++++++++
+>   fs/tarfs/Kconfig                  |  15 +
+>   fs/tarfs/Makefile                 |   8 +
+>   fs/tarfs/defs.rs                  |  80 +++
+>   fs/tarfs/tar.rs                   | 394 +++++++++++++++
+>   rust/bindings/bindings_helper.h   |  11 +
+>   rust/helpers.c                    | 182 +++++++
+>   rust/kernel/block.rs              |  10 +-
+>   rust/kernel/error.rs              |   8 +-
+>   rust/kernel/file.rs               | 251 ----------
+>   rust/kernel/folio.rs              | 305 ++++++++++++
+>   rust/kernel/fs.rs                 | 492 +++++++++++++++++++
+>   rust/kernel/fs/address_space.rs   |  90 ++++
+>   rust/kernel/fs/dentry.rs          | 136 ++++++
+>   rust/kernel/fs/file.rs            | 607 +++++++++++++++++++++++
+>   rust/kernel/fs/inode.rs           | 780 ++++++++++++++++++++++++++++++
+>   rust/kernel/fs/iomap.rs           | 281 +++++++++++
+>   rust/kernel/fs/sb.rs              | 194 ++++++++
+>   rust/kernel/lib.rs                |   6 +-
+>   rust/kernel/mem_cache.rs          |   2 -
+>   rust/kernel/user.rs               |   1 -
+>   samples/rust/Kconfig              |  10 +
+>   samples/rust/Makefile             |   1 +
+>   samples/rust/rust_rofs.rs         | 202 ++++++++
+>   scripts/generate_rust_analyzer.py |   2 +-
+>   30 files changed, 4555 insertions(+), 262 deletions(-)
+>   create mode 100644 fs/rust-ext2/Kconfig
+>   create mode 100644 fs/rust-ext2/Makefile
+>   create mode 100644 fs/rust-ext2/defs.rs
+>   create mode 100644 fs/rust-ext2/ext2.rs
+>   create mode 100644 fs/tarfs/Kconfig
+>   create mode 100644 fs/tarfs/Makefile
+>   create mode 100644 fs/tarfs/defs.rs
+>   create mode 100644 fs/tarfs/tar.rs
+>   delete mode 100644 rust/kernel/file.rs
+>   create mode 100644 rust/kernel/folio.rs
+>   create mode 100644 rust/kernel/fs.rs
+>   create mode 100644 rust/kernel/fs/address_space.rs
+>   create mode 100644 rust/kernel/fs/dentry.rs
+>   create mode 100644 rust/kernel/fs/file.rs
+>   create mode 100644 rust/kernel/fs/inode.rs
+>   create mode 100644 rust/kernel/fs/iomap.rs
+>   create mode 100644 rust/kernel/fs/sb.rs
+>   create mode 100644 samples/rust/rust_rofs.rs
+> 
+> 
+> base-commit: 183ea65d1fcd71039cf4d111a22d69c337bfd344
 
