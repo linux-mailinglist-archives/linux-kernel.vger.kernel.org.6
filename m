@@ -1,87 +1,86 @@
-Return-Path: <linux-kernel+bounces-196219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32F268D58F9
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 05:23:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2124A8D58FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 05:23:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE9232882AB
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 03:23:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD15B288A37
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 03:23:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B0E678C75;
-	Fri, 31 May 2024 03:23:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57C1D7BB0A;
+	Fri, 31 May 2024 03:23:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="au25WwJW"
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2046.outbound.protection.outlook.com [40.107.96.46])
+	dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b="iAKpc4Hi"
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2076.outbound.protection.outlook.com [40.107.117.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C856E77F08;
-	Fri, 31 May 2024 03:23:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EDCA79945
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 03:23:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.76
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717125818; cv=fail; b=usC1A9dgTiYDN2pDO+AQBAdhkD+MQ3atyuzqeR/ZaXtNuDqsAjMa/TxQnS9ej4EkWrjcZFaT0mEHRPgdVc5AJLp3YHQdxr0+Xn0msbyAt6ZigCmS7Oxp4I9aj8dQaoJrgj6nx1X9HUDtIqMttvzRZb0N9Bvh2TD4Ab2v6qa0+4w=
+	t=1717125822; cv=fail; b=huoC7sO6p/eN9Svyeoeq/Gm25L5QJ+nTYtd8mM31+Rq9aqzrzeZctYoHQBrJaFejKrkoRXKv9z8di/oE1dUQn4vEKOJ2kTiwBHAT7MKsNfX3ulyDdCqGYI9lGScoV0URQsJ8firVxAf1ZzO3eyIJTZFR1MtR3ij4setc+rZDYSw=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717125818; c=relaxed/simple;
-	bh=ZwgiBZqaQI88yroGu5N/MjGk/2gYSLKq3x2Z4iIFJRc=;
+	s=arc-20240116; t=1717125822; c=relaxed/simple;
+	bh=9/w1ecyKo7QG+wXHgs65/ovR1/RiU3LeR2ryBtNGGHE=;
 	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bubpBcK5viKfzX0Id/VOOWfRBd79q2oE7Rc411fFeW4oYGvQ7fo1jF6keMXDcW0YcRewhU6Tr9ZSEzPO8+PtAhDCoSOigczigjeS4YnO/pRdjmVZh3uCluuyfzZoa14XfYuqQepUZZLF9HxOpToKpbbGf1VpKIbZ8ZuLISstcJY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=au25WwJW; arc=fail smtp.client-ip=40.107.96.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=YKykVjQl81DHRzXiKqxEKQRla/qv9+AZbQWHq4RMwKdVpBzXoHWDGIG2Tsnd59WsaSq96v8oKW4tkVSWwqlFc7aqgGbAtX8Jxg/o1PbDunjo5Txr90yDvUUWxlzojMn3ZP3d0qGuoTb3F9TUlgcI5PF+T9lbHqHg7/H8JwoQTN8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com; spf=pass smtp.mailfrom=oppo.com; dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b=iAKpc4Hi; arc=fail smtp.client-ip=40.107.117.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oppo.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=UUg+QoQHupTuXCNM3MFhMvwV9w/BUdnm568RKXNuh5sY0Fi4x4zq0xsu+YO2EfW1coICRuIZT9BGvXNwc5+GTtZmY48lkjMJJkXq+04H9ECe0m03q3795nmF++r/otY0uJxVDhyNzQmzV1D8RqUqltPCtP3poqMR9BCCWl3Rl4lKxQbm6IXpG406cpgBlUDRr8A8SyBV3nzh14AxVHmaMISeAW23lCpWhLnbOsHzg4Op57AXxWCGgaEPn+1OceiwuCpFn4tKzB8s2MRPUwJAe3o7THj+4mt79HtONxDF98VjqLe3ElNmREyKIyFbWLfacyPI9Pxp9VUiiCgjEd1//g==
+ b=OkBKu6ZzzG61y2FtvpGDNgDx944UIR71ldF+0xC+AR1PYalHPjIoLurNXVy8TZncPcHYeJlh0SBYw9Tw5BPmNrQeF2zb1DHAvBTFK5n9eWe0JEGZucvNfQ2ApEUSzDJ97+3AwBoQPcoyOkaYaO3nKDBZIY1hWpcIt5yhFiLjwivLzhFfSY5WFl7xjZpSyDK8dtGHuAa4Kuh0fpUJmxbcM8jX+nXHEc4+nO3vVciX/jXSQGbia+aMKPEZDGpR6u1jEK6/+fFzioR1PMCeGt9uR1P1Nis8RYygTewtheiiQx/i5Uj1ZFta8EadP3UtmYeWrlKDbMTRzU4RVxH6PovJLQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RaEz9Vd5MvS4r6jxNvhE8FeZrfx+dxdrJZwauFqwr7Y=;
- b=PcXRWd8ubftPIOkQO2A3Pzg9NFXxCzv95RH+xelKhivcEgPClgOXtAPcnvA12Bxdk+6I92LxqrIcQyDtoIOGz69wBm/n4doWmYghz72Gn244xhiVbePdiL9+pBW4fFHzk6l21/uBJg9ombl8xJEOKbu1LRXAkXGFgef6mLbQzk2b4+NAsAhIzVM0+SwufruJ/dyXuLXCKhBi0txu3Yw5KEx3GwRMQ40Cro4c2owii8DkcTKGJZMEhCmVGqgjo2c3dE2AkooR4MDHh+Dwi7mVaqkZwMeshRwpPzcgnEWWW5LY5imzYoimMZZO+5BUJ4hxHN8lANB1ymW56Y5XPt3eow==
+ bh=RGys5S5HSSNEIPcp9ogvGbsmm8TME5ZfwLcta3OhRfg=;
+ b=AcZcLlhDDv1Yi5D0hmMGpxNwR+Y4d1vD850VEFYOh7M5d7YQHGFJY7jnSLtqxCLmbhPd0hUMX4KabEaWuE3loWeSunaaoEwe8uD6WZ8Q757iX0lYonlTr++Gi/DBwixiT0Ln6TPuWcFMzABOUaP65STR5yw2hV2an0f0neXAZu/XbWpLWrI9SKlervyC+Gtjr6NfNC97baZKp+MrWPnadA0qO98LFIKedJ8TZ64aD+QwjvGgCmAAE/q7ZvAXuvelPxeQuITlR15jdumrarjbqA9H3iesrkBWhGbkK7hv4VkhGyzgfTzTNHrWVLzlyZatDfN91moSIFhBA/QFApHrtQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=redhat.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ 58.252.5.68) smtp.rcpttodomain=unisoc.com smtp.mailfrom=oppo.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=oppo.com;
  dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oppo.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RaEz9Vd5MvS4r6jxNvhE8FeZrfx+dxdrJZwauFqwr7Y=;
- b=au25WwJWQhHssjDkgz2903XLUmpxSOWVGZwHHZv2VxLCYYmDNZFCTL4PMgDXiDiL1AdNx5gWiMBMPKKmOiHlKKPWMViVhlZj1cL/BU9Y4z00KRdvNTLJsKKLKzaP/B65G90YOvb8zS5Bzru+CVTvV7jl3GgmGoNoBdo8FiPq/yE=
-Received: from SJ0PR03CA0060.namprd03.prod.outlook.com (2603:10b6:a03:33e::35)
- by PH8PR12MB7028.namprd12.prod.outlook.com (2603:10b6:510:1bf::15) with
+ bh=RGys5S5HSSNEIPcp9ogvGbsmm8TME5ZfwLcta3OhRfg=;
+ b=iAKpc4Him9sblJt/Y91CUgSQhRiBXnyBriqL0/7GW/4NQzJWByxRLU7gZNeYOXWnFh8Czooxx/7TzKmCUzl9v2OpSj1LOpqIPQ3iUTO7XbVaeFRRBGuL4Xq+RscbeRl3XWADTsI1t5ZrMYu4RReLRME7uqJ7e7JUdCD45YvfT40=
+Received: from PS2PR02CA0009.apcprd02.prod.outlook.com (2603:1096:300:41::21)
+ by SEZPR02MB6773.apcprd02.prod.outlook.com (2603:1096:101:199::14) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.19; Fri, 31 May
- 2024 03:23:32 +0000
-Received: from CO1PEPF000042AD.namprd03.prod.outlook.com
- (2603:10b6:a03:33e:cafe::1e) by SJ0PR03CA0060.outlook.office365.com
- (2603:10b6:a03:33e::35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.30 via Frontend
- Transport; Fri, 31 May 2024 03:23:32 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CO1PEPF000042AD.mail.protection.outlook.com (10.167.243.42) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7633.15 via Frontend Transport; Fri, 31 May 2024 03:23:32 +0000
-Received: from localhost (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Thu, 30 May
- 2024 22:23:27 -0500
-Date: Thu, 30 May 2024 22:22:49 -0500
-From: Michael Roth <michael.roth@amd.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Sean Christopherson
-	<seanjc@google.com>, <linux-coco@lists.linux.dev>, <jroedel@suse.de>,
-	<thomas.lendacky@amd.com>, <vkuznets@redhat.com>, <pgonda@google.com>,
-	<rientjes@google.com>, <tobin@ibm.com>, <bp@alien8.de>, <vbabka@suse.cz>,
-	<alpergun@google.com>, <ashish.kalra@amd.com>, <nikunj.dadhania@amd.com>,
-	<pankaj.gupta@amd.com>, <liam.merwick@oracle.com>, <papaluri@amd.com>
-Subject: Re: [PULL 00/19] KVM: Add AMD Secure Nested Paging (SEV-SNP)
- Hypervisor Support
-Message-ID: <6nby33glecw46wrdws7vuokrqz4b72evrzdujcrsm6pujo62b6@xoxstkzsvwrj>
-References: <20240510211024.556136-1-michael.roth@amd.com>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.36; Fri, 31 May
+ 2024 03:23:34 +0000
+Received: from HK3PEPF0000021C.apcprd03.prod.outlook.com
+ (2603:1096:300:41:cafe::ee) by PS2PR02CA0009.outlook.office365.com
+ (2603:1096:300:41::21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.23 via Frontend
+ Transport; Fri, 31 May 2024 03:23:34 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 58.252.5.68)
+ smtp.mailfrom=oppo.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=oppo.com;
+Received-SPF: Pass (protection.outlook.com: domain of oppo.com designates
+ 58.252.5.68 as permitted sender) receiver=protection.outlook.com;
+ client-ip=58.252.5.68; helo=mail.oppo.com; pr=C
+Received: from mail.oppo.com (58.252.5.68) by
+ HK3PEPF0000021C.mail.protection.outlook.com (10.167.8.38) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7633.15 via Frontend Transport; Fri, 31 May 2024 03:23:33 +0000
+Received: from oppo.com (172.16.40.118) by mailappw31.adc.com (172.16.56.198)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 31 May
+ 2024 11:23:24 +0800
+Date: Fri, 31 May 2024 11:23:19 +0800
+From: hailong liu <hailong.liu@oppo.com>
+To: zhaoyang.huang <zhaoyang.huang@unisoc.com>
+CC: Andrew Morton <akpm@linux-foundation.org>, Uladzislau Rezki
+	<urezki@gmail.com>, Christoph Hellwig <hch@infradead.org>, Lorenzo Stoakes
+	<lstoakes@gmail.com>, Baoquan He <bhe@redhat.com>, Thomas Gleixner
+	<tglx@linutronix.de>, <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+	Zhaoyang Huang <huangzhaoyang@gmail.com>, <steve.kang@unisoc.com>
+Subject: Re: [PATCHv3] mm: fix incorrect vbq reference in
+ purge_fragmented_block
+Message-ID: <20240531032319.n2zqerooq7qe7osk@oppo.com>
+References: <20240531030520.1615833-1-zhaoyang.huang@unisoc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,202 +89,158 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20240510211024.556136-1-michael.roth@amd.com>
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
+In-Reply-To: <20240531030520.1615833-1-zhaoyang.huang@unisoc.com>
+X-ClientProxiedBy: mailappw31.adc.com (172.16.56.198) To mailappw31.adc.com
+ (172.16.56.198)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000042AD:EE_|PH8PR12MB7028:EE_
-X-MS-Office365-Filtering-Correlation-Id: ad5fd8c7-3ce2-4e45-c7bf-08dc81210c77
+X-MS-TrafficTypeDiagnostic: HK3PEPF0000021C:EE_|SEZPR02MB6773:EE_
+X-MS-Office365-Filtering-Correlation-Id: b5486bc3-1c7b-43bb-231c-08dc81210d3d
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|7416005|36860700004|82310400017|1800799015|376005;
+	BCL:0;ARA:13230031|1800799015|376005|36860700004|7416005|82310400017;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ktLJFypMUenAj332d1Gne1pfumPCb5647XBlcyx7PrET5Vem/vGd85eJvkC5?=
- =?us-ascii?Q?M4TJZFSdw+b7MdO5kc6kJVzrqeZqc7p7UnJYFW3ax8v4YbeSG4mM0OUwgff7?=
- =?us-ascii?Q?zyLwXUbn5TW0Z4LQHuJwUa0SvuekOcwsZHHhR3yYmXrpMUh7pchxO9IjlT44?=
- =?us-ascii?Q?hG8S6A52t+O6SisxHmLjFZax6xpPCoaEIunfn6OR3RECiLuVRJEvqadfdgLW?=
- =?us-ascii?Q?+RFUOcyoNDfwACfn6vtVVUM98JsCUnrDZg/AccFuS3tTSIt9kNH3KXhwcmXR?=
- =?us-ascii?Q?JondMPZGyz3ygZune4ui68/GGU4+X3Qu/zPH5UIl7WsEnEtY9lk9VXsyXUg4?=
- =?us-ascii?Q?pWqBBcX+PradVqZXut1Xsp8HGJaj0VIR6r0W92DLSRjvouKrW3I/zGj85KmG?=
- =?us-ascii?Q?qphDg+p5moK/rx1LtsDPPT2gPjOwJ0DhMxxK1tpHeT7C2ty4FCElOK5g0/8+?=
- =?us-ascii?Q?iTXbP7CYuL23n8YV2CEk4CU8EDy8tTqRWprg14ufYYE8DOr9q3WOLoBHIoo4?=
- =?us-ascii?Q?zG26MMwxVcVGfabinFPfH4JgWvuCGXwOkV7fzzF9o0qjpeyfQQUM/MgmDBSi?=
- =?us-ascii?Q?7fLBENpbQaQ7bcHPixlcBe+nNh6yhy4k5fynwAe5DRO+NidBoatcC8vIV6zk?=
- =?us-ascii?Q?n4wXuJZIMfI+fFBvc6jW0gxDfB9b3ucQvnPgAyeq3y0wieayeCrPuzj5u0fi?=
- =?us-ascii?Q?9bB+u03AUuO0QgLAYic5MW59nc96ftbnDNcK3iiJMlKEfi94xcQjeUW4VHVJ?=
- =?us-ascii?Q?7LpHvWUwXdn2ZEO+V3g1ZchGC6diD/ZwBUa9sWdqZA3buANHtOPvqFFHK4qp?=
- =?us-ascii?Q?FykK7BlT3ZZylWlE1HEi9tryNzPdGULH6UIYyT/Ano8aQFUU8iJUK+SHXFRA?=
- =?us-ascii?Q?mdUGdXS1hfRcBb5v/cEmWC0jMBxv8rRIkjLeNHm2zrFLqZ+YpbYy8on/zV0n?=
- =?us-ascii?Q?jE7vmYdsoyo+eo9G3rMaLDpcjeGqMF/QkFQq1H+U8QC0bmAL10I0d7qE6SED?=
- =?us-ascii?Q?dn5zLQVQN64GlBRYai4xOuXFy0Z3nPUyx9kfUP4gkgDUyWsGc/NlnslCuE1f?=
- =?us-ascii?Q?rdBDH7lDyvF72mm4SrH/W9E4X++ek6aOY2SU35gObae91SV7r1gxzpU7TKtC?=
- =?us-ascii?Q?awVKc11bmNxkRssRl9EPffvB8GnoFBgLCNSeLv7Mm97pBAcnFiMPqGQuw3z1?=
- =?us-ascii?Q?1hIxs6XmLEnguxu6OY3h8yV89J60uv0lxlSP3KtqrmH0tSZRG8+MNQhiOToQ?=
- =?us-ascii?Q?cEyHj4gO3tRIb8CaIf6Y5dAZVpQrr947ma1OGLncqXK5WHr+QWH26JOmF4ht?=
- =?us-ascii?Q?cyrA7ME9eZUU7+fKBsMEeKi7NurWcuIToudPSqhOg+z3eQ=3D=3D?=
+	=?us-ascii?Q?ydoR9C1C6f+Sm5824gRvX/ZzU+qldWGCl13bSicGIbDyf0ww4PrcUxSbQ7RQ?=
+ =?us-ascii?Q?fc9R4UWehLObSfWgL/dOXRfxBmUilio1IahF1HSz8IAbzhDLyuDWxDHt+Q+z?=
+ =?us-ascii?Q?o/xX5r/sEHNXzb2G/wCcpIAzjc+wmtXheg0H58qQVNzz5P+FIRxK+gfV8Fi+?=
+ =?us-ascii?Q?J6wqx2ZqF9DrbloXuNalFtV3Ge5fLAKLuoSFWPjSqw1arycF0qwzcS76G1/o?=
+ =?us-ascii?Q?CqJkkc6xzlNQoegMrTn6JMwbiTBtnqFdTsetSwq26QXXcMgbcBGZqbo4PDaU?=
+ =?us-ascii?Q?HaeKPjn8jAma5U0b9Bd6rs1imUyrGVllM/1yLjAQBWEalw/mD5XN7orIibv9?=
+ =?us-ascii?Q?O3pqyK4IbQfUF53jp6i+2d7zh6sc+9Ah/hLezWD2c9MP2USsiZBR0r3mAg69?=
+ =?us-ascii?Q?vM7c5aTMLpqxRAyiAfiphfrXXQWWnDoUn+HUBIjZAnJkb2W1EwVVEOczVKjy?=
+ =?us-ascii?Q?ur8CTpG+JVhz/06FY0gSAckAvaYV8k3R/ZYOkztymfg1+iaVMVUXliRKr9rx?=
+ =?us-ascii?Q?bD77y+3OErc64k4lkfWlsqrPb32lQ9bqknQ26WH9hgwhFVemIGFw7BguVqiN?=
+ =?us-ascii?Q?NqTQ9MvLtPbFF4DuOpH3xe8EpIxlalMPQAlYhA+TrRL3wOaNRJXPr8SQJGUc?=
+ =?us-ascii?Q?iQ/k2K9Fqhb+AiPZQX36DHPFzvujWzcHqkvEUG+XlSGfN+KiFZ34wAok6mE+?=
+ =?us-ascii?Q?nGd6S+31pqGUgIr/8n9f7xSaGb8V6UopjM8AntP7WOC61SJOfAf7uPSjUqB3?=
+ =?us-ascii?Q?dVTQE4ud7XBovusx1cpxdiat/is+JNy7cDacqMIZvELyFhD9TP1H8y7iio4K?=
+ =?us-ascii?Q?uYqI/P8pVIgrJm6PY9SJ/EVsakKxo8bkq5n9Ie3zigxvIPhwKgb0HJy3OR7L?=
+ =?us-ascii?Q?rz0xJBfY6Ji0fCq9kmaXzMySLWKvImUPBaE9VIHGz5ms5DThFXT3qEhAqGei?=
+ =?us-ascii?Q?gRsrWy6laL8p0wGU5pTeDnNig7bBSkIJc7nlG0i9hWHDGrZ/kpwFfOJ9ZVVc?=
+ =?us-ascii?Q?o/Cdioj0EnJl/aGHqrjZIEmXH6Jd3VUXYiSh1/u6GTcHWocJtmtiPrmFfRJX?=
+ =?us-ascii?Q?SYik9NOPnBRTuAbs7Qszbd7O07+H/fUuRtPy8FPzb1obOkmlO7b7Gsenze39?=
+ =?us-ascii?Q?EAp7m/CUBJ2NY+m1anwxH6azr2PzhzW9+YhcehbB2/GS75wLTQHOQAuBGC0f?=
+ =?us-ascii?Q?rMnrQaNifX+3+IiVUfNml4jd0hcrjb1QiSxtqIXfL5CopPXsehA3BYXUcJkb?=
+ =?us-ascii?Q?5GhSEOzmx0bapzKOYf75MC6a1w3fFO6jZjA96ZNebgWljLHOJakJFdT0Z2uC?=
+ =?us-ascii?Q?1DcGmAYLGpxRbGDkua7sgiQp?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(7416005)(36860700004)(82310400017)(1800799015)(376005);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 May 2024 03:23:32.1129
+	CIP:58.252.5.68;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.oppo.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(1800799015)(376005)(36860700004)(7416005)(82310400017);DIR:OUT;SFP:1101;
+X-OriginatorOrg: oppo.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 May 2024 03:23:33.4219
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ad5fd8c7-3ce2-4e45-c7bf-08dc81210c77
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-Network-Message-Id: b5486bc3-1c7b-43bb-231c-08dc81210d3d
+X-MS-Exchange-CrossTenant-Id: f1905eb1-c353-41c5-9516-62b4a54b5ee6
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f1905eb1-c353-41c5-9516-62b4a54b5ee6;Ip=[58.252.5.68];Helo=[mail.oppo.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	CO1PEPF000042AD.namprd03.prod.outlook.com
+	HK3PEPF0000021C.apcprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7028
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR02MB6773
 
-On Fri, May 10, 2024 at 04:10:05PM -0500, Michael Roth wrote:
-> Hi Paolo,
-> 
-> This pull request contains v15 of the KVM SNP support patchset[1] along
-> with fixes and feedback from you and Sean regarding PSC request processing,
-> fast_page_fault() handling for SNP/TDX, and avoiding uncessary
-> PSMASH/zapping for KVM_EXIT_MEMORY_FAULT events. It's also been rebased
-> on top of kvm/queue (commit 1451476151e0), and re-tested with/without
-> 2MB gmem pages enabled.
+On Fri, 31. May 11:05, zhaoyang.huang wrote:
+> From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
+>
+> vmalloc area runs out in our ARM64 system during an erofs test as
+> vm_map_ram failed[1]. By following the debug log, we find that
+> vm_map_ram()->vb_alloc() will allocate new vb->va which corresponding
+> to 4MB vmalloc area as list_for_each_entry_rcu returns immediately
+> when vbq->free->next points to vbq->free. That is to say, 65536 times
+> of page fault after the list's broken will run out of the whole
+> vmalloc area. This should be introduced by one vbq->free->next point to
+> vbq->free which makes list_for_each_entry_rcu can not iterate the list
+> and find the BUG.
+>
+> [1]
+> PID: 1        TASK: ffffff80802b4e00  CPU: 6    COMMAND: "init"
+>  #0 [ffffffc08006afe0] __switch_to at ffffffc08111d5cc
+>  #1 [ffffffc08006b040] __schedule at ffffffc08111dde0
+>  #2 [ffffffc08006b0a0] schedule at ffffffc08111e294
+>  #3 [ffffffc08006b0d0] schedule_preempt_disabled at ffffffc08111e3f0
+>  #4 [ffffffc08006b140] __mutex_lock at ffffffc08112068c
+>  #5 [ffffffc08006b180] __mutex_lock_slowpath at ffffffc08111f8f8
+>  #6 [ffffffc08006b1a0] mutex_lock at ffffffc08111f834
+>  #7 [ffffffc08006b1d0] reclaim_and_purge_vmap_areas at ffffffc0803ebc3c
+>  #8 [ffffffc08006b290] alloc_vmap_area at ffffffc0803e83fc
+>  #9 [ffffffc08006b300] vm_map_ram at ffffffc0803e78c0
+>
+> Fixes: fc1e0d980037 ("mm/vmalloc: prevent stale TLBs in fully utilized blocks")
+>
+> Suggested-by: Hailong.Liu <hailong.liu@oppo.com>
+> Signed-off-by: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
+> ---
+> v2: introduce cpu in vmap_block to record the right CPU number
+> v3: use get_cpu/put_cpu to prevent schedule between core
+> ---
+> ---
+>  mm/vmalloc.c | 12 ++++++++----
+>  1 file changed, 8 insertions(+), 4 deletions(-)
+>
+> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> index 22aa63f4ef63..ecdb75d10949 100644
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -2458,6 +2458,7 @@ struct vmap_block {
+>  	struct list_head free_list;
+>  	struct rcu_head rcu_head;
+>  	struct list_head purge;
+> +	unsigned int cpu;
+>  };
+>
+>  /* Queue of free and dirty vmap blocks, for allocation and flushing purposes */
+> @@ -2586,10 +2587,12 @@ static void *new_vmap_block(unsigned int order, gfp_t gfp_mask)
+>  		return ERR_PTR(err);
+>  	}
+>
+> +	vb->cpu = get_cpu();
+>  	vbq = raw_cpu_ptr(&vmap_block_queue);
+>  	spin_lock(&vbq->lock);
+>  	list_add_tail_rcu(&vb->free_list, &vbq->free);
+>  	spin_unlock(&vbq->lock);
+> +	put_cpu();
+>
+>  	return vaddr;
+>  }
+> @@ -2614,9 +2617,10 @@ static void free_vmap_block(struct vmap_block *vb)
+>  }
+>
+>  static bool purge_fragmented_block(struct vmap_block *vb,
+> -		struct vmap_block_queue *vbq, struct list_head *purge_list,
+> -		bool force_purge)
+> +		struct list_head *purge_list, bool force_purge)
+>  {
+> +	struct vmap_block_queue *vbq = &per_cpu(vmap_block_queue, vb->cpu);
+> +
+>  	if (vb->free + vb->dirty != VMAP_BBMAP_BITS ||
+>  	    vb->dirty == VMAP_BBMAP_BITS)
+>  		return false;
+> @@ -2664,7 +2668,7 @@ static void purge_fragmented_blocks(int cpu)
+>  			continue;
+>
+>  		spin_lock(&vb->lock);
+> -		purge_fragmented_block(vb, vbq, &purge, true);
+> +		purge_fragmented_block(vb, &purge, true);
+>  		spin_unlock(&vb->lock);
+>  	}
+>  	rcu_read_unlock();
+> @@ -2801,7 +2805,7 @@ static void _vm_unmap_aliases(unsigned long start, unsigned long end, int flush)
+>  			 * not purgeable, check whether there is dirty
+>  			 * space to be flushed.
+>  			 */
+> -			if (!purge_fragmented_block(vb, vbq, &purge_list, false) &&
+> +			if (!purge_fragmented_block(vb, &purge_list, false) &&
+>  			    vb->dirty_max && vb->dirty != VMAP_BBMAP_BITS) {
+>  				unsigned long va_start = vb->va->va_start;
+>  				unsigned long s, e;
+> --
+> 2.25.1
+>
+>
 
-As discussed during the PUCK call, here is a branch with fixup patches
-that incorporate the additional review/testing that came in after these
-patches were merged into kvm/next:
+--
+feel free to include my commit msg to help others.
+https://lore.kernel.org/all/20240531024820.5507-1-hailong.liu@oppo.com/
 
-  https://github.com/mdroth/linux/commits/kvm-next-snp-fixes4/
-
-They are intended to be squashed in but can also be applied on top if
-that's preferable (but in that case the first 2 patches need to be
-squashed together to maintain build bisectability):
-
- [SQUASH] KVM: SVM: Remove the need to trigger an UNBLOCK event on AP creation
-   - drops handling for KVM_MP_STATE_UNINITIALIZED since no special
-     handling for it will be needed until SVSM support is added in OVMF
-     and the host kernel has the necessary support for running
-     SVSM-enabled guests
-   - to be squashed into:
-     KVM: SEV: Support SEV-SNP AP Creation NAE event
-
- [SQUASH] KVM: SEV: Don't WARN() if RMP lookup fails when invalidating gmem pages
-   - address the WARN() that Sean noticed when running guest_memfd_test
-     kselftest on an AMD system without SNP enabled
-   - to be squashed into:
-     KVM: SEV: Implement gmem hook for invalidating private pages
-
- [SQUASH] KVM: SEV: Use new kvm_rmp_make_shared() naming
-   - fixup to handle helper function being renamed in prior patch
-   - to be squashed into:
-     KVM: SEV: Add KVM_SEV_SNP_LAUNCH_FINISH command
-     
- [SQUASH] KVM: SEV: Automatically switch reclaimed pages to shared
-   - implement suggestion from Sean to always switch reclaimed pages to shared
-     since that's what the callers all end up doing anyway
-   - to be squashed into:
-     KVM: SEV: Add KVM_SEV_SNP_LAUNCH_UPDATE command
-
-As discussed at PUCK I will resubmit the guest requests patches
-separately will all the pending changes incorporated.
-
-Thanks!
-
--Mike
-
-> 
-> Thanks!
-> 
-> -Mike
-> 
-> [1] https://lore.kernel.org/kvm/20240501085210.2213060-1-michael.roth@amd.com/
-> 
-> The following changes since commit 1451476151e08e1e83ff07ce69dd0d1d025e976e:
-> 
->   Merge commit 'kvm-coco-hooks' into HEAD (2024-05-10 13:20:42 -0400)
-> 
-> are available in the Git repository at:
-> 
->   https://github.com/mdroth/linux.git tags/tags/kvm-queue-snp
-> 
-> for you to fetch changes up to 4b3f0135f759bb1a54bb28d644c38a7780150eda:
-> 
->   crypto: ccp: Add the SNP_VLEK_LOAD command (2024-05-10 14:44:31 -0500)
-> 
-> ----------------------------------------------------------------
-> Base x86 KVM support for running SEV-SNP guests:
-> 
->  - add some basic infrastructure and introduces a new KVM_X86_SNP_VM
->    vm_type to handle differences versus the existing KVM_X86_SEV_VM and
->    KVM_X86_SEV_ES_VM types.
-> 
->  - implement the KVM API to handle the creation of a cryptographic
->    launch context, encrypt/measure the initial image into guest memory,
->    and finalize it before launching it.
-> 
->  - implement handling for various guest-generated events such as page
->    state changes, onlining of additional vCPUs, etc.
-> 
->  - implement the gmem/mmu hooks needed to prepare gmem-allocated pages
->    before mapping them into guest private memory ranges as well as
->    cleaning them up prior to returning them to the host for use as
->    normal memory. Because those cleanup hooks supplant certain
->    activities like issuing WBINVDs during KVM MMU invalidations, avoid
->    duplicating that work to avoid unecessary overhead.
-> 
->  - add support for the servicing of guest requests to handle things like
->    attestation, as well as some related host-management interfaces to
->    handle updating firmware's signing key for attestation requests
-> 
-> ----------------------------------------------------------------
-> Ashish Kalra (1):
->       KVM: SEV: Avoid WBINVD for HVA-based MMU notifications for SNP
-> 
-> Brijesh Singh (8):
->       KVM: SEV: Add initial SEV-SNP support
->       KVM: SEV: Add KVM_SEV_SNP_LAUNCH_START command
->       KVM: SEV: Add KVM_SEV_SNP_LAUNCH_UPDATE command
->       KVM: SEV: Add KVM_SEV_SNP_LAUNCH_FINISH command
->       KVM: SEV: Add support to handle GHCB GPA register VMGEXIT
->       KVM: SEV: Add support to handle RMP nested page faults
->       KVM: SVM: Add module parameter to enable SEV-SNP
->       KVM: SEV: Provide support for SNP_GUEST_REQUEST NAE event
-> 
-> Michael Roth (9):
->       KVM: MMU: Disable fast path if KVM_EXIT_MEMORY_FAULT is needed
->       KVM: SEV: Select KVM_GENERIC_PRIVATE_MEM when CONFIG_KVM_AMD_SEV=y
->       KVM: SEV: Add support to handle MSR based Page State Change VMGEXIT
->       KVM: SEV: Add support to handle Page State Change VMGEXIT
->       KVM: SEV: Implement gmem hook for initializing private pages
->       KVM: SEV: Implement gmem hook for invalidating private pages
->       KVM: x86: Implement hook for determining max NPT mapping level
->       KVM: SEV: Provide support for SNP_EXTENDED_GUEST_REQUEST NAE event
->       crypto: ccp: Add the SNP_VLEK_LOAD command
-> 
-> Tom Lendacky (1):
->       KVM: SEV: Support SEV-SNP AP Creation NAE event
-> 
->  Documentation/virt/coco/sev-guest.rst              |   19 +
->  Documentation/virt/kvm/api.rst                     |   87 ++
->  .../virt/kvm/x86/amd-memory-encryption.rst         |  110 +-
->  arch/x86/include/asm/kvm_host.h                    |    2 +
->  arch/x86/include/asm/sev-common.h                  |   25 +
->  arch/x86/include/asm/sev.h                         |    3 +
->  arch/x86/include/asm/svm.h                         |    9 +-
->  arch/x86/include/uapi/asm/kvm.h                    |   48 +
->  arch/x86/kvm/Kconfig                               |    3 +
->  arch/x86/kvm/mmu.h                                 |    2 -
->  arch/x86/kvm/mmu/mmu.c                             |   25 +-
->  arch/x86/kvm/svm/sev.c                             | 1546 +++++++++++++++++++-
->  arch/x86/kvm/svm/svm.c                             |   37 +-
->  arch/x86/kvm/svm/svm.h                             |   52 +
->  arch/x86/kvm/trace.h                               |   31 +
->  arch/x86/kvm/x86.c                                 |   17 +
->  drivers/crypto/ccp/sev-dev.c                       |   36 +
->  include/linux/psp-sev.h                            |    4 +-
->  include/uapi/linux/kvm.h                           |   23 +
->  include/uapi/linux/psp-sev.h                       |   27 +
->  include/uapi/linux/sev-guest.h                     |    9 +
->  virt/kvm/guest_memfd.c                             |    4 +-
->  22 files changed, 2086 insertions(+), 33 deletions(-)
-> 
-> 
+Best Regards,
+Hailong.
 
