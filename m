@@ -1,120 +1,199 @@
-Return-Path: <linux-kernel+bounces-197334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5691C8D696A
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 21:09:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC5B38D6959
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 21:02:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B98C1F2858B
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 19:09:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BF80284031
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 19:02:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C644617B51D;
-	Fri, 31 May 2024 19:09:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D367C7F7FC;
+	Fri, 31 May 2024 19:02:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=math.uni-bielefeld.de header.i=@math.uni-bielefeld.de header.b="s6PRNz2a"
-Received: from smtp1.math.uni-bielefeld.de (smtp1.math.uni-bielefeld.de [129.70.45.10])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LL20CsDh";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JYEK0UrY"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5989880604;
-	Fri, 31 May 2024 19:09:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.70.45.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 653C61E498;
+	Fri, 31 May 2024 19:02:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717182560; cv=none; b=e+7jrrLeLxE3eC+TIGWqHbygTHBV9JgtTtqg94jJCnAz4rJ8l1x2BXfESExJblj3Wu88Fy78WR7XAnlhnalbDmCkdr5jgEuQFPBmtvL5bFmzP8OVJTcPcUT/qnSgo7Ja1/7ZmvOJ1Dr3amODFMVbLR2esmNTocnj9TDqG5Qg4TM=
+	t=1717182127; cv=none; b=F3NlhvcQrFKWtB0uC0fePxEmPga6Yp8xgt/SJzH1c2Cp1t5QJwXmY+8LPGFrRiCpo65tU0rDOKDUxIvED5Ja6r7Uw4B9CMd0uZdW7wvmIZh1qtHX1eMnGwYzNigNypVTTaaRxlNGzeEcOBdPue7KN7yjODCe96dvX/eHWYLC88I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717182560; c=relaxed/simple;
-	bh=f6oyVa4CF+Atx2Os6W1pYW+SHbV4+5PZDkBbDDgOlAE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=r40dhGHzpsxfQeUPET2ExC3VNp1UBVRoXXP1lNz7l+Vd88Vwsvk+Wu/sKiIlk/QpkMTh2JjTmwrTN3xXGRMGhuhmdSUv9lVCQjjtPROi+SFzinM4AYpu72XMAv71w1uVK9Db7Vj5ly5Fw9dTgu09ip4CFhVEmdo6Pv8m0acN+qo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=math.uni-bielefeld.de; spf=pass smtp.mailfrom=math.uni-bielefeld.de; dkim=pass (2048-bit key) header.d=math.uni-bielefeld.de header.i=@math.uni-bielefeld.de header.b=s6PRNz2a; arc=none smtp.client-ip=129.70.45.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=math.uni-bielefeld.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=math.uni-bielefeld.de
-Received: from localhost (dslb-088-074-203-220.088.074.pools.vodafone-ip.de [88.74.203.220])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by smtp1.math.uni-bielefeld.de (Postfix) with ESMTPSA id 867DA6014D;
-	Fri, 31 May 2024 21:01:09 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=math.uni-bielefeld.de; s=default; t=1717182069;
-	bh=f6oyVa4CF+Atx2Os6W1pYW+SHbV4+5PZDkBbDDgOlAE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=s6PRNz2aHjg5896ke3uhntALQDyhSz99QfC1B91xOm1j62oXnSrWYhuujaM5PPULS
-	 6IhG04FI9qC5TGvkMkwrduu2ONlkGbTlqtFymZu+LJNKGtnNg20AwnXAWcXfc5MwsY
-	 JK6JXPnIJU0Re522Auaoujm+MiD3LEvfju9oFDHESqnpBKoFVHFS4s5m7L7PA0evcS
-	 sWvbF9vGPhKcF8feELZGs1rssjjCFrVv4C0qLdRFTQ4bWJaika122wWJh8Wlfej37U
-	 fzjso3cOx0HR/HEOP4pxhkSvEiHJHe8xoj6Kh44N+mLY4sfBy8VjdXzbGs93N9lVMu
-	 Xd5A4T6lWTFew==
-From: tjakobi@math.uni-bielefeld.de
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] Input: i8042 - add Ayaneo Kun to i8042 quirk table
-Date: Fri, 31 May 2024 21:00:59 +0200
-Message-ID: <20240531190100.3874731-1-tjakobi@math.uni-bielefeld.de>
-X-Mailer: git-send-email 2.44.1
+	s=arc-20240116; t=1717182127; c=relaxed/simple;
+	bh=4/qrFOt0J60H9Q8gZg1QzL1Ob0AeG1+br64Pzy1aoLk=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=EGG9F2rNalK7CkQ2FVB5MGjqHM21JIov6lznJLvStKgQO3yIeWFbXCgmJDXbkn1GerqSzbjDrFa+aSzyuwLOr6lB/i9d4VdzpSLJXvnPmiy1z94/+CDfxU/5nOABVDWHHWPBSxsmUs1Ol8URzlWyhVz+l+6e1G0RD8W2YrkfOr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LL20CsDh; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JYEK0UrY; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 31 May 2024 19:02:02 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1717182123;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=y9MJU17Ekc/uxv5y4w6TjvOm/CdW/nFdhox3LjTYtqY=;
+	b=LL20CsDhcM4mVsDIzcaCBCynrd2qG5CAq5x7IV8yaT+1HGEITbGXiZCJ4hzqTIh2QqxsZa
+	e7k6sd8rXsGuj4dgj00dIcDnBcPVNd0eVstqFag5/x45fjdqU6HNFc/eATjrGCHoekCOxz
+	/w4Yz/9Z5j0r45oykKpw6NidfCIfnvM5M0VyYbX/3EG9mI/0BfiXajI6iNkqXO0uCva3hV
+	tCHwUVTi9Ml5PFfrthpyK9LHOhPj5WjzwYyMQPFvlTHlbVLi2AG9HmJCTyxYor3pQfcJ+b
+	EgkG03+MdqOw4BrJ9ELHF6OxTL1N7twB5ArbXb5wnXzqtOXfHC+d65dgfJ7Wxg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1717182123;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=y9MJU17Ekc/uxv5y4w6TjvOm/CdW/nFdhox3LjTYtqY=;
+	b=JYEK0UrY1N5PXVSy9GlG46i4XPXU2CNgWNetyJmzxNa1P8OPoLo/1vbY7Yx9KfRQKHuSzV
+	gBOwzVmAEsvx1DBw==
+From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: x86/urgent] x86/topology/intel: Unlock CPUID before evaluating anything
+Cc: Peter Schneider <pschneider1968@googlemail.com>,
+ Thomas Gleixner <tglx@linutronix.de>, "Borislav Petkov (AMD)" <bp@alien8.de>,
+  <stable@kernel.org>, x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <fd3f73dc-a86f-4bcf-9c60-43556a21eb42@googlemail.com>
+References: <fd3f73dc-a86f-4bcf-9c60-43556a21eb42@googlemail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-ID: <171718212254.10875.16204655017704621999.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+The following commit has been merged into the x86/urgent branch of tip:
 
-See the added comment for details. Also fix a typo in the
-quirk's define.
+Commit-ID:     0c2f6d04619ec2b53ad4b0b591eafc9389786e86
+Gitweb:        https://git.kernel.org/tip/0c2f6d04619ec2b53ad4b0b591eafc9389786e86
+Author:        Thomas Gleixner <tglx@linutronix.de>
+AuthorDate:    Thu, 30 May 2024 17:29:18 +02:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Fri, 31 May 2024 20:25:56 +02:00
 
-Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+x86/topology/intel: Unlock CPUID before evaluating anything
+
+Intel CPUs have a MSR bit to limit CPUID enumeration to leaf two. If
+this bit is set by the BIOS then CPUID evaluation including topology
+enumeration does not work correctly as the evaluation code does not try
+to analyze any leaf greater than two.
+
+This went unnoticed before because the original topology code just
+repeated evaluation several times and managed to overwrite the initial
+limited information with the correct one later. The new evaluation code
+does it once and therefore ends up with the limited and wrong
+information.
+
+Cure this by unlocking CPUID right before evaluating anything which
+depends on the maximum CPUID leaf being greater than two instead of
+rereading stuff after unlock.
+
+Fixes: 22d63660c35e ("x86/cpu: Use common topology code for Intel")
+Reported-by: Peter Schneider <pschneider1968@googlemail.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Tested-by: Peter Schneider <pschneider1968@googlemail.com>
+Cc: <stable@kernel.org>
+Link: https://lore.kernel.org/r/fd3f73dc-a86f-4bcf-9c60-43556a21eb42@googlemail.com
 ---
- drivers/input/serio/i8042-acpipnpio.h | 17 +++++++++++++++--
- 1 file changed, 15 insertions(+), 2 deletions(-)
+ arch/x86/kernel/cpu/common.c |  3 ++-
+ arch/x86/kernel/cpu/cpu.h    |  2 ++
+ arch/x86/kernel/cpu/intel.c  | 25 ++++++++++++++++---------
+ 3 files changed, 20 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/input/serio/i8042-acpipnpio.h b/drivers/input/serio/i8042-acpipnpio.h
-index dfc6c581873b..0a7388985622 100644
---- a/drivers/input/serio/i8042-acpipnpio.h
-+++ b/drivers/input/serio/i8042-acpipnpio.h
-@@ -76,7 +76,7 @@ static inline void i8042_write_command(int val)
- #define SERIO_QUIRK_PROBE_DEFER		BIT(5)
- #define SERIO_QUIRK_RESET_ALWAYS	BIT(6)
- #define SERIO_QUIRK_RESET_NEVER		BIT(7)
--#define SERIO_QUIRK_DIECT		BIT(8)
-+#define SERIO_QUIRK_DIRECT		BIT(8)
- #define SERIO_QUIRK_DUMBKBD		BIT(9)
- #define SERIO_QUIRK_NOLOOP		BIT(10)
- #define SERIO_QUIRK_NOTIMEOUT		BIT(11)
-@@ -1332,6 +1332,19 @@ static const struct dmi_system_id i8042_dmi_quirk_table[] __initconst = {
- 		.driver_data = (void *)(SERIO_QUIRK_NOMUX | SERIO_QUIRK_RESET_ALWAYS |
- 					SERIO_QUIRK_NOLOOP | SERIO_QUIRK_NOPNP)
- 	},
-+	{
-+		/*
-+		 * The Ayaneo Kun is a handheld device where some the buttons are handled by an
-+		 * AT keyboard. The keyboard is usually detected as raw, but sometimes, usually
-+		 * after a cold boot, it is detected as translated.
-+		 * Make sure that the keyboard is always in raw mode.
-+		 */
-+		.matches = {
-+			DMI_EXACT_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
-+			DMI_MATCH(DMI_BOARD_NAME, "KUN"),
-+		},
-+		.driver_data = (void *)(SERIO_QUIRK_DIRECT)
-+	},
- 	{ }
- };
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index e31293c..d4e539d 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -1589,6 +1589,7 @@ static void __init early_identify_cpu(struct cpuinfo_x86 *c)
+ 	if (have_cpuid_p()) {
+ 		cpu_detect(c);
+ 		get_cpu_vendor(c);
++		intel_unlock_cpuid_leafs(c);
+ 		get_cpu_cap(c);
+ 		setup_force_cpu_cap(X86_FEATURE_CPUID);
+ 		get_cpu_address_sizes(c);
+@@ -1748,7 +1749,7 @@ static void generic_identify(struct cpuinfo_x86 *c)
+ 	cpu_detect(c);
  
-@@ -1655,7 +1668,7 @@ static void __init i8042_check_quirks(void)
- 		if (quirks & SERIO_QUIRK_RESET_NEVER)
- 			i8042_reset = I8042_RESET_NEVER;
- 	}
--	if (quirks & SERIO_QUIRK_DIECT)
-+	if (quirks & SERIO_QUIRK_DIRECT)
- 		i8042_direct = true;
- 	if (quirks & SERIO_QUIRK_DUMBKBD)
- 		i8042_dumbkbd = true;
--- 
-2.44.1
-
+ 	get_cpu_vendor(c);
+-
++	intel_unlock_cpuid_leafs(c);
+ 	get_cpu_cap(c);
+ 
+ 	get_cpu_address_sizes(c);
+diff --git a/arch/x86/kernel/cpu/cpu.h b/arch/x86/kernel/cpu/cpu.h
+index ea9e07d..1beccef 100644
+--- a/arch/x86/kernel/cpu/cpu.h
++++ b/arch/x86/kernel/cpu/cpu.h
+@@ -61,9 +61,11 @@ extern __ro_after_init enum tsx_ctrl_states tsx_ctrl_state;
+ 
+ extern void __init tsx_init(void);
+ void tsx_ap_init(void);
++void intel_unlock_cpuid_leafs(struct cpuinfo_x86 *c);
+ #else
+ static inline void tsx_init(void) { }
+ static inline void tsx_ap_init(void) { }
++static inline void intel_unlock_cpuid_leafs(struct cpuinfo_x86 *c) { }
+ #endif /* CONFIG_CPU_SUP_INTEL */
+ 
+ extern void init_spectral_chicken(struct cpuinfo_x86 *c);
+diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
+index 3c3e7e5..fdf3489 100644
+--- a/arch/x86/kernel/cpu/intel.c
++++ b/arch/x86/kernel/cpu/intel.c
+@@ -269,19 +269,26 @@ detect_keyid_bits:
+ 	c->x86_phys_bits -= keyid_bits;
+ }
+ 
++void intel_unlock_cpuid_leafs(struct cpuinfo_x86 *c)
++{
++	if (boot_cpu_data.x86_vendor != X86_VENDOR_INTEL)
++		return;
++
++	if (c->x86 < 6 || (c->x86 == 6 && c->x86_model < 0xd))
++		return;
++
++	/*
++	 * The BIOS can have limited CPUID to leaf 2, which breaks feature
++	 * enumeration. Unlock it and update the maximum leaf info.
++	 */
++	if (msr_clear_bit(MSR_IA32_MISC_ENABLE, MSR_IA32_MISC_ENABLE_LIMIT_CPUID_BIT) > 0)
++		c->cpuid_level = cpuid_eax(0);
++}
++
+ static void early_init_intel(struct cpuinfo_x86 *c)
+ {
+ 	u64 misc_enable;
+ 
+-	/* Unmask CPUID levels if masked: */
+-	if (c->x86 > 6 || (c->x86 == 6 && c->x86_model >= 0xd)) {
+-		if (msr_clear_bit(MSR_IA32_MISC_ENABLE,
+-				  MSR_IA32_MISC_ENABLE_LIMIT_CPUID_BIT) > 0) {
+-			c->cpuid_level = cpuid_eax(0);
+-			get_cpu_cap(c);
+-		}
+-	}
+-
+ 	if ((c->x86 == 0xf && c->x86_model >= 0x03) ||
+ 		(c->x86 == 0x6 && c->x86_model >= 0x0e))
+ 		set_cpu_cap(c, X86_FEATURE_CONSTANT_TSC);
 
