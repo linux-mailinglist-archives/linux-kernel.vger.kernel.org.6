@@ -1,118 +1,120 @@
-Return-Path: <linux-kernel+bounces-197325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EDF18D6952
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 20:58:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5691C8D696A
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 21:09:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D05591C21E52
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:58:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B98C1F2858B
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 19:09:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 346497F7F6;
-	Fri, 31 May 2024 18:58:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C644617B51D;
+	Fri, 31 May 2024 19:09:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="HHYVz9wH"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=math.uni-bielefeld.de header.i=@math.uni-bielefeld.de header.b="s6PRNz2a"
+Received: from smtp1.math.uni-bielefeld.de (smtp1.math.uni-bielefeld.de [129.70.45.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF3BF7D40E;
-	Fri, 31 May 2024 18:58:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5989880604;
+	Fri, 31 May 2024 19:09:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.70.45.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717181931; cv=none; b=Tn9Y+R6LJx0iJm/vu+bKM12lhKFk9WPjmnOH/Xtx0R13gM5SqY1Ci976zHqugju9ybE47Zajth5hxjcKM8J/1uAosWfYDLOc76pOBKbOzSmbi2oPEhkGt4I7bl4wazgHyCBlhMfJHrajMh+1kWdFzN7R6zqm4SvJFH6hkA4o2dc=
+	t=1717182560; cv=none; b=e+7jrrLeLxE3eC+TIGWqHbygTHBV9JgtTtqg94jJCnAz4rJ8l1x2BXfESExJblj3Wu88Fy78WR7XAnlhnalbDmCkdr5jgEuQFPBmtvL5bFmzP8OVJTcPcUT/qnSgo7Ja1/7ZmvOJ1Dr3amODFMVbLR2esmNTocnj9TDqG5Qg4TM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717181931; c=relaxed/simple;
-	bh=mJQDp5OVE52hSetYA8xq+qtJdIpr+7mUyWY61xiyUKs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dL1Hpytp/D5SdO2N2P6IUzbZF9iVAn2dCNfanbepinnpbTuQ9LIQmUMZqB1nX1iTSm8zZBWOeD01zqvIQLY4oETSTyPsXBNSvT4DI0HuskkF6Na1h/vrbqWkAGfggNIMV4rp0EGiAdmdRyHdjEVeLk0N4I+chO5uLVesmHQ3Zyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=HHYVz9wH; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=J00hHbCv0tmWX3RsYRCdEYWH/PP4cQcPiWZYM0T92ck=; b=HHYVz9wHuEJdBcIo
-	WMaLl2zl1miSHNW8SWzfQ8zlbKPhzpnTRYCbSGom/Qg84Tce6JSpQ6CnsZqflASI4sKeFpCyID1Xq
-	2SDmzBFq0j6VcYuYM/+Uu+w48NyfzNz2ZZiPVBtyvVvaQ9oKVH2LeIqClHL8YpvHGgN0WdTr5gsVa
-	tI/MGPmrflJGKPGpDw5TojQwAlSaeYphyvD3j+9JybofM9SdtevWaBpav+5+4tx/h4vdSejXMX/Ol
-	WgnNnhn/Ea3x7Gwh2Qw+0va46CTBTClrDiTLXivI1fw/rqGZsTlCakCzbBe1b6HDHr6utrhGHfeBk
-	D2Q0XVuDBIOu1lu6qQ==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1sD7Sf-003drn-1k;
-	Fri, 31 May 2024 18:58:45 +0000
-Date: Fri, 31 May 2024 18:58:45 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc: davidgow@google.com, linux-kselftest@vger.kernel.org,
-	kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] list: test: remove unused struct 'klist_test_struct'
-Message-ID: <Zlod5TMzmXinDu2X@gallifrey>
-References: <20240531151801.128792-1-linux@treblig.org>
- <89e07c93-a54d-4cc2-8ee1-664389ffcdd7@collabora.com>
+	s=arc-20240116; t=1717182560; c=relaxed/simple;
+	bh=f6oyVa4CF+Atx2Os6W1pYW+SHbV4+5PZDkBbDDgOlAE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=r40dhGHzpsxfQeUPET2ExC3VNp1UBVRoXXP1lNz7l+Vd88Vwsvk+Wu/sKiIlk/QpkMTh2JjTmwrTN3xXGRMGhuhmdSUv9lVCQjjtPROi+SFzinM4AYpu72XMAv71w1uVK9Db7Vj5ly5Fw9dTgu09ip4CFhVEmdo6Pv8m0acN+qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=math.uni-bielefeld.de; spf=pass smtp.mailfrom=math.uni-bielefeld.de; dkim=pass (2048-bit key) header.d=math.uni-bielefeld.de header.i=@math.uni-bielefeld.de header.b=s6PRNz2a; arc=none smtp.client-ip=129.70.45.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=math.uni-bielefeld.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=math.uni-bielefeld.de
+Received: from localhost (dslb-088-074-203-220.088.074.pools.vodafone-ip.de [88.74.203.220])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by smtp1.math.uni-bielefeld.de (Postfix) with ESMTPSA id 867DA6014D;
+	Fri, 31 May 2024 21:01:09 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=math.uni-bielefeld.de; s=default; t=1717182069;
+	bh=f6oyVa4CF+Atx2Os6W1pYW+SHbV4+5PZDkBbDDgOlAE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=s6PRNz2aHjg5896ke3uhntALQDyhSz99QfC1B91xOm1j62oXnSrWYhuujaM5PPULS
+	 6IhG04FI9qC5TGvkMkwrduu2ONlkGbTlqtFymZu+LJNKGtnNg20AwnXAWcXfc5MwsY
+	 JK6JXPnIJU0Re522Auaoujm+MiD3LEvfju9oFDHESqnpBKoFVHFS4s5m7L7PA0evcS
+	 sWvbF9vGPhKcF8feELZGs1rssjjCFrVv4C0qLdRFTQ4bWJaika122wWJh8Wlfej37U
+	 fzjso3cOx0HR/HEOP4pxhkSvEiHJHe8xoj6Kh44N+mLY4sfBy8VjdXzbGs93N9lVMu
+	 Xd5A4T6lWTFew==
+From: tjakobi@math.uni-bielefeld.de
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] Input: i8042 - add Ayaneo Kun to i8042 quirk table
+Date: Fri, 31 May 2024 21:00:59 +0200
+Message-ID: <20240531190100.3874731-1-tjakobi@math.uni-bielefeld.de>
+X-Mailer: git-send-email 2.44.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <89e07c93-a54d-4cc2-8ee1-664389ffcdd7@collabora.com>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 18:57:18 up 23 days,  6:11,  1 user,  load average: 0.15, 0.03, 0.01
-User-Agent: Mutt/2.2.12 (2023-09-09)
+Content-Transfer-Encoding: 8bit
 
-* Muhammad Usama Anjum (usama.anjum@collabora.com) wrote:
-> On 5/31/24 8:18 PM, linux@treblig.org wrote:
-> > From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> > 
-> > 'klist_test_struct' has been unused since the original
-> > commit 57b4f760f94d ("list: test: Test the klist structure").
-> Probably a fixes by tag would be needed here.
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-I'm generally avoiding fixes tags in this set of changes, since
-  a) They have no behavioural change at all.
-  b) Downstream and stable kernel people use fixes tags to indicate
-     stuff they should pick up if they have the original, and there's
-     no need for them to do that with this cleanup.
+See the added comment for details. Also fix a typo in the
+quirk's define.
 
-Dave
+Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+---
+ drivers/input/serio/i8042-acpipnpio.h | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
 
-> > 
-> > Remove it.
-> > 
-> > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-> > ---
-> >  lib/list-test.c | 6 ------
-> >  1 file changed, 6 deletions(-)
-> > 
-> > diff --git a/lib/list-test.c b/lib/list-test.c
-> > index 0cc27de9cec8..383ee0ad582e 100644
-> > --- a/lib/list-test.c
-> > +++ b/lib/list-test.c
-> > @@ -1201,12 +1201,6 @@ static struct kunit_suite hlist_test_module = {
-> >  };
-> >  
-> >  
-> > -struct klist_test_struct {
-> > -	int data;
-> > -	struct klist klist;
-> > -	struct klist_node klist_node;
-> > -};
-> > -
-> >  static int node_count;
-> >  static struct klist_node *last_node;
-> >  
-> 
-> -- 
-> BR,
-> Muhammad Usama Anjum
+diff --git a/drivers/input/serio/i8042-acpipnpio.h b/drivers/input/serio/i8042-acpipnpio.h
+index dfc6c581873b..0a7388985622 100644
+--- a/drivers/input/serio/i8042-acpipnpio.h
++++ b/drivers/input/serio/i8042-acpipnpio.h
+@@ -76,7 +76,7 @@ static inline void i8042_write_command(int val)
+ #define SERIO_QUIRK_PROBE_DEFER		BIT(5)
+ #define SERIO_QUIRK_RESET_ALWAYS	BIT(6)
+ #define SERIO_QUIRK_RESET_NEVER		BIT(7)
+-#define SERIO_QUIRK_DIECT		BIT(8)
++#define SERIO_QUIRK_DIRECT		BIT(8)
+ #define SERIO_QUIRK_DUMBKBD		BIT(9)
+ #define SERIO_QUIRK_NOLOOP		BIT(10)
+ #define SERIO_QUIRK_NOTIMEOUT		BIT(11)
+@@ -1332,6 +1332,19 @@ static const struct dmi_system_id i8042_dmi_quirk_table[] __initconst = {
+ 		.driver_data = (void *)(SERIO_QUIRK_NOMUX | SERIO_QUIRK_RESET_ALWAYS |
+ 					SERIO_QUIRK_NOLOOP | SERIO_QUIRK_NOPNP)
+ 	},
++	{
++		/*
++		 * The Ayaneo Kun is a handheld device where some the buttons are handled by an
++		 * AT keyboard. The keyboard is usually detected as raw, but sometimes, usually
++		 * after a cold boot, it is detected as translated.
++		 * Make sure that the keyboard is always in raw mode.
++		 */
++		.matches = {
++			DMI_EXACT_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
++			DMI_MATCH(DMI_BOARD_NAME, "KUN"),
++		},
++		.driver_data = (void *)(SERIO_QUIRK_DIRECT)
++	},
+ 	{ }
+ };
+ 
+@@ -1655,7 +1668,7 @@ static void __init i8042_check_quirks(void)
+ 		if (quirks & SERIO_QUIRK_RESET_NEVER)
+ 			i8042_reset = I8042_RESET_NEVER;
+ 	}
+-	if (quirks & SERIO_QUIRK_DIECT)
++	if (quirks & SERIO_QUIRK_DIRECT)
+ 		i8042_direct = true;
+ 	if (quirks & SERIO_QUIRK_DUMBKBD)
+ 		i8042_dumbkbd = true;
 -- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+2.44.1
+
 
