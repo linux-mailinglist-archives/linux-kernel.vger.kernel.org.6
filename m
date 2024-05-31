@@ -1,102 +1,125 @@
-Return-Path: <linux-kernel+bounces-197204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 896E58D6780
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:56:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C669F8D67C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 19:09:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA68D1C23B19
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:56:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81F9F283C71
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:09:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6184171E59;
-	Fri, 31 May 2024 16:56:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B79D17CA02;
+	Fri, 31 May 2024 17:08:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yg5hW8D5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ct+rfWXx"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0292815CD7F;
-	Fri, 31 May 2024 16:56:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E007817C233;
+	Fri, 31 May 2024 17:08:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717174567; cv=none; b=JrllN3mqFCMDNI+t4cTyAGPbIAmaHUuv47ZhwM2mYe835UI8hHVMCMCt2nwKCUTuabfD7os5cpoz6gBkWBgtaE723rSiE72iP8bQTaTQuqhTBgGAef/FFJIlCr59P0gl7/j/ZeeE/6hw/VwKLRoN+Jz+En/EgB3OAlm4keagvuI=
+	t=1717175336; cv=none; b=MqwJZVJWvtGbmpHs++KAqWMFpmkKMqC71dhnKV5yMSFnQ8xfOlJue2tgIjOddIRp38gH3rg5yf72CwYPUiulHV9qEik2k+he1Sqb9FXePYy+ju/XK2ruehu1nIsehYmaC3S+sI2xwyep+zUfTxI3EyBP7uQGjwaqjW7Q9zeT+n8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717174567; c=relaxed/simple;
-	bh=WUvmVdpJgJRxIaSCRIfJr52zfPAGi08QjQmVCOZydiE=;
-	h=Message-ID:From:To:Cc:Subject:Date; b=KOmFTuCb2HnrRhSEBTWxzoUOqYOHxSNDzF7Xmgv2Bfe77d5kGsSED5WNchCBD6eNf3aVIyQ5/gC+WT0lbbLyNhchLw4aaA9HEPBsf2SWr1yNlI7XTr+0iUNpUHsO57zTnNUyB1RWo0joBP0tCsG7xglzUV26StaZV1uhg0sZzmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yg5hW8D5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 246E7C116B1;
-	Fri, 31 May 2024 16:56:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717174566;
-	bh=WUvmVdpJgJRxIaSCRIfJr52zfPAGi08QjQmVCOZydiE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Yg5hW8D5kWN2vVcj1mQ5dwY2nTsIcg8Fgevp0WahsMiOfZnKkL/OS6PYdPLPjSOHo
-	 hWnZpbo3BZ2/PRul/A1BnGDyZhL0Ymzb9WoQaxevwq2FgoEXo/UT3QGNY3T0+vizbd
-	 o5RaMo+Pzw7/411mvYcdciTMfInw4IEhTIii61RHtVTv3XSHxgsim36vnbJEH0LNrI
-	 Y2nfZjusX5pCdxpJb+FwA1sbiKQV1l9WWADM3wPZsDnegoLzUK8pJ4kqCMgIyViWlj
-	 6nclj5tMosEXJsKTaekkNAisfYHpnmWKoGiiqG7NbXkyLkw591m+8nQH4qJfHcMm2O
-	 OfJW5uuWCsjaw==
-Message-ID: <a606dc99619c387713bc312d3222c98f.broonie@kernel.org>
-From: Mark Brown <broonie@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-Subject: [GIT PULL] SPI fixes for v6.10-rc1
-Date: Fri, 31 May 2024 17:55:51 +0100
+	s=arc-20240116; t=1717175336; c=relaxed/simple;
+	bh=9mMdk1jEo+cYqxnq/VHuXt+Kvb7Vs6u4w3HGCp0rzwE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=izd+gPhrO7ZlgENTwgrIvmb8puzMqsEBgvvqCkFzmqht8a/DsumKzYtF48i4BGRjYqFucai6NZe262K6cR22X1dwc/jYZuCne8cl4zL6pVuVboPaRk1PS05kCK852Tri909z4MUBiHe0vquCfsBngli1eXDKt0qM3Q4qqVDztL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ct+rfWXx; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717175335; x=1748711335;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=9mMdk1jEo+cYqxnq/VHuXt+Kvb7Vs6u4w3HGCp0rzwE=;
+  b=ct+rfWXxEkk/BqcaeW21XXZQCaRBvlsSf5KkAeoNT1rzfKunJfhwMjKN
+   IHkCVZv0ccEpzqW3JIKbKkWqSR1lpzGz02k4PHztL5Ymwxh6Fo66kPysE
+   CxUJZS8t1l+NZrFvtpma7/M5zDSfVqeNRTmzWooOEKVnZipQmiMjEvYRT
+   8IYao+pdfA2C7WE+nCbuNDlrJPZa2sc4kxbuY0O2PKZoLeECpWso1XVTF
+   36PmQ9o5kK9uLcgkuL8F6Q0zQ9Aoi7i+YfjEIjSSMjCJGYUXPlg6fjjOM
+   58Nvs54WdE7FBsYrWjwGGpkfdIpg8TQaW/OuwCSxJvhW6loJvSYUyFSBP
+   Q==;
+X-CSE-ConnectionGUID: IuBeEx8ESgCFghNjri9z+A==
+X-CSE-MsgGUID: HFWJwV4ZRbG6FVy4SqBCfQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11089"; a="25131930"
+X-IronPort-AV: E=Sophos;i="6.08,204,1712646000"; 
+   d="scan'208";a="25131930"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 10:08:52 -0700
+X-CSE-ConnectionGUID: k3q6XVXASyyTwoSwZ8TqMQ==
+X-CSE-MsgGUID: Jpe2YRQZT92NRTtY+XEJTQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,204,1712646000"; 
+   d="scan'208";a="36147847"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa007.fm.intel.com with ESMTP; 31 May 2024 10:08:47 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 6E01B228; Fri, 31 May 2024 20:08:46 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Lee Jones <lee@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-iio@vger.kernel.org,
+	linux-leds@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-fbdev@vger.kernel.org
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Pavel Machek <pavel@ucw.cz>,
+	Daniel Thompson <daniel.thompson@linaro.org>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Helge Deller <deller@gmx.de>,
+	Johan Hovold <jhovold@gmail.com>,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH v1 0/4] lm3533: Remove the outdated drivers
+Date: Fri, 31 May 2024 19:56:12 +0300
+Message-ID: <20240531170844.1595468-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-The following changes since commit d6e7ffd4820f8894eb865890c96852085d3640e1:
+Driver is quite outdated from the Linux kernel internal APIs
+perspective. In particular GPIO code is using legacy calls,
+that started being replaced by a new API ca. 2014, i.e. ten
+years ago.
 
-  spi: dw: Bail out early on unsupported target mode (2024-05-09 17:48:06 +0200)
+Suggested-by: Linus Walleij <linus.walleij@linaro.org>
 
-are available in the Git repository at:
+Andy Shevchenko (4):
+  backlight: lm3533_bl: Remove the driver
+  iio: light: lm3533-als: Remove the driver
+  leds: lm3533: Remove the driver
+  mfd: lm3533: Remove the driver
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git tags/spi-fix-v6.10-rc1
+ drivers/iio/light/Kconfig           |  17 -
+ drivers/iio/light/Makefile          |   1 -
+ drivers/iio/light/lm3533-als.c      | 922 ----------------------------
+ drivers/leds/Kconfig                |  13 -
+ drivers/leds/Makefile               |   1 -
+ drivers/leds/leds-lm3533.c          | 755 -----------------------
+ drivers/mfd/lm3533-core.c           | 645 -------------------
+ drivers/video/backlight/Kconfig     |  11 -
+ drivers/video/backlight/Makefile    |   1 -
+ drivers/video/backlight/lm3533_bl.c | 399 ------------
+ include/linux/mfd/lm3533.h          | 100 ---
+ 11 files changed, 2865 deletions(-)
+ delete mode 100644 drivers/iio/light/lm3533-als.c
+ delete mode 100644 drivers/leds/leds-lm3533.c
+ delete mode 100644 drivers/mfd/lm3533-core.c
+ delete mode 100644 drivers/video/backlight/lm3533_bl.c
+ delete mode 100644 include/linux/mfd/lm3533.h
 
-for you to fetch changes up to 95d7c452a26564ef0c427f2806761b857106d8c4:
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
 
-  spi: stm32: Don't warn about spurious interrupts (2024-05-29 19:12:09 +0100)
-
-----------------------------------------------------------------
-spi: Fixes for v6.10
-
-A series of fixes that came in since the merge window, the main thing
-being the fixes Andy did for DMA sync where we were calling into the DMA
-API in suprising ways and causing issues as a result, the main thing
-being confusing the IOMMU code.
-
-We've also got some fairly important fixes for the stm32 driver, it
-supports a wide range of hardware and some optimisations that were done
-recently have broken on some systems, and a fix to prevent glitched
-signals on the bus in the cadence driver.
-
-----------------------------------------------------------------
-Andy Shevchenko (3):
-      spi: Don't mark message DMA mapped when no transfer in it is
-      spi: Check if transfer is mapped before calling DMA sync APIs
-      spi: Assign dummy scatterlist to unidirectional transfers
-
-Mark Brown (1):
-      soi: Don't call DMA sync API when not needed
-
-Uwe Kleine-König (2):
-      spi: stm32: Revert change that enabled controller before asserting CS
-      spi: stm32: Don't warn about spurious interrupts
-
-Witold Sadowski (1):
-      spi: cadence: Ensure data lines set to low during dummy-cycle period
-
- drivers/spi/spi-axi-spi-engine.c      |  2 +-
- drivers/spi/spi-cadence-xspi.c        | 20 +++++++++++++++-----
- drivers/spi/spi-hisi-kunpeng.c        |  2 --
- drivers/spi/spi-microchip-core-qspi.c |  1 +
- drivers/spi/spi-stm32.c               |  2 +-
- drivers/spi/spi.c                     | 32 +++++++++++++++++++++++++++-----
- 6 files changed, 45 insertions(+), 14 deletions(-)
 
