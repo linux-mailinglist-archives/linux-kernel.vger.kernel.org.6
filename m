@@ -1,173 +1,296 @@
-Return-Path: <linux-kernel+bounces-197212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0774B8D6793
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 19:01:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7BD18D6798
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 19:03:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B02F1C24E95
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:01:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C64811C24AE8
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:03:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 170DF171E59;
-	Fri, 31 May 2024 17:01:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A605172793;
+	Fri, 31 May 2024 17:03:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="faGKBjHC"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="T30/PkI4"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B9316D304;
-	Fri, 31 May 2024 17:01:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB0321B948;
+	Fri, 31 May 2024 17:03:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717174894; cv=none; b=WFFmRKwqO6vpp0ZnaAfyqHrBYg7dqPEtxcL307f0DflW5TPKgsRRphdCBttOjmfcRfAej4Bnsu1bxpxgBHnXQsfiRdM4xzz7dPwuKeU6B6gLfua4OYSIt/9CmwuA9jOn0HPhx2qSqrvsFIiDzpWiegaRY71uTfNGV0JrNkObLGY=
+	t=1717174986; cv=none; b=bj5rOYjDU/hXa4Uw71inq3M2doB+SvxNxMWMlqy9lniYb9imtoKLMXIF7sL0/VgKE9njRLXAVcYowHFIdvgmT3WbV95fKmS+ipuLLtFGXNKpF/O9dVWGaANxw8v6WNN1SFbI6/oJWFe52iGYdgcVB1MBUKPsDwOfzzazkC1KmFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717174894; c=relaxed/simple;
-	bh=Yjqo3hlhlx9yKevXhDT1MNENp9AFIIad+z8zrRdLuUs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZmHNnTs8yfM63sRsdAiqby4yW0MxfVjWNDHk68XfBUt9mqPQNhndAp1uqzoJzf1KS+XFzyHSL7vyYHuPkCEz7bbJZFyBXZ+C7EfTXjkNZ9OGGcGGtAmiQsIdzDGLRy+Zt+kJzkwhP9QT7r4zIs09TlhNJqOOsXRUD4oW6wN/Vek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=faGKBjHC; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717174891; x=1748710891;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Yjqo3hlhlx9yKevXhDT1MNENp9AFIIad+z8zrRdLuUs=;
-  b=faGKBjHCipfYarK+ZtyukSvXvuDJ9nLLhH83jsdCuoPRrcXL4V7i0QDX
-   KcQiwrp5uQyql6B0usuSccvDUAwWVCaBBp+8kNBzoa9HAFcAxmoNAT5XN
-   +JJGQ08xnXTI2qFu4Y+uQ2Dg+as0/V0lfE6kIw/WdvPsxQJ6rXNmLtSKd
-   lYbjN+ROiJ22MB5zzstaDoLd8qphUrMi1tg32HsiKJIfFUK6bWka5ByAN
-   k2l/e+gl0Q63f2JqkE95EbNRxROzWFI3D9T3NYSGA84FCyKETVbdv6/9C
-   51n3RUX6zDAQGEmL6uDNqv40pUeHcMr6GEO37OxGqQ50jZpGdD2MqFNcj
-   w==;
-X-CSE-ConnectionGUID: RDNgaDEyT9i9nmGA53wnEA==
-X-CSE-MsgGUID: BdTQM0E6Sdu81V7bxIsj+A==
-X-IronPort-AV: E=McAfee;i="6600,9927,11089"; a="31223123"
-X-IronPort-AV: E=Sophos;i="6.08,204,1712646000"; 
-   d="scan'208";a="31223123"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 10:01:31 -0700
-X-CSE-ConnectionGUID: kwv4Ne6VSaWer/Fbg//lww==
-X-CSE-MsgGUID: UWrQa+u+SWK1A29eqgaOlw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,204,1712646000"; 
-   d="scan'208";a="36800309"
-Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
-  by orviesa008.jf.intel.com with ESMTP; 31 May 2024 10:01:29 -0700
-Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sD5d8-000HUA-1N;
-	Fri, 31 May 2024 17:01:26 +0000
-Date: Sat, 1 Jun 2024 01:01:26 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	don <zds100@gmail.com>, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, mhiramat@kernel.org
-Subject: Re: [PATCH] tracing/fprobe: Support raw tracepoint events on modules
-Message-ID: <202406010034.fsNP9Rsq-lkp@intel.com>
-References: <171714888633.198965.13093663631481169611.stgit@devnote2>
+	s=arc-20240116; t=1717174986; c=relaxed/simple;
+	bh=yzSu1nSmnK4RiYs3rxQNcqghsg+iXzBRgwq7341MI4U=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lSlxfg+0VLGZskXSO+F/gilWsG1xqOXk5aPEWff1jivPUgE1w+IBKFDDyXZFYBUJhELDFV2xAtxtR3uZ7D9tgEByqBz9L4ZDrHtf52xxXMX9FzAMItRyhbOqaNH2YOJbKcbAMcstkty1cxmaBl9YEYIgtnWDDzKxFV5lUxyPkyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=T30/PkI4; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44VH2UJG060630;
+	Fri, 31 May 2024 12:02:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1717174951;
+	bh=MzQ+7/MrIHtEg6/X8achCJyTMRrYF3jNMk1eh4gtscQ=;
+	h=From:To:CC:Subject:Date;
+	b=T30/PkI4d9xSIw6OVAH9wommmE97Jdi04kK63i2yIXzPMaJxGxw/0QxePFqMJwk47
+	 6CSC1nxni/92De6rx1U27b+6OsM9JOa79vnnfHgNozFUnJ19gK/4AebQi7lBeKRa6K
+	 nuh84ZvU8B9xKzMaRWZMy+T+HVQGtbi1aU7J+u+Q=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44VH2UHw011034
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 31 May 2024 12:02:30 -0500
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 31
+ May 2024 12:02:30 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 31 May 2024 12:02:30 -0500
+Received: from localhost (ti.dhcp.ti.com [172.24.227.95] (may be forged))
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44VH2TqO033957;
+	Fri, 31 May 2024 12:02:30 -0500
+From: Devarsh Thakkar <devarsht@ti.com>
+To: <mchehab@kernel.org>, <robh@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <hverkuil-cisco@xs4all.nl>, <linux-media@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <benjamin.gaignard@collabora.com>, <sebastian.fricke@collabora.com>
+CC: <laurent.pinchart@ideasonboard.com>, <praneeth@ti.com>, <nm@ti.com>,
+        <vigneshr@ti.com>, <a-bhatia1@ti.com>, <j-luthra@ti.com>,
+        <b-brnich@ti.com>, <detheridge@ti.com>, <p-mantena@ti.com>,
+        <vijayp@ti.com>, <devarsht@ti.com>, <andrzej.p@collabora.com>,
+        <nicolas@ndufresne.ca>, <akpm@linux-foundation.org>,
+        <gregkh@linuxfoundation.org>, <andriy.shevchenko@linux.intel.com>,
+        <adobriyan@gmail.com>, <p.zabel@pengutronix.de>, <airlied@gmail.com>,
+        <daniel@ffwll.ch>, <jani.nikula@intel.com>,
+        <dri-devel@lists.freedesktop.org>,
+        <linux-rockchip@lists.infradead.org>, <davidgow@google.com>,
+        <dlatypov@google.com>
+Subject: [PATCH v11 00/11] Add V4L2 M2M Driver for E5010 JPEG Encoder
+Date: Fri, 31 May 2024 22:32:29 +0530
+Message-ID: <20240531170229.1270828-1-devarsht@ti.com>
+X-Mailer: git-send-email 2.39.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <171714888633.198965.13093663631481169611.stgit@devnote2>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hi Masami,
+This adds support for V4L2 M2M based driver for E5010 JPEG Encoder
+which is a stateful JPEG encoder from Imagination technologies
+and is present in TI AM62A SoC.
 
-kernel test robot noticed the following build errors:
+While adding support for it, following additional framework changes were
+made:
+ - Moved reference quantization and huffman tables provided in
+   ITU-T-REC-T.81 to v4l2-jpeg.c as suggested in mailing list [1].
+ - Add macros to round to closest integer (either higher or lower) while
+   rounding in order of 2.
+ - Add KUnit tests for math functions.
 
-[auto build test ERROR on linus/master]
-[also build test ERROR on v6.10-rc1 next-20240531]
-[cannot apply to rostedt-trace/for-next rostedt-trace/for-next-urgent]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+v4l2-compliance test :
+Link: https://gist.github.com/devarsht/1f039c631ca953a57f405cfce1b69e49
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Masami-Hiramatsu-Google/tracing-fprobe-Support-raw-tracepoint-events-on-modules/20240531-175013
-base:   linus/master
-patch link:    https://lore.kernel.org/r/171714888633.198965.13093663631481169611.stgit%40devnote2
-patch subject: [PATCH] tracing/fprobe: Support raw tracepoint events on modules
-config: s390-defconfig (https://download.01.org/0day-ci/archive/20240601/202406010034.fsNP9Rsq-lkp@intel.com/config)
-compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project bafda89a0944d947fc4b3b5663185e07a397ac30)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240601/202406010034.fsNP9Rsq-lkp@intel.com/reproduce)
+E5010 JPEG Encoder Manual tests :
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406010034.fsNP9Rsq-lkp@intel.com/
+Performance:
+Link: https://gist.github.com/devarsht/c40672944fd71c9a53ab55adbfd9e28b
 
-All errors (new ones prefixed by >>):
+Functionality:
+Link: https://gist.github.com/devarsht/8e88fcaabff016bb2bac83d89c9d23ce
 
-   In file included from kernel/tracepoint.c:5:
-   In file included from include/linux/module.h:19:
-   In file included from include/linux/elf.h:6:
-   In file included from arch/s390/include/asm/elf.h:173:
-   In file included from arch/s390/include/asm/mmu_context.h:11:
-   In file included from arch/s390/include/asm/pgalloc.h:18:
-   In file included from include/linux/mm.h:2253:
-   include/linux/vmstat.h:500:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     500 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     501 |                            item];
-         |                            ~~~~
-   include/linux/vmstat.h:507:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     507 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     508 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/vmstat.h:514:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     514 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   include/linux/vmstat.h:519:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     519 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     520 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/vmstat.h:528:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     528 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     529 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
->> kernel/tracepoint.c:751:34: error: no member named '__start___tracepoints_ptrs' in 'struct module'
-     751 |                 for_each_tracepoint_range(mod->__start___tracepoints_ptrs,
-         |                                           ~~~  ^
-   5 warnings and 1 error generated.
+Compression Quality:
+Link: https://gist.github.com/devarsht/cbcc7cd97e8c48ba1486caa2b7884655
+
+Multi Instance:
+Link: https://gist.github.com/devarsht/22c2fca08cd3441fb40f2c7a4cebc95a
+
+Crop support:
+Link: https://gist.github.com/devarsht/de6f5142f678bb1a5338abfd9f814abd
+
+Runtime PM:
+Link: https://gist.github.com/devarsht/70cd95d4440ddc678489d93885ddd4dd
+
+Math lib KUnit tests:
+Link: https://gist.github.com/devarsht/3f9042825be3da4e133b8f4eda067876
+
+[1]: 
+https://lore.kernel.org/all/de46aefe-36da-4e1a-b4fa-b375b2749181@xs4all.nl/
+
+Changelog:
+V10->V11:
+ - Fix commenting for math.h, include headers per IWYU principle in
+   math_kunit, update title for math.h kernel-doc
+
+V9->V10:
+ - Update commenting style in math.h and add notes for new jpeg header
+   macros
+ - Add KUnit dependency for math_kunit
+
+V8->V9:
+ - Remove kernel.h header file
+ - Remove stale filler data on jpeg header in E5010 jpeg driver
+
+V7->V8:
+ - Add KUnit tests for math functions
+ - Add roundclosest() for supporting rounding for non-multiple of 2
+ - Update commit message as suggested
+ - Add Reviewed-by and Acked-by tags to patches as received
+
+V6->V7:
+ - Fix cropping support
+ - Move reference huffman and quantization tables to v4l2-jpeg.c
+ - Fix suspend/resume use-case
+ - Add Reviewed-by
+
+V5->V6:
+ - Fix sparse warnings
+
+V4->V5:
+ - Sort the #includes in driver file alphabetically
+ - Rename huffman and quantization tables to not use '_'
+ - Add Reviewed-by tag
+
+V3->V4:
+- Use ti-specific compatible ti,am62a-jpeg-enc as secondary one in
+  dt-binding
+- Remove clock-names as only single clock in dt-binding
+- Fix issue with default params setting
+- Correct v4l2 error prints
+- Simplify register write functions with single statement return values
+- Remove unrequired error checks from get_queue()
+- Drop explicit device_caps setting as it is already taken care by v4l2
+  core
+- Remove unrequired multiplanar checks and memset from s_fmt, g_fmt
+  callback functions
+- Fix try_fmt callback to not update the queues
+- Remove unrequired contiguous format attribute from queue_init
+- Use dynamic allocation for video_device and remove unrequired
+  assignments in probe()
+- Remove unrequired checks from queue_setup function
+- Return queued buffers back if start_streaming fails
+- Use ARRAY_SIZE in place of hard-coding
+- Use huffman and quantization tables from reference header file
+
+V2->V3:
+- Add DONOTMERGE patches for dts and defconfig
+- Update driver with below changes :
+  - Correct license headers
+  - Use more generic name core instead of jasper for base registers
+  - Add Comment for forward declarations
+  - Simplify quantization table calculations
+  - Use v4l2_apply_frmsize_constraints for updating framesize and remove
+    unrequired functions
+  - Place TODO at top of file and in commit message too
+  - Use dev_err_probe helper in probe function
+  - Fix return value checking for failure scenarios in probe function
+  - Use v4l2_err/info/warn helpers instead of dev_err/info/warn helpers
+  - Fix unexpected indentation
+  - Correct commit message
+- Update dt-bindings with below changes :
+  - Add vendor specific compatible 
+  - Fix commit title and message
+  - Update reg names
+  - Update clocks to 1
+  - Fix dts example with proper naming
+
+V1->V2:
+ - Send dt-bindings and driver together
+
+Patch-Diff between the series :
+V10->V11 Range diff :
+https://gist.github.com/devarsht/cd76372bff7c125f75d06ba009264b75
+
+V9->V10 Range diff :
+https://gist.github.com/devarsht/b446acee460b8c65fb577d06b7bbc1da
+
+V8->V9 Range diff :
+https://gist.github.com/devarsht/3fd6c4e8031ab114248f93d01c8dfc74
+
+V6->V7 Range diff :
+https://gist.github.com/devarsht/1db185b1e187eaf397e9e4c37066777e
+
+V5->V6 Range diff :
+https://gist.github.com/devarsht/c89180ac2b0d2814614f2b59d0705c19
+
+V4->V5 Range diff :
+https://gist.github.com/devarsht/298790af819f299a0a05fec89371097b
+
+V3->V4 Range diff :
+https://gist.github.com/devarsht/22a744d999080de6e813bcfb5a596272
+
+Previous patch series:
+V10: https://lore.kernel.org/all/20240530165925.2715837-1-devarsht@ti.com/
+V9: https://lore.kernel.org/all/20240526175655.1093707-1-devarsht@ti.com/
+V8: https://lore.kernel.org/all/20240517171532.748684-1-devarsht@ti.com/
+V7: https://lore.kernel.org/all/20240510082603.1263256-1-devarsht@ti.com/
+V6: https://lore.kernel.org/all/20240228141140.3530612-1-devarsht@ti.com/
+V5: https://lore.kernel.org/all/20240215134641.3381478-1-devarsht@ti.com/
+V4: https://lore.kernel.org/all/20240205114239.924697-1-devarsht@ti.com/
+V3: https://lore.kernel.org/all/20230816152210.4080779-1-devarsht@ti.com/
+V2: https://lore.kernel.org/all/20230727112546.2201995-1-devarsht@ti.com/
 
 
-vim +751 kernel/tracepoint.c
+Daniel Latypov (1):
+  lib: add basic KUnit test for lib/math
 
-   738	
-   739	void for_each_module_tracepoint(void (*fct)(struct tracepoint *tp, void *priv),
-   740					void *priv)
-   741	{
-   742		struct tp_module *tp_mod;
-   743		struct module *mod;
-   744	
-   745		if (!mod->num_tracepoints)
-   746			return;
-   747	
-   748		mutex_lock(&tracepoint_module_list_mutex);
-   749		list_for_each_entry(tp_mod, &tracepoint_module_list, list) {
-   750			mod = tp_mod->mod;
- > 751			for_each_tracepoint_range(mod->__start___tracepoints_ptrs,
-   752				mod->tracepoints_ptrs + mod->num_tracepoints,
-   753				fct, priv);
-   754		}
-   755		mutex_unlock(&tracepoint_module_list_mutex);
-   756	}
-   757	#endif /* CONFIG_MODULES */
-   758	
+Devarsh Thakkar (10):
+  media: dt-bindings: Add Imagination E5010 JPEG Encoder
+  media: imagination: Add E5010 JPEG Encoder driver
+  media: v4l2-jpeg: Export reference quantization and huffman tables
+  media: imagination: Use exported tables from v4l2-jpeg core
+  media: verisilicon : Use exported tables from v4l2-jpeg for hantro
+    codec
+  math.h: Add macros for rounding to closest value
+  Documentation: core-api: Add math.h macros and functions
+  lib: math_kunit: Add tests for new macros related to rounding to
+    nearest value
+  media: imagination: Round to closest multiple for cropping region
+  gpu: ipu-v3: Use generic macro for rounding closest to specified value
+
+ Documentation/core-api/kernel-api.rst         |    6 +
+ .../bindings/media/img,e5010-jpeg-enc.yaml    |   75 +
+ MAINTAINERS                                   |    7 +
+ drivers/gpu/ipu-v3/ipu-image-convert.c        |    4 +-
+ drivers/media/platform/Kconfig                |    1 +
+ drivers/media/platform/Makefile               |    1 +
+ drivers/media/platform/imagination/Kconfig    |   12 +
+ drivers/media/platform/imagination/Makefile   |    3 +
+ .../platform/imagination/e5010-core-regs.h    |  585 ++++++
+ .../platform/imagination/e5010-jpeg-enc-hw.c  |  267 +++
+ .../platform/imagination/e5010-jpeg-enc-hw.h  |   42 +
+ .../platform/imagination/e5010-jpeg-enc.c     | 1644 +++++++++++++++++
+ .../platform/imagination/e5010-jpeg-enc.h     |  168 ++
+ .../platform/imagination/e5010-mmu-regs.h     |  311 ++++
+ .../media/platform/verisilicon/hantro_jpeg.c  |  128 +-
+ drivers/media/v4l2-core/v4l2-jpeg.c           |  162 +-
+ include/linux/math.h                          |   63 +
+ include/media/v4l2-jpeg.h                     |   28 +
+ lib/math/Kconfig                              |   14 +
+ lib/math/Makefile                             |    1 +
+ lib/math/math_kunit.c                         |  329 ++++
+ 21 files changed, 3733 insertions(+), 118 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/media/img,e5010-jpeg-enc.yaml
+ create mode 100644 drivers/media/platform/imagination/Kconfig
+ create mode 100644 drivers/media/platform/imagination/Makefile
+ create mode 100644 drivers/media/platform/imagination/e5010-core-regs.h
+ create mode 100644 drivers/media/platform/imagination/e5010-jpeg-enc-hw.c
+ create mode 100644 drivers/media/platform/imagination/e5010-jpeg-enc-hw.h
+ create mode 100644 drivers/media/platform/imagination/e5010-jpeg-enc.c
+ create mode 100644 drivers/media/platform/imagination/e5010-jpeg-enc.h
+ create mode 100644 drivers/media/platform/imagination/e5010-mmu-regs.h
+ create mode 100644 lib/math/math_kunit.c
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.39.1
+
 
