@@ -1,161 +1,116 @@
-Return-Path: <linux-kernel+bounces-196968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B88B8D645F
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:22:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1820A8D63FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:05:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00F332871FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:22:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 489B81C2787C
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:05:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A1781CD18;
-	Fri, 31 May 2024 14:22:24 +0000 (UTC)
-Received: from out03.mta.xmission.com (out03.mta.xmission.com [166.70.13.233])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BE6D1649BE;
+	Fri, 31 May 2024 14:04:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="dcdxt/2v"
+Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34E14179AE;
-	Fri, 31 May 2024 14:22:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0E5C155C8E
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 14:04:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717165343; cv=none; b=Oh5BDAy4hUwwQpd88Om8T5fsNswmSb6EnBBI3MHEODXqiR+jRvoZ9KlFSjr4Rh3dB8v8Yat/JBPcAxTJ7pPZB1szCC4/SazJTksCm8jMnkeSMollGeDUPfzclvGi7tb3zMBYkqub+R81ELX0s8sYqY0nI8NhIY3gaVIrpjqaqGY=
+	t=1717164287; cv=none; b=arGaJ934bmcmyK5+5VwDIE3Tt95CyGnyU95atMNpkV1qC4K5mLZ3qky0GSzkeMmhUdPXotYj0G6cizEgmesA5hMqrCjUaaZA0t+b4VZ3M1fPLUCcSbFT6h5ci53x/EKQFIVLfR7xEJaV7cTq+Vbh6od0Mw4QNXjt9jUY9jwwZwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717165343; c=relaxed/simple;
-	bh=KhPwAHj5psCQsqX4Dn8+N9prZw+SckfJvkJ/770euJo=;
-	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
-	 Content-Type:Subject; b=NGMsXDK+eMpNdQz83jggdYNlO1APeUCjdyuZwDiCK9k0BkYVBuGfu2JLjYsdozmPT581zes2gTl1n0Ubn2jDFVf9ZaOksXVHOXNJ2v2xQmAY0RTR9mZWH3uIXqLcPjoZEu0BMe8icY4uWi/FYEQWTHuplNQOQPIQSaz4aqeIftk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
-Received: from in01.mta.xmission.com ([166.70.13.51]:42770)
-	by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1sD2jp-003KCz-6R; Fri, 31 May 2024 07:56:09 -0600
-Received: from ip68-227-168-167.om.om.cox.net ([68.227.168.167]:39510 helo=email.froward.int.ebiederm.org.xmission.com)
-	by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1sD2jo-00Bi30-2x; Fri, 31 May 2024 07:56:08 -0600
-From: "Eric W. Biederman" <ebiederm@xmission.com>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Ross Philipson <ross.philipson@oracle.com>,
-  linux-kernel@vger.kernel.org,  x86@kernel.org,
-  linux-integrity@vger.kernel.org,  linux-doc@vger.kernel.org,
-  linux-crypto@vger.kernel.org,  kexec@lists.infradead.org,
-  linux-efi@vger.kernel.org,  iommu@lists.linux-foundation.org,
-  dpsmith@apertussolutions.com,  tglx@linutronix.de,  mingo@redhat.com,
-  bp@alien8.de,  hpa@zytor.com,  dave.hansen@linux.intel.com,
-  ardb@kernel.org,  mjg59@srcf.ucam.org,
-  James.Bottomley@hansenpartnership.com,  peterhuewe@gmx.de,
-  jarkko@kernel.org,  jgg@ziepe.ca,  luto@amacapital.net,
-  nivedita@alum.mit.edu,  herbert@gondor.apana.org.au,
-  davem@davemloft.net,  corbet@lwn.net,  dwmw2@infradead.org,
-  baolu.lu@linux.intel.com,  kanth.ghatraju@oracle.com,
-  andrew.cooper3@citrix.com,  trenchboot-devel@googlegroups.com
-References: <20240531010331.134441-1-ross.philipson@oracle.com>
-	<20240531010331.134441-7-ross.philipson@oracle.com>
-	<20240531021656.GA1502@sol.localdomain>
-Date: Fri, 31 May 2024 08:54:21 -0500
-In-Reply-To: <20240531021656.GA1502@sol.localdomain> (Eric Biggers's message
-	of "Thu, 30 May 2024 19:16:56 -0700")
-Message-ID: <874jaegk8i.fsf@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1717164287; c=relaxed/simple;
+	bh=9X3/+K4zOUhzNbutloj3w6yI0u7JNa7iWNyhISz2UUo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tPsLIn5zV0g28EY0iuFVhw3rVJKFNHlqJjCm2VHZC9aZDsDMu+YxXGRzmUsFCwCygKrPbCCrETQUlb/XFNo4hvqXrfVmMuM15VYor6DlUJsVxoKyMk9BTeXmqBvmLR+BXR2vPvYj1T9/tjczVc23ue7L3rJ9LENb2YVhFWBZjo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=dcdxt/2v; arc=none smtp.client-ip=91.218.175.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: sam@ravnborg.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1717164282;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=o/qvTrH1SiQj3MlmnfxDD66NKPm741DV2Sf6ZGRQjq0=;
+	b=dcdxt/2vKtqS3mvkvS2XwUo4rVK/Gi3jVopqG04THr1VzIf7XXW6pasFPOGn1fuDJAZp3Z
+	pM86B8Jg1dR0SbpIP0CqPk90+ackIQKmtNnD+v+Pq8GQ+jUZuXT6gB8/+9qgOksy9sYsAa
+	NrKgSHKf79u9c0ljICkoi5d5I1JCESU=
+X-Envelope-To: j-choudhary@ti.com
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: dmitry.baryshkov@linaro.org
+X-Envelope-To: andrzej.hajda@intel.com
+X-Envelope-To: neil.armstrong@linaro.org
+X-Envelope-To: rfoss@kernel.org
+X-Envelope-To: laurent.pinchart@ideasonboard.com
+X-Envelope-To: mripard@kernel.org
+X-Envelope-To: jonas@kwiboo.se
+X-Envelope-To: jernej.skrabec@gmail.com
+X-Envelope-To: maarten.lankhorst@linux.intel.com
+X-Envelope-To: tzimmermann@suse.de
+X-Envelope-To: airlied@gmail.com
+X-Envelope-To: daniel@ffwll.ch
+X-Envelope-To: a-bhatia1@ti.com
+X-Envelope-To: dri-devel@lists.freedesktop.org
+Message-ID: <955a6d94-9a4c-4f7d-974c-819261579f14@linux.dev>
+Date: Fri, 31 May 2024 22:04:29 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1sD2jo-00Bi30-2x;;;mid=<874jaegk8i.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.168.167;;;frm=ebiederm@xmission.com;;;spf=pass
-X-XM-AID: U2FsdGVkX19trb9vNuHauQyjgb2/8G4ddYyfaO4Rxd0=
-X-SA-Exim-Connect-IP: 68.227.168.167
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Level: *
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-	*      [score: 0.5000]
-	*  0.7 XMSubLong Long Subject
-	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-	*      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
-	*  0.0 T_TooManySym_01 4+ unique symbols in subject
-	*  1.0 T_XMDrugObfuBody_08 obfuscated drug references
-X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: *;Eric Biggers <ebiggers@kernel.org>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 465 ms - load_scoreonly_sql: 0.11 (0.0%),
-	signal_user_changed: 12 (2.5%), b_tie_ro: 10 (2.1%), parse: 1.18
-	(0.3%), extract_message_metadata: 15 (3.3%), get_uri_detail_list: 1.99
-	(0.4%), tests_pri_-2000: 15 (3.2%), tests_pri_-1000: 3.1 (0.7%),
-	tests_pri_-950: 1.25 (0.3%), tests_pri_-900: 1.09 (0.2%),
-	tests_pri_-90: 77 (16.6%), check_bayes: 76 (16.3%), b_tokenize: 16
-	(3.4%), b_tok_get_all: 13 (2.8%), b_comp_prob: 4.4 (0.9%),
-	b_tok_touch_all: 38 (8.2%), b_finish: 1.11 (0.2%), tests_pri_0: 324
-	(69.8%), check_dkim_signature: 0.77 (0.2%), check_dkim_adsp: 3.2
-	(0.7%), poll_dns_idle: 0.97 (0.2%), tests_pri_10: 2.1 (0.5%),
-	tests_pri_500: 8 (1.7%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH v9 06/19] x86: Add early SHA-1 support for Secure Launch
- early measurements
-X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+Subject: Re: [v4,1/2] drm/bridge: sii902x: Fix mode_valid hook
+To: Sam Ravnborg <sam@ravnborg.org>, Jayesh Choudhary <j-choudhary@ti.com>
+Cc: linux-kernel@vger.kernel.org, dmitry.baryshkov@linaro.org,
+ andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
+ Laurent.pinchart@ideasonboard.com, mripard@kernel.org, jonas@kwiboo.se,
+ jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
+ tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch, a-bhatia1@ti.com,
+ dri-devel@lists.freedesktop.org
+References: <20240530092930.434026-2-j-choudhary@ti.com>
+ <e5ce13e6-1007-41c9-bedc-2045d6f75480@linux.dev>
+ <20240531133324.GA1715839@ravnborg.org>
+Content-Language: en-US, en-AU
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sui Jingfeng <sui.jingfeng@linux.dev>
+In-Reply-To: <20240531133324.GA1715839@ravnborg.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-Eric Biggers <ebiggers@kernel.org> writes:
+Hi, Jayesh
 
-> On Thu, May 30, 2024 at 06:03:18PM -0700, Ross Philipson wrote:
->> From: "Daniel P. Smith" <dpsmith@apertussolutions.com>
->> 
->> For better or worse, Secure Launch needs SHA-1 and SHA-256. The
->> choice of hashes used lie with the platform firmware, not with
->> software, and is often outside of the users control.
->> 
->> Even if we'd prefer to use SHA-256-only, if firmware elected to start us
->> with the SHA-1 and SHA-256 backs active, we still need SHA-1 to parse
->> the TPM event log thus far, and deliberately cap the SHA-1 PCRs in order
->> to safely use SHA-256 for everything else.
->> 
->> The SHA-1 code here has its origins in the code from the main kernel:
->> 
->> commit c4d5b9ffa31f ("crypto: sha1 - implement base layer for SHA-1")
->> 
->> A modified version of this code was introduced to the lib/crypto/sha1.c
->> to bring it in line with the SHA-256 code and allow it to be pulled into the
->> setup kernel in the same manner as SHA-256 is.
->> 
->> Signed-off-by: Daniel P. Smith <dpsmith@apertussolutions.com>
->> Signed-off-by: Ross Philipson <ross.philipson@oracle.com>
->
-> Thanks.  This explanation doesn't seem to have made it into the actual code or
-> documentation.  Can you please get it into a more permanent location?
->
-> Also, can you point to where the "deliberately cap the SHA-1 PCRs" thing happens
-> in the code?
->
-> That paragraph is also phrased as a hypothetical, "Even if we'd prefer to use
-> SHA-256-only".  That implies that you do not, in fact, prefer SHA-256 only.  Is
-> that the case?  Sure, maybe there are situations where you *have* to use SHA-1,
-> but why would you not at least *prefer* SHA-256?
 
-Yes.  Please prefer to use SHA-256.
+On 5/31/24 21:33, Sam Ravnborg wrote:
+> Hi Jayesh,
+> 
+>>> +
+>>>    static const struct drm_bridge_funcs sii902x_bridge_funcs = {
+>>>    	.attach = sii902x_bridge_attach,
+>>>    	.mode_set = sii902x_bridge_mode_set,
+>>> @@ -516,6 +529,7 @@ static const struct drm_bridge_funcs sii902x_bridge_funcs = {
+>>>    	.atomic_destroy_state = drm_atomic_helper_bridge_destroy_state,
+>>>    	.atomic_get_input_bus_fmts = sii902x_bridge_atomic_get_input_bus_fmts,
+>>>    	.atomic_check = sii902x_bridge_atomic_check,
+>>> +	.mode_valid = sii902x_bridge_mode_valid,
+> 
+> As you have the possibility to test the driver, it would be nice with a
+> follow-up patch that replaces the use of enable() / disable() with the
+> atomic counterparts.
+> 
+> enable() / disable() are deprecated, so it is nice to reduce their use.
 
-Have you considered implementing I think it is SHA1-DC (as git has) that
-is compatible with SHA1 but blocks the known class of attacks where
-sha1 is actively broken at this point?
+I agree with Sam.
 
-No offense to your Trenchboot project but my gut says that anything new
-relying on SHA-1 is probably a bad joke at this point.
+Please using atomic uniformally with a follow-up patch, the mixed
+using of atomic API and non atomic API is a little bit confusing IMO.
 
-Firmware can most definitely be upgraded and if the goal is a more
-secure boot the usual backwards compatibility concerns for supporting
-old firmware really don't apply.
 
-Perhaps hide all of the SHA-1 stuff behind CONFIG_TRENCHBOOT_PROTOTYPE
-or something like that to make it clear that SHA-1 is not appropriate
-for any kind of production deployment and is only good for prototyping
-your implementation until properly implemented firmware comes along.
-
-Eric
+> 	Sam
 
