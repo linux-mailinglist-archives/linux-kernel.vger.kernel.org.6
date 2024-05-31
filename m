@@ -1,437 +1,147 @@
-Return-Path: <linux-kernel+bounces-196107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B6FD8D5763
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 02:55:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC77A8D5768
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 02:57:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E2661C21B61
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 00:55:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 821A61F2452D
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 00:57:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CDB95221;
-	Fri, 31 May 2024 00:55:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB0AA63C7;
+	Fri, 31 May 2024 00:56:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="Rz+5gUR2"
-Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11011009.outbound.protection.outlook.com [52.101.228.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="AYFBMKat"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F2354C79;
-	Fri, 31 May 2024 00:55:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.9
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717116931; cv=fail; b=VBj/9vo9/hJvJhRalVs7ivN7C9lGWXBhxN3i9SLNxCk7z5RRc5FifHENShNIcB3Zxqsh6xxrroiaAW3YXChQsvbQ8rcQ6C1uW5Wa1zo3x63GX+AiISaw450coeZZS8NWJUE/UqJlh+dzJdSkL3kPl6w70afQY2JEgjRK87RRYWg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717116931; c=relaxed/simple;
-	bh=9AHK/aMosDHTDu3VcGeAy2ykRabm59GKUjxkyZbgnLc=;
-	h=Message-ID:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=dFH8e2xUUH2Pq0aoWurmByvr6SgnDRUJT5PqpOXK640wNZc3jB/l7Tf2zLC0E1GYjL8mgllqQQaO7xWOzrv5x18AibTLy/VZz1Ly7cqi0OSRwvf3iX6svNZGFMfM7vRW/Z/Oi+p8iObz7NenTIb9PepuLJ+W/bk4MxvnPUQctCI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=Rz+5gUR2; arc=fail smtp.client-ip=52.101.228.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=J3WE2F1xHjtuRJvCg7kCCPLvZH2hcQKqjE65AehfTgAaDFk6Z72RgaR0u6h/Xk8/QP4SFzyjgqEuv4Pp9vMT95ytvURE1SM0zPIb8neX6c339Y9FX6vl5dGkIE2BuL6xy3G15VqLuvabrnLLsmnEjnQ+ZBOFKrvO6sDmUXbL7B1cIsdZFsGrR4Fcd5RRayxVt47MORXouqCsQVm3A5gJnYEVQpIRFtbiX2NMwZXKs8BLIJkYReQIL0j9Yj6byMsUuljOk43JxShzrOST4DzO7X2whLjYUaHdzk8sZ0LmJQH0LFAKAppJszm4e7AyU61CSaGoaEKsjFO0Ix//aR+z4Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qIUcXbFUafmAWyrLtMS0KC2jz2Yc1VAQDEZP54vQ1os=;
- b=b2WC3I1AAxbAIfuu3Xq+oY7Yh8clGjCb10EDbMCXQFh6zq7PYoDzKdjPzC+/S/n8tlwA4PB12FfrckEJJDNZxZvMicrRIaNA0pC55hwqPd250sIEo0UogD2VDXfCeZBnlQX65255SvlYsQxWMsDn5zzjkd1j4i7BB+pajRvt05F/DUy9qktUCInl5KGc678XlU10Z9bQ0cIpjfgqmcvgw4mF31XHXhbUPldijSPDKUOXfufYFvtSD8zcFO96Iy8Sm5bYF392MzjEOssyomjHIAHMmU4Yq2ZQeQQdZSLQ3e99LN8GTdynnj8rD3SWEcSIwHoWMWBTnJlc5YdB/wBQLA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qIUcXbFUafmAWyrLtMS0KC2jz2Yc1VAQDEZP54vQ1os=;
- b=Rz+5gUR2kAx4RCXsU1cdWnqm/RIQ1xzEHjNK82SRZ5pltba/h8Bz6MhMWguHZsj6teXbuXjT9vjl0Ai+onE/POVSn99ZiB+uCmAzQDHuMuh4MYN7LbVBv6NKRS6BhVxexjC1L0RNXo743y9+GRQOteOSj6w1Dp58P5COZR8D+kU=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=renesas.com;
-Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
- (2603:1096:400:3a9::11) by OS0PR01MB6465.jpnprd01.prod.outlook.com
- (2603:1096:604:107::7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.24; Fri, 31 May
- 2024 00:55:25 +0000
-Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
- ([fe80::c568:1028:2fd1:6e11]) by TYCPR01MB10914.jpnprd01.prod.outlook.com
- ([fe80::c568:1028:2fd1:6e11%4]) with mapi id 15.20.7633.021; Fri, 31 May 2024
- 00:55:25 +0000
-Message-ID: <87sexyvlz8.wl-kuninori.morimoto.gx@renesas.com>
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Rob Herring <robh@kernel.org>,	Weidong Wang <wangweidong.a@awinic.com>,
-	Mark Brown <broonie@kernel.org>,	Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?=
- <u.kleine-koenig@pengutronix.de>,	Shenghao Ding <shenghao-ding@ti.com>,
-	Marco Felsch <m.felsch@pengutronix.de>,	Alper Nebi Yasak
- <alpernebiyasak@gmail.com>,	Chancel Liu <chancel.liu@nxp.com>,
-	linux-sound@vger.kernel.org,	linux-kernel@vger.kernel.org,
-	alsa-devel@alsa-project.org,	patches@opensource.cirrus.com,
-	linuxppc-dev@lists.ozlabs.org,	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,	linux-rockchip@lists.infradead.org,
-	Liam Girdwood <lgirdwood@gmail.com>,	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,	James Schulman <james.schulman@cirrus.com>,
-	David Rhodes <david.rhodes@cirrus.com>,	Richard Fitzgerald
- <rf@opensource.cirrus.com>,	Kevin Lu <kevin-lu@ti.com>,	Baojun Xu
- <baojun.xu@ti.com>,	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Banajit Goswami <bgoswami@quicinc.com>,	Shengjiu Wang
- <shengjiu.wang@gmail.com>,	Xiubo Li <Xiubo.Lee@gmail.com>,	Fabio Estevam
- <festevam@gmail.com>,	Nicolin Chen <nicoleotsuka@gmail.com>,	Shawn Guo
- <shawnguo@kernel.org>,	Sascha Hauer <s.hauer@pengutronix.de>,	Pengutronix
- Kernel Team <kernel@pengutronix.de>,	Heiko Stuebner <heiko@sntech.de>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v1 1/6] ASoC: codecs: Remove unused of_gpio.h
-In-Reply-To: <20240530230037.1156253-2-andriy.shevchenko@linux.intel.com>
-References: <20240530230037.1156253-1-andriy.shevchenko@linux.intel.com>
-	<20240530230037.1156253-2-andriy.shevchenko@linux.intel.com>
-User-Agent: Wanderlust/2.15.9 Emacs/29.3 Mule/6.0
-Content-Type: text/plain; charset=US-ASCII
-Date: Fri, 31 May 2024 00:55:24 +0000
-X-ClientProxiedBy: TYCP286CA0355.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:405:7c::12) To TYCPR01MB10914.jpnprd01.prod.outlook.com
- (2603:1096:400:3a9::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD625211C
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 00:56:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717117017; cv=none; b=hMsJSpC2yiGosoU5D4cKoLpc189Bhis4IaXpQXXymwAGtzf+nLkz/NSE5NOzSqb0/1mxHZphwgkshlI7ORbFYdnt19wEGj1iBygdfM7JR7Iouhi7VTQKFqk0cj0XdT1ZY6XAUYI0Q2mujWn1gHSJOY4xNHWWYTGXWGbvHNIKVjM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717117017; c=relaxed/simple;
+	bh=utUjPf+CxVjInNUZOIhI0gR+mCYUEfMhM7sF+HObOLQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=amLrTs+iNae96NgsAfAGX2z+RRVj909MJUehtRiYV9uEnWtCsGHLL2Y7ePPNp38Vbw4/aG/XwEjpVWVTKU2cF8BcfeHmMx8+CCXFrRfkIRzmpNfVLLldk7dbnkYhkmfRsdR1xpxh8ApmlHfA+yOQqJPr69qqfkDGxfwOzb9fe9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=AYFBMKat; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1f612d7b0f5so9368075ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 17:56:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fastly.com; s=google; t=1717117015; x=1717721815; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=b10Tm7oRJPRuDfKU1e8ItJ5vWrTyaVOp+4gtgHNCzus=;
+        b=AYFBMKat4pEbjDffJmKzvweIca3z86K8fKPF7fezGjP3P1M62hy7Nj4/ibo9Apa1S3
+         Z4u/V0VKRRueO/205+7rAKcpAnLV0u7ktJzp35V/P6Vk0/Cn5o+EtHqp6iHcJhmIpLkh
+         p2ia49XoJlHNJGW05m4WcqhmjfFPka8ZBdlzI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717117015; x=1717721815;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=b10Tm7oRJPRuDfKU1e8ItJ5vWrTyaVOp+4gtgHNCzus=;
+        b=YMWccw1KfPCBqD7sQBJIH487+exvw5vtKFUP3oxZ2iIGBgnzxay0BxDFWJn5n0e9Vz
+         Q/ptq8o3jqP65xMr+L/Rd1DKXjjzYx5wXPUy1Oa3zesRaC3DqFXzzRFNMXUwxFghtOBl
+         pvluKoDuZjRvLwDQB33HdCH4pWxuiZWCnKSmY0/8bv7HMjmVNydmjAZh5pDrRuaMdE7b
+         rj7kJyKVJ1BBxVhwOnRGQc08NHUpZOhdXMOl0PEbuXO+9sGRez8ScbI2Gd+DDoqs9oXQ
+         wvLZnGGMXSm6U7+qEN431CgGEGetXkEZJPu5fm8EBa84Hr86PVhUtl3+keDOlAbg1H9d
+         jKkA==
+X-Forwarded-Encrypted: i=1; AJvYcCUtmpyWcxYQviLXve09l15jN1C3bVd0a1Khqv7mjwz2mfkiIleMcRXdUEPPVD3Wjhcu56AeXQ7gYouM0jWROdFkfZMeNOEcQSSJUd+1
+X-Gm-Message-State: AOJu0YydTmRX9kIPH1HGYRjdXwEBKGLHg4bLPJsnXv4KBY+toNnMDFQe
+	5rcaU0CVMGubaL+AXOftJ9ErHw3Vz4Lw6jcozUH1f8YUXUqlGXzEJAAzKH+KnAw=
+X-Google-Smtp-Source: AGHT+IHIQqq87FLOuCkXsun/b85HAp4T8gxNpAE6sXxtG7+A9leHJoAHvH9pQLR4ro8iOsSxPHm0gw==
+X-Received: by 2002:a17:902:ce01:b0:1eb:6cfe:7423 with SMTP id d9443c01a7336-1f6359eaaaemr8685885ad.19.1717117015183;
+        Thu, 30 May 2024 17:56:55 -0700 (PDT)
+Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f635abdec8sm2026815ad.163.2024.05.30.17.56.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 May 2024 17:56:54 -0700 (PDT)
+Date: Thu, 30 May 2024 17:56:52 -0700
+From: Joe Damato <jdamato@fastly.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Saeed Mahameed <saeedm@nvidia.com>, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, nalramli@fastly.com,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Leon Romanovsky <leon@kernel.org>,
+	"open list:MELLANOX MLX5 core VPI driver" <linux-rdma@vger.kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Tariq Toukan <tariqt@nvidia.com>
+Subject: Re: [RFC net-next v3 0/2] mlx5: Add netdev-genl queue stats
+Message-ID: <ZlkgVJbRpkzx6rTI@LQ3V64L9R2>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Saeed Mahameed <saeedm@nvidia.com>, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, nalramli@fastly.com,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Leon Romanovsky <leon@kernel.org>,
+	"open list:MELLANOX MLX5 core VPI driver" <linux-rdma@vger.kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Tariq Toukan <tariqt@nvidia.com>
+References: <20240529031628.324117-1-jdamato@fastly.com>
+ <20240530171128.35bd0ee2@kernel.org>
+ <ZlkWnXirc-NhQERA@LQ3V64L9R2>
+ <20240530173902.7f00a610@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYCPR01MB10914:EE_|OS0PR01MB6465:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6aaaed8a-a809-4ad9-f7f3-08dc810c5b4f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|52116005|1800799015|7416005|376005|366007|38350700005;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?uZqkXrtTEoKrWROtZ9cnrgi1hIoJj37JniApMwJo6YiwzfBpMBJ78KDNestR?=
- =?us-ascii?Q?vtZpL3OkU1OcTJDPDD/3mm2p+gGyEKtsHJH3KU8+ltOK4DVC1X+VSAV7ySvs?=
- =?us-ascii?Q?gBh14uJ+mt2uie6kkeEtHfPgVga6qQXheHttJprJ7Nj7V/F459b8jMNPwCIz?=
- =?us-ascii?Q?eb0cxwwzvLQ/2DX08Ih9rg0VYjAkpxNvLbpt+OyIURG7BGtIjBNBqQmX8pTk?=
- =?us-ascii?Q?T/D2H812QXUR2t7ChITcEXa2lmGQDcowemR9FaoYsDAnmATpZEPwAPNHLsLi?=
- =?us-ascii?Q?b+YKGDB1afQPWVdNhcZO744ijW/M9FbhhiYsGqxAQzPXCzaqMX6soyXV65wE?=
- =?us-ascii?Q?XDNInlu+F7YGo9tWZits2WP3hPUFup2nkM6ceYUdc9sxhLVF24MqxO8rv/kO?=
- =?us-ascii?Q?4vFJAgiFohl/lATNGUdvtZ2r4oP38AQObL49TzQa59nVfX19sofomrd2jnRl?=
- =?us-ascii?Q?ri857QV3bikuh0fqEDKn110jaoJ+JKoVGvhfsPNyLCq46U2C6Y3n51bLsQl8?=
- =?us-ascii?Q?FMwvr8n8FGUxATKAjO4BLLeowbhCPx8bPyw5bkPbHzjw/Kk8wSQYRWOO0a1G?=
- =?us-ascii?Q?PW/ds+JMfN9wuNsNRltVQDjJJ9iKg1/PSAfJshf6kKCCfd650Q/5FMOYGuBe?=
- =?us-ascii?Q?q3Zyj+W6212A+tAmKk1XyssHpss0DWW3nnQyjzuAhjVOa2tkOSRJ/ppypzw9?=
- =?us-ascii?Q?NotL4tKQccVf14xJtDhXrMZSwLj7E15HHq/cJuaBCRN6xcMRFYDg3b4vAgWM?=
- =?us-ascii?Q?nyKNYnxJ/juYrQJ02CQPDJ7jtvdiWQVuL+1xqWNb4ojcr1G8vdfceNKBoseu?=
- =?us-ascii?Q?B7gWArMMvbpRNx8nF7ETKsMkqhiatg5de3UsAtH9D2J3hIfVTWeBNq9P1btn?=
- =?us-ascii?Q?NuqkyM9G1RrVSZs7rLPVNbAx++rGBxS8Cv7sqQBFiWJIk1glvg80FNPZ78Sj?=
- =?us-ascii?Q?bd/m0mKu8QNLyBOAeMdwn4yZJr/qwSK+TYgjLFZEzZnohk0lyTp1chX/+LjB?=
- =?us-ascii?Q?/4uki00E7dtNKXieuaNTszReU/5c+8zubyRTc4oNlzNlxlEjdgkumwEhZJpE?=
- =?us-ascii?Q?ABQgYQkGbPy6uXQJq/a8xbI9fWJszBh3H3Ykf+9BNENsbMD6TcGhUBhPkurO?=
- =?us-ascii?Q?RdgjIWag1NXR99Nuj5T4Mtce4mLdu2ko2pOExL4qzAgSRgusSO5SGHgoS98I?=
- =?us-ascii?Q?WvmCXXW7Li5wUeF2StrcBTQD35OBZbPL6FXRtn23qLdiCL4rJA/FqhdZP8o6?=
- =?us-ascii?Q?zFfMZlaiJV7EoLOhPxRTX+HeuD3qHJhOooGknJWB11VlyWgQ7WYHNq/CTly4?=
- =?us-ascii?Q?+ZMBZSrh1QqoDMDwLOp2pUKdLrR5z0a89avrFQScN5LLew=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB10914.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(52116005)(1800799015)(7416005)(376005)(366007)(38350700005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?iWL43j4E3yOLMmt6srfNkjtxXfA+1JCe0K/ClfIYZ+OfKb9HyvokIHtnPfAl?=
- =?us-ascii?Q?vWNtjXa1EcYfRiOVM0M7N4SWJr5TA9VI6H1r/9piZIUN31srBJsbHVZTgHcF?=
- =?us-ascii?Q?VuCaIb18vheOaGn/rzR25N3tR7llLRQdK0IpAt8i7ldhuj9/78Az8ZSeKF5z?=
- =?us-ascii?Q?4fdDIU6iorFSo+acsUaP27SKT3LvgWwX06grOXciTsbMXUfNhVwGLqNkBjUI?=
- =?us-ascii?Q?xI68+wfazvu3V3fN9leo9VoRnlWVOFZnbFCUzQtxzrnDYB8kbM5GyMygwkzs?=
- =?us-ascii?Q?v1/6AzuTOS5zxHqQ2TumFoLtUqwVD+YMAEygN3yXK6nnATXJnlp32kgzff6+?=
- =?us-ascii?Q?WVvPSNm/aigNwoISaiWf7SRcz0u37701+EpP51UsAjwIVlI0LSV28Q/tCDnt?=
- =?us-ascii?Q?msxcvo1eVHSQ+TAg9NEwsvxdeL/AJBVDhVpui8Fu64ez0KXIzkeY2glxXzc2?=
- =?us-ascii?Q?UurA4y8Ya9W6X7+OZRubEZ06KuIFUObxLyrGbu1bIZ2evFkdOJgI8ZjNVIcC?=
- =?us-ascii?Q?t3+xInGnd6fDGN20mb5mrH6UEnjpeBEfgJdaHWejKnCM+Z13Y+qysg9e4Gi+?=
- =?us-ascii?Q?J2RxPYeozSUPiWicOs6Eq3Wfnx0q9QkGyRiyfgeaTnTQFdx9ns8nEphsgxIY?=
- =?us-ascii?Q?WHtR3lJgmmsADjGGti0ca5wI+ishYAymBNkA7P4gM7rVtqg09GH2czrOvDS4?=
- =?us-ascii?Q?k2etHlPpjsfl2F0Vnik8Bkb7vuSO0b897dtuZd7Pt/kTEtngi4aDUiOxJwEL?=
- =?us-ascii?Q?aOz563koFBpHILeNrGsSCbt4tSCfJuHEYTmkseRZ9Gv0sui/F6SgJB50fMBT?=
- =?us-ascii?Q?azMPE3/YFyLe6TsxbN5YaHtf0pCi0hJiY63MyZOB2etJY69r/6MSHatZ9Ose?=
- =?us-ascii?Q?u71VFiD4N+/JwxHDms8raR3VD5I8yGH7irs1kAKGtLe8wNm03pxSq37Jnwza?=
- =?us-ascii?Q?ADc5BXKLTQYj0iBGbHsyD5uVSRlEhcBKx9VzOG1DeUg46l/l/YFs3Z1yAUDr?=
- =?us-ascii?Q?Vxqc47Gkou7evB8/HDbC5sVgqmQCFBtsJ0KDMFdrvgDdJKbw0nQwI4PECiAp?=
- =?us-ascii?Q?8JK5ZLxTp/ChrlV2gKZM1EhhAhU3BsOCAAmz4pR5H+y5/BiWSed4HT8+7INl?=
- =?us-ascii?Q?ZPEqqQodvH6zENMeywf45uRclZpm39bEcRf03PJN00ADvLHzCY78EEZCM9g/?=
- =?us-ascii?Q?t069k9pnVdnRWT5nLXZLdQgoVVrlZ8b+EcQmOWuTGOHv30ILGiVYBxbi16m4?=
- =?us-ascii?Q?/v0j9JkLjS5pw49em2fxNDLFKryad0diwmYwNEC6HXXQfMVFPtUB0I7I5hak?=
- =?us-ascii?Q?Z7dVMDZO0rf/K9QPDdjqTZrVHUp3b6pFfm610ak65mfhw1uRNqrInnBQX7kH?=
- =?us-ascii?Q?osdAwwv0V/38tln1wRrSBZ+GfTZ7RJAnfNfkBP+AWvkImGTyymlkwcWk7IUa?=
- =?us-ascii?Q?jOkwD3H0Q6Uc7dw8vfHpMJTZo6e7fPB6hfK/tfnuDcjnI9TQJLhanRfOpom+?=
- =?us-ascii?Q?LkO/7fq9VSn82X34dWHVapI5e0UkhMxrTq4iVIv6b3dXloEDAZWGz83k5N3j?=
- =?us-ascii?Q?4NVVlslUsaDIHwkggtzKll49p4Ooz8ex9N87yvGi1YzxGZIH7nHVmRcAiU+2?=
- =?us-ascii?Q?8O3YZTjC02q3G0wOKor5ib4=3D?=
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6aaaed8a-a809-4ad9-f7f3-08dc810c5b4f
-X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB10914.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 May 2024 00:55:25.3302
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: MNTOWLFnUMw+j8LYMFyKGYMZN3qpg7eYhTaQy2Z1UgEcva7vvpgVfRPzu0DNl+qUU4bhwOQmAZdSrcjG7jUuX4QhdMRYtJ+EvlHHpwcRk1IV0mJ1m3zxuYK8+8/RKR9a
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS0PR01MB6465
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240530173902.7f00a610@kernel.org>
 
-
-Hi
-
-> of_gpio.h is deprecated and subject to remove. The drivers in question
-> don't use it, simply remove the unused header.
+On Thu, May 30, 2024 at 05:39:02PM -0700, Jakub Kicinski wrote:
+> On Thu, 30 May 2024 17:15:25 -0700 Joe Damato wrote:
+> > > Why to base, and not report them as queue stats?
+> > > 
+> > > Judging by mlx5e_update_tx_netdev_queues() calls sprinkled in
+> > > ../mlx5/core/en/htb.c it seems that the driver will update the
+> > > real_num_tx_queues accordingly. And from mlx5e_qid_from_qos()
+> > > it seems like the inverse calculation is:
+> > > 
+> > > i - (chs->params.num_channels + is_ptp)*mlx5e_get_dcb_num_tc(&chs->params)
+> > > 
+> > > But really, isn't it enough to use priv->txq2sq[i] for the active
+> > > queues, and not active ones you've already covered?  
+> > 
+> > This is what I proposed in the thread for the v2, but Tariq
+> > suggested a different approach he liked more, please see this
+> > message for more details:
+> > 
+> >   https://lore.kernel.org/netdev/68225941-f3c3-4335-8f3d-edee43f59033@gmail.com/
+> > 
+> > I attempted to implement option 1 as he described in his message.
 > 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->  sound/soc/codecs/ak4118.c         | 1 -
->  sound/soc/codecs/ak4458.c         | 1 -
->  sound/soc/codecs/aw88399.c        | 1 -
->  sound/soc/codecs/cs53l30.c        | 1 -
->  sound/soc/codecs/max98390.c       | 1 -
->  sound/soc/codecs/pcm3168a.c       | 1 -
->  sound/soc/codecs/rk817_codec.c    | 1 -
->  sound/soc/codecs/tas2552.c        | 1 -
->  sound/soc/codecs/tas2764.c        | 1 -
->  sound/soc/codecs/tas2770.c        | 1 -
->  sound/soc/codecs/tas2780.c        | 1 -
->  sound/soc/codecs/tas2781-comlib.c | 1 -
->  sound/soc/codecs/tas2781-fmwlib.c | 1 -
->  sound/soc/codecs/tas2781-i2c.c    | 1 -
->  sound/soc/codecs/tlv320adc3xxx.c  | 1 -
->  sound/soc/codecs/tlv320adcx140.c  | 1 -
->  sound/soc/codecs/tlv320aic31xx.c  | 1 -
->  sound/soc/codecs/ts3a227e.c       | 1 -
->  sound/soc/codecs/wsa883x.c        | 1 -
->  19 files changed, 19 deletions(-)
+> I see, although it sounds like option 2 would also work.
 
-For pcm3168a
+I don't really mind either way; from Tariq's message it sounded like
+he preferred option 1, so I tried to implement that thinking that it would be
+my best bet at getting this done.
 
-Reviewed-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+If option 2 is easier/preferred for some reason... it seems like
+(other than the locking I forgot to include) the base implementation
+in v2 was correct and I could use what I proposed in the thread for
+the tx stats, which was:
 
-> diff --git a/sound/soc/codecs/ak4118.c b/sound/soc/codecs/ak4118.c
-> index 9a43235e6a11..23e868e4e3fb 100644
-> --- a/sound/soc/codecs/ak4118.c
-> +++ b/sound/soc/codecs/ak4118.c
-> @@ -9,7 +9,6 @@
->  #include <linux/gpio/consumer.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
-> -#include <linux/of_gpio.h>
->  #include <linux/regmap.h>
->  #include <linux/slab.h>
->  
-> diff --git a/sound/soc/codecs/ak4458.c b/sound/soc/codecs/ak4458.c
-> index 73cf482f104f..32cb802ad635 100644
-> --- a/sound/soc/codecs/ak4458.c
-> +++ b/sound/soc/codecs/ak4458.c
-> @@ -10,7 +10,6 @@
->  #include <linux/i2c.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
-> -#include <linux/of_gpio.h>
->  #include <linux/pm_runtime.h>
->  #include <linux/regulator/consumer.h>
->  #include <linux/reset.h>
-> diff --git a/sound/soc/codecs/aw88399.c b/sound/soc/codecs/aw88399.c
-> index 9fcb805bf971..23e50d73b4c4 100644
-> --- a/sound/soc/codecs/aw88399.c
-> +++ b/sound/soc/codecs/aw88399.c
-> @@ -10,7 +10,6 @@
->  #include <linux/crc32.h>
->  #include <linux/i2c.h>
->  #include <linux/firmware.h>
-> -#include <linux/of_gpio.h>
->  #include <linux/regmap.h>
->  #include <sound/soc.h>
->  #include "aw88399.h"
-> diff --git a/sound/soc/codecs/cs53l30.c b/sound/soc/codecs/cs53l30.c
-> index c0893146423b..2ee13d885fdc 100644
-> --- a/sound/soc/codecs/cs53l30.c
-> +++ b/sound/soc/codecs/cs53l30.c
-> @@ -12,7 +12,6 @@
->  #include <linux/delay.h>
->  #include <linux/i2c.h>
->  #include <linux/module.h>
-> -#include <linux/of_gpio.h>
->  #include <linux/gpio/consumer.h>
->  #include <linux/regulator/consumer.h>
->  #include <sound/pcm_params.h>
-> diff --git a/sound/soc/codecs/max98390.c b/sound/soc/codecs/max98390.c
-> index 57fa2db1e148..1bae253618fd 100644
-> --- a/sound/soc/codecs/max98390.c
-> +++ b/sound/soc/codecs/max98390.c
-> @@ -13,7 +13,6 @@
->  #include <linux/gpio/consumer.h>
->  #include <linux/i2c.h>
->  #include <linux/module.h>
-> -#include <linux/of_gpio.h>
->  #include <linux/regmap.h>
->  #include <linux/slab.h>
->  #include <linux/time.h>
-> diff --git a/sound/soc/codecs/pcm3168a.c b/sound/soc/codecs/pcm3168a.c
-> index 9d6431338fb7..3c0e0fdbfc5c 100644
-> --- a/sound/soc/codecs/pcm3168a.c
-> +++ b/sound/soc/codecs/pcm3168a.c
-> @@ -11,7 +11,6 @@
->  #include <linux/delay.h>
->  #include <linux/gpio/consumer.h>
->  #include <linux/module.h>
-> -#include <linux/of_gpio.h>
->  #include <linux/pm_runtime.h>
->  #include <linux/regulator/consumer.h>
->  
-> diff --git a/sound/soc/codecs/rk817_codec.c b/sound/soc/codecs/rk817_codec.c
-> index d4da98469f8b..5fea600bc3a4 100644
-> --- a/sound/soc/codecs/rk817_codec.c
-> +++ b/sound/soc/codecs/rk817_codec.c
-> @@ -10,7 +10,6 @@
->  #include <linux/mfd/rk808.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
-> -#include <linux/of_gpio.h>
->  #include <linux/platform_device.h>
->  #include <linux/regmap.h>
->  #include <sound/core.h>
-> diff --git a/sound/soc/codecs/tas2552.c b/sound/soc/codecs/tas2552.c
-> index a7ed59ec49a6..9e68afc09897 100644
-> --- a/sound/soc/codecs/tas2552.c
-> +++ b/sound/soc/codecs/tas2552.c
-> @@ -13,7 +13,6 @@
->  #include <linux/device.h>
->  #include <linux/i2c.h>
->  #include <linux/gpio.h>
-> -#include <linux/of_gpio.h>
->  #include <linux/pm_runtime.h>
->  #include <linux/regmap.h>
->  #include <linux/slab.h>
-> diff --git a/sound/soc/codecs/tas2764.c b/sound/soc/codecs/tas2764.c
-> index 1dc719d726ab..5eaddf07aadc 100644
-> --- a/sound/soc/codecs/tas2764.c
-> +++ b/sound/soc/codecs/tas2764.c
-> @@ -15,7 +15,6 @@
->  #include <linux/regulator/consumer.h>
->  #include <linux/regmap.h>
->  #include <linux/of.h>
-> -#include <linux/of_gpio.h>
->  #include <linux/slab.h>
->  #include <sound/soc.h>
->  #include <sound/pcm.h>
-> diff --git a/sound/soc/codecs/tas2770.c b/sound/soc/codecs/tas2770.c
-> index 67bc1c8b0131..5601fba17c96 100644
-> --- a/sound/soc/codecs/tas2770.c
-> +++ b/sound/soc/codecs/tas2770.c
-> @@ -20,7 +20,6 @@
->  #include <linux/firmware.h>
->  #include <linux/regmap.h>
->  #include <linux/of.h>
-> -#include <linux/of_gpio.h>
->  #include <linux/slab.h>
->  #include <sound/soc.h>
->  #include <sound/pcm.h>
-> diff --git a/sound/soc/codecs/tas2780.c b/sound/soc/codecs/tas2780.c
-> index a18ccf5fb7ad..6902bfef185b 100644
-> --- a/sound/soc/codecs/tas2780.c
-> +++ b/sound/soc/codecs/tas2780.c
-> @@ -11,7 +11,6 @@
->  #include <linux/gpio/consumer.h>
->  #include <linux/regmap.h>
->  #include <linux/of.h>
-> -#include <linux/of_gpio.h>
->  #include <sound/soc.h>
->  #include <sound/pcm.h>
->  #include <sound/pcm_params.h>
-> diff --git a/sound/soc/codecs/tas2781-comlib.c b/sound/soc/codecs/tas2781-comlib.c
-> index 3aa81514dad7..2eb3b384f9e7 100644
-> --- a/sound/soc/codecs/tas2781-comlib.c
-> +++ b/sound/soc/codecs/tas2781-comlib.c
-> @@ -14,7 +14,6 @@
->  #include <linux/interrupt.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
-> -#include <linux/of_gpio.h>
->  #include <linux/of_irq.h>
->  #include <linux/regmap.h>
->  #include <linux/slab.h>
-> diff --git a/sound/soc/codecs/tas2781-fmwlib.c b/sound/soc/codecs/tas2781-fmwlib.c
-> index 265a8ca25cbb..d6afab542da7 100644
-> --- a/sound/soc/codecs/tas2781-fmwlib.c
-> +++ b/sound/soc/codecs/tas2781-fmwlib.c
-> @@ -13,7 +13,6 @@
->  #include <linux/interrupt.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
-> -#include <linux/of_gpio.h>
->  #include <linux/of_irq.h>
->  #include <linux/regmap.h>
->  #include <linux/slab.h>
-> diff --git a/sound/soc/codecs/tas2781-i2c.c b/sound/soc/codecs/tas2781-i2c.c
-> index 9350972dfefe..c9086fe42419 100644
-> --- a/sound/soc/codecs/tas2781-i2c.c
-> +++ b/sound/soc/codecs/tas2781-i2c.c
-> @@ -21,7 +21,6 @@
->  #include <linux/interrupt.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
-> -#include <linux/of_gpio.h>
->  #include <linux/of_irq.h>
->  #include <linux/regmap.h>
->  #include <linux/slab.h>
-> diff --git a/sound/soc/codecs/tlv320adc3xxx.c b/sound/soc/codecs/tlv320adc3xxx.c
-> index e100cc9f5c19..eb180df9a72a 100644
-> --- a/sound/soc/codecs/tlv320adc3xxx.c
-> +++ b/sound/soc/codecs/tlv320adc3xxx.c
-> @@ -25,7 +25,6 @@
->  #include <linux/i2c.h>
->  #include <linux/platform_device.h>
->  #include <linux/cdev.h>
-> -#include <linux/of_gpio.h>
->  #include <linux/slab.h>
->  #include <sound/core.h>
->  #include <sound/pcm.h>
-> diff --git a/sound/soc/codecs/tlv320adcx140.c b/sound/soc/codecs/tlv320adcx140.c
-> index 41342b340680..d594bf166c0e 100644
-> --- a/sound/soc/codecs/tlv320adcx140.c
-> +++ b/sound/soc/codecs/tlv320adcx140.c
-> @@ -12,7 +12,6 @@
->  #include <linux/regulator/consumer.h>
->  #include <linux/acpi.h>
->  #include <linux/of.h>
-> -#include <linux/of_gpio.h>
->  #include <linux/slab.h>
->  #include <sound/core.h>
->  #include <sound/pcm.h>
-> diff --git a/sound/soc/codecs/tlv320aic31xx.c b/sound/soc/codecs/tlv320aic31xx.c
-> index 4d7c5a80c6ed..2f94cfda0e33 100644
-> --- a/sound/soc/codecs/tlv320aic31xx.c
-> +++ b/sound/soc/codecs/tlv320aic31xx.c
-> @@ -23,7 +23,6 @@
->  #include <linux/regulator/consumer.h>
->  #include <linux/acpi.h>
->  #include <linux/of.h>
-> -#include <linux/of_gpio.h>
->  #include <linux/slab.h>
->  #include <sound/core.h>
->  #include <sound/jack.h>
-> diff --git a/sound/soc/codecs/ts3a227e.c b/sound/soc/codecs/ts3a227e.c
-> index dbf448dd8864..b9eb59e3bfa0 100644
-> --- a/sound/soc/codecs/ts3a227e.c
-> +++ b/sound/soc/codecs/ts3a227e.c
-> @@ -10,7 +10,6 @@
->  #include <linux/init.h>
->  #include <linux/input.h>
->  #include <linux/module.h>
-> -#include <linux/of_gpio.h>
->  #include <linux/regmap.h>
->  #include <linux/acpi.h>
->  
-> diff --git a/sound/soc/codecs/wsa883x.c b/sound/soc/codecs/wsa883x.c
-> index a2e86ef7d18f..8abce2160d65 100644
-> --- a/sound/soc/codecs/wsa883x.c
-> +++ b/sound/soc/codecs/wsa883x.c
-> @@ -9,7 +9,6 @@
->  #include <linux/init.h>
->  #include <linux/kernel.h>
->  #include <linux/module.h>
-> -#include <linux/of_gpio.h>
->  #include <linux/pm_runtime.h>
->  #include <linux/printk.h>
->  #include <linux/regmap.h>
-> -- 
-> 2.43.0.rc1.1336.g36b5255a03ac
-> 
+  mutex_lock(&priv->state_lock);
+  if (priv->channels.num > 0) {
+          sq = priv->txq2sq[i];
+          stats->packets = sq->stats->packets;
+          stats->bytes = sq->stats->bytes;
+  }
+  mutex_unlock(&priv->state_lock);
+
+And I would have implemented option 2... IIUC.
 
