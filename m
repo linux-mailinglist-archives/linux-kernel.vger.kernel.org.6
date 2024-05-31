@@ -1,167 +1,256 @@
-Return-Path: <linux-kernel+bounces-196452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 422428D5C79
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:14:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13CF68D5C7F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:15:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 707D01C2190B
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 08:14:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9348E1F29B7E
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 08:15:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AC4078C91;
-	Fri, 31 May 2024 08:13:54 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEEA981211;
+	Fri, 31 May 2024 08:14:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="Y5L8xwze"
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48A8B77114;
-	Fri, 31 May 2024 08:13:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82FC478276;
+	Fri, 31 May 2024 08:14:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.126.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717143233; cv=none; b=jrIDsz1ll9Bnrw58HzO5GrDrasg88jGCfawUMqb5ILdbu6pWsarmdf6BVzjw4A2Tebxz76k2zp7G5ModoXRudvECYEKTu8jkiA2OM0ZZuOrP7+g3UkVUjHojnNQR7Amt6rQmstIlqrBivmaivoraRRKrLXrQj8sCw8ii8sPMlDA=
+	t=1717143267; cv=none; b=MKxz4+go9N6hZycqIdd+vFisV1b4YrTimwQ6fx2X2+kUp+vq77ZCBVB9O3r2OEygbJOarlhQV3P/OqLcO+KU5OAA9G7ElI3I5NKw2X6A5K4XEydnZenC9fYRXTRr+/R2A+QkqdQTbggaKUkctnG5/HBR7UCqOc7zeLlTybbGo/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717143233; c=relaxed/simple;
-	bh=KaZu3PfnuCLAgttdKtOj8aMS+kBKtD2hyquye1H9HRU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=GEDkNL2Qjdh6LtWg2xTXhc6tq8UyyYPkk9Itg5t/jj36ctJE5ROcCCef1/e4PA0bcBtRZbAM6Yoj7fJhH1BBCRtI8ecSZ2y4USeElubTfB6mVkZsEZ7RaJqNV35HrHQM2Bh48eS5WOMuygflFggSKMX1nQfsXjVHQ1PR3wnBIbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: b10363301f2511ef9305a59a3cc225df-20240531
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:5d283cd1-a105-48ee-8743-2c5c99b604d6,IP:20,
-	URL:0,TC:0,Content:-25,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACT
-	ION:release,TS:-10
-X-CID-INFO: VERSION:1.1.38,REQID:5d283cd1-a105-48ee-8743-2c5c99b604d6,IP:20,UR
-	L:0,TC:0,Content:-25,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:-10
-X-CID-META: VersionHash:82c5f88,CLOUDID:e8ac45031189e541bd5ee02aacc15a8a,BulkI
-	D:240531161344YZ4O3K9Z,BulkQuantity:0,Recheck:0,SF:66|38|24|72|19|44|102,T
-	C:nil,Content:0,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil
-	,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI
-X-UUID: b10363301f2511ef9305a59a3cc225df-20240531
-Received: from node4.com.cn [(39.156.73.12)] by mailgw.kylinos.cn
-	(envelope-from <tanzheng@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1052488889; Fri, 31 May 2024 16:13:41 +0800
-Received: from node4.com.cn (localhost [127.0.0.1])
-	by node4.com.cn (NSMail) with SMTP id 4AFC916002081;
-	Fri, 31 May 2024 16:13:41 +0800 (CST)
-X-ns-mid: postfix-665986B5-191610221
-Received: from localhost.localdomain (unknown [10.42.124.206])
-	by node4.com.cn (NSMail) with ESMTPA id 62B0016002081;
-	Fri, 31 May 2024 08:13:40 +0000 (UTC)
-From: zheng tan <tanzheng@kylinos.cn>
-To: hare@suse.com,
-	James.Bottomley@HansenPartnership.com,
-	martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Zheng tan <tanzheng@kylinos.cn>,
-	k2ci <kernel-bot@kylinos.cn>
-Subject: [PATCH] scsi: aic7xxx: Fix some build warning
-Date: Fri, 31 May 2024 16:13:37 +0800
-Message-Id: <20240531081337.536182-1-tanzheng@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1717143267; c=relaxed/simple;
+	bh=nP6eHxryLepIbCbvV63z+a4eiZ9YWlZ+uyeJAbn7Tz0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MSU4rE27WE7XPfheriyY3A7Oewgf/w5meHXMo0L18ZPTSR8lONHmOeBPp1IWmwqDDPOUHCkOT2nXQpBXqWVClgTHxd+kZOrTYzxRsoo+T3ct7yxYAiZ8NRFFzY54qk35DQ2uCV8gfOs+sDcs4Y77wLgJIcWqqVeA0W80BKjrGcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=Y5L8xwze; arc=none smtp.client-ip=212.227.126.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusel.eu;
+	s=s1-ionos; t=1717143236; x=1717748036; i=christian@heusel.eu;
+	bh=wH+BJymVDvZg4gMAg7QG7CU7o+Pzrp+2Go1iWGurmG0=;
+	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:References:
+	 MIME-Version:Content-Type:In-Reply-To:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=Y5L8xwzeRmy/jkQZWLIRjIlzzO76/8NlUFB5f5mL/NJDkZbEQHEqafuxJvMnsMtd
+	 v3MUNaFBln7Oba4E4YcHilA/m4U2cQQUQn099sHjY7zOxz3kj7uYJzv0NdTTDRVUG
+	 8JvGhcc+7w+doj+Rc1hg4p9zn3saPYYxb4VtUBPTSSE6I/73VE2RTvQ0gThVDqKqn
+	 nGzyqlD3QeRPs+gYx38K0v76jW/29ZMiRczzrGZJCOQayGUTIcQnEDCAlydbK8WkJ
+	 9IeTTbbIBwYO9szBmJFV0vfYZbJ3SXDqK2qvQosSqCrK+k4CQF9WEmccJYZ9PkRGl
+	 tHH2oNKdOFwyjwMYBQ==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from localhost ([141.70.80.5]) by mrelayeu.kundenserver.de (mreue011
+ [212.227.15.167]) with ESMTPSA (Nemesis) id 1M9WiK-1s9fc73JWW-005bXa; Fri, 31
+ May 2024 10:13:56 +0200
+Date: Fri, 31 May 2024 10:13:53 +0200
+From: Christian Heusel <christian@heusel.eu>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Peter Schneider <pschneider1968@googlemail.com>, 
+	LKML <linux-kernel@vger.kernel.org>, x86@kernel.org, stable@vger.kernel.org, 
+	regressions@lists.linux.dev
+Subject: Re: Kernel 6.9 regression: X86: Bogus messages from topology
+ detection
+Message-ID: <4171899b-78cb-4fe2-a0b6-e06844554ed5@heusel.eu>
+References: <877cffcs7h.ffs@tglx>
+ <16cd76b1-a512-4a7b-a304-5e4e31af3c8a@googlemail.com>
+ <ce3abe01-4c37-416e-a5ed-25703318318a@googlemail.com>
+ <87zfs78zxq.ffs@tglx>
+ <76b1e0b9-26ae-4915-920d-9093f057796b@googlemail.com>
+ <87r0dj8ls4.ffs@tglx>
+ <87o78n8fe2.ffs@tglx>
+ <87le3r8dyw.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=y
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ml4yake7echoyyum"
+Content-Disposition: inline
+In-Reply-To: <87le3r8dyw.ffs@tglx>
+X-Provags-ID: V03:K1:j0dP5ZRh4oNpd/6JDMZMU93d+hfhx1Mxewrq/WDRy94RIDfjXt9
+ yAQEq0gPE+VAJvI5T1tOJaLI+JFoI3EwkCJGWm69XkwU65yGwLmPV5fWgBQTAkzM2nxu9Pp
+ t+Bn+ZyHl8NySM5GaaR7U2Wh0YQPPmsqTAwcGoms2/xCDMXyq3KBUlJczx5ASR/ur3zt3rK
+ VhW71jfDDM0fsdN/Q5jNQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:ol7OTCE7foc=;P52IwVeVjz2QEczg1D9PMNG1dJk
+ y/5g826ErIe61hrflvqRUgWGyQw8b1EH0qsZBgBcMBW1RuG9zNNji1QncmnzBGtCgfShHrMad
+ VZAKmBo75hKN7mTKsqnlW+doDcW+xLs30dyk560HE9lXTPMfYPhT4+dMj+a+N1MdVvtGUiP6o
+ c5sB2dYTyOhR9fxeZM1D/WuwZF+pYGjlep/9GoaX+IZ4DuoJBtiA38WJ2oMbNhyGTl/9OgDAH
+ i4NMeVJ85yfrcqmZdiwWna50AEBoGgkLIOP1KUGmW7ec8DA5PdQ3A6y8S5WtocJc++LA0eBh7
+ V+Wj1ld3ZFSCNW2czrQxewO1r6c+FKEJEAuDO51RGOFWuLkRfOhpeIa99WUd5IjCwIGLMJaeK
+ gvsIURXSpbdRcTV6GsIhMpVqO1t+5Y1sUb7dkyxhNny9yZnidwGxrh5G4CGpHX6HJGrSnLTMw
+ //8zYZYIDtB5it6RKwIhYAWUWTPS8c97ADITVoRYm/XzRpaVGJWkttA+fS4H+dTxBgH/sArz2
+ baLRaoz7lJuaO0Rs5JS+HJ/63OuGZjFx6hglUA+aYoS0MihoT42/W93vzMv+7R9dnN9cd4R0W
+ ll99RwenRE7ZtiqG7wxZHodFKvKMmmmVQWqxlkqz67AmFezz9vdWL5ayAs/4ARloyBEaYpbCh
+ w85T7HhOINFlw/ILrspWMehZ+tlvZN1+LaREjuLbpMAABKl/6v6xeHKfU/uDxFZQ2AX9TGfhi
+ +d+LT8GDw5OXda1XdBa/sU6merDXszwo5bsAsuRDGGoBmyKwJlxrSk=
+
+
+--ml4yake7echoyyum
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-From: Zheng tan <tanzheng@kylinos.cn>
+On 24/05/30 06:24PM, Thomas Gleixner wrote:
+> On Thu, May 30 2024 at 17:53, Thomas Gleixner wrote:
+>
+> > Let me figure out how to fix that sanely.
+>=20
+> The proper fix is obviously to unlock CPUID on Intel _before_ anything
+> which depends on cpuid_level is evaluated.
+>=20
+> Thanks,
+>=20
+>         tglx
 
-Fixed some warnings in compilation:
+Hey Thomas,
 
-aicasm_gram.c:1562:16: warning: implicit declaration of function =E2=80=98=
-yylex=E2=80=99
-yychar =3D yylex ();
+as reported on the other mail the proposed fix broke the build (see
+below) due to get_cpu_cap() becoming static but still being used in
+other parts of the code.
 
-aicasm_scan.l:417:6: warning: implicit declaration of function =E2=80=98m=
-m_switch_to_buffer=E2=80=99
-      mm_switch_to_buffer(old_state);
-      ^~~~~~~~~~~~~~~~~~~
-      yy_switch_to_buffer
-aicasm_scan.l:418:6: warning: implicit declaration of function =E2=80=98m=
-mparse=E2=80=99
-      mmparse();
-      ^~~~~~~
-      yyparse
-aicasm_scan.l:421:6: warning: implicit declaration of function =E2=80=98m=
-m_delete_buffer=E2=80=99
-      mm_delete_buffer(temp_state);
+One of the reporters in the Arch Bugtracker with an Intel Core i7-7700k
+has tested a modified version of this fix[0] with the static change
+reversed on top of the 6.9.2 stable kernel and reports that the patch
+does not fix the issue for them. I have attached their output for the
+patched (dmesg6.9.2-1.5.log) and nonpatched (dmesg6.9.2-1.log) kernel.
 
-Reported-by: k2ci <kernel-bot@kylinos.cn>
-Signed-off-by: Zheng tan <tanzheng@kylinos.cn>
----
- drivers/scsi/aic7xxx/aicasm/aicasm_gram.y       | 2 +-
- drivers/scsi/aic7xxx/aicasm/aicasm_macro_gram.y | 2 +-
- drivers/scsi/aic7xxx/aicasm/aicasm_scan.l       | 7 ++++---
- 3 files changed, 6 insertions(+), 5 deletions(-)
+Should we also get them to test the mainline version or do you need any
+other debug output?
 
-diff --git a/drivers/scsi/aic7xxx/aicasm/aicasm_gram.y b/drivers/scsi/aic=
-7xxx/aicasm/aicasm_gram.y
-index 65182ad9cdf8..ac96fb9152b6 100644
---- a/drivers/scsi/aic7xxx/aicasm/aicasm_gram.y
-+++ b/drivers/scsi/aic7xxx/aicasm/aicasm_gram.y
-@@ -103,7 +103,7 @@ static void add_version(const char *verstring);
- static int  is_download_const(expression_t *immed);
- static int  is_location_address(symbol_t *symbol);
- void yyerror(const char *string);
--
-+int yylex(void);
- #define SRAM_SYMNAME "SRAM_BASE"
- #define SCB_SYMNAME "SCB_BASE"
- %}
-diff --git a/drivers/scsi/aic7xxx/aicasm/aicasm_macro_gram.y b/drivers/sc=
-si/aic7xxx/aicasm/aicasm_macro_gram.y
-index 8c0479865f04..d787b2f89007 100644
---- a/drivers/scsi/aic7xxx/aicasm/aicasm_macro_gram.y
-+++ b/drivers/scsi/aic7xxx/aicasm/aicasm_macro_gram.y
-@@ -62,7 +62,7 @@ static symbol_t *macro_symbol;
-=20
- static void add_macro_arg(const char *argtext, int position);
- void mmerror(const char *string);
--
-+int mmlex(void);
- %}
-=20
- %union {
-diff --git a/drivers/scsi/aic7xxx/aicasm/aicasm_scan.l b/drivers/scsi/aic=
-7xxx/aicasm/aicasm_scan.l
-index c78d4f68eea5..8214d7eaef1d 100644
---- a/drivers/scsi/aic7xxx/aicasm/aicasm_scan.l
-+++ b/drivers/scsi/aic7xxx/aicasm/aicasm_scan.l
-@@ -56,6 +56,7 @@
- #include "aicasm.h"
- #include "aicasm_symbol.h"
- #include "aicasm_gram.h"
-+#include "aicasm_macro_gram.h"
-=20
- /* This is used for macro body capture too, so err on the large size. */
- #define MAX_STR_CONST 4096
-@@ -414,11 +415,11 @@ nop			{ return T_NOP; }
- 					    yy_create_buffer(stdin,
- 							     YY_BUF_SIZE);
- 					yy_switch_to_buffer(temp_state);
--					mm_switch_to_buffer(old_state);
-+					yy_switch_to_buffer(old_state);
- 					mmparse();
--					mm_switch_to_buffer(temp_state);
-+					yy_switch_to_buffer(temp_state);
- 					yy_switch_to_buffer(old_state);
--					mm_delete_buffer(temp_state);
-+					yy_delete_buffer(temp_state);
- 					expand_macro(yylval.sym);
- 				} else {
- 					if (yylval.sym->type =3D=3D UNINITIALIZED) {
---=20
-2.25.1
+Cheers,
+gromit
 
+[0]: https://gitlab.archlinux.org/archlinux/packaging/packages/linux/-/issu=
+es/57#note_189079
+
+> ---
+> --- a/arch/x86/kernel/cpu/common.c
+> +++ b/arch/x86/kernel/cpu/common.c
+> @@ -969,7 +969,7 @@ static void init_speculation_control(str
+>  	}
+>  }
+> =20
+> -void get_cpu_cap(struct cpuinfo_x86 *c)
+> +static void get_cpu_cap(struct cpuinfo_x86 *c)
+
+making this function static breaks the build for me:
+
+arch/x86/xen/enlighten_pv.c: In function =E2=80=98xen_start_kernel=E2=80=99:
+arch/x86/xen/enlighten_pv.c:1388:9: error: implicit declaration of function=
+ =E2=80=98get_cpu_cap=E2=80=99; did you mean =E2=80=98set_cpu_cap=E2=80=99?=
+ [-Wimplicit-function-declaration]
+ 1388 |         get_cpu_cap(&boot_cpu_data);
+    =C2=A6 |         ^~~~~~~~~~~
+    =C2=A6 |         set_cpu_cap
+
+
+>  {
+>  	u32 eax, ebx, ecx, edx;
+> =20
+> @@ -1585,6 +1585,7 @@ static void __init early_identify_cpu(st
+>  	if (have_cpuid_p()) {
+>  		cpu_detect(c);
+>  		get_cpu_vendor(c);
+> +		intel_unlock_cpuid_leafs(c);
+>  		get_cpu_cap(c);
+>  		setup_force_cpu_cap(X86_FEATURE_CPUID);
+>  		get_cpu_address_sizes(c);
+> @@ -1744,7 +1745,7 @@ static void generic_identify(struct cpui
+>  	cpu_detect(c);
+> =20
+>  	get_cpu_vendor(c);
+> -
+> +	intel_unlock_cpuid_leafs(c);
+>  	get_cpu_cap(c);
+> =20
+>  	get_cpu_address_sizes(c);
+> --- a/arch/x86/kernel/cpu/cpu.h
+> +++ b/arch/x86/kernel/cpu/cpu.h
+> @@ -61,14 +61,15 @@ extern __ro_after_init enum tsx_ctrl_sta
+> =20
+>  extern void __init tsx_init(void);
+>  void tsx_ap_init(void);
+> +void intel_unlock_cpuid_leafs(struct cpuinfo_x86 *c);
+>  #else
+>  static inline void tsx_init(void) { }
+>  static inline void tsx_ap_init(void) { }
+> +static inline void intel_unlock_cpuid_leafs(struct cpuinfo_x86 *c) { }
+>  #endif /* CONFIG_CPU_SUP_INTEL */
+> =20
+>  extern void init_spectral_chicken(struct cpuinfo_x86 *c);
+> =20
+> -extern void get_cpu_cap(struct cpuinfo_x86 *c);
+>  extern void get_cpu_address_sizes(struct cpuinfo_x86 *c);
+>  extern void cpu_detect_cache_sizes(struct cpuinfo_x86 *c);
+>  extern void init_scattered_cpuid_features(struct cpuinfo_x86 *c);
+> --- a/arch/x86/kernel/cpu/intel.c
+> +++ b/arch/x86/kernel/cpu/intel.c
+> @@ -269,19 +269,26 @@ static void detect_tme_early(struct cpui
+>  	c->x86_phys_bits -=3D keyid_bits;
+>  }
+> =20
+> +void intel_unlock_cpuid_leafs(struct cpuinfo_x86 *c)
+> +{
+> +	if (boot_cpu_data.x86_vendor !=3D X86_VENDOR_INTEL)
+> +		return;
+> +
+> +	if (c->x86 < 6 || (c->x86 =3D=3D 6 && c->x86_model < 0xd))
+> +		return;
+> +
+> +	/*
+> +	 * The BIOS can have limited CPUID to leaf 2, which breaks feature
+> +	 * enumeration. Unlock it and update the maximum leaf info.
+> +	 */
+> +	if (msr_clear_bit(MSR_IA32_MISC_ENABLE, MSR_IA32_MISC_ENABLE_LIMIT_CPUI=
+D_BIT) > 0)
+> +		c->cpuid_level =3D cpuid_eax(0);
+> +}
+> +
+>  static void early_init_intel(struct cpuinfo_x86 *c)
+>  {
+>  	u64 misc_enable;
+> =20
+> -	/* Unmask CPUID levels if masked: */
+> -	if (c->x86 > 6 || (c->x86 =3D=3D 6 && c->x86_model >=3D 0xd)) {
+> -		if (msr_clear_bit(MSR_IA32_MISC_ENABLE,
+> -				  MSR_IA32_MISC_ENABLE_LIMIT_CPUID_BIT) > 0) {
+> -			c->cpuid_level =3D cpuid_eax(0);
+> -			get_cpu_cap(c);
+> -		}
+> -	}
+> -
+>  	if ((c->x86 =3D=3D 0xf && c->x86_model >=3D 0x03) ||
+>  		(c->x86 =3D=3D 0x6 && c->x86_model >=3D 0x0e))
+>  		set_cpu_cap(c, X86_FEATURE_CONSTANT_TSC);
+>=20
+
+--ml4yake7echoyyum
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEb3ea3iR6a4oPcswTwEfU8yi1JYUFAmZZhsEACgkQwEfU8yi1
+JYUC/Q/+KLPr/xG5yCPC5RdysEAsP6D8G0begqtRBY2V+/c4dDXiuwjbPsuelJ9F
+8DU1e2rJ5RfRTNAaEHX0mDiYs1g/L1BpO67R1SzjOkT9R+7i2IjAjcRCKdl7gv5Y
+T1YGD3A/GhtP8KpMOiS06AEFGzgWkkdDH3Owll8uLKJGFHJTPB6mMqlO1Cy5R7t3
+QFQ3zSwi9dp7lSSp+vIzRDfV0V+RzFs1M+II6hNNOIDxeG0LiKV8dAQoIiVHrRaI
+0RBAqTSPXydVcPzYPJ3Bl7Gg0dLbM3kBSM4Cz4CG6tWzviaUkOh3ln4NHmCdnHgT
+RyQDtkOzNnhaEZLoDOLO60Z6jJjqBLsGyJCZxUsJWg6fkUMWQziW24eltOpJPGmi
+5wrGmByoPptxd/UDaIoUUNbO0qzMPivIeJ3OeUyVKlOBARoDLxqZQr9ED3WmpTdz
+tidfPhrlpNs81HXYhA4fsSa0pkwaMFUUEQiioGoWSKMwoTBQwjIV6g7Hx23ZN2Nr
+82juIhGUFmxL+POUYqEtgWt0xitmF53yYehcPBksv51zjuM0EX6VYPbVuK+wyIUB
+MYmNvRa8XEyctM4CmDuixuE/g+VagJN3r0HRicLfgNKMMVNPZ6M9KzATdyfavXGb
+C/SrbBzPg9oKmuDjD44MPeNeGhmY6OZiKeM0SOyBJvI9sgqVpQQ=
+=Jgcp
+-----END PGP SIGNATURE-----
+
+--ml4yake7echoyyum--
 
