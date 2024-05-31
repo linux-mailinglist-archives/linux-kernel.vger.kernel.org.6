@@ -1,121 +1,166 @@
-Return-Path: <linux-kernel+bounces-196635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3954B8D5F1F
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 11:59:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 926278D5F25
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:00:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 613961C21A57
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 09:59:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0FC49B25305
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:00:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3631B1422C4;
-	Fri, 31 May 2024 09:59:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B4FC14F9FF;
+	Fri, 31 May 2024 10:00:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="o+hOdA5I";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VzzTcxfl"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A55Jxqdt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24FBB140395;
-	Fri, 31 May 2024 09:59:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCF78140395;
+	Fri, 31 May 2024 10:00:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717149588; cv=none; b=B/VQmPCfVdlySSFYPXdIah//WvK3r9bnG1jIu8bhOP1jd2f7WXWqhBOfljI9puypPH7nfIjWYZFt4OoKNLWzj9Z6gzaST3ZTompywQsgzcFPR1Ws8JxS+EqrwPc8VIouteaLzzdgd3K0A/IV4xkpeDMRu7F4eJ2L5c5IPWYjv7M=
+	t=1717149606; cv=none; b=qbBrxWYQe9A744E19T/TSe/h6wVt0BrweXSQsE4ejhE4roaBdQtJ1QMdOZXSkCiJLssZAyyHRJZl0LTtG1/Utl4cFwWSn0jqGhEGwiuYY1hQTiEgjxM0jU7pFotiauxk2Zt3Eo/QA52K66BPYe3hJw8sUCUZrpnAVDpXL2pzqBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717149588; c=relaxed/simple;
-	bh=5bkerezig87RZ5oi5fPwTc4JzitlAm+g+mlN/HPTKqQ=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=p+VcXV5yvDQkVwPCY/fK1fzj5aRjbq/i005S3UWeH3dMGJlNSd4PZwIdNJxh/F9Pqu48S++nNzNpp6rmyUBV1sqMBCOCDdRPSkOB0izpWbH5gKxxO7eDszX1EXkmi4UjgVXNfhF4BYTFjRnYtcu7Kn1+wEnuUWScfD4Ib6bsbVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=o+hOdA5I; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VzzTcxfl; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 31 May 2024 09:59:45 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1717149585;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cTMVPF2GH7QajfvTeNubuoLs6K6kCrJH8oBiVsIrwks=;
-	b=o+hOdA5I26IzDrWf5GcqvdVy/X5NTdaRS2LiLA88hEsW3Kdcefo7VB7V/Hd9t1NRH+WixL
-	IMDZanxymo1z24J+kie01c2cloADAXRjHvfP6aUQD5yZsFTQ2qJV/oNHQUiiQRD4BYtmW5
-	ih7xqSdTYmnh1XOMWUUMgsZBgL2+bBUJTCi3h9jDfFnkjaj40T/xUxrnS22RKhaD5P8Rt1
-	hbmsLHkw9dziM4Iv8ju7Dr+AlOqiE56EMLSvK15maLj7YQYHT8hqpYogTwlNT5lE76FN3V
-	MSZbOaBCo9i9tgFrgztmds0kTIgRr7jNmXBspF+RN2geLYckgNeLloj0jlwXRw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1717149585;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cTMVPF2GH7QajfvTeNubuoLs6K6kCrJH8oBiVsIrwks=;
-	b=VzzTcxflg6v3OsCZlPdpPAWLyuJqvfiCvC46GNLfn+HLJI1osmSpG9oWOT4Teo6JlVg3D6
-	y2EVWOqKXmnFWJDw==
-From: "tip-bot2 for Phil Auld" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/urgent] sched/x86: Export 'percpu arch_freq_scale'
-Cc: Phil Auld <pauld@redhat.com>, Ingo Molnar <mingo@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240530181548.2039216-1-pauld@redhat.com>
-References: <20240530181548.2039216-1-pauld@redhat.com>
+	s=arc-20240116; t=1717149606; c=relaxed/simple;
+	bh=z8yB8OQXjB3WlTE06q4oT4336b2IkSpm9Wv5WCeHpmI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jae+72AI0sQe3/GY2MROEVI3wHTsHQZl0sKtfYv3gtkc4bdcZRb3fWWi0XGSa8fgb7kPa2OgfYelMumyZRmmqZKQ9ssdh4rtj/PKgN+7/RsdlDkmUOmuGpXQbRzC/Mebpf0UdlHt02+/Za8D9ccPd7ClU+LWAcMVpnaNxCgp7eA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A55Jxqdt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C2A7C116B1;
+	Fri, 31 May 2024 10:00:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717149606;
+	bh=z8yB8OQXjB3WlTE06q4oT4336b2IkSpm9Wv5WCeHpmI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=A55JxqdtPnzbguBZIRJmtvMXADNpUnaLsEmY0IAHpj6ZV+6tiIPXUmnz2Tvfrl1bL
+	 +s9YHlAOg4WnstWxVbnj3onii2SjbW73HgJcS+aVXaWDeM9zkLOQ5AzsS3WcyrW+wt
+	 FFoHAjY7OkJll6v5q2ETvBrPB4vMi9NGzIuF6Ya6VEZ1cEiCmc5MSfMMwjPu54/Q1R
+	 dsf5wV9KzBtzxE1eEEuRiwirUz1CfvO9P7azt2kaWGkkbri3fAK7rEgPkLaHpq+U8N
+	 D5siFuY2U04AwfwbFpzojxEOnK1s9RzVLkBUQGwdnCWkOhjBrAQuRuTIJomdvVIghF
+	 6EBNvFSCugpig==
+Date: Fri, 31 May 2024 13:00:00 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Anand Khoje <anand.a.khoje@oracle.com>
+Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+	rama.nichanamatlu@oracle.com, manjunath.b.patil@oracle.com,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Subject: Re: [PATCH 1/1] RDMA/mlx5: Release CPU for other processes in
+ mlx5_free_cmd_msg()
+Message-ID: <20240531100000.GG3884@unreal>
+References: <20240522033256.11960-1-anand.a.khoje@oracle.com>
+ <20240522033256.11960-2-anand.a.khoje@oracle.com>
+ <20240530171440.GE3884@unreal>
+ <f6d81694-c321-470e-8b53-dcdf24d67c9b@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <171714958509.10875.11912816904466913393.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f6d81694-c321-470e-8b53-dcdf24d67c9b@oracle.com>
 
-The following commit has been merged into the sched/urgent branch of tip:
+On Fri, May 31, 2024 at 10:21:39AM +0530, Anand Khoje wrote:
+> 
+> On 5/30/24 22:44, Leon Romanovsky wrote:
+> > On Wed, May 22, 2024 at 09:02:56AM +0530, Anand Khoje wrote:
+> > > In non FLR context, at times CX-5 requests release of ~8 million device pages.
+> > > This needs humongous number of cmd mailboxes, which to be released once
+> > > the pages are reclaimed. Release of humongous number of cmd mailboxes
+> > > consuming cpu time running into many secs, with non preemptable kernels
+> > > is leading to critical process starving on that cpu’s RQ. To alleviate
+> > > this, this patch relinquishes cpu periodically but conditionally.
+> > > 
+> > > Orabug: 36275016
+> > > 
+> > > Signed-off-by: Anand Khoje <anand.a.khoje@oracle.com>
+> > > ---
+> > >   drivers/net/ethernet/mellanox/mlx5/core/cmd.c | 7 +++++++
+> > >   1 file changed, 7 insertions(+)
+> > > 
+> > > diff --git a/drivers/net/ethernet/mellanox/mlx5/core/cmd.c b/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
+> > > index 9c21bce..9fbf25d 100644
+> > > --- a/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
+> > > +++ b/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
+> > > @@ -1336,16 +1336,23 @@ static struct mlx5_cmd_msg *mlx5_alloc_cmd_msg(struct mlx5_core_dev *dev,
+> > >   	return ERR_PTR(err);
+> > >   }
+> > > +#define RESCHED_MSEC 2
+> > >   static void mlx5_free_cmd_msg(struct mlx5_core_dev *dev,
+> > >   			      struct mlx5_cmd_msg *msg)
+> > >   {
+> > >   	struct mlx5_cmd_mailbox *head = msg->next;
+> > >   	struct mlx5_cmd_mailbox *next;
+> > > +	unsigned long start_time = jiffies;
+> > >   	while (head) {
+> > >   		next = head->next;
+> > >   		free_cmd_box(dev, head);
+> > Did you consider to make this function asynchronous and parallel?
+> > 
+> > Thanks
+> 
+> Hi Leon,
+> 
+> Thanks for reviewing this patch.
+> 
+> Here, all page related methods give_pages/reclaim_pages/release_all_pages
+> are executed in a worker thread through pages_work_handler().
+> 
+> Doesn't that mean it is already asynchronous?
 
-Commit-ID:     d40605a6823577a6c40fad6fb1f10a40ea0389d7
-Gitweb:        https://git.kernel.org/tip/d40605a6823577a6c40fad6fb1f10a40ea0389d7
-Author:        Phil Auld <pauld@redhat.com>
-AuthorDate:    Thu, 30 May 2024 14:15:48 -04:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Fri, 31 May 2024 11:48:42 +02:00
+You didn't provide any performance data, so I can't say if it is related to work_handlers.
 
-sched/x86: Export 'percpu arch_freq_scale'
+For example, we can be in this loop when we call to mlx5_cmd_disable()
+and it will cause to synchronous calls to dma_pool_free() which holds
+the spinlock.
 
-Commit:
+Also pages_work_handler() runs through single threaded workqueue, it is
+not asynchronous.
 
-  7bc263840bc3 ("sched/topology: Consolidate and clean up access to a CPU's max compute capacity")
+> 
+> When the worker thread, in this case it is processing reclaim_pages(), is
+> taking a long time - it is starving other processes on the processor that it
+> is running on. Oracle UEK being a non-preemptible kernel, these other
+> processes that are getting starved do not get CPU until the worker
+> relinquishes the CPU. This applies to even processes that are time critical
+> and high priority. These processes when starved of CPU for a long time,
+> trigger a kernel panic.
 
-removed rq->cpu_capacity_orig in favor of using arch_scale_freq_capacity()
-calls. Export the underlying percpu symbol on x86 so that external trace
-point helper modules can be made to work again.
+Please add kernel panic and perf data to your commit message.
 
-Signed-off-by: Phil Auld <pauld@redhat.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: https://lore.kernel.org/r/20240530181548.2039216-1-pauld@redhat.com
----
- arch/x86/kernel/cpu/aperfmperf.c | 1 +
- 1 file changed, 1 insertion(+)
+> 
+> Hence, this patch implements a time based relinquish of CPU using
+> cond_resched().
+> 
+> Shay Dori, had a suggestion to tune the time (which we have made 2 msec), to
+> reduce too frequent context switching and find a balance in processing of
+> these mailbox objects. I am presently running some tests on the basis of
+> this suggestion.
 
-diff --git a/arch/x86/kernel/cpu/aperfmperf.c b/arch/x86/kernel/cpu/aperfmperf.c
-index f9a8c7b..b3fa61d 100644
---- a/arch/x86/kernel/cpu/aperfmperf.c
-+++ b/arch/x86/kernel/cpu/aperfmperf.c
-@@ -345,6 +345,7 @@ static DECLARE_WORK(disable_freq_invariance_work,
- 		    disable_freq_invariance_workfn);
- 
- DEFINE_PER_CPU(unsigned long, arch_freq_scale) = SCHED_CAPACITY_SCALE;
-+EXPORT_PER_CPU_SYMBOL_GPL(arch_freq_scale);
- 
- static void scale_freq_tick(u64 acnt, u64 mcnt)
- {
+You will have better results if you parallel page release.
+
+Thanks
+
+> 
+> Thanks,
+> 
+> Anand
+> 
+> > >   		head = next;
+> > > +		if (time_after(jiffies, start_time + msecs_to_jiffies(RESCHED_MSEC))) {
+> > > +			mlx5_core_warn_rl(dev, "Spent more than %d msecs, yielding CPU\n", RESCHED_MSEC);
+> > > +			cond_resched();
+> > > +			start_time = jiffies;
+> > > +		}
+> > >   	}
+> > >   	kfree(msg);
+> > >   }
+> > > -- 
+> > > 1.8.3.1
+> > > 
+> > > 
 
