@@ -1,172 +1,210 @@
-Return-Path: <linux-kernel+bounces-197518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3AE28D6BB2
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 23:36:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9DC18D6BB6
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 23:39:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 230111C25E91
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 21:36:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36BF0B20DF8
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 21:39:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E7F97B3FE;
-	Fri, 31 May 2024 21:36:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 794F17F7DA;
+	Fri, 31 May 2024 21:39:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pj+FH8bl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="LElijR8C"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2041.outbound.protection.outlook.com [40.107.243.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3C5178C9C;
-	Fri, 31 May 2024 21:36:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717191411; cv=none; b=DiK8Cyw5ctg4eLLX6IVwBY5ZYk5c6uAVEJi+eap9/V/Ta37fGHG3lL4nmZk8iyEuOCA2DR0+VG474StANOr7GVh/FwuCDyXhhDgt/Rb9nMuhXYA6I6Phbskb3qOz107aAx+CtZYg6qTyGFFHrlTwmSYhDG5y5ZfX+APjUJ5qK5k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717191411; c=relaxed/simple;
-	bh=FFToUnOuCn712quRqXbsVLVvTc5pX5hyAMtrzSFK0vA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DU+HfemuOprVSCKXxeTj3ZHox+xzF1Jkf9TrDKrvkqL9gb5zpGoRgS+GeOnRJpehauwsTIMLqYif/TppuV3tU7jYBENa5cRGyj2cgsA8KApB/tUD3ZMM4i28KnYIL9/FK2lUaDo2NazV43ZTQGBNGDOwLSSVUaaBU94Zox5pt0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pj+FH8bl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9F60C116B1;
-	Fri, 31 May 2024 21:36:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717191411;
-	bh=FFToUnOuCn712quRqXbsVLVvTc5pX5hyAMtrzSFK0vA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Pj+FH8bl6Gl0YqzVdbTMoK7p2XxVcg2Nc2jhOf1pQOfFcNSVUq7G+tciKkEzbprPj
-	 4O45kyEW5N16DwcyT9/WJs1he3jF6xUC4TdEJB3FoSIbZaCwRI6P8aB1R0UT8CISHp
-	 ++BYzy0R1Qk/OJgUITnj2SLL2SNHDxSI5TFBhF22TE6HTIOPUuNW911AC6dOrF+Gme
-	 /FAyvr+gO5DA82/g2yB1H4/DKoS73Tdgj9IrOXkOYkuQddmy2pKk7gpsWYfhrKHWY5
-	 O39EbvaAzx61rgfStlBHnNvu7Wzf8rWdC8nu5NgI1kjOZkdYEbjnS5yYiVsn39/Hmt
-	 kn8lcRTLh2NtA==
-Date: Fri, 31 May 2024 22:36:46 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Charlie Jenkins <charlie@rivosinc.com>
-Cc: Jesse Taube <jesse@rivosinc.com>, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
-	Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@rivosinc.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Masahiro Yamada <masahiroy@kernel.org>
-Subject: Re: [PATCH v0] RISC-V: Use Zkr to seed KASLR base address
-Message-ID: <20240531-cough-yearling-bdfd49244885@spud>
-References: <20240531162327.2436962-1-jesse@rivosinc.com>
- <20240531-uselessly-spied-262ecf44e694@spud>
- <ZlowwohstpT0sJVl@ghost>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 001121DDD1;
+	Fri, 31 May 2024 21:38:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.41
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717191540; cv=fail; b=jX7lk4hm7zNNT1BFIBSQIwQJWv3WuHyg5ajO9k/5loYPTwmFo3BL7jJcUOjFV1vsPoNmNbPf+k7EFtrwcGMqj1dOtLW8kXLw3Q0/fGLgXd/Vwr+2GIRe/SRD6nQhdkpBNCjaDQ+UHr/w3Kbk1tHAiKNimmsE1AjNn4z6UUwMKiI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717191540; c=relaxed/simple;
+	bh=v8E0kkBYUBrqQJJIeLKOzFXacKhwqjx+SWhN2eKd+LA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MpLqasgEy3F8EvDDTsE5uE3ETm4rzj8+qum4BmvFNG4DrqEGYuLDs8yPHmgOX+sSqfK+gllPPRXHilThc+BSz2eNC9CwV7+xKGanRR9eQHSaUth+q+bJekujpfxj+5fVPJlPQ76QD/rhHmPmHKijJqCTBVKdPXIqxgGgD7aqHi0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=LElijR8C; arc=fail smtp.client-ip=40.107.243.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=HT3toomvlKFHk3iLqRx8tQFDNNKhGDb3zqDaJblxbbB/tdmwMvrXvutpvb0z1aIcVuaVCUDHWfPLCAdswsHZVWH3IqL5VjvrLRmpJlal6aY+WG9EVxIh5C230A7acaljUmjDZjqc+k6T8HauvyWCjlWY4Udo/15yE9Jv0vTEGuM+M3D+MBMEoRjEvx+76cYI0nyoCA+QDN6A5WVgq+ii++EiYwqxIoCoDbL1Q0EqB8JGRWgaWJPqgEF4uwp1ea5d8l9RNwjSs3ndBate+xjgUGJRoPFXd929grrct3dUosuJQ0ZoAsPFgWDLWD2UY4H3Buyheb5oXD1wCd/zVERLzw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QEaH+lcRkbHItOwR8ARAzg4Q+VIIwskoMCC8C1nhRFw=;
+ b=eHLSBFozw7/Tj7/MuUlxy/GO0nuOKtbkOKJE6HzhcdMgziFoxy2bMk2smpdXyvQB4jd9HFarF12COVnodp9iO5Am9UvQLb2SgW1dKMJ5oPmgHVTKj47WVdVsCjJ8atJTSarkDoDZauETkoxFwQsHrhE4EkH0oqqUn5NYJ+pfOJr/SrQITK07bjmp1Cl68C13f8lQuRrhgqaIpfb/OLk4LkcOaHoHA6DFI+Xk9U+00q+zQVwrO/Zby2OsFXuGSq9XE/9/I7C76Jp4rvMf8bN6ab43yHJCXqPoAzXwMdlJXRyabkrX028YmuimJXzjxdNWxOAG8+2r9uWqepC8a7S6SA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QEaH+lcRkbHItOwR8ARAzg4Q+VIIwskoMCC8C1nhRFw=;
+ b=LElijR8CiRko0/f+oJbC7RaIQMlI5OYoBO6XAOhIjhDCtMm2OZSvz7P3Twe2GSFIAeyarNdcciD3Zv+TbJ71vBxeMErB0kza7azXi4qKHkhq777tK7BFnPHWv92KSWwUMttqr5aj6u9Qzb3WVEO8LNBOvudvTDWsVucs8/NXN8c=
+Received: from CY8PR11CA0032.namprd11.prod.outlook.com (2603:10b6:930:4a::25)
+ by SJ0PR12MB5663.namprd12.prod.outlook.com (2603:10b6:a03:42a::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.21; Fri, 31 May
+ 2024 21:38:50 +0000
+Received: from CY4PEPF0000EE33.namprd05.prod.outlook.com
+ (2603:10b6:930:4a:cafe::11) by CY8PR11CA0032.outlook.office365.com
+ (2603:10b6:930:4a::25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.21 via Frontend
+ Transport; Fri, 31 May 2024 21:38:48 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CY4PEPF0000EE33.mail.protection.outlook.com (10.167.242.39) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7633.15 via Frontend Transport; Fri, 31 May 2024 21:38:48 +0000
+Received: from weiserver.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Fri, 31 May
+ 2024 16:38:46 -0500
+From: Wei Huang <wei.huang2@amd.com>
+To: <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>, <netdev@vger.kernel.org>
+CC: <bhelgaas@google.com>, <corbet@lwn.net>, <davem@davemloft.net>,
+	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
+	<alex.williamson@redhat.com>, <gospo@broadcom.com>,
+	<michael.chan@broadcom.com>, <ajit.khaparde@broadcom.com>,
+	<somnath.kotur@broadcom.com>, <andrew.gospodarek@broadcom.com>,
+	<manoj.panicker2@amd.com>, <Eric.VanTassell@amd.com>, <wei.huang2@amd.com>,
+	<vadim.fedorenko@linux.dev>, <horms@kernel.org>, <bagasdotme@gmail.com>
+Subject: [PATCH V2 0/9] PCIe TPH and cache direct injection support
+Date: Fri, 31 May 2024 16:38:32 -0500
+Message-ID: <20240531213841.3246055-1-wei.huang2@amd.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ggqLvOYAyQE9JuFh"
-Content-Disposition: inline
-In-Reply-To: <ZlowwohstpT0sJVl@ghost>
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE33:EE_|SJ0PR12MB5663:EE_
+X-MS-Office365-Filtering-Correlation-Id: 67da1e8d-02fc-4422-a2f7-08dc81ba0e28
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|82310400017|36860700004|376005|7416005|1800799015;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?BVMBrWnktqBxZwc3H1lx5XO0+w8RkxPk/RDqmcxlBcmF03085zLAs17KexJI?=
+ =?us-ascii?Q?UzQHQpbKmna3v6YL9DJFrF6+yznsT6Ou+1jdVFa1nDovRJdmOi/8rVzPGoiO?=
+ =?us-ascii?Q?POs1DlFzQyldlNCdtGysHdYfGYy18GvhEtM5A5YAZAGBHQw8GsLP71xAJO2C?=
+ =?us-ascii?Q?3Lu7Gt7iqfpu/EfISsSZErFfQ1kCZE5xe47tf4+yogeZcJTdYeE4ylTMYcjX?=
+ =?us-ascii?Q?X8imLobPeJalV/xTl0Mvz6mxSwWMN1dCBD+63vvGwT45ibkbi9Hg6f5ok11g?=
+ =?us-ascii?Q?r6Fpsv7G0R2IY63xx5qqiSJedKsIQk3ecqAXKweBgPF/VGjoP2b1R8aDuA8j?=
+ =?us-ascii?Q?UKytrk6NxJv1VBj2A57CA47AceIFSsln4D5tkvO/PAdsE0L7QicEj9x0ZAWo?=
+ =?us-ascii?Q?+Vn7zpM4KCKn/qzFaQ7Li79F+LePVRAmQq0GTAkg8eyCgZ6ZXaeuP+z066zi?=
+ =?us-ascii?Q?ppQ6RPh4AufoIJFT/49nXlaZsd0uwqgmf6sJqmsimrz5X9Jyzk2dCB+xwtqu?=
+ =?us-ascii?Q?rejdQSl3ldQFSxE/bowuwLJMURSfTwwsEOzmvHygTuCRcWMpqXnOxYchxvAC?=
+ =?us-ascii?Q?7kJ10akXjiaZXc9wb8HvSYB050d8jTtx4o4u8EPV8IGWuSOSBDgGKAnOFc4p?=
+ =?us-ascii?Q?ZnrsjIp6ApjXgbkvx6hT1L7rdhMKJkiVNJfpA0Sy4v/mjkMJQbhwGfApx5cr?=
+ =?us-ascii?Q?48EplAZyczf5vCyELputWdjId1NiI2rJDbiaB7Fzr4oTDNLAfY66zgKdoaSp?=
+ =?us-ascii?Q?Ha1YLeyvsNa4+nUDrxdg7A0rqquXlqUprbiZ62ngZOFIGuK218Ib9NJfSPk8?=
+ =?us-ascii?Q?GSecXW/D3ck6aCf7hE+nvydw3ThXk/5ONCm1VFR4LVRm/GgOUAf6EUupb4oe?=
+ =?us-ascii?Q?1F54Tk7+uwarjZxPOiY6e1HZWtIxpx5IXs8k622VGQjBIaLD0wZt6K9urd+h?=
+ =?us-ascii?Q?yhDMYHqQhcH1iYMqr6D2H41zEdJCWELxsazz7rBU4zn/E9qIagisUzo8bcVw?=
+ =?us-ascii?Q?RrIsJX274LDF7U3VUhrWV0A7CS3X6CX2N2Vtv2Z9gZrcGYs7yNYVKbUplh24?=
+ =?us-ascii?Q?qZsvaArbSFIrzILAZI6CnH0XK200grcGVlD4isde4yoHcF5Yel5Cp4ml4UiV?=
+ =?us-ascii?Q?TwpgLiEzqargPoEMkUYgo/cRqQ91nGi2x/0atzn0u2BAZu59uDdWzGwRiii8?=
+ =?us-ascii?Q?L61vmAOzINNTzVQzP4QKI0XOyGuITXYIp898IiDYMRjQNacrtd9Ar7B7vTKQ?=
+ =?us-ascii?Q?9EuzATec9ySLPv0Tku8ZObhKbpiB50Ulf/JPaecPilDkaraUKdUFTiNTB+Un?=
+ =?us-ascii?Q?5ZvzxMtnvKl2jc6nacm4OTjr?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(82310400017)(36860700004)(376005)(7416005)(1800799015);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 May 2024 21:38:48.0118
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 67da1e8d-02fc-4422-a2f7-08dc81ba0e28
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000EE33.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB5663
 
+Hi All,
 
---ggqLvOYAyQE9JuFh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+TPH (TLP Processing Hints) is a PCIe feature that allows endpoint devices
+to provide optimization hints for requests that target memory space. These
+hints, in a format called steering tag (ST), are provided in the requester's
+TLP headers and allow the system hardware, including the Root Complex, to
+optimize the utilization of platform resources for the requests.
 
-On Fri, May 31, 2024 at 01:19:14PM -0700, Charlie Jenkins wrote:
-> On Fri, May 31, 2024 at 06:31:09PM +0100, Conor Dooley wrote:
-> > On Fri, May 31, 2024 at 12:23:27PM -0400, Jesse Taube wrote:
-> > > Dectect the Zkr extension and use it to seed the kernel base address.
-> > >=20
-> > > Detection of the extension can not be done in the typical fashion, as
-> > > this is very early in the boot process. Instead, add a trap handler
-> > > and run it to see if the extension is present.
-> >=20
-> > You can't rely on the lack of a trap meaning that Zkr is present unless
-> > you know that the platform implements Ssstrict. The CSR with that number
-> > could do anything if not Ssstrict compliant, so this approach gets a
-> > nak from me. Unfortunately, Ssstrict doesn't provide a way to detect
-> > it, so you're stuck with getting that information from firmware.
->=20
-> The Scalar Cryptography v1.0.1 spec says "If Zkr is not implemented, the
-> [s,u]seed bits must be hardwired to zero". It also says "Without the
-> corresponding access control bit set to 1, any attempted access to seed
-> from U, S, or HS modes will raise an illegal instruction exception."
->=20
-> There is a slight nuance here as the definition of Ssstrict is:
->=20
-> "No non-conforming extensions are present. Attempts to execute
-> unimplemented opcodes or access unimplemented CSRs in the standard or
-> reserved encoding spaces raises an illegal instruction exception that
-> results in a contained trap to the supervisor-mode trap handler."
->=20
-> The trap that Jesse is relying on in the code here is related to access
-> bits and not related to the CSR being unimplemented. Since the access
-> bits are required to be 0 on an implementation without Zkr, it is
-> required to trap if seed is accessed, regardless of Ssstrict.
->=20
-> The situation here is slightly odd because the spec is defining behavior
-> for what to do if the extension is not supported, and requires
-> implementations to follow this aspect of the Scalar Cryptography spec
-> even though they may not implement any of the instructions in the spec.
+Upcoming AMD hardware implement a new Cache Injection feature that leverages
+TPH. Cache Injection allows PCIe endpoints to inject I/O Coherent DMA writes
+directly into an L2 within the CCX (core complex) closest to the CPU core
+that will consume it. This technology is aimed at applications requiring high
+performance and low latency, such as networking and storage applications.
 
-Firstly, you absolutely cannot rely on the behaviour defined by a new
-extension by systems that implement a version of the ISA that predates
-it. Secondly, we're talking about non-conforming implementations that
-use a reserved CSR number for other purposes, you cannot rely on the
-behaviour that the Scalar Crypto spec prescribes for access to the
-register.
+This series introduces generic TPH support in Linux, allowing STs to be
+retrieved from ACPI _DSM (as defined by ACPI) and used by PCIe endpoint
+drivers as needed. As a demonstration, it includes an example usage in the
+Broadcom BNXT driver. When running on Broadcom NICs with the appropriate
+firmware, Cache Injection shows substantial memory bandwidth savings in
+real-world benchmarks. This solution is vendor-neutral, as both TPH and ACPI
+_DSM are industry standards.
 
-"Non-conforming" is also a moving target btw - the Andes PMU (I think
-it's that) uses an interrupt number that was moved from "platform
-specific use" to "reserved" by the AIA spec. If you only looked the
-current specs, the Andes PMU is a "non-conforming extension" but at the
-time that it was created it was compliant. I think we're gonna have a
-fun conversation defining what "Ssstrict" actually means when someone
-actually tries to document that.
+V1->V2:
+ * Rebase on top of pci.git/for-linus (6.10-rc1)
+ * Address mismatched data types reported by Sparse (Sparse checking passed)
+ * Add a new API, pcie_tph_intr_vec_supported(), for checking IRQ mode support
+ * Skip bnxt affinity notifier registration if pcie_tph_intr_vec_supported()=false
+ * Minor fixes in bnxt driver (i.e. warning messages)
 
-> > For DT systems, you can actually parse the DT in the pi, we do it to get
-> > the kaslr seed if present, so you can actually check for Zkr. With ACPI
-> > I have no idea how you can get that information, I amn't an ACPI-ist.
->=20
-> It is feasible to check if Zkr is present in the device tree at this
-> stage in boot, but at first glance does not seem feasible to read the
-> ACPI tables this early.
->=20
-> The CSR being read is just for entropy so even if the seed CSR doesn't
-> trap and provides an arbitrary value on an implementation that does not
-> support Zkr, it can still be used as a source of entropy. If the
-> implementation does trap, the entropy will be set to 0 which is just a
-> different hard-coded arbitrary value.=20
+Manoj Panicker (1):
+  bnxt_en: Add TPH support in BNXT driver
 
-Right. I can see value in doing something that may contain entropy, and
-is at worst no better than the 0 we can currently get. But the patch
-we're talking about here mentions nothing of the sort, it presents itself
-as detection of Zkr and an actually random number - but all it actually
-detects is whether or not the CSR at CSR_SEED traps.
+Michael Chan (1):
+  bnxt_en: Pass NQ ID to the FW when allocating RX/RX AGG rings
 
-To be acceptable, the patch would need to stop claiming that it is a valid
-way to detect Zkr. The commit message, and a comment, must also explain
-what may happen on systems that do not implement Zkr as you have done
-here.
-For example, `if (!riscv_has_zkr()) return 0` would have to be something
-like `if (riscv_csr_seed_traps()) return 0`.
+Wei Huang (8):
+  PCI: Introduce PCIe TPH support framework
+  PCI: Add TPH related register definition
+  PCI/TPH: Implement a command line option to disable TPH
+  PCI/TPH: Implement a command line option to force No ST Mode
+  PCI/TPH: Introduce API functions to manage steering tags
+  PCI/TPH: Retrieve steering tag from ACPI _DSM
+  PCI/TPH: Add TPH documentation
 
-Thanks,
-Conor.
+ Documentation/PCI/index.rst                   |   1 +
+ Documentation/PCI/tph.rst                     |  57 ++
+ .../admin-guide/kernel-parameters.txt         |   2 +
+ Documentation/driver-api/pci/pci.rst          |   3 +
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c     |  62 +-
+ drivers/net/ethernet/broadcom/bnxt/bnxt.h     |   4 +
+ drivers/pci/pci-driver.c                      |  12 +-
+ drivers/pci/pci.c                             |  24 +
+ drivers/pci/pci.h                             |   6 +
+ drivers/pci/pcie/Kconfig                      |  10 +
+ drivers/pci/pcie/Makefile                     |   1 +
+ drivers/pci/pcie/tph.c                        | 582 ++++++++++++++++++
+ drivers/pci/probe.c                           |   1 +
+ drivers/vfio/pci/vfio_pci_config.c            |   7 +-
+ include/linux/pci-tph.h                       |  78 +++
+ include/linux/pci.h                           |   6 +
+ include/uapi/linux/pci_regs.h                 |  35 +-
+ 17 files changed, 881 insertions(+), 10 deletions(-)
+ create mode 100644 Documentation/PCI/tph.rst
+ create mode 100644 drivers/pci/pcie/tph.c
+ create mode 100644 include/linux/pci-tph.h
 
---ggqLvOYAyQE9JuFh
-Content-Type: application/pgp-signature; name="signature.asc"
+-- 
+2.44.0
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZlpC7gAKCRB4tDGHoIJi
-0unPAP9+cMX5dlo+PBlNH2Xf52APZwRcdImVnnyQiYcK7srY9wD/Zg5Ccwcu5LmY
-vm8TWShzC4ePfWVslctxqCd3Fr2d8Q0=
-=hSYQ
------END PGP SIGNATURE-----
-
---ggqLvOYAyQE9JuFh--
 
