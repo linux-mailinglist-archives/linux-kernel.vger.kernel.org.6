@@ -1,60 +1,87 @@
-Return-Path: <linux-kernel+bounces-196678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 288A88D5FCF
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:38:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0B3D8D5FD2
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:38:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A0301C2269E
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:38:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 759961F255EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:38:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D03C7156245;
-	Fri, 31 May 2024 10:38:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FCE8156F25;
+	Fri, 31 May 2024 10:38:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=t-8ch.de header.i=@t-8ch.de header.b="I7ohPjh1"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="F0heMktW";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YN+uNLES"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4BB9155C8E;
-	Fri, 31 May 2024 10:38:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46900155C8E;
+	Fri, 31 May 2024 10:38:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717151886; cv=none; b=lXNxXnonethysvIO/V3qYAjJu2laPlzb9Xqqt4QPUyFz4AX2bG40iE8PnQwH8ZP3XuuvnYfqAtZEGcAsaKOFwQQdz5ychDunPi6mQEfHl4t0we5Y7XDHrCGMpKwqrYvgynk3yFU1qc+2kHo8P+Kgh2ud3DxMEr6+GbAtRFc83UY=
+	t=1717151892; cv=none; b=TKYVd6bDWSG2ZyRwwS/8Uj0nYUjNwQSXO2xjOQDZeJDcuN2CZ/fxrl5qNKxesf5S5t2EExkPOlhWxJ6DAzCOwQHkUA7kJFtCGXFhNhQNUjQV6Io+SIYp+5IUdSVCjA+JTaUQItGY2sHLzrXhAuWjL/idntnuyt9mi9XwAZo7O58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717151886; c=relaxed/simple;
-	bh=vGS6g45uGnxHvSSNpUZ+06i5ODxlJer7tFN7ZSsuT3o=;
+	s=arc-20240116; t=1717151892; c=relaxed/simple;
+	bh=pHEsO2qn1rcaa/CVVCC1rJCGrocpF3xq2ymrPBC1hyM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q3Pgcc5lTEnJytAjbd87DHSVg5/wS+AX67Qlm+cIJuP5AXuavmKqS4WsSRQZwov6HxlcA2r2m4uxWr/9teIN80mBOc3GdVKCQdsjFqoQBvCCzBgCEoZWEHTw8NKcpNZ3UDPW4IUfLUApvdXKjcxyRzsBWHvaakJFm9MUjxGN5iI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=t-8ch.de; spf=pass smtp.mailfrom=t-8ch.de; dkim=pass (1024-bit key) header.d=t-8ch.de header.i=@t-8ch.de header.b=I7ohPjh1; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=t-8ch.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-8ch.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=t-8ch.de; s=mail;
-	t=1717151875; bh=vGS6g45uGnxHvSSNpUZ+06i5ODxlJer7tFN7ZSsuT3o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=I7ohPjh1avznzAaPb8T6T7o4LUKfcwAdQet/t5H/NpzpKtL4FfFYE/P4ucUbW6j3T
-	 SVCdjqM8Wjgnc2pwGNtt1GO02xrFZlLwFVHFyxJZ+e9XpapKCWzfDo1XUUKQbyUt48
-	 AxPK4mJsasUNb4FlIbz/JCnDeDv20T49z8G9QMSQ=
-Date: Fri, 31 May 2024 12:37:54 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas@t-8ch.de>
-To: =?utf-8?B?UmVuw6k=?= Rebe <rene@exactcode.de>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org, Hristo Venev <hristo@venev.name>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Radu Sabau <radu.sabau@analog.com>, Paul Menzel <pmenzel@molgen.mpg.de>
-Subject: Re: [PATCH 2/3] hwmon: Add support for SPD5118 compliant temperature
- sensors
-Message-ID: <2b3ca226-339e-40f3-908f-bf8adcb94504@t-8ch.de>
-References: <20240529205204.81208-1-linux@roeck-us.net>
- <20240529205204.81208-3-linux@roeck-us.net>
- <34a4292e-c4db-4b40-822e-b892e1444045@t-8ch.de>
- <16e448f1-cfc9-4e88-b3f1-55e1856d1405@roeck-us.net>
- <0a2ed64d-06d9-45e8-a054-4ded4429f952@t-8ch.de>
- <ffd72953-ecd2-405a-ad6d-236143b26946@roeck-us.net>
- <20240531093154.rna2vwbfx7csu2sj@ninjato>
- <BA0B79E0-6582-45EA-8EA9-35E278B8CC42@exactcode.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tVa84WxKhoNcvFLGRU7mPDvTn3SYjw7Slnhf/Dyb+0WDQn2nuyX/CyEOOcdFGupdMLE4fV5FfWWjkhxhMRZAQGXCFB31ElW2VCIPcM9z/of7iyW2vZHOO5h7TNkhyZTs+7mbWNfMcVeSI9oStdRlHmsJcVw3tIdVSM2TnMdcvjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=F0heMktW; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YN+uNLES; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 31 May 2024 12:38:07 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1717151889;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=s4acigBe027wOQx0luMaaon6tV311jRRizAmbiQqL3w=;
+	b=F0heMktWAuN3lpcjkR+BkoYknS08e++75PnvWStPB9mL2ifxNdHcKz5weNkFgwFB1j84Qw
+	QMYeUMqjHfYnQDfLmxfG2IMol2YmnIYoV9aDk3SIvCyO9iJc/PrYDZExR53KWU5eBit800
+	A/8ur4BgPCXyYAcK0arCAFyxTYkLdMSj9Go2Y8rByOr4PvmyKltCd8K6hxKDc8uxbiMzhS
+	O/0ecInyrCKM0d9uYSRkS3A/JOTNZ6Up+04k9Kl5vtbZutIm4rIE2mvgdJFOll5X/Ok3EF
+	Wu1wiB8LMEdDeFz3DMTP32t5qruIRsjPHFSDeoImxEjZtLmkFDty3EdUcpWWnA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1717151889;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=s4acigBe027wOQx0luMaaon6tV311jRRizAmbiQqL3w=;
+	b=YN+uNLESzX+WmX/Q2l0gLeQmgehpBRHwNK7BGf1Ci7es9A7xJHTFdbLQVw8obMJK45/1gV
+	40Y6OrLNtX5SqzCQ==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Eduard Zingerman <eddyz87@gmail.com>, Hao Luo <haoluo@google.com>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	Jiri Olsa <jolsa@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
+	Stanislav Fomichev <sdf@google.com>,
+	Yonghong Song <yonghong.song@linux.dev>, bpf@vger.kernel.org
+Subject: Re: [PATCH v3 net-next 14/15] net: Reference bpf_redirect_info via
+ task_struct on PREEMPT_RT.
+Message-ID: <20240531103807.QjzIOAOh@linutronix.de>
+References: <20240529162927.403425-1-bigeasy@linutronix.de>
+ <20240529162927.403425-15-bigeasy@linutronix.de>
+ <87y17sfey6.fsf@toke.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,40 +90,71 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <BA0B79E0-6582-45EA-8EA9-35E278B8CC42@exactcode.de>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <87y17sfey6.fsf@toke.dk>
 
-On 2024-05-31 12:01:35+0000, René Rebe wrote:
-> On May 31, 2024, at 11:31, Wolfram Sang <wsa+renesas@sang-engineering.com> wrote:
-> >>> Wolfgang seems to think it's important:
-> > 
-> > Wolfram, please.
+On 2024-05-30 00:09:21 [+0200], Toke H=C3=B8iland-J=C3=B8rgensen wrote:
+> [...]
+> > @@ -240,12 +240,14 @@ static int cpu_map_bpf_prog_run(struct bpf_cpu_ma=
+p_entry *rcpu, void **frames,
+> >  				int xdp_n, struct xdp_cpumap_stats *stats,
+> >  				struct list_head *list)
+> >  {
+> > +	struct bpf_net_context __bpf_net_ctx, *bpf_net_ctx;
+> >  	int nframes;
+>=20
+> I think we need to zero-initialise all the context objects we allocate
+> on the stack.
+>=20
+> The reason being that an XDP program can return XDP_REDIRECT without
+> calling any of the redirect helpers first; which will lead to
+> xdp_do_redirect() being called without any of the fields in struct
+> bpf_redirect_info having being set. This can lead to a crash if the
+> values happen to be the wrong value; and if we're not initialising the
+> stack space used by this struct, we have no guarantees about what value
+> they will end up with.
 
-Sorry, Wolfram.
+Okay, I can do that.
 
-> > 
-> >>> https://lore.kernel.org/lkml/tdia472d4pow2osabef24y2ujkkquplfajxmmtk5pnxllsdxsz@wxzynz7llasr/
-> >>> 
-> >> 
-> >> Ok, but that doesn't explain the reason. Wolfram, Paul, why do you
-> >> think this is needed ? Note that I am not opposed to adding spd
-> >> eeprom support, but I'd like to know why I am doing it before
-> >> I spend time on it.
-> > 
-> > A working eeprom driver is needed to get 'decode-dimms' from the
-> > i2c-tools package working. Jean reported that EEPROM access for DDR5 is
-> > different from DDR4, so it needs a separate driver. And
-> > i2c_register_spd() then needs to be updated to use the new driver for
-> > DDR5.
-> 
-> Well my original downstream driver already had eeprom access:
-> 
-> 	https://svn.exactcode.de/t2/trunk/package/kernel/linux/spd-5118.patch
-> 
-> Note there are some surrounding -2, and parity patches around this patch.
+> >  void bpf_clear_redirect_map(struct bpf_map *map)
+> >  {
+> > -	struct bpf_redirect_info *ri;
+> > -	int cpu;
+> > -
+> > -	for_each_possible_cpu(cpu) {
+> > -		ri =3D per_cpu_ptr(&bpf_redirect_info, cpu);
+> > -		/* Avoid polluting remote cacheline due to writes if
+> > -		 * not needed. Once we pass this test, we need the
+> > -		 * cmpxchg() to make sure it hasn't been changed in
+> > -		 * the meantime by remote CPU.
+> > -		 */
+> > -		if (unlikely(READ_ONCE(ri->map) =3D=3D map))
+> > -			cmpxchg(&ri->map, map, NULL);
+> > -	}
+> > +	/* ri->map is assigned in __bpf_xdp_redirect_map() from within a eBPF
+> > +	 * program/ during NAPI callback. It is used during
+> > +	 * xdp_do_generic_redirect_map()/ __xdp_do_redirect_frame() from the
+> > +	 * redirect callback afterwards. ri->map is cleared after usage.
+> > +	 * The path has no explicit RCU read section but the local_bh_disable=
+()
+> > +	 * is also a RCU read section which makes the complete softirq callba=
+ck
+> > +	 * RCU protected. This in turn makes ri->map RCU protected and it is
+> > +	 * sufficient to wait a grace period to ensure that no "ri->map =3D=
+=3D map"
+> > +	 * exists. dev_map_free() removes the map from the list and then
+> > +	 * invokes synchronize_rcu() after calling this function.
+> > +	 */
+> >  }
+>=20
+> With the zeroing of the stack variable mentioned above, I agree that
+> this is not needed anymore, but I think we should just get rid of the
+> function entirely and put a comment in devmap.c instead of the call to
+> the (now empty) function.
 
-That would need to be rewritten to use the nvmem APIs though, I guess.
-If nobody wants to do it, I'm volunteering.
+I wasn't entirely sure if my reasoning is valid. In that case=E2=80=A6
 
-Thomas
+> -Toke
+
+Sebastian
 
