@@ -1,145 +1,258 @@
-Return-Path: <linux-kernel+bounces-196623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 616BC8D5EC7
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCE4E8D5EC8
 	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 11:48:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4727B285E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 09:48:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93071287E8F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 09:48:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D6ED1420A8;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2DF8140395;
 	Fri, 31 May 2024 09:48:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GwkMn/s+"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ihS01GEb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA4117C6EB
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 09:48:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1AAA78C69;
+	Fri, 31 May 2024 09:48:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717148889; cv=none; b=dzPtRvyKmxk0JPaiLXM7wpu4PBF8dfzBckwLk9vr91lIgSOTrdANnu5dcnStlslaVHQQSv1gme/SFjSWqkdx1bC2TRs0qLJGkpS3Yk1ZWMAu60+vqYurzG4n5N2/XWTXaomstkAllFmuo1wnWxT7R1Nul7EUvd66NkemJDhZzf0=
+	t=1717148890; cv=none; b=lDd082ix3BIVE/Vn2746V3IugdPGFMvDdZbx0jWCo5TPMQhfrHQnq41wZOaroTEveSPu1QkcwlCR7v8qjRBg0E9f/wWEipbIXL8FvFHqQSFuuP6S4ffoHUM/ALjDb4AnnbHNUT9wx843wjM/xMfBR2Oswj7nZBg60HbCV8RqjW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717148889; c=relaxed/simple;
-	bh=iY0Y8pGOe7NKlzuhxWSHCXrnuMnl+pFzytg+XGfJ2Fc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mv18AYTkvN1RQnDP/0hca0TlZRqG6jgIn95Fq5O7Z6W4f6YYH9bsEfcdSP9frtHrI4o2Wt/rCL2WkAOzZz3KgnG0u6LBiyq9nnTdxB090WTUlCs0BfRoXrdhYIeVm/nEuaYlWapSTTUqJ0+jwheUz+F3J6ElnuPEZUh0/LaTUcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GwkMn/s+; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-35507e3a5deso1260128f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 02:48:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717148885; x=1717753685; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3QphDfY5f+dlpkjZJqpKBufDO6kEZfbPYC8lG8WaDP0=;
-        b=GwkMn/s+V7/EOe3FUyHWdzwUUtQwqD9D3XpruOy/4uoeXDAfjFewUfj5ZgB0cYST0y
-         oWw0+FQ1BrbQcoLXlStIBwQUQEoUpiuYBAKwey3RfjlHfL5ZMpCZM2Th8JasECLMJSuO
-         E8qYW38sj1avZJORNE5w4RKKXfBNk4zWABtBV2BjpRiJFX4ILkQTVnp+ZWon9XKwvroQ
-         Uy4XnbLy6lR+TOn+ai4IdHdR3xTZx1Js6kISAuG+3cn6H0GjnT/v4LcBR8g4UdzdiAI8
-         K07rOjj/HEBaMfiLRXhn7Gh2vTS5uane4biUDnWwkIfKXBHq6n5uxm4anXXDkzN5H178
-         Vt3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717148885; x=1717753685;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3QphDfY5f+dlpkjZJqpKBufDO6kEZfbPYC8lG8WaDP0=;
-        b=fDa++SH9131gN4E8fPxpNV9ic/9/wbHdzCvV3Nx7ALSmIJBzIrQQJo2B5qalw6VzDw
-         kC43byFKzr671a1nqvjzk8jaLU2elhP7UPphpBJRBCU9lR7am233znv1qTMnsEFX2IrI
-         Q6k1TgiL26qseTcWtp/rLzHjRIItVKhV3anWU2FS17xWtayBibvt7672TS82YXiHbXEu
-         uIZvCOFdj2XSXwRe+IQ02dV5Nf5qgbO1an5qXuze/Aq9CNL6COz4haGQ2xfnJq1FwhYy
-         ZBUS9valyX6/h5Ku1ZxCgVzhtg4ruUAwwuECKiCCVpSgHMYtnZOzF5S9HpRIgfQEyYAk
-         HWZA==
-X-Forwarded-Encrypted: i=1; AJvYcCVUGmpIvPduFkqRhw6sFoQJoFRJj0Divp4awFApvwtTKjpP69+yct+UR02+zPXoft6BxxOHKkD4HHhtvMazDiISJHwyxLpws3sCq3AJ
-X-Gm-Message-State: AOJu0Yw8TvXGedb9s60lmoneG+/iUbsw0BnwaV6brq/iNkFZ/iUUkC5W
-	9hJ/f3ijAZjPF29eLfh43wvYlTGS9KjD38m4BGL25YJINL7j3N/iCMrPFaJpiYc=
-X-Google-Smtp-Source: AGHT+IFAQRuZmhDxjGlW6esaOhNk56To1ieBo/3ULHIoW0dljiOjAH1mTqztqjhXIUNxR9S9PL+8Cw==
-X-Received: by 2002:a5d:4aca:0:b0:358:d9d4:1026 with SMTP id ffacd0b85a97d-35dc7e3e320mr4172508f8f.17.1717148885258;
-        Fri, 31 May 2024 02:48:05 -0700 (PDT)
-Received: from [192.168.86.191] ([5.133.47.210])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-35dd062ee31sm1461077f8f.87.2024.05.31.02.48.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 31 May 2024 02:48:04 -0700 (PDT)
-Message-ID: <8fd4ba90-bd9a-4520-a287-f2119a37acb9@linaro.org>
-Date: Fri, 31 May 2024 10:48:04 +0100
+	s=arc-20240116; t=1717148890; c=relaxed/simple;
+	bh=9emyVcHeEjih4DKqAaHmMJgrsFc11xb6jFw6hilqh6Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=S50vtaiNz4rXlU325EpDb4Cd1Ua4MmqY55e+XOBKHyxozM5FX2aoGaUJHYmhgseq601Oifvcdo9AqD/vN2YD+3wEGxkucIKRVWXX2skyGgN2yLOjIphC1xnt+c+Qz73OQmK2l3lw0+X1fmqppu8BtzG7S8pkeiJVaITcaWWWSds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ihS01GEb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84323C116B1;
+	Fri, 31 May 2024 09:48:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717148889;
+	bh=9emyVcHeEjih4DKqAaHmMJgrsFc11xb6jFw6hilqh6Q=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ihS01GEbqeFL8vs00CWNTYO4XItYZgqUxwn0UhZHlggv20Y4y8bxDx9/Tmqw2fJJK
+	 u29IU4L/k8rrYANrHTK7MVlEeapqvAKO11SC3YM2oRhCDHv9zzyFrtzN6lrDIH+5k5
+	 ELpgTzX8adQHhDCTPT7o93oBBQs52vu/a1fkbDQoDELzG3SL+SZ1OzIfq9Eo4tL5ae
+	 B/8FQIIxWPgJNytnEZ+GdJxwRSUhEafKVKVOVDAVoHHwSVuJpk/b5sii2hi0GltNM+
+	 bjrpIxMmlH4SPyvdCMbQv3M78xVh4p9JMySYYaNz3bWpb098dzWNfSGkwDHN/UAFHv
+	 fpgR/2LJWu48g==
+From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: don <zds100@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	mhiramat@kernel.org
+Subject: [PATCH] tracing/fprobe: Support raw tracepoint events on modules
+Date: Fri, 31 May 2024 18:48:06 +0900
+Message-Id: <171714888633.198965.13093663631481169611.stgit@devnote2>
+X-Mailer: git-send-email 2.34.1
+User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 7/9] misc: fastrpc: Restrict untrusted app to attach to
- privileged PD
-To: Ekansh Gupta <quic_ekangupt@quicinc.com>, linux-arm-msm@vger.kernel.org
-Cc: gregkh@linuxfoundation.org, quic_bkumar@quicinc.com,
- linux-kernel@vger.kernel.org, quic_chennak@quicinc.com,
- stable <stable@kernel.org>
-References: <20240530102032.27179-1-quic_ekangupt@quicinc.com>
- <20240530102032.27179-8-quic_ekangupt@quicinc.com>
-Content-Language: en-US
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-In-Reply-To: <20240530102032.27179-8-quic_ekangupt@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
+Support raw tracepoint event on module by fprobe events.
+Since it only uses for_each_kernel_tracepoint() to find a tracepoint,
+the tracepoints on modules are not handled. Thus if user specified a
+tracepoint on a module, it shows an error.
+This adds new for_each_module_tracepoint() API to tracepoint subsystem,
+and uses it to find tracepoints on modules.
 
-On 30/05/2024 11:20, Ekansh Gupta wrote:
-> Untrusted application with access to only non-secure fastrpc device
-> node can attach to root_pd or static PDs if it can make the respective
-> init request. This can cause problems as the untrusted application
-> can send bad requests to root_pd or static PDs. Add changes to reject
-> attach to privileged PDs if the request is being made using non-secure
-> fastrpc device node.
-> 
-> Fixes: 0871561055e6 ("misc: fastrpc: Add support for audiopd")
-> Cc: stable <stable@kernel.org>
-> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
-> ---
->   drivers/misc/fastrpc.c | 10 ++++++++++
->   1 file changed, 10 insertions(+)
-> 
-> diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
-> index d9d9f889e39e..73fa0e536cf9 100644
-> --- a/drivers/misc/fastrpc.c
-> +++ b/drivers/misc/fastrpc.c
-> @@ -1344,6 +1344,11 @@ static int fastrpc_init_create_static_process(struct fastrpc_user *fl,
->   	} inbuf;
->   	u32 sc;
->   
-> +	if (!fl->is_secure_dev) {
-> +		dev_dbg(&fl->cctx->rpdev->dev, "untrusted app trying to attach to privileged DSP PD\n");
-> +		return -EACCES;
-> +	}
+Reported-by: don <zds100@gmail.com>
+Closes: https://lore.kernel.org/all/20240530215718.aeec973a1d0bf058d39cb1e3@kernel.org/
+Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+---
+ include/linux/tracepoint.h  |    7 +++++++
+ kernel/trace/trace_fprobe.c |   46 ++++++++++++++++++++++++++++++++++++-------
+ kernel/tracepoint.c         |   19 ++++++++++++++++++
+ 3 files changed, 64 insertions(+), 8 deletions(-)
 
-Please move these checks to fastrpc_device_ioctl which makes it clear 
-that these are only supported with secure device nodes.
+diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
+index 689b6d71590e..46e6a5e759fd 100644
+--- a/include/linux/tracepoint.h
++++ b/include/linux/tracepoint.h
+@@ -65,6 +65,8 @@ struct tp_module {
+ bool trace_module_has_bad_taint(struct module *mod);
+ extern int register_tracepoint_module_notifier(struct notifier_block *nb);
+ extern int unregister_tracepoint_module_notifier(struct notifier_block *nb);
++void for_each_module_tracepoint(void (*fct)(struct tracepoint *, void *),
++				void *priv);
+ #else
+ static inline bool trace_module_has_bad_taint(struct module *mod)
+ {
+@@ -80,6 +82,11 @@ int unregister_tracepoint_module_notifier(struct notifier_block *nb)
+ {
+ 	return 0;
+ }
++static inline
++void for_each_module_tracepoint(void (*fct)(struct tracepoint *, void *),
++				void *priv)
++{
++}
+ #endif /* CONFIG_MODULES */
+ 
+ /*
+diff --git a/kernel/trace/trace_fprobe.c b/kernel/trace/trace_fprobe.c
+index 62e6a8f4aae9..1d8a983e1edc 100644
+--- a/kernel/trace/trace_fprobe.c
++++ b/kernel/trace/trace_fprobe.c
+@@ -385,6 +385,7 @@ static struct trace_fprobe *alloc_trace_fprobe(const char *group,
+ 					       const char *event,
+ 					       const char *symbol,
+ 					       struct tracepoint *tpoint,
++					       struct module *mod,
+ 					       int maxactive,
+ 					       int nargs, bool is_return)
+ {
+@@ -405,6 +406,7 @@ static struct trace_fprobe *alloc_trace_fprobe(const char *group,
+ 		tf->fp.entry_handler = fentry_dispatcher;
+ 
+ 	tf->tpoint = tpoint;
++	tf->mod = mod;
+ 	tf->fp.nr_maxactive = maxactive;
+ 
+ 	ret = trace_probe_init(&tf->tp, event, group, false, nargs);
+@@ -895,8 +897,23 @@ static struct notifier_block tracepoint_module_nb = {
+ struct __find_tracepoint_cb_data {
+ 	const char *tp_name;
+ 	struct tracepoint *tpoint;
++	struct module *mod;
+ };
+ 
++static void __find_tracepoint_module_cb(struct tracepoint *tp, void *priv)
++{
++	struct __find_tracepoint_cb_data *data = priv;
++
++	if (!data->tpoint && !strcmp(data->tp_name, tp->name)) {
++		data->tpoint = tp;
++		data->mod = __module_text_address((unsigned long)tp->probestub);
++		if (!try_module_get(data->mod)) {
++			data->tpoint = NULL;
++			data->mod = NULL;
++		}
++	}
++}
++
+ static void __find_tracepoint_cb(struct tracepoint *tp, void *priv)
+ {
+ 	struct __find_tracepoint_cb_data *data = priv;
+@@ -905,14 +922,28 @@ static void __find_tracepoint_cb(struct tracepoint *tp, void *priv)
+ 		data->tpoint = tp;
+ }
+ 
+-static struct tracepoint *find_tracepoint(const char *tp_name)
++/*
++ * Find a tracepoint from kernel and module. If the tracepoint is in a module,
++ * this increments the module refcount to prevent unloading until the
++ * trace_fprobe is registered to the list. After registering the trace_fprobe
++ * on the trace_fprobe list, the module refcount is decremented because
++ * tracepoint_probe_module_cb will handle it.
++ */
++static struct tracepoint *find_tracepoint(const char *tp_name,
++					  struct module **tp_mod)
+ {
+ 	struct __find_tracepoint_cb_data data = {
+ 		.tp_name = tp_name,
++		.mod = NULL,
+ 	};
+ 
+ 	for_each_kernel_tracepoint(__find_tracepoint_cb, &data);
+ 
++	if (!data.tpoint && IS_ENABLED(CONFIG_MODULES)) {
++		for_each_module_tracepoint(__find_tracepoint_module_cb, &data);
++		*tp_mod = data.mod;
++	}
++
+ 	return data.tpoint;
+ }
+ 
+@@ -996,6 +1027,7 @@ static int __trace_fprobe_create(int argc, const char *argv[])
+ 	char abuf[MAX_BTF_ARGS_LEN];
+ 	char *dbuf = NULL;
+ 	bool is_tracepoint = false;
++	struct module *tp_mod = NULL;
+ 	struct tracepoint *tpoint = NULL;
+ 	struct traceprobe_parse_context ctx = {
+ 		.flags = TPARG_FL_KERNEL | TPARG_FL_FPROBE,
+@@ -1080,7 +1112,7 @@ static int __trace_fprobe_create(int argc, const char *argv[])
+ 
+ 	if (is_tracepoint) {
+ 		ctx.flags |= TPARG_FL_TPOINT;
+-		tpoint = find_tracepoint(symbol);
++		tpoint = find_tracepoint(symbol, &tp_mod);
+ 		if (!tpoint) {
+ 			trace_probe_log_set_index(1);
+ 			trace_probe_log_err(0, NO_TRACEPOINT);
+@@ -1110,8 +1142,8 @@ static int __trace_fprobe_create(int argc, const char *argv[])
+ 		goto out;
+ 
+ 	/* setup a probe */
+-	tf = alloc_trace_fprobe(group, event, symbol, tpoint, maxactive,
+-				argc, is_return);
++	tf = alloc_trace_fprobe(group, event, symbol, tpoint, tp_mod,
++				maxactive, argc, is_return);
+ 	if (IS_ERR(tf)) {
+ 		ret = PTR_ERR(tf);
+ 		/* This must return -ENOMEM, else there is a bug */
+@@ -1119,10 +1151,6 @@ static int __trace_fprobe_create(int argc, const char *argv[])
+ 		goto out;	/* We know tf is not allocated */
+ 	}
+ 
+-	if (is_tracepoint)
+-		tf->mod = __module_text_address(
+-				(unsigned long)tf->tpoint->probestub);
+-
+ 	/* parse arguments */
+ 	for (i = 0; i < argc && i < MAX_TRACE_ARGS; i++) {
+ 		trace_probe_log_set_index(i + 2);
+@@ -1155,6 +1183,8 @@ static int __trace_fprobe_create(int argc, const char *argv[])
+ 	}
+ 
+ out:
++	if (tp_mod)
++		module_put(tp_mod);
+ 	traceprobe_finish_parse(&ctx);
+ 	trace_probe_log_clear();
+ 	kfree(new_argv);
+diff --git a/kernel/tracepoint.c b/kernel/tracepoint.c
+index 8d1507dd0724..981b60199413 100644
+--- a/kernel/tracepoint.c
++++ b/kernel/tracepoint.c
+@@ -735,6 +735,25 @@ static __init int init_tracepoints(void)
+ 	return ret;
+ }
+ __initcall(init_tracepoints);
++
++void for_each_module_tracepoint(void (*fct)(struct tracepoint *tp, void *priv),
++				void *priv)
++{
++	struct tp_module *tp_mod;
++	struct module *mod;
++
++	if (!mod->num_tracepoints)
++		return;
++
++	mutex_lock(&tracepoint_module_list_mutex);
++	list_for_each_entry(tp_mod, &tracepoint_module_list, list) {
++		mod = tp_mod->mod;
++		for_each_tracepoint_range(mod->__start___tracepoints_ptrs,
++			mod->tracepoints_ptrs + mod->num_tracepoints,
++			fct, priv);
++	}
++	mutex_unlock(&tracepoint_module_list_mutex);
++}
+ #endif /* CONFIG_MODULES */
+ 
+ /**
 
-I would also prefer this to be documented in the the uapi headers.
-
-
---srini
-> +
->   	args = kcalloc(FASTRPC_CREATE_STATIC_PROCESS_NARGS, sizeof(*args), GFP_KERNEL);
->   	if (!args)
->   		return -ENOMEM;
-> @@ -1769,6 +1774,11 @@ static int fastrpc_init_attach(struct fastrpc_user *fl, int pd)
->   	int tgid = fl->tgid;
->   	u32 sc;
->   
-> +	if (!fl->is_secure_dev) {
-> +		dev_dbg(&fl->cctx->rpdev->dev, "untrusted app trying to attach to privileged DSP PD\n");
-> +		return -EACCES;
-> +	}
-> +
->   	args[0].ptr = (u64)(uintptr_t) &tgid;
->   	args[0].length = sizeof(tgid);
->   	args[0].fd = -1;
 
