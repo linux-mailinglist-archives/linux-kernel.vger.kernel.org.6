@@ -1,187 +1,133 @@
-Return-Path: <linux-kernel+bounces-197278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB0EC8D689B
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 19:57:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AABC8D689F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 20:01:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19C741C2138C
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:57:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 809801C23E73
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:01:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7C6D17C9FE;
-	Fri, 31 May 2024 17:57:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e7yULbTB"
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4271176258;
+	Fri, 31 May 2024 18:01:15 +0000 (UTC)
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FC6317C7D4;
-	Fri, 31 May 2024 17:57:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD95B52F6A;
+	Fri, 31 May 2024 18:01:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717178250; cv=none; b=B1WfU0Ml538vqnEQvuWD5W9/O8fL6nhxEuUlQS4fh6742r8NZ8pV1RD2gZ+LOTLxB9d/B2KoPIKagvW94dcJHDknEr1V8ygw+AFg/ilwHCTOMcwJC0NCjv4NjU0v7eUF3PfbrNzLuOVdIJptevE1wyE456i/D1xsyMDx+u1pShc=
+	t=1717178475; cv=none; b=m9R10sqBiKZxCnrHlDsGnd2V5P+KtuxXwqigqUVifNb+1WZ+6W4S8yF7LYSiker4Atk49NWy8JQ3L1qrD0/E+Y60keGUs6xqF5L1oiWsFqILDiDespNlJd01F9QTTyX9gfoOHvddR/4WZ5VEgD9HYWN4+xPi6YaYtqRv1JiHmuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717178250; c=relaxed/simple;
-	bh=14nUOvlXzx9FwcFZnYhljHX2vE6nY1fLFbUL/vgkrwM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LcpyvsrtoVFwAXo8y0VC6/CkA/vrCZcSdmSx8GcAIRMl3JvkmY5t0qyH6HlBs+EvEE927ED3+pC0S8h1eTJAOhsFtGBdrIKmUxwK7nWopGnYnxnZh+w4wd1V/UlSN77cg1uvWih2dwlHR2bGakAXxrnRY8Xkj4EozReGckZ6LdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e7yULbTB; arc=none smtp.client-ip=209.85.219.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1717178475; c=relaxed/simple;
+	bh=tao2gQx02AeKmIGyjONY5RmwcqU8wLfetOD0u4K3fTs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BxwXcizAZgGQmPaoXMSoMHWMT4GbtLFXJl4wntL2v80FFBXHMMIszVtMcYNcHM/66Rz+UNjibpK2gURCkBs6k70/NM8T+UfOZFQgfPXfdbp3ukuR4dc8W5TusE0RGIETRWH3OqwTMPwFLTK+CMgsVJ6BLZ+QP3NXWMzwe2ARBRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-dfa6e0add60so1416567276.3;
-        Fri, 31 May 2024 10:57:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717178247; x=1717783047; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=iLsU9SrFk8jsYiYkwRmxAIdMWmUIfrvdUknMyWYRiWE=;
-        b=e7yULbTBi8fPsnGj+5gxmyqps7WiyVq6V/8R9T96B7aFSlgcwk720JnVR1w98xqh3L
-         dAf8EiGQKLDAs9r2QH1JoQcSsXB2hG3MdN3+bzmFoTMr/B4/LMQFuRbSYHDtRhTGD+ym
-         hK/GrGbfAbyuXaIjRVu6F5aABJMPPACA4A0VFgZms9DhNRBZ7swN9mQ7mwM06Zcvpojn
-         N23O57Thr3dUWr8XXJiacD3iRo9omsFUzeEgzWuCzuc1Z81oTAdjs6VcxO0ZjTyp6mOb
-         SoTP9eXGqZSN/X/KW6YWXZXPdg/W67KKfh1VSiPSLE0daUhnOSkgf02crm7eiRgr0wWu
-         yf3w==
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a689ad8d1f6so43957566b.2;
+        Fri, 31 May 2024 11:01:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717178247; x=1717783047;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1717178472; x=1717783272;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=iLsU9SrFk8jsYiYkwRmxAIdMWmUIfrvdUknMyWYRiWE=;
-        b=LZr2dvtb1WWoBNl2VnTc/62mokMvGtAi8qBg89aXN1wCpPenhr62yvaRkS3QdcD9x9
-         QDObzlnY/gdAKhK9GKjAFTsbEDUqC2o0c8c5fUDCU2dWDHLGEH5U7u5N045/kzkP1qkP
-         UMhtKBQidmDkvJ1SRnOkOeonilS8GxQ/p0YHazXeItWmyjtL3Y+k2uFrf6qiwcsMrf+y
-         HcvK55iNrtCBRsQcEjWGYNjwM1ktej2/Klv8BinfadOCqa46aujRIciDgMAq6FIrM2Ol
-         u+dGeMpAFctY0yrtlsBhiD3K31JfwUM8nDunCrpKVfsr4D/+KHND8byXZx10+I7oEzFD
-         QDFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUbxy6eGRV5tP3ypRDfAc3dpD6mvGUQKBupKzFnDoEzPPz0tTIAvhqdry0tIVsj3JwUC1Q8VNZhREbtUrDNqH1m8wQYGSqxZMCq02Dx5Q+tU1R5jcb/Sf6udth4fUwXo1uhZutH/Q==
-X-Gm-Message-State: AOJu0YxtgQuGM0Bky0bIT5Wppyt9Qkr57YySlk8mrdIea9XxOMNwCuz0
-	gxFygfNErEKYj1CqHq1kgMuM/6DUW6ukCAXZUFCg306K7xYPoYQXdy41l9ojff6zGiGJZmeEHH2
-	wqWS34XhtAXaDWcvPd1bmlUBGuz8=
-X-Google-Smtp-Source: AGHT+IGJfAakWRlaze69hr1itb5DcopAVyEyNrYk8qoHbmtcEU0nuInXs6ghX0YrxFqZ+c4wgNhMQt18gfTY2R95X1Y=
-X-Received: by 2002:a5b:b86:0:b0:de5:4ab8:317f with SMTP id
- 3f1490d57ef6-dfa73c087fcmr2687449276.20.1717178247282; Fri, 31 May 2024
- 10:57:27 -0700 (PDT)
+        bh=NLstpYo8ImkDRhndA7onVdU+VCFInAIg26uWhetlb/4=;
+        b=qd50BoiellVvY9Tk518r8zO5FBNhXkhwT4/vG3zo9ti1vGS2maj5CX9n4Dj4VN+26N
+         SNvL/aeZ3dFWGKGtEvKemJAvdWQWWZ3L0sGNTpPQkfhu48TnnGqY3SpNRM/bi9emCbC4
+         sJfdIyDA4TC9Fke4vk91sqqD0PGr5AdWHrADw4+zN5F8gclHWcTh+uPm9l8SfqGeycpp
+         79QOaWvUKk3YvEiO2//NgPfRAWROKTkN+2NpSjkdlFrA1ZshUvRragW2GbR1CBr3/4mQ
+         Irrpz9OR6U+SA8PbYDQKKpokLdrt/cFdIFEfda1P7cYWnidkJI7uf9Nwij94zzac6cBl
+         Fq6g==
+X-Forwarded-Encrypted: i=1; AJvYcCXdRjO5sJc350rCUygN0bbS1vHWZCP0XMZz4kKnAWrVz+YJLGTt4vlOMjx/th8s9yKHClrwDxBv3fqjB080uVx7c1MBzg916/woPtzxPv21hY/7MBO9rWYny3ffob2rj3vGYu975eNcfw==
+X-Gm-Message-State: AOJu0YxEWg41A9FxbtBiF3baWWsi6ww502ONDm0kcMt7naGrOy/sWLAi
+	GMR3tIotiYb+N0ZOo70RbZora5swHQpGZUHCifV6vEAxllVaNlpMU86Neg==
+X-Google-Smtp-Source: AGHT+IEwj0Slis4hrfiXkf85Fgrd/rBKf2ysY5uKFQK+X1tj3scLLSTZDhlMTJfDT4aeViNuRgIDvA==
+X-Received: by 2002:a17:906:b0d2:b0:a5a:88ff:fe81 with SMTP id a640c23a62f3a-a6820136cd7mr180720766b.20.1717178471779;
+        Fri, 31 May 2024 11:01:11 -0700 (PDT)
+Received: from localhost (fwdproxy-lla-001.fbsv.net. [2a03:2880:30ff:1::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6848423bc9sm86641566b.147.2024.05.31.11.01.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 May 2024 11:01:11 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+To: Sathya Prakash <sathya.prakash@broadcom.com>,
+	Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
+	Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>,
+	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: leit@meta.com,
+	Keith Busch <kbusch@kernel.org>,
+	MPT-FusionLinux.pdl@broadcom.com (open list:LSILOGIC MPT FUSION DRIVERS (FC/SAS/SPI)),
+	linux-scsi@vger.kernel.org (open list:LSILOGIC MPT FUSION DRIVERS (FC/SAS/SPI)),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] mpt3sas: Avoid test/set_bit() operating in non-allocated memory
+Date: Fri, 31 May 2024 11:00:54 -0700
+Message-ID: <20240531180055.950704-1-leitao@debian.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240531141152.327592-1-kikuchan98@gmail.com> <20240531141152.327592-6-kikuchan98@gmail.com>
- <851280ad-ac0e-47d1-99e2-4f3b5ea29f2f@kernel.org>
-In-Reply-To: <851280ad-ac0e-47d1-99e2-4f3b5ea29f2f@kernel.org>
-From: Hironori KIKUCHI <kikuchan98@gmail.com>
-Date: Sat, 1 Jun 2024 02:57:15 +0900
-Message-ID: <CAG40kxEbMQc-ni0HDVR7rtj48aFu-jz8sYUAO+fdmZSmXWrizw@mail.gmail.com>
-Subject: Re: [PATCH 5/5] dt-bindings: pwm: sun20i: Add options to select a
- clock source and DIV_M
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Samuel Holland <samuel@sholland.org>, Aleksandr Shubin <privatesub2@gmail.com>, 
-	Cheo Fusi <fusibrandon13@gmail.com>, linux-pwm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-sunxi@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+There is a potential out-of-bounds access when using test_bit() on a
+single word. The test_bit() and set_bit() functions operate on long
+values, and when testing or setting a single word, they can exceed the
+word boundary. KASAN detects this issue and produces a dump:
 
-> > This patch adds new options to select a clock source and DIV_M register
-> > value for each coupled PWM channels.
->
-> Please do not use "This commit/patch/change", but imperative mood. See
-> longer explanation here:
-> https://elixir.bootlin.com/linux/v5.17.1/source/Documentation/process/submitting-patches.rst#L95
->
-> Bindings are before their users. This should not be last patch, because
-> this implies there is no user.
+	 BUG: KASAN: slab-out-of-bounds in _scsih_add_device.constprop.0 (./arch/x86/include/asm/bitops.h:60 ./include/asm-generic/bitops/instrumented-atomic.h:29 drivers/scsi/mpt3sas/mpt3sas_scsih.c:7331) mpt3sas
 
-I'm sorry, I'll fix them.
+	 Write of size 8 at addr ffff8881d26e3c60 by task kworker/u1536:2/2965
 
-> This applies to all variants? Or the one you add? Confused...
+For full log, please look at [1].
 
-Apologies for confusing you. This applies to all variants.
+Make the allocation at least the size of sizeof(unsigned long) so that
+set_bit() and test_bit() have sufficient room for read/write operations
+without overwriting unallocated memory.
 
->
-> >
-> > Signed-off-by: Hironori KIKUCHI <kikuchan98@gmail.com>
-> > ---
-> >  .../bindings/pwm/allwinner,sun20i-pwm.yaml    | 19 +++++++++++++++++++
-> >  1 file changed, 19 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/pwm/allwinner,sun20i-pwm.yaml b/Documentation/devicetree/bindings/pwm/allwinner,sun20i-pwm.yaml
-> > index b9b6d7e7c87..436a1d344ab 100644
-> > --- a/Documentation/devicetree/bindings/pwm/allwinner,sun20i-pwm.yaml
-> > +++ b/Documentation/devicetree/bindings/pwm/allwinner,sun20i-pwm.yaml
-> > @@ -45,6 +45,25 @@ properties:
-> >      description: The number of PWM channels configured for this instance
-> >      enum: [6, 9]
-> >
-> > +  allwinner,pwm-pair-clock-sources:
-> > +    description: The clock source names for each PWM pair
-> > +    items:
-> > +      enum: [hosc, apb]
-> > +    minItems: 1
-> > +    maxItems: 8
->
-> Missing type... and add 8 of such items to your example to make it complete.
+[1] Link: https://lore.kernel.org/all/ZkNcALr3W3KGYYJG@gmail.com/
 
-Thank you. I'll fix it.
+Suggested-by: Keith Busch <kbusch@kernel.org>
+Signed-off-by: Breno Leitao <leitao@debian.org>
+---
+ drivers/scsi/mpt3sas/mpt3sas_base.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
->
-> > +
-> > +  allwinner,pwm-pair-clock-prescales:
-> > +    description: The prescale (DIV_M register) values for each PWM pair
-> > +    $ref: /schemas/types.yaml#/definitions/uint32-matrix
-> > +    items:
-> > +      items:
-> > +        minimum: 0
-> > +        maximum: 8
-> > +      minItems: 1
-> > +      maxItems: 1
-> > +    minItems: 1
-> > +    maxItems: 8
->
-> This does not look like matrix but array.
+diff --git a/drivers/scsi/mpt3sas/mpt3sas_base.c b/drivers/scsi/mpt3sas/mpt3sas_base.c
+index 258647fc6bdd..fe9f4a4175d1 100644
+--- a/drivers/scsi/mpt3sas/mpt3sas_base.c
++++ b/drivers/scsi/mpt3sas/mpt3sas_base.c
+@@ -8512,6 +8512,12 @@ mpt3sas_base_attach(struct MPT3SAS_ADAPTER *ioc)
+ 	ioc->pd_handles_sz = (ioc->facts.MaxDevHandle / 8);
+ 	if (ioc->facts.MaxDevHandle % 8)
+ 		ioc->pd_handles_sz++;
++	/* pd_handles_sz should have, at least, the minimal room
++	 * for set_bit()/test_bit(), otherwise out-of-memory touch
++	 * may occur
++	 */
++	ioc->pd_handles_sz = ALIGN(ioc->pd_handles_sz, sizeof(unsigned long));
++
+ 	ioc->pd_handles = kzalloc(ioc->pd_handles_sz,
+ 	    GFP_KERNEL);
+ 	if (!ioc->pd_handles) {
+@@ -8529,6 +8535,12 @@ mpt3sas_base_attach(struct MPT3SAS_ADAPTER *ioc)
+ 	ioc->pend_os_device_add_sz = (ioc->facts.MaxDevHandle / 8);
+ 	if (ioc->facts.MaxDevHandle % 8)
+ 		ioc->pend_os_device_add_sz++;
++
++	/* pend_os_device_add_sz should have, at least, the minimal room
++	 * for set_bit()/test_bit(), otherwise out-of-memory may occur
++	 */
++	ioc->pend_os_device_add_sz = ALIGN(ioc->pend_os_device_add_sz,
++					   sizeof(unsigned long));
+ 	ioc->pend_os_device_add = kzalloc(ioc->pend_os_device_add_sz,
+ 	    GFP_KERNEL);
+ 	if (!ioc->pend_os_device_add) {
+-- 
+2.43.0
 
-I wanted to specify values like this:
-
-    allwinner,pwm-pair-clock-prescales = <0>, <1>, <3>;
-    allwinner,pwm-pair-clock-sources = "hosc", "apb", "hosc":
-
-These should correspond to each PWM pair.
-This way, I thought we might be able to visually understand the relationship
-between prescalers and sources, like clock-names and clocks.
-
-Is this notation uncommon, perhaps?
-
->
-> Why clock DIV cannot be deduced from typical PWM attributes + clock
-> frequency?
-
-This SoC's PWM system has one shared prescaler and clock source for each pair
-of PWM channels. I should have noted this earlier, sorry.
-
-Actually, the original v9 patch automatically deduced the DIV value
-from the frequency.
-However, because the two channels share a single prescaler, once one channel is
-enabled, it affects and restricts the DIV value for the other channel
-in the pair.
-This introduces a problem of determining which channel should set the shared DIV
-value. The original behavior was that the first channel enabled would win.
-
-Instead, this patch try to resolve the issue by specifying these
-values for each PWM
-pairs deterministically.
-That's why it requires the new options.
-
->
-> Best regards,
-> Krzysztof
-
-Best regards,
-kikuchan.
 
