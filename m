@@ -1,86 +1,82 @@
-Return-Path: <linux-kernel+bounces-197302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9BF88D6905
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 20:34:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 556D48D6906
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 20:35:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8329228783A
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:34:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D30B61F2742E
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:35:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48FAF7E103;
-	Fri, 31 May 2024 18:34:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B92E7E0E9;
+	Fri, 31 May 2024 18:35:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dblSYSjV"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eMoFOfJX"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 506CB7C097
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 18:34:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A36DE7C097
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 18:35:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717180491; cv=none; b=Vq/pjxI5b/lBm7zunzg19RRcdblTj4alJRuItfeRZBPfmpdKKsc5aFbnFkCTxPQA21RBJk6xTNpWjy1fnCJZnJW/tL0Ca71zNXpadSn+b4tShynkwguEspQl1mr+BcSJdow+NnKAfIJ3EUSPEBo7GOga80ypEuEzH3ow9HwPtX0=
+	t=1717180538; cv=none; b=iiOtUKHeDsAwaXJd9u5+R+TiXZGe+1WnU5zU4zqFohfRSz0Rx/BGLCyx2GkSWmkaKZ+Ch5CCfw8r6PLKWZhnmpw6HiFC9l82Z4ScuJVhkHio+rk6sSAN3RhyW2dhygZGYZerskdVn98vArXRYjNj27CkKH8mXTCvs7JfK3TwEIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717180491; c=relaxed/simple;
-	bh=aSGiikkT6x1TNct0kZEX/uNcjl8Rojs8bZbsZLGio/c=;
+	s=arc-20240116; t=1717180538; c=relaxed/simple;
+	bh=r7DQ3avihlSDHYQgeFqpv8TcDPZqxHs/SRRgjLXHxvI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ACSS23yAhFqU07t+0wqU4bzbvZBUj6oHnrYTkjD9iJ8+NA7yOgtY6nqZ+RxEP2u2+9DnPIwaHef/Pu4qeFZLHOTGJtPbDaGAQNiCE4+2LV31wITNbcBopYjy2JTluoPd5uyGzCjea7CuLhi8ihIECOp4DOv6MJhbvbw01J1ukBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dblSYSjV; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52b82d57963so1959905e87.2
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 11:34:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717180487; x=1717785287; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7ajAKtHvE471CPuPKfvRU6jqIKN2/5fnuw4v2uvpYPQ=;
-        b=dblSYSjVYGak6B/56e9TVZVB7duaZFqkw1B6kot9jo8ZKcxdvkhkJhmfp3VRV/6kbQ
-         Z6zbq0mw7ks/tILe+31GrVlZq8c2+oneedJPjdduKreHWx9OqrYTF6RTKWHspt2jqadk
-         dBwO/HY8pVFCICXY/ysGsMPBzBR8jqAltyXRuWzKf8AY+KBohino+ePzwqhpKRW6TIz6
-         v8CHdCpoXl4rkleZ/lc+LCOv4SXyog3TkhGVQO54tan2RvKHCSggf/IwCUKE7EHXEwTg
-         9jO3tspHLb345HT0sAG9Ukk+QO2NF/UV7uVfoc9sYLSTKFfEh8St9ITMkyC51JFmZquC
-         qk9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717180487; x=1717785287;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7ajAKtHvE471CPuPKfvRU6jqIKN2/5fnuw4v2uvpYPQ=;
-        b=qA9kh+sQZ22d2B8Ifpdba6DeScEuhGVgICACWp2YzamG9QrncNhnztG5KIYWOKeVvK
-         5ADobCWxZPoaU3Hc5XWeqMnUvLop9iMb4bXCVLhvvol2lpsKbHVWasQA/ykD6uaZrX7n
-         mDYtbMutYG65+2ram1jvjq+9YAM4RHkPcnes+DXoIDk10HgxyH+dnYjLgByBm/aTUcAf
-         vtyFEN0pR0LW0jBeJfuBP9GqWwljGEsLw5xAOr3/e/pGhmsxHC5Dco6JdXIsy/qywUlk
-         O8xgpxGVP2wo7fTXIgWsGVvBU5vT61dFbnyXtiWuYObSt2s5Xl3WdNAE0tQkdWdxRjvi
-         Gzug==
-X-Forwarded-Encrypted: i=1; AJvYcCUVthvRwMDbEZqXKOjYSs0Fe9XOwFybO4qg1RD8W5E8VqoD7OEelmHcPlwGEk20nfEwILyjGTuLBT4g2knNsiC7f2V5OWfCwcbkDVr1
-X-Gm-Message-State: AOJu0YzHiiBi4uqhuS84MmwtT8STGH+vmaJhFvdx0UoDzpKynj7tQJYS
-	mSKNieh/qb8BF0LoCmQNMJUh70LZ2Y0W8yIa8mblHg17TbGkFsfKGQo0xgZhzeU=
-X-Google-Smtp-Source: AGHT+IGD6e7kaRCA8BDiu5RMfdDUAogfscN87V+yK9tKmvj4jP1cN89O4Gg//R+tBckHRlIDnAVMcQ==
-X-Received: by 2002:a19:c514:0:b0:51e:1bed:13a8 with SMTP id 2adb3069b0e04-52b896aa750mr1679529e87.29.1717180487212;
-        Fri, 31 May 2024 11:34:47 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57a31be4f4csm1300160a12.48.2024.05.31.11.34.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 May 2024 11:34:46 -0700 (PDT)
-Date: Fri, 31 May 2024 21:34:43 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Kees Cook <kees@kernel.org>, Nikolay Borisov <nik.borisov@suse.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] x86/boot: add prototype for __fortify_panic()
-Message-ID: <b335c8f8-f59f-40b1-8388-013c815fb9e6@moroto.mountain>
-References: <20240529-fortify_panic-v1-1-9923d5c77657@quicinc.com>
- <0d3f7c58-7fc0-4e8b-b6fb-c4d0d9969ce7@suse.com>
- <e42c4984-d4a2-45b1-b93d-7471000766b7@quicinc.com>
- <202405310923.78257B2B3@keescook>
- <c19aa2df-adaa-463e-b3a4-843f04538a2b@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ezu4LL2K1dMXkDCzN/CJC4cQc97cf7piEQIkEhGU9dtmoSrdmYrhbXW6EF3NiGMOjUE2z7sQ293TBJp9URL4qYPd/xRRSvNLszXJJlK1nYbOPtbtlnq5OJ1mRaWBtMrE2zjH3Xksv/6JjTa7SoEpzW71hAsgbUVJE3n6OU2v3jA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eMoFOfJX; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717180536; x=1748716536;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=r7DQ3avihlSDHYQgeFqpv8TcDPZqxHs/SRRgjLXHxvI=;
+  b=eMoFOfJXIsYG7FOQvEHbsQri9n0lCuUq2I9LL3qjO2zighi1c1rhIoL8
+   JmFTNWe0XlwM/OMpb6/+VAN3f1ADZZS0TSsH+F78nxF1AXZ0E/P7z+IJ8
+   stpbN78lXA93aMQLr1QxH5gCF2IvHEstW+ijmExQfOLlyadOhQ3JO3HoK
+   VYhi3ZxgAEtVv99mzM04QkSwA+celLHP4R0Pxwwj2HSbMX8ZA+uploJ4v
+   XxQ+i9x1IMfhK/XdK0EUUQJfrSpITd+lZRvKEoN7Sws3cyFP9Rnxkeppt
+   MbYQTjF4TnUahAmA7F8RKZ21RiDN9HhVsrGzSyrNg3P7mBDlA1KegYJto
+   Q==;
+X-CSE-ConnectionGUID: UvfxusF8RKO1q9s+RzJuwQ==
+X-CSE-MsgGUID: /XijxneuS5+n9fqGccxAHw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11089"; a="24400404"
+X-IronPort-AV: E=Sophos;i="6.08,205,1712646000"; 
+   d="scan'208";a="24400404"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 11:35:35 -0700
+X-CSE-ConnectionGUID: 2aN9h814TI+3vFApkNNgOQ==
+X-CSE-MsgGUID: Yby8Si2cSDGLlXOp5EhbUQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,205,1712646000"; 
+   d="scan'208";a="36167529"
+Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
+  by fmviesa007.fm.intel.com with ESMTP; 31 May 2024 11:35:32 -0700
+Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sD769-000He7-25;
+	Fri, 31 May 2024 18:35:29 +0000
+Date: Sat, 1 Jun 2024 02:34:51 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jesse Taube <jesse@rivosinc.com>, linux-riscv@lists.infradead.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev, Jesse Taube <jesse@rivosinc.com>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@rivosinc.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Masahiro Yamada <masahiroy@kernel.org>
+Subject: Re: [PATCH v0] RISC-V: Use Zkr to seed KASLR base address
+Message-ID: <202406010252.0xgcgnD7-lkp@intel.com>
+References: <20240531162327.2436962-1-jesse@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,61 +85,70 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c19aa2df-adaa-463e-b3a4-843f04538a2b@quicinc.com>
+In-Reply-To: <20240531162327.2436962-1-jesse@rivosinc.com>
 
-On Fri, May 31, 2024 at 11:28:58AM -0700, Jeff Johnson wrote:
-> On 5/31/2024 9:28 AM, Kees Cook wrote:
-> > On Thu, May 30, 2024 at 09:23:36AM -0700, Jeff Johnson wrote:
-> >> On 5/30/2024 8:42 AM, Nikolay Borisov wrote:
-> >>>
-> >>>
-> >>> On 29.05.24 \u0433. 21:09 \u0447., Jeff Johnson wrote:
-> >>>> As discussed in [1] add a prototype for __fortify_panic() to fix the
-> >>>> 'make W=1 C=1' warning:
-> >>>>
-> >>>> arch/x86/boot/compressed/misc.c:535:6: warning: symbol '__fortify_panic' was not declared. Should it be static?
-> >>>
-> >>> Actually doesn't it make sense to have this defined under ../string.h ? 
-> >>> Actually given that we don't have any string fortification under the 
-> >>> boot/  why have the fortify _* functions at all ?
-> >>
-> >> I'll let Kees answer these questions since I just took guidance from him :)
-> > 
-> > Ah-ha, I see what's happening. When not built with
-> > CONFIG_FORTIFY_SOURCE, fortify-string.h isn't included. But since misc.c
-> > has the function definition, we get a warning that the function
-> > declaration was never seen. This is likely the better solution:
-> > 
-> > 
-> > diff --git a/arch/x86/boot/compressed/misc.c b/arch/x86/boot/compressed/misc.c
-> > index b70e4a21c15f..3f21a5e218f8 100644
-> > --- a/arch/x86/boot/compressed/misc.c
-> > +++ b/arch/x86/boot/compressed/misc.c
-> > @@ -532,7 +532,9 @@ asmlinkage __visible void *extract_kernel(void *rmode, unsigned char *output)
-> >  	return output + entry_offset;
-> >  }
-> >  
-> > +#ifdef CONFIG_FORTIFY_SOURCE
-> >  void __fortify_panic(const u8 reason, size_t avail, size_t size)
-> >  {
-> >  	error("detected buffer overflow");
-> >  }
-> > +#endif
-> > 
-> > 
-> > Jeff, can you test this? (I still haven't been able to reproduce the
-> > warning.)
-> 
-> Adding Dan since this comes during:
->   CHECK   arch/x86/boot/compressed/misc.c
-> 
-> What version of smatch are you using? I'm using v0.5.0-8639-gff1cc4d453ff
+Hi Jesse,
 
-The "warning: symbol '__fortify_panic' was not declared. Should it be
-static?" warning is from Sparse, not Smatch.  So probably that's why you
-can't reproduce it.
+kernel test robot noticed the following build errors:
 
-regards,
-dan carpenter
+[auto build test ERROR on linus/master]
+[also build test ERROR on v6.10-rc1 next-20240531]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
+url:    https://github.com/intel-lab-lkp/linux/commits/Jesse-Taube/RISC-V-Use-Zkr-to-seed-KASLR-base-address/20240601-002545
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20240531162327.2436962-1-jesse%40rivosinc.com
+patch subject: [PATCH v0] RISC-V: Use Zkr to seed KASLR base address
+config: riscv-allnoconfig (https://download.01.org/0day-ci/archive/20240601/202406010252.0xgcgnD7-lkp@intel.com/config)
+compiler: riscv64-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240601/202406010252.0xgcgnD7-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406010252.0xgcgnD7-lkp@intel.com/
+
+All error/warnings (new ones prefixed by >>):
+
+   riscv64-linux-ld: arch/riscv/kernel/pi/archrandom_early.pi.o: in function `__pi_.L0 ':
+>> __pi_archrandom_early.c:(.init.pi.text+0x90): undefined reference to `__pi__printk'
+--
+   In file included from include/linux/kernel.h:31,
+                    from include/linux/cpumask.h:11,
+                    from arch/riscv/include/asm/processor.h:71,
+                    from arch/riscv/include/asm/archrandom.h:13,
+                    from arch/riscv/kernel/pi/archrandom_early.c:13:
+>> include/linux/printk.h:619: warning: "pr_err_once" redefined
+     619 | #define pr_err_once(fmt, ...)                                   \
+         | 
+   arch/riscv/kernel/pi/archrandom_early.c:9: note: this is the location of the previous definition
+       9 | #define pr_err_once(...)
+         | 
+
+
+vim +/pr_err_once +619 include/linux/printk.h
+
+16cb839f133249 Joe Perches     2011-01-12  612  
+16cb839f133249 Joe Perches     2011-01-12  613  #define pr_emerg_once(fmt, ...)					\
+16cb839f133249 Joe Perches     2011-01-12  614  	printk_once(KERN_EMERG pr_fmt(fmt), ##__VA_ARGS__)
+16cb839f133249 Joe Perches     2011-01-12  615  #define pr_alert_once(fmt, ...)					\
+16cb839f133249 Joe Perches     2011-01-12  616  	printk_once(KERN_ALERT pr_fmt(fmt), ##__VA_ARGS__)
+16cb839f133249 Joe Perches     2011-01-12  617  #define pr_crit_once(fmt, ...)					\
+16cb839f133249 Joe Perches     2011-01-12  618  	printk_once(KERN_CRIT pr_fmt(fmt), ##__VA_ARGS__)
+16cb839f133249 Joe Perches     2011-01-12 @619  #define pr_err_once(fmt, ...)					\
+16cb839f133249 Joe Perches     2011-01-12  620  	printk_once(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
+16cb839f133249 Joe Perches     2011-01-12  621  #define pr_warn_once(fmt, ...)					\
+16cb839f133249 Joe Perches     2011-01-12  622  	printk_once(KERN_WARNING pr_fmt(fmt), ##__VA_ARGS__)
+16cb839f133249 Joe Perches     2011-01-12  623  #define pr_notice_once(fmt, ...)				\
+16cb839f133249 Joe Perches     2011-01-12  624  	printk_once(KERN_NOTICE pr_fmt(fmt), ##__VA_ARGS__)
+16cb839f133249 Joe Perches     2011-01-12  625  #define pr_info_once(fmt, ...)					\
+16cb839f133249 Joe Perches     2011-01-12  626  	printk_once(KERN_INFO pr_fmt(fmt), ##__VA_ARGS__)
+eb012d125a2419 Tetsuo Handa    2020-05-25  627  /* no pr_cont_once, don't do that... */
+36d308d8b547ee Mikhail Gruzdev 2013-02-21  628  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
