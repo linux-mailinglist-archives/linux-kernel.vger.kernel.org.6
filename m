@@ -1,503 +1,277 @@
-Return-Path: <linux-kernel+bounces-196103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D65738D575A
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 02:51:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F3528D56BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 02:10:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05C0F1C20B67
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 00:51:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E5BD1F2453F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 00:10:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7E18DDBD;
-	Fri, 31 May 2024 00:50:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B98EB1103;
+	Fri, 31 May 2024 00:10:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e9ymvS95"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Jr0S5O+J"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C77211C;
-	Fri, 31 May 2024 00:50:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C2D815B3;
+	Fri, 31 May 2024 00:10:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717116639; cv=none; b=civgZSMmdxTMHS8jcHs0am0FyKNiVowv9hFLHEYzaCRwROe979fwCXylOR4wZfd2Rp1Zybgif1qwCk2aUictvAiNK8lHFW3YJkoyd0mD9T9dyduzA3n5d5kwdGP+us37vPRojOK7pNtF5EIoximWrqZeCjTPXDyuE+CezvWZx8Q=
+	t=1717114240; cv=none; b=DPyNnvtKoxSRAdceIN1bGupvQwvliR6FEFqwsT77o2YdgHBiK6CNCiPMgxpbXIy8asy7JE9UdhVJn0Q8BiC2LE+2e985UMJatL/9mtYgMZ7LI+WNBpBhTiu7tF5sW9Alz193HcmlYHR/pwEoHYSNqARKOjAb/0uONwaQTrxzc7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717116639; c=relaxed/simple;
-	bh=onuwuvENVCtNHWu8XCs4vv6O1mZKno2paCmRnfkN2xQ=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ruu9SPAzAeRqvl5ge9QYWVQ+75C1bXIf2VVohQKUe4xG4kdAuCrf88sOK2HRy3Z91ird0xbfX6mZOyWOIvZMnC7oA8cEsIPZ1Vm75jCPdv9p2jNXyEDpIRdSZLiFN0UDloSjC3LmtbxGvuFiaIqgMcqlDfZyG906tRxpm+UhySA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e9ymvS95; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4202cea9a2fso14783145e9.3;
-        Thu, 30 May 2024 17:50:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717116636; x=1717721436; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mCAmW2qrRsxZlUwi0zvsDbZO9ACbl7sZDK6XgFcx6CE=;
-        b=e9ymvS95gDbSOXsUnj7kC31bRWyBSD2FDKet4KhUZGYI6rGlQ85GvppQBJuKzFenFT
-         nYoJIr3JckpfSUxiMmmrd98lRkKvthrTZteqtSNul47Z1jj+zvmiK+zJzlYm+JI4UbJf
-         s2WOEq1KDWK5f3SKxhpa28pq6rtu4Q9mAZBvcqNNQEU2mjeOVwGNkaOK6R13J72dHs3s
-         RdEFGvnZ/V3k+XyQKtlJKGzCpvZnPSFkslB0OL2VMGhtspYClTPdTVqsx6JpA5McoBed
-         ZRVe8kNGDZ+0TtUjNMMk9tmVqgcBJuysVTTn15Ab5FkoO6blgz97NmdReXJ1cBgn2hyI
-         7e1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717116636; x=1717721436;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mCAmW2qrRsxZlUwi0zvsDbZO9ACbl7sZDK6XgFcx6CE=;
-        b=PsPqh0oFFixxRnhdmQPNoZ73RWGKH3ZQcfURiO40X0WLBu+oyr6KCIdAntPlp7FanV
-         zxc/0SmREaFJxr7eT6j8p7kKsl/xt6/LBEA0wzWxzomGytGXuRlTFSSFVI6F2Fzs+LDc
-         EDDjAhLe1A4+tz9qc9cdB0ZVIivi7t/ZCqNWukyNOhDhNCfqEYmfpzXPyfZbAySXgewI
-         046g+4DenBszyQ9anAJyNCUjQYumKrYYxmWJOp7cEq/pjq9kWwM0KwQwtp9B9KHthtVP
-         uElg1LLllnu2Pwp+OJCpZ8k30Tl/v4kyk83RV+mNwmMP9AH1iP3w8eQkRniVRvmwbPbO
-         r2hg==
-X-Forwarded-Encrypted: i=1; AJvYcCWKK3dJUgUhA+Wx+CvU7N+9xmLEV1RiRa1O+N8hgFvMTiU5Nzlr24Nc1D8l90DdqyorItgjN8mjvOP7n0u7kapd0EiIX+fQcKvpN+NmsSgd1XDBqDOFhO2c/B25cH5BGK+cUn1Q
-X-Gm-Message-State: AOJu0YwrYuosEeidT4I9arl41VnE9obRTIRYRDInn1zM9kr/vD5FJzmH
-	Acg0lFCmP++FIq661ukHev3+j8Rz2zTZcB6RRfuGkS1dgTXgwv3k
-X-Google-Smtp-Source: AGHT+IH/5yv8dmxla3/yPc+53hm77sEyKxgYeCvGirIo6LmD1zFBqb0dgPfB6x//Oh72GSKOgh6q2A==
-X-Received: by 2002:a05:600c:4314:b0:421:2ddf:aec4 with SMTP id 5b1f17b1804b1-4212e09b9b9mr2593715e9.30.1717116635714;
-        Thu, 30 May 2024 17:50:35 -0700 (PDT)
-Received: from localhost.localdomain (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4212279b4c7sm64327125e9.0.2024.05.30.17.50.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 May 2024 17:50:35 -0700 (PDT)
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	Robert Marko <robimarko@gmail.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
-	=?UTF-8?q?Pawe=C5=82=20Owoc?= <frut3k7@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [net-next PATCH v2 2/2] net: phy: aquantia: add support for PHY LEDs
-Date: Thu, 30 May 2024 23:20:31 +0200
-Message-ID: <20240530212043.9006-2-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240530212043.9006-1-ansuelsmth@gmail.com>
-References: <20240530212043.9006-1-ansuelsmth@gmail.com>
+	s=arc-20240116; t=1717114240; c=relaxed/simple;
+	bh=kbuE3YYNvHZZpdFzMlUIb5zBZJCuGRjp82a+xXwXIow=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DBh1fqg4pkOrl5x+tNZ1nccU+hKsCZzs6W2sDswMJ+mTnlpLEIleyqJHpBspgiFWvUxl9QQ8tU09Ms8t+2Y9PIwHiAWxpaVwd9MbAD6/kHOA/7h3Q/Zl+OLF1mMQOoCbQqDZF+3uyM+18DbhM/MbigR16O9f5QpyxdEed8Msv9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Jr0S5O+J; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717114238; x=1748650238;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=kbuE3YYNvHZZpdFzMlUIb5zBZJCuGRjp82a+xXwXIow=;
+  b=Jr0S5O+JTI/bYyk2opPL8AuIXRfFOuW/jsryVGg8g+TrwJ1L1kDVAq/U
+   Rg1pPRupt9DT82AdvYwTF1glLMxeufCzJA5kvTn74VwTtHaHeJK3LB9rp
+   7pqyJOt1qKxR/fc0JoUTljNkOY4vA0hIYMN2tBKD/aKKCdUNUPSHmkZBw
+   jVq9eOwXfoXRuXPX1+JAxczYhWuBNZiVFHJC/XRkEjGsv5XMiinrGCHZ8
+   DAQzJw0a1ttDKX9gCgZ/Nk4WoxXp43px7xtBX2nRojYWG0+5wm8njpDcQ
+   qFGJN+i85XjyLUgwPJqoFAlyqkYB3UQRUNW+hELNzerjxxETzFPg+AyZC
+   w==;
+X-CSE-ConnectionGUID: +aySiVUXRKWhyNCvvKAHWA==
+X-CSE-MsgGUID: 84xX1E9DT9K1PNZ4+hSCKg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="13481066"
+X-IronPort-AV: E=Sophos;i="6.08,202,1712646000"; 
+   d="scan'208";a="13481066"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 17:10:37 -0700
+X-CSE-ConnectionGUID: 2usrzk6OQhS9flupch8FOw==
+X-CSE-MsgGUID: m/2Q4ip9TzeEilm/NbGggQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,202,1712646000"; 
+   d="scan'208";a="36028466"
+Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
+  by fmviesa006.fm.intel.com with ESMTP; 30 May 2024 17:07:22 -0700
+Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sCpnj-000GEf-1o;
+	Fri, 31 May 2024 00:07:19 +0000
+Date: Fri, 31 May 2024 08:07:14 +0800
+From: kernel test robot <lkp@intel.com>
+To: ranechita <ramona.nechita@analog.com>, linux-iio@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, ranechita <ramona.nechita@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Nuno Sa <nuno.sa@analog.com>,
+	Marcelo Schmitt <marcelo.schmitt@analog.com>,
+	Marius Cristea <marius.cristea@microchip.com>,
+	Maksim Kiselev <bigunclemax@gmail.com>,
+	Marcus Folkesson <marcus.folkesson@gmail.com>,
+	Okan Sahin <okan.sahin@analog.com>,
+	Mike Looijmans <mike.looijmans@topic.nl>,
+	Liam Beguin <liambeguin@gmail.com>,
+	Ivan Mikhaylov <fr0st61te@gmail.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] drivers: iio: adc: add support for ad777x family
+Message-ID: <202405310747.6KO7w1V1-lkp@intel.com>
+References: <20240529150322.28018-1-ramona.nechita@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240529150322.28018-1-ramona.nechita@analog.com>
 
-From: Daniel Golle <daniel@makrotopia.org>
+Hi ranechita,
 
-Aquantia Ethernet PHYs got 3 LED output pins which are typically used
-to indicate link status and activity.
-Add a minimal LED controller driver supporting the most common uses
-with the 'netdev' trigger as well as software-driven forced control of
-the LEDs.
+kernel test robot noticed the following build warnings:
 
-Signed-off-by: Daniel Golle <daniel@makrotopia.org>
-[ rework indentation, fix checkpatch error and improve some functions ]
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
----
-Changes v2:
-- Out of RFC
+[auto build test WARNING on jic23-iio/togreg]
+[also build test WARNING on linus/master v6.10-rc1 next-20240529]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
- drivers/net/phy/aquantia/Makefile        |   2 +-
- drivers/net/phy/aquantia/aquantia.h      |  40 ++++++
- drivers/net/phy/aquantia/aquantia_leds.c | 150 +++++++++++++++++++++++
- drivers/net/phy/aquantia/aquantia_main.c |  63 +++++++++-
- 4 files changed, 252 insertions(+), 3 deletions(-)
- create mode 100644 drivers/net/phy/aquantia/aquantia_leds.c
+url:    https://github.com/intel-lab-lkp/linux/commits/ranechita/drivers-iio-adc-add-support-for-ad777x-family/20240529-230814
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
+patch link:    https://lore.kernel.org/r/20240529150322.28018-1-ramona.nechita%40analog.com
+patch subject: [PATCH v2] drivers: iio: adc: add support for ad777x family
+config: microblaze-randconfig-r113-20240531 (https://download.01.org/0day-ci/archive/20240531/202405310747.6KO7w1V1-lkp@intel.com/config)
+compiler: microblaze-linux-gcc (GCC) 13.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20240531/202405310747.6KO7w1V1-lkp@intel.com/reproduce)
 
-diff --git a/drivers/net/phy/aquantia/Makefile b/drivers/net/phy/aquantia/Makefile
-index aa77fb63c8ec..c6c4d494ee2a 100644
---- a/drivers/net/phy/aquantia/Makefile
-+++ b/drivers/net/phy/aquantia/Makefile
-@@ -1,5 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0
--aquantia-objs			+= aquantia_main.o aquantia_firmware.o
-+aquantia-objs			+= aquantia_main.o aquantia_firmware.o aquantia_leds.o
- ifdef CONFIG_HWMON
- aquantia-objs			+= aquantia_hwmon.o
- endif
-diff --git a/drivers/net/phy/aquantia/aquantia.h b/drivers/net/phy/aquantia/aquantia.h
-index c79b33d95628..c0e1fd9d7152 100644
---- a/drivers/net/phy/aquantia/aquantia.h
-+++ b/drivers/net/phy/aquantia/aquantia.h
-@@ -63,6 +63,28 @@
- #define VEND1_GLOBAL_CONTROL2_UP_RUN_STALL_OVD	BIT(6)
- #define VEND1_GLOBAL_CONTROL2_UP_RUN_STALL	BIT(0)
- 
-+#define VEND1_GLOBAL_LED_PROV			0xc430
-+#define AQR_LED_PROV(x)				(VEND1_GLOBAL_LED_PROV + (x))
-+#define VEND1_GLOBAL_LED_PROV_LINK2500		BIT(14)
-+#define VEND1_GLOBAL_LED_PROV_LINK5000		BIT(15)
-+#define VEND1_GLOBAL_LED_PROV_FORCE_ON		BIT(8)
-+#define VEND1_GLOBAL_LED_PROV_LINK10000		BIT(7)
-+#define VEND1_GLOBAL_LED_PROV_LINK1000		BIT(6)
-+#define VEND1_GLOBAL_LED_PROV_LINK100		BIT(5)
-+#define VEND1_GLOBAL_LED_PROV_RX_ACT		BIT(3)
-+#define VEND1_GLOBAL_LED_PROV_TX_ACT		BIT(2)
-+#define VEND1_GLOBAL_LED_PROV_ACT_STRETCH	GENMASK(0, 1)
-+
-+#define VEND1_GLOBAL_LED_PROV_LINK_MASK		(VEND1_GLOBAL_LED_PROV_LINK100 | \
-+						 VEND1_GLOBAL_LED_PROV_LINK1000 | \
-+						 VEND1_GLOBAL_LED_PROV_LINK10000 | \
-+						 VEND1_GLOBAL_LED_PROV_LINK5000 | \
-+						 VEND1_GLOBAL_LED_PROV_LINK2500)
-+
-+#define VEND1_GLOBAL_LED_DRIVE			0xc438
-+#define VEND1_GLOBAL_LED_DRIVE_VDD		BIT(1)
-+#define AQR_LED_DRIVE(x)			(VEND1_GLOBAL_LED_DRIVE + (x))
-+
- #define VEND1_THERMAL_PROV_HIGH_TEMP_FAIL	0xc421
- #define VEND1_THERMAL_PROV_LOW_TEMP_FAIL	0xc422
- #define VEND1_THERMAL_PROV_HIGH_TEMP_WARN	0xc423
-@@ -125,6 +147,8 @@
- #define VEND1_GLOBAL_INT_VEND_MASK_GLOBAL2	BIT(1)
- #define VEND1_GLOBAL_INT_VEND_MASK_GLOBAL3	BIT(0)
- 
-+#define AQR_MAX_LEDS				3
-+
- struct aqr107_hw_stat {
- 	const char *name;
- 	int reg;
-@@ -149,6 +173,7 @@ static const struct aqr107_hw_stat aqr107_hw_stats[] = {
- 
- struct aqr107_priv {
- 	u64 sgmii_stats[AQR107_SGMII_STAT_SZ];
-+	unsigned long leds_active_low;
- };
- 
- #if IS_REACHABLE(CONFIG_HWMON)
-@@ -158,3 +183,18 @@ static inline int aqr_hwmon_probe(struct phy_device *phydev) { return 0; }
- #endif
- 
- int aqr_firmware_load(struct phy_device *phydev);
-+
-+int aqr_phy_led_blink_set(struct phy_device *phydev, u8 index,
-+			  unsigned long *delay_on,
-+			  unsigned long *delay_off);
-+int aqr_phy_led_brightness_set(struct phy_device *phydev,
-+			       u8 index, enum led_brightness value);
-+int aqr_phy_led_hw_is_supported(struct phy_device *phydev, u8 index,
-+				unsigned long rules);
-+int aqr_phy_led_hw_control_get(struct phy_device *phydev, u8 index,
-+			       unsigned long *rules);
-+int aqr_phy_led_hw_control_set(struct phy_device *phydev, u8 index,
-+			       unsigned long rules);
-+int aqr_phy_led_active_low_set(struct phy_device *phydev, int index, bool enable);
-+int aqr_phy_led_polarity_set(struct phy_device *phydev, int index,
-+			     unsigned long modes);
-diff --git a/drivers/net/phy/aquantia/aquantia_leds.c b/drivers/net/phy/aquantia/aquantia_leds.c
-new file mode 100644
-index 000000000000..47bcc6d70945
---- /dev/null
-+++ b/drivers/net/phy/aquantia/aquantia_leds.c
-@@ -0,0 +1,150 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* LED driver for Aquantia PHY
-+ *
-+ * Author: Daniel Golle <daniel@makrotopia.org>
-+ */
-+
-+#include <linux/phy.h>
-+
-+#include "aquantia.h"
-+
-+int aqr_phy_led_brightness_set(struct phy_device *phydev,
-+			       u8 index, enum led_brightness value)
-+{
-+	if (index > 2)
-+		return -EINVAL;
-+
-+	return phy_modify_mmd(phydev, MDIO_MMD_VEND1, AQR_LED_PROV(index),
-+			      VEND1_GLOBAL_LED_PROV_LINK_MASK |
-+			      VEND1_GLOBAL_LED_PROV_FORCE_ON |
-+			      VEND1_GLOBAL_LED_PROV_RX_ACT |
-+			      VEND1_GLOBAL_LED_PROV_TX_ACT,
-+			      value ? VEND1_GLOBAL_LED_PROV_FORCE_ON : 0);
-+}
-+
-+static const unsigned long supported_triggers = (BIT(TRIGGER_NETDEV_LINK) |
-+						 BIT(TRIGGER_NETDEV_LINK_100) |
-+						 BIT(TRIGGER_NETDEV_LINK_1000) |
-+						 BIT(TRIGGER_NETDEV_LINK_2500) |
-+						 BIT(TRIGGER_NETDEV_LINK_5000) |
-+						 BIT(TRIGGER_NETDEV_LINK_10000)  |
-+						 BIT(TRIGGER_NETDEV_RX) |
-+						 BIT(TRIGGER_NETDEV_TX));
-+
-+int aqr_phy_led_hw_is_supported(struct phy_device *phydev, u8 index,
-+				unsigned long rules)
-+{
-+	if (index >= AQR_MAX_LEDS)
-+		return -EINVAL;
-+
-+	/* All combinations of the supported triggers are allowed */
-+	if (rules & ~supported_triggers)
-+		return -EOPNOTSUPP;
-+
-+	return 0;
-+}
-+
-+int aqr_phy_led_hw_control_get(struct phy_device *phydev, u8 index,
-+			       unsigned long *rules)
-+{
-+	int val;
-+
-+	if (index >= AQR_MAX_LEDS)
-+		return -EINVAL;
-+
-+	val = phy_read_mmd(phydev, MDIO_MMD_VEND1, AQR_LED_PROV(index));
-+	if (val < 0)
-+		return val;
-+
-+	*rules = 0;
-+	if (val & VEND1_GLOBAL_LED_PROV_LINK100)
-+		*rules |= BIT(TRIGGER_NETDEV_LINK_100);
-+
-+	if (val & VEND1_GLOBAL_LED_PROV_LINK1000)
-+		*rules |= BIT(TRIGGER_NETDEV_LINK_1000);
-+
-+	if (val & VEND1_GLOBAL_LED_PROV_LINK2500)
-+		*rules |= BIT(TRIGGER_NETDEV_LINK_2500);
-+
-+	if (val & VEND1_GLOBAL_LED_PROV_LINK5000)
-+		*rules |= BIT(TRIGGER_NETDEV_LINK_5000);
-+
-+	if (val & VEND1_GLOBAL_LED_PROV_LINK10000)
-+		*rules |= BIT(TRIGGER_NETDEV_LINK_10000);
-+
-+	if (val & VEND1_GLOBAL_LED_PROV_RX_ACT)
-+		*rules |= BIT(TRIGGER_NETDEV_RX);
-+
-+	if (val & VEND1_GLOBAL_LED_PROV_TX_ACT)
-+		*rules |= BIT(TRIGGER_NETDEV_TX);
-+
-+	return 0;
-+}
-+
-+int aqr_phy_led_hw_control_set(struct phy_device *phydev, u8 index,
-+			       unsigned long rules)
-+{
-+	u16 val = 0;
-+
-+	if (index >= AQR_MAX_LEDS)
-+		return -EINVAL;
-+
-+	if (rules & (BIT(TRIGGER_NETDEV_LINK_100) | BIT(TRIGGER_NETDEV_LINK)))
-+		val |= VEND1_GLOBAL_LED_PROV_LINK100;
-+
-+	if (rules & (BIT(TRIGGER_NETDEV_LINK_1000) | BIT(TRIGGER_NETDEV_LINK)))
-+		val |= VEND1_GLOBAL_LED_PROV_LINK1000;
-+
-+	if (rules & (BIT(TRIGGER_NETDEV_LINK_2500) | BIT(TRIGGER_NETDEV_LINK)))
-+		val |= VEND1_GLOBAL_LED_PROV_LINK2500;
-+
-+	if (rules & (BIT(TRIGGER_NETDEV_LINK_5000) | BIT(TRIGGER_NETDEV_LINK)))
-+		val |= VEND1_GLOBAL_LED_PROV_LINK5000;
-+
-+	if (rules & (BIT(TRIGGER_NETDEV_LINK_10000) | BIT(TRIGGER_NETDEV_LINK)))
-+		val |= VEND1_GLOBAL_LED_PROV_LINK10000;
-+
-+	if (rules & BIT(TRIGGER_NETDEV_RX))
-+		val |= VEND1_GLOBAL_LED_PROV_RX_ACT;
-+
-+	if (rules & BIT(TRIGGER_NETDEV_TX))
-+		val |= VEND1_GLOBAL_LED_PROV_TX_ACT;
-+
-+	return phy_modify_mmd(phydev, MDIO_MMD_VEND1, AQR_LED_PROV(index),
-+			      VEND1_GLOBAL_LED_PROV_LINK_MASK |
-+			      VEND1_GLOBAL_LED_PROV_FORCE_ON |
-+			      VEND1_GLOBAL_LED_PROV_RX_ACT |
-+			      VEND1_GLOBAL_LED_PROV_TX_ACT, val);
-+}
-+
-+int aqr_phy_led_active_low_set(struct phy_device *phydev, int index, bool enable)
-+{
-+	return phy_modify_mmd(phydev, MDIO_MMD_VEND1, AQR_LED_DRIVE(index),
-+			      VEND1_GLOBAL_LED_DRIVE_VDD, enable);
-+}
-+
-+int aqr_phy_led_polarity_set(struct phy_device *phydev, int index, unsigned long modes)
-+{
-+	struct aqr107_priv *priv = phydev->priv;
-+	bool active_low = false;
-+	u32 mode;
-+
-+	if (index >= AQR_MAX_LEDS)
-+		return -EINVAL;
-+
-+	for_each_set_bit(mode, &modes, __PHY_LED_MODES_NUM) {
-+		switch (mode) {
-+		case PHY_LED_ACTIVE_LOW:
-+			active_low = true;
-+			break;
-+		default:
-+			return -EINVAL;
-+		}
-+	}
-+
-+	/* Save LED driver vdd state to restore on SW reset */
-+	if (active_low)
-+		priv->leds_active_low |= BIT(index);
-+
-+	return aqr_phy_led_active_low_set(phydev, index, active_low);
-+}
-diff --git a/drivers/net/phy/aquantia/aquantia_main.c b/drivers/net/phy/aquantia/aquantia_main.c
-index 252123d12efb..6c14355744b7 100644
---- a/drivers/net/phy/aquantia/aquantia_main.c
-+++ b/drivers/net/phy/aquantia/aquantia_main.c
-@@ -475,7 +475,9 @@ static void aqr107_chip_info(struct phy_device *phydev)
- 
- static int aqr107_config_init(struct phy_device *phydev)
- {
--	int ret;
-+	struct aqr107_priv *priv = phydev->priv;
-+	u32 led_active_low;
-+	int ret, index = 0;
- 
- 	/* Check that the PHY interface type is compatible */
- 	if (phydev->interface != PHY_INTERFACE_MODE_SGMII &&
-@@ -496,7 +498,19 @@ static int aqr107_config_init(struct phy_device *phydev)
- 	if (!ret)
- 		aqr107_chip_info(phydev);
- 
--	return aqr107_set_downshift(phydev, MDIO_AN_VEND_PROV_DOWNSHIFT_DFLT);
-+	ret = aqr107_set_downshift(phydev, MDIO_AN_VEND_PROV_DOWNSHIFT_DFLT);
-+	if (ret)
-+		return ret;
-+
-+	/* Restore LED polarity state after reset */
-+	for_each_set_bit(led_active_low, &priv->leds_active_low, AQR_MAX_LEDS) {
-+		ret = aqr_phy_led_active_low_set(phydev, index, led_active_low);
-+		if (ret)
-+			return ret;
-+		index++;
-+	}
-+
-+	return 0;
- }
- 
- static int aqcs109_config_init(struct phy_device *phydev)
-@@ -786,6 +800,11 @@ static struct phy_driver aqr_driver[] = {
- 	.get_strings	= aqr107_get_strings,
- 	.get_stats	= aqr107_get_stats,
- 	.link_change_notify = aqr107_link_change_notify,
-+	.led_brightness_set = aqr_phy_led_brightness_set,
-+	.led_hw_is_supported = aqr_phy_led_hw_is_supported,
-+	.led_hw_control_set = aqr_phy_led_hw_control_set,
-+	.led_hw_control_get = aqr_phy_led_hw_control_get,
-+	.led_polarity_set = aqr_phy_led_polarity_set,
- },
- {
- 	PHY_ID_MATCH_MODEL(PHY_ID_AQCS109),
-@@ -805,6 +824,11 @@ static struct phy_driver aqr_driver[] = {
- 	.get_strings	= aqr107_get_strings,
- 	.get_stats	= aqr107_get_stats,
- 	.link_change_notify = aqr107_link_change_notify,
-+	.led_brightness_set = aqr_phy_led_brightness_set,
-+	.led_hw_is_supported = aqr_phy_led_hw_is_supported,
-+	.led_hw_control_set = aqr_phy_led_hw_control_set,
-+	.led_hw_control_get = aqr_phy_led_hw_control_get,
-+	.led_polarity_set = aqr_phy_led_polarity_set,
- },
- {
- 	PHY_ID_MATCH_MODEL(PHY_ID_AQR111),
-@@ -824,6 +848,11 @@ static struct phy_driver aqr_driver[] = {
- 	.get_strings	= aqr107_get_strings,
- 	.get_stats	= aqr107_get_stats,
- 	.link_change_notify = aqr107_link_change_notify,
-+	.led_brightness_set = aqr_phy_led_brightness_set,
-+	.led_hw_is_supported = aqr_phy_led_hw_is_supported,
-+	.led_hw_control_set = aqr_phy_led_hw_control_set,
-+	.led_hw_control_get = aqr_phy_led_hw_control_get,
-+	.led_polarity_set = aqr_phy_led_polarity_set,
- },
- {
- 	PHY_ID_MATCH_MODEL(PHY_ID_AQR111B0),
-@@ -843,6 +872,11 @@ static struct phy_driver aqr_driver[] = {
- 	.get_strings	= aqr107_get_strings,
- 	.get_stats	= aqr107_get_stats,
- 	.link_change_notify = aqr107_link_change_notify,
-+	.led_brightness_set = aqr_phy_led_brightness_set,
-+	.led_hw_is_supported = aqr_phy_led_hw_is_supported,
-+	.led_hw_control_set = aqr_phy_led_hw_control_set,
-+	.led_hw_control_get = aqr_phy_led_hw_control_get,
-+	.led_polarity_set = aqr_phy_led_polarity_set,
- },
- {
- 	PHY_ID_MATCH_MODEL(PHY_ID_AQR405),
-@@ -869,6 +903,11 @@ static struct phy_driver aqr_driver[] = {
- 	.get_strings	= aqr107_get_strings,
- 	.get_stats	= aqr107_get_stats,
- 	.link_change_notify = aqr107_link_change_notify,
-+	.led_brightness_set = aqr_phy_led_brightness_set,
-+	.led_hw_is_supported = aqr_phy_led_hw_is_supported,
-+	.led_hw_control_set = aqr_phy_led_hw_control_set,
-+	.led_hw_control_get = aqr_phy_led_hw_control_get,
-+	.led_polarity_set = aqr_phy_led_polarity_set,
- },
- {
- 	PHY_ID_MATCH_MODEL(PHY_ID_AQR412),
-@@ -906,6 +945,11 @@ static struct phy_driver aqr_driver[] = {
- 	.get_strings    = aqr107_get_strings,
- 	.get_stats      = aqr107_get_stats,
- 	.link_change_notify = aqr107_link_change_notify,
-+	.led_brightness_set = aqr_phy_led_brightness_set,
-+	.led_hw_is_supported = aqr_phy_led_hw_is_supported,
-+	.led_hw_control_set = aqr_phy_led_hw_control_set,
-+	.led_hw_control_get = aqr_phy_led_hw_control_get,
-+	.led_polarity_set = aqr_phy_led_polarity_set,
- },
- {
- 	PHY_ID_MATCH_MODEL(PHY_ID_AQR113C),
-@@ -925,6 +969,11 @@ static struct phy_driver aqr_driver[] = {
- 	.get_strings    = aqr107_get_strings,
- 	.get_stats      = aqr107_get_stats,
- 	.link_change_notify = aqr107_link_change_notify,
-+	.led_brightness_set = aqr_phy_led_brightness_set,
-+	.led_hw_is_supported = aqr_phy_led_hw_is_supported,
-+	.led_hw_control_set = aqr_phy_led_hw_control_set,
-+	.led_hw_control_get = aqr_phy_led_hw_control_get,
-+	.led_polarity_set = aqr_phy_led_polarity_set,
- },
- {
- 	PHY_ID_MATCH_MODEL(PHY_ID_AQR114C),
-@@ -944,6 +993,11 @@ static struct phy_driver aqr_driver[] = {
- 	.get_strings    = aqr107_get_strings,
- 	.get_stats      = aqr107_get_stats,
- 	.link_change_notify = aqr107_link_change_notify,
-+	.led_brightness_set = aqr_phy_led_brightness_set,
-+	.led_hw_is_supported = aqr_phy_led_hw_is_supported,
-+	.led_hw_control_set = aqr_phy_led_hw_control_set,
-+	.led_hw_control_get = aqr_phy_led_hw_control_get,
-+	.led_polarity_set = aqr_phy_led_polarity_set,
- },
- {
- 	PHY_ID_MATCH_MODEL(PHY_ID_AQR813),
-@@ -963,6 +1017,11 @@ static struct phy_driver aqr_driver[] = {
- 	.get_strings	= aqr107_get_strings,
- 	.get_stats	= aqr107_get_stats,
- 	.link_change_notify = aqr107_link_change_notify,
-+	.led_brightness_set = aqr_phy_led_brightness_set,
-+	.led_hw_is_supported = aqr_phy_led_hw_is_supported,
-+	.led_hw_control_set = aqr_phy_led_hw_control_set,
-+	.led_hw_control_get = aqr_phy_led_hw_control_get,
-+	.led_polarity_set = aqr_phy_led_polarity_set,
- },
- };
- 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405310747.6KO7w1V1-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+>> drivers/iio/adc/ad7779.c:571:35: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __be32 @@     got unsigned long @@
+   drivers/iio/adc/ad7779.c:571:35: sparse:     expected restricted __be32
+   drivers/iio/adc/ad7779.c:571:35: sparse:     got unsigned long
+>> drivers/iio/adc/ad7779.c:581:42: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __be32 @@     got unsigned int [usertype] @@
+   drivers/iio/adc/ad7779.c:581:42: sparse:     expected restricted __be32
+   drivers/iio/adc/ad7779.c:581:42: sparse:     got unsigned int [usertype]
+>> drivers/iio/adc/ad7779.c:685:35: sparse: sparse: symbol 'ad777x_buffer_setup_ops' was not declared. Should it be static?
+   drivers/iio/adc/ad7779.c: note: in included file (through include/linux/mutex.h, include/linux/notifier.h, include/linux/clk.h):
+   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
+   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
+   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
+   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
+
+vim +571 drivers/iio/adc/ad7779.c
+
+   552	
+   553	static irqreturn_t ad777x_irq_handler(int irq, void *data)
+   554	{
+   555		struct iio_dev *indio_dev = data;
+   556		struct ad777x_state *st = iio_priv(indio_dev);
+   557		int ret;
+   558		__be32 tmp[8];
+   559		int i;
+   560		int k = 0;
+   561	
+   562		struct spi_transfer sd_readback_tr[] = {
+   563			{
+   564				.rx_buf = st->spidata_rx,
+   565				.tx_buf = st->spidata_tx,
+   566				.len = 32,
+   567			}
+   568		};
+   569	
+   570		if (iio_buffer_enabled(indio_dev)) {
+ > 571			st->spidata_tx[0] = AD777X_SPI_READ_CMD;
+   572			ret = spi_sync_transfer(st->spi, sd_readback_tr,
+   573						ARRAY_SIZE(sd_readback_tr));
+   574			if (ret) {
+   575				dev_err(&st->spi->dev,
+   576					"spi transfer error in irq handler");
+   577				return IRQ_HANDLED;
+   578			}
+   579			for (i = 0; i < AD777X_NUM_CHANNELS; i++) {
+   580				if (st->active_ch & BIT(i))
+ > 581					tmp[k++] = __be32_to_cpu(st->spidata_rx[i]);
+   582			}
+   583			iio_push_to_buffers(indio_dev, &tmp[0]);
+   584		}
+   585	
+   586		return IRQ_HANDLED;
+   587	}
+   588	
+   589	static int ad777x_reset(struct iio_dev *indio_dev, struct gpio_desc *reset_gpio)
+   590	{
+   591		struct ad777x_state *st = iio_priv(indio_dev);
+   592		int ret;
+   593		struct spi_transfer reg_read_tr[] = {
+   594			{
+   595				.tx_buf = st->reset_buf,
+   596				.len = 8,
+   597			},
+   598		};
+   599	
+   600		memset(st->reset_buf, 0xff, sizeof(st->reset_buf));
+   601	
+   602		if (reset_gpio) {
+   603			gpiod_set_value(reset_gpio, 1);
+   604			fsleep(230);
+   605			return 0;
+   606		}
+   607	
+   608		ret = spi_sync_transfer(st->spi, reg_read_tr,
+   609					ARRAY_SIZE(reg_read_tr));
+   610		if (ret)
+   611			return ret;
+   612	
+   613		fsleep(230);
+   614	
+   615		return 0;
+   616	}
+   617	
+   618	static const struct iio_info ad777x_info = {
+   619		.read_raw = ad777x_read_raw,
+   620		.write_raw = ad777x_write_raw,
+   621		.debugfs_reg_access = &ad777x_reg_access,
+   622		.update_scan_mode = &ad777x_update_scan_mode,
+   623	};
+   624	
+   625	static const struct iio_enum ad777x_filter_enum = {
+   626		.items = ad777x_filter_type,
+   627		.num_items = ARRAY_SIZE(ad777x_filter_type),
+   628		.get = ad777x_get_filter,
+   629		.set = ad777x_set_filter,
+   630	};
+   631	
+   632	static const struct iio_chan_spec_ext_info ad777x_ext_filter[] = {
+   633		IIO_ENUM("filter_type", IIO_SHARED_BY_ALL, &ad777x_filter_enum),
+   634		IIO_ENUM_AVAILABLE("filter_type", IIO_SHARED_BY_ALL,
+   635					  &ad777x_filter_enum),
+   636		{ }
+   637	};
+   638	
+   639	#define AD777x_CHAN_S(index, _ext_info)					       \
+   640		{								       \
+   641			.type = IIO_VOLTAGE,					       \
+   642			.info_mask_separate = BIT(IIO_CHAN_INFO_CALIBSCALE)  |	       \
+   643					      BIT(IIO_CHAN_INFO_CALIBBIAS),	       \
+   644			.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_SAMP_FREQ),       \
+   645			.address = (index),					       \
+   646			.indexed = 1,						       \
+   647			.channel = (index),					       \
+   648			.scan_index = (index),					       \
+   649			.ext_info = (_ext_info),				       \
+   650			.scan_type = {						       \
+   651				.sign = 's',					       \
+   652				.realbits = 24,					       \
+   653				.storagebits = 32,				       \
+   654			},							       \
+   655		}
+   656	
+   657	#define AD777x_CHAN_NO_FILTER_S(index)					       \
+   658		AD777x_CHAN_S(index, NULL)
+   659	
+   660	#define AD777x_CHAN_FILTER_S(index)					       \
+   661		AD777x_CHAN_S(index, ad777x_ext_filter)
+   662	
+   663	static const struct iio_chan_spec ad777x_channels[] = {
+   664		AD777x_CHAN_NO_FILTER_S(0),
+   665		AD777x_CHAN_NO_FILTER_S(1),
+   666		AD777x_CHAN_NO_FILTER_S(2),
+   667		AD777x_CHAN_NO_FILTER_S(3),
+   668		AD777x_CHAN_NO_FILTER_S(4),
+   669		AD777x_CHAN_NO_FILTER_S(5),
+   670		AD777x_CHAN_NO_FILTER_S(6),
+   671		AD777x_CHAN_NO_FILTER_S(7),
+   672	};
+   673	
+   674	static const struct iio_chan_spec ad777x_channels_filter[] = {
+   675		AD777x_CHAN_FILTER_S(0),
+   676		AD777x_CHAN_FILTER_S(1),
+   677		AD777x_CHAN_FILTER_S(2),
+   678		AD777x_CHAN_FILTER_S(3),
+   679		AD777x_CHAN_FILTER_S(4),
+   680		AD777x_CHAN_FILTER_S(5),
+   681		AD777x_CHAN_FILTER_S(6),
+   682		AD777x_CHAN_FILTER_S(7),
+   683	};
+   684	
+ > 685	const struct iio_buffer_setup_ops ad777x_buffer_setup_ops = {
+   686		.postenable = ad777x_buffer_postenable,
+   687		.predisable = ad777x_buffer_predisable,
+   688	};
+   689	
+
 -- 
-2.43.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
