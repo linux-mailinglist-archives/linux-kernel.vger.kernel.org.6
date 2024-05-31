@@ -1,131 +1,103 @@
-Return-Path: <linux-kernel+bounces-196195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6205A8D58B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 04:44:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F149C8D58B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 04:45:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13BA52846F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 02:44:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEB2B1F23C20
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 02:45:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98A7878C6D;
-	Fri, 31 May 2024 02:44:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9077378C68;
+	Fri, 31 May 2024 02:45:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="N4jFDKVy"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="SNAYiZtN"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7A992594;
-	Fri, 31 May 2024 02:44:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BAA814265;
+	Fri, 31 May 2024 02:45:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717123462; cv=none; b=Lhhwm60TnHKSyoW7ddo9KunSy5F7Hcuf12uJWooB9I+NY36DZoG1mjJ7ff0h6I5ovGJZxjrtTAMQzavIznujUeje4l3veDGnR8iaELpf33Fr5jP61e8kBMhvWg1Dslg2dIcd02dBVhB3Z5dcbTZU46kyWpjNVdDjavV4+7tmsis=
+	t=1717123535; cv=none; b=XAdOEoUR6xFF80GJEM2haPji7H8r2JMi4tph53dYZgSkqVgJqE1ldvHuL/3PrEWrxMip+yzV4kZpOokMI6SiQju+WVOBgLQ4LtryCe/46fc5QEwzWaN6NXkndJq9vI28TAxCnK/DksQeMvF8C3QCyLiyc0ZpqgJJ9UKeptDJjn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717123462; c=relaxed/simple;
-	bh=l8VmNTJPiwZqWIgn2cv7NUGYgElm1KcKVT861XhvKiQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=qLO/6PhQz+WIqwtr3sHBX1QUPKGxY0QRdrPRUgKAJH4/GK5mRRzKlcp6volvPWP8XR8OJydMi775K3+JXrN1bepE0gd+FseJ06fW6GIt9qpIkO3seglytql6urRe0iyGWNxOw3peItqMo7v+0N+Q7Xo0bc0Bw8IMqtqnP5qI9i4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=N4jFDKVy; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1717123457;
-	bh=aR1yvLQuxElZ8NfNhoJ1MpMwxcPJ8QdRDR6NUS+hnpc=;
-	h=Date:From:To:Cc:Subject:From;
-	b=N4jFDKVyLSZHrLRrADOLG0gsliB9bhohmu8bhYIcjK3hxQjv4lJkHow1hf0jEGGl6
-	 J/o3cnh8liaDPpdL5Kch54YnQO2tFYABQgEzNok0smdbAbcTWjoA6i/r8jcakHsR5x
-	 32cSnp0TOTWpDo8smJKQMG6oavl7XRX6eGN1UIw8zDbsLGUg+hP7Gh347RAMDt3Nyp
-	 fXTCB+TS5Ewh1WrdMzIHjfh/ta5ErCKCo1FiQYlv0GzwvjO40Nrrb+I/UqnvNStrke
-	 P4DQB1wdj0celiCKxl4luPe6HMXUcl2L7e4dtP3/y/dYqdkv/gng1+2NVOnrvip9ew
-	 mmJRffCFRGzSg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Vr6rw0jjwz4x2v;
-	Fri, 31 May 2024 12:44:16 +1000 (AEST)
-Date: Fri, 31 May 2024 12:44:15 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Kalle Valo <kvalo@kernel.org>, Johannes Berg <johannes@sipsolutions.net>
-Cc: Wireless <linux-wireless@vger.kernel.org>, Aditya Kumar Singh
- <quic_adisi@quicinc.com>, Johannes Berg <johannes.berg@intel.com>, Linux
- Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the wireless-next tree with the
- wireless tree
-Message-ID: <20240531124415.05b25e7a@canb.auug.org.au>
+	s=arc-20240116; t=1717123535; c=relaxed/simple;
+	bh=ogjFpFI1mY9EkB7BS5con78jBONtmxi3wYyr48grF7c=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=CWlQRPsqXK/vzAJXXtOdaUKTifanEKjz5vu7AhYO1pKeDF7qJIfjFi7GxtaPt4uQ6Is3EfCDgDonBP6FkvXZmO14H5pbseqTxvD95kbuqttiQsDgq4A22GxnBZGuS+Dw6iF0sgwT9LtpBXJ5vZ0z+tnGa6N9hsPURfAQEVeX6uY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=SNAYiZtN; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/e8WJ.=ctS7b1q7BH3npLeZH";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1717123530;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Q5Xxa+1pfjc83KgBzGxQW/9sLaAlfMtTgcdj5otYUxQ=;
+	b=SNAYiZtNgZqRk9A1Opklu3S3DISvQzvdiQsIwR+hxLJwn3EvkM1U0oc4W5FDaYKz5KfM6c
+	E/QhLW+EYIHy0+wN3Lk34YIaYl0fnzuTr+hGczp5TBmFjlsafAnBHmjeDmQ30NVFhL6DUa
+	mTcPkotcL1rEazPuEg8KQ44s8AsVIdwQXZbiwZqJba9gbqT7RvVwROCJAVVi2fQ5Aa/1vs
+	X0+mjKUw+xJyVBYMhvgDxVoihnSyX7qUMbEe57qOJ7dNHF/rNGV5pD74o8NdfuMXhGNH5m
+	udPdca5v8xsOKerjRU+/jdYjE1W8zgyRmv2a9rqiXHxil18UeXtkJv4VvAGx4w==
+Date: Fri, 31 May 2024 04:45:28 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: Diederik de Haas <didi.debian@cknow.org>
+Cc: Alexey Charkov <alchark@gmail.com>, linux-rockchip@lists.infradead.org,
+ heiko@sntech.de, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, robh+dt@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, linux-kernel@vger.kernel.org, quentin.schulz@cherry.de,
+ wens@kernel.org, daniel.lezcano@linaro.org,
+ krzysztof.kozlowski+dt@linaro.org, viresh.kumar@linaro.org
+Subject: Re: [RFC PATCH] arm64: dts: rockchip: Make preparations for
+ per-RK3588-variant OPPs
+In-Reply-To: <511137f077495007f467d5927f42f85d@manjaro.org>
+References: <673dcf47596e7bc8ba065034e339bb1bbf9cdcb0.1716948159.git.dsimic@manjaro.org>
+ <CABjd4YxD41DEkBCZfkznLboEY9ZVOfTCLcj4S_kkcsVswbANyQ@mail.gmail.com>
+ <9996796.SDjBYy7pSV@bagend> <511137f077495007f467d5927f42f85d@manjaro.org>
+Message-ID: <06452ce330f0a712e4d765475c6cbc8b@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
---Sig_/e8WJ.=ctS7b1q7BH3npLeZH
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 2024-05-29 13:33, Dragan Simic wrote:
+> On 2024-05-29 13:09, Diederik de Haas wrote:
+>> On Wednesday, 29 May 2024 11:57:45 CEST Alexey Charkov wrote:
 
-Hi all,
+[...]
 
-Today's linux-next merge of the wireless-next tree got a conflict in:
+>>> >  arch/arm64/boot/dts/rockchip/rk3588.dtsi      |  414 +--
+>>> >  arch/arm64/boot/dts/rockchip/rk3588j.dtsi     |    6 +-
+>>> >  arch/arm64/boot/dts/rockchip/rk3588s.dtsi     | 2671 +----------------
+>>> 
+>>> Rename detection didn't do a particularly great job here - wonder if
+>>> we can do anything about it to minimize the patch size and ensure 
+>>> that
+>>> the change history is preserved for git blame...
+>> 
+>> +1
+>> The diff does look awfully big for a rename operation, which was 
+>> supposed to
+>> (also only) "modify ... a bit".
+> 
+> I also don't like the size of the patch.  I just tried playing with
+> specifying different values for the --find-renames and --find-copies
+> options, but with no good results.  I'll have a look into the Git
+> source later, to see what's actually going on with those options.
 
-  net/mac80211/cfg.c
+Yay, --break-rewrites makes the diff extremely compact. :) [1]
 
-between commit:
-
-  8ecc4d7a7cd3 ("wifi: mac80211: pass proper link id for channel switch sta=
-rted notification")
-
-from the wireless tree and commit:
-
-  344d18cec231 ("wifi: mac80211: collect some CSA data into sub-structs")
-
-from the wireless-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc net/mac80211/cfg.c
-index 83ad6c9709fe,62119e957cd8..000000000000
---- a/net/mac80211/cfg.c
-+++ b/net/mac80211/cfg.c
-@@@ -4028,7 -4028,7 +4029,7 @@@ __ieee80211_channel_switch(struct wiph
-  	}
- =20
-  	cfg80211_ch_switch_started_notify(sdata->dev,
-- 					  &link_data->csa_chanreq.oper, link_id,
- -					  &link_data->csa.chanreq.oper, 0,
-++					  &link_data->csa.chanreq.oper, link_id,
-  					  params->count, params->block_tx);
- =20
-  	if (changed) {
-
---Sig_/e8WJ.=ctS7b1q7BH3npLeZH
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZZOX8ACgkQAVBC80lX
-0GyP5gf7BCjJnkS0kwsZ+SARJZQmoABPkxmaBd/FTavGeL48R7KDEXrnaVnyb7+S
-Kgv6+hE9NtRw8hln1NxKWHrGhj6ded7WCpBpzSk9XUmeDjtLKWauYRLzW8rWsbw1
-aVwJG5EwktUgJtuviRVMLXhDLuTjV69KMvn/0ggoCZTcPt8AXH2uDZbO4TEnPw+i
-NHKGB2ghbL1cQpiX9I6OPffqTnRtPACP3Jivzz0PEb8rrSO3i3y/HbgtcbMBM7DM
-BWdiFvNml2uCbfoqp1oEsbYyeVYP+5pBnenl8snMAHdcVe84dUSVmdrhRFIC0enu
-d4JoHiE0uDqh5NJ1wOPNo3FVbSbB2Q==
-=WfFO
------END PGP SIGNATURE-----
-
---Sig_/e8WJ.=ctS7b1q7BH3npLeZH--
+[1] 
+https://git-scm.com/docs/git-diff#Documentation/git-diff.txt--Bltngtltmgt
 
