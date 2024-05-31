@@ -1,173 +1,223 @@
-Return-Path: <linux-kernel+bounces-196846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DA738D627F
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 15:11:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C11CF8D6282
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 15:12:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D22E01F2317D
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 13:11:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2E5C1C23582
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 13:12:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 254C8158D60;
-	Fri, 31 May 2024 13:11:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B8EA158DCC;
+	Fri, 31 May 2024 13:11:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VsWS0fjg"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="f3YxeQ19"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E76D4158A14
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 13:11:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 413B1158A14;
+	Fri, 31 May 2024 13:11:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717161082; cv=none; b=PXucNJyj69GOY8bQhLyO6Hu8DxfciTWvUfBx6R7eGEwqmDuLQwn6rQsZJzLyCeYHW96nIfcyT3MX8ewBkMO5999PbNWdUuSjIjeCaPl9LRTph2yEOTnBihp5IY3jCOXzSp/WlrN/jYxpwt/aRIZPIc37glsFsypcpYEUO2drttg=
+	t=1717161087; cv=none; b=VqOou36dHPbiO7QLdhLxHvYXRo9FDqSG+1v4scSX/cTDVf0yf04AdmyNCiXdI0LEX20JmmLeCmj62kSphmbZLFL6N92Y9jWjC42H3hFs96xpb1yjyrtW2I5puR8Qf+pNM3u/NJvGR2OxzskyK90bfA24zovGkBn++qai+OGX68k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717161082; c=relaxed/simple;
-	bh=c3XdctI4qUJlJfz5ADlPYS/uW7u8v1FB/rMrC5LHkds=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J2lSGO8kpzZBVeRu/oYnLjhFs/na+01ATrqm8W1gDVesIImKWynIkDa0rFog5gkIysLKyk7bJY6XwsmKkHaOvOzkoMnnNaOKUPHQGK4bFN6npQilEKxcK+5xugVaLrP6Zz4oTRJN39Us8uIg0yUhofcLF48ilO2hfjgF2ls1bJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VsWS0fjg; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717161079;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Px56jy9il/IYwkPayrMIkBySKFiPmogiNfHl+A5skDU=;
-	b=VsWS0fjgShR/OgeiVF+dMjd90ZryTNSZExTJ4NSq8TxMDgVxS3cAiWxGZXOO0+Ok7Yq+Tn
-	1EIb1gWN6zB8rCNAVelz8oKoOz+bd6c0iAKhu79IojSY1eSQcF62NH4hrTcKt1yYRKhDod
-	5edjcaiqtQhzKibW4s3F4ZPX3crxOnQ=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-225-QNPI0xSQOuuq40B6MsgdHA-1; Fri, 31 May 2024 09:11:18 -0400
-X-MC-Unique: QNPI0xSQOuuq40B6MsgdHA-1
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a62c4ffecefso94370866b.2
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 06:11:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717161077; x=1717765877;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Px56jy9il/IYwkPayrMIkBySKFiPmogiNfHl+A5skDU=;
-        b=Uf3m5Q4MQHfnIYJ0XsS8ij5JvVzUcW01LC/25ab7oZ9kiSFKbLNGoETZgFgwkH+Dtd
-         cT3aqwTEvxfQKfx1+5afl9JPZ+G/dAwbhUm2mj37mD/JM2CdgnK5j9+Ygm7CuWQ9kW/T
-         5dN4znZg+hevKi1KzMzxC/q0uznHSoNoqg05e6mQT/3AFW4MwpFPI38Vy+Et+QOZ/Swn
-         l+d7UO/N2y74k1Ar1CjDQeycrd2FUC4xHlnHoIAjgRJR4voQktTCSI0WRGHGK7g8d5PK
-         M+kK9cZ94919htbZiUMmZgpYPsGGEZL30DyyQV+InqaO6q9PZMHtlFM47796wASRNqiW
-         xpmA==
-X-Forwarded-Encrypted: i=1; AJvYcCXlW27ECT6uq9Oz6xAoK75zXftPm8MeDYtHFunIdLlAqJadRoH93HxGLjz6bBULSLfqU+X/2PBDjeelffz5oJ3ncw4p3PywMWUWmyf/
-X-Gm-Message-State: AOJu0Yw/vuIR4xdIaKGbmlyTd9mKWLQeKiKhJGJ6DFRlpX3OYRADBhP8
-	LEtVj3+TPi5N/AasbGEMciHh0QIot1poy2ovAavFEZETOTW1Qj6j7ELfUWYHhY7+iuudomUgBnN
-	qiW7TtYwn6Y93YsW3AcrIgsJ1Udelt7vH1Ikl5XM8ziCg9oMrN2Wo5ePIA8idrzmdddZE1w==
-X-Received: by 2002:a17:906:7ac7:b0:a68:13d8:3d00 with SMTP id a640c23a62f3a-a6821f4e6d6mr150501666b.56.1717161076967;
-        Fri, 31 May 2024 06:11:16 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFApD+njPNUgEgZoAQ0f63kVWmn84bRFqq8Ou8YZKepQ4ySoVE/xIS7SnQ8n3/uLsbJXQVPHg==
-X-Received: by 2002:a17:906:7ac7:b0:a68:13d8:3d00 with SMTP id a640c23a62f3a-a6821f4e6d6mr150497366b.56.1717161076394;
-        Fri, 31 May 2024 06:11:16 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a67e73f9b84sm85694766b.64.2024.05.31.06.11.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 31 May 2024 06:11:16 -0700 (PDT)
-Message-ID: <2a6045e2-031a-46b6-9943-eaae21d85e37@redhat.com>
-Date: Fri, 31 May 2024 15:11:15 +0200
+	s=arc-20240116; t=1717161087; c=relaxed/simple;
+	bh=dbVpcj6lEF7ZMOUwEixLA9Qbf6Mjg1Vgndp9rKsWPHI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t7OTjbccyJdanPLYEyezdOk0R3LTiZcLpkXWGCO7X2Y9ZzS3lK1FdH3tV9q0G6V/p8HwQtE3UZe7VJkvYRY1Aws8KTDPK+IcgKxfsPfRqVHJwrEqVKvswXym0MVXNQlXbc7f4kzE8/1HqmPiaY9vWrMYjgRNHg9Q7A5ArgXHcdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=f3YxeQ19; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=B0njvbhUXTgT/K1JkeyWR7Yg/ve/W+DwUWJceKkwN2g=; b=f3YxeQ19IOyh8l3J31nByIOeej
+	4Z+pFrYHpfWjuj3txCiq25wcdH2aNEyj5HAyJlGFrmPLsWCst1ARjljPusb0Tmb3x7gGkvtp6SNCV
+	TE96z+8WsHW7thycrRIXPfQEJ59efHDnXIRrz64BIsX2DdJJzt/K9NtE7q2/dUAT1GOiw60Q6TDqt
+	bFC01CttF2tBa9F8HxAZLpk7HdGacP0ea7XKSpnTPdPrD/hu1RImXftEenBSYUBhbdhmF7K0VPLea
+	q5x/pvvWp4z55bMGeNfU6lTrrOJ7xR0vQWx5gbsSj6YNogNvhEttv00REiqrgEi2qQj04t+9Pyn73
+	LesLWjhQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sD22X-0000000AIKs-3B9D;
+	Fri, 31 May 2024 13:11:25 +0000
+Date: Fri, 31 May 2024 06:11:25 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, djwong@kernel.org, hch@infradead.org,
+	brauner@kernel.org, david@fromorbit.com, chandanbabu@kernel.org,
+	jack@suse.cz, willy@infradead.org, yi.zhang@huawei.com,
+	chengzhihao1@huawei.com, yukuai3@huawei.com
+Subject: Re: [RFC PATCH v4 1/8] iomap: zeroing needs to be pagecache aware
+Message-ID: <ZlnMfSJcm5k6Dg_e@infradead.org>
+References: <20240529095206.2568162-1-yi.zhang@huaweicloud.com>
+ <20240529095206.2568162-2-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Hung tasks due to a AB-BA deadlock between the leds_list_lock
- rwsem and the rtnl mutex
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Linux regressions mailing list <regressions@lists.linux.dev>,
- Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
- Linux LEDs <linux-leds@vger.kernel.org>,
- Heiner Kallweit <hkallweit1@gmail.com>, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, johanneswueller@gmail.com,
- "Russell King (Oracle)" <linux@armlinux.org.uk>,
- Genes Lists <lists@sapience.com>
-References: <9d189ec329cfe68ed68699f314e191a10d4b5eda.camel@sapience.com>
- <15a0bbd24cd01bd0b60b7047958a2e3ab556ea6f.camel@sapience.com>
- <ZliHhebSGQYZ/0S0@shell.armlinux.org.uk>
- <42d498fc-c95b-4441-b81a-aee4237d1c0d@leemhuis.info>
- <618601d8-f82a-402f-bf7f-831671d3d83f@redhat.com>
- <01fc2e30-eafe-495c-a62d-402903fd3e2a@lunn.ch>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <01fc2e30-eafe-495c-a62d-402903fd3e2a@lunn.ch>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240529095206.2568162-2-yi.zhang@huaweicloud.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Hi,
+On Wed, May 29, 2024 at 05:51:59PM +0800, Zhang Yi wrote:
+> XXX: how do we detect a iomap containing a cow mapping over a hole
+> in iomap_zero_iter()? The XFS code implies this case also needs to
+> zero the page cache if there is data present, so trigger for page
+> cache lookup only in iomap_zero_iter() needs to handle this case as
+> well.
 
-On 5/31/24 2:54 PM, Andrew Lunn wrote:
->> I actually have been looking at a ledtrig-netdev lockdep warning yesterday
->> which I believe is the same thing. I'll include the lockdep trace below.
->>
->> According to lockdep there indeed is a ABBA (ish) cyclic deadlock with
->> the rtnl mutex vs led-triggers related locks. I believe that this problem
->> may be a pre-existing problem but this now actually gets hit in kernels >=
->> 6.9 because of commit 66601a29bb23 ("leds: class: If no default trigger is
->> given, make hw_control trigger the default trigger"). Before that commit
->> the "netdev" trigger would not be bound / set as phy LEDs trigger by default.
->>
->> +Cc Heiner Kallweit who authored that commit.
->>
->> The netdev trigger typically is not needed because the PHY LEDs are typically
->> under hw-control and the netdev trigger even tries to leave things that way
->> so setting it as the active trigger for the LED class device is basically
->> a no-op. I guess the goal of that commit is correctly have the triggers
->> file content reflect that the LED is controlled by a netdev and to allow
->> changing the hw-control mode without the user first needing to set netdev
->> as trigger before being able to change the mode.
-> 
-> It was not the intention that this triggers is loaded for all
-> systems.
+If there is no data in the page cache and either a whole or unwritten
+extent it really should not matter what is in the COW fork, a there
+obviously isn't any data we could zero.
 
-Right note there are really 2 separate issues (or 1 issue
-and one question) here:
+If there is data in the page cache for something that is marked as
+a hole in the srcmap, but we have data in the COW fork due to
+COW extsize preallocation we'd need to zero it, but as the
+xfs iomap ops don't return a separate srcmap for that case we
+should be fine.  Or am I missing something?
 
-1. The locking issue which this commit has exposed (but existed before)
+> + * Note: when zeroing unwritten extents, we might have data in the page cache
+> + * over an unwritten extent. In this case, we want to do a pure lookup on the
+> + * page cache and not create a new folio as we don't need to perform zeroing on
+> + * unwritten extents if there is no cached data over the given range.
+>   */
+>  struct folio *iomap_get_folio(struct iomap_iter *iter, loff_t pos, size_t len)
+>  {
+>  	fgf_t fgp = FGP_WRITEBEGIN | FGP_NOFS;
+>  
+> +	if (iter->flags & IOMAP_ZERO) {
+> +		const struct iomap *srcmap = iomap_iter_srcmap(iter);
+> +
+> +		if (srcmap->type == IOMAP_UNWRITTEN)
+> +			fgp &= ~FGP_CREAT;
+> +	}
 
-2. If it is desirable to load / activate ledtrig-netdev by default on
-   quite a lot of machines where it does not really gain us anything ?
+Nit:  The comment would probably stand out a little better if it was
+right next to the IOMAP_ZERO conditional instead of above the
+function.
 
-For now I think we should focus on 1.
+> +		if (status) {
+> +			if (status == -ENOENT) {
+> +				/*
+> +				 * Unwritten extents need to have page cache
+> +				 * lookups done to determine if they have data
+> +				 * over them that needs zeroing. If there is no
+> +				 * data, we'll get -ENOENT returned here, so we
+> +				 * can just skip over this index.
+> +				 */
+> +				WARN_ON_ONCE(srcmap->type != IOMAP_UNWRITTEN);
 
-Still about 2:
+I'd return -EIO if the WARN_ON triggers.
 
-> It should only be those that actually have LEDs which can be
-> controlled:
-> 
-> drivers/net/ethernet/realtek/r8169_leds.c:	led_cdev->hw_control_trigger = "netdev";
-> drivers/net/ethernet/realtek/r8169_leds.c:	led_cdev->hw_control_trigger = "netdev";
-> drivers/net/ethernet/intel/igc/igc_leds.c:	led_cdev->hw_control_trigger = "netdev";
-> drivers/net/dsa/qca/qca8k-leds.c:		port_led->cdev.hw_control_trigger = "netdev";
-> drivers/net/phy/phy_device.c:		cdev->hw_control_trigger = "netdev";
+> +loop_continue:
 
-Well those drivers combined, esp. with the generic phy_device in there
-does mean that the ledtrig-netdev module now gets loaded on a whole lot
-of x86 machines where before it would not. On one hand those machines
-are plenty powerful typically, so what is one more module. OTOH I don't
-think many users if any at all want to change the hwcontrol mode for
-those LEDs...
+While I'm no strange to gotos for loop control something trips me
+up about jumping to the end of the loop.  Here is what I could come
+up with instead.  Not arguing it's objectively better, but I somehow
+like it a little better:
 
-> Reverting this patch does seem like a good way forward, but i would
-> also like to give Heiner a little bit of time to see if he has a quick
-> real fix.
-
-Ack.
-
-Regards,
-
-Hans
-
-
-
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index 700b22d6807783..81378f7cd8d7ff 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -1412,49 +1412,56 @@ static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
+ 		bool ret;
+ 
+ 		status = iomap_write_begin(iter, pos, bytes, &folio);
+-		if (status) {
+-			if (status == -ENOENT) {
+-				/*
+-				 * Unwritten extents need to have page cache
+-				 * lookups done to determine if they have data
+-				 * over them that needs zeroing. If there is no
+-				 * data, we'll get -ENOENT returned here, so we
+-				 * can just skip over this index.
+-				 */
+-				WARN_ON_ONCE(srcmap->type != IOMAP_UNWRITTEN);
+-				if (bytes > PAGE_SIZE - offset_in_page(pos))
+-					bytes = PAGE_SIZE - offset_in_page(pos);
+-				goto loop_continue;
+-			}
++		if (status && status != -ENOENT)
+ 			return status;
+-		}
+-		if (iter->iomap.flags & IOMAP_F_STALE)
+-			break;
+ 
+-		offset = offset_in_folio(folio, pos);
+-		if (bytes > folio_size(folio) - offset)
+-			bytes = folio_size(folio) - offset;
++		if (status == -ENOENT) {
++			/*
++			 * If we end up here, we did not find a folio in the
++			 * page cache for an unwritten extent and thus can
++			 * skip over the range.
++			 */
++			if (WARN_ON_ONCE(srcmap->type != IOMAP_UNWRITTEN))
++				return -EIO;
+ 
+-		/*
+-		 * If the folio over an unwritten extent is clean (i.e. because
+-		 * it has been read from), then it already contains zeros. Hence
+-		 * we can just skip it.
+-		 */
+-		if (srcmap->type == IOMAP_UNWRITTEN &&
+-		    !folio_test_dirty(folio)) {
+-			folio_unlock(folio);
+-			goto loop_continue;
++			/*
++			 * XXX: It would be nice if we could get the offset of
++			 * the next entry in the pagecache so that we don't have
++			 * to iterate one page at a time here.
++			 */
++			offset = offset_in_page(pos);
++			if (bytes > PAGE_SIZE - offset)
++				bytes = PAGE_SIZE - offset;
++		} else {
++			if (iter->iomap.flags & IOMAP_F_STALE)
++				break;
++
++			offset = offset_in_folio(folio, pos);
++			if (bytes > folio_size(folio) - offset)
++				bytes = folio_size(folio) - offset;
++		
++			/*
++			 * If the folio over an unwritten extent is clean (i.e.
++			 * because it has only been read from), then it already
++			 * contains zeros.  Hence we can just skip it.
++			 */
++			if (srcmap->type == IOMAP_UNWRITTEN &&
++			    !folio_test_dirty(folio)) {
++				folio_unlock(folio);
++				status = -ENOENT;
++			}
+ 		}
+ 
+-		folio_zero_range(folio, offset, bytes);
+-		folio_mark_accessed(folio);
++		if (status != -ENOENT) {
++			folio_zero_range(folio, offset, bytes);
++			folio_mark_accessed(folio);
+ 
+-		ret = iomap_write_end(iter, pos, bytes, bytes, folio);
+-		__iomap_put_folio(iter, pos, bytes, folio);
+-		if (WARN_ON_ONCE(!ret))
+-			return -EIO;
++			ret = iomap_write_end(iter, pos, bytes, bytes, folio);
++			__iomap_put_folio(iter, pos, bytes, folio);
++			if (WARN_ON_ONCE(!ret))
++				return -EIO;
++		}
+ 
+-loop_continue:
+ 		pos += bytes;
+ 		length -= bytes;
+ 		written += bytes;
 
