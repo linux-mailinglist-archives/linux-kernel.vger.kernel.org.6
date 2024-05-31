@@ -1,179 +1,126 @@
-Return-Path: <linux-kernel+bounces-197017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13B498D6504
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:58:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 300F28D650F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:59:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F48F1F23682
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:58:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BABC31F2699F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:59:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7884F7406C;
-	Fri, 31 May 2024 14:58:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31FB36F318;
+	Fri, 31 May 2024 14:59:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J0Y2n+7y"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="cgV8psTi"
+Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E7CE57CAC;
-	Fri, 31 May 2024 14:58:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1804B6F2EB;
+	Fri, 31 May 2024 14:59:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717167490; cv=none; b=SOitnZVRC4wvhwkfP1lR+tOxq/vdwy26F/6sq13TzP7+e2TUslc0kl01HhIkBWaqxBqs6pdmzV39Rh8RLm1WC2s+z6IKxgSnH0LqEGlW3t5WWegsr5XJ4eRV2q3f39IU3lsp3QxlmNv6qiAWabJGhT4RiwZDB3AJxopr+BB20hQ=
+	t=1717167553; cv=none; b=b0riGXPLo7OMMGhiy6P4vP589cIwBlxA6eldH4hm2csOQmaWEBOUg9Sm2uvQhSkl+iQkpKFYCIPh1j/GFUUL5sKgFHLvKa9HeipFW4DvGKx06FBXhgf8RgdLiUAT/zkDGY+tbn6mf7/ShIq3H1Wn93au+2rxXmtI1BgAFTx09bM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717167490; c=relaxed/simple;
-	bh=guC3Efigyil0S3SxtobdMAomm8kQ8iXzg+HWuL6hpOs=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=XerCNS7UDV+W+KPOXo2yr3FwpAyes+pBI8X96zvw4gPNLSKpL3bUTyBZhugucKFjXZUEKndIiiuhxFFuMa9I96MDLVOloCUxUkgSAvRn6s/LfOw+DXHl8aYYgWBGzBJTfVjO1DsBQyXukxir6+CDMXKDpLz3Xbo/588brktJEEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J0Y2n+7y; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717167490; x=1748703490;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=guC3Efigyil0S3SxtobdMAomm8kQ8iXzg+HWuL6hpOs=;
-  b=J0Y2n+7yME4zAREiHSm3vMHTvu+Z5eXq5Zk6NTV9YPHjTzbaNZjtSVYx
-   V+sf/u1xBbQBzPBWT1j0JSGznk5V4ai7fUEkElcv+PICLQsZ+LTIwegrv
-   UW4MK9usI5+CkT6CFBCp+P1CIgLTCunOytEH9STw10PZdfumsd3djuYBF
-   9reW3bNDhmP6SpnShkEsbmEXrYhMlZleH8o3WPErOZ2pV3hptxeKhO2y0
-   kAxqI5R2o0o1rQAEGodBn69uzczX/bUKkdM5sPgiJUlkEaoSB4qU3GfrX
-   ocGdNyu57o7J0TbC2gGv5Ti6Wv1MD42X029tfjbMbIZnNUAEWAa0eOWep
-   w==;
-X-CSE-ConnectionGUID: GL0DbUrmSSa8WlGmkNhjeg==
-X-CSE-MsgGUID: ZP5jXrqySbSGCbfGDgbtFQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="17543863"
-X-IronPort-AV: E=Sophos;i="6.08,204,1712646000"; 
-   d="scan'208";a="17543863"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 07:58:09 -0700
-X-CSE-ConnectionGUID: xpS9hxDTT72W9A1inqvudA==
-X-CSE-MsgGUID: FAW2eByGTHmqmrkY3wCBWA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,204,1712646000"; 
-   d="scan'208";a="36645406"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.152])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 07:58:02 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Fri, 31 May 2024 17:57:59 +0300 (EEST)
-To: Douglas Anderson <dianders@chromium.org>
-cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-    Jiri Slaby <jirislaby@kernel.org>, linux-arm-msm@vger.kernel.org, 
-    John Ogness <john.ogness@linutronix.de>, 
-    =?ISO-8859-15?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, 
-    Tony Lindgren <tony@atomide.com>, Stephen Boyd <swboyd@chromium.org>, 
-    linux-serial <linux-serial@vger.kernel.org>, 
-    Yicong Yang <yangyicong@hisilicon.com>, 
-    Johan Hovold <johan+linaro@kernel.org>, 
-    LKML <linux-kernel@vger.kernel.org>, 
-    Bjorn Andersson <andersson@kernel.org>, 
-    Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-    Konrad Dybcio <konrad.dybcio@linaro.org>, 
-    Thomas Gleixner <tglx@linutronix.de>, 
-    Vijaya Krishna Nivarthi <quic_vnivarth@quicinc.com>
-Subject: Re: [PATCH v2 2/7] serial: qcom-geni: Fix the timeout in
- qcom_geni_serial_poll_bit()
-In-Reply-To: <20240530154553.v2.2.I3e1968bbeee67e28fd4e15509950805b6665484a@changeid>
-Message-ID: <d68297dd-302e-9780-d141-34531faa13af@linux.intel.com>
-References: <20240530224603.730042-1-dianders@chromium.org> <20240530154553.v2.2.I3e1968bbeee67e28fd4e15509950805b6665484a@changeid>
+	s=arc-20240116; t=1717167553; c=relaxed/simple;
+	bh=9+6h3DiodrT9YFrdp+kdRsd+uvX5l44PO21I4T4zFO4=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DaJtWdqUsnXtb9munJsZjDSJS24deBDnIKEAef+bzlIYLsdPR545lVbIJVLbFUHqE5ISGCMQEabcuI7fYr3vFve6xioiUNFhygj+Cv3cMrY3T39mfmyAan0MY3eHoL4vELeKGfacHHqDgUI7p0Ep2TrxqKlJHACQe8oL3xaqM+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=cgV8psTi; arc=none smtp.client-ip=67.231.149.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44V9Swso003313;
+	Fri, 31 May 2024 09:58:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=PODMain02222019; bh=hxGvSEqlUm/4Gr1/Y7
+	FisaucBu8jAHnTKI/Obg6VI9c=; b=cgV8psTiVp2etlgNlYKT/Xz5UTa72Adwnp
+	Mz2p1O9qHqFUPa15bt9k4vOaw0BFh7bPfJ1p4wP2ArTWshr7L1GtTFZWa18VmbEX
+	efyhNCr7LGDVTGEkFIdZ0+fQ7lrmWR08B7gFutkTdq4gik7dVbbMx17C3hPbsiqX
+	FCCs7+w31Fz3cjSd/vTp8fxiOXlBH0SixpDYUeNAgOZyC/WqXTvNGN/y23eabUCD
+	5uteqKIcoNKlQlCxYfRo5l/rbU0dUpjor+W6lYVOnFoOCyW4y/NdaGcm+icIdEzg
+	FzQyVFTV5U46MBSRn9vkeAmsXDfnV3tfBs9CiTKaysNGvNIL1WOg==
+Received: from ediex01.ad.cirrus.com ([84.19.233.68])
+	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 3ybdcwwwuu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 31 May 2024 09:58:06 -0500 (CDT)
+Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 31 May
+ 2024 15:58:04 +0100
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
+ 15.2.1544.9 via Frontend Transport; Fri, 31 May 2024 15:58:04 +0100
+Received: from opensource.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPS id 05CBE820244;
+	Fri, 31 May 2024 14:58:04 +0000 (UTC)
+Date: Fri, 31 May 2024 14:58:02 +0000
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+CC: Rob Herring <robh@kernel.org>, Weidong Wang <wangweidong.a@awinic.com>,
+        Mark Brown <broonie@kernel.org>,
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+	<u.kleine-koenig@pengutronix.de>,
+        Shenghao Ding <shenghao-ding@ti.com>,
+        "Marco Felsch" <m.felsch@pengutronix.de>,
+        Alper Nebi Yasak
+	<alpernebiyasak@gmail.com>,
+        Chancel Liu <chancel.liu@nxp.com>,
+        "Kuninori
+ Morimoto" <kuninori.morimoto.gx@renesas.com>,
+        <linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <alsa-devel@alsa-project.org>, <patches@opensource.cirrus.com>,
+        <linuxppc-dev@lists.ozlabs.org>, <imx@lists.linux.dev>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-rockchip@lists.infradead.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        "James
+ Schulman" <james.schulman@cirrus.com>,
+        David Rhodes
+	<david.rhodes@cirrus.com>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        Kevin Lu <kevin-lu@ti.com>, Baojun Xu <baojun.xu@ti.com>,
+        Srinivas Kandagatla
+	<srinivas.kandagatla@linaro.org>,
+        Banajit Goswami <bgoswami@quicinc.com>,
+        Shengjiu Wang <shengjiu.wang@gmail.com>,
+        Xiubo Li <Xiubo.Lee@gmail.com>, Fabio Estevam <festevam@gmail.com>,
+        Nicolin Chen <nicoleotsuka@gmail.com>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Heiko Stuebner
+	<heiko@sntech.de>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v1 1/6] ASoC: codecs: Remove unused of_gpio.h
+Message-ID: <ZlnleuSae2C6/WRU@opensource.cirrus.com>
+References: <20240530230037.1156253-1-andriy.shevchenko@linux.intel.com>
+ <20240530230037.1156253-2-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240530230037.1156253-2-andriy.shevchenko@linux.intel.com>
+X-Proofpoint-GUID: QOHrrhhsAlL1BvB8LD1NFqOZRJaPkXqI
+X-Proofpoint-ORIG-GUID: QOHrrhhsAlL1BvB8LD1NFqOZRJaPkXqI
+X-Proofpoint-Spam-Reason: safe
 
-On Thu, 30 May 2024, Douglas Anderson wrote:
-
-> The qcom_geni_serial_poll_bit() is supposed to be able to be used to
-> poll a bit that's will become set when a TX transfer finishes. Because
-> of this it tries to set its timeout based on how long the UART will
-> take to shift out all of the queued bytes. There are two problems
-> here:
-> 1. There appears to be a hidden extra word on the firmware side which
->    is the word that the firmware has already taken out of the FIFO and
->    is currently shifting out. We need to account for this.
-> 2. The timeout calculation was assuming that it would only need 8 bits
->    on the wire to shift out 1 byte. This isn't true. Typically 10 bits
->    are used (8 data bits, 1 start and 1 stop bit), but as much as 13
->    bits could be used (14 if we allowed 9 bits per byte, which we
->    don't).
+On Fri, May 31, 2024 at 01:58:47AM +0300, Andy Shevchenko wrote:
+> of_gpio.h is deprecated and subject to remove. The drivers in question
+> don't use it, simply remove the unused header.
 > 
-> The too-short timeout was seen causing problems in a future patch
-> which more properly waited for bytes to transfer out of the UART
-> before cancelling.
-> 
-> Fixes: c4f528795d1a ("tty: serial: msm_geni_serial: Add serial driver support for GENI based QUP")
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 > ---
-> 
-> Changes in v2:
-> - New
-> 
->  drivers/tty/serial/qcom_geni_serial.c | 32 ++++++++++++++++++++++++---
->  1 file changed, 29 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/tty/serial/qcom_geni_serial.c b/drivers/tty/serial/qcom_geni_serial.c
-> index 2bd25afe0d92..32e025705f99 100644
-> --- a/drivers/tty/serial/qcom_geni_serial.c
-> +++ b/drivers/tty/serial/qcom_geni_serial.c
-> @@ -271,7 +271,8 @@ static bool qcom_geni_serial_poll_bit(struct uart_port *uport,
->  	u32 reg;
->  	struct qcom_geni_serial_port *port;
->  	unsigned int baud;
-> -	unsigned int fifo_bits;
-> +	unsigned int max_queued_bytes;
-> +	unsigned int max_queued_bits;
->  	unsigned long timeout_us = 20000;
->  	struct qcom_geni_private_data *private_data = uport->private_data;
->  
-> @@ -280,12 +281,37 @@ static bool qcom_geni_serial_poll_bit(struct uart_port *uport,
->  		baud = port->baud;
->  		if (!baud)
->  			baud = 115200;
-> -		fifo_bits = port->tx_fifo_depth * port->tx_fifo_width;
-> +
-> +		/*
-> +		 * Add 1 to tx_fifo_depth to account for the hidden register
-> +		 * on the firmware side that can hold a word.
-> +		 */
-> +		max_queued_bytes =
-> +			DIV_ROUND_UP((port->tx_fifo_depth + 1) * port->tx_fifo_width,
-> +				     BITS_PER_BYTE);
-> +
-> +		/*
-> +		 * The maximum number of bits per byte on the wire is 13 from:
-> +		 * - 1 start bit
-> +		 * - 8 data bits
-> +		 * - 1 parity bit
-> +		 * - 3 stop bits
-> +		 *
-> +		 * While we could try count the actual bits per byte based on
-> +		 * the port configuration, this is a rough timeout anyway so
-> +		 * using the max is fine.
-> +		 */
-> +		max_queued_bits = max_queued_bytes * 13;
-> +
->  		/*
->  		 * Total polling iterations based on FIFO worth of bytes to be
->  		 * sent at current baud. Add a little fluff to the wait.
-> +		 *
-> +		 * NOTE: this assumes that flow control isn't used, but with
-> +		 * flow control we could wait indefinitely and that wouldn't
-> +		 * be OK.
->  		 */
-> -		timeout_us = ((fifo_bits * USEC_PER_SEC) / baud) + 500;
-> +		timeout_us = ((max_queued_bits * USEC_PER_SEC) / baud) + 500;
+>  sound/soc/codecs/cs53l30.c        | 1 -
 
-You should try to generalize the existing uart_fifo_timeout() to suit what 
-you're trying to do here instead of writing more variants of code with 
-this same intent.
+Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 
--- 
- i.
-
+Thanks,
+Charles
 
