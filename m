@@ -1,98 +1,155 @@
-Return-Path: <linux-kernel+bounces-197066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA40C8D65B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:29:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22F788D65BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:31:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6533D282CFB
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 15:29:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F3051C256BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 15:31:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50CFF7710B;
-	Fri, 31 May 2024 15:29:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E78B158DC1;
+	Fri, 31 May 2024 15:30:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UF+2dzDh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gwHn53Ob"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 902AB33080;
-	Fri, 31 May 2024 15:29:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E234057CA7;
+	Fri, 31 May 2024 15:30:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717169363; cv=none; b=JVeSrP5J03IoYApssbR4pyJCPiOs7sSkjRkscc9eqkciBcsY/QZ/0OZEbxCrzDIVcLI1FH1YIxgJC7pwS1fEFWxWrPZX2DZltROw84ZpDy78JtbtTnDxHEz6KUDCIMdWu6zBxPUge5vyLKiCVWSCJr6FaH5R7o/hJlPOk56+f/E=
+	t=1717169453; cv=none; b=h9DLD+xz+J4tNVJysDMb37gAyjlWsFQnmq2KUUgX9o65YjPrnKnySdETweKCyP4Yvi+YX+9s5SapPM9eiS2wDLUoeOihtCfGwMM+NwcTTYVGWI2hKvvYfzrFU1d1BxWAWwug0uV0ptWHpaa6tEysFBy48juhbkNYkJ+u9N2uHPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717169363; c=relaxed/simple;
-	bh=vGdGcvG/usBANOA8rI6HjNUXFa+3GSenghMlRYfsdgA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jOmr+leAS3krXSHLhQryUSfbPQUejdVtVj4u4rf9wq1oaOAJyLn6PxeOdVcgfwdkEeplbBe6+bf996DpC+TqBrzKUJdfeyEdohr0XdalcfW4xe0vDxTXnye2fHH7XqJey8Is+PQJaEvFqM39BkF1UQNKuQrUP04Nm4jdLuOanPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UF+2dzDh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 122DFC116B1;
-	Fri, 31 May 2024 15:29:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717169363;
-	bh=vGdGcvG/usBANOA8rI6HjNUXFa+3GSenghMlRYfsdgA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UF+2dzDh6UpZmUspof8Y3Y11pjEkOJ4u4k3fnlpwD6csQFbUlRc+YOwzDBNfgjQ0Y
-	 6y6UArHPAvnIA+M8dgy8aB4CBagR2BPX9DLzaP0cG/KuYMztdP+qIv5RQ/q3nzGyVt
-	 l5s1afe35RsHc6Mq7c9F2kqWJs23LDOQNT1y/FNxXgWcdpipHTxVWBjfsA0b3iueuF
-	 /WHKa8NytnhvEHZDmFgPxMa6azgFXgLT7DgNDpvIppfmCorcFwSkPVjtUDuhe4y1K1
-	 8oKOV2eU+WtmkkMx1hy/gZ1DY+sYyerAhamQf0sGVWzRKWGOUWnZEWghbiccyg8MlV
-	 stx36vE4Oz9vw==
-Date: Fri, 31 May 2024 08:29:22 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Zhang Yi <yi.zhang@huaweicloud.com>, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	brauner@kernel.org, david@fromorbit.com, chandanbabu@kernel.org,
-	jack@suse.cz, willy@infradead.org, yi.zhang@huawei.com,
-	chengzhihao1@huawei.com, yukuai3@huawei.com
-Subject: Re: [RFC PATCH v4 7/8] xfs: reserve blocks for truncating realtime
- inode
-Message-ID: <20240531152922.GN52987@frogsfrogsfrogs>
-References: <20240529095206.2568162-1-yi.zhang@huaweicloud.com>
- <20240529095206.2568162-8-yi.zhang@huaweicloud.com>
- <ZlnFvWsvfrR1HBZW@infradead.org>
- <20240531141000.GH52987@frogsfrogsfrogs>
- <Zlna8S76sbj-6ItP@infradead.org>
+	s=arc-20240116; t=1717169453; c=relaxed/simple;
+	bh=hsjA0x6Srt7WNltFPQm36M1XEQClgGGCUWLHMkEXdTw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nZBWxqgIoycnCJfap40FhO6Z658QfcfOmPEqwFPoa9lkn2C45e7lA/xIAupCyTaTI7//nL5IC8ibPHoZ9pOpuCuXgl6EEm2ExpAtGQYWwSXAH6Y/Fw73E2bIMXp6zf0N5CEfwXlf0O2D9W4ozj0/W6oOVWsdsNLC/dFZLa7zfbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gwHn53Ob; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717169451; x=1748705451;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=hsjA0x6Srt7WNltFPQm36M1XEQClgGGCUWLHMkEXdTw=;
+  b=gwHn53OboEuQaDjWp71F6SAV26buEj/aWbxkKyiN6Ak+/ouWpiKJupeJ
+   ZD5ry+rTQsE2sslGSRWRtR11v0TumnVjwOuNjK9TsyutUHaTpulmfscUn
+   g8NifyZKdMPIZ0o7PbEM1K12I6RtbE9z0Lw+c4W2NV8wVFd+8j32xBoBN
+   sogIulYS4xgUTQJPIqejl64Mlqi9PbUhSPeS2P1Gio4aYn3QE6iN5x54P
+   dMJNVdAUtZs0oQ0BwDNl10HmCiwnlwTAzBxB1ZJ67LlthO0J2HvQQBKGt
+   0UOQmSaAmy5TmDOTsmeQE220YWZ9iAxuDK1j6fPCQPAa8cHb5bUr1yIoR
+   Q==;
+X-CSE-ConnectionGUID: 8obfSqfIRT619NMbwQluQA==
+X-CSE-MsgGUID: n/PVPk/XT2OSU4/I/Tr+/w==
+X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="13839566"
+X-IronPort-AV: E=Sophos;i="6.08,204,1712646000"; 
+   d="scan'208";a="13839566"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 08:30:50 -0700
+X-CSE-ConnectionGUID: rj6obq2ERMO5QDiPGyKZ2g==
+X-CSE-MsgGUID: q2N5xO0fShaiM6SvMI6SaQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,204,1712646000"; 
+   d="scan'208";a="40627259"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa003.fm.intel.com with ESMTP; 31 May 2024 08:30:40 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 8ED9F228; Fri, 31 May 2024 18:30:39 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Charles Keepax <ckeepax@opensource.cirrus.com>,
+	Rob Herring <robh@kernel.org>,
+	Weidong Wang <wangweidong.a@awinic.com>,
+	Mark Brown <broonie@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Shenghao Ding <shenghao-ding@ti.com>,
+	Marco Felsch <m.felsch@pengutronix.de>,
+	Alper Nebi Yasak <alpernebiyasak@gmail.com>,
+	Chancel Liu <chancel.liu@nxp.com>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	alsa-devel@alsa-project.org,
+	patches@opensource.cirrus.com,
+	linuxppc-dev@lists.ozlabs.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org
+Cc: Liam Girdwood <lgirdwood@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	David Rhodes <david.rhodes@cirrus.com>,
+	Richard Fitzgerald <rf@opensource.cirrus.com>,
+	Kevin Lu <kevin-lu@ti.com>,
+	Baojun Xu <baojun.xu@ti.com>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Banajit Goswami <bgoswami@quicinc.com>,
+	Shengjiu Wang <shengjiu.wang@gmail.com>,
+	Xiubo Li <Xiubo.Lee@gmail.com>,
+	Fabio Estevam <festevam@gmail.com>,
+	Nicolin Chen <nicoleotsuka@gmail.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH v2 0/6] ASoC: Drop or replace of_gpio.h
+Date: Fri, 31 May 2024 18:29:27 +0300
+Message-ID: <20240531153038.1590171-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zlna8S76sbj-6ItP@infradead.org>
+Content-Transfer-Encoding: 8bit
 
-On Fri, May 31, 2024 at 07:13:05AM -0700, Christoph Hellwig wrote:
-> On Fri, May 31, 2024 at 07:10:00AM -0700, Darrick J. Wong wrote:
-> > On Fri, May 31, 2024 at 05:42:37AM -0700, Christoph Hellwig wrote:
-> > > > -	error = xfs_trans_alloc(mp, &M_RES(mp)->tr_itruncate, 0, 0, 0, &tp);
-> > > > +	resblks = XFS_IS_REALTIME_INODE(ip) ? XFS_DIOSTRAT_SPACE_RES(mp, 0) : 0;
-> > > 
-> > > This probably wants a comment explaining that we need the block
-> > > reservation for bmap btree block allocations / splits that can happen
-> > > because we can split a written extent into one written and one
-> > > unwritten, while for the data fork we'll always just shorten or
-> > > remove extents.
-> > 
-> > "for the data fork"? <confused>
-> > 
-> > This always runs on the data fork.  Did you mean "for files with alloc
-> > unit > 1 fsblock"?
-> 
-> Sorry, it was meant to say for the data device.  My whole journey
-> to check if this could get called for the attr fork twisted my mind.
+Replace or drop the legacy header that is subject to remove.
+Not all of them were compile-tested, the series might have
+hidden compilation errors.
 
-I really hope not -- all writes to the attr fork have known sizes at
-syscall time, and appending doesn't even make sense.
+In v2:
+- added tags (Kuninori, Charles)
+- ripped out TAS2781 (it's a mess from GPIO handling perspective)
 
-> But you have a good point that even for the rt device we only need
-> the reservation for an rtextsize > 1.
+Andy Shevchenko (6):
+  ASoC: codecs: Remove unused of_gpio.h
+  ASoC: fsl: Remove unused of_gpio.h
+  ASoC: rockchip: Remove unused of_gpio.h
+  ASoC: codecs: Replace of_gpio.h by proper one
+  ASoC: generic: Replace of_gpio.h by proper one
+  ASoC: samsung: Replace of_gpio.h by proper one
 
-<nod>
+ sound/soc/codecs/ak4118.c                           | 1 -
+ sound/soc/codecs/ak4458.c                           | 1 -
+ sound/soc/codecs/aw88395/aw88395.c                  | 2 +-
+ sound/soc/codecs/aw88399.c                          | 1 -
+ sound/soc/codecs/cs53l30.c                          | 1 -
+ sound/soc/codecs/max98390.c                         | 1 -
+ sound/soc/codecs/pcm3168a.c                         | 1 -
+ sound/soc/codecs/rk817_codec.c                      | 1 -
+ sound/soc/codecs/tas2552.c                          | 1 -
+ sound/soc/codecs/tas2764.c                          | 1 -
+ sound/soc/codecs/tas2770.c                          | 1 -
+ sound/soc/codecs/tas2780.c                          | 1 -
+ sound/soc/codecs/tlv320adc3xxx.c                    | 1 -
+ sound/soc/codecs/tlv320adcx140.c                    | 1 -
+ sound/soc/codecs/tlv320aic31xx.c                    | 1 -
+ sound/soc/codecs/ts3a227e.c                         | 1 -
+ sound/soc/codecs/wsa883x.c                          | 1 -
+ sound/soc/fsl/imx-es8328.c                          | 1 -
+ sound/soc/fsl/imx-rpmsg.c                           | 2 --
+ sound/soc/generic/audio-graph-card2-custom-sample.c | 3 ++-
+ sound/soc/rockchip/rockchip_i2s.c                   | 1 -
+ sound/soc/rockchip/rockchip_spdif.c                 | 1 -
+ sound/soc/samsung/aries_wm8994.c                    | 2 +-
+ 23 files changed, 4 insertions(+), 24 deletions(-)
 
---D
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
+
 
