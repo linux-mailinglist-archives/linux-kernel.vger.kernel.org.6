@@ -1,169 +1,290 @@
-Return-Path: <linux-kernel+bounces-197143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE3408D66C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:24:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8850A8D66C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:25:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 846DF285E68
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:24:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8AABFB28B17
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:25:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34857158DD8;
-	Fri, 31 May 2024 16:24:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2642158D90;
+	Fri, 31 May 2024 16:25:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GSmQfjEm"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NKtv8lXf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAD89156242
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 16:24:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6EE917545
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 16:25:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717172674; cv=none; b=S5lrgSmwuIcBoc3FamzTJxZGIdiDcJE9+4C1P7bgPxQG9EsKIui2Si24qazFsgGPWuX2fluJbKigdQja5kCBuZ4tWaqw65P5BCLh+DF5lZFIzL6uxYNqSVYqRLatrefHTbq7PF9zxTiIqVfZBm8MaQH5RXajEPznsAPH8PlnrYA=
+	t=1717172729; cv=none; b=nR597s3m9SFGMHYhk5U7nwknmdO7NCsfnWm2/udaOMw12QkJ/1Ch5ifOn8J8X6vDwDCtg+a4KQsg+DgFPxQWd1UtPzGY43R9prz18zfP8kx/xNXwCeAaUKT5y0SaPQgKB3VdUjCw15VeiV7rL26ssUZLs0ffS97vwDbM7sglfXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717172674; c=relaxed/simple;
-	bh=WTA7d/z0xFHAQQEnzbGrEGNF6YB7HTz3I/13JSlNFYo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=az5mC6PCCnOUjbpRAH5aRYI9+vwGGm7ae4ReluCclMaa/KljIerCZ2DcLHJZT26g8C32b/BeY1yIA5Wwu+k0rvMjNr5+WLDEFHQVVA8wrGyQmXmnxbtLIr6fuCMriz9y38KU7NlxQwPgcIS02cj38+Y72S/7gjjpjzzohecyFGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GSmQfjEm; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a688d7e0eceso76581166b.3
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 09:24:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717172670; x=1717777470; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=qJSdIzJxO297NdqW7w9lTW/tPIbe+iy5RtUaCB6QAh8=;
-        b=GSmQfjEmBAb/9nt9NIhxeVK8sZfF3Z6EtTPmDfJOJgDNNl+6WxjYejQO0r6VUwtm5X
-         Ex2eMEy2EaCQKdat9GduaGz2mojLtfDXVTgenZxAgGWpkvoh/NnVh6gloGZMMLjn2WuH
-         BXezbHeWh9ZUM/UNuoSJ59GYVLanF3Do+/lAZyMSBqzTGYL9bRv6uKNxWmcEHkmutTG7
-         DWRe19qfRtV1Wt1kRoyEkgrTiyg6PscTiYc8937VST3AYP2I+sq7s9N+bmjVkN3MwLJ6
-         QJTstU2eWDzu2hZ85JqPTyV48ueXAUT2u42vFJ/tvmYTLEfmqTZttQGaub7FCEstAxcd
-         cUag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717172670; x=1717777470;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qJSdIzJxO297NdqW7w9lTW/tPIbe+iy5RtUaCB6QAh8=;
-        b=HzRb2XrQJ2G4goXr0Nkw9HR3FYZbYQadMPB8jr7VdXdUTYL9KoWW+ljJnHWp4CPNIz
-         Sn1qXjyD9PpTzyNb9K1oxh0M2fZHxdJF9TUYFNMdRLykBokJNbE2HgJlZJRHnSO1yVDl
-         f9pAtRVb3t1YM1gKctjZ4PQuEVhljtF9cViNsLfjl4Kx1dSY3JCqwYhdRia3lHWJJu1P
-         ldnY4ihm/idtDNScIasDZvZqq7GURi00S6watGLNxKq76NI0qp8TF5cArwtuV4RuTJrX
-         9WKIyZbApNPThffuMuyQ5XmTdrHanwDtvN7nHo54dyvUP1oFncbB6mXTNcUKM23Bt6hF
-         J/SQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWO/LXKWx4tRWL9a/8MwXiPWO1tyyqp7jSv0y+Y3vhiAc2ORscbiHqO93lDntJ2eRTnxCeKnrm73nqLOj+9rkJEKukWymrVRDyFuVNz
-X-Gm-Message-State: AOJu0YzIar86gX9OkPqb1bxtbw6XQUAv3gzGCHdBHi3Wezfsf3udFG6C
-	EjItaO8QsOCALOvyS77zWSAZA6kHPD6ZoP/vQ5nCJu7k/sYcPIFOAT7KdEWT7QQ=
-X-Google-Smtp-Source: AGHT+IHMjfm1hAmH8n4bh0zbfjiFA+P2dlsXvlXEHgL6/peyBYrgDM0fzWcbQ/J/s5N1R1UbimJSBw==
-X-Received: by 2002:a17:907:9867:b0:a59:d4f0:cfc3 with SMTP id a640c23a62f3a-a682204a7a5mr170276366b.59.1717172670275;
-        Fri, 31 May 2024 09:24:30 -0700 (PDT)
-Received: from [192.168.128.139] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a67ea5869a2sm101989066b.123.2024.05.31.09.24.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 31 May 2024 09:24:29 -0700 (PDT)
-Message-ID: <c64cd541-4572-4a1b-96ac-607a491ec844@linaro.org>
-Date: Fri, 31 May 2024 18:24:28 +0200
+	s=arc-20240116; t=1717172729; c=relaxed/simple;
+	bh=BnM9CcLm4Sp/dA80cks00HFRImjXT1zleUoSQEfC10U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a7hmw08gDAoC8NZJYymU5MAPwdzmeGWVSwn3LnQCaVQ7Yx5BaTJR5xbo9cyg/t5u4LtxEDx36StlLz9ZrgoOTI6JrK3cNxoQdjwIgJHVq+2ZEWYsraY3jS0aaBCxbAj+dpBGFcM/aOW4vqUxDYkaW9Xbu5Qs+fl/2ZBo79/ROo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NKtv8lXf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E92F1C2BD10;
+	Fri, 31 May 2024 16:25:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717172729;
+	bh=BnM9CcLm4Sp/dA80cks00HFRImjXT1zleUoSQEfC10U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NKtv8lXfOgAZ0RY4gVbgtsgJ+Xq3ombXoILBWyDcww/Tvnc3ek9m+SVeeXBl/4OpQ
+	 YIXY1bzLgaGKecJsK7cHKkLuKvlQi8LoRI9U0B184zUCkpUypo3piqD0UyxGUeLS6n
+	 WlGESA1/BaiyGKqLVHgsW/IZ0uiAuT5ePEJ8cbcvcb13Elce+BCg1shh2jSUYlgnz1
+	 j0A2fC/ni1s9RizqB/44o9sryRw8J3W+t4X7+EsPbDIObpv+eS271XTjjonEJm/8or
+	 H2JVqeWe+Huwlo3stxhkQdC7thrwbvfZKfVaTdW0rfAgFzjkrwlGknjvbmeBGsi3pb
+	 H/9NcHGC1/0Uw==
+Date: Fri, 31 May 2024 13:25:26 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: Re: [PATCH 0/4 v3] perf: Fix leaked sigtrap events
+Message-ID: <Zln59lKDPwuBT1GZ@x1>
+References: <20240516140936.13694-1-frederic@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: mfd: qcom,spmi-pmic: Document PMC8380
- and SMB2360
-To: Lee Jones <lee@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240529-topic-x1e_pmic-v1-0-9de0506179eb@linaro.org>
- <20240529-topic-x1e_pmic-v1-1-9de0506179eb@linaro.org>
- <20240531161433.GU1005600@google.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20240531161433.GU1005600@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240516140936.13694-1-frederic@kernel.org>
 
-On 31.05.2024 6:14 PM, Lee Jones wrote:
-> On Wed, 29 May 2024, Konrad Dybcio wrote:
+On Thu, May 16, 2024 at 04:09:32PM +0200, Frederic Weisbecker wrote:
+> Changes since v2:
 > 
->> These are just some more PMICs adjacent to X1 SoCs. Document them.
->>
->> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
->> ---
->>  Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.yaml | 2 ++
->>  1 file changed, 2 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.yaml b/Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.yaml
->> index b7f01cbb8fff..a2b2fbf77d5c 100644
->> --- a/Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.yaml
->> +++ b/Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.yaml
->> @@ -75,6 +75,7 @@ properties:
->>            - qcom,pma8084
->>            - qcom,pmc8180
->>            - qcom,pmc8180c
->> +          - qcom,pmc8380
->>            - qcom,pmd9635
->>            - qcom,pmi632
->>            - qcom,pmi8950
->> @@ -95,6 +96,7 @@ properties:
->>            - qcom,pmx65
->>            - qcom,pmx75
->>            - qcom,smb2351
->> +          - qcom,smb2360
+> * Simplify the branch condition on [3/4] (peterz)
+> * Rebase [4/4] accordingly
 > 
-> Abel already added this in:
-> 
->   dt-bindings: mfd: qcom-spmi-pmic: Document SMB2360 PMIC
-> 
-> I've made changes to the commit message to reflect it.
+> Frederic Weisbecker (4):
+>   task_work: s/task_work_cancel()/task_work_cancel_func()/
+>   task_work: Introduce task_work_cancel() again
+>   perf: Fix event leak upon exit
+>   perf: Fix event leak upon exec and file release
 
-Thanks, Lee
+Trying this on linux-rt-devel/6.10.y-rt, after reverting Sebastian's
+series that has clashes with this patch series:
 
-Konrad
+[acme@nine linux]$ git log --oneline -5
+4de7b8e17201 (HEAD -> linux-rt-devel-6.10.y-rt-sigtrap-fix-frederic-v3) Revert "perf: Move irq_work_queue() where the event is prepared."
+5efa195af234 Revert "perf: Enqueue SIGTRAP always via task_work."
+26ac4dfa180a Revert "perf: Remove perf_swevent_get_recursion_context() from perf_pending_task()."
+c2fb5208a68e Revert "perf: Split __perf_pending_irq() out of perf_pending_irq()"
+6d20efa57a89 (tag: v6.10-rc1-rt1-rebase, tag: v6.10-rc1-rt1, linux-rt-devel/linux-6.10.y-rt-rebase, linux-rt-devel/linux-6.10.y-rt, linux-rt-devel/for-kbuild-bot/prepare-release, linux-rt-devel/for-kbuild-bot/current-stable) Add localversion for -RT release
+[acme@nine linux]$
+
+Testing with the above reverts we're back to:
+
+[   66.513763] BUG: scheduling while atomic: perf/7940/0x00000002
+[   66.513763] BUG: scheduling while atomic: perf/7938/0x00000002
+
+[   66.513872] Preemption disabled at:
+[   66.513872] Preemption disabled at:
+[   66.513872] [<0000000000000000>] 0x0
+[   66.513872] [<0000000000000000>] 0x0
+[   66.513878] CPU: 1 PID: 7940 Comm: perf Kdump: loaded Not tainted 6.10.0-rc1-rt1+ #1
+[   66.513881] Hardware name: LENOVO 427623U/427623U, BIOS 8BET45WW (1.25 ) 05/18/2011
+[   66.513882] Call Trace:
+[   66.513885]  <TASK>
+[   66.513887]  dump_stack_lvl+0x51/0x70
+[   66.513893]  __schedule_bug+0x88/0xa0
+[   66.513898]  schedule_debug.constprop.0+0xd1/0x120
+[   66.513901]  __schedule+0x50/0x680
+[   66.513906]  ? __pfx_perf_pmu_nop_int+0x10/0x10
+[   66.513910]  ? merge_sched_in+0x202/0x350
+[   66.513913]  ? _raw_spin_lock+0x13/0x40
+[   66.513917]  schedule_rtlock+0x1d/0x40
+[   66.513920]  rtlock_slowlock_locked+0xcd/0x260
+[   66.513924]  ? __pfx_perf_pmu_nop_void+0x10/0x10
+[   66.513926]  ? perf_ctx_enable+0x55/0x70
+[   66.513930]  rt_spin_lock+0x40/0x60
+[   66.513933]  do_send_sig_info+0x32/0xb0
+[   66.513936]  send_sig_perf+0x6f/0x90
+[   66.513939]  perf_pending_task+0x89/0xa0
+[   66.513942]  task_work_run+0x58/0x90
+[   66.513946]  irqentry_exit_to_user_mode+0x1ce/0x1d0
+[   66.513950]  asm_sysvec_irq_work+0x16/0x20
+[   66.513955] RIP: 0033:0x4c05af
+[   66.513957] Code: 8b 04 25 28 00 00 00 48 89 45 e8 31 c0 e8 39 c0 f4 ff 4c 89 e7 48 89 c3 e8 be d3 f4 ff f0 01 1d 37 e6 85 00 8b 05 39 e6 85 00 <83> f8 01 7e 23 89 d9 31 d2 0f 1f 84 00 00 00 00 00 f0 01 0d 19 e6
+[   66.513959] RSP: 002b:00007fcd6cf9bd70 EFLAGS: 00000202
+[   66.513961] RAX: 0000000000000bb8 RBX: 0000000000001f04 RCX: 00007fcd6f41fb7a
+[   66.513963] RDX: 0000000000000004 RSI: 0000000000000080 RDI: 00007ffe83407af4
+[   66.513964] RBP: 00007fcd6cf9bd90 R08: 00007ffe83407af0 R09: 0000000000000004
+[   66.513966] R10: 0000000000000000 R11: 0000000000000282 R12: 00007ffe83407af0
+[   66.513967] R13: 000000000000000d R14: 00007fcd6f421530 R15: 0000000000000000
+[   66.513970]  </TASK>
+<SNIP more backtraces>
+
+With Frederic's patchset:
+
+[acme@nine linux]$ b4 am -ctsl --cc-trailers 20240516140936.13694-1-frederic@kernel.org
+Grabbing thread from lore.kernel.org/all/20240516140936.13694-1-frederic@kernel.org/t.mbox.gz
+Checking for newer revisions
+Grabbing search results from lore.kernel.org
+Analyzing 5 messages in the thread
+Looking for additional code-review trailers on lore.kernel.org
+<SNIP>
+Total patches: 4
+---
+Cover: ./v3_20240516_frederic_perf_fix_leaked_sigtrap_events.cover
+ Link: https://lore.kernel.org/r/20240516140936.13694-1-frederic@kernel.org
+ Base: not specified
+       git am ./v3_20240516_frederic_perf_fix_leaked_sigtrap_events.mbx
+[acme@nine linux]$        git am ./v3_20240516_frederic_perf_fix_leaked_sigtrap_events.mbx
+Applying: task_work: s/task_work_cancel()/task_work_cancel_func()/
+Applying: task_work: Introduce task_work_cancel() again
+Applying: perf: Fix event leak upon exit
+Applying: perf: Fix event leak upon exec and file release
+[acme@nine linux]$
+
+[acme@nine linux]$ git log --oneline -9
+1f88fa6e3adb (HEAD -> linux-rt-devel-6.10.y-rt-sigtrap-fix-frederic-v3) perf: Fix event leak upon exec and file release
+44cde14a096c perf: Fix event leak upon exit
+512f8f5cbaed task_work: Introduce task_work_cancel() again
+e7bee294ec69 task_work: s/task_work_cancel()/task_work_cancel_func()/
+4de7b8e17201 Revert "perf: Move irq_work_queue() where the event is prepared."
+5efa195af234 Revert "perf: Enqueue SIGTRAP always via task_work."
+26ac4dfa180a Revert "perf: Remove perf_swevent_get_recursion_context() from perf_pending_task()."
+c2fb5208a68e Revert "perf: Split __perf_pending_irq() out of perf_pending_irq()"
+6d20efa57a89 (tag: v6.10-rc1-rt1-rebase, tag: v6.10-rc1-rt1, linux-rt-devel/linux-6.10.y-rt-rebase, linux-rt-devel/linux-6.10.y-rt, linux-rt-devel/for-kbuild-bot/prepare-release, linux-rt-devel/for-kbuild-bot/current-stable) Add localversion for -RT release
+[acme@nine linux]$
+
+The workload that is used to do that, as a reminder, is 'perf test sigtrap'.
+
+[  121.217475] BUG: scheduling while atomic: perf/7955/0x00000002
+[  121.217478] BUG: scheduling while atomic: perf/7956/0x00000002
+<SNIP list of modules>
+[  121.217492] BUG: scheduling while atomic: perf/7954/0x00000002
+<SNIP list of modules>
+[  121.217570] Preemption disabled at:
+<SNIP>
+[  121.217571] [<0000000000000000>] 0x0
+<SNIP>
+[  121.217609] Preemption disabled at:
+<SNIP>
+[  121.217610] [<0000000000000000>] 0x0
+
+Lots of reports mixed up
+
+[  121.217575] CPU: 5 PID: 7955 Comm: perf Kdump: loaded Not tainted 6.10.0-rc1.frederic-rt1+ #3
+[  121.217577]  i2c_smbus
+[  121.217577]  cec
+[  121.217577] Hardware name: LENOVO 427623U/427623U, BIOS 8BET45WW (1.25 ) 05/18/2011
+[  121.217578]  firmware_attributes_class
+[  121.217577]  i2c_algo_bit
+[  121.217579]  snd
+[  121.217579]  drm_buddy
+[  121.217579] Call Trace:
+  121.217580]  wmi_bmof
+[  121.217580]  ttm
+[  121.217580]  mei_me lpc_ich
+[  121.217581]  <TASK>
+[  121.217581]  sr_mod
+[  121.217582]  mei
+[  121.217582]  intel_gtt
+[  121.217583]  soundcore sparse_keymap
+[  121.217584]  sd_mod cdrom
+[  121.217584]  platform_profile rfkill
+[  121.217585]  drm_display_helper t10_pi
+[  121.217583]  dump_stack_lvl+0x51/0x70
+[  121.217586]  joydev xfs
+[  121.217587]  sg drm_kms_helper
+[  121.217588]  libcrc32c
+[  121.217589]  sdhci_pci
+[  121.217589]  i915
+[  121.217590]  crct10dif_pclmul
+[  121.217590]  cec
+[  121.217590]  ahci
+[  121.217588]  __schedule_bug+0x88/0xa0
+[  121.217598]  ghash_clmulni_intel
+[  121.217596]  __schedule+0x50/0x680
+[  121.217598]  drm_display_helper t10_pi
+[  121.217599]  mmc_core e1000e
+[  121.217600]  sg
+[  121.217601]  video
+[  121.217601]  drm_kms_helper sdhci_pci
+[  121.217602]  wmi
+[  121.217601]  ? _raw_spin_lock+0x13/0x40
+[  121.217603]  crct10dif_pclmul
+[  121.217603]  serio_raw
+[  121.217604]  ahci
+[  121.217604]  dm_mirror
+[  121.217605]  drm
+[  121.217605]  dm_region_hash
+[  121.217605]  schedule_rtlock+0x1d/0x40
+[  121.217606]  dm_log
+[  121.217606]  crc32_pclmul cqhci
+[  121.217607]  dm_mod fuse
+[  121.217608]  libahci
+
+[  121.217607]  rtlock_slowlock_locked+0xcd/0x260
+[  121.217609] Preemption disabled at:
+[  121.217609]  crc32c_intel sdhci libata ghash_clmulni_intel
+[  121.217610] [<0000000000000000>] 0x0
+[  121.217612]  mmc_core
+[  121.217612]  rt_spin_lock+0x40/0x60
+[  121.217612]  e1000e video wmi serio_raw dm_mirror
+[  121.217614]  do_send_sig_info+0x32/0xb0
+[  121.217615]  dm_region_hash dm_log dm_mod fuse
+[  121.217617]  send_sig_perf+0x6f/0x90
+
+[  121.217619] Preemption disabled at:
+[  121.217619] [<0000000000000000>] 0x0
+[  121.217619]  perf_pending_task+0x65/0x90
+[  121.217624]  task_work_run+0x58/0x90
+[  121.217627]  irqentry_exit_to_user_mode+0x1ce/0x1d0
+[  121.217629]  asm_sysvec_irq_work+0x16/0x20
+[  121.217633] RIP: 0033:0x4c05af
+[  121.217634] BUG: scheduling while atomic: perf/7953/0x00000002
+[  121.217634] Code: 8b 04 25 28 00 00 00 48 89 45 e8 31 c0 e8 39 c0 f4 ff 4c 89 e7 48 89 c3 e8 be d3 f4 ff f0 01 1d 37 e6 85 00 8b 05 39 e6 85 00 <83> f8 01 7e 23 89 d9 31 d2 0f 1f 84 00 00 00 00 00 f0 01 0d 19 e6
+[  121.217636] RSP: 002b:00007fb693ac5d70 EFLAGS: 00000206
+
+<SNIP>
+[  121.217653] caller is perf_pending_task+0x29/0x90
+[  121.217654]  coretemp snd_hda_codec_conexant kvm_intel snd_hda_codec_generic
+[  121.217655]  dump_stack_lvl+0x51/0x70
+[  121.217657]  mac80211 kvm snd_hda_intel uvcvideo snd_intel_dspcfg libarc4 snd_intel_sdw_acpi
+[  121.217659]  __schedule_bug+0x88/0xa0
+[  121.217661]  snd_hda_codec uvc rapl videobuf2_vmalloc mei_wdt snd_hda_core
+[  121.217663]  schedule_debug.constprop.0+0xd1/0x120
+[  121.217665]  videobuf2_memops btusb videobuf2_v4l2 iwlwifi btrtl snd_hwdep btintel
+[  121.217666]  __schedule+0x50/0x680
+[  121.217668]  videodev snd_seq btbcm snd_ctl_led snd_seq_device iTCO_wdt btmtk
+[  121.217670]  ? _raw_spin_lock+0x13/0x40
+[  121.217672]  snd_pcm intel_cstate videobuf2_common iTCO_vendor_support bluetooth cfg80211 thinkpad_acpi snd_timer
+[  121.217675]  schedule_rtlock+0x1d/0x40
+[  121.217677]  i2c_i801 think_lmi mc intel_uncore pcspkr i2c_smbus
+[  121.217678]  rtlock_slowlock_locked+0xcd/0x260
+[  121.217680]  firmware_attributes_class snd wmi_bmof mei_me lpc_ich mei soundcore sparse_keymap platform_profile
+[  121.217683]  rt_spin_lock+0x40/0x60
+[  121.217685]  rfkill joydev xfs libcrc32c i915
+[  121.217687]  do_send_sig_info+0x32/0xb0
+[  121.217688]  cec i2c_algo_bit drm_buddy ttm sr_mod intel_gtt
+[  121.217690]  send_sig_perf+0x6f/0x90
+[  121.217691]  sd_mod cdrom drm_display_helper t10_pi sg drm_kms_helper sdhci_pci
+[  121.217693]  perf_pending_task+0x65/0x90
+[  121.217695]  crct10dif_pclmul ahci drm crc32_pclmul cqhci libahci
+[  121.217697]  task_work_run+0x58/0x90
+[  121.217698]  crc32c_intel sdhci libata ghash_clmulni_intel mmc_core e1000e
+[  121.217700]  irqentry_exit_to_user_mode+0x1ce/0x1d0
+[  121.217702]  video wmi serio_raw dm_mirror dm_region_hash dm_log
+[  121.217703]  asm_sysvec_irq_work+0x16/0x20
+[  121.217705]  dm_mod fuse
+
+
+
 
