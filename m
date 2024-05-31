@@ -1,231 +1,197 @@
-Return-Path: <linux-kernel+bounces-196405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6DF68D5B69
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 09:28:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A9E28D5B6F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 09:29:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E22F1F2367F
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 07:28:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5FF3B223C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 07:29:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9D7181724;
-	Fri, 31 May 2024 07:28:29 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E637381724;
+	Fri, 31 May 2024 07:29:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="agBtS9VZ"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F23A2B9AB;
-	Fri, 31 May 2024 07:28:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 853A780631
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 07:29:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717140509; cv=none; b=awE7y0Uyo1mLPJOXO76UcF6fh59TVj/KBTjKj9ybUTFPkuhHO60lN5xmT4jBrP8nzxKmkackvonAoH/Amnucz6p3LND+JCQ32db0JXDztMbv2mzZt4AG2jppKUwYlcFcAjclIF72liLoN10XNxItxLpSAUSkXJYt4sYXJ3BghiI=
+	t=1717140561; cv=none; b=j62WdYHE8iIvlhvIr4xJNrbTjfnOPjFvzUUjAHr/FUFsOvj4xyh8gwmDgCsni5CweCe3/BQMb24BVc95522jvTLZptXHiv2Yfc+WDKsU87VBWoVKcPozESLZMaZFCURH1R/abmGoyLp3FVEC7myr/rZyJhBGTbcFeWPNG4eQ5MI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717140509; c=relaxed/simple;
-	bh=EI4hkwsMyjIOrKijWoxSrNOs2BHfED4YcSoEJWEI2Ps=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PNmx3Yt4CJCAorkz/uQi+Hd68Z+i7KyvUPa5nJ+ns4AO0Rh09jW7XNceGbsVb2Z+fEOGIQeo5ka8hW9j7puWZqSjszVpf4JPHa1fk+OfrO+clIBourIG7cYCjrLYNHgxxa+wM5Z3sM2YkqAfq51l0uZOoXnrqclu2Hf27o9IImE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85AB8C116B1;
-	Fri, 31 May 2024 07:28:27 +0000 (UTC)
-Message-ID: <b7c585ae-88e7-403b-97b9-a13597c667c8@xs4all.nl>
-Date: Fri, 31 May 2024 09:28:25 +0200
+	s=arc-20240116; t=1717140561; c=relaxed/simple;
+	bh=RKPl0Z5QXSn3cjvj+NKgRkVBwe1KyjTiEqUJC6ruUJE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AiZ+LF3h/ft+wMEhAD6gDxmG8pj39iVRcsz9foUJxs1yewIVWvH7Bb+AmvKPkrB3+RGGMR0HyjcQiQ7dWjh1gpQnSLrs9DFuvfZrQWnqX1olcaIH7EJj4ojxVeoIfNngHV2DAAmx7AUGQV1RjYj4zzofcPMaEEWoI8IVEQW9q8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=agBtS9VZ; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52b03d66861so1827442e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 00:29:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1717140558; x=1717745358; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7AuBpLgSZMEBo2XzwoYxF5FL6n7LRJe6EeX7UzHv+C4=;
+        b=agBtS9VZLgrA7VA4No4n9TtppxVwTx4f+uXqo9aLKRs+atugY5CnqA6R3JYwbE7S5f
+         jjbxAy8VGAeqg+BgF0o/UV9Nr9iETmOmQWDEHd7giQ3HIqkGmaOHyTGUtsaNRza3aBzW
+         aR3OhC5feADxFLy0b0vQ6NFHKHxVm2mV8c0qE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717140558; x=1717745358;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7AuBpLgSZMEBo2XzwoYxF5FL6n7LRJe6EeX7UzHv+C4=;
+        b=miW9bCqSCuBwTmPqIuNLU1McVaJjJIDyEls/2FPTfTN1XC53LKEz2ekJvqDpNTan7M
+         OqamIjviSXFRSmCCO8cMnBIlIFmN+bNQiQllpBTytQkOWRidFUggOHfVkcOwZ1RqhKwR
+         oMyOdqkuGl/spGIXGpDvh8J1z2LSrOvtzeHTs7+fcecSTl7tvf7Ok1cUfYLdqI0mBQjW
+         2zDNdLfI0Na8vPkKXnHl/KlGx6hFHIK+QLWX8YFe/OSjkP/Y4Z8TWJUSzj76mjz/C+5q
+         HDpeLM+clXetiWeqvTB05uYyd2RoHShme1HBflyHVbSbICI884yYVoOWT1NuOBnx0L/m
+         RGPA==
+X-Forwarded-Encrypted: i=1; AJvYcCXux0bP7tlnSxRkDFbDu7W87xRQe4eRsnRSirfxLwfuK6a9XvOKLdQn0hlWfjayPF8R9wXYjrzOBcgKlfiooCYqKlg4JwcSH2Rw8SQl
+X-Gm-Message-State: AOJu0YxbuwnNMmxkLmxnTfgRQV5NylCyZyvjBshSpeCGJQ/Pp5dIkVZw
+	goqS7bX6wRrGCmGLLRsFdwoWe8G8PW9s/2SAX1ETHePkCDAvfd4xvnHSZbIDbFQPrAmx6kZmEAe
+	SONqbrWANUH6+AY4fHjwVPnJ16WNh6PWgZhdk
+X-Google-Smtp-Source: AGHT+IHG9cIqzvXzXFVSJ3u+mefhmJEYsDfRGLlyDYP+0F7chk9Cih1xUPNaF4GQKusTGlZd76NQwOCqr1Bnfxqn4zw=
+X-Received: by 2002:a05:6512:2029:b0:52b:8455:a9df with SMTP id
+ 2adb3069b0e04-52b896b8210mr483694e87.34.1717140557358; Fri, 31 May 2024
+ 00:29:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] media: uapi: v4l: Change V4L2_TYPE_IS_CAPTURE
- condition
-To: Nas Chung <nas.chung@chipsnmedia.com>,
- "mchehab@kernel.org" <mchehab@kernel.org>,
- "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
- "sebastian.fricke@collabora.com" <sebastian.fricke@collabora.com>,
- "m.tretter@pengutronix.de" <m.tretter@pengutronix.de>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20240528020425.4994-1-nas.chung@chipsnmedia.com>
- <a962e94f-a669-40e1-8b28-9ef077cf69be@xs4all.nl>
- <SL2P216MB1246D6779BDDA2C03333D549FBFC2@SL2P216MB1246.KORP216.PROD.OUTLOOK.COM>
-Content-Language: en-US, nl
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Autocrypt: addr=hverkuil@xs4all.nl; keydata=
- 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
-In-Reply-To: <SL2P216MB1246D6779BDDA2C03333D549FBFC2@SL2P216MB1246.KORP216.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240530083513.4135052-1-wenst@chromium.org> <20240530083513.4135052-2-wenst@chromium.org>
+ <20240530-revisit-profanity-889f1bcae21a@spud>
+In-Reply-To: <20240530-revisit-profanity-889f1bcae21a@spud>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Fri, 31 May 2024 15:29:06 +0800
+Message-ID: <CAGXv+5F=AEE7t=YQ0hNGtV9rbVBm75D=ftJdZKwD_JmUW9gQWQ@mail.gmail.com>
+Subject: Re: [PATCH 1/6] dt-bindings: clock: mediatek: Add mt8173 mfgtop
+To: Conor Dooley <conor@kernel.org>
+Cc: Frank Binns <frank.binns@imgtec.com>, Matt Coster <matt.coster@imgtec.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 31/05/2024 09:03, Nas Chung wrote:
-> Hi, Hans.
-> 
->> -----Original Message-----
->> From: Hans Verkuil <hverkuil@xs4all.nl>
->> Sent: Thursday, May 30, 2024 7:32 PM
->> To: Nas Chung <nas.chung@chipsnmedia.com>; mchehab@kernel.org; linux-
->> media@vger.kernel.org; sebastian.fricke@collabora.com;
->> m.tretter@pengutronix.de
->> Cc: linux-kernel@vger.kernel.org
->> Subject: Re: [PATCH v2] media: uapi: v4l: Change V4L2_TYPE_IS_CAPTURE
->> condition
->>
->> On 28/05/2024 04:04, Nas Chung wrote:
->>> Explicitly compare a buffer type only with valid buffer types,
->>> to avoid matching the buffer type outside of valid buffer
->>> type set.
->>>
->>> Signed-off-by: Nas Chung <nas.chung@chipsnmedia.com>
->>> ---
->>>  include/uapi/linux/videodev2.h | 7 ++++++-
->>>  1 file changed, 6 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/include/uapi/linux/videodev2.h
->> b/include/uapi/linux/videodev2.h
->>> index fe6b67e83751..fa2b7086e480 100644
->>> --- a/include/uapi/linux/videodev2.h
->>> +++ b/include/uapi/linux/videodev2.h
->>> @@ -157,6 +157,10 @@ enum v4l2_buf_type {
->>>  	V4L2_BUF_TYPE_PRIVATE              = 0x80,
->>>  };
->>>
->>> +#define V4L2_TYPE_IS_VALID(type)		\
->>> +	((type) >= V4L2_BUF_TYPE_VIDEO_CAPTURE	\
->>> +	 && (type) <= V4L2_BUF_TYPE_META_OUTPUT)
->>> +
->>>  #define V4L2_TYPE_IS_MULTIPLANAR(type)			\
->>>  	((type) == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE	\
->>>  	 || (type) == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE)
->>> @@ -171,7 +175,8 @@ enum v4l2_buf_type {
->>>  	 || (type) == V4L2_BUF_TYPE_SDR_OUTPUT			\
->>>  	 || (type) == V4L2_BUF_TYPE_META_OUTPUT)
->>>
->>> -#define V4L2_TYPE_IS_CAPTURE(type) (!V4L2_TYPE_IS_OUTPUT(type))
->>> +#define V4L2_TYPE_IS_CAPTURE(type)	\
->>> +	(V4L2_TYPE_IS_VALID(type) && !V4L2_TYPE_IS_OUTPUT(type))
->>>
->>>  enum v4l2_tuner_type {
->>>  	V4L2_TUNER_RADIO	     = 1,
->>
->> This patch introduced this warning:
->>
->> In function 'find_format_by_index',
->>    inlined from 'vdec_enum_fmt' at
->> drivers/media/platform/qcom/venus/vdec.c:452:8:
->> drivers/media/platform/qcom/venus/vdec.c:172:32: warning: 'valid' may be
->> used uninitialized [-Wmaybe-uninitialized]
->>  172 |                 if (k == index && valid)
->>      |                     ~~~~~~~~~~~^~~~~~~~
->> drivers/media/platform/qcom/venus/vdec.c: In function 'vdec_enum_fmt':
->> drivers/media/platform/qcom/venus/vdec.c:157:22: note: 'valid' was
->> declared here
->>  157 |                 bool valid;
->>      |                      ^~~~~
->>
->> This driver does this:
->>
->> 	bool valid;
->>
->>        if (V4L2_TYPE_IS_OUTPUT(type)) {
->>                valid = venus_helper_check_codec(inst, fmt[i].pixfmt);
->>        } else if (V4L2_TYPE_IS_CAPTURE(type)) {
->>                valid = venus_helper_check_format(inst, fmt[i].pixfmt);
->>
->> With your patch both V4L2_TYPE_IS_OUTPUT(type) and
->> V4L2_TYPE_IS_CAPTURE(type)
->> can return false, something that wasn't possible without this patch.
->>
->> In this driver the fix would just be to drop the second 'if' altogether,
->> so just
->> '} else {'.
->>
->> Since these defines are part of the public API, this change introduces a
->> subtle
->> behavior difference that can affect applications.
-> 
-> Thank you for a detailed description.
-> 
->>
->> That said, I do consider this an improvement.
->>
->> I would like some changes, though:
->>
->> 1) Just after "V4L2_BUF_TYPE_META_OUTPUT          = 14," in enum
->> v4l2_buf_type,
->>   add a comment saying that V4L2_TYPE_IS_VALID and (for output types)
->>   V4L2_TYPE_IS_OUTPUT must be updated if a new type is added. It's all
->>   too easy to forget that otherwise.
-> 
->> 2) Add a patch fixing the venus/vdec.c code.
-> 
-> 1), 2) I will address both in v3.
-> 
->> 3) Something else I noticed, but I think this change should be in a
->> separate patch:
->>   V4L2_TYPE_IS_OUTPUT() returns true for V4L2_BUF_TYPE_VIDEO_OVERLAY, but
->> that
->>   definitely belongs to CAPTURE. Nobody really uses that type anymore,
->> but still,
->>   it should be fixed.
-> 
-> 3) Would you prefer this modification to be included as a separate patch
-> in the v3 of this patch series, or should it be submitted as a new
-> standalone patch ?
+On Thu, May 30, 2024 at 11:43=E2=80=AFPM Conor Dooley <conor@kernel.org> wr=
+ote:
+>
+> On Thu, May 30, 2024 at 04:35:00PM +0800, Chen-Yu Tsai wrote:
+> > The MFG (GPU) block on the MT8173 has a small glue layer, named MFG_TOP
+> > in the datasheet, that contains clock gates, some power sequence signal
+> > delays, and other unknown registers that get toggled when the GPU is
+> > powered on.
+> >
+> > The clock gates are exposed as clocks provided by a clock controller,
+> > while the power sequencing bits are exposed as one singular power domai=
+n.
+> >
+> > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+> > ---
+> >  .../clock/mediatek,mt8173-mfgtop.yaml         | 71 +++++++++++++++++++
+> >  include/dt-bindings/clock/mt8173-clk.h        |  7 ++
+> >  2 files changed, 78 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt=
+8173-mfgtop.yaml
+> >
+> > diff --git a/Documentation/devicetree/bindings/clock/mediatek,mt8173-mf=
+gtop.yaml b/Documentation/devicetree/bindings/clock/mediatek,mt8173-mfgtop.=
+yaml
+> > new file mode 100644
+> > index 000000000000..03c3c1f8cf75
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/clock/mediatek,mt8173-mfgtop.ya=
+ml
+> > @@ -0,0 +1,71 @@
+> > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +
+> > +$id: http://devicetree.org/schemas/clock/mediatek,mt8173-mfgtop.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: MediaTek MT8173 MFG TOP controller
+> > +
+> > +maintainers:
+> > +  - AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.co=
+m>
+> > +
+> > +description:
+> > +  The MFG TOP glue layer controls various signals going to the MFG (GP=
+U)
+> > +  block on the MT8173.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: mediatek,mt8173-mfgtop
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  clocks:
+> > +    minItems: 4
+>
+> minItems is not needed when minItems =3D=3D maxItems.
 
-Separate patch in this series, please.
+Ack.
 
-Regards,
+> > +    maxItems: 4
+> > +
+> > +  clock-names:
+> > +    items:
+> > +      - const: sys
+> > +      - const: mem
+> > +      - const: core
+> > +      - const: clk26m
+> > +
+> > +  power-domains:
+> > +    maxItems: 1
+> > +
+> > +  '#clock-cells':
+> > +    const: 1
+> > +
+> > +  '#power-domain-cells':
+> > +    const: 0
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - clocks
+> > +  - clock-names
+> > +  - power-domains
+> > +  - '#clock-cells'
+> > +  - '#power-domain-cells'
+> > +
+> > +additionalProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +        #include <dt-bindings/clock/mt8173-clk.h>
+> > +        #include <dt-bindings/power/mt8173-power.h>
+> > +
+> > +        mfgtop: clock-controller@13fff000 {
+>
+> The label here is used, so drop it.
 
-	Hans
+Assume you mean _not_ used. Dropping. :D
 
-> 
-> Thanks.
-> Nas.
-> 
->>
->> Regards,
->>
->> 	Hans
-> 
+> Otherwise,
+> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 
+Thanks!
 
