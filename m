@@ -1,181 +1,179 @@
-Return-Path: <linux-kernel+bounces-197016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3503D8D64F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:55:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13B498D6504
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:58:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E48FB28BC4C
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:55:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F48F1F23682
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:58:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7240058ABF;
-	Fri, 31 May 2024 14:55:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7884F7406C;
+	Fri, 31 May 2024 14:58:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cy7AMLdQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J0Y2n+7y"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B616256773;
-	Fri, 31 May 2024 14:55:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E7CE57CAC;
+	Fri, 31 May 2024 14:58:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717167327; cv=none; b=OJcoawKSpS7MGBabThu7YbpmrLMxanNwaQT0KfVvmm/K9hkvOMUoLNttDqPAMHG6bIKOjnUDcWBgPd5wnuJP9SeWYDJFpJcPmnPYrCPII3v/R+JLBGvV85GdEPoq1VHL83TzF52hXjKLQiwWEwf20fPgdcOhSuWju+LL0X/dmnA=
+	t=1717167490; cv=none; b=SOitnZVRC4wvhwkfP1lR+tOxq/vdwy26F/6sq13TzP7+e2TUslc0kl01HhIkBWaqxBqs6pdmzV39Rh8RLm1WC2s+z6IKxgSnH0LqEGlW3t5WWegsr5XJ4eRV2q3f39IU3lsp3QxlmNv6qiAWabJGhT4RiwZDB3AJxopr+BB20hQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717167327; c=relaxed/simple;
-	bh=H9n4gjwEhp25bKgIVaVsaRAwxRosEDCSFaZ2Ap1cPlk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f6hTuP7uH/XYcyI3suAm7/lrp6hMFleDmZ3APtAF+Vunp0f2/ExN31UA5b9tj2wLLhR+9iRDKwE2ivH3B8BJtu5DHJR8tWgbWXVh9DRHUJkevmdICm6e+o/MeF4AhiH71V7bjTdFm0qwS2li4m8B7nD+gHxRUHad30qUBRAyk2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cy7AMLdQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCB94C116B1;
-	Fri, 31 May 2024 14:55:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717167327;
-	bh=H9n4gjwEhp25bKgIVaVsaRAwxRosEDCSFaZ2Ap1cPlk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cy7AMLdQpvEKFMPmis7uy1qJrWIgUPWJZWEEdrWD87UW+sePZLnD6ok0GNvzpwOzg
-	 1k7HkQG2SYyHwmviCdtaHgP7FU06zdHFQApA9fOXCsHC7JB/QlIVCCTpG/1f49NJwG
-	 cJuf29N08uyDBZez9Xe6sGNLUgUmmd8N50GyGUzjemc98iGjAAn6rdGyZVF/aNvV5d
-	 dFWAv0SZXGqo5ILhtSXQ9ayvpZpyekuHh48FFMNCiO0x7Wxax1L5XaFQXTjpt3UVG6
-	 RfFzLSKLdEPzIE0T5l9jbe3Thg41XG8tCMFVrLP+GLZcUeXDpt6TOLKFLfC3rd5pk7
-	 kRtzpWMyQ0+PQ==
-Date: Fri, 31 May 2024 15:55:23 +0100
-From: Lee Jones <lee@kernel.org>
-To: Bastien Curutchet <bastien.curutchet@bootlin.com>
-Cc: Riku Voipio <riku.voipio@iki.fi>, Pavel Machek <pavel@ucw.cz>,
-	linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	herve.codina@bootlin.com, christophercordahi@nanometrics.ca
-Subject: Re: [PATCH 1/3] leds: pca9532: Use PWM1 for hardware blinking
-Message-ID: <20240531145523.GN1005600@google.com>
-References: <20240527125940.155260-1-bastien.curutchet@bootlin.com>
- <20240527125940.155260-2-bastien.curutchet@bootlin.com>
+	s=arc-20240116; t=1717167490; c=relaxed/simple;
+	bh=guC3Efigyil0S3SxtobdMAomm8kQ8iXzg+HWuL6hpOs=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=XerCNS7UDV+W+KPOXo2yr3FwpAyes+pBI8X96zvw4gPNLSKpL3bUTyBZhugucKFjXZUEKndIiiuhxFFuMa9I96MDLVOloCUxUkgSAvRn6s/LfOw+DXHl8aYYgWBGzBJTfVjO1DsBQyXukxir6+CDMXKDpLz3Xbo/588brktJEEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J0Y2n+7y; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717167490; x=1748703490;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=guC3Efigyil0S3SxtobdMAomm8kQ8iXzg+HWuL6hpOs=;
+  b=J0Y2n+7yME4zAREiHSm3vMHTvu+Z5eXq5Zk6NTV9YPHjTzbaNZjtSVYx
+   V+sf/u1xBbQBzPBWT1j0JSGznk5V4ai7fUEkElcv+PICLQsZ+LTIwegrv
+   UW4MK9usI5+CkT6CFBCp+P1CIgLTCunOytEH9STw10PZdfumsd3djuYBF
+   9reW3bNDhmP6SpnShkEsbmEXrYhMlZleH8o3WPErOZ2pV3hptxeKhO2y0
+   kAxqI5R2o0o1rQAEGodBn69uzczX/bUKkdM5sPgiJUlkEaoSB4qU3GfrX
+   ocGdNyu57o7J0TbC2gGv5Ti6Wv1MD42X029tfjbMbIZnNUAEWAa0eOWep
+   w==;
+X-CSE-ConnectionGUID: GL0DbUrmSSa8WlGmkNhjeg==
+X-CSE-MsgGUID: ZP5jXrqySbSGCbfGDgbtFQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="17543863"
+X-IronPort-AV: E=Sophos;i="6.08,204,1712646000"; 
+   d="scan'208";a="17543863"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 07:58:09 -0700
+X-CSE-ConnectionGUID: xpS9hxDTT72W9A1inqvudA==
+X-CSE-MsgGUID: FAW2eByGTHmqmrkY3wCBWA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,204,1712646000"; 
+   d="scan'208";a="36645406"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.152])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 07:58:02 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Fri, 31 May 2024 17:57:59 +0300 (EEST)
+To: Douglas Anderson <dianders@chromium.org>
+cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+    Jiri Slaby <jirislaby@kernel.org>, linux-arm-msm@vger.kernel.org, 
+    John Ogness <john.ogness@linutronix.de>, 
+    =?ISO-8859-15?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, 
+    Tony Lindgren <tony@atomide.com>, Stephen Boyd <swboyd@chromium.org>, 
+    linux-serial <linux-serial@vger.kernel.org>, 
+    Yicong Yang <yangyicong@hisilicon.com>, 
+    Johan Hovold <johan+linaro@kernel.org>, 
+    LKML <linux-kernel@vger.kernel.org>, 
+    Bjorn Andersson <andersson@kernel.org>, 
+    Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+    Konrad Dybcio <konrad.dybcio@linaro.org>, 
+    Thomas Gleixner <tglx@linutronix.de>, 
+    Vijaya Krishna Nivarthi <quic_vnivarth@quicinc.com>
+Subject: Re: [PATCH v2 2/7] serial: qcom-geni: Fix the timeout in
+ qcom_geni_serial_poll_bit()
+In-Reply-To: <20240530154553.v2.2.I3e1968bbeee67e28fd4e15509950805b6665484a@changeid>
+Message-ID: <d68297dd-302e-9780-d141-34531faa13af@linux.intel.com>
+References: <20240530224603.730042-1-dianders@chromium.org> <20240530154553.v2.2.I3e1968bbeee67e28fd4e15509950805b6665484a@changeid>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240527125940.155260-2-bastien.curutchet@bootlin.com>
+Content-Type: text/plain; charset=US-ASCII
 
-On Mon, 27 May 2024, Bastien Curutchet wrote:
+On Thu, 30 May 2024, Douglas Anderson wrote:
 
-> PSC0/PWM0 are used by all leds for brightness and blinking. This causes
-
-LEDs everywhere please.
-
-> conflicts when you set a brightness of a new led while an other one is
-> already using PWM0 for blinking.
+> The qcom_geni_serial_poll_bit() is supposed to be able to be used to
+> poll a bit that's will become set when a TX transfer finishes. Because
+> of this it tries to set its timeout based on how long the UART will
+> take to shift out all of the queued bytes. There are two problems
+> here:
+> 1. There appears to be a hidden extra word on the firmware side which
+>    is the word that the firmware has already taken out of the FIFO and
+>    is currently shifting out. We need to account for this.
+> 2. The timeout calculation was assuming that it would only need 8 bits
+>    on the wire to shift out 1 byte. This isn't true. Typically 10 bits
+>    are used (8 data bits, 1 start and 1 stop bit), but as much as 13
+>    bits could be used (14 if we allowed 9 bits per byte, which we
+>    don't).
 > 
-> Use PSC1/PWM1 for blinking.
-> Check that no other led is already blinking with a different PSC1/PWM1
-> configuration to avoid conflict.
+> The too-short timeout was seen causing problems in a future patch
+> which more properly waited for bytes to transfer out of the UART
+> before cancelling.
 > 
-> Signed-off-by: Bastien Curutchet <bastien.curutchet@bootlin.com>
+> Fixes: c4f528795d1a ("tty: serial: msm_geni_serial: Add serial driver support for GENI based QUP")
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
 > ---
->  drivers/leds/leds-pca9532.c | 49 ++++++++++++++++++++++++++++++-------
->  1 file changed, 40 insertions(+), 9 deletions(-)
 > 
-> diff --git a/drivers/leds/leds-pca9532.c b/drivers/leds/leds-pca9532.c
-> index bf8bb8fc007c..c210608ad336 100644
-> --- a/drivers/leds/leds-pca9532.c
-> +++ b/drivers/leds/leds-pca9532.c
-> @@ -191,29 +191,60 @@ static int pca9532_set_brightness(struct led_classdev *led_cdev,
->  	return err;
->  }
->  
-> +static int pca9532_update_hw_blink(struct pca9532_led *led,
-> +				   unsigned long delay_on, unsigned long delay_off)
-> +{
-> +	struct pca9532_data *data = i2c_get_clientdata(led->client);
-> +	unsigned int psc;
-> +	int i;
-> +
-> +	/* Look for others leds that already use PWM1 */
-> +	for (i = 0; i < data->chip_info->num_leds; i++) {
-> +		struct pca9532_led *other = &data->leds[i];
-> +
-> +		if (other == led)
-> +			continue;
-
-Don't bunch things up please - new line here.
-
-> +		if (other->state == PCA9532_PWM1) {
-> +			if (other->ldev.blink_delay_on != delay_on ||
-> +			    other->ldev.blink_delay_off != delay_off) {
-> +				dev_dbg(&led->client->dev,
-> +					"HW can handle only one blink configuration at a time\n");
-> +				return -EINVAL;
-> +			}
-> +		}
-> +	}
-> +
-> +	psc = ((delay_on + delay_off) * 152 - 1) / 1000;
-
-What are these funny magic numbers?  Define them please.
-
-> +	if (psc > 255) {
-
-And this.
-
-> +		dev_dbg(&led->client->dev, "Blink period too long to be handled by hardware\n");
-
-If you're returning an error, this should be dev_err().
-
-> +		return -EINVAL;
-> +	}
-> +
-> +	data->psc[1] = psc;
-
-Can we define these indexes please?
-
-> +	data->pwm[1] = (delay_on * 255) / (delay_on + delay_off);
-> +
-> +	return pca9532_setpwm(data->client, 1);
-> +}
-> +
->  static int pca9532_set_blink(struct led_classdev *led_cdev,
->  	unsigned long *delay_on, unsigned long *delay_off)
->  {
->  	struct pca9532_led *led = ldev_to_led(led_cdev);
->  	struct i2c_client *client = led->client;
-> -	int psc;
-> -	int err = 0;
-> +	struct pca9532_data *data = i2c_get_clientdata(client);
-
-Did you build this with W=1?  This looks unused.
-
-> +	int err;
->  
->  	if (*delay_on == 0 && *delay_off == 0) {
->  		/* led subsystem ask us for a blink rate */
->  		*delay_on = 1000;
->  		*delay_off = 1000;
->  	}
-> -	if (*delay_on != *delay_off || *delay_on > 1690 || *delay_on < 6)
-> -		return -EINVAL;
->  
-> -	/* Thecus specific: only use PSC/PWM 0 */
-> -	psc = (*delay_on * 152-1)/1000;
-> -	err = pca9532_calcpwm(client, 0, psc, led_cdev->brightness);
-> +	led->state = PCA9532_PWM1;
-> +	err = pca9532_update_hw_blink(led, *delay_on, *delay_off);
->  	if (err)
->  		return err;
-> -	if (led->state == PCA9532_PWM0)
-> -		pca9532_setpwm(led->client, 0);
-> +
->  	pca9532_setled(led);
->  
->  	return 0;
-> -- 
-> 2.44.0
+> Changes in v2:
+> - New
 > 
+>  drivers/tty/serial/qcom_geni_serial.c | 32 ++++++++++++++++++++++++---
+>  1 file changed, 29 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/tty/serial/qcom_geni_serial.c b/drivers/tty/serial/qcom_geni_serial.c
+> index 2bd25afe0d92..32e025705f99 100644
+> --- a/drivers/tty/serial/qcom_geni_serial.c
+> +++ b/drivers/tty/serial/qcom_geni_serial.c
+> @@ -271,7 +271,8 @@ static bool qcom_geni_serial_poll_bit(struct uart_port *uport,
+>  	u32 reg;
+>  	struct qcom_geni_serial_port *port;
+>  	unsigned int baud;
+> -	unsigned int fifo_bits;
+> +	unsigned int max_queued_bytes;
+> +	unsigned int max_queued_bits;
+>  	unsigned long timeout_us = 20000;
+>  	struct qcom_geni_private_data *private_data = uport->private_data;
+>  
+> @@ -280,12 +281,37 @@ static bool qcom_geni_serial_poll_bit(struct uart_port *uport,
+>  		baud = port->baud;
+>  		if (!baud)
+>  			baud = 115200;
+> -		fifo_bits = port->tx_fifo_depth * port->tx_fifo_width;
+> +
+> +		/*
+> +		 * Add 1 to tx_fifo_depth to account for the hidden register
+> +		 * on the firmware side that can hold a word.
+> +		 */
+> +		max_queued_bytes =
+> +			DIV_ROUND_UP((port->tx_fifo_depth + 1) * port->tx_fifo_width,
+> +				     BITS_PER_BYTE);
+> +
+> +		/*
+> +		 * The maximum number of bits per byte on the wire is 13 from:
+> +		 * - 1 start bit
+> +		 * - 8 data bits
+> +		 * - 1 parity bit
+> +		 * - 3 stop bits
+> +		 *
+> +		 * While we could try count the actual bits per byte based on
+> +		 * the port configuration, this is a rough timeout anyway so
+> +		 * using the max is fine.
+> +		 */
+> +		max_queued_bits = max_queued_bytes * 13;
+> +
+>  		/*
+>  		 * Total polling iterations based on FIFO worth of bytes to be
+>  		 * sent at current baud. Add a little fluff to the wait.
+> +		 *
+> +		 * NOTE: this assumes that flow control isn't used, but with
+> +		 * flow control we could wait indefinitely and that wouldn't
+> +		 * be OK.
+>  		 */
+> -		timeout_us = ((fifo_bits * USEC_PER_SEC) / baud) + 500;
+> +		timeout_us = ((max_queued_bits * USEC_PER_SEC) / baud) + 500;
+
+You should try to generalize the existing uart_fifo_timeout() to suit what 
+you're trying to do here instead of writing more variants of code with 
+this same intent.
 
 -- 
-Lee Jones [李琼斯]
+ i.
+
 
