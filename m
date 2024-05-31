@@ -1,133 +1,136 @@
-Return-Path: <linux-kernel+bounces-196726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0B438D6084
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 13:19:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E91DD8D6086
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 13:20:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9750F2831C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 11:19:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 099C11C2285D
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 11:20:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 949C3157A53;
-	Fri, 31 May 2024 11:19:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FE56157469;
+	Fri, 31 May 2024 11:20:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HAsPEDLs";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XRgLpBmX"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="S6/XqAY7";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="hcQ3Gwxo"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EF27156F5B;
-	Fri, 31 May 2024 11:19:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82A9E15746B;
+	Fri, 31 May 2024 11:20:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717154352; cv=none; b=rz9xoCxQFiYRh3h4uUp/JjgSoGqrlGDUV8eFvWyxMT0O5gXOCMomsdaeq7oo0kA/zxrSazcZmJUdGZvZie52DOtEPUby4ZPXF57Sl/8WHAcW8Op+wiojGfqtjiilbOFQtmxSQPEHpPeBh+XGdx8h1Y/wsAU1hUaKn53NKq1uLEA=
+	t=1717154408; cv=none; b=MHvRhIi+qvZaqlyPs5Z2sF8X869oxjJWdwaSpBlyXbfFOhbObkZ0OLSST7pYjmxMSYH8TXoXsB7pYGLoGAE7DdRBKbQmr2LmI2EwWWa2qohXnoX2XtlsCKZdvYRZVkBmOYpJnFKuetAi4Z+27nbJYRTa3mj9Lcdg7glX01XZmjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717154352; c=relaxed/simple;
-	bh=Q/k0ZuJgDxU64Fg7EXSjwr3Af/BGVhb3gFxOmobhEZY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Xqo86MTy7x0nadnIl2KtobHJtMw3O2hSmdkJcw0IOII7fuxVLirrfWy6UAiuRQvJgGnN1jLFDmE7oHbCfA6m6hQoM1NBbwDmlnkK741WUWPL3upMKOkDYrrPymsLMFICzASprclpozUlRWoRnAbzHE7skrSL8XO71KS2Oeqh938=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HAsPEDLs; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XRgLpBmX; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Nam Cao <namcao@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1717154349;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kaI3CFwEe6RD74mHpEKGILiAvt58PIOSoSNwjACCcVc=;
-	b=HAsPEDLsyQ6bOu4ZuP/CmWhMQTJp+F+P8iX5d3ZgKBjfO2jt/goXI1G1L6t0k1uPH8Y1Pr
-	+9YjzxNc6NsNZL+W7T1XabiFHZY74hn9teFhfU5v0ug/mXeB8eHpUZJJV5sPZnVLD6/C86
-	klkNa3qstqzvLjHXZHqZTlknALpJa/vcyNBakUHPTW/IyIwcfmk8aj/5t4uGSp8ExgUs8+
-	7rLxCKrQYs0jAlh0leV/jz4Kz+X8gpawrCdBksYGT/KKEEwM+BdITe1BDqGTj48PGCgbyb
-	RCvYSybNz5zoWHp9trR4v8wqNfufHh04bN/CoGi92YdL7zz+F12f7kOEHrCa8g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1717154349;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kaI3CFwEe6RD74mHpEKGILiAvt58PIOSoSNwjACCcVc=;
-	b=XRgLpBmXmSQF7EgKpoWN14dFoPzhYEM7IklIj+SAeJxShIvWMcV1sUWtHaBW3UufgQfep7
-	W9wJogk9URdh7ZDQ==
-To: Bjorn Helgaas <bhelgaas@google.com>,
-	Rob Herring <robh@kernel.org>,
-	Lizhi Hou <lizhi.hou@amd.com>,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Lukas Wunner <lukas@wunner.de>,
-	Nam Cao <namcao@linutronix.de>,
-	stable@vger.kernel.org
-Subject: [PATCH 2/2] PCI: of_property: Fix NULL pointer defererence in of_pci_prop_intr_map()
-Date: Fri, 31 May 2024 13:19:00 +0200
-Message-Id: <52dd5a634cb6b490c6a49170abdde4f1070c2ad6.1717154083.git.namcao@linutronix.de>
-In-Reply-To: <cover.1717154083.git.namcao@linutronix.de>
-References: <cover.1717154083.git.namcao@linutronix.de>
+	s=arc-20240116; t=1717154408; c=relaxed/simple;
+	bh=yK/9zuweDOypzYDJEBoGAgQ/cyW+LWy0AQZxqNE129s=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Md8eG7v4aJjdCqaqw4e/T1avGTjTuGrllGpXBMxQLo0oTyoTGoCEBhYSXxQXb2maHb86VUesGC0ij48cz6dXAd3waS42oU/n8DpQiPG3W2WtcmUo632G4gvj4K7D7YUQ2WHCa5rfZB8Ji72zsBMr8crbzbonzc2XNAiv584TWHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=S6/XqAY7; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=hcQ3Gwxo reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1717154404; x=1748690404;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=dBKf2zZ6ISHeCjN/chmz4IF4IvJbZqScCFwFIMuTRXM=;
+  b=S6/XqAY7IA7MuOe1R4LPK2qkd/XL2MkJLYuccHCXw0cUzNwvx6l08zkZ
+   Bw5iDw5ZWTKR/mhdKlwBbtwN0LJlJHYx2N6ia+Y0nMb00hztMtlszDo/m
+   0SimSNXSXV9oPoFkCm2WbPsukP1v0ShOUWhPkZU2VHYsGl+gqqc7E8sJ5
+   /oEP9BiaKBCIrTVpsEDlPPn3/HNO228ca7jUPHptxbslAjAjUEHwuAwPw
+   Vf/1/W0aBEHXXGoEi49td1pixK+jOsGSpLieZZVvhh+G1EC7TmBqRIwub
+   tRU62Bvy3fnmksXUaRFCL2k1F/hzdOLtmuImPE47S+HHGjgb/MMKbQpbI
+   g==;
+X-CSE-ConnectionGUID: VjAggmQpSy615veur+5o+w==
+X-CSE-MsgGUID: 9j/bxm4oQeWL8attay58SQ==
+X-IronPort-AV: E=Sophos;i="6.08,204,1712613600"; 
+   d="scan'208";a="37159682"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 31 May 2024 13:20:02 +0200
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 7A44E1664A0;
+	Fri, 31 May 2024 13:19:56 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1717154397;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=dBKf2zZ6ISHeCjN/chmz4IF4IvJbZqScCFwFIMuTRXM=;
+	b=hcQ3GwxoQ6Dq+OVdklHuJTT67XqYyfbQL0wxRqo7nbnt/8OfGyP2wYg/R0Fqvy9sDljz/k
+	xDSfZNsmsYGJG9NVdKUjaQwM/Ifd5OL/YVsjn+UJWNIzZSMAHK8rlSalq1JoVrJnABkY6h
+	a5xyFx+BeRswdkRz3jXZGiN1kh1Vg/uvUF0/bQj/VNByKquZkLnQyKIjuGo5Js/bHhJoL8
+	1AGeVp2xSSDxBXDshVOQBjVUkzcoArUmt5zuIPUBRXYSQcsmKP/566RMOo1C7BuxPhNzNv
+	lMP5dbQrfkgI2NHi3zM1arZr3YmaW3qSA3WGb63tnMazMMI6lezkV2UdYTE9MQ==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v2 2/2] gpiolib: Show more info for interrupt only lines in debugfs
+Date: Fri, 31 May 2024 13:19:56 +0200
+Message-ID: <7750850.EvYhyI6sBW@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <20240530191418.1138003-3-andriy.shevchenko@linux.intel.com>
+References: <20240530191418.1138003-1-andriy.shevchenko@linux.intel.com> <20240530191418.1138003-3-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+X-Last-TLS-Session-Version: TLSv1.3
 
-The subordinate pointer can be null if we are out of bus number. The
-function of_pci_prop_intr_map() deferences this pointer without checking
-and may crashes the kernel.
+Hi,
 
-This crash can be reproduced by starting a QEMU instance:
-    qemu-system-riscv64 -machine virt \
-    -kernel ../build-pci-riscv/arch/riscv/boot/Image \
-    -append "console=ttyS0 root=/dev/vda" \
-    -nographic \
-    -drive "file=root.img,format=raw,id=hd0" \
-    -device virtio-blk-device,drive=hd0 \
-    -device pcie-root-port,bus=pcie.0,slot=1,id=rp1,bus-reserve=0 \
-    -device pcie-pci-bridge,id=br1,bus=rp1
+Am Donnerstag, 30. Mai 2024, 21:12:30 CEST schrieb Andy Shevchenko:
+> Show more info for interrupt only lines in debugfs. It's useful
+> to monitor the lines that have been never requested as GPIOs,
+> but IRQs.
 
-Then hot-add a bridge with
-    device_add pci-bridge,id=br2,bus=br1,chassis_nr=1,addr=1
+I was trying to test this on TQMa8MPQL (i.MX8MP) using gpio-mxc.c.
+But apparently this series only has an effect when gpiochip_lock_as_irq()
+is called eventually. I'm wondering what needs to be done so IRQ only
+GPIOs are listed in debugfs. Using irq_request_resources/irq_release_resour=
+ces
+similar to what pinctrl-at91.c is doing?
 
-Then the kernel crashes:
-Unable to handle kernel NULL pointer dereference at virtual address 0000000000000028
-    [snip]
-[<ffffffff804dac82>] of_pci_prop_intr_map+0x104/0x362
-[<ffffffff804db262>] of_pci_add_properties+0x382/0x3ca
-[<ffffffff804c8228>] of_pci_make_dev_node+0xb6/0x116
-[<ffffffff804a6b72>] pci_bus_add_device+0xa8/0xaa
-[<ffffffff804a6ba4>] pci_bus_add_devices+0x30/0x6a
-[<ffffffff804d3b5c>] shpchp_configure_device+0xa0/0x112
-[<ffffffff804d2b3a>] board_added+0xce/0x354
-[<ffffffff804d2e9a>] shpchp_enable_slot+0xda/0x30c
-[<ffffffff804d336c>] shpchp_pushbutton_thread+0x84/0xa0
+Best regards,
+Alexander
 
-NULL check this pointer first before proceeding.
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  drivers/gpio/gpiolib.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index a6032b84ba98..f3b2f5c4781d 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -4888,11 +4888,11 @@ static void gpiolib_dbg_show(struct seq_file *s, =
+struct gpio_device *gdev)
+> =20
+>  	for_each_gpio_desc(gc, desc) {
+>  		guard(srcu)(&desc->gdev->desc_srcu);
+> -		if (test_bit(FLAG_REQUESTED, &desc->flags)) {
+> +		is_irq =3D test_bit(FLAG_USED_AS_IRQ, &desc->flags);
+> +		if (is_irq || test_bit(FLAG_REQUESTED, &desc->flags)) {
+>  			gpiod_get_direction(desc);
+>  			is_out =3D test_bit(FLAG_IS_OUT, &desc->flags);
+>  			value =3D gpio_chip_get_value(gc, desc);
+> -			is_irq =3D test_bit(FLAG_USED_AS_IRQ, &desc->flags);
+>  			active_low =3D test_bit(FLAG_ACTIVE_LOW, &desc->flags);
+>  			seq_printf(s, " gpio-%-3u (%-20.20s|%-20.20s) %s %s %s%s\n",
+>  				   gpio, desc->name ?: "", gpiod_get_label(desc),
+>=20
 
-Fixes: 407d1a51921e ("PCI: Create device tree node for bridge")
-Signed-off-by: Nam Cao <namcao@linutronix.de>
-Cc: stable@vger.kernel.org
----
- drivers/pci/of_property.c | 3 +++
- 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/pci/of_property.c b/drivers/pci/of_property.c
-index 5fb516807ba2..c405978a0b7e 100644
---- a/drivers/pci/of_property.c
-+++ b/drivers/pci/of_property.c
-@@ -199,6 +199,9 @@ static int of_pci_prop_intr_map(struct pci_dev *pdev, struct of_changeset *ocs,
- 	int ret;
- 	u8 pin;
- 
-+	if (!pdev->subordinate)
-+		return 0;
-+
- 	pnode = pci_device_to_OF_node(pdev->bus->self);
- 	if (!pnode)
- 		pnode = pci_bus_to_OF_node(pdev->bus);
--- 
-2.39.2
+=2D-=20
+TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht M=FCnchen, HRB 105018
+Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
+http://www.tq-group.com/
+
 
 
