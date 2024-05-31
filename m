@@ -1,87 +1,159 @@
-Return-Path: <linux-kernel+bounces-196808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95C6D8D6202
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:41:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 550DD8D61FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:40:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 25558B25D08
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:41:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B26D287AEB
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:40:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E61C415DBB2;
-	Fri, 31 May 2024 12:39:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0346158A0B;
+	Fri, 31 May 2024 12:39:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="iQld/0+w"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="buTmRst5";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="CqoWYuPv";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="rweyPEsK";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="xbUK2QWJ"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DF82158A14;
-	Fri, 31 May 2024 12:39:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B84DD1581ED;
+	Fri, 31 May 2024 12:39:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717159155; cv=none; b=DDZNUKO9Kwylk4WP9F1WVNGBxEBNZ7IAEj4MtJyn64KpVvoH+/OtCUJe9mkEQgn0j4TfqVIMW+0w1ytI4fD0s/bqGDZnDyI7apkgRG5r0+qhD3aC7rCO99mSq5qW+ZicJSMdNp80g2GMHYWiZVv1K6WDX/qf76WyxQ+sPdfD6Ng=
+	t=1717159142; cv=none; b=c/2UipmMIGs7O6dwizkbiJ20igHmCFWJvH7PZsjfm+LWGLdGWh3cNEoeWorFG6CupSneRFiw7Iv/tuHNI80u9p+rlbX3RLDNFwGGqGK5JIK/eAEwNU3GUrPf8UQx1c5Oa2G2H3MEhaw6nIOADuj6hK42xSQVrSoD/OFxaZIcS6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717159155; c=relaxed/simple;
-	bh=XHhIKllrLS04EQIbw2cXL6NKpGu+cxJfRqy8n5ltMfQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a0h0HAvwm1BsAArAUoM3uup0CDpvIJs+E4GmgIH3sv5QcrkljwYElPiinFZsp1KY/kNEetBKDnB8bd1KAW+wPaY2KqQ0R+Lx/4M8t7ZoPtbRmXNyxXIY3xAzLtCZPxP18sVwtm6Rc3m8ygBmMR/993CY81bkUjeGjiKs9lSHWRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=iQld/0+w; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=JUHpCtOFvJ217dOG69CLyUE0s9lGKzV3hZOfC/pApv8=; b=iQld/0+wSyfDLz98D3BIIzo6Ac
-	x0Kz29ldzbaZqe3zBKjJV5QDN2L941s1LbVSuwnrhoAoU7XP/QxLTgu79MZ7uwZFM8R5ABwwaUS+E
-	eCr7HJjGHMmlVgDZKCQ/ET2oUVa3AiYGlyTjXatp4q4nqfzZcBif0iRw6XtgN35+02gEDFDAIHxZb
-	QkIAWVD7WxeqRRAcU63D4fj6MQcY4Bybro4TsAka9FJeb5N1ZYtMcqo/1a9pP6furrGehPRXH4v89
-	Ev9xqid/1uHzTf44rjHWrxGPVRQitVoixmDtn/7rI4kGEH6u5FLVUmya0YnvDbWir4nTaE8Pw/CQx
-	PL3jCGig==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sD1XK-0000000ADsj-3R6h;
-	Fri, 31 May 2024 12:39:10 +0000
-Date: Fri, 31 May 2024 05:39:10 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, djwong@kernel.org, hch@infradead.org,
-	brauner@kernel.org, david@fromorbit.com, chandanbabu@kernel.org,
-	jack@suse.cz, willy@infradead.org, yi.zhang@huawei.com,
-	chengzhihao1@huawei.com, yukuai3@huawei.com
-Subject: Re: [RFC PATCH v4 3/8] iomap: pass blocksize to iomap_truncate_page()
-Message-ID: <ZlnE7vrk_dmrqUxC@infradead.org>
-References: <20240529095206.2568162-1-yi.zhang@huaweicloud.com>
- <20240529095206.2568162-4-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1717159142; c=relaxed/simple;
+	bh=IPc8jlhLuzCqTnWJaLMFTsOyIKrZtUkJnSVzGut2KNs=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YKyKVc0RpPDu9+aKX2cZGK+2xZLneNajfpJra8CTQet87slV30jkUJUEbnscV6nrKv4/+n34YvpHHo9aaUF/CO5nEahCyhbu8pP2BnussL7jsCwU0mQizO8HK0/9HoNuQI8vSzG9fSKxuLcnSBwNEaDw77H6Qsm5dtNnOoDFcKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=buTmRst5; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=CqoWYuPv; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=rweyPEsK; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=xbUK2QWJ; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id D3DCB21BCB;
+	Fri, 31 May 2024 12:38:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1717159139; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Id2Wss5xxMjf0A2gtsNDPrctLn2eyY404RyQsHumymI=;
+	b=buTmRst5f2sIJdCOyHq1LcbQu3ML9DgMP7/76B/bCW7hO3Um1UazPmYRDZGnMEdBoTQw1l
+	BV+MRXgeberk61fD2GU8HBkuksGjKf37dY+C9yA1jtDGy410HA/OVBT9KJCBY+V1be0793
+	RGwOZasJEQDjKPihWXFVbnYQcvFxndM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1717159139;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Id2Wss5xxMjf0A2gtsNDPrctLn2eyY404RyQsHumymI=;
+	b=CqoWYuPvhW+ljUduNbnxAn7qhmt+yxxfVA2GX2MwKit6Qu/YbVHI6Vy0dBXAX/AIgs6NMC
+	8Ahz+Je6tvlHZfDQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=rweyPEsK;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=xbUK2QWJ
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1717159138; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Id2Wss5xxMjf0A2gtsNDPrctLn2eyY404RyQsHumymI=;
+	b=rweyPEsKGRbRSnkLQuXsThuTBcIZde9ZNptYG0LsVrvMwZGrlxsXPXkYI/zZoeUTqdwjtE
+	tKrgq04XHkjuHNYJjyfbo0JEyOEmbxinoS0pK+lvIaU87wTDvr6auFekVLBVyuk+GV3NU9
+	BshI+Yk0kpdFjfjxlBhWnOhShFYWfB0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1717159138;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Id2Wss5xxMjf0A2gtsNDPrctLn2eyY404RyQsHumymI=;
+	b=xbUK2QWJ2GU9pi7HShs4CAbs6FjizIBVs5CjwONqe1tRwH8JsrvgdFj2WInMascfruJpC2
+	QQ3ERH59LpGw2CDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 52924137C3;
+	Fri, 31 May 2024 12:38:58 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id k6FrEOLEWWbhVQAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Fri, 31 May 2024 12:38:58 +0000
+Date: Fri, 31 May 2024 14:39:20 +0200
+Message-ID: <871q5i40lj.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Simon Trimmer <simont@opensource.cirrus.com>
+Cc: <tiwai@suse.com>,
+	<linux-sound@vger.kernel.org>,
+	<alsa-devel@alsa-project.org>,
+	<linux-kernel@vger.kernel.org>,
+	<patches@opensource.cirrus.com>
+Subject: Re: [PATCH] ALSA: hda: cs35l41: Possible null pointer dereference in cs35l41_hda_unbind()
+In-Reply-To: <20240531120820.35367-1-simont@opensource.cirrus.com>
+References: <20240531120820.35367-1-simont@opensource.cirrus.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240529095206.2568162-4-yi.zhang@huaweicloud.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Flag: NO
+X-Spam-Score: -5.43
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: D3DCB21BCB
+X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-5.43 / 50.00];
+	BAYES_HAM(-2.92)[99.66%];
+	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_DN_SOME(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
 
-> -		const struct iomap_ops *ops)
-> +iomap_truncate_page(struct inode *inode, loff_t pos, unsigned int blocksize,
-> +		bool *did_zero, const struct iomap_ops *ops)
->  {
-> -	unsigned int blocksize = i_blocksize(inode);
-> -	unsigned int off = pos & (blocksize - 1);
-> +	unsigned int off = rem_u64(pos, blocksize);
->  
->  	/* Block boundary? Nothing to do */
->  	if (!off)
+On Fri, 31 May 2024 14:08:20 +0200,
+Simon Trimmer wrote:
+> 
+> The cs35l41_hda_unbind() function clears the hda_component entry
+> matching it's index and then dereferences the codec pointer held in the
+> first element of the hda_component array, this is an issue when the
+> device index was 0.
+> 
+> Instead use the codec pointer stashed in the cs35l41_hda structure as it
+> will still be valid.
+> 
+> Fixes: 7cf5ce66dfda ("ALSA: hda: cs35l41: Add device_link between HDA and cs35l41_hda")
+> Signed-off-by: Simon Trimmer <simont@opensource.cirrus.com>
 
-Instad of passing yet another argument here, can we just kill
-iomap_truncate_page?
+Thanks, applied now.
 
-I.e. just open code the rem_u64 and 0 offset check in the only caller
-and call iomap_zero_range.  Same for the DAX variant and it's two
-callers.
 
+Takashi
 
