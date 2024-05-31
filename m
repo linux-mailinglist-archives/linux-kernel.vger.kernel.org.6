@@ -1,213 +1,123 @@
-Return-Path: <linux-kernel+bounces-196069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EB148D56D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 02:18:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E895A8D56DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 02:20:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43FE31C22B44
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 00:18:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 853D21F2503D
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 00:20:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7DC817F8;
-	Fri, 31 May 2024 00:18:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD3B34C62;
+	Fri, 31 May 2024 00:20:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EJrJEChX"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CsB7Gz+M"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83AAC6AC0
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 00:18:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5A78A2D;
+	Fri, 31 May 2024 00:20:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717114697; cv=none; b=JNlremapsenFafUm6qHKvtv8dGeUqlojsgco1QFkOY2m8s/W+fkIlqTTpJCPqf3PVFULhfJmgrYhflBKNsI0UEy/BNvv56htOqxP1W7UkKxu6gRdl1aLY+veUbI5VSM7aKI41DsaETcbl5I9jxRrUS8Kh0inSfexAtmNkHZ5EQ8=
+	t=1717114845; cv=none; b=qrYsf/336mjAVcRumIy2G2hfuO4i87xViFeUizHC7XrTIocBRYZStNYYN6XL7dMbUtpleM0XL/N4Npznw1MWtmWbCEbCabXM8N2ff8hk/DyNH5w0D6ezwx7aYqw6BHW31P/Re7nCJiOOGjlPtoB5wFJ8OfiZm7f7TFpVz9bKxmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717114697; c=relaxed/simple;
-	bh=KNXVkfWiz4Q50vCls1kWwILJ5qinN5zXnC4J+4f1Haw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MFAJx6jVCtt4PZcL+4/MhfCLTGEJtb8+Op5+eBvEqDek06j/OBDZWW/8p8WVj9k8zL18iT8e2/Q4WM5InvDOy8h0UcQrxWfWX8Qp+eJlnPB1StWaGJsgPiGjjUJ2Ykf8bj2xA8DiOtUSW/C2aFtzge1ljWFZOSjm5q8PtDMOXeU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EJrJEChX; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717114694;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5jGk8SEMK5Bvtc/9k59FnMjRJyI8k1VJ2cg/HKGkhc4=;
-	b=EJrJEChXPnVsS+OcqArUM4mqrFgU4x0z+c8JDI4QIQEjB3J0eLXicJeGHij14WxnPClZpN
-	eJCuiJKMGVBnkgX7bfKIVQdstrINo7TWYhkNidWjRLxK50ZksI5qWYEVHLAErfteEmAVs3
-	3mFK94jM5NTKPMooN5J9kmYdgwG5Wno=
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
- [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-53-96Sw8t6kOeeAE3rqcw2G6Q-1; Thu, 30 May 2024 20:18:13 -0400
-X-MC-Unique: 96Sw8t6kOeeAE3rqcw2G6Q-1
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2bf5e099692so1368563a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 17:18:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717114692; x=1717719492;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5jGk8SEMK5Bvtc/9k59FnMjRJyI8k1VJ2cg/HKGkhc4=;
-        b=P9BiBNSkll5F5DO3CYRuLUsPIx5H9HQIcWpU8SxK29StN2h7W7ebbDLm0YnlTuAoQo
-         NRZgzUTSaWYt5Esv6/1EtqoGZdvaHA8pSE8CAui+Qq+YoilhdlOA9riKp+5PxFW5qeXH
-         mYee84/esuZvHm5UWKrIirwvo9d/3SX+3RkZ1SaKaHnyNQs8tzHalPMU5398z8Vn6REY
-         WvIizrj9ju2L/B+cQNpqmj1rX/fFLEnmBDvvDjaosAPAZ/FQOk4bf563MOerv9r8ipep
-         0gkifE93Yn2fKz+/88P5B0KkO4B/C3KKpbGQTj/U/0cTZg6vjwUZ8XLZyWyrGbSSIQYn
-         vJzA==
-X-Forwarded-Encrypted: i=1; AJvYcCUrX8yXAdPUADUd5vp59fGFRarpKbOArAswkvc/rXbf2H797FqojkjSalESNssbdYErMa1WTWYYOMfLonBsAtzrrPfTeQ/10HZBp2P0
-X-Gm-Message-State: AOJu0YxlBuIIIg002+C20NpFEmGwhfYLq+tdCG6GodxJFirHmRA5jEJd
-	gSV49LdY29CZqUKMw2rok4MNwo0VoFf665jgaPYQneRB3Id7XvDQ2XkadUn6CQs6RdO5+01aZ5h
-	n60GaxmNyz5F8CKRWtBBymZcdUTI9skSg4WLYepTM3SldlgxakBFCtLjstdffT3m/rxWowpPVuI
-	ey6sao8O/v5YjP2VRZLTIBVZSRpMBo30SA8yr9
-X-Received: by 2002:a17:90a:e28d:b0:2b9:e009:e47a with SMTP id 98e67ed59e1d1-2c1acc3d22cmr4688030a91.10.1717114691888;
-        Thu, 30 May 2024 17:18:11 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGGtxuo6Bp6PN93cBewrcbzjLxTqiGmrfw4AWkEQU+ceUU0PXzAO9ChgAQ0Le5dYGJn1ZxgaARLQjE0Gw2KYLs=
-X-Received: by 2002:a17:90a:e28d:b0:2b9:e009:e47a with SMTP id
- 98e67ed59e1d1-2c1acc3d22cmr4687990a91.10.1717114691232; Thu, 30 May 2024
- 17:18:11 -0700 (PDT)
+	s=arc-20240116; t=1717114845; c=relaxed/simple;
+	bh=6eCfvSnM0YaO9SBtIYu/Zfal1XzOnsjkl0HaGq9pawI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=dOZhwPYPkvf6HKrz4oO/RjWuedo8Ltuminj6VU1CylZSo0a69kDMnwmheHFhWR54ibMGHPbHFdtYIbRwa199iV4v4e7uSuqn7udtLVtAkcRCLjYIclaIono3qxyBOEkltvGm09tseB4v2nR92mGYy5LTOeR2sZGlNLNdSW5GLE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CsB7Gz+M; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44UGrZdV025517;
+	Fri, 31 May 2024 00:20:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=gynQjfPIoxN/mtapgaztZK
+	5d/ROaq3hN0sTXGHXwRZ4=; b=CsB7Gz+MxQ9qQLiB8oxPsLjvwEArgGaqy7ZXR/
+	y2y8C56hcutEaf+9WUOvR3VqIHNENb/o+zRqPlQL6JgQPeAoRCD65YX7K918EGj0
+	TY9KKnW4yiNMAmeklac/ibFiTmBkQGcIgv3ruUP8x+X52nVt2jPUdxChce1BO/PN
+	PvPFa/tGg+qHix1ucPucPMFMAd4PBLDBxAzjDNydffXtrOiw1ffrezowPahwWnbL
+	Y+usbYPOZNEUZstJbbl5OkA8KzPCDwdxFfdhOZ8tVtkF7MI5qg0ca3Owprys9ug2
+	MpUQzC6lQkQllQm5ZoLtj3x2gMc3h4HZvRN5iessfket23GA==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba2pwh3a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 31 May 2024 00:20:28 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44V0KP64028232
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 31 May 2024 00:20:25 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 30 May
+ 2024 17:20:25 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Thu, 30 May 2024 17:20:20 -0700
+Subject: [PATCH] x86/mce/inject: add missing MODULE_DESCRIPTION()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240530032055.8036-1-jasowang@redhat.com> <20240530020531-mutt-send-email-mst@kernel.org>
- <CACGkMEun-77fXbQ93H_GEC4=0_7CLq7iPtXSKe9Qriw-Qh1Tbw@mail.gmail.com> <20240530090742-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20240530090742-mutt-send-email-mst@kernel.org>
-From: Jason Wang <jasowang@redhat.com>
-Date: Fri, 31 May 2024 08:18:00 +0800
-Message-ID: <CACGkMEsYRCJ96=sja9pBo_mnPsp75Go6E-wmm=-QX0kaOu4RFQ@mail.gmail.com>
-Subject: Re: [PATCH net-next V2] virtio-net: synchronize operstate with admin
- state on up/down
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: xuanzhuo@linux.alibaba.com, eperezma@redhat.com, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
-	virtualization@lists.linux.dev, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Venkat Venkatsubra <venkat.x.venkatsubra@oracle.com>, 
-	Gia-Khanh Nguyen <gia-khanh.nguyen@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240530-md-x86-mce-inject-v1-1-2a9dc998f709@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAMMXWWYC/x3MQQrCMBCF4auUWTsQk6YVryJdpMloR0yUmSqB0
+ rsbXX483r+BkjApnLsNhD6s/CwNx0MHcQnlRsipGayxvfHOYE5YTwPm2JZyp7iic6Ox49B7nxK
+ 030voyvXfvEzNc1DCWUKJy6/04PKumIOuJLDvX+Kx1/CCAAAA
+To: Tony Luck <tony.luck@intel.com>, Borislav Petkov <bp@alien8.de>,
+        "Thomas
+ Gleixner" <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Dave Hansen
+	<dave.hansen@linux.intel.com>, <x86@kernel.org>,
+        "H. Peter Anvin"
+	<hpa@zytor.com>
+CC: <linux-edac@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: qiczb4UyaajCO-QvZnSNknv_ofnxowc7
+X-Proofpoint-ORIG-GUID: qiczb4UyaajCO-QvZnSNknv_ofnxowc7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-30_21,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ malwarescore=0 spamscore=0 adultscore=0 clxscore=1011 bulkscore=0
+ mlxscore=0 suspectscore=0 priorityscore=1501 phishscore=0 mlxlogscore=837
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405310001
 
-On Thu, May 30, 2024 at 9:09=E2=80=AFPM Michael S. Tsirkin <mst@redhat.com>=
- wrote:
->
-> On Thu, May 30, 2024 at 06:29:51PM +0800, Jason Wang wrote:
-> > On Thu, May 30, 2024 at 2:10=E2=80=AFPM Michael S. Tsirkin <mst@redhat.=
-com> wrote:
-> > >
-> > > On Thu, May 30, 2024 at 11:20:55AM +0800, Jason Wang wrote:
-> > > > This patch synchronize operstate with admin state per RFC2863.
-> > > >
-> > > > This is done by trying to toggle the carrier upon open/close and
-> > > > synchronize with the config change work. This allows propagate stat=
-us
-> > > > correctly to stacked devices like:
-> > > >
-> > > > ip link add link enp0s3 macvlan0 type macvlan
-> > > > ip link set link enp0s3 down
-> > > > ip link show
-> > > >
-> > > > Before this patch:
-> > > >
-> > > > 3: enp0s3: <BROADCAST,MULTICAST> mtu 1500 qdisc pfifo_fast state DO=
-WN mode DEFAULT group default qlen 1000
-> > > >     link/ether 00:00:05:00:00:09 brd ff:ff:ff:ff:ff:ff
-> > > > ......
-> > > > 5: macvlan0@enp0s3: <BROADCAST,MULTICAST,UP,LOWER_UP,M-DOWN> mtu 15=
-00 qdisc noqueue state UP mode DEFAULT group default qlen 1000
-> > > >     link/ether b2:a9:c5:04:da:53 brd ff:ff:ff:ff:ff:ff
-> > > >
-> > > > After this patch:
-> > > >
-> > > > 3: enp0s3: <BROADCAST,MULTICAST> mtu 1500 qdisc pfifo_fast state DO=
-WN mode DEFAULT group default qlen 1000
-> > > >     link/ether 00:00:05:00:00:09 brd ff:ff:ff:ff:ff:ff
-> > > > ...
-> > > > 5: macvlan0@enp0s3: <NO-CARRIER,BROADCAST,MULTICAST,UP,M-DOWN> mtu =
-1500 qdisc noqueue state LOWERLAYERDOWN mode DEFAULT group default qlen 100=
-0
-> > > >     link/ether b2:a9:c5:04:da:53 brd ff:ff:ff:ff:ff:ff
-> > > >
-> > > > Cc: Venkat Venkatsubra <venkat.x.venkatsubra@oracle.com>
-> > > > Cc: Gia-Khanh Nguyen <gia-khanh.nguyen@oracle.com>
-> > > > Reviewed-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-> > > > Acked-by: Michael S. Tsirkin <mst@redhat.com>
-> > > > Signed-off-by: Jason Wang <jasowang@redhat.com>
-> > > > ---
-> > > > Changes since V1:
-> > > > - rebase
-> > > > - add ack/review tags
-> > >
-> > >
-> > >
-> > >
-> > >
-> > > > ---
-> > > >  drivers/net/virtio_net.c | 94 +++++++++++++++++++++++++++---------=
-----
-> > > >  1 file changed, 63 insertions(+), 31 deletions(-)
-> > > >
-> > > > diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-> > > > index 4a802c0ea2cb..69e4ae353c51 100644
-> > > > --- a/drivers/net/virtio_net.c
-> > > > +++ b/drivers/net/virtio_net.c
-> > > > @@ -433,6 +433,12 @@ struct virtnet_info {
-> > > >       /* The lock to synchronize the access to refill_enabled */
-> > > >       spinlock_t refill_lock;
-> > > >
-> > > > +     /* Is config change enabled? */
-> > > > +     bool config_change_enabled;
-> > > > +
-> > > > +     /* The lock to synchronize the access to config_change_enable=
-d */
-> > > > +     spinlock_t config_change_lock;
-> > > > +
-> > > >       /* Work struct for config space updates */
-> > > >       struct work_struct config_work;
-> > > >
-> > >
-> > >
-> > > But we already have dev->config_lock and dev->config_enabled.
-> > >
-> > > And it actually works better - instead of discarding config
-> > > change events it defers them until enabled.
-> > >
-> >
-> > Yes but then both virtio-net driver and virtio core can ask to enable
-> > and disable and then we need some kind of synchronization which is
-> > non-trivial.
->
-> Well for core it happens on bring up path before driver works
-> and later on tear down after it is gone.
-> So I do not think they ever do it at the same time.
+make W=1 C=1 warns:
+WARNING: modpost: missing MODULE_DESCRIPTION() in arch/x86/kernel/cpu/mce/mce-inject.o
 
-For example, there could be a suspend/resume when the admin state is down.
+Add the missing MODULE_DESCRIPTION().
 
->
->
-> > And device enabling on the core is different from bringing the device
-> > up in the networking subsystem. Here we just delay to deal with the
-> > config change interrupt on ndo_open(). (E.g try to ack announce is
-> > meaningless when the device is down).
-> >
-> > Thanks
->
-> another thing is that it is better not to re-read all config
-> on link up if there was no config interrupt - less vm exits.
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ arch/x86/kernel/cpu/mce/inject.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Yes, but it should not matter much as it's done in the ndo_open().
+diff --git a/arch/x86/kernel/cpu/mce/inject.c b/arch/x86/kernel/cpu/mce/inject.c
+index 94953d749475..4ade2a3ba312 100644
+--- a/arch/x86/kernel/cpu/mce/inject.c
++++ b/arch/x86/kernel/cpu/mce/inject.c
+@@ -795,4 +795,5 @@ static void __exit inject_exit(void)
+ 
+ module_init(inject_init);
+ module_exit(inject_exit);
++MODULE_DESCRIPTION("Machine check injection support");
+ MODULE_LICENSE("GPL");
 
-Thanks
-
->
-> --
-> MST
->
+---
+base-commit: 4a4be1ad3a6efea16c56615f31117590fd881358
+change-id: 20240530-md-x86-mce-inject-3370276455dd
 
 
