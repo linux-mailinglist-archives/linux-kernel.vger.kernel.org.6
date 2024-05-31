@@ -1,510 +1,218 @@
-Return-Path: <linux-kernel+bounces-196973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8A098D647E
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:26:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26DB38D647D
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:26:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 397D51F2833E
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:26:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE8EEB26AE7
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:26:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B088A20B0F;
-	Fri, 31 May 2024 14:26:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58FD91CFA8;
+	Fri, 31 May 2024 14:26:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RSr0u95u"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yFhP3Kl2"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B9D21C680
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6DB31CAA1
 	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 14:26:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717165567; cv=none; b=PntumWuY3koS67iq2FLeOHQt/ubwQoWg5/Gc8nBTgM8x4Qnh0jSqL7ua//6Wmt1Huia5GPF7Hwvl6bkmIGZuh45zoDFGLC+12pZ8KkuQ1/mdekfmf71EQd9hZzTT8QS6rHkeDStyEoiAIG8ApBwcoPJbklkSJUCluP0S/LSCftE=
+	t=1717165566; cv=none; b=hmaf8zkL9/rFkCvO86el/F540g+RgBgWUv6BBQzbralt6vrxhJtrdCFb7z3jA/Vy2jQgQdfdveg0o5zIGNJ7zgGRbe8kg54EzCMHkVEye3GjRxwe+VTBuTcXV5g4V+KfH/JPHmsgvFlmZvS/gdNLkYVf89oMCHepIiqHcs4pR9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717165567; c=relaxed/simple;
-	bh=+/+goGZXvVD0mX4k0BYGMzVPiKaylBwPwrokDA9Mr3g=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Ak8uchAYjURug0PNYkhe/9u8FogjVli48UzCmwbfftB/g5Z1qxy8NpaFhytdIz/pcSC9CM5JQks3zAcp0bTmQZjyLcM/1n9/UeDD20gb3KzizgliKOek5apddWtei+Ae/rFgD23fFwKv92GvJxoLxY2vI0KM2KUZgErJ26rCvOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RSr0u95u; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717165565; x=1748701565;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=+/+goGZXvVD0mX4k0BYGMzVPiKaylBwPwrokDA9Mr3g=;
-  b=RSr0u95uM4wMYu0Le11otDPCl2L42hjKi6WMlg75AQo8tfnmv+vLk1Ph
-   CMHuaBCzkSgAoLmvRzgAniqzzUwv5IAQ4AmLm8RiQK3xCdG/FLuLEvT0K
-   04jV3Kz27EaYLCVib+/AwvvRkuTMcatsesF8GolV/qVSYBd2P0JkIvbXG
-   CpqR6c+zQVOlKzagPzukPgFu+QPElsvqcr7XSMzH+UcW5xaUCRiD/dMO7
-   s0+z+O+eE8JOzTCN+hmVfjDFcdIf+1LnqqefyP0EAWW67Oc3rpSTNT8kS
-   ifXe23iHARN6gSM1UUBus92Zmj7PBtqrPfUPkPBNQ2hWSnHG6S72ESNUc
-   g==;
-X-CSE-ConnectionGUID: dlsjfkx/Q26eJdOxdNkDqQ==
-X-CSE-MsgGUID: cOvUZK0dTZuwyAWLyqgWkw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="24374054"
-X-IronPort-AV: E=Sophos;i="6.08,204,1712646000"; 
-   d="scan'208";a="24374054"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 07:25:14 -0700
-X-CSE-ConnectionGUID: MWZ9398qTM+u+LB9qkvqzA==
-X-CSE-MsgGUID: 1gn44HJZRvy3EqQHZDxUJQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,204,1712646000"; 
-   d="scan'208";a="40731195"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.152])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 07:25:12 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-	Lee Jones <lee@kernel.org>,
-	linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Subject: [PATCH 1/1] mfd: intel-lpss: Rename SPI intel_lpss_platform_info structs
-Date: Fri, 31 May 2024 17:25:05 +0300
-Message-Id: <20240531142505.1888-1-ilpo.jarvinen@linux.intel.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1717165566; c=relaxed/simple;
+	bh=LqRcRR1cFi1+thtnTUt29DnULSfs9Z8g1CGzHs6MSzM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PcHmWlaUXBjVO+qiCU/W26wN8V1Dk6uePmuf7uouU3qpFFEs1s0yzVc0DMb9k4K00vcW+kh2og2Ta8qox0T5csXsDWC6iE38ndTPGqPZEMsT9qOL4kPpVjzrjc++I8GYpqOK1btWAkMqZJ13vcBjL0AqfqQwB/Qm2MvA9taTuio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yFhP3Kl2; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52961b77655so2515872e87.2
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 07:26:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717165563; x=1717770363; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=TFd7dzhMFZkIzJzGiLdET+zEuG1GiWj/+wfLNFxwkBg=;
+        b=yFhP3Kl24gu2TI/vB4R3o+qc7gEIlb4beXVBcXn1mGUPYmmYVqtu8BpzyVyEmVB3hj
+         jsQ0/wsW3n6dnlpfw+gGeBMhip+dHxCyn0YbZK0tB+mx9PoqZuO2PSoRgJIEL7/e5idB
+         VNECOq4BSvweoZSf9jSCTnEnCgDTnMcrGYULzRrwJ9tme/i2HFCAx1d10NIkiYn/HA6C
+         +hkXpl+/3+GLg32HV9hnm8pUJe9WYaQY2ZJLcTtLgYLiXxDctSLwNt0/Eq+5ejBrBx1e
+         41hQWVE/1LQg0xoIed1/T/xwGqLBDverk7OLTJ8cSzdCMZTG0UJ/U48inv9JwVnCrpVS
+         7mcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717165563; x=1717770363;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TFd7dzhMFZkIzJzGiLdET+zEuG1GiWj/+wfLNFxwkBg=;
+        b=vel7bUChhM1nw7KWdlDJ3fEwht0jfOxWuxMN4LaDauUeZf8FHW2b6gvvAOwImwQa+I
+         Qk5AsP4VagtL3Bfu9Slm6OnF12ny+X4/Y5ip64cy1zOdyEG/tPYW8tiUna6aHG0nWwA2
+         jy8aVM2FurlgfBW3uLrUAqHDKKlFA1v+IXq60eW8EGO2+zDsILIBx3S2azqINvLhhmmt
+         qjsBTlYrf2/yrO1H1R0KirtJggHuKExiyGmzlsO78zs0q7nNdZPbnxU+YL0HLjtsKe4W
+         4UPo75D3B6RvDj0RPz7GG8GFcR5R7yGgTltmxeAEoudzhTCs0b5INADLiLdohNDrJ9xS
+         5g8A==
+X-Forwarded-Encrypted: i=1; AJvYcCVySUyE9NDflNjrJ9nHIF2MRGqYaWPJUftES7fpus50Yl5wJEqnwDTsNWZLu7VMjLKWgYsjkW97zbcTSka+If1X4FcDyGoDhj5BiTiT
+X-Gm-Message-State: AOJu0YwyzH8+5DPLGUclLEP2KRGEPKkhtIJV2GDcAzxSvDUQwX8BZrgr
+	k71DkAMO82fS/LRGwkgT80W13y8wFPqKzUrAJ/w4VUJUZvu9AjaWjUpFW+CjKXw=
+X-Google-Smtp-Source: AGHT+IFc4CdzwrD/1uDBczJOhAz9Yly8TMnZUxBNCzlrntRUhMCMlLQJIqLJ7jUAXAiUvLODNW4HjA==
+X-Received: by 2002:a19:4314:0:b0:523:72b8:8002 with SMTP id 2adb3069b0e04-52b896b4832mr1292417e87.30.1717165562633;
+        Fri, 31 May 2024 07:26:02 -0700 (PDT)
+Received: from [192.168.128.139] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57a31be6525sm1085330a12.56.2024.05.31.07.26.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 31 May 2024 07:26:02 -0700 (PDT)
+Message-ID: <e5f6e9bd-e19e-4997-a646-f3ddee84a5c8@linaro.org>
+Date: Fri, 31 May 2024 16:26:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] Disable SS instances in park mode for SC7180/ SC7280
+To: Doug Anderson <dianders@chromium.org>
+Cc: Krishna Kurapati <quic_kriskura@quicinc.com>,
+ cros-qcom-dts-watchers@chromium.org, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Stephen Boyd <swboyd@chromium.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Matthias Kaehlcke <mka@chromium.org>, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ quic_ppratap@quicinc.com, quic_jackp@quicinc.com
+References: <20240530082556.2960148-1-quic_kriskura@quicinc.com>
+ <CAD=FV=UhrCKCv5R-LAAugrLXFp=cDcj2=Pp9-N3qk5pk2=sGEg@mail.gmail.com>
+ <e732257d-cd16-4e81-9a20-af481184ce0e@linaro.org>
+ <CAD=FV=XO_8SwDLJfoNwwCKEO6CZyMRMY_BdsWMLPBkpczErppA@mail.gmail.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ xsFNBF9ALYUBEADWAhxdTBWrwAgDQQzc1O/bJ5O7b6cXYxwbBd9xKP7MICh5YA0DcCjJSOum
+ BB/OmIWU6X+LZW6P88ZmHe+KeyABLMP5s1tJNK1j4ntT7mECcWZDzafPWF4F6m4WJOG27kTJ
+ HGWdmtO+RvadOVi6CoUDqALsmfS3MUG5Pj2Ne9+0jRg4hEnB92AyF9rW2G3qisFcwPgvatt7
+ TXD5E38mLyOPOUyXNj9XpDbt1hNwKQfiidmPh5e7VNAWRnW1iCMMoKqzM1Anzq7e5Afyeifz
+ zRcQPLaqrPjnKqZGL2BKQSZDh6NkI5ZLRhhHQf61fkWcUpTp1oDC6jWVfT7hwRVIQLrrNj9G
+ MpPzrlN4YuAqKeIer1FMt8cq64ifgTzxHzXsMcUdclzq2LTk2RXaPl6Jg/IXWqUClJHbamSk
+ t1bfif3SnmhA6TiNvEpDKPiT3IDs42THU6ygslrBxyROQPWLI9IL1y8S6RtEh8H+NZQWZNzm
+ UQ3imZirlPjxZtvz1BtnnBWS06e7x/UEAguj7VHCuymVgpl2Za17d1jj81YN5Rp5L9GXxkV1
+ aUEwONM3eCI3qcYm5JNc5X+JthZOWsbIPSC1Rhxz3JmWIwP1udr5E3oNRe9u2LIEq+wH/toH
+ kpPDhTeMkvt4KfE5m5ercid9+ZXAqoaYLUL4HCEw+HW0DXcKDwARAQABzShLb25yYWQgRHli
+ Y2lvIDxrb25yYWQuZHliY2lvQGxpbmFyby5vcmc+wsGOBBMBCAA4FiEEU24if9oCL2zdAAQV
+ R4cBcg5dfFgFAmQ5bqwCGwMFCwkIBwIGFQoJCAsCBBYCAwECHgECF4AACgkQR4cBcg5dfFjO
+ BQ//YQV6fkbqQCceYebGg6TiisWCy8LG77zV7DB0VMIWJv7Km7Sz0QQrHQVzhEr3trNenZrf
+ yy+o2tQOF2biICzbLM8oyQPY8B///KJTWI2khoB8IJSJq3kNG68NjPg2vkP6CMltC/X3ohAo
+ xL2UgwN5vj74QnlNneOjc0vGbtA7zURNhTz5P/YuTudCqcAbxJkbqZM4WymjQhe0XgwHLkiH
+ 5LHSZ31MRKp/+4Kqs4DTXMctc7vFhtUdmatAExDKw8oEz5NbskKbW+qHjW1XUcUIrxRr667V
+ GWH6MkVceT9ZBrtLoSzMLYaQXvi3sSAup0qiJiBYszc/VOu3RbIpNLRcXN3KYuxdQAptacTE
+ mA+5+4Y4DfC3rUSun+hWLDeac9z9jjHm5rE998OqZnOU9aztbd6zQG5VL6EKgsVXAZD4D3RP
+ x1NaAjdA3MD06eyvbOWiA5NSzIcC8UIQvgx09xm7dThCuQYJR4Yxjd+9JPJHI6apzNZpDGvQ
+ BBZzvwxV6L1CojUEpnilmMG1ZOTstktWpNzw3G2Gis0XihDUef0MWVsQYJAl0wfiv/0By+XK
+ mm2zRR+l/dnzxnlbgJ5pO0imC2w0TVxLkAp0eo0LHw619finad2u6UPQAkZ4oj++iIGrJkt5
+ Lkn2XgB+IW8ESflz6nDY3b5KQRF8Z6XLP0+IEdLOOARkOW7yEgorBgEEAZdVAQUBAQdAwmUx
+ xrbSCx2ksDxz7rFFGX1KmTkdRtcgC6F3NfuNYkYDAQgHwsF2BBgBCAAgFiEEU24if9oCL2zd
+ AAQVR4cBcg5dfFgFAmQ5bvICGwwACgkQR4cBcg5dfFju1Q//Xta1ShwL0MLSC1KL1lXGXeRM
+ 8arzfyiB5wJ9tb9U/nZvhhdfilEDLe0jKJY0RJErbdRHsalwQCrtq/1ewQpMpsRxXzAjgfRN
+ jc4tgxRWmI+aVTzSRpywNahzZBT695hMz81cVZJoZzaV0KaMTlSnBkrviPz1nIGHYCHJxF9r
+ cIu0GSIyUjZ/7xslxdvjpLth16H27JCWDzDqIQMtg61063gNyEyWgt1qRSaK14JIH/DoYRfn
+ jfFQSC8bffFjat7BQGFz4ZpRavkMUFuDirn5Tf28oc5ebe2cIHp4/kajTx/7JOxWZ80U70mA
+ cBgEeYSrYYnX+UJsSxpzLc/0sT1eRJDEhI4XIQM4ClIzpsCIN5HnVF76UQXh3a9zpwh3dk8i
+ bhN/URmCOTH+LHNJYN/MxY8wuukq877DWB7k86pBs5IDLAXmW8v3gIDWyIcgYqb2v8QO2Mqx
+ YMqL7UZxVLul4/JbllsQB8F/fNI8AfttmAQL9cwo6C8yDTXKdho920W4WUR9k8NT/OBqWSyk
+ bGqMHex48FVZhexNPYOd58EY9/7mL5u0sJmo+jTeb4JBgIbFPJCFyng4HwbniWgQJZ1WqaUC
+ nas9J77uICis2WH7N8Bs9jy0wQYezNzqS+FxoNXmDQg2jetX8en4bO2Di7Pmx0jXA4TOb9TM
+ izWDgYvmBE8=
+In-Reply-To: <CAD=FV=XO_8SwDLJfoNwwCKEO6CZyMRMY_BdsWMLPBkpczErppA@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-The driver has intel_lpss_platform_info structs for I2C, SPI, and UART.
-The I2C and UART structs are named with "i2c" and "uart" in the variable
-name, whereas SPI ones do not mention "spi".
+On 31.05.2024 4:17 PM, Doug Anderson wrote:
+> Hi,
+> 
+> On Fri, May 31, 2024 at 5:33 AM Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
+>>
+>> On 30.05.2024 3:34 PM, Doug Anderson wrote:
+>>> Hi,
+>>>
+>>> On Thu, May 30, 2024 at 1:26 AM Krishna Kurapati
+>>> <quic_kriskura@quicinc.com> wrote:
+>>>>
+>>>> When working in host mode, in certain conditions, when the USB
+>>>> host controller is stressed, there is a HC died warning that comes up.
+>>>> Fix this up by disabling SS instances in park mode for SC7280 and SC7180.
+>>>>
+>>>> Krishna Kurapati (2):
+>>>>   arm64: dts: qcom: sc7180: Disable SS instances in park mode
+>>>>   arm64: dts: qcom: sc7280: Disable SS instances in park mode
+>>>>
+>>>>  arch/arm64/boot/dts/qcom/sc7180.dtsi | 1 +
+>>>>  arch/arm64/boot/dts/qcom/sc7280.dtsi | 1 +
+>>>>  2 files changed, 2 insertions(+)
+>>>
+>>> FWIW, the test case I used to reproduce this:
+>>>
+>>> 1. Plug in a USB dock w/ Ethernet
+>>> 2. Plug a USB 3 SD card reader into the dock.
+>>> 3. Use lsusb -t to confirm both Ethernet and card reader are on USB3.
+>>> 4. From a shell, run for i in $(seq 5); do dd if=/dev/sdb of=/dev/null
+>>> bs=4M; done to read from the card reader.
+>>> 5. At the same time, stress the Internet. If you've got a very fast
+>>> Internet connection then running Google's "Internet speed test" did
+>>> it, but I could also reproduce by just running this from a PC
+>>> connected to the same network as my DUT: ssh ${DUT} "dd of=/dev/null"
+>>> < /dev/zero
+>>>
+>>> I would also note that, though I personally reproduced this on sc7180
+>>> and sc7280 boards and thus Krishna posted the patch for those boards,
+>>> there's no reason to believe that this problem doesn't affect all of
+>>> Qualcomm's SoCs. It would be nice if someone at Qualcomm could post a
+>>> followup patch fixing this everywhere.
+>>
+>> Right, this sounds like a more widespread issue
+>>
+>> That said, I couldn't reproduce it on SC8280XP / X13s (which does NOT mean
+>> 8280 isn't affected). My setup was:
+>>
+>> - USB3 5GB/s hub plugged into one of the side USBs
+>>   - on-hub 1 Gb /s network hub connected straight to my router with a
+>>     600 / 60 Mbps link, spamming speedtest-cli and dd-over-ssh
+>>   - M.2 SSD connected over a USB adapter, nearing 280 MB/s speeds (the
+>>     adapter isn't particularly speedy)
+>>
+>> So it stands to reason that it might not have been enough to trigger it.
+> 
+> In my case I wasn't using anything nearly as fast as a M.2 SSD. I was
+> just using a normal USB3 SD card reader. That being said, multiple
+> people at Qualcomm were able to replicate the issue without lots of
+> back and forth, so I'd guess that the problem isn't that sensitive to
+> the exact storage device. I will also note that it's not sensitive to
+> the exact network device as I replicated it with two Ethernet adapters
+> with very different chipsets.
+> 
+> My only guess is that somehow SC8280XP is faster and that changes the
+> timing of how it handles interrupts. I guess you could try capping
+> your cpufreq in sysfs and see if that makes a difference in
+> reproducing. ;-) ...or maybe somehow SC8280XP has a newer version of
+> the IP where they've fixed this?
 
-Rename the SPI related info structs to include "spi" in their names for
-consistency and to make it obvious in the device ID list what kind of
-device the line relates to.
+Well, great minds think alike :P I did cap it to f_min on all cores, but
+that didn't change the situation. Might have been worth to check out powering
+off all cores except 0.. I might do that at one point.
 
-Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
----
- drivers/mfd/intel-lpss-pci.c | 162 +++++++++++++++++------------------
- 1 file changed, 81 insertions(+), 81 deletions(-)
+My guess is that with a process node change, they might have used some
+newer/better ip revision though. Remains to be seen.
 
-diff --git a/drivers/mfd/intel-lpss-pci.c b/drivers/mfd/intel-lpss-pci.c
-index c36a101df7be..1362b3f64ade 100644
---- a/drivers/mfd/intel-lpss-pci.c
-+++ b/drivers/mfd/intel-lpss-pci.c
-@@ -103,7 +103,7 @@ static const struct software_node spt_spi_node = {
- 	.properties = spt_spi_properties,
- };
- 
--static const struct intel_lpss_platform_info spt_info = {
-+static const struct intel_lpss_platform_info spt_spi_info = {
- 	.clk_rate = 120000000,
- 	.swnode = &spt_spi_node,
- };
-@@ -148,7 +148,7 @@ static const struct software_node bxt_spi_node = {
- 	.properties = bxt_spi_properties,
- };
- 
--static const struct intel_lpss_platform_info bxt_info = {
-+static const struct intel_lpss_platform_info bxt_spi_info = {
- 	.clk_rate = 100000000,
- 	.swnode = &bxt_spi_node,
- };
-@@ -216,7 +216,7 @@ static const struct software_node cnl_spi_node = {
- 	.properties = cnl_spi_properties,
- };
- 
--static const struct intel_lpss_platform_info cnl_info = {
-+static const struct intel_lpss_platform_info cnl_spi_info = {
- 	.clk_rate = 120000000,
- 	.swnode = &cnl_spi_node,
- };
-@@ -240,7 +240,7 @@ static const struct software_node tgl_spi_node = {
- 	.properties = tgl_spi_properties,
- };
- 
--static const struct intel_lpss_platform_info tgl_info = {
-+static const struct intel_lpss_platform_info tgl_spi_info = {
- 	.clk_rate = 100000000,
- 	.swnode = &tgl_spi_node,
- };
-@@ -249,8 +249,8 @@ static const struct pci_device_id intel_lpss_pci_ids[] = {
- 	/* CML-LP */
- 	{ PCI_VDEVICE(INTEL, 0x02a8), (kernel_ulong_t)&spt_uart_info },
- 	{ PCI_VDEVICE(INTEL, 0x02a9), (kernel_ulong_t)&spt_uart_info },
--	{ PCI_VDEVICE(INTEL, 0x02aa), (kernel_ulong_t)&cnl_info },
--	{ PCI_VDEVICE(INTEL, 0x02ab), (kernel_ulong_t)&cnl_info },
-+	{ PCI_VDEVICE(INTEL, 0x02aa), (kernel_ulong_t)&cnl_spi_info },
-+	{ PCI_VDEVICE(INTEL, 0x02ab), (kernel_ulong_t)&cnl_spi_info },
- 	{ PCI_VDEVICE(INTEL, 0x02c5), (kernel_ulong_t)&cnl_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x02c6), (kernel_ulong_t)&cnl_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x02c7), (kernel_ulong_t)&spt_uart_info },
-@@ -258,18 +258,18 @@ static const struct pci_device_id intel_lpss_pci_ids[] = {
- 	{ PCI_VDEVICE(INTEL, 0x02e9), (kernel_ulong_t)&cnl_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x02ea), (kernel_ulong_t)&cnl_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x02eb), (kernel_ulong_t)&cnl_i2c_info },
--	{ PCI_VDEVICE(INTEL, 0x02fb), (kernel_ulong_t)&cnl_info },
-+	{ PCI_VDEVICE(INTEL, 0x02fb), (kernel_ulong_t)&cnl_spi_info },
- 	/* CML-H */
- 	{ PCI_VDEVICE(INTEL, 0x06a8), (kernel_ulong_t)&spt_uart_info },
- 	{ PCI_VDEVICE(INTEL, 0x06a9), (kernel_ulong_t)&spt_uart_info },
--	{ PCI_VDEVICE(INTEL, 0x06aa), (kernel_ulong_t)&cnl_info },
--	{ PCI_VDEVICE(INTEL, 0x06ab), (kernel_ulong_t)&cnl_info },
-+	{ PCI_VDEVICE(INTEL, 0x06aa), (kernel_ulong_t)&cnl_spi_info },
-+	{ PCI_VDEVICE(INTEL, 0x06ab), (kernel_ulong_t)&cnl_spi_info },
- 	{ PCI_VDEVICE(INTEL, 0x06c7), (kernel_ulong_t)&spt_uart_info },
- 	{ PCI_VDEVICE(INTEL, 0x06e8), (kernel_ulong_t)&cnl_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x06e9), (kernel_ulong_t)&cnl_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x06ea), (kernel_ulong_t)&cnl_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x06eb), (kernel_ulong_t)&cnl_i2c_info },
--	{ PCI_VDEVICE(INTEL, 0x06fb), (kernel_ulong_t)&cnl_info },
-+	{ PCI_VDEVICE(INTEL, 0x06fb), (kernel_ulong_t)&cnl_spi_info },
- 	/* BXT A-Step */
- 	{ PCI_VDEVICE(INTEL, 0x0aac), (kernel_ulong_t)&bxt_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x0aae), (kernel_ulong_t)&bxt_i2c_info },
-@@ -282,9 +282,9 @@ static const struct pci_device_id intel_lpss_pci_ids[] = {
- 	{ PCI_VDEVICE(INTEL, 0x0abc), (kernel_ulong_t)&bxt_uart_info },
- 	{ PCI_VDEVICE(INTEL, 0x0abe), (kernel_ulong_t)&bxt_uart_info },
- 	{ PCI_VDEVICE(INTEL, 0x0ac0), (kernel_ulong_t)&bxt_uart_info },
--	{ PCI_VDEVICE(INTEL, 0x0ac2), (kernel_ulong_t)&bxt_info },
--	{ PCI_VDEVICE(INTEL, 0x0ac4), (kernel_ulong_t)&bxt_info },
--	{ PCI_VDEVICE(INTEL, 0x0ac6), (kernel_ulong_t)&bxt_info },
-+	{ PCI_VDEVICE(INTEL, 0x0ac2), (kernel_ulong_t)&bxt_spi_info },
-+	{ PCI_VDEVICE(INTEL, 0x0ac4), (kernel_ulong_t)&bxt_spi_info },
-+	{ PCI_VDEVICE(INTEL, 0x0ac6), (kernel_ulong_t)&bxt_spi_info },
- 	{ PCI_VDEVICE(INTEL, 0x0aee), (kernel_ulong_t)&bxt_uart_info },
- 	/* BXT B-Step */
- 	{ PCI_VDEVICE(INTEL, 0x1aac), (kernel_ulong_t)&bxt_i2c_info },
-@@ -298,9 +298,9 @@ static const struct pci_device_id intel_lpss_pci_ids[] = {
- 	{ PCI_VDEVICE(INTEL, 0x1abc), (kernel_ulong_t)&bxt_uart_info },
- 	{ PCI_VDEVICE(INTEL, 0x1abe), (kernel_ulong_t)&bxt_uart_info },
- 	{ PCI_VDEVICE(INTEL, 0x1ac0), (kernel_ulong_t)&bxt_uart_info },
--	{ PCI_VDEVICE(INTEL, 0x1ac2), (kernel_ulong_t)&bxt_info },
--	{ PCI_VDEVICE(INTEL, 0x1ac4), (kernel_ulong_t)&bxt_info },
--	{ PCI_VDEVICE(INTEL, 0x1ac6), (kernel_ulong_t)&bxt_info },
-+	{ PCI_VDEVICE(INTEL, 0x1ac2), (kernel_ulong_t)&bxt_spi_info },
-+	{ PCI_VDEVICE(INTEL, 0x1ac4), (kernel_ulong_t)&bxt_spi_info },
-+	{ PCI_VDEVICE(INTEL, 0x1ac6), (kernel_ulong_t)&bxt_spi_info },
- 	{ PCI_VDEVICE(INTEL, 0x1aee), (kernel_ulong_t)&bxt_uart_info },
- 	/* EBG */
- 	{ PCI_VDEVICE(INTEL, 0x1bad), (kernel_ulong_t)&bxt_uart_info },
-@@ -317,15 +317,15 @@ static const struct pci_device_id intel_lpss_pci_ids[] = {
- 	{ PCI_VDEVICE(INTEL, 0x31bc), (kernel_ulong_t)&bxt_uart_info },
- 	{ PCI_VDEVICE(INTEL, 0x31be), (kernel_ulong_t)&bxt_uart_info },
- 	{ PCI_VDEVICE(INTEL, 0x31c0), (kernel_ulong_t)&bxt_uart_info },
--	{ PCI_VDEVICE(INTEL, 0x31c2), (kernel_ulong_t)&bxt_info },
--	{ PCI_VDEVICE(INTEL, 0x31c4), (kernel_ulong_t)&bxt_info },
--	{ PCI_VDEVICE(INTEL, 0x31c6), (kernel_ulong_t)&bxt_info },
-+	{ PCI_VDEVICE(INTEL, 0x31c2), (kernel_ulong_t)&bxt_spi_info },
-+	{ PCI_VDEVICE(INTEL, 0x31c4), (kernel_ulong_t)&bxt_spi_info },
-+	{ PCI_VDEVICE(INTEL, 0x31c6), (kernel_ulong_t)&bxt_spi_info },
- 	{ PCI_VDEVICE(INTEL, 0x31ee), (kernel_ulong_t)&bxt_uart_info },
- 	/* ICL-LP */
- 	{ PCI_VDEVICE(INTEL, 0x34a8), (kernel_ulong_t)&spt_uart_info },
- 	{ PCI_VDEVICE(INTEL, 0x34a9), (kernel_ulong_t)&spt_uart_info },
--	{ PCI_VDEVICE(INTEL, 0x34aa), (kernel_ulong_t)&cnl_info },
--	{ PCI_VDEVICE(INTEL, 0x34ab), (kernel_ulong_t)&cnl_info },
-+	{ PCI_VDEVICE(INTEL, 0x34aa), (kernel_ulong_t)&cnl_spi_info },
-+	{ PCI_VDEVICE(INTEL, 0x34ab), (kernel_ulong_t)&cnl_spi_info },
- 	{ PCI_VDEVICE(INTEL, 0x34c5), (kernel_ulong_t)&bxt_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x34c6), (kernel_ulong_t)&bxt_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x34c7), (kernel_ulong_t)&spt_uart_info },
-@@ -333,15 +333,15 @@ static const struct pci_device_id intel_lpss_pci_ids[] = {
- 	{ PCI_VDEVICE(INTEL, 0x34e9), (kernel_ulong_t)&bxt_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x34ea), (kernel_ulong_t)&bxt_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x34eb), (kernel_ulong_t)&bxt_i2c_info },
--	{ PCI_VDEVICE(INTEL, 0x34fb), (kernel_ulong_t)&cnl_info },
-+	{ PCI_VDEVICE(INTEL, 0x34fb), (kernel_ulong_t)&cnl_spi_info },
- 	/* ICL-N */
- 	{ PCI_VDEVICE(INTEL, 0x38a8), (kernel_ulong_t)&spt_uart_info },
- 	/* TGL-H */
- 	{ PCI_VDEVICE(INTEL, 0x43a7), (kernel_ulong_t)&bxt_uart_info },
- 	{ PCI_VDEVICE(INTEL, 0x43a8), (kernel_ulong_t)&bxt_uart_info },
- 	{ PCI_VDEVICE(INTEL, 0x43a9), (kernel_ulong_t)&bxt_uart_info },
--	{ PCI_VDEVICE(INTEL, 0x43aa), (kernel_ulong_t)&tgl_info },
--	{ PCI_VDEVICE(INTEL, 0x43ab), (kernel_ulong_t)&tgl_info },
-+	{ PCI_VDEVICE(INTEL, 0x43aa), (kernel_ulong_t)&tgl_spi_info },
-+	{ PCI_VDEVICE(INTEL, 0x43ab), (kernel_ulong_t)&tgl_spi_info },
- 	{ PCI_VDEVICE(INTEL, 0x43ad), (kernel_ulong_t)&bxt_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x43ae), (kernel_ulong_t)&bxt_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x43d8), (kernel_ulong_t)&bxt_i2c_info },
-@@ -350,14 +350,14 @@ static const struct pci_device_id intel_lpss_pci_ids[] = {
- 	{ PCI_VDEVICE(INTEL, 0x43e9), (kernel_ulong_t)&bxt_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x43ea), (kernel_ulong_t)&bxt_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x43eb), (kernel_ulong_t)&bxt_i2c_info },
--	{ PCI_VDEVICE(INTEL, 0x43fb), (kernel_ulong_t)&tgl_info },
--	{ PCI_VDEVICE(INTEL, 0x43fd), (kernel_ulong_t)&tgl_info },
-+	{ PCI_VDEVICE(INTEL, 0x43fb), (kernel_ulong_t)&tgl_spi_info },
-+	{ PCI_VDEVICE(INTEL, 0x43fd), (kernel_ulong_t)&tgl_spi_info },
- 	/* EHL */
- 	{ PCI_VDEVICE(INTEL, 0x4b28), (kernel_ulong_t)&bxt_uart_info },
- 	{ PCI_VDEVICE(INTEL, 0x4b29), (kernel_ulong_t)&bxt_uart_info },
--	{ PCI_VDEVICE(INTEL, 0x4b2a), (kernel_ulong_t)&bxt_info },
--	{ PCI_VDEVICE(INTEL, 0x4b2b), (kernel_ulong_t)&bxt_info },
--	{ PCI_VDEVICE(INTEL, 0x4b37), (kernel_ulong_t)&bxt_info },
-+	{ PCI_VDEVICE(INTEL, 0x4b2a), (kernel_ulong_t)&bxt_spi_info },
-+	{ PCI_VDEVICE(INTEL, 0x4b2b), (kernel_ulong_t)&bxt_spi_info },
-+	{ PCI_VDEVICE(INTEL, 0x4b37), (kernel_ulong_t)&bxt_spi_info },
- 	{ PCI_VDEVICE(INTEL, 0x4b44), (kernel_ulong_t)&ehl_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x4b45), (kernel_ulong_t)&ehl_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x4b4b), (kernel_ulong_t)&ehl_i2c_info },
-@@ -370,8 +370,8 @@ static const struct pci_device_id intel_lpss_pci_ids[] = {
- 	/* JSL */
- 	{ PCI_VDEVICE(INTEL, 0x4da8), (kernel_ulong_t)&spt_uart_info },
- 	{ PCI_VDEVICE(INTEL, 0x4da9), (kernel_ulong_t)&spt_uart_info },
--	{ PCI_VDEVICE(INTEL, 0x4daa), (kernel_ulong_t)&cnl_info },
--	{ PCI_VDEVICE(INTEL, 0x4dab), (kernel_ulong_t)&cnl_info },
-+	{ PCI_VDEVICE(INTEL, 0x4daa), (kernel_ulong_t)&cnl_spi_info },
-+	{ PCI_VDEVICE(INTEL, 0x4dab), (kernel_ulong_t)&cnl_spi_info },
- 	{ PCI_VDEVICE(INTEL, 0x4dc5), (kernel_ulong_t)&bxt_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x4dc6), (kernel_ulong_t)&bxt_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x4dc7), (kernel_ulong_t)&spt_uart_info },
-@@ -379,12 +379,12 @@ static const struct pci_device_id intel_lpss_pci_ids[] = {
- 	{ PCI_VDEVICE(INTEL, 0x4de9), (kernel_ulong_t)&bxt_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x4dea), (kernel_ulong_t)&bxt_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x4deb), (kernel_ulong_t)&bxt_i2c_info },
--	{ PCI_VDEVICE(INTEL, 0x4dfb), (kernel_ulong_t)&cnl_info },
-+	{ PCI_VDEVICE(INTEL, 0x4dfb), (kernel_ulong_t)&cnl_spi_info },
- 	/* ADL-P */
- 	{ PCI_VDEVICE(INTEL, 0x51a8), (kernel_ulong_t)&bxt_uart_info },
- 	{ PCI_VDEVICE(INTEL, 0x51a9), (kernel_ulong_t)&bxt_uart_info },
--	{ PCI_VDEVICE(INTEL, 0x51aa), (kernel_ulong_t)&tgl_info },
--	{ PCI_VDEVICE(INTEL, 0x51ab), (kernel_ulong_t)&tgl_info },
-+	{ PCI_VDEVICE(INTEL, 0x51aa), (kernel_ulong_t)&tgl_spi_info },
-+	{ PCI_VDEVICE(INTEL, 0x51ab), (kernel_ulong_t)&tgl_spi_info },
- 	{ PCI_VDEVICE(INTEL, 0x51c5), (kernel_ulong_t)&bxt_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x51c6), (kernel_ulong_t)&bxt_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x51c7), (kernel_ulong_t)&bxt_uart_info },
-@@ -394,12 +394,12 @@ static const struct pci_device_id intel_lpss_pci_ids[] = {
- 	{ PCI_VDEVICE(INTEL, 0x51e9), (kernel_ulong_t)&bxt_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x51ea), (kernel_ulong_t)&bxt_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x51eb), (kernel_ulong_t)&bxt_i2c_info },
--	{ PCI_VDEVICE(INTEL, 0x51fb), (kernel_ulong_t)&tgl_info },
-+	{ PCI_VDEVICE(INTEL, 0x51fb), (kernel_ulong_t)&tgl_spi_info },
- 	/* ADL-M */
- 	{ PCI_VDEVICE(INTEL, 0x54a8), (kernel_ulong_t)&bxt_uart_info },
- 	{ PCI_VDEVICE(INTEL, 0x54a9), (kernel_ulong_t)&bxt_uart_info },
--	{ PCI_VDEVICE(INTEL, 0x54aa), (kernel_ulong_t)&tgl_info },
--	{ PCI_VDEVICE(INTEL, 0x54ab), (kernel_ulong_t)&tgl_info },
-+	{ PCI_VDEVICE(INTEL, 0x54aa), (kernel_ulong_t)&tgl_spi_info },
-+	{ PCI_VDEVICE(INTEL, 0x54ab), (kernel_ulong_t)&tgl_spi_info },
- 	{ PCI_VDEVICE(INTEL, 0x54c5), (kernel_ulong_t)&bxt_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x54c6), (kernel_ulong_t)&bxt_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x54c7), (kernel_ulong_t)&bxt_uart_info },
-@@ -407,7 +407,7 @@ static const struct pci_device_id intel_lpss_pci_ids[] = {
- 	{ PCI_VDEVICE(INTEL, 0x54e9), (kernel_ulong_t)&bxt_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x54ea), (kernel_ulong_t)&bxt_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x54eb), (kernel_ulong_t)&bxt_i2c_info },
--	{ PCI_VDEVICE(INTEL, 0x54fb), (kernel_ulong_t)&tgl_info },
-+	{ PCI_VDEVICE(INTEL, 0x54fb), (kernel_ulong_t)&tgl_spi_info },
- 	/* APL */
- 	{ PCI_VDEVICE(INTEL, 0x5aac), (kernel_ulong_t)&apl_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x5aae), (kernel_ulong_t)&apl_i2c_info },
-@@ -420,46 +420,46 @@ static const struct pci_device_id intel_lpss_pci_ids[] = {
- 	{ PCI_VDEVICE(INTEL, 0x5abc), (kernel_ulong_t)&bxt_uart_info },
- 	{ PCI_VDEVICE(INTEL, 0x5abe), (kernel_ulong_t)&bxt_uart_info },
- 	{ PCI_VDEVICE(INTEL, 0x5ac0), (kernel_ulong_t)&bxt_uart_info },
--	{ PCI_VDEVICE(INTEL, 0x5ac2), (kernel_ulong_t)&bxt_info },
--	{ PCI_VDEVICE(INTEL, 0x5ac4), (kernel_ulong_t)&bxt_info },
--	{ PCI_VDEVICE(INTEL, 0x5ac6), (kernel_ulong_t)&bxt_info },
-+	{ PCI_VDEVICE(INTEL, 0x5ac2), (kernel_ulong_t)&bxt_spi_info },
-+	{ PCI_VDEVICE(INTEL, 0x5ac4), (kernel_ulong_t)&bxt_spi_info },
-+	{ PCI_VDEVICE(INTEL, 0x5ac6), (kernel_ulong_t)&bxt_spi_info },
- 	{ PCI_VDEVICE(INTEL, 0x5aee), (kernel_ulong_t)&bxt_uart_info },
- 	/* RPL-S */
- 	{ PCI_VDEVICE(INTEL, 0x7a28), (kernel_ulong_t)&bxt_uart_info },
- 	{ PCI_VDEVICE(INTEL, 0x7a29), (kernel_ulong_t)&bxt_uart_info },
--	{ PCI_VDEVICE(INTEL, 0x7a2a), (kernel_ulong_t)&tgl_info },
--	{ PCI_VDEVICE(INTEL, 0x7a2b), (kernel_ulong_t)&tgl_info },
-+	{ PCI_VDEVICE(INTEL, 0x7a2a), (kernel_ulong_t)&tgl_spi_info },
-+	{ PCI_VDEVICE(INTEL, 0x7a2b), (kernel_ulong_t)&tgl_spi_info },
- 	{ PCI_VDEVICE(INTEL, 0x7a4c), (kernel_ulong_t)&bxt_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x7a4d), (kernel_ulong_t)&bxt_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x7a4e), (kernel_ulong_t)&bxt_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x7a4f), (kernel_ulong_t)&bxt_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x7a5c), (kernel_ulong_t)&bxt_uart_info },
--	{ PCI_VDEVICE(INTEL, 0x7a79), (kernel_ulong_t)&tgl_info },
--	{ PCI_VDEVICE(INTEL, 0x7a7b), (kernel_ulong_t)&tgl_info },
-+	{ PCI_VDEVICE(INTEL, 0x7a79), (kernel_ulong_t)&tgl_spi_info },
-+	{ PCI_VDEVICE(INTEL, 0x7a7b), (kernel_ulong_t)&tgl_spi_info },
- 	{ PCI_VDEVICE(INTEL, 0x7a7c), (kernel_ulong_t)&bxt_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x7a7d), (kernel_ulong_t)&bxt_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x7a7e), (kernel_ulong_t)&bxt_uart_info },
- 	/* ADL-S */
- 	{ PCI_VDEVICE(INTEL, 0x7aa8), (kernel_ulong_t)&bxt_uart_info },
- 	{ PCI_VDEVICE(INTEL, 0x7aa9), (kernel_ulong_t)&bxt_uart_info },
--	{ PCI_VDEVICE(INTEL, 0x7aaa), (kernel_ulong_t)&tgl_info },
--	{ PCI_VDEVICE(INTEL, 0x7aab), (kernel_ulong_t)&tgl_info },
-+	{ PCI_VDEVICE(INTEL, 0x7aaa), (kernel_ulong_t)&tgl_spi_info },
-+	{ PCI_VDEVICE(INTEL, 0x7aab), (kernel_ulong_t)&tgl_spi_info },
- 	{ PCI_VDEVICE(INTEL, 0x7acc), (kernel_ulong_t)&bxt_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x7acd), (kernel_ulong_t)&bxt_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x7ace), (kernel_ulong_t)&bxt_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x7acf), (kernel_ulong_t)&bxt_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x7adc), (kernel_ulong_t)&bxt_uart_info },
--	{ PCI_VDEVICE(INTEL, 0x7af9), (kernel_ulong_t)&tgl_info },
--	{ PCI_VDEVICE(INTEL, 0x7afb), (kernel_ulong_t)&tgl_info },
-+	{ PCI_VDEVICE(INTEL, 0x7af9), (kernel_ulong_t)&tgl_spi_info },
-+	{ PCI_VDEVICE(INTEL, 0x7afb), (kernel_ulong_t)&tgl_spi_info },
- 	{ PCI_VDEVICE(INTEL, 0x7afc), (kernel_ulong_t)&bxt_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x7afd), (kernel_ulong_t)&bxt_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x7afe), (kernel_ulong_t)&bxt_uart_info },
- 	/* MTL-P */
- 	{ PCI_VDEVICE(INTEL, 0x7e25), (kernel_ulong_t)&bxt_uart_info },
- 	{ PCI_VDEVICE(INTEL, 0x7e26), (kernel_ulong_t)&bxt_uart_info },
--	{ PCI_VDEVICE(INTEL, 0x7e27), (kernel_ulong_t)&tgl_info },
--	{ PCI_VDEVICE(INTEL, 0x7e30), (kernel_ulong_t)&tgl_info },
--	{ PCI_VDEVICE(INTEL, 0x7e46), (kernel_ulong_t)&tgl_info },
-+	{ PCI_VDEVICE(INTEL, 0x7e27), (kernel_ulong_t)&tgl_spi_info },
-+	{ PCI_VDEVICE(INTEL, 0x7e30), (kernel_ulong_t)&tgl_spi_info },
-+	{ PCI_VDEVICE(INTEL, 0x7e46), (kernel_ulong_t)&tgl_spi_info },
- 	{ PCI_VDEVICE(INTEL, 0x7e50), (kernel_ulong_t)&bxt_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x7e51), (kernel_ulong_t)&bxt_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x7e52), (kernel_ulong_t)&bxt_uart_info },
-@@ -470,22 +470,22 @@ static const struct pci_device_id intel_lpss_pci_ids[] = {
- 	/* MTP-S */
- 	{ PCI_VDEVICE(INTEL, 0x7f28), (kernel_ulong_t)&bxt_uart_info },
- 	{ PCI_VDEVICE(INTEL, 0x7f29), (kernel_ulong_t)&bxt_uart_info },
--	{ PCI_VDEVICE(INTEL, 0x7f2a), (kernel_ulong_t)&tgl_info },
--	{ PCI_VDEVICE(INTEL, 0x7f2b), (kernel_ulong_t)&tgl_info },
-+	{ PCI_VDEVICE(INTEL, 0x7f2a), (kernel_ulong_t)&tgl_spi_info },
-+	{ PCI_VDEVICE(INTEL, 0x7f2b), (kernel_ulong_t)&tgl_spi_info },
- 	{ PCI_VDEVICE(INTEL, 0x7f4c), (kernel_ulong_t)&bxt_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x7f4d), (kernel_ulong_t)&bxt_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x7f4e), (kernel_ulong_t)&bxt_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x7f4f), (kernel_ulong_t)&bxt_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x7f5c), (kernel_ulong_t)&bxt_uart_info },
- 	{ PCI_VDEVICE(INTEL, 0x7f5d), (kernel_ulong_t)&bxt_uart_info },
--	{ PCI_VDEVICE(INTEL, 0x7f5e), (kernel_ulong_t)&tgl_info },
--	{ PCI_VDEVICE(INTEL, 0x7f5f), (kernel_ulong_t)&tgl_info },
-+	{ PCI_VDEVICE(INTEL, 0x7f5e), (kernel_ulong_t)&tgl_spi_info },
-+	{ PCI_VDEVICE(INTEL, 0x7f5f), (kernel_ulong_t)&tgl_spi_info },
- 	{ PCI_VDEVICE(INTEL, 0x7f7a), (kernel_ulong_t)&bxt_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x7f7b), (kernel_ulong_t)&bxt_i2c_info },
- 	/* LKF */
- 	{ PCI_VDEVICE(INTEL, 0x98a8), (kernel_ulong_t)&bxt_uart_info },
- 	{ PCI_VDEVICE(INTEL, 0x98a9), (kernel_ulong_t)&bxt_uart_info },
--	{ PCI_VDEVICE(INTEL, 0x98aa), (kernel_ulong_t)&bxt_info },
-+	{ PCI_VDEVICE(INTEL, 0x98aa), (kernel_ulong_t)&bxt_spi_info },
- 	{ PCI_VDEVICE(INTEL, 0x98c5), (kernel_ulong_t)&bxt_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x98c6), (kernel_ulong_t)&bxt_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x98c7), (kernel_ulong_t)&bxt_uart_info },
-@@ -496,8 +496,8 @@ static const struct pci_device_id intel_lpss_pci_ids[] = {
- 	/* SPT-LP */
- 	{ PCI_VDEVICE(INTEL, 0x9d27), (kernel_ulong_t)&spt_uart_info },
- 	{ PCI_VDEVICE(INTEL, 0x9d28), (kernel_ulong_t)&spt_uart_info },
--	{ PCI_VDEVICE(INTEL, 0x9d29), (kernel_ulong_t)&spt_info },
--	{ PCI_VDEVICE(INTEL, 0x9d2a), (kernel_ulong_t)&spt_info },
-+	{ PCI_VDEVICE(INTEL, 0x9d29), (kernel_ulong_t)&spt_spi_info },
-+	{ PCI_VDEVICE(INTEL, 0x9d2a), (kernel_ulong_t)&spt_spi_info },
- 	{ PCI_VDEVICE(INTEL, 0x9d60), (kernel_ulong_t)&spt_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x9d61), (kernel_ulong_t)&spt_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x9d62), (kernel_ulong_t)&spt_i2c_info },
-@@ -508,8 +508,8 @@ static const struct pci_device_id intel_lpss_pci_ids[] = {
- 	/* CNL-LP */
- 	{ PCI_VDEVICE(INTEL, 0x9da8), (kernel_ulong_t)&spt_uart_info },
- 	{ PCI_VDEVICE(INTEL, 0x9da9), (kernel_ulong_t)&spt_uart_info },
--	{ PCI_VDEVICE(INTEL, 0x9daa), (kernel_ulong_t)&cnl_info },
--	{ PCI_VDEVICE(INTEL, 0x9dab), (kernel_ulong_t)&cnl_info },
-+	{ PCI_VDEVICE(INTEL, 0x9daa), (kernel_ulong_t)&cnl_spi_info },
-+	{ PCI_VDEVICE(INTEL, 0x9dab), (kernel_ulong_t)&cnl_spi_info },
- 	{ PCI_VDEVICE(INTEL, 0x9dc5), (kernel_ulong_t)&cnl_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x9dc6), (kernel_ulong_t)&cnl_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x9dc7), (kernel_ulong_t)&spt_uart_info },
-@@ -517,12 +517,12 @@ static const struct pci_device_id intel_lpss_pci_ids[] = {
- 	{ PCI_VDEVICE(INTEL, 0x9de9), (kernel_ulong_t)&cnl_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x9dea), (kernel_ulong_t)&cnl_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x9deb), (kernel_ulong_t)&cnl_i2c_info },
--	{ PCI_VDEVICE(INTEL, 0x9dfb), (kernel_ulong_t)&cnl_info },
-+	{ PCI_VDEVICE(INTEL, 0x9dfb), (kernel_ulong_t)&cnl_spi_info },
- 	/* TGL-LP */
- 	{ PCI_VDEVICE(INTEL, 0xa0a8), (kernel_ulong_t)&bxt_uart_info },
- 	{ PCI_VDEVICE(INTEL, 0xa0a9), (kernel_ulong_t)&bxt_uart_info },
--	{ PCI_VDEVICE(INTEL, 0xa0aa), (kernel_ulong_t)&cnl_info },
--	{ PCI_VDEVICE(INTEL, 0xa0ab), (kernel_ulong_t)&cnl_info },
-+	{ PCI_VDEVICE(INTEL, 0xa0aa), (kernel_ulong_t)&cnl_spi_info },
-+	{ PCI_VDEVICE(INTEL, 0xa0ab), (kernel_ulong_t)&cnl_spi_info },
- 	{ PCI_VDEVICE(INTEL, 0xa0c5), (kernel_ulong_t)&spt_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0xa0c6), (kernel_ulong_t)&spt_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0xa0c7), (kernel_ulong_t)&bxt_uart_info },
-@@ -532,20 +532,20 @@ static const struct pci_device_id intel_lpss_pci_ids[] = {
- 	{ PCI_VDEVICE(INTEL, 0xa0db), (kernel_ulong_t)&bxt_uart_info },
- 	{ PCI_VDEVICE(INTEL, 0xa0dc), (kernel_ulong_t)&bxt_uart_info },
- 	{ PCI_VDEVICE(INTEL, 0xa0dd), (kernel_ulong_t)&bxt_uart_info },
--	{ PCI_VDEVICE(INTEL, 0xa0de), (kernel_ulong_t)&cnl_info },
--	{ PCI_VDEVICE(INTEL, 0xa0df), (kernel_ulong_t)&cnl_info },
-+	{ PCI_VDEVICE(INTEL, 0xa0de), (kernel_ulong_t)&cnl_spi_info },
-+	{ PCI_VDEVICE(INTEL, 0xa0df), (kernel_ulong_t)&cnl_spi_info },
- 	{ PCI_VDEVICE(INTEL, 0xa0e8), (kernel_ulong_t)&spt_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0xa0e9), (kernel_ulong_t)&spt_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0xa0ea), (kernel_ulong_t)&spt_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0xa0eb), (kernel_ulong_t)&spt_i2c_info },
--	{ PCI_VDEVICE(INTEL, 0xa0fb), (kernel_ulong_t)&cnl_info },
--	{ PCI_VDEVICE(INTEL, 0xa0fd), (kernel_ulong_t)&cnl_info },
--	{ PCI_VDEVICE(INTEL, 0xa0fe), (kernel_ulong_t)&cnl_info },
-+	{ PCI_VDEVICE(INTEL, 0xa0fb), (kernel_ulong_t)&cnl_spi_info },
-+	{ PCI_VDEVICE(INTEL, 0xa0fd), (kernel_ulong_t)&cnl_spi_info },
-+	{ PCI_VDEVICE(INTEL, 0xa0fe), (kernel_ulong_t)&cnl_spi_info },
- 	/* SPT-H */
- 	{ PCI_VDEVICE(INTEL, 0xa127), (kernel_ulong_t)&spt_uart_info },
- 	{ PCI_VDEVICE(INTEL, 0xa128), (kernel_ulong_t)&spt_uart_info },
--	{ PCI_VDEVICE(INTEL, 0xa129), (kernel_ulong_t)&spt_info },
--	{ PCI_VDEVICE(INTEL, 0xa12a), (kernel_ulong_t)&spt_info },
-+	{ PCI_VDEVICE(INTEL, 0xa129), (kernel_ulong_t)&spt_spi_info },
-+	{ PCI_VDEVICE(INTEL, 0xa12a), (kernel_ulong_t)&spt_spi_info },
- 	{ PCI_VDEVICE(INTEL, 0xa160), (kernel_ulong_t)&spt_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0xa161), (kernel_ulong_t)&spt_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0xa162), (kernel_ulong_t)&spt_i2c_info },
-@@ -553,8 +553,8 @@ static const struct pci_device_id intel_lpss_pci_ids[] = {
- 	/* KBL-H */
- 	{ PCI_VDEVICE(INTEL, 0xa2a7), (kernel_ulong_t)&spt_uart_info },
- 	{ PCI_VDEVICE(INTEL, 0xa2a8), (kernel_ulong_t)&spt_uart_info },
--	{ PCI_VDEVICE(INTEL, 0xa2a9), (kernel_ulong_t)&spt_info },
--	{ PCI_VDEVICE(INTEL, 0xa2aa), (kernel_ulong_t)&spt_info },
-+	{ PCI_VDEVICE(INTEL, 0xa2a9), (kernel_ulong_t)&spt_spi_info },
-+	{ PCI_VDEVICE(INTEL, 0xa2aa), (kernel_ulong_t)&spt_spi_info },
- 	{ PCI_VDEVICE(INTEL, 0xa2e0), (kernel_ulong_t)&spt_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0xa2e1), (kernel_ulong_t)&spt_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0xa2e2), (kernel_ulong_t)&spt_i2c_info },
-@@ -563,19 +563,19 @@ static const struct pci_device_id intel_lpss_pci_ids[] = {
- 	/* CNL-H */
- 	{ PCI_VDEVICE(INTEL, 0xa328), (kernel_ulong_t)&spt_uart_info },
- 	{ PCI_VDEVICE(INTEL, 0xa329), (kernel_ulong_t)&spt_uart_info },
--	{ PCI_VDEVICE(INTEL, 0xa32a), (kernel_ulong_t)&cnl_info },
--	{ PCI_VDEVICE(INTEL, 0xa32b), (kernel_ulong_t)&cnl_info },
-+	{ PCI_VDEVICE(INTEL, 0xa32a), (kernel_ulong_t)&cnl_spi_info },
-+	{ PCI_VDEVICE(INTEL, 0xa32b), (kernel_ulong_t)&cnl_spi_info },
- 	{ PCI_VDEVICE(INTEL, 0xa347), (kernel_ulong_t)&spt_uart_info },
- 	{ PCI_VDEVICE(INTEL, 0xa368), (kernel_ulong_t)&cnl_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0xa369), (kernel_ulong_t)&cnl_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0xa36a), (kernel_ulong_t)&cnl_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0xa36b), (kernel_ulong_t)&cnl_i2c_info },
--	{ PCI_VDEVICE(INTEL, 0xa37b), (kernel_ulong_t)&cnl_info },
-+	{ PCI_VDEVICE(INTEL, 0xa37b), (kernel_ulong_t)&cnl_spi_info },
- 	/* CML-V */
- 	{ PCI_VDEVICE(INTEL, 0xa3a7), (kernel_ulong_t)&spt_uart_info },
- 	{ PCI_VDEVICE(INTEL, 0xa3a8), (kernel_ulong_t)&spt_uart_info },
--	{ PCI_VDEVICE(INTEL, 0xa3a9), (kernel_ulong_t)&spt_info },
--	{ PCI_VDEVICE(INTEL, 0xa3aa), (kernel_ulong_t)&spt_info },
-+	{ PCI_VDEVICE(INTEL, 0xa3a9), (kernel_ulong_t)&spt_spi_info },
-+	{ PCI_VDEVICE(INTEL, 0xa3aa), (kernel_ulong_t)&spt_spi_info },
- 	{ PCI_VDEVICE(INTEL, 0xa3e0), (kernel_ulong_t)&spt_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0xa3e1), (kernel_ulong_t)&spt_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0xa3e2), (kernel_ulong_t)&spt_i2c_info },
-@@ -584,9 +584,9 @@ static const struct pci_device_id intel_lpss_pci_ids[] = {
- 	/* LNL-M */
- 	{ PCI_VDEVICE(INTEL, 0xa825), (kernel_ulong_t)&bxt_uart_info },
- 	{ PCI_VDEVICE(INTEL, 0xa826), (kernel_ulong_t)&bxt_uart_info },
--	{ PCI_VDEVICE(INTEL, 0xa827), (kernel_ulong_t)&tgl_info },
--	{ PCI_VDEVICE(INTEL, 0xa830), (kernel_ulong_t)&tgl_info },
--	{ PCI_VDEVICE(INTEL, 0xa846), (kernel_ulong_t)&tgl_info },
-+	{ PCI_VDEVICE(INTEL, 0xa827), (kernel_ulong_t)&tgl_spi_info },
-+	{ PCI_VDEVICE(INTEL, 0xa830), (kernel_ulong_t)&tgl_spi_info },
-+	{ PCI_VDEVICE(INTEL, 0xa846), (kernel_ulong_t)&tgl_spi_info },
- 	{ PCI_VDEVICE(INTEL, 0xa850), (kernel_ulong_t)&ehl_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0xa851), (kernel_ulong_t)&ehl_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0xa852), (kernel_ulong_t)&bxt_uart_info },
--- 
-2.39.2
+Konrad
 
+> 
+> It would be interesting if someone with a SDM845 dragonboard could try
+> replicating since that seems highly likely to reproduce, at least.
+> 
+> -Doug
 
