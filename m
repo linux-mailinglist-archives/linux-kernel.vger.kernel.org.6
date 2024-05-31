@@ -1,152 +1,106 @@
-Return-Path: <linux-kernel+bounces-197067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1E388D65BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:30:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76FD38D65BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:30:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75D8D1F222D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 15:30:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 330932831A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 15:30:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A972579B7E;
-	Fri, 31 May 2024 15:30:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7811E78C7A;
+	Fri, 31 May 2024 15:30:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g+yjWoVQ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KFJEN/L0"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7970A4C7C;
-	Fri, 31 May 2024 15:30:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 281D91859;
+	Fri, 31 May 2024 15:30:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717169427; cv=none; b=KxNYqM5Ama1tRB88aRp432zPq5Kjj7KRqyGLZlmMHfU28xh3u/ZuJcwuzvyBs64/sRdRUGsifiERzZcTKmBo/+8QRzRMJLZYLS/kOJVh5Hngfxv0A5aOhgy1usKe8ixXTUcfbEPOyGM8mhyc0u//Hye2J0OxHaDvGnJhodXgChY=
+	t=1717169436; cv=none; b=Yz480NWFwolF2vNcAA6HDdkCzJ5keGr3ySpYg/20RLHxJLp+GoMg86aZSrFbNTS5OULoLtMlD/JNsjoxKU1pMF4VsC90/cqyxZGztsezXQ4+KmSqJwl81y2addzqv3/UMblH8bxylKrkcHuecISwEKpZCF649mRQL1HbXzQ+Lhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717169427; c=relaxed/simple;
-	bh=LMKo8cO4a5a84Rip7QNsCoS0nQcXswBiCLWRnMnn6yQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b6rfwoAIi25iZ7Mi1p7+pHDCRp9Q88QTeJpzg0QLbkh4rV0V+y1SCz4t5be7+DRrsuSx6mICRlEhrGLSk1OsEyw8UqxyViIzsokAifqMKqui2bSzU7WjhkC9gllzoRVw4hExqCreNCdMDQxitW+gxJCUk7YLHAyqi67Pw3c1k4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g+yjWoVQ; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717169426; x=1748705426;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=LMKo8cO4a5a84Rip7QNsCoS0nQcXswBiCLWRnMnn6yQ=;
-  b=g+yjWoVQWyyKapB2k4A0YXAIfY61qZfPY1Zt+4HpcYgVJhQFhqRKMbu4
-   /xm2IhOYP5PlLfksTiYv1pdK7EwW7kiDpTc8+9NBWZ6R0jcCMkdzL+JmU
-   9rG8FsyH0hws4wiUH2KZ1WoGg3T08h1DkOgmUX9z8CmvDNcOJtIVrp1/N
-   GJIEFHDLHnv/KhrCTPp/8tUoIz3b7ibsw9awQjCxkijcThRCyAXvCKnua
-   rTYkSJ1Rleh9WrhTg+jPtLPnAMeV50DKjjfMiaPZ8Mn6lyPB9mjVxVUUu
-   01XD/KmCBvTIpbpNoLBUVbptXQ7h4+9XmNl4WdUZVXIS/sMhJTA/xVnks
-   w==;
-X-CSE-ConnectionGUID: S5qer6VeQqKTjOua9K04vA==
-X-CSE-MsgGUID: AaJyaOCUTWmgNCX6qO+qxQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="17514218"
-X-IronPort-AV: E=Sophos;i="6.08,204,1712646000"; 
-   d="scan'208";a="17514218"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 08:30:25 -0700
-X-CSE-ConnectionGUID: l5lsMTrXSpaytGx0KmxbDA==
-X-CSE-MsgGUID: vMNB4v87Tj2UN1JX9a5lsQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,204,1712646000"; 
-   d="scan'208";a="36209148"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 08:30:19 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sD4Ct-0000000CVRR-3uji;
-	Fri, 31 May 2024 18:30:15 +0300
-Date: Fri, 31 May 2024 18:30:15 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Douglas Anderson <dianders@chromium.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	John Ogness <john.ogness@linutronix.de>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	linux-arm-msm@vger.kernel.org, Tony Lindgren <tony@atomide.com>,
-	stable@vger.kernel.org,
-	Tony Lindgren <tony.lindgren@linux.intel.com>,
-	Bing Fan <tombinfan@tencent.com>,
-	Guanbing Huang <albanhuang@tencent.com>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org
-Subject: Re: [PATCH v3] serial: port: Don't block system suspend even if
- bytes are left to xmit
-Message-ID: <ZlntB9t6glOZC_HX@smile.fi.intel.com>
-References: <20240531080914.v3.1.I2395e66cf70c6e67d774c56943825c289b9c13e4@changeid>
+	s=arc-20240116; t=1717169436; c=relaxed/simple;
+	bh=b8edFq+BX78eQRN1Ba8dv8UAmRIZpk2lXQ0Ky4bIJnY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=beVZzaoefzKwx3GiBSnvnD61tblVPwixN2WKWXIwHxaG7Y0MBj8E1z58sUZFen1YiCot2398KwCdV8wsIYvrHOy+nZiNN7xhcQcvSA9Ra7rLYctNykTzk+mxqrpkHJDO0z8P60zsTZnUXDVUwlw16AeIeesxurxXUmJ4HBNJgs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=KFJEN/L0; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=Ae2+xYZ7D6L0nBQ0Vqf/ep5G4lxJjwrzH4Lp6YJWsIo=; b=KFJEN/L09A6KG0/i631h7Qvmi1
+	t9m0j4bCm75IjozOHqDRmqvh4Eg+Nii93D5Jw3S4f8uSXWFynnhzerME3xOJ2/THcvi+5F7oJH7JH
+	QWpOUwYfClymAm/XOkMEAWMZnpmPMUr9WI2FlxveqnMARE7h6JqeORe0laBLE4OPJ5JXLvQ9VByRg
+	AOgGy7jgATX5GdWMxfmSqYAgfcZOyGfcglVBgY+06f36QPCBSPyh3ckQzH9XI+ZnK5ARBFXm8hCKP
+	EJFO81cC5JARECborKg4LZiARZnptCHW6V1smuUqtwJVmoCxJcAPvxUf6mDUTNE1Nz3m8+ET1JZm8
+	FF2TejbQ==;
+Received: from [50.53.4.147] (helo=[192.168.254.15])
+	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sD4D5-0000000AgS0-3Clf;
+	Fri, 31 May 2024 15:30:28 +0000
+Message-ID: <98b1a3a4-5db8-4b69-9e3e-99f2dadf1b43@infradead.org>
+Date: Fri, 31 May 2024 08:30:24 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240531080914.v3.1.I2395e66cf70c6e67d774c56943825c289b9c13e4@changeid>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v2 1/3] net: ethernet: ti: RPMsg based shared
+ memory ethernet driver
+To: Yojana Mallik <y-mallik@ti.com>, schnelle@linux.ibm.com,
+ wsa+renesas@sang-engineering.com, diogo.ivo@siemens.com, horms@kernel.org,
+ vigneshr@ti.com, rogerq@ti.com, danishanwar@ti.com, pabeni@redhat.com,
+ kuba@kernel.org, edumazet@google.com, davem@davemloft.net
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, srk@ti.com,
+ rogerq@kernel.org
+References: <20240531064006.1223417-1-y-mallik@ti.com>
+ <20240531064006.1223417-2-y-mallik@ti.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20240531064006.1223417-2-y-mallik@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, May 31, 2024 at 08:09:18AM -0700, Douglas Anderson wrote:
-> Recently, suspend testing on sc7180-trogdor based devices has started
-> to sometimes fail with messages like this:
-> 
->   port a88000.serial:0.0: PM: calling pm_runtime_force_suspend+0x0/0xf8 @ 28934, parent: a88000.serial:0
->   port a88000.serial:0.0: PM: dpm_run_callback(): pm_runtime_force_suspend+0x0/0xf8 returns -16
->   port a88000.serial:0.0: PM: pm_runtime_force_suspend+0x0/0xf8 returned -16 after 33 usecs
->   port a88000.serial:0.0: PM: failed to suspend: error -16
-> 
-> I could reproduce these problems by logging in via an agetty on the
-> debug serial port (which was _not_ used for kernel console) and
-> running:
->   cat /var/log/messages
-> ...and then (via an SSH session) forcing a few suspend/resume cycles.
-> 
-> Tracing through the code and doing some printf()-based debugging shows
-> that the -16 (-EBUSY) comes from the recently added
-> serial_port_runtime_suspend().
-> 
-> The idea of the serial_port_runtime_suspend() function is to prevent
-> the port from being _runtime_ suspended if it still has bytes left to
-> transmit. Having bytes left to transmit isn't a reason to block
-> _system_ suspend, though. If a serdev device in the kernel needs to
-> block system suspend it should block its own suspend and it can use
-> serdev_device_wait_until_sent() to ensure bytes are sent.
-> 
-> The DEFINE_RUNTIME_DEV_PM_OPS() used by the serial_port code means
-> that the system suspend function will be pm_runtime_force_suspend().
-> In pm_runtime_force_suspend() we can see that before calling the
-> runtime suspend function we'll call pm_runtime_disable(). This should
-> be a reliable way to detect that we're called from system suspend and
-> that we shouldn't look for busyness.
-> 
-> Fixes: 43066e32227e ("serial: port: Don't suspend if the port is still busy")
-> Cc: stable@vger.kernel.org
-> Reviewed-by: Tony Lindgren <tony.lindgren@linux.intel.com>
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
 
-..
 
-> +	/*
-> +	 * Nothing to do on pm_runtime_force_suspend(), see
-> +	 * DEFINE_RUNTIME_DEV_PM_OPS.
+On 5/30/24 11:40 PM, Yojana Mallik wrote:
+> diff --git a/drivers/net/ethernet/ti/Kconfig b/drivers/net/ethernet/ti/Kconfig
+> index 1729eb0e0b41..4f00cb8fe9f1 100644
+> --- a/drivers/net/ethernet/ti/Kconfig
+> +++ b/drivers/net/ethernet/ti/Kconfig
+> @@ -145,6 +145,15 @@ config TI_AM65_CPSW_QOS
+>  	  The EST scheduler runs on CPTS and the TAS/EST schedule is
+>  	  updated in the Fetch RAM memory of the CPSW.
+>  
+> +config TI_K3_INTERCORE_VIRT_ETH
+> +	tristate "TI K3 Intercore Virtual Ethernet driver"
+> +	help
+> +	  This driver provides intercore virtual ethernet driver
+> +	  capability.Intercore Virtual Ethernet driver is modelled as
 
-	 * DEFINE_RUNTIME_DEV_PM_OPS().
+	  capability. Intercore
 
-(in case you need to send a new version)
+> +	  a RPMsg based shared memory ethernet driver for network traffic
 
-> +	 */
-> +	if (!pm_runtime_enabled(dev))
-> +		return 0;
+	  a RPMsg-based
+
+> +	  tunnelling between heterogeneous processors Cortex A and Cortex R
+> +	  used in TI's K3 SoCs.
+
+
+OK, the darned British spellings can stay. ;)
+(the double-l words)
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+#Randy
+https://people.kernel.org/tglx/notes-about-netiquette
+https://subspace.kernel.org/etiquette.html
 
