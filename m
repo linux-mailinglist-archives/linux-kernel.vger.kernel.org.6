@@ -1,308 +1,102 @@
-Return-Path: <linux-kernel+bounces-196677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 769B08D5FC3
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:32:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 288A88D5FCF
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:38:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 46414B253DD
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:32:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A0301C2269E
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:38:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E96DE156899;
-	Fri, 31 May 2024 10:32:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D03C7156245;
+	Fri, 31 May 2024 10:38:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QFqgR77B"
-Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=t-8ch.de header.i=@t-8ch.de header.b="I7ohPjh1"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 678F7156242;
-	Fri, 31 May 2024 10:32:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4BB9155C8E;
+	Fri, 31 May 2024 10:38:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717151536; cv=none; b=DfLq4tkP7QyIIaDnBdaaEa8+c/hHsGvtCts2GxHPbrk6y/nM8pB+JV0l0rMNDHRa185zmTm3rxT/JybBOz/vkaLBjV412bRMzFNKgwoZ7SL0C0aF0UVTQXWpWX1wYmW3+UDIj3XvG1EQeRfAOk2cItd70EnfEYUSbn7tjaTmYfU=
+	t=1717151886; cv=none; b=lXNxXnonethysvIO/V3qYAjJu2laPlzb9Xqqt4QPUyFz4AX2bG40iE8PnQwH8ZP3XuuvnYfqAtZEGcAsaKOFwQQdz5ychDunPi6mQEfHl4t0we5Y7XDHrCGMpKwqrYvgynk3yFU1qc+2kHo8P+Kgh2ud3DxMEr6+GbAtRFc83UY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717151536; c=relaxed/simple;
-	bh=BhfDWRQAxg2H0nNvxN8ST80r+VkjlyGPhD/DEZuE9cA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ja1rvNOY6Y32Rl3AsLlgX6KvzPwD6DbNlmuDeXjg12WDnXzZ2kxeHWWegCCKMoka4GJjd+ZkEwxiGQDUB+e4oPVGk/S+kK/z2Wo7E4D9W1VynzUlXbxTsAj7x+ZNijQwLs6OTV/SeC8rNKYn2jLbwMcKOek641t65jfMciJz7/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QFqgR77B; arc=none smtp.client-ip=209.85.221.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-4e4eff99f16so645298e0c.1;
-        Fri, 31 May 2024 03:32:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717151533; x=1717756333; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2HS0R4iju6FvJzIbu0g7hhKx4uFltPTHH/SC2V6Zi2U=;
-        b=QFqgR77BRRKftpefS+UmcyAYv9s60ebwnwL8MzURxweO3qLstQaTql+tVeoJFZ+vAX
-         c7s4ctDIg57lAhCNo3jcw8hd+4hfC+S6anZifocJY8s+Edu2ru4pRzu6D/j36b7mQe9B
-         0TC/izaOjLFOtSx0mdCe8WamPni4vSB4yUOhfOyVYPzIUXxyLwG9lEJyZWeGmg4HHTrj
-         Ygn1X72c/XCi95kk4incjSebcEowKwHsYySv5vZ/8Dr2/RNbrM0MC1k+85HKSLTUaeaM
-         E7ZkSrnoqih+1CmC8X+kIGcZwqBGYwB7PSeS8KrF+J4tW8gVAQ0zIeEmDomuh7stW8Vl
-         IdnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717151533; x=1717756333;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2HS0R4iju6FvJzIbu0g7hhKx4uFltPTHH/SC2V6Zi2U=;
-        b=VSDT2jY62GaDLzErB4DJZWf5+8UbM+UxHYcK09njl95iTano7uiocECt3Q+Mfq9D2F
-         jIKJkw3LZV7Yv+VhDAfAGngHBkF0eP9kzrcdVrXgHC+yHobJl/DhKc321wyxCYJJhwq+
-         aH1ND/Ovddn7492lD9JHKu9yjEy8yF86pJf8L/MqikdnPclf5N+fk5aA6Ax0/JtmzIYP
-         +Sb+UKVGq8fwpWyF4hvdWXKOQqdCAl1Q0SsSyv807SpXQEHvQyqxjjMi+SulibyEf21G
-         8+oPNndpIigHQ2Oge79Xj3z68poEwyU9U21fnsmd0sOMUjO6oEWtzww3KP7Pt5pI6D7v
-         Mg3w==
-X-Forwarded-Encrypted: i=1; AJvYcCVk1P77eTai8hL4+5nG4y9dNUBJJGFmIw2CkEGIbJa9/jhqo3UI3QJNYFr96BQm2KG0dTf8SRQr0TRO7XzX0WPUOLZjo6RnJZDqjvS4
-X-Gm-Message-State: AOJu0YyUBip2g5rfge7TzRUujXN/IItGyHa9b5AT2NqIgFSxeqrDL7WW
-	cTth4yhYKtMZq7PANsawH1UwBAkXcugXG5FaFNbO4jb2FfSM/MhCT6dc0or3NqKsWFW3zmSZXVe
-	A7ajMXwLLhw176F4cEkqNfGUxDaw=
-X-Google-Smtp-Source: AGHT+IG46cRNTa/gtranYKJdBT6/dNezPeSoykLRMIt4Z33qyDiPIc0MZ/By/svPwuzcGaqNtVEed7QZH55x6+hKuhU=
-X-Received: by 2002:a05:6122:458d:b0:4e4:eda9:ec32 with SMTP id
- 71dfb90a1353d-4eb02e5a92bmr1688549e0c.10.1717151533191; Fri, 31 May 2024
- 03:32:13 -0700 (PDT)
+	s=arc-20240116; t=1717151886; c=relaxed/simple;
+	bh=vGS6g45uGnxHvSSNpUZ+06i5ODxlJer7tFN7ZSsuT3o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q3Pgcc5lTEnJytAjbd87DHSVg5/wS+AX67Qlm+cIJuP5AXuavmKqS4WsSRQZwov6HxlcA2r2m4uxWr/9teIN80mBOc3GdVKCQdsjFqoQBvCCzBgCEoZWEHTw8NKcpNZ3UDPW4IUfLUApvdXKjcxyRzsBWHvaakJFm9MUjxGN5iI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=t-8ch.de; spf=pass smtp.mailfrom=t-8ch.de; dkim=pass (1024-bit key) header.d=t-8ch.de header.i=@t-8ch.de header.b=I7ohPjh1; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=t-8ch.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-8ch.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=t-8ch.de; s=mail;
+	t=1717151875; bh=vGS6g45uGnxHvSSNpUZ+06i5ODxlJer7tFN7ZSsuT3o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=I7ohPjh1avznzAaPb8T6T7o4LUKfcwAdQet/t5H/NpzpKtL4FfFYE/P4ucUbW6j3T
+	 SVCdjqM8Wjgnc2pwGNtt1GO02xrFZlLwFVHFyxJZ+e9XpapKCWzfDo1XUUKQbyUt48
+	 AxPK4mJsasUNb4FlIbz/JCnDeDv20T49z8G9QMSQ=
+Date: Fri, 31 May 2024 12:37:54 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas@t-8ch.de>
+To: =?utf-8?B?UmVuw6k=?= Rebe <rene@exactcode.de>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org, Hristo Venev <hristo@venev.name>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Radu Sabau <radu.sabau@analog.com>, Paul Menzel <pmenzel@molgen.mpg.de>
+Subject: Re: [PATCH 2/3] hwmon: Add support for SPD5118 compliant temperature
+ sensors
+Message-ID: <2b3ca226-339e-40f3-908f-bf8adcb94504@t-8ch.de>
+References: <20240529205204.81208-1-linux@roeck-us.net>
+ <20240529205204.81208-3-linux@roeck-us.net>
+ <34a4292e-c4db-4b40-822e-b892e1444045@t-8ch.de>
+ <16e448f1-cfc9-4e88-b3f1-55e1856d1405@roeck-us.net>
+ <0a2ed64d-06d9-45e8-a054-4ded4429f952@t-8ch.de>
+ <ffd72953-ecd2-405a-ad6d-236143b26946@roeck-us.net>
+ <20240531093154.rna2vwbfx7csu2sj@ninjato>
+ <BA0B79E0-6582-45EA-8EA9-35E278B8CC42@exactcode.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240522110909.10060-1-victorshihgli@gmail.com>
- <20240522110909.10060-13-victorshihgli@gmail.com> <42f2b1d4-e6c2-4860-956d-4f10c3b05529@intel.com>
-In-Reply-To: <42f2b1d4-e6c2-4860-956d-4f10c3b05529@intel.com>
-From: Victor Shih <victorshihgli@gmail.com>
-Date: Fri, 31 May 2024 18:32:00 +0800
-Message-ID: <CAK00qKBA81zx=QmU7m=pZXOzdY4syOht4p_-SU7fdw+-an0ciQ@mail.gmail.com>
-Subject: Re: [PATCH V16 12/23] mmc: sdhci-uhs2: add reset function function
-To: Adrian Hunter <adrian.hunter@intel.com>
-Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	benchuanggli@gmail.com, HL.Liu@genesyslogic.com.tw, 
-	Greg.tu@genesyslogic.com.tw, takahiro.akashi@linaro.org, dlunev@chromium.org, 
-	Ben Chuang <ben.chuang@genesyslogic.com.tw>, 
-	Victor Shih <victor.shih@genesyslogic.com.tw>, ulf.hansson@linaro.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <BA0B79E0-6582-45EA-8EA9-35E278B8CC42@exactcode.de>
 
-On Fri, May 24, 2024 at 3:23=E2=80=AFPM Adrian Hunter <adrian.hunter@intel.=
-com> wrote:
->
-> On 22/05/24 14:08, Victor Shih wrote:
-> > From: Victor Shih <victor.shih@genesyslogic.com.tw>
-> >
-> > Sdhci_uhs2_reset() does a UHS-II specific reset operation.
-> >
-> > Signed-off-by: Ben Chuang <ben.chuang@genesyslogic.com.tw>
-> > Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
-> > Signed-off-by: Victor Shih <victor.shih@genesyslogic.com.tw>
-> > ---
-> >
-> > Updates in V15:
-> >  - Refer the SD Host Controller Standard Specification Section 3.10
-> >    to add reset command data mechanism.
-> >
-> > Updates in V14:
-> >  - Since mmc_card_uhs2() is the same as sdhci_uhs2_mode(), so drop
-> >    sdhci_uhs2_mode() and use mmc_card_uhs2() instead of sdhci_uhs2_mode=
-().
-> >
-> > Updates in V13:
-> >  - Use ios timing to stead MMC_UHS2_SUPPORT for indicate the UHS2 mode.
-> >
-> > Updates in V8:
-> >  - Adjust the position of matching brackets.
-> >
-> > Updates in V6:
-> >  - Remove unnecessary functions and simplify code.
-> >
-> > ---
-> >
-> >  drivers/mmc/host/sdhci-uhs2.c | 57 +++++++++++++++++++++++++++++++++++
-> >  drivers/mmc/host/sdhci-uhs2.h |  1 +
-> >  drivers/mmc/host/sdhci.c      |  3 +-
-> >  drivers/mmc/host/sdhci.h      |  1 +
-> >  4 files changed, 61 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/mmc/host/sdhci-uhs2.c b/drivers/mmc/host/sdhci-uhs=
-2.c
-> > index 9cb0f1b2a37d..7652158ea151 100644
-> > --- a/drivers/mmc/host/sdhci-uhs2.c
-> > +++ b/drivers/mmc/host/sdhci-uhs2.c
-> > @@ -10,7 +10,9 @@
-> >   *  Author: AKASHI Takahiro <takahiro.akashi@linaro.org>
-> >   */
-> >
-> > +#include <linux/delay.h>
-> >  #include <linux/module.h>
-> > +#include <linux/iopoll.h>
-> >
-> >  #include "sdhci.h"
-> >  #include "sdhci-uhs2.h"
-> > @@ -21,6 +23,8 @@
-> >  #define SDHCI_UHS2_DUMP(f, x...) \
-> >       pr_err("%s: " DRIVER_NAME ": " f, mmc_hostname(host->mmc), ## x)
-> >
-> > +#define UHS2_RESET_TIMEOUT_100MS             100000
-> > +
-> >  void sdhci_uhs2_dump_regs(struct sdhci_host *host)
-> >  {
-> >       if (!(mmc_card_uhs2(host->mmc)))
-> > @@ -49,6 +53,57 @@ void sdhci_uhs2_dump_regs(struct sdhci_host *host)
-> >  }
-> >  EXPORT_SYMBOL_GPL(sdhci_uhs2_dump_regs);
-> >
-> > +/*********************************************************************=
-********\
-> > + *                                                                    =
-       *
-> > + * Low level functions                                                =
-       *
-> > + *                                                                    =
-       *
-> > +\*********************************************************************=
-********/
-> > +
-> > +/**
-> > + * sdhci_uhs2_reset - invoke SW reset
-> > + * @host: SDHCI host
-> > + * @mask: Control mask
-> > + *
-> > + * Invoke SW reset, depending on a bit in @mask and wait for completio=
-n.
-> > + */
-> > +void sdhci_uhs2_reset(struct sdhci_host *host, u16 mask)
-> > +{
-> > +     u32 val;
-> > +
-> > +     sdhci_writew(host, mask, SDHCI_UHS2_SW_RESET);
-> > +
-> > +     if (mask & SDHCI_UHS2_SW_RESET_FULL)
-> > +             host->clock =3D 0;
-> > +
-> > +     /* hw clears the bit when it's done */
-> > +     if (read_poll_timeout_atomic(sdhci_readw, val, !(val & mask), 10,
-> > +                                  UHS2_RESET_TIMEOUT_100MS, true, host=
-, SDHCI_UHS2_SW_RESET)) {
-> > +             pr_warn("%s: %s: Reset 0x%x never completed. %s: clean re=
-set bit.\n", __func__,
-> > +                     mmc_hostname(host->mmc), (int)mask, mmc_hostname(=
-host->mmc));
-> > +             sdhci_writeb(host, 0, SDHCI_UHS2_SW_RESET);
-> > +             return;
-> > +     }
-> > +}
-> > +EXPORT_SYMBOL_GPL(sdhci_uhs2_reset);
-> > +
-> > +static void sdhci_uhs2_reset_cmd_data(struct mmc_host *mmc)
-> > +{
-> > +     struct sdhci_host *host =3D mmc_priv(mmc);
-> > +
-> > +     sdhci_do_reset(host, SDHCI_RESET_CMD | SDHCI_RESET_DATA);
-> > +
-> > +     if (host->mmc->ios.timing =3D=3D MMC_TIMING_UHS2_SPEED_A ||
-> > +         host->mmc->ios.timing =3D=3D MMC_TIMING_UHS2_SPEED_A_HD ||
-> > +         host->mmc->ios.timing =3D=3D MMC_TIMING_UHS2_SPEED_B ||
-> > +         host->mmc->ios.timing =3D=3D MMC_TIMING_UHS2_SPEED_B_HD) {
->
-> Please use mmc_card_uhs2()
->
+On 2024-05-31 12:01:35+0000, René Rebe wrote:
+> On May 31, 2024, at 11:31, Wolfram Sang <wsa+renesas@sang-engineering.com> wrote:
+> >>> Wolfgang seems to think it's important:
+> > 
+> > Wolfram, please.
 
-Hi, Adrian
+Sorry, Wolfram.
 
-     I will update this in the v17 version.
+> > 
+> >>> https://lore.kernel.org/lkml/tdia472d4pow2osabef24y2ujkkquplfajxmmtk5pnxllsdxsz@wxzynz7llasr/
+> >>> 
+> >> 
+> >> Ok, but that doesn't explain the reason. Wolfram, Paul, why do you
+> >> think this is needed ? Note that I am not opposed to adding spd
+> >> eeprom support, but I'd like to know why I am doing it before
+> >> I spend time on it.
+> > 
+> > A working eeprom driver is needed to get 'decode-dimms' from the
+> > i2c-tools package working. Jean reported that EEPROM access for DDR5 is
+> > different from DDR4, so it needs a separate driver. And
+> > i2c_register_spd() then needs to be updated to use the new driver for
+> > DDR5.
+> 
+> Well my original downstream driver already had eeprom access:
+> 
+> 	https://svn.exactcode.de/t2/trunk/package/kernel/linux/spd-5118.patch
+> 
+> Note there are some surrounding -2, and parity patches around this patch.
 
-Thanks, Victor Shih
+That would need to be rewritten to use the nvmem APIs though, I guess.
+If nobody wants to do it, I'm volunteering.
 
-> > +             sdhci_uhs2_reset(host, SDHCI_UHS2_SW_RESET_SD);
-> > +
-> > +             sdhci_writel(host, host->ier, SDHCI_INT_ENABLE);
-> > +             sdhci_writel(host, host->ier, SDHCI_SIGNAL_ENABLE);
-> > +             sdhci_uhs2_clear_set_irqs(host, SDHCI_INT_ALL_MASK, SDHCI=
-_UHS2_INT_ERROR_MASK);
-> > +     }
-> > +}
-> > +
-> >  /*********************************************************************=
-********\
-> >   *                                                                    =
-       *
-> >   * Driver init/exit                                                   =
-       *
-> > @@ -57,6 +112,8 @@ EXPORT_SYMBOL_GPL(sdhci_uhs2_dump_regs);
-> >
-> >  static int sdhci_uhs2_host_ops_init(struct sdhci_host *host)
-> >  {
-> > +     host->mmc_host_ops.uhs2_reset_cmd_data =3D sdhci_uhs2_reset_cmd_d=
-ata;
->
-> As noted for patch 8, any host controller resets needed
-> should be done before completing the request, so a call
-> back function should not be needed.
->
-
-Hi, Adrian
-
-     I want to confirm further, so can I call
-sdhci_uhs2_reset_cmd_data() directly
-     in the mmc_wait_for_req_done()?
-     Am I understanding something wrong?
-
-Thanks, Victor Shih
-
-> > +
-> >       return 0;
-> >  }
-> >
-> > diff --git a/drivers/mmc/host/sdhci-uhs2.h b/drivers/mmc/host/sdhci-uhs=
-2.h
-> > index 2bfe18d29bca..caaf9fba4975 100644
-> > --- a/drivers/mmc/host/sdhci-uhs2.h
-> > +++ b/drivers/mmc/host/sdhci-uhs2.h
-> > @@ -177,5 +177,6 @@
-> >  struct sdhci_host;
-> >
-> >  void sdhci_uhs2_dump_regs(struct sdhci_host *host);
-> > +void sdhci_uhs2_reset(struct sdhci_host *host, u16 mask);
-> >
-> >  #endif /* __SDHCI_UHS2_H */
-> > diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-> > index 8fc3e001db74..f212da6dc2aa 100644
-> > --- a/drivers/mmc/host/sdhci.c
-> > +++ b/drivers/mmc/host/sdhci.c
-> > @@ -236,7 +236,7 @@ void sdhci_reset(struct sdhci_host *host, u8 mask)
-> >  }
-> >  EXPORT_SYMBOL_GPL(sdhci_reset);
-> >
-> > -static bool sdhci_do_reset(struct sdhci_host *host, u8 mask)
-> > +bool sdhci_do_reset(struct sdhci_host *host, u8 mask)
-> >  {
-> >       if (host->quirks & SDHCI_QUIRK_NO_CARD_NO_RESET) {
-> >               struct mmc_host *mmc =3D host->mmc;
-> > @@ -249,6 +249,7 @@ static bool sdhci_do_reset(struct sdhci_host *host,=
- u8 mask)
-> >
-> >       return true;
-> >  }
-> > +EXPORT_SYMBOL_GPL(sdhci_do_reset);
-> >
-> >  static void sdhci_reset_for_all(struct sdhci_host *host)
-> >  {
-> > diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
-> > index 13703f1a3710..83d994c8d89e 100644
-> > --- a/drivers/mmc/host/sdhci.h
-> > +++ b/drivers/mmc/host/sdhci.h
-> > @@ -845,6 +845,7 @@ void sdhci_request(struct mmc_host *mmc, struct mmc=
-_request *mrq);
-> >  int sdhci_request_atomic(struct mmc_host *mmc, struct mmc_request *mrq=
-);
-> >  void sdhci_set_bus_width(struct sdhci_host *host, int width);
-> >  void sdhci_reset(struct sdhci_host *host, u8 mask);
-> > +bool sdhci_do_reset(struct sdhci_host *host, u8 mask);
-> >  void sdhci_set_uhs_signaling(struct sdhci_host *host, unsigned timing)=
-;
-> >  int sdhci_execute_tuning(struct mmc_host *mmc, u32 opcode);
-> >  int __sdhci_execute_tuning(struct sdhci_host *host, u32 opcode);
->
+Thomas
 
