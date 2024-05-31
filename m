@@ -1,161 +1,102 @@
-Return-Path: <linux-kernel+bounces-197467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABDA38D6B15
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 22:48:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C0908D6B18
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 22:50:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6815E287A50
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 20:48:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A145D1F2668F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 20:50:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A9D478269;
-	Fri, 31 May 2024 20:48:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91ACE3C08A;
+	Fri, 31 May 2024 20:50:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cCV0st2r"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="exWSKQon"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A140DD26A;
-	Fri, 31 May 2024 20:48:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FC6379DC7;
+	Fri, 31 May 2024 20:50:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717188524; cv=none; b=g33iwToOGa2Sd7eJLlK2ngkQE0KbLMa/kLIJ45B7yx3JIO+8atXXd/xRgA9hAM47G6R37UOxQqO+BoTSBStQTObG7QczHVvky5cJ6SJkr9D9d/yYehtXDBn9i+46S2GV0y2rjAnjuVfYQorp7oCgVFmF1q7u+BxIZKdfopE0gc4=
+	t=1717188611; cv=none; b=QC5IhGIWWTXOzWCJKC2LI+qRnrgieq/xRxG+0nBp1te4fr5Fizqe+gMIyY3X+q5K7mTgIraRj4iJxPy4RWhiX7wNdmVSkO7aBt2VLAFXqDKQ7D2X2d7VmoG+jI7e3iEO5jLEeF+dovRy2c6SIuTOBQSzHw/sXQoZNSVod+aKR7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717188524; c=relaxed/simple;
-	bh=rFnHh2wJYNoB76Ml+22NnUsLEKD+h/GAxFGey/czVOQ=;
+	s=arc-20240116; t=1717188611; c=relaxed/simple;
+	bh=CqlIzLo28saVuf9DPW5SY4U8PePcJgM43whMLoV3lrY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u6bfn4W3V81iwPmpO3omBTG3wRIgBqaryg98uL3LOozJWOERAlX0XPNwB1L39PjP+dK1hPeCdqkI1CRcOQqzgaldGmSoX8WZlVE+uYLwsSHPXrem506APX7Q04TmgWOoRZXj7AfukOBzbMd80AmqwsYBEm2OzcZsm6TJ7Gy+UKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cCV0st2r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16EA2C116B1;
-	Fri, 31 May 2024 20:48:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717188524;
-	bh=rFnHh2wJYNoB76Ml+22NnUsLEKD+h/GAxFGey/czVOQ=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=XYZ941sLRP4/Yw3wR0L2Ai/W94++8i8Z0Pe0bJXE8yHJG4VUS7E8IfDIL7HCqBhskOBeP1FmgJMONuYfErAOqIk/6qRXVSW+Auxcp/Hkc2wJ6nYT160EfxADYVftmDT7/L4d1EMbuhgzOFM1Cq0rnpYQPGdjDCMlysTcZRJl/yM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=exWSKQon; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 45DB340E02BA;
+	Fri, 31 May 2024 20:50:07 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id glGpxI6KoY2X; Fri, 31 May 2024 20:50:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1717188604; bh=2eSJr/KNAbeYvj9YM7r9Ad2wggiAI2ZKgJwZBFOE4BI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cCV0st2rQscuWQRRD66py/Md9Mf8mIse5f5jZSqyArOSjheLY3FWzSZ0nnPnPNuDe
-	 dX3NKU8cFLky+rp9zE1/dWqI9QumqMPadZXRguN/uqvqIy8JCxKqaT5mNWb2ddSTOP
-	 WW3nTZoNUs3ooPHdjzSuivJ9cfYPEbub+Xi5sXHD8VdV0/X3G2UgRyohnG3NOyg4xP
-	 HLW1WEdF0saOukDjTRCAHk8oZxhEhtrC+LbbXgmEUyHYqE4kDzV8OVVj9w3J3qszx/
-	 OuZc8w6Q7BVzPPGo29tNFxZb8EPKfAFfd/Cq3VAehojM71REySKXZqSyAjrLTJO2hM
-	 NBSeyCI3HYUHQ==
-Date: Fri, 31 May 2024 20:48:42 +0000
-From: Eric Biggers <ebiggers@kernel.org>
-To: Fan Wu <wufan@linux.microsoft.com>
-Cc: corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org,
-	serge@hallyn.com, tytso@mit.edu, axboe@kernel.dk, agk@redhat.com,
-	snitzer@kernel.org, mpatocka@redhat.com, eparis@redhat.com,
-	paul@paul-moore.com, linux-doc@vger.kernel.org,
-	linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org, fsverity@lists.linux.dev,
-	linux-block@vger.kernel.org, dm-devel@lists.linux.dev,
-	audit@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Deven Bowers <deven.desai@linux.microsoft.com>
-Subject: Re: [PATCH v19 11/20] block,lsm: add LSM blob and new LSM hooks for
- block device
-Message-ID: <20240531204842.GA2838215@google.com>
-References: <1716583609-21790-1-git-send-email-wufan@linux.microsoft.com>
- <1716583609-21790-12-git-send-email-wufan@linux.microsoft.com>
+	b=exWSKQont0SSjJ4Q+5EBEcsbrJZ3Y82KeK151Kt49xsWaE+8KHEzOEGWxPmDm0SUr
+	 ejxfRJwoxK5jF/w0XDarZmUz9HZ3hh08Ma0VFfmx6NnHQvnXCvaukvakDRBnw3ioSG
+	 dkCHJm7xsLaXpGUuh9fOIoIySoemnVTd/bBmMyQB4iY2y/O6EJGcIyvDfYS6Cv5N0I
+	 j3hON/a4AT6Xj/4QWDe39scfvq8iUOzOrLF0ufATlBKTDzPd2wlmJQC06RmhBaHvm7
+	 sqtD30CBDLVo7CHtt47ov8qjOrLwkSBzS4t6GrSn/U27BJR9DCLM/6HNBlLFNTjWHb
+	 0VMY6/u06gLDQjSOtITh9T9dGULIWC+00FsRfU0UG9WLufO0kaj8qPrAiG9Vpol7UW
+	 FUjeQ/R4Rw/CROk4R/s5FD3gi+Z0ENuDX6B7YJrfl2BP9985MQ4p5zhDctnElyrkZt
+	 fvzzq0xnfl+MioiVyUhHYP21whoTaHqUJNxAhauGfmDXgNE0SziR9inRm/nuuuRWqF
+	 rD3eITYn1WnXSA2iq1vL7oMqoJB5M/vq095HPhEQOa4voSKwb6bvMTSI6SuIZxPsLN
+	 VyV5AdGzOBdFoKy0SnyKedwgJ1KjkewcLUxZ3Pq5Gf+nmfMQt9U8yAMpzob30qDgAY
+	 wSw/pRhVixcRVIqP19cXVu0w=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1A7C840E02B2;
+	Fri, 31 May 2024 20:49:53 +0000 (UTC)
+Date: Fri, 31 May 2024 22:49:47 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Kees Cook <kees@kernel.org>
+Cc: Jeff Johnson <quic_jjohnson@quicinc.com>,
+	Nikolay Borisov <nik.borisov@suse.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] x86/boot: add prototype for __fortify_panic()
+Message-ID: <20240531204947.GNZlo367G0YXVbOk1I@fat_crate.local>
+References: <20240529-fortify_panic-v1-1-9923d5c77657@quicinc.com>
+ <0d3f7c58-7fc0-4e8b-b6fb-c4d0d9969ce7@suse.com>
+ <e42c4984-d4a2-45b1-b93d-7471000766b7@quicinc.com>
+ <5658B525-6642-43A2-B14C-BC4AA916FBCC@alien8.de>
+ <202405310951.56D9BD5C41@keescook>
+ <20240531190816.GLZlogIGgpc5maOeLN@fat_crate.local>
+ <202405311345.D91BF6E9@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1716583609-21790-12-git-send-email-wufan@linux.microsoft.com>
+In-Reply-To: <202405311345.D91BF6E9@keescook>
 
-On Fri, May 24, 2024 at 01:46:40PM -0700, Fan Wu wrote:
-> From: Deven Bowers <deven.desai@linux.microsoft.com>
-> 
-> Some block devices have valuable security properties that is only
-> accessible during the creation time.
->
-> For example, when creating a dm-verity block device, the dm-verity's
-> roothash and roothash signature, which are extreme important security
-> metadata, are passed to the kernel. However, the roothash will be saved
-> privately in dm-verity, which prevents the security subsystem to easily
-> access that information. Worse, in the current implementation the
-> roothash signature will be discarded after the verification, making it
-> impossible to utilize the roothash signature by the security subsystem.
+On Fri, May 31, 2024 at 01:46:37PM -0700, Kees Cook wrote:
+> Please do not do this. It still benefits from compile-time sanity
+> checking.
 
-This patch seems to be assuming that creating the block device == setting up
-dm-verity.  That's not how it actually works.  The way that device-mapper works
-is that first a device-mapper device is created, and then targets are loaded
-into it.  The targets can be changed later, any number of times.
+Care to elaborate how exactly it benefits?
 
-So, while the creation of the block device is when the LSM blob is allocated,
-it's not when the actual contents of it are initialized.  And its contents can
-vary over the lifetime of the block device, including changing from something
-the LSM "trusts" to something it doesn't "trust".
+-- 
+Regards/Gruss,
+    Boris.
 
-I'm not sure if this is "just" a documentation issue or if there are bugs
-resulting from not handling changes properly.  The code itself *looks* correct,
-but seeing it's not clear how much this has been considered and that getting
-this wrong would allow the LSM checks to be bypassed, I thought I'd draw
-attention to it.  This is really something that ought to be called out
-explicitly in comments, for example.
-
-> For example, LSM can use the new LSM blob to save the roothash signature of a
-> dm-verity, and LSM can make access decision based on the data inside the
-> signature, like the signer certificate.
-
-This isn't what IPE actually does, though.  So this doesn't seem like a
-particularly useful example in this context.
-
-> For example, for dm-verity, LSMs can use this hook to save
-> the roothash signature of a dm-verity into the security blob,
-> and LSMs can make access decisions based on the data inside
-> the signature, like the signer certificate.
-
-Likewise.
-
-> diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
-> index 781c4500491b..eaa28f366d98 100644
-> --- a/include/linux/blk_types.h
-> +++ b/include/linux/blk_types.h
-> @@ -71,6 +71,9 @@ struct block_device {
->  
->  	struct partition_meta_info *bd_meta_info;
->  	int			bd_writers;
-> +#ifdef CONFIG_SECURITY
-> +	void			*security;
-> +#endif
-
-All the other fields in struct block_device are prefixed with "bd_", so please
-use the same pattern for this new field (bd_security).
-
-> diff --git a/security/security.c b/security/security.c
-> index b419166979da..743652e5e893 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-[...]
-> +/**
-> + * security_bdev_setintegrity() - Set the device's integrity data
-> + * @bdev: block device
-> + * @type: type of integrity, e.g. hash digest, signature, etc
-> + * @value: the integrity value
-> + * @size: size of the integrity value
-> + *
-> + * Register a verified integrity measurement of a bdev with LSMs.
-> + * LSMs should free the previously saved data if @value is NULL.
-> + *
-> + * Return: Returns 0 on success, negative values on failure.
-> + */
-> +int security_bdev_setintegrity(struct block_device *bdev,
-> +			       enum lsm_integrity_type type, const void *value,
-> +			       size_t size)
-> +{
-> +	return call_int_hook(bdev_setintegrity, bdev, type, value, size);
-> +}
-> +EXPORT_SYMBOL(security_bdev_setintegrity);
-
-This might be a good place to explicitly document that the block device's
-integrity properties may change over the lifetime of the block device and that
-LSMs *must* (not "should") handle all possible types of updates, including
-updates from a non-NULL value of a property to a NULL value.
-
-- Eric
+https://people.kernel.org/tglx/notes-about-netiquette
 
