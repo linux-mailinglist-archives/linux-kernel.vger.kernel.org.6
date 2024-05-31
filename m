@@ -1,89 +1,90 @@
-Return-Path: <linux-kernel+bounces-196774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A465C8D61B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:28:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C861B8D61B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:28:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3882F1F25CA0
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:28:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80B852874BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:28:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D23E51586CB;
-	Fri, 31 May 2024 12:28:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BBEF1586CC;
+	Fri, 31 May 2024 12:28:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aa19eOk9"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sJYZLkhM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3BAB39FF3
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 12:28:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C40739FF3;
+	Fri, 31 May 2024 12:28:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717158489; cv=none; b=E33AGMBIHKilpOIPDNmdpyDmAwQeRWrUkoSiNJwoo9WP0BvGbFx+0bdrWm0ObVCP02yUP/Fi86/M/r9IM0SuoyVJBx9DZCdRjAwU41L/zuO9z3lzPQPCFnZIAmaPcuzhRg8iyz3+MKEjkdPjvlOw2CBxeK1N3qT5ZKfAsBA/v6E=
+	t=1717158512; cv=none; b=r1GkvGor21jm20BKC9nuPmguaHno2fKU94e22wjbuqEBPvvO+3Z6NrvoHgocenUrWZFPFrInup9OfSwd+0FJ+Ag9ZWBb0FVYBDeMdzxwsmv1KaaM4DWGdvsw0L7vRxEmim4IzDV6+3ioEOGShxp1JiC8XsG4huYiTV+tN//VzF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717158489; c=relaxed/simple;
-	bh=02xQIpzrJDvBVIgLx4jKyyxdR1qj1m751XRn6SUG1g0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Q2V+9Va23JKxaEN1pm8s2QDWobqgbiYreNYZkTci9hxSZmA10T3Oc073UcY/mgpiyM2/WAw2SruBr+LdNYIsBOmjIRAxFYUJpriNXtSCOueB/ZBkjnxUoVp5hb8kjDRmu6kvgYM2ZQ5hnSEQCin7VZr4W1ekPd0MT65/rJ5+MuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aa19eOk9; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717158486;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=02xQIpzrJDvBVIgLx4jKyyxdR1qj1m751XRn6SUG1g0=;
-	b=aa19eOk987oq6NXoSb22SUwVhY+TPLDZ/l7FhMN459nl2jvt8b6Cl4wFLwFtaQFRSpTKVw
-	0AEFERVDuiuUP1QpKJOjI99JmATNdQ6ZpqKFgMbpaegljJW6DgBmRp5I4hMzxLkALiOVj7
-	wrPCINWMQ2IF+JkoCCiz7j784Q+rwTE=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-645-xiMw4JBCMDeAwMc9v_a3OA-1; Fri, 31 May 2024 08:28:03 -0400
-X-MC-Unique: xiMw4JBCMDeAwMc9v_a3OA-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id E0911185A780;
-	Fri, 31 May 2024 12:28:02 +0000 (UTC)
-Received: from [192.168.37.1] (ovpn-0-11.rdu2.redhat.com [10.22.0.11])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id E4017103A3AA;
-	Fri, 31 May 2024 12:28:01 +0000 (UTC)
-From: Benjamin Coddington <bcodding@redhat.com>
-To: linux@treblig.org
-Cc: trond.myklebust@hammerspace.com, anna@kernel.org,
- linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] NFS: remove unused struct 'mnt_fhstatus'
-Date: Fri, 31 May 2024 08:28:00 -0400
-Message-ID: <D6834CFC-CD3D-4CC9-BB6C-E874F8F0755B@redhat.com>
-In-Reply-To: <20240531000033.294044-1-linux@treblig.org>
-References: <20240531000033.294044-1-linux@treblig.org>
+	s=arc-20240116; t=1717158512; c=relaxed/simple;
+	bh=z4ruzD56OZPWPzQYpYgTNc4Tq1V0MYMO9wYsXWqIpKI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QL37CU81G5gXOm7sle3XAGanifLbLikxI5TC5hPPsxzkEyyAFVm9hutJnsogul2qQ8UN+j9JUn0G4nEgcDz8ghzNTkNbDVFoylWRHJBHVk6ZkXQmIkwRhZxq5b6ImNAxi/GRXJMrsYeHfYA3rXz55ZAX9QKpi67aUaPPM3Y6th0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sJYZLkhM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5F1BC32781;
+	Fri, 31 May 2024 12:28:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717158511;
+	bh=z4ruzD56OZPWPzQYpYgTNc4Tq1V0MYMO9wYsXWqIpKI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=sJYZLkhMsPzY5OGXDbm/gd0vcmG3lgyvt+C0ripDS2x66QuN6Sg9QGcTSZnB8ehZH
+	 guptbHgKhMvpghLd6TMQ6VUcQFqM6fzPJe1UG++2heMUL+YXWxqeFez3rHPrL1ytek
+	 bi3EjU73JE9LrYjyWmd0CimGr36lLfQnDEFfaJLLnQwjWzOXTUMXsYesI3YXsJf0Ck
+	 pRw0TiYJSds6n4wpUDNsz1jGRLWPlEuYUcfz7oxmBNwtfQ61Q3kqrTaTlj0O/Fmg0k
+	 jM83pk/V7HoguzYFuBGsyprdEt3EZ74aA8Gunwflg6DNks+cEf3334SzyollguYisT
+	 ov88nLSw1hCqA==
+From: Masahiro Yamada <masahiroy@kernel.org>
+To: linux-kbuild@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>
+Subject: [PATCH] usr: shorten cmd_initfs in Makefile
+Date: Fri, 31 May 2024 21:28:25 +0900
+Message-Id: <20240531122825.699771-1-masahiroy@kernel.org>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.3
+Content-Transfer-Encoding: 8bit
 
-On 30 May 2024, at 20:00, linux@treblig.org wrote:
+Avoid repetition of long variables.
 
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
->
-> 'mnt_fhstatus' has been unused since
-> commit 065015e5efff ("NFS: Remove unused XDR decoder functions").
->
-> Remove it.
->
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+No functional change intended.
 
-Reviewed-by: Benjamin Coddington <bcodding@redhat.com>
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+---
 
-Ben
+ usr/Makefile | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/usr/Makefile b/usr/Makefile
+index 132ef7e96e6d..75224d927025 100644
+--- a/usr/Makefile
++++ b/usr/Makefile
+@@ -62,9 +62,9 @@ $(deps_initramfs): ;
+ quiet_cmd_initfs = GEN     $@
+       cmd_initfs = \
+ 	$(CONFIG_SHELL) $< -o $@ -l $(obj)/.initramfs_data.cpio.d \
+-	$(if $(CONFIG_INITRAMFS_ROOT_UID), -u $(CONFIG_INITRAMFS_ROOT_UID)) \
+-	$(if $(CONFIG_INITRAMFS_ROOT_GID), -g $(CONFIG_INITRAMFS_ROOT_GID)) \
+-	$(if $(KBUILD_BUILD_TIMESTAMP), -d "$(KBUILD_BUILD_TIMESTAMP)") \
++	$(addprefix -u , $(CONFIG_INITRAMFS_ROOT_UID)) \
++	$(addprefix -g , $(CONFIG_INITRAMFS_ROOT_GID)) \
++	$(patsubst %,-d "%", $(KBUILD_BUILD_TIMESTAMP)) \
+ 	$(ramfs-input)
+ 
+ # We rebuild initramfs_data.cpio if:
+-- 
+2.40.1
 
 
