@@ -1,280 +1,335 @@
-Return-Path: <linux-kernel+bounces-196214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47EC48D58EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 05:12:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 869BC8D58F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 05:16:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1C79287C70
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 03:12:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D6E428333A
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 03:16:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 855D81F947;
-	Fri, 31 May 2024 03:12:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D7BB44384;
+	Fri, 31 May 2024 03:16:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ATeChw88"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UmrytSbx"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E8D618B1A
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 03:12:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.7
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717125138; cv=fail; b=T7MMUYJezmMY7QVEjWXGLETMSFwjnn9N/cr6vZpP1wxyMJQ+mxiPi1FwR24nijZvWkjlMeksoPfnvNeYiSrGadvMaXklM1VJgxY+etEmN6caZnCsJBOm5mZXGEFMyoujvRwJQ04+TsWz0ih0dC0F2oE8xHY//R41TZRPHIabcuY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717125138; c=relaxed/simple;
-	bh=nhkPlR9DShOxrmmWwCwry75bOL8tTksg6eANaX9YINo=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=ACfZfGLNn82gBofndimTML/RsunVT8KAhFnSwgTLmYh1u4gPhaSRKDDwCFuQXbFYZkYL2ZeP9WL85IuU0UIBDxB957rzGrd0UCJ3bXfjS6Enq4ENbX5zuyb8ntf7Ieb0bn7beJBOwDGlc2EIram2GJDEGNxuPjChxTgA/kw0iJc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ATeChw88; arc=fail smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 624612110F;
+	Fri, 31 May 2024 03:16:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717125409; cv=none; b=dPoy0Hqp82cf0IAcpaf94WRBntgD3IQ2GoAdkJmnfgCLEp3+uPI772SkW8HY2PWy++nVOIYY89ScUnbEXuI14Stm8ReeijJyojprM/wT+AWqKh08hr3Kbq8Gu5LZ5xn9qC7ZDBZOTaxrVVvV7KbtJp53uR30S6YDd+8c3R4Wd5c=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717125409; c=relaxed/simple;
+	bh=iyCW7kFSKDXz/X1KwEbJdlMwEoExWyUSJt412bkH+VM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sL7s3wfrbYs6+RJJIDwuyimKW37ohWL3dI4lHzL1/UuTXQwM2uy7PPSai4ejpiVJDk8ildV9cdfb8QrF37+Dtc3p7J0m2B2yp79lUgXsH8WaIwujKAO3jjQWBCiyohL/GY0lAc6fRaE+2t9nRQ3aBmShp/nrmny+cFJoquoemMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UmrytSbx; arc=none smtp.client-ip=192.198.163.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717125136; x=1748661136;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=nhkPlR9DShOxrmmWwCwry75bOL8tTksg6eANaX9YINo=;
-  b=ATeChw88A8G7NXZMW3PN3kR+oh1hDlm0DJDPKQ/vL/0mLFDVJ3hffx7b
-   gO7aAFQLj4oGyYacpuB4IIn2nIGsvkjgW5BeT1JND8gRTj8x4Fq74FxNX
-   H+R9tCCltYwv9tYk0IPwkytzJyxlzsq3Q+R/AHaYBBNNWQt6rpqGQx+MH
-   EA2E1QjisqP4j99VtD6IHwXRTtAm0YHSWGwZSM9oV2YXIbz9aw0orxo0U
-   gHFcjS4iShp9zKaz7wrwL8zOuIrMdRHXvrb8pRTFuMFNbTd/v/W6VyNPz
-   QN5SqjgUhAkdXB5kh9mPC3irLUooMkfmQcNNZJ97V81jfbbZepJeG9NW6
-   A==;
-X-CSE-ConnectionGUID: EKZfrRQ8RAeOb2oIXHbIyQ==
-X-CSE-MsgGUID: QO93decpRwC7Cdhtgy2XCQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="39042951"
+  t=1717125406; x=1748661406;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=iyCW7kFSKDXz/X1KwEbJdlMwEoExWyUSJt412bkH+VM=;
+  b=UmrytSbxHO9IECaBfeKVTqU81xuxLR6XH8asFAoCZ2ZoIvLcdX2lVcPe
+   ck0PdFYVRC9+FFd3T1+Ecd77/SVQ4K9SPd2p2GN0bH62h9m10n+vsk7hc
+   CtMAApqyubM+oJ7CaslxVOyjtLBucA6L8GEyQ++PW2fRNi/iicFNh87xe
+   bJdzd7UYXa0XZihdFC1ZWxdDuS6ZD8CaYTsWN3F+45V6k4WBrwXQxhzsw
+   VG9m073K+ZmvRq7eOFJhwwnOpgkn3QQ7hEgsLSKJeLpo/MN2Pm9DSG15B
+   jdu+q7Ls/qWOLeKccLLcp9V2bEhCgF+vKSX/eM7XvYtQlhZkL6+XxuN5B
+   w==;
+X-CSE-ConnectionGUID: zGt4a10QQeOLrSE5e3aGfA==
+X-CSE-MsgGUID: GqD0dORNQKG1uyg96A/HQg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="13879849"
 X-IronPort-AV: E=Sophos;i="6.08,203,1712646000"; 
-   d="scan'208";a="39042951"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 20:12:15 -0700
-X-CSE-ConnectionGUID: G71MrCQlT9StRqQM7qWrQA==
-X-CSE-MsgGUID: q+TVWP7FSh6nLaXpXJ+tJw==
+   d="scan'208";a="13879849"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 20:16:45 -0700
+X-CSE-ConnectionGUID: 7RCSr1coRSadS/8n1Im5Ww==
+X-CSE-MsgGUID: TJKVUWf4SJ6j9iBpxstteA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,203,1712646000"; 
-   d="scan'208";a="36119325"
-Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
-  by orviesa009.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 30 May 2024 20:12:15 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 30 May 2024 20:12:14 -0700
-Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Thu, 30 May 2024 20:12:14 -0700
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.169)
- by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 30 May 2024 20:12:14 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=RVa+BqhYWKuwNl3BughFpaJ8DupM6G/Chdfssr009txajkHajsOuCifh8r1wXWp+XVycZxJwy1xsyj/ZELkL8JMNlaF4/VP7/Cw6dqGsfgEgCc7g4b5N/7bJS4hcW2CXaOfF+Agtlj5BPdNPL6Oy5dcLmXoaz7oifG8aWlKOpVgSckDLswjTZaK+5ImyUCLP2GBcVcfp+KJK2BPOFMkAUZqetwEFXregUfEOixtHOzaUAwUJ0KpIL8W9bNq7aumLVgv2ZV+A/89D5nN/VGdd+mW6sqxcn4dRxd46fyYzEnvTktwuEOiIThGra+BX78tIpQNBGAltulobwEeC6umY5A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tzlVK+Eh15Hoky86ZxNSmlxVZACNhu7VxALT1QhEbwI=;
- b=QVDR6L2y2q/Ra8/UHEs9PRj4oqNajcX78Bw4OWkLs1DkkRVvT1DGNC6fTFO9xInzH9xGP9je3GGbU3QEolUe/mkjxKeTvKEagDHumNPPh5EtQBf/ZQ3AV8dhh3cL0dcCAlSDxx2soumGomYElnuqTyXx1BJSCG3nI5htYg9hWe2WcXf/kxHZjLlkX/Z0nzOE2KCBd0HefetRG8sxCSRpi4JdgEqt6HJIumrlPMPHn2U9pV8cmT9/0un0AFWliFG66gk9kFR1rvfT54xNn3cahFKA4KH5YE7RluWKw3baX3BKtQ/qBtYEeilHnx9O2VFvoPxxu62sjf2Nkupt/pY8tQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7529.namprd11.prod.outlook.com (2603:10b6:8:141::20)
- by MW3PR11MB4585.namprd11.prod.outlook.com (2603:10b6:303:52::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.24; Fri, 31 May
- 2024 03:12:11 +0000
-Received: from DS0PR11MB7529.namprd11.prod.outlook.com
- ([fe80::d244:15cd:1060:941a]) by DS0PR11MB7529.namprd11.prod.outlook.com
- ([fe80::d244:15cd:1060:941a%7]) with mapi id 15.20.7633.018; Fri, 31 May 2024
- 03:12:11 +0000
-Message-ID: <7af4fee2-1b37-4eb8-9d03-8b1a402ec00b@intel.com>
-Date: Fri, 31 May 2024 11:16:03 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/20] iommu: Refactoring domain allocation interface
-To: Baolu Lu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>, "Will
- Deacon" <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, "Jason
- Gunthorpe" <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>
-CC: David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, "Kalle
- Valo" <kvalo@kernel.org>, Bjorn Andersson <andersson@kernel.org>, "Mathieu
- Poirier" <mathieu.poirier@linaro.org>, Alex Williamson
-	<alex.williamson@redhat.com>, <mst@redhat.com>, Jason Wang
-	<jasowang@redhat.com>, Thierry Reding <thierry.reding@gmail.com>, "Jonathan
- Hunter" <jonathanh@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>,
-	<iommu@lists.linux.dev>, <dri-devel@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20240529053250.91284-1-baolu.lu@linux.intel.com>
- <efd902f6-eafc-4a26-8057-bdd9d7d6e535@intel.com>
- <a1f2c08a-e92f-4080-b55e-8d6dbd94db78@linux.intel.com>
-Content-Language: en-US
-From: Yi Liu <yi.l.liu@intel.com>
-In-Reply-To: <a1f2c08a-e92f-4080-b55e-8d6dbd94db78@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SG2PR01CA0181.apcprd01.prod.exchangelabs.com
- (2603:1096:4:189::13) To DS0PR11MB7529.namprd11.prod.outlook.com
- (2603:10b6:8:141::20)
+   d="scan'208";a="40477855"
+Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
+  by fmviesa003.fm.intel.com with ESMTP; 30 May 2024 20:16:42 -0700
+Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sCsky-000GRT-2p;
+	Fri, 31 May 2024 03:16:40 +0000
+Date: Fri, 31 May 2024 11:16:36 +0800
+From: kernel test robot <lkp@intel.com>
+To: Radu Sabau <radu.sabau@analog.com>, Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Jonathan Corbet <corbet@lwn.net>, linux-hwmon@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Radu Sabau <radu.sabau@analog.com>
+Subject: Re: [PATCH v5] drivers: hwmon: max31827: Add PEC support
+Message-ID: <202405311134.f2ALUwLL-lkp@intel.com>
+References: <20240530112505.14831-1-radu.sabau@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7529:EE_|MW3PR11MB4585:EE_
-X-MS-Office365-Filtering-Correlation-Id: de6afb29-1830-4270-1539-08dc811f76b4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|376005|7416005|1800799015;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?bnJORzZ0YnJDejNyMzRHMk1IOVlyeVFtRmR0b3BDeTRQeEJiWEkrZGVxSmwz?=
- =?utf-8?B?SWo0QUJlSHAvV0pUWlM3V0ExZy9FcTlyRERZS2RCc2EvQTRndTY3YktFcmtY?=
- =?utf-8?B?WkI3TGlrajBGMHlzMkxBSFZLNW5UYStwU3Z5clpGMEwyZVovNWxQUHVxUll4?=
- =?utf-8?B?dTZXNTMrcElXUTdmQmpTWlU1ZXVrQU9EdG9kTEpFVDlUODB6RHpCSnFhZnBI?=
- =?utf-8?B?N2Z3a1VPakZqSEYybXdHdnlvQU5LamdYMFRvS3F6cFFkYW12RkNuYzBseG8r?=
- =?utf-8?B?R2ZRQzB6RHUrY3p4UXZmaUZFZHNqUG5mQlJWNitDTUZjUHR5YkpvTFJXVGZk?=
- =?utf-8?B?MFFOa0VWTVR3T1Q1VC9SZkk2SnJuQndnaHVPcytzOHFWZ0dTNFFmNk4yNXV2?=
- =?utf-8?B?Sk8vdjZTY2hYSHJlaFR3TUZnTzhmd1ljWXlhRTZKK21yUTA3blZ3YWFnaDVr?=
- =?utf-8?B?Q09JcE43V0FnZG5rNFNVWjAyQjhac2dsdDlVM29vbzlKTUtCMEVNWEJBbzNi?=
- =?utf-8?B?dDVwMXNQRkJqMDBMYnd3Z0xTYWt5RkdDWGlWNlZSYmtjWStJT01nVUJXTW9F?=
- =?utf-8?B?TVU4OXRIWWU1a3hYcnc5ZVgwNndIN1Y4VlI2bGJacjE1K3hQVW1DZmJSQkIx?=
- =?utf-8?B?cUFTNmRObDFBUFoyOGh2Z0V6NFBUbFR3MEVUUUMyZWtBb0tqZGc2cmUzWmRu?=
- =?utf-8?B?cXYxdjhqQ1EvTUVleE1EVDZYYzJ3enNUcDJpWXRIY1BoOFZ0ZVo0NXY0MDlH?=
- =?utf-8?B?a3NFeGVPOCs3OHByS1F3Y0R4OHpvUnJXd1IxdXY2ZVRCSG95cHFKQi9MTmts?=
- =?utf-8?B?WkpHRFZqaE5ER2V1cWgzNTJtU1VNT080bzdrVWxuYkZuQnZ2VUF5Z3ozWFl3?=
- =?utf-8?B?WEcvTHZSMHp2Y2lzU0xiTzBBMkVGbGJCbTFjMGk3TEk4L2VDVnduRGJRb1Rr?=
- =?utf-8?B?NXc3MVIra1pMSG9DVE1WN1I2ZmdqU0VBSllYT2ZhN3pZQ0VhVEVMTEZLT0RW?=
- =?utf-8?B?bXRNU0F0YTFLTDBTL3dnM1d5YWdPQloxR0ZDa1ZEbEs0amtRVWtUZTQwdVg4?=
- =?utf-8?B?YVlKNE4rSXovQk96TVNwWS9EbUNtQS8zeDk4ZlhBcXFqSUIwSzE1WkxHUEtR?=
- =?utf-8?B?Z1VrdTY1ak9KREdLa2FQZGN4dnVpakhDQnF1K2ZOa0w1VzR5NHAwWUoyMEdi?=
- =?utf-8?B?cHRldVJGRmd1eUcvazE0UWduSWJYTklGdmRwa2c3NkQ1SUNhSElhMmFhcHNN?=
- =?utf-8?B?ektLUUtJSkM3OHh6K3pkM3FCZk1LenhDUzVhL0VScTNlZS9SVkFpM2NHYWFF?=
- =?utf-8?B?QUJzTlltMnE4RXlSWE5UcGo0eUJSWTJXclZ6dWJHeHJRRGdFSFp2MWdDQlc5?=
- =?utf-8?B?R0g4M3BNb1ZUNnk3d3lSSzI3VGlMNXF1YlQxYndvaEJVU1M0dkh3cGQ0MjJv?=
- =?utf-8?B?TS9VQnp0b1kvU0J5SWJLVC9ubG96Z04wRExsZjhaKzBQTTlmZk0wV0RIQ2gz?=
- =?utf-8?B?cFFxWjZVcjA2b1VaSGRFNW5qSTEyeG1QNUh0R2djdk5ic0J1akRNdmRGc2Jl?=
- =?utf-8?B?K3BvNzVNaE1UOFRHWm1PK3lRa2c4a2xkM3dCanlrYWdhYlNRVGxHRmdyWjFn?=
- =?utf-8?B?WFJsNnNOaTB3TTYzZlRHQmFwNzNwcW4xUDQwM0Q5MEFjSmQ3ajNGa3dCQmNx?=
- =?utf-8?B?TFA4akN4VXVncFNOVnlLUDRGRTh5WmQ0RlZHNHNEWWVTeE1jVFUwSFRBPT0=?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB7529.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(7416005)(1800799015);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?akdKeHpRZVRBOTBzVG90bzBTWEdsV2FHUWJicnVqQTBlekp4WWppbmlncDRE?=
- =?utf-8?B?SU83QlhuUldSNUtmdkVWTnlDVVh2d2VqUDJkYmp0a3ZwU29KMCtJRk10K0JB?=
- =?utf-8?B?YWdPcERsejR2UzN0T3NBcVd2Q0lscGJ6cUZ6STkrMDZQdm1ZdEJaQzVPamVD?=
- =?utf-8?B?bUMyUkpGcnRheUdRZkFUeWRQT3dkZlZWczNlSXNJdTNqS3NBNFkyckNNNkxo?=
- =?utf-8?B?Y0U2dXRHZGp6dUJlY1JsbG9rZFM3U0x5aGd6MjM5Y01yZldZcTZmdmZGMHFs?=
- =?utf-8?B?aHhWZ2N1SWV1cFNGSGQ1aUFtQVZrY1N3dlZxNGZ1bGtpdDVaVHllWVBGRnNm?=
- =?utf-8?B?Zi9uQWx2anBhMkNIY1d6VTc5VVJPbjRnQ3g1cHJzY2dWNVc3OEhuRDl0Vi84?=
- =?utf-8?B?dGJKSDZFakUxK0p2RDlNTllxZktvYVFScFNwbUJxeXpWU1RRK3JlbWxtL21G?=
- =?utf-8?B?akNEaXhXekZBQlV2UCtXQnk2QnZLa2dMaGI5NGcyVEMva3Q2ZXZ0aWJhNVNL?=
- =?utf-8?B?RTdYSU9kM3JQYURpM1pvQWtaNm40Tlk3WHRSRWJac05oV3Fxc3c1cU9NVW5p?=
- =?utf-8?B?QjMvQ3FCN3hNbU13bGxCNTQwWk0wOWhFV0tpUlloWk1FQ3grS2gra2tjWEJG?=
- =?utf-8?B?Q2hCL0NVR2xQem45YndGRFRtenhVWEU3eXE0QTFlTU1WbkdMaGlxWHpYL2Rp?=
- =?utf-8?B?dUtScE5leEIwUmtydEIyT0ZwdGhkNFBrZXJaSTFEQXlhU1lFV0lKZ1BjdGhW?=
- =?utf-8?B?YStvMkxTM1A3WU1vSExyWEczVDNIUk03TVhtdEd3dm5ScS9sQUZaNk5kcjBH?=
- =?utf-8?B?OXVoSHk5Z2N4VWxaY05QeStRbENSaWU4MVJ1ZkxoQVJjb0k5eXhHSktLK2lG?=
- =?utf-8?B?eXNwelV1dDNHNG1ETXpyQ2JLd0JuZ1J3T1RBM1Zod2luT0JITFVRbTh6QXZP?=
- =?utf-8?B?VlBtTkx3TWNGajhIN2tEeWN1Y1RYQnhVMmhUMGRBeEVpV1g3cXpoQ3psSzIr?=
- =?utf-8?B?ZExkWXQ0bExvQ0swVXhnamVDTHZBSFEyVmwwbUxlT0hpUmU3UGpwbFBzamlC?=
- =?utf-8?B?cnJjWENQVXY5cTZHSTh1WE5OS0xwVTREQjJCTUZSUGN2MVIrVzJ6ejZGakpo?=
- =?utf-8?B?NUJzSmd5QUdWQXlWZjdDams4STE0V2pkeFJDc0FIYVFtaVBsQWZjL1JXYWpY?=
- =?utf-8?B?Y21ETXdXTzRONG9sbDkvYzFYU2NYdFROampsK2tVNVdBa0VjVkoxaWY3SWxI?=
- =?utf-8?B?STBPekJRY3VnREpRTXlUcGVUeks0NXdJVlFXVUJ1K1V2U05maG9vc0dvaS9G?=
- =?utf-8?B?bHF1L2FGSTJMUkJSaDRzWGk0aTV2R0N6RDNZNkRLYTFCWWl4Tk1mUmVSalVF?=
- =?utf-8?B?WEJiSjBIeWJpUXNhQjZ0UFdPUm4rYVljOEo3dDUrQzd0WHMrSEp4dFRFT3I0?=
- =?utf-8?B?aGtTZjlTSmVKQ3ZCOW1sc3lFRmZ6WXEwOFNXMlhxcVJldE90R0dNSW9NbTFv?=
- =?utf-8?B?U2FLODZ3MG42VFdtdmQ4bUVFbmJFbEtQNnBEc0dWTE80K21iY1BKaGliVHlZ?=
- =?utf-8?B?Z2l0V0xZOEh2dUJnSkJUbjdyZFpxcjRlSnptSVcyUjd5RExDc0N4bXQ4R2wr?=
- =?utf-8?B?UC9kdUExN3NPajBuNmpiQnZlcG80ZHlOYVZaUmJsTmtyazV2RnEvaHVOUUJK?=
- =?utf-8?B?WTI1bmRwSU1xaXQwaEloVDJuVmthVEJ4dG5uaHJYZjczelJSYXZrV1hkNHJk?=
- =?utf-8?B?SDFYZkNIejk4WVpPSm95VkduTjdLYVRCa29tMkp2bkR3MXJTZEtxSkVaR3Zk?=
- =?utf-8?B?WmZVRkdiTWlhRmw2OUJIR0NlVi9ZbEdwd0JQOUxQSUYydXcrOVNxa2hsZHZw?=
- =?utf-8?B?NE5iODNMSnFqT0ZINVh0dW5QRng5SVRRVGw3d2hXVWg1R2I2d2h0WmlYbFk2?=
- =?utf-8?B?OHZEaTlsd1BDa1VyQWhxb0d0ZEw2REtQdVBIYkNyNXNRUHlndGw4K1NhUDBs?=
- =?utf-8?B?UUNCeUNkZHFvYStscG1IaGtFS0Y2QndrTjA5VENLazlCdDVPTWtkRmliZlZM?=
- =?utf-8?B?d3lvNDBEVVRZVDZXTXNtelNkL0ZRdWc2MlNQY0VENVVrSitzdFJSTEFlTk85?=
- =?utf-8?Q?lADGNcMBAUZUIZ2vNYC2tn+Q7?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: de6afb29-1830-4270-1539-08dc811f76b4
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7529.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 May 2024 03:12:11.8215
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: K1l+ldtEHiUkIs1bU4nEXCYpQJRk5p9arsgljm/Fd3J5H02CnDHu4mUUbPmpmgneB7vdbAHXhRGtmKVPfOxDUA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR11MB4585
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240530112505.14831-1-radu.sabau@analog.com>
 
-On 2024/5/29 20:02, Baolu Lu wrote:
-> On 2024/5/29 17:03, Yi Liu wrote:
->> On 2024/5/29 13:32, Lu Baolu wrote:
->>> The IOMMU subsystem has undergone some changes, including the removal
->>> of iommu_ops from the bus structure. Consequently, the existing domain
->>> allocation interface, which relies on a bus type argument, is no longer
->>> relevant:
->>>
->>>      struct iommu_domain *iommu_domain_alloc(struct bus_type *bus)
->>>
->>> This series is designed to refactor the use of this interface. It
->>> proposes two new interfaces to replace iommu_domain_alloc():
->>>
->>> - iommu_user_domain_alloc(): This interface is intended for allocating
->>>    iommu domains managed by userspace for device passthrough scenarios,
->>>    such as those used by iommufd, vfio, and vdpa. It clearly indicates
->>>    that the domain is for user-managed device DMA.
->>
->> user paging domain? It looks to me user domain includes the nested domains
->> as well.
-> 
-> Yes, nested domain is a user domain. The iommu driver should implement
-> iommu_ops->domain_alloc_user for nested domain allocation.
+Hi Radu,
 
-will it be more clear to name iommu_user_domain_alloc() be
-iommu_user_paging_domain_alloc() as it is mainly for paging domain
-allocation?
+kernel test robot noticed the following build errors:
 
->>
->>>    If an IOMMU driver does not implement iommu_ops->domain_alloc_user,
->>>    this interface will rollback to the generic paging domain allocation.
->>>
->>> - iommu_paging_domain_alloc(): This interface is for allocating iommu
->>>    domains managed by kernel drivers for kernel DMA purposes. It takes a
->>>    device pointer as a parameter, which better reflects the current
->>>    design of the IOMMU subsystem.
->>>
->>> The majority of device drivers currently using iommu_domain_alloc() do
->>> so to allocate a domain for a specific device and then attach that
->>> domain to the device. These cases can be straightforwardly migrated to
->>> the new interfaces.
->>>
->>> However, there are some drivers with more complex use cases that do
->>> not fit neatly into this new scheme. For example:
->>>
->>> $ git grep "= iommu_domain_alloc"
->>> arch/arm/mm/dma-mapping.c:      mapping->domain = iommu_domain_alloc(bus);
->>> drivers/gpu/drm/rockchip/rockchip_drm_drv.c:    private->domain = 
->>> iommu_domain_alloc(private->iommu_dev->bus);
->>> drivers/gpu/drm/tegra/drm.c:            tegra->domain = 
->>> iommu_domain_alloc(&platform_bus_type);
->>> drivers/infiniband/hw/usnic/usnic_uiom.c:       pd->domain = domain = 
->>> iommu_domain_alloc(dev->bus);
->>>
->>> This series leave those cases unchanged and keep iommu_domain_alloc()
->>> for their usage. But new drivers should not use it anymore.
->>
->> does it mean there is still domains allocated via iommu_domain_alloc()
->> on VT-d platform?
-> 
-> I think the drivers mentioned above do not run on x86 platforms, or do
-> they?
+[auto build test ERROR on groeck-staging/hwmon-next]
+[also build test ERROR on linus/master v6.10-rc1 next-20240529]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-cool. BTW. I know out-of-tree drivers are not counted in upstream review.
-Just out of curious, is there a formal way to let such drivers know it is
-no longer allowed to use iommu_domain_alloc() on VT-d?
+url:    https://github.com/intel-lab-lkp/linux/commits/Radu-Sabau/drivers-hwmon-max31827-Add-PEC-support/20240530-192727
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git hwmon-next
+patch link:    https://lore.kernel.org/r/20240530112505.14831-1-radu.sabau%40analog.com
+patch subject: [PATCH v5] drivers: hwmon: max31827: Add PEC support
+config: hexagon-allmodconfig (https://download.01.org/0day-ci/archive/20240531/202405311134.f2ALUwLL-lkp@intel.com/config)
+compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project bafda89a0944d947fc4b3b5663185e07a397ac30)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240531/202405311134.f2ALUwLL-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405311134.f2ALUwLL-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from drivers/hwmon/max31827.c:12:
+   In file included from include/linux/i2c.h:19:
+   In file included from include/linux/regulator/consumer.h:35:
+   In file included from include/linux/suspend.h:5:
+   In file included from include/linux/swap.h:9:
+   In file included from include/linux/memcontrol.h:13:
+   In file included from include/linux/cgroup.h:26:
+   In file included from include/linux/kernel_stat.h:9:
+   In file included from include/linux/interrupt.h:11:
+   In file included from include/linux/hardirq.h:11:
+   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:13:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:547:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     547 |         val = __raw_readb(PCI_IOBASE + addr);
+         |                           ~~~~~~~~~~ ^
+   include/asm-generic/io.h:560:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     560 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
+      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
+         |                                                   ^
+   In file included from drivers/hwmon/max31827.c:12:
+   In file included from include/linux/i2c.h:19:
+   In file included from include/linux/regulator/consumer.h:35:
+   In file included from include/linux/suspend.h:5:
+   In file included from include/linux/swap.h:9:
+   In file included from include/linux/memcontrol.h:13:
+   In file included from include/linux/cgroup.h:26:
+   In file included from include/linux/kernel_stat.h:9:
+   In file included from include/linux/interrupt.h:11:
+   In file included from include/linux/hardirq.h:11:
+   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:13:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:573:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     573 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
+      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
+         |                                                   ^
+   In file included from drivers/hwmon/max31827.c:12:
+   In file included from include/linux/i2c.h:19:
+   In file included from include/linux/regulator/consumer.h:35:
+   In file included from include/linux/suspend.h:5:
+   In file included from include/linux/swap.h:9:
+   In file included from include/linux/memcontrol.h:13:
+   In file included from include/linux/cgroup.h:26:
+   In file included from include/linux/kernel_stat.h:9:
+   In file included from include/linux/interrupt.h:11:
+   In file included from include/linux/hardirq.h:11:
+   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:13:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:584:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     584 |         __raw_writeb(value, PCI_IOBASE + addr);
+         |                             ~~~~~~~~~~ ^
+   include/asm-generic/io.h:594:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     594 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:604:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     604 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   In file included from drivers/hwmon/max31827.c:12:
+   In file included from include/linux/i2c.h:19:
+   In file included from include/linux/regulator/consumer.h:35:
+   In file included from include/linux/suspend.h:5:
+   In file included from include/linux/swap.h:9:
+   In file included from include/linux/memcontrol.h:21:
+   In file included from include/linux/mm.h:2208:
+   include/linux/vmstat.h:522:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     522 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+>> drivers/hwmon/max31827.c:336:32: error: declaration of anonymous struct must be a definition
+     336 | static int max31827_chip_write(struct *regmap, u32 attr, long val)
+         |                                ^
+>> drivers/hwmon/max31827.c:339:7: error: use of undeclared identifier 'hwmon_chip_pec'; did you mean 'hwmon_chip'?
+     339 |         case hwmon_chip_pec:
+         |              ^~~~~~~~~~~~~~
+         |              hwmon_chip
+   include/linux/hwmon.h:21:2: note: 'hwmon_chip' declared here
+      21 |         hwmon_chip,
+         |         ^
+>> drivers/hwmon/max31827.c:340:29: error: use of undeclared identifier 'regmap'
+     340 |                 return regmap_update_bits(regmap, MAX31827_CONFIGURATION_REG,
+         |                                           ^
+>> drivers/hwmon/max31827.c:341:8: error: use of undeclared identifier 'MAX38127_CONFIGURATION_PEC_EN_MASK'
+     341 |                                           MAX38127_CONFIGURATION_PEC_EN_MASK,
+         |                                           ^
+   drivers/hwmon/max31827.c:342:14: error: use of undeclared identifier 'MAX38127_CONFIGURATION_PEC_EN_MASK'
+     342 |                                           val ? MAX38127_CONFIGURATION_PEC_EN_MASK : 0);
+         |                                                 ^
+>> drivers/hwmon/max31827.c:357:48: error: too many arguments to function call, expected 2, have 3
+     357 |                 return max31827_chip_write(st->regmap, attr, val);
+         |                        ~~~~~~~~~~~~~~~~~~~                   ^~~
+   drivers/hwmon/max31827.c:336:12: note: 'max31827_chip_write' declared here
+     336 | static int max31827_chip_write(struct *regmap, u32 attr, long val)
+         |            ^                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>> drivers/hwmon/max31827.c:399:7: error: duplicate case value 'hwmon_chip'
+     399 |         case hwmon_chip:
+         |              ^
+   drivers/hwmon/max31827.c:356:7: note: previous case defined here
+     356 |         case hwmon_chip:
+         |              ^
+>> drivers/hwmon/max31827.c:601:53: error: use of undeclared identifier 'HWMON_C_PEC'
+     601 |         HWMON_CHANNEL_INFO(chip, HWMON_C_UPDATE_INTERVAL | HWMON_C_PEC),
+         |                                                            ^
+   7 warnings and 8 errors generated.
+
+
+vim +336 drivers/hwmon/max31827.c
+
+   335	
+ > 336	static int max31827_chip_write(struct *regmap, u32 attr, long val)
+   337	{
+   338		switch (attr) {
+ > 339		case hwmon_chip_pec:
+ > 340			return regmap_update_bits(regmap, MAX31827_CONFIGURATION_REG,
+ > 341						  MAX38127_CONFIGURATION_PEC_EN_MASK,
+ > 342						  val ? MAX38127_CONFIGURATION_PEC_EN_MASK : 0);
+   343		default:
+   344			return -EOPNOTSUPP;
+   345		}
+   346	}
+   347	
+   348	static int max31827_write(struct device *dev, enum hwmon_sensor_types type,
+   349				  u32 attr, int channel, long val)
+   350	{
+   351		struct max31827_state *st = dev_get_drvdata(dev);
+   352		int res = 1;
+   353		int ret;
+   354	
+   355		switch (type) {
+   356		case hwmon_chip:
+ > 357			return max31827_chip_write(st->regmap, attr, val);
+   358		case hwmon_temp:
+   359			switch (attr) {
+   360			case hwmon_temp_enable:
+   361				if (val >> 1)
+   362					return -EINVAL;
+   363	
+   364				mutex_lock(&st->lock);
+   365				/**
+   366				 * The chip should not be enabled while a conversion is
+   367				 * performed. Neither should the chip be enabled when
+   368				 * the alarm values are changed.
+   369				 */
+   370	
+   371				st->enable = val;
+   372	
+   373				ret = regmap_update_bits(st->regmap,
+   374							 MAX31827_CONFIGURATION_REG,
+   375							 MAX31827_CONFIGURATION_1SHOT_MASK |
+   376							 MAX31827_CONFIGURATION_CNV_RATE_MASK,
+   377							 MAX31827_DEVICE_ENABLE(val));
+   378	
+   379				mutex_unlock(&st->lock);
+   380	
+   381				return ret;
+   382	
+   383			case hwmon_temp_max:
+   384				return write_alarm_val(st, MAX31827_TH_REG, val);
+   385	
+   386			case hwmon_temp_max_hyst:
+   387				return write_alarm_val(st, MAX31827_TH_HYST_REG, val);
+   388	
+   389			case hwmon_temp_min:
+   390				return write_alarm_val(st, MAX31827_TL_REG, val);
+   391	
+   392			case hwmon_temp_min_hyst:
+   393				return write_alarm_val(st, MAX31827_TL_HYST_REG, val);
+   394	
+   395			default:
+   396				return -EOPNOTSUPP;
+   397			}
+   398	
+ > 399		case hwmon_chip:
+   400			if (attr == hwmon_chip_update_interval) {
+   401				if (!st->enable)
+   402					return -EINVAL;
+   403	
+   404				/*
+   405				 * Convert the desired conversion rate into register
+   406				 * bits. res is already initialized with 1.
+   407				 *
+   408				 * This was inspired by lm73 driver.
+   409				 */
+   410				while (res < ARRAY_SIZE(max31827_conversions) &&
+   411				       val < max31827_conversions[res])
+   412					res++;
+   413	
+   414				if (res == ARRAY_SIZE(max31827_conversions))
+   415					res = ARRAY_SIZE(max31827_conversions) - 1;
+   416	
+   417				res = FIELD_PREP(MAX31827_CONFIGURATION_CNV_RATE_MASK,
+   418						 res);
+   419	
+   420				ret = regmap_update_bits(st->regmap,
+   421							 MAX31827_CONFIGURATION_REG,
+   422							 MAX31827_CONFIGURATION_CNV_RATE_MASK,
+   423							 res);
+   424				if (ret)
+   425					return ret;
+   426	
+   427				st->update_interval = val;
+   428			}
+   429			break;
+   430	
+   431		default:
+   432			return -EOPNOTSUPP;
+   433		}
+   434	
+   435		return 0;
+   436	}
+   437	
 
 -- 
-Regards,
-Yi Liu
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
