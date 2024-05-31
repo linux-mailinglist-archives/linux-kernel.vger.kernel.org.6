@@ -1,117 +1,118 @@
-Return-Path: <linux-kernel+bounces-197275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D0618D688D
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 19:54:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97F248D683B
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 19:37:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D0B91F241E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:54:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C92D51C23F5D
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:37:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6068E17F4EB;
-	Fri, 31 May 2024 17:53:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 695F217C7B5;
+	Fri, 31 May 2024 17:37:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mff.cuni.cz header.i=@mff.cuni.cz header.b="WhhlDm8+"
-Received: from smtp1.ms.mff.cuni.cz (smtp-in1.ms.mff.cuni.cz [195.113.20.234])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Uo4fDUfI"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EF3B17E44F;
-	Fri, 31 May 2024 17:53:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.113.20.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E86452E3F2;
+	Fri, 31 May 2024 17:37:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717178001; cv=none; b=t6uANsp1vhq61zKVc62oCLdwQZZXXLpMtV87XzeaYz097514BM4gpR5YdWRytGu5mFxzpsUkEnYaRp39N6VVkm5Omj5ogHZr7ugs+XaFrBek+53gP2mJPoDwt6TcSHS4wGBYjwzCpRcWY0K63D7sjTvcusm55F1jHunu3uTQ8m0=
+	t=1717177055; cv=none; b=qXzBx6EAf4hOkHhn9gavMImPPTC6gmq+KdsrKuGlmH1E0HK7jahIBog/NxPmlGmfLYj2XjfuRXHmMJLUgsYlz1i9Jy2nvuBW3bx/sguKrCNDycI+1jfElz8vlAQ/X8aoz4xlWPahC/53bomTAevPrjG2s1DMX41XNIAOG1fMMgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717178001; c=relaxed/simple;
-	bh=/1bazwq8/5ZIffTP9cbZUkwd86uwrXjzRtAHrHiL2vk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sTHt6RRQNeE/4XktMbcM2N+8Xz6Y+qqj8wK2QbATqGKlVfmv+P+mLBRwK7l+Lhh7oSCLgqMt3ZmR2t3f/MKbcYbWXDlFJ2JyzZrtk6uJPgm7Z36NzE7TCT740xHhIzeOi8qOWHcJJUYWGDiPbDByU7mhSa7+Z4AEy5jkDHpbj4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=matfyz.cz; spf=pass smtp.mailfrom=matfyz.cz; dkim=pass (2048-bit key) header.d=mff.cuni.cz header.i=@mff.cuni.cz header.b=WhhlDm8+; arc=none smtp.client-ip=195.113.20.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=matfyz.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=matfyz.cz
-X-SubmittedBy: id balejk@matfyz.cz subject /postalCode=110+2000/O=Univerzita+20Karlova/street=Ovocn+5CxC3+5CxBD+20trh+20560/5/ST=Praha,+20Hlavn+5CxC3+5CxAD+20m+5CxC4+5Cx9Bsto/C=CZ/CN=Karel+20Balej/emailAddress=balejk@matfyz.cz
-	serial F5FD910E8FE2121B897F7E55B84E351D
-	issued by /C=NL/O=GEANT+20Vereniging/CN=GEANT+20Personal+20CA+204
-	auth type TLS.CUNI
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mff.cuni.cz;
-	s=submission; t=1717177980; x=1718477980;
-	bh=My4LXhXbb9BOpUof0ahRmEdjI75iWQ/EFNjZ8MlgZrg=; h=From;
-	b=WhhlDm8+P5hbDnR/U8kiAn2A4f7Zc7v5CVE4/wBGRE+LGHaLdGuWxD0uQZwnhx0GM
-	 t+ceQjFzs7EFlqZpFiSt2F+fQapECr0CX+r64YlHztxuB1WSV1RlL9gFsXF+qzhVh0
-	 2DlwxSORJiI2ZyqakKq5/rQfO9xJECyYXYeMxMNH/NjQXBJMIQtZmE8Msnacyb2BHN
-	 eZXyxEtVtAbOALc/5IXf0mDhdRQKXMTAZKTmb6wFL0fk3AG711Kv8HSWCZCDbzyKyw
-	 v7GKfTkiN7qMI8OuYjfLC5mog262Bc7I+H4yDcT8kWXCbaKr8NE0vGVxEv3w5hc26Q
-	 XX4GCERRstPsw==
-Received: from localhost (internet5.mraknet.com [185.200.108.250])
-	(authenticated)
-	by smtp1.ms.mff.cuni.cz (8.16.1/8.16.1) with ESMTPS id 44VHqxRU001124
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=OK);
-	Fri, 31 May 2024 19:53:00 +0200 (CEST)
-	(envelope-from balejk@matfyz.cz)
-From: Karel Balej <balejk@matfyz.cz>
-To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-input@vger.kernel.org
-Cc: =?UTF-8?q?Duje=20Mihanovi=C4=87?= <duje.mihanovic@skole.hr>,
-        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        balejk@matfyz.cz
-Subject: [PATCH v7 5/5] MAINTAINERS: add myself for Marvell 88PM886 PMIC
-Date: Fri, 31 May 2024 19:35:00 +0200
-Message-ID: <20240531175109.15599-6-balejk@matfyz.cz>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240531175109.15599-1-balejk@matfyz.cz>
-References: <20240531175109.15599-1-balejk@matfyz.cz>
+	s=arc-20240116; t=1717177055; c=relaxed/simple;
+	bh=GuxYQS0FYJYGWg1QSsJxVdpzacr59Qf7Z2wjinF8MLU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q2yzBYT+oeEOUGfS2oaNPSULUml6kfj8E4hnF0KJxundjJxPvPyBSjzjqR78+S4z0gEBgZV4WI7/rA1wqWfXP6WzKSIJtLDNRw7ZhJsTwHFGeVCbvJSifjrHb1u0GDNNdrmSYowmXZDPuRzHEyUORvUsxSE5d0v4AAbuBlphHeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Uo4fDUfI; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717177055; x=1748713055;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=GuxYQS0FYJYGWg1QSsJxVdpzacr59Qf7Z2wjinF8MLU=;
+  b=Uo4fDUfIvMmC2oPYDfruR42U3LQwSFWEI1ryjryOsSUvLm9X0nc0yg1s
+   uySMnFn1bxmOTQswR8vXV2xv3GHthJ4JDNcQy3yLg2ebma2fKdniLo9Qr
+   80xzbzOhiSr4YZmGWWzXuGd6JECGjUcC3tXpAQhQF/3ro6q8Pn1oy22S9
+   tudIGPQ/eXcTeGgsrW9fqUWMuG5aDXhYe0wGmp5TrE2CyQOH2KNWbPAkq
+   9+dY7f+cvx8wRwKZYo3iM8IiAqas280POeFkjCml1da+LfcLPed5K1am5
+   5CzOQRn2DOvFXJ64JkP9OeUGa7wLspkM81MfoI3D5+mobS0RYoQAoN1vf
+   A==;
+X-CSE-ConnectionGUID: +abyWSyuTq2ZpXtadCdbDQ==
+X-CSE-MsgGUID: 9suSetSTS/i5Ydj1m/paCw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11089"; a="13550960"
+X-IronPort-AV: E=Sophos;i="6.08,205,1712646000"; 
+   d="scan'208";a="13550960"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 10:37:34 -0700
+X-CSE-ConnectionGUID: xJGeshXWRVCTzV+VtBlg9Q==
+X-CSE-MsgGUID: 6nVCfv0IT5WQ29ga8RtdLw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,205,1712646000"; 
+   d="scan'208";a="36335914"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 10:37:30 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sD6Bz-0000000CXWw-08Pg;
+	Fri, 31 May 2024 20:37:27 +0300
+Date: Fri, 31 May 2024 20:37:26 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Lee Jones <lee@kernel.org>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+	linux-leds@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-fbdev@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Pavel Machek <pavel@ucw.cz>,
+	Daniel Thompson <daniel.thompson@linaro.org>,
+	Jingoo Han <jingoohan1@gmail.com>, Helge Deller <deller@gmx.de>,
+	Johan Hovold <jhovold@gmail.com>,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v1 0/4] lm3533: Remove the outdated drivers
+Message-ID: <ZloK1hooJ0Wdh0G9@smile.fi.intel.com>
+References: <20240531170844.1595468-1-andriy.shevchenko@linux.intel.com>
+ <ZloFgnKC6S2B_oz0@smile.fi.intel.com>
+ <20240531171546.GF1204315@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240531171546.GF1204315@google.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Add an entry to MAINTAINERS for the Marvell 88PM886 PMIC MFD, onkey and
-regulator drivers.
+On Fri, May 31, 2024 at 06:15:46PM +0100, Lee Jones wrote:
+> On Fri, 31 May 2024, Andy Shevchenko wrote:
+> > On Fri, May 31, 2024 at 07:56:12PM +0300, Andy Shevchenko wrote:
+> > > Driver is quite outdated from the Linux kernel internal APIs
+> > > perspective. In particular GPIO code is using legacy calls,
+> > > that started being replaced by a new API ca. 2014, i.e. ten
+> > > years ago.
+> > > 
+> > > Suggested-by: Linus Walleij <linus.walleij@linaro.org>
+> > 
+> > >  drivers/mfd/lm3533-core.c           | 645 -------------------
+> > 
+> > Oops, still leftovers: one file and Kconfig/Makefile updates...
+> > If needed I'll send a v2, but now I leave it to Lee and Johan to decide
+> > the destiny of the drivers.
+> 
+> Let's not rush into it.  Take your time.
 
-Signed-off-by: Karel Balej <balejk@matfyz.cz>
----
+Exactly, excellente fin de semaine!
 
-Notes:
-    RFC v3:
-    - Remove onkey bindings file.
-    RFC v2:
-    - Only mention 88PM886 in the commit message.
-    - Add regulator driver.
-    - Rename the entry.
-
- MAINTAINERS | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index d6c90161c7bf..9d6c940029b8 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -13295,6 +13295,15 @@ F:	drivers/net/dsa/mv88e6xxx/
- F:	include/linux/dsa/mv88e6xxx.h
- F:	include/linux/platform_data/mv88e6xxx.h
- 
-+MARVELL 88PM886 PMIC DRIVER
-+M:	Karel Balej <balejk@matfyz.cz>
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/mfd/marvell,88pm886-a1.yaml
-+F:	drivers/input/misc/88pm886-onkey.c
-+F:	drivers/mfd/88pm886.c
-+F:	drivers/regulators/88pm886-regulator.c
-+F:	include/linux/mfd/88pm886.h
-+
- MARVELL ARMADA 3700 PHY DRIVERS
- M:	Miquel Raynal <miquel.raynal@bootlin.com>
- S:	Maintained
 -- 
-2.45.1
+With Best Regards,
+Andy Shevchenko
+
 
 
