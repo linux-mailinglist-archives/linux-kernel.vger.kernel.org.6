@@ -1,117 +1,121 @@
-Return-Path: <linux-kernel+bounces-196537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D34DA8D5D93
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 11:06:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE6468D5D84
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 11:04:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88FA11F2298C
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 09:06:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BE601C23E0E
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 09:04:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 560FB15746E;
-	Fri, 31 May 2024 09:04:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E911156641;
+	Fri, 31 May 2024 09:03:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="heGfTpQ+"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JxhA6qI2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16D0815697A;
-	Fri, 31 May 2024 09:04:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9886E14532D;
+	Fri, 31 May 2024 09:03:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717146244; cv=none; b=QW4eRSriMd8nQNO2x1ATo707Y9Dqr4tVt2IhWVbDbGAVuiodyYaMxzLmBx8PWLRPVF8Izpj/C7/cbRliWOkr0ClBOV1FFbMXVRannka7M7wKfGVfQA38YKsOKU2jb8FAUfBvuT5XhnOkOnTzHfPG2bm1EFpO2T5QGGLgsXDz+Is=
+	t=1717146235; cv=none; b=Q3QqsY7gdQC2eM9jiFdUlNBHQg+3hY1+1vcWZuMU1xSIsLg+iVP0jxySdD+wlvrAnKE1WBbBX+BiK6jwKHr84uFwZI5RmTXlR6NfHLTOrkiwxGlR0vyOM1+7H1AYl2NfWfLxe58f4bGVBXfUHI5uECJMIO9QLn1SthBj1G3YegQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717146244; c=relaxed/simple;
-	bh=RNQ631wq+tFcd6BAOu9FMkT9bNMeAzeuDXhiZg+LHe0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=r6LtVTyjMmHBxOGkZ1uikJT0G5jih+rwv0kigJz08nF1ZFwgJd199OXTOaYTBFvAiS8co7SboOttjwTrwl77EpvhP9+gcexuJRSvWA3QNRtbRgfeZRA329G8+t/c1Q1fSFiS7zgEv1RTafSSUjBH0iG8Dt5ieVdhGhzQ0MASpwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=heGfTpQ+; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717146243; x=1748682243;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=RNQ631wq+tFcd6BAOu9FMkT9bNMeAzeuDXhiZg+LHe0=;
-  b=heGfTpQ+INrfmthY0WwIuv+0Ec/SA24VMvQS5RFt2bY5Eb3dg29lFLig
-   UTT8Nop9odIWtr3iK8KAwehmMHg9RcL3BvuOLPGADTipQLCrVp+0S6DkJ
-   RTW4fbWH5qJeTXRsz3GkLxBbbFb+jckLstcOosFasPGhNZYAr/jYvxvne
-   4rHderARvcB5DRpq0jXscIqRZlhLO+0QqQdjAK5nRcwvws790f/H6/8bP
-   hrJK9mtP5yw/N8KtGKsJiYyxAFzQI8QB6ih6huXMlBn2QyKuZDL3JUXI9
-   Zia1nivq2fK8RcidfEQvvk0R2AFj4cDSlYa5iOCUaXeYBl34RuSQxrzzO
-   A==;
-X-CSE-ConnectionGUID: dPq+XxmoT4a15+Dow+Mb/A==
-X-CSE-MsgGUID: BkbUaT63ToOaiwPO/KcWHA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="17480622"
-X-IronPort-AV: E=Sophos;i="6.08,203,1712646000"; 
-   d="scan'208";a="17480622"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 02:04:00 -0700
-X-CSE-ConnectionGUID: ZCghcb8kQuWOI6toIDkwiA==
-X-CSE-MsgGUID: Bm2es+QJR1acdezFCvu0Qw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,203,1712646000"; 
-   d="scan'208";a="36102759"
-Received: from jf.jf.intel.com ([10.165.9.183])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 02:04:00 -0700
-From: Yang Weijiang <weijiang.yang@intel.com>
-To: tglx@linutronix.de,
-	dave.hansen@intel.com,
-	x86@kernel.org,
-	seanjc@google.com,
-	pbonzini@redhat.com,
-	linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org
-Cc: peterz@infradead.org,
-	chao.gao@intel.com,
-	rick.p.edgecombe@intel.com,
-	mlevitsk@redhat.com,
-	weijiang.yang@intel.com,
-	john.allen@amd.com
-Subject: [PATCH 6/6] x86/fpu/xstate: Warn if CET supervisor state is detected in normal fpstate
-Date: Fri, 31 May 2024 02:03:31 -0700
-Message-ID: <20240531090331.13713-7-weijiang.yang@intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240531090331.13713-1-weijiang.yang@intel.com>
-References: <20240531090331.13713-1-weijiang.yang@intel.com>
+	s=arc-20240116; t=1717146235; c=relaxed/simple;
+	bh=7oDijFUHb/SzuGN0T03N+niG7QYaHVhZCXHr291ui9c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WxJ0/l6RnEzJ2SIItKni9rmppLOYIfbSGYzYQDxM5R6T/dH5TFXuL3liBdvKOLUbxsJFSQPNvAj6RTuvN4YW+zjXlPVh6a+4/xdIydMqEnzUBDDQiu5ry3+X+jlA6fIgyUIGEYp54NB4V2shNJszmbZshvHnaQ0GYF3j4b9EBfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JxhA6qI2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8A38C116B1;
+	Fri, 31 May 2024 09:03:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717146235;
+	bh=7oDijFUHb/SzuGN0T03N+niG7QYaHVhZCXHr291ui9c=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=JxhA6qI2GZ3wBeoAQOs8MgBZI7+U0CZf+n8MyebURts/gIfiq2v8vLCrsH//Ahj1f
+	 1j3i6qm35dyRDDVqhSHxhf0mPBfg3mFsR0pJ0UQ//tx4KO38Wl62rvmEHCdek5XSIR
+	 jvspU4FEzRouBxtIC9UM9m/6LSe+EOMGUXG487OSuJGL8GeMIdEQKHSFLqoV338kjG
+	 YF44WSTV3BMRLP4bWia4Gjhp1Kp27YhSCjYdKKNfwe2vLLB7xPHL/XK835HIn5gEi0
+	 m+0N0XkXch+KqtU1zv5TVHnbM4K7KYzs6MqCB6h6H6vYbcOprQvgBQJauQiwUyLKv0
+	 16QsHrspytJ2Q==
+Message-ID: <21b8fc7a-f915-40a1-aa40-c8f91f158b1c@kernel.org>
+Date: Fri, 31 May 2024 11:03:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] dt-bindings: iio: adc: add a7779 doc
+To: ranechita <ramona.nechita@analog.com>, linux-iio@vger.kernel.org
+Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen
+ <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20240530075914.28080-1-ramona.nechita@analog.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240530075914.28080-1-ramona.nechita@analog.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-CET supervisor state bit is __ONLY__ enabled for guest fpstate, i.e.,
-never for normal kernel fpstate. The bit is set when guest FPU config
-is initialized.
+On 30/05/2024 09:59, ranechita wrote:
+> Add dt bindings for adc ad7779.
+> 
+> Signed-off-by: ranechita <ramona.nechita@analog.com>
 
-For normal fpstate, the bit should have been removed when initializes
-kernel FPU config settings, WARN_ONCE() if kernel detects normal fpstate
-xfeatures contains CET supervisor state bit before xsaves operation.
+Same v2? Nothing improved?
 
-Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
----
- arch/x86/kernel/fpu/xstate.h | 2 ++
- 1 file changed, 2 insertions(+)
+Name used is still not full name, as I asked.
 
-diff --git a/arch/x86/kernel/fpu/xstate.h b/arch/x86/kernel/fpu/xstate.h
-index 05df04f39628..b1b3e0fe02c6 100644
---- a/arch/x86/kernel/fpu/xstate.h
-+++ b/arch/x86/kernel/fpu/xstate.h
-@@ -189,6 +189,8 @@ static inline void os_xsave(struct fpstate *fpstate)
- 	WARN_ON_FPU(!alternatives_patched);
- 	xfd_validate_state(fpstate, mask, false);
- 
-+	WARN_ON_FPU(!fpstate->is_guest && (mask & XFEATURE_MASK_CET_KERNEL));
-+
- 	XSTATE_XSAVE(&fpstate->regs.xsave, lmask, hmask, err);
- 
- 	/* We should never fault when copying to a kernel buffer: */
--- 
-2.43.0
+Best regards,
+Krzysztof
 
 
