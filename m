@@ -1,87 +1,73 @@
-Return-Path: <linux-kernel+bounces-197222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB8228D67BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 19:09:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B27D8D6786
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:58:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A215D2839E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:09:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC49A2830B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:58:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CFE817C7B6;
-	Fri, 31 May 2024 17:08:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DD7E176AAA;
+	Fri, 31 May 2024 16:58:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NBrCSbBa"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="vimy6Tsk"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3A1617622E;
-	Fri, 31 May 2024 17:08:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD81916E867;
+	Fri, 31 May 2024 16:58:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717175334; cv=none; b=epyVHYEB9sf6eI9LoMuixhTVBmYi3ock2fACFkX5LUYljb9P/Fnvu2KZnjNyMOwTHBHGG4g6+O1yU6mKSwEj32E6x8HNahZEWcSnITlm+eShW76NyUXX4j/oFkzqQU+W94X3mk+Uu8gqzu3cYPkOLA+QtZSSEDOT1AvAVuXCkTM=
+	t=1717174710; cv=none; b=fMeGX2vZ6jdoEjvVo7s4ID3hWS8esWhdC6UDql80J+uFFrKAVBxsr4mjR/+pyGuLboJvbXxHx+VP7uAiHUe9G1lWYTlzLvyWXxl6UuBGB4QGfUJEAa1yjtyjKHziMaOqHOkP6DaAvKrHApGBosVoPAgNKpAe0LX3pIFIiwy3AJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717175334; c=relaxed/simple;
-	bh=3PIKjX4C8x631MS4CKk45aCDtHEPJ9w4WNa6zwbGgDg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nxMVCO08p3Xkn+aAHNTVXzSnKK/8pP/VxfFWI+0cuKliaokczq+Ksv1J7/mYC2PLQJfRG9nwYeZSr1w9cJtApkYtCNs4X1MVvkjs5rDBnzW4igtWFKnx3j/Hn2D0Lu5YBjU9LPKRgxLQRephLd8ZPdQOrOy3x7/mHXZ5nio7udY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NBrCSbBa; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717175333; x=1748711333;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=3PIKjX4C8x631MS4CKk45aCDtHEPJ9w4WNa6zwbGgDg=;
-  b=NBrCSbBaTnZHUmeUzU/XBbske1sWYQGRkD8SxAJq33PGPtasQh8R3oDh
-   742Q5KzDIaI5MIdirV6FaCzrYsKL9nCk6+9grOlMUmF3X2OnD+PWG9EQQ
-   jom1fqqawE0U3+hdpedcORBy/m73spizcAh84fw/oltjaVX9l3zPge1dY
-   HXRziix5oaK1b2H4BJj0oEfbVHv4TCALbnrMhh1aR34sQAOUYpLSHrg+1
-   CIygSZOuOlEbsyOFqWKWv9ObfWyAtrMWz+4a7CylAlI8uUyINR6p/J3HG
-   pZ6o1+T4/p0rv/uwZ/bqM//snxm5/F5KFtiFQwAbdXz21tGuo9nHhcMqZ
-   Q==;
-X-CSE-ConnectionGUID: BkRe68g/Qnax/yrL9cScMg==
-X-CSE-MsgGUID: M7TV8vC9Ry6ifd/HI24BLA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11089"; a="31224229"
-X-IronPort-AV: E=Sophos;i="6.08,204,1712646000"; 
-   d="scan'208";a="31224229"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 10:08:52 -0700
-X-CSE-ConnectionGUID: mHQrX2IWRVa5+r7AUEnNXw==
-X-CSE-MsgGUID: wQSkJeloQSqgY/IxW9qV6A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,204,1712646000"; 
-   d="scan'208";a="36163156"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa010.jf.intel.com with ESMTP; 31 May 2024 10:08:49 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id A6D02668; Fri, 31 May 2024 20:08:46 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-	Lee Jones <lee@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org,
-	linux-leds@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-fbdev@vger.kernel.org
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Pavel Machek <pavel@ucw.cz>,
-	Daniel Thompson <daniel.thompson@linaro.org>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Helge Deller <deller@gmx.de>,
-	Johan Hovold <jhovold@gmail.com>
-Subject: [PATCH v1 4/4] mfd: lm3533: Remove the driver
-Date: Fri, 31 May 2024 19:56:16 +0300
-Message-ID: <20240531170844.1595468-5-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
-In-Reply-To: <20240531170844.1595468-1-andriy.shevchenko@linux.intel.com>
-References: <20240531170844.1595468-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1717174710; c=relaxed/simple;
+	bh=aGRrRjKhc2q1dy0PbGkr1B3BphvFlUHcgPTDtktT34s=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SwV/c9e6R6KtAIZ+V3CykQuv++2G5Ph73gYDG+GA1uKKst3J1C0x7vFN2Euq8sQ5dqsBGu+CeF1bGPHsjpzcuM+Z4TL+1p2tK160NeeQPatgorvimMuRc+lsH4Qpzr5YjysdytB37dRy6lGzaDe/U/ytTJaXreECNAm64AbGvLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=vimy6Tsk; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44VGvpkq059573;
+	Fri, 31 May 2024 11:57:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1717174671;
+	bh=1q9tDaD0alJjEVrUhFUirlBLwy8o73Gn1mGNhE6sui8=;
+	h=From:To:CC:Subject:Date;
+	b=vimy6Tsk4Y5bo9v2s9c8x023VB9kV+38nCCP7sFcZBlUAofKFiaVD/wpaDBmDNuwj
+	 +PlEcUQjB7ObLSGCw1MMLSwJFm434ZJawoHE/+bxe35wP/T6f89xOOxol705TSBVg7
+	 WgImnnxZgdIkpq7zrkMHx6jhp5yquiDd8tVJHLkg=
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44VGvp1g007698
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 31 May 2024 11:57:51 -0500
+Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 31
+ May 2024 11:57:51 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 31 May 2024 11:57:51 -0500
+Received: from udit-HP-Z2-Tower-G9-Workstation-Desktop-PC.dhcp.ti.com (udit-hp-z2-tower-g9-workstation-desktop-pc.dhcp.ti.com [172.24.227.18])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44VGvjiU023353;
+	Fri, 31 May 2024 11:57:46 -0500
+From: Udit Kumar <u-kumar1@ti.com>
+To: <vigneshr@ti.com>, <nm@ti.com>, <tglx@linutronix.de>, <tpiepho@impinj.com>,
+        <w.egorov@phytec.de>
+CC: <andrew@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
+        <kuba@kernel.org>, <pabeni@redhat.com>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <netdev@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, Udit Kumar <u-kumar1@ti.com>,
+        Kip
+ Broadhurst <kbroadhurst@ti.com>
+Subject: [PATCH v2] dt-bindings: net: dp8386x: Add MIT license along with GPL-2.0
+Date: Fri, 31 May 2024 22:27:25 +0530
+Message-ID: <20240531165725.1815176-1-u-kumar1@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,779 +75,78 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-The driver has no in kernel users and requires a board file
-to be instantiated. Remove basically a dead code.
+Modify license to include dual licensing as GPL-2.0-only OR MIT
+license for TI specific phy header files. This allows for Linux
+kernel files to be used in other Operating System ecosystems
+such as Zephyr or FreeBSD.
 
-If ever needed, it can be reinstantiated and converted to one
-that uses firmware node interfaces.
+While at this, update the GPL-2.0 to be GPL-2.0-only to be in sync
+with latest SPDX conventions (GPL-2.0 is deprecated).
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+While at this, update the TI copyright year to sync with current year
+to indicate license change.
+
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Trent Piepho <tpiepho@impinj.com>
+Cc: Wadim Egorov <w.egorov@phytec.de>
+Cc: Kip Broadhurst <kbroadhurst@ti.com>
+Signed-off-by: Udit Kumar <u-kumar1@ti.com>
 ---
- drivers/mfd/lm3533-core.c  | 645 -------------------------------------
- include/linux/mfd/lm3533.h | 100 ------
- 2 files changed, 745 deletions(-)
- delete mode 100644 drivers/mfd/lm3533-core.c
- delete mode 100644 include/linux/mfd/lm3533.h
+Changelog:
+Changes in v2:
+- Updated Copyright information as per review comments of v1
+- Added all authors[0] in CC list of patch
+- Extended patch to LAKML list
+v1 link: https://lore.kernel.org/all/20240517104226.3395480-1-u-kumar1@ti.com/
 
-diff --git a/drivers/mfd/lm3533-core.c b/drivers/mfd/lm3533-core.c
-deleted file mode 100644
-index c211183cecb2..000000000000
---- a/drivers/mfd/lm3533-core.c
-+++ /dev/null
-@@ -1,645 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0-or-later
--/*
-- * lm3533-core.c -- LM3533 Core
-- *
-- * Copyright (C) 2011-2012 Texas Instruments
-- *
-- * Author: Johan Hovold <jhovold@gmail.com>
-- */
--
--#include <linux/module.h>
--#include <linux/init.h>
--#include <linux/kernel.h>
--#include <linux/err.h>
--#include <linux/gpio.h>
--#include <linux/i2c.h>
--#include <linux/mfd/core.h>
--#include <linux/regmap.h>
--#include <linux/seq_file.h>
--#include <linux/slab.h>
--#include <linux/uaccess.h>
--
--#include <linux/mfd/lm3533.h>
--
--
--#define LM3533_BOOST_OVP_MASK		0x06
--#define LM3533_BOOST_OVP_SHIFT		1
--
--#define LM3533_BOOST_FREQ_MASK		0x01
--#define LM3533_BOOST_FREQ_SHIFT		0
--
--#define LM3533_BL_ID_MASK		1
--#define LM3533_LED_ID_MASK		3
--#define LM3533_BL_ID_MAX		1
--#define LM3533_LED_ID_MAX		3
--
--#define LM3533_HVLED_ID_MAX		2
--#define LM3533_LVLED_ID_MAX		5
--
--#define LM3533_REG_OUTPUT_CONF1		0x10
--#define LM3533_REG_OUTPUT_CONF2		0x11
--#define LM3533_REG_BOOST_PWM		0x2c
--
--#define LM3533_REG_MAX			0xb2
--
--
--static struct mfd_cell lm3533_als_devs[] = {
--	{
--		.name	= "lm3533-als",
--		.id	= -1,
--	},
--};
--
--static struct mfd_cell lm3533_bl_devs[] = {
--	{
--		.name	= "lm3533-backlight",
--		.id	= 0,
--	},
--	{
--		.name	= "lm3533-backlight",
--		.id	= 1,
--	},
--};
--
--static struct mfd_cell lm3533_led_devs[] = {
--	{
--		.name	= "lm3533-leds",
--		.id	= 0,
--	},
--	{
--		.name	= "lm3533-leds",
--		.id	= 1,
--	},
--	{
--		.name	= "lm3533-leds",
--		.id	= 2,
--	},
--	{
--		.name	= "lm3533-leds",
--		.id	= 3,
--	},
--};
--
--int lm3533_read(struct lm3533 *lm3533, u8 reg, u8 *val)
--{
--	int tmp;
--	int ret;
--
--	ret = regmap_read(lm3533->regmap, reg, &tmp);
--	if (ret < 0) {
--		dev_err(lm3533->dev, "failed to read register %02x: %d\n",
--								reg, ret);
--		return ret;
--	}
--
--	*val = tmp;
--
--	dev_dbg(lm3533->dev, "read [%02x]: %02x\n", reg, *val);
--
--	return ret;
--}
--EXPORT_SYMBOL_GPL(lm3533_read);
--
--int lm3533_write(struct lm3533 *lm3533, u8 reg, u8 val)
--{
--	int ret;
--
--	dev_dbg(lm3533->dev, "write [%02x]: %02x\n", reg, val);
--
--	ret = regmap_write(lm3533->regmap, reg, val);
--	if (ret < 0) {
--		dev_err(lm3533->dev, "failed to write register %02x: %d\n",
--								reg, ret);
--	}
--
--	return ret;
--}
--EXPORT_SYMBOL_GPL(lm3533_write);
--
--int lm3533_update(struct lm3533 *lm3533, u8 reg, u8 val, u8 mask)
--{
--	int ret;
--
--	dev_dbg(lm3533->dev, "update [%02x]: %02x/%02x\n", reg, val, mask);
--
--	ret = regmap_update_bits(lm3533->regmap, reg, mask, val);
--	if (ret < 0) {
--		dev_err(lm3533->dev, "failed to update register %02x: %d\n",
--								reg, ret);
--	}
--
--	return ret;
--}
--EXPORT_SYMBOL_GPL(lm3533_update);
--
--static int lm3533_set_boost_freq(struct lm3533 *lm3533,
--						enum lm3533_boost_freq freq)
--{
--	int ret;
--
--	ret = lm3533_update(lm3533, LM3533_REG_BOOST_PWM,
--					freq << LM3533_BOOST_FREQ_SHIFT,
--					LM3533_BOOST_FREQ_MASK);
--	if (ret)
--		dev_err(lm3533->dev, "failed to set boost frequency\n");
--
--	return ret;
--}
--
--
--static int lm3533_set_boost_ovp(struct lm3533 *lm3533,
--						enum lm3533_boost_ovp ovp)
--{
--	int ret;
--
--	ret = lm3533_update(lm3533, LM3533_REG_BOOST_PWM,
--					ovp << LM3533_BOOST_OVP_SHIFT,
--					LM3533_BOOST_OVP_MASK);
--	if (ret)
--		dev_err(lm3533->dev, "failed to set boost ovp\n");
--
--	return ret;
--}
--
--/*
-- * HVLED output config -- output hvled controlled by backlight bl
-- */
--static int lm3533_set_hvled_config(struct lm3533 *lm3533, u8 hvled, u8 bl)
--{
--	u8 val;
--	u8 mask;
--	int shift;
--	int ret;
--
--	if (hvled == 0 || hvled > LM3533_HVLED_ID_MAX)
--		return -EINVAL;
--
--	if (bl > LM3533_BL_ID_MAX)
--		return -EINVAL;
--
--	shift = hvled - 1;
--	mask = LM3533_BL_ID_MASK << shift;
--	val = bl << shift;
--
--	ret = lm3533_update(lm3533, LM3533_REG_OUTPUT_CONF1, val, mask);
--	if (ret)
--		dev_err(lm3533->dev, "failed to set hvled config\n");
--
--	return ret;
--}
--
--/*
-- * LVLED output config -- output lvled controlled by LED led
-- */
--static int lm3533_set_lvled_config(struct lm3533 *lm3533, u8 lvled, u8 led)
--{
--	u8 reg;
--	u8 val;
--	u8 mask;
--	int shift;
--	int ret;
--
--	if (lvled == 0 || lvled > LM3533_LVLED_ID_MAX)
--		return -EINVAL;
--
--	if (led > LM3533_LED_ID_MAX)
--		return -EINVAL;
--
--	if (lvled < 4) {
--		reg = LM3533_REG_OUTPUT_CONF1;
--		shift = 2 * lvled;
--	} else {
--		reg = LM3533_REG_OUTPUT_CONF2;
--		shift = 2 * (lvled - 4);
--	}
--
--	mask = LM3533_LED_ID_MASK << shift;
--	val = led << shift;
--
--	ret = lm3533_update(lm3533, reg, val, mask);
--	if (ret)
--		dev_err(lm3533->dev, "failed to set lvled config\n");
--
--	return ret;
--}
--
--static void lm3533_enable(struct lm3533 *lm3533)
--{
--	if (gpio_is_valid(lm3533->gpio_hwen))
--		gpio_set_value(lm3533->gpio_hwen, 1);
--}
--
--static void lm3533_disable(struct lm3533 *lm3533)
--{
--	if (gpio_is_valid(lm3533->gpio_hwen))
--		gpio_set_value(lm3533->gpio_hwen, 0);
--}
--
--enum lm3533_attribute_type {
--	LM3533_ATTR_TYPE_BACKLIGHT,
--	LM3533_ATTR_TYPE_LED,
--};
--
--struct lm3533_device_attribute {
--	struct device_attribute dev_attr;
--	enum lm3533_attribute_type type;
--	union {
--		struct {
--			u8 id;
--		} output;
--	} u;
--};
--
--#define to_lm3533_dev_attr(_attr) \
--	container_of(_attr, struct lm3533_device_attribute, dev_attr)
--
--static ssize_t show_output(struct device *dev,
--				struct device_attribute *attr, char *buf)
--{
--	struct lm3533 *lm3533 = dev_get_drvdata(dev);
--	struct lm3533_device_attribute *lattr = to_lm3533_dev_attr(attr);
--	int id = lattr->u.output.id;
--	u8 reg;
--	u8 val;
--	u8 mask;
--	int shift;
--	int ret;
--
--	if (lattr->type == LM3533_ATTR_TYPE_BACKLIGHT) {
--		reg = LM3533_REG_OUTPUT_CONF1;
--		shift = id - 1;
--		mask = LM3533_BL_ID_MASK << shift;
--	} else {
--		if (id < 4) {
--			reg = LM3533_REG_OUTPUT_CONF1;
--			shift = 2 * id;
--		} else {
--			reg = LM3533_REG_OUTPUT_CONF2;
--			shift = 2 * (id - 4);
--		}
--		mask = LM3533_LED_ID_MASK << shift;
--	}
--
--	ret = lm3533_read(lm3533, reg, &val);
--	if (ret)
--		return ret;
--
--	val = (val & mask) >> shift;
--
--	return sysfs_emit(buf, "%u\n", val);
--}
--
--static ssize_t store_output(struct device *dev,
--					struct device_attribute *attr,
--					const char *buf, size_t len)
--{
--	struct lm3533 *lm3533 = dev_get_drvdata(dev);
--	struct lm3533_device_attribute *lattr = to_lm3533_dev_attr(attr);
--	int id = lattr->u.output.id;
--	u8 val;
--	int ret;
--
--	if (kstrtou8(buf, 0, &val))
--		return -EINVAL;
--
--	if (lattr->type == LM3533_ATTR_TYPE_BACKLIGHT)
--		ret = lm3533_set_hvled_config(lm3533, id, val);
--	else
--		ret = lm3533_set_lvled_config(lm3533, id, val);
--
--	if (ret)
--		return ret;
--
--	return len;
--}
--
--#define LM3533_OUTPUT_ATTR(_name, _mode, _show, _store, _type, _id) \
--	struct lm3533_device_attribute lm3533_dev_attr_##_name = \
--		{ .dev_attr	= __ATTR(_name, _mode, _show, _store), \
--		  .type		= _type, \
--		  .u.output	= { .id = _id }, }
--
--#define LM3533_OUTPUT_ATTR_RW(_name, _type, _id) \
--	LM3533_OUTPUT_ATTR(output_##_name, S_IRUGO | S_IWUSR, \
--					show_output, store_output, _type, _id)
--
--#define LM3533_OUTPUT_HVLED_ATTR_RW(_nr) \
--	LM3533_OUTPUT_ATTR_RW(hvled##_nr, LM3533_ATTR_TYPE_BACKLIGHT, _nr)
--#define LM3533_OUTPUT_LVLED_ATTR_RW(_nr) \
--	LM3533_OUTPUT_ATTR_RW(lvled##_nr, LM3533_ATTR_TYPE_LED, _nr)
--/*
-- * Output config:
-- *
-- * output_hvled<nr>	0-1
-- * output_lvled<nr>	0-3
-- */
--static LM3533_OUTPUT_HVLED_ATTR_RW(1);
--static LM3533_OUTPUT_HVLED_ATTR_RW(2);
--static LM3533_OUTPUT_LVLED_ATTR_RW(1);
--static LM3533_OUTPUT_LVLED_ATTR_RW(2);
--static LM3533_OUTPUT_LVLED_ATTR_RW(3);
--static LM3533_OUTPUT_LVLED_ATTR_RW(4);
--static LM3533_OUTPUT_LVLED_ATTR_RW(5);
--
--static struct attribute *lm3533_attributes[] = {
--	&lm3533_dev_attr_output_hvled1.dev_attr.attr,
--	&lm3533_dev_attr_output_hvled2.dev_attr.attr,
--	&lm3533_dev_attr_output_lvled1.dev_attr.attr,
--	&lm3533_dev_attr_output_lvled2.dev_attr.attr,
--	&lm3533_dev_attr_output_lvled3.dev_attr.attr,
--	&lm3533_dev_attr_output_lvled4.dev_attr.attr,
--	&lm3533_dev_attr_output_lvled5.dev_attr.attr,
--	NULL,
--};
--
--#define to_dev_attr(_attr) \
--	container_of(_attr, struct device_attribute, attr)
--
--static umode_t lm3533_attr_is_visible(struct kobject *kobj,
--					     struct attribute *attr, int n)
--{
--	struct device *dev = kobj_to_dev(kobj);
--	struct lm3533 *lm3533 = dev_get_drvdata(dev);
--	struct device_attribute *dattr = to_dev_attr(attr);
--	struct lm3533_device_attribute *lattr = to_lm3533_dev_attr(dattr);
--	enum lm3533_attribute_type type = lattr->type;
--	umode_t mode = attr->mode;
--
--	if (!lm3533->have_backlights && type == LM3533_ATTR_TYPE_BACKLIGHT)
--		mode = 0;
--	else if (!lm3533->have_leds && type == LM3533_ATTR_TYPE_LED)
--		mode = 0;
--
--	return mode;
--};
--
--static struct attribute_group lm3533_attribute_group = {
--	.is_visible	= lm3533_attr_is_visible,
--	.attrs		= lm3533_attributes
--};
--
--static int lm3533_device_als_init(struct lm3533 *lm3533)
--{
--	struct lm3533_platform_data *pdata = dev_get_platdata(lm3533->dev);
--	int ret;
--
--	if (!pdata->als)
--		return 0;
--
--	lm3533_als_devs[0].platform_data = pdata->als;
--	lm3533_als_devs[0].pdata_size = sizeof(*pdata->als);
--
--	ret = mfd_add_devices(lm3533->dev, 0, lm3533_als_devs, 1, NULL,
--			      0, NULL);
--	if (ret) {
--		dev_err(lm3533->dev, "failed to add ALS device\n");
--		return ret;
--	}
--
--	lm3533->have_als = 1;
--
--	return 0;
--}
--
--static int lm3533_device_bl_init(struct lm3533 *lm3533)
--{
--	struct lm3533_platform_data *pdata = dev_get_platdata(lm3533->dev);
--	int i;
--	int ret;
--
--	if (!pdata->backlights || pdata->num_backlights == 0)
--		return 0;
--
--	if (pdata->num_backlights > ARRAY_SIZE(lm3533_bl_devs))
--		pdata->num_backlights = ARRAY_SIZE(lm3533_bl_devs);
--
--	for (i = 0; i < pdata->num_backlights; ++i) {
--		lm3533_bl_devs[i].platform_data = &pdata->backlights[i];
--		lm3533_bl_devs[i].pdata_size = sizeof(pdata->backlights[i]);
--	}
--
--	ret = mfd_add_devices(lm3533->dev, 0, lm3533_bl_devs,
--			      pdata->num_backlights, NULL, 0, NULL);
--	if (ret) {
--		dev_err(lm3533->dev, "failed to add backlight devices\n");
--		return ret;
--	}
--
--	lm3533->have_backlights = 1;
--
--	return 0;
--}
--
--static int lm3533_device_led_init(struct lm3533 *lm3533)
--{
--	struct lm3533_platform_data *pdata = dev_get_platdata(lm3533->dev);
--	int i;
--	int ret;
--
--	if (!pdata->leds || pdata->num_leds == 0)
--		return 0;
--
--	if (pdata->num_leds > ARRAY_SIZE(lm3533_led_devs))
--		pdata->num_leds = ARRAY_SIZE(lm3533_led_devs);
--
--	for (i = 0; i < pdata->num_leds; ++i) {
--		lm3533_led_devs[i].platform_data = &pdata->leds[i];
--		lm3533_led_devs[i].pdata_size = sizeof(pdata->leds[i]);
--	}
--
--	ret = mfd_add_devices(lm3533->dev, 0, lm3533_led_devs,
--			      pdata->num_leds, NULL, 0, NULL);
--	if (ret) {
--		dev_err(lm3533->dev, "failed to add LED devices\n");
--		return ret;
--	}
--
--	lm3533->have_leds = 1;
--
--	return 0;
--}
--
--static int lm3533_device_setup(struct lm3533 *lm3533,
--					struct lm3533_platform_data *pdata)
--{
--	int ret;
--
--	ret = lm3533_set_boost_freq(lm3533, pdata->boost_freq);
--	if (ret)
--		return ret;
--
--	return lm3533_set_boost_ovp(lm3533, pdata->boost_ovp);
--}
--
--static int lm3533_device_init(struct lm3533 *lm3533)
--{
--	struct lm3533_platform_data *pdata = dev_get_platdata(lm3533->dev);
--	int ret;
--
--	dev_dbg(lm3533->dev, "%s\n", __func__);
--
--	if (!pdata) {
--		dev_err(lm3533->dev, "no platform data\n");
--		return -EINVAL;
--	}
--
--	lm3533->gpio_hwen = pdata->gpio_hwen;
--
--	if (gpio_is_valid(lm3533->gpio_hwen)) {
--		ret = devm_gpio_request_one(lm3533->dev, lm3533->gpio_hwen,
--					GPIOF_OUT_INIT_LOW, "lm3533-hwen");
--		if (ret < 0) {
--			dev_err(lm3533->dev,
--				"failed to request HWEN GPIO %d\n",
--				lm3533->gpio_hwen);
--			return ret;
--		}
--	}
--
--	lm3533_enable(lm3533);
--
--	ret = lm3533_device_setup(lm3533, pdata);
--	if (ret)
--		goto err_disable;
--
--	lm3533_device_als_init(lm3533);
--	lm3533_device_bl_init(lm3533);
--	lm3533_device_led_init(lm3533);
--
--	ret = sysfs_create_group(&lm3533->dev->kobj, &lm3533_attribute_group);
--	if (ret < 0) {
--		dev_err(lm3533->dev, "failed to create sysfs attributes\n");
--		goto err_unregister;
--	}
--
--	return 0;
--
--err_unregister:
--	mfd_remove_devices(lm3533->dev);
--err_disable:
--	lm3533_disable(lm3533);
--
--	return ret;
--}
--
--static void lm3533_device_exit(struct lm3533 *lm3533)
--{
--	dev_dbg(lm3533->dev, "%s\n", __func__);
--
--	sysfs_remove_group(&lm3533->dev->kobj, &lm3533_attribute_group);
--
--	mfd_remove_devices(lm3533->dev);
--	lm3533_disable(lm3533);
--}
--
--static bool lm3533_readable_register(struct device *dev, unsigned int reg)
--{
--	switch (reg) {
--	case 0x10 ... 0x2c:
--	case 0x30 ... 0x38:
--	case 0x40 ... 0x45:
--	case 0x50 ... 0x57:
--	case 0x60 ... 0x6e:
--	case 0x70 ... 0x75:
--	case 0x80 ... 0x85:
--	case 0x90 ... 0x95:
--	case 0xa0 ... 0xa5:
--	case 0xb0 ... 0xb2:
--		return true;
--	default:
--		return false;
--	}
--}
--
--static bool lm3533_volatile_register(struct device *dev, unsigned int reg)
--{
--	switch (reg) {
--	case 0x34 ... 0x36:	/* zone */
--	case 0x37 ... 0x38:	/* adc */
--	case 0xb0 ... 0xb1:	/* fault */
--		return true;
--	default:
--		return false;
--	}
--}
--
--static bool lm3533_precious_register(struct device *dev, unsigned int reg)
--{
--	switch (reg) {
--	case 0x34:		/* zone */
--		return true;
--	default:
--		return false;
--	}
--}
--
--static const struct regmap_config regmap_config = {
--	.reg_bits	= 8,
--	.val_bits	= 8,
--	.max_register	= LM3533_REG_MAX,
--	.readable_reg	= lm3533_readable_register,
--	.volatile_reg	= lm3533_volatile_register,
--	.precious_reg	= lm3533_precious_register,
--};
--
--static int lm3533_i2c_probe(struct i2c_client *i2c)
--{
--	struct lm3533 *lm3533;
--
--	dev_dbg(&i2c->dev, "%s\n", __func__);
--
--	lm3533 = devm_kzalloc(&i2c->dev, sizeof(*lm3533), GFP_KERNEL);
--	if (!lm3533)
--		return -ENOMEM;
--
--	i2c_set_clientdata(i2c, lm3533);
--
--	lm3533->regmap = devm_regmap_init_i2c(i2c, &regmap_config);
--	if (IS_ERR(lm3533->regmap))
--		return PTR_ERR(lm3533->regmap);
--
--	lm3533->dev = &i2c->dev;
--	lm3533->irq = i2c->irq;
--
--	return lm3533_device_init(lm3533);
--}
--
--static void lm3533_i2c_remove(struct i2c_client *i2c)
--{
--	struct lm3533 *lm3533 = i2c_get_clientdata(i2c);
--
--	dev_dbg(&i2c->dev, "%s\n", __func__);
--
--	lm3533_device_exit(lm3533);
--}
--
--static const struct i2c_device_id lm3533_i2c_ids[] = {
--	{ "lm3533", 0 },
--	{ },
--};
--MODULE_DEVICE_TABLE(i2c, lm3533_i2c_ids);
--
--static struct i2c_driver lm3533_i2c_driver = {
--	.driver = {
--		   .name = "lm3533",
--	},
--	.id_table	= lm3533_i2c_ids,
--	.probe		= lm3533_i2c_probe,
--	.remove		= lm3533_i2c_remove,
--};
--
--static int __init lm3533_i2c_init(void)
--{
--	return i2c_add_driver(&lm3533_i2c_driver);
--}
--subsys_initcall(lm3533_i2c_init);
--
--static void __exit lm3533_i2c_exit(void)
--{
--	i2c_del_driver(&lm3533_i2c_driver);
--}
--module_exit(lm3533_i2c_exit);
--
--MODULE_AUTHOR("Johan Hovold <jhovold@gmail.com>");
--MODULE_DESCRIPTION("LM3533 Core");
--MODULE_LICENSE("GPL");
-diff --git a/include/linux/mfd/lm3533.h b/include/linux/mfd/lm3533.h
-deleted file mode 100644
-index 77092f6363ad..000000000000
---- a/include/linux/mfd/lm3533.h
-+++ /dev/null
-@@ -1,100 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0-or-later */
--/*
-- * lm3533.h -- LM3533 interface
-- *
-- * Copyright (C) 2011-2012 Texas Instruments
-- *
-- * Author: Johan Hovold <jhovold@gmail.com>
-- */
--
--#ifndef __LINUX_MFD_LM3533_H
--#define __LINUX_MFD_LM3533_H
--
--#define LM3533_ATTR_RO(_name) \
--	DEVICE_ATTR(_name, S_IRUGO, show_##_name, NULL)
--#define LM3533_ATTR_RW(_name) \
--	DEVICE_ATTR(_name, S_IRUGO | S_IWUSR , show_##_name, store_##_name)
--
--struct device;
--struct regmap;
--
--struct lm3533 {
--	struct device *dev;
--
--	struct regmap *regmap;
--
--	int gpio_hwen;
--	int irq;
--
--	unsigned have_als:1;
--	unsigned have_backlights:1;
--	unsigned have_leds:1;
--};
--
--struct lm3533_ctrlbank {
--	struct lm3533 *lm3533;
--	struct device *dev;
--	int id;
--};
--
--struct lm3533_als_platform_data {
--	unsigned pwm_mode:1;		/* PWM input mode (default analog) */
--	u8 r_select;			/* 1 - 127 (ignored in PWM-mode) */
--};
--
--struct lm3533_bl_platform_data {
--	char *name;
--	u16 max_current;		/* 5000 - 29800 uA (800 uA step) */
--	u8 default_brightness;		/* 0 - 255 */
--	u8 pwm;				/* 0 - 0x3f */
--};
--
--struct lm3533_led_platform_data {
--	char *name;
--	const char *default_trigger;
--	u16 max_current;		/* 5000 - 29800 uA (800 uA step) */
--	u8 pwm;				/* 0 - 0x3f */
--};
--
--enum lm3533_boost_freq {
--	LM3533_BOOST_FREQ_500KHZ,
--	LM3533_BOOST_FREQ_1000KHZ,
--};
--
--enum lm3533_boost_ovp {
--	LM3533_BOOST_OVP_16V,
--	LM3533_BOOST_OVP_24V,
--	LM3533_BOOST_OVP_32V,
--	LM3533_BOOST_OVP_40V,
--};
--
--struct lm3533_platform_data {
--	int gpio_hwen;
--
--	enum lm3533_boost_ovp boost_ovp;
--	enum lm3533_boost_freq boost_freq;
--
--	struct lm3533_als_platform_data *als;
--
--	struct lm3533_bl_platform_data *backlights;
--	int num_backlights;
--
--	struct lm3533_led_platform_data *leds;
--	int num_leds;
--};
--
--extern int lm3533_ctrlbank_enable(struct lm3533_ctrlbank *cb);
--extern int lm3533_ctrlbank_disable(struct lm3533_ctrlbank *cb);
--
--extern int lm3533_ctrlbank_set_brightness(struct lm3533_ctrlbank *cb, u8 val);
--extern int lm3533_ctrlbank_get_brightness(struct lm3533_ctrlbank *cb, u8 *val);
--extern int lm3533_ctrlbank_set_max_current(struct lm3533_ctrlbank *cb,
--								u16 imax);
--extern int lm3533_ctrlbank_set_pwm(struct lm3533_ctrlbank *cb, u8 val);
--extern int lm3533_ctrlbank_get_pwm(struct lm3533_ctrlbank *cb, u8 *val);
--
--extern int lm3533_read(struct lm3533 *lm3533, u8 reg, u8 *val);
--extern int lm3533_write(struct lm3533 *lm3533, u8 reg, u8 val);
--extern int lm3533_update(struct lm3533 *lm3533, u8 reg, u8 val, u8 mask);
--
--#endif	/* __LINUX_MFD_LM3533_H */
+[0] Patch cc list is based upon (I am representing @ti.com for this patch)
+git log --no-merges --pretty="%ae" $files|grep -v "@ti.com"
+
+Requesting Acked-by, from the CC list of patch at the earliest
+
+
+ include/dt-bindings/net/ti-dp83867.h | 4 ++--
+ include/dt-bindings/net/ti-dp83869.h | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/include/dt-bindings/net/ti-dp83867.h b/include/dt-bindings/net/ti-dp83867.h
+index 6fc4b445d3a1..b8a4f3ff4a3b 100644
+--- a/include/dt-bindings/net/ti-dp83867.h
++++ b/include/dt-bindings/net/ti-dp83867.h
+@@ -1,10 +1,10 @@
+-/* SPDX-License-Identifier: GPL-2.0-only */
++/* SPDX-License-Identifier: GPL-2.0-only OR MIT */
+ /*
+  * Device Tree constants for the Texas Instruments DP83867 PHY
+  *
+  * Author: Dan Murphy <dmurphy@ti.com>
+  *
+- * Copyright:   (C) 2015 Texas Instruments, Inc.
++ * Copyright (C) 2015-2024 Texas Instruments Incorporated - https://www.ti.com/
+  */
+ 
+ #ifndef _DT_BINDINGS_TI_DP83867_H
+diff --git a/include/dt-bindings/net/ti-dp83869.h b/include/dt-bindings/net/ti-dp83869.h
+index 218b1a64e975..917114aad7d0 100644
+--- a/include/dt-bindings/net/ti-dp83869.h
++++ b/include/dt-bindings/net/ti-dp83869.h
+@@ -1,10 +1,10 @@
+-/* SPDX-License-Identifier: GPL-2.0-only */
++/* SPDX-License-Identifier: GPL-2.0-only OR MIT */
+ /*
+  * Device Tree constants for the Texas Instruments DP83869 PHY
+  *
+  * Author: Dan Murphy <dmurphy@ti.com>
+  *
+- * Copyright:   (C) 2019 Texas Instruments, Inc.
++ * Copyright (C) 2015-2024 Texas Instruments Incorporated - https://www.ti.com/
+  */
+ 
+ #ifndef _DT_BINDINGS_TI_DP83869_H
 -- 
-2.43.0.rc1.1336.g36b5255a03ac
+2.34.1
 
 
