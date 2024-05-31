@@ -1,55 +1,80 @@
-Return-Path: <linux-kernel+bounces-196637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 387EE8D5F28
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:00:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F00808D5F29
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:02:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E0DA1C22089
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:00:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58DFEB22A19
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:02:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7CFB1422DA;
-	Fri, 31 May 2024 10:00:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 301611422D5;
+	Fri, 31 May 2024 10:02:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="rgua9hSZ"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DQKqoAcS"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C49D71422B8;
-	Fri, 31 May 2024 10:00:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A69CB14295
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 10:02:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717149631; cv=none; b=feYn8aXkgMk+j92uhGwaORI6AaZagBDhS3AvD/gWXyE/0slbB3P0ZetZgQm8KCk2wMU9K2FZkuUcxY2CiHs2jglBfu0IXRvm03U5M2yb7XVO5kJ/b8SDl55dAW6JrmivWLM1iED5c+Q5axmS2WxE1UNnTjWMAiPE5YYYtjjp2ho=
+	t=1717149740; cv=none; b=mVWJS/cwQzOTCv2Irpou6mfbozBY44ayNOjeFLw5CK8b8fFkwNay/KtTVb3yCJW5WsSnqTqsMnf7GYHpZzBvV8s2tqUVJNaGEwgA7VmjwLnmBAmUDfl+nZEGBs0BMGQQcGphjtpCBpyFO9d3OcwW2b61xg6HuVUcWBxVwKxaCGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717149631; c=relaxed/simple;
-	bh=GjsznghdysZp68H0iTM8WCUDR6RX6D4R9WpQ0Uw4Jfw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Aun5znI5Ka6vpWXrEfJwYbjCKuHX7M9KPmnJ0x21ak1rG3IdVgL9v+H60ga9/YE+4Akodz07udI2MLrYeeFo8FycYoA1id8M4z5Z/+x7S8nVhcbAQiL2uDmVUO4DK3LqewdqNoTyjwx1iq9iMmmbKzR5jTT3SfRx65c77yeHBaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=rgua9hSZ; arc=none smtp.client-ip=212.227.15.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1717149611; x=1717754411; i=wahrenst@gmx.net;
-	bh=SKMrSxZi6YJ6irKfb+bbvyw+6ypZ+N02Wwss1x87j0Y=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=rgua9hSZaZRfKQaAkFlyrTwkc9ISFT4I26hD62wr0fvrqgo40ejg9l5SGL4pmwVn
-	 hB3b6uZAc+5rF1SbMNWnsqPLOAOn3zwxP/NKHNP9Z0NOW8RGkTvunipbl/w4AuzSU
-	 jkiqsASmxE5HVdW6d+KvC+boVh3euSP8MmpSn6Ciqx0+qtvyycr11k10IDHST+HzV
-	 KfIxTkAWmszASYIVxWvaLbLl0UB63xBAgBwUJ1SyeD4Qrpg7TwQqavZgyui7jEhLc
-	 UZI3Lk+Ha/WJ9qxDBo7kmyBp3r57KSIibrj7WDfLyoCWDMYeIQDks6+Zbhca7u9XO
-	 7s0q38Ym/Dnh0C+6uA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.1.127] ([37.4.248.43]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MPXhA-1rraK83SKY-00Md8t; Fri, 31
- May 2024 12:00:10 +0200
-Message-ID: <36642bd8-c981-4190-9f44-072ac3c97c6b@gmx.net>
-Date: Fri, 31 May 2024 12:00:07 +0200
+	s=arc-20240116; t=1717149740; c=relaxed/simple;
+	bh=80+oZV2Hwc0+u8PDDdgEnVBFWtZUX0L56/jzAaDbVBY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SEo4zh/GnVZs3mB/lrHYXtf5vrJOzNtT/1P+hSdTFIKshjh0w0N61bdEPcQtPcAtEOTc+w4jciz2dvLNlOhXshVUjqS3meCuN3Ytq79IzcCG+r7qxtnATy8vKyQzqM9YS3VAwq1dPREPObdQhYynKR+AIxyy4vyDcS/wKFlRQlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DQKqoAcS; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717149737;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=MJ04lQJ+GBKpWEjJ+VxNTs5PlYqhFbGa0udLArxovdk=;
+	b=DQKqoAcSGKq1St7KGOssc4nCC0onBIefWNjeWFP9styK7xgWWkfE6TyokTyTYb7oxHxxNO
+	B0l+3cdxKvxT6i8QGfAEemzneGpPCc0O8QqKM2F1rAYM8tEku9DJKShpsRd173kjebr/L4
+	GOinff2NW/GpEkrTBH+As8G16QSsU7Q=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-219-InWB4tl9ObmNWZYnWVWORw-1; Fri, 31 May 2024 06:02:15 -0400
+X-MC-Unique: InWB4tl9ObmNWZYnWVWORw-1
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-35dd0cc1a7bso437120f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 03:02:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717149734; x=1717754534;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=MJ04lQJ+GBKpWEjJ+VxNTs5PlYqhFbGa0udLArxovdk=;
+        b=JIm28doziLez/1tfCLAFxCbsh9LSUKEz0g43v6hxqjREBQX+XkAgjerjPMhfRAm6J4
+         6lxTjAippIwNPcZ3Q7N08eADerI0SocLHM7PCsTeT/QIyAlEhkZvpNVPnhGlbcXDL6YT
+         gEIeo3FXcgQDrsbpF1iE5viG4b3U/mC1KNC/QHZrlNuwzLgk1ul1IRbcULXxnbINKGzp
+         DAQb+YLuZMVRJwKH9fc2sJ4NUvcPWtf3wreyr/uj0LiRYCcbW8nbTkQ5nWkGnqyXLIvy
+         IdGJE7KDkxRd6y0axx/F6HKl++GQiv1F0EqNI9O6JQgtHLxDjVBGt1NeSSMwO41J24JZ
+         rm8g==
+X-Forwarded-Encrypted: i=1; AJvYcCXauQBBH5DAAKlf8Aq5vrUAJHRExBWU0dMb13r8qswvTBpTBlnJUcUBeqtn5yF/I7CtkyHQ2BlhRTCEt3NhBICUOU2IhIAANNpLwdik
+X-Gm-Message-State: AOJu0Yw54LnIZTY5BaUBKZ4xMpXI9fzhXRQ4eCq9Nuxunvix9hW6A/cY
+	q7RezIzgW5QWYRZov9TBECqaQEjbCqQ272zcyCprrEoHrJ9rrzjud78+F9bZr6NGRNhOYohKVyl
+	7mdX3YxAOIU6So1+Ep7coo5Mak19g81t8ZWV23dw//fAKPnLQjNgCqk7d6/r8hzQQmK0CVg==
+X-Received: by 2002:adf:f742:0:b0:357:3e5a:6c90 with SMTP id ffacd0b85a97d-35e0f36d84amr1071436f8f.57.1717149734542;
+        Fri, 31 May 2024 03:02:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHeS5HZkW4qvB1V7nYN9JjTsjl8P5wxpf8txKd3ben3bh4FQXh41fFVj5GVr3OQUJJT77+d7w==
+X-Received: by 2002:adf:f742:0:b0:357:3e5a:6c90 with SMTP id ffacd0b85a97d-35e0f36d84amr1071406f8f.57.1717149733967;
+        Fri, 31 May 2024 03:02:13 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c717:a000:d4df:4b8f:37d4:59e4? (p200300cbc717a000d4df4b8f37d459e4.dip0.t-ipconnect.de. [2003:cb:c717:a000:d4df:4b8f:37d4:59e4])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35dd04d9c68sm1477783f8f.56.2024.05.31.03.02.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 31 May 2024 03:02:13 -0700 (PDT)
+Message-ID: <f073e363-f6b2-41df-84b3-4b2cfa2267a8@redhat.com>
+Date: Fri, 31 May 2024 12:02:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,80 +82,101 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 0/4] Add minimal boot support for Raspberry Pi 5
-To: Andrea della Porta <andrea.porta@suse.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
- <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Ulf Hansson
- <ulf.hansson@linaro.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Kamal Dasu <kamal.dasu@broadcom.com>, Al Cooper <alcooperx@gmail.com>,
- devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mmc@vger.kernel.org
-References: <cover.1717061147.git.andrea.porta@suse.com>
+Subject: Re: [PATCH] mm: userfaultfd: Use swap() in double_pt_lock()
+To: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>, akpm@linux-foundation.org
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Abaci Robot <abaci@linux.alibaba.com>
+References: <20240531091643.67778-1-jiapeng.chong@linux.alibaba.com>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-From: Stefan Wahren <wahrenst@gmx.net>
-In-Reply-To: <cover.1717061147.git.andrea.porta@suse.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20240531091643.67778-1-jiapeng.chong@linux.alibaba.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:NC3U7PPJiwkY9pDq8eAw5WVvbNo2mtziqFH6WTnEhDW2yoCcFkS
- +0IhCR/H/Xq44Pl5QAT5O/TH25E7U0auv2ztbEvHfCDuGzND/yGPdvN9p4t/5e6MSwq1DcS
- /U6+BXowocckNKyxA/D2HXeRwOPgRitFEMY9vw4QW8uQ8vOazViSYwi5mvczuymgbUQVcvH
- AC5wHh1FAWxf7XqLC7PvQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:2aASMyPySck=;cYE8SQEXYO6YSrrCHXAMmcampT4
- eEw2/zrBMA7oAeTdxF6JThFFGVzhtgSS5LEtbRsHbXSpvnTZM5bOA4FSEFRzaAN2jjuUYp06M
- mHdZoXq3ERumQcJHouZugNYY1RaKE6cZo8EQClzDdg712I6ymYtrRZWxdsMRaiFXrOyMX4GAk
- i0lhwWfd7hLSG9NbTqOR++z+TCfKCFb5x/Z8pb/dd9AnuCxjU6EvkiGij4jbHzzuR61OX503M
- SBbgUbwhwjeqIa8iyNweqZHCKlG+EiWrur/vyIT6FZKHT7Sr1GoBAThm5oQ4EKr3ax7GhF4mR
- /CrMYM7J/ozCF8BGjWKjR4DqEcn2W0iAcsc6NMdhSEOE3id2lQxl4KnOXgXoBK69n8YLggDqR
- diHf05aOQt1EUcZ3+Bdnf+++suqeJQYK2hdstduzQrQhRTtiSVeSDXdj/Kyrddz7NyqBOboyP
- xz64yHm+j0PVTaP0sfmVIIdUWY5RmDj0QcWYXyDXiOQhc8CBGFrmWponv/Mx+gcwfdeZsoYIW
- BBHsReMIxV5R5XywUjlHMXCQnYK8hFBmN+xwd5R1yUs4yl37jp2e28UhCc7vf3G1c5kaMZMnQ
- We+7Rwa0ruyQPeCBfsgA2UjbYyVmBl8isCQxRU2JPgEws5tvh12SL76PR/qcp7TZxk5EKjD2n
- REU6yjP/AUoot/2LjsLryq197AuJsi1LAS6uazyN6KY6YDIFtcMmlyVlzhZF08akiI30NCPqg
- m33adAzpk8cWNq13pNNK0SF3UWo9r5uN3ew4qU8ahh8XvCdamBFLBK2xbUpCMYXkUQXP03DUp
- 53Ul7kflx8f0fPh8spd0PC/IwWoCnQnzvbFBR8C14fgek=
 
-Hi Andrea,
+On 31.05.24 11:16, Jiapeng Chong wrote:
+> Use existing swap() function rather than duplicating its implementation.
+> 
+> ./mm/userfaultfd.c:1006:13-14: WARNING opportunity for swap()
+> 
+> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=9266
+> Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+> ---
+>   mm/userfaultfd.c | 10 ++--------
+>   1 file changed, 2 insertions(+), 8 deletions(-)
+> 
+> diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+> index defa5109cc62..5e7f2801698a 100644
+> --- a/mm/userfaultfd.c
+> +++ b/mm/userfaultfd.c
+> @@ -995,14 +995,8 @@ void double_pt_lock(spinlock_t *ptl1,
+>   	__acquires(ptl1)
+>   	__acquires(ptl2)
+>   {
+> -	spinlock_t *ptl_tmp;
+> -
+> -	if (ptl1 > ptl2) {
+> -		/* exchange ptl1 and ptl2 */
+> -		ptl_tmp = ptl1;
+> -		ptl1 = ptl2;
+> -		ptl2 = ptl_tmp;
+> -	}
+> +	if (ptl1 > ptl2)
+> +		swap(ptl1, ptl2);
+>   	/* lock in virtual address order to avoid lock inversion */
+>   	spin_lock(ptl1);
+>   	if (ptl1 != ptl2)
 
-Am 30.05.24 um 12:11 schrieb Andrea della Porta:
-> Hi,
->
-> This patchset adds minimal support for the Broadcom BCM2712 SoC and for
-> the on-board SDHCI controller on Broadcom BCM2712 in order to make it
-> possible to boot (particularly) a Raspberry Pi 5 from SD card and get a
-> console through uart.
-> Changes to arm64/defconfig are not needed since the actual options work
-> as they are.
-> This work is heavily based on downstream contributions.
->
-> Tested on Tumbleweed substituting the stock kernel with upstream one,
-> either chainloading uboot+grub+kernel or directly booting the kernel
-> from 1st stage bootloader. Steps to reproduce:
-> - prepare an SD card from a Raspberry enabled raw image, mount the first
->    FAT partition.
-> - make sure the FAT partition is big enough to contain the kernel,
->    anything bigger than 64Mb is usually enough, depending on your kernel
->    config options.
-> - build the kernel and dtbs making sure that the support for your root
->    fs type is compiled as builtin.
-> - copy the kernel image in your FAT partition overwriting the older one
->    (e.g. kernel*.img for Raspberry Pi OS or u-boot.bin for Tumbleweed).
-> - copy arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb on FAT partition.
-> - make sure you have a cmdline.txt file in FAT partition with the
->    following content:
->    # cat /boot/efi/cmdline.txt
->    root=/dev/mmcblk0p3 rootwait rw console=tty ignore_loglevel earlycon
->    console=ttyAMA10,115200
-> - if you experience random SD issues during boot, try to set
->    initial_turbo=0 in config.txt.
-was this an issue since the beginning of this series?
+Reviewed-by: David Hildenbrand <david@redhat.com>
 
-What kind of SD issues?
+-- 
+Cheers,
 
-Is there a downstream reference?
+David / dhildenb
+
 
