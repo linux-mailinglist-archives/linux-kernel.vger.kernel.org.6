@@ -1,107 +1,208 @@
-Return-Path: <linux-kernel+bounces-196409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A68E38D5B8E
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 09:33:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B61598D5B92
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 09:33:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D876F1C213B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 07:33:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41CAE1F21847
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 07:33:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11AED74062;
-	Fri, 31 May 2024 07:33:30 +0000 (UTC)
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0686674062;
+	Fri, 31 May 2024 07:33:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f8NEfzpx"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4982C74047;
-	Fri, 31 May 2024 07:33:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93981482D7;
+	Fri, 31 May 2024 07:33:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717140809; cv=none; b=hmpEOxyPIhYIRwED+pZ46ATARP7q/nRR77iyUtqrpaCQmdheq/l3mmT+zYzz8Zk+av6tvJ01KUT7tXHesLxAdh65YXHyIow8gsaxpfeRe72KrV+h/OPYYnQzRq+0SbuShE1wwFrcEEwy0rCL+2TNvEQffr3P5/u3G3fiaxCRRmY=
+	t=1717140829; cv=none; b=r2jTUuEZWgfR1bGOVKVZ6Hin/NrEVgJmir7lBJ4x1UVgD3UfLAHOFIrqjfLi0n8g9zKSV0HLjhNPmFkIP32wFGAYez0CeSfNYbCjdrUAxMxlIUDNqOMr8opgDOI2XayT8zXXQ3iziRGvivxEMBZUmfvKjHHEizEcwQ3+Chn9n9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717140809; c=relaxed/simple;
-	bh=MRK+h1WZYjHuu1URYD6M3YcSUxV8DuY5UvqxFU3Arco=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fLi41JNFu4vqwRUhFRwSc3PR0Obhd08+Mi4cysWr2+BKcBkApbyr53K/1HjHCu3wpfr5L00uJ1WHBcqUZLM8+9gMHXJ1OkFODj44g9iPH1Km0f3Id0lrEXbA541Jwn/mvkSdfXxussQnvncRK/32aFP8lHvi5IQlFhPH+iCP8ZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1717140829; c=relaxed/simple;
+	bh=upVR2zdmOmV2PjDOyS4rb5HI5f6pXw6b1JkflcVTmhI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=RF4GAZU0+hiEcjzvFFu7FP46+n56UiPRoVDhAUJFW55h05VZWB2/FqpRiKoOJY87b0zzy9HAjybsQajgv6/oOUKieqno5O40AvbzXnnG3Bj2V6pW/hr78s9lLlS42uzNOsi7Ofe6QPOLCLKY5c8hZr2viO1F8OCrkHNYM569GGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f8NEfzpx; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-62a08092c4dso16308297b3.0;
-        Fri, 31 May 2024 00:33:28 -0700 (PDT)
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a626919d19dso327024766b.0;
+        Fri, 31 May 2024 00:33:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717140826; x=1717745626; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=upVR2zdmOmV2PjDOyS4rb5HI5f6pXw6b1JkflcVTmhI=;
+        b=f8NEfzpxPO83Qrn8VZObY0aS9qP9MrP7LktgKq7kYVZAe4MnIwnUMJipqFpS4D4j8z
+         8PxuQjl7WBJM6ezaXIFcdj3CUH2bSk4/lSP07TZX0VXdLBUODg85iIBfageUjVrnpxU5
+         AsM02n1Vhh+EtvRl7SsOMgG9rOj51BAkO1XOMzC+T2u4NSbFxebek77+XpDX8MQs/+w/
+         QwN36sKXgR8I+JGViM8z7wk1ux+cRsc2NBREDlLWxEy4sISld21MLfKcT1hPxOj83QxL
+         GbzaIwaa0idmT8jSPZf4u10ZOzCZkq1UQC8eZJdxuFUhyq6uTqXwrRWtQW9wiK4TNZPf
+         msQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717140806; x=1717745606;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qj6EusQ3A409SsVzLb4gC8GqQaE/mFAcX8PaYZZXXLw=;
-        b=JceygU38JHpZckXkKFZCw2qyrNFL0JL+USD0MVdIbGnVUvue+kR3PjiB8XbGdfBsjM
-         0KO6CYGiJwycKIksF7nQeM/Ftcp8zoRc6I0r9n4wxUD1rfLwW4d85syCtukMczKjPPoI
-         WfbJL1m4o40JGT+HqHKsoiuSZ29oe2Bbv/5inBZXqi3AjbzEaXFwKBCP0ygQcsunvw+l
-         uz9Ldp6K4HKEFmjmmHFv6pKNgyA8g2fdpIWkJchLCwYLnv1v8O7WYELnCubxLqjFytDF
-         9HhumcwszBYiz8ox+1/wwMu2hgBGEIR0zejHPlw7IRu/97Tb97qAsLblM+MCu0Np5bnU
-         bCFw==
-X-Forwarded-Encrypted: i=1; AJvYcCWrphmlhzi8QxhBhM1wBFLPzGHb7gcsbzwwb3TIkBX7dnwXu16XayXt3/jV+uuuuWAniqBm14CPm6/yyQGJdoViEs5Vp7K5lMpsEH+q7Tok+zexvsS07JZLzcJFbOAplyc9E6ScXpoDBYVpFlfn655QkEpxpxMbuY4UE2LsDrGDP5tSsCjq90iNuwBVpVYo5GN0zexabVEBh/NjQbbiElsPEg==
-X-Gm-Message-State: AOJu0YzJPSI9ZK0tOXDBlsYG1SXaffzzT7a3q4nqzUqaI4YhbGxZhJMV
-	aQjCx2YN1D29Hjr1RZ3+NXhhYQVVe0rHxmJXfovGyP/DtsGednhmf+iRGOUt
-X-Google-Smtp-Source: AGHT+IFmOC9gyYJlnq2XG+VOY995hsrtRsSVtZMswMEQHLjPlqRyZzDo2GAIE0QjImTFYKu91eqFEg==
-X-Received: by 2002:a81:b609:0:b0:622:df58:2cf6 with SMTP id 00721157ae682-62c7982af56mr9370827b3.50.1717140804270;
-        Fri, 31 May 2024 00:33:24 -0700 (PDT)
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com. [209.85.219.181])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-62c765b8d35sm2404337b3.17.2024.05.31.00.33.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 31 May 2024 00:33:24 -0700 (PDT)
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-df4f05e5901so1809109276.0;
-        Fri, 31 May 2024 00:33:24 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUfRImCO7HuQMzOP7ify0lkE/bh6P66/iVMUkVlVJ/vZFA4IrZOAaLjxcPvhUJAa0UPYYdJBgH1buRHw7oRfxLGr+Wn21YXa3bkaCxv3TJ+CDl9iBoyacuRRULTzj8bq87DAYgRbKQAlwmQ+6GVZMwBVPJO5YamnZNwDanYatWOx+bDEoDs1kmnE9CKxZrqNlPeQ0y0FO8wikBPNzAirCD8+g==
-X-Received: by 2002:a25:d047:0:b0:dfa:56a9:8869 with SMTP id
- 3f1490d57ef6-dfa73c48294mr1121789276.34.1717140803859; Fri, 31 May 2024
- 00:33:23 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717140826; x=1717745626;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=upVR2zdmOmV2PjDOyS4rb5HI5f6pXw6b1JkflcVTmhI=;
+        b=nWIDASzTLh/+8/XJxXSGbCEl2WDxyRj3JNLNYiZgKX8DM+BeK2bcUaB40NEb9SP0NO
+         iOnEbhwYH+1ID3eiYkpm7raj2AeWbd7eoPOdl3e/rBiM6d+1ZjBOIdr0q+VxuU1yLkhP
+         VfzGHqrtISYemOAzb5UhPh6ZwFlvK3v7LjMBKlC9UOr59CVJyaAjq3KAQpz7SiIn+3EC
+         OiC+7pdrTDOo1n7PApmmUU6LnvihosDa3W6pahxvahw3wG9k3d/BrnevValJ0/uPqh12
+         LPTVhay7L8J1iZ3/pK51h/4mmHp4rn/zXPNLRZNlC4eo8OikVjf5MUDjd+qjsvNofw5K
+         WcdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUXaurMbBsXJ4gfwBJzSNsNdQ3LrzcI84k8RzkB/EQ177y2rvY4SEdOqLUBqUt2rleOoAzvMlmpPuUYK0ex/illDFsvkQGPCK11mED1v4YPmQeYW0L0CZrHXVFQG+lC2jgnKKX8e8oNldXUdcOzSjv4LPTvOHPaJ7PWNHFTJnYQmNXWQCooH1uGaG8FlR1OPhPA5VOT4tzGqpUN/0cJBA==
+X-Gm-Message-State: AOJu0Yz+J1N8Fya9zaVL9hZsQfYwRvZ20lNDcUTj9PeKcTBc1kmWbaVR
+	mJ2aBQLzt3ZiTtiL7hBp5P9fotCN+s9TNFNn7V0PGeUbOUjHcMRR
+X-Google-Smtp-Source: AGHT+IEcqkCYmBlKNw4xhgK9UqGESD/QlUTYSu/OQ9etZLHw8dS/y8lqY8GUiTOQaxlmE+E9Rhmp0g==
+X-Received: by 2002:a17:906:4313:b0:a61:7f85:e31c with SMTP id a640c23a62f3a-a6818c46ef7mr93402066b.12.1717140825572;
+        Fri, 31 May 2024 00:33:45 -0700 (PDT)
+Received: from nsa.fritz.box ([2001:a61:35f9:9001:40df:88bb:5090:7ab6])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a67e78db9b9sm57197766b.97.2024.05.31.00.33.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 May 2024 00:33:45 -0700 (PDT)
+Message-ID: <32747c84d382d5c24408bcceb885659d28f20585.camel@gmail.com>
+Subject: Re: [PATCH RFC v2 1/8] spi: dt-bindings: spi-peripheral-props: add
+ spi-offloads property
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: David Lechner <dlechner@baylibre.com>, Conor Dooley <conor@kernel.org>
+Cc: Mark Brown <broonie@kernel.org>, Jonathan Cameron <jic23@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,  Nuno =?ISO-8859-1?Q?S=E1?=
+ <nuno.sa@analog.com>, Michael Hennerich <Michael.Hennerich@analog.com>, 
+ Lars-Peter Clausen <lars@metafoo.de>, David Jander <david@protonic.nl>,
+ Martin Sperl <kernel@martin.sperl.org>, linux-spi@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-iio@vger.kernel.org
+Date: Fri, 31 May 2024 09:33:44 +0200
+In-Reply-To: <6db8ba66-841b-4425-9dd4-9d6e7b0463bf@baylibre.com>
+References: <20240513-headsman-hacking-d51fcc811695@spud>
+	 <CAMknhBE5XJzhdJ=PQUXiubw_CiCLcn1jihiscnQZUzDWMASPKw@mail.gmail.com>
+	 <20240514-aspire-ascension-449556da3615@spud>
+	 <CAMknhBFFpEGcMoLo5gsC11Syv+CwUM0mnq1yDMUzL1uutUtB+Q@mail.gmail.com>
+	 <20240516-rudder-reburial-dcf300504c0a@spud>
+	 <CAMknhBF_s0btus4yqPe-T=F3z7Asi9KkRGsGr7FHDFi=k4EQjw@mail.gmail.com>
+	 <20240519-abreast-haziness-096a57ef57d3@spud>
+	 <CAMknhBHvEse2FyDoBXR1PvymGpSGq8dotKfm+8XH+0+k+xKtQw@mail.gmail.com>
+	 <20240522-gullible-ibuprofen-cf9111c25f6f@spud>
+	 <5ad0b5782434eaf4cf565cffb0e4c14b7414ae38.camel@gmail.com>
+	 <20240526-peculiar-panama-badda4f02336@spud>
+	 <10991373cb9603803df63d8236c475807f6dde68.camel@gmail.com>
+	 <6db8ba66-841b-4425-9dd4-9d6e7b0463bf@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.1 (3.52.1-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240509-python-version-v1-1-a7dda3a95b5f@linaro.org>
- <87o79faq4a.fsf@meer.lwn.net> <D1N564M136RW.3CRPYTGKMW1NP@gmail.com>
-In-Reply-To: <D1N564M136RW.3CRPYTGKMW1NP@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 31 May 2024 09:33:12 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVA7MU8LMUW6rR=VWtCDs8erpKgx30woL5eUucRYiK-Fg@mail.gmail.com>
-Message-ID: <CAMuHMdVA7MU8LMUW6rR=VWtCDs8erpKgx30woL5eUucRYiK-Fg@mail.gmail.com>
-Subject: Re: [PATCH] docs: document python version used for compilation
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	workflows@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Thierry,
+On Thu, 2024-05-30 at 14:24 -0500, David Lechner wrote:
+> On 5/29/24 3:07 AM, Nuno S=C3=A1 wrote:
+> > On Sun, 2024-05-26 at 18:35 +0100, Conor Dooley wrote:
+>=20
+>=20
+> > > It might be easy to do it this way right now, but be problematic for =
+a
+> > > future device or if someone wants to chuck away the ADI provided RTL =
+and
+> > > do their own thing for this device. Really it just makes me wonder if
+> > > what's needed to describe more complex data pipelines uses an of_grap=
+h,
+> > > just like how video pipelines are handled, rather than the implementa=
+tion
+> > > of io-backends that don't really seem to model the flow of data.
+> > >=20
+> >=20
+> > Yeah, backends is more for devices/soft-cores that extend the functiona=
+lity of
+> > the
+> > device they are connected too. Like having DACs/ADCs hdl cores for conn=
+ecting to
+> > high
+> > speed controllers. Note that in some cases they also manipulate or even=
+ create
+> > data
+> > but since they fit in IIO, having things like the DMA property in the h=
+dl binding
+> > was
+> > fairly straight.
+> >=20
+> > Maybe having an offload dedicated API (through spi) to get/share a DMA =
+handle
+> > would
+> > be acceptable. Then we could add support to "import" it in the IIO core=
+ Then it
+> > would be up to the controller to accept or not to share the handle (in =
+some cases
+> > the
+> > controller could really want to have the control of the DMA transfers).
+>=20
+> I could see this working for some SPI controllers, but for the AXI SPI En=
+gine
+> + DMA currently, the DMA has a fixed word size, so can't be used as a gen=
+eric
+> DMA with arbitrary SPI xfers. For example, if the HDL is compiled with a =
+32-bit
+> word size, then even if we are reading 16-bit sample data, the DMA is goi=
+ng to
+> put it in a 32-bit slot. So one could argue that this is still doing some=
+ data
+> manipulation similar to the CRC checker example.
+>=20
 
-On Thu, May 30, 2024 at 7:07=E2=80=AFPM Thierry Reding <thierry.reding@gmai=
-l.com> wrote:
-> Alternatively, maybe Kconfig could be taught about build dependencies?
+Note that what I was thinking was something very trivial... Just a way to g=
+et
+'dma_chan' out of the spi_engine to the consumer so we could import it in t=
+he IIO DMA
+infrastructure... I assume it may be a sneaky way to just get around the pr=
+oblem
+though :).
 
-git grep "depends on \$(" -- "*Kconf*"
+Another way is to come up with spi like API's to submit DMA request's (pass=
+ing an
+handler or so for completion). I guess we would somehow also need a kind of=
+ get()
+function that would give consumers some kind of info/interface like spi xfe=
+rs size
+(as in this particular case it's the DMA who defines the src/dst width). We=
+ would
+likely also need some kind of spi_dma_buffer implementation in IIO (likely =
+to share
+some code with the current stuff; at least the userspace interface should d=
+efinitely
+be the same).
 
-Gr{oetje,eeting}s,
+Anyways, the above it's just me throwing some random ideas that come to min=
+d :). They
+may be stupid but at the very least they could give you some betters ideas =
+:).
 
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
+> >=20
+> > Not familiar enough with of_graph so can't argue about it but likely is=
+ something
+> > worth looking at.
+> >=20
+> > - Nuno S=C3=A1
+> > > >=20
+>=20
+> I did try implementing something using graph bindings when I first starte=
+d
+> working on this, but it didn't seem to really give us any extra useful
+> information. It was just describing connections (endpoints) that I though=
 t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+> we could just implicitly assume. After this discussion though, maybe wort=
+h
+> a second look. I'll have to think about it more.
+
+Why not :)?
+
+- Nuno S=C3=A1
 
