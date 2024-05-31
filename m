@@ -1,296 +1,191 @@
-Return-Path: <linux-kernel+bounces-197213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7BD18D6798
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 19:03:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92AAE8D679C
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 19:04:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C64811C24AE8
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:03:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05445B22F9F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:04:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A605172793;
-	Fri, 31 May 2024 17:03:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DF67176184;
+	Fri, 31 May 2024 17:04:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="T30/PkI4"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G71wsKMY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB0321B948;
-	Fri, 31 May 2024 17:03:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EED7770F3;
+	Fri, 31 May 2024 17:04:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717174986; cv=none; b=bj5rOYjDU/hXa4Uw71inq3M2doB+SvxNxMWMlqy9lniYb9imtoKLMXIF7sL0/VgKE9njRLXAVcYowHFIdvgmT3WbV95fKmS+ipuLLtFGXNKpF/O9dVWGaANxw8v6WNN1SFbI6/oJWFe52iGYdgcVB1MBUKPsDwOfzzazkC1KmFo=
+	t=1717175040; cv=none; b=kIe91jLmKgA/GnVlFAB+12GQC5Z48QGZ23XQJCvy6XH5UtQJXu4l8eHgVXimyBTegLOWRCkhmwhRK5HS5cWMWgxk6NgtTHsGLpXefGchSIw1aM5h5wVU0Cu6k9MPaJ5dKuj+JqroNlluqvXHBmVv2TwHnirr4At3GkMfqfjaepY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717174986; c=relaxed/simple;
-	bh=yzSu1nSmnK4RiYs3rxQNcqghsg+iXzBRgwq7341MI4U=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lSlxfg+0VLGZskXSO+F/gilWsG1xqOXk5aPEWff1jivPUgE1w+IBKFDDyXZFYBUJhELDFV2xAtxtR3uZ7D9tgEByqBz9L4ZDrHtf52xxXMX9FzAMItRyhbOqaNH2YOJbKcbAMcstkty1cxmaBl9YEYIgtnWDDzKxFV5lUxyPkyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=T30/PkI4; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44VH2UJG060630;
-	Fri, 31 May 2024 12:02:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1717174951;
-	bh=MzQ+7/MrIHtEg6/X8achCJyTMRrYF3jNMk1eh4gtscQ=;
-	h=From:To:CC:Subject:Date;
-	b=T30/PkI4d9xSIw6OVAH9wommmE97Jdi04kK63i2yIXzPMaJxGxw/0QxePFqMJwk47
-	 6CSC1nxni/92De6rx1U27b+6OsM9JOa79vnnfHgNozFUnJ19gK/4AebQi7lBeKRa6K
-	 nuh84ZvU8B9xKzMaRWZMy+T+HVQGtbi1aU7J+u+Q=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44VH2UHw011034
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 31 May 2024 12:02:30 -0500
-Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 31
- May 2024 12:02:30 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 31 May 2024 12:02:30 -0500
-Received: from localhost (ti.dhcp.ti.com [172.24.227.95] (may be forged))
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44VH2TqO033957;
-	Fri, 31 May 2024 12:02:30 -0500
-From: Devarsh Thakkar <devarsht@ti.com>
-To: <mchehab@kernel.org>, <robh@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <hverkuil-cisco@xs4all.nl>, <linux-media@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <benjamin.gaignard@collabora.com>, <sebastian.fricke@collabora.com>
-CC: <laurent.pinchart@ideasonboard.com>, <praneeth@ti.com>, <nm@ti.com>,
-        <vigneshr@ti.com>, <a-bhatia1@ti.com>, <j-luthra@ti.com>,
-        <b-brnich@ti.com>, <detheridge@ti.com>, <p-mantena@ti.com>,
-        <vijayp@ti.com>, <devarsht@ti.com>, <andrzej.p@collabora.com>,
-        <nicolas@ndufresne.ca>, <akpm@linux-foundation.org>,
-        <gregkh@linuxfoundation.org>, <andriy.shevchenko@linux.intel.com>,
-        <adobriyan@gmail.com>, <p.zabel@pengutronix.de>, <airlied@gmail.com>,
-        <daniel@ffwll.ch>, <jani.nikula@intel.com>,
-        <dri-devel@lists.freedesktop.org>,
-        <linux-rockchip@lists.infradead.org>, <davidgow@google.com>,
-        <dlatypov@google.com>
-Subject: [PATCH v11 00/11] Add V4L2 M2M Driver for E5010 JPEG Encoder
-Date: Fri, 31 May 2024 22:32:29 +0530
-Message-ID: <20240531170229.1270828-1-devarsht@ti.com>
-X-Mailer: git-send-email 2.39.1
+	s=arc-20240116; t=1717175040; c=relaxed/simple;
+	bh=0YvlLspqtLIryUdRJ9NcPOInVAGbrmGXs+zKX9/mp5U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O0TIHAYUjtF/NtgJyQkn+Umociz4DNUaItiXUPsfmqFTYkIOZAqc/3XL8hZnTdrkcWztaIYMdGg3OPol7cZmLy3ypuUiSqIcy1eXFd65gSH6qrltIZVGzge51S0VfuBiQWpWigM7/mXyuh6dwz8bJ1OTlnC/dVcnPC3//HOg/yE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G71wsKMY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BFE4C116B1;
+	Fri, 31 May 2024 17:03:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717175040;
+	bh=0YvlLspqtLIryUdRJ9NcPOInVAGbrmGXs+zKX9/mp5U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=G71wsKMYMF/A3oTgEmvH6NnN+Si6Cay7mE1t+advWfGF9GaR5IVC756gEjUbDIrMH
+	 yC2R+wd7saUIaPMyoc7grmg3o/sIn3t0BqHm4jtQW5Sm48D2i08oZ5rj3iMNHrbxeV
+	 GRV+smQ2abOEJKv0PoM93MPRzam6sSp7S/USNp5zebrcFF+viQKUbh4f5epF1BSPWK
+	 KrIkMYik7lVQ1CkTCGhwsR/+j1FuKUAHh1eo0M3d7JojvWS9Z4VgthfdahXoYo6mT4
+	 fJJD0yWUXfkZELKoPK1QXg8N6rlZ1rfxTi5NUrm6aG+AFbro7+N2NU7mER6Z+BVhuZ
+	 nbqxgFn7nO3sg==
+Date: Fri, 31 May 2024 18:03:53 +0100
+From: Lee Jones <lee@kernel.org>
+To: Johan Hovold <johan+linaro@kernel.org>
+Cc: Mark Brown <broonie@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Das Srinagesh <quic_gurus@quicinc.com>,
+	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+	Stephen Boyd <swboyd@chromium.org>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2 02/14] mfd: pm8008: fix regmap irq chip initialisation
+Message-ID: <20240531170353.GB1204315@google.com>
+References: <20240529162958.18081-1-johan+linaro@kernel.org>
+ <20240529162958.18081-3-johan+linaro@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <20240529162958.18081-3-johan+linaro@kernel.org>
 
-This adds support for V4L2 M2M based driver for E5010 JPEG Encoder
-which is a stateful JPEG encoder from Imagination technologies
-and is present in TI AM62A SoC.
+On Wed, 29 May 2024, Johan Hovold wrote:
 
-While adding support for it, following additional framework changes were
-made:
- - Moved reference quantization and huffman tables provided in
-   ITU-T-REC-T.81 to v4l2-jpeg.c as suggested in mailing list [1].
- - Add macros to round to closest integer (either higher or lower) while
-   rounding in order of 2.
- - Add KUnit tests for math functions.
+> The regmap irq array is potentially shared between multiple PMICs and
+> should only contain static data.
+> 
+> Use a custom macro to initialise also the type fields and drop the
+> unnecessary updates on each probe.
+> 
+> Fixes: 6b149f3310a4 ("mfd: pm8008: Add driver for QCOM PM8008 PMIC")
+> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+> ---
+>  drivers/mfd/qcom-pm8008.c | 64 ++++++++++++++-------------------------
+>  1 file changed, 23 insertions(+), 41 deletions(-)
+> 
+> diff --git a/drivers/mfd/qcom-pm8008.c b/drivers/mfd/qcom-pm8008.c
+> index 3ac3742f438b..f71c490f25c8 100644
+> --- a/drivers/mfd/qcom-pm8008.c
+> +++ b/drivers/mfd/qcom-pm8008.c
+> @@ -56,15 +56,25 @@ static unsigned int pm8008_config_regs[] = {
+>  	INT_POL_LOW_OFFSET,
+>  };
+>  
+> -static struct regmap_irq pm8008_irqs[] = {
+> -	REGMAP_IRQ_REG(PM8008_IRQ_MISC_UVLO,	PM8008_MISC,	BIT(0)),
+> -	REGMAP_IRQ_REG(PM8008_IRQ_MISC_OVLO,	PM8008_MISC,	BIT(1)),
+> -	REGMAP_IRQ_REG(PM8008_IRQ_MISC_OTST2,	PM8008_MISC,	BIT(2)),
+> -	REGMAP_IRQ_REG(PM8008_IRQ_MISC_OTST3,	PM8008_MISC,	BIT(3)),
+> -	REGMAP_IRQ_REG(PM8008_IRQ_MISC_LDO_OCP,	PM8008_MISC,	BIT(4)),
+> -	REGMAP_IRQ_REG(PM8008_IRQ_TEMP_ALARM,	PM8008_TEMP_ALARM, BIT(0)),
+> -	REGMAP_IRQ_REG(PM8008_IRQ_GPIO1,	PM8008_GPIO1,	BIT(0)),
+> -	REGMAP_IRQ_REG(PM8008_IRQ_GPIO2,	PM8008_GPIO2,	BIT(0)),
+> +#define _IRQ(_irq, _off, _mask, _types)			\
+> +	[_irq] = {					\
+> +		.reg_offset = (_off),			\
+> +		.mask = (_mask),			\
+> +		.type = {				\
+> +			.type_reg_offset = (_off),	\
+> +			.types_supported = (_types),	\
+> +		},					\
+> +	}
 
-v4l2-compliance test :
-Link: https://gist.github.com/devarsht/1f039c631ca953a57f405cfce1b69e49
+Any reason why this can't be generic and be tucked away somewhere in a
+header file?
 
-E5010 JPEG Encoder Manual tests :
-
-Performance:
-Link: https://gist.github.com/devarsht/c40672944fd71c9a53ab55adbfd9e28b
-
-Functionality:
-Link: https://gist.github.com/devarsht/8e88fcaabff016bb2bac83d89c9d23ce
-
-Compression Quality:
-Link: https://gist.github.com/devarsht/cbcc7cd97e8c48ba1486caa2b7884655
-
-Multi Instance:
-Link: https://gist.github.com/devarsht/22c2fca08cd3441fb40f2c7a4cebc95a
-
-Crop support:
-Link: https://gist.github.com/devarsht/de6f5142f678bb1a5338abfd9f814abd
-
-Runtime PM:
-Link: https://gist.github.com/devarsht/70cd95d4440ddc678489d93885ddd4dd
-
-Math lib KUnit tests:
-Link: https://gist.github.com/devarsht/3f9042825be3da4e133b8f4eda067876
-
-[1]: 
-https://lore.kernel.org/all/de46aefe-36da-4e1a-b4fa-b375b2749181@xs4all.nl/
-
-Changelog:
-V10->V11:
- - Fix commenting for math.h, include headers per IWYU principle in
-   math_kunit, update title for math.h kernel-doc
-
-V9->V10:
- - Update commenting style in math.h and add notes for new jpeg header
-   macros
- - Add KUnit dependency for math_kunit
-
-V8->V9:
- - Remove kernel.h header file
- - Remove stale filler data on jpeg header in E5010 jpeg driver
-
-V7->V8:
- - Add KUnit tests for math functions
- - Add roundclosest() for supporting rounding for non-multiple of 2
- - Update commit message as suggested
- - Add Reviewed-by and Acked-by tags to patches as received
-
-V6->V7:
- - Fix cropping support
- - Move reference huffman and quantization tables to v4l2-jpeg.c
- - Fix suspend/resume use-case
- - Add Reviewed-by
-
-V5->V6:
- - Fix sparse warnings
-
-V4->V5:
- - Sort the #includes in driver file alphabetically
- - Rename huffman and quantization tables to not use '_'
- - Add Reviewed-by tag
-
-V3->V4:
-- Use ti-specific compatible ti,am62a-jpeg-enc as secondary one in
-  dt-binding
-- Remove clock-names as only single clock in dt-binding
-- Fix issue with default params setting
-- Correct v4l2 error prints
-- Simplify register write functions with single statement return values
-- Remove unrequired error checks from get_queue()
-- Drop explicit device_caps setting as it is already taken care by v4l2
-  core
-- Remove unrequired multiplanar checks and memset from s_fmt, g_fmt
-  callback functions
-- Fix try_fmt callback to not update the queues
-- Remove unrequired contiguous format attribute from queue_init
-- Use dynamic allocation for video_device and remove unrequired
-  assignments in probe()
-- Remove unrequired checks from queue_setup function
-- Return queued buffers back if start_streaming fails
-- Use ARRAY_SIZE in place of hard-coding
-- Use huffman and quantization tables from reference header file
-
-V2->V3:
-- Add DONOTMERGE patches for dts and defconfig
-- Update driver with below changes :
-  - Correct license headers
-  - Use more generic name core instead of jasper for base registers
-  - Add Comment for forward declarations
-  - Simplify quantization table calculations
-  - Use v4l2_apply_frmsize_constraints for updating framesize and remove
-    unrequired functions
-  - Place TODO at top of file and in commit message too
-  - Use dev_err_probe helper in probe function
-  - Fix return value checking for failure scenarios in probe function
-  - Use v4l2_err/info/warn helpers instead of dev_err/info/warn helpers
-  - Fix unexpected indentation
-  - Correct commit message
-- Update dt-bindings with below changes :
-  - Add vendor specific compatible 
-  - Fix commit title and message
-  - Update reg names
-  - Update clocks to 1
-  - Fix dts example with proper naming
-
-V1->V2:
- - Send dt-bindings and driver together
-
-Patch-Diff between the series :
-V10->V11 Range diff :
-https://gist.github.com/devarsht/cd76372bff7c125f75d06ba009264b75
-
-V9->V10 Range diff :
-https://gist.github.com/devarsht/b446acee460b8c65fb577d06b7bbc1da
-
-V8->V9 Range diff :
-https://gist.github.com/devarsht/3fd6c4e8031ab114248f93d01c8dfc74
-
-V6->V7 Range diff :
-https://gist.github.com/devarsht/1db185b1e187eaf397e9e4c37066777e
-
-V5->V6 Range diff :
-https://gist.github.com/devarsht/c89180ac2b0d2814614f2b59d0705c19
-
-V4->V5 Range diff :
-https://gist.github.com/devarsht/298790af819f299a0a05fec89371097b
-
-V3->V4 Range diff :
-https://gist.github.com/devarsht/22a744d999080de6e813bcfb5a596272
-
-Previous patch series:
-V10: https://lore.kernel.org/all/20240530165925.2715837-1-devarsht@ti.com/
-V9: https://lore.kernel.org/all/20240526175655.1093707-1-devarsht@ti.com/
-V8: https://lore.kernel.org/all/20240517171532.748684-1-devarsht@ti.com/
-V7: https://lore.kernel.org/all/20240510082603.1263256-1-devarsht@ti.com/
-V6: https://lore.kernel.org/all/20240228141140.3530612-1-devarsht@ti.com/
-V5: https://lore.kernel.org/all/20240215134641.3381478-1-devarsht@ti.com/
-V4: https://lore.kernel.org/all/20240205114239.924697-1-devarsht@ti.com/
-V3: https://lore.kernel.org/all/20230816152210.4080779-1-devarsht@ti.com/
-V2: https://lore.kernel.org/all/20230727112546.2201995-1-devarsht@ti.com/
-
-
-Daniel Latypov (1):
-  lib: add basic KUnit test for lib/math
-
-Devarsh Thakkar (10):
-  media: dt-bindings: Add Imagination E5010 JPEG Encoder
-  media: imagination: Add E5010 JPEG Encoder driver
-  media: v4l2-jpeg: Export reference quantization and huffman tables
-  media: imagination: Use exported tables from v4l2-jpeg core
-  media: verisilicon : Use exported tables from v4l2-jpeg for hantro
-    codec
-  math.h: Add macros for rounding to closest value
-  Documentation: core-api: Add math.h macros and functions
-  lib: math_kunit: Add tests for new macros related to rounding to
-    nearest value
-  media: imagination: Round to closest multiple for cropping region
-  gpu: ipu-v3: Use generic macro for rounding closest to specified value
-
- Documentation/core-api/kernel-api.rst         |    6 +
- .../bindings/media/img,e5010-jpeg-enc.yaml    |   75 +
- MAINTAINERS                                   |    7 +
- drivers/gpu/ipu-v3/ipu-image-convert.c        |    4 +-
- drivers/media/platform/Kconfig                |    1 +
- drivers/media/platform/Makefile               |    1 +
- drivers/media/platform/imagination/Kconfig    |   12 +
- drivers/media/platform/imagination/Makefile   |    3 +
- .../platform/imagination/e5010-core-regs.h    |  585 ++++++
- .../platform/imagination/e5010-jpeg-enc-hw.c  |  267 +++
- .../platform/imagination/e5010-jpeg-enc-hw.h  |   42 +
- .../platform/imagination/e5010-jpeg-enc.c     | 1644 +++++++++++++++++
- .../platform/imagination/e5010-jpeg-enc.h     |  168 ++
- .../platform/imagination/e5010-mmu-regs.h     |  311 ++++
- .../media/platform/verisilicon/hantro_jpeg.c  |  128 +-
- drivers/media/v4l2-core/v4l2-jpeg.c           |  162 +-
- include/linux/math.h                          |   63 +
- include/media/v4l2-jpeg.h                     |   28 +
- lib/math/Kconfig                              |   14 +
- lib/math/Makefile                             |    1 +
- lib/math/math_kunit.c                         |  329 ++++
- 21 files changed, 3733 insertions(+), 118 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/media/img,e5010-jpeg-enc.yaml
- create mode 100644 drivers/media/platform/imagination/Kconfig
- create mode 100644 drivers/media/platform/imagination/Makefile
- create mode 100644 drivers/media/platform/imagination/e5010-core-regs.h
- create mode 100644 drivers/media/platform/imagination/e5010-jpeg-enc-hw.c
- create mode 100644 drivers/media/platform/imagination/e5010-jpeg-enc-hw.h
- create mode 100644 drivers/media/platform/imagination/e5010-jpeg-enc.c
- create mode 100644 drivers/media/platform/imagination/e5010-jpeg-enc.h
- create mode 100644 drivers/media/platform/imagination/e5010-mmu-regs.h
- create mode 100644 lib/math/math_kunit.c
+> +static const struct regmap_irq pm8008_irqs[] = {
+> +	_IRQ(PM8008_IRQ_MISC_UVLO,    PM8008_MISC,	BIT(0), IRQ_TYPE_EDGE_RISING),
+> +	_IRQ(PM8008_IRQ_MISC_OVLO,    PM8008_MISC,	BIT(1), IRQ_TYPE_EDGE_RISING),
+> +	_IRQ(PM8008_IRQ_MISC_OTST2,   PM8008_MISC,	BIT(2), IRQ_TYPE_EDGE_RISING),
+> +	_IRQ(PM8008_IRQ_MISC_OTST3,   PM8008_MISC,	BIT(3), IRQ_TYPE_EDGE_RISING),
+> +	_IRQ(PM8008_IRQ_MISC_LDO_OCP, PM8008_MISC,	BIT(4), IRQ_TYPE_EDGE_RISING),
+> +	_IRQ(PM8008_IRQ_TEMP_ALARM,   PM8008_TEMP_ALARM,BIT(0), IRQ_TYPE_SENSE_MASK),
+> +	_IRQ(PM8008_IRQ_GPIO1,	      PM8008_GPIO1,	BIT(0), IRQ_TYPE_SENSE_MASK),
+> +	_IRQ(PM8008_IRQ_GPIO2,	      PM8008_GPIO2,	BIT(0), IRQ_TYPE_SENSE_MASK),
+>  };
+>  
+>  static const unsigned int pm8008_periph_base[] = {
+> @@ -143,38 +153,9 @@ static struct regmap_config qcom_mfd_regmap_cfg = {
+>  	.max_register	= 0xFFFF,
+>  };
+>  
+> -static int pm8008_probe_irq_peripherals(struct device *dev,
+> -					struct regmap *regmap,
+> -					int client_irq)
+> -{
+> -	int rc, i;
+> -	struct regmap_irq_type *type;
+> -	struct regmap_irq_chip_data *irq_data;
+> -
+> -	for (i = 0; i < ARRAY_SIZE(pm8008_irqs); i++) {
+> -		type = &pm8008_irqs[i].type;
+> -
+> -		type->type_reg_offset = pm8008_irqs[i].reg_offset;
+> -
+> -		if (type->type_reg_offset == PM8008_MISC)
+> -			type->types_supported = IRQ_TYPE_EDGE_RISING;
+> -		else
+> -			type->types_supported = (IRQ_TYPE_EDGE_BOTH |
+> -				IRQ_TYPE_LEVEL_HIGH | IRQ_TYPE_LEVEL_LOW);
+> -	}
+> -
+> -	rc = devm_regmap_add_irq_chip(dev, regmap, client_irq,
+> -			IRQF_SHARED, 0, &pm8008_irq_chip, &irq_data);
+> -	if (rc) {
+> -		dev_err(dev, "Failed to add IRQ chip: %d\n", rc);
+> -		return rc;
+> -	}
+> -
+> -	return 0;
+> -}
+> -
+>  static int pm8008_probe(struct i2c_client *client)
+>  {
+> +	struct regmap_irq_chip_data *irq_data;
+>  	int rc;
+>  	struct device *dev;
+>  	struct regmap *regmap;
+> @@ -187,9 +168,10 @@ static int pm8008_probe(struct i2c_client *client)
+>  	i2c_set_clientdata(client, regmap);
+>  
+>  	if (of_property_read_bool(dev->of_node, "interrupt-controller")) {
+> -		rc = pm8008_probe_irq_peripherals(dev, regmap, client->irq);
+> +		rc = devm_regmap_add_irq_chip(dev, regmap, client->irq,
+> +				IRQF_SHARED, 0, &pm8008_irq_chip, &irq_data);
+>  		if (rc)
+> -			dev_err(dev, "Failed to probe irq periphs: %d\n", rc);
+> +			dev_err(dev, "failed to add IRQ chip: %d\n", rc);
+>  	}
+>  
+>  	return devm_of_platform_populate(dev);
+> -- 
+> 2.44.1
+> 
 
 -- 
-2.39.1
-
+Lee Jones [李琼斯]
 
