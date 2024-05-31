@@ -1,129 +1,134 @@
-Return-Path: <linux-kernel+bounces-197007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B8018D64D5
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:50:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D6198D64E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:53:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB4DA28AA61
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:50:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1780728B3E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:53:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85224770ED;
-	Fri, 31 May 2024 14:49:38 +0000 (UTC)
-Received: from mx.gpxsee.org (mx.gpxsee.org [37.205.14.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB2365C8FC;
+	Fri, 31 May 2024 14:53:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="gJhSWPMl"
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10B9C558B9;
-	Fri, 31 May 2024 14:49:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.14.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCC4457C8E
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 14:53:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717166978; cv=none; b=ZQj9W9Aw0T3u3I7hJXoBKpEXrlOSUHPfKHsMHoJ1xt0AvJ3xhRprNRSQKnyT0QQBR1XQV+qkwQdjAwnz8jPuUG4/X6hDaVufAAPvGNFNALtFjnbDF+CIFZxH4LfOgxfoTN/h6aefAHqY11bId9/anDHjGlqlyy8bKmTBX8/UkoA=
+	t=1717167199; cv=none; b=cV2IKwJjEO/IseMmghEd3WKiUSOjpO6eUD6/VYOgqj4avSCSDamXg4trVvbOpmn7RQ58iwZBhQdgvrrTfmvayOfuhAFXdp5QOLaNceiRmr8SVMDuVoICxppekKVGPqVMYEaFaoCKUqPm5rsjj+oIEUIE7GIq9TWYafNUFKyYzlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717166978; c=relaxed/simple;
-	bh=obniZfSDW/k/GqDjUVIYlNk7TKGfBf5TeVHiB4wZLko=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=E2GrfRg1KQ89VlCGJaUw0lz4h/kDP+cph8hAHfjYaekMOVZgoYDVsscjnApktxyt8HnB/T7Qa92Pqen0XsMRNm97eJq1NQ4w7GWCGRDKJaQ0LO9YbAx/Uw9dutMh0xQH/F01A8UGLB5k2lBA24Kaq/BaFHdYIpKTe4g520h0kkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gpxsee.org; spf=pass smtp.mailfrom=gpxsee.org; arc=none smtp.client-ip=37.205.14.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gpxsee.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gpxsee.org
-Received: from mgb4.. (unknown [62.77.71.229])
-	by mx.gpxsee.org (Postfix) with ESMTPSA id 04ED14ABED;
-	Fri, 31 May 2024 16:49:27 +0200 (CEST)
-From: tumic@gpxsee.org
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?Martin=20T=C5=AFma?= <martin.tuma@digiteqautomotive.com>
-Subject: [PATCH v6 4/4] media: admin-guide: mgb4: Outputs DV timings documentation update
-Date: Fri, 31 May 2024 16:49:21 +0200
-Message-ID: <20240531144921.2104-5-tumic@gpxsee.org>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240531144921.2104-1-tumic@gpxsee.org>
-References: <20240531144921.2104-1-tumic@gpxsee.org>
+	s=arc-20240116; t=1717167199; c=relaxed/simple;
+	bh=zIxJj+eFNW131CghuD8tAVb+DXZz1K/r7747QzysLZ0=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=lzyxyuVDzZnbG0HGvypSUUnnLqoaQApkTbWHW+ZJO4UA9AwOujQTpjTtE9Sla098b1X0NEdQPxlp5U1jCD1PbnGFvQZKVTFsQEA62tEgrOJeqQPb2owcDUHFALLJEIGNsk5KKCiAukxCUD5cE6dJLREP0lTCZfALFZHGt+KRStQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=gJhSWPMl; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from macsyma.thunk.org (unn-149-40-50-56.datapacket.com [149.40.50.56] (may be forged))
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 44VEnwYM020082
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 31 May 2024 10:50:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1717167002; bh=TVitHfGXx2wIQGCXtRSfpVuiPAJXkRLy5+/11kjTZi8=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=gJhSWPMlva12midGaeg/PHU2neWOcKsKiFso7tYpYY6tMVpafdbk0znXMFEK9H1hU
+	 qdyBPtkEngiB7yqQ+IbNrHlkWYOWgTjcvQgJNO7MTOTZisvZdZSoDHJWY3lqeJaYZE
+	 U38u43F9VE4lFxJknYqgbIoTNE+P1A2Q4LVc12BHeDv1KKY88JN9DqWz4hzA6iWmx8
+	 y2TY1uFckzpWjIiew4C1qPlARFYwrj6ebMmhkk+fiFQEX7rpKDXel6j5rvPRdi9eDf
+	 HMJqjXMcGDUiuhpBoML4bUHQ6xIbM2FnKtOoPuHSbUzya2eBGa7gg01LX6ZZmBbqR2
+	 QX791qc6scs2g==
+Received: by macsyma.thunk.org (Postfix, from userid 15806)
+	id 257EA340A68; Fri, 31 May 2024 16:49:57 +0200 (CEST)
+Date: Fri, 31 May 2024 16:49:57 +0200
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Linux Kernel Developers List <linux-kernel@vger.kernel.org>,
+        Linux Filesystem Development List <linux-fsdevel@vger.kernel.org>,
+        linux-block@vger.kernel.org, netdev@vger.kernel.org,
+        linux-mm@kvack.org, ksummit@lists.linux.dev
+Subject: Maintainers Summit 2024 Call for Topics
+Message-ID: <20240531144957.GA301668@mit.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-From: Martin Tůma <martin.tuma@digiteqautomotive.com>
+This year, the Maintainers Summit will be held in Vienna, Austria on
+Tuesday, September 17th, 2024, just before the Linux Plumber's Conference
+(September 18--20th).
 
-Properly document the function of the mgb4 output "frame_rate" sysfs parameter
-and update the default DV timings values according to the latest code changes.
+As in previous years, the Maintainers Summit is invite-only, where the
+primary focus will be process issues around Linux Kernel Development.
+It will be limited to 30 invitees and a handful of sponsored
+attendees.
 
-Signed-off-by: Martin Tůma <martin.tuma@digiteqautomotive.com>
----
- Documentation/admin-guide/media/mgb4.rst | 23 ++++++++++++++---------
- 1 file changed, 14 insertions(+), 9 deletions(-)
+Linus has generated a list of people for the program committee to
+consider.  People who suggest topics that should be discussed at the
+Maintainers Summit will also be added to the list for consideration.
+To make topic suggestions for the Maintainers Summit, please send
+e-mail to the ksummit@lists.linux.dev with a subject prefix of
+[MAINTAINERS SUMMIT].
 
-diff --git a/Documentation/admin-guide/media/mgb4.rst b/Documentation/admin-guide/media/mgb4.rst
-index e434d4a9eeb3..b9da127c074d 100644
---- a/Documentation/admin-guide/media/mgb4.rst
-+++ b/Documentation/admin-guide/media/mgb4.rst
-@@ -227,8 +227,13 @@ Common FPDL3/GMSL output parameters
-     open.*
- 
- **frame_rate** (RW):
--    Output video frame rate in frames per second. The default frame rate is
--    60Hz.
-+    Output video signal frame rate limit in frames per second. Due to
-+    the limited output pixel clock steps, the card can not always generate
-+    a frame rate perfectly matching the value required by the connected display.
-+    Using this parameter one can limit the frame rate by "crippling" the signal
-+    so that the lines are not equal (the porches of the last line differ) but
-+    the signal appears like having the exact frame rate to the connected display.
-+    The default frame rate limit is 60Hz.
- 
- **hsync_polarity** (RW):
-     HSYNC signal polarity.
-@@ -253,33 +258,33 @@ Common FPDL3/GMSL output parameters
-     and there is a non-linear stepping between two consecutive allowed
-     frequencies. The driver finds the nearest allowed frequency to the given
-     value and sets it. When reading this property, you get the exact
--    frequency set by the driver. The default frequency is 70000kHz.
-+    frequency set by the driver. The default frequency is 61150kHz.
- 
-     *Note: This parameter can not be changed while the output v4l2 device is
-     open.*
- 
- **hsync_width** (RW):
--    Width of the HSYNC signal in pixels. The default value is 16.
-+    Width of the HSYNC signal in pixels. The default value is 40.
- 
- **vsync_width** (RW):
--    Width of the VSYNC signal in video lines. The default value is 2.
-+    Width of the VSYNC signal in video lines. The default value is 20.
- 
- **hback_porch** (RW):
-     Number of PCLK pulses between deassertion of the HSYNC signal and the first
--    valid pixel in the video line (marked by DE=1). The default value is 32.
-+    valid pixel in the video line (marked by DE=1). The default value is 50.
- 
- **hfront_porch** (RW):
-     Number of PCLK pulses between the end of the last valid pixel in the video
-     line (marked by DE=1) and assertion of the HSYNC signal. The default value
--    is 32.
-+    is 50.
- 
- **vback_porch** (RW):
-     Number of video lines between deassertion of the VSYNC signal and the video
--    line with the first valid pixel (marked by DE=1). The default value is 2.
-+    line with the first valid pixel (marked by DE=1). The default value is 31.
- 
- **vfront_porch** (RW):
-     Number of video lines between the end of the last valid pixel line (marked
--    by DE=1) and assertion of the VSYNC signal. The default value is 2.
-+    by DE=1) and assertion of the VSYNC signal. The default value is 30.
- 
- FPDL3 specific input parameters
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
--- 
-2.45.1
+To get the most out of our topic discussions, folks proposing a topic
+should also suggest relevant people and desired outcomes.
+
+For an examples of past Maintainers Summit topics, please see these
+LWN articles:
+
+ * 2023 https://lwn.net/Articles/951847/
+ * 2022 https://lwn.net/Articles/908320/
+ * 2021 https://lwn.net/Articles/870415/
+
+The Kernel Summit is organized as a track which is run in parallel
+with the other tracks at the Linux Plumbers Conference (LPC), and is
+open to all registered attendees of LPC.  The goal of the Kernel
+Summit track will be to provide a forum to discuss specific technical
+issues that would be easier to resolve in person than over e-mail.
+The program committee will also consider "information sharing" topics
+if they are clearly of interest to the wider development community
+(i.e., advanced training in topics that would be useful to kernel
+developers).
+
+To suggest a topic for the Kernel Summit, please do two things. by
+June 16th, 2024.  First, please tag your e-mail with [TECH TOPIC].  As
+before, please use a separate e-mail for each topic, and send the
+topic suggestions to the ksummit discussion list.
+
+Secondly, please create a topic at the Linux Plumbers Conference
+proposal submission site and target it to the Kernel Summit track:
+
+	https://lpc.events/event/18/abstracts/
+
+Please do both steps.  I'll try to notice if someone forgets one or
+the other, but your chances of making sure your proposal gets the
+necessary attention and consideration are maximized by submitting both
+to the mailing list and the web site.
+
+
+If you were not subscribed on to the kernel mailing list from
+last year (or if you had removed yourself after the kernel summit),
+you can subscribe by sending an e-mail to the address:
+
+   ksummit+subscribe@lists.linux.dev
+
+The program committee this year is composed of the following people:
+
+Christian Brauner
+Jon Corbet
+Greg KH
+Sasha Levin
+Ted Ts'o
+Rafael J. Wysocki
 
 
