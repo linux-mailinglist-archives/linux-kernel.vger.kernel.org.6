@@ -1,198 +1,236 @@
-Return-Path: <linux-kernel+bounces-197320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C25FB8D6947
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 20:56:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DFC08D6949
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 20:56:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54C6A28364F
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:56:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 030C11F26735
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:56:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CCF97F7FC;
-	Fri, 31 May 2024 18:56:22 +0000 (UTC)
-Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECDA67F499;
+	Fri, 31 May 2024 18:56:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="R++cZoet"
+Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F6E27E774
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 18:56:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33A447E774
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 18:56:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717181782; cv=none; b=nns6kKojregepvo+E9Je325Lqk2S9ETTB9J961azOGWejjTMjRKxRRZIxHXlDgHNi6zGJn+d+jK9pljhXjGahYPE1gDsAiyo/KtDRfSR9LCWbuPkIKTtAYirbO/5lqJlq/QD+guY9QQM2UOByo2dGTjyNDQL+Esc00SszdLdgFo=
+	t=1717181793; cv=none; b=psEow6TTdFL/aR1HybmDRPsmhdBKx4MJFB+DWMfZvFQ1D3LpTKMAXSKI60tCugl/o+MxprBKgjMkrEwbDSE+YdHEuXbK9U5Ih6QuFMLPHV70zIBiAzKblO/jug+0Ei6623AGUDhmQ+tXxZkpn1IojsbhSwl9mwWIt56th5nqHBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717181782; c=relaxed/simple;
-	bh=qN4vlgIgphPICeA4Q6mNaG+fMmSzRaQqb7ipUQbietE=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=D2yiE332nmiVASQDpsPiYxgHKPWTYAqhYm3XOuKPvEGQnIEYFyXH0Ru9ChjWHtuHAdB+nCLitwLM62AoYMagTXs3y/0bBkLAK5zgrR7/ghhvR4EfGZU6KHYuTEXex7MOGkk0eOczEstHZPGhdZKXpTRIuDdLCtnmGbWzplLjmYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-7e261e3e1beso293893439f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 11:56:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717181780; x=1717786580;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BGMeTtLYeIHVSkGLYngSRR4aJEt/tcf+WEvx9z803x4=;
-        b=sbuJ0Q1KlSPFMWLGg6McO1htCEsT1R/+/PSYGvsPq2OXjc+sCBI2fotfQT+HQHGtRh
-         SHOuAo7glypymQU4UYvqxjzbyMe6C6EvVN0pOzjVIhUSgrDfcHnDsvMycvH2WEKl7q3A
-         U05KaWeosk0QhsEq6AmhzZ7qKtVK1T+ay9SmaecY7l8OvZvpzn8b7bGemeDhM7hb41XD
-         YKigKwKSampzS4UVpnpqe9tfA+9wFfJ8ty02KU2QVaASLwrFlePy+RshIbHZhSAuUV10
-         T+7nas9jWUckEWe+vNYfJiFQy9Eifdek7jbcx9QkLZaMhQjg1eCi5Cl3EqF6lou9szLF
-         V61Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVDvoDjvOYReLRZitU+ZS94TRPLLFn6anDDmyBNLoPqAZxR6MJauF/UyF9YdP0SaVyxAFaVrdskNLD2EuwQjtEhy0x8WEyPjrPQRRYj
-X-Gm-Message-State: AOJu0Yx2xglhOXR40JpjLBQmMNotjnP4fsx5w4R6DvzE8GZNgsgXULXc
-	QITUW5BCE4tNICIxhrjpkDY6wEK44VVz/F98YhkqHEEG2Ljei6IsV2cDscxjNnz0beNe2sso6Lo
-	Jf4lfddYZklbJsaolioKti/h3+NiwAAXex+k3yYcVuJR7hyNPwbvwGS0=
-X-Google-Smtp-Source: AGHT+IFZFsUgCMXhoAwOpoDKxRo2bK70F662gaHR/g6Wz1Cj3I10qnqYXoAAtI8r+mfs20sgrXxlYOYPO22iWPcCYmq4PjE/A9fV
+	s=arc-20240116; t=1717181793; c=relaxed/simple;
+	bh=2Qz7Mobi1Jemvm70CEaxkqIwHatVUT3Igmm0sp2NxxE=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Rf7DuUpTnvSx8QyOYwSeqYVM7MAhigZSSNHmWJrtG4G0YqWiw1lUbKXGuaF9YBvKHbDNAxkHUDfID9pdWnT54EmM4ZP/3YyteIQ+KuDX+2WVMWYFTG4sLfJq8B3JLXx5c8VqS3WrEkI5gdquyl7FlQBGGDBtIIBFlOQbvFo2cmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=R++cZoet; arc=none smtp.client-ip=185.70.40.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1717181789; x=1717440989;
+	bh=EF2H09lbmyaCypwI54sg4h1wzWqn3R/Ehd3dbT5gr3w=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=R++cZoet/HlxcS1UtROgiYK3uqFp81tksJBCGM4M82AQG/p6GOCAZVTkOO3+tm3Q7
+	 FgjmQDMd+qNoKjbXdSZgzhT5U1SkKHBfxP3i8getlQUpSLWaxprF1h68ycnMkPmidO
+	 1AZge7qOctjLg2iFTQF4HzQdDsXpvgcsz3bK7SGwCEOGTIvROYEkDRYbEPxL/CWBgQ
+	 G6/Gu1NgBpsXDBwmPVNk9KpaIwocA8ycWPWDu2BJ0YY+PMi/hbhKtVR5EbBPnl1cWa
+	 DOdqmlKlf5gd82o4mRNpoIVpwdIMNzSf1TPHh9sCWWYv9d74PngRgoS6VPyFPiBZjJ
+	 /rpGGncprRing==
+Date: Fri, 31 May 2024 18:56:22 +0000
+To: Jeff Xu <jeffxu@google.com>
+From: =?utf-8?Q?Barnab=C3=A1s_P=C5=91cze?= <pobrn@protonmail.com>
+Cc: David Rheinsberg <david@readahead.eu>, Jeff Xu <jeffxu@chromium.org>, Andrew Morton <akpm@linux-foundation.org>, cyphar@cyphar.com, dmitry.torokhov@gmail.com, Daniel Verkamp <dverkamp@chromium.org>, hughd@google.com, jorgelo@chromium.org, Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, linux-mm@kvack.org, skhan@linuxfoundation.org, stable@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] memfd: fix MFD_NOEXEC_SEAL to be non-sealable by default
+Message-ID: <2fQi6XI7TmRN_qi9xldglgYFujpzMvr0bbkxhYNJhY6VRYjDsyTDqavR6OPU6DNBtCKAPgBVKxV0SMo7WnjUaDit-zxsBZauGavgKzqcNy8=@protonmail.com>
+In-Reply-To: <CALmYWFv+Tsqwv96oB4rTrJ7_ZC3CoNZFjmKFYKQgGZuceqZ6vg@mail.gmail.com>
+References: <20240524033933.135049-1-jeffxu@google.com> <20240524033933.135049-2-jeffxu@google.com> <79b3aa3e-bc70-410e-9646-0b6880a4a74b@app.fastmail.com> <CALmYWFu61FkbboWkXUSKBGmXeiNtBwrgfizS5kNvPMx4ByUqPQ@mail.gmail.com> <b8cGJnU5ofWgsiKD5z8RGlW-2ijs7IW9h4LUg1tzFBu3agFinCvdxuiSaUDG_DfVen2vCDNu-QbGfOR7DeARf4jsy3CNNTfzQGMX1HfqHdo=@protonmail.com> <CALmYWFv+Tsqwv96oB4rTrJ7_ZC3CoNZFjmKFYKQgGZuceqZ6vg@mail.gmail.com>
+Feedback-ID: 20568564:user:proton
+X-Pm-Message-ID: 10e36116d14daed7d928f575d8afdac320345604
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:1650:b0:7ea:fa78:1568 with SMTP id
- ca18e2360f4ac-7eaffdd3600mr21086839f.0.1717181778406; Fri, 31 May 2024
- 11:56:18 -0700 (PDT)
-Date: Fri, 31 May 2024 11:56:18 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000eabe1d0619c48986@google.com>
-Subject: [syzbot] [btrfs?] kernel BUG in clear_inode
-From: syzbot <syzbot+67ba3c42bcbb4665d3ad@syzkaller.appspotmail.com>
-To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+2024. m=C3=A1jus 30., cs=C3=BCt=C3=B6rt=C3=B6k 0:24 keltez=C3=A9ssel, Jeff =
+Xu <jeffxu@google.com> =C3=ADrta:
 
-syzbot found the following issue on:
+> On Wed, May 29, 2024 at 2:46=E2=80=AFPM Barnab=C3=A1s P=C5=91cze <pobrn@p=
+rotonmail.com> wrote:
+> >
+> > Hi
+> >
+> >
+> > 2024. m=C3=A1jus 29., szerda 23:30 keltez=C3=A9ssel, Jeff Xu <jeffxu@go=
+ogle.com> =C3=ADrta:
+> >
+> > > Hi David and Barnab=C3=A1s
+> > >
+> > > On Fri, May 24, 2024 at 7:15=E2=80=AFAM David Rheinsberg <david@reada=
+head.eu> wrote:
+> > > >
+> > > > Hi
+> > > >
+> > > > On Fri, May 24, 2024, at 5:39 AM, jeffxu@chromium.org wrote:
+> > > > > From: Jeff Xu <jeffxu@google.com>
+> > > > >
+> > > > > By default, memfd_create() creates a non-sealable MFD, unless the
+> > > > > MFD_ALLOW_SEALING flag is set.
+> > > > >
+> > > > > When the MFD_NOEXEC_SEAL flag is initially introduced, the MFD cr=
+eated
+> > > > > with that flag is sealable, even though MFD_ALLOW_SEALING is not =
+set.
+> > > > > This patch changes MFD_NOEXEC_SEAL to be non-sealable by default,
+> > > > > unless MFD_ALLOW_SEALING is explicitly set.
+> > > > >
+> > > > > This is a non-backward compatible change. However, as MFD_NOEXEC_=
+SEAL
+> > > > > is new, we expect not many applications will rely on the nature o=
+f
+> > > > > MFD_NOEXEC_SEAL being sealable. In most cases, the application al=
+ready
+> > > > > sets MFD_ALLOW_SEALING if they need a sealable MFD.
+> > > >
+> > > > This does not really reflect the effort that went into this. Should=
+n't this be something along the lines of:
+> > > >
+> > > >     This is a non-backward compatible change. However, MFD_NOEXEC_S=
+EAL
+> > > >     was only recently introduced and a codesearch revealed no break=
+ing
+> > > >     users apart from dbus-broker unit-tests (which have a patch pen=
+ding
+> > > >     and explicitly support this change).
+> > > >
+> > > Actually, I think we might need to hold on to this change. With debia=
+n
+> > > code search, I found more codes that already use MFD_NOEXEC_SEAL
+> > > without MFD_ALLOW_SEALING. e.g. systemd [1], [2] [3]
+> >
+> > Yes, I have looked at those as well, and as far as I could tell,
+> > they are not affected. Have I missed something?
+> >
+> In the example, the MFD was created then passed into somewhere else
+> (safe_fork_full, open_serialization_fd, etc.), the scope and usage of
+> mfd isn't that clear to me, you might have checked all the user cases.
+> In addition, MFD_NOEXEC_SEAL  exists in libc and rust and go lib.  I
+> don't know if debian code search is sufficient to cover enough apps .
+> There is a certain risk.
+>=20
+> Fundamentally, I'm not convinced that making MFD default-non-sealable
+> has  meaningful benefit, especially when MFD_NOEXEC_SEAL is new.
 
-HEAD commit:    2bfcfd584ff5 Merge tag 'pmdomain-v6.10-rc1' of git://git.k..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=128ea8b4980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=733cc7a95171d8e7
-dashboard link: https://syzkaller.appspot.com/bug?extid=67ba3c42bcbb4665d3ad
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: i386
+Certainly, there is always a risk, I did not mean to imply that there isn't=
+.
+However, I believe this risk is low enough to at least warrant an attempt a=
+t
+eliminating this inconsistency. It can always be reverted if it turns out t=
+hat
+the effects have been vastly underestimated by me.
 
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-2bfcfd58.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/c7ed3bb80bed/vmlinux-2bfcfd58.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/93acc5bfbaef/bzImage-2bfcfd58.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+67ba3c42bcbb4665d3ad@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-kernel BUG at fs/inode.c:626!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
-CPU: 0 PID: 7700 Comm: syz-executor.2 Not tainted 6.10.0-rc1-syzkaller-00013-g2bfcfd584ff5 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-RIP: 0010:clear_inode+0x15b/0x190 fs/inode.c:626
-Code: 00 00 00 5b 5d 41 5c c3 cc cc cc cc e8 1e 7e 8b ff 90 0f 0b e8 16 7e 8b ff 90 0f 0b e8 0e 7e 8b ff 90 0f 0b e8 06 7e 8b ff 90 <0f> 0b e8 fe 7d 8b ff 90 0f 0b e8 b6 b0 e8 ff e9 d2 fe ff ff e8 ac
-RSP: 0018:ffffc90003a2fab0 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: ffff888028014230 RCX: ffffffff82030100
-RDX: ffff88801e1fa440 RSI: ffffffff8203016a RDI: 0000000000000007
-RBP: 0000000000000040 R08: 0000000000000007 R09: 0000000000000000
-R10: 0000000000000040 R11: 0000000000000001 R12: 0000000000000020
-R13: ffff88802855c000 R14: 0000000000000000 R15: ffff888028014230
-FS:  0000000000000000(0000) GS:ffff88802c000000(0063) knlGS:0000000056b5e400
-CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
-CR2: 00007f58c1d30980 CR3: 000000006b300000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000001000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- btrfs_evict_inode+0x529/0xe80 fs/btrfs/inode.c:5262
- evict+0x2ed/0x6c0 fs/inode.c:667
- dispose_list+0x117/0x1e0 fs/inode.c:700
- evict_inodes+0x34e/0x450 fs/inode.c:750
- generic_shutdown_super+0xb5/0x3d0 fs/super.c:627
- kill_anon_super+0x3a/0x60 fs/super.c:1226
- btrfs_kill_super+0x3b/0x50 fs/btrfs/super.c:2096
- deactivate_locked_super+0xbe/0x1a0 fs/super.c:473
- deactivate_super+0xde/0x100 fs/super.c:506
- cleanup_mnt+0x222/0x450 fs/namespace.c:1267
- task_work_run+0x14e/0x250 kernel/task_work.c:180
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0x278/0x2a0 kernel/entry/common.c:218
- __do_fast_syscall_32+0x80/0x120 arch/x86/entry/common.c:389
- do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
- entry_SYSENTER_compat_after_hwframe+0x84/0x8e
-RIP: 0023:0xf72c7579
-Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d b4 26 00 00 00 00 8d b4 26 00 00 00 00
-RSP: 002b:00000000ff99b808 EFLAGS: 00000292 ORIG_RAX: 0000000000000034
-RAX: 0000000000000000 RBX: 00000000ff99b8b0 RCX: 0000000000000009
-RDX: 00000000f741dff4 RSI: 00000000f736e361 RDI: 00000000ff99c954
-RBP: 00000000ff99b8b0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000296 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:clear_inode+0x15b/0x190 fs/inode.c:626
-Code: 00 00 00 5b 5d 41 5c c3 cc cc cc cc e8 1e 7e 8b ff 90 0f 0b e8 16 7e 8b ff 90 0f 0b e8 0e 7e 8b ff 90 0f 0b e8 06 7e 8b ff 90 <0f> 0b e8 fe 7d 8b ff 90 0f 0b e8 b6 b0 e8 ff e9 d2 fe ff ff e8 ac
-RSP: 0018:ffffc90003a2fab0 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: ffff888028014230 RCX: ffffffff82030100
-RDX: ffff88801e1fa440 RSI: ffffffff8203016a RDI: 0000000000000007
-RBP: 0000000000000040 R08: 0000000000000007 R09: 0000000000000000
-R10: 0000000000000040 R11: 0000000000000001 R12: 0000000000000020
-R13: ffff88802855c000 R14: 0000000000000000 R15: ffff888028014230
-FS:  0000000000000000(0000) GS:ffff88802c000000(0063) knlGS:0000000056b5e400
-CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
-CR2: 000000c000f9c4e0 CR3: 000000006b300000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000001000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess), 2 bytes skipped:
-   0:	10 06                	adc    %al,(%rsi)
-   2:	03 74 b4 01          	add    0x1(%rsp,%rsi,4),%esi
-   6:	10 07                	adc    %al,(%rdi)
-   8:	03 74 b0 01          	add    0x1(%rax,%rsi,4),%esi
-   c:	10 08                	adc    %cl,(%rax)
-   e:	03 74 d8 01          	add    0x1(%rax,%rbx,8),%esi
-  1e:	00 51 52             	add    %dl,0x52(%rcx)
-  21:	55                   	push   %rbp
-  22:	89 e5                	mov    %esp,%ebp
-  24:	0f 34                	sysenter
-  26:	cd 80                	int    $0x80
-* 28:	5d                   	pop    %rbp <-- trapping instruction
-  29:	5a                   	pop    %rdx
-  2a:	59                   	pop    %rcx
-  2b:	c3                   	ret
-  2c:	90                   	nop
-  2d:	90                   	nop
-  2e:	90                   	nop
-  2f:	90                   	nop
-  30:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
-  37:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
+So I would still like to see this change merged.
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Regards,
+Barnab=C3=A1s P=C5=91cze
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+>=20
+>=20
+> >
+> > Regards,
+> > Barnab=C3=A1s
+> >
+> >
+> > >
+> > > I'm not sure if this  will break  more applications not-knowingly tha=
+t
+> > > have started relying on MFD_NOEXEC_SEAL being sealable. The feature
+> > > has been out for more than a year.
+> > >
+> > > Would you consider my augments in [4] to make MFD to be sealable by d=
+efault ?
+> > >
+> > > At this moment, I'm willing to add a document to clarify that
+> > > MFD_NOEXEC_SEAL is sealable by default, and that an app that needs
+> > > non-sealable MFD can  set  SEAL_SEAL.  Because both MFD_NOEXEC_SEAL
+> > > and vm.memfd_noexec are new,  I don't think it breaks the existing
+> > > ABI, and vm.memfd_noexec=3D0 is there for backward compatibility
+> > > reasons. Besides, I honestly think there is little reason that MFD
+> > > needs to be non-sealable by default.  There might be few rare cases,
+> > > but the majority of apps don't need that.  On the flip side, the fact
+> > > that MFD is set up to be sealable by default is a nice bonus for an
+> > > app - it makes it easier for apps to use the sealing feature.
+> > >
+> > > What do you think ?
+> > >
+> > > Thanks
+> > > -Jeff
+> > >
+> > > [1] https://codesearch.debian.net/search?q=3DMFD_NOEXEC_SEAL
+> > > [2] https://codesearch.debian.net/show?file=3Dsystemd_256~rc3-5%2Fsrc=
+%2Fhome%2Fhomed-home.c&line=3D1274
+> > > [3] https://sources.debian.org/src/elogind/255.5-1debian1/src/shared/=
+serialize.c/?hl=3D558#L558
+> > > [4] https://lore.kernel.org/lkml/CALmYWFuPBEM2DE97mQvB2eEgSO9Dvt=3DuO=
+9OewMhGfhGCY66Hbw@mail.gmail.com/
+> > >
+> > >
+> > > > > Additionally, this enhances the useability of  pid namespace sysc=
+tl
+> > > > > vm.memfd_noexec. When vm.memfd_noexec equals 1 or 2, the kernel w=
+ill
+> > > > > add MFD_NOEXEC_SEAL if mfd_create does not specify MFD_EXEC or
+> > > > > MFD_NOEXEC_SEAL, and the addition of MFD_NOEXEC_SEAL enables the =
+MFD
+> > > > > to be sealable. This means, any application that does not desire =
+this
+> > > > > behavior will be unable to utilize vm.memfd_noexec =3D 1 or 2 to
+> > > > > migrate/enforce non-executable MFD. This adjustment ensures that
+> > > > > applications can anticipate that the sealable characteristic will
+> > > > > remain unmodified by vm.memfd_noexec.
+> > > > >
+> > > > > This patch was initially developed by Barnab=C3=A1s P=C5=91cze, a=
+nd Barnab=C3=A1s
+> > > > > used Debian Code Search and GitHub to try to find potential break=
+ages
+> > > > > and could only find a single one. Dbus-broker's memfd_create() wr=
+apper
+> > > > > is aware of this implicit `MFD_ALLOW_SEALING` behavior, and tries=
+ to
+> > > > > work around it [1]. This workaround will break. Luckily, this onl=
+y
+> > > > > affects the test suite, it does not affect
+> > > > > the normal operations of dbus-broker. There is a PR with a fix[2]=
+ In
+> > > > > addition, David Rheinsberg also raised similar fix in [3]
+> > > > >
+> > > > > [1]:
+> > > > > https://github.com/bus1/dbus-broker/blob/9eb0b7e5826fc76cad7b025b=
+c46f267d4a8784cb/src/util/misc.c#L114
+> > > > > [2]: https://github.com/bus1/dbus-broker/pull/366
+> > > > > [3]:
+> > > > > https://lore.kernel.org/lkml/20230714114753.170814-1-david@readah=
+ead.eu/
+> > > > >
+> > > > > Cc: stable@vger.kernel.org
+> > > > > Fixes: 105ff5339f498a ("mm/memfd: add MFD_NOEXEC_SEAL and MFD_EXE=
+C")
+> > > > > Signed-off-by: Barnab=C3=A1s P=C5=91cze <pobrn@protonmail.com>
+> > > > > Signed-off-by: Jeff Xu <jeffxu@google.com>
+> > > > > Reviewed-by: David Rheinsberg <david@readahead.eu>
+> > > >
+> > > > Looks good! Thanks!
+> > > > David
+> > >
 
