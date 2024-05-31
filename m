@@ -1,100 +1,104 @@
-Return-Path: <linux-kernel+bounces-197190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0A188D673A
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:49:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 014638D6739
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:49:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A1111C25C75
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:49:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D1DE1F2344F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:49:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B692172777;
-	Fri, 31 May 2024 16:49:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4185D13D63E;
+	Fri, 31 May 2024 16:48:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="eVhFnIzZ"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NbobTXkM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F177A171E43
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 16:48:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E7437F7F7;
+	Fri, 31 May 2024 16:48:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717174142; cv=none; b=pR9n2ILAoWwT58s1hRWLYA7EB8IyUpC8CrJWy6i8qsnOY09U8nb4npqsdcsL5xsTlhkijbahbcM7cUdzprzSNrDcGXzjp2XYrbl+ughlq/5sUH5sqeyPoQCEBowqFG8YCUBneRmlvuHSmvslGkHmgfyPDi+AFO6YEhRcXohDzWg=
+	t=1717174130; cv=none; b=EEJqtvCo2JJ+xF7W/4/ZKfEnGnrrnRv9twval+ztsjK121msC9kEOGfoIxHqp/VuvRDew7Z2bHyGpcqWUqFrYugy9X3f3QgD006KLRZenX1atTeLce4LbGZyMKEwgtcjMaIHW2V7kSVaqq0lMkevIRZGSV+F/wzG3nYY48z0RdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717174142; c=relaxed/simple;
-	bh=Nm2i92xCQ67hmust2UuNX1G5OUmaFGTIU0aMJ1K4VeQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TPhkOvP1BDWA4GyPsmCX2OFroUlUjBWP93slLYRClN0Z7HjIBOxbL/qv6seQLcjLAiAthqqM4eCV0RTNz5kjgyT51pdZ80GQBISbOOaBpGLihIBd3qdZ87/lYwPpANc2TXd9EEvnkflDhNG4i4zkujzAU2K9Rzoqhpw23scPo8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=eVhFnIzZ; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 28E6CC0004;
-	Fri, 31 May 2024 16:48:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1717174132;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=v/yv4AtesztMvKs3Dy53Bfb+WU3NfhkM1gOgzOFjdC8=;
-	b=eVhFnIzZA5uZr4P0MdG5r9nKiFIhTwGlMX4q07Vog/BqFN091gujcv5FRN1W/k7IxXRrzD
-	NWceODQ4gDJql5tUanC459FNm/4gtlkHnWc+GXt5SsQQSgrDcUob2AeTLH5w230x3S/Irg
-	b004+S2UD5MCIjrvTOYxkYvRghqO2fjWPz8Dk7nUw+f4LwSWPniMu49ebqmf1CiOp9chrb
-	wI1/NCdIsu2aQIXcar/+hgtFXzfVsVFg7erMmPsmiSsb2O5UecOw9K6Kbyep7xp9dq36+I
-	X2N1wC0YOE1viVDBVRCZmZhNzdioQ7UC3t6izv8nfcx3e5TcGdgUv3vS4dcarQ==
-Message-ID: <13f4bbb5-272c-4f3a-9c75-90a8b3898cad@bootlin.com>
-Date: Fri, 31 May 2024 18:48:48 +0200
+	s=arc-20240116; t=1717174130; c=relaxed/simple;
+	bh=7NIOshqsMg6hd7t1Z6w0jLoqyFdwJa2iySu2w9THERY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iRj+TPe9lNl9lSgl1qJ5wiiECnIzGCU9Ap/ekJLGphXK9BMGMbrFKwHPQ41W/to5E3d+CaxGSChnT9x0xdvu9UsRElm4Sum9kE/109tSW87cLmd8CGE8PYPdEn+rKQbYQc3dS24/ce5xQm5pKh+RT1OMP+A7FeA0uHddXO+fMWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NbobTXkM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0E9DC116B1;
+	Fri, 31 May 2024 16:48:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717174130;
+	bh=7NIOshqsMg6hd7t1Z6w0jLoqyFdwJa2iySu2w9THERY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NbobTXkMaJCoz8B1Mrm3hCVPLVj/NtKblGSDve2mUncZusGL8g4sYRgASjGF0gVvM
+	 uCXWBjYEm5z39Dpy2JAiFmaQH9YjEoZJx/22LEC+tlKiTV3D2lngXBWtn+0l//J/Nd
+	 47LbbMukEOiDqfEhkwK3kbyMXEX1/0Zt6eKey2ulLmMiQM8P7RTt8rpvMrnmXTvaAm
+	 S9MNZ241fc2loO7sYCqfh9pZ3K5HmYz4V9Pn0k4rJmI/QJ5KnIWoWAd1GkEwXj8lMN
+	 LepKOZmBmhsp4aKFd8NIVqnJEqpqHfqEsXEoTdu12NZmcSESILKLamATqeIiup3/Wd
+	 OpMQ38+d7Dz/Q==
+Date: Fri, 31 May 2024 09:48:49 -0700
+From: Kees Cook <kees@kernel.org>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Vlastimil Babka <vbabka@suse.cz>, Christoph Lameter <cl@linux.com>,
+	Pekka Enberg <penberg@kernel.org>,
+	David Rientjes <rientjes@google.com>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
+	linux-hardening@vger.kernel.org,
+	"GONG, Ruiqi" <gongruiqi@huaweicloud.com>,
+	Xiu Jianfeng <xiujianfeng@huawei.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Jann Horn <jannh@google.com>, Matteo Rizzo <matteorizzo@google.com>,
+	Thomas Graf <tgraf@suug.ch>,
+	Herbert Xu <herbert@gondor.apana.org.au>, julien.voisin@dustri.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/6] mm/slab: Plumb kmem_buckets into
+ __do_kmalloc_node()
+Message-ID: <202405310943.D9818A4FE@keescook>
+References: <20240424213019.make.366-kees@kernel.org>
+ <20240424214104.3248214-2-keescook@chromium.org>
+ <zxc3fpd552hnd4jumot2k3bnol3pe2ooybz2rts4qrcxpgn7ll@4aggaem6acjw>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/8] Add suspend and resume support for
- phy-cadence-torrent and phy-j721e-wiz
-To: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
- <kishon@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
- gregory.clement@bootlin.com, theo.lebrun@bootlin.com,
- thomas.petazzoni@bootlin.com, u-kumar1@ti.com
-References: <20240412-j7200-phy-s2r-v1-0-f15815833974@bootlin.com>
-Content-Language: en-US
-From: Thomas Richard <thomas.richard@bootlin.com>
-In-Reply-To: <20240412-j7200-phy-s2r-v1-0-f15815833974@bootlin.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: thomas.richard@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <zxc3fpd552hnd4jumot2k3bnol3pe2ooybz2rts4qrcxpgn7ll@4aggaem6acjw>
 
-On 4/16/24 14:52, Thomas Richard wrote:
-> The patches of this series were originally in the series "Add suspend to
-> ram support for PCIe on J7200" [1].
-> They were moved in a separate series as requested by the PHY maintainer.
-> This series adds suspend and resume support for the phy-cadence-torrent and
-> phy-j721e-wiz drivers.
+On Fri, May 24, 2024 at 11:01:40AM -0400, Kent Overstreet wrote:
+> On Wed, Apr 24, 2024 at 02:40:59PM -0700, Kees Cook wrote:
+> > To be able to choose which buckets to allocate from, make the buckets
+> > available to the lower level kmalloc interfaces by adding them as the
+> > first argument. Where the bucket is not available, pass NULL, which means
+> > "use the default system kmalloc bucket set" (the prior existing behavior),
+> > as implemented in kmalloc_slab().
 > 
-> Compared to the PCIe series v4 [1], these PHY patches were rebased on Linux
-> v6.9-rc1.
-> The only change is for the patch "phy: cadence-torrent: extract calls to
-> clk_get from cdns_torrent_clk". Now the cadence-torrent driver supports
-> dual reference clock, so the patch was updated consequently.
+> I thought the plan was to use codetags for this? That would obviate the
+> need for all this plumbing.
 > 
-> [1] https://lore.kernel.org/all/20240102-j7200-pcie-s2r-v4-0-6f1f53390c85@bootlin.com/
+> Add fields to the alloc tag for:
+>  - allocation size (or 0 if it's not a compile time constant)
+>  - union of kmem_cache, kmem_buckets, depending on whether the
+>    allocation size is constant or not
 
-Hello,
+I want to provide "simple" (low-hanging fruit) coverage that can live
+separately from the codetags-based coverage. The memory overhead for
+this patch series is negligible, but I suspect the codetags expansion,
+while not giant, will be more than some deployments will want. I want
+to avoid an all-or-nothing solution -- which is why I had intended this
+to be available "by default".
 
-Gentle ping.
-No merge conflict with 6.10-rc1.
-
-Best Regards,
-
-Thomas
+But I will respin this with kmem_buckets under a Kconfig.
 
 -- 
-Thomas Richard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
+Kees Cook
 
