@@ -1,206 +1,283 @@
-Return-Path: <linux-kernel+bounces-196763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3E3E8D6196
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:20:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73F9B8D6197
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:20:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4916DB246BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:20:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C809F2857AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:20:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C3C51586C7;
-	Fri, 31 May 2024 12:20:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 299B015821A;
+	Fri, 31 May 2024 12:20:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="ijK3t7KH"
-Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QwYQoW8j"
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com [209.85.217.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1682158218;
-	Fri, 31 May 2024 12:20:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4C2E15821F
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 12:20:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717158015; cv=none; b=VJFYmOiyGwkyRy7Faktk6sAyrAbjZViv3oP5WtTgzoh7hb7Sht8mumhNRquwJjRslX+9JDWyMcoJfFQtZuIk03eyC6PXcHHK6qhRE+NMpMlCdyFUr/36x5BPDTE8ZkNTtffLne1FJklVP0AWD7Iilj/iM+Fs7egTlFggRSQA2v4=
+	t=1717158028; cv=none; b=UYT9oZMVLTok4cMfbU4jYJrgXv9dCC1nUBzJMzPvDtFzL/C5vWeO99tsSb743tQhaV7vAEy3S9SJvzJf2m7IKdec5psgMExXcu8ewUeNdI07pQuD+E2il+9IUUTpLfOKpysGBXs5btANvQvZxTzF2Dqud5vhf6bDwqufsP1u8WA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717158015; c=relaxed/simple;
-	bh=qCFiUUCYk0b9VZYj16TxUMHUJrac8mN5G7MjSHzTxmA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=RNaTPhem1Qp5r8yoPnMabpFL4+StLCOuR47wbgbO2JLiBBBgHdXR7mii+yB2NNVBTcLzVHRkTovDDMyLA71qo0IDIzNJhKDa3NErJ/cr83z0T0ALlIxIGzMoIPpIGhx5/QmBPeLhqufiyZjxE/vt1QHK0Qi1EqNivY40nfXGf7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=ijK3t7KH; arc=none smtp.client-ip=188.40.30.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
-	s=default2211; h=Content-Type:MIME-Version:Message-ID:Date:References:
-	In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=UWoe0J/16Ku5EFj3U5F77tdrpZFyvI4MmiD7hff0Nek=; b=ijK3t7KHG/ulEUpsXr+tbwgP6+
-	U9ebG69XhpDE2Etb+WjS75mVDzD0qf0wWnDRsI2Ud4evfmLERFy8Aqc/y34UCD8sqzXUQ+uprf8fa
-	0TwF7Y2apPVWv0oVbgfEhXar+7oVFtsNpszZadU1DyMWkEM6Z/Bddf0eex4IgCvVTYBm9g7sYBCVx
-	tK936vYQHhl7OO9iX3lSlVfsgE65MJ8a/9k+lXY84PmeRlpQEEMR9KoSzgjoFgXo6QxRax0Dz3EGb
-	3OCt+qMJ0mUBhFgpAcTsjckoqj/1kf4y3SvKItZ6zfN2xHdrYuiFM7NDeiCIoXdSB09eXBF+XqnZw
-	I6VqifXw==;
-Received: from sslproxy05.your-server.de ([78.46.172.2])
-	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <esben@geanix.com>)
-	id 1sD1Ep-000AZA-SH; Fri, 31 May 2024 14:20:03 +0200
-Received: from [87.49.42.81] (helo=localhost)
-	by sslproxy05.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <esben@geanix.com>)
-	id 1sD1Ep-0000n3-1f;
-	Fri, 31 May 2024 14:20:03 +0200
-From: Esben Haabendal <esben@geanix.com>
-To: Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc: Shawn Guo <shawnguo@kernel.org>,  Rob Herring <robh@kernel.org>,
-  Krzysztof Kozlowski <krzk+dt@kernel.org>,  Conor Dooley
- <conor+dt@kernel.org>,  linux-arm-kernel@lists.infradead.org,  Rasmus
- Villemoes <linux@rasmusvillemoes.dk>,  devicetree@vger.kernel.org,
-  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ARM: dts: ls1021a: add QUICC Engine node
-In-Reply-To: <3380831.44csPzL39Z@steina-w> (Alexander Stein's message of "Fri,
-	31 May 2024 08:32:44 +0200")
-References: <20240530-arm-ls1021a-qe-dts-v1-1-2eda23bdf8c5@geanix.com>
-	<3380831.44csPzL39Z@steina-w>
-Date: Fri, 31 May 2024 14:20:02 +0200
-Message-ID: <87frtynpfx.fsf@geanix.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1717158028; c=relaxed/simple;
+	bh=Py1xqjbV4PXYM3kiYbGkWVoqLS/mAFHMmryBZ56b/AY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ng0zZXyhKoWug27EdIY+VWnkAMFay2GV4PjzvFDJtUyPp/umYhkue1qEH4/se9fz7hgCQJ91F5HU6iWGDm1y/++cY0SlWfEpBzWeyk3gk4f3Dy1snV3J78rYLJPfJgPFyQQ+VeRgmRHMxE3SOOWE7xyyD3bW/72HXVtEm/bByzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QwYQoW8j; arc=none smtp.client-ip=209.85.217.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-48bbcdd2ba6so555123137.0
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 05:20:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717158025; x=1717762825; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=n6mihzZPIajhm/Tu9byM7yxkAls9gPvYzrS97XWomiU=;
+        b=QwYQoW8jsez+JKqIG4R9wCfPdcgqw1SKo30OXm2yXnZMrjDvEdm/iOpoGqCiSZTtst
+         aNSC59hODxFLcYF8RqE6bMGQ+KMPFkcogR0rUXnreESDECzZy/4AC5sO632CoX+GgyXd
+         LwWqbNZWLmOKHhuc9y77MPui3W8OE4dEUu+H0vQWOE+m65hK29v36A+AIECVyzA2tdRV
+         Yob+3pa4jOqSdGfFXLGhivx1zsyJizOqlWSJbHW74MJXil9qAV7hFSv+FYh9FdCcPZAb
+         K5X9VIzlBVrJbTborVwOc3L6WRwQkGERAYR7/RRc1IHLAY1SjQpJwWA5MmFf4JXe2A0x
+         usUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717158025; x=1717762825;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=n6mihzZPIajhm/Tu9byM7yxkAls9gPvYzrS97XWomiU=;
+        b=ePT4LIxhTGEIktSEY/m0GB87KfHT2ggUiMkTM8e89j5U9WGgFIPwLh3Rv98vb/Xsnu
+         sRDzDlyokDMEmD3jNEjNxrHhvwEtDhBvEQpCnVjIRoIOVsA+xzj4RXeo/A2FPETgQCv6
+         0pIEZwH7KqJgjydEsSEmhcaH8os/nhHONPEJrdo+1hK/LYIdDECGLwL06QDzSF94Un9f
+         sF1Q+jXucs0JQBHl5CMdy6UEf25KcP6zfufRcFAtetux4ZR4icm2TmeDeBU8ZjmnGsPa
+         hJpOHo3OHQ0DZB24f2xcYjHi27WwnL9OPKau4AZGGoQhnTqZVd26r2zkUdhqEL8LXCZE
+         oq1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU55w5JY9/ehVD9brwIZ7MymGJxEqRkceWkr2LRX1M07tEyIEbtHcTwcCY+CwGeZZb6JufzZaQxFfSa0eshJm9MeBOortwojh2BEnrg
+X-Gm-Message-State: AOJu0YxsjTWiQDSJeir6GQ2WV2a0maDqOdARgMkbn2qRfNc94hMYDzr0
+	rnZ0mKh5Sc3wkJn7XOvyX4sOOJz/xfk0JcNI4Ol0CILLo1SLZLQPZCPSwR6Q3i7wyaDkjwpDQOD
+	9yQsjOrHQII6Fj0ucsLmr+fpo9+s=
+X-Google-Smtp-Source: AGHT+IHiSk8nsMoWq1B4TPpiCuasKi0m15AKvxCuWsKbkFMpf5vL7h++LNU/oxFMSgsmPoCxlK5oMwonvhVAZi6kZ6c=
+X-Received: by 2002:a05:6102:7d0:b0:48b:c32e:2185 with SMTP id
+ ada2fe7eead31-48bc32e220dmr892093137.9.1717158025416; Fri, 31 May 2024
+ 05:20:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Authenticated-Sender: esben@geanix.com
-X-Virus-Scanned: Clear (ClamAV 0.103.10/27292/Fri May 31 10:31:14 2024)
+References: <20240531104819.140218-1-21cnbao@gmail.com> <87ac9610-5650-451f-aa54-e634a6310af4@redhat.com>
+ <CAGsJ_4zgf8j0oRnVBhe-__=K2RFDHTCo-JnMak95HTvxtMUwnQ@mail.gmail.com> <d4c1a9ad-4945-40d7-9b7a-5b02df805884@redhat.com>
+In-Reply-To: <d4c1a9ad-4945-40d7-9b7a-5b02df805884@redhat.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Sat, 1 Jun 2024 00:20:13 +1200
+Message-ID: <CAGsJ_4xpDwTTbwzMx8ipmpCyNmVmABpRN1f9yfZfFiOaGMKiew@mail.gmail.com>
+Subject: Re: [RFC PATCH] mm: swap: reuse exclusive folio directly instead of
+ wp page faults
+To: David Hildenbrand <david@redhat.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, chrisl@kernel.org, 
+	surenb@google.com, kasong@tencent.com, minchan@kernel.org, 
+	willy@infradead.org, ryan.roberts@arm.com, linux-kernel@vger.kernel.org, 
+	Barry Song <v-songbaohua@oppo.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Alexander Stein <alexander.stein@ew.tq-group.com> writes:
-
-> Would you consider current converting into YAML format?
-
-You mean converting Documentation/devicetree/bindings/soc/fsl/qe.txt and
-Documentation/devicetree/bindings/soc/fsl/qe/*.txt into YAML?
-
-I can consider that. I haven't done something like that before, but I
-assume it might include some additional work other than trivially format
-conversion. So I would prefer to do that after this patch, if that is
-ok.
-
-> Am Donnerstag, 30. Mai 2024, 16:22:54 CEST schrieb Esben Haabendal:
->> The LS1021A contains a QUICC Engine Block, so add a node to device
->> tree describing that.
->> 
->> Signed-off-by: Esben Haabendal <esben@geanix.com>
->> ---
->>  arch/arm/boot/dts/nxp/ls/ls1021a.dtsi | 51 +++++++++++++++++++++++++++++++++++
->>  1 file changed, 51 insertions(+)
->> 
->> diff --git a/arch/arm/boot/dts/nxp/ls/ls1021a.dtsi b/arch/arm/boot/dts/nxp/ls/ls1021a.dtsi
->> index e86998ca77d6..ff7be69acdd5 100644
->> --- a/arch/arm/boot/dts/nxp/ls/ls1021a.dtsi
->> +++ b/arch/arm/boot/dts/nxp/ls/ls1021a.dtsi
->> @@ -460,6 +460,57 @@ gpio3: gpio@2330000 {
->>  			#interrupt-cells = <2>;
->>  		};
->>  
->> +		uqe: uqe@2400000 {
->> +			#address-cells = <1>;
->> +			#size-cells = <1>;
->> +			device_type = "qe";
->> +			compatible = "fsl,qe", "simple-bus";
->> +			ranges = <0x0 0x0 0x2400000 0x40000>;
->> +			reg = <0x0 0x2400000 0x0 0x480>;
+On Sat, Jun 1, 2024 at 12:10=E2=80=AFAM David Hildenbrand <david@redhat.com=
+> wrote:
 >
-> Properties please in this order:
-> * compatible
-> * reg
-> * #address-cells
-> * #size-cells
-> * ranges
-> * device_type
-
-Fixing.
-
->> +			brg-frequency = <150000000>;
->> +			bus-frequency = <300000000>;
+> On 31.05.24 13:55, Barry Song wrote:
+> > On Fri, May 31, 2024 at 11:08=E2=80=AFPM David Hildenbrand <david@redha=
+t.com> wrote:
+> >>
+> >> On 31.05.24 12:48, Barry Song wrote:
+> >>> From: Barry Song <v-songbaohua@oppo.com>
+> >>>
+> >>> After swapping out, we perform a swap-in operation. If we first read
+> >>> and then write, we encounter a major fault in do_swap_page for readin=
+g,
+> >>> along with additional minor faults in do_wp_page for writing. However=
+,
+> >>> the latter appears to be unnecessary and inefficient. Instead, we can
+> >>> directly reuse in do_swap_page and completely eliminate the need for
+> >>> do_wp_page.
+> >>>
+> >>> This patch achieves that optimization specifically for exclusive foli=
+os.
+> >>> The following microbenchmark demonstrates the significant reduction i=
+n
+> >>> minor faults.
+> >>>
+> >>>    #define DATA_SIZE (2UL * 1024 * 1024)
+> >>>    #define PAGE_SIZE (4UL * 1024)
+> >>>
+> >>>    static void *read_write_data(char *addr)
+> >>>    {
+> >>>            char tmp;
+> >>>
+> >>>            for (int i =3D 0; i < DATA_SIZE; i +=3D PAGE_SIZE) {
+> >>>                    tmp =3D *(volatile char *)(addr + i);
+> >>>                    *(volatile char *)(addr + i) =3D tmp;
+> >>>            }
+> >>>    }
+> >>>
+> >>>    int main(int argc, char **argv)
+> >>>    {
+> >>>            struct rusage ru;
+> >>>
+> >>>            char *addr =3D mmap(NULL, DATA_SIZE, PROT_READ | PROT_WRIT=
+E,
+> >>>                            MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
+> >>>            memset(addr, 0x11, DATA_SIZE);
+> >>>
+> >>>            do {
+> >>>                    long old_ru_minflt, old_ru_majflt;
+> >>>                    long new_ru_minflt, new_ru_majflt;
+> >>>
+> >>>                    madvise(addr, DATA_SIZE, MADV_PAGEOUT);
+> >>>
+> >>>                    getrusage(RUSAGE_SELF, &ru);
+> >>>                    old_ru_minflt =3D ru.ru_minflt;
+> >>>                    old_ru_majflt =3D ru.ru_majflt;
+> >>>
+> >>>                    read_write_data(addr);
+> >>>                    getrusage(RUSAGE_SELF, &ru);
+> >>>                    new_ru_minflt =3D ru.ru_minflt;
+> >>>                    new_ru_majflt =3D ru.ru_majflt;
+> >>>
+> >>>                    printf("minor faults:%ld major faults:%ld\n",
+> >>>                            new_ru_minflt - old_ru_minflt,
+> >>>                            new_ru_majflt - old_ru_majflt);
+> >>>            } while(0);
+> >>>
+> >>>            return 0;
+> >>>    }
+> >>>
+> >>> w/o patch,
+> >>> / # ~/a.out
+> >>> minor faults:512 major faults:512
+> >>>
+> >>> w/ patch,
+> >>> / # ~/a.out
+> >>> minor faults:0 major faults:512
+> >>>
+> >>> Minor faults decrease to 0!
+> >>>
+> >>> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+> >>> ---
+> >>>    mm/memory.c | 7 ++++---
+> >>>    1 file changed, 4 insertions(+), 3 deletions(-)
+> >>>
+> >>> diff --git a/mm/memory.c b/mm/memory.c
+> >>> index eef4e482c0c2..e1d2e339958e 100644
+> >>> --- a/mm/memory.c
+> >>> +++ b/mm/memory.c
+> >>> @@ -4325,9 +4325,10 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+> >>>         */
+> >>>        if (!folio_test_ksm(folio) &&
+> >>>            (exclusive || folio_ref_count(folio) =3D=3D 1)) {
+> >>> -             if (vmf->flags & FAULT_FLAG_WRITE) {
+> >>> -                     pte =3D maybe_mkwrite(pte_mkdirty(pte), vma);
+> >>> -                     vmf->flags &=3D ~FAULT_FLAG_WRITE;
+> >>> +             if (vma->vm_flags & VM_WRITE) {
+> >>> +                     pte =3D pte_mkwrite(pte_mkdirty(pte), vma);
+> >>> +                     if (vmf->flags & FAULT_FLAG_WRITE)
+> >>> +                             vmf->flags &=3D ~FAULT_FLAG_WRITE;
+> >>
+> >> This implies, that even on a read fault, you would mark the pte dirty
+> >> and it would have to be written back to swap if still in the swap cach=
+e
+> >> and only read.
+> >>
+> >> That is controversial.
+> >>
+> >> What is less controversial is doing what mprotect() via
+> >> change_pte_range()/can_change_pte_writable() would do: mark the PTE
+> >> writable but not dirty.
+> >>
+> >> I suggest setting the pte only dirty if FAULT_FLAG_WRITE is set.
+> >
+> > Thanks!
+> >
+> > I assume you mean something as below?
 >
-> Mh, aren't these values depending on your actual RCW configuration?
-
-Yes, you are right. The QE bus-frequency comes from platform_clk which
-is controlled by various bits in RCW and sys_ref_clk.
-
-So I guess it should be possible to derive bus-frequency from sysclk
-clock-frequency attribute and RCW. But fsl,qe bus-frequency is a
-required property...
-
-Max bus-frequency for LS1021A is 300 MHz. But it should be possible to
-set it lower, although I suspect that many/most/everyone is running it
-at 300 MHz.
-
->> +			fsl,qe-num-riscs = <1>;
->> +			fsl,qe-num-snums = <28>;
+> It raises an important point: uffd-wp must be handled accordingly.
 >
-> Current bindings defines:
->> fsl,qe-snums: This property has to be specified as '/bits/ 8' value,
->>   defining the array of serial number (SNUM) values for the virtual
->>   threads.
+> >
+> > diff --git a/mm/memory.c b/mm/memory.c
+> > index eef4e482c0c2..dbf1ba8ccfd6 100644
+> > --- a/mm/memory.c
+> > +++ b/mm/memory.c
+> > @@ -4317,6 +4317,10 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+> >          add_mm_counter(vma->vm_mm, MM_SWAPENTS, -nr_pages);
+> >          pte =3D mk_pte(page, vma->vm_page_prot);
+> >
+> > +       if (pte_swp_soft_dirty(vmf->orig_pte))
+> > +               pte =3D pte_mksoft_dirty(pte);
+> > +       if (pte_swp_uffd_wp(vmf->orig_pte))
+> > +               pte =3D pte_mkuffd_wp(pte);
+> >          /*
+> >           * Same logic as in do_wp_page(); however, optimize for pages =
+that are
+> >           * certainly not shared either because we just allocated them =
+without
+> > @@ -4325,18 +4329,19 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+> >           */
+> >          if (!folio_test_ksm(folio) &&
+> >              (exclusive || folio_ref_count(folio) =3D=3D 1)) {
+> > -               if (vmf->flags & FAULT_FLAG_WRITE) {
+> > -                       pte =3D maybe_mkwrite(pte_mkdirty(pte), vma);
+> > -                       vmf->flags &=3D ~FAULT_FLAG_WRITE;
+> > +               if (vma->vm_flags & VM_WRITE) {
+> > +                       if (vmf->flags & FAULT_FLAG_WRITE) {
+> > +                               pte =3D pte_mkwrite(pte_mkdirty(pte), v=
+ma);
+> > +                               vmf->flags &=3D ~FAULT_FLAG_WRITE;
+> > +                       } else if ((!vma_soft_dirty_enabled(vma) ||
+> > pte_soft_dirty(pte))
+> > +                                   && !userfaultfd_pte_wp(vma, pte)) {
+> > +                                       pte =3D pte_mkwrite(pte, vma);
 >
-> So '/bits/ 8' is missing.
-
-Ok, so you want me to add an array for fs,qe-snums attribute?
-None of the existing fsl,qe devices has a fsl,qe-snums.
-And qe_snums_init() has a fallback, so I don't think it is correct to
-specify fsl,qe-snums to be a required property in the bindings. It
-should be listed as optional.
-
->> +			qeic: qeic@80 {
->> +				compatible = "fsl,qe-ic";
->> +				reg = <0x80 0x80>;
->> +				#address-cells = <0>;
->> +				interrupt-controller;
->> +				#interrupt-cells = <1>;
->> +				interrupts = <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH
->> +					      GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>;
->> +			};
->> +
->> +			ucc@2000 {
->> +				cell-index = <1>;
->> +				reg = <0x2000 0x200>;
->> +				interrupts = <32>;
->> +				interrupt-parent = <&qeic>;
+> Even with FAULT_FLAG_WRITE we must respect uffd-wp and *not* do a
+> pte_mkwrite(pte). So we have to catch and handle that earlier (I could
+> have sworn we handle that somehow).
 >
-> Move cell-index to last position.
-
-Done.
-
->> +			};
->> +
->> +			ucc@2200 {
->> +				cell-index = <3>;
->> +				reg = <0x2200 0x200>;
->> +				interrupts = <34>;
->> +				interrupt-parent = <&qeic>;
+> Note that the existing
+>         pte =3D pte_mkuffd_wp(pte);
 >
-> Same here.
+> Will fix that up because it does an implicit pte_wrprotect().
 
-Done.
+This is exactly what I have missed as I am struggling with why WRITE_FAULT
+blindly does mkwrite without checking userfaultfd_pte_wp().
 
->> +			};
->> +
->> +			muram@10000 {
->> +				#address-cells = <1>;
->> +				#size-cells = <1>;
->> +				compatible = "fsl,qe-muram", "fsl,cpm-muram";
->> +				ranges = <0x0 0x10000 0x6000>;
 >
-> Node address but no 'reg' property? I have no idea if this is okay.
-> Also compatible (and possibly reg) first.
+>
+> So maybe what would work is
+>
+>
+> if ((vma->vm_flags & VM_WRITE) && !userfaultfd_pte_wp(vma, pte) &&
+>      !vma_soft_dirty_enabled(vma)) {
+>         pte =3D pte_mkwrite(pte);
+>
+>         /* Only set the PTE dirty on write fault. */
+>         if (vmf->flags & FAULT_FLAG_WRITE) {
+>                 pte =3D pte_mkdirty(pte);
+>                 vmf->flags &=3D ~FAULT_FLAG_WRITE;
+>         }
+> }
+>
 
-It is done in the same way for all existing fsl,qe-muram devices. So if
-it is not okay, a tree-wide fixup would be in place.
+looks good!
 
-/Esben
+> --
+> Cheers,
+>
+> David / dhildenb
+>
+
+Thanks
+Barry
 
