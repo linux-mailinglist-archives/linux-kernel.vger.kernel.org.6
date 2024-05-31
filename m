@@ -1,225 +1,167 @@
-Return-Path: <linux-kernel+bounces-196448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BA4A8D5C71
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:13:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 422428D5C79
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:14:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5CA53B25117
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 08:13:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 707D01C2190B
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 08:14:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71DC115E89;
-	Fri, 31 May 2024 08:13:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="payMWvDe"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AC4078C91;
+	Fri, 31 May 2024 08:13:54 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5741278269
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 08:12:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48A8B77114;
+	Fri, 31 May 2024 08:13:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717143179; cv=none; b=fw4+tY6FzZb/Lh9EHL7apud6zP94HxuDMJ30DZcwOeKzMvtSMeDWe0mfulI6qrjvEjDOwzEsR68qCkQGBd8aWgLDqLgYKq0RIlBUTzjQh7vcj6/d7PhIr0P4Grp7hwNW7BaP/sjEjGiJuDBBjNK39HHbYouzaGyACxAz9E5wouk=
+	t=1717143233; cv=none; b=jrIDsz1ll9Bnrw58HzO5GrDrasg88jGCfawUMqb5ILdbu6pWsarmdf6BVzjw4A2Tebxz76k2zp7G5ModoXRudvECYEKTu8jkiA2OM0ZZuOrP7+g3UkVUjHojnNQR7Amt6rQmstIlqrBivmaivoraRRKrLXrQj8sCw8ii8sPMlDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717143179; c=relaxed/simple;
-	bh=50bDE9GVqx4l6q4sfSURNi+FaLu/7o8czkzdCOYXEuc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=Z/humDzTChi8z14sCEq6Uq4TU/XpDLXL+Ggb0Tb4rBtlif5x50Jk1QaG6OMVVlRI1kHnGhhfqg9V7YFJaRR1OTWpenmugo8aWuJevwDJl/5VbcEYXFXmi1CN7DevYM1urrRVx3STGypTNv5N38XjlNJmxnINu/etw4b2oQaQFD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=payMWvDe; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a688d7e0eceso7751666b.3
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 01:12:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717143176; x=1717747976; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=X7y8eyhIqfF5t90/h/o/3CeZlPVMesGC4ZxrK7wpyBo=;
-        b=payMWvDeoKvtf+2IHvALItOjLmFyhxJv8Vl6H3z7Vn2/6+x6B+/wph1TkZjW6+FFFp
-         V/WIMa+1qxDP8WR4xR2Bd+DNqcZzBdMqpTrK7InP8Vl8w48wo2RBpIwbWLkOr8gdFZMq
-         yUMuwSOFc4NVFQ1dfU7xJiuD4Q645Z4fneS5rVLWLJZpZ15ZQhdfBIKN/jpExUNRkMKO
-         dus9HD0UrDldvHM9JrljIfvIKa4m3fSiqImonyWwZd1etxI4vrT72rdkrqEdN5zMG8iV
-         FabqvO8WXN3NRMMwWzks6uLsrtTWEMX+ysUO0RMfijRmwuTIIILF2e6nxFqUtWW2Xly5
-         rodg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717143176; x=1717747976;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=X7y8eyhIqfF5t90/h/o/3CeZlPVMesGC4ZxrK7wpyBo=;
-        b=VpeHnskD26RW+5nIeQeX6G86W2p75ncjmk8h9cI8CaAlh47pickuT/uTZh4w9E/Y5B
-         vSsPSePb2fJSKEEB2Oo+TeCotvaOmH3yPwwGk4Kamol3QgCUwFcfhyq0k0Wtua7nOE4Q
-         MyDMdPK3/35Fas8bIXdJC475vqy8xdIkygFjgGw34FD746md9g27GziB1XXHABdxI1iO
-         YbC5RxrWSdPfKOHxBQOyr6FyyiUboxt9Xsl2mDt+AxjkgcTEQIW7EJRmPqFZvCcUOzeh
-         kDPYOgYMNG1qrqDRV0oEo2T9xC9/ljUX5o897DtqRG15H+kTzDAtZLW8+jwgdLsnH+hp
-         FifA==
-X-Forwarded-Encrypted: i=1; AJvYcCXPHXaYkB4Clqb8HgCcIvziaTEUl5Ox5BwIUTgXufD3nYNEVCkP+uysDZzkppSkyegBblHKqVHf6nWygMpLllYYykPhT6JLTUQjggqQ
-X-Gm-Message-State: AOJu0YzMNjeAgJsl4yfMNOmr9wmCsTfhoC9sxQ/xVYqMyLd8UtL7+vyF
-	b7gen0aYSt0r3WzbgL7XhFbMG6ohRQe6DOvnXxSur9IE6/zzfrEvmb85/ARvKGI=
-X-Google-Smtp-Source: AGHT+IEjwh5swZuHRMZk1utIs6Dg1augmzOniQXqTFWyNzZVY2ErsR96IGThsIucTuSpBWvR4YJDqw==
-X-Received: by 2002:a17:906:cec8:b0:a62:de58:b358 with SMTP id a640c23a62f3a-a681fc5c055mr85952766b.13.1717143175393;
-        Fri, 31 May 2024 01:12:55 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a67eb3444a6sm59838866b.211.2024.05.31.01.12.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 May 2024 01:12:55 -0700 (PDT)
-Date: Fri, 31 May 2024 11:12:51 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev, wangshuaijie@awinic.com,
-	dmitry.torokhov@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, jeff@labundy.com, linux-input@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev, wangshuaijie@awinic.com,
-	liweilei@awinic.com, kangjiajun@awinic.com
-Subject: Re: [PATCH V1 5/5] Add support for Awinic sar sensor.
-Message-ID: <9d90f11f-c476-40f2-a7b1-41b35783b27e@moroto.mountain>
+	s=arc-20240116; t=1717143233; c=relaxed/simple;
+	bh=KaZu3PfnuCLAgttdKtOj8aMS+kBKtD2hyquye1H9HRU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=GEDkNL2Qjdh6LtWg2xTXhc6tq8UyyYPkk9Itg5t/jj36ctJE5ROcCCef1/e4PA0bcBtRZbAM6Yoj7fJhH1BBCRtI8ecSZ2y4USeElubTfB6mVkZsEZ7RaJqNV35HrHQM2Bh48eS5WOMuygflFggSKMX1nQfsXjVHQ1PR3wnBIbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: b10363301f2511ef9305a59a3cc225df-20240531
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:5d283cd1-a105-48ee-8743-2c5c99b604d6,IP:20,
+	URL:0,TC:0,Content:-25,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACT
+	ION:release,TS:-10
+X-CID-INFO: VERSION:1.1.38,REQID:5d283cd1-a105-48ee-8743-2c5c99b604d6,IP:20,UR
+	L:0,TC:0,Content:-25,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:-10
+X-CID-META: VersionHash:82c5f88,CLOUDID:e8ac45031189e541bd5ee02aacc15a8a,BulkI
+	D:240531161344YZ4O3K9Z,BulkQuantity:0,Recheck:0,SF:66|38|24|72|19|44|102,T
+	C:nil,Content:0,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil
+	,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI
+X-UUID: b10363301f2511ef9305a59a3cc225df-20240531
+Received: from node4.com.cn [(39.156.73.12)] by mailgw.kylinos.cn
+	(envelope-from <tanzheng@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 1052488889; Fri, 31 May 2024 16:13:41 +0800
+Received: from node4.com.cn (localhost [127.0.0.1])
+	by node4.com.cn (NSMail) with SMTP id 4AFC916002081;
+	Fri, 31 May 2024 16:13:41 +0800 (CST)
+X-ns-mid: postfix-665986B5-191610221
+Received: from localhost.localdomain (unknown [10.42.124.206])
+	by node4.com.cn (NSMail) with ESMTPA id 62B0016002081;
+	Fri, 31 May 2024 08:13:40 +0000 (UTC)
+From: zheng tan <tanzheng@kylinos.cn>
+To: hare@suse.com,
+	James.Bottomley@HansenPartnership.com,
+	martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Zheng tan <tanzheng@kylinos.cn>,
+	k2ci <kernel-bot@kylinos.cn>
+Subject: [PATCH] scsi: aic7xxx: Fix some build warning
+Date: Fri, 31 May 2024 16:13:37 +0800
+Message-Id: <20240531081337.536182-1-tanzheng@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240529130608.783624-6-wangshuaijie@awinic.com>
+Content-Type: text/plain; charset=y
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+From: Zheng tan <tanzheng@kylinos.cn>
 
-kernel test robot noticed the following build warnings:
+Fixed some warnings in compilation:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/wangshuaijie-awinic-com/dt-bindings-input-Add-YAML-to-Awinic-sar-sensor/20240529-211303
-base:   e0cce98fe279b64f4a7d81b7f5c3a23d80b92fbc
-patch link:    https://lore.kernel.org/r/20240529130608.783624-6-wangshuaijie%40awinic.com
-patch subject: [PATCH V1 5/5] Add support for Awinic sar sensor.
-config: riscv-randconfig-r071-20240530 (https://download.01.org/0day-ci/archive/20240531/202405310138.ry5jf9hL-lkp@intel.com/config)
-compiler: riscv64-linux-gcc (GCC) 13.2.0
+aicasm_gram.c:1562:16: warning: implicit declaration of function =E2=80=98=
+yylex=E2=80=99
+yychar =3D yylex ();
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202405310138.ry5jf9hL-lkp@intel.com/
+aicasm_scan.l:417:6: warning: implicit declaration of function =E2=80=98m=
+m_switch_to_buffer=E2=80=99
+      mm_switch_to_buffer(old_state);
+      ^~~~~~~~~~~~~~~~~~~
+      yy_switch_to_buffer
+aicasm_scan.l:418:6: warning: implicit declaration of function =E2=80=98m=
+mparse=E2=80=99
+      mmparse();
+      ^~~~~~~
+      yyparse
+aicasm_scan.l:421:6: warning: implicit declaration of function =E2=80=98m=
+m_delete_buffer=E2=80=99
+      mm_delete_buffer(temp_state);
 
-New smatch warnings:
-drivers/input/misc/aw_sar/aw_sar.c:221 aw_sar_load_bin_comm() warn: 'fw' from request_firmware() not released on lines: 217.
-drivers/input/misc/aw_sar/aw_sar.c:283 aw_sar_irq() error: uninitialized symbol 'irq_status'.
-drivers/input/misc/aw_sar/./aw9610x/aw9610x.c:479 aw9610x_get_chip_version() error: __builtin_memcpy() 'aw9610x->chip_name[__builtin_choose_expr((4 == 1), __builtin_strlen(aw9610x->chip_name), __fortify_strlen(aw9610x->chip_name))]' too small (1 vs 2)
-drivers/input/misc/aw_sar/./aw963xx/aw963xx.c:227 aw963xx_sram_data_write() error: uninitialized symbol 'ret'.
-drivers/input/misc/aw_sar/./aw963xx/aw963xx.c:522 aw963xx_get_cap_offset() warn: inconsistent indenting
+Reported-by: k2ci <kernel-bot@kylinos.cn>
+Signed-off-by: Zheng tan <tanzheng@kylinos.cn>
+---
+ drivers/scsi/aic7xxx/aicasm/aicasm_gram.y       | 2 +-
+ drivers/scsi/aic7xxx/aicasm/aicasm_macro_gram.y | 2 +-
+ drivers/scsi/aic7xxx/aicasm/aicasm_scan.l       | 7 ++++---
+ 3 files changed, 6 insertions(+), 5 deletions(-)
 
-Old smatch warnings:
-drivers/input/misc/aw_sar/./aw963xx/aw963xx.c:557 aw963xx_get_cap_offset() warn: inconsistent indenting
-
-vim +/fw +221 drivers/input/misc/aw_sar/aw_sar.c
-
-e5df082e247559 shuaijie wang 2024-05-29  203  static int32_t aw_sar_load_bin_comm(struct aw_sar *p_sar)
-e5df082e247559 shuaijie wang 2024-05-29  204  {
-e5df082e247559 shuaijie wang 2024-05-29  205  	const struct firmware *fw;
-e5df082e247559 shuaijie wang 2024-05-29  206  	int32_t ret;
-e5df082e247559 shuaijie wang 2024-05-29  207  
-e5df082e247559 shuaijie wang 2024-05-29  208  	ret = request_firmware(&fw, p_sar->load_bin.bin_name, p_sar->dev);
-e5df082e247559 shuaijie wang 2024-05-29  209  	if (ret != 0) {
-e5df082e247559 shuaijie wang 2024-05-29  210  		dev_err(p_sar->dev, "parse %s error!", p_sar->load_bin.bin_name);
-e5df082e247559 shuaijie wang 2024-05-29  211  		return ret;
-e5df082e247559 shuaijie wang 2024-05-29  212  	}
-e5df082e247559 shuaijie wang 2024-05-29  213  
-e5df082e247559 shuaijie wang 2024-05-29  214  	ret = aw_sar_parse_bin(fw, p_sar);
-e5df082e247559 shuaijie wang 2024-05-29  215  	if (ret != 0) {
-e5df082e247559 shuaijie wang 2024-05-29  216  		dev_err(p_sar->dev, "reg_bin %s load error!", p_sar->load_bin.bin_name);
-
-release_firmware(fw);
-
-e5df082e247559 shuaijie wang 2024-05-29  217  		return ret;
-e5df082e247559 shuaijie wang 2024-05-29  218  	}
-e5df082e247559 shuaijie wang 2024-05-29  219  	release_firmware(fw);
-e5df082e247559 shuaijie wang 2024-05-29  220  
-e5df082e247559 shuaijie wang 2024-05-29 @221  	return 0;
-e5df082e247559 shuaijie wang 2024-05-29  222  }
-e5df082e247559 shuaijie wang 2024-05-29  223  
-e5df082e247559 shuaijie wang 2024-05-29  224  static int32_t aw_sar_parse_dts_comm(struct device *dev, struct device_node *np,
-e5df082e247559 shuaijie wang 2024-05-29  225  		struct aw_sar_dts_info *p_dts_info)
-e5df082e247559 shuaijie wang 2024-05-29  226  {
-e5df082e247559 shuaijie wang 2024-05-29  227  	int32_t val;
-e5df082e247559 shuaijie wang 2024-05-29  228  
-e5df082e247559 shuaijie wang 2024-05-29  229  	val = of_property_read_u32(np, "sar-num", &p_dts_info->sar_num);
-e5df082e247559 shuaijie wang 2024-05-29  230  	dev_info(dev, "sar num = %d", p_dts_info->sar_num);
-e5df082e247559 shuaijie wang 2024-05-29  231  	if (val != 0) {
-e5df082e247559 shuaijie wang 2024-05-29  232  		dev_err(dev, "multiple sar failed!");
-e5df082e247559 shuaijie wang 2024-05-29  233  		return -EINVAL;
-e5df082e247559 shuaijie wang 2024-05-29  234  	}
-e5df082e247559 shuaijie wang 2024-05-29  235  
-e5df082e247559 shuaijie wang 2024-05-29  236  	p_dts_info->irq_gpio = of_get_named_gpio(np, "irq-gpio", 0);
-e5df082e247559 shuaijie wang 2024-05-29  237  	if (p_dts_info->irq_gpio < 0) {
-e5df082e247559 shuaijie wang 2024-05-29  238  		p_dts_info->irq_gpio = -1;
-e5df082e247559 shuaijie wang 2024-05-29  239  		dev_err(dev, "no irq gpio provided.");
-e5df082e247559 shuaijie wang 2024-05-29  240  		return -EINVAL;
-e5df082e247559 shuaijie wang 2024-05-29  241  	}
-e5df082e247559 shuaijie wang 2024-05-29  242  
-e5df082e247559 shuaijie wang 2024-05-29  243  	val = of_property_read_u32(np, "channel_use_flag", &p_dts_info->channel_use_flag);
-e5df082e247559 shuaijie wang 2024-05-29  244  	if (val != 0) {
-e5df082e247559 shuaijie wang 2024-05-29  245  		dev_err(dev, "channel_use_flag failed!");
-e5df082e247559 shuaijie wang 2024-05-29  246  		return -EINVAL;
-e5df082e247559 shuaijie wang 2024-05-29  247  	}
-e5df082e247559 shuaijie wang 2024-05-29  248  
-e5df082e247559 shuaijie wang 2024-05-29  249  	//GPIO is set as internal pull-up input
-e5df082e247559 shuaijie wang 2024-05-29  250  	p_dts_info->use_inter_pull_up = of_property_read_bool(np, "aw_sar,pin_set_inter_pull-up");
-e5df082e247559 shuaijie wang 2024-05-29  251  	p_dts_info->use_pm = of_property_read_bool(np, "aw_sar,using_pm_ops");
-e5df082e247559 shuaijie wang 2024-05-29  252  	p_dts_info->update_fw_flag = of_property_read_bool(np, "aw_sar,update_fw");
-e5df082e247559 shuaijie wang 2024-05-29  253  	p_dts_info->use_plug_cail_flag = of_property_read_bool(np, "aw_sar,use_plug_cail");
-e5df082e247559 shuaijie wang 2024-05-29  254  	p_dts_info->monitor_esd_flag = of_property_read_bool(np, "aw_sar,monitor_esd");
-e5df082e247559 shuaijie wang 2024-05-29  255  
-e5df082e247559 shuaijie wang 2024-05-29  256  	return 0;
-e5df082e247559 shuaijie wang 2024-05-29  257  }
-e5df082e247559 shuaijie wang 2024-05-29  258  
-e5df082e247559 shuaijie wang 2024-05-29  259  static int32_t aw_sar_parse_dts(struct aw_sar *p_sar)
-e5df082e247559 shuaijie wang 2024-05-29  260  {
-e5df082e247559 shuaijie wang 2024-05-29  261  	int32_t ret;
-e5df082e247559 shuaijie wang 2024-05-29  262  
-e5df082e247559 shuaijie wang 2024-05-29  263  	ret = aw_sar_parse_dts_comm(p_sar->dev, p_sar->i2c->dev.of_node, &p_sar->dts_info);
-e5df082e247559 shuaijie wang 2024-05-29  264  
-e5df082e247559 shuaijie wang 2024-05-29  265  	//Special requirements of SAR chip
-e5df082e247559 shuaijie wang 2024-05-29  266  	if (p_sar->p_sar_para->p_platform_config->p_add_parse_dts_fn != NULL)
-e5df082e247559 shuaijie wang 2024-05-29  267  		ret |= p_sar->p_sar_para->p_platform_config->p_add_parse_dts_fn(p_sar);
-e5df082e247559 shuaijie wang 2024-05-29  268  
-e5df082e247559 shuaijie wang 2024-05-29  269  	return ret;
-e5df082e247559 shuaijie wang 2024-05-29  270  }
-e5df082e247559 shuaijie wang 2024-05-29  271  
-e5df082e247559 shuaijie wang 2024-05-29  272  static irqreturn_t aw_sar_irq(int32_t irq, void *data)
-e5df082e247559 shuaijie wang 2024-05-29  273  {
-e5df082e247559 shuaijie wang 2024-05-29  274  	struct aw_sar *p_sar = (struct aw_sar *)data;
-e5df082e247559 shuaijie wang 2024-05-29  275  	uint32_t irq_status;
-e5df082e247559 shuaijie wang 2024-05-29  276  
-e5df082e247559 shuaijie wang 2024-05-29  277  	//step1: read clear interrupt
-e5df082e247559 shuaijie wang 2024-05-29  278  	if (p_sar->p_sar_para->p_platform_config->p_irq_init->rc_irq_fn != NULL)
-e5df082e247559 shuaijie wang 2024-05-29  279  		irq_status = p_sar->p_sar_para->p_platform_config->p_irq_init->rc_irq_fn(p_sar->i2c);
-e5df082e247559 shuaijie wang 2024-05-29  280  
-e5df082e247559 shuaijie wang 2024-05-29  281  	//step2: Read the status register for status reporting
-e5df082e247559 shuaijie wang 2024-05-29  282  	if (p_sar->p_sar_para->p_platform_config->p_irq_init->irq_spec_handler_fn != NULL)
-e5df082e247559 shuaijie wang 2024-05-29 @283  		p_sar->p_sar_para->p_platform_config->p_irq_init->irq_spec_handler_fn(irq_status,
-e5df082e247559 shuaijie wang 2024-05-29  284  				p_sar);
-
-Probably if ->irq_spec_handler_fn is non-NULL then ->rc_irq_fn is also
-non-NULL, but the static checker doesn't know that so it warns about
-uninitialized variables.
-
-e5df082e247559 shuaijie wang 2024-05-29  285  
-e5df082e247559 shuaijie wang 2024-05-29  286  	//step3: The chip
-e5df082e247559 shuaijie wang 2024-05-29  287  
-e5df082e247559 shuaijie wang 2024-05-29  288  	if ((!p_sar->dts_info.monitor_esd_flag) && (p_sar->fault_flag == AW_SAR_UNHEALTHY)) {
-e5df082e247559 shuaijie wang 2024-05-29  289  		p_sar->fault_flag = AW_SAR_HEALTHY;
-e5df082e247559 shuaijie wang 2024-05-29  290  		disable_irq_nosync(p_sar->irq_init.to_irq);
-e5df082e247559 shuaijie wang 2024-05-29  291  		p_sar->irq_init.host_irq_stat = IRQ_DISABLE;
-e5df082e247559 shuaijie wang 2024-05-29  292  		//aw_sar_soft_reset(p_sar);
-e5df082e247559 shuaijie wang 2024-05-29  293  		schedule_delayed_work(&p_sar->update_work, msecs_to_jiffies(500));
-e5df082e247559 shuaijie wang 2024-05-29  294  	}
-e5df082e247559 shuaijie wang 2024-05-29  295  
-e5df082e247559 shuaijie wang 2024-05-29  296  	return IRQ_HANDLED;
-e5df082e247559 shuaijie wang 2024-05-29  297  }
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+diff --git a/drivers/scsi/aic7xxx/aicasm/aicasm_gram.y b/drivers/scsi/aic=
+7xxx/aicasm/aicasm_gram.y
+index 65182ad9cdf8..ac96fb9152b6 100644
+--- a/drivers/scsi/aic7xxx/aicasm/aicasm_gram.y
++++ b/drivers/scsi/aic7xxx/aicasm/aicasm_gram.y
+@@ -103,7 +103,7 @@ static void add_version(const char *verstring);
+ static int  is_download_const(expression_t *immed);
+ static int  is_location_address(symbol_t *symbol);
+ void yyerror(const char *string);
+-
++int yylex(void);
+ #define SRAM_SYMNAME "SRAM_BASE"
+ #define SCB_SYMNAME "SCB_BASE"
+ %}
+diff --git a/drivers/scsi/aic7xxx/aicasm/aicasm_macro_gram.y b/drivers/sc=
+si/aic7xxx/aicasm/aicasm_macro_gram.y
+index 8c0479865f04..d787b2f89007 100644
+--- a/drivers/scsi/aic7xxx/aicasm/aicasm_macro_gram.y
++++ b/drivers/scsi/aic7xxx/aicasm/aicasm_macro_gram.y
+@@ -62,7 +62,7 @@ static symbol_t *macro_symbol;
+=20
+ static void add_macro_arg(const char *argtext, int position);
+ void mmerror(const char *string);
+-
++int mmlex(void);
+ %}
+=20
+ %union {
+diff --git a/drivers/scsi/aic7xxx/aicasm/aicasm_scan.l b/drivers/scsi/aic=
+7xxx/aicasm/aicasm_scan.l
+index c78d4f68eea5..8214d7eaef1d 100644
+--- a/drivers/scsi/aic7xxx/aicasm/aicasm_scan.l
++++ b/drivers/scsi/aic7xxx/aicasm/aicasm_scan.l
+@@ -56,6 +56,7 @@
+ #include "aicasm.h"
+ #include "aicasm_symbol.h"
+ #include "aicasm_gram.h"
++#include "aicasm_macro_gram.h"
+=20
+ /* This is used for macro body capture too, so err on the large size. */
+ #define MAX_STR_CONST 4096
+@@ -414,11 +415,11 @@ nop			{ return T_NOP; }
+ 					    yy_create_buffer(stdin,
+ 							     YY_BUF_SIZE);
+ 					yy_switch_to_buffer(temp_state);
+-					mm_switch_to_buffer(old_state);
++					yy_switch_to_buffer(old_state);
+ 					mmparse();
+-					mm_switch_to_buffer(temp_state);
++					yy_switch_to_buffer(temp_state);
+ 					yy_switch_to_buffer(old_state);
+-					mm_delete_buffer(temp_state);
++					yy_delete_buffer(temp_state);
+ 					expand_macro(yylval.sym);
+ 				} else {
+ 					if (yylval.sym->type =3D=3D UNINITIALIZED) {
+--=20
+2.25.1
 
 
