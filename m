@@ -1,112 +1,132 @@
-Return-Path: <linux-kernel+bounces-196708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AEFE8D602E
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 13:04:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB3A18D6033
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 13:05:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11C05283F68
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 11:03:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC36B1C21BD7
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 11:05:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30F3A156F4A;
-	Fri, 31 May 2024 11:03:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DDEE156F4A;
+	Fri, 31 May 2024 11:05:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Lk+qwqSC";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="z7ose9lI"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="nq+jkujc";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="IC/gf8bv";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="nq+jkujc";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="IC/gf8bv"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25B2F1386B4;
-	Fri, 31 May 2024 11:03:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7291F156672;
+	Fri, 31 May 2024 11:05:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717153432; cv=none; b=MC6Wtv46XNrfDQemBPIvjHGA2nv3Hhl0Nzlu2nuBikjl6GMnNjoP4DVNvKwsxgmmAIAD5PcyYv8LF3ILn1F6CDKtjvExHNxhAbYW0LPkUaPdLv1+wVfkVCcESg9NWy2zlUkTEeKkl0fxkb3jUAV0i1H9ND60X8rdSui0JOOLY3g=
+	t=1717153524; cv=none; b=o5DWRdpQujz4eJVaVEqQHtHV9sySCPbOuiGPs+LpFhB7VkC/IajI/frNRtUVb7W2XDNdlzEdNXcptIbaNwACm/Iapn61+8qOApor8ye0fcwG4mX23gGDNpmVBzGHw7sSnuICr1qg2mCFHZ1ykKiyIvgyj5I7YHQWwK1v0Z6COUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717153432; c=relaxed/simple;
-	bh=u2XM75t4IvA2pCbU6k8ocA0j7B1oVUN41SVqxqtDTms=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=t0eoo65uvWtM38hz6itJNzoLhlYSBUcT59FX8N4UvkP5IQHoSqipi+kv9uPaXUd1RM+jrtv3fPy6B5wxp1SKl+k7g2riqLzjJS7ZT1Tp/ehxZIVZmQad8XUs9/DkKgooWrTStfakPal01ZL8vixo44JSuJfgmGJDZpfnLPQXuRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Lk+qwqSC; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=z7ose9lI; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Nam Cao <namcao@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1717153429;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=ilNHlPRGRrx6lQXkZab5wH5B1TU8D7A+BitRKeb8hDc=;
-	b=Lk+qwqSC/+aH3JkkLiIp1JziwqOO5ppnj0DxcbmOqyJsG+nzqL0OTlpayMNciHkhN65EtC
-	Hqxd9JwBsYD1vkpYAAL9J+S+MkYcORO/VNSqpFVIEJq3wWpwLkkL4JkmAoe/QBe73E3ebm
-	SQQ+9oy80rtaufmYcdhcvSu2XVEY9kTtiAMKYIjsfnTok8m+ODpmqTT2kaf+UrL4t391Kj
-	I2Sn5PX2TAdGFNxH5DUdpTHrWHOZMyE59r9wQm1Hj0S1hteiV0C/eSLjQu7lQygNMhJwdc
-	EBsJTsxhBFLZXLJULMbkLR6O9lCO7tvgaZcqhE6gcS8z3B2sF8azGOJNXoBB/Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1717153429;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=ilNHlPRGRrx6lQXkZab5wH5B1TU8D7A+BitRKeb8hDc=;
-	b=z7ose9lIBs8WgZTceQpfqST8NihAeZLAQR/WoBT1syJwD0umZDss3o960jtYVHejWNIpyu
-	TkFsJvMpaeAC0GBw==
-To: Bjorn Helgaas <bhelgaas@google.com>,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Nam Cao <namcao@linutronix.de>,
-	stable@vger.kernel.org
-Subject: [PATCH] PCI: Bail out if bus number overflows during scan
-Date: Fri, 31 May 2024 13:03:43 +0200
-Message-Id: <20240531110343.3800767-1-namcao@linutronix.de>
+	s=arc-20240116; t=1717153524; c=relaxed/simple;
+	bh=0nEKGRG72PKIONgf+4q/o8b0GACuYDObhxKdXIZhjp4=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=u0bWSbxjQyd4WCPX1gMdpaztBR0CqSBIqdmoJJxDJsVFS3CP8pzsAithH1sSSN6k/fMF7Eun4rwO76Snq4Heb2a7GKvEqkNz2an73mUchEBE5W3Jwn7zDpEvW869nOPJ0brG4NU/FgdNNC/mq3Z6BXtY7H7L0z2oC2FFaZ77ALM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=nq+jkujc; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=IC/gf8bv; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=nq+jkujc; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=IC/gf8bv; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from pobox.suse.cz (unknown [10.100.2.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 768DF21B80;
+	Fri, 31 May 2024 11:05:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1717153520; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MFFyCrFbyEWDoo3J5YoxcpAHtW/B9fBZJZkqRpwz8RA=;
+	b=nq+jkujc9BksOE+gGBDmqvrD/FErd/o96IZrmN4/UYYSpKVVksHT3a0tw14AlmNIst/HEY
+	JkhaS/DP0puyJQH+KuNP05cZ6ox5eCLc8DBo9MG3PDMWjMPb+mSjUs510QDlqmZ1ZC1BFY
+	28XqyqBQgSdwiQWxCnvDiZWf5Pfy6CI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1717153520;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MFFyCrFbyEWDoo3J5YoxcpAHtW/B9fBZJZkqRpwz8RA=;
+	b=IC/gf8bvJ7tHcQTSv+TFpf5prOkR3avJ/NykjmlnJU9vOb+miuYIsDn5nQXRFNruaEFVsd
+	RsrzpzcxQ09QjeDA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1717153520; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MFFyCrFbyEWDoo3J5YoxcpAHtW/B9fBZJZkqRpwz8RA=;
+	b=nq+jkujc9BksOE+gGBDmqvrD/FErd/o96IZrmN4/UYYSpKVVksHT3a0tw14AlmNIst/HEY
+	JkhaS/DP0puyJQH+KuNP05cZ6ox5eCLc8DBo9MG3PDMWjMPb+mSjUs510QDlqmZ1ZC1BFY
+	28XqyqBQgSdwiQWxCnvDiZWf5Pfy6CI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1717153520;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MFFyCrFbyEWDoo3J5YoxcpAHtW/B9fBZJZkqRpwz8RA=;
+	b=IC/gf8bvJ7tHcQTSv+TFpf5prOkR3avJ/NykjmlnJU9vOb+miuYIsDn5nQXRFNruaEFVsd
+	RsrzpzcxQ09QjeDA==
+Date: Fri, 31 May 2024 13:05:19 +0200 (CEST)
+From: Miroslav Benes <mbenes@suse.cz>
+To: Ryan Sullivan <rysulliv@redhat.com>
+cc: live-patching@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+    linux-kernel@vger.kernel.org, mpdesouza@suse.com, jpoimboe@kernel.org, 
+    jikos@kernel.org, pmladek@suse.com, joe.lawrence@redhat.com, 
+    shuah@kernel.org
+Subject: Re: [PATCH] tools/testing/selftests/livepatch: define max test-syscall
+ processes
+In-Reply-To: <20240529201941.13968-1-rysulliv@redhat.com>
+Message-ID: <alpine.LSU.2.21.2405311304250.8344@pobox.suse.cz>
+References: <20240529201941.13968-1-rysulliv@redhat.com>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.24 / 50.00];
+	BAYES_HAM(-2.99)[99.97%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.15)[-0.742];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	RCVD_COUNT_ZERO(0.00)[0];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[]
+X-Spam-Score: -4.24
+X-Spam-Flag: NO
 
-In function pci_scan_bridge_extend(), if the variable next_busnr gets to
-256, "child = pci_find_bus()" will return bus 0 (root bus). Consequently,
-we have a circular PCI topology. The scan will then go in circle until the
-kernel crashes due to stack overflow.
+Hi,
 
-This can be reproduced with:
-    qemu-system-x86_64 -machine pc-q35-2.10 \
-    -kernel bzImage \
-    -m 2048 -smp 1 -enable-kvm \
-    -append "console=ttyS0 root=/dev/sda debug" \
-    -nographic \
-    -device pcie-root-port,bus=pcie.0,slot=1,id=rp1,bus-reserve=253 \
-    -device pcie-root-port,bus=pcie.0,slot=2,id=rp2,bus-reserve=0 \
-    -device pcie-root-port,bus=pcie.0,slot=3,id=rp3,bus-reserve=0
+On Wed, 29 May 2024, Ryan Sullivan wrote:
 
-Check if next_busnr "overflow" and bail out if this is the case.
+> Define a maximum allowable number of pids that can be livepatched in
+> test-syscall.sh as with extremely large machines the output from a
+> large number of processes overflows the dev/kmsg "expect" buffer in
+> the "check_result" function and causes a false error.
+> 
+> Reported-by: CKI Project <cki-project@redhat.com>
+> Signed-off-by: Ryan Sullivan <rysulliv@redhat.com>
 
-Signed-off-by: Nam Cao <namcao@linutronix.de>
-Cc: stable@vger.kernel.org # all
----
-This bug exists since the beginning of git history. So I didn't bother
-tracing beyond git to see which patch introduced this.
----
- drivers/pci/probe.c | 3 +++
- 1 file changed, 3 insertions(+)
+a nit: we usually use just "selftests/livepatch:" prefix in Subject.
 
-diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-index 1325fbae2f28..03caae76337c 100644
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@ -1382,6 +1382,9 @@ static int pci_scan_bridge_extend(struct pci_bus *bus, struct pci_dev *dev,
- 		else
- 			next_busnr = max + 1;
- 
-+		if (next_busnr == 256)
-+			goto out;
-+
- 		/*
- 		 * Prevent assigning a bus number that already exists.
- 		 * This can happen when a bridge is hot-plugged, so in this
--- 
-2.39.2
+Acked-by: Miroslav Benes <mbenes@suse.cz>
 
+M
 
