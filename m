@@ -1,146 +1,94 @@
-Return-Path: <linux-kernel+bounces-197101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED9E38D662D
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:59:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7292C8D662F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:00:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A1871F23F5A
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 15:59:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1C6B1C23A5D
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:00:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CE2C15666B;
-	Fri, 31 May 2024 15:59:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D2B21509AF;
+	Fri, 31 May 2024 16:00:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="Azd2Hv/l"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="usSwkHvU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3B5524A0E;
-	Fri, 31 May 2024 15:59:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 724E033DF
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 16:00:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717171145; cv=none; b=mZGJbftzn6V9v3iKGCeKpFXInWoYX40EBbppyD0RHHjYWN86mGsVp/TW1gg5HgawCs86cmP73cQFK2L3S0RoAW6i2BakOx0YaqChmdRnLd7NSraDPfGMd4pRjME1jYjHzV1OFcFwdKno3vg0BYZ7BjOSynJjM8C6ZKWG+o+mb/Y=
+	t=1717171237; cv=none; b=WT7Tju37JFKaIl7Ryw8FsdyX7ntfiDn8pKvWM2rwKoqTzjr8NmP5ymX+JreiOHDUyVxYI3Qn3GS3AKy9+uSMwFnL67ficWVtLcDcTxFPUXfEkOT1UNUQBxcw/lRvQsrBmN9cbXIeSOiH3jMozdfXW5pYOand66EihoGYi+HB6AQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717171145; c=relaxed/simple;
-	bh=corneObQCKTlO58nm3W4zHliD7BMTd9KhdrijkvA5e4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kgOFNTZsYCfhs3crMn4MjurxFYDJvy77cUe0yRiKBW9wu5FyDbLUwRmMmD/vsPT1VJjha0ebUo6uAuaF1TY2QNdAlet9/9gSrp1AJcljJuP7qxbccU6GLa7tVDdkWcaUDfEO92UR9rEnVu431IJt/NwZzmyvFcpDCWjEBdT6iZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=Azd2Hv/l; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1717171141;
-	bh=corneObQCKTlO58nm3W4zHliD7BMTd9KhdrijkvA5e4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Azd2Hv/lW5nnT6Dr9Xt0GV/LQkxfNsanX1SRxtDqM5NDVdw9J+BA/oQo3EQhWY3B0
-	 poOVoA805PWWhg6mR1iX57tlB0CReLLx47APwMS0yyrVZfLnCP23X9/pT53ITplo/I
-	 ZKW40nEpihl5p74p2slEgSe6L1+245cfe+7UQAak=
-Date: Fri, 31 May 2024 17:59:01 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Lee Jones <lee@kernel.org>
-Cc: Benson Leung <bleung@chromium.org>, 
-	Guenter Roeck <groeck@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>, Pavel Machek <pavel@ucw.cz>, 
-	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org, Dustin Howett <dustin@howett.net>, 
-	Mario Limonciello <mario.limonciello@amd.com>, linux-leds@vger.kernel.org, 
-	Rajas Paranjpe <paranjperajas@gmail.com>
-Subject: Re: [PATCH v3 0/4] cros_kbd_led_backlight: allow binding through
- cros_ec mfd device
-Message-ID: <edc637ff-d26d-4500-8ad3-23bf7a9d527e@t-8ch.de>
-References: <20240526-cros_ec-kbd-led-framework-v3-0-ee577415a521@weissschuh.net>
- <20240531153530.GP1005600@google.com>
- <0172f4a6-27da-43ca-8df3-93279d1ef903@t-8ch.de>
- <20240531155356.GR1005600@google.com>
+	s=arc-20240116; t=1717171237; c=relaxed/simple;
+	bh=ue49JlCpjRBuJwkDVBPStXgNI/crZ5RD6wSv46b3h3k=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=fJnKa+VO9Ww9VkTa0uuCo3JtkN/G9Vc2cjRez9AbxrEKym+th47Qr3JkzAUVA/HdVwlr0hScm4y0hjrCVzaqmy+NqjIO7ewOIF9R/N8qlquGIXlR7EL7g/KYwFAkcjbzWQcjqwG3geiSpxP1FenDExeH18HL4ZGh+Zlot14MXPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=usSwkHvU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id D985CC32786;
+	Fri, 31 May 2024 16:00:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717171236;
+	bh=ue49JlCpjRBuJwkDVBPStXgNI/crZ5RD6wSv46b3h3k=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=usSwkHvUVsf7/ZNRXUCMNsqvZHcyzc4kvc1SZOpeCW1uFaQUIFbpOGhzBT2P8HIT6
+	 Ylx8eTuBrpw8Lyr4nYYEJK6e1Q25nq4Ka9CY2eppnCYnLPWvO4cbvP1AQW7YnnR1KX
+	 0sNg4uAHyi12kch59Mq8IgHaGiSVF18tLoxoVSqs9Y1fNHtgQrrcbvw3ukuLaiF49w
+	 DLYw5PNShkR1l4Cukkj8SBUNxSAsj3hnAeA/zHR3lgAIsFR/JCmlR/PP+93UjHHcju
+	 ijgGiem5Q4cxWXUjBwiSR4DHNakUzcCGXiY/9hCfzIlQE7/L+tWn7Yl1Vo8Y4VqJ/c
+	 cCP+ptG9j7/Kw==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id C4528DEA710;
+	Fri, 31 May 2024 16:00:36 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240531155356.GR1005600@google.com>
+Subject: Re: [PATCH] Revert "riscv: mm: accelerate pagefault when badaccess"
+From: patchwork-bot+linux-riscv@kernel.org
+Message-Id: 
+ <171717123679.27814.3225238698035039427.git-patchwork-notify@kernel.org>
+Date: Fri, 31 May 2024 16:00:36 +0000
+References: <20240530164451.21336-1-palmer@rivosinc.com>
+In-Reply-To: <20240530164451.21336-1-palmer@rivosinc.com>
+To: Palmer Dabbelt <palmer@rivosinc.com>
+Cc: linux-riscv@lists.infradead.org, paul.walmsley@sifive.com,
+ palmer@dabbelt.com, aou@eecs.berkeley.edu, surenb@google.com,
+ akpm@linux-foundation.org, alexghiti@rivosinc.com,
+ wangkefeng.wang@huawei.com, jszhang@kernel.org, ben@decadent.org.uk,
+ bjorn@rivosinc.com, willy@infradead.org, linux-kernel@vger.kernel.org
 
-On 2024-05-31 16:53:56+0000, Lee Jones wrote:
-> On Fri, 31 May 2024, Thomas Weißschuh wrote:
+Hello:
+
+This patch was applied to riscv/linux.git (fixes)
+by Palmer Dabbelt <palmer@rivosinc.com>:
+
+On Thu, 30 May 2024 09:44:51 -0700 you wrote:
+> From: Palmer Dabbelt <palmer@rivosinc.com>
 > 
-> > On 2024-05-31 16:35:30+0000, Lee Jones wrote:
-> > > On Sun, 26 May 2024, Thomas Weißschuh wrote:
-> > > 
-> > > > Extend the cros_ec MFD device to also load cros_kbd_led_backlight
-> > > > when the EC reports EC_FEATURE_PWM_KEYB.
-> > > > As the driver can now be probed multiple times, some preparation in the
-> > > > LED core is necessary to avoid name collisions.
-> > > > 
-> > > > Patch 1 is a general cleanup for the LED core.
-> > > > Patch 2 modifies the LED core to skip the default collision handling.
-> > > > Patch 3 adds the new probing logic to cros_kbd_led_backlight.
-> > > > Patch 4 wires up the driver to the cros_ec mfd devices.
-> > > > 
-> > > > The helper keyboard_led_is_mfd_device is a bit iffy.
-> > > > But using match data doesn't work.
-> > > > 
-> > > > * driver_data from platform_device_id is overwritten by the mfd platform data
-> > > > * Setting the driver_data in drivers/mfd/cros_ec_dev.c would expose the
-> > > > internals of cros_kbd_led_backlight
-> > > > 
-> > > > Tested on a Framework 13 AMD, Firmware 3.05, and a Jinlon Chromebook.
-> > > > 
-> > > > To: Lee Jones <lee@kernel.org>
-> > > > To: Benson Leung <bleung@chromium.org>
-> > > > To: Guenter Roeck <groeck@chromium.org>
-> > > > To: Tzung-Bi Shih <tzungbi@kernel.org>
-> > > > To: Pavel Machek <pavel@ucw.cz>
-> > > > Cc: chrome-platform@lists.linux.dev
-> > > > Cc: linux-kernel@vger.kernel.org
-> > > > Cc: Dustin Howett <dustin@howett.net>
-> > > > Cc: Mario Limonciello <mario.limonciello@amd.com>
-> > > > Cc: linux-leds@vger.kernel.org
-> > > > Cc: Rajas Paranjpe <paranjperajas@gmail.com>
-> > > > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-> > > > 
-> > > > Changes in v3:
-> > > > - Avoid probing multiple times (Confirmed by Rajas)
-> > > > - Add Kconfig dependency on MFD_CROS_EC_DEV
-> > > > - Link to v2: https://lore.kernel.org/r/20240511-cros_ec-kbd-led-framework-v2-0-b20c48109e46@weissschuh.net
-> > > > 
-> > > > Changes in v2:
-> > > > - Fix build with CONFIG_MFD_CROS_EC_DEV=n (kernel test robot)
-> > > > - Split out mfd registration into own commit (Lee)
-> > > > - Simplify keyboard_led_is_mfd_device() with mfd_get_cell()
-> > > > - Link to v1: https://lore.kernel.org/r/20240505-cros_ec-kbd-led-framework-v1-1-bfcca69013d2@weissschuh.net
-> > > > 
-> > > > ---
-> > > > Thomas Weißschuh (4):
-> > > >       leds: class: warn about name collisions earlier
-> > > >       leds: add flag to avoid automatic renaming of led devices
-> > > >       platform/chrome: cros_kbd_led_backlight: allow binding through mfd device
-> > > >       mfd: cros_ec: Register keyboard backlight subdevice
-> > > > 
-> > > >  drivers/leds/led-class.c                         |  9 +++---
-> > > >  drivers/mfd/cros_ec_dev.c                        |  9 ++++++
-> > > >  drivers/platform/chrome/Kconfig                  |  2 +-
-> > > >  drivers/platform/chrome/cros_kbd_led_backlight.c | 40 ++++++++++++++++++++++--
-> > > >  include/linux/leds.h                             |  1 +
-> > > >  5 files changed, 54 insertions(+), 7 deletions(-)
-> > > 
-> > > Looks okay.
-> > 
-> > Thanks.
-> > 
-> > > Does the platform patch need to be applied with the others?
-> > 
-> > Each patch depends on all its predecessors.
-> > (but I'm not sure I understood your question)
+> I accidentally picked up an earlier version of this patch, which had
+> already landed via mm.  The patch  I picked up contains a bug, which I
+> kept as I thought it was a fix.  So let's just revert it.
 > 
-> Does the Platform patch have 'build-time' deps on the others?
+> This reverts commit 4c6c0020427a4547845a83f7e4d6085e16c3e24f.
+> 
+> [...]
 
-Yes.
+Here is the summary with links:
+  - Revert "riscv: mm: accelerate pagefault when badaccess"
+    https://git.kernel.org/riscv/c/7932b172ac7e
 
-Patch 3 makes use of LED_REJECT_NAME_CONFLICT which was introduced in Patch 2.
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-Patch 1, 2, 3 have build-time deps on their predecessors.
-Patch 4 has a run-time deps on Patch 3.
+
 
