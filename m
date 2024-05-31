@@ -1,31 +1,31 @@
-Return-Path: <linux-kernel+bounces-196566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BA548D5E18
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 11:21:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3F058D5E1A
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 11:21:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 774B0B252F9
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 09:21:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CE341F2798C
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 09:21:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98D3C12FF63;
-	Fri, 31 May 2024 09:20:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5468135A58;
+	Fri, 31 May 2024 09:20:27 +0000 (UTC)
 Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31C2B78C62
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18A3282869
 	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 09:20:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717147226; cv=none; b=pHJVi9jJY/q2kEysPsEf00y679QSoqSRXCNthBcQsVGp9WYbeonzt6VWuC86tnHpXM/eijSRA+yJYta+TM5dFtlTGy1bH8KJYy1tiu39XbIhVqlxztJH4uarI6urooczFW0krVb7Oz/WCgcb+C8ifaDs4+5NksMXQOOHbkbRBeo=
+	t=1717147227; cv=none; b=Ls1tJ3awbsjMtaaOYQ40oCvH1jE4NNn3lNQuXFziagB6b6YDqgscvZhtivTqL9zEO+op7EcGwpbOEoQdhz2CMZlDVfSqLRMFVckbZEPqTfaxBLRh1n3NfIeR1PeyjHpfKOorTKgRGrCKuh4orLJtVFP6DbOW3KX6faM7W6K3C1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717147226; c=relaxed/simple;
-	bh=d6bHunNAOkL4AaON84uJC/Z4Z5hH+zI4TAL/MT3Bllc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=FrRH3Fu8bnMRnygj6OVPKV+EplAPyztQ73WjfvDEPOyg0O/fb0+4RsqURJn7pM78RIqjVNIbeeuNZwnRIBJ/AaUgFFmGAYC9yJU57JdXWzL1nK2/wNfCZuinIj9joRKUfv5h4gb1LHYPqSlcV35sPjei9/k1T2qnTrSi4p0jCiQ=
+	s=arc-20240116; t=1717147227; c=relaxed/simple;
+	bh=ySyfp9Tsb6A3ifM2kAJNqbEQbETZH/UsyUxprYmMjNw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=PUh3PfBUQyrdvmlFEcvakbees7/ieDSkWh8NxlQUr9e1aw1uPkpPU9Z5S4Eu7m8XIKcA/CwpEbBzfkfEZCQvwesmUO4UWGF0hCmTFEP8GNAEgnGhvNAocKMCO/qrZGTWmqxpwTf5eAy5UpL80MsVlMcjMj5XMm+3mA6OOxWRuAU=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-d85ff70000001748-52-6659964cfef5
+X-AuditID: a67dfc5b-d85ff70000001748-57-6659964c6c58
 From: Byungchul Park <byungchul@sk.com>
 To: linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org
@@ -44,36 +44,36 @@ Cc: kernel_team@skhynix.com,
 	bp@alien8.de,
 	dave.hansen@linux.intel.com,
 	rjgolo@gmail.com
-Subject: [PATCH v11 04/12] x86/tlb, riscv/tlb, mm/rmap: separate arch_tlbbatch_clear() out of arch_tlbbatch_flush()
-Date: Fri, 31 May 2024 18:19:53 +0900
-Message-Id: <20240531092001.30428-5-byungchul@sk.com>
+Subject: [PATCH v11 05/12] mm: buddy: make room for a new variable, ugen, in struct page
+Date: Fri, 31 May 2024 18:19:54 +0900
+Message-Id: <20240531092001.30428-6-byungchul@sk.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20240531092001.30428-1-byungchul@sk.com>
 References: <20240531092001.30428-1-byungchul@sk.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrGLMWRmVeSWpSXmKPExsXC9ZZnka7PtMg0g1lNnBZz1q9hs/i84R+b
-	xYsN7YwWX9f/YrZ4+qmPxeLyrjlsFvfW/Ge1OL9rLavFjqX7mCwuHVjAZHG89wCTxfx7n9ks
-	Nm+aymxxfMpURovfP4CKT86azOIg4PG9tY/FY+esu+weCzaVemxeoeWxeM9LJo9NqzrZPDZ9
-	msTu8e7cOXaPEzN+s3jMOxno8X7fVTaPrb/sPBqnXmPz+LxJLoAvissmJTUnsyy1SN8ugSvj
-	xukuxoL7fBVTVr9maWCcytPFyMkhIWAi0dD+iA3G3tJ3nBnEZhNQl7hx4yeYLSJgJnGw9Q87
-	iM0scJdJ4kA/WL2wQLHEnN7tYHEWAVWJG/f+soDYvAKmEuc27WCFmCkvsXrDAbA5nEBzDvy9
-	wwhiCwHVLPrfC2RzAdW8ZpN4s20CC0SDpMTBFTdYJjDyLmBkWMUolJlXlpuYmWOil1GZl1mh
-	l5yfu4kRGPrLav9E72D8dCH4EKMAB6MSD29ARUSaEGtiWXFl7iFGCQ5mJRHeX+lAId6UxMqq
-	1KL8+KLSnNTiQ4zSHCxK4rxG38pThATSE0tSs1NTC1KLYLJMHJxSDYzNRnL8/nuWnzK8qckm
-	dq89+qGT2Yne8kVT90eyvfEWXxzTv3FlsjNL3Gn1u+zbr29Sf/kxPajbUnClote7hrnizOzi
-	aa48x7I7rW2Lr1ty7bfYqpcyY4PbKU71ZV8WZwXVOccUTNFmkmadP2mi8nKjlp3p+YF1cq6X
-	mNR2l7btOiJqWPn2uxJLcUaioRZzUXEiAHlk0Fd5AgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrLLMWRmVeSWpSXmKPExsXC5WfdrOs9LTLN4MVsG4s569ewWXze8I/N
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrGLMWRmVeSWpSXmKPExsXC9ZZnoa7PtMg0g3nvuC3mrF/DZvF5wz82
+	ixcb2hktvq7/xWzx9FMfi8XlXXPYLO6t+c9qcX7XWlaLHUv3MVlcOrCAyeJ47wEmi/n3PrNZ
+	bN40ldni+JSpjBa/fwAVn5w1mcVBwON7ax+Lx85Zd9k9Fmwq9di8Qstj8Z6XTB6bVnWyeWz6
+	NInd4925c+weJ2b8ZvGYdzLQ4/2+q2weW3/ZeTROvcbm8XmTXABfFJdNSmpOZllqkb5dAlfG
+	k4+/WQuuqlQcn/6VuYGxTbaLkZNDQsBE4tO5A8ww9qXnqxhBbDYBdYkbN36CxUUEzCQOtv5h
+	B7GZBe4ySRzoZwOxhQUiJDZd6wSLswioSmz93MwEYvMKmEqsWrWNBWKmvMTqDRDzOYHmHPh7
+	B2y+EFDNov+9QDYXUM17Nolfr06xQTRIShxccYNlAiPvAkaGVYxCmXlluYmZOSZ6GZV5mRV6
+	yfm5mxiBob+s9k/0DsZPF4IPMQpwMCrx8AZURKQJsSaWFVfmHmKU4GBWEuH9lQ4U4k1JrKxK
+	LcqPLyrNSS0+xCjNwaIkzmv0rTxFSCA9sSQ1OzW1ILUIJsvEwSnVwCjryvz40vvJyrdqnzfJ
+	uk1n9lu8Oz9HT9XU+5VggRRf1NFJz/cf6bA4d3p2nGbTqs6jog+Cv4YKzRWsOPtnztx9s/lM
+	3WPOSR6o2XYh2+DPZ1VB/eQ0YUNzAVmFstMcoe9qA581nuue6PLi6etLpmLn1y58PjNUO/Zq
+	3Pf20s0WV59Jf5LhW6bEUpyRaKjFXFScCABLWebVeQIAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrLLMWRmVeSWpSXmKPExsXC5WfdrOszLTLN4OlFRos569ewWXze8I/N
 	4sWGdkaLr+t/MVs8/dTHYnF47klWi8u75rBZ3Fvzn9Xi/K61rBY7lu5jsrh0YAGTxfHeA0wW
 	8+99ZrPYvGkqs8XxKVMZLX7/ACo+OWsyi4Ogx/fWPhaPnbPusnss2FTqsXmFlsfiPS+ZPDat
 	6mTz2PRpErvHu3Pn2D1OzPjN4jHvZKDH+31X2TwWv/jA5LH1l51H49RrbB6fN8kF8Edx2aSk
-	5mSWpRbp2yVwZdw43cVYcJ+vYsrq1ywNjFN5uhg5OSQETCS29B1nBrHZBNQlbtz4CWaLCJhJ
-	HGz9ww5iMwvcZZI40M8GYgsLFEvM6d0OFmcRUJW4ce8vC4jNK2AqcW7TDlaImfISqzccAJvD
-	CTTnwN87jCC2EFDNov+9jBMYuRYwMqxiFMnMK8tNzMwx1SvOzqjMy6zQS87P3cQIDORltX8m
-	7mD8ctn9EKMAB6MSD29ARUSaEGtiWXFl7iFGCQ5mJRHeX+lAId6UxMqq1KL8+KLSnNTiQ4zS
-	HCxK4rxe4akJQgLpiSWp2ampBalFMFkmDk6pBkYd80cf9bWsTEMtDzqfUl7MKb3L3bLIIaR8
-	p/vFqnaDt20ar7w9dky5sEqWR2j2ny1O1/teb/jtm/vq0Du2Lwc/uBQ4q8e5/DrxWOnnxge8
-	AvdCHjmwh67JrYlfbnY5RVwovEljpWS7d9dh8XoutfmyLqFO3dNY1/0//Il1r8W5aVPzGDst
-	XJRYijMSDbWYi4oTAWUft89gAgAA
+	5mSWpRbp2yVwZTz5+Ju14KpKxfHpX5kbGNtkuxg5OSQETCQuPV/FCGKzCahL3LjxkxnEFhEw
+	kzjY+ocdxGYWuMskcaCfDcQWFoiQ2HStEyzOIqAqsfVzMxOIzStgKrFq1TYWiJnyEqs3HACb
+	wwk058DfO2DzhYBqFv3vZZzAyLWAkWEVo0hmXlluYmaOqV5xdkZlXmaFXnJ+7iZGYCAvq/0z
+	cQfjl8vuhxgFOBiVeHgDKiLShFgTy4orcw8xSnAwK4nw/koHCvGmJFZWpRblxxeV5qQWH2KU
+	5mBREuf1Ck9NEBJITyxJzU5NLUgtgskycXBKNTA+fnZK+2ia54ZJppuPr1j2tetYx4HIo7wt
+	NTtTVeWLnj/4M2Frv76rQt9fw5IPSv+6F9sfTZ1Tz6uipmwYnnNZrlJl9qxI37DK0qJYFlPv
+	niL30xeuX5nvV95jsN5zoc7Wvy5v5Pw8pzbsXj8vXpLjZHzer9fvW89tqz/kvdYmcYKtFGNH
+	yUQlluKMREMt5qLiRADuneMJYAIAAA==
 X-CFilter-Loop: Reflected
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -81,59 +81,148 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-A new mechanism, LUF(Lazy Unmap Flush), defers tlb flush until folios
-that have been unmapped and freed, eventually get allocated again.  It's
-safe for folios that had been mapped read only and were unmapped, since
-the contents of the folios don't change while staying in pcp or buddy
-so we can still read the data through the stale tlb entries.
+Functionally, no change.  This is a preparation for luf mechanism that
+tracks need of tlb flush for each page residing in buddy, using a
+generation number in struct page.
 
-This is a preparation for the mechanism that requires to avoid redundant
-tlb flush by manipulating tlb batch's arch data.  To achieve that, we
-need to separate the part clearing the tlb batch's arch data out of
-arch_tlbbatch_flush().
+Fortunately, since the private field in struct page is used only to
+store page order in buddy, ranging from 0 to MAX_PAGE_ORDER, that can be
+covered with unsigned short int.  So splitted it into two smaller ones,
+order and ugen, so that the both can be used in buddy at the same time.
 
 Signed-off-by: Byungchul Park <byungchul@sk.com>
 ---
- arch/riscv/mm/tlbflush.c | 1 -
- arch/x86/mm/tlb.c        | 2 --
- mm/rmap.c                | 1 +
- 3 files changed, 1 insertion(+), 3 deletions(-)
+ include/linux/mm_types.h | 40 +++++++++++++++++++++++++++++++++-------
+ mm/internal.h            |  4 ++--
+ mm/page_alloc.c          | 13 ++++++++-----
+ 3 files changed, 43 insertions(+), 14 deletions(-)
 
-diff --git a/arch/riscv/mm/tlbflush.c b/arch/riscv/mm/tlbflush.c
-index 9b6e86ce3867..36f996af6256 100644
---- a/arch/riscv/mm/tlbflush.c
-+++ b/arch/riscv/mm/tlbflush.c
-@@ -201,5 +201,4 @@ void arch_tlbbatch_flush(struct arch_tlbflush_unmap_batch *batch)
- {
- 	__flush_tlb_range(&batch->cpumask, FLUSH_TLB_NO_ASID, 0,
- 			  FLUSH_TLB_MAX_SIZE, PAGE_SIZE);
--	cpumask_clear(&batch->cpumask);
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index 24323c7d0bd4..37eb3000267c 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -108,13 +108,25 @@ struct page {
+ 				pgoff_t index;		/* Our offset within mapping. */
+ 				unsigned long share;	/* share count for fsdax */
+ 			};
+-			/**
+-			 * @private: Mapping-private opaque data.
+-			 * Usually used for buffer_heads if PagePrivate.
+-			 * Used for swp_entry_t if PageSwapCache.
+-			 * Indicates order in the buddy system if PageBuddy.
+-			 */
+-			unsigned long private;
++			union {
++				/**
++				 * @private: Mapping-private opaque data.
++				 * Usually used for buffer_heads if PagePrivate.
++				 * Used for swp_entry_t if PageSwapCache.
++				 */
++				unsigned long private;
++				struct {
++					/*
++					 * Indicates order in the buddy system if PageBuddy.
++					 */
++					unsigned short int order;
++					/*
++					 * Tracks need of tlb flush used by luf,
++					 * which stands for lazy unmap flush.
++					 */
++					unsigned short int ugen;
++				};
++			};
+ 		};
+ 		struct {	/* page_pool used by netstack */
+ 			/**
+@@ -521,6 +533,20 @@ static inline void set_page_private(struct page *page, unsigned long private)
+ 	page->private = private;
  }
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index 44ac64f3a047..24bce69222cd 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -1265,8 +1265,6 @@ void arch_tlbbatch_flush(struct arch_tlbflush_unmap_batch *batch)
- 		local_irq_enable();
+ 
++#define page_buddy_order(page)		((page)->order)
++
++static inline void set_page_buddy_order(struct page *page, unsigned int order)
++{
++	page->order = (unsigned short int)order;
++}
++
++#define page_buddy_ugen(page)		((page)->ugen)
++
++static inline void set_page_buddy_ugen(struct page *page, unsigned short int ugen)
++{
++	page->ugen = ugen;
++}
++
+ static inline void *folio_get_private(struct folio *folio)
+ {
+ 	return folio->private;
+diff --git a/mm/internal.h b/mm/internal.h
+index bbec99cc9d9d..552e1061d36d 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -461,7 +461,7 @@ struct alloc_context {
+ static inline unsigned int buddy_order(struct page *page)
+ {
+ 	/* PageBuddy() must be checked by the caller */
+-	return page_private(page);
++	return page_buddy_order(page);
+ }
+ 
+ /*
+@@ -475,7 +475,7 @@ static inline unsigned int buddy_order(struct page *page)
+  * times, potentially observing different values in the tests and the actual
+  * use of the result.
+  */
+-#define buddy_order_unsafe(page)	READ_ONCE(page_private(page))
++#define buddy_order_unsafe(page)	READ_ONCE(page_buddy_order(page))
+ 
+ /*
+  * This function checks whether a page is free && is the buddy
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index b1e3eb5787de..ae57dd8718fe 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -565,9 +565,12 @@ void prep_compound_page(struct page *page, unsigned int order)
+ 	prep_compound_head(page, order);
+ }
+ 
+-static inline void set_buddy_order(struct page *page, unsigned int order)
++static inline void set_buddy_order_ugen(struct page *page,
++					unsigned int order,
++					unsigned short int ugen)
+ {
+-	set_page_private(page, order);
++	set_page_buddy_order(page, order);
++	set_page_buddy_ugen(page, order);
+ 	__SetPageBuddy(page);
+ }
+ 
+@@ -826,7 +829,7 @@ static inline void __free_one_page(struct page *page,
  	}
  
--	cpumask_clear(&batch->cpumask);
--
- 	put_flush_tlb_info();
- 	put_cpu();
- }
-diff --git a/mm/rmap.c b/mm/rmap.c
-index 52357d79917c..a65a94aada8d 100644
---- a/mm/rmap.c
-+++ b/mm/rmap.c
-@@ -648,6 +648,7 @@ void try_to_unmap_flush(void)
- 		return;
+ done_merging:
+-	set_buddy_order(page, order);
++	set_buddy_order_ugen(page, order, 0);
  
- 	arch_tlbbatch_flush(&tlb_ubc->arch);
-+	arch_tlbbatch_clear(&tlb_ubc->arch);
- 	tlb_ubc->flush_required = false;
- 	tlb_ubc->writable = false;
+ 	if (fpi_flags & FPI_TO_TAIL)
+ 		to_tail = true;
+@@ -1336,7 +1339,7 @@ static inline void expand(struct zone *zone, struct page *page,
+ 			continue;
+ 
+ 		__add_to_free_list(&page[size], zone, high, migratetype, false);
+-		set_buddy_order(&page[size], high);
++		set_buddy_order_ugen(&page[size], high, 0);
+ 		nr_added += size;
+ 	}
+ 	account_freepages(zone, nr_added, migratetype);
+@@ -6801,7 +6804,7 @@ static void break_down_buddy_pages(struct zone *zone, struct page *page,
+ 			continue;
+ 
+ 		add_to_free_list(current_buddy, zone, high, migratetype, false);
+-		set_buddy_order(current_buddy, high);
++		set_buddy_order_ugen(current_buddy, high, 0);
+ 	}
  }
+ 
 -- 
 2.17.1
 
