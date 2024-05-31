@@ -1,433 +1,324 @@
-Return-Path: <linux-kernel+bounces-196682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 287538D5FDC
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:45:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BC378D5FE0
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:45:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2174287E10
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:44:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 860191F24312
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:45:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EB4E15625A;
-	Fri, 31 May 2024 10:44:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05F9D156898;
+	Fri, 31 May 2024 10:45:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="IHDAyar2"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="GD3j8AG2"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2D8A155CBF;
-	Fri, 31 May 2024 10:44:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11E6F156253
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 10:45:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717152292; cv=none; b=rkeaWIbF0P8IVOhAxbo5xCBgU/05GK5lY3bXDA3zdUtdzQ9y6Xe33SOzQtftlCQA/CGqd3ML/cXYelsrcv6TsoIzitCR0OT9ZQdz5+1Mfc6AWcAcDqL0kqmAdN5MM7n6WT57F4hetL/H1URbG1/bZf9eqTalDNTcc+27kEA/P/4=
+	t=1717152308; cv=none; b=P2HvpW6kouNS06B5BahxQuStUbWSdcBa+KX3rwpQyxQl1HqDkEkX8andwkjVF/YiAyUnKlG9fpbTE2X7zvhaKi0z4nbUWSv3ufKohhcKzGpaRpdr0MP+Tj4VkbBRHLuUw+h+iLloSTdYCN53H05PhzHkA+alqbhoj5F8iBkg6FU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717152292; c=relaxed/simple;
-	bh=hq7gYO45nay0AdXL8vn4EYPw2rnwSb+oMYkezoEp6Vo=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Q5VDZE4aSU8rIExFsBhhxvlj/3ifk1w8rVWfhzlEoU3kJH/r4fQYC29dn2PQZ8/cCr0P/SKV2470w/4LwB5YdFLTOdP70EM+d+7nKmizhvb7+eievLs30aJTjsFJn8MWnO7jviZhccrK50vA6l/pN1mGAgJfxX5KRBVtNIOLgw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com; spf=pass smtp.mailfrom=ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=IHDAyar2; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44VAf8o4004209;
-	Fri, 31 May 2024 10:44:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc :
- content-transfer-encoding : content-type : date : from : in-reply-to :
- message-id : mime-version : references : subject : to; s=pp1;
- bh=hq7gYO45nay0AdXL8vn4EYPw2rnwSb+oMYkezoEp6Vo=;
- b=IHDAyar2HnDfAj/PA5SSD34sv8NawAOmRVh9ej6AxUIfSTCWdvFIY4dnHOGz7gbpJjBa
- EBAdX7j70b6L3HPUCHhwRvWGvCEY8qc3iQmwlAVeAQ0rJyvQ6Pxik8c7wazcNpiAfPVm
- CmU9brKqHQv9uGTpTQYIMLXwOgr4k7aXylVJe8Hr/so6J0fDnedgE0jAKtyna19QvI3t
- xDD+GEe9K+RgUxNEB7Vi5bMsvHJvVOHcrCptolp27mi6g3UmxbzwVnvRm98E9CpilvPs
- Vwnc+OMRly32eEclVPaNAQ4y5UkhMX53o12Xbr+veh8P0pZiZ6YfdZCoMDgkWWjEJmfN Sw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yfcr0r1g4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 31 May 2024 10:44:41 +0000
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 44VAieMN009269;
-	Fri, 31 May 2024 10:44:40 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yfcr0r1fy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 31 May 2024 10:44:40 +0000
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 44V9AdMf002322;
-	Fri, 31 May 2024 10:44:39 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3ydpb0yeca-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 31 May 2024 10:44:39 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 44VAiYFp27525502
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 31 May 2024 10:44:36 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0DABF20043;
-	Fri, 31 May 2024 10:44:34 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7AF4D20040;
-	Fri, 31 May 2024 10:44:31 +0000 (GMT)
-Received: from [9.109.241.85] (unknown [9.109.241.85])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 31 May 2024 10:44:31 +0000 (GMT)
-Message-ID: <e5db1fdc-166b-441f-a35c-707850b9b43d@ibm.com>
-Date: Fri, 31 May 2024 16:14:30 +0530
+	s=arc-20240116; t=1717152308; c=relaxed/simple;
+	bh=+O74bC7crkPEscgYhdIG1ohsmHNDl/oLsAtyvpy3nTI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=jd1Jc/JHqWkXI02vYPGrBKDRAqmQ6tJ036VPtNgGT34pBDOgqIhUccMAS9dlF6JXj3wCMNgLCN9KWbMPh8+3g9IysBQqwxrulGqyQ4gcYgWbi6Dpow1cPJ+kuNZH6GE8f+uOrt65VUP31+HnlVlE25w0cDP6jruQbPXUNH6pOEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=GD3j8AG2; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-57a2406f951so1765262a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 03:45:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google09082023; t=1717152305; x=1717757105; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:user-agent
+         :references:in-reply-to:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BX448Ud4eVPnfmLCN+EQvZqufwLyNpau6GIoFy7+iCw=;
+        b=GD3j8AG2atGiOFMV1dULbJ4n1OdhVh4dhdg+sW4Vwm1F+Ex+Nt2J18rIdjdTA8hC39
+         9h70tZMIo55HxHS4eOfdvPnPLvyQkWWWSaDtvJN2hr96Umbx4PHijNtxoikyEyADt944
+         3ZctO3yo6sJrwUkiaUhHgnei9arqxBJH3ORuhj6UvFxV+R7x5vR9b7tC2YBBRMpcjDpe
+         MGuypXHP8HqS22agWkBQ4RDxoJG0p2MnAlfIdNOstdlC8S6BGWRerlthu0JEaTaoCDGx
+         iw1/4xzti8V4pLZw1lOAZPERfFGwD+4OuRw+oeh6C0HWakkqAoZHrR7/Loq3aXIKoPOu
+         GHCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717152305; x=1717757105;
+        h=content-transfer-encoding:mime-version:message-id:date:user-agent
+         :references:in-reply-to:subject:cc:to:from:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=BX448Ud4eVPnfmLCN+EQvZqufwLyNpau6GIoFy7+iCw=;
+        b=dEJK/gn2nZS8tgjLCtG3UO1OL5Is7ZaoAC8+xvVNoz6s+KjZOdS+xaese/3ECyKi8J
+         NQaJnozeVWiezlK3Ckdp0jh+2d3DiyvLw/QkmiXNTTgM2LQp3hUYQTT0SqUFzbsZeFil
+         zgUSoJLvqiiTFFWPFb9/T/GD/jIUS6kxnfU6OHHoZbTsAEPJU8/Bg89OdSzVJz+7xSc+
+         v8HaJtAdtIDcsny7tEqO68plva+EbkmN83xreMs681mI3vBc8lBIINmhfed7APfrDzkU
+         zADYNBS9Hl01T0IF5l8JsA1RWjGgNIRtdnIQn9rUT63+9XI+yZ86MaeTaQOCPhVTrjqo
+         BnkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXl8xukuPYu5XTg4n7eSHxN2Zo6F3tZC4ia5d0kpRE/OxnhQIfH601sAWUm0/2wGDQbrSMZnZ3rSLpVPe74dLFvvOrcPLcV1zhjdChN
+X-Gm-Message-State: AOJu0Yxmg/3cZ8qaZDpV2Zd6v7KR75JDxHTADAlLVf4kHbbZK33O/KLp
+	L9yRJ7xVYFyxyORZgP0AoBHLhTUL81DslX2iTNWvWogszlfKvc1vqaVNf7L4VmA=
+X-Google-Smtp-Source: AGHT+IHTYTM/ab6LWd92gVTgFqoZ8pkRyG3eRSwtgT+QrdwknrAixxaF8EiUoizMwaSlRInCm1Bzjw==
+X-Received: by 2002:a50:d5dd:0:b0:578:5245:3296 with SMTP id 4fb4d7f45d1cf-57a364480e7mr986562a12.28.1717152305251;
+        Fri, 31 May 2024 03:45:05 -0700 (PDT)
+Received: from cloudflare.com ([2a09:bac5:5063:2387::38a:19])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57a31c6d30esm874646a12.73.2024.05.31.03.45.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 May 2024 03:45:04 -0700 (PDT)
+From: Jakub Sitnicki <jakub@cloudflare.com>
+To: Feng Zhou <zhoufeng.zf@bytedance.com>
+Cc: edumazet@google.com,  ast@kernel.org,  daniel@iogearbox.net,
+  andrii@kernel.org,  martin.lau@linux.dev,  eddyz87@gmail.com,
+  song@kernel.org,  yonghong.song@linux.dev,  john.fastabend@gmail.com,
+  kpsingh@kernel.org,  sdf@google.com,  haoluo@google.com,
+  jolsa@kernel.org,  davem@davemloft.net,  dsahern@kernel.org,
+  kuba@kernel.org,  pabeni@redhat.com,  laoar.shao@gmail.com,
+  netdev@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  bpf@vger.kernel.org,  yangzhenze@bytedance.com,
+  wangdongdong.6@bytedance.com
+Subject: Re: [PATCH bpf-next] bpf: tcp: Improve bpf write tcp opt performance
+In-Reply-To: <d66d58f1-219e-450a-91fc-bd08337db77d@bytedance.com> (Feng Zhou's
+	message of "Fri, 17 May 2024 15:27:11 +0800")
+References: <20240515081901.91058-1-zhoufeng.zf@bytedance.com>
+	<87seyjwgme.fsf@cloudflare.com>
+	<1803b7c0-bc56-46d6-835f-f3802b8b7e00@bytedance.com>
+	<87wmnty8yd.fsf@cloudflare.com>
+	<d66d58f1-219e-450a-91fc-bd08337db77d@bytedance.com>
+User-Agent: mu4e 1.12.4; emacs 29.1
+Date: Fri, 31 May 2024 12:45:03 +0200
+Message-ID: <875xuuxntc.fsf@cloudflare.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] powerpc: hotplug driver bridge support
-From: Krishna Kumar <krishna.kumar11@ibm.com>
-To: "Oliver O'Halloran" <oohall@gmail.com>,
-        krishna kumar <krishnak@linux.ibm.com>
-Cc: Nathan Lynch <nathanl@linux.ibm.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nicholas Piggin <npiggin@gmail.com>, mahesh@linux.ibm.com,
-        Gaurav Batra <gbatra@linux.ibm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Brian King <brking@linux.vnet.ibm.com>, linuxppc-dev@lists.ozlabs.org
-References: <20240514135303.176134-1-krishnak@linux.ibm.com>
- <20240514135303.176134-3-krishnak@linux.ibm.com>
- <CAOSf1CFDCTMdmrjoSRdP09rJgtzPVDnCPXpfS-S+J7XKHzKRCw@mail.gmail.com>
- <fd0e22ab-5998-4b57-828e-224dda6bf490@linux.ibm.com>
- <CAOSf1CE2r4Gju-BkGVzuAyWoiFZ+9csNMj=v+KkQMmixUAHH6w@mail.gmail.com>
- <66572ca5-88aa-4495-b926-5a3bfe6ae1da@ibm.com>
-Content-Language: en-US
-In-Reply-To: <66572ca5-88aa-4495-b926-5a3bfe6ae1da@ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: fbLCRSyjOZypEgQKsT7XYFlFTqK0zvtq
-X-Proofpoint-ORIG-GUID: 12Nt6OIwI24x0kWkbD9z5mFHen5yBLFd
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-31_07,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- lowpriorityscore=0 suspectscore=0 phishscore=0 spamscore=0 mlxscore=0
- impostorscore=0 mlxlogscore=999 malwarescore=0 adultscore=0
- priorityscore=1501 bulkscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2405010000 definitions=main-2405310079
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, May 17, 2024 at 03:27 PM +08, Feng Zhou wrote:
+> =E5=9C=A8 2024/5/17 01:15, Jakub Sitnicki =E5=86=99=E9=81=93:
+>> On Thu, May 16, 2024 at 11:15 AM +08, Feng Zhou wrote:
+>>> =E5=9C=A8 2024/5/15 17:48, Jakub Sitnicki =E5=86=99=E9=81=93:
 
-On 5/23/24 20:22, Krishna Kumar wrote:
+[...]
+
+>> If it's not the BPF prog, which you have ruled out, then where are we
+>> burining cycles? Maybe that is something that can be improved.
+>> Also, in terms on quantifying the improvement - it is 20% in terms of
+>> what? Throughput, pps, cycles? And was that a single data point? For
+>> multiple measurements there must be some variance (+/- X pp).
+>> Would be great to see some data to back it up.
+>> [...]
+>>=20
+>
+> Pressure measurement method:
+>
+> server: sockperf sr --tcp -i x.x.x.x -p 7654 --daemonize
+> client: taskset -c 8 sockperf tp --tcp -i x.x.x.x -p 7654 -m 1200 -t 30
+>
+> Default mode, no bpf prog:
+>
+> taskset -c 8 sockperf tp --tcp -i x.x.x.x -p 7654 -m 1200 -t 30
+> sockperf: =3D=3D version #3.10-23.gited92afb185e6 =3D=3D
+> sockperf[CLIENT] send on:
+> [ 0] IP =3D x.x.x.x    PORT =3D  7654 # TCP
+> sockperf: Warmup stage (sending a few dummy messages)...
+> sockperf: Starting test...
+> sockperf: Test end (interrupted by timer)
+> sockperf: Test ended
+> sockperf: Total of 71520808 messages sent in 30.000 sec
+>
+> sockperf: NOTE: test was performed, using msg-size=3D1200. For getting ma=
+ximum
+> throughput consider using --msg-size=3D1472
+> sockperf: Summary: Message Rate is 2384000 [msg/sec]
+> sockperf: Summary: BandWidth is 2728.271 MBps (21826.172 Mbps)
+>
+> perf record --call-graph fp -e cycles:k -C 8 -- sleep 10
+> perf report
+>
+> 80.88%--sock_sendmsg
+>  79.53%--tcp_sendmsg
+>   42.48%--tcp_sendmsg_locked
+>    16.23%--_copy_from_iter
+>    4.24%--tcp_send_mss
+>     3.25%--tcp_current_mss
 >
 >
-> Hi Oliver,
+> perf top -C 8
 >
-> Thanks for your suggestions. Pls find my response:
+> 19.13%  [kernel]            [k] _raw_spin_lock_bh
+> 11.75%  [kernel]            [k] copy_user_enhanced_fast_string
+>  9.86%  [kernel]            [k] tcp_sendmsg_locked
+>  4.44%  sockperf            [.]
+>  _Z14client_handlerI10IoRecvfrom9SwitchOff13PongModeNeverEviii
+>  4.16%  libpthread-2.28.so  [.] __libc_sendto
+>  3.85%  [kernel]            [k] syscall_return_via_sysret
+>  2.70%  [kernel]            [k] _copy_from_iter
+>  2.48%  [kernel]            [k] entry_SYSCALL_64
+>  2.33%  [kernel]            [k] native_queued_spin_lock_slowpath
+>  1.89%  [kernel]            [k] __virt_addr_valid
+>  1.77%  [kernel]            [k] __check_object_size
+>  1.75%  [kernel]            [k] __sys_sendto
+>  1.74%  [kernel]            [k] entry_SYSCALL_64_after_hwframe
+>  1.42%  [kernel]            [k] __fget_light
+>  1.28%  [kernel]            [k] tcp_push
+>  1.01%  [kernel]            [k] tcp_established_options
+>  0.97%  [kernel]            [k] tcp_send_mss
+>  0.94%  [kernel]            [k] syscall_exit_to_user_mode_prepare
+>  0.94%  [kernel]            [k] tcp_sendmsg
+>  0.86%  [kernel]            [k] tcp_current_mss
 >
-> On 5/20/24 20:29, Oliver O'Halloran wrote:
->> On Fri, May 17, 2024 at 9:15 PM krishna kumar <krishnak@linux.ibm.com> wrote:
->>>> Uh, if I'm reading this right it looks like your "slot" C5 is actually
->>>> the PCIe switch's internal bus which is definitely not hot pluggable.
->>> It's a hotplug slot. Please see the snippet below:
+> Having bpf prog to write tcp opt in all pkts:
+>
+> taskset -c 8 sockperf tp --tcp -i x.x.x.x -p 7654 -m 1200 -t 30
+> sockperf: =3D=3D version #3.10-23.gited92afb185e6 =3D=3D
+> sockperf[CLIENT] send on:
+> [ 0] IP =3D x.x.x.x    PORT =3D  7654 # TCP
+> sockperf: Warmup stage (sending a few dummy messages)...
+> sockperf: Starting test...
+> sockperf: Test end (interrupted by timer)
+> sockperf: Test ended
+> sockperf: Total of 60636218 messages sent in 30.000 sec
+>
+> sockperf: NOTE: test was performed, using msg-size=3D1200. For getting ma=
+ximum
+> throughput consider using --msg-size=3D1472
+> sockperf: Summary: Message Rate is 2021185 [msg/sec]
+> sockperf: Summary: BandWidth is 2313.063 MBps (18504.501 Mbps)
+>
+> perf record --call-graph fp -e cycles:k -C 8 -- sleep 10
+> perf report
+>
+> 80.30%--sock_sendmsg
+>  79.02%--tcp_sendmsg
+>   54.14%--tcp_sendmsg_locked
+>    12.82%--_copy_from_iter
+>    12.51%--tcp_send_mss
+>     11.77%--tcp_current_mss
+>      10.10%--tcp_established_options
+>       8.75%--bpf_skops_hdr_opt_len.isra.54
+>        5.71%--__cgroup_bpf_run_filter_sock_ops
+>         3.32%--bpf_prog_e7ccbf819f5be0d0_tcpopt
+>   6.61%--__tcp_push_pending_frames
+>    6.60%--tcp_write_xmit
+>     5.89%--__tcp_transmit_skb
+>
+> perf top -C 8
+>
+> 10.98%  [kernel]                           [k] _raw_spin_lock_bh
+>  9.04%  [kernel]                           [k] copy_user_enhanced_fast_st=
+ring
+>  7.78%  [kernel]                           [k] tcp_sendmsg_locked
+>  3.91%  sockperf                           [.]
+>  _Z14client_handlerI10IoRecvfrom9SwitchOff13PongModeNeverEviii
+>  3.46%  libpthread-2.28.so                 [.] __libc_sendto
+>  3.35%  [kernel]                           [k] syscall_return_via_sysret
+>  2.86%  [kernel]                           [k] bpf_skops_hdr_opt_len.isra=
+54
+>  2.16%  [kernel]                           [k] __htab_map_lookup_elem
+>  2.11%  [kernel]                           [k] _copy_from_iter
+>  2.09%  [kernel]                           [k] entry_SYSCALL_64
+>  1.97%  [kernel]                           [k] __virt_addr_valid
+>  1.95%  [kernel]                           [k] __cgroup_bpf_run_filter_so=
+ck_ops
+>  1.95%  [kernel]                           [k] lookup_nulls_elem_raw
+>  1.89%  [kernel]                           [k] __fget_light
+>  1.42%  [kernel]                           [k] __sys_sendto
+>  1.41%  [kernel]                           [k] entry_SYSCALL_64_after_hwf=
+rame
+>  1.31%  [kernel]                           [k] native_queued_spin_lock_sl=
+owpath
+>  1.22%  [kernel]                           [k] __check_object_size
+>  1.18%  [kernel]                           [k] tcp_established_options
+>  1.04%  bpf_prog_e7ccbf819f5be0d0_tcpopt   [k] bpf_prog_e7ccbf819f5be0d0_=
+tcpopt
+>
+> Compare the above test results, fill up a CPU, you can find that
+> the upper limit of qps or BandWidth has a loss of nearly 18-20%.
+> Then CPU occupancy, you can find that "tcp_send_mss" has increased
+> significantly.
+
+This helps prove the point, but what I actually had in mind is to check
+"perf annotate bpf_skops_hdr_opt_len" and see if there any low hanging
+fruit there which we can optimize.
+
+For instance, when I benchmark it in a VM, I see we're spending cycles
+mostly memset()/rep stos. I have no idea where the cycles are spent in
+your case.
+
+>
+>>>>> diff --git a/tools/include/uapi/linux/bpf.h b/tools/include/uapi/linu=
+x/bpf.h
+>>>>> index 90706a47f6ff..f2092de1f432 100644
+>>>>> --- a/tools/include/uapi/linux/bpf.h
+>>>>> +++ b/tools/include/uapi/linux/bpf.h
+>>>>> @@ -6892,8 +6892,14 @@ enum {
+>>>>>    	 * options first before the BPF program does.
+>>>>>    	 */
+>>>>>    	BPF_SOCK_OPS_WRITE_HDR_OPT_CB_FLAG =3D (1<<6),
+>>>>> +	/* Fast path to reserve space in a skb under
+>>>>> +	 * sock_ops->op =3D=3D BPF_SOCK_OPS_HDR_OPT_LEN_CB.
+>>>>> +	 * opt length doesn't change often, so it can save in the tcp_sock.=
+ And
+>>>>> +	 * set BPF_SOCK_OPS_HDR_OPT_LEN_CACHE_CB_FLAG to no bpf call.
+>>>>> +	 */
+>>>>> +	BPF_SOCK_OPS_HDR_OPT_LEN_CACHE_CB_FLAG =3D (1<<7),
+>>>> Have you considered a bpf_reserve_hdr_opt() flag instead?
+>>>> An example or test coverage would to show this API extension in action
+>>>> would help.
+>>>>
 >>>
->>> :~$ sudo lspci -vvv -s 0004:02:00.0 | grep --color HotPlug
->>>           SltCap:    AttnBtn- PwrCtrl+ MRL- AttnInd- PwrInd- HotPlug+ Surprise-
->>> :~$
->>>
->>> :~$ sudo lspci -vvv -s 0004:02:01.0 | grep --color HotPlug
->>>          SltCap:    AttnBtn- PwrCtrl+ MRL- AttnInd- PwrInd- HotPlug+ Surprise-
->>> :~$
->>>
->>> :~$ sudo lspci -vvv -s 0004:02:02.0 | grep --color HotPlug
->>>          SltCap:    AttnBtn- PwrCtrl+ MRL- AttnInd- PwrInd- HotPlug+ Surprise-
->>> :~$
->>>
->>> :~$ sudo lspci -vvv -s 0004:02:03.0 | grep --color HotPlug
->>>          SltCap:    AttnBtn- PwrCtrl+ MRL- AttnInd- PwrInd- HotPlug+ Surprise-
->>> :~$
->> All this is showing is that the switch downstream ports on bus 0004:02
->> have a slot capability. I already know that (see what I said
->> previously about physical links). The fact the downstream ports have a
->> slot capability also has absolutely nothing to do with anything I was
->> saying. Look at the lspci output for 0004:01:00.0 which is the
->> switch's upstream port. The upstream port device will not have a slot
->> capability because it's a bridge into the virtual PCI bus that is
->> internal to the switch.
+>>> bpf_reserve_hdr_opt () flag can't finish this. I want to optimize
+>>> that bpf prog will not be triggered frequently before TSO. Provide
+>>> a way for users to not trigger bpf prog when opt len is unchanged.
+>>> Then when writing opt, if len changes, clear the flag, and then
+>>> change opt len in the next package.
+>> I haven't seen a sample using the API extenstion that you're proposing,
+>> so I can only guess. But you probably have something like:
+>> SEC("sockops")
+>> int sockops_prog(struct bpf_sock_ops *ctx)
+>> {
+>> 	if (ctx->op =3D=3D BPF_SOCK_OPS_HDR_OPT_LEN_CB &&
+>> 	    ctx->args[0] =3D=3D BPF_WRITE_HDR_TCP_CURRENT_MSS) {
+>> 		bpf_reserve_hdr_opt(ctx, N, 0);
+>> 		bpf_sock_ops_cb_flags_set(ctx,
+>> 					  ctx->bpf_sock_ops_cb_flags |
+>> 					  MY_NEW_FLAG);
+>> 		return 1;
+>> 	}
+>> }
 >
-> Let me try to understand your suggestion and what needs to be done now:
+> Yes, that's what I expected.
 >
-> lspci -nn snippet in current scenario:
+>> I don't understand why you're saying it can't be transformed into:
+>> int sockops_prog(struct bpf_sock_ops *ctx)
+>> {
+>> 	if (ctx->op =3D=3D BPF_SOCK_OPS_HDR_OPT_LEN_CB &&
+>> 	    ctx->args[0] =3D=3D BPF_WRITE_HDR_TCP_CURRENT_MSS) {
+>> 		bpf_reserve_hdr_opt(ctx, N, MY_NEW_FLAG);
+>> 		return 1;
+>> 	}
+>> }
 >
-> 0004:01:00.0 PCI bridge [0604]: PMC-Sierra Inc. Device [11f8:4052]
-> 0004:01:00.1 Memory controller [0580]: PMC-Sierra Inc. Device [11f8:4052]
-> 0004:02:00.0 PCI bridge [0604]: PMC-Sierra Inc. Device [11f8:4052]
-> 0004:02:01.0 PCI bridge [0604]: PMC-Sierra Inc. Device [11f8:4052]
-> 0004:02:02.0 PCI bridge [0604]: PMC-Sierra Inc. Device [11f8:4052]
-> 0004:02:03.0 PCI bridge [0604]: PMC-Sierra Inc. Device [11f8:4052]
+> "bpf_reserve_hdr_opt (ctx, N, MY_NEW_FLAG);"
 >
-> lspci -tv snippet in current scenario:
+> I don't know what I can do to pass the flag parameter, let
+> "bpf_reserve_hdr_opt" return quickly? But this is not useful,
+> because the loss caused by the triggering of bpf prog is very
+> expensive, and it is still on the hotspot function of sending
+> packets, and the TSO has not been completed yet.
 >
-> +-[0001:00]---00.0-[01-0a]--+-00.0-[02-0a]--+-00.0-[03-07]--
->  |                           |               +-01.0-[08]--+-00.0  Broadcom Inc. and subsidiaries NetXtreme BCM5719 Gigabit Ethernet PCIe
->  |                           |               |            +-00.1  Broadcom Inc. and subsidiaries NetXtreme BCM5719 Gigabit Ethernet PCIe
->  |                           |               |            +-00.2  Broadcom Inc. and subsidiaries NetXtreme BCM5719 Gigabit Ethernet PCIe
->  |                           |               |            \-00.3  Broadcom Inc. and subsidiaries NetXtreme BCM5719 Gigabit Ethernet PCIe
->  |                           |               +-02.0-[09]----00.0  Broadcom / LSI SAS3216 PCI-Express Fusion-MPT SAS-3
->  |                           |               \-03.0-[0a]----00.0  IBM PCI-E IPR SAS Adapter (ASIC)
->  |                           \-00.1  PMC-Sierra Inc. Device 4052
->
-> C5 bus address:
->
-> [root@ltczzess2-lp1 ~]# cat /sys/bus/pci/slots/C5/address
-> 0004:02:00
-> [root@ltczzess2-lp1 ~]#
->
-> 0004:01:00.0 doesn't have hotplug capability but 0004:02:00.0 does
-> have this capability. Below snippet tells about this:
->
-> [root@ltczzess2-lp1 ~]# sudo lspci -vvv -s 0004:01:00.0 | grep --color HotPlug
-> [root@ltczzess2-lp1 ~]#
-> [root@ltczzess2-lp1 ~]# sudo lspci -vvv -s 0004:02:00.0 | grep --color HotPlug
->         SltCap:    AttnBtn- PwrCtrl+ MRL- AttnInd- PwrInd- HotPlug+ Surprise-
-> [root@ltczzess2-lp1 ~]#
->
-> In Function -  pnv_php_register_one() is responsible for slot creation from
-> hotplug capable device node:
->
-> Below is the current code that does check the device node for hot plug
-> capability and takes the decision
->
->  /* Check if it's hotpluggable slot */
->         ret = of_property_read_u32(dn, "ibm,slot-pluggable", &prop32);
->         if (ret || !prop32){
->                 return -ENXIO;
->         }
->
-> Its obvious that 0004:01:00.0 does not get above criteria fulfilled but
-> 0004:02:00.0 does, so is the current behavior (Upstream port is not became
-> C5 slot but downstream port became C5 slot).
->
-> I am summarizing your suggested changes. Please let
-> me know if I've got it right:
->
-> 1. Do you want me to modify the code so that the C5
-> device-bdf and bus-address become 0004:01:00/0004:01
-> instead of 0004:02:00/0004:01?
->
-> 2. When performing a hot-unplug operation on C5,
-> should all devices from 0004:01 be removed? And
-> should all devices from 0004:02 also be removed?
-> I think the answer is yes, but please confirm.
->
-> 3. When performing a hot-plug operation on C5,
-> should all the devices removed earlier from 0004:01
->  and 0004:02 be re-attached?
->
-> 4. Will there be any PCIe topology changes in this workflow?
->
-> Once you confirm the above requirements, we can discuss
-> how to proceed further.
-> I have some follow up questions from your last mail and I am
-> putting these questions in below paragraphs as inline statements.
-> It will confirm me if we should do above things or not.
->
->
->>> It seems like your explanation about the missing 0004:01:00.0 may be
->>> correct and could be due to a firmware bug. However, the scope of this
->>> patch does not relate to this issue. Additionally, if it starts with
->>> 0004:01:00.0 to 0004:01:03.0, the behavior of hot-unplug and hot-plug
->>> operations will remain inconsistent. This patch aims to address the
->>> inconsistent behavior of hot-unplug and hot-plug.
->>>
->>> *snip*
->>>
->>>> It might be worth adding some logic to pnv_php to verify the PCI
->>>> bridge upstream of the slot actually has the PCIe slot capability to
->>>> guard against this problem.
->>> We can have a look at this problem in another patch.
->> The point of this series is to fix the behaviour of pnv_php, is it
->> not?
->
-> Yes and we will do necessary things.
->
->> Powering off a PCI(e) slot is supposed to render it safe to
->> remove the card  in that slot.
->
-> Do you mean physical-removal of the device after power-off ?
->
->>   Currently if you "power off" C5, the
->> kernel is still going to have active references to the switch's
->> upstream port device (at 0004:01:00.0) and the switch management
->> function (at 0004:01:00.1).
->
-> Yes, since we are only operating on the downstream port of C5,
-> upstream ports' reference to the kernel will remain the same.
->
->> If the kernel has active references to PCI
->> devices physically located in the slot we supposedly powered off, then
->> the hotplug driver isn't doing its job.
->
-> We have only powered off the downstream ports, not the upstream port.
-> The upstream port will remain powered on. Do you mean to say that it
-> will cause a problem if we physically remove the device while the
-> upstream port is powered on and the downstream port is powered off?
-> Will it cause a kernel crash? Is this the reason for designating the
-> upstream port as a C5 slot and performing a hot-plug operation on it?
-> Is it correct to select a device port that is not hot-pluggable,
-> designate it as a C5 slot, and perform a hot-plug operation on it?
->
->
->> The asymmetry between hot add
->> and removal that you're trying to fix here is a side effect of the
->> fact that pnv_php is advertising the wrong thing as a slot.
->
-> Pnv-php is displaying the information, what it receives from the
-> device node property. We will attempt to modify the code
-> path that is responsible for this. I am not sure yet what
-> additional code is needed for this, but I will figure it
-> out. Is it okay to change this code?
->
->>   I think
->> you should stop pnv_php from advertising something as a slot when it's
->> not actually a slot because that's the root of all your problems.
->
-> Okay, I am aligned but need some more clarification. Currently,
-> we are observing this behavior with the PMC-Sierra bridge.
-> Will this behavior occur with all bridges? In other words,
-> will the upstream port capability not be hot-pluggable for
-> all bridges and switches, and therefore not be considered
-> for slot selection?
->
-> In a previous email, you mentioned that this problem is due
-> to a firmware bug, causing the driver to behave incorrectly
-> and advertise the wrong port as a slot. Assuming the firmware
-> bug is not present, what will be the behavior? Will there be
-> any expected PCI-topology changes in the above "lspci -tv"
-> command? Also, if the firmware bug is not present, do we still
-> need to make changes to the driver code?
->
->
-> Best Regards,
-> Krishna
+>> [...]
 
+This is not what I'm suggesting.
 
-While I am still waiting for a response on the above points,
-I would like to add a few more points here:
+bpf_reserve_hdr_opt() has access to bpf_sock_ops_kern and even the
+sock. You could either signal through bpf_sock_ops_kern to
+bpf_skops_hdr_opt_len() that it should not be called again
 
-1. The connection between the upstream and downstream
-ports is vendor-specific, and we cannot control this.
-
-2. When running "lspci -vvv" on the upstream port, it neither
-shows its a slot nor a hotplug slot. This is the reason pnv_php
-does not advertise the upstream port as a slot. I have observed
-similar behavior for upstream and downstream ports on other
-architectures and with other switches as well.
-
-
-Snippet for Upstream Port, showing it is neither a slot nor a hotplug
-slot.
-
-# lspci -vvv -s 0004:01:00.0 | grep -i slot
-            ExtTag+ AttnBtn- AttnInd- PwrInd- RBE+ SlotPowerLimit 0.000W
-            TrErr- Train- SlotClk+ DLActive- BWMgmt- ABWMgmt-
-[root@ltczzess2-lp1 ~]#
-
-# lspci -vvv -s 0004:01:00.0 | grep -i Upstream
-    Capabilities: [40] Express (v2) Upstream Port, MSI 00
-             Retimer- 2Retimers- CrosslinkRes: Upstream Port
-        ACSCap:    SrcValid- TransBlk- ReqRedir+ CmpltRedir+ UpstreamFwd- EgressCtrl- DirectTrans+
-        ACSCtl:    SrcValid- TransBlk- ReqRedir- CmpltRedir- UpstreamFwd- EgressCtrl- DirectTrans-
-#
-
-Downstream Port snippet : Its a slot and hotplug slot too.
-
-#
-# lspci -vvv -s 0004:02:00.0 | grep -i slot
-    Physical Slot: C5
-    Capabilities: [40] Express (v2) Downstream Port (Slot+), MSI 00
-            TrErr- Train- SlotClk+ DLActive- BWMgmt- ABWMgmt-
-            Slot #1, PowerLimit 0.000W; Interlock- NoCompl+
-#
-
-# lspci -vvv -s 0004:02:00.0 | grep -i hot
-        SltCap:    AttnBtn- PwrCtrl+ MRL- AttnInd- PwrInd- HotPlug+ Surprise-
-        Flags: PMEClk- DSI- D1- D2- AuxCurrent=0mA PME(D0+,D1-,D2-,D3hot+,D3cold+)
-#
-
-3. The devices are connected to the downstream port, and hotplug
-operations should only occur on these ports, not on the upstream port.
-
-4. The upstream port and downstream port remain on different buses.
-I have observed this behavior with other architectures and switches too.
-
-5. Performing a poweroff operation on different ports of the bridge
-and the devices behind them does not cause any problems for the
-available upstream port. I have not encountered any tests/scenarios
-where this could create a problem.
-
-Taking all of the above points into consideration, I do not see any need
-for further code changes in the pnv_php driver regarding this matter.
-
-
-
->
->>> We wanted to handle the more generic case and did not want to be confined to
->>> only one device assumption. We want to fix the current inconsistent behavior
->>> more generically.
->> Right, as I said above I don't think handing the more generic case is
->> actually required if pnv_php is doing its job properly. It doesn't
->> hurt though.
->>
->>> Regarding the fix, the fix is obvious:
->> really?
->>
->>> We have to traverse
->>> and find the bridge ports from DT and invoke  pci_scan_slot() on them. This will
->>> discover and create the entry for bridge ports (0004:02:00.0 to 0004:02:00.3 on
->>> the given bus- 0004:02). There is already an existing function, pci_scan_bridge()
->>> which is doing invocation of pci_scan_slot () for the devices behind the bridge,
->>> in this case for  SAS device. So eventually, we are doing a scan of all the entities
->>> behind the slot.
->> I already read your patch so I'm not sure why you feel the need to
->> re-describe it in tedious detail.
->>
->>> Would you like me to combine the non-bridge and bridge cases into one? I can attempt
->>> to do this. Hopefully, if we incorporate the iterate sibling logic case correctly,
->>> we may not need to maintain these two separate cases for bridge and non-bridge. I
->>> will attempt this, and if it works, I will include it in the next patch. Thanks.
->> Yes, do that.
-
-A single call of pci_scan_slot is sufficient to power on the devices in the scenario
-with multiple ports on the same card. However, it is not enough for a switch
-containing multiple ports. If the check is removed and we rely on the logic to
-traverse all the sibling device nodes and invoke pci_scan_slot() on each, in
-this case, device initialization of NIC ports (represented below) in terms of bar region
-and so will occur multiple times. Although this is not a problem and it works fine, we
-have to make a choice whether to proceed with or without the check.
-
-
-Snippet showing multiple port from a single card. This is not on bridge but on same
-card.
-
-+-[0001:00]---00.0-[01-0a]--+-00.0-[02-0a]--+-00.0-[03-07]--
- |                           |               +-01.0-[08]--+-00.0  Broadcom Inc. and subsidiaries NetXtreme BCM5719 Gigabit Ethernet PCIe
- |                           |               |                    +-00.1  Broadcom Inc. and subsidiaries NetXtreme BCM5719 Gigabit Ethernet PCIe
- |                           |               |                    +-00.2  Broadcom Inc. and subsidiaries NetXtreme BCM5719 Gigabit Ethernet PCIe
- |                           |               |                     \-00.3  Broadcom Inc. and subsidiaries NetXtreme BCM5719 Gigabit Ethernet PCIe
- |                           |               +-02.0-[09]----00.0  Broadcom / LSI SAS3216 PCI-Express Fusion-MPT SAS-3
- |                           |               \-03.0-[0a]----00.0  IBM PCI-E IPR SAS Adapter (ASIC)
- |                           \-00.1  PMC-Sierra Inc. Device 4052
-
-
-Best regards,
-Krishna
-
-
->> Also, do not post HTML emails to linux development lists. It breaks
->> plain text inline quoting which makes your messages annoying to reply
->> to. Some linux development lists will also silently drop HTML emails.
->> Please talk to the other LTC engineers about how to set up your mail
->> client to send plain text emails to avoid these problems in the
->> future.
->>
->> Oliver
+Or even configure the tcp_sock directly from bpf_reserve_hdr_opt()
+because it has access to it via bpf_sock_ops_kern{}.sk.
 
