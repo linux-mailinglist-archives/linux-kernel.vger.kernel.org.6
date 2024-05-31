@@ -1,77 +1,81 @@
-Return-Path: <linux-kernel+bounces-196500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C38F78D5D11
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:47:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F6058D5D10
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:47:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 385931F22394
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 08:47:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D6661F253E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 08:47:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EC20155A43;
-	Fri, 31 May 2024 08:47:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E86F4155A23;
+	Fri, 31 May 2024 08:47:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="GYGEn6rB"
-Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="nAOB4i1u"
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98928762D0;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A9F44E1C8;
 	Fri, 31 May 2024 08:47:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717145248; cv=none; b=mendaMBJUOKi2PkI/EMtEmPnscovWC3cJv3ZO0nksnKsjdVhNEos+29w5sdcSfeI+ZNP2hr/JiW3cOOPcxVrksF8jl+vowei3IjpRQ+yexAKn2OeAN9aEzBRV737jSvO8RDR8wp4iY1Gtfxwzk6sKzZ354g9/2u2vOcMB7obZn8=
+	t=1717145248; cv=none; b=Q9k+3l/fcZZJO/9rFMwqF9HwbTJSmTYMbQOFuvDu+CCCoBoze8JzER4ELngHpLBcbJ2Ol81mVHS3oQ6nrSVJ1q6CAz+j7FgHXFkW05cEelEhFXLCRRl/ipF7Zg34A7R+Z6J4W9ET632ouznfKRrutwTqaplEbIIOZdPlUE9PUoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1717145248; c=relaxed/simple;
-	bh=YIMxgbIBKA/bQc04vaweWwut+0w6tL08S/RLf90TwtI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=elcpqKPTCrn8qBQ6qyyQSO2n2W9yPl2NqclL+QDSgSXjifiTgdp9a9miYh0Gv6g3MezubHOu9j0BFrNKSQ2ioiqLMEf/Cx5aQSuX0gelnJ4Lv5IrO4ivmnjYvImvZWXXpXwQQ5O+/4re9GidSNx+1QRdHG2/ABfhvOHqBVxUALU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=GYGEn6rB; arc=none smtp.client-ip=148.163.135.77
+	bh=puLHBzNZ26APQMzwfYvHHSHrulunZMrMo+MEGm1JwjA=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=U/eKZujJ7Bh6FUqI2Aew4awBR/fn+zOVj4GxtO/gwnLlHb8uY7wN2eOLhyNrQJUv5i+eMFkzbvCfyEzq9FAX0DEv5I7cvdXEmF3TDQ2vPOGy2WBuhxCmbTC1rtLFA3AdLxOgc7nMB5neU37cNnU0d0Pffchz2DEv7yYAQOAuinQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=nAOB4i1u; arc=none smtp.client-ip=148.163.135.77
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
-	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44V8Nq6G013196;
-	Fri, 31 May 2024 04:47:07 -0400
+Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44V80o2s031840;
+	Fri, 31 May 2024 04:47:13 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=DKIM; bh=BfOvY2XFvLZ55QcFRnNAA1SivDB
-	6mZk+DCeAdeMBKPk=; b=GYGEn6rBTOkSfLFVSm8F1mXWIG0ExWgn/ZgK1h2KRfl
-	Mb6MxlW3jvXvndq+ufhEjptv+v8CuKmvtOJ/HfmV1840yaxCbdOu5eON1qOK4vhO
-	hSG9yrV2EELGKSJtqPcQdrNximXFJW6inkcnGXOjFzcQctwl9ritkW6Bq/E9BYpu
-	oYTEstIOsCX/CFFgUBJ5vWs+dKrunlXbKbK2pmuVYr1FvUh1anbmDmnamLBU4oxM
-	92a4yV3c7jIRYuSA9jc5i5cR8jicdVts9oFcePWiiuDHD3ACnUjhXeiPR8c5zgiy
-	Kmz9xhp8m7kgRFiybMwq9SrGSkGUvwwEKBck4TMF09g==
-Received: from nwd2mta3.analog.com ([137.71.173.56])
-	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 3yf60qh2q7-1
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=DKIM; bh=g1kRZ
+	lNIOKNCVjWxqEE5O19ed4HqbyIxzVGl4/CiTpo=; b=nAOB4i1ubAHpVA6q8V6sd
+	DRkhw/9D6VPCBKuZPWbhz0hokUCQA5WVq9+Laf9+bz4e9Jeq2U8cX6B5/tO2yTWA
+	1bvsyXIcnZ9k6z9Xw8kPMWPRn1PgWX9XCCPdz/DeUONHgA3bS17e+MqBSn4E5c3L
+	jCHdQXwpqXCqEEG0/Wsdg7eNw+zMSSFF3RuUe7CQpU7PWA9v5/FrV7W7e6sKBSKW
+	ErLl/KO+tuOwbZ6RB3VjbK1JOylIGWpYiCvJ3p4fOx8YUaPwqThbZjtpQgvnwnq7
+	y9CVXkU1uVvvYrNDj5KtNsEkCVq3TJFJkgk4Kj1WdtK/wJtZuesTgLwalkXRdR0x
+	g==
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 3yeddx6k7j-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 31 May 2024 04:47:07 -0400 (EDT)
-Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
-	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 44V8l52g039322
+	Fri, 31 May 2024 04:47:13 -0400 (EDT)
+Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
+	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 44V8lB7X044918
 	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 31 May 2024 04:47:05 -0400
-Received: from ASHBCASHYB5.ad.analog.com (10.64.17.133) by
- ASHBMBX8.ad.analog.com (10.64.17.5) with Microsoft SMTP Server
+	Fri, 31 May 2024 04:47:11 -0400
+Received: from ASHBCASHYB4.ad.analog.com (10.64.17.132) by
+ ASHBMBX9.ad.analog.com (10.64.17.10) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.14; Fri, 31 May 2024 04:47:05 -0400
+ 15.2.986.14; Fri, 31 May 2024 04:47:10 -0400
 Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by
- ASHBCASHYB5.ad.analog.com (10.64.17.133) with Microsoft SMTP Server
+ ASHBCASHYB4.ad.analog.com (10.64.17.132) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.14; Fri, 31 May 2024 04:47:04 -0400
+ 15.2.986.14; Fri, 31 May 2024 04:47:10 -0400
 Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
  (10.64.17.10) with Microsoft SMTP Server id 15.2.986.14 via Frontend
- Transport; Fri, 31 May 2024 04:47:04 -0400
+ Transport; Fri, 31 May 2024 04:47:10 -0400
 Received: from radu.ad.analog.com ([10.48.65.189])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 44V8kshd031459;
-	Fri, 31 May 2024 04:46:56 -0400
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 44V8kshe031459;
+	Fri, 31 May 2024 04:47:06 -0400
 From: Radu Sabau <radu.sabau@analog.com>
 To: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
         Jonathan Corbet <corbet@lwn.net>, <linux-hwmon@vger.kernel.org>,
         <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: Radu Sabau <radu.sabau@analog.com>, Nuno Sa <nuno.sa@analog.com>
-Subject: [PATCH v6 1/2] hwmon: Add PEC attribute support to hardware monitoring core
-Date: Fri, 31 May 2024 11:46:43 +0300
-Message-ID: <20240531084645.12935-1-radu.sabau@analog.com>
+CC: Radu Sabau <radu.sabau@analog.com>
+Subject: [PATCH v6 2/2] drivers: hwmon: max31827: Add PEC support
+Date: Fri, 31 May 2024 11:46:44 +0300
+Message-ID: <20240531084645.12935-2-radu.sabau@analog.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240531084645.12935-1-radu.sabau@analog.com>
+References: <20240531084645.12935-1-radu.sabau@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,253 +85,127 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-ORIG-GUID: jkIseQdnZ54Zs506JX4nCrbqLBUdkAoP
-X-Proofpoint-GUID: jkIseQdnZ54Zs506JX4nCrbqLBUdkAoP
+X-Proofpoint-GUID: ZR_1fOSEMhxZW_gt8hhdnT9LNNr8S_Kz
+X-Proofpoint-ORIG-GUID: ZR_1fOSEMhxZW_gt8hhdnT9LNNr8S_Kz
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
  definitions=2024-05-31_04,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- lowpriorityscore=0 suspectscore=0 malwarescore=0 mlxlogscore=999
- mlxscore=0 priorityscore=1501 bulkscore=0 adultscore=0 phishscore=0
- clxscore=1015 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2405310064
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
+ clxscore=1015 mlxlogscore=999 priorityscore=1501 adultscore=0 bulkscore=0
+ phishscore=0 spamscore=0 malwarescore=0 lowpriorityscore=0 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
+ definitions=main-2405310064
 
-From: Guenter Roeck <linux@roeck-us.net>
+Add support for PEC by configuring the chip accordingly to the hwmon core PEC
+attribute handling
+Handle hwmon_chip_pec attribute writing in the max31827_write in the
+hwmon_chip type switch case, approaching the same code structure
+as for temp writing.
 
-Several hardware monitoring chips optionally support Packet Error Checking
-(PEC). For some chips, PEC support can be enabled simply by setting
-I2C_CLIENT_PEC in the i2c client data structure. Others require chip
-specific code to enable or disable PEC support.
-
-Introduce hwmon_chip_pec and HWMON_C_PEC to simplify adding configurable
-PEC support for hardware monitoring drivers. A driver can set HWMON_C_PEC
-in its chip information data to indicate PEC support. If a chip requires
-chip specific code to enable or disable PEC support, the driver only needs
-to implement support for the hwmon_chip_pec attribute to its write
-function.
-
-The hardware monitoring core does not depend on the I2C subsystem after
-this change. However, the I2C subsystem needs to be reachable. This
-requires a new HWMON dependency to ensure that HWMON can only be built
-as module if I2C is built as module. This should not make a practical
-difference.
-
-Cc: Radu Sabau <radu.sabau@analog.com>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Acked-by: Nuno Sa <nuno.sa@analog.com>
+Signed-off-by: Radu Sabau <radu.sabau@analog.com>
 ---
- drivers/hwmon/Kconfig |   1 +
- drivers/hwmon/hwmon.c | 136 +++++++++++++++++++++++++++++++++++++-----
- include/linux/hwmon.h |   2 +
- 3 files changed, 123 insertions(+), 16 deletions(-)
+Change log:
+v2:
+ *Rebase on top of v6.9
+ *Attach pec attribute only to i2c device
+ *Fix bug to attach pec attribute to i2c device if the device supports it.
+v3:
+ *Use only one variable to write PEC_EN bit in configuration register
+ *Use regmap_set_bits to set PEC_EN bit when requested instead of
+  regmap_update_bits.
+ *Fix typo in commit message.
+v4:
+ *Use regmap_clear_bits to clear PEC_EN bit when requested instead of
+  regmap_update_bits.
+v5:
+ *Adapt driver to the new hwmon PEC attribute handling from the hwmon core.
+v6:
+ *Apply patch containing hwmon core code and rebase driver PEC patch on top
+  of it.
+ *Handle hwmon_chip_pec attribute write in the max31827_write function, the same
+  way temp writes are handled, therefore remove the max31827_chip_write function
+ *Fix typos.
+---
+ Documentation/hwmon/max31827.rst | 13 ++++++++++---
+ drivers/hwmon/max31827.c         | 18 ++++++++++++------
+ 2 files changed, 22 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
-index e14ae18a973b..7f384a2494c9 100644
---- a/drivers/hwmon/Kconfig
-+++ b/drivers/hwmon/Kconfig
-@@ -6,6 +6,7 @@
- menuconfig HWMON
- 	tristate "Hardware Monitoring support"
- 	depends on HAS_IOMEM
-+	depends on I2C || I2C=n
- 	default y
- 	help
- 	  Hardware monitoring devices let you monitor the hardware health
-diff --git a/drivers/hwmon/hwmon.c b/drivers/hwmon/hwmon.c
-index 3b259c425ab7..1fdea8b1ec91 100644
---- a/drivers/hwmon/hwmon.c
-+++ b/drivers/hwmon/hwmon.c
-@@ -14,6 +14,7 @@
- #include <linux/err.h>
- #include <linux/gfp.h>
- #include <linux/hwmon.h>
-+#include <linux/i2c.h>
- #include <linux/idr.h>
- #include <linux/kstrtox.h>
- #include <linux/list.h>
-@@ -309,6 +310,103 @@ static int hwmon_attr_base(enum hwmon_sensor_types type)
- 	return 1;
+diff --git a/Documentation/hwmon/max31827.rst b/Documentation/hwmon/max31827.rst
+index 44ab9dc064cb..9c11a9518c67 100644
+--- a/Documentation/hwmon/max31827.rst
++++ b/Documentation/hwmon/max31827.rst
+@@ -131,7 +131,14 @@ The Fault Queue bits select how many consecutive temperature faults must occur
+ before overtemperature or undertemperature faults are indicated in the
+ corresponding status bits.
+ 
+-Notes
+------
++PEC Support
++-----------
++
++When reading a register value, the PEC byte is computed and sent by the chip.
++
++PEC on word data transaction respresents a signifcant increase in bandwitdh
++usage (+33% for both write and reads) in normal conditions.
+ 
+-PEC is not implemented.
++Since this operation implies there will be an extra delay to each
++transaction, PEC can be disabled or enabled through sysfs.
++Just write 1  to the "pec" file for enabling PEC and 0 for disabling it.
+diff --git a/drivers/hwmon/max31827.c b/drivers/hwmon/max31827.c
+index f8a13b30f100..4d89b6a7060b 100644
+--- a/drivers/hwmon/max31827.c
++++ b/drivers/hwmon/max31827.c
+@@ -24,6 +24,7 @@
+ 
+ #define MAX31827_CONFIGURATION_1SHOT_MASK	BIT(0)
+ #define MAX31827_CONFIGURATION_CNV_RATE_MASK	GENMASK(3, 1)
++#define MAX31827_CONFIGURATION_PEC_EN_MASK	BIT(4)
+ #define MAX31827_CONFIGURATION_TIMEOUT_MASK	BIT(5)
+ #define MAX31827_CONFIGURATION_RESOLUTION_MASK	GENMASK(7, 6)
+ #define MAX31827_CONFIGURATION_ALRM_POL_MASK	BIT(8)
+@@ -382,7 +383,8 @@ static int max31827_write(struct device *dev, enum hwmon_sensor_types type,
+ 		}
+ 
+ 	case hwmon_chip:
+-		if (attr == hwmon_chip_update_interval) {
++		switch (attr) {
++		case hwmon_chip_update_interval:
+ 			if (!st->enable)
+ 				return -EINVAL;
+ 
+@@ -410,14 +412,18 @@ static int max31827_write(struct device *dev, enum hwmon_sensor_types type,
+ 				return ret;
+ 
+ 			st->update_interval = val;
+-		}
+-		break;
+ 
++			return 0;
++		case hwmon_chip_pec:
++			return regmap_update_bits(st->regmap, MAX31827_CONFIGURATION_REG,
++						  MAX31827_CONFIGURATION_PEC_EN_MASK,
++						  val ? MAX31827_CONFIGURATION_PEC_EN_MASK : 0);
++		default:
++			return -EOPNOTSUPP;
++		}
+ 	default:
+ 		return -EOPNOTSUPP;
+ 	}
+-
+-	return 0;
  }
  
-+/*
-+ * PEC support
-+ *
-+ * The 'pec' attribute is attached to I2C client devices. It is only provided
-+ * if the i2c controller supports PEC.
-+ *
-+ * The mutex ensures that PEC configuration between i2c device and the hardware
-+ * is consistent. Use a single mutex because attribute writes are supposed to be
-+ * rare, and maintaining a separate mutex for each hardware monitoring device
-+ * would add substantial complexity to the driver for little if any gain.
-+ *
-+ * The hardware monitoring device is identified as child of the i2c client
-+ * device. This assumes that only a single hardware monitoring device is
-+ * attached to an i2c client device.
-+ */
-+
-+static DEFINE_MUTEX(hwmon_pec_mutex);
-+
-+static int hwmon_match_device(struct device *dev, void *data)
-+{
-+	return dev->class == &hwmon_class;
-+}
-+
-+static ssize_t pec_show(struct device *dev, struct device_attribute *dummy,
-+			char *buf)
-+{
-+	struct i2c_client *client = to_i2c_client(dev);
-+
-+	return sprintf(buf, "%d\n", !!(client->flags & I2C_CLIENT_PEC));
-+}
-+
-+static ssize_t pec_store(struct device *dev, struct device_attribute *devattr,
-+			 const char *buf, size_t count)
-+{
-+	struct i2c_client *client = to_i2c_client(dev);
-+	struct hwmon_device *hwdev;
-+	struct device *hdev;
-+	bool val;
-+	int err;
-+
-+	err = kstrtobool(buf, &val);
-+	if (err < 0)
-+		return err;
-+
-+	hdev = device_find_child(dev, NULL, hwmon_match_device);
-+	if (!hdev)
-+		return -ENODEV;
-+
-+	mutex_lock(&hwmon_pec_mutex);
-+
-+	/*
-+	 * If there is no write function, we assume that chip specific
-+	 * handling is not required.
-+	 */
-+	hwdev = to_hwmon_device(hdev);
-+	if (hwdev->chip->ops->write) {
-+		err = hwdev->chip->ops->write(hdev, hwmon_chip, hwmon_chip_pec, 0, val);
-+		if (err && err != -EOPNOTSUPP)
-+			goto unlock;
-+	}
-+
-+	if (!val)
-+		client->flags &= ~I2C_CLIENT_PEC;
-+	else
-+		client->flags |= I2C_CLIENT_PEC;
-+
-+	err = count;
-+unlock:
-+	mutex_unlock(&hwmon_pec_mutex);
-+	put_device(hdev);
-+
-+	return err;
-+}
-+
-+static DEVICE_ATTR_RW(pec);
-+
-+static void hwmon_remove_pec(void *dev)
-+{
-+	device_remove_file(dev, &dev_attr_pec);
-+}
-+
-+static int hwmon_pec_register(struct device *hdev)
-+{
-+	struct i2c_client *client = i2c_verify_client(hdev->parent);
-+	int err;
-+
-+	if (!client ||
-+	    !i2c_check_functionality(client->adapter, I2C_FUNC_SMBUS_PEC))
-+		return 0;
-+
-+	err = device_create_file(&client->dev, &dev_attr_pec);
-+	if (err)
-+		return err;
-+
-+	return devm_add_action_or_reset(hdev, hwmon_remove_pec, &client->dev);
-+}
-+
- /* sysfs attribute management */
- 
- static ssize_t hwmon_attr_show(struct device *dev,
-@@ -397,10 +495,6 @@ static struct attribute *hwmon_genattr(const void *drvdata,
- 	const char *name;
- 	bool is_string = is_string_attr(type, attr);
- 
--	/* The attribute is invisible if there is no template string */
--	if (!template)
--		return ERR_PTR(-ENOENT);
--
- 	mode = ops->is_visible(drvdata, type, attr, index);
- 	if (!mode)
- 		return ERR_PTR(-ENOENT);
-@@ -712,8 +806,8 @@ static int hwmon_genattrs(const void *drvdata,
- 
- 			attr = __ffs(attr_mask);
- 			attr_mask &= ~BIT(attr);
--			if (attr >= template_size)
--				return -EINVAL;
-+			if (attr >= template_size || !templates[attr])
-+				continue;	/* attribute is invisible */
- 			a = hwmon_genattr(drvdata, info->type, attr, i,
- 					  templates[attr], ops);
- 			if (IS_ERR(a)) {
-@@ -849,16 +943,26 @@ __hwmon_device_register(struct device *dev, const char *name, void *drvdata,
- 	INIT_LIST_HEAD(&hwdev->tzdata);
- 
- 	if (hdev->of_node && chip && chip->ops->read &&
--	    chip->info[0]->type == hwmon_chip &&
--	    (chip->info[0]->config[0] & HWMON_C_REGISTER_TZ)) {
--		err = hwmon_thermal_register_sensors(hdev);
--		if (err) {
--			device_unregister(hdev);
--			/*
--			 * Don't worry about hwdev; hwmon_dev_release(), called
--			 * from device_unregister(), will free it.
--			 */
--			goto ida_remove;
-+	    chip->info[0]->type == hwmon_chip) {
-+		u32 config = chip->info[0]->config[0];
-+
-+		if (config & HWMON_C_REGISTER_TZ) {
-+			err = hwmon_thermal_register_sensors(hdev);
-+			if (err) {
-+				device_unregister(hdev);
-+				/*
-+				 * Don't worry about hwdev; hwmon_dev_release(),
-+				 * called from device_unregister(), will free it.
-+				 */
-+				goto ida_remove;
-+			}
-+		}
-+		if (config & HWMON_C_PEC) {
-+			err = hwmon_pec_register(hdev);
-+			if (err) {
-+				device_unregister(hdev);
-+				goto ida_remove;
-+			}
- 		}
- 	}
- 
-diff --git a/include/linux/hwmon.h b/include/linux/hwmon.h
-index edf96f249eb5..e94314760aab 100644
---- a/include/linux/hwmon.h
-+++ b/include/linux/hwmon.h
-@@ -45,6 +45,7 @@ enum hwmon_chip_attributes {
- 	hwmon_chip_power_samples,
- 	hwmon_chip_temp_samples,
- 	hwmon_chip_beep_enable,
-+	hwmon_chip_pec,
+ static ssize_t temp1_resolution_show(struct device *dev,
+@@ -583,7 +589,7 @@ static const struct hwmon_channel_info *max31827_info[] = {
+ 					 HWMON_T_MIN_HYST | HWMON_T_MIN_ALARM |
+ 					 HWMON_T_MAX | HWMON_T_MAX_HYST |
+ 					 HWMON_T_MAX_ALARM),
+-	HWMON_CHANNEL_INFO(chip, HWMON_C_UPDATE_INTERVAL),
++	HWMON_CHANNEL_INFO(chip, HWMON_C_UPDATE_INTERVAL | HWMON_C_PEC),
+ 	NULL,
  };
  
- #define HWMON_C_TEMP_RESET_HISTORY	BIT(hwmon_chip_temp_reset_history)
-@@ -60,6 +61,7 @@ enum hwmon_chip_attributes {
- #define HWMON_C_POWER_SAMPLES		BIT(hwmon_chip_power_samples)
- #define HWMON_C_TEMP_SAMPLES		BIT(hwmon_chip_temp_samples)
- #define HWMON_C_BEEP_ENABLE		BIT(hwmon_chip_beep_enable)
-+#define HWMON_C_PEC			BIT(hwmon_chip_pec)
- 
- enum hwmon_temp_attributes {
- 	hwmon_temp_enable,
 -- 
 2.34.1
 
