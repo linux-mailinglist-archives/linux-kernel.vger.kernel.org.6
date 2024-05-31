@@ -1,44 +1,46 @@
-Return-Path: <linux-kernel+bounces-197120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC1BE8D6675
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:14:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01F6C8D6679
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:14:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C95B61C23CE6
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:14:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51395B2A5D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:14:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F0DC15AAB6;
-	Fri, 31 May 2024 16:13:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42A7A172BA2;
+	Fri, 31 May 2024 16:13:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="dNvXwOiT"
-Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="g0BEU0Z5"
+Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BECA3158D78
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 16:13:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6114158D9C
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 16:13:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717172032; cv=none; b=sblDubUmaTEvidrhSzCUxkGD4C7k7Tw5P+vlBXrIm/sP9NirlPDm3w/Uz03VwDMZ1PrMXNaL+AmrewwtEYnajjDmOUAlS4WplnWsMZP1IW16ALxZZ39c98H8GnY40PJeLnHRZG0pT7A6bvWp6S69XvLp8psi/xrdWcX8AOcSRl4=
+	t=1717172033; cv=none; b=Rn1jfsOfHVPKwVXTTh9hPCZoLzejHvycHCUxDYFV8kF5co3uhZOzsYuW18hnjJbTwOGBfxizjZErn8ePNJKREsAVEOTkBMVOj6+DcCOLVtoENpcMmxw78YbvG0ieJLaOtphcA173M590vVz+rVkwdeap27KYLV3tnPVrSrEimXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717172032; c=relaxed/simple;
-	bh=vZhBBVl8czJfcB3QyAXJ/jzdXjaM/KONvegUH9JNRgQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=aT99DeAkZd3eEgbwM07fJ8qVa8eCegok60kZuVn33dk7DMv3rNvcCZjIOf7ye+5fgl8Y/NJkGtEdlI8efGuc8rjnRyN2o6xSMdHJto8KMWExZQUWarylTKF34U0JMeITcnZZ2kxOrL5Dq5NoykZANRR3ZzXSHAQhmIrWnxm1MvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=dNvXwOiT; arc=none smtp.client-ip=91.218.175.181
+	s=arc-20240116; t=1717172033; c=relaxed/simple;
+	bh=EzyIjuJj/J5dssuEwuYMPWZIo1X0zzcFoeRzZ79QhU0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=h5mZ+uRvm8zl7emSSYkuA30GoNBULfEc5pTv4c+BNjskGWchIxPnEyevD0F1s+eKXpz2zx+C7zeZzqZ4NjLYlF54YqOm2YKTXgXo1+lgqUtzNuxpqagyOgmGJ0uFN/Hgbr4MKwPpLmT/FJgY6+tGTP0zBAf4WqhZA+h804rPszU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=g0BEU0Z5; arc=none smtp.client-ip=91.218.175.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Envelope-To: lpieralisi@kernel.org
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1717172027;
+	t=1717172030;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=9pcEl9M55lrI6aQcGSoBDLIhIuk5i++OCOwZXRusXEo=;
-	b=dNvXwOiTb/9FbHUiQ24hdOMu3t1DwGywelWdjk+2NUVmKRtBIpyCrrYtoSlW435aPZUImW
-	xzraYG7o0qWposzy2mO2QwNEtTKiLsSZpRUvsA1c0szkKJfXdi0x+KGI5jPMEtlulrKYb4
-	b2gMAZs+ZkKiViisJ+mEtCNS0Dfh0Lc=
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cZqpbYK0acYzL/XrtMy6W52K47SmPfVIoW1GfOOCZgI=;
+	b=g0BEU0Z5fo+CppAYRK/JgTR3WszFtmSJ9G6hMLCOCNO3acaJebGGoixYy1870PiBsFGFeg
+	/VBB6X04H4RjW/ksrKfq/tfWAs+DEVye/TL1ckZZuI5dvg/cPgh8mJIW0lOM/pqNdaF0cb
+	FMMmwkT2k712z9wAN9HokGMzc53/UeA=
 X-Envelope-To: kw@linux.com
 X-Envelope-To: robh@kernel.org
 X-Envelope-To: linux-pci@vger.kernel.org
@@ -50,13 +52,8 @@ X-Envelope-To: linux-kernel@vger.kernel.org
 X-Envelope-To: bhelgaas@google.com
 X-Envelope-To: michal.simek@amd.com
 X-Envelope-To: sean.anderson@linux.dev
-X-Envelope-To: bharat.kumar.gogada@xilinx.com
-X-Envelope-To: bharatku@xilinx.com
-X-Envelope-To: helgaas@kernel.org
 X-Envelope-To: conor+dt@kernel.org
 X-Envelope-To: krzysztof.kozlowski+dt@linaro.org
-X-Envelope-To: lorenzo.pieralisi@arm.com
-X-Envelope-To: michal.simek@xilinx.com
 X-Envelope-To: devicetree@vger.kernel.org
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 From: Sean Anderson <sean.anderson@linux.dev>
@@ -72,63 +69,75 @@ Cc: Thippeswamy Havalige <thippeswamy.havalige@amd.com>,
 	Bjorn Helgaas <bhelgaas@google.com>,
 	Michal Simek <michal.simek@amd.com>,
 	Sean Anderson <sean.anderson@linux.dev>,
-	Bharat Kumar Gogada <bharat.kumar.gogada@xilinx.com>,
-	Bharat Kumar Gogada <bharatku@xilinx.com>,
-	Bjorn Helgaas <helgaas@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
 	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Michal Simek <michal.simek@xilinx.com>,
 	devicetree@vger.kernel.org
-Subject: [PATCH v4 0/7] PCI: xilinx-nwl: Add phy support
-Date: Fri, 31 May 2024 12:13:30 -0400
-Message-Id: <20240531161337.864994-1-sean.anderson@linux.dev>
+Subject: [PATCH v4 1/7] dt-bindings: pci: xilinx-nwl: Add phys property
+Date: Fri, 31 May 2024 12:13:31 -0400
+Message-Id: <20240531161337.864994-2-sean.anderson@linux.dev>
+In-Reply-To: <20240531161337.864994-1-sean.anderson@linux.dev>
+References: <20240531161337.864994-1-sean.anderson@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-Add phy subsystem support for the xilinx-nwl PCIe controller. This
-series also includes several small fixes and improvements.
+Add phys properties so Linux can power-on/configure the GTR
+transceivers (xlnx,zynqmp-psgtr-v1.1).
+
+Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+---
 
 Changes in v4:
-- Clarify dt-bindings commit subject/message
-- Explain likely effects of the off-by-one error
-- Trim down UBSAN backtrace
-- Move if to after pci_host_probe
-- Remove if in err_phy
-- Fix error path in phy_enable skipping the first phy
-- Disable phys in reverse order
-- Use dev_err instead of WARN for errors
+- Clarify commit subject/message
 
 Changes in v3:
 - Document phys property
-- Expand off-by-one commit message
 
 Changes in v2:
 - Remove phy-names
 - Add an example
-- Get phys by index and not by name
 
-Sean Anderson (7):
-  dt-bindings: pci: xilinx-nwl: Add phys property
-  PCI: xilinx-nwl: Fix off-by-one in IRQ handler
-  PCI: xilinx-nwl: Fix register misspelling
-  PCI: xilinx-nwl: Rate-limit misc interrupt messages
-  PCI: xilinx-nwl: Clean up clock on probe failure/removal
-  PCI: xilinx-nwl: Add phy support
-  arm64: zynqmp: Add PCIe phys
+ Documentation/devicetree/bindings/pci/xlnx,nwl-pcie.yaml | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
- .../bindings/pci/xlnx,nwl-pcie.yaml           |   7 +
- .../boot/dts/xilinx/zynqmp-zcu102-revA.dts    |   1 +
- drivers/pci/controller/pcie-xilinx-nwl.c      | 139 +++++++++++++++---
- 3 files changed, 124 insertions(+), 23 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/pci/xlnx,nwl-pcie.yaml b/Documentation/devicetree/bindings/pci/xlnx,nwl-pcie.yaml
+index 426f90a47f35..cc50795d170b 100644
+--- a/Documentation/devicetree/bindings/pci/xlnx,nwl-pcie.yaml
++++ b/Documentation/devicetree/bindings/pci/xlnx,nwl-pcie.yaml
+@@ -61,6 +61,11 @@ properties:
+   interrupt-map:
+     maxItems: 4
+ 
++  phys:
++    minItems: 1
++    maxItems: 4
++    description: One phy per logical lane, in order
++
+   power-domains:
+     maxItems: 1
+ 
+@@ -110,6 +115,7 @@ examples:
+   - |
+     #include <dt-bindings/interrupt-controller/arm-gic.h>
+     #include <dt-bindings/interrupt-controller/irq.h>
++    #include <dt-bindings/phy/phy.h>
+     #include <dt-bindings/power/xlnx-zynqmp-power.h>
+     soc {
+         #address-cells = <2>;
+@@ -138,6 +144,7 @@ examples:
+                             <0x0 0x0 0x0 0x3 &pcie_intc 0x3>,
+                             <0x0 0x0 0x0 0x4 &pcie_intc 0x4>;
+             msi-parent = <&nwl_pcie>;
++            phys = <&psgtr 0 PHY_TYPE_PCIE 0 0>;
+             power-domains = <&zynqmp_firmware PD_PCIE>;
+             iommus = <&smmu 0x4d0>;
+             pcie_intc: legacy-interrupt-controller {
 -- 
 2.35.1.1320.gc452695387.dirty
 
