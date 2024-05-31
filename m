@@ -1,302 +1,193 @@
-Return-Path: <linux-kernel+bounces-196618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13E518D5EBB
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 11:46:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D04738D5EC5
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 11:48:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 955401F2379A
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 09:46:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86612287D38
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 09:48:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A5361422A8;
-	Fri, 31 May 2024 09:45:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64D151420A8;
+	Fri, 31 May 2024 09:47:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="eEaFYA54"
-Received: from smtp-fw-80008.amazon.com (smtp-fw-80008.amazon.com [99.78.197.219])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MtJccM8H"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A15131422A5
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 09:45:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.219
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B05878C69;
+	Fri, 31 May 2024 09:47:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717148751; cv=none; b=Kjeq6taPa7Uy0eZ9QW9MB63kJbJ3rF4C+icxH70i54Uu7wI+04DhRyPnmhtNlP8I56J2jRh7BTvt6gYmsR9yPcbsQBjSdQ9fNwLrpqJxmUt5vHPPPVLAQBaqmVFxXLsVJRH6iNiRMwZeWngaQ/F/Xwnbpm81ukiMcOclWkNR4H0=
+	t=1717148873; cv=none; b=cqUrW1sLEC8Dp6t3veMGzC67jEkh/Q7l+maAMO9U+HEdZa9Xm/LfS541F4/ZGCqy5kkNndr4z3l+OWjZH8y1T/ePifaXhKJ4uF1Qu0KHoaTwj2pqKeaTvlLIV0bc/2bBH8kCHDPdGy7fsbSeM/KEgY8LkfQKTPeK4qItEd6dB1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717148751; c=relaxed/simple;
-	bh=SEJuXy0foCRsGs/IifrpkObXXd25A36ZEA4zEolK/Nk=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cYkFWNJMyDjLpazPLcLGlXei/axkRVoCU9YaS8X8E+f2Fx93nmXCEr75v8vgrPmF0FkMK7zWTyBVL4kjjfc3vwpHMkuKxbVqos7t3M1uRre4OwLNssWf8zouSYp1DIVHN1RugQlvZhI9+eEfonDlqi7ljM6fUBEX3ohCkB0+fV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=eEaFYA54; arc=none smtp.client-ip=99.78.197.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1717148749; x=1748684749;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=DVVQl3ZHyFGVE+EIxPt01UrwGP4+YpumGHdTM8K0sH0=;
-  b=eEaFYA54TemklDFkokko1YVsRBeA5fQtsbGMCxJO6qemxj/rFPyzkYYH
-   5EVSTEqxxeUtedgc099kGxnPw/Fl7gRdTohj+wir0SNHl4PAVU9029AXc
-   J9Qykvr/AziP80Eof983OFLKxQ5wxB+kaSqp3kmXoioe4v+0KSa7n8BHz
-   8=;
-X-IronPort-AV: E=Sophos;i="6.08,203,1712620800"; 
-   d="scan'208";a="93189632"
-Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.214])
-  by smtp-border-fw-80008.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 09:45:46 +0000
-Received: from EX19MTAEUA002.ant.amazon.com [10.0.43.254:5001]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.39.158:2525] with esmtp (Farcaster)
- id fbbfbe37-de1f-4092-b44e-f5dab31828cb; Fri, 31 May 2024 09:45:45 +0000 (UTC)
-X-Farcaster-Flow-ID: fbbfbe37-de1f-4092-b44e-f5dab31828cb
-Received: from EX19D002EUA004.ant.amazon.com (10.252.50.181) by
- EX19MTAEUA002.ant.amazon.com (10.252.50.126) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.28; Fri, 31 May 2024 09:45:45 +0000
-Received: from EX19MTAUWA001.ant.amazon.com (10.250.64.204) by
- EX19D002EUA004.ant.amazon.com (10.252.50.181) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.28; Fri, 31 May 2024 09:45:45 +0000
-Received: from dev-dsk-hagarhem-1b-b868d8d5.eu-west-1.amazon.com
- (10.253.65.58) by mail-relay.amazon.com (10.250.64.204) with Microsoft SMTP
- Server id 15.2.1258.28 via Frontend Transport; Fri, 31 May 2024 09:45:44
- +0000
-Received: by dev-dsk-hagarhem-1b-b868d8d5.eu-west-1.amazon.com (Postfix, from userid 23002382)
-	id 489B820BED; Fri, 31 May 2024 09:45:44 +0000 (UTC)
-Date: Fri, 31 May 2024 09:45:44 +0000
-From: Hagar Hemdan <hagarhem@amazon.com>
-To: Marc Zyngier <maz@kernel.org>
-CC: Maximilian Heyne <mheyne@amazon.de>, Norbert Manthey <nmanthey@amazon.de>,
-	Thomas Gleixner <tglx@linutronix.de>, Eric Auger <eric.auger@redhat.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<hagarhem@amazon.de>
-Subject: Re: [PATCH] irqchip/gic-v3-its: Fix potential race condition in
- its_vlpi_prop_update()
-Message-ID: <20240531094544.GA3406@amazon.com>
-References: <20240530105713.18552-1-hagarhem@amazon.com>
- <86v82vl34a.wl-maz@kernel.org>
+	s=arc-20240116; t=1717148873; c=relaxed/simple;
+	bh=0AqNLvKpg/geJIUQwuuG7BWkHpEirvzj8sd+Eo2HCbs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NZjxZkkdJ+SGdHIOx8QYI7Xzennq5DBZwJ9xoIyktb2SfwwIV4qiutWbP60/M6XujJxiXYUw/fVXay7lP+QmhytnU4oWsRt9OPY0nq9FV0n3NILT5SNeVAC3KopCA0MtwqPnX246HbXJP6cA1kmTm5U+l30iRzh9pKEx+8Q9NCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MtJccM8H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B96BCC116B1;
+	Fri, 31 May 2024 09:47:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717148873;
+	bh=0AqNLvKpg/geJIUQwuuG7BWkHpEirvzj8sd+Eo2HCbs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=MtJccM8H82DKhcLR/0SkystafddpIZhrxib+SWKxcXaZro5clMJtZ3dh5yqthHZBp
+	 KQmoZWs7/Po4lA53a3Vzrpbzt98YufIqh0UlM1pkenZA7zUsM8POH3QzPibMcLU6pn
+	 TvWKkv+TshtkwIMCAlw/htI2QM2t9Bfm/NlgGwUVZiLTlWVY6Mzj0Su/QdMuwM7luS
+	 3b19+bjNwR1bfNv0HoMI/0EYiRjmIsYlgntnO2ysAO75Ls8BNDX8vDYso1tDa4ozu0
+	 a3+BUL0KOHR3SodPbesbZLQKPJAUZ+enEYdZYmWqx8giq3xMZGLtIR2t01gFtE1nIx
+	 8lTcO3iDTjnig==
+Message-ID: <d740ff64-2de6-424c-9fc0-f1064f8c4f8b@kernel.org>
+Date: Fri, 31 May 2024 11:47:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <86v82vl34a.wl-maz@kernel.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 06/11] power: supply: max77693: Set charge current
+ limits during init
+To: Artur Weber <aweber.kernel@gmail.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, linux-pm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ ~postmarketos/upstreaming@lists.sr.ht, Henrik Grimler <henrik@grimler.se>,
+ Wolfgang Wiedmeyer <wolfgit@wiedmeyer.de>,
+ Denis 'GNUtoo' Carikli <GNUtoo@cyberdimension.org>
+References: <20240530-max77693-charger-extcon-v1-0-dc2a9e5bdf30@gmail.com>
+ <20240530-max77693-charger-extcon-v1-6-dc2a9e5bdf30@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240530-max77693-charger-extcon-v1-6-dc2a9e5bdf30@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, May 30, 2024 at 04:40:37PM +0100, Marc Zyngier wrote:
-> Hi Hagar,
+On 30/05/2024 10:55, Artur Weber wrote:
+> There are two charger current limit registers:
 > 
-> On Thu, 30 May 2024 11:57:13 +0100,
-> Hagar Hemdan <hagarhem@amazon.com> wrote:
-> > 
-> > Similar to commit 046b5054f566 ("irqchip/gic-v3-its: Lock VLPI map array
-> > before translating it"), its_vlpi_prop_update() calls lpi_write_config()
-> > which obtains the mapping information for a VLPI.
-> > This should always be done with vlpi_lock for this device held. Otherwise,
-> > its_vlpi_prop_update() could race with its_vlpi_unmap().
+> - Fast charge current limit (which controls current going from the
+>   charger to the battery);
+> - CHGIN input current limit (which controls current going into the
+>   charger through the cable, and is managed by the CHARGER regulator).
 > 
-> Thanks for reporting this. Note that this issue is not the same as the
-> one you refer to (what you have here is a total absence of locking,
-> while 046b5054f566 fixed a call to get_vlpi_map() outside of an
-> existing critical section).
+> Add functions for setting both of the values, and set them to a
+> safe default value of 500mA at initialization.
 > 
-> > 
-> > This bug was discovered and resolved using Coverity Static Analysis
-> > Security Testing (SAST) by Synopsys, Inc.
+> The default value for the fast charge current limit can be modified
+> by setting the maxim,fast-charge-current-microamp DT property; the
+> CHGIN input current limit will be set up later in the charger detection
+> mechanism.
 > 
-> Should we get a scrolling banner for this kind of advertisements? ;-)
-We either have to include that disclaimer, or cannot send fixes related
-to that commercial tool :)
+> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
+> ---
+>  drivers/power/supply/max77693_charger.c | 45 +++++++++++++++++++++++++++++++++
+>  1 file changed, 45 insertions(+)
 > 
-> > 
-> > Fixes: 015ec0386ab6 ("irqchip/gic-v3-its: Add VLPI configuration handling")
-> > Signed-off-by: Hagar Hemdan <hagarhem@amazon.com>
-> > ---
-> >  drivers/irqchip/irq-gic-v3-its.c | 12 +++++++++---
-> >  1 file changed, 9 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-> > index 40ebf1726393..ecaad1786345 100644
-> > --- a/drivers/irqchip/irq-gic-v3-its.c
-> > +++ b/drivers/irqchip/irq-gic-v3-its.c
-> > @@ -1970,9 +1970,13 @@ static int its_vlpi_unmap(struct irq_data *d)
-> >  static int its_vlpi_prop_update(struct irq_data *d, struct its_cmd_info *info)
-> >  {
-> >  	struct its_device *its_dev = irq_data_get_irq_chip_data(d);
-> > +	int ret = 0;
-> >  
-> > -	if (!its_dev->event_map.vm || !irqd_is_forwarded_to_vcpu(d))
-> > -		return -EINVAL;
-> > +	raw_spin_lock(&its_dev->event_map.vlpi_lock);
-> > +	if (!its_dev->event_map.vm || !irqd_is_forwarded_to_vcpu(d)) {
-> > +		ret = -EINVAL;
-> > +		goto out;
-> > +	}
-> >  
-> >  	if (info->cmd_type == PROP_UPDATE_AND_INV_VLPI)
-> >  		lpi_update_config(d, 0xff, info->config);
-> > @@ -1980,7 +1984,9 @@ static int its_vlpi_prop_update(struct irq_data *d, struct its_cmd_info *info)
-> >  		lpi_write_config(d, 0xff, info->config);
-> >  	its_vlpi_set_doorbell(d, !!(info->config & LPI_PROP_ENABLED));
-> >  
-> > -	return 0;
-> > +out:
-> > +	raw_spin_unlock(&its_dev->event_map.vlpi_lock);
-> > +	return ret;
-> >  }
-> >  
-> >  static int its_irq_set_vcpu_affinity(struct irq_data *d, void *vcpu_info)
-> 
-> As it turns out, all the calls from its_irq_set_vcpu_affinity()
-> require the same lock to be held. So instead of peppering the locking
-> all over the place, we could (should?) hoist the locking into
-> its_irq_set_vcpu_affinity() and avoid future bugs. It also results in
-> a negative diffstat.
-> 
-> Something like the hack below (compile-tested only), which I'm sure
-> the "Coverity Static Analysis Security Testing (SAST) by Synopsys,
-> Inc" will be able to verify...
-> 
-> 	M.
-> 
-> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-> index 40ebf1726393..abc1fb360ce4 100644
-> --- a/drivers/irqchip/irq-gic-v3-its.c
-> +++ b/drivers/irqchip/irq-gic-v3-its.c
-> @@ -1851,23 +1851,18 @@ static int its_vlpi_map(struct irq_data *d, struct its_cmd_info *info)
->  	if (!info->map)
->  		return -EINVAL;
+> diff --git a/drivers/power/supply/max77693_charger.c b/drivers/power/supply/max77693_charger.c
+> index 894c35b750b3..d59b1524b0a4 100644
+> --- a/drivers/power/supply/max77693_charger.c
+> +++ b/drivers/power/supply/max77693_charger.c
+> @@ -28,6 +28,7 @@ struct max77693_charger {
+>  	u32 min_system_volt;
+>  	u32 thermal_regulation_temp;
+>  	u32 batttery_overcurrent;
+> +	u32 fast_charge_current;
+>  	u32 charge_input_threshold_volt;
+>  };
 >  
-> -	raw_spin_lock(&its_dev->event_map.vlpi_lock);
-> -
->  	if (!its_dev->event_map.vm) {
->  		struct its_vlpi_map *maps;
->  
->  		maps = kcalloc(its_dev->event_map.nr_lpis, sizeof(*maps),
->  			       GFP_ATOMIC);
-> -		if (!maps) {
-> -			ret = -ENOMEM;
-> -			goto out;
-> -		}
-> +		if (!maps)
-> +			return -ENOMEM;
->  
->  		its_dev->event_map.vm = info->map->vm;
->  		its_dev->event_map.vlpi_maps = maps;
->  	} else if (its_dev->event_map.vm != info->map->vm) {
-> -		ret = -EINVAL;
-> -		goto out;
-> +		return -EINVAL;
->  	}
->  
->  	/* Get our private copy of the mapping information */
-> @@ -1899,8 +1894,6 @@ static int its_vlpi_map(struct irq_data *d, struct its_cmd_info *info)
->  		its_dev->event_map.nr_vlpis++;
->  	}
->  
-> -out:
-> -	raw_spin_unlock(&its_dev->event_map.vlpi_lock);
->  	return ret;
+> @@ -591,6 +592,35 @@ static int max77693_set_batttery_overcurrent(struct max77693_charger *chg,
+>  			CHG_CNFG_12_B2SOVRC_MASK, data);
 >  }
 >  
-> @@ -1910,20 +1903,14 @@ static int its_vlpi_get(struct irq_data *d, struct its_cmd_info *info)
->  	struct its_vlpi_map *map;
->  	int ret = 0;
->  
-> -	raw_spin_lock(&its_dev->event_map.vlpi_lock);
-> -
->  	map = get_vlpi_map(d);
->  
-> -	if (!its_dev->event_map.vm || !map) {
-> -		ret = -EINVAL;
-> -		goto out;
-> -	}
-> +	if (!its_dev->event_map.vm || !map)
-> +		return -EINVAL;
->  
->  	/* Copy our mapping information to the incoming request */
->  	*info->map = *map;
->  
-> -out:
-> -	raw_spin_unlock(&its_dev->event_map.vlpi_lock);
->  	return ret;
->  }
->  
-> @@ -1933,12 +1920,8 @@ static int its_vlpi_unmap(struct irq_data *d)
->  	u32 event = its_get_event_id(d);
->  	int ret = 0;
->  
-> -	raw_spin_lock(&its_dev->event_map.vlpi_lock);
-> -
-> -	if (!its_dev->event_map.vm || !irqd_is_forwarded_to_vcpu(d)) {
-> -		ret = -EINVAL;
-> -		goto out;
-> -	}
-> +	if (!its_dev->event_map.vm || !irqd_is_forwarded_to_vcpu(d))
-> +		return -EINVAL;
->  
->  	/* Drop the virtual mapping */
->  	its_send_discard(its_dev, event);
-> @@ -1962,8 +1945,6 @@ static int its_vlpi_unmap(struct irq_data *d)
->  		kfree(its_dev->event_map.vlpi_maps);
->  	}
->  
-> -out:
-> -	raw_spin_unlock(&its_dev->event_map.vlpi_lock);
->  	return ret;
->  }
->  
-> @@ -1987,29 +1968,41 @@ static int its_irq_set_vcpu_affinity(struct irq_data *d, void *vcpu_info)
->  {
->  	struct its_device *its_dev = irq_data_get_irq_chip_data(d);
->  	struct its_cmd_info *info = vcpu_info;
-> +	int ret;
->  
->  	/* Need a v4 ITS */
->  	if (!is_v4(its_dev->its))
->  		return -EINVAL;
->  
-> +	raw_spin_lock(&its_dev->event_map.vlpi_lock);
+> +static int max77693_set_input_current_limit(struct max77693_charger *chg,
+> +		unsigned int uamp)
+> +{
+> +	dev_dbg(chg->dev, "CHGIN input current limit: %u\n", uamp);
+
+That's quite useless debug. It duplicates
+max77693_set_fast_charge_current(). Just drop entire wrapper.
+
 > +
->  	/* Unmap request? */
-> -	if (!info)
-> -		return its_vlpi_unmap(d);
-> +	if (!info) {
-> +		ret = its_vlpi_unmap(d);
-> +		goto out;
+> +	return regulator_set_current_limit(chg->regu, (int)uamp, (int)uamp);
+> +}
+> +
+> +static int max77693_set_fast_charge_current(struct max77693_charger *chg,
+> +		unsigned int uamp)
+> +{
+> +	unsigned int data;
+> +
+> +	data = (uamp / 1000) * 10 / 333; /* 0.1A/3 steps */
+> +
+> +	if (data > CHG_CNFG_02_CC_MASK) {
+> +		dev_err(chg->dev, "Wrong value for fast charge current\n");
+> +		return -EINVAL;
 > +	}
->  
->  	switch (info->cmd_type) {
->  	case MAP_VLPI:
-> -		return its_vlpi_map(d, info);
-> +		ret = its_vlpi_map(d, info);
-> +		break;
->  
->  	case GET_VLPI:
-> -		return its_vlpi_get(d, info);
-> +		ret = its_vlpi_get(d, info);
-> +		break;
->  
->  	case PROP_UPDATE_VLPI:
->  	case PROP_UPDATE_AND_INV_VLPI:
-> -		return its_vlpi_prop_update(d, info);
-> +		ret = its_vlpi_prop_update(d, info);
-> +		break;
->  
->  	default:
-> -		return -EINVAL;
-> +		ret = -EINVAL;
->  	}
 > +
-> +out:
-> +	raw_spin_unlock(&its_dev->event_map.vlpi_lock);
-> +	return ret;
->  }
->  
->  static struct irq_chip its_irq_chip = {
+> +	data <<= CHG_CNFG_02_CC_SHIFT;
+> +
+> +	dev_dbg(chg->dev, "Fast charge current: %u (0x%x)\n", uamp, data);
+> +
+> +	return regmap_update_bits(chg->max77693->regmap,
+> +			MAX77693_CHG_REG_CHG_CNFG_02,
+> +			CHG_CNFG_02_CC_MASK, data);
+
+I am surprised that you set current limit via regulator but actual
+charging current value here. I think both should go to regulator in such
+case.
 > 
-> -- 
-> Without deviation from the norm, progress is not possible.
+
+Best regards,
+Krzysztof
+
 
