@@ -1,183 +1,200 @@
-Return-Path: <linux-kernel+bounces-196083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C19668D5700
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 02:36:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38CCC8D570A
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 02:37:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 794FF28784E
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 00:35:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E359A28181A
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 00:37:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AA188F6D;
-	Fri, 31 May 2024 00:35:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vjv6cAn/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ED2879C4;
+	Fri, 31 May 2024 00:37:04 +0000 (UTC)
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7925D4C98;
-	Fri, 31 May 2024 00:35:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717115745; cv=none; b=p//1caKdNFbpXpuvExUr9ZBkr1m2g0nL6gjJu2urLo8mlsWEk47LhHm4zDx6pllv80+MvqRp5HE2xUaQasdhEWZy0MrlrHotp9uZhciofIwDyPG/DQ10HY76lTE89H/qjsNWnu2bheGW2SwawrZxFN3Xrp9wVSjLiUzJG/PMiEA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717115745; c=relaxed/simple;
-	bh=Gy/JnciJhe5Dw470c+ZEo/a9cuF+y5OZIqMUQ5HDt9E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IdFDKuUc+vk6B2kI9KGs/QYWhK+dBk4fVWkpeGHEDy0YdGrYMn1aAOdOmXU9M/xrEs8twk4e8a7uBM0S4u0cHX3j0TYRQbI8GJoZdCsB+XEFK5zD6skaIfN0xJ6n29YMEbgOdicXTJhzfXgimENR/STujDAtPb371C8K59Bj5kI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vjv6cAn/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2261C2BBFC;
-	Fri, 31 May 2024 00:35:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717115745;
-	bh=Gy/JnciJhe5Dw470c+ZEo/a9cuF+y5OZIqMUQ5HDt9E=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=Vjv6cAn/+8UwW97eP2xNnGyEgnK46LMImrvY3alPlMe6zJB3YqyfMbRnz6ZUh0QTH
-	 MFbPrdPpamwGfCBmghdDDBya3ZV5RloAI59bf61J1jr5pdJRmuAVtJJCk8lxJMjh3U
-	 TosgA4htaHDx1Nxp9IXkdLn5KeYshOTz/H45ZcufQ7v8rsuKjtm2F/kp1mK/lXB3C5
-	 JeC9DLO0iDeaHHDxvDFobXBa2Q3pWZ6BUdUStHQcgtdWPNlepQCfsx2hBuYTejITBp
-	 YztEeDXYPGW3jjqQfVBhHC1sXlSq7D1dO2GouwAXxYZFCfxn4TJCenCbUgYXekdatd
-	 V5N4tDacITCQg==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 548E7CE0B6F; Thu, 30 May 2024 17:35:44 -0700 (PDT)
-Date: Thu, 30 May 2024 17:35:44 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Russell King <linux@armlinux.org.uk>,
-	Naresh Kamboju <naresh.kamboju@linaro.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	lkft-triage@lists.linaro.org,
-	Linux Regressions <regressions@lists.linux.dev>,
-	rcu <rcu@vger.kernel.org>, Dan Carpenter <dan.carpenter@linaro.org>,
-	Joel Fernandes <joel@joelfernandes.org>, neeraj.upadhyay@kernel.org,
-	John Ogness <john.ogness@linutronix.de>, broonie@kernel.org
-Subject: Re: arm-linux-gnueabihf-ld:
- kernel/rcu/update.o:update.c:(.text+0x1cc4): more undefined references to
- `__bad_cmpxchg' follow
-Message-ID: <3ce74da3-0b21-439b-af72-e80bfe0e9f02@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <CA+G9fYuZ+pf6p8AXMZWtdFtX-gbG8HMaBKp=XbxcdzA_QeLkxQ@mail.gmail.com>
- <Zlhwe5owmbzI3jJK@shell.armlinux.org.uk>
- <7f61cc11-7afe-46ac-9f07-62e0b9ab429f@app.fastmail.com>
- <5426b25f-9c25-4938-99e8-5cdea75e4d3b@paulmck-laptop>
- <214a33ac-d4fa-4d48-ad3c-ad8b00ae1a5e@paulmck-laptop>
- <20240530215153.GA466604@thelio-3990X>
- <583e2476-50c5-4f9c-85af-f4489a53083b@paulmck-laptop>
- <20240530233053.GA1601862@thelio-3990X>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 399AD4C84;
+	Fri, 31 May 2024 00:37:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717115823; cv=fail; b=feJ1fyk/vBS205isIHkFEMuG8rWB2zhXQIC2K35ngjCEnVz7HZ+Ds2ZFCEbgrpcRqqqPXENoRnDg2LPoizWh5MkBdTWWH6mpes4f6ujQyv167E1AePNQNamSmb8HO77ecneLAuIUtoRUZaIjk7TlLiQqXTD8b1NoH6BKErCSKgI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717115823; c=relaxed/simple;
+	bh=iSF1LU/zCQFY6TG4/nLW6Dy8b/j9TBL8D08QpH7NoTI=;
+	h=To:Cc:Subject:From:In-Reply-To:Message-ID:References:Date:
+	 Content-Type:MIME-Version; b=ps0oo16hJ1BmGQGXIpjoG/lWRaZK3Pa5nIBqCvbEXmtoFRP92bAHIKn3pwECkw5G5uVQbeTA3uiB7459dwGaHTO/9dSlCoW//hD9Uu+oNh4pYnykDfff/qhfr8uXlibIOfKibmz+cHqA4V7Bw5rYDPcnChvWeWZ8E/7XgNKs8TQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44UFUkai019783;
+	Fri, 31 May 2024 00:36:53 GMT
+DKIM-Signature: =?UTF-8?Q?v=3D1;_a=3Drsa-sha256;_c=3Drelaxed/relaxed;_d=3Doracle.com;_h?=
+ =?UTF-8?Q?=3Dcc:content-type:date:from:in-reply-to:message-id:mime-versio?=
+ =?UTF-8?Q?n:references:subject:to;_s=3Dcorp-2023-11-20;_bh=3D/YUgjiU1wUgo?=
+ =?UTF-8?Q?9dz5C1fJlVXVYYw4ag8wq4Ha72btmi0=3D;_b=3DQuUH7vg8aPjutyxbiBPxmaA?=
+ =?UTF-8?Q?LG2TeKW0iYOBjsDOVZdFm8wmjhiZFh2L7frMMikLgqWGG_XMf+R9+TSFtQzaXuj?=
+ =?UTF-8?Q?woWfEVHGGJFjGwnT5AAp9+AnsDsYpY+Sq1wpaiTcMaS5TFdkuRs_4VhWINp1HCb?=
+ =?UTF-8?Q?TQ9F/1LyayouYmxGLUo2/LIk+RTFtO0WHw4fSsWXMWFPtV9w57nyzvcg2_xg5pu?=
+ =?UTF-8?Q?vNBb9vkZxenYGz5syi0W18T/hAHqq3zqzn11agquGFMo+JJmj52tPgUh2V1BqqI?=
+ =?UTF-8?Q?_ZK58tHKCW8oSEGlvd/mFPUL28vDdt5WxzD5O4jhXPA7SrHq0Kk3/4VwNX3nm8V?=
+ =?UTF-8?Q?a7Nqcp_qQ=3D=3D_?=
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3yb8g9taqt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 31 May 2024 00:36:53 +0000
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 44V0ChWV024127;
+	Fri, 31 May 2024 00:36:52 GMT
+Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2176.outbound.protection.outlook.com [104.47.58.176])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3yc52ejtb0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 31 May 2024 00:36:52 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=HBGeKIm0hzCxDUxxIIwtAJvlZgdFQVxi++6WKSzcrsmeSFNFW/42bLx/M+On0QBenpSBdPiMNi0bEpd45NBiEA+m3EKdliCwkv1EXotxaUHCoRwVcmMihTDHP8xWlPH3RLkdp5GDCuaIhFWe982Ew2IYXhoNdCQZlQgtfM+T+o5XS61dn+mlXeCVwyt8+hb63ItxbOKK2yEA4VlCJdHMOlM/mVqJLBqrZXHG7IccwSQuKqtJjPnLoQaKbCRpybkm6ZQvu2z1QRkOi/eChtULTRH3hHKTVzXWQtvQtuqK0Tn4afHkuYstxeFrdio4RgQTYixXCKSbZvgTNUAP5RR77w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/YUgjiU1wUgo9dz5C1fJlVXVYYw4ag8wq4Ha72btmi0=;
+ b=m5UOd8NvSjXeQyUcQn2Pvx10L3eHaQPKBc75PsMXnSiJwGef8ohb44t+8dcOOPsWW2eTG+I4A5eqTUf52XW7/KcjGr2xQ1yYLGTkNACmt3ZWDjLGEAu/hb4tUksAoZAMGtIjcBc8Hfm1z3qDnnrmsa0DtrAev5k1tK2Ua7q1mECIsJcA/zZZyEO3pPzB6iyCG1sbym7QnvyGKOFgQ40A8cpw2SI9QiWv4zGwV9t0OHNJa5ox/xBWourgVBIfg1NLkfOsFtb+mLWhaQVtJGE88XFeWXfR2nsaN/gewTlDcGjI/+7XqM3EWzk9p/+xkiiuKgozyaGT99FgV2ih63Qt9g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/YUgjiU1wUgo9dz5C1fJlVXVYYw4ag8wq4Ha72btmi0=;
+ b=EM9rdmoJwQNP0XBvXSU6BdsB5L4ybMYPCiVzR5xEw4hUgUe4e5ZMDkIWmkbLzgnnbQvUKO/sDsPTRjU1Vc8+OZXJHoyplh4Ma0yHRQwquKi/tUU27NPxHLvHCBUhrzWpFmZ1CE/+0A2dr8Dm7DbN0+oc32T7uiwPKQDWaJ1eXkA=
+Received: from PH0PR10MB4759.namprd10.prod.outlook.com (2603:10b6:510:3d::12)
+ by BN0PR10MB4870.namprd10.prod.outlook.com (2603:10b6:408:12a::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.24; Fri, 31 May
+ 2024 00:36:51 +0000
+Received: from PH0PR10MB4759.namprd10.prod.outlook.com
+ ([fe80::5c74:6a24:843e:e8f7]) by PH0PR10MB4759.namprd10.prod.outlook.com
+ ([fe80::5c74:6a24:843e:e8f7%4]) with mapi id 15.20.7633.021; Fri, 31 May 2024
+ 00:36:50 +0000
+To: Avri Altman <avri.altman@wdc.com>
+Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Bart Van Assche
+ <bvanassche@acm.org>, Bean Huo <beanhuo@micron.com>,
+        Peter Wang
+ <peter.wang@mediatek.com>, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 0/3] scsi: ufs: Allow RTT negotiation
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+In-Reply-To: <20240530142510.734-1-avri.altman@wdc.com> (Avri Altman's message
+	of "Thu, 30 May 2024 17:25:06 +0300")
+Organization: Oracle Corporation
+Message-ID: <yq1zfs6es12.fsf@ca-mkp.ca.oracle.com>
+References: <20240530142510.734-1-avri.altman@wdc.com>
+Date: Thu, 30 May 2024 20:36:48 -0400
+Content-Type: text/plain
+X-ClientProxiedBy: SJ0PR05CA0188.namprd05.prod.outlook.com
+ (2603:10b6:a03:330::13) To PH0PR10MB4759.namprd10.prod.outlook.com
+ (2603:10b6:510:3d::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240530233053.GA1601862@thelio-3990X>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH0PR10MB4759:EE_|BN0PR10MB4870:EE_
+X-MS-Office365-Filtering-Correlation-Id: adffea79-2ab6-4262-18c0-08dc8109c313
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|366007|376005;
+X-Microsoft-Antispam-Message-Info: 
+	=?us-ascii?Q?h88cEPwbc+nzc5nSaEfoAxmkW3QCirEbfIotJmuRR+8DnOAkn7hCXBZH1VmM?=
+ =?us-ascii?Q?sFhUCPJdMnRu0awIoupoy3yRy/6kudtzpF+GfqOWWV3Lw51dfsyWRjHBijU4?=
+ =?us-ascii?Q?xb91AiNjju7nqaxmGSZRFFyqBtaeCWSydTN1s9uEgOBrKs8AorrnTw15Ijb9?=
+ =?us-ascii?Q?oLtFzRCtKcaZtk//nKPGGu8YHfv7ypeOu4j4VyXR1eCy36Cn6zJ/F65WsEUI?=
+ =?us-ascii?Q?jAgko6TXXWCzZRJO5MQPtLZdqVbBYCzGFUQI9VGEtrIwiped+mr0vMnK9HTV?=
+ =?us-ascii?Q?5ds1lLlM37LocgQVYqc3SoZV34Qqhrx3RGena9t8soStwadGzkXU8YhgJzIH?=
+ =?us-ascii?Q?qUqlsk9yZ42sZXKaN8ewrFERH1SBezauqbXhKEerH1+BGDuUV/qNOS0t5GWV?=
+ =?us-ascii?Q?ITRXWv7HlMoEhrJncNPRIsRIp2wZu3DKmjOOuMdZAcOQuIdu/7VLFwxeySgP?=
+ =?us-ascii?Q?/ducn0e8/VdCZv3n7snNuB8EBKBC+DqCwuLFu+b7vGzcR7sm4MUww9hSPQ3s?=
+ =?us-ascii?Q?4/Od/W20rlVv5BTvoDJ7fBDE+1Yo5cyljS6MQH0cIbMW/B0MAVHVSxRHgrHu?=
+ =?us-ascii?Q?jwJabmY25gTBJxmAA5phUhTIOl/vXwUS5PiuEMETLGMhCYK7E1V2QVHQgBEB?=
+ =?us-ascii?Q?57+9hVKBcshr4ejyhphx8ZXujSe9pdDlAzvWUo5jDi4eBpjtn7hx4bcEpzj7?=
+ =?us-ascii?Q?XLLA1Ze/TNBbWDHFnp5pGktowOK0uNKA74OhxDiU8dr9xtZ6qv7b3q7kk9sQ?=
+ =?us-ascii?Q?fMpE/WTqNScvlCEH4socNeg4vX6hySDybeENBVfJow5BZE3gQ4pxDXVZAJb8?=
+ =?us-ascii?Q?RqjuqF+GsG0lzJfKtCj6ucA/D+ynNOWEl4xvFK3aZQNZ3AW+JUALBOzq9gnM?=
+ =?us-ascii?Q?87h96ORcEo4f5B46iym9EYRYuAwD/ZUAbkrCkCeVL956XSwIpjmzswl27ngZ?=
+ =?us-ascii?Q?ziGiqMbvLs4HJkCb8KcA9CPCP/zESoMysPUCyN6NRDmz3+0RadUuL/DfU1zG?=
+ =?us-ascii?Q?bPLaFalS/sOpUb0wuCD4cqRlyx/VaOrfGkKcaz4FEQ3adHi+dXNXW4BCyu/F?=
+ =?us-ascii?Q?eVI3RJTf7xDMZM08a4gnQmekeEYFENWrImYgU5JY5DzmwPlxD6LXjbBy+F3R?=
+ =?us-ascii?Q?eoOODXwM0EKr8qP3W7ra8zIAeRHnTiAFO/822w7ysoku8YHBbYWKBfoqgvjN?=
+ =?us-ascii?Q?w/fAlLpKK9LFsABa5ieIa0ohw2MVCR4gt3MkCaNCK2dPU6mFkQql3Re6NEC4?=
+ =?us-ascii?Q?vcYdwgUH+sjFkCBPvCHKhP8nBN1ZcJByaMZNazWd2Q=3D=3D?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB4759.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(366007)(376005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?us-ascii?Q?l3RNdPhT458qWgyBkj59lI2B59qZuXIRTkI6nLLa+k7y4cs5OwqQ8CVX7EMI?=
+ =?us-ascii?Q?jssDzBvb1BY9dNmYCsXf1LIeQxfXtRDw5uOiHL1XqHB33LM2iRJDvfI4m5mf?=
+ =?us-ascii?Q?jqNqYcKcRXMiiwWWe77Us1uYImjb9F6qq3eQRmB2g99a4xEacaNYGKvplR0m?=
+ =?us-ascii?Q?w33y4Hbpb0C0km6dKD9ZvrSdJn566Pe3RAOPJEZr0qcG/iSq7MzUTtQZybor?=
+ =?us-ascii?Q?KRUKrJceChU/YhkKweKbqZhVEdDZFHXuIDYI3AEcRzqFVIUPqW9FrX42f5ap?=
+ =?us-ascii?Q?HJ35is1u/MwqCtX2k7UR72HAR3v0FVi8xCXOcPwtgCTM/e4cxIltUJzMpb6w?=
+ =?us-ascii?Q?Ksp/Q/8XN4htoGizc6x75Rlt4BdX0mxfBP+nuyfW0b3kyfU6YbzANwI5k4EO?=
+ =?us-ascii?Q?P5z4RwpE+9j7q67+UMT+ridaNw6fq7EIdBppUfEcJIdwCxQOCqgY5q+9geKb?=
+ =?us-ascii?Q?Ni/+MKnRliPrNyr61eJo/4oUZv0MIO7mxmPSCQMSc6MhGnM4cFakdFplpn8l?=
+ =?us-ascii?Q?xQlGmLWAQsadCtjU3rzTAhtkFD/LRoWwYROWj51LBqfHdlPhCJOo1/oIS50K?=
+ =?us-ascii?Q?ODlq61btjxjFfC8F+An0CCviLaHZk20Y1tT17a1nyQPTzfLBaBjcCEBB5iM+?=
+ =?us-ascii?Q?bp4XUNi0jPD9Dj6Nv1WG5sjqBL47XSKei1X/0VTNmb0TYQ6GVc4pnKhBBbXL?=
+ =?us-ascii?Q?E/lwK33JyyuTbpoImPaRpcLxrFEkugbvqYBxwyLTU9PgpEn71M2AgD5LTVFg?=
+ =?us-ascii?Q?wrZ6pszUbisgB8G79BC3gAAEI6eEpwrv8OMuWHsxx48zKqKTtdtxixh8yYDK?=
+ =?us-ascii?Q?4U1Phip47SXFNDG+N6LNLCVeRiuwunfPykenID0sdyDnr29hPrRMDMG3O+fd?=
+ =?us-ascii?Q?0S6UmuxQl6vAvmgqMq7otKo7gDMHc7s6Tp88durmzW6QbC/bDxXl72HhPw+P?=
+ =?us-ascii?Q?aH/A0avSa4gIP3ay8Aimvbly/oyA7UhH/+Ru2cP4V1UOxS/b3ZQVenweDGup?=
+ =?us-ascii?Q?Xsj8KjtZ36CS+Ee9ag8OTNSvImsg6IgJzdzWX6ubBl1LXOEfg4dMdsVqwkVb?=
+ =?us-ascii?Q?YMiZxzfbV389Lx4Fhzfq5R0n7mL4e8PSW1/jMvPoCPmyf4KGyJWyXjlqkLNS?=
+ =?us-ascii?Q?KRfng3LKP+3thuRWW0Xl/+E/AuoO1ki1fpHa305Z/XkVk0Dl0Da5y2V3Wcf8?=
+ =?us-ascii?Q?lnGc5y4BbUXB23hzUyLtyr6QpOyMolwOWU/hM0ZO1WbdilicFpHljqgaDUYz?=
+ =?us-ascii?Q?lxlT6NtOURpUQPO0/8DILIo7Ris4KuOm07f4pR1Qfl3X5+Qbgf+3wS7ZiIWu?=
+ =?us-ascii?Q?m2MzuVtzWEVhqkWU0pZaSxQ02lMTHRtaN3SO8YuxEPqFmlpyPrxxwkUbPmvW?=
+ =?us-ascii?Q?UBJDQAucHRzauF0gen6L2510lCWiug3QcfucDBhsbxzwa8XpSWn7JADyH6OJ?=
+ =?us-ascii?Q?i77HxM28EFQ3MIqvUQKNFLtDLjWbFfZneVgzdupMQc7h4HgmyNOAAuAVdBOF?=
+ =?us-ascii?Q?GeThGgcxn/8zUM4cP/ExsiJihfniwzIh6sRV5leOVbpCt4QXVEUDD6AhsCnN?=
+ =?us-ascii?Q?rksiV6t0kpPqdRAVnWziAyo0SrcMeOFZ3kazz2oQFyulqA8VU8WP9KiAuc6v?=
+ =?us-ascii?Q?+A=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	Kejxv7VhLMpf673r8ci9/a5RFgxOQ8Gp8w7k+0m0isxAJIs+DkzSE94tDLrDCrE4YLvuhmOoL/7Q+zaRS610+1By8+0QwSeoHv0T19GHUSLdnRozu5uuNbvsYuDJZA95WwKyTPVUq04FAQvQ1SGrlATYlrd8owUlEzYyXab55k3P3HCvOlmmxZMPo0XwL3xwgp66FMXnFTdrrGaLpTULo4m7kJhLRrBQNGLVdvWGmzfyt2/AnuWwDkql9fqRCpwC0400xEgYKjpVGT1OeayQHrv7eU5ZC6bXaYDT1ZmZKsnEl/FfZjVGRGfFUiQ3hovsOgu6xpyU4ItGtIMzUeNa99ybGzOWXx/bn9+L2SvAEzsaa/wMiFmsmIXes9jHfV6DjExlgHmOIVb+VgrZ4+Q/eQB3U30fqAXdHzdt/l0Xint1Z8hbP70SrbYQqLdu6uvCGNU+f5lmPc9J6yXuDERQlCteVqR/TsGpgAjlzPmDLvVtN/Y0Mzc9Nh+o/CnnpLBbbSmgvM/4RFIfdylQIMQO/i71b7zDhofXTIodholxB/xDOQTq/6z7YeZYKqpvGd4DcePo9Dl2AUGLbPE6ms7UIu+x75KpoOmuaC0bfIg0H0o=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: adffea79-2ab6-4262-18c0-08dc8109c313
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB4759.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 May 2024 00:36:50.8720
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: AeGFcv54lCxUmMLcDQQmUgZb4QBTDFc4P8oMSu/DMLZ2JDD0ECrkpIwtcrygSaOisP13GiOVDgR6BzlEPdEg4+vj61PcClsXr3IuLVheEqI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN0PR10MB4870
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-30_21,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 malwarescore=0 mlxscore=0
+ mlxlogscore=614 phishscore=0 spamscore=0 adultscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2405010000
+ definitions=main-2405310002
+X-Proofpoint-GUID: Ft0ApAVea3hqTtYCmX5DRB17QrmgkZ7k
+X-Proofpoint-ORIG-GUID: Ft0ApAVea3hqTtYCmX5DRB17QrmgkZ7k
 
-On Thu, May 30, 2024 at 04:30:53PM -0700, Nathan Chancellor wrote:
-> On Thu, May 30, 2024 at 03:05:21PM -0700, Paul E. McKenney wrote:
-> > On Thu, May 30, 2024 at 02:52:48PM -0700, Nathan Chancellor wrote:
-> > > On Thu, May 30, 2024 at 10:24:05AM -0700, Paul E. McKenney wrote:
-> > > > And for an untested first attempt at a fix.
-> > > > 
-> > > > What did I mess up this time?  ;-)
-> > > 
-> > > An include for cmpxchg-emu.h ;)
-> > > 
-> > >   In file included from arch/arm/include/asm/atomic.h:16,
-> > >                    from include/linux/atomic.h:7,
-> > >                    from include/asm-generic/bitops/lock.h:5,
-> > >                    from arch/arm/include/asm/bitops.h:245,
-> > >                    from include/linux/bitops.h:63,
-> > >                    from include/linux/log2.h:12,
-> > >                    from kernel/bounds.c:13:
-> > >   arch/arm/include/asm/cmpxchg.h: In function '__cmpxchg':
-> > >   arch/arm/include/asm/cmpxchg.h:167:26: error: implicit declaration of function 'cmpxchg_emu_u8' [-Werror=implicit-function-declaration]
-> > >     167 |                 oldval = cmpxchg_emu_u8((volatile u8 *)ptr, old, new);
-> > >         |                          ^~~~~~~~~~~~~~
-> > >   cc1: some warnings being treated as errors
-> > 
-> > Good catch, and thank you for testing this!  Does the updated version
-> > shown below do better?
-> 
-> Yes, that matches what I tested locally before I replied initially.
 
-Very good!  May I please add your Tested-by?
+Avri,
 
-							Thanx, Paul
+> The rtt-upiu packets precede any data-out upiu packets, thus
+> synchronizing the data input to the device: this mostly applies to write
+> operations, but there are other operations that requires rtt as well.
 
-> Thanks for the quick fix!
-> 
-> Cheers,
-> Nathan
-> 
-> > 							Thanx, Paul
-> > 
-> > ------------------------------------------------------------------------
-> > 
-> > commit 74e3470afacaa9d2f37db4773a5fef887ac4ef56
-> > Author: Paul E. McKenney <paulmck@kernel.org>
-> > Date:   Thu May 30 10:11:31 2024 -0700
-> > 
-> >     ARM: Emulate one-byte cmpxchg
-> >     
-> >     Use the new cmpxchg_emu_u8() to emulate one-byte cmpxchg() on ARM systems
-> >     with ARCH < ARMv6K.
-> >     
-> >     [ paulmck: Apply Arnd Bergmann and Nathan Chancellor feedback. ]
-> >     
-> >     Reported-by: Mark Brown <broonie@kernel.org>
-> >     Closes: https://lore.kernel.org/all/54798f68-48f7-4c65-9cba-47c0bf175143@sirena.org.uk/
-> >     Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
-> >     Closes: https://lore.kernel.org/all/CA+G9fYuZ+pf6p8AXMZWtdFtX-gbG8HMaBKp=XbxcdzA_QeLkxQ@mail.gmail.com/
-> >     Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> >     Cc: "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
-> >     Cc: Arnd Bergmann <arnd@arndb.de>
-> >     Cc: Andrew Davis <afd@ti.com>
-> >     Cc: Andrew Morton <akpm@linux-foundation.org>
-> >     Cc: Linus Walleij <linus.walleij@linaro.org>
-> >     Cc: Eric DeVolder <eric.devolder@oracle.com>
-> >     Cc: Rob Herring <robh@kernel.org>
-> >     Cc: <linux-arm-kernel@lists.infradead.org>
-> > 
-> > diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-> > index ee5115252aac4..a867a7d967aa5 100644
-> > --- a/arch/arm/Kconfig
-> > +++ b/arch/arm/Kconfig
-> > @@ -34,6 +34,7 @@ config ARM
-> >  	select ARCH_MIGHT_HAVE_PC_PARPORT
-> >  	select ARCH_OPTIONAL_KERNEL_RWX if ARCH_HAS_STRICT_KERNEL_RWX
-> >  	select ARCH_OPTIONAL_KERNEL_RWX_DEFAULT if CPU_V7
-> > +	select ARCH_NEED_CMPXCHG_1_EMU if CPU_V6
-> >  	select ARCH_SUPPORTS_ATOMIC_RMW
-> >  	select ARCH_SUPPORTS_CFI_CLANG
-> >  	select ARCH_SUPPORTS_HUGETLBFS if ARM_LPAE
-> > diff --git a/arch/arm/include/asm/cmpxchg.h b/arch/arm/include/asm/cmpxchg.h
-> > index 44667bdb4707a..a428e06fe94ee 100644
-> > --- a/arch/arm/include/asm/cmpxchg.h
-> > +++ b/arch/arm/include/asm/cmpxchg.h
-> > @@ -5,6 +5,7 @@
-> >  #include <linux/irqflags.h>
-> >  #include <linux/prefetch.h>
-> >  #include <asm/barrier.h>
-> > +#include <linux/cmpxchg-emu.h>
-> >  
-> >  #if defined(CONFIG_CPU_SA1100) || defined(CONFIG_CPU_SA110)
-> >  /*
-> > @@ -162,7 +163,11 @@ static inline unsigned long __cmpxchg(volatile void *ptr, unsigned long old,
-> >  	prefetchw((const void *)ptr);
-> >  
-> >  	switch (size) {
-> > -#ifndef CONFIG_CPU_V6	/* min ARCH >= ARMv6K */
-> > +#ifdef CONFIG_CPU_V6	/* min ARCH < ARMv6K */
-> > +	case 1:
-> > +		oldval = cmpxchg_emu_u8((volatile u8 *)ptr, old, new);
-> > +		break;
-> > +#else /* min ARCH >= ARMv6K */
-> >  	case 1:
-> >  		do {
-> >  			asm volatile("@ __cmpxchg1\n"
+Applied to 6.11/scsi-staging, thanks!
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
 
