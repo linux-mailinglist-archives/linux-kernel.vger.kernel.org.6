@@ -1,111 +1,123 @@
-Return-Path: <linux-kernel+bounces-196778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32A278D61C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:30:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D16D78D61BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:30:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 427EAB250AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:30:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F39A1F27A7B
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:30:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66D9C1586D5;
-	Fri, 31 May 2024 12:30:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E24DD15886E;
+	Fri, 31 May 2024 12:30:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="SMApdGDK"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="E3KaQRf2"
+Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6762AD2D
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 12:30:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDDA3158847
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 12:30:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717158628; cv=none; b=BVDrELH4CqiUYkrkxTIqopYXnLhlvRmyf5GXY9xzzqHy9aYz5dZ99UdXzOtu6Aaz1xCD1fPVJFHGAt0ifJYaOs4IWzyJrx+zINpDxULJ/JIFcJ55cVsTwGIJLKCjMQ5trchYrKZ1p7+QfU9c6WVZPI7CzawmdEaru6Cyubn5Biw=
+	t=1717158616; cv=none; b=es79X9vZD14GsDULFtPXpL41idgvYShBrH05wFbjNGMcDDQcWq+5Fvc3yxPz1D5UkQHiSGCqHCY8TU3FdEO81juZWbdJyB+MgI1Kx8RoAE9lvZlBVjuV0bQfJwMcrI7vgJDs/XV9CRyyK3OHHz4T/ORmwk4B8hJ++WQjkNO4mMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717158628; c=relaxed/simple;
-	bh=2mc0HWTfOV1Teq6IYJqOMKDrFW1OILUGkAVGkdJ9Acc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DVNe8mpWyxd2rA5TlsiGHggKVXOVspmXuzpvbkkwtdjrKMq6cnyWf/J4JHjW8R8yXNrMwKmTxmsTvBqu4ogkr4r7JiaSD9IORaHWD81FnqYHQCiFP70pH37VGBG7A8H6Uu7bnD2avxxT9TMjqazkcpxH39rA1m8QdB26U8d9HZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=SMApdGDK; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 5A6C440E0192;
-	Fri, 31 May 2024 12:30:24 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id sPIeD_FlmuX3; Fri, 31 May 2024 12:30:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1717158619; bh=Cp7gWFWCgunxt2EZJJB/aMuJ7vmygLLqyPm4seO3fyo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SMApdGDKJuXYKkzBsXvwplsjbBQp5vqi+c5SXxkmQngoAniCZWwd+D8iDQqxgQXAq
-	 9aIylFmNIC2SiiDYnmCouKbPaNfEIcXMoILkbr70GUv16+ylobyh2c832VEhU6uUvK
-	 3UrxUutyaYyOU0uMnM06iX0V9wfxNLY2ZrFxfNc5IKxoRlV2CukGQ7eMjX3zkxTTv6
-	 6CptbotB/rPBL/D1tn7nwnWvqv14u1ke7ld8OTKUJ64iDVVeM0/jgadH9AaMFCv6mH
-	 sXlu7OcCjKqOZaYJdLeMGlXEZMTAn6E8yqbeNosVT3qL1RocRBTA1uXTxSfLfimK2Z
-	 qVf20E6SmUCF9rvTjWdhdXMumbv5LmoIPqXFNfZfwavzsrFB4Zrvb+QkPJun87P8/W
-	 7fHkb9g+ehc6LED69c92QsZed8qHvOuMrlYvptYKteNzFhNhrssmXihrxp63rdVVZ5
-	 VyjQ+wiYsqWQMH1T5o0MlQCXHzxejAua71GG9eh+LtM9GJGjHynoSFV7QbLfDequXq
-	 qnbKRMXMswlVjY/GpL+0/xbCssqOmNuFYtSP5+i/p8G0vUZsqcSrqYFh23d5v7vNlN
-	 NLVcMASThnwqJxikvCi5OOmsM2y5PvBeVvd8ndXCkSC4UYJiPzJIRnzpoSntafxkmA
-	 vLHMB5HIbule/nrq7PtTEjdE=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E1EE540E0177;
-	Fri, 31 May 2024 12:30:04 +0000 (UTC)
-Date: Fri, 31 May 2024 14:29:59 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
-	linux-coco@lists.linux.dev, svsm-devel@coconut-svsm.dev,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Michael Roth <michael.roth@amd.com>,
-	Ashish Kalra <ashish.kalra@amd.com>
-Subject: Re: [PATCH v4 07/15] x86/sev: Use the SVSM to create a vCPU when not
- in VMPL0
-Message-ID: <20240531122959.GCZlnCx8uxvozjmfly@fat_crate.local>
-References: <cover.1713974291.git.thomas.lendacky@amd.com>
- <aa7f311d90efb49dfa6f4589854ee43c049b7b88.1713974291.git.thomas.lendacky@amd.com>
- <20240527123304.GBZlR9gBzBIjqEKKo6@fat_crate.local>
- <4f704d19-088a-89d7-0515-144db61b93a5@amd.com>
+	s=arc-20240116; t=1717158616; c=relaxed/simple;
+	bh=PVDSnpGmRt8ijqYH04SdOAIHTZQoWdauoklqv/bpCjA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hFezoIOzKDAifdzk+HyYIGZNFF+NtpREqvoX4GW3CGe9rPQHLdHnb29/aXv3W/bOcgyWn39Sb0JtZ76Pg/3reLI7EV4WaBziIbhoqla/1SuAJJSRkYmpoeHjRnfB8vHhp11YeaW4EyaWkZlnANWGA0D+6S+vEIo6+Vbe59sXUc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=E3KaQRf2; arc=none smtp.client-ip=209.85.210.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-6f8ea563a46so1150692a34.2
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 05:30:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1717158613; x=1717763413; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pobb+qKmbEVkLRW5gpiFE+2DxXv9n/WgMfYUIElZ6qQ=;
+        b=E3KaQRf2UlHTHr9r3E4Rws2pyv7MEsbWAVs+K9rj+dMpyqh1RnNeJpTwRwwZ1PiswN
+         VfFF1mHhHWGbYd/a+fjcRY2JTh0lJkD7j3r0B9LoazpsjbIMv0HNMNFpPQikFpVCGtWi
+         24qaPVV5j2CLd8f+C/Bd2HoFvMSaUU8m+NI/XOVMOhKtPa0xAp7HoZ6ecsfb3t4nTKC4
+         VLiLSV3QJuXUurs+Fw8lxe83RZ5A1bz7modJIU3NqADPKE5DwmIRkfvapcoxB+FoGPDs
+         chjS0VKJ9XaxMbRoavM90kXWg4xqgO3chgLl65T+sIHHNaPnmyf3mCnzYQgg5tJIsAqa
+         eTGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717158613; x=1717763413;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pobb+qKmbEVkLRW5gpiFE+2DxXv9n/WgMfYUIElZ6qQ=;
+        b=kqYYQS4CpQ01LAEYRWGnE3tk8/dvUblG3jG0KymN0ogkb5JIOfmkKXLle8U33uf7pX
+         50cs1Dt5o/jrXMVY7C7c4d9SQRAkT2jasENcn1EocsOP9SztmCP2Ixm2D4SSlTSG5bXA
+         fOSAZQ5BwrE4K0loKrqCAYY1z6gaBjNWbP2qJGuCyXzMgMYilq+dk4CQS8oOADJTu0ga
+         V4enfIn07PavvpKkDVzg/2Ut9ybCtapXNHTyq8PDGE99jgPgf0UZjutBf22QJZxITqDk
+         WzOv2ivLYV+17SQvI4ScwhQu8OBSrmyeTxDsIi0Y96dmJ4pSAxQcAbc0J+RBsGyy3ST9
+         OQwg==
+X-Forwarded-Encrypted: i=1; AJvYcCXzrJXzDvCuvC3AtU+4NGvqLaHUwwWpNpO5xnq5DGuIgjmyeYExTiHF+E4en2TPRMRrsRwqvkN3smqJFrIx/0cZr126Vm5muP1HY8fl
+X-Gm-Message-State: AOJu0YxmD4I4Zghf0mw50G8zZ3HVKJtDlvbl4Mf9HDic/LIdSQPinoJt
+	W8+FndoD4qa3RXLixzX3tOXVC0nsO60cS+/81tRJ/IshuuB+0CCbXh1RApltlcI=
+X-Google-Smtp-Source: AGHT+IGeo7tqAnMa9JIVWwH4HjMXc/fO4mXZB9xlsqbbsjuQhrqcsOkModTThzMO7MtphiKdpMdQXg==
+X-Received: by 2002:a05:6358:33a2:b0:199:28f7:c247 with SMTP id e5c5f4694b2df-19b48c28251mr203744155d.9.1717158613508;
+        Fri, 31 May 2024 05:30:13 -0700 (PDT)
+Received: from [10.4.66.249] ([139.177.225.230])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6c354b945a8sm1181633a12.23.2024.05.31.05.30.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 31 May 2024 05:30:13 -0700 (PDT)
+Message-ID: <7f7c3bbe-e250-420d-a7d5-89508d881f0b@bytedance.com>
+Date: Fri, 31 May 2024 20:30:08 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <4f704d19-088a-89d7-0515-144db61b93a5@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [External] Re: [QUESTION] mm: Redundant const parameter?
+Content-Language: en-US
+To: Dev Jain <dev.jain@arm.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Anshuman.Khandual@arm.com
+References: <e5f01ffe-de51-4079-a87f-2886788422f9@arm.com>
+ <e6b7858b-39cd-432d-9206-4ccbd153baa2@arm.com>
+From: Chengming Zhou <zhouchengming@bytedance.com>
+In-Reply-To: <e6b7858b-39cd-432d-9206-4ccbd153baa2@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, May 28, 2024 at 03:28:28PM -0500, Tom Lendacky wrote:
-> I just think it's easier to follow, with specific functions for the
-> situation and less indentation. But if you want, I can put it all in one
-> function.
+On 2024/5/31 19:31, Dev Jain wrote:
+> I guess it would be better if I send this as a patch and wait for comments.
 
-Well, if the function were huge and hard to read sure, but right now it
-is simple and with single indentation level. There's the other side of
-having too many small helpers, leading into not seeing the flow. The
-logic we should follow is: if the function is big and fat and has too
-many indentation levels, you split into smaller functions.
+Ah, you're right. I think it should be:
 
-The "Functions" section in Documentation/process/coding-style.rst has
-some blurb on the matter.
+	return folio_test_workingset(slab_folio(slab));
 
--- 
-Regards/Gruss,
-    Boris.
+Right? Don't notice there isn't any build warning about this "const" discard.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+Thanks.
+
+> 
+> On 5/31/24 16:42, Dev Jain wrote:
+>> Hi Chengming,
+>>
+>> In mm/slub.c, you had defined slab_test_node_partial() to take a const parameter.
+>>
+>> Is there any point of taking in a const, when you are anyways typecasting it to
+>>
+>> a (struct folio *) from (const struct folio *) ? In fact, at the place where you call
+>>
+>> slab_test_node_partial(), the struct slab *slab is not const.
+>>
+>> Please comment.
+>>
+>>
+>> Thanks
+>>
+>> DJ
+>>
+>>
+>>
+>>
 
