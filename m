@@ -1,130 +1,196 @@
-Return-Path: <linux-kernel+bounces-197584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D8998D6CBF
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 01:08:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D96B8D6CCE
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 01:15:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1F491F245A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 23:08:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA4631F237B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 23:15:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDA3D84DFE;
-	Fri, 31 May 2024 23:07:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 582B284E0D;
+	Fri, 31 May 2024 23:15:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="O5xV2CYN"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="eluFq7dW"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C95B878C7E;
-	Fri, 31 May 2024 23:07:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E06BB8287C
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 23:15:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717196877; cv=none; b=OBDete5SSmX5sz23FCK3SVilIJ+YrOzE4//V3VqaxSlb1uZrtTT0d99U35xqfGdn6xEWnWVDasMAYYxt9G3oATQFayyoIn2HsgD/knVowwcB+5nUPi2S5kIPieAZOgkA28wiqER4gY1EQa/ZThE6QAHzWZF76sHV4CcgoLNqayI=
+	t=1717197322; cv=none; b=Fz8Zg2PAcPWZxhD8UzKd1YTzJFq800ZFAr7Duo2Zkdk6OlPIsHE+3zplHxdzDE7UaXDznfbyDDvkLnDg7w2AIpiH7AmkxT6ei9FYPMf6stM7lDTpRpKawYIgD+LTnkF1uwWxEdro4w9jABrNE6IjmK4cqjP2FMOL729x3lwvVZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717196877; c=relaxed/simple;
-	bh=3L8q6+HeknLNIZfhdkFFi4EhUcFS6SsgKfSMxydRkI0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=Qy+o3zBMlqV/7LLHwcqS1eBzLQMIE4WT4WOq+hEdUF0V/TVH27jMsdiZktgIWKDHNYJhzBBL6gJdVYhUqwvONrMubRvBc7K4/IFypobp9aVzxSCdyH4UVfNz4JmRGIaykGKlZmi11QtqO4PazYc3yS1cdjNYKT/Eqpi90dNKJ2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=O5xV2CYN; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44VMAfkx003470;
-	Fri, 31 May 2024 23:07:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=UloEUe7AvInSWdJYghVBKr
-	arL03QWUuf05ctdl7DoL8=; b=O5xV2CYNPMlJQyJTy2aRLzRv4ARsa8kWu3sbtl
-	MsHrj2ytGhf57iRAZKZ1c/1pSkhKBvNMgUm6ppx75MYYqX5jvKu7bwvG5vduYEWV
-	Ye8V2T1uCoXydy++qgOs1e/ch++stx39Xkrx4expS+/qvpNiM5xP/ac81Cfn8mol
-	f0R3O9aT6eJLP5CDYzk6qi65t4v/c8Xp9tFLJCUP9h8+ZfEP6iFCMQl91AGTv7HC
-	SeCnDGNQ1mzD6wDPmlw+gMIHZVmXJy7b+N5LQyHsoFM9O1yopC0nsBZCyGP/L/54
-	QSLL/KsYYt5unvIacx0IMmPLwFN1dOrLwe9wmFOHNSXYWhvw==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yesw5mhv4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 31 May 2024 23:07:51 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44VN7nas030486
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 31 May 2024 23:07:50 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 31 May
- 2024 16:07:49 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Fri, 31 May 2024 16:07:26 -0700
-Subject: [PATCH] string: kunit: add missing MODULE_DESCRIPTION() macros
+	s=arc-20240116; t=1717197322; c=relaxed/simple;
+	bh=ZEP4WV2Hz3N7FDd90cgmwrRwy533OH85Lf+6xaB9wqk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pEcT4QguxHq29ReIrZb5q6lmVHZiJUG2lScNd/PsWKHfCiN4Xk1TIRfyO2AVHC8jvIGhxhwfoxm12k2TpPOuYhpGc2JlFWGXvYJx7E3p0+iWJxumi2kaj/CMHElUsvu0zNRzzrcJshJT77CbWM/aIFh/Xk7H+i2Zb6C0ZqYIbZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=eluFq7dW; arc=none smtp.client-ip=149.28.215.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1717197310;
+ bh=NT5VlfpAzQy5RqRKCg0k7PinYB0pq9c+JH44HfHvY7g=;
+ b=eluFq7dWDBPkW+exCejdkAN4T+k2Y9LF/M8JHAC2ell/udmPgto3k/ewXzaafSlaa5EGEGY4+
+ QZe1o426QDPplYp3Hw1+4UTC1zuLAKb4s06xn7ke5zNoprAk8wogymAERT/AhwrIzJkdijiD/Y6
+ m43Z0asJr2R1xJKf4R35tjNUgTdF+znt4+U6ic/8rtOpCe5B0y9YzW68gsVzMpBod84zzMFep+n
+ etLENzhCsIgcLWXnS4Mo5Ug/PYrXFJ2DHjo+MsbY/zt4owuMqmjgkIyRRPEcpZWXoY/rmuBabWS
+ oibkrfBV+Yd7gsA1QNHdm2wXX5KEUXZORKWbp8PtkmOw==
+Message-ID: <33ee8446-aa01-47df-8e20-5ae2d384ed0e@kwiboo.se>
+Date: Sat, 1 Jun 2024 01:15:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] arm64: dts: rockchip: Make preparations for
+ per-RK3588-variant OPPs
+To: Dragan Simic <dsimic@manjaro.org>
+Cc: Alexey Charkov <alchark@gmail.com>, linux-rockchip@lists.infradead.org,
+ heiko@sntech.de, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, robh+dt@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, linux-kernel@vger.kernel.org,
+ quentin.schulz@cherry.de, wens@kernel.org, daniel.lezcano@linaro.org,
+ didi.debian@cknow.org, krzysztof.kozlowski+dt@linaro.org,
+ viresh.kumar@linaro.org
+References: <673dcf47596e7bc8ba065034e339bb1bbf9cdcb0.1716948159.git.dsimic@manjaro.org>
+ <CABjd4YxD41DEkBCZfkznLboEY9ZVOfTCLcj4S_kkcsVswbANyQ@mail.gmail.com>
+ <8f8623e29a479c4108141302e708dc3b@manjaro.org>
+ <CABjd4Yy4RMg+6-4ygV0MSwJj5LReY-ymbctq4PPfVZ6L+c1tsw@mail.gmail.com>
+ <166cc4e46f31644a50306625b2ab18a6@manjaro.org>
+ <CABjd4YzDNQa45=KC_t0xnTDrH+g-oUrcpgP55oOj7JcAuu7uFw@mail.gmail.com>
+ <82db817a908b761d8c3d73ea04714314@manjaro.org>
+ <607f4da8-99b2-4379-9567-4bfd2744eab3@kwiboo.se>
+ <66677077acf4e970444cea829436fd0a@manjaro.org>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <66677077acf4e970444cea829436fd0a@manjaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-ID: <20240531-md-lib-string-v1-1-2738cf057d94@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAC1YWmYC/x3MwQqDMAyA4VeRnBewtmNurzI8tDbTgGYjcUMQ3
- 92643f4/w2MlMngUW2g9GPjtxS4SwX9GGUg5FwMTd2E+uodzhknTmiLsgyY7+0tt84nHwKU5qP
- 04vX/e3bFKRph0ij9eF4mlu+Kc7SFFPb9AL+3IKx+AAAA
-To: Andrew Morton <akpm@linux-foundation.org>,
-        Kees Cook
-	<keescook@chromium.org>, Andy Shevchenko <andy@kernel.org>
-CC: <linux-hardening@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: nfPBLTy5pgwf_aNgb92UGnqazCOEfK2P
-X-Proofpoint-GUID: nfPBLTy5pgwf_aNgb92UGnqazCOEfK2P
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-31_14,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- mlxlogscore=999 phishscore=0 malwarescore=0 impostorscore=0 bulkscore=0
- suspectscore=0 priorityscore=1501 clxscore=1011 spamscore=0 mlxscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2405310176
+X-Report-Abuse-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-ForwardEmail-Version: 0.4.40
+X-ForwardEmail-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 149.28.215.223
+X-ForwardEmail-ID: 665a59fe0b82eeef13908f0a
 
-make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/string_kunit.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/string_helpers_kunit.o
+Hello Dragan,
 
-Add the missing invocation of the MODULE_DESCRIPTION() macro.
+On 2024-05-31 23:24, Dragan Simic wrote:
+> Hello Jonas,
+> 
+> On 2024-05-31 13:27, Jonas Karlman wrote:
+>> On 2024-05-30 21:31, Dragan Simic wrote:
+>> [snip]
+>>
+>>>>>>> That way we'll have no roadblocks if, at some point, we end up 
+>>>>>>> with
+>>>>>>> having
+>>>>>>> different OPPs defined for the RK3588 and the RK3588S variants.  
+>>>>>>> Or
+>>>>>>> maybe
+>>>>>>> even for the RK3582, which we don't know much about yet.
+>>>>>>
+>>>>>> Guess we'll deal with that one once we stumble upon an actual 
+>>>>>> RK3582
+>>>>>> board out in the wild and heading to the mainline kernel tree :)
+>>>>>
+>>>>> Of course, that was just an example for the future use.
+>>>>
+>>>> In fact, I've just discovered that Radxa has recently released Rock 
+>>>> 5C
+>>>> Lite which is based on RK3582, and starts at just $29 for the 1GB
+>>>> version, making it interesting for tinkering. Especially given that
+>>>> its GPU, one of the big-core clusters and one of the VPU cores seem 
+>>>> to
+>>>> be disabled in software (u-boot) rather than in hardware, which means
+>>>> there is some chance that a particular SoC specimen would actually
+>>>> have them in a working condition and possible to re-enable at no 
+>>>> cost.
+>>>> Ordered myself one to investigate :)
+>>>
+>>> Yes, I also saw the RK3582-based ROCK 5C Lite a couple of days ago. :)
+>>> It seems that the disabled IP blocks are detected as defective during
+>>> the manufacturing, which means that they might work correctly, or 
+>>> might
+>>> actually misbehave.  It seems similar to the way old three-core AMD
+>>> Phenom II CPUs could sometimes be made quad-core.
+>>
+>> I can confirm that the RK3582 include ip-state in OTP indicating
+>> unusable cores, any unusable cpu core cannot be taken online and stalls
+>> Linux kernel a few extra seconds during boot.
+> 
+> Thanks for this confirmation!
+> 
+>> Started working on a patch for U-Boot to remove any broken cpu core
+>> and/or cluster nodes, similar to what vendor U-Boot does, adopted to
+>> work with a mainline DT for RK3588.
+> 
+> Nice, thanks for working on that. :)
+> 
+>> On one of my ROCK 5C Lite board one of the cpu cores is unusable, 
+>> U-Boot
+>> removes the related cpu cluster nodes. On another ROCK 5C Lite board 
+>> one
+>> rkvdec core is only marked unusable and all cpu cores can be taken
+>> online, U-Boot does nothing in this case. Guessing we should apply
+>> similar policy as vendor U-Boot and disable cores anyway.
+> 
+> Just checking, you're referring to disabling the rkvdec core only,
+> for the latter case?
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- lib/string_helpers_kunit.c | 1 +
- lib/string_kunit.c         | 1 +
- 2 files changed, 2 insertions(+)
+No, the vendor U-Boot will remove cluster2 if no cpu core is bad.
 
-diff --git a/lib/string_helpers_kunit.c b/lib/string_helpers_kunit.c
-index f88e39fd68d6..c853046183d2 100644
---- a/lib/string_helpers_kunit.c
-+++ b/lib/string_helpers_kunit.c
-@@ -625,4 +625,5 @@ static struct kunit_suite string_helpers_test_suite = {
- 
- kunit_test_suites(&string_helpers_test_suite);
- 
-+MODULE_DESCRIPTION("Test cases for string helpers module");
- MODULE_LICENSE("Dual BSD/GPL");
-diff --git a/lib/string_kunit.c b/lib/string_kunit.c
-index 2a812decf14b..c919e3293da6 100644
---- a/lib/string_kunit.c
-+++ b/lib/string_kunit.c
-@@ -633,4 +633,5 @@ static struct kunit_suite string_test_suite = {
- 
- kunit_test_suites(&string_test_suite);
- 
-+MODULE_DESCRIPTION("Test cases for string functions");
- MODULE_LICENSE("GPL v2");
+RK3582 policy:
+- always remove gpu node
+- always remove both rkvdec nodes
+- remove bad rkvenc node, if both are normal, remove rkvenc1 anyway
 
----
-base-commit: b050496579632f86ee1ef7e7501906db579f3457
-change-id: 20240531-md-lib-string-d987d813b344
+RK3583 policy:
+- remove bad rkvdec node, if both are normal, remove rkvdec1 anyway
+- remove bad rkvenc node, if both are normal, remove rkvenc1 anyway
+
+CPU core policy:
+- remove both cores within a cluster having a bad core
+- if core4~7 are all normal, remove core6 and core7 anyway
+
+Regards,
+Jonas
+
+> 
+>> Following commit contains early work-in-progress and some debug output.
+>>
+>> https://github.com/Kwiboo/u-boot-rockchip/commit/8cdf606e616baa36751f3b4adcfaefc781126c8c
+>>
+>> Booting ROCK 5C Lite boards using U-Boot generic-rk3588_defconfig:
+>>
+>> ROCK 5C Lite v1.1 (RK3582 with 1 bad cpu core):
+>>
+>>   cpu-code: 3582
+>>   cpu-version: 08 10
+>>   data: fe 21
+>>   package: 11
+>>   specification: 01
+>>   ip-state: 10 00 00
+>>   bad-state: cpu core 4
+>>
+>> ROCK 5C Lite v1.1 (RK3582 with 1 bad rkvdec core):
+>>
+>>   cpu-code: 3582
+>>   cpu-version: 08 00
+>>   data: fe 21
+>>   package: 11
+>>   specification: 01
+>>   ip-state: 00 80 00
+>>   bad-state: rkvdec core 1
+> 
+> Thanks again for these nice details!
 
 
