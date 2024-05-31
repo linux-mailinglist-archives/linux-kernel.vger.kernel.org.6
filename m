@@ -1,141 +1,109 @@
-Return-Path: <linux-kernel+bounces-196289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C30D78D59CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 07:21:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB5BB8D59D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 07:22:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 008C61C2148B
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 05:21:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88244282F42
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 05:22:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C19B78269;
-	Fri, 31 May 2024 05:21:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 718EB78C8C;
+	Fri, 31 May 2024 05:22:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="yHLSfYWG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="C5hqtUW8"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D142249F5;
-	Fri, 31 May 2024 05:21:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E9887B3FA;
+	Fri, 31 May 2024 05:22:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717132887; cv=none; b=iY7dwRQI3PBwHoU0a+o1DTAGKIDQt4xKJ75O+5YXl/0+AuDCmymYXAKdj9fWyyPXvZBuQ1oKb6P3qwU2IyDK7xstIINjcO9LZiZJOjpBXCZsPi88YUChZQl4IHyszsqwkO5SFwjuxl6zD0R1oKPagFtSCgLwaiRSoA7ENm3aopY=
+	t=1717132953; cv=none; b=BXIoo+wbQWmOs/niuyGP2uzxEJ2vIKMPI9MhKyDEURuR6kWv52P2ZysT2bQWQLCPws/VkksnhKusSNorWe+L7dZDWvHMLxY3rsnurYmDT7KHog8y02LiHMAY/sTV+sUZXbzxgTPxp5ciyNfJ4kTlQNRva8hSh33va1hOLxeA5/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717132887; c=relaxed/simple;
-	bh=WJYFVQABthkurcVYkwWrzXsplNA67V49oLFB3N0V99A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cNoWGM/iCfp4h2Dq1ZMddytrW5z2TO4m4XNO2HAAZwTZPP1YUb88WTcX3gGEPcIM04XuQfB2js8SQtAPHWMhJx589pGLB14md31alVMJCRDtbT//Y5iXMA3JF5/I9XBqaAMQk2AlziIKvEL+Zr4pQVk8QJww7yt/coLOF547QjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=yHLSfYWG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 192ECC116B1;
-	Fri, 31 May 2024 05:21:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1717132886;
-	bh=WJYFVQABthkurcVYkwWrzXsplNA67V49oLFB3N0V99A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=yHLSfYWGdwuyVoAzOb3yuif43BPrZEDs0ZasAB0wHoHw9z9XLTxEOlU5/1G2xtdlt
-	 JZCL7g824tOR0gzim1SlUUBo22tOf1HyjOFne88JQfUJPzQUx7ALFkC5Cwp3AGzn8h
-	 Nm/Gq6wVdmOe6ZbqQhG0iQH7ko+boNrUtbyw04k4=
-Date: Fri, 31 May 2024 07:21:31 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Douglas Anderson <dianders@chromium.org>
-Cc: Jiri Slaby <jirislaby@kernel.org>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	John Ogness <john.ogness@linutronix.de>,
-	linux-arm-msm@vger.kernel.org, Tony Lindgren <tony@atomide.com>,
-	Guanbing Huang <albanhuang@tencent.com>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org
-Subject: Re: [PATCH v2] serial: port: Don't block system suspend even if
- bytes are left to xmit
-Message-ID: <2024053112-subsonic-legibly-e386@gregkh>
-References: <20240530084841.v2.1.I2395e66cf70c6e67d774c56943825c289b9c13e4@changeid>
+	s=arc-20240116; t=1717132953; c=relaxed/simple;
+	bh=ExOyrGLPq+cbNBHLnaqRDpbl/UFvrtdYmxw57uBQYxg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=W6iF2w1PhFa5P7PXb7HRcDrfeTjbxbFGqSGHDg19vPOK/06LcM2AkG7UjFEgoZibK5rTv0Nmg6yrfLd8KEMaEw9rEk653G2hBHIEXAstP3o0vuQCjCRZ3u97MpHpjgtQ/krlfe/vUXtNxx4GHL3f+Wm8KujtDHtV2fvE6z6/YxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=C5hqtUW8; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1717132946;
+	bh=HtFIEAZ4yhYW9148ubuKagwRbxSRIkDPm5YZpkzTI3E=;
+	h=Date:From:To:Cc:Subject:From;
+	b=C5hqtUW8+G3hleGqnHQQY60Cat0xzp2u7r1RKq0AYi16A69r2EYdvDUwWJYxvu1oI
+	 89Lt0pu25UoRj25AJDjKRFOgp+PQidmvo1DjoDAQ1C+AZYfe5rZaeGDKfkHMAWKxi4
+	 u8StgGqphZ7HlbUnmbYr84yXZL0wET500cbnXj4ppI7+ddzek4UJ8TggDNWRlFAiXl
+	 CoGY1u4y6bM4RFcS51k8pHogybSBaD3Z9x0XqfP6zi06HdoSxs0Nb7c+2aBSSaMmsM
+	 icebIBEFODXgMbk+Us4wiOarK5jWsx1Z4ktTPP+LFmbhw5CD3i4v2HFAxpHXAzsTHT
+	 O3HsYb05eiC2Q==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VrBMQ2XMVz4wcC;
+	Fri, 31 May 2024 15:22:25 +1000 (AEST)
+Date: Fri, 31 May 2024 15:22:23 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>
+Cc: Networking <netdev@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the net-next tree
+Message-ID: <20240531152223.25591c8e@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240530084841.v2.1.I2395e66cf70c6e67d774c56943825c289b9c13e4@changeid>
+Content-Type: multipart/signed; boundary="Sig_/QVjuUfo6d0P+GNzlp76I206";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Thu, May 30, 2024 at 08:48:46AM -0700, Douglas Anderson wrote:
-> Recently, suspend testing on sc7180-trogdor based devices has started
-> to sometimes fail with messages like this:
-> 
->   port a88000.serial:0.0: PM: calling pm_runtime_force_suspend+0x0/0xf8 @ 28934, parent: a88000.serial:0
->   port a88000.serial:0.0: PM: dpm_run_callback(): pm_runtime_force_suspend+0x0/0xf8 returns -16
->   port a88000.serial:0.0: PM: pm_runtime_force_suspend+0x0/0xf8 returned -16 after 33 usecs
->   port a88000.serial:0.0: PM: failed to suspend: error -16
-> 
-> I could reproduce these problems by logging in via an agetty on the
-> debug serial port (which was _not_ used for kernel console) and
-> running:
->   cat /var/log/messages
-> ...and then (via an SSH session) forcing a few suspend/resume cycles.
-> 
-> Tracing through the code and doing some printf()-based debugging shows
-> that the -16 (-EBUSY) comes from the recently added
-> serial_port_runtime_suspend().
-> 
-> The idea of the serial_port_runtime_suspend() function is to prevent
-> the port from being _runtime_ suspended if it still has bytes left to
-> transmit. Having bytes left to transmit isn't a reason to block
-> _system_ suspend, though. If a serdev device in the kernel needs to
-> block system suspend it should block its own suspend and it can use
-> serdev_device_wait_until_sent() to ensure bytes are sent.
-> 
-> The DEFINE_RUNTIME_DEV_PM_OPS() used by the serial_port code means
-> that the system suspend function will be pm_runtime_force_suspend().
-> In pm_runtime_force_suspend() we can see that before calling the
-> runtime suspend function we'll call pm_runtime_disable(). This should
-> be a reliable way to detect that we're called from system suspend and
-> that we shouldn't look for busyness.
-> 
-> Fixes: 43066e32227e ("serial: port: Don't suspend if the port is still busy")
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> ---
-> In v1 [1] this was part of a 2-patch series. I'm now just sending this
-> patch on its own since the Qualcomm GENI serial driver has ended up
-> having a whole pile of problems that are taking a while to unravel.
-> It makes sense to disconnect the two efforts. The core problem fixed
-> by this patch and the geni problems never had any dependencies anyway.
-> 
-> [1] https://lore.kernel.org/r/20240523162207.1.I2395e66cf70c6e67d774c56943825c289b9c13e4@changeid/
-> 
+--Sig_/QVjuUfo6d0P+GNzlp76I206
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hi all,
 
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
+After merging the net-next tree, today's linux-next build (x86_64
+modules_install after an x86_64 allmodconfig build) failed like this:
 
-You are receiving this message because of the following common error(s)
-as indicated below:
+depmod: ERROR: Cycle detected: rvu_nicpf -> otx2_devlink -> rvu_nicpf
+depmod: ERROR: Cycle detected: rvu_nicpf -> otx2_dcbnl -> rvu_nicpf
+depmod: ERROR: Cycle detected: otx2_ptp
+depmod: ERROR: Cycle detected: ptp
+depmod: ERROR: Found 3 modules in dependency cycles!
 
-- You have marked a patch with a "Fixes:" tag for a commit that is in an
-  older released kernel, yet you do not have a cc: stable line in the
-  signed-off-by area at all, which means that the patch will not be
-  applied to any older kernel releases.  To properly fix this, please
-  follow the documented rules in the
-  Documentation/process/stable-kernel-rules.rst file for how to resolve
-  this.
+Caused by commit
 
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
+  727c94c9539a ("ethernet: octeontx2: avoid linking objects into multiple m=
+odules")
 
-thanks,
+I have reverted that commit for today.
 
-greg k-h's patch email bot
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/QVjuUfo6d0P+GNzlp76I206
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZZXo8ACgkQAVBC80lX
+0Gxmzwf/ZxtaD4L1nWZXMKjIMxm51/ifAQdM4CDp7pwLODu1ry1sSH+stG2/iUL7
+h4myllHZsdwNS3vlQsRKjHxyWPY9NSMNuuwiRKmQ/2VkZtLj1NlcF7426Xd2oBjk
+H6U3rJFhvIMVeVgZbdEqlepCrCGFDn5KwaRJToqvINCVB2Yvu/KqhE2OWg8dtjr7
+OAY/6vTGxijOOSf0oOyJKvScv0GufSOE2gD1mQWtOaeiy2osuXF74H98VfW4m82S
+3rKUdUPw9iyx/Xzev9BxrsTRzCHsSYuMR4MiV6ceVexoMwJFpscK8GhaHjd4fupz
+9faHelVZH+ObZoL07vVgNPkYkCwmYQ==
+=dNwv
+-----END PGP SIGNATURE-----
+
+--Sig_/QVjuUfo6d0P+GNzlp76I206--
 
