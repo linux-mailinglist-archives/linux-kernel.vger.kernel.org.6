@@ -1,135 +1,237 @@
-Return-Path: <linux-kernel+bounces-196939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53F168D63EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:03:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C89F68D63EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:04:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9CE41F26698
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:03:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19DF41F2672A
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:04:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F282515B106;
-	Fri, 31 May 2024 14:03:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C70515B96F;
+	Fri, 31 May 2024 14:04:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="BEmMZTXQ"
-Received: from smtp-fw-80007.amazon.com (smtp-fw-80007.amazon.com [99.78.197.218])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FFFsw1KE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E600C155C8E
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 14:03:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E169155C8E;
+	Fri, 31 May 2024 14:03:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717164223; cv=none; b=RZbXG1X8c7cdEjuZJ0dUdocuwyGCWCkR82WNG8IFx9xVYIQ9aorG/gE1YYIJdpSNsVemRq1UB9XDuOpWiBXmNjFvT2Zr34Ea6L77c2aJV0gEtmKe7WDPkk7Vt2O2i+G4m17Jf6dHwaoSyIdYGGPEJtxt+/j550ZxqOYkKJJKoGs=
+	t=1717164239; cv=none; b=LOpEhtEgVZlvn6mlLMWOgQDv+lPcrkd6X88dqLIJPY3OVB1MPT4O3FPaJ3PONbecqB6JkrPXwuiNWAlDQ059xMaPTn/KvZB7F1gi84DSKzQy2zDrm789FT3uowOxfXUbxcKQJbw+kuIQ9GWrUqTWxNj2gYl+qjNX6cn/Qum3Yug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717164223; c=relaxed/simple;
-	bh=KRdjPOiSmKhnbpqLsAUL50Sh5xQVBDWcZuPxhkr37Hg=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lps/CTAulYPCxNWTZlOVtxbbCHNslaxVVfLOXJu1hfG4xSVwCTPyjY7WqMJ28qwKHQH7hsTtpz4I8YYdf4GkxHk6DKJ/S7LE11zgVKRLnQ7ku27IAfEThIxZRCfGL0PCM7Bn6knBxadXqj8hTNgLKlemdu+H/1WWdX3NQ94pUvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=BEmMZTXQ; arc=none smtp.client-ip=99.78.197.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1717164222; x=1748700222;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=FHDVmJVmJipFUzztrcQUetQex5rFg7uI0/X/xngjWQQ=;
-  b=BEmMZTXQhIbvTnk2WrnjhuB3G3rxnCN9ii+7n8sAcw4kxfSaoR/fn8sX
-   QHSpLXuYhfAxSAGwQbs/ejWhlTsrgdbOpu6ZPyUoJolQtOl1Od1Ez75BU
-   ZeZ6NMxzbe/lU5SrMv/1KbSEVIB2eLBx0jRWYXrIvZDiwM+Zxi3dp5W6/
-   0=;
-X-IronPort-AV: E=Sophos;i="6.08,204,1712620800"; 
-   d="scan'208";a="300045662"
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-80007.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 14:03:39 +0000
-Received: from EX19MTAEUB002.ant.amazon.com [10.0.10.100:63734]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.41.97:2525] with esmtp (Farcaster)
- id fe2e9d2c-9cd6-4ea6-9f94-22312cbd41d6; Fri, 31 May 2024 14:03:37 +0000 (UTC)
-X-Farcaster-Flow-ID: fe2e9d2c-9cd6-4ea6-9f94-22312cbd41d6
-Received: from EX19D008EUA004.ant.amazon.com (10.252.50.158) by
- EX19MTAEUB002.ant.amazon.com (10.252.51.59) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.28; Fri, 31 May 2024 14:03:37 +0000
-Received: from EX19MTAUWA001.ant.amazon.com (10.250.64.204) by
- EX19D008EUA004.ant.amazon.com (10.252.50.158) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.28; Fri, 31 May 2024 14:03:37 +0000
-Received: from dev-dsk-hagarhem-1b-b868d8d5.eu-west-1.amazon.com
- (10.253.65.58) by mail-relay.amazon.com (10.250.64.204) with Microsoft SMTP
- Server id 15.2.1258.28 via Frontend Transport; Fri, 31 May 2024 14:03:36
- +0000
-Received: by dev-dsk-hagarhem-1b-b868d8d5.eu-west-1.amazon.com (Postfix, from userid 23002382)
-	id 3002320BED; Fri, 31 May 2024 14:03:36 +0000 (UTC)
-Date: Fri, 31 May 2024 14:03:36 +0000
-From: Hagar Hemdan <hagarhem@amazon.com>
-To: Marc Zyngier <maz@kernel.org>
-CC: Maximilian Heyne <mheyne@amazon.de>, Norbert Manthey <nmanthey@amazon.de>,
-	Thomas Gleixner <tglx@linutronix.de>, Eric Auger <eric.auger@redhat.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<hagarhem@amazon.de>
-Subject: Re: [PATCH v2] irqchip/gic-v3-its: Fix potential race condition in
- its_vlpi_prop_update()
-Message-ID: <20240531140336.GA4911@amazon.com>
-References: <20240531074302.30563-1-hagarhem@amazon.com>
- <86ttiel4bb.wl-maz@kernel.org>
- <20240531095318.GA5556@amazon.com>
- <87mso62rz0.wl-maz@kernel.org>
+	s=arc-20240116; t=1717164239; c=relaxed/simple;
+	bh=OR5TcAid10nxVjMKvTnf5psawQ+kB4xK6BcAmRyea1c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JXDB1+mptQJQL2xu7Uubqy6d3WU8VyoIT+ilXP8Rzd6iNCf2wYSRiUDH4kiBz17kcQXENCwuQEXPF/rPc3fcRufWFJ2Pi5cC2xIbs/3N8g8QnA/t+L5XlGdJSixZdKFj/6Lz++nFlvaI64Zro4ZBkcV1p1HiUuvnTnQKOau+CEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FFFsw1KE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEBC4C116B1;
+	Fri, 31 May 2024 14:03:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717164238;
+	bh=OR5TcAid10nxVjMKvTnf5psawQ+kB4xK6BcAmRyea1c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FFFsw1KE13cBSVF2ZFI9uk0KAKuzlQrCqop/BEXWXprSV00dzWLST+9JnszVIsWKB
+	 tH9cq83udcxZf0UltjzdgnB3b5T5dWP3WSNGu8tyN27taocyat5DgxNPuP4HfYx8lU
+	 aAPdQ+2D99XHoOnjBMZtPUYW1AHLkhd2bGBG6XUO72abikZAqYjXKY2MBlHAQbmEgo
+	 IoNNvhJOtuHSzihshNNXKT/sGQGNkhogqagJ+UnuSisaIfwQooFxKw2wRBJDJ4JnAO
+	 YufkmiWK8XyOOMDLvW/ShbkkUhXegNilrcpc3UaM5Nha7dZHxud3Pj2oHSqUBklnN6
+	 P1LErz+lf8k8g==
+Date: Fri, 31 May 2024 07:03:58 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Zhang Yi <yi.zhang@huaweicloud.com>, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	brauner@kernel.org, david@fromorbit.com, chandanbabu@kernel.org,
+	jack@suse.cz, willy@infradead.org, yi.zhang@huawei.com,
+	chengzhihao1@huawei.com, yukuai3@huawei.com
+Subject: Re: [RFC PATCH v4 1/8] iomap: zeroing needs to be pagecache aware
+Message-ID: <20240531140358.GF52987@frogsfrogsfrogs>
+References: <20240529095206.2568162-1-yi.zhang@huaweicloud.com>
+ <20240529095206.2568162-2-yi.zhang@huaweicloud.com>
+ <ZlnMfSJcm5k6Dg_e@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87mso62rz0.wl-maz@kernel.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <ZlnMfSJcm5k6Dg_e@infradead.org>
 
-On Fri, May 31, 2024 at 11:30:59AM +0100, Marc Zyngier wrote:
-> On Fri, 31 May 2024 10:53:18 +0100,
-> Hagar Hemdan <hagarhem@amazon.com> wrote:
-> > 
-> > On Fri, May 31, 2024 at 10:27:04AM +0100, Marc Zyngier wrote:
-> > > On Fri, 31 May 2024 08:43:02 +0100,
-> > > Hagar Hemdan <hagarhem@amazon.com> wrote:
-> > > > 
-> > > > its_vlpi_prop_update() calls lpi_write_config() which obtains the
-> > > > mapping information for a VLPI without lock held. So it could race
-> > > > with its_vlpi_unmap().
-> > > > Since all calls from its_irq_set_vcpu_affinity() require the same
-> > > > lock to be held. So instead of peppering the locking all over the
-> > > > place, we hoist the locking into its_irq_set_vcpu_affinity().
-> > > > 
-> > > > This bug was discovered and resolved using Coverity Static Analysis
-> > > > Security Testing (SAST) by Synopsys, Inc.
-> > > > 
-> > > > Fixes: 015ec0386ab6 ("irqchip/gic-v3-its: Add VLPI configuration handling")
-> > > > Signed-off-by: Hagar Hemdan <hagarhem@amazon.com>
-> > > 
-> > > Given that you have lifted both my proposed patch and part of my
-> > > reply as a commit message, you may at least credit me with a
-> > > Suggested-by: tag. Not to mention that the blatant advertising doesn't
-> > > really apply in this case.
-> > 
-> > ok, I will add this tag in rev3 and we need to add that disclaimer
-> > as it is a commercial tool. thanks!
+On Fri, May 31, 2024 at 06:11:25AM -0700, Christoph Hellwig wrote:
+> On Wed, May 29, 2024 at 05:51:59PM +0800, Zhang Yi wrote:
+> > XXX: how do we detect a iomap containing a cow mapping over a hole
+> > in iomap_zero_iter()? The XFS code implies this case also needs to
+> > zero the page cache if there is data present, so trigger for page
+> > cache lookup only in iomap_zero_iter() needs to handle this case as
+> > well.
 > 
-> Sorry, but I'm not bound by this requirement. I'm happy to credit
-> *you* for reporting a defect, but certainly not a tool that hasn't
-> "resolved" anything, despite what the message says.
+> If there is no data in the page cache and either a whole or unwritten
+> extent it really should not matter what is in the COW fork, a there
+> obviously isn't any data we could zero.
+> 
+> If there is data in the page cache for something that is marked as
+> a hole in the srcmap, but we have data in the COW fork due to
+> COW extsize preallocation we'd need to zero it, but as the
+> xfs iomap ops don't return a separate srcmap for that case we
+> should be fine.  Or am I missing something?
 
-Ok, I will drop the resolved part as the modified fix is suggested by
-you. Is it ok?
+It might be useful to skip the scan for dirty pagecache if both forks
+have holes, since (in theory) that's never possible on xfs.
+
+OTOH maybe there are filesystems that allow dirty pagecache over a hole?
+
+> > + * Note: when zeroing unwritten extents, we might have data in the page cache
+> > + * over an unwritten extent. In this case, we want to do a pure lookup on the
+> > + * page cache and not create a new folio as we don't need to perform zeroing on
+> > + * unwritten extents if there is no cached data over the given range.
+> >   */
+> >  struct folio *iomap_get_folio(struct iomap_iter *iter, loff_t pos, size_t len)
+> >  {
+> >  	fgf_t fgp = FGP_WRITEBEGIN | FGP_NOFS;
+> >  
+> > +	if (iter->flags & IOMAP_ZERO) {
+> > +		const struct iomap *srcmap = iomap_iter_srcmap(iter);
+> > +
+> > +		if (srcmap->type == IOMAP_UNWRITTEN)
+> > +			fgp &= ~FGP_CREAT;
+> > +	}
 > 
-> 	M.
+> Nit:  The comment would probably stand out a little better if it was
+> right next to the IOMAP_ZERO conditional instead of above the
+> function.
+
+Agreed.
+
+> > +		if (status) {
+> > +			if (status == -ENOENT) {
+> > +				/*
+> > +				 * Unwritten extents need to have page cache
+> > +				 * lookups done to determine if they have data
+> > +				 * over them that needs zeroing. If there is no
+> > +				 * data, we'll get -ENOENT returned here, so we
+> > +				 * can just skip over this index.
+> > +				 */
+> > +				WARN_ON_ONCE(srcmap->type != IOMAP_UNWRITTEN);
 > 
-> -- 
-> Without deviation from the norm, progress is not possible.
+> I'd return -EIO if the WARN_ON triggers.
 > 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> > +loop_continue:
+> 
+> While I'm no strange to gotos for loop control something trips me
+> up about jumping to the end of the loop.  Here is what I could come
+> up with instead.  Not arguing it's objectively better, but I somehow
+> like it a little better:
+> 
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index 700b22d6807783..81378f7cd8d7ff 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -1412,49 +1412,56 @@ static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
+>  		bool ret;
+>  
+>  		status = iomap_write_begin(iter, pos, bytes, &folio);
+> -		if (status) {
+> -			if (status == -ENOENT) {
+> -				/*
+> -				 * Unwritten extents need to have page cache
+> -				 * lookups done to determine if they have data
+> -				 * over them that needs zeroing. If there is no
+> -				 * data, we'll get -ENOENT returned here, so we
+> -				 * can just skip over this index.
+> -				 */
+> -				WARN_ON_ONCE(srcmap->type != IOMAP_UNWRITTEN);
+> -				if (bytes > PAGE_SIZE - offset_in_page(pos))
+> -					bytes = PAGE_SIZE - offset_in_page(pos);
+> -				goto loop_continue;
+> -			}
+> +		if (status && status != -ENOENT)
+>  			return status;
+> -		}
+> -		if (iter->iomap.flags & IOMAP_F_STALE)
+> -			break;
+>  
+> -		offset = offset_in_folio(folio, pos);
+> -		if (bytes > folio_size(folio) - offset)
+> -			bytes = folio_size(folio) - offset;
+> +		if (status == -ENOENT) {
+> +			/*
+> +			 * If we end up here, we did not find a folio in the
+> +			 * page cache for an unwritten extent and thus can
+> +			 * skip over the range.
+> +			 */
+> +			if (WARN_ON_ONCE(srcmap->type != IOMAP_UNWRITTEN))
+> +				return -EIO;
+>  
+> -		/*
+> -		 * If the folio over an unwritten extent is clean (i.e. because
+> -		 * it has been read from), then it already contains zeros. Hence
+> -		 * we can just skip it.
+> -		 */
+> -		if (srcmap->type == IOMAP_UNWRITTEN &&
+> -		    !folio_test_dirty(folio)) {
+> -			folio_unlock(folio);
+> -			goto loop_continue;
+> +			/*
+> +			 * XXX: It would be nice if we could get the offset of
+> +			 * the next entry in the pagecache so that we don't have
+> +			 * to iterate one page at a time here.
+> +			 */
+> +			offset = offset_in_page(pos);
+> +			if (bytes > PAGE_SIZE - offset)
+> +				bytes = PAGE_SIZE - offset;
+
+Why is it PAGE_SIZE here and not folio_size() like below?
+
+(I know you're just copying the existing code; I'm merely wondering if
+this is some minor bug.)
+
+--D
+
+> +		} else {
+> +			if (iter->iomap.flags & IOMAP_F_STALE)
+> +				break;
+> +
+> +			offset = offset_in_folio(folio, pos);
+> +			if (bytes > folio_size(folio) - offset)
+> +				bytes = folio_size(folio) - offset;
+> +		
+> +			/*
+> +			 * If the folio over an unwritten extent is clean (i.e.
+> +			 * because it has only been read from), then it already
+> +			 * contains zeros.  Hence we can just skip it.
+> +			 */
+> +			if (srcmap->type == IOMAP_UNWRITTEN &&
+> +			    !folio_test_dirty(folio)) {
+> +				folio_unlock(folio);
+> +				status = -ENOENT;
+> +			}
+>  		}
+>  
+> -		folio_zero_range(folio, offset, bytes);
+> -		folio_mark_accessed(folio);
+> +		if (status != -ENOENT) {
+> +			folio_zero_range(folio, offset, bytes);
+> +			folio_mark_accessed(folio);
+>  
+> -		ret = iomap_write_end(iter, pos, bytes, bytes, folio);
+> -		__iomap_put_folio(iter, pos, bytes, folio);
+> -		if (WARN_ON_ONCE(!ret))
+> -			return -EIO;
+> +			ret = iomap_write_end(iter, pos, bytes, bytes, folio);
+> +			__iomap_put_folio(iter, pos, bytes, folio);
+> +			if (WARN_ON_ONCE(!ret))
+> +				return -EIO;
+> +		}
+>  
+> -loop_continue:
+>  		pos += bytes;
+>  		length -= bytes;
+>  		written += bytes;
+> 
 
