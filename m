@@ -1,233 +1,230 @@
-Return-Path: <linux-kernel+bounces-196508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 385718D5D2C
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:53:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BF0468D5D2E
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:53:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BEE51C24DB2
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 08:53:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E21431C252EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 08:53:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A26715575A;
-	Fri, 31 May 2024 08:53:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6308E155C8E;
+	Fri, 31 May 2024 08:53:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b="BsT0cn/B"
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2067.outbound.protection.outlook.com [40.107.117.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="bzTAE0yH"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6863B136E23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30AD515382E
 	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 08:53:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.67
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717145595; cv=fail; b=WltwwNPfMTQ/zMDyZ6Ji0exSsts9X+QGCAIdFjVJT91lHKukQxGAHmW04lyKanAGfs/RFcsHZxoX7I2qRDH0k0yZdDU4Myw3z4gK6j33jmHtU5QudKCGVA5iL5HpJ3rDSJtpofswqH8HObdWbojaZ74gsspymkX4tp3xqYDb5/0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717145595; c=relaxed/simple;
-	bh=IjZ4fuNMeUjQzaxjoxMHREtG5l+I8TqJa+M3dYHd6lA=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dDPyexbCXqcAzIzpg5olW2xiKBFSc1xuw/9HEeXaU1kU5L5rFLU4kouFjot469IZpAlAlqL6QSl1dqsXq9YA4TUcoyUZ/H4ywHuVh5Dkhg+wrSh9PmBdeNkyfmx95jJzk3Ui8/EN10JNUY2gJTecUXbHo0LnHxRpoTS6PJwiDuk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com; spf=pass smtp.mailfrom=oppo.com; dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b=BsT0cn/B; arc=fail smtp.client-ip=40.107.117.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oppo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=LfdQIQPhPleHNYPxT3xgTRW5sxg+UwfttUZl9fc9bnp6PES/ovCH51C2FxBhqvkln7BGXKs7widfnvghIhWnJBKcZIuD5VORUYSPW8C8eACHGUE3t/VkLFL2OchQcPb6BvzzMurXCrGUQDyHPOLUlY0ZaKDVDXAXDUKZX9fqE+WA7Sp9NiIKvIAs0PWECXCxcUpbeLeqk/M6cxbiqFgb/0+8wf68h49VJbmiRQFSy7jlhEiNXiZO2BnB5GRnwlBzetKmZet7HTbJph3diGOKT5Lbs/aiJZFb/nIboWN8lg4fCKntlytbp2Fc4ktmNGCQ+98sYx3iLWwNlje4TLdzlQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=TgknR7vJa5ond1M78NfFRYbFOkugJP29ZGIvYifwTpw=;
- b=Gu/yjp3X9LNfo2wesfVuP03vooIMTqm/LefeJwjNBxilVTkVcYppyDnVFcASZ0gZC9XKJai2BimCltANlih3E4inAPfe5y4ZjRAA7M6UQO1VZZvGMvhJadAZqw58yYfZgYxmi+1H4lM3/L97wHmYYooQUzcXDBMCIK49FCWVn1DArDEVgD/rnja76ZZ+Rk3zVWJNpnSGbmzt5yMT20cleoSErn4FwiniFCJOl2761rZTe0nFd3v5r+0fsmk/Xi+bfFLw8soBZ1r4Haf3dZAsm4TLscoK6MfzN5WIyXTrxzh03RpBUCMskUw8XR4jfNvHqRul3+hKB4gjS6vCXcUr8w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 58.252.5.68) smtp.rcpttodomain=gmail.com smtp.mailfrom=oppo.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=oppo.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oppo.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TgknR7vJa5ond1M78NfFRYbFOkugJP29ZGIvYifwTpw=;
- b=BsT0cn/BNBXZv4Ulj5AlQnhd6bedzWLwT8bwnoQ+243y6IY/RUgir6uWcAy6f6X0mgAGBq83kZ5QJpCbfVKL46eiBbaqQLw0G/mC+pYdoe+Mh7RZBHU5jqRVuUAe2aGZqz/XTfhVeFMLGDRE/MvlMagH8J09yD3aKCY7e2tqTJo=
-Received: from SG2PR01CA0132.apcprd01.prod.exchangelabs.com
- (2603:1096:4:40::36) by TYZPR02MB6521.apcprd02.prod.outlook.com
- (2603:1096:400:41c::6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.24; Fri, 31 May
- 2024 08:53:10 +0000
-Received: from SG2PEPF000B66D0.apcprd03.prod.outlook.com
- (2603:1096:4:40:cafe::16) by SG2PR01CA0132.outlook.office365.com
- (2603:1096:4:40::36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.23 via Frontend
- Transport; Fri, 31 May 2024 08:53:10 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 58.252.5.68)
- smtp.mailfrom=oppo.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=oppo.com;
-Received-SPF: Pass (protection.outlook.com: domain of oppo.com designates
- 58.252.5.68 as permitted sender) receiver=protection.outlook.com;
- client-ip=58.252.5.68; helo=mail.oppo.com; pr=C
-Received: from mail.oppo.com (58.252.5.68) by
- SG2PEPF000B66D0.mail.protection.outlook.com (10.167.240.26) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7633.15 via Frontend Transport; Fri, 31 May 2024 08:53:10 +0000
-Received: from oppo.com (172.16.40.118) by mailappw31.adc.com (172.16.56.198)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 31 May
- 2024 16:53:09 +0800
-Date: Fri, 31 May 2024 16:53:09 +0800
-From: hailong liu <hailong.liu@oppo.com>
-To: Uladzislau Rezki <urezki@gmail.com>
-CC: zhaoyang.huang <zhaoyang.huang@unisoc.com>, Andrew Morton
-	<akpm@linux-foundation.org>, Christoph Hellwig <hch@infradead.org>, Lorenzo
- Stoakes <lstoakes@gmail.com>, Baoquan He <bhe@redhat.com>, Thomas Gleixner
-	<tglx@linutronix.de>, <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-	Zhaoyang Huang <huangzhaoyang@gmail.com>, <steve.kang@unisoc.com>
-Subject: Re: [PATCHv3] mm: fix incorrect vbq reference in
- purge_fragmented_block
-Message-ID: <20240531085309.x2pyjm6tl5xe2swv@oppo.com>
-References: <20240531030520.1615833-1-zhaoyang.huang@unisoc.com>
- <ZlmEp9nxKiG9gWFj@pc636>
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717145596; cv=none; b=q6ItwP8XV1tAvDGREwe+NN19ja1WMNQRG+hGI4JNayHVfxD3eviCIdQ61m+eFIWVtBRIfNYrSUXiIAC+XwCnS8oVh9LjM1JGuf6Phuj9FXwnngYxlgfiskfw3oxEuJCL1RzVZ09WcKRfF6T9DRKrCQjJQrKA7UdeJwEQO8WyKYY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717145596; c=relaxed/simple;
+	bh=wjxwO1kfN3yLpkkRp9LD0DqZb/dGb3ArQrnPmLdb+Ps=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=V8C4TMBepM7pxuTYBWP4Gzdn5UMiWVoe1mrTTVOiMVrU0lHcQk/8hZKEvGjLE35fm3i424+gc7gaPmEMg142So9vPlIzbWFfBae6J/9W4VHnOr9krDygE0/RbTfo2nuYejyysQb04c4SM6PLAyBTmncySIR0VxUzHTpliCvve6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=bzTAE0yH; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-35dc36b107fso906677f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 01:53:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1717145592; x=1717750392; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:cc:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1JO32U3KVcULAzpdxL+s1aYhejtsLxraKgEysFJcK3U=;
+        b=bzTAE0yH1MjSOg7YP6zDs5RD/WnBQ0YqbkqCHvI1W6XEz95Np4ryE3oDbTNBLHI0c5
+         683uKyX2GyL1Ixrm6cGvcF3naA9elTa1GOBwEF7TVW477As3Jucocfk9MEkc3XchUarp
+         VECT9pQeZs2b9OMR82VK9vT7AlI2PpfoetUQp0ZG2ZJ4YjcMbCMnYkF8YM3KwmyDnx7u
+         QUQqtIzWMJc30eoL2xgmQICjokE7jf9pArIjgODy3WTHC/sig2ZGBO8fPmSfoa1/BuqY
+         UyVoWRzYVmRoWOh89MxdfiNQ/mIB97nQsqrt9AiFx+FnyFkpmcXQe2xaMD/zz8gLyiWb
+         RAYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717145592; x=1717750392;
+        h=content-transfer-encoding:in-reply-to:from:cc:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1JO32U3KVcULAzpdxL+s1aYhejtsLxraKgEysFJcK3U=;
+        b=F+19MYj2IGr/RYiraoGBRbYaVys2tEPVFdq+BODMDDCwFOxY/V8MZLeUKPwjzOKoGe
+         ZFihNT3jRrWqKwNmPB9k8qXIgyx6pDAjc9cHqLvtKVsLkNdvQQ3K/6gogF9IFEi5wh1R
+         9c6T++jWaL8mYF289zIE0TYkWWl79i5hOrFtAXDCqSxZtu8arvRKMEF2Ezx33HVi8FWZ
+         iNxCWJG6OXjXMJ1NUSP4HOZIiTBACwlFBrgu+ffSmrFyVlc4nkWcpZfu4OnjTr+IuV4F
+         i5fSxxzmztOHjc7avbSSK1gkxH38tkzKluyqe/fDR3LMtM3HMopJ+Ue755mtZlzKvFj4
+         Fk/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW/uL5FUIHyxA6KD6sHnotg1+fgfMNSTSwH+u3YdcsSYgnCDLcAV6wWrS+ZkMvWTWzI2Px16ijIm/OZaxqf5Shjc+8dAlJgWg7/sfKr
+X-Gm-Message-State: AOJu0YyGXY1zxBYzZgyP96aJoiQCwASpRl9Vs9je6tGz0yJ0xrL0LCDo
+	j7XzW7gRM9X0vzhmHXIB6E4c3svTHLHsKFSK/egLbSJGO0H1HDPbyZ9K0J5EW7A=
+X-Google-Smtp-Source: AGHT+IERNdT26Dww0h4W5Ue6l90E4GnjttzPoLc6Dk1OkGcpVZkyLEu7R7eu1EfcvPGRqpmBHR6DDA==
+X-Received: by 2002:adf:f9c7:0:b0:35d:bf0d:c818 with SMTP id ffacd0b85a97d-35e0f289a88mr820036f8f.34.1717145592376;
+        Fri, 31 May 2024 01:53:12 -0700 (PDT)
+Received: from [10.100.51.161] (nat2.prg.suse.com. [195.250.132.146])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35dd04cc0b6sm1358119f8f.44.2024.05.31.01.53.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 31 May 2024 01:53:12 -0700 (PDT)
+Message-ID: <cbd56289-c9e9-4cd1-87d8-623ae7e39347@suse.com>
+Date: Fri, 31 May 2024 10:53:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <ZlmEp9nxKiG9gWFj@pc636>
-X-ClientProxiedBy: mailappw31.adc.com (172.16.56.198) To mailappw31.adc.com
- (172.16.56.198)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SG2PEPF000B66D0:EE_|TYZPR02MB6521:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7be7b089-1749-4c1b-dd87-08dc814f191b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|82310400017|36860700004|376005|7416005|1800799015;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?XjDpj2679ZUjc4GEquv0Fa+y8KGVqAgqPu3ifIqy+0ozzZoZIQ66V4H7vbC9?=
- =?us-ascii?Q?Rr3Lr0flVSGvzw6A3k264Zp8xtDiKuf3AD/C4alFyId/nUxa0ryC+HG61w8A?=
- =?us-ascii?Q?eQoX2OhytASkyPqxHKMi6acNgyf54KGIrGwwFv/nqd3u1gTacv2HEmFvRCKH?=
- =?us-ascii?Q?ymXq/09QR+HnBnV2T47OCxPWhMruK/iCsfDY8cIgUz9EZmZwlXWVLvHItnn0?=
- =?us-ascii?Q?qzCmDvyX3j8TO0Uo3TeYwpUKnUeHom4qy/ep+6FN01w8q0y2TKQVmEbk7MrT?=
- =?us-ascii?Q?AoL5rVRsCkeiPDQW9FcgFGNRVWO7WHark9IetjYI0BWnDIl7ZF1yOhZMKQ3N?=
- =?us-ascii?Q?fJRs7xFc00X6iU7SDnnDb7zGT11CeyF1cBV9d/PqmjanRxHxxYmR0eBBKjC1?=
- =?us-ascii?Q?fwHzCPacSM/BhC+xgHaetknuzcO474SLwMx3HyfJH7rU33sIQ9bx8jCf4gkb?=
- =?us-ascii?Q?Pw1UXdzfnwmXvrX1KUrRA2YcpP4Jain2jfcphg46L4RvxeLPiigO7gRltvXM?=
- =?us-ascii?Q?87gRryauz+vURMUhJjcIl+vnRMd/3+SaPmWXEgbfEoqxoo2p2qi6qVVMiqUI?=
- =?us-ascii?Q?BemRdrgmUm5F1tzspXncMIhbrA5Exg9G/XGTAJBVcs3o2Tx9ZAlDvqQPcfs2?=
- =?us-ascii?Q?/Ghy3Kr6hTOHXRWG6L3h9X7TEHlk83OCVDza5vZwKih5Ax3aoExWNcenZN46?=
- =?us-ascii?Q?vmNJEtwoVb4yZ6tt3zKypNG2DJy1SkCafJGF5mASQFQ1kwXb4bSOOoKbnyWN?=
- =?us-ascii?Q?S7oEGSPI6t9kx+KmPy3C5ZsxqBvWigUEwE4MHiiXfKF8IXo8L9f8r3t5Ltm6?=
- =?us-ascii?Q?QVEHQ9CW8eVa+E8j/oiHocT0XjDs8dIWXQcvKtvtKh0ZKiW7soQhfvbKzhd/?=
- =?us-ascii?Q?93UBzMDubUWp09ClRH/WigmSdpGsAKby7gsXHteqsyBnqllqD60s+fAoN9Hi?=
- =?us-ascii?Q?LRy+PrTOFo68YGd4/dWvrRIrLxAAGZOFELkD27N8Y1E/xUE4mZSL0IfFyOw2?=
- =?us-ascii?Q?QItY7vrSMBSBA+tmCRV9++1YKbBnT3w/MCSmKB/PbAh6ydKE2gPfnSyjEXhF?=
- =?us-ascii?Q?D9NUvR/jJPKoz3YUuq2ojxcdzrfZkTYxy68EXqDqZWnoYqmCwy1sj28yBsNa?=
- =?us-ascii?Q?rURvjqx/PXPU307Rh4Lc0sU8VPUFRtzmjhb56jN4ruTwxGZcL7R40Mai38Bv?=
- =?us-ascii?Q?A8hr8ybxfbRSvFHtz/g1uU/DdHYhItvsLyA4I0l666NQCok+xBQWpoIQo8N1?=
- =?us-ascii?Q?9L/i/ISeYPfQN/R/IkX90MSZO9pnm8eCKoNF/AGtcWvwvYsk1wmiS22KSMj5?=
- =?us-ascii?Q?7AAG5Jt2Nsi4E07w63j/E0CM?=
-X-Forefront-Antispam-Report:
-	CIP:58.252.5.68;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.oppo.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(82310400017)(36860700004)(376005)(7416005)(1800799015);DIR:OUT;SFP:1101;
-X-OriginatorOrg: oppo.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 May 2024 08:53:10.2486
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7be7b089-1749-4c1b-dd87-08dc814f191b
-X-MS-Exchange-CrossTenant-Id: f1905eb1-c353-41c5-9516-62b4a54b5ee6
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f1905eb1-c353-41c5-9516-62b4a54b5ee6;Ip=[58.252.5.68];Helo=[mail.oppo.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SG2PEPF000B66D0.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR02MB6521
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] net/ipv6: Fix the RT cache flush via sysctl using a
+ previous delay
+Content-Language: en-US
+To: Kuifeng Lee <sinquersw@gmail.com>
+References: <20240529135251.4074-1-petr.pavlu@suse.com>
+ <CAHE2DV1S4oKved063WaYzqsoiEe1hY=ZoRxjFfPX1m0-N0MsdQ@mail.gmail.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Petr Pavlu <petr.pavlu@suse.com>
+In-Reply-To: <CAHE2DV1S4oKved063WaYzqsoiEe1hY=ZoRxjFfPX1m0-N0MsdQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, 31. May 10:04, Uladzislau Rezki wrote:
-> On Fri, May 31, 2024 at 11:05:20AM +0800, zhaoyang.huang wrote:
-> > From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
-> >
-> > vmalloc area runs out in our ARM64 system during an erofs test as
-> > vm_map_ram failed[1]. By following the debug log, we find that
-> > vm_map_ram()->vb_alloc() will allocate new vb->va which corresponding
-> > to 4MB vmalloc area as list_for_each_entry_rcu returns immediately
-> > when vbq->free->next points to vbq->free. That is to say, 65536 times
-> > of page fault after the list's broken will run out of the whole
-> > vmalloc area. This should be introduced by one vbq->free->next point to
-> > vbq->free which makes list_for_each_entry_rcu can not iterate the list
-> > and find the BUG.
-> >
-> > [1]
-> > PID: 1        TASK: ffffff80802b4e00  CPU: 6    COMMAND: "init"
-> >  #0 [ffffffc08006afe0] __switch_to at ffffffc08111d5cc
-> >  #1 [ffffffc08006b040] __schedule at ffffffc08111dde0
-> >  #2 [ffffffc08006b0a0] schedule at ffffffc08111e294
-> >  #3 [ffffffc08006b0d0] schedule_preempt_disabled at ffffffc08111e3f0
-> >  #4 [ffffffc08006b140] __mutex_lock at ffffffc08112068c
-> >  #5 [ffffffc08006b180] __mutex_lock_slowpath at ffffffc08111f8f8
-> >  #6 [ffffffc08006b1a0] mutex_lock at ffffffc08111f834
-> >  #7 [ffffffc08006b1d0] reclaim_and_purge_vmap_areas at ffffffc0803ebc3c
-> >  #8 [ffffffc08006b290] alloc_vmap_area at ffffffc0803e83fc
-> >  #9 [ffffffc08006b300] vm_map_ram at ffffffc0803e78c0
-> >
-> > Fixes: fc1e0d980037 ("mm/vmalloc: prevent stale TLBs in fully utilized blocks")
-> >
-> > Suggested-by: Hailong.Liu <hailong.liu@oppo.com>
-> > Signed-off-by: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
-> >
-> Is a problem related to run out of vmalloc space _only_ or it is a problem
-> with broken list? From the commit message it is hard to follow the reason.
->
-> Could you please post a full trace or panic?
-https://lore.kernel.org/all/20240531024820.5507-1-hailong.liu@oppo.com/
-we also face this issue and I give a more detail in the link.
-However I revert the
-commit fc1e0d980037 ("mm/vmalloc: prevent stale TLBs in fully utilized blocks") :)
->
-> > ---
-> > v2: introduce cpu in vmap_block to record the right CPU number
-> > v3: use get_cpu/put_cpu to prevent schedule between core
-> > ---
-> > ---
-> >  mm/vmalloc.c | 12 ++++++++----
-> >  1 file changed, 8 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> > index 22aa63f4ef63..ecdb75d10949 100644
-> > --- a/mm/vmalloc.c
-> > +++ b/mm/vmalloc.c
-> > @@ -2458,6 +2458,7 @@ struct vmap_block {
-> >  	struct list_head free_list;
-> >  	struct rcu_head rcu_head;
-> >  	struct list_head purge;
-> > +	unsigned int cpu;
-> >  };
-> >
-> >  /* Queue of free and dirty vmap blocks, for allocation and flushing purposes */
-> > @@ -2586,10 +2587,12 @@ static void *new_vmap_block(unsigned int order, gfp_t gfp_mask)
-> >  		return ERR_PTR(err);
-> >  	}
-> >
-> > +	vb->cpu = get_cpu();
-> >  	vbq = raw_cpu_ptr(&vmap_block_queue);
-> >  	spin_lock(&vbq->lock);
-> >  	list_add_tail_rcu(&vb->free_list, &vbq->free);
-> >  	spin_unlock(&vbq->lock);
-> > +	put_cpu();
-> >
-> Why do you need get_cpu() here? Can you go with raw_smp_processor_id()
-> and then access the per-cpu "vmap_block_queue"? get_cpu() disables
-> preemption and then a spin-lock is take within this critical section.
-> From the first glance PREEMPT_RT is broken in this case.
->
-> I am on a vacation, responds can be with delays.
->
-cpu = raw_smp_processor_id()
+[Added back netdev@vger.kernel.org and linux-kernel@vger.kernel.org
+which seem to be dropped by accident.]
 
-vbq = &per_cpu(vmap_block_queue, cpu);
-vb->cpu = cpu;
+On 5/30/24 17:59, Kuifeng Lee wrote:
+> On Wed, May 29, 2024 at 6:53 AM Petr Pavlu <petr.pavlu@suse.com> wrote:
+>>
+>> The net.ipv6.route.flush system parameter takes a value which specifies
+>> a delay used during the flush operation for aging exception routes. The
+>> written value is however not used in the currently requested flush and
+>> instead utilized only in the next one.
+>>
+>> A problem is that ipv6_sysctl_rtcache_flush() first reads the old value
+>> of net->ipv6.sysctl.flush_delay into a local delay variable and then
+>> calls proc_dointvec() which actually updates the sysctl based on the
+>> provided input.
+> 
+> If the problem we are trying to fix is using the old value, should we move
+> the line reading the value to a place after updating it instead of a
+> local copy of
+> the whole ctl_table?
 
-this would fix the case.
+Just moving the read of net->ipv6.sysctl.flush_delay after the
+proc_dointvec() call was actually my initial implementation. I then
+opted for the proposed version because it looked useful to me to save
+memory used to store net->ipv6.sysctl.flush_delay.
 
-> --
-> Uladzislau Rezki
---
-Best Regards,
-Hailong.
+Another minor aspect is that these sysctl writes are not serialized. Two
+invocations of ipv6_sysctl_rtcache_flush() could in theory occur at the
+same time. It can then happen that they both first execute
+proc_dointvec(). One of them ends up slower and thus its value gets
+stored in net->ipv6.sysctl.flush_delay. Both runs then return to
+ipv6_sysctl_rtcache_flush(), read the stored value and execute
+fib6_run_gc(). It means one of them calls this function with a value
+different that it was actually given on input. By having a purely local
+variable, each write is independent and fib6_run_gc() is executed with
+the right input delay.
+
+The cost of making a copy of ctl_table is a few instructions and this
+isn't on any hot path. The same pattern is used, for example, in
+net/ipv6/addrconf.c, function addrconf_sysctl_forward().
+
+So overall, the proposed version looked marginally better to me than
+just moving the read of net->ipv6.sysctl.flush_delay later in
+ipv6_sysctl_rtcache_flush().
+
+Thanks,
+Petr
+
+> 
+>>
+>> Fix the problem by removing net->ipv6.sysctl.flush_delay because the
+>> value is never actually used after the flush operation and instead use
+>> a temporary ctl_table in ipv6_sysctl_rtcache_flush() pointing directly
+>> to the local delay variable.
+>>
+>> Fixes: 4990509f19e8 ("[NETNS][IPV6]: Make sysctls route per namespace.")
+>> Signed-off-by: Petr Pavlu <petr.pavlu@suse.com>
+>> ---
+>>
+>> Note that when testing this fix, I noticed that an aging exception route
+>> (created via ICMP redirect) was not getting removed when triggering the
+>> flush operation unless the associated fib6_info was an expiring route.
+>> It looks the logic introduced in 5eb902b8e719 ("net/ipv6: Remove expired
+>> routes with a separated list of routes.") otherwise missed registering
+>> the fib6_info with the GC. That is potentially a separate issue, just
+>> adding it here in case someone decides to test this patch and possibly
+>> run into this problem too.
+>>
+>>  include/net/netns/ipv6.h |  1 -
+>>  net/ipv6/route.c         | 13 ++++++-------
+>>  2 files changed, 6 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/include/net/netns/ipv6.h b/include/net/netns/ipv6.h
+>> index 5f2cfd84570a..2ed7659013a4 100644
+>> --- a/include/net/netns/ipv6.h
+>> +++ b/include/net/netns/ipv6.h
+>> @@ -20,7 +20,6 @@ struct netns_sysctl_ipv6 {
+>>         struct ctl_table_header *frags_hdr;
+>>         struct ctl_table_header *xfrm6_hdr;
+>>  #endif
+>> -       int flush_delay;
+>>         int ip6_rt_max_size;
+>>         int ip6_rt_gc_min_interval;
+>>         int ip6_rt_gc_timeout;
+>> diff --git a/net/ipv6/route.c b/net/ipv6/route.c
+>> index bbc2a0dd9314..f07f050003c3 100644
+>> --- a/net/ipv6/route.c
+>> +++ b/net/ipv6/route.c
+>> @@ -6335,15 +6335,17 @@ static int rt6_stats_seq_show(struct seq_file *seq, void *v)
+>>  static int ipv6_sysctl_rtcache_flush(struct ctl_table *ctl, int write,
+>>                               void *buffer, size_t *lenp, loff_t *ppos)
+>>  {
+>> -       struct net *net;
+>> +       struct net *net = ctl->extra1;
+>> +       struct ctl_table lctl;
+>>         int delay;
+>>         int ret;
+>> +
+>>         if (!write)
+>>                 return -EINVAL;
+>>
+>> -       net = (struct net *)ctl->extra1;
+>> -       delay = net->ipv6.sysctl.flush_delay;
+>> -       ret = proc_dointvec(ctl, write, buffer, lenp, ppos);
+>> +       lctl = *ctl;
+>> +       lctl.data = &delay;
+>> +       ret = proc_dointvec(&lctl, write, buffer, lenp, ppos);
+>>         if (ret)
+>>                 return ret;
+>>
+>> @@ -6368,7 +6370,6 @@ static struct ctl_table ipv6_route_table_template[] = {
+>>         },
+>>         {
+>>                 .procname       =       "flush",
+>> -               .data           =       &init_net.ipv6.sysctl.flush_delay,
+>>                 .maxlen         =       sizeof(int),
+>>                 .mode           =       0200,
+>>                 .proc_handler   =       ipv6_sysctl_rtcache_flush
+>> @@ -6444,7 +6445,6 @@ struct ctl_table * __net_init ipv6_route_sysctl_init(struct net *net)
+>>         if (table) {
+>>                 table[0].data = &net->ipv6.sysctl.ip6_rt_max_size;
+>>                 table[1].data = &net->ipv6.ip6_dst_ops.gc_thresh;
+>> -               table[2].data = &net->ipv6.sysctl.flush_delay;
+>>                 table[2].extra1 = net;
+>>                 table[3].data = &net->ipv6.sysctl.ip6_rt_gc_min_interval;
+>>                 table[4].data = &net->ipv6.sysctl.ip6_rt_gc_timeout;
+>> @@ -6521,7 +6521,6 @@ static int __net_init ip6_route_net_init(struct net *net)
+>>  #endif
+>>  #endif
+>>
+>> -       net->ipv6.sysctl.flush_delay = 0;
+>>         net->ipv6.sysctl.ip6_rt_max_size = INT_MAX;
+>>         net->ipv6.sysctl.ip6_rt_gc_min_interval = HZ / 2;
+>>         net->ipv6.sysctl.ip6_rt_gc_timeout = 60*HZ;
+>>
+>> base-commit: 2bfcfd584ff5ccc8bb7acde19b42570414bf880b
+>> --
+>> 2.35.3
+>>
+>>
 
