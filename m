@@ -1,101 +1,118 @@
-Return-Path: <linux-kernel+bounces-196226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 324BD8D591E
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 05:46:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7F8C8D591F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 05:48:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4113B217EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 03:46:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5578B1F23D4B
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 03:48:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D879A79B9C;
-	Fri, 31 May 2024 03:46:22 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4938277F08;
+	Fri, 31 May 2024 03:48:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LJvY+hNU"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DBF7187578
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 03:46:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F2D2187562;
+	Fri, 31 May 2024 03:48:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717127182; cv=none; b=lfQayyU33fi/crhZX6AY2P3sy4t+v2ns7KpxdUd7bvRweMcI1uJIBY+6yYrckfm7c2dbmN3Yo/e8aTD5lc7j7e1w+3kC4nsDuVmo/enKrhFXXNKOFd561RxHshyBaflqHaHj2r+8SEs9ieqxI6nohXoFi4kVtnK6FHuM7CkVAzo=
+	t=1717127292; cv=none; b=A6pvdj3aPCxy2nnxdIedZFznpyOl7iXtIV39DMaRmp8TKcbxigdm8kDUek+sYr7d4eM3x91R/bJvqdLRexOLRCxQZthvLcCe+xBr6Yb0LWpyPZSSdgREtd40N3dTfOlRpsET7Kt/vKFBnszXEZkF56BLX4F+TX7VEAYiarHhUDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717127182; c=relaxed/simple;
-	bh=DC68Fan9U1mDvvm9HS7/KL5cq/tCfXtYDl7pvERFoFo=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=q5Z9TkrUfTFqafZ+X542JBau9WM+uaObtOAyZBEpCslKaBddBl3Rc1/NgCiqVLjF2na7jpXDa3Kwg+LJgPeXjf9MS3qrM5ZfGwgGTCMoulcxi3lFmUrm6u8gcfFG1DQmWV1Ng9pywqqtMV9/aIoONjyFHZtkktNeiupKEzznjR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3737b4129deso13333135ab.3
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 20:46:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717127180; x=1717731980;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DC68Fan9U1mDvvm9HS7/KL5cq/tCfXtYDl7pvERFoFo=;
-        b=xU0i2Ddh7FPhrotaG2bJ2vBQpuz2kS34c4/kmEdXTzrByHZ0pGtCNP+UjQJvjenPxS
-         fBDboz4hA7a9zmRT0+bXzfxT3DE6KdzFKbOMa+1ShLcfF1OYVJBIVGoLVvBSvk1/cR01
-         Pw5YGZXqMPLTTKsm+Sa8jaYzQuKlXMbR9WRO5wVI5bizvjqUgdhuZbdxVFDOncAexWTW
-         fIhOHtBmWQOV6C8av/Wu4uIi9kmC7F7ubuM76xxrB8W6iFLGLgsLReCC1wUCcuXIDsFb
-         tPMWpRipm/lGUQbxqHEQoaL5ubucCtru5YwiM5UhDuI0YTscnDId++J1Nd8HLkBVUryz
-         B3qA==
-X-Forwarded-Encrypted: i=1; AJvYcCUOCeP121w0469QIMLQAKj3tRF+ildN9Bp4d7ICnuKgyfRI/Sit9IU7aCiU3hp6LG/ix/S4F4n8VerzCub9Alez/Rj6+5PgAY4JT1WR
-X-Gm-Message-State: AOJu0YxDpV+pYA6U3ubyiJhUBCWp9zZVomnyJHFmY5LLeGKOg60/9e1N
-	N+Vq/6tnnEDATxdBEKjPD7D0RSLfar1KSI+XhDW2CE/QN08N8minFdcfhSKIDyTMa7CI3QMRslp
-	R2nD68Am1U2qb/kiRiUC3er9JFUBIgctytcYBn0kb7KbbRC5cgWsfk94=
-X-Google-Smtp-Source: AGHT+IFAlsDFvycw9GtdEcUnKblFYVUmsufEcUGHjOdczoQb273MFgKPjf2HsqU/ULaiNL0DiWQF9DvncnFTP9/cEgX9Dm6AepsC
+	s=arc-20240116; t=1717127292; c=relaxed/simple;
+	bh=0qCJgFLf9cXN6pdBFJDfR8v6g2HBsgnEiPYfjYNZNY0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=oNMN9dlBcyqzB+HhHRiZ2Ih6BJB0/vvlOsMqr1AFJBDXpC4yq6Tl3rApIdvrqQQ8QaNyRmM+4jPO5+tB1fOtQeK1BvyH2ONLgOtusULSZcUZHWdiYXhJBZfzLiGqa2kkXWcf1s6O0d5APNG1aYzkTR1/LgszFNzBWnOBeaal7dM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LJvY+hNU; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44UJPcHi015856;
+	Fri, 31 May 2024 03:48:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=Br+FZ6MhvKaX5QBk82W+eV
+	7qxeYU5nM4tEeHEpAgG2s=; b=LJvY+hNU9u/3LCqpd0At2U2Z4nF99G5mfPpgQr
+	NIrdtRPsirH8J/I5ZpjigWDx0fitE3Zc5l42Xl8LCmgk6mERcURP/8cbGd8yhLQc
+	P5vOcRJBBSVGR7sRR2izUzdW5ONLWvLUsjXimEropir2MekakqF1RZeEDzshzisr
+	L6r2FwXiHOcqjQPSPvDlmYr/veMZGAIj/dWhsatR7PR1xfyhSOtNA824atvxh//2
+	EcUwdWtvPGp+otr11W8cbaFYeH51wYQarkrX8ByNrUI50ADBjksG0pWRoJh+RhPY
+	lv81MZPUOxrjZAsf7fFfNlzn0DbEtzu83W8aXbGeS8CJzjYA==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba2pwuu1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 31 May 2024 03:48:08 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44V3m89n004112
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 31 May 2024 03:48:08 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 30 May
+ 2024 20:48:01 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Thu, 30 May 2024 20:48:01 -0700
+Subject: [PATCH] parport: add missing MODULE_DESCRIPTION()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12c4:b0:373:fed2:d934 with SMTP id
- e9e14a558f8ab-3748b96aa5amr863735ab.1.1717127180409; Thu, 30 May 2024
- 20:46:20 -0700 (PDT)
-Date: Thu, 30 May 2024 20:46:20 -0700
-In-Reply-To: <000000000000dfd6a105f71001d7@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000009f6f220619b7d3a8@google.com>
-Subject: Re: [syzbot] kernel BUG in ext4_write_inline_data
-From: syzbot <syzbot+f4582777a19ec422b517@syzkaller.appspotmail.com>
-To: adilger.kernel@dilger.ca, eadavis@qq.com, linux-ext4@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	nogikh@google.com, syzkaller-bugs@googlegroups.com, tytso@mit.edu
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240530-parport-v1-1-09bee2ca3123@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAHBIWWYC/x3M0QqDMAyF4VeRXC9Qu6ljrzK8SLs4A66WREUQ3
+ 33dLj/4zznAWIUNHtUBypuYzKmgvlQQR0pvRnkVg3f+5pqrw0yaZ12w7og7H5v7EFoodVYeZP8
+ /PfviQMYYlFIcf/tJ0rrjh2xhhfP8AqjUUZ94AAAA
+To: Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+        Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>
+CC: <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        "Jeff
+ Johnson" <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: FIaQ4w7fS3vAdceo2HPcuHKHYgN5ai8s
+X-Proofpoint-ORIG-GUID: FIaQ4w7fS3vAdceo2HPcuHKHYgN5ai8s
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-30_21,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ malwarescore=0 spamscore=0 adultscore=0 clxscore=1011 bulkscore=0
+ mlxscore=0 suspectscore=0 priorityscore=1501 phishscore=0 mlxlogscore=919
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405310028
 
-This bug is marked as fixed by commit:
-ext4: fix race condition between buffer write and page_mkwrite
+make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/parport/parport.o
 
-But I can't find it in the tested trees[1] for more than 90 days.
-Is it a correct commit? Please update it by replying:
+Add the missing MODULE_DESCRIPTION() macro invocation.
 
-#syz fix: exact-commit-title
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ drivers/parport/share.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Until then the bug is still considered open and new crashes with
-the same signature are ignored.
-
-Kernel: Linux
-Dashboard link: https://syzkaller.appspot.com/bug?extid=f4582777a19ec422b517
+diff --git a/drivers/parport/share.c b/drivers/parport/share.c
+index 49c74ded8a53..b7148517e076 100644
+--- a/drivers/parport/share.c
++++ b/drivers/parport/share.c
+@@ -1219,4 +1219,5 @@ irqreturn_t parport_irq_handler(int irq, void *dev_id)
+ }
+ EXPORT_SYMBOL(parport_irq_handler);
+ 
++MODULE_DESCRIPTION("Parallel-port resource manager");
+ MODULE_LICENSE("GPL");
 
 ---
-[1] I expect the commit to be present in:
+base-commit: 4a4be1ad3a6efea16c56615f31117590fd881358
+change-id: 20240530-parport-17ae72c58fb6
 
-1. for-kernelci branch of
-git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git
-
-2. master branch of
-git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git
-
-3. master branch of
-git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf.git
-
-4. main branch of
-git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git
-
-The full list of 9 trees can be found at
-https://syzkaller.appspot.com/upstream/repos
 
