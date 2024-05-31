@@ -1,95 +1,124 @@
-Return-Path: <linux-kernel+bounces-196882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F23E8D6301
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 15:29:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A72358D6303
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 15:29:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A3362812EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 13:29:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62DCF281CDB
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 13:29:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0513158DA8;
-	Fri, 31 May 2024 13:29:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D654158D7D;
+	Fri, 31 May 2024 13:29:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="CFmBUj+S"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fKqoHK29"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E539158D69;
-	Fri, 31 May 2024 13:29:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F256158D69;
+	Fri, 31 May 2024 13:29:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717162154; cv=none; b=lXrV0KgiiNjnKr1Pdy/BVwh/vAHeWqHTBNNaR41wOf1CuZo5E+crPpQpR729YDZYvzVLQhDP1TIadci8KJlFMhPDujqRY8lVOSABahhe8vAvOfRCM7noj6IXQgIn02XoOyx5GTy7wKdUl9nQxKKTYKgeXYPBuugwMkX9UH4QG7c=
+	t=1717162171; cv=none; b=o4M6e6v1YXpLHwR760bht5Eqe0E0Wj9G6SWyVDBJSes1vU++ywdYI1Ye2MyzUaFedc+RNYE5G/DgzgO+ERPMWZ/ytx9k96dObDTNFXKJ1O2HFYEJ+t7UgCz9NlZ3ZCdrouWGzATD+cZhScgj0zlLUffzZa8oe339v6JsSzlNoY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717162154; c=relaxed/simple;
-	bh=HAdBczTqYee4g0PfJNsMrZzNsQM3qPcsfsGtaRBqd40=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iSpCn482O7yROL2G7pMrc/DAheO7ZafjPSlaA52BJ1Zuw39mVOAJo2LZvCZPBMAOrQWY4DSDppZvsfwsUKF8hQ28xabdfDsvxLFu1aX9EUe0U0PdL8QRSKPu2mthnMqRTVfiFKG61/vbCNz98bVfCfsqAnDIw4iHA656NGciedE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=CFmBUj+S; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=FFhmGtm10lHefONMxTl29WG3wWok7tsWWVFlFVzZL74=; b=CFmBUj+Sotj6vExgsK2oFNemud
-	P/OnqnjStz1aea1014fPefiq1zZ2l+CYGNUbECxGBEt0LoXIGg6nNMa1cuHgR1Y2LhJmK5xryH3PB
-	8Wb7txcOEQW359ekoFY6/bsvnis6RYl3Ue8Gy2NJtQDllFQXbfr9l8mG5uojulVXhf/8=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sD2Jh-00GT4l-UI; Fri, 31 May 2024 15:29:09 +0200
-Date: Fri, 31 May 2024 15:29:09 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Linux regressions mailing list <regressions@lists.linux.dev>,
-	Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
-	Linux LEDs <linux-leds@vger.kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, johanneswueller@gmail.com,
-	"Russell King (Oracle)" <linux@armlinux.org.uk>,
-	Genes Lists <lists@sapience.com>
-Subject: Re: Hung tasks due to a AB-BA deadlock between the leds_list_lock
- rwsem and the rtnl mutex
-Message-ID: <e6800715-6bc0-49a0-bd00-5a75b852ea9d@lunn.ch>
-References: <9d189ec329cfe68ed68699f314e191a10d4b5eda.camel@sapience.com>
- <15a0bbd24cd01bd0b60b7047958a2e3ab556ea6f.camel@sapience.com>
- <ZliHhebSGQYZ/0S0@shell.armlinux.org.uk>
- <42d498fc-c95b-4441-b81a-aee4237d1c0d@leemhuis.info>
- <618601d8-f82a-402f-bf7f-831671d3d83f@redhat.com>
- <01fc2e30-eafe-495c-a62d-402903fd3e2a@lunn.ch>
- <2a6045e2-031a-46b6-9943-eaae21d85e37@redhat.com>
+	s=arc-20240116; t=1717162171; c=relaxed/simple;
+	bh=1B5Ail3gluKkIFy3ZhVZfOGqKlrQeSOnSE+DIaF3Mgg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uI6Au0Gcxb2VAm+CiMiowb+Ae9Q2i7eLw7bBKOLIWGg0yBs+cRnXefJ5ch/0nqNwffobPfTftA+BUQqv7GxreHB1UpTPSjP/FtuIYQx6miP2HgG184KqWiDtJjcKwM83QsJf7PCX5gmsGUH361B+FkcNMeZlPCahg7hvhRNmF2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fKqoHK29; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717162170; x=1748698170;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=1B5Ail3gluKkIFy3ZhVZfOGqKlrQeSOnSE+DIaF3Mgg=;
+  b=fKqoHK29j2Ply4TRyhgVfaKWy+IKBj1y5XAHUsZGGuUsd4eVWRZ6/d6m
+   w9A2Rslv060+vKKFSY8gButHI4uBHPkiVQ9NWM+CTsepr+iKCxIEkCN6U
+   iw4S1x8CYmFPx/Vf4Bh7S8ctsiYbUi3Oy3XUWZiYU4tGqyrgStIl9Cd8g
+   Yi4nQ8Fz41mpy5xRGUduPWYYlkxbEr6orOl0UpDrsCjLCUuBkTGNbVDc5
+   23lpR33z3y+75/cjbifMUc7oFp8Hnv4DFnZEG/26QuE1QNVUkgIw1HUQA
+   Dv7SiV2MD1B9OInJMRiWp/1SXAkI+BEw70VKaUcFKERb0zDAH3hpoqKor
+   Q==;
+X-CSE-ConnectionGUID: 53EQ6DuISeODcO9Bvi5SWQ==
+X-CSE-MsgGUID: z0n0AeboSbeSkmitZi/AFA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="24264776"
+X-IronPort-AV: E=Sophos;i="6.08,204,1712646000"; 
+   d="scan'208";a="24264776"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 06:29:29 -0700
+X-CSE-ConnectionGUID: 65t5r04gR3CfyhuOBFPsQg==
+X-CSE-MsgGUID: zXqrHzlNSZeV3UI/dHXMsA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,204,1712646000"; 
+   d="scan'208";a="36188428"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.41.28])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 06:29:26 -0700
+Message-ID: <b42123e6-eb46-442e-9caf-0184f86d723b@intel.com>
+Date: Fri, 31 May 2024 16:29:20 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2a6045e2-031a-46b6-9943-eaae21d85e37@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mmc: sdhci-of-dwcmshc: set CQE irq-handler for rockchip
+ variants
+To: Heiko Stuebner <heiko@sntech.de>, ulf.hansson@linaro.org
+Cc: serghox@gmail.com, linux-mmc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, quentin.schulz@cherry.de,
+ Heiko Stuebner <heiko.stuebner@cherry.de>
+References: <20240530215547.2192457-1-heiko@sntech.de>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <20240530215547.2192457-1-heiko@sntech.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-> > drivers/net/ethernet/realtek/r8169_leds.c:	led_cdev->hw_control_trigger = "netdev";
-> > drivers/net/ethernet/realtek/r8169_leds.c:	led_cdev->hw_control_trigger = "netdev";
-> > drivers/net/ethernet/intel/igc/igc_leds.c:	led_cdev->hw_control_trigger = "netdev";
-> > drivers/net/dsa/qca/qca8k-leds.c:		port_led->cdev.hw_control_trigger = "netdev";
-> > drivers/net/phy/phy_device.c:		cdev->hw_control_trigger = "netdev";
+On 31/05/24 00:55, Heiko Stuebner wrote:
+> From: Heiko Stuebner <heiko.stuebner@cherry.de>
 > 
-> Well those drivers combined, esp. with the generic phy_device in there
-> does mean that the ledtrig-netdev module now gets loaded on a whole lot
-> of x86 machines where before it would not.
+> The dwcmshc used on Rockchip rk3568 and rk3588 can use cqe, so set
+> the needed irq handler.
+> 
+> Tested on a rk3588-tiger SoM with dd, hdparm and fio. fio performance
+> does increase slightly from
+> 
+> Run status group 0 (all jobs):
+>    READ: bw=209MiB/s (219MB/s), 209MiB/s-209MiB/s (219MB/s-219MB/s), io=4096MiB (4295MB), run=19607-19607msec
+> 
+> without CQE to
+> 
+> Run status group 0 (all jobs):
+>    READ: bw=215MiB/s (225MB/s), 215MiB/s-215MiB/s (225MB/s-225MB/s), io=4096MiB (4295MB), run=19062-19062msec
+> 
+> with CQE enabled.
+> 
+> Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
 
-phy_device will only do something if there is the needed Device Tree
-properties. Given that very few systems use DT on x86, that should not
-be an issue. So only x86 systems with r8169 and igc should have the
-trigger module loaded because of this. It would be good to understand
-why other systems have the trigger loaded. However, as you say, this
-will not fix the underlying deadlock, it will just limit it to systems with r8169
-and igc...
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
 
-    Andrew
+> ---
+>  drivers/mmc/host/sdhci-of-dwcmshc.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/mmc/host/sdhci-of-dwcmshc.c b/drivers/mmc/host/sdhci-of-dwcmshc.c
+> index 4410d4523728d..3c203857189f9 100644
+> --- a/drivers/mmc/host/sdhci-of-dwcmshc.c
+> +++ b/drivers/mmc/host/sdhci-of-dwcmshc.c
+> @@ -908,6 +908,7 @@ static const struct sdhci_ops sdhci_dwcmshc_rk35xx_ops = {
+>  	.get_max_clock		= rk35xx_get_max_clock,
+>  	.reset			= rk35xx_sdhci_reset,
+>  	.adma_write_desc	= dwcmshc_adma_write_desc,
+> +	.irq			= dwcmshc_cqe_irq_handler,
+>  };
+>  
+>  static const struct sdhci_ops sdhci_dwcmshc_th1520_ops = {
+
 
