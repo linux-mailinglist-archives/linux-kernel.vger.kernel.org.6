@@ -1,107 +1,109 @@
-Return-Path: <linux-kernel+bounces-196648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC5768D5F46
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:09:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A5C68D5F48
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:10:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6CE5CB2533D
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:09:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EE231F2152C
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:10:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34363150980;
-	Fri, 31 May 2024 10:09:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63867149C76;
+	Fri, 31 May 2024 10:10:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vIriLKsu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OOF5Gutv"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77FF981ACB;
-	Fri, 31 May 2024 10:09:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4744B150981
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 10:10:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717150169; cv=none; b=FJlj7sh2P0pBcUs6L5HTN7xoqxmaaj1kftrTqP67S/qFSZ8iBW0Q6Rz3K70gxX4TCbMm50fDvQ9ZjRNiW64YmBMXKU4UBwumpJcsA0RlKr5F/C/1rpjMTg1l4TEc7pW1xKhaH3yiRcajqSoZgMiW+zfMkqIwmRb405BQBaISi/Q=
+	t=1717150206; cv=none; b=fJtvmJiMlwXmvs53kUxzU3e5PjJTTGrrCG/dRFVPwaOsA0eGuv6Aph50j81nQCxqckx9MJl1uUcHpQkonXoxcxnSX57zo+WdTjjo2HeceNO0oNJhqY9r1Oxx5ULRqWJaic6wFvg8iP7TeClbOH7CYGJeWw9WEjSca6yy5XkKBoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717150169; c=relaxed/simple;
-	bh=Sic4nTyYw+kCcDlQNPaN6T+BaZh+LcAE+Y2eGY+gukY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=qXr7toifx3pYVegUaFGFRY5kEvRLJx5ArQeLWeAGkUugyYtK7+2gnbjEv+XdQx8GbNhVietJzOc7Rm2YdaATiQRupr0mNOZJfRTPejgcwQbT2GKMicWfnvmCuXcN6hSMnPKVJahy7bcXV0KLqAzPg9nRYZJS4C/VtxZ0hSkbVhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vIriLKsu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C436C116B1;
-	Fri, 31 May 2024 10:09:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717150169;
-	bh=Sic4nTyYw+kCcDlQNPaN6T+BaZh+LcAE+Y2eGY+gukY=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=vIriLKsuUHXGkrsZUN0rQhmXJkOT4PQO7k4YbXKYkM6uuLRjZYbpN3nxFxsfdzIJk
-	 e9449mBvDdvgjEv6GGP12Y6bHwVyz8snADTrF6Ffge40pa/X6xAhYpobIkLNQAk/NO
-	 YuxCMWH5vpAQEHul1AVXArcH5/ef1OpeS9SyZSjb4Vr77AXNby30wMES8gpYIh+LbY
-	 GkbGkG2MgFQKZpQK9xlScXMz6fTMSKR4O4DOlF8fGjSfIAcqZvAS393qTcviQwnOYf
-	 Uco2HWf+kMdfJWDusJ1DbObG7n4by4bnGlv2Iwqf5nJ1TCiQJVLvfCXJqAm9zkZNkG
-	 06g1keqRLdN+Q==
-Message-ID: <1922c6893fd78b5c9af1549ac109d097341c4b0e.camel@kernel.org>
-Subject: Re: [PATCH] NFSD: remove unused structs 'nfsd3_voidargs'
-From: Jeff Layton <jlayton@kernel.org>
-To: linux@treblig.org, chuck.lever@oracle.com, neilb@suse.de
-Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Fri, 31 May 2024 06:09:27 -0400
-In-Reply-To: <20240531000838.332082-1-linux@treblig.org>
-References: <20240531000838.332082-1-linux@treblig.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
+	s=arc-20240116; t=1717150206; c=relaxed/simple;
+	bh=fTksmndDTvX3FXV3M5XklCCIM8WuaJli4n1k2WWdSFQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L4ky549vpTm1DJWG4AmNRRe3ahfDVtmU5M2hjU5z4f8tHPIusPOg++5pvsnPkc7gARjHS0vaSBnwnUzJD0+ZmocHI5K0LHo0u05x02VBwRamkw8DLDBkWR+4iVVOFou4JPhrkfSRICmU8SpwlOaidiDd6Obw+mHG55LbNynrDhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OOF5Gutv; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2e95a1f9c53so23162121fa.0
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 03:10:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717150203; x=1717755003; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=mwfOQ3dECageVJLKD3vAG2UoJX5hF/uRp6wCRRPuE0w=;
+        b=OOF5GutvbZI2UqeiQBWVZ+Rzjb58volBByeBuBOpUUkggR+EUEAXnF0jGNrEEDbhRt
+         JKjnmpd9riIahy8LeBswIrJjvFbAGBh6GFfBvlGNi18C3GCiTOmCm3Okws2pIsV1hiOo
+         JGhZAxkR3+RTufw+QxlhYZtmlrIdaK3cxvFsRd9ISEFYKuV9nGOdvAnS8pe0RZckQguc
+         9wLp92yjFLmBubgaYqkQyL+tSeBy+7hOlCh/Ii/ivfMUkheRRCvEqSEXWfNm55KIsuAA
+         vnvVYElW8aNKVjxMsewL/681N9QUK/vPfbd2eS6k90KY56yArPfO345OQkEmROOX6Mty
+         m36g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717150203; x=1717755003;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mwfOQ3dECageVJLKD3vAG2UoJX5hF/uRp6wCRRPuE0w=;
+        b=woa/GUL/iidaDwC1ZVaZlt750YC9cgrnMWE68jgbtPDAIm83RQUMJLLlYlJNG7TqE4
+         /YmhWcXT5amoEYhcmezfAuMoBEP5X5siwc/JsnIUr+zfhsVaBZjri2CLg8AfS6NrjcOs
+         uy2VQfe9mtOpCqLGlKZeF7vUj+FfC8pjofo+zqpeEGFLoOro0oQcBpUXuD2sMzfJZeiM
+         CQVOnXom2Mg16AgxfEznCugMFrYVNoFYJJEnKWd91xjPI9c36xRZGkraW7jHePSq5yq3
+         T/a/BX2Swg1pANh16qc5Wapz1z8Se3qgWMq2zbygPAVbg54xSPvgG3S8x50OZa+6J3BH
+         +3+A==
+X-Forwarded-Encrypted: i=1; AJvYcCUPLuSR3Kw39vYy4ed8BrJ4YuM790bTXYk/Z1A5t0HvdX24RV0kEpJBSvMtMjRl3ZWomRYuCTT0SWrPwjHw/8uNiSflI4vM910wLja4
+X-Gm-Message-State: AOJu0YyUUwp+PXghBAjxDRevAIXDGK+2wS+kQsFPMc1E06yfQG7OkoWi
+	za/qoNoFzu7cfpD4nT0jhMWuqYI5tSIX6WVJ83D7uknA+Yp671GoR+gLjiS6diQ=
+X-Google-Smtp-Source: AGHT+IEc2ysTUGY93B1Uge/CdR+H0J0ryAE+foagqOAZWTBhmukV2jutJ1gpYzXjeDOFKZ2EHUzIGw==
+X-Received: by 2002:a2e:9c0f:0:b0:2ea:8370:8a86 with SMTP id 38308e7fff4ca-2ea950c923fmr10767981fa.10.1717150203308;
+        Fri, 31 May 2024 03:10:03 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ea91cc65cbsm2524041fa.73.2024.05.31.03.10.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 May 2024 03:10:02 -0700 (PDT)
+Date: Fri, 31 May 2024 13:10:01 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Tengfei Fan <quic_tengfan@quicinc.com>
+Cc: andersson@kernel.org, konrad.dybcio@linaro.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@quicinc.com
+Subject: Re: [PATCH v3 1/2] arm64: dts: qcom: sm8550: Move usb-role-switch to
+ SoC dtsi
+Message-ID: <twgk3ufjkx2d5g2eoqdgcnfcch7jduihgy7iqmpaem6yryp7vt@c3e55qt7qoqo>
+References: <20240531090422.158813-1-quic_tengfan@quicinc.com>
+ <20240531090422.158813-2-quic_tengfan@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240531090422.158813-2-quic_tengfan@quicinc.com>
 
-On Fri, 2024-05-31 at 01:08 +0100, linux@treblig.org wrote:
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
->=20
-> 'nfsd3_voidargs' in nfs[23]acl.c is unused since
-> commit 788f7183fba8 ("NFSD: Add common helpers to decode void args
-> and
-> encode void results").
->=20
-> Remove them.
->=20
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+On Fri, May 31, 2024 at 05:04:21PM +0800, Tengfei Fan wrote:
+> The usb-role-switch is SM8550 SoC property, so move it from board dts
+> to SM8550 SoC dtsi.
+> 
+> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
 > ---
-> =C2=A0fs/nfsd/nfs2acl.c | 2 --
-> =C2=A0fs/nfsd/nfs3acl.c | 2 --
-> =C2=A02 files changed, 4 deletions(-)
->=20
-> diff --git a/fs/nfsd/nfs2acl.c b/fs/nfsd/nfs2acl.c
-> index 12b2b9bc07bf..4e3be7201b1c 100644
-> --- a/fs/nfsd/nfs2acl.c
-> +++ b/fs/nfsd/nfs2acl.c
-> @@ -308,8 +308,6 @@ static void nfsaclsvc_release_access(struct
-> svc_rqst *rqstp)
-> =C2=A0	fh_put(&resp->fh);
-> =C2=A0}
-> =C2=A0
-> -struct nfsd3_voidargs { int dummy; };
-> -
-> =C2=A0#define ST 1		/* status*/
-> =C2=A0#define AT 21		/* attributes */
-> =C2=A0#define pAT (1+AT)	/* post attributes - conditional */
-> diff --git a/fs/nfsd/nfs3acl.c b/fs/nfsd/nfs3acl.c
-> index 73adca47d373..5e34e98db969 100644
-> --- a/fs/nfsd/nfs3acl.c
-> +++ b/fs/nfsd/nfs3acl.c
-> @@ -221,8 +221,6 @@ static void nfs3svc_release_getacl(struct
-> svc_rqst *rqstp)
-> =C2=A0	posix_acl_release(resp->acl_default);
-> =C2=A0}
-> =C2=A0
-> -struct nfsd3_voidargs { int dummy; };
-> -
-> =C2=A0#define ST 1		/* status*/
-> =C2=A0#define AT 21		/* attributes */
-> =C2=A0#define pAT (1+AT)	/* post attributes - conditional */
+>  arch/arm64/boot/dts/qcom/sm8550-hdk.dts                     | 1 -
+>  arch/arm64/boot/dts/qcom/sm8550-mtp.dts                     | 1 -
+>  arch/arm64/boot/dts/qcom/sm8550-qrd.dts                     | 1 -
+>  arch/arm64/boot/dts/qcom/sm8550-sony-xperia-yodo-pdx234.dts | 1 -
+>  arch/arm64/boot/dts/qcom/sm8550.dtsi                        | 1 +
+>  5 files changed, 1 insertion(+), 4 deletions(-)
+> 
 
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
+
+-- 
+With best wishes
+Dmitry
 
