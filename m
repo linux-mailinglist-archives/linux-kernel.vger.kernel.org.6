@@ -1,39 +1,47 @@
-Return-Path: <linux-kernel+bounces-196659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DD5E8D5F70
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:19:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 610EA8D5F76
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:19:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6D351F24075
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:19:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D84C289D59
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:19:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4E7F1509AF;
-	Fri, 31 May 2024 10:19:18 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C728A1422DA;
-	Fri, 31 May 2024 10:19:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ADAA1514DE;
+	Fri, 31 May 2024 10:19:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gncuVOsA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D710150981;
+	Fri, 31 May 2024 10:19:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717150758; cv=none; b=DgJn14wTeDeA5E3/qCqQqX2jVyFSI5RSW8nNN3s+sVpb7H7T/wLvuMgAVblZHAFeW8SMKIaJi8Vch8mfPWNfpQ5QzCmdzh13TEuFN6mhE97YwHQfYLWV8mL8yAVnRTFZWh0uQW97MDbt05NvYKSYh/LaaUZ+lH8zYRw1C+l+xnQ=
+	t=1717150787; cv=none; b=TKV1Z/6yMsgCxQoIm46zWOvBXT7rQ3UhUYXkj42IhoUwTSagJf+nzWBBmD6OkwxiayfkoxMnZhfmBDGD8eBVe6p/vnyEsEXbRatc5IsFL0Fs47K6B1+FLjTXMlV+Rku+cfEwUNxXiMhqKKjJWSnKzNm/iIPqM+mUEn+V2KdJrpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717150758; c=relaxed/simple;
-	bh=Gxk63K/WzefClGNX53qjRIrlcEhoJXL8wkpq+mWqYMU=;
+	s=arc-20240116; t=1717150787; c=relaxed/simple;
+	bh=jDQX/opuoq7GSS+Owl/RC7qj/dNISV5td2hHwBrIiIs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FuOCdUr6xYKwmA8apPap8kf+I5IF/3KVQRc5kVweB+fmalNh+MsAoSqApLDOB+Vwst+46l7skUB1JB7XKGA1nsbdZ/DrpHlaOp45L4fBdCa13U6I+I43nKTe21Ls5n/qN0UHPvoxAaZTHQ5SzyKHPLeiOSQrPFG66SAwLCbW4mw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 83AE21424;
-	Fri, 31 May 2024 03:19:40 -0700 (PDT)
-Received: from [192.168.1.100] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BCAB03F641;
-	Fri, 31 May 2024 03:19:14 -0700 (PDT)
-Message-ID: <857fb9da-e12f-4496-964f-44d7ac0ad313@arm.com>
-Date: Fri, 31 May 2024 11:19:13 +0100
+	 In-Reply-To:Content-Type; b=IfhwrqW5mMXHsS9jAxvofACk3ug4uWHWVHNMPE58E+02P5/MC09FExYlFIoluHXJAk9WuBPejCwjWHocs6Down434Jsy25iBFpd3bwehJo5zNAKloyUUuLWPtGiRLkSvvo0fQNbhUI1c7qKf1UQZRg3oeKwoPw94inwLBfLQrbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gncuVOsA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BD22C116B1;
+	Fri, 31 May 2024 10:19:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717150786;
+	bh=jDQX/opuoq7GSS+Owl/RC7qj/dNISV5td2hHwBrIiIs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=gncuVOsAtRbQgRxsU84/voQtRgUWtq97AOosjLB1AYPK4e/QQhLQPX+iLho56qvIf
+	 ONgCjj4DHVoo2i48X9yU4uwN1WsbgMrpMrB+GYMOIS3Jn6xNeaziT7fv+MSblxQsAI
+	 U8XgUOvLzRfFFPIEobEUCuirMYPRqqtVzz7PzRtIXQamLYxv2pww4Ax3CsjYI3QnRx
+	 D3B5EHSzOT0pSSteXBtxQls+zFIgdEuQ1w+g8qBKhBWzziPRK+c1xv9IB3OGGki+bX
+	 1EVDfC69VKcoy5aTKUWIBrv6TBCcX0ZIrsSsblTEl8BBOATxE/2UCJpDtMDa4CNDlm
+	 yw1Nw3l1TKhvQ==
+Message-ID: <a472e8ba-bf54-4a62-9b05-ea265a83ef1b@kernel.org>
+Date: Fri, 31 May 2024 12:19:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,178 +49,113 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 7/7] coresight: config: Add preloaded configuration
-To: Linu Cherian <lcherian@marvell.com>
-Cc: linux-arm-kernel@lists.infradead.org, coresight@lists.linaro.org,
- linux-kernel@vger.kernel.org, robh+dt@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
- devicetree@vger.kernel.org, sgoutham@marvell.com, gcherian@marvell.com,
- suzuki.poulose@arm.com, mike.leach@linaro.org
-References: <20240531042745.494222-1-lcherian@marvell.com>
- <20240531042745.494222-8-lcherian@marvell.com>
+Subject: Re: [PATCH v2] dt-bindings: dma: fsl,imx-dma: Convert to dtschema
+To: Animesh Agarwal <animeshagarwal28@gmail.com>
+Cc: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, dmaengine@vger.kernel.org,
+ devicetree@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240531090458.99744-1-animeshagarwal28@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: James Clark <james.clark@arm.com>
-In-Reply-To: <20240531042745.494222-8-lcherian@marvell.com>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240531090458.99744-1-animeshagarwal28@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-
-
-On 31/05/2024 05:27, Linu Cherian wrote:
-> Add a preloaded configuration for generating
-> external trigger on address match. This can be
-> used by CTI and ETR blocks to stop trace capture
-> on kernel panic.
+On 31/05/2024 11:04, Animesh Agarwal wrote:
+> Convert the fsl i.MX DMA controller bindings to DT schema.
 > 
-> Kernel address for "panic" function is used as the
-> default trigger address.
-> 
-> This new configuration is available as,
-> /sys/kernel/config/cs-syscfg/configurations/panicstop
-> 
-
-Reviewed-by: James Clark <james.clark@arm.com>
-
-> Signed-off-by: Linu Cherian <lcherian@marvell.com>
+> Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
 > ---
->  drivers/hwtracing/coresight/Makefile          |  2 +-
->  .../coresight/coresight-cfg-preload.c         |  2 +
->  .../coresight/coresight-cfg-preload.h         |  2 +
->  .../hwtracing/coresight/coresight-cfg-pstop.c | 83 +++++++++++++++++++
->  4 files changed, 88 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/hwtracing/coresight/coresight-cfg-pstop.c
-> 
-> diff --git a/drivers/hwtracing/coresight/Makefile b/drivers/hwtracing/coresight/Makefile
-> index 4ba478211b31..46ce7f39d05f 100644
-> --- a/drivers/hwtracing/coresight/Makefile
-> +++ b/drivers/hwtracing/coresight/Makefile
-> @@ -25,7 +25,7 @@ subdir-ccflags-y += $(condflags)
->  obj-$(CONFIG_CORESIGHT) += coresight.o
->  coresight-y := coresight-core.o  coresight-etm-perf.o coresight-platform.o \
->  		coresight-sysfs.o coresight-syscfg.o coresight-config.o \
-> -		coresight-cfg-preload.o coresight-cfg-afdo.o \
-> +		coresight-cfg-preload.o coresight-cfg-afdo.o coresight-cfg-pstop.o \
->  		coresight-syscfg-configfs.o coresight-trace-id.o
->  obj-$(CONFIG_CORESIGHT_LINK_AND_SINK_TMC) += coresight-tmc.o
->  coresight-tmc-y := coresight-tmc-core.o coresight-tmc-etf.o \
-> diff --git a/drivers/hwtracing/coresight/coresight-cfg-preload.c b/drivers/hwtracing/coresight/coresight-cfg-preload.c
-> index e237a4edfa09..4980e68483c5 100644
-> --- a/drivers/hwtracing/coresight/coresight-cfg-preload.c
-> +++ b/drivers/hwtracing/coresight/coresight-cfg-preload.c
-> @@ -13,6 +13,7 @@
->  static struct cscfg_feature_desc *preload_feats[] = {
->  #if IS_ENABLED(CONFIG_CORESIGHT_SOURCE_ETM4X)
->  	&strobe_etm4x,
-> +	&gen_etrig_etm4x,
->  #endif
->  	NULL
->  };
-> @@ -20,6 +21,7 @@ static struct cscfg_feature_desc *preload_feats[] = {
->  static struct cscfg_config_desc *preload_cfgs[] = {
->  #if IS_ENABLED(CONFIG_CORESIGHT_SOURCE_ETM4X)
->  	&afdo_etm4x,
-> +	&pstop_etm4x,
->  #endif
->  	NULL
->  };
-> diff --git a/drivers/hwtracing/coresight/coresight-cfg-preload.h b/drivers/hwtracing/coresight/coresight-cfg-preload.h
-> index 21299e175477..291ba530a6a5 100644
-> --- a/drivers/hwtracing/coresight/coresight-cfg-preload.h
-> +++ b/drivers/hwtracing/coresight/coresight-cfg-preload.h
-> @@ -10,4 +10,6 @@
->  #if IS_ENABLED(CONFIG_CORESIGHT_SOURCE_ETM4X)
->  extern struct cscfg_feature_desc strobe_etm4x;
->  extern struct cscfg_config_desc afdo_etm4x;
-> +extern struct cscfg_feature_desc gen_etrig_etm4x;
-> +extern struct cscfg_config_desc pstop_etm4x;
->  #endif
-> diff --git a/drivers/hwtracing/coresight/coresight-cfg-pstop.c b/drivers/hwtracing/coresight/coresight-cfg-pstop.c
-> new file mode 100644
-> index 000000000000..c2bfbd07bfaf
-> --- /dev/null
-> +++ b/drivers/hwtracing/coresight/coresight-cfg-pstop.c
-> @@ -0,0 +1,83 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright(C) 2023  Marvell.
-> + * Based on coresight-cfg-afdo.c
-> + */
+>  .../devicetree/bindings/dma/fsl,imx-dma.yaml  | 56 +++++++++++++++++++
+
+Thank you for your patch. There is something to discuss/improve.
+
+
+> +  "#dma-cells":
+> +    const: 1
 > +
-> +#include "coresight-config.h"
+> +  dma-channels:
+> +    maximum: 16
+
+maximum or const?
+
+deprecated: true
+
 > +
-> +/* ETMv4 includes and features */
-> +#if IS_ENABLED(CONFIG_CORESIGHT_SOURCE_ETM4X)
-> +#include "coresight-etm4x-cfg.h"
+> +  dma-requests:
+> +    description: Number of DMA requests supported.
+
+deprecated: true
+
 > +
-> +/* preload configurations and features */
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - "#dma-cells"
 > +
-> +/* preload in features for ETMv4 */
+> +additionalProperties: false
 > +
-> +/* panic_stop feature */
-> +static struct cscfg_parameter_desc gen_etrig_params[] = {
-> +	{
-> +		.name = "address",
-> +		.value = (u64)panic,
-> +	},
-> +};
-> +
-> +static struct cscfg_regval_desc gen_etrig_regs[] = {
-> +	/* resource selector */
-> +	{
-> +		.type = CS_CFG_REG_TYPE_RESOURCE,
-> +		.offset = TRCRSCTLRn(2),
-> +		.hw_info = ETM4_CFG_RES_SEL,
-> +		.val32 = 0x40001,
-> +	},
-> +	/* single address comparator */
-> +	{
-> +		.type = CS_CFG_REG_TYPE_RESOURCE | CS_CFG_REG_TYPE_VAL_64BIT |
-> +			CS_CFG_REG_TYPE_VAL_PARAM,
-> +		.offset =  TRCACVRn(0),
-> +		.val32 = 0x0,
-> +	},
-> +	{
-> +		.type = CS_CFG_REG_TYPE_RESOURCE,
-> +		.offset = TRCACATRn(0),
-> +		.val64 = 0xf00,
-> +	},
-> +	/* Driver external output[0] with comparator out */
-> +	{
-> +		.type = CS_CFG_REG_TYPE_RESOURCE,
-> +		.offset = TRCEVENTCTL0R,
-> +		.val32 = 0x2,
-> +	},
-> +	/* end of regs */
-> +};
-> +
-> +struct cscfg_feature_desc gen_etrig_etm4x = {
-> +	.name = "gen_etrig",
-> +	.description = "Generate external trigger on address match\n"
-> +		       "parameter \'address\': address of kernel address\n",
-> +	.match_flags = CS_CFG_MATCH_CLASS_SRC_ETM4,
-> +	.nr_params = ARRAY_SIZE(gen_etrig_params),
-> +	.params_desc = gen_etrig_params,
-> +	.nr_regs = ARRAY_SIZE(gen_etrig_regs),
-> +	.regs_desc = gen_etrig_regs,
-> +};
-> +
-> +/* create a panic stop configuration */
-> +
-> +/* the total number of parameters in used features */
-> +#define PSTOP_NR_PARAMS	ARRAY_SIZE(gen_etrig_params)
-> +
-> +static const char *pstop_ref_names[] = {
-> +	"gen_etrig",
-> +};
-> +
-> +struct cscfg_config_desc pstop_etm4x = {
-> +	.name = "panicstop",
-> +	.description = "Stop ETM on kernel panic\n",
-> +	.nr_feat_refs = ARRAY_SIZE(pstop_ref_names),
-> +	.feat_ref_names = pstop_ref_names,
-> +	.nr_total_params = PSTOP_NR_PARAMS,
-> +};
-> +
-> +/* end of ETM4x configurations */
-> +#endif	/* IS_ENABLED(CONFIG_CORESIGHT_SOURCE_ETM4X) */
+> +examples:
+> +  - |
+> +    dma-controller@10001000 {
+> +      compatible = "fsl,imx27-dma";
+> +      reg = <0x10001000 0x1000>;
+> +      interrupts = <32 33>;
+> +      #dma-cells = <1>;
+> +      dma-channels = <16>;
+
+and drop it from here
+
+Best regards,
+Krzysztof
+
 
