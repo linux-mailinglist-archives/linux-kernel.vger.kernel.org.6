@@ -1,137 +1,253 @@
-Return-Path: <linux-kernel+bounces-197138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E27C8D66AF
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:21:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 30B018D66B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:22:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F83F1C24863
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:21:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 531551C245EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:22:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34F92158D8D;
-	Fri, 31 May 2024 16:21:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A396815623B;
+	Fri, 31 May 2024 16:22:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="a3G1jFCH"
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="R3yoT+pG"
+Received: from smtp-fw-52005.amazon.com (smtp-fw-52005.amazon.com [52.119.213.156])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 111E2145328
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 16:21:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A1ED158D78
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 16:22:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717172481; cv=none; b=FzFdSwb+nMcdUSdsbCv4dxleerzPV5UhJWlZxBwDt3K+ZqiD2tO77nEf1eXux4Kh3wVvNR4dBb2bK4GKS06+SZGbWLCSBuFHAI27sysDOP97aPQMSROSUp19fQczmwh/HtM2qY4vbMuXiUomJyTMPaTAQseFI3GBMQ+1P2K+6mM=
+	t=1717172527; cv=none; b=cQrzwZrpMWbtpPKHYvGr0+Y1RHaOl3L0b7g13/YTsYUHoh/BVJLRtMPHCXJ6Jwjl24efyO9tm5eaB8iCa1g+vKXBZ68mvd6A+17Qqzivj/SaRBBHTt4QGgM+4zG9rg5c/BqkEItWioRyFz+FxGu8OxNnEmjxQsDfeQ+UIRGkXFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717172481; c=relaxed/simple;
-	bh=nvY8T8Ok0QulhK6MiIwjO6JnMW3LaS4gATuYYnuUhy4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BsipEqRRFdM/QgaRmS9KSywrMtNAjtEpUhasubpyymn7tcm1VL9d/NrVhKbLvPPeCOgalGbF0Lold+rZ0dsCO2lBTcOUT+gfjERfbqYNfuBOseAsbpc3ePXAaT8qs5D1GslY/ZyiMqC6ESG49KeorGk4QDIJS9blMALlNcu64cg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=a3G1jFCH; arc=none smtp.client-ip=209.85.222.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-794ba2d4d82so107068585a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 09:21:19 -0700 (PDT)
+	s=arc-20240116; t=1717172527; c=relaxed/simple;
+	bh=mkb/nVcUv3NFAWt/4Kf8HdacRVGvAVCG1SNRZH1Zy8E=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZkPH+AVTfQ1r6OldoEDODdL5nxPQoZXfXr4FeuKyyKV2XyrejjMHuJOdARSabYRs8D6sh/VjbhD6zuclF4C5Tcb2Sw+RGGZN/sL+JsSsX/Q+zSbVyGhdUQomEsd3HeT2TWd0odZaPyWhGZtRSXlTnMtYc+u+sIba345jezT1bCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=R3yoT+pG; arc=none smtp.client-ip=52.119.213.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1717172477; x=1717777277; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=siXueITpdXmllfrhOnciz2l6HSxbQMeuCE6GtcEy6a8=;
-        b=a3G1jFCHy1Ghhw6/DTUruHZJv13CKYdwDR6RGLDvZPdrsB/O1JKklDGGvOPmXTfkHo
-         Ip9Vd08iHkY4XiUC4ShUqPJoCja4vfJ2TK0lJ2hgsofy4BUxkWa0uZHF3zDeY1x/t0Ab
-         D+bPL3xYzn8406NTmelVDDOv5XjLDNYs7yJ2c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717172477; x=1717777277;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=siXueITpdXmllfrhOnciz2l6HSxbQMeuCE6GtcEy6a8=;
-        b=QQ6WS3EsdGpZgjUt2LI+ldcZf3vd+3FBYV1b9HryJwgKRRh4CwY1c+e9Fy70OoMTdi
-         Qc40WjqJP7onrjrcEwjPzKyrVXsXsCbIfVDZhxlpwGkPO6/v7lWGCd0TasyLwsuVokUz
-         asPB8ehvagkGCuqR5GCkbIKhq8/nTjaUIUrLcBiesbvdZhZb3l1Z53N3su6lxyJrBa9H
-         bqmTSC5lMoxrVlLwKcELPusVy507pOCzZeB5cIsYmFmUR73XHDYQaNI5f/lllaLz8bHE
-         yc/9Qf8+GpZYyqBn8gcwK+D20w1/CGPo9AmSbfUsBSE5uLToYTB9hGv7IvlZONFRQpT6
-         DC9w==
-X-Forwarded-Encrypted: i=1; AJvYcCUokAx7SudzNadef4PV0Z/XBLJ8NOF8JcIdMUs0sIGcztmMBJcg5HbSuXOoRIcvpdlRCvc+cQEkRVkIYxQy71XLBVF3zGWuS/CZsoZF
-X-Gm-Message-State: AOJu0Yz+X2g9a55kMmBGDSJfGl+1q5lB5OZzpi7eOPgmbXB0rxgVaJB2
-	0PANd0WiPM43Lt2J+opJ1MzXnB4hkO0TKVXnxx2UF4C7y5jcIqxmm4wqIFPPxykzPyCckwiHgLj
-	8h+UR
-X-Google-Smtp-Source: AGHT+IE6DkjKT4hHom0gDsS4c1jLWgO4NpXpA4y+if5RwWJXJbUhztcjACuwvhF02dCEcV/KB/UZ6w==
-X-Received: by 2002:a05:620a:e0b:b0:792:bb55:906d with SMTP id af79cd13be357-794f5c88d1cmr219108385a.39.1717172476930;
-        Fri, 31 May 2024 09:21:16 -0700 (PDT)
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com. [209.85.160.176])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-794f3018c11sm68803485a.67.2024.05.31.09.21.15
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 31 May 2024 09:21:16 -0700 (PDT)
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-43f87dd6866so435711cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 09:21:15 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXYSay8syySFNSnZ19WG5Q4KfjIcFAflzNqTephKgp8RAJE2Gn8Qws2tphldUu2IYBb1CeX3zOj6Q1C4GL6zIWM92inIhJfzqw6KE5U
-X-Received: by 2002:a05:622a:4a14:b0:43f:b19e:d3ba with SMTP id
- d75a77b69052e-43ff2c5399bmr3052241cf.8.1717172475232; Fri, 31 May 2024
- 09:21:15 -0700 (PDT)
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1717172527; x=1748708527;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Kkjdm7vLzgsvxwTIl6a+cQaY/194/UYr9RfyTUcw400=;
+  b=R3yoT+pGSPNzWSY1vjdBBl53E0gvZbg+mXEUSHk0WUUEPVF67rc00LqG
+   S7MFf987nH1K/u5ZOns6T9Ve1fEyWWQCcYR97JIlt8yuQjOXBPQFUsE6h
+   Aripyz56m2lkpD7zYM8An15I7TdJji1WpSAXZ5/zKGF6uk5snXyQkVcsB
+   0=;
+X-IronPort-AV: E=Sophos;i="6.08,204,1712620800"; 
+   d="scan'208";a="657753334"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-52005.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 16:22:04 +0000
+Received: from EX19MTAEUB001.ant.amazon.com [10.0.10.100:27507]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.8.93:2525] with esmtp (Farcaster)
+ id 61aea3b8-f33e-485c-8066-25d0973a7946; Fri, 31 May 2024 16:22:02 +0000 (UTC)
+X-Farcaster-Flow-ID: 61aea3b8-f33e-485c-8066-25d0973a7946
+Received: from EX19D002EUA001.ant.amazon.com (10.252.50.66) by
+ EX19MTAEUB001.ant.amazon.com (10.252.51.28) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.28; Fri, 31 May 2024 16:22:02 +0000
+Received: from EX19MTAUWA001.ant.amazon.com (10.250.64.204) by
+ EX19D002EUA001.ant.amazon.com (10.252.50.66) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.28; Fri, 31 May 2024 16:22:01 +0000
+Received: from dev-dsk-hagarhem-1b-b868d8d5.eu-west-1.amazon.com
+ (10.253.65.58) by mail-relay.amazon.com (10.250.64.204) with Microsoft SMTP
+ Server id 15.2.1258.28 via Frontend Transport; Fri, 31 May 2024 16:22:01
+ +0000
+Received: by dev-dsk-hagarhem-1b-b868d8d5.eu-west-1.amazon.com (Postfix, from userid 23002382)
+	id EA07320BED; Fri, 31 May 2024 16:22:00 +0000 (UTC)
+From: Hagar Hemdan <hagarhem@amazon.com>
+To:
+CC: Maximilian Heyne <mheyne@amazon.de>, Norbert Manthey <nmanthey@amazon.de>,
+	Hagar Hemdan <hagarhem@amazon.com>, Marc Zyngier <maz@kernel.org>, "Thomas
+ Gleixner" <tglx@linutronix.de>, Eric Auger <eric.auger@redhat.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v4] irqchip/gic-v3-its: Fix potential race condition in its_vlpi_prop_update()
+Date: Fri, 31 May 2024 16:21:44 +0000
+Message-ID: <20240531162144.28650-1-hagarhem@amazon.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240531-edp-panel-drop-v3-0-4c98b2b95e3a@linaro.org> <7428a2f7-befc-6db8-76f4-3ca8dc12d31c@quicinc.com>
-In-Reply-To: <7428a2f7-befc-6db8-76f4-3ca8dc12d31c@quicinc.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Fri, 31 May 2024 09:20:56 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=Xcq-p5OxSnDJVF-Wp88ZfXOaOKJmh941ymy-f0wkhdhw@mail.gmail.com>
-Message-ID: <CAD=FV=Xcq-p5OxSnDJVF-Wp88ZfXOaOKJmh941ymy-f0wkhdhw@mail.gmail.com>
-Subject: Re: [PATCH v3 0/3] drm/panel-edp: remove several legacy compatibles
- used by the driver
-To: Jeffrey Hugo <quic_jhugo@quicinc.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-rockchip@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Hi,
+its_vlpi_prop_update() calls lpi_write_config() which obtains the
+mapping information for a VLPI without lock held. So it could race
+with its_vlpi_unmap().
+Since all calls from its_irq_set_vcpu_affinity() require the same
+lock to be held. So instead of peppering the locking all over the
+place, we hoist the locking into its_irq_set_vcpu_affinity().
 
-On Fri, May 31, 2024 at 9:18=E2=80=AFAM Jeffrey Hugo <quic_jhugo@quicinc.co=
-m> wrote:
->
-> On 5/30/2024 5:12 PM, Dmitry Baryshkov wrote:
-> > There are two ways to describe an eDP panel in device tree. The
-> > recommended way is to add a device on the AUX bus, ideally using the
-> > edp-panel compatible. The legacy way is to define a top-level platform
-> > device for the panel.
-> >
-> > Document that adding support for eDP panels in a legacy way is strongly
-> > discouraged (if not forbidden at all).
-> >
-> > While we are at it, also drop legacy compatible strings and bindings fo=
-r
-> > five panels. These compatible strings were never used by a DT file
-> > present in Linux kernel and most likely were never used with the
-> > upstream Linux kernel.
-> >
-> > The following compatibles were never used by the devices supported by
-> > the upstream kernel and are a subject to possible removal:
-> >
-> > - lg,lp097qx1-spa1
-> > - samsung,lsn122dl01-c01
-> > - sharp,ld-d5116z01b
->
-> Ok to drop the sharp one I added.  It should be able to be handled by
-> the (newish) edp-panel, but I think the TI bridge driver needs some work
-> for the specific platform (no I2C connection) to verify.
+This bug was discovered using Coverity Static Analysis
+Security Testing (SAST) by Synopsys, Inc.
 
-Is the platform supported upstream? If so, which platform is it? Is
-the TI bridge chip the ti-sn65dsi86? If so, I'm confused how you could
-use that bridge chip without an i2c connection, but perhaps I'm
-misunderstanding. :-P
+Fixes: 015ec0386ab6 ("irqchip/gic-v3-its: Add VLPI configuration handling")
+Suggested-by: Marc Zyngier <maz@kernel.org>
+Signed-off-by: Hagar Hemdan <hagarhem@amazon.com>
+---
+v4: modified the commit msg.
+Only compile-tested, no access to HW.
+---
+ drivers/irqchip/irq-gic-v3-its.c | 65 +++++++++++++-------------------
+ 1 file changed, 27 insertions(+), 38 deletions(-)
 
-Thanks!
+diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+index 40ebf1726393..f9e824ad1523 100644
+--- a/drivers/irqchip/irq-gic-v3-its.c
++++ b/drivers/irqchip/irq-gic-v3-its.c
+@@ -1846,28 +1846,22 @@ static int its_vlpi_map(struct irq_data *d, struct its_cmd_info *info)
+ {
+ 	struct its_device *its_dev = irq_data_get_irq_chip_data(d);
+ 	u32 event = its_get_event_id(d);
+-	int ret = 0;
+ 
+ 	if (!info->map)
+ 		return -EINVAL;
+ 
+-	raw_spin_lock(&its_dev->event_map.vlpi_lock);
+-
+ 	if (!its_dev->event_map.vm) {
+ 		struct its_vlpi_map *maps;
+ 
+ 		maps = kcalloc(its_dev->event_map.nr_lpis, sizeof(*maps),
+ 			       GFP_ATOMIC);
+-		if (!maps) {
+-			ret = -ENOMEM;
+-			goto out;
+-		}
++		if (!maps)
++			return -ENOMEM;
+ 
+ 		its_dev->event_map.vm = info->map->vm;
+ 		its_dev->event_map.vlpi_maps = maps;
+ 	} else if (its_dev->event_map.vm != info->map->vm) {
+-		ret = -EINVAL;
+-		goto out;
++		return -EINVAL;
+ 	}
+ 
+ 	/* Get our private copy of the mapping information */
+@@ -1899,46 +1893,32 @@ static int its_vlpi_map(struct irq_data *d, struct its_cmd_info *info)
+ 		its_dev->event_map.nr_vlpis++;
+ 	}
+ 
+-out:
+-	raw_spin_unlock(&its_dev->event_map.vlpi_lock);
+-	return ret;
++	return 0;
+ }
+ 
+ static int its_vlpi_get(struct irq_data *d, struct its_cmd_info *info)
+ {
+ 	struct its_device *its_dev = irq_data_get_irq_chip_data(d);
+ 	struct its_vlpi_map *map;
+-	int ret = 0;
+-
+-	raw_spin_lock(&its_dev->event_map.vlpi_lock);
+ 
+ 	map = get_vlpi_map(d);
+ 
+-	if (!its_dev->event_map.vm || !map) {
+-		ret = -EINVAL;
+-		goto out;
+-	}
++	if (!its_dev->event_map.vm || !map)
++		return -EINVAL;
+ 
+ 	/* Copy our mapping information to the incoming request */
+ 	*info->map = *map;
+ 
+-out:
+-	raw_spin_unlock(&its_dev->event_map.vlpi_lock);
+-	return ret;
++	return 0;
+ }
+ 
+ static int its_vlpi_unmap(struct irq_data *d)
+ {
+ 	struct its_device *its_dev = irq_data_get_irq_chip_data(d);
+ 	u32 event = its_get_event_id(d);
+-	int ret = 0;
+ 
+-	raw_spin_lock(&its_dev->event_map.vlpi_lock);
+-
+-	if (!its_dev->event_map.vm || !irqd_is_forwarded_to_vcpu(d)) {
+-		ret = -EINVAL;
+-		goto out;
+-	}
++	if (!its_dev->event_map.vm || !irqd_is_forwarded_to_vcpu(d))
++		return -EINVAL;
+ 
+ 	/* Drop the virtual mapping */
+ 	its_send_discard(its_dev, event);
+@@ -1962,9 +1942,7 @@ static int its_vlpi_unmap(struct irq_data *d)
+ 		kfree(its_dev->event_map.vlpi_maps);
+ 	}
+ 
+-out:
+-	raw_spin_unlock(&its_dev->event_map.vlpi_lock);
+-	return ret;
++	return 0;
+ }
+ 
+ static int its_vlpi_prop_update(struct irq_data *d, struct its_cmd_info *info)
+@@ -1987,29 +1965,40 @@ static int its_irq_set_vcpu_affinity(struct irq_data *d, void *vcpu_info)
+ {
+ 	struct its_device *its_dev = irq_data_get_irq_chip_data(d);
+ 	struct its_cmd_info *info = vcpu_info;
++	int ret;
+ 
+ 	/* Need a v4 ITS */
+ 	if (!is_v4(its_dev->its))
+ 		return -EINVAL;
+ 
++	raw_spin_lock(&its_dev->event_map.vlpi_lock);
++
+ 	/* Unmap request? */
+-	if (!info)
+-		return its_vlpi_unmap(d);
++	if (!info) {
++		ret = its_vlpi_unmap(d);
++		goto out;
++	}
+ 
+ 	switch (info->cmd_type) {
+ 	case MAP_VLPI:
+-		return its_vlpi_map(d, info);
++		ret = its_vlpi_map(d, info);
++		break;
+ 
+ 	case GET_VLPI:
+-		return its_vlpi_get(d, info);
++		ret = its_vlpi_get(d, info);
++		break;
+ 
+ 	case PROP_UPDATE_VLPI:
+ 	case PROP_UPDATE_AND_INV_VLPI:
+-		return its_vlpi_prop_update(d, info);
++		ret = its_vlpi_prop_update(d, info);
++		break;
+ 
+ 	default:
+-		return -EINVAL;
++		ret = -EINVAL;
+ 	}
++out:
++	raw_spin_unlock(&its_dev->event_map.vlpi_lock);
++	return ret;
+ }
+ 
+ static struct irq_chip its_irq_chip = {
+-- 
+2.40.1
 
--Doug
 
