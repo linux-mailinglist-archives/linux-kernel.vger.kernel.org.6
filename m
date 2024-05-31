@@ -1,67 +1,121 @@
-Return-Path: <linux-kernel+bounces-196634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 007068D5F17
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 11:58:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3954B8D5F1F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 11:59:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2C411F2375A
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 09:58:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 613961C21A57
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 09:59:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25D8A1422DA;
-	Fri, 31 May 2024 09:58:39 +0000 (UTC)
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3631B1422C4;
+	Fri, 31 May 2024 09:59:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="o+hOdA5I";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VzzTcxfl"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9602A1420D0;
-	Fri, 31 May 2024 09:58:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24FBB140395;
+	Fri, 31 May 2024 09:59:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717149518; cv=none; b=i5F4rOJzZKpk0/N3BklWj2B5Oc3/uLvkDhM4dKUAAzaFCrJ25+q/YVWPeer625e599Ki3yOnB1YjWXTxbPMdIa9MVk3rQIBs7zaFehtn/wJTu1rSBMIOOKV2A847vgEfgco9DqCpIxL22RPIib9InbpfbbEkZiuZuQxFaApipks=
+	t=1717149588; cv=none; b=B/VQmPCfVdlySSFYPXdIah//WvK3r9bnG1jIu8bhOP1jd2f7WXWqhBOfljI9puypPH7nfIjWYZFt4OoKNLWzj9Z6gzaST3ZTompywQsgzcFPR1Ws8JxS+EqrwPc8VIouteaLzzdgd3K0A/IV4xkpeDMRu7F4eJ2L5c5IPWYjv7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717149518; c=relaxed/simple;
-	bh=CKyLj97UPUEBz/XeOsBo/51NPdT+IpIDcONQXH9fiRE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ewFresylOb2Th4IjdNuUvbjJIe5oFe8j5g+8Wyi1QG7GeWYzxjbGq/8OT0t+vI1mIm+X/M9jxeeY4++ebJjD3wXqYdKI2anD0ztLq7YNkW3tQkCHbRvmaufx9MWqNke/d6wCVRxTjOllX3ueP2Ug3ieUCo12FquAy29Zg3mimXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1sCz1o-004AJP-01;
-	Fri, 31 May 2024 17:58:29 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 31 May 2024 17:58:30 +0800
-Date: Fri, 31 May 2024 17:58:30 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Deming Wang <wangdeming@inspur.com>
-Cc: davem@davemloft.net, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] crypto: qat - Fix typo
-Message-ID: <ZlmfRuKhFxWWyB6I@gondor.apana.org.au>
-References: <20240513060742.2134-1-wangdeming@inspur.com>
+	s=arc-20240116; t=1717149588; c=relaxed/simple;
+	bh=5bkerezig87RZ5oi5fPwTc4JzitlAm+g+mlN/HPTKqQ=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=p+VcXV5yvDQkVwPCY/fK1fzj5aRjbq/i005S3UWeH3dMGJlNSd4PZwIdNJxh/F9Pqu48S++nNzNpp6rmyUBV1sqMBCOCDdRPSkOB0izpWbH5gKxxO7eDszX1EXkmi4UjgVXNfhF4BYTFjRnYtcu7Kn1+wEnuUWScfD4Ib6bsbVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=o+hOdA5I; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VzzTcxfl; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 31 May 2024 09:59:45 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1717149585;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cTMVPF2GH7QajfvTeNubuoLs6K6kCrJH8oBiVsIrwks=;
+	b=o+hOdA5I26IzDrWf5GcqvdVy/X5NTdaRS2LiLA88hEsW3Kdcefo7VB7V/Hd9t1NRH+WixL
+	IMDZanxymo1z24J+kie01c2cloADAXRjHvfP6aUQD5yZsFTQ2qJV/oNHQUiiQRD4BYtmW5
+	ih7xqSdTYmnh1XOMWUUMgsZBgL2+bBUJTCi3h9jDfFnkjaj40T/xUxrnS22RKhaD5P8Rt1
+	hbmsLHkw9dziM4Iv8ju7Dr+AlOqiE56EMLSvK15maLj7YQYHT8hqpYogTwlNT5lE76FN3V
+	MSZbOaBCo9i9tgFrgztmds0kTIgRr7jNmXBspF+RN2geLYckgNeLloj0jlwXRw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1717149585;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cTMVPF2GH7QajfvTeNubuoLs6K6kCrJH8oBiVsIrwks=;
+	b=VzzTcxflg6v3OsCZlPdpPAWLyuJqvfiCvC46GNLfn+HLJI1osmSpG9oWOT4Teo6JlVg3D6
+	y2EVWOqKXmnFWJDw==
+From: "tip-bot2 for Phil Auld" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: sched/urgent] sched/x86: Export 'percpu arch_freq_scale'
+Cc: Phil Auld <pauld@redhat.com>, Ingo Molnar <mingo@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240530181548.2039216-1-pauld@redhat.com>
+References: <20240530181548.2039216-1-pauld@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240513060742.2134-1-wangdeming@inspur.com>
+Message-ID: <171714958509.10875.11912816904466913393.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Mon, May 13, 2024 at 02:07:42AM -0400, Deming Wang wrote:
-> The mapings should be replaced by mappings.
-> 
-> Signed-off-by: Deming Wang <wangdeming@inspur.com>
-> ---
->  drivers/crypto/intel/qat/qat_common/adf_dev_mgr.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+The following commit has been merged into the sched/urgent branch of tip:
 
-Patch applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Commit-ID:     d40605a6823577a6c40fad6fb1f10a40ea0389d7
+Gitweb:        https://git.kernel.org/tip/d40605a6823577a6c40fad6fb1f10a40ea0389d7
+Author:        Phil Auld <pauld@redhat.com>
+AuthorDate:    Thu, 30 May 2024 14:15:48 -04:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Fri, 31 May 2024 11:48:42 +02:00
+
+sched/x86: Export 'percpu arch_freq_scale'
+
+Commit:
+
+  7bc263840bc3 ("sched/topology: Consolidate and clean up access to a CPU's max compute capacity")
+
+removed rq->cpu_capacity_orig in favor of using arch_scale_freq_capacity()
+calls. Export the underlying percpu symbol on x86 so that external trace
+point helper modules can be made to work again.
+
+Signed-off-by: Phil Auld <pauld@redhat.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: https://lore.kernel.org/r/20240530181548.2039216-1-pauld@redhat.com
+---
+ arch/x86/kernel/cpu/aperfmperf.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/x86/kernel/cpu/aperfmperf.c b/arch/x86/kernel/cpu/aperfmperf.c
+index f9a8c7b..b3fa61d 100644
+--- a/arch/x86/kernel/cpu/aperfmperf.c
++++ b/arch/x86/kernel/cpu/aperfmperf.c
+@@ -345,6 +345,7 @@ static DECLARE_WORK(disable_freq_invariance_work,
+ 		    disable_freq_invariance_workfn);
+ 
+ DEFINE_PER_CPU(unsigned long, arch_freq_scale) = SCHED_CAPACITY_SCALE;
++EXPORT_PER_CPU_SYMBOL_GPL(arch_freq_scale);
+ 
+ static void scale_freq_tick(u64 acnt, u64 mcnt)
+ {
 
