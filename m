@@ -1,122 +1,112 @@
-Return-Path: <linux-kernel+bounces-197569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16D8E8D6C92
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 00:44:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6EA38D6C93
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 00:44:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45AB41C23DA1
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 22:44:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 721CB286165
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 22:44:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEC7E8174E;
-	Fri, 31 May 2024 22:44:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hxvKrD5h"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C069181AD7;
+	Fri, 31 May 2024 22:44:42 +0000 (UTC)
+Received: from mx0b-002e3701.pphosted.com (mx0b-002e3701.pphosted.com [148.163.143.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AE438172E
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 22:44:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F69C81730
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 22:44:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.143.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717195462; cv=none; b=pmL2chL8WjgAZV97eWt69Bocb41mIA/kdsOvDBtFlvKoDtjxSHFUff4fufs1XLR7rJRxs7xWAjduFbayBZ/2Z8pdeXlYVg5PYHwJ/BcAIBWPwW8dYsWTNXs6st7wFVSyD3U6EAzZ+/o/LJiH+4Jh9QpRyyutMzZuALjZ88qasHw=
+	t=1717195482; cv=none; b=U6N/IuhQfu4TFvOP3767L4qF7gpXzTwy/7XNymMeBcOh/c6CZCWLVl5suKnI//5ezsE4F1ymOaUFyq8532c0AHEBOfopLFahuAcmTAueoqfeujWNVhoH9/FCsHMp1u5WoHBoh5+nkVWrR38YypXchq0nhlLQBr2d/gS/avsBFAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717195462; c=relaxed/simple;
-	bh=Sus4y6UmNR5dzGV4IzmSLrPvvrNGonDyWCvKjZx6etY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oROkJZXF6jW1sR8W9+GDDoFLS6cn+mZUqpdcoLG18YyedDO5ytNOi21vGByGXYXqdBKniWhZi5leNEBQNKBl9I1rCErcFgmEy5kjYilCAy5YtR/9jTrM5vvXzgl26Znc1UsIMn/2lVkJtjkJmwXkCuML4EaPRP+7SZjEHwKxTLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hxvKrD5h; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717195461; x=1748731461;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Sus4y6UmNR5dzGV4IzmSLrPvvrNGonDyWCvKjZx6etY=;
-  b=hxvKrD5hra1wLW3qK0yRhSiB5AicBGB/ra6yy0MEhMUvXHnqtaXbTbgG
-   6sTIi5NCmHZp8yqkTfzEPnYKbKya2mUdAY1auwKI4W1rCwyiFiE30IsG0
-   0hM+c/VypCR+sBdiJSk5OFAaDeKx9z7Nn51NYcTJcIvDAEgoWpqcnneHS
-   RekTa6le5G2kdggN/Qh68u9aXnyOGLSS+Qtc9Fxqrc1c7se0ZR8fqBX9L
-   YDfWfVVzpngrLbm7V3NbCe8NKrVk4KOM9Vyn1H+STrcwq58W+kot2Jmnl
-   r9Za93X25/Z8LjSDGqH/dN+FT0xDSr9bWEHNWEvN3n6XjJBh5n1S846Jg
-   Q==;
-X-CSE-ConnectionGUID: to1FvddiSZq1C/3nsJh1/g==
-X-CSE-MsgGUID: 4JEnU4CoSl2ab6xgql7sbw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11089"; a="13882286"
-X-IronPort-AV: E=Sophos;i="6.08,205,1712646000"; 
-   d="scan'208";a="13882286"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 15:44:20 -0700
-X-CSE-ConnectionGUID: ngmWe3QmTvmwk9vRxe5PZg==
-X-CSE-MsgGUID: 76dvYXejRtWErjwhEgsmwg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,205,1712646000"; 
-   d="scan'208";a="41223266"
-Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
-  by orviesa003.jf.intel.com with ESMTP; 31 May 2024 15:44:17 -0700
-Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sDAys-000HxN-1J;
-	Fri, 31 May 2024 22:44:14 +0000
-Date: Sat, 1 Jun 2024 06:44:10 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jesse Taube <jesse@rivosinc.com>, linux-riscv@lists.infradead.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Jesse Taube <jesse@rivosinc.com>,
-	Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@rivosinc.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Masahiro Yamada <masahiroy@kernel.org>
-Subject: Re: [PATCH v0] RISC-V: Use Zkr to seed KASLR base address
-Message-ID: <202406010606.hHFDxmHY-lkp@intel.com>
-References: <20240531162327.2436962-1-jesse@rivosinc.com>
+	s=arc-20240116; t=1717195482; c=relaxed/simple;
+	bh=sWPIj3ckBZI10Hnygx2NOzfdvE4v56Vx+HGpCcUYPT0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Sf/AobrANg2jm5Lz8SYYhKLXXtfNJBuh64Vu90qRUL8EsXieUMIMdnD8ypslHey7Cwdzo/A1eC6fKYCGjrmMUkgNENa2m+8Snm7RQFaSzwhzGSLZ1/lkfKfNcYKeJyQrCA1dLrj/HS92jN3mfNJHiArsnLdjo9KRsL32WlGiEg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hpe.com; spf=pass smtp.mailfrom=hpe.com; arc=none smtp.client-ip=148.163.143.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hpe.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hpe.com
+Received: from pps.filterd (m0134423.ppops.net [127.0.0.1])
+	by mx0b-002e3701.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44VKeKQr006533;
+	Fri, 31 May 2024 22:44:31 GMT
+DKIM-Signature: =?UTF-8?Q?v=3D1;_a=3Drsa-sha256;_c=3Drelaxed/relaxed;_d=3Dhpe.com;_h=3Dcc?=
+ =?UTF-8?Q?:content-transfer-encoding:date:from:message-id:mime-version:su?=
+ =?UTF-8?Q?bject:to;_s=3Dpps0720;_bh=3DVx6JoJ4VI0e4C9Ieoj7qbwUrOQgHwUd4bcK?=
+ =?UTF-8?Q?0druKUJE=3D;_b=3DNPPArVP72NXvUvvhVXuMUPUqDTBrUKy9dT/gXT7MEwCQpj?=
+ =?UTF-8?Q?LwluG3yL3XzXPda2GvtdK4_98kYB8RuUIaJD4nIKIttprJoG8uLopFiCwIN3Ojp?=
+ =?UTF-8?Q?kLmPRVMONU3mm4U+VydP/sk/+oRt_Lq97pkv9orWz6vDT0goPYh3TWpAO1eD0bB?=
+ =?UTF-8?Q?ae+VGq0gyHybqC4qO85WHPmEheJ2+Hy+cK_iruTdMuepL0/MHZXPOUJwaqM1Iul?=
+ =?UTF-8?Q?brWMxd118BDN2rotInTjndBlQ1muqU+5WfnPsTLG_rs+odFvee7C2rJ5J0o0VCj?=
+ =?UTF-8?Q?92WOYvwlunpQKqrBI7zTQbxZmyE+3iUJSMnwDZBzCJA+Gs_Ag=3D=3D_?=
+Received: from p1lg14881.it.hpe.com ([16.230.97.202])
+	by mx0b-002e3701.pphosted.com (PPS) with ESMTPS id 3yf67j03y6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 31 May 2024 22:44:31 +0000
+Received: from hpnsw6056.rose.rdlabs.hpecorp.net (unknown [192.58.206.38])
+	by p1lg14881.it.hpe.com (Postfix) with ESMTP id B84B4805E9C;
+	Fri, 31 May 2024 22:44:30 +0000 (UTC)
+From: Curtis Klein <curtis.klein@hpe.com>
+To: giometti@enneenne.com
+Cc: linux-kernel@vger.kernel.org, Curtis Klein <curtis.klein@hpe.com>
+Subject: [PATCH] pps: clients: gpio: Continue after failing to get optional ECHO pin
+Date: Fri, 31 May 2024 15:44:11 -0700
+Message-Id: <20240531224411.3515712-1-curtis.klein@hpe.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240531162327.2436962-1-jesse@rivosinc.com>
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: lcuGxPxzCKkRoN12KtqAhGjK6amCZcCA
+X-Proofpoint-ORIG-GUID: lcuGxPxzCKkRoN12KtqAhGjK6amCZcCA
+X-HPE-SCL: -1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-31_14,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 mlxlogscore=788
+ spamscore=0 suspectscore=0 priorityscore=1501 mlxscore=0 bulkscore=0
+ phishscore=0 lowpriorityscore=0 adultscore=0 malwarescore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2405010000 definitions=main-2405310173
 
-Hi Jesse,
+Warn but do not fail when devm_gpiod_get_optional returns an error when
+trying to get the ECHO pin. When creating a pps-gpio device using
+platform data and GPIO lookup tables, the call to gpiod_get_optional
+will match on the unlabeled pin meant as the input when searching for
+the "echo" pin. Since it is already in use as the PPS input, it will
+fail with -EBUSY. As the ECHO pin is optional, we just warn on the error
+and continue the initialization. This allows us to support devices
+created using GPIO lookup tables instead of ACPI, DT, swnode, etc.
 
-kernel test robot noticed the following build errors:
+Signed-off-by: Curtis Klein <curtis.klein@hpe.com>
+---
+ drivers/pps/clients/pps-gpio.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-[auto build test ERROR on linus/master]
-[also build test ERROR on v6.10-rc1 next-20240531]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Jesse-Taube/RISC-V-Use-Zkr-to-seed-KASLR-base-address/20240601-002545
-base:   linus/master
-patch link:    https://lore.kernel.org/r/20240531162327.2436962-1-jesse%40rivosinc.com
-patch subject: [PATCH v0] RISC-V: Use Zkr to seed KASLR base address
-config: riscv-defconfig (https://download.01.org/0day-ci/archive/20240601/202406010606.hHFDxmHY-lkp@intel.com/config)
-compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project bafda89a0944d947fc4b3b5663185e07a397ac30)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240601/202406010606.hHFDxmHY-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406010606.hHFDxmHY-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> ld.lld: error: undefined symbol: __pi__printk
-   >>> referenced by __pi_archrandom_early.c
-   >>>               arch/riscv/kernel/pi/archrandom_early.pi.o:(__pi_get_kaslr_seed_zkr) in archive vmlinux.a
-
+diff --git a/drivers/pps/clients/pps-gpio.c b/drivers/pps/clients/pps-gpio.c
+index 2f4b11b4dfcd..b7db4a3ee97e 100644
+--- a/drivers/pps/clients/pps-gpio.c
++++ b/drivers/pps/clients/pps-gpio.c
+@@ -114,9 +114,12 @@ static int pps_gpio_setup(struct device *dev)
+ 		device_property_read_bool(dev, "assert-falling-edge");
+ 
+ 	data->echo_pin = devm_gpiod_get_optional(dev, "echo", GPIOD_OUT_LOW);
+-	if (IS_ERR(data->echo_pin))
+-		return dev_err_probe(dev, PTR_ERR(data->echo_pin),
+-				     "failed to request ECHO GPIO\n");
++	if (IS_ERR(data->echo_pin)) {
++		dev_warn(dev, "failed to request ECHO GPIO: %ld\n",
++			 PTR_ERR(data->echo_pin));
++		data->echo_pin = NULL;
++		return 0;
++	}
+ 
+ 	if (!data->echo_pin)
+ 		return 0;
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.34.1
+
 
