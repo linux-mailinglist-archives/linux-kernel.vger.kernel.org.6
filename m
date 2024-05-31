@@ -1,103 +1,184 @@
-Return-Path: <linux-kernel+bounces-197062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63CB28D65A6
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:25:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6098D8D65AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:25:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FC032880D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 15:25:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D89E11F25AF5
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 15:25:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C013E770E6;
-	Fri, 31 May 2024 15:25:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C1801586C8;
+	Fri, 31 May 2024 15:25:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pJEIrs2f";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="X272vt9j"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mRub1NTE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEB6933080;
-	Fri, 31 May 2024 15:25:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C3EA77118;
+	Fri, 31 May 2024 15:25:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717169106; cv=none; b=K2bivyYDpYqi12ZToRqagjMe+CgOltc4dy4H6cy792dFUPMnZ+Fs3kAZc6c7FAoTda4hcytTv89Q0OEHfIaC/T7oMt32ERqQfXGR0cI9IqbAROXNCxWAP04KvD6k3k3Z7VAVCq/kr4Z40ven2yl88E32HLT8iR2Ef30h/KkT+DE=
+	t=1717169118; cv=none; b=hZrbFuhjJRv24rd+lJN0UYaLnU2BEN2bWroClkb8afEWaqrXIhV5+MeXGzECuRjErZvc1KD7vH4CxAAFELLLzMqiyDXu95ibbNFoUeEju/52G2LZ4lTsYpM3Npg88WQIZLBDqHKVygF26A2ZxyON02Z3IIP263Wh2sQAxLT1evQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717169106; c=relaxed/simple;
-	bh=pF4Mixxdrq0cYOpR+ClRxFtubx/s2XmY9q7iP3NxDqg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=YhMfiOf8EswM+Nfze70YQzG/8jfEsM48yllLfZ+xCWUlL+eXFT9bOqhVf6p+/VrMlEy5p/Qwb3Em7X/5x/Enisr/qvGemjIQCTAihX/xbYwh944gVFMA70yMBqinqnteiUV6Fl6P1Yv5e6waEq+siU17jw5PfDLT9iuoNaEMYvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pJEIrs2f; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=X272vt9j; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1717169102;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zBAiXgC5x6K/2E25MmGwn9JeI87ahIu7LD3cMl3AcgI=;
-	b=pJEIrs2fQMNn+nGI1rBaVPcWTQOUXi7P4atPxxPoRH2Fim0kO4PPoHNaW2EglMy/KdNQWf
-	yAmJNeXfL9KrLIcPRb9Ma54ySvg5VFzVDKFlJCh7ZgpKKeyf2ElJVCP4NQuX1H12dkfN7L
-	J5AqlHjH20FdGBi/tKGR0J6THLXH2NVEpAYbo3pag912MyCCB5HQkk8KstB0KY8+2MO109
-	AKbJbLySvpgPs73pDglKLGxgBmqGvx9ms68b1RzoIOlsZ1VWsST15OzWW+gYmC87VUc2hX
-	cm290au9wvRPlhry5e2iC0/gE/3lAwG+2Gv/3/M583XOXSLE0qeHqLcVFxK9Dw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1717169102;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zBAiXgC5x6K/2E25MmGwn9JeI87ahIu7LD3cMl3AcgI=;
-	b=X272vt9jZHCuUxIPlGP7h16QUfr6QWEuUYpJNrjFH+d/k/xNcbO61KHjTne81u5i5EyzD1
-	6pQNFx81D9aLOhCg==
-To: Christian Heusel <christian@heusel.eu>
-Cc: Peter Schneider <pschneider1968@googlemail.com>, LKML
- <linux-kernel@vger.kernel.org>, x86@kernel.org, stable@vger.kernel.org,
- regressions@lists.linux.dev
-Subject: Re: Kernel 6.9 regression: X86: Bogus messages from topology detection
-In-Reply-To: <43c15a7b-6f43-410e-800e-2ebec87ea762@heusel.eu>
-References: <76b1e0b9-26ae-4915-920d-9093f057796b@googlemail.com>
- <87r0dj8ls4.ffs@tglx> <87o78n8fe2.ffs@tglx> <87le3r8dyw.ffs@tglx>
- <4171899b-78cb-4fe2-a0b6-e06844554ed5@heusel.eu>
- <20ec1c1a-b804-408f-b279-853579bffc24@heusel.eu> <87cyp28j0b.ffs@tglx>
- <875xuu8hx0.ffs@tglx> <b42363ac-31ef-4b1a-9164-67c0e0af3768@heusel.eu>
- <87sexy6qt9.ffs@tglx> <43c15a7b-6f43-410e-800e-2ebec87ea762@heusel.eu>
-Date: Fri, 31 May 2024 17:25:00 +0200
-Message-ID: <87plt26m2b.ffs@tglx>
+	s=arc-20240116; t=1717169118; c=relaxed/simple;
+	bh=4G6i+MqRsVd1u+U7jECgsxdbxRmfHnk2OKaw20DmgQE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=g2gieO9TkenE6UY5NkV8BmzUDFfVF12leGZlbJIU2rHbRiFCCByRsEpAlTxPhIjF+JF3fAm6G4kGBBgKfw9L7SBH0c5KGs2li0ZtpzVNJ64n7s/xp6B/DAwKxT+GzTEp/cBwaP8JyL7x0hxKzAc4F1+q9lWfmRRewHutUbTHsnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mRub1NTE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98DFCC32789;
+	Fri, 31 May 2024 15:25:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717169118;
+	bh=4G6i+MqRsVd1u+U7jECgsxdbxRmfHnk2OKaw20DmgQE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=mRub1NTEexeIKD+YW40l67qrKqF3dduVb4iUog4M4DuaILgl+EgJ/kIIMwrmnwX+7
+	 Ty5TmKhOHywqwV5d3aiTaYGd+E4TPkzZMdp+xP3UstJ5u37lrUbmUgPrBGwtI6Lp+p
+	 gY5CboHqGQq1XZ4KHdiEzPM6Wy8pVPZ//UB2bJgsy5HPSs0LQW4AyUQk0cO9eCD2I4
+	 AlpzGrFsmaeH0eB+XwLsfpdk5JRsOY/31MefO0ICWBE6SPz7qJQiz2ARYpQIbhZ//Z
+	 In5hs3VOdkMFEbox1zRNfrc4a2+vaiYgfsEA0aJpcGX3xUd58rcCvjBmaSr1VXEwhS
+	 XUmN9PvA/+EcA==
+Message-ID: <278ed1f7-7f98-412a-abef-840592e016d4@kernel.org>
+Date: Fri, 31 May 2024 17:25:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/1] dt-bindings: iio: adc: add a7779 doc
+To: Ramona Alexandra Nechita <ramona.nechita@analog.com>,
+ linux-iio@vger.kernel.org
+Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen
+ <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20240531133604.1380-1-ramona.nechita@analog.com>
+ <20240531133604.1380-2-ramona.nechita@analog.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240531133604.1380-2-ramona.nechita@analog.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, May 31 2024 at 16:29, Christian Heusel wrote:
+On 31/05/2024 15:35, Ramona Alexandra Nechita wrote:
+> Add dt bindings for adc ad7779.
+> 
+> Signed-off-by: Ramona Alexandra Nechita <ramona.nechita@analog.com>
+> ---
+>  .../ABI/testing/sysfs-bus-iio-adc-ad777x      | 23 +++++
+>  .../bindings/iio/adc/adi,ad7779.yaml          | 87 +++++++++++++++++++
+>  2 files changed, 110 insertions(+)
+>  create mode 100644 Documentation/ABI/testing/sysfs-bus-iio-adc-ad777x
+>  create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ad7779.yaml
 
-P-Cores are consistent:
+Why is this sent separately troubles us all... I saw many patches from
+analog.com, so maybe there is a person who will help you, in case you do
+not want to read submitting patches?
 
-> CPU 0:
->    0x0000000b 0x01: eax=0x00000006 ebx=0x0000000c ecx=0x00000201 edx=0x00000000
+..
 
->    0x0000001f 0x00: eax=0x00000001 ebx=0x00000002 ecx=0x00000100 edx=0x00000000
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  '#address-cells':
+> +    const: 1
+> +
+> +  '#size-cells':
+> +    const: 0
+> +
+> +  spi-max-frequency: true
 
-E-Cores are not:
+Drop
 
-> CPU 4:
->    0x0000000b 0x01: eax=0x00000006 ebx=0x0000000c ecx=0x00000201 edx=0x00000010
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  vref-supply:
+> +    description:
+> +      ADC reference voltage supply
+> +
+> +  start-gpios:
+> +    description:
+> +      Pin that controls start synchronization pulse.
+> +    maxItems: 1
+> +
+> +  reset-gpios:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/gpio/gpio.h>
+> +    spi {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        adc@0 {
+> +          compatible = "adi,ad7779";
 
->    0x0000001f 0x01: eax=0x00000007 ebx=0x0000000c ecx=0x00000201 edx=0x00000010
+Messed indentation. Keep same for entire example, e.g.
+Use 4 spaces for example indentation.
 
-As the topology is evaluated from CPU0 CPUID leaf 0x1f it's obvious that
-CPU4...11 will trigger the sanity checks because their CPUID leaf 0x1f
-subleaf 1 entries are bogus.
-
-IOW it's a firmware bug and there is nothing the kernel will and can do
-about it except what it does already: complaining about the inconsistency.
-
-Thanks for providing all the information!
-
-       tglx
+Best regards,
+Krzysztof
 
 
