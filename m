@@ -1,252 +1,285 @@
-Return-Path: <linux-kernel+bounces-196835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5B228D625A
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 15:06:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8AA58D6260
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 15:07:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC9FEB25A87
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 13:06:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A3A21F25E0E
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 13:07:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA21815886E;
-	Fri, 31 May 2024 13:05:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28532158A16;
+	Fri, 31 May 2024 13:07:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="C+vq4C7Y"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="clhIQ4gS"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 673411581FB
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 13:05:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59AF2139563;
+	Fri, 31 May 2024 13:07:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717160751; cv=none; b=n64FhTnyVtra+OH7WabalasFRp0OYMbdCtZhF+fSHhTDsqDuxwgmVpTMW7eUGg03M/uKTkXreysojDaiMZkULfkDuk3JysEepWfHOXJHJCJ4zsPkRKlTk6kZqCGnCgvP0ijcll9Yp+iHQ+gsL+qYXeVksWxghH5OfWFl7DmTR5c=
+	t=1717160825; cv=none; b=den7hqfsyCBzXskqutaEjwSmF12dpHUfUOBsy88a98n66x59gXtz3gV6CRlIP3kUoLzBt3tpQo/MjDPgC4opG6D7cVHygswZ+a0Oyd8C2PLfm9SyRKOtojMnp873SU49SZ8hJILxU41dq8cTqnxH0en62phtpf4t3d/DOef4BRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717160751; c=relaxed/simple;
-	bh=anptV1IFlCGdEypnDaHiVZxoXNrqlJIVQoFTA/Fc8O0=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=h2weDJxsp9zCDlQoTalsu0J+QAUWVnb1dUUf6KwsiJyt75o4MOjBJ2cr7Clf98zOQCWtjCbDRgcRoLsyVGyUbLBmWCsuock5EPtjsUmbbzuo5OMwq4VeeMm6Te5DR9LRd0rxIJHD7VKpTqH+mQv8PEGzTtqfav/VwJc5ngRvaEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=C+vq4C7Y; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717160748;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=eWPJprElNMXCXo9iDiQXBGc5GCfw1pS39+lgF8K2K38=;
-	b=C+vq4C7Y0KR3k6cyTIjt4M7D5ZTyW711+03sMV4+2CIvccPu1hzIr1ykfyy20fhF3LFHfi
-	7nxqwE1Remilo7JAwZNN8HLyF0uq8ht+jV5bv6GF0ltFupseGqtYHkqnF9qKK/CuGuv/BZ
-	ui+e7aQQM0cB/ww70Ld97icKKrrRw8E=
-Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
- [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-426-5xaB6eUEMIimkuiTT2PkIA-1; Fri, 31 May 2024 09:05:46 -0400
-X-MC-Unique: 5xaB6eUEMIimkuiTT2PkIA-1
-Received: by mail-lj1-f200.google.com with SMTP id 38308e7fff4ca-2ea839a481bso15332191fa.0
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 06:05:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717160744; x=1717765544;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:from:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=eWPJprElNMXCXo9iDiQXBGc5GCfw1pS39+lgF8K2K38=;
-        b=invSfZP7xZVEnl9B3HtoVDtGvDNxu4aU8N8kL4A3xzC6pzKh6Slq/bNvMTUyMtsPqo
-         cYk30WK2XM2LJKvkzV110XdpXNXMzParQtuDOTn61BLMdY5+/xNOZUgZPHUZK8iXhURb
-         Reo2zyQfA6/l9lYWihGM/X3AEFoP9vm2pQHWq5bySKyr0BEN1wVC/P3SIJP7nEBbQqao
-         S5OAd/rWMkN/rZf/i7DRFLcsoGtj+NuUXXw2RZ2ukOaLbkKpRZ37zSFFRDtSx/z2wK9L
-         SOeoHWtQACMLKTqhmty/FTzneqI5yp+cLilxQJLrbJyR31uEbvQ57VIg/LGSjzmph8IL
-         L4dQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWDlZd5K03bHY/cV2/0HjpXM0vzLtE1GfshDPqZ+REjUl7MsqkbSEe/2nMgCdUrb04Z/dWsuwEnSNOxDb2st7kVy5Nsl2r9ZPlmVk9L
-X-Gm-Message-State: AOJu0Yx7t130D0Nhbj7E+sQMAL6Jh0e7rgs452NZ0vfCMbTAZ+jFrSTe
-	Z+wAF6BbfKJQUduGeYY3hem557TjPZsJGbaFbs0Z7ZA7iWF88FlxGcK4Cuxvdn6jd2JdmrgYoRp
-	0khhwEXKmlFvJgCwMXTethRMOJiEjUIAWRctnF+Wl1hQsFnCj3s/E8W6qAujeVA==
-X-Received: by 2002:a05:651c:1a12:b0:2e5:67bc:739 with SMTP id 38308e7fff4ca-2ea950b55b0mr16523361fa.2.1717160744643;
-        Fri, 31 May 2024 06:05:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHN7764g19nHVJQIhrnIPAoZI4/o58tCleNGHZw+vpvy2hTCND3S/CXd5/Pgm1sbitKw9cz8w==
-X-Received: by 2002:a05:651c:1a12:b0:2e5:67bc:739 with SMTP id 38308e7fff4ca-2ea950b55b0mr16523081fa.2.1717160744085;
-        Fri, 31 May 2024 06:05:44 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c717:a000:d4df:4b8f:37d4:59e4? (p200300cbc717a000d4df4b8f37d459e4.dip0.t-ipconnect.de. [2003:cb:c717:a000:d4df:4b8f:37d4:59e4])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35dd04cad2csm1850133f8f.36.2024.05.31.06.05.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 31 May 2024 06:05:43 -0700 (PDT)
-Message-ID: <dec62086-8170-4fea-987a-9cc514cc4b27@redhat.com>
-Date: Fri, 31 May 2024 15:05:42 +0200
+	s=arc-20240116; t=1717160825; c=relaxed/simple;
+	bh=Gysdjfj+HqOXnRL+AUVd8SZVjhHIt+02/qHfmXbJw7o=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=KWwR3srqr+2DaEdeLyqVkwbg1H/HMjWdxnrmGisORknrD8SEjyizHp+L4FJ+k/muMNYoZ9N9eIegQfC3entpks85fvGX2w/COYXtdKbVZ89lrqfXA6dE9pyQniFACuqt9WBQe3U5kU3piDKbWE4XCNMAto3cx04XmzW0ziS4nm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=clhIQ4gS; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1717160821;
+	bh=Gysdjfj+HqOXnRL+AUVd8SZVjhHIt+02/qHfmXbJw7o=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=clhIQ4gSQyiGW5phyxgxdd84B5foEK4VYnSQeq7DvUgYHbzwAaVIZ2bXWBjCo92mi
+	 T7C52wwHQdzZj+DAUSzgogofYO03sRnI3o3Ursd2JAvwEe7jG6S569hQNb8wJOlfcB
+	 4AGkX5k56LBN61L2U3WN/E0Xm6Rb3QkqA9CQE/WsE4Vp2Sa125tTRiF3eeVN4BhCfl
+	 8ye7v/9dKYkuT5+wRTMs2oBsCktswU4OMHiZZyytPjAjgyQW32PC1Q0DJfITlw54ul
+	 Oqf/HJPIqcIuEbDkMw2ypDA/RtHiBHpi2cN8jypub8M5POIIG+3HKIWQ75pInM7hDq
+	 QNakC+O45csXQ==
+Received: from nicolas-tpx395.localdomain (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nicolas)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 717D537821AD;
+	Fri, 31 May 2024 13:06:57 +0000 (UTC)
+Message-ID: <84d2a7f87add1829fce20495a6b6e0b399381925.camel@collabora.com>
+Subject: Re: [PATCH v6,14/24] media: mediatek: vcodec: Add capture format to
+ support one plane memory
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: Chen-Yu Tsai <wenst@chromium.org>, Andrzej Pietrasiewicz
+	 <andrzej.p@collabora.com>
+Cc: Yunfei Dong <yunfei.dong@mediatek.com>, Jeffrey Kardatzke
+ <jkardatzke@google.com>, =?ISO-8859-1?Q?N=EDcolas?= "F . R . A . Prado"
+ <nfraprado@collabora.com>, Nathan Hebert <nhebert@chromium.org>, Hans
+ Verkuil <hverkuil-cisco@xs4all.nl>, AngeloGioacchino Del Regno
+ <angelogioacchino.delregno@collabora.com>, Benjamin Gaignard
+ <benjamin.gaignard@collabora.com>, Sebastian Fricke
+ <sebastian.fricke@collabora.com>, Tomasz Figa <tfiga@chromium.org>, Mauro
+ Carvalho Chehab <mchehab@kernel.org>, Marek Szyprowski
+ <m.szyprowski@samsung.com>, Yong Wu <yong.wu@mediatek.com>,  Hsin-Yi Wang
+ <hsinyi@chromium.org>, Fritz Koenig <frkoenig@chromium.org>, Daniel Vetter
+ <daniel@ffwll.ch>,  Steve Cho <stevecho@chromium.org>, Sumit Semwal
+ <sumit.semwal@linaro.org>, Brian Starkey <Brian.Starkey@arm.com>, John
+ Stultz <jstultz@google.com>, "T . J . Mercier" <tjmercier@google.com>,
+ Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, Matthias
+ Brugger <matthias.bgg@gmail.com>,  linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org,  linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,  linux-mediatek@lists.infradead.org, 
+ Project_Global_Chrome_Upstream_Group@mediatek.com
+Date: Fri, 31 May 2024 09:06:51 -0400
+In-Reply-To: <CAGXv+5Hg-61qQEiPScqEfO6irHnaJHHqcr=MYX=89RzUBRK7oA@mail.gmail.com>
+References: <20240516122102.16379-1-yunfei.dong@mediatek.com>
+	 <20240516122102.16379-15-yunfei.dong@mediatek.com>
+	 <1d4618ac-4316-495d-afdb-5849e4b1e805@collabora.com>
+	 <537a0969-afdf-4e48-a640-2d8fc665c964@collabora.com>
+	 <CAGXv+5Hg-61qQEiPScqEfO6irHnaJHHqcr=MYX=89RzUBRK7oA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.1 (3.52.1-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mm/hugetlb: mm/memory_hotplug: use a folio in
- scan_movable_pages()
-From: David Hildenbrand <david@redhat.com>
-To: Sidhartha Kumar <sidhartha.kumar@oracle.com>,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Cc: akpm@linux-foundation.org, vishal.moola@oracle.com,
- muchun.song@linux.dev, osalvador@suse.de, willy@infradead.org
-References: <20240530171427.242018-1-sidhartha.kumar@oracle.com>
- <fe37643c-93a0-4220-b547-a5cae36b3231@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <fe37643c-93a0-4220-b547-a5cae36b3231@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 31.05.24 15:04, David Hildenbrand wrote:
-> On 30.05.24 19:14, Sidhartha Kumar wrote:
->> By using a folio in scan_movable_pages() we convert the last user of the
->> page-based hugetlb information macro functions to the folio version.
->> After this conversion, we can safely remove the page-based definitions
->> from include/linux/hugetlb.h.
->>
->> Signed-off-by: Sidhartha Kumar <sidhartha.kumar@oracle.com>
->> ---
->>
->> v1 -> v2:
->> 	simplify pfn skipping logic with pfn |= folio_nr_pages(folio) - 1
->> 	per Matthew
->>
->>    include/linux/hugetlb.h |  6 +-----
->>    mm/memory_hotplug.c     | 11 +++++------
->>    2 files changed, 6 insertions(+), 11 deletions(-)
->>
->> diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
->> index 15a58f69782c..279aca379b95 100644
->> --- a/include/linux/hugetlb.h
->> +++ b/include/linux/hugetlb.h
->> @@ -616,9 +616,7 @@ static __always_inline						\
->>    bool folio_test_hugetlb_##flname(struct folio *folio)		\
->>    	{	void *private = &folio->private;		\
->>    		return test_bit(HPG_##flname, private);		\
->> -	}							\
->> -static inline int HPage##uname(struct page *page)		\
->> -	{ return test_bit(HPG_##flname, &(page->private)); }
->> +	}
->>    
->>    #define SETHPAGEFLAG(uname, flname)				\
->>    static __always_inline						\
->> @@ -637,8 +635,6 @@ void folio_clear_hugetlb_##flname(struct folio *folio)		\
->>    #define TESTHPAGEFLAG(uname, flname)				\
->>    static inline bool						\
->>    folio_test_hugetlb_##flname(struct folio *folio)		\
->> -	{ return 0; }						\
->> -static inline int HPage##uname(struct page *page)		\
->>    	{ return 0; }
->>    
->>    #define SETHPAGEFLAG(uname, flname)				\
->> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
->> index 431b1f6753c0..9c36eb3bbd3b 100644
->> --- a/mm/memory_hotplug.c
->> +++ b/mm/memory_hotplug.c
->> @@ -1731,8 +1731,8 @@ static int scan_movable_pages(unsigned long start, unsigned long end,
->>    	unsigned long pfn;
->>    
->>    	for (pfn = start; pfn < end; pfn++) {
->> -		struct page *page, *head;
->> -		unsigned long skip;
->> +		struct page *page;
->> +		struct folio *folio;
->>    
->>    		if (!pfn_valid(pfn))
->>    			continue;
->> @@ -1753,7 +1753,7 @@ static int scan_movable_pages(unsigned long start, unsigned long end,
->>    
->>    		if (!PageHuge(page))
->>    			continue;
->> -		head = compound_head(page);
->> +		folio = page_folio(page);
->>    		/*
->>    		 * This test is racy as we hold no reference or lock.  The
->>    		 * hugetlb page could have been free'ed and head is no longer
->> @@ -1761,10 +1761,9 @@ static int scan_movable_pages(unsigned long start, unsigned long end,
->>    		 * cases false positives and negatives are possible.  Calling
->>    		 * code must deal with these scenarios.
->>    		 */
->> -		if (HPageMigratable(head))
->> +		if (folio_test_hugetlb_migratable(folio))
->>    			goto found;
->> -		skip = compound_nr(head) - (pfn - page_to_pfn(head));
->> -		pfn += skip - 1;
->> +		pfn |= folio_nr_pages(folio) - 1;
-> 
-> Likely not exactly what we want?
-> 
-> pfn |= folio_nr_pages(folio);
-> 
-> Would make sure that we are "one PFN before the start of the next
-> folio". The pfn++ before the next loop iteration would move us to the
-> next folio.
-> 
-> Or am I missing something?
+Hi,
 
-Okay, I got it wrong.
+Le jeudi 23 mai 2024 =C3=A0 18:36 +0800, Chen-Yu Tsai a =C3=A9crit=C2=A0:
+> On Thu, May 23, 2024 at 6:14=E2=80=AFPM Andrzej Pietrasiewicz
+> <andrzej.p@collabora.com> wrote:
+> >=20
+> > Hi,
+> >=20
+> > I'm having second thoughts, please see inline,
+> >=20
+> > W dniu 22.05.2024 o 14:26, Andrzej Pietrasiewicz pisze:
+> > > Hi Yunfei,
+> > >=20
+> > > W dniu 16.05.2024 o 14:20, Yunfei Dong pisze:
+> > > > Define one uncompressed capture format V4L2_PIX_FMT_MS21 in order t=
+o
+> > > > support one plane memory. The buffer size is luma + chroma, luma is
+> > > > stored at the start and chrome is stored at the end.
+> > > >=20
+> > > > Signed-off-by: Yunfei Dong <yunfei.dong@mediatek.com>
+> > > > ---
+> > > >   Documentation/userspace-api/media/v4l/pixfmt-reserved.rst | 8 +++=
++++++
+> > > >   drivers/media/v4l2-core/v4l2-common.c                     | 2 ++
+> > > >   drivers/media/v4l2-core/v4l2-ioctl.c                      | 1 +
+> > > >   include/uapi/linux/videodev2.h                            | 1 +
+> > > >   4 files changed, 12 insertions(+)
+> > > >=20
+> > > > diff --git a/Documentation/userspace-api/media/v4l/pixfmt-reserved.=
+rst b/Documentation/userspace-api/media/v4l/pixfmt-reserved.rst
+> > > > index 886ba7b08d6b..6ec899649d50 100644
+> > > > --- a/Documentation/userspace-api/media/v4l/pixfmt-reserved.rst
+> > > > +++ b/Documentation/userspace-api/media/v4l/pixfmt-reserved.rst
+> > > > @@ -295,6 +295,14 @@ please make a proposal on the linux-media mail=
+ing list.
+> > > >         - Compressed format used by Nuvoton NPCM video driver. This=
+ format is
+> > > >           defined in Remote Framebuffer Protocol (RFC 6143, chapter=
+ 7.7.4 Hextile
+> > > >           Encoding).
+> > > > +    * .. _V4L2-PIX-FMT-MS21:
+> > > > +
+> > > > +      - ``V4L2_PIX_FMT_MS21``
+> > > > +      - 'MS21'
+> > > > +      - This format has one plane, luma and chroma are stored in a=
+ contiguous
+> > >=20
+> > > Maybe s/one/single ?
+> > >=20
+> > > > +        memory. Luma pixel in 16x32 tiles at the start, chroma pix=
+el in 16x16
+> > >=20
+> > > maybe the word "pixel" is reduntant here? What else than pixels could=
+ tile sizes mean?
+> > > Any padding between luma and chroma?
+> > >=20
+> > > > +        tiles at the end. The image height must be aligned with 32=
+ and the image
+> > > > +        width must be aligned with 16.
+> > >=20
+> > > Maybe aligned to?
+> > >=20
+> > > >   .. raw:: latex
+> > > >       \normalsize
+> > > > diff --git a/drivers/media/v4l2-core/v4l2-common.c b/drivers/media/=
+v4l2-core/v4l2-common.c
+> > > > index 4165c815faef..5ae54cf48dc7 100644
+> > > > --- a/drivers/media/v4l2-core/v4l2-common.c
+> > > > +++ b/drivers/media/v4l2-core/v4l2-common.c
+> > > > @@ -271,6 +271,8 @@ const struct v4l2_format_info *v4l2_format_info=
+(u32 format)
+> > > >             .block_w =3D { 16, 8, 0, 0 }, .block_h =3D { 32, 16, 0,=
+ 0 }},
+> > > >           { .format =3D V4L2_PIX_FMT_MT2110R, .pixel_enc =3D V4L2_P=
+IXEL_ENC_YUV, .mem_planes =3D 2, .comp_planes =3D 2, .bpp =3D { 5, 10, 0, 0=
+ }, .bpp_div =3D { 4, 4, 1, 1 }, .hdiv =3D 2, .vdiv =3D 2,
+> > > >             .block_w =3D { 16, 8, 0, 0 }, .block_h =3D { 32, 16, 0,=
+ 0 }},
+> > > > +        { .format =3D V4L2_PIX_FMT_MS21, pixel_enc =3D V4L2_PIXEL_=
+ENC_YUV, .mem_planes =3D 1, .comp_planes =3D 2, .bpp =3D { 1, 2, 0, 0 }, .b=
+pp_div =3D { 1, 1, 1, 1 }, .hdiv =3D 2, .vdiv =3D 2,
+> > > > +          .block_w =3D { 16, 8, 0, 0 }, .block_h =3D { 32, 16, 0, =
+0 }},
+> > > >           /* YUV planar formats */
+> > > >           { .format =3D V4L2_PIX_FMT_NV12,    .pixel_enc =3D V4L2_P=
+IXEL_ENC_YUV, .mem_planes =3D 1, .comp_planes =3D 2, .bpp =3D { 1, 2, 0, 0 =
+}, .bpp_div =3D { 1, 1, 1, 1 }, .hdiv =3D 2, .vdiv =3D 2 },
+> > > > diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v=
+4l2-core/v4l2-ioctl.c
+> > > > index 4c76d17b4629..3a68f2b9e7a4 100644
+> > > > --- a/drivers/media/v4l2-core/v4l2-ioctl.c
+> > > > +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+> > > > @@ -1529,6 +1529,7 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtd=
+esc *fmt)
+> > > >           case V4L2_PIX_FMT_MT2110T:    descr =3D "Mediatek 10bit T=
+ile Mode"; break;
+> > > >           case V4L2_PIX_FMT_MT2110R:    descr =3D "Mediatek 10bit R=
+aster Mode"; break;
+> > > >           case V4L2_PIX_FMT_HEXTILE:    descr =3D "Hextile Compress=
+ed Format"; break;
+> > > > +        case V4L2_PIX_FMT_MS21:        descr =3D "MediaTek One Pla=
+ne Format"; break;
+> > >=20
+> > > s/One/Single ?
+> > >=20
+> >=20
+> > On the other hand "single" would be [in this case incorrectly] associat=
+ed with
+> > single-planar API, which would be totally confusing.
+> >=20
+> > Still, the reality you are trying to model is complex: you use
+> > MPLANE, yet there's a single plane in case of secure playback.
+>=20
+> I don't think that's a problem though. The NV12 format (seen above in
+> the diff context) has the same attributes: 1 contiguous memory plane
+> containing two component planes.
+>=20
+> And it's perfectly fine for MPLANE drivers to support these formats,
+> Hantro being one of them that decodes to NV12. If a decoder can decode
+> into discontiguous buffers, it surely can decode into contiguous ones;
+> just set the second/third buffer address to the correct offset into
+> the first buffer based on the format layout.
 
-"folio_nr_pages(folio) - 1" gives us the bitmask to land one PFN before 
-the end.
+There is some complexity and limitations not disclose here, but in 99% of t=
+he
+cases I agree.
 
-Acked-by: David Hildenbrand <david@redhat.com>
+>=20
+> In retrospect we probably should have named "MM21" as "MM21M" to denote
+> that it is multi-memory-plane, and this "MS21" would have been "MM21",
+> having a single contiguous memory plane.
+>=20
+> And the MPLANE driver supporting "single memory plane" oddity gets
+> resolved if the API rework ever gets finished.
 
-> 
-> It might be cleaner if we would handle the "pfn++;" on the "continue;"
-> paths inmstead, and simply here do something like
-> 
-> 	pfn = ALIGN(pfn + 1, folio_nr_pages(folio));
-> 
-> instead.
-> 
+Not clear what you are proposing here, since its too late to rename MM21. I
+agree with you there is no problem adding single allocation version of MM21=
+ to
+save on secure zones, and this is intented to be support by the MPLANE API =
+too.
 
--- 
-Cheers,
+Though, on the other side, I'm thinking its an internal limitation that we =
+must
+have multiple allocation when using planar formats. We could certainly expo=
+rt
+twice the same dmabuf, in that capture case, data_offset would be used with=
+ its
+original design (driver provided). In fact, if we remove this internal
+limitation, we could stop the proliferation of duplicated pixel formats in =
+V4L2
+which is quite a bad design error in my opinion.
 
-David / dhildenb
+Nicolas
+
+>=20
+>=20
+> Regards,
+> ChenYu
+>=20
+> > Regards,
+> >=20
+> > Andrzej
+> >=20
+> >=20
+> > > Regards,
+> > >=20
+> > > Andrzej
+> > >=20
+> > > >           default:
+> > > >               if (fmt->description[0])
+> > > >                   return;
+> > > > diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/vi=
+deodev2.h
+> > > > index 89eb1a3c6555..7aff2f2c8f9c 100644
+> > > > --- a/include/uapi/linux/videodev2.h
+> > > > +++ b/include/uapi/linux/videodev2.h
+> > > > @@ -800,6 +800,7 @@ struct v4l2_pix_format {
+> > > >   #define V4L2_PIX_FMT_MM21     v4l2_fourcc('M', 'M', '2', '1') /* =
+Mediatek 8-bit block mode, two non-contiguous planes */
+> > > >   #define V4L2_PIX_FMT_MT2110T  v4l2_fourcc('M', 'T', '2', 'T') /* =
+Mediatek 10-bit block tile mode */
+> > > >   #define V4L2_PIX_FMT_MT2110R  v4l2_fourcc('M', 'T', '2', 'R') /* =
+Mediatek 10-bit block raster mode */
+> > > > +#define V4L2_PIX_FMT_MS21     v4l2_fourcc('M', 'S', '2', '1') /* M=
+ediaTek 8-bit block mode with one plane */
+> > > >   #define V4L2_PIX_FMT_INZI     v4l2_fourcc('I', 'N', 'Z', 'I') /* =
+Intel Planar Greyscale 10-bit and Depth 16-bit */
+> > > >   #define V4L2_PIX_FMT_CNF4     v4l2_fourcc('C', 'N', 'F', '4') /* =
+Intel 4-bit packed depth confidence information */
+> > > >   #define V4L2_PIX_FMT_HI240    v4l2_fourcc('H', 'I', '2', '4') /* =
+BTTV 8-bit dithered RGB */
+> > >=20
+> >=20
 
 
