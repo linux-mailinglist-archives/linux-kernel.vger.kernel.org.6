@@ -1,197 +1,131 @@
-Return-Path: <linux-kernel+bounces-197448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 422998D6ACC
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 22:36:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D431A8D6ACE
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 22:36:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B1A6BB23725
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 20:36:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48DC91F26578
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 20:36:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DABB717DE1D;
-	Fri, 31 May 2024 20:36:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77BB417D88A;
+	Fri, 31 May 2024 20:36:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BgzTgIjj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P1FkS+UY"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F383208DA;
-	Fri, 31 May 2024 20:36:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A80782866;
+	Fri, 31 May 2024 20:36:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717187781; cv=none; b=t5dbtZZ5kGnADVHcuTHyPnkAzA6zXbYQDaPu3nq2lF4RJ2kVMntlSVgk5e3FTijyhGCvqOZvIE58L86C6DJkv90cQNZMzCgNaAPyRyFbMHiBTDkM5wpt6VuJTveUj8Xy68geZNUokZCrGIbdYYnyIRtsmbGpHO6tVD/yV4kJn5s=
+	t=1717187799; cv=none; b=DFcFWqmOEIz+WgRkPFFERB4UL8cQE2q9g+c31TrZkfR8xawjuKblENsjv8JLDAGUPnAQ0HQzUCI8wfP8EJWJlpdQgZJQ3sQ2DSNHGKiMNA3EUXkdO0C6tPeRMB8GBe56y7khsFqt9vsWM6fa6K7ZoOUXtVuu2UKfjnPn8VBPaWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717187781; c=relaxed/simple;
-	bh=WdOxa9rbUS6q9NaRbl/yb1oNoDnPk7wE0Gs06YTBa5U=;
+	s=arc-20240116; t=1717187799; c=relaxed/simple;
+	bh=QT8jsy9BjKZNv8X9KAnXUdxKec2WrNfhYs2tkh8Z9n0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K1svYIUpLiLhpc16ehyBtzdG2xYVxKS/mEvrhMfoi8qzwLL1rG7aBeRk6GZdvhY+CHbFz7IdHSC8iESVh1fFItrJUMKw7VNjDf/En+cX2WBsxJgVe1oVwGKY0UuhbSPTWqh98WniRTbznhAv6zEe5aNwPQ4RpvBK3d7Ym2OYHUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BgzTgIjj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5434C2BD10;
-	Fri, 31 May 2024 20:36:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717187780;
-	bh=WdOxa9rbUS6q9NaRbl/yb1oNoDnPk7wE0Gs06YTBa5U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BgzTgIjjAbBDZJJ7SdGkQGn03Ke7koI9sJcvxzGG85wTTVXYUoUXrCv+9F2+Fr/p0
-	 5ann9Kudtmbhm5NuShztMv0EAjFKOaxiiV420z9fm1LqUhVPUVOjjqLne17p6ZqDO6
-	 CcaaVgkybPhHQeBRx2sqjj+RSW+PjtVnZWl+o4Vr8Oxjr9x7Bb1Cx03QlEgURZp6EG
-	 16FKupbqrEl+oHu3VZYCeT6Mx98i18EH8N3S3AP2mWIg+PYTuDZWK6dcQ/bk5MvmF6
-	 fSkyQ45BE5IcQWascYcv86qbwspWcJ21Qps/yZ3OASZ6k7bTUBrGBqENi+FNwL1/53
-	 BTJoDAANj2F2A==
-Date: Fri, 31 May 2024 21:36:12 +0100
-From: Simon Horman <horms@kernel.org>
-To: Liju-clr Chen <liju-clr.chen@mediatek.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Yingshiuan Pan <Yingshiuan.Pan@mediatek.com>,
-	Ze-yu Wang <Ze-yu.Wang@mediatek.com>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-trace-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	David Bradil <dbrazdil@google.com>,
-	Trilok Soni <quic_tsoni@quicinc.com>,
-	Shawn Hsiao <shawn.hsiao@mediatek.com>,
-	PeiLun Suei <PeiLun.Suei@mediatek.com>,
-	Chi-shen Yeh <Chi-shen.Yeh@mediatek.com>,
-	Kevenny Hsieh <Kevenny.Hsieh@mediatek.com>
-Subject: Re: [PATCH v11 08/21] virt: geniezone: Add vcpu support
-Message-ID: <20240531203612.GU491852@kernel.org>
-References: <20240529084239.11478-1-liju-clr.chen@mediatek.com>
- <20240529084239.11478-9-liju-clr.chen@mediatek.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UXoMovl4Ehg27opqD3k3GPgHQY4ALUCVsQcGGK2CTTv85AUJbrBfMr5aHY1hRLY5bh/T2DogMXJyH6s6PXZU2rtPf7V3XUGMe05SiHpkPy1LXGtjC8dK7dGsznQ1tCJFI0dU2LYxCSeQBGNYEtzIFwDJ7mJcXlnmrXZoJeOFqmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P1FkS+UY; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1f480624d10so20525245ad.1;
+        Fri, 31 May 2024 13:36:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717187798; x=1717792598; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=twLijwTOj4W6ARqqInAp+sh1XdnAFooJeHYSV2DKonw=;
+        b=P1FkS+UYjV91MRnUhLnt76ROzkSASrn+96unQRNu2inIYZQfOw7t3giDbUh7qUYgjQ
+         4M3QKU4ZTlIAQA+SPudLiL2vLY6GaTdsA4VKRZ7tOKMYhJ+j71jBXUAiLOU/isrs/zDk
+         5jAbzenVHLPlQvtpUqAyU5qGA3eA7DYngv5Tf5LSGPhsgeWm5jTkQ96R7R9KLTEPNf7q
+         GR4/jCrMhsOt/u1dyXHyLEFUL7DllmXqlyaNCRHCZjSo0RDawDZ9MxKAD7eMXlRYKn2V
+         gJlW8KkZwdim9B78ce1xT7tu8f7YCbrqbLXmd1F/+XLPkuTWd4LWUZhFwqkNpuRPTO9m
+         CNLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717187798; x=1717792598;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=twLijwTOj4W6ARqqInAp+sh1XdnAFooJeHYSV2DKonw=;
+        b=nNr7DqGBCAkpQh9g+cec3A0dX37G3DpA+6kRWLTYtnAZuA+mS5ZTUA0kIy3CakREHL
+         Gjt+BVlMpdm6Mm3+S7lzI9sMHUosM6gCwRShPzVCNz2XOQMbAL92ZOm4Hj4C/YTpqZ13
+         CpZce4Y7oisIDdck7g1baYsv110XvW0ZZNpmdsQfQ0MYdZetjmOPoDaU0rVDnBPBQfim
+         MJiP7EdvxM5lGjO7w3OTpd1T0PyxUrBoGnDeGAOXVUVIV7M6t583BgVRFgz+lnoIAbg6
+         d+IDemSd8QACFxiCyn7OHLRhFDdEVJwgQ9a5ltix2MooJhEqOUJk7Yd8DnFLug+SsKZs
+         bESQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUtJh+AZFnThDEM9oIJuCYDDOnnoGjS5TyeyZ/vs4W7oG2OA6/4dT7G7dpHp8463RZ0kt1yjKUkXzYlRIpCHAjJgduwen1XbfyyIT93V/8TO0+86oJd/IeQp4+lJU0BY7kkjORD/XV/lRITcJAj
+X-Gm-Message-State: AOJu0YyRCCoVxYEuTL/KTOlinHmR9erj4kQShqPXF+q6F6cqrWBCQcJB
+	HhthmOMMTcdbGruknEaSAwHEh1ZKRvJMMZ3FEseu+Vphe4soaCk4
+X-Google-Smtp-Source: AGHT+IHHP8QAg76F7jjbJT2bI58nRgcqFgYuv5Qk4QfOSBQI34clBHl68Uk4KCQNaiw4SFdV18/XsA==
+X-Received: by 2002:a17:902:ed54:b0:1f3:ea4:7ed6 with SMTP id d9443c01a7336-1f6370e66fdmr27847175ad.61.1717187797708;
+        Fri, 31 May 2024 13:36:37 -0700 (PDT)
+Received: from Gatlins-MBP.lan ([2001:558:6025:79:9460:fb03:8dbb:8b69])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f632413e63sm20862525ad.276.2024.05.31.13.36.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 May 2024 13:36:37 -0700 (PDT)
+Date: Fri, 31 May 2024 13:36:35 -0700
+From: Gatlin Newhouse <gatlin.newhouse@gmail.com>
+To: Andrew Cooper <andrew.cooper3@citrix.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Kees Cook <keescook@chromium.org>, 
+	Marco Elver <elver@google.com>, Andrey Konovalov <andreyknvl@gmail.com>, 
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>, Nathan Chancellor <nathan@kernel.org>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Baoquan He <bhe@redhat.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
+	Changbin Du <changbin.du@huawei.com>, Pengfei Xu <pengfei.xu@intel.com>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Xin Li <xin3.li@intel.com>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com, 
+	linux-hardening@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH] x86/traps: Enable UBSAN traps on x86
+Message-ID: <5yx5aykf77x2gufpaf4nlrdhiqh6ioiqicazp4wq6dosu6d62g@xmj62qw7xa7q>
+References: <20240529022043.3661757-1-gatlin.newhouse@gmail.com>
+ <c068193b-75fb-49d2-9104-775051ffd941@citrix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20240529084239.11478-9-liju-clr.chen@mediatek.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <c068193b-75fb-49d2-9104-775051ffd941@citrix.com>
 
-On Wed, May 29, 2024 at 04:42:26PM +0800, Liju-clr Chen wrote:
-> From: Yi-De Wu <yi-de.wu@mediatek.com>
+On Thu, May 30, 2024 at 01:24:56AM UTC, Andrew Cooper wrote:
+> On 29/05/2024 3:20 am, Gatlin Newhouse wrote:
+> > diff --git a/arch/x86/include/asm/bug.h b/arch/x86/include/asm/bug.h
+> > index a3ec87d198ac..e3fbed9073f8 100644
+> > --- a/arch/x86/include/asm/bug.h
+> > +++ b/arch/x86/include/asm/bug.h
+> > @@ -13,6 +13,14 @@
+> >  #define INSN_UD2	0x0b0f
+> >  #define LEN_UD2		2
+> >  
+> > +/*
+> > + * In clang we have UD1s reporting UBSAN failures on X86, 64 and 32bit.
+> > + */
+> > +#define INSN_UD1	0xb90f
+> > +#define LEN_UD1		2
+> > +#define INSN_REX	0x67
+> > +#define LEN_REX		1
 > 
-> From: "Yingshiuan Pan" <yingshiuan.pan@mediatek.com>
+> That's an address size override prefix, not a REX prefix.
 
-nit: I think there should be at most one From line,
-     denoting the author of the patch. Based on the Signed-off-by
-     lines I assume that is Yingshiuan Pan.
+Good to know, thanks.
 
-     If there are multiple authors perhaps
-     the Co-developed-by tag should be used below.
+> What information is actually encoded in this UD1 instruction?  I can't
+> find anything any documentation which actually discusses how the ModRM
+> byte is encoded.
 
-     And on that note, it's not clear to me what the significance
-     of the Signed-off-by lines, other than that of
-     Yingshiuan Pan (presumed author) and Liju Chen (sender) are.
-     I'd suggest deleting them unless they are
-     accompanied by Co-developed-by tags.
+lib/ubsan.h has a comment before the ubsan_checks enum which links to line 113
+in LLVM's clang/lib/CodeGen/CodeGenFunction.h which defines the values for the
+ModRM byte. I think the Undefined Behavior Sanitizer pass does the actual
+encoding of UB type to values but I'm not an expert in LLVM.
 
-     And, lastly, the sender's signed-off-by line should come last.
-
-     See: https://www.kernel.org/doc/html/latest/process/submitting-patches.html#sign-your-work-the-developer-s-certificate-of-origin
-
-> 
-> VMM use this interface to create vcpu instance which is a fd, and this
-> fd will be for any vcpu operations, such as setting vcpu registers and
-> accepts the most important ioctl GZVM_VCPU_RUN which requests GenieZone
-> hypervisor to do context switch to execute VM's vcpu context.
-> 
-> Signed-off-by: Yingshiuan Pan <yingshiuan.pan@mediatek.com>
-> Signed-off-by: Jerry Wang <ze-yu.wang@mediatek.com>
-> Signed-off-by: kevenny hsieh <kevenny.hsieh@mediatek.com>
-> Signed-off-by: Liju Chen <liju-clr.chen@mediatek.com>
-> Signed-off-by: Yi-De Wu <yi-de.wu@mediatek.com>
-
-...
-
-> diff --git a/drivers/virt/geniezone/Makefile b/drivers/virt/geniezone/Makefile
-> index 25614ea3dea2..9cc453c0819b 100644
-> --- a/drivers/virt/geniezone/Makefile
-> +++ b/drivers/virt/geniezone/Makefile
-> @@ -6,4 +6,5 @@
->  
->  GZVM_DIR ?= ../../../drivers/virt/geniezone
->  
-> -gzvm-y := $(GZVM_DIR)/gzvm_main.o $(GZVM_DIR)/gzvm_vm.o
-> +gzvm-y := $(GZVM_DIR)/gzvm_main.o $(GZVM_DIR)/gzvm_vm.o \
-> +	  $(GZVM_DIR)/gzvm_vcpu.o
-> diff --git a/drivers/virt/geniezone/gzvm_vcpu.c b/drivers/virt/geniezone/gzvm_vcpu.c
-> new file mode 100644
-> index 000000000000..1aca13fef422
-> --- /dev/null
-> +++ b/drivers/virt/geniezone/gzvm_vcpu.c
-> @@ -0,0 +1,249 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2023 MediaTek Inc.
-> + */
-> +
-> +#include <asm/sysreg.h>
-
-nit: It's not clear to me that sysreg.h needs to be included in this file.
-
-> +#include <linux/anon_inodes.h>
-> +#include <linux/device.h>
-> +#include <linux/file.h>
-> +#include <linux/mm.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/slab.h>
-> +#include <linux/soc/mediatek/gzvm_drv.h>
-> +
-> +/* maximum size needed for holding an integer */
-> +#define ITOA_MAX_LEN 12
-> +
-> +static long gzvm_vcpu_update_one_reg(struct gzvm_vcpu *vcpu,
-> +				     void __user *argp,
-> +				     bool is_write)
-> +{
-> +	struct gzvm_one_reg reg;
-> +	void __user *reg_addr;
-> +	u64 data = 0;
-> +	u64 reg_size;
-> +	long ret;
-> +
-> +	if (copy_from_user(&reg, argp, sizeof(reg)))
-> +		return -EFAULT;
-> +
-> +	reg_addr = (void __user *)reg.addr;
-
-nit: Perhaps u64_to_user_ptr() is appropriate here.
-
-     Also in gzvm_vm_ioctl_create_device() in patch 09/21.
-
-> +	reg_size = (reg.id & GZVM_REG_SIZE_MASK) >> GZVM_REG_SIZE_SHIFT;
-> +	reg_size = BIT(reg_size);
-> +
-> +	if (reg_size != 1 && reg_size != 2 && reg_size != 4 && reg_size != 8)
-> +		return -EINVAL;
-> +
-> +	if (is_write) {
-> +		/* GZ hypervisor would filter out invalid vcpu register access */
-> +		if (copy_from_user(&data, reg_addr, reg_size))
-> +			return -EFAULT;
-> +	} else {
-> +		return -EOPNOTSUPP;
-> +	}
-> +
-> +	ret = gzvm_arch_vcpu_update_one_reg(vcpu, reg.id, is_write, &data);
-> +
-> +	if (ret)
-> +		return ret;
-> +
-> +	return 0;
-> +}
-
-...
+> ~Andrew
 
