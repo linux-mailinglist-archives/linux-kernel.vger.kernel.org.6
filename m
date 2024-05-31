@@ -1,100 +1,75 @@
-Return-Path: <linux-kernel+bounces-197085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E627A8D65F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:41:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 903BC8D65EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:40:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22AE31C2464E
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 15:41:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4AA61C24976
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 15:40:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC0F9155A5B;
-	Fri, 31 May 2024 15:40:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5A93145322;
+	Fri, 31 May 2024 15:40:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="XpxlPg86"
-Received: from smtp-1908.mail.infomaniak.ch (smtp-1908.mail.infomaniak.ch [185.125.25.8])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PGX2c9r0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0634D24211
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 15:40:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E26D124211;
+	Fri, 31 May 2024 15:40:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717170056; cv=none; b=rH+XPHHlSy3TGImr5sbtDSwJ2p9W3kyw6cEY5OvAixV32zaDrLJRpyYTo/6H+QyVnJEebU55UWLM7eKux5LDo8xnVTH5Nvd8OtNAVpA+sjoP55AUp0EuZyE3R/4c1Ji6EkAQOweqm9WUrGpTAWJ1rq+PpbDa7M+vQM7h1Y9QZ10=
+	t=1717170042; cv=none; b=G7ItL1LzEbK7Tz6xHWxAtKXShdh0eIk8Ei07s3oyA1e3Um32HzutC1GbYXtDfvR4gUi+wvGix15WiuiFdcdLlUaOu3hujSqPoj6iQBKcLYZY+xiVJhakAqVnJAB6lfXNummcTDXGUe1Fm+HcIRqH4DRj6JSGSWB9uFAIfZ+AqbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717170056; c=relaxed/simple;
-	bh=jMphLtJ1ajjONUHwdMfQkImvbdmMMRz8DvS2PZBC1Ww=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=o0sb0ioSVpyeZ4+GR0FMPIwOr0xquh9BoQVW/HCC5dIgv0TOvQnyR/KrRm1CpaOYcJKlYXqDqueY3Jq4Bh2NJW6Co9Jgn1RUBUVEBlmAworpPgzoxHnD9ZcuhP+cYnBw4w0VAYa0J+5+2XjWslXencqAXY1WRCn18hAY2QiC9Sk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=XpxlPg86; arc=none smtp.client-ip=185.125.25.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4VrS4q5Z1lz1WM;
-	Fri, 31 May 2024 17:40:43 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1717170043;
-	bh=j4+nbp4ODTAZgk4eMuAJTaPQPhKuOjoc5EjXd36hnA4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=XpxlPg867rk6kWp5pkC+7M2c23z8uYSM2AN3yaalvLFuvlMCHvGjrGs4ugotxmmE+
-	 7IyDArcdEgg1dTPWYq5ju6vKTl5WSSe0eoIXss4vf3m6T5fp4yw7DW799IVaNGCvtc
-	 fSdV7graSZaMU4aM9mXSPPPc7K5Q5CLmZ9xC5RhU=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4VrS4q27FFzZ0S;
-	Fri, 31 May 2024 17:40:43 +0200 (CEST)
-From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
-	Paul Moore <paul@paul-moore.com>,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: [GIT PULL] Landlock fix for v6.10-rc2
-Date: Fri, 31 May 2024 17:40:34 +0200
-Message-ID: <20240531154034.198316-1-mic@digikod.net>
+	s=arc-20240116; t=1717170042; c=relaxed/simple;
+	bh=2iHYKfuL3l56RbZBaOU3Nr5MMok8DdbaiiXFP7i97zo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WqKbVJrqi0S44YLXcdipBq6wPh4F/+jLfCRVPSWDhp5BBYXIIrM7s5uVesRnvSbuZjBHXTKatGq37uvjin04qQH6xw2e866tLmIqkX/sKaBVR5xrFxc4MiqV3yIHidX+1Sv4tge1TJXXEwZmuwlzKASmDRBgZg2ZZEZ2kNjMN0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PGX2c9r0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 044E4C116B1;
+	Fri, 31 May 2024 15:40:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717170041;
+	bh=2iHYKfuL3l56RbZBaOU3Nr5MMok8DdbaiiXFP7i97zo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PGX2c9r0XXAXJKeHeYKqs0Y3aZ4y1EI1bYwLiyF78CiOrwThrUdl1+Lfr33Ubye98
+	 Np27t7EgmGMCtFOew9mrU/eToiY+pIA2RkvPg9B1EgwKzPIdYvxL0GvntMdhpp8UsO
+	 1MINWfnxJiESZeguZMwwV7TflmZbWHs0Q21ZBQDqWpmxjlao87oaJKtkR4nN/6Kn3L
+	 +yZ9Carl+qWubZsdQNrgZ0IfPvgs+bqGt3Pnkae/4tlllQrCL16QPzPl98xZwbYYqA
+	 0zXgNRlA7Uyef1w0Y73CUFMXCQGP41cprnQqgbYrWs00EpglDMPRhP9UgSxAbxN3ly
+	 1DEi2cG1VwuXw==
+Date: Fri, 31 May 2024 16:40:38 +0100
+From: Simon Horman <horms@kernel.org>
+To: linux@treblig.org
+Cc: mkl@pengutronix.de, mailhol.vincent@wanadoo.fr,
+	linux-can@vger.kernel.org, netdev@vger.kernel.org, wsa@kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] can: mscan: remove unused struct 'mscan_state'
+Message-ID: <20240531154038.GB491852@kernel.org>
+References: <20240525232509.191735-1-linux@treblig.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240525232509.191735-1-linux@treblig.org>
 
-Hi Linus,
+On Sun, May 26, 2024 at 12:25:09AM +0100, linux@treblig.org wrote:
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> 
+> 'mscan_state' is unused since the original
+> commit afa17a500a36 ("net/can: add driver for mscan family &
+> mpc52xx_mscan").
+> 
+> Remove it.
+> 
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 
-This PR fixes a wrong path walk triggered by syzkaller.
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-Please pull these changes for v6.10-rc2.  This commit merged cleanly with your
-master branch.  The kernel code has been tested in the latest linux-next
-releases for two weeks, but I rebased it on v6.10-rc1 to fix a commit message
-and properly test it again.
-
-Regards,
- Mickaël
-
---
-The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
-
-  Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git tags/landlock-6.10-rc2
-
-for you to fetch changes up to 0055f53aac80fd938bf7cdfad7ad414ca6c0e198:
-
-  selftests/landlock: Add layout1.refer_mount_root (2024-05-31 16:41:54 +0200)
-
-----------------------------------------------------------------
-Landlock fix for v6.10-rc2
-
-----------------------------------------------------------------
-Mickaël Salaün (2):
-      landlock: Fix d_parent walk
-      selftests/landlock: Add layout1.refer_mount_root
-
- security/landlock/fs.c                     | 13 +++++++--
- tools/testing/selftests/landlock/fs_test.c | 45 ++++++++++++++++++++++++++++++
- 2 files changed, 56 insertions(+), 2 deletions(-)
 
