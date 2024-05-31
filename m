@@ -1,145 +1,238 @@
-Return-Path: <linux-kernel+bounces-196578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AE5A8D5E2B
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 11:24:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DE998D5E45
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 11:29:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C88E1C20AB0
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 09:24:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE66EB23B28
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 09:29:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A7DA78C99;
-	Fri, 31 May 2024 09:24:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 784D18173C;
+	Fri, 31 May 2024 09:29:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DSXl6MM/"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="uPrMofPP"
+Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A28FF770EE
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 09:24:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14ADE2032D;
+	Fri, 31 May 2024 09:29:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717147465; cv=none; b=HN18vMpLZY2+f8RjNyGhhTVqSbr6yF6fXFjoRhm106zUWwnCuK5yqi2bVt5kpZvYbwHyB+D1GssQfxrPaUUYv/cNXgWrraowbhah5SQT5gPqVPmAXI9lAEPFtpbDPRuKnY4ccoLvs5Jyfw07zE3G+2HthMWSDS5ZV6Tfkto0glk=
+	t=1717147774; cv=none; b=FY2l94n2R8qi+KTnqFEMUuBsXhSQ0/AmzjiFKLn61LOCrGC0My9MAgRCZWfjq7qPf+AH6fTwqbXBewwdzsf3o924ZY3FrSlBb1DT/HdXZq/A0cMclbmPJsfMSbJtb74m8qm8Pq71Qu4nak5ZTCWm4pgJlvJWIi9uO42764GynM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717147465; c=relaxed/simple;
-	bh=njpPL1V1veKANz+pyjKvPcN17ctn8E8cPDIE73nMeXA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VSFHIHVuiMGzch4oIGgZUPrGz9qjxgCBFkFKV8DCyB1NaCB9PsT6VEFqng12IberuiWRT2E0jYnul3iUbNlcSIkBS95FFhMmc5yz7y9kHdSfcxNm5BBvG6Bu1Dk1FDPxjXoRQ+HW0UrP00XEKeyZS/3YyY3XnjP3h3Nhi+CG8TE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DSXl6MM/; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1f61f775738so11638735ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 02:24:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717147463; x=1717752263; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=mrKkBvog5oyiwqctC5TCQKtV++LMDGUX2RPtvKV8xCI=;
-        b=DSXl6MM/CVfNGKXsmOmQSSqdMd9sE/X/IesPX1xuyrA4PwuCiSL3Ghc+YV4SSZSmn6
-         yMBc8gp2hUxORezbEQnqPv8thlNpFn91pfkRKXTVmkLrF8mKHYsu2V0ryEdppTBf/5z/
-         YEfPLz9/o3CBdPkdb1YqS/E4Uon5oFWZRsm2nDFxbpraHUyUPqmER132i6HYMjXahPj4
-         Xhp+rnbCio8YBH4hQIvN37ZFfxkUeMGg7eGuNcJutFj0AV2XEmWOG2ijl4nidCOoHTlv
-         bi5CB1bV3+FaVPNp43gWzRlNyJt+Ca09tu1/NWP6JI5HJnDAoNS/9oW7+qZNNCrrjnWR
-         NzAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717147463; x=1717752263;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mrKkBvog5oyiwqctC5TCQKtV++LMDGUX2RPtvKV8xCI=;
-        b=vaMyuqPvDa47AD5ZZvZCjd3cO8nW0/wTBYjOrDlKvbzYCaWFz3EjVQWXuJ1/oBx7BS
-         GFI9A6kd9EqRC8OLfDIvJp8AI5zF0kx3Nuf5y8+4bYNqT2ik4QjZUZhs+xsPP1OWi+Jc
-         r8DRWzdUDY8eIf6wxqDnZfJcw9c3BZOc9q3R5HQ0dqK6B2KlaBa2tgFlmxnv9836qOjj
-         ejvh/5GHYtlXVbAv5AEGNqUJK+ibE6hTj8ZBRgERveQlm/TjBj3q4zWekCV4wHIyb+lx
-         LgNVnawd6Mjzx9yf5L2T0KALKVwPtmdPbUZj8uPI9W2s/pNsWdVPrf0o8hxcp6IS87tq
-         414w==
-X-Forwarded-Encrypted: i=1; AJvYcCWHr2+6mCu7ueTbRGb8bdtVQZUUyeTiTBbXpQ/kC87IuSi25w0GfLCmQxePuGaM9/mMMvk+nk27G1pdQo1SgMAIBdjvyOOPJENLFSch
-X-Gm-Message-State: AOJu0Yw5dIFEApSPwRS+bz1dzELzcsbY/nl4xWt7I6k8wmCl0RUGWvTU
-	q5IT68ELG1hMzUxm5TsmxShlaesOt5GTZ1ywpZj467rC1nip5XlKyDvnMvrCZFo=
-X-Google-Smtp-Source: AGHT+IE6gGq+eCrjF3uWKXdUrVl9nCO1Z75cjEF8h5pRBPogQzDAKCEb/EdSACkI92nCASHWM37d5g==
-X-Received: by 2002:a17:903:1249:b0:1f4:b858:5fe7 with SMTP id d9443c01a7336-1f6370cefbbmr14952105ad.61.1717147462737;
-        Fri, 31 May 2024 02:24:22 -0700 (PDT)
-Received: from localhost.localdomain ([143.92.64.17])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6323dde85sm11870975ad.149.2024.05.31.02.24.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 May 2024 02:24:21 -0700 (PDT)
-From: "brookxu.cn" <brookxu.cn@gmail.com>
-To: kbusch@kernel.org,
-	axboe@kernel.dk,
-	hch@lst.de,
-	sagi@grimberg.me,
-	kch@nvidia.com
-Cc: linux-nvme@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [RESEND PATCH] nvme-fabrics: use reserved tag for reg read/write command
-Date: Fri, 31 May 2024 17:24:21 +0800
-Message-Id: <20240531092421.317296-1-brookxu.cn@gmail.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1717147774; c=relaxed/simple;
+	bh=EN3yAsbmjnvvPDgNC90DZ+p+kvaIL34JaNYFOwcvgsQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UIumBWxO3mGzMaDQDuG+5u3REmC09Lemj+gI7FGb1VJZWXnlBg141SdEU/XtDS7PN7JGWnYzhjNYRST/wawM7IkTcjRy6TEf4A+GspP+ii9EIGUT+CKl9pTu86uTVLeAWCKadyiyZPK43cPGyrhfjh3MO35iCLqFq/h+44qMblc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=uPrMofPP; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
+	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44V8p9aQ013187;
+	Fri, 31 May 2024 05:29:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=t8hvnnR4gL7szMpPoyw0DjEfOAO
+	Y0g/eXoIWy/G7HoQ=; b=uPrMofPPSilPfE8UMTu7ixypwlZ5OzY8OMzWMfs5Q0Q
+	mUO/wtwIJ6HPa5qKKj5uuvQmokvFpKKTpK65JZ1uAqgEqFNyxu0J/eMfCbZm1UC4
+	t48ArHNnw6npwW6ZL3uYGGymB8syQ1QxM3lp4dsqWsdMBvxfSAv9mNQ553M27nYf
+	Uz5h+2lIiGpabuyIGvRp5Ej0z/ATQVH5DhNEBHPScal+OKc2ZLVgQXl4rxUafLJ5
+	EU43PGhoroqSvs8YDH69KC+DrTTujU9SLfFcQWjQl5JyjkT2JaEz3Rw8Xj00hiIT
+	YXmP4ItwYKIDcOylQpNUIIUy63yy5jdxr8zVJUx770A==
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 3yf60qh6rb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 31 May 2024 05:29:19 -0400 (EDT)
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 44V9THKn046249
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 31 May 2024 05:29:17 -0400
+Received: from ASHBCASHYB4.ad.analog.com (10.64.17.132) by
+ ASHBMBX8.ad.analog.com (10.64.17.5) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.14; Fri, 31 May 2024 05:29:16 -0400
+Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by
+ ASHBCASHYB4.ad.analog.com (10.64.17.132) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.14; Fri, 31 May 2024 05:29:16 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Fri, 31 May 2024 05:29:16 -0400
+Received: from HYB-hYN1yfF7zRm.ad.analog.com (HYB-hYN1yfF7zRm.ad.analog.com [10.48.65.147])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 44V9T4nm001182;
+	Fri, 31 May 2024 05:29:06 -0400
+From: ranechita <ramona.nechita@analog.com>
+To: <linux-iio@vger.kernel.org>
+CC: ranechita <ramona.nechita@analog.com>,
+        Jonathan Cameron
+	<jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich
+	<Michael.Hennerich@analog.com>,
+        Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+Subject: [PATCH v2] dt-bindings: iio: adc: add a7779 doc
+Date: Fri, 31 May 2024 12:26:59 +0300
+Message-ID: <20240531092704.21255-1-ramona.nechita@analog.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-ORIG-GUID: WIHj57tDlcTo0k9EgzQtG_-quuHgbV61
+X-Proofpoint-GUID: WIHj57tDlcTo0k9EgzQtG_-quuHgbV61
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-31_05,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ lowpriorityscore=0 suspectscore=0 malwarescore=0 mlxlogscore=999
+ mlxscore=0 priorityscore=1501 bulkscore=0 adultscore=0 phishscore=0
+ clxscore=1015 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405310068
 
-From: Chunguang Xu <chunguang.xu@shopee.com>
+Add dt bindings for adc ad7779.
 
-In some scenarios, if too many commands are issued by nvme command in
-the same time by user tasks, this may exhaust all tags of admin_q. If
-a reset (nvme reset or IO timeout) occurs before these commands finish,
-reconnect routine may fail to update nvme regs due to insufficient tags,
-which will cause kernel hang forever. In order to workaround this issue,
-maybe we can let reg_read32()/reg_read64()/reg_write32() use reserved
-tags. This maybe safe for nvmf:
-
-1. For the disable ctrl path,  we will not issue connect command
-2. For the enable ctrl / fw activate path, since connect and reg_xx()
-   are called serially.
-
-So the reserved tags may still be enough while reg_xx() use reserved tags.
-
-Signed-off-by: Chunguang Xu <chunguang.xu@shopee.com>
-Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
-Reviewed-by: Chaitanya Kulkarni <kch@nvidia.com>
-
+Signed-off-by: Ramona Alexandra Nechita <ramona.nechita@analog.com>
 ---
- drivers/nvme/host/fabrics.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ .../ABI/testing/sysfs-bus-iio-adc-ad777x      | 23 +++++
+ .../bindings/iio/adc/adi,ad7779.yaml          | 87 +++++++++++++++++++
+ 2 files changed, 110 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-bus-iio-adc-ad777x
+ create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ad7779.yaml
 
-diff --git a/drivers/nvme/host/fabrics.c b/drivers/nvme/host/fabrics.c
-index 1f0ea1f32d22..f6416f8553f0 100644
---- a/drivers/nvme/host/fabrics.c
-+++ b/drivers/nvme/host/fabrics.c
-@@ -180,7 +180,7 @@ int nvmf_reg_read32(struct nvme_ctrl *ctrl, u32 off, u32 *val)
- 	cmd.prop_get.offset = cpu_to_le32(off);
- 
- 	ret = __nvme_submit_sync_cmd(ctrl->fabrics_q, &cmd, &res, NULL, 0,
--			NVME_QID_ANY, 0);
-+			NVME_QID_ANY, NVME_SUBMIT_RESERVED);
- 
- 	if (ret >= 0)
- 		*val = le64_to_cpu(res.u64);
-@@ -226,7 +226,7 @@ int nvmf_reg_read64(struct nvme_ctrl *ctrl, u32 off, u64 *val)
- 	cmd.prop_get.offset = cpu_to_le32(off);
- 
- 	ret = __nvme_submit_sync_cmd(ctrl->fabrics_q, &cmd, &res, NULL, 0,
--			NVME_QID_ANY, 0);
-+			NVME_QID_ANY, NVME_SUBMIT_RESERVED);
- 
- 	if (ret >= 0)
- 		*val = le64_to_cpu(res.u64);
-@@ -271,7 +271,7 @@ int nvmf_reg_write32(struct nvme_ctrl *ctrl, u32 off, u32 val)
- 	cmd.prop_set.value = cpu_to_le64(val);
- 
- 	ret = __nvme_submit_sync_cmd(ctrl->fabrics_q, &cmd, NULL, NULL, 0,
--			NVME_QID_ANY, 0);
-+			NVME_QID_ANY, NVME_SUBMIT_RESERVED);
- 	if (unlikely(ret))
- 		dev_err(ctrl->device,
- 			"Property Set error: %d, offset %#x\n",
+diff --git a/Documentation/ABI/testing/sysfs-bus-iio-adc-ad777x b/Documentation/ABI/testing/sysfs-bus-iio-adc-ad777x
+new file mode 100644
+index 000000000000..0a57fda598e6
+--- /dev/null
++++ b/Documentation/ABI/testing/sysfs-bus-iio-adc-ad777x
+@@ -0,0 +1,23 @@
++What:		/sys/bus/iio/devices/iio:deviceX/filter_type_available
++KernelVersion:  6.1
++Contact:	linux-iio@vger.kernel.org
++Description:
++		Reading returns a list with the possible filter modes. Only supported by
++		AD7771.
++
++		  * "sinc3"	- The digital sinc3 filter implements three main notches, one at
++				the maximum ODR (128 kHz or 32 kHz, depending on the
++				power mode) and another two at the ODR frequency selected to
++				stop noise aliasing into the pass band.
++
++		  * "sinc5"	- The sinc5 filter implements five notches, one at
++				the maximum ODR (128 kHz or 32 kHz, depending on the
++				power mode) and another four at the ODR frequency
++				selected to stop noise aliasing into the pass band.
++
++What:		/sys/bus/iio/devices/iio:deviceX/filter_type
++KernelVersion:  6.1
++Contact:	linux-iio@vger.kernel.org
++Description:
++		Set the filter mode of the differential channel. The current sampling_frequency
++		is set according to the filter range. Only supported by AD7771.
+diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7779.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad7779.yaml
+new file mode 100644
+index 000000000000..632e9ec0ab44
+--- /dev/null
++++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7779.yaml
+@@ -0,0 +1,87 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/iio/adc/adi,ad7779.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Analog Devices AD777X family 8-Channel, 24-Bit, Simultaneous Sampling ADCs
++
++maintainers:
++  - Ramona Nechita <ramona.nechita@analog.com>
++
++description: |
++  The AD777X family consist of 8-channel, simultaneous sampling analog-to-
++  digital converter (ADC). Eight full Σ-Δ ADCs are on-chip. The
++  AD7771 provides an ultralow input current to allow direct sensor
++  connection. Each input channel has a programmable gain stage
++  allowing gains of 1, 2, 4, and 8 to map lower amplitude sensor
++  outputs into the full-scale ADC input range, maximizing the
++  dynamic range of the signal chain.
++
++  https://www.analog.com/media/en/technical-documentation/data-sheets/ad7770.pdf
++  https://www.analog.com/media/en/technical-documentation/data-sheets/ad7771.pdf
++  https://www.analog.com/media/en/technical-documentation/data-sheets/ad7779.pdf
++
++$ref: /schemas/spi/spi-peripheral-props.yaml#
++
++properties:
++  compatible:
++    enum:
++      - adi,ad7770
++      - adi,ad7771
++      - adi,ad7779
++
++  reg:
++    maxItems: 1
++
++  '#address-cells':
++    const: 1
++
++  '#size-cells':
++    const: 0
++
++  spi-max-frequency: true
++
++  clocks:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  vref-supply:
++    description:
++      ADC reference voltage supply
++
++  start-gpios:
++    description:
++      Pin that controls start synchronization pulse.
++    maxItems: 1
++
++  reset-gpios:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - clocks
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++    spi {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        adc@0 {
++          compatible = "adi,ad7779";
++          reg = <0>;
++          spi-max-frequency = <20000000>;
++          vref-supply = <&vref>;
++          start-gpios = <&gpio0 87 GPIO_ACTIVE_LOW>;
++          reset-gpios = <&gpio0 93 GPIO_ACTIVE_LOW>;
++          clocks = <&adc_clk>;
++        };
++    };
++...
 -- 
-2.25.1
+2.43.0
 
 
