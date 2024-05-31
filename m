@@ -1,197 +1,179 @@
-Return-Path: <linux-kernel+bounces-196748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 120048D6112
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 13:57:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CC018D6117
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 13:57:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35E4A1C2349D
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 11:57:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43EDE2838B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 11:57:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61773157E94;
-	Fri, 31 May 2024 11:56:54 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65159158202;
+	Fri, 31 May 2024 11:57:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="g93vQSf9"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0400D157A57;
-	Fri, 31 May 2024 11:56:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F74215748F;
+	Fri, 31 May 2024 11:57:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717156614; cv=none; b=IYZ7L5xkGXgdL1pO6QxrXutUR/ecqm+zE6KdXiYdzKG8Z2ftJRRQ3W4ON6z9oErJzSMSMRu7cHPpv1Utm6vyptS/axW3T9K5oD7Ns2HiBgC4fk32Z+zkwu3YZOLk8O1NJ+5BWmdxibvGuqnrMpIqj+nWrAcZhpUkOl4wf4LkeJQ=
+	t=1717156646; cv=none; b=fAg6LQj+TUVkBRS1gz8FyOKTWsii7bh3vwU1xFi9RuBP2zBhmFHfIOF1iTHF3CYjX+Zb2LQiXR8VZsXSCqlQaQ7arsRar6FDNJ6FFrjg+BEGxSEMP7WJD7ycOFPpuRP3rLwJ23/zALRL0hyzwKUt+5QW/FyWZEnw3uATSMuc0VM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717156614; c=relaxed/simple;
-	bh=v5Glmb6ZuhDTz587nJUEfkIG11ufUSkYKVodRGPZILU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rRhoIvlughegEDSMT4Vf+C34re+1F1BWa+QzdKDZCLrcyKPtkrPE1XRA/ioplZN46XIyIH92TLVFA51hjE9cPdw8SYodPvJhpk7QyHyyVdOAKI8WAxq0GO90M/zJfB9Dtd8NYbMg0sslvXPf2Q/1oIilJy4E5ncK0rvPLNPmJ3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id C879C68BFE; Fri, 31 May 2024 13:56:44 +0200 (CEST)
-Date: Fri, 31 May 2024 13:56:44 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Gulam Mohamed <gulam.mohamed@oracle.com>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	yukuai1@huaweicloud.com, hch@lst.de, axboe@kernel.dk
-Subject: Re: [PATCH V3 for-6.10/block] loop: Fix a race between loop detach
- and loop open
-Message-ID: <20240531115644.GA23881@lst.de>
-References: <20240529200240.133331-1-gulam.mohamed@oracle.com>
+	s=arc-20240116; t=1717156646; c=relaxed/simple;
+	bh=jK6YYEy/7Igoejw2c2fzU6CRCWo7OrhStRnGrEA4778=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=YpEWbaZA5gAAHJ+JsLfNAAfd2TXb8BBhzVMwV4deM+ElvaIio4eUmFq/1y2JttP6S4BoCO7/neq/g4X22IWKI14fXBO2yVtrP9i4AQvEpC5ZHigX29pJM8aT/78R+BTqxEIJZDqLpYv6iTwk+//AWKiGW0C7GP8WlBQ674aRclE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=g93vQSf9; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44V8lHAr006252;
+	Fri, 31 May 2024 11:57:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	QLXCf+uuiqWX0T+eAEfBRmO10Kpgb3O9apvffaCdJmA=; b=g93vQSf9dgKTHatG
+	Am/8jpuemv3UW6BDgRKTST76WOniM8PKa3t1AgfRk0Xdc++DThS/2XEGkI0xIvZQ
+	U+mrbpRfA7MUasPTZwePgCKfsJ5q7DlWSU29P+75RVwkrJmRjKPi8hrWc49OIKsN
+	2UB1b05HbTpCraKFhDk2S88QxwaLBJ1vpDiHteIn2gPITKbEaI80qDo9A0vQrJmK
+	KmeJ5vEppgX3Gcrr+eL/9ReWG6cQ8ceNQzD15uZhcU+o0T3pVB9ZjV53k/kfaBlO
+	q6NYTFGsXFq5bvX4Dxs/ZiVthmDMK2Fw0Y2EaaT5jW44cu/4teoEbAQNNd7F4e93
+	XbyXQA==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba2hembv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 31 May 2024 11:57:11 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44VBvA7b010803
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 31 May 2024 11:57:10 GMT
+Received: from [10.218.5.19] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 31 May
+ 2024 04:56:55 -0700
+Message-ID: <1df48a42-3b4e-4eb4-971b-cd4be001ba27@quicinc.com>
+Date: Fri, 31 May 2024 17:26:52 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240529200240.133331-1-gulam.mohamed@oracle.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V5 RESEND 5/5] venus: pm_helpers: Use
+ dev_pm_genpd_set_hwmode to switch GDSC mode on V6
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        "Michael
+ Turquette" <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+        Vikash Garodia
+	<quic_vgarodia@quicinc.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "Ulf
+ Hansson" <ulf.hansson@linaro.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Kevin Hilman <khilman@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+        Len Brown
+	<len.brown@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Andy
+ Gross" <agross@kernel.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Abel Vesa <abel.vesa@linaro.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
+        "Satya Priya
+ Kakitapalli" <quic_skakitap@quicinc.com>,
+        Imran Shaik
+	<quic_imrashai@quicinc.com>,
+        Ajit Pandey <quic_ajipan@quicinc.com>
+References: <20240413152013.22307-1-quic_jkona@quicinc.com>
+ <20240413152013.22307-6-quic_jkona@quicinc.com>
+ <5c78ad52-524b-4ad7-b149-0e7252abc2ee@linaro.org>
+ <b96ef82c-4033-43e0-9c1e-347ffb500751@quicinc.com>
+ <a522f25f-bb38-4ae1-8f13-8e56934e5ef5@linaro.org>
+ <dbd1b86c-7b5f-4b92-ab1f-fecfe1486cfc@quicinc.com>
+ <621dbaaa-6b86-45b5-988e-a6d9c39b13d7@linaro.org>
+ <d36c1163-a3f0-4034-a430-91986e5bbce8@linaro.org>
+ <ef194e5c-f136-4dba-bfe0-2c6439892e34@linaro.org>
+ <d2e55523-f8fd-4cbe-909c-57de241107e8@linaro.org>
+Content-Language: en-US
+From: Jagadeesh Kona <quic_jkona@quicinc.com>
+In-Reply-To: <d2e55523-f8fd-4cbe-909c-57de241107e8@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: BLsjDIiK3CsLckqGqMKAgMBG7h5L6Pat
+X-Proofpoint-ORIG-GUID: BLsjDIiK3CsLckqGqMKAgMBG7h5L6Pat
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-31_08,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 adultscore=0
+ malwarescore=0 priorityscore=1501 impostorscore=0 suspectscore=0
+ phishscore=0 bulkscore=0 mlxscore=0 lowpriorityscore=0 spamscore=0
+ mlxlogscore=921 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405310088
 
-On Wed, May 29, 2024 at 08:02:40PM +0000, Gulam Mohamed wrote:
-> Test case involves the following two scripts:
+
+
+On 5/10/2024 6:31 PM, Bryan O'Donoghue wrote:
+> On 01/05/2024 10:14, Bryan O'Donoghue wrote:
+>> On 30/04/2024 21:01, Konrad Dybcio wrote:
+>>> On 24.04.2024 11:50 AM, Bryan O'Donoghue wrote:
+>>>> On 24/04/2024 10:45, Jagadeesh Kona wrote:
+>>>>>
+>>>>> Thanks Bryan for testing this series. Can you please confirm if 
+>>>>> this issue is observed in every run or only seen during the first 
+>>>>> run? Also please let me know on which platform this issue is observed?
+>>>>>
+>>>>> Thanks,
+>>>>> Jagadeesh
+>>>>
+>>>> rb5/sm8250
+>>>>
+>>>> My observation was on a previous _boot_ the stuttering was worse. 
+>>>> There is in the video capture three times that I count where the 
+>>>> video halts briefly, I guess we need to vote or set an OPP so the 
+>>>> firmware knows not to power-collapse quite so aggressively.
+>>>
+>>> We seem to be having some qualcomm-wide variance on perf/pwr usage on 
+>>> some
+>>> odd boots.. Any chance you could try like 5 times and see if it was a 
+>>> fluke?
+>>>
+>>> Konrad
+>>
+>> Sure.
+>>
+>> The first time I tried it, it was much worse.
+>>
+>> The second time, captured in the video is only noticeable because I 
+>> was *looking* for this specific error i.e. I don't think I would have 
+>> noticed the error on the second run, had I not seen the first run.
+>>
+>> I'll find some time to do 5x with and 5x without.
+>>
+>> ---
+>> bod
 > 
-> script1.sh:
+> ping bod please remember to do this thanks
 > 
-> while [ 1 ];
-> do
->         losetup -P -f /home/opt/looptest/test10.img
->         blkid /dev/loop0p1
-> done
-> 
-> script2.sh:
-> 
-> while [ 1 ];
-> do
->         losetup -d /dev/loop0
-> done
 
-When just running these in the background, I just get spam of
-losetup errors.  Maybe you can turn this into a proper blktests
-test case with a sensible timeout?
+Hi Bryan, Could you please let me know if you got a chance to check the 
+above? Thank you!
 
-A for the fix: I suspect it is bette to simply always defer the
-actual work of disconnecting the backing device, as that avoid the
-race entirely, and simplifies the code in nbd by removing special
-cases.  Something like this:
-
-
-diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index 93780f41646b75..c2238c1e2ad68d 100644
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -1131,7 +1131,7 @@ static int loop_configure(struct loop_device *lo, blk_mode_t mode,
- 	return error;
- }
- 
--static void __loop_clr_fd(struct loop_device *lo, bool release)
-+static void __loop_clr_fd(struct loop_device *lo)
- {
- 	struct file *filp;
- 	gfp_t gfp = lo->old_gfp_mask;
-@@ -1139,14 +1139,6 @@ static void __loop_clr_fd(struct loop_device *lo, bool release)
- 	if (test_bit(QUEUE_FLAG_WC, &lo->lo_queue->queue_flags))
- 		blk_queue_write_cache(lo->lo_queue, false, false);
- 
--	/*
--	 * Freeze the request queue when unbinding on a live file descriptor and
--	 * thus an open device.  When called from ->release we are guaranteed
--	 * that there is no I/O in progress already.
--	 */
--	if (!release)
--		blk_mq_freeze_queue(lo->lo_queue);
--
- 	spin_lock_irq(&lo->lo_lock);
- 	filp = lo->lo_backing_file;
- 	lo->lo_backing_file = NULL;
-@@ -1164,8 +1156,6 @@ static void __loop_clr_fd(struct loop_device *lo, bool release)
- 	mapping_set_gfp_mask(filp->f_mapping, gfp);
- 	/* This is safe: open() is still holding a reference. */
- 	module_put(THIS_MODULE);
--	if (!release)
--		blk_mq_unfreeze_queue(lo->lo_queue);
- 
- 	disk_force_media_change(lo->lo_disk);
- 
-@@ -1180,11 +1170,7 @@ static void __loop_clr_fd(struct loop_device *lo, bool release)
- 		 * must be at least one and it can only become zero when the
- 		 * current holder is released.
- 		 */
--		if (!release)
--			mutex_lock(&lo->lo_disk->open_mutex);
- 		err = bdev_disk_changed(lo->lo_disk, false);
--		if (!release)
--			mutex_unlock(&lo->lo_disk->open_mutex);
- 		if (err)
- 			pr_warn("%s: partition scan of loop%d failed (rc=%d)\n",
- 				__func__, lo->lo_number, err);
-@@ -1232,25 +1218,16 @@ static int loop_clr_fd(struct loop_device *lo)
- 		loop_global_unlock(lo, true);
- 		return -ENXIO;
- 	}
-+
- 	/*
--	 * If we've explicitly asked to tear down the loop device,
--	 * and it has an elevated reference count, set it for auto-teardown when
--	 * the last reference goes away. This stops $!~#$@ udev from
--	 * preventing teardown because it decided that it needs to run blkid on
--	 * the loopback device whenever they appear. xfstests is notorious for
--	 * failing tests because blkid via udev races with a losetup
--	 * <dev>/do something like mkfs/losetup -d <dev> causing the losetup -d
--	 * command to fail with EBUSY.
-+	 * Mark the device for removing the backing device on last close.
-+	 * If we are the only opener, also switch the state to roundown here to
-+	 * prevent new openers from coming in.
- 	 */
--	if (disk_openers(lo->lo_disk) > 1) {
--		lo->lo_flags |= LO_FLAGS_AUTOCLEAR;
--		loop_global_unlock(lo, true);
--		return 0;
--	}
--	lo->lo_state = Lo_rundown;
-+	lo->lo_flags |= LO_FLAGS_AUTOCLEAR;
-+	if (disk_openers(lo->lo_disk) == 1)
-+		lo->lo_state = Lo_rundown;
- 	loop_global_unlock(lo, true);
--
--	__loop_clr_fd(lo, false);
- 	return 0;
- }
- 
-@@ -1720,22 +1697,24 @@ static int lo_compat_ioctl(struct block_device *bdev, blk_mode_t mode,
- static void lo_release(struct gendisk *disk)
- {
- 	struct loop_device *lo = disk->private_data;
-+	bool need_clear;
- 
- 	if (disk_openers(disk) > 0)
- 		return;
- 
-+	/*
-+	 * Clear the backing device information if this is the last close of
-+	 * a device that's been marked for auto clear, or on which LOOP_CLR_FD
-+	 * has been called.
-+	 */
- 	mutex_lock(&lo->lo_mutex);
--	if (lo->lo_state == Lo_bound && (lo->lo_flags & LO_FLAGS_AUTOCLEAR)) {
-+	if (lo->lo_state == Lo_bound && (lo->lo_flags & LO_FLAGS_AUTOCLEAR))
- 		lo->lo_state = Lo_rundown;
--		mutex_unlock(&lo->lo_mutex);
--		/*
--		 * In autoclear mode, stop the loop thread
--		 * and remove configuration after last close.
--		 */
--		__loop_clr_fd(lo, true);
--		return;
--	}
-+	need_clear = (lo->lo_state == Lo_rundown);
- 	mutex_unlock(&lo->lo_mutex);
-+
-+	if (need_clear)
-+		__loop_clr_fd(lo);
- }
- 
- static void lo_free_disk(struct gendisk *disk)
+Thanks,
+Jagadeesh
 
