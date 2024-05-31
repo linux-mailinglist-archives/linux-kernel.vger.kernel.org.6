@@ -1,82 +1,56 @@
-Return-Path: <linux-kernel+bounces-197015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 110A08D64F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:54:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3503D8D64F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:55:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69C5C28B238
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:54:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E48FB28BC4C
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:55:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECBC957CA7;
-	Fri, 31 May 2024 14:54:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7240058ABF;
+	Fri, 31 May 2024 14:55:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="W0I6x00J"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cy7AMLdQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 842EF54656
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 14:54:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B616256773;
+	Fri, 31 May 2024 14:55:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717167290; cv=none; b=On4QGM2Zevxskx2t2Jn4mUP4Dj1hKjwBtgl6apr5RwaQgcjs1FfoAeN+w03DyNvRFM/XHREUw4YvwEl5Db3Qc5m3cknhrocWnmQj6ZskhDhfMDDBmL3ngzYrihn8jpjdPOGCJDrSATwBoFGWTs0BfkmgEjhgvwmaBc+SL+3QcqM=
+	t=1717167327; cv=none; b=OJcoawKSpS7MGBabThu7YbpmrLMxanNwaQT0KfVvmm/K9hkvOMUoLNttDqPAMHG6bIKOjnUDcWBgPd5wnuJP9SeWYDJFpJcPmnPYrCPII3v/R+JLBGvV85GdEPoq1VHL83TzF52hXjKLQiwWEwf20fPgdcOhSuWju+LL0X/dmnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717167290; c=relaxed/simple;
-	bh=nE6E5FLTG/e2GjVjjRLiE2nCKGeY5JRM73xX44CiF2I=;
+	s=arc-20240116; t=1717167327; c=relaxed/simple;
+	bh=H9n4gjwEhp25bKgIVaVsaRAwxRosEDCSFaZ2Ap1cPlk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ok+X3lbnpjl8HZwhek8iR9v30ZCayiaeg6ykUmIDKf+l215dY2tuiHm/0V7CqoXDOwfg4IJzNJScDVI1I/0wzkX+ev7PIKrx9eaamIzlDBZjR2q27KJ3Fxg7TznlIo5s5sNfPzM+Q9fPVONWKY9zvQgbUIfUQm9FfIbyHqnGniE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=W0I6x00J; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 60BC340E0192;
-	Fri, 31 May 2024 14:54:46 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id qvqEUXbV9wpc; Fri, 31 May 2024 14:54:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1717167283; bh=58EpTMbYkdabimCKAYW9OCshcGz6t3rQsUDOZo5HP9E=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=f6hTuP7uH/XYcyI3suAm7/lrp6hMFleDmZ3APtAF+Vunp0f2/ExN31UA5b9tj2wLLhR+9iRDKwE2ivH3B8BJtu5DHJR8tWgbWXVh9DRHUJkevmdICm6e+o/MeF4AhiH71V7bjTdFm0qwS2li4m8B7nD+gHxRUHad30qUBRAyk2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cy7AMLdQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCB94C116B1;
+	Fri, 31 May 2024 14:55:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717167327;
+	bh=H9n4gjwEhp25bKgIVaVsaRAwxRosEDCSFaZ2Ap1cPlk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=W0I6x00J/49wxEJY5mcGi+Ee/7ux9OkCg8FKdonfy6EHM4jhdUVuzdONymdlpKvoa
-	 GC8SiOP7VGH+GsJb9WHz3jJAhEYw24DoZ3L8lc3oS1SEna9SpKZV0cl8AQ3qLKGRBH
-	 pblskE9F1L3aHhMiNkV23IRI16CfGEMtMXzgXWsQaSozT/QEzI2BUOXdfqeP3Hef/b
-	 yYlqImxFw692YnUyWCX34dNyJlQSGj9+LpJdleiNjzYjmuSiF+eDD2p6V0w4rFEXZR
-	 QtUFUvPOxesHvbFgsKtQkq1BVEQdpash+aQUG4CB31lNGuG/g14OVNzrgNZZ35PIGv
-	 TRtfkm5uNgHXVhmFGokaTjZpTpeJfijDwgWQcITARdycPmJpfZXcXYeUjsqvpGUcY7
-	 ChmllTTE/rw3uLw9e3Bla1reamgTVCTBmj7Hia3f+FR2C2NcVtWklys1aK5QX1ddiR
-	 5pKL6DuP/fHP08iXsMEZXYExJu9jieS4Gig6F+vSqbDuPvgclVwANMax9xrUSHPmy4
-	 NW4zWpYjcl0dOiBYF3xfKFxiOlcoHUyMgm+aXcMPfTrigItdAYfzL+R/TjVodZD8X+
-	 wCf/UJJDCSPfgKzzDcXtAxrurLzqETi3D1fzENYGR2p46Tw3f1MT9tzVJDow/ivMV3
-	 yor/Ui+B20oEvb7+cOgWJMaU=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id EB2BC40E01E8;
-	Fri, 31 May 2024 14:54:28 +0000 (UTC)
-Date: Fri, 31 May 2024 16:54:23 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
-	linux-coco@lists.linux.dev, svsm-devel@coconut-svsm.dev,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Michael Roth <michael.roth@amd.com>,
-	Ashish Kalra <ashish.kalra@amd.com>
-Subject: Re: [PATCH v4 15/15] x86/sev: Allow non-VMPL0 execution when an SVSM
- is present
-Message-ID: <20240531145423.GLZlnkn4JHSyh4-G8P@fat_crate.local>
-References: <cover.1713974291.git.thomas.lendacky@amd.com>
- <e377d148acac799f6905fc544fbb8bf2ed76e078.1713974291.git.thomas.lendacky@amd.com>
+	b=cy7AMLdQpvEKFMPmis7uy1qJrWIgUPWJZWEEdrWD87UW+sePZLnD6ok0GNvzpwOzg
+	 1k7HkQG2SYyHwmviCdtaHgP7FU06zdHFQApA9fOXCsHC7JB/QlIVCCTpG/1f49NJwG
+	 cJuf29N08uyDBZez9Xe6sGNLUgUmmd8N50GyGUzjemc98iGjAAn6rdGyZVF/aNvV5d
+	 dFWAv0SZXGqo5ILhtSXQ9ayvpZpyekuHh48FFMNCiO0x7Wxax1L5XaFQXTjpt3UVG6
+	 RfFzLSKLdEPzIE0T5l9jbe3Thg41XG8tCMFVrLP+GLZcUeXDpt6TOLKFLfC3rd5pk7
+	 kRtzpWMyQ0+PQ==
+Date: Fri, 31 May 2024 15:55:23 +0100
+From: Lee Jones <lee@kernel.org>
+To: Bastien Curutchet <bastien.curutchet@bootlin.com>
+Cc: Riku Voipio <riku.voipio@iki.fi>, Pavel Machek <pavel@ucw.cz>,
+	linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	herve.codina@bootlin.com, christophercordahi@nanometrics.ca
+Subject: Re: [PATCH 1/3] leds: pca9532: Use PWM1 for hardware blinking
+Message-ID: <20240531145523.GN1005600@google.com>
+References: <20240527125940.155260-1-bastien.curutchet@bootlin.com>
+ <20240527125940.155260-2-bastien.curutchet@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,140 +59,123 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <e377d148acac799f6905fc544fbb8bf2ed76e078.1713974291.git.thomas.lendacky@amd.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240527125940.155260-2-bastien.curutchet@bootlin.com>
 
-On Wed, Apr 24, 2024 at 10:58:11AM -0500, Tom Lendacky wrote:
-> @@ -624,8 +626,12 @@ void sev_enable(struct boot_params *bp)
->  		 * modifies permission bits, it is still ok to do so currently because Linux
->  		 * SNP guests running at VMPL0 only run at VMPL0, so VMPL1 or higher
->  		 * permission mask changes are a don't-care.
-> +		 *
-> +		 * Running at VMPL0 is not required if an SVSM is present and the hypervisor
-> +		 * supports the required SVSM GHCB events.
->  		 */
-> -		if (rmpadjust((unsigned long)&boot_ghcb_page, RMP_PG_SIZE_4K, 1))
-> +		if (rmpadjust((unsigned long)&boot_ghcb_page, RMP_PG_SIZE_4K, 1) &&
-> +		    !(vmpl && (hv_features & GHCB_HV_FT_SNP_MULTI_VMPL)))
->  			sev_es_terminate(SEV_TERM_SET_LINUX, GHCB_TERM_NOT_VMPL0);
->  	}
+On Mon, 27 May 2024, Bastien Curutchet wrote:
 
-Let's make that more readable:
+> PSC0/PWM0 are used by all leds for brightness and blinking. This causes
 
-diff --git a/arch/x86/boot/compressed/sev.c b/arch/x86/boot/compressed/sev.c
-index fb1e60165cd1..157f749faba0 100644
---- a/arch/x86/boot/compressed/sev.c
-+++ b/arch/x86/boot/compressed/sev.c
-@@ -610,8 +610,10 @@ void sev_enable(struct boot_params *bp)
- 	 * features.
- 	 */
- 	if (sev_status & MSR_AMD64_SEV_SNP_ENABLED) {
--		u64 hv_features = get_hv_features();
-+		u64 hv_features;
-+		int rmpadj_ret;
- 
-+		hv_features = get_hv_features();
- 		if (!(hv_features & GHCB_HV_FT_SNP))
- 			sev_es_terminate(SEV_TERM_SET_GEN, GHCB_SNP_UNSUPPORTED);
- 
-@@ -626,11 +628,15 @@ void sev_enable(struct boot_params *bp)
- 		 * modifies permission bits, it is still ok to do so currently because Linux
- 		 * SNP guests running at VMPL0 only run at VMPL0, so VMPL1 or higher
- 		 * permission mask changes are a don't-care.
--		 *
-+		 */
-+		rmpadj_ret = rmpadjust((unsigned long)&boot_ghcb_page, RMP_PG_SIZE_4K, 1);
-+
-+		/*
- 		 * Running at VMPL0 is not required if an SVSM is present and the hypervisor
- 		 * supports the required SVSM GHCB events.
- 		 */
--		if (rmpadjust((unsigned long)&boot_ghcb_page, RMP_PG_SIZE_4K, 1) &&
-+
-+		if (rmpadj_ret &&
- 		    !(vmpl && (hv_features & GHCB_HV_FT_SNP_MULTI_VMPL)))
- 			sev_es_terminate(SEV_TERM_SET_LINUX, GHCB_TERM_NOT_VMPL0);
- 	}
+LEDs everywhere please.
 
-> -static int __init report_cpuid_table(void)
-> +static void __init report_cpuid_table(void)
+> conflicts when you set a brightness of a new led while an other one is
+> already using PWM0 for blinking.
+> 
+> Use PSC1/PWM1 for blinking.
+> Check that no other led is already blinking with a different PSC1/PWM1
+> configuration to avoid conflict.
+> 
+> Signed-off-by: Bastien Curutchet <bastien.curutchet@bootlin.com>
+> ---
+>  drivers/leds/leds-pca9532.c | 49 ++++++++++++++++++++++++++++++-------
+>  1 file changed, 40 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/leds/leds-pca9532.c b/drivers/leds/leds-pca9532.c
+> index bf8bb8fc007c..c210608ad336 100644
+> --- a/drivers/leds/leds-pca9532.c
+> +++ b/drivers/leds/leds-pca9532.c
+> @@ -191,29 +191,60 @@ static int pca9532_set_brightness(struct led_classdev *led_cdev,
+>  	return err;
+>  }
+>  
+> +static int pca9532_update_hw_blink(struct pca9532_led *led,
+> +				   unsigned long delay_on, unsigned long delay_off)
+> +{
+> +	struct pca9532_data *data = i2c_get_clientdata(led->client);
+> +	unsigned int psc;
+> +	int i;
+> +
+> +	/* Look for others leds that already use PWM1 */
+> +	for (i = 0; i < data->chip_info->num_leds; i++) {
+> +		struct pca9532_led *other = &data->leds[i];
+> +
+> +		if (other == led)
+> +			continue;
+
+Don't bunch things up please - new line here.
+
+> +		if (other->state == PCA9532_PWM1) {
+> +			if (other->ldev.blink_delay_on != delay_on ||
+> +			    other->ldev.blink_delay_off != delay_off) {
+> +				dev_dbg(&led->client->dev,
+> +					"HW can handle only one blink configuration at a time\n");
+> +				return -EINVAL;
+> +			}
+> +		}
+> +	}
+> +
+> +	psc = ((delay_on + delay_off) * 152 - 1) / 1000;
+
+What are these funny magic numbers?  Define them please.
+
+> +	if (psc > 255) {
+
+And this.
+
+> +		dev_dbg(&led->client->dev, "Blink period too long to be handled by hardware\n");
+
+If you're returning an error, this should be dev_err().
+
+> +		return -EINVAL;
+> +	}
+> +
+> +	data->psc[1] = psc;
+
+Can we define these indexes please?
+
+> +	data->pwm[1] = (delay_on * 255) / (delay_on + delay_off);
+> +
+> +	return pca9532_setpwm(data->client, 1);
+> +}
+> +
+>  static int pca9532_set_blink(struct led_classdev *led_cdev,
+>  	unsigned long *delay_on, unsigned long *delay_off)
 >  {
->  	const struct snp_cpuid_table *cpuid_table = snp_cpuid_get_table();
+>  	struct pca9532_led *led = ldev_to_led(led_cdev);
+>  	struct i2c_client *client = led->client;
+> -	int psc;
+> -	int err = 0;
+> +	struct pca9532_data *data = i2c_get_clientdata(client);
+
+Did you build this with W=1?  This looks unused.
+
+> +	int err;
 >  
->  	if (!cpuid_table->count)
-> -		return 0;
-> +		return;
+>  	if (*delay_on == 0 && *delay_off == 0) {
+>  		/* led subsystem ask us for a blink rate */
+>  		*delay_on = 1000;
+>  		*delay_off = 1000;
+>  	}
+> -	if (*delay_on != *delay_off || *delay_on > 1690 || *delay_on < 6)
+> -		return -EINVAL;
 >  
->  	pr_info("Using SNP CPUID table, %d entries present.\n",
->  		cpuid_table->count);
->  
->  	if (sev_cfg.debug)
->  		dump_cpuid_table();
-> +}
+> -	/* Thecus specific: only use PSC/PWM 0 */
+> -	psc = (*delay_on * 152-1)/1000;
+> -	err = pca9532_calcpwm(client, 0, psc, led_cdev->brightness);
+> +	led->state = PCA9532_PWM1;
+> +	err = pca9532_update_hw_blink(led, *delay_on, *delay_off);
+>  	if (err)
+>  		return err;
+> -	if (led->state == PCA9532_PWM0)
+> -		pca9532_setpwm(led->client, 0);
 > +
-> +static void __init report_vmpl_level(void)
-> +{
-> +	if (!cc_platform_has(CC_ATTR_GUEST_SEV_SNP))
-> +		return;
-> +
-> +	pr_info("SNP running at VMPL%u.\n", vmpl);
-> +}
-> +
-> +static int __init report_snp_info(void)
-> +{
-> +	report_vmpl_level();
-> +	report_cpuid_table();
+>  	pca9532_setled(led);
 >  
 >  	return 0;
->  }
-> -arch_initcall(report_cpuid_table);
-> +arch_initcall(report_snp_info);
-
-Zap one more silly helper:
-
-diff --git a/arch/x86/kernel/sev.c b/arch/x86/kernel/sev.c
-index 7955c024d5d7..ff5a32b0b21c 100644
---- a/arch/x86/kernel/sev.c
-+++ b/arch/x86/kernel/sev.c
-@@ -2356,32 +2356,23 @@ static void dump_cpuid_table(void)
-  * sort of indicator, and there's not really any other good place to do it,
-  * so do it here.
-  */
--static void __init report_cpuid_table(void)
-+static int __init report_snp_info(void)
- {
- 	const struct snp_cpuid_table *cpuid_table = snp_cpuid_get_table();
- 
- 	if (!cpuid_table->count)
--		return;
-+		return 0;
- 
- 	pr_info("Using SNP CPUID table, %d entries present.\n",
- 		cpuid_table->count);
- 
- 	if (sev_cfg.debug)
- 		dump_cpuid_table();
--}
- 
--static void __init report_vmpl_level(void)
--{
- 	if (!cc_platform_has(CC_ATTR_GUEST_SEV_SNP))
--		return;
-+		return 0;
- 
- 	pr_info("SNP running at VMPL%u.\n", vmpl);
--}
--
--static int __init report_snp_info(void)
--{
--	report_vmpl_level();
--	report_cpuid_table();
- 
- 	return 0;
- }
+> -- 
+> 2.44.0
+> 
 
 -- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Lee Jones [李琼斯]
 
