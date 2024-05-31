@@ -1,74 +1,89 @@
-Return-Path: <linux-kernel+bounces-196773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2E3B8D61B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:26:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A465C8D61B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:28:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E0B9281EC1
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:26:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3882F1F25CA0
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:28:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A3AE1586D5;
-	Fri, 31 May 2024 12:26:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D23E51586CB;
+	Fri, 31 May 2024 12:28:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="vBCRKEsd"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aa19eOk9"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC9271581F5;
-	Fri, 31 May 2024 12:26:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3BAB39FF3
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 12:28:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717158408; cv=none; b=Cr0hP6LblxC0VZqifwL08oBfwBdlcMNwimCDM5iz9FmnSuCLU0de232vyDrg56Gc2jk/OzEI0q4x1ABAHpR0pb5MCRbsD3zZGX4/kk8pwv2TDI6jCzgBzVq3n0aqBkfOFpr+yuhAt/VTiHy96G/bWQzxVCE5g6TooKv9u2JxFlc=
+	t=1717158489; cv=none; b=E33AGMBIHKilpOIPDNmdpyDmAwQeRWrUkoSiNJwoo9WP0BvGbFx+0bdrWm0ObVCP02yUP/Fi86/M/r9IM0SuoyVJBx9DZCdRjAwU41L/zuO9z3lzPQPCFnZIAmaPcuzhRg8iyz3+MKEjkdPjvlOw2CBxeK1N3qT5ZKfAsBA/v6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717158408; c=relaxed/simple;
-	bh=tyjiJhJUky+P95f/gBMZegAOq44q9U06Rmp8c34+qxU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gTDNjAZiUdrqRTM6+5n0+BPe988BDTeqCKvTHw0ko4f5olYYZkaH7cPVYvR+J0VcHIRvIpMVU2MJBXLS/5I9odrnqCjRelj7SpyQBtK9A+KC9K5oD9etM0R0WWl2wmHF4e4uWaKGrs8Ou4CPIcp+/IWWZ4+WKcP850Q0BoKA/xk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=vBCRKEsd; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Ya0JKaaN/iqn+GC8hMfSZ/1c+tmy47dUnxaIMYg9sxE=; b=vBCRKEsd4jIRlt9sE5TtUB94xC
-	EWnNrKH7Kej4zEeq1Aeex2t1LFk6yqgwXPCfV4axCY8NaMugJlioi2Q3Vlmv7YS+S+H9OaPDlKW7y
-	YKoK6LpAmvdwAqA1YroY6vYlrpGf37yB1fruVBrckHLj+DZlBdJxX/X5wcgGczK0AqBDz5XMvB37s
-	gf/wQ8xRIFPJelgti81P4TC+Sh3wn95nwmmTUwvy+mOsCrz7P1uZIgQNxOEfA8jxLdUxRtnX7y8me
-	Fqkyyybz3FBACwGlYRyv5QF5szIvVBLiLGtx++5gxFBIuISkNdUsR/+9rwSoduQ4NPkLf9mdMZ/5U
-	JAvT1jGA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sD1LG-0000000ABnv-3ddw;
-	Fri, 31 May 2024 12:26:42 +0000
-Date: Fri, 31 May 2024 05:26:42 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, djwong@kernel.org, hch@infradead.org,
-	brauner@kernel.org, david@fromorbit.com, chandanbabu@kernel.org,
-	jack@suse.cz, willy@infradead.org, yi.zhang@huawei.com,
-	chengzhihao1@huawei.com, yukuai3@huawei.com
-Subject: Re: [RFC PATCH v4 0/8] iomap/xfs: fix stale data exposure when
- truncating realtime inodes
-Message-ID: <ZlnCAo0aM8tP__hc@infradead.org>
-References: <20240529095206.2568162-1-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1717158489; c=relaxed/simple;
+	bh=02xQIpzrJDvBVIgLx4jKyyxdR1qj1m751XRn6SUG1g0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Q2V+9Va23JKxaEN1pm8s2QDWobqgbiYreNYZkTci9hxSZmA10T3Oc073UcY/mgpiyM2/WAw2SruBr+LdNYIsBOmjIRAxFYUJpriNXtSCOueB/ZBkjnxUoVp5hb8kjDRmu6kvgYM2ZQ5hnSEQCin7VZr4W1ekPd0MT65/rJ5+MuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aa19eOk9; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717158486;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=02xQIpzrJDvBVIgLx4jKyyxdR1qj1m751XRn6SUG1g0=;
+	b=aa19eOk987oq6NXoSb22SUwVhY+TPLDZ/l7FhMN459nl2jvt8b6Cl4wFLwFtaQFRSpTKVw
+	0AEFERVDuiuUP1QpKJOjI99JmATNdQ6ZpqKFgMbpaegljJW6DgBmRp5I4hMzxLkALiOVj7
+	wrPCINWMQ2IF+JkoCCiz7j784Q+rwTE=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-645-xiMw4JBCMDeAwMc9v_a3OA-1; Fri, 31 May 2024 08:28:03 -0400
+X-MC-Unique: xiMw4JBCMDeAwMc9v_a3OA-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id E0911185A780;
+	Fri, 31 May 2024 12:28:02 +0000 (UTC)
+Received: from [192.168.37.1] (ovpn-0-11.rdu2.redhat.com [10.22.0.11])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id E4017103A3AA;
+	Fri, 31 May 2024 12:28:01 +0000 (UTC)
+From: Benjamin Coddington <bcodding@redhat.com>
+To: linux@treblig.org
+Cc: trond.myklebust@hammerspace.com, anna@kernel.org,
+ linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] NFS: remove unused struct 'mnt_fhstatus'
+Date: Fri, 31 May 2024 08:28:00 -0400
+Message-ID: <D6834CFC-CD3D-4CC9-BB6C-E874F8F0755B@redhat.com>
+In-Reply-To: <20240531000033.294044-1-linux@treblig.org>
+References: <20240531000033.294044-1-linux@treblig.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240529095206.2568162-1-yi.zhang@huaweicloud.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.3
 
-Procedural question before I get into the actual review:  given we
-are close to -rc3 and there is no user of the iomap change yet,
-should we revert that for 6.10 and instead try again in 6.11 when
-the XFS bits are sorted out?
+On 30 May 2024, at 20:00, linux@treblig.org wrote:
+
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+>
+> 'mnt_fhstatus' has been unused since
+> commit 065015e5efff ("NFS: Remove unused XDR decoder functions").
+>
+> Remove it.
+>
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+
+Reviewed-by: Benjamin Coddington <bcodding@redhat.com>
+
+Ben
 
 
