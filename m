@@ -1,141 +1,206 @@
-Return-Path: <linux-kernel+bounces-196105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43D828D575F
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 02:53:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1EAB8D5760
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 02:54:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C176AB21C86
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 00:53:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3870C284533
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 00:54:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B88C5695;
-	Fri, 31 May 2024 00:53:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 424E35221;
+	Fri, 31 May 2024 00:54:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BkA9m2NT"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="RbAilqTQ"
+Received: from JPN01-TYC-obe.outbound.protection.outlook.com (mail-tycjpn01on2040.outbound.protection.outlook.com [40.107.114.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CD9D322A;
-	Fri, 31 May 2024 00:53:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717116817; cv=none; b=VDRWwag/j9jAxAXG8p++HYktu/01s5IR6oE9imxtvAD2hW4661TPh0etGGfaUyvtG6LoC8gpTMGbCBQYxPeDnWDRSnDACpgLtl6gPRFCrQm/+4logoZpkTeyqrTWQwyKTGmEu7H0ZbQjXDJTmy5aUqpZdP/NeRbBhUQidAIqxa0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717116817; c=relaxed/simple;
-	bh=Mw1oL9sdafUoY4MhV8f9PQm63vS1qe+VApJa7ikXoM8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=PsEDxFTZJAZfVnkkzRsP/Z5RfCFL8FNx0aO1fPRAgJauzhIaFTx6ZxlRbEHkRKpY3MEoOpqX+NlhXY3GR3zoKdGXInZeMgfUG3HmCu5i5wrFPmye4y4P7G08al+2rvUQ9Mx07GG2tMRvcIB+faL/nq+JLrfdOW3Ri9vf/KD9meo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BkA9m2NT; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44UJ6iKa012837;
-	Fri, 31 May 2024 00:53:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=8N4sIf9xZAt909SNCE1IP2
-	Br36KKZ3iY6WzOZ4HpDR0=; b=BkA9m2NT7nJeTKV9jh3w2EFTqHspAPlU2a+Fg5
-	x15O7oxn7TvlFf1YHDYh68L9+tTEsl7XN8WI8dDsRozxnVV9ndstZvUtyrkMU5Is
-	beixQvAs0yKn40fCOTnSO3TBFgVhUvJD7j0rambN6OSzxykg/Q0xkbg9a4c2MFbJ
-	+K2RuGrfwXhfVC6w2e9luKsr956XxPY/o+P0oDqoCeT6TkJCsYlGUYzqCkMSp2qQ
-	s7Btye1LqJ/wGDZa8oMjApzcuRsAQ0BZ0B4Yl5slNBG4A7z8mNoQvN4MQySSztQF
-	NAIe4R+iAmviCgBeMnS1i2iOzvlb1bGSUHWYYsus3yiDCzGg==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba0qnetn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 31 May 2024 00:53:18 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44V0rHKF007129
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 31 May 2024 00:53:17 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 30 May
- 2024 17:53:17 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Thu, 30 May 2024 17:53:17 -0700
-Subject: [PATCH] crypto: x86 - add missing MODULE_DESCRIPTION() macros
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E4AC4C79;
+	Fri, 31 May 2024 00:53:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.114.40
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717116840; cv=fail; b=CCEURTJkMwtzEMYgMq2W9Wp3QasZwR5fminjaCNIiwzNToDINstiWGl6UcIgW2Z0Ekoz6m2BpmS7jIUs81VvgcIF2Nhg5vr7+f2L/HhW+Cermw+MfMk2Rf8l5U6pRBPjyF1Hf3xDBPYSMfqV9GQAK3ocKB8GbvR2gc6cAOHRfqw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717116840; c=relaxed/simple;
+	bh=OS/7Lq+zPUpzm2nXKzjKIYuBkPgTZwakPAxWfdKzS8w=;
+	h=Message-ID:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=U97H3hVIYAbrrqBcLIZDTcrmwbooE1zCHdIenD6UqEIq/4k27X83aYsFUnknFyz7XH5gKyGFAL3eCvQpWjmPAUD6FPu+xbSlfRf2CkE0NKMyUDYQs53LEMQXY299PcDDzP+ZemGsg6G2ZyZkrou2kdMQ6kszRBdIEUhxqkRvnZ8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=RbAilqTQ; arc=fail smtp.client-ip=40.107.114.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ldqcJh5Ld7xkUBljUE8iTd9Q8oOTDpvmr7V/eT0uz+ilxhEF9Atunb3LrN+fvp+/lVnvF6Jp1vxBn27wUX5qjMUWAcEXBKMVagcUqEjftZOlscpG9gTvcuVj//IHvUkLXV9bcoTCQKWjUsdsLlcDUjsJyf+2xCtOhP1z+DQrsNtRD+3fIGDd02P2biyWskfTdcNMjI+KoKTpyDpukDEJuj7g93JA2varCuFXOFCJNAix27EDYZoj0pXqPOAihXC/8LaZHlZfW+qWXAgSdnGHgRJAb7qWPVTOb7XM9QvPEDwDObKV6JbLrHujweDAnZ2jqcxT8D14OuoE6yGFv1zzlQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rnRiCj1AQxC8bQ1vaKb4r/rrpq8eEUrHlH4nakrZoPk=;
+ b=N32Q7HjD32hkFvIF8Bwq48sTIophCCzf3Ydz+iJ7voduUcmyCBkOzLHQ60hj8D4UH1l05SjGwBWFvKKo5HxXfOVNIEDlb9wYWN8fcPTau49wSHqWsreVW7P26TKHqXNcNHBGPSSrZz0owClZZdj6144sR4fqeX3BlQ2lDH/rAtfVWraAgKBGVRMJ/C416bBoEaDsaUbssduJ8LbmQ6PRleWEPMNfR+I+AW/GvWMjB3SELpEmaMHVV1r22txp70bxu/jQcskUmnn0ZnU9HHtGO0yej4sdWE/n7RGm3x/WErzn36XsPkj/6ZzXz+zWcRB9XcdBEDPqUqKexaB+M6IQGw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rnRiCj1AQxC8bQ1vaKb4r/rrpq8eEUrHlH4nakrZoPk=;
+ b=RbAilqTQboCZDt8NRzhogQcAZ4GpocXYzjUZiA3rVYIFhPulzYA6wKtmSMAUjjH3RZfV8PA49tN9eruoZMLuhi/IPjQH9qxH38PwtM+tMjGrtMgtnD7xMleSXXvbQEA/v6PtNxaRMvqzMUEHO6Fm5hvwZXFIzzcYsL9Sz3T2u1c=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
+ (2603:1096:400:3a9::11) by OS3PR01MB5878.jpnprd01.prod.outlook.com
+ (2603:1096:604:c4::9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.23; Fri, 31 May
+ 2024 00:53:54 +0000
+Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
+ ([fe80::c568:1028:2fd1:6e11]) by TYCPR01MB10914.jpnprd01.prod.outlook.com
+ ([fe80::c568:1028:2fd1:6e11%4]) with mapi id 15.20.7633.021; Fri, 31 May 2024
+ 00:53:53 +0000
+Message-ID: <87ttievm1r.wl-kuninori.morimoto.gx@renesas.com>
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Rob Herring <robh@kernel.org>,	Weidong Wang <wangweidong.a@awinic.com>,
+	Mark Brown <broonie@kernel.org>,	Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?=
+ <u.kleine-koenig@pengutronix.de>,	Shenghao Ding <shenghao-ding@ti.com>,
+	Marco Felsch <m.felsch@pengutronix.de>,	Alper Nebi Yasak
+ <alpernebiyasak@gmail.com>,	Chancel Liu <chancel.liu@nxp.com>,
+	linux-sound@vger.kernel.org,	linux-kernel@vger.kernel.org,
+	alsa-devel@alsa-project.org,	patches@opensource.cirrus.com,
+	linuxppc-dev@lists.ozlabs.org,	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,	linux-rockchip@lists.infradead.org,
+	Liam Girdwood <lgirdwood@gmail.com>,	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,	James Schulman <james.schulman@cirrus.com>,
+	David Rhodes <david.rhodes@cirrus.com>,	Richard Fitzgerald
+ <rf@opensource.cirrus.com>,	Kevin Lu <kevin-lu@ti.com>,	Baojun Xu
+ <baojun.xu@ti.com>,	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Banajit Goswami <bgoswami@quicinc.com>,	Shengjiu Wang
+ <shengjiu.wang@gmail.com>,	Xiubo Li <Xiubo.Lee@gmail.com>,	Fabio Estevam
+ <festevam@gmail.com>,	Nicolin Chen <nicoleotsuka@gmail.com>,	Shawn Guo
+ <shawnguo@kernel.org>,	Sascha Hauer <s.hauer@pengutronix.de>,	Pengutronix
+ Kernel Team <kernel@pengutronix.de>,	Heiko Stuebner <heiko@sntech.de>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v1 5/6] ASoC: generic: Replace of_gpio.h by proper one
+In-Reply-To: <20240530230037.1156253-6-andriy.shevchenko@linux.intel.com>
+References: <20240530230037.1156253-1-andriy.shevchenko@linux.intel.com>
+	<20240530230037.1156253-6-andriy.shevchenko@linux.intel.com>
+User-Agent: Wanderlust/2.15.9 Emacs/29.3 Mule/6.0
+Content-Type: text/plain; charset=US-ASCII
+Date: Fri, 31 May 2024 00:53:52 +0000
+X-ClientProxiedBy: TYBP286CA0005.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:404:ce::17) To TYCPR01MB10914.jpnprd01.prod.outlook.com
+ (2603:1096:400:3a9::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240530-md-x86-crypto-v1-1-b480cbcc6bdf@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAHwfWWYC/x3MwQ6CMAyA4VchPdtkTlmMr2I8lK1KExmkBTNCe
- Hemx+/w/xsYq7DBvdlA+SsmY644nxqIPeU3o6Rq8M5fXXtxOCQst4BR12keMVEg8q5NHAPUZlJ
- +Sfn/Hs/qjoyxU8qx/10+kpeCA9nMCvt+AH+zadh+AAAA
-To: Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller"
-	<davem@davemloft.net>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
-	<mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen
-	<dave.hansen@linux.intel.com>, <x86@kernel.org>,
-        "H. Peter Anvin"
-	<hpa@zytor.com>
-CC: <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: IwbYgAE4N56bvjZ05olor3sQg6bMlXBr
-X-Proofpoint-ORIG-GUID: IwbYgAE4N56bvjZ05olor3sQg6bMlXBr
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-30_21,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- suspectscore=0 lowpriorityscore=0 impostorscore=0 clxscore=1015 mlxscore=0
- mlxlogscore=999 malwarescore=0 spamscore=0 adultscore=0 bulkscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2405310004
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYCPR01MB10914:EE_|OS3PR01MB5878:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7e4f55c6-91dc-4aeb-1396-08dc810c24c9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|7416005|52116005|376005|366007|1800799015|38350700005;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?FcTy7MQ7xyKTS4c9yoBZPRb7bK2E9+bilpN04gKeG1jtR+q2MoIc9mESWumd?=
+ =?us-ascii?Q?/krM3QB9LgbHjRjAmWjwGAcxw7WXp4hlJmZzXw5cNSpLSyat8gEbKtcMS6q7?=
+ =?us-ascii?Q?3mulwm/0GKomDvA9IGhhLd0Py+Mq1GP31vTPoN7bizCL1CPouv7K8cy1rYRV?=
+ =?us-ascii?Q?NaSeLchd5/IazjqzWootuyfGj8IeJ02FJHkRO2EZL0RpDOmufraPkWKGDfp7?=
+ =?us-ascii?Q?caVCVZBsA8LJrL8nGGLklKwytlFYAcM0XmeK6a1fymfOasyGhxkogMROixML?=
+ =?us-ascii?Q?5aZxYiIowuiJrQOCZwTuu+UZ5wNKQ3m7fRovt7ZKDtm4zz2TKHRvnZnjaeDX?=
+ =?us-ascii?Q?rEWOjSs5FMC40XpN4O1pxsQhyeih5q9tR1WExRPznHiKUv/p/vYyGdq2dz6s?=
+ =?us-ascii?Q?HjiECxXijME8OV1FLkVib5yJcrLr2tkluI+kYLN+PSvbfSnGm3nZ42QFTU3K?=
+ =?us-ascii?Q?4UgnPcmfIRAHI518NDRPviMm2JgR1zGCRTK1Sli8Ui9nX33xWeWpMtoO4dMQ?=
+ =?us-ascii?Q?LDWUEN8+2qvENEQDRzQxC1xSePa9U/XnqQrbReZ+LLuioZFoauAxWwDVq4Bs?=
+ =?us-ascii?Q?uxO0XMZuPg0TQOGCV8zH8rqlWXDO77unO3nltwwYw+gBLm+q5sMO4iWKvSh6?=
+ =?us-ascii?Q?l1CaGBl0muIdkJCqv1oxt6aBgtalvViouHTQ1gv/PMF//B3KMzoGWKgabkHX?=
+ =?us-ascii?Q?OQfLPTV/YF2aC+c1dvcJ9wKbCXptpxhTXLeHUf+bTJ7WZ1FnwlAOwiTqRSuL?=
+ =?us-ascii?Q?LSUHnxZ8cnYAOVfAcfOoZhBwtkYbvWWl1D6HD3WyCGn9cHHKaBbPjzhyMqwg?=
+ =?us-ascii?Q?P3nsJBACkDlO8gQBML9d52j+6FZRYfI3CFIjIbpXBgBA8SUQvu+7og8CdDMP?=
+ =?us-ascii?Q?+EWAfwHjRPqcRiO/LtvQ4jHFGRFy58Y1RS24JZ8/6pbrHqdwWewuLco+1/7y?=
+ =?us-ascii?Q?VaKCcowxqGLVSLIlVTDlefPbo5/tbn6b8tTKmzInkQ6xgbteGHKFJuZBHkc1?=
+ =?us-ascii?Q?io/XA/R7Yu9y4WtFbam/3FOlYiZwZ4FzTrHwZbPaRhJmWwsL99nL1nVGh0F8?=
+ =?us-ascii?Q?jmu8AbSmyLqY5Kx91xfxH/As/ni0YDCnMuaNqMoEjPXrJkwatmT2UHw5OeT5?=
+ =?us-ascii?Q?mkTuUzEMikXdaq4okJHcZgPObqAjAs+0iz4empLa0QNDHUBCc6KhgUh50+HB?=
+ =?us-ascii?Q?eWg3p2dU7Ef5nKkYEKO7SzymvLXUUOBscJ1eiL57FjBRFz+Cb3/wVuQ6dp3f?=
+ =?us-ascii?Q?Z128LK3W1rERk63rSgRjLT1k0UWdLd9tTUIwFSXLgEgC9fGvqnCEbopl/aJM?=
+ =?us-ascii?Q?PHztpppKeVcJ55XbJBnrpIaRtQb1wflpuDad1e3avLLqZw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB10914.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7416005)(52116005)(376005)(366007)(1800799015)(38350700005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?1QoiMPO9V4W++16/btjwcNhUGxFGhYkenaKB6OqQXvXq2eYDLfzH8VeRjWf5?=
+ =?us-ascii?Q?DnMamy4bISYdRBa2FgOxlmiCvteVjaTuw7ZBmLLWFDwpncFx4ZBn0PYpAEtX?=
+ =?us-ascii?Q?r6w8Q7IEo8mf7czMtTuJExvWrDE6u+/raoTXU0iV6wM5GgNhNYOZgVziUceH?=
+ =?us-ascii?Q?6O5Lgn/yLk0Bl9aAHdWCR/N/OC3XBBSqIaR8ysn/yqE8Frav2FOzu5xDZmlA?=
+ =?us-ascii?Q?17V6Uo1c7rththBsLtvCKBcPXtxcZh8uA3AKiQm8bRZ3DCTwF0Mwb6uw0S+l?=
+ =?us-ascii?Q?oNeOX7Bt+KzWi277A0W+Rbx/w6VNEDJGybC6Ek5TPx4VYjG1TJXITtGRbpUb?=
+ =?us-ascii?Q?wg1yhkUg3ud3HDRJYBucXx/wWloZ6wmdX33GCO7R0gvYsGv99kk9psCGtjUT?=
+ =?us-ascii?Q?iXdilPEBe8KcCtPfJf5NT197ITCuYjh0o9MuJvfsTM/9iplnGXYaGcMTePK8?=
+ =?us-ascii?Q?MOltUlj6y3mmJGW6laHt5pnjWdv+1D9lALiyS0yqIZWY988ZwpNhQdUT2lfl?=
+ =?us-ascii?Q?wypL748hLScMYh7tSBqNKFp+KtzuXUrDqGnwKQcl2Ddls1PNIOP/30NH/1na?=
+ =?us-ascii?Q?JFEmqsodnRhXfKN0e94T6QuaJVqlqnV0b9HXA/zkUuUAGGu59D4TrKwiMswz?=
+ =?us-ascii?Q?mxWFZMQFW1P+AdTsdxYA33o0fdb/Qia4u2Mj7YXiTGvDM2R0Vy/BrldY7gyP?=
+ =?us-ascii?Q?l5No/oewJmHQFNmJpT/P0ggB8BhqxYpo83ekkOzU1cZDN7ZnTcgVr5JMBtKR?=
+ =?us-ascii?Q?Hi/Mk1TWUIExzRiJIVcaPw2XvpyA8tcMoSLRu+WaoLBJaphEDnGS59a9JArn?=
+ =?us-ascii?Q?OSAvaEoaDS3pXTDt+AEikh1iBWeDRn8E3UtXgZT9dLH8xe2Y6y7uYnHzoSbl?=
+ =?us-ascii?Q?hB3tVEiJZTcYHuD/p+ljfREUWJxKpqTqsjyrtImzsXTgXu2Dk8RadNIKzBPq?=
+ =?us-ascii?Q?FTdVwsztiF8MMlOg/JZG8VNpTMFg3QqaOTZ2fWO8nV/f7ovZfgJ6vbgAFm8Q?=
+ =?us-ascii?Q?E3C8jxHAnLlPCKD/CiIpcK9x6KlJN8gy1UI9z8kdm+03AP9O3FuWdLz/WPn9?=
+ =?us-ascii?Q?XUgcv6kzGos4ajkUxrvFr+hXYFXLcUINFhEkQgQZtCSZM6qGl09z8YnEU7Xc?=
+ =?us-ascii?Q?9J4+VNIouNeYXEVDirpTVQpsUHdLXFE9S7GEeQcrylBRJ+UJPCeTnTEykIDf?=
+ =?us-ascii?Q?TnkS+52oVOF8G1XuicPIPuZR2yzrg/Zl/DWmhlxFNJMtawO91oAwXkDFjAYD?=
+ =?us-ascii?Q?pQ9yOI4r/MIDwjF8Nj+geg8W6epRGkYf3piYWdZQd5wkWTPxcyjEftpa6hbe?=
+ =?us-ascii?Q?UXyOcp9VTIkqVdVThlM7Dvd+b0bFZvy/EuosW7rTfeXk/1XlAetd1ttrIyRG?=
+ =?us-ascii?Q?ue9deopyDuf9NbXbYbafCBEW+8kZkSPit2Qt8GYGAMPO0R+dcoMFFfKytTXP?=
+ =?us-ascii?Q?y0snhxvFrTviorFLxpTCrMSltyecInqq4Oq5/fFvsH7WlsArnV6HF2EFRX3+?=
+ =?us-ascii?Q?W6a2C1p2VkVAO5HloxAj7JhXNiUZaGDqL5Un/5fpJLhiZDBxaiOQJsKzQIMi?=
+ =?us-ascii?Q?zvNWAzJus08zqKv9tQMDVPi6TOpzOjGce+4kY90plbccHL4lBs7aN+TiRDlL?=
+ =?us-ascii?Q?sVsxkc2JtOFlF0N8dM7sbHU=3D?=
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7e4f55c6-91dc-4aeb-1396-08dc810c24c9
+X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB10914.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 May 2024 00:53:53.8027
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: UEoiBfS38WCwrjH1iinINsLH5zNJ1YSawDVd23YcpQMjC6DBwvgiR7nyh0nYjm0dC0/UcVSTo+XGRVNJ1+ORl0iaPQbvdHjotm0YbGR8OZb6aMWdRabspyZSBg/ARmMh
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB5878
 
-On x86, make allmodconfig && make W=1 C=1 warns:
 
-WARNING: modpost: missing MODULE_DESCRIPTION() in arch/x86/crypto/crc32-pclmul.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in arch/x86/crypto/curve25519-x86_64.o
+Hi
 
-Add the missing MODULE_DESCRIPTION() macro invocations.
+> of_gpio.h is deprecated and subject to remove.
+> The driver doesn't use it directly, replace it
+> with what is really being used.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- arch/x86/crypto/crc32-pclmul_glue.c | 1 +
- arch/x86/crypto/curve25519-x86_64.c | 1 +
- 2 files changed, 2 insertions(+)
+Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-diff --git a/arch/x86/crypto/crc32-pclmul_glue.c b/arch/x86/crypto/crc32-pclmul_glue.c
-index 98cf3b4e4c9f..9f5e342b9845 100644
---- a/arch/x86/crypto/crc32-pclmul_glue.c
-+++ b/arch/x86/crypto/crc32-pclmul_glue.c
-@@ -195,6 +195,7 @@ module_init(crc32_pclmul_mod_init);
- module_exit(crc32_pclmul_mod_fini);
- 
- MODULE_AUTHOR("Alexander Boyko <alexander_boyko@xyratex.com>");
-+MODULE_DESCRIPTION("CRC32 algorithm (IEEE 802.3) accelerated with PCLMULQDQ");
- MODULE_LICENSE("GPL");
- 
- MODULE_ALIAS_CRYPTO("crc32");
-diff --git a/arch/x86/crypto/curve25519-x86_64.c b/arch/x86/crypto/curve25519-x86_64.c
-index d55fa9e9b9e6..dcfc0de333de 100644
---- a/arch/x86/crypto/curve25519-x86_64.c
-+++ b/arch/x86/crypto/curve25519-x86_64.c
-@@ -1720,5 +1720,6 @@ module_exit(curve25519_mod_exit);
- 
- MODULE_ALIAS_CRYPTO("curve25519");
- MODULE_ALIAS_CRYPTO("curve25519-x86");
-+MODULE_DESCRIPTION("Curve25519 algorithm, ADX optimized");
- MODULE_LICENSE("GPL v2");
- MODULE_AUTHOR("Jason A. Donenfeld <Jason@zx2c4.com>");
-
----
-base-commit: 4a4be1ad3a6efea16c56615f31117590fd881358
-change-id: 20240530-md-x86-crypto-da6aa205dec6
-
+>  sound/soc/generic/audio-graph-card2-custom-sample.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/sound/soc/generic/audio-graph-card2-custom-sample.c b/sound/soc/generic/audio-graph-card2-custom-sample.c
+> index 1b6ccd2de964..8e5a51098490 100644
+> --- a/sound/soc/generic/audio-graph-card2-custom-sample.c
+> +++ b/sound/soc/generic/audio-graph-card2-custom-sample.c
+> @@ -5,8 +5,9 @@
+>  // Copyright (C) 2020 Renesas Electronics Corp.
+>  // Copyright (C) 2020 Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+>  //
+> +#include <linux/device.h>
+> +#include <linux/mod_devicetable.h>
+>  #include <linux/module.h>
+> -#include <linux/of_gpio.h>
+>  #include <linux/platform_device.h>
+>  #include <sound/graph_card.h>
+>  
+> -- 
+> 2.43.0.rc1.1336.g36b5255a03ac
+> 
 
