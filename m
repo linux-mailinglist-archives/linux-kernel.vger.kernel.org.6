@@ -1,121 +1,117 @@
-Return-Path: <linux-kernel+bounces-196903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 806078D6348
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 15:42:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49FC98D634B
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 15:43:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31D271F25C16
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 13:42:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7297E1C268BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 13:43:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8FFE158DCF;
-	Fri, 31 May 2024 13:42:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PEDp8uNJ";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hZlGhLIf"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DDEC158DC5;
+	Fri, 31 May 2024 13:43:33 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9A45158D69;
-	Fri, 31 May 2024 13:42:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4370415887E
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 13:43:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717162958; cv=none; b=fDHxZg0Y9cLjy490hENRU8Xl03oRKFvfC7Ib5FQOh2CUWXJa3krYdYXfH0EqXyuKUX4l9lo5g1dlpZ8vQO3Wai1K1RE0PdE4T0j9xOKn4U8XzUcYI1V8eBH17if6L7BRjLnXGjPpfCIH6u8/s/3jGOdhUYBd6pnrolc1v/nU7hs=
+	t=1717163012; cv=none; b=lBRqfucjqvrM+z7Cms/mYQyyptlXkBRH9Xe5aJHPljQiGEjLKTTnu0xWjVEDO5ed5/z7PyDCNyjLRwO+cGH5iTvJNmqexk59Njp6JBjb7TmyMWHRL2uUg25vWB/pXuN6+HDeyznNZe/ndgi2aaGQHsm/7EVCFCE4T+qaWhGVLdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717162958; c=relaxed/simple;
-	bh=eY2qkBo8TuMtICupkOTJ+jXO0M+B2a1HCHXG4Y9V598=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=mqikTMnkgyyq36YdKhPSrweYKiyCCpYLE63cI1aVnOUEM8H+RNL6VflxDhlvra1pP59PXFMuLkzR39zIEM+WOuey2jKdPK+eXg1NxuP7rLaZhR5AJYyAsgp1jN7Fusaw/KL6wk4raiZyYAS6uPNtXL4GoyVBdYwAY56hP5RuShs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PEDp8uNJ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hZlGhLIf; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1717162949;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Vnvx/b3YBPJGdrGkvIGOzq//fKgTkTsLUSK9I8zckqM=;
-	b=PEDp8uNJNYaj3NgyjQbG9GhoP2raHs3KNUeUNthy8WjQ6bJq3ogRxiu0V+vdKgIxt1E7Ab
-	nj3LACMTyTj7AJ/LEZ1n0da4T5mqV6N0sRcDwxcHL5PJcjgWb5z5inQj7ouQ2nGljrN8s1
-	VRbM5XRj8OGNsxWDKnrd2sW6rzMP0L2uLykiOsEOz0o/p1sl9+o4wXEmlEsCmNG52RiRKC
-	Nhg7UDVl9yzW7vJQAMwqF3KD7ydfpSyftTmdKULog0RciygSa0x7UE64KFrpBo6NLrhPWZ
-	0cvhkPfaSRApwNFpVePymtjetVLQinl0Ti1qG5qcjvYcXbR+GDcV34mAUPJxmg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1717162949;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Vnvx/b3YBPJGdrGkvIGOzq//fKgTkTsLUSK9I8zckqM=;
-	b=hZlGhLIfpFoIcILmDCyged3NbGZSVUrewqV1qVXiggb+rPnVMLjeJqbb4XEGJmFGEDmtVC
-	1QjuloI/vJYNzCCA==
-To: Christian Heusel <christian@heusel.eu>
-Cc: Peter Schneider <pschneider1968@googlemail.com>, LKML
- <linux-kernel@vger.kernel.org>, x86@kernel.org, stable@vger.kernel.org,
- regressions@lists.linux.dev
-Subject: Re: Kernel 6.9 regression: X86: Bogus messages from topology detection
-In-Reply-To: <b42363ac-31ef-4b1a-9164-67c0e0af3768@heusel.eu>
-References: <ce3abe01-4c37-416e-a5ed-25703318318a@googlemail.com>
- <87zfs78zxq.ffs@tglx>
- <76b1e0b9-26ae-4915-920d-9093f057796b@googlemail.com>
- <87r0dj8ls4.ffs@tglx> <87o78n8fe2.ffs@tglx> <87le3r8dyw.ffs@tglx>
- <4171899b-78cb-4fe2-a0b6-e06844554ed5@heusel.eu>
- <20ec1c1a-b804-408f-b279-853579bffc24@heusel.eu> <87cyp28j0b.ffs@tglx>
- <875xuu8hx0.ffs@tglx> <b42363ac-31ef-4b1a-9164-67c0e0af3768@heusel.eu>
-Date: Fri, 31 May 2024 15:42:26 +0200
-Message-ID: <87sexy6qt9.ffs@tglx>
+	s=arc-20240116; t=1717163012; c=relaxed/simple;
+	bh=al9Ha/OrDfBziIwM4XhvpMCjLLsWKg3ELWnz6t66700=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OrRXG4fmwf4kUzMmbF99IJRydxYrQ/+vAJeoKkgN7d1wCsfrMoQ0ZIHFjVoBuT0BNdfHBtHd0MflexzUqhOyBkaSIOp2l7segv0JG+iBrPp/vXFeD+NgKZyHnikz6lsFsMUYc9EdFQ4GVmT+cZsDxbW4Pwz1pvKsniuOto3TR9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
+X-CSE-ConnectionGUID: hGF9cshyST2YN+ZLXP5G6g==
+X-CSE-MsgGUID: O0JE6j2TQJ2oSVvJgDxXIw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="13657272"
+X-IronPort-AV: E=Sophos;i="6.08,204,1712646000"; 
+   d="scan'208";a="13657272"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 06:43:31 -0700
+X-CSE-ConnectionGUID: soasy7mOQKuHne6hRgFRmQ==
+X-CSE-MsgGUID: iFOsiirCRLCdwuykA4WJSQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,204,1712646000"; 
+   d="scan'208";a="40601440"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 06:43:29 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andy.shevchenko@gmail.com>)
+	id 1sD2XW-0000000CTf4-3DpK;
+	Fri, 31 May 2024 16:43:26 +0300
+Date: Fri, 31 May 2024 16:43:26 +0300
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Chris Packham <chris.packham@alliedtelesis.co.nz>, tzimmermann@suse.de,
+	ojeda@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] auxdisplay: linedisp: Support configuring the boot
+ message
+Message-ID: <ZlnT_imCNdts8EOd@smile.fi.intel.com>
+References: <20240530232054.3559043-1-chris.packham@alliedtelesis.co.nz>
+ <CAMuHMdXGJxwRDRjKQT5aa6off9nQ5WqreK9K-QhJwhUXngYA=Q@mail.gmail.com>
+ <CAHp75Ve3-JkNUuF_LT=E53WfEfxt5yizSvoD22a3OvHiPXSRJQ@mail.gmail.com>
+ <CAMuHMdXg1GCAqYPy++4UjFN6QsCnfikZdvsz5=2G4j13E3DUjQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMuHMdXg1GCAqYPy++4UjFN6QsCnfikZdvsz5=2G4j13E3DUjQ@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Fri, May 31 2024 at 15:08, Christian Heusel wrote:
-> On 24/05/31 11:11AM, Thomas Gleixner wrote:
->> On Fri, May 31 2024 at 10:48, Thomas Gleixner wrote:
->> 
->> It seems there are two different issues here. The dmesg you provided is
->> from a i7-1255U, which is a hybrid CPU. The i7-7700k has 4 cores (8
->> threads) and there is not necessarily the same root cause.
->
-> It seems like I was also below my needed caffeine levels :p The person
-> reporting (in the same thread) with the i7-7700k reports the problem
-> fixed[1] as well, so this is in line with Peters observerations!
+On Fri, May 31, 2024 at 10:22:02AM +0200, Geert Uytterhoeven wrote:
+> On Fri, May 31, 2024 at 10:16 AM Andy Shevchenko
+> <andy.shevchenko@gmail.com> wrote:
+> > On Fri, May 31, 2024 at 10:45 AM Geert Uytterhoeven
+> > <geert@linux-m68k.org> wrote:
+> > > On Fri, May 31, 2024 at 7:28 AM Chris Packham
+> > > <chris.packham@alliedtelesis.co.nz> wrote:
+> > > > Like we do for charlcd, allow the configuration of the initial message
+> > > > on line-display devices.
 
-Cool!
+..
 
-> The other person with the i7-1255U in the meantime got back to me with
-> the needed outputs:
->> - output of cpuid -r
+> > > > +#ifndef CONFIG_PANEL_BOOT_MESSAGE
+> > > >  #include <generated/utsrelease.h>
+> > > > +#endif
+> > >
+> > > The #ifndef/#endif is not really needed.
+> >
+> > It's needed to avoid unnecessary build of the module (in case of m).
+> 
+> OK.
+> 
+> > > As I see no real deficiencies:
+> > > Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> >
+> > I believe you agree with leaving ifdeffery above.
+> 
+> Thanks, I agree to agree ;-)
 
-> 0x0000000b: subleafs:
->   0: EAX=0x00000001, EBX=0x00000001, ECX=0x00000100, EDX=0x00000012
->   1: EAX=0x00000006, EBX=0x0000000c, ECX=0x00000201, EDX=0x00000012
+Btw, I will take a long lasting vacations (ten weeks in a row) and most likely
+won't be able to actively participate for this subsystem. Thinking about how
+to proceed if something critical appears... Maybe you want a push access to the
+same Git repo and in (rare) cases can handle fixes? We may ask Konstantin to
+configure that on git.kernel.org.
 
-> 0x0000001f: subleafs:
->   0: EAX=0x00000001, EBX=0x00000001, ECX=0x00000100, EDX=0x00000012
->   1: EAX=0x00000007, EBX=0x0000000c, ECX=0x00000201, EDX=0x00000012
+P.S. This change doesn't seem to me as critical and there is still a chance
+that I will have time to proceed, but the situation just motivated me to discuss
+the possibilities.
 
-So this is inconsistent already. Both leafs should describe the same
-topology. See the differing EAX values (6/7) in subleaf 1, which are
-exactly the values the kernel complains about :)
+-- 
+With Best Regards,
+Andy Shevchenko
 
-But that should not be an issue because the kernel preferres 0x1f over
-0xb and will never evaluate both, but this is just from one randomly
-picked CPU.
 
-I wonder which variant of the cpuid tool that is. cpuid -r gives you
-usually just the plain values and collects them for all CPUs.
-
-I really need to have the values for all CPUs to see whether there are
-differences at the relevant places. The above is probably from one of
-the E-Cores.
-
-Thanks,
-
-        tglx
 
