@@ -1,170 +1,168 @@
-Return-Path: <linux-kernel+bounces-197510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 171A98D6B9D
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 23:34:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5641C8D6B80
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 23:25:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 380A81C24B2B
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 21:34:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E791D1F286EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 21:25:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8C497FBDA;
-	Fri, 31 May 2024 21:34:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 787BE78C9C;
+	Fri, 31 May 2024 21:25:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="rQyAMHzt"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="lY00Jlkh"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EC3277F08
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 21:34:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4D811CAA6;
+	Fri, 31 May 2024 21:25:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717191272; cv=none; b=qHVg0nuFNXTVsFoKiuEDX9P9BV3Hvkc3FWvGSb6z1lxmXxbELTrTb5M63dWl+QjP4QMvebS8uiUIJwwkvviYNmClEMYVlm0x4PvrHjzD6cNbxkyJm+BioynydxMMydLqeCIe8dRfAr5cBqZJuyFY3AsXq7iT0hJ1Q9uA/+C5YAI=
+	t=1717190705; cv=none; b=J+A1tsDxQskyjMmP3FZ+zsbK07cm+7cMAsguoIznp+c0MwRd/HimvhvNuqyQX/EMceT5Qnz4l01lZD8Sc0IZsc/u+m47UXvSLa6CUNSfUcxMGkKAPc/DZ2PNGP+zBnAs8mB6+gue8AtGytGfKPSmOnNj4+iRZW7oWGs7xaXuThQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717191272; c=relaxed/simple;
-	bh=RS404MaW/RRWkBNJVZPcTnWbwxOOHWs8vCjY74+uM3Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=JDftClL3BC0YtQD9aB9ce6483nM6RYkdAHmgi8ZveNfpNSX4UvsEo7b207FUuwFDWW8IB2EOS1b8mr4tlLPcNqqUuJC0wwruV4E61mzBmmJZgikwJwOm3BAl0yyn6ndG9oNXYr1N3Nl657kLGG3LqynYC7/ziWZG0TNZm1NbK9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=rQyAMHzt; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240531213427epoutp016f5f61ed85d4af0b488611bd92f3b04e~UsFwKN5C-2372223722epoutp01e
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 21:34:27 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240531213427epoutp016f5f61ed85d4af0b488611bd92f3b04e~UsFwKN5C-2372223722epoutp01e
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1717191267;
-	bh=YTBytlr7ecZYCvMxUYhfydMV+Bi6kPS36xosbNeI0cE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=rQyAMHztBoBoy+N/KsuluaMiAr3fQIOcfE3WmIS14oE2Umi1kwDGfOQYHI4e/adPw
-	 bKm/c/ePk6zCEL6T7nB4U1ujXxfcImuttmElwDHxWRxvxarwpPeXu3dtxRtNYkvm77
-	 FN45M9NGdrIAXADC5BmdFybiYFN55lHhiNKLhNx4=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas2p1.samsung.com (KnoxPortal) with ESMTP id
-	20240531213426epcas2p179b6939ef325166973d6f569e1389f10~UsFvcWJg-1103811038epcas2p1W;
-	Fri, 31 May 2024 21:34:26 +0000 (GMT)
-Received: from epsmges2p4.samsung.com (unknown [182.195.36.90]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4Vrbwx5SH1z4x9Pp; Fri, 31 May
-	2024 21:34:25 +0000 (GMT)
-Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
-	epsmges2p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-	8F.35.09479.1624A566; Sat,  1 Jun 2024 06:34:25 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
-	20240531213425epcas2p477d443427f706b999e81432393bfdc8a~UsFuHsr9v2198821988epcas2p49;
-	Fri, 31 May 2024 21:34:25 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240531213425epsmtrp2573c90bc02eb722d9a6b605f38f9efd5~UsFuG7FVd0808808088epsmtrp2x;
-	Fri, 31 May 2024 21:34:25 +0000 (GMT)
-X-AuditID: b6c32a48-ea7ff70000002507-8d-665a42619b59
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	18.F6.07412.0624A566; Sat,  1 Jun 2024 06:34:24 +0900 (KST)
-Received: from localhost.dsn.sec.samsung.com (unknown [10.229.54.230]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240531213424epsmtip26f28ca152e1f446c95d844ba27f85083~UsFt4LerI1505315053epsmtip2t;
-	Fri, 31 May 2024 21:34:24 +0000 (GMT)
-From: Minwoo Im <minwoo.im@samsung.com>
-To: "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K . Petersen" <martin.petersen@oracle.com>, Bart Van Assche
-	<bvanassche@acm.org>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman
-	<avri.altman@wdc.com>, Minwoo Im <minwoo.im@samsung.com>,
-	gost.dev@samsung.com, linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Jeuk Kim <jeuk20.kim@samsung.com>
-Subject: [PATCH v2 2/2] ufs: mcq: Prevent no I/O queue case for MCQ
-Date: Sat,  1 Jun 2024 06:22:44 +0900
-Message-Id: <20240531212244.1593535-3-minwoo.im@samsung.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240531212244.1593535-1-minwoo.im@samsung.com>
+	s=arc-20240116; t=1717190705; c=relaxed/simple;
+	bh=VF5huSIXEGspnsYcYrVm6cTWXK90solzuMmSiSuO6uY=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=BDTtXj3kVPqMGEgG+QPcs2ZYAen4gjF9mefPpv9sh1nM6YJFaHa1IMo31Uayn65swX4SmzYNhL0sr0d3PgsL+oTPXfGj8ZTKDNkYb7qacpjl5I1jvRckskmi3LHbisW+kJPYsSjodjEXKfoLJDTiRDXu9CaJaxUHQPL/ub+l73E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=lY00Jlkh; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprDJsWRmVeSWpSXmKPExsWy7bCmhW6iU1SawYFfGhYP5m1js3j58yqb
-	xbQPP5ktbh7YyWSxsZ/D4v7Wa4wWl3fNYbPovr6DzWL58X9MFs9OH2B24PK4fMXbY9qkU2we
-	H5/eYvHo27KK0ePzJjmP9gPdTAFsUdk2GamJKalFCql5yfkpmXnptkrewfHO8aZmBoa6hpYW
-	5koKeYm5qbZKLj4Bum6ZOUCHKSmUJeaUAoUCEouLlfTtbIryS0tSFTLyi0tslVILUnIKzAv0
-	ihNzi0vz0vXyUkusDA0MjEyBChOyM6Z3LGUt2MpZcbrrGnsD43X2LkZODgkBE4klZ84B2Vwc
-	QgI7GCV2///MDOF8YpQ43NLDAuF8Y5S4dnENI0zLwe4msHYhgb2MEkfeakEU/WaUeHVlOlgR
-	m4C6RMPUVywgtojAYkaJuav5QIqYBV4wSnxbOI8JJCEs4Cyxa88DsAYWAVWJrk9X2LoYOTh4
-	BWwkNv+ohlgmL7H/4FlmEJtTwFbi/dbtYDavgKDEyZlPwOYzA9U0b50NdraEQCuHxI9vF1gh
-	ml0kPszdBvWosMSr41ugbCmJz+/2skHY5RI/30yC+qxC4uCs22A3SAjYS1x7ngJiMgtoSqzf
-	pQ8RVZY4cgtqK59Ex+G/7BBhXomONiGIGcoSHw8dYoawJSWWX3oNtcdD4tHB5UyQkJrAKNH5
-	7zvbBEaFWUiemYXkmVkIixcwMq9iFEstKM5NTy02KjCBx29yfu4mRnAy1fLYwTj77Qe9Q4xM
-	HIyHGCU4mJVEeH+lR6QJ8aYkVlalFuXHF5XmpBYfYjQFhvREZinR5HxgOs8riTc0sTQwMTMz
-	NDcyNTBXEue91zo3RUggPbEkNTs1tSC1CKaPiYNTqoGpWTmUW0x4jsi0fu9406Jnp+ZbzGw5
-	wXql+gzL2mlvlj7VDNYtlXY5/ztH+Oy/RaWe95/nz314fWv5Ux6/1JWX/BuKF/Wef3S6OKNC
-	tzHfZfpHQ6WrXwPOPvx0kCNgl1tzy7yNU5x2GuU9Lmm+u2HXsjxnS5f9z1Ym9j20P/dx6eyl
-	yqEzfhpFe+drpJkyXleNz1oaee/aYlHVaY4CHFWd62WDVRLzmvR378944Lp5v5ygrl6nzz3e
-	I4fWqGt9e8vEFrngGNuFNNbF63/wmVRY9H0LvJsuNH/eRMsFG9XX7NrVsIGt9PP6H8Gqyw49
-	fWSzeOuTnxevRD9cU5Dy9bqB+5KVizsyuRV+KDy7a18apMRSnJFoqMVcVJwIAHig4PkvBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrFLMWRmVeSWpSXmKPExsWy7bCSvG6CU1SawczH1hYP5m1js3j58yqb
-	xbQPP5ktbh7YyWSxsZ/D4v7Wa4wWl3fNYbPovr6DzWL58X9MFs9OH2B24PK4fMXbY9qkU2we
-	H5/eYvHo27KK0ePzJjmP9gPdTAFsUVw2Kak5mWWpRfp2CVwZ0zuWshZs5aw43XWNvYHxOnsX
-	IyeHhICJxMHuJiCbi0NIYDejxJLFZ5khEpIS+07fZIWwhSXutxxhhSj6ySixoO8AI0iCTUBd
-	omHqKxaQhIjAYkaJJ+fegDnMAu8YJXbvmcAEUiUs4Cyxa88DsA4WAVWJrk9X2LoYOTh4BWwk
-	Nv+ohtggL7H/IMRmTgFbifdbt4PZQkAlr3dPB7N5BQQlTs58wgJiMwPVN2+dzTyBUWAWktQs
-	JKkFjEyrGCVTC4pz03OTDQsM81LL9YoTc4tL89L1kvNzNzGCg19LYwfjvfn/9A4xMnEwHmKU
-	4GBWEuH9lR6RJsSbklhZlVqUH19UmpNafIhRmoNFSZzXcMbsFCGB9MSS1OzU1ILUIpgsEwen
-	VAMTo/RNvq6QDX80bfZf4M3//MgzNWxpy7t1HrGlG4y6V8mFx1QKeDyX5vGVffVg19+go4+u
-	pLJ0aoS9+vOoRnNyqKPF6cUlVZ9fT4ky5cy8YK/W7W5tnNCho/Q82Em8tk9qVemiIq21siJ6
-	Wht42ZkP1J67Pu9o74HiOmPLPO6PbwR3Kv44mJK0bmtOb3y2U7vwb7O/NS+fftLld7b5z7tr
-	inPm/u1GTa+YH4grSd04+dZbKFt5BhcDww5Px7n8n1QWrO86/FhA4+7qyf94ky8qFPP6XnB4
-	8/fKDU+h82aPY3q4Zy308khPZrpfatu4o+jAM9MDupf1fNfd1NTW4pv1YbHWUdvc+Z+3vv51
-	Y5oSS3FGoqEWc1FxIgBYj7eW7QIAAA==
-X-CMS-MailID: 20240531213425epcas2p477d443427f706b999e81432393bfdc8a
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240531213425epcas2p477d443427f706b999e81432393bfdc8a
-References: <20240531212244.1593535-1-minwoo.im@samsung.com>
-	<CGME20240531213425epcas2p477d443427f706b999e81432393bfdc8a@epcas2p4.samsung.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1717190694;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Jww2qZI1db4LLxX4ddTJs3O/960dbOvvlMlYQYu9OhE=;
+	b=lY00JlkhEeFaQAD6/CPV34Box50rDsxRCnJhPcrckinMIimIB2a+vL0dC2/10rznzsFNTM
+	HpicKiI70a8tubn7YogGYe4aVV5iJY4gMVHOA1kLWpzW6RfkpjWioyrZ+pN0dMdDjbT1hi
+	0scxBkRlDJ7B5znOVfryeCtRcBd4CvvWJNDkZB6Rk/u34Ep/9jtkFXWGRIE07Dp5JTlJvC
+	BpZvNk6Xwu11785eyHPD7KUmyNxwlUNKy57BXqr53H/h1f3sEhC2E+fiFQvzrg8Tm7wi9n
+	QsgiyHgZ2FP8zCwMTuRfnEytkZJU6SVZAYW4ItOHwVAlYZdzEtayK4AV5yvuTg==
+Date: Fri, 31 May 2024 23:24:53 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: Jonas Karlman <jonas@kwiboo.se>
+Cc: Alexey Charkov <alchark@gmail.com>, linux-rockchip@lists.infradead.org,
+ heiko@sntech.de, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, robh+dt@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, linux-kernel@vger.kernel.org, quentin.schulz@cherry.de,
+ wens@kernel.org, daniel.lezcano@linaro.org, didi.debian@cknow.org,
+ krzysztof.kozlowski+dt@linaro.org, viresh.kumar@linaro.org
+Subject: Re: [RFC PATCH] arm64: dts: rockchip: Make preparations for
+ per-RK3588-variant OPPs
+In-Reply-To: <607f4da8-99b2-4379-9567-4bfd2744eab3@kwiboo.se>
+References: <673dcf47596e7bc8ba065034e339bb1bbf9cdcb0.1716948159.git.dsimic@manjaro.org>
+ <CABjd4YxD41DEkBCZfkznLboEY9ZVOfTCLcj4S_kkcsVswbANyQ@mail.gmail.com>
+ <8f8623e29a479c4108141302e708dc3b@manjaro.org>
+ <CABjd4Yy4RMg+6-4ygV0MSwJj5LReY-ymbctq4PPfVZ6L+c1tsw@mail.gmail.com>
+ <166cc4e46f31644a50306625b2ab18a6@manjaro.org>
+ <CABjd4YzDNQa45=KC_t0xnTDrH+g-oUrcpgP55oOj7JcAuu7uFw@mail.gmail.com>
+ <82db817a908b761d8c3d73ea04714314@manjaro.org>
+ <607f4da8-99b2-4379-9567-4bfd2744eab3@kwiboo.se>
+Message-ID: <66677077acf4e970444cea829436fd0a@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-If hba_maxq equals poll_queues, which means there are no I/O queues
-(HCTX_TYPE_DEFAULT, HCTX_TYPE_READ), the very first hw queue will be
-allocated as HCTX_TYPE_POLL and it will be used as the dev_cmd_queue.
-In this case, device commands such as QUERY cannot be properly handled.
+Hello Jonas,
 
-This patch prevents the initialization of MCQ when the number of I/O
-queues is not set and only the number of POLL queues is set.
+On 2024-05-31 13:27, Jonas Karlman wrote:
+> On 2024-05-30 21:31, Dragan Simic wrote:
+> [snip]
+> 
+>>>>>> That way we'll have no roadblocks if, at some point, we end up 
+>>>>>> with
+>>>>>> having
+>>>>>> different OPPs defined for the RK3588 and the RK3588S variants.  
+>>>>>> Or
+>>>>>> maybe
+>>>>>> even for the RK3582, which we don't know much about yet.
+>>>>> 
+>>>>> Guess we'll deal with that one once we stumble upon an actual 
+>>>>> RK3582
+>>>>> board out in the wild and heading to the mainline kernel tree :)
+>>>> 
+>>>> Of course, that was just an example for the future use.
+>>> 
+>>> In fact, I've just discovered that Radxa has recently released Rock 
+>>> 5C
+>>> Lite which is based on RK3582, and starts at just $29 for the 1GB
+>>> version, making it interesting for tinkering. Especially given that
+>>> its GPU, one of the big-core clusters and one of the VPU cores seem 
+>>> to
+>>> be disabled in software (u-boot) rather than in hardware, which means
+>>> there is some chance that a particular SoC specimen would actually
+>>> have them in a working condition and possible to re-enable at no 
+>>> cost.
+>>> Ordered myself one to investigate :)
+>> 
+>> Yes, I also saw the RK3582-based ROCK 5C Lite a couple of days ago. :)
+>> It seems that the disabled IP blocks are detected as defective during
+>> the manufacturing, which means that they might work correctly, or 
+>> might
+>> actually misbehave.  It seems similar to the way old three-core AMD
+>> Phenom II CPUs could sometimes be made quad-core.
+> 
+> I can confirm that the RK3582 include ip-state in OTP indicating
+> unusable cores, any unusable cpu core cannot be taken online and stalls
+> Linux kernel a few extra seconds during boot.
 
-Signed-off-by: Minwoo Im <minwoo.im@samsung.com>
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
----
- drivers/ufs/core/ufs-mcq.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Thanks for this confirmation!
 
-diff --git a/drivers/ufs/core/ufs-mcq.c b/drivers/ufs/core/ufs-mcq.c
-index 46faa54aea94..4bcae410c268 100644
---- a/drivers/ufs/core/ufs-mcq.c
-+++ b/drivers/ufs/core/ufs-mcq.c
-@@ -179,6 +179,15 @@ static int ufshcd_mcq_config_nr_queues(struct ufs_hba *hba)
- 		return -EOPNOTSUPP;
- 	}
- 
-+	/*
-+	 * Device should support at least one I/O queue to handle device
-+	 * commands via hba->dev_cmd_queue.
-+	 */
-+	if (hba_maxq == poll_queues) {
-+		dev_err(hba->dev, "At least one non-poll queue required\n");
-+		return -EOPNOTSUPP;
-+	}
-+
- 	rem = hba_maxq;
- 
- 	if (rw_queues) {
--- 
-2.34.1
+> Started working on a patch for U-Boot to remove any broken cpu core
+> and/or cluster nodes, similar to what vendor U-Boot does, adopted to
+> work with a mainline DT for RK3588.
 
+Nice, thanks for working on that. :)
+
+> On one of my ROCK 5C Lite board one of the cpu cores is unusable, 
+> U-Boot
+> removes the related cpu cluster nodes. On another ROCK 5C Lite board 
+> one
+> rkvdec core is only marked unusable and all cpu cores can be taken
+> online, U-Boot does nothing in this case. Guessing we should apply
+> similar policy as vendor U-Boot and disable cores anyway.
+
+Just checking, you're referring to disabling the rkvdec core only,
+for the latter case?
+
+> Following commit contains early work-in-progress and some debug output.
+> 
+> https://github.com/Kwiboo/u-boot-rockchip/commit/8cdf606e616baa36751f3b4adcfaefc781126c8c
+> 
+> Booting ROCK 5C Lite boards using U-Boot generic-rk3588_defconfig:
+> 
+> ROCK 5C Lite v1.1 (RK3582 with 1 bad cpu core):
+> 
+>   cpu-code: 3582
+>   cpu-version: 08 10
+>   data: fe 21
+>   package: 11
+>   specification: 01
+>   ip-state: 10 00 00
+>   bad-state: cpu core 4
+> 
+> ROCK 5C Lite v1.1 (RK3582 with 1 bad rkvdec core):
+> 
+>   cpu-code: 3582
+>   cpu-version: 08 00
+>   data: fe 21
+>   package: 11
+>   specification: 01
+>   ip-state: 00 80 00
+>   bad-state: rkvdec core 1
+
+Thanks again for these nice details!
 
