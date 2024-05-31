@@ -1,162 +1,93 @@
-Return-Path: <linux-kernel+bounces-196155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94CF48D581D
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 03:37:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 638928D5779
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 03:03:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 491A91F25BCD
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 01:37:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDD58B23E04
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 01:03:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD01C7C081;
-	Fri, 31 May 2024 01:33:07 +0000 (UTC)
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E003613D;
+	Fri, 31 May 2024 01:03:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FAv4bVuh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A732474E3D;
-	Fri, 31 May 2024 01:33:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60780211C;
+	Fri, 31 May 2024 01:03:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717119187; cv=none; b=f1Xm3iuUUzrKlWUNPCPsl3OpyYSqz0/oe1xFtFaiSzsROJYt34RPX2SHWDt5kjKjtmtaz/6b1V1SXJeScVsHBXf3WehoH1QgNvm6wmjpMp+Mg+Kkq7Nv1zmkQOBuD4gk1kvfzB0V2pWxWbBIamcuZnA1CUEo7BjSElYmYsWePcY=
+	t=1717117415; cv=none; b=MLxOteBT3HsRgS8Pm8wlFG/9h84STIbKVDUZlMQmCPHguMZvbO79REfLCPtY3GBxhrUsVZPla9hzZ3vZUCSFQkqWtZ3r7Uat7i3mXmztQBwYeSqrZGVlVQFDzxxCLG0WPM54ZneGXoxOBGmhJWsURmvxxrqZzL5mxcCmEddUSGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717119187; c=relaxed/simple;
-	bh=3L96u0YINL/lZYh+ApfhJWt20fUZmuR5yChPKmCF2Gk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fNCCGMpssiNE99/7IaFiJcEImdqxydFQDjNdpBxUQUWuO0mQMlKIkdU+ajGcx3+49idILaPXxiRbbfkI72Ook437qe7Krdd8E2SQG33DOQuK3G2v0bkez72DEofP1SapOgF7DfL0phdWNo3zXQpRQzzELmwKCgCE2hhV6EPNsr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; arc=none smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44UFYmrl018596;
-	Fri, 31 May 2024 01:31:23 GMT
-DKIM-Signature: =?UTF-8?Q?v=3D1;_a=3Drsa-sha256;_c=3Drelaxed/relaxed;_d=3Doracle.com;_h?=
- =?UTF-8?Q?=3Dcc:content-transfer-encoding:date:from:in-reply-to:message-i?=
- =?UTF-8?Q?d:mime-version:references:subject:to;_s=3Dcorp-2023-11-20;_bh?=
- =?UTF-8?Q?=3D6N4qQQrM8z8SHauW+PZ5K3kuBZffzbTKxPhp698XFwE=3D;_b=3DLefFjjHJ?=
- =?UTF-8?Q?q2G+9tOxIyYEIG1+Ltd4hNAjXfNoCCjYijKAsy4XQsReKXzv/8p7iCHxgPGi_t+?=
- =?UTF-8?Q?hFu+SAZd3KWRDknRvDQ3IUGEyLhOr5KqoBorPhFuVPMqb4ySpOpcmnzBHtSWWzP?=
- =?UTF-8?Q?xNo_lP1n8hj7ieOl1Eoxjcx1gHhoy+8bQ9tI/lRwW469plxj6T1kyWW8looTHYf?=
- =?UTF-8?Q?dCkS0i4eJ_sbthiT2uHyRUhpUXa5t8BqQwYaUahH2sgF2xT4r8Jcwq9iBasG3YE?=
- =?UTF-8?Q?zbh93PrLUvZE8AW_xlNRJ36icYAaS3KComEsfTnp/jKN/1ElShuOIkwuGhTQJdP?=
- =?UTF-8?Q?XErVVb2nKoGProqraK6Ot_QQ=3D=3D_?=
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3yb8j8a3eg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 31 May 2024 01:31:23 +0000
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 44UMoRAT016364;
-	Fri, 31 May 2024 01:31:22 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3yc50t981m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Fri, 31 May 2024 01:31:22 +0000
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 44V1SKNg027418;
-	Fri, 31 May 2024 01:31:21 GMT
-Received: from bur-virt-x6-2-100.us.oracle.com (bur-virt-x6-2-100.us.oracle.com [10.153.92.40])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3yc50t96yw-15
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Fri, 31 May 2024 01:31:21 +0000
-From: Ross Philipson <ross.philipson@oracle.com>
-To: linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-crypto@vger.kernel.org, kexec@lists.infradead.org,
-        linux-efi@vger.kernel.org, iommu@lists.linux-foundation.org
-Cc: ross.philipson@oracle.com, dpsmith@apertussolutions.com,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        dave.hansen@linux.intel.com, ardb@kernel.org, mjg59@srcf.ucam.org,
-        James.Bottomley@hansenpartnership.com, peterhuewe@gmx.de,
-        jarkko@kernel.org, jgg@ziepe.ca, luto@amacapital.net,
-        nivedita@alum.mit.edu, herbert@gondor.apana.org.au,
-        davem@davemloft.net, corbet@lwn.net, ebiederm@xmission.com,
-        dwmw2@infradead.org, baolu.lu@linux.intel.com,
-        kanth.ghatraju@oracle.com, andrew.cooper3@citrix.com,
-        trenchboot-devel@googlegroups.com
-Subject: [PATCH v9 14/19] tpm: Ensure tpm is in known state at startup
-Date: Thu, 30 May 2024 18:03:26 -0700
-Message-Id: <20240531010331.134441-15-ross.philipson@oracle.com>
-X-Mailer: git-send-email 2.39.3
-In-Reply-To: <20240531010331.134441-1-ross.philipson@oracle.com>
-References: <20240531010331.134441-1-ross.philipson@oracle.com>
+	s=arc-20240116; t=1717117415; c=relaxed/simple;
+	bh=4FFFXn5HEKWNE6TaKsVsrPpXEqZHIilUtoahZLs5uK0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=LiSpEr9dImm/rc3vCcFLVdXPqbq4L6ofPBJCN/RKiHj0+6z15bVmYzTc7Z8eRZGX8ldCtukqPzAE3eVNsHV/e+1EdgH78sECmAIWeitrkL/KPmJW4Vh4AeNf/OQQPAH/d1hB6bQR43O9WXOrTWb2onnwisNc3KOcTGzdZGNPprw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FAv4bVuh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1854C2BBFC;
+	Fri, 31 May 2024 01:03:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717117415;
+	bh=4FFFXn5HEKWNE6TaKsVsrPpXEqZHIilUtoahZLs5uK0=;
+	h=From:Subject:Date:To:Cc:From;
+	b=FAv4bVuhU7S04E8JTAuJfZnM+i5aDj9+l0q2AKCIIEHUn7dAMtHZAsc22JKIyVs86
+	 dlxHA4a5l7XOEx3HaDr4QwFCf9TicanP0ZZOj0bntdP7eV+U3lDC3wklFyjZEqaX1/
+	 Q28IviXJRongsWF1xB2k4B/Hbiu7gmKgc3wPrW1LryFrG/rwXMFOou7O87neEhA7lX
+	 z4pxurF30Zb/wS/bT5x4c+jewwxNMHuVE/xVrwyYPDW2gzZr9YME5JTnncD8sIoTqW
+	 GGDyviHaQaeenu3Y0EVGVbJZjwSiFvDpqIuQPddGLVLSuEIws+R4gVi6ROJ4yBjFvp
+	 Ypat0rwPeCZKA==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Subject: [PATCH 0/3] of: Reimplement of_(bus_)?n_(size|addr)_cells()
+Date: Thu, 30 May 2024 20:03:26 -0500
+Message-Id: <20240530-dt-interrupt-map-fix-v1-0-2331d8732f08@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-30_21,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 spamscore=0 suspectscore=0
- adultscore=0 phishscore=0 malwarescore=0 mlxlogscore=999 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2405010000
- definitions=main-2405310010
-X-Proofpoint-ORIG-GUID: yneutNHgvFRMYyzThQzJpk-4OSnQW4h3
-X-Proofpoint-GUID: yneutNHgvFRMYyzThQzJpk-4OSnQW4h3
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAN4hWWYC/x2MSQqAMAwAvyI5G2jcQL8iHqpGzcFa0iqC+HeLx
+ xmYeSCwCgfosgeULwlyuASUZzBt1q2MMieGwhSVqUuDc0RxkVVPH3G3Hhe5sWmrhgyNVLYEKfX
+ KSf/bfnjfD+WLifBmAAAA
+To: Saravana Kannan <saravanak@google.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+X-Mailer: b4 0.14-dev
 
-From: "Daniel P. Smith" <dpsmith@apertussolutions.com>
+This series reworks the of_(bus_)?n_(size|addr)_cells() functions. They 
+fail to hold the DT spinlock while accessing 'parent' pointer and don't 
+hold a reference to the parent node. Neither is likely a real issue as 
+most nodes are static.
 
-When tis core initializes, it assumes all localities are closed. There
-are cases when this may not be the case. This commit addresses this by
-ensuring all localities are closed before initializing begins.
+With these issues fixed, we can then replace the open coded version in 
+of_irq_parse_raw().
 
-Signed-off-by: Daniel P. Smith <dpsmith@apertussolutions.com>
-Signed-off-by: Ross Philipson <ross.philipson@oracle.com>
+This series depends on the fixes from this series[1].
+
+Rob
+
+[1] https://lore.kernel.org/lkml/20240529-dt-interrupt-map-fix-v2-0-ef86dc5bcd2a@kernel.org/
+
 ---
- drivers/char/tpm/tpm_tis_core.c | 11 ++++++++++-
- include/linux/tpm.h             |  6 ++++++
- 2 files changed, 16 insertions(+), 1 deletion(-)
+Rob Herring (Arm) (3):
+      of: Add an iterator to walk up parent nodes
+      of: Add missing locking to of_(bus_)?n_(size|addr)_cells()
+      of/irq: Use of_bus_n_addr_cells() to retrieve "#address-cells"
 
-diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-index 7c1761bd6000..9fb53bb3e73f 100644
---- a/drivers/char/tpm/tpm_tis_core.c
-+++ b/drivers/char/tpm/tpm_tis_core.c
-@@ -1104,7 +1104,7 @@ int tpm_tis_core_init(struct device *dev, struct tpm_tis_data *priv, int irq,
- 	u32 intmask;
- 	u32 clkrun_val;
- 	u8 rid;
--	int rc, probe;
-+	int rc, probe, i;
- 	struct tpm_chip *chip;
- 
- 	chip = tpmm_chip_alloc(dev, &tpm_tis);
-@@ -1166,6 +1166,15 @@ int tpm_tis_core_init(struct device *dev, struct tpm_tis_data *priv, int irq,
- 		goto out_err;
- 	}
- 
-+	/*
-+	 * There are environments, like Intel TXT, that may leave a TPM
-+	 * locality open. Close all localities to start from a known state.
-+	 */
-+	for (i = 0; i <= TPM_MAX_LOCALITY; i++) {
-+		if (check_locality(chip, i))
-+			tpm_tis_relinquish_locality(chip, i);
-+	}
-+
- 	/* Take control of the TPM's interrupt hardware and shut it off */
- 	rc = tpm_tis_read32(priv, TPM_INT_ENABLE(priv->locality), &intmask);
- 	if (rc < 0)
-diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-index c17e4efbb2e5..363f7078c3a9 100644
---- a/include/linux/tpm.h
-+++ b/include/linux/tpm.h
-@@ -147,6 +147,12 @@ struct tpm_chip_seqops {
-  */
- #define TPM2_MAX_CONTEXT_SIZE 4096
- 
-+/*
-+ * The maximum locality (0 - 4) for a TPM, as defined in section 3.2 of the
-+ * Client Platform Profile Specification.
-+ */
-+#define TPM_MAX_LOCALITY		4
-+
- struct tpm_chip {
- 	struct device dev;
- 	struct device devs;
+ drivers/of/base.c  | 18 ++++++++----------
+ drivers/of/irq.c   | 15 +++------------
+ include/linux/of.h |  5 +++++
+ 3 files changed, 16 insertions(+), 22 deletions(-)
+---
+base-commit: e7985f43609c782132f8f5794ee6cc4cdb66ca75
+change-id: 20240530-dt-interrupt-map-fix-6946101b1391
+
+Best regards,
 -- 
-2.39.3
+Rob Herring (Arm) <robh@kernel.org>
 
 
