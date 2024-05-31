@@ -1,116 +1,320 @@
-Return-Path: <linux-kernel+bounces-196675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C5E98D5FBF
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:31:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E320A8D5FC1
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:32:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC4B0284217
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:31:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E2752849DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:32:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC27F155CA6;
-	Fri, 31 May 2024 10:31:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC569155CB4;
+	Fri, 31 May 2024 10:32:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DgtBv1xK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L/zOt286"
+Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2A6FD27E
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 10:30:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 208C57828B;
+	Fri, 31 May 2024 10:32:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717151460; cv=none; b=Y4h1PAgLxU3unwlcb6RkcLNBPvykhiuVO817l2gZ6FS13vipCbGexqVQAQ5q4GE8RpD1wfw5LAtTue8DrUMvDJ7fam3JLFvKc7d5MBPByjjrGtmSsIvEvyfCeBB19kcs5DNE3mLrGe86aZR03f5qH7TWS+s/2JWaSFknfetO7yY=
+	t=1717151532; cv=none; b=PQgzHS2PgxX57parLdAaGa6zs9+/crAfQ75XNAjNcK0NJn1MMU5YxIkmlrWwx38cPmuENIeBCtUnovpn38RYsrSiHZN/8E1F0vX32cPAXCNOosEMuM8duNtoYSy9d6LoP1vJ0uOYf4odYljppQ1uMYAZjh1i9UmyxuzyTvbtDrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717151460; c=relaxed/simple;
-	bh=tl5eBt4hxqNJQwu2XkYiH1S4HyMP4WJexLEXShn0et8=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ByRzwmeLc6TijxSgp77AwIQUxD8nQOBUq0bxf/07NtOkv6IjAfzA+fPG08/uisx4YPPWLRYcC3EQG6y5thvCysf6pTVQJDIGoomxC9eAxc3tlkIfttD2KdsctmDiQ6E62OpV1kP3s87U9fmsCq6F6hO+UhHbYB1GougXRoLJCmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DgtBv1xK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 659FDC116B1;
-	Fri, 31 May 2024 10:30:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717151459;
-	bh=tl5eBt4hxqNJQwu2XkYiH1S4HyMP4WJexLEXShn0et8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=DgtBv1xK+gFp8xmwkuDRyLp42olvbV/e7+u29Nwyd1WFj6wGceSyoRM53XgYqgT1a
-	 6Zln/6cjEcFO5yMy1piVwxnG/gpYcW0smeO6husLQTFJqqMSl3KYmwoPV2An91oY2d
-	 CW7ZkSTTjAtB0Brji9tFlKNkWVFc8oBxMQz7duPzkU5poi1FZ52La352B3K42dnalL
-	 8DHxafvCtcEGJwpp+XOyZZ7eZQxN/pL4/OT/0pbQyVVG9ADcp4eBNOjQfArMeWNLZ9
-	 HwZV7RVlM4gxt5xMW8yGMJ+SttcTE9xGEB8s4f6htVxBZIyTC+FbF5rO0BjF7K/PyE
-	 RiJF+eePo6Taw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=wait-a-minute.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sCzXF-00H93G-7E;
-	Fri, 31 May 2024 11:30:57 +0100
-Date: Fri, 31 May 2024 11:30:59 +0100
-Message-ID: <87mso62rz0.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Hagar Hemdan <hagarhem@amazon.com>
-Cc: Maximilian Heyne <mheyne@amazon.de>,
-	Norbert Manthey <nmanthey@amazon.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Eric Auger <eric.auger@redhat.com>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>,
-	<hagarhem@amazon.de>
-Subject: Re: [PATCH v2] irqchip/gic-v3-its: Fix potential race condition in its_vlpi_prop_update()
-In-Reply-To: <20240531095318.GA5556@amazon.com>
-References: <20240531074302.30563-1-hagarhem@amazon.com>
-	<86ttiel4bb.wl-maz@kernel.org>
-	<20240531095318.GA5556@amazon.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/28.2
- (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1717151532; c=relaxed/simple;
+	bh=dDDEfEsjfFj4dAcpfnAUrhvu/hMoCIIpnPxuOy34JhY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GhxfOhn0kDhEeUIJatNGcaU/umPwYZ5RXeuSS1FcEx49dBqxzqwFOXqYfUK51+ZWU7zb1Fkgt9y82BPzcs+7MU91tWuXypfbdWNR11is505RExqVnpNfm4nVORstM5OgyZFreDYe8FmX2s8GhCc4Jf6HE0tHiKplehGiSPG7VSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L/zOt286; arc=none smtp.client-ip=209.85.217.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-48bb4f21172so435469137.3;
+        Fri, 31 May 2024 03:32:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717151530; x=1717756330; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HcM/q+B64c+IL4z3ll1HNo6g5Ua5mFGJaDl0RMo26bw=;
+        b=L/zOt286fPVQtRfoIQf3gm4hGixulnHmVoNGnxDIdg/1H5mBtOBaySjbVZDCCV0Ln+
+         MXQc3b4YUElTT+bZJkmTeyZ+TW6xOsahgIgFaiafV8BJY5QhiKC8pP0aIzX79GzbMUH7
+         qmyGiW4DNAQ0AYDdB7bBtCBiGqGnN9ZTnaR6evrBGZ/aKvKyhrY2cUccA8dniH4l+peg
+         5LfM5H5D4ol+yYY5SQz/xt2rd0pgSfo9VdmA3KuzkPzIyEosGB6hi7GEdBo9UaVMxqn1
+         6iKoCVFpJFIvae856MjJRKhri1m+gj7HAnesJO4q8Jurp0qoAS4V9ajNs8g6M7LbcJUK
+         yvMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717151530; x=1717756330;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HcM/q+B64c+IL4z3ll1HNo6g5Ua5mFGJaDl0RMo26bw=;
+        b=T/IIbmlesL1gJJHbSqwfqhVdIVhIJ6o6BycDpadwznblSTx4fYdHOM4Li6/3qmM+AL
+         3HH/DMmin8LxxeM/P2GmZJj+j8Xc98X9zcMszByHo+74MM6FqsFj3qNX0FyYmZWyFSab
+         lire34BsARl1OB+RIxLO/cxSHFlpJpOCtasA7vyTB+BbnUIVMub0QpxtG0jshnBEEcwY
+         9nJJVb+wyZX70MKk+QdD7buqe5kVUd1HPCj3qyn7auVvNsuGoANWZM79XHEt5l1eK6rE
+         QQOooXzAoC9FzZFKIJffrOwrpDe3q1ItN8wjoxJWfAiohDiCMCCiRXyjcPuN4J3q77JH
+         4ZAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUkT2QiZfZqPlmnGjXQxKLu3E7CY104JDhxdAbdbypo8d3exwY6J80PthBXJu/nG9ZPbqr7un5GpXEKtKU5VCy5FelvFKVil4PlJazx
+X-Gm-Message-State: AOJu0YyoNGBlYHQFp/dG11iV/irYxxnG8opep8qd/ahfVSwJRYC6q78O
+	cNASHX+9WFvoEjf+EdNgBgAIdC1V1CbcVIo1KodHgt9RdBaB0wBDV1ObR1f1mAtNNdynlWBM3j7
+	yKXCN1tMFBE6q02+EdYkLmVVJFdY=
+X-Google-Smtp-Source: AGHT+IFMx05bSFeyu9+XIMW5dT9oLVgwhPOC7hSRPgf5r+X56J3wm4qotnkJlP/JvyyuWn5DKR7+dZuysCe50OUcaew=
+X-Received: by 2002:a67:ba0a:0:b0:48b:bce7:a80 with SMTP id
+ ada2fe7eead31-48bc21a90a2mr1617620137.24.1717151529815; Fri, 31 May 2024
+ 03:32:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: hagarhem@amazon.com, mheyne@amazon.de, nmanthey@amazon.de, tglx@linutronix.de, eric.auger@redhat.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, hagarhem@amazon.de
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+References: <20240522110909.10060-1-victorshihgli@gmail.com>
+ <20240522110909.10060-9-victorshihgli@gmail.com> <4354636c-24dd-4145-a551-75dc5c69910b@intel.com>
+In-Reply-To: <4354636c-24dd-4145-a551-75dc5c69910b@intel.com>
+From: Victor Shih <victorshihgli@gmail.com>
+Date: Fri, 31 May 2024 18:31:57 +0800
+Message-ID: <CAK00qKCRD1Xdb5DmWud9F=r85aVxtnQ5wS_=yhzQ46LS0Mjqsg@mail.gmail.com>
+Subject: Re: [PATCH V16 08/23] mmc: core: Support UHS-II Auto Command Error Recovery
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	benchuanggli@gmail.com, HL.Liu@genesyslogic.com.tw, 
+	Greg.tu@genesyslogic.com.tw, takahiro.akashi@linaro.org, dlunev@chromium.org, 
+	Ben Chuang <ben.chuang@genesyslogic.com.tw>, 
+	Victor Shih <victor.shih@genesyslogic.com.tw>, ulf.hansson@linaro.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 31 May 2024 10:53:18 +0100,
-Hagar Hemdan <hagarhem@amazon.com> wrote:
-> 
-> On Fri, May 31, 2024 at 10:27:04AM +0100, Marc Zyngier wrote:
-> > On Fri, 31 May 2024 08:43:02 +0100,
-> > Hagar Hemdan <hagarhem@amazon.com> wrote:
-> > > 
-> > > its_vlpi_prop_update() calls lpi_write_config() which obtains the
-> > > mapping information for a VLPI without lock held. So it could race
-> > > with its_vlpi_unmap().
-> > > Since all calls from its_irq_set_vcpu_affinity() require the same
-> > > lock to be held. So instead of peppering the locking all over the
-> > > place, we hoist the locking into its_irq_set_vcpu_affinity().
-> > > 
-> > > This bug was discovered and resolved using Coverity Static Analysis
-> > > Security Testing (SAST) by Synopsys, Inc.
-> > > 
-> > > Fixes: 015ec0386ab6 ("irqchip/gic-v3-its: Add VLPI configuration handling")
-> > > Signed-off-by: Hagar Hemdan <hagarhem@amazon.com>
-> > 
-> > Given that you have lifted both my proposed patch and part of my
-> > reply as a commit message, you may at least credit me with a
-> > Suggested-by: tag. Not to mention that the blatant advertising doesn't
-> > really apply in this case.
-> 
-> ok, I will add this tag in rev3 and we need to add that disclaimer
-> as it is a commercial tool. thanks!
+On Fri, May 24, 2024 at 2:54=E2=80=AFPM Adrian Hunter <adrian.hunter@intel.=
+com> wrote:
+>
+> On 22/05/24 14:08, Victor Shih wrote:
+> > From: Victor Shih <victor.shih@genesyslogic.com.tw>
+> >
+> > Add UHS-II Auto Command Error Recovery functionality
+> > into the MMC request processing flow.
+>
+> Not sure what "auto" means here, but the commit message
+> should outline what the spec. requires for error recovery.
+>
 
-Sorry, but I'm not bound by this requirement. I'm happy to credit
-*you* for reporting a defect, but certainly not a tool that hasn't
-"resolved" anything, despite what the message says.
+Hi, Adrian
 
-	M.
+     I will add instructions in the v17 version.
 
--- 
-Without deviation from the norm, progress is not possible.
+Thanks, Victor Shih
+
+> >
+> > Signed-off-by: Ben Chuang <ben.chuang@genesyslogic.com.tw>
+> > Signed-off-by: Victor Shih <victor.shih@genesyslogic.com.tw>
+> > ---
+> >
+> > Updates in V16:
+> >  - Separate the Error Recovery mechanism from patch#7 to patch#8.
+> >
+> > ---
+> >
+> >  drivers/mmc/core/core.c    |  4 ++
+> >  drivers/mmc/core/core.h    |  1 +
+> >  drivers/mmc/core/sd_uhs2.c | 80 ++++++++++++++++++++++++++++++++++++++
+> >  include/linux/mmc/host.h   |  6 +++
+> >  4 files changed, 91 insertions(+)
+> >
+> > diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
+> > index 68496c51a521..18642afc405f 100644
+> > --- a/drivers/mmc/core/core.c
+> > +++ b/drivers/mmc/core/core.c
+> > @@ -403,6 +403,10 @@ void mmc_wait_for_req_done(struct mmc_host *host, =
+struct mmc_request *mrq)
+> >       while (1) {
+> >               wait_for_completion(&mrq->completion);
+> >
+> > +             if (host->ops->get_cd(host))
+> > +                     if (mrq->cmd->error || (mrq->data && mrq->data->e=
+rror))
+> > +                             mmc_sd_uhs2_error_recovery(host, mrq);
+>
+> There are several issues with this:
+>
+> 1. It is not OK to start a request from within the request path
+> because it is recursive:
+>
+>    mmc_wait_for_req_done()                      <--
+>       mmc_sd_uhs2_error_recovery()
+>          sd_uhs2_abort_trans()
+>             mmc_wait_for_cmd()
+>                mmc_wait_for_req()
+>                   mmc_wait_for_req_done()       <--
+>
+> 2. The mmc block driver does not use this path
+>
+> 3. No need to always call ->get_cd() if there is no error
+>
+> It is worth considering whether the host controller could
+> send the abort command as part of the original request, as
+> is done with the stop command.
+>
+
+Hi, Adrian
+
+     1. It looks like just issuing a command in
+mmc_wait_for_req_done() will cause a recursion.
+         I will drop sd_uhs2_abort_trans() and
+sd_uhs2_abort_status_read() in the v17 version.
+     2. I have no idea about this part, could you please give me some advic=
+e?
+     3. I will try to modify this part in the v17 version.
+
+Thanks, Victor Shih
+
+> > +
+> >               cmd =3D mrq->cmd;
+> >
+> >               if (!cmd->error || !cmd->retries ||
+> > diff --git a/drivers/mmc/core/core.h b/drivers/mmc/core/core.h
+> > index 920323faa834..259d47c8bb19 100644
+> > --- a/drivers/mmc/core/core.h
+> > +++ b/drivers/mmc/core/core.h
+> > @@ -82,6 +82,7 @@ int mmc_attach_mmc(struct mmc_host *host);
+> >  int mmc_attach_sd(struct mmc_host *host);
+> >  int mmc_attach_sdio(struct mmc_host *host);
+> >  int mmc_attach_sd_uhs2(struct mmc_host *host);
+> > +void mmc_sd_uhs2_error_recovery(struct mmc_host *mmc, struct mmc_reque=
+st *mrq);
+> >
+> >  /* Module parameters */
+> >  extern bool use_spi_crc;
+> > diff --git a/drivers/mmc/core/sd_uhs2.c b/drivers/mmc/core/sd_uhs2.c
+> > index 85939a2582dc..d5acb4e6ccac 100644
+> > --- a/drivers/mmc/core/sd_uhs2.c
+> > +++ b/drivers/mmc/core/sd_uhs2.c
+> > @@ -1324,3 +1324,83 @@ int mmc_attach_sd_uhs2(struct mmc_host *host)
+> >
+> >       return err;
+> >  }
+> > +
+> > +static void sd_uhs2_abort_trans(struct mmc_host *mmc)
+> > +{
+> > +     struct mmc_request mrq =3D {};
+> > +     struct mmc_command cmd =3D {0};
+> > +     struct uhs2_command uhs2_cmd =3D {};
+> > +     int err;
+> > +
+> > +     mrq.cmd =3D &cmd;
+> > +     mmc->ongoing_mrq =3D &mrq;
+> > +
+> > +     uhs2_cmd.header =3D UHS2_NATIVE_PACKET | UHS2_PACKET_TYPE_CCMD |
+> > +                       mmc->card->uhs2_config.node_id;
+> > +     uhs2_cmd.arg =3D ((UHS2_DEV_CMD_TRANS_ABORT & 0xFF) << 8) |
+> > +                     UHS2_NATIVE_CMD_WRITE |
+> > +                     (UHS2_DEV_CMD_TRANS_ABORT >> 8);
+> > +
+> > +     sd_uhs2_cmd_assemble(&cmd, &uhs2_cmd, 0, 0);
+> > +     err =3D mmc_wait_for_cmd(mmc, &cmd, 0);
+> > +
+> > +     if (err)
+> > +             pr_err("%s: %s: UHS2 CMD send fail, err=3D 0x%x!\n",
+> > +                    mmc_hostname(mmc), __func__, err);
+> > +}
+> > +
+> > +static void sd_uhs2_abort_status_read(struct mmc_host *mmc)
+> > +{
+> > +     struct mmc_request mrq =3D {};
+> > +     struct mmc_command cmd =3D {0};
+> > +     struct uhs2_command uhs2_cmd =3D {};
+> > +     int err;
+> > +
+> > +     mrq.cmd =3D &cmd;
+> > +     mmc->ongoing_mrq =3D &mrq;
+> > +
+> > +     uhs2_cmd.header =3D UHS2_NATIVE_PACKET |
+> > +                       UHS2_PACKET_TYPE_CCMD |
+> > +                       mmc->card->uhs2_config.node_id;
+> > +     uhs2_cmd.arg =3D ((UHS2_DEV_STATUS_REG & 0xFF) << 8) |
+> > +                     UHS2_NATIVE_CMD_READ |
+> > +                     UHS2_NATIVE_CMD_PLEN_4B |
+> > +                     (UHS2_DEV_STATUS_REG >> 8);
+> > +
+> > +     sd_uhs2_cmd_assemble(&cmd, &uhs2_cmd, 0, 0);
+> > +     err =3D mmc_wait_for_cmd(mmc, &cmd, 0);
+> > +
+> > +     if (err)
+> > +             pr_err("%s: %s: UHS2 CMD send fail, err=3D 0x%x!\n",
+> > +                    mmc_hostname(mmc), __func__, err);
+> > +}
+> > +
+> > +void mmc_sd_uhs2_error_recovery(struct mmc_host *mmc, struct mmc_reque=
+st *mrq)
+> > +{
+> > +     mmc->ops->uhs2_reset_cmd_data(mmc);
+>
+> The host controller should already have done any resets needed.
+> sdhci already has support for doing that - see host->pending_reset
+>
+
+Hi, Adrian
+
+     I'm not sure what this means. Could you please give me more informatio=
+n?
+
+Thanks, Victor Shih
+
+> > +
+> > +     if (mrq->data) {
+> > +             if (mrq->data->error && mmc_card_uhs2(mmc)) {
+> > +                     if (mrq->cmd) {
+> > +                             switch (mrq->cmd->error) {
+> > +                             case ETIMEDOUT:
+> > +                             case EILSEQ:
+> > +                             case EIO:
+> > +                                     sd_uhs2_abort_trans(mmc);
+> > +                                     sd_uhs2_abort_status_read(mmc);
+>
+> What is the purpose of sd_uhs2_abort_status_read() here?
+> It is not obvious it does anything.
+>
+
+Hi, Adrian
+
+     sd_uhs2_abort_status_read() seems to only have read status,
+     I will drop this in the v17 version.
+
+Thanks, Victor Shih
+
+> > +                                     break;
+> > +                             default:
+> > +                                     break;
+> > +                             }
+> > +                     }
+> > +             }
+> > +     } else {
+> > +             if (mrq->cmd) {
+> > +                     switch (mrq->cmd->error) {
+> > +                     case ETIMEDOUT:
+> > +                             sd_uhs2_abort_trans(mmc);
+> > +                             break;
+> > +                     }
+> > +             }
+> > +     }
+> > +}
+> > diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
+> > index fc9520b3bfa4..c914a58f7e1e 100644
+> > --- a/include/linux/mmc/host.h
+> > +++ b/include/linux/mmc/host.h
+> > @@ -271,6 +271,12 @@ struct mmc_host_ops {
+> >        * negative errno in case of a failure or zero for success.
+> >        */
+> >       int     (*uhs2_control)(struct mmc_host *host, enum sd_uhs2_opera=
+tion op);
+> > +
+> > +     /*
+> > +      * The uhs2_reset_cmd_data callback is used to excute reset
+> > +      * when a auto command error occurs.
+> > +      */
+> > +     void    (*uhs2_reset_cmd_data)(struct mmc_host *host);
+> >  };
+> >
+> >  struct mmc_cqe_ops {
+>
 
