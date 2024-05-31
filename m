@@ -1,86 +1,96 @@
-Return-Path: <linux-kernel+bounces-196643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 083148D5F3B
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:07:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E54AF8D5F3E
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:07:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B6781F239FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:07:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 658F9B23869
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:07:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B88414F9FF;
-	Fri, 31 May 2024 10:07:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3BC314C581;
+	Fri, 31 May 2024 10:07:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NBDaNdj5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zI2/dNii";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="E0QquJ1L"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC7A37D3F4;
-	Fri, 31 May 2024 10:06:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E49A41422DA;
+	Fri, 31 May 2024 10:07:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717150020; cv=none; b=IgTCsrUb0I9bJvIHPKP5a91oydU26bZsFL1FfGmUXf5mLbHAhYO4X/xgnyM3y+GPuYkvGJy2Vhzet0gbp1B2PLsAkTy6Y6P04eas6dXWmtlJc4QnDz8ByHhFDq+z3cnYcZONpYoXwiAo1BImBH/eONep3RQ8gFOVXrGsQtsBOzU=
+	t=1717150038; cv=none; b=ieEj4b43nou41uSiSvfxE0KAFW4vDXcoDtHTw1MdOgBj5irjpjKRGr38VKV4nZHhtrcUn5/LEANNS7NgmkceHRoR/yp9YFh2hj7E3h2JJ8CT5GyjjKLjtQRIth89KU5n2IZbpXvqBfIUKnt474JKHvcTDOgp8xnNZauJvyfrj5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717150020; c=relaxed/simple;
-	bh=x6YrxgCuIC9cb+82N6X0rKHyCVymfCkKvZeGU9Wr/kI=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=qg1q/udpMSUDm77tkg3aYmzjLZ1sZnQNPpIuFf6B6M5Ft+LfNB3h3DrVDpv1XkWwZkKCUfJaD8VhS2ZhjkJR8ktrUUnzYWqIpWg8jETPyf9O3mm1sFFjkL/KQll3Y0luEzLyUcJjCXJFhCDZe7ObkyJlKF/UTk/2kgHwPtqjigE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NBDaNdj5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53C3AC32786;
-	Fri, 31 May 2024 10:06:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717150019;
-	bh=x6YrxgCuIC9cb+82N6X0rKHyCVymfCkKvZeGU9Wr/kI=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=NBDaNdj5VTAI3zuvwIlhOXV34jecHBKVG3bTmGLGc8ZvnMUG1XLsEePOV1i2wcsSz
-	 1J9GRbqQhaldUZBfC+PHFkORUyfFoPYvCf6YPmM2cPo/HPi9EACHOw6wxLN3zmiwRr
-	 SQE0+7YocVgnleIRxUyziE/IGbS0Fng/CZhU0fEEIruX9EUS0FYNubjLsh1lMY8BpB
-	 Nc7LxW+ZVQ8k9B0wkVcxnUmwMYGk+SKjOtB1KEx9CKPWa0Yqfw/oWAX8WWbSKfZyH6
-	 1Z+dAugxq71B7cMyjINg0DRngdFvzxu0JzGCVf8RL9gvcgj1Hh7gX2x+vAqtCqV+p5
-	 M3fTVWoH43YKg==
-From: Lee Jones <lee@kernel.org>
-To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
- linux-leds@vger.kernel.org
-In-Reply-To: <82a5cb26ff8af1865a790286bdbc3c4a2bd149f1.1714892598.git.christophe.jaillet@wanadoo.fr>
-References: <82a5cb26ff8af1865a790286bdbc3c4a2bd149f1.1714892598.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: (subset) [PATCH] leds: is31fl319x: Constify struct
- regmap_config
-Message-Id: <171715001807.1011393.13624879216621879090.b4-ty@kernel.org>
-Date: Fri, 31 May 2024 11:06:58 +0100
+	s=arc-20240116; t=1717150038; c=relaxed/simple;
+	bh=NMTU3pxi7UKcMSiTL7Ysh/AVfIuKQmazDHD/xsZGNfc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=aV+4AksDwOL61aRp50evqVpGd1An5EI1n712GHlhTkQli6MiyefcK8TgramHF8q0byS902Upne4MNMX8OSz3E8sAOeORWHjJNcW3gmCPYL+FAcifIwIc6LIbAsW+tr9UyB4GHvXGF0oevdauZiCSehfesDTg9XN79bV+8BEsDfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zI2/dNii; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=E0QquJ1L; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1717150034;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YEhhT+5dH1vYGUO4W2LMvyfj5PkiRdgoZHd30AvP03A=;
+	b=zI2/dNiiftJHjwSy2qBj/TkVOGN/az4z04M5u0rB5C+1zWjeQNXzkdrF3F725nvE1xopZa
+	GX2SA9GyTBoeRm/xsGiOrTbxH37vPyQ0Es7Mnr0Vo3/MXF4kK7dO1t93E+zMIX5ujWublK
+	zZqzLd5JAV6LdDEC8clsUSyB+m5mXYbwmNo3iMxFF6699mT6GbUS/CgQb5qOkV+7CiflP0
+	hHIzrmhZiQyOyJYCWTRNLRE688nFPGSSe3zMsnj/9YDxnfreyO/x7NxHE1YvAdAXj0WDvh
+	cC1ghZLN3hap/Tiea69Bu+RNrMKKK3+3/ubldgS/WdlEk1UVtrcU54VU2MLGgg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1717150034;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YEhhT+5dH1vYGUO4W2LMvyfj5PkiRdgoZHd30AvP03A=;
+	b=E0QquJ1LURRSgg3AIudbCUfBMHUXcoKDHNRPc0soIX51ytOK8+HZtPA0f5JPBbwmxm4rh0
+	8ZhOjWIk3mC/z7AA==
+To: Peter Schneider <pschneider1968@googlemail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
+ stable@vger.kernel.org, regressions@lists.linux.dev, christian@heusel.eu
+Subject: Re: Kernel 6.9 regression: X86: Bogus messages from topology detection
+In-Reply-To: <087b4298-6564-40ad-a4fb-32dbb2f74a43@googlemail.com>
+References: <877cffcs7h.ffs@tglx>
+ <16cd76b1-a512-4a7b-a304-5e4e31af3c8a@googlemail.com>
+ <ce3abe01-4c37-416e-a5ed-25703318318a@googlemail.com>
+ <87zfs78zxq.ffs@tglx>
+ <76b1e0b9-26ae-4915-920d-9093f057796b@googlemail.com>
+ <87r0dj8ls4.ffs@tglx> <87o78n8fe2.ffs@tglx> <87le3r8dyw.ffs@tglx>
+ <bd7ff2f3-bf2c-4431-9848-8eb41e7422c6@googlemail.com>
+ <87ikyu8jp4.ffs@tglx> <87frty8j9p.ffs@tglx>
+ <087b4298-6564-40ad-a4fb-32dbb2f74a43@googlemail.com>
+Date: Fri, 31 May 2024 12:07:11 +0200
+Message-ID: <87zfs670s0.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.12.4
+Content-Type: text/plain
 
-On Sun, 05 May 2024 09:03:32 +0200, Christophe JAILLET wrote:
-> 'is31fl3190_regmap_config' and 'is31fl3196_regmap_config' are not modified
-> in this diver and are only used as a const struct regmap_config.
-> 
-> Constifying these structures moves some data to a read-only section, so
-> increase overall security.
-> 
-> On a x86_64, with allmodconfig:
-> Before:
->    text	   data	    bss	    dec	    hex	filename
->   13827	   2002	     32	  15861	   3df5	drivers/leds/leds-is31fl319x.o
-> 
-> [...]
+Peter!
 
-Applied, thanks!
+On Fri, May 31 2024 at 11:41, Peter Schneider wrote:
+> Anyway, this last version of your patch fixes things for me, please see attached dmesg 
+> output. Thanks very much for investigating and fixing this issue!
+>
+> Tested-by: Peter Schneider <pschneider1968@googlemail.com>
+>
+> If you like, I can retest with your first patch (with additional debug
+> info output) additionally applied on top of that and send the output,
+> if that would be useful for you.
 
-[1/1] leds: is31fl319x: Constify struct regmap_config
-      commit: eccf45fdbfcbc9890a02d53c0a6c45271c37969e
+No need. I'm properly coffeiniated and confident enough that this cures
+it. :)
 
---
-Lee Jones [李琼斯]
+Thanks a lot for testing and providing all the information!
 
+       tglx
 
