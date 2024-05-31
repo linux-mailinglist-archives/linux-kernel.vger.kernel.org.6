@@ -1,357 +1,78 @@
-Return-Path: <linux-kernel+bounces-197490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4440F8D6B5E
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 23:15:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C5B58D6B63
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 23:16:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66FB21C21544
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 21:15:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10D7AB214ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 21:16:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 110C7824BD;
-	Fri, 31 May 2024 21:14:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A46DC12FF83;
+	Fri, 31 May 2024 21:14:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bEiUu/Ze"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q9eQAr0c"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4575E78276
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 21:13:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3FBD12F5B7;
+	Fri, 31 May 2024 21:14:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717190041; cv=none; b=MIuA0yE0Nh8uBvcGvzblI8mqjbiUL1Vfu0aMCqjRhZAXdV6AhTpvHQP5bjaa+/ub3jlFJboq4VUMxnVf5kezCnRdwEfxawVeTGYhy5yJryy0eBkBLvbxDbHGJORoQFlrl/E5w9LnfqeN9Fp1d4hdPcJUjQP/Hqtkn3bu228Ua9Q=
+	t=1717190046; cv=none; b=SWiJ56uJdk27UE2wrvdtZAgZGQV93F2Cczxp0/MTVNjCFIoHWEMDNCf29Hsw+iexNgmy22bq5DQrquBDP2/6+iLi4j9GPp6MVOrYbfjnR+eanNUlfufmkBdtCi+Uu7TjyYHsyKgIKsWUXuyvFa1FrkMUCJ772FzumQSVV1pOKCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717190041; c=relaxed/simple;
-	bh=ZoonMjX+hy2dC/e3grvoJDzsRkeVHYWF+ZtOXmjMi1c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NDjl4WPdXMgz349Gmq3FtynPqCTR/frs1arzvVGmQ6sjyAYGYQbn+TlwBTVTtp9RelDPsU4QqRrN1JZtXXQ4sfFgA6CvY/oTfj1yP1xoU/P2aw9FD/kEAfq7yQFcTQ1/bAH0gHjXwrYDUnevJfkcGdb1zkdRigJnXNhDjQvv9+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bEiUu/Ze; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717190037;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WhJ9r9VGb6v6nJtrxpKIUn6gJ8+bAg2GbcmFOpF+Xps=;
-	b=bEiUu/Ze4HQ7hLhBlzX9dVH5ieh9S/NIXnonyu2It0+71rF9ny0tDxnUqzAIsWKcd2j0UZ
-	0um6Q9z/fprapbs5QaBRikEKczRfrLtbcSYKjrEPuEssrWd312OpeHdilJZsbbp57fos0G
-	qib2e0gIcZJh6pBOqq4iqSO69NBLbyg=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-73-FFdWxYncNq-AimzezFZRAg-1; Fri,
- 31 May 2024 17:13:53 -0400
-X-MC-Unique: FFdWxYncNq-AimzezFZRAg-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 287FA29AA381;
-	Fri, 31 May 2024 21:13:53 +0000 (UTC)
-Received: from [10.22.9.214] (unknown [10.22.9.214])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 91B2F105480A;
-	Fri, 31 May 2024 21:13:52 +0000 (UTC)
-Message-ID: <31980c80-0f61-4ff7-87ab-be901f08c682@redhat.com>
-Date: Fri, 31 May 2024 17:13:51 -0400
+	s=arc-20240116; t=1717190046; c=relaxed/simple;
+	bh=g4xGftAItbPB9/XxDsfBwBbndVWd87MNeTmFhogkhE4=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DM1O4xBb+ffgnRA0jUaZ01vaQ5EQtzY67bTTj/tyoOezYsH1wHdhTFGtc66f1wF0DuX4h+KXRoAAmXipGCGHFt9oqpa97TkCZenVwUAhSAalKlY9azlQwwtGlWBYb7NJK3FowdwhM/jLLbYvjBb5o7c7rTGbwdC9DTehNjMQkSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q9eQAr0c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A0F0C116B1;
+	Fri, 31 May 2024 21:14:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717190045;
+	bh=g4xGftAItbPB9/XxDsfBwBbndVWd87MNeTmFhogkhE4=;
+	h=From:To:Subject:Date:In-Reply-To:References:From;
+	b=q9eQAr0cmZto6gpP+2HJ1tgAKR9hzD+P9Yx0I+7h3WffpKxyQny84HXuFZcA18tm6
+	 +1cd/Zurjeb9aRuEvKekL6EYsLcgAqF9Z+IsFVxcecXTbiZZBCfiOf52kWEt1BS//y
+	 AQSVa8+Y34ZgO2LPifHhLKsP63HnmIJTw5BTKpdI9AruvHdci43Amew9GO/tm+x4Zg
+	 HA0XWkBlHu3tcxNS5gkSxcYsxHcRXuk16Up5XhHIfWm3eTiZ0Q+eL00ro3hO9tmqxF
+	 /1wEvpZHjR9uROFbuF3jY6J3sKJb5Ei6fuLRvK12F2GygKdW9Uf32uLAKakH9ktxxO
+	 GQntCGWGA0WBA==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] tools api io: Move filling the io buffer to its own function
+Date: Fri, 31 May 2024 14:14:03 -0700
+Message-ID: <171718991317.2179562.7793120859292708141.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.45.1.288.g0e0cd299f1-goog
+In-Reply-To: <20240519181716.4088459-1-irogers@google.com>
+References: <20240519181716.4088459-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] cpuset: Optimize the number of iterations in the
- scheduling domain construction process
-To: Xavier <ghostxavier@sina.com>, lizefan.x@bytedance.com, tj@kernel.org,
- hannes@cmpxchg.org
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240531024837.255293-1-ghostxavier@sina.com>
-Content-Language: en-US
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <20240531024837.255293-1-ghostxavier@sina.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.3
 
-On 5/30/24 22:48, Xavier wrote:
-> The process of constructing scheduling domains involves multiple loops
-> and repeated evaluations, leading to numerous redundant and ineffective
-> assessments that impact code efficiency.
->
-> Here, we use Union-Find to optimize the merging of cpumasks. By employing
-> path compression and union by rank, we effectively reduce the number of
-> lookups and merge comparisons.
->
-> Signed-off-by: Xavier <ghostxavier@sina.com>
-> ---
->   kernel/cgroup/cpuset.c | 117 +++++++++++++++++++++++------------------
->   1 file changed, 66 insertions(+), 51 deletions(-)
->
-> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-> index c12b9fdb2..4bea1c2db 100644
-> --- a/kernel/cgroup/cpuset.c
-> +++ b/kernel/cgroup/cpuset.c
-> @@ -891,6 +891,44 @@ static inline int nr_cpusets(void)
->   	return static_key_count(&cpusets_enabled_key.key) + 1;
->   }
->   
-> +/*define a union find node struct*/
-> +struct uf_node {
-> +	int parent;
-> +	int rank;
-> +};
-> +
-> +static int find_root(struct uf_node *nodes, int x)
-> +{
-> +	int root = x;
-> +	int parent;
-> +
-> +	/*Find the root node and perform path compression at the same time*/
-> +	while (nodes[root].parent != root) {
-> +		parent = nodes[root].parent;
-> +		nodes[root].parent = nodes[parent].parent;
-> +		root = parent;
-> +	}
-> +	return root;
-> +}
-> +
-> +/*Function to merge two sets, using union by rank*/
-> +static void union_sets(struct uf_node *nodes, int a, int b)
-> +{
-> +	int root_a = find_root(nodes, a);
-> +	int root_b = find_root(nodes, b);
-> +
-> +	if (root_a != root_b) {
-> +		if (nodes[root_a].rank < nodes[root_b].rank) {
-> +			nodes[root_a].parent = root_b;
-> +		} else if (nodes[root_a].rank > nodes[root_b].rank) {
-> +			nodes[root_b].parent = root_a;
-> +		} else {
-> +			nodes[root_b].parent = root_a;
-> +			nodes[root_a].rank++;
-> +		}
-> +	}
-> +}
-> +
->   /*
->    * generate_sched_domains()
->    *
-> @@ -950,13 +988,14 @@ static int generate_sched_domains(cpumask_var_t **domains,
->   	struct cpuset *cp;	/* top-down scan of cpusets */
->   	struct cpuset **csa;	/* array of all cpuset ptrs */
->   	int csn;		/* how many cpuset ptrs in csa so far */
-> -	int i, j, k;		/* indices for partition finding loops */
-> +	int i, j;		/* indices for partition finding loops */
->   	cpumask_var_t *doms;	/* resulting partition; i.e. sched domains */
->   	struct sched_domain_attr *dattr;  /* attributes for custom domains */
->   	int ndoms = 0;		/* number of sched domains in result */
->   	int nslot;		/* next empty doms[] struct cpumask slot */
->   	struct cgroup_subsys_state *pos_css;
->   	bool root_load_balance = is_sched_load_balance(&top_cpuset);
-> +	struct uf_node *nodes;
->   
->   	doms = NULL;
->   	dattr = NULL;
-> @@ -1022,33 +1061,31 @@ static int generate_sched_domains(cpumask_var_t **domains,
->   	}
->   	rcu_read_unlock();
->   
-> -	for (i = 0; i < csn; i++)
-> -		csa[i]->pn = i;
-> -	ndoms = csn;
-> -
-> -restart:
-> -	/* Find the best partition (set of sched domains) */
-> -	for (i = 0; i < csn; i++) {
-> -		struct cpuset *a = csa[i];
-> -		int apn = a->pn;
-> +	nodes = kmalloc_array(csn, sizeof(struct uf_node), GFP_KERNEL);
-> +	if (!nodes)
-> +		goto done;
->   
-> -		for (j = 0; j < csn; j++) {
-> -			struct cpuset *b = csa[j];
-> -			int bpn = b->pn;
->   
-> -			if (apn != bpn && cpusets_overlap(a, b)) {
-> -				for (k = 0; k < csn; k++) {
-> -					struct cpuset *c = csa[k];
-> +	/* Each node is initially its own parent */
-> +	for (i = 0; i < csn; i++) {
-> +		nodes[i].parent = i;
-> +		nodes[i].rank = 0;
-> +	}
->   
-> -					if (c->pn == bpn)
-> -						c->pn = apn;
-> -				}
-> -				ndoms--;	/* one less element */
-> -				goto restart;
-> -			}
-> +	/* Merge overlapping cpusets */
-> +	for (i = 0; i < csn; i++) {
-> +		for (j = i + 1; j < csn; j++) {
-> +			if (cpusets_overlap(csa[i], csa[j]))
-> +				union_sets(nodes, i, j);
->   		}
->   	}
->   
-> +	/* Calculate the number of domains after merging */
-> +	for (i = 0; i < csn; i++) {
-> +		if (nodes[i].parent == i)
-> +			ndoms++;
-> +	}
-> +
->   	/*
->   	 * Now we know how many domains to create.
->   	 * Convert <csn, csa> to <ndoms, doms> and populate cpu masks.
-> @@ -1065,47 +1102,25 @@ static int generate_sched_domains(cpumask_var_t **domains,
->   			      GFP_KERNEL);
->   
->   	for (nslot = 0, i = 0; i < csn; i++) {
-> -		struct cpuset *a = csa[i];
-> -		struct cpumask *dp;
-> -		int apn = a->pn;
-> -
-> -		if (apn < 0) {
-> -			/* Skip completed partitions */
-> -			continue;
-> -		}
-> -
-> -		dp = doms[nslot];
-> -
-> -		if (nslot == ndoms) {
-> -			static int warnings = 10;
-> -			if (warnings) {
-> -				pr_warn("rebuild_sched_domains confused: nslot %d, ndoms %d, csn %d, i %d, apn %d\n",
-> -					nslot, ndoms, csn, i, apn);
-> -				warnings--;
-> -			}
-> -			continue;
-> -		}
-> +		struct cpumask *dp = doms[nslot];
->   
->   		cpumask_clear(dp);
->   		if (dattr)
->   			*(dattr + nslot) = SD_ATTR_INIT;
->   		for (j = i; j < csn; j++) {
-> -			struct cpuset *b = csa[j];
-> +			if (find_root(nodes, j) == i) {
-> +				if (i == j)
-> +					nslot++;
->   
-> -			if (apn == b->pn) {
-> -				cpumask_or(dp, dp, b->effective_cpus);
-> +				cpumask_or(dp, dp, csa[j]->effective_cpus);
->   				cpumask_and(dp, dp, housekeeping_cpumask(HK_TYPE_DOMAIN));
->   				if (dattr)
-> -					update_domain_attr_tree(dattr + nslot, b);
-> -
-> -				/* Done with this partition */
-> -				b->pn = -1;
-> +					update_domain_attr_tree(dattr + nslot, csa[j]);
->   			}
->   		}
-> -		nslot++;
->   	}
->   	BUG_ON(nslot != ndoms);
-> -
-> +	kfree(nodes);
->   done:
->   	kfree(csa);
->   
+On Sun, 19 May 2024 11:17:16 -0700, Ian Rogers wrote:
+> In general a read fills 4kb so filling the buffer is a 1 in 4096
+> operation, move it out of the io__get_char function to avoid some
+> checking overhead and to better hint the function is good to inline.
+> 
+> For perf's IO intensive internal (non-rigorous) benchmarks there's a
+> near 8% improvement to kallsyms-parsing with a default build.
+> 
+> [...]
 
-I have several issues with this patch.
+Applied to perf-tools-next, thanks!
 
-1) The function comment describes the algorithm to find the set of 
-domains. If you change the algorithm, you have to update the comment as 
-well.
-
-2) generate_sched_domains() is not in a performance critical path, so 
-its performance is not as important. Also the csn array is typically not 
-that big. Changing the algorithm may introduce new bugs which leads to 
-the next point.
-
-3) How do you test your code to ensure its correctness?
-
-I applied your patch and run the ./test_cpuset_prs.sh got the following:
-
-[   87.850866] BUG: kernel NULL pointer dereference, address: 
-0000000000000000
-[   87.857832] #PF: supervisor write access in kernel mode
-[   87.863067] #PF: error_code(0x0002) - not-present page
-[   87.868203] PGD 0 P4D 0
-[   87.870745] Oops: 0002 [#1] PREEMPT SMP NOPTI
-[   87.875105] CPU: 34 PID: 8789 Comm: test_cpuset_prs Kdump: loaded Not 
-tainted 6.9.0-rc2-test+ #12
-[   87.883976] Hardware name: Intel Corporation S2600WFD/S2600WFD, BIOS 
-SE5C620.86B.0X.02.0001.043020191705 04/30/2019
-[   87.894402] RIP: 0010:memset_orig+0x72/0xb0
-[   87.898597] Code: 47 28 48 89 47 30 48 89 47 38 48 8d 7f 40 75 d8 0f 
-1f 84 00 00 00 00 00 89 d1 83 e1 38 74 14 c1 e9 03 66 0f 1f 44 00 00 ff 
-c9 <48> 89 07 48 8d 7f 08 75 f5 83 e2 07 74 0a ff ca 88 07 48 8d 7f 01
-[   87.917343] RSP: 0018:ffffa1b2a29b7d28 EFLAGS: 00010202
-[   87.922568] RAX: 0000000000000000 RBX: 0000000000000002 RCX: 
-0000000000000001
-[   87.929701] RDX: 0000000000000010 RSI: 0000000000000000 RDI: 
-0000000000000000
-[   87.936834] RBP: ffff9184d9647620 R08: 0000000000000008 R09: 
-0000000000000000
-[   87.943967] R10: 0000000000000000 R11: 0000000000000001 R12: 
-0000000000000002
-[   87.951100] R13: 0000000000000000 R14: ffff9184ccca5798 R15: 
-0000000000000003
-[   87.958231] FS:  00007fb51944a740(0000) GS:ffff91947eb00000(0000) 
-knlGS:0000000000000000
-[   87.966316] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   87.972061] CR2: 0000000000000000 CR3: 000000109627c005 CR4: 
-00000000007706f0
-[   87.979194] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 
-0000000000000000
-[   87.986327] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 
-0000000000000400
-[   87.993460] PKRU: 55555554
-[   87.996174] Call Trace:
-[   87.998626]  <TASK>
-[   88.000733]  ? __die+0x24/0x70
-[   88.003802]  ? page_fault_oops+0x14a/0x510
-[   88.007909]  ? __schedule+0x3d1/0x1710
-[   88.011659]  ? exc_page_fault+0x77/0x170
-[   88.015584]  ? asm_exc_page_fault+0x26/0x30
-[   88.019772]  ? memset_orig+0x72/0xb0
-[   88.023349]  rebuild_sched_domains_locked+0x4f5/0x920
-[   88.028403]  update_prstate+0x137/0x4e0
-[   88.032245]  sched_partition_write+0x96/0x180
-[   88.036613]  kernfs_fop_write_iter+0x12c/0x1c0
-[   88.041067]  vfs_write+0x30c/0x430
-[   88.044481]  ksys_write+0x63/0xe0
-[   88.047801]  do_syscall_64+0x87/0x170
-[   88.051474]  ? exc_page_fault+0x77/0x170
-[   88.055400]  entry_SYSCALL_64_after_hwframe+0x71/0x79
-[   88.060453] RIP: 0033:0x7fb5192fda57
-[   88.064047] Code: 0f 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b7 0f 
-1f 00 f3 0f 1e fa 64 8b 04 25 18 00 00 00 85 c0 75 10 b8 01 00 00 00 0f 
-05 <48> 3d 00 f0 ff ff 77 51 c3 48 83 ec 28 48 89 54 24 18 48 89 74 24
-[   88.082794] RSP: 002b:00007ffc6e57d2d8 EFLAGS: 00000246 ORIG_RAX: 
-0000000000000001
-[   88.090361] RAX: ffffffffffffffda RBX: 0000000000000007 RCX: 
-00007fb5192fda57
-[   88.097490] RDX: 0000000000000007 RSI: 000055aee3c38f40 RDI: 
-0000000000000001
-[   88.104623] RBP: 000055aee3c38f40 R08: 0000000000000000 R09: 
-00007fb5193b14e0
-[   88.111757] R10: 00007fb5193b13e0 R11: 0000000000000246 R12: 
-0000000000000007
-[   88.118890] R13: 00007fb5193fb780 R14: 0000000000000007 R15: 
-00007fb5193f69e0
-[   88.126024]  </TASK>
-
-So it is not ready for prime time yet.
-
-Regards,
-Longman
-
+Best regards,
+-- 
+Namhyung Kim <namhyung@kernel.org>
 
