@@ -1,147 +1,166 @@
-Return-Path: <linux-kernel+bounces-196741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D13158D60D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 13:38:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB42A8D60F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 13:44:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3530D1F2424F
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 11:38:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C1C42850F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 11:44:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D7B58173C;
-	Fri, 31 May 2024 11:38:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04A1D157A7C;
+	Fri, 31 May 2024 11:44:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PFhkgnfH"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="azpfS43w"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C622A15748D
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 11:38:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1B56156967;
+	Fri, 31 May 2024 11:44:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717155491; cv=none; b=LSlyjhRuSurU9siKB7SjxYwbm/KbcK9exF4IYKW79i6+tkcAYvY43yYoMrsNMol3V7YG55p3Q4LuHLl53OLFgigYJmoinxhSNCtNSzNacjIpoH7FWRLtrzc+UCPsVe0vAQmBoFyqHuqdPId5K9c9X41ZDatqk7G54hVO8Hsdekw=
+	t=1717155873; cv=none; b=J7F6l48gliXIMJz8bqvbSoqoIl/Ua9s64JmA2wm5jwsk1hTaf+9w7izEnvDT5j776BQmm7tBc/FDGM2lx0ukoS+u5kYLHscIEf3sVZ4ZByyLBkDr6wa4kD7GuEipsOWpqyFEhUHl8UcPPIlqGt5rs/JJzRvGTAud9NKoqI5YT5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717155491; c=relaxed/simple;
-	bh=KzxFueSVmNEoiNc+OTEKRiu2AQKgXCyeCA4qnKLprZc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CBrLpo5AX9gSPUj2bYV0S0yKouLHyVfkH1xtFCotGXcW3xVmn32+IpFmAvFAVOwPfinQcdTylIRzdVE9hSUX7dkz98601vXheKiQFc4bM0u2D5BXbL5aNfLjfOZLYqEBAbQuosln884aiY34YmkBv+m53UjowKFH5/jZ/qbe+tQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PFhkgnfH; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-578517c7ae9so2067366a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 04:38:09 -0700 (PDT)
+	s=arc-20240116; t=1717155873; c=relaxed/simple;
+	bh=gTkrPFcPFjPmNl4EMeRF67ICZfuMGtOJ+smcsmDI0GA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VeyvzGLHqrfTwddurEO4inwslB8HRWag6P2ujKj8IZrkff0wOJedI79ItQHN/e3XUQD+VHFNoqkKarERd8JU0WAqVsaI5GSb3soKhBYefE4wzc0JF5VVtqC2i5GY0u16M1D8rW94v8X2zalqYFvuD6MT54Da8LKm97U0Il7omrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=azpfS43w; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a6762109c06so189166066b.0;
+        Fri, 31 May 2024 04:44:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717155488; x=1717760288; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=iNuoN1tAu0HSQS+G/RZ/dRXYB+icJAiyT6fdiYq4XYA=;
-        b=PFhkgnfHWvhYlM+tc6WQUxT3KRnN6ytevyTiVH/7UC84D9IFioM+zP5c+cLP042Hao
-         JeX1gHMF+9RhtMs/heZoG0g1wPJVoF7/22K4JLfJEDrHzWvCE1HkICIGIb5/7SmBTKiM
-         KH/idONQCDKI/7VQQgBv360zbqJ2uO0934pttwkcANOK4vLkyA8Tq4yRWmEcBFsAMb9D
-         RSsNFZc06w/mSfD2kUfSy5PnmHQqHk1LNnZ6lwYM0s1Q3jS3hz1domwOhQaS+51PyRdx
-         ZmEd4+ev7uVkNp/dvyYrg0UrhSZ6vS2D4PFBOm7H54kq9eOJvDzM61ofxw05qVDgIyF8
-         /aiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717155488; x=1717760288;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1717155869; x=1717760669; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=iNuoN1tAu0HSQS+G/RZ/dRXYB+icJAiyT6fdiYq4XYA=;
-        b=q+NOHKrixf0ZQbPM5GgvVuRJYGjrLs/bUKVQrqTfJbstMJO+A7ZpSSkey0VkEylyd+
-         8j0vAlndezp/EMtShZxn7US2S2WbZw9ILKnK7nf7tP7ifJSZTKT8aK/3GIKibCyy7/1Z
-         7Oj9eIOHceIV70oP6dnz2CxMm6ly9XJ8bR2XEawC7OmxwN0tmRscxQpdY0k1QsU13nLR
-         dRNNKFxbHqpVwSdShpYAOi2x2qGjRXi7q492gvZEW+pwPEpcwi+u6+AlB7z1sbUoJSX+
-         MjB/Fyt9I4VR3fnYeyJwtrVqKD6+Qr2FLOoV6kKA5LVXVtJ9+qx5U1eoe0DteKCa52nE
-         529g==
-X-Forwarded-Encrypted: i=1; AJvYcCVudZ6CeM8v46AJ7Jwj1TDKhGDbWmWyKWiYGF+pcv+byCc0tnTfFT1w1gzi5ttytaw8LwaRTqMZ1eZv0Dn3nF7pqp4mnZ6aRxF3wntb
-X-Gm-Message-State: AOJu0Yz04QjEeZIvLu/Mst0+a3zrJJoGP27SmfMCwbypjJRQJi539Bwu
-	S7OlcJOxi94sKfnBk/c0tqqMaORVCLvbLIrE5ZyaSfCGUyOQkKs3MCKDWYLX0Yg=
-X-Google-Smtp-Source: AGHT+IEB9Zjhm+bJIPzNKCbqEzPDhy6cnhe6m1N9nggGknOW+0Col3bm16ru72Z75E4WiduBDf84Zg==
-X-Received: by 2002:a50:874f:0:b0:57a:27f5:1273 with SMTP id 4fb4d7f45d1cf-57a36571e62mr1041811a12.37.1717155488119;
-        Fri, 31 May 2024 04:38:08 -0700 (PDT)
-Received: from [192.168.128.139] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57a31c9bc79sm915069a12.89.2024.05.31.04.38.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 31 May 2024 04:38:07 -0700 (PDT)
-Message-ID: <7beb86d3-2d80-4c69-bad9-c0b050b73c79@linaro.org>
-Date: Fri, 31 May 2024 13:38:04 +0200
+        bh=wqd5CJWs8bzLK+RMndMHq317X+gT2llkhqAxoGBYvLU=;
+        b=azpfS43wN2KCH4RBOJ8Do/P3ub61nW5hP2jpq/pOk+jyN2gL7bF15zpNR/wF0VhPdh
+         PYFv2+4XDBl0UHUNAqTrpxR33aDQ9uISi4/NLtoDNBZF7giY8kG0SNPxz7CHhqH7F7Wp
+         ijT+BLmesAgM9dsK9p8KFhmonKM8sdiannY0lC/6/Jlg6qAYlTH7F8CJ8A/7QT406b3+
+         Ng6MbFLgtSWEwi9a0LdVCxrcLWO/4hbZKi6yyP0ONWER4CwA9Yiop7Gz4MBIDugtfEgU
+         S9iPxuDi+Wa392gt94m0bZ0WGO2ChY8wHzC/84aqV739aHKzjHQdvsQgk0O5AMKIQdy/
+         +q6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717155869; x=1717760669;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wqd5CJWs8bzLK+RMndMHq317X+gT2llkhqAxoGBYvLU=;
+        b=X/dxeuS5uopxZNDS9Ig4POPsg6K2XUe2koRqoyaE6qbBdbEGMyvixrC7xwlOTy/DpG
+         1/mTR5k7SNF89cZaZuequAfGYCRsLXOVpuvJfwR/CZYHPO2b/ISS64eyORvM9P10hepu
+         oQU7iLbFhA9ThEXUkF2+FlNDmUWzh18xBqQkI002AcZfsRtLMf/RgGvx9xvWygdf7/6d
+         81gKNONlYSGPUXWUGs0ibOHDwr/9/RJn/6yVn7X3A3peiJZnRosLiWC+TfB/hPHNuiwD
+         e4IB/5FeXz+8vFuc5h6pLvwJ0b9XKiSoxRSVdawTaPY2VaUYaHLaTiOWmNj8jVxiquWE
+         670Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXTLrGVz1PI9h4ytUpE/xa4HrLoHHoSBFPEkBFrjnFLGQ+Fq1Nlqod3y12LLrmn+ZLyL2f+tJ6gyb9hCRJoFs7MJEXZeFQTorUzfCI7XKPZPI3fkBAHyzG0NK+ZVfewN8XoIZNSiufiVQ==
+X-Gm-Message-State: AOJu0YzeqQzQOuTQ2FLaHm2T525EnsvIcWeqrNBn0374SkUFw72SJR2Z
+	XeGKGCX7OBXbA+s6Q8R+HiwOXBuYsy/qxMxhzOgwcD1pU5xPtww/wq6NTQzZSkQVedgBvctFkdX
+	zAmyE9+36byVHfwIu8+ertJWh+WI=
+X-Google-Smtp-Source: AGHT+IF0Qcu9EJQr44+eGVBolIVBmGWoyCtqb1nUMq+iFXyzHjYzB1XGjgJZdgvl6m/6O9x6S/jQYc6TUKvIW8vbQQU=
+X-Received: by 2002:a17:907:1044:b0:a68:8cf2:4985 with SMTP id
+ a640c23a62f3a-a688cf249f7mr56590066b.37.1717155868742; Fri, 31 May 2024
+ 04:44:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: (subset) [PATCH 0/3] arm64: qcom: SA8775p: Add llcc support
-To: Rob Herring <robh@kernel.org>, Bjorn Andersson <andersson@kernel.org>
-Cc: krzk+dt@kernel.org, conor+dt@kernel.org,
- Tengfei Fan <quic_tengfan@quicinc.com>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@quicinc.com
-References: <20240529101534.3166507-1-quic_tengfan@quicinc.com>
- <171703961686.615222.7092607304287257293.b4-ty@kernel.org>
- <20240531014151.GA3684019-robh@kernel.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20240531014151.GA3684019-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <673dcf47596e7bc8ba065034e339bb1bbf9cdcb0.1716948159.git.dsimic@manjaro.org>
+ <CABjd4YxD41DEkBCZfkznLboEY9ZVOfTCLcj4S_kkcsVswbANyQ@mail.gmail.com>
+ <8f8623e29a479c4108141302e708dc3b@manjaro.org> <CABjd4Yy4RMg+6-4ygV0MSwJj5LReY-ymbctq4PPfVZ6L+c1tsw@mail.gmail.com>
+ <166cc4e46f31644a50306625b2ab18a6@manjaro.org> <CABjd4YzDNQa45=KC_t0xnTDrH+g-oUrcpgP55oOj7JcAuu7uFw@mail.gmail.com>
+ <82db817a908b761d8c3d73ea04714314@manjaro.org> <607f4da8-99b2-4379-9567-4bfd2744eab3@kwiboo.se>
+In-Reply-To: <607f4da8-99b2-4379-9567-4bfd2744eab3@kwiboo.se>
+From: Alexey Charkov <alchark@gmail.com>
+Date: Fri, 31 May 2024 15:44:17 +0400
+Message-ID: <CABjd4YxdM+cM+z7ou3=DF2SrFM0235DSTZ45o0NsKBwGrgW8Bg@mail.gmail.com>
+Subject: Re: [RFC PATCH] arm64: dts: rockchip: Make preparations for
+ per-RK3588-variant OPPs
+To: Jonas Karlman <jonas@kwiboo.se>
+Cc: Dragan Simic <dsimic@manjaro.org>, linux-rockchip@lists.infradead.org, heiko@sntech.de, 
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+	robh+dt@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	linux-kernel@vger.kernel.org, quentin.schulz@cherry.de, wens@kernel.org, 
+	daniel.lezcano@linaro.org, didi.debian@cknow.org, 
+	krzysztof.kozlowski+dt@linaro.org, viresh.kumar@linaro.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 31.05.2024 3:41 AM, Rob Herring wrote:
-> On Wed, May 29, 2024 at 10:27:00PM -0500, Bjorn Andersson wrote:
->>
->> On Wed, 29 May 2024 18:15:31 +0800, Tengfei Fan wrote:
->>> The SA8775p platform has LLCC as the system cache controller. It
->>> includes 6 LLCC instances and 1 broadcast interface.
->>>
->>>
->>
->> Applied, thanks!
->>
->> [3/3] arm64: dts: qcom: sa8775p: Add llcc support for the SA8775p platform
->>       commit: 809c20b1ffc80200bfcbbeceb0d946a3e0eed3a4
-> 
-> I'm confused why you didn't pick up the driver and binding?
+Hi Jonas,
 
-He did, although to a different tree (qcom/arm64-for-x.y vs qcom/drivers-for-x.y)
+On Fri, May 31, 2024 at 3:27=E2=80=AFPM Jonas Karlman <jonas@kwiboo.se> wro=
+te:
+>
+> Hi Alexey and Dragan,
+>
+> On 2024-05-30 21:31, Dragan Simic wrote:
+> > Hello Alexey,
+> >
+>
+> [snip]
+>
+> >>>>> That way we'll have no roadblocks if, at some point, we end up with
+> >>>>> having
+> >>>>> different OPPs defined for the RK3588 and the RK3588S variants.  Or
+> >>>>> maybe
+> >>>>> even for the RK3582, which we don't know much about yet.
+> >>>>
+> >>>> Guess we'll deal with that one once we stumble upon an actual RK3582
+> >>>> board out in the wild and heading to the mainline kernel tree :)
+> >>>
+> >>> Of course, that was just an example for the future use.
+> >>
+> >> In fact, I've just discovered that Radxa has recently released Rock 5C
+> >> Lite which is based on RK3582, and starts at just $29 for the 1GB
+> >> version, making it interesting for tinkering. Especially given that
+> >> its GPU, one of the big-core clusters and one of the VPU cores seem to
+> >> be disabled in software (u-boot) rather than in hardware, which means
+> >> there is some chance that a particular SoC specimen would actually
+> >> have them in a working condition and possible to re-enable at no cost.
+> >> Ordered myself one to investigate :)
+> >
+> > Yes, I also saw the RK3582-based ROCK 5C Lite a couple of days ago. :)
+> > It seems that the disabled IP blocks are detected as defective during
+> > the manufacturing, which means that they might work correctly, or might
+> > actually misbehave.  It seems similar to the way old three-core AMD
+> > Phenom II CPUs could sometimes be made quad-core.
+> >
+>
+> I can confirm that the RK3582 include ip-state in OTP indicating
+> unusable cores, any unusable cpu core cannot be taken online and stalls
+> Linux kernel a few extra seconds during boot.
+>
+> Started working on a patch for U-Boot to remove any broken cpu core
+> and/or cluster nodes, similar to what vendor U-Boot does, adopted to
+> work with a mainline DT for RK3588.
 
-Konrad
+Superb - it's great to have a patch for it already, thank you for working o=
+n it!
+
+> On one of my ROCK 5C Lite board one of the cpu cores is unusable, U-Boot
+> removes the related cpu cluster nodes. On another ROCK 5C Lite board one
+> rkvdec core is only marked unusable and all cpu cores can be taken
+> online, U-Boot does nothing in this case. Guessing we should apply
+> similar policy as vendor U-Boot and disable cores anyway.
+
+Is there any misbehavior / instability if you just keep all the
+unmarked cores online?
+
+I think from an end-user perspective it would be better to just enable
+everything that works, as the reason to unconditionally disable some
+IP blocks even when they are "good" is quite likely not a technical
+one but rather a marketing one. It's hard to justify selling chips
+with different sets of working IP blocks under the same label and the
+same price, making it easier to just trim them all to a lowest common
+denominator. On the other hand, once a person has already bought a
+device where some IP blocks work even if they are not supposed to, why
+not make use of them? It costs nothing, hurts noone...
+
+Best regards,
+Alexey
 
