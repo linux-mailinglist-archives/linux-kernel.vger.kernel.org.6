@@ -1,273 +1,106 @@
-Return-Path: <linux-kernel+bounces-196294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 751748D59DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 07:28:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 577AE8D59DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 07:26:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E81CF1F2482D
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 05:28:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FF93283C90
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 05:26:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 500F678C8C;
-	Fri, 31 May 2024 05:28:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5F2E7B3FA;
+	Fri, 31 May 2024 05:26:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="JYr8c36p"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="cLhwqiY5"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BCAD2595
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 05:28:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4AD72595;
+	Fri, 31 May 2024 05:26:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717133287; cv=none; b=GJ5wA3iO178DsA7KSZcjt96CrT1x+rxMwQHXPsimhv6BHhAiLeh5Hc9VHB+Un7KjSMYuEfe7DBEEvsxRtXVoJ8XLaxanmCvdjN9UFmzWl/P2+4ZwulEE7hhbXNgZ1LRyHD1y7rUpZZapNHa9oVnplXiKXwBI0VmPFw5TyxM8Aio=
+	t=1717133201; cv=none; b=j12wKKxuHqIBtqDnvB2mrzHYVkPpOe1EVoSa5iu4M/2UTFXYvkHD3oUwhWIB6HXbngl5MHvSpFDj9N0zAegfr/msxtnHl80/ZLsZ695KAktCG5tBmnenerf2ZrtkFxdCiHnam3Py7E4XfvjUhtltgLaHSLaTvjWZogOHQnN9+dQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717133287; c=relaxed/simple;
-	bh=PzL3Agibp2BwAUGKAq4VnWqww86W93usoupJOjzqlQk=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JVxTQ5JHIGkHIupB6I/grLnKfYYFRu6FmNLr6j/C6wRK9dfgdYwTo9c+6EfTSFvb/ZPf1Xjir7EkKQfAjJcQhI2CGmWoo1SiXYU7b4r5A6fDrFfbjxsSyxxf07YFbqQLiOVvDW1dp4Tz6i36VI6R6MIzfJi8BFIxyq1gZfvu4F0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=JYr8c36p; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44V5Qn9V126365;
-	Fri, 31 May 2024 00:26:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1717133209;
-	bh=swyYL/UTh/fJIrJdY36x8AgMYNmXTYRmwCF34ITHoj4=;
-	h=From:To:CC:Subject:Date;
-	b=JYr8c36pFLhiIJe19M6rv6+V+UNNJYYpoQ1z+60bESp3+DuWm3qHeFOzRicqJToyR
-	 DTqYzb5keeS2lYi/S2n1SYiMqON2J0T/A9wL6+YRBso5WCzbNUhOOuJENTA8j2OWx2
-	 AT/YoZAcyG7S6FTQsZqqZuzaJQ91L3bvp99b8D0M=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44V5QnMH007938
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 31 May 2024 00:26:49 -0500
-Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 31
- May 2024 00:26:49 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 31 May 2024 00:26:49 -0500
-Received: from LT5CG31242FY.dhcp.ti.com (lt5cg31242fy.dhcp.ti.com [10.85.14.171])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44V5Qe1q005196;
-	Fri, 31 May 2024 00:26:41 -0500
-From: Shenghao Ding <shenghao-ding@ti.com>
-To: <broonie@kernel.org>
-CC: <andriy.shevchenko@linux.intel.com>, <lgirdwood@gmail.com>,
-        <perex@perex.cz>, <pierre-louis.bossart@linux.intel.com>,
-        <13916275206@139.com>, <alsa-devel@alsa-project.org>,
-        <i-salazar@ti.com>, <linux-kernel@vger.kernel.org>, <j-chadha@ti.com>,
-        <liam.r.girdwood@intel.com>, <jaden-yue@ti.com>,
-        <yung-chuan.liao@linux.intel.com>, <dipa@ti.com>, <yuhsuan@google.com>,
-        <tiwai@suse.de>, <baojun.xu@ti.com>, <soyer@irl.hu>,
-        <Baojun.Xu@fpt.com>, <judyhsiao@google.com>, <navada@ti.com>,
-        <cujomalainey@google.com>, <aanya@ti.com>, <nayeem.mahmud@ti.com>,
-        <savyasanchi.shukla@netradyne.com>, <flaviopr@microsoft.com>,
-        <jesse-ji@ti.com>, Shenghao Ding
-	<shenghao-ding@ti.com>
-Subject: [PATCH v4] ASoc: tas2781: Enable RCA-based playback without DSP firmware download
-Date: Fri, 31 May 2024 13:26:35 +0800
-Message-ID: <20240531052636.565-1-shenghao-ding@ti.com>
-X-Mailer: git-send-email 2.33.0.windows.2
+	s=arc-20240116; t=1717133201; c=relaxed/simple;
+	bh=YscxZCYLLDidxBBMmV88bjTXrJTpcqHkdjPKaE7Atcg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=JZu5upHz85mRvfZWJr2kYrmYa2YsiQM3LSlZQQEkZ/6Zsrp7RrAjN9Dm7AIRXFSDtyLZiECyQLPRweyVmmVkACFfdQ/U4zSqF5yQb7NR4aqI0SC6P/goxq4EYRPfNdBULta3WkN0N83KSetl8cT6tsWAypOKI7GkT1DwDAfePI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=cLhwqiY5; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1717133197;
+	bh=V8rlp/cSq87xmInN6Y0JSEeCQ1MbzZJjIocoMlFhpXA=;
+	h=Date:From:To:Cc:Subject:From;
+	b=cLhwqiY5FQPBk1JLP0piZww4SBQaq6x0BlTDRLPEVU2BlxBj+UU2BCfZbr/dyVe3O
+	 qtzRx6qEFfFedt71QPLLP0NIX6KL3eTwJnvkLnyVLUGnhffPUmtKwtx+ySuxt5ppj9
+	 7mZFKkZ4DQ7srjrFtoEwHNtcHbN8ejKVYQ5d96thC5d3NXDKlOFtveIAH2odyoaNfq
+	 gmW7tjxq81klNJtE3dWdSuVmky4gQDD5Eb3qi77LePyBs+Od5rqXwRQskfFojk4Pjz
+	 4ts8UAQabg9IhrngURSf+NhYFwRs3Pnq4kUypFEZzksI04/Qu+0wXNfcQFnRPeDiUA
+	 feiuyKWPKM06Q==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VrBSF0DSYz4x1C;
+	Fri, 31 May 2024 15:26:37 +1000 (AEST)
+Date: Fri, 31 May 2024 15:26:36 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Alex Deucher <alexdeucher@gmail.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>, Aurabindo Pillai
+ <aurabindo.pillai@amd.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build warning after merge of the amdgpu tree
+Message-ID: <20240531152636.1b58caa0@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: multipart/signed; boundary="Sig_/1aFX2qZuHvixQJo9YFQw9nP";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-In only RCA (Reconfigurable Architecture) binary case, no DSP program will
-be working inside tas2563/tas2781, that is dsp-bypass mode, do not support
-speaker protection, and audio acoustic algorithms in this mode.
+--Sig_/1aFX2qZuHvixQJo9YFQw9nP
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Fixes: ef3bcde75d06 ("ASoC: tas2781: Add tas2781 driver")
-Signed-off-by: Shenghao Ding <shenghao-ding@ti.com>
+Hi all,
 
----
-v4:
- - add a description of what the state machine looks like, and why
-   FW_PENDING/FAIL remain but are not used.
- - Remove TASDEVICE_DSP_FW_NONE because of unused.
- - Remove stray change.
- - Fix broken indentation.
-v3:
- - Add description on RCA is Reconfigurable Architecture.
- - Add the description on enabling
- - Reword the commit
- - Remove question mark in the comments.
- - Add spaces in comments.
-v2:
- - Correct comment.
- - Add Fixes.
- - Move header file to the first.
-v1:
- - Split out the different logical changes into different patches.
- - rename tasdevice_dsp_fw_state -> tasdevice_fw_state, the fw are not
-   only DSP fw, but also RCA(Reconfigurable data, such as acoustic data
-   and register setting, etc).
- - Add TASDEVICE_RCA_FW_OK in tasdevice_fw_state to identify the state
-   that only RCA binary file has been download successfully, but DSP fw
-   is not loaded or loading failure.
- - Add the this strategy into tasdevice_tuning_switch.
- - If one side of the if/else has a braces both should in
-   tasdevice_tuning_switch.
- - Identify whehter both RCA and DSP have been loaded or only RCA has
-   been loaded in tasdevice_fw_ready.
- - Add check fw load status in tasdevice_startup.
- - remove ret in tasdevice_startup to make the code neater.
----
- include/sound/tas2781-dsp.h       | 11 ++++++++--
- sound/soc/codecs/tas2781-fmwlib.c | 18 +++++++++++-----
- sound/soc/codecs/tas2781-i2c.c    | 34 +++++++++++++++++++------------
- 3 files changed, 43 insertions(+), 20 deletions(-)
+After merging the amdgpu tree, today's linux-next build (htmldocs)
+produced this warning:
 
-diff --git a/include/sound/tas2781-dsp.h b/include/sound/tas2781-dsp.h
-index 7fba7ea26a4b..3cda9da14f6d 100644
---- a/include/sound/tas2781-dsp.h
-+++ b/include/sound/tas2781-dsp.h
-@@ -117,10 +117,17 @@ struct tasdevice_fw {
- 	struct device *dev;
- };
- 
--enum tasdevice_dsp_fw_state {
--	TASDEVICE_DSP_FW_NONE = 0,
-+enum tasdevice_fw_state {
-+	/* Driver in startup mode, not load any firmware. */
- 	TASDEVICE_DSP_FW_PENDING,
-+	/* DSP firmware in the system, but parsing error. */
- 	TASDEVICE_DSP_FW_FAIL,
-+	/*
-+	 * Only RCA (Reconfigurable Architecture) firmware load
-+	 * successfully.
-+	 */
-+	TASDEVICE_RCA_FW_OK,
-+	/* Both RCA and DSP firmware load successfully. */
- 	TASDEVICE_DSP_FW_ALL_OK,
- };
- 
-diff --git a/sound/soc/codecs/tas2781-fmwlib.c b/sound/soc/codecs/tas2781-fmwlib.c
-index 265a8ca25cbb..838d29fead96 100644
---- a/sound/soc/codecs/tas2781-fmwlib.c
-+++ b/sound/soc/codecs/tas2781-fmwlib.c
-@@ -2324,14 +2324,21 @@ void tasdevice_tuning_switch(void *context, int state)
- 	struct tasdevice_fw *tas_fmw = tas_priv->fmw;
- 	int profile_cfg_id = tas_priv->rcabin.profile_cfg_id;
- 
--	if (tas_priv->fw_state == TASDEVICE_DSP_FW_FAIL) {
--		dev_err(tas_priv->dev, "DSP bin file not loaded\n");
-+	/*
-+	 * Only RCA-based Playback can still work with no dsp program running
-+	 * inside the chip.
-+	 */
-+	switch (tas_priv->fw_state) {
-+	case TASDEVICE_RCA_FW_OK:
-+	case TASDEVICE_DSP_FW_ALL_OK:
-+		break;
-+	default:
- 		return;
- 	}
- 
- 	if (state == 0) {
--		if (tas_priv->cur_prog < tas_fmw->nr_programs) {
--			/*dsp mode or tuning mode*/
-+		if (tas_fmw && tas_priv->cur_prog < tas_fmw->nr_programs) {
-+			/* dsp mode or tuning mode */
- 			profile_cfg_id = tas_priv->rcabin.profile_cfg_id;
- 			tasdevice_select_tuningprm_cfg(tas_priv,
- 				tas_priv->cur_prog, tas_priv->cur_conf,
-@@ -2340,9 +2347,10 @@ void tasdevice_tuning_switch(void *context, int state)
- 
- 		tasdevice_select_cfg_blk(tas_priv, profile_cfg_id,
- 			TASDEVICE_BIN_BLK_PRE_POWER_UP);
--	} else
-+	} else {
- 		tasdevice_select_cfg_blk(tas_priv, profile_cfg_id,
- 			TASDEVICE_BIN_BLK_PRE_SHUTDOWN);
-+	}
- }
- EXPORT_SYMBOL_NS_GPL(tasdevice_tuning_switch,
- 	SND_SOC_TAS2781_FMWLIB);
-diff --git a/sound/soc/codecs/tas2781-i2c.c b/sound/soc/codecs/tas2781-i2c.c
-index 9350972dfefe..9c3c89cb36de 100644
---- a/sound/soc/codecs/tas2781-i2c.c
-+++ b/sound/soc/codecs/tas2781-i2c.c
-@@ -380,23 +380,32 @@ static void tasdevice_fw_ready(const struct firmware *fmw,
- 	mutex_lock(&tas_priv->codec_lock);
- 
- 	ret = tasdevice_rca_parser(tas_priv, fmw);
--	if (ret)
-+	if (ret) {
-+		tasdevice_config_info_remove(tas_priv);
- 		goto out;
-+	}
- 	tasdevice_create_control(tas_priv);
- 
- 	tasdevice_dsp_remove(tas_priv);
- 	tasdevice_calbin_remove(tas_priv);
--	tas_priv->fw_state = TASDEVICE_DSP_FW_PENDING;
-+	tas_priv->fw_state = TASDEVICE_RCA_FW_OK;
- 	scnprintf(tas_priv->coef_binaryname, 64, "%s_coef.bin",
- 		tas_priv->dev_name);
- 	ret = tasdevice_dsp_parser(tas_priv);
- 	if (ret) {
- 		dev_err(tas_priv->dev, "dspfw load %s error\n",
- 			tas_priv->coef_binaryname);
--		tas_priv->fw_state = TASDEVICE_DSP_FW_FAIL;
- 		goto out;
- 	}
--	tasdevice_dsp_create_ctrls(tas_priv);
-+
-+	/*
-+	 * If no dsp-related kcontrol created, the dsp resource will be freed.
-+	 */
-+	ret = tasdevice_dsp_create_ctrls(tas_priv);
-+	if (ret) {
-+		dev_err(tas_priv->dev, "dsp controls error\n");
-+		goto out;
-+	}
- 
- 	tas_priv->fw_state = TASDEVICE_DSP_FW_ALL_OK;
- 
-@@ -417,9 +426,8 @@ static void tasdevice_fw_ready(const struct firmware *fmw,
- 	tasdevice_prmg_load(tas_priv, 0);
- 	tas_priv->cur_prog = 0;
- out:
--	if (tas_priv->fw_state == TASDEVICE_DSP_FW_FAIL) {
--		/*If DSP FW fail, kcontrol won't be created */
--		tasdevice_config_info_remove(tas_priv);
-+	if (tas_priv->fw_state == TASDEVICE_RCA_FW_OK) {
-+		/* If DSP FW fail, DSP kcontrol won't be created. */
- 		tasdevice_dsp_remove(tas_priv);
- 	}
- 	mutex_unlock(&tas_priv->codec_lock);
-@@ -466,14 +474,14 @@ static int tasdevice_startup(struct snd_pcm_substream *substream,
- {
- 	struct snd_soc_component *codec = dai->component;
- 	struct tasdevice_priv *tas_priv = snd_soc_component_get_drvdata(codec);
--	int ret = 0;
- 
--	if (tas_priv->fw_state != TASDEVICE_DSP_FW_ALL_OK) {
--		dev_err(tas_priv->dev, "DSP bin file not loaded\n");
--		ret = -EINVAL;
-+	switch (tas_priv->fw_state) {
-+	case TASDEVICE_RCA_FW_OK:
-+	case TASDEVICE_DSP_FW_ALL_OK:
-+		return 0;
-+	default:
-+		return -EINVAL;
- 	}
--
--	return ret;
- }
- 
- static int tasdevice_hw_params(struct snd_pcm_substream *substream,
--- 
-2.34.1
+drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h:586: warning: Function pa=
+rameter or struct member 'bb_from_dmub' not described in 'amdgpu_display_ma=
+nager'
 
+
+Introduced by commit
+
+  234e94555800 ("drm/amd/display: Enable copying of bounding box data from =
+VBIOS DMUB")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/1aFX2qZuHvixQJo9YFQw9nP
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZZX4wACgkQAVBC80lX
+0GwQ9gf+ItKVoe8/sCdc/3WKdDg38D3Orqm3wRvuiJ516LDUGu2vN069lYOgRwgk
+p/28TWvjPDcSslxuTUZFA8ux0YuGLcS3R6gsHUESjZXxAtzjoU6a7l3YbooI0wZU
+JVnDCp2xyTItxy+B5nFoWTGG5xp1cbi8+wFtNzgcxO0n0JOjr5ThAx1WLVjhjUJO
+JXz1itVsw3Nf+NqK2FpIUsxw+TeWjVuYe2IpahnQjTDN7uTC61DL3ZpzIjvCMnOf
+gLQV+IgELpzMirBjjsNC6jKAFPv8a1kgPLTqAcyv+lOw6x/RGS9xxFH6+cZ3cjWs
+O5d4lrfvRu719zr/yjLynRJVt4Z9Uw==
+=Ho9F
+-----END PGP SIGNATURE-----
+
+--Sig_/1aFX2qZuHvixQJo9YFQw9nP--
 
