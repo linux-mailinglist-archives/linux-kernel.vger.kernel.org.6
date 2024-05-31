@@ -1,147 +1,132 @@
-Return-Path: <linux-kernel+bounces-196127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAEB18D57AF
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 03:17:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3D808D57B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 03:19:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76AE6284633
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 01:17:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A5DB1F2645B
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 01:19:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 667C66AD7;
-	Fri, 31 May 2024 01:17:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C1B17489;
+	Fri, 31 May 2024 01:19:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qYcThanK"
-Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
+	dkim=pass (2048-bit key) header.d=lyndeno.ca header.i=@lyndeno.ca header.b="t7LL0MZv";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="X3q6euZd"
+Received: from fhigh5-smtp.messagingengine.com (fhigh5-smtp.messagingengine.com [103.168.172.156])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E7D56AC0
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 01:17:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BC2163C7;
+	Fri, 31 May 2024 01:19:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717118250; cv=none; b=bvHZ5+jy/kEW+WST8b0af3oNhRRuzcBxla9H3g+qrLiJENIKlE9Olyqe0S9FJarYXqk1c8SKTvt58hsCwF1OcOw6xkzvkNp6E4h/BwIAnofhHOTrdJEUXgxMWd3xc/q0iFGslEf+cOiKBpNVXHi4xcjApYuyQXgnnEmlu/JVWfY=
+	t=1717118390; cv=none; b=jPj8bH4wIEMF0ubQdklTI2zFOoaLPkZpBkjyzFXRr7IEjTjPAwZqsj6QF28IaAonSM+3cLKgd5EIUNhgkcLGS8iv8M0z9K+mkAnrtyKoSmzxOKOiT/ys5ebghbE6X+dWfaxXAk7/Mw8GaElOX5bk98ONrCfxsqnKGMxPcJa+PgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717118250; c=relaxed/simple;
-	bh=6qmwuyMEvvP0Hsm2Rz0a7pueEgM5xbu7B+w3vkN7rYk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p5VNbezIyYYQiWpPb2sunQ5NcCFwixir09kXeAirsM0QdYwjd0FePwU4QrKYAFA0u2E1IRk4NyhsUjZGNHOut6KATL3qD641j7wjx0NMK9aukgmBKpJho3Gbhye5dgomamy7kOOqQg79BAuUUmoz7XZuVquzSWx0pB/4UeF8GT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qYcThanK; arc=none smtp.client-ip=95.215.58.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: nik.borisov@suse.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1717118244;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wwENAVxxQtEomtor8VVQD99hPDXcx9AWwuArFugb+7Q=;
-	b=qYcThanKKIBCctUoEHBCXOtSOk9m3a4y4iTXSLJ3BTaV34TPXSNNftXp2BjVpI5rvYAkNg
-	aaHvSU7eZSlE0FjdEIn34NTDhevkwN3IG0AdOazV6x+C/1/7N6DsiJgsIxxmM4yw7K9sKx
-	KOM3N0FfqJ5jPZKpmfl903LX0JGcmHQ=
-X-Envelope-To: tglx@linutronix.de
-X-Envelope-To: mingo@redhat.com
-X-Envelope-To: bp@alien8.de
-X-Envelope-To: dave.hansen@linux.intel.com
-X-Envelope-To: x86@kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: mjguzik@gmail.com
-X-Envelope-To: tangyouling@kylinos.cn
-Message-ID: <ac6b2f60-e611-422c-9e22-311701f9d4c0@linux.dev>
-Date: Fri, 31 May 2024 09:17:08 +0800
+	s=arc-20240116; t=1717118390; c=relaxed/simple;
+	bh=e5/NKjsM5ULYOYhot/Kcrf0uXGGr7Q2ErMsxZ8AbhNg=;
+	h=Date:From:Subject:To:Cc:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eSH09g6xHRB+UmglkbjgROtsciolwWNZuJpKBP7a1bIy5sU4QsjD49TVH/ctrn5dVi+9HOoGxRbtAgLcK7lBfIfTvz/uEkbug/mrPDBUn0i/IBNazILk2pXhmOGDI6Qv2+UlQnbM8CB2gzXOaKoP1PYteXhMf+gdrGkCGDFvJko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lyndeno.ca; spf=pass smtp.mailfrom=lyndeno.ca; dkim=pass (2048-bit key) header.d=lyndeno.ca header.i=@lyndeno.ca header.b=t7LL0MZv; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=X3q6euZd; arc=none smtp.client-ip=103.168.172.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lyndeno.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lyndeno.ca
+Received: from compute7.internal (compute7.nyi.internal [10.202.2.48])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id 450861140183;
+	Thu, 30 May 2024 21:19:47 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute7.internal (MEProxy); Thu, 30 May 2024 21:19:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lyndeno.ca; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1717118387;
+	 x=1717204787; bh=5yJmV879YPZ2+qzVIS5sOrVKm0uZoMEEXgLMCx1poD4=; b=
+	t7LL0MZvW1jNfL47fgQk0BtOskjZFYY4xsj2o4QysAQA6CxHmsSn3Qp8sraA31Wm
+	82rJTaX0BmsADgS4jjebsMOsW2oWyZc6z/mVYDpbTu6s0Ius6l2xryFtDdh1vERG
+	/oE5MGMcI+n4dGqcxbQVEewkASakh0Lz/gsvRaSFg17gTX9gnCvUZQFD1qOOnt9G
+	1PVQjYy5yKTb0UghisAqYAkjzATCz3Hu67degCdAeoPTNr1fN0xdHUlKxJ/VvP1s
+	4KodTbTh2l2THRoWuDgMqi1YrH5HJMHw2SfuXjuzujL5X6YIS1CxigYb6tF88TY9
+	HMsqi2h9bIvfyrvmLMSn2Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1717118387; x=
+	1717204787; bh=5yJmV879YPZ2+qzVIS5sOrVKm0uZoMEEXgLMCx1poD4=; b=X
+	3q6euZdRcSJ9L82NWcjjmlvOUHNeTNGeUlCTiYlv+aYkSY1CgNmNKulQ1J42aKWT
+	tfJnEoMkvCFWCeOLYrgddNoj5zQQzrkh91H/O6hk7Th+Xaioq/bJHnjjl0yRQXzA
+	cYdHSOrnrtnJFiAGmRAPKG+Uum6/qcqj8cCZRNsw0VINH8cYkzMlD2DhH2sfqRVu
+	x3XVbm/1J5ddIO/D5dk2jWm/gZ4Cuxh/m3m3WzrwnDVgu9H7oHo57ncXtsUlcm1+
+	KVOISrZPxADh/7uI1Pw37iMsJWoVlFyNhlFc0A/oCzPTCMP+KWdfkhwY217VVy0s
+	OCJEfh58wwBW0wfj4ps7w==
+X-ME-Sender: <xms:siVZZjWxe6P1aqiXVIfF48_IZTo2a1YXZCvgrj-paahP-42B4K0KfA>
+    <xme:siVZZrktsld1OtgJjDSqZJ_B94rytQkIHHROpI2xs1UTa9ZQSlZmpHuoxu6e3Qpxg
+    7Z3QjRYypiB5H5_mRA>
+X-ME-Received: <xmr:siVZZvYF3vdW9lRkyRnjAu68DMX79zJEgJIO1HShsHEpPyPUdtvJKQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdekhedggeegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhuffvvefkjghfofggtgfgsehtqhertdertddunecuhfhrohhmpefnhihn
+    ughonhcuufgrnhgthhgvuceolhhsrghntghhvgeslhihnhguvghnohdrtggrqeenucggtf
+    frrghtthgvrhhnpedtvdefvdetfeeggeejgeejvdevteejvdehhedtueeugfelhfeuieff
+    ieehffetheenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+    hmpehlshgrnhgthhgvsehlhihnuggvnhhordgtrg
+X-ME-Proxy: <xmx:siVZZuX5jhqfQLr1QqWzbt7Ah025Pmtag-r-O9UaKe1UB_LQ_wvb9g>
+    <xmx:siVZZtnow_TRZRrhr1sWLuMDeLzqH5Jqsx_KdhWHMctQEXqs54PkUQ>
+    <xmx:siVZZre2j5ECAOlqWuWgd_9gGuHKphodRk687MOR9eVQiQGsJ3KsYg>
+    <xmx:siVZZnHHqq3CADkutlUm9FeNh6oaJrtPFQHanlupiWdcv-ckhDljdw>
+    <xmx:syVZZtmVuUgtuHs-7GMhWRF36Cf_-lkiT-rQ7sIWkuBGknk4Wl3o7DAh>
+Feedback-ID: i1719461a:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 30 May 2024 21:19:44 -0400 (EDT)
+Date: Thu, 30 May 2024 19:19:36 -0600
+From: Lyndon Sanche <lsanche@lyndeno.ca>
+Subject: Re: [PATCH v8 3/3] platform/x86: dell-pc: Implement platform_profile
+To: Ilpo =?iso-8859-1?q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: mario.limonciello@amd.com, pali@kernel.org, W_Armin@gmx.de,
+	srinivas.pandruvada@linux.intel.com, lkp@intel.com, Hans de Goede
+	<hdegoede@redhat.com>, Yijun.Shen@dell.com, Matthew Garrett
+	<mjg59@srcf.ucam.org>, Vegard Nossum <vegard.nossum@oracle.com>, AceLan Kao
+	<acelan.kao@canonical.com>, Heiner Kallweit <hkallweit1@gmail.com>, LKML
+	<linux-kernel@vger.kernel.org>, platform-driver-x86@vger.kernel.org,
+	Dell.Client.Kernel@dell.com
+Message-Id: <O0TBES.JKXVC38VSDID@lyndeno.ca>
+In-Reply-To: <db3191b5-2f42-5075-a493-dedb34e578ad@linux.intel.com>
+References: <20240425172758.67831-1-lsanche@lyndeno.ca>
+	<20240529174843.13226-1-lsanche@lyndeno.ca>
+	<20240529174843.13226-4-lsanche@lyndeno.ca>
+	<db3191b5-2f42-5075-a493-dedb34e578ad@linux.intel.com>
+X-Mailer: geary/44.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 1/2] x86: Remove the prefetch() specific implementation on
- x86_64
-To: Nikolay Borisov <nik.borisov@suse.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
- Mateusz Guzik <mjguzik@gmail.com>, Youling Tang <tangyouling@kylinos.cn>
-References: <20240529032059.899347-1-youling.tang@linux.dev>
- <ca6c512a-c9cd-4210-bd71-c72c729c95a9@suse.com>
-Content-Language: en-US, en-AU
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Youling Tang <youling.tang@linux.dev>
-In-Reply-To: <ca6c512a-c9cd-4210-bd71-c72c729c95a9@suse.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Transfer-Encoding: quoted-printable
 
-Hi, Nikolay
-On 30/05/2024 23:26, Nikolay Borisov wrote:
->
->
-> On 29.05.24 г. 6:20 ч., Youling Tang wrote:
->> From: Youling Tang <tangyouling@kylinos.cn>
->>
->> After commit ab483570a13b ("x86 & generic: change to 
->> __builtin_prefetch()"),
->> x86_64 directly uses __builtin_prefetch() without the specific 
->> implementation
->> of prefetch(). Also, x86_64 use a generic definition until commit 
->> ae2e15eb3b6c
->> ("x86: unify prefetch operations"). So remove it.
->
->
-> So this patch just ensures the x86-specific prefetch() implementation 
-> is defined only for 32bit case, otherwise we have it defined for the 
-> 64bit case as well but effectively it's not used since 
-> ARCH_HAS_PREFETCH is not defined for 64bit, meaning in the 64bit case 
-> prefetch() is still defined to __builtint_prefetch in 
-> include/linux/prefetch.h.
->
->
-> In essence this is a purely cosmetic cleanup , am I right?
-Yes, when arch customization and __builtint_prefetch are implemented with
-the same instructions, it looks like pure cleaning (without changing the
-generated assembly).
 
-Thanks,
-Youling.
->
->
-> I compiled a file that utilizes prefetch with and without your patch 
-> and the generated assembly is identical.
->
->
-> Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
->
->
->>
->> Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
->> ---
->>   arch/x86/include/asm/processor.h | 7 ++++---
->>   1 file changed, 4 insertions(+), 3 deletions(-)
->>
->> diff --git a/arch/x86/include/asm/processor.h 
->> b/arch/x86/include/asm/processor.h
->> index cb4f6c513c48..44371bdcc59d 100644
->> --- a/arch/x86/include/asm/processor.h
->> +++ b/arch/x86/include/asm/processor.h
->> @@ -599,9 +599,6 @@ extern char            ignore_fpu_irq;
->>   #ifdef CONFIG_X86_32
->>   # define BASE_PREFETCH        ""
->>   # define ARCH_HAS_PREFETCH
->> -#else
->> -# define BASE_PREFETCH        "prefetcht0 %1"
->> -#endif
->>     /*
->>    * Prefetch instructions for Pentium III (+) and AMD Athlon (+)
->> @@ -616,6 +613,10 @@ static inline void prefetch(const void *x)
->>                 "m" (*(const char *)x));
->>   }
->>   +#else
->> +# define BASE_PREFETCH        "prefetcht0 %1"
->> +#endif
->> +
->>   /*
->>    * 3dnow prefetch to get an exclusive cache line.
->>    * Useful for spinlocks to avoid one state transition in the
+
+On Thu, May 30 2024 at 11:39:27 AM +03:00:00, Ilpo J=E4rvinen=20
+<ilpo.jarvinen@linux.intel.com> wrote:
+> Thanks for the update. I've now applied this into review-ilpo branch.
+>=20
+> I reordered those headers into alphabetical order while applying. In
+> future, when adding new headers, try adhere to the alphabetical order.
+>=20
+> --
+>  i.
+
+Thank you for taking the time to review. Also thank you for letting me=20
+know about the header order, I will note that for next time.
+
+Please let me know if you need anything else on my end.
+
+Thank you,
+
+Lyndon Sanche
+
+
 
