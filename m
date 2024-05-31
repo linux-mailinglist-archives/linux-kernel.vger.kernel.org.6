@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-196794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70FC28D61E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:37:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 019EA8D61E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:37:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A95F1C246FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:37:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 327CC1C23E1C
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:37:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2CDB16D9AC;
-	Fri, 31 May 2024 12:35:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43954172BA2;
+	Fri, 31 May 2024 12:35:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iUAMAFaT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g7ZhDjsE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 484DC161B4D
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 12:35:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8102A16F282
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 12:35:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717158926; cv=none; b=SiGOuGdPBQEAGY9ooZF+UoxcgrNHJfu4hE1bZGRssAkSJxkp8Wp5orImlSN/N8KhIMRN6pGVLHZk5ygvRHfD0k9f5inZeUT9IDyA/zQSKqnDoHVuaGz+hMOJtpjZNmftd9XMRo/uRFcpgBpiJCc/rjiyLn2pdmcUYgucJvTKVsM=
+	t=1717158927; cv=none; b=myPJ5Gc3PlUQqAWbCS+iX8hoiXpKePJ3G+4q8UW9Hc0ZuNX31NwvP5Gk5itjREe/rXC6kou5NNJB8g8+oCNAQ9QKnln7OiE1sGfmj7KqXWT8JX3UygGWuZOFyFzp0xNj00VJvSqbAH0/pqd4nLGrycEkOQKSGcFXYBtMNgMyS5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717158926; c=relaxed/simple;
-	bh=g+G19NKQbd6Xtqc8HQIhzpIDmFN7DdYjK8JTK7amgwM=;
+	s=arc-20240116; t=1717158927; c=relaxed/simple;
+	bh=oaM4gPS6c2Nwk34PW367bO82k88VoCS8rWqPUvkNmV8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EpXyP/QZN8c6LhdGBUxXZimOxP07z/hcbinyZtjc6aIGtfdcKb7lK/ZVb8ixCh9WEG1GjGhh7RjAx4HlIqNOfRcOx77YCX1Wh+3bCB5A/DfL22KlmMlPZP+JM1tJLfRBS4yZcKQXRAeA03zajcKfQLhNHZ6JHicsPl9pmz43H0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iUAMAFaT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C0A0C32786;
-	Fri, 31 May 2024 12:35:25 +0000 (UTC)
+	 MIME-Version; b=Q1rZzDKg712gTZ0oqMxEuOWPTwJURbWZl1Sx9OkSZagsq1cocGzrzqnDS7Hsrvun80JKVgkhCDI3KndAykRWj4VOpkcZ2egHMijmT8WJN7xl500sP2BDPyk/bcKl0IA4l+xEKYqLna+u3re3aIXcm5hcpgu3nVvvrqPoOWEBE5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g7ZhDjsE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B2F8C116B1;
+	Fri, 31 May 2024 12:35:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717158926;
-	bh=g+G19NKQbd6Xtqc8HQIhzpIDmFN7DdYjK8JTK7amgwM=;
+	s=k20201202; t=1717158927;
+	bh=oaM4gPS6c2Nwk34PW367bO82k88VoCS8rWqPUvkNmV8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=iUAMAFaT69xFtXeJ2GAUZn/DDtnT/opTJjnFLesIch99rPRQ0d5IMRLf6AmQ1ALXk
-	 G367ehtdFqXYEc5zRDTjANbnxHSMKwgaPdQGlWJLIboRuYHFkROtTPYquGUAqgD4PW
-	 H7gOk/Jcr01Xe7cIh1XTCHEvexiRWwuy0cqLiMiUaH5RPzlXvMITQj/j96ppjQrUxI
-	 sjUnAC7nQlHhzZBOJPpu/qe5Co2cxCfZouCvzDOozy31u9AqxNlcPetW3VRtxYZVq/
-	 ovK0yEpYe0w+M/lzMQr5avxBQMVmHtKKlM98Tx76z9/2kMym6i9xD24ejF6/Bbma2D
-	 mOHdn7X7zMnQg==
+	b=g7ZhDjsE0FvoznvJBgINAFKkO67JXsg0YiHRNBb2NKOuTRD2425e1wfiLO+hQUJyu
+	 3HKNwX2UQM0Fghfvu+AA7vUXPC0TmK2QRtnyo3+Mpb2OOWhzJwVSzmT6l68gXfS7TO
+	 HxBkKNcwK/OVzrnX6LStI8hQTp8a5pjI+OXiD5WJ2T7f7yzJRoAfaGqBfNKjoA13j/
+	 1WTQYgy9q28C69mZFBMCdA10bVFJPht2Y8wKd9N1posNezDsvxQGFC23l0QPUx4Y56
+	 vuJt2YIFJENUjQbQ81l40ppaau9wB9L0Vkrqu7NTPVxV7NqJvRV29sU6RJbLwt2mmJ
+	 SnBOqyPKCknGA==
 From: Borislav Petkov <bp@kernel.org>
 To: X86 ML <x86@kernel.org>
 Cc: LKML <linux-kernel@vger.kernel.org>,
 	"Borislav Petkov (AMD)" <bp@alien8.de>
-Subject: [PATCH 08/14] x86/alternative: Convert alternative_call_2()
-Date: Fri, 31 May 2024 14:35:05 +0200
-Message-ID: <20240531123512.21427-9-bp@kernel.org>
+Subject: [PATCH 09/14] x86/alternative: Convert ALTERNATIVE_TERNARY()
+Date: Fri, 31 May 2024 14:35:06 +0200
+Message-ID: <20240531123512.21427-10-bp@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240531123512.21427-1-bp@kernel.org>
 References: <20240531123512.21427-1-bp@kernel.org>
@@ -60,45 +60,33 @@ Content-Transfer-Encoding: 8bit
 
 From: "Borislav Petkov (AMD)" <bp@alien8.de>
 
+The C macro.
+
 Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
 ---
- arch/x86/include/asm/alternative.h | 21 ++++++---------------
- 1 file changed, 6 insertions(+), 15 deletions(-)
+ arch/x86/include/asm/alternative.h | 6 ------
+ 1 file changed, 6 deletions(-)
 
 diff --git a/arch/x86/include/asm/alternative.h b/arch/x86/include/asm/alternative.h
-index bc696c60848d..bad1558d6382 100644
+index bad1558d6382..73ee18705ef1 100644
 --- a/arch/x86/include/asm/alternative.h
 +++ b/arch/x86/include/asm/alternative.h
-@@ -349,23 +349,14 @@ static inline int alternatives_text_reserved(void *start, void *end)
-  * Otherwise, if CPU has feature1, function1 is used.
-  * Otherwise, old function is used.
-  */
--#define alternative_call_2(oldfunc, newfunc1, ft_flags1, newfunc2, ft_flags2, \
--			   output, input...)				\
--	asm_inline volatile (ALTERNATIVE_2("call %c[old]", "call %c[new1]", ft_flags1, \
--		"call %c[new2]", ft_flags2)				\
--		: output, ASM_CALL_CONSTRAINT				\
--		: [old] "i" (oldfunc), [new1] "i" (newfunc1),		\
-+#define alternative_call_2(oldfunc, newfunc1, ft_flags1, newfunc2, ft_flags2,		\
-+			   output, input...)						\
-+	asm_inline volatile(N_ALTERNATIVE_2("call %P[old]", "call %P[new1]", ft_flags1,	\
-+		"call %P[new2]", ft_flags2)						\
-+		: output, ASM_CALL_CONSTRAINT						\
-+		: [old] "i" (oldfunc), [new1] "i" (newfunc1),				\
- 		  [new2] "i" (newfunc2), ## input)
+@@ -274,15 +274,9 @@ static inline int alternatives_text_reserved(void *start, void *end)
  
--#define n_alternative_call_2(oldfunc, newfunc1, ft_flags1, newfunc2, ft_flags2,   \
--			   output, input...)				      \
--	asm_inline volatile (N_ALTERNATIVE_2("call %P[old]", "call %P[new1]", ft_flags1,\
--		"call %P[new2]", ft_flags2)				      \
--		: output, ASM_CALL_CONSTRAINT				      \
--		: [old] "i" (oldfunc), [new1] "i" (newfunc1),		      \
--		  [new2] "i" (newfunc2), ## input)
+ /* If @feature is set, patch in @newinstr_yes, otherwise @newinstr_no. */
+ #define ALTERNATIVE_TERNARY(oldinstr, ft_flags, newinstr_yes, newinstr_no) \
+-	ALTERNATIVE_2(oldinstr, newinstr_no, X86_FEATURE_ALWAYS,	\
+-		      newinstr_yes, ft_flags)
 -
+-/* If @feature is set, patch in @newinstr_yes, otherwise @newinstr_no. */
+-#define N_ALTERNATIVE_TERNARY(oldinstr, ft_flags, newinstr_yes, newinstr_no) \
+ 	N_ALTERNATIVE_2(oldinstr, newinstr_no, X86_FEATURE_ALWAYS,	\
+ 		      newinstr_yes, ft_flags)
+ 
 -
- /*
-  * use this macro(s) if you need more than one output parameter
-  * in alternative_io
+ #define ALTERNATIVE_3(oldinsn, newinsn1, ft_flags1, newinsn2, ft_flags2, \
+ 			newinsn3, ft_flags3)				\
+ 	OLDINSTR_3(oldinsn, 1, 2, 3)					\
 -- 
 2.43.0
 
