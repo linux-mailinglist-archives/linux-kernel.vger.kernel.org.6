@@ -1,236 +1,305 @@
-Return-Path: <linux-kernel+bounces-196139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3CE78D57D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 03:32:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96EB08D5789
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 03:05:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B9D01F25119
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 01:32:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAA341C244D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 01:05:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E4AE1946F;
-	Fri, 31 May 2024 01:32:18 +0000 (UTC)
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1A5879C4;
+	Fri, 31 May 2024 01:05:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PZ2imBoO"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 302895C89;
-	Fri, 31 May 2024 01:32:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29D5CDDA1
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 01:05:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717119137; cv=none; b=GhfTjsVW3rlXJ7zgyxhykpJq2436Wl5LwObLvE0xu9HSHre5EAeUHsjWEXyXGodFUxEnl/6UGjNUWwXBiTJtpEeZLOZnheavZ0ugWG3NS6cbXFQKByU0VjtUQKktkHsqI8y+8QZpfHubrHBeCAEGyqYSVC5AZgFK5P6vt3e7vtk=
+	t=1717117514; cv=none; b=qNGhhQ/q+LG5aJSAEs3leBhzSFmMDY89/VFFlwxHM88I/r1MQiXCp/rl7vusKSim9PO/FzQcQrm9yPd+tWu+nq2J0DK4bLthuKVNbzumR7+k/mjLFBzTOGbchP9MsJo6Q5eLdpSzQ5qne+XSHhqoTjr/eg8CIYn2aRQtAdKj82k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717119137; c=relaxed/simple;
-	bh=jHl6b3dMJ6FFg3UIi6LmmEvFgirmAw+HES4vhbbCYg4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=qFQy6eT5++IdU7ewUY4ywoej5D+vm/ZJnLpf+xV2n5M0G0UnW+LfKksI987pdDRUrWjb9unoPG7FF94rjM4fmNESWSGnwG7T3hb2kFazINXDmYmIPlNjClD6fxR2I5uuA0ueA1CIQefEMxkxqq5UZQfbzuOf8UnS+hrnyr622Ew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44UFU2Fi006307;
-	Fri, 31 May 2024 01:31:42 GMT
-DKIM-Signature: =?UTF-8?Q?v=3D1;_a=3Drsa-sha256;_c=3Drelaxed/relaxed;_d=3Doracle.com;_h?=
- =?UTF-8?Q?=3Dcc:content-transfer-encoding:date:from:in-reply-to:message-i?=
- =?UTF-8?Q?d:mime-version:references:subject:to;_s=3Dcorp-2023-11-20;_bh?=
- =?UTF-8?Q?=3D9m2aNR1g/4krse8kqjCyTPG8hy+6sHMM4ClRX172BWM=3D;_b=3DI6Oo8GVh?=
- =?UTF-8?Q?reCS/o27w4AvW5Cwmi9+K5FSkmTakQH5+Wr6+ItFaaO3TOlLABLKfLl6YvAJ_hV?=
- =?UTF-8?Q?p6Wm3kOQfgb4qzOQ55h+Cqvzn42FDfnZXdk3jHlS83iVbchCkKAix3o+DZtj4bH?=
- =?UTF-8?Q?SwX_tZVqJEMnTXDboT4d1JnOErQV9r/JlmTZVBhz5PcLP8ZUhrP2/GKA6huCllm?=
- =?UTF-8?Q?JrMp5wYM4_2K1Q/Rif9ino8Dy+UdzIcnQX35q6gYdVqERxdw8kXopHurL8ypvVO?=
- =?UTF-8?Q?HNNPC37pdHz9TrE_IeQg9VLzO8UxovUdCv8wZTsh59OHsJoFbw14c0zn4s37zzc?=
- =?UTF-8?Q?qHw7VuNmgqV6qwXc88/T0_+A=3D=3D_?=
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3yb8p7t3hd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 31 May 2024 01:31:42 +0000
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 44V10JZw016201;
-	Fri, 31 May 2024 01:31:41 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3yc50t985y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Fri, 31 May 2024 01:31:41 +0000
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 44V1SKNq027418;
-	Fri, 31 May 2024 01:31:40 GMT
-Received: from bur-virt-x6-2-100.us.oracle.com (bur-virt-x6-2-100.us.oracle.com [10.153.92.40])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3yc50t96yw-20
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Fri, 31 May 2024 01:31:39 +0000
-From: Ross Philipson <ross.philipson@oracle.com>
-To: linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-crypto@vger.kernel.org, kexec@lists.infradead.org,
-        linux-efi@vger.kernel.org, iommu@lists.linux-foundation.org
-Cc: ross.philipson@oracle.com, dpsmith@apertussolutions.com,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        dave.hansen@linux.intel.com, ardb@kernel.org, mjg59@srcf.ucam.org,
-        James.Bottomley@hansenpartnership.com, peterhuewe@gmx.de,
-        jarkko@kernel.org, jgg@ziepe.ca, luto@amacapital.net,
-        nivedita@alum.mit.edu, herbert@gondor.apana.org.au,
-        davem@davemloft.net, corbet@lwn.net, ebiederm@xmission.com,
-        dwmw2@infradead.org, baolu.lu@linux.intel.com,
-        kanth.ghatraju@oracle.com, andrew.cooper3@citrix.com,
-        trenchboot-devel@googlegroups.com
-Subject: [PATCH v9 19/19] x86: EFI stub DRTM launch support for Secure Launch
-Date: Thu, 30 May 2024 18:03:31 -0700
-Message-Id: <20240531010331.134441-20-ross.philipson@oracle.com>
-X-Mailer: git-send-email 2.39.3
-In-Reply-To: <20240531010331.134441-1-ross.philipson@oracle.com>
-References: <20240531010331.134441-1-ross.philipson@oracle.com>
+	s=arc-20240116; t=1717117514; c=relaxed/simple;
+	bh=uXfDEOjLv+ehvyI9BLqFEZ08MZc+Pu/2A0MFNLqubJw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SgQEVvCWcaAOriDIMBOt6K1ZP6SKqfCyE4pEjT9dPaP4/HyCnFwXfl4VMDidKIwNlnpHHu/4C0nG1ErU82qyTlKAPCUyQYGHpSUdX+HAwX6rZh79GhnwUnx7ArFP6EIwXG71Vb1aJ8IEnZhDFsp94CtF47yO5ZxzFDTlEbOmGfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PZ2imBoO; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52b80e5688aso1657433e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2024 18:05:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717117510; x=1717722310; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=LVbzQgiFaGguV//d78RBj3pAHXG3P0yCT4npYfngP5s=;
+        b=PZ2imBoOD/Gla9oPGISBS5VRkqhq4CUqBmcLJRO2cnQe+5z/wQ7vLCAr6t+0LFL9GI
+         JZviynR6AAOPVyaqj9w7lN4wf+ydNABI/O3xrrMGDrOcjpWUJXpj0gHVMqpJ0cuM3d2e
+         r9MOwBMb5aNcMx9vfb32/ldlfY0Tqr4p89tmWHXJqTe1rtaCuHecSWKLz/CK+lIf8uni
+         3/VcSepRvfxq0lMeH/O4+A8Xf4XZDVYdLlytmnnmVV3oR4Js986SJKnHvScJSdb5nHQU
+         1lK7D6kjEId1n5NiojZar5VxtGWC35D2tcPmWAG31+dAryUD1fEtG1UBcgjFon0Sbf/m
+         43wQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717117510; x=1717722310;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LVbzQgiFaGguV//d78RBj3pAHXG3P0yCT4npYfngP5s=;
+        b=R7vIpgldqZJhhS9tV6rKKqX3I1ObScdUKfOXcrdQOAxmUUN3M93RNuYeZ03RLor++V
+         e3em0DWaLJRWUF3qnvjyV0YHe20ZwRoQe7WhEVUNdzIpP4P5X/dc0/z8207IP1Iei9cI
+         8kbKpY9g6iE24PZCX3GZQR3ZMWXDVGqm/j2H8+KMumKktLgDm3LzcEMMR59m4qjo7bAq
+         PG55224yVKP5Co1njvQchagYSJnMsW1aTn1x/VkbH24XlC65SeaN5cHTC1/VQuVhqEGT
+         AwG8LOMF7AMNH5x6lnsLfx6V0YdjsFidvIgoV0khlTHGgZxG1QFPY5AdHD8DKAp9AUxK
+         9wcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWsrltgt8J2OiQ3PMKe3AaHPn8Lhx3bvz5CtFCA9g0UWpDmX/t+b1d1yJDvyoikRrdCFvvs18e7LMGS/Vn8fzhpciGCFcjmY83dGqLi
+X-Gm-Message-State: AOJu0YyB1FjillOiLEko9HBbc2RUPLqoaC9T5+WW/p5j/kPN2y9ckhmv
+	y/9Rz4iBj8/RStvltUPsspwF5Y00vU8wDhg0RwOdqLl/i588SZZs+5ktS0r4NHw=
+X-Google-Smtp-Source: AGHT+IHomuQLV/a1+46r2/bjrhxItgrwS1B7Si5a5leUogKwVcxPn4v1vNxtZhU6lKWRVAcVsxarfw==
+X-Received: by 2002:ac2:5548:0:b0:52b:88e8:1c82 with SMTP id 2adb3069b0e04-52b895a385fmr190738e87.47.1717117510049;
+        Thu, 30 May 2024 18:05:10 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52b84d75fd6sm142407e87.157.2024.05.30.18.05.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 May 2024 18:05:09 -0700 (PDT)
+Date: Fri, 31 May 2024 04:05:08 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Hans de Goede <hdegoede@redhat.com>, 
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	platform-driver-x86@vger.kernel.org, linux-usb@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	Nikita Travkin <nikita@trvn.ru>
+Subject: Re: [PATCH v4 4/6] power: supply: lenovo_yoga_c630_battery: add
+ Lenovo C630 driver
+Message-ID: <ndrp6ghnoibfm3t7qk7zuwfcukixh6uzqykj7vitobtiqntin6@ud242mjaivfl>
+References: <20240528-yoga-ec-driver-v4-0-4fa8dfaae7b6@linaro.org>
+ <20240528-yoga-ec-driver-v4-4-4fa8dfaae7b6@linaro.org>
+ <6d957019-ccec-4129-9e6d-33204de88dd5@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-30_21,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 spamscore=0 suspectscore=0
- adultscore=0 phishscore=0 malwarescore=0 mlxlogscore=999 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2405010000
- definitions=main-2405310010
-X-Proofpoint-ORIG-GUID: 0aK0fOvrZX65T8BZ6lZx1WP0me2ls7dG
-X-Proofpoint-GUID: 0aK0fOvrZX65T8BZ6lZx1WP0me2ls7dG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6d957019-ccec-4129-9e6d-33204de88dd5@linaro.org>
 
-This support allows the DRTM launch to be initiated after an EFI stub
-launch of the Linux kernel is done. This is accomplished by providing
-a handler to jump to when a Secure Launch is in progress. This has to be
-called after the EFI stub does Exit Boot Services.
+On Wed, May 29, 2024 at 04:51:54PM +0100, Bryan O'Donoghue wrote:
+> On 28/05/2024 21:44, Dmitry Baryshkov wrote:
+> > On the Lenovo Yoga C630 WOS laptop the EC provides access to the adapter
+> > and battery status. Add the driver to read power supply status on the
+> > laptop.
+> > 
+> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > ---
+> >   drivers/power/supply/Kconfig                    |   9 +
+> >   drivers/power/supply/Makefile                   |   1 +
+> >   drivers/power/supply/lenovo_yoga_c630_battery.c | 479 ++++++++++++++++++++++++
+> >   3 files changed, 489 insertions(+)
+> > 
+> > diff --git a/drivers/power/supply/Kconfig b/drivers/power/supply/Kconfig
+> > index 3e31375491d5..55ab8e90747d 100644
+> > --- a/drivers/power/supply/Kconfig
+> > +++ b/drivers/power/supply/Kconfig
+> > @@ -167,6 +167,15 @@ config BATTERY_LEGO_EV3
+> >   	help
+> >   	  Say Y here to enable support for the LEGO MINDSTORMS EV3 battery.
+> > +config BATTERY_LENOVO_YOGA_C630
+> > +	tristate "Lenovo Yoga C630 battery"
+> > +	depends on OF && EC_LENOVO_YOGA_C630
+> > +	help
+> > +	  This driver enables battery support on the Lenovo Yoga C630 laptop.
+> > +
+> > +	  To compile the driver as a module, choose M here: the module will be
+> > +	  called lenovo_yoga_c630_battery.
+> > +
+> >   config BATTERY_PMU
+> >   	tristate "Apple PMU battery"
+> >   	depends on PPC32 && ADB_PMU
+> > diff --git a/drivers/power/supply/Makefile b/drivers/power/supply/Makefile
+> > index 58b567278034..8ebbdcf92dac 100644
+> > --- a/drivers/power/supply/Makefile
+> > +++ b/drivers/power/supply/Makefile
+> > @@ -32,6 +32,7 @@ obj-$(CONFIG_BATTERY_DS2782)	+= ds2782_battery.o
+> >   obj-$(CONFIG_BATTERY_GAUGE_LTC2941)	+= ltc2941-battery-gauge.o
+> >   obj-$(CONFIG_BATTERY_GOLDFISH)	+= goldfish_battery.o
+> >   obj-$(CONFIG_BATTERY_LEGO_EV3)	+= lego_ev3_battery.o
+> > +obj-$(CONFIG_BATTERY_LENOVO_YOGA_C630) += lenovo_yoga_c630_battery.o
+> >   obj-$(CONFIG_BATTERY_PMU)	+= pmu_battery.o
+> >   obj-$(CONFIG_BATTERY_QCOM_BATTMGR)	+= qcom_battmgr.o
+> >   obj-$(CONFIG_BATTERY_OLPC)	+= olpc_battery.o
+> > diff --git a/drivers/power/supply/lenovo_yoga_c630_battery.c b/drivers/power/supply/lenovo_yoga_c630_battery.c
+> > new file mode 100644
+> > index 000000000000..76152ad38d46
+> > --- /dev/null
+> > +++ b/drivers/power/supply/lenovo_yoga_c630_battery.c
+> > @@ -0,0 +1,479 @@
+> > +// SPDX-License-Identifier: GPL-2.0-only
+> > +/*
+> > + * Copyright (c) 2022-2024, Linaro Ltd
+> > + * Authors:
+> > + *    Bjorn Andersson
+> > + *    Dmitry Baryshkov
+> > + */
+> > +#include <linux/auxiliary_bus.h>
+> > +#include <linux/delay.h>
+> > +#include <linux/module.h>
+> > +#include <linux/platform_data/lenovo-yoga-c630.h>
+> > +#include <linux/power_supply.h>
+> > +
+> > +struct yoga_c630_psy {
+> > +	struct yoga_c630_ec *ec;
+> > +	struct device *dev;
+> > +	struct device_node *of_node;
+> > +	struct notifier_block nb;
+> > +	struct mutex lock;
+> 
+> Do locks still not require a
+> 
+> struct mutex lock; /* this mutex locks this thing */
 
-Signed-off-by: Ross Philipson <ross.philipson@oracle.com>
----
- drivers/firmware/efi/libstub/x86-stub.c | 98 +++++++++++++++++++++++++
- 1 file changed, 98 insertions(+)
+Not required, but let me add the doc.
 
-diff --git a/drivers/firmware/efi/libstub/x86-stub.c b/drivers/firmware/efi/libstub/x86-stub.c
-index d5a8182cf2e1..a1143d006202 100644
---- a/drivers/firmware/efi/libstub/x86-stub.c
-+++ b/drivers/firmware/efi/libstub/x86-stub.c
-@@ -9,6 +9,8 @@
- #include <linux/efi.h>
- #include <linux/pci.h>
- #include <linux/stddef.h>
-+#include <linux/slr_table.h>
-+#include <linux/slaunch.h>
- 
- #include <asm/efi.h>
- #include <asm/e820/types.h>
-@@ -830,6 +832,97 @@ static efi_status_t efi_decompress_kernel(unsigned long *kernel_entry)
- 	return efi_adjust_memory_range_protection(addr, kernel_text_size);
- }
- 
-+#if (IS_ENABLED(CONFIG_SECURE_LAUNCH))
-+static bool efi_secure_launch_update_boot_params(struct slr_table *slrt,
-+						 struct boot_params *boot_params)
-+{
-+	struct slr_entry_intel_info *txt_info;
-+	struct slr_entry_policy *policy;
-+	struct txt_os_mle_data *os_mle;
-+	bool updated = false;
-+	int i;
-+
-+	txt_info = slr_next_entry_by_tag(slrt, NULL, SLR_ENTRY_INTEL_INFO);
-+	if (!txt_info)
-+		return false;
-+
-+	os_mle = txt_os_mle_data_start((void *)txt_info->txt_heap);
-+	if (!os_mle)
-+		return false;
-+
-+	os_mle->boot_params_addr = (u32)(u64)boot_params;
-+
-+	policy = slr_next_entry_by_tag(slrt, NULL, SLR_ENTRY_ENTRY_POLICY);
-+	if (!policy)
-+		return false;
-+
-+	for (i = 0; i < policy->nr_entries; i++) {
-+		if (policy->policy_entries[i].entity_type == SLR_ET_BOOT_PARAMS) {
-+			policy->policy_entries[i].entity = (u64)boot_params;
-+			updated = true;
-+			break;
-+		}
-+	}
-+
-+	/*
-+	 * If this is a PE entry into EFI stub the mocked up boot params will
-+	 * be missing some of the setup header data needed for the second stage
-+	 * of the Secure Launch boot.
-+	 */
-+	if (image) {
-+		struct setup_header *hdr = (struct setup_header *)((u8 *)image->image_base + 0x1f1);
-+		u64 cmdline_ptr, hi_val;
-+
-+		boot_params->hdr.setup_sects = hdr->setup_sects;
-+		boot_params->hdr.syssize = hdr->syssize;
-+		boot_params->hdr.version = hdr->version;
-+		boot_params->hdr.loadflags = hdr->loadflags;
-+		boot_params->hdr.kernel_alignment = hdr->kernel_alignment;
-+		boot_params->hdr.min_alignment = hdr->min_alignment;
-+		boot_params->hdr.xloadflags = hdr->xloadflags;
-+		boot_params->hdr.init_size = hdr->init_size;
-+		boot_params->hdr.kernel_info_offset = hdr->kernel_info_offset;
-+		hi_val = boot_params->ext_cmd_line_ptr;
-+		cmdline_ptr = boot_params->hdr.cmd_line_ptr | hi_val << 32;
-+		boot_params->hdr.cmdline_size = strlen((const char *)cmdline_ptr);;
-+	}
-+
-+	return updated;
-+}
-+
-+static void efi_secure_launch(struct boot_params *boot_params)
-+{
-+	struct slr_entry_dl_info *dlinfo;
-+	efi_guid_t guid = SLR_TABLE_GUID;
-+	dl_handler_func handler_callback;
-+	struct slr_table *slrt;
-+
-+	/*
-+	 * The presence of this table indicated a Secure Launch
-+	 * is being requested.
-+	 */
-+	slrt = (struct slr_table *)get_efi_config_table(guid);
-+	if (!slrt || slrt->magic != SLR_TABLE_MAGIC)
-+		return;
-+
-+	/*
-+	 * Since the EFI stub library creates its own boot_params on entry, the
-+	 * SLRT and TXT heap have to be updated with this version.
-+	 */
-+	if (!efi_secure_launch_update_boot_params(slrt, boot_params))
-+		return;
-+
-+	/* Jump through DL stub to initiate Secure Launch */
-+	dlinfo = slr_next_entry_by_tag(slrt, NULL, SLR_ENTRY_DL_INFO);
-+
-+	handler_callback = (dl_handler_func)dlinfo->dl_handler;
-+
-+	handler_callback(&dlinfo->bl_context);
-+
-+	unreachable();
-+}
-+#endif
-+
- static void __noreturn enter_kernel(unsigned long kernel_addr,
- 				    struct boot_params *boot_params)
- {
-@@ -957,6 +1050,11 @@ void __noreturn efi_stub_entry(efi_handle_t handle,
- 		goto fail;
- 	}
- 
-+#if (IS_ENABLED(CONFIG_SECURE_LAUNCH))
-+	/* If a Secure Launch is in progress, this never returns */
-+	efi_secure_launch(boot_params);
-+#endif
-+
- 	/*
- 	 * Call the SEV init code while still running with the firmware's
- 	 * GDT/IDT, so #VC exceptions will be handled by EFI.
+> 
+> > +
+> > +	struct power_supply *adp_psy;
+> > +	struct power_supply *bat_psy;
+> > +
+> > +	unsigned long last_status_update;
+> > +
+> > +	bool adapter_online;
+> > +
+> > +	bool unit_mA;
+> > +
+> > +	bool bat_present;
+> > +	unsigned int bat_status;
+> > +	unsigned int design_capacity;
+> > +	unsigned int design_voltage;
+> > +	unsigned int full_charge_capacity;
+> > +
+> > +	unsigned int capacity_now;
+> > +	unsigned int voltage_now;
+> > +
+> > +	int current_now;
+> > +	int rate_now;
+> > +};
+> > +
+> > +#define LENOVO_EC_CACHE_TIME		(10 * HZ)
+> > +
+> > +#define LENOVO_EC_ADPT_STATUS		0xa3
+> > +#define LENOVO_EC_ADPT_PRESENT		BIT(7)
+> > +#define LENOVO_EC_BAT_ATTRIBUTES	0xc0
+> > +#define LENOVO_EC_BAT_ATTR_UNIT_IS_MA	BIT(1)
+> > +#define LENOVO_EC_BAT_STATUS		0xc1
+> > +#define LENOVO_EC_BAT_REMAIN_CAPACITY	0xc2
+> > +#define LENOVO_EC_BAT_VOLTAGE		0xc6
+> > +#define LENOVO_EC_BAT_DESIGN_VOLTAGE	0xc8
+> > +#define LENOVO_EC_BAT_DESIGN_CAPACITY	0xca
+> > +#define LENOVO_EC_BAT_FULL_CAPACITY	0xcc
+> > +#define LENOVO_EC_BAT_CURRENT		0xd2
+> > +#define LENOVO_EC_BAT_FULL_FACTORY	0xd6
+> > +#define LENOVO_EC_BAT_PRESENT		0xda
+> > +#define LENOVO_EC_BAT_FULL_REGISTER	0xdb
+> > +#define LENOVO_EC_BAT_FULL_IS_FACTORY	BIT(0)
+> > +
+> > +/* the mutex should already be locked */
+> > +static int yoga_c630_psy_update_bat_info(struct yoga_c630_psy *ecbat)
+> > +{
+> > +	struct yoga_c630_ec *ec = ecbat->ec;
+> > +	int val;
+> > +
+> > +	val = yoga_c630_ec_read8(ec, LENOVO_EC_BAT_PRESENT);
+> > +	if (val < 0)
+> > +		return val;
+> > +	ecbat->bat_present = !!(val & BIT(0));
+> > +	if (!ecbat->bat_present)
+> > +		return val;
+> > +
+> > +	val = yoga_c630_ec_read8(ec, LENOVO_EC_BAT_ATTRIBUTES);
+> > +	if (val < 0)
+> > +		return val;
+> > +	ecbat->unit_mA = val & LENOVO_EC_BAT_ATTR_UNIT_IS_MA;
+> > +
+> > +	val = yoga_c630_ec_read16(ec, LENOVO_EC_BAT_DESIGN_CAPACITY);
+> > +	if (val < 0)
+> > +		return val;
+> > +	ecbat->design_capacity = val * 1000;
+> > +
+> > +	msleep(50);
+> 
+> What's this for ? Also do you really want to hold a mutex for 50
+> milliseconds ?
+
+DSDT has these delays after each read, so I can only assume it is required.
+Sleeping outside of the mutex() would mean that a concurrent thread
+might break into this delay and query the EC.
+
+[skipped]
+
+
+> > +static int yoga_c630_psy_probe(struct auxiliary_device *adev,
+> > +				   const struct auxiliary_device_id *id)
+> > +{
+> > +	struct yoga_c630_ec *ec = adev->dev.platform_data;
+> > +	struct power_supply_config adp_cfg = {};
+> > +	struct device *dev = &adev->dev;
+> > +	struct yoga_c630_psy *ecbat;
+> > +	int ret;
+> > +
+> > +	ecbat = devm_kzalloc(&adev->dev, sizeof(*ecbat), GFP_KERNEL);
+> > +	if (!ecbat)
+> > +		return -ENOMEM;
+> > +
+> > +	ecbat->ec = ec;
+> > +	ecbat->dev = dev;
+> > +	mutex_init(&ecbat->lock);
+> > +	ecbat->of_node = adev->dev.parent->of_node;
+> > +	ecbat->nb.notifier_call = yoga_c630_psy_notify;
+> > +
+> > +	auxiliary_set_drvdata(adev, ecbat);
+> > +
+> > +	adp_cfg.drv_data = ecbat;
+> > +	adp_cfg.of_node = ecbat->of_node;
+> > +	adp_cfg.supplied_to = (char **)&yoga_c630_psy_bat_psy_desc_mA.name;
+> > +	adp_cfg.num_supplicants = 1;
+> > +	ecbat->adp_psy = devm_power_supply_register_no_ws(dev, &yoga_c630_psy_adpt_psy_desc, &adp_cfg);
+> > +	if (IS_ERR(ecbat->adp_psy)) {
+> > +		dev_err(dev, "failed to register AC adapter supply\n");
+> > +		return PTR_ERR(ecbat->adp_psy);
+> > +	}
+> > +
+> > +	mutex_lock(&ecbat->lock);
+> 
+> Do you really need this lock here in your probe() function ? What's the
+> parallel path of execution you are mitigating against here ?
+
+Notifications from the battery driver can already happen at this point.
+Also once the fist power supply is registered, userspace can potentially
+access it, triggering EC access and updates of the PSY registration.
+
+> 
+> > +
+> > +	ret = yoga_c630_psy_update_bat_info(ecbat);
+> > +	if (ret)
+> > +		goto err_unlock;
+> > +
+> > +	ret = yoga_c630_psy_register_bat_psy(ecbat);
+> > +	if (ret)
+> > +		goto err_unlock;
+> > +
+> > +	mutex_unlock(&ecbat->lock);
+> > +
+
+
 -- 
-2.39.3
-
+With best wishes
+Dmitry
 
