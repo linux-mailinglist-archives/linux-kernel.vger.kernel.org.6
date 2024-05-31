@@ -1,169 +1,167 @@
-Return-Path: <linux-kernel+bounces-197179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41D0C8D672A
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:47:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 878848D671D
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:46:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B9A7B2ACCD
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:46:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DDA9BB278F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:45:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BE11176AA2;
-	Fri, 31 May 2024 16:45:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54C3716E867;
+	Fri, 31 May 2024 16:45:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UCk/4hhx"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="da0K0Pyo"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BEB7155CA1
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 16:45:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1D422135B;
+	Fri, 31 May 2024 16:45:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717173948; cv=none; b=Lmx57YdF2OTY8u6f/OW3QuNMuKEiUhQy+UzR0XfFpGE49pU3LFrm7hxygGvedKDe40utns1Y/dTBcBuPryDCQ1bQL/OVw/Gjx6Wef5NbU5U8TWJA685Galn923+uuFjVjkSBNRmzTfMWp88FRT21n5TmLUaOJ8ix6Plfxu2IJtU=
+	t=1717173946; cv=none; b=dNSWiMWn1a2PQhLxX4yJbXpwtOKytCFtxX+wwPqKCOJ2oTcpjBEgLER6C++T61FCq4jbKE0qWGIKQSI9Qfv4PULdWzX8+atcaZFwZUaWAipTi1fV8fnAz1TGLyAUb5pQj5z7sQC1oZZuCJvyUnY6tC7kQEuS3gtuXQuDuuZtnmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717173948; c=relaxed/simple;
-	bh=36m2p7lcItP/+bB0ofDSLrkZ1c8ARR5jCIwAHfSrTs0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YwybN7SPr4BgSORQeH5ZlwZI1749WmLIXvGrtQh440eGDQNtCy8JENVXOnlDTxUEDFwxvLBmd+V6kMXSel4pkyo7qd4uXN2F4efYPPY8Ru7xVldpFVCnMSUZh7s/2gGk/Yi6rrU9sxBWx+CB7Rc3YPAHHHyPiPBJdBQygd9Qpo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UCk/4hhx; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-420107286ecso2115e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 09:45:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717173944; x=1717778744; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TH4bnbtSSVEcXN8q4TBBHbQcYVbG9UpE4sBQSCvIGBs=;
-        b=UCk/4hhxC9TTHJFm/SwPJSMMnlMhcDoNO2QA35JXbrLd6qvfLJGdG6clHM4wqdFN+T
-         X9kHvucJTzr2PLtYEqwtJjZzGfy3QbJPaN2Tn4j+uFo5PenwKGSmJ4VgKbhykJo08BU/
-         jbL/s1PqK5Xg6l+ZMFoJuzLbhaXh1sCZOHt4lHMlJ72lxFKovBtyGYHDND0RLXWCpjnJ
-         g7uxM7rcbbUFqkj1PrjED5cXUkMl18o97jggrgC40XtawhccskTMcTsSfWkUsX+kObQc
-         smI5WnvINM4M08+Q9/i0MnRBaBSHhUJsdHvq+0455OyIgScHxvcUnShXtXOWGp3QcHLj
-         UKWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717173944; x=1717778744;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TH4bnbtSSVEcXN8q4TBBHbQcYVbG9UpE4sBQSCvIGBs=;
-        b=VBPJfyTXmvPsSGnmvdnoDwwrC7b1ILYk/AT5kLblZTdPI5BQ099JRVeTtYVGtspgcX
-         vi0zc3mhmSI22Esyp97DIzy1UezlCoXqnbwOIxUO/q+lXaZrCgiI5SUTFRmSj0M3ximJ
-         cZk7e6lUYb4PKdDYlUJBjKGah0imP1Yc6piNwfvqleF/RaHPE++tAloH28Vy6BDQ5ldF
-         gNcC+NQ+/j9e7/lvq5ElYGxAqocVZz/5e4YjO1K/GOdDCF7URbfxoCtlaMhrdnauBI/6
-         itX0cuN3GJ6nSvFPOy0hSROVYbDdd9fC6JCPIkQQh34NkFtIn/pWG07sloJIsEj0c3S6
-         58cA==
-X-Forwarded-Encrypted: i=1; AJvYcCXLq0bTi/B/qNAkynUWICQfoS1E8bSDrUJTlQKP4en2H5LOHTd4v0myIuvOSl5A15YcRipTkIpOM1JYEUINLOC4i6d/Xt8yM7X5Hoel
-X-Gm-Message-State: AOJu0YwA2k7YLNeN1OE5yLtgSn5CzUrq3GuYqYFOzs9YpNdN6zVvmM9Y
-	tdXAKZ3l4/8s1uxUqpSCJSSwO7FrQobBUMN4zIWQgRO6f05MGjr8Geu6Qb/UhFyf9ZtSig+htB5
-	0x1iImXCVEg6c71FS9p8EeIV9dECKgzBfjW8X
-X-Google-Smtp-Source: AGHT+IEq8Fs3z13ePwWrnbWJUDpx50btCGNNHylLrjkBr8g/csKK0P+GO3+xFEqljtHAVxZhGvPrjS68k6wXeE2cHVA=
-X-Received: by 2002:a05:600c:6546:b0:41f:9dd0:7168 with SMTP id
- 5b1f17b1804b1-4212c091f55mr2200815e9.2.1717173943952; Fri, 31 May 2024
- 09:45:43 -0700 (PDT)
+	s=arc-20240116; t=1717173946; c=relaxed/simple;
+	bh=9ZGyYiqIe9YBKccu9aVX7tFCEevFRWtYp/GVAzLQ7eE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PI0E+b8HE/88E4bdcxQZQpNOzlPDnlx4h5jJeC0TMDZn1qxb9Fk8EcfC63A0kq8UnkkModxytGRf81EFRIeVNayXxRSbDJdgQydapRK8yAikBaVHN2N4Gke3VduSlAX9MeYhOavlJCJ6xzmmsKsaEoyEHf2gUDcIqkfkeJJ3doY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=da0K0Pyo; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44V9pLYm002217;
+	Fri, 31 May 2024 16:45:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=SxcHMvjlVyGvXa+aKGe+oOvQ+0ImX/B+Xhu
+	V6t49JaU=; b=da0K0Pyow5EDGX1PonsKfxeQcTqzC00VVETH9nIUD8TkT9k2cum
+	qdR99u0aZSeE7ovISNLtZhooPoBLDO5TzW1jCwW63yKs7ULAbHuAlOXiGawoRdTl
+	yGAtfju0k7ztV6z/o4oxVNE7uALPhP2UOhiNz2M9bJli6gaTBaZL0RnBfmCH8GIV
+	Dl0FFwiJGRf4qSEEqEgeqwap1IszPTBWtVL6rRs/rAhbzfDG+MV0svqqSr5/23dJ
+	2idN/wBuHbDBpJ8bKAo5N8bTKMTTcLPbYGVDdlA6tBr5LrUmLY3ovVV/WNRJC2GS
+	90XFNa5vFCwBIZAK8YpEBi9p3wqwCkTbxxA==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfc9nh128-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 31 May 2024 16:45:40 +0000 (GMT)
+Received: from pps.filterd (NALASPPMTA01.qualcomm.com [127.0.0.1])
+	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTP id 44VGfCpP026789;
+	Fri, 31 May 2024 16:45:39 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by NALASPPMTA01.qualcomm.com (PPS) with ESMTPS id 3yfd4ta3an-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 31 May 2024 16:45:39 +0000
+Received: from NALASPPMTA01.qualcomm.com (NALASPPMTA01.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 44VGgLOx027988;
+	Fri, 31 May 2024 16:45:39 GMT
+Received: from hu-devc-lv-u22-c.qualcomm.com (hu-uchalich-lv.qualcomm.com [10.81.89.1])
+	by NALASPPMTA01.qualcomm.com (PPS) with ESMTPS id 44VGjcbw000483
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 31 May 2024 16:45:39 +0000
+Received: by hu-devc-lv-u22-c.qualcomm.com (Postfix, from userid 4184210)
+	id 49D0A658; Fri, 31 May 2024 09:45:38 -0700 (PDT)
+From: Unnathi Chalicheemala <quic_uchalich@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: Unnathi Chalicheemala <quic_uchalich@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel@quicinc.com
+Subject: [PATCH v6 0/5] LLCC: Support for Broadcast_AND region
+Date: Fri, 31 May 2024 09:45:23 -0700
+Message-Id: <cover.1717014052.git.quic_uchalich@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240529180510.2295118-1-jthoughton@google.com>
- <20240529180510.2295118-3-jthoughton@google.com> <CAOUHufYFHKLwt1PWp2uS6g174GZYRZURWJAmdUWs5eaKmhEeyQ@mail.gmail.com>
- <ZlelW93_T6P-ZuSZ@google.com> <CAOUHufZdEpY6ra73SMHA33DegKxKaUM=Os7A7aDBFND6NkbUmQ@mail.gmail.com>
- <Zley-u_dOlZ-S-a6@google.com> <CADrL8HXHWg_MkApYQTngzmN21NEGNWC6KzJDw_Lm63JHJkR=5A@mail.gmail.com>
- <CAOUHufZq6DwpStzHtjG+TOiHaQ6FFbkTfHMCe8Yy0n_M9MKdqw@mail.gmail.com> <Zll2ILUNWE-JPi9U@linux.dev>
-In-Reply-To: <Zll2ILUNWE-JPi9U@linux.dev>
-From: Yu Zhao <yuzhao@google.com>
-Date: Fri, 31 May 2024 10:45:04 -0600
-Message-ID: <CAOUHufb_-w=B+NfHAUAo=O8bDXZBdXeeGRZD6kY=krN07srbGA@mail.gmail.com>
-Subject: Re: [PATCH v4 2/7] mm: multi-gen LRU: Have secondary MMUs participate
- in aging
-To: Oliver Upton <oliver.upton@linux.dev>
-Cc: James Houghton <jthoughton@google.com>, Sean Christopherson <seanjc@google.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Ankit Agrawal <ankita@nvidia.com>, 
-	Anup Patel <anup@brainfault.org>, Atish Patra <atishp@atishpatra.org>, 
-	Axel Rasmussen <axelrasmussen@google.com>, Bibo Mao <maobibo@loongson.cn>, 
-	Catalin Marinas <catalin.marinas@arm.com>, David Matlack <dmatlack@google.com>, 
-	David Rientjes <rientjes@google.com>, Huacai Chen <chenhuacai@kernel.org>, 
-	James Morse <james.morse@arm.com>, Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>, 
-	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Raghavendra Rao Ananta <rananta@google.com>, Ryan Roberts <ryan.roberts@arm.com>, 
-	Shaoqin Huang <shahuang@redhat.com>, Shuah Khan <shuah@kernel.org>, 
-	Suzuki K Poulose <suzuki.poulose@arm.com>, Tianrui Zhao <zhaotianrui@loongson.cn>, 
-	Will Deacon <will@kernel.org>, Zenghui Yu <yuzenghui@huawei.com>, kvm-riscv@lists.infradead.org, 
-	kvm@vger.kernel.org, kvmarm@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-mips@vger.kernel.org, linux-mm@kvack.org, 
-	linux-riscv@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, 
-	loongarch@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: JHled-lritcTTLGDqSS0DcgTXmptPPOT
+X-Proofpoint-GUID: JHled-lritcTTLGDqSS0DcgTXmptPPOT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-31_12,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
+ impostorscore=0 bulkscore=0 malwarescore=0 clxscore=1015 spamscore=0
+ priorityscore=1501 mlxlogscore=796 suspectscore=0 phishscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405310127
 
-On Fri, May 31, 2024 at 1:03=E2=80=AFAM Oliver Upton <oliver.upton@linux.de=
-v> wrote:
->
-> On Fri, May 31, 2024 at 12:05:48AM -0600, Yu Zhao wrote:
+This series adds:
+1. Device tree register mapping for Broadcast_AND region in SM8450,
+SM8550, SM8650.
+2. LLCC driver updates to reflect addition of Broadcast_AND regmap.
 
-Let me add back what I said earlier:
+To support CSR programming, a broadcast interface is used to program all
+channels in a single command. Until SM8450 there was only one broadcast
+region (Broadcast_OR) used to broadcast write and check for status bit
+0. From SM8450 onwards another broadcast region (Broadcast_AND) has been
+added which checks for status bit 1.
 
-  I'm not convinced, but it doesn't mean your point of view is
-  invalid. If you fully understand the implications of your design
-  choice and document them, I will not object.
+This series updates the device trees from SM8450 onwards to have a
+mapping to this Broadcast_AND region. It also updates the llcc_drv_data
+structure with a regmap for Broadcast_AND region and corrects the
+broadcast region used to check for status bit 1.
 
-> > All optimizations in v2 were measured step by step. Even that bitmap,
-> > which might be considered overengineered, brought a readily
-> > measuarable 4% improvement in memcached throughput on Altra Max
-> > swapping to Optane:
->
-> That's great, but taking an iterative approach to the problem allows
-> the reviewers and maintainers to come to their own conclusions about
-> each optimization independently. Squashing all of that together and
-> posting the result doesn't allow for this.
+Changes in v6:
+- Update commit message of driver code patch to include problem statement.
 
-That's your methodology, which I respect: as I said I won't stand in your w=
-ay.
+Changes in v5:
+- Add additional check to remove warning from devres.c on older
+chipsets.
+- Carried over Bjorn's and Krzysztof's R-b tags from v4.
 
-But mine is backed by data, please do respect that as well, by doing
-what I asked: document your justifications.
+Changes in v4:
+- Updated Devicetree patches' commit messages to make problem statement
+clearer
+- Resolved Konrad's comments on driver code patch
+- Updated v3 changelog to include dropped R-b tag
 
-> Even if we were to take the series as-is, the door is wide open to
-> subsequent improvements.
->
-> > What I don't think is acceptable is simplifying those optimizations
-> > out without documenting your justifications (I would even call it a
-> > design change, rather than simplification, from v3 to v4).
->
-> No, sorry, there's nothing wrong with James' approach here.
+Changes in v3:
+- Removed new example in dt-bindings patch and ran 'make
+DT_CHECKER_FLAGS=-m dt_binding_check'
+- Dropped Krzysztof's R-b tag on dt-bindings patch
+- Use of ternary operator in llcc_update_act_ctrl()
+- Add comment before initialization of Broadcast_AND regmap in probe
+- Move DeviceTree patches to the end
 
-Sorry, are you saying "without documenting your justifications" is
-nothing wrong? If so, please elaborate.
+Changes in v2:
+- Added an additional check in the case old DT files are used for
+above mentioned chipsets for backwards compatibility
+- Moved addition of if check in llcc_update_act_ctrl() to a separate
+"Fixes" patch; not part of this series
 
-> The discussion that led to the design of v4 happened on list; you were
-> on CC. The general consensus on the KVM side was that the bitmap was
-> complicated and lacked independent justification. There was ample
-> opportunity to voice your concerns before he spent the time on v4.
+Link to v5: https://lore.kernel.org/all/cover.1716228054.git.quic_uchalich@quicinc.com/
+Link to v4: https://lore.kernel.org/all/20240329-llcc-broadcast-and-v4-0-107c76fd8ceb@quicinc.com/
+Link to v3: https://lore.kernel.org/all/cover.1708551850.git.quic_uchalich@quicinc.com/
+Link to v2: https://lore.kernel.org/all/cover.1707202761.git.quic_uchalich@quicinc.com/
+Link to v1: https://lore.kernel.org/all/cover.1706296015.git.quic_uchalich@quicinc.com/
 
-Please re-read my previous emails -- I never object to the removal of
-the bitmap or James' approach.
+Unnathi Chalicheemala (5):
+  dt-bindings: arm: msm: Add llcc Broadcast_AND register
+  soc: qcom: llcc: Add regmap for Broadcast_AND region
+  arm64: dts: qcom: sm8450: Add Broadcast_AND register in LLCC block
+  arm64: dts: qcom: sm8550: Add Broadcast_AND register in LLCC block
+  arm64: dts: qcom: sm8650: Add Broadcast_AND register in LLCC block
 
-And please stop making assumptions -- I did voice my concerns with
-James privately.
+ .../devicetree/bindings/cache/qcom,llcc.yaml  | 27 ++++++++++++++++++-
+ arch/arm64/boot/dts/qcom/sm8450.dtsi          |  5 ++--
+ arch/arm64/boot/dts/qcom/sm8550.dtsi          |  6 +++--
+ arch/arm64/boot/dts/qcom/sm8650.dtsi          |  6 +++--
+ drivers/soc/qcom/llcc-qcom.c                  | 16 ++++++++++-
+ include/linux/soc/qcom/llcc-qcom.h            |  4 ++-
+ 6 files changed, 55 insertions(+), 9 deletions(-)
 
-> You seriously cannot fault a contributor for respinning their work based
-> on the provided feedback.
+-- 
+2.34.1
 
-Are you saying I faulted James for taking others' feedback? If so,
-where? And I'll make sure I don't give such an impression in the
-future.
-
-Also what do you think about the technical flaws and inaccurate
-understandings I pointed out? You seem to have a strong opinion on
-your iterate approach, but I hope you didn't choose to overlook the
-real meat of this discussion.
 
