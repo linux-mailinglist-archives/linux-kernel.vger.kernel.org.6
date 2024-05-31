@@ -1,141 +1,152 @@
-Return-Path: <linux-kernel+bounces-196999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70F798D64BE
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:45:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E26788D64C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:49:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A22441C23C1B
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:45:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1EC741C23576
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:49:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4748557888;
-	Fri, 31 May 2024 14:45:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEA1557323;
+	Fri, 31 May 2024 14:48:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gIgfamOO"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XG8EPRYs"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35BFA2E859;
-	Fri, 31 May 2024 14:45:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81FE87602B
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 14:48:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717166720; cv=none; b=PVjeTurLoYS50vRnWOfXSqdTfMfnsOO55b+MuBsyi/8lKkX/pu3IfZi+ygw14Rri90+MLpv6QsxuN20NhXmXk683HihBaM8TfGuF91WFNUv/LSrEchz/2aqMnmZvKhiewTDhAdFBmTw9Up/sx9bvkbDKHUttRSWomG7Ez9Ox7zE=
+	t=1717166936; cv=none; b=AK4+OcBqKDMCXZJrAjmRFGkNYudUmKXlBeiNPX+gMKTay2tth+qbOkNJg+ao19yYReErwf5zWh8HpqJH1BOq1q5CXJ3GwIbH7/b7n3ZNs3VsqhtYR92QHQ49FY+Xoc/o+PFyRSOcZgZcGqX2xE8iSet8WH1dlmIn31YrXliNdxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717166720; c=relaxed/simple;
-	bh=EIrwrMgP84onPe3hHLgvihCbppR9nSwhvh1a+A539DY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EPaawZlAt/un4UkTd4hrKgd4O5ide/XdHP5hIlP77VPlztlmxrsgNpK8osS0bhNMsMierlIPoHjcJzglLf12qNPmZKLuMSycyX/4wPl3vmTjLPERoeCZnliOpSQU41wtcuS1tSMLeoaBkm2BXU/qS5WDVplGDjtjhL4A2RhvWh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gIgfamOO; arc=none smtp.client-ip=192.198.163.14
+	s=arc-20240116; t=1717166936; c=relaxed/simple;
+	bh=MG4XTF460ME3QysgJdn6KSQKbYDcjfrewhgJYyzES+8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=st6qATkPHqtc2F8fCEeHwway4fSkYWtesJspYaFI/NHfZLi4m0K6+T0geO0YjcJkpjH9wS6GPV58B6ZYPVgO7n5Oy6E8ifPVDWx49fQyGf0Jr9wy79aEhm23ZZlK1ygh3pnLOcSGvfGlfjblpnWUrRaxVrymzXjeEnawKrEspYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XG8EPRYs; arc=none smtp.client-ip=198.175.65.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717166719; x=1748702719;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=EIrwrMgP84onPe3hHLgvihCbppR9nSwhvh1a+A539DY=;
-  b=gIgfamOOAheaM2zBu2lQ4GMOSELo/ZqSOsYGTom12B+TgfDIbkMNTTuQ
-   asIFUfdMBPLNvCdG6GEaf863ROjyNVYjM2AH/x1ebhV9KKOXJhcBwQxaH
-   Mwah1iAolf0hKn/LjwRsLTruQw8/UF+zP3/nh3juJERcJuNnESna9+8Gi
-   C7e7gWi6LKbQU0rnvth01ZqRD7A41AwuZI6YT9Wgt295R+63w27si6mvq
-   Vgs+zo2bThGn4MpdwGIYwbrYy5NwDG5enIT9fTFMya18nCR8QTDGYvpg5
-   +HplbfP2lJYpvzwQUeGfVn65auDiL/bNT+lHCrmkrig2fjTPvasX9gXnz
-   A==;
-X-CSE-ConnectionGUID: xOAAyloVQK6zyP39xzGL+Q==
-X-CSE-MsgGUID: QJQeq4zxQIWPexzpDikVQQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="13939047"
+  t=1717166935; x=1748702935;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=MG4XTF460ME3QysgJdn6KSQKbYDcjfrewhgJYyzES+8=;
+  b=XG8EPRYsaZoy0KFio2Ju+Rvec97a8r9lEhiHxVmVCiD9ZpJLQznY/1DI
+   xTap5rkRGiLVEq7mwngORjlA75IK+rKLWREqirOhNa2Chf5f5LKEa+fMt
+   xgVbHZ+u6G7YFWaPGlbZpy4/UN9jQQGEISSjJ6DKNcYpjvoiocLgSECWi
+   5XY1YboequMxCp4GwJCCr4ODJzx2M6ou1xVAWn9YmoyPEp+2TDXu7RjG4
+   Ewim5EgtTq99avI7fcZKVFpZ2Ux6RnlA3iVgU6R86o+z7jVfqWYbB5BS3
+   YG2PQg95F4QmppFJG5imZTI0Xm9nbeYdHGeqHM/DA0SbVZ0fJV3v/dVcB
+   Q==;
+X-CSE-ConnectionGUID: kaUPsBW7Q3OINUgMZZjlgA==
+X-CSE-MsgGUID: fzds1pj1RGWZpcg0MT9i6g==
+X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="24288606"
 X-IronPort-AV: E=Sophos;i="6.08,204,1712646000"; 
-   d="scan'208";a="13939047"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 07:45:19 -0700
-X-CSE-ConnectionGUID: AF/eqOPGQtC4ibKbWQSFkQ==
-X-CSE-MsgGUID: OrRQBb5xQYCHfCfMLf2tzQ==
+   d="scan'208";a="24288606"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 07:47:59 -0700
+X-CSE-ConnectionGUID: eiuozHKnS2iAMwXvlG0LLQ==
+X-CSE-MsgGUID: ztnHMCkNRxanqV1Z1AVwhw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,204,1712646000"; 
-   d="scan'208";a="67030268"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 07:45:14 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sD3VG-0000000CUn1-45IS;
-	Fri, 31 May 2024 17:45:10 +0300
-Date: Fri, 31 May 2024 17:45:10 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Stefan Eichenberger <eichest@gmail.com>
-Cc: o.rempel@pengutronix.de, kernel@pengutronix.de, andi.shyti@kernel.org,
-	shawnguo@kernel.org, s.hauer@pengutronix.de, festevam@gmail.com,
-	jic23@kernel.org, lars@metafoo.de, nuno.sa@analog.com,
-	u.kleine-koenig@pengutronix.de, marcelo.schmitt@analog.com,
-	gnstark@salutedevices.com, francesco.dolcini@toradex.com,
-	linux-i2c@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org,
-	Stefan Eichenberger <stefan.eichenberger@toradex.com>
-Subject: Re: [RFC PATCH] i2c: imx: avoid rescheduling when waiting for bus
- not busy
-Message-ID: <Zlnidi62gEWwdQ3U@smile.fi.intel.com>
-References: <20240531142437.74831-1-eichest@gmail.com>
+   d="scan'208";a="59361042"
+Received: from ibganev-desk.amr.corp.intel.com (HELO [10.125.108.40]) ([10.125.108.40])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 07:47:56 -0700
+Message-ID: <f1b6d4d8-1d17-4d1f-ba9d-8b59393a6676@linux.intel.com>
+Date: Fri, 31 May 2024 09:46:55 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240531142437.74831-1-eichest@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] ASoc: tas2781: Enable RCA-based playback without DSP
+ firmware download
+To: Shenghao Ding <shenghao-ding@ti.com>, broonie@kernel.org
+Cc: andriy.shevchenko@linux.intel.com, lgirdwood@gmail.com, perex@perex.cz,
+ 13916275206@139.com, alsa-devel@alsa-project.org, i-salazar@ti.com,
+ linux-kernel@vger.kernel.org, j-chadha@ti.com, liam.r.girdwood@intel.com,
+ jaden-yue@ti.com, yung-chuan.liao@linux.intel.com, dipa@ti.com,
+ yuhsuan@google.com, tiwai@suse.de, baojun.xu@ti.com, soyer@irl.hu,
+ Baojun.Xu@fpt.com, judyhsiao@google.com, navada@ti.com,
+ cujomalainey@google.com, aanya@ti.com, nayeem.mahmud@ti.com,
+ savyasanchi.shukla@netradyne.com, flaviopr@microsoft.com, jesse-ji@ti.com
+References: <20240531052636.565-1-shenghao-ding@ti.com>
+Content-Language: en-US
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+In-Reply-To: <20240531052636.565-1-shenghao-ding@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, May 31, 2024 at 04:24:37PM +0200, Stefan Eichenberger wrote:
-> From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
-> 
-> On our i.MX8M Mini based module we have an ADS1015 I2C ADC connected to
-> the I2C bus. The ADS1015 I2C ADC will timeout after 25ms when the I2C
-> bus is idle. The imx i2c driver will call schedule when waiting for the
-> bus to become idle after switching to master mode. When the i2c
-> controller switches to master mode it pulls SCL and SDA low, if the
-> ADS1015 I2C ADC sees this for more than 25 ms without seeing SCL
-> clocking, it will timeout and ignore all signals until the next start
-> condition occurs (SCL and SDA low). This can occur when the system load
-> is high and schedule returns after more than 25 ms.
-> 
-> This rfc tries to solve the problem by using a udelay for the first 10
-> ms before calling schedule. This reduces the chance that we will
-> reschedule. However, it is still theoretically possible for the problem
-> to occur. To properly solve the problem, we would also need to disable
-> interrupts during the transfer.
-> 
-> After some internal discussion, we see three possible solutions:
-> 1. Use udelay as shown in this rfc and also disable the interrupts
->    during the transfer. This would solve the problem but disable the
->    interrupts. Also, we would have to re-enable the interrupts if the
->    timeout is longer than 1ms (TBD).
-> 2. We use a retry mechanism in the ti-ads1015 driver. When we see a
->    timeout, we try again.
-> 3. We use the suggested solution and accept that there is an edge case
->    where the timeout can happen.
-> 
-> There may be a better way to do this, which is why this is an RFC.
 
-..
+> -enum tasdevice_dsp_fw_state {
+> -	TASDEVICE_DSP_FW_NONE = 0,
+> +enum tasdevice_fw_state {
+> +	/* Driver in startup mode, not load any firmware. */
+>  	TASDEVICE_DSP_FW_PENDING,
+> +	/* DSP firmware in the system, but parsing error. */
+>  	TASDEVICE_DSP_FW_FAIL,
+> +	/*
+> +	 * Only RCA (Reconfigurable Architecture) firmware load
+> +	 * successfully.
+> +	 */
+> +	TASDEVICE_RCA_FW_OK,
+> +	/* Both RCA and DSP firmware load successfully. */
+>  	TASDEVICE_DSP_FW_ALL_OK,
 
-> +			/*
-> +			 * Avoid rescheduling in the first 10 ms to avoid
-> +			 * timeouts for SMBus like devices
-> +			 */
-> +			if (time_before(jiffies, orig_jiffies + msecs_to_jiffies(10)))
-> +				udelay(10);
-> +			else
-> +				schedule();
+I appreciate the effort to document the states, but for the RCA cases we
+can have two 'success' states?
 
-Isn't there cond_resched() or so for such things?
-More info here: 494e46d08d35 ("airo: Replace in_atomic() usage.")
+> -	tas_priv->fw_state = TASDEVICE_DSP_FW_PENDING;
+> +	tas_priv->fw_state = TASDEVICE_RCA_FW_OK;
+>  	scnprintf(tas_priv->coef_binaryname, 64, "%s_coef.bin",
+>  		tas_priv->dev_name);
+>  	ret = tasdevice_dsp_parser(tas_priv);
+>  	if (ret) {
+>  		dev_err(tas_priv->dev, "dspfw load %s error\n",
+>  			tas_priv->coef_binaryname);
+> -		tas_priv->fw_state = TASDEVICE_DSP_FW_FAIL;
+>  		goto out;
+>  	}
+> -	tasdevice_dsp_create_ctrls(tas_priv);
+> +
+> +	/*
+> +	 * If no dsp-related kcontrol created, the dsp resource will be freed.
+> +	 */
+> +	ret = tasdevice_dsp_create_ctrls(tas_priv);
+> +	if (ret) {
+> +		dev_err(tas_priv->dev, "dsp controls error\n");
+> +		goto out;
+> +	}
+>  
+>  	tas_priv->fw_state = TASDEVICE_DSP_FW_ALL_OK;
 
--- 
-With Best Regards,
-Andy Shevchenko
+from this code, it seems that the RCA case goes from RCA_FW_OK to
+TASDEVICE_DSP_FW_ALL_OK, so there's a difference between the two states, no?
 
+
+> @@ -466,14 +474,14 @@ static int tasdevice_startup(struct snd_pcm_substream *substream,
+>  {
+>  	struct snd_soc_component *codec = dai->component;
+>  	struct tasdevice_priv *tas_priv = snd_soc_component_get_drvdata(codec);
+> -	int ret = 0;
+>  
+> -	if (tas_priv->fw_state != TASDEVICE_DSP_FW_ALL_OK) {
+> -		dev_err(tas_priv->dev, "DSP bin file not loaded\n");
+> -		ret = -EINVAL;
+> +	switch (tas_priv->fw_state) {
+> +	case TASDEVICE_RCA_FW_OK:
+> +	case TASDEVICE_DSP_FW_ALL_OK:
+> +		return 0;
+> +	default:
+> +		return -EINVAL;
+
+maybe keep the error logs?
 
 
