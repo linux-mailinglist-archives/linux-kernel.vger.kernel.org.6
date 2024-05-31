@@ -1,106 +1,108 @@
-Return-Path: <linux-kernel+bounces-197068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76FD38D65BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:30:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D42D38D65CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 17:32:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 330932831A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 15:30:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 748AF1F28411
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 15:32:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7811E78C7A;
-	Fri, 31 May 2024 15:30:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KFJEN/L0"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 281D91859;
-	Fri, 31 May 2024 15:30:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA355158D90;
+	Fri, 31 May 2024 15:31:27 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1CA739FF3;
+	Fri, 31 May 2024 15:31:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717169436; cv=none; b=Yz480NWFwolF2vNcAA6HDdkCzJ5keGr3ySpYg/20RLHxJLp+GoMg86aZSrFbNTS5OULoLtMlD/JNsjoxKU1pMF4VsC90/cqyxZGztsezXQ4+KmSqJwl81y2addzqv3/UMblH8bxylKrkcHuecISwEKpZCF649mRQL1HbXzQ+Lhk=
+	t=1717169487; cv=none; b=XOTibFL6ba3umTM4/Qb0+ubrcSK2tx297wL1b8619btJDLi23Ss8vod1DF922tuOZo2jyEf8LfoPwOBGvMWSwtTB0UKK/eZRNAZoGsfUH5sdH4dzeAMj3w9KNWQ0KYMae3t2VD92tJh3pAApldxCKUPaELcaEXVZ6nddRxcWHE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717169436; c=relaxed/simple;
-	bh=b8edFq+BX78eQRN1Ba8dv8UAmRIZpk2lXQ0Ky4bIJnY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=beVZzaoefzKwx3GiBSnvnD61tblVPwixN2WKWXIwHxaG7Y0MBj8E1z58sUZFen1YiCot2398KwCdV8wsIYvrHOy+nZiNN7xhcQcvSA9Ra7rLYctNykTzk+mxqrpkHJDO0z8P60zsTZnUXDVUwlw16AeIeesxurxXUmJ4HBNJgs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=KFJEN/L0; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=Ae2+xYZ7D6L0nBQ0Vqf/ep5G4lxJjwrzH4Lp6YJWsIo=; b=KFJEN/L09A6KG0/i631h7Qvmi1
-	t9m0j4bCm75IjozOHqDRmqvh4Eg+Nii93D5Jw3S4f8uSXWFynnhzerME3xOJ2/THcvi+5F7oJH7JH
-	QWpOUwYfClymAm/XOkMEAWMZnpmPMUr9WI2FlxveqnMARE7h6JqeORe0laBLE4OPJ5JXLvQ9VByRg
-	AOgGy7jgATX5GdWMxfmSqYAgfcZOyGfcglVBgY+06f36QPCBSPyh3ckQzH9XI+ZnK5ARBFXm8hCKP
-	EJFO81cC5JARECborKg4LZiARZnptCHW6V1smuUqtwJVmoCxJcAPvxUf6mDUTNE1Nz3m8+ET1JZm8
-	FF2TejbQ==;
-Received: from [50.53.4.147] (helo=[192.168.254.15])
-	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sD4D5-0000000AgS0-3Clf;
-	Fri, 31 May 2024 15:30:28 +0000
-Message-ID: <98b1a3a4-5db8-4b69-9e3e-99f2dadf1b43@infradead.org>
-Date: Fri, 31 May 2024 08:30:24 -0700
+	s=arc-20240116; t=1717169487; c=relaxed/simple;
+	bh=wb1cOchvcOujs9HWcw7r/ZrIUMH4fHWuktSZkjSAwAY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iwNtD4RhyRW0yjyAzAjMb8qB1VuGonUFFeUZwOvUU8D/1uBwtPWvgRYUQFA7JXCEt0kthWjMVjGLBG9htgc8LVhfIml0QAJKGdptfB3pXj6oP6AvC6e5e+XOnkHEvmihfUqZuwKyUvveuP9+QeXOz9w3RiwCkDlrKTg1tqwxG1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 559941424;
+	Fri, 31 May 2024 08:31:49 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A56163F641;
+	Fri, 31 May 2024 08:31:21 -0700 (PDT)
+Date: Fri, 31 May 2024 16:31:14 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Akinobu Mita <akinobu.mita@gmail.com>, Christoph Lameter <cl@linux.com>,
+	David Rientjes <rientjes@google.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+	Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>, Jiri Olsa <jolsa@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, bpf@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC 0/4] static key support for error injection functions
+Message-ID: <ZlntQn-a7Ycko_j5@J2N7QTR9R3>
+References: <20240531-fault-injection-statickeys-v1-0-a513fd0a9614@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2 1/3] net: ethernet: ti: RPMsg based shared
- memory ethernet driver
-To: Yojana Mallik <y-mallik@ti.com>, schnelle@linux.ibm.com,
- wsa+renesas@sang-engineering.com, diogo.ivo@siemens.com, horms@kernel.org,
- vigneshr@ti.com, rogerq@ti.com, danishanwar@ti.com, pabeni@redhat.com,
- kuba@kernel.org, edumazet@google.com, davem@davemloft.net
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, srk@ti.com,
- rogerq@kernel.org
-References: <20240531064006.1223417-1-y-mallik@ti.com>
- <20240531064006.1223417-2-y-mallik@ti.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20240531064006.1223417-2-y-mallik@ti.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240531-fault-injection-statickeys-v1-0-a513fd0a9614@suse.cz>
 
+Hi,
 
+On Fri, May 31, 2024 at 11:33:31AM +0200, Vlastimil Babka wrote:
+> Incomplete, help needed from ftrace/kprobe and bpf folks.
 
-On 5/30/24 11:40 PM, Yojana Mallik wrote:
-> diff --git a/drivers/net/ethernet/ti/Kconfig b/drivers/net/ethernet/ti/Kconfig
-> index 1729eb0e0b41..4f00cb8fe9f1 100644
-> --- a/drivers/net/ethernet/ti/Kconfig
-> +++ b/drivers/net/ethernet/ti/Kconfig
-> @@ -145,6 +145,15 @@ config TI_AM65_CPSW_QOS
->  	  The EST scheduler runs on CPTS and the TAS/EST schedule is
->  	  updated in the Fetch RAM memory of the CPSW.
->  
-> +config TI_K3_INTERCORE_VIRT_ETH
-> +	tristate "TI K3 Intercore Virtual Ethernet driver"
-> +	help
-> +	  This driver provides intercore virtual ethernet driver
-> +	  capability.Intercore Virtual Ethernet driver is modelled as
+> - the generic error injection using kretprobes with
+>   override_function_with_return is handled in patch 2. The
+>   ALLOW_ERROR_INJECTION() annotation is extended so that static key
+>   address can be passed, and the framework controls it when error
+>   injection is enabled or disabled in debugfs for the function.
+> 
+> There are two more users I know of but am not familiar enough to fix up
+> myself. I hope people that are more familiar can help me here.
+> 
+> - ftrace seems to be using override_function_with_return from
+>   #define ftrace_override_function_with_return but I found no place
+>   where the latter is used. I assume it might be hidden behind more
+>   macro magic? But the point is if ftrace can be instructed to act like
+>   an error injection, it would also have to use some form of metadata
+>   (from patch 2 presumably?) to get to the static key and control it.
 
-	  capability. Intercore
+I don't think you've missed anything; nothing currently uses
+ftrace_override_function_with_return(). I added that in commit:
 
-> +	  a RPMsg based shared memory ethernet driver for network traffic
+  94d095ffa0e16bb7 ("ftrace: abstract DYNAMIC_FTRACE_WITH_ARGS accesses")
 
-	  a RPMsg-based
+.. so that it was possible to do anything that was possible with
+FTRACE_WITH_REGS and/or kprobes, under the expectation that we might
+want to move fault injection and BPF probes over to fprobes in future,
+as ftrace/fprobes is generally faster than kprobes (e.g. for
+architectures that can't do KPROBES_ON_FTRACE or OPTPROBES).
 
-> +	  tunnelling between heterogeneous processors Cortex A and Cortex R
-> +	  used in TI's K3 SoCs.
+That's just the mechanism for the handler to use; I'd expect whatever
+registered the handler to be responsible for flipping the static key,
+and I don't think anything needs to change within ftrace itself.
 
+>   If ftrace can only observe the function being called, maybe it
+>   wouldn't be wrong to just observe nothing if the static key isn't
+>   enabled because nobody is doing the fault injection?
 
-OK, the darned British spellings can stay. ;)
-(the double-l words)
+Yep, that sounds right to me.
 
--- 
-#Randy
-https://people.kernel.org/tglx/notes-about-netiquette
-https://subspace.kernel.org/etiquette.html
+Mark.
 
