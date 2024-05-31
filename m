@@ -1,122 +1,151 @@
-Return-Path: <linux-kernel+bounces-197531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A90F08D6BE3
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 23:46:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47FC58D6BE6
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 23:46:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5FD01C24D5D
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 21:46:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C95E01F2A5C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 21:46:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E198D80BEC;
-	Fri, 31 May 2024 21:46:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9AB98002A;
+	Fri, 31 May 2024 21:46:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="QMfXA6y7"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PXvx31dm"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BF96AD59;
-	Fri, 31 May 2024 21:46:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1FC57F7EF
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 21:46:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717191969; cv=none; b=geUZeM4z6GrvXg0K20ZeA6MVjAH7Ko1aKDoyzJMSTBkBGAJSVRqalJVEMIZDTWzFEx9CCrrXQZM4320t1+tiyJtkEMaJ3fSrDYszZiWkYSUN+sPLGBWghO3PHrTY3jIpDG8/V6dXv+zP2SB2rf39h2x+63zA+psZXF7V2iwgW6c=
+	t=1717191987; cv=none; b=f3RrRr9lw0b5/m0+9blochP7NICZUsjmmoBNosq5S92bvSlJgilmIdU5I6bG04jXaVZhX/GE5+2U2mlEh0oO652x6QkLLyPG83BpZPJqAr7KtJSj0g39MnRY1eeYY/cL9kTqTmON5qx2sXWR17IrDTzTMlno/7RGP2htXwG6Qnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717191969; c=relaxed/simple;
-	bh=gghBl4JNIy95VfLrfwUP2Off8V0JTaP9S92vAyIBtpk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pUogEvR+MEuWjgBF3l/3KzSys+lw8trAwiDdlTq4pc1HhDoENiGX82RRrBTAjhjGxoSvEglW6GsW1LfjO+NnGYwL5lJS/7YdD41ouvKLfV0ut7ZzXUdOw/hAZwDle8J5rXPvSYF49lGLC1SHVoPU/CT+VUh36vpeRi8urGhlfg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=QMfXA6y7; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id E46A540E02BA;
-	Fri, 31 May 2024 21:46:04 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id mp9dd_f_l4Ta; Fri, 31 May 2024 21:46:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1717191961; bh=EB3b0oK1NO82II0HvxGp1gnqwn/B2ARuYc6PW/E4a7w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QMfXA6y7f3Wu0gHnuLb7og3I+KNwp73rGCOQrSpTYXYF+Hg9Eu5qWu6GUrWIe6kj8
-	 5aaXWWbU0YxSm+yLfWZp3CA4SS1Saw+W+8gkPylwes3iA3HIlRnWXo65h5pllRglXF
-	 WrEwA4ELVEp21OMiFsbRw+6U6LtNqw0Cr4ToQJJ3kRNV29lJwmF8Qwbn1DcG1HwFWk
-	 DZq3Dnbdw10d814C7kg0VqbwvXikIXFXBYcVNFy2t03hbl4gbj/ZTQqaDMDvb/7vbY
-	 o0H3w5gozMLcYeyMc5R4irUnvw5xp/IzbFHXRy4uuQzBWABd1ZGYQPUIjpTmWD9i2G
-	 qwHN7xOgE7eB0rN2f+lAXwu8jIgDexgZJcIEqf3TDblDhVFh7uoYK7G9S6HUz8tebO
-	 a9rzJsxyiwC+0DUebmLkOEfHAP5Zj6xZvjrwEEhXSKtUO5fxd9PT7lSrhrdWE59Mn9
-	 WfnHXtOvWNQOsB0RxMBXNIn3cKdpvFixSoQ4PK9uQcmLe+RXPWch5T3tTqr/Z/HR0L
-	 pFD0mmxZx1SEFa8m9mlW6JjkXXoktNbYHCYpQCDNahe3+7hwSt16Dx+GYDLwcIhdjS
-	 upNpTLaoBiVNfHPMMzmRJtw1u9n2kucfbWt7wJuyIqpbPP6x4D96mso/A7eUMNcPpy
-	 y4/wWrdmJ9q8fAMUy+tJe2sg=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id AAB5340E02B9;
-	Fri, 31 May 2024 21:45:50 +0000 (UTC)
-Date: Fri, 31 May 2024 23:45:45 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Kees Cook <kees@kernel.org>
-Cc: Jeff Johnson <quic_jjohnson@quicinc.com>,
-	Nikolay Borisov <nik.borisov@suse.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] x86/boot: add prototype for __fortify_panic()
-Message-ID: <20240531214545.GPZlpFCaXtTGinbcfl@fat_crate.local>
-References: <0d3f7c58-7fc0-4e8b-b6fb-c4d0d9969ce7@suse.com>
- <e42c4984-d4a2-45b1-b93d-7471000766b7@quicinc.com>
- <5658B525-6642-43A2-B14C-BC4AA916FBCC@alien8.de>
- <202405310951.56D9BD5C41@keescook>
- <20240531190816.GLZlogIGgpc5maOeLN@fat_crate.local>
- <202405311345.D91BF6E9@keescook>
- <20240531204947.GNZlo367G0YXVbOk1I@fat_crate.local>
- <202405311359.EFC7345EC@keescook>
- <20240531212009.GOZlo_CV0lxZ1xviQW@fat_crate.local>
- <202405311431.BF9FE3F7A7@keescook>
+	s=arc-20240116; t=1717191987; c=relaxed/simple;
+	bh=l9l3FqC9dknDCtsJMKp0h5MAOYBbJfIqVGQU5aZNZEg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YDzFA9chsn7pVzKufxiIWr01D34iXU1cxJkhQYiI8kWJbNdHDl2TZ3qYFPgQBzybJKRZkm6DfbFVokyFrUlc6xo3XFxkHm5GBkLK7ZXDx7QKKpt+vXsE5MVsEnoW/OoyzJP5/4Z+BBrzFgsXKoQ0ksHu+/6pTDf98SWZx6F5aA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PXvx31dm; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717191985; x=1748727985;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=l9l3FqC9dknDCtsJMKp0h5MAOYBbJfIqVGQU5aZNZEg=;
+  b=PXvx31dmchmizR+dLssJtvMY2OHL8wSXZN50yMnbNz+GoYLtuFeU/Gt6
+   xOk/MOia1ynXz1F0wtInf6VJk4eU+sPyQ9P86gTrq/fHTPwNyF7ua+TWK
+   GPGRD5sbvVoRQxMILwiPdoky78BUuikI+mxFnO0EAYCPyAa9aaaG8tP9x
+   Pda9e7/6okRVOTGMS1Q4eGajf+r4dI3bG2H2qfh/I0TA1avqehlLPRQzu
+   5wbmDMofJkfdjyNWTSkdw1iXPBtWDSoWljGU5JbgnJTu3A7PfuQKt/f2k
+   ED6cqIaeyEhDXrqS0Jy0pRx7jhEOwVbtbDzBoa4dPF69T8ghLAbSfrTmx
+   g==;
+X-CSE-ConnectionGUID: keabngv+REORBiiOFPZPag==
+X-CSE-MsgGUID: a6fhAkGmSzGK+23W5S3yxQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11089"; a="25158614"
+X-IronPort-AV: E=Sophos;i="6.08,205,1712646000"; 
+   d="scan'208";a="25158614"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 14:46:24 -0700
+X-CSE-ConnectionGUID: vQR7QD4/TY2g2Hysghvfjw==
+X-CSE-MsgGUID: 4IdUVHs4R8G1i4VFHNMhug==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,205,1712646000"; 
+   d="scan'208";a="36297654"
+Received: from uaeoff-desk1.amr.corp.intel.com (HELO [10.125.108.48]) ([10.125.108.48])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 14:46:24 -0700
+Message-ID: <f17f33e8-1c1f-460f-8c5a-713476f524a3@intel.com>
+Date: Fri, 31 May 2024 14:46:23 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <202405311431.BF9FE3F7A7@keescook>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 09/12] mm: implement LUF(Lazy Unmap Flush) defering
+ tlb flush when folios get unmapped
+To: Byungchul Park <lkml.byungchul.park@gmail.com>
+Cc: Byungchul Park <byungchul@sk.com>, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, kernel_team@skhynix.com, akpm@linux-foundation.org,
+ ying.huang@intel.com, vernhao@tencent.com, mgorman@techsingularity.net,
+ hughd@google.com, willy@infradead.org, david@redhat.com,
+ peterz@infradead.org, luto@kernel.org, tglx@linutronix.de, mingo@redhat.com,
+ bp@alien8.de, dave.hansen@linux.intel.com, rjgolo@gmail.com
+References: <20240531092001.30428-1-byungchul@sk.com>
+ <20240531092001.30428-10-byungchul@sk.com>
+ <fab1dd64-c652-4160-93b4-7b483a8874da@intel.com>
+ <CAHyrMpxETdVewTH3MCS4qPyD6Xf1zRUfWZf-8SCdpCFj2Pj_Wg@mail.gmail.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <CAHyrMpxETdVewTH3MCS4qPyD6Xf1zRUfWZf-8SCdpCFj2Pj_Wg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, May 31, 2024 at 02:34:07PM -0700, Kees Cook wrote:
-> On Fri, May 31, 2024 at 11:20:09PM +0200, Borislav Petkov wrote:
-> > So I get an allergic reaction everytime we wag the dog - i.e., fix the
-> > code because some tool or option can't handle it even if it is
-> > a perfectly fine code. In that case it is an unused symbol.
-> > 
-> > And frankly, I'd prefer the silly warning to denote that fortify doesn't
-> > need to do any checking there vs shutting it up just because.
-> 
-> If we want to declare that x86 boot will never perform string handling
-> on strings with unknown lengths, we could just delete the boot/
-> implementation of __fortify_panic(), and make it a hard failure if such
-> cases are introduced in the future. This hasn't been a particularly
-> friendly solution in the past, though, as the fortify routines do tend
-> to grow additional coverage over time, so there may be future cases that
-> do trip the runtime checking...
+On 5/31/24 11:04, Byungchul Park wrote:
+...
+> I don't believe you do not agree with the concept itself.  Thing is
+> the current version is not good enough.  I will do my best by doing
+> what I can do.
 
-Yes, and we should not do anything right now either.
+More performance is good.  I agree with that.
 
-As said, I'd prefer the warning which actually says that fortify
-routines are not used, which in itself is useful information vs shutting
-it up.
+But it has to be weighed against the risk and the complexity.  The more
+I look at this approach, the more I think this is not a good trade off.
+There's a lot of risk and a lot of complexity and we haven't seen the
+full complexity picture.  The gaps are being fixed by adding complexity
+in new subsystems (the VFS in this case).
 
--- 
-Regards/Gruss,
-    Boris.
+There are going to be winners and losers, and this version for example
+makes file writes lose performance.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+Just to be crystal clear: I disagree with the concept of leaving stale
+TLB entries in place in an attempt to gain performance.
+
 
