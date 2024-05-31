@@ -1,153 +1,241 @@
-Return-Path: <linux-kernel+bounces-197339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98DAC8D6982
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 21:12:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47A558D6962
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 21:05:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEFB6283E57
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 19:12:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBAFF1F277A6
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 19:05:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C60A717CA03;
-	Fri, 31 May 2024 19:12:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0374815AD93;
+	Fri, 31 May 2024 19:05:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=math.uni-bielefeld.de header.i=@math.uni-bielefeld.de header.b="w+5RfYmC"
-Received: from smtp2.math.uni-bielefeld.de (smtp2.math.uni-bielefeld.de [129.70.45.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="LhVIrZAi"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8476117C7D4
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 19:12:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.70.45.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638FD4653C
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 19:05:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717182762; cv=none; b=OlI3fGhM6U7a8qJ1dAG+0LAMM8IcWVT7bZrmhj6cwre86ntKLSjooKEw2ugZyaBKxR69eAvkrHEIFGEVjia6gC47M1j9qikZ8XzNOBOFYoOr+7cm5/5WJbfp73/EXjfiDtRA9BmTloVBBW8fE6Nid2hs+NxVW4WU/+XRyxy3Jf4=
+	t=1717182331; cv=none; b=NIOBighe8tmOHV+e/XT2Ikr7OxfHAxsYKiSjMF5L92/oygoFoYrz3ZP8ShLWdKrLHPvHfTF3U+F3U+oHuwJ7ZIV/GCg9nHuDiui5ZiT/cjC4j1UOQIDF8zVxF4gbAHyQMZy1YbBTdrY0pUfFPZv40dTZTW7UL5rzvrCPaC6Xb0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717182762; c=relaxed/simple;
-	bh=l6Noy5qDuga5ddzS3uhFndxB/qs8GrX99aTIdEU4qGo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BDIbX74sU2q3H+91eR8YhEv4Qyyd4ySuQN/koBLzGKx2zWN0+Fs7r8v4iutKFwObFRPCfNKHZcTxghzIM0I6p1BMjS05R1ZYXxzKYz+cewFZTDMnXVZvVYmssF2+CNJFqXcjh7yzwuRmmpBjw5lSnu3j295rN/XrE1W+6+/J3VU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=math.uni-bielefeld.de; spf=pass smtp.mailfrom=math.uni-bielefeld.de; dkim=pass (2048-bit key) header.d=math.uni-bielefeld.de header.i=@math.uni-bielefeld.de header.b=w+5RfYmC; arc=none smtp.client-ip=129.70.45.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=math.uni-bielefeld.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=math.uni-bielefeld.de
-Received: from [192.168.0.100] (dslb-088-074-203-220.088.074.pools.vodafone-ip.de [88.74.203.220])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by smtp2.math.uni-bielefeld.de (Postfix) with ESMTPSA id C27B56015A;
-	Fri, 31 May 2024 21:04:08 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=math.uni-bielefeld.de; s=default; t=1717182249;
-	bh=l6Noy5qDuga5ddzS3uhFndxB/qs8GrX99aTIdEU4qGo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=w+5RfYmCDLL39Us+JDOzdHqgmRGlqo8OWHhr7mWY2eJVoyJXFo93+GRnBB/dx/rav
-	 z33rrAesPCMaPGXP5CFXthePyVYRhxhAmlLqC5gBlzqzGFQnkwhA+FrjDVZFwl8HSc
-	 BMF1UWHrVR4IJPvoiEEnJcu/UCuU79MGCN6UeLRItizp7vfN68qnNSy5K/zjVhqJHZ
-	 6vyxOSsUki4qNll8xlw4Xv/hBGOReZcin50XjiV3qAW41P5Qxn/4tc40kwCOfvfYDe
-	 zgT8D96tzaNmwKu0rHTdN6FFHM6LBe9c6vDtvKA2BajuknkaLhHkslmshDahNpEowZ
-	 eEtT7dZb0q3Gg==
-Message-ID: <a4069a85-b990-42b4-8cde-8906a740ec27@math.uni-bielefeld.de>
-Date: Fri, 31 May 2024 21:04:05 +0200
+	s=arc-20240116; t=1717182331; c=relaxed/simple;
+	bh=JLgUk4/H0I49wI7AFpjfE5SBqXIrl4DmbD4W1JvveUQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sXETYv5Dw5/USlMFAlMWe2tJ3r7YJR6j7RapXnRsOc0yAcbJtXMHit/MchQdvE5zwyHa/KlLhDZDfmDw4pIAvLtSCurrse+Yag1c7Mgmn4kxu9AuroYPnmED2K2p6Kf+MLys8h1/Kdxr4e9vg98D5H6P/Crx/3QPbPCFl3lG/No=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=LhVIrZAi; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-578517c7ae9so2631678a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 12:05:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google09082023; t=1717182328; x=1717787128; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XI3ySpP1YuGuRU+0r2fjh+wjdLvP3upJGIzwxGrKcXs=;
+        b=LhVIrZAiHb7iMJSGRxvYzuyS37uhblIV4+4flec2xUd0h9+pTRbsY6S4E1cRvrORPH
+         jH3wgPoZVNRSrLa1erSkHI44EtEqEYqBhCSvrBg7kSAbQvB0M9Ry2Qv8xYmDoDTOPIDr
+         /fjGQjac5/PT8FxjEb5NO+Vri925HWedruGDHcBobRcrJWZ7Bb/dTSCqxXbUNGs3lZV2
+         UxUefJ9UHX83icT+tfjtNoWYvSypj8EL+IDbyQUzHVLWkP1yAze33zV57m0xWNF8UOMX
+         +R/cBr5aqrGHNrv4+j8ix/BGlbzngEVcPvVGhSdWHYRv026D2OKiszL+7KUnjizxx8J9
+         CNkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717182328; x=1717787128;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XI3ySpP1YuGuRU+0r2fjh+wjdLvP3upJGIzwxGrKcXs=;
+        b=CptmGrey+RO73EnWIVqZkrllsEh15Y5ydx4u2AClzAUyf2wT773sIaYweqf6V5/nRy
+         vjmqX5i+31dRwZPj9/eeh5BI9JGTrmePxvVSJieT2WjmIDqhgjVJ2i3i897aaqqerLUA
+         Y7VoxIHD1D1L8mjN/ibT7i9e9ZDTl3EYrzDwgAFc0dAZlzZbaowoNSonCivR593/ilH/
+         f0fLCibpgh9+AI9HplfzZ5ZCHoqcSGpo0XBC9P2INEJmaxmU6rEJsVckpMWzbKgs+f5H
+         p+J4H3kMAj1xP5JmsuCdaV8iajQkyH0ITKpj3aEmcCMt7zhlW6BCzZmvPjB3vjS5OblT
+         F1Fg==
+X-Forwarded-Encrypted: i=1; AJvYcCU3jSanRMEKQUvT2ScqTsL53VRL9t2l5mrI7xIbSIFGOGsRnzLJUs5jhGrOsgMwysC/TUXDb28zGAEFpzHfCJNSfOyABRq5b56Er5Au
+X-Gm-Message-State: AOJu0YwjR5kmknKcOjU488uHkJKkRhHb8n4Cc8+kQfd4dog2bwR9FCvl
+	l7u7ge0Kpmu0yJIKRpmHejTK6ZC33nsY376tR9jfwLP3R279ayec1RXUUrcUXb9PVPeblLSX3U+
+	IxbqWckxob8jLncPcl8S2mgADDGaXtqgtTn/Pqw==
+X-Google-Smtp-Source: AGHT+IGHM+cFCKr3cD4qLfBdzN50PJ4EDyUgAhS4Wnkb4lkIVrzCC1xfhFir50c+Rban7OD/Mp5ebucWbvjCKDVrJhg=
+X-Received: by 2002:a50:9f22:0:b0:57a:2bfd:82b3 with SMTP id
+ 4fb4d7f45d1cf-57a36430e90mr1727721a12.23.1717182327616; Fri, 31 May 2024
+ 12:05:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND] drm: panel-orientation-quirks: Add quirk for Aya
- Neo KUN
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Hans de Goede <hdegoede@redhat.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20240310220401.895591-1-tjakobi@math.uni-bielefeld.de>
-Content-Language: en-US
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Autocrypt: addr=tjakobi@math.uni-bielefeld.de; keydata=
- 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
- JRHWPGCL3BhOxQ==
-In-Reply-To: <20240310220401.895591-1-tjakobi@math.uni-bielefeld.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <cover.1717105215.git.yan@cloudflare.com> <9be3733eee16bb81a7e8e2e57ebcc008f95cae08.1717105215.git.yan@cloudflare.com>
+ <CANn89iLo6A__U5HqeA65NuBnrg36jpt9EOUC7T0fLdNEpa6eRQ@mail.gmail.com>
+ <CAO3-PboQ68+xFe4Z10L-s-k3NCgciGXNWM00-3wgqbPmGaBB9A@mail.gmail.com> <CANn89iJ_rd_vUH1LPbby5vV=s=jWdpzvDKnm6H1YK=wRPWBiyw@mail.gmail.com>
+In-Reply-To: <CANn89iJ_rd_vUH1LPbby5vV=s=jWdpzvDKnm6H1YK=wRPWBiyw@mail.gmail.com>
+From: Yan Zhai <yan@cloudflare.com>
+Date: Fri, 31 May 2024 14:05:16 -0500
+Message-ID: <CAO3-PbqaiqWvc1vgHzj2-DEQUPCxTByp4r+zTBWyo-XP4u1G4A@mail.gmail.com>
+Subject: Re: [RFC net-next 1/6] net: add kfree_skb_for_sk function
+To: Eric Dumazet <edumazet@google.com>
+Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	David Ahern <dsahern@kernel.org>, Abhishek Chauhan <quic_abchauha@quicinc.com>, 
+	Mina Almasry <almasrymina@google.com>, Florian Westphal <fw@strlen.de>, 
+	Alexander Lobakin <aleksander.lobakin@intel.com>, David Howells <dhowells@redhat.com>, 
+	Jiri Pirko <jiri@resnulli.us>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Lorenzo Bianconi <lorenzo@kernel.org>, 
+	Pavel Begunkov <asml.silence@gmail.com>, linux-kernel@vger.kernel.org, 
+	kernel-team@cloudflare.com, Jesper Dangaard Brouer <hawk@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 3/10/24 23:04, tjakobi@math.uni-bielefeld.de wrote:
-
-> From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+On Fri, May 31, 2024 at 12:32=E2=80=AFPM Eric Dumazet <edumazet@google.com>=
+ wrote:
 >
-> Similar to the other Aya Neo devices this one features
-> again a portrait screen, here with a native resolution
-> of 1600x2560.
+> On Fri, May 31, 2024 at 6:58=E2=80=AFPM Yan Zhai <yan@cloudflare.com> wro=
+te:
+> >
+> > Hi Eric,
+> >
+> >  Thanks for the feedback.
+> >
+> > On Fri, May 31, 2024 at 1:51=E2=80=AFAM Eric Dumazet <edumazet@google.c=
+om> wrote:
+> > >
+> > > On Thu, May 30, 2024 at 11:46=E2=80=AFPM Yan Zhai <yan@cloudflare.com=
+> wrote:
+> > > >
+> > > > Implement a new kfree_skb_for_sk to replace kfree_skb_reason on a f=
+ew
+> > > > local receive path. The function accepts an extra receiving socket
+> > > > argument, which will be set in skb->cb for kfree_skb/consume_skb
+> > > > tracepoint consumption. With this extra bit of information, it will=
+ be
+> > > > easier to attribute dropped packets to netns/containers and
+> > > > sockets/services for performance and error monitoring purposes.
+> > >
+> > > This is a lot of code churn...
+> > >
+> > > I have to ask : Why not simply adding an sk parameter to an existing
+> > > trace point ?
+> > >
+> > Modifying a signature of the current tracepoint seems like a breaking
+> > change, that's why I was saving the context inside skb->cb, hoping to
+> > not impact any existing programs watching this tracepoint. But
+> > thinking it twice, it might not cause a problem if the signature
+> > becomes:
+> >
+> >  trace_kfree_skb(const struct sk_buff *skb, void *location, enum
+> > skb_drop_reason reason, const struct sock *sk)
+> >
+> > As return values are usually not a thing for tracepoints, it is
+> > probably still compatible. The cons is that the last "sk" still breaks
+> > the integrity of naming. How about making a "kfree_skb_context"
+> > internal struct and putting it as the last argument to "hide" the
+> > naming confusion?
+> >
+> > > If this not possible, I would rather add new tracepoints, adding new =
+classes,
+> > > because it will ease your debugging :
+> > >
+> > > When looking for TCP drops, simply use a tcp_event_sk_skb_reason inst=
+ance,
+> > > and voila, no distractions caused by RAW/ICMP/ICMPv6/af_packet drops.
+> > >
+> > > DECLARE_EVENT_CLASS(tcp_event_sk_skb_reason,
+> > >
+> > >      TP_PROTO(const struct sock *sk, const struct sk_buff *skb, enum
+> > > skb_drop_reason reason),
+> > > ...
+> > > );
+> >
+> > The alternative of adding another tracepoint could indeed work, we had
+> > a few cases like that in the past, e.g.
+> >
+> > https://lore.kernel.org/lkml/20230711043453.64095-1-ivan@cloudflare.com=
+/
+> > https://lore.kernel.org/netdev/20230707043923.35578-1-ivan@cloudflare.c=
+om/
+> >
+> > But it does feel like a whack-a-mole thing. The problems are solvable
+> > if we extend the kfree_skb tracepoint, so I would prefer to not add a
+> > new tracepoint.
 >
-> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-> ---
->   drivers/gpu/drm/drm_panel_orientation_quirks.c | 6 ++++++
->   1 file changed, 6 insertions(+)
+> Solvable with many future merge conflicts for stable teams.
 >
-> diff --git a/drivers/gpu/drm/drm_panel_orientation_quirks.c b/drivers/gpu/drm/drm_panel_orientation_quirks.c
-> index 3d92f66e550c..5d3fb11fd45f 100644
-> --- a/drivers/gpu/drm/drm_panel_orientation_quirks.c
-> +++ b/drivers/gpu/drm/drm_panel_orientation_quirks.c
-> @@ -196,6 +196,12 @@ static const struct dmi_system_id orientation_data[] = {
->   		  DMI_MATCH(DMI_BOARD_NAME, "NEXT"),
->   		},
->   		.driver_data = (void *)&lcd800x1280_rightside_up,
-> +	}, {	/* AYA NEO KUN */
-> +		.matches = {
-> +		  DMI_EXACT_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
-> +		  DMI_MATCH(DMI_BOARD_NAME, "KUN"),
-> +		},
-> +		.driver_data = (void *)&lcd1600x2560_rightside_up,
->   	}, {	/* Chuwi HiBook (CWI514) */
->   		.matches = {
->   			DMI_MATCH(DMI_BOARD_VENDOR, "Hampoo"),
+I don't quite follow it. I think this specific commit using skb->cb is
+unnecessary so I am going to re-work it. As you initially mentioned,
+maybe I should just extend kfree_skb tracepoint. I saw a similar
+change dd1b527831a3("net: add location to trace_consume_skb()"), is it
+something I might follow, or do you specifically mean changes like
+this can annoy stable teams?
 
-Trying yet another ping! Also adding Hans to the list of recipients, as 
-he committed the last quirk for an Ayaneo device. Someone pick this up, 
-pretty please! :-)
+>
+> >
+> > >
+> > > Also, the name ( kfree_skb_for_sk) and order of parameters is confusi=
+ng.
+> > >
+> > > I always prefer this kind of ordering/names :
+> > >
+> > > void sk_skb_reason_drop( [struct net *net ] // not relevant here, but
+> > > to expand the rationale
+> > >               struct sock *sk, struct sk_buff *skb, enum skb_drop_rea=
+son reason)
+> > >
+> > > Looking at the name, we immediately see the parameter order.
+> > >
+> > > The consume one (no @reason there) would be called
+> > >
+> > > void sk_skb_consume(struct sock *sk, struct sk_buff *skb);
+> >
+> > I was intending to keep the "kfree_skb" prefix initially since it
+> > would appear less surprising to kernel developers who used kfree_skb
+> > and kfree_skb_reason. But your points do make good sense. How about
+> > "kfree_sk_skb_reason" and "consume_sk_skb" here?
+> >
+>
+> IMO kfree_skb() and consume_skb() were a wrong choice. We have to live
+> with them.
+>
+> It should have been skb_free(), skb_consume(), skb_alloc(),
+> to be consistent.
+>
+> Following (partial) list was much better:
+>
+> skb_add_rx_frag_netmem, skb_coalesce_rx_frag, skb_pp_cow_data,
+> skb_cow_data_for_xdp,
+> skb_dump, skb_tx_error, skb_morph, skb_zerocopy_iter_stream, skb_copy_ubu=
+fs,
+> skb_clone, skb_headers_offset_update, skb_copy_header, skb_copy,
+> skb_realloc_headroom, skb_expand_head, skb_copy_expand, skb_put,
+> skb_push, skb_pull, skb_pull_data, skb_trim, skb_copy_bits,
+> skb_splice_bits, skb_send_sock_locked, skb_store_bits,
+> skb_checksum, skb_copy_and_csum_bits, skb_zerocopy_headlen,
+> skb_zerocopy, skb_copy_and_csum_dev, skb_dequeue,
+> skb_dequeue_tail, skb_queue_purge_reason, skb_errqueue_purge,
+> skb_queue_head, skb_queue_tail, skb_unlink, skb_append,
+> skb_split, skb_prepare_seq_read, skb_seq_read, skb_abort_seq_read,
+> skb_find_text, skb_append_pagefrags, skb_pull_rcsum, skb_segment_list,
+> skb_segment, skb_to_sgvec, skb_to_sgvec_nomark, skb_cow_data, skb_clone_s=
+k,
+> skb_complete_tx_timestamp, skb_tstamp_tx, skb_complete_wifi_ack,
+> skb_partial_csum_set, skb_checksum_setup, skb_checksum_trimmed,
+> skb_try_coalesce, skb_scrub_packet, skb_vlan_untag, skb_ensure_writable,
+> skb_ensure_writable_head_tail, skb_vlan_pop, skb_vlan_push, skb_eth_pop,
+> skb_eth_push, skb_mpls_push, skb_mpls_pop, skb_mpls_update_lse,
+> skb_mpls_dec_ttl, skb_condense, skb_ext_add, skb_splice_from_iter
+>
+> (just to make my point very very clear)
+>
+> Instead we have a myriad of functions with illogical parameter
+> ordering vs their names.
+>
+> I see no reason to add more confusion for new helpers.
 
-- Tobias
+ACK. Thanks for clarifying.
 
+Yan
 
