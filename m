@@ -1,157 +1,172 @@
-Return-Path: <linux-kernel+bounces-196318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55C608D5A20
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 08:01:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FF8A8D5A21
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 08:02:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5641B256B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 06:00:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F6E01C23FB3
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 06:02:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E51E2823CC;
-	Fri, 31 May 2024 05:58:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B76274079;
+	Fri, 31 May 2024 06:02:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eT/sDjCn"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Yzp6GSIH"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D147D823AC;
-	Fri, 31 May 2024 05:58:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 635B21CD13
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 06:02:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717135137; cv=none; b=MgXnOQyKF9QFFUlSAq8LC7wYZSQKKCM/h9QW1viO4mYnDyQMIcPe9AP4BjMDFz7WDgI/P/AAHGjqThl1zdUsczjUqaxoGtyHQYbKyf0JSD4d93CDSEogNu8FlLpSGKdz3KLe0pHS57bwu8XeSTVq9w9fTeD2VAAYAV/KLopXlSo=
+	t=1717135368; cv=none; b=aPPCekFXO45kpR3yXOB79nM01v6tPSOcaGLpES125IeevcSUEUENfpcVwBGhbZpRSwLb5fnlQ4993nciV5aeX1YceaY9/rSoYFcULHTswR1j4h7TY26QLY9MI2KAhrNvqw93SopoCva6+C9jdP35wNzelGYlEpD693qmhvgjMRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717135137; c=relaxed/simple;
-	bh=T3lYCZNDTOox5kJQOOR6Dbvex/BUJB0U27xJgGtdjGk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=kMvoiSrjrYlGHBDtNOiXF/yI2APSxJH3SlmXeBjQILwpZJjNTTHdQZ0/ogqwKMsfe0Y9xFfOsQalEMVvAYM6Hek+0spfjn26FvUzueptxIR25XQrTzRdFnoS90Fcycip9EepOqiQ0bBUzVRCjUDqyPPTWnCqfl9xYT9E7rGQ/bs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eT/sDjCn; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1717135368; c=relaxed/simple;
+	bh=ybwUS6RtWP/25t4kttVVL9hVeT6Fp8bPYKJR9Xwq21Y=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=PL1ycyurrRrfmOdq0qIQS7QDFXM1G+z0LjiRaZFUgOYWjbquough/Rwobtggy3PBq4gt71Scm1323z+sOJdhfuWa0qani+HfZiFl+1+IgI24APAC8eHo9d8vRWsmPVr3atBBzh3MfXllLvn6lcRS4837nbIRTAm8V5YXaumKJMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Yzp6GSIH; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717135136; x=1748671136;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=T3lYCZNDTOox5kJQOOR6Dbvex/BUJB0U27xJgGtdjGk=;
-  b=eT/sDjCnFzy2Vc2/g4Oel29M4rDvrmihdh53l4fdJVU8tecz5vpVwP2A
-   H27W6B3yyrVjjPyWuFwBsL7s+/teEjnqvSJY9crSVzhzU9MxilN85b7bd
-   CY8DkapYu5aNpJXUHUMXdZCNvNKWgu+PBPIwXtm+dCJOsjHdbMLlhfZRu
-   l5e7lUGnyZs/xLoqsXhrcjSObo3u2XIxcHuPmDcScagIKQ1Vn3Kk34bIe
-   3+2O7BO7JQqhKfmrRPjj6Xf86+TXYgMJTEuhdXQIyjYEkc4E82Kd6n1Ry
-   yuQ5QgELmubzFv/0CL26mUSdFoY3csiu6V/QXZkCvDcJsFKoV7H4VjJ9M
-   g==;
-X-CSE-ConnectionGUID: hhMI/G/+TLCx4/VNpgBPfg==
-X-CSE-MsgGUID: vX01tnVnTvWHxeEl5+Hc2Q==
-X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="25068342"
+  t=1717135368; x=1748671368;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=ybwUS6RtWP/25t4kttVVL9hVeT6Fp8bPYKJR9Xwq21Y=;
+  b=Yzp6GSIHtBtJCByAn/q603xTx9521rxJ1J5jPnAUkF2P/BzEgMxSQrnM
+   uA62wfVilmRy3TzDR04L4qLzt1aZArKBtZkc8AY45puPzw2Tv7C4yeA3e
+   kAimg22aH9usD9xmKPuP7a6+rJs1zyXnGiRufApJKUPpC1z4ndbeakKHF
+   f5BCdLpE3TZXeFh5V+srNZJz4tC2joVwEUpHixxrZlsr0gPWNMgJ14DkS
+   aYaNMMP5F2lYzbhsq4OzzNZbtKWlwpOchbD1/aRNuGJ4NgNTFN72zrLYf
+   czRptdT41fXiAdXpK/FsNuce2w6FHNfiLfNOQZjrctUuM3zxPc88Nbo93
+   w==;
+X-CSE-ConnectionGUID: ec9oc40bSWihv7ehxNjEJQ==
+X-CSE-MsgGUID: qTCXWMk1QVuJuN5eRQ19aA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="13509421"
 X-IronPort-AV: E=Sophos;i="6.08,203,1712646000"; 
-   d="scan'208";a="25068342"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 22:58:55 -0700
-X-CSE-ConnectionGUID: SxjeQndQTHueuh3XL3CyeQ==
-X-CSE-MsgGUID: P9VZf4uyTHmJ9O/ifrtZkA==
+   d="scan'208";a="13509421"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 23:02:47 -0700
+X-CSE-ConnectionGUID: fMZJ/pUwTXqKV30ojXQ/RA==
+X-CSE-MsgGUID: CO2gmYVVR3yFgXq5Fsh8Rw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,203,1712646000"; 
-   d="scan'208";a="40511003"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO localhost.localdomain) ([10.246.41.28])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2024 22:58:51 -0700
-From: Adrian Hunter <adrian.hunter@intel.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Hendrik Brueckner <brueckner@linux.ibm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>,
-	James Clark <james.clark@arm.com>,
-	coresight@lists.linaro.org,
-	linux-arm-kernel@lists.infradead.org,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Will Deacon <will@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: [PATCH V7 12/12] perf intel-pt: Add a test for pause / resume
-Date: Fri, 31 May 2024 08:57:31 +0300
-Message-Id: <20240531055731.12541-13-adrian.hunter@intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240531055731.12541-1-adrian.hunter@intel.com>
-References: <20240531055731.12541-1-adrian.hunter@intel.com>
+   d="scan'208";a="41127729"
+Received: from unknown (HELO [10.239.159.127]) ([10.239.159.127])
+  by orviesa004.jf.intel.com with ESMTP; 30 May 2024 23:02:41 -0700
+Message-ID: <34d23852-ea68-414e-92ce-61dcfe6a0368@linux.intel.com>
+Date: Fri, 31 May 2024 14:00:34 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+User-Agent: Mozilla Thunderbird
+Cc: baolu.lu@linux.intel.com, David Airlie <airlied@gmail.com>,
+ Daniel Vetter <daniel@ffwll.ch>, Kalle Valo <kvalo@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>,
+ Alex Williamson <alex.williamson@redhat.com>, mst@redhat.com,
+ Jason Wang <jasowang@redhat.com>, Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Mikko Perttunen <mperttunen@nvidia.com>, iommu@lists.linux.dev,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 00/20] iommu: Refactoring domain allocation interface
+To: Yi Liu <yi.l.liu@intel.com>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>
+References: <20240529053250.91284-1-baolu.lu@linux.intel.com>
+ <efd902f6-eafc-4a26-8057-bdd9d7d6e535@intel.com>
+ <a1f2c08a-e92f-4080-b55e-8d6dbd94db78@linux.intel.com>
+ <7af4fee2-1b37-4eb8-9d03-8b1a402ec00b@intel.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <7af4fee2-1b37-4eb8-9d03-8b1a402ec00b@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Add a simple sub-test to the "Miscellaneous Intel PT testing" test to
-check pause / resume.
+On 5/31/24 11:16 AM, Yi Liu wrote:
+> On 2024/5/29 20:02, Baolu Lu wrote:
+>> On 2024/5/29 17:03, Yi Liu wrote:
+>>> On 2024/5/29 13:32, Lu Baolu wrote:
+>>>> The IOMMU subsystem has undergone some changes, including the removal
+>>>> of iommu_ops from the bus structure. Consequently, the existing domain
+>>>> allocation interface, which relies on a bus type argument, is no longer
+>>>> relevant:
+>>>>
+>>>>      struct iommu_domain *iommu_domain_alloc(struct bus_type *bus)
+>>>>
+>>>> This series is designed to refactor the use of this interface. It
+>>>> proposes two new interfaces to replace iommu_domain_alloc():
+>>>>
+>>>> - iommu_user_domain_alloc(): This interface is intended for allocating
+>>>>    iommu domains managed by userspace for device passthrough scenarios,
+>>>>    such as those used by iommufd, vfio, and vdpa. It clearly indicates
+>>>>    that the domain is for user-managed device DMA.
+>>>
+>>> user paging domain? It looks to me user domain includes the nested 
+>>> domains
+>>> as well.
+>>
+>> Yes, nested domain is a user domain. The iommu driver should implement
+>> iommu_ops->domain_alloc_user for nested domain allocation.
+> 
+> will it be more clear to name iommu_user_domain_alloc() be
+> iommu_user_paging_domain_alloc() as it is mainly for paging domain
+> allocation?
 
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Acked-by: Ian Rogers <irogers@google.com>
-Reviewed-by: Andi Kleen <ak@linux.intel.com>
----
- tools/perf/tests/shell/test_intel_pt.sh | 28 +++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+That might be better; let's wait and see if there's another option.
 
-diff --git a/tools/perf/tests/shell/test_intel_pt.sh b/tools/perf/tests/shell/test_intel_pt.sh
-index 723ec501f99a..e359db0d0ff2 100755
---- a/tools/perf/tests/shell/test_intel_pt.sh
-+++ b/tools/perf/tests/shell/test_intel_pt.sh
-@@ -644,6 +644,33 @@ test_pipe()
- 	return 0
- }
- 
-+test_pause_resume()
-+{
-+	echo "--- Test with pause / resume ---"
-+	if ! perf_record_no_decode -o "${perfdatafile}" -e intel_pt/aux-action=start-paused/u uname ; then
-+		echo "SKIP: pause / resume is not supported"
-+		return 2
-+	fi
-+	if ! perf_record_no_bpf -o "${perfdatafile}" \
-+			-e intel_pt/aux-action=start-paused/u \
-+			-e instructions/period=50000,aux-action=resume,name=Resume/u \
-+			-e instructions/period=100000,aux-action=pause,name=Pause/u uname  ; then
-+		echo "perf record with pause / resume failed"
-+		return 1
-+	fi
-+	if ! perf script -i "${perfdatafile}" --itrace=b -Fperiod,event | \
-+			awk 'BEGIN {paused=1;branches=0}
-+			     /Resume/ {paused=0}
-+			     /branches/ {if (paused) exit 1;branches=1}
-+			     /Pause/ {paused=1}
-+			     END {if (!branches) exit 1}' ; then
-+		echo "perf record with pause / resume failed"
-+		return 1
-+	fi
-+	echo OK
-+	return 0
-+}
-+
- count_result()
- {
- 	if [ "$1" -eq 2 ] ; then
-@@ -672,6 +699,7 @@ test_power_event			|| ret=$? ; count_result $ret ; ret=0
- test_no_tnt				|| ret=$? ; count_result $ret ; ret=0
- test_event_trace			|| ret=$? ; count_result $ret ; ret=0
- test_pipe				|| ret=$? ; count_result $ret ; ret=0
-+test_pause_resume			|| ret=$? ; count_result $ret ; ret=0
- 
- cleanup
- 
--- 
-2.34.1
+> 
+>>>
+>>>>    If an IOMMU driver does not implement iommu_ops->domain_alloc_user,
+>>>>    this interface will rollback to the generic paging domain 
+>>>> allocation.
+>>>>
+>>>> - iommu_paging_domain_alloc(): This interface is for allocating iommu
+>>>>    domains managed by kernel drivers for kernel DMA purposes. It 
+>>>> takes a
+>>>>    device pointer as a parameter, which better reflects the current
+>>>>    design of the IOMMU subsystem.
+>>>>
+>>>> The majority of device drivers currently using iommu_domain_alloc() do
+>>>> so to allocate a domain for a specific device and then attach that
+>>>> domain to the device. These cases can be straightforwardly migrated to
+>>>> the new interfaces.
+>>>>
+>>>> However, there are some drivers with more complex use cases that do
+>>>> not fit neatly into this new scheme. For example:
+>>>>
+>>>> $ git grep "= iommu_domain_alloc"
+>>>> arch/arm/mm/dma-mapping.c:      mapping->domain = 
+>>>> iommu_domain_alloc(bus);
+>>>> drivers/gpu/drm/rockchip/rockchip_drm_drv.c:    private->domain = 
+>>>> iommu_domain_alloc(private->iommu_dev->bus);
+>>>> drivers/gpu/drm/tegra/drm.c:            tegra->domain = 
+>>>> iommu_domain_alloc(&platform_bus_type);
+>>>> drivers/infiniband/hw/usnic/usnic_uiom.c:       pd->domain = domain 
+>>>> = iommu_domain_alloc(dev->bus);
+>>>>
+>>>> This series leave those cases unchanged and keep iommu_domain_alloc()
+>>>> for their usage. But new drivers should not use it anymore.
+>>>
+>>> does it mean there is still domains allocated via iommu_domain_alloc()
+>>> on VT-d platform?
+>>
+>> I think the drivers mentioned above do not run on x86 platforms, or do
+>> they?
+> 
+> cool. BTW. I know out-of-tree drivers are not counted in upstream review.
+> Just out of curious, is there a formal way to let such drivers know it is
+> no longer allowed to use iommu_domain_alloc() on VT-d?
 
+As Robin suggested, we should try to remove iommu_domain_alloc() from
+the tree in this series.
+
+Best regards,
+baolu
 
