@@ -1,81 +1,143 @@
-Return-Path: <linux-kernel+bounces-196736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AAA58D60BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 13:32:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 653EA8D60C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 13:35:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1367BB239C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 11:32:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 954F11C23DC0
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 11:35:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD91F15749D;
-	Fri, 31 May 2024 11:31:57 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62335155C87
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 11:31:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 513FA157493;
+	Fri, 31 May 2024 11:35:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="stdfbrAg"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20D998173C;
+	Fri, 31 May 2024 11:35:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717155117; cv=none; b=LYgtjLlccAMJRn1cJvhc/XsEj6ULFPEqkU4xDQDdE+p9rqatmBJSISfTucfrHWCBHKgfkItHyKxnarYK6QXV/z7X1YvN0ntwEcodiXxtPHNSIs6fJWrFTz7zcB/jeUmmL9yqw8MBW+dJ9+YLGP8plnW9sQVPKAGkh+o3ZEpZdJM=
+	t=1717155303; cv=none; b=prMno+7F5lmgmoVaU0W9sTQ5vf/vi225hqGSrgfnhW9eV7J5rGIMZuBht3ZWOTen5B0H0cYQceGuZfexL0ax/103WRh0l2SiS3WmAW2AEnDc7zZKIq4iv/TveaL56ooGvpZ/erm5nRcX1MMvMk7Nw//uKyvCeVpIEeYMOXH2HCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717155117; c=relaxed/simple;
-	bh=TmxQYiPP3ecRhKCM8rJ2qnA6Vdk3jTsL+nCFM7q9bVw=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=oc3+HUTNilmASmxFnLcq5EVwyk6WZorrE5vT9aFKhhBY4dGlifeCTf4T/PXRsNYx8R3o73p0Kz0US2A00Ga0hgvDcrtXbOQLTYQW59j6GT8RXU+sUopQ2O3DraInIR+KcSsyXXoDIITDEAJ2mmoOxsX4IA4b59Z1FMu5NLUftS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F089E1424;
-	Fri, 31 May 2024 04:32:18 -0700 (PDT)
-Received: from [10.162.41.15] (e116581.arm.com [10.162.41.15])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2EAE43F792;
-	Fri, 31 May 2024 04:31:52 -0700 (PDT)
-Message-ID: <e6b7858b-39cd-432d-9206-4ccbd153baa2@arm.com>
-Date: Fri, 31 May 2024 17:01:49 +0530
+	s=arc-20240116; t=1717155303; c=relaxed/simple;
+	bh=BCulwwdYr/KSnyKqgtvuTyOnil71EDFeqJBJWRTrdjs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=gw0g4nEzQ5cSmIhgO0Nov8Y6yN6zH2QQwp7KN0DNoGbi2cKRYnH7A56IsFlZGRFFemulLY68HRKZd9o37bQXY9hkUDKaV0VcxeXq3XKm2SrM4cUSjgKcW6srrbY0xoMlB31PI45fBI4j7P8171oTMelLGq05E2NomnhSCC/UfVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=stdfbrAg; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1717155300;
+	bh=BCulwwdYr/KSnyKqgtvuTyOnil71EDFeqJBJWRTrdjs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=stdfbrAgFa6eirwM9A9FExFkiI+T9UTFZiG8pJBuCO//NzYE0TGsZVHs841M0zehE
+	 ZRafkHT4gXAgkDjLDnpTa1vnOXmiD08fG01WCvVB0QzercN1barPPixmmiek1CRYCR
+	 SXdhXYdgeYZNMH3NegrZdwPswFK4lDFtTX0JN2Of4jH+9KJG4ut2osedriGmFu1gjt
+	 eEZff7DzrmWUBls/foADLuGXUI7wcFFFnKv9R1jY273L4XUfFC3krTKgruzfShzRtg
+	 oK/BgbRLNGKa0Wm/ubpj+88PigmwYJ/k5vpX6IUftf87/kaNL3POMjrSE7xnqzGCY9
+	 peZl+0XZ0Oiow==
+Received: from localhost.localdomain (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: laura.nao)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id C30403781FA4;
+	Fri, 31 May 2024 11:34:59 +0000 (UTC)
+From: Laura Nao <laura.nao@collabora.com>
+To: laura.nao@collabora.com
+Cc: kernel@collabora.com,
+	lenb@kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	rafael@kernel.org,
+	regressions@lists.linux.dev
+Subject: Re: [REGRESSION] probe with driver acpi-fan failed with error -22
+Date: Fri, 31 May 2024 13:35:34 +0200
+Message-Id: <20240531113534.577055-1-laura.nao@collabora.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20240530153727.843378-1-laura.nao@collabora.com>
+References: <20240530153727.843378-1-laura.nao@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [QUESTION] mm: Redundant const parameter?
-From: Dev Jain <dev.jain@arm.com>
-To: zhouchengming@bytedance.com
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- Anshuman.Khandual@arm.com
-References: <e5f01ffe-de51-4079-a87f-2886788422f9@arm.com>
-Content-Language: en-US
-In-Reply-To: <e5f01ffe-de51-4079-a87f-2886788422f9@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-I guess it would be better if I send this as a patch and wait for comments.
+Hello,
 
-On 5/31/24 16:42, Dev Jain wrote:
-> Hi Chengming,
->
-> In mm/slub.c, you had defined slab_test_node_partial() to take a const 
-> parameter.
->
-> Is there any point of taking in a const, when you are anyways 
-> typecasting it to
->
-> a (struct folio *) from (const struct folio *) ? In fact, at the place 
-> where you call
->
-> slab_test_node_partial(), the struct slab *slab is not const.
->
-> Please comment.
->
->
-> Thanks
->
-> DJ
->
->
->
->
+On 5/30/24 17:37, Laura Nao wrote:
+> Hello,
+>                                                                           
+> We have identified a regression in the acpi-fan driver probe between
+> v6.9-rc7 and v6.10-rc1 on some Intel Chromebooks in the Collabora LAVA
+> lab.
+> 
+> For the Acer Chromebook Spin 514 (CP514-2H), the following error is
+> reported in the logs:
+> 
+> [    0.651202] acpi-fan INTC1044:00: probe with driver acpi-fan failed with error -22
+> 
+> Similar errors are reported on other devices with fans compatible with
+> the same driver.
+> 
+> On Acer Chromebox CXI4, ASUS Chromebook Flip C436FA and
+> HP Chromebook x360 14 G1:
+> 
+> [    0.488001] acpi-fan INT3404:00: probe with driver acpi-fan failed with error -22
+> 
+> On ASUS Chromebook Vero 514 CBV514-1H:
+> 
+> [    1.168905] acpi-fan INTC1048:00: probe with driver acpi-fan failed with error -22
+> 
+> The issue is still present on next-20240529.
+> 
+> I'm sending this report to track the regression while a fix is
+> identified. I'll investigate the issue/run a bisection and report back
+> with the results.
+>                                       
+> This regression was discovered during some preliminary tests with the
+> ACPI probe kselftest [1] in KernelCI. The config used was the upstream
+> x86_64 defconfig with a fragment applied on top [2].
+> 
+> Best,
+> 
+> Laura
+> 
+> [1] https://lore.kernel.org/all/20240308144933.337107-1-laura.nao@collabora.com/
+> [2] https://pastebin.com/raw/0tFM0Zyg
+> 
+> #regzbot introduced: v6.9-rc7..v6.10-rc1
+
+The issue started happening after: 
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/drivers/thermal/thermal_core.c?h=v6.10-rc1&id=31a0fa0019b022024cc082ae292951a596b06f8c
+
+Before this commit, get_cur_state() was not called by 
+__thermal_cooling_device_register, so the error was not triggered.
+
+After enabling debugging for the acpi-fan driver, I noticed these errors
+in the logs:
+
+[    0.682224] acpi INTC1044:00: Invalid control value returned
+[    0.682635] acpi INTC1044:00: Invalid control value returned
+
+The value stored in fst.control is 255, which is indeed not a valid 
+value.
+
+I suspect this might be a firmware issue that is now manifesting due to
+the addition of the extra get_cur_state() call.
+
+I'll dig a bit more and report back.
+
+Best,
+
+Laura
+
+#regzbot introduced: 31a0fa0019
+
 
