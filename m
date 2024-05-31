@@ -1,135 +1,105 @@
-Return-Path: <linux-kernel+bounces-197460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1BD48D6AEB
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 22:39:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 673B88D6AEE
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 22:40:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3DB4AB274F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 20:39:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76C581C22FEA
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 20:40:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CED217D895;
-	Fri, 31 May 2024 20:39:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D66A917D8B0;
+	Fri, 31 May 2024 20:40:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="PSPqzJel"
-Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h9GHoPXU"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31649EAE7
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 20:39:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D14CFEAE7;
+	Fri, 31 May 2024 20:40:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717187985; cv=none; b=PSRkF7MPw0E29JAzYDlnawTYuZN2/KWGuL4vEaiBFAcpXAaxZ2mYKI567YRAUcaK0kV4nSEPQBMMeSA4rq5jdnZy5mQ9eWOXeaRrWOjwz5dPqKSKuBnBfkxO/hivp5q0vHcGuLb2q6UZdGIKbY3Wq6IyfB3Jaq6XyAs++unUShU=
+	t=1717188012; cv=none; b=mHeQC9kM+1L3FBc8cFeCYf7tg3GGS4hO11CgAUQjjI/oZvUGcXncXCTJ1U88h0RrUolGQ+3oX2E8Tk950a8cn8RgDYsMgSzwvvpYasjJ/Z/xpnvkjXep8djERmOyUuBydd0bIPf0VnYWGtSNyBn0FwilH3K0/mK60OFnJQ266EU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717187985; c=relaxed/simple;
-	bh=shhio0iNEuO7LiDKGHdia85hkYDhPRfghUqasfZZD+I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Md/6pzXi9/PTEVwWtwfjuLMRot2zSqfUTdpnD4UB74oUHhwBXraFic+7gGt+7zYYjyGFnU31cyZDzmh5BoqUDWoYPO7yUdK5q9gvd9EZHelY8cSf+wDwCJrIzqPJxMgdCe8PwcNzPYNrDswpeZDXKoAcEEBzjByPy4kk3sCyAf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=PSPqzJel; arc=none smtp.client-ip=209.85.166.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-7e22af6fed5so11683039f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 13:39:42 -0700 (PDT)
+	s=arc-20240116; t=1717188012; c=relaxed/simple;
+	bh=XWJGA7WkumqEWVF3eNR36oimqhMNBPP0r3p047diBwI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gEftkduXAz9IW019w157WZ6ZuxrIKR9+hP90N+hxfo01aBpH/MvIWYDtBjHc/lD6BLvJw/tN88EENPVywGwk6I/ii5BP8yHn9bOnicrk+ROk58Og/4oh85YP5ORUilK11lHMbfLtyGcgCw7xYNKuEo5twzFaJU1VxqIurAStWlc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h9GHoPXU; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-701ae8698d8so2004988b3a.0;
+        Fri, 31 May 2024 13:40:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1717187982; x=1717792782; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=C6cHgWjpqD8fz5b7y0liRbomCTR9fA7E/zBbxbh5sw4=;
-        b=PSPqzJelWORugQHF9dweOJfzNzUSvvGrJQnLuiYc4EPbX+WP1hTPhy8LD8v8K2lwHr
-         xf9IbD0sqMuWKYU9W03BR7v9OlVsMnV/tNqbqYF/cnNizW7pELx1ZqBMHOa89tXroCB7
-         i/W5uryS1pEQ+pMBEjvJZBqTBNREAhvm5ilUM=
+        d=gmail.com; s=20230601; t=1717188010; x=1717792810; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EcSoUVjLNskF349BZzJVDHB2cNNxuuJE3IEXN9Qr/mg=;
+        b=h9GHoPXUadVKUTY9/k/VSwV4FhfgQEvP698QEFdlsMbSSc1S0iZm9zbPV9VG5JNf3A
+         Dy2SGtnGbNW1R8UGJPA7awvEmnhnJxEZIAj84szhp+4/UDIF0oY7Bp7vRnVt7TDQnTqf
+         Zimwa8gjO9ialddWgFwJ9fypl/8v2FKpFNfTUS6h/rO1vXhRnHZT0cqtkXniVM1KjQ6+
+         806fovGMH3cUrWvdFzjRXBK5rzQUGTSK/ixYH55xKXR9tIlrs2CYx6mhpuW+QEPvqkO8
+         SHaTmRNpT9Ye+2VyLbEhgt1kAZ7aq8905dnN9ZN2Msr4W3GQCWE/R7epF0qStLXrPGzC
+         +cZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717187982; x=1717792782;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=C6cHgWjpqD8fz5b7y0liRbomCTR9fA7E/zBbxbh5sw4=;
-        b=G0tqHvGVMwaOb1fL8xfB5YGsCTQ7f5HtMAA2yBTk2QSvzCipEdZHKUfGbcSeb/fifJ
-         Nnd7D3X6FG58U5SyJiKJnVp7+mlWiUQUl7j0BAAY8ajYhbse+TFDsiaJbNfdk6BOxbYC
-         adQJhDG5qo3lUXZcb97a9BRKzqbdmDMH4aSqGo+ZjPEmWvOSxc/2k9KUXqXO8wQWMDDJ
-         HoWCO99YGC/2Vv4M/pcS0keJ3jryCynDVgOE4jpxU1pmQaqX6N1kx9WBbbH7uqifvQja
-         oKn83T7LLBIx2KdgsR+cl1tFCkXv28o1Xv+HCoZOeTavoyh/kGNGqqVcb8+sEKWRL2bN
-         tU0g==
-X-Forwarded-Encrypted: i=1; AJvYcCVEfNQB8SP4usNvv+qqpSuwn9Jl8ot22v700PHkdrDfgE6+ZaycgPghgi/D2E6t4M6y5SGVkCbERLDnZGAu8j4e3Y2P9VzO2KGlFqgw
-X-Gm-Message-State: AOJu0YzlkiLGhZoQCFALubxvy+k+56X2RVg0G5qvTSfF6TT8zY0GRg/x
-	SoEeB2mXKuOwyvB7SZwp9u254HAiYvTg6UrfJQnYbTfeOU27rz3H07V0Z4bwoRo=
-X-Google-Smtp-Source: AGHT+IEi/yRk3a3BA5WhOOsakdFKAemq7R0bofiAbYYvoIhENWSoZzpQG/FvvYP3/VSRcUgV/PlyQA==
-X-Received: by 2002:a5e:8b09:0:b0:7e1:8829:51f6 with SMTP id ca18e2360f4ac-7eafff1f512mr323936339f.1.1717187982213;
-        Fri, 31 May 2024 13:39:42 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4b562a839acsm269349173.67.2024.05.31.13.39.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 31 May 2024 13:39:41 -0700 (PDT)
-Message-ID: <0394faa7-af19-4929-a1e4-00d21d0749aa@linuxfoundation.org>
-Date: Fri, 31 May 2024 14:39:41 -0600
+        d=1e100.net; s=20230601; t=1717188010; x=1717792810;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EcSoUVjLNskF349BZzJVDHB2cNNxuuJE3IEXN9Qr/mg=;
+        b=NrzKfpb4G0IwiNQoLt08i/OyLE1AY0xmWm1lMaGv4ST+kb59FBumGQ7y9AKUSTHjwS
+         rcph+4H9c3v0JCNrtayM2hDSsLx7VKJ+oaYbLtdKh7xibTPqf3TYEempUeYbkmUv/8bf
+         6+vYRmHvL28y7NCskvNCuo3241wRiJi0hecwH7on8xEJMSu294z2ykTlVlzUennyMe01
+         g3HZb8RX2kWbdwGbJOG/+PW9dmoyDU2iLVEwYEaLngcFgEE5MWUGkbVYAWNBjqHpMB7H
+         4HuGTJ2Uz0rTgycPzFU/XwMoh6INiasefpCwDyhs9ti5yFWuT9zQBfpbVhWhv/hzsrpQ
+         TD6w==
+X-Forwarded-Encrypted: i=1; AJvYcCVqcdbyWGPfpmxYvpOrvvBuA8wtfFj+lPjWjXrlLIlarI2b3p2aTu8YrXkH19HIL8nSEgCP8abF8d/z+tZHRGe1lGQCwQlJCurJE6L7Ao0c9F3b6SSc//v5U8J6Zxlq47YMEnU7xzcxbJkM+Mndbh8o6lXXyS+W7VARwX1Du39U07/V3lE=
+X-Gm-Message-State: AOJu0Yy2N+oF7NP4xL0wPl5kF45A/pkAk4XTpGEQ680Z3XP5ljSVl4RI
+	n3AIUusgCLhpwLrY4WKW0T4UoPw9PTOZ7TDjWNeoSuwiEiXTRXtx
+X-Google-Smtp-Source: AGHT+IHsl1mU7gRHY5Se++eXlfsTrPYGTP4qW4HqGsRZrj8ftol6XE0ti+DxCQCDzjqx1XI3vZkrlw==
+X-Received: by 2002:a05:6a00:4388:b0:702:33a4:53a5 with SMTP id d2e1a72fcca58-7024789cccamr3371975b3a.27.1717188009902;
+        Fri, 31 May 2024 13:40:09 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70242ae88besm1774032b3a.116.2024.05.31.13.40.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 May 2024 13:40:09 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Fri, 31 May 2024 13:40:08 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Radu Sabau <radu.sabau@analog.com>
+Cc: Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
+	linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 2/2] drivers: hwmon: max31827: Add PEC support
+Message-ID: <30cc3e47-3da3-4a92-956c-d1c1cba97e09@roeck-us.net>
+References: <20240531084645.12935-1-radu.sabau@analog.com>
+ <20240531084645.12935-2-radu.sabau@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/3] selftests/futex: clang-inspired fixes
-To: John Hubbard <jhubbard@nvidia.com>, Shuah Khan <shuah@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>,
- Davidlohr Bueso <dave@stgolabs.net>, Edward Liaw <edliaw@google.com>,
- =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>,
- "Nysal Jan K . A" <nysal@linux.ibm.com>, Mark Brown <broonie@kernel.org>,
- Valentin Obst <kernel@valentinobst.de>, linux-kselftest@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>, llvm@lists.linux.dev,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240531200755.128749-1-jhubbard@nvidia.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240531200755.128749-1-jhubbard@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240531084645.12935-2-radu.sabau@analog.com>
 
-On 5/31/24 14:07, John Hubbard wrote:
-> Hi,
+On Fri, May 31, 2024 at 11:46:44AM +0300, Radu Sabau wrote:
+> Add support for PEC by configuring the chip accordingly to the hwmon
+> core PEC attribute handling.
 > 
-> Here's a few fixes that are part of my effort to get all selftests
-> building cleanly under clang. Plus one that I noticed by inspection.
+> Handle hwmon_chip_pec attribute writing in the max31827_write in the
+> hwmon_chip type switch case, using the same code structure as for
+> writing temperature limits. 
 > 
-> Changes since v2:
-> 
-> 1) Added a sentence to the .PHONY patch, to show that it is removing
->     duplicate code.
-> 
-> 2) Added the actual clang warning output to the commit description.
-> 
-> Changes since the first version:
-> 
-> 1) Rebased onto Linux 6.10-rc1
-> 2) Added Reviewed-by's.
-> 
-> ...and it turns out that all three patches are still required, on -rc1,
-> in order to get a clean clang build.
-> 
-> Enjoy!
-> 
-> thanks,
-> John Hubbard
-> 
-> John Hubbard (3):
->    selftests/futex: don't redefine .PHONY targets (all, clean)
->    selftests/futex: don't pass a const char* to asprintf(3)
->    selftests/futex: pass _GNU_SOURCE without a value to the compiler
-> 
->   tools/testing/selftests/futex/Makefile                      | 2 --
->   tools/testing/selftests/futex/functional/Makefile           | 2 +-
->   tools/testing/selftests/futex/functional/futex_requeue_pi.c | 2 +-
->   3 files changed, 2 insertions(+), 4 deletions(-)
-> 
-> 
-> base-commit: b050496579632f86ee1ef7e7501906db579f3457
+> Signed-off-by: Radu Sabau <radu.sabau@analog.com>
+> Reviewed-by: Nuno Sa <nuno.sa@analog.com>
 
-Thank you - applied to linux-kselftest fixes branch for next rc.
+Applied to hwmon-next.
 
-thanks,
--- Shuah
+Thanks,
+Guenter
 
