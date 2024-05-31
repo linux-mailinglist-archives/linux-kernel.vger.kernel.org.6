@@ -1,146 +1,149 @@
-Return-Path: <linux-kernel+bounces-197105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 778428D6641
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:03:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 222748D6644
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:04:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3336729094F
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:03:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B635B29316
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:04:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA7231581EB;
-	Fri, 31 May 2024 16:03:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YGOxBPX/"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F93C57CA7;
-	Fri, 31 May 2024 16:03:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25BCE158869;
+	Fri, 31 May 2024 16:04:03 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9A8432C8C;
+	Fri, 31 May 2024 16:04:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717171402; cv=none; b=t5VwiGYTJ8z7RV8xZnoDOrQNz0UWyZJwn6y0kTpLZMQHyaDBs/5fNKHQ69y4ulMuq2ipiSsnX3SDowyj27jdcYBHm5nXgalkJyxfs1c4HKl7cCb9gyJNk96iYvxKizQlD6lUOaULp0jITEMUrw5M+/qgZgTlaegrjSF3XKvwTjQ=
+	t=1717171442; cv=none; b=B6gaa13HQmbt1v0U4qHhaS4djNuNMxfm+KdOaBZUu3W/8C2u/sBlu3r+P9WbLL/8VHeCfHut+0X3M/f04n5pBjeXUIfPg55W0SKrMJjlQqI52nUDabChEL6RR2pSt2oud49/uY3Y0OATAcTQITYx8QqzkpWBt0h79pmQGqtefWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717171402; c=relaxed/simple;
-	bh=bMFv7xDnJL+hw/p29GL/YYNnQd909xblIrlSOzQjKyk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=rCJvNpsJnhsWAbaiTpUP6/ZT5+2NNZPYukWQFyhyZvz8Kwd15h70eVc1Lq978FGfdjA7KKr1+QQZiCzjVSRkryqXrbWn6CjXgDAfiB5LxncvCbS6b/Wl/emkmg7j/m/e68F+ZPh0QJQSoBHKYouKQjwaOQRdZ0kuMklhpMODf1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YGOxBPX/; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44V9C7O0015967;
-	Fri, 31 May 2024 16:03:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=vCUZllc4TeUKj1QZG2IYPG
-	qKIcTqIzUjXXYoUoV18pY=; b=YGOxBPX/7HmBp3VROPCSFF68p6+wAvGR9HWzLv
-	Sx5tYSquzjraiQCY1S3/lZOMwF/HoAPs5/LIYvKollLCfptxE10B4VJ9yyCqGhmu
-	Yt06wY8jTxog66ZZjKkT4aY44R1Zy1JkY2PXPACvV+5MMUhhBACip1XZ2jyDT7Wc
-	mWFpbhS+nH68fr7dUNLiVwSY8eeYHmj+i7Kw9Yvhxd0hIwf2FEAnZFoh8RY213gd
-	U6BVItugiCNFVjet+L1H2I523IX2+pbyEYMR7atYlirMWbU6zMraIwzFtptFTcHW
-	cqcHncHSdY9Mp7KCMjy9ZWeY2jgPXqFCCbr+qsC6LXu267eg==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yf23st5qt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 31 May 2024 16:03:13 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44VG3CdF025759
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 31 May 2024 16:03:12 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 31 May
- 2024 09:03:12 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Fri, 31 May 2024 09:03:11 -0700
-Subject: [PATCH] lib: bitmap: add missing MODULE_DESCRIPTION() macros
+	s=arc-20240116; t=1717171442; c=relaxed/simple;
+	bh=IFUjXMQpAq5HwdlN0F4Ro/EwDdykkZC4cPHBidBAlvw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OZfMmBduE8GkzDx1D6m1HCUZoZKKl3elO9Foeg5Tq0mVZeesZFus7Sq/zbisTsToXxkyIHa/PpdeAkAmAjcThSz/7zrxyjtnAtmzD3O2Cg6dJoFdUn8baaEC4wAYFGwtwE22/wpCcFSvBNx5msDyQcc3YTTr9K7FwPctA4XUxzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6A6631424;
+	Fri, 31 May 2024 09:04:24 -0700 (PDT)
+Received: from [10.1.27.19] (e122027.cambridge.arm.com [10.1.27.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7A9A33F792;
+	Fri, 31 May 2024 09:03:56 -0700 (PDT)
+Message-ID: <ab2ac224-ec8f-423a-80ce-0d7b18a7a173@arm.com>
+Date: Fri, 31 May 2024 17:03:54 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240531-lib-bitmap-v1-1-45a782cf3686@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAL/0WWYC/x3MwQqDMAyA4VeRnBew1a2wVxk7pG02A9pJokMQ3
- 32dx+/w/zsYq7DBvdlB+Ssmn1LhLg2kgcqbUXI1+Nb37bVzOErEKMtEM4bEt5Cjzy50UINZ+SX
- bOXs8qyMZY1QqafgvRinrhhPZwgrH8QNLhfIZewAAAA==
-To: Yury Norov <yury.norov@gmail.com>,
-        Rasmus Villemoes
-	<linux@rasmusvillemoes.dk>,
-        Andrew Morton <akpm@linux-foundation.org>
-CC: <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        "Jeff
- Johnson" <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: tudb-G3CITrWrkZe_6E_8r8iMT-plcJR
-X-Proofpoint-GUID: tudb-G3CITrWrkZe_6E_8r8iMT-plcJR
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-31_12,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
- adultscore=0 spamscore=0 lowpriorityscore=0 priorityscore=1501
- impostorscore=0 phishscore=0 mlxlogscore=999 bulkscore=0 mlxscore=0
- clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2405310120
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 21/43] arm64: RME: Runtime faulting of memory
+To: Fuad Tabba <tabba@google.com>
+Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
+ Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
+ Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
+ Oliver Upton <oliver.upton@linux.dev>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
+ <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
+ Alexandru Elisei <alexandru.elisei@arm.com>,
+ Christoffer Dall <christoffer.dall@arm.com>, linux-coco@lists.linux.dev,
+ Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
+References: <20240412084056.1733704-1-steven.price@arm.com>
+ <20240412084309.1733783-1-steven.price@arm.com>
+ <20240412084309.1733783-22-steven.price@arm.com>
+ <CA+EHjTyr1swQ4ONE2oVnWU5uPkcq2WDNYDRA8eK29-4BQDcCLw@mail.gmail.com>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <CA+EHjTyr1swQ4ONE2oVnWU5uPkcq2WDNYDRA8eK29-4BQDcCLw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/find_bit_benchmark.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/cpumask_kunit.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_bitmap.o
+On 25/04/2024 11:43, Fuad Tabba wrote:
+> Hi,
 
-Add the missing invocations of the MODULE_DESCRIPTION() macro.
+Hi,
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
-This is the subset of "missing MODULE_DESCRIPTION()" which fall under
-the scope of the BITMAP API entry in the MAINTAINERS file.
----
- lib/cpumask_kunit.c      | 1 +
- lib/find_bit_benchmark.c | 1 +
- lib/test_bitmap.c        | 1 +
- 3 files changed, 3 insertions(+)
+Thanks for the review. Sorry I didn't respond earlier.
 
-diff --git a/lib/cpumask_kunit.c b/lib/cpumask_kunit.c
-index a105e6369efc..6b62a6bdd50e 100644
---- a/lib/cpumask_kunit.c
-+++ b/lib/cpumask_kunit.c
-@@ -152,4 +152,5 @@ static struct kunit_suite test_cpumask_suite = {
- };
- kunit_test_suite(test_cpumask_suite);
- 
-+MODULE_DESCRIPTION("KUnit tests for cpumask");
- MODULE_LICENSE("GPL");
-diff --git a/lib/find_bit_benchmark.c b/lib/find_bit_benchmark.c
-index d3fb09e6eff1..402e160e7186 100644
---- a/lib/find_bit_benchmark.c
-+++ b/lib/find_bit_benchmark.c
-@@ -194,4 +194,5 @@ static int __init find_bit_test(void)
- }
- module_init(find_bit_test);
- 
-+MODULE_DESCRIPTION("Test for find_*_bit functions");
- MODULE_LICENSE("GPL");
-diff --git a/lib/test_bitmap.c b/lib/test_bitmap.c
-index 6dfb8d46a4ff..65a75d58ed9e 100644
---- a/lib/test_bitmap.c
-+++ b/lib/test_bitmap.c
-@@ -1486,4 +1486,5 @@ static void __init selftest(void)
- 
- KSTM_MODULE_LOADERS(test_bitmap);
- MODULE_AUTHOR("david decotigny <david.decotigny@googlers.com>");
-+MODULE_DESCRIPTION("Test cases for bitmap API");
- MODULE_LICENSE("GPL");
+> On Fri, Apr 12, 2024 at 9:44 AM Steven Price <steven.price@arm.com> wrote:
+>>
+<snip>
+>> +static int private_memslot_fault(struct kvm_vcpu *vcpu,
+>> +                                phys_addr_t fault_ipa,
+>> +                                struct kvm_memory_slot *memslot)
+>> +{
+>> +       struct kvm *kvm = vcpu->kvm;
+>> +       gpa_t gpa_stolen_mask = kvm_gpa_stolen_bits(kvm);
+>> +       gfn_t gfn = (fault_ipa & ~gpa_stolen_mask) >> PAGE_SHIFT;
+>> +       bool is_priv_gfn = !((fault_ipa & gpa_stolen_mask) == gpa_stolen_mask);
+>> +       bool priv_exists = kvm_mem_is_private(kvm, gfn);
+>> +       struct kvm_mmu_memory_cache *memcache = &vcpu->arch.mmu_page_cache;
+>> +       int order;
+>> +       kvm_pfn_t pfn;
+>> +       int ret;
+>> +
+>> +       if (priv_exists != is_priv_gfn) {
+>> +               kvm_prepare_memory_fault_exit(vcpu,
+>> +                                             fault_ipa & ~gpa_stolen_mask,
+>> +                                             PAGE_SIZE,
+>> +                                             kvm_is_write_fault(vcpu),
+>> +                                             false, is_priv_gfn);
+>> +
+>> +               return 0;
+>> +       }
+>> +
+>> +       if (!is_priv_gfn) {
+>> +               /* Not a private mapping, handling normally */
+>> +               return -EAGAIN;
+>> +       }
+>> +
+>> +       if (kvm_gmem_get_pfn(kvm, memslot, gfn, &pfn, &order))
+>> +               return 1; /* Retry */
+> 
+> You don't need to pass a variable to hold the order if you don't need
+> it. You can pass NULL.
 
----
-base-commit: 4a4be1ad3a6efea16c56615f31117590fd881358
-change-id: 20240531-lib-bitmap-7ce67db2d173
+Ah, good point - that simplifies things.
+
+> I am also confused about the return, why do you return 1 regardless of
+> the reason kvm_gmem_get_pfn() fails?
+
+Thinking about this, I don't think we actually expect kvm_gmem_get_pfn()
+to fail, so it's actually more appropriate to just pass return any error
+value.
+
+>> +       ret = kvm_mmu_topup_memory_cache(memcache,
+>> +                                        kvm_mmu_cache_min_pages(vcpu->arch.hw_mmu));
+>> +       if (ret)
+>> +               return ret;
+> 
+> If this fails you should release the page you got earlier (e.g.,
+> kvm_release_pfn_clean()), or you could move it before
+> kvm_gmem_get_pfn().
+
+Good point, however...
+
+>> +       /* FIXME: Should be able to use bigger than PAGE_SIZE mappings */
+>> +       ret = realm_map_ipa(kvm, fault_ipa, pfn, PAGE_SIZE, KVM_PGTABLE_PROT_W,
+>> +                            memcache);
+>> +       if (!ret)
+>> +               return 1; /* Handled */
+> 
+> Should also release the page if it fails. Speaking of which,
+> where/when do you eventually release the page?
+
+.. I messed this up ;) It seems I'm managing to leak all guestmem
+pages. I'm not sure what I was thinking but I think I'd got it into my
+head guestmem wasn't reference counting the pages. I'll fix this up in
+the next version.
+
+Thanks,
+
+Steve
 
 
