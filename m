@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-197454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A94518D6ADC
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 22:37:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CC7108D6AE4
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 22:38:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 237361F222B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 20:37:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BC0A1F291C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 20:38:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B7461822CC;
-	Fri, 31 May 2024 20:37:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CB16183097;
+	Fri, 31 May 2024 20:37:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PIidtctR"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CaU5VZ86"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E82717E477;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C8ED17F4E6;
 	Fri, 31 May 2024 20:37:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717187835; cv=none; b=PWWo7P2w+FBnxcEvD2CkRObDu6NNWMm7BlmrX6rGzf7bOauCpCN6uTi9k5RwA9RxdzWCbqKNTG68e0sMIEdUtvtUb+RdDCnPL7Dvm8aHzZNiJVblHOU8Oo/+TeLtrMw9Q28c/3vMKW/xIzSfROviYC2qHK/F+qI7vsyms0ZiNA0=
+	t=1717187837; cv=none; b=jkF6pk6gdUyBOQhjcfswPxmKu9isJWlplwxTv8NNTkLxz4x7IrDYszN+PoYLrfaxu7oett65d/Fr0hVvY9xuKSjg513c/q27AtzoOLsh2nm17UEAJnsmEZpNQ1hAY2Uvt08UYd17dkukenorrc+jxLzwvHsCQUWShxJ+vqolcNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717187835; c=relaxed/simple;
-	bh=PQHhBRWTyJ7lXAnwUF6T1t71Eh1K9Um/FsP12CRYfhs=;
+	s=arc-20240116; t=1717187837; c=relaxed/simple;
+	bh=WB9IrZhQaBiWvCtxLVin3lFQLCeXldDe0NZh3MqrvXI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dvV0tSD6PuAZnFhWbdXAkPrb6U/xhNCNq6SCqq1MTz3pbcNJs/jT1Yf2w+AoREbM0oBM/zAHNjqDiEDK9zsySUIIRWYNbD1/wcVCLSkBlVqQeHt3YO20e3wwkJv56qR4hsNmhNhSNNVFmxLJM2njEEPs4DaY4S6ln7+a3luYoz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PIidtctR; arc=none smtp.client-ip=198.175.65.17
+	 MIME-Version; b=oa4NPFvC75AOrhJpzzIn8fLUjCt2IBAGTcvdVCVB+J/2SmXl1KbtactXXpVvuNskWNEkblJT5KMOzEd/HOatfXmPJ2TCM1G4hC5eT6Jn1Dx9JTty52ZyutX57atttmBzu2EzBw2QZ4oPjT+XQxU6QJBnVAjI9ZLU7ixSO1Wo4FU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CaU5VZ86; arc=none smtp.client-ip=198.175.65.17
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
@@ -35,26 +35,26 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   t=1717187834; x=1748723834;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=PQHhBRWTyJ7lXAnwUF6T1t71Eh1K9Um/FsP12CRYfhs=;
-  b=PIidtctRBdYxKT2/ct1G5p4ZsjizYA+jyDtHFFzgVGDE5TT38wkCnhct
-   2fBoQ4ZgYtNMyoCmPZQCskVV3okpS5BbVc/VHW0YUNV6SftB7og83VXjO
-   M0rllS+/E187xOz5TbVxejmG+DnIx/on/vuawbH+jAjYyScEWlYLDhvG7
-   hDaZ27mI8fdVNQa3vwGrkn3ERhSoSUEwwlWloBeGO3ARkhJqVXm+Y09r1
-   LLjbdaAy4CALXN/lkX2y7L4cWh4uybW2UtNxFY18TxGBueDFdc4EGQwZ8
-   vnVncTP1W7+5t6N3FfIw0vjsP4NpWuHcfZSullp2ncak0ybQx5IuSmsCS
-   A==;
-X-CSE-ConnectionGUID: rhV6yxjlQ7ie4vP71pPWfw==
-X-CSE-MsgGUID: sDfCuWK5QBuv1m0yMr2tYw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11089"; a="13871833"
+  bh=WB9IrZhQaBiWvCtxLVin3lFQLCeXldDe0NZh3MqrvXI=;
+  b=CaU5VZ86xuJA8vAQJkH6ABH5xqWJZQ/Mlwjbicbo2tEqOPXHi3LwOLnk
+   7fsi7oTUfz3O2k71jWTeD2ZY9TDBsna6mzyJvrAd9Cjjd3lOIZjb5IXUa
+   byM5x0DH2e+fsIx2PY9DjnYhYF8pY3avinehhflWW1hHrC/ubrnBDzYZq
+   WU2GtxjIhk0c7axrPjIKkEHm7wNi2aSpiGuf63++1KjE1OB42oFmmA959
+   DQsyCZJPCoPFTy9a6NOBLwUeeZzQ4jxIUm3qiTLorKCS7bbAO0dUvzL2B
+   y1+sYv9RYowIoXBsrltGPNOE+ITvACrFO6Hz5gP+rOPhVxvT8iWpoVjkZ
+   Q==;
+X-CSE-ConnectionGUID: Q2yMlXGsQ46WXMPcpFRe1w==
+X-CSE-MsgGUID: ZfGUuEKBQl6Zttj5rgfolA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11089"; a="13871837"
 X-IronPort-AV: E=Sophos;i="6.08,205,1712646000"; 
-   d="scan'208";a="13871833"
+   d="scan'208";a="13871837"
 Received: from orviesa009.jf.intel.com ([10.64.159.149])
   by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 13:37:12 -0700
-X-CSE-ConnectionGUID: EGw/odp1QjyARxLl2l8KHg==
-X-CSE-MsgGUID: Z+S6GtXRQTymbrEgYf5zJQ==
+X-CSE-ConnectionGUID: gX6ewXi+QAOe88AJ0eEeNw==
+X-CSE-MsgGUID: puFRbaN9R+W99loEwhSs+w==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,205,1712646000"; 
-   d="scan'208";a="36355381"
+   d="scan'208";a="36355384"
 Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
   by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 13:37:12 -0700
 From: Tony Luck <tony.luck@intel.com>
@@ -65,9 +65,9 @@ Cc: platform-driver-x86@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	patches@lists.linux.dev,
 	Tony Luck <tony.luck@intel.com>
-Subject: [PATCH 04/11] platform/x86: p2sb: Switch to new Intel CPU model defines
-Date: Fri, 31 May 2024 13:37:00 -0700
-Message-ID: <20240531203706.233365-5-tony.luck@intel.com>
+Subject: [PATCH 05/11] platform/x86: intel_turbo_max_3: Switch to new Intel CPU model defines
+Date: Fri, 31 May 2024 13:37:01 -0700
+Message-ID: <20240531203706.233365-6-tony.luck@intel.com>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <20240531203706.233365-1-tony.luck@intel.com>
 References: <20240531203706.233365-1-tony.luck@intel.com>
@@ -84,19 +84,21 @@ New CPU #defines encode vendor and family as well as model.
 Signed-off-by: Tony Luck <tony.luck@intel.com>
 Acked-by: Hans de Goede <hdegoede@redhat.com>
 ---
- drivers/platform/x86/p2sb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/platform/x86/intel/turbo_max_3.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/platform/x86/p2sb.c b/drivers/platform/x86/p2sb.c
-index 3bf5d2243491..31f38309b389 100644
---- a/drivers/platform/x86/p2sb.c
-+++ b/drivers/platform/x86/p2sb.c
-@@ -24,7 +24,7 @@
- #define SPI_DEVFN_GOLDMONT	PCI_DEVFN(13, 2)
+diff --git a/drivers/platform/x86/intel/turbo_max_3.c b/drivers/platform/x86/intel/turbo_max_3.c
+index 892140b62898..79a0bcdeffb8 100644
+--- a/drivers/platform/x86/intel/turbo_max_3.c
++++ b/drivers/platform/x86/intel/turbo_max_3.c
+@@ -114,8 +114,8 @@ static int itmt_legacy_cpu_online(unsigned int cpu)
+ }
  
- static const struct x86_cpu_id p2sb_cpu_ids[] = {
--	X86_MATCH_INTEL_FAM6_MODEL(ATOM_GOLDMONT, P2SB_DEVFN_GOLDMONT),
-+	X86_MATCH_VFM(INTEL_ATOM_GOLDMONT, P2SB_DEVFN_GOLDMONT),
+ static const struct x86_cpu_id itmt_legacy_cpu_ids[] = {
+-	X86_MATCH_INTEL_FAM6_MODEL(BROADWELL_X,	NULL),
+-	X86_MATCH_INTEL_FAM6_MODEL(SKYLAKE_X,	NULL),
++	X86_MATCH_VFM(INTEL_BROADWELL_X,	NULL),
++	X86_MATCH_VFM(INTEL_SKYLAKE_X,	NULL),
  	{}
  };
  
