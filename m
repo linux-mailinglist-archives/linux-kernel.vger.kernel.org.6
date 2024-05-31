@@ -1,130 +1,111 @@
-Return-Path: <linux-kernel+bounces-196511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C431D8D5D32
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:54:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 539908D5D34
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:54:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5ADE8B25FC8
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 08:54:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8243F1C23FDB
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 08:54:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1939E155CB5;
-	Fri, 31 May 2024 08:53:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UX0WeXm0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E783155CA1;
+	Fri, 31 May 2024 08:53:52 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56E9E155CA1;
-	Fri, 31 May 2024 08:53:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D3EC136E23;
+	Fri, 31 May 2024 08:53:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717145620; cv=none; b=cdowW+lI08DNv8qJVfTCIvX1ulE+jEej3/tTeUnNYZ2G4Apt/f4xjsSX9M9OEYc/d36hkHJCiAK2D09we7o80oenVFL1vhUIiJAYYOD4AFHWEtx5vD5nhXT+6o9Sz26GjAG1O/zD2+pwFYs7+8Diiz2Ks0pMee87CYlKMh93vMA=
+	t=1717145631; cv=none; b=Z/SUYBzO9VxdtMLLpoEejPRDGJymTf/ZNW4FSjuYF0tgd70ysfpnDex5sPBkzpC/WK5KbpH+Kj11rO77STQXDzY+uFT5rpx7paEQu2WgDN09tvLJ9LOTc9AkBvawJeISQmmqxZ3G8ciDiARyEO65yE0ZWtIZDKX9Hs7/1PNAEG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717145620; c=relaxed/simple;
-	bh=hejNiCvLj7Dk9SFPEcozF5XOfDPrPBPpe0gJ7vmY0QI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XII40taW++vD75fz6tIhd8BBv+x14E9xlOAJg3GYLmJWb4+n/9APXaYnkpn/rpD5oJ2Objau2Fo9wOqWXd/8LCAI7+H5HAgunq2ZYXypjjcdpKSMfksbC6FtbDP3d9sBJbJKV4GxKFTESfnq14oLpY6bdwE6HrzEk0AAVFSrGng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UX0WeXm0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03BDBC116B1;
-	Fri, 31 May 2024 08:53:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717145619;
-	bh=hejNiCvLj7Dk9SFPEcozF5XOfDPrPBPpe0gJ7vmY0QI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=UX0WeXm0NkCilX5aVvEi+LkdAAzdayAzppiXYAxwCkUwHdgG0i6uaxsMBdgIpfb0g
-	 XrjT4JwEYsVlaZLLRgwUOqL3WLf1BabanQt7nO5qbkEOX4/tj4QTM737NHYYZpc5t9
-	 Eoz6YlE5XM6jV7Xoxyw4jJ4Zh08sjf1tv8HBacEtVGFJxfL1AaDIA46gvQUtttr9J/
-	 US9Ithh2ox0IpQvsyN9FPv8qKn5CXHDnMmlrYEOst/oT6x5ISqkc/LaRXpb3EP8VMX
-	 7VFVGcB4r9RcqDbyN8g4p218s4rowR62ytVJH34Higs9bMfc6nHu4Bw9zS1imWEpRK
-	 mcQqGdCfo9y+g==
-Message-ID: <99bed183-9b3e-437a-8c35-8a345f4a3558@kernel.org>
-Date: Fri, 31 May 2024 10:53:33 +0200
+	s=arc-20240116; t=1717145631; c=relaxed/simple;
+	bh=GX83tVnVrrE7CbGvDzxEtC/0sBHxwKgPFSeDxJFmwi8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Td/7gsLMbQ2u5DPa2UQ8uSkIjeh6/hg8V/kTX34D5tTO/xA9MEPqf47v3S+iZo0K8rrzYLrunEfcP59HTUDPKYIz1IX+OUlw0XHF6fCsMXFKDuvwqGTECOsQDHtALVwivw0DDMuBaaW+VbM+4e07pb55cyJy3UUlQ/b8qUgucCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4VrH1h05sZz1xs93;
+	Fri, 31 May 2024 16:52:24 +0800 (CST)
+Received: from dggpemd100001.china.huawei.com (unknown [7.185.36.94])
+	by mail.maildlp.com (Postfix) with ESMTPS id EA5701A016C;
+	Fri, 31 May 2024 16:53:41 +0800 (CST)
+Received: from [10.67.120.108] (10.67.120.108) by
+ dggpemd100001.china.huawei.com (7.185.36.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Fri, 31 May 2024 16:53:41 +0800
+Message-ID: <d4b6ed9b-8beb-025b-fc60-078a3fd7e471@huawei.com>
+Date: Fri, 31 May 2024 16:53:41 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] arm64: dts: ti: k3-am64-phycore-som: Add
- serial_flash label
-To: Wadim Egorov <w.egorov@phytec.de>,
- Nathan Morrisson <nmorrisson@phytec.com>, nm@ti.com, vigneshr@ti.com,
- kristo@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, upstream@lists.phytec.de
-References: <20240528225137.3629698-1-nmorrisson@phytec.com>
- <20240528225137.3629698-2-nmorrisson@phytec.com>
- <bd062517-4756-4ba3-b937-c3a2db7a9855@phytec.de>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <bd062517-4756-4ba3-b937-c3a2db7a9855@phytec.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.1
+Subject: Re: [PATCH v2] scsi: libsas: Fix exp-attached end device cannot be
+ scanned in again after probe failed
+Content-Language: en-CA
+To: John Garry <john.g.garry@oracle.com>, <yanaijie@huawei.com>,
+	<jejb@linux.ibm.com>, <martin.petersen@oracle.com>,
+	<damien.lemoal@opensource.wdc.com>
+CC: <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linuxarm@huawei.com>, <prime.zeng@hisilicon.com>,
+	<chenxiang66@hisilicon.com>, <kangfenglong@huawei.com>
+References: <20240424080807.8469-1-yangxingui@huawei.com>
+ <824c34aa-7c4c-4edd-b41c-f9b5ff5aff03@oracle.com>
+ <12ea14e9-5821-b2b5-16c1-ac48985927d7@huawei.com>
+ <a8b18cea-cc04-47d0-8ff0-b02dd087dc73@oracle.com>
+From: yangxingui <yangxingui@huawei.com>
+In-Reply-To: <a8b18cea-cc04-47d0-8ff0-b02dd087dc73@oracle.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggpemm100003.china.huawei.com (7.185.36.68) To
+ dggpemd100001.china.huawei.com (7.185.36.94)
 
-On 31/05/2024 10:28, Wadim Egorov wrote:
-> 
-> 
-> Am 29.05.24 um 00:51 schrieb Nathan Morrisson:
->> Label the spi nor as serial_flash. This allows us to disable the
->> flash with an overlay common to all am6xx-phycore-som boards.
+
+Hi John,
+On 2024/5/28 18:11, John Garry wrote:
+> On 25/05/2024 04:08, yangxingui wrote:
+>>> Why do these new additions not cover the same job which those calls 
+>>> to the same functions @out covers?
+>> For asynchronous probes like sata, the failure occurs after @out. 
+>> After adding the device to port_delete_list, the port is not deleted 
+>> immediately. This may cause the device to fail to create a new port 
+>> because the previous port has not been deleted when the device 
+>> attached again. as follow:
 >>
->> Signed-off-by: Nathan Morrisson <nmorrisson@phytec.com>
+>> 1. REVALIDATING DOMAIN
+>> 2. new device attached
+>> 3. ata_sas_async_probe
+>> 4. done REVALIDATING DOMAIN
+>> 5. @out, handle parent->port->sas_port_del_list
+>> 6. sata probe failed
+>> 7. add phy->port->list to parent->port->sas_port_del_list // port 
+>> won't delete now
+>>
+>> 8、REVALIDATING DOMAIN
+>> 9、new device attached
+>> 10、new port create failed, as port already exits.
+>>
+> ok, so next please consider these items:
 > 
-> For all 3 patches,
+> - add a helper for calling sas_destruct_devices() and sas_destruct_ports().
 > 
-> Reviewed-by: Wadim Egorov <w.egorov@phytec.de>
+> - add a comment on why we have this new extra call to 
+> sas_destruct_devices() and sas_destruct_ports()
+> 
+> - can we put the new call to sas_destruct_devices() and 
+> sas_destruct_ports() after 7, above? i.e. the
+> sas_probe_devices() call? It would look a bit neater.
 
-Tooling does not work like this. You need to review each or provide tag
-for 4 (not three) in cover letter.
+Yes, this is much simpler. I will test it more according to your suggestion.
 
-Best regards,
-Krzysztof
-
+Thanks,
+Xingui
 
