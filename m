@@ -1,78 +1,102 @@
-Return-Path: <linux-kernel+bounces-197203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC4D98D677D
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:56:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 896E58D6780
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:56:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 194261C24F79
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:56:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA68D1C23B19
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:56:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69E68176181;
-	Fri, 31 May 2024 16:55:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6184171E59;
+	Fri, 31 May 2024 16:56:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TsQQe8/3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yg5hW8D5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3B83158869
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 16:55:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0292815CD7F;
+	Fri, 31 May 2024 16:56:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717174545; cv=none; b=RF9m3pkIfw+4JegHCBb7BAD24nFmwd0YcQMYkif2N4T5GLb9sDIVdNiwbRqDDuXUbyH7T65CmLzMBcpIp71PpbNId8PuRorLpaTyiqilEJWofWuNLbF0fk+R1vcRL9EtMK6V1D69qRjj9uK4j1x09P4MtxY7H0UYvyAtjAWBRYg=
+	t=1717174567; cv=none; b=JrllN3mqFCMDNI+t4cTyAGPbIAmaHUuv47ZhwM2mYe835UI8hHVMCMCt2nwKCUTuabfD7os5cpoz6gBkWBgtaE723rSiE72iP8bQTaTQuqhTBgGAef/FFJIlCr59P0gl7/j/ZeeE/6hw/VwKLRoN+Jz+En/EgB3OAlm4keagvuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717174545; c=relaxed/simple;
-	bh=IRc4uSV8tqEkuKCHVh9bSaenQRqN5VARcm90v+3+buM=;
-	h=Message-ID:From:To:Cc:Subject:Date; b=SjTiJbDE1e5UlVnu3VBJzUxI6FCRU1RYfKv+BpMJrMo19lknUkJArAzmX1Rx8VBKyK3wkgoztFeCX6Rt3rX2szgqoF8LP1ymKBlTKSKn5YljKcDU9qCYyAr7/oDCr77dltKQ4HpQ+tsMUge+Z7BymhE3Td2gll83Wsr7N+pW8Ok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TsQQe8/3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B894C116B1;
-	Fri, 31 May 2024 16:55:45 +0000 (UTC)
+	s=arc-20240116; t=1717174567; c=relaxed/simple;
+	bh=WUvmVdpJgJRxIaSCRIfJr52zfPAGi08QjQmVCOZydiE=;
+	h=Message-ID:From:To:Cc:Subject:Date; b=KOmFTuCb2HnrRhSEBTWxzoUOqYOHxSNDzF7Xmgv2Bfe77d5kGsSED5WNchCBD6eNf3aVIyQ5/gC+WT0lbbLyNhchLw4aaA9HEPBsf2SWr1yNlI7XTr+0iUNpUHsO57zTnNUyB1RWo0joBP0tCsG7xglzUV26StaZV1uhg0sZzmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yg5hW8D5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 246E7C116B1;
+	Fri, 31 May 2024 16:56:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717174545;
-	bh=IRc4uSV8tqEkuKCHVh9bSaenQRqN5VARcm90v+3+buM=;
+	s=k20201202; t=1717174566;
+	bh=WUvmVdpJgJRxIaSCRIfJr52zfPAGi08QjQmVCOZydiE=;
 	h=From:To:Cc:Subject:Date:From;
-	b=TsQQe8/3vWmS5MaE3LA7HbgpGfWOlGBNJ62065+fuRAI/rXv6wJHVvNY/8Lw5nHxv
-	 bYrwKLKJRPB800jCPTKuMz44UxJHr4Cby949WWcS0158hDupCIWKCxizQDsEx8WYhU
-	 vKXVQAFLwoM2arZNMNXHiQaQcE3cLSiTcGXgimJc1c6huNJNx1NTeopyBb+oycXOqj
-	 AbeuVotjPtqGrYz1BD8cWstK5WztXpC3Lk25q4aaRbGP9SZkL21Db1JSVuRmITRnqj
-	 UosGWoFen+oFscj0qYBPH3MefI6Xv8iQYpr+cKSZpStMK7EfozMtE/FP/Q19+avSuc
-	 LMkAQHIsnHx3w==
-Message-ID: <61fbae7ae23cc7bdb6d20621db77ebb4.broonie@kernel.org>
+	b=Yg5hW8D5kWN2vVcj1mQ5dwY2nTsIcg8Fgevp0WahsMiOfZnKkL/OS6PYdPLPjSOHo
+	 hWnZpbo3BZ2/PRul/A1BnGDyZhL0Ymzb9WoQaxevwq2FgoEXo/UT3QGNY3T0+vizbd
+	 o5RaMo+Pzw7/411mvYcdciTMfInw4IEhTIii61RHtVTv3XSHxgsim36vnbJEH0LNrI
+	 Y2nfZjusX5pCdxpJb+FwA1sbiKQV1l9WWADM3wPZsDnegoLzUK8pJ4kqCMgIyViWlj
+	 6nclj5tMosEXJsKTaekkNAisfYHpnmWKoGiiqG7NbXkyLkw591m+8nQH4qJfHcMm2O
+	 OfJW5uuWCsjaw==
+Message-ID: <a606dc99619c387713bc312d3222c98f.broonie@kernel.org>
 From: Mark Brown <broonie@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-Subject: [GIT PULL] regulator fixes for v6.10-rc1
-Date: Fri, 31 May 2024 17:55:36 +0100
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Subject: [GIT PULL] SPI fixes for v6.10-rc1
+Date: Fri, 31 May 2024 17:55:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
+The following changes since commit d6e7ffd4820f8894eb865890c96852085d3640e1:
 
-  Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
+  spi: dw: Bail out early on unsupported target mode (2024-05-09 17:48:06 +0200)
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git tags/regulator-fix-v6.10-rc1
+  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git tags/spi-fix-v6.10-rc1
 
-for you to fetch changes up to 72b6a2d6506843375c7b91197f49ef38ca0c6d0f:
+for you to fetch changes up to 95d7c452a26564ef0c427f2806761b857106d8c4:
 
-  regulator: rtq2208: Fix invalid memory access when devm_of_regulator_put_matches is called (2024-05-28 13:22:54 +0100)
-
-----------------------------------------------------------------
-regulator: Fix for v6.10
-
-One fix that came in since -rc1, fixing misuse of a local variable in
-the DT parsing code in the RTQ2208 driver.
+  spi: stm32: Don't warn about spurious interrupts (2024-05-29 19:12:09 +0100)
 
 ----------------------------------------------------------------
-Alina Yu (1):
-      regulator: rtq2208: Fix invalid memory access when devm_of_regulator_put_matches is called
+spi: Fixes for v6.10
 
- drivers/regulator/rtq2208-regulator.c | 22 ++++++++++++----------
- 1 file changed, 12 insertions(+), 10 deletions(-)
+A series of fixes that came in since the merge window, the main thing
+being the fixes Andy did for DMA sync where we were calling into the DMA
+API in suprising ways and causing issues as a result, the main thing
+being confusing the IOMMU code.
+
+We've also got some fairly important fixes for the stm32 driver, it
+supports a wide range of hardware and some optimisations that were done
+recently have broken on some systems, and a fix to prevent glitched
+signals on the bus in the cadence driver.
+
+----------------------------------------------------------------
+Andy Shevchenko (3):
+      spi: Don't mark message DMA mapped when no transfer in it is
+      spi: Check if transfer is mapped before calling DMA sync APIs
+      spi: Assign dummy scatterlist to unidirectional transfers
+
+Mark Brown (1):
+      soi: Don't call DMA sync API when not needed
+
+Uwe Kleine-König (2):
+      spi: stm32: Revert change that enabled controller before asserting CS
+      spi: stm32: Don't warn about spurious interrupts
+
+Witold Sadowski (1):
+      spi: cadence: Ensure data lines set to low during dummy-cycle period
+
+ drivers/spi/spi-axi-spi-engine.c      |  2 +-
+ drivers/spi/spi-cadence-xspi.c        | 20 +++++++++++++++-----
+ drivers/spi/spi-hisi-kunpeng.c        |  2 --
+ drivers/spi/spi-microchip-core-qspi.c |  1 +
+ drivers/spi/spi-stm32.c               |  2 +-
+ drivers/spi/spi.c                     | 32 +++++++++++++++++++++++++++-----
+ 6 files changed, 45 insertions(+), 14 deletions(-)
 
