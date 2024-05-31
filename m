@@ -1,74 +1,89 @@
-Return-Path: <linux-kernel+bounces-196539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 019F18D5DB1
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 11:07:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95BD38D5DBA
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 11:09:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32DFD1C24923
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 09:07:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22DE11F22B91
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 09:09:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 412AB156885;
-	Fri, 31 May 2024 09:04:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB7A6158A26;
+	Fri, 31 May 2024 09:05:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RTpMfSNW"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="diRdJuWk"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31955156668;
-	Fri, 31 May 2024 09:04:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 249A4158A08;
+	Fri, 31 May 2024 09:05:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717146293; cv=none; b=u32QbgE0cfhpJjdSavdreEZjPrM7meOcbyUYYBibr5+vKgsuWZDjQCkxq1NYczkg9UdjHVc+VNM+oZzfGuL/3b5JlCZWkiB1Hm6pXr/iuR+mWXD0+wplwuHP1AkmxnADrRfzvu7+T79DdY7eLOIpRH00sbyFFxCz6sRKH+1bgZA=
+	t=1717146318; cv=none; b=Vdku7if5/no360Xd2vCo6byOcJBzWNKLkc03JCPPqlgVdxvr6yms7A2PffCT1y3bAtmLPvvlUJGhTQK9KOioHcXhJal0wc3E+ISVGPUIKUnR41nrQ4pIOP0k50unw3j9+oGm21XH0xiVCN8mXVAVYeJqpY2yI+k1ItfVpGAy2BU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717146293; c=relaxed/simple;
-	bh=0dSibXkU6f8Q//sCbH2eQglOEU1J6upIDpbuwvdMICM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=U1Dl8Qz/A1Cb2TgVFJ06PWxa7kL24VfcAnLoNbYnsxg7LkBXXMkRRGr4LeFZgoUYLk+JOPDlKIbdq/qyK/ykMU4rxvpThPwtnqSgw3Hnl/b7ARRCk1SZ8nbecud4d5XtjlxLkGEn3NbZhcsXJYndhyW0ohVkLAUikpLBQ1BcBk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RTpMfSNW; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44V23uh1003481;
-	Fri, 31 May 2024 09:04:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	/iAyTRXChGwQJX0VqI/cabOvsSm4oDhHvF+DV6/sKhs=; b=RTpMfSNW88tQ8KtE
-	ml5zEL0YXoDkUojCxPCuWkPlHSAgrHma6Y3D4i/Pg7wVvrp+agflMZgCoHIq71EI
-	+r8QDUeWAr26Jpbz/0VhSuB5egclTuvbH3R1OL1R3M3IB/ZCnwYsGGee+qxR4Nyf
-	96eBzKtBsw83BlPosmju2gDa9QBpsQGJgyMCUfeIvbjE4q2hy+Z7RrPkUapT3gpe
-	ZEZaqgNaVyRZnicpC0nj9Kn8OgazY+lrvmz5m5qo85l3CrIUFD1vTjuuLgOxQsiJ
-	ZHjlmieMa6j9XQ82k0u5kedOgo4FEtNys0TpzA0I1DYsh/uU0CztZChX3GcqHjBc
-	lmowIg==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yesw5jd5d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 31 May 2024 09:04:48 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44V94lTt004400
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 31 May 2024 09:04:47 GMT
-Received: from tengfan-gv.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 31 May 2024 02:04:41 -0700
-From: Tengfei Fan <quic_tengfan@quicinc.com>
-To: <andersson@kernel.org>, <konrad.dybcio@linaro.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <dmitry.baryshkov@linaro.org>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>,
-        Tengfei Fan
-	<quic_tengfan@quicinc.com>
-Subject: [PATCH v3 2/2] arm64: dts: qcom: sm8550: Remove usb default dr_mode
-Date: Fri, 31 May 2024 17:04:22 +0800
-Message-ID: <20240531090422.158813-3-quic_tengfan@quicinc.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240531090422.158813-1-quic_tengfan@quicinc.com>
-References: <20240531090422.158813-1-quic_tengfan@quicinc.com>
+	s=arc-20240116; t=1717146318; c=relaxed/simple;
+	bh=l9od8fUQjOt1e50pDgBVKHh7h1Sq3qEMWS9k7Ol8kHs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZixX7PhmDSSMT6Y1RDJNe0G1FJ5Q1YpZ4NmxLjfWGtG3vk0sOuoSudkzkL2qVD4X3nVhrkdZCxt8/tafl26xYQYdzl007UflcY+xXNDuNWWPJTc7/zmmRcK2aTBV0hqK+lweFDRxIHHNxt+rTI9PHVa0Ihk5z6WKJYosReap/4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=diRdJuWk; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1f63642ab8aso3920845ad.3;
+        Fri, 31 May 2024 02:05:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717146315; x=1717751115; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cIqlWuPqBxRMmc3AFgZJ/wVDP6Hh20wzHjGm/ayLPpw=;
+        b=diRdJuWkEJBpje1sMRWu3ZQQJhRjgeBTfzhyZwQ7VPHwmeFrnwwbY1yJBWL77L40LV
+         AitIr0qXXoI+AQ5104uKe0SqoIN5yzF5PjiuyHv0z2WwtHAFbmxhq4vRQY+BIdbJEs6C
+         JyWxHwVB3T9OqlcZuv+KuA2IpleQZWFT/39xVlCbDcpQewgZMZIhaZ/w4/HUhMbZj7ES
+         JCD+U8OZ0+GMXBD4IgASM4li0/ydwAJUwNv5BC4/axyaSTiym2Ioddt/zhtpijz+LCoP
+         qHkebbTJwBF7IYCJkqT4elJ3VNgIIIbAp4q0KTN0JejSuEFvLKUKpe0mLCSBkxqQ1RaS
+         1JoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717146315; x=1717751115;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cIqlWuPqBxRMmc3AFgZJ/wVDP6Hh20wzHjGm/ayLPpw=;
+        b=bagoR4PbFJAKf4z2YiOAy2ITQEj8qdIdt0hAAbCb0FZq3yz5YwO3b3uXzd7D+l7I0v
+         pJHcS7/vG6bBDNO/taz8T1MYOdi+wBkSf12JsUFw31epS7WnnZQdRD60peDzg1UIynAw
+         KS9vV/IDUUEqDuLs8J0eRI9ElFexaUawjorv/xlSrUkzOOilEOaido1OW3O2fKFcKO12
+         FrmgXIlzALTdapZguaT7H9ORQBc6i1Xy5M5U4sZhR8QOtpj6kNXzi5plGMoz4RN+nOu8
+         E1frm0cNPwvo5FHpOA06zRgr04tgfehIOiGYFZZ+pMrPsrqPdhh9ZAMHDMhRXORgqxsa
+         6u6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU3cuFw+LtE5glYGIk4Hg5wBz8YqXMIuc+fV06APw+u1AVEfNdDDeY/mxWppMcQ3Zhr7oVn5iLhBcwtUNOVsGxlqDXofv3SvX0k11/hQo6skq+8b72Pk6VI6BmG8xpqsDFPV87rUiOkmvTNkXMEgTrRmuFW32OcbtCzgXY6KYHFztMqpQ==
+X-Gm-Message-State: AOJu0YzP8PtKtpbeXpiosaqhQWegqtl55r/7l2OWofm0RF21X8qywS5X
+	Gs1SG5VomtKBKd9K6E3QZqHb03yesHLFUAPZx3ROslZ4KFpcCjRj
+X-Google-Smtp-Source: AGHT+IEcCbIUb7FLaS1kv0Gl0B/d0JLuJYOBmQuhl+Pn9+ipuPL8cfMSAbBqrvyB9DDLlJppJJN4Lg==
+X-Received: by 2002:a17:902:e88f:b0:1f2:fe12:b79e with SMTP id d9443c01a7336-1f637012f93mr15319515ad.17.1717146315068;
+        Fri, 31 May 2024 02:05:15 -0700 (PDT)
+Received: from fedora.pi.hole ([2405:201:6013:c0b2:b3f7:7c95:a370:4345])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6323ec184sm11572445ad.209.2024.05.31.02.05.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 May 2024 02:05:14 -0700 (PDT)
+From: Animesh Agarwal <animeshagarwal28@gmail.com>
+To: 
+Cc: animeshagarwal28@gmail.com,
+	Vinod Koul <vkoul@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	dmaengine@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] dt-bindings: dma: fsl,imx-dma: Convert to dtschema
+Date: Fri, 31 May 2024 14:34:51 +0530
+Message-ID: <20240531090458.99744-1-animeshagarwal28@gmail.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,94 +91,136 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 4rIsaSUFc8F-7HVfYi_mp-Gz4k72WyQE
-X-Proofpoint-GUID: 4rIsaSUFc8F-7HVfYi_mp-Gz4k72WyQE
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-31_05,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- mlxlogscore=547 phishscore=0 malwarescore=0 impostorscore=0 bulkscore=0
- suspectscore=0 priorityscore=1501 clxscore=1015 spamscore=0 mlxscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2405310066
 
-OTG is default usb dr_mode, so this property can be removed.
+Convert the fsl i.MX DMA controller bindings to DT schema.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
+Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
 ---
- arch/arm64/boot/dts/qcom/sm8550-hdk.dts                     | 4 ----
- arch/arm64/boot/dts/qcom/sm8550-mtp.dts                     | 4 ----
- arch/arm64/boot/dts/qcom/sm8550-qrd.dts                     | 4 ----
- arch/arm64/boot/dts/qcom/sm8550-sony-xperia-yodo-pdx234.dts | 4 ----
- 4 files changed, 16 deletions(-)
+ .../devicetree/bindings/dma/fsl,imx-dma.yaml  | 56 +++++++++++++++++++
+ .../devicetree/bindings/dma/fsl-imx-dma.txt   | 50 -----------------
+ 2 files changed, 56 insertions(+), 50 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/dma/fsl,imx-dma.yaml
+ delete mode 100644 Documentation/devicetree/bindings/dma/fsl-imx-dma.txt
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8550-hdk.dts b/arch/arm64/boot/dts/qcom/sm8550-hdk.dts
-index 411de3451db8..e0dc03a97771 100644
---- a/arch/arm64/boot/dts/qcom/sm8550-hdk.dts
-+++ b/arch/arm64/boot/dts/qcom/sm8550-hdk.dts
-@@ -1253,10 +1253,6 @@ &usb_1 {
- 	status = "okay";
- };
- 
--&usb_1_dwc3 {
--	dr_mode = "otg";
--};
+diff --git a/Documentation/devicetree/bindings/dma/fsl,imx-dma.yaml b/Documentation/devicetree/bindings/dma/fsl,imx-dma.yaml
+new file mode 100644
+index 000000000000..13ac6d6ad49f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/dma/fsl,imx-dma.yaml
+@@ -0,0 +1,56 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/dma/fsl,imx-dma.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Freescale Direct Memory Access (DMA) Controller for i.MX
++
++maintainers:
++  - Animesh Agarwal <animeshagarwal28@gmail.com>
++
++allOf:
++  - $ref: dma-controller.yaml#
++
++properties:
++  compatible:
++    enum:
++      - fsl,imx1-dma
++      - fsl,imx21-dma
++      - fsl,imx27-dma
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    items:
++      - description: DMA complete interrupt
++      - description: DMA Error interrupt
++    minItems: 1
++
++  "#dma-cells":
++    const: 1
++
++  dma-channels:
++    maximum: 16
++
++  dma-requests:
++    description: Number of DMA requests supported.
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - "#dma-cells"
++
++additionalProperties: false
++
++examples:
++  - |
++    dma-controller@10001000 {
++      compatible = "fsl,imx27-dma";
++      reg = <0x10001000 0x1000>;
++      interrupts = <32 33>;
++      #dma-cells = <1>;
++      dma-channels = <16>;
++    };
+diff --git a/Documentation/devicetree/bindings/dma/fsl-imx-dma.txt b/Documentation/devicetree/bindings/dma/fsl-imx-dma.txt
+deleted file mode 100644
+index 1c9929d53727..000000000000
+--- a/Documentation/devicetree/bindings/dma/fsl-imx-dma.txt
++++ /dev/null
+@@ -1,50 +0,0 @@
+-* Freescale Direct Memory Access (DMA) Controller for i.MX
 -
- &usb_1_dwc3_hs {
- 	remote-endpoint = <&pmic_glink_hs_in>;
- };
-diff --git a/arch/arm64/boot/dts/qcom/sm8550-mtp.dts b/arch/arm64/boot/dts/qcom/sm8550-mtp.dts
-index 84d16227ef80..26dfca0c3e05 100644
---- a/arch/arm64/boot/dts/qcom/sm8550-mtp.dts
-+++ b/arch/arm64/boot/dts/qcom/sm8550-mtp.dts
-@@ -946,10 +946,6 @@ &usb_1 {
- 	status = "okay";
- };
- 
--&usb_1_dwc3 {
--	dr_mode = "otg";
--};
+-This document will only describe differences to the generic DMA Controller and
+-DMA request bindings as described in dma/dma.txt .
 -
- &usb_1_dwc3_hs {
- 	remote-endpoint = <&pmic_glink_hs_in>;
- };
-diff --git a/arch/arm64/boot/dts/qcom/sm8550-qrd.dts b/arch/arm64/boot/dts/qcom/sm8550-qrd.dts
-index e20c6240f76d..d27820fb5fc0 100644
---- a/arch/arm64/boot/dts/qcom/sm8550-qrd.dts
-+++ b/arch/arm64/boot/dts/qcom/sm8550-qrd.dts
-@@ -1115,10 +1115,6 @@ &usb_1 {
- 	status = "okay";
- };
- 
--&usb_1_dwc3 {
--	dr_mode = "otg";
--};
+-* DMA controller
 -
- &usb_1_dwc3_hs {
- 	remote-endpoint = <&pmic_glink_hs_in>;
- };
-diff --git a/arch/arm64/boot/dts/qcom/sm8550-sony-xperia-yodo-pdx234.dts b/arch/arm64/boot/dts/qcom/sm8550-sony-xperia-yodo-pdx234.dts
-index 6dd5232da9f9..85d487ef80a0 100644
---- a/arch/arm64/boot/dts/qcom/sm8550-sony-xperia-yodo-pdx234.dts
-+++ b/arch/arm64/boot/dts/qcom/sm8550-sony-xperia-yodo-pdx234.dts
-@@ -737,10 +737,6 @@ &usb_1 {
- 	status = "okay";
- };
- 
--&usb_1_dwc3 {
--	dr_mode = "otg";
--};
+-Required properties:
+-- compatible : Should be "fsl,<chip>-dma". chip can be imx1, imx21 or imx27
+-- reg : Should contain DMA registers location and length
+-- interrupts : First item should be DMA interrupt, second one is optional and
+-    should contain DMA Error interrupt
+-- #dma-cells : Has to be 1. imx-dma does not support anything else.
 -
- &usb_1_dwc3_hs {
- 	remote-endpoint = <&pmic_glink_hs_in>;
- };
+-Optional properties:
+-- dma-channels : Number of DMA channels supported. Should be 16.
+-- #dma-channels : deprecated
+-- dma-requests : Number of DMA requests supported.
+-- #dma-requests : deprecated
+-
+-Example:
+-
+-	dma: dma@10001000 {
+-		compatible = "fsl,imx27-dma";
+-		reg = <0x10001000 0x1000>;
+-		interrupts = <32 33>;
+-		#dma-cells = <1>;
+-		dma-channels = <16>;
+-	};
+-
+-
+-* DMA client
+-
+-Clients have to specify the DMA requests with phandles in a list.
+-
+-Required properties:
+-- dmas: List of one or more DMA request specifiers. One DMA request specifier
+-    consists of a phandle to the DMA controller followed by the integer
+-    specifying the request line.
+-- dma-names: List of string identifiers for the DMA requests. For the correct
+-    names, have a look at the specific client driver.
+-
+-Example:
+-
+-	sdhci1: sdhci@10013000 {
+-		...
+-		dmas = <&dma 7>;
+-		dma-names = "rx-tx";
+-		...
+-	};
 -- 
-2.25.1
+2.45.1
 
 
