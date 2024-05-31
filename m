@@ -1,166 +1,198 @@
-Return-Path: <linux-kernel+bounces-197442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DDD38D6AA8
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 22:27:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A1B48D6AAD
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 22:30:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB8711F254F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 20:27:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BEC021F25C0E
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 20:30:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 845047F7CA;
-	Fri, 31 May 2024 20:27:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 022821779BD;
+	Fri, 31 May 2024 20:30:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ikx9S7Vi"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g6CWUhfC"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53DF028DA0;
-	Fri, 31 May 2024 20:27:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F046D2940B;
+	Fri, 31 May 2024 20:30:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717187269; cv=none; b=flkSL6U45J6rN1FoaYd9jb9wrwwqPf8dR+tk26lWVzlF3epS7dyf9kGzwc4h4UEpaeZ4iqayFlx0GBW/wEY1qNbBkq2vMb98IQ5JeLPj5dJHAD/OESEsPg0muGZP1/mt4XnurldcjjqJPYQvcd8CQDwurldPfI/2esqwAj8A0Bs=
+	t=1717187420; cv=none; b=ceKOLuJK0M/u1T7lhn10qjxNk3e/BMqv/CmUKbbzFIGFTQYBeI1Zy+FrRA5Hejp4zT9ulbm+LoNXVk8eWHzu3qaVXrAy+pAd7MKJG9OPMqg9NAbzj5EoBK3KqdZguwOawXG1oEKa5vn7CUrtDL5jOYUpWbK34XRtiFqY9P5ivQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717187269; c=relaxed/simple;
-	bh=BwyIIKUf715vDcKf4Ktdqx6NgE7LTbawobryhf6V1C4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=doXsktcOmLzFa3kEGkCSsZqMKOHSz0U15OZbXbCoLT7LEKA1Ivqk/W1PzM0VZTEw4wGZK6gEKD8p1g0zPfs5dShWVFCBvckvV5kZ/QzvWrvWIbMO051e5oGGK9rCEDKxeb/iN1BNGD5aR+rJsw/KB+hlqYWJ+YVwjinhcExI0Vg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ikx9S7Vi; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1f44b441b08so19641175ad.0;
-        Fri, 31 May 2024 13:27:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717187268; x=1717792068; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=RzTL7KCD7mabWNL1IHuhwrwbXd2Kw0U2+uLVkBgYfhE=;
-        b=Ikx9S7ViJo/90TABYpZKO0S2yzvJJnSot/svMz91ktVh+8A0xsZtEH5rW3SyL238g3
-         /gYrSyY6rr9faR8TvzxLklKwGbPcz8t72qLwVOMpMF2pgWAKvo/ySpyINwxxDmzg1cha
-         bzHvcSXMurGRolAVxcDwo/9iu3sqUWkeBozRtcKJaifQPKGAn/k2z3UT2WL1M9uRCqb3
-         82NipCjb+AV2rM8YROMiV1BzyX9bHlGcZ1Ucd62rSeJooXDew4oJEZPqv3Eed2TZeevC
-         V7EGIC307azf+dgAre4JtnNEuHeHV0BFylgnzVDpkab3RnxH7WfzKt+K4HbnvrfrHlgL
-         MGNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717187268; x=1717792068;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RzTL7KCD7mabWNL1IHuhwrwbXd2Kw0U2+uLVkBgYfhE=;
-        b=JPsPNn2oa0Tu04HYiol4HZJJNe1phd2AubiM3hKQ4hEXslt616cEjhvuijI+4cBwqD
-         HDNfwDlgrv14oj2g4Cw4V9/FsgwtmiqUKrYH7cfXA9QsTzaD2T8n4dX1NEzlVk2D9Bwg
-         NxOucxUwt22EgYJQlBlO+TPWUDNaVp3/oDOVShJSM4zu4nPGP4bgTQHbc9u6IjQs27no
-         dcTuqtUIIoquiGykzKr1beUplNhCaORWWPOT9TG92TE3TzyjYybCvLidEfd08TK30V4f
-         ScG2hyMfz1eBOlNkyJR7haxlzXz8oCrszUbuOML/6lYTjkm1XM9JCQHhrFKxG3TamOIT
-         BfIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV0NrPOlaMJ/fPOkFoGV0go4y0JiNdFanjrxfcH2K9AXxHBFYxj6b7xrXFRBmrTPsLLmtIVcwpKHm/fSTo+Fen78cVPtaB98OLYbHrrm7hUlGacHhCFwuuYr1uclzDRFb3XoIb0
-X-Gm-Message-State: AOJu0YxniBX3VgU6D1nop5EM/WrZxr4DyPD6tYuejbsdbc2gWTuXh1cN
-	FuxDLfCV4LaLCyf1K1yTvqNz4C1S4yc08Hb0G0rvBmnvs5SNkOq2
-X-Google-Smtp-Source: AGHT+IE2eW8bdNnZfuPu2wIJaDTXVBu8Sj55ip+faWkZKkkIwldMWwLFpfKUF1h1bpjU0uUETiSFRA==
-X-Received: by 2002:a17:902:dad0:b0:1f3:1ea5:7e0f with SMTP id d9443c01a7336-1f636ff51e6mr39299085ad.3.1717187267469;
-        Fri, 31 May 2024 13:27:47 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f634146cf3sm19834905ad.262.2024.05.31.13.27.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 31 May 2024 13:27:46 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <60fd8015-9fd0-4454-a11c-763c06cef66a@roeck-us.net>
-Date: Fri, 31 May 2024 13:27:44 -0700
+	s=arc-20240116; t=1717187420; c=relaxed/simple;
+	bh=FyXrGKtxtK1Ia++Up7p7wWt6dTZYsv9GlxJsgvwjMZ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TD1Ut9+zXQW37Gm8Nga6G6nHiTkcNzrf+pL4fV/neVhGtMvt4JyKVWtqqIw0eqzhoEvJApoOkRXpIprqL6rSwzwDFdLekEY7x/X3nIqAvdARAK3nmknWS+8wTDlAUD8uolxNdzcbaxR+eafn9Z0qOtV6Mr9nfb1is9s4ep/Qw+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g6CWUhfC; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717187418; x=1748723418;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=FyXrGKtxtK1Ia++Up7p7wWt6dTZYsv9GlxJsgvwjMZ0=;
+  b=g6CWUhfCoGHQpbhW0ZS+VnOw/11uR2qnPEHZug3sQoispNJO3eAcf8MQ
+   O3DaefJUpspBtTLyIMgo2Jgt+IG9ChmuvSbI6slCMc8fiDBfjPzDmjv76
+   d9f5nToxfPLWnYn1ETbwMhkuo3xZH0nIssWijGPTLLkFxA784l5/T6/dd
+   D3D6TJ4JOrAKPJgYBV/Y5EcbRM3o7KcD8X8DKCbVTY8hpaaieOQ6rcskv
+   5EQi9mScWMCq8FH3JKW+ywEjppjZFB63q1r/bBD18nWRSfd+bObreJGiN
+   sTDR7T5hwGq251DBnvERXUzPfMTdDeCZ01WVmT5wW5QNQ7oUvNdTfjrFX
+   A==;
+X-CSE-ConnectionGUID: eI1aGrTYRTeTduhvMjSsYA==
+X-CSE-MsgGUID: /a6n6twJTaWI9hOB3pdTew==
+X-IronPort-AV: E=McAfee;i="6600,9927,11089"; a="17544901"
+X-IronPort-AV: E=Sophos;i="6.08,205,1712646000"; 
+   d="scan'208";a="17544901"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 13:30:17 -0700
+X-CSE-ConnectionGUID: VFIwyAj9SgmeTuHViMNcug==
+X-CSE-MsgGUID: Og9p9johTY22w0ElFeLTWw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,205,1712646000"; 
+   d="scan'208";a="40711149"
+Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
+  by fmviesa003.fm.intel.com with ESMTP; 31 May 2024 13:30:15 -0700
+Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sD8tA-000Hmr-2d;
+	Fri, 31 May 2024 20:30:12 +0000
+Date: Sat, 1 Jun 2024 04:29:37 +0800
+From: kernel test robot <lkp@intel.com>
+To: Shivnandan Kumar <quic_kshivnan@quicinc.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Ramakrishna Gottimukkula <quic_rgottimu@quicinc.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	Shivnandan Kumar <quic_kshivnan@quicinc.com>
+Subject: Re: [PATCH] soc: qcom: icc-bwmon: Add tracepoints in
+ bwmon_intr_thread
+Message-ID: <202406010409.xiR31FVt-lkp@intel.com>
+References: <20240531105404.879267-1-quic_kshivnan@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.8 000/493] 6.8.12-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org, shuah@kernel.org,
- patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
- jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
- srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
- allen.lkml@gmail.com, broonie@kernel.org
-References: <20240527185626.546110716@linuxfoundation.org>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <20240527185626.546110716@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240531105404.879267-1-quic_kshivnan@quicinc.com>
 
-On 5/27/24 11:50, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.8.12 release.
-> There are 493 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed, 29 May 2024 18:53:22 +0000.
-> Anything received after that time might be too late.
-> 
+Hi Shivnandan,
 
-Build failures in v6.8.12:
+kernel test robot noticed the following build errors:
 
-Building csky:allmodconfig ... failed
-Building m68k:allmodconfig ... failed
-Building xtensa:allmodconfig ... failed
+[auto build test ERROR on linus/master]
+[also build test ERROR on v6.10-rc1 next-20240531]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
---------------
-Error log:
-In file included from kernel/sched/build_utility.c:104:
-kernel/sched/isolation.c: In function 'housekeeping_setup':
-kernel/sched/isolation.c:134:53: error: 'setup_max_cpus' undeclared (first use in this function)
-   134 |         if (first_cpu >= nr_cpu_ids || first_cpu >= setup_max_cpus) {
+url:    https://github.com/intel-lab-lkp/linux/commits/Shivnandan-Kumar/soc-qcom-icc-bwmon-Add-tracepoints-in-bwmon_intr_thread/20240531-185658
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20240531105404.879267-1-quic_kshivnan%40quicinc.com
+patch subject: [PATCH] soc: qcom: icc-bwmon: Add tracepoints in bwmon_intr_thread
+config: um-allyesconfig (https://download.01.org/0day-ci/archive/20240601/202406010409.xiR31FVt-lkp@intel.com/config)
+compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240601/202406010409.xiR31FVt-lkp@intel.com/reproduce)
 
-Commit 3c2f8859ae1ce ("smp: Provide 'setup_max_cpus' definition on UP too")
-might solve the problem.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406010409.xiR31FVt-lkp@intel.com/
 
-Guenter
+All errors (new ones prefixed by >>):
 
+   In file included from include/trace/trace_events.h:419,
+                    from include/trace/define_trace.h:102,
+                    from drivers/soc/qcom/trace_icc-bwmon.h:49,
+                    from drivers/soc/qcom/icc-bwmon.c:21:
+>> include/trace/../../drivers/soc/qcom//trace_icc-bwmon.h:39:1: error: macro "__assign_str" passed 2 arguments, but takes just 1
+      39 | );
+         | ^~             
+   In file included from include/trace/trace_events.h:375:
+   include/trace/stages/stage6_event_callback.h:34: note: macro "__assign_str" defined here
+      34 | #define __assign_str(dst)                                               \
+         | 
+   include/trace/../../drivers/soc/qcom//trace_icc-bwmon.h: In function 'trace_event_raw_event_qcom_bwmon_update':
+>> include/trace/../../drivers/soc/qcom//trace_icc-bwmon.h:28:17: error: '__assign_str' undeclared (first use in this function)
+      28 |                 __assign_str(name, name);
+         |                 ^~~~~~~~~~~~
+   include/trace/trace_events.h:402:11: note: in definition of macro 'DECLARE_EVENT_CLASS'
+     402 |         { assign; }                                                     \
+         |           ^~~~~~
+   include/trace/trace_events.h:44:30: note: in expansion of macro 'PARAMS'
+      44 |                              PARAMS(assign),                   \
+         |                              ^~~~~~
+   include/trace/../../drivers/soc/qcom//trace_icc-bwmon.h:13:1: note: in expansion of macro 'TRACE_EVENT'
+      13 | TRACE_EVENT(qcom_bwmon_update,
+         | ^~~~~~~~~~~
+   include/trace/../../drivers/soc/qcom//trace_icc-bwmon.h:27:9: note: in expansion of macro 'TP_fast_assign'
+      27 |         TP_fast_assign(
+         |         ^~~~~~~~~~~~~~
+   include/trace/../../drivers/soc/qcom//trace_icc-bwmon.h:28:17: note: each undeclared identifier is reported only once for each function it appears in
+      28 |                 __assign_str(name, name);
+         |                 ^~~~~~~~~~~~
+   include/trace/trace_events.h:402:11: note: in definition of macro 'DECLARE_EVENT_CLASS'
+     402 |         { assign; }                                                     \
+         |           ^~~~~~
+   include/trace/trace_events.h:44:30: note: in expansion of macro 'PARAMS'
+      44 |                              PARAMS(assign),                   \
+         |                              ^~~~~~
+   include/trace/../../drivers/soc/qcom//trace_icc-bwmon.h:13:1: note: in expansion of macro 'TRACE_EVENT'
+      13 | TRACE_EVENT(qcom_bwmon_update,
+         | ^~~~~~~~~~~
+   include/trace/../../drivers/soc/qcom//trace_icc-bwmon.h:27:9: note: in expansion of macro 'TP_fast_assign'
+      27 |         TP_fast_assign(
+         |         ^~~~~~~~~~~~~~
+   In file included from include/trace/trace_events.h:469:
+   include/trace/../../drivers/soc/qcom//trace_icc-bwmon.h: At top level:
+>> include/trace/../../drivers/soc/qcom//trace_icc-bwmon.h:39:1: error: macro "__assign_str" passed 2 arguments, but takes just 1
+      39 | );
+         | ^~             
+   include/trace/stages/stage6_event_callback.h:34: note: macro "__assign_str" defined here
+      34 | #define __assign_str(dst)                                               \
+         | 
+
+
+vim +/__assign_str +39 include/trace/../../drivers/soc/qcom//trace_icc-bwmon.h
+
+    14	
+    15		TP_PROTO(const char *name,
+    16			 unsigned int meas_kbps, unsigned int up_kbps, unsigned int down_kbps),
+    17	
+    18		TP_ARGS(name, meas_kbps, up_kbps, down_kbps),
+    19	
+    20		TP_STRUCT__entry(
+    21			__string(name, name)
+    22			__field(unsigned int, meas_kbps)
+    23			__field(unsigned int, up_kbps)
+    24			__field(unsigned int, down_kbps)
+    25		),
+    26	
+    27		TP_fast_assign(
+  > 28			__assign_str(name, name);
+    29			__entry->meas_kbps = meas_kbps;
+    30			__entry->up_kbps = up_kbps;
+    31			__entry->down_kbps = down_kbps;
+    32		),
+    33	
+    34		TP_printk("name=%s meas_kbps=%u up_kbps=%u down_kbps=%u",
+    35			__get_str(name),
+    36			__entry->meas_kbps,
+    37			__entry->up_kbps,
+    38			__entry->down_kbps)
+  > 39	);
+    40	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
