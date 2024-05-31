@@ -1,122 +1,122 @@
-Return-Path: <linux-kernel+bounces-197532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 914028D6BE5
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 23:46:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A90F08D6BE3
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 23:46:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F34EB289AA
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 21:46:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5FD01C24D5D
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 21:46:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7B1181AC3;
-	Fri, 31 May 2024 21:46:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OkY7LVZn"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ABE780034;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E198D80BEC;
 	Fri, 31 May 2024 21:46:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="QMfXA6y7"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BF96AD59;
+	Fri, 31 May 2024 21:46:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717191971; cv=none; b=nY0jUVVECHioPV01ZTN9o0WUCjmfGqMlH3TwXji9w0FbvDeB0BcTJVFrRPKOMOc0FPhey/Z96UdQWou1oxpbSDgntf0BW6fSE5v0vxMtm2JmypQP3uNfDUd+wT7DrEbPKClnpH3cj/RLYZwLW2mPEJDshvjJclHI5q5xJWjDq7k=
+	t=1717191969; cv=none; b=geUZeM4z6GrvXg0K20ZeA6MVjAH7Ko1aKDoyzJMSTBkBGAJSVRqalJVEMIZDTWzFEx9CCrrXQZM4320t1+tiyJtkEMaJ3fSrDYszZiWkYSUN+sPLGBWghO3PHrTY3jIpDG8/V6dXv+zP2SB2rf39h2x+63zA+psZXF7V2iwgW6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717191971; c=relaxed/simple;
-	bh=Ax0ZyJOVsJMqf3GkJn8oJR1x2sY8yNWTx1LHPubxfPs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=A1NqBsEtPvXI8uh38GYzkqCKZNM8RwWLSgE9glfE/9dJvM41r1E7Ph1Y89qaDawTmZgRu7dtsrPkRtBx86kvEzSuILNG4giBa7/U93TujNYoVjFtBwOUT2dU3tpDMUVw/lpWdZAReDWwhUYKo1Yz293EJmZ7TLUpxvxwDmCHACI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OkY7LVZn; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-57a2f032007so1961127a12.0;
-        Fri, 31 May 2024 14:46:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717191968; x=1717796768; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ax0ZyJOVsJMqf3GkJn8oJR1x2sY8yNWTx1LHPubxfPs=;
-        b=OkY7LVZnd9qD3ZTKutLcKGH3OD2lEZi+CvVmPIxuW7iNAHCED2cqDWzjdgm0bQnode
-         BO5BV5tiGmxB6Y1+OS1UnveMTDI3//KKcWNbNerAK3Xb0yNt2KaN5EEOviRNNKFT0YrZ
-         vzAWM6pjyGd4q106MY2jwWIJvUqy2KwFCHVMwhNRodxjdDKMCmbPktu1P2Q22TytYe+3
-         ceLtMypxvExiyY87AUqHi4817J9CEZSXc2UvONnpoignFn8VRZcf59xAMKjyFGimNqfE
-         JvThuRi8qZHgQ5KMV1ify30UfIy8donX3a0cbsazeIg2yj0OcPG8Qv8yfiTRSINXUdyu
-         MvyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717191968; x=1717796768;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ax0ZyJOVsJMqf3GkJn8oJR1x2sY8yNWTx1LHPubxfPs=;
-        b=HqiFCr2xa9mBvom9D+GMepdnX+lFT+T7Yw4g+T8v83Ibj9kcJVUq6aafMuFBh4js8x
-         2Hve5/Ty0XbBeSxKWL7RyaFEJruFxZ1UPF0mQ0Lnu/xQEm1fHb1w67YJFNpa++CXUhu4
-         A417ZgjzPNzIDja8bgc28TeoresKTVLgV9YW9mwXQVHqgZamEuzrUnqW3CUSh7TynuXv
-         G+gjdH0/HGFQxowDXeSLgofG7nwt0oIk/VtvtAXkffWI4MJM+jwo/T7hFfD13w3TgBAi
-         aoWxBUhDTMCOk99/mR3HAlby6gmF04Fdt4ttkjNPzbRiHCW3bv2ogwOWC3ipiASRRwlZ
-         34jg==
-X-Forwarded-Encrypted: i=1; AJvYcCX0k30oAwlDv4EO2pvW4n+ziry82UzOlkIkstFeEnwLlbPVULJvIM8EqAFeGsBNXtip3lU1uWRfSWgNedEe7WnEjtY9AJ+hssaKWPZU7+CEyea3Pq3YC/luFthGqzg7vPI9qlzERNq4
-X-Gm-Message-State: AOJu0YxvYHLpuuNGIoznTpXwBY4NIED7ippsABxfJ65R7SAwDeulodrk
-	t3RKWGmPshmOcPr1DjUSVJLHaE9KIz/3MH1JgrDnBnA1XCjVo7rRPv8/qrckdpWc8EsYPDuYF5t
-	SlQTf+f7Ig7xi89VR7ltk6S8yuMg=
-X-Google-Smtp-Source: AGHT+IF2JFzwO5h9jWIbwQwlcBnpViCMfdgYP0QRsx/mlMurfH6n2y2K95pbPdxLBZOKzRyClZLaWoOaVrxqGYHBhfQ=
-X-Received: by 2002:a17:906:5281:b0:a59:bdb7:73e8 with SMTP id
- a640c23a62f3a-a68220499f5mr195797566b.53.1717191967594; Fri, 31 May 2024
- 14:46:07 -0700 (PDT)
+	s=arc-20240116; t=1717191969; c=relaxed/simple;
+	bh=gghBl4JNIy95VfLrfwUP2Off8V0JTaP9S92vAyIBtpk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pUogEvR+MEuWjgBF3l/3KzSys+lw8trAwiDdlTq4pc1HhDoENiGX82RRrBTAjhjGxoSvEglW6GsW1LfjO+NnGYwL5lJS/7YdD41ouvKLfV0ut7ZzXUdOw/hAZwDle8J5rXPvSYF49lGLC1SHVoPU/CT+VUh36vpeRi8urGhlfg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=QMfXA6y7; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id E46A540E02BA;
+	Fri, 31 May 2024 21:46:04 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id mp9dd_f_l4Ta; Fri, 31 May 2024 21:46:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1717191961; bh=EB3b0oK1NO82II0HvxGp1gnqwn/B2ARuYc6PW/E4a7w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QMfXA6y7f3Wu0gHnuLb7og3I+KNwp73rGCOQrSpTYXYF+Hg9Eu5qWu6GUrWIe6kj8
+	 5aaXWWbU0YxSm+yLfWZp3CA4SS1Saw+W+8gkPylwes3iA3HIlRnWXo65h5pllRglXF
+	 WrEwA4ELVEp21OMiFsbRw+6U6LtNqw0Cr4ToQJJ3kRNV29lJwmF8Qwbn1DcG1HwFWk
+	 DZq3Dnbdw10d814C7kg0VqbwvXikIXFXBYcVNFy2t03hbl4gbj/ZTQqaDMDvb/7vbY
+	 o0H3w5gozMLcYeyMc5R4irUnvw5xp/IzbFHXRy4uuQzBWABd1ZGYQPUIjpTmWD9i2G
+	 qwHN7xOgE7eB0rN2f+lAXwu8jIgDexgZJcIEqf3TDblDhVFh7uoYK7G9S6HUz8tebO
+	 a9rzJsxyiwC+0DUebmLkOEfHAP5Zj6xZvjrwEEhXSKtUO5fxd9PT7lSrhrdWE59Mn9
+	 WfnHXtOvWNQOsB0RxMBXNIn3cKdpvFixSoQ4PK9uQcmLe+RXPWch5T3tTqr/Z/HR0L
+	 pFD0mmxZx1SEFa8m9mlW6JjkXXoktNbYHCYpQCDNahe3+7hwSt16Dx+GYDLwcIhdjS
+	 upNpTLaoBiVNfHPMMzmRJtw1u9n2kucfbWt7wJuyIqpbPP6x4D96mso/A7eUMNcPpy
+	 y4/wWrdmJ9q8fAMUy+tJe2sg=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id AAB5340E02B9;
+	Fri, 31 May 2024 21:45:50 +0000 (UTC)
+Date: Fri, 31 May 2024 23:45:45 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Kees Cook <kees@kernel.org>
+Cc: Jeff Johnson <quic_jjohnson@quicinc.com>,
+	Nikolay Borisov <nik.borisov@suse.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] x86/boot: add prototype for __fortify_panic()
+Message-ID: <20240531214545.GPZlpFCaXtTGinbcfl@fat_crate.local>
+References: <0d3f7c58-7fc0-4e8b-b6fb-c4d0d9969ce7@suse.com>
+ <e42c4984-d4a2-45b1-b93d-7471000766b7@quicinc.com>
+ <5658B525-6642-43A2-B14C-BC4AA916FBCC@alien8.de>
+ <202405310951.56D9BD5C41@keescook>
+ <20240531190816.GLZlogIGgpc5maOeLN@fat_crate.local>
+ <202405311345.D91BF6E9@keescook>
+ <20240531204947.GNZlo367G0YXVbOk1I@fat_crate.local>
+ <202405311359.EFC7345EC@keescook>
+ <20240531212009.GOZlo_CV0lxZ1xviQW@fat_crate.local>
+ <202405311431.BF9FE3F7A7@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240531094658.1598969-1-andy.shevchenko@gmail.com>
- <1ea41944-a107-4528-8e8d-559c06907e3f@notapiano> <CAHp75VeG9K3Ar4UJnGxus3zz_vtt4QfFdkYQ8=6D8pt2aB8kmA@mail.gmail.com>
- <CAHp75VcHsE_vb12rwgf6f3q4V_wUVq5tckA5QgFhwUHaYKjwWg@mail.gmail.com> <3f0606f3-c781-49e1-a946-dc9aea77f835@notapiano>
-In-Reply-To: <3f0606f3-c781-49e1-a946-dc9aea77f835@notapiano>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Sat, 1 Jun 2024 00:45:30 +0300
-Message-ID: <CAHp75VehYoEFPV4jTdXh4D5DSGUkHzska6tuvB=BrZDpZhiv5Q@mail.gmail.com>
-Subject: Re: [PATCH v1 0/2] spi: Make dummy SG handling robust
-To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>
-Cc: Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <202405311431.BF9FE3F7A7@keescook>
 
-On Fri, May 31, 2024 at 8:14=E2=80=AFPM N=C3=ADcolas F. R. A. Prado
-<nfraprado@collabora.com> wrote:
->
-> On Fri, May 31, 2024 at 06:51:46PM +0300, Andy Shevchenko wrote:
-> > On Fri, May 31, 2024 at 6:46=E2=80=AFPM Andy Shevchenko
-> > <andy.shevchenko@gmail.com> wrote:
-> > > On Fri, May 31, 2024 at 5:37=E2=80=AFPM N=C3=ADcolas F. R. A. Prado
-> > > <nfraprado@collabora.com> wrote:
-> > > > On Fri, May 31, 2024 at 12:44:31PM +0300, Andy Shevchenko wrote:
+On Fri, May 31, 2024 at 02:34:07PM -0700, Kees Cook wrote:
+> On Fri, May 31, 2024 at 11:20:09PM +0200, Borislav Petkov wrote:
+> > So I get an allergic reaction everytime we wag the dog - i.e., fix the
+> > code because some tool or option can't handle it even if it is
+> > a perfectly fine code. In that case it is an unused symbol.
+> > 
+> > And frankly, I'd prefer the silly warning to denote that fortify doesn't
+> > need to do any checking there vs shutting it up just because.
+> 
+> If we want to declare that x86 boot will never perform string handling
+> on strings with unknown lengths, we could just delete the boot/
+> implementation of __fortify_panic(), and make it a hard failure if such
+> cases are introduced in the future. This hasn't been a particularly
+> friendly solution in the past, though, as the fortify routines do tend
+> to grow additional coverage over time, so there may be future cases that
+> do trip the runtime checking...
 
-...
+Yes, and we should not do anything right now either.
 
-> > > > applying either of these patches causes issues. See the traces for =
-each one
-> > > > below. This was tested on top of next-20240531, which works fine.
-> > >
-> > > Oh, thank you very much for prompt testing! Can you test just the
-> > > second one without the revert?
-> >
-> > Ah, you wrote "either", so it seems you have tried that already.
->
-> Yes exactly. Both patches are troublesome. Patch 2 causes a slightly diff=
-erent
-> null pointer dereference, in "dcache_clean_poc+0x20/0x38", as the stack t=
-race I
-> posted shows.
+As said, I'd prefer the warning which actually says that fortify
+routines are not used, which in itself is useful information vs shutting
+it up.
 
-I have sent a new series where the last patch has a massive rework of
-the cur_msg_mapped flag. Would be nice to see if it passes your tests.
-The main idea there is to actually move to per transfer flag(s) from
-per message one.
+-- 
+Regards/Gruss,
+    Boris.
 
---=20
-With Best Regards,
-Andy Shevchenko
+https://people.kernel.org/tglx/notes-about-netiquette
 
