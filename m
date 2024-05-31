@@ -1,219 +1,207 @@
-Return-Path: <linux-kernel+bounces-196744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E6C48D6109
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 13:55:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 681CE8D610A
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 13:55:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC6D51F24A71
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 11:55:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C0A31C22794
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 11:55:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B6BD1581F7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEC97158209;
 	Fri, 31 May 2024 11:55:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JmqCSz+r"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b="eNSQVIMw";
+	dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b="oQXCzoNL"
+Received: from s1.sapience.com (s1.sapience.com [72.84.236.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7966D156257;
-	Fri, 31 May 2024 11:55:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717156528; cv=none; b=J+CKE9HKl8jM9eT5MCwk3nJ+c16Nnn7F/fDTwirgEOQ7mSX45i/omPMD/An8qfOForMq6QAapMVow17PXimB92RMpjfgwVF/yDSms573CxsFKZ6hWls8+kcdZWZCDnDXGq5BPHSHC2JbDS79vxj6xFlifFex4XnKAZSCELIT2o4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40B39157A6C;
+	Fri, 31 May 2024 11:55:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=72.84.236.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717156528; cv=fail; b=UlNqtztWtQCokVGm17pG4fBbDPCyC/h6/o6lCQvIse7HgCo8DGQ9m+e6LTLqrhIrzwDWjstn+3MsYqPuAGazVpEzHRAwnvKtPhPo4M0icVl7TM9G28Ej8aWTng5lCJNWrp5stYAE4wLTiiAJZi1zmGudBvbI19rfko95GaldgCQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1717156528; c=relaxed/simple;
-	bh=CBKzv3CRd2OOutXfqI+Jz8p5xY2ZBVrp7l2FWlg5yuU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t0di56wJcl5AzUTGdZLuioQq5cnUW7fx3Y7LZ9M7kMRjbcHVNZQqu3uFHRmng3E1En24eCDGIM4uFDxScuAbLDlr1YEQ6LzyzfOB+/MpvnbsiUHYaD0konmG8709pQlJtgk+IvkvNh4zTw+mSrP9KoQG7opldf9cXRYgYoVAVL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JmqCSz+r; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a6267778b3aso168588766b.3;
-        Fri, 31 May 2024 04:55:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717156525; x=1717761325; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+4EQS2Qufu6k4fIxkqPPPmFNyZB1HQhHIFpQwHJxd/E=;
-        b=JmqCSz+rSaLUGIzYsRhSHeR0JTtikC021AzJ84mY++mAs9niq6X9v1J6kYh+tZoTQG
-         ycoTj/fdYr/Rn0SjbXwqM7WgL+HRPJtX6aOYbQeXok556C2nujHn+t9RnaV6tCKEPtv5
-         kxDWrLFDeysJ38OKTLWI83sqiIyw0Aj9yNCC209DROts8jQKhI8z3mKcSbWv5QQcBYKM
-         +3BtJc6dS7VtxLtxit0yfQ2aNmjguSXiRYrTq6CI056yOp4Uq9K97Zwvte3UZC1dJXyw
-         nacr+f0trsL10KcPSx2jL34UF0KkNfXm5r2rObq2okOGvGP9VKlYi6Q3WZI+wFG6HaP8
-         QF3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717156525; x=1717761325;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+4EQS2Qufu6k4fIxkqPPPmFNyZB1HQhHIFpQwHJxd/E=;
-        b=dzd829Zf9JTqSbX97JC+83IfkiJQhpvPMhWQYtnLjl8cjNiKB53qxKJFRDHx7gCNWE
-         b6fHSm8VqPfvo/R/Q4Y7i7djDsWKt3c2LdrAvqAD4PNJD2hF54UIBM8m2cA1rJYdSG20
-         XwGDGuqlJICmSLewJvHcREIwUANVF4D0o5RjVIEkgL/BnRNTsczylq7XKlGZ8rR6KFBI
-         SJNQhQm2ckifvDIdbrWu/Z6M2OZvNPFgCarhewBkgPM1BncZI8DEkeIdqIJLyBnuPJFk
-         6hcirKJmPA5+fCslLItV+jz7dmozhsnZ5L0+XMOr/bysFHHO7DaULA7whZbG9ablEmzW
-         LkDA==
-X-Forwarded-Encrypted: i=1; AJvYcCWVlFldybqtqnXbrja1d0JNAeN3gQhfY8o2SGBdKDgMHLHB04ujXDSQ5UMy30uF6F/NCfEdmD2nckU3VUyL/F5oI5bVaIbvBYeMZeEaPOUmSdcW1aL/DQoqnZy6xwTZJmZh7GwBn9ve3n9RjNp/28OIiVykPxknm+9+8f+KF3SXGv31cCaXMER5OZAQNtp18O1GZDKITFxcT9ypFBAfT4h2fEoBowg=
-X-Gm-Message-State: AOJu0YwcW8vpfrqyU5P4sx+F0Gj0MrD6k1lwsZxNvJx4aIxNRda6Bnx9
-	YBEi4zNI3syx7doBAcbWwG6WMSdm3ahr2Qx2UcG7T7FeXVDotyfa
-X-Google-Smtp-Source: AGHT+IF5s93wOrD7fv1QbKpmM06TGIoSvHaQfAxyubxSj+LQPazSFbI1YaveD5sUsyWaTvIT4JPZOA==
-X-Received: by 2002:a17:906:d109:b0:a63:535b:b316 with SMTP id a640c23a62f3a-a68208f0f9cmr134945966b.44.1717156524515;
-        Fri, 31 May 2024 04:55:24 -0700 (PDT)
-Received: from [192.168.50.244] (83.8.128.191.ipv4.supernova.orange.pl. [83.8.128.191])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a67eb34449bsm77607466b.213.2024.05.31.04.55.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 31 May 2024 04:55:24 -0700 (PDT)
-Message-ID: <0b611c4b-23d2-4c33-a6be-c15a04e8b99a@gmail.com>
-Date: Fri, 31 May 2024 13:55:22 +0200
+	bh=Bd3KZ+yFQSeCtmXYqYm3VH6yU8fRiWgc3mbKerK/UhU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=mWRU5mLtfTdpmDaebTwZhg6gu1XiK7Xi4xtrctPrmnr4H0E9teCS/BvRnt21iy1ordXvhTketm0NgrnCRsl5uThaPu64D4+Wg8EY2+Rd1LOsf12aQaOLMlSZtUh6LyXZH5QT5Iw4/heEKUl9ZH+CiqTpWLUGndcJYW46aOcUujQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com; spf=pass smtp.mailfrom=sapience.com; dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b=eNSQVIMw; dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b=oQXCzoNL; arc=fail smtp.client-ip=72.84.236.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sapience.com
+Authentication-Results: dkim-srvy7; dkim=pass (Good ed25519-sha256 
+   signature) header.d=sapience.com header.i=@sapience.com 
+   header.a=ed25519-sha256; dkim=pass (Good 2048 bit rsa-sha256 signature) 
+   header.d=sapience.com header.i=@sapience.com header.a=rsa-sha256
+Received: from srv8.sapience.com (srv8.sapience.com [x.x.x.x])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (secp384r1) server-digest SHA384)
+	(No client certificate requested)
+	by s1.sapience.com (Postfix) with ESMTPS id 07690480A2E;
+	Fri, 31 May 2024 07:55:25 -0400 (EDT)
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=sapience.com;
+ i=@sapience.com; q=dns/txt; s=dk-ed25519-220413; t=1717156525;
+ h=message-id : subject : from : to : cc : date : in-reply-to :
+ references : content-type : mime-version : from;
+ bh=Bd3KZ+yFQSeCtmXYqYm3VH6yU8fRiWgc3mbKerK/UhU=;
+ b=eNSQVIMwKba7IepHL2th/FwZ/XAvK4Mu2K78TT8lDkCvIFwzw8G4ziIpHBJoQ06JZynSD
+ mYGz6Beg5VWZlUtCQ==
+ARC-Seal: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412; t=1717156525;
+	cv=none; b=DQRufJH8RG0EtfdpGLg3OscZNCvXlRob9CHXc58/zcFeIqlGOpDzAUHSrhKzgsQmsVDK87Hux0UqZ07EdKjihtZiDGoaRTlQFlO8gg3bwRG0vVZcxS7oDd9Y489xspb4VXwMNxOH55KyZ4Y1qRx0m+ErY5w3aJWoROmZYagD8KI4Rj6BHqDM3yVw1hGKowvE32CCkOZlGR2gDR5nDU8cefH8T3wVfkRVNI8Pv+UAwc6l78HYJv1gdUDAVU59CLC3ME4B32hf0ReI3+VvoS7pHxHtiisnfCrpnzBIGo9h6VjHPmSuJRCtDSEuZ3cvYnPb67+hXMWYeg4lRhYehbV2mg==
+ARC-Message-Signature: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412;
+	t=1717156525; c=relaxed/simple;
+	bh=Bd3KZ+yFQSeCtmXYqYm3VH6yU8fRiWgc3mbKerK/UhU=;
+	h=DKIM-Signature:DKIM-Signature:Message-ID:Subject:From:To:Cc:Date:
+	 In-Reply-To:References:Autocrypt:Content-Type:User-Agent:
+	 MIME-Version; b=Ur5FWX81IzOOX/7AMkWfZBbo2GA0zlTYHf2yG8vwwXWGmZSuqO0gYTCs8Bh6Nozz/2fmc7HsUnBvo2KzCo46io7xQ0HGWYSyXPoM55QEj4SnEa9UFMM8FOZDiEQfkHPJfIiT771Zc9ocfG9UvANIGpnWLd9ieLIcfMh2VeUy5nyzn2sE5MgWUr4GD3X38XNMjeygv++lCW/0FfmB7Ad+eY2BK1ZndT8o8L5yzsShmWtLhi3yGzQRm3Di7bOC/MYxCjbWZtHFdEORWoCuns4yBHj3sY7Ulf/kr21ULSgp41Ocpm+9OZY+EYEheTVkiIMIqlPS6dJZxMe+HxG91RAA5Q==
+ARC-Authentication-Results: i=1; arc-srv8.sapience.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sapience.com;
+ i=@sapience.com; q=dns/txt; s=dk-rsa-220413; t=1717156525;
+ h=message-id : subject : from : to : cc : date : in-reply-to :
+ references : content-type : mime-version : from;
+ bh=Bd3KZ+yFQSeCtmXYqYm3VH6yU8fRiWgc3mbKerK/UhU=;
+ b=oQXCzoNLpXEAKjmy4+GQ2r0RA7pkqKeTmXo0aLajKdOo1GGUQWVHGDlU5yRsTcSEhOM4L
+ t21GgvxgsZ1MqO+V0D56TlmdvrjkHu+mOXDNJMcWhm/oAySHzBXRHUpqRnajW91DCBJrHn6
+ j6cNAeuLQdwwNr7RUsTVpuWMUYavCpKBCxehQNjBS4aKwN79bN2etnnE1GXYKkBlGJyeI3Q
+ lOzQcck1qtJChwy0pSOCz/2HWSVq7zBPNs6FX3By/s9NKLp2K7FgBjaLZnSTRJrzLQQvCM9
+ o/Zyr1KLCDallirjgJzDCLLML1LsKGAiOQXnaOHv/Iwy3dqylbn3w+1/CWvw==
+Received: from lap7.sapience.com (lap7w.sapience.com [x.x.x.x])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (secp384r1) server-digest SHA384)
+	(No client certificate requested)
+	by srv8.sapience.com (Postfix) with ESMTPS id B69D4280016;
+	Fri, 31 May 2024 07:55:25 -0400 (EDT)
+Message-ID: <69d0c5f0b237990fd2c7cd88768aa2a70a5ee83a.camel@sapience.com>
+Subject: Re: Hung tasks due to a AB-BA deadlock between the leds_list_lock
+ rwsem and the rtnl mutex
+From: Genes Lists <lists@sapience.com>
+To: Hans de Goede <hdegoede@redhat.com>, Linux regressions mailing list
+	 <regressions@lists.linux.dev>, Pavel Machek <pavel@ucw.cz>, Lee Jones
+	 <lee@kernel.org>, Linux LEDs <linux-leds@vger.kernel.org>, Heiner Kallweit
+	 <hkallweit1@gmail.com>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, andrew@lunn.ch, 
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com,  johanneswueller@gmail.com, "Russell King (Oracle)"
+ <linux@armlinux.org.uk>
+Date: Fri, 31 May 2024 07:55:25 -0400
+In-Reply-To: <618601d8-f82a-402f-bf7f-831671d3d83f@redhat.com>
+References: <9d189ec329cfe68ed68699f314e191a10d4b5eda.camel@sapience.com>
+	 <15a0bbd24cd01bd0b60b7047958a2e3ab556ea6f.camel@sapience.com>
+	 <ZliHhebSGQYZ/0S0@shell.armlinux.org.uk>
+	 <42d498fc-c95b-4441-b81a-aee4237d1c0d@leemhuis.info>
+	 <618601d8-f82a-402f-bf7f-831671d3d83f@redhat.com>
+Autocrypt: addr=lists@sapience.com; prefer-encrypt=mutual;
+ keydata=mDMEXSY9GRYJKwYBBAHaRw8BAQdAwzFfmp+m0ldl2vgmbtPC/XN7/k5vscpADq3BmRy5R
+ 7y0LU1haWwgTGlzdHMgKEwwIDIwMTkwNzEwKSA8bGlzdHNAc2FwaWVuY2UuY29tPoiWBBMWCAA+Ah
+ sBBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAFiEE5YMoUxcbEgQOvOMKc+dlCv6PxQAFAmPJfooFCRl
+ vRHEACgkQc+dlCv6PxQAc/wEA/Dbmg91DOGXll0OW1GKaZQGQDl7fHibMOKRGC6X/emoA+wQR5FIz
+ BnV/PrXbao8LS/h0tSkeXgPsYxrzvfZInIAC
+Content-Type: multipart/signed; micalg="pgp-sha384";
+	protocol="application/pgp-signature"; boundary="=-Y2OqDd5dYDgI7spdeu7K"
+User-Agent: Evolution 3.52.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 06/11] power: supply: max77693: Set charge current
- limits during init
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, linux-pm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- ~postmarketos/upstreaming@lists.sr.ht, Henrik Grimler <henrik@grimler.se>,
- Wolfgang Wiedmeyer <wolfgit@wiedmeyer.de>,
- Denis 'GNUtoo' Carikli <GNUtoo@cyberdimension.org>
-References: <20240530-max77693-charger-extcon-v1-0-dc2a9e5bdf30@gmail.com>
- <20240530-max77693-charger-extcon-v1-6-dc2a9e5bdf30@gmail.com>
- <d740ff64-2de6-424c-9fc0-f1064f8c4f8b@kernel.org>
-Content-Language: en-US
-From: Artur Weber <aweber.kernel@gmail.com>
-In-Reply-To: <d740ff64-2de6-424c-9fc0-f1064f8c4f8b@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 31.05.2024 11:47, Krzysztof Kozlowski wrote:
-> On 30/05/2024 10:55, Artur Weber wrote:
->> There are two charger current limit registers:
->>
->> - Fast charge current limit (which controls current going from the
->>    charger to the battery);
->> - CHGIN input current limit (which controls current going into the
->>    charger through the cable, and is managed by the CHARGER regulator).
->>
->> Add functions for setting both of the values, and set them to a
->> safe default value of 500mA at initialization.
->>
->> The default value for the fast charge current limit can be modified
->> by setting the maxim,fast-charge-current-microamp DT property; the
->> CHGIN input current limit will be set up later in the charger detection
->> mechanism.
->>
->> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
->> ---
->>   drivers/power/supply/max77693_charger.c | 45 +++++++++++++++++++++++++++++++++
->>   1 file changed, 45 insertions(+)
->>
->> diff --git a/drivers/power/supply/max77693_charger.c b/drivers/power/supply/max77693_charger.c
->> index 894c35b750b3..d59b1524b0a4 100644
->> --- a/drivers/power/supply/max77693_charger.c
->> +++ b/drivers/power/supply/max77693_charger.c
->> @@ -28,6 +28,7 @@ struct max77693_charger {
->>   	u32 min_system_volt;
->>   	u32 thermal_regulation_temp;
->>   	u32 batttery_overcurrent;
->> +	u32 fast_charge_current;
->>   	u32 charge_input_threshold_volt;
->>   };
->>   
->> @@ -591,6 +592,35 @@ static int max77693_set_batttery_overcurrent(struct max77693_charger *chg,
->>   			CHG_CNFG_12_B2SOVRC_MASK, data);
->>   }
->>   
->> +static int max77693_set_input_current_limit(struct max77693_charger *chg,
->> +		unsigned int uamp)
->> +{
->> +	dev_dbg(chg->dev, "CHGIN input current limit: %u\n", uamp);
-> 
-> That's quite useless debug. It duplicates
-> max77693_set_fast_charge_current(). Just drop entire wrapper.
 
-It doesn't duplicate max77693_set_fast_charge_current, they modify two
-separate registers. Quote from the commit message:
+--=-Y2OqDd5dYDgI7spdeu7K
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> There are two charger current limit registers:
-> 
-> - Fast charge current limit (which controls current going from the
->  charger to the battery);
-> - CHGIN input current limit (which controls current going into the
->   charger through the cable, and is managed by the CHARGER regulator).
+On Fri, 2024-05-31 at 11:50 +0200, Hans de Goede wrote:
+> Hi,
+>=20
+> ...
 
-max77693_set_fast_charge_current sets up the "fast charge current"
-register (in CNFG_02, CHG_CNFG_02_CC). The CHARGER regulators sets the
-CHGIN input current (in CNFG_09, CHG_CNFG_09_CHGIN_ILIM).
+> I actually have been looking at a ledtrig-netdev lockdep warning
+> yesterday
+> which I believe is the same thing. I'll include the lockdep trace
+> below.
+>=20
+> According to lockdep there indeed is a ABBA (ish) cyclic deadlock
+> with
+> the rtnl mutex vs led-triggers related locks. I believe that this
+> problem
+> may be a pre-existing problem but this now actually gets hit in
+> kernels >=3D
+> 6.9 because of commit 66601a29bb23 ("leds: class: If no default
+> trigger is
+> given, make hw_control trigger the default trigger"). Before that
+> commit
+> the "netdev" trigger would not be bound / set as phy LEDs trigger by
+> default.
+>=20
+> +Cc Heiner Kallweit who authored that commit.
+>=20
+> The netdev trigger typically is not needed because the PHY LEDs are
+> typically
+> under hw-control and the netdev trigger even tries to leave things
+> that way
+> so setting it as the active trigger for the LED class device is
+> basically
+> a no-op. I guess the goal of that commit is correctly have the
+> triggers
+> file content reflect that the LED is controlled by a netdev and to
+> allow
+> changing the hw-control mode without the user first needing to set
+> netdev
+> as trigger before being able to change the mode.
+>=20
+> But there is a price to this, besides the locking problem this also
+> causes the ledtrig-netdev module to load on pretty much everyones
+> systems (when build as a module) even though 99.999% of our users
+> likely does not need this at all...
+>=20
+> Given this price and the troubles this is causing I think it might be
+> best
+> to revert 66601a29bb23. There might still be a locking issue when
+> setting
+> the trigger to netdev manually (I'll check and follow up) but this
+> should
+> fix the regression users are hitting since typically users do not set
+> the trigger manually.
+>=20
+> Gene, as the original reporter of this can you do "modinfo
+> ledtrig_netdev"
+> and if this shows that ledtrig_netdev is a module for you try
+> blacklisting
+> ledtrig_netdev ?=C2=A0 And if it is not a module can you try building a
+> 6.9
+> kernel with commit 66601a29bb23 reverted and see if that helps ?
 
-(Apparently the CHARGER regulator is supposed to handle the fast
-charge current, but it does not; I wrote about this in the "CHARGER
-regulator" section of the patchset description.)
+Thank you - I've blacklisted ledtrig_netdev and will report back if
+anything interesting happens.
 
->> +
->> +	return regulator_set_current_limit(chg->regu, (int)uamp, (int)uamp);
->> +}
->> +
->> +static int max77693_set_fast_charge_current(struct max77693_charger *chg,
->> +		unsigned int uamp)
->> +{
->> +	unsigned int data;
->> +
->> +	data = (uamp / 1000) * 10 / 333; /* 0.1A/3 steps */
->> +
->> +	if (data > CHG_CNFG_02_CC_MASK) {
->> +		dev_err(chg->dev, "Wrong value for fast charge current\n");
->> +		return -EINVAL;
->> +	}
->> +
->> +	data <<= CHG_CNFG_02_CC_SHIFT;
->> +
->> +	dev_dbg(chg->dev, "Fast charge current: %u (0x%x)\n", uamp, data);
->> +
->> +	return regmap_update_bits(chg->max77693->regmap,
->> +			MAX77693_CHG_REG_CHG_CNFG_02,
->> +			CHG_CNFG_02_CC_MASK, data);
-> 
-> I am surprised that you set current limit via regulator but actual
-> charging current value here. I think both should go to regulator in such
-> case.
+best
 
-As in, both fast charge current and input current should be set up by
-the CHARGER regulator? Sure, sounds good to me.
+gene
 
-I've noticed that on the original kernel, both of the values are
-modified together too (only exception is that fast charge current would
-be set to 0 when the cable was unplugged, but the input current stayed
-at 500mA. This doesn't seem to affect anything, though.).
+>=20
+>=20
+> Regards,
+>=20
+> Hans
 
-At one point I actually considered going the other way around - moving
-all charger register handling into the charger driver, instead of having
-it be a regulator. As far as I can tell, only some Samsung-submitted
-charger drivers (max77693, max8997, max8998, max14577) use a regulator
-to manage the charger current (if anything, some power supply drivers
-expose an OTG/VBUS regulator, might be something for us to consider as
-well...).
+--=20
+Gene
 
-I see you wrote at least the max14577 and part of the max77693 driver;
-out of curiosity, what's the benefit of doing it through a current
-regulator (as opposed to adding set functions for the relevant
-properties in the charger driver)? I've noticed the downstream driver
-has a very similar pattern[1], I wonder if it's just a port of that or
-if there's a more concrete reason.
 
-Best regards
-Artur
+--=-Y2OqDd5dYDgI7spdeu7K
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
 
-[1] https://github.com/gr8nole/android_kernel_samsung_smdk4x12/blob/lineage-14.1/drivers/regulator/max77693.c (everything related to MAX77693_CHARGER)
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYJAB0WIQRByXNdQO2KDRJ2iXo5BdB0L6Ze2wUCZlm6rQAKCRA5BdB0L6Ze
+2ztQAP9qMQRR3zWotstYwUJgtGTnC8aBJ+98ER37vLWOQ8tUfwD/YXQxaCPd9Swg
+ncFhq3xPmLoOpSikgJb3evYfVsGEzQU=
+=tg5T
+-----END PGP SIGNATURE-----
+
+--=-Y2OqDd5dYDgI7spdeu7K--
 
