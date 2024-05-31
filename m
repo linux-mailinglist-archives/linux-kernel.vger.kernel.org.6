@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-196443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E81778D5C62
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:10:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BB608D5C67
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:12:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2568C1C22224
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 08:10:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A84B61C21246
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 08:12:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0E7377F2F;
-	Fri, 31 May 2024 08:10:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6064E78C6B;
+	Fri, 31 May 2024 08:12:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lbCzs8AI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AwLwPL1B"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A3E415E89;
-	Fri, 31 May 2024 08:10:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99D6274057;
+	Fri, 31 May 2024 08:12:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717143035; cv=none; b=DR737SWYO+OZyOs1QHBzgOOJPWn+UPiuikvcNWhUMNeQkS/P8mwvjOT3m8FHkhPiiwp+r/LgakLt8Hhwv/vQtz1r5X7hFUOt35A37TJZv26m2//D/CdthUPsiQO9eFFcc0wQsDths3m8IsANKdUkWbNYAvloL8f033AU9R8Gc4w=
+	t=1717143128; cv=none; b=jb2Z2UfQZJ9hgGZzJ4Xe9V7+atJtz9DiZFmDVxKkNIKuh7AbTcDY0aVWa5xKbqWmGDdYwb3RRc3gYUWqYLYGjNv+W306+gbUsltNrDr50ZLgo2uQhXkdh7Op+FihGUF0Xuq1IanG0riuMod32v+WRhZQqdnLLo4vN2q5mpFM7aQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717143035; c=relaxed/simple;
-	bh=H9RDUXyvetjYgqQb8c3fvYqfxDbAsUSc51HBbOy/KbY=;
+	s=arc-20240116; t=1717143128; c=relaxed/simple;
+	bh=gb9gMIWn8jzO/xjRsGo+uWr3zYzRZbtuO6LQosHp3Q0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eq7nAoG6WIjP3bgXoZKpjhpKKGW79QAqkTKKax6viR1t5q75aonCRvI5dXl+2LxPhngskKNnV5Iqy+NDAouw/+18Wi93T/r/+rYClr7wXajSeE9q/6xlox/tB9LHrt6OntWpDs0j5ayo1dmjUSEBaawE2H5uVvQv0JXaf4uCNbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lbCzs8AI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C63EFC2BD10;
-	Fri, 31 May 2024 08:10:31 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=tM1ar8CojOwF6ExI9s39CA8SKKiXAg60FA+VGA5fDcTn25XNTrlHN075ls3/eRLhNbmLvbm1AzFLqZ2RSvd8LIpo7C3HOHtI9Bi2RhZKjfW82TpsH9RijQ99Z8R/2qkuZP9/NXAiLQAbfdDIuqdGToWvZvmH9vyY8zXGX1q9kxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AwLwPL1B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04637C2BD10;
+	Fri, 31 May 2024 08:12:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717143034;
-	bh=H9RDUXyvetjYgqQb8c3fvYqfxDbAsUSc51HBbOy/KbY=;
+	s=k20201202; t=1717143128;
+	bh=gb9gMIWn8jzO/xjRsGo+uWr3zYzRZbtuO6LQosHp3Q0=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=lbCzs8AIOtUBzgzSAx+oQLhxgZGtz2WNMWgpplyssdtaUCDpzXcSwyj/8bmyed/Ma
-	 bB2P78TIRen/+5itQ4mLdAUEgA7lqGQAGXa1Z2+iriAAb2yMmfloGM9NcFlk6Ukc1b
-	 wJ3VtmR5osYMZenKgXswOCsIsvGFBW88MpJRfAmiFIvL+5kAoHy/Q+EwulaLILxUs7
-	 nfKxm9B8b1tfiPE6St4RC/UZIfx6cg75K4UIOHATHVOTgB2Yh3N/HkSXimQhApd/ue
-	 7S3SmmEUGWqGu4br0L0DPpwKS4DWjXZYFeNAgCNHsedGo55DgLL+vI3DF+hBXktzW2
-	 G5OBYLqfSzTnQ==
-Message-ID: <57966949-8080-4aa5-8d38-63ded1c2b467@kernel.org>
-Date: Fri, 31 May 2024 10:10:30 +0200
+	b=AwLwPL1Bgkg/SP5sslF2ZHxO2ywoT87JmHGa+yUC7A8D95p5rJ9+4jwhdawYPVazq
+	 j/lEsbxbmaal+qpkDIFSY0Z0hjdQ39uixuVecPzBRhCzz9iNpOeVTmivX/Q0sabeLX
+	 ZHk6k+t+TqEjsnOHsX7DaRcTeSd3rx7Hk73cTEOIbMLHKs8L9HTOYgIAaArdVcJgMi
+	 /RieqnKkRgRxOEskDfcA2vJz0owZoyz1L03E81113vZuk3lDSswy4GdGtQZGePek/A
+	 4qF+ZqjdmjOYlYCGgi19JZKWZ1UN0hNXD6XbL/mgOIchqhnuts950TmYsQZf/rKFAW
+	 DqohQQnmmS93A==
+Message-ID: <bcbff3b2-c5ae-4a95-aa36-f9b88a97e72c@kernel.org>
+Date: Fri, 31 May 2024 10:12:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,8 +49,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/5] dt-bindings: usb: snps,dwc3: Add
- 'snps,xhci-write-64-hi-lo-quirk' quirk
+Subject: Re: [PATCH v2 3/5] dt-bindings: usb: xhci: Add 'write-64-hi-lo-quirk'
+ quirk
 To: Daehwan Jung <dh10.jung@samsung.com>,
  Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -61,8 +61,8 @@ Cc: "open list:USB SUBSYSTEM" <linux-usb@vger.kernel.org>,
  "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
  <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 References: <1717135657-120818-1-git-send-email-dh10.jung@samsung.com>
- <CGME20240531060728epcas2p358edd115ee217a50712f1ca3b3b22bd7@epcas2p3.samsung.com>
- <1717135657-120818-2-git-send-email-dh10.jung@samsung.com>
+ <CGME20240531060729epcas2p1df12dd3b14c5fa2fa0716f72010b3dbd@epcas2p1.samsung.com>
+ <1717135657-120818-4-git-send-email-dh10.jung@samsung.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -108,16 +108,24 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <1717135657-120818-2-git-send-email-dh10.jung@samsung.com>
+In-Reply-To: <1717135657-120818-4-git-send-email-dh10.jung@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 31/05/2024 08:07, Daehwan Jung wrote:
-> Add a new quirk for dwc3 core to support writing high-low order.
+> xHCI specification 5.1 "Register Conventions" states that 64 bit
+> registers should be written in low-high order. All writing operations
+> in xhci is done low-high order following the spec.
 
-This does not tell me more. Could be OS property as well... please
-describe hardware and provide rationale why this is suitable for
-bindings (also cannot be deduced from compatible).
+What is high-low / low-high order? Are you talking about endianness?
+
+> 
+> Add a new quirk to support workaround for high-low order.
+
+Why? If they should be written low-high, then why breaking the spec? Why
+this cannot be deduced from compatible?
+
+Which *upstream* hardware is affected?
 
 
 
