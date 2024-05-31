@@ -1,191 +1,166 @@
-Return-Path: <linux-kernel+bounces-196490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86F488D5CEE
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:39:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E60DD8D5CF4
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 10:40:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 406B51F21B49
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 08:39:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13E3D1C22699
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 08:40:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2860715098F;
-	Fri, 31 May 2024 08:39:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A71E2150997;
+	Fri, 31 May 2024 08:39:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zDCj0g5c"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="QIC+VDbT"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E410215098D
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 08:39:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB1BE187567;
+	Fri, 31 May 2024 08:39:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717144744; cv=none; b=i3MGjuqdtuoFh86jL3La637atC+i1KE6NcYVsJ1HKzTiCYLuqiWTirZsRmP8d8qYhMaSN5/q/OEg+boSD4W6pcmv+VKSQb5h2vRmKDWCfXVQmu3XotLoPA0wzBmDw2wWuDH370Z3ZYrLm4JWSjxlYZPMbIBHA0FnrI8IqQCFm6Q=
+	t=1717144797; cv=none; b=Rth7HvCmWPjzsen2LzghF6NyVq4t7aYWCBbRCRkUqEySNXBcI5t+wUVHTN2C7W2FPgDKReGqXDrDV3iWyC1TfCWyT+J15N8wtMN075hcEwJJfOtIoAim8ACniFDlinGptlIIngxKCjGEqPmO8YUiFN9N43Z9YOT8S3h8/gPPRv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717144744; c=relaxed/simple;
-	bh=ZFMmpYdHQGeJ/z9gZHfYAifXybdEhkawr1UnA1qVQ4Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WRYS4kFDL6K7dcijoskcl9dHwvdBQFvT+E6TOL/bP0ri3IiMf4hYDeS5EAmLzNfPnw7RJRECRm7AWfpuRY4JhO7PgN+Jmo8mWwHq683JisTfg0xZx2FF4Axnr/QUEk8E8OJ/rrYJk4FG54s5unqMmqvvgHZozv+Rgu3Up4tBWSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zDCj0g5c; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1f4a5344ec7so13571805ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 01:39:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717144741; x=1717749541; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=lnrY2pbNU0k+0zlhxzJD+ASA3BY00naiFRrmZ3gNEAM=;
-        b=zDCj0g5cPLeHHMm1K8ZNjnITlyqFja02cUVLPpIXwURvAehG+ss/gAgVfSB8fbQL9d
-         +muHz6OwOVjM641HWh/FLmrwxT+2aLF9nofx35ZNrLrDHa4yYYFJ82KtjCBO/3SNU0FY
-         phJICaw2bflPEPhzoYH/n6V3MatQi4l1wzNULnMRcJBiweuzILycH+ueUmdfhEtwHe0I
-         3OdwatEItB09rAHP5r/sBaRIz9YG+zBZWW/ajn4UqGgRinVu0Byp0FS8kgpu6GHfsqFi
-         yABXg669NWVP0rE3+KjVPcMVgq176gVqkjbSAfYKFffh7vxui861nI9roPnNv1o9WvkX
-         TESA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717144741; x=1717749541;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lnrY2pbNU0k+0zlhxzJD+ASA3BY00naiFRrmZ3gNEAM=;
-        b=XYdy5RbAvbYpMO3PvQu3BMCcYIq16m5yqVIrdlpRd2HNTzcVI7mibOTGzTx14u5phj
-         2fovfKDQPR6orlxYGynA0YVzBYjYtT9RQOI3uW+wwnbJDTDdw5O75pRDPfmzUHBrdN+C
-         s4dWNDY7dR73HTkCxOCQwk9XbIFpua6VhM6iZsjTQyBPIXFTXSeCqQBiTLhn2xNWoAOk
-         iooChEkNWVj17uywxpeCzyIDudjkg1xrZEBp4VXnJoSlRE92hfoRzmyfC1+bLdAJtLCi
-         jX5jbZZ6cCI4ymmOO3uBV9d2V0yzpPvamEXPd/bjLmSubOKScVsWE1zn+NBJyfmDvG1l
-         ExRg==
-X-Forwarded-Encrypted: i=1; AJvYcCW2263xghDX/F6XsTo503YNr9xx4xJtU76tycG5n8D5rreOkPt6Jw/hC/VahMpXMAymCUDK2/v0lZk08KommZ1ibmEf6RPOR+V5KpSs
-X-Gm-Message-State: AOJu0Yz9b3417ejUkhZKK1WukxQis6VO3sAD6I2bka214+q8VpN3RtIG
-	NW+y7WSKCmkKnZmZb4Cav5d+SslPQ7QU3RkIF/Wj3ElIkJeHFyUzdZSfReBMh17udWlnhyKgghM
-	8R1JGqJ6hnUyAipEq1bNZJg0CqK2BL0vWERsFOg==
-X-Google-Smtp-Source: AGHT+IG8vPZtTUMBJ/SeUxjWqwTa+oxGvQfRE7eRFeFHpKg0Ap4gr+tU2wNSF5RwNuTIuL/3twCwLRR9PNjRGv0nJ00=
-X-Received: by 2002:a17:902:ec92:b0:1f3:62c:247f with SMTP id
- d9443c01a7336-1f61be15ccemr63399965ad.11.1717144741002; Fri, 31 May 2024
- 01:39:01 -0700 (PDT)
+	s=arc-20240116; t=1717144797; c=relaxed/simple;
+	bh=HZYCsKjMSc/EqPpUCUY+p9VaVxhaFBNBTLb4Frz7Asg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HI/8j+ocU7TbzwxplMrvnshw5Dxc3lNeEpedaEE4Tv533UG14yfWXw/HMpk2rQWZuMA774ZexElLYU00bJo/beDoekSSamxNjlOOzkMApSf3TSOnhNmcUAfnqFPMbNWbx5zuvbDZrhrFZJ5whqEg3vr8c7Wjgkqt9MPCWKDK7+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=QIC+VDbT; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:Reply-To:MIME-Version:Date:
+	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
+	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
+	In-Reply-To:References; bh=hfDzAvU8xDKFTc19pK9dW0rwA+QcQVLK4v1h8Qtw0Fs=;
+	t=1717144795; x=1717576795; b=QIC+VDbT23zvgu93nYy1Aw9r2kfqwfOAxweuCVs4Om3Fhyu
+	668zxbnpElfmXiZyxeEtQYvUgr3mdMzVNffOSOJkQHg/nDGELXr3Bz7dFz+0bTap9PX/4F9k27CRh
+	2wi2CR4IvUZnV7p2co+MEdPbOxztW+AjeIksy2ldpr8KM11sTsoE3iz+jyMiFoDI3f0zrb6DHZFaJ
+	H8T7AyPKlvKCcoGWxMz4MTaBaT9EXlN0ocSs6IKyDkiTtarL+/4I4Y9kPOJkTkcOH59QZtXBG1GGE
+	VCqHxvwgPTsuCBX0YX+gBdfxj42xt6MaloWrxhS5W1OBpxiR3rtxt6btXzneokeg==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1sCxnj-0005SD-1R; Fri, 31 May 2024 10:39:51 +0200
+Message-ID: <42d498fc-c95b-4441-b81a-aee4237d1c0d@leemhuis.info>
+Date: Fri, 31 May 2024 10:39:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240529100926.3166325-1-quic_tengfan@quicinc.com>
- <20240529100926.3166325-5-quic_tengfan@quicinc.com> <s5gt3p6zsd5ebrkop4dhd33tykln33f6ahu3pibymecxsmakyd@lg5wfgec6dat>
- <205de8b7-507f-45c9-83ce-6eceb1466cb2@quicinc.com>
-In-Reply-To: <205de8b7-507f-45c9-83ce-6eceb1466cb2@quicinc.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Fri, 31 May 2024 11:38:48 +0300
-Message-ID: <CAA8EJpqFq=6YFcUpjdkKikN54iQ76i8Rk_z+mLH1Tt0zFFmciQ@mail.gmail.com>
-Subject: Re: [PATCH v9 4/4] arm64: dts: qcom: aim300: add AIM300 AIoT
-To: Tengfei Fan <quic_tengfan@quicinc.com>
-Cc: andersson@kernel.org, konrad.dybcio@linaro.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@quicinc.com, 
-	Qiang Yu <quic_qianyu@quicinc.com>, Ziyue Zhang <quic_ziyuzhan@quicinc.com>, 
-	quic_chenlei@quicinc.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
+Subject: Hung tasks due to a AB-BA deadlock between the leds_list_lock rwsem
+ and the rtnl mutex (was: 6.9.3 Hung tasks)
+To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
+ Linux LEDs <linux-leds@vger.kernel.org>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, andrew@lunn.ch,
+ hkallweit1@gmail.com, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, johanneswueller@gmail.com,
+ "Russell King (Oracle)" <linux@armlinux.org.uk>,
+ Genes Lists <lists@sapience.com>,
+ Linux kernel regressions list <regressions@lists.linux.dev>
+References: <9d189ec329cfe68ed68699f314e191a10d4b5eda.camel@sapience.com>
+ <15a0bbd24cd01bd0b60b7047958a2e3ab556ea6f.camel@sapience.com>
+ <ZliHhebSGQYZ/0S0@shell.armlinux.org.uk>
+From: "Linux regression tracking (Thorsten Leemhuis)"
+ <regressions@leemhuis.info>
+Content-Language: en-US, de-DE
+In-Reply-To: <ZliHhebSGQYZ/0S0@shell.armlinux.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1717144795;124009fb;
+X-HE-SMSGID: 1sCxnj-0005SD-1R
 
-On Fri, 31 May 2024 at 11:35, Tengfei Fan <quic_tengfan@quicinc.com> wrote:
->
->
->
-> On 5/29/2024 11:18 PM, Dmitry Baryshkov wrote:
-> > On Wed, May 29, 2024 at 06:09:26PM +0800, Tengfei Fan wrote:
-> >> Add AIM300 AIoT Carrier board DTS support, including usb, UART, PCIe,
-> >> I2C functions support.
-> >> Here is a diagram of AIM300 AIoT Carrie Board and SoM
-> >>   +--------------------------------------------------+
-> >>   |             AIM300 AIOT Carrier Board            |
-> >>   |                                                  |
-> >>   |           +-----------------+                    |
-> >>   |power----->| Fixed regulator |---------+          |
-> >>   |           +-----------------+         |          |
-> >>   |                                       |          |
-> >>   |                                       v VPH_PWR  |
-> >>   | +----------------------------------------------+ |
-> >>   | |                          AIM300 SOM |        | |
-> >>   | |                                     |VPH_PWR | |
-> >>   | |                                     v        | |
-> >>   | |   +-------+       +--------+     +------+    | |
-> >>   | |   | UFS   |       | QCS8550|     |PMIC  |    | |
-> >>   | |   +-------+       +--------+     +------+    | |
-> >>   | |                                              | |
-> >>   | +----------------------------------------------+ |
-> >>   |                                                  |
-> >>   |                    +----+          +------+      |
-> >>   |                    |USB |          | UART |      |
-> >>   |                    +----+          +------+      |
-> >>   +--------------------------------------------------+
-> >>
-> >> Co-developed-by: Qiang Yu <quic_qianyu@quicinc.com>
-> >> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
-> >> Co-developed-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
-> >> Signed-off-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
-> >> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
-> >> ---
-> >>   arch/arm64/boot/dts/qcom/Makefile             |   1 +
-> >>   .../boot/dts/qcom/qcs8550-aim300-aiot.dts     | 322 ++++++++++++++++++
-> >>   2 files changed, 323 insertions(+)
-> >>   create mode 100644 arch/arm64/boot/dts/qcom/qcs8550-aim300-aiot.dts
-> >
-> > [trimmed]
-> >
-> >> +&remoteproc_adsp {
-> >> +    firmware-name = "qcom/qcs8550/adsp.mbn",
-> >> +                    "qcom/qcs8550/adsp_dtbs.elf";
-> >
-> > Please excuse me, I think I missed those on the previous run.
-> >
-> > adsp_dtb.mbn
->
-> Currently, waht we have released is adsp_dtbs.elf. If we modify it to
-> adsp_dtb.mbn, it may cause the ADSP functionality can not boot normally.
+[adding the LED folks and the regressions list to the list of recipients]
 
-Released where? linux-firmware doesn't have such a file. And the modem
-partition most likely has a different path for it anyway.
+Hi, Thorsten here, the Linux kernel's regression tracker. Top-posting
+for once, to make this easily accessible to everyone.
 
->
-> >
-> >> +    status = "okay";
-> >> +};
-> >> +
-> >> +&remoteproc_cdsp {
-> >> +    firmware-name = "qcom/qcs8550/cdsp.mbn",
-> >> +                    "qcom/qcs8550/cdsp_dtbs.elf";
-> >
-> > cdsp_dtb.mbn
->
-> CDSP also as above ADSP.
->
-> >
+Lee, Pavel, could you look into below regression report please? Thread
+starts here:
+https://lore.kernel.org/all/9d189ec329cfe68ed68699f314e191a10d4b5eda.camel@sapience.com/
 
-> >> +
-> >> +    te_active: te-active-state {
-> >> +            pins = "gpio86";
-> >> +            function = "mdp_vsync";
-> >> +            drive-strength = <2>;
-> >> +            bias-pull-down;
-> >> +    };
-> >> +
-> >> +    te_suspend: te-suspend-state {
-> >> +            pins = "gpio86";
-> >> +            function = "mdp_vsync";
-> >> +            drive-strength = <2>;
-> >> +            bias-pull-down;
-> >> +    };
-> >
-> > What is the difference between these two?
->
-> TE pin needs to be pulled down for both active and suspend states. There
-> is no difference.
+Another report with somewhat similar symptom can be found here:
+https://lore.kernel.org/lkml/e441605c-eaf2-4c2d-872b-d8e541f4cf60@gmail.com/
 
-So why do you need two different states for it?
+See also Russell's analysis of that report below (many many thx for
+that, much appreciated Russel!).
 
+To my untrained eyes all of this sounds a lot like we still have a 6.9
+regression related to the LED code somewhere. Reminder, we had earlier
+trouble, but that was avoided through other measures:
 
+* 3d913719df14c2 ("wifi: iwlwifi: Use request_module_nowait") /
+https://lore.kernel.org/lkml/30f757e3-73c5-5473-c1f8-328bab98fd7d@candelatech.com/
 
+* c04d1b9ecce565 ("igc: Fix LED-related deadlock on driver unbind") /
+https://lore.kernel.org/all/ZhRD3cOtz5i-61PB@mail-itl/
 
+* 19fa4f2a85d777 ("r8169: fix LED-related deadlock on module removal")
 
--- 
-With best wishes
-Dmitry
+That iwlwifi commit even calls it self "work around". The developer that
+submitted it bisected the problem to a LED merge, but sadly that was the
+end of it. :-/
+
+Ciao, Thorsten
+
+On 30.05.24 16:04, Russell King (Oracle) wrote:
+> On Thu, May 30, 2024 at 09:36:45AM -0400, Genes Lists wrote:
+>> On Thu, 2024-05-30 at 08:53 -0400, Genes Lists wrote:
+>> This report for 6.9.1 could well be the same issue:
+>> https://lore.kernel.org/lkml/e441605c-eaf2-4c2d-872b-d8e541f4cf60@gmail.com/
+> 
+> The reg_check_chans_work() thing in pid 285 is likely stuck on the
+> rtnl lock. The same is true of pid 287.
+> 
+> That will be because of the thread (pid 663) that's stuck in
+> __dev_open()...led_trigger_register(), where the rtnl lock will have
+> been taken in that path. It looks to me like led_trigger_register()
+> is stuck waiting for read access with the leds_list_lock rwsem.
+> 
+> There are only two places that take that rwsem in write mode, which
+> are led_classdev_register_ext() and led_classdev_unregister(). None
+> of these paths are blocking in v6.9.
+> 
+> Pid 641 doesn't look significant (its probably waiting for either
+> pid 285 or 287 to complete its work.)
+> 
+> Pid 666 looks like it is blocked waiting for exclusive write-access
+> on the leds_list_lock - but it isn't holding that lock. This means
+> there must already be some other reader or writer holding this lock.
+> 
+> Pid 722 doesn't look sigificant (same as pid 641).
+> 
+> Pid 760 is also waiting for the rtnl lock.
+> 
+> Pid 854, 855 also doesn't look sigificant (as pid 641).
+> 
+> And then we get to pid 858. This is in set_device_name(), which
+> was called from led_trigger_set() and led_trigger_register().
+> We know from pid 663 that led_trigger_register() can take a read
+> on leds_list_lock, and indeed it does and then calls
+> led_match_default_trigger(), which then goes on to call
+> led_trigger_set(). Bingo, this is why pid 666 is blocked, which
+> then blocks pid 663. pid 663 takes the rtnl lock, which blocks
+> everything else _and_ also blocks pid 858 in set_device_name().
+> 
+> Lockdep would've found this... this is a classic AB-BA deadlock
+> between the leds_list_lock rwsem and the rtnl mutex.
+> 
+> I haven't checked to see how that deadlock got introduced, that's
+> for someone else to do.
+
+P.S.:
+
+#regzbot report: /
+#regzbot introduced: f5c31bcf604d
+#regzbot duplicate:
+https://lore.kernel.org/lkml/e441605c-eaf2-4c2d-872b-d8e541f4cf60@gmail.com/
+#regzbot summary: leds: Hung tasks due to a AB-BA deadlock between the
+leds_list_lock rwsem and the rtnl mutex
 
