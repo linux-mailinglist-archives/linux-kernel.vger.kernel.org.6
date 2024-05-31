@@ -1,119 +1,156 @@
-Return-Path: <linux-kernel+bounces-197438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDF148D6A98
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 22:17:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F016C8D6A9B
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 22:19:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B73C1C21974
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 20:17:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7ABCC1F2513F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 20:19:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E68B51761B3;
-	Fri, 31 May 2024 20:17:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24CC68061C;
+	Fri, 31 May 2024 20:19:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="Bm1EuZZO"
-Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="AHiGC7eu"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D20EA7442D;
-	Fri, 31 May 2024 20:17:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCD0F7442D
+	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 20:19:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717186649; cv=none; b=IZ/p77EHa4gwvrmsE2CUIuoohZ4WeCqj0I0kB265xz5u6G6qH88FFCsKbepjC9Zdbr7yOSTNnHHMGCMZT52EK2xqv9WVdL62cLns4XwV09eAuF5O3zKUwvNJzpxmM+atBSsQwaYD8/fciJRvAGkW3LXVpb5ybYtvHKyhDf1O11g=
+	t=1717186760; cv=none; b=Xe2r2Xd9Fd42Sf2gDFhwWs7MPWP5EnmZwRjkxJ7f2gJeM1ZHWOypkE9GYVD04TGwo/Wk6urrFe2CODRtvP3xzGcux+QUvDyNH+1X7biXAesgn5+NQl5wD1iC4XyjZMAiEoDC1LOfELRmlM5oMIQyQn4TIxlSRh/yXtqxo3Fv3wg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717186649; c=relaxed/simple;
-	bh=iVyxCBgipN1/l7WejKasNNtGtZFAr+TSGnaoUVmpVNs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Sy/jEZT2TX9DLldpr3PPakOIZL4rskASFcxyC51PTFY3MG5rHWjk9W3YTx4fYxUOkDcVd+PMa9/lrDgWI8Gjc4n8Lh8dbNHnqWH6xoKwRgD/q0hIpZHqFPFzOeL3M8MVCZ7usHDEhH9cB3t3PcHi9ZqxLh+SvWRQ3DxZa7ds4eY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=Bm1EuZZO; arc=none smtp.client-ip=199.89.1.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 009.lax.mailroute.net (Postfix) with ESMTP id 4VrZD072m3zlgMVh;
-	Fri, 31 May 2024 20:17:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1717186637; x=1719778638; bh=nyoplry9+EjDO2K6USEd2Rmd
-	/CvDvmtOGGC+SvSL3Us=; b=Bm1EuZZOMUY78J7D90y3QmF5AwTTPzO08TNIRZsU
-	JPjX01YaIBnUF/P2fd/HbwtSchjIbuulIRtLW3t5b1eit7uiP3a34HJyWwQicBi2
-	yBbyrYQeS1LfNKmODjarAJXTiN62ZdhZIgbEDHiPT43SDNUgMIVxTNDbfXgrDwrm
-	CedzA8QkuL1AGuDZkt88rUswzlzbAFv4ghEJcKyx+u4pOk6pZx1/EvGJt8YyW8eU
-	prrLFJFr8llhWgbHVduzXCxSLWtE5tLM8cvmWDHtHmzvw8F39OD228UECNj4SqzL
-	/+I3zSYFWGj3+2s3KdZ6smLZ01vCqyXMBqijt29cxM/X3w==
-X-Virus-Scanned: by MailRoute
-Received: from 009.lax.mailroute.net ([127.0.0.1])
- by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id sqvcXqvhu2j0; Fri, 31 May 2024 20:17:17 +0000 (UTC)
-Received: from [100.96.154.26] (unknown [104.132.0.90])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4VrZCx1Fg9zlgMVf;
-	Fri, 31 May 2024 20:17:16 +0000 (UTC)
-Message-ID: <c49fe0fa-9924-4ff8-9775-080b7b470d41@acm.org>
-Date: Fri, 31 May 2024 13:17:16 -0700
+	s=arc-20240116; t=1717186760; c=relaxed/simple;
+	bh=shft3RVwUwjo21em7Y9Em5jABEKo/Olm3NJpZmv8t2w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cP8njcf51gTDoeCzubcu/0woeaJKKQ8lOoNbO3+shziPa6Eq15Oc1Z+oZmb9hanRQz4ejmvUX7GbSfyqW8lw7MQ7NBqigUgHu1FsKflGaYdwr0pOVll5DVyAXYLWNpCFbSZoiuR3rejc9G+9KEmsOHHNxzAXcbiRTS3KnWnF8UM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=AHiGC7eu; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-702492172e3so959335b3a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 13:19:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1717186758; x=1717791558; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=qAGjhFHnXf9IpViW/yMwbiFI16GqjUPhP70I5dCooFE=;
+        b=AHiGC7euoV7P+iTbqWHS2nUYTzA6Fogz/HrYYUFYNjd98XC62IfTYzftwgtZwLQiit
+         kb0riIeBIA4timmDEpfpnDZS/DB2TVGU+Nq2L8LtVYxbQUVMUsmKvgvgWpDeZ1UnrQiy
+         QhMoxtulS/1Eejl+8n4aTVTap2IY0KLG+xj0jvI3NRGjsRIsfw9dBiCQ2mKpGvECYJCn
+         kne8FvUYsK8Iy6eYkeYhhuS6hAW1plMf/OGJMmR82pAl/uamNLm2QhjE62/8L36xRqIs
+         H1ev6akFVb+0trO2Mil/75cYHDlRGJlaHAGauhiB0vJ5gIGnwM8kduCzU4v97dujErYb
+         nKnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717186758; x=1717791558;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qAGjhFHnXf9IpViW/yMwbiFI16GqjUPhP70I5dCooFE=;
+        b=vxRFW8jdMFUI2y1DY1ZOw3AazMkgo6uxiRobhFkkBOd0hsm2sJk8RBCNA2OL0ECw6V
+         SIWgF9VLqEmT3Et+bXcz7ExVFcnbie5lyDqx13iS99rD9wnLHSuu6A1rTSp2awB90pVI
+         lVzIlD5a3eNxh4pc4kkPKAoNbUfTgXqxF0OD9pcqTECMdI8Zfrl047HIBlRHmWRZlRzU
+         1jNdlbmqReuOeAx17+FYfmK2vodv5TF2c1KvyS85SW3aLwVro1VOj3P6u0gsiD1oEFqG
+         b3zzTVHZB4e6MKn89EwJYm2bZag+h8c2cx+I93DicZjPYJkJ+ThI8wNZNTaFtPu8fO9S
+         5vqg==
+X-Forwarded-Encrypted: i=1; AJvYcCUp1SMsIWp0grTZYvnh0pS5ITmgpiSmtJobDpnuTTXuqFbGbN+sBM46gQ0Q0f1t7ztasSoSvmnb7JUl4DSUw3//p0O7PSuq4t+SUVsF
+X-Gm-Message-State: AOJu0Yy9rM0dlyVMxs7v1pMG5nt36q55R1YMmPTVhx+GfD4Om72TjFp2
+	YOzt7dLNAkOrmJVPx0LtIKV7a6IVLai11AKHWNkSjsqVP+bB5HNXrEDDuRLRca4=
+X-Google-Smtp-Source: AGHT+IGVzy3+vOIUubWLHwauUWb5Skr6TuZH88CsARiNo0nv/hRvULtFg2uHbqI0Wo/CnlmesOhwIw==
+X-Received: by 2002:a05:6a00:198d:b0:6f0:b53c:dfb4 with SMTP id d2e1a72fcca58-7024788e80bmr3955148b3a.22.1717186757959;
+        Fri, 31 May 2024 13:19:17 -0700 (PDT)
+Received: from ghost ([2601:647:5700:6860:4d3b:392b:5722:91c1])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70242c245absm1745251b3a.200.2024.05.31.13.19.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 May 2024 13:19:17 -0700 (PDT)
+Date: Fri, 31 May 2024 13:19:14 -0700
+From: Charlie Jenkins <charlie@rivosinc.com>
+To: Conor Dooley <conor@kernel.org>
+Cc: Jesse Taube <jesse@rivosinc.com>, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@rivosinc.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Masahiro Yamada <masahiroy@kernel.org>
+Subject: Re: [PATCH v0] RISC-V: Use Zkr to seed KASLR base address
+Message-ID: <ZlowwohstpT0sJVl@ghost>
+References: <20240531162327.2436962-1-jesse@rivosinc.com>
+ <20240531-uselessly-spied-262ecf44e694@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] ufs: mcq: Prevent no I/O queue case for MCQ
-To: Minwoo Im <minwoo.im@samsung.com>,
- "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K . Petersen" <martin.petersen@oracle.com>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>,
- gost.dev@samsung.com, linux-scsi@vger.kernel.org,
- linux-kernel@vger.kernel.org, Jeuk Kim <jeuk20.kim@samsung.com>
-References: <20240531103821.1583934-1-minwoo.im@samsung.com>
- <CGME20240531104948epcas2p1a70f31cd4a1aa5d36267b4187d75056b@epcas2p1.samsung.com>
- <20240531103821.1583934-4-minwoo.im@samsung.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20240531103821.1583934-4-minwoo.im@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240531-uselessly-spied-262ecf44e694@spud>
 
-On 5/31/24 03:38, Minwoo Im wrote:
-> If hba_maxq equals poll_queues, which means there are no I/O queues
-> (HCTX_TYPE_DEFAULT, HCTX_TYPE_READ), the very first hw queue will be
-> allocated as HCTX_TYPE_POLL and it will be used as the dev_cmd_queue.
-> In this case, device commands such as QUERY cannot be properly handled.
+On Fri, May 31, 2024 at 06:31:09PM +0100, Conor Dooley wrote:
+> On Fri, May 31, 2024 at 12:23:27PM -0400, Jesse Taube wrote:
+> > Dectect the Zkr extension and use it to seed the kernel base address.
+> > 
+> > Detection of the extension can not be done in the typical fashion, as
+> > this is very early in the boot process. Instead, add a trap handler
+> > and run it to see if the extension is present.
 > 
-> This patch prevents the initialization of MCQ when the number of I/O
-> queues is not set and only the number of POLL queues is set.
-> 
-> Signed-off-by: Minwoo Im <minwoo.im@samsung.com>
-> ---
->   drivers/ufs/core/ufs-mcq.c | 9 +++++++++
->   1 file changed, 9 insertions(+)
-> 
-> diff --git a/drivers/ufs/core/ufs-mcq.c b/drivers/ufs/core/ufs-mcq.c
-> index 46faa54aea94..4bcae410c268 100644
-> --- a/drivers/ufs/core/ufs-mcq.c
-> +++ b/drivers/ufs/core/ufs-mcq.c
-> @@ -179,6 +179,15 @@ static int ufshcd_mcq_config_nr_queues(struct ufs_hba *hba)
->   		return -EOPNOTSUPP;
->   	}
->   
-> +	/*
-> +	 * Device should support at least one I/O queue to handle device
-> +	 * commands via hba->dev_cmd_queue.
-> +	 */
-> +	if (hba_maxq == poll_queues) {
-> +		dev_err(hba->dev, "At least one non-poll queue required\n");
-> +		return -EOPNOTSUPP;
-> +	}
-> +
->   	rem = hba_maxq;
->   
->   	if (rw_queues) {
+> You can't rely on the lack of a trap meaning that Zkr is present unless
+> you know that the platform implements Ssstrict. The CSR with that number
+> could do anything if not Ssstrict compliant, so this approach gets a
+> nak from me. Unfortunately, Ssstrict doesn't provide a way to detect
+> it, so you're stuck with getting that information from firmware.
 
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+The Scalar Cryptography v1.0.1 spec says "If Zkr is not implemented, the
+[s,u]seed bits must be hardwired to zero". It also says "Without the
+corresponding access control bit set to 1, any attempted access to seed
+from U, S, or HS modes will raise an illegal instruction exception."
+
+There is a slight nuance here as the definition of Ssstrict is:
+
+"No non-conforming extensions are present. Attempts to execute
+unimplemented opcodes or access unimplemented CSRs in the standard or
+reserved encoding spaces raises an illegal instruction exception that
+results in a contained trap to the supervisor-mode trap handler."
+
+The trap that Jesse is relying on in the code here is related to access
+bits and not related to the CSR being unimplemented. Since the access
+bits are required to be 0 on an implementation without Zkr, it is
+required to trap if seed is accessed, regardless of Ssstrict.
+
+The situation here is slightly odd because the spec is defining behavior
+for what to do if the extension is not supported, and requires
+implementations to follow this aspect of the Scalar Cryptography spec
+even though they may not implement any of the instructions in the spec.
+
+> 
+> For DT systems, you can actually parse the DT in the pi, we do it to get
+> the kaslr seed if present, so you can actually check for Zkr. With ACPI
+> I have no idea how you can get that information, I amn't an ACPI-ist.
+
+It is feasible to check if Zkr is present in the device tree at this
+stage in boot, but at first glance does not seem feasible to read the
+ACPI tables this early.
+
+The CSR being read is just for entropy so even if the seed CSR doesn't
+trap and provides an arbitrary value on an implementation that does not
+support Zkr, it can still be used as a source of entropy. If the
+implementation does trap, the entropy will be set to 0 which is just a
+different hard-coded arbitrary value. 
+
+- Charlie
+
+> 
+> Thanks,
+> Conor.
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
+
 
