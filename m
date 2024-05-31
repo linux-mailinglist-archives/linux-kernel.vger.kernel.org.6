@@ -1,237 +1,122 @@
-Return-Path: <linux-kernel+bounces-196391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D5518D5B28
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 09:04:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB4218D5B2D
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 09:05:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0312FB26D42
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 07:04:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7AB4A1F25A9C
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 07:05:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 482DB80C15;
-	Fri, 31 May 2024 07:04:29 +0000 (UTC)
-Received: from mx1.zhaoxin.com (MX1.ZHAOXIN.COM [210.0.225.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C44AB8120D;
+	Fri, 31 May 2024 07:05:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="aZvgQmTP"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A822217E9
-	for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 07:04:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.0.225.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02BAF17E9;
+	Fri, 31 May 2024 07:05:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717139068; cv=none; b=qaK9sgGK/UsPsBQ0ktOdheWFzyVPb3O55rgERlWGWJL0K0nzdInEvpcMuF0OIKPtkNY5JQk7BxjPNX5x9NqXziDejNUshXvfmFMzcOee2SwWZdbFarYILgiS5MdQ126+4EvNhyzVF1AuqY2BQniGdvQFPGNHyIzoDjn9/OAjRmA=
+	t=1717139149; cv=none; b=azpk618AlZqSdO/elRmJDAb5xCb7+xYabNpsyivgY8H+lmIpqyP7wRaggwSXTNC6TusBt0eoMO1glZ/G7VaZInhPty8To4xKVI+xTrSw8xMzx5Ek7sy7U98LK0ZUgs09SNtfCFXxvewQAHRdy6LSPJp6ByZN1RqmORUKqhDgX1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717139068; c=relaxed/simple;
-	bh=lcn/WRn4tuYxb3wZ5bV1UpkIeHIxRpNeQzxNuetkF6Q=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=nKSPwHiz8Q9HUAbJxXEV3Zz/iQi89Gp5G77yP9weXtC7R5ux6s1BXtX0CG7wx+r8To0D38bNOw5dr3tHy6QFKyoL4dLpANBHonBbZKDT095Znb9UrLj/at6tvFtnJATgYrvMAvUM6KdsjorxNeCgZMT4cZ4eva2GsfB/0YcIRck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com; spf=pass smtp.mailfrom=zhaoxin.com; arc=none smtp.client-ip=210.0.225.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zhaoxin.com
-X-ASG-Debug-ID: 1717139062-086e23110716a50001-xx1T2L
-Received: from ZXSHMBX3.zhaoxin.com (ZXSHMBX3.zhaoxin.com [10.28.252.165]) by mx1.zhaoxin.com with ESMTP id TOX1gDREyvcukL0n (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO); Fri, 31 May 2024 15:04:22 +0800 (CST)
-X-Barracuda-Envelope-From: LindaChai@zhaoxin.com
-X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.165
-Received: from zxbjmbx1.zhaoxin.com (10.29.252.163) by ZXSHMBX3.zhaoxin.com
- (10.28.252.165) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Fri, 31 May
- 2024 15:04:21 +0800
-Received: from zxbjmbx1.zhaoxin.com (10.29.252.163) by zxbjmbx1.zhaoxin.com
- (10.29.252.163) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Fri, 31 May
- 2024 15:04:21 +0800
-X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.165
-Received: from zxbjmbx1.zhaoxin.com ([::1]) by zxbjmbx1.zhaoxin.com
- ([fe80::b125:97ff:1c5d:c6ca%3]) with mapi id 15.01.2507.027; Fri, 31 May 2024
- 15:04:21 +0800
-X-Barracuda-RBL-Trusted-Forwarder: 10.29.252.163
-From: "Linda Chai(BJ-RD)" <LindaChai@zhaoxin.com>
-To: "ricardo.neri-calderon@linux.intel.com"
-	<ricardo.neri-calderon@linux.intel.com>
-CC: "Cobe Chen(BJ-RD)" <CobeChen@zhaoxin.com>, LeoLiu-oc
-	<LeoLiu-oc@zhaoxin.com>, "Linda Chai(BJ-RD)" <LindaChai@zhaoxin.com>, "Tim
- Guo(BJ-RD)" <TimGuo@zhaoxin.com>, Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>,
-	"acpica-devel@lists.linux.dev" <acpica-devel@lists.linux.dev>, "bp@alien8.de"
-	<bp@alien8.de>, "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"hpa@zytor.com" <hpa@zytor.com>, "j.granados@samsung.com"
-	<j.granados@samsung.com>, "lenb@kernel.org" <lenb@kernel.org>,
-	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "mcgrof@kernel.org"
-	<mcgrof@kernel.org>, "mingo@redhat.com" <mingo@redhat.com>,
-	"peterz@infradead.org" <peterz@infradead.org>, "rafael@kernel.org"
-	<rafael@kernel.org>, "robert.moore@intel.com" <robert.moore@intel.com>,
-	"tglx@linutronix.de" <tglx@linutronix.de>, "viresh.kumar@linaro.org"
-	<viresh.kumar@linaro.org>, "x86@kernel.org" <x86@kernel.org>
-Subject: Re: [PATCH 3/3] ACPI: cpufreq: Add ITMT support when CPPC enabled for
- Zhaoxin CPUs
-Thread-Topic: Re: [PATCH 3/3] ACPI: cpufreq: Add ITMT support when CPPC
- enabled for Zhaoxin CPUs
-X-ASG-Orig-Subj: Re: [PATCH 3/3] ACPI: cpufreq: Add ITMT support when CPPC enabled for
- Zhaoxin CPUs
-Thread-Index: AdqzKGx5se4bWMonTx2xsC8Nn5RcCA==
-Date: Fri, 31 May 2024 07:04:21 +0000
-Message-ID: <48a2010eaf4e4eb9963117724ea93d61@zhaoxin.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1717139149; c=relaxed/simple;
+	bh=0XK0C55EsMsjaft8p7TPB4SKJqrAJ7KdyEueOggJfd4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FPHB8MMH+EQk3wdily91k436f7JlOSES2M+vIbW4W40/RwmBeG4gZtDuSRZpxSq+M533ko4WIo7MXAacxWc46Xz1OZ+m1bMF/Ld39Rq5RMNqBtTPVP5s2WdNBI0GDHh5v70mV1i2WOkWMPwPg0UZ5PxnqNyndLJ4Koip6EZKvro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=aZvgQmTP; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1717139147; x=1748675147;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=0XK0C55EsMsjaft8p7TPB4SKJqrAJ7KdyEueOggJfd4=;
+  b=aZvgQmTPPIExpgwagTxtmTXo9qCkjEui1ePhO3Y9zmGvoPdDItxLYDv+
+   6hwZtmqfxKdpuY4WKLfJf92Rav7Y+mIuX6ZDts+BHzkiRFwCb4ywYabd4
+   vQW/kXyP7nGWlUl9r1jK0dnDTQ6EiVPGaZwp6AMtn9vzmsYoa+HziJ+hm
+   WwbMac6AjSz8/Kc9BWVSxtjlDidQEIHp0jI0vfptEcEfO8JaXxjx+eha2
+   l3Sp8Ch/K7OKK5YnuN4/lj8B0SmHoslLmHkz9TcZPEdvoUvJSpATlc44n
+   OR8YZHA6lWL5OZgmOY4KmsYqZEQ4d+HUU2O4WusSBaA2+EP7iMasZLaJG
+   g==;
+X-CSE-ConnectionGUID: wTY4LIfiQwGiNFVRU5C2dQ==
+X-CSE-MsgGUID: ktTwT2CdTAmqTCWLpjIYUg==
+X-IronPort-AV: E=Sophos;i="6.08,203,1712646000"; 
+   d="scan'208";a="26795678"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 31 May 2024 00:05:44 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Fri, 31 May 2024 00:05:20 -0700
+Received: from wendy.microchip.com (10.10.85.11) by chn-vm-ex02.mchp-main.com
+ (10.10.85.144) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Fri, 31 May 2024 00:05:18 -0700
+From: Conor Dooley <conor.dooley@microchip.com>
+To: <linux-usb@vger.kernel.org>
+CC: <conor@kernel.org>, <conor.dooley@microchip.com>, Daire McNamara
+	<daire.mcnamara@microchip.com>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, Rob Herring <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzysztof.kozlowski+dt@linaro.org>, Bin Liu <b-liu@ti.com>,
+	<linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH v1 0/2] external ulpi vbus control
+Date: Fri, 31 May 2024 08:04:30 +0100
+Message-ID: <20240531-citable-copier-188d32c108ff@wendy>
+X-Mailer: git-send-email 2.43.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Barracuda-Connect: ZXSHMBX3.zhaoxin.com[10.28.252.165]
-X-Barracuda-Start-Time: 1717139062
-X-Barracuda-Encrypted: ECDHE-RSA-AES128-GCM-SHA256
-X-Barracuda-URL: https://10.28.252.35:4443/cgi-mod/mark.cgi
-X-Virus-Scanned: by bsmtpd at zhaoxin.com
-X-Barracuda-Scan-Msg-Size: 7590
-X-Barracuda-BRTS-Status: 1
-X-Barracuda-Bayes: INNOCENT GLOBAL 0.0000 1.0000 -2.0210
-X-Barracuda-Spam-Score: -2.00
-X-Barracuda-Spam-Status: No, SCORE=-2.00 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=THREAD_INDEX, THREAD_TOPIC
-X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.125586
-	Rule breakdown below
-	 pts rule name              description
-	---- ---------------------- --------------------------------------------------
-	0.01 THREAD_INDEX           thread-index: AcO7Y8iR61tzADqsRmmc5wNiFHEOig==
-	0.01 THREAD_TOPIC           Thread-Topic: ...(Japanese Subject)...
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1688; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=0XK0C55EsMsjaft8p7TPB4SKJqrAJ7KdyEueOggJfd4=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDGmRZbVzm8UKLF4Whm/Y9qlBWsV5m9IJB+Ut66YYHZR8kHxP fgJnRykLgxgHg6yYIkvi7b4WqfV/XHY497yFmcPKBDKEgYtTACYi0svIMKl3WfyST9tOLQ5uuvhxiq 50sTRLWLt5+KeDvfH6dtnl1xgZ+gzecoold9/138Uo9byyJEE8pvTDacmMi+6zX6zwS13KDwA=
+X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-SGkgLFJpY2FyZG8NCkFib3V0IHRoaXMgaXRtdCBkdW1wbGljYXRlZCBjb2RlIGluIGludGVsLXBz
-dGF0ZSBhbmQgYWNwaS1jcHVmcmVxIGRyaXZlcjsNCmhvdyBhYm91dCB3ZSBwdXQgdGhlc2UgY29t
-bW9uIGNvZGVzIGluIGFyY2gveDg2L2tlcm5lbC9pdG10LmM/DQppbiBpbnRlbC1wc3RhdGUvYWNw
-aS1jcHVmcmVxIGRyaXZlciwgaXQgb25seSBnZXQgaGlnaGVzdCBmcmVxdWVuY3kgdGhyb3VnaCBj
-cHBjIGludGVyZmFjZSBhbmQgY2FsbCBzY2hlZF9zZXRfaXRtdF9jb3JlX3ByaW8gcHJvdmlkZWQg
-YnkgaXRtdC5jOw0KICAgIGluIHRoZSBzY2hlZF9zZXRfaXRtdF9jb3JlX3ByaW8sIGRvIHRoZXNl
-IGZvbGxvd2luZyB3b3JrczoNCjEpIHNldCBjb3JlIHByaW9ydHkgYWNjb3JkaW5nIHRvIHRoZSBo
-aWdoZXN0IGZyZXF1ZW5jeTsNCjIpIGNoZWNrIHdoZXRoZXIgY29yZXPigJloaWdoZXN0IGZyZXF1
-ZW5jaWVzIGFyZSBkaWZmZXJlbnQsIGlmIHllcywgc2V0IGl0bXQgY2FwYWJsZSAmIGVuYWJsZTsN
-CjMpIGNoZWNrIHdoZXRoZXIgYWxsIG9ubGluZSBjb3JlcyBoYXZlIHVwZGF0ZWQgY29yZSBwcmlv
-cml0eSwgd2hpY2ggZ3VhcmFudGVlIHJlYnVpbGRfc2NoZWRfZG9tYWlucyB3aWxsIGdldCB0aGUg
-Y29ycmVjdCBwcmlvcml0eSBpbmZvIGZvciBlYWNoIG9ubGluZSBjb3JlOw0KDQpGb2xsb3dpbmcg
-dGhpcyBydWxlLCB0aGUgcGF0Y2ggbG9va3MgbGlrZSB0aGlzOg0KZGlmZiAtLWdpdCBhL2FyY2gv
-eDg2L2tlcm5lbC9pdG10LmMgYi9hcmNoL3g4Ni9rZXJuZWwvaXRtdC5jDQppbmRleCA5YTdjMDNk
-NDc4NjEuLmViMjRkZjI4MjZiYyAxMDA2NDQNCi0tLSBhL2FyY2gveDg2L2tlcm5lbC9pdG10LmMN
-CisrKyBiL2FyY2gveDg2L2tlcm5lbC9pdG10LmMNCkBAIC0yMiw2ICsyMiw3IEBADQojaW5jbHVk
-ZSA8bGludXgvbXV0ZXguaD4NCiNpbmNsdWRlIDxsaW51eC9zeXNjdGwuaD4NCiNpbmNsdWRlIDxs
-aW51eC9ub2RlbWFzay5oPg0KKyNpbmNsdWRlIDxsaW51eC9pdG10Lmg+DQoNCiBzdGF0aWMgREVG
-SU5FX01VVEVYKGl0bXRfdXBkYXRlX211dGV4KTsNCkRFRklORV9QRVJfQ1BVX1JFQURfTU9TVExZ
-KGludCwgc2NoZWRfY29yZV9wcmlvcml0eSk7DQpAQCAtMTYyLDYgKzE2MywxMyBAQCBpbnQgYXJj
-aF9hc3ltX2NwdV9wcmlvcml0eShpbnQgY3B1KQ0KICAgICByZXR1cm4gcGVyX2NwdShzY2hlZF9j
-b3JlX3ByaW9yaXR5LCBjcHUpOw0KfQ0KDQorLyogVGhlIHdvcmsgaXRlbSBpcyBuZWVkZWQgdG8g
-YXZvaWQgQ1BVIGhvdHBsdWcgbG9ja2luZyBpc3N1ZXMgKi8NCitzdGF0aWMgdm9pZCBzY2hlZF9p
-dG10X3dvcmtfZm4oc3RydWN0IHdvcmtfc3RydWN0ICp3b3JrKQ0KK3sNCisgICAgIHNjaGVkX3Nl
-dF9pdG10X3N1cHBvcnQoKTsNCit9DQorc3RhdGljIERFQ0xBUkVfV09SSyhzY2hlZF9pdG10X3dv
-cmssIHNjaGVkX2l0bXRfd29ya19mbik7DQorDQovKioNCiAgKiBzY2hlZF9zZXRfaXRtdF9jb3Jl
-X3ByaW8oKSAtIFNldCBDUFUgcHJpb3JpdHkgYmFzZWQgb24gSVRNVA0KICAqIEBwcmlvOiAgICAg
-UHJpb3JpdHkgb2YgQGNwdQ0KQEAgLTE3Niw3ICsxODQsMzYgQEAgaW50IGFyY2hfYXN5bV9jcHVf
-cHJpb3JpdHkoaW50IGNwdSkNCiAgKiB0aGUgQ1BVIHByaW9yaXRpZXMuIFRoZSBzY2hlZCBkb21h
-aW5zIGhhdmUgbm8NCiAgKiBkZXBlbmRlbmN5IG9uIENQVSBwcmlvcml0aWVzLg0KICAqLw0KKw0K
-K3N0YXRpYyB1NjQgbWF4X2hpZ2hlc3RfcHJpbyA9IDAsIG1pbl9oaWdoZXN0X3ByaW8gPSBVNjRf
-TUFYOw0KK3N0YXRpYyBib29sIGNvcmVfcHJpb3JpdHlfZGlmZj1mYWxzZTsNCitzdGF0aWMgc3Ry
-dWN0IGNwdW1hc2sgY29yZV9wcmlvX2NwdW1hc2s7DQp2b2lkIHNjaGVkX3NldF9pdG10X2NvcmVf
-cHJpbyhpbnQgcHJpbywgaW50IGNwdSkNCnsNCiAgICAgcGVyX2NwdShzY2hlZF9jb3JlX3ByaW9y
-aXR5LCBjcHUpID0gcHJpbzsNCisgICAgIGNwdW1hc2tfc2V0X2NwdShjcHUsICZjb3JlX3ByaW9f
-Y3B1bWFzayk7DQorDQorICAgICBpZiAobWF4X2hpZ2hlc3RfcHJpbyA8PSBtaW5faGlnaGVzdF9w
-cmlvKQ0KKyAgICAgew0KKyAgICAgICAgICAgIGlmIChwcmlvID4gbWF4X2hpZ2hlc3RfcHJpbykN
-CisgICAgICAgICAgICAgICAgICAgbWF4X2hpZ2hlc3RfcHJpbyA9IHByaW87DQorDQorICAgICAg
-ICAgICAgaWYgKHByaW8gPCBtaW5faGlnaGVzdF9wcmlvKQ0KKyAgICAgICAgICAgICAgICAgICBt
-aW5faGlnaGVzdF9wcmlvID0gcHJpbzsNCisNCisgICAgICAgICAgICBpZiAobWF4X2hpZ2hlc3Rf
-cHJpbyA+IG1pbl9oaWdoZXN0X3ByaW8pDQorICAgICAgICAgICAgICAgICAgIGNvcmVfcHJpb3Jp
-dHlfZGlmZiA9IHRydWU7DQorICAgICB9DQorDQorICAgICBpZiAoY29yZV9wcmlvcml0eV9kaWZm
-ICYmIGNwdW1hc2tfZXF1YWwoJmNvcmVfcHJpb19jcHVtYXNrLCBjcHVfb25saW5lX21hc2spKQ0K
-KyAgICAgew0KKyAgICAgICAgICAgIC8qDQorICAgICAgICAgICAgKiBUaGlzIGNvZGUgIGNhbiBi
-ZSBydW4gZHVyaW5nIENQVSBvbmxpbmUgdW5kZXIgdGhlIENQVSBob3RwbHVnIGxvY2tzLA0KKyAg
-ICAgICAgICAgICogc28gc2NoZWRfc2V0X2l0bXQgY2Fubm90IGJlIGNhbGxlZCBmcm9tIGhlcmUu
-DQorICAgICAgICAgICAgKiBxdWV1ZSBhIHdvcmsgaXRlbSB0byBpbnZva2UgaXQNCisgICAgICAg
-ICAgICAqLw0KKyAgICAgICAgICAgIHByX2RlYnVnKCJxdWV1ZSBhIHdvcmsgdG8gc2V0IGl0bXQg
-c3VwcG9ydCBhbmQgZW5hYmxlXG4iKTsNCisgICAgICAgICAgICBzY2hlZHVsZV93b3JrKCZzY2hl
-ZF9pdG10X3dvcmspOw0KKyAgICAgfQ0KKw0KfQ0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvY3B1ZnJl
-cS9hY3BpLWNwdWZyZXEuYyBiL2RyaXZlcnMvY3B1ZnJlcS9hY3BpLWNwdWZyZXEuYw0KaW5kZXgg
-MzdmMWNkZjQ2ZDI5Li4zZTVlMGY2NmIyZWQgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL2NwdWZyZXEv
-YWNwaS1jcHVmcmVxLmMNCisrKyBiL2RyaXZlcnMvY3B1ZnJlcS9hY3BpLWNwdWZyZXEuYw0KQEAg
-LTMwLDYgKzMwLDcgQEANCiNpbmNsdWRlIDxhY3BpL3Byb2Nlc3Nvci5oPg0KI2luY2x1ZGUgPGFj
-cGkvY3BwY19hY3BpLmg+DQoNCisjaW5jbHVkZSA8bGludXgvaXRtdC5oPg0KI2luY2x1ZGUgPGFz
-bS9tc3IuaD4NCiNpbmNsdWRlIDxhc20vcHJvY2Vzc29yLmg+DQojaW5jbHVkZSA8YXNtL2NwdWZl
-YXR1cmUuaD4NCkBAIC02NjMsOCArNjY0LDE3IEBAIHN0YXRpYyB1NjQgZ2V0X21heF9ib29zdF9y
-YXRpbyh1bnNpZ25lZCBpbnQgY3B1KQ0KDQogICAgICByZXR1cm4gZGl2X3U2NChoaWdoZXN0X3Bl
-cmYgPDwgU0NIRURfQ0FQQUNJVFlfU0hJRlQsIG5vbWluYWxfcGVyZik7DQp9DQorDQorc3RhdGlj
-IHZvaWQgY29yZV9zZXRfaXRtdF9wcmlvKGludCBjcHUpDQorew0KKyAgICAgdTY0IGhpZ2hlc3Rf
-cGVyZjsNCisgICAgIGNwcGNfZ2V0X2hpZ2hlc3RfcGVyZihjcHUsICZoaWdoZXN0X3BlcmYpOw0K
-KyAgICAgc2NoZWRfc2V0X2l0bXRfY29yZV9wcmlvKGhpZ2hlc3RfcGVyZiwgY3B1KTsNCit9DQor
-DQojZWxzZQ0Kc3RhdGljIGlubGluZSB1NjQgZ2V0X21heF9ib29zdF9yYXRpbyh1bnNpZ25lZCBp
-bnQgY3B1KSB7IHJldHVybiAwOyB9DQorc3RhdGljIHZvaWQgY29yZV9zZXRfaXRtdF9wcmlvKGlu
-dCBjcHUpIHt9DQojZW5kaWYNCg0KIHN0YXRpYyBpbnQgYWNwaV9jcHVmcmVxX2NwdV9pbml0KHN0
-cnVjdCBjcHVmcmVxX3BvbGljeSAqcG9saWN5KQ0KQEAgLTY3Nyw3ICs2ODcsNyBAQCBzdGF0aWMg
-aW50IGFjcGlfY3B1ZnJlcV9jcHVfaW5pdChzdHJ1Y3QgY3B1ZnJlcV9wb2xpY3kgKnBvbGljeSkN
-CiAgICAgdW5zaWduZWQgaW50IHZhbGlkX3N0YXRlcyA9IDA7DQogICAgIHVuc2lnbmVkIGludCBy
-ZXN1bHQgPSAwOw0KICAgICB1NjQgbWF4X2Jvb3N0X3JhdGlvOw0KLSAgICAgdW5zaWduZWQgaW50
-IGk7DQorICAgICB1bnNpZ25lZCBpbnQgaSxqOw0KI2lmZGVmIENPTkZJR19TTVANCiAgICAgc3Rh
-dGljIGludCBibGFja2xpc3RlZDsNCiNlbmRpZg0KQEAgLTc0MSw2ICs3NTEsMTAgQEAgc3RhdGlj
-IGludCBhY3BpX2NwdWZyZXFfY3B1X2luaXQoc3RydWN0IGNwdWZyZXFfcG9saWN5ICpwb2xpY3kp
-DQogICAgICAgICAgICBwcl9pbmZvX29uY2UoIm92ZXJyaWRpbmcgQklPUyBwcm92aWRlZCBfUFNE
-IGRhdGFcbiIpOw0KICAgICB9DQojZW5kaWYNCisgICAgIGZvcl9lYWNoX2NwdShqLHBvbGljeS0+
-Y3B1cykNCisgICAgIHsNCisgICAgICAgICAgICBjb3JlX3NldF9pdG10X3ByaW8oaik7DQorICAg
-ICB9DQoNCiAgICAgIC8qIGNhcGFiaWxpdHkgY2hlY2sgKi8NCiAgICAgaWYgKHBlcmYtPnN0YXRl
-X2NvdW50IDw9IDEpIHsNCmRpZmYgLS1naXQgYS9kcml2ZXJzL2NwdWZyZXEvaW50ZWxfcHN0YXRl
-LmMgYi9kcml2ZXJzL2NwdWZyZXEvaW50ZWxfcHN0YXRlLmMNCmluZGV4IGRiYmYyOTlmNDIxOS4u
-NGIwNGU2ZGI5ZDViIDEwMDY0NA0KLS0tIGEvZHJpdmVycy9jcHVmcmVxL2ludGVsX3BzdGF0ZS5j
-DQorKysgYi9kcml2ZXJzL2NwdWZyZXEvaW50ZWxfcHN0YXRlLmMNCkBAIC0yNyw2ICsyNyw3IEBA
-DQojaW5jbHVkZSA8bGludXgvcG1fcW9zLmg+DQojaW5jbHVkZSA8bGludXgvYml0ZmllbGQuaD4N
-CiNpbmNsdWRlIDx0cmFjZS9ldmVudHMvcG93ZXIuaD4NCisjaW5jbHVkZSA8bGludXgvaXRtdC5o
-Pg0KDQogI2luY2x1ZGUgPGFzbS9jcHUuaD4NCiNpbmNsdWRlIDxhc20vZGl2NjQuaD4NCkBAIC0z
-NDAsMjMgKzM0MSwxNCBAQCBzdGF0aWMgYm9vbCBpbnRlbF9wc3RhdGVfZ2V0X3BwY19lbmFibGVf
-c3RhdHVzKHZvaWQpDQoNCiAjaWZkZWYgQ09ORklHX0FDUElfQ1BQQ19MSUINCg0KLS8qIFRoZSB3
-b3JrIGl0ZW0gaXMgbmVlZGVkIHRvIGF2b2lkIENQVSBob3RwbHVnIGxvY2tpbmcgaXNzdWVzICov
-DQotc3RhdGljIHZvaWQgaW50ZWxfcHN0c3RlX3NjaGVkX2l0bXRfd29ya19mbihzdHJ1Y3Qgd29y
-a19zdHJ1Y3QgKndvcmspDQotew0KLSAgICAgc2NoZWRfc2V0X2l0bXRfc3VwcG9ydCgpOw0KLX0N
-Ci0NCi1zdGF0aWMgREVDTEFSRV9XT1JLKHNjaGVkX2l0bXRfd29yaywgaW50ZWxfcHN0c3RlX3Nj
-aGVkX2l0bXRfd29ya19mbik7DQotDQojZGVmaW5lIENQUENfTUFYX1BFUkYgIFU4X01BWA0KDQog
-c3RhdGljIHZvaWQgaW50ZWxfcHN0YXRlX3NldF9pdG10X3ByaW8oaW50IGNwdSkNCnsNCi0gICAg
-IHN0cnVjdCBjcHBjX3BlcmZfY2FwcyBjcHBjX3BlcmY7DQotICAgICBzdGF0aWMgdTMyIG1heF9o
-aWdoZXN0X3BlcmYgPSAwLCBtaW5faGlnaGVzdF9wZXJmID0gVTMyX01BWDsNCisgICAgIHU2NCBo
-aWdoZXN0X3BlcmY7DQogICAgIGludCByZXQ7DQoNCi0gICAgIHJldCA9IGNwcGNfZ2V0X3BlcmZf
-Y2FwcyhjcHUsICZjcHBjX3BlcmYpOw0KKyAgICAgcmV0ID0gY3BwY19nZXRfaGlnaGVzdF9wZXJm
-KGNwdSwmaGlnaGVzdF9wZXJmKTsNCiAgICAgaWYgKHJldCkNCiAgICAgICAgICAgIHJldHVybjsN
-Cg0KQEAgLTM2NSwzMyArMzU3LDE1IEBAIHN0YXRpYyB2b2lkIGludGVsX3BzdGF0ZV9zZXRfaXRt
-dF9wcmlvKGludCBjcHUpDQogICAgICAqIEluIHRoaXMgY2FzZSB3ZSBjYW4ndCB1c2UgQ1BQQy5o
-aWdoZXN0X3BlcmYgdG8gZW5hYmxlIElUTVQuDQogICAgICAqIEluIHRoaXMgY2FzZSB3ZSBjYW4g
-bG9vayBhdCBNU1JfSFdQX0NBUEFCSUxJVElFUyBiaXRzIFs4OjBdIHRvIGRlY2lkZS4NCiAgICAg
-ICovDQotICAgICBpZiAoY3BwY19wZXJmLmhpZ2hlc3RfcGVyZiA9PSBDUFBDX01BWF9QRVJGKQ0K
-LSAgICAgICAgICAgIGNwcGNfcGVyZi5oaWdoZXN0X3BlcmYgPSBIV1BfSElHSEVTVF9QRVJGKFJF
-QURfT05DRShhbGxfY3B1X2RhdGFbY3B1XS0+aHdwX2NhcF9jYWNoZWQpKTsNCisgICAgIGlmICho
-aWdoZXN0X3BlcmYgPT0gQ1BQQ19NQVhfUEVSRikNCisgICAgICAgICAgICBoaWdoZXN0X3BlcmYg
-PSBIV1BfSElHSEVTVF9QRVJGKFJFQURfT05DRShhbGxfY3B1X2RhdGFbY3B1XS0+aHdwX2NhcF9j
-YWNoZWQpKTsNCg0KICAgICAgLyoNCiAgICAgICogVGhlIHByaW9yaXRpZXMgY2FuIGJlIHNldCBy
-ZWdhcmRsZXNzIG9mIHdoZXRoZXIgb3Igbm90DQogICAgICAqIHNjaGVkX3NldF9pdG10X3N1cHBv
-cnQodHJ1ZSkgaGFzIGJlZW4gY2FsbGVkIGFuZCBpdCBpcyB2YWxpZCB0bw0KICAgICAgKiB1cGRh
-dGUgdGhlbSBhdCBhbnkgdGltZSBhZnRlciBpdCBoYXMgYmVlbiBjYWxsZWQuDQogICAgICAqLw0K
-LSAgICAgc2NoZWRfc2V0X2l0bXRfY29yZV9wcmlvKGNwcGNfcGVyZi5oaWdoZXN0X3BlcmYsIGNw
-dSk7DQotDQotICAgICBpZiAobWF4X2hpZ2hlc3RfcGVyZiA8PSBtaW5faGlnaGVzdF9wZXJmKSB7
-DQotICAgICAgICAgICAgaWYgKGNwcGNfcGVyZi5oaWdoZXN0X3BlcmYgPiBtYXhfaGlnaGVzdF9w
-ZXJmKQ0KLSAgICAgICAgICAgICAgICAgICBtYXhfaGlnaGVzdF9wZXJmID0gY3BwY19wZXJmLmhp
-Z2hlc3RfcGVyZjsNCi0NCi0gICAgICAgICAgICBpZiAoY3BwY19wZXJmLmhpZ2hlc3RfcGVyZiA8
-IG1pbl9oaWdoZXN0X3BlcmYpDQotICAgICAgICAgICAgICAgICAgIG1pbl9oaWdoZXN0X3BlcmYg
-PSBjcHBjX3BlcmYuaGlnaGVzdF9wZXJmOw0KLQ0KLSAgICAgICAgICAgIGlmIChtYXhfaGlnaGVz
-dF9wZXJmID4gbWluX2hpZ2hlc3RfcGVyZikgew0KLSAgICAgICAgICAgICAgICAgICAvKg0KLSAg
-ICAgICAgICAgICAgICAgICAqIFRoaXMgY29kZSBjYW4gYmUgcnVuIGR1cmluZyBDUFUgb25saW5l
-IHVuZGVyIHRoZQ0KLSAgICAgICAgICAgICAgICAgICAqIENQVSBob3RwbHVnIGxvY2tzLCBzbyBz
-Y2hlZF9zZXRfaXRtdF9zdXBwb3J0KCkNCi0gICAgICAgICAgICAgICAgICAgKiBjYW5ub3QgYmUg
-Y2FsbGVkIGZyb20gaGVyZS4gIFF1ZXVlIHVwIGEgd29yayBpdGVtDQotICAgICAgICAgICAgICAg
-ICAgICogdG8gaW52b2tlIGl0Lg0KLSAgICAgICAgICAgICAgICAgICAqLw0KLSAgICAgICAgICAg
-ICAgICAgICBzY2hlZHVsZV93b3JrKCZzY2hlZF9pdG10X3dvcmspOw0KLSAgICAgICAgICAgIH0N
-Ci0gICAgIH0NCisgICAgIHNjaGVkX3NldF9pdG10X2NvcmVfcHJpbyhoaWdoZXN0X3BlcmYsIGNw
-dSk7DQp9DQoNCiBzdGF0aWMgaW50IGludGVsX3BzdGF0ZV9nZXRfY3BwY19ndWFyYW50ZWVkKGlu
-dCBjcHUpDQpUaGFua3MNCkxpbmRhDQoNCg0KDQrkv53lr4blo7DmmI7vvJoNCuacrOmCruS7tuWQ
-q+acieS/neWvhuaIluS4k+acieS/oeaBr++8jOS7heS+m+aMh+WumuaUtuS7tuS6uuS9v+eUqOOA
-guS4peemgeWvueacrOmCruS7tuaIluWFtuWGheWuueWBmuS7u+S9leacque7j+aOiOadg+eahOaf
-pemYheOAgeS9v+eUqOOAgeWkjeWItuaIlui9rOWPkeOAgg0KQ09ORklERU5USUFMIE5PVEU6DQpU
-aGlzIGVtYWlsIGNvbnRhaW5zIGNvbmZpZGVudGlhbCBvciBsZWdhbGx5IHByaXZpbGVnZWQgaW5m
-b3JtYXRpb24gYW5kIGlzIGZvciB0aGUgc29sZSB1c2Ugb2YgaXRzIGludGVuZGVkIHJlY2lwaWVu
-dC4gQW55IHVuYXV0aG9yaXplZCByZXZpZXcsIHVzZSwgY29weWluZyBvciBmb3J3YXJkaW5nIG9m
-IHRoaXMgZW1haWwgb3IgdGhlIGNvbnRlbnQgb2YgdGhpcyBlbWFpbCBpcyBzdHJpY3RseSBwcm9o
-aWJpdGVkLg0K
+A customer sent me a patch adding a dt property to enable external vbus
+control as their phy didn't support it*. I was surprised to see that none
+of the other musb drivers made any use of this, but there is handling
+in the musb core for it - made me feel like I was missing something as
+to why it was not used by other drivers.
+
+I've vendor prefixed the property for now, but I figure there may well
+be a bunch of other potential users since this isn't just an musb thing,
+given that there's a snps,ulpi-ext-vbus-drv used by an xHCI IP.
+
+This is my third attempt to send these patches. I cannot find them on
+lore from either of my previous attempts, so I'm gonna treat this as
+v1. I think must've tried to send it from my kernel.org account from
+Microchip's corp network and that failed. Either way, apologies if this
+is #3 you've got from me..
+
+* they didn't want to be identified, but said it was okay to post.
+
+CC: Conor Dooley <conor.dooley@microchip.com>
+CC: Daire McNamara <daire.mcnamara@microchip.com>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Rob Herring <robh@kernel.org>
+CC: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+CC: Bin Liu <b-liu@ti.com>
+CC: linux-riscv@lists.infradead.org
+CC: linux-usb@vger.kernel.org
+CC: devicetree@vger.kernel.org
+CC: linux-kernel@vger.kernel.org
+
+Conor Dooley (2):
+  dt-bindings: musb: mpfs: add ULPI external vbus support
+  usb: musb: mpfs: detect UPLI external vbus control requirement from DT
+
+ .../devicetree/bindings/usb/microchip,mpfs-musb.yaml       | 7 +++++++
+ drivers/usb/musb/mpfs.c                                    | 2 ++
+ 2 files changed, 9 insertions(+)
+
+-- 
+2.43.2
+
 
