@@ -1,86 +1,133 @@
-Return-Path: <linux-kernel+bounces-197132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94FF28D669C
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:18:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82EA98D66A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 18:19:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C66EA1C2505E
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:18:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B5C7B286B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 16:18:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7F4F158DD7;
-	Fri, 31 May 2024 16:17:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDC8F158D8D;
+	Fri, 31 May 2024 16:18:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="stGSz/LK"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="llSl65jg"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D95643D57E;
-	Fri, 31 May 2024 16:17:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B5D2768EC;
+	Fri, 31 May 2024 16:18:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717172274; cv=none; b=UBb2CDEY9x9rL7jvIIIqM/IbkOrVoL0+AEOffwPWiVxSg0RXLobS79YDVhaPNHCk+kZ7a07SEKDzBvMcFYytkh+LKAREoUas7NP1lfBJDZ94+Lwn4y5F2e8FDr0wgILOkvKixcDrnALFrh9K7JEapbNlbyti6Bt6UMftxDzjz20=
+	t=1717172320; cv=none; b=LjiI7jAswEu9OTLFkEM7Vlc/JGPQu8iZ97cxmLcVXKbQzP43k9nFbQae2//GMRdqN/uKF7Toeo1gwqoALTNoQb2BDjROiX5+iphXncu46umLtCepjnPXzfPGvs6MaTDcPFbu4HL+EeGDRuPUVGYgRVQ432wa+da6tevQwFrO28I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717172274; c=relaxed/simple;
-	bh=vlldDds/fh09JBc7WVUVFuFOn32xy1JcFdVT445R33Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mb4KNV8KcgDcal3RJEJL132t4L9hncTvNflBYoKcgnMkgdC98FEmSe+Yk2cqJDaroAtyL2Cu3QNCf1C8Rwq08265Na72LBp7Gp22UUmBq7vcM5kqcGC1oEZj4A/yuyE+emZbFXmvB2E4GVUOpQWoOI9ZE8RoLkxDttwbkn4SNZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=stGSz/LK; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=nez/jzPvJv9Aintcu3RZ3COXxw6jF9V/9ALZcl2RF5Y=; b=stGSz/LKwiyNGVDT61NEq7ww4H
-	m3UVCPdgFtRPNdP/L/DHJA8zNB1gxZ2trLgTB10psBhR9lKlN/arXp+LhCViU4QyDfYm5BTMll6gN
-	4KjfxrMbI0V8gtA3TIpfJ4ql/RnC2y6/W+KNkLRhzeg2rcZ3RnFw/lNsx54EbzLEPCnSEm101AmyN
-	25BYt9aT56J5NHBo8nI7lPmLe1d+Xrjak5u7Z6BFsAYTmtv2ggMZvBQGrz5G8RrN0Zg4M75sezwud
-	2ktaWrgM7+i8x3CpSPM05HU+rgnV8VK4NPGssegEPYmH6TAzyIJJn79YD6wMRHmdmp3AFPEej2Ajl
-	TTH5RBCg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sD4wy-0000000AoKY-1dBu;
-	Fri, 31 May 2024 16:17:52 +0000
-Date: Fri, 31 May 2024 09:17:52 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Zhang Yi <yi.zhang@huaweicloud.com>, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	brauner@kernel.org, david@fromorbit.com, chandanbabu@kernel.org,
-	jack@suse.cz, willy@infradead.org, yi.zhang@huawei.com,
-	chengzhihao1@huawei.com, yukuai3@huawei.com
-Subject: Re: [RFC PATCH v4 7/8] xfs: reserve blocks for truncating realtime
- inode
-Message-ID: <Zln4MAQmvk8BSKJM@infradead.org>
-References: <20240529095206.2568162-1-yi.zhang@huaweicloud.com>
- <20240529095206.2568162-8-yi.zhang@huaweicloud.com>
- <ZlnFvWsvfrR1HBZW@infradead.org>
- <20240531141000.GH52987@frogsfrogsfrogs>
- <Zlna8S76sbj-6ItP@infradead.org>
- <20240531152922.GN52987@frogsfrogsfrogs>
+	s=arc-20240116; t=1717172320; c=relaxed/simple;
+	bh=Hj0vEj7c6cwkA2oKS33jVheiYDaPMJ2IGapRx0pjAt4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=QkVQamxboS6pzdpZQgfItjupRKYdf+fucMJzZxXYKVKEpzjwyGRzRg5qsk+cZVvXbbhKrIDHpB+z3V5JHMG8f/jIdhHDicuaWUopFnFOPLxHRSxra0ggxsm168vqikc9ddha2Bj3LUulDtqaz2o9BqvKwFR8viM2IgNO39Zw4Ig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=llSl65jg; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44VBU6U8003487;
+	Fri, 31 May 2024 16:18:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	sIzFseeuuSm8HDVz4Niia26WaDuHcYXYVvYEjMLmYRo=; b=llSl65jgBGSzOihl
+	TE+3umfmpofxGgqxapf1wsjiZLdCQYiTKbobCUT8RM32lXueZ9vxKrX0aXUA5W5P
+	iwrexnFIFBkLoCsYBMo9r94haIMbqdX8X9XMW4WjPq+fIyo+oZwUcWsq7v89Vk2t
+	zhZOhLt1AtqF3Ku6fRhqP5BQbfEQOQJO627rtH7fDbQT2iTcVQ2VSth6cC8NpOf0
+	kRxVh4NQfg+Z1BtIpz890Zh8lO9OSoyud8QJ89//bFWoc6DpeyVe/jQypDexiN0J
+	Cz7v5/U8xWYBEqSrOZPifBF1Zof7sp8YGECw222ouNrdERSUsqYlzRGCYoCXMRzi
+	dOPgHA==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yesw5kee4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 31 May 2024 16:18:10 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44VGI8Kw013354
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 31 May 2024 16:18:09 GMT
+Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 31 May
+ 2024 09:18:07 -0700
+Message-ID: <7428a2f7-befc-6db8-76f4-3ca8dc12d31c@quicinc.com>
+Date: Fri, 31 May 2024 10:18:07 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240531152922.GN52987@frogsfrogsfrogs>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.0
+Subject: Re: [PATCH v3 0/3] drm/panel-edp: remove several legacy compatibles
+ used by the driver
+Content-Language: en-US
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Douglas Anderson
+	<dianders@chromium.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        "Jessica
+ Zhang" <quic_jesszhan@quicinc.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        "Maarten
+ Lankhorst" <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard
+	<mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie
+	<airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+CC: <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-rockchip@lists.infradead.org>
+References: <20240531-edp-panel-drop-v3-0-4c98b2b95e3a@linaro.org>
+From: Jeffrey Hugo <quic_jhugo@quicinc.com>
+In-Reply-To: <20240531-edp-panel-drop-v3-0-4c98b2b95e3a@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: KDqy62VT-sUlJKS5paT22JNBEFfhfxT7
+X-Proofpoint-GUID: KDqy62VT-sUlJKS5paT22JNBEFfhfxT7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-31_12,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ mlxlogscore=999 phishscore=0 malwarescore=0 impostorscore=0 bulkscore=0
+ suspectscore=0 priorityscore=1501 clxscore=1011 spamscore=0 mlxscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405310122
 
-On Fri, May 31, 2024 at 08:29:22AM -0700, Darrick J. Wong wrote:
-> > 
-> > Sorry, it was meant to say for the data device.  My whole journey
-> > to check if this could get called for the attr fork twisted my mind.
+On 5/30/2024 5:12 PM, Dmitry Baryshkov wrote:
+> There are two ways to describe an eDP panel in device tree. The
+> recommended way is to add a device on the AUX bus, ideally using the
+> edp-panel compatible. The legacy way is to define a top-level platform
+> device for the panel.
 > 
-> I really hope not -- all writes to the attr fork have known sizes at
-> syscall time, and appending doesn't even make sense.
+> Document that adding support for eDP panels in a legacy way is strongly
+> discouraged (if not forbidden at all).
+> 
+> While we are at it, also drop legacy compatible strings and bindings for
+> five panels. These compatible strings were never used by a DT file
+> present in Linux kernel and most likely were never used with the
+> upstream Linux kernel.
+> 
+> The following compatibles were never used by the devices supported by
+> the upstream kernel and are a subject to possible removal:
+> 
+> - lg,lp097qx1-spa1
+> - samsung,lsn122dl01-c01
+> - sharp,ld-d5116z01b
 
-It's obviously not.  I just had to go out and actually read the code
-before commenting.
+Ok to drop the sharp one I added.  It should be able to be handled by 
+the (newish) edp-panel, but I think the TI bridge driver needs some work 
+for the specific platform (no I2C connection) to verify.
 
+-Jeff
 
