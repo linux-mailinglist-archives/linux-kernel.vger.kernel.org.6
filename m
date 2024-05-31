@@ -1,87 +1,142 @@
-Return-Path: <linux-kernel+bounces-197477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EA288D6B28
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 23:04:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFD028D6B2E
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 23:06:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 030B21F21965
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 21:04:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9C16281ACC
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 21:06:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80DEA77111;
-	Fri, 31 May 2024 21:04:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E56978C6D;
+	Fri, 31 May 2024 21:05:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nO3fy8fg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Ya2NF/vA"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C37B7168DA;
-	Fri, 31 May 2024 21:04:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95A15200B7;
+	Fri, 31 May 2024 21:05:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717189477; cv=none; b=T9pHlp69E1fBMRlVOWuZVO25gUJFFTlnIw7Xaqn4t+hAjHWviEokWfTcuI64yUjCUZ9NFeFGci/aMg4e9UkHJqMt+bt/rhBUbcC7RlMLmUaASDMoY9EdVsqScXNFhZTE3rzjQ9VaUkw56gsZnCs426127CRb30JH1Zt8o7EmoDM=
+	t=1717189554; cv=none; b=VtI5HfgQdVktPVYTx3O+FDcZoynikCM3+Vsnq/35wQy0OPqq0PZjDkL/XjX8gHMjIDEP0R4vj2ysgVnqlWy0PE9jh/ejFhdp/oRjrmwWIVsUPREFi/YRJ1eAwRp+7VqsxbtKC/4ZhUQzRm6gwP5r9LekrujrOj35HnE4ey/K2iw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717189477; c=relaxed/simple;
-	bh=nlf2Py+keWPZWb2WEcXyuXnPsjey2AglcXUUfxlnR8I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ODmlVKDgNFJL5ty+d5IugHTyuHkDFg2mTAHkceq4EwGJ5RV6jKhMoqdbaprFth3PDsbKUs6JE2M6lpW27hD4hKKzldaiBfGi1Bms3bSbi3Mfv//4Ko6iEkOQW4RGuMsXNOIa9XOu4NE880Esa1SQpfLe9/vKf+cdSaMmYgmoC/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nO3fy8fg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39EC0C116B1;
-	Fri, 31 May 2024 21:04:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717189477;
-	bh=nlf2Py+keWPZWb2WEcXyuXnPsjey2AglcXUUfxlnR8I=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=nO3fy8fgQWn0NjyZ8qCpS1EbBXel6/8sp/s2m7QTRhjbVh2L3lh6BQqV45wV0NGnQ
-	 NUwO6NMl/83GNmFtwZDl0TiF+pVcT2VyYqFsyk9kMFWk/W/ISrDPvrB8RD6sGLjahn
-	 5oOjXG8qKT8D22/7KKNuSnCz2ZrXTbDQR1Tv1hTRCBOP1eTTvM34WkgbyR0wVTJhHB
-	 5OQkpTBLSl50CWfoRhIKhdvZF75NVtqTdJ5zGmF5yGdi5LaVmsGi8aoYAqzKtTZFke
-	 tGTVzBp3iSiWKeQYHauYzewx9ClsPafPWCpyPBPjK2SBhSFO6Y/Llgd1SM+HkChLXL
-	 k68EsIKPxl5mQ==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id D2E67CE1347; Fri, 31 May 2024 14:04:36 -0700 (PDT)
-Date: Fri, 31 May 2024 14:04:36 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Marco Elver <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>,
-	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] kcsan: test: add missing MODULE_DESCRIPTION() macro
-Message-ID: <2fae7fe7-1e4f-467a-b03d-3fcd6025d144@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240530-md-kernel-kcsan-v1-1-a6f69570fdf6@quicinc.com>
- <CANpmjNN1qf=uUnetER3CPZ9d5DSU_S5n-4dka3mDKgV-Jq0Jgw@mail.gmail.com>
- <e9b4a22f-1842-4c37-8248-4f715d70a6c1@quicinc.com>
+	s=arc-20240116; t=1717189554; c=relaxed/simple;
+	bh=xvQzkBSWipn5BTguZl2ZxrNRJ+QHLeFOQPAwf48u15Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=TT0ZnR4MUYviRceoJD5iIgv6yk1Ci50nX9IS7eqpzpJcpkb2Z6201xsbmusbp806VoMqwrTtcAbemIWVhfeqLkymi/U40bX2cwPAJc29E9eARCV6nfFrlmSChK/zj/C4scLEQDrjg0l8mRHg4O51n8UTsGvbeF3iIMwwSmjL9aw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Ya2NF/vA; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44VJka2H032204;
+	Fri, 31 May 2024 21:05:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Yk7VA+HEcR20gkB/6v5vEyWOz+IIKZizxHjGWlqg/mc=; b=Ya2NF/vAgtLEhDjX
+	cY9FbhhnG31R0U6rbXYIV4zBouEELY8aDk0S1tLPZzn9StxnZpoNPvyfLBs7d/jA
+	e8WtI2kmni3+fPBGieuNUJrKETzFZMiGbtArrVGvlm0wVAaDqaBZxncB5XssNYSi
+	cDqUyXUFIhd6WF87FOD7mSymBV9KDR9IH1ZZSJ3nuYnqaLiC3CMtw3GmH2Us0JGN
+	hjIBsnyg4qFAPMBrKUCSQKeLBSCPMYkDxrKEPEI2TcUBsWSOAlKtTpo2lb7gxgyo
+	MOkwEo8SA9ZuBfsuKUX8NirBXiGDwqt6YmYEVulWPXDh7ygwd2+m/CPVmmT0YWay
+	XoHG2g==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba0ggg1k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 31 May 2024 21:05:36 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44VL5ZoT008118
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 31 May 2024 21:05:35 GMT
+Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 31 May
+ 2024 14:05:34 -0700
+Message-ID: <f78a5c96-6a4e-f13f-c17a-984ddd8617c5@quicinc.com>
+Date: Fri, 31 May 2024 15:05:33 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e9b4a22f-1842-4c37-8248-4f715d70a6c1@quicinc.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.0
+Subject: Re: [PATCH] Documentation/accel/qaic: Fix typo 'phsyical'
+Content-Language: en-US
+To: Shuah Khan <skhan@linuxfoundation.org>,
+        Danish Prakash
+	<contact@danishpraka.sh>
+CC: Carl Vanderlip <quic_carlv@quicinc.com>,
+        Pranjal Ramajor Asha Kanojiya
+	<quic_pkanojiy@quicinc.com>,
+        Oded Gabbay <ogabbay@kernel.org>, "Jonathan
+ Corbet" <corbet@lwn.net>,
+        "open list:QUALCOMM CLOUD AI (QAIC) DRIVER"
+	<linux-arm-msm@vger.kernel.org>,
+        "open list:QUALCOMM CLOUD AI (QAIC) DRIVER"
+	<dri-devel@lists.freedesktop.org>,
+        "open list:DOCUMENTATION"
+	<linux-doc@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20240531060929.5281-1-contact@danishpraka.sh>
+ <16b1bcb5-00c6-4b59-a880-188bed32d175@linuxfoundation.org>
+From: Jeffrey Hugo <quic_jhugo@quicinc.com>
+In-Reply-To: <16b1bcb5-00c6-4b59-a880-188bed32d175@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: RTucxBVNOIh-q8QTwaHEvvKuJPmq8RKO
+X-Proofpoint-ORIG-GUID: RTucxBVNOIh-q8QTwaHEvvKuJPmq8RKO
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-31_14,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
+ priorityscore=1501 bulkscore=0 phishscore=0 adultscore=0 spamscore=0
+ mlxlogscore=999 malwarescore=0 lowpriorityscore=0 clxscore=1011
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405310161
 
-On Fri, May 31, 2024 at 06:54:03AM -0700, Jeff Johnson wrote:
-> On 5/31/2024 12:47 AM, Marco Elver wrote:
-> > On Thu, 30 May 2024 at 21:39, Jeff Johnson <quic_jjohnson@quicinc.com> wrote:
-> >>
-> >> Fix the warning reported by 'make C=1 W=1':
-> >> WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/kcsan/kcsan_test.o
-> >>
-> >> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> > 
-> > Reviewed-by: Marco Elver <elver@google.com>
-> > 
-> > Jeff, do you have a tree to take this through?
-> > If not - Paul, could this go through your tree again?
+On 5/31/2024 8:20 AM, Shuah Khan wrote:
+> On 5/31/24 00:09, Danish Prakash wrote:
+>> (as part of LFX Linux Mentorship program)
+>>
 > 
-> I don't currently have a tree. Kalle is in the process of relocating the
-> wireless ath tree so that I can push, but that is still work in progress.
+> Please add proper commit log for this change.
 
-Queued and pushed with Marco's Reviewed-by, thank you both!
+Looks like a good fix, and I'd love to take it, but the commit log needs 
+some content.
 
-							Thanx, Paul
+> 
+>> Signed-off-by: Danish Prakash <contact@danishpraka.sh>
+> 
+>> ---
+>>   Documentation/accel/qaic/qaic.rst | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/Documentation/accel/qaic/qaic.rst 
+>> b/Documentation/accel/qaic/qaic.rst
+>> index efb7771273bb..628bf2f7a416 100644
+>> --- a/Documentation/accel/qaic/qaic.rst
+>> +++ b/Documentation/accel/qaic/qaic.rst
+>> @@ -93,7 +93,7 @@ commands (does not impact QAIC).
+>>   uAPI
+>>   ====
+>> -QAIC creates an accel device per phsyical PCIe device. This accel 
+>> device exists
+>> +QAIC creates an accel device per physical PCIe device. This accel 
+>> device exists
+>>   for as long as the PCIe device is known to Linux.
+>>   The PCIe device may not be in the state to accept requests from 
+>> userspace at
+> 
+> thanks,
+> -- Shuah
+
 
