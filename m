@@ -1,105 +1,110 @@
-Return-Path: <linux-kernel+bounces-196754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-196752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E0C98D6178
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:13:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C4438D6156
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 14:08:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19C632812E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:13:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A02171F25726
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2024 12:08:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ECA41581FA;
-	Fri, 31 May 2024 12:12:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47A3D1581FA;
+	Fri, 31 May 2024 12:08:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="aHII+BlE"
-Received: from mail.mainlining.org (mainlining.org [94.241.141.152])
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="WTtiUWul"
+Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01ECB29A0;
-	Fri, 31 May 2024 12:12:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.241.141.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F17EE29A0;
+	Fri, 31 May 2024 12:08:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717157571; cv=none; b=bPRHFsbM6IiJ9Lv0xt9uMX/jPrDeI5DglujNh71jTi6aFN2LyeJS6OlKnwG7OPMHJKGbBGq9+wzCoVAVuDZK9cDUjlpHogUPs4gPqKAbuxuJCpvwBMf15UYGtO/6rAo7FlN1SwPglASaaRh9aA4qTktl7gSq2deAc0JXDNaOn/w=
+	t=1717157314; cv=none; b=TDVFxyn5xS3yLTUiYjnH6pWVr+6+Nl5gLbde8JdkYWyerUJKcQqvL/Ua4uAduGF8+l7OGVFMZA2DdVyRwOcYcN5PejZ880/sm7BEBufRXc/B4746nakuQP4pvwuLhOw2vN5M5PtQkVkv9V0l2NV1Zxl2tCNyLBSSos1QwuROhPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717157571; c=relaxed/simple;
-	bh=sNwq9j0seUAAM0TlDZhbME8CPsDh4g2j1l5gla81evc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=L6kCC30a+WkBQeO4lq9TaFE1Vyfa9Ge3NXDG4RUtTBg/+wSnHxXn+gu5j1u3rLqXLsT21UYDOcymSHgTsopzTVaIE3f+MhYfu/LenWku1da9uUYTZnRSERQX0pQMbyQCRCFXI1+hQ+nZTWmByx+QNS/rFJTgikgJaoKkvGwO2Sw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=aHII+BlE; arc=none smtp.client-ip=94.241.141.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
-Received: from [192.168.188.26] (ipb21bf7ea.dynamic.kabel-deutschland.de [178.27.247.234])
-	by mail.mainlining.org (Postfix) with ESMTPSA id 09D1CE1FB4;
-	Fri, 31 May 2024 12:06:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
-	s=psm; t=1717157195;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=365GHuWbQyUl6ukwGlIrpFAaKYKPH0Juz+u4AfNJ4+M=;
-	b=aHII+BlECXTNdaRd2bvpCG6OehJvPxLj0/U3tGLo/MLmrUUb+D87U2eFC91TzYTu6JhF7D
-	KVUSyaeNS3vlSNkK/UI64W2d2b0RzuRkbKnQQ8nbah7K3llkkCgfWOb6NIdebetD5MHGso
-	Xs6p8UWdnnUjQniax7muMORH0ZON2iDduyh2DczrlCU2ahL9wj0llFNHCeWMasLW8luW2C
-	+YWx4NsBCRs3uJpDsGQAft72lQN6/a3i7Mti1JBUbY9O/mrrhk8Uqj4ThAFNvNo7kKK/57
-	bV3P8TUwyzM/sCVOyrlh9DfZzQKzD75DDaVHSVSHPf9OAZK1T3pcDLfVO9VwBA==
-From: David Wronek <david@mainlining.org>
-Date: Fri, 31 May 2024 14:05:59 +0200
-Subject: [PATCH] arm64: dts: qcom: sm8550-samsung-q5q: fix typo
+	s=arc-20240116; t=1717157314; c=relaxed/simple;
+	bh=1k9t6jehRo7chIdZq9uoVU5h/rfm2SsMzqY7xyvvVbc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kiwyIHTQudoV4/haLqtHJ0GYJ8+DKPbCD6N8GpxxgB/eNBJECoprpOjgnQwRXN6jUT1Lzvkct4uMyy6OjlwFbpnBr2IY4dUO2BWlS7rTizUMfHjZp9KjAc9kIdTGRCOterFdATTGhTVnwuxv9HcWhIWLHf6v1Ib+bdPqwqrkoaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=WTtiUWul; arc=none smtp.client-ip=67.231.149.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44V9Swja003313;
+	Fri, 31 May 2024 07:08:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=PODMain02222019; bh=jojeGL9NyCQPAKin
+	3J/C+KRxMKRG2M3M0NSuFuoQxSM=; b=WTtiUWul1jMchiPb35GkiMk6reG9QZuI
+	48PSnH7FRwqA+ufeElYJFPPyAttpKcGEgJLi7YJy5Sx4Bm3dQCDkHkj6BjxebA23
+	LvpHU6rrdtntXesH7YLoxoVTnJaUbPFe7wEfBjz9x7niJc2Yxaq/4p4FHd8Ava3Y
+	qsEEuxDnQug6fRSZ7po6MhMwny4XNWqBtHgZET1NUhkjyFoe6Z5qrsjg5/vI4b7J
+	xnftqLmiUCfAGXmQ/y//2xgH/MfbVrABHyVn0/7KRU4wrRN+GodFF5/G/yIS6mcJ
+	xg0Pnl36qQboKIfahQkTgY4mxr9FDX8H2Sq4MByJg3+sxj+r+1gIMQ==
+Received: from ediex01.ad.cirrus.com ([84.19.233.68])
+	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 3ybdcwwr9x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 31 May 2024 07:08:26 -0500 (CDT)
+Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 31 May
+ 2024 13:08:23 +0100
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
+ 15.2.1544.9 via Frontend Transport; Fri, 31 May 2024 13:08:23 +0100
+Received: from EDIN6ZZ2FY3.ad.cirrus.com (EDIN6ZZ2FY3.ad.cirrus.com [198.61.65.72])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 8B538820249;
+	Fri, 31 May 2024 12:08:23 +0000 (UTC)
+From: Simon Trimmer <simont@opensource.cirrus.com>
+To: <tiwai@suse.com>
+CC: <linux-sound@vger.kernel.org>, <alsa-devel@alsa-project.org>,
+        <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>,
+        "Simon
+ Trimmer" <simont@opensource.cirrus.com>
+Subject: [PATCH] ALSA: hda: cs35l41: Possible null pointer dereference in cs35l41_hda_unbind()
+Date: Fri, 31 May 2024 13:08:20 +0100
+Message-ID: <20240531120820.35367-1-simont@opensource.cirrus.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240531-fix-typo-q5q-v1-1-95f10a8eff9b@mainlining.org>
-X-B4-Tracking: v=1; b=H4sIACa9WWYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDU2ND3bTMCt2SyoJ83ULTQl3TFGMTEyPjJPOkJBMloJaColSgPNi46Nj
- aWgBRksprXgAAAA==
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Alexandru Marc Serdeliuc <serdeliuk@yahoo.com>
-Cc: phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, David Wronek <david@mainlining.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1717157194; l=948;
- i=david@mainlining.org; s=20240531; h=from:subject:message-id;
- bh=sNwq9j0seUAAM0TlDZhbME8CPsDh4g2j1l5gla81evc=;
- b=te3JsqLcyA2g3BK4ZBdiENlHG97kZ+Wym6ylsy25J/ENSEY/3pPHqH1nW13eDMppwe3GQsiYD
- e2VLLNJMmd2CprD7SJ2GJIcfW2W2GqQ7M4BU36+NVL8gk2p4iolUuNS
-X-Developer-Key: i=david@mainlining.org; a=ed25519;
- pk=XqkgbOfXJSEnyKxaC8p47fQE9Mm3634OwptSTONhdSk=
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: kwle0reXsEGM8-ag8K8DUTPDf-O3TQxB
+X-Proofpoint-ORIG-GUID: kwle0reXsEGM8-ag8K8DUTPDf-O3TQxB
+X-Proofpoint-Spam-Reason: safe
 
-It looks like "cdsp_mem" was pasted in the license header by accident.
-Fix the typo by removing it.
+The cs35l41_hda_unbind() function clears the hda_component entry
+matching it's index and then dereferences the codec pointer held in the
+first element of the hda_component array, this is an issue when the
+device index was 0.
 
-Signed-off-by: David Wronek <david@mainlining.org>
+Instead use the codec pointer stashed in the cs35l41_hda structure as it
+will still be valid.
+
+Fixes: 7cf5ce66dfda ("ALSA: hda: cs35l41: Add device_link between HDA and cs35l41_hda")
+Signed-off-by: Simon Trimmer <simont@opensource.cirrus.com>
 ---
- arch/arm64/boot/dts/qcom/sm8550-samsung-q5q.dts | 2 +-
+ sound/pci/hda/cs35l41_hda.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8550-samsung-q5q.dts b/arch/arm64/boot/dts/qcom/sm8550-samsung-q5q.dts
-index 4654ae1364ba..3d351e90bb39 100644
---- a/arch/arm64/boot/dts/qcom/sm8550-samsung-q5q.dts
-+++ b/arch/arm64/boot/dts/qcom/sm8550-samsung-q5q.dts
-@@ -1,4 +1,4 @@
--// SPDX-License-cdsp_memIdentifier: BSD-3-Clause
-+// SPDX-License-Identifier: BSD-3-Clause
- /*
-  * Copyright (c) 2024, Alexandru Marc Serdeliuc <serdeliuk@yahoo.com>
-  * Copyright (c) 2024, David Wronek <david@mainlining.org>
-
----
-base-commit: 0e1980c40b6edfa68b6acf926bab22448a6e40c9
-change-id: 20240531-fix-typo-q5q-5d34423b7bb4
-
-Best regards,
+diff --git a/sound/pci/hda/cs35l41_hda.c b/sound/pci/hda/cs35l41_hda.c
+index 6c49e5c6cd20..d54d4d60b03e 100644
+--- a/sound/pci/hda/cs35l41_hda.c
++++ b/sound/pci/hda/cs35l41_hda.c
+@@ -1495,7 +1495,7 @@ static void cs35l41_hda_unbind(struct device *dev, struct device *master, void *
+ 	if (comps[cs35l41->index].dev == dev) {
+ 		memset(&comps[cs35l41->index], 0, sizeof(*comps));
+ 		sleep_flags = lock_system_sleep();
+-		device_link_remove(&comps->codec->core.dev, cs35l41->dev);
++		device_link_remove(&cs35l41->codec->core.dev, cs35l41->dev);
+ 		unlock_system_sleep(sleep_flags);
+ 	}
+ }
 -- 
-David Wronek <david@mainlining.org>
+2.34.1
 
 
