@@ -1,168 +1,170 @@
-Return-Path: <linux-kernel+bounces-197806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 498A18D6F75
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 13:12:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 37E1F8D6F77
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 13:16:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B51EA1F228E1
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 11:12:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A57451F22488
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 11:16:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2FDC823DD;
-	Sat,  1 Jun 2024 11:12:37 +0000 (UTC)
-Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DE0D84DEC;
+	Sat,  1 Jun 2024 11:16:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=metaspace-dk.20230601.gappssmtp.com header.i=@metaspace-dk.20230601.gappssmtp.com header.b="0SiD5IoE"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1DBB7C6EB
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Jun 2024 11:12:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 364F76FB9
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Jun 2024 11:16:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717240357; cv=none; b=MWuBI0ZqdPw+2mK6tOhpkg3dHd2jZsZiAR7Lj8uFSJE1w2vv1WD02oTFfUSyh/DQf+9ofdam6k42mIlTAduJS4OtK5SH3xkYFY1VD93Lgpz75u76d8HgL0K+cznEn4vidPd2e35FuYTwULZicQyTVoj0aWbtVn/spGAknMDJsqU=
+	t=1717240562; cv=none; b=CA6LfKRJmmZJsErv8nyjz8fKLsOqXDkwlj5dJnfOPdSiZR0p6Tc2SiOEPUNC9xIRvvlSjQRu9x/8FR0EclFibdR8L+gKFDmb3DnpAOynrU7OKWpC5jfSQDZnzjiRhzNTl8l1S/5K9sRIAJQDD0g10rUPHvNCA4ltXSk8jzew3VE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717240357; c=relaxed/simple;
-	bh=32WwZF3/QA1CjNqfrvhrAZCOhOPsDYeB4078HiZ1lo8=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ibbUjCKJZQogBD+AUOG61+MyJwZ3vNSLbH4QnrERRp1Gk5icd3SVx82RLHK33dZ2A0G2SSyVDu9NhnrBP38i/fCzpcmiSu71iLe9CIrHliuuvswy/9MJXK93r3uD78kjC7u8bcpkYe3IrhyUO95PQRbxoHuNfCjDhT5YXBowDgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-7eada05bd3bso341327039f.0
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Jun 2024 04:12:35 -0700 (PDT)
+	s=arc-20240116; t=1717240562; c=relaxed/simple;
+	bh=/PJ2GjT7/rLhw5D4POjI70oJckkLJy4s/NNLOSXov2Q=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=TrfDgRPp0pz6ukHb1Xgx9Y/17IfPzsuiLVZ569wlHpmU71OnDFJMNHthAiUJSI7mObzYXxmSG1UZKLFSaot+/wD2OYMdyLKk4u039I5P5ePVkwCO/I9CB/z0Db0HS7LuqSqHovpwXCTZEss9HmxAepVxrG+pS5l+qgnnuVbCAwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=metaspace.dk; spf=none smtp.mailfrom=metaspace.dk; dkim=pass (2048-bit key) header.d=metaspace-dk.20230601.gappssmtp.com header.i=@metaspace-dk.20230601.gappssmtp.com header.b=0SiD5IoE; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=metaspace.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=metaspace.dk
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-57a23997da3so2808665a12.3
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Jun 2024 04:15:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=metaspace-dk.20230601.gappssmtp.com; s=20230601; t=1717240558; x=1717845358; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:references
+         :in-reply-to:subject:cc:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zCryFmGVnMLpUEOQA4poMI+wOTAgkfQR64/zK6nQuRw=;
+        b=0SiD5IoEXllMOqSknxxjRIoG55IRlLx9cyqV56ztzj3YuwI6pRLFbnppaFZ+8euC7M
+         h7guB5Lyx4AjZqahRM0NHZ8qCVFWz4Vp1fOYY1zTDcER5rZqik7X2Lm6NT3KxnIDkhC3
+         j97scRkElNwztko78UTYF5MqlHeyEnF1yDTQOZ5YA0d9fMROAwacpYHsXxqkdEazUC7Q
+         n351qelNhX0xI0ugorV77H8VOLz2LOR0zXPfi9/wbUepCFBQfUUcDTgls6IudMhwRja3
+         0QTuC6DzjzHD90XevQVoXmYCy6ZLkAxoJTWs0B8w1GukEec1B3ewhIKuOIPiBLEVZcf+
+         Zkpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717240355; x=1717845155;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=haJLjVBSN5VVEyOIvDxDEpwNuq4r9JOqsfVuXZhRM44=;
-        b=bE/KKZ3i+6PltYEEMkNu6DYaVadBUnZ0HJljWYbSZaYpmNNNVopuGaMm/DnBxQ9Vib
-         7xwv+uhvHDxbAdxI5/fe3+3RNjLdaRilbou8z9AbJZpv0YeW+gErvd2uHMSKDQ2Xjnhg
-         o5jhHo+3zyD6OEwd04A97rmReYwiG4RdjTjK3SUVh+AmQVk0ztY/n/PTYRYbf/s/Tkb2
-         SPxaIgLeKRMoiLRxCeF+0TEnf+iuASPU81Yn+5SBsi7o7PGf+6HXrfj5Sf7wjJ8Two6E
-         wsD7P1UZ1rGZrwq/7MBYAns1f5bIQqZHdbBji1NED2Ri0ggcLlR8wXJQrkml2HmHi7VD
-         2DAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVFt1nG5+c7tZVYioey0YnlHhS1DFEHj5bce0+kQCKr1OTn2eI0Cj9XpZZX1JW7HOzSz7TwScQ8+RgTXQb2/CJU5D3PgMXtdjGWE/Qn
-X-Gm-Message-State: AOJu0YxkuCiODCLHFWnREBbXdgfaA2WAguQAhPfktf/2Z8sGsfNy8bj2
-	pD31a4WollcIPXSwLZWKWvSRTPZQ87rwF4NP0c6Jdn4TVusvu4NR/aiF5zMxjsxpG7Pu2tfy5OP
-	/6CFKxRz4AMd11jI9Uu6/8k8S0JcPHJDtQMxJatOJYKl2Kw7YN1W6VKU=
-X-Google-Smtp-Source: AGHT+IE8BMZGXn3e3+Odr4QpT5aqczHVeg+2m0ardriFrn+W6qy/cyJSWdu/KFWbM1gO3dPBG7mgZZw1R7BNOJqbyxog6AtFSrrB
+        d=1e100.net; s=20230601; t=1717240558; x=1717845358;
+        h=content-transfer-encoding:mime-version:message-id:date:references
+         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zCryFmGVnMLpUEOQA4poMI+wOTAgkfQR64/zK6nQuRw=;
+        b=Upj6XgyIX63hEkhZ5eR+wjtBUBDnBIBdNfU2vyfXI4xGUl11hGRPgNZnrZLcCphMmF
+         K539ia8s+IX/NSlagN2yhEGgPQkQTMNU+6p7e/new2N0Mq4Hyspa3ejQi+6K4IJ++lI3
+         tCJqd5MtklhrfCea7SLKJUfzkOPekzTiE/nUurPDXV5RmUDEZFd7Y2DWfQrFHJLjgR/q
+         50oITcceZmq0LvDwRib0hjya145phSNuA1XPRcl3rX4YGXLYv3oedrkkucLb7KR9yMcJ
+         YB99kWLQvSO8MOvA4DbH2/M8AHvjF6ZykZVL4X7z1biI72YFf/nJfsawSc4eewxrSylz
+         GnBg==
+X-Forwarded-Encrypted: i=1; AJvYcCXtOFPUAC449UjKcnHqyP52BLt32wv445asPXCj/t1/HZ/UMIR03b6GBDecmCROCLZVHt+jxeD43eny4TYA8fAWJDrLzbOQlMlu/8h1
+X-Gm-Message-State: AOJu0YxVpcoprUoJ7vtAj9hahYQ7JstgyDz6aaqEWmOu6ZwOy5U8eyPa
+	CLL8Zd5kPVX+9XuB4aVOh0WsoVU3603L9KHRmh0Keedz9nnkK9jL07gtDPXSPaA=
+X-Google-Smtp-Source: AGHT+IEZYXud4tM6JcqUgo1hgqJr7fdgasI9zD5M8BqVsUWiC8vI1fGU/UfvXbZpBl4UPndv1yXtNA==
+X-Received: by 2002:a17:906:4f8d:b0:a59:a83b:d438 with SMTP id a640c23a62f3a-a682022d0bemr309841966b.23.1717240558265;
+        Sat, 01 Jun 2024 04:15:58 -0700 (PDT)
+Received: from localhost ([79.142.230.34])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a67eb344426sm185893866b.215.2024.06.01.04.15.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 01 Jun 2024 04:15:57 -0700 (PDT)
+From: Andreas Hindborg <nmi@metaspace.dk>
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: Jens Axboe <axboe@kernel.dk>,  Christoph Hellwig <hch@lst.de>,  Keith
+ Busch <kbusch@kernel.org>,  Damien Le Moal <dlemoal@kernel.org>,  Bart Van
+ Assche <bvanassche@acm.org>,  Hannes Reinecke <hare@suse.de>,  Ming Lei
+ <ming.lei@redhat.com>,  "linux-block@vger.kernel.org"
+ <linux-block@vger.kernel.org>,  Andreas Hindborg <a.hindborg@samsung.com>,
+  Greg KH <gregkh@linuxfoundation.org>,  Matthew Wilcox
+ <willy@infradead.org>,  Miguel Ojeda <ojeda@kernel.org>,  Alex Gaynor
+ <alex.gaynor@gmail.com>,  Wedson Almeida Filho <wedsonaf@gmail.com>,
+  Boqun Feng <boqun.feng@gmail.com>,  Gary Guo <gary@garyguo.net>,
+  =?utf-8?Q?Bj=C3=B6rn?=
+ Roy Baron <bjorn3_gh@protonmail.com>,  Alice Ryhl <aliceryhl@google.com>,
+  Chaitanya Kulkarni <chaitanyak@nvidia.com>,  Luis Chamberlain
+ <mcgrof@kernel.org>,  Yexuan Yang <1182282462@bupt.edu.cn>,  Sergio
+ =?utf-8?Q?Gonz=C3=A1lez?= Collado <sergio.collado@gmail.com>,  Joel
+ Granados
+ <j.granados@samsung.com>,  "Pankaj Raghav (Samsung)"
+ <kernel@pankajraghav.com>,  Daniel Gomez <da.gomez@samsung.com>,  Niklas
+ Cassel <Niklas.Cassel@wdc.com>,  Philipp Stanner <pstanner@redhat.com>,
+  Conor Dooley <conor@kernel.org>,  Johannes Thumshirn
+ <Johannes.Thumshirn@wdc.com>,  Matias =?utf-8?Q?Bj=C3=B8rling?=
+ <m@bjorling.me>,  open list
+ <linux-kernel@vger.kernel.org>,  "rust-for-linux@vger.kernel.org"
+ <rust-for-linux@vger.kernel.org>,  "lsf-pc@lists.linux-foundation.org"
+ <lsf-pc@lists.linux-foundation.org>,  "gost.dev@samsung.com"
+ <gost.dev@samsung.com>
+Subject: Re: [PATCH v3 2/3] rust: block: add rnull, Rust null_blk
+ implementation
+In-Reply-To: <2021ea8f-a3df-46c6-8fdf-61b1df231773@proton.me> (Benno Lossin's
+	message of "Sat, 01 Jun 2024 09:15:59 +0000")
+References: <20240601081806.531954-1-nmi@metaspace.dk>
+	<20240601081806.531954-3-nmi@metaspace.dk>
+	<2021ea8f-a3df-46c6-8fdf-61b1df231773@proton.me>
+Date: Sat, 01 Jun 2024 13:15:54 +0200
+Message-ID: <87ed9goqvp.fsf@metaspace.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:6425:b0:7ea:fe9a:8055 with SMTP id
- ca18e2360f4ac-7eafff3441bmr32930239f.2.1717240355125; Sat, 01 Jun 2024
- 04:12:35 -0700 (PDT)
-Date: Sat, 01 Jun 2024 04:12:35 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000005c8f0a0619d22d65@google.com>
-Subject: [syzbot] [xfs?] BUG: corrupted list in xlog_cil_commit
-From: syzbot <syzbot+ea15576a86ef3f03216a@syzkaller.appspotmail.com>
-To: chandan.babu@oracle.com, djwong@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+Benno Lossin <benno.lossin@proton.me> writes:
 
-syzbot found the following issue on:
+>> +impl kernel::Module for NullBlkModule {
+>> +    fn init(_module: &'static ThisModule) -> Result<Self> {
+>> +        pr_info!("Rust null_blk loaded\n");
+>> +        let tagset =3D Arc::pin_init(TagSet::try_new(1, 256, 1), flags:=
+:GFP_KERNEL)?;
+>> +
+>> +        let disk =3D {
+>> +            let block_size: u16 =3D 4096;
+>> +            if block_size % 512 !=3D 0 || !(512..=3D4096).contains(&blo=
+ck_size) {
+>> +                return Err(kernel::error::code::EINVAL);
+>> +            }
+>> +
+>> +            let mut disk =3D gen_disk::GenDisk::try_new(tagset)?;
+>> +            disk.set_name(format_args!("rnullb{}", 0))?;
+>> +            disk.set_capacity_sectors(4096 << 11);
+>> +            disk.set_queue_logical_block_size(block_size.into());
+>> +            disk.set_queue_physical_block_size(block_size.into());
+>> +            disk.set_rotational(false);
+>> +            disk.add()
+>> +        }?;
+>
+> Personally, I would prefer to put the `?` into the line above.
 
-HEAD commit:    cc8ed4d0a848 Merge tag 'drm-fixes-2024-06-01' of https://g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17039cba980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=733cc7a95171d8e7
-dashboard link: https://syzkaller.appspot.com/bug?extid=ea15576a86ef3f03216a
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: i386
+I have no strong opinion here.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+>
+>> +
+>> +        let disk =3D Box::pin_init(new_mutex!(disk, "nullb:disk"), flag=
+s::GFP_KERNEL)?;
+>> +
+>> +        Ok(Self { _disk: disk })
+>> +    }
+>> +}
+>> +
+>> +struct NullBlkDevice;
+>> +
+>> +#[vtable]
+>> +impl Operations for NullBlkDevice {
+>> +    #[inline(always)]
+>> +    fn queue_rq(rq: ARef<mq::Request<Self>>, _is_last: bool) -> Result {
+>> +        mq::Request::end_ok(rq)
+>> +            .map_err(|_e| kernel::error::code::EIO)
+>> +            .expect("Fatal error - expected to be able to end request");
+>
+> I expected something more along the lines of: "expected to be able to
+> end request, since `NullBlkDevice` never takes refcounts on Requests and
+> as such the ARef must be unique, but `end_ok` only fails if that is not
+> the case". But maybe that would fit better in a comment, what do you
+> think?
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-cc8ed4d0.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/36abdd995432/vmlinux-cc8ed4d0.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/5e4e0a6f67db/bzImage-cc8ed4d0.xz
+I can add a comment =F0=9F=91=8D
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+ea15576a86ef3f03216a@syzkaller.appspotmail.com
-
-list_add corruption. prev->next should be next (ffffe8ffad379458), but was ffffe8ffad379546. (prev=ffffe8ffad379458).
-------------[ cut here ]------------
-kernel BUG at lib/list_debug.c:32!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
-CPU: 3 PID: 57 Comm: kworker/3:1 Not tainted 6.10.0-rc1-syzkaller-00267-gcc8ed4d0a848 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-Workqueue: xfs-conv/loop2 xfs_end_io
-RIP: 0010:__list_add_valid_or_report+0xbe/0x100 lib/list_debug.c:32
-Code: e9 fc 90 0f 0b 48 89 d9 48 c7 c7 20 c0 8f 8b e8 88 50 e9 fc 90 0f 0b 48 89 f1 48 c7 c7 a0 c0 8f 8b 48 89 de e8 73 50 e9 fc 90 <0f> 0b 48 89 f2 48 89 d9 48 89 ee 48 c7 c7 20 c1 8f 8b e8 5b 50 e9
-RSP: 0000:ffffc9000077f450 EFLAGS: 00010286
-RAX: 0000000000000075 RBX: ffffe8ffad379458 RCX: ffffffff816f3159
-RDX: 0000000000000000 RSI: ffffffff816fbd56 RDI: 0000000000000005
-RBP: ffff88804c565d18 R08: 0000000000000005 R09: 0000000000000000
-R10: 0000000000000001 R11: 0000000000000007 R12: ffffe8ffad379458
-R13: ffff88804c565cb0 R14: ffff88804c565d18 R15: ffffe8ffad379440
-FS:  0000000000000000(0000) GS:ffff88802c300000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000033533000 CR3: 000000004c7bc000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- __list_add_valid include/linux/list.h:88 [inline]
- __list_add include/linux/list.h:150 [inline]
- list_add_tail include/linux/list.h:183 [inline]
- xlog_cil_insert_items fs/xfs/xfs_log_cil.c:675 [inline]
- xlog_cil_commit+0x125b/0x32d0 fs/xfs/xfs_log_cil.c:1593
- __xfs_trans_commit+0x346/0xe90 fs/xfs/xfs_trans.c:1020
- xfs_trans_roll+0x1a9/0x430 fs/xfs/xfs_trans.c:1168
- xfs_defer_trans_roll+0x1b8/0x610 fs/xfs/libxfs/xfs_defer.c:478
- xfs_defer_finish_noroll+0x6b2/0x1490 fs/xfs/libxfs/xfs_defer.c:687
- __xfs_trans_commit+0x941/0xe90 fs/xfs/xfs_trans.c:980
- xfs_iomap_write_unwritten+0x32e/0x9d0 fs/xfs/xfs_iomap.c:649
- xfs_end_ioend+0x3e4/0x530 fs/xfs/xfs_aops.c:131
- xfs_end_io+0x217/0x340 fs/xfs/xfs_aops.c:173
- process_one_work+0x958/0x1ad0 kernel/workqueue.c:3231
- process_scheduled_works kernel/workqueue.c:3312 [inline]
- worker_thread+0x6c8/0xf70 kernel/workqueue.c:3393
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:__list_add_valid_or_report+0xbe/0x100 lib/list_debug.c:32
-Code: e9 fc 90 0f 0b 48 89 d9 48 c7 c7 20 c0 8f 8b e8 88 50 e9 fc 90 0f 0b 48 89 f1 48 c7 c7 a0 c0 8f 8b 48 89 de e8 73 50 e9 fc 90 <0f> 0b 48 89 f2 48 89 d9 48 89 ee 48 c7 c7 20 c1 8f 8b e8 5b 50 e9
-RSP: 0000:ffffc9000077f450 EFLAGS: 00010286
-RAX: 0000000000000075 RBX: ffffe8ffad379458 RCX: ffffffff816f3159
-RDX: 0000000000000000 RSI: ffffffff816fbd56 RDI: 0000000000000005
-RBP: ffff88804c565d18 R08: 0000000000000005 R09: 0000000000000000
-R10: 0000000000000001 R11: 0000000000000007 R12: ffffe8ffad379458
-R13: ffff88804c565cb0 R14: ffff88804c565d18 R15: ffffe8ffad379440
-FS:  0000000000000000(0000) GS:ffff88802c300000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000033533000 CR3: 000000004c7bc000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+BR Andreas
 
