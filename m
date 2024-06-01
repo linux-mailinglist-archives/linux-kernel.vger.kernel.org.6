@@ -1,76 +1,79 @@
-Return-Path: <linux-kernel+bounces-197689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCAC48D6DFE
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 07:09:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F8758D6E02
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 07:19:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 059361C211BB
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 05:09:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4863B23AD1
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 05:19:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D47FDDBB;
-	Sat,  1 Jun 2024 05:09:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06B30DDC0;
+	Sat,  1 Jun 2024 05:19:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TTsc+Q/i"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lHARu/ux"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FCC5AD5A
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Jun 2024 05:09:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE9DDF9CC;
+	Sat,  1 Jun 2024 05:19:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717218550; cv=none; b=LXKy8zuxeJ6IVfvxdyQd64tZHTQ09VKHgKLTBZtZu/QKB0Uw9e7kiSutMdKzkbmo5lee0OWZDx/MwIJeap8OGU1cTPCST0mtPflrq25Yh6uwevSSjMvwn4q0/7gulrjdC/1i/i+dgO7YWYPc1eQLvGyfVaeh6ZzafqShw3Snl8E=
+	t=1717219151; cv=none; b=faLXnXod620iMA+sl/3uXprKZrpvTZHwFugXLJ9L+JcOSzoPGkKKXQAdw+bcvPMvdKQ3QZf2N40xgBXLeL1FSMpV8ia+F++Ic1VhgviLgjwF2XCIf8ReZRnnhHWI4wmRyKzzuaNKcL0Kl1y/YEfhIa4BI411peUxhfTGDaVNTwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717218550; c=relaxed/simple;
-	bh=tKYTmVHs6IMI7rjpM20cWi/8xgeoZcaJdXkzRHvYPR0=;
+	s=arc-20240116; t=1717219151; c=relaxed/simple;
+	bh=RmGTeDB7gSE6+bdtPqnjC5zB/xCa0YNAJAARczN2gPQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c1TTh8F9l1J9dBXMyTVdjbdOBAFEvpDFH0t6sFzqzvSihifPvQH+sppZtQLhjN4Tm8FHXlMjDF7dPO1KPtVj2dy0pKkwEmXNIg398UQst08LDAkKUXRLKA7Digje/wxQP8b9WAfEu37Sx7TJuYEEhuVu08SXAffJkyskHPmTe1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TTsc+Q/i; arc=none smtp.client-ip=198.175.65.15
+	 Content-Type:Content-Disposition:In-Reply-To; b=V7RJ18oLj8YC02MDLGkvjkXmkaSOmoAIqLk3FfG2CQZRsBOxL2TbxpMG6OPSgfCrOTc32wwpkwd1GyWXeHdt6byQkK8eiy4dYCHglaCps2ciB0gXxmTPPjgEwaVw4J5layF9gYdql0GCutN7DLrP4D9VF/fjDGhqyN0HnJOgc4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lHARu/ux; arc=none smtp.client-ip=198.175.65.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717218548; x=1748754548;
+  t=1717219150; x=1748755150;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=tKYTmVHs6IMI7rjpM20cWi/8xgeoZcaJdXkzRHvYPR0=;
-  b=TTsc+Q/iih3zCv8c/rqE2chBX9CIzwvGNSsEDB/9IeTXe2++e8mRq6Ea
-   tODmhiRZ1fBw4rHNuA2IEwaPOwZQElLVW//LImyXepJW02WWxok4UdtnF
-   24m66mISOVmoZdkkZSbR8O14gaEdcQ8XTMPwJ/0cd1SbqHndYag/a/xGO
-   0Lm56Ub7jVakV8FdjRr8hvMAPZ//rsH+EnRBpMzz1T9mIoBm6YoJnOYSE
-   MDuYA9aQ+mjLRRMTpfE9/aWd0764/QzyRxIQn5F7aKS6ECvEiHTwbVdrx
-   x5fhsg1kJz6kToCMl1xlYgCx+qTLvogyuVCiIAY1iAmjYveqFfLbEt6pS
-   w==;
-X-CSE-ConnectionGUID: eIxjqUCASM+nbYQnmWprqA==
-X-CSE-MsgGUID: hROSLjJ/Qf6FQFkIFT0wXg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11089"; a="17570138"
+  bh=RmGTeDB7gSE6+bdtPqnjC5zB/xCa0YNAJAARczN2gPQ=;
+  b=lHARu/uxiXlGxDzmUTL0FxqMSm2lWHUvArIL4V4UO7U67tF7AsNHcjeA
+   1TuzUs33WPF7g8wd+4KD/gZs0nVNrtp0mR/JqYrSICCa1etN00Wj0AfY8
+   lrPVgRO/142LKTsPN+S2M5ohHTc5rhRDMNaQB6EFRU9/2zzBioqoYzo2f
+   mEgwI7aQ0oVuihRYC0cX3lw3B89KX6d1cGFAMy4AcNUdn8BUbR1gzPthJ
+   048NHstYU54k2oh/WPM3oz3GEBk2hKv94WEDnVI8YZSnXqz9IC81260y8
+   3dQouE3u42vVRUM5zEKH0LQGjs5mmp+vLJRJjgRMu0vbhZZRC2ngebaMK
+   g==;
+X-CSE-ConnectionGUID: wUAcFYv2S7eyrVDFMc0ssw==
+X-CSE-MsgGUID: mB2qqDhNQq2CavBFpd+xBA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11089"; a="24894527"
 X-IronPort-AV: E=Sophos;i="6.08,206,1712646000"; 
-   d="scan'208";a="17570138"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 22:09:08 -0700
-X-CSE-ConnectionGUID: t4bv1537SM6B9vxLcsByig==
-X-CSE-MsgGUID: /62jstHhSxWc/FUZHbEKjg==
+   d="scan'208";a="24894527"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 22:19:10 -0700
+X-CSE-ConnectionGUID: EG35p8h0R6O2sKJanIuclA==
+X-CSE-MsgGUID: JzwWgfBrTlqUJNu/d0aJfQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,206,1712646000"; 
-   d="scan'208";a="40797318"
+   d="scan'208";a="36447216"
 Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
-  by fmviesa005.fm.intel.com with ESMTP; 31 May 2024 22:09:06 -0700
+  by orviesa009.jf.intel.com with ESMTP; 31 May 2024 22:19:06 -0700
 Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1sDGzH-000IQL-33;
-	Sat, 01 Jun 2024 05:09:03 +0000
-Date: Sat, 1 Jun 2024 13:08:12 +0800
+	id 1sDH8y-000IQn-0l;
+	Sat, 01 Jun 2024 05:19:04 +0000
+Date: Sat, 1 Jun 2024 13:18:47 +0800
 From: kernel test robot <lkp@intel.com>
-To: Frank Li <Frank.Li@nxp.com>, Vinod Koul <vkoul@kernel.org>,
-	"open list:FREESCALE eDMA DRIVER" <imx@lists.linux.dev>,
-	open list <linux-kernel@vger.kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH 2/2] dmaengine: fsl-edma: remove redundant "idle" field
- from fsl_chan
-Message-ID: <202406011229.5vpeVXX2-lkp@intel.com>
-References: <20240531210152.1878443-2-Frank.Li@nxp.com>
+To: Arnd Bergmann <arnd@kernel.org>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	Zhang Lixu <lixu.zhang@intel.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Arnd Bergmann <arnd@arndb.de>, linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] [v2] HID: intel-ish-hid: fix endian-conversion
+Message-ID: <202406011319.hk4MAysc-lkp@intel.com>
+References: <20240531162836.157891-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,134 +82,78 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240531210152.1878443-2-Frank.Li@nxp.com>
+In-Reply-To: <20240531162836.157891-1-arnd@kernel.org>
 
-Hi Frank,
+Hi Arnd,
 
-kernel test robot noticed the following build errors:
+kernel test robot noticed the following build warnings:
 
-[auto build test ERROR on vkoul-dmaengine/next]
-[also build test ERROR on linus/master v6.10-rc1 next-20240531]
+[auto build test WARNING on hid/for-next]
+[also build test WARNING on next-20240531]
+[cannot apply to linus/master v6.10-rc1]
 [If your patch is applied to the wrong git tree, kindly drop us a note.
 And when submitting patch, we suggest to use '--base' as documented in
 https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Frank-Li/dmaengine-fsl-edma-remove-redundant-idle-field-from-fsl_chan/20240601-050401
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/vkoul/dmaengine.git next
-patch link:    https://lore.kernel.org/r/20240531210152.1878443-2-Frank.Li%40nxp.com
-patch subject: [PATCH 2/2] dmaengine: fsl-edma: remove redundant "idle" field from fsl_chan
-config: hexagon-allmodconfig (https://download.01.org/0day-ci/archive/20240601/202406011229.5vpeVXX2-lkp@intel.com/config)
-compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project bafda89a0944d947fc4b3b5663185e07a397ac30)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240601/202406011229.5vpeVXX2-lkp@intel.com/reproduce)
+url:    https://github.com/intel-lab-lkp/linux/commits/Arnd-Bergmann/HID-intel-ish-hid-fix-endian-conversion/20240601-003303
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git for-next
+patch link:    https://lore.kernel.org/r/20240531162836.157891-1-arnd%40kernel.org
+patch subject: [PATCH] [v2] HID: intel-ish-hid: fix endian-conversion
+config: x86_64-buildonly-randconfig-002-20240601 (https://download.01.org/0day-ci/archive/20240601/202406011319.hk4MAysc-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240601/202406011319.hk4MAysc-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406011229.5vpeVXX2-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406011319.hk4MAysc-lkp@intel.com/
 
-All errors (new ones prefixed by >>):
+All warnings (new ones prefixed by >>):
 
-   In file included from drivers/dma/mcf-edma-main.c:7:
-   In file included from include/linux/interrupt.h:11:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     548 |         val = __raw_readb(PCI_IOBASE + addr);
-         |                           ~~~~~~~~~~ ^
-   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
-      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
-         |                                                   ^
-   In file included from drivers/dma/mcf-edma-main.c:7:
-   In file included from include/linux/interrupt.h:11:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
-      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
-         |                                                   ^
-   In file included from drivers/dma/mcf-edma-main.c:7:
-   In file included from include/linux/interrupt.h:11:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     585 |         __raw_writeb(value, PCI_IOBASE + addr);
-         |                             ~~~~~~~~~~ ^
-   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   In file included from drivers/dma/mcf-edma-main.c:8:
-   In file included from include/linux/dmaengine.h:12:
-   In file included from include/linux/scatterlist.h:8:
-   In file included from include/linux/mm.h:2253:
-   include/linux/vmstat.h:514:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     514 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
->> drivers/dma/mcf-edma-main.c:67:24: error: no member named 'idle' in 'struct fsl_edma_chan'
-      67 |                         mcf_edma->chans[ch].idle = true;
-         |                         ~~~~~~~~~~~~~~~~~~~ ^
-   drivers/dma/mcf-edma-main.c:199:13: error: no member named 'idle' in 'struct fsl_edma_chan'
-     199 |                 mcf_chan->idle = true;
-         |                 ~~~~~~~~  ^
-   7 warnings and 2 errors generated.
+>> drivers/hid/intel-ish-hid/ishtp/loader.c:170: warning: Function parameter or struct member 'fragment_count' not described in 'prepare_dma_bufs'
 
 
-vim +67 drivers/dma/mcf-edma-main.c
+vim +170 drivers/hid/intel-ish-hid/ishtp/loader.c
 
-e7a3ff92eaf19e drivers/dma/mcf-edma.c      Angelo Dureghello 2018-08-19  39  
-e7a3ff92eaf19e drivers/dma/mcf-edma.c      Angelo Dureghello 2018-08-19  40  static irqreturn_t mcf_edma_err_handler(int irq, void *dev_id)
-e7a3ff92eaf19e drivers/dma/mcf-edma.c      Angelo Dureghello 2018-08-19  41  {
-e7a3ff92eaf19e drivers/dma/mcf-edma.c      Angelo Dureghello 2018-08-19  42  	struct fsl_edma_engine *mcf_edma = dev_id;
-e7a3ff92eaf19e drivers/dma/mcf-edma.c      Angelo Dureghello 2018-08-19  43  	struct edma_regs *regs = &mcf_edma->regs;
-e7a3ff92eaf19e drivers/dma/mcf-edma.c      Angelo Dureghello 2018-08-19  44  	unsigned int err, ch;
-e7a3ff92eaf19e drivers/dma/mcf-edma.c      Angelo Dureghello 2018-08-19  45  
-e7a3ff92eaf19e drivers/dma/mcf-edma.c      Angelo Dureghello 2018-08-19  46  	err = ioread32(regs->errl);
-e7a3ff92eaf19e drivers/dma/mcf-edma.c      Angelo Dureghello 2018-08-19  47  	if (!err)
-e7a3ff92eaf19e drivers/dma/mcf-edma.c      Angelo Dureghello 2018-08-19  48  		return IRQ_NONE;
-e7a3ff92eaf19e drivers/dma/mcf-edma.c      Angelo Dureghello 2018-08-19  49  
-e7a3ff92eaf19e drivers/dma/mcf-edma.c      Angelo Dureghello 2018-08-19  50  	for (ch = 0; ch < (EDMA_CHANNELS / 2); ch++) {
-e7a3ff92eaf19e drivers/dma/mcf-edma.c      Angelo Dureghello 2018-08-19  51  		if (err & BIT(ch)) {
-e7a3ff92eaf19e drivers/dma/mcf-edma.c      Angelo Dureghello 2018-08-19  52  			fsl_edma_disable_request(&mcf_edma->chans[ch]);
-e7a3ff92eaf19e drivers/dma/mcf-edma.c      Angelo Dureghello 2018-08-19  53  			iowrite8(EDMA_CERR_CERR(ch), regs->cerr);
-79434f9b973616 drivers/dma/mcf-edma-main.c Frank Li          2023-08-21  54  			fsl_edma_err_chan_handler(&mcf_edma->chans[ch]);
-e7a3ff92eaf19e drivers/dma/mcf-edma.c      Angelo Dureghello 2018-08-19  55  		}
-e7a3ff92eaf19e drivers/dma/mcf-edma.c      Angelo Dureghello 2018-08-19  56  	}
-e7a3ff92eaf19e drivers/dma/mcf-edma.c      Angelo Dureghello 2018-08-19  57  
-e7a3ff92eaf19e drivers/dma/mcf-edma.c      Angelo Dureghello 2018-08-19  58  	err = ioread32(regs->errh);
-e7a3ff92eaf19e drivers/dma/mcf-edma.c      Angelo Dureghello 2018-08-19  59  	if (!err)
-e7a3ff92eaf19e drivers/dma/mcf-edma.c      Angelo Dureghello 2018-08-19  60  		return IRQ_NONE;
-e7a3ff92eaf19e drivers/dma/mcf-edma.c      Angelo Dureghello 2018-08-19  61  
-e7a3ff92eaf19e drivers/dma/mcf-edma.c      Angelo Dureghello 2018-08-19  62  	for (ch = (EDMA_CHANNELS / 2); ch < EDMA_CHANNELS; ch++) {
-e7a3ff92eaf19e drivers/dma/mcf-edma.c      Angelo Dureghello 2018-08-19  63  		if (err & (BIT(ch - (EDMA_CHANNELS / 2)))) {
-e7a3ff92eaf19e drivers/dma/mcf-edma.c      Angelo Dureghello 2018-08-19  64  			fsl_edma_disable_request(&mcf_edma->chans[ch]);
-e7a3ff92eaf19e drivers/dma/mcf-edma.c      Angelo Dureghello 2018-08-19  65  			iowrite8(EDMA_CERR_CERR(ch), regs->cerr);
-e7a3ff92eaf19e drivers/dma/mcf-edma.c      Angelo Dureghello 2018-08-19  66  			mcf_edma->chans[ch].status = DMA_ERROR;
-e7a3ff92eaf19e drivers/dma/mcf-edma.c      Angelo Dureghello 2018-08-19 @67  			mcf_edma->chans[ch].idle = true;
-e7a3ff92eaf19e drivers/dma/mcf-edma.c      Angelo Dureghello 2018-08-19  68  		}
-e7a3ff92eaf19e drivers/dma/mcf-edma.c      Angelo Dureghello 2018-08-19  69  	}
-e7a3ff92eaf19e drivers/dma/mcf-edma.c      Angelo Dureghello 2018-08-19  70  
-e7a3ff92eaf19e drivers/dma/mcf-edma.c      Angelo Dureghello 2018-08-19  71  	return IRQ_HANDLED;
-e7a3ff92eaf19e drivers/dma/mcf-edma.c      Angelo Dureghello 2018-08-19  72  }
-e7a3ff92eaf19e drivers/dma/mcf-edma.c      Angelo Dureghello 2018-08-19  73  
+579a267e4617d7 Zhang Lixu    2024-05-06  155  
+579a267e4617d7 Zhang Lixu    2024-05-06  156  /**
+579a267e4617d7 Zhang Lixu    2024-05-06  157   * prepare_dma_bufs() - Prepare the DMA buffer for transferring firmware fragments
+579a267e4617d7 Zhang Lixu    2024-05-06  158   * @dev: The ISHTP device
+579a267e4617d7 Zhang Lixu    2024-05-06  159   * @ish_fw: The ISH firmware
+579a267e4617d7 Zhang Lixu    2024-05-06  160   * @fragment: The ISHTP firmware fragment descriptor
+579a267e4617d7 Zhang Lixu    2024-05-06  161   * @dma_bufs: The array of DMA fragment buffers
+579a267e4617d7 Zhang Lixu    2024-05-06  162   * @fragment_size: The size of a single DMA fragment
+579a267e4617d7 Zhang Lixu    2024-05-06  163   *
+579a267e4617d7 Zhang Lixu    2024-05-06  164   * Return: 0 on success, negative error code on failure
+579a267e4617d7 Zhang Lixu    2024-05-06  165   */
+579a267e4617d7 Zhang Lixu    2024-05-06  166  static int prepare_dma_bufs(struct ishtp_device *dev,
+579a267e4617d7 Zhang Lixu    2024-05-06  167  			    const struct firmware *ish_fw,
+579a267e4617d7 Zhang Lixu    2024-05-06  168  			    struct loader_xfer_dma_fragment *fragment,
+5180be24abbcc0 Arnd Bergmann 2024-05-31  169  			    void **dma_bufs, u32 fragment_size, u32 fragment_count)
+579a267e4617d7 Zhang Lixu    2024-05-06 @170  {
+2360497238261f Zhang Lixu    2024-05-23  171  	dma_addr_t dma_addr;
+579a267e4617d7 Zhang Lixu    2024-05-06  172  	u32 offset = 0;
+5180be24abbcc0 Arnd Bergmann 2024-05-31  173  	u32 length;
+579a267e4617d7 Zhang Lixu    2024-05-06  174  	int i;
+579a267e4617d7 Zhang Lixu    2024-05-06  175  
+5180be24abbcc0 Arnd Bergmann 2024-05-31  176  	for (i = 0; i < fragment_count && offset < ish_fw->size; i++) {
+2360497238261f Zhang Lixu    2024-05-23  177  		dma_bufs[i] = dma_alloc_coherent(dev->devc, fragment_size, &dma_addr, GFP_KERNEL);
+579a267e4617d7 Zhang Lixu    2024-05-06  178  		if (!dma_bufs[i])
+579a267e4617d7 Zhang Lixu    2024-05-06  179  			return -ENOMEM;
+579a267e4617d7 Zhang Lixu    2024-05-06  180  
+2360497238261f Zhang Lixu    2024-05-23  181  		fragment->fragment_tbl[i].ddr_adrs = cpu_to_le64(dma_addr);
+5180be24abbcc0 Arnd Bergmann 2024-05-31  182  		length = clamp(ish_fw->size - offset, 0, fragment_size);
+5180be24abbcc0 Arnd Bergmann 2024-05-31  183  		fragment->fragment_tbl[i].length = cpu_to_le32(length);
+5180be24abbcc0 Arnd Bergmann 2024-05-31  184  		fragment->fragment_tbl[i].fw_off = cpu_to_le32(offset);
+5180be24abbcc0 Arnd Bergmann 2024-05-31  185  		memcpy(dma_bufs[i], ish_fw->data + offset, length);
+579a267e4617d7 Zhang Lixu    2024-05-06  186  		clflush_cache_range(dma_bufs[i], fragment_size);
+579a267e4617d7 Zhang Lixu    2024-05-06  187  
+5180be24abbcc0 Arnd Bergmann 2024-05-31  188  		offset += length;
+579a267e4617d7 Zhang Lixu    2024-05-06  189  	}
+579a267e4617d7 Zhang Lixu    2024-05-06  190  
+579a267e4617d7 Zhang Lixu    2024-05-06  191  	return 0;
+579a267e4617d7 Zhang Lixu    2024-05-06  192  }
+579a267e4617d7 Zhang Lixu    2024-05-06  193  
 
 -- 
 0-DAY CI Kernel Test Service
