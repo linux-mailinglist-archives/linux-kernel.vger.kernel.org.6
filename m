@@ -1,161 +1,130 @@
-Return-Path: <linux-kernel+bounces-197690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F8758D6E02
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 07:19:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 509A08D6E06
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 07:21:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4863B23AD1
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 05:19:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5639D1C217F4
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 05:21:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06B30DDC0;
-	Sat,  1 Jun 2024 05:19:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7E53F9D4;
+	Sat,  1 Jun 2024 05:21:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lHARu/ux"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MJKJj3me"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE9DDF9CC;
-	Sat,  1 Jun 2024 05:19:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E6871FA1;
+	Sat,  1 Jun 2024 05:21:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717219151; cv=none; b=faLXnXod620iMA+sl/3uXprKZrpvTZHwFugXLJ9L+JcOSzoPGkKKXQAdw+bcvPMvdKQ3QZf2N40xgBXLeL1FSMpV8ia+F++Ic1VhgviLgjwF2XCIf8ReZRnnhHWI4wmRyKzzuaNKcL0Kl1y/YEfhIa4BI411peUxhfTGDaVNTwY=
+	t=1717219309; cv=none; b=qAkc5uYtoECn0QnI4HEn8RKKEivuwdziads6rppQW8RULEYD2SURiCdXWNEv3Sz24j1mWZO9anPEsryZK6RIDK77YuG/R5++pFB0BLZ3bEio+rDmK/yaiMDxJqyYgLAl/izjRSQfOpqrnaHmIcZF5SZPcg6778Mq3cddlmDqSaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717219151; c=relaxed/simple;
-	bh=RmGTeDB7gSE6+bdtPqnjC5zB/xCa0YNAJAARczN2gPQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V7RJ18oLj8YC02MDLGkvjkXmkaSOmoAIqLk3FfG2CQZRsBOxL2TbxpMG6OPSgfCrOTc32wwpkwd1GyWXeHdt6byQkK8eiy4dYCHglaCps2ciB0gXxmTPPjgEwaVw4J5layF9gYdql0GCutN7DLrP4D9VF/fjDGhqyN0HnJOgc4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lHARu/ux; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717219150; x=1748755150;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=RmGTeDB7gSE6+bdtPqnjC5zB/xCa0YNAJAARczN2gPQ=;
-  b=lHARu/uxiXlGxDzmUTL0FxqMSm2lWHUvArIL4V4UO7U67tF7AsNHcjeA
-   1TuzUs33WPF7g8wd+4KD/gZs0nVNrtp0mR/JqYrSICCa1etN00Wj0AfY8
-   lrPVgRO/142LKTsPN+S2M5ohHTc5rhRDMNaQB6EFRU9/2zzBioqoYzo2f
-   mEgwI7aQ0oVuihRYC0cX3lw3B89KX6d1cGFAMy4AcNUdn8BUbR1gzPthJ
-   048NHstYU54k2oh/WPM3oz3GEBk2hKv94WEDnVI8YZSnXqz9IC81260y8
-   3dQouE3u42vVRUM5zEKH0LQGjs5mmp+vLJRJjgRMu0vbhZZRC2ngebaMK
-   g==;
-X-CSE-ConnectionGUID: wUAcFYv2S7eyrVDFMc0ssw==
-X-CSE-MsgGUID: mB2qqDhNQq2CavBFpd+xBA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11089"; a="24894527"
-X-IronPort-AV: E=Sophos;i="6.08,206,1712646000"; 
-   d="scan'208";a="24894527"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 22:19:10 -0700
-X-CSE-ConnectionGUID: EG35p8h0R6O2sKJanIuclA==
-X-CSE-MsgGUID: JzwWgfBrTlqUJNu/d0aJfQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,206,1712646000"; 
-   d="scan'208";a="36447216"
-Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
-  by orviesa009.jf.intel.com with ESMTP; 31 May 2024 22:19:06 -0700
-Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sDH8y-000IQn-0l;
-	Sat, 01 Jun 2024 05:19:04 +0000
-Date: Sat, 1 Jun 2024 13:18:47 +0800
-From: kernel test robot <lkp@intel.com>
-To: Arnd Bergmann <arnd@kernel.org>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
-	Zhang Lixu <lixu.zhang@intel.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Arnd Bergmann <arnd@arndb.de>, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] [v2] HID: intel-ish-hid: fix endian-conversion
-Message-ID: <202406011319.hk4MAysc-lkp@intel.com>
-References: <20240531162836.157891-1-arnd@kernel.org>
+	s=arc-20240116; t=1717219309; c=relaxed/simple;
+	bh=WuzLPxmQ2z5qFOYB6Ccrur/y1T1zx02Or2ziLvcjtgg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=BOmgLR3+LstpNuqQmO0grdoeZc3RnAxV/k7Rq0BY6/y/jh1JO3YjzPrUwSQYqN6elLa97G/B52NUknN6UbForm0S/vxYGHy0Vzy1qysRlNUYA6/EvT7uTP5VKYTL28vF3dZfHNwAWURGE5DD2N8vw+eb7/D9qLvTL8KUTKyjamY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MJKJj3me; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 451518uZ002791;
+	Sat, 1 Jun 2024 05:21:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=e+29MkcgeFyHU/qK6ca+zJ
+	YwNpXN/HC1oFMDub0VUZE=; b=MJKJj3meO5ViuQqUzHBkx7mPkyTQ1CcAVA0dLK
+	ecDLBI/XLmCkD5gPuKwKY07ar1tz5hjlx03NHXWdm8lS1C3Ugk8b5iaV5tRUdlKx
+	nuaFzyE+dWbnOKl8RObW8zbCbltqlDczR73HXkrQkszRd+VpsTIW6708QMAA9EbI
+	MTaILbc5at+8AXSXlmblZWo/1iheWXCx9HNsICzN6qGcF3SS80x3FVfVtnI4LQBE
+	8SPWH8BV9QTR/R4OA6fUletbf4tOgO3IL6xJuQ/I5OmnQWLeJWTgopb1nEBUepT4
+	u5yQEE7R/Ck5z854dbGAsU+sTbeLP8C10eBZ2hUq0+h0Hypw==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfw4d00j4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 01 Jun 2024 05:21:43 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 4515Lgwn023576
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 1 Jun 2024 05:21:42 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 31 May
+ 2024 22:21:41 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Fri, 31 May 2024 22:21:38 -0700
+Subject: [PATCH] lib/math: add missing MODULE_DESCRIPTION() macros
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240531162836.157891-1-arnd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240531-md-lib-math-v1-1-11a3bec51ebb@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAOGvWmYC/x3MwQqDMAyA4VeRnBewajfcqwwPjaZrQLvRuCGI7
+ 26243f4/x2Ui7DCvdqh8FdUXtngLhWMKeQno0xmaOqmq33rcJlwFsIlrAl9SzH27tr7G4EV78J
+ Rtv/tMZgpKCOVkMf0e8ySP5uVunKB4zgBBkSsOHwAAAA=
+To: Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>
+CC: <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        "Jeff
+ Johnson" <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: vdd0Ca4FGswCdz9Ft6H6c-WFMsoesBx1
+X-Proofpoint-GUID: vdd0Ca4FGswCdz9Ft6H6c-WFMsoesBx1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-06-01_01,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 mlxscore=0 adultscore=0 impostorscore=0 bulkscore=0
+ spamscore=0 phishscore=0 clxscore=1015 mlxlogscore=999 suspectscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406010039
 
-Hi Arnd,
+make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/math/prime_numbers.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/math/rational-test.o
 
-kernel test robot noticed the following build warnings:
+Add the missing invocations of the MODULE_DESCRIPTION() macro.
 
-[auto build test WARNING on hid/for-next]
-[also build test WARNING on next-20240531]
-[cannot apply to linus/master v6.10-rc1]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ lib/math/prime_numbers.c | 1 +
+ lib/math/rational-test.c | 1 +
+ 2 files changed, 2 insertions(+)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Arnd-Bergmann/HID-intel-ish-hid-fix-endian-conversion/20240601-003303
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git for-next
-patch link:    https://lore.kernel.org/r/20240531162836.157891-1-arnd%40kernel.org
-patch subject: [PATCH] [v2] HID: intel-ish-hid: fix endian-conversion
-config: x86_64-buildonly-randconfig-002-20240601 (https://download.01.org/0day-ci/archive/20240601/202406011319.hk4MAysc-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240601/202406011319.hk4MAysc-lkp@intel.com/reproduce)
+diff --git a/lib/math/prime_numbers.c b/lib/math/prime_numbers.c
+index d3b64b10da1c..9a17ee9af93a 100644
+--- a/lib/math/prime_numbers.c
++++ b/lib/math/prime_numbers.c
+@@ -311,4 +311,5 @@ module_exit(primes_exit);
+ module_param_named(selftest, selftest_max, ulong, 0400);
+ 
+ MODULE_AUTHOR("Intel Corporation");
++MODULE_DESCRIPTION("Prime number library");
+ MODULE_LICENSE("GPL");
+diff --git a/lib/math/rational-test.c b/lib/math/rational-test.c
+index 01611ddff420..47486a95f088 100644
+--- a/lib/math/rational-test.c
++++ b/lib/math/rational-test.c
+@@ -53,4 +53,5 @@ static struct kunit_suite rational_test_suite = {
+ 
+ kunit_test_suites(&rational_test_suite);
+ 
++MODULE_DESCRIPTION("Rational fractions unit test");
+ MODULE_LICENSE("GPL v2");
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406011319.hk4MAysc-lkp@intel.com/
+---
+base-commit: b050496579632f86ee1ef7e7501906db579f3457
+change-id: 20240531-md-lib-math-53bff916957b
 
-All warnings (new ones prefixed by >>):
-
->> drivers/hid/intel-ish-hid/ishtp/loader.c:170: warning: Function parameter or struct member 'fragment_count' not described in 'prepare_dma_bufs'
-
-
-vim +170 drivers/hid/intel-ish-hid/ishtp/loader.c
-
-579a267e4617d7 Zhang Lixu    2024-05-06  155  
-579a267e4617d7 Zhang Lixu    2024-05-06  156  /**
-579a267e4617d7 Zhang Lixu    2024-05-06  157   * prepare_dma_bufs() - Prepare the DMA buffer for transferring firmware fragments
-579a267e4617d7 Zhang Lixu    2024-05-06  158   * @dev: The ISHTP device
-579a267e4617d7 Zhang Lixu    2024-05-06  159   * @ish_fw: The ISH firmware
-579a267e4617d7 Zhang Lixu    2024-05-06  160   * @fragment: The ISHTP firmware fragment descriptor
-579a267e4617d7 Zhang Lixu    2024-05-06  161   * @dma_bufs: The array of DMA fragment buffers
-579a267e4617d7 Zhang Lixu    2024-05-06  162   * @fragment_size: The size of a single DMA fragment
-579a267e4617d7 Zhang Lixu    2024-05-06  163   *
-579a267e4617d7 Zhang Lixu    2024-05-06  164   * Return: 0 on success, negative error code on failure
-579a267e4617d7 Zhang Lixu    2024-05-06  165   */
-579a267e4617d7 Zhang Lixu    2024-05-06  166  static int prepare_dma_bufs(struct ishtp_device *dev,
-579a267e4617d7 Zhang Lixu    2024-05-06  167  			    const struct firmware *ish_fw,
-579a267e4617d7 Zhang Lixu    2024-05-06  168  			    struct loader_xfer_dma_fragment *fragment,
-5180be24abbcc0 Arnd Bergmann 2024-05-31  169  			    void **dma_bufs, u32 fragment_size, u32 fragment_count)
-579a267e4617d7 Zhang Lixu    2024-05-06 @170  {
-2360497238261f Zhang Lixu    2024-05-23  171  	dma_addr_t dma_addr;
-579a267e4617d7 Zhang Lixu    2024-05-06  172  	u32 offset = 0;
-5180be24abbcc0 Arnd Bergmann 2024-05-31  173  	u32 length;
-579a267e4617d7 Zhang Lixu    2024-05-06  174  	int i;
-579a267e4617d7 Zhang Lixu    2024-05-06  175  
-5180be24abbcc0 Arnd Bergmann 2024-05-31  176  	for (i = 0; i < fragment_count && offset < ish_fw->size; i++) {
-2360497238261f Zhang Lixu    2024-05-23  177  		dma_bufs[i] = dma_alloc_coherent(dev->devc, fragment_size, &dma_addr, GFP_KERNEL);
-579a267e4617d7 Zhang Lixu    2024-05-06  178  		if (!dma_bufs[i])
-579a267e4617d7 Zhang Lixu    2024-05-06  179  			return -ENOMEM;
-579a267e4617d7 Zhang Lixu    2024-05-06  180  
-2360497238261f Zhang Lixu    2024-05-23  181  		fragment->fragment_tbl[i].ddr_adrs = cpu_to_le64(dma_addr);
-5180be24abbcc0 Arnd Bergmann 2024-05-31  182  		length = clamp(ish_fw->size - offset, 0, fragment_size);
-5180be24abbcc0 Arnd Bergmann 2024-05-31  183  		fragment->fragment_tbl[i].length = cpu_to_le32(length);
-5180be24abbcc0 Arnd Bergmann 2024-05-31  184  		fragment->fragment_tbl[i].fw_off = cpu_to_le32(offset);
-5180be24abbcc0 Arnd Bergmann 2024-05-31  185  		memcpy(dma_bufs[i], ish_fw->data + offset, length);
-579a267e4617d7 Zhang Lixu    2024-05-06  186  		clflush_cache_range(dma_bufs[i], fragment_size);
-579a267e4617d7 Zhang Lixu    2024-05-06  187  
-5180be24abbcc0 Arnd Bergmann 2024-05-31  188  		offset += length;
-579a267e4617d7 Zhang Lixu    2024-05-06  189  	}
-579a267e4617d7 Zhang Lixu    2024-05-06  190  
-579a267e4617d7 Zhang Lixu    2024-05-06  191  	return 0;
-579a267e4617d7 Zhang Lixu    2024-05-06  192  }
-579a267e4617d7 Zhang Lixu    2024-05-06  193  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
