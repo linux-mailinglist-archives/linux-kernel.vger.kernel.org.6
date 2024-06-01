@@ -1,175 +1,217 @@
-Return-Path: <linux-kernel+bounces-197980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AEBE8D7183
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 20:21:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5053F8D7188
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 20:35:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E1BD1C20C4F
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 18:21:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68E751C20AAF
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 18:35:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC13F15535B;
-	Sat,  1 Jun 2024 18:20:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5DC7154C02;
+	Sat,  1 Jun 2024 18:35:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vg67uHb3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iNlH+UiJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF8D0155348;
-	Sat,  1 Jun 2024 18:20:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07EC314267;
+	Sat,  1 Jun 2024 18:35:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717266056; cv=none; b=JkQI2ePfECe27eo4d4GJrNIQiXPHJ6FDPEoUa4g5w/edZbjaO/XZV0IOLN56R/0Lc7NIEezYT3ZaR/aEAac28mDPWXaDO0Sf4z145mB+9YnKtb9OLN7cqx/zzpm07Qb6jZxziVjFw4O/B+/5wNVCuiZ1V3sFgVZYSg8G7pCoAkY=
+	t=1717266929; cv=none; b=jxob1CSNfzzzNtIX4UKG2W7vRinAG6GGeLwh9JvmqYoI8IlDN7FnzuBbUYRGX0+nJ2KcbOZvYps1VpO7+okk6p3kXnYDtQJTo4ylkphEnJ01s+BbLyQZ79crI6miHBBTfbdotCqOf5oqDJShbxltP1aci/ANCUAnih2aJEs6zfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717266056; c=relaxed/simple;
-	bh=kC1jc3prKdtA/LgosSTF/JuJoDdO9UUh+Y3Hw0pC3Mo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=GXvcJKSrkkTSK8VdmsjplhE2MtHTD8/XAFP5hBVRYnhpk6f9PdV5KmGQhzLCEXh3V/UFXcyFO9+PjHtDJohWP+APzAv5Ey8aMAJMULz28ebMLs3Xfna8WHgFYL/EQvkW6acJJ2+st1X4Ooun5zqIAiuMaxuVbfjjiuvqXz9hHeU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vg67uHb3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C15CCC4AF08;
-	Sat,  1 Jun 2024 18:20:54 +0000 (UTC)
+	s=arc-20240116; t=1717266929; c=relaxed/simple;
+	bh=mtgb8tUEskvemeJcAOPUnubgObdTQkeV31omALLO7pc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=boP76NWG6DnvsAJWDrjazHcRzm233t8rBlouaTEe0se3h0k+zgpe5EchRgv2NDGpQjDYzAwRe2r15v8BZ5IMxvuzHNooiqRePrWgbOhj6C+CCP2DJvglgzvOpSnr3ejsqJ6uo3a9Wqy+MkzH/uuWze3sv6BHmUB1AgGvRgdH66k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iNlH+UiJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C63A3C116B1;
+	Sat,  1 Jun 2024 18:35:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717266055;
-	bh=kC1jc3prKdtA/LgosSTF/JuJoDdO9UUh+Y3Hw0pC3Mo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Vg67uHb3e6ApuZockC+sUyc0WOdFnzWF6d78gAUgF/OOw41DV5Eyp6u+D3TBz5D1b
-	 mbgRd8u5HBT5Zue98gtwIxiRXKBNfOqc7Pn3Yz5KDRd16DnHszHRBGaB2atOAqm17W
-	 InU/3k5RvsYQ+8zCjpQ8Oo+AUmCKmF7H48eIpVzfNxuq31AB6wxLPok1eSnl+FpvWe
-	 3uHsDfAtME7WqmqEBaw5paw+JJhpO7lMsyZpCzGY5d6gNycoRFFGzYeNv+BuWOVYhm
-	 RayQCs0a3ro20wlofLJI4+bbYhXY5qvuDh0dOC1WE1ZOarpfWWnUTLKdLxTJ1RJdmU
-	 spT/rZ/46KKUw==
-From: Masahiro Yamada <masahiroy@kernel.org>
-To: linux-kbuild@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>
-Subject: [PATCH 6/6] kconfig: pass new the conf_changed value to the callback
-Date: Sun,  2 Jun 2024 03:20:43 +0900
-Message-Id: <20240601182043.876249-6-masahiroy@kernel.org>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20240601182043.876249-1-masahiroy@kernel.org>
-References: <20240601182043.876249-1-masahiroy@kernel.org>
+	s=k20201202; t=1717266928;
+	bh=mtgb8tUEskvemeJcAOPUnubgObdTQkeV31omALLO7pc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=iNlH+UiJ3HzSbTmjUVHal1OZKAIrt+6ksY0CblgBD5MNtmimFpmsnRp7mtPSF0Rhz
+	 98QnTgIJBWgrjYrdIvo6KYy3QlVcsbgTYywb9eKykXtma8dU5CQnjIISDeVKb0TRDv
+	 V4Sg1dG/b/qQqN+Fr8226DrJRFWPjgDrRs73vuSnzWi73OYeScF406fbLjtFXbb5cC
+	 q65YQbnMvWIg0c1/oKW8yVHe/XISnPCTSx05AgyVnQIqHFHKsRTihXU+z194wUAb2F
+	 Tta2LGLlZXFoVCfufH3OgHQu3bTIl49cI24FO0UjXIWYIU82JHffaRu+93H4N5S+fK
+	 FZLsfW2g8Xl4w==
+Date: Sat, 1 Jun 2024 19:35:12 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Dumitru Ceclan via B4 Relay
+ <devnull+dumitru.ceclan.analog.com@kernel.org>
+Cc: dumitru.ceclan@analog.com, Lars-Peter Clausen <lars@metafoo.de>, Michael
+ Hennerich <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley
+ <conor+dt@kernel.org>, David Lechner <dlechner@baylibre.com>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Dumitru Ceclan <mitrutzceclan@gmail.com>
+Subject: Re: [PATCH v4 1/6] dt-bindings: adc: ad7173: add support for ad411x
+Message-ID: <20240601193512.0e17992b@jic23-huawei>
+In-Reply-To: <20240531-ad4111-v4-1-64607301c057@analog.com>
+References: <20240531-ad4111-v4-0-64607301c057@analog.com>
+	<20240531-ad4111-v4-1-64607301c057@analog.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Commit ee06a3ef7e3c ("kconfig: Update config changed flag before calling
-callback") pointed out that conf_updated flag must be updated before
-calling the callback because it needs to know the new value.
+On Fri, 31 May 2024 22:42:27 +0300
+Dumitru Ceclan via B4 Relay <devnull+dumitru.ceclan.analog.com@kernel.org> =
+wrote:
 
-If so, it makes sense to pass the new value to the callback.
+> From: Dumitru Ceclan <dumitru.ceclan@analog.com>
+>=20
+> Add support for: AD4111, AD4112, AD4114, AD4115, AD4116.
+>=20
+> AD411x family ADCs support a VCOM pin. The purpose of this pin is to
+> offer a dedicated common-mode voltage input for single-ended channels.
+> This pin is specified as supporting a differential channel with VIN10 on
+> model AD4116.
+>=20
+> AD4111/AD4112 support current channels. Support is implemented using
+> single-channel and "adi,current-channel".
+>=20
+> Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
+I like the common-mode-channel solution to the pseudo differential
+description. It makes things explicit whilst avoiding an ugly differential
+but not differential mess.
 
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
----
+However, it feels like a general thing to me not a vendor specific one.
+Perhaps makes sense to put in adc.yaml?
 
- scripts/kconfig/confdata.c  | 10 ++++------
- scripts/kconfig/gconf.c     |  7 +++----
- scripts/kconfig/lkc_proto.h |  2 +-
- scripts/kconfig/qconf.cc    |  4 ++--
- scripts/kconfig/qconf.h     |  2 +-
- 5 files changed, 11 insertions(+), 14 deletions(-)
+One other question that is more me being curious and failing to understand
+the datasheet than a request to change anything.
+> ---
+>  .../devicetree/bindings/iio/adc/adi,ad7173.yaml    | 192 +++++++++++++++=
++++++-
+>  1 file changed, 190 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml b/=
+Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml
+> index ea6cfcd0aff4..d8474eee553e 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml
+> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml
+> @@ -19,7 +19,18 @@ description: |
+>    primarily for measurement of signals close to DC but also delivers
+>    outstanding performance with input bandwidths out to ~10kHz.
+> =20
+> +  Analog Devices AD411x ADC's:
+> +  The AD411X family encompasses a series of low power, low noise, 24-bit,
+> +  sigma-delta analog-to-digital converters that offer a versatile range =
+of
+> +  specifications. They integrate an analog front end suitable for proces=
+sing
+> +  fully differential/single-ended and bipolar voltage inputs.
+> +
+>    Datasheets for supported chips:
+> +    https://www.analog.com/media/en/technical-documentation/data-sheets/=
+AD4111.pdf
+> +    https://www.analog.com/media/en/technical-documentation/data-sheets/=
+AD4112.pdf
+> +    https://www.analog.com/media/en/technical-documentation/data-sheets/=
+AD4114.pdf
+> +    https://www.analog.com/media/en/technical-documentation/data-sheets/=
+AD4115.pdf
+> +    https://www.analog.com/media/en/technical-documentation/data-sheets/=
+AD4116.pdf
+>      https://www.analog.com/media/en/technical-documentation/data-sheets/=
+AD7172-2.pdf
+>      https://www.analog.com/media/en/technical-documentation/data-sheets/=
+AD7172-4.pdf
+>      https://www.analog.com/media/en/technical-documentation/data-sheets/=
+AD7173-8.pdf
+> @@ -31,6 +42,11 @@ description: |
+>  properties:
+>    compatible:
+>      enum:
+> +      - adi,ad4111
+> +      - adi,ad4112
+> +      - adi,ad4114
+> +      - adi,ad4115
+> +      - adi,ad4116
+>        - adi,ad7172-2
+>        - adi,ad7172-4
+>        - adi,ad7173-8
+> @@ -129,10 +145,54 @@ patternProperties:
+>          maximum: 15
+> =20
+>        diff-channels:
+> +        description: |
+> +          This property is used for defining the inputs of a differential
+> +          voltage channel. The first value is the positive input and the=
+ second
+> +          value is the negative input of the channel.
+> +
+> +          Family AD411x supports a dedicated VINCOM voltage input.
+> +          To select it set the second channel to 16.
+> +            (VIN2, VINCOM) -> diff-channels =3D <2 16>
+> +
+> +          There are special values that can be selected besides the volt=
+age
+> +          analog inputs:
+> +            21: REF+
+> +            22: REF=E2=88=92
+> +          Supported only by AD7172-2, AD7172-4, AD7175-2, AD7175-8, AD71=
+77-2:
+> +            19: ((AVDD1 =E2=88=92 AVSS)/5)+
+> +            20: ((AVDD1 =E2=88=92 AVSS)/5)=E2=88=92
 
-diff --git a/scripts/kconfig/confdata.c b/scripts/kconfig/confdata.c
-index 85b53069ba7a..946185506380 100644
---- a/scripts/kconfig/confdata.c
-+++ b/scripts/kconfig/confdata.c
-@@ -1141,16 +1141,14 @@ int conf_write_autoconf(int overwrite)
- }
- 
- static bool conf_changed;
--static void (*conf_changed_callback)(void);
-+static void (*conf_changed_callback)(bool);
- 
- void conf_set_changed(bool val)
- {
--	bool changed = conf_changed != val;
-+	if (conf_changed_callback && conf_changed != val)
-+		conf_changed_callback(val);
- 
- 	conf_changed = val;
--
--	if (conf_changed_callback && changed)
--		conf_changed_callback();
- }
- 
- bool conf_get_changed(void)
-@@ -1158,7 +1156,7 @@ bool conf_get_changed(void)
- 	return conf_changed;
- }
- 
--void conf_set_changed_callback(void (*fn)(void))
-+void conf_set_changed_callback(void (*fn)(bool))
- {
- 	conf_changed_callback = fn;
- }
-diff --git a/scripts/kconfig/gconf.c b/scripts/kconfig/gconf.c
-index 2bf74aee5eff..baa1c512de3c 100644
---- a/scripts/kconfig/gconf.c
-+++ b/scripts/kconfig/gconf.c
-@@ -84,11 +84,10 @@ static void replace_button_icon(GladeXML *xml, GdkDrawable *window,
- 	gtk_tool_button_set_icon_widget(button, image);
- }
- 
--static void conf_changed(void)
-+static void conf_changed(bool dirty)
- {
--	bool changed = conf_get_changed();
--	gtk_widget_set_sensitive(save_btn, changed);
--	gtk_widget_set_sensitive(save_menu_item, changed);
-+	gtk_widget_set_sensitive(save_btn, dirty);
-+	gtk_widget_set_sensitive(save_menu_item, dirty);
- }
- 
- /* Main Window Initialization */
-diff --git a/scripts/kconfig/lkc_proto.h b/scripts/kconfig/lkc_proto.h
-index d76aaf4ea117..c663fd8b35d2 100644
---- a/scripts/kconfig/lkc_proto.h
-+++ b/scripts/kconfig/lkc_proto.h
-@@ -13,7 +13,7 @@ int conf_write(const char *name);
- int conf_write_autoconf(int overwrite);
- void conf_set_changed(bool val);
- bool conf_get_changed(void);
--void conf_set_changed_callback(void (*fn)(void));
-+void conf_set_changed_callback(void (*fn)(bool));
- void conf_set_message_callback(void (*fn)(const char *s));
- bool conf_errors(void);
- 
-diff --git a/scripts/kconfig/qconf.cc b/scripts/kconfig/qconf.cc
-index e62e862ea283..03fa096074b4 100644
---- a/scripts/kconfig/qconf.cc
-+++ b/scripts/kconfig/qconf.cc
-@@ -1849,10 +1849,10 @@ void ConfigMainWindow::saveSettings(void)
- 	configSettings->writeSizes("/split2", split2->sizes());
- }
- 
--void ConfigMainWindow::conf_changed(void)
-+void ConfigMainWindow::conf_changed(bool dirty)
- {
- 	if (saveAction)
--		saveAction->setEnabled(conf_get_changed());
-+		saveAction->setEnabled(dirty);
- }
- 
- void fixup_rootmenu(struct menu *menu)
-diff --git a/scripts/kconfig/qconf.h b/scripts/kconfig/qconf.h
-index 78b0a1dfcd53..53373064d90a 100644
---- a/scripts/kconfig/qconf.h
-+++ b/scripts/kconfig/qconf.h
-@@ -239,7 +239,7 @@ class ConfigMainWindow : public QMainWindow {
- 
- 	char *configname;
- 	static QAction *saveAction;
--	static void conf_changed(void);
-+	static void conf_changed(bool);
- public:
- 	ConfigMainWindow(void);
- public slots:
--- 
-2.40.1
+That's what it says on the datasheet (so fine to copy that here) but I'm cu=
+rious, what does
+that mean in practice?  How can we have negative and postive signals of the=
+ difference
+between two power supply voltages where I'm fairly sure AVDD1 always greate=
+r than AVSS.
+
+Anyhow, that's a problem for the person reading the datasheet to figure out=
+ :)
+=20
+> +
+>          items:
+>            minimum: 0
+>            maximum: 31
+> =20
+> +      single-channel:
+> +        description: |
+> +          This property is used for defining a current channel or the po=
+sitive
+> +          input of a voltage channel (single-ended or pseudo-differentia=
+l).
+> +
+> +          Models AD4111 and AD4112 support current channels.
+> +            Example: (IIN2+, IIN2=E2=88=92) -> single-channel =3D <2>
+> +          To correctly configure a current channel set the "adi,current-=
+channel"
+> +          property to true.
+> +
+> +          To configure a single-ended/pseudo-differential channel set the
+> +          "adi,common-mode-channel" property to the desired negative vol=
+tage input.
+> +
+> +          When used as a voltage channel, special inputs are valid as we=
+ll.
+> +        minimum: 0
+> +        maximum: 31
+> +
+> +      adi,common-mode-channel:
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        description:
+> +          This property is used for defining the negative input of a
+> +          single-ended or pseudo-differential voltage channel.
+> +
+> +          Special inputs are valid as well.
+> +        minimum: 0
+> +        maximum: 31
+> +
 
 
