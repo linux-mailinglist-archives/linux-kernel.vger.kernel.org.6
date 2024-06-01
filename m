@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-197928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 603BE8D70D8
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 17:22:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48C768D70DC
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 17:26:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 929391C21029
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 15:22:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2C8B1F216F3
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 15:25:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72480152DF5;
-	Sat,  1 Jun 2024 15:22:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D4DB152DF5;
+	Sat,  1 Jun 2024 15:25:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iNsQ5pJH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UKNwUi/Z"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABDEF14EC58;
-	Sat,  1 Jun 2024 15:22:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A76F111AD;
+	Sat,  1 Jun 2024 15:25:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717255346; cv=none; b=eNnuhiYw71b4EXUM5Cw0lqzoYLkbfdRmrPV6PnexD+lbEaRefyvWtRSS+lL4oMGYQe08E9RNDBks1Nz2v09OO4qluXdjZbGFcTcB4qux9Qpv69iNJFKpC1BywHSTSCSMRZ8OscdZWcfMU2N2YUkth6KxpJxYtgBuo1GFEFVJBzU=
+	t=1717255550; cv=none; b=QvxgD3yHZwCoVGWZUs1jKVi0B8JY/20Jt7VsgekquJFPphnqRgHXk0BN44/GnWxAQGaOCFrwkZPD0KAwtwR7r9PueCXCe0xLdPFUIBmiY+aMVezAJbE8U9oaiX6JvZJMH70Q6DmwLSE15/4EmJ0xazPEhPnH7bG7KZuDrYQ7zIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717255346; c=relaxed/simple;
-	bh=d1fhBJMNp7LfOS3u+BYRG62udbvv8i/BuoCejdIOb4E=;
+	s=arc-20240116; t=1717255550; c=relaxed/simple;
+	bh=6arLZDLJuJlo6JuZXNw8KfGVxYLRDu0gY7ndaZcELgs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pOU1SjT/YmAB8v4Z/yBLvnUrCmk1xEWYsMAcEl1UrS39U0Duuu49JAv2+8S3mhdpXLs5HTyjDDNxPtOZrkrX9j5cppqO2zIOdfgqLA1ShteegB98aVRWVMjhlOvAQkzxUMK0OeIKJTYdYGp9cUAbKjcry1+NHLkUlb7WLvJkT+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iNsQ5pJH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 635BFC116B1;
-	Sat,  1 Jun 2024 15:22:23 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=R2fDMFs9zwBGwdbawpqvpQSvc6OISx2P52ILXDFtI+Hz9zNbaXRY1QhG0j0iDazZqoBW9jatjFaGSfAMSftfNlLBLvITKgiLMT5PzkGrtNtzMkRDQxDtHjRl8w707KaI1Zaevq+9PS5QC/0jPo5OW6qrOoesEqPOkI9pElNP4Go=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UKNwUi/Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED31FC116B1;
+	Sat,  1 Jun 2024 15:25:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717255346;
-	bh=d1fhBJMNp7LfOS3u+BYRG62udbvv8i/BuoCejdIOb4E=;
+	s=k20201202; t=1717255550;
+	bh=6arLZDLJuJlo6JuZXNw8KfGVxYLRDu0gY7ndaZcELgs=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=iNsQ5pJHLNaFmvGOIzJNrxIfcRRUKN1Lk0r522q0/NyLvReE8u8xIyiNOCAuh9W4r
-	 GuzKgphlTs7UbhDk9pAgVkXBVaq9L372gBV8arJwEuh8OR8C5G6T+cvlvrH9vDxwA8
-	 RDVnsXe7P3cjkDNjnDniTxHwkvIk8NDwW9Vti4mgmlrU25bDjH4+nXa0byeP3T9brr
-	 Vd1rDj+kS1wi4tKvEGaRI71SeNAsC18BS89P2Vh99EZJPxcv5DSZQwh6ctcaAKOWgy
-	 qhRz2cTZOUsPFbNeRIXaBlUrOh//LdsMblAHPnJqktvObb8UQgpJrpQcltV92WDJ6V
-	 CJGznVzi4Iumw==
-Message-ID: <fc09ed1b-a0ce-4540-b197-d77dff7a63c1@kernel.org>
-Date: Sat, 1 Jun 2024 17:21:41 +0200
+	b=UKNwUi/ZG96iN4HmYc3blfQJ0y6H4YO4j/U1ogjpCJ7ZKqj3hwtlv7xNJWZinU1Wc
+	 M6LsTxD604zMz+m1MtLqCVhNNznq1eVhf0GbkELX1+prAF3fJl3NlrT26tVcr7gdcA
+	 Eihndo4ZPQwfN/5BoO1csMa0qqB1RLwMQE5zz3VkuA32hux7PpZzoFLoS8Der35fRj
+	 3+t7Lio5XC8QJyEtRSCi1IaN18zuwgnXZEioDdE+3sp7ZlY2ii6nt0fn3z7gkZaPLA
+	 XYvziZyT+8BjLyn3i8MCdR14/jTG452SGVUdKXFM2l4H028sLSISG5A4pFl2dj2qv4
+	 qbmcx9DRYO+sQ==
+Message-ID: <b78b14c7-e71c-4403-a606-80564a31e107@kernel.org>
+Date: Sat, 1 Jun 2024 17:25:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,16 +49,16 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy:
- Document the X1E80100 QMP PCIe PHY Gen4 x4
-To: Abel Vesa <abel.vesa@linaro.org>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: Johan Hovold <johan@kernel.org>, linux-arm-msm@vger.kernel.org,
- linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240531-x1e80100-phy-add-gen4x4-v1-0-5c841dae7850@linaro.org>
- <20240531-x1e80100-phy-add-gen4x4-v1-1-5c841dae7850@linaro.org>
+Subject: Re: [PATCH 1/1] dt-bindings: mmc: Convert fsl-esdhc.txt to yaml
+To: Frank Li <Frank.Li@nxp.com>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ "open list:MULTIMEDIA CARD (MMC), SECURE DIGITAL (SD) AND..."
+ <linux-mmc@vger.kernel.org>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Cc: imx@lists.linux.dev
+References: <20240531193745.1714046-1-Frank.Li@nxp.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -104,18 +104,102 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240531-x1e80100-phy-add-gen4x4-v1-1-5c841dae7850@linaro.org>
+In-Reply-To: <20240531193745.1714046-1-Frank.Li@nxp.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 31/05/2024 18:06, Abel Vesa wrote:
-> The PCIe 6th instance from X1E80100 can be used in both 4-lane mode or
-> 2-lane mode. Document the 4-lane mode as a separate compatible.
+On 31/05/2024 21:37, Frank Li wrote:
+> Convert layerscape fsl-esdhc binding doc from txt to yaml format.
 > 
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> Addtional change during convert:
+> - deprecate "sdhci,wp-inverted", "sdhci,1-bit-only".
+> - Add "reg" and "interrupts" property.
+> - change example "sdhci@2e000" to "mmc@2e000".
+> - compatible string require fsl,<chip>-esdhc followed by fsl,esdhc to match
+> most existed dts file.
+> 
 
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+> -};
+> diff --git a/Documentation/devicetree/bindings/mmc/fsl-ls-esdhc.yaml b/Documentation/devicetree/bindings/mmc/fsl-ls-esdhc.yaml
+> new file mode 100644
+> index 0000000000000..cafc09c4f1234
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mmc/fsl-ls-esdhc.yaml
+
+Filename: fsl,esdhc.yaml
+
+> @@ -0,0 +1,98 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+
+...
+
+> +  clock-frequency:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: specifies eSDHC base clock frequency.
+> +
+> +  sdhci,wp-inverted:
+> +    $ref: /schemas/types.yaml#/definitions/flag
+> +    deprecated: true
+> +    description:
+> +      specifies that eSDHC controller reports
+> +      inverted write-protect state; New devices should use the generic
+> +      "wp-inverted" property.
+> +
+> +  sdhci,1-bit-only:
+> +    $ref: /schemas/types.yaml#/definitions/flag
+> +    deprecated: true
+> +    description:
+> +      specifies that a controller can only handle
+> +      1-bit data transfers. New devices should use the generic
+> +      "bus-width = <1>" property.
+> +
+> +  sdhci,auto-cmd12:
+> +    $ref: /schemas/types.yaml#/definitions/flag
+> +    description:
+> +      specifies that a controller can only handle auto CMD12.
+> +
+> +  voltage-ranges:
+> +    $ref: /schemas/types.yaml#/definitions/uint32-matrix
+> +    items:
+> +      items:
+> +        - description: specifies minimum slot voltage (mV).
+> +        - description: specifies maximum slot voltage (mV).
+> +
+> +  little-endian:
+> +    $ref: /schemas/types.yaml#/definitions/flag
+> +    description:
+> +      If the host controller is little-endian mode, specify
+> +      this property. The default endian mode is big-endian.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+
+clock-frequency was required. Isn't it required now?
+
+> +
+> +allOf:
+> +  - $ref: sdhci-common.yaml#
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    mmc@2e000 {
+> +        compatible = "fsl,mpc8378-esdhc", "fsl,esdhc";
+> +        reg = <0x2e000 0x1000>;
+> +        interrupts = <42 0x8>;
+> +        interrupt-parent = <&ipic>;
+> +        /* Filled in by U-Boot */
+> +        clock-frequency = <0>;
+
+Please provide complete (final) example.
+
+> +        voltage-ranges = <3300 3300>;
+> +    };
 
 Best regards,
 Krzysztof
