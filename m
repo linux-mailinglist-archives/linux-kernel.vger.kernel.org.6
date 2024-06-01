@@ -1,59 +1,49 @@
-Return-Path: <linux-kernel+bounces-198042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 977978D72BA
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 01:26:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 237A78D72BE
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 01:30:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50BF3281794
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 23:26:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC1BD1F219E6
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 23:30:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4729944C93;
-	Sat,  1 Jun 2024 23:26:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79D46482ED;
+	Sat,  1 Jun 2024 23:30:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="Y2zUpNiB"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jB4XYslc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 277FA14A96;
-	Sat,  1 Jun 2024 23:26:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6452208AF;
+	Sat,  1 Jun 2024 23:30:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717284374; cv=none; b=txmcufeXL5pSB7haxQKqkfOWXtEU7NKxvkFOqosQbJMJ+uy/ThbJMutvQKtguVVvQUDwmhuSoyOSXULztGSrRc1bSp8cdnhKty0u7wWAxBvAtRahwPLhMnQaed0SP3Xdtj6yjONZLDSi7LiNhZA5gSE0vVFcEcSVQ9cfIs5DtzQ=
+	t=1717284630; cv=none; b=Khl0WE/Xo+XyBI/Jc/MfPq3glXqOGvGNj+7Sf11iYprjDuXBpBt+Q0CwRjREuu+YhiFyZt1IoaAnByshNxdbNoLO7KBZ/4AKKDJxCmUss8UBGsvVMUjCwydZHu1uaAnzzbA0Rgt+FCllaypA/aVWAYN9GKMEVJa4+TTeQSmosVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717284374; c=relaxed/simple;
-	bh=QPUlfK6GFJ0fHyLlwqfDeRFIf41n+RJclyTaY7KVufE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TC4G5LfMa2ifVXGOawEPqLHj0jJvggZHdnvRNICNPcBIfkP363dU67b+PHee3o6XwspdZ32stYojGBiF3LE0RMsHEevGGw/Td+ugPF2xqEtxxQKB+foQtRxjk4Dc9VlEu/LiM87EvN9dAxfppUd+XLSGz31ReRU+Igma2HpCx2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=Y2zUpNiB; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=y3toXmjpE9FC/9nFEs8AsST4kK6tsu5EB+9tVoO4zzI=; b=Y2zUpNiB/hULCH7b
-	PXwi63YHwj1Acizrz4gbxnX5hrKfgMbb8s4PFq+HSb8ewOzVTPwYwIo0t/XILqn8m+qA6dG3WNMis
-	AeuSTyYsJbMXeMy9OA3whhJUgCtC7bwRtlBbQePV/k/eUjZDyn60ftXbTGoMsEeIg6XW3bOZUJuiv
-	u4ejGw/Cb/2V3xoYjYUcD0blOwmNR4Sth7N6JFkfwOMeQocujlODvEzNbkd0APlz9q7vwvdd8gXDL
-	nfuj0jZmnD/HO/aY4QY/h4ST+cvZFCJWt3DeYlW671WqjjLiKLpBDrd2sLcZ/QuMszUjQ49rCy902
-	ZssT6wp4lyFN/gEjsg==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1sDY6v-003lo2-2B;
-	Sat, 01 Jun 2024 23:26:06 +0000
-From: linux@treblig.org
-To: oleksandr_andrushchenko@epam.com,
-	perex@perex.cz,
-	tiwai@suse.com
-Cc: xen-devel@lists.xenproject.org,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] ALSA: xen-front: remove unused struct 'alsa_sndif_hw_param'
-Date: Sun,  2 Jun 2024 00:26:04 +0100
-Message-ID: <20240601232604.198662-1-linux@treblig.org>
-X-Mailer: git-send-email 2.45.1
+	s=arc-20240116; t=1717284630; c=relaxed/simple;
+	bh=HtIY8x63o4gVdI41Mc4Yw+56jEwaKmExL0kjyQf2kow=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=EMcxA4hQvvyNFHk/mo6MKYgYrrbcrAFQm+9bGS2wkFYADn1akzDUOEQ6kwhU3iCBKQs3XbG55AEYrH+rUMRhkOuo/RQbKhoCjvrRcRVMvea+UwtHrXvWdxkIB9uljDcOnuV24CskLgiUXTJnccH224n2wTsUnya3Vmpp90bsq2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jB4XYslc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 3B9E1C32786;
+	Sat,  1 Jun 2024 23:30:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717284630;
+	bh=HtIY8x63o4gVdI41Mc4Yw+56jEwaKmExL0kjyQf2kow=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=jB4XYslczypI1UzS3ud8z6ErderAdRCufOuuyJqHPt4pRICpE9dLOgCWSAB+D0UkO
+	 1Fe/ozK1MCp9K5vMKTLWbbgDV4QxE+ZbujE9/vIlkIW9umCO6ZNE4tuIXwUa+nmV4s
+	 yPLGjS9hSUEcQ73lCpUtGSMAr9Yrfo8tFP5rwspavQ6IwPTP6YKfSsB8+kjeLiVrN6
+	 nHp0cqxFkmZmOms9NhoFYvQ+UnvgfuaCdF4BBYSb6S1LIn+R+xPqA/yn0zhRztVoI6
+	 U2x1ttQY2C4rS54rEADknfyTZb7oBYLFsU1pufwj/BzRKpvdlUbVhPUpthdUakU6j7
+	 UJLQjnrgOZ5tg==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 2A689DEA711;
+	Sat,  1 Jun 2024 23:30:30 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,37 +51,47 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v3 0/2] lan78xx: Enable 125 MHz CLK and Auto Speed
+ configuration for LAN7801 if NO EEPROM is detected
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <171728463016.18107.17504072310645117786.git-patchwork-notify@kernel.org>
+Date: Sat, 01 Jun 2024 23:30:30 +0000
+References: <20240529140256.1849764-1-rengarajan.s@microchip.com>
+In-Reply-To: <20240529140256.1849764-1-rengarajan.s@microchip.com>
+To: Rengarajan S <rengarajan.s@microchip.com>
+Cc: woojung.huh@microchip.com, UNGLinuxDriver@microchip.com,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ netdev@vger.kernel.org, linux-usb@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+Hello:
 
-'alsa_sndif_hw_param' has been unused since the original
-commit 1cee559351a7 ("ALSA: xen-front: Implement ALSA virtual sound
-driver").
+This series was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-Remove it.
+On Wed, 29 May 2024 19:32:54 +0530 you wrote:
+> This patch series adds the support for 125 MHz clock, Auto speed and
+> auto duplex configuration for LAN7801 in the absence of EEPROM.
+> 
+> Rengarajan S (2):
+>   lan78xx: Enable 125 MHz CLK configuration for LAN7801 if NO EEPROM is
+>     detected
+>   lan78xx: Enable Auto Speed and Auto Duplex configuration for LAN7801
+>     if NO EEPROM is detected
+> 
+> [...]
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- sound/xen/xen_snd_front_alsa.c | 5 -----
- 1 file changed, 5 deletions(-)
+Here is the summary with links:
+  - [net-next,v3,1/2] lan78xx: Enable 125 MHz CLK configuration for LAN7801 if NO EEPROM is detected
+    https://git.kernel.org/netdev/net-next/c/5160b129f65f
+  - [net-next,v3,2/2] lan78xx: Enable Auto Speed and Auto Duplex configuration for LAN7801 if NO EEPROM is detected
+    https://git.kernel.org/netdev/net-next/c/799f532de136
 
-diff --git a/sound/xen/xen_snd_front_alsa.c b/sound/xen/xen_snd_front_alsa.c
-index 31b5dc0f34d2..b229eb6f7057 100644
---- a/sound/xen/xen_snd_front_alsa.c
-+++ b/sound/xen/xen_snd_front_alsa.c
-@@ -69,11 +69,6 @@ struct alsa_sndif_sample_format {
- 	snd_pcm_format_t alsa;
- };
- 
--struct alsa_sndif_hw_param {
--	u8 sndif;
--	snd_pcm_hw_param_t alsa;
--};
--
- static const struct alsa_sndif_sample_format ALSA_SNDIF_FORMATS[] = {
- 	{
- 		.sndif = XENSND_PCM_FORMAT_U8,
+You are awesome, thank you!
 -- 
-2.45.1
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
