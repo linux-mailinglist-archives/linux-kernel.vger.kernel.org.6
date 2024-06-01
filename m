@@ -1,144 +1,102 @@
-Return-Path: <linux-kernel+bounces-197968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 393138D7157
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 19:19:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 098F28D715C
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 19:36:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8907B220F1
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 17:19:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B759C1F21B77
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 17:36:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81EA9154C01;
-	Sat,  1 Jun 2024 17:19:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3A77154BF9;
+	Sat,  1 Jun 2024 17:36:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VL1ZwYSG"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P+P5UhoT"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4344150985;
-	Sat,  1 Jun 2024 17:19:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FF3EAD55;
+	Sat,  1 Jun 2024 17:36:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717262371; cv=none; b=pVVhxd6fAd2liCgTHTcdGVDjE+DTomC8dpQD27YIHUJAtjKdYBZpYAXIua9CfsN6lqDXA7HQ+SIgH1uswRu94/PHqH/PFWW+zl0nAQeN/rzn5FUhpPVMzvQPJkgH4+qdnkHJZA95gRvJ0qfB/kCd81DqnFdYCg1579jm2ttOLTM=
+	t=1717263362; cv=none; b=i/Xfx79RzTG7IF7eNg7O2UsR6j/ezVBzpQ8n4zl/B6VwPtKMZL+mWCAbJRvi2bdCZ3YgjGtSYO7xATVgFybzA8NVs15u2MBqeWLt2TfAG+FPgUpTgT0RBTRLjETmoyVsMUjeRCVkhnATAL53wilRufYOl8OqiLbRo8QEY30Qg/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717262371; c=relaxed/simple;
-	bh=lIhn43BwQ32JA6UG4cK0p+IYzQuCHKH2dan2bZP6Kfw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=PNVClUZvoUmaGJ8dmNvuOk+mm/vMThACOx7Ep+erUL2XGUCof5hesLzEljjLARs5toZsV84Q78J3ABnK3IOo+BjO6sVPsakRrM4D9RJDoRL2iziGUTYWK14S58Iy7wTrk1ZDuJmZBZn7GuHGZHJnNm9JWZKtAHJ3lQyATcQU9RA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VL1ZwYSG; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4515aBin026061;
-	Sat, 1 Jun 2024 17:19:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=WolRTNGs22Qwu5W/wrcTRr
-	Mf/7sM+ga4NIe988M9EP0=; b=VL1ZwYSGrMfUCgmf/Anf8pmVGsR9A+EHehsuWq
-	rEirhkeBKdybSObVukQNN8AOO5zbav5gUOqybamlWJakKvfdECxk7CJahha8raU1
-	3OnVUaiqFn/GZdXTMkjokqP9SS3LR4fHDJMu71k+610cKtOTmO9yzCSi1nq/QLG9
-	ecx1QolGIwQQi7iv+n7pBeMHGIN6o7OTMh/j6wovG/J15o3mKvaz82mDNhAxwaT8
-	m+QQq1mdKN5kSHJb7kb05xC5VdG4P3826ta/D0fQ4NJJWxCtWIAowmpZJ26MSGSh
-	E42xUkbePU4lSw2sm3IzFbMDjMHVictQFKhy+5qoWFFIp/eA==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfw59h2qn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 01 Jun 2024 17:19:13 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 451HJCQb026303
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 1 Jun 2024 17:19:12 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 1 Jun 2024
- 10:19:12 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Sat, 1 Jun 2024 10:19:11 -0700
-Subject: [PATCH] kunit: add missing MODULE_DESCRIPTION() macros to core
- modules
+	s=arc-20240116; t=1717263362; c=relaxed/simple;
+	bh=XJyl4l5t/k3rLnQ72/yn2HQW5issWPa/CHD5pRVJm74=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=i1Uhkl08jzeNvwKxmYw2iLoz3BAXJdCEtZuHXJkdV/FQEe9p7cPoILlXgd1iGXrh/x+b5pwAaybO72i4y34A25Ef/iiY0iRTvX/QYzCKNS54dqSCmD3GvhiOVSqZqnOilFWh957EKc4k7SVPO/o7dbn343wnPiC+htyhtwcQPzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P+P5UhoT; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52b919d214cso492455e87.2;
+        Sat, 01 Jun 2024 10:36:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717263359; x=1717868159; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XJyl4l5t/k3rLnQ72/yn2HQW5issWPa/CHD5pRVJm74=;
+        b=P+P5UhoTWRIfMPiEvbqujuEn5q2u7mWJLopu/PT66y/21ttz2XaN1eq7bjAuDTNhJR
+         dLPoSpOH4OZK30oFI4pa5VH7VtybAuGWfBpgeN0zDe2Q+qK86Lb9/7Frgxd4lWvqs3lP
+         XHdVg1Z3P4O5z/x0fMQQhfeTh9cW17HoZqHZ4fEEPsAsmriPSxf0I+fflgHAsDhjDUsp
+         jCGmvGhpoeFMhGtxBC4UMCsvcs3X09kc7if+qeYYn68U6UfLYXCf/+6ATjuyIfkyKoX0
+         krJiPYbCABUPhFyXcMLCHB/0x3f7zun/fW873lfjZOkcnTlXh3Uz7FTJwCi6QAiWTEtY
+         PAyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717263359; x=1717868159;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XJyl4l5t/k3rLnQ72/yn2HQW5issWPa/CHD5pRVJm74=;
+        b=HbCfH97ueqevRdbAjgZLDoO1jAQNow69rNtGtdWvgOxs4a9mAVMC9G1fAKErAUYziR
+         XXauYw9KTVBXCUDyovC/d6AR+t7VPLtj5ZzBSbBIy0BWSKqOn4KKXpF67Dlo3gn6zqsd
+         5VPd3T9GUwz4770Upc8uNA2tKK9k6mQY92LDadf27+L8JWDZHZyht3KNPOQwOcwo7Xi7
+         uUSIvyy2dF/w6AYyDv4Qptbyy3y7VEjGsOOApkqrQQqr0/14cx/0emX1sEDfVPy3rK1s
+         RqaNodmmRFrgV5thgqobVwHL8nHk2Sxw3OhknmWhpEGB3BFJQTOL3XwtsoiCwJ9hjXXx
+         YxAA==
+X-Forwarded-Encrypted: i=1; AJvYcCXbmPj7sCDfO0ll0c5mDzFzTHZ3YmXDrhqp5rw0wbjTa8tz56WZtKyxPbHzy96JQPbYy5+wcUax9NS17ExcZ5OclCEwkWOosvX5jeLlv+pi656dWnQVTjwBQCePD/GbgXGTU/nY8M0wS8UgkS05T5z5zG3TPw0Q+b5Nb1fBDLBpsEkKrRdz
+X-Gm-Message-State: AOJu0Yx7F+EXexeMcIwF0EUSYom25T6VpIZmGICsuWxptS8MWCGdfsMq
+	KSziZsg2t7iY3Fhh4oTiZzzB5G14kTcv3RNoOcO34ZHzCnlWHOkxyKmHX9376J1wwcxC8bY2FnG
+	+MEl94knl4R9ARSvfhnCwGvW5er0=
+X-Google-Smtp-Source: AGHT+IH04S1mTC1pbRmToifVqj/OK9AubBcLxbTT/9mdn/0C3Y2HQnsY37NvyikE6lfjaJ8pSWX+rxyxcA2IjZ4SRQY=
+X-Received: by 2002:a05:6512:3ca3:b0:521:e065:c6c5 with SMTP id
+ 2adb3069b0e04-52b8955c4bemr4195236e87.11.1717263358375; Sat, 01 Jun 2024
+ 10:35:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240601-md-lib-kunit-framework-v1-1-f406bb629bde@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAA5YW2YC/x3MQQ6CMBBA0auQWTtJabQar2JctHQqE2gxM4Akh
- LtbXb7F/zsoCZPCvdlBaGXlqVS0pwa63pcXIcdqsMaejTMt5ogjBxyWwjMm8Zk+kwxI0cZbcOl
- CVwc1fgsl3v7jx7M6eCUM4kvX/3Yjl2XD7HUmgeP4Asntrn+HAAAA
-To: Brendan Higgins <brendan.higgins@linux.dev>,
-        David Gow
-	<davidgow@google.com>, Rae Moar <rmoar@google.com>
-CC: <linux-kselftest@vger.kernel.org>, <kunit-dev@googlegroups.com>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        "Jeff
- Johnson" <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: RNeXgOlWJIMjqVBM7aTCq01U20WHj6U-
-X-Proofpoint-ORIG-GUID: RNeXgOlWJIMjqVBM7aTCq01U20WHj6U-
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-06-01_11,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
- spamscore=0 lowpriorityscore=0 priorityscore=1501 suspectscore=0
- adultscore=0 clxscore=1011 mlxlogscore=987 bulkscore=0 phishscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406010136
+References: <20240530111205.1764-1-bavishimithil@gmail.com>
+ <7845bb1c-47d5-41f6-bf08-bd7b357df02c@kernel.org> <CAGzNGRn=e46yYrK3o8JhUmod4pGFFdEK31kUWUU4jn+JTgZjQg@mail.gmail.com>
+ <c89d4290-1f24-4a30-9d94-f6d0dde21e80@kernel.org>
+In-Reply-To: <c89d4290-1f24-4a30-9d94-f6d0dde21e80@kernel.org>
+From: Mithil <bavishimithil@gmail.com>
+Date: Sat, 1 Jun 2024 23:05:45 +0530
+Message-ID: <CAGzNGRk8OtxY-K+3FF1UJ_mUS6Ras-FA7Es_KuLnva9jfqEPHA@mail.gmail.com>
+Subject: Re: [PATCH v6] ASoC: dt-bindings: omap-mcpdm: Convert to DT schema
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: peter.ujfalusi@gmail.com, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Lopez Cruz <misael.lopez@ti.com>, linux-sound@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-make allmodconfig && make W=1 C=1 reports in lib/kunit:
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/kunit/kunit.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/kunit/kunit-test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/kunit/kunit-example-test.o
+On Sat, Jun 1, 2024 at 8:44=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.org=
+> wrote:
+> I think you are now mixing different things. changelog and differences
+> comparing to pure 1-to-1 conversion.
+Oh my apologies, the commit message being more descriptive? Should it
+also include the changelogs, or just a general description about mcpdm
+and it being used in omap4/omap5 platforms?
 
-Add the missing invocations of the MODULE_DESCRIPTION() macro.
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- lib/kunit/kunit-example-test.c | 1 +
- lib/kunit/kunit-test.c         | 1 +
- lib/kunit/test.c               | 1 +
- 3 files changed, 3 insertions(+)
-
-diff --git a/lib/kunit/kunit-example-test.c b/lib/kunit/kunit-example-test.c
-index 798924f7cc86..3056d6bc705d 100644
---- a/lib/kunit/kunit-example-test.c
-+++ b/lib/kunit/kunit-example-test.c
-@@ -374,4 +374,5 @@ static struct kunit_suite example_init_test_suite = {
-  */
- kunit_test_init_section_suites(&example_init_test_suite);
- 
-+MODULE_DESCRIPTION("Example KUnit test suite");
- MODULE_LICENSE("GPL v2");
-diff --git a/lib/kunit/kunit-test.c b/lib/kunit/kunit-test.c
-index e3412e0ca399..37e02be1e710 100644
---- a/lib/kunit/kunit-test.c
-+++ b/lib/kunit/kunit-test.c
-@@ -871,4 +871,5 @@ kunit_test_suites(&kunit_try_catch_test_suite, &kunit_resource_test_suite,
- 		  &kunit_current_test_suite, &kunit_device_test_suite,
- 		  &kunit_fault_test_suite);
- 
-+MODULE_DESCRIPTION("KUnit test for core test infrastructure");
- MODULE_LICENSE("GPL v2");
-diff --git a/lib/kunit/test.c b/lib/kunit/test.c
-index b8514dbb337c..e8b1b52a19ab 100644
---- a/lib/kunit/test.c
-+++ b/lib/kunit/test.c
-@@ -938,4 +938,5 @@ static void __exit kunit_exit(void)
- }
- module_exit(kunit_exit);
- 
-+MODULE_DESCRIPTION("Base unit test (KUnit) API");
- MODULE_LICENSE("GPL v2");
-
----
-base-commit: b050496579632f86ee1ef7e7501906db579f3457
-change-id: 20240601-md-lib-kunit-framework-ed2d8b6f5e76
-
+--=20
+Best Regards,
+Mithil
 
