@@ -1,321 +1,171 @@
-Return-Path: <linux-kernel+bounces-197666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE7CC8D6DA1
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 05:10:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEB688D6DA5
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 05:15:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EF9628546F
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 03:10:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E5451F230C4
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 03:15:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CA85AD24;
-	Sat,  1 Jun 2024 03:10:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F5161170F;
+	Sat,  1 Jun 2024 03:14:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XOF9zUte"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dq0ZQB97"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29C2F4690;
-	Sat,  1 Jun 2024 03:10:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01A44AD55;
+	Sat,  1 Jun 2024 03:14:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717211438; cv=none; b=G50iGBEUgE0zS+dkt637m2js1wm/LxQSc8c4X6hVqzcbgHH+rH1nQeG6U+J01lja+vxqLhSvhkRiYzAtK1YqDTC0bIdB6rSFxavEX6GYMx22rDvaTeCOb5GY4heLDa6BzZA9x+qXEF0SM5HRGDxTYBtjHfEv7DuaaqtQuMID43U=
+	t=1717211684; cv=none; b=QRMrmhQLR94S075KHR+OPbqx3wruvQpT+2Jqrlrt8gnMD5WYjA7c0Q9zPJJmkTKBJu9UGy6Eeji1J4fsN00+HgbfXTUzYvaMynQ29WpKGHw2/xeE106f/CJWkeu5O7cp0Tq5dFsWPBk9F1bK3gAEbgudALSTgw7TuO3uA32Z2hI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717211438; c=relaxed/simple;
-	bh=oSGW82qH1pk7AijenKYz6iWCOpYTl6GSAI49mjY7zTY=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=pMsMsnEElbpP7cXjjg1Jhgg3iHI6tQuCh+Gw8gaJiDazcRmm2HCMF2cBM8dF8KEcjb0bqLfZXDwGhM+oD1M1ymaFY3MH3gukFoTkGDTEhGWE7C4G3Calr0tpU+GzBsVH759xSCBpBE1JXmNO5t4WYt+pzweC0WCRXle9jtQjtu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XOF9zUte; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1f4a5344ec7so20251545ad.1;
-        Fri, 31 May 2024 20:10:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717211436; x=1717816236; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=SZapLPythn+7OkdKcS6JWdxzNsHsHOH/K7Ra5EurPq0=;
-        b=XOF9zUte+q1Zt+8PC8zO4VSGZGTZbv+MpvZWZIf/+8Ui1YTM+cGvu0WPJlT0GSL9G3
-         bZJrS+rl53cVDhRaxcRie8PALKcqYiKGU8C5Nk47eNmdG1OKCOeKFtsGkWnw+SAt1G8T
-         h5Bs+csIJZaDDvpbevOy2BU7nX7QqSWhOL+h22et60QQAhdFd7je2QLaOJ6WyODwnS2b
-         9D9Kx0u4F77ci6kkbncueANuNCfAn16CbUX0dSPaAZw+31+c9iJ0PjYTODsNUy4AL6wG
-         ATO/ADtm27hQaW/Tcytb3TxA3CpPKAUxWHZ1qqVwzkGlvX9ENEVcZLtwTsIr7jO/gF9O
-         zIug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717211436; x=1717816236;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SZapLPythn+7OkdKcS6JWdxzNsHsHOH/K7Ra5EurPq0=;
-        b=I0H9PORBZPicqKdUvgCi4/6EYZ3sZr+0OgFkGdbfGdlT15UtrR/QeTtdE7qtH1DhWL
-         OCjqdyliaiogJ91qB86YDwp0fiWtczemXOzQQwC8m9fGDMftxDbE6iMc9tMwD4EkQt3O
-         JHp0xWth6Kdx37f5UeQhUEDAfeppM+Zbp030etkwuLECIZXBkWKxLj8iciVs9Xj4NTDa
-         fNvtgyJyFjAT0tCQDbwfPCU4lTJzx6Wdk1ecqH/XhatTJv11/BnR2TI+AUrd3lt9PZmD
-         3cvic992loE+65VVHS4PksgGpiTQAh+OxpOUnkqZZYP3FTnwIozc9Fa3Ksyy2vhMrGhv
-         4UFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUEjwbBO5KYccNzT1Ir8H91y7BMF5+MKvftVqDA+OhCI/+cLYpOe4gOhBdGOvkvooG+FwsbaoL+e4+17fVVA7B+XO5GvR5tVjsOhw4761QCX396j+CymKEvl8X2TjxTfYJDAogx3BPQRoVL/Bwh
-X-Gm-Message-State: AOJu0YyV4tLaBk0TNP0/PFw3QIrtNqZQsQJ5lMrRL+lbZ5PrNUkFIRD2
-	+6f9vwkMlM4t9dKC+rDAbs0sD31mT623hOJ+EGcWlBCb37oZH0xP
-X-Google-Smtp-Source: AGHT+IFhsqiVz9EDeD/CbXvtEMgU+B5unGFQLECQrx8z9hlXmFFpKVSwe+ozJKX0foC9phVtE7m7Cw==
-X-Received: by 2002:a17:902:780c:b0:1f1:8fd9:b99d with SMTP id d9443c01a7336-1f61bfa6dc5mr71550035ad.23.1717211436189;
-        Fri, 31 May 2024 20:10:36 -0700 (PDT)
-Received: from localhost.localdomain ([2604:a880:4:1d0::427:6000])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-1f6323ddac9sm24097325ad.173.2024.05.31.20.10.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 May 2024 20:10:35 -0700 (PDT)
-From: Gatlin Newhouse <gatlin.newhouse@gmail.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Kees Cook <keescook@chromium.org>,
-	Marco Elver <elver@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Gatlin Newhouse <gatlin.newhouse@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	Baoquan He <bhe@redhat.com>,
-	Changbin Du <changbin.du@huawei.com>,
-	Pengfei Xu <pengfei.xu@intel.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Xin Li <xin3.li@intel.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Tina Zhang <tina.zhang@intel.com>,
-	Uros Bizjak <ubizjak@gmail.com>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	linux-kernel@vger.kernel.org,
-	kasan-dev@googlegroups.com,
-	linux-hardening@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: [PATCH v2] x86/traps: Enable UBSAN traps on x86
-Date: Sat,  1 Jun 2024 03:10:05 +0000
-Message-Id: <20240601031019.3708758-1-gatlin.newhouse@gmail.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1717211684; c=relaxed/simple;
+	bh=7FQyW/yioMpQHBP4xhyLZXl/Y2Ju6MhY7VJfMNnD+kE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WQyaAi3fXMV+LIHYA7tYn8ZjABVNXTlSjh59RabmaDRjC6F2lCLhUeg8jPeo7PRA1Zc+OUG0wEqO3awX62uuf78MzJyCjxHIi5AAgZqQFJqSZBgLvZEkUV3gL2ULmD4g9aBQ6zKr1LEJjsjnM0PQkr/+iRxswNlPo8c+ef9ch3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dq0ZQB97; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717211684; x=1748747684;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=7FQyW/yioMpQHBP4xhyLZXl/Y2Ju6MhY7VJfMNnD+kE=;
+  b=dq0ZQB971K/5Sm9A8k9J7NWDwXpwm4KH6vPl5m1imRFWgau3NmCCIvL+
+   7NWKlxauTODd2HGvJlAnFaeRydObCM7wP6SFbJOIrfx1eWJwf7vmowXK7
+   AQsGFINI/TwEhA6kz8uCE9um2Ju7kULAbhii+P5iygVzhlGYqavF9Vfza
+   /FAGqy7oPmMQILy/ZXihb0FahhLGuE6qcPotFZkvnOnSin8Bjp/CH4ZTx
+   Z0Y/JGcYUhLG9PVieVPyu7rZsRW0K8niAHqoIloiAIKGJGQKBdcRJVb2B
+   CKvsOdbOvjJ500Q+xUpphjhj3J9k+n56e07zrgZhDrZ0hdhC2P/TJX8Qy
+   A==;
+X-CSE-ConnectionGUID: UXr1pl6aSJeWfnA7AzV22A==
+X-CSE-MsgGUID: /IyC1BgOShuzlSWWPfVJXg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11089"; a="24431279"
+X-IronPort-AV: E=Sophos;i="6.08,206,1712646000"; 
+   d="scan'208";a="24431279"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 20:14:44 -0700
+X-CSE-ConnectionGUID: LDZuZgfsQtmtWrGPRFQGtg==
+X-CSE-MsgGUID: u+nMsEkTS6GXndRjCWf6hQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,206,1712646000"; 
+   d="scan'208";a="73824294"
+Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
+  by orviesa001.jf.intel.com with ESMTP; 31 May 2024 20:14:38 -0700
+Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sDFCW-000IHN-0Q;
+	Sat, 01 Jun 2024 03:14:36 +0000
+Date: Sat, 1 Jun 2024 11:13:50 +0800
+From: kernel test robot <lkp@intel.com>
+To: Yojana Mallik <y-mallik@ti.com>, schnelle@linux.ibm.com,
+	wsa+renesas@sang-engineering.com, diogo.ivo@siemens.com,
+	rdunlap@infradead.org, horms@kernel.org, vigneshr@ti.com,
+	rogerq@ti.com, danishanwar@ti.com, pabeni@redhat.com,
+	kuba@kernel.org, edumazet@google.com, davem@davemloft.net
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, srk@ti.com,
+	rogerq@kernel.org
+Subject: Re: [PATCH net-next v2 2/3] net: ethernet: ti: Register the RPMsg
+ driver as network device
+Message-ID: <202406011038.AwLZhQpy-lkp@intel.com>
+References: <20240531064006.1223417-3-y-mallik@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240531064006.1223417-3-y-mallik@ti.com>
 
-Bring x86 to parity with arm64, similar to commit 25b84002afb9
-("arm64: Support Clang UBSAN trap codes for better reporting").
-Enable the output of UBSAN type information on x86 architectures
-compiled with clang when CONFIG_UBSAN_TRAP=y. Currently ARM
-architectures output which specific sanitizer caused the trap,
-via the encoded data in the trap instruction. Clang on x86
-currently encodes the same data in ud1 instructions but the x86
-handle_bug() and is_valid_bugaddr() functions currently only look
-at ud2s.
+Hi Yojana,
 
-Signed-off-by: Gatlin Newhouse <gatlin.newhouse@gmail.com>
----
-Changes in v2:
-  - Name the new constants 'LEN_ASOP' and 'INSN_ASOP' instead of
-    'LEN_REX' and 'INSN_REX'
-  - Change handle_ubsan_failure() from enum bug_trap_type to void
-    function
+kernel test robot noticed the following build warnings:
 
-v1: https://lore.kernel.org/linux-hardening/20240529022043.3661757-1-gatlin.newhouse@gmail.com/
----
- MAINTAINERS                  |  2 ++
- arch/x86/include/asm/bug.h   |  8 ++++++++
- arch/x86/include/asm/ubsan.h | 18 ++++++++++++++++++
- arch/x86/kernel/Makefile     |  1 +
- arch/x86/kernel/traps.c      | 29 +++++++++++++++++++++++------
- arch/x86/kernel/ubsan.c      | 30 ++++++++++++++++++++++++++++++
- 6 files changed, 82 insertions(+), 6 deletions(-)
- create mode 100644 arch/x86/include/asm/ubsan.h
- create mode 100644 arch/x86/kernel/ubsan.c
+[auto build test WARNING on net-next/main]
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 28e20975c26f..b8512887ffb1 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -22635,6 +22635,8 @@ L:	kasan-dev@googlegroups.com
- L:	linux-hardening@vger.kernel.org
- S:	Supported
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git for-next/hardening
-+F:	arch/x86/include/asm/ubsan.h
-+F:	arch/x86/kernel/ubsan.c
- F:	Documentation/dev-tools/ubsan.rst
- F:	include/linux/ubsan.h
- F:	lib/Kconfig.ubsan
-diff --git a/arch/x86/include/asm/bug.h b/arch/x86/include/asm/bug.h
-index a3ec87d198ac..1023c149f93d 100644
---- a/arch/x86/include/asm/bug.h
-+++ b/arch/x86/include/asm/bug.h
-@@ -13,6 +13,14 @@
- #define INSN_UD2	0x0b0f
- #define LEN_UD2		2
- 
-+/*
-+ * In clang we have UD1s reporting UBSAN failures on X86, 64 and 32bit.
-+ */
-+#define INSN_UD1	0xb90f
-+#define LEN_UD1		2
-+#define INSN_ASOP	0x67
-+#define LEN_ASOP	1
-+
- #ifdef CONFIG_GENERIC_BUG
- 
- #ifdef CONFIG_X86_32
-diff --git a/arch/x86/include/asm/ubsan.h b/arch/x86/include/asm/ubsan.h
-new file mode 100644
-index 000000000000..896ad7bf587f
---- /dev/null
-+++ b/arch/x86/include/asm/ubsan.h
-@@ -0,0 +1,18 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _ASM_X86_UBSAN_H
-+#define _ASM_X86_UBSAN_H
-+
-+/*
-+ * Clang Undefined Behavior Sanitizer trap mode support.
-+ */
-+#include <linux/bug.h>
-+#include <linux/ubsan.h>
-+#include <asm/ptrace.h>
-+
-+#ifdef CONFIG_UBSAN_TRAP
-+void handle_ubsan_failure(struct pt_regs *regs, int insn);
-+#else
-+static inline void handle_ubsan_failure(struct pt_regs *regs, int insn) { return; }
-+#endif /* CONFIG_UBSAN_TRAP */
-+
-+#endif /* _ASM_X86_UBSAN_H */
-diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
-index 74077694da7d..fe1d9db27500 100644
---- a/arch/x86/kernel/Makefile
-+++ b/arch/x86/kernel/Makefile
-@@ -145,6 +145,7 @@ obj-$(CONFIG_UNWINDER_GUESS)		+= unwind_guess.o
- obj-$(CONFIG_AMD_MEM_ENCRYPT)		+= sev.o
- 
- obj-$(CONFIG_CFI_CLANG)			+= cfi.o
-+obj-$(CONFIG_UBSAN_TRAP)		+= ubsan.o
- 
- obj-$(CONFIG_CALL_THUNKS)		+= callthunks.o
- 
-diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
-index 4fa0b17e5043..ee77c868090a 100644
---- a/arch/x86/kernel/traps.c
-+++ b/arch/x86/kernel/traps.c
-@@ -67,6 +67,7 @@
- #include <asm/vdso.h>
- #include <asm/tdx.h>
- #include <asm/cfi.h>
-+#include <asm/ubsan.h>
- 
- #ifdef CONFIG_X86_64
- #include <asm/x86_init.h>
-@@ -79,6 +80,9 @@
- 
- DECLARE_BITMAP(system_vectors, NR_VECTORS);
- 
-+/*
-+ * Check for UD1, UD2, with or without Address Size Override Prefixes instructions.
-+ */
- __always_inline int is_valid_bugaddr(unsigned long addr)
- {
- 	if (addr < TASK_SIZE_MAX)
-@@ -88,7 +92,13 @@ __always_inline int is_valid_bugaddr(unsigned long addr)
- 	 * We got #UD, if the text isn't readable we'd have gotten
- 	 * a different exception.
- 	 */
--	return *(unsigned short *)addr == INSN_UD2;
-+	if (*(u16 *)addr == INSN_UD2)
-+		return INSN_UD2;
-+	if (*(u16 *)addr == INSN_UD1)
-+		return INSN_UD1;
-+	if (*(u8 *)addr == INSN_ASOP && *(u16 *)(addr + 1) == INSN_UD1)
-+		return INSN_ASOP;
-+	return 0;
- }
- 
- static nokprobe_inline int
-@@ -216,6 +226,7 @@ static inline void handle_invalid_op(struct pt_regs *regs)
- static noinstr bool handle_bug(struct pt_regs *regs)
- {
- 	bool handled = false;
-+	int insn;
- 
- 	/*
- 	 * Normally @regs are unpoisoned by irqentry_enter(), but handle_bug()
-@@ -223,7 +234,8 @@ static noinstr bool handle_bug(struct pt_regs *regs)
- 	 * irqentry_enter().
- 	 */
- 	kmsan_unpoison_entry_regs(regs);
--	if (!is_valid_bugaddr(regs->ip))
-+	insn = is_valid_bugaddr(regs->ip);
-+	if (insn == 0)
- 		return handled;
- 
- 	/*
-@@ -236,10 +248,15 @@ static noinstr bool handle_bug(struct pt_regs *regs)
- 	 */
- 	if (regs->flags & X86_EFLAGS_IF)
- 		raw_local_irq_enable();
--	if (report_bug(regs->ip, regs) == BUG_TRAP_TYPE_WARN ||
--	    handle_cfi_failure(regs) == BUG_TRAP_TYPE_WARN) {
--		regs->ip += LEN_UD2;
--		handled = true;
-+
-+	if (insn == INSN_UD2) {
-+		if (report_bug(regs->ip, regs) == BUG_TRAP_TYPE_WARN ||
-+		handle_cfi_failure(regs) == BUG_TRAP_TYPE_WARN) {
-+			regs->ip += LEN_UD2;
-+			handled = true;
-+		}
-+	} else {
-+		handle_ubsan_failure(regs, insn);
- 	}
- 	if (regs->flags & X86_EFLAGS_IF)
- 		raw_local_irq_disable();
-diff --git a/arch/x86/kernel/ubsan.c b/arch/x86/kernel/ubsan.c
-new file mode 100644
-index 000000000000..35b2039a3b8f
---- /dev/null
-+++ b/arch/x86/kernel/ubsan.c
-@@ -0,0 +1,30 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Clang Undefined Behavior Sanitizer trap mode support.
-+ */
-+#include <linux/bug.h>
-+#include <linux/string.h>
-+#include <linux/printk.h>
-+#include <linux/ubsan.h>
-+#include <asm/ptrace.h>
-+#include <asm/ubsan.h>
-+
-+/*
-+ * Checks for the information embedded in the UD1 trap instruction
-+ * for the UB Sanitizer in order to pass along debugging output.
-+ */
-+void handle_ubsan_failure(struct pt_regs *regs, int insn)
-+{
-+	u32 type = 0;
-+
-+	if (insn == INSN_ASOP) {
-+		type = (*(u16 *)(regs->ip + LEN_ASOP + LEN_UD1));
-+		if ((type & 0xFF) == 0x40)
-+			type = (type >> 8) & 0xFF;
-+	} else {
-+		type = (*(u16 *)(regs->ip + LEN_UD1));
-+		if ((type & 0xFF) == 0x40)
-+			type = (type >> 8) & 0xFF;
-+	}
-+	pr_crit("%s at %pS\n", report_ubsan_failure(regs, type), (void *)regs->ip);
-+}
+url:    https://github.com/intel-lab-lkp/linux/commits/Yojana-Mallik/net-ethernet-ti-RPMsg-based-shared-memory-ethernet-driver/20240531-144258
+base:   net-next/main
+patch link:    https://lore.kernel.org/r/20240531064006.1223417-3-y-mallik%40ti.com
+patch subject: [PATCH net-next v2 2/3] net: ethernet: ti: Register the RPMsg driver as network device
+config: x86_64-allyesconfig (https://download.01.org/0day-ci/archive/20240601/202406011038.AwLZhQpy-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240601/202406011038.AwLZhQpy-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406011038.AwLZhQpy-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/net/ethernet/ti/inter_core_virt_eth.c:76:6: warning: variable 'ret' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+      76 |         if (wait) {
+         |             ^~~~
+   drivers/net/ethernet/ti/inter_core_virt_eth.c:87:9: note: uninitialized use occurs here
+      87 |         return ret;
+         |                ^~~
+   drivers/net/ethernet/ti/inter_core_virt_eth.c:76:2: note: remove the 'if' if its condition is always true
+      76 |         if (wait) {
+         |         ^~~~~~~~~
+   drivers/net/ethernet/ti/inter_core_virt_eth.c:65:9: note: initialize the variable 'ret' to silence this warning
+      65 |         int ret;
+         |                ^
+         |                 = 0
+   drivers/net/ethernet/ti/inter_core_virt_eth.c:330:24: error: use of undeclared identifier 'icve_del_mc_addr'
+     330 |         __dev_mc_unsync(ndev, icve_del_mc_addr);
+         |                               ^
+   drivers/net/ethernet/ti/inter_core_virt_eth.c:331:26: error: no member named 'mc_list' in 'struct icve_common'
+     331 |         __hw_addr_init(&common->mc_list);
+         |                         ~~~~~~  ^
+   drivers/net/ethernet/ti/inter_core_virt_eth.c:337:28: error: no member named 'rx_mode_work' in 'struct icve_common'
+     337 |         cancel_work_sync(&common->rx_mode_work);
+         |                           ~~~~~~  ^
+   1 warning and 3 errors generated.
+
+
+vim +76 drivers/net/ethernet/ti/inter_core_virt_eth.c
+
+    59	
+    60	static int icve_create_send_request(struct icve_common *common,
+    61					    enum icve_rpmsg_type rpmsg_type,
+    62					    bool wait)
+    63	{
+    64		unsigned long flags;
+    65		int ret;
+    66	
+    67		if (wait)
+    68			reinit_completion(&common->sync_msg);
+    69	
+    70		spin_lock_irqsave(&common->send_msg_lock, flags);
+    71		create_request(common, rpmsg_type);
+    72		rpmsg_send(common->rpdev->ept, (void *)(&common->send_msg),
+    73			   sizeof(common->send_msg));
+    74		spin_unlock_irqrestore(&common->send_msg_lock, flags);
+    75	
+  > 76		if (wait) {
+    77			ret = wait_for_completion_timeout(&common->sync_msg,
+    78							  ICVE_REQ_TIMEOUT);
+    79	
+    80			if (!ret) {
+    81				dev_err(common->dev, "Failed to receive response within %ld jiffies\n",
+    82					ICVE_REQ_TIMEOUT);
+    83				ret = -ETIMEDOUT;
+    84				return ret;
+    85			}
+    86		}
+    87		return ret;
+    88	}
+    89	
+
 -- 
-2.25.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
