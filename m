@@ -1,162 +1,122 @@
-Return-Path: <linux-kernel+bounces-198004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8D0D8D71E7
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 22:51:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F39408D71C9
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 22:24:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49D9D2817A1
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 20:51:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 921AE1F21B10
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 20:24:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB101154C0D;
-	Sat,  1 Jun 2024 20:51:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 552D3154BF9;
+	Sat,  1 Jun 2024 20:24:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="AY1J70zv"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=metaspace-dk.20230601.gappssmtp.com header.i=@metaspace-dk.20230601.gappssmtp.com header.b="RNP20Vz2"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 484BA1CAA6;
-	Sat,  1 Jun 2024 20:51:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64007219E7
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Jun 2024 20:24:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717275065; cv=none; b=njmk14sppV/IIFPSpFevC9hAXfEz7YIeOiWesZtRF1390IT+5z7f98x4ZstWSyFi0vRkDoyzbxRN/C6Rq7XPL81c1usOHoEA/9kM4b+X/23eEW8WFEPylUOkZctWZo4h8MUtaBnuX4Bcmfvpqgo+RtNtQPKUphydIBLUQYxgVUE=
+	t=1717273463; cv=none; b=FuN/Cgh1XR6uZWE4YkvgcEPtIQ1UrVeWOqv25ncA+RwL01wzktB2pjGMANGMwwmh0o7+PKZ0+NF27jchqSiUsveXvMGmVw1nl/LpFEw9hrS6XK5jmNl6aVuBe/Rt4girxVtRwzlQYVs40GwQAtP9+VdhPcEZtPHDAfDY8SdxC4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717275065; c=relaxed/simple;
-	bh=NP/r89WxcSHiG32+OPN4wVDkmqX2CPWxzvihewvyHAE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TQ3dgQbFXlHdGtsNJU9FmGP0/rdopsn5Uw2R1UFwQ2YomXkwXozJLpfXSZuB3gcpjtj+zQD4/59x7yneyFKkAE2XXPSvyvboZBgHUDIyFDO37abTOkTTkO4/DdLusJIZyj02tmWxhTHoD/ANTO7Yfi+IyhH0veshS+e451FVO00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=AY1J70zv; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=WscMFS7a4CeJw0zsLY2pLYSCPzFoN90vk/QWypLw3pM=; b=AY1J70zvdlqs7izN
-	VcbE9s52IV9X9U7B+mp/1LMrAFAjZ9QleqdE5W9tZwOqKw0cwYp+YuQcDsW5ZQBvgCCJFCLjk5V4v
-	kOszt8wtTi3n4VPIHnk2FlU6T4MrGPRakY914LVDg1/r3Zv8PrhtCLZ72/nmp+mK8p3bORW7asCeW
-	nSY1qiMGYytIzM/J80tcko6xVAT4ohBHb98Oz+xVS6/NrJ5oFmNXiQTF3X7yl7uvWlc+tKulSsOsl
-	sjGxRqoLzH8qsEwbJRKfqs9EweTyzl/IWJcceeyPsB3j+g9E+NeHXBGo2MsqkUs6UgmKOMQ1zU18t
-	RzyUrBTmyqcbsjESBg==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1sDV0s-003l0n-1I;
-	Sat, 01 Jun 2024 20:07:38 +0000
-Date: Sat, 1 Jun 2024 20:07:38 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Greg KH <greg@kroah.com>, lars@metafoo.de, Michael.Hennerich@analog.com,
-	linux-iio@vger.kernel.org, linux-staging@lists.linux.dev,
+	s=arc-20240116; t=1717273463; c=relaxed/simple;
+	bh=YXg0sJEHG1JNmDmWn+3aihlbT685eZ8lKy+1vssih1I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WjWQuZo6VrMManxb0feaLTyLUmKILFc5CyLWCJ2I2f+92AlI10+ny+JYQ0GwpJXmwx4FKVBojvSA58NA+PHYXx4OFgLpDun3IUFKjcadH8g2t8++9svHRyg2Das9FBSx1icAtk3lEl5MPtcYanGrlcL7rbIWQL2t3MvDdIPLmLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=metaspace.dk; spf=none smtp.mailfrom=metaspace.dk; dkim=pass (2048-bit key) header.d=metaspace-dk.20230601.gappssmtp.com header.i=@metaspace-dk.20230601.gappssmtp.com header.b=RNP20Vz2; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=metaspace.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=metaspace.dk
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2e95a1d5ee2so51026131fa.0
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Jun 2024 13:24:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=metaspace-dk.20230601.gappssmtp.com; s=20230601; t=1717273458; x=1717878258; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lE82Snz8MzIXw9HxE7ksfPmYVUidTWq9kb5E7IW25jI=;
+        b=RNP20Vz2RoqwnsODkshjpfwgVupIQufIkbGSFnVHsilxyEIyi8vUGcueugAgB6eaf1
+         Ot44Spjl3X15J+8pQaFVBl5eHTQmrlIOPSOn1z1HRhxicRacbQV1IKrweoQZ3PhdPqbJ
+         saobC21vg9WyKuthf7lmE5BNI97pC6+2cF29Nz8HjftG4BFoeq8Cl7vPkVb16rdyDMC0
+         kozbTO6heK83K2ATnj0HppvDfH3UhVcwUP0OHl3ufj0MpKJoCc6RbjuCR1iuQYulXa1F
+         Q6xuyByg2LpA6t4BbByKB84cyeu54RwOIgS2gHgxAzIZ18D+9N8YQaULui7eSI0ywDrj
+         pmSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717273458; x=1717878258;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lE82Snz8MzIXw9HxE7ksfPmYVUidTWq9kb5E7IW25jI=;
+        b=cka3bZItqX6dyWg0nzoZp6evI+yzZ0EFmmaZ6gbnqHzx2XDKNHxxoJgiKPPuMzlo/C
+         OVPFAyk8Etln1yWIvnj7VCTGzZGziM6P1PZojPsZuziq2xe2VbjMgxcUhKKtofpw8EnW
+         SFzqeMIJ+Dc6G0M9wSxWk00hNUvn5MJ1vtcwngDUXYm6+0LCv9gBebmgSsVrUHyWzrI9
+         d3Jjm9HUgAct2PCsvRf7TBT+oI0icD0n+033dMz7nEnvW7oRn4gil7uNVoT7NVKdMXey
+         0M07qg9x2m+1/ncC8i5Rc12tT8MBOFIybvRKZRYu7UfmvSQoaa22QB3nptYVoTVsNKDl
+         1ONg==
+X-Forwarded-Encrypted: i=1; AJvYcCWSw8/g4KLMdSoaaeicfv1JBm7tqBanEUx0rxM0kXrZnnkPbb3UapAnSDWSIpKgKnVVM68+Dbei81zS1qwcAuQSDMHwmcm5fJFF/Cm3
+X-Gm-Message-State: AOJu0YxNAXJE+UQGE1ynQMLRPPD76fPq2imvJh4coZhM9ofEDbtz+r2R
+	EGmnoua0KI0GaWMdiaS8ekejhypNf7FL2zFRYQ9HhmknkQxqNswDdEYj5JHqwss=
+X-Google-Smtp-Source: AGHT+IFLsoaIiImdFPdqMk9Owuiby/QeuscoKOAaWhgAQWdntLqPGCtlswpdzpAqz2qUzWDXU4U/YA==
+X-Received: by 2002:a2e:9d1a:0:b0:2ea:81cb:5532 with SMTP id 38308e7fff4ca-2ea9520a217mr41188441fa.52.1717273458251;
+        Sat, 01 Jun 2024 13:24:18 -0700 (PDT)
+Received: from localhost ([79.142.230.34])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a68ed647945sm4229766b.9.2024.06.01.13.24.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 01 Jun 2024 13:24:17 -0700 (PDT)
+From: Andreas Hindborg <nmi@metaspace.dk>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Andreas Hindborg <a.hindborg@samsung.com>,
+	Keith Busch <kbusch@kernel.org>,
+	linux-block@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] staging: iio: adt7316: remove unused struct
- 'adt7316_limit_regs'
-Message-ID: <Zlt_iqhNZpPNkTEn@gallifrey>
-References: <20240529160055.28489-1-linux@treblig.org>
- <2024053049-repossess-moonwalk-4235@gregkh>
- <20240601202426.0f667a0d@jic23-huawei>
+Subject: [PATCH] null_blk: fix validation of block size
+Date: Sat,  1 Jun 2024 22:23:51 +0200
+Message-ID: <20240601202351.691952-1-nmi@metaspace.dk>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <20240601202426.0f667a0d@jic23-huawei>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 20:07:26 up 24 days,  7:21,  1 user,  load average: 0.00, 0.00, 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+Content-Transfer-Encoding: 8bit
 
-* Jonathan Cameron (jic23@kernel.org) wrote:
-> On Thu, 30 May 2024 11:45:03 +0200
-> Greg KH <greg@kroah.com> wrote:
-> 
-> > On Wed, May 29, 2024 at 05:00:55PM +0100, linux@treblig.org wrote:
-> > > From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> > > 
-> > > 'adt7316_limit_regs' has never been used since the original
-> > > commit 35f6b6b86ede ("staging: iio: new ADT7316/7/8 and ADT7516/7/9
-> > > driver").
-> > > 
-> > > The comment above it is a copy-and-paste from a different struct.
-> > > 
-> > > Remove both the struct and the comment.
-> > > 
-> > > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-> Greg's bot is correct, but meh, not worth a v3.
-> 
-> I picked up Nuno's tag from v1 though. I don't think that came
-> in after you'd sent this, so I guess you missed that one.
-> 
-> Applied.
+From: Andreas Hindborg <a.hindborg@samsung.com>
 
-Thanks!
+Block size should be between 512 and 4096 and be a power of 2. The current
+check does not validate this, so update the check.
 
-Dave
+Without this patch, null_blk would Oops due to a null pointer deref when
+loaded with bs=1536 [1].
 
-> Jonathan
-> 
-> > > ---
-> > >  drivers/staging/iio/addac/adt7316.c | 9 ---------
-> > >  1 file changed, 9 deletions(-)
-> > > 
-> > > diff --git a/drivers/staging/iio/addac/adt7316.c b/drivers/staging/iio/addac/adt7316.c
-> > > index 79467f056a05..f4260786d50a 100644
-> > > --- a/drivers/staging/iio/addac/adt7316.c
-> > > +++ b/drivers/staging/iio/addac/adt7316.c
-> > > @@ -209,15 +209,6 @@ struct adt7316_chip_info {
-> > >  #define ADT7316_TEMP_AIN_INT_MASK	\
-> > >  	(ADT7316_TEMP_INT_MASK)
-> > >  
-> > > -/*
-> > > - * struct adt7316_chip_info - chip specific information
-> > > - */
-> > > -
-> > > -struct adt7316_limit_regs {
-> > > -	u16	data_high;
-> > > -	u16	data_low;
-> > > -};
-> > > -
-> > >  static ssize_t adt7316_show_enabled(struct device *dev,
-> > >  				    struct device_attribute *attr,
-> > >  				    char *buf)
-> > > -- 
-> > > 2.45.1
-> > > 
-> > >   
-> > 
-> > Hi,
-> > 
-> > This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-> > a patch that has triggered this response.  He used to manually respond
-> > to these common problems, but in order to save his sanity (he kept
-> > writing the same thing over and over, yet to different people), I was
-> > created.  Hopefully you will not take offence and will fix the problem
-> > in your patch and resubmit it so that it can be accepted into the Linux
-> > kernel tree.
-> > 
-> > You are receiving this message because of the following common error(s)
-> > as indicated below:
-> > 
-> > - This looks like a new version of a previously submitted patch, but you
-> >   did not list below the --- line any changes from the previous version.
-> >   Please read the section entitled "The canonical patch format" in the
-> >   kernel file, Documentation/process/submitting-patches.rst for what
-> >   needs to be done here to properly describe this.
-> > 
-> > If you wish to discuss this problem further, or you have questions about
-> > how to resolve this issue, please feel free to respond to this email and
-> > Greg will reply once he has dug out from the pending patches received
-> > from other developers.
-> > 
-> > thanks,
-> > 
-> > greg k-h's patch email bot
-> 
+Link: https://lore.kernel.org/all/87wmn8mocd.fsf@metaspace.dk/
+
+Signed-off-by: Andreas Hindborg <a.hindborg@samsung.com>
+---
+ drivers/block/null_blk/main.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/block/null_blk/main.c b/drivers/block/null_blk/main.c
+index eb023d267369..6a26888c52bb 100644
+--- a/drivers/block/null_blk/main.c
++++ b/drivers/block/null_blk/main.c
+@@ -1823,8 +1823,10 @@ static int null_validate_conf(struct nullb_device *dev)
+ 		dev->queue_mode = NULL_Q_MQ;
+ 	}
+ 
+-	dev->blocksize = round_down(dev->blocksize, 512);
+-	dev->blocksize = clamp_t(unsigned int, dev->blocksize, 512, 4096);
++	if ((dev->blocksize < 512 || dev->blocksize > 4096) ||
++	    ((dev->blocksize & (dev->blocksize - 1)) != 0)) {
++		return -EINVAL;
++	}
+ 
+ 	if (dev->use_per_node_hctx) {
+ 		if (dev->submit_queues != nr_online_nodes)
+
+base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
 -- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+2.45.1
+
 
