@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-197926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0E428D70D2
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 17:18:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78A9D8D70D5
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 17:19:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF7521C20B27
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 15:18:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9C551C20FE7
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 15:19:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 167DB15279C;
-	Sat,  1 Jun 2024 15:17:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 750EA1527AF;
+	Sat,  1 Jun 2024 15:19:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="neoRfGaJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dZQ4r/sS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 253F710949;
-	Sat,  1 Jun 2024 15:17:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA88D10949;
+	Sat,  1 Jun 2024 15:19:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717255077; cv=none; b=PK1+z2Q8diavpFAUrhcJWdm1kalPI4+K2xWt9lIGlVelRwduOSICw508HC7aCZKVFalQFEAqkap79ziE/lsVa0suZN2uDB4lUp5uAo1/Ywer+YF4/z3hDr1TUYCnH+l7XkjQFXJKgYfJ860wlq4jzfIbDH+6AD9z0LR9f8UPHV4=
+	t=1717255166; cv=none; b=QnlsyKEfqL7d3vQwcC40oxiqVd02CyAxfFXbGMB8GK3Up03Gwqei2Wdq+8zRfOQ99VbIBrVclVksHr18Ws5e1p5p3yIANZEutjPjhLA2kEoa3VNYQhvvMIjcsDDRq59CsiqrlGLiC8fU7edxhdXFngF3JrnmzDXxfKYijouRh1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717255077; c=relaxed/simple;
-	bh=MiheRmDa9YIwfK0COcyZiMZofO0kN5bJO2zbV82w0Q8=;
+	s=arc-20240116; t=1717255166; c=relaxed/simple;
+	bh=xhl4m/sGwLQwos4ljI30y0Ocr/Ljr5iV3f1lw4UeoBE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dPipJJiysFYx8ygxjEObwv/iEXMYuebTLeVWJwgoXssubOjhkAi9jXaC83sa9XPZYL4TmP/eMoqbz5J8Z1rc3Nkd5aEh6l7Pg656EDPZYXFhRdNxJfh7P18mp8/YOSoTzwQbKNL0WEW0//eJmHpTOQqiDmdIYkEmRB4NyEnj54c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=neoRfGaJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28E88C116B1;
-	Sat,  1 Jun 2024 15:17:52 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=pmy3jKe5gzpJy4mdiHTcUnM8jjT4q0kjrh/GAhsF+cQK1Y93w9HT7LSQaqSBe9VeclEVsnpnPbJPVmWg2LLcL/CxGg2cx/jHQQlsMz1Dp0fp15iucIgR5hc98b0WsM8KiCPGwTJC90m6fKAscww/SBLYXd6a71/GJE+O6LmxuAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dZQ4r/sS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E73A7C116B1;
+	Sat,  1 Jun 2024 15:19:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717255076;
-	bh=MiheRmDa9YIwfK0COcyZiMZofO0kN5bJO2zbV82w0Q8=;
+	s=k20201202; t=1717255166;
+	bh=xhl4m/sGwLQwos4ljI30y0Ocr/Ljr5iV3f1lw4UeoBE=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=neoRfGaJsRFWOk1FaODamSrVPP9Mkt05R2gvMBipBnzK1gyg+ILcqorphKVKXP7Gs
-	 F/R4Odn6vSj9GoNdKKK3FYuEB+UWeeTe0ceeBrwyPkZ2HsXvXMJdTUKFpNjGUC4lqW
-	 jpKJONY/2Yw1n2vrfXULQcfubiHTr6FYDdxpIOJ6vG+LdNB1Mh5SW8UVUHipwo8G++
-	 49rP8vVdhEOxQpE+M/kQzy43pt0aeAgPylF8ofIkz15XsbAJVnXd8q1eL3iYrynKPb
-	 2zkxDRnj0veTWOOgfykURUV6zWrRKZfuCj8/xqemaiA8jWzGLV9B4bw4ZcqAHZvwOa
-	 hMjCOb4ycNi2Q==
-Message-ID: <da382d43-fa82-44c0-9630-086f59e6efa2@kernel.org>
-Date: Sat, 1 Jun 2024 17:17:51 +0200
+	b=dZQ4r/sSYpGrKhYoene0oFevA3igKq5BlaKGmZRaEzBluv+UKt8E70iQG1iFdz2hy
+	 Y1EIjbDdEwe0NmPyAcNDlfHS8R6/TOJp+RIsAoHvN14IP4WuOaQGbJGXOGY9TIh6W7
+	 cbEhcj29ZWsjlNYg0iYn9iIwX+rBFhH6RhoDksxk14lJKxeX6/52xJptqSdBYUqkXU
+	 eIHDqmjur522u+kIamDnxEhb9mIauYxNGjKFfXiadvkpO7HgOFt5sg+c13tDciLM7O
+	 0jye8J30uvynaG0SK1PWSabewf4dRSBTI+HC9p5c6bja3LJkS4IQ8NhxymUSVm4Cf2
+	 WClzSviCzGxaw==
+Message-ID: <30aabfb2-14b6-4064-8c34-32eb43bd7d49@kernel.org>
+Date: Sat, 1 Jun 2024 17:19:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,23 +49,16 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/5] dt-bindings: pwm: sun20i: Add options to select a
- clock source and DIV_M
-To: Hironori KIKUCHI <kikuchan98@gmail.com>
-Cc: linux-kernel@vger.kernel.org, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
- <ukleinek@kernel.org>, Rob Herring <robh@kernel.org>,
+Subject: Re: [PATCH v3 1/4] dt-bindings: trivial-devices: Add jedec,spd5118
+To: Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org
+Cc: devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>,
- Aleksandr Shubin <privatesub2@gmail.com>, Cheo Fusi
- <fusibrandon13@gmail.com>, linux-pwm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev
-References: <20240531141152.327592-1-kikuchan98@gmail.com>
- <20240531141152.327592-6-kikuchan98@gmail.com>
- <851280ad-ac0e-47d1-99e2-4f3b5ea29f2f@kernel.org>
- <CAG40kxEbMQc-ni0HDVR7rtj48aFu-jz8sYUAO+fdmZSmXWrizw@mail.gmail.com>
+ <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+ Armin Wolf <W_Armin@gmx.de>, =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?=
+ <linux@weissschuh.net>, =?UTF-8?Q?Ren=C3=A9_Rebe?= <rene@exactcode.de>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>
+References: <20240531230556.1409532-1-linux@roeck-us.net>
+ <20240531230556.1409532-2-linux@roeck-us.net>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -111,110 +104,19 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <CAG40kxEbMQc-ni0HDVR7rtj48aFu-jz8sYUAO+fdmZSmXWrizw@mail.gmail.com>
+In-Reply-To: <20240531230556.1409532-2-linux@roeck-us.net>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 31/05/2024 19:57, Hironori KIKUCHI wrote:
-> Hello,
+On 01/06/2024 01:05, Guenter Roeck wrote:
+> Add bindings for the SPD hub present in DDR5 modules.
+> (https://www.jedec.org/standards-documents/docs/jesd300-5b01).
 > 
->>> This patch adds new options to select a clock source and DIV_M register
->>> value for each coupled PWM channels.
->>
->> Please do not use "This commit/patch/change", but imperative mood. See
->> longer explanation here:
->> https://elixir.bootlin.com/linux/v5.17.1/source/Documentation/process/submitting-patches.rst#L95
->>
->> Bindings are before their users. This should not be last patch, because
->> this implies there is no user.
-> 
-> I'm sorry, I'll fix them.
-> 
->> This applies to all variants? Or the one you add? Confused...
-> 
-> Apologies for confusing you. This applies to all variants.
-> 
->>
->>>
->>> Signed-off-by: Hironori KIKUCHI <kikuchan98@gmail.com>
->>> ---
->>>  .../bindings/pwm/allwinner,sun20i-pwm.yaml    | 19 +++++++++++++++++++
->>>  1 file changed, 19 insertions(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/pwm/allwinner,sun20i-pwm.yaml b/Documentation/devicetree/bindings/pwm/allwinner,sun20i-pwm.yaml
->>> index b9b6d7e7c87..436a1d344ab 100644
->>> --- a/Documentation/devicetree/bindings/pwm/allwinner,sun20i-pwm.yaml
->>> +++ b/Documentation/devicetree/bindings/pwm/allwinner,sun20i-pwm.yaml
->>> @@ -45,6 +45,25 @@ properties:
->>>      description: The number of PWM channels configured for this instance
->>>      enum: [6, 9]
->>>
->>> +  allwinner,pwm-pair-clock-sources:
->>> +    description: The clock source names for each PWM pair
->>> +    items:
->>> +      enum: [hosc, apb]
->>> +    minItems: 1
->>> +    maxItems: 8
->>
->> Missing type... and add 8 of such items to your example to make it complete.
-> 
-> Thank you. I'll fix it.
-> 
->>
->>> +
->>> +  allwinner,pwm-pair-clock-prescales:
->>> +    description: The prescale (DIV_M register) values for each PWM pair
->>> +    $ref: /schemas/types.yaml#/definitions/uint32-matrix
->>> +    items:
->>> +      items:
->>> +        minimum: 0
->>> +        maximum: 8
->>> +      minItems: 1
->>> +      maxItems: 1
->>> +    minItems: 1
->>> +    maxItems: 8
->>
->> This does not look like matrix but array.
-> 
-> I wanted to specify values like this:
-> 
->     allwinner,pwm-pair-clock-prescales = <0>, <1>, <3>;
->     allwinner,pwm-pair-clock-sources = "hosc", "apb", "hosc":
-> 
-> These should correspond to each PWM pair.
-> This way, I thought we might be able to visually understand the relationship
-> between prescalers and sources, like clock-names and clocks.
-> 
-> Is this notation uncommon, perhaps?
+> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+> ---
+> v3: Drop explicit bindings file; add binding to trivial devices
 
-It's still an array.
-
-> 
->>
->> Why clock DIV cannot be deduced from typical PWM attributes + clock
->> frequency?
-> 
-> This SoC's PWM system has one shared prescaler and clock source for each pair
-> of PWM channels. I should have noted this earlier, sorry.
-> 
-> Actually, the original v9 patch automatically deduced the DIV value
-> from the frequency.
-> However, because the two channels share a single prescaler, once one channel is
-> enabled, it affects and restricts the DIV value for the other channel
-> in the pair.
-> This introduces a problem of determining which channel should set the shared DIV
-> value. The original behavior was that the first channel enabled would win.
-
-There's nothing bad in this.
-
-> 
-> Instead, this patch try to resolve the issue by specifying these
-> values for each PWM
-> pairs deterministically.
-> That's why it requires the new options.
-
-This does not solve that wrong divider can be programmed for second
-channel in each pair.
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
