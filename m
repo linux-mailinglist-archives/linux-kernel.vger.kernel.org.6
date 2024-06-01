@@ -1,98 +1,110 @@
-Return-Path: <linux-kernel+bounces-197771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C6C48D6EE8
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 10:35:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 447E38D6EED
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 10:39:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96EF72873E0
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 08:35:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9972AB24298
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 08:39:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C4BD20B34;
-	Sat,  1 Jun 2024 08:35:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1AE520DF7;
+	Sat,  1 Jun 2024 08:39:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t33ghpcn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lmu1TjfA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8845134BC;
-	Sat,  1 Jun 2024 08:35:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4A3A111AD;
+	Sat,  1 Jun 2024 08:39:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717230924; cv=none; b=C5nsxuqg5txRmpHMwWMiG3HWU7J14WpLS6UFWvOeTXbHrqhQw7Z4tJmt1cmiX/kIOT6kaFkxz+M+JvFIE3O4dNzCDY+iPsd+eHX6WXX0QtkZ3tTSdRh90pTHuqO/bgfgt8biHT8r+mwOwovMwMr/A2xaUsuyKtdXG6FpTP7v2PE=
+	t=1717231148; cv=none; b=cQY6NzaupyTE6Q/UjB/DmXe4Sxv38WCU/DmjJPHDzzwMCtX53JNKjyshkgrq6erx8IIkv5eCSHUsWZecIAEFE5Zh0q7ZwXHBHvvu8ZkPIt9o6WJJRsOA1EY4E4TXVLjgI/fODzZLK9NJqNPIkYzg9KIdcKna4rVOpxXSItvg0pE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717230924; c=relaxed/simple;
-	bh=i6QXw0K5kD5BqtAZxeo4zpXZBwWLBWtzp1J9e0muU8c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MsWQlqva6K/vhYefX1zg+m7H7wslf6kDTIA+NbT43jbKcNSXPFcTkqoOKrt8j9k3ABbJy0SmJOXyiTvfFawk2wwjhZAznP7Lm7Uj7oKWMoTJiiOL35D/j2f697ytP0sSnNYQFnxJn4bvdlwikVZ5KMr8QDAVGuHv/7DXiC9gakU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t33ghpcn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E2F7C116B1;
-	Sat,  1 Jun 2024 08:35:20 +0000 (UTC)
+	s=arc-20240116; t=1717231148; c=relaxed/simple;
+	bh=O/cdpqT7qQihzPF3SYw3ffdjHn+vpQtcKKcbKkl2pXA=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=kPMjfVF7AfmyANxGiWWWBMdLV9cjXmhgIoK0JUwEqx214EJHFhvY80nbhsQPd+NaaEGzN2fR9Mc5VNHqq06p3KYwjGa9+w3dCF1H/OULDoKLqux4rFSPhpipuCC3K9Aw+NVq4QA7Gu9VEIWVCF0qL3upoRA/6BzqlqQxD4UjSBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lmu1TjfA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 288E7C116B1;
+	Sat,  1 Jun 2024 08:39:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717230923;
-	bh=i6QXw0K5kD5BqtAZxeo4zpXZBwWLBWtzp1J9e0muU8c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=t33ghpcnE/BmCqaAshrQt17eVB2iwIAhBihh8ANAqgvrW4XD6/WzPzv+ZI2bxvs6/
-	 wzuDIYcORClcDYgFhJKGsq1Wh7GnTciiLgKXNKhExNdR5tbfz5eLAg+Pr1qupo9oOx
-	 q97iT3Vl+4eEJejchQbdxGFYU9S8yK3k7/QlmFqj7cb6KLwqJPff960P6jZiXAaSDZ
-	 qyzGupR6m9hLvhOLioR0cYZjYD7CAP4dOdk5gO5pFTZPxx4VjJ6lzyGAeqddh6vGI+
-	 90O1nLsAOO8XJD7N5lBT9L6sAcemJe0q3+m+iKIeHK3AvbZEc0BrP9yzo6DPvB2SJh
-	 w1tjKH6vzJi6g==
-Date: Sat, 1 Jun 2024 09:35:17 +0100
-From: Simon Horman <horms@kernel.org>
-To: Guangguan Wang <guangguan.wang@linux.alibaba.com>
-Cc: wenjia@linux.ibm.com, jaka@linux.ibm.com, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	kgraul@linux.ibm.com, alibuda@linux.alibaba.com,
-	tonylu@linux.alibaba.com, guwen@linux.alibaba.com,
-	linux-s390@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 1/2] net/smc: set rmb's SG_MAX_SINGLE_ALLOC
- limitation only when CONFIG_ARCH_NO_SG_CHAIN is defined
-Message-ID: <20240601083517.GX491852@kernel.org>
-References: <20240528135138.99266-1-guangguan.wang@linux.alibaba.com>
- <20240528135138.99266-2-guangguan.wang@linux.alibaba.com>
+	s=k20201202; t=1717231147;
+	bh=O/cdpqT7qQihzPF3SYw3ffdjHn+vpQtcKKcbKkl2pXA=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+	b=lmu1TjfAQQoBYhj/5tR7GS0uOuhgynxe5b8eTTxihKbYlFz9EB9BuMaGLeDxzIuQa
+	 mPL1IUU24/j5KmRP7KUBe0uI7vvIS6NVX7i9Q3YerbU/Z3NPTj8MbRbneAyrTD41Ns
+	 +xyUGP2pdDwyiS94iYPHYOSWOYwFHr7xM9UMtWUFO20gz1EReopk8uHvol1NzPcobS
+	 lXYgd7nVOP7X8rb7cioKPkC2YQf1lIqdQPk4zPN5OLa/2Lr1c36cwTmNHFEp2BQ09M
+	 Y6twVXL/tNg4qPu0VP9NjAWJCRtariHmDydaylbZd8zwK+h2jqVm/2nG+pUQt5shpx
+	 JDfaxnwZkCo2g==
+From: Kalle Valo <kvalo@kernel.org>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: Dave Jiang <dave.jiang@intel.com>,  Bjorn Helgaas <bhelgaas@google.com>,
+  <linux-wireless@vger.kernel.org>,  <ath11k@lists.infradead.org>,
+  <regressions@lists.linux.dev>,  Jeff Johnson <quic_jjohnson@quicinc.com>,
+  <linux-kernel@vger.kernel.org>,  <linux-cxl@vger.kernel.org>,
+  <linux-pci@vger.kernel.org>
+Subject: Re: [regression] BUG: KASAN: use-after-free in
+ lockdep_register_key+0x755/0x8f0
+References: <87v82y6wvi.fsf@kernel.org> <87wmncwqxf.fsf@kernel.org>
+	<87sexzx02f.fsf@kernel.org>
+	<66582bee45da8_6ec329496@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+	<87jzjbwxin.fsf@kernel.org> <87frtzww57.fsf@kernel.org>
+	<6659ee8b8dfd_166872941c@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+	<87y17qudwb.fsf@kernel.org>
+Date: Sat, 01 Jun 2024 11:39:03 +0300
+In-Reply-To: <87y17qudwb.fsf@kernel.org> (Kalle Valo's message of "Fri, 31 May
+	2024 19:47:32 +0300")
+Message-ID: <87a5k5ukew.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240528135138.99266-2-guangguan.wang@linux.alibaba.com>
+Content-Type: text/plain
 
-On Tue, May 28, 2024 at 09:51:37PM +0800, Guangguan Wang wrote:
-> SG_MAX_SINGLE_ALLOC is used to limit maximum number of entries that
-> will be allocated in one piece of scatterlist. When the entries of
-> scatterlist exceeds SG_MAX_SINGLE_ALLOC, sg chain will be used. From
-> commit 7c703e54cc71 ("arch: switch the default on ARCH_HAS_SG_CHAIN"),
-> we can know that the macro CONFIG_ARCH_NO_SG_CHAIN is used to identify
-> whether sg chain is supported. So, SMC-R's rmb buffer should be limitted
+Kalle Valo <kvalo@kernel.org> writes:
 
-Hi Guangguan Wang,
+> Dan Williams <dan.j.williams@intel.com> writes:
+>
+>> Kalle Valo wrote:
+>> [..]
+>>> >> The proposed fix for that is here:
+>>> >>
+>>> >> http://lore.kernel.org/r/66560aa9dbedb_195e294b0@dwillia2-mobl3.amr.corp.intel.com.notmuch
+>>> >
+>>> > I get "Not Found" from that link, is there a typo?
+>>> 
+>>> I found this fix from for-linus branch:
+>>> 
+>>> # PCI: Fix missing lockdep annotation for pci_cfg_access_trylock()for-linus
+>>> https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/commit/?h=for-linus&id=f941b9182c54a885a9d5d4cfd97af66873c98560
+>>> 
+>>> But at least that doesn't fix my crash.
+>>
+>> Sorry for the broken link I mistakenly used a message-id from an
+>> internal thread with the intel.com reporter. However, it is moot now
+>> because the new direction is to revert the lockdep infrastructure:
+>>
+>> https://lore.kernel.org/r/171711745834.1628941.5259278474013108507.stgit@dwillia2-xfh.jf.intel.com
+>>
+>> (that link works...)
+>
+> Thanks, that links works :) I did a quick test with the three patches
+> and I didn't see any crashes anymore. But to be confident I need to run
+> overnight tests, I'll provide my Tested-by after that.
 
-As it looks like there will be a v2:
+Ok, I'm now quite confident that the issues I saw are solved so:
 
-In this patch: limitted -> limited
-In patch 2/2:  defalut -> default
+Tested-by: Kalle Valo <kvalo@kernel.org>
 
-checkpatch.pl --codespell is your friend.
+-- 
+https://patchwork.kernel.org/project/linux-wireless/list/
 
-> by SG_MAX_SINGLE_ALLOC only when the macro CONFIG_ARCH_NO_SG_CHAIN is
-> defined.
-> 
-> Signed-off-by: Guangguan Wang <guangguan.wang@linux.alibaba.com>
-> Co-developed-by: Wen Gu <guwen@linux.alibaba.com>
-> Signed-off-by: Wen Gu <guwen@linux.alibaba.com>
-> Fixes: a3fe3d01bd0d ("net/smc: introduce sg-logic for RMBs")
-
-I think it is usual to put the fixes tag above the Signed-of tags,
-although I don't see anything about that in [1].
-
-[1] https://www.kernel.org/doc/html/latest/process/submitting-patches.html#using-reported-by-tested-by-reviewed-by-suggested-by-and-fixes
-
-...
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
