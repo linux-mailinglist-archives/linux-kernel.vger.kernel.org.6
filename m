@@ -1,118 +1,87 @@
-Return-Path: <linux-kernel+bounces-197810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 657838D6F7E
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 13:33:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9E528D6F81
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 13:36:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79F86B22148
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 11:33:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74AD3281D07
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 11:36:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8E0A335A7;
-	Sat,  1 Jun 2024 11:33:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 539EB14E2D9;
+	Sat,  1 Jun 2024 11:36:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pse4ENjE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gzj36iIF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F7B97F7CA;
-	Sat,  1 Jun 2024 11:33:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BF47335A7;
+	Sat,  1 Jun 2024 11:36:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717241615; cv=none; b=U8EuQ6/QYaY8/b9XL3HaflijyqDeNTCpu3qDlH79INptyE8AD1f05JHNn4+jknBu9cDBEzkFMvjSGi5myDGndBgXQec5QxsOBaAdm16nsLPsdGm9IzZUTVDipPwiJ8S+m/A+1MEyysEay0boDwXmAtAkZrOoAvjUEJJ9x04brq4=
+	t=1717241762; cv=none; b=Nf7yjwUP6YQaanub/hnnLIeo+R9f99LQfOSTkeO6UEfaf/gMixOoVpE31i+ZE9X1J12H9baox9kb0ipGWjkFarCuqp6jkUlReMFVC/Hx6oQsZscXRIrVN7S5GBo1BAdoXWkjgM0SgWdvtzEi39xIBhACqmhKy/UQKnOV+DdcDIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717241615; c=relaxed/simple;
-	bh=1sQLkbFvGo0K2q+/mxnULj8MtZJc0U6foyt7fFEL0Iw=;
+	s=arc-20240116; t=1717241762; c=relaxed/simple;
+	bh=kpQf4gwEeOOzDfhWhhcG3oI1znrd4vE/jJPK+EcV08I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=heE/LGQBjjj8viuGWJVMfmqOFktjRALFUFZX2ZOucO+Uq9+kl7kVteNyrUhzoviRgx2M5HqLMo0rx6sIrZTLDe72O5PoOjTEupAsOWkhDSgjZULqSQwlR2zOJ4zesytfhAD/HnNCPsPF1nTuFYPqUo75c9W3lern+o72DeB4KkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pse4ENjE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EC40C116B1;
-	Sat,  1 Jun 2024 11:33:34 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=uXtM+Hn4RHtV+qSYixDK48x/Vw5QBdSSguF5dxi4fc2qgmEnbYeCe/PlrN5mgt1wdk30LRDfo7/qTz/c3/2S/RJkKpGEAVUCHuLUtEcPOcyOThjjGyr5aZ0MC13GAZqH3epj86GUZQwsMBd3wjCXO+BZMNaQhHKgzG+1dnWYB0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gzj36iIF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66135C116B1;
+	Sat,  1 Jun 2024 11:35:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717241614;
-	bh=1sQLkbFvGo0K2q+/mxnULj8MtZJc0U6foyt7fFEL0Iw=;
+	s=k20201202; t=1717241762;
+	bh=kpQf4gwEeOOzDfhWhhcG3oI1znrd4vE/jJPK+EcV08I=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Pse4ENjEiWPsplyFVmTE4IAyWq6Kt9wKjNgHZrwIkEK23dzThHnZHJS3BvMNKDO9X
-	 9sFs9Qjb2HCk1CqPtAYUs9LvJRiNfjdVVno4rHlwFd8QpxuvA6/W/4lR0rjfJZrnuy
-	 /cNfHqY3p3nul1dbZmm9CzQ5LhBTattxxXh7oS6SgZZtDK6FoK8EJnCCvYvLT0cHFs
-	 Mwu5K3ZizZZAq8Ic4kIjFdenWGqMZTAKTupS0COfFrTkW3ZPI4OLtCmuAPrPNUcyiG
-	 jXidr8VOltAzSj27aDJGxETk/P4Qe+h7Q7pejnIQbvp+MN/WLfgOO+JnoXw+0OQkzd
-	 Jpbq0YzbzK/nA==
-Date: Sat, 1 Jun 2024 12:33:31 +0100
-From: Mark Brown <broonie@kernel.org>
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>,
-	Kees Cook <keescook@chromium.org>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] bcachefs updates fro 6.10-rc1
-Message-ID: <ZlsHCzAPzp6XwTqw@finisterre.sirena.org.uk>
-References: <zhtllemg2gcex7hwybjzoavzrsnrwheuxtswqyo3mn2dlhsxbx@dkfnr5zx3r2x>
- <202405191921.C218169@keescook>
- <2uuhtn5rnrfqvwx7krec6lc57gptqearrwwbtbpedvlbor7ziw@zgbzssfacdbe>
- <a1aa10f9d97b2d80048a26f518df2a4b90c90620.camel@HansenPartnership.com>
+	b=gzj36iIF2LvyS7Kv7+EL84VyeI6zM2JaoVBShSc4JqtM8sFYhlxcx0KUbWYikYebQ
+	 kQHucV5qqOknsjNo2DRtp8y44jNhLyDoXX5Tqh0ZDOATy6DLSWeOFEscMrIutOCkhq
+	 VkxP0kAuj9FJ+Lj+BErd1LWQD5TVNapB4zls0XCC16an1emBni6tZdToA+bcdJl1kQ
+	 R09XGLRF3mXBTTZ/N/Zkh99tY0JV+LtFiSKmRu2OnM83b0aExNwB5i5XdLWHGPgUBt
+	 zfFGV+2qNdmLYuqpG0fM4GamTMjYi6sN/iAe6xPID701LvsT5DwQLOCSwHVoUZEyeC
+	 yb12Et9/B2rdA==
+Date: Sat, 1 Jun 2024 12:35:57 +0100
+From: Simon Horman <horms@kernel.org>
+To: Joe Damato <jdamato@fastly.com>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	nalramli@fastly.com, Saeed Mahameed <saeedm@nvidia.com>,
+	Tariq Toukan <tariqt@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	"open list:MELLANOX MLX5 core VPI driver" <linux-rdma@vger.kernel.org>
+Subject: Re: [RFC net-next v3 1/2] net/mlx5e: Add helpers to calculate txq
+ and ch idx
+Message-ID: <20240601113557.GE491852@kernel.org>
+References: <20240529031628.324117-1-jdamato@fastly.com>
+ <20240529031628.324117-2-jdamato@fastly.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="4CGzBNjsXpkSmh79"
-Content-Disposition: inline
-In-Reply-To: <a1aa10f9d97b2d80048a26f518df2a4b90c90620.camel@HansenPartnership.com>
-X-Cookie: I had pancake makeup for brunch!
-
-
---4CGzBNjsXpkSmh79
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20240529031628.324117-2-jdamato@fastly.com>
 
-On Mon, May 20, 2024 at 12:10:31PM -0400, James Bottomley wrote:
-> On Sun, 2024-05-19 at 23:52 -0400, Kent Overstreet wrote:
+On Wed, May 29, 2024 at 03:16:26AM +0000, Joe Damato wrote:
+> Add two helpers to:
+> 
+> 1. Compute the txq_ix given a channel and a tc offset (tc_to_txq_ix).
+> 2. Compute the channel index and tc offset given a txq_ix
+>    (txq_ix_to_chtc_ix).
+> 
+> The first helper, tc_to_txq_ix, is used in place of the mathematical
+> expressionin mlx5e_open_sqs when txq_ix values are computed.
+> 
+> The second helper, txq_ix_to_chtc_ix, will be used in a following patch.
 
-> > I also do (try to) post patches to the list that are doing something
-> > interesting and worth discussion; the vast majority this cycle has
-> > been boring syzbot crap...
+Hi Joe,
 
-> you still don't say what problem not posting most patches solves?  You
-> imply it would slow you down, but getting git-send-email to post to a
-> mailing list can actually be automated through a pre-push commit hook
-> with no slowdown in the awesome rate at which you apply patches to your
-> own tree.
+I think it would be best to add txq_ix_to_chtc_ix as part of patch that
+uses it, because the current arrangement will cause allmodconfigs with
+clang-18 and W=1 to fail due to txq_ix_to_chtc_ix being unused.
 
-> Linux kernel process exists because it's been found to work over time.
-> That's not to say it can't be changed, but it usually requires at least
-> some stab at a reason before that happens.
-
-Even if no meaningful review ever happens on the actual posts there's
-still utility in having the patches on a list and findable in lore,
-since everything is normally on the list people end up with workflows
-that assume that they'll be able to find things there.  For example it's
-common for test people who identify which patch introduces an issue to
-grab the patch from lore in order to review any discussion of the patch,
-then report by replying to the patch to help with context for their
-report and get some help with figuring out a CC list.  Posting costs
-very little and makes people's lives easier.
-
---4CGzBNjsXpkSmh79
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZbBwcACgkQJNaLcl1U
-h9Ctrgf/V6HUvGS/lPiuRfYtqLPYUmt8K87RV8eA9xCDQGpM7WHVSbkFrSSXMJy5
-kGecY0z4i1r25gjcaTl1DeqIa7QUs5SBWTzj+UC7dT0Sy4tLdNAT0jTbWetaUBTU
-g/7S6c4OED/rNxsh8+uSHRbVZ3HBrtI4oAkG7jF2kuAWEoV4VmktIoeCgMrryNMc
-VIfedpdi3QAs3Emog0zyGJBT9W7SL87woIvJYqdEuqePMdKiGol/X7XEXouCuBAz
-+tuQSVVCBeAS0CunkIb520pAQP0OQopWQ5VhC6DdBeIHUttRoSfYWsophiULuAhj
-bBYASjNxk6wEC/C8ikmxN4WYA0znrQ==
-=3llj
------END PGP SIGNATURE-----
-
---4CGzBNjsXpkSmh79--
+...
 
