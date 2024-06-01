@@ -1,159 +1,98 @@
-Return-Path: <linux-kernel+bounces-197720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3FF18D6E69
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 08:18:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E827C8D6E6E
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 08:19:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 840541F25D5A
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 06:18:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25AB31C245C6
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 06:19:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19DC915EA6;
-	Sat,  1 Jun 2024 06:18:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T3l21jx6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 328521B5A4;
+	Sat,  1 Jun 2024 06:18:47 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B569134BC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB9BE14A8F;
 	Sat,  1 Jun 2024 06:18:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717222724; cv=none; b=Yqngz9KLYlkvjr7uZCWW/rPegnwEnSQ050CezQ7oH4toToP1nR1e16Tnd8ZbI3cci51ht0x4bn13trDA5j+ZN4DrCqwTWwX62tCkOlv49/1P5W2lN39MUlgM0ijVACTn/Ft+Fql3YLk6NN7kc4Pv1wabVEPEReOPm67q1Jrkofo=
+	t=1717222726; cv=none; b=Y+FsIgD41+krr5XzI5a4kQw/0uD9BSlQFa7KmTzPTEtDmt1AUDkSBJJdXesg/VmCWCvwrFrJg+0FClJ2PCAanXM1Oo0M5/vQMK33dp02yWQDHBRZ/u/abPbBwb5C2e8SYG9Yp/RTgjEzoGa/Dg2lBBnwTM46gDIiK3EuGNP3nxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717222724; c=relaxed/simple;
-	bh=qv/TpTCLIjAt2eWLAMdx+nkTx3R9H3xNd5p/PM0KR/Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=d0vohHBlIUnbimfzeCKVv+lJfd0xavFKPQPuwCm+ivb5T/xoo8IJsZ6UlN8/gHmaX5dcQXGxy3QXwWhQf6ne/+rIlTpejm4INb03MoTDcPTfGkVuhJaHHgahzFgqJv1yOrDy0a0fzwhNm0mERhse4S0ZaFXIa8izneQ/hvyLxA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T3l21jx6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC514C4AF11;
-	Sat,  1 Jun 2024 06:18:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717222723;
-	bh=qv/TpTCLIjAt2eWLAMdx+nkTx3R9H3xNd5p/PM0KR/Y=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=T3l21jx6DRIWYURgryuGOT3ad9rDOO3VpyZ+i7KLuV3CcXvTubeGccG9yaHbBfJpY
-	 LsrboZ2sQWcX9Ec/3B69HuI2DM9AN2sbX2oU2rv+UPKctEENjsZN3ASah5wZia7ZK3
-	 RNc651eTlMdCQiTtGD9ElY2qefzF2jz335808HGpaAPQZDz9k6TXGPKefYGoTbxyvg
-	 l0IAo0pij8zWp3qwUG62akh6IMydtrt0QifAulzwqW5jbbYmLZfoENjqQ7JyCHmInL
-	 jznE2vMfiu0ThzP5s4rWrOEo4GqI3tS5wfe6DIgNbuelsCyxK0vo7pd/AyLGoiISdF
-	 o0D+603L2oJlw==
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a653972487fso228595366b.1;
-        Fri, 31 May 2024 23:18:43 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXmfREBp6USUf3OnTP63Gx95HISStyRzVj8AY6KotvZpuXgFZf3nW7yWNR5aBIMWDb8RVmih7ArtGxC8cS06GAifyQZpkwr6LA0nixNJw6KGX/9bruaYwfYwulkLSzQf/q97ZgCXErIUKWh2EkGHcPiSPoojRFy6qu+472yM4892xupPw==
-X-Gm-Message-State: AOJu0YytL21p8ZuEH/VB0HE6rMYkLcaMNzgIIWzeWwxSCfdEJox1hcp+
-	2l2tzEehhLZ4kGUrcSDpzne8jpN7qy9rV7NbXCUa6LFVJCaF0i/x3KfeRZFCjRj9t82ZsdRKmLt
-	egIlezFRPXcvy9+MtzyW5zzRIor4=
-X-Google-Smtp-Source: AGHT+IEA4/ILSczbK0xOrDgN8sjL32cYwfghwWG8IasCH/Si+Iwy3qd1z6J8H3j9DILXwkN3hkhqqm3H1a7TEeNrKmU=
-X-Received: by 2002:a17:906:4114:b0:a68:b6c7:516b with SMTP id
- a640c23a62f3a-a68b6c75209mr37608866b.73.1717222722373; Fri, 31 May 2024
- 23:18:42 -0700 (PDT)
+	s=arc-20240116; t=1717222726; c=relaxed/simple;
+	bh=rrBjQRF40NCxkbGV+C8UNlmDmwTUguMTPm33YC2RW1w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AunoQjkmJFDRo/1IdxFOeDaIbD0rNYdTo+vXiiFs/H4CQUtjOzThWLgI0llfmIIUFN5IUCSerhBoNDtcxGzLm8cCMeIMxdjS3e/EG2vXWXsZMz2OuMDoa+KzemAsF4Aaff8P1JZj+zJpovxBjXExc9mkRMz8NhlRJU1c2mqekWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id C5AF668D17; Sat,  1 Jun 2024 08:18:39 +0200 (CEST)
+Date: Sat, 1 Jun 2024 08:18:39 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Nitesh Shetty <nj.shetty@samsung.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
+	Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
+	Mikulas Patocka <mpatocka@redhat.com>,
+	Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>,
+	Chaitanya Kulkarni <kch@nvidia.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	martin.petersen@oracle.com, bvanassche@acm.org, david@fromorbit.com,
+	hare@suse.de, damien.lemoal@opensource.wdc.com,
+	anuj20.g@samsung.com, joshi.k@samsung.com, nitheshshetty@gmail.com,
+	gost.dev@samsung.com, Vincent Fu <vincent.fu@samsung.com>,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, dm-devel@lists.linux.dev,
+	linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v20 04/12] block: add emulation for copy
+Message-ID: <20240601061839.GA6221@lst.de>
+References: <20240520102033.9361-1-nj.shetty@samsung.com> <CGME20240520102906epcas5p15b5a0b3c8edd0bf3073030a792a328bb@epcas5p1.samsung.com> <20240520102033.9361-5-nj.shetty@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240528151052.313031-1-alexghiti@rivosinc.com>
- <20240528151052.313031-8-alexghiti@rivosinc.com> <ZlZ8/Nv3QS99AgY9@andrea>
- <39a9b28c-2792-45ce-a8c6-1703cab0f2de@ghiti.fr> <ZlnyKclZOQdrJTtU@andrea>
-In-Reply-To: <ZlnyKclZOQdrJTtU@andrea>
-From: Guo Ren <guoren@kernel.org>
-Date: Sat, 1 Jun 2024 14:18:30 +0800
-X-Gmail-Original-Message-ID: <CAJF2gTTz2H5McxgsrEcMeCNMnchS6sr3vRn53J=FWk_6HPoP6A@mail.gmail.com>
-Message-ID: <CAJF2gTTz2H5McxgsrEcMeCNMnchS6sr3vRn53J=FWk_6HPoP6A@mail.gmail.com>
-Subject: Re: [PATCH 7/7] riscv: Add qspinlock support based on Zabha extension
-To: Andrea Parri <parri.andrea@gmail.com>
-Cc: Alexandre Ghiti <alex@ghiti.fr>, Alexandre Ghiti <alexghiti@rivosinc.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, 
-	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Leonardo Bras <leobras@redhat.com>, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-arch@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240520102033.9361-5-nj.shetty@samsung.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Fri, May 31, 2024 at 11:52=E2=80=AFPM Andrea Parri <parri.andrea@gmail.c=
-om> wrote:
->
-> > > > + select ARCH_USE_QUEUED_SPINLOCKS if TOOLCHAIN_HAS_ZABHA
-> > > IIUC, we should make sure qspinlocks run with ARCH_WEAK_RELEASE_ACQUI=
-RE,
-> > > perhaps a similar select for the latter?  (not a kconfig expert)
-> >
-> >
-> > Where did you see this dependency? And if that is really a dependency o=
-f
-> > qspinlocks, shouldn't this be under CONFIG_QUEUED_SPINLOCKS? (not a Kco=
-nfig
-> > expert too).
->
-> The comment on smp_mb__after_unlock_lock() in include/linux/rcupdate.h
-> (the barrier is currently only used by the RCU subsystem) recalls:
->
->   /*
->    * Place this after a lock-acquisition primitive to guarantee that
->    * an UNLOCK+LOCK pair acts as a full barrier.  This guarantee applies
->    * if the UNLOCK and LOCK are executed by the same CPU or if the
->    * UNLOCK and LOCK operate on the same lock variable.
->    */
->   #ifdef CONFIG_ARCH_WEAK_RELEASE_ACQUIRE
->   #define smp_mb__after_unlock_lock()   smp_mb()  /* Full ordering for lo=
-ck. */
->   #else /* #ifdef CONFIG_ARCH_WEAK_RELEASE_ACQUIRE */
->   #define smp_mb__after_unlock_lock()   do { } while (0)
->   #endif /* #else #ifdef CONFIG_ARCH_WEAK_RELEASE_ACQUIRE */
->
-> Architectures whose UNLOCK+LOCK implementation does not (already) meet
-> the required "full barrier" ordering property (currently, only powerpc)
-> can overwrite the "default"/common #define for this barrier (NOP) and
-> meet the ordering by opting in for ARCH_WEAK_RELEASE_ACQUIRE.
->
-> The (current) "generic" ticket lock implementation provides "the full
-> barrier" in its LOCK operations (hence in part. in UNLOCK+LOCK), cf.
->
->   arch_spin_trylock() -> atomic_try_cmpxchg()
->   arch_spin_lock() -> atomic_fetch_add()
->                    -> atomic_cond_read_acquire(); smp_mb()
->
-> but the "UNLOCK+LOCK pairs act as a full barrier" property doesn't hold
-> true for riscv (and powerpc) when switching over to queued spinlock.
-Yes.
+On Mon, May 20, 2024 at 03:50:17PM +0530, Nitesh Shetty wrote:
+> For the devices which does not support copy, copy emulation is added.
+> It is required for in-kernel users like fabrics, where file descriptor is
+> not available and hence they can't use copy_file_range.
+> Copy-emulation is implemented by reading from source into memory and
+> writing to the corresponding destination.
+> At present in kernel user of emulation is fabrics.
 
-> OTOH, I see no particular reason for other "users" of queued spinlocks
-> (notably, x86 and arm64) for selecting ARCH_WEAK_RELEASE_ACQUIRE.
-I looked at the riscv-unprivileged ppo section, seems RISC-V .rl ->
-.aq has RCsc annotations.
-ref:
-Explicit Synchronization
- 5. has an acquire annotation
- 6. has a release annotation
- 7. a and b both have RCsc annotations
+I still don't see the point of offering this in the block layer,
+at least in this form.  Caller usually can pre-allocate a buffer
+if they need regular copies instead of doing constant allocation
+and freeing which puts a lot of stress on the page allocator.
 
-And for qspinlock:
-unlock:
-        smp_store_release(&lock->locked, 0);
+> +static void *blkdev_copy_alloc_buf(ssize_t req_size, ssize_t *alloc_size,
+> +				   gfp_t gfp)
+> +{
+> +	int min_size = PAGE_SIZE;
+> +	char *buf;
+> +
+> +	while (req_size >= min_size) {
+> +		buf = kvmalloc(req_size, gfp);
+> +		if (buf) {
+> +			*alloc_size = req_size;
+> +			return buf;
+> +		}
+> +		req_size >>= 1;
+> +	}
+> +
+> +	return NULL;
 
-lock:
-        if (likely(atomic_try_cmpxchg_acquire(&lock->val, &val, _Q_LOCKED_V=
-AL)))
+And requiring a kernel mapping for data is is never used through the
+kernel mapping is pretty silly as well.
 
-If the hardware has Store-Release and CAS instructions, they all obey
-Explicit Synchronization rules. Then RISC-V "UNLOCK+LOCK" pairs act as
-a full barrier, right?
-
->
-> But does this address your concern?  Let me know if I misunderstood it.
->
->   Andrea
-
-
-
---=20
-Best Regards
- Guo Ren
 
