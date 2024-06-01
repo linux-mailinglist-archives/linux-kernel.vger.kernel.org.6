@@ -1,246 +1,195 @@
-Return-Path: <linux-kernel+bounces-197931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D0018D70EC
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 17:30:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A350D8D70F0
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 17:33:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90F901C21117
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 15:30:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18E381F217FA
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 15:33:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84E24153585;
-	Sat,  1 Jun 2024 15:30:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24860152E05;
+	Sat,  1 Jun 2024 15:32:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XoQVULtx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tYYYK70Y"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C2E327451;
-	Sat,  1 Jun 2024 15:30:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4797017BD9;
+	Sat,  1 Jun 2024 15:32:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717255825; cv=none; b=RiCWYRItynXcYIc/oCH6w1AxX90Vc+udsVKkm6ZnNUk6RvDbgqzyC65HynxJAVD3u5EUFMM88RzDNHeroRNmdkqvgb7j/289j2bszDi6Vwy9wQgnwNGIVBDCxVa2kpzX+9iXKEExvMPhwBF/TYdy0V4ZxM+0hmitQNN5Ckkq//k=
+	t=1717255976; cv=none; b=MONFW2YVGJAjKX7mxWNm/pZf8gdIeKrFNGyQXFWqMcfRiEMHUxX/UQ0mcqv1GVe5xD3nmHgc+5JjndjFozWSg/1/nETA/VHbr+h4rrKoAFyEwUL2V4+v6Au9F77GjCCGkFqo5SeHDo9YC08+kWXmWVxktxJhZz465OdfRJbD0S0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717255825; c=relaxed/simple;
-	bh=YKctU1BgLvYJv1exYVgkH2uz/IJdBVvmQn66+UB144M=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=OlE0saHZTIThK+uUQsK0Ft0QnZhvYdItm6yPQ6RG5OY8cSPELVlwXRDqXLtYrGbsKFoA1ci8SNFxMASwKfFbJi4lvH7tvvn/E1jOZs20DWLIOrmyWAicvW3n8nT1xdW9Ieemw0rZqnPWsxvUb5qxmjA/ABmWI+23R9dscYIIsdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XoQVULtx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 3BCAFC4AF0A;
-	Sat,  1 Jun 2024 15:30:25 +0000 (UTC)
+	s=arc-20240116; t=1717255976; c=relaxed/simple;
+	bh=4FoTUy/jB2ewyL/BKItSSopy5nZtqbaENV3Zmn4IIPo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HQT0dC+b1UCPpFFzwvKxFfyFNwELMxFuaNXGZHbjtm4HqwwIiX1uDrpgrjEBgvDbqAQfa7YRg6Darzuw0bHS+pgtkvr/f8P+0WYP3u1LeBpBG0gcMzcFKh7tn5ZE6B7il8RfzHtVzhSsHROuf9O8eByu8BF4H6WYQAk4zbBlsN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tYYYK70Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D616C116B1;
+	Sat,  1 Jun 2024 15:32:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717255825;
-	bh=YKctU1BgLvYJv1exYVgkH2uz/IJdBVvmQn66+UB144M=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=XoQVULtxJiG3OwYnKxuBcukpsIbAqATRT9pLRbDHb9K37TVbJ1j5Vjz4nd2wrm4JQ
-	 hy6y3DLlOD64xqQn/GfMFucfLgmhI9hJ7U4SnWBpvmR9N0VJ1rzqo3DoW+rkoRwkMe
-	 kg6jXXU8U7wkduQLr3W/VhqEtLcv4mXYDRTibNGDkRS3kQyqzDKntJH4OGeZ3LZGdd
-	 uVUYYnruOQlYkOhm6/LoxqymP3tFMzPftevdgrjvmYwyvGVQHzafcGMRKTLNDcCxFA
-	 Hm1Tawm7z68jy+S0fyle2QhSL4RdsL2yMdInv//zGycHV1mRvfSyy4P7YwCT16p/o/
-	 s99AUwc4NTb7Q==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 278E6C27C50;
-	Sat,  1 Jun 2024 15:30:25 +0000 (UTC)
-From: Joel Selvaraj via B4 Relay <devnull+joelselvaraj.oss.gmail.com@kernel.org>
-Date: Sat, 01 Jun 2024 10:30:20 -0500
-Subject: [PATCH v4 3/3] Input: novatek-nvt-ts: add support for NT36672A
- touchscreen
+	s=k20201202; t=1717255975;
+	bh=4FoTUy/jB2ewyL/BKItSSopy5nZtqbaENV3Zmn4IIPo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=tYYYK70Y1VfxXdhu8HJtcbzI9ZeIrOMGIcxacypG0pty+n750VXmCTkKtlqXNdcL8
+	 cBULeL3QxhweboRE8QnJI8c6Ow8u1575EB87Rl9ybjik4e9w1VVy4zJ+9Dw67PpBrY
+	 dje19reIi5Z+ldsxCDGxzNQ6ObYl/bg4p20cKBbJU0EYDYb8ZXgjhE5ZvNoXFbN+9T
+	 n6qRuLKuCwhdN0MeOHomJgax/9qsE1/LYQqfaa6WIgaSIPkbrt9MZZM0qR1XrT9Eyx
+	 KZ1xQvuRIZ58vzLgv6V4EqWBuwN1hfNiDtFC4P2C/JeJW3W8coFLR9oQr9KSoiUwGW
+	 4rXpMfC3DhCEA==
+Message-ID: <c2b97c8e-177e-4169-b001-ab0e3303734f@kernel.org>
+Date: Sat, 1 Jun 2024 17:32:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/4] dt-bindings: iio: adc: Add MediaTek MT6359 PMIC
+ AUXADC
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ jic23@kernel.org
+Cc: lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, matthias.bgg@gmail.com, lee@kernel.org,
+ andy@kernel.org, nuno.sa@analog.com, bigunclemax@gmail.com,
+ dlechner@baylibre.com, marius.cristea@microchip.com,
+ marcelo.schmitt@analog.com, fr0st61te@gmail.com, mitrutzceclan@gmail.com,
+ mike.looijmans@topic.nl, marcus.folkesson@gmail.com,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, kernel@collabora.com
+References: <20240530093410.112716-1-angelogioacchino.delregno@collabora.com>
+ <20240530093410.112716-2-angelogioacchino.delregno@collabora.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240530093410.112716-2-angelogioacchino.delregno@collabora.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240601-nvt-ts-devicetree-regulator-support-v4-3-e0c0174464c4@gmail.com>
-References: <20240601-nvt-ts-devicetree-regulator-support-v4-0-e0c0174464c4@gmail.com>
-In-Reply-To: <20240601-nvt-ts-devicetree-regulator-support-v4-0-e0c0174464c4@gmail.com>
-To: Hans de Goede <hdegoede@redhat.com>, 
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
- Joel Selvaraj <joelselvaraj.oss@gmail.com>
-X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1717255824; l=5459;
- i=joelselvaraj.oss@gmail.com; s=20240420; h=from:subject:message-id;
- bh=MDx8U1TZt2iAR4PmfpxVEJF0XZQV+kEvz+8qGOsCbAM=;
- b=KSxgR0L7q1slNer4MRCnteah32lyqCN1Dui7W6UpcwpXX7+2NIBXKj4CtaIZ1i/VSUjTWnnax
- U9dUl1ZyhxbDWeL1mf3mhRFfdKMwLbfnEXvKQkbKsy8rEuSLAfE2H8l
-X-Developer-Key: i=joelselvaraj.oss@gmail.com; a=ed25519;
- pk=qT4gsuVtlPE0Dpr+tQA/Fumm7wzVP6qfeVaY+6pX04s=
-X-Endpoint-Received: by B4 Relay for joelselvaraj.oss@gmail.com/20240420
- with auth_id=165
-X-Original-From: Joel Selvaraj <joelselvaraj.oss@gmail.com>
-Reply-To: joelselvaraj.oss@gmail.com
 
-From: Joel Selvaraj <joelselvaraj.oss@gmail.com>
+On 30/05/2024 11:34, AngeloGioacchino Del Regno wrote:
+> Add a new binding for the MT6350 Series (MT6357/8/9) PMIC AUXADC,
+> providing various ADC channels for both internal temperatures and
+> voltages, audio accessory detection (hp/mic/hp+mic and buttons,
+> usually on a 3.5mm jack) other than some basic battery statistics
+> on boards where the battery is managed by this PMIC.
+> 
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> ---
+>  .../iio/adc/mediatek,mt6359-auxadc.yaml       | 43 +++++++++++++++++++
+>  .../iio/adc/mediatek,mt6357-auxadc.h          | 21 +++++++++
+>  .../iio/adc/mediatek,mt6358-auxadc.h          | 22 ++++++++++
+>  .../iio/adc/mediatek,mt6359-auxadc.h          | 22 ++++++++++
+>  4 files changed, 108 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/adc/mediatek,mt6359-auxadc.yaml
+>  create mode 100644 include/dt-bindings/iio/adc/mediatek,mt6357-auxadc.h
+>  create mode 100644 include/dt-bindings/iio/adc/mediatek,mt6358-auxadc.h
+>  create mode 100644 include/dt-bindings/iio/adc/mediatek,mt6359-auxadc.h
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/adc/mediatek,mt6359-auxadc.yaml b/Documentation/devicetree/bindings/iio/adc/mediatek,mt6359-auxadc.yaml
+> new file mode 100644
+> index 000000000000..dd6c331905cf
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/adc/mediatek,mt6359-auxadc.yaml
+> @@ -0,0 +1,43 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/adc/mediatek,mt6359-auxadc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: MediaTek MT6350 series PMIC AUXADC
+> +
+> +maintainers:
+> +  - AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> +
+> +description:
+> +  The Auxiliary Analog/Digital Converter (AUXADC) is an ADC found
+> +  in some MediaTek PMICs, performing various PMIC related measurements
+> +  such as battery and PMIC internal voltage regulators temperatures,
+> +  accessory detection resistance (usually, for a 3.5mm audio jack)
+> +  other than voltages for various PMIC internal components.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - mediatek,mt6357-auxadc
+> +      - mediatek,mt6358-auxadc
+> +      - mediatek,mt6359-auxadc
+> +
+> +  "#io-channel-cells":
+> +    const: 1
+> +
+> +additionalProperties: false
 
-Extend the novatek touchscreen driver to support NT36672A chip which
-is found in phones like qcom/sdm845-xiaomi-beryllium-tianma.dts.
-Added devicetree support for the driver and used i2c chip data to handle
-the variation in chip id and wake type. Also added vcc and iovcc
-regulators which are used to power the touchscreen hardware.
+If there is going to be a re-spin, please move this below required: block.
 
-Signed-off-by: Joel Selvaraj <joelselvaraj.oss@gmail.com>
----
- drivers/input/touchscreen/novatek-nvt-ts.c | 70 +++++++++++++++++++++++++++---
- 1 file changed, 64 insertions(+), 6 deletions(-)
+> +
+> +required:
+> +  - compatible
+> +  - "#io-channel-cells"
+> +
+> +examples:
+> +  - |
+> +    pmic {
+> +        pmic_adc: adc {
+> +            compatible = "mediatek,mt6359-auxadc";
+> +            #io-channel-cells = <1>;
+> +        };
 
-diff --git a/drivers/input/touchscreen/novatek-nvt-ts.c b/drivers/input/touchscreen/novatek-nvt-ts.c
-index 9bee3a0c122fb..c24c33f609eb8 100644
---- a/drivers/input/touchscreen/novatek-nvt-ts.c
-+++ b/drivers/input/touchscreen/novatek-nvt-ts.c
-@@ -31,9 +31,6 @@
- #define NVT_TS_PARAMS_CHIP_ID		0x0e
- #define NVT_TS_PARAMS_SIZE		0x0f
- 
--#define NVT_TS_SUPPORTED_WAKE_TYPE	0x05
--#define NVT_TS_SUPPORTED_CHIP_ID	0x05
--
- #define NVT_TS_MAX_TOUCHES		10
- #define NVT_TS_MAX_SIZE			4096
- 
-@@ -51,11 +48,18 @@ static const int nvt_ts_irq_type[4] = {
- 	IRQF_TRIGGER_HIGH
- };
- 
-+struct nvt_ts_i2c_chip_data {
-+	u8 wake_type;
-+	u8 chip_id;
-+};
-+
- struct nvt_ts_data {
- 	struct i2c_client *client;
- 	struct input_dev *input;
- 	struct gpio_desc *reset_gpio;
-+	struct regulator_bulk_data regulators[2];
- 	struct touchscreen_properties prop;
-+	const struct nvt_ts_i2c_chip_data *chip;
- 	int max_touches;
- 	u8 buf[NVT_TS_TOUCH_SIZE * NVT_TS_MAX_TOUCHES];
- };
-@@ -142,6 +146,13 @@ static irqreturn_t nvt_ts_irq(int irq, void *dev_id)
- static int nvt_ts_start(struct input_dev *dev)
- {
- 	struct nvt_ts_data *data = input_get_drvdata(dev);
-+	int error;
-+
-+	error = regulator_bulk_enable(ARRAY_SIZE(data->regulators), data->regulators);
-+	if (error) {
-+		dev_err(&data->client->dev, "failed to enable regulators\n");
-+		return error;
-+	}
- 
- 	enable_irq(data->client->irq);
- 	gpiod_set_value_cansleep(data->reset_gpio, 0);
-@@ -155,6 +166,7 @@ static void nvt_ts_stop(struct input_dev *dev)
- 
- 	disable_irq(data->client->irq);
- 	gpiod_set_value_cansleep(data->reset_gpio, 1);
-+	regulator_bulk_disable(ARRAY_SIZE(data->regulators), data->regulators);
- }
- 
- static int nvt_ts_suspend(struct device *dev)
-@@ -199,9 +211,31 @@ static int nvt_ts_probe(struct i2c_client *client)
- 	if (!data)
- 		return -ENOMEM;
- 
-+	data->chip = device_get_match_data(&client->dev);
-+	if (!data->chip)
-+		return -EINVAL;
-+
- 	data->client = client;
- 	i2c_set_clientdata(client, data);
- 
-+	/*
-+	 * VCC is the analog voltage supply
-+	 * IOVCC is the digital voltage supply
-+	 */
-+	data->regulators[0].supply = "vcc";
-+	data->regulators[1].supply = "iovcc";
-+	error = devm_regulator_bulk_get(dev, ARRAY_SIZE(data->regulators), data->regulators);
-+	if (error) {
-+		dev_err(dev, "cannot get regulators: %d\n", error);
-+		return error;
-+	}
-+
-+	error = regulator_bulk_enable(ARRAY_SIZE(data->regulators), data->regulators);
-+	if (error) {
-+		dev_err(dev, "failed to enable regulators: %d\n", error);
-+		return error;
-+	}
-+
- 	data->reset_gpio = devm_gpiod_get(dev, "reset", GPIOD_OUT_LOW);
- 	error = PTR_ERR_OR_ZERO(data->reset_gpio);
- 	if (error) {
-@@ -216,6 +250,11 @@ static int nvt_ts_probe(struct i2c_client *client)
- 	gpiod_set_value_cansleep(data->reset_gpio, 1); /* Put back in reset */
- 	if (error)
- 		return error;
-+	error = regulator_bulk_disable(ARRAY_SIZE(data->regulators), data->regulators);
-+	if (error) {
-+		dev_err(dev, "failed to disable regulators: %d\n", error);
-+		return error;
-+	}
- 
- 	width  = get_unaligned_be16(&data->buf[NVT_TS_PARAMS_WIDTH]);
- 	height = get_unaligned_be16(&data->buf[NVT_TS_PARAMS_HEIGHT]);
-@@ -225,8 +264,8 @@ static int nvt_ts_probe(struct i2c_client *client)
- 	if (width > NVT_TS_MAX_SIZE || height >= NVT_TS_MAX_SIZE ||
- 	    data->max_touches > NVT_TS_MAX_TOUCHES ||
- 	    irq_type >= ARRAY_SIZE(nvt_ts_irq_type) ||
--	    data->buf[NVT_TS_PARAMS_WAKE_TYPE] != NVT_TS_SUPPORTED_WAKE_TYPE ||
--	    data->buf[NVT_TS_PARAMS_CHIP_ID] != NVT_TS_SUPPORTED_CHIP_ID) {
-+	    data->buf[NVT_TS_PARAMS_WAKE_TYPE] != data->chip->wake_type ||
-+	    data->buf[NVT_TS_PARAMS_CHIP_ID] != data->chip->chip_id) {
- 		dev_err(dev, "Unsupported touchscreen parameters: %*ph\n",
- 			NVT_TS_PARAMS_SIZE, data->buf);
- 		return -EIO;
-@@ -277,8 +316,26 @@ static int nvt_ts_probe(struct i2c_client *client)
- 	return 0;
- }
- 
-+static const struct nvt_ts_i2c_chip_data nvt_nt11205_ts_data = {
-+	.wake_type = 0x05,
-+	.chip_id = 0x05,
-+};
-+
-+static const struct nvt_ts_i2c_chip_data nvt_nt36672a_ts_data = {
-+	.wake_type = 0x01,
-+	.chip_id = 0x08,
-+};
-+
-+static const struct of_device_id nvt_ts_of_match[] = {
-+	{ .compatible = "novatek,nt11205-ts", .data = &nvt_nt11205_ts_data },
-+	{ .compatible = "novatek,nt36672a-ts", .data = &nvt_nt36672a_ts_data },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, nvt_ts_of_match);
-+
- static const struct i2c_device_id nvt_ts_i2c_id[] = {
--	{ "nt11205-ts" },
-+	{ "nt11205-ts", (unsigned long) &nvt_nt11205_ts_data },
-+	{ "nt36672a-ts", (unsigned long) &nvt_nt36672a_ts_data },
- 	{ }
- };
- MODULE_DEVICE_TABLE(i2c, nvt_ts_i2c_id);
-@@ -287,6 +344,7 @@ static struct i2c_driver nvt_ts_driver = {
- 	.driver = {
- 		.name	= "novatek-nvt-ts",
- 		.pm	= pm_sleep_ptr(&nvt_ts_pm_ops),
-+		.of_match_table = nvt_ts_of_match,
- 	},
- 	.probe = nvt_ts_probe,
- 	.id_table = nvt_ts_i2c_id,
+This suggests that you should grow (make complete) the parent PMIC example.
 
--- 
-2.45.1
+Actually having this as a separate node is not really needed. Why it
+cannot be just part of the MFD/parent node?
 
+
+Best regards,
+Krzysztof
 
 
