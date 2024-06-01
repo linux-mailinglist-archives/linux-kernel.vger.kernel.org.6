@@ -1,371 +1,328 @@
-Return-Path: <linux-kernel+bounces-197966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F52A8D7150
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 19:14:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FA328D7153
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 19:16:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D30B282B3D
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 17:14:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CE101C20B08
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 17:16:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AE32154BF3;
-	Sat,  1 Jun 2024 17:14:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DFA1154BFA;
+	Sat,  1 Jun 2024 17:16:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b="hnEwLTJL"
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2057.outbound.protection.outlook.com [40.107.255.57])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nyuTJsmD"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E6CA14E2EF;
-	Sat,  1 Jun 2024 17:13:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.57
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717262040; cv=fail; b=fPPUmgPPl1KLqWknhkB8npb/LiczwANhjmc7JNGqpc+DsMI9yg2Fw/HjxjXsDrpKZrSode8A5vh8q5Qf1LV73TKRi7dTztcBhw6VEhymcLMhvMSh84iW9mqca4Cvm8KrF20xjabVijd7o+/CsaowdLxeCxTLeWtepqmfowyOIUk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717262040; c=relaxed/simple;
-	bh=mgl4gjj73TrY1xx2ezESkYLEhKqR2lzCjUo5+GVrFVU=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QjMuTS9VaeP6AGt7YjoOgr7dzj6ZHKxBWdm97mmaDzTIPMAJsjbDLFrsYLyn7U2zqBqtAxNpM3NlUS9AmLIxkz1bZML8CnawBk0lDXVTfzmv/4fIeKTbz//kTk3CnbfJrILWZI12JwQIfO0YG42dKFwAMsNChtshKCA3G9rginA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com; spf=pass smtp.mailfrom=oppo.com; dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b=hnEwLTJL; arc=fail smtp.client-ip=40.107.255.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oppo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=YP2rVo1FN5imyqnKGLwMJ+5+b5QT+INrlhpPdpvzFv7H1ldccG/1o6FMBZShXGVed8RvHZbLhmMCFtCKCpEQefIYihmlU8rNA2Ht/VPp0If21FVnrU+B9TQAMxqXWroks3PKLBY/Akzyqqh49MRasb6a8FOZl7CN/Ylf8xNVpeyR3+P29/pMtAWV09bsOdtm7l9ASox6gdroOlMAIHOtIjO/TxsIQGJSbwq7FCov8kAATGS0eJJ/vC+dFKcG4pvlQj71ZL7HcEymLTBYwUalGG3xjOy8ptiEipLC0VpbsmKUT1e80YMFgy4/gGLxyXU8pI3GdO0V9GSonfT1EQ+ffQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=AqOgLgthzn1qLp3kbc5ZQt6YMy04O74tT8zw4l/e2+I=;
- b=gtqw/7FpwXFR+eJ8yjugRQeeBVfSA22iv1hiwdDkU+v5zN49E864RU5868EdzCAXR6WaCgJfrkliWiFHyp5M7vfjPZ2AqY2+eKtpRZ6v4lUJUfahwPtPvO/QTL1AvCuPMd39UlS+9fm79ZH0A1y9uRPQuY06e0YMcZgPbv88X6x85ioOntN6yMvs7WinYt9gapAUOTTtp0QNrl1as8cqOQo4hJP9y23zz36kaixeieYDakAh2HuYdHaSEfc24HBCWmyD6ppXITG7B5nN1vIG/21lq3gSU/TlGkDVDJtEeLWBxnY49ctgsAI4iASsL/wsb/pV9quZ0gwSMc0jmv2n/A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 58.252.5.68) smtp.rcpttodomain=linux-foundation.org smtp.mailfrom=oppo.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=oppo.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oppo.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=AqOgLgthzn1qLp3kbc5ZQt6YMy04O74tT8zw4l/e2+I=;
- b=hnEwLTJLax5uyRWYxtSJN90l5ZUf2bT8ea02fj0lcOLyIPEteGOZD+vIgfThjEPc66w7FLfBbgYGJ42PeBJfoqwAemOHr1PYna4mj86YQl4UAWvMuTdquWFSl86+GOssQ44OimoXWl2EIkoTEsAyESLIeLrk8tFZPU95tl100ZE=
-Received: from SG2PR06CA0182.apcprd06.prod.outlook.com (2603:1096:4:1::14) by
- KL1PR02MB7042.apcprd02.prod.outlook.com (2603:1096:820:10a::6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7611.22; Sat, 1 Jun 2024 17:13:52 +0000
-Received: from HK3PEPF0000021E.apcprd03.prod.outlook.com
- (2603:1096:4:1:cafe::75) by SG2PR06CA0182.outlook.office365.com
- (2603:1096:4:1::14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.27 via Frontend
- Transport; Sat, 1 Jun 2024 17:13:52 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 58.252.5.68)
- smtp.mailfrom=oppo.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=oppo.com;
-Received-SPF: Pass (protection.outlook.com: domain of oppo.com designates
- 58.252.5.68 as permitted sender) receiver=protection.outlook.com;
- client-ip=58.252.5.68; helo=mail.oppo.com; pr=C
-Received: from mail.oppo.com (58.252.5.68) by
- HK3PEPF0000021E.mail.protection.outlook.com (10.167.8.40) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7633.15 via Frontend Transport; Sat, 1 Jun 2024 17:13:51 +0000
-Received: from PH80250894.adc.com (172.16.40.118) by mailappw31.adc.com
- (172.16.56.198) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Sun, 2 Jun
- 2024 01:13:51 +0800
-From: <hailong.liu@oppo.com>
-To: <akpm@linux-foundation.org>
-CC: <urezki@gmail.com>, <hch@infradead.org>, <lstoakes@gmail.com>,
-	<21cnbao@gmail.com>, <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-	<xiang@kernel.org>, <guangye.yang@mediatek.com>, <zhaoyang.huang@unisoc.com>,
-	<tglx@linutronix.de>, Hailong.Liu <hailong.liu@oppo.com>,
-	<stable@vger.kernel.org>
-Subject: [PATCH v3] mm/vmalloc: fix corrupted list of vbq->free
-Date: Sun, 2 Jun 2024 01:13:28 +0800
-Message-ID: <20240601171328.9799-1-hailong.liu@oppo.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7F9D8473;
+	Sat,  1 Jun 2024 17:15:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717262160; cv=none; b=FkcXgTg66ULbGy7SLBrADcQJ3P5ytq2Vm5rMzfF1xT/3HBdjk/ihYGzv8U3DFBmbGHndiVIYQROR3EnHCjw5034hz8SL83dJeExgAVef1LukQwBGQxtOX6Xfc9NrH1wDbPJgB65AbqphGLwcpLZ0C9cCmVDD9A6FcUv9E5Wbcww=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717262160; c=relaxed/simple;
+	bh=QT0/E9Yiy8jGP3WrJjpfhCJZG2LSMCz7oy8UufZ8jHo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X18YfFtibB+GPejJyGxorSl2F2eLm5fy93Mz1nUl8eY6YQmIfS+3W3EJi+G9qOyBQ4O6qFKh6uJ/zp8t833GlqT/nywCRcsORZRZroKPWvJOZ+lLcNEI3zL2unaOf25HFyJOOiEljlhZ19uf5QOBBAFD3CH9KvyYNwggYS2JYfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nyuTJsmD; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717262157; x=1748798157;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=QT0/E9Yiy8jGP3WrJjpfhCJZG2LSMCz7oy8UufZ8jHo=;
+  b=nyuTJsmD08wZLC41cgbD6WdO6BTD3iM9k8Ms8DOYLt3oR8yJxursp4Ix
+   SSBm8t7pdkQzWi3NGPkS2MI+wytQa9DBNnGVBa5tWIYmqvZBKZ/Ac3/dQ
+   /Daq+pnIw7CLVF4y5Ws0bUdU7ABd2mF1NmXKZzzxOkd9AnLMWCIObstxh
+   7wusBhbXV76LVRbSMY57geESbVZZa85/BqcDJ7ErPgvepjREiopL2aG4M
+   aEXLWq8/i/n1ylfOMi+mpyCc8GGl9U0sgv/gFpS75l65sjUFoNhHMs38y
+   Fln1vYMfjk0K3WusMMY1zc90syvrasHLxx4RvKx9ox4G4MlWrWrfj/3Cp
+   g==;
+X-CSE-ConnectionGUID: sLRsKSMNQcmXdcizwc3Dpg==
+X-CSE-MsgGUID: 7D4AdwiuQEqbQaBZVh7eIA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11090"; a="39200154"
+X-IronPort-AV: E=Sophos;i="6.08,207,1712646000"; 
+   d="scan'208";a="39200154"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jun 2024 10:15:57 -0700
+X-CSE-ConnectionGUID: fh2X1d6hTGqjZBpzWWpz1g==
+X-CSE-MsgGUID: EPn/z0lATWOf0HFkYD5mSw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,207,1712646000"; 
+   d="scan'208";a="41004444"
+Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
+  by fmviesa004.fm.intel.com with ESMTP; 01 Jun 2024 10:15:50 -0700
+Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sDSKZ-000JAV-2x;
+	Sat, 01 Jun 2024 17:15:47 +0000
+Date: Sun, 2 Jun 2024 01:15:38 +0800
+From: kernel test robot <lkp@intel.com>
+To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Sandy Huang <hjc@rock-chips.com>,
+	Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
+	Andy Yan <andy.yan@rock-chips.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Mark Yao <markyao0591@gmail.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+	kernel@collabora.com, Alexandre ARNOUD <aarnoud@me.com>,
+	Luis de Arquer <ldearquer@gmail.com>,
+	Algea Cao <algea.cao@rock-chips.com>
+Subject: Re: [PATCH 14/14] drm/rockchip: dw_hdmi: Add basic RK3588 support
+Message-ID: <202406020122.7LHytbS3-lkp@intel.com>
+References: <20240601-b4-rk3588-bridge-upstream-v1-14-f6203753232b@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: mailappw31.adc.com (172.16.56.198) To mailappw31.adc.com
- (172.16.56.198)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: HK3PEPF0000021E:EE_|KL1PR02MB7042:EE_
-X-MS-Office365-Filtering-Correlation-Id: 66156564-8491-4aa7-0210-08dc825e35ca
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|82310400017|376005|36860700004|1800799015|7416005;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TzZ0WlRjbmxHRXNsSm5NS0hRSCsyVk9LcHc1STg5R3NySmZxYXg5SXhWM1FW?=
- =?utf-8?B?YzlrRnZnTzdiVHQwMncwa2RqQWhZK284UVdJVE5OOWlNR0E2MzhNSWNRQnFl?=
- =?utf-8?B?VlFNSEZWNEdubkNRd1lvSE1GZ3dEVWI0RVFFTytwKzRvVUtEL2JlQW1FQ1hl?=
- =?utf-8?B?aHdoWllLSmdzNG5lZEp0ZWtSbkk5bm83b1ovSVowcHBqdlk1enVNM2pDZHlw?=
- =?utf-8?B?UUhvRThkKzhuSDVOL3k5cFBlNkRQYXBUZFl4SktzcGdxT1hVbEtoNlV3QUgv?=
- =?utf-8?B?a29OZGJiSTAzV0JQL1kvSElZdmUwN1doT1JTUHdVQVozSDNzL2NSaldQTTRX?=
- =?utf-8?B?NGMyME9raXc3TFpsNGpJdWhnRk9ncjgrcDNCMHoyTElRRHAvZkQ1VTMzVVdU?=
- =?utf-8?B?TUtHaDJVaCt3V3NNMFQ2cE9uOG1iWnlYWmxyRXFOTDRCa2JtdzhkTlZLQld4?=
- =?utf-8?B?M1ZHOHdTUGx5dHVvTGZycjc1RUxkaGNNOGl0Vm9yYjJHeDRBQUFZbnV2RXlP?=
- =?utf-8?B?eHlxUEUvOFpnV2lPNHZoR0w1TTB5QmFXUW42Z0dMZWwzc1phR2oxb2o5dEtN?=
- =?utf-8?B?VXh1TDJzRjlkczBVNXg0U20zdVRCd3FZMnVKSG9IKzQ0TzVQMjlEbXBJdUVK?=
- =?utf-8?B?RkJiRTNjVzl4K3lDVVdLZitUeTlURmVwczdibzM5d1VRUko0Wm56MG1ScWpw?=
- =?utf-8?B?a09Xdnl5dVhzUVRZNGVlU090NnlrbVhELzhXOGxUdjgwSmc0ZFNaTmpYR2Ux?=
- =?utf-8?B?SXRCLzhKWDh6a2RwOUxRNC9KMkc1cG1vU2pEaStuQkt1ZTdvVVU1RzZueXFW?=
- =?utf-8?B?OStXeEN2OTQ4MXYwbmxJck5zMFYyTG9SZUlzMkI2QTJ6dVZTd1NlMGRsSXpy?=
- =?utf-8?B?OEtlQ3N5UDFYNnUweVlaT2ExYnp5VDV0YWs0Wk83OEpIM0pJOEEyNGZUcDFN?=
- =?utf-8?B?Nm5MK0Z4WE5OV3NVK3BEWGp0cUtMYXo3R1MwUGlpZXB1VDBDM05ZeG5Eankw?=
- =?utf-8?B?dnRuQ09YakJtYnhWSmw5eGNrMWJ1ZTY0eFF5L0Jpd1I0N0g4T0VFRnpmLy94?=
- =?utf-8?B?cktHSVFRUy85bDNJV2JCTUsvZlRTVFRSU2FZSmk5bnpRci9uUmI1QzRCOHda?=
- =?utf-8?B?RlY2MEc4TVdTNkpjQWJEYmI5WUNMQ1c3bGFTWTFTN25ySkZTekFQcWdyd1VZ?=
- =?utf-8?B?dWVBQWh2TjBacG5FQ292ZURYcFR6VmRieEtQZWpIdzEyUksrYmFsc0RkQW9v?=
- =?utf-8?B?Y21xR3pSZGRocDA5VGpIWG81RVloMU5GOGJKU0ZsZnlZa05aQ1JvVFBkTnQ2?=
- =?utf-8?B?QzlWa2lzbU04NllORDRpUEtUZ1IyK083Rm5RM2pnVGNKbGJzR3JFdndGYWFB?=
- =?utf-8?B?RXNZMitydUFZK3pTQUVLOVI0NzNSWjAzUW9nTXpENVN6c21qSHcxQXlrbEFM?=
- =?utf-8?B?aU1lbGN3V3NTbTU0S1pmTzcwei9TWFlPOFlFNmN5TWUzZzhYNlMwUkZZS2U0?=
- =?utf-8?B?c0RIc3hyODJiQlphWXZOMkkrVHltVlpxd3huZ1c3NS9JR2ZQV2VlTHJ2TEtF?=
- =?utf-8?B?UnJ3QWoxYzQzOFZCMmxHS1RrUm43c21wZUoyM0ZnUlhSTEIrcWpyVUJ3b3Jk?=
- =?utf-8?B?dVJqU1M5c0pvbW5seEw2NG5TcnJaQUdJTjNuWU9adWtON0lpdCtZbFFVQ05y?=
- =?utf-8?B?a3dlWS8rOC8yd0cwR1hWakZRQVlNbUxiblFKdyt6UzdrdnJuNkswb3o5OWFH?=
- =?utf-8?Q?PLb3D80Dnl51zUjbXMYb08ztU7uY3TT2jOd55+f?=
-X-Forefront-Antispam-Report:
-	CIP:58.252.5.68;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.oppo.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(82310400017)(376005)(36860700004)(1800799015)(7416005);DIR:OUT;SFP:1101;
-X-OriginatorOrg: oppo.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jun 2024 17:13:51.9173
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 66156564-8491-4aa7-0210-08dc825e35ca
-X-MS-Exchange-CrossTenant-Id: f1905eb1-c353-41c5-9516-62b4a54b5ee6
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f1905eb1-c353-41c5-9516-62b4a54b5ee6;Ip=[58.252.5.68];Helo=[mail.oppo.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	HK3PEPF0000021E.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR02MB7042
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240601-b4-rk3588-bridge-upstream-v1-14-f6203753232b@collabora.com>
 
-From: "Hailong.Liu" <hailong.liu@oppo.com>
+Hi Cristian,
 
-The function xa_for_each() in _vm_unmap_aliases() loops through all
-vbs. However, since commit 062eacf57ad9 ("mm: vmalloc: remove a global
-vmap_blocks xarray") the vb from xarray may not be on the corresponding
-CPU vmap_block_queue. Consequently, purge_fragmented_block() might
-use the wrong vbq->lock to protect the free list, leading to vbq->free
-breakage.
+kernel test robot noticed the following build errors:
 
-Incorrect lock protection can exhaust all vmalloc space as follows:
-CPU0                                            CPU1
-+--------------------------------------------+
-|    +--------------------+     +-----+      |
-+--> |                    |---->|     |------+
-     | CPU1:vbq free_list |     | vb1 |
-+--- |                    |<----|     |<-----+
-|    +--------------------+     +-----+      |
-+--------------------------------------------+
+[auto build test ERROR on 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0]
 
-_vm_unmap_aliases()                             vb_alloc()
-                                                new_vmap_block()
-xa_for_each(&vbq->vmap_blocks, idx, vb)
---> vb in CPU1:vbq->freelist
+url:    https://github.com/intel-lab-lkp/linux/commits/Cristian-Ciocaltea/drm-bridge-dw-hdmi-Simplify-clock-handling/20240601-211531
+base:   1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
+patch link:    https://lore.kernel.org/r/20240601-b4-rk3588-bridge-upstream-v1-14-f6203753232b%40collabora.com
+patch subject: [PATCH 14/14] drm/rockchip: dw_hdmi: Add basic RK3588 support
+config: arm-defconfig (https://download.01.org/0day-ci/archive/20240602/202406020122.7LHytbS3-lkp@intel.com/config)
+compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project f28c006a5895fc0e329fe15fead81e37457cb1d1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240602/202406020122.7LHytbS3-lkp@intel.com/reproduce)
 
-purge_fragmented_block(vb)
-spin_lock(&vbq->lock)                           spin_lock(&vbq->lock)
---> use CPU0:vbq->lock                          --> use CPU1:vbq->lock
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406020122.7LHytbS3-lkp@intel.com/
 
-list_del_rcu(&vb->free_list)                    list_add_tail_rcu(&vb->free_list, &vbq->free)
-    __list_del(vb->prev, vb->next)
-        next->prev = prev
-    +--------------------+
-    |                    |
-    | CPU1:vbq free_list |
-+---|                    |<--+
-|   +--------------------+   |
-+----------------------------+
-                                                __list_add(new, head->prev, head)
-+--------------------------------------------+
-|    +--------------------+     +-----+      |
-+--> |                    |---->|     |------+
-     | CPU1:vbq free_list |     | vb2 |
-+--- |                    |<----|     |<-----+
-|    +--------------------+     +-----+      |
-+--------------------------------------------+
+All errors (new ones prefixed by >>):
 
-        prev->next = next
-+--------------------------------------------+
-|----------------------------+               |
-|    +--------------------+  |  +-----+      |
-+--> |                    |--+  |     |------+
-     | CPU1:vbq free_list |     | vb2 |
-+--- |                    |<----|     |<-----+
-|    +--------------------+     +-----+      |
-+--------------------------------------------+
-Here’s a list breakdown. All vbs, which were to be added to
-‘prev’, cannot be used by list_for_each_entry_rcu(vb, &vbq->free,
-free_list) in vb_alloc(). Thus, vmalloc space is exhausted.
+>> drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c:280:26: error: implicit declaration of function 'devm_gpiod_get_optional' is invalid in C99 [-Werror,-Wimplicit-function-declaration]
+                   hdmi->qp_enable_gpio = devm_gpiod_get_optional(hdmi->dev, "enable",
+                                          ^
+   drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c:280:26: note: did you mean 'devm_clk_get_optional'?
+   include/linux/clk.h:597:13: note: 'devm_clk_get_optional' declared here
+   struct clk *devm_clk_get_optional(struct device *dev, const char *id);
+               ^
+>> drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c:281:15: error: use of undeclared identifier 'GPIOD_OUT_HIGH'
+                                                                  GPIOD_OUT_HIGH);
+                                                                  ^
+>> drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c:364:3: error: implicit declaration of function 'gpiod_set_value' is invalid in C99 [-Werror,-Wimplicit-function-declaration]
+                   gpiod_set_value(hdmi->qp_enable_gpio, 1);
+                   ^
+   3 errors generated.
 
-This issue affects both erofs and f2fs, the stacktrace is as follows:
-erofs:
-[<ffffffd4ffb93ad4>] __switch_to+0x174
-[<ffffffd4ffb942f0>] __schedule+0x624
-[<ffffffd4ffb946f4>] schedule+0x7c
-[<ffffffd4ffb947cc>] schedule_preempt_disabled+0x24
-[<ffffffd4ffb962ec>] __mutex_lock+0x374
-[<ffffffd4ffb95998>] __mutex_lock_slowpath+0x14
-[<ffffffd4ffb95954>] mutex_lock+0x24
-[<ffffffd4fef2900c>] reclaim_and_purge_vmap_areas+0x44
-[<ffffffd4fef25908>] alloc_vmap_area+0x2e0
-[<ffffffd4fef24ea0>] vm_map_ram+0x1b0
-[<ffffffd4ff1b46f4>] z_erofs_lz4_decompress+0x278
-[<ffffffd4ff1b8ac4>] z_erofs_decompress_queue+0x650
-[<ffffffd4ff1b8328>] z_erofs_runqueue+0x7f4
-[<ffffffd4ff1b66a8>] z_erofs_read_folio+0x104
-[<ffffffd4feeb6fec>] filemap_read_folio+0x6c
-[<ffffffd4feeb68c4>] filemap_fault+0x300
-[<ffffffd4fef0ecac>] __do_fault+0xc8
-[<ffffffd4fef0c908>] handle_mm_fault+0xb38
-[<ffffffd4ffb9f008>] do_page_fault+0x288
-[<ffffffd4ffb9ed64>] do_translation_fault[jt]+0x40
-[<ffffffd4fec39c78>] do_mem_abort+0x58
-[<ffffffd4ffb8c3e4>] el0_ia+0x70
-[<ffffffd4ffb8c260>] el0t_64_sync_handler[jt]+0xb0
-[<ffffffd4fec11588>] ret_to_user[jt]+0x0
 
-f2fs:
-[<ffffffd4ffb93ad4>] __switch_to+0x174
-[<ffffffd4ffb942f0>] __schedule+0x624
-[<ffffffd4ffb946f4>] schedule+0x7c
-[<ffffffd4ffb947cc>] schedule_preempt_disabled+0x24
-[<ffffffd4ffb962ec>] __mutex_lock+0x374
-[<ffffffd4ffb95998>] __mutex_lock_slowpath+0x14
-[<ffffffd4ffb95954>] mutex_lock+0x24
-[<ffffffd4fef2900c>] reclaim_and_purge_vmap_areas+0x44
-[<ffffffd4fef25908>] alloc_vmap_area+0x2e0
-[<ffffffd4fef24ea0>] vm_map_ram+0x1b0
-[<ffffffd4ff1a3b60>] f2fs_prepare_decomp_mem+0x144
-[<ffffffd4ff1a6c24>] f2fs_alloc_dic+0x264
-[<ffffffd4ff175468>] f2fs_read_multi_pages+0x428
-[<ffffffd4ff17b46c>] f2fs_mpage_readpages+0x314
-[<ffffffd4ff1785c4>] f2fs_readahead+0x50
-[<ffffffd4feec3384>] read_pages+0x80
-[<ffffffd4feec32c0>] page_cache_ra_unbounded+0x1a0
-[<ffffffd4feec39e8>] page_cache_ra_order+0x274
-[<ffffffd4feeb6cec>] do_sync_mmap_readahead+0x11c
-[<ffffffd4feeb6764>] filemap_fault+0x1a0
-[<ffffffd4ff1423bc>] f2fs_filemap_fault+0x28
-[<ffffffd4fef0ecac>] __do_fault+0xc8
-[<ffffffd4fef0c908>] handle_mm_fault+0xb38
-[<ffffffd4ffb9f008>] do_page_fault+0x288
-[<ffffffd4ffb9ed64>] do_translation_fault[jt]+0x40
-[<ffffffd4fec39c78>] do_mem_abort+0x58
-[<ffffffd4ffb8c3e4>] el0_ia+0x70
-[<ffffffd4ffb8c260>] el0t_64_sync_handler[jt]+0xb0
-[<ffffffd4fec11588>] ret_to_user[jt]+0x0
+vim +/devm_gpiod_get_optional +280 drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
 
-To fix this, introduce vbq_lock in vmap_block.
+   226	
+   227	static int rockchip_hdmi_parse_dt(struct rockchip_hdmi *hdmi)
+   228	{
+   229		static const char * const qp_clk_names[] = {
+   230			"pclk", "hdp", "earc", "aud", "hclk_vo1",
+   231		};
+   232		struct device_node *np = hdmi->dev->of_node;
+   233		struct clk *qp_clk;
+   234		int ret, i;
+   235	
+   236		hdmi->regmap = syscon_regmap_lookup_by_phandle(np, "rockchip,grf");
+   237		if (IS_ERR(hdmi->regmap)) {
+   238			drm_err(hdmi, "Unable to get rockchip,grf\n");
+   239			return PTR_ERR(hdmi->regmap);
+   240		}
+   241	
+   242		hdmi->ref_clk = devm_clk_get_optional_enabled(hdmi->dev, "ref");
+   243		if (!hdmi->ref_clk)
+   244			hdmi->ref_clk = devm_clk_get_optional_enabled(hdmi->dev, "vpll");
+   245	
+   246		if (IS_ERR(hdmi->ref_clk)) {
+   247			ret = PTR_ERR(hdmi->ref_clk);
+   248			if (ret != -EPROBE_DEFER)
+   249				drm_err(hdmi, "failed to get reference clock\n");
+   250			return ret;
+   251		}
+   252	
+   253		hdmi->grf_clk = devm_clk_get_optional(hdmi->dev, "grf");
+   254		if (IS_ERR(hdmi->grf_clk)) {
+   255			ret = PTR_ERR(hdmi->grf_clk);
+   256			if (ret != -EPROBE_DEFER)
+   257				drm_err(hdmi, "failed to get grf clock\n");
+   258			return ret;
+   259		}
+   260	
+   261		if (hdmi->is_hdmi_qp) {
+   262			hdmi->vo1_regmap = syscon_regmap_lookup_by_phandle(np, "rockchip,vo1_grf");
+   263			if (IS_ERR(hdmi->vo1_regmap)) {
+   264				drm_err(hdmi, "Unable to get rockchip,vo1_grf\n");
+   265				return PTR_ERR(hdmi->vo1_regmap);
+   266			}
+   267	
+   268			for (i = 0; i < ARRAY_SIZE(qp_clk_names); i++) {
+   269				qp_clk = devm_clk_get_optional_enabled(hdmi->dev, qp_clk_names[i]);
+   270	
+   271				if (IS_ERR(qp_clk)) {
+   272					ret = PTR_ERR(qp_clk);
+   273					if (ret != -EPROBE_DEFER)
+   274						drm_err(hdmi, "failed to get %s clock: %d\n",
+   275							qp_clk_names[i], ret);
+   276					return ret;
+   277				}
+   278			}
+   279	
+ > 280			hdmi->qp_enable_gpio = devm_gpiod_get_optional(hdmi->dev, "enable",
+ > 281								       GPIOD_OUT_HIGH);
+   282			if (IS_ERR(hdmi->qp_enable_gpio)) {
+   283				ret = PTR_ERR(hdmi->qp_enable_gpio);
+   284				drm_err(hdmi, "failed to request enable GPIO: %d\n", ret);
+   285				return ret;
+   286			}
+   287		}
+   288	
+   289		ret = devm_regulator_get_enable(hdmi->dev, "avdd-0v9");
+   290		if (ret)
+   291			return ret;
+   292	
+   293		ret = devm_regulator_get_enable(hdmi->dev, "avdd-1v8");
+   294	
+   295		return ret;
+   296	}
+   297	
+   298	static enum drm_mode_status
+   299	dw_hdmi_rockchip_mode_valid(struct dw_hdmi *dw_hdmi, void *data,
+   300				    const struct drm_display_info *info,
+   301				    const struct drm_display_mode *mode)
+   302	{
+   303		struct rockchip_hdmi *hdmi = data;
+   304		const struct dw_hdmi_mpll_config *mpll_cfg = rockchip_mpll_cfg;
+   305		int pclk = mode->clock * 1000;
+   306		bool exact_match = hdmi->plat_data->phy_force_vendor;
+   307		int i;
+   308	
+   309		if (hdmi->ref_clk) {
+   310			int rpclk = clk_round_rate(hdmi->ref_clk, pclk);
+   311	
+   312			if (abs(rpclk - pclk) > pclk / 1000)
+   313				return MODE_NOCLOCK;
+   314		}
+   315	
+   316		for (i = 0; mpll_cfg[i].mpixelclock != (~0UL); i++) {
+   317			/*
+   318			 * For vendor specific phys force an exact match of the pixelclock
+   319			 * to preserve the original behaviour of the driver.
+   320			 */
+   321			if (exact_match && pclk == mpll_cfg[i].mpixelclock)
+   322				return MODE_OK;
+   323			/*
+   324			 * The Synopsys phy can work with pixelclocks up to the value given
+   325			 * in the corresponding mpll_cfg entry.
+   326			 */
+   327			if (!exact_match && pclk <= mpll_cfg[i].mpixelclock)
+   328				return MODE_OK;
+   329		}
+   330	
+   331		return MODE_BAD;
+   332	}
+   333	
+   334	static void dw_hdmi_rockchip_encoder_disable(struct drm_encoder *encoder)
+   335	{
+   336	}
+   337	
+   338	static bool
+   339	dw_hdmi_rockchip_encoder_mode_fixup(struct drm_encoder *encoder,
+   340					    const struct drm_display_mode *mode,
+   341					    struct drm_display_mode *adj_mode)
+   342	{
+   343		return true;
+   344	}
+   345	
+   346	static void dw_hdmi_rockchip_encoder_mode_set(struct drm_encoder *encoder,
+   347						      struct drm_display_mode *mode,
+   348						      struct drm_display_mode *adj_mode)
+   349	{
+   350		struct rockchip_hdmi *hdmi = to_rockchip_hdmi(encoder);
+   351	
+   352		clk_set_rate(hdmi->ref_clk, adj_mode->clock * 1000);
+   353	}
+   354	
+   355	static void dw_hdmi_rockchip_encoder_enable(struct drm_encoder *encoder)
+   356	{
+   357		struct rockchip_hdmi *hdmi = to_rockchip_hdmi(encoder);
+   358		struct drm_crtc *crtc = encoder->crtc;
+   359		u32 val;
+   360		int ret, rate;
+   361	
+   362		if (hdmi->is_hdmi_qp) {
+   363			/* Unconditionally switch to TMDS as FRL is not yet supported */
+ > 364			gpiod_set_value(hdmi->qp_enable_gpio, 1);
+   365	
+   366			if (crtc && crtc->state) {
+   367				clk_set_rate(hdmi->ref_clk,
+   368					     crtc->state->adjusted_mode.crtc_clock * 1000);
+   369				/*
+   370				 * FIXME: Temporary workaround to pass pixel clock rate
+   371				 * to the PHY driver until phy_configure_opts_hdmi
+   372				 * becomes available in the PHY API. See also the related
+   373				 * comment in rk_hdptx_phy_power_on() from
+   374				 * drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
+   375				 */
+   376				if (hdmi->phy) {
+   377					rate = crtc->state->mode.clock * 10;
+   378					phy_set_bus_width(hdmi->phy, rate);
+   379					drm_dbg(hdmi, "%s set bus_width=%u\n",
+   380						__func__, rate);
+   381				}
+   382			}
+   383		}
+   384	
+   385		if (hdmi->chip_data->lcdsel_grf_reg < 0)
+   386			return;
+   387	
+   388		ret = drm_of_encoder_active_endpoint_id(hdmi->dev->of_node, encoder);
+   389		if (ret)
+   390			val = hdmi->chip_data->lcdsel_lit;
+   391		else
+   392			val = hdmi->chip_data->lcdsel_big;
+   393	
+   394		ret = clk_prepare_enable(hdmi->grf_clk);
+   395		if (ret < 0) {
+   396			drm_err(hdmi, "failed to enable grfclk %d\n", ret);
+   397			return;
+   398		}
+   399	
+   400		ret = regmap_write(hdmi->regmap, hdmi->chip_data->lcdsel_grf_reg, val);
+   401		if (ret != 0)
+   402			drm_err(hdmi, "Could not write to GRF: %d\n", ret);
+   403	
+   404		clk_disable_unprepare(hdmi->grf_clk);
+   405		drm_dbg(hdmi, "vop %s output to hdmi\n", ret ? "LIT" : "BIG");
+   406	}
+   407	
 
-Cc: <stable@vger.kernel.org>
-Fixes: fc1e0d980037 ("mm/vmalloc: prevent stale TLBs in fully utilized blocks")
-Suggested-by: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
-Signed-off-by: Hailong.Liu <hailong.liu@oppo.com>
----
- mm/vmalloc.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
-
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index 125427cbdb87..f4cfdf3fd925 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -2467,6 +2467,7 @@ struct vmap_block_queue {
-
- struct vmap_block {
- 	spinlock_t lock;
-+	spinlock_t *vbq_lock;
- 	struct vmap_area *va;
- 	unsigned long free, dirty;
- 	DECLARE_BITMAP(used_map, VMAP_BBMAP_BITS);
-@@ -2603,6 +2604,7 @@ static void *new_vmap_block(unsigned int order, gfp_t gfp_mask)
- 	}
-
- 	vbq = raw_cpu_ptr(&vmap_block_queue);
-+	vb->vbq_lock = &vbq->lock;
- 	spin_lock(&vbq->lock);
- 	list_add_tail_rcu(&vb->free_list, &vbq->free);
- 	spin_unlock(&vbq->lock);
-@@ -2630,7 +2632,7 @@ static void free_vmap_block(struct vmap_block *vb)
- }
-
- static bool purge_fragmented_block(struct vmap_block *vb,
--		struct vmap_block_queue *vbq, struct list_head *purge_list,
-+		struct list_head *purge_list,
- 		bool force_purge)
- {
- 	if (vb->free + vb->dirty != VMAP_BBMAP_BITS ||
-@@ -2647,9 +2649,9 @@ static bool purge_fragmented_block(struct vmap_block *vb,
- 	WRITE_ONCE(vb->dirty, VMAP_BBMAP_BITS);
- 	vb->dirty_min = 0;
- 	vb->dirty_max = VMAP_BBMAP_BITS;
--	spin_lock(&vbq->lock);
-+	spin_lock(vb->vbq_lock);
- 	list_del_rcu(&vb->free_list);
--	spin_unlock(&vbq->lock);
-+	spin_unlock(vb->vbq_lock);
- 	list_add_tail(&vb->purge, purge_list);
- 	return true;
- }
-@@ -2680,7 +2682,7 @@ static void purge_fragmented_blocks(int cpu)
- 			continue;
-
- 		spin_lock(&vb->lock);
--		purge_fragmented_block(vb, vbq, &purge, true);
-+		purge_fragmented_block(vb, &purge, true);
- 		spin_unlock(&vb->lock);
- 	}
- 	rcu_read_unlock();
-@@ -2817,7 +2819,7 @@ static void _vm_unmap_aliases(unsigned long start, unsigned long end, int flush)
- 			 * not purgeable, check whether there is dirty
- 			 * space to be flushed.
- 			 */
--			if (!purge_fragmented_block(vb, vbq, &purge_list, false) &&
-+			if (!purge_fragmented_block(vb, &purge_list, false) &&
- 			    vb->dirty_max && vb->dirty != VMAP_BBMAP_BITS) {
- 				unsigned long va_start = vb->va->va_start;
- 				unsigned long s, e;
----
-Changes since v2 [2]:
-- simply revert the patch has other effects, per Zhaoyang
-
-Changes since v1 [1]:
-- add runtime effect in commit msg, per Andrew.
-
-BTW,
-
-1. use xa_for_each to iterate all vb, we need a mapping from vb to vbq.
-Zhaoyang use cpuid to get vbq as follows:
-https://lore.kernel.org/all/20240531030520.1615833-1-zhaoyang.huang@unisoc.com/
-IMO, why not just store the address of the lock, which might waste a few more
-bytes but would look clearer.
-
-Baoquan and Hillf save directly to the queue correspoding to va,
--	vbq = raw_cpu_ptr(&vmap_block_queue);
-+	vbq = container_of(xa, struct vmap_block_queue, vmap_blocks);
- 	spin_lock(&vbq->lock);
-,
-
- /*
-  * We should probably have a fallback mechanism to allocate virtual memory
-  * out of partially filled vmap blocks. However vmap block sizing should be
-@@ -2626,7 +2634,7 @@ static void *new_vmap_block(unsigned int order, gfp_t gfp_mask)
- 		return ERR_PTR(err);
- 	}
-
--	vbq = raw_cpu_ptr(&vmap_block_queue);
-+	vbq = addr_to_vbq(va->va_start);
-If in this case we actually don't need the percpu variable at all, because
-each address directly to the correspoding index through hash function.
-
-Does anyone have a btter suggestion?
-
-https://lore.kernel.org/all/ZlqIp9V1Jknm7axa@MiWiFi-R3L-srv/
-
-[1] https://lore.kernel.org/all/20240530093108.4512-1-hailong.liu@oppo.com/
-[2] https://lore.kernel.org/all/20240531024820.5507-1-hailong.liu@oppo.com/
---
-2.34.1
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
