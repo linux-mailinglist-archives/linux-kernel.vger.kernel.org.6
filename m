@@ -1,137 +1,111 @@
-Return-Path: <linux-kernel+bounces-197917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EF948D70B3
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 17:07:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EC878D70CB
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 17:09:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D23C1C2147C
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 15:07:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22DE01F267BD
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 15:09:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8686F154BEB;
-	Sat,  1 Jun 2024 15:05:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC6A61527A4;
+	Sat,  1 Jun 2024 15:08:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yhxP+r3A";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nASV/q8J"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GBFgqTZI"
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33780152790;
-	Sat,  1 Jun 2024 15:05:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5D8F1CD3D;
+	Sat,  1 Jun 2024 15:08:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717254341; cv=none; b=K84ndoJzbj5/Vo4f/wFTWfS2sXKijXPde+onSobqviczWv4wHLKe6oXFzNEdpH5l6e+LoLOj+HevsNS1k963B+dSz7zOv1wbYwGGcDRDq05qWCE4F/LW7Su/L2ynBcEVuIh/hi6dWjNYabAxEfkGTF2tv+11VldBI3NjFEEa7ws=
+	t=1717254534; cv=none; b=mj/PZoThuv8cABshiZWgJs1GtkJDB235JtvLOth3tQdvqxEKuUXJlWKWby8XkwKchZ1kLE8EUepLsSg1OicUb1ZGj09AzsTwpaFDg0rfHXVsZYQLUIFCf8svXUOBG/eH7Qgss9AT8aRbhWfaLwKvZalTmJ/uJ/WvH9CmZM4Mnyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717254341; c=relaxed/simple;
-	bh=N4+f77hmblsYWyxLqdoO6HFFJ+2yG2uuZNMtKfF1cdY=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=FKxvIeZ7Q59F5I5rwK6kQ3JPekuXX6bXgF4Ugv0HIIcw0/pLX5pBCbE10O7AiakE6RQAJpeZnsXbbB3xCJN2Sz1mfj9hp4rQizpZQQ6msSfPd84MRTWFNlv4aHyAkT2LOHrNO9XwXANsNlWlbPPh66P/03lGrmL/LOFG6rDhYB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yhxP+r3A; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nASV/q8J; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Sat, 01 Jun 2024 15:05:30 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1717254330;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FwjvXUJwOV2b8jf6WvgH0V8CrS+brHJ3EcpyG+R0d0Q=;
-	b=yhxP+r3AWYatGR/QflydLKxujeqTbqGvITT52OlNKs9cMVALLKnR6oU0jPOi7Ku/5LHriD
-	WXQU0s3xEiLwIozqA8XXuXd5+HVDyc2xjEnjnFnh+JJ6YtmgaZEQhkmehyJULCYfRE58Jo
-	D6geOdgd3b4e6a9ltKSkLzns6Yqka72Er8QyEz0nmMyv2dzSnb/2DGfZcr6O1eflPgdA1p
-	XQjn014rMKo36Awd2jfxhXhG6dFKSxTMY1o49QVryhkhyZ/J7CJulxNbEcjXks8fBBNJwQ
-	i4jLLs9q9TFTLk+mCPVEYK0YiBji3Ica602qWxAlw6WDdraxco2ltAKbNn8Ubw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1717254330;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FwjvXUJwOV2b8jf6WvgH0V8CrS+brHJ3EcpyG+R0d0Q=;
-	b=nASV/q8JdtgMAknDSvbe8FOm67cHaxNdnkLGmUBZDXT6gbI/ee/RtHyCL1No/M3Ieili/b
-	GolLVhxgAfyiQBBA==
-From: "tip-bot2 for Marcin Juszkiewicz" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: x86/misc] x86, arm: Add missing license tag to syscall tables files
-Cc: Marcin Juszkiewicz <marcin@juszkiewicz.com.pl>,
- "Borislav Petkov (AMD)" <bp@alien8.de>, linux-arm-kernel@lists.infradead.org,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240229145101.553998-1-marcin@juszkiewicz.com.pl>
-References: <20240229145101.553998-1-marcin@juszkiewicz.com.pl>
+	s=arc-20240116; t=1717254534; c=relaxed/simple;
+	bh=1oVKVqQgdKTr5SQqEoXNfoaiRhZ43/gYviSPxoYVDCc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JacTh2GpTep5Tk2nU9SvqWGw9JLkjfEefPWh4zRJ5RZgdR1wRHUtauZTZ6IVJsxJJJUBPfuGSp+FpCNzjDgahnsI98u7TDZBIOU3DtQnasDqQ4iFnX0zHAGOE73twbGRh2s/14DiYoFAZKD/wvGAEGP+dc+27cUddGUfHBu2jNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GBFgqTZI; arc=none smtp.client-ip=209.85.219.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6af538c750eso108006d6.1;
+        Sat, 01 Jun 2024 08:08:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717254532; x=1717859332; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=d8x4+MRtwD32I6N1x72QTvMbn3LCLaG3WhWmmoOO4kg=;
+        b=GBFgqTZIZQGofTs+Ve2jR6ynhIu51hc7aHbHWbvnZs2n+sSR/uofeFW1u5aJ+AQcT7
+         8eMf959kqGo/qGItPLOjZ0wHHyrkt2UQiS1A+Tm+C8E6wnjryyi4fHrr/E3AJG0VkB6q
+         ZRBBiVY+Vu8r1vGsm8HtOmXjQgIlNNVkbZWTrUOCCWHZ+3JBJ6nl0HEwnXm080Sp/EtY
+         hEc4D/6APWTT5A4W30Vntf3wtizviNPVvx5Kw2dBqD4VDcV+m6Nn1yHIBwXhKLRGmWJe
+         8Fb3sYiCXRCZd3cJ174YokTCDxMQqjxnbNJJuFxkA+4ePPXFFufv8TGSj0K/ZJig7FOI
+         dhbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717254532; x=1717859332;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=d8x4+MRtwD32I6N1x72QTvMbn3LCLaG3WhWmmoOO4kg=;
+        b=fu3vSOE5FhvEyII1mvy0r+E4EeAdoMHz89qMyOOeyW4tD8hNnUD96oLEKIvbHVvEo9
+         +5Zz4djQq49c0E+pUocJJoP62l/edmT1JK1yBzIHW9E3+Qbz+kNaX0gllW5KG6PYk1Kr
+         11PXm31xgcYRnDWQMqJ3D8YaGyvndh4xY4+c/7pKpQAW5xdLL+H8MEn3tO+Q6nu8iB/w
+         FyT9Pes7g8hcwaeaRUX68+3nQIOo4/vrH4o+OEBmARkKeoBMia+mAdIB8vyS00FoFvEM
+         Ax0nB04byg+g1XR1wWToo3etkJk4uUuJqGhwH6mHutqwKP1aLwZTicVqa/WaO3ay1Q7i
+         rxPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWslet6s0DIY5N8oq3zzNGKKDmeEJlRNiauGhHwZYJt8p6Nor688q24bh4u9U0PZwTuPf0z6Efz3+/shCycnh5df3XzCMUjxcU6mViqNpIIPP77juZxyl7PiEL6mthHh1HgJAIZkmhrv+WiRBud8u4kWC/iAO3mv/ikzp/AKOwVTwUH9FaQuG6O6tBdPIY=
+X-Gm-Message-State: AOJu0YyROA5zv5kb57rGw5ZmghS1um0CRa9iaUVwK/aRG/qROBCxiiS9
+	DBI1yoViMrkvMvlDQ2gJqcenLr81CBv73JiL+mRT7pKMxQfmD/qf
+X-Google-Smtp-Source: AGHT+IG1T/hp6o7zkkb5+oFcjirqY1NXo+A6couRFfEo2eooW4Dbt+1SecgfOPduKlbcqakOYQFEGg==
+X-Received: by 2002:ac8:574e:0:b0:43f:edee:9219 with SMTP id d75a77b69052e-43ff4f79747mr51031171cf.0.1717254526665;
+        Sat, 01 Jun 2024 08:08:46 -0700 (PDT)
+Received: from [192.168.0.98] ([67.6.32.220])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-43ff23a18e3sm19794811cf.10.2024.06.01.08.08.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 01 Jun 2024 08:08:46 -0700 (PDT)
+Message-ID: <f9e26fac-5ab0-4cfb-a721-8290656c11a9@gmail.com>
+Date: Sat, 1 Jun 2024 10:08:44 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <171725433033.10875.630169255677526443.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/3] Input: novatek-nvt-ts: add support for NT36672A
+ touchscreen
+To: Hans de Goede <hdegoede@redhat.com>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?=
+ <ilpo.jarvinen@linux.intel.com>
+Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
+References: <20240526-nvt-ts-devicetree-regulator-support-v3-0-aa88d10ccd9a@gmail.com>
+ <20240526-nvt-ts-devicetree-regulator-support-v3-3-aa88d10ccd9a@gmail.com>
+ <55272a3b-575d-4212-a40b-7245beed5d80@redhat.com>
+ <a2f68c56-e6d6-4626-8d05-b5e808da60da@gmail.com>
+ <cbc86440-5065-448d-b83c-83602de6651c@redhat.com>
+Content-Language: en-US
+From: Joel Selvaraj <joelselvaraj.oss@gmail.com>
+In-Reply-To: <cbc86440-5065-448d-b83c-83602de6651c@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the x86/misc branch of tip:
+Hi Hans de Goede,
 
-Commit-ID:     95e3fa6acf624ca9689397ca7ea881450f3cbe24
-Gitweb:        https://git.kernel.org/tip/95e3fa6acf624ca9689397ca7ea881450f3cbe24
-Author:        Marcin Juszkiewicz <marcin@juszkiewicz.com.pl>
-AuthorDate:    Thu, 29 Feb 2024 15:51:00 +01:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Sat, 01 Jun 2024 16:53:25 +02:00
+On 6/1/24 09:07, Hans de Goede wrote:
+> Sounds good.
+> 
+> It is great to see people working on getting mainline
+> kernels to work on phones like the work you are doing here.
+> Thank you for doing this work!
 
-x86, arm: Add missing license tag to syscall tables files
+Thanks! :)
 
-syscall*.tbl files were added to make it easier to check which system
-calls are supported on each architecture and to check for their numbers.
-
-Arm and x86 files lack Linux-syscall-note license exception present in
-files for all other architectures.
-
-Signed-off-by: Marcin Juszkiewicz <marcin@juszkiewicz.com.pl>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Cc: linux-arm-kernel@lists.infradead.org
-Link: https://lore.kernel.org/r/20240229145101.553998-1-marcin@juszkiewicz.com.pl
----
- arch/arm/tools/syscall.tbl             | 1 +
- arch/x86/entry/syscalls/syscall_32.tbl | 1 +
- arch/x86/entry/syscalls/syscall_64.tbl | 1 +
- 3 files changed, 3 insertions(+)
-
-diff --git a/arch/arm/tools/syscall.tbl b/arch/arm/tools/syscall.tbl
-index 2ed7d22..23c9820 100644
---- a/arch/arm/tools/syscall.tbl
-+++ b/arch/arm/tools/syscall.tbl
-@@ -1,3 +1,4 @@
-+# SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note
- #
- # Linux system call numbers and entry vectors
- #
-diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
-index 7fd1f57..9436b67 100644
---- a/arch/x86/entry/syscalls/syscall_32.tbl
-+++ b/arch/x86/entry/syscalls/syscall_32.tbl
-@@ -1,3 +1,4 @@
-+# SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note
- #
- # 32-bit system call numbers and entry vectors
- #
-diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
-index a396f6e..129bdd4 100644
---- a/arch/x86/entry/syscalls/syscall_64.tbl
-+++ b/arch/x86/entry/syscalls/syscall_64.tbl
-@@ -1,3 +1,4 @@
-+# SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note
- #
- # 64-bit system call numbers and entry vectors
- #
+Regards,
+Joel Selvaraj
 
