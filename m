@@ -1,222 +1,179 @@
-Return-Path: <linux-kernel+bounces-197779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F5668D6F0C
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 10:53:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A02C8D6F11
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 11:05:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 422471C21D45
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 08:53:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFE0AB242C2
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 09:05:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0495F140380;
-	Sat,  1 Jun 2024 08:53:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5C4D14E2C5;
+	Sat,  1 Jun 2024 09:04:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uYM5mKBM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Sdpuj1Gr"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3603742A98;
-	Sat,  1 Jun 2024 08:53:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2B271CFBE
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Jun 2024 09:04:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717231994; cv=none; b=HZDGzr+uEOzBlI33p2P39bVVrIN3B6Twnw8kyqIbn0IBvYA1QHrVX1SmmXek11A+U2wQlII6dnBEd+E29n5DPTmUttuSOqf0EsV9ied3z9Rjfj33Dx9BvkNyvxGYlfdICZrgYgUqUOYVznQeiTxq5PYtTv8O2HW00swJ3FtfPK4=
+	t=1717232694; cv=none; b=fu2+ii6cMYM1FeElaVZqIlO7U7fYyaeeG9g7GFDlbBt4WbcmsSZ3fMJIaVsX5ppjvl2ndtr2JvS6rjriPua6dnDvUlYJRGoGT1UjmbwD7BwZ04g33VpQ02uPQBzGF9QdiaWHpXsQSe+kuwanh/xEQnRLhTKUTjgVgkAMjD2fAR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717231994; c=relaxed/simple;
-	bh=H5sB6TwHZi7BqHGT0l4LyuL8uIqho7zk4EU9ve/2M7M=;
+	s=arc-20240116; t=1717232694; c=relaxed/simple;
+	bh=icu7jSauroyEPnKWTedHoxoncAQjCOtiv+zPdobF7TU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uFqZOj3hmgUIBEc6UTg5XPCbyKlNhhBjtFp2rcc03Uv9IbJNTbLDrG+ULrNEGGxosFCtXkabJ2xC7sbsSJhKRKTamL/mtYvOwK6YGdJrlHZm7GS3xlR45hkqCudJ5spAAlOHhq2lO9kLwGEvtfHpRpo/PuywwFq71oUwsRtBH/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uYM5mKBM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EEA5C116B1;
-	Sat,  1 Jun 2024 08:53:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717231993;
-	bh=H5sB6TwHZi7BqHGT0l4LyuL8uIqho7zk4EU9ve/2M7M=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=CCy33WMQpuV4XD2cLxKca9NLBKz0O+0mL6cM3hOdbKE7WK4XUezZz1zt2nRCL214O1PuBSthUyKSnKkGCBOPsH0P0NWRXVOO+/cGD5WMgbm3YZJDFRYOZ4gygsu3A5jYtbTpou1kM9o1FF55ySQfQPI6nA/7fQGK6hcSNOgepQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Sdpuj1Gr; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 2628640E016A;
+	Sat,  1 Jun 2024 09:04:49 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id h_VhE2OV4rW0; Sat,  1 Jun 2024 09:04:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1717232686; bh=xP0weqrRl+2BUKV2+HfBB0LCs4RH/ww+KkZzEG1IJ34=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uYM5mKBMZVOnqc1CmIlU/61jMLZeQXjryZ8hfftIDjU2gZUfQn2kgd4NLOwF6K+Fj
-	 Wgtb/pN3HPAIFLYHgVqlW10OutVn6ctkRJTLubWTefirlZc7lqsgnRp+PacLFByBbZ
-	 qa8dcRYjCfbJxGfWZwAHw8PMkULmo3AigYnTJ7ZGfr33e9qx3VdvUP1+TJ98b+wuzh
-	 EvOkrvNuSJkXNAyAQwPEh78WnXIjFKa4EXzE8pSRn7zN6pI5nazvOFNng5bdvByZle
-	 zHUHSEYMJRY69e+8nooTnDbHW/Nla6+FJY/M2NAbMLGwFtjTFctbVV7YAk1cFndAvp
-	 P4swyh21+FMlA==
-Date: Sat, 1 Jun 2024 09:53:08 +0100
-From: Simon Horman <horms@kernel.org>
-To: Alexander Lobakin <aleksander.lobakin@intel.com>
-Cc: intel-wired-lan@lists.osuosl.org,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Mina Almasry <almasrymina@google.com>,
-	nex.sw.ncis.osdt.itp.upstreaming@intel.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH iwl-next 03/12] idpf: split &idpf_queue into 4
- strictly-typed queue structures
-Message-ID: <20240601085308.GY491852@kernel.org>
-References: <20240528134846.148890-1-aleksander.lobakin@intel.com>
- <20240528134846.148890-4-aleksander.lobakin@intel.com>
+	b=Sdpuj1Gr3PhGfv8k8dUS8hzzW2IpjOdYFdI4OFmhvHBGFyu51McFtLEO+HxUekbX1
+	 v5xYrEyO0vfY2RxuUjZSCdJLYUTtPXVnkLT/dDceHNc+GgEc4yfcGavwpmPiiAhruh
+	 pQmbBYZ22RPSQA97/TsKa4+PReLdS71fC0Pc6lIam9OkxjfexXNzCCV5kROCVzuY6H
+	 pKGssykUT6jAX7ZY6FwUM4a0HTErkwpcTFb23vO1kUTZXbrDK5ujy0v2ygKk5GIS4t
+	 wzOXz9bgtWFWxcS00Q3At3rVKhma6oMcJuHZq0LhsdfWt990QV98bRJ6iLZe/t9QRB
+	 IqvMQmQmPlvxksRiE+qFwVKBEHHrBnCtK7ru7mehi0HqfSokD8iuw2ZU8Qk7rQGR5D
+	 hp7i8GIY+ToI1ixzHlMvCyhdvbZlrsYugwPL/uuZS0B4GrhZA1FvegTUc7IAqQab4J
+	 crF4jo1p9F3ykmRf8XT6csWL1j8QxJCPn/EpI+RcoKdB0lkGTK5rxeJvkGIRxVbcja
+	 9aSThpq1s/1BLKhqcoiV+eJH56PIKzkXYQg8mEJQGTDqBAA8D6RR+slgwk2K99Ajeu
+	 1qJcKVvDfoH/gK2GH4BF3w5HXin37qMq+Q91960jTtvuWteymxFCRTXqh6+ELW5tGZ
+	 ndvlzWu29RIPQ7q76yGf/r44=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id EFCBE40E02BA;
+	Sat,  1 Jun 2024 09:04:41 +0000 (UTC)
+Date: Sat, 1 Jun 2024 11:04:35 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Brian Gerst <brgerst@gmail.com>
+Cc: Borislav Petkov <bp@kernel.org>, X86 ML <x86@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 10/14] x86/alternative: Convert ALTERNATIVE_3()
+Message-ID: <20240601090435.GAZlrkI4xoJigj1tjp@fat_crate.local>
+References: <20240531123512.21427-1-bp@kernel.org>
+ <20240531123512.21427-11-bp@kernel.org>
+ <CAMzpN2i4oJ-Dv0qO46Fd-DxNv5z9=x+vO+8g=47NiiAf8QEJYA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240528134846.148890-4-aleksander.lobakin@intel.com>
+In-Reply-To: <CAMzpN2i4oJ-Dv0qO46Fd-DxNv5z9=x+vO+8g=47NiiAf8QEJYA@mail.gmail.com>
 
-On Tue, May 28, 2024 at 03:48:37PM +0200, Alexander Lobakin wrote:
-> Currently, sizeof(struct idpf_queue) is 32 Kb.
-> This is due to the 12-bit hashtable declaration at the end of the queue.
-> This HT is needed only for Tx queues when the flow scheduling mode is
-> enabled. But &idpf_queue is unified for all of the queue types,
-> provoking excessive memory usage.
-> The unified structure in general makes the code less effective via
-> suboptimal fields placement. You can't avoid that unless you make unions
-> each 2 fields. Even then, different field alignment etc., doesn't allow
-> you to optimize things to the limit.
-> Split &idpf_queue into 4 structures corresponding to the queue types:
-> RQ (Rx queue), SQ (Tx queue), FQ (buffer queue), and CQ (completion
-> queue). Place only needed fields there and shortcuts handy for hotpath.
-> Allocate the abovementioned hashtable dynamically and only when needed,
-> keeping &idpf_tx_queue relatively short (192 bytes, same as Rx). This HT
-> is used only for OOO completions, which aren't really hotpath anyway.
-> Note that this change must be done atomically, otherwise it's really
-> easy to get lost and miss something.
-> 
-> Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
+On Fri, May 31, 2024 at 01:00:55PM -0400, Brian Gerst wrote:
+> Just add a label at the start of this macro, so it doesn't depend on
+> the internal labels of ALTERNATIVE().  Something like:
+>     asm volatile("1:" ALTERNATIVE_3(XSAVE, \
+>     ...
+>      _ASM_EXTABLE_TYPE_REG(1b, 3b, EX_TYPE_EFAULT_REG, %[err]) \
+>     ...
+
+Thanks for the cool idea - that use of the asm label outside of the
+macro was really nasty but I didn't think of that. Cool.
+
+And yap, it looks good:
+
+------
+#APP
+# 188 "arch/x86/kernel/fpu/xstate.h" 1
+	1: # ALT: oldinstr
+
+<--- the outer label 1:
+
+771:
+	# ALT: oldinstr
+771:
+	# ALT: oldinstr
+771:
+	.byte 0x48, 0x0f,0xae,0x27
+772:
+# ALT: padding
+.skip -(((775f-774f)-(772b-771b)) > 0) * ((775f-774f)-(772b-771b)),0x90
+
+...
+
+triple-alternative gunk
 
 ...
 
-> diff --git a/drivers/net/ethernet/intel/idpf/idpf_txrx.c b/drivers/net/ethernet/intel/idpf/idpf_txrx.c
+775:
+.popsection
 
-...
+xor %edi, %edi	# err
+3:
+ .pushsection "__ex_table","a"
+------
 
-> @@ -1158,20 +1325,22 @@ static void idpf_rxq_set_descids(struct idpf_vport *vport, struct idpf_queue *q)
->   */
->  static int idpf_txq_group_alloc(struct idpf_vport *vport, u16 num_txq)
->  {
-> -	bool flow_sch_en;
-> -	int err, i;
-> +	bool split, flow_sch_en;
-> +	int i;
->  
->  	vport->txq_grps = kcalloc(vport->num_txq_grp,
->  				  sizeof(*vport->txq_grps), GFP_KERNEL);
->  	if (!vport->txq_grps)
->  		return -ENOMEM;
->  
-> +	split = idpf_is_queue_model_split(vport->txq_model);
->  	flow_sch_en = !idpf_is_cap_ena(vport->adapter, IDPF_OTHER_CAPS,
->  				       VIRTCHNL2_CAP_SPLITQ_QSCHED);
->  
->  	for (i = 0; i < vport->num_txq_grp; i++) {
->  		struct idpf_txq_group *tx_qgrp = &vport->txq_grps[i];
->  		struct idpf_adapter *adapter = vport->adapter;
-> +		struct idpf_txq_stash *stashes;
->  		int j;
->  
->  		tx_qgrp->vport = vport;
-> @@ -1180,45 +1349,62 @@ static int idpf_txq_group_alloc(struct idpf_vport *vport, u16 num_txq)
->  		for (j = 0; j < tx_qgrp->num_txq; j++) {
->  			tx_qgrp->txqs[j] = kzalloc(sizeof(*tx_qgrp->txqs[j]),
->  						   GFP_KERNEL);
-> -			if (!tx_qgrp->txqs[j]) {
-> -				err = -ENOMEM;
-> +			if (!tx_qgrp->txqs[j])
->  				goto err_alloc;
-> -			}
-> +		}
-> +
-> +		if (split && flow_sch_en) {
-> +			stashes = kcalloc(num_txq, sizeof(*stashes),
-> +					  GFP_KERNEL);
+Yap, and boots in the guest.
 
-Hi Alexander,
+I'll fold in the below:
 
-Here stashes is assigned a memory allocation and
-then then assigned to tx_qgrp->stashes a few lines below...
+diff --git a/arch/x86/kernel/fpu/xstate.h b/arch/x86/kernel/fpu/xstate.h
+index 70903c12a911..2ee0b9c53dcc 100644
+--- a/arch/x86/kernel/fpu/xstate.h
++++ b/arch/x86/kernel/fpu/xstate.h
+@@ -106,21 +106,17 @@ static inline u64 xfeatures_mask_independent(void)
+  * Otherwise, if XSAVEOPT is enabled, XSAVEOPT replaces XSAVE because XSAVEOPT
+  * supports modified optimization which is not supported by XSAVE.
+  *
+- * We use XSAVE as a fallback.
+- *
+- * The 771 label is defined in the ALTERNATIVE* macros as the address of the
+- * original instruction which gets replaced. We need to use it here as the
+- * address of the instruction where we might get an exception at.
++ * Use XSAVE as a fallback.
+  */
+ #define XSTATE_XSAVE(st, lmask, hmask, err)				\
+-	asm volatile(ALTERNATIVE_3(XSAVE,				\
++	asm volatile("1: " ALTERNATIVE_3(XSAVE,				\
+ 				   XSAVEOPT, X86_FEATURE_XSAVEOPT,	\
+ 				   XSAVEC,   X86_FEATURE_XSAVEC,	\
+ 				   XSAVES,   X86_FEATURE_XSAVES)	\
+ 		     "\n"						\
+ 		     "xor %[err], %[err]\n"				\
+ 		     "3:\n"						\
+-		     _ASM_EXTABLE_TYPE_REG(771b, 3b, EX_TYPE_EFAULT_REG, %[err]) \
++		     _ASM_EXTABLE_TYPE_REG(1b, 3b, EX_TYPE_EFAULT_REG, %[err]) \
+ 		     : [err] "=r" (err)					\
+ 		     : "D" (st), "m" (*st), "a" (lmask), "d" (hmask)	\
+ 		     : "memory")
+@@ -130,11 +126,11 @@ static inline u64 xfeatures_mask_independent(void)
+  * XSAVE area format.
+  */
+ #define XSTATE_XRESTORE(st, lmask, hmask)				\
+-	asm volatile(ALTERNATIVE(XRSTOR,				\
++	asm volatile("1: " ALTERNATIVE(XRSTOR,				\
+ 				 XRSTORS, X86_FEATURE_XSAVES)		\
+ 		     "\n"						\
+ 		     "3:\n"						\
+-		     _ASM_EXTABLE_TYPE(771b, 3b, EX_TYPE_FPU_RESTORE)	\
++		     _ASM_EXTABLE_TYPE(1b, 3b, EX_TYPE_FPU_RESTORE)	\
+ 		     :							\
+ 		     : "D" (st), "m" (*st), "a" (lmask), "d" (hmask)	\
+ 		     : "memory")
 
-> +			if (!stashes)
-> +				goto err_alloc;
-> +
-> +			tx_qgrp->stashes = stashes;
->  		}
->  
->  		for (j = 0; j < tx_qgrp->num_txq; j++) {
-> -			struct idpf_queue *q = tx_qgrp->txqs[j];
-> +			struct idpf_tx_queue *q = tx_qgrp->txqs[j];
->  
->  			q->dev = &adapter->pdev->dev;
->  			q->desc_count = vport->txq_desc_count;
->  			q->tx_max_bufs = idpf_get_max_tx_bufs(adapter);
->  			q->tx_min_pkt_len = idpf_get_min_tx_pkt_len(adapter);
-> -			q->vport = vport;
-> +			q->netdev = vport->netdev;
->  			q->txq_grp = tx_qgrp;
-> -			hash_init(q->sched_buf_hash);
->  
-> -			if (flow_sch_en)
-> -				set_bit(__IDPF_Q_FLOW_SCH_EN, q->flags);
-> +			if (!split) {
-> +				q->clean_budget = vport->compln_clean_budget;
-> +				idpf_queue_assign(CRC_EN, q,
-> +						  vport->crc_enable);
-> +			}
-> +
-> +			if (!flow_sch_en)
-> +				continue;
-> +
-> +			if (split) {
+-- 
+Regards/Gruss,
+    Boris.
 
-... but here elements of stashes seem to be assigned to q->stash
-without stashes having being initialised.
-
-Flagged by Smatch
-
-> +				q->stash = &stashes[j];
-> +				hash_init(q->stash->sched_buf_hash);
-> +			}
-> +
-> +			idpf_queue_set(FLOW_SCH_EN, q);
->  		}
->  
-> -		if (!idpf_is_queue_model_split(vport->txq_model))
-> +		if (!split)
->  			continue;
->  
->  		tx_qgrp->complq = kcalloc(IDPF_COMPLQ_PER_GROUP,
->  					  sizeof(*tx_qgrp->complq),
->  					  GFP_KERNEL);
-> -		if (!tx_qgrp->complq) {
-> -			err = -ENOMEM;
-> +		if (!tx_qgrp->complq)
->  			goto err_alloc;
-> -		}
->  
-> -		tx_qgrp->complq->dev = &adapter->pdev->dev;
->  		tx_qgrp->complq->desc_count = vport->complq_desc_count;
-> -		tx_qgrp->complq->vport = vport;
->  		tx_qgrp->complq->txq_grp = tx_qgrp;
-> +		tx_qgrp->complq->netdev = vport->netdev;
-> +		tx_qgrp->complq->clean_budget = vport->compln_clean_budget;
->  
->  		if (flow_sch_en)
-> -			__set_bit(__IDPF_Q_FLOW_SCH_EN, tx_qgrp->complq->flags);
-> +			idpf_queue_set(FLOW_SCH_EN, tx_qgrp->complq);
->  	}
->  
->  	return 0;
-> @@ -1226,7 +1412,7 @@ static int idpf_txq_group_alloc(struct idpf_vport *vport, u16 num_txq)
->  err_alloc:
->  	idpf_txq_group_rel(vport);
->  
-> -	return err;
-> +	return -ENOMEM;
->  }
->  
->  /**
-
-...
+https://people.kernel.org/tglx/notes-about-netiquette
 
