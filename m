@@ -1,58 +1,55 @@
-Return-Path: <linux-kernel+bounces-197800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95D608D6F59
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 12:19:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FB418D6F61
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 12:41:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50DD5283E73
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 10:19:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E58C282B21
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 10:41:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 061DA14EC43;
-	Sat,  1 Jun 2024 10:19:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D445F14EC46;
+	Sat,  1 Jun 2024 10:41:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MlbC5hHi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="gKtw9kXx"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 470FBAD59;
-	Sat,  1 Jun 2024 10:19:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69F0D1DDEA;
+	Sat,  1 Jun 2024 10:41:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717237176; cv=none; b=JaWtYEGNZ75dxR/lE+t4TAOEgPpSecszZzAZHHVUwK9AIDgx2a5hO+XtqSlE72/CvxAUbalL1JY9h0Pgmna3iWE/YO11tNocZ+rms+Xkd0HFr5C3yWLuSWt3ETU5q4EbVwzir/nZK9xaMYTP73nKzhjJugPjyh9fKU2g5sXVJPg=
+	t=1717238474; cv=none; b=GCk35K3XoGiv0pK/B0aTYteFLlt8HLHlnVnqkF5BlfnYBBhWpb5G3fk0dleALwzyC/DxGwAmOmjt/VQ3IHouODhcrBuSNLeZ7/bz9RJVey8g6mRHx/9uPWB2SAQMqBOlPOYmmE6ogF+CJ3U9nh4HNDLbudQ05nPQk9Hw5jbeYwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717237176; c=relaxed/simple;
-	bh=sMFhjPh7JDKJ1MjejY8b9DGy1ZvZd+eBy+OfIkYL1e0=;
+	s=arc-20240116; t=1717238474; c=relaxed/simple;
+	bh=nyxSrVcpxbGL5iI/vXuDn01y3NgVDhxDhqhSgyZeYyI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WpddA1gyY9YOcktHezi8J/ct/oKhYLqs67PLfW4eoqgKuJxFmZ+oGbRVSMu4j1S7h02Sn8nxdZsgPzwv45fHrWoJBwgjFKz57LkZrUkQitn2PswyDBSCZB9WMo7jQ4PXwzJMNpO8MIUkwXcnqTBt1zvvlcseu/PYAJsnyWGFo7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MlbC5hHi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC06BC116B1;
-	Sat,  1 Jun 2024 10:19:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717237175;
-	bh=sMFhjPh7JDKJ1MjejY8b9DGy1ZvZd+eBy+OfIkYL1e0=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=oT6dr35MypPgcUOLMTmbmLCNcOOUS8CN/FUA0DZH+yLoYk214rz2biomFnXyBrDK8/IZRnd50NdqkX6XAZMkE5f540waxAoDwMDRsi/1+ml3cSpdzS7GJVEehvkeZx2Nxox9fY4wR9/rDWA3RYKlZ3N2XnrbQ0d53WwX2KI9lb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=gKtw9kXx; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1717238461;
+	bh=nyxSrVcpxbGL5iI/vXuDn01y3NgVDhxDhqhSgyZeYyI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MlbC5hHi5JsXsNZTldG4HACIMBwI2931rl1FnngOMBCoooNYUwYYyoLii092jhhQr
-	 0JLu8MhI/da2xOxoop9FSCaZXplPzPGV1rNvK1aBb6+DB7JgV3yIqAOtRl340r1bvb
-	 y8aXw/ickHFoEsUSrgsBMzaZtuJE+qtBXhjZGZVpRqKcVuCscr8k3c9wVQ2ifzbamn
-	 FeHk8XYRfati+QSzyfI00jdH5Jb5Vs+KJjGZhY4DF8WGFhR9yEdYpnXx1ypExvycY5
-	 FvSLopPKSTVNajvqS9EmJFW7n16Z4ikuoGJcB7+ega1OSwVs/4To1xgNrMI3UhR8vv
-	 wMoXGI1dcdFiw==
-Date: Sat, 1 Jun 2024 11:19:30 +0100
-From: Simon Horman <horms@kernel.org>
-To: Bharat Bhushan <bbhushan2@marvell.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	sgoutham@marvell.com, gakula@marvell.com, sbhatta@marvell.com,
-	hkelam@marvell.com, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, jerinj@marvell.com,
-	lcherian@marvell.com, richardcochran@gmail.com
-Subject: Re: [net-next,v3 6/8] cn10k-ipsec: Process inline ipsec transmit
- offload
-Message-ID: <20240601101930.GB491852@kernel.org>
-References: <20240528135349.932669-1-bbhushan2@marvell.com>
- <20240528135349.932669-7-bbhushan2@marvell.com>
+	b=gKtw9kXxtAF3HxhCIXp/6uu0k66j2vOZJSvHgKe8M84aY8Ne5MhHy8rdUzQyTeS5h
+	 OczKrBMt5Y9jgqT66Fs6T2e3imtWc1T4kgrOYkxudkyRwoHY8KnWBrQCj9eJe/EjUS
+	 YWv5Bql1TEAQ1NoS4QsOMA13xeefRzatMxc/bPU8=
+Date: Sat, 1 Jun 2024 12:41:00 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, Armin Wolf <W_Armin@gmx.de>, 
+	=?utf-8?B?UmVuw6k=?= Rebe <rene@exactcode.de>, Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH RFT v3 4/4] hwmon: (spd5118) Add support for reading SPD
+ data
+Message-ID: <cf9d752e-0137-4a6d-85d3-fbe69293a43e@t-8ch.de>
+References: <20240531230556.1409532-1-linux@roeck-us.net>
+ <20240531230556.1409532-5-linux@roeck-us.net>
+ <4cc979c3-3ce0-4f31-b5d0-508e1af5fdf4@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,46 +58,119 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240528135349.932669-7-bbhushan2@marvell.com>
+In-Reply-To: <4cc979c3-3ce0-4f31-b5d0-508e1af5fdf4@roeck-us.net>
 
-On Tue, May 28, 2024 at 07:23:47PM +0530, Bharat Bhushan wrote:
-> Prepare and submit crypto hardware (CPT) instruction for
-> outbound inline ipsec crypto mode offload. The CPT instruction
-> have authentication offset, IV offset and encapsulation offset
-> in input packet. Also provide SA context pointer which have
-> details about algo, keys, salt etc. Crypto hardware encrypt,
-> authenticate and provide the ESP packet to networking hardware.
+On 2024-05-31 22:42:24+0000, Guenter Roeck wrote:
+> On 5/31/24 16:05, Guenter Roeck wrote:
+> > Add support for reading SPD NVRAM data from SPD5118 (Jedec JESD300)
+> > compliant memory modules. NVRAM write operation is not supported.
+> > 
+> > Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+> > ---
+> > v3: New patch
+> > 
+> > RFT: I'd like to get some more test coverage before moving forward
+> >       with this patch. decode-dimms doesn't recognize the 'spd5118'
+> >       driver.
+> > 
+
+Looks good to me.
+
+Spot-checking against JSED400-5B and the embedded CRC are as expected.
+
 > 
-> Signed-off-by: Bharat Bhushan <bbhushan2@marvell.com>
+> Looking for feedback:
+> 
+> [ ... ]
+> 
+> > +
+> > +	nvmem = devm_nvmem_register(dev, &nvmem_config);
+> 
+> This returns ERR_PTR(-EOPNOTSUPP) if CONFIG_NVRAM=n. We have two options:
+> 
+> - Ignore -EOPNOTSUPP and continue registering the hwmon device
+> 
+> or
+> 
+> - Add
+> 	select NVRAM
+> 	select NVRAM_SYSFS
+>   to the driver's Kconfig entry.
 
-Hi Bharat,
+s/NVRAM/NVMEM/g
 
-A minor nit from my side as it looks like there will be a v4 anyway.
+> Any preferences ?
 
-...
+It seems reasonable to support the module without the eeprom logic.
+When used in a fixed, embedded environment, the eeprom is of limited
+value as it's known beforehand, while the hwmon functionality is still
+useful.
 
-> diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/cn10k_ipsec.c b/drivers/net/ethernet/marvell/octeontx2/nic/cn10k_ipsec.c
 
-...
+EEPROM dump in case anyone wants it:
 
-> +bool cn10k_ipsec_transmit(struct otx2_nic *pf, struct netdev_queue *txq,
-> +			  struct otx2_snd_queue *sq, struct sk_buff *skb,
-> +			  int num_segs, int size)
-> +{
-
-...
-
-> +	/* Check for valid SA context */
-> +	sa_info = (struct cpt_ctx_info_s *)x->xso.offload_handle;
-> +	if (!sa_info || !sa_info->sa_iova) {
-> +		netdev_err(pf->netdev, "Invalid SA conext\n");
-
-nit: context
-
-     checkpatch.pl --codespell is your friend.
-
-> +		goto drop;
-> +	}
-
-...
+00000000: 3010 1203 0400 2062 0000 0000 b212 0d00  0..... b........
+00000010: 0000 0000 6501 f203 7aaf 0000 0000 c837  ....e...z......7
+00000020: c837 c837 906f 80bb 3075 2701 a000 8200  .7.7.o..0u'.....
+00000030: 0000 0000 0000 d400 0000 d400 0000 d400  ................
+00000040: 0000 d400 0000 8813 0888 1308 204e 2010  ............ N .
+00000050: 2710 1534 2010 2710 c409 044c 1d0c 0000  '..4 .'....L....
+00000060: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00000070: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00000080: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00000090: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+000000a0: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+000000b0: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+000000c0: 1000 8632 8015 8a8c 8213 0000 0000 0000  ...2............
+000000d0: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+000000e0: 0000 0000 0000 0f11 0171 0822 0000 0000  .........q."....
+000000f0: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00000100: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00000110: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00000120: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00000130: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00000140: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00000150: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00000160: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00000170: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00000180: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00000190: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+000001a0: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+000001b0: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+000001c0: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+000001d0: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+000001e0: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+000001f0: 0000 0000 0000 0000 0000 0000 0000 a14d  ...............M
+00000200: 0198 0823 328e 0a9b e84b 4635 3536 5334  ...#2....KF556S4
+00000210: 302d 3332 2020 2020 2020 2020 2020 2020  0-32            
+00000220: 2020 2020 2020 2000 80ad 4100 0831 3030         ...A..100
+00000230: 3139 3738 3700 0000 0000 0000 0000 0000  19787...........
+00000240: 0000 4100 0000 0000 0001 0000 0000 0000  ..A.............
+00000250: 0100 0000 0000 0000 0000 0000 0000 0000  ................
+00000260: 0000 0001 0100 0000 0000 0000 0000 0088  ................
+00000270: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00000280: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00000290: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+000002a0: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+000002b0: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+000002c0: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+000002d0: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+000002e0: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+000002f0: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00000300: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00000310: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00000320: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00000330: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00000340: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00000350: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00000360: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00000370: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00000380: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00000390: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+000003a0: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+000003b0: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+000003c0: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+000003d0: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+000003e0: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+000003f0: 0000 0000 0000 0000 0000 0000 0000 0000  ................
 
