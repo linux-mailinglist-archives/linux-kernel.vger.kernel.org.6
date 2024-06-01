@@ -1,227 +1,184 @@
-Return-Path: <linux-kernel+bounces-197841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5CF78D6FD8
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 15:00:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CE2E8D6FDA
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 15:01:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B932F1C2151C
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 13:00:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F8B3283B3F
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 13:01:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33B151509B1;
-	Sat,  1 Jun 2024 13:00:14 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0E711D52B;
-	Sat,  1 Jun 2024 13:00:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4A9C1509A6;
+	Sat,  1 Jun 2024 13:01:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s5h+ccwz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 025507EF;
+	Sat,  1 Jun 2024 13:01:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717246813; cv=none; b=cIgCUx1KVor1KhgYMvMEcW0kE23599v2t0BZakdkViCEqvWEvzKgZ/7hhzZTX8pi1dFPL0BoPFymrw92r0WkFraISjNk+FBjOJRdkmevFcEbThHtLjUwGayS72zpjEQu7XuUtLyp/sumtVbu3GJeuDwdzx5HLzwL0SOe5v5DNoM=
+	t=1717246912; cv=none; b=uIc01p69cZS5TuPZc/GTT0ZPtUmVWPjKKyKKEZxXb8DERJdD9h5zvBA1OfjZwdcWMRAvLkGoi9TLuRW4NqbNGM6QcW/RCx4ERZYl8CyU7zwv53FpP01iFZSIb611DFzrfjGulYJGQ1yBqAlSSQDUifkiHj2idyRhX8qz9LKjT7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717246813; c=relaxed/simple;
-	bh=2FPssmpebm/MsnMpER/LK4FbLSFxW33pyx7QWk2U8EA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=YWvHq17cHcfcqy0gITy9byyXFOpCrJf+UVDlEoyQvWd3dS1WHgveRFcqbotmo0vtRb51l5EbEH8OOkcKVefZ31aAuPx8+d2zw8IWrm2rnibK5PMujqHDBf86OKciW53HAN99ikd71MU7HhA/L1kmKEeFnIvppfePq34loNDxwXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5939E12FC;
-	Sat,  1 Jun 2024 06:00:28 -0700 (PDT)
-Received: from a079740.arm.com (unknown [10.163.70.164])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 262E03F792;
-	Sat,  1 Jun 2024 05:59:53 -0700 (PDT)
-From: Chaitanya S Prakash <ChaitanyaS.Prakash@arm.com>
-To: linux-perf-users@vger.kernel.org
-Cc: anshuman.khandual@arm.com,
-	james.clark@arm.com,
-	Chaitanya S Prakash <chaitanyas.prakash@arm.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>,
-	John Garry <john.g.garry@oracle.com>,
-	Will Deacon <will@kernel.org>,
-	Leo Yan <leo.yan@linaro.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Chenyuan Mi <cymi20@fudan.edu.cn>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Ravi Bangoria <ravi.bangoria@amd.com>,
-	=?UTF-8?q?Ahelenia=20Ziemia=C5=84ska?= <nabijaczleweli@nabijaczleweli.xyz>,
-	Colin Ian King <colin.i.king@gmail.com>,
-	Changbin Du <changbin.du@huawei.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-	Tiezhu Yang <yangtiezhu@loongson.cn>,
-	Alexey Dobriyan <adobriyan@gmail.com>,
-	=?UTF-8?q?Georg=20M=C3=BCller?= <georgmueller@gmx.net>,
-	Liam Howlett <liam.howlett@oracle.com>,
-	bpf@vger.kernel.org,
-	coresight@lists.linaro.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH V3 00/10] perf tools: Fix test "perf probe of function from different CU"
-Date: Sat,  1 Jun 2024 18:29:36 +0530
-Message-Id: <20240601125946.1741414-1-ChaitanyaS.Prakash@arm.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1717246912; c=relaxed/simple;
+	bh=/ZL+QsOgXoSDRVVKHsuowmlYl090GokdsLFAjZvNNIk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qB2bSJVNke6NdYJchciBea3yss9CY+F2XCQqO7PMC6oF7XB0lTBTDVSkoHebC6T7xVQT578ZYipDZgVjV/rExVdoekY0XDqB1wdHZJvA6kvUEjDkfVHmc32VhJUw1+OdiCLfVoGTXSRZALxvOhXli4+X0kfjYnkhb0QQ/x7UN/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s5h+ccwz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1961C116B1;
+	Sat,  1 Jun 2024 13:01:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717246911;
+	bh=/ZL+QsOgXoSDRVVKHsuowmlYl090GokdsLFAjZvNNIk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=s5h+ccwzI6CjGc9XT9WWo6HYlT03YhlaYlB4VNPmkCgQafIDAeF7nNJ3i8beK2tfl
+	 JZ5yl7G2Vfych/aStegTquvQ/PQOyj9l/WqiSkCIgPyIEqkE6yEh9odKihZ6UDBmyb
+	 5bn73AxJlaMfxmjw7hXPrbiodBNBGq7ReywKFCOjts1DbYuK/qMd6H3dX94WXuK33+
+	 M4H/OMpaLycwBQ43jyN/cm4RPf7JV93cAgmFBhAGZOajL9Ua0HzcY8uW30u2CgModN
+	 SLBzjHXC62WnDRsOy1F2eqJkI4kxmKQUkE3Jw50eFza8KbCo7XJqfE+FFrlN+XFJ/9
+	 t7d3jcPQnMLoA==
+Date: Sat, 1 Jun 2024 14:01:39 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Marcelo Schmitt <marcelo.schmitt1@gmail.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, Michael Hennerich <Michael.Hennerich@analog.com>,
+ Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/5] iio: adc: ad7944: use
+ devm_regulator_get_enable_read_voltage
+Message-ID: <20240601140139.3166dcaf@jic23-huawei>
+In-Reply-To: <20240531-iio-adc-ref-supply-refactor-v1-5-4b313c0615ad@baylibre.com>
+References: <20240531-iio-adc-ref-supply-refactor-v1-0-4b313c0615ad@baylibre.com>
+	<20240531-iio-adc-ref-supply-refactor-v1-5-4b313c0615ad@baylibre.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Chaitanya S Prakash <chaitanyas.prakash@arm.com>
+On Fri, 31 May 2024 16:19:36 -0500
+David Lechner <dlechner@baylibre.com> wrote:
 
-Perf treated all files beginning with "/tmp/perf-" as a map file despite
-them always ending in ".map", this caused the test "perf probe of
-function from different CU" to fail when Perf was built with NO_DWARF=1.
-As the file was parsed as a map file, the probe...--funcs command output
-garbage values instead of listing the functions in the binary. After
-fixing the issue an additional check to test the output of the
-probe...--funcs command has been added.
+> This makes use of the new devm_regulator_get_enable_read_voltage()
+> function to reduce boilerplate code.
+> 
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+A possible corner case inline.
 
-Additionally, various functions within the codebase have been refactored
-and restructured. The definition of str_has_suffix() has been adopted
-from tools/bpf/bpftool/gen.c and added to tools/lib/string.c in an
-attempt to make the function more generic. The implementation has been
-retained but the return values have been modified to resemble that of
-str_has_prefix(), i.e., return strlen(suffix) on success and 0 on
-failure. In light of the new addition, "ends_with()", a locally defined
-function used for checking if a string had a given suffix has been
-deleted and str_has_suffix() has replaced its usage. A call to
-strtailcmp() has also been replaced as str_has_suffix() seemed more
-suited for that particular use case.
+Patches 2-4 lgtm.
+> ---
+>  drivers/iio/adc/ad7944.c | 62 +++++++++++++++---------------------------------
+>  1 file changed, 19 insertions(+), 43 deletions(-)
+> 
+> diff --git a/drivers/iio/adc/ad7944.c b/drivers/iio/adc/ad7944.c
+> index e2cb64cef476..42bbcb904778 100644
+> --- a/drivers/iio/adc/ad7944.c
+> +++ b/drivers/iio/adc/ad7944.c
+> @@ -464,23 +464,16 @@ static const char * const ad7944_power_supplies[] = {
+>  	"avdd",	"dvdd",	"bvdd", "vio"
+>  };
+>  
+> -static void ad7944_ref_disable(void *ref)
+> -{
+> -	regulator_disable(ref);
+> -}
+> -
+>  static int ad7944_probe(struct spi_device *spi)
+>  {
+>  	const struct ad7944_chip_info *chip_info;
+>  	struct device *dev = &spi->dev;
+>  	struct iio_dev *indio_dev;
+>  	struct ad7944_adc *adc;
+> -	bool have_refin = false;
+> -	struct regulator *ref;
+>  	struct iio_chan_spec *chain_chan;
+>  	unsigned long *chain_scan_masks;
+>  	u32 n_chain_dev;
+> -	int ret;
+> +	int ret, ref_mv, refin_mv;
+>  
+>  	indio_dev = devm_iio_device_alloc(dev, sizeof(*adc));
+>  	if (!indio_dev)
+> @@ -531,47 +524,30 @@ static int ad7944_probe(struct spi_device *spi)
+>  	 * - external reference: REF is connected, REFIN is not connected
+>  	 */
+>  
+> -	ref = devm_regulator_get_optional(dev, "ref");
+> -	if (IS_ERR(ref)) {
+> -		if (PTR_ERR(ref) != -ENODEV)
+> -			return dev_err_probe(dev, PTR_ERR(ref),
+> -					     "failed to get REF supply\n");
+> -
+> -		ref = NULL;
+> -	}
+> +	ret = devm_regulator_get_enable_read_voltage(dev, "ref");
+> +	if (ret == -ENODEV)
+> +		ref_mv = 0;
+> +	else if (ret < 0)
+> +		return dev_err_probe(dev, ret, "failed to get REF voltage\n");
+> +	else
+> +		ref_mv = ret / 1000;
+>  
+> -	ret = devm_regulator_get_enable_optional(dev, "refin");
+> -	if (ret == 0)
+> -		have_refin = true;
+> -	else if (ret != -ENODEV)
+> -		return dev_err_probe(dev, ret,
+> -				     "failed to get and enable REFIN supply\n");
+> +	ret = devm_regulator_get_enable_read_voltage(dev, "refin");
+> +	if (ret == -ENODEV)
+> +		refin_mv = 0;
+> +	else if (ret < 0)
+> +		return dev_err_probe(dev, ret, "failed to get REFIN voltage\n");
+> +	else
+> +		refin_mv = ret / 1000;
+How does refin_mv get used?  Previously we never queried it's voltage (I assume
+because it supplies an internal reference?
 
-Finally str_has_prefix() is adopted from the kernel and is added to
-tools/lib/string.c, following which strstarts() is deleted and its use
-has been replaced with str_has_prefix().
+Are there any regulators that are real enough to enable but for which a voltage
+can't be queried?  I think fixed regulators with gpio control are in this
+category...
 
-This patch series has been tested on 6.10-rc1 mainline kernel, both on
-arm64 and x86 platforms.
-
-Changes in V3:
-
-- Patch adding configs required by "perf probe of function from different
-  CU" was originally part of the series but has been merged in 6.10-rc1.
-  https://github.com/torvalds/linux/commit/6b718ac6874c2233b8dec369a8a377d6c5b638e6
-
-- Restructure patches according to the maintainer trees.
-- Add explanation for why '| grep "foo"' is used.
-- Fix build errors for when perf is built with LLVM=1.
-
-Changes in V2:
-https://lore.kernel.org/all/20240408062230.1949882-1-ChaitanyaS.Prakash@arm.com/
-
-- Add str_has_suffix() and str_has_prefix() to tools/lib/string.c
-- Delete ends_with() and replace its usage with str_has_suffix()
-- Replace an instance of strtailcmp() with str_has_suffix()
-- Delete strstarts() from tools/include/linux/string.h and replace its
-  usage with str_has_prefix()
-
-Changes in V1:
-https://lore.kernel.org/all/20240220042957.2022391-1-ChaitanyaS.Prakash@arm.com/
-
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc: Mike Leach <mike.leach@linaro.org>
-Cc: James Clark <james.clark@arm.com>
-Cc: John Garry <john.g.garry@oracle.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: Leo Yan <leo.yan@linaro.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Ian Rogers <irogers@google.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Chenyuan Mi <cymi20@fudan.edu.cn>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Ravi Bangoria <ravi.bangoria@amd.com>
-Cc: Ahelenia Ziemiańska <nabijaczleweli@nabijaczleweli.xyz>
-Cc: Colin Ian King <colin.i.king@gmail.com>
-Cc: Changbin Du <changbin.du@huawei.com>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-Cc: Tiezhu Yang <yangtiezhu@loongson.cn>
-Cc: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: Georg Müller <georgmueller@gmx.net>
-Cc: Liam Howlett <liam.howlett@oracle.com>
-Cc: bpf@vger.kernel.org
-Cc: coresight@lists.linaro.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-perf-users@vger.kernel.org
-
-Chaitanya S Prakash (10):
-  tools lib: adopt str_has_suffix() from bpftool/gen.c
-  perf util: Delete ends_with() and replace its use with
-    str_has_suffix()
-  perf util: Replace an instance of strtailcmp() by str_has_suffix()
-  tools lib: Adopt str_has_prefix() from kernel
-  libsubcmd: Replace strstarts() usage with str_has_prefix()
-  objtool: Replace strstarts() usage with str_has_prefix()
-  perf tools: Replace strstarts() usage with str_has_prefix()
-  tools lib: Remove strstarts() as all its usecases have been replaced
-    by str_has_prefix()
-  perf tools: Only treat files as map files when they have the extension
-    .map
-  perf test: Check output of the probe ... --funcs command
-
- tools/include/linux/string.h                  | 12 ++---
- tools/lib/string.c                            | 48 +++++++++++++++++++
- tools/lib/subcmd/help.c                       |  2 +-
- tools/lib/subcmd/parse-options.c              | 18 +++----
- tools/objtool/check.c                         |  2 +-
- tools/perf/arch/arm/util/pmu.c                |  4 +-
- tools/perf/arch/x86/annotate/instructions.c   | 14 +++---
- tools/perf/arch/x86/util/env.c                |  2 +-
- tools/perf/builtin-c2c.c                      |  4 +-
- tools/perf/builtin-config.c                   |  2 +-
- tools/perf/builtin-daemon.c                   |  2 +-
- tools/perf/builtin-ftrace.c                   |  2 +-
- tools/perf/builtin-help.c                     |  6 +--
- tools/perf/builtin-kmem.c                     |  2 +-
- tools/perf/builtin-kvm.c                      | 14 +++---
- tools/perf/builtin-kwork.c                    | 10 ++--
- tools/perf/builtin-lock.c                     |  6 +--
- tools/perf/builtin-mem.c                      |  4 +-
- tools/perf/builtin-sched.c                    |  6 +--
- tools/perf/builtin-script.c                   | 30 ++++--------
- tools/perf/builtin-stat.c                     |  4 +-
- tools/perf/builtin-timechart.c                |  2 +-
- tools/perf/builtin-trace.c                    |  6 +--
- tools/perf/perf.c                             | 12 ++---
- .../shell/test_uprobe_from_different_cu.sh    |  2 +-
- tools/perf/tests/symbols.c                    |  2 +-
- tools/perf/ui/browser.c                       |  2 +-
- tools/perf/ui/browsers/scripts.c              |  2 +-
- tools/perf/ui/stdio/hist.c                    |  2 +-
- tools/perf/util/amd-sample-raw.c              |  4 +-
- tools/perf/util/annotate.c                    |  2 +-
- tools/perf/util/callchain.c                   |  2 +-
- tools/perf/util/config.c                      | 12 ++---
- tools/perf/util/map.c                         |  8 ++--
- tools/perf/util/pmus.c                        |  2 +-
- tools/perf/util/probe-event.c                 |  2 +-
- tools/perf/util/sample-raw.c                  |  2 +-
- tools/perf/util/symbol-elf.c                  |  4 +-
- tools/perf/util/symbol.c                      |  3 +-
- 39 files changed, 148 insertions(+), 117 deletions(-)
-
--- 
-2.34.1
+>  
+> -	if (have_refin && ref)
+> +	if (ref_mv && refin_mv)
+>  		return dev_err_probe(dev, -EINVAL,
+>  				     "cannot have both refin and ref supplies\n");
+>  
+> -	if (ref) {
+> -		ret = regulator_enable(ref);
+> -		if (ret)
+> -			return dev_err_probe(dev, ret,
+> -					     "failed to enable REF supply\n");
+> -
+> -		ret = devm_add_action_or_reset(dev, ad7944_ref_disable, ref);
+> -		if (ret)
+> -			return ret;
+> -
+> -		ret = regulator_get_voltage(ref);
+> -		if (ret < 0)
+> -			return dev_err_probe(dev, ret,
+> -					     "failed to get REF voltage\n");
+> -
+> -		/* external reference */
+> -		adc->ref_mv = ret / 1000;
+> -	} else {
+> -		/* internal reference */
+> +	if (ref_mv)
+> +		adc->ref_mv = ref_mv;
+> +	else
+>  		adc->ref_mv = AD7944_INTERNAL_REF_MV;
+> -	}
+>  
+>  	adc->cnv = devm_gpiod_get_optional(dev, "cnv", GPIOD_OUT_LOW);
+>  	if (IS_ERR(adc->cnv))
+> 
 
 
