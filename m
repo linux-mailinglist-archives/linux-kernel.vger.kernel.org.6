@@ -1,188 +1,88 @@
-Return-Path: <linux-kernel+bounces-197798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEC0B8D6F4A
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 12:10:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7E148D6F49
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 12:10:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 25BDEB22B97
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 10:10:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55EEA1F21BF0
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 10:10:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E72B14EC41;
-	Sat,  1 Jun 2024 10:10:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AE0C14EC44;
+	Sat,  1 Jun 2024 10:10:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m0cfFzgC"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rttwk3+M"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D64256F2EB
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Jun 2024 10:10:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8BE96F2EB;
+	Sat,  1 Jun 2024 10:10:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717236619; cv=none; b=Lge/T4SvJuIaMU/o8F9LUCe2NCWA52nl77hlivL3Ceb+yVJfVEvAXrGoQEiT/84/QjtG3n6eUiEVoeioamSYcjdnpnoHbSdOoQwTyo8HnP8NoVoHd6etl7suhr0Ayfmrhf6lGsYHUK+onPKND9Q78PyagqtHRYfpYJ04l9z8rgg=
+	t=1717236601; cv=none; b=nHjsjtzEWbaeXmw9oloMkbqHc+59PRwnCI9YpD4ODjOx6pUJ3Jlm/F0ZiKDyGU4CejrZxHS8HyblEHkAnIkjGRejpOSGFukeJC2tZflVD3GRd6FXhBuTi1GEZvngNaG3kZrLy5k5GUHSYOAeLmM/O5iue6Vfp0/P1j8J1dfrL9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717236619; c=relaxed/simple;
-	bh=L2Fb0cA6egvQk7LSOeuXnq+6wOfz3vlPMZBefyOFWoU=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=bpmTsf9kEcrOYC5dl3KW1Qq8+Rt/IyEMRsC9UkebeboXmiG4QrJWH595leVgfbYJ+zjw7KxgKfiASGwM9giCwUH4g7VP/VrXbINU5mgIS4+smsLbh8wLWMnD6maWEVSVEzZ3CDd1g3Ujz//ey7iPS/ZWintwmANF4Tm5LDeOTX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m0cfFzgC; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717236617; x=1748772617;
-  h=date:from:to:cc:subject:message-id;
-  bh=L2Fb0cA6egvQk7LSOeuXnq+6wOfz3vlPMZBefyOFWoU=;
-  b=m0cfFzgCKaVaFaz7DfeAaX1Ch011HLbdJZwaiE0jbK0m87Zn5XupWJji
-   QAOuh/9V52MoNhTPT5fIMo7Jl6cU31mwE1mT9mXjHPA2jWm27BrZQH5kT
-   vaEWh+qd2b8m+CBJ5oKdeWRsDo/Q826KNL7cdFyO83bmu6dr3Z8cMcXp0
-   pdv3huUG5tOeU760gxKscNCjf7Y7NxjIiV1dO+64wz+9Tnf013uLDO4UK
-   tHnM3FIsMZy57GXgIhDtacTYZXkd0Ny6wlQUFQQu2XLP6grF6h4j5UgPj
-   0icQJxIkjV1yZSGCOadZmgDptZgC+oBo1UvpTHrno34aLnfEHR//pGOpr
-   w==;
-X-CSE-ConnectionGUID: aU1dSee4QPOVORFvcRYhTQ==
-X-CSE-MsgGUID: JNYzyoIQTOaDZQmyWCjVTA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11089"; a="17610817"
-X-IronPort-AV: E=Sophos;i="6.08,207,1712646000"; 
-   d="scan'208";a="17610817"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jun 2024 03:10:16 -0700
-X-CSE-ConnectionGUID: GtDHBXNmSceh5tcEEb0PaQ==
-X-CSE-MsgGUID: U3R2FK/fQ4SAdNIIGLl0ZA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,207,1712646000"; 
-   d="scan'208";a="36317969"
-Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
-  by fmviesa007.fm.intel.com with ESMTP; 01 Jun 2024 03:10:15 -0700
-Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sDLgi-000IgV-2e;
-	Sat, 01 Jun 2024 10:10:12 +0000
-Date: Sat, 01 Jun 2024 18:09:43 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/urgent] BUILD SUCCESS
- 0c2f6d04619ec2b53ad4b0b591eafc9389786e86
-Message-ID: <202406011841.3Agkafsx-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1717236601; c=relaxed/simple;
+	bh=a0/W5by6/xec9h+UXLZSahAaezpbZxiKHRI27sSNl2I=;
+	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
+	 Cc:Message-ID:Date; b=X5H86TZBezLUsYnqvCu02FqkkhptZ8Xuw6J3roVKTPz3gbeiiyLx7+0qw92akdC/du11Gu2LGVWVG64KaLNcGBNqEuIHkt4kHzzIn7el3L37BAwFE0wvsVhNzqNdaS3Z3De+etSzZr1iL7GtEBCnwVWVT9kJjjjQs5FE1scKe9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rttwk3+M; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9D12C116B1;
+	Sat,  1 Jun 2024 10:09:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717236600;
+	bh=a0/W5by6/xec9h+UXLZSahAaezpbZxiKHRI27sSNl2I=;
+	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+	b=rttwk3+MAfGCnyG7t4kJq/knG9qH7Bcuz6V2DUhVgX7ualv2wWv7MMpUVC8vqLNaw
+	 LA+h6jciz8cBCgYHqE/WxNoMog3P1cb6QNOzT622zbSFkmgDoQfi7AMNaKDlnXKlLl
+	 yEFpzPa/zkXgnZs2Zc3HZMj6UpDWLuUzbYZ/CkOnk5PK4Jio2XNFPz0Hsa59wd7KVm
+	 8SwcSXVRaj+rJfudw1rRHmc3jkBvDhAflpLLQ3DQyJke2FHZMRN66tfYtOtvBYUSXL
+	 tccGDF/P1BWPMkc/l584dFvjZa8/kHtd12DITIGSKQ4XoxXN6nwN0S/ysFWrRLrvuy
+	 2OeOcNtRNuMSA==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] wifi: brcm80211: remove unused structs
+From: Kalle Valo <kvalo@kernel.org>
+In-Reply-To: <20240526234553.286773-1-linux@treblig.org>
+References: <20240526234553.286773-1-linux@treblig.org>
+To: linux@treblig.org
+Cc: arend.vanspriel@broadcom.com, linux-wireless@vger.kernel.org,
+ brcm80211@lists.linux.dev, brcm80211-dev-list.pdl@broadcom.com,
+ linux-kernel@vger.kernel.org, "Dr. David Alan Gilbert" <linux@treblig.org>
+User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
+Message-ID: <171723659704.1034023.17135703392957281288.kvalo@kernel.org>
+Date: Sat,  1 Jun 2024 10:09:58 +0000 (UTC)
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/urgent
-branch HEAD: 0c2f6d04619ec2b53ad4b0b591eafc9389786e86  x86/topology/intel: Unlock CPUID before evaluating anything
+linux@treblig.org wrote:
 
-elapsed time: 891m
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> 
+> 'brcmf_pcie_core_info' was added in
+> commit 9e37f045d5e7 ("brcmfmac: Adding PCIe bus layer support.")
+> but never used.
+> 
+> 'brcms_c_bit_desc' last use was removed in
+> commit cdf4352f5c59 ("brcmsmac: Improve tx trace and debug support").
+> 
+> Remove them.
+> 
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> Acked-by: Arend van Spriel <arend.vanspriel@broadcom.com>
 
-configs tested: 96
-configs skipped: 135
+Patch applied to wireless-next.git, thanks.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
-
-tested configs:
-alpha                             allnoconfig   gcc  
-alpha                            allyesconfig   gcc  
-alpha                               defconfig   gcc  
-arc                               allnoconfig   gcc  
-arc                                 defconfig   gcc  
-arc                   randconfig-001-20240601   gcc  
-arc                   randconfig-002-20240601   gcc  
-arm                   randconfig-003-20240601   gcc  
-arm                   randconfig-004-20240601   gcc  
-arm64                             allnoconfig   gcc  
-arm64                               defconfig   gcc  
-arm64                 randconfig-001-20240601   gcc  
-arm64                 randconfig-004-20240601   gcc  
-csky                              allnoconfig   gcc  
-csky                                defconfig   gcc  
-csky                  randconfig-001-20240601   gcc  
-csky                  randconfig-002-20240601   gcc  
-i386                             allmodconfig   gcc  
-i386                              allnoconfig   gcc  
-i386                             allyesconfig   gcc  
-i386         buildonly-randconfig-001-20240601   clang
-i386         buildonly-randconfig-002-20240601   gcc  
-i386         buildonly-randconfig-003-20240601   gcc  
-i386         buildonly-randconfig-004-20240601   gcc  
-i386         buildonly-randconfig-005-20240601   gcc  
-i386         buildonly-randconfig-006-20240601   clang
-i386                                defconfig   clang
-i386                  randconfig-001-20240601   clang
-i386                  randconfig-002-20240601   gcc  
-i386                  randconfig-003-20240601   clang
-i386                  randconfig-004-20240601   gcc  
-i386                  randconfig-005-20240601   clang
-i386                  randconfig-006-20240601   gcc  
-i386                  randconfig-011-20240601   gcc  
-i386                  randconfig-012-20240601   gcc  
-i386                  randconfig-013-20240601   gcc  
-i386                  randconfig-014-20240601   gcc  
-i386                  randconfig-015-20240601   clang
-i386                  randconfig-016-20240601   clang
-loongarch                        allmodconfig   gcc  
-loongarch                         allnoconfig   gcc  
-loongarch                           defconfig   gcc  
-loongarch             randconfig-001-20240601   gcc  
-loongarch             randconfig-002-20240601   gcc  
-m68k                             allmodconfig   gcc  
-m68k                              allnoconfig   gcc  
-m68k                             allyesconfig   gcc  
-m68k                                defconfig   gcc  
-microblaze                       allmodconfig   gcc  
-microblaze                        allnoconfig   gcc  
-microblaze                       allyesconfig   gcc  
-microblaze                          defconfig   gcc  
-mips                              allnoconfig   gcc  
-mips                             allyesconfig   gcc  
-nios2                            allmodconfig   gcc  
-nios2                             allnoconfig   gcc  
-nios2                            allyesconfig   gcc  
-nios2                               defconfig   gcc  
-nios2                 randconfig-001-20240601   gcc  
-nios2                 randconfig-002-20240601   gcc  
-parisc                randconfig-001-20240601   gcc  
-parisc                randconfig-002-20240601   gcc  
-powerpc               randconfig-001-20240601   gcc  
-powerpc               randconfig-002-20240601   gcc  
-powerpc               randconfig-003-20240601   gcc  
-powerpc64             randconfig-003-20240601   gcc  
-riscv                 randconfig-002-20240601   gcc  
-s390                  randconfig-001-20240601   gcc  
-s390                  randconfig-002-20240601   gcc  
-sh                    randconfig-001-20240601   gcc  
-sh                    randconfig-002-20240601   gcc  
-sparc64               randconfig-001-20240601   gcc  
-sparc64               randconfig-002-20240601   gcc  
-um                               allyesconfig   gcc  
-um                    randconfig-001-20240601   gcc  
-x86_64                            allnoconfig   clang
-x86_64                           allyesconfig   clang
-x86_64       buildonly-randconfig-001-20240601   clang
-x86_64       buildonly-randconfig-002-20240601   clang
-x86_64       buildonly-randconfig-004-20240601   gcc  
-x86_64       buildonly-randconfig-005-20240601   clang
-x86_64       buildonly-randconfig-006-20240601   gcc  
-x86_64                              defconfig   gcc  
-x86_64                randconfig-002-20240601   clang
-x86_64                randconfig-003-20240601   clang
-x86_64                randconfig-004-20240601   clang
-x86_64                randconfig-006-20240601   clang
-x86_64                randconfig-011-20240601   clang
-x86_64                randconfig-012-20240601   clang
-x86_64                randconfig-013-20240601   clang
-x86_64                randconfig-071-20240601   clang
-x86_64                randconfig-073-20240601   clang
-x86_64                randconfig-075-20240601   clang
-x86_64                          rhel-8.3-rust   clang
-xtensa                randconfig-001-20240601   gcc  
-xtensa                randconfig-002-20240601   gcc  
+5bcd9a0a5995 wifi: brcm80211: remove unused structs
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+https://patchwork.kernel.org/project/linux-wireless/patch/20240526234553.286773-1-linux@treblig.org/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
 
