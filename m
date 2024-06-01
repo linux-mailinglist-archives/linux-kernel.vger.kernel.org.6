@@ -1,85 +1,167 @@
-Return-Path: <linux-kernel+bounces-197782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B91CC8D6F15
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 11:07:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B97238D6F18
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 11:08:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69C691F2465A
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 09:07:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75DC028872F
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 09:08:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C07F314E2C1;
-	Sat,  1 Jun 2024 09:07:31 +0000 (UTC)
-Received: from smtp134-25.sina.com.cn (smtp134-25.sina.com.cn [180.149.134.25])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1789314E2D6;
+	Sat,  1 Jun 2024 09:08:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tTQ2s5dF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BB941CFBE
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Jun 2024 09:07:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.149.134.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 574B2111AD;
+	Sat,  1 Jun 2024 09:08:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717232851; cv=none; b=h3jzgFXJkkqQo095gYWZxO7/1bR72xbIEDNIz4bT5C0ThvMIWFWh4CXMLWZsKDzTMPkATtYpfioy10AB3V13U0HjZcooQqOSkm3+fP7seVAJHAq7pbNERzfPWSEEdo20W+QaRjCS4BoGwDc1lk9T02tVbTFzA3+RB3ruy6zJyt4=
+	t=1717232927; cv=none; b=BTzfoW22w3/H8AeGT6CV3mStkpukLZSPkaTyeaJlQtTYx82A1FSyd31kwVmSgWWB0LUQlaUTNjRNPT5S6teHnf38Liu4JwNAzEIEAjcqrlWp09coJbpi41CAsetMdXGq7kYI4kVVaGi9IRG39zkIEojnkFRVRTNvxUUwjpGBcDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717232851; c=relaxed/simple;
-	bh=8mispSm5LAS1dd6YXjvy47vFNymtXBnRasSceVyclCQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=h4hde41HUMvXIcO/JqvlwNukqLNFMGo7poSeaLwS1zGIGWkGQHbpU11WxgsSGyh6Kb8pjvyblzCivIKJJPX7FsDjnM17SmU0WjMC0DAH4ABJRo+R0+ZQO/zfwy3hNGH265Dlhiy68a95xuBYCv3jZVcNJH7te47ba2rLUVGXg6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=180.149.134.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([113.118.68.165])
-	by sina.com (10.185.250.21) with ESMTP
-	id 665AE4C00000105E; Sat, 1 Jun 2024 17:07:14 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 8807393408336
-X-SMAIL-UIID: 8CE89FD4BCE94F99AD68A663130A9332-20240601-170714-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+54594368fbd5a4f1754a@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [mm?] INFO: rcu detected stall in kcompactd (2)
-Date: Sat,  1 Jun 2024 17:07:02 +0800
-Message-Id: <20240601090702.3550-1-hdanton@sina.com>
-In-Reply-To: <0000000000002304860619cb8aa1@google.com>
-References: 
+	s=arc-20240116; t=1717232927; c=relaxed/simple;
+	bh=h6AQp5HLvjkO9wvYFVJXTPoumQQtZPBpKKF3YIzdJKg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aBg3Zv5gLxCOjg0vB3AuTBNhlqQnC7jptUb1wUdrO2Mvuh4ddoxqez90LsHAKlF7nlH9xjSVGQqpxZWMLh4VufmLQEeml0WWkYbkO4pCpfkbvCcnFeuVp0N03CvAXaLRi8THBqHm5UNGmogF4SnourEov2HvxKySz0XhP1mLSr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tTQ2s5dF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74123C116B1;
+	Sat,  1 Jun 2024 09:08:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717232927;
+	bh=h6AQp5HLvjkO9wvYFVJXTPoumQQtZPBpKKF3YIzdJKg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tTQ2s5dFr/GugcK3CbwhywDOpEVAtHJNGU9YAnPAUzWTAFiRVj3ZiC9Pzr1zszFCD
+	 WnVldec/W9TDLZX+1ZtNVEmiOTgx1Qnjl1OLQCjcIuFprUzcJO7p8uhpfMdZ3hjFAX
+	 Hx6RW/VBRHdYXp1oFxcKCEakd6RuY4vYYUzg57jQc3o9EXom/bJe/UZVHtEgUC+1ZF
+	 2svOXpBiDvjHUKNpq2EgY+wRtaEKC3KOa4vbgEK33oy/ajbmF1UntJzhbSZ9Mw18Yi
+	 Nhz584MG7oMj2v7BPxOymUda20jbqFC/89SUUta4eqyb2R/dXeVbT6Egx9bWFDokO+
+	 qHgILGYk5S1LQ==
+Date: Sat, 1 Jun 2024 10:08:42 +0100
+From: Simon Horman <horms@kernel.org>
+To: Alexander Lobakin <aleksander.lobakin@intel.com>
+Cc: intel-wired-lan@lists.osuosl.org,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Mina Almasry <almasrymina@google.com>,
+	nex.sw.ncis.osdt.itp.upstreaming@intel.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Dan Carpenter <dan.carpenter@linaro.org>
+Subject: Re: [PATCH iwl-next 12/12] idpf: use libeth Rx buffer management for
+ payload buffer
+Message-ID: <20240601090842.GZ491852@kernel.org>
+References: <20240528134846.148890-1-aleksander.lobakin@intel.com>
+ <20240528134846.148890-13-aleksander.lobakin@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240528134846.148890-13-aleksander.lobakin@intel.com>
 
-On Fri, 31 May 2024 20:17:26 -0700
-> syzbot found the following issue on:
++ Dan Carpenter
+
+On Tue, May 28, 2024 at 03:48:46PM +0200, Alexander Lobakin wrote:
+> idpf uses Page Pool for data buffers with hardcoded buffer lengths of
+> 4k for "classic" buffers and 2k for "short" ones. This is not flexible
+> and does not ensure optimal memory usage. Why would you need 4k buffers
+> when the MTU is 1500?
+> Use libeth for the data buffers and don't hardcode any buffer sizes. Let
+> them be calculated from the MTU for "classics" and then divide the
+> truesize by 2 for "short" ones. The memory usage is now greatly reduced
+> and 2 buffer queues starts make sense: on frames <= 1024, you'll recycle
+> (and resync) a page only after 4 HW writes rather than two.
 > 
-> HEAD commit:    2bfcfd584ff5 Merge tag 'pmdomain-v6.10-rc1' of git://git.k..
-> git tree:       upstream
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17314572980000
+> Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
 
-#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git  master
+...
 
---- x/net/mac80211/main.c
-+++ y/net/mac80211/main.c
-@@ -427,9 +427,12 @@ static void ieee80211_tasklet_handler(st
- {
- 	struct ieee80211_local *local = from_tasklet(local, t, tasklet);
- 	struct sk_buff *skb;
-+	unsigned int loop = 0;
- 
- 	while ((skb = skb_dequeue(&local->skb_queue)) ||
- 	       (skb = skb_dequeue(&local->skb_queue_unreliable))) {
-+		if (++loop == 64)
-+			return;
- 		switch (skb->pkt_type) {
- 		case IEEE80211_RX_MSG:
- 			/* Clear skb->pkt_type in order to not confuse kernel
---
+> diff --git a/drivers/net/ethernet/intel/idpf/idpf_txrx.c b/drivers/net/ethernet/intel/idpf/idpf_txrx.c
+
+...
+
+Hi Alexander,
+
+The code above the hunk below, starting at line 3321, is:
+
+		if (unlikely(!hdr_len && !skb)) {
+			hdr_len = idpf_rx_hsplit_wa(hdr, rx_buf, pkt_len);
+			pkt_len -= hdr_len;
+			u64_stats_update_begin(&rxq->stats_sync);
+			u64_stats_inc(&rxq->q_stats.hsplit_buf_ovf);
+			u64_stats_update_end(&rxq->stats_sync);
+		}
+		if (libeth_rx_sync_for_cpu(hdr, hdr_len)) {
+			skb = idpf_rx_build_skb(hdr, hdr_len);
+			if (!skb)
+				break;
+			u64_stats_update_begin(&rxq->stats_sync);
+			u64_stats_inc(&rxq->q_stats.hsplit_pkts);
+			u64_stats_update_end(&rxq->stats_sync);
+		}
+
+> @@ -3413,24 +3340,24 @@ static int idpf_rx_splitq_clean(struct idpf_rx_queue *rxq, int budget)
+>  		hdr->page = NULL;
+>  
+>  payload:
+> -		if (pkt_len) {
+> -			idpf_rx_sync_for_cpu(rx_buf, pkt_len);
+> -			if (skb)
+> -				idpf_rx_add_frag(rx_buf, skb, pkt_len);
+> -			else
+> -				skb = idpf_rx_construct_skb(rxq, rx_buf,
+> -							    pkt_len);
+> -		} else {
+> -			idpf_rx_put_page(rx_buf);
+> -		}
+> +		if (!libeth_rx_sync_for_cpu(rx_buf, pkt_len))
+> +			goto skip_data;
+> +
+> +		if (skb)
+> +			idpf_rx_add_frag(rx_buf, skb, pkt_len);
+> +		else
+> +			skb = idpf_rx_build_skb(rx_buf, pkt_len);
+>  
+>  		/* exit if we failed to retrieve a buffer */
+>  		if (!skb)
+>  			break;
+>  
+> -		idpf_rx_post_buf_refill(refillq, buf_id);
+> +skip_data:
+> +		rx_buf->page = NULL;
+>  
+> +		idpf_rx_post_buf_refill(refillq, buf_id);
+>  		IDPF_RX_BUMP_NTC(rxq, ntc);
+> +
+>  		/* skip if it is non EOP desc */
+>  		if (!idpf_rx_splitq_is_eop(rx_desc))
+>  			continue;
+
+The code following this hunk, ending at line 3372, looks like this:
+
+		/* pad skb if needed (to make valid ethernet frame) */
+		if (eth_skb_pad(skb)) {
+			skb = NULL;
+			continue;
+		}
+		/* probably a little skewed due to removing CRC */
+		total_rx_bytes += skb->len;
+
+Smatch warns that:
+.../idpf_txrx.c:3372 idpf_rx_splitq_clean() error: we previously assumed 'skb' could be null (see line 3321)
+
+I think, but am not sure, this is because it thinks skb might
+be NULL at the point where "goto skip_data;" is now called above.
+
+Could you look into this?
+
+...
 
