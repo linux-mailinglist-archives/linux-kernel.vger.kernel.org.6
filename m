@@ -1,114 +1,169 @@
-Return-Path: <linux-kernel+bounces-197885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07ED48D705E
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 16:06:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE5EA8D7061
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 16:07:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B137B1F21979
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 14:06:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E154E1C214E4
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 14:07:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFCD7152174;
-	Sat,  1 Jun 2024 14:06:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6D0315218B;
+	Sat,  1 Jun 2024 14:07:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="unBUsn8O"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DBAXU9ZF"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B7851E871;
-	Sat,  1 Jun 2024 14:06:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3D421514C6
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Jun 2024 14:07:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717250798; cv=none; b=lcISbNyJDTwuqHL3mL7lsDjRJA7nioP7mbgp+WF4Oz3NxoJkuOWXj97BomYEgPO35vhQUdlwNqKRAUToyP4wcSvNmYNhzO1Uhamh+4aHWzV62NaehBg7vaA3UWz4Ofd+xaGHJGmfuiYovtW7nMXhyKy2OJAr4bNKb45hIZ+wX0c=
+	t=1717250829; cv=none; b=nTrhyfGGlhIsMB9jz159vXWbAcoiWF7ppAD/YTLnIoHSIOwX5Ee7YuqZ0FOqVIYDj0dojPe2i+7Fl+OBjUC0jqTJe/1mkE4oW8F8fLQu7IGEbu6tYkaIjts2mYtpol2Sk/XUIvOvbFQq+o3kqgPpyEibtUmQ0HVk3invTErl//I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717250798; c=relaxed/simple;
-	bh=/j5ILFtMpjiIaAV7H+hfiVW/2tt6sQJV0z9kL5h7blc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RU+tzlH0Aic9Ry3vA1O3vMIof87VGVHejRdDJICVtqIY+u6qkSK2pAGYOiie7jX7O47TJ7cKHQLGFSJA0TiLPajRIppakxzlmAHZ5cK+ffvvjPCe4WckZNVKsnTwz1M6vhzbbuM1OiKYCF/D5Ia+owhCDzyT8QDHWvxUTSEbiaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=unBUsn8O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E446C116B1;
-	Sat,  1 Jun 2024 14:06:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717250797;
-	bh=/j5ILFtMpjiIaAV7H+hfiVW/2tt6sQJV0z9kL5h7blc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=unBUsn8OXnCRHHFbp1bQ5L3fAmmACope/0sfX8QPNVMYsbcSoMivByMZz7ky1L2IW
-	 g3uQfvzBBoRVOqvt9t+5aCi10VUBLqUp35B9CwVmEVvp9AhfwOIDk1wRsqRb3O+jhP
-	 RmnhhtpADfAAVBHmEanVQ+PrJw4mjhRUvixLFIbKgmNG9fFhNjOzfX1fCaMCc8qRL3
-	 Y5AmIsWUuJSm/ogD3wc0/RGSGg06LTy+v/PPfmkme+Q0E98Cp0S/0ofIudzlGoU2Bl
-	 ky1UXb5KGs4CgA9ltXovNUsf6rCapRU8Yve3PQ9+ZOm3xxIWU8iZilAQ7FWv21ETvt
-	 u5CfNTB2iXIBQ==
-Date: Sat, 1 Jun 2024 07:06:37 -0700
-From: Kees Cook <kees@kernel.org>
-To: Gatlin Newhouse <gatlin.newhouse@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, Marco Elver <elver@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	Baoquan He <bhe@redhat.com>, Changbin Du <changbin.du@huawei.com>,
-	Pengfei Xu <pengfei.xu@intel.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>, Xin Li <xin3.li@intel.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>, Tina Zhang <tina.zhang@intel.com>,
-	Uros Bizjak <ubizjak@gmail.com>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
-	linux-hardening@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH v2] x86/traps: Enable UBSAN traps on x86
-Message-ID: <202406010700.39246BA@keescook>
-References: <20240601031019.3708758-1-gatlin.newhouse@gmail.com>
+	s=arc-20240116; t=1717250829; c=relaxed/simple;
+	bh=ikkENPlE2slpeWboaluDXajcTZxGD7or68aJOfcGkEM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XmJahC6B3kkO723QPtRdm1qqpgSCXNCh3lTqkV3x2XucRax4U2LIQXYxdCjIOezOKidHK26MgNAhVY0mBeJRBozC/D5No9NUSSRq9I10IzYbKQN9xmL4lNknVsDYHq4fUCT51+Rb0SD2POdphGBireEvkb3QXwbh7O3dBN5b7ss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DBAXU9ZF; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717250826;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kdunc1MOwifq0Pj2t9CMUd8sizubraQCUNmNNEjHAsA=;
+	b=DBAXU9ZFa0bXt1DYc2kSJwYKp2OBI184RMgc8nfFbVJQPa94rYNKjeyQy9+teqIYR7VBw4
+	rTJWg0PwBeq75a28ipaUzySuO1Y2EUNK4NppEyo6DbXjg6aS1Ws1adWw2ZEkpbupuDJoFX
+	r+BINZhe12gFkFgOD6JV7kdk6gEk1VA=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-497-6opmOykLN9ScFzEanrsRKQ-1; Sat, 01 Jun 2024 10:07:05 -0400
+X-MC-Unique: 6opmOykLN9ScFzEanrsRKQ-1
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a67984c1ff0so99960266b.0
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Jun 2024 07:07:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717250824; x=1717855624;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kdunc1MOwifq0Pj2t9CMUd8sizubraQCUNmNNEjHAsA=;
+        b=iZ7WrsCDtUfBPS9/c2Ex6vIlgeWH6eANh3H3w9svL7OvhzO08WD21Q41gbCcv8j95c
+         S1BLc48gQoSPQOnbKHQ9yFIR20DpfTwGo9q53EVNSTJaVIfP3XAFVyDZtioVpJgk81bV
+         3yLvDAbHcGOPcZQVGXqDcq1LL9LrYCbZL//7b750hbISQ02vPmhhlYZPnbBhSVv97jSq
+         YpZeAJSZnF8cxTQbqFZfudLIefBLokkGKdavH9LC5LGhjhsTO2C6cL37RG0ptQ362oeP
+         H4I5lRxhG7lhQZDTqWVG2tkdYQbdex+fEsv6S0N1Okgy7BPbSYETRGN1lM8uMvptzKHE
+         DIEw==
+X-Forwarded-Encrypted: i=1; AJvYcCUCGPYMhcD2tTf6xjbxxaepz6X4+HdmOJZ8kkxEb3D1853MqEyQh0U+emO2YaSGfmPd2JTW85Ir0EgVYfm34Hw4i8nVbACDSGN83jdN
+X-Gm-Message-State: AOJu0YwP7oGMu+aSWQmgeMUUd2bln2oC8qPmaOIe7HFRFnWQPPXKqvXh
+	HRWDps3XpQeVqqqhg+YfPZy4VRhzep+3fA04ll4o6tvC+eWEP+hvUep8cyn2mSLmB3hTlUfMvQU
+	q1ikTABpP7C7JkKgKGlaPvI96MJMZ6Dzje95tDrA8HNR7opl8X0RVYoY00et0sg==
+X-Received: by 2002:a17:906:7717:b0:a66:c041:e5fc with SMTP id a640c23a62f3a-a681fe4e225mr333041666b.5.1717250824047;
+        Sat, 01 Jun 2024 07:07:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEnukBzFfefT9QR5IBCC8a8HuaV7SiThNcod633slL2ixYxhj+mh/gMufDwzD04FZFjX9cAfg==
+X-Received: by 2002:a17:906:7717:b0:a66:c041:e5fc with SMTP id a640c23a62f3a-a681fe4e225mr333039866b.5.1717250823477;
+        Sat, 01 Jun 2024 07:07:03 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6861da5e24sm171765866b.136.2024.06.01.07.07.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 01 Jun 2024 07:07:02 -0700 (PDT)
+Message-ID: <cbc86440-5065-448d-b83c-83602de6651c@redhat.com>
+Date: Sat, 1 Jun 2024 16:07:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240601031019.3708758-1-gatlin.newhouse@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/3] Input: novatek-nvt-ts: add support for NT36672A
+ touchscreen
+To: Joel Selvaraj <joelselvaraj.oss@gmail.com>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?=
+ <ilpo.jarvinen@linux.intel.com>
+Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
+References: <20240526-nvt-ts-devicetree-regulator-support-v3-0-aa88d10ccd9a@gmail.com>
+ <20240526-nvt-ts-devicetree-regulator-support-v3-3-aa88d10ccd9a@gmail.com>
+ <55272a3b-575d-4212-a40b-7245beed5d80@redhat.com>
+ <a2f68c56-e6d6-4626-8d05-b5e808da60da@gmail.com>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <a2f68c56-e6d6-4626-8d05-b5e808da60da@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Sat, Jun 01, 2024 at 03:10:05AM +0000, Gatlin Newhouse wrote:
-> +void handle_ubsan_failure(struct pt_regs *regs, int insn)
-> +{
-> +	u32 type = 0;
-> +
-> +	if (insn == INSN_ASOP) {
-> +		type = (*(u16 *)(regs->ip + LEN_ASOP + LEN_UD1));
-> +		if ((type & 0xFF) == 0x40)
-> +			type = (type >> 8) & 0xFF;
-> +	} else {
-> +		type = (*(u16 *)(regs->ip + LEN_UD1));
-> +		if ((type & 0xFF) == 0x40)
-> +			type = (type >> 8) & 0xFF;
-> +	}
+Hi,
 
-The if/else code is repeated, but the only difference is the offset to
-read from. Also, if the 0x40 is absent, we likely don't want to report
-anything. So, perhaps:
+On 6/1/24 2:10 AM, Joel Selvaraj wrote:
+> Hi Hans de Goede,
+> 
+> On 5/27/24 03:42, Hans de Goede wrote:
+>> Hi Joel,
+>>
+>> On 5/27/24 5:26 AM, Joel Selvaraj via B4 Relay wrote:
+>>> From: Joel Selvaraj <joelselvaraj.oss@gmail.com>
+>>>
+>>> ---
+>>>   drivers/input/touchscreen/novatek-nvt-ts.c | 78 +++++++++++++++++++++++++++---
+>>>   1 file changed, 72 insertions(+), 6 deletions(-)
+>>>
+>>> diff --git a/drivers/input/touchscreen/novatek-nvt-ts.c b/drivers/input/touchscreen/novatek-nvt-ts.c
+>>> index 224fd112b25a9..7a82a1b09f9d5 100644
+>>> --- a/drivers/input/touchscreen/novatek-nvt-ts.c
+>>> +++ b/drivers/input/touchscreen/novatek-nvt-ts.c
+>>> @@ -139,9 +143,23 @@ static irqreturn_t nvt_ts_irq(int irq, void *dev_id)
+>>>       return IRQ_HANDLED;
+>>>   }
+>>>   +static void nvt_ts_disable_regulators(void *_data)
+>>> +{
+>>> +    struct nvt_ts_data *data = _data;
+>>> +
+>>> +    regulator_bulk_disable(ARRAY_SIZE(data->regulators), data->regulators);
+>>> +}
+>>> +
+>>>   static int nvt_ts_start(struct input_dev *dev)
+>>>   {
+>>>       struct nvt_ts_data *data = input_get_drvdata(dev);
+>>> +    int error;
+>>> +
+>>> +    error = regulator_bulk_enable(ARRAY_SIZE(data->regulators), data->regulators);
+>>> +    if (error) {
+>>> +        dev_err(&data->client->dev, "failed to enable regulators\n");
+>>> +        return error;
+>>> +    }
+>>>   
+>>
+>> This is weird, you already enable the regulators in probe() and
+>> those get disabled again on remove() by the devm action you add.
+>>
+>> So there is no need to enable / disable the regulators on start/stop .
+>>
+>> If you want the regulators to only be enabled when the touchscreen
+>> is on then you should disable the regulators again in probe()
+>> after the nvt_ts_read_data() call there (and drop the devm action).
+> 
+> Yes, I want the regulators to be enabled only when the touchscreen is on/active. I will disable the regulators in probe and remove the devm action in v4.
 
-	u16 offset = LEN_UD1;
-	u32 type;
+Sounds good.
 
-	if (insn == INSN_ASOP)
-		offset += INSN_ASOP;
-	type = *(u16 *)(regs->ip + offset);
-	if ((type & 0xFF) != 0x40)
-		return;
+It is great to see people working on getting mainline
+kernels to work on phones like the work you are doing here.
+Thank you for doing this work!
 
-	type = (type >> 8) & 0xFF;
-	pr_crit("%s at %pS\n", report_ubsan_failure(regs, type), (void *)regs->ip);
+Regards,
+
+Hans
 
 
 
--- 
-Kees Cook
+
+
 
