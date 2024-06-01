@@ -1,70 +1,71 @@
-Return-Path: <linux-kernel+bounces-197633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E99778D6D4C
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 03:42:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 300A48D6D52
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 03:43:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1AE991C215C6
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 01:42:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 831E2B2320E
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 01:43:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 557CE63D0;
-	Sat,  1 Jun 2024 01:42:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F31FCA946;
+	Sat,  1 Jun 2024 01:42:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="YZGOMqCU"
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="EZEulQPL"
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04AD2A55
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Jun 2024 01:42:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B20FC6FB6
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Jun 2024 01:42:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717206166; cv=none; b=c+4fmNjqRU0gdo9F5KX+F0S87ezkFLsbSt+c5bSdHcET4G9nCngXoSULrxliAq8VhWsdASKs4f+qMWiCGrImBLa5YfTOWlyGsDdd8rXWu/gBRDm6bwzoG5kvGNgvM9yb3GJKg8ixt27UInscsPbe91++XrkRTyhWEgOlDuAX5JY=
+	t=1717206169; cv=none; b=OzGoZ7cg1WCFtt7Xh7AYrwl7hyOPOxw9YZgj+TgCM6kvWTXENCrn2A6wO+lkwNzv3Z9seLHlZv3q1JpTAN4RrDI7N0hSq653LUyXqsmzR0aKY8CIh2ZclrriwdMdIoeqOfeaSoNzBkIleyI9NNGbtqVaqdAiW52YFmmDdvBVTq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717206166; c=relaxed/simple;
-	bh=RtPBGDrjxHAF9pAAHS4/V3G72zZ9pxbAwV6Wa1ILOXI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ZXZjidhCq67JgLGA/lCVfQjWi1nXUBwsjT2ppsveRo0YGgDKu8hatZl6u9Ykh4Vfda59iQo7UwTOBYYxX0IA96itwDgCv+Ko3P0hZ+2H3sH7wyOwOqiM8Z8eo+FRrNtEnWawYBswql+3jrJBdcHt27qkp44MwBo0Io6PAAaO2Mw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=YZGOMqCU; arc=none smtp.client-ip=209.85.128.175
+	s=arc-20240116; t=1717206169; c=relaxed/simple;
+	bh=fMhS89j65J/ioJctAsELK69LYt7rCRTJv5kJAJc12O8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kVcSGxeRTtvXQuxJ+apGnTSRYFqUB0cf0U+3D9K69LKYoMk6WaroGoatIJeZ2mx6zHrtuqNt8UTlnirw21D94THMMfczqHwU0CTUSWlUtGIwdssaFEbs8osip7ZeGtu66M8o4SZa/RZRTNYc4cCLZHmp/oK0kzlVfybzV5Pa6EY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=EZEulQPL; arc=none smtp.client-ip=209.85.219.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-627f3265898so26600387b3.3
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 18:42:44 -0700 (PDT)
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-dfa79233c48so1147377276.1
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 18:42:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1717206164; x=1717810964; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8cHPMeLcn44EVetD1HkMPMRNrtYI3nYnKi2QgdwWdQY=;
-        b=YZGOMqCUpj0mhzwc5yc54DDa8OKa+pUngzFTy8bHBvKFF2M6l3tk6FAaVJWDLvPm0v
-         9+gXSOOgYItVvXVeC7dVBU3kg9bsPxQQu0W0bXu1mhFGbafJZwx1UkmnwTN7gCu0+gfd
-         fXc2XPy8FWZacnFjUZ4kYVI8cf9I4silQh5FjA3+qrN6kdGl1lUriH9Tkndta1cbq4th
-         +buvxxQu4setuWfzA6lCmkbJhmv8G7eKqciiTzARQU3jEzW7om3aYhmJNMK/6/VvVKs5
-         q5/U28/YR0GWrb2P88v2YL0J0dive/M6QUH7X5W5WroMXvpGqqQdMNLVCHMPRBrIcmcK
-         uP1Q==
+        d=cloudflare.com; s=google09082023; t=1717206167; x=1717810967; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=cundJu+cYnxxw8687bE9Xl3Y+llWE0GOh77B0ua/CNI=;
+        b=EZEulQPLbNS0NM15eeqKtV9wFeLGCPEme9p9MxydLAhDWvxVpmc43mkyJD3lgqbHXR
+         gwMG7e7eAxQzsVvz+brmbu/uZvfH4D9aGhPFlMVBWYSGaab5kn9Ggb31RKkT+KsCEi3i
+         cq5R+J6SZUrwaQASzn05t6gmqiUXEaHfkdWYFjeBDHen/QBz4ceYUl1NPZQKNwlV0T29
+         8GZA9YUVTndFYXQNs+shzcvBN4qeekaOAbLmE9UZ9fDETaKxmGaBEvtW5AIDI9Ghz0Lo
+         HNGw0ZwI6wU3YOysfGBIVn4mYqwExGOnSgqSIctwuFR2oqhfRGQCh8tuNyuvdBIONmJH
+         M91Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717206164; x=1717810964;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8cHPMeLcn44EVetD1HkMPMRNrtYI3nYnKi2QgdwWdQY=;
-        b=tL9N2TocS3ZnaUpoXGh5NzIidKQlboGRZfOtwa9N+5usT51ewfTcZl2gvT2C352YHs
-         zN7QQ4WuiUq+9qlm61mynUaNg+IVoaWuij+Niq0qaMQ5vFanPbiKCnd6sFYyQMqCHXaT
-         3UvN8rm5f3bVV5spi7oLbTyGh2cDeBqJUW8Z06N8Yf/nER8VJkqz6wjsVRWoLldLIeo/
-         C6PxiXBV3ybwcODaIP7bjuZYaRPz8Qve7zFA5p1qf85TwFvaBfnKEbzkUCcLYhvoOYx/
-         fmVdxEDN9xzhAiF3hsTAupQ/SfRbHlWlJ8P7Ui8sWWEsaTI+FCJDFywWyGLVpbp887ly
-         D5fw==
-X-Forwarded-Encrypted: i=1; AJvYcCWPX7e8LQIQeSX2qofDUWSk0qrSaAhfyEPJKLSNRu7ejInqDLM0+2PuEDdLe2j22WjHU2yPTZJZaMFCWinmkdf147b9bDAGGhYHej1d
-X-Gm-Message-State: AOJu0Yy3mvQUxZ2wxjcPvriMxEtrC2o1Wr7yeFOdtx2omEkCUbO7FE7F
-	8W02f09SobRFtbNXamtPvBFWewpdItp3KiJ8EgHpMeB3IhV4mhGe0m0b2zKrwS4=
-X-Google-Smtp-Source: AGHT+IG7sanvx5FAHKJW1bxvvxPFu/J+Chdp5KgLHMLXg3dhzqi/Xmmf5bGO2qo5XX/yN4elKZ1zBQ==
-X-Received: by 2002:a81:400a:0:b0:627:dca5:407b with SMTP id 00721157ae682-62c79708770mr35288347b3.13.1717206163692;
-        Fri, 31 May 2024 18:42:43 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717206167; x=1717810967;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cundJu+cYnxxw8687bE9Xl3Y+llWE0GOh77B0ua/CNI=;
+        b=X3GI2x3RQQbM42qtkKLLPjB4q2HCVwd/QqYUdMr59XTsWymkcGJ1r3evVevhmn/Qu9
+         Cb6U59dFITkQBIM1zaTV2nbrH4h7mf/rZTsQqiYcD2hfLohcwKMp3yvz/+IA34GOpv9d
+         Rgn0c34y03XXT6cQUKt/diWIjYkwjuWm+nZ0REi0gMRdXv4p4w/JPJ38a0TWGGWlGkmL
+         dNHINBE37kuZpb+0k7ShG+TYFPIJ7e2DPFS5Wm2mZyThS+Z0JXremSVAHqWZxgwukevn
+         W84RW0nlsEaSiNGFSL/6ejO4EqiR/R5ngXCDuudPrYRU2ASFrzuFsHDH1HOfF4fBqtuk
+         5qUw==
+X-Forwarded-Encrypted: i=1; AJvYcCXnJTlgkTBpapsL5UG8xg0eSmu5LrvUnTJXky09zGfrFicKC42m6ge8XIwsPraLrLynjMHV+PyFm/4EVVWn8O52NLipc/BGhr6Wz87j
+X-Gm-Message-State: AOJu0Yw+x4g8QWO5KcE7fnGr4Y3Xn+4hj2zL8ne/PDkkiRjA0av5tyYQ
+	/Csrl8R5BxkgABVz+xtvxL/oxoS/C91tEiICndiM23U2l2ptC32DUrMG6ad3DPs=
+X-Google-Smtp-Source: AGHT+IF8/QXX/W3z+6+bPU1EZTN+wOS5BbuypuBo+0m5XNlSWCNf1UxNrXiBYmUihxaQr4gR5LJW8w==
+X-Received: by 2002:a25:abd1:0:b0:df4:dcb6:75bd with SMTP id 3f1490d57ef6-dfa73bc31f9mr4195161276.9.1717206166653;
+        Fri, 31 May 2024 18:42:46 -0700 (PDT)
 Received: from debian.debian ([2a09:bac5:7a49:f9b::18e:1c])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-62c766c9ca5sm5321317b3.143.2024.05.31.18.42.41
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-dfa6f011334sm561875276.4.2024.05.31.18.42.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 May 2024 18:42:43 -0700 (PDT)
-Date: Fri, 31 May 2024 18:42:40 -0700
+        Fri, 31 May 2024 18:42:45 -0700 (PDT)
+Date: Fri, 31 May 2024 18:42:43 -0700
 From: Yan Zhai <yan@cloudflare.com>
 To: netdev@vger.kernel.org
 Cc: "David S. Miller" <davem@davemloft.net>,
@@ -82,8 +83,9 @@ Cc: "David S. Miller" <davem@davemloft.net>,
 	Pavel Begunkov <asml.silence@gmail.com>,
 	linux-kernel@vger.kernel.org, kernel-team@cloudflare.com,
 	Jesper Dangaard Brouer <hawk@kernel.org>
-Subject: [RFC v2 net-next 0/7] net: pass receive socket to drop tracepoint
-Message-ID: <cover.1717206060.git.yan@cloudflare.com>
+Subject: [RFC v2 net-next 1/7] net: add rx_sk to trace_kfree_skb
+Message-ID: <451ae2a5c2ddb3c127cfddaf4a6579d6e85791f3.1717206060.git.yan@cloudflare.com>
+References: <cover.1717206060.git.yan@cloudflare.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,70 +94,90 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <cover.1717206060.git.yan@cloudflare.com>
 
-We set up our production packet drop monitoring around the kfree_skb
-tracepoint. While this tracepoint is extremely valuable for diagnosing
-critical problems, it also has some limitation with drops on the local
-receive path: this tracepoint can only inspect the dropped skb itself,
-but such skb might not carry enough information to:
+skb does not include enough information to find out receiving
+sockets/services and netns/containers on packet drops. In theory
+skb->dev tells about netns, but it can get cleared/reused, e.g. by TCP
+stack for OOO packet lookup. Similarly, skb->sk often identifies a local
+sender, and tells nothing about a receiver.
 
-1. determine in which netns/container this skb gets dropped
-2. determine by which socket/service this skb oughts to be received
+Allow passing an extra receiving socket to the tracepoint to improve
+the visibility on receiving drops.
 
-The 1st issue is because skb->dev is the only member field with valid
-netns reference. But skb->dev can get cleared or reused. For example,
-tcp_v4_rcv will clear skb->dev and in later processing it might be reused
-for OFO tree.
-
-The 2nd issue is because there is no reference on an skb that reliably
-points to a receiving socket. skb->sk usually points to the local
-sending socket, and it only points to a receive socket briefly after
-early demux stage, yet the socket can get stolen later. For certain drop
-reason like TCP OFO_MERGE, Zerowindow, UDP at PROTO_MEM error, etc, it
-is hard to infer which receiving socket is impacted. This cannot be
-overcome by simply looking at the packet header, because of
-complications like sk lookup programs. In the past, single purpose
-tracepoints like trace_udp_fail_queue_rcv_skb, trace_sock_rcvqueue_full,
-etc are added as needed to provide more visibility. This could be
-handled in a more generic way.
-
-In this change set we propose a new 'sk_skb_reason_drop' call as a drop-in
-replacement for kfree_skb_reason at various local input path. It accepts
-an extra receiving socket argument. Both issues above can be resolved
-via this new argument.
-
-V1->V2: instead of using skb->cb, directly add the needed argument to
-trace_kfree_skb tracepoint. Also renamed functions as Eric Dumazet
-suggested.
-
-V1: https://lore.kernel.org/netdev/cover.1717105215.git.yan@cloudflare.com/
-
-Yan Zhai (7):
-  net: add rx_sk to trace_kfree_skb
-  net: introduce sk_skb_reason_drop function
-  ping: use sk_skb_reason_drop to free rx packets
-  net: raw: use sk_skb_reason_drop to free rx packets
-  tcp: use sk_skb_reason_drop to free rx packets
-  udp: use sk_skb_reason_drop to free rx packets
-  af_packet: use sk_skb_reason_drop to free rx packets
-
- include/linux/skbuff.h     | 10 ++++++++--
+Signed-off-by: Yan Zhai <yan@cloudflare.com>
+---
  include/trace/events/skb.h | 11 +++++++----
  net/core/dev.c             |  2 +-
- net/core/skbuff.c          | 22 ++++++++++++----------
- net/ipv4/ping.c            |  2 +-
- net/ipv4/raw.c             |  4 ++--
- net/ipv4/syncookies.c      |  2 +-
- net/ipv4/tcp_input.c       |  2 +-
- net/ipv4/tcp_ipv4.c        |  6 +++---
- net/ipv4/udp.c             | 10 +++++-----
- net/ipv6/raw.c             |  8 ++++----
- net/ipv6/syncookies.c      |  2 +-
- net/ipv6/tcp_ipv6.c        |  6 +++---
- net/ipv6/udp.c             | 10 +++++-----
- net/packet/af_packet.c     |  6 +++---
- 15 files changed, 57 insertions(+), 46 deletions(-)
+ net/core/skbuff.c          |  2 +-
+ 3 files changed, 9 insertions(+), 6 deletions(-)
 
+diff --git a/include/trace/events/skb.h b/include/trace/events/skb.h
+index 07e0715628ec..aa6b46b6172c 100644
+--- a/include/trace/events/skb.h
++++ b/include/trace/events/skb.h
+@@ -24,15 +24,16 @@ DEFINE_DROP_REASON(FN, FN)
+ TRACE_EVENT(kfree_skb,
+ 
+ 	TP_PROTO(struct sk_buff *skb, void *location,
+-		 enum skb_drop_reason reason),
++		 enum skb_drop_reason reason, struct sock *rx_sk),
+ 
+-	TP_ARGS(skb, location, reason),
++	TP_ARGS(skb, location, reason, rx_sk),
+ 
+ 	TP_STRUCT__entry(
+ 		__field(void *,		skbaddr)
+ 		__field(void *,		location)
+ 		__field(unsigned short,	protocol)
+ 		__field(enum skb_drop_reason,	reason)
++		__field(void *,		rx_skaddr)
+ 	),
+ 
+ 	TP_fast_assign(
+@@ -40,12 +41,14 @@ TRACE_EVENT(kfree_skb,
+ 		__entry->location = location;
+ 		__entry->protocol = ntohs(skb->protocol);
+ 		__entry->reason = reason;
++		__entry->rx_skaddr = rx_sk;
+ 	),
+ 
+-	TP_printk("skbaddr=%p protocol=%u location=%pS reason: %s",
++	TP_printk("skbaddr=%p protocol=%u location=%pS reason: %s rx_skaddr=%p",
+ 		  __entry->skbaddr, __entry->protocol, __entry->location,
+ 		  __print_symbolic(__entry->reason,
+-				   DEFINE_DROP_REASON(FN, FNe)))
++				   DEFINE_DROP_REASON(FN, FNe)),
++		  __entry->rx_skaddr)
+ );
+ 
+ #undef FN
+diff --git a/net/core/dev.c b/net/core/dev.c
+index 85fe8138f3e4..7844227ecbfd 100644
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -5233,7 +5233,7 @@ static __latent_entropy void net_tx_action(struct softirq_action *h)
+ 				trace_consume_skb(skb, net_tx_action);
+ 			else
+ 				trace_kfree_skb(skb, net_tx_action,
+-						get_kfree_skb_cb(skb)->reason);
++						get_kfree_skb_cb(skb)->reason, NULL);
+ 
+ 			if (skb->fclone != SKB_FCLONE_UNAVAILABLE)
+ 				__kfree_skb(skb);
+diff --git a/net/core/skbuff.c b/net/core/skbuff.c
+index 466999a7515e..2854afdd713f 100644
+--- a/net/core/skbuff.c
++++ b/net/core/skbuff.c
+@@ -1203,7 +1203,7 @@ bool __kfree_skb_reason(struct sk_buff *skb, enum skb_drop_reason reason)
+ 	if (reason == SKB_CONSUMED)
+ 		trace_consume_skb(skb, __builtin_return_address(0));
+ 	else
+-		trace_kfree_skb(skb, __builtin_return_address(0), reason);
++		trace_kfree_skb(skb, __builtin_return_address(0), reason, NULL);
+ 	return true;
+ }
+ 
 -- 
 2.30.2
 
