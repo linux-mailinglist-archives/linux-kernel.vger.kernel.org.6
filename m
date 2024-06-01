@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-197925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B7E38D70CE
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 17:14:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0E428D70D2
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 17:18:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 278182832B8
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 15:14:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF7521C20B27
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 15:18:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 290E515279A;
-	Sat,  1 Jun 2024 15:14:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 167DB15279C;
+	Sat,  1 Jun 2024 15:17:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e3qH+dDP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="neoRfGaJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54EC515252F;
-	Sat,  1 Jun 2024 15:14:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 253F710949;
+	Sat,  1 Jun 2024 15:17:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717254854; cv=none; b=JwiVHQ7iHanIEUOzIrByoHRWdtIHFFcuwuxiwh4pk/5MPh7Y+tBW3lDmnv8EGcT7ApBYRPcpz1CDyEIiabifBWu3OtktcVgiiFXtCdedxsTCa44TtMm17PvN8YYl+0FpeypXgEPS3U9seVkwXZ/Pho2eZCDRobItnmLNwTRIo6w=
+	t=1717255077; cv=none; b=PK1+z2Q8diavpFAUrhcJWdm1kalPI4+K2xWt9lIGlVelRwduOSICw508HC7aCZKVFalQFEAqkap79ziE/lsVa0suZN2uDB4lUp5uAo1/Ywer+YF4/z3hDr1TUYCnH+l7XkjQFXJKgYfJ860wlq4jzfIbDH+6AD9z0LR9f8UPHV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717254854; c=relaxed/simple;
-	bh=mXF7nvSdeRE4Z4x5eaLbqxzEVjugXsq3MQ4fP2HSK4M=;
+	s=arc-20240116; t=1717255077; c=relaxed/simple;
+	bh=MiheRmDa9YIwfK0COcyZiMZofO0kN5bJO2zbV82w0Q8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eImnAf/aYMzKVtVk24Igm+wyG92X0ovJlepXJHdmoNNyH9P1Zl+D2ZmQClU/DLEZEcZxdg+VMH/JJKyZFPeUKpyYAazjiNHfcWYEpWnwY93FuUdpieFTCDf4tIhuKX2kR6ZshL811k+bjxbucI70T0uAVWNBmWhgjcCS9rMLIRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e3qH+dDP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B3EAC116B1;
-	Sat,  1 Jun 2024 15:14:10 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=dPipJJiysFYx8ygxjEObwv/iEXMYuebTLeVWJwgoXssubOjhkAi9jXaC83sa9XPZYL4TmP/eMoqbz5J8Z1rc3Nkd5aEh6l7Pg656EDPZYXFhRdNxJfh7P18mp8/YOSoTzwQbKNL0WEW0//eJmHpTOQqiDmdIYkEmRB4NyEnj54c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=neoRfGaJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28E88C116B1;
+	Sat,  1 Jun 2024 15:17:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717254853;
-	bh=mXF7nvSdeRE4Z4x5eaLbqxzEVjugXsq3MQ4fP2HSK4M=;
+	s=k20201202; t=1717255076;
+	bh=MiheRmDa9YIwfK0COcyZiMZofO0kN5bJO2zbV82w0Q8=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=e3qH+dDPDEnZn1ly6/gKXshZ0ogKUQM532qasqny17nvjvGV5kHOzMWQDgqQBdNU/
-	 n6o1uvUrIjiXR55Oo+6kI9YibFJT2Y5Vbb/n7qVpfmDPGfcUtvNHP5pLnYi6cwpRFm
-	 EAcw8ps0fjFaTBBQBygYfj6S0ReUCXM0rvuLn7zEYWZtIxd47kGSsQlO1eBIUxAdb8
-	 bRPU1P0xsDJz7ouQqm6dbUsIqGSqNV8H3AOIGN2TUW+Pjqo2sxTletK+kYewMeUVil
-	 25Q8irPts3GGDFA3WK2ftMERGEestQnYNBrI5znh8LRKIOHA7/k1aZSWTyswo9TIU+
-	 e004i5u+sfNhQ==
-Message-ID: <c89d4290-1f24-4a30-9d94-f6d0dde21e80@kernel.org>
-Date: Sat, 1 Jun 2024 17:14:08 +0200
+	b=neoRfGaJsRFWOk1FaODamSrVPP9Mkt05R2gvMBipBnzK1gyg+ILcqorphKVKXP7Gs
+	 F/R4Odn6vSj9GoNdKKK3FYuEB+UWeeTe0ceeBrwyPkZ2HsXvXMJdTUKFpNjGUC4lqW
+	 jpKJONY/2Yw1n2vrfXULQcfubiHTr6FYDdxpIOJ6vG+LdNB1Mh5SW8UVUHipwo8G++
+	 49rP8vVdhEOxQpE+M/kQzy43pt0aeAgPylF8ofIkz15XsbAJVnXd8q1eL3iYrynKPb
+	 2zkxDRnj0veTWOOgfykURUV6zWrRKZfuCj8/xqemaiA8jWzGLV9B4bw4ZcqAHZvwOa
+	 hMjCOb4ycNi2Q==
+Message-ID: <da382d43-fa82-44c0-9630-086f59e6efa2@kernel.org>
+Date: Sat, 1 Jun 2024 17:17:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,17 +49,23 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6] ASoC: dt-bindings: omap-mcpdm: Convert to DT schema
-To: Mithil <bavishimithil@gmail.com>
-Cc: peter.ujfalusi@gmail.com, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+Subject: Re: [PATCH 5/5] dt-bindings: pwm: sun20i: Add options to select a
+ clock source and DIV_M
+To: Hironori KIKUCHI <kikuchan98@gmail.com>
+Cc: linux-kernel@vger.kernel.org, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
+ <ukleinek@kernel.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Lopez Cruz <misael.lopez@ti.com>,
- linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240530111205.1764-1-bavishimithil@gmail.com>
- <7845bb1c-47d5-41f6-bf08-bd7b357df02c@kernel.org>
- <CAGzNGRn=e46yYrK3o8JhUmod4pGFFdEK31kUWUU4jn+JTgZjQg@mail.gmail.com>
+ <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>,
+ Aleksandr Shubin <privatesub2@gmail.com>, Cheo Fusi
+ <fusibrandon13@gmail.com>, linux-pwm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev
+References: <20240531141152.327592-1-kikuchan98@gmail.com>
+ <20240531141152.327592-6-kikuchan98@gmail.com>
+ <851280ad-ac0e-47d1-99e2-4f3b5ea29f2f@kernel.org>
+ <CAG40kxEbMQc-ni0HDVR7rtj48aFu-jz8sYUAO+fdmZSmXWrizw@mail.gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -105,20 +111,110 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <CAGzNGRn=e46yYrK3o8JhUmod4pGFFdEK31kUWUU4jn+JTgZjQg@mail.gmail.com>
+In-Reply-To: <CAG40kxEbMQc-ni0HDVR7rtj48aFu-jz8sYUAO+fdmZSmXWrizw@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 01/06/2024 08:16, Mithil wrote:
->> Please mention in the commit msg all changes (and explain why!) done
->> during conversion (comparing to original binding). I am pretty sure I
->> gave this feedback already.
-> I read that i'm supposed to add the changelog below the --- line, my
-> bad. I'll mention the changes in the commit message itself and that
-> too from v2 right?
+On 31/05/2024 19:57, Hironori KIKUCHI wrote:
+> Hello,
+> 
+>>> This patch adds new options to select a clock source and DIV_M register
+>>> value for each coupled PWM channels.
+>>
+>> Please do not use "This commit/patch/change", but imperative mood. See
+>> longer explanation here:
+>> https://elixir.bootlin.com/linux/v5.17.1/source/Documentation/process/submitting-patches.rst#L95
+>>
+>> Bindings are before their users. This should not be last patch, because
+>> this implies there is no user.
+> 
+> I'm sorry, I'll fix them.
+> 
+>> This applies to all variants? Or the one you add? Confused...
+> 
+> Apologies for confusing you. This applies to all variants.
+> 
+>>
+>>>
+>>> Signed-off-by: Hironori KIKUCHI <kikuchan98@gmail.com>
+>>> ---
+>>>  .../bindings/pwm/allwinner,sun20i-pwm.yaml    | 19 +++++++++++++++++++
+>>>  1 file changed, 19 insertions(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/pwm/allwinner,sun20i-pwm.yaml b/Documentation/devicetree/bindings/pwm/allwinner,sun20i-pwm.yaml
+>>> index b9b6d7e7c87..436a1d344ab 100644
+>>> --- a/Documentation/devicetree/bindings/pwm/allwinner,sun20i-pwm.yaml
+>>> +++ b/Documentation/devicetree/bindings/pwm/allwinner,sun20i-pwm.yaml
+>>> @@ -45,6 +45,25 @@ properties:
+>>>      description: The number of PWM channels configured for this instance
+>>>      enum: [6, 9]
+>>>
+>>> +  allwinner,pwm-pair-clock-sources:
+>>> +    description: The clock source names for each PWM pair
+>>> +    items:
+>>> +      enum: [hosc, apb]
+>>> +    minItems: 1
+>>> +    maxItems: 8
+>>
+>> Missing type... and add 8 of such items to your example to make it complete.
+> 
+> Thank you. I'll fix it.
+> 
+>>
+>>> +
+>>> +  allwinner,pwm-pair-clock-prescales:
+>>> +    description: The prescale (DIV_M register) values for each PWM pair
+>>> +    $ref: /schemas/types.yaml#/definitions/uint32-matrix
+>>> +    items:
+>>> +      items:
+>>> +        minimum: 0
+>>> +        maximum: 8
+>>> +      minItems: 1
+>>> +      maxItems: 1
+>>> +    minItems: 1
+>>> +    maxItems: 8
+>>
+>> This does not look like matrix but array.
+> 
+> I wanted to specify values like this:
+> 
+>     allwinner,pwm-pair-clock-prescales = <0>, <1>, <3>;
+>     allwinner,pwm-pair-clock-sources = "hosc", "apb", "hosc":
+> 
+> These should correspond to each PWM pair.
+> This way, I thought we might be able to visually understand the relationship
+> between prescalers and sources, like clock-names and clocks.
+> 
+> Is this notation uncommon, perhaps?
 
-I think you are now mixing different things. changelog and differences
-comparing to pure 1-to-1 conversion.
+It's still an array.
+
+> 
+>>
+>> Why clock DIV cannot be deduced from typical PWM attributes + clock
+>> frequency?
+> 
+> This SoC's PWM system has one shared prescaler and clock source for each pair
+> of PWM channels. I should have noted this earlier, sorry.
+> 
+> Actually, the original v9 patch automatically deduced the DIV value
+> from the frequency.
+> However, because the two channels share a single prescaler, once one channel is
+> enabled, it affects and restricts the DIV value for the other channel
+> in the pair.
+> This introduces a problem of determining which channel should set the shared DIV
+> value. The original behavior was that the first channel enabled would win.
+
+There's nothing bad in this.
+
+> 
+> Instead, this patch try to resolve the issue by specifying these
+> values for each PWM
+> pairs deterministically.
+> That's why it requires the new options.
+
+This does not solve that wrong divider can be programmed for second
+channel in each pair.
 
 Best regards,
 Krzysztof
