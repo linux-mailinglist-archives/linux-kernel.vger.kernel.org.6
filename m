@@ -1,187 +1,78 @@
-Return-Path: <linux-kernel+bounces-198013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CB658D7201
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 23:34:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C6408D7204
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 23:40:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99D551F2128E
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 21:34:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D23191F21BF2
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 21:40:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48B3C43146;
-	Sat,  1 Jun 2024 21:33:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7579320B0F;
+	Sat,  1 Jun 2024 21:40:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="gsCHRutT"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kmMJL9+k"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD0AA21364
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Jun 2024 21:33:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACC77B657;
+	Sat,  1 Jun 2024 21:40:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717277615; cv=none; b=QjpR4yRIjFRllPKAtxolvI41Yi67mDCBpvmHaS6YHqW4jNfmck6LJesRLNibrSxWdapClb/F3N3t3ruM2u4VR3QJbIT3zZqVWPgfEF+3P+Q8FH6Pn2T+ov3JERprDzq9ZoERHp89MJyI82Kw/SDCKo8zSaF+jH8sOChYF1js4No=
+	t=1717278006; cv=none; b=kNg4W8YH6MT2E4yCO4rBEnFX1M9fJdSYRxK/BqC+n3OX4NwWQcx4ZuQhM0HNjhYK7WJ4Z+QuYcOeelPM93jTFJqU7pliC4VlEe0nR4jfiatUPtMfxn6YgFafTSbjWOOw4kiDtm0WsE0lS9Fuq582JQqIqtzs7kTSsWQaDm3ohsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717277615; c=relaxed/simple;
-	bh=O8JuXN/F7C9Ahr23boiRySLU30zszNQXarX6RobRxdc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=L8JGiBI75tx8MtaY3PMS927uW+mPqTxevCZgESsfjHiJZldw06m91l5iorFIbk0YXN7+OPuBw+fg9Amqf0yNUUBEu5FExICj/reE3+d5Z1D1fmaF5ETWezPDDASjQS9l63dQIDyQFIGMHyxJWLRonUsBmJcsUkwdfVvKw9dX1ts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=gsCHRutT; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2e95a1f9c53so39785541fa.0
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Jun 2024 14:33:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1717277612; x=1717882412; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3sT0UxPJVsFvbizWQFXaFxd+myFLbvt1Djq9NxHiO/k=;
-        b=gsCHRutT+kkmDaDw99jdqRf4h1xDF/cC9Jm4Ym/eV0Ly4NNEN6JdUMV4lgMFGJx26Q
-         08fT9CRM5LZSvPxdS/JZ52OPmwPJYJG46ca9sXEqrCqwCxpcdGcMHjXduDQDpDPGR6rj
-         RmYt2I7xUPy4YzZ+qseoBshXeMlrFd57aiK/LxtqkCTvTkXNua/yOlg2QJIwSykoozRR
-         F0KaTZegWZI3PpfgRYvwINALTlsKABcK8W6+p6r2ri9Q5RFhkqY7FSk0Vs4zNW2LVWFI
-         nRrf2roBbiYoXd8SnU3/9F1X1uNLlxOvs75pdkbQMMvw8NnsS0Zzy2i3dYBcGTmsVIah
-         lFYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717277612; x=1717882412;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3sT0UxPJVsFvbizWQFXaFxd+myFLbvt1Djq9NxHiO/k=;
-        b=sZnBbDA1uQYGLIm0GK3LQpK6Ul1Gnyt45FDPRSu2+nnhwPC293qW4EW+HiTtCYJjSN
-         s/rYFmpAdUrFlNFrUKkOVQYVIFpCPDUWO7yJoNgqrZClRbPvc+X1pzLHtWmtH4+TmWvH
-         xv9QbckNGzt/D7ZvWBSppWJ0VY02VGbzP3RFk3e3mfPVgYTyQf68fhOgFT1av6RVVeuX
-         HBBKd7fzebkO/jhP3pSpv/+lIzzx3BJkiOB8Ulzlnm9Hnr3kOWP5mzidIoNwyniCcSCx
-         4aNHs9BvXx2sFJMAch8NbUJIJXJH9pzQEkn6BmZcWAYLJisOav/h5pwXTDLXjk0Kmv6X
-         vAwA==
-X-Forwarded-Encrypted: i=1; AJvYcCWPZIMJ3JZZWsqDdajiS3B8tAIK+3iAcds4WRQm5zR3MvxKKGrZrlesCAmf6X71uid62qPBywDPvww/y9+KNDyvhPJQNMsyRAVw3mzD
-X-Gm-Message-State: AOJu0Yy0al+SHfHxLJe7bL266OGWDCxuANCCI5ItJnqGyuIG12KeQ0l1
-	wTT2T6/Cr2XveWTfuexlp0pkVj3LpXMd8+YrTVWX6DYJ2n8aKaLtAAbqwPyKq1k=
-X-Google-Smtp-Source: AGHT+IHTtXDQYUCHcup+VdBP7H+9TJT0tVCvzBLqaigZ6UCn3zIJ6feyXGCuTgk0t3iYmSADXLLaag==
-X-Received: by 2002:a2e:8e62:0:b0:2ea:7954:3777 with SMTP id 38308e7fff4ca-2ea950f8c22mr29792601fa.18.1717277611480;
-        Sat, 01 Jun 2024 14:33:31 -0700 (PDT)
-Received: from airbuntu.. (host81-157-90-255.range81-157.btcentralplus.com. [81.157.90.255])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35dd04c0839sm4751324f8f.23.2024.06.01.14.33.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 01 Jun 2024 14:33:31 -0700 (PDT)
-From: Qais Yousef <qyousef@layalina.io>
-To: Ingo Molnar <mingo@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Steven Rostedt <rostedt@goodmis.org>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>,
-	Daniel Bristot de Oliveira <bristot@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jens Axboe <axboe@kernel.dk>,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	Qais Yousef <qyousef@layalina.io>
-Subject: [PATCH v4 2/2] sched/rt, dl: Convert functions to return bool
-Date: Sat,  1 Jun 2024 22:33:09 +0100
-Message-Id: <20240601213309.1262206-3-qyousef@layalina.io>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240601213309.1262206-1-qyousef@layalina.io>
-References: <20240601213309.1262206-1-qyousef@layalina.io>
+	s=arc-20240116; t=1717278006; c=relaxed/simple;
+	bh=m+etHiW6k+2IQY7bRLYoihQg+r9dVMhN7tANjY2hCnk=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=VluMzgnE+DXCYsiadTvMW9CPVVkoHqYpd+wS3HfGr9FNussaqhcxmqD5v9BIIom40aPMcm0wB1v2AGQP0I/pSl/1bjg08gM6hrfZPKigRztpFQYMTmuR4XAoaIyyTkNToUc3vpwr0Jz8f8h6DWfMVCuIrnBFiPdTO2IzUasbxz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kmMJL9+k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 37D39C116B1;
+	Sat,  1 Jun 2024 21:40:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717278006;
+	bh=m+etHiW6k+2IQY7bRLYoihQg+r9dVMhN7tANjY2hCnk=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=kmMJL9+kYGq/S2zWRoc9bL/rjCwKfPco8A8wLAGaOdHFKR01+/smYQAz5dRhzZGXV
+	 /n5MGSEmd8MVVQStelfU91JK5ZWBtNCyXcQwGgn3N341i6G7JsYBBve4ci/7qe4mno
+	 ax3jKeNdbmmtVg9anKiMCRupjfhRDiA1EKwP9Jr94HdSfpN0D5S/DA5hgKeIJxFzjt
+	 uckuLEsmqW4J86ZQlh4rUzBlQrd0J/WoAIUIdKAL5bgh3QTs2xiQXe68iqwi8DhOF/
+	 32rMHhpYe0S/aoyWoNmO3OU12NvCXq0A8s0LfXer5s6MEJvk4hJ1w/VsGTa5JC9/Kj
+	 Tv1JFHm23/KRw==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 21572D2D0EA;
+	Sat,  1 Jun 2024 21:40:06 +0000 (UTC)
+Subject: Re: [GIT PULL] smb3 client fixes
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <CAH2r5mstfGRS6XazUAM7uX=FkpJ+da7jesa1_8BcOvZgLx1RYQ@mail.gmail.com>
+References: <CAH2r5mstfGRS6XazUAM7uX=FkpJ+da7jesa1_8BcOvZgLx1RYQ@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CAH2r5mstfGRS6XazUAM7uX=FkpJ+da7jesa1_8BcOvZgLx1RYQ@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.samba.org/sfrench/cifs-2.6.git tags/6.10-rc1-smb3-client-fixes
+X-PR-Tracked-Commit-Id: 518549c120e671c4906f77d1802b97e9b23f673a
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 89be4025b0db42db830d72d532437248774cba49
+Message-Id: <171727800605.30089.2246135519790170864.pr-tracker-bot@kernel.org>
+Date: Sat, 01 Jun 2024 21:40:06 +0000
+To: Steve French <smfrench@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, CIFS <linux-cifs@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-{rt, realtime, dl}_{task, prio}() functions return value is actually
-a bool.  Convert their return type to reflect that.
+The pull request you sent on Sat, 1 Jun 2024 16:14:00 -0500:
 
-Suggested-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-Signed-off-by: Qais Yousef <qyousef@layalina.io>
----
- include/linux/sched/deadline.h |  8 ++++----
- include/linux/sched/rt.h       | 16 ++++++++--------
- 2 files changed, 12 insertions(+), 12 deletions(-)
+> git://git.samba.org/sfrench/cifs-2.6.git tags/6.10-rc1-smb3-client-fixes
 
-diff --git a/include/linux/sched/deadline.h b/include/linux/sched/deadline.h
-index 5cb88b748ad6..f2053f46f1d5 100644
---- a/include/linux/sched/deadline.h
-+++ b/include/linux/sched/deadline.h
-@@ -10,18 +10,18 @@
- 
- #include <linux/sched.h>
- 
--static inline int dl_prio(int prio)
-+static inline bool dl_prio(int prio)
- {
- 	if (unlikely(prio < MAX_DL_PRIO))
--		return 1;
--	return 0;
-+		return true;
-+	return false;
- }
- 
- /*
-  * Returns true if a task has a priority that belongs to DL class. PI-boosted
-  * tasks will return true. Use dl_policy() to ignore PI-boosted tasks.
-  */
--static inline int dl_task(struct task_struct *p)
-+static inline bool dl_task(struct task_struct *p)
- {
- 	return dl_prio(p->prio);
- }
-diff --git a/include/linux/sched/rt.h b/include/linux/sched/rt.h
-index a055dd68a77c..efbdd2e57765 100644
---- a/include/linux/sched/rt.h
-+++ b/include/linux/sched/rt.h
-@@ -6,25 +6,25 @@
- 
- struct task_struct;
- 
--static inline int rt_prio(int prio)
-+static inline bool rt_prio(int prio)
- {
- 	if (unlikely(prio < MAX_RT_PRIO && prio >= MAX_DL_PRIO))
--		return 1;
--	return 0;
-+		return true;
-+	return false;
- }
- 
--static inline int realtime_prio(int prio)
-+static inline bool realtime_prio(int prio)
- {
- 	if (unlikely(prio < MAX_RT_PRIO))
--		return 1;
--	return 0;
-+		return true;
-+	return false;
- }
- 
- /*
-  * Returns true if a task has a priority that belongs to RT class. PI-boosted
-  * tasks will return true. Use rt_policy() to ignore PI-boosted tasks.
-  */
--static inline int rt_task(struct task_struct *p)
-+static inline bool rt_task(struct task_struct *p)
- {
- 	return rt_prio(p->prio);
- }
-@@ -34,7 +34,7 @@ static inline int rt_task(struct task_struct *p)
-  * PI-boosted tasks will return true. Use realtime_task_policy() to ignore
-  * PI-boosted tasks.
-  */
--static inline int realtime_task(struct task_struct *p)
-+static inline bool realtime_task(struct task_struct *p)
- {
- 	return realtime_prio(p->prio);
- }
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/89be4025b0db42db830d72d532437248774cba49
+
+Thank you!
+
 -- 
-2.34.1
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
