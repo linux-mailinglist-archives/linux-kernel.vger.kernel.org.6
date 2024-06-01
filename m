@@ -1,109 +1,117 @@
-Return-Path: <linux-kernel+bounces-197847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFB738D6FF6
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 15:11:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68C428D6FF4
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 15:11:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D9031F21F08
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 13:11:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 243BA281E71
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 13:11:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12ABA1514C6;
-	Sat,  1 Jun 2024 13:11:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4D6A1514CF;
+	Sat,  1 Jun 2024 13:10:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="gkR1vG4P"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l1WV53eh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EF841509A1;
-	Sat,  1 Jun 2024 13:11:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF0E150999;
+	Sat,  1 Jun 2024 13:10:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717247493; cv=none; b=YNC7DkyT5teHESq5mPiPNqZMg1P/hmPpyLgRKGFhU7AdZbb5QfComtK/vU5ewZ78nXWzZpodytb6sJPhN5UQWaNvLQGB6cprQi4ZeQ3Ll3KzPEOTz6pxnUebW0stsFUuimxwrrUNAXIaHMZ/mk4oOXOLirh+VHcoJL0B66/bSGs=
+	t=1717247459; cv=none; b=EerjX9rMtuBDQHP/DoXtnPt8Et24ILUR6WgEQjEObT8Ypvu1wwJ0YUjekNt/mkvg7v0WokuycEZiVHtOZpYPtLtQUp7VcUjA7Pw19s+Sp2XbeCzIpbDH+G41V5stxr/pl+JQ186dmZk+t87jfw0vTEuAmT8gysiD5FH5+SjDebQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717247493; c=relaxed/simple;
-	bh=1azJbmKafXYpI7cPrs4sh/5oeftQgPo4X4g1HEFMTDI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pmUJs/aW/EzHkHC/LRHwuUUn/5XCAq8rt5F9a8z4Lmtb5ZaIK1WoSD9+wp0YqIliejxkn+ehrSe6zer3sgnPjC8s2B+6kNGs4E1/EHaEXubKmAf9YlZ7bCwutmxekU91KasyrcwJHR/3s4lXnyOK/Ba83U41VHh/ZqpiwH06U1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=gkR1vG4P; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1717247440; x=1717852240; i=markus.elfring@web.de;
-	bh=1azJbmKafXYpI7cPrs4sh/5oeftQgPo4X4g1HEFMTDI=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=gkR1vG4PWxoV0wY+ljRZqKsbe8ownQbLIekqm0gF/RdpoxNT7ZPf0PMj74VXYCkV
-	 WoBnYOowP8AEsvKwIXx0EFA5n1FwefIyiiSh2UhsTmkqy9I+x7x0tMTZgT28youFM
-	 mPQnFv2EfcYWykUCRMXbYTy26/qgqtRCafT40qdArO9iZyzCj9VzN2ki0mg7bu0mK
-	 qAwhPljOHpt42F7VA3rQJ5OlpP4wFXiuojnCvjiOnDOVtanQV9Dri6cysZESU7QMJ
-	 DR1F38tES2ivM9n2b3TnpbhMHaSIkg2KJAhfc4dcLtKGs4ywduOB5CRDqrvjWetQc
-	 CYxxpyCA8IVLvMTFPg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1M8T7K-1s8yeW1qYC-009vic; Sat, 01
- Jun 2024 15:10:40 +0200
-Message-ID: <e4e9a26f-720a-4648-a099-be9193af1734@web.de>
-Date: Sat, 1 Jun 2024 15:10:29 +0200
+	s=arc-20240116; t=1717247459; c=relaxed/simple;
+	bh=yvirPWICtc2QO7WKfB/iVO5Zi8WPqbGY2CUGPPTKTgc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PfGB5fxTb6HTQdbXthGHqUflOKWN9MKvTscMhKHHlsSPXZMP+GS83BySO20qRNjAP20ToGCKLAa1dNAhTrq+gxjcxLf3Icwh4ifVA05zqlvHTp3r/war1TYTdHZ4SdK3egMMqXYYrnM8IQUbBOfHZSXqE2uMIocuwuTczI5TccM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l1WV53eh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E95C1C116B1;
+	Sat,  1 Jun 2024 13:10:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717247458;
+	bh=yvirPWICtc2QO7WKfB/iVO5Zi8WPqbGY2CUGPPTKTgc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=l1WV53eh1n81m2udc9OuBCt0KFuPBHRwk5fkRV4wNsbu+WrEfgbfmAEZhkmVRA2Zv
+	 CgSP5lySgLwPxnPnXG0xDQs86mifJ1pRdAaF8XpUE7tEDwjuWLg7cfH7CbpadeW6Bc
+	 WJOqi5Ezrc2B8ytpAfhXe0gUOJfvPF7jmuoKZ89rZCzuiRrwaB2Y6Nr5uqhhdBc/Nw
+	 D6XmAfbECyD9Dr+JdoughBdHVodQPnsOx92x6nBuoX6vVVP0SVBUYHv7dlCUb/zgIP
+	 PA0QFzUU9O3DSh2vgB0mYUixEyLVPQifeZRjRGIPNUOE2yII1dhAX/mHIIup0iHNJI
+	 VlnYR6hSjMwVQ==
+Date: Sat, 1 Jun 2024 14:10:53 +0100
+From: Simon Horman <horms@kernel.org>
+To: Martin =?utf-8?Q?Hundeb=C3=B8ll?= <martin@geanix.com>
+Cc: Chandrasekar Ramakrishnan <rcsekar@samsung.com>,
+	Marc Kleine-Budde <mkl@pengutronix.de>,
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Markus Schneider-Pargmann <msp@baylibre.com>,
+	linux-can@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] can: m_can: don't enable transceiver when probing
+Message-ID: <20240601131053.GL491852@kernel.org>
+References: <20240530105801.3930087-1-martin@geanix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 6/7] PCI: xilinx-nwl: Add phy support
-To: Sean Anderson <sean.anderson@linux.dev>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
- Dan Carpenter <dan.carpenter@linaro.org>, Michal Simek
- <michal.simek@amd.com>, Thippeswamy Havalige <thippeswamy.havalige@amd.com>
-References: <20240531161337.864994-1-sean.anderson@linux.dev>
- <20240531161337.864994-7-sean.anderson@linux.dev>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240531161337.864994-7-sean.anderson@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:rr0oyNIhZsSYRmKnkOucR9Hnu5e7lA1H5g6+bgs5JjeJyKuLq0b
- gfn+X2lblMLkvd1RN6itUqIcqLUJwWcrcKx1TlJMfYtpeR2mBz0DeCdoxpOEXRCBTv5i/gG
- bMiulP3G/MO/ora81oPn2M3noj4QrQjrRGuYvK5gvn2RPbhnJjkMLwaubArX2DSPv2gEFkY
- fn5kg+YVa3D9hu+VmBYKw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:zmel7gxYK9M=;CsezFhwRd1YgwkDWyl9LkM6gLr3
- y7Ltp5b/BFj82tGPE7dpM7Ig10am/QTbVDxOQVlqrKQeVkzSTRKiuGOVvHzCaW2piTZF6hMb5
- 8kzWVUwdFodYkbrhxswldnpMokKLkJkhZ/M2x5r3JpZ8oixxJ8rPxU/5/3W4b5LuxntS/Lph2
- XH/kYKdMU4Xfs9scU7YDmU+FbaqLXVwedllqd0/3NvrobDgOpZLbh3eJltqNSWvaSzlvvvywK
- /omG1LnxbCxe8Vt0FOgSakA9c/IaZv1wvS5JCXDjJYRheOgWq90ZqetRsXh9h2IF5n32rJhG8
- j7+I/uivkmFY8iL1I/Ap/xYe8ieXC563DKFqqIpxxuq0cr9Z3MFdXv5uyE0vbmMASCASZDE+v
- U7TkkuwVLnYAzBcq1VjmXF+pffV1Im+mxX0vsll8Wrhw884LoYGYQOj/mwTyQgs8PNhiUuz/f
- DoBSgWk8rJM981Mu7WjKobo0NeQGPGlZwsIUQIQxY3L4CHRptzFoE5/B2jJ3OUUoiXiW7wd5c
- 0YfU61UnaCscPK/pfu5qMo8LCMvKfgKdpL18j5JQGWM2JLKTSzKvI0tqmvhEtEtE3EQ292u1d
- Ll/wR97QZ4hbcaGrx0hNo4zadgzcMWZz4OXrdn8yThcgLOjQhzycF0mko7l0r3qJeaUMDjQSx
- EPi8Vx+BGd7NTT6yLJ615Ehy+JN3xeiZvChFzMrHYXtLMBzfI1cHx/eRKrJN8Yt4LwTe/qVKR
- giHVSacz/SVXEOQqML6eyV1IdDDbbh0uNgLj19kKx/wYeIUhoLsu1eojJfFl8aM37HlbcUKkr
- 27/mdZf03Z8KxcztQp0hyriCscZ/YVMXrlEZNq82LHsoU=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240530105801.3930087-1-martin@geanix.com>
 
-> Add support for enabling/disabling PCIe phys. We can't really do
-> anything about failures in the disable/remove path, so just print an
-> error.
+On Thu, May 30, 2024 at 12:57:58PM +0200, Martin Hundebøll wrote:
+> The m_can driver sets and clears the CCCR.INIT bit during probe (both
+> when testing the NON-ISO bit, and when configuring the chip). After
+> clearing the CCCR.INIT bit, the transceiver enters normal mode, where it
+> affects the CAN bus (i.e. it ACKs frames). This can cause troubles when
+> the m_can node is only used for monitoring the bus, as one cannot setup
+> listen-only mode before the device is probed.
+> 
+> Rework the probe flow, so that the CCCR.INIT bit is only cleared when
+> upping the device. First, the tcan4x5x driver is changed to stay in
+> standby mode during/after probe. This in turn requires changes when
+> setting bits in the CCCR register, as its CSR and CSA bits are always
+> high in standby mode.
+> 
+> Signed-off-by: Martin Hundebøll <martin@geanix.com>
+> ---
+>  drivers/net/can/m_can/m_can.c         | 169 ++++++++++++++++----------
+>  drivers/net/can/m_can/tcan4x5x-core.c |  13 +-
+>  2 files changed, 116 insertions(+), 66 deletions(-)
+> 
+> diff --git a/drivers/net/can/m_can/m_can.c b/drivers/net/can/m_can/m_can.c
 
-You propose to extend the exception handling.
-Does such information indicate a need for another tag =E2=80=9CFixes=E2=80=
-=9D?
+...
 
+> @@ -1694,21 +1732,26 @@ static int m_can_dev_setup(struct m_can_classdev *cdev)
+>  		return -EINVAL;
+>  	}
+>  
+> -	if (cdev->ops->init)
+> -		cdev->ops->init(cdev);
+> -
+> -	return 0;
+> +	/* Forcing standby mode should be redunant, as the chip should be in
 
-Would you become more interested in the application of scope-based resourc=
-e management?
+Hi Martin,
 
-Regards,
-Markus
+A minor nit from my side as it looks like there will be another revision
+anyway.
+
+redunant -> redundant
+
+> +	 * standby after a reset. Write the INIT bit anyways, should the chip
+> +	 * be configured by previous stage.
+> +	 */
+> +	return m_can_cccr_update_bits(cdev, CCCR_INIT, CCCR_INIT);
+>  }
+
+...
 
