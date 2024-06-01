@@ -1,120 +1,98 @@
-Return-Path: <linux-kernel+bounces-197770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 090748D6EE4
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 10:32:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C6C48D6EE8
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 10:35:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B953028523E
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 08:32:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96EF72873E0
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 08:35:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FC2C1CF8D;
-	Sat,  1 Jun 2024 08:32:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C4BD20B34;
+	Sat,  1 Jun 2024 08:35:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KO5myp0A"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t33ghpcn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B71F3D69
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Jun 2024 08:32:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8845134BC;
+	Sat,  1 Jun 2024 08:35:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717230724; cv=none; b=Ep9qivM5c1XzmVB3wHcjZZh876bG6YZYDqXpJxDXc4TANTz778GdnvCfXs7sFc52iD3ciiGMttVoHoxTlOLKyORx0m3gmU4Vk+f8ADwevmTTF3ZX1M/wIfMkPenhweKT0MrJRkUYD2pZi3N0QetqJf8Qm6rPIrM+kq4IItnkMRw=
+	t=1717230924; cv=none; b=C5nsxuqg5txRmpHMwWMiG3HWU7J14WpLS6UFWvOeTXbHrqhQw7Z4tJmt1cmiX/kIOT6kaFkxz+M+JvFIE3O4dNzCDY+iPsd+eHX6WXX0QtkZ3tTSdRh90pTHuqO/bgfgt8biHT8r+mwOwovMwMr/A2xaUsuyKtdXG6FpTP7v2PE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717230724; c=relaxed/simple;
-	bh=FKb4cyZxX+aHBqlharm4di4pT4yRKJBQrV6+RAj1SmE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EpKeaWhO4+OoH9Y1iCeWgS6peHMYCYK/SrU/TlSfy+Ch4m0sF77zZv7Uj+0NIsCUjVpA/mx9i8CDLhiH1268gpm6kHa2lWJLpEXTIYJM1wP1TTEPznvaegH6xIUlxFHdKLslL9m4Lnh+Ph7JvcMxtnvMuVN+aAn1duFbP7Z6hj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KO5myp0A; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2c19bba897bso2163067a91.2
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Jun 2024 01:32:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717230723; x=1717835523; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=H3hjzwanBytkl4obEE6D67qP07qRMuRdAI0wYEzYvMc=;
-        b=KO5myp0AVxfKt1s5399lEOOMM244lD/dR8tUYiMrRhFjMDhqltCiFUNr1dSN/jJKHA
-         ax5feJXJYaR+H77KswJPOY968fpseItaPUpxprVDXZxI53cFk1MKaQN1gj0ieEUXLj0L
-         r43DmAZwmFHYbrRKwupU9MW/QTNiBa1bg2Oq/2Upu2kMoP9NUI+rjO1I9YslJbwmc9ol
-         8LdOU23xX0AABfn4ZhCNoyIo4RaMIhwhyLcKVzENjJJhuy0n5RU5CXTX+vzKinyPPOeI
-         hiqOngDdxZZZYa3e4Hlmt55s0iTBGEyDFJPQiMd1lScj329iBZngl9ZLr/pg1RKv6zaZ
-         KjEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717230723; x=1717835523;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=H3hjzwanBytkl4obEE6D67qP07qRMuRdAI0wYEzYvMc=;
-        b=TCp1FmvEhkdFbsWO3zPymi+omlIhblsTbuktTnxH9gSY4DWrMJqgp2T5ncqcJuSid5
-         gFIY8ePqTyESntFiBiZDl5guqefF4zLByXXLqObboMCeWtRc9nVyatFf6PzwxyDG78LT
-         ySM+w0tvRXJ7eAbN/P4897fcymP6dvB44F8EUu1hjUzB5pz4IuyadhdcjiWtKl45GNPq
-         vF7GUGMpm8qRTsxVRkopy50t1cQD8c2OY8o1f4n2Qbb0+ZSfRcFmqEkpTMve2fuAs6s6
-         aCGtUqL3lHGyE7iGFmOvfjhWItVIXw4Z+Fz96kkvFLNEHTyJ5qrbThjtBupm7IIg03Zr
-         bOTw==
-X-Forwarded-Encrypted: i=1; AJvYcCVLDTeObFYAZliZhPmPg57MT7aiSb6ouELmlsFXoAasqcewhDAZ1UNTSmXqsYtO0IT2w0+MaINlCh6dLWIK7XoklhOv7FXVyGAFW3wE
-X-Gm-Message-State: AOJu0YxaD/XDfYWkTwy2n3/OxZk40DvIJEsx8UE8LoDc6xjCd4EIyhVz
-	Y/ae7ybhr0PNCiCks7RqAJpYe6UBXKcygKOk8BMX7F/1qrGwjuhJjhP9jFZq
-X-Google-Smtp-Source: AGHT+IEn0wjLCo6Y1AE4Mp4UbxabwPlAjXIHUBxQsF3C/qD+vV4XI4Luyq32+AdsW0zeHI1BnStLHg==
-X-Received: by 2002:a17:90b:2282:b0:2bd:fa57:b361 with SMTP id 98e67ed59e1d1-2c1dc56fce1mr3603808a91.11.1717230722679;
-        Sat, 01 Jun 2024 01:32:02 -0700 (PDT)
-Received: from ubuntukernelserver.. ([110.44.116.44])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c1a77bb65bsm4384000a91.56.2024.06.01.01.31.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 01 Jun 2024 01:32:02 -0700 (PDT)
-From: Roshan Khatri <topofeverest8848@gmail.com>
-To: gregkh@linuxfoundation.org,
-	ruanjinjie@huawei.com,
-	bragathemanick0908@gmail.com,
-	colin.i.king@gmail.com
-Cc: Roshan Khatri <topofeverest8848@gmail.com>,
-	linux-staging@lists.linux.dev,
+	s=arc-20240116; t=1717230924; c=relaxed/simple;
+	bh=i6QXw0K5kD5BqtAZxeo4zpXZBwWLBWtzp1J9e0muU8c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MsWQlqva6K/vhYefX1zg+m7H7wslf6kDTIA+NbT43jbKcNSXPFcTkqoOKrt8j9k3ABbJy0SmJOXyiTvfFawk2wwjhZAznP7Lm7Uj7oKWMoTJiiOL35D/j2f697ytP0sSnNYQFnxJn4bvdlwikVZ5KMr8QDAVGuHv/7DXiC9gakU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t33ghpcn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E2F7C116B1;
+	Sat,  1 Jun 2024 08:35:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717230923;
+	bh=i6QXw0K5kD5BqtAZxeo4zpXZBwWLBWtzp1J9e0muU8c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=t33ghpcnE/BmCqaAshrQt17eVB2iwIAhBihh8ANAqgvrW4XD6/WzPzv+ZI2bxvs6/
+	 wzuDIYcORClcDYgFhJKGsq1Wh7GnTciiLgKXNKhExNdR5tbfz5eLAg+Pr1qupo9oOx
+	 q97iT3Vl+4eEJejchQbdxGFYU9S8yK3k7/QlmFqj7cb6KLwqJPff960P6jZiXAaSDZ
+	 qyzGupR6m9hLvhOLioR0cYZjYD7CAP4dOdk5gO5pFTZPxx4VjJ6lzyGAeqddh6vGI+
+	 90O1nLsAOO8XJD7N5lBT9L6sAcemJe0q3+m+iKIeHK3AvbZEc0BrP9yzo6DPvB2SJh
+	 w1tjKH6vzJi6g==
+Date: Sat, 1 Jun 2024 09:35:17 +0100
+From: Simon Horman <horms@kernel.org>
+To: Guangguan Wang <guangguan.wang@linux.alibaba.com>
+Cc: wenjia@linux.ibm.com, jaka@linux.ibm.com, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	kgraul@linux.ibm.com, alibuda@linux.alibaba.com,
+	tonylu@linux.alibaba.com, guwen@linux.alibaba.com,
+	linux-s390@vger.kernel.org, netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: rtl8723bs: hal: Fix spelling mistakes in odm.h
-Date: Sat,  1 Jun 2024 14:16:53 +0545
-Message-Id: <20240601083153.96242-1-topofeverest8848@gmail.com>
-X-Mailer: git-send-email 2.34.1
+Subject: Re: [PATCH net-next 1/2] net/smc: set rmb's SG_MAX_SINGLE_ALLOC
+ limitation only when CONFIG_ARCH_NO_SG_CHAIN is defined
+Message-ID: <20240601083517.GX491852@kernel.org>
+References: <20240528135138.99266-1-guangguan.wang@linux.alibaba.com>
+ <20240528135138.99266-2-guangguan.wang@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240528135138.99266-2-guangguan.wang@linux.alibaba.com>
 
-This patch fixes misspelled words to increase code readability and
-searching.
+On Tue, May 28, 2024 at 09:51:37PM +0800, Guangguan Wang wrote:
+> SG_MAX_SINGLE_ALLOC is used to limit maximum number of entries that
+> will be allocated in one piece of scatterlist. When the entries of
+> scatterlist exceeds SG_MAX_SINGLE_ALLOC, sg chain will be used. From
+> commit 7c703e54cc71 ("arch: switch the default on ARCH_HAS_SG_CHAIN"),
+> we can know that the macro CONFIG_ARCH_NO_SG_CHAIN is used to identify
+> whether sg chain is supported. So, SMC-R's rmb buffer should be limitted
 
-Signed-off-by: Roshan Khatri <topofeverest8848@gmail.com>
----
- drivers/staging/rtl8723bs/hal/odm.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Hi Guangguan Wang,
 
-diff --git a/drivers/staging/rtl8723bs/hal/odm.h b/drivers/staging/rtl8723bs/hal/odm.h
-index f5c804a1b9d5..010274ba8079 100644
---- a/drivers/staging/rtl8723bs/hal/odm.h
-+++ b/drivers/staging/rtl8723bs/hal/odm.h
-@@ -76,7 +76,7 @@
- 
- /* Remove DIG by Yuchen */
- 
--/* Remoce BB power saving by Yuchn */
-+/* Remove BB power saving by Yuchn */
- 
- /* Remove DIG by yuchen */
- 
-@@ -878,7 +878,7 @@ struct dm_odm_t { /* DM_Out_Source_Dynamic_Mechanism_Structure */
- 	struct odm_mac_status_info *pMacInfo;
- 	/* MAC_INFO_88E		MacInfo; */
- 
--	/*  Different Team independt structure?? */
-+	/*  Different Team independent structure?? */
- 
- 	/*  */
- 	/* TX_RTP_CMN		TX_retrpo; */
--- 
-2.34.1
+As it looks like there will be a v2:
 
+In this patch: limitted -> limited
+In patch 2/2:  defalut -> default
+
+checkpatch.pl --codespell is your friend.
+
+> by SG_MAX_SINGLE_ALLOC only when the macro CONFIG_ARCH_NO_SG_CHAIN is
+> defined.
+> 
+> Signed-off-by: Guangguan Wang <guangguan.wang@linux.alibaba.com>
+> Co-developed-by: Wen Gu <guwen@linux.alibaba.com>
+> Signed-off-by: Wen Gu <guwen@linux.alibaba.com>
+> Fixes: a3fe3d01bd0d ("net/smc: introduce sg-logic for RMBs")
+
+I think it is usual to put the fixes tag above the Signed-of tags,
+although I don't see anything about that in [1].
+
+[1] https://www.kernel.org/doc/html/latest/process/submitting-patches.html#using-reported-by-tested-by-reviewed-by-suggested-by-and-fixes
+
+...
 
