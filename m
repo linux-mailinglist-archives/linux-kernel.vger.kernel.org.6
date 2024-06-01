@@ -1,329 +1,190 @@
-Return-Path: <linux-kernel+bounces-197997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93E738D71CF
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 22:36:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E21F88D71D2
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 22:41:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2332A1F21C9D
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 20:36:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F251B216AA
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 20:41:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8267154C04;
-	Sat,  1 Jun 2024 20:36:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A891E154C07;
+	Sat,  1 Jun 2024 20:40:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dqoNGqvf"
-Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="gdF87KPC"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2055.outbound.protection.outlook.com [40.107.220.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D479A1802E;
-	Sat,  1 Jun 2024 20:36:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717274169; cv=none; b=I8CvJuoxG4ARlvDQUSoDYoyx1AS3fAfsoQuqnqFg5jKUwqKCczZrmUJDedlU5D5MQGM2zkTgpq7MFs1+kpwIahz5OSplUQVWqWrYwlScibjJZtIxwpg6lfeCYVpOExX2QvP2dfg7uOCLVweu4TtTKGnd3EFwcFKKsrHHRtKagL8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717274169; c=relaxed/simple;
-	bh=vHaRtKfsyO36lW7Dv9xqwyGDsAw2fMsvqELRTccw1I8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HGJkpWvgha4jIA92Qu5JJt/1ZsMSi+dsLoDKT8873B1UXYnj/mtX3qm26Uqbg+0QJRy/NF0kSDYKEwdpmJaMmwj/TXlg9Zcpqxbdtdh0xFqXhyKCrYet/38n/jRtfu4JnWbtDhdk6slfJ3XIHhUN7M0PwenNfepS2jBYDA8PJm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dqoNGqvf; arc=none smtp.client-ip=209.85.161.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-5b97f09cde3so477813eaf.0;
-        Sat, 01 Jun 2024 13:36:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717274167; x=1717878967; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=S7h+jQ7Ja8aNNX//dfY7u0TDow7aLWPm6IzQiHJUBe8=;
-        b=dqoNGqvfyYY0OMDVk9dQz+mXubxAN+5CfMaGMC6bgUBLK8KHCkKnwFaoZ6tOGQRudP
-         rox5e9gqb0UhLzvDp+MFzS3KOZAFcsXURjGezWguf8kaxrcpB2Ln+b/f2+IoMh3K8kx9
-         iduNmYurwje3k/vCTkG5PUmFzwup3O6fPwsqo40ZzjAR0EnwLU1Oh/zzOySvJvlEyoU8
-         ncOcluvUoMuvkBqrpaOBi/bQT0j0gTBknpRUg8J2ZJuzv8O0aZXaW9nv771UzHP31i5w
-         gslEhYzeyirBlRX/HWpA8m+iNSznjfj4b+iedvhaKdyEp9ER6J7e/0DVm6Oz1Bbyl2XZ
-         ZtxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717274167; x=1717878967;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=S7h+jQ7Ja8aNNX//dfY7u0TDow7aLWPm6IzQiHJUBe8=;
-        b=mvocNnv6OWrgA4AHl9z8/TQdOARwCEbDQzYwy1YeXEpxEfc9CX3QJzGulzLsGIdfd6
-         U6uVLwa764S1VAR7A5GQQHmKRGzmCO4zOmbY6+XepxhnQEYDhel51idlKnMyv2CP1DZY
-         +f28bVcfNxY3b3GS3fsfULtDRGphBZuSSpD02CjUQMokiYZubjs1hN62CWPM2F1OEoiq
-         qGlAFhqjrRzZuz/DBXh7c+fQ3Ozpy10LSYivXciY6NrRhFpZ0c9s2TL1pLT8AfcU0YTh
-         O5JfLCvyLSMvp2s3PBmxkLjEaNxLdXEVHfRm1dZVt/xys5XwO8lOJ5YXuBCmgBbv6L4R
-         5DSw==
-X-Forwarded-Encrypted: i=1; AJvYcCV1sbpPcfCpbdfp0CXl1QxIcDQ7+dZF2ZTbYFq8ZjxamgBBI63ES8Xo+ph6d6SxEHeBD8AFRbzlPhGJh0sWR7YfR1auEJUs584sZ3PIY8q0C1PDK3JNm4iCQwZCuOr9szd66sxJxIiNbrFlM0z8itAIyrK3v0Xny47nqSRszaBNM44gnXlmD/alMM+q2tA=
-X-Gm-Message-State: AOJu0YwhfGyoeJEkANwViJuqwYAZ+wklm60nu95kFkXoBag9RULhV41s
-	vbwuXwhQeg/i+Rmoat1gWIkbaWyLu/t4GSzt1/mxGpU1cQtp0nH1
-X-Google-Smtp-Source: AGHT+IENRztfzP/GvNSsTmL9gkAOzuLBv8AhBPU9paZaMqOOvaZqzIlp6vUomqoIUH80XiJosoNRuw==
-X-Received: by 2002:a05:6808:140b:b0:3c9:9693:f66 with SMTP id 5614622812f47-3d1e35f6638mr6289711b6e.4.1717274166691;
-        Sat, 01 Jun 2024 13:36:06 -0700 (PDT)
-Received: from [192.168.0.98] ([67.6.32.220])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-43ff2467eddsm21680301cf.62.2024.06.01.13.36.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 01 Jun 2024 13:36:06 -0700 (PDT)
-Message-ID: <100bc58f-0c21-45ee-b793-71b8309b402c@gmail.com>
-Date: Sat, 1 Jun 2024 15:36:04 -0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D0F18AEA;
+	Sat,  1 Jun 2024 20:40:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717274457; cv=fail; b=igg4VNfSzMC8pea9sbS6bj2SxaMqG7IT7ELV3vaiYjlZOXcNrPfOXCHeoaTQ2GrybyheYMzIhp6u/MD+x7MVgKKziQhs+tkJYShU5sNdq8hvzhK5eJLbVQFdk1Fq8M9zn0U32JSBvLhbxeAzEXvGhVzAtNS1bzwqwBy34d36l/0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717274457; c=relaxed/simple;
+	bh=QQLHFPL9uOsQe3fjyFoHRNLu0qCvjsC0WymP6PzT2xs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=alpOeq8Ealhuwg7R960RLudaAQ7dHqfGzgEctHtpk6H5cYNfpUE3K4gXm8tXNC3XNykJZb2rEFWrKpP49VKqLC9Dcbi/xnFLGXFHJCp6KUIqdNp3eWBuS+2qqwd6nhyz/6m10/p23a3S8gQ0ykNvXnkOZacE3QSlgpPSWAmLcpU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=gdF87KPC; arc=fail smtp.client-ip=40.107.220.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=kJJo8uoprVsjWxWU74NtmD993ElS4Rss9gN9hsEGjUIbRAliCQlFxbiO5qwxyVM81SFbt6rDN/SSI9HxNP0qVfDvVFbQs2pHP2yNpGpFgvHFJEe6ZXJ9GJxyI5/xsoFHGA+OxpuPFd4KDTOxXf5v9jkiryVqkMN5J4XnJD6qW5PLj849tFcFShh8QivM/Fgl+W6nwWjK71rwldBFSZC0pl5ctmo5Ec4HaXG7aMOPlY+pxUWRYyfgaKDFrXKJLnncpnQpKS9SqgGLJmoDjYsNB1OUfMk9M0kzEh4PBr2X0eJ8Bqkt47xDT0zDIsCi9NMd2Kvz8YLEIv9Q4oMDU0DrsA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QQLHFPL9uOsQe3fjyFoHRNLu0qCvjsC0WymP6PzT2xs=;
+ b=PDBVpmETiQRQUMVVjOOlEesMGYrd+uIh9ZfBAHVLuotsgZIe54l0ZlwV8u5DbkCD6atYHEzOnl8YGYkBS49er/WSEsteX4hUvKMEHq/+umQ6Zdtad6qN121slTEMV5cCM2YztrKn9Mb6Iv2PASppovcCUHV9snMdef+s9PHAmp6bFM9GnK84a63ACcbQHCWG2I/t0UWlg8zXsZ7CO0FWYfBL6fCOmvtNzDZNEveiIF6cjYXRi8GrPPogye+hfMw+co/28xEvFp6Kbu3ME3AqK+G6oAO/gkVVXa2yXjNP6omwQcJYkyeQn0TMk70nVqzgE4+dAOXSJNmmTNr+LbiXQQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QQLHFPL9uOsQe3fjyFoHRNLu0qCvjsC0WymP6PzT2xs=;
+ b=gdF87KPCPZsKgO0KANl9eU+lfEN3IHA9uuz3873IZ/vZAGZ2GD7DvDhEhMdyi7HgmwveiIqNkWbkp9XH0Mr7MT5RAfcq+5k1pz3PZmvAKNDWDvK1ZG9zC/s6MiPZA03t9uQzGfw0nAS4QXyv24W4cOg0b3++stqYSeNNsw8A2Ak47uMyVjODYn6GVo8O2YvsYFHvTsRiHlrIw3SXLWKtynm7LM9WYHnVkrHFTpUaIftZ9dsGHzl7TEscamI5lGYBSGvnQR5JBLR+Dk38J5lEoNq9pmh03QKlOeCmn+HXtKoErUqrr46SPT5/plxdwLtSvQQi28KegrbLjZxF01w1nw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DM6PR12MB3849.namprd12.prod.outlook.com (2603:10b6:5:1c7::26)
+ by SJ2PR12MB8062.namprd12.prod.outlook.com (2603:10b6:a03:4c8::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.21; Sat, 1 Jun
+ 2024 20:40:53 +0000
+Received: from DM6PR12MB3849.namprd12.prod.outlook.com
+ ([fe80::c296:774b:a5fc:965e]) by DM6PR12MB3849.namprd12.prod.outlook.com
+ ([fe80::c296:774b:a5fc:965e%4]) with mapi id 15.20.7633.021; Sat, 1 Jun 2024
+ 20:40:51 +0000
+Date: Sat, 1 Jun 2024 17:40:43 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Steven Price <steven.price@arm.com>
+Cc: Itaru Kitayama <itaru.kitayama@linux.dev>, kvm@vger.kernel.org,
+	kvmarm@lists.linux.dev, Catalin Marinas <catalin.marinas@arm.com>,
+	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
+	James Morse <james.morse@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Joey Gouly <joey.gouly@arm.com>,
+	Alexandru Elisei <alexandru.elisei@arm.com>,
+	Christoffer Dall <christoffer.dall@arm.com>,
+	Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
+	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
+Subject: Re: [v2] Support for Arm CCA VMs on Linux
+Message-ID: <ZluHS9ZAZwzF85jk@nvidia.com>
+References: <20240412084056.1733704-1-steven.price@arm.com>
+ <Zhgx1IDhEYo27OAR@vm3>
+ <b2accd2c-15cc-44d9-9191-60224b797814@arm.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b2accd2c-15cc-44d9-9191-60224b797814@arm.com>
+X-ClientProxiedBy: BYAPR07CA0096.namprd07.prod.outlook.com
+ (2603:10b6:a03:12b::37) To DM6PR12MB3849.namprd12.prod.outlook.com
+ (2603:10b6:5:1c7::26)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/3] Input: novatek-nvt-ts: add support for NT36672A
- touchscreen
-To: Hans de Goede <hdegoede@redhat.com>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?=
- <ilpo.jarvinen@linux.intel.com>
-Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
-References: <20240601-nvt-ts-devicetree-regulator-support-v4-0-e0c0174464c4@gmail.com>
- <20240601-nvt-ts-devicetree-regulator-support-v4-3-e0c0174464c4@gmail.com>
- <2b876ece-3b02-493e-ab1d-e5acc40c5d88@redhat.com>
-Content-Language: en-US
-From: Joel Selvaraj <joelselvaraj.oss@gmail.com>
-In-Reply-To: <2b876ece-3b02-493e-ab1d-e5acc40c5d88@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR12MB3849:EE_|SJ2PR12MB8062:EE_
+X-MS-Office365-Filtering-Correlation-Id: f28d2d23-3c83-4ae0-725b-08dc827b204d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|376005|7416005|1800799015;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?IxIQ3V3XK9zMXHjxTiJIc0nnGXHqU/jJ5CUzqM2fJswBHD09Ii+Zg3G0IsRc?=
+ =?us-ascii?Q?HYeJHzguGTJQnkD+kbV+NTlfymtR+58Kjo454IfnRT7zO9hzHAu8+JaMLnx6?=
+ =?us-ascii?Q?b1wEmgl+pMkSbOjimG48BRpGDDbh19esKeip+fwsiXpLObRbO1RzhRNwk3JZ?=
+ =?us-ascii?Q?btDnxxZVZ6hS1BVFUv/99a6z0XFrccccYMC1bi0m8V4bt4P8eoTEh+FefwnK?=
+ =?us-ascii?Q?lh3idSbkP4HFQ93EmYywfWxutbZYmxw6FNA62/KNO+w5zOcQYFedOkt5oCcI?=
+ =?us-ascii?Q?zNGbIyLtHW8ZWCXDn9Xg/9bUXePitPechKCdfiLs611mbaroXNNnEW//onRI?=
+ =?us-ascii?Q?1EohrDwur+eYhX3aGnoHXXCO8eG1zq00m+TSDTWdDU61JgJv4hclB25U5i5u?=
+ =?us-ascii?Q?dWkJx3P06a4bIZEt4ZJJgnricBJHdZVFOcNQ7xBFrUUKd1qrFsAHIbWtAf8r?=
+ =?us-ascii?Q?46deqr2iL78RaUMo5lZDf4aRUEWF4E0y6MR7dBwnOA4ffbIh83eswuOzZyur?=
+ =?us-ascii?Q?ZffV5kDKvAtn1h+ip1ZuRSUhOhioNHqqIfQsyxxWTcNWJ+ahNTKn4YZp2F/A?=
+ =?us-ascii?Q?CMzOiOB6Pg5IrWC6P4qQRn7N5977/ghDjoLVPVh2ypD5L4GfY9mwRfoHlVWc?=
+ =?us-ascii?Q?JBonlyID19TShM53JeLHjRljfSXslEVd5Pcl10hXBSPwO7mxu2BLXOBoO5B+?=
+ =?us-ascii?Q?GfoPAZr9pOwO9MvVc2JYai+FjGM0mpFtdQr1rGRG1NJ5qTB3EovhPLhEYqdD?=
+ =?us-ascii?Q?Lw+Oo6P6D/q0S9j77h4W506P5w3ana+5yJIo3joScQKKXnzqbGWd4jIbLVQy?=
+ =?us-ascii?Q?sKUKNCQxLxYIKxjnQ2gF6G/ngd29AW2kNquV5Oih9KHrwKBjr+w8ujMlJwcz?=
+ =?us-ascii?Q?dUuIcXgkMwnqOBiPhvhqpE40Xm7TR4b+7lgvgGnjOIxFMLuEB15LPAxoE3p5?=
+ =?us-ascii?Q?2D/Fda9+n+5MCNepy9pUCB9R7ZcfPxrVYck+xEc2r1IyBxoMWHVHbS5y51t0?=
+ =?us-ascii?Q?mMBe5BZpZLYMRX/VxcCdSQmwEoA23SRzhqhV/nUIQiwlNQwqeaM0xZ5jLC3k?=
+ =?us-ascii?Q?KEU1rOFtzpPIzScFBU8SB1ESZZHMPGMyw7aoinhsHZ4Yqbe1N78N5CIwNQ6E?=
+ =?us-ascii?Q?WikjWctwtPGTEGv8e6XdNwGaZvN//Gyw5UB6s4d57W9Nuu/nCafD3YKyRXsH?=
+ =?us-ascii?Q?FAMKv7YMjUL4Cl0JSBowRlU0i/RlDaEHKryqvUXzAqiGsuIoLpDw+3fRfwIA?=
+ =?us-ascii?Q?FU3OXYaAYAyMCsZiQ/RFXMUSsHI9MrtrQPntKP4yHA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB3849.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(7416005)(1800799015);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Aq/xDarG/7y0ZrXaz4R1xYYHYFHOjpovPSJ5CMIMB0MVeCqcNo34k112aBf9?=
+ =?us-ascii?Q?ZGeD6sQP74OHClGai8vWw1+le9GiIirRg9CrJ+VFk+A7CFw8oceVMq9yVe5C?=
+ =?us-ascii?Q?UqYXGh6F4Z+dwpY2aUQbjR6v4B/ICUFDoIfIUNAotIFiDo4O+6M9GPOKxwiP?=
+ =?us-ascii?Q?H6vNHs8vk/ZMT2fFtG7iM/SkVSuY/6LNbXIcpAAyy9WYLEFSw9Wqv2Qr5Fw+?=
+ =?us-ascii?Q?oWlYaVdJguBG+JlpNGnKC9iOJNlCAWdizbpoeVqqzgRP5c9oTiwXAuL5RqEP?=
+ =?us-ascii?Q?ANg71jbJAOjY/ZQlCu7hxu4yjOAh4rAcmuh+OUQSdjwyo1QubyJ1ibtvFT/G?=
+ =?us-ascii?Q?cv5ZwT8+3ioMvpeUSEmhlTmZJC5OT2EHxv6aOwkf/ZtZlZyArW2VmYlMDgHu?=
+ =?us-ascii?Q?WqU3EhjTdWtR/1vz1CMwMSnWa0i2I0rZBn1ZzGoMb2iEfaYM7VVvVu220T76?=
+ =?us-ascii?Q?IfHQXZbrGs36yiMggiWK4ubjQivm1bQ6aFxN+X/fw9eRAPZaxNXSVFi+52LP?=
+ =?us-ascii?Q?k6u0yyZanKwEPe6ivqCRqIoeS3jT2k4H+76GdqPcD87ReWBdnbCLWLPTdabJ?=
+ =?us-ascii?Q?6WQI8xliPa1tQ9hXiQ9hFOFThLA/gb2Cm8q5EeF0xaVd+D8HUMhwKZwa5L/G?=
+ =?us-ascii?Q?kWH3kMmrSpFMLPYU9w5/TOBXjaenCPhLzuJnlPY342GQsxiDjGIUI56ew8d9?=
+ =?us-ascii?Q?0JzvpKDPfSv5qx0bBO0ciLo2PLeyZvFsM9GzXX00jlbuNJIf1Rsz0dS5+5DR?=
+ =?us-ascii?Q?YnHKNOMg1uu7X1YByL65h2x+9bB48uwPeXTG9CEPk8npLNC73zFC6l8JbGD/?=
+ =?us-ascii?Q?tP+4tCRdEQdCsaPcuAXAW4r2t1czfMFysMqaATZpnOEbJlHviD5ieyv+WmCm?=
+ =?us-ascii?Q?Ji/7F4ZwxWiEIF5Ur5yqAzktj3t59/Jnb9cZiUOonn9tXfTg/4uz3mkEDxYd?=
+ =?us-ascii?Q?STvtCncijzEm3EXMKpKK0huDjZ6VZbZhT43xUWOy1Mf7jpfmA4AbI2g/zIuL?=
+ =?us-ascii?Q?ZTSCzdFeFJUNRMWrNf+SVcRwH5YAPB93APsb3Gh3fQTBtzx5IZv/rEzQ3vtP?=
+ =?us-ascii?Q?BOGSvc6pRY3j5pwtWYinbrbDmfG/PF5NK6ALS2CVyRghA6aXK/kiknUUMb/Z?=
+ =?us-ascii?Q?145wSJkLRV7Xn2QW7YIfk8MTXssLjdzWjQMLJB6MPJrAbkcruMQw7HWSoYHv?=
+ =?us-ascii?Q?2Iyo6CfXjnJkC5Z1cHEAHAwHjrCRxFEmZ4XTydZ7v/WNlCSe7IO+MrW1oFTW?=
+ =?us-ascii?Q?ul6hY8heY5oOr9/Lf9JSPMoZEVkkibJFhRCjHDCHYVJfV65qrDv0x+XfKQ6G?=
+ =?us-ascii?Q?NHwnUxQmuc1o5AEasiUG9LA4mNaQP5iCUdg2cypuxM+t7WJnXrIK7pNAFeZm?=
+ =?us-ascii?Q?BVfgkpYM7u4E7uUtAYSlC0wTM57Wi6g0qCtZwE1EzSe6eP5k3v/ZDdA9YY9Y?=
+ =?us-ascii?Q?q35sMCFG12Q/FWW9QL+wcseA4XHY5XRVWEF/J01ace80XFoiuH2TxD38eJ20?=
+ =?us-ascii?Q?r6HRxskrKspaOgkGmSlqnKoojASQRWqMc5/19xKCE6stRFyj4ZQ9esOZTJxg?=
+ =?us-ascii?Q?7kNB4gsETPKmpALFQntBANi+dXIANXg8LxlPV0Pc?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f28d2d23-3c83-4ae0-725b-08dc827b204d
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB3849.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jun 2024 20:40:51.7226
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: thpu/S0ipIu+Ph+DVcHqdpLvY4U9U3j2ZCHow/4IXebHSJWsJ8tRQFYn2N1qbril
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8062
 
-Hi Hans,
+On Mon, Apr 15, 2024 at 09:14:47AM +0100, Steven Price wrote:
 
-On 6/1/24 12:07, Hans de Goede wrote:
-> Hi Joel,
-> 
-> Thank you for the new version.
-> 
-> On 6/1/24 5:30 PM, Joel Selvaraj via B4 Relay wrote:
->> From: Joel Selvaraj <joelselvaraj.oss@gmail.com>
->>
->> Extend the novatek touchscreen driver to support NT36672A chip which
->> is found in phones like qcom/sdm845-xiaomi-beryllium-tianma.dts.
->> Added devicetree support for the driver and used i2c chip data to handle
->> the variation in chip id and wake type. Also added vcc and iovcc
->> regulators which are used to power the touchscreen hardware.
->>
->> Signed-off-by: Joel Selvaraj <joelselvaraj.oss@gmail.com>
->> ---
->>   drivers/input/touchscreen/novatek-nvt-ts.c | 70 +++++++++++++++++++++++++++---
->>   1 file changed, 64 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/input/touchscreen/novatek-nvt-ts.c b/drivers/input/touchscreen/novatek-nvt-ts.c
->> index 9bee3a0c122fb..c24c33f609eb8 100644
->> --- a/drivers/input/touchscreen/novatek-nvt-ts.c
->> +++ b/drivers/input/touchscreen/novatek-nvt-ts.c
->> @@ -31,9 +31,6 @@
->>   #define NVT_TS_PARAMS_CHIP_ID		0x0e
->>   #define NVT_TS_PARAMS_SIZE		0x0f
->>   
->> -#define NVT_TS_SUPPORTED_WAKE_TYPE	0x05
->> -#define NVT_TS_SUPPORTED_CHIP_ID	0x05
->> -
->>   #define NVT_TS_MAX_TOUCHES		10
->>   #define NVT_TS_MAX_SIZE			4096
->>   
->> @@ -51,11 +48,18 @@ static const int nvt_ts_irq_type[4] = {
->>   	IRQF_TRIGGER_HIGH
->>   };
->>   
->> +struct nvt_ts_i2c_chip_data {
->> +	u8 wake_type;
->> +	u8 chip_id;
->> +};
->> +
->>   struct nvt_ts_data {
->>   	struct i2c_client *client;
->>   	struct input_dev *input;
->>   	struct gpio_desc *reset_gpio;
->> +	struct regulator_bulk_data regulators[2];
->>   	struct touchscreen_properties prop;
->> +	const struct nvt_ts_i2c_chip_data *chip;
-> 
-> Almost there. I have one remark which requires fixing below,
-> so since a v5 will be necessary anyways I also spotted another
-> small possible improvement:
-> 
-> Since you only use chip->wake_type and chip->chip_id
-> inside probe() you can make this chip pointer a local
-> variable in probe(). This saves having this stored
-> on the kernel heap even though it is never used again.
-> 
+> The support for running in a guest is (I believe) in a good state
+> and I don't expect to have to iterate much on that before merging -
+> but, as always, that depends on the feedback received.
 
-Thanks for your detailed explanation here and below. I will fix them in v5.
+All the stuff I've been hearing about CC is that timely guest support
+is a really important thing. Right now the majority of the CC world is
+running on propritary hypervisors, it is the guest enablement that is
+something a wide group of people will be able to actually consume and
+use.
 
-Regards,
-Joel
+It needs to get into mainline to be able to reach distros about a year
+before anyone offers an ARM CC VM to the public. Various x86 guest
+only parts for CC are already merged.
 
->>   	int max_touches;
->>   	u8 buf[NVT_TS_TOUCH_SIZE * NVT_TS_MAX_TOUCHES];
->>   };
->> @@ -142,6 +146,13 @@ static irqreturn_t nvt_ts_irq(int irq, void *dev_id)
->>   static int nvt_ts_start(struct input_dev *dev)
->>   {
->>   	struct nvt_ts_data *data = input_get_drvdata(dev);
->> +	int error;
->> +
->> +	error = regulator_bulk_enable(ARRAY_SIZE(data->regulators), data->regulators);
->> +	if (error) {
->> +		dev_err(&data->client->dev, "failed to enable regulators\n");
->> +		return error;
->> +	}
->>   
->>   	enable_irq(data->client->irq);
->>   	gpiod_set_value_cansleep(data->reset_gpio, 0);
->> @@ -155,6 +166,7 @@ static void nvt_ts_stop(struct input_dev *dev)
->>   
->>   	disable_irq(data->client->irq);
->>   	gpiod_set_value_cansleep(data->reset_gpio, 1);
->> +	regulator_bulk_disable(ARRAY_SIZE(data->regulators), data->regulators);
->>   }
->>   
->>   static int nvt_ts_suspend(struct device *dev)
->> @@ -199,9 +211,31 @@ static int nvt_ts_probe(struct i2c_client *client)
->>   	if (!data)
->>   		return -ENOMEM;
->>   
->> +	data->chip = device_get_match_data(&client->dev);
->> +	if (!data->chip)
->> +		return -EINVAL;
->> +
-> 
-> As mentioned above instead of data->chip you can use a local
-> "chip" variable here.
-> 
->>   	data->client = client;
->>   	i2c_set_clientdata(client, data);
->>   
->> +	/*
->> +	 * VCC is the analog voltage supply
->> +	 * IOVCC is the digital voltage supply
->> +	 */
->> +	data->regulators[0].supply = "vcc";
->> +	data->regulators[1].supply = "iovcc";
->> +	error = devm_regulator_bulk_get(dev, ARRAY_SIZE(data->regulators), data->regulators);
->> +	if (error) {
->> +		dev_err(dev, "cannot get regulators: %d\n", error);
->> +		return error;
->> +	}
->> +
->> +	error = regulator_bulk_enable(ARRAY_SIZE(data->regulators), data->regulators);
->> +	if (error) {
->> +		dev_err(dev, "failed to enable regulators: %d\n", error);
->> +		return error;
->> +	}
->> +
->>   	data->reset_gpio = devm_gpiod_get(dev, "reset", GPIOD_OUT_LOW);
->>   	error = PTR_ERR_OR_ZERO(data->reset_gpio);
->>   	if (error) {
-> 
-> Almost there. You need to disable the regulators when probe fails to
-> avoid an error from the regulator core about unbalanced enable/disable
-> of the regulators when the devm framework releases them.
-> 
-> So you need to add a regulator_bulk_disable() call in
-> the "if (error) {" branch here:
-> 
->    	data->reset_gpio = devm_gpiod_get(dev, "reset", GPIOD_OUT_LOW);
->    	error = PTR_ERR_OR_ZERO(data->reset_gpio);
->    	if (error) {
-> 		regulator_bulk_disable(ARRAY_SIZE(data->regulators), data->regulators);
-> 		dev_err(dev, "failed to request reset GPIO: %d\n", error);
-> 		return error;
-> 	}
-> 
-> And ... (continued below)
-> 
->> @@ -216,6 +250,11 @@ static int nvt_ts_probe(struct i2c_client *client)
->>   	gpiod_set_value_cansleep(data->reset_gpio, 1); /* Put back in reset */
->>   	if (error)
->>   		return error;
->> +	error = regulator_bulk_disable(ARRAY_SIZE(data->regulators), data->regulators);
-> 
-> I would not error check this, just like how it is not error checked
-> in void nvt_ts_stop() and then I would move it to above the error
-> checking for the nvt_ts_read_data(...NVT_TS_PARAMETERS...), to avoid
-> the need for an extra regulator_bulk_disable() call in the if (error)
-> path for the nvt_ts_read_data() call.
-> 
-> So make the code look like this:
-> 
->          error = nvt_ts_read_data(data->client, NVT_TS_PARAMETERS_START,
->                                   data->buf, NVT_TS_PARAMS_SIZE);
->          gpiod_set_value_cansleep(data->reset_gpio, 1); /* Put back in reset */
-> 	regulator_bulk_disable(ARRAY_SIZE(data->regulators), data->regulators);
->          if (error)
->                  return error;
-> 
->          width  = get_unaligned_be16(&data->buf[NVT_TS_PARAMS_WIDTH]);
->          height = get_unaligned_be16(&data->buf[NVT_TS_PARAMS_HEIGHT]);
-> 	...
-> 
-> This way you only need one extra regulator_bulk_disable() call for
-> error-exit paths in the case of devm_gpiod_get(dev, "reset", ...)
-> failing.
-> 
-> Regards,
-> 
-> Hans
-> 
-> 
-> 
-> 
-> 
-> 
->> @@ -225,8 +264,8 @@ static int nvt_ts_probe(struct i2c_client *client)
->>   	if (width > NVT_TS_MAX_SIZE || height >= NVT_TS_MAX_SIZE ||
->>   	    data->max_touches > NVT_TS_MAX_TOUCHES ||
->>   	    irq_type >= ARRAY_SIZE(nvt_ts_irq_type) ||
->> -	    data->buf[NVT_TS_PARAMS_WAKE_TYPE] != NVT_TS_SUPPORTED_WAKE_TYPE ||
->> -	    data->buf[NVT_TS_PARAMS_CHIP_ID] != NVT_TS_SUPPORTED_CHIP_ID) {
->> +	    data->buf[NVT_TS_PARAMS_WAKE_TYPE] != data->chip->wake_type ||
->> +	    data->buf[NVT_TS_PARAMS_CHIP_ID] != data->chip->chip_id) {
->>   		dev_err(dev, "Unsupported touchscreen parameters: %*ph\n",
->>   			NVT_TS_PARAMS_SIZE, data->buf);
->>   		return -EIO;
->> @@ -277,8 +316,26 @@ static int nvt_ts_probe(struct i2c_client *client)
->>   	return 0;
->>   }
->>   
->> +static const struct nvt_ts_i2c_chip_data nvt_nt11205_ts_data = {
->> +	.wake_type = 0x05,
->> +	.chip_id = 0x05,
->> +};
->> +
->> +static const struct nvt_ts_i2c_chip_data nvt_nt36672a_ts_data = {
->> +	.wake_type = 0x01,
->> +	.chip_id = 0x08,
->> +};
->> +
->> +static const struct of_device_id nvt_ts_of_match[] = {
->> +	{ .compatible = "novatek,nt11205-ts", .data = &nvt_nt11205_ts_data },
->> +	{ .compatible = "novatek,nt36672a-ts", .data = &nvt_nt36672a_ts_data },
->> +	{ }
->> +};
->> +MODULE_DEVICE_TABLE(of, nvt_ts_of_match);
->> +
->>   static const struct i2c_device_id nvt_ts_i2c_id[] = {
->> -	{ "nt11205-ts" },
->> +	{ "nt11205-ts", (unsigned long) &nvt_nt11205_ts_data },
->> +	{ "nt36672a-ts", (unsigned long) &nvt_nt36672a_ts_data },
->>   	{ }
->>   };
->>   MODULE_DEVICE_TABLE(i2c, nvt_ts_i2c_id);
->> @@ -287,6 +344,7 @@ static struct i2c_driver nvt_ts_driver = {
->>   	.driver = {
->>   		.name	= "novatek-nvt-ts",
->>   		.pm	= pm_sleep_ptr(&nvt_ts_pm_ops),
->> +		.of_match_table = nvt_ts_of_match,
->>   	},
->>   	.probe = nvt_ts_probe,
->>   	.id_table = nvt_ts_i2c_id,
->>
-> 
+The KVM side is absolutely really important as well, but x86 has
+managed for a long time now with KVM being out of tree. The KVM side
+is far more complex at least.
+
+So I'd split out the guest side and just send it, I saw a few comments
+already, but it looks like it shouldn't be an issue to make it this
+cycle or next? Keep sending guest enablement updates when the spec is
+stable and you have some way to do basic test.
+
+Jason
 
