@@ -1,122 +1,237 @@
-Return-Path: <linux-kernel+bounces-197836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71DF98D6FCB
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 14:35:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61FFB8D6FCF
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 14:48:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D74D283137
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 12:35:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B00B1C20FA7
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 12:48:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5072414F9ED;
-	Sat,  1 Jun 2024 12:35:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A25B215099B;
+	Sat,  1 Jun 2024 12:48:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OtOZCsNl"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cQ+11BBU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E34E6FB9
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Jun 2024 12:35:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CECC01E481;
+	Sat,  1 Jun 2024 12:48:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717245347; cv=none; b=AZg1OW/OaqOHKkg0a4DKWN4QsJW3TckAE9B6rh0V3M/9HGFNNRY5Qqu6bLGZwpFXOfsOVZ9pkRx3YsIDxW2bqQtjjLUUyTX0MhbRmFSMPp22U2kl15LLG0x3JB8k2FLKD/43apgmuQSlpfBnaxCrAIdnxwRHzZjt+KR/4LKL3Yo=
+	t=1717246122; cv=none; b=hGAKAQ6TwhMUTYvHuIkOqUzcgZNkzwTMFPoHK4VVGwjhX9oXmqe0acglG2jMUpdn3VdWiDRsFvPNM5QhsHJwb5miNMVLdp6MHdZ4DrYXk/Nr8b4ZNyGsOIHPcR03hfJk4W+kyq6CtAjEeZ1gQoNDzHhnq5TTZgJDJ28APAMyNNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717245347; c=relaxed/simple;
-	bh=l+w0MWiDm6oJtqFXx9Re3XnVhUTLF3ybfCko7EdhCnI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uFjSzTOOoTlTJ7aoAlt13ycq+cGAAqUXg/cU4TqYQULiC2hqq3tylRdnSFFKyUf2SljLXH4m8mPObBJ19/Oi+2TtesvAFd1jhAJKsMEGCTpGd6AkJfSvbnlrxpI2cWdjmfts1uFrWSXEyTWYhzDMmR2VyPd+WxtaIpu2sPKosVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OtOZCsNl; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-57a1d55a7c7so311464a12.0
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Jun 2024 05:35:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717245344; x=1717850144; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BT5mj85tlRfrnhVxRHRVZyHIGnWChMArh0mXdC5TaDU=;
-        b=OtOZCsNlqCGyIlr0N1UfXFexkNEOOV3HHptdjgToznGf3K2FM7yoWUZfVAsND4UywU
-         4sZPsQFcCdg2R6lVf7gLxhzLnog8WzkWbgNjjlrHGN/449PbBZlUyCrRPKMiOqXan2Lm
-         mNlfFXcmVWfw8C9OXvXZC0I+YDIz77PYgQcXIJFNGHY02x+M5MtjA0CZDQAhKD3RbcZ6
-         SbydKGQucJ3nCi/9mAxvmPbbANhWFiszZj0ICKAl4e3HSUFcaxsTWTdDr/ceDZR2nkF5
-         1i49Tr/caYH3TtEEeLYghgk+C9AigDkuvIxx7M1AJ9MLnStMDpoeg/Y2OmHoG6z/84if
-         kCAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717245344; x=1717850144;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BT5mj85tlRfrnhVxRHRVZyHIGnWChMArh0mXdC5TaDU=;
-        b=MY6YtFrAuYyUBfGYoAhz3X6hXRlGzqPzJimpBhIrzPQSc7banUGOIyhuL0yx/nulrD
-         MpgFHQHMBS90y5w03gtlPVr3WZMZcaflvBMoSMVnMrb+9Plv9dGWPZrk9fXTgCPi+qkK
-         i/bePsagF/Xd+k00lOnhQ7/GXT7d8elOrgqn09lkhkDYPOjQTwHS27lge5XdsfTZPXXB
-         44uqTEiAigoqXuifVQYhU8RfFZHogZtKlpbSX/aFsi1xB/ldQbd+djquoqOexeNot8kL
-         YDwsGfpANtEoXYfvrcFE/3JS7SGEFMGOzUsZJqZ693LnQCoIGTqsFFsNMYEdR9P7GGjd
-         eJxw==
-X-Forwarded-Encrypted: i=1; AJvYcCVUvnk1m4TobRe9N5iKT3KITgP4qb6e2gBy8peOx/p4uHPud2lQXGQqk0Dis0mCTjutrgKMSL95BtBbID2aezRRrukENX4Rvceht37X
-X-Gm-Message-State: AOJu0YxVPPB8Ewi91LGmVeTG7Zj3FrCFcGPZJ7gZvbosQ3LhENmLEONM
-	JZEX5G3zAF1opbaOLC2OmlNUD2LSC9jzqXy8+EhMLiS7YGbN4UlH
-X-Google-Smtp-Source: AGHT+IEpUvav2aw6H/1mjoliu/c1vSBEjWM0BfAwWeYkytbnsKtDu98JWv9RmyZFoyI6uPe7gIoimg==
-X-Received: by 2002:a50:c354:0:b0:57a:2f92:2955 with SMTP id 4fb4d7f45d1cf-57a361cf32dmr2922617a12.0.1717245343633;
-        Sat, 01 Jun 2024 05:35:43 -0700 (PDT)
-Received: from [192.168.0.102] (p57935a9b.dip0.t-ipconnect.de. [87.147.90.155])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57a49deff15sm787593a12.94.2024.06.01.05.35.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 01 Jun 2024 05:35:43 -0700 (PDT)
-Message-ID: <c0f4d6ef-78e8-49a0-9544-7399a9eec9cb@gmail.com>
-Date: Sat, 1 Jun 2024 14:35:42 +0200
+	s=arc-20240116; t=1717246122; c=relaxed/simple;
+	bh=58IkfghORK5mSRBwh6TqDVlxAwNbReUZkA6ELrjjxEk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iArdpE5FjerbfdAix/XqahS0/WE+2IVc2CoddiNvjwBP7sghhrjJKCJpsCdiqmzNxdr3MZ/sHP6F36XLf0sPzhJbxadrLRRREmrFvZji4YaX6LbynOjsJ/YmLOX8WSzvldDiBpPrXFOiyLA0Z9Udg221GKtavffNyuegDLVCUwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cQ+11BBU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A0E9C116B1;
+	Sat,  1 Jun 2024 12:48:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717246122;
+	bh=58IkfghORK5mSRBwh6TqDVlxAwNbReUZkA6ELrjjxEk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=cQ+11BBUPvwmjob7lUfleGd12aVQaOp1yVjb4P5Ju63kYEAepNaVEhlWmPrBGlYTz
+	 uJuNfz4U2KzJeoyJCwRkHNY+cNKJlvJ27sWD74jZgsMx/UBrrvSr7uUKWXc3IX5L4d
+	 Zz8dpybH4awUuPE93MmyE7PbBo7s4bPJg9QfVJtPUa/6hdPaD+1cNJ2Pu7R7zi5Ckx
+	 a33GpcFK4ytEY585Y7lLYKsGZutEhIaJy+BEfhmB7Bww9aPUxy7B6xdcERGyyZ2JR7
+	 ZDxRgXZ9ArgpBQ1VxlvrhHLQGrHGdf0RVrYxMuNySpwgHwqtnaYLI9vcrRtdFgejC5
+	 8Zjf0D0JqRlvA==
+Date: Sat, 1 Jun 2024 13:48:28 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Marcelo Schmitt <marcelo.schmitt1@gmail.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, Michael Hennerich <Michael.Hennerich@analog.com>,
+ Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/5] iio: adc: ad7192: use
+ devm_regulator_get_enable_read_voltage
+Message-ID: <20240601134828.68c3acba@jic23-huawei>
+In-Reply-To: <20240531-iio-adc-ref-supply-refactor-v1-1-4b313c0615ad@baylibre.com>
+References: <20240531-iio-adc-ref-supply-refactor-v1-0-4b313c0615ad@baylibre.com>
+	<20240531-iio-adc-ref-supply-refactor-v1-1-4b313c0615ad@baylibre.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] staging: rtl8723bs: hal: Fix spelling mistakes in odm.h
-To: Roshan Khatri <topofeverest8848@gmail.com>, gregkh@linuxfoundation.org,
- ruanjinjie@huawei.com, bragathemanick0908@gmail.com, colin.i.king@gmail.com
-Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20240601083153.96242-1-topofeverest8848@gmail.com>
-Content-Language: en-US
-From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
-In-Reply-To: <20240601083153.96242-1-topofeverest8848@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 6/1/24 10:31, Roshan Khatri wrote:
-> This patch fixes misspelled words to increase code readability and
-> searching.
-> 
-> Signed-off-by: Roshan Khatri <topofeverest8848@gmail.com>
-> ---
->   drivers/staging/rtl8723bs/hal/odm.h | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/staging/rtl8723bs/hal/odm.h b/drivers/staging/rtl8723bs/hal/odm.h
-> index f5c804a1b9d5..010274ba8079 100644
-> --- a/drivers/staging/rtl8723bs/hal/odm.h
-> +++ b/drivers/staging/rtl8723bs/hal/odm.h
-> @@ -76,7 +76,7 @@
->   
->   /* Remove DIG by Yuchen */
->   
-> -/* Remoce BB power saving by Yuchn */
-> +/* Remove BB power saving by Yuchn */
->   
->   /* Remove DIG by yuchen */
->   
-> @@ -878,7 +878,7 @@ struct dm_odm_t { /* DM_Out_Source_Dynamic_Mechanism_Structure */
->   	struct odm_mac_status_info *pMacInfo;
->   	/* MAC_INFO_88E		MacInfo; */
->   
-> -	/*  Different Team independt structure?? */
-> +	/*  Different Team independent structure?? */
->   
->   	/*  */
->   	/* TX_RTP_CMN		TX_retrpo; */
+On Fri, 31 May 2024 16:19:32 -0500
+David Lechner <dlechner@baylibre.com> wrote:
 
-Reviewed-by: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+> This makes use of the new devm_regulator_get_enable_read_voltage()
+> function to reduce boilerplate code.
+> 
+> Error messages have changed slightly since there are now fewer places
+> where we print an error. The rest of the logic of selecting which
+> supply to use as the reference voltage remains the same.
+> 
+> Also 1000 is replaced by MILLI in a few places for consistency.
+> 
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+Ouch diff didn't like this one much and it is a bit hard to read.
+
+One case where I think this has an unintended side effect.
+See below.
+
+> ---
+>  drivers/iio/adc/ad7192.c | 98 +++++++++++++++++-------------------------------
+>  1 file changed, 35 insertions(+), 63 deletions(-)
+> 
+> diff --git a/drivers/iio/adc/ad7192.c b/drivers/iio/adc/ad7192.c
+> index 0789121236d6..e08bf066b3f6 100644
+> --- a/drivers/iio/adc/ad7192.c
+> +++ b/drivers/iio/adc/ad7192.c
+> @@ -200,8 +200,6 @@ struct ad7192_chip_info {
+>  
+>  struct ad7192_state {
+>  	const struct ad7192_chip_info	*chip_info;
+> -	struct regulator		*avdd;
+> -	struct regulator		*vref;
+>  	struct clk			*mclk;
+>  	u16				int_vref_mv;
+>  	u32				aincom_mv;
+> @@ -1189,17 +1187,11 @@ static const struct ad7192_chip_info ad7192_chip_info_tbl[] = {
+>  	},
+>  };
+>  
+> -static void ad7192_reg_disable(void *reg)
+> -{
+> -	regulator_disable(reg);
+> -}
+> -
+>  static int ad7192_probe(struct spi_device *spi)
+>  {
+>  	struct ad7192_state *st;
+>  	struct iio_dev *indio_dev;
+> -	struct regulator *aincom;
+> -	int ret;
+> +	int ret, avdd_mv;
+>  
+>  	if (!spi->irq) {
+>  		dev_err(&spi->dev, "no IRQ?\n");
+> @@ -1219,74 +1211,54 @@ static int ad7192_probe(struct spi_device *spi)
+>  	 * Newer firmware should provide a zero volt fixed supply if wired to
+>  	 * ground.
+>  	 */
+> -	aincom = devm_regulator_get_optional(&spi->dev, "aincom");
+> -	if (IS_ERR(aincom)) {
+> -		if (PTR_ERR(aincom) != -ENODEV)
+> -			return dev_err_probe(&spi->dev, PTR_ERR(aincom),
+> -					     "Failed to get AINCOM supply\n");
+> -
+> +	ret = devm_regulator_get_enable_read_voltage(&spi->dev, "aincom");
+> +	if (ret == -ENODEV)
+>  		st->aincom_mv = 0;
+> -	} else {
+> -		ret = regulator_enable(aincom);
+> -		if (ret)
+> -			return dev_err_probe(&spi->dev, ret,
+> -					     "Failed to enable specified AINCOM supply\n");
+> +	else if (ret < 0)
+> +		return dev_err_probe(&spi->dev, ret, "Failed to get AINCOM voltage\n");
+> +	else
+> +		st->aincom_mv = ret / MILLI;
+>  
+> -		ret = devm_add_action_or_reset(&spi->dev, ad7192_reg_disable, aincom);
+> +	/* AVDD can optionally be used as reference voltage */
+> +	ret = devm_regulator_get_enable_read_voltage(&spi->dev, "avdd");
+> +	if (ret == -EINVAL) {
+> +		/*
+> +		 * We get -EINVAL if avdd is a supply with unknown voltage. We
+> +		 * still need to enable it since it is also a power supply.
+> +		 */
+> +		ret = devm_regulator_get_enable(&spi->dev, "avdd");
+
+What happens if the entry simply isn't there in the DT.
+Previously I think the regulator framework would supply a stub whereas
+the devm_regulator_get_enable_read_voltage() returns -ENODEV so isn't
+caught by the handling and I think it should be.
+
+>  		if (ret)
+> -			return ret;
+> -
+> -		ret = regulator_get_voltage(aincom);
+> -		if (ret < 0)
+>  			return dev_err_probe(&spi->dev, ret,
+> -					     "Device tree error, AINCOM voltage undefined\n");
+> -		st->aincom_mv = ret / MILLI;
+> -	}
+> +					     "Failed to enable AVDD supply\n");
+>  
+> -	st->avdd = devm_regulator_get(&spi->dev, "avdd");
+> -	if (IS_ERR(st->avdd))
+> -		return PTR_ERR(st->avdd);
+> -
+> -	ret = regulator_enable(st->avdd);
+> -	if (ret) {
+> -		dev_err(&spi->dev, "Failed to enable specified AVdd supply\n");
+> -		return ret;
+> +		avdd_mv = 0;
+> +	} else if (ret < 0) {
+> +		return dev_err_probe(&spi->dev, ret, "Failed to get AVDD voltage\n");
+> +	} else {
+> +		avdd_mv = ret / MILLI;
+>  	}
+>  
+> -	ret = devm_add_action_or_reset(&spi->dev, ad7192_reg_disable, st->avdd);
+> -	if (ret)
+> -		return ret;
+>  
+>  	ret = devm_regulator_get_enable(&spi->dev, "dvdd");
+>  	if (ret)
+>  		return dev_err_probe(&spi->dev, ret, "Failed to enable specified DVdd supply\n");
+>  
+> -	st->vref = devm_regulator_get_optional(&spi->dev, "vref");
+> -	if (IS_ERR(st->vref)) {
+> -		if (PTR_ERR(st->vref) != -ENODEV)
+> -			return PTR_ERR(st->vref);
+> -
+> -		ret = regulator_get_voltage(st->avdd);
+> -		if (ret < 0)
+> -			return dev_err_probe(&spi->dev, ret,
+> -					     "Device tree error, AVdd voltage undefined\n");
+> +	/*
+> +	 * This is either REFIN1 or REFIN2 depending on adi,refin2-pins-enable.
+> +	 * If this supply is not present, fall back to AVDD as reference.
+> +	 */
+> +	ret = devm_regulator_get_enable_read_voltage(&spi->dev, "vref");
+> +	if (ret == -ENODEV) {
+> +		if (avdd_mv == 0)
+> +			return dev_err_probe(&spi->dev, -ENODEV,
+> +					     "No reference voltage available\n");
+> +
+> +		st->int_vref_mv = avdd_mv;
+> +	} else if (ret < 0) {
+> +		return ret;
+>  	} else {
+> -		ret = regulator_enable(st->vref);
+> -		if (ret) {
+> -			dev_err(&spi->dev, "Failed to enable specified Vref supply\n");
+> -			return ret;
+> -		}
+> -
+> -		ret = devm_add_action_or_reset(&spi->dev, ad7192_reg_disable, st->vref);
+> -		if (ret)
+> -			return ret;
+> -
+> -		ret = regulator_get_voltage(st->vref);
+> -		if (ret < 0)
+> -			return dev_err_probe(&spi->dev, ret,
+> -					     "Device tree error, Vref voltage undefined\n");
+> +		st->int_vref_mv = ret / MILLI;
+>  	}
+> -	st->int_vref_mv = ret / 1000;
+>  
+>  	st->chip_info = spi_get_device_match_data(spi);
+>  	indio_dev->name = st->chip_info->name;
+> 
+
 
