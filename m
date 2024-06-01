@@ -1,170 +1,178 @@
-Return-Path: <linux-kernel+bounces-197807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37E1F8D6F77
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 13:16:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 930558D6F79
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 13:28:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A57451F22488
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 11:16:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42A4D2841F2
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 11:28:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DE0D84DEC;
-	Sat,  1 Jun 2024 11:16:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=metaspace-dk.20230601.gappssmtp.com header.i=@metaspace-dk.20230601.gappssmtp.com header.b="0SiD5IoE"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C26C282876;
+	Sat,  1 Jun 2024 11:28:33 +0000 (UTC)
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 364F76FB9
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Jun 2024 11:16:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B74AA22081
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Jun 2024 11:28:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717240562; cv=none; b=CA6LfKRJmmZJsErv8nyjz8fKLsOqXDkwlj5dJnfOPdSiZR0p6Tc2SiOEPUNC9xIRvvlSjQRu9x/8FR0EclFibdR8L+gKFDmb3DnpAOynrU7OKWpC5jfSQDZnzjiRhzNTl8l1S/5K9sRIAJQDD0g10rUPHvNCA4ltXSk8jzew3VE=
+	t=1717241313; cv=none; b=TdVE0wB+dgNJ529N7mvY89bA1jZeSAGintqLR0aMHlxMeP/vtSmWQUCrOUjBVkLhgLB9So84clo1fYYBLKUFKe24zX85dGSGl4tL5zQ+j88J3+JqINqw03ZD3QA/QipjPmt/E/yZrZ00WnnZRlPxqDzecsOU9+vvIKmsbblM4Wo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717240562; c=relaxed/simple;
-	bh=/PJ2GjT7/rLhw5D4POjI70oJckkLJy4s/NNLOSXov2Q=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=TrfDgRPp0pz6ukHb1Xgx9Y/17IfPzsuiLVZ569wlHpmU71OnDFJMNHthAiUJSI7mObzYXxmSG1UZKLFSaot+/wD2OYMdyLKk4u039I5P5ePVkwCO/I9CB/z0Db0HS7LuqSqHovpwXCTZEss9HmxAepVxrG+pS5l+qgnnuVbCAwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=metaspace.dk; spf=none smtp.mailfrom=metaspace.dk; dkim=pass (2048-bit key) header.d=metaspace-dk.20230601.gappssmtp.com header.i=@metaspace-dk.20230601.gappssmtp.com header.b=0SiD5IoE; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=metaspace.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=metaspace.dk
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-57a23997da3so2808665a12.3
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Jun 2024 04:15:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=metaspace-dk.20230601.gappssmtp.com; s=20230601; t=1717240558; x=1717845358; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:cc:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zCryFmGVnMLpUEOQA4poMI+wOTAgkfQR64/zK6nQuRw=;
-        b=0SiD5IoEXllMOqSknxxjRIoG55IRlLx9cyqV56ztzj3YuwI6pRLFbnppaFZ+8euC7M
-         h7guB5Lyx4AjZqahRM0NHZ8qCVFWz4Vp1fOYY1zTDcER5rZqik7X2Lm6NT3KxnIDkhC3
-         j97scRkElNwztko78UTYF5MqlHeyEnF1yDTQOZ5YA0d9fMROAwacpYHsXxqkdEazUC7Q
-         n351qelNhX0xI0ugorV77H8VOLz2LOR0zXPfi9/wbUepCFBQfUUcDTgls6IudMhwRja3
-         0QTuC6DzjzHD90XevQVoXmYCy6ZLkAxoJTWs0B8w1GukEec1B3ewhIKuOIPiBLEVZcf+
-         Zkpg==
+	s=arc-20240116; t=1717241313; c=relaxed/simple;
+	bh=KJ92Oc9PjxGJMQzb5SHHTnBXUatu39hQDfFdnjqr8OI=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=XXtHc6sN7OwV9nG5LNuis/BgxNq2HaEB2gZLBWkzfHA9BaBD94MGXiUoO7aZMoxZnnah00yipGBBRbae8a5f62uj0y09OXV69i4bmPncw66mJV3cJXc6oLWEXeonXcP9IXNR41vQEnSw2AXHMhvMu1MoPMeNcEHuB0OZak8Om7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3748f2cfdabso11149305ab.0
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Jun 2024 04:28:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717240558; x=1717845358;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zCryFmGVnMLpUEOQA4poMI+wOTAgkfQR64/zK6nQuRw=;
-        b=Upj6XgyIX63hEkhZ5eR+wjtBUBDnBIBdNfU2vyfXI4xGUl11hGRPgNZnrZLcCphMmF
-         K539ia8s+IX/NSlagN2yhEGgPQkQTMNU+6p7e/new2N0Mq4Hyspa3ejQi+6K4IJ++lI3
-         tCJqd5MtklhrfCea7SLKJUfzkOPekzTiE/nUurPDXV5RmUDEZFd7Y2DWfQrFHJLjgR/q
-         50oITcceZmq0LvDwRib0hjya145phSNuA1XPRcl3rX4YGXLYv3oedrkkucLb7KR9yMcJ
-         YB99kWLQvSO8MOvA4DbH2/M8AHvjF6ZykZVL4X7z1biI72YFf/nJfsawSc4eewxrSylz
-         GnBg==
-X-Forwarded-Encrypted: i=1; AJvYcCXtOFPUAC449UjKcnHqyP52BLt32wv445asPXCj/t1/HZ/UMIR03b6GBDecmCROCLZVHt+jxeD43eny4TYA8fAWJDrLzbOQlMlu/8h1
-X-Gm-Message-State: AOJu0YxVpcoprUoJ7vtAj9hahYQ7JstgyDz6aaqEWmOu6ZwOy5U8eyPa
-	CLL8Zd5kPVX+9XuB4aVOh0WsoVU3603L9KHRmh0Keedz9nnkK9jL07gtDPXSPaA=
-X-Google-Smtp-Source: AGHT+IEZYXud4tM6JcqUgo1hgqJr7fdgasI9zD5M8BqVsUWiC8vI1fGU/UfvXbZpBl4UPndv1yXtNA==
-X-Received: by 2002:a17:906:4f8d:b0:a59:a83b:d438 with SMTP id a640c23a62f3a-a682022d0bemr309841966b.23.1717240558265;
-        Sat, 01 Jun 2024 04:15:58 -0700 (PDT)
-Received: from localhost ([79.142.230.34])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a67eb344426sm185893866b.215.2024.06.01.04.15.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 01 Jun 2024 04:15:57 -0700 (PDT)
-From: Andreas Hindborg <nmi@metaspace.dk>
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Jens Axboe <axboe@kernel.dk>,  Christoph Hellwig <hch@lst.de>,  Keith
- Busch <kbusch@kernel.org>,  Damien Le Moal <dlemoal@kernel.org>,  Bart Van
- Assche <bvanassche@acm.org>,  Hannes Reinecke <hare@suse.de>,  Ming Lei
- <ming.lei@redhat.com>,  "linux-block@vger.kernel.org"
- <linux-block@vger.kernel.org>,  Andreas Hindborg <a.hindborg@samsung.com>,
-  Greg KH <gregkh@linuxfoundation.org>,  Matthew Wilcox
- <willy@infradead.org>,  Miguel Ojeda <ojeda@kernel.org>,  Alex Gaynor
- <alex.gaynor@gmail.com>,  Wedson Almeida Filho <wedsonaf@gmail.com>,
-  Boqun Feng <boqun.feng@gmail.com>,  Gary Guo <gary@garyguo.net>,
-  =?utf-8?Q?Bj=C3=B6rn?=
- Roy Baron <bjorn3_gh@protonmail.com>,  Alice Ryhl <aliceryhl@google.com>,
-  Chaitanya Kulkarni <chaitanyak@nvidia.com>,  Luis Chamberlain
- <mcgrof@kernel.org>,  Yexuan Yang <1182282462@bupt.edu.cn>,  Sergio
- =?utf-8?Q?Gonz=C3=A1lez?= Collado <sergio.collado@gmail.com>,  Joel
- Granados
- <j.granados@samsung.com>,  "Pankaj Raghav (Samsung)"
- <kernel@pankajraghav.com>,  Daniel Gomez <da.gomez@samsung.com>,  Niklas
- Cassel <Niklas.Cassel@wdc.com>,  Philipp Stanner <pstanner@redhat.com>,
-  Conor Dooley <conor@kernel.org>,  Johannes Thumshirn
- <Johannes.Thumshirn@wdc.com>,  Matias =?utf-8?Q?Bj=C3=B8rling?=
- <m@bjorling.me>,  open list
- <linux-kernel@vger.kernel.org>,  "rust-for-linux@vger.kernel.org"
- <rust-for-linux@vger.kernel.org>,  "lsf-pc@lists.linux-foundation.org"
- <lsf-pc@lists.linux-foundation.org>,  "gost.dev@samsung.com"
- <gost.dev@samsung.com>
-Subject: Re: [PATCH v3 2/3] rust: block: add rnull, Rust null_blk
- implementation
-In-Reply-To: <2021ea8f-a3df-46c6-8fdf-61b1df231773@proton.me> (Benno Lossin's
-	message of "Sat, 01 Jun 2024 09:15:59 +0000")
-References: <20240601081806.531954-1-nmi@metaspace.dk>
-	<20240601081806.531954-3-nmi@metaspace.dk>
-	<2021ea8f-a3df-46c6-8fdf-61b1df231773@proton.me>
-Date: Sat, 01 Jun 2024 13:15:54 +0200
-Message-ID: <87ed9goqvp.fsf@metaspace.dk>
+        d=1e100.net; s=20230601; t=1717241311; x=1717846111;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=En2iqL+LLgk7tp/ubjPEhkxL7xgNrkURqF9kOhTOYFk=;
+        b=Nhb8b0FKEPqGdr2aqN6TfT4zln2GTVd5QJHBqlqe8v0S2Xcfsd3zUy4SaPK6YWUSRs
+         JqLqdEAUxfHDzojKq8oePY3guggIRSKXSwNFi3Xxfv27wswN2KMxj2YariEFGgWoXBun
+         ttUk0/X6RNSM1MTIQTEJnml2PRCD99vqRMyw68WMOXGtqT4sP+9He6CCcgs14wqhVzoa
+         7Z6sSt3bOTqgRSD0aYcSeyyYsg0ZHjv4hbEV1csf6YW90ft3GiVz4kErsOuHPdz8ke8p
+         hQmPyIS3oxPIzkkPCjJm82PmPdcS2tU7D/oewrIA7bx7f7OJh1rUuuciP7aAK0PPYjD9
+         eJ7g==
+X-Forwarded-Encrypted: i=1; AJvYcCWUCzmw2geRzaOonu5TEZN4ol16OvSpV3p7ZPGhhZlBQYQQBGVQRydRrnUTdzvhMxGhTEM+zKSrWKqhAW3LCi+MSommg79xoMP57bMh
+X-Gm-Message-State: AOJu0YzgV7qWh/AZzcseYmP6eOXJcnWbWn1f1v3aDF+dXvX05rZ2hCbD
+	quqEZ6zWRwAl3RWtK6r18aIZREBpp6y3Oh5Yg0lQTdfWrlwkhgogskJOW0jzHY5cW7nUMydXIwM
+	1e+cCKnsG1qKXqv9GrhhTKhcBl9u14Ib4nQrwC1Waovm7nBVjiHHIIwA=
+X-Google-Smtp-Source: AGHT+IGPbnUrJhSB5DJ8KCCYe+7oMpGqs34F4zsVNjADmy6/yvlDzcjG6mWistYI14R35//24/wmVmtWsppg1uKToeQ3GamxFGwo
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-Received: by 2002:a92:d951:0:b0:374:968e:7ee3 with SMTP id
+ e9e14a558f8ab-374968e8336mr130025ab.3.1717241310978; Sat, 01 Jun 2024
+ 04:28:30 -0700 (PDT)
+Date: Sat, 01 Jun 2024 04:28:30 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000055ad7c0619d266c8@google.com>
+Subject: [syzbot] [mm?] BUG: unable to handle kernel paging request in free_unref_page
+From: syzbot <syzbot+e2402985c6e53d251f8c@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Benno Lossin <benno.lossin@proton.me> writes:
+Hello,
 
->> +impl kernel::Module for NullBlkModule {
->> +    fn init(_module: &'static ThisModule) -> Result<Self> {
->> +        pr_info!("Rust null_blk loaded\n");
->> +        let tagset =3D Arc::pin_init(TagSet::try_new(1, 256, 1), flags:=
-:GFP_KERNEL)?;
->> +
->> +        let disk =3D {
->> +            let block_size: u16 =3D 4096;
->> +            if block_size % 512 !=3D 0 || !(512..=3D4096).contains(&blo=
-ck_size) {
->> +                return Err(kernel::error::code::EINVAL);
->> +            }
->> +
->> +            let mut disk =3D gen_disk::GenDisk::try_new(tagset)?;
->> +            disk.set_name(format_args!("rnullb{}", 0))?;
->> +            disk.set_capacity_sectors(4096 << 11);
->> +            disk.set_queue_logical_block_size(block_size.into());
->> +            disk.set_queue_physical_block_size(block_size.into());
->> +            disk.set_rotational(false);
->> +            disk.add()
->> +        }?;
->
-> Personally, I would prefer to put the `?` into the line above.
+syzbot found the following issue on:
 
-I have no strong opinion here.
+HEAD commit:    4a4be1ad3a6e Revert "vfs: Delete the associated dentry whe..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=15eb1026980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bd6024aedb15e15c
+dashboard link: https://syzkaller.appspot.com/bug?extid=e2402985c6e53d251f8c
+compiler:       aarch64-linux-gnu-gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=131db3ec980000
 
->
->> +
->> +        let disk =3D Box::pin_init(new_mutex!(disk, "nullb:disk"), flag=
-s::GFP_KERNEL)?;
->> +
->> +        Ok(Self { _disk: disk })
->> +    }
->> +}
->> +
->> +struct NullBlkDevice;
->> +
->> +#[vtable]
->> +impl Operations for NullBlkDevice {
->> +    #[inline(always)]
->> +    fn queue_rq(rq: ARef<mq::Request<Self>>, _is_last: bool) -> Result {
->> +        mq::Request::end_ok(rq)
->> +            .map_err(|_e| kernel::error::code::EIO)
->> +            .expect("Fatal error - expected to be able to end request");
->
-> I expected something more along the lines of: "expected to be able to
-> end request, since `NullBlkDevice` never takes refcounts on Requests and
-> as such the ARef must be unique, but `end_ok` only fails if that is not
-> the case". But maybe that would fit better in a comment, what do you
-> think?
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/384ffdcca292/non_bootable_disk-4a4be1ad.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/75957361122b/vmlinux-4a4be1ad.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/6c766b0ec377/Image-4a4be1ad.gz.xz
 
-I can add a comment =F0=9F=91=8D
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+e2402985c6e53d251f8c@syzkaller.appspotmail.com
 
-BR Andreas
+Unable to handle kernel paging request at virtual address fef0000006705000
+Mem abort info:
+  ESR = 0x0000000096000047
+  EC = 0x25: DABT (current EL), IL = 32 bits
+  SET = 0, FnV = 0
+  EA = 0, S1PTW = 0
+  FSC = 0x07: level 3 translation fault
+Data abort info:
+  ISV = 0, ISS = 0x00000047, ISS2 = 0x00000000
+  CM = 0, WnR = 1, TnD = 0, TagAccess = 0
+  GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+swapper pgtable: 4k pages, 52-bit VAs, pgdp=0000000042650000
+[fef0000006705000] pgd=18000000bfdff003, p4d=18000000bfdfe003, pud=18000000bfdfd003, pmd=18000000bfdda003, pte=0068000046705406
+Internal error: Oops: 0000000096000047 [#1] PREEMPT SMP
+Modules linked in:
+CPU: 1 PID: 3644 Comm: syz-executor.0 Not tainted 6.10.0-rc1-syzkaller-00027-g4a4be1ad3a6e #0
+Hardware name: linux,dummy-virt (DT)
+pstate: 21400009 (nzCv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
+pc : __stg_post arch/arm64/include/asm/mte-kasan.h:120 [inline]
+pc : mte_set_mem_tag_range arch/arm64/include/asm/mte-kasan.h:196 [inline]
+pc : kasan_poison.constprop.0+0x80/0x104 mm/kasan/kasan.h:478
+lr : __kasan_poison_pages+0x50/0x80 mm/kasan/common.c:141
+sp : ffff800089163b10
+x29: ffff800089163b10 x28: 0000000000000000 x27: 0000000000100dc2
+x26: 0000000000100cc2 x25: 0000000000000000 x24: faf0000006decbb8
+x23: 00000000000000f9 x22: 0000000040000000 x21: 0000000000000000
+x20: 0000000000000000 x19: ffffc1ffc019c140 x18: 0000000000000001
+x17: 0000000000000000 x16: 1e9e000000c8e3c1 x15: 0000000000000001
+x14: 0000000000000002 x13: 0000000000000000 x12: 00000000000702d1
+x11: 0000000000000000 x10: ffff800081e3d1e8 x9 : 00000000000000f9
+x8 : 0000000000000038 x7 : 0000000000000000 x6 : fef0000006706000
+x5 : fef000000670503f x4 : 0000000000000040 x3 : fef0000006706000
+x2 : 0000000000000000 x1 : 0000000000001000 x0 : fef0000006705000
+Call trace:
+ mte_set_mem_tag_range arch/arm64/include/asm/mte-kasan.h:196 [inline]
+ kasan_poison.constprop.0+0x80/0x104 mm/kasan/kasan.h:478
+ kasan_poison_pages include/linux/kasan.h:114 [inline]
+ free_pages_prepare mm/page_alloc.c:1110 [inline]
+ free_unref_page+0x10c/0x488 mm/page_alloc.c:2565
+ __folio_put+0xb0/0x104 mm/swap.c:129
+ folio_put include/linux/mm.h:1508 [inline]
+ secretmem_fault+0x1e8/0x23c mm/secretmem.c:87
+ __do_fault+0x3c/0x214 mm/memory.c:4562
+ do_read_fault mm/memory.c:4926 [inline]
+ do_fault+0x310/0x650 mm/memory.c:5056
+ do_pte_missing mm/memory.c:3903 [inline]
+ handle_pte_fault mm/memory.c:5380 [inline]
+ __handle_mm_fault+0x4d0/0xc20 mm/memory.c:5523
+ handle_mm_fault+0x68/0x27c mm/memory.c:5688
+ do_page_fault+0x168/0x480 arch/arm64/mm/fault.c:613
+ do_translation_fault+0xac/0xbc arch/arm64/mm/fault.c:690
+ do_mem_abort+0x44/0x94 arch/arm64/mm/fault.c:826
+ el0_da+0x6c/0xb8 arch/arm64/kernel/entry-common.c:580
+ el0t_64_sync_handler+0xb8/0x12c arch/arm64/kernel/entry-common.c:733
+ el0t_64_sync+0x19c/0x1a0 arch/arm64/kernel/entry.S:598
+Code: b5000247 eb04043f 54000203 d503201f (d9201400) 
+---[ end trace 0000000000000000 ]---
+----------------
+Code disassembly (best guess):
+   0:	b5000247 	cbnz	x7, 0x48
+   4:	eb04043f 	cmp	x1, x4, lsl #1
+   8:	54000203 	b.cc	0x48  // b.lo, b.ul, b.last
+   c:	d503201f 	nop
+* 10:	d9201400 	stg	x0, [x0], #16 <-- trapping instruction
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
