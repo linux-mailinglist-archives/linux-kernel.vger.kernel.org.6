@@ -1,138 +1,95 @@
-Return-Path: <linux-kernel+bounces-197668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CCC78D6DA3
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 05:14:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEAD78D6D99
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 05:08:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DEDA1F23269
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 03:14:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D120B21E51
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 03:08:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13202BE78;
-	Sat,  1 Jun 2024 03:14:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26BF2AD32;
+	Sat,  1 Jun 2024 03:08:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Cg93CBS7"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V+c4GBFq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4A026FC7;
-	Sat,  1 Jun 2024 03:14:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51D0B6FA8;
+	Sat,  1 Jun 2024 03:07:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717211683; cv=none; b=Evq2+La3zxFWozBEuc7jp4OmfBk6ET1MBbJ6KFviAHJuBLVN/DLU1qvBSQvoecLwzwGJLHkx143Ae6sXA/RJUtCbkwKXNMOHzs0wCe5u4dT9hRUfBvFhWPVbaKgoPSR46l9JYP4iiA8gkU4MxZCZ9HYLitc9EraracTSQFKxhzg=
+	t=1717211279; cv=none; b=ULfqoTDSuWLd2/jlMbXEJlO4yPHG4xRZLR16ksio2VVA+ll0Yj6FKqOLUburnCQQGLQ3wsiWXIhaJIAuImieC8AmdoNjaLsVvISd43FkG8LDKvkRSxH3jVBlOneA3KX4VarxNuqNmfyM9KTD+iaeNrbAIFHsZm5SdvLaD2NTPfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717211683; c=relaxed/simple;
-	bh=c7E6ywWcouETEOz7X+m9V6ffY9O9cI6IapgRWonAuyw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k0sfjYD79LcdOwRGiFFVDFH6azIL7K9xsAQXj8XIT6/sUJNZghoXSOQNcDshJUhiaiw1qvMNVMMVLGZ9hQT5JM0F8bZ5x3IHhja+c+D6yK9TohLCHDZCG/rQaOR7b/qPyGdkMTsNvfgU5WBhxssiNa+mDHcMHsFu2Az+Z+FM3LM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Cg93CBS7; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717211683; x=1748747683;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=c7E6ywWcouETEOz7X+m9V6ffY9O9cI6IapgRWonAuyw=;
-  b=Cg93CBS7Knh5ciDwIwAOyGsoT/qg0/IW7TBy39bd8o4PAXypToyQXQwM
-   hWx2gdFW5Vu5pj4hAHFQ9VFE6ifGjK368SJw16GrfDE7/qeACivht8zQY
-   2/NDIPJrxKC0bUK645lhiez0ZGVf1yTEPvCwSEzxLj5wf1xE9rCH8t+zF
-   ZPNhxyS7ZfeEOG9WW8jDstisoAXYOBEj2flgm87azHDaCFKETFCRnw1UN
-   +WYoZrzD/9SgVFIaf3fGsaPAyO2oy86KeO0tj4j7MivzZIMYeZD3zS8TU
-   iIybq4GVVHoLpPQ2WdacCyuSeIkpyP2PqCAOCidWqTyQ3h+X/2PPtgsYT
-   w==;
-X-CSE-ConnectionGUID: y5VKK6VYTuGN6acFqQJARw==
-X-CSE-MsgGUID: IddRGVkvTv6c7AV/zB6X6w==
-X-IronPort-AV: E=McAfee;i="6600,9927,11089"; a="24431270"
-X-IronPort-AV: E=Sophos;i="6.08,206,1712646000"; 
-   d="scan'208";a="24431270"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 20:14:42 -0700
-X-CSE-ConnectionGUID: l2xz+gaVQ1Sp7xFZjbApEA==
-X-CSE-MsgGUID: n7Eg6RluRgSRmWmZVdk4kg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,206,1712646000"; 
-   d="scan'208";a="73824285"
-Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
-  by orviesa001.jf.intel.com with ESMTP; 31 May 2024 20:14:38 -0700
-Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sDFCV-000IGn-2o;
-	Sat, 01 Jun 2024 03:14:35 +0000
-Date: Sat, 1 Jun 2024 11:02:50 +0800
-From: kernel test robot <lkp@intel.com>
-To: Simon Trimmer <simont@opensource.cirrus.com>, tiwai@suse.com
-Cc: oe-kbuild-all@lists.linux.dev, linux-sound@vger.kernel.org,
-	alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-	patches@opensource.cirrus.com, soyer@irl.hu, shenghao-ding@ti.com,
-	kevin-lu@ti.com, baojun.xu@ti.com, kailang@realtek.com,
-	Simon Trimmer <simont@opensource.cirrus.com>
-Subject: Re: [PATCH 4/7] ALSA: hda: hda_component: Introduce component parent
- structure
-Message-ID: <202406011025.mzDXJJjz-lkp@intel.com>
-References: <20240531151409.80284-5-simont@opensource.cirrus.com>
+	s=arc-20240116; t=1717211279; c=relaxed/simple;
+	bh=cqaO2mscY2nvy4zNayXNs9Wfa7beJ4b5F0q/LUYBUJg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UH8JPjl78ll4CPm4YyI+8canZ+T7ig8h5VKSZ7hoNj275ITPObHdGSZr8pF6JUjWEabh3fWTD7LhA6igPoSin7+U87aMF+vA5+w75C10u1bexKOjFPSetjfwA8656c8nZBQ0HHbNtKyJLvbzDytvQd1WyC1Kvk9QQdMgrzt+XCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V+c4GBFq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C51E6C4AF09;
+	Sat,  1 Jun 2024 03:07:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717211278;
+	bh=cqaO2mscY2nvy4zNayXNs9Wfa7beJ4b5F0q/LUYBUJg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=V+c4GBFq+AJHHmirAvekwH+/IsgVpXuVDd6U1UGAeXUfuzeuc1NLSIlYjMaCq3cmJ
+	 vlysgvnRMYy6fbCPsjSDGEREJMBNvVr81YevgCzJPCPgOGhSQCTgtx5PvWT8CHBY1v
+	 /yPwdx4NIBGx43SaBnJ8nQ9nGajK39IW4a7wr+Httdk1IK8Q807TYGra/c1vqiYYzZ
+	 pmZbGJIe1+3iSk1eWZI8wofiJQlwGYEJ3OY6dOzqBmhN0cAena1h98Ora+uQUZpL3X
+	 6LyKqzRejUYZUofbj2uZTfVapENfSC8tIJ0Ld6KeJ5ieHKyE2y5+Wyg4HZYorIkJQ6
+	 ooYqqYUIs87/A==
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52b912198f1so218319e87.0;
+        Fri, 31 May 2024 20:07:58 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW5q3Wq+p8CYVIQFmj+ySuxTaY8jT0xKFO3rap+6Xz2rLgPNCzBY9MYKTBGdf83FlLjIGdO4yjzEt4O4EebpoLwXm4WGCf/rZgZXDEbN3+1y7zY1HeLZKXksqY7RNk5c0+cDQz9FlT0FA==
+X-Gm-Message-State: AOJu0Yz1OO5t3fNsLh5Gr9etegxi9To1NHbh5QFBHrjwsH2q2/jJK5EH
+	dsPfc8PaW0yhXuHBWkif8Ub/gPf4yER2dq8oBoAdBownKPZ3KzSEuSU2Li/8Zq87Sxq6O28IcUt
+	F04nmHPflwPnn12wZE2HMXPXHYI0=
+X-Google-Smtp-Source: AGHT+IFeCE4qyDl4YzuCOe6hydlRibgFllVHhxftqrceEaiCEbO5cuy+v8E7x8MdzPi9PQ5s4gSuJfAumWwUV24KUA8=
+X-Received: by 2002:ac2:5dc3:0:b0:52b:88db:a554 with SMTP id
+ 2adb3069b0e04-52b89564ffcmr2258561e87.8.1717211277004; Fri, 31 May 2024
+ 20:07:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240531151409.80284-5-simont@opensource.cirrus.com>
+References: <IA1PR20MB4953BA3638A0839FCB0EF86BBBF32@IA1PR20MB4953.namprd20.prod.outlook.com>
+ <CAJF2gTRu8WUkjOOzH4MZvinZv=0cgF988c7HyzP5jw0p3w+MWQ@mail.gmail.com> <20240531-reseal-sabbath-4994673eb98c@spud>
+In-Reply-To: <20240531-reseal-sabbath-4994673eb98c@spud>
+From: Guo Ren <guoren@kernel.org>
+Date: Sat, 1 Jun 2024 11:07:44 +0800
+X-Gmail-Original-Message-ID: <CAJF2gTQYT+2Q4K4jPoD3X=JArKReD6O8uF4Q1o2fGqYXb2RPWw@mail.gmail.com>
+Message-ID: <CAJF2gTQYT+2Q4K4jPoD3X=JArKReD6O8uF4Q1o2fGqYXb2RPWw@mail.gmail.com>
+Subject: Re: [PATCH] riscv: dts: thead: th1520: Add PMU event node
+To: Conor Dooley <conor@kernel.org>
+Cc: Inochi Amaoto <inochiama@outlook.com>, Jisheng Zhang <jszhang@kernel.org>, Fu Wei <wefu@redhat.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, linux-riscv@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Simon,
+On Fri, May 31, 2024 at 11:03=E2=80=AFPM Conor Dooley <conor@kernel.org> wr=
+ote:
+>
+> On Fri, May 31, 2024 at 09:43:00AM +0800, Guo Ren wrote:
+> > LGTM! Reviewed-by: Guo Ren <guoren@kernel.org>
+>
+> Please provide tags on a new line so that tooling picks them up.
+> I had to amend this commit cos I forgot a signoff, so I added it.
+Okay, Thx for telling.
 
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on tiwai-sound/for-next]
-[also build test WARNING on tiwai-sound/for-linus linus/master v6.10-rc1 next-20240531]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Simon-Trimmer/ALSA-hda-cs35l56-Component-should-be-unbound-before-deconstruction/20240531-231828
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git for-next
-patch link:    https://lore.kernel.org/r/20240531151409.80284-5-simont%40opensource.cirrus.com
-patch subject: [PATCH 4/7] ALSA: hda: hda_component: Introduce component parent structure
-config: arm64-randconfig-001-20240601 (https://download.01.org/0day-ci/archive/20240601/202406011025.mzDXJJjz-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240601/202406011025.mzDXJJjz-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406011025.mzDXJJjz-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   sound/pci/hda/hda_component.c: In function 'hda_component_manager_bind':
->> sound/pci/hda/hda_component.c:140:33: warning: argument to 'sizeof' in 'memset' call is the same expression as the destination; did you mean to dereference it? [-Wsizeof-pointer-memaccess]
-     140 |         memset(parent, 0, sizeof(parent));
-         |                                 ^
+>
+> Thanks,
+> Conor.
 
 
-vim +140 sound/pci/hda/hda_component.c
 
-   133	
-   134	int hda_component_manager_bind(struct hda_codec *cdc,
-   135				       struct hda_component_parent *parent)
-   136	{
-   137		int i;
-   138	
-   139		/* Init shared and component specific data */
- > 140		memset(parent, 0, sizeof(parent));
-   141		for (i = 0; i < ARRAY_SIZE(parent->comps); i++)
-   142			parent->comps[i].codec = cdc;
-   143	
-   144		return component_bind_all(hda_codec_dev(cdc), &parent->comps);
-   145	}
-   146	EXPORT_SYMBOL_NS_GPL(hda_component_manager_bind, SND_HDA_SCODEC_COMPONENT);
-   147	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+--=20
+Best Regards
+ Guo Ren
 
