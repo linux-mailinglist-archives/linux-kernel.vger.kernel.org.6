@@ -1,197 +1,120 @@
-Return-Path: <linux-kernel+bounces-197613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DAEB8D6D17
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 02:10:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26BB18D6D19
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 02:13:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F3821C2312B
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 00:10:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BECCC1F270DC
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 00:13:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98DE11370;
-	Sat,  1 Jun 2024 00:10:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4266CEDB;
+	Sat,  1 Jun 2024 00:13:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FlMgNgSV"
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="e10+U6Ot"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F4C037E;
-	Sat,  1 Jun 2024 00:10:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F1E37E;
+	Sat,  1 Jun 2024 00:13:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717200624; cv=none; b=OWdWDi8vRZ1WRYjvA2dT67ed358UCggC7m+9qFg3AojUPBLdF/Sp0D2qgJhVdjGAxsjzGwFaThb5X/m2kO4VNW+7ZmLZ8gxGaJ2IBazTaZOky8xJzYDJJoncrm7Tgq30qPCL7LckG5+uHjosv+g4K5Cs3Cvcpjk9D/OmwO8/Gx4=
+	t=1717200809; cv=none; b=Cc52w5T9iuFyW5DVrE8Khi6s+uhqLJkmRUBEaRBYzzvEJUntCC+ceLBPfCHkAn+YxZNvBFOWIXfRc2cdBOTGRrNWoe139O38Bnl7H9ji1h8Jom21gFb+ehWMAKnzq9zVQApAxk8FIbQp8HMMoUUSm0ApMLwWIwS4cHtaPsFoL1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717200624; c=relaxed/simple;
-	bh=91n2kwnI74OK5r+ydkpLfw2spS5DCQ1J5SRP6i3YAQI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AcmSzM6L3OOZ4EuPMUNIoAm++NYmQmT3uiM2odHJDyBev2X0oBcNXxknRtLm69rY8wH8yDDrb+CbRBuysWD4UlwA1JLA5PAadlG1ZQaKTsvP8dKcpVbvCW0YY7jSlFN4HlVA2ROn/Qa1/3H69hMWQLPd1+chzPPq14ZcZWfaxrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FlMgNgSV; arc=none smtp.client-ip=209.85.219.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6ae10ec3bd7so2385236d6.1;
-        Fri, 31 May 2024 17:10:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717200622; x=1717805422; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PSzJ+L/cbNA7sYLgQBG3/PvK9MnOtIiCP0OTqTlJIHk=;
-        b=FlMgNgSVqp0FBYHbvzzEpIokXDizST/k+slfSYtgqjPVXPDqNPkxRZ0GfG4sLKQcH+
-         5pAsXkA9kprSQbjdqu7By/Zi8SUPccTIpbCdkVXwl6iMaaNyJ35J5iRij/DMyotegMTg
-         uO047Rb6LCFEjJpjzkADgauwZo9+vup0bWBYJTDPamseCPlWwWdie5G3TY5ZzQphQWnx
-         bZBmz2gatcJTUuwhJ8k3QBoha8T90H/fp6UcERTOiBIFPBwqidJL2kmYvM8XOfSzaQXc
-         4+2xqsiAAIxLy97TiwtiNQnLV7WILV1aJFUgeejKCOdVguUNG7s5idiQY9/EhQpqC6Xl
-         iwKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717200622; x=1717805422;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PSzJ+L/cbNA7sYLgQBG3/PvK9MnOtIiCP0OTqTlJIHk=;
-        b=f79vq2hSJJX2NTm5vo9D/rpThBUT/m+M+xUGAc4fUpQGb2genEXRkCGnmM/DLuCRKV
-         F5v6Gx/FtlgOf/1uG8pYASJNOM013rnq7twmjb7WbPwBNOEx1BfPZRXUAnwqbVRTuSVO
-         GwOaXEQxI4PrI52CLsuB0SSZqDcAGZNihwRfhIgBfHbgpkFcgmm+LITPtc8jXmJNPzAa
-         b6mgsmWcQXRzYESOcCIbvIO+jgUecHvwPWD0E98TuhzGWAnFh1nW5UJ6reYkDn2nV1Bi
-         3mwrSOSJnFyh+0RYQ2xBHzQ454llTL7EnpmZLIMtzEwXd3RyJvcvqibPe09v+7i+jJTH
-         voTw==
-X-Forwarded-Encrypted: i=1; AJvYcCXWd2GKj5vfCCxVrgodcAG8fG+hqndZodS8bF9vH+zCjHgTD8g/U0GBaAzXCP8FLuKZzNppUGqNdwV7g5y6EqI/hr/EeELlJsrrTLnZ5cenXRpffxJTFkeTf1vhA9n1F3v860jG/LHDU/6XTHhpW7Kn2O1gKfsjEJZTUzSdwFHDIXPyo4uifpk2RwdVffE=
-X-Gm-Message-State: AOJu0YxbzvX11eCjHFW7YFpHUzgPJdncrx25FQWPRDZI0AzHuzdIoMHz
-	cSqZTPTadu8O06VNUbOzZBWswIDt6H1vW+QpE6AoO7kpOzNOWBPi
-X-Google-Smtp-Source: AGHT+IHoL2mHJHbKUOWC5NiDcAMqLzR0pPVM700KBUPJG6vSPJONv3wJvMsi2fwBuGwxHejvntBBlw==
-X-Received: by 2002:a05:6214:c48:b0:6ab:8c3b:9032 with SMTP id 6a1803df08f44-6aecd573592mr36731136d6.1.1717200622086;
-        Fri, 31 May 2024 17:10:22 -0700 (PDT)
-Received: from [192.168.0.98] ([67.6.32.220])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ae4a73e767sm10633516d6.1.2024.05.31.17.10.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 31 May 2024 17:10:21 -0700 (PDT)
-Message-ID: <a2f68c56-e6d6-4626-8d05-b5e808da60da@gmail.com>
-Date: Fri, 31 May 2024 19:10:20 -0500
+	s=arc-20240116; t=1717200809; c=relaxed/simple;
+	bh=U3IpMTGlVC35y/n/a2+QExIY8OMaGJQZnI54eqpiEKA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=G6RlbTkOjhzceZaOk0zyIJ+7sCl9xCzk9QdpiAXVkkTShBHUN0opdigojtJpSdjhV/1hzkaXMj4iH90VtPCfWdHJin2WHiCS11N5tgTLXpJoOx/DORL+eGEDPW/1WaF0cXEk0dePiVZMFaMNfFXGgMVPDJetfxw8NppRFuuNO/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=e10+U6Ot; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44VFRLQp031606;
+	Sat, 1 Jun 2024 00:13:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=U3IpMTGlVC35y/n/a2+QEx
+	IY8OMaGJQZnI54eqpiEKA=; b=e10+U6Otr29RRxPvyI1dDFnbZ1uYQI8kx+mTZs
+	2xaFwgnVEYL8UzoI/3R8XJ/eERU08XfRQhGYdATVQ8+Ekt30ts7EDfk2b9cwiHzr
+	7eR4p8rP0/wYPhjWbNvgukSQhHPrZ3CKFIOHqN4E3fdmaHAKRXh8ULlPGbN9FUMV
+	71xuf46ttwk0iv5QUF/r4KvXoWszZtuNV5sQeBe7ga56mSXcbAZLRG+oDL3s2usn
+	3UMqnqOnEV84Z0nLSg7SC6+fKH8ac1lnXq+yWFgJe4Y3HEByQgKWOd31J7HLuYtX
+	ThWRhM1zrNcyyx2wZgmD7k+3rkkcUIo7Vac1STynKEnygeJg==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yf8xa2kaq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 01 Jun 2024 00:13:17 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 4510DG0v021416
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 1 Jun 2024 00:13:16 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 31 May
+ 2024 17:13:16 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Fri, 31 May 2024 17:13:16 -0700
+Subject: [PATCH] test_maple_tree: add the missing MODULE_DESCRIPTION()
+ macro
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/3] Input: novatek-nvt-ts: add support for NT36672A
- touchscreen
-To: Hans de Goede <hdegoede@redhat.com>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?=
- <ilpo.jarvinen@linux.intel.com>
-Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
-References: <20240526-nvt-ts-devicetree-regulator-support-v3-0-aa88d10ccd9a@gmail.com>
- <20240526-nvt-ts-devicetree-regulator-support-v3-3-aa88d10ccd9a@gmail.com>
- <55272a3b-575d-4212-a40b-7245beed5d80@redhat.com>
-Content-Language: en-US
-From: Joel Selvaraj <joelselvaraj.oss@gmail.com>
-In-Reply-To: <55272a3b-575d-4212-a40b-7245beed5d80@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-ID: <20240531-md-lib-test_maple_tree-v1-1-7b1b485aeec3@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAJtnWmYC/x3M0QqDMAxA0V+RPC9gdU7cr4whqWYz0HaSdEMQ/
+ 33dHs/DvTsYq7DBtdpB+SMmr1TgThVMC6Uno8zF0NTNue5ah3HGIB4zWx4jrYHHrMzYuZna4eL
+ 6wfVQ4lX5Idt/fLsXezJGr5Sm5bcLkt4bRrLMCsfxBRn0xnOHAAAA
+To: Andrew Morton <akpm@linux-foundation.org>,
+        "Liam R. Howlett"
+	<Liam.Howlett@oracle.com>
+CC: <linux-kernel@vger.kernel.org>, <maple-tree@lists.infradead.org>,
+        <linux-mm@kvack.org>, <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson
+	<quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: UHMNlEdKt6nGiY76iG2tw_J54Qt1Qk0k
+X-Proofpoint-ORIG-GUID: UHMNlEdKt6nGiY76iG2tw_J54Qt1Qk0k
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-31_14,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ mlxlogscore=999 mlxscore=0 priorityscore=1501 malwarescore=0 bulkscore=0
+ impostorscore=0 clxscore=1011 lowpriorityscore=0 adultscore=0 phishscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405310185
 
-Hi Hans de Goede,
+make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_maple_tree.o
 
-On 5/27/24 03:42, Hans de Goede wrote:
-> Hi Joel,
-> 
-> On 5/27/24 5:26 AM, Joel Selvaraj via B4 Relay wrote:
->> From: Joel Selvaraj <joelselvaraj.oss@gmail.com>
->>
->> ---
->>   drivers/input/touchscreen/novatek-nvt-ts.c | 78 +++++++++++++++++++++++++++---
->>   1 file changed, 72 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/input/touchscreen/novatek-nvt-ts.c b/drivers/input/touchscreen/novatek-nvt-ts.c
->> index 224fd112b25a9..7a82a1b09f9d5 100644
->> --- a/drivers/input/touchscreen/novatek-nvt-ts.c
->> +++ b/drivers/input/touchscreen/novatek-nvt-ts.c
->> @@ -139,9 +143,23 @@ static irqreturn_t nvt_ts_irq(int irq, void *dev_id)
->>   	return IRQ_HANDLED;
->>   }
->>   
->> +static void nvt_ts_disable_regulators(void *_data)
->> +{
->> +	struct nvt_ts_data *data = _data;
->> +
->> +	regulator_bulk_disable(ARRAY_SIZE(data->regulators), data->regulators);
->> +}
->> +
->>   static int nvt_ts_start(struct input_dev *dev)
->>   {
->>   	struct nvt_ts_data *data = input_get_drvdata(dev);
->> +	int error;
->> +
->> +	error = regulator_bulk_enable(ARRAY_SIZE(data->regulators), data->regulators);
->> +	if (error) {
->> +		dev_err(&data->client->dev, "failed to enable regulators\n");
->> +		return error;
->> +	}
->>   
-> 
-> This is weird, you already enable the regulators in probe() and
-> those get disabled again on remove() by the devm action you add.
-> 
-> So there is no need to enable / disable the regulators on start/stop .
-> 
-> If you want the regulators to only be enabled when the touchscreen
-> is on then you should disable the regulators again in probe()
-> after the nvt_ts_read_data() call there (and drop the devm action).
+Add the missing invocation of the MODULE_DESCRIPTION() macro.
 
-Yes, I want the regulators to be enabled only when the touchscreen is 
-on/active. I will disable the regulators in probe and remove the devm 
-action in v4.
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ lib/test_maple_tree.c | 1 +
+ 1 file changed, 1 insertion(+)
 
->> @@ -277,8 +324,26 @@ static int nvt_ts_probe(struct i2c_client *client)
->>   	return 0;
->>   }
->>   
->> +static const struct nvt_ts_i2c_chip_data nvt_nt11205_ts_data = {
->> +	.wake_type = 0x05,
->> +	.chip_id = 0x05,
->> +};
->> +
->> +static const struct nvt_ts_i2c_chip_data nvt_nt36672a_ts_data = {
->> +	.wake_type = 0x01,
->> +	.chip_id = 0x08,
->> +};
->> +
->> +static const struct of_device_id nvt_ts_of_match[] = {
->> +	{ .compatible = "novatek,nt11205-ts", .data = &nvt_nt11205_ts_data },
->> +	{ .compatible = "novatek,nt36672a-ts", .data = &nvt_nt36672a_ts_data },
->> +	{ }
->> +};
->> +MODULE_DEVICE_TABLE(of, nvt_ts_of_match);
->> +
->>   static const struct i2c_device_id nvt_ts_i2c_id[] = {
->> -	{ "NT11205-ts" },
->> +	{ "NT11205-ts", (unsigned long) &nvt_nt11205_ts_data },
->> +	{ "NT36672A-ts", (unsigned long) &nvt_nt36672a_ts_data },
-> 
-> The i2c-subsystem will also match of compatible strings to i2c_device_ids
-> by looking at the partof the compatible after the ',', so for a compatible
-> of e.g. "novatek,nt36672a-ts" will match an i2c_device_id of "nt36672a-ts".
-> 
-> So if you change these to lower-case:
-> 
-> 	{ "nt11205-ts", (unsigned long) &nvt_nt11205_ts_data },
-> 	{ "nt36672a-ts", (unsigned long) &nvt_nt36672a_ts_data },
-> 
-> Then you can drop the nvt_ts_of_match table since that is not necessary
-> then.
-> 
-> Hmm I just realized that this will break module auto-loading though since that
-> does require of modaliases .
->   
-> So maybe this is not such a good idea after all. Still switching to lowercase
-> i2c_device_id-s would be good for consistency and you need to respin
-> the patch-set for the regulator issue anyways.
+diff --git a/lib/test_maple_tree.c b/lib/test_maple_tree.c
+index 399380db449c..31561e0e1a0d 100644
+--- a/lib/test_maple_tree.c
++++ b/lib/test_maple_tree.c
+@@ -3946,4 +3946,5 @@ static void __exit maple_tree_harvest(void)
+ module_init(maple_tree_seed);
+ module_exit(maple_tree_harvest);
+ MODULE_AUTHOR("Liam R. Howlett <Liam.Howlett@Oracle.com>");
++MODULE_DESCRIPTION("maple tree API test module");
+ MODULE_LICENSE("GPL");
 
-Ok. I will change it to lowercase i2c device id in v4.
+---
+base-commit: b050496579632f86ee1ef7e7501906db579f3457
+change-id: 20240531-md-lib-test_maple_tree-51da39617917
 
-Regards,
-Joel Selvaraj
 
