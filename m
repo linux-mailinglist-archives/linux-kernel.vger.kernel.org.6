@@ -1,380 +1,217 @@
-Return-Path: <linux-kernel+bounces-197623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A2B48D6D32
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 02:48:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ACDB8D6D34
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 02:49:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4C2E1F23D64
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 00:48:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 624CE1C2174B
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 00:49:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02E553FF1;
-	Sat,  1 Jun 2024 00:48:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80C08469D;
+	Sat,  1 Jun 2024 00:49:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="et1hE7lU"
-Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="SA5C+/qg"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2085.outbound.protection.outlook.com [40.107.94.85])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 420AEA38
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Jun 2024 00:48:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717202928; cv=none; b=Th0KqIS4WK3ZjHVBenO+du1WKfkcBZmChpy8ZIl0QZmWou+DuUhrkP4XHO65EmIFkLzY0JeiXTGlAs0r9j3bH/9jqsJeSBLV+qMn8rgOf1O0nqbDBCLwuVUekL9KqMdYdlfd4gYnaQ9ThcLGc/8Vl4+P2NJi5QVLzEeY9zc4qZA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717202928; c=relaxed/simple;
-	bh=gurZFsQ8OvJmnaV8agzTrGE7oEuXGBKQ3Re0ATr/GuU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DJ6wBgx/OubF7LJLo3OIfyBf6J4fi1Vhe1HOfe/bSEp8kqcZUShxLxDkBoTZNKTEms58XZFajTspdeP4/H0GMnvRi1HNF/APKQlwNYMLI/DMlBZ1hTQEMIuEPV6vgraCkVhHc6XahAoZQXJ+dhm1bNoaeGGZ9/BA6YrYyo0AzC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=et1hE7lU; arc=none smtp.client-ip=209.85.210.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-6f8ef63714cso1730542a34.1
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 17:48:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717202926; x=1717807726; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fLpooYvn6cqpznIh0g+oklIkjo2I3vAHUhZ1XARf310=;
-        b=et1hE7lUYBev3Hh4rQdvFaRw0kr1Xk5nNKeKlnt7dIlI3G2BQUN+P/lghmdyIIULAv
-         ZEN8nqk91iWy9LrlwcCA80y6o84qLAbqa658A8DRagaOGWfUcJOXTx5rJXIaFlMBTNXd
-         pRR/Qsrcu+xByO0PVwfsLiF2CuGRYkF3454LQAdNyO3V4iQ8uW12+/GHjUexAoSWHikF
-         Jl9RMth0C/sDgS6o6kZU2UT+Np0sK6Xlpk5UZ8Ytnhu3Pm7+Gfx5WPUIMFhNWOLYK8x6
-         ydvmHDWxS8hoMgf/5qHgJf2mRXK/pvryauH5prd1bkPdfBs1PyNWDLuMLFPuNMfgB6zh
-         aanw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717202926; x=1717807726;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fLpooYvn6cqpznIh0g+oklIkjo2I3vAHUhZ1XARf310=;
-        b=TkdrQBGMleRBvCk+GNrl2ds3rDaT8xxZNsJplto2PyiBxDgsbE7eAd65H2XFIrL/N4
-         k7kFiT0WvsIUrpspbayCo3ReFUwu0lcV9JZ8r4NZqIWQs2eHOsLj0Cg4f02iNoh4k/AN
-         lodFVWtU4NfsYzoWfddjJJz7QTxAKrsDwLas/Qiu98V9S9gmjmbhGaYE2BouJq0ctxeb
-         17LQKuvqSntPPDbcCQjN53rNo/U3z08hVFIDtV7VldoE4EQtXP3svoiUCD7nks9/21ej
-         C9uI7gmzK9uCarDl/KRC1jh8Jt7GwhCT14Y1qqO0f6gLo5FnntIYA12SqIpubkDTsYgu
-         FiuA==
-X-Forwarded-Encrypted: i=1; AJvYcCXy/GzdHppXrcII4J8f/53TVBQbi0/7upWGLfa2MB7zXUwC6RIYn0CBuTP8IUs483vdjHJi1R53m66dwCQ+mUietTXVPDjdcTFV0Q7Y
-X-Gm-Message-State: AOJu0Yx4XAfYxKNo/HXTbsKaHolSedDRO3r5OsPfNUahC4SwzQFymilC
-	aiTC7vjlRmvCOx9BT1lSN8Ev8SuyXpYgufaVzvqAKQ1hBBswqX2WgXXyBdTW8LcEuIw21OHRm83
-	00R0mrLw9xF1Sh8g2T+SnoL9iiO9aL0a2
-X-Google-Smtp-Source: AGHT+IEgE6cxa2YbnBDMm9TNEWqxp4u0kLHoB2ZU4k4IHiB+4ruYZqTlDv2zniIUPy0zkfnP9vpri7djL8HkoWPMSjc=
-X-Received: by 2002:a05:6830:ed9:b0:6f1:3aa3:b0e7 with SMTP id
- 46e09a7af769-6f911f273ffmr3908761a34.7.1717202926307; Fri, 31 May 2024
- 17:48:46 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D609A6FB6;
+	Sat,  1 Jun 2024 00:49:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.85
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717202944; cv=fail; b=G11ERI89AaxkwFJ6k5XUP92HcEiIXDrnK7qanbsja3lO0clL+RG8E/3aWzwjemwp1FWfijPcKPlBY179udBMNyfqNw5MP70AMj9xDXZ8sDfiRM0RMn6bnxyEjMEt5l/KaqiRhXZWMWqKwzEEE9dNNadWfmJ/ckLntYALRV6WVzg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717202944; c=relaxed/simple;
+	bh=hSheAr1uPHW/ocTPDYc3WyKn4GKNbpjIbW/zSKj78A4=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=O0rRP5V+9xnkmpypHyNw9gugphg5a7ZgJg4yGRPl+tYGVjYvQpDrrC4oLB39JiBXzuQJjq/hEkduYQka0sw9oQ1HbVK5KVJ22p/JSoY6NKVDCQzzjrPKChDAeceqCxXOgYU3UEEJITgXgQzKhBR+A2cEr6dDuJMKaSWNk/p+aRk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=SA5C+/qg; arc=fail smtp.client-ip=40.107.94.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=So61LHcxj/K9xRsx+GbWfFlBzG5DW2GKXiYso6L5CBB0j4xqz609Q89se7O1ObO9oeZjFbr5lubNMUfmH4IG055XCq1WGu2piYQ24Pz0AtSmxgHJmTHyIqPYvcWekqI6aETYt39SxjSDJjuvLm+kLuPRDNOCkWPryZneFf522GUT8A45lqbkU26sXtW5AiHG7bq+3SX686qIh10cZZY0kfgWkduckne2qIt30B4KY/shd5w14TdD9mtmS5h+k5HGittfpNgC5FmiI8MJKpXiW6P+sjLqTrKRG0riPe0XhbKwd2rjn9bSqQprmK+OaWOgFM2J7dsXdt4eT2FQ+35IRA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=S4CjiUWzwWVDo5U5rggXo8NhTAk0+tvy0s6AgdaDpIY=;
+ b=kyuPXDbs7GCpzCk87oiCcFB+XeQ0g5lRl0uyXeOO8K0GABIY7ShPB4brHwv8DU/9juihb2jaT1xbSrxhXVyq6ncDMcROrUBo0Om5jGnXYoX+rmnBob/bzft7Z2rAn5eKUzJkVJoQ9Dt0gRpYxDMi7BfP5T7akN9ySM47RTYRIaXWW4567DNm+sIpqN9RY26iQG58h30lJomo/gAmnNa+XQrxzy8aL1Ph2BxKAR4Dj7BoiaXb98x8oRcFtwqaexzl+KUrsz+mp7XFDhysqbstUYkfG5O/l8YSUYssIFfXq49b95iW6Sg7xrW/sTyb+PnTeNWRj9VQHZnt9DhRmI3Xsg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=S4CjiUWzwWVDo5U5rggXo8NhTAk0+tvy0s6AgdaDpIY=;
+ b=SA5C+/qgqlDP1lM0EXZ19DC8Q6o3zvaqbO+fuAkmmycPEhFmS7UCAXur5SGehq8JB9eMmtmxVI5N2VbWMgiHcjvtQELjJP+AGKSC22z4/iYco9nDPIxK4jXrs011355RfEtGtC67a9B0fY3Kfo+ZUhyndlrn//SG5PUkSj3LIMZoSRySj7ua9lhhXwyFEC9UMBBmWYrCkqIET8Wzq7IjXn0lEq/CFTopqQ1tpbHWI+kaZ0hOcUpBsU9KPVKUPf6s0BShT2w7CBqpRXcpem/HcXmMSEeWrxWUxPy1+uz9NB0L5TQ0OhsKrMXxhnwnarUGuiFtgISZJXj1aq/ny1d3ZA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from BY5PR12MB4130.namprd12.prod.outlook.com (2603:10b6:a03:20b::16)
+ by CY8PR12MB7682.namprd12.prod.outlook.com (2603:10b6:930:85::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.22; Sat, 1 Jun
+ 2024 00:48:58 +0000
+Received: from BY5PR12MB4130.namprd12.prod.outlook.com
+ ([fe80::2cf4:5198:354a:cd07]) by BY5PR12MB4130.namprd12.prod.outlook.com
+ ([fe80::2cf4:5198:354a:cd07%4]) with mapi id 15.20.7633.021; Sat, 1 Jun 2024
+ 00:48:58 +0000
+From: John Hubbard <jhubbard@nvidia.com>
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	linux-kbuild@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	John Hubbard <jhubbard@nvidia.com>
+Subject: [PATCH] Makefile: rust-analyzer target: better error handling and comments
+Date: Fri, 31 May 2024 17:48:56 -0700
+Message-ID: <20240601004856.206682-1-jhubbard@nvidia.com>
+X-Mailer: git-send-email 2.45.1
+X-NVConfidentiality: public
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BY5PR20CA0008.namprd20.prod.outlook.com
+ (2603:10b6:a03:1f4::21) To BY5PR12MB4130.namprd12.prod.outlook.com
+ (2603:10b6:a03:20b::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240531104819.140218-1-21cnbao@gmail.com> <87ac9610-5650-451f-aa54-e634a6310af4@redhat.com>
- <CAGsJ_4zgf8j0oRnVBhe-__=K2RFDHTCo-JnMak95HTvxtMUwnQ@mail.gmail.com>
- <d4c1a9ad-4945-40d7-9b7a-5b02df805884@redhat.com> <CAGsJ_4xpDwTTbwzMx8ipmpCyNmVmABpRN1f9yfZfFiOaGMKiew@mail.gmail.com>
- <CAGsJ_4yX52k=Wx2x3jwXzNBG=rDGJrzGNwGCAh0puUP7zby=QA@mail.gmail.com> <821d29b9-cb06-49db-9fe8-6c054c8787fb@redhat.com>
-In-Reply-To: <821d29b9-cb06-49db-9fe8-6c054c8787fb@redhat.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Sat, 1 Jun 2024 12:48:34 +1200
-Message-ID: <CAGsJ_4xrH0iQ1KU6ATWVx4SutfWqCBC6bF-a1tJyRFRKcOUV4A@mail.gmail.com>
-Subject: Re: [RFC PATCH] mm: swap: reuse exclusive folio directly instead of
- wp page faults
-To: David Hildenbrand <david@redhat.com>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org, chrisl@kernel.org, 
-	surenb@google.com, kasong@tencent.com, minchan@kernel.org, 
-	willy@infradead.org, ryan.roberts@arm.com, linux-kernel@vger.kernel.org, 
-	Barry Song <v-songbaohua@oppo.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BY5PR12MB4130:EE_|CY8PR12MB7682:EE_
+X-MS-Office365-Filtering-Correlation-Id: e3552b23-15b9-40a7-3bb7-08dc81d49f4c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|7416005|376005|366007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?zkldY+v0Z8iMSd3NjT/8zcG0HDr3dg3u7OODTARDGeM30AsrLFd7RAlwgChS?=
+ =?us-ascii?Q?o6QaTth/ldChVy9+WjsrOukrBbDPiueYQhaMypYMpeswzlV0RxH4EUKM9I7R?=
+ =?us-ascii?Q?De9/h+GM7JJ0ZDMXbftCQoWWW5FJkP8VTfyQYz+1o9Onfr/PntUWLNtmXJ6F?=
+ =?us-ascii?Q?6JDuTpHRgWajuSpMW46eUsAWCmTSXOMHaWhWvKeM7UyLOIyaAPVagf/SGwOh?=
+ =?us-ascii?Q?tDNbJD7H94gDkUw0roIKMBvKMy6nF0jpOsoVeg14Zw5vtvWT4q0Qt5vdB7s1?=
+ =?us-ascii?Q?5aH5sPEB/o7Z6B0F95sZ8eZD2f7yaEgxjlxFdnH6HB2rbfskMMcaNh3DvwTW?=
+ =?us-ascii?Q?0Y9VZF5dJyrMdPCNMpG8lRfymPwOYKlk1ic95EcQ+41co3ZHiEv7m5cl8Flz?=
+ =?us-ascii?Q?AT00yD1eq1C7ZgkYX1s8TbNYG+4BjiBB4liw9x12Sh/QzD5maoTcihBSRMnc?=
+ =?us-ascii?Q?OAKgrqmfeFtjkFzFUU19NeRJEhSi5KX8M4cWrNRvADmVUK40ro+BqyUmvFhs?=
+ =?us-ascii?Q?YMMAOBtUOWZ/fyzt3G3vw6ikHVRBceCiz+heUNKmhYKtTQ1n7QfWT7x9i5Tk?=
+ =?us-ascii?Q?Jg/NNIgunMmqGr3bm4S559bONjwtP9mDrivqh3Tq2z9rb2R12aTflqKe797w?=
+ =?us-ascii?Q?Fm5xMSLaEEC3jTywoRspEueyJco8cT85/Ekjs9TrY9/UfGMIEmOZHtGJr5De?=
+ =?us-ascii?Q?igwNauQmgESsbjYgLu1jFMYQwPt5zIoxTfQyCb4D3+f+MPS6JuwQhw/NkE9a?=
+ =?us-ascii?Q?xxIO9HLiTBaf/+As8b/48pk9n0ZDu4xTZXuj2GnwQ1SY/jxtkIwQr3sOl7Su?=
+ =?us-ascii?Q?zxwrnnp/loVuvKnQKLJ13PNpsSuA3DJsz3bLQcMQlPGvSlyPTjv2XN1pa7tj?=
+ =?us-ascii?Q?BVjr5SyfJ7NxlpuRSXN7kAjmLK8459nH8hOPYM4q4KeCtER5fw7pzzTcNbEz?=
+ =?us-ascii?Q?Xl1dPr0ET3YO8J21h8dcoxaomMvEQN9Jq6p/UtEhSnjat/VKdNRMv5rgWEsE?=
+ =?us-ascii?Q?+XOeYBzNR2OjWQN7knq1IOgjLpsRcpndMGwsIHJ1gTo0Kb3b1vYQb8h1nYcn?=
+ =?us-ascii?Q?hfolBgiS5T61Uln2Pls8A20/6WBk7KbeKlky2PiLv6aTiqSxn5NeZyCwXbD6?=
+ =?us-ascii?Q?M/D8kSD+OOFOwOlNKten8FwU+KVNgXG75n7B8nEyToaqfgDwH+wpSzjM10Rb?=
+ =?us-ascii?Q?/9MYjcCD2ykwEaM5Yoz9KuHNBGdnuT3bbCY79BNGTjaqTRcsCbN2upOnK3uX?=
+ =?us-ascii?Q?RWw/7SHgnhAWDeQ00pMOTR5zQHgb/KFlycYnnKWMaw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR12MB4130.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(7416005)(376005)(366007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?YKDQOrrM7CDRUJvHcKBFVaE2BWMcUHimiJGFZSgGg6KT1hd5IAeXf+1+IuDR?=
+ =?us-ascii?Q?cBqZbYecYx5IGlIUL9snXjwmYxLak5ZRsuUdSdSETdFadv0HMmHcAn4jv4f1?=
+ =?us-ascii?Q?syVq/yVpOzqddANDHE525xJpesOq6qAGuyhye4Inw0sY4phPGNgPuoPrmqFk?=
+ =?us-ascii?Q?rtcVoU7O+460TOJdFMHVV8iFj7Iao/m2k7nurS+boyMo6XR6BV2ljyA/EwL+?=
+ =?us-ascii?Q?VbFKAG3EACNxXiNOO8o+UaXX1RnEnWA7sICILk/KkkR8xLwiTJnf18FTX+v5?=
+ =?us-ascii?Q?9lJV6PNSuoE/gB5t20h19Y5B3BK8WUa343xuKNKRIUAmWAmgOEsfUo9W0NE/?=
+ =?us-ascii?Q?tznee1GljiSx431JwaDBDr9Qw+VF7WaJz/6MeuU8n1APex0nKmW1Eru5ELXT?=
+ =?us-ascii?Q?5CLW6aj3KhElAAk7KKPZvmc4R62IXr66/5SmwyfBs0AWLLiEnwiDw3NMBdP0?=
+ =?us-ascii?Q?O+BPUhq1g1+WrcwzLDgUHS8MHw5YDDiKM/HrJtNqeMcyss/vNKgu5gQ/7U/1?=
+ =?us-ascii?Q?ThYXOhhqI7u17Old6ZFinxSapwnMnewSIn5www4/i7cU3fQK1p/obS1LGHaa?=
+ =?us-ascii?Q?j7XzwxJUjcffYLf6vw7F1Ge+m2LIVqY7MfevpvoB/gizlfOzphI3SKhwFCW0?=
+ =?us-ascii?Q?1vd+uvRXgPfUyG4y2j7Szpq+ZFBhyIqX6IUOG2Y4Ci0hbeWdTBIKAV04RG0e?=
+ =?us-ascii?Q?diwFBL1euveiPMwb7Sjm2dAYI97cHF8eWcEDMSdUGnit9Pl69NWO+rOiahCO?=
+ =?us-ascii?Q?qXa+uRF8AY5ti7WG9p66vXhilLyCxGzCKfGUHwv8v7Kk+Bb7zVAtGsjnCYcW?=
+ =?us-ascii?Q?g5xFPzbWQKKNlGmobrjgGH7Zx/xaTxoV4bvx7pMOS4l8C6THTbUWLP/H6IyY?=
+ =?us-ascii?Q?4AjOCnue8WAOA7EZv5KmL2aKz7k5x1EjoAMo6DholV+D+bj7NROE7/aBWh3n?=
+ =?us-ascii?Q?zkgnRu9cc/0ayGqtf+V5jduWQJYP3elLmQYCDdCwySpXV42QgCFdGPcfzSJp?=
+ =?us-ascii?Q?38zSg9tVw6uo5ok13UKx7RJ1U+fZd/UA+oFcgdN/zUzgw2QpdD4xDGtu1xOg?=
+ =?us-ascii?Q?LyDjWKCAPfXIQZ9iczau0Yv+V3n89/gj6VcOQ+FnvP7L34siZjFSHxgySFep?=
+ =?us-ascii?Q?dU/kjqUlqOiAd+79EhCxLZTt6JlJjJrG2QqVn2m4kfMpcm8dk8EQY9SQMb9c?=
+ =?us-ascii?Q?5awg/e0Ky7k2WwdtYVd2oIRGNItUWDw/bmolE3ATyJ28xBx0nIdxYTusppJW?=
+ =?us-ascii?Q?9Fyh4SAbSjaBGRFqChRD50F1MJF/qclXc15qnU0NOqSpPhXZCsb3kr/nSjIy?=
+ =?us-ascii?Q?uN54Ow8YXR6hOy+W7cUjVpvwCvOJhJ91DOkP8AnUUmeMgWvLb3dmB1B40+28?=
+ =?us-ascii?Q?q43n7257rk63ORDyqjiKMhpcD3pMDM/dcXRieT0PUnXUsTAzRMRbrqOK9ioA?=
+ =?us-ascii?Q?9HiXCtIDshUxZfaVOGpAa18skVNDisOpfJV4T4cNngzyh06HWIaza6xJ8ig9?=
+ =?us-ascii?Q?WxIU9HJLz0AodQPufD6Bd6otRAxWBRaX4w10ySZAxa1JbRaeguK0Ff/OZqZZ?=
+ =?us-ascii?Q?/SKzfxhAcahi7oA8bcVyWNcw792RHLHpvGbU1pkq?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e3552b23-15b9-40a7-3bb7-08dc81d49f4c
+X-MS-Exchange-CrossTenant-AuthSource: BY5PR12MB4130.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jun 2024 00:48:58.6179
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: NmH7EnXbEUqHaz0wutgp6d5sTnRCopDlQehJ21dZbe6D4AJf1LIIUbJmv7p6+v5kw7lM3TdPh2x0mpfObnYUjw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7682
 
-On Sat, Jun 1, 2024 at 12:35=E2=80=AFAM David Hildenbrand <david@redhat.com=
-> wrote:
->
-> On 31.05.24 14:30, Barry Song wrote:
-> > On Sat, Jun 1, 2024 at 12:20=E2=80=AFAM Barry Song <21cnbao@gmail.com> =
-wrote:
-> >>
-> >> On Sat, Jun 1, 2024 at 12:10=E2=80=AFAM David Hildenbrand <david@redha=
-t.com> wrote:
-> >>>
-> >>> On 31.05.24 13:55, Barry Song wrote:
-> >>>> On Fri, May 31, 2024 at 11:08=E2=80=AFPM David Hildenbrand <david@re=
-dhat.com> wrote:
-> >>>>>
-> >>>>> On 31.05.24 12:48, Barry Song wrote:
-> >>>>>> From: Barry Song <v-songbaohua@oppo.com>
-> >>>>>>
-> >>>>>> After swapping out, we perform a swap-in operation. If we first re=
-ad
-> >>>>>> and then write, we encounter a major fault in do_swap_page for rea=
-ding,
-> >>>>>> along with additional minor faults in do_wp_page for writing. Howe=
-ver,
-> >>>>>> the latter appears to be unnecessary and inefficient. Instead, we =
-can
-> >>>>>> directly reuse in do_swap_page and completely eliminate the need f=
-or
-> >>>>>> do_wp_page.
-> >>>>>>
-> >>>>>> This patch achieves that optimization specifically for exclusive f=
-olios.
-> >>>>>> The following microbenchmark demonstrates the significant reductio=
-n in
-> >>>>>> minor faults.
-> >>>>>>
-> >>>>>>     #define DATA_SIZE (2UL * 1024 * 1024)
-> >>>>>>     #define PAGE_SIZE (4UL * 1024)
-> >>>>>>
-> >>>>>>     static void *read_write_data(char *addr)
-> >>>>>>     {
-> >>>>>>             char tmp;
-> >>>>>>
-> >>>>>>             for (int i =3D 0; i < DATA_SIZE; i +=3D PAGE_SIZE) {
-> >>>>>>                     tmp =3D *(volatile char *)(addr + i);
-> >>>>>>                     *(volatile char *)(addr + i) =3D tmp;
-> >>>>>>             }
-> >>>>>>     }
-> >>>>>>
-> >>>>>>     int main(int argc, char **argv)
-> >>>>>>     {
-> >>>>>>             struct rusage ru;
-> >>>>>>
-> >>>>>>             char *addr =3D mmap(NULL, DATA_SIZE, PROT_READ | PROT_=
-WRITE,
-> >>>>>>                             MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
-> >>>>>>             memset(addr, 0x11, DATA_SIZE);
-> >>>>>>
-> >>>>>>             do {
-> >>>>>>                     long old_ru_minflt, old_ru_majflt;
-> >>>>>>                     long new_ru_minflt, new_ru_majflt;
-> >>>>>>
-> >>>>>>                     madvise(addr, DATA_SIZE, MADV_PAGEOUT);
-> >>>>>>
-> >>>>>>                     getrusage(RUSAGE_SELF, &ru);
-> >>>>>>                     old_ru_minflt =3D ru.ru_minflt;
-> >>>>>>                     old_ru_majflt =3D ru.ru_majflt;
-> >>>>>>
-> >>>>>>                     read_write_data(addr);
-> >>>>>>                     getrusage(RUSAGE_SELF, &ru);
-> >>>>>>                     new_ru_minflt =3D ru.ru_minflt;
-> >>>>>>                     new_ru_majflt =3D ru.ru_majflt;
-> >>>>>>
-> >>>>>>                     printf("minor faults:%ld major faults:%ld\n",
-> >>>>>>                             new_ru_minflt - old_ru_minflt,
-> >>>>>>                             new_ru_majflt - old_ru_majflt);
-> >>>>>>             } while(0);
-> >>>>>>
-> >>>>>>             return 0;
-> >>>>>>     }
-> >>>>>>
-> >>>>>> w/o patch,
-> >>>>>> / # ~/a.out
-> >>>>>> minor faults:512 major faults:512
-> >>>>>>
-> >>>>>> w/ patch,
-> >>>>>> / # ~/a.out
-> >>>>>> minor faults:0 major faults:512
-> >>>>>>
-> >>>>>> Minor faults decrease to 0!
-> >>>>>>
-> >>>>>> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
-> >>>>>> ---
-> >>>>>>     mm/memory.c | 7 ++++---
-> >>>>>>     1 file changed, 4 insertions(+), 3 deletions(-)
-> >>>>>>
-> >>>>>> diff --git a/mm/memory.c b/mm/memory.c
-> >>>>>> index eef4e482c0c2..e1d2e339958e 100644
-> >>>>>> --- a/mm/memory.c
-> >>>>>> +++ b/mm/memory.c
-> >>>>>> @@ -4325,9 +4325,10 @@ vm_fault_t do_swap_page(struct vm_fault *vm=
-f)
-> >>>>>>          */
-> >>>>>>         if (!folio_test_ksm(folio) &&
-> >>>>>>             (exclusive || folio_ref_count(folio) =3D=3D 1)) {
-> >>>>>> -             if (vmf->flags & FAULT_FLAG_WRITE) {
-> >>>>>> -                     pte =3D maybe_mkwrite(pte_mkdirty(pte), vma)=
-;
-> >>>>>> -                     vmf->flags &=3D ~FAULT_FLAG_WRITE;
-> >>>>>> +             if (vma->vm_flags & VM_WRITE) {
-> >>>>>> +                     pte =3D pte_mkwrite(pte_mkdirty(pte), vma);
-> >>>>>> +                     if (vmf->flags & FAULT_FLAG_WRITE)
-> >>>>>> +                             vmf->flags &=3D ~FAULT_FLAG_WRITE;
-> >>>>>
-> >>>>> This implies, that even on a read fault, you would mark the pte dir=
-ty
-> >>>>> and it would have to be written back to swap if still in the swap c=
-ache
-> >>>>> and only read.
-> >>>>>
-> >>>>> That is controversial.
-> >>>>>
-> >>>>> What is less controversial is doing what mprotect() via
-> >>>>> change_pte_range()/can_change_pte_writable() would do: mark the PTE
-> >>>>> writable but not dirty.
-> >>>>>
-> >>>>> I suggest setting the pte only dirty if FAULT_FLAG_WRITE is set.
-> >>>>
-> >>>> Thanks!
-> >>>>
-> >>>> I assume you mean something as below?
-> >>>
-> >>> It raises an important point: uffd-wp must be handled accordingly.
-> >>>
-> >>>>
-> >>>> diff --git a/mm/memory.c b/mm/memory.c
-> >>>> index eef4e482c0c2..dbf1ba8ccfd6 100644
-> >>>> --- a/mm/memory.c
-> >>>> +++ b/mm/memory.c
-> >>>> @@ -4317,6 +4317,10 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
-> >>>>           add_mm_counter(vma->vm_mm, MM_SWAPENTS, -nr_pages);
-> >>>>           pte =3D mk_pte(page, vma->vm_page_prot);
-> >>>>
-> >>>> +       if (pte_swp_soft_dirty(vmf->orig_pte))
-> >>>> +               pte =3D pte_mksoft_dirty(pte);
-> >>>> +       if (pte_swp_uffd_wp(vmf->orig_pte))
-> >>>> +               pte =3D pte_mkuffd_wp(pte);
-> >>>>           /*
-> >>>>            * Same logic as in do_wp_page(); however, optimize for pa=
-ges that are
-> >>>>            * certainly not shared either because we just allocated t=
-hem without
-> >>>> @@ -4325,18 +4329,19 @@ vm_fault_t do_swap_page(struct vm_fault *vmf=
-)
-> >>>>            */
-> >>>>           if (!folio_test_ksm(folio) &&
-> >>>>               (exclusive || folio_ref_count(folio) =3D=3D 1)) {
-> >>>> -               if (vmf->flags & FAULT_FLAG_WRITE) {
-> >>>> -                       pte =3D maybe_mkwrite(pte_mkdirty(pte), vma)=
-;
-> >>>> -                       vmf->flags &=3D ~FAULT_FLAG_WRITE;
-> >>>> +               if (vma->vm_flags & VM_WRITE) {
-> >>>> +                       if (vmf->flags & FAULT_FLAG_WRITE) {
-> >>>> +                               pte =3D pte_mkwrite(pte_mkdirty(pte)=
-, vma);
-> >>>> +                               vmf->flags &=3D ~FAULT_FLAG_WRITE;
-> >>>> +                       } else if ((!vma_soft_dirty_enabled(vma) ||
-> >>>> pte_soft_dirty(pte))
-> >>>> +                                   && !userfaultfd_pte_wp(vma, pte)=
-) {
-> >>>> +                                       pte =3D pte_mkwrite(pte, vma=
-);
-> >>>
-> >>> Even with FAULT_FLAG_WRITE we must respect uffd-wp and *not* do a
-> >>> pte_mkwrite(pte). So we have to catch and handle that earlier (I coul=
-d
-> >>> have sworn we handle that somehow).
-> >>>
-> >>> Note that the existing
-> >>>          pte =3D pte_mkuffd_wp(pte);
-> >>>
-> >>> Will fix that up because it does an implicit pte_wrprotect().
-> >>
-> >> This is exactly what I have missed as I am struggling with why WRITE_F=
-AULT
-> >> blindly does mkwrite without checking userfaultfd_pte_wp().
-> >>
-> >>>
-> >>>
-> >>> So maybe what would work is
-> >>>
-> >>>
-> >>> if ((vma->vm_flags & VM_WRITE) && !userfaultfd_pte_wp(vma, pte) &&
-> >>>       !vma_soft_dirty_enabled(vma)) {
-> >>>          pte =3D pte_mkwrite(pte);
-> >>>
-> >>>          /* Only set the PTE dirty on write fault. */
-> >>>          if (vmf->flags & FAULT_FLAG_WRITE) {
-> >>>                  pte =3D pte_mkdirty(pte);
-> >>>                  vmf->flags &=3D ~FAULT_FLAG_WRITE;
-> >>>          }
-> >
-> > WRITE_FAULT has a pte_mkdirty, so it doesn't need to check
-> > "!vma_soft_dirty_enabled(vma)"?
-> > Maybe I thought too much, just the simple code below should work?
->
-> That would likely not handle softdirty correctly in case we end up in
-> pte_mkwrite(pte, vma); note that pte_mksoft_dirty() will not wrprotect ..=
-.
+1) Provide a more self-explanatory error message for the "Rust not
+available" case. Without this patch, if Rust is not set up properly
+(which happens a lot, seeing as how one must routinely run "rustup
+override ..." with each new kernel release), the "make rust-analyzer"
+invocation generates a somewhat confusing message:
 
-if SOFTDIRTY has been set, we shouldn't do wrprotect? till the dirty
-is cleared, we don't rely on further write fault to set soft dirty, right?
+    "No rule to make target 'rust-analyzer"
 
-so we should better do pte_mkwrite if pte_soft_dirty(pte) =3D=3D true?
+This is confusing at first, because there is, in fact, a rust-analyzer
+build target. It's just not set up to handle errors gracefully.
 
- if ((vma->vm_flags & VM_WRITE) && !userfaultfd_pte_wp(vma, pte) &&
-      (!vma_soft_dirty_enabled(vma) || pte_soft_dirty(pte)))
+Instead of inflicting that on the developer, just print that Rust is
+not available, with a blank line above and below, so it doesn't get lost
+in the noise. Now the error case looks like this:
 
->
-> (note that we shouldn't optimize for softdirty handling)
->
-> >
-> >          if (!folio_test_ksm(folio) &&
-> >              (exclusive || folio_ref_count(folio) =3D=3D 1)) {
-> >                  if (vma->vm_flags & VM_WRITE) {
-> >                          if (vmf->flags & FAULT_FLAG_WRITE) {
-> >                                  pte =3D pte_mkwrite(pte_mkdirty(pte), =
-vma);
-> >                                  vmf->flags &=3D ~FAULT_FLAG_WRITE;
-> >                          } else {
-> >                                  pte =3D pte_mkwrite(pte, vma);
-> >                          }
-> >                  }
-> >                  rmap_flags |=3D RMAP_EXCLUSIVE;
-> >          }
-> >
-> >          if (pte_swp_soft_dirty(vmf->orig_pte))
-> >                  pte =3D pte_mksoft_dirty(pte);
-> >          if (pte_swp_uffd_wp(vmf->orig_pte))
-> >                  pte =3D pte_mkuffd_wp(pte);
-> >
-> > This still uses the implicit wrprotect of pte_mkuffd_wp.
->
-> But the wrprotected->writable->wrprotected path really is confusing. I'd
-> prefer to set these bits ahead of time instead, so we can properly rely
-> on them -- like we do in other code.
+    $ make rust-analyzer
 
-I agree. we are setting WRITE then reverting the WRITE. It is confusing.
+    Rust is not available
 
-So in conclusion, we get the belows?
+    make[1]: *** [/kernel_work/linux-github/Makefile:1975: rust-analyzer] Error 1
+    make: *** [Makefile:240: __sub-make] Error 2
 
-        if (pte_swp_soft_dirty(vmf->orig_pte))
-                pte =3D pte_mksoft_dirty(pte);
-        if (pte_swp_uffd_wp(vmf->orig_pte))
-                pte =3D pte_mkuffd_wp(pte);
+2) As long as I'm there, also add some documentation about what
+rust-analyzer provides.
 
-        /*
-         * Same logic as in do_wp_page(); however, optimize for pages that =
-are
-         * certainly not shared either because we just allocated them witho=
-ut
-         * exposing them to the swapcache or because the swap entry indicat=
-es
-         * exclusivity.
-         */
-        if (!folio_test_ksm(folio) &&
-            (exclusive || folio_ref_count(folio) =3D=3D 1)) {
-                if (vma->vm_flags & VM_WRITE && !userfaultfd_pte_wp(vma, pt=
-e)
-                    && (!vma_soft_dirty_enabled(vma) || pte_soft_dirty(pte)=
-)) {
-                        if (vmf->flags & FAULT_FLAG_WRITE) {
-                                pte =3D pte_mkwrite(pte_mkdirty(pte), vma);
-                                vmf->flags &=3D ~FAULT_FLAG_WRITE;
-                        } else {
-                                pte =3D pte_mkwrite(pte, vma);
-                        }
-                }
-                rmap_flags |=3D RMAP_EXCLUSIVE;
-        }
+Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+---
+ Makefile | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
->
-> --
-> Cheers,
->
-> David / dhildenb
->
+diff --git a/Makefile b/Makefile
+index f975b6396328..aca2c96820aa 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1967,9 +1967,13 @@ quiet_cmd_tags = GEN     $@
+ tags TAGS cscope gtags: FORCE
+ 	$(call cmd,tags)
+ 
+-# IDE support targets
++# Generate rust-project.json, which does for Rust what clangd's
++# compile_commands.json does for C/C++: provides a browsing database for code
++# editors and IDEs.
+ PHONY += rust-analyzer
+ rust-analyzer:
++	$(Q)$(CONFIG_SHELL) $(srctree)/scripts/rust_is_available.sh 2>/dev/null || \
++	    { echo; echo "Rust is not available"; echo; false; }
+ 	$(Q)$(MAKE) $(build)=rust $@
+ 
+ # Script to generate missing namespace dependencies
 
-Thanks
-Barry
+base-commit: b050496579632f86ee1ef7e7501906db579f3457
+-- 
+2.45.1
+
 
