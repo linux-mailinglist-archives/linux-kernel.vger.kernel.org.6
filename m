@@ -1,252 +1,234 @@
-Return-Path: <linux-kernel+bounces-198002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CDC58D71E2
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 22:45:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 544398D71E4
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 22:49:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 048921F21C8F
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 20:45:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82DCA1C20D68
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 20:49:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A2E215530F;
-	Sat,  1 Jun 2024 20:44:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47A43154C0B;
+	Sat,  1 Jun 2024 20:49:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jRhxDNM7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="kGfbzgwA";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3gzI0uYT";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="kGfbzgwA";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3gzI0uYT"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71D688120F;
-	Sat,  1 Jun 2024 20:44:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 823AB27447;
+	Sat,  1 Jun 2024 20:49:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717274686; cv=none; b=oTbR3v1oLJ6BsVl2Csidx6SngHgaBFQLMjdQYEdk40WOPcqVfCpTbamM4fL9c6lY0bWyshVl8oIHUYrg+8wMtjoV/Ni4i4bc60HkiZ9OwmEVGcEt2Au6yvgueXzminFZG9aBFA/xIjcouuUc9VXvbKSJcf5g27dXR+5iu6naEw8=
+	t=1717274945; cv=none; b=Sl0Fp0OPIFWjRND0561fXYhUsh+v1UBAVLrSiXoYQ0p+nqhbmkkIkHps5QP0MGx55ZT7629RubIqmMQlXRBWQXCSutadrdUpxsme+cIKRjkBpBLOVkffI4KFCeG37dQ5PppF6ayV1McHgE65D5Pjdr77QdtiSYrjZV8CBqfLcxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717274686; c=relaxed/simple;
-	bh=oL/f5LFTUMhn1i0h51KvDWlGmHaSNFHJXTUDC1jxepU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=E2+QBC4XSSsqykki9UptDtKTLnE/cqJZqSBygFP0/moihkEvPlB5y7vqpSMBaadJvPhR52tsgyGlomP79ERnjyzZtsRSGTqm/KI/H+F458ZPalOj8lvzAQZm2Fim6PT2dppyC3oNU989a5+3Sz7Stkkr6jUgLeTUD+Kt92C7++g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jRhxDNM7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 074D5C4AF08;
-	Sat,  1 Jun 2024 20:44:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717274686;
-	bh=oL/f5LFTUMhn1i0h51KvDWlGmHaSNFHJXTUDC1jxepU=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=jRhxDNM7ePk0nBGTUOyV0zivwwFyxTe/Woq9utdJYdNypCXeVv81ONZw6tMYqnTCm
-	 7Ahf5nTwghzuo5eGxgTulez+uvOpMtRKOOrsfrg9oaJhXX6MTrA8LqRkLWwCAvpJEC
-	 IhNaBGhb9Wf5OM6o2nzry8gQTv0yO4FeyedFUtXKOv1UumZnsvtT3xnY7v6eQ3N/Xb
-	 R1jmePgdic9r6OYqlT94TMo8D30nxQV477hepqdrCjJ+145Z/kZMLqg0g70PCvZEE4
-	 jvBL25EtWKulT0I1KqXOa0OUNU9szwooVQdX4/Ghlv7atap99h1DOMWstxm4IjIOMk
-	 TnToiL3dy8OeA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7D23C27C53;
-	Sat,  1 Jun 2024 20:44:45 +0000 (UTC)
-From: Joel Selvaraj via B4 Relay <devnull+joelselvaraj.oss.gmail.com@kernel.org>
-Date: Sat, 01 Jun 2024 15:44:45 -0500
-Subject: [PATCH v5 3/3] Input: novatek-nvt-ts: add support for NT36672A
- touchscreen
+	s=arc-20240116; t=1717274945; c=relaxed/simple;
+	bh=TJUhnakkezy3jijdOVSBPJtYX1JNamsqZONzk+asy4w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FgMDJ2SmiTI5NKAJKwuCvrsxD4E5Rs8Cr//2mzqiBitMdAOq/ETL+iCx1WuYQ64eKEoECbGdd8+jsXtTVnpjjrW7TxkreVy+TDUw9NiOoHvmNiLm788dTngs/yTghgfeuHMEY99/KTAoYUJ/YfgEx+r0J2IrDUthpurDSM1/+hk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=kGfbzgwA; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3gzI0uYT; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=kGfbzgwA; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3gzI0uYT; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 9B1DD1FEE9;
+	Sat,  1 Jun 2024 20:48:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1717274934; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=dCDTiX0KomT1r1tAFoAwvnZAd6hkmojiupNma6nyo+c=;
+	b=kGfbzgwAJio3GgGdExfGZnRxU6Evf3D8g4jlsxLTOBJXhDuIYX4H2vldEtDEmX1Xz/T5Oh
+	nxRAu+nm8tOGfvJesYNIasVsC863iSEH3aHX1pf/pCh3lcZMvyN8yO+jjJ5DKN3fgIPFl0
+	LF56y34NWUZgyKEE/d3Pvp5c4P9VR94=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1717274934;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=dCDTiX0KomT1r1tAFoAwvnZAd6hkmojiupNma6nyo+c=;
+	b=3gzI0uYTZxFIrmGm+TBHChXdVgUUhGyJIf5BdU6BfdM58vhL5E/AXW6pJogURno0S0TAvo
+	N/qXJGRQU79etnBg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1717274934; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=dCDTiX0KomT1r1tAFoAwvnZAd6hkmojiupNma6nyo+c=;
+	b=kGfbzgwAJio3GgGdExfGZnRxU6Evf3D8g4jlsxLTOBJXhDuIYX4H2vldEtDEmX1Xz/T5Oh
+	nxRAu+nm8tOGfvJesYNIasVsC863iSEH3aHX1pf/pCh3lcZMvyN8yO+jjJ5DKN3fgIPFl0
+	LF56y34NWUZgyKEE/d3Pvp5c4P9VR94=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1717274934;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=dCDTiX0KomT1r1tAFoAwvnZAd6hkmojiupNma6nyo+c=;
+	b=3gzI0uYTZxFIrmGm+TBHChXdVgUUhGyJIf5BdU6BfdM58vhL5E/AXW6pJogURno0S0TAvo
+	N/qXJGRQU79etnBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6D9C6137C3;
+	Sat,  1 Jun 2024 20:48:54 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id gqgkGjaJW2azTQAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Sat, 01 Jun 2024 20:48:54 +0000
+Message-ID: <87a4928a-ea15-453c-b252-2da0b301cb7e@suse.cz>
+Date: Sat, 1 Jun 2024 22:48:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 0/4] static key support for error injection functions
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Akinobu Mita <akinobu.mita@gmail.com>, Christoph Lameter <cl@linux.com>,
+ David Rientjes <rientjes@google.com>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
+ "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+ Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+ "David S. Miller" <davem@davemloft.net>,
+ Masami Hiramatsu <mhiramat@kernel.org>, Steven Rostedt
+ <rostedt@goodmis.org>, Jiri Olsa <jolsa@kernel.org>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, bpf@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+References: <20240531-fault-injection-statickeys-v1-0-a513fd0a9614@suse.cz>
+ <ZlntQn-a7Ycko_j5@J2N7QTR9R3>
+Content-Language: en-US
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <ZlntQn-a7Ycko_j5@J2N7QTR9R3>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240601-nvt-ts-devicetree-regulator-support-v5-3-aa9bf986347d@gmail.com>
-References: <20240601-nvt-ts-devicetree-regulator-support-v5-0-aa9bf986347d@gmail.com>
-In-Reply-To: <20240601-nvt-ts-devicetree-regulator-support-v5-0-aa9bf986347d@gmail.com>
-To: Hans de Goede <hdegoede@redhat.com>, 
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
- Joel Selvaraj <joelselvaraj.oss@gmail.com>
-X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1717274685; l=5689;
- i=joelselvaraj.oss@gmail.com; s=20240420; h=from:subject:message-id;
- bh=3VXnAP6lJY2+M+2uxu95s8qsqxPyAvaz4q1AjmLeC48=;
- b=Qz1O618oBK00jaC0pV7fWbiAbJxW7yQ2Z0jWPgduxelFegorutKfOEmouD2q96iSuRR1UC5lf
- Un/y+WCP5FrDzZLarOPOSsbPW8tvbdVDh+Kp+M42JxXJDlaiHEgV46u
-X-Developer-Key: i=joelselvaraj.oss@gmail.com; a=ed25519;
- pk=qT4gsuVtlPE0Dpr+tQA/Fumm7wzVP6qfeVaY+6pX04s=
-X-Endpoint-Received: by B4 Relay for joelselvaraj.oss@gmail.com/20240420
- with auth_id=165
-X-Original-From: Joel Selvaraj <joelselvaraj.oss@gmail.com>
-Reply-To: joelselvaraj.oss@gmail.com
+X-Spam-Flag: NO
+X-Spam-Score: -2.79
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.79 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	RCVD_TLS_ALL(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[gmail.com,linux.com,google.com,kernel.org,iogearbox.net,linux.ibm.com,intel.com,davemloft.net,goodmis.org,linux.dev,vger.kernel.org,kvack.org];
+	RCPT_COUNT_TWELVE(0.00)[19];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_SOME(0.00)[]
 
-From: Joel Selvaraj <joelselvaraj.oss@gmail.com>
+On 5/31/24 5:31 PM, Mark Rutland wrote:
+> Hi,
+> 
+> On Fri, May 31, 2024 at 11:33:31AM +0200, Vlastimil Babka wrote:
+>> Incomplete, help needed from ftrace/kprobe and bpf folks.
+> 
+>> - the generic error injection using kretprobes with
+>>   override_function_with_return is handled in patch 2. The
+>>   ALLOW_ERROR_INJECTION() annotation is extended so that static key
+>>   address can be passed, and the framework controls it when error
+>>   injection is enabled or disabled in debugfs for the function.
+>> 
+>> There are two more users I know of but am not familiar enough to fix up
+>> myself. I hope people that are more familiar can help me here.
+>> 
+>> - ftrace seems to be using override_function_with_return from
+>>   #define ftrace_override_function_with_return but I found no place
+>>   where the latter is used. I assume it might be hidden behind more
+>>   macro magic? But the point is if ftrace can be instructed to act like
+>>   an error injection, it would also have to use some form of metadata
+>>   (from patch 2 presumably?) to get to the static key and control it.
+> 
+> I don't think you've missed anything; nothing currently uses
+> ftrace_override_function_with_return(). I added that in commit:
 
-Extend the novatek touchscreen driver to support NT36672A chip which
-is found in phones like qcom/sdm845-xiaomi-beryllium-tianma.dts.
-Added devicetree support for the driver and used i2c chip data to handle
-the variation in chip id and wake type. Also added vcc and iovcc
-regulators which are used to power the touchscreen hardware.
+Ah, great, thanks for confirming that.
 
-Signed-off-by: Joel Selvaraj <joelselvaraj.oss@gmail.com>
----
- drivers/input/touchscreen/novatek-nvt-ts.c | 67 +++++++++++++++++++++++++++---
- 1 file changed, 61 insertions(+), 6 deletions(-)
+>   94d095ffa0e16bb7 ("ftrace: abstract DYNAMIC_FTRACE_WITH_ARGS accesses")
+> 
+> ... so that it was possible to do anything that was possible with
+> FTRACE_WITH_REGS and/or kprobes, under the expectation that we might
+> want to move fault injection and BPF probes over to fprobes in future,
+> as ftrace/fprobes is generally faster than kprobes (e.g. for
+> architectures that can't do KPROBES_ON_FTRACE or OPTPROBES).
+> 
+> That's just the mechanism for the handler to use; I'd expect whatever
+> registered the handler to be responsible for flipping the static key,
+> and I don't think anything needs to change within ftrace itself.
+> 
+>>   If ftrace can only observe the function being called, maybe it
+>>   wouldn't be wrong to just observe nothing if the static key isn't
+>>   enabled because nobody is doing the fault injection?
+> 
+> Yep, that sounds right to me.
 
-diff --git a/drivers/input/touchscreen/novatek-nvt-ts.c b/drivers/input/touchscreen/novatek-nvt-ts.c
-index 9bee3a0c122fb..b9ff97bf4d880 100644
---- a/drivers/input/touchscreen/novatek-nvt-ts.c
-+++ b/drivers/input/touchscreen/novatek-nvt-ts.c
-@@ -31,9 +31,6 @@
- #define NVT_TS_PARAMS_CHIP_ID		0x0e
- #define NVT_TS_PARAMS_SIZE		0x0f
- 
--#define NVT_TS_SUPPORTED_WAKE_TYPE	0x05
--#define NVT_TS_SUPPORTED_CHIP_ID	0x05
--
- #define NVT_TS_MAX_TOUCHES		10
- #define NVT_TS_MAX_SIZE			4096
- 
-@@ -51,10 +48,16 @@ static const int nvt_ts_irq_type[4] = {
- 	IRQF_TRIGGER_HIGH
- };
- 
-+struct nvt_ts_i2c_chip_data {
-+	u8 wake_type;
-+	u8 chip_id;
-+};
-+
- struct nvt_ts_data {
- 	struct i2c_client *client;
- 	struct input_dev *input;
- 	struct gpio_desc *reset_gpio;
-+	struct regulator_bulk_data regulators[2];
- 	struct touchscreen_properties prop;
- 	int max_touches;
- 	u8 buf[NVT_TS_TOUCH_SIZE * NVT_TS_MAX_TOUCHES];
-@@ -142,6 +145,13 @@ static irqreturn_t nvt_ts_irq(int irq, void *dev_id)
- static int nvt_ts_start(struct input_dev *dev)
- {
- 	struct nvt_ts_data *data = input_get_drvdata(dev);
-+	int error;
-+
-+	error = regulator_bulk_enable(ARRAY_SIZE(data->regulators), data->regulators);
-+	if (error) {
-+		dev_err(&data->client->dev, "failed to enable regulators\n");
-+		return error;
-+	}
- 
- 	enable_irq(data->client->irq);
- 	gpiod_set_value_cansleep(data->reset_gpio, 0);
-@@ -155,6 +165,7 @@ static void nvt_ts_stop(struct input_dev *dev)
- 
- 	disable_irq(data->client->irq);
- 	gpiod_set_value_cansleep(data->reset_gpio, 1);
-+	regulator_bulk_disable(ARRAY_SIZE(data->regulators), data->regulators);
- }
- 
- static int nvt_ts_suspend(struct device *dev)
-@@ -188,6 +199,7 @@ static int nvt_ts_probe(struct i2c_client *client)
- 	struct device *dev = &client->dev;
- 	int error, width, height, irq_type;
- 	struct nvt_ts_data *data;
-+	const struct nvt_ts_i2c_chip_data *chip;
- 	struct input_dev *input;
- 
- 	if (!client->irq) {
-@@ -199,12 +211,35 @@ static int nvt_ts_probe(struct i2c_client *client)
- 	if (!data)
- 		return -ENOMEM;
- 
-+	chip = device_get_match_data(&client->dev);
-+	if (!chip)
-+		return -EINVAL;
-+
- 	data->client = client;
- 	i2c_set_clientdata(client, data);
- 
-+	/*
-+	 * VCC is the analog voltage supply
-+	 * IOVCC is the digital voltage supply
-+	 */
-+	data->regulators[0].supply = "vcc";
-+	data->regulators[1].supply = "iovcc";
-+	error = devm_regulator_bulk_get(dev, ARRAY_SIZE(data->regulators), data->regulators);
-+	if (error) {
-+		dev_err(dev, "cannot get regulators: %d\n", error);
-+		return error;
-+	}
-+
-+	error = regulator_bulk_enable(ARRAY_SIZE(data->regulators), data->regulators);
-+	if (error) {
-+		dev_err(dev, "failed to enable regulators: %d\n", error);
-+		return error;
-+	}
-+
- 	data->reset_gpio = devm_gpiod_get(dev, "reset", GPIOD_OUT_LOW);
- 	error = PTR_ERR_OR_ZERO(data->reset_gpio);
- 	if (error) {
-+		regulator_bulk_disable(ARRAY_SIZE(data->regulators), data->regulators);
- 		dev_err(dev, "failed to request reset GPIO: %d\n", error);
- 		return error;
- 	}
-@@ -214,6 +249,7 @@ static int nvt_ts_probe(struct i2c_client *client)
- 	error = nvt_ts_read_data(data->client, NVT_TS_PARAMETERS_START,
- 				 data->buf, NVT_TS_PARAMS_SIZE);
- 	gpiod_set_value_cansleep(data->reset_gpio, 1); /* Put back in reset */
-+	regulator_bulk_disable(ARRAY_SIZE(data->regulators), data->regulators);
- 	if (error)
- 		return error;
- 
-@@ -225,8 +261,8 @@ static int nvt_ts_probe(struct i2c_client *client)
- 	if (width > NVT_TS_MAX_SIZE || height >= NVT_TS_MAX_SIZE ||
- 	    data->max_touches > NVT_TS_MAX_TOUCHES ||
- 	    irq_type >= ARRAY_SIZE(nvt_ts_irq_type) ||
--	    data->buf[NVT_TS_PARAMS_WAKE_TYPE] != NVT_TS_SUPPORTED_WAKE_TYPE ||
--	    data->buf[NVT_TS_PARAMS_CHIP_ID] != NVT_TS_SUPPORTED_CHIP_ID) {
-+	    data->buf[NVT_TS_PARAMS_WAKE_TYPE] != chip->wake_type ||
-+	    data->buf[NVT_TS_PARAMS_CHIP_ID] != chip->chip_id) {
- 		dev_err(dev, "Unsupported touchscreen parameters: %*ph\n",
- 			NVT_TS_PARAMS_SIZE, data->buf);
- 		return -EIO;
-@@ -277,8 +313,26 @@ static int nvt_ts_probe(struct i2c_client *client)
- 	return 0;
- }
- 
-+static const struct nvt_ts_i2c_chip_data nvt_nt11205_ts_data = {
-+	.wake_type = 0x05,
-+	.chip_id = 0x05,
-+};
-+
-+static const struct nvt_ts_i2c_chip_data nvt_nt36672a_ts_data = {
-+	.wake_type = 0x01,
-+	.chip_id = 0x08,
-+};
-+
-+static const struct of_device_id nvt_ts_of_match[] = {
-+	{ .compatible = "novatek,nt11205-ts", .data = &nvt_nt11205_ts_data },
-+	{ .compatible = "novatek,nt36672a-ts", .data = &nvt_nt36672a_ts_data },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, nvt_ts_of_match);
-+
- static const struct i2c_device_id nvt_ts_i2c_id[] = {
--	{ "nt11205-ts" },
-+	{ "nt11205-ts", (unsigned long) &nvt_nt11205_ts_data },
-+	{ "nt36672a-ts", (unsigned long) &nvt_nt36672a_ts_data },
- 	{ }
- };
- MODULE_DEVICE_TABLE(i2c, nvt_ts_i2c_id);
-@@ -287,6 +341,7 @@ static struct i2c_driver nvt_ts_driver = {
- 	.driver = {
- 		.name	= "novatek-nvt-ts",
- 		.pm	= pm_sleep_ptr(&nvt_ts_pm_ops),
-+		.of_match_table = nvt_ts_of_match,
- 	},
- 	.probe = nvt_ts_probe,
- 	.id_table = nvt_ts_i2c_id,
+Good.
 
--- 
-2.45.1
-
+> Mark.
 
 
