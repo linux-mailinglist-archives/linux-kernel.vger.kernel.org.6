@@ -1,199 +1,129 @@
-Return-Path: <linux-kernel+bounces-197822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D25268D6FA5
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 14:05:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DB0F8D6FA7
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 14:06:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D2FF1C20DC6
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 12:05:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 036EE2818DD
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 12:06:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DF9F150989;
-	Sat,  1 Jun 2024 12:05:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AE5C14F9F7;
+	Sat,  1 Jun 2024 12:05:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="d4nejng1"
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qUCEfpMz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6CB914F9D6
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Jun 2024 12:05:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF80D14F11D;
+	Sat,  1 Jun 2024 12:05:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717243517; cv=none; b=HyEJjJmijckmENxvDe6Wj0qRPpzpUVuVBxhzFx0gUISL/RF7wpb+wSsumXyFFGXzQD7El7I82kDEoZbtD27M2Ckb7IsGNyRAxc2qY5cFvmBNjD17uH72W3sfwyaaM26VQdNYqf6vSKC58VWLdbUJ5eVt0o0w0bxJDzOOL7oGfec=
+	t=1717243551; cv=none; b=tePdjFkQ1+stiCDJEWIsHnmnDGkyvJxKcx5TO+kyp1RIQhQRCe0OlwOiYX/4EWBhm8AWnOG+/hqX77akC7Af+bZm4RPo12VfdYoZlXbjcM1W3n0g/5N4QrkLu/AdUu01597DWtT6k+u+G4EEnZ7BTDORZa6YzCQePYQqaIaS0GY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717243517; c=relaxed/simple;
-	bh=DsN/1amsqM8cu1/fMXEEj56TsbKtVvc2uJbDvsjVfW8=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mqP+MVqgArdllKnsntcsKsxzw/IttMnNU9R6cqvzsB4RKB9RcIzAyMxnFpnG9OTp+/tKoAsoxwZLXaUe0BovW3xDrXZ7hiHP3MgoXVI1BCcoGmfoBhlgVMfonSxA8yK4m2prrjExOtgvt8QhbZFoGEtWQ6xJRmMP1OIhu9p3kVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=d4nejng1; arc=none smtp.client-ip=185.70.43.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1717243513; x=1717502713;
-	bh=fnwhnTGCPs27zFajfymGkj5Js3/VS4EavIJ+ATMewR4=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=d4nejng1rlokHUAqMxs5ReintutcycKMCAS9EWKJK0Ccjow9OCmWPYQIeAfCBxX7l
-	 0F1osZlIz6OIdlD07QfreNFgpbgyihG/L1mDPHV6u3jtwgzwWpALaWFXJ4TLDSAbtO
-	 kSQZVcfov1HeOphYlziBrghMTB035d8VTx8mWYZUN2XbCVgD7u+Ds3e+YSmnTDvivB
-	 yl/W9NRjAT4MZcqie38U6+iSp06lvLQiVv2ISRLOXvvti8y7kd5BE7PfmjFAMDnexQ
-	 ylSkdj6zfjpP/yyq4JgFA7uCDvIGwsZM02eRqDNptlmH62VAvgoyJO4wcH/KSXqBOY
-	 vwXgfKlVFkS8w==
-Date: Sat, 01 Jun 2024 12:05:10 +0000
-To: Andreas Hindborg <nmi@metaspace.dk>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@kernel.org>, Damien Le Moal <dlemoal@kernel.org>, Bart Van Assche <bvanassche@acm.org>, Hannes Reinecke <hare@suse.de>, Ming Lei <ming.lei@redhat.com>, "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>, Andreas Hindborg <a.hindborg@samsung.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Greg KH <gregkh@linuxfoundation.org>, Matthew Wilcox <willy@infradead.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>, Chaitanya Kulkarni <chaitanyak@nvidia.com>, Luis Chamberlain <mcgrof@kernel.org>, Yexuan Yang <1182282462@bupt.edu.cn>, =?utf-8?Q?Sergio_Gonz=C3=A1lez_Collado?= <sergio.collado@gmail.com>, Joel Granados <j.granados@samsung.com>, "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>, Daniel Gomez
-	<da.gomez@samsung.com>, Niklas Cassel <Niklas.Cassel@wdc.com>, Philipp Stanner <pstanner@redhat.com>, Conor Dooley <conor@kernel.org>, Johannes Thumshirn <Johannes.Thumshirn@wdc.com>, =?utf-8?Q?Matias_Bj=C3=B8rling?= <m@bjorling.me>, open list <linux-kernel@vger.kernel.org>, "rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>, "lsf-pc@lists.linux-foundation.org" <lsf-pc@lists.linux-foundation.org>, "gost.dev@samsung.com" <gost.dev@samsung.com>
-Subject: Re: [PATCH v3 1/3] rust: block: introduce `kernel::block::mq` module
-Message-ID: <696d50c4-a2b0-4c72-890e-be27f48f0fb3@proton.me>
-In-Reply-To: <87ikysor3q.fsf@metaspace.dk>
-References: <20240601081806.531954-1-nmi@metaspace.dk> <20240601081806.531954-2-nmi@metaspace.dk> <47a8ce04-3901-49ae-abac-a7d85901f980@proton.me> <87ikysor3q.fsf@metaspace.dk>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: d422cc806e8f74df9d24b8e0498c32173c71b22e
+	s=arc-20240116; t=1717243551; c=relaxed/simple;
+	bh=gpmoHDNdcBUdXCxDIsEosMQ7ZR2VEkQU+Y3h+1Gc2Wo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VdwE/do03ylMVkOz8h9wCQsYn+aZH9Sl9UlYMcn8osY2GLGn/769tyeyLerRkGxyqPv36jU7tRmxkF6LqwjdeBuT2xRKf/ZvsdsRkvPaOrZhYoKZCkTVMB6L0XCgEJqUx71r659H1Dr+tUXH0moqRwYptWTVqmT7FUMZHkjt034=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qUCEfpMz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CD5AC116B1;
+	Sat,  1 Jun 2024 12:05:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717243550;
+	bh=gpmoHDNdcBUdXCxDIsEosMQ7ZR2VEkQU+Y3h+1Gc2Wo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qUCEfpMzmRd6IJpzlNuwa8H3GBtfPJUFkylGL2QCA67KbPBUlFjqiomnHe0WlioMp
+	 Axljd74C/sSzzRsXlSAQr9PHkoc0Hue/yseoOf3ZT0JoOO1JWoUl4W4Dh166tQDFyj
+	 pEdC7be4YM7Vo1mv+vup7A9vIQOcKL7hLVd9goAarKk7gIHC9AgUnbGs7nj5pe+jUd
+	 rEWEjjFLpQG2uOMDb72aaC28MgK3IMJQDkWlITxzcNXIJLiqKyTUERQ4HEVT4FB6Xb
+	 S2smLA/TplgTyz1Phw1VIkjXRVCXoFBHMkKL/vtjqa3iN3FF3NQcpO/YcQfDJ/Jr6E
+	 txaL0yaQsNM2Q==
+Date: Sat, 1 Jun 2024 13:05:45 +0100
+From: Simon Horman <horms@kernel.org>
+To: Tristram.Ha@microchip.com
+Cc: Woojung.Huh@microchip.com, andrew@lunn.ch, vivien.didelot@gmail.com,
+	f.fainelli@gmail.com, olteanv@gmail.com, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	UNGLinuxDriver@microchip.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] net: dsa: microchip: fix initial port flush problem
+Message-ID: <20240601120545.GG491852@kernel.org>
+References: <1716932145-3486-1-git-send-email-Tristram.Ha@microchip.com>
+ <20240531190234.GT491852@kernel.org>
+ <BYAPR11MB35583B3BA16BFB2F78615DBBECFC2@BYAPR11MB3558.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <BYAPR11MB35583B3BA16BFB2F78615DBBECFC2@BYAPR11MB3558.namprd11.prod.outlook.com>
 
-On 01.06.24 13:11, Andreas Hindborg wrote:
-> Benno Lossin <benno.lossin@proton.me> writes:
->> On 01.06.24 10:18, Andreas Hindborg wrote:
->>> +    /// This function is called by the C kernel. A pointer to this fun=
-ction is
->>> +    /// installed in the `blk_mq_ops` vtable for the driver.
->>> +    ///
->>> +    /// # Safety
->>> +    ///
->>> +    /// This function may only be called by blk-mq C infrastructure.
->>> +    unsafe extern "C" fn commit_rqs_callback(_hctx: *mut bindings::blk=
-_mq_hw_ctx) {
->>> +        T::commit_rqs()
->>> +    }
->>> +
->>> +    /// This function is called by the C kernel. It is not currently
->>> +    /// implemented, and there is no way to exercise this code path.
->>
->> Is it also possible to completely remove it? ie use `None` in the
->> VTABLE, or will the C side error?
->=20
-> No, this pointer is not allowed to be null. It must be a callable
-> function, hence the stub. It will be populated soon enough when I send
-> patches for the remote completion logic.
+On Fri, May 31, 2024 at 07:19:54PM +0000, Tristram.Ha@microchip.com wrote:
+> > Subject: Re: [PATCH net] net: dsa: microchip: fix initial port flush problem
+> > 
+> > EXTERNAL EMAIL: Do not click links or open attachments unless you know the content
+> > is safe
+> > 
+> > On Tue, May 28, 2024 at 02:35:45PM -0700, Tristram.Ha@microchip.com wrote:
+> > > From: Tristram Ha <tristram.ha@microchip.com>
+> > >
+> > > The very first flush in any port will flush all learned addresses in all
+> > > ports.  This can be observed by unplugging a cable from one port while
+> > > additional ports are connected and dumping the fdb entries.
+> > >
+> > > This problem is caused by the initially wrong value programmed to the
+> > > register.  After the first flush the value is reset back to the normal so
+> > > the next port flush will not cause such problem again.
+> > 
+> > Hi Tristram,
+> > 
+> > I think it would be worth spelling out why it is correct to:
+> > 1. Not set SW_FLUSH_STP_TABLE or SW_FLUSH_MSTP_TABLE; and
+> > 2. Preserve the value of the other bits of REG_SW_LUE_CTRL_1
+> 
+> Setting SW_FLUSH_STP_TABLE and SW_FLUSH_MSTP_TABLE bits are wrong as they
+> are action bits.  The bit should be set only when doing an action like
+> flushing.
 
-Makes sense.
+Understood, thanks. And I guess that only bits that are being configured
+should be changed, thus the values other bits are preserved with this
+change.
 
-[...]
+FWIIW, I do think it would be worth adding something about this to the
+patch description.
 
->>> +impl<T: Operations> TagSet<T> {
->>> +    /// Try to create a new tag set
->>> +    pub fn try_new(
->>> +        nr_hw_queues: u32,
->>> +        num_tags: u32,
->>> +        num_maps: u32,
->>> +    ) -> impl PinInit<Self, error::Error> {
->>> +        try_pin_init!( TagSet {
->>> +            // INVARIANT: We initialize `inner` here and it is valid a=
-fter the
->>> +            // initializer has run.
->>> +            inner <- unsafe {kernel::init::pin_init_from_closure(move =
-|place: *mut Opaque<bindings::blk_mq_tag_set>| -> Result<()> {
->>> +                let place =3D place.cast::<bindings::blk_mq_tag_set>()=
-;
->>> +
->>> +                // SAFETY: pin_init_from_closure promises that `place`=
- is writable, and
->>> +                // zeroes is a valid bit pattern for this structure.
->>> +                core::ptr::write_bytes(place, 0, 1);
->>> +
->>> +                /// For a raw pointer to a struct, write a struct fiel=
-d without
->>> +                /// creating a reference to the field
->>> +                macro_rules! write_ptr_field {
->>> +                    ($target:ident, $field:ident, $value:expr) =3D> {
->>> +                        ::core::ptr::write(::core::ptr::addr_of_mut!((=
-*$target).$field), $value)
->>> +                    };
->>> +                }
->>> +
->>> +                // SAFETY: pin_init_from_closure promises that `place`=
- is writable
->>> +                    write_ptr_field!(place, ops, OperationsVTable::<T>=
-::build());
->>> +                    write_ptr_field!(place, nr_hw_queues , nr_hw_queue=
-s);
->>> +                    write_ptr_field!(place, timeout , 0); // 0 means d=
-efault which is 30 * HZ in C
->>> +                    write_ptr_field!(place, numa_node , bindings::NUMA=
-_NO_NODE);
->>> +                    write_ptr_field!(place, queue_depth , num_tags);
->>> +                    write_ptr_field!(place, cmd_size , core::mem::size=
-_of::<RequestDataWrapper>().try_into()?);
->>> +                    write_ptr_field!(place, flags , bindings::BLK_MQ_F=
-_SHOULD_MERGE);
->>> +                    write_ptr_field!(place, driver_data , core::ptr::n=
-ull_mut::<core::ffi::c_void>());
->>> +                    write_ptr_field!(place, nr_maps , num_maps);
->>
->> Did something not work with my suggestion?
->=20
-> I did not want to change it if we are rewriting it to `Opaque::init`
-> in a cycle or two, which I think is a better solution.
-
-Ah I was suggesting to do it now, but emulate the `Opaque::init`
-function (I should have been clearer about that).
-I tried to do exactly that, but failed to easily implement it, since the
-fields of `blk_mq_tag_set` include some structs, which of course do not
-implement `Zeroable`.
-
-Instead I came up with the following solution, which I find a lot nicer:
-
-    pub fn try_new(
-        nr_hw_queues: u32,
-        num_tags: u32,
-        num_maps: u32,
-    ) -> impl PinInit<Self, error::Error> {
-        // SAFETY: `blk_mq_tag_set` only contains integers and pointers, wh=
-ich all are allowed to be 0.
-        let tag_set: bindings::blk_mq_tag_set =3D unsafe { core::mem::zeroe=
-d() };
-        let tag_set =3D bindings::blk_mq_tag_set {
-            ops: OperationsVTable::<T>::build(),
-            nr_hw_queues,
-            timeout: 0, // 0 means default which is 30Hz in C
-            numa_node: bindings::NUMA_NO_NODE,
-            queue_depth: num_tags,
-            cmd_size: core::mem::size_of::<RequestDataWrapper>().try_into()=
-?,
-            flags: bindings::BLK_MQ_F_SHOULD_MERGE,
-            driver_data: core::ptr::null_mut::<core::ffi::c_void>(),
-            nr_maps: num_maps,
-            ..tag_set
-        };
-        try_pin_init!(TagSet {
-            inner <- PinInit::<_, error::Error>::pin_chain(Opaque::new(tag_=
-set), |tag_set| {
-                // SAFETY: we do not move out of `tag_set`.
-                let tag_set =3D unsafe { Pin::get_unchecked_mut(tag_set) };
-                // SAFETY: `tag_set` is a reference to an initialized `blk_=
-mq_tag_set`.
-                error::to_result(unsafe { bindings::blk_mq_alloc_tag_set(ta=
-g_set) })
-            }),
-            _p: PhantomData,
-        })
-    }
-
-I haven't tested it though, let me know if you have any problems.
-
----
-Cheers,
-Benno
-
+> 
+> > >
+> > > Fixes: b987e98e50ab ("dsa: add DSA switch driver for Microchip KSZ9477")
+> > > Signed-off-by: Tristram Ha <tristram.ha@microchip.com>
+> > > ---
+> > >  drivers/net/dsa/microchip/ksz9477.c | 3 +--
+> > >  1 file changed, 1 insertion(+), 2 deletions(-)
+> > >
+> > > diff --git a/drivers/net/dsa/microchip/ksz9477.c
+> > b/drivers/net/dsa/microchip/ksz9477.c
+> > > index f8ad7833f5d9..7cc92b90ffea 100644
+> > > --- a/drivers/net/dsa/microchip/ksz9477.c
+> > > +++ b/drivers/net/dsa/microchip/ksz9477.c
+> > > @@ -356,8 +356,7 @@ int ksz9477_reset_switch(struct ksz_device *dev)
+> > >
+> > >       /* default configuration */
+> > >       ksz_read8(dev, REG_SW_LUE_CTRL_1, &data8);
+> > > -     data8 = SW_AGING_ENABLE | SW_LINK_AUTO_AGING |
+> > > -           SW_SRC_ADDR_FILTER | SW_FLUSH_STP_TABLE | SW_FLUSH_MSTP_TABLE;
+> > > +     data8 |= SW_AGING_ENABLE | SW_LINK_AUTO_AGING |
+> > SW_SRC_ADDR_FILTER;
+> > >       ksz_write8(dev, REG_SW_LUE_CTRL_1, data8);
+> > >
+> > >       /* disable interrupts */
+> > > --
+> > > 2.34.1
+> > >
+> > >
+> 
 
