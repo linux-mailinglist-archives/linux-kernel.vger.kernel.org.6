@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-197638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 505E48D6D5C
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 03:44:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6A668D6D5D
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 03:45:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B520C1F22280
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 01:44:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14DFE289313
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 01:45:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FC931DFF8;
-	Sat,  1 Jun 2024 01:43:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DFA722081;
+	Sat,  1 Jun 2024 01:43:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="Xv0WToc1"
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="RILy/egF"
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA6916FBE
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Jun 2024 01:42:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD7791F934
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Jun 2024 01:43:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717206180; cv=none; b=chxKeXcR7eoGHCReCo0mm6GEtQoUbEJsd+KhN0e00ISrHTcSS5AH00ylSNb3kAzJGZzAljugSRa1EFT6rEf7/TL/COoh5QNvFts2bDU5yNIF/vNMq8UDliCZC8jFziqp5qf3y6qKNUxB8ArpZ/Bed7AAyStAHEhH1sm7loKViBQ=
+	t=1717206183; cv=none; b=KvgOnXu5QYZozVH1OFBIhTb82sDOWftOpug5IuiKSDR8WF5KIt78O/bDPYHk8F01qyPxVVzIHglavl12ihSLU41PpVJjb6TCF6c0kVAEqMF3dCPJLkGMzhm57xJkfyC8H4UYEE0gTAMDmAQYl18DG+1BbYlM7v28uxXIqv7BGn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717206180; c=relaxed/simple;
-	bh=1LVHRhrSMWEwJpOY/aznILauVa0NivSWY+f+CAqnbvA=;
+	s=arc-20240116; t=1717206183; c=relaxed/simple;
+	bh=8vUlbvEH7gTZvH1D61OBJNrvJ28CeUyHOjmFolkGer4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q7NLfKaenEbkrpFMsZph99/OXis2NJDBHAPv99w0LeczSHB/xNPSdlwVq+D0hcmLwzvGWiHvcBwPmgxiXJmPb4ehbsR+lyU71ctFX+CN+QMP09WJSoQajP0GgjS35bXiRtw54oVJLmo0FiSdKZXaWwtYQZ7kB5e4sLI2czPudUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=Xv0WToc1; arc=none smtp.client-ip=209.85.219.177
+	 Content-Type:Content-Disposition:In-Reply-To; b=JNAy8BPLlRMEljg3Kutl7r7Wc+hG4HFQcya6eDoo2lHhWuf/Zml8wxSBekfdDYE9CjxOUXtzuLeUSYlTe6ePo982VlZWDb5tDlzebtVX+3kPsmBZrST2d5Z/COWmH5oZ5dD7YLpCzza9LHCjfFrv9bUPTSc7SWTv6j9J0p4Cu88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=RILy/egF; arc=none smtp.client-ip=209.85.128.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-dfa48f505dfso2630917276.3
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 18:42:58 -0700 (PDT)
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-62a2424ed01so27975597b3.1
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 18:43:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1717206178; x=1717810978; darn=vger.kernel.org;
+        d=cloudflare.com; s=google09082023; t=1717206181; x=1717810981; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=dYA4sm5ZJWs2eGhWm2n7K+ofN7tUeRmWPht1RYEuz58=;
-        b=Xv0WToc1MxZYkw9/ypiCWj7FEmuwkczmpehZ0DufYqltgqrX7JDaeZDrOki/09xyvU
-         AQy2YzDMP3ScLeqgyv09ZDPSpzyJA7rx8qQjEHXbzfOmdoTdGAPGmMEakDJERmsm0nDU
-         fSKeMYiBDcrkM0BqpZBshezHRoxsiPNrsSstqML0tnyfPd0qSrBLGAMOty84sVnyrgg7
-         CluutMd5s+Hzbe2tSE4h9+NbGiv9u27k7ndjaxH/unCEjxkwsbYhQmeS3u3ItcAdUcXf
-         jsK2geImaHkqYeTUgaIa/lUOjECIu1rPaj92vc8aFL7+QlEHJVQCzxpqy8g5Kjy4o4UJ
-         SKzA==
+        bh=y2xdFUxWobdQwEfx7YLKH85Utfki6HaKV/+RpyucODI=;
+        b=RILy/egFZdUJ5NO8K+QHWKFHGDB9ns+IJtwcOqMfJCHojQo8GWz6eereq+V3ZdX7n/
+         VzyJ1nkcFK37h085zjQomjfjsnchbiREb2IknrJMRwHcctmrbbk7rYwV78yO9QcF+Gf9
+         /LK8Ap9Pl4eCthhlRVdrbrH2tBT9njfgJYePH5Yr6frADthoxyW13zUFL7Xkd0rsoNEg
+         cibX84nrINkVH1JYpeJLuNKN3XVgYWm9kHZjxXsywhImWa94zRBiwkCMMCmf2hbzmvS5
+         w04hC3eB3QeHWL6ODMD00ltPOwrnuivceOsPXHQ93LO9ullid1CAY7uik0T0UM3rF2vg
+         Pu4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717206178; x=1717810978;
+        d=1e100.net; s=20230601; t=1717206181; x=1717810981;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=dYA4sm5ZJWs2eGhWm2n7K+ofN7tUeRmWPht1RYEuz58=;
-        b=Wr9Jre7dARn5dHKiMnWza4z6OSvCo5dock0/bonZfGDHSVAkHenjTOISCIGW9g2z2M
-         kUDbuPR/pSrGzliJEDjP4HamfQUKq43pg9VBpmCbdKoI4b3SeCBwZMvEi0nUmMHfzmrs
-         yzkSrcoMm19z+wF/F6yUjBNDOfxkPBIFx9pTZRvn2em6itKAgC26QaCd/VaJcTbpd1Pc
-         9Gx5wQnhX9W6rDsKMDvm0HxwJMB54eL5E8GyvGmXKG/LOm89EAZOeqyB38CezyMasGNA
-         feGTxOLk0MBJkeDFd4u6PaZR+0d506lHrDl0E5VuZpdArz8r42uetpI2m6/fm4m6aC70
-         inSA==
-X-Forwarded-Encrypted: i=1; AJvYcCWUUVNr7POlnu1rpvg7N1cm0FSgTdjedxU7UDMjtDLFPthBDWeNLHXI+d66oVoxmqARg40vyOulEdoHDfYoDYszGYlS6+G4JX5+oCCf
-X-Gm-Message-State: AOJu0YyzQn+olFgqkfb70Bn81cLMNktMROHmBuLHgGe1PLVyBnJh01uK
-	F6cN3Od/VN4Esy/FiYiBZOpDiwKGBUBAK2YaJwyh8VUP98ncASNUDJ+XVWLv94g=
-X-Google-Smtp-Source: AGHT+IHFKpM9VUj5fPdAjZri6ASqCbW12U8KkE2PQMXK9hGY4p9KtRo4Ib8XzSacGGYo3hFMh5BQkg==
-X-Received: by 2002:a25:1387:0:b0:df4:d7e2:aa2f with SMTP id 3f1490d57ef6-dfa73dbfb85mr3516117276.59.1717206177923;
-        Fri, 31 May 2024 18:42:57 -0700 (PDT)
+        bh=y2xdFUxWobdQwEfx7YLKH85Utfki6HaKV/+RpyucODI=;
+        b=ivBu0OQCiCBkvXkkLJxnVJg5vbP4qIy2FhlPGR4NMB1orqEybPYR2lC9SkDzo1aQfx
+         7yaiyEF7rdE9J9ztezN5gAPFaz66vzU7AbzEEss1UZ7OwZudFlYNuNaOpLr4drFE9wXM
+         ySewUJORcdqC42oPKjbTdsy5socgPzhqw0uWrowRk/NuDKnLm1Y+Tjbo43J4e+5sVJW+
+         RZi9XeLsHZhCqwPZg72yJP6wHksuQJXVUVT9vrvnzu8sKwN5qzpTV0Jc7FYsnvoF5wur
+         Vvi0UwLZ912Ra3TNW3cEAAPuPk4HqmXCEq9+w8vetUPOU3bD30r86vYc/y3OBnvKZQRX
+         eY6g==
+X-Forwarded-Encrypted: i=1; AJvYcCVvylluPyQakuCYML3T2cqcpvL91a5fWfOcdyyxAadeJkl8S3bE6icdUmZBw4yf10gNqZjexpvwXaVxxIz99BT00dWa3Z7A0UGv6qQd
+X-Gm-Message-State: AOJu0YwcZyyFoVLRAYvXalaw4XQm7vwzQsreyCFFoJJjFDOyBZTfm8U9
+	dq542i+k+srcjMVSX7bBkk8jEXzRZI67LTYVCpyMDni73AfvOLx5wSDMLMGqF/0=
+X-Google-Smtp-Source: AGHT+IEjR0Ljn4HhOxXhAh7n33Q2xIPS6LzvX1WnMQFcShl7OzOwraUD/JRB815GeeImrjbnCz0LRg==
+X-Received: by 2002:a0d:cb81:0:b0:622:cc0d:62c3 with SMTP id 00721157ae682-62c7971cbcemr36155437b3.28.1717206180717;
+        Fri, 31 May 2024 18:43:00 -0700 (PDT)
 Received: from debian.debian ([2a09:bac5:7a49:f9b::18e:1c])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-dfa6f150099sm555136276.60.2024.05.31.18.42.55
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-62c7667cad3sm5394697b3.87.2024.05.31.18.42.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 May 2024 18:42:57 -0700 (PDT)
-Date: Fri, 31 May 2024 18:42:55 -0700
+        Fri, 31 May 2024 18:43:00 -0700 (PDT)
+Date: Fri, 31 May 2024 18:42:58 -0700
 From: Yan Zhai <yan@cloudflare.com>
 To: netdev@vger.kernel.org
 Cc: "David S. Miller" <davem@davemloft.net>,
@@ -83,8 +83,8 @@ Cc: "David S. Miller" <davem@davemloft.net>,
 	Pavel Begunkov <asml.silence@gmail.com>,
 	linux-kernel@vger.kernel.org, kernel-team@cloudflare.com,
 	Jesper Dangaard Brouer <hawk@kernel.org>
-Subject: [RFC v2 net-next 5/7] tcp: use sk_skb_reason_drop to free rx packets
-Message-ID: <40d89398347be8d269f49f604bf82bdb9855d00d.1717206060.git.yan@cloudflare.com>
+Subject: [RFC v2 net-next 6/7] udp: use sk_skb_reason_drop to free rx packets
+Message-ID: <76cb47137dc232e88a0707d1d863749c5f35ec89.1717206060.git.yan@cloudflare.com>
 References: <cover.1717206060.git.yan@cloudflare.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -101,114 +101,109 @@ socket to the tracepoint.
 
 Signed-off-by: Yan Zhai <yan@cloudflare.com>
 ---
- net/ipv4/syncookies.c | 2 +-
- net/ipv4/tcp_input.c  | 2 +-
- net/ipv4/tcp_ipv4.c   | 6 +++---
- net/ipv6/syncookies.c | 2 +-
- net/ipv6/tcp_ipv6.c   | 6 +++---
- 5 files changed, 9 insertions(+), 9 deletions(-)
+ net/ipv4/udp.c | 10 +++++-----
+ net/ipv6/udp.c | 10 +++++-----
+ 2 files changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/net/ipv4/syncookies.c b/net/ipv4/syncookies.c
-index b61d36810fe3..1948d15f1f28 100644
---- a/net/ipv4/syncookies.c
-+++ b/net/ipv4/syncookies.c
-@@ -496,6 +496,6 @@ struct sock *cookie_v4_check(struct sock *sk, struct sk_buff *skb)
- out_free:
- 	reqsk_free(req);
- out_drop:
--	kfree_skb_reason(skb, reason);
-+	sk_skb_reason_drop(sk, skb, reason);
- 	return NULL;
+diff --git a/net/ipv4/udp.c b/net/ipv4/udp.c
+index 189c9113fe9a..ecafb1695999 100644
+--- a/net/ipv4/udp.c
++++ b/net/ipv4/udp.c
+@@ -2074,7 +2074,7 @@ static int __udp_queue_rcv_skb(struct sock *sk, struct sk_buff *skb)
+ 		}
+ 		UDP_INC_STATS(sock_net(sk), UDP_MIB_INERRORS, is_udplite);
+ 		trace_udp_fail_queue_rcv_skb(rc, sk, skb);
+-		kfree_skb_reason(skb, drop_reason);
++		sk_skb_reason_drop(sk, skb, drop_reason);
+ 		return -1;
+ 	}
+ 
+@@ -2196,7 +2196,7 @@ static int udp_queue_rcv_one_skb(struct sock *sk, struct sk_buff *skb)
+ drop:
+ 	__UDP_INC_STATS(sock_net(sk), UDP_MIB_INERRORS, is_udplite);
+ 	atomic_inc(&sk->sk_drops);
+-	kfree_skb_reason(skb, drop_reason);
++	sk_skb_reason_drop(sk, skb, drop_reason);
+ 	return -1;
  }
-diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
-index 5aadf64e554d..bedb079de1f0 100644
---- a/net/ipv4/tcp_input.c
-+++ b/net/ipv4/tcp_input.c
-@@ -4859,7 +4859,7 @@ static void tcp_drop_reason(struct sock *sk, struct sk_buff *skb,
- 			    enum skb_drop_reason reason)
+ 
+@@ -2383,7 +2383,7 @@ static int udp_unicast_rcv_skb(struct sock *sk, struct sk_buff *skb,
+ int __udp4_lib_rcv(struct sk_buff *skb, struct udp_table *udptable,
+ 		   int proto)
  {
- 	sk_drops_add(sk, skb);
--	kfree_skb_reason(skb, reason);
-+	sk_skb_reason_drop(sk, skb, reason);
- }
- 
- /* This one checks to see if we can put data from the
-diff --git a/net/ipv4/tcp_ipv4.c b/net/ipv4/tcp_ipv4.c
-index 041c7eda9abe..f7a046bc4b27 100644
---- a/net/ipv4/tcp_ipv4.c
-+++ b/net/ipv4/tcp_ipv4.c
-@@ -1939,7 +1939,7 @@ int tcp_v4_do_rcv(struct sock *sk, struct sk_buff *skb)
- reset:
- 	tcp_v4_send_reset(rsk, skb, sk_rst_convert_drop_reason(reason));
- discard:
--	kfree_skb_reason(skb, reason);
-+	sk_skb_reason_drop(sk, skb, reason);
- 	/* Be careful here. If this function gets more complicated and
- 	 * gcc suffers from register pressure on the x86, sk (in %ebx)
- 	 * might be destroyed here. This current version compiles correctly,
-@@ -2176,8 +2176,8 @@ int tcp_v4_rcv(struct sk_buff *skb)
- 	int dif = inet_iif(skb);
- 	const struct iphdr *iph;
- 	const struct tcphdr *th;
-+	struct sock *sk = NULL;
- 	bool refcounted;
 -	struct sock *sk;
- 	int ret;
- 	u32 isn;
- 
-@@ -2376,7 +2376,7 @@ int tcp_v4_rcv(struct sk_buff *skb)
- discard_it:
- 	SKB_DR_OR(drop_reason, NOT_SPECIFIED);
- 	/* Discard frame. */
++	struct sock *sk = NULL;
+ 	struct udphdr *uh;
+ 	unsigned short ulen;
+ 	struct rtable *rt = skb_rtable(skb);
+@@ -2460,7 +2460,7 @@ int __udp4_lib_rcv(struct sk_buff *skb, struct udp_table *udptable,
+ 	 * Hmm.  We got an UDP packet to a port to which we
+ 	 * don't wanna listen.  Ignore it.
+ 	 */
 -	kfree_skb_reason(skb, drop_reason);
 +	sk_skb_reason_drop(sk, skb, drop_reason);
  	return 0;
  
- discard_and_relse:
-diff --git a/net/ipv6/syncookies.c b/net/ipv6/syncookies.c
-index bfad1e89b6a6..9d83eadd308b 100644
---- a/net/ipv6/syncookies.c
-+++ b/net/ipv6/syncookies.c
-@@ -275,6 +275,6 @@ struct sock *cookie_v6_check(struct sock *sk, struct sk_buff *skb)
- out_free:
- 	reqsk_free(req);
- out_drop:
--	kfree_skb_reason(skb, reason);
-+	sk_skb_reason_drop(sk, skb, reason);
- 	return NULL;
- }
-diff --git a/net/ipv6/tcp_ipv6.c b/net/ipv6/tcp_ipv6.c
-index 1ac7502e1bf5..93967accc35d 100644
---- a/net/ipv6/tcp_ipv6.c
-+++ b/net/ipv6/tcp_ipv6.c
-@@ -1678,7 +1678,7 @@ int tcp_v6_do_rcv(struct sock *sk, struct sk_buff *skb)
- discard:
- 	if (opt_skb)
- 		__kfree_skb(opt_skb);
--	kfree_skb_reason(skb, reason);
-+	sk_skb_reason_drop(sk, skb, reason);
+ short_packet:
+@@ -2485,7 +2485,7 @@ int __udp4_lib_rcv(struct sk_buff *skb, struct udp_table *udptable,
+ 	__UDP_INC_STATS(net, UDP_MIB_CSUMERRORS, proto == IPPROTO_UDPLITE);
+ drop:
+ 	__UDP_INC_STATS(net, UDP_MIB_INERRORS, proto == IPPROTO_UDPLITE);
+-	kfree_skb_reason(skb, drop_reason);
++	sk_skb_reason_drop(sk, skb, drop_reason);
  	return 0;
- csum_err:
- 	reason = SKB_DROP_REASON_TCP_CSUM;
-@@ -1751,8 +1751,8 @@ INDIRECT_CALLABLE_SCOPE int tcp_v6_rcv(struct sk_buff *skb)
- 	int dif = inet6_iif(skb);
- 	const struct tcphdr *th;
- 	const struct ipv6hdr *hdr;
-+	struct sock *sk = NULL;
- 	bool refcounted;
--	struct sock *sk;
- 	int ret;
- 	u32 isn;
+ }
+ 
+diff --git a/net/ipv6/udp.c b/net/ipv6/udp.c
+index c81a07ac0463..b56f0b9f4307 100644
+--- a/net/ipv6/udp.c
++++ b/net/ipv6/udp.c
+@@ -673,7 +673,7 @@ static int __udpv6_queue_rcv_skb(struct sock *sk, struct sk_buff *skb)
+ 		}
+ 		UDP6_INC_STATS(sock_net(sk), UDP_MIB_INERRORS, is_udplite);
+ 		trace_udp_fail_queue_rcv_skb(rc, sk, skb);
+-		kfree_skb_reason(skb, drop_reason);
++		sk_skb_reason_drop(sk, skb, drop_reason);
+ 		return -1;
+ 	}
+ 
+@@ -776,7 +776,7 @@ static int udpv6_queue_rcv_one_skb(struct sock *sk, struct sk_buff *skb)
+ drop:
+ 	__UDP6_INC_STATS(sock_net(sk), UDP_MIB_INERRORS, is_udplite);
+ 	atomic_inc(&sk->sk_drops);
+-	kfree_skb_reason(skb, drop_reason);
++	sk_skb_reason_drop(sk, skb, drop_reason);
+ 	return -1;
+ }
+ 
+@@ -940,8 +940,8 @@ int __udp6_lib_rcv(struct sk_buff *skb, struct udp_table *udptable,
+ 	enum skb_drop_reason reason = SKB_DROP_REASON_NOT_SPECIFIED;
+ 	const struct in6_addr *saddr, *daddr;
  	struct net *net = dev_net(skb->dev);
-@@ -1944,7 +1944,7 @@ INDIRECT_CALLABLE_SCOPE int tcp_v6_rcv(struct sk_buff *skb)
++	struct sock *sk = NULL;
+ 	struct udphdr *uh;
+-	struct sock *sk;
+ 	bool refcounted;
+ 	u32 ulen = 0;
  
- discard_it:
- 	SKB_DR_OR(drop_reason, NOT_SPECIFIED);
--	kfree_skb_reason(skb, drop_reason);
-+	sk_skb_reason_drop(sk, skb, drop_reason);
+@@ -1033,7 +1033,7 @@ int __udp6_lib_rcv(struct sk_buff *skb, struct udp_table *udptable,
+ 	__UDP6_INC_STATS(net, UDP_MIB_NOPORTS, proto == IPPROTO_UDPLITE);
+ 	icmpv6_send(skb, ICMPV6_DEST_UNREACH, ICMPV6_PORT_UNREACH, 0);
+ 
+-	kfree_skb_reason(skb, reason);
++	sk_skb_reason_drop(sk, skb, reason);
  	return 0;
  
- discard_and_relse:
+ short_packet:
+@@ -1054,7 +1054,7 @@ int __udp6_lib_rcv(struct sk_buff *skb, struct udp_table *udptable,
+ 	__UDP6_INC_STATS(net, UDP_MIB_CSUMERRORS, proto == IPPROTO_UDPLITE);
+ discard:
+ 	__UDP6_INC_STATS(net, UDP_MIB_INERRORS, proto == IPPROTO_UDPLITE);
+-	kfree_skb_reason(skb, reason);
++	sk_skb_reason_drop(sk, skb, reason);
+ 	return 0;
+ }
+ 
 -- 
 2.30.2
 
