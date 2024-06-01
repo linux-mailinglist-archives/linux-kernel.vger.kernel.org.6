@@ -1,176 +1,131 @@
-Return-Path: <linux-kernel+bounces-197650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0E028D6D83
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 04:34:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B09398D6D84
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 04:38:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04A061C2104A
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 02:34:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 077622832E2
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 02:38:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99ABE6FBE;
-	Sat,  1 Jun 2024 02:34:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 853A86FBE;
+	Sat,  1 Jun 2024 02:38:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="G2VyM7Q9"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NCKjWnus"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 121B12914
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Jun 2024 02:34:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EEBA6FA8
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Jun 2024 02:37:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717209272; cv=none; b=D5OeZefhUqOYbR7oAErcIXkw90xS3rIlJkoHEGurS3yV7PXEtvmqJhDDNCyLCn+fdve/uo3kxesPJCkhf+qKiyCXWS15F5FLjtfsHRy1wiNYfZ/PvQr75w2cnvNVsixKYgtI4qDlM2xeim9XmkoFHtiJYgmfYZjzQzG38w9xvTo=
+	t=1717209480; cv=none; b=jXmnR3JF0A4E3brPbolF8DJUsbOp6zeQv2FrqRxeNLpFGFaisOW8RsBvWQ5fSvV+et16aSG3k9gHiEv/kxreHg5WDMoArwNr54Zqmmy/x70qDqnt9kRuEg9fDSEK27WXKRj7mGCS4CFaUvPSCsBJe4Z58fli9pnnKAwFjc+W2uw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717209272; c=relaxed/simple;
-	bh=VQa0k3H6f5HBMJoDWIzqFeyZtk8Unm224EOTfZugkLQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WYjnthNfIZLD+GH0H5EI+h/yA9h9yAL4HoDmkBENDO402ZDJG8eeZhEtqv0l1b2udyPkUsykre/ASrFtu8B9lGx1H3ZEOX7/3VjM4ErG3f3i97n+UGbo/qRuaYpgp/d/9gKZ+IroBbmTHEahkI1M05ETdvBhfLeFphbha8VCa9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=G2VyM7Q9; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717209269;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NzTTL+MfzvlfKZfQtB4qseGdRfAHinOsvS8cm5FA5Qs=;
-	b=G2VyM7Q9v6F2cRuqUanSOsMIcD7g2Nkq7CeXQDOOg1IJwiDQhKTArSfV2xx9gH0yMDbmp1
-	tqIoY06o1dGN+eWsEFDkbLWpp4kZuJUFw9ABxRxZ9iOrLzvX5xdVrwraZTPfWpDaDJmxd3
-	dtPMft3LoK0YvGDPXP/1PwEioD9dYVc=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-561-VCSY1c3tOcKlKUnpHLrdyw-1; Fri,
- 31 May 2024 22:34:22 -0400
-X-MC-Unique: VCSY1c3tOcKlKUnpHLrdyw-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A387B1C05129;
-	Sat,  1 Jun 2024 02:34:21 +0000 (UTC)
-Received: from localhost (unknown [10.72.116.39])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id 8A5663C27;
-	Sat,  1 Jun 2024 02:34:18 +0000 (UTC)
-Date: Sat, 1 Jun 2024 10:34:15 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Uladzislau Rezki <urezki@gmail.com>,
-	"zhaoyang.huang" <zhaoyang.huang@unisoc.com>,
-	hailong liu <hailong.liu@oppo.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Hellwig <hch@infradead.org>,
-	Lorenzo Stoakes <lstoakes@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Zhaoyang Huang <huangzhaoyang@gmail.com>, steve.kang@unisoc.com
-Subject: Re: [PATCHv3] mm: fix incorrect vbq reference in
- purge_fragmented_block
-Message-ID: <ZlqIp9V1Jknm7axa@MiWiFi-R3L-srv>
-References: <20240531030520.1615833-1-zhaoyang.huang@unisoc.com>
- <ZlmEp9nxKiG9gWFj@pc636>
+	s=arc-20240116; t=1717209480; c=relaxed/simple;
+	bh=h0vhYBVZVGaI8yXhnl7nr0T+/KncbGl3OwsuldQ0xMU=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=iWMBacsO9e7GwNPOlaE+7rtPwaVO/FGx3D14Ldjjk9e0xXwDrorrWYeAnKv4I71QeeJgp+YIUzdCXzicCVCU8kFknL7eLWus4zT4GNJ1H0vsns1luazKjVTKOY7roZDiCW4r+3NUVudc98YeUO+VqBQx54/0sw4DiX8ITViFkn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NCKjWnus; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2c2070e1579so32474a91.3
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 19:37:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717209479; x=1717814279; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eDNMabYW2abbHXnVWwFSqG9v75QNgOfpcXzt7NGTMHM=;
+        b=NCKjWnusnjb1YU95QJbcqTGpl4On552N4RJ/9ydF7zoxfHH8tJZ5/9ngD92l842sbW
+         iU7PlO3wutFMpo7ty8e8hc9iW+nyf4vVY0Re4TQ51JBylfEizcEcZVgAz+YEn/QGusiK
+         4qVgU3C7s5ca3YErxXAyNSGkno+9EHyHShLmrGOr/tfA35J1vjV4W63yO0zk9FFGTAIy
+         UjsYGYj8a2o28j1XVgjGT1pWSKuiTNowmX0sqjG8eMxjKsj6C9d0r8C2LyX+gTJBpyS4
+         WVan25LPjmd9xH86ct27pKLLIfsEnhWvsfMPnarbvDF+r+t+P1FeMa1qzqdEPP6UKoYG
+         ev0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717209479; x=1717814279;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eDNMabYW2abbHXnVWwFSqG9v75QNgOfpcXzt7NGTMHM=;
+        b=izHbDMg/Og+RUqaOW9MBiyrZebCz11y2WiVVrjDvOqx3uyZxPpC2puuQezlhnFLR6n
+         5LT/jvUo3BnBYFW0zUiMH0n7jNF6SFrvm6FICQFxO6MJUaQHPME4RjnAJa0PWgyOSyn3
+         UYSBNf3C8fLn8RUobzgqIuct44mvz5AzX90hFu7HUVPpeO1XBLrjMdfh4n4PCSDiQOwo
+         fvaSX8h4h47IYgqrkMjFnq9XYLjKmMq2yB6iX8Pjcn5ar9Rz/I32f/Z+JYogetZ7OQiG
+         QR7pMv8BVWSFpwFzvCMPsQQZNH0cGu95F2yZ7ApgL2qmH8xwR4OvRm0pVgwQ30kYzEHr
+         3dAw==
+X-Forwarded-Encrypted: i=1; AJvYcCUtsJUy1y4DLQe6Nw6T5154Ci14SHyVpdrN7cqK4/wNiCGWs96zvJG/NUjJBMyR9jjpB5eCbdiV8ujDQkVdk7Vofl8e15PfxtVb0H8N
+X-Gm-Message-State: AOJu0YwtRL0NY5AfVTtTSrzskBhakveVz4n+h4E860k+dcnf+TXDbVW2
+	xNX0hmP0uayXHHHEF8LPU6ATEfMW5jmH/19YOsxekxsRMY1qrWg9U9T52mLj
+X-Google-Smtp-Source: AGHT+IH2wOZUIqhqnHNNRFHyANOJ24cAQXOX5kwZsG73ukdlpI/et6EBALcb1YP8OMfEowxVwr8O2w==
+X-Received: by 2002:a17:90b:19d2:b0:2c1:948b:6f2e with SMTP id 98e67ed59e1d1-2c1dc5d5698mr3162951a91.44.1717209478737;
+        Fri, 31 May 2024 19:37:58 -0700 (PDT)
+Received: from localhost.localdomain ([180.69.210.41])
+        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-2c1c2831639sm2399858a91.35.2024.05.31.19.37.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 May 2024 19:37:58 -0700 (PDT)
+From: Jung-JaeJoon <rgbi3307@gmail.com>
+X-Google-Original-From: Jung-JaeJoon <rgbi3307@naver.com>
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+Cc: Jung-JaeJoon <rgbi3307@gmail.com>,
+	maple-tree@lists.infradead.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] maple_tree: add mas_node_count() before going to slow_path in mas_wr_modify()
+Date: Sat,  1 Jun 2024 11:37:14 +0900
+Message-Id: <20240601023714.21226-1-rgbi3307@naver.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZlmEp9nxKiG9gWFj@pc636>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.1
 
-On 05/31/24 at 10:04am, Uladzislau Rezki wrote:
-> On Fri, May 31, 2024 at 11:05:20AM +0800, zhaoyang.huang wrote:
-> > From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
-> > 
-> > vmalloc area runs out in our ARM64 system during an erofs test as
-> > vm_map_ram failed[1]. By following the debug log, we find that
-> > vm_map_ram()->vb_alloc() will allocate new vb->va which corresponding
-> > to 4MB vmalloc area as list_for_each_entry_rcu returns immediately
-> > when vbq->free->next points to vbq->free. That is to say, 65536 times
-> > of page fault after the list's broken will run out of the whole
-> > vmalloc area. This should be introduced by one vbq->free->next point to
-> > vbq->free which makes list_for_each_entry_rcu can not iterate the list
-> > and find the BUG.
-> > 
-> > [1]
-> > PID: 1        TASK: ffffff80802b4e00  CPU: 6    COMMAND: "init"
-> >  #0 [ffffffc08006afe0] __switch_to at ffffffc08111d5cc
-> >  #1 [ffffffc08006b040] __schedule at ffffffc08111dde0
-> >  #2 [ffffffc08006b0a0] schedule at ffffffc08111e294
-> >  #3 [ffffffc08006b0d0] schedule_preempt_disabled at ffffffc08111e3f0
-> >  #4 [ffffffc08006b140] __mutex_lock at ffffffc08112068c
-> >  #5 [ffffffc08006b180] __mutex_lock_slowpath at ffffffc08111f8f8
-> >  #6 [ffffffc08006b1a0] mutex_lock at ffffffc08111f834
-> >  #7 [ffffffc08006b1d0] reclaim_and_purge_vmap_areas at ffffffc0803ebc3c
-> >  #8 [ffffffc08006b290] alloc_vmap_area at ffffffc0803e83fc
-> >  #9 [ffffffc08006b300] vm_map_ram at ffffffc0803e78c0
-> > 
-> > Fixes: fc1e0d980037 ("mm/vmalloc: prevent stale TLBs in fully utilized blocks")
-> > 
-> > Suggested-by: Hailong.Liu <hailong.liu@oppo.com>
-> > Signed-off-by: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
-> >
-> Is a problem related to run out of vmalloc space _only_ or it is a problem
-> with broken list? From the commit message it is hard to follow the reason.
+From: Jung-JaeJoon <rgbi3307@gmail.com>
 
-This should fix the broken list.
+If there are not enough nodes, mas_node_count() set an error state via mas_set_err()
+and return control flow to the beginning.
 
-Hi Zhaoyang and Hailong,
+In the return flow, mas_nomem() checks the error status, allocates new nodes,
+and resumes execution again.
 
-Could any of you test below patch in your testing environment?
+In particular,
+if this happens in mas_split() in the slow_path section executed in mas_wr_modify(),
+unnecessary work is repeated, causing a slowdown in speed as below flow:
 
-From b56dcc7d98c4dbb7ea197516bd129c30c0e9d1ef Mon Sep 17 00:00:00 2001
-From: Baoquan He <bhe@redhat.com>
-Date: Fri, 31 May 2024 23:44:57 +0800
-Subject: [PATCH] mm/vmalloc.c: add vb into appropriate vbq->free
-Content-type: text/plain
+_begin:
+mas_wr_modify() --> if (new_end >= mt_slots[wr_mas->type]) --> goto slow_path
+slow_path:
+    --> mas_wr_bnode() --> mas_store_b_node() --> mas_commit_b_node() --> mas_split()
+    --> mas_node_count() return to _begin
 
-The current vbq is organized into per-cpu data structure, including a xa
-and list. However, its adding into vba->free list is not handled
-correctly. The new vmap_block allocation could be done in one cpu, while
-it's actually belong into anohter cpu's percpu vbq. Then the
-list_for_each_entry_rcu() on the vbq->free and its deletion could cause
-list breakage.
+But, in the above flow, if mas_node_count() is executed before entering slow_path,
+execution efficiency is improved by allocating nodes without entering slow_path repeatedly.
 
-This fix the wrong vb adding to make it be added into expected
-vba->free.
-
-Signed-off-by: Baoquan He <bhe@redhat.com>
+Signed-off-by: JaeJoon Jung <rgbi3307@gmail.com>
 ---
- mm/vmalloc.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ lib/maple_tree.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index b921baf0ef8a..47659b41259a 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -2547,6 +2547,14 @@ addr_to_vb_xa(unsigned long addr)
- 	return &per_cpu(vmap_block_queue, index).vmap_blocks;
- }
+diff --git a/lib/maple_tree.c b/lib/maple_tree.c
+index 2d7d27e6ae3c..b42a4e70d229 100644
+--- a/lib/maple_tree.c
++++ b/lib/maple_tree.c
+@@ -4176,8 +4176,13 @@ static inline void mas_wr_modify(struct ma_wr_state *wr_mas)
+ 	 * path.
+ 	 */
+ 	new_end = mas_wr_new_end(wr_mas);
+-	if (new_end >= mt_slots[wr_mas->type])
++	if (new_end >= mt_slots[wr_mas->type]) }
++                mas->depth = mas_mt_height(mas);
++                mas_node_count(mas, 1 + mas->depth * 2);
++                if (mas_is_err(mas))
++                        return;
+ 		goto slow_path;
++        }
  
-+static struct vmap_block_queue *
-+addr_to_vbq(unsigned long addr)
-+{
-+	int index = (addr / VMAP_BLOCK_SIZE) % num_possible_cpus();
-+
-+	return &per_cpu(vmap_block_queue, index);
-+}
-+
- /*
-  * We should probably have a fallback mechanism to allocate virtual memory
-  * out of partially filled vmap blocks. However vmap block sizing should be
-@@ -2626,7 +2634,7 @@ static void *new_vmap_block(unsigned int order, gfp_t gfp_mask)
- 		return ERR_PTR(err);
- 	}
- 
--	vbq = raw_cpu_ptr(&vmap_block_queue);
-+	vbq = addr_to_vbq(va->va_start);
- 	spin_lock(&vbq->lock);
- 	list_add_tail_rcu(&vb->free_list, &vbq->free);
- 	spin_unlock(&vbq->lock);
+ 	/* Attempt to append */
+ 	if (mas_wr_append(wr_mas, new_end))
 -- 
-2.41.0
+2.17.1
 
 
