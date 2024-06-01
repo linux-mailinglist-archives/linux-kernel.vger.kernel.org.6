@@ -1,158 +1,150 @@
-Return-Path: <linux-kernel+bounces-197962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 751548D7145
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 18:59:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B106A8D7147
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 19:07:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92D021C20A37
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 16:59:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D97661C20AA5
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 17:07:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C7771527A0;
-	Sat,  1 Jun 2024 16:59:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02605154BF0;
+	Sat,  1 Jun 2024 17:07:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=metaspace-dk.20230601.gappssmtp.com header.i=@metaspace-dk.20230601.gappssmtp.com header.b="wwKh0pMr"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GyoW1L1P"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91B041534FB
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Jun 2024 16:59:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCC73152E05;
+	Sat,  1 Jun 2024 17:07:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717261181; cv=none; b=uA9hoDkM0mh8vyL/nR03rtbBaKkSUTDkrddZGFcfn6LQ650K3PBcjcsHYiHse5MZuV326mleJsO00LBRhdeiFNcEIBBNQeNj5Vl4EMWww+yveL6Ydtz23oYH/uprsFDevh0BstqvsT/p9NOZZpPIBbs/edfTpOLGuYOjlx3R9kY=
+	t=1717261646; cv=none; b=gPggCnVtmwptkZbUI6b3V53SLla16snp2zybYpsQUv1voYw3URU0apvTDgT+zRtge9JMYJjzsjUkO0piy6HN29tsP2og2y+mAYNkx7K3AP59L9fyD0IsqukNLT7uO0LVk0IfRaLVV7SMjS95gs++22Mhy9gFsH0O+5Tqop1ztR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717261181; c=relaxed/simple;
-	bh=vY83/g5DnlUfQZA9zDchrVy8+HtF22bRD22oke+NysM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=CBY0T7c1T8kz+8iqGLXP+D1yW0j2vLBDGlh97WvWoXskofbhuyaI081lTY/K0i/BoZFTG6YqzKRoDZHhjLbARpCF+/mZt4WjoIwjibIvLT9BRb5r6ucLvpU2Glj0Yv6KPIfXywo+Z/BNNTzeLqWAnCHCYmmRxJpM/gtLl+hTjVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=metaspace.dk; spf=none smtp.mailfrom=metaspace.dk; dkim=pass (2048-bit key) header.d=metaspace-dk.20230601.gappssmtp.com header.i=@metaspace-dk.20230601.gappssmtp.com header.b=wwKh0pMr; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=metaspace.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=metaspace.dk
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2e95a74d51fso46245291fa.2
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Jun 2024 09:59:39 -0700 (PDT)
+	s=arc-20240116; t=1717261646; c=relaxed/simple;
+	bh=LZ3GDWpyd93YydDtOYzkZD4KocTVxgezuqt2lbVIKxw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iFqGK2IrQRvh8xi2j2UXYuuLxw12JBSrHZDMt0DcDCRIRGMfkuBPkUxBjJwl6mzqFSl9LCsZShm4XcIqzm10I2jOh+l3ehdGbEc4gOtLVM53AtmO+amH/ttcKe3S5dci5l4UdET0TyVY9eP01wanDkOdNirdRj6rMZGSFPKKIcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GyoW1L1P; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-6818e31e5baso2382101a12.1;
+        Sat, 01 Jun 2024 10:07:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=metaspace-dk.20230601.gappssmtp.com; s=20230601; t=1717261178; x=1717865978; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2mL6l8seCFLH+FLqk0uzi6xe60dPnwEuIbsZWb+Jgs8=;
-        b=wwKh0pMrCWNf4pWpmwi3ABDnaTpDxSwyyrA80PhnQmjMYHVBfFwl1gU1tNehlN70yp
-         AjJVtXUN+8hXokiyJ4QYKhcpZsbH2K27Em0LrPQfHHzp5ud8CI1uNPsSH5In2/0iMC5w
-         zsicMxacBqOKMgUTEKxQCKKQxQn8p7iB838ge4xG4Y6IJqpHpNzmKUpWDWtfb/DLrP9u
-         d0fZhIEP7ExWRHBgIbhq9cF5dV0QFebPozDtHJEWTJmEBB74d7sMPhaqoP/3Z9PlRsFB
-         3l3Vc+c6tWQXlmYxHmUpRs/+fGnyzJ+XWXONFfpmAVWwSzZLkla5MghltLYFGqBEtbqS
-         fZkw==
+        d=gmail.com; s=20230601; t=1717261644; x=1717866444; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2MXCJewXuaOb5JuphsoKQX5DhVjzwbqfBMtGCB+y5TU=;
+        b=GyoW1L1PtByU8TQPiXyvbxcpBO9YLmloIQ030NvsUOTriuiKJjafu4SlD/FfUiANkB
+         YmlPtyeIgBcVoMqsNU8DDTgBD5QDCcfwdiDzolVR7Ct1k+YCZleVJZ7jNOpn2alUVESu
+         ZiGweV/PgdG2i0Q6qCwXK+z1Bb54I6nspZbYfrHocIvlWtqP7TkdgpbAeZH382x/Tgdu
+         nxsHmj0QUHAbw2SbvepoqV5wYO6GBZQk0q1FYiPCJMiOIJqYIFonxEYC66a3AMzsm8ZR
+         IQBL6jQbTDUNojiQT3TODvLQRX/b+FX14U404eBVO11rpoGSS6D4rZVQYBRp8gRBDDj6
+         lPRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717261178; x=1717865978;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2mL6l8seCFLH+FLqk0uzi6xe60dPnwEuIbsZWb+Jgs8=;
-        b=DULeOekf9LE0akBLADFdSLZpRJMoY2HVjfsA+ajday9k8EFbS8BlXIPoVNDe3YkVRd
-         tUvvG2xcCbrFT/1vaAiuhyyrV0HGmlIChYuBiVThPsgvhhgtlnGvqfhVARd83zlVmHI3
-         OUZY8o4DqCNNtBWxUEAjH8iEnoea+1xrFirvj+L0hGGDHO+MMhCQxIHxsCUxb9plKiqY
-         6IcNwKmYGonFPPkrCj+031VBv2ZbTKLTPLsDjsdgK3q7KvifKSnlZ2PYmuVgf0XJcrGR
-         qrx4laPQ0qHNTtaqqiTQ29XyImOg6INIIS/qnMcUOUNM+3PmhbN/hjBOwyHEzuQsPlmq
-         eEdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWxwZ5TmZjBRkLh3AMtEy/4TqLp1D/vxf8REdEwIiMmga8Sbxlqaan8u60xksrDYyk7VYTPSIW0FHjv+S6XOUCgzgb9CQGcdJ1ocmq0
-X-Gm-Message-State: AOJu0YyJRg1AbGByIhDI7m7ZObZWmUcviNited2S5AoUM4bDssVAy5j1
-	UkINT2TbHzA93453BcTz/P1H+sqAchn4GHVmjLGOM8/XFoaeA5VIg9uZJpAGg2x/axDGTiQMPvY
-	H
-X-Google-Smtp-Source: AGHT+IFVGuaNXbhM1O7OzZMAjBCAkB+1ODN3q2YCCYkCSfm5BH2IuT/IISoTcabi+6Ng5qUysh1/bw==
-X-Received: by 2002:a2e:3517:0:b0:2e2:a99a:4c4 with SMTP id 38308e7fff4ca-2ea951f5e53mr39476581fa.47.1717261177607;
-        Sat, 01 Jun 2024 09:59:37 -0700 (PDT)
-Received: from localhost ([79.142.230.34])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a67ea67b4b2sm217708466b.117.2024.06.01.09.59.37
+        d=1e100.net; s=20230601; t=1717261644; x=1717866444;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2MXCJewXuaOb5JuphsoKQX5DhVjzwbqfBMtGCB+y5TU=;
+        b=K7PZTdxFdI2oXwdIvj7GzUZ2YYTY+gVsPtHPoKsFjs3XISkK2hWBST9PyF3YmCBFTX
+         9WdjV2ccaV+0YqIOSlavN/V5VBdJxbYty9pjy22fnCLJDQ1erquxSEVoawjIa8HSNEdA
+         Ah9end/hOQ4EMEuhGHYd8C84ktcMRvLg2CUiYqdjRMTtn3mdd6A5rCaPGjCJjN3n11jZ
+         eJRPr1n0hViaEdou3U4+/+9yH+hbJMdoSOlf6cxhTO7JKzrOUBJnD/IuuPfRAbNKeCdb
+         4w4u0lcv9k9IWWe4ZYj8uSb1lDkfQX5Ui4O6OQT6LXZTGlv++u/2Czrnwzg6ysfbRZsh
+         1tuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX/0ASQrWOd4r2IWSIxxUvg3jgINVRabVzsBRJAer73mdjgB5QDba1bY/geEvvC5RCJGZMTXkPDW6+KrbXQ/L3mADbXjLWaf7j3EWfuw6yRbcA/cMZnB8Q44cdeCa6V2+NaEuQn5w==
+X-Gm-Message-State: AOJu0YzB0vGy0AiYDWNNy2k4tcb/86w7PfxUDLYTk7UV5uQEJ5vH6EPA
+	U5J2yAcA9xpuX7KZcmK5/Npn+Nl8uhdGEkeCph6Ift6zMkwoVGph
+X-Google-Smtp-Source: AGHT+IEBppm1nOBktXDX3nc90gsPSN+Zjs8QGEOmfk/iQmwBpzbr1woDnWLKJCgSRt0bo5AX/Opkhw==
+X-Received: by 2002:a17:903:40c1:b0:1f3:2d51:17a with SMTP id d9443c01a7336-1f636ffa8a8mr61979185ad.18.1717261643904;
+        Sat, 01 Jun 2024 10:07:23 -0700 (PDT)
+Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f665929689sm2114745ad.151.2024.06.01.10.07.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 01 Jun 2024 09:59:37 -0700 (PDT)
-From: Andreas Hindborg <nmi@metaspace.dk>
-To: Keith Busch <kbusch@kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>,  Christoph Hellwig <hch@lst.de>,  Damien
- Le Moal <dlemoal@kernel.org>,  Bart Van Assche <bvanassche@acm.org>,
-  Hannes Reinecke <hare@suse.de>,  Ming Lei <ming.lei@redhat.com>,
-  "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,  Andreas
- Hindborg <a.hindborg@samsung.com>,  Greg KH <gregkh@linuxfoundation.org>,
-  Matthew Wilcox <willy@infradead.org>,  Miguel Ojeda <ojeda@kernel.org>,
-  Alex Gaynor <alex.gaynor@gmail.com>,  Wedson Almeida Filho
- <wedsonaf@gmail.com>,  Boqun Feng <boqun.feng@gmail.com>,  Gary Guo
- <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  Benno
- Lossin <benno.lossin@proton.me>,  Alice Ryhl <aliceryhl@google.com>,
-  Chaitanya Kulkarni <chaitanyak@nvidia.com>,  Luis Chamberlain
- <mcgrof@kernel.org>,  Yexuan Yang <1182282462@bupt.edu.cn>,  Sergio
- =?utf-8?Q?Gonz=C3=A1lez?= Collado <sergio.collado@gmail.com>,  Joel
- Granados
- <j.granados@samsung.com>,  "Pankaj Raghav (Samsung)"
- <kernel@pankajraghav.com>,  Daniel Gomez <da.gomez@samsung.com>,  Niklas
- Cassel <Niklas.Cassel@wdc.com>,  Philipp Stanner <pstanner@redhat.com>,
-  Conor Dooley <conor@kernel.org>,  Johannes Thumshirn
- <Johannes.Thumshirn@wdc.com>,  Matias =?utf-8?Q?Bj=C3=B8rling?=
- <m@bjorling.me>,  open list
- <linux-kernel@vger.kernel.org>,  "rust-for-linux@vger.kernel.org"
- <rust-for-linux@vger.kernel.org>,  "lsf-pc@lists.linux-foundation.org"
- <lsf-pc@lists.linux-foundation.org>,  "gost.dev@samsung.com"
- <gost.dev@samsung.com>
-Subject: Re: [PATCH v4 2/3] rust: block: add rnull, Rust null_blk
- implementation
-In-Reply-To: <ZltF5NvDnKFphcOo@kbusch-mbp.dhcp.thefacebook.com> (Keith Busch's
-	message of "Sat, 1 Jun 2024 10:01:40 -0600")
-References: <20240601134005.621714-1-nmi@metaspace.dk>
-	<20240601134005.621714-3-nmi@metaspace.dk>
-	<ZlsvHV6y4DEdC8ja@kbusch-mbp.dhcp.thefacebook.com>
-	<875xusoetn.fsf@metaspace.dk>
-	<ZltF5NvDnKFphcOo@kbusch-mbp.dhcp.thefacebook.com>
-Date: Sat, 01 Jun 2024 18:59:31 +0200
-Message-ID: <871q5goaz0.fsf@metaspace.dk>
+        Sat, 01 Jun 2024 10:07:23 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Sat, 1 Jun 2024 07:07:22 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Waiman Long <longman@redhat.com>
+Cc: Xiu Jianfeng <xiujianfeng@huawei.com>, lizefan.x@bytedance.com,
+	hannes@cmpxchg.org, cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] cgroup/cpuset: Reduce the lock protecting
+ CS_SCHED_LOAD_BALANCE
+Message-ID: <ZltVSizcmwxymwKp@slm.duckdns.org>
+References: <20240525094648.1585086-1-xiujianfeng@huawei.com>
+ <ZlOBAmStNZZU6Z-N@slm.duckdns.org>
+ <da5bd6ec-f297-4d2d-8701-2554ef8118bb@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <da5bd6ec-f297-4d2d-8701-2554ef8118bb@redhat.com>
 
-Keith Busch <kbusch@kernel.org> writes:
+On Fri, May 31, 2024 at 04:07:32PM -0400, Waiman Long wrote:
+> 
+> On 5/26/24 14:35, Tejun Heo wrote:
+> > On Sat, May 25, 2024 at 09:46:48AM +0000, Xiu Jianfeng wrote:
+> > > In the cpuset_css_online(), clearing the CS_SCHED_LOAD_BALANCE bit
+> > > of cs->flags is guarded by callback_lock and cpuset_mutex. There is
+> > > no problem with itself, because it is consistent with the description
+> > > of there two global lock at the beginning of this file. However, since
+> > > the operation of checking, setting and clearing the flag bit is atomic,
+> > > protection of callback_lock is unnecessary here, see CS_SPREAD_*. so
+> > > to make it more consistent with the other code, move the operation
+> > > outside the critical section of callback_lock.
+> > > 
+> > > No functional changes intended.
+> > > 
+> > > Signed-off-by: Xiu Jianfeng<xiujianfeng@huawei.com>
+> > > ---
+> > >   kernel/cgroup/cpuset.c | 14 ++++++--------
+> > >   1 file changed, 6 insertions(+), 8 deletions(-)
+> > > 
+> > > diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+> > > index f9d2a3487645..315f8cbd6d35 100644
+> > > --- a/kernel/cgroup/cpuset.c
+> > > +++ b/kernel/cgroup/cpuset.c
+> > > @@ -4038,6 +4038,12 @@ static int cpuset_css_online(struct cgroup_subsys_state *css)
+> > >   		set_bit(CS_SPREAD_PAGE, &cs->flags);
+> > >   	if (is_spread_slab(parent))
+> > >   		set_bit(CS_SPREAD_SLAB, &cs->flags);
+> > > +	/*
+> > > +	 * For v2, clear CS_SCHED_LOAD_BALANCE if parent is isolated
+> > > +	 */
+> > > +	if (cgroup_subsys_on_dfl(cpuset_cgrp_subsys) &&
+> > > +	    !is_sched_load_balance(parent))
+> > > +		clear_bit(CS_SCHED_LOAD_BALANCE, &cs->flags);
+> > The code looks weird to me. It's doing the same thing under the
+> > is_in_v2_mode() block and the cgroup_subsys_on_dfl() block and the former is
+> > also run when the latter condition is true. Looks like we can get rid of the
+> > latter block? Waiman?
+> 
+> Sorry for the late reply.
+> 
+> The handling of the CS_SCHED_LOAD_BALANCE flag is different between v1 and
+> v2. For v1, CS_SCHED_LOAD_BALANCE is default to ON unless it is explicitly
+> turned off by writing to cpuset.sched_load_balance. For v2, the state will
+> follow its parent when a new cpuset is brought online. Since is_in_v2_mode()
+> can be on with cgroup v1, we can't group the two together.
+> 
+> I agree that we don't need to protect the clearing of CS_SCHED_LOAD_BALANCE
+> with the callback lock. So I don't have objection to this patch.
+> 
+> Acked-by: Waiman Long <longman@redhat.com>
 
-> On Sat, Jun 01, 2024 at 05:36:20PM +0200, Andreas Hindborg wrote:
->> Keith Busch <kbusch@kernel.org> writes:
->> 
->> > On Sat, Jun 01, 2024 at 03:40:04PM +0200, Andreas Hindborg wrote:
->> >> +impl kernel::Module for NullBlkModule {
->> >> +    fn init(_module: &'static ThisModule) -> Result<Self> {
->> >> +        pr_info!("Rust null_blk loaded\n");
->> >> +        let tagset = Arc::pin_init(TagSet::try_new(1, 256, 1), flags::GFP_KERNEL)?;
->> >> +
->> >> +        let disk = {
->> >> +            let block_size: u16 = 4096;
->> >> +            if block_size % 512 != 0 || !(512..=4096).contains(&block_size) {
->> >> +                return Err(kernel::error::code::EINVAL);
->> >> +            }
->> >
->> > You've set block_size to the literal 4096, then validate its value
->> > immediately after? Am I missing some way this could ever be invalid?
->> 
->> Good catch. It is because I have a patch in the outbound queue that allows setting
->> the block size via a module parameter. The module parameter patch is not
->> upstream yet. Once I have that up, I will send the patch with the block
->> size config.
->> 
->> Do you think it is OK to have this redundancy? It would only be for a
->> few cycles.
->
-> It's fine, just wondering why it's there. But it also allows values like
-> 1536 and 3584, which are not valid block sizes, so I think you want the
-> check to be:
->
-> 	if !(512..=4096).contains(&block_size) || ((block_size & (block_size - 1)) != 0)
+Applied to cgroup/for-6.11.
 
-Right, that makes sense. I modeled it after the C null_blk validation
-code in `null_validate_conf`. It contains this:
+Thanks.
 
-	dev->blocksize = round_down(dev->blocksize, 512);
-	dev->blocksize = clamp_t(unsigned int, dev->blocksize, 512, 4096);
-
-That would have the same semantics, right? I guess I'll try to make a
-device with a 1536 block size and see what happens.
-
-BR Andreas
+-- 
+tejun
 
