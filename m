@@ -1,82 +1,124 @@
-Return-Path: <linux-kernel+bounces-197744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1EC88D6E96
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 08:53:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1AC08D6E97
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 09:02:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2C6F1C21909
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 06:53:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C68FAB216DD
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 07:02:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 300401400A;
-	Sat,  1 Jun 2024 06:53:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Nv16bLFO"
-Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCCAB14A82;
+	Sat,  1 Jun 2024 07:02:17 +0000 (UTC)
+Received: from smtp134-32.sina.com.cn (smtp134-32.sina.com.cn [180.149.134.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6D31FC1F
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Jun 2024 06:53:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9318111AA
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Jun 2024 07:02:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.149.134.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717224789; cv=none; b=tLTmUbLw2/HiPuY6g0fvsDV/YAmnZ8ZFLuivbi81YxkErsAoVptLI2c/V64V7w666YZsLYnsOGuYo+rNdGblLyE/cx0S6otDgoUAymKPSrZJ7BWvv/ItWHd3sgUV8JoKgK1SImTdvdzT/X6cH0wM998vlfpbOKkzposXpp8TmfM=
+	t=1717225337; cv=none; b=n/kmjciD53t3dUd2HHNDuoGsf/fEPRAa91TIcAWE6NmK+qAALZvyEMqyOm5hchPPQ7/391wxH6aD6N5o56KbsHBFkzbCGMgfy0ydcVvDrdxaV+zsh765TM9D1Rw8hhnEbTH8UzZ+0M0to0qJ7OW8A3WXyvlihe3+WNSMac+O3mA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717224789; c=relaxed/simple;
-	bh=JImLXNX2vV91/ze/yqvjMib2KsaBe8CFho8OHUC6B9A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I74oyusy617Bjcplglfym74u2Z1Oriyn5+ykISAG7J7C/UPcDP7OuhGJZsMRl6kST35g+/sJn0HBN5Lg+VhCr1FtGgodVenVII7xpsXM6/A/h1V3N4AtGRu0gWjJt0Ru/wEgDfYuLVte3y0RC1EkFUjMEiGa3VAR2j6rW1dyXEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Nv16bLFO; arc=none smtp.client-ip=91.218.175.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: roman.gushchin@linux.dev
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1717224785;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JImLXNX2vV91/ze/yqvjMib2KsaBe8CFho8OHUC6B9A=;
-	b=Nv16bLFOI2r9GzIyH/e69wJ0pi9u1kBY6ugMCo8RFVLSaBdKmyBp1p7zN8cWIgssEy+nwL
-	039KnM3Vi4hC4jKeXgPWmb2QJCMT1E9iLELrT1N7kc6wPy5yjthDN+7hFPZaWhFZmJBWoX
-	4fJw6CTD7HcXm5srxmpnucv+BVE6pc8=
-X-Envelope-To: akpm@linux-foundation.org
-X-Envelope-To: muchun.song@linux.dev
-X-Envelope-To: hannes@cmpxchg.org
-X-Envelope-To: mhocko@kernel.org
-X-Envelope-To: willy@infradead.org
-X-Envelope-To: linux-mm@kvack.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-Date: Fri, 31 May 2024 23:53:01 -0700
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Roman Gushchin <roman.gushchin@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Muchun Song <muchun.song@linux.dev>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Michal Hocko <mhocko@kernel.org>, Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 14/14] MAINTAINERS: add mm/memcontrol-v1.c/h to the
- list of maintained files
-Message-ID: <p2lakkljy46frgvhpa3mo2o47iqjmc5gpjhamx7zgpziwwqekt@3giywbnsat7x>
-References: <20240528202101.3099300-1-roman.gushchin@linux.dev>
- <20240528214435.3125304-1-roman.gushchin@linux.dev>
- <20240528214435.3125304-5-roman.gushchin@linux.dev>
+	s=arc-20240116; t=1717225337; c=relaxed/simple;
+	bh=zv8eMW1Eelq4laV38IJKliGY//RaAnyGOig+D03M6C0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=aOdSuW8aKnbM4VzD3fOSwiKgVTzxiwbsuvEbE8dI7I+FIR4ULNLlg9/HppL2P/sBtLj2+NYQ7qsUhsNK5+dmXtpoimT0XKTKEG0wHdJHRiv0tMWPzCnha4JlGFN7BN+qSFeBRr4RGF6B6uwVsDl7ad7FX192NOIxhqKVAzgxX4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=180.149.134.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.118.68.165])
+	by sina.com (10.185.250.21) with ESMTP
+	id 665AC74700002F9A; Sat, 1 Jun 2024 15:01:29 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 8688393408439
+X-SMAIL-UIID: 6BA0A628B0B844B49317363F6B6842EB-20240601-150129-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+54594368fbd5a4f1754a@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [mm?] INFO: rcu detected stall in kcompactd (2)
+Date: Sat,  1 Jun 2024 15:01:17 +0800
+Message-Id: <20240601070117.3481-1-hdanton@sina.com>
+In-Reply-To: <0000000000002304860619cb8aa1@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240528214435.3125304-5-roman.gushchin@linux.dev>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-On Tue, May 28, 2024 at 02:44:35PM GMT, Roman Gushchin wrote:
+On Fri, 31 May 2024 20:17:26 -0700
+> syzbot found the following issue on:
+> 
+> HEAD commit:    2bfcfd584ff5 Merge tag 'pmdomain-v6.10-rc1' of git://git.k..
+> git tree:       upstream
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17314572980000
 
-Nit: add a simple commit message even if it is redundant.
+#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git  master
 
-> Signed-off-by: Roman Gushchin <roman.gushchin@linux.dev>
-
-Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
+--- x/net/mac80211/ieee80211_i.h
++++ y/net/mac80211/ieee80211_i.h
+@@ -1437,6 +1437,7 @@ struct ieee80211_local {
+ 	 * queues increases over the limit. */
+ #define IEEE80211_IRQSAFE_QUEUE_LIMIT 128
+ 	struct tasklet_struct tasklet;
++	struct work_struct tlw;
+ 	struct sk_buff_head skb_queue;
+ 	struct sk_buff_head skb_queue_unreliable;
+ 
+--- x/net/mac80211/main.c
++++ y/net/mac80211/main.c
+@@ -423,9 +423,9 @@ u64 ieee80211_reset_erp_info(struct ieee
+ 	       BSS_CHANGED_ERP_SLOT;
+ }
+ 
+-static void ieee80211_tasklet_handler(struct tasklet_struct *t)
++static void ieee80211_tlw_fn(struct work_struct *w)
+ {
+-	struct ieee80211_local *local = from_tasklet(local, t, tasklet);
++	struct ieee80211_local *local = container_of(w, struct ieee80211_local, tlw);
+ 	struct sk_buff *skb;
+ 
+ 	while ((skb = skb_dequeue(&local->skb_queue)) ||
+@@ -450,6 +450,13 @@ static void ieee80211_tasklet_handler(st
+ 	}
+ }
+ 
++static void ieee80211_tasklet_handler(struct tasklet_struct *t)
++{
++	struct ieee80211_local *local = from_tasklet(local, t, tasklet);
++
++	schedule_work(&local->tlw);
++}
++
+ static void ieee80211_restart_work(struct work_struct *work)
+ {
+ 	struct ieee80211_local *local =
+@@ -989,6 +996,7 @@ struct ieee80211_hw *ieee80211_alloc_hw_
+ 	tasklet_setup(&local->tx_pending_tasklet, ieee80211_tx_pending);
+ 	tasklet_setup(&local->wake_txqs_tasklet, ieee80211_wake_txqs);
+ 	tasklet_setup(&local->tasklet, ieee80211_tasklet_handler);
++	INIT_WORK(&local->tlw, ieee80211_tlw_fn);
+ 
+ 	skb_queue_head_init(&local->skb_queue);
+ 	skb_queue_head_init(&local->skb_queue_unreliable);
+@@ -1634,6 +1642,7 @@ void ieee80211_unregister_hw(struct ieee
+ 
+ 	tasklet_kill(&local->tx_pending_tasklet);
+ 	tasklet_kill(&local->tasklet);
++	flush_work(&local->tlw);
+ 
+ #ifdef CONFIG_INET
+ 	unregister_inetaddr_notifier(&local->ifa_notifier);
+--
 
