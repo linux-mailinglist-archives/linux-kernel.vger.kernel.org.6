@@ -1,143 +1,125 @@
-Return-Path: <linux-kernel+bounces-197865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB58D8D702A
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 15:18:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C43318D702C
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 15:22:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECB521C20E1B
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 13:18:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B638282126
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 13:22:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D95EB15099F;
-	Sat,  1 Jun 2024 13:17:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4D8A1509B8;
+	Sat,  1 Jun 2024 13:21:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="EZSb5/Cq"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l2j0EAKL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AC928C04;
-	Sat,  1 Jun 2024 13:17:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32DBA8C04;
+	Sat,  1 Jun 2024 13:21:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717247868; cv=none; b=PNHJBB8OV4CFiFQ7zNjI4bTAwg4FrOoda2w3obJb9C9iXUi3GFmtQavnbw/45xmHJ+1h/bDRnvRycbLiIGCVR2zny51KQWk+n1KqQitaHgwK/D9OuxFnmQw61UJIdYCZNWnnKrr4RX9q8a3dp49Afyz1PE6ImLZ7tL4yJEbRprY=
+	t=1717248117; cv=none; b=X8XBZBgE8CNt7AalZIrWLp2crBKcZS8MQWtw0GrcGj++Jf0gIYpOF8Jijk5VdyC5E18RbfZX1+pPMJI8VVfS+Q6eHsQFGMx1oc4y8HOq6hm9A8pYqKyQ0CYRrYpVxpYkopSreQqNL/fAyWLO8R9ZFqKvqXPheR7KmfV8o+Y9Osk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717247868; c=relaxed/simple;
-	bh=uPrCuZ3Ei1gyQy6K3DGtuOuETYkHUYBNhjUla7mAorM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VsusO+1dFrFnYd/VXf/HelPqy9KpQ7pvwK11t2GGrfTRumA63A8e4UmnDYGcqjSXVil9Pr4o7uxlnE1YVMlFs+WDNmHQ6NjyR57vCpEsvXbv3bZdDDwq3favHmi12O+YuFCFr2YCpNJXyuN4GL/3tbxHDJT2RNRgyWotw/GuzOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=EZSb5/Cq; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=+y8rnCbC5QYKXVWHLiiou6eTUqBo3oGctM0zE1/ZJ80=; b=EZSb5/CqKPBNHJzR
-	J84wFQs4vKAStZzwd6SKyRUqCb5dzJYiW9prWsuHarTAosPzeqoAVT8E5S9VcP17AgwHlK4iohKqc
-	mZsm2eaOzPVw5Qj9MaeAulNyqr7frQN9XQxwqxDDF/iFu0bYFCQzQjD65bD8R2x2SJdTUeOoK2d5Z
-	M1QUmSPjQW5nA0ynqi1kmcTCPmxoAz2HdU2OzqUgu8uJgZ55YrWAhp6KB+mJqPRVLp+zDWEpyG2tn
-	gS3owc/dNz9LwX4W6W0QwAh3cOKbk0EtJ4CRcVB07E7fU87xH71LnDVso660IxMF6BfXwUwg7qajL
-	FFv2T/ASn/EWeJXYBw==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1sDOcB-003jPL-14;
-	Sat, 01 Jun 2024 13:17:43 +0000
-Date: Sat, 1 Jun 2024 13:17:43 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: Philipp Hortmann <philipp.g.hortmann@gmail.com>
-Cc: Larry.Finger@lwfinger.net, florian.c.schilhabel@googlemail.com,
-	gregkh@linuxfoundation.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: r8712u: remove unused struct
- 'zero_bulkout_context'
-Message-ID: <Zlsfd9Eq5jecxRZq@gallifrey>
-References: <20240529000814.233690-1-linux@treblig.org>
- <971c164f-5ebf-44cb-8cff-3a09c63bb77e@gmail.com>
+	s=arc-20240116; t=1717248117; c=relaxed/simple;
+	bh=l/he8j/750/A4n4DZmFkdOFTh7dOKEIKzSspnPzjkmk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WfFC5yF579LqrpPlodRhWgEkGNfmTP1tc7s6BFBLjzzFSCgSLErTrcXS3ZJhwAs381AtXBZ1+RP1abSc6cPLnPNdzD5T5sf3AGfLCQk9xa/g+7Z6iNx2d4a2YEkckmaWmHt3XkbTe/li+qM2q46xIsJ+f78FvPPY+aJ+7JnoT9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l2j0EAKL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FF7CC116B1;
+	Sat,  1 Jun 2024 13:21:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717248116;
+	bh=l/he8j/750/A4n4DZmFkdOFTh7dOKEIKzSspnPzjkmk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=l2j0EAKLNyrEfvBk0792+gT4S/9JFEBBMC3Z6s5dsaU0LxgZThBqtt/2dwwWv3nt/
+	 Ifp4FCbyiWZtpHpLXDMlPfQf5hJoeCMsprR9yi7cmRHSEmxmqnP2VoI6U2O1k96iy7
+	 6eyE/pT80dOB1sN89vIH3HVHxl7iYY3uNrxSKlzvI0NDR/2GT6oVSiwqYyNL1O5def
+	 rm16sAktF8U9uMT7GohNXGVCyKIyBz5y+ZqzBxtKQIaC2QWd5EMOrjzHNXOclp6u3L
+	 UgQ9qQOBQuTnB/FxrwgSzUCI+XBDL48/2UBANtEApldLlERKBxEMP6tF73WQCRAzqL
+	 oUYcQLMSknL3w==
+Date: Sat, 1 Jun 2024 14:21:47 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Johan Hovold <johan+linaro@kernel.org>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Nuno Sa <nuno.sa@analog.com>
+Subject: Re: [PATCH] iio: inkern: fix channel read regression
+Message-ID: <20240601142147.3ac40207@jic23-huawei>
+In-Reply-To: <20240530074416.13697-1-johan+linaro@kernel.org>
+References: <20240530074416.13697-1-johan+linaro@kernel.org>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <971c164f-5ebf-44cb-8cff-3a09c63bb77e@gmail.com>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 13:16:28 up 24 days, 30 min,  1 user,  load average: 0.01, 0.01,
- 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-* Philipp Hortmann (philipp.g.hortmann@gmail.com) wrote:
-> On 5/29/24 02:08, linux@treblig.org wrote:
-> 
-> please remove the following line:
-> > From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> > 
-> To me it is not important which commit introduced the struct. This is not a
-> bug. So I would omit this lines and use instead just:
-> Remove struct zero_bulkout_context as it is unused.
-> > 'zero_bulkout_context' is unused since the original
-> > commit 2865d42c78a9 ("staging: r8712u: Add the new driver to the
-> > mainline kernel").
-> > 
-> please remove the following line:
-> > Remove it. >
+On Thu, 30 May 2024 09:44:16 +0200
+Johan Hovold <johan+linaro@kernel.org> wrote:
 
-v2 sent just now with changes as requested.
-(Although I think you're the only person who has asked
-to remove that detail, most seem to like it as a hint
-as to whether there's some reason it's unused).
+> A recent "cleanup" broke IIO channel read outs and thereby thermal
+> mitigation on the Lenovo ThinkPad X13s by returning zero instead of the
+> expected IIO value type in iio_read_channel_processed_scale():
+> 
+> 	thermal thermal_zone12: failed to read out thermal zone (-22)
+> 
+> Fixes: 3092bde731ca ("iio: inkern: move to the cleanup.h magic")
+> Cc: Nuno Sa <nuno.sa@analog.com>
+> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
 
-Dave
+Hi Johan,
 
-> > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-> > ---
-> >   drivers/staging/rtl8712/usb_ops_linux.c | 7 -------
-> >   1 file changed, 7 deletions(-)
-> > 
-> > diff --git a/drivers/staging/rtl8712/usb_ops_linux.c b/drivers/staging/rtl8712/usb_ops_linux.c
-> > index b2181e1e2d38..0a3451cdc8a1 100644
-> > --- a/drivers/staging/rtl8712/usb_ops_linux.c
-> > +++ b/drivers/staging/rtl8712/usb_ops_linux.c
-> > @@ -26,13 +26,6 @@
-> >   #define	RTL871X_VENQT_READ	0xc0
-> >   #define	RTL871X_VENQT_WRITE	0x40
-> > -struct zero_bulkout_context {
-> > -	void *pbuf;
-> > -	void *purb;
-> > -	void *pirp;
-> > -	void *padapter;
-> > -};
-> > -
-> >   uint r8712_usb_init_intf_priv(struct intf_priv *pintfpriv)
-> >   {
-> >   	pintfpriv->piorw_urb = usb_alloc_urb(0, GFP_ATOMIC);
+The documentation for this function unfortunately says 
+* Returns an error code or 0
+so not surprising this went wrong.
+
+All those docs should be dragged alongside the implementations
+to make it easier to spot errors and seems we need to do some
+fixing up of those docs in general :(
+
+In meantime, Nuno please take another look at these and see if
+we have additional problem cases like this.  Given the patch
+queue I have and a busy few days it will be a while before I
+get to it but I'll try and take a close look soon as well.
+
+Longer term, in my view the readability and chance of bugs
+is reduced, but churn always introduces the possibility of
+issues like this in the short term :(
+
+
+Jonathan
+
+
+> ---
+>  drivers/iio/inkern.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
 > 
-> Hi David,
+> Someone should re-review the offending commit so that there are no more
+> of these subtle regressions that are bound to happen when people use
+> cleanup.h to save a few lines of code at the cost of readability.
 > 
-> I would prefer the following changes:
-> Subject: please change from r8712u which is the compiled driver name to
-> folder name of the driver: rtl8712
-> 
-> Please also consider the above hints.
-> 
-> If you send in a second version of this patch please use a change history.
-> Description from Dan under:
-> https://staticthinking.wordpress.com/2022/07/27/how-to-send-a-v2-patch/
-> 
-> Please contact me for any questions.
-> 
-> Thanks for your support.
-> 
-> Bye Philipp
+> Johan
 > 
 > 
 > 
--- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+> diff --git a/drivers/iio/inkern.c b/drivers/iio/inkern.c
+> index 52d773261828..485e6fc44a04 100644
+> --- a/drivers/iio/inkern.c
+> +++ b/drivers/iio/inkern.c
+> @@ -721,7 +721,7 @@ int iio_read_channel_processed_scale(struct iio_channel *chan, int *val,
+>  			return ret;
+>  		*val *= scale;
+>  
+> -		return 0;
+> +		return ret;
+>  	} else {
+>  		ret = iio_channel_read(chan, val, NULL, IIO_CHAN_INFO_RAW);
+>  		if (ret < 0)
+
 
