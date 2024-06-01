@@ -1,131 +1,107 @@
-Return-Path: <linux-kernel+bounces-197768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2D9F8D6EDD
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 10:23:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 300F48D6EE1
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 10:27:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D420F1C25594
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 08:23:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A5C81C24E2F
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 08:27:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAEBE20DE8;
-	Sat,  1 Jun 2024 08:22:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58C2B1CF9A;
+	Sat,  1 Jun 2024 08:27:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JLkBfIXG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="gqVIp9oq"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1769811711;
-	Sat,  1 Jun 2024 08:22:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB11117736;
+	Sat,  1 Jun 2024 08:27:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717230179; cv=none; b=GRuZhhD8fQjWh3OYwxEw8Kp6gbgGfBxEmvtK6ZPzqBKTMQpoY80FrmMxNMLoGB47AGVO+4Q9VmR1HjGgAkazz17KRhJWepuUdRPqWI7wwhoHiM7XDjeu+C44WQNq+dgx3bDaOncKuYud2GG2TYgZvmXRuvJo39jipmi53PlhEmA=
+	t=1717230460; cv=none; b=kPcb5gX1/jsguUugOpnRwqUejiS76Is33+rdUajD7RUDJanFPB0BPN6nn1MP6nTUp2hdbMsge5Tg4gCLiSfOdpgAqGTUnim4yMSjWI3NWaktvX8ZhwnyGQCoU/4O0Ee5dD+h7MAu+lQu+4wYpDDEay00Lseweq6SkJDsg2hK2kk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717230179; c=relaxed/simple;
-	bh=ir1GPv/WVZeGeHO6Nly4BHiSZZOFn2vs7jsNY1Z2JXs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rTIDbgukqSi4UnokVFjuOslOYnFT4l1ZiaiuCfJgk/qi/naBVnL1tK6Cvhv63HTA2FgMV6v+PROvoYcjkd6FzpQkbZ6ArVmRbVIJ7W2POJWTX6xej3bGd/AVnQ+WHKVYYShinH4Zib/vKq3Fm9D/4uWDThUkiFJDp2FA81mSm6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JLkBfIXG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E6C5C116B1;
-	Sat,  1 Jun 2024 08:22:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717230179;
-	bh=ir1GPv/WVZeGeHO6Nly4BHiSZZOFn2vs7jsNY1Z2JXs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=JLkBfIXGZZFBMaImA+rmmP+F0KASs+OeR7q6vA4tFXZo7nUFBTfY7JDy240OCUv/0
-	 pLIK5OqREwS4EwZtHzI0gxprdPLqLYE4/g6rI2lzFkTjA+Icl9xV1VkAghGLxABqZT
-	 v0phh+7Z9qugL5gMDGLLM5HGvPkoTv0uG7RczE9uMLb3pKcQY1nc6TdENGAU+1WMUK
-	 FZAlXfRZ35zmmtXbqR/cyqY5qzaWGJ72EWuW0jNery01qbW7ZTgcFudui509rCdTwa
-	 h4qDgNKAM8xdhOHJKKXYSpESOf3CpPF2CGigKtR4ZWXFJtxctJGU1P+g7qZnwW6qvN
-	 kVuGIXYaLndkA==
-From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	don <zds100@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	mhiramat@kernel.org
-Subject: [PATCH v2 3/3] sefltests/tracing: Add a test for tracepoint events on modules
-Date: Sat,  1 Jun 2024 17:22:55 +0900
-Message-Id: <171723017495.258703.11572784928592807749.stgit@devnote2>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <171723014778.258703.6731294779199848686.stgit@devnote2>
-References: <171723014778.258703.6731294779199848686.stgit@devnote2>
-User-Agent: StGit/0.19
+	s=arc-20240116; t=1717230460; c=relaxed/simple;
+	bh=CCGdaeCR/uSlXg0QGvO7hXoUNkCEtxBToDVRpLZJZDw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=ejlWXI72AYHLK0qQN58gLCPQiA02YppPVFnsKoalx76QlfkSOjNnaHmWPI6WWSbJ0O6PtuGMcijJ2h0Xh7fOgtGEvb/4qt+NRpawMs8KYTMd+GsEnL1cF4gKARdJ8xK+Dp8JDTR9ciZkh5Ne5BPDCFj6inXHqFh6CF2HtM9OJlY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=gqVIp9oq; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1717230441; x=1717835241; i=wahrenst@gmx.net;
+	bh=CCGdaeCR/uSlXg0QGvO7hXoUNkCEtxBToDVRpLZJZDw=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=gqVIp9oqJ24/c2lzQKDkZ2QtAkJHYXEqWiawrrXMWXvw1gtOqUzsThlO3aW+gsLa
+	 tAnUH6unRCIrHm1RuZOsTxbRi1bJbiAWXvpiQRoYBIcsKe6nfnVRYIQQWwiJL6M7g
+	 lwZUWcp+kA16BjU9onxsMP2vXdlg55N++7va74VBfwBjks/gw8tL4XivnLJahCilp
+	 c72+h7RJGOu7Ku1zgNWvVTyIE3CnbC/KGyHsANbHd7xFC7mvJcNm98EAtGtHZ2F0B
+	 ZC1S980PKiWWjAk5XqRJnuaeaE0rJlCak0lYXBEKOJ+ATxvJ9lCDGtkc+NH9JnSez
+	 Ar59cDDvZb1cY0kBuA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.1.127] ([37.4.248.43]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MIx3C-1rstW702cE-00KSlK; Sat, 01
+ Jun 2024 10:27:21 +0200
+Message-ID: <dbcd0f28-3f45-4506-aefb-b8dc6be47a43@gmx.net>
+Date: Sat, 1 Jun 2024 10:27:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 4/4] arm64: dts: broadcom: Add minimal support for
+ Raspberry Pi 5
+To: Andrea della Porta <andrea.porta@suse.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
+ <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Ulf Hansson
+ <ulf.hansson@linaro.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ Kamal Dasu <kamal.dasu@broadcom.com>, Al Cooper <alcooperx@gmail.com>,
+ devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-mmc@vger.kernel.org
+References: <cover.1717061147.git.andrea.porta@suse.com>
+ <874589f6c621036620cca944986e5be7238b4784.1717061147.git.andrea.porta@suse.com>
+Content-Language: en-US
+From: Stefan Wahren <wahrenst@gmx.net>
+In-Reply-To: <874589f6c621036620cca944986e5be7238b4784.1717061147.git.andrea.porta@suse.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:eAMNr6tyKKk5lXgBC/lHAUcrQiVwXALGXb+bV2UoQxMspC3HHqW
+ /7/yOEI2IyRxgRUdmgTvVDulpss+/ExBcchPXhxue8QT0GlCXP3XU9nLMV03V/lRj4M04n5
+ bw+ihcEEye0eAJkV/hwQhfScsS0+POT8kneoRJ0RgdOwuiXKHyajHIrknV00lnRchj5IjMu
+ dqIExM+aSdlQJ+L0QUOcg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:U+Adulxrhug=;DQtuSnTMoCZFQSZXDz5eLyzymsi
+ oD/abWDWRHWpdJVXD50f3xTYhJTvvj122R8WH9ivX4OrtyLJe19eEdzvlJjd/CbrZauN2JB5K
+ S0EqQN1fGjqCgPN5KlRHqukyYLSDwgqlkxnfWNJSxN1Q7d22u2ChcDSBA4qKflRZTz36xZAct
+ TWyLVodQsx7hbM/krHfjjMKM7sf9nLNpKLvgDLwEaKb+aYFxM7iwH4gfOWA8PwqithXsaunmR
+ NVi+fFUVmze614RFKNHnId1zNKmDf/96NHk82Lu29F9y+0IDOEmwZnxZWZxKyJMCXBXsLmMRL
+ ybfi15ZkSPZPM87t7pC36qV8jFYCpcHuhxXn16qOZVuqmx9gJJUORigEdJB9EFDZStL1RgkcB
+ 13cMwHVKoELLko7aFMFunhevjK687a9qn/UlS9KZOrqG903SXAzFbMm9ORUGf7ktympYMpeCw
+ doNoMtxo2adNqHAlpXfGYqPfABlI4AZewE1p6o4K5gSkETzzGfwIDtVAOCrC6ZRlfn67NJ75K
+ UdmyP/hzKhOosdxIUr38Ds/nAYxUABV3LP9bREuByKU/RvU6QrAKV8T8BOsqYbqWb2Qs9m4tR
+ f5lslYEl2QjXRhsCxHE2E/xaCFxelWf8u3e7FzV+n3Wo6Wi6stqf71XPxN8N6xMq97YUbEHNm
+ H6IvtM51SmPymWSExS+QHJJK7JVAI3ISTe/DERQB+0KwcXCIlftWiKmxb7iWbZDKBxHjU9QBt
+ 200w6Hfne8iRnnCdmGoDc4XTbgkHfuKxfUZQyx4zrpUPwvZBp4Oz4C9nAqGwdiJMDaLVmPTSe
+ 2PAGPxLimnRq/cEN3gWPkYFKIjFtzUP+l4NJ0vxvK+N8E=
 
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-
-Add a test case for tracepoint events on modules. This checks if it can add
-and remove the events correctly.
-
-Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
----
- tools/testing/selftests/ftrace/config              |    1 +
- .../test.d/dynevent/add_remove_tprobe_module.tc    |   34 ++++++++++++++++++++
- 2 files changed, 35 insertions(+)
- create mode 100644 tools/testing/selftests/ftrace/test.d/dynevent/add_remove_tprobe_module.tc
-
-diff --git a/tools/testing/selftests/ftrace/config b/tools/testing/selftests/ftrace/config
-index 048a312abf40..544de0db5f58 100644
---- a/tools/testing/selftests/ftrace/config
-+++ b/tools/testing/selftests/ftrace/config
-@@ -20,6 +20,7 @@ CONFIG_PREEMPT_TRACER=y
- CONFIG_PROBE_EVENTS_BTF_ARGS=y
- CONFIG_SAMPLES=y
- CONFIG_SAMPLE_FTRACE_DIRECT=m
-+CONFIG_SAMPLE_TRACE_EVENTS=m
- CONFIG_SAMPLE_TRACE_PRINTK=m
- CONFIG_SCHED_TRACER=y
- CONFIG_STACK_TRACER=y
-diff --git a/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_tprobe_module.tc b/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_tprobe_module.tc
-new file mode 100644
-index 000000000000..2caed9454caa
---- /dev/null
-+++ b/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_tprobe_module.tc
-@@ -0,0 +1,34 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+# description: Generic dynamic event - add/remove tracepoint probe events on module
-+# requires: dynamic_events "t[:[<group>/][<event>]] <tracepoint> [<args>]":README
-+
-+rmmod trace-events-sample ||:
-+if ! modprobe trace-events-sample ; then
-+  echo "No trace-events sample module - please make CONFIG_SAMPLE_TRACE_EVENTS=m"
-+  exit_unresolved;
-+fi
-+trap "rmmod trace-events-sample" EXIT
-+
-+echo 0 > events/enable
-+echo > dynamic_events
-+
-+TRACEPOINT1=foo_bar
-+TRACEPOINT2=foo_bar_with_cond
-+
-+echo "t:myevent1 $TRACEPOINT1" >> dynamic_events
-+echo "t:myevent2 $TRACEPOINT2" >> dynamic_events
-+
-+grep -q myevent1 dynamic_events
-+grep -q myevent2 dynamic_events
-+test -d events/tracepoints/myevent1
-+test -d events/tracepoints/myevent2
-+
-+echo "-:myevent2" >> dynamic_events
-+
-+grep -q myevent1 dynamic_events
-+! grep -q myevent2 dynamic_events
-+
-+echo > dynamic_events
-+
-+clear_trace
-
+Am 30.05.24 um 12:12 schrieb Andrea della Porta:
+> The BCM2712 SoC family can be found on Raspberry Pi 5.
+> Add minimal SoC and board (Rpi5 specific) dts file to be able to
+> boot from SD card and use console on debug UART.
+>
+> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+Reviewed-by: Stefan Wahren <wahrenst@gmx.net>
 
