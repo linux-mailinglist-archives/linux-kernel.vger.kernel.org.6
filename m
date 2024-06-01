@@ -1,224 +1,721 @@
-Return-Path: <linux-kernel+bounces-197944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA0558D710D
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 18:11:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1A828D7113
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 18:23:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3A2D1C20D62
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 16:11:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2CEC0B218E1
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 16:23:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79CC0152E1D;
-	Sat,  1 Jun 2024 16:11:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B0171E50B;
+	Sat,  1 Jun 2024 16:23:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lw60ZAFC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Vd+0Ghtc"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95B6F152517;
-	Sat,  1 Jun 2024 16:11:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12DC11E502
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Jun 2024 16:23:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717258282; cv=none; b=Lgr+AEFSz7ZyeE2Hd7NYegKd+kwR4/GucqhOauBaRTuT/9pJoa/nDBe03AWwVZWiYzRUBUKQLZQA3S+VNIuvOaRJwg15PordGAwP3/t496gONdJ/rG/GPsGevGvMWIUAcm/YGcuUtjdARsjjAWjkNQ1njcT082MAtuLu15PWVMA=
+	t=1717259025; cv=none; b=TMC5mnfrgBYwNHsGQQWaXzyYntWiJcu2NIBuNGKSEnPVw4YEI23c/hkjnnQoZ3ANDmDncAXndYFwcN011Vn0DtHgdiD5AbglPR4i0EiWZNkMEgu9dA18DHGYgCLEP/XqYuRIyxop3Df5ERZTRX2JIDFzsJJswQKw0/EZRcdn/Bk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717258282; c=relaxed/simple;
-	bh=M/G4EWycUwATzD14/dyBu7qr6EKd3fFH23GNEPwmMY0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YE8hi4NL8dVi9ZcRcL+jsKc82SEjFvorhK1EHzqDHbPTck5NnchWOLTYoyzQvvmgj/TIsludKnpvpwC+C5vKTu6buhbLG5XXBpg/3yruvUDlUzUw/YVwK/3oBbxc4esxt12Xb6PNAUlwAZJ4/mM9EvijC8/LCOqpuUbTAOjExl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lw60ZAFC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50439C116B1;
-	Sat,  1 Jun 2024 16:11:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717258282;
-	bh=M/G4EWycUwATzD14/dyBu7qr6EKd3fFH23GNEPwmMY0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=lw60ZAFCa2oqEvw46NpxMc+haJObJH1iKZVaqpEsEZVKcAgl8qdTlorZG/OxPy45K
-	 eULIKEYDRzURrLdsHxUYbXTx2sZurI09YvSXYP+AhyKPJ4kB1bu0kfiZIztEEiV4vd
-	 8APweNJL8q6kYAlqBDH/gHf6YGB+19gY6qedH1yDKhqKk2bS0/73OT/BOgR8cOoRGS
-	 P5SbuuYqUwRReUNbIubYJ+lh7GToqpzGjEDpjw43flNjzMcBWT0XpGYL90J/sGQOAh
-	 8WJ3KTyVQczADzFE/pwikCmZ65GM7Vc9SY91JLNYy5FXttCDjcAECQiJE9UGaG2Tqz
-	 OPZYBnulfw8HQ==
-Message-ID: <32137d7d-fe61-468a-a3f4-1602512104da@kernel.org>
-Date: Sat, 1 Jun 2024 18:11:17 +0200
+	s=arc-20240116; t=1717259025; c=relaxed/simple;
+	bh=sWSgOiMeSu3hdqkX7RXlbgROaZVfjDiL1k3XhWlqymI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SeYPyQOmgrp8DAyEQsRsVsFYuInMYccC1fRxeJxAs7KUGpZI70EML7KbEEXsIePwfMsM1jW+ZntLhfo5xdFtlj5ChHziTkbht+fIrvJ/E9rRZL7kJ15MiKMgI45+brAR0of7Bw5zOJMhrOH3vG3FeJde9CNYQ65KqrfyIXZN27c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Vd+0Ghtc; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2eaa80cb573so700101fa.1
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Jun 2024 09:23:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717259021; x=1717863821; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=AFYbHI/iftzeCVZcgyHEUN23jefa2GL40WdI+hSfcUY=;
+        b=Vd+0GhtcZTWOw0mpKYC/OjElvOlrOYfBcYzp7ltZcjNGYT1q9VxSoTgRof90iPx1ev
+         NAPwyXZ34lplamR/oFGs0+zxnTKBzX06ptsRbtlij5djj0Pvx3JSTqMiIk1GHqE3QWq/
+         Zbnx7wkHdOfWiZ3GplmL6mZ4rBTT/arIFBbbdGOtLUlxtCe1wWjFUz/oJriBe2C2uI8U
+         7BSMWElbWECNJlJncay53eijx0m1hrKmyjaUFGC7DkgMUbL//JXvP5o1sFJ3Z0U1EHm/
+         pX7EbLrWbIKfuz+r6AFau5bRjtxpdadCGnNveFkb2OiCicUB4OGwlV6XZ7PLV57qqSob
+         6Xkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717259021; x=1717863821;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AFYbHI/iftzeCVZcgyHEUN23jefa2GL40WdI+hSfcUY=;
+        b=mCbofKzsjkHpS0M1tsgy46cBakrQFJFNPug0zEqk9f3vSgbht6RZlRd3ZJqa1TxML6
+         Rmbg4pkd52mgaZdCch7YtLvXvxfdrnFRy9193jkbE4UiIQhbvJ9kEl3MKe+Ua6dJfaPA
+         mSp5yvKo1EY8IsRI/3Z4IEdNIIovDoRUo3xz/dX49OyHIROje2zQFKdBhdnrdnliZeSN
+         coKB5zWMHOkVuNodBQobeZECQ+3C0C0bJIP36IRGspt+KVXGQDYzqjEiV5OSHSSFqhUs
+         ytJHLjn7bh60A2j3aVQmXWHqP4nDg+TXH4RrrHuq1n9Xb9mB5aFdoS4AB2M0XjYuqe0C
+         koDA==
+X-Forwarded-Encrypted: i=1; AJvYcCVJEYw1Xn/y2DBAMBlaNoZbkDA9IsiFYeSUD5DnKmamPzfo8QhV4Q975xF3y1TNdHPHWQGxZdBQ5MG0TSkGM+qTi3n0HkFnp2buTkKx
+X-Gm-Message-State: AOJu0YxYORv3ZkSYOKg7T471+9+bmZtWT3sis32ao9nu3BUwSPAfcQaJ
+	4oasYaIKAWMFXZB/a+vwuIFz2bOuvkdV48KzSY8pPVHEokFcTwutnOe8oRXWWHU=
+X-Google-Smtp-Source: AGHT+IFyJhRqFa8IgrBp6/6h3OLMBLYTUBAoFXY0l3e5Be488IYl+3x1ULtRSmfe6DLuB5yjSSUS3Q==
+X-Received: by 2002:a2e:7c10:0:b0:2e9:756f:cde0 with SMTP id 38308e7fff4ca-2ea9512a367mr27454421fa.23.1717259020714;
+        Sat, 01 Jun 2024 09:23:40 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ea91bee773sm6157261fa.66.2024.06.01.09.23.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 01 Jun 2024 09:23:40 -0700 (PDT)
+Date: Sat, 1 Jun 2024 19:23:38 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
+Cc: dmitry.torokhov@gmail.com, robh@kernel.org, 
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, jikos@kernel.org, 
+	benjamin.tissoires@redhat.co, dianders@google.com, hsinyi@google.com, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/4] drm/panel: kd101ne3: add new panel driver
+Message-ID: <hsf7dz5uzpf2gn34wicjycs4f22vuaessle6wk7jwcvnnwspwe@dzxku34gz55b>
+References: <20240601084528.22502-1-lvzhaoxiong@huaqin.corp-partner.google.com>
+ <20240601084528.22502-3-lvzhaoxiong@huaqin.corp-partner.google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] pinctrl: samsung: Add support for pull-up and pull-down
-To: Vishnu Reddy <vishnu.reddy@samsung.com>, s.nawrocki@samsung.com,
- alim.akhtar@samsung.com, linus.walleij@linaro.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
- pankaj.dubey@samsung.com, ravi.patel@samsung.com
-References: <CGME20240529070220epcas5p140580a28b93ce5cb256ef825c778c649@epcas5p1.samsung.com>
- <20240529065939.36369-1-vishnu.reddy@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240529065939.36369-1-vishnu.reddy@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240601084528.22502-3-lvzhaoxiong@huaqin.corp-partner.google.com>
 
-On 29/05/2024 08:59, Vishnu Reddy wrote:
-> gpiolib framework has the implementation of setting up the
-> PUD configuration for GPIO pins but there is no driver support.
+On Sat, Jun 01, 2024 at 04:45:26PM +0800, Zhaoxiong Lv wrote:
+> The bias IC of this kindisplay-kd101ne3 panel is placed
+> on the panel side, so when the panel is powered on,
+> there is no need to control AVDD and AVEE in the driver,
+> only 3.3v and reset are needed.
 > 
-> Add support to handle the PUD configuration request from the
-> userspace in samsung pinctrl driver.
-> 
-> Signed-off-by: Vishnu Reddy <vishnu.reddy@samsung.com>
+> Signed-off-by: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
 > ---
->  drivers/pinctrl/samsung/pinctrl-samsung.c | 51 +++++++++++++++++++++++
->  drivers/pinctrl/samsung/pinctrl-samsung.h |  7 ++++
-
-Please work on latest mainline or next branches. This was based on some
-older tree.
-
-
->  2 files changed, 58 insertions(+)
 > 
-> diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-> index ed07e23e0912..a4b6eea5e168 100644
-> --- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-> +++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-> @@ -939,6 +939,56 @@ static int samsung_pinctrl_unregister(struct platform_device *pdev,
->  	return 0;
->  }
+> Chage since V2:
+> 
+> -  1. Use the new mipi_dsi_dcs_write_seq_multi() function.
+> -  2. Modify Move mipi_dsi_dcs_set_display_off() and mipi_dsi_dcs_enter_sleep_mode() to disable(),
+> -  and drop kingdisplay_panel_enter_sleep_mode().
+> -  3. If prepare fails, disable GPIO before regulators.
+> -  4. This function drm_connector_set_panel_orientation() is no longer used. Delete it.
+> -  5. Drop ".shutdown = kingdisplay_panel_shutdown".
+> 
+> ---
+>  drivers/gpu/drm/panel/Kconfig                 |   9 +
+>  drivers/gpu/drm/panel/Makefile                |   1 +
+>  .../drm/panel/panel-kingdisplay-kd101ne3.c    | 533 ++++++++++++++++++
+>  3 files changed, 543 insertions(+)
+>  create mode 100644 drivers/gpu/drm/panel/panel-kingdisplay-kd101ne3.c
+> 
+> diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
+> index e54f6f5604ed..71669e990e8e 100644
+> --- a/drivers/gpu/drm/panel/Kconfig
+> +++ b/drivers/gpu/drm/panel/Kconfig
+> @@ -297,6 +297,15 @@ config DRM_PANEL_KINGDISPLAY_KD097D04
+>  	  24 bit RGB per pixel. It provides a MIPI DSI interface to
+>  	  the host and has a built-in LED backlight.
 >  
-> +/*
-> + * samsung_gpio_set_pud will enable or disable the pull-down and
-> + * pull-up for the gpio pins in the PUD register.
-> + */
-> +static void samsung_gpio_set_pud(struct gpio_chip *gc, unsigned int offset,
-> +				 unsigned int value)
-> +{
-> +	struct samsung_pin_bank *bank = gpiochip_get_data(gc);
-> +	const struct samsung_pin_bank_type *type = bank->type;
-> +	void __iomem *reg;
-> +	unsigned int data;
+> +config DRM_PANEL_KINGDISPLAY_KD101NE3
+> +	tristate "Kingdisplay kd101ne3 panel"
+> +	depends on OF
+> +	depends on DRM_MIPI_DSI
+> +	depends on BACKLIGHT_CLASS_DEVICE
+> +	help
+> +	  Say Y here if you want to enable support for the kingdisplay kd101ne3
+> +	  4-lane 800x1280 MIPI DSI panel.
 > +
-> +	reg = bank->pctl_base + bank->pctl_offset;
-> +	data = readl(reg + type->reg_offset[PINCFG_TYPE_PUD]);
-> +	data &= ~(0xf << (offset * 4));
-> +	data |= value << (offset * 4);
-> +	writel(data, reg + type->reg_offset[PINCFG_TYPE_PUD]);
+>  config DRM_PANEL_LEADTEK_LTK050H3146W
+>  	tristate "Leadtek LTK050H3146W panel"
+>  	depends on OF
+> diff --git a/drivers/gpu/drm/panel/Makefile b/drivers/gpu/drm/panel/Makefile
+> index f0203f6e02f4..4576c9fe33d9 100644
+> --- a/drivers/gpu/drm/panel/Makefile
+> +++ b/drivers/gpu/drm/panel/Makefile
+> @@ -30,6 +30,7 @@ obj-$(CONFIG_DRM_PANEL_JDI_LPM102A188A) += panel-jdi-lpm102a188a.o
+>  obj-$(CONFIG_DRM_PANEL_JDI_R63452) += panel-jdi-fhd-r63452.o
+>  obj-$(CONFIG_DRM_PANEL_KHADAS_TS050) += panel-khadas-ts050.o
+>  obj-$(CONFIG_DRM_PANEL_KINGDISPLAY_KD097D04) += panel-kingdisplay-kd097d04.o
+> +obj-$(CONFIG_DRM_PANEL_KINGDISPLAY_KD101NE3) += panel-kingdisplay-kd101ne3.o
+>  obj-$(CONFIG_DRM_PANEL_LEADTEK_LTK050H3146W) += panel-leadtek-ltk050h3146w.o
+>  obj-$(CONFIG_DRM_PANEL_LEADTEK_LTK500HD1829) += panel-leadtek-ltk500hd1829.o
+>  obj-$(CONFIG_DRM_PANEL_LG_LB035Q02) += panel-lg-lb035q02.o
+> diff --git a/drivers/gpu/drm/panel/panel-kingdisplay-kd101ne3.c b/drivers/gpu/drm/panel/panel-kingdisplay-kd101ne3.c
+> new file mode 100644
+> index 000000000000..8994a1c9afb5
+> --- /dev/null
+> +++ b/drivers/gpu/drm/panel/panel-kingdisplay-kd101ne3.c
+> @@ -0,0 +1,533 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/* Panels based on the JD9365DA display controller.
+> + * Author: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
+> + */
+> +
+> +#include <linux/delay.h>
+> +#include <linux/gpio/consumer.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/regulator/consumer.h>
+> +
+> +#include <drm/drm_connector.h>
+> +#include <drm/drm_crtc.h>
+> +#include <drm/drm_mipi_dsi.h>
+> +#include <drm/drm_panel.h>
+> +
+> +#include <video/mipi_display.h>
+> +
+> +struct kingdisplay_panel;
+> +
+> +struct panel_desc {
+> +	const struct drm_display_mode *modes;
+> +	unsigned int bpc;
+> +
+> +	/**
+> +	 * @width_mm: width of the panel's active display area
+> +	 * @height_mm: height of the panel's active display area
+> +	 */
+> +	struct {
+> +		unsigned int width_mm;
+> +		unsigned int height_mm;
+> +	} size;
+> +
+> +	unsigned long mode_flags;
+> +	enum mipi_dsi_pixel_format format;
+> +	const struct panel_init_cmd *init_cmds;
+> +	int (*init)(struct kingdisplay_panel *kingdisplay);
+> +	unsigned int lanes;
+> +	bool discharge_on_disable;
+> +	bool lp11_before_reset;
+> +};
+> +
+> +struct kingdisplay_panel {
+> +	struct drm_panel base;
+> +	struct mipi_dsi_device *dsi;
+> +
+> +	const struct panel_desc *desc;
+> +
+> +	enum drm_panel_orientation orientation;
+> +	struct regulator *pp3300;
+> +	struct gpio_desc *enable_gpio;
+> +};
+> +
+> +static int kingdisplay_kd101ne3_init(struct kingdisplay_panel *kingdisplay)
+> +{
+> +	struct mipi_dsi_multi_context dsi_ctx = { .dsi = kingdisplay->dsi };
+> +
+> +	/* T5:HWreset to init_code >= 50ms */
+> +	msleep(50);
+> +
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xe0, 0x00);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xe1, 0x93);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xe2, 0x65);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xe3, 0xf8);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x80, 0x03);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xe0, 0x01);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x0c, 0x74);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x17, 0x00);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x18, 0xc7);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x19, 0x01);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x1a, 0x00);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x1b, 0xc7);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x1c, 0x01);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x24, 0xfe);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x37, 0x19);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x35, 0x28);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x38, 0x05);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x39, 0x08);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x3a, 0x12);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x3c, 0x7e);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x3d, 0xff);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x3e, 0xff);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x3f, 0x7f);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x40, 0x06);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x41, 0xa0);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x43, 0x1e);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x44, 0x0b);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x55, 0x02);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x57, 0x6a);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x59, 0x0a);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x5a, 0x2e);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x5b, 0x1a);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x5c, 0x15);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x5d, 0x7f);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x5e, 0x61);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x5f, 0x50);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x60, 0x43);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x61, 0x3f);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x62, 0x32);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x63, 0x35);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x64, 0x1f);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x65, 0x38);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x66, 0x36);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x67, 0x36);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x68, 0x54);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x69, 0x42);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x6a, 0x48);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x6b, 0x39);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x6c, 0x34);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x6d, 0x26);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x6e, 0x14);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x6f, 0x02);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x70, 0x7f);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x71, 0x61);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x72, 0x50);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x73, 0x43);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x74, 0x3f);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x75, 0x32);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x76, 0x35);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x77, 0x1f);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x78, 0x38);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x79, 0x36);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x7a, 0x36);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x7b, 0x54);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x7c, 0x42);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x7d, 0x48);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x7e, 0x39);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x7f, 0x34);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x80, 0x26);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x81, 0x14);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x82, 0x02);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xe0, 0x02);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x00, 0x52);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x01, 0x5f);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x02, 0x5f);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x03, 0x50);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x04, 0x77);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x05, 0x57);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x06, 0x5f);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x07, 0x4e);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x08, 0x4c);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x09, 0x5f);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x0a, 0x4a);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x0b, 0x48);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x0c, 0x5f);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x0d, 0x46);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x0e, 0x44);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x0f, 0x40);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x10, 0x5f);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x11, 0x5f);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x12, 0x5f);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x13, 0x5f);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x14, 0x5f);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x15, 0x5f);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x16, 0x53);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x17, 0x5f);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x18, 0x5f);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x19, 0x51);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x1a, 0x77);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x1b, 0x57);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x1c, 0x5f);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x1d, 0x4f);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x1e, 0x4d);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x1f, 0x5f);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x20, 0x4b);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x21, 0x49);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x22, 0x5f);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x23, 0x47);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x24, 0x45);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x25, 0x41);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x26, 0x5f);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x27, 0x5f);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x28, 0x5f);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x29, 0x5f);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x2a, 0x5f);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x2b, 0x5f);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x2c, 0x13);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x2d, 0x1f);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x2e, 0x1f);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x2f, 0x01);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x30, 0x17);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x31, 0x17);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x32, 0x1f);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x33, 0x0d);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x34, 0x0f);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x35, 0x1f);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x36, 0x05);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x37, 0x07);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x38, 0x1f);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x39, 0x09);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x3a, 0x0b);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x3b, 0x11);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x3c, 0x1f);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x3d, 0x1f);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x3e, 0x1f);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x3f, 0x1f);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x40, 0x1f);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x41, 0x1f);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x42, 0x12);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x43, 0x1f);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x44, 0x1f);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x45, 0x00);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x46, 0x17);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x47, 0x17);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x48, 0x1f);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x49, 0x0c);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x4a, 0x0e);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x4b, 0x1f);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x4c, 0x04);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x4d, 0x06);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x4e, 0x1f);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x4f, 0x08);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x50, 0x0a);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x51, 0x10);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x52, 0x1f);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x53, 0x1f);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x54, 0x1f);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x55, 0x1f);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x56, 0x1f);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x57, 0x1f);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x58, 0x40);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x5b, 0x10);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x5c, 0x06);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x5d, 0x40);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x5e, 0x00);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x5f, 0x00);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x60, 0x40);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x61, 0x03);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x62, 0x04);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x63, 0x6c);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x64, 0x6c);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x65, 0x75);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x66, 0x08);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x67, 0xb4);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x68, 0x08);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x69, 0x6c);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x6a, 0x6c);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x6b, 0x0c);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x6d, 0x00);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x6e, 0x00);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x6f, 0x88);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x75, 0xbb);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x76, 0x00);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x77, 0x05);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x78, 0x2a);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xe0, 0x04);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x00, 0x0e);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x02, 0xb3);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x09, 0x61);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x0e, 0x48);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xe0, 0x00);
+> +	if (dsi_ctx.accum_err)
+> +		return dsi_ctx.accum_err;
+
+No need to, the execution can continue.
+
+> +
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, MIPI_DCS_EXIT_SLEEP_MODE);
+
+mipi_dsi_dcs_exit_sleep_mode_multi()
+
+> +	if (dsi_ctx.accum_err)
+> +		return dsi_ctx.accum_err;
+
+No need to
+
+> +
+> +	msleep(120);
+
+mipi_dsi_msleep
+
+> +
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, MIPI_DCS_SET_DISPLAY_ON);
+
+mipi_dsi_dcs_set_display_on_multi
+
+> +	if (dsi_ctx.accum_err)
+> +		return dsi_ctx.accum_err;
+
+No need to
+
+> +
+> +	msleep(20);
+
+mipi_dsi_msleep
+> +
+> +	return 0;
+> +};
+> +
+> +static inline struct kingdisplay_panel *to_kingdisplay_panel(struct drm_panel *panel)
+> +{
+> +	return container_of(panel, struct kingdisplay_panel, base);
 > +}
 > +
-> +/*
-> + * samsung_gpio_set_config will identify the type of PUD config based
-> + * on the gpiolib request to enable or disable the PUD configuration.
-> + */
-> +static int samsung_gpio_set_config(struct gpio_chip *gc, unsigned int offset,
-> +				   unsigned long config)
+> +static int kingdisplay_panel_disable(struct drm_panel *panel)
 > +{
-> +	struct samsung_pin_bank *bank = gpiochip_get_data(gc);
-> +	unsigned long flags;
-> +	unsigned int value = 0;
+> +	struct kingdisplay_panel *kingdisplay = to_kingdisplay_panel(panel);
+> +	int err;
 > +
-> +	switch (pinconf_to_config_param(config)) {
-> +	case PIN_CONFIG_BIAS_DISABLE:
-> +		value = DISABLE_PIN_PULL_UP_DOWN;
-> +		break;
-> +	case PIN_CONFIG_BIAS_PULL_DOWN:
-> +		value = ENABLE_PIN_PULL_DOWN;
-> +		break;
-> +	case PIN_CONFIG_BIAS_PULL_UP:
-> +		value = ENABLE_PIN_PULL_UP;
-> +		break;
-> +	default:
-> +		return -ENOTSUPP;
+> +	kingdisplay->dsi->mode_flags &= ~MIPI_DSI_MODE_LPM;
+> +
+> +	msleep(100);
+> +
+> +	err = mipi_dsi_dcs_set_display_off(kingdisplay->dsi);
+
+You might want to use context / mipi_dsi_*_multi here too.
+
+> +	if (err < 0)
+> +		dev_err(panel->dev, "failed to set display off: %d\n", err);
+> +
+> +	msleep(50);
+> +
+> +	err = mipi_dsi_dcs_enter_sleep_mode(kingdisplay->dsi);
+> +	if (err < 0) {
+> +		dev_err(panel->dev, "failed to enter sleep mode: %d\n", err);
+> +		return err;
 > +	}
 > +
+> +	msleep(120);
+> +
+> +	return 0;
+> +}
+> +
+> +static int kingdisplay_panel_unprepare(struct drm_panel *panel)
+> +{
+> +	struct kingdisplay_panel *kingdisplay = to_kingdisplay_panel(panel);
+> +	int err;
+> +
+> +	gpiod_set_value_cansleep(kingdisplay->enable_gpio, 0);
+> +
+> +	/* T15: 2ms */
+> +	usleep_range(1000, 2000);
+> +
+> +	err = regulator_disable(kingdisplay->pp3300);
+> +	if (err < 0)
+> +		return err;
+> +
+> +	return 0;
+> +}
+> +
+> +static int kingdisplay_panel_prepare(struct drm_panel *panel)
+> +{
+> +	struct kingdisplay_panel *kingdisplay = to_kingdisplay_panel(panel);
+> +	int err;
+> +
+> +	gpiod_set_value(kingdisplay->enable_gpio, 0);
+> +
+> +	err = regulator_enable(kingdisplay->pp3300);
+> +	if (err < 0)
+> +		return err;
+> +
+> +	/* T1:Vdd to mipi_lp >= 0ms */
+> +	usleep_range(5000, 6000);
+> +
+> +	if (kingdisplay->desc->lp11_before_reset) {
+> +		err = mipi_dsi_dcs_nop(kingdisplay->dsi);
+> +		if (err < 0)
+> +			goto poweroff;
+> +
+> +		usleep_range(1000, 2000);
+> +	}
+> +
+> +	/* T2: 10ms, T1 + T2 > 60ms */
+> +	msleep(60);
+> +
+> +	gpiod_set_value_cansleep(kingdisplay->enable_gpio, 1);
+> +
+> +	err = kingdisplay->desc->init(kingdisplay);
+> +	if (err < 0)
+> +		goto poweroff;
+> +
+> +	return 0;
+> +
+> +poweroff:
+> +	gpiod_set_value(kingdisplay->enable_gpio, 0);
+> +		/* T6: 2ms */
+> +	usleep_range(1000, 2000);
+> +	regulator_disable(kingdisplay->pp3300);
+> +
+> +	return err;
+> +}
+> +
+> +static int kingdisplay_panel_enable(struct drm_panel *panel)
+> +{
+> +	msleep(130);
 
-Missing clock.
-
-> +	raw_spin_lock_irqsave(&bank->slock, flags);
-> +	samsung_gpio_set_pud(gc, offset, value);
-> +	raw_spin_unlock_irqrestore(&bank->slock, flags);
-
-Blank line
+This happens after enabling the DSI video signal. What is the point of sleeping here?
 
 > +	return 0;
 > +}
 > +
->  static const struct gpio_chip samsung_gpiolib_chip = {
->  	.request = gpiochip_generic_request,
->  	.free = gpiochip_generic_free,
-> @@ -948,6 +998,7 @@ static const struct gpio_chip samsung_gpiolib_chip = {
->  	.direction_output = samsung_gpio_direction_output,
->  	.to_irq = samsung_gpio_to_irq,
->  	.add_pin_ranges = samsung_add_pin_ranges,
-> +	.set_config = samsung_gpio_set_config,
->  	.owner = THIS_MODULE,
->  };
->  
-> diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.h b/drivers/pinctrl/samsung/pinctrl-samsung.h
-> index ab791afaabf5..23b70ddcaccc 100644
-> --- a/drivers/pinctrl/samsung/pinctrl-samsung.h
-> +++ b/drivers/pinctrl/samsung/pinctrl-samsung.h
-> @@ -61,6 +61,13 @@ enum pincfg_type {
->  #define PIN_CON_FUNC_INPUT		0x0
->  #define PIN_CON_FUNC_OUTPUT		0x1
->  
-> +/*
-> + * Values for the pin PUD register.
-> + */
-> +#define DISABLE_PIN_PULL_UP_DOWN	0x0
-> +#define ENABLE_PIN_PULL_DOWN		0x1
-> +#define ENABLE_PIN_PULL_UP		0x3
+> +static const struct drm_display_mode kingdisplay_kd101ne3_40ti_default_mode = {
+> +	.clock = 70595,
+> +	.hdisplay = 800,
+> +	.hsync_start = 800 + 30,
+> +	.hsync_end = 800 + 30 + 30,
+> +	.htotal = 800 + 30 + 30 + 30,
+> +	.vdisplay = 1280,
+> +	.vsync_start = 1280 + 30,
+> +	.vsync_end = 1280 + 30 + 4,
+> +	.vtotal = 1280 + 30 + 4 + 8,
+> +	.type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED,
+> +};
+> +
+> +static const struct panel_desc kingdisplay_kd101ne3_40ti_desc = {
+> +	.modes = &kingdisplay_kd101ne3_40ti_default_mode,
+> +	.bpc = 8,
+> +	.size = {
+> +		.width_mm = 135,
+> +		.height_mm = 216,
+> +	},
+> +	.lanes = 4,
+> +	.format = MIPI_DSI_FMT_RGB888,
+> +	.mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_SYNC_PULSE |
+> +		      MIPI_DSI_MODE_LPM,
+> +	.init = kingdisplay_kd101ne3_init,
+> +	.lp11_before_reset = true,
+> +};
+> +
+> +static int kingdisplay_panel_get_modes(struct drm_panel *panel,
+> +			       struct drm_connector *connector)
+> +{
+> +	struct kingdisplay_panel *kingdisplay = to_kingdisplay_panel(panel);
+> +	const struct drm_display_mode *m = kingdisplay->desc->modes;
+> +	struct drm_display_mode *mode;
+> +
+> +	mode = drm_mode_duplicate(connector->dev, m);
+> +	if (!mode) {
+> +		dev_err(panel->dev, "failed to add mode %ux%u@%u\n",
+> +			m->hdisplay, m->vdisplay, drm_mode_vrefresh(m));
+> +		return -ENOMEM;
+> +	}
+> +
+> +	mode->type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED;
+> +	drm_mode_set_name(mode);
+> +	drm_mode_probed_add(connector, mode);
+> +
+> +	connector->display_info.width_mm = kingdisplay->desc->size.width_mm;
+> +	connector->display_info.height_mm = kingdisplay->desc->size.height_mm;
 
-This does not look right. The value is 0x2 for s3c and s5p.
+Please move dimensions to the mode and use drm_connector_helper_get_modes_fixed()
 
+> +	connector->display_info.bpc = kingdisplay->desc->bpc;
+> +
+> +	return 1;
+> +}
+> +
+> +static enum drm_panel_orientation kingdisplay_panel_get_orientation(struct drm_panel *panel)
+> +{
+> +	struct kingdisplay_panel *kingdisplay = to_kingdisplay_panel(panel);
+> +
+> +	return kingdisplay->orientation;
+> +}
+> +
+> +static const struct drm_panel_funcs kingdisplay_panel_funcs = {
+> +	.disable = kingdisplay_panel_disable,
+> +	.unprepare = kingdisplay_panel_unprepare,
+> +	.prepare = kingdisplay_panel_prepare,
+> +	.enable = kingdisplay_panel_enable,
+> +	.get_modes = kingdisplay_panel_get_modes,
+> +	.get_orientation = kingdisplay_panel_get_orientation,
+> +};
+> +
+> +static int kingdisplay_panel_add(struct kingdisplay_panel *kingdisplay)
+> +{
+> +	struct device *dev = &kingdisplay->dsi->dev;
+> +	int err;
+> +
+> +	kingdisplay->pp3300 = devm_regulator_get(dev, "pp3300");
+> +	if (IS_ERR(kingdisplay->pp3300))
+> +		return dev_err_probe(dev, PTR_ERR(kingdisplay->pp3300),
+> +				     "Cannot get pp3300\n");
+> +
+> +	kingdisplay->enable_gpio = devm_gpiod_get(dev, "enable", GPIOD_OUT_LOW);
+> +	if (IS_ERR(kingdisplay->enable_gpio))
+> +		return dev_err_probe(dev, PTR_ERR(kingdisplay->enable_gpio),
+> +				     "Cannot get enable GPIO\n");
+> +
+> +	drm_panel_init(&kingdisplay->base, dev, &kingdisplay_panel_funcs,
+> +		       DRM_MODE_CONNECTOR_DSI);
+> +
+> +	err = of_drm_get_panel_orientation(dev->of_node, &kingdisplay->orientation);
+> +	if (err < 0) {
+> +		dev_err(dev, "%pOF: failed to get orientation %d\n", dev->of_node, err);
+> +		return err;
+> +	}
+> +
+> +	err = drm_panel_of_backlight(&kingdisplay->base);
+> +	if (err)
+> +		return err;
+> +
+> +	kingdisplay->base.funcs = &kingdisplay_panel_funcs;
+> +	kingdisplay->base.dev = &kingdisplay->dsi->dev;
+> +
+> +	drm_panel_add(&kingdisplay->base);
+> +
+> +	return 0;
+> +}
+> +
+> +static int kingdisplay_panel_probe(struct mipi_dsi_device *dsi)
+> +{
+> +	struct kingdisplay_panel *kingdisplay;
+> +	int ret;
+> +	const struct panel_desc *desc;
+> +
+> +	kingdisplay = devm_kzalloc(&dsi->dev, sizeof(*kingdisplay), GFP_KERNEL);
+> +	if (!kingdisplay)
+> +		return -ENOMEM;
+> +
+> +	desc = of_device_get_match_data(&dsi->dev);
+> +	dsi->lanes = desc->lanes;
+> +	dsi->format = desc->format;
+> +	dsi->mode_flags = desc->mode_flags;
+> +	kingdisplay->desc = desc;
+> +	kingdisplay->dsi = dsi;
+> +	ret = kingdisplay_panel_add(kingdisplay);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	mipi_dsi_set_drvdata(dsi, kingdisplay);
+> +
+> +	ret = mipi_dsi_attach(dsi);
+> +	if (ret)
+> +		drm_panel_remove(&kingdisplay->base);
+> +
+> +	return ret;
+> +}
+> +
+> +static void kingdisplay_panel_remove(struct mipi_dsi_device *dsi)
+> +{
+> +	struct kingdisplay_panel *kingdisplay = mipi_dsi_get_drvdata(dsi);
+> +	int ret;
+> +
+> +	ret = mipi_dsi_detach(dsi);
+> +	if (ret < 0)
+> +		dev_err(&dsi->dev, "failed to detach from DSI host: %d\n", ret);
+> +
+> +	if (kingdisplay->base.dev)
+> +		drm_panel_remove(&kingdisplay->base);
+> +}
+> +
+> +static const struct of_device_id kingdisplay_of_match[] = {
+> +	{ .compatible = "kingdisplay,kd101ne3-40ti",
+> +	  .data = &kingdisplay_kd101ne3_40ti_desc
+> +	},
+> +	{ /* sentinel */ }
+> +};
+> +MODULE_DEVICE_TABLE(of, kingdisplay_of_match);
+> +
+> +static struct mipi_dsi_driver kingdisplay_panel_driver = {
+> +	.driver = {
+> +		.name = "panel-kingdisplay-kd101ne3",
+> +		.of_match_table = kingdisplay_of_match,
+> +	},
+> +	.probe = kingdisplay_panel_probe,
+> +	.remove = kingdisplay_panel_remove,
+> +};
+> +module_mipi_dsi_driver(kingdisplay_panel_driver);
+> +
+> +MODULE_AUTHOR("Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>");
+> +MODULE_DESCRIPTION("kingdisplay kd101ne3-40ti 800x1280 video mode panel driver");
+> +MODULE_LICENSE("GPL v2");
+> -- 
+> 2.17.1
+> 
 
-
-Best regards,
-Krzysztof
-
+-- 
+With best wishes
+Dmitry
 
