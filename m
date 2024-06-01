@@ -1,62 +1,79 @@
-Return-Path: <linux-kernel+bounces-197893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 440CB8D7070
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 16:33:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 805728D7073
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 16:41:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC55FB2172C
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 14:33:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23379283C93
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 14:41:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52A5D152182;
-	Sat,  1 Jun 2024 14:33:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0DA815250A;
+	Sat,  1 Jun 2024 14:41:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ravnborg.org header.i=@ravnborg.org header.b="sXNBlm5r";
-	dkim=permerror (0-bit key) header.d=ravnborg.org header.i=@ravnborg.org header.b="FPI6mhQl"
-Received: from mailrelay3-1.pub.mailoutpod2-cph3.one.com (mailrelay3-1.pub.mailoutpod2-cph3.one.com [46.30.211.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C7mnhAJ6"
+Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1C33824A7
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Jun 2024 14:33:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.211.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD1078475
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Jun 2024 14:41:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717252420; cv=none; b=iS4RaIcs8QjJwlV0VWH+hHfuGZZNSS7FvH6L8moFDqwdR7+4rkBXH32ZnSXE9lLI3nXOe6OYDuPSPpk5F3n6vUgMkrvCnVjJNVlubHwcrx+r4Q4VwnSRrwRTITFVXzIJaYpv1nh4MT0YACDD8U7SaNzT13jORHHbBA4QTWOINiw=
+	t=1717252877; cv=none; b=Z4hwMbzGM9ae/DYo/sS2XWQbaG0RNcMB1om+bn0Q58p/5OVXAk+hgZb0mjdfy1ZyJ6kjWNZTgWSO2BQmeyeSqI2imbEs3K4K6sSJYLnGD8Ei1HCy6cJzW3N7DqfMoEj70HYg5++rK0JNmuXC2ptaYzDQ7jGt2ZaB621k7XO3abw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717252420; c=relaxed/simple;
-	bh=7lcCSZYjgUMhT7hjgnWq0PuqXk4GYQpRlGM9G6xmAH8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t2GcDSW5XeEQz5w26PcgGeUn7pUSGku4VaKBWfIA1qFlIacparkQ5QMcoLYhqXKHByzHuRwE1aBwSzqbGo+U/MC1FQUtyWtgO4Pr6vd7Qb5bqtSkf9oMYo7vXEcTj0565dEBQySY7fHFz7BZauUVxPdMwh6JxeS/O0QXnC+hU/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ravnborg.org; spf=none smtp.mailfrom=ravnborg.org; dkim=pass (2048-bit key) header.d=ravnborg.org header.i=@ravnborg.org header.b=sXNBlm5r; dkim=permerror (0-bit key) header.d=ravnborg.org header.i=@ravnborg.org header.b=FPI6mhQl; arc=none smtp.client-ip=46.30.211.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ravnborg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ravnborg.org
+	s=arc-20240116; t=1717252877; c=relaxed/simple;
+	bh=+a/mVnYs0/uoIOCgvRtws4D2eIjELAfh3Z43y/B0QH0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TWUOujoTmz2Pd0LACRe5Oa+8dlDeejNVoW7DisDFwGxdQhqEQsK4bzD8wrStS/OtJKh+hIkA3anl1ocLnEBNxcWbdvZrgI4lErZRQ4TXyZ7EKlluq7UNJ9CMkrup9z4U9ehuP6eragFAtfx4IyySiEQCQVNW0+25eRWsDbzQ6uU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C7mnhAJ6; arc=none smtp.client-ip=209.85.166.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-7eb01106015so71986239f.1
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Jun 2024 07:41:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=ravnborg.org; s=rsa1;
-	h=in-reply-to:content-type:mime-version:references:message-id:subject:cc:to:
-	 from:date:from;
-	bh=oPiP+6Xv1rauIECXZ7PSRSg8wkxsNMowRof7mkzrmGE=;
-	b=sXNBlm5ryO6M0p5a7pA1/4QYhsHRvE38MIidYWZOfWQeTs0FdE6QWI0LGwbLCW2xdPAfIJL3CBvxV
-	 q8Iu5tbSlIJj/59QIbQbHHK7pvWFSX3sqT55cIfuEuPHYEac11ZiBgNeQl8Pef+MhCLuf60bDS4KL4
-	 Q8P/mGQ9UGP57YyhZI4HrLID4vbYsxwcTFSvQbRKXSPnGIqeczO2itnIGmlq6Rd7xV2FQiFW0Mvbs7
-	 xZDoqDciCtpBvVILXpDig22SZm5LXC7BhJiDvLdbVONuvytkC/gVFAB9EEnT7jUjwUOEwq++qosN7G
-	 AaY0R8NIb4Ng+Mmf0Mr7o9SOJCycUbg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed;
-	d=ravnborg.org; s=ed1;
-	h=in-reply-to:content-type:mime-version:references:message-id:subject:cc:to:
-	 from:date:from;
-	bh=oPiP+6Xv1rauIECXZ7PSRSg8wkxsNMowRof7mkzrmGE=;
-	b=FPI6mhQlC0kwcyQqIsi1QkIyx9Vj8DYZFZ2KTdLErhSprnjhhecaQvLK0h1HXbFwDA8NchK91faYb
-	 utsak4IBQ==
-X-HalOne-ID: c44c843a-2023-11ef-b19f-79f4c2873f57
-Received: from ravnborg.org (2-105-2-98-cable.dk.customer.tdc.net [2.105.2.98])
-	by mailrelay3.pub.mailoutpod2-cph3.one.com (Halon) with ESMTPSA
-	id c44c843a-2023-11ef-b19f-79f4c2873f57;
-	Sat, 01 Jun 2024 14:32:28 +0000 (UTC)
-Date: Sat, 1 Jun 2024 16:32:26 +0200
-From: Sam Ravnborg <sam@ravnborg.org>
-To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
+        d=gmail.com; s=20230601; t=1717252875; x=1717857675; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YYm71HSiGPsudDN1BEH9h2sX+QmeDn3a45v9S6zBBMI=;
+        b=C7mnhAJ6C6pj5O2sN2XSdhD6UclsFvddd4dhG4+FWKV05e+XZgqyWoARI6tljKAaIv
+         MvuAKtoQKotmNm2AbHIf7WjRmBp1vK10lANx4Pq/HiyNOHWdy/Bj38Q17N5N+Q1Y05yk
+         NnGLUbI/SVa0VX8dSOmBrqVjEtJ6Nix+NlCOnMMsVTR0Uz5pwWHLsaf6+Nbr+Tm6vI4N
+         N99ac4oWZ1YcBIkaQ+yylkzk7rkx8Y69G68ufu5rkDHjRlFmThNb/MfDoA/F4JddfYpF
+         m2ONgL7tsu75KU2o4tRdtd3cj4yA5fnK1N2f2Qc2F0uE4646zIUxTIl5j+w0rDuVF+fe
+         Ti1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717252875; x=1717857675;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YYm71HSiGPsudDN1BEH9h2sX+QmeDn3a45v9S6zBBMI=;
+        b=ggW8Kkr1hwN0B/WG5NT3fO5SQvzVuM6ZH9hx9QnWX4cBoP4P4B3UxRiuxcLf4aqhSq
+         fW66pv5HoOdK0R9ufy+x39Do4+UqfuCbvTHGhLv4pxnTFqxZPM8MaVSgxhQ1G3Pqy7j2
+         iMofRO+/AoEniseI0k+WHPMxVtLD5YRWWiUHqY1ryF0YAAydDTnxPTEtYLLKl+dAbj+f
+         f1fdouSqeNjoftjgXvn8wcmNXj+THu17zoeRinS3AjUYa5Htfs5rVFsGXf4h1anQhLlD
+         zcGQ8dd3RklLBeqTlKkmycpp/IarDlChEX+Z5IYZ/0EKxvXc6UjVmUp+2Dg88NfbXxLm
+         IKTw==
+X-Forwarded-Encrypted: i=1; AJvYcCXIMdl9YxLQcLiQNiiaht6v+3GN+D/XzOUWKzVU072WCHswHHFQPgZPAjosDGiWgzAAGNxNc7tkQtyBoZtBt7oma3cvPCzAYZJiR0hi
+X-Gm-Message-State: AOJu0YyvDHOwspDPWnw+Iw6JJQZVqYAKBt+7l2wDYGHu0qfJfo+cczt/
+	skxRNDsr7K1AkcRLoccxkaZUd5kdEHKYc1D9FjZkwKlEsHL2N72n
+X-Google-Smtp-Source: AGHT+IFdMB5NEE4I6L4RNnvKvgCE2fzESNYLGg4gSTkI3X2gl0A00bOETGIHdhAGVjPzSoYizwfovQ==
+X-Received: by 2002:a05:6602:1507:b0:7e1:b480:4c02 with SMTP id ca18e2360f4ac-7eaffe8caf2mr584434439f.5.1717252874663;
+        Sat, 01 Jun 2024 07:41:14 -0700 (PDT)
+Received: from aford-System-Version.lan ([2601:447:d002:5be:e0b7:c613:ee:e8f3])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-7eafe603e5bsm107424639f.52.2024.06.01.07.41.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 01 Jun 2024 07:41:14 -0700 (PDT)
+From: Adam Ford <aford173@gmail.com>
+To: dri-devel@lists.freedesktop.org
+Cc: aford@beaconembedded.com,
+	Adam Ford <aford173@gmail.com>,
+	Frieder Schrempf <frieder.schrempf@kontron.de>,
+	Marek Vasut <marex@denx.de>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Inki Dae <inki.dae@samsung.com>,
+	Jagan Teki <jagan@amarulasolutions.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
 	Neil Armstrong <neil.armstrong@linaro.org>,
 	Robert Foss <rfoss@kernel.org>,
 	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
@@ -65,129 +82,72 @@ Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
 	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 	Maxime Ripard <mripard@kernel.org>,
 	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Sandy Huang <hjc@rock-chips.com>,
-	Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
-	Andy Yan <andy.yan@rock-chips.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Mark Yao <markyao0591@gmail.com>, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-	kernel@collabora.com, Alexandre ARNOUD <aarnoud@me.com>,
-	Luis de Arquer <ldearquer@gmail.com>,
-	Algea Cao <algea.cao@rock-chips.com>
-Subject: Re: [PATCH 13/14] drm/bridge: synopsys: Add DW HDMI QP TX controller
- driver
-Message-ID: <20240601143226.GA2003970@ravnborg.org>
-References: <20240601-b4-rk3588-bridge-upstream-v1-0-f6203753232b@collabora.com>
- <20240601-b4-rk3588-bridge-upstream-v1-13-f6203753232b@collabora.com>
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Marco Felsch <m.felsch@pengutronix.de>,
+	Michael Tretter <m.tretter@pengutronix.de>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH V3 1/2] drm/bridge: samsung-dsim: Set P divider based on min/max of fin pll
+Date: Sat,  1 Jun 2024 09:41:01 -0500
+Message-ID: <20240601144103.198299-1-aford173@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240601-b4-rk3588-bridge-upstream-v1-13-f6203753232b@collabora.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Cristian,
+The P divider should be set based on the min and max values of
+the fin pll which may vary between different platforms.
+These ranges are defined per platform, but hard-coded values
+were used instead which resulted in a smaller range available
+on the i.MX8M[MNP] than what was possible.
 
-a few drive-by comments below.
+As noted by Frieder, there are descripencies between the reference
+manuals of the Mini, Nano and Plus, so I reached out to my NXP
+rep and got the following response regarding the varing notes
+in the documentation.
 
-	Sam
+"Yes it is definitely wrong, the one that is part of the NOTE in
+MIPI_DPHY_M_PLLPMS register table against PMS_P, PMS_M and PMS_S is
+not correct. I will report this to Doc team, the one customer should
+be take into account is the Table 13-40 DPHY PLL Parameters and the
+Note above."
 
+With this patch, the clock rates now match the values used in NXP's
+downstream kernel.
 
-> +
-> +static const struct drm_connector_funcs dw_hdmi_qp_connector_funcs = {
-> +	.fill_modes = drm_helper_probe_single_connector_modes,
-> +	.detect = dw_hdmi_connector_detect,
-> +	.destroy = drm_connector_cleanup,
-> +	.force = dw_hdmi_qp_connector_force,
-> +	.reset = drm_atomic_helper_connector_reset,
-> +	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
-> +	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
-> +};
-> +
-> +static int dw_hdmi_qp_bridge_attach(struct drm_bridge *bridge,
-> +				    enum drm_bridge_attach_flags flags)
-> +{
-> +	struct dw_hdmi *hdmi = bridge->driver_private;
-> +
-> +	if (flags & DRM_BRIDGE_ATTACH_NO_CONNECTOR)
-> +		return drm_bridge_attach(bridge->encoder, hdmi->next_bridge,
-> +					 bridge, flags);
-> +
-> +	return dw_hdmi_connector_create(hdmi, &dw_hdmi_qp_connector_funcs);
-> +}
+Fixes: 846307185f0f ("drm/bridge: samsung-dsim: update PLL reference clock")
+Signed-off-by: Adam Ford <aford173@gmail.com>
+Reviewed-by: Frieder Schrempf <frieder.schrempf@kontron.de>
+Tested-by: Frieder Schrempf <frieder.schrempf@kontron.de>
+Reviewed-by: Marek Vasut <marex@denx.de>
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
-Are there any users left that requires the display driver to create the
-connector?
-In other words - could this driver fail if DRM_BRIDGE_ATTACH_NO_CONNECTOR
-is not passed and drop dw_hdmi_connector_create()?
+---
+V2:  Only update the commit message to reflect why these values
+     were chosen.  No code change present
 
-I did not try to verify this - just a naive question.
+V3:  No Changes
 
-> +
-> +static enum drm_mode_status
-> +dw_hdmi_qp_bridge_mode_valid(struct drm_bridge *bridge,
-> +			     const struct drm_display_info *info,
-> +			     const struct drm_display_mode *mode)
-> +{
-> +	struct dw_hdmi *hdmi = bridge->driver_private;
-> +	const struct dw_hdmi_plat_data *pdata = hdmi->plat_data;
-> +	enum drm_mode_status mode_status = MODE_OK;
-> +
-> +	if (pdata->mode_valid)
-> +		mode_status = pdata->mode_valid(hdmi, pdata->priv_data, info,
-> +						mode);
-> +
-> +	return mode_status;
-> +}
-> +
-> +static void dw_hdmi_qp_bridge_atomic_disable(struct drm_bridge *bridge,
-> +					     struct drm_bridge_state *old_state)
-> +{
-> +	struct dw_hdmi *hdmi = bridge->driver_private;
-> +
-> +	mutex_lock(&hdmi->mutex);
-> +	hdmi->disabled = true;
-> +	hdmi->curr_conn = NULL;
-> +	dw_hdmi_qp_update_power(hdmi);
-> +	dw_handle_plugged_change(hdmi, false);
-> +	mutex_unlock(&hdmi->mutex);
-> +}
-> +
-> +static void dw_hdmi_qp_bridge_atomic_enable(struct drm_bridge *bridge,
-> +					    struct drm_bridge_state *old_state)
-> +{
-> +	struct dw_hdmi *hdmi = bridge->driver_private;
-> +	struct drm_atomic_state *state = old_state->base.state;
-> +	struct drm_connector *connector;
-> +
-> +	connector = drm_atomic_get_new_connector_for_encoder(state,
-> +							     bridge->encoder);
-> +
-> +	mutex_lock(&hdmi->mutex);
-> +	hdmi->disabled = false;
-> +	hdmi->curr_conn = connector;
-> +	dw_hdmi_qp_update_power(hdmi);
-> +	dw_handle_plugged_change(hdmi, true);
-> +	mutex_unlock(&hdmi->mutex);
-> +}
-> +
-> +static const struct drm_bridge_funcs dw_hdmi_qp_bridge_funcs = {
-> +	.atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
-> +	.atomic_destroy_state = drm_atomic_helper_bridge_destroy_state,
-> +	.atomic_reset = drm_atomic_helper_bridge_reset,
-> +	.attach = dw_hdmi_qp_bridge_attach,
-> +	.detach = dw_hdmi_bridge_detach,
-> +	.atomic_check = dw_hdmi_bridge_atomic_check,
-> +	.atomic_enable = dw_hdmi_qp_bridge_atomic_enable,
-> +	.atomic_disable = dw_hdmi_qp_bridge_atomic_disable,
-> +	.mode_set = dw_hdmi_bridge_mode_set,
-
-The use of mode_set is deprecated - see drm_bridge.h
+diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c b/drivers/gpu/drm/bridge/samsung-dsim.c
+index 95fedc68b0ae..8476650c477c 100644
+--- a/drivers/gpu/drm/bridge/samsung-dsim.c
++++ b/drivers/gpu/drm/bridge/samsung-dsim.c
+@@ -574,8 +574,8 @@ static unsigned long samsung_dsim_pll_find_pms(struct samsung_dsim *dsi,
+ 	u16 _m, best_m;
+ 	u8 _s, best_s;
+ 
+-	p_min = DIV_ROUND_UP(fin, (12 * MHZ));
+-	p_max = fin / (6 * MHZ);
++	p_min = DIV_ROUND_UP(fin, (driver_data->pll_fin_max * MHZ));
++	p_max = fin / (driver_data->pll_fin_min * MHZ);
+ 
+ 	for (_p = p_min; _p <= p_max; ++_p) {
+ 		for (_s = 0; _s <= 5; ++_s) {
+-- 
+2.43.0
 
 
