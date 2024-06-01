@@ -1,160 +1,131 @@
-Return-Path: <linux-kernel+bounces-197895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFB0C8D7076
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 16:41:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 661F58D7078
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 16:45:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D93AF1C212C9
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 14:41:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2145E284168
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 14:45:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECA3315253D;
-	Sat,  1 Jun 2024 14:41:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D9FE152517;
+	Sat,  1 Jun 2024 14:45:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GrHwblnR"
-Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XVTLHHGN"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1C6C152184
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Jun 2024 14:41:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CD57187569;
+	Sat,  1 Jun 2024 14:45:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717252879; cv=none; b=P+hX39zHdp8gPSyTr9723wxngZGIklBHqDYSWs+IijzYcoDgIChVXOCsf5G2LRIYAykCELlO6e0EuKC7WmHbNSy4JiMMj+racpqvXu6mMraEBaaSHft6N59HABJezMpgwp737aEHtDNvNDR1OgnYx+iLWZsECvTABHoB6kcKYxE=
+	t=1717253116; cv=none; b=rekAgOd6cscoB4BQ6Ngh+SinZdYrOYUfmBwuGbsymiUuUc0G3/qgJzgn5jB0xhzPvdvi1Q9LQL4226w4HDDjnXDP2QTyfJsJiGFczEIbuH1+nxvsMuzbZ4f7ujzYeMxGcyUW+X+uRjOT/9fpgZsKgUbr45W6Y0DSrkWlG4KIsvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717252879; c=relaxed/simple;
-	bh=IdPQV3gjMitZEqvPmXcYQN4F99m8ZuqyDu8rv8Lu6mM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ft6y1VFok72OGO9wr5829Mzf9yhyXlMv52EtQaIVGXcLJHy5oHVt5dkHRRQyHtxekihsTVt8xQb0ZiFXdG+Wvq6sAbh1aZLxitQVzImXKS/82oQ2lWvm6Vv3o9v39qtHNVbKDUaBTbZdshETnRnh5ta2HmxGA/5wbvRatusLKC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GrHwblnR; arc=none smtp.client-ip=209.85.166.52
+	s=arc-20240116; t=1717253116; c=relaxed/simple;
+	bh=emp5z/uF5BiqP/IJHpyMR8XWVHdbgEX2O7qtRn16QTM=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lWTRd57JZvKxouosdlJWpyIwyjWapWz72dNpleK0G2OXcKgPbTMSiyeO81KrTWByENGuBL4RWo0zRiixWWd109qZCPZLnUoZYs9ppEOZIow/iJ6V/XEQCye0TarIMr2QCg8BLyasfoqk9JSkVeVWaFq2DNS84SKV+9zY/uyilrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XVTLHHGN; arc=none smtp.client-ip=209.85.167.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-7e1fcd2662cso131910339f.2
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Jun 2024 07:41:17 -0700 (PDT)
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52b92e73e2fso502585e87.2;
+        Sat, 01 Jun 2024 07:45:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717252877; x=1717857677; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Nvodmy/+o1CpqrThX4vjzT04rOZoUfiprza2mHo3aIg=;
-        b=GrHwblnRRfF65tzzcQSEEM3bvKlGwDDcdiasPYQlYd6gQCeK1gk0iQu9KZanZK57Mb
-         flkwbSNphLKXm0Wyxyka2UqIrnPrwgOL1ROM+8bm+rBJOZ9DtCvND13Zokc7KBbnmjKO
-         bKOaCok4S0fhUPRfqW+RyB2OzDMkpWcAUTP7ypKUv2LKR+wpzLt/XC1zS6Ot3/liwdQa
-         eTD2xFuKKaLFtedV5133qm6D6E8S8Se7GTRrh/BONNxnV+2IvM/p5xx2OChaL/l3gdcR
-         VdYDIlYPehCIZKRrgeFzQ18Mmzq1NtiWfJTnUE1V12a6DwEqe5buLPnGCP4lT6NnuKJ8
-         94nQ==
+        d=gmail.com; s=20230601; t=1717253113; x=1717857913; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=F1DIBX0+WK7EodjH2ldEnpV6XI1bwn41T/4K0vTK+fQ=;
+        b=XVTLHHGNrGHMCp/zwiBr7vLsn00EO6UavrduEnqd5bOfmPy7JXIH+/9Q9lSfY+Nk25
+         cVKtupILXMz4/HCsk3zFZMj7OsJL6eo+HZOHCvcHL8zs8I6xQpRGm1DG9nHZz55JYiH0
+         tf41+GG7HwvDXhjZSr6k77g7MnjXBn7FlnGNnEt6UFpbqS/sM2FR+nle+s9z5L7tsTyR
+         zat9VErolEZTYeWmUCOMYHIuj3yL4LQ7bcNPwHDlMNDAScJtwXrorsKWdC9/QvR9hlMt
+         IWMGKGZ0qicOn1bS9OOLd6V7J6KJLm5TRo+Kx/tvoIJehMyweb/vCdMprktsuL/C4p1w
+         /qkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717252877; x=1717857677;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Nvodmy/+o1CpqrThX4vjzT04rOZoUfiprza2mHo3aIg=;
-        b=sS55lywELTWEVvSsor9JSW0ozWafuN1Ip+YAtG3YgEdR+oLWoH6tkw7rtM+Mw2ecNu
-         Wy6sYChIE+4ZVPuxeZP3g++Hy7XyvxgaSkpQNmcEpuV3mEyb3eU7fp6Tl90MdNmHAK2Y
-         NcDQZu4Pxfmi2a86AqRz66XANZlF6u9irMBWtgkpBQzWiIml5mXfFbLgd8+cwPxU8a/+
-         GobjFqiY3fRlhiwWDaCsGkLQm4tNypx00pJYJGbVeu7rqwYmTZr/mXAyWSyUkrGrI+z2
-         0mSn7iNZlyKnbDBMQLMNoSH6KoOpXFpX/b3jVKNGFeQRSI6TCXlb3Bq1BvJjO9uE2o8M
-         1o3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW1x32KXeMSeoN5iCLDgmBWEs3an8u0FYhyoOmL9+XGnivldt+HXVDs4O+uSuidiitp/NsugU5djyjKGteWLRey8w3WEMzdwDAvVsMU
-X-Gm-Message-State: AOJu0YxvMLOY3ifJahFTiwSalWjda7tWiMp0ngZfZ03IevGtpPdHDeKN
-	hn7e1jRtMqoR6PqjJgNIQ0vHrpsmAsB2OUNUjN0pY/P451NHvEOm
-X-Google-Smtp-Source: AGHT+IGKx2NnzelycSxOsglojmYMn4Dyp9V7bQrXTzRbMPzofddfZdHsxjMHGmD35Kk02nnsH0La3g==
-X-Received: by 2002:a05:6602:1541:b0:7ea:faad:74c2 with SMTP id ca18e2360f4ac-7eaffea6e2emr587615639f.9.1717252876833;
-        Sat, 01 Jun 2024 07:41:16 -0700 (PDT)
-Received: from aford-System-Version.lan ([2601:447:d002:5be:e0b7:c613:ee:e8f3])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-7eafe603e5bsm107424639f.52.2024.06.01.07.41.14
+        d=1e100.net; s=20230601; t=1717253113; x=1717857913;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=F1DIBX0+WK7EodjH2ldEnpV6XI1bwn41T/4K0vTK+fQ=;
+        b=d518qmK+enJT6jnxnsU2PXjitWkXvJa3R+opXNGx47KdU3urU8P/wAIfJ9YKDd5zj7
+         DfN2CjaWRZk8xaVng7pMvgNzESl3GZNWFyiuuX10Vp6U4jXfCasNV3is1lpOSlFddxYm
+         RsOM7T1isyr2uVCIeGe0xOu0gttmlrS0mBLbjzS5Zl5CnOQiDGIFOcifn/Io9or8p5os
+         fEGAEQ5vgByN+2SnhG7tx62ii+l0i/6ejLTG+05lwNKFPB5FDNr2aQtL7kZ51peKKCi/
+         KtY5sIszXyq8t7mfHkTawdvYqxHi9ZgKrfR0DwHDw7EEa/+nBrM7HnB9C1TpvZruNpK1
+         u9ng==
+X-Forwarded-Encrypted: i=1; AJvYcCXHoKPIkfo4ZB8Pwp9R+eXA4Spi8w/Ib7GUQsfHy5miSAlkxqQ80Z7sHo2pHAa0HmKhGWOsjmBqs9jzApw72AMFt+wgUiIf7fMx8Y2Xrbza2Aqn5pQy/QVxLjpTNeIzvw4p
+X-Gm-Message-State: AOJu0YxMfDz1uI+mhu0kBpekk2MOYf4v8jx8nvuGbgqTSHGStYaPogWw
+	f3roXqVvtbfoIs/zdYEgooPHbB4zMJ3f53LWJJ0D/MkKqrPEKNBv
+X-Google-Smtp-Source: AGHT+IHSi6cFEuaUTRWCJ/+T7XxnAmTFKzV5cuNLzAW7JkzxGdKZuGz2HW/ofd2uZmc9JEzhiz/sdg==
+X-Received: by 2002:a05:6512:521:b0:52b:853e:4d44 with SMTP id 2adb3069b0e04-52b895892cfmr2875628e87.35.1717253112948;
+        Sat, 01 Jun 2024 07:45:12 -0700 (PDT)
+Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57a31c6d330sm2279589a12.67.2024.06.01.07.45.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 01 Jun 2024 07:41:15 -0700 (PDT)
-From: Adam Ford <aford173@gmail.com>
-To: dri-devel@lists.freedesktop.org
-Cc: aford@beaconembedded.com,
-	Adam Ford <aford173@gmail.com>,
-	Frieder Schrempf <frieder.schrempf@kontron.de>,
-	Inki Dae <inki.dae@samsung.com>,
-	Jagan Teki <jagan@amarulasolutions.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Michael Tretter <m.tretter@pengutronix.de>,
-	Marco Felsch <m.felsch@pengutronix.de>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH V3 2/2] drm/bridge: samsung-dsim: Fix porch calcalcuation rounding
-Date: Sat,  1 Jun 2024 09:41:02 -0500
-Message-ID: <20240601144103.198299-2-aford173@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240601144103.198299-1-aford173@gmail.com>
-References: <20240601144103.198299-1-aford173@gmail.com>
+        Sat, 01 Jun 2024 07:45:12 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Sat, 1 Jun 2024 16:45:10 +0200
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: ast@kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH] bpf: plug a warn about bpf_session_cookie without
+ CONFIG_FPROBE
+Message-ID: <Zlsz9pTiT2Ad04i6@krava>
+References: <20240601133224.674784-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240601133224.674784-1-mjguzik@gmail.com>
 
-The VFP, HBP, and HSA are divided between the available lanes if
-there is more than one lane.  For certain timings and lane
-configurations, the HFP may not be evenly divisible. If the HFP
-is rounded down, it ends up being too small which can cause some
-monitors to not sync properly. In these instances, adjust htotal
-and hsync to round the HFP up, and recalculate the htotal.
+On Sat, Jun 01, 2024 at 03:32:23PM +0200, Mateusz Guzik wrote:
+> Building a kernel without said option results in:
+> WARN: resolve_btfids: unresolved symbol bpf_session_cookie
+> 
+> This is a bare-minimum patch to sort it out.
+> 
+> There are other uses of the bpf_session_cookie thing spread out
+> thorought the file, they don't seem to break anything though.
+> 
+> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> ---
+> 
+> I don't care how this gets addressed, I just want the warning gone.
+> So I am not going to fight any ideas how to do it, as long as it gets
+> done.
 
-This allows 720P-60 to operation on an i.MX8MP with a four-lane
-configuration.
+it's fixed by:
+  https://lore.kernel.org/bpf/20240531194500.2967187-1-jolsa@kernel.org/
 
-Tested-by: Frieder Schrempf <frieder.schrempf@kontron.de> # Kontron BL i.MX8MM with HDMI monitor
-Signed-off-by: Adam Ford <aford173@gmail.com>
----
-V2:  No changes
-V3:  Remove the MIPI_DSI_MODE_VIDEO_SYNC_PULSE conditional as
-     requested by Marek Vasut.
-     Removed the Tested-by from Szyprowski because I don't know
-     if removing the conditional will impact his boards.
-     Update commit message
+thanks,
+jirka
 
-diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c b/drivers/gpu/drm/bridge/samsung-dsim.c
-index 8476650c477c..e7e53a9e42af 100644
---- a/drivers/gpu/drm/bridge/samsung-dsim.c
-+++ b/drivers/gpu/drm/bridge/samsung-dsim.c
-@@ -1606,6 +1606,27 @@ static int samsung_dsim_atomic_check(struct drm_bridge *bridge,
- 		adjusted_mode->flags |= (DRM_MODE_FLAG_PHSYNC | DRM_MODE_FLAG_PVSYNC);
- 	}
- 
-+	/*
-+	 * When using video sync pulses, the HFP, HBP, and HSA are divided between
-+	 * the available lanes if there is more than one lane.  For certain
-+	 * timings and lane configurations, the HFP may not be evenly divisible.
-+	 * If the HFP is rounded down, it ends up being too small which can cause
-+	 * some monitors to not sync properly. In these instances, adjust htotal
-+	 * and hsync to round the HFP up, and recalculate the htotal. Through trial
-+	 * and error, it appears that the HBP and HSA do not appearto need the same
-+	 * correction that HFP does.
-+	 */
-+	if (dsi->lanes > 1) {
-+		int hfp = adjusted_mode->hsync_start - adjusted_mode->hdisplay;
-+		int remainder = hfp % dsi->lanes;
-+
-+		if (remainder) {
-+			adjusted_mode->hsync_start += remainder;
-+			adjusted_mode->hsync_end   += remainder;
-+			adjusted_mode->htotal      += remainder;
-+		}
-+	}
-+
- 	return 0;
- }
- 
--- 
-2.43.0
-
+> 
+>  kernel/bpf/verifier.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+> index 48f3a9acdef3..b081bdd6f477 100644
+> --- a/kernel/bpf/verifier.c
+> +++ b/kernel/bpf/verifier.c
+> @@ -11128,7 +11128,9 @@ BTF_ID(func, bpf_iter_css_task_new)
+>  #else
+>  BTF_ID_UNUSED
+>  #endif
+> +#ifdef CONFIG_FPROBES
+>  BTF_ID(func, bpf_session_cookie)
+> +#endif
+>  
+>  static bool is_kfunc_ret_null(struct bpf_kfunc_call_arg_meta *meta)
+>  {
+> -- 
+> 2.39.2
+> 
+> 
 
