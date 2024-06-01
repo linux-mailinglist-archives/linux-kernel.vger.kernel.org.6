@@ -1,118 +1,132 @@
-Return-Path: <linux-kernel+bounces-197616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A656D8D6D1E
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 02:23:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 769B88D6D27
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 02:27:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 373E5284D9F
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 00:23:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E3D5286AB9
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 00:27:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A9DC1869;
-	Sat,  1 Jun 2024 00:23:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CA9A1869;
+	Sat,  1 Jun 2024 00:27:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JzNP8cNm"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UpxAf4vx"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AB55136A;
-	Sat,  1 Jun 2024 00:23:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B550CEDC;
+	Sat,  1 Jun 2024 00:27:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717201396; cv=none; b=N+XHp6ctCJBfiQX5z+ieslMWM6Li6Y1ZaHDMq/BAmI42Uq45yTQxfVuXOB3bhdkFkZETKjqBES/4iQDDrm2LjG4/qRr9pRgi7QLvsMy3LpZmBwl0sTzaXcu5Sqx7+tYp0xSr+0B0hqTJJ44Gb7BBMX4ZVwvaBs0IZCRcg9HLB4I=
+	t=1717201659; cv=none; b=l1PQjcLuz/8ftiA3HppW76ujN9MtAgLWYepROVGIp1vj/k65bJJix1eD/yrLV0JnY3k9nRFnNcxkDkBKc1hW09z7GDW5taSh/ZecrpiNe5EOfvLTfqTLBTz+pNsW2LD0GrBwB8+FJpoPgcjx3TI0rCidAvjJ3BiIjs9XrjvGKQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717201396; c=relaxed/simple;
-	bh=1njJ3xLVMmnFjC8+Ano2goV3domkrvrOvZgZSuISQ1o=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=sxQbrHR3w5OcvCkk/zza4gIWuGWX/3IfPeyBwpURfpT9B5qFHCVLzMoFdeZT8OVpa1wXQzZ/iM1anq4kHYMfYgTh1idyh8Yl3IDMgsoIdQx0WYSvqmPgxqvk+cXDhrh/JQ1AcBRoQPEqC4T4iEruwwXcM8E0kVzoHJKP4255Ot0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JzNP8cNm; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44VGtWBV003196;
-	Sat, 1 Jun 2024 00:23:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=f7TPuE6UqHPQWhDgSspn37
-	QmivY2yzCp9zT70alc2CY=; b=JzNP8cNmUoJUrFkONp7AeWdpSBAJxhkRVCpkmE
-	p0MRT2Ms5WUttfyuPYrMc0QGgCr1QM+TT6sGyA39RdCkTvxTLfiX6BNd61zqODDs
-	NrLQvCrc2/yGk5DCAkUuw2wtqcjkjoIQSPI6TD9/L3d412FC9SLEost/Jj2LZ7Px
-	OenRuJNF0c2keV/2blxeX83SYleDri3xbR8+UBCBed9GgwNWEUlDrsVCN5z3w3ly
-	MPd7dAv1srXTYijYvZJ0kuhBtYyrH0oi23ulDlZpyxz+bfOlCSCxIfBgSnG6YJ4q
-	4ycOqCHAeEi75g082jk/lRwA6a3RlrAoJSa1g3zQuOOoAtVw==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfa9bjfjc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 01 Jun 2024 00:23:11 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 4510NAew020090
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 1 Jun 2024 00:23:10 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 31 May
- 2024 17:23:09 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Fri, 31 May 2024 17:23:09 -0700
-Subject: [PATCH] lib/test_kmod: add missing MODULE_DESCRIPTION() macro
+	s=arc-20240116; t=1717201659; c=relaxed/simple;
+	bh=pzkQzkll9BnxvY6yoADX3c1dvUwawuIjZ6ByCbhdF+o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B6NtPY89KzUDoPRhLqU/OSkk+pWJ0yJT5y1gba7UIVzWkciswPooaQkbGrMdBO1JAKr7/GucGdNtExZNMOnf0+BrJCurhzHMI7M50eAMhCq18IoJWOFfXdCTyNvsadv4QvG356Y3qCKVTXwQQBM4Vku6XV0NhpJ9q3wm3dGe2K0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UpxAf4vx; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717201657; x=1748737657;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=pzkQzkll9BnxvY6yoADX3c1dvUwawuIjZ6ByCbhdF+o=;
+  b=UpxAf4vxRPcg/VEKmNSYgkGyZx9MGhHRCjgsZUCXoQOQIUKIglDpMnYt
+   JKhDzAxJIZxYQuU1IcPxEcTzaTXqm4N1R8Xnj9z5pWmqbT5ar3FnLXaQc
+   PqpOo1J8yHyNGuxK0pt6njKqo0tuam7hVSpwT9bp8WwejXrC8Y8N2ttu6
+   xQsv7q7fNLh+NR90KJB4vdIKJHS31kk5iG4vu6ZZAXOic/vup+Iqjx4dV
+   AhPyQ/3TnPGLQReimkZ9+9IP1MovGFUiRr3kSGGvFenKgd8U37LPAMt8J
+   Va2eoLcNpn1id5YnX3IZjIhMvrAurUsljzclpweLrC6vhM7vCg53W/U2q
+   A==;
+X-CSE-ConnectionGUID: BYs/wzKbS8qsK2BEoEnYSw==
+X-CSE-MsgGUID: MaY0U9VGR/u7hs2uJl9OAg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11089"; a="36299249"
+X-IronPort-AV: E=Sophos;i="6.08,205,1712646000"; 
+   d="scan'208";a="36299249"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 17:27:36 -0700
+X-CSE-ConnectionGUID: ZHnSF2voQwq5GZgRwjZgUQ==
+X-CSE-MsgGUID: IIS8T1viRr6mGLi6evRQjw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,205,1712646000"; 
+   d="scan'208";a="36237179"
+Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
+  by fmviesa007.fm.intel.com with ESMTP; 31 May 2024 17:27:33 -0700
+Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sDCao-000I23-1E;
+	Sat, 01 Jun 2024 00:27:30 +0000
+Date: Sat, 1 Jun 2024 08:27:10 +0800
+From: kernel test robot <lkp@intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-iio@vger.kernel.org, linux-leds@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, Lars-Peter Clausen <lars@metafoo.de>,
+	Pavel Machek <pavel@ucw.cz>,
+	Daniel Thompson <daniel.thompson@linaro.org>,
+	Jingoo Han <jingoohan1@gmail.com>, Helge Deller <deller@gmx.de>,
+	Johan Hovold <jhovold@gmail.com>
+Subject: Re: [PATCH v1 4/4] mfd: lm3533: Remove the driver
+Message-ID: <202406010822.oVBEReGC-lkp@intel.com>
+References: <20240531170844.1595468-5-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240531-md-lib-test_kmod-v1-1-fdf11bc6095e@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAOxpWmYC/x3MQQqDMBBG4avIrDugsWLpVUqRxPzWoSaWTFoE8
- e5Nu/wW7+2kSAKla7VTwkdU1ljQnCoaZxsfYPHFZGpzrru24eB5EccZmodnWD1fWjcZoEdvOir
- ZK2GS7b+83YudVbBLNo7zb7RIfG8crGYkOo4v8qFThYEAAAA=
-To: Luis Chamberlain <mcgrof@kernel.org>,
-        Andrew Morton
-	<akpm@linux-foundation.org>
-CC: <linux-modules@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: qWd3-jOZ8HfKaEvWut0oYzeTnNi7Wj7S
-X-Proofpoint-GUID: qWd3-jOZ8HfKaEvWut0oYzeTnNi7Wj7S
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-31_14,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- lowpriorityscore=0 priorityscore=1501 bulkscore=0 adultscore=0 mlxscore=0
- phishscore=0 clxscore=1011 spamscore=0 malwarescore=0 suspectscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406010000
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240531170844.1595468-5-andriy.shevchenko@linux.intel.com>
 
-make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_kmod.o
+Hi Andy,
 
-Add the missing invocation of the MODULE_DESCRIPTION() macro.
+kernel test robot noticed the following build errors:
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- lib/test_kmod.c | 1 +
- 1 file changed, 1 insertion(+)
+[auto build test ERROR on jic23-iio/togreg]
+[also build test ERROR on lee-backlight/for-backlight-fixes linus/master v6.10-rc1 next-20240531]
+[cannot apply to lee-backlight/for-backlight-next pavel-leds/for-next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-diff --git a/lib/test_kmod.c b/lib/test_kmod.c
-index 1eec3b7ac67c..064ed0fce75a 100644
---- a/lib/test_kmod.c
-+++ b/lib/test_kmod.c
-@@ -1223,4 +1223,5 @@ static void __exit test_kmod_exit(void)
- module_exit(test_kmod_exit);
- 
- MODULE_AUTHOR("Luis R. Rodriguez <mcgrof@kernel.org>");
-+MODULE_DESCRIPTION("kmod stress test driver");
- MODULE_LICENSE("GPL");
+url:    https://github.com/intel-lab-lkp/linux/commits/Andy-Shevchenko/backlight-lm3533_bl-Remove-the-driver/20240601-011153
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
+patch link:    https://lore.kernel.org/r/20240531170844.1595468-5-andriy.shevchenko%40linux.intel.com
+patch subject: [PATCH v1 4/4] mfd: lm3533: Remove the driver
+config: alpha-allyesconfig (https://download.01.org/0day-ci/archive/20240601/202406010822.oVBEReGC-lkp@intel.com/config)
+compiler: alpha-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240601/202406010822.oVBEReGC-lkp@intel.com/reproduce)
 
----
-base-commit: b050496579632f86ee1ef7e7501906db579f3457
-change-id: 20240531-md-lib-test_kmod-83bf2ee7e725
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406010822.oVBEReGC-lkp@intel.com/
 
+All errors (new ones prefixed by >>):
+
+>> drivers/mfd/lm3533-ctrlbank.c:13:10: fatal error: linux/mfd/lm3533.h: No such file or directory
+      13 | #include <linux/mfd/lm3533.h>
+         |          ^~~~~~~~~~~~~~~~~~~~
+   compilation terminated.
+
+
+vim +13 drivers/mfd/lm3533-ctrlbank.c
+
+16c5c023aac862 Johan Hovold 2012-05-03  12  
+16c5c023aac862 Johan Hovold 2012-05-03 @13  #include <linux/mfd/lm3533.h>
+16c5c023aac862 Johan Hovold 2012-05-03  14  
+16c5c023aac862 Johan Hovold 2012-05-03  15  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
