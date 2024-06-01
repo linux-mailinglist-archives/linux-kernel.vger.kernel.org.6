@@ -1,161 +1,118 @@
-Return-Path: <linux-kernel+bounces-197901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F7478D7086
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 17:01:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F3F98D708B
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 17:02:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C3FD2831BD
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 15:01:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 075F5B21A89
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 15:02:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3C0E152782;
-	Sat,  1 Jun 2024 15:00:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8DB915253D;
+	Sat,  1 Jun 2024 15:02:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="JY4lvHhN"
-Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TsLAK5cR"
+Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C96A31CD3D;
-	Sat,  1 Jun 2024 15:00:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A82C31CD3D;
+	Sat,  1 Jun 2024 15:02:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717254051; cv=none; b=uA7Mgs3E/QRH1eTbmYk4P3DaxhURz+DAEc+78iXBY4UX8lUF2bb6uMacLtkhavwANqm1LOYB8HUYKFxdp2XiIY2gAwWzvXHxwsqBAdNs3PfR5gklMs0LgI495xz1Cy5VYvsjPEyCFRglddHrXVLOVPfDiUMK1F8vLzTx5Bt+Ft0=
+	t=1717254159; cv=none; b=BV1VQhyZEeMTbCzh+6QWywh+mc95eRRHtOL/VWXuI/AEzg93aKKhcpa40+25spoPp/sT7IVdE/M3ZntJ2H5FJ8W/Odw1FUb4QpqPwzyXS/xxaowvT9hHqZdQDIemBq5D5chibLa+gCmEU9w6kS1Lxkg7Q3tuOXncQ2Lz+U4/R/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717254051; c=relaxed/simple;
-	bh=cpDMvVIdLPhR5zy2zCBjOcNpO7WYB4YNI6UM9U7l+y8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=G2Ob7mqzYX5IgcYMD2kVpQI4ikJleMWWAQSuWe1RX3N+WgJ2xgNVXNlLcICjo5G2ci06GazuoHyODbjb/0NVJ8ehpmEz7eA8+iSP3IRruNKfkNhXPCAoUpomoT8TOfk96iB7OF4uUIWp6ZmC0xNEglxPVHr7JMb2Ts5/O6NGrso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=JY4lvHhN; arc=none smtp.client-ip=80.12.242.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([86.243.17.157])
-	by smtp.orange.fr with ESMTPA
-	id DQDisz5ua13tqDQDpsovaD; Sat, 01 Jun 2024 17:00:41 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1717254041;
-	bh=jIblfMwtliNUcxjvHa+qfP3YXi+49by7T+Qpw7+AkQ0=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=JY4lvHhNoh9sABZn7VeIG7ThlFCIA1L1eh0wpizfGsh6Wb3qy6AXQLDMQeIsJ2NcD
-	 zqQN1pSPj2TUPB7EeJUcF19B9FLSECKUyzSwhAtH0Yz8EO1ykp6qMWZkQEGrULQ0Ol
-	 XsoImMCDv8Y9vmGbFsGAoMIYpBXkqiSbtspP1SjG1XscF9NISKcFMKBg6AzhgqLMrx
-	 Y7GKXFbh4lCYd0OTUnrRykQwvhOyR9Yo11PJkfgULfnQJ4WpuIPYqZsH8vDGptOCio
-	 VCw9/q/lo56y/VQ2fg6OhFyTTVkap57zEmUmmj8FC2RVL8HCpLco/N4IoTRR3Q/n7b
-	 AoHi3+BBGaNEw==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 01 Jun 2024 17:00:41 +0200
-X-ME-IP: 86.243.17.157
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Sebastian Reichel <sre@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-pm@vger.kernel.org
-Subject: [PATCH 2/2] power: supply: samsung-sdi-battery: Constify struct power_supply_maintenance_charge_table
-Date: Sat,  1 Jun 2024 17:00:29 +0200
-Message-ID: <02c6ad69a3ace192c9d609b7336a681a8fc7ba94.1717253900.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <cover.1717253900.git.christophe.jaillet@wanadoo.fr>
-References: <cover.1717253900.git.christophe.jaillet@wanadoo.fr>
+	s=arc-20240116; t=1717254159; c=relaxed/simple;
+	bh=qTjU/TippBIBluChZCNGHhy1DPcvvexKMAWCo0qp0Fc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MyCi0z4zPm3UE0IyZdSjfVGP1W7ghpuKNTDyGsUqDYwECgiqvWEchnPntICt/I1TMpmRkoIGuLTsbpFi9w7KO68OPhESHjMLwcch08Oz8tNnYyPLck0qwh7m+mqG0ZA0XGFbkVw+PJ5fhvTpyzWkK4/h4M0kYGJXI2sK2l48iag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TsLAK5cR; arc=none smtp.client-ip=209.85.160.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-24ca03ad307so1603235fac.3;
+        Sat, 01 Jun 2024 08:02:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717254157; x=1717858957; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jeHtycv1NrGcuFGlOJxaUeyL3FoJw5Lrqo8poVlugY0=;
+        b=TsLAK5cRIiie2xATT8uMB1lRd0Voi5mbYWpQWF7p13/xudRA/o+LY60H/TKR826yPU
+         7HO9SQBKAMq2r2wcB98BYdWgyOD5/d7SfjL7EdNj4n6UQf7IqXgo5DVRVx+L0Vo93O7F
+         wC7nD4RVqZAfyZ4bUXBua3wMRuVBUCfhSiscdaB30X7khclJBG/sU8+g8wkVjquTVE2D
+         yXaX9FTY/3Ie4jVo+0j0sPXMWTvomSeOzs/Dl16WowJO8tC0DGkOpYWXHGN0qfpb2LUr
+         OUSzcveX2CdM5l1cAaURPG8VYt0qBy2LO7/U1/meHqjVYjSRI8q3Poyy32GttQ96PfQL
+         F84w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717254157; x=1717858957;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jeHtycv1NrGcuFGlOJxaUeyL3FoJw5Lrqo8poVlugY0=;
+        b=tI6QA/kTeb4sFZT+FdXxUi7xate5eyBurbsz+dXz3A1kQDkMki6oEe9FZnQwLnf7FC
+         ZVZ3wpe6Y6EERHl8QZaHQthgsEeMfUlyuvKXxV9VWFs6WyQ7DpIpsbCb9KRtooOfTz7O
+         Eei+JVI0S/kEuzt+n2BZWy6sByrwDHNWJiWv7PhfrOq2udae1zBwzbnZFyKTLpwGpYtP
+         QS8pWsUz56lcW/IBrdHWUpoTk9IVYozyC+E6JQ5hNbtdLlYaEW2qIxkgf999Idikj7QV
+         kkx+fbtQq3n77iDsDEtD441v4KcZ9egafEI+WjIODZ+psjN5hUrk/wBN7fDt8vSFJXjn
+         hREg==
+X-Forwarded-Encrypted: i=1; AJvYcCV6Xu3EszxaDkHyCOMUj9o7umUmXyFGZVUZtJb2azCbtWg4icwKax9Zwo0C9840XWCZdIaF9i1nREBP59jNu1C1cN8s/oA4hIg7RyLU
+X-Gm-Message-State: AOJu0YydiV3N+VuqahUZ3uirHZNcwuf+RDdsvK5aupIpF4mIqzMs3dvJ
+	hL624+OaUS6ta+nF0qFccAC4BNpVRb1dBbkjRZA7It34qB1roC+e
+X-Google-Smtp-Source: AGHT+IFhAGP0l4w4JyaYSs0w1MZm2Y1A2crbOP/IlrChZZX6KMlnn/wb1umAaC6scLTIFeKlTLkKqA==
+X-Received: by 2002:a05:6870:b486:b0:250:1322:34c0 with SMTP id 586e51a60fabf-2508b9b843bmr5819163fac.10.1717254156568;
+        Sat, 01 Jun 2024 08:02:36 -0700 (PDT)
+Received: from ?IPV6:2603:8080:2300:de:3d70:f8:6869:93de? ([2603:8080:2300:de:3d70:f8:6869:93de])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-25085000afasm1216495fac.23.2024.06.01.08.02.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 01 Jun 2024 08:02:36 -0700 (PDT)
+Message-ID: <a97648b5-bfab-4ac7-ba8e-bb6d30b558bf@gmail.com>
+Date: Sat, 1 Jun 2024 10:02:34 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] docs: Extend and refactor index of further kernel docs
+To: Jonathan Corbet <corbet@lwn.net>, bilbao@vt.edu
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <fdf68be7-875a-421d-8bc3-034a21990679@gmail.com>
+ <87ikyvccwc.fsf@meer.lwn.net>
+Content-Language: en-US
+From: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
+In-Reply-To: <87ikyvccwc.fsf@meer.lwn.net>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-'struct power_supply_maintenance_charge_table' is not modified in this
-driver.
+On 5/30/24 14:34, Jonathan Corbet wrote:
 
-Constifying this structure moves some data to a read-only section, so
-increase overall security.
+> Carlos Bilbao <carlos.bilbao.osdev@gmail.com> writes:
+>
+>> Extend the Index of Further Kernel Documentation by adding entries for the
+>> Rust for Linux website, the Linux Foundation's YouTube channel, and notes
+>> on the second edition of Billimoria's kernel programming book. Also,
+>> perform some refactoring: format the text to 75 characters per line and
+>> sort per-section content in chronological order of publication.
+>>
+>> Signed-off-by: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
+>> ---
+>>  Documentation/process/kernel-docs.rst | 68 +++++++++++++++++----------
+>>  1 file changed, 44 insertions(+), 24 deletions(-)
+> So I was going to apply this but ... it doesn't apply.  It looks like
+> some sort of weird whitespace damage?
 
-In order to do it, some code also needs to be adjusted to this new const
-qualifier.
 
-On a x86_64, with allmodconfig:
-Before:
-======
-$ size drivers/power/supply/samsung-sdi-battery.o
-   text	   data	    bss	    dec	    hex	filename
-   4055	   4584	      0	   8639	   21bf	drivers/power/supply/samsung-sdi-battery.o
+Apologies for the inconvenience. I found the issue so this should not
+happen in future patches. Replying with the fixed patch now.
 
-After:
-=====
-$ size drivers/power/supply/samsung-sdi-battery.o
-   text	   data	    bss	    dec	    hex	filename
-   4087	   4552	      0	   8639	   21bf	drivers/power/supply/samsung-sdi-battery.o
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested-only
----
- drivers/power/supply/power_supply_core.c   | 2 +-
- drivers/power/supply/samsung-sdi-battery.c | 2 +-
- include/linux/power_supply.h               | 6 +++---
- 3 files changed, 5 insertions(+), 5 deletions(-)
+>
+> jon
 
-diff --git a/drivers/power/supply/power_supply_core.c b/drivers/power/supply/power_supply_core.c
-index 022d0e4bf621..8f6025acd10a 100644
---- a/drivers/power/supply/power_supply_core.c
-+++ b/drivers/power/supply/power_supply_core.c
-@@ -1072,7 +1072,7 @@ int power_supply_vbat2ri(struct power_supply_battery_info *info,
- }
- EXPORT_SYMBOL_GPL(power_supply_vbat2ri);
- 
--struct power_supply_maintenance_charge_table *
-+const struct power_supply_maintenance_charge_table *
- power_supply_get_maintenance_charging_setting(struct power_supply_battery_info *info,
- 					      int index)
- {
-diff --git a/drivers/power/supply/samsung-sdi-battery.c b/drivers/power/supply/samsung-sdi-battery.c
-index 725fbe09379e..b63fd2758c2f 100644
---- a/drivers/power/supply/samsung-sdi-battery.c
-+++ b/drivers/power/supply/samsung-sdi-battery.c
-@@ -613,7 +613,7 @@ static struct power_supply_battery_ocv_table samsung_ocv_cap_eb585157lu[] = {
- 	{ .ocv = 3300000, .capacity = 0},
- };
- 
--static struct power_supply_maintenance_charge_table samsung_maint_charge_table[] = {
-+static const struct power_supply_maintenance_charge_table samsung_maint_charge_table[] = {
- 	{
- 		/* Maintenance charging phase A, 60 hours */
- 		.charge_current_max_ua = 600000,
-diff --git a/include/linux/power_supply.h b/include/linux/power_supply.h
-index 3ccf7d47f502..6f983720c146 100644
---- a/include/linux/power_supply.h
-+++ b/include/linux/power_supply.h
-@@ -741,7 +741,7 @@ struct power_supply_battery_info {
- 	int overvoltage_limit_uv;
- 	int constant_charge_current_max_ua;
- 	int constant_charge_voltage_max_uv;
--	struct power_supply_maintenance_charge_table *maintenance_charge;
-+	const struct power_supply_maintenance_charge_table *maintenance_charge;
- 	int maintenance_charge_size;
- 	int alert_low_temp_charge_current_ua;
- 	int alert_low_temp_charge_voltage_uv;
-@@ -815,7 +815,7 @@ power_supply_temp2resist_simple(struct power_supply_resistance_temp_table *table
- 				int table_len, int temp);
- extern int power_supply_vbat2ri(struct power_supply_battery_info *info,
- 				int vbat_uv, bool charging);
--extern struct power_supply_maintenance_charge_table *
-+extern const struct power_supply_maintenance_charge_table *
- power_supply_get_maintenance_charging_setting(struct power_supply_battery_info *info, int index);
- extern bool power_supply_battery_bti_in_range(struct power_supply_battery_info *info,
- 					      int resistance);
-@@ -829,7 +829,7 @@ extern int power_supply_set_battery_charged(struct power_supply *psy);
- static inline bool
- power_supply_supports_maintenance_charging(struct power_supply_battery_info *info)
- {
--	struct power_supply_maintenance_charge_table *mt;
-+	const struct power_supply_maintenance_charge_table *mt;
- 
- 	mt = power_supply_get_maintenance_charging_setting(info, 0);
- 
--- 
-2.45.1
+
+Thanks,
+Carlos
 
 
