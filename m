@@ -1,184 +1,236 @@
-Return-Path: <linux-kernel+bounces-198026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2959E8D7292
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 00:49:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B86388D72A5
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 01:05:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 918831F21B29
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 22:49:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D984C1C20B2D
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 23:05:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6316D2E414;
-	Sat,  1 Jun 2024 22:49:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C0D13A1BF;
+	Sat,  1 Jun 2024 23:05:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="IAoiJYPj"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [167.172.40.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="qiDdXnLw"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2076.outbound.protection.outlook.com [40.107.237.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82628224CC
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Jun 2024 22:49:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.172.40.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717282181; cv=none; b=YbCSzXutJ849g9UYwzj2SZ0chsjHCQ5pSlRavGd0SOAtk1u+VWsfOEUZhvSeejxnUb12wnz3aBz+9DSLpQ9SGRQ6xssHfYKbWFOXpZsJwudOWM7OFMuU03cm/A7WL5F0AG7byPxqFBuB2Jn105Ac+T9oXWSwm8CvKGH0doj65Ds=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717282181; c=relaxed/simple;
-	bh=Jkb8Hqv95DRnRm/NxgOPNaIghiPJOHpb1eOciF3qDFY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=epzv7nRyMdAlcvgxJu7z7vFVodREnlri6m6fQ0Jdxq6Pk7NTsrNsSF3hZPuPj5nPDjm126W4x9rYOtlXEwNWpwVKpdcdMnvaE7e2Woqs050aQTwoqeINwCodBc2SJlriXV5Htl0YeQ9k0e81QIrS9YaMpc7izeRbVQRdXCywp/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=IAoiJYPj; arc=none smtp.client-ip=167.172.40.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
- Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
- s=fe-e1b5cab7be; t=1717282140;
- bh=/k1PnOZIBQq7/TC/41KnYN6gtYkoZOfq1Q0coM4QxJ4=;
- b=IAoiJYPjI70b9FQJs5+yPAOaADoe2lOr7mk54a47iJK6LaeVzR2nJkjDq6UjqUQQBh16oLSWp
- OmRJwWHT34EDXPILh1QGR5YjCTwOMH01HciscOIbH3tC6FLs/j5k9D7n3pLWGwoFcbUJQaq5oN7
- VpL5ScVekby+AqKHPUXblKBpcs29IyoO7bkofK8WRfKZt+bUarmEqrnIRSwLEwL6o51DdjatHKw
- 9ngdlaRlPFkozI4PqSd2Qy0ugLtd9NlQaHrFsDcOglTKQRqwcJqUYb8/AYRtV+FGGT3hxn3Bu+X
- rm3KRfIibp1Lrn9kcPqcE1genx0e0W02xye8Dlsl8BnQ==
-Message-ID: <e4e0c2a4-0d63-434f-ba52-6aaf571e30a5@kwiboo.se>
-Date: Sat, 1 Jun 2024 01:32:29 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7215217BD9;
+	Sat,  1 Jun 2024 23:05:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.76
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717283131; cv=fail; b=kOcAIIhrN5p4nWo0YCRUEgX9NQ2JPm9qa/Hxk8QVJr8+PF9XVOfaxZKV7RdwXIjVXVsFxSMsncH8DjgrYoT6LidTch2YntQytA36RndGsiwIG9u+UE2O9lWlhR5eEbCQSSwjDL+WCp3SMEQacWKF6z1ulOailD4GPjZOQdDWgMA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717283131; c=relaxed/simple;
+	bh=GIA88Cs5QAJ+SnCmUh1vg9IiD6TjXainI/ygKwYrR6Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=AddiA9yF/ZbqtCCEYLCSUG7fbfLYxsoXHU40MRKrLAPo5EJMW7PUsBFPOKNAvfRsy9ieB8xqGuLF/Mii210207gBaUqskAskMyIH+Rw6V+zprb4l8XKa8cR2CDNFFbOeQB0J+cJcMolJBV9xCB9r1zg0yOQkI/ZXcj0+Et4wZ0Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=qiDdXnLw; arc=fail smtp.client-ip=40.107.237.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=SiBkvSHf7fa9WU5sOtkmezFCBM99GaNBZ0JbSdr5twEjvSpGmUsSKAPmCw9yEDcNv7yMwPOCq9wxE5yYIHrB4LTBBHomRSjb8IzYS26Skh888q6MBwJ1Ihu3X+aFo5x56mniVeNNTD38fn6mJgzkUOTA3jJnDl6/89d1WahKu1wYaXW7kNaaWh8akAdOrfpKiVnsZwHQtkXa/a7Flm1yvs4yq6hHRSFE9gMM3Fw9ZNFcUXciGbHiX7VGqTvGxazVNBuOR/hYO6/F+AjmmWfZ+qZbnWxmvuOPq27ZvOvlIT3/Fg7mijgXqXFBSE2CdCH+QOOwd9fZtzxkkMpiOwsfyQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=pDGJ5iRUCjnBNSqG8iRKYMqrAygPidV7HbfHMK2KRZ4=;
+ b=ndqHpaAp9sWqwAPJqWmKxxT7tdUVOBu2LxDAerDluhGlGmLLGVNpUNBrXBr2vcTnR+q5J4Uqe6ye0WzRr1cc2D5WZnRp9DDCUaHgECU8hwj4Qq7nCpVa3F7dHjH0QKiYERCNBl1hX9Da1+zbkRJK3hMBji+BheiC4lVZF4vGyZBKtzj0J0cgUDAkl3K1RxWQ/p7M6506mT9/Og/OaPAINoYcUsS+kvvR1UftklskhNUTNNt+a6Pu8P+bakPOuW6RNdQZCeMuMYQUxgVmpSphFXaK5Pn26zNArPoo2CJjUdtr42ZOYA6hO83UqOsI5+rfvKEtr2h7oPi2d3MopZIhKA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pDGJ5iRUCjnBNSqG8iRKYMqrAygPidV7HbfHMK2KRZ4=;
+ b=qiDdXnLw0xVuW9ZghwKUh1nLqgpkIvFs6sMr3pE7erJB+U3uigRPgorW9zOraTVkOPLe/pHZ5Di7XZE78kEZ9IybZ0Uwii0Ky181W2EN2JmfuGnHPnTK6MbvH21qAxVNETSJmfAXVEhJu1s85JENT5vqn4AEIrivXEijg6cBU5jOGaYC75ttTNCH1DUKiRJ3AKz3gpB0JT5pAflbvTSScQ2b5OWIXSScxoI//jVtz6OowtEuamwAtFM+poEwWMhutDWAJA4gFK5lz0NosnysffrkVPDbL+FYsB+88h2tiIXlON/dBWTbC7V5HtVoX9lMGCxoFudcylPpxaLl8vUk3w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DM6PR12MB3849.namprd12.prod.outlook.com (2603:10b6:5:1c7::26)
+ by IA0PR12MB8906.namprd12.prod.outlook.com (2603:10b6:208:481::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.22; Sat, 1 Jun
+ 2024 23:05:26 +0000
+Received: from DM6PR12MB3849.namprd12.prod.outlook.com
+ ([fe80::c296:774b:a5fc:965e]) by DM6PR12MB3849.namprd12.prod.outlook.com
+ ([fe80::c296:774b:a5fc:965e%4]) with mapi id 15.20.7633.021; Sat, 1 Jun 2024
+ 23:05:26 +0000
+Date: Sat, 1 Jun 2024 18:45:01 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: "Tian, Kevin" <kevin.tian@intel.com>,
+	"will@kernel.org" <will@kernel.org>,
+	"robin.murphy@arm.com" <robin.murphy@arm.com>,
+	"suravee.suthikulpanit@amd.com" <suravee.suthikulpanit@amd.com>,
+	"joro@8bytes.org" <joro@8bytes.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	"Liu, Yi L" <yi.l.liu@intel.com>,
+	"eric.auger@redhat.com" <eric.auger@redhat.com>,
+	"vasant.hegde@amd.com" <vasant.hegde@amd.com>,
+	"jon.grimm@amd.com" <jon.grimm@amd.com>,
+	"santosh.shukla@amd.com" <santosh.shukla@amd.com>,
+	"Dhaval.Giani@amd.com" <Dhaval.Giani@amd.com>,
+	"shameerali.kolothum.thodi@huawei.com" <shameerali.kolothum.thodi@huawei.com>
+Subject: Re: [PATCH RFCv1 08/14] iommufd: Add IOMMU_VIOMMU_SET_DEV_ID ioctl
+Message-ID: <ZluWXYQjroz0fqqn@nvidia.com>
+References: <BN9PR11MB5276A897A5386DFAC9A35F9D8CF42@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <ZlAoN3s96HL7ROth@nvidia.com>
+ <BN9PR11MB52762A0BC67B64D4171480C78CF52@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <20240524131912.GT20229@nvidia.com>
+ <BN9PR11MB5276BBD592021507C3A0EBB38CF02@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <ZlY886FT3HHLC8Cf@nvidia.com>
+ <BN9PR11MB52762EA9B444DA71F551C3868CF22@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <ZlafEktUu5znDsNt@Asurada-Nvidia>
+ <BN9PR11MB5276AC43120376A2502D3D148CF32@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <ZlfPPwsnY6P4SoGF@Asurada-Nvidia>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZlfPPwsnY6P4SoGF@Asurada-Nvidia>
+X-ClientProxiedBy: YQBPR01CA0041.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:c01:2::13) To DM6PR12MB3849.namprd12.prod.outlook.com
+ (2603:10b6:5:1c7::26)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] arm64: dts: rockchip: Make preparations for
- per-RK3588-variant OPPs
-To: Alexey Charkov <alchark@gmail.com>
-Cc: Dragan Simic <dsimic@manjaro.org>, linux-rockchip@lists.infradead.org,
- heiko@sntech.de, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, robh+dt@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, linux-kernel@vger.kernel.org,
- quentin.schulz@cherry.de, wens@kernel.org, daniel.lezcano@linaro.org,
- didi.debian@cknow.org, krzysztof.kozlowski+dt@linaro.org,
- viresh.kumar@linaro.org
-References: <673dcf47596e7bc8ba065034e339bb1bbf9cdcb0.1716948159.git.dsimic@manjaro.org>
- <CABjd4YxD41DEkBCZfkznLboEY9ZVOfTCLcj4S_kkcsVswbANyQ@mail.gmail.com>
- <8f8623e29a479c4108141302e708dc3b@manjaro.org>
- <CABjd4Yy4RMg+6-4ygV0MSwJj5LReY-ymbctq4PPfVZ6L+c1tsw@mail.gmail.com>
- <166cc4e46f31644a50306625b2ab18a6@manjaro.org>
- <CABjd4YzDNQa45=KC_t0xnTDrH+g-oUrcpgP55oOj7JcAuu7uFw@mail.gmail.com>
- <82db817a908b761d8c3d73ea04714314@manjaro.org>
- <607f4da8-99b2-4379-9567-4bfd2744eab3@kwiboo.se>
- <CABjd4YxdM+cM+z7ou3=DF2SrFM0235DSTZ45o0NsKBwGrgW8Bg@mail.gmail.com>
-Content-Language: en-US
-From: Jonas Karlman <jonas@kwiboo.se>
-In-Reply-To: <CABjd4YxdM+cM+z7ou3=DF2SrFM0235DSTZ45o0NsKBwGrgW8Bg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Report-Abuse-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-ForwardEmail-Version: 0.4.40
-X-ForwardEmail-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 167.172.40.54
-X-ForwardEmail-ID: 665a5e1290b1ee9784da9536
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR12MB3849:EE_|IA0PR12MB8906:EE_
+X-MS-Office365-Filtering-Correlation-Id: 597b857d-8a66-407b-ca41-08dc828f52b3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|366007|7416005|1800799015;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ns9V9E6ltOacJ6KgOwifpzxTBa3w6zSipK0wgSddEToKb8FFYJyFkabLer0e?=
+ =?us-ascii?Q?SkT9u9PR/15ggSQR8tIS4RnVnWWExctgmBU+Uork74CqDzKEEubwFEM7s7dm?=
+ =?us-ascii?Q?KQDbyhevx2izeEr/AQMu+hEi+aSK1ZySZ9I1DGPSB60DoUgn/QvnXFivBaTS?=
+ =?us-ascii?Q?RxY6Lvj9nCsgZAfa+fzKIx6jCor7iNvgWcwNrPya+wTdc5wf+8s8Hwvw66XZ?=
+ =?us-ascii?Q?Ttb/x5UyuFkFfyTFoNe58gKKUhwy4o7zn6u+SA35ADHjfEC7F5NbY4QxPMiz?=
+ =?us-ascii?Q?229wDh3hKgtILKwstiLijtM4lCgScXLaawQvXO/M9jeLd302dcF9lY9n0XTX?=
+ =?us-ascii?Q?5qcsSUqpNcBCCUC2LiRdq2sFOhNFwLsOVTRRoPhzsFDp076SZ7zGJ7RbHcV0?=
+ =?us-ascii?Q?PicUrzo5VgwfdAJYWMJqWo2mwMXh9+Af5RO2/rUln9Leo3iBC43AOuN5L25R?=
+ =?us-ascii?Q?qsdk9v3ECr9IDN4f3+7ZbLi0DhpZLGQ7iwNmJkbIwJvA3yYIMUs5N7zEF5bD?=
+ =?us-ascii?Q?vvXHrpYUs4lhZGAgzFV9LeiZsAWr7v43vUW98oqvEicBEUxX7FVHXgPJMIT5?=
+ =?us-ascii?Q?Ak015Sx5Vp24fHgaNK1GV9MNKCZcmcnyvude21sYBMk465yg7zKdatvCxIg/?=
+ =?us-ascii?Q?HavfoX3c47qM39jA7HwFGpV0fsYNNt4kZsnyMv597j/6kaxV3scJyYoiN7Z5?=
+ =?us-ascii?Q?22UAj+2f9jmWG8b7HoKZN3PA5f4LXmL0XCp0H81qKTNqPxLSVXhS+EQ+cO8r?=
+ =?us-ascii?Q?OMmQCci8d2R5zFLf+rpr0eHkREImsFSwb09Un486Qh2SruTNTmh+Hiy4m+uS?=
+ =?us-ascii?Q?rQwTrP3Ush5/fcunW0RG245RJvcMiuJNk8VDy+q0QJaDYAykaGLkSsXKpa9q?=
+ =?us-ascii?Q?k8lPVQJsW8/zKqH3c0CJ+PpmJ7etHprs/+feS3xNEGHnlfiom64uDNGKl2Vw?=
+ =?us-ascii?Q?fNWrdW2W6KYVBMOfjJTohvVnJFNW0sfgLiXc1ga0bihhLbR6x671RhOSd3yt?=
+ =?us-ascii?Q?NBtimm01EGLOZMjuMb5majEVstQzTk1hDS6rzqUatKcK5x74jWHXvP6fbI29?=
+ =?us-ascii?Q?0kLMHSvJ6RHr4cMoW47GJIsrWrXiJ7IPJ4OKfsQUliC4NnUKiNETC2jR7EJA?=
+ =?us-ascii?Q?MC5QlOald8vZ8tdtiXCDOFl57SG8itbpn3Rw2JszE+bvCjRqdtDNO/bo7jOa?=
+ =?us-ascii?Q?2QFQ2FdCnIUSmswRnNh4+2AAhdWfdN0z54s8sWeeathYSQ4gvJiQyL0CjjXI?=
+ =?us-ascii?Q?hHqeWKhxTwB1vHqAh8lAwPUG/FotRyELipkKQ3MXHA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB3849.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(366007)(7416005)(1800799015);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?BDHGH+/R5hRIslQtzdnYBfXMnJJuU4UfXtJiFH/WY0x9r71sf0X/EeffuQIx?=
+ =?us-ascii?Q?2ZRl/9SeEwqzddQuWH8caStlM/u/fx3cPGSGAQRzGcERXNaMrSDyhgvDuVEN?=
+ =?us-ascii?Q?I/g/sXPH1RE3mhhY3CUudJ9Wqqa8tpvT0ccSlLfluFripdlRJbdWPoOEssB0?=
+ =?us-ascii?Q?xvg4DPWtY5cwUIov+pntsYop0CF9opzcJwY+pIp2jO1t+D/bZHRQwromqbfV?=
+ =?us-ascii?Q?0NsLIdh7clYrSScnYzkMLtonpDPN9ZoBmevMvakdWN9jzx3xsATLgfCNsj2Q?=
+ =?us-ascii?Q?1HJGXb9ryAJYwdpT+dvGyPG4QueNlgiDI9UcFivg1X8JvesFT3F+Djawycox?=
+ =?us-ascii?Q?Gc+swTh514P3CUDDdup8g2uDhnANSoJ1lnPPQ/9nEKa3Bb8WYZbERhhO3eJX?=
+ =?us-ascii?Q?fX5HeSgFSrLemr6YxPqdVU561l+qJNdzLiQ4OXOPr/7VXnEBC/U8fPz7IbG/?=
+ =?us-ascii?Q?DQIct26r0W2pGjLwXtRW8uVgeVQ60it/Apq6Ij4Iw1ZfcvjmV/ytUHwfGxmK?=
+ =?us-ascii?Q?zhnm40HXbpxohRCIgs2+MnNXvRtu1K4w2o3BzvdDxQfU3dEsfJN2vm1ZVCJe?=
+ =?us-ascii?Q?bFVujfosS/36ZEuhpcKfyOhAy4caRuIJ+Kmj2+Eq07dOZHjqK9Nnv/RwtoxP?=
+ =?us-ascii?Q?DiAiac+8UrXMq0Mndyq85aypTWocDtPcArn32OCYgqDFCIcPeAUEETJ2rEV9?=
+ =?us-ascii?Q?WKzYP2FWA0+atmoQu+4nNgyDckbDdFA8aZ9Kut2fCizeI324FPnkPTzv8G0V?=
+ =?us-ascii?Q?WiC12F2u5hQL3b3Bd98XklPNQjhIMHPqoBpkAggP0+j0XyB3Iqbx1tFv92WA?=
+ =?us-ascii?Q?11j4niFlXjfqKUr4f4omyU6TOWbZ8QgKPifXawwdtF7ceK8inHDYU1Ssdwv4?=
+ =?us-ascii?Q?wA+vWnUNwO2PmxqayNW/DSnO6Os/ZZXYPNZk2SMAz/AZNCAOCthO0QwEk84B?=
+ =?us-ascii?Q?0YhHNvFZTGfe7FrYJ5cQwZWANJu3PZXAqVgST51dq5tPvBootWiWrjPQt826?=
+ =?us-ascii?Q?snxVMfVnp3uFZwhcgUXHgFlxoIStTwoSoU0znSZRLLirMg4ZTfZH2WSAGFnz?=
+ =?us-ascii?Q?XhiGDECPaPPyehjFKArrj2xtZEhwv41cOXKu/dpH5bKXffl89kBYipzShKyr?=
+ =?us-ascii?Q?ukVg9QP5jKY/0IikhmodWZ2CXpN/RbYvrnlaxZH9YXuZfIab60BTzpDB1pIT?=
+ =?us-ascii?Q?Yl7CHi0wZIr+FjqewU68atsHpuG+E59P5IKE0PAd0Rh5mloubvuNW6ct9I0V?=
+ =?us-ascii?Q?38v3F9DTaIOeH1xBlT0s9D+DK8NLfyjAkMiOdBRLX0d1RyRH6Zh5kxGcrSc2?=
+ =?us-ascii?Q?R0TcEvr2f4sRE923dOggVdfUYeMsopKDfzsGKkqMk8YGdFvUraxtAq7mYEFt?=
+ =?us-ascii?Q?1VirZLCznI4N9d+uUZ4NxTGvcSWvGdkLMmy8eoqdEkZknjuEO/v84LyY6A64?=
+ =?us-ascii?Q?jPv3D1sBqs+xCYNUlB5HVpI4f1q4oLN5IH46vrbj9ojhYmsyp0APfiXncJjz?=
+ =?us-ascii?Q?9rw3lYv81IH6xvK5Iv6BhqZ3E0Ls5qngDK+jFsHP6+pXW0wz2duAk64gBjhL?=
+ =?us-ascii?Q?+RFKcDDaimGUUqwR+to=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 597b857d-8a66-407b-ca41-08dc828f52b3
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB3849.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jun 2024 23:05:26.0284
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: YQjkZKnJ2dsqnkPF+528MQ/wbRKTo37NQm4fq9qsBvEs5Mwblrdg8nlnDG654JuW
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8906
 
-Hi Alexey,
-
-On 2024-05-31 13:44, Alexey Charkov wrote:
-> Hi Jonas,
+On Wed, May 29, 2024 at 05:58:39PM -0700, Nicolin Chen wrote:
+> On Thu, May 30, 2024 at 12:28:43AM +0000, Tian, Kevin wrote:
+> > > From: Nicolin Chen <nicolinc@nvidia.com>
+> > > Sent: Wednesday, May 29, 2024 11:21 AM
+> > > On Wed, May 29, 2024 at 02:58:11AM +0000, Tian, Kevin wrote:
+> > > > My question is why that option is chosen instead of going with 1:1
+> > > > mapping between vSMMU and viommu i.e. letting the kernel to
+> > > > figure out which pSMMU should be sent an invalidation cmd to, as
+> > > > how VT-d is virtualized.
+> > > >
+> > > > I want to know whether doing so is simply to be compatible with
+> > > > what VCMDQ requires, or due to another untold reason.
+> > >
+> > > Because we use viommu as a VMID holder for SMMU. So a pSMMU must
+> > > have its own viommu to store its VMID for a shared s2_hwpt:
+> > >         |-- viommu0 (VMIDx) --|-- pSMMU0 --|
+> > >  vSMMU--|-- viommu1 (VMIDy) --|-- pSMMU1 --|--s2_hwpt
+> > >         |-- viommu2 (VMIDz) --|-- pSMMU2 --|
+> > >
+> > 
+> > there are other options, e.g. you can have one viommu holding multiple
+> > VMIDs each associating to a pSMMU.
 > 
-> On Fri, May 31, 2024 at 3:27 PM Jonas Karlman <jonas@kwiboo.se> wrote:
->>
->> Hi Alexey and Dragan,
->>
->> On 2024-05-30 21:31, Dragan Simic wrote:
->>> Hello Alexey,
->>>
->>
->> [snip]
->>
->>>>>>> That way we'll have no roadblocks if, at some point, we end up with
->>>>>>> having
->>>>>>> different OPPs defined for the RK3588 and the RK3588S variants.  Or
->>>>>>> maybe
->>>>>>> even for the RK3582, which we don't know much about yet.
->>>>>>
->>>>>> Guess we'll deal with that one once we stumble upon an actual RK3582
->>>>>> board out in the wild and heading to the mainline kernel tree :)
->>>>>
->>>>> Of course, that was just an example for the future use.
->>>>
->>>> In fact, I've just discovered that Radxa has recently released Rock 5C
->>>> Lite which is based on RK3582, and starts at just $29 for the 1GB
->>>> version, making it interesting for tinkering. Especially given that
->>>> its GPU, one of the big-core clusters and one of the VPU cores seem to
->>>> be disabled in software (u-boot) rather than in hardware, which means
->>>> there is some chance that a particular SoC specimen would actually
->>>> have them in a working condition and possible to re-enable at no cost.
->>>> Ordered myself one to investigate :)
->>>
->>> Yes, I also saw the RK3582-based ROCK 5C Lite a couple of days ago. :)
->>> It seems that the disabled IP blocks are detected as defective during
->>> the manufacturing, which means that they might work correctly, or might
->>> actually misbehave.  It seems similar to the way old three-core AMD
->>> Phenom II CPUs could sometimes be made quad-core.
->>>
->>
->> I can confirm that the RK3582 include ip-state in OTP indicating
->> unusable cores, any unusable cpu core cannot be taken online and stalls
->> Linux kernel a few extra seconds during boot.
->>
->> Started working on a patch for U-Boot to remove any broken cpu core
->> and/or cluster nodes, similar to what vendor U-Boot does, adopted to
->> work with a mainline DT for RK3588.
+> Well, possibly. But everything previously in a viommu would have
+> to be a list (for number of VMIDs) in the kernel level: not only
+> a VMID list, but also a 2D virtual ID lists, something like:
 > 
-> Superb - it's great to have a patch for it already, thank you for working on it!
-> 
->> On one of my ROCK 5C Lite board one of the cpu cores is unusable, U-Boot
->> removes the related cpu cluster nodes. On another ROCK 5C Lite board one
->> rkvdec core is only marked unusable and all cpu cores can be taken
->> online, U-Boot does nothing in this case. Guessing we should apply
->> similar policy as vendor U-Boot and disable cores anyway.
-> 
-> Is there any misbehavior / instability if you just keep all the
-> unmarked cores online?
+> struct xarray vdev_ids[num_of_vmid]; // per-IOMMU vID to pID lookup
 
-I will run some tests during the weekend and get back with results later.
+I feel it makes most sense that ARM (and maybe everyone) just have a
+viommu per piommu.
 
-> 
-> I think from an end-user perspective it would be better to just enable
-> everything that works, as the reason to unconditionally disable some
-> IP blocks even when they are "good" is quite likely not a technical
-> one but rather a marketing one. It's hard to justify selling chips
-> with different sets of working IP blocks under the same label and the
-> same price, making it easier to just trim them all to a lowest common
-> denominator. On the other hand, once a person has already bought a
-> device where some IP blocks work even if they are not supposed to, why
-> not make use of them? It costs nothing, hurts noone...
+The main argument against is we haven't made it efficient for the VMM
+to support multiple piommus. It has to do a system call per piommu
+each time it processes the cmdq.
 
-I agree, it is probably more related to marketing, licensing and/or
-what is tested.
+But, on the other hand, if you care about invalidation efficiency it
+is kind of silly not to expose the piommus to the guest so that the
+invalidation scope can be appropriately narrowed. Replicating all ASID
+invalidations to all piommus doesn't make alot of sense if the guest
+can know that only one piommu actually needs invalidation.
 
-Vendor U-Boot apply following logic/policy for rk3582 (and rk3583).
+> And a driver in this case would be difficult to get a complete
+> concept of a viommu object since it's core object and shared by
+> all kernel-level IOMMU instances. If a driver wants to extend a
+> viommu object for some additional feature, e.g. VINTF in this
+> series, it would likely have to create another per-driver object
+> and again another list of this kind of objects in struct viommu.
 
-RK3582 policy:
-- always remove gpu
-- always remove both rkvdec cores
-- remove bad rkvenc core, if both are normal, remove rkvenc1 anyway
+Right, we need some kind of per-piommu object because we have
+per-piommu data.
 
-RK3583 policy:
-- always keep gpu
-- remove bad rkvdec core, if both are normal, remove rkvdec1 anyway
-- remove bad rkvenc core, if both are normal, remove rkvenc1 anyway
+> Oh. With regular nested SMMU, there is only one virtual SMMU in
+> the guest VM. No need of copying physical topology. Just the VMM
+> needs to allocate three viommus to add them to a list of its own.
 
-CPU core policy:
-- remove both cores within a cluster having a bad core
-- if core4~7 are all normal, remove core6 and core7 anyway
+I understand the appeal of doing this has been to minimize qemu
+changes in its ACPI parts, if we tackle that instead maybe we should
+just not implement viommu to multiple piommu. It is somewhat
+complicated.
 
-Regards,
-Jonas
-
-> 
-> Best regards,
-> Alexey
-
+Jason
 
