@@ -1,216 +1,113 @@
-Return-Path: <linux-kernel+bounces-197803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0453E8D6F6B
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 12:58:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F3348D6F6E
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 12:58:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8197EB20BDF
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 10:58:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4A541F21904
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 10:58:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC41814EC53;
-	Sat,  1 Jun 2024 10:57:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B99314EC41;
+	Sat,  1 Jun 2024 10:58:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RR+osAes"
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="eYq1ylhk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DCDD208A4;
-	Sat,  1 Jun 2024 10:57:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A1C9208A4;
+	Sat,  1 Jun 2024 10:58:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717239476; cv=none; b=Sc+rwSQJa9o9WC16H0ZJUHXqYf5hab1PMx988nN1RPuF5bRD2PR4MdzB4u1H3oqMOzfGji5OfXzivYLkJtjp5Ga/dOCtUzqWC1RwFWIsXP6pncuxDRndOG7BIlvXLWOdyvGWmusWYzUbf20sfnEvmI2Uh1Apazwxx9dvA9qjJcg=
+	t=1717239494; cv=none; b=st3J9CPOzNyHo952QpuE/DoSLgG3c0MmZAB86BT/r6YcERBMJs85bDxxRsg/ljCImKsEGNssPsWsMRjryk3tM/vrvNg7hFksSDIGTQc3ix5AkqcATMmC5gOH4eMJHKWSM+B28pjsNSFQkEd+aU1+zwEKpFgJGDhqiSO/iHkKN1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717239476; c=relaxed/simple;
-	bh=hjI6zlGmk0XqJ+6m5c0T6h3I3gacZziDQWPru7DqbYg=;
+	s=arc-20240116; t=1717239494; c=relaxed/simple;
+	bh=wlnpLq+45J4tfLZFkhftuMQPmEq2WrajzpJIs6Fj/hk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HEC277X5vy0JuRD1jjMR7hhb0RGc80uxX3oiqxS8g2w5FttznM6EM7kEPYFoFgTsnWHxs8lckjh+008r/uCJk6l0LQgEhJOxujgaqdbSzYh3hpFido9we0LJuEt/Ib+mn5qIEHCmXJc9uBdP5whrBpW15kQP7OYEHjFH3hPla8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RR+osAes; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05F3FC116B1;
-	Sat,  1 Jun 2024 10:57:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717239475;
-	bh=hjI6zlGmk0XqJ+6m5c0T6h3I3gacZziDQWPru7DqbYg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RR+osAesOUjdoXTTA0qTuMAr/2oy2KdpBDQgwFJoxN/XgIbvP/ljF8wah+ZfQMZCh
-	 7uD+sO49jt+3tXid+1jbmovedox3WD9FVA5ZvTDWcfwFCzhBmsRFiSIApqjr/0U+P/
-	 KbBhT+foqhUFl31iS/NeX2uzTvEWr18JGsJ518I1xPo+ODUBPVeRt4JL5H6XGFuFs9
-	 ems+gtnk6f2XSiABMHFe3/4gIUiBRbadXG+NR4xKAgf0ErdsYLpk8hWVN90STYsmAl
-	 xBpWjCD3s5nE61GhQ2Quf2mANrs3UKpIKddhLk6tjTsZ77A4Q/ngI0bBMtbF9EUZbK
-	 G/ZHioj/1wBQw==
-Date: Sat, 1 Jun 2024 12:57:48 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Trevor Gamblin <tgamblin@baylibre.com>
-Cc: linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	michael.hennerich@analog.com, nuno.sa@analog.com, dlechner@baylibre.com, 
-	devicetree@vger.kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org
-Subject: Re: [PATCH 2/2 v5] pwm: Add driver for AXI PWM generator
-Message-ID: <de2trti4ilp3zw47u6qddg64ghiosvnrmknu3lkce635qushvq@qcoz3nfjuyrx>
-References: <20240424125850.4189116-1-tgamblin@baylibre.com>
- <20240424125850.4189116-3-tgamblin@baylibre.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mRfg4n+U/gaZ/bF1Z/JYgkLdCcvtMAW1AEaCm9JyNEyzMdGtQTIbqqC/2GR2bRkS7AelJdgHH1qqz7vneIuYJxlMTcOAtMhmNVM9ekN4PkJcWmcgPBdcH5Z4i3tDGScFHbXxA7iT2m+5kRQlhoyBfz168cVXQsCQlYVzP5ENR94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=eYq1ylhk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD51AC116B1;
+	Sat,  1 Jun 2024 10:58:12 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="eYq1ylhk"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1717239490;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rRRJ0TcbQymOl5qbgMPazXzODCKq3LQRPQG3lk7mexg=;
+	b=eYq1ylhkfkVMl4Wa2klcb9OTPRym7AB6TOi2siOM5nXpkbGtlvmG1alalBB48r18P1GcFu
+	pfO1CtOvigwoTmajePI63BjHo3mY8um8toV9l+aa8+CBRsmRxBnCcN10pj/nWKxp4/LpiP
+	FUulbAb9ZnxwjoXbxnwI3ueWWtUXM0Q=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 386d20b2 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Sat, 1 Jun 2024 10:58:10 +0000 (UTC)
+Date: Sat, 1 Jun 2024 12:58:07 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev, tglx@linutronix.de,
+	linux-crypto@vger.kernel.org, linux-api@vger.kernel.org,
+	x86@kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
+	Carlos O'Donell <carlos@redhat.com>,
+	Florian Weimer <fweimer@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+	Jann Horn <jannh@google.com>,
+	Christian Brauner <brauner@kernel.org>,
+	David Hildenbrand <dhildenb@redhat.com>
+Subject: Re: [PATCH v16 3/5] arch: allocate vgetrandom_alloc() syscall number
+Message-ID: <Zlr-v8vd0JHKYtM-@zx2c4.com>
+References: <20240528122352.2485958-1-Jason@zx2c4.com>
+ <20240528122352.2485958-4-Jason@zx2c4.com>
+ <CAMuHMdVJ8KpaqnWeHCMbJdf-Am6uY0N+uFM+OVxWTZH37TQvxw@mail.gmail.com>
+ <ZlXX0cFl5RANHNOQ@zx2c4.com>
+ <CAHmME9qZ2Xm68HQqfOmasWRoaW4xfAFAiLfw-pFbhq2i0rHz=w@mail.gmail.com>
+ <20240531022621.GC1502@sol.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="wyvehzs256ug4w5r"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240424125850.4189116-3-tgamblin@baylibre.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240531022621.GC1502@sol.localdomain>
 
+On Thu, May 30, 2024 at 07:26:21PM -0700, Eric Biggers wrote:
+> On Tue, May 28, 2024 at 03:28:58PM +0200, Jason A. Donenfeld wrote:
+> > On Tue, May 28, 2024 at 3:10 PM Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+> > >
+> > > On Tue, May 28, 2024 at 03:08:00PM +0200, Geert Uytterhoeven wrote:
+> > > > Hi Jason,
+> > > >
+> > > > On Tue, May 28, 2024 at 2:24 PM Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+> > > > > Add vgetrandom_alloc() as syscall 462 (or 572 on alpha) by adding it to
+> > > > > all of the various syscall.tbl and unistd.h files.
+> > > > >
+> > > > > Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> > > > > Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
+> > > >
+> > > > As of commit ff388fe5c481d39c ("mseal: wire up mseal syscall") in
+> > > > v6.10-rc1, 462 is already taken.
+> > > >
+> > > > v17 ++ ;-)
+> > >
+> > > Oy! Thanks. I should have thought to rebase on rc1 anyway before posting
+> > > this.
+> > 
+> > Sorted in https://git.kernel.org/pub/scm/linux/kernel/git/crng/random.git/log/?h=vdso
+> > for the time being.
+> > 
+> 
+> Please also get in the habit of using the --base option to git format-patch, so
+> that it's actually possible to apply patches without guessing the base commit.
 
---wyvehzs256ug4w5r
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I recall you mentioning this to me in the past. I'll experiment with it
+for the v+1.
 
-Hello Trevor,
-
-thanks for your patience waiting for me to come around looking at your
-patch. I only found some trivial stuff to fix this time around.
-
-On Wed, Apr 24, 2024 at 08:58:48AM -0400, Trevor Gamblin wrote:
-> diff --git a/drivers/pwm/pwm-axi-pwmgen.c b/drivers/pwm/pwm-axi-pwmgen.c
-> new file mode 100644
-> index 000000000000..e0bf90cc2ba3
-> --- /dev/null
-> +++ b/drivers/pwm/pwm-axi-pwmgen.c
-> @@ -0,0 +1,248 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Analog Devices AXI PWM generator
-> + *
-> + * Copyright 2024 Analog Devices Inc.
-> + * Copyright 2024 Baylibre SAS
-
-If there is public documentation available for the device, extra points
-for a link to it here.
-
-> [...]
-> +static int axi_pwmgen_setup(struct regmap *regmap, struct device *dev)
-> +{
-> +	int ret;
-> +	u32 val;
-> +
-> +	ret = regmap_read(regmap, AXI_PWMGEN_REG_CORE_MAGIC, &val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (val != AXI_PWMGEN_REG_CORE_MAGIC_VAL)
-> +		return dev_err_probe(dev, -ENODEV,
-> +			"failed to read expected value from register: got %08x, expected %08x\n",
-> +			val,
-> +			AXI_PWMGEN_REG_CORE_MAGIC_VAL);
-
-Join these two lines, please.
-
-> +	ret = regmap_read(regmap, AXI_PWMGEN_REG_CORE_VERSION, &val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (ADI_AXI_PCORE_VER_MAJOR(val) != 2) {
-> +		return dev_err_probe(dev, -ENODEV, "Unsupported peripheral version %u.%u.%u\n",
-> +			ADI_AXI_PCORE_VER_MAJOR(val),
-> +			ADI_AXI_PCORE_VER_MINOR(val),
-> +			ADI_AXI_PCORE_VER_PATCH(val));
-> +	}
-> +
-> +	/* Enable the core */
-> +	ret = regmap_update_bits(regmap, AXI_PWMGEN_REG_CONFIG, AXI_PWMGEN_REG_CONFIG_RESET, 0);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = regmap_read(regmap, AXI_PWMGEN_REG_NPWM, &val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Return the number of PWMs */
-> +	return val;
-
-If the AXI_PWMGEN_REG_NPWM register contains a value >= 0x80000000, the
-return value is considered a negative error code. Not sure how necessary
-it is to check for this case. I'll leave that to you.
-
-> +}
-> [...]
-> +static int axi_pwmgen_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct regmap *regmap;
-> +	struct pwm_chip *chip;
-> +	struct axi_pwmgen_ddata *ddata;
-> +	struct clk *clk;
-> +	void __iomem *io_base;
-> +	int ret;
-> +
-> +	io_base = devm_platform_ioremap_resource(pdev, 0);
-> +	if (IS_ERR(io_base))
-> +		return PTR_ERR(io_base);
-> +
-> +	regmap = devm_regmap_init_mmio(dev, io_base, &axi_pwmgen_regmap_config);
-> +	if (IS_ERR(regmap))
-> +		return dev_err_probe(dev, PTR_ERR(regmap),
-> +				     "failed to init register map\n");
-> +
-> +	ret = axi_pwmgen_setup(regmap, dev);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	chip = devm_pwmchip_alloc(dev, ret, sizeof(*ddata));
-> +	if (IS_ERR(chip))
-> +		return PTR_ERR(chip);
-> +	ddata = pwmchip_get_drvdata(chip);
-> +	ddata->regmap = regmap;
-> +
-> +	clk = devm_clk_get_enabled(dev, NULL);
-> +	if (IS_ERR(clk))
-> +		return dev_err_probe(dev, PTR_ERR(clk), "failed to get clock\n");
-> +
-> +	ret = devm_clk_rate_exclusive_get(dev, clk);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "failed to get exclusive rate\n");
-> +
-> +	ret = devm_add_action_or_reset(dev, axi_pwmgen_clk_rate_exclusive_put, clk);
-> +	if (ret)
-> +		return ret;
-
-this should be dropped as devm_clk_rate_exclusive_get() already takes
-care for calling clk_rate_exclusive_put().
-
-> +	ddata->clk_rate_hz = clk_get_rate(clk);
-> +	if (!ddata->clk_rate_hz || ddata->clk_rate_hz > NSEC_PER_SEC)
-> +		return dev_err_probe(dev, -EINVAL,
-> +				     "Invalid clock rate: %lu\n", ddata->clk_rate_hz);
-> +
-> +	chip->ops = &axi_pwmgen_pwm_ops;
-> +	chip->atomic = true;
-> +
-> +	ret = devm_pwmchip_add(dev, chip);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "could not add PWM chip\n");
-> +
-> +	return 0;
-> +}
-
-Best regards
-Uwe
-
---wyvehzs256ug4w5r
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmZa/poACgkQj4D7WH0S
-/k7Ccwf/XbVPD01QvCpVWIitYjlnQFA3OeXZOb78SAPUiKsNRvo4iQ+meWKOoUf8
-PGXMMBuVKNkndiKXn0AIIp4XIsmXv+8J8/p2TnTrTLE1OpB6gc3TTtdp0Y8LTRDJ
-mFsk+0jrGHwc5GG8OGehTKabJzUdCwJh5K3fYwsbinFob9ud52oiLDf6OPPQg8Wi
-m2DE3HLo2tGCzJvaioTEipN/M0vqJpmAkg+B10cNAIBqVEPn+tQxA4/HrD5GF29c
-l0YDjYj9se/IsyymwyREnm5/yEzIm6sGed+FVCowawq7P74SPBlIKtfMYEuhKJ+/
-tI16LwfQxQtdQKMqIbpdyEOJu8/A/A==
-=EJQa
------END PGP SIGNATURE-----
-
---wyvehzs256ug4w5r--
+Jason
 
