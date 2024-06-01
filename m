@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-197912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63E2A8D70A6
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 17:06:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A83358D70AA
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 17:06:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12DC41F23AE9
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 15:06:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46C011F23D79
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 15:06:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FCD01534EF;
-	Sat,  1 Jun 2024 15:05:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F21D71E520;
+	Sat,  1 Jun 2024 15:05:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="Kjz2fM/L"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="BBBbQ44E"
+Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF47F1534EA
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Jun 2024 15:05:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8BE71534EA
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Jun 2024 15:05:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717254312; cv=none; b=pN/HNEU9TxISCwiQ1LqRghvCbbxXdFQ4UWF0C/LxC5mCEUg3Ayl/1zr7wDb/FCc91evtPkVIgywS5YvSsGYXDNMG+TsIFcwCeM/+mDzfmqSzWr7n9BU1KYUOV1oib8Rr3KIVyvj0P7yuE//7NeqG9APA0Ek51i1uwA515o/EtFo=
+	t=1717254321; cv=none; b=llkV6B1CK8ojnY/HxR6bv4U29B1zlD9z1ovejDrvyu3NH8EA3ARZd/FUUGY0hynO3ZRH21YVpEjTKJ9mhCJYXlbIaG9P2SgdEBHJU/ifYvNOBdVwN/QDzL2EXVKbNhPDWuLP+WKFQiXkvtUhiNycm/BY4A8RzdacafDEz9SM3Fg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717254312; c=relaxed/simple;
-	bh=MS3pYncxgjtaz9tqccBN5FjLqLx8afnodSL+vXxHJSE=;
+	s=arc-20240116; t=1717254321; c=relaxed/simple;
+	bh=W0OyoZZELdi3XoEeDkVWUSqd7/veUNR99vJr5QS1Ml4=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Qh07ELgwGrCCAPNb3BoL2bt0+qjeelXxIblfGsVuZRwhDuvXQ8PdVYqpuzmOE0JaA+flp543d3VTX1jvG7r8h7z6um8Dlh3DCukV2bj+T/fvbf6ooAWoEqiL9oxW+wpCdUhyTPK0PQPI1jSUjVM78UWmw8qMWRGZ9/fKCMduEDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=Kjz2fM/L; arc=none smtp.client-ip=209.85.216.54
+	 MIME-Version; b=lylRllv0Omuc/YQQh7ScrauSDQQNIRYvDM/bTCKvrhsIDGUEEDGeAdt44hEjuOHKOBsqpk68KeictX6WtbbfRpQ2zMzMX6tbGfIFXULFZmtx7+gNwEKdCKFukus3OqVp7en+7BF3ckkZKSMTxuv7tabsazAchfIi0q/wZRYtGHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=BBBbQ44E; arc=none smtp.client-ip=209.85.166.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2c1e6fcb2f1so1139053a91.1
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Jun 2024 08:05:11 -0700 (PDT)
+Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-36ddf683ad7so12232405ab.2
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Jun 2024 08:05:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1717254311; x=1717859111; darn=vger.kernel.org;
+        d=ventanamicro.com; s=google; t=1717254318; x=1717859118; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=B4M/mYQsiafz27308Ygh9HE2jpjvmPpXdwbsDZU0p4U=;
-        b=Kjz2fM/LXEMXrWPgy3sD+Wi5PZRi93ASTcmKlDmLh3ZGN0oPWD1oeZdpMNCKrd2QMN
-         MrhFdYfjFFM3RS6qtHorNm7M7CfuypUyrkZpnY3FD68PI//gs0qtSjwEAPQXu0Ng/2sw
-         nOFWvBQcnJVJyLituErWYCrzA8IYz68IyEoyckiu1lQaWO6JaHD5zABHo1wuAil2TJ2K
-         04h89Uk4D+8+/SfPXscz1RzEE5gIDVeJVqVs6+Fy7FYIIKcTr47CPgOPe/ZIxpHzlKWT
-         1KQw3Z6ESHZu/i9lNKHViesBqeju7+vOBZFy5DfS5K7KzhQavvh60k5MvtXtsM95WffU
-         SwDA==
+        bh=Xln7tORKkifGXhXo2mks++Fmg8FnhH/zBNmrN9CYLQo=;
+        b=BBBbQ44EhKJlAEZX1vP2lnI4YaNZsvpym9ajQvc8XbakKS0jNtInMBSr7SEw0Ulhx9
+         LplchPBhUaYXkb3cxGAcnZYodC7ZK3wyyF7ZKUbX0zUgtageYczPHWd0TLTqTOjLF4ou
+         OHuTI1FEuaExMX+cRQhqfORaFOu0BktQOwoWq2djKiPvMfyeuDUl7Yf2gxR5ClqbQmZP
+         8ABTFCvSUn7411sCWThf+A6Ezawxpv632d5aiaXVxHMNj3Gl+nEopUB+5OsBw4/oPkhY
+         hh7wQvEHoblnKMugUX0rcM1SJgrDQXctt0k9zX2YseOK+/zETkvkDfGcCLZ6hrrCj7WL
+         8VRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717254311; x=1717859111;
+        d=1e100.net; s=20230601; t=1717254318; x=1717859118;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=B4M/mYQsiafz27308Ygh9HE2jpjvmPpXdwbsDZU0p4U=;
-        b=MBFrv6Q1jGBSCyEfW10oL/4wPMz+oR/ReoWIN6UR5boBG7qjy8iAYUnobadDyZXB/i
-         7nY6AHyd6bfCvJr2hCZJjrgzBTRmaUUCEMJPq8xwDpAAKSFQJVupeQyr1McW1/L6LG2w
-         ur9/QWiedhnkKovGJpHVtjbThkxJ89WdV3owDq2M4Jy8eK8LBA3XFqxWynRtUU4UgqzH
-         mJkUH5W22mWN5IGyNaIedd3OE68Qi+SPHt6Li4etAXML0SNfWrIG+AXno3NcqONyy1iL
-         rs1ot+QlzQTrJjhyi6w/Fqdh3S0xt8xan72a02Sz/RsK3AnFMhoroAieObBPkYEMvNtp
-         AJfw==
-X-Forwarded-Encrypted: i=1; AJvYcCUI/wnr1o/VLaHUIKyUGr5P0CIgkF4PnbY5GPtAVyhumEgXBAXNfq+VVcBtvldu2TFGS/YSJtOUH4lOOFqf9w40gnoBMBKIPyq7Tf0j
-X-Gm-Message-State: AOJu0YxFOtucZCeYn+UXLDleVLXNKUg2BsUtc/kPP4YorUijZhw1JxVE
-	7tI6uFmYNCa4zDls22tCMYhuYQKh1qJG+b0aFIOTmBWQujFcu/HGxXWpcVf3svY=
-X-Google-Smtp-Source: AGHT+IH8CUtTilyts1LQmIwjtfiqczpJ90H7WVJzan1b3vUk1N8n0tjhHWRHLwYTOBrAh4nFvjs79Q==
-X-Received: by 2002:a17:90b:1bcd:b0:2c2:a2a:6151 with SMTP id 98e67ed59e1d1-2c20a2a631emr797621a91.39.1717254310835;
-        Sat, 01 Jun 2024 08:05:10 -0700 (PDT)
+        bh=Xln7tORKkifGXhXo2mks++Fmg8FnhH/zBNmrN9CYLQo=;
+        b=X/yv6uBvtwV/A1lmHgoQBwriCtj9gbHRXJ377YPoZ5FOzevi1q3bcPo+5NyB1W81fR
+         JU9piqSUYlH3+SDEfiD0J9ksak15McdhsUTZ4ezf5daRvfG4IzcSkb5+8teOwe900Mz4
+         pYAfuOKvc22KwIfycwmGCQaTlNOmBZDiDcgL+jCdZpTt2M7GnopC2AbZrgIx/iRx4T29
+         RvRBfJhzRwFzIm9gdxujqqoZ3Hj5OI2i8cveCbOYp4wofdEBFDTi2HFyh5XKmwN9iWjW
+         64G98/nil7by8/Yt/rZyjT/JDxDA4yskO1nha/gZA4yGXn0MPYR48OurdOKtd8+WfCsc
+         Sldg==
+X-Forwarded-Encrypted: i=1; AJvYcCVoytVcXxx8AglPpXLinSVL5lEz2sQ4CJAVmsw31hP4fhzglERUAcNPL3hneioce0naCTlgfyk8RoQ7kGVzz+0++Jvd1zrYdqe6vPRS
+X-Gm-Message-State: AOJu0YyaaRbM1UExTWLzYn0uWtHBkt6K+OirNJ04mX1Ip9EQeUSpvGHi
+	nwFx3q91hUPe23atgji5PpeGcve9GyzZD2WE35fW9ctNyft503+MHj1ndin76Xo=
+X-Google-Smtp-Source: AGHT+IGwBTAKeY5fhp4d/uHQX4CpW74WCuXLPUcacrekwQIOgiTzG+e+uX/rDZRV2vhHKygHe3+bDg==
+X-Received: by 2002:a05:6e02:198a:b0:374:5641:bb8f with SMTP id e9e14a558f8ab-3748b9dd6a4mr60478395ab.27.1717254317893;
+        Sat, 01 Jun 2024 08:05:17 -0700 (PDT)
 Received: from sunil-pc.Dlink ([106.51.187.237])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6c35a4ba741sm2559410a12.85.2024.06.01.08.05.04
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6c35a4ba741sm2559410a12.85.2024.06.01.08.05.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 01 Jun 2024 08:05:10 -0700 (PDT)
+        Sat, 01 Jun 2024 08:05:17 -0700 (PDT)
 From: Sunil V L <sunilvl@ventanamicro.com>
 To: linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
@@ -93,9 +93,9 @@ Cc: Catalin Marinas <catalin.marinas@arm.com>,
 	Haibo1 Xu <haibo1.xu@intel.com>,
 	=?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@kernel.org>,
 	Sunil V L <sunilvl@ventanamicro.com>
-Subject: [PATCH v6 07/17] ACPI: bus: Add RINTC IRQ model for RISC-V
-Date: Sat,  1 Jun 2024 20:34:01 +0530
-Message-Id: <20240601150411.1929783-8-sunilvl@ventanamicro.com>
+Subject: [PATCH v6 08/17] ACPI: pci_link: Clear the dependencies after probe
+Date: Sat,  1 Jun 2024 20:34:02 +0530
+Message-Id: <20240601150411.1929783-9-sunilvl@ventanamicro.com>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20240601150411.1929783-1-sunilvl@ventanamicro.com>
 References: <20240601150411.1929783-1-sunilvl@ventanamicro.com>
@@ -107,39 +107,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add the IRQ model for RISC-V INTC so that acpi_set_irq_model can use this
-for RISC-V.
+RISC-V platforms need to use dependencies between PCI host bridge, Link
+devices and the interrupt controllers to ensure probe order. The
+dependency is like below.
+
+Interrupt controller <-- Link Device <-- PCI Host bridge.
+
+If there is no dependency added between Link device and PCI Host Bridge,
+then the PCI end points can get probed prior to link device, unable to
+get mapping for INTx.
+
+So, add the link device's HID to dependency honor list and also clear it
+after its probe.
 
 Signed-off-by: Sunil V L <sunilvl@ventanamicro.com>
 ---
- drivers/acpi/bus.c   | 3 +++
- include/linux/acpi.h | 1 +
- 2 files changed, 4 insertions(+)
+ drivers/acpi/pci_link.c | 2 ++
+ drivers/acpi/scan.c     | 1 +
+ 2 files changed, 3 insertions(+)
 
-diff --git a/drivers/acpi/bus.c b/drivers/acpi/bus.c
-index 8d0710ade8c6..d5286e39668e 100644
---- a/drivers/acpi/bus.c
-+++ b/drivers/acpi/bus.c
-@@ -1201,6 +1201,9 @@ static int __init acpi_bus_init_irq(void)
- 	case ACPI_IRQ_MODEL_LPIC:
- 		message = "LPIC";
- 		break;
-+	case ACPI_IRQ_MODEL_RINTC:
-+		message = "RINTC";
-+		break;
- 	default:
- 		pr_info("Unknown interrupt routing model\n");
- 		return -ENODEV;
-diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-index 0c6d9539f737..3dd67ee09c39 100644
---- a/include/linux/acpi.h
-+++ b/include/linux/acpi.h
-@@ -107,6 +107,7 @@ enum acpi_irq_model_id {
- 	ACPI_IRQ_MODEL_PLATFORM,
- 	ACPI_IRQ_MODEL_GIC,
- 	ACPI_IRQ_MODEL_LPIC,
-+	ACPI_IRQ_MODEL_RINTC,
- 	ACPI_IRQ_MODEL_COUNT
+diff --git a/drivers/acpi/pci_link.c b/drivers/acpi/pci_link.c
+index aa1038b8aec4..b727db968f33 100644
+--- a/drivers/acpi/pci_link.c
++++ b/drivers/acpi/pci_link.c
+@@ -748,6 +748,8 @@ static int acpi_pci_link_add(struct acpi_device *device,
+ 	if (result)
+ 		kfree(link);
+ 
++	acpi_dev_clear_dependencies(device);
++
+ 	return result < 0 ? result : 1;
+ }
+ 
+diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
+index 918e71fc54cb..0280056a326b 100644
+--- a/drivers/acpi/scan.c
++++ b/drivers/acpi/scan.c
+@@ -834,6 +834,7 @@ static const char * const acpi_honor_dep_ids[] = {
+ 	"INTC10CF", /* IVSC (MTL) driver must be loaded to allow i2c access to camera sensors */
+ 	"RSCV0001", /* RISC-V PLIC */
+ 	"RSCV0002", /* RISC-V APLIC */
++	"PNP0C0F",  /* PCI Link Device */
+ 	NULL
  };
  
 -- 
