@@ -1,384 +1,168 @@
-Return-Path: <linux-kernel+bounces-197805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CE358D6F72
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 13:11:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 498A18D6F75
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 13:12:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7AEF28333A
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 11:11:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B51EA1F228E1
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 11:12:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F095714E2F9;
-	Sat,  1 Jun 2024 11:11:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=metaspace-dk.20230601.gappssmtp.com header.i=@metaspace-dk.20230601.gappssmtp.com header.b="tF1gPEep"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2FDC823DD;
+	Sat,  1 Jun 2024 11:12:37 +0000 (UTC)
+Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4272C208B0
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Jun 2024 11:11:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1DBB7C6EB
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Jun 2024 11:12:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717240281; cv=none; b=E7SuXIPfS4aqqdY1XRwipSMgFoWfnjndlsPfILyTEJ1hwgHGMSygG/p5cd851ZPJzWYsP/QgYliruo28uFPV05g8Gix0+ZQs+8NKYbYmpNXbUlEzcKpvSdoWFvIkMQpXkJtz3wk/0UGmCceN/NV1k5PJlPndtJDS+TzJ6KEZTMU=
+	t=1717240357; cv=none; b=MWuBI0ZqdPw+2mK6tOhpkg3dHd2jZsZiAR7Lj8uFSJE1w2vv1WD02oTFfUSyh/DQf+9ofdam6k42mIlTAduJS4OtK5SH3xkYFY1VD93Lgpz75u76d8HgL0K+cznEn4vidPd2e35FuYTwULZicQyTVoj0aWbtVn/spGAknMDJsqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717240281; c=relaxed/simple;
-	bh=21N+PVuembHrqSBNJBTVoVgQuu3mMVXmFN4nRBYEHgs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ZVuch5TmE/D6B3ivUpa7YGcg6RaeMINyGCSWQ6EakEDnGdgnSgA5cY+4it02Bwn/GRF1spnMvTrna3lCERw0r3WprUQw0o2HGYAjkRGmZnPaegapbSz8wUOkRk+purM5JgYZhCn9ln6I2C0HDIuL0FZLzLtJU8Kssr72IHTnXPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=metaspace.dk; spf=none smtp.mailfrom=metaspace.dk; dkim=pass (2048-bit key) header.d=metaspace-dk.20230601.gappssmtp.com header.i=@metaspace-dk.20230601.gappssmtp.com header.b=tF1gPEep; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=metaspace.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=metaspace.dk
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a6858bdc9ddso167590166b.2
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Jun 2024 04:11:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=metaspace-dk.20230601.gappssmtp.com; s=20230601; t=1717240276; x=1717845076; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:cc:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ye/eFIIg5/G1qr1KkNcR29iqsvNe7JD8BDAscA4I/gc=;
-        b=tF1gPEepT/610atnyrTn82H9m4bozGy+zY3hUxcwfmljPhx6+2W0Me5oRr9IihWDEQ
-         +IqC21zl4RDWXMyTGlqRWLaZ93iGmbtXZ+ar5XVPlAsy2zQQVptdsmDqWLNGECoF8SpX
-         TGFBYqaoU11LrTkfdt5H04a4SGwJkUSVaXZrfV97tuBJwk3T6WFUXKJFX2PLbtAZXrMm
-         wswcMJR3f5Gl2IMgxnxOfhBkW8sTeTAsWuZlO9pRxWPwrFKKA09LlJZnYD/4i+6GVwnz
-         CMYFRRUWpCjQYdMkwWANwgzv3ODR2gJOl2IxFsVjBqzX4j3SUDdEjk32hPI3dG5QLKUD
-         7QoA==
+	s=arc-20240116; t=1717240357; c=relaxed/simple;
+	bh=32WwZF3/QA1CjNqfrvhrAZCOhOPsDYeB4078HiZ1lo8=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ibbUjCKJZQogBD+AUOG61+MyJwZ3vNSLbH4QnrERRp1Gk5icd3SVx82RLHK33dZ2A0G2SSyVDu9NhnrBP38i/fCzpcmiSu71iLe9CIrHliuuvswy/9MJXK93r3uD78kjC7u8bcpkYe3IrhyUO95PQRbxoHuNfCjDhT5YXBowDgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-7eada05bd3bso341327039f.0
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Jun 2024 04:12:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717240276; x=1717845076;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ye/eFIIg5/G1qr1KkNcR29iqsvNe7JD8BDAscA4I/gc=;
-        b=FvM7or2eSrcXFQld9RnZhb9sRvnZt/kI+VjfMkeboHWWkl1Gouc6sBRUfHGQj2pxuf
-         41DBQkxSKTh6tvDyzlCjKjQljE5oDA4dLihI2oWvhj7MZ9Ao46oHxPd9bsMezer6IuTt
-         qsUfah4/KS8eqsYRsBTjTdsQYxbNzuXPafMOe5HTxH1XP7rqrD2YOccIABo4/xkKynt4
-         +NwOKqY7rocNVbmn5UhX8XvuT6/FyHFoU7fLEWuTAd5XZG8TXQsZf/OTgefYazoPjkWW
-         l5N58VeMKmq64X+xLHCKAkBAc/HhiV6asnOPhMxqvK0S24M93aqEdopS4T2UA8Hoxt97
-         UHUw==
-X-Forwarded-Encrypted: i=1; AJvYcCVcOVooS8lAjfe2MhBZoFbbHKgvfJGylG7PL0bA3jbQ3jMbdqzNm/qDUtb7QjgRPXHbF9rOC+AAkH2C5C2gvs25VNx8pciPfDGFyjTa
-X-Gm-Message-State: AOJu0YwtG0yFUEd3QAc30YNS3ZHFfZW8zQxM5Tc4vlOFkXeAYGCQnYwE
-	NVD+29ygyYJTZQ3oqX4JkwOCdwiwlf65/M19rwvmNOcALovD899fqSpA3+1ShdE=
-X-Google-Smtp-Source: AGHT+IFytQ5yIPI3lBnNUgqxPc+2VPf3VD9PmRwyD0eSmowzhfwvJg9iPrDwl4lTyDJgoRGNIzyRlg==
-X-Received: by 2002:a17:906:6d06:b0:a68:b0f2:1d95 with SMTP id a640c23a62f3a-a68b0f21f73mr81382566b.71.1717240276238;
-        Sat, 01 Jun 2024 04:11:16 -0700 (PDT)
-Received: from localhost ([79.142.230.34])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a68c5539b80sm24885166b.168.2024.06.01.04.11.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 01 Jun 2024 04:11:15 -0700 (PDT)
-From: Andreas Hindborg <nmi@metaspace.dk>
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Jens Axboe <axboe@kernel.dk>,  Christoph Hellwig <hch@lst.de>,  Keith
- Busch <kbusch@kernel.org>,  Damien Le Moal <dlemoal@kernel.org>,  Bart Van
- Assche <bvanassche@acm.org>,  Hannes Reinecke <hare@suse.de>,  Ming Lei
- <ming.lei@redhat.com>,  "linux-block@vger.kernel.org"
- <linux-block@vger.kernel.org>,  Andreas Hindborg <a.hindborg@samsung.com>,
-  Wedson Almeida Filho <wedsonaf@gmail.com>,  Greg KH
- <gregkh@linuxfoundation.org>,  Matthew Wilcox <willy@infradead.org>,
-  Miguel Ojeda <ojeda@kernel.org>,  Alex Gaynor <alex.gaynor@gmail.com>,
-  Boqun Feng <boqun.feng@gmail.com>,  Gary Guo <gary@garyguo.net>,
-  =?utf-8?Q?Bj=C3=B6rn?=
- Roy Baron <bjorn3_gh@protonmail.com>,  Alice Ryhl <aliceryhl@google.com>,
-  Chaitanya Kulkarni <chaitanyak@nvidia.com>,  Luis Chamberlain
- <mcgrof@kernel.org>,  Yexuan Yang <1182282462@bupt.edu.cn>,  Sergio
- =?utf-8?Q?Gonz=C3=A1lez?= Collado <sergio.collado@gmail.com>,  Joel
- Granados
- <j.granados@samsung.com>,  "Pankaj Raghav (Samsung)"
- <kernel@pankajraghav.com>,  Daniel Gomez <da.gomez@samsung.com>,  Niklas
- Cassel <Niklas.Cassel@wdc.com>,  Philipp Stanner <pstanner@redhat.com>,
-  Conor Dooley <conor@kernel.org>,  Johannes Thumshirn
- <Johannes.Thumshirn@wdc.com>,  Matias =?utf-8?Q?Bj=C3=B8rling?=
- <m@bjorling.me>,  open list
- <linux-kernel@vger.kernel.org>,  "rust-for-linux@vger.kernel.org"
- <rust-for-linux@vger.kernel.org>,  "lsf-pc@lists.linux-foundation.org"
- <lsf-pc@lists.linux-foundation.org>,  "gost.dev@samsung.com"
- <gost.dev@samsung.com>
-Subject: Re: [PATCH v3 1/3] rust: block: introduce `kernel::block::mq` module
-In-Reply-To: <47a8ce04-3901-49ae-abac-a7d85901f980@proton.me> (Benno Lossin's
-	message of "Sat, 01 Jun 2024 09:43:47 +0000")
-References: <20240601081806.531954-1-nmi@metaspace.dk>
-	<20240601081806.531954-2-nmi@metaspace.dk>
-	<47a8ce04-3901-49ae-abac-a7d85901f980@proton.me>
-Date: Sat, 01 Jun 2024 13:11:05 +0200
-Message-ID: <87ikysor3q.fsf@metaspace.dk>
+        d=1e100.net; s=20230601; t=1717240355; x=1717845155;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=haJLjVBSN5VVEyOIvDxDEpwNuq4r9JOqsfVuXZhRM44=;
+        b=bE/KKZ3i+6PltYEEMkNu6DYaVadBUnZ0HJljWYbSZaYpmNNNVopuGaMm/DnBxQ9Vib
+         7xwv+uhvHDxbAdxI5/fe3+3RNjLdaRilbou8z9AbJZpv0YeW+gErvd2uHMSKDQ2Xjnhg
+         o5jhHo+3zyD6OEwd04A97rmReYwiG4RdjTjK3SUVh+AmQVk0ztY/n/PTYRYbf/s/Tkb2
+         SPxaIgLeKRMoiLRxCeF+0TEnf+iuASPU81Yn+5SBsi7o7PGf+6HXrfj5Sf7wjJ8Two6E
+         wsD7P1UZ1rGZrwq/7MBYAns1f5bIQqZHdbBji1NED2Ri0ggcLlR8wXJQrkml2HmHi7VD
+         2DAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVFt1nG5+c7tZVYioey0YnlHhS1DFEHj5bce0+kQCKr1OTn2eI0Cj9XpZZX1JW7HOzSz7TwScQ8+RgTXQb2/CJU5D3PgMXtdjGWE/Qn
+X-Gm-Message-State: AOJu0YxkuCiODCLHFWnREBbXdgfaA2WAguQAhPfktf/2Z8sGsfNy8bj2
+	pD31a4WollcIPXSwLZWKWvSRTPZQ87rwF4NP0c6Jdn4TVusvu4NR/aiF5zMxjsxpG7Pu2tfy5OP
+	/6CFKxRz4AMd11jI9Uu6/8k8S0JcPHJDtQMxJatOJYKl2Kw7YN1W6VKU=
+X-Google-Smtp-Source: AGHT+IE8BMZGXn3e3+Odr4QpT5aqczHVeg+2m0ardriFrn+W6qy/cyJSWdu/KFWbM1gO3dPBG7mgZZw1R7BNOJqbyxog6AtFSrrB
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-Received: by 2002:a05:6602:6425:b0:7ea:fe9a:8055 with SMTP id
+ ca18e2360f4ac-7eafff3441bmr32930239f.2.1717240355125; Sat, 01 Jun 2024
+ 04:12:35 -0700 (PDT)
+Date: Sat, 01 Jun 2024 04:12:35 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000005c8f0a0619d22d65@google.com>
+Subject: [syzbot] [xfs?] BUG: corrupted list in xlog_cil_commit
+From: syzbot <syzbot+ea15576a86ef3f03216a@syzkaller.appspotmail.com>
+To: chandan.babu@oracle.com, djwong@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Benno Lossin <benno.lossin@proton.me> writes:
+Hello,
 
-> On 01.06.24 10:18, Andreas Hindborg wrote:
->> From: Andreas Hindborg <a.hindborg@samsung.com>
->
-> [...]
->
->> +impl<T: Operations> GenDisk<T, Initialized> {
->> +    /// Try to create a new `GenDisk`.
->> +    pub fn try_new(tagset: Arc<TagSet<T>>) -> Result<Self> {
->> +        let lock_class_key =3D crate::sync::LockClassKey::new();
->> +
->> +        // SAFETY: `tagset.raw_tag_set()` points to a valid and initial=
-ized tag set
->> +        let gendisk =3D from_err_ptr(unsafe {
->> +            bindings::__blk_mq_alloc_disk(
->> +                tagset.raw_tag_set(),
->> +                core::ptr::null_mut(), // TODO: We can pass queue limit=
-s right here
->> +                core::ptr::null_mut(),
->> +                lock_class_key.as_ptr(),
->> +            )
->> +        })?;
->> +
->> +        const TABLE: bindings::block_device_operations =3D bindings::bl=
-ock_device_operations {
->> +            submit_bio: None,
->> +            open: None,
->> +            release: None,
->> +            ioctl: None,
->> +            compat_ioctl: None,
->> +            check_events: None,
->> +            unlock_native_capacity: None,
->> +            getgeo: None,
->> +            set_read_only: None,
->> +            swap_slot_free_notify: None,
->> +            report_zones: None,
->> +            devnode: None,
->> +            alternative_gpt_sector: None,
->> +            get_unique_id: None,
->> +            // TODO: Set to THIS_MODULE. Waiting for const_refs_to_stat=
-ic feature to
->> +            // be merged (unstable in rustc 1.78 which is staged for li=
-nux 6.10)
->> +            // https://github.com/rust-lang/rust/issues/119618
->
-> AFAIK the 1.78 upgrade already is in rust-next (and also should appear
-> in v6.10-rc2, right?) do you have this on your radar?
+syzbot found the following issue on:
 
-I am tracking this and I plan to add support in a later patch.
+HEAD commit:    cc8ed4d0a848 Merge tag 'drm-fixes-2024-06-01' of https://g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17039cba980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=733cc7a95171d8e7
+dashboard link: https://syzkaller.appspot.com/bug?extid=ea15576a86ef3f03216a
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: i386
 
->
->> +            owner: core::ptr::null_mut(),
->> +            pr_ops: core::ptr::null_mut(),
->> +            free_disk: None,
->> +            poll_bio: None,
->> +        };
->> +
->> +        // SAFETY: gendisk is a valid pointer as we initialized it above
->> +        unsafe { (*gendisk).fops =3D &TABLE };
->> +
->> +        // INVARIANT: `gendisk` was initialized above.
->> +        // INVARIANT: `gendisk.queue.queue_data` is set to `data` in th=
-e call to
->> +        // `__blk_mq_alloc_disk` above.
->> +        Ok(GenDisk {
->> +            tagset,
->> +            gendisk,
->> +            _phantom: PhantomData,
->> +        })
->> +    }
->
-> [...]
->
->> +    /// This function is called by the C kernel. A pointer to this func=
-tion is
->> +    /// installed in the `blk_mq_ops` vtable for the driver.
->> +    ///
->> +    /// # Safety
->> +    ///
->> +    /// This function may only be called by blk-mq C infrastructure.
->> +    unsafe extern "C" fn commit_rqs_callback(_hctx: *mut bindings::blk_=
-mq_hw_ctx) {
->> +        T::commit_rqs()
->> +    }
->> +
->> +    /// This function is called by the C kernel. It is not currently
->> +    /// implemented, and there is no way to exercise this code path.
->
-> Is it also possible to completely remove it? ie use `None` in the
-> VTABLE, or will the C side error?
+Unfortunately, I don't have any reproducer for this issue yet.
 
-No, this pointer is not allowed to be null. It must be a callable
-function, hence the stub. It will be populated soon enough when I send
-patches for the remote completion logic.
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-cc8ed4d0.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/36abdd995432/vmlinux-cc8ed4d0.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/5e4e0a6f67db/bzImage-cc8ed4d0.xz
 
->
->> +    ///
->> +    /// # Safety
->> +    ///
->> +    /// This function may only be called by blk-mq C infrastructure.
->> +    unsafe extern "C" fn complete_callback(_rq: *mut bindings::request)=
- {}
->
-> [...]
->
->> +impl<'a> RawWriter<'a> {
->> +    /// Create a new `RawWriter` instance.
->> +    fn new(buffer: &'a mut [u8]) -> Result<RawWriter<'a>> {
->> +        *(buffer.last_mut().ok_or(EINVAL)?) =3D 0;
->> +
->> +        // INVARIANT: We null terminated the buffer above.
->> +        Ok(Self { buffer, pos: 0 })
->> +    }
->> +
->> +    pub(crate) fn from_array<const N: usize>(
->> +        a: &'a mut [core::ffi::c_char; N],
->> +    ) -> Result<RawWriter<'a>> {
->
-> You could change the return type to be `RawWriter<'a>` and check using
-> `build_assert!` that `N > 0`. Then you can also call `unwrap_unchecked`
-> on the result that you get below.
->
-> I don't know if we want that, but it is a possibility.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+ea15576a86ef3f03216a@syzkaller.appspotmail.com
 
-I guess we could potentially make the type generic over a const buffer
-size. But let's put a pin in that for now. I'll look into that down the roa=
-d.
-
->
->> +        Self::new(
->> +            // SAFETY: the buffer of `a` is valid for read and write as=
- `u8` for
->> +            // at least `N` bytes.
->> +            unsafe { core::slice::from_raw_parts_mut(a.as_mut_ptr().cas=
-t::<u8>(), N) },
->> +        )
->> +    }
->> +}
->
-> [...]
->
->> +/// Store the result of `op(target.load())` in target, returning new va=
-lue of
->> +/// taret.
->> +fn atomic_relaxed_op_return(target: &AtomicU64, op: impl Fn(u64) -> u64=
-) -> u64 {
->> +    let old =3D target.fetch_update(Ordering::Relaxed, Ordering::Relaxe=
-d, |x| Some(op(x)));
->> +
->> +    // SAFETY: Because the operation passed to `fetch_update` above alw=
-ays
->> +    // return `Some`, `old` will always be `Ok`.
->> +    let old =3D unsafe { old.unwrap_unchecked() };
->> +
->> +    op(old)
->> +}
->> +
->> +/// Store the result of `op(target.load)` in `target` if `target.load()=
- !=3D
->> +/// pred`, returning previous value of target
->
-> The function returns a bool, not a u64 (value). From the body I read
-> that you return whether the value was updated.
-
-Thanks =F0=9F=91=8D
-
->
->> +fn atomic_relaxed_op_unless(target: &AtomicU64, op: impl Fn(u64) -> u64=
-, pred: u64) -> bool {
->> +    let x =3D target.load(Ordering::Relaxed);
->> +    loop {
->> +        if x =3D=3D pred {
->> +            break;
->> +        }
->> +        if target
->> +            .compare_exchange_weak(x, op(x), Ordering::Relaxed, Orderin=
-g::Relaxed)
->> +            .is_ok()
->> +        {
->> +            break;
->> +        }
->
-> If this fails, you are not re-reading the value of `target`, so if
-> someone else just set it to `pred`, you will still continue to try to
-> set it from `x` to `op(x)`, but it might never have the value `x` again.
-> This would lead to a potentially infinite loop, right?
-
-Yea, that is not good. I should have moved the assignment of `x` into the l=
-oop
-
->
->> +    }
->
-> Do you think you can also implement this using `fetch_update`? I guess
-> this would do what you want, right?:
->
->     target.fetch_update(Ordering::Relaxed, Ordering::Relaxed, |x| {
->         if x =3D=3D pred {
->             None
->         } else {
->             Some(op(x))
->         }
->     }).is_ok()
-
-Makes sense, I will steal that.
-
->
->> +
->> +    x =3D=3D pred
->> +}
->
-> [...]
->
->> +impl<T: Operations> TagSet<T> {
->> +    /// Try to create a new tag set
->> +    pub fn try_new(
->> +        nr_hw_queues: u32,
->> +        num_tags: u32,
->> +        num_maps: u32,
->> +    ) -> impl PinInit<Self, error::Error> {
->> +        try_pin_init!( TagSet {
->> +            // INVARIANT: We initialize `inner` here and it is valid af=
-ter the
->> +            // initializer has run.
->> +            inner <- unsafe {kernel::init::pin_init_from_closure(move |=
-place: *mut Opaque<bindings::blk_mq_tag_set>| -> Result<()> {
->> +                let place =3D place.cast::<bindings::blk_mq_tag_set>();
->> +
->> +                // SAFETY: pin_init_from_closure promises that `place` =
-is writable, and
->> +                // zeroes is a valid bit pattern for this structure.
->> +                core::ptr::write_bytes(place, 0, 1);
->> +
->> +                /// For a raw pointer to a struct, write a struct field=
- without
->> +                /// creating a reference to the field
->> +                macro_rules! write_ptr_field {
->> +                    ($target:ident, $field:ident, $value:expr) =3D> {
->> +                        ::core::ptr::write(::core::ptr::addr_of_mut!((*=
-$target).$field), $value)
->> +                    };
->> +                }
->> +
->> +                // SAFETY: pin_init_from_closure promises that `place` =
-is writable
->> +                    write_ptr_field!(place, ops, OperationsVTable::<T>:=
-:build());
->> +                    write_ptr_field!(place, nr_hw_queues , nr_hw_queues=
-);
->> +                    write_ptr_field!(place, timeout , 0); // 0 means de=
-fault which is 30 * HZ in C
->> +                    write_ptr_field!(place, numa_node , bindings::NUMA_=
-NO_NODE);
->> +                    write_ptr_field!(place, queue_depth , num_tags);
->> +                    write_ptr_field!(place, cmd_size , core::mem::size_=
-of::<RequestDataWrapper>().try_into()?);
->> +                    write_ptr_field!(place, flags , bindings::BLK_MQ_F_=
-SHOULD_MERGE);
->> +                    write_ptr_field!(place, driver_data , core::ptr::nu=
-ll_mut::<core::ffi::c_void>());
->> +                    write_ptr_field!(place, nr_maps , num_maps);
->
-> Did something not work with my suggestion?
-
-I did not want to change it if we are rewriting it to `Opaque::init`
-in a cycle or two, which I think is a better solution.
+list_add corruption. prev->next should be next (ffffe8ffad379458), but was ffffe8ffad379546. (prev=ffffe8ffad379458).
+------------[ cut here ]------------
+kernel BUG at lib/list_debug.c:32!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
+CPU: 3 PID: 57 Comm: kworker/3:1 Not tainted 6.10.0-rc1-syzkaller-00267-gcc8ed4d0a848 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+Workqueue: xfs-conv/loop2 xfs_end_io
+RIP: 0010:__list_add_valid_or_report+0xbe/0x100 lib/list_debug.c:32
+Code: e9 fc 90 0f 0b 48 89 d9 48 c7 c7 20 c0 8f 8b e8 88 50 e9 fc 90 0f 0b 48 89 f1 48 c7 c7 a0 c0 8f 8b 48 89 de e8 73 50 e9 fc 90 <0f> 0b 48 89 f2 48 89 d9 48 89 ee 48 c7 c7 20 c1 8f 8b e8 5b 50 e9
+RSP: 0000:ffffc9000077f450 EFLAGS: 00010286
+RAX: 0000000000000075 RBX: ffffe8ffad379458 RCX: ffffffff816f3159
+RDX: 0000000000000000 RSI: ffffffff816fbd56 RDI: 0000000000000005
+RBP: ffff88804c565d18 R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000000000001 R11: 0000000000000007 R12: ffffe8ffad379458
+R13: ffff88804c565cb0 R14: ffff88804c565d18 R15: ffffe8ffad379440
+FS:  0000000000000000(0000) GS:ffff88802c300000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000033533000 CR3: 000000004c7bc000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ __list_add_valid include/linux/list.h:88 [inline]
+ __list_add include/linux/list.h:150 [inline]
+ list_add_tail include/linux/list.h:183 [inline]
+ xlog_cil_insert_items fs/xfs/xfs_log_cil.c:675 [inline]
+ xlog_cil_commit+0x125b/0x32d0 fs/xfs/xfs_log_cil.c:1593
+ __xfs_trans_commit+0x346/0xe90 fs/xfs/xfs_trans.c:1020
+ xfs_trans_roll+0x1a9/0x430 fs/xfs/xfs_trans.c:1168
+ xfs_defer_trans_roll+0x1b8/0x610 fs/xfs/libxfs/xfs_defer.c:478
+ xfs_defer_finish_noroll+0x6b2/0x1490 fs/xfs/libxfs/xfs_defer.c:687
+ __xfs_trans_commit+0x941/0xe90 fs/xfs/xfs_trans.c:980
+ xfs_iomap_write_unwritten+0x32e/0x9d0 fs/xfs/xfs_iomap.c:649
+ xfs_end_ioend+0x3e4/0x530 fs/xfs/xfs_aops.c:131
+ xfs_end_io+0x217/0x340 fs/xfs/xfs_aops.c:173
+ process_one_work+0x958/0x1ad0 kernel/workqueue.c:3231
+ process_scheduled_works kernel/workqueue.c:3312 [inline]
+ worker_thread+0x6c8/0xf70 kernel/workqueue.c:3393
+ kthread+0x2c1/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:__list_add_valid_or_report+0xbe/0x100 lib/list_debug.c:32
+Code: e9 fc 90 0f 0b 48 89 d9 48 c7 c7 20 c0 8f 8b e8 88 50 e9 fc 90 0f 0b 48 89 f1 48 c7 c7 a0 c0 8f 8b 48 89 de e8 73 50 e9 fc 90 <0f> 0b 48 89 f2 48 89 d9 48 89 ee 48 c7 c7 20 c1 8f 8b e8 5b 50 e9
+RSP: 0000:ffffc9000077f450 EFLAGS: 00010286
+RAX: 0000000000000075 RBX: ffffe8ffad379458 RCX: ffffffff816f3159
+RDX: 0000000000000000 RSI: ffffffff816fbd56 RDI: 0000000000000005
+RBP: ffff88804c565d18 R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000000000001 R11: 0000000000000007 R12: ffffe8ffad379458
+R13: ffff88804c565cb0 R14: ffff88804c565d18 R15: ffffe8ffad379440
+FS:  0000000000000000(0000) GS:ffff88802c300000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000033533000 CR3: 000000004c7bc000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
 
-Best regards,
-Andreas
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
