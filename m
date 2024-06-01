@@ -1,172 +1,215 @@
-Return-Path: <linux-kernel+bounces-197993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A40E8D71B8
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 21:54:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28B788D71C5
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 22:06:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60556B21331
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 19:54:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 360671C20B19
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 20:06:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C805B1534FB;
-	Sat,  1 Jun 2024 19:54:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 206B5154C04;
+	Sat,  1 Jun 2024 20:06:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=metaspace-dk.20230601.gappssmtp.com header.i=@metaspace-dk.20230601.gappssmtp.com header.b="j6+JKXK9"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SPbz4eHU"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0485614E2EF
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Jun 2024 19:53:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5F0A1D555
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Jun 2024 20:05:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717271642; cv=none; b=l6CrNx8/N5g5cSCimwr+hA6agYy+KJF8r0yv1fTH0zqZTZET+F4YugvLFNakgQHVMc+zgmxQhIbGey8CMDQavgi1t3t+yyA1S0ti7LVmvuQJM7hj0tf+DdZAlGdgvuwZ9UKjUC/ptZDK82UlxNFelLb0QqO0natMtGMDLEzsGQA=
+	t=1717272361; cv=none; b=seUhMk0TIKL020y+f0ixJDHVDB/w99whA9KPAqygUEuEKiquJ/RflX9KhQQRix+/iuCpqv5SfHMLtnL8Nv/OkhrosaCCKE8d8yTqZ208q7wSPK5OFuT7Ie1DG0CIPNwivGa4QVd0lKOoVzyAXLc8Kt+fkrsZVkLhh1piydSniM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717271642; c=relaxed/simple;
-	bh=sjTvnLL15+axd8kEPHCrI1q2EZzeItpEAdxMZyj56QQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=XSqvT35W+dTLlhw7LsPsOA61HnZC6NHhusj10lCBGQw8cizAff4PdNANicnA+WY44BdEMkmpOSPuPzA+dbc6mQDE9R55itFW6+uE8L99PKPoNkPlRDkuKEsdWYcYkroIEiqM/1UJ8fZ4joJ2hyh6UEhTgeZ8IWlVgfjXUbr8XXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=metaspace.dk; spf=none smtp.mailfrom=metaspace.dk; dkim=pass (2048-bit key) header.d=metaspace-dk.20230601.gappssmtp.com header.i=@metaspace-dk.20230601.gappssmtp.com header.b=j6+JKXK9; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=metaspace.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=metaspace.dk
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-57a44c2ce80so970161a12.0
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Jun 2024 12:53:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=metaspace-dk.20230601.gappssmtp.com; s=20230601; t=1717271638; x=1717876438; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jr2Al8+ndIMPJPdlShlncDNXoaIKKJSR1q01cY4wntc=;
-        b=j6+JKXK9DoUXHI7BnH41+jvrY3T7Uyzt4W0eazDXOhSvG1K8S2duPPt/Hqm6AhZsgB
-         C5IQLXFJWRYblqCxJQ7FXZ4oFVxqRUvL0Y33GYbPZcv9WftEP2hFcMYzw2b3WLcyorYc
-         0gzd+u8pPG9J11WR6tkwwwXgXD+dbl2/gIOU3bEDJHMsXT0RJRS1EaBMjqBWvRQj6nM2
-         bfyVgH55WgIRcRuDIaL8FRIrMBdCbEH6GZ0k/SU/S7rmqhLqgRDpPy7/3ib8HP6XaIrw
-         o/j2AgllMma/RokiDWrjkbT8gvYHvAF10tOZyQh5sWBK1cfVyWF6uwVl6+uEhzlw0Q7A
-         yWTA==
+	s=arc-20240116; t=1717272361; c=relaxed/simple;
+	bh=bb1Eh6sYxp0wiXwMLIgdauY1kNYKOWwZ0sTYj+x+3i4=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=UswREWUCXqMVTWqGJPIymnVaJT+VhBQZkwgmsA4otUB20dz8c2OAQGZDbcwxqYsQwfYi0fUoppg0PRpqeXUBMgRktqSWaJV/blKOOyAoglFv4eAw6SIHfnCbP9qJV5h8zE6EHKmDaS81nhFQFcUdGvgiNxw2ObXhcoAUQznXzCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SPbz4eHU; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717272358;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dzxohq/lDop4X+G5bOl0wtRNygcADEx/hc58/q+dn7c=;
+	b=SPbz4eHUVezLvTCm99v6uKgqt4dbGyx9fq+sCFd1nbREuKmoGKSz1Jl3oqDuX22H4OnhE0
+	6dWjSbuMfUxgJwC4XJW/3QA5nwO+fNQXKJUyBVJdaDLopMsmlQCp4rNvGyXmnzYRivvAZt
+	w2fINPg1UeFvxoTFJfSVgkey5pYbnDw=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-610-uOItLCLfOWiboiv4ZHoCTA-1; Sat, 01 Jun 2024 16:05:57 -0400
+X-MC-Unique: uOItLCLfOWiboiv4ZHoCTA-1
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a592c35ac06so251777666b.0
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Jun 2024 13:05:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717271638; x=1717876438;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jr2Al8+ndIMPJPdlShlncDNXoaIKKJSR1q01cY4wntc=;
-        b=pOblLEPq3oORT01qMPfLOh+BgNQhdBIzc0Q8r4P38HOYUkJ6BOoJgK2jChfOztxSTi
-         Ify28HyIvV5PgsCr0x0ktCRUs0F5rLBWoXHPhQgQBDVsEeNNvFfsAp4cK1O02GHCvddT
-         brhzok2Zy9seOLHJq1MmjFMq54A053Mj3RTLAkuoWEt+0UuefkR8VSIz4FzelwQe8Au0
-         B0avtHiEE/6gRE0RYSevjbRT8V7XTNvuBCcoU4A/OWMiuwb4CtIUnkLJPvyJlnNzLDbb
-         OWmoIB7Y7CKBsjpQKiGpFIlP7RFjen/oGfK6CQZbIsApkm37z/JQ3XePtHV7MtmSs5nG
-         PVvw==
-X-Forwarded-Encrypted: i=1; AJvYcCUs0GflijoIZmzyek+CsY8FODZBgpR+LzTDJWptXr23L/5LjF1oGuboIqp6/jsPJ1flWv42QIwKuQGp2Uc4Hw7snsjfOpKJoqiUjwDQ
-X-Gm-Message-State: AOJu0YyuAz41IOkYWyPsxhUlzKjPB0eX+LqDQoAf6qH7d9HGkR6zTilt
-	Nl5zZMhbh88Fr8vcnp7nM/zECA3nIvrZ8g1ttWjuvf2dvGcRxG5d1N7nL1YwcpY=
-X-Google-Smtp-Source: AGHT+IHg/Tdb9DK9+R9MFmqVcUxrNUbRCWNDM/3aHBB9G/2ub/z/P4O87DthrD+4wpkjKUhladJ/Gw==
-X-Received: by 2002:a50:9992:0:b0:57a:2546:2512 with SMTP id 4fb4d7f45d1cf-57a36456201mr3737951a12.34.1717271637875;
-        Sat, 01 Jun 2024 12:53:57 -0700 (PDT)
-Received: from localhost ([79.142.230.34])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57a31b9958fsm2594386a12.2.2024.06.01.12.53.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 01 Jun 2024 12:53:57 -0700 (PDT)
-From: Andreas Hindborg <nmi@metaspace.dk>
-To: Keith Busch <kbusch@kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>,  Christoph Hellwig <hch@lst.de>,  Damien
- Le Moal <dlemoal@kernel.org>,  Bart Van Assche <bvanassche@acm.org>,
-  Hannes Reinecke <hare@suse.de>,  Ming Lei <ming.lei@redhat.com>,
-  "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,  Andreas
- Hindborg <a.hindborg@samsung.com>,  Greg KH <gregkh@linuxfoundation.org>,
-  Matthew Wilcox <willy@infradead.org>,  Miguel Ojeda <ojeda@kernel.org>,
-  Alex Gaynor <alex.gaynor@gmail.com>,  Wedson Almeida Filho
- <wedsonaf@gmail.com>,  Boqun Feng <boqun.feng@gmail.com>,  Gary Guo
- <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  Benno
- Lossin <benno.lossin@proton.me>,  Alice Ryhl <aliceryhl@google.com>,
-  Chaitanya Kulkarni <chaitanyak@nvidia.com>,  Luis Chamberlain
- <mcgrof@kernel.org>,  Yexuan Yang <1182282462@bupt.edu.cn>,  Sergio
- =?utf-8?Q?Gonz=C3=A1lez?= Collado <sergio.collado@gmail.com>,  Joel
- Granados
- <j.granados@samsung.com>,  "Pankaj Raghav (Samsung)"
- <kernel@pankajraghav.com>,  Daniel Gomez <da.gomez@samsung.com>,  Niklas
- Cassel <Niklas.Cassel@wdc.com>,  Philipp Stanner <pstanner@redhat.com>,
-  Conor Dooley <conor@kernel.org>,  Johannes Thumshirn
- <Johannes.Thumshirn@wdc.com>,  Matias =?utf-8?Q?Bj=C3=B8rling?=
- <m@bjorling.me>,  open list
- <linux-kernel@vger.kernel.org>,  "rust-for-linux@vger.kernel.org"
- <rust-for-linux@vger.kernel.org>,  "lsf-pc@lists.linux-foundation.org"
- <lsf-pc@lists.linux-foundation.org>,  "gost.dev@samsung.com"
- <gost.dev@samsung.com>
-Subject: Re: [PATCH v4 2/3] rust: block: add rnull, Rust null_blk
- implementation
-In-Reply-To: <871q5goaz0.fsf@metaspace.dk> (Andreas Hindborg's message of
-	"Sat, 01 Jun 2024 18:59:31 +0200")
-References: <20240601134005.621714-1-nmi@metaspace.dk>
-	<20240601134005.621714-3-nmi@metaspace.dk>
-	<ZlsvHV6y4DEdC8ja@kbusch-mbp.dhcp.thefacebook.com>
-	<875xusoetn.fsf@metaspace.dk>
-	<ZltF5NvDnKFphcOo@kbusch-mbp.dhcp.thefacebook.com>
-	<871q5goaz0.fsf@metaspace.dk>
-Date: Sat, 01 Jun 2024 21:53:38 +0200
-Message-ID: <87wmn8mocd.fsf@metaspace.dk>
+        d=1e100.net; s=20230601; t=1717272356; x=1717877156;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dzxohq/lDop4X+G5bOl0wtRNygcADEx/hc58/q+dn7c=;
+        b=Fn2tLs7wjbWPIpqhDG6v4W7bDHTIJXD3MW4naA1Bvdne3Y0+q0MhyLHmESSBY93UTB
+         egwIjXdydhN/rRvxMHlQi8njLbjvggfuzvxWNSRYEyJciMFSdLlBqS2vRgzzEg+WvMZt
+         BkWm1Ce7FF+wosfeS173N3gkDm7Oi2w30Y5c+yK+7AjHdWp0zp2q+N8Bhj7GZAZN2BDa
+         Kp+cvRU5v0BPMz50JPlpzl/D/i31PCCkFWzSQVmKQpEYsOK6udTtEPzAT7K3DwPo2eiZ
+         WKrAaQ01Ixe1YUeyDFIPWRMKEqs9btGugPta4J9cQh32RkPt3bEGkiNSFCY7wJqXuk4q
+         HM3A==
+X-Gm-Message-State: AOJu0YxoflQVGN5nQpgNuwsLPScGyuceOktgnrwmSBPwJioEA42qYUYw
+	Z6jCD0I24o+SIWiwIkT7eem7FREVbLttOz/dUmbdERpxdJPk+L1DB/vJIe55gAwbn58zqI8KWlH
+	NrS6BY75CsRAGzwlm9PGyv4jYkbeBzcGOAWL9QVftsA2v2bg1nQWufUVAiEbNNg==
+X-Received: by 2002:a17:906:5a8c:b0:a68:e834:e9bb with SMTP id a640c23a62f3a-a68e834ff24mr25611866b.35.1717272355879;
+        Sat, 01 Jun 2024 13:05:55 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHKBjI4khq4cOxujM+nFtg2T6bx0NqxvdpUtcJC72aKWj08HWBrV5C0F9kUUcWZtUreaiC0mQ==
+X-Received: by 2002:a17:906:5a8c:b0:a68:e834:e9bb with SMTP id a640c23a62f3a-a68e834ff24mr25609766b.35.1717272355320;
+        Sat, 01 Jun 2024 13:05:55 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6848423bc9sm210815066b.147.2024.06.01.13.05.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 01 Jun 2024 13:05:54 -0700 (PDT)
+Message-ID: <d7c555cc-d07c-4f22-9636-9ebb44165e1d@redhat.com>
+Date: Sat, 1 Jun 2024 22:05:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: Hung tasks due to a AB-BA deadlock between the leds_list_lock
+ rwsem and the rtnl mutex
+From: Hans de Goede <hdegoede@redhat.com>
+To: Linux regressions mailing list <regressions@lists.linux.dev>,
+ Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
+ Linux LEDs <linux-leds@vger.kernel.org>,
+ Heiner Kallweit <hkallweit1@gmail.com>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, andrew@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, johanneswueller@gmail.com,
+ "Russell King (Oracle)" <linux@armlinux.org.uk>,
+ Genes Lists <lists@sapience.com>
+References: <9d189ec329cfe68ed68699f314e191a10d4b5eda.camel@sapience.com>
+ <15a0bbd24cd01bd0b60b7047958a2e3ab556ea6f.camel@sapience.com>
+ <ZliHhebSGQYZ/0S0@shell.armlinux.org.uk>
+ <42d498fc-c95b-4441-b81a-aee4237d1c0d@leemhuis.info>
+ <618601d8-f82a-402f-bf7f-831671d3d83f@redhat.com>
+ <d8f8b1b2-1ffd-435a-8bed-b1a05d16a270@redhat.com>
+Content-Language: en-US, nl
+In-Reply-To: <d8f8b1b2-1ffd-435a-8bed-b1a05d16a270@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Andreas Hindborg <nmi@metaspace.dk> writes:
+Hi All,
 
-> Keith Busch <kbusch@kernel.org> writes:
->
->> On Sat, Jun 01, 2024 at 05:36:20PM +0200, Andreas Hindborg wrote:
->>> Keith Busch <kbusch@kernel.org> writes:
->>> 
->>> > On Sat, Jun 01, 2024 at 03:40:04PM +0200, Andreas Hindborg wrote:
->>> >> +impl kernel::Module for NullBlkModule {
->>> >> +    fn init(_module: &'static ThisModule) -> Result<Self> {
->>> >> +        pr_info!("Rust null_blk loaded\n");
->>> >> +        let tagset = Arc::pin_init(TagSet::try_new(1, 256, 1), flags::GFP_KERNEL)?;
->>> >> +
->>> >> +        let disk = {
->>> >> +            let block_size: u16 = 4096;
->>> >> +            if block_size % 512 != 0 || !(512..=4096).contains(&block_size) {
->>> >> +                return Err(kernel::error::code::EINVAL);
->>> >> +            }
->>> >
->>> > You've set block_size to the literal 4096, then validate its value
->>> > immediately after? Am I missing some way this could ever be invalid?
->>> 
->>> Good catch. It is because I have a patch in the outbound queue that allows setting
->>> the block size via a module parameter. The module parameter patch is not
->>> upstream yet. Once I have that up, I will send the patch with the block
->>> size config.
->>> 
->>> Do you think it is OK to have this redundancy? It would only be for a
->>> few cycles.
+On 5/31/24 12:22 PM, Hans de Goede wrote:
+> Hi,
+> 
+> On 5/31/24 11:50 AM, Hans de Goede wrote:
+>> Hi,
 >>
->> It's fine, just wondering why it's there. But it also allows values like
->> 1536 and 3584, which are not valid block sizes, so I think you want the
->> check to be:
+>> On 5/31/24 10:39 AM, Linux regression tracking (Thorsten Leemhuis) wrote:
+>>> [adding the LED folks and the regressions list to the list of recipients]
+>>>
+>>> Hi, Thorsten here, the Linux kernel's regression tracker. Top-posting
+>>> for once, to make this easily accessible to everyone.
+>>>
+>>> Lee, Pavel, could you look into below regression report please? Thread
+>>> starts here:
+>>> https://lore.kernel.org/all/9d189ec329cfe68ed68699f314e191a10d4b5eda.camel@sapience.com/
+>>>
+>>> Another report with somewhat similar symptom can be found here:
+>>> https://lore.kernel.org/lkml/e441605c-eaf2-4c2d-872b-d8e541f4cf60@gmail.com/
+>>>
+>>> See also Russell's analysis of that report below (many many thx for
+>>> that, much appreciated Russel!).
+>>>
+>>> To my untrained eyes all of this sounds a lot like we still have a 6.9
+>>> regression related to the LED code somewhere. Reminder, we had earlier
+>>> trouble, but that was avoided through other measures:
+>>>
+>>> * 3d913719df14c2 ("wifi: iwlwifi: Use request_module_nowait") /
+>>> https://lore.kernel.org/lkml/30f757e3-73c5-5473-c1f8-328bab98fd7d@candelatech.com/
+>>>
+>>> * c04d1b9ecce565 ("igc: Fix LED-related deadlock on driver unbind") /
+>>> https://lore.kernel.org/all/ZhRD3cOtz5i-61PB@mail-itl/
+>>>
+>>> * 19fa4f2a85d777 ("r8169: fix LED-related deadlock on module removal")
+>>>
+>>> That iwlwifi commit even calls it self "work around". The developer that
+>>> submitted it bisected the problem to a LED merge, but sadly that was the
+>>> end of it. :-/
 >>
->> 	if !(512..=4096).contains(&block_size) || ((block_size & (block_size - 1)) != 0)
->
-> Right, that makes sense. I modeled it after the C null_blk validation
-> code in `null_validate_conf`. It contains this:
->
-> 	dev->blocksize = round_down(dev->blocksize, 512);
-> 	dev->blocksize = clamp_t(unsigned int, dev->blocksize, 512, 4096);
->
-> That would have the same semantics, right? I guess I'll try to make a
-> device with a 1536 block size and see what happens.
+>> I actually have been looking at a ledtrig-netdev lockdep warning yesterday
+>> which I believe is the same thing. I'll include the lockdep trace below.
+>>
+>> According to lockdep there indeed is a ABBA (ish) cyclic deadlock with
+>> the rtnl mutex vs led-triggers related locks. I believe that this problem
+>> may be a pre-existing problem but this now actually gets hit in kernels >=
+>> 6.9 because of commit 66601a29bb23 ("leds: class: If no default trigger is
+>> given, make hw_control trigger the default trigger"). Before that commit
+>> the "netdev" trigger would not be bound / set as phy LEDs trigger by default.
+>>
+>> +Cc Heiner Kallweit who authored that commit.
+>>
+>> The netdev trigger typically is not needed because the PHY LEDs are typically
+>> under hw-control and the netdev trigger even tries to leave things that way
+>> so setting it as the active trigger for the LED class device is basically
+>> a no-op. I guess the goal of that commit is correctly have the triggers
+>> file content reflect that the LED is controlled by a netdev and to allow
+>> changing the hw-control mode without the user first needing to set netdev
+>> as trigger before being able to change the mode.
+>>
+>> But there is a price to this, besides the locking problem this also
+>> causes the ledtrig-netdev module to load on pretty much everyones
+>> systems (when build as a module) even though 99.999% of our users
+>> likely does not need this at all...
+>>
+>> Given this price and the troubles this is causing I think it might be best
+>> to revert 66601a29bb23. There might still be a locking issue when setting
+>> the trigger to netdev manually (I'll check and follow up) but this should
+>> fix the regression users are hitting since typically users do not set
+>> the trigger manually.
+> 
+> Ok, I can confirm that the lockdep warning is gone for me with 66601a29bb23
+> reverted. Unfortunately it does still happen after a "modprobe ledtrig_netdev"
+> (to add it to the list of available triggers) and then setting the trigger
+> for /sys/class/leds/enp42s0-0::lan to netdev manually.
+> 
+> Still reverting 66601a29bb23 should avoid the problem getting triggered
+> and this would seem like a safe fix especially for the 6.9 series and
+> then the necessary time can be taken to fix the actual underlying locking
+> issue which 66601a29bb23 exposes.
 
-This happens:
+I recently wrote a new input-events LED trigger:
+https://lore.kernel.org/linux-leds/20240531135910.168965-2-hdegoede@redhat.com/
 
-root@debian:~# insmod /mnt/linux-build/drivers/block/null_blk/null_blk.ko bs=1536
-BUG: kernel NULL pointer dereference, address: 0000000000000000
-#PF: supervisor write access in kernel mode
-#PF: error_code(0x0002) - not-present page
-PGD 0 P4D 0
-Oops: Oops: 0002 [#1] SMP
-CPU: 2 PID: 291 Comm: insmod Not tainted 6.10.0-rc1+ #839
+and I just found out this has a very similar deadlock problem. It seems
+there it a generic problem with LEDs or LED triggers getting registered
+by subsystems while holding a global lock from that subsystem vs
+the activate / deactivate method of the trigger calling functions of that
+same subsystem which require that same global lock.
 
-Probably a good idea with a better check.
+I came up with a fix but that just fixed the activate() path leaving
+a similar deadlock in place in the deactivate path:
 
-BR Andreas
+https://lore.kernel.org/linux-leds/20240601195528.48308-1-hdegoede@redhat.com/
+https://lore.kernel.org/linux-leds/20240601195528.48308-3-hdegoede@redhat.com/
+
+So this seems to be a non trivial problem to solve. For the new input-events
+trigger I plan to solve this by switching to a single input_handler which will
+be registered at module_init() time instead of having a handler per LED and
+registering that handler at activate() time.
+
+But I have no idea how to solve this for the netdev trigger I just wanted
+to share my experience with the input-events trigger in case it is useful.
+
+Regards,
+
+Hans
+
+
 
