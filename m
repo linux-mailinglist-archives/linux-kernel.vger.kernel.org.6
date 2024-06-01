@@ -1,114 +1,105 @@
-Return-Path: <linux-kernel+bounces-197794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA6358D6F3B
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 11:59:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A88B8D6F3D
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 11:59:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A66A1F21AFF
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 09:59:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A96D1C21013
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 09:59:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4994814EC48;
-	Sat,  1 Jun 2024 09:59:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4034F14EC42;
+	Sat,  1 Jun 2024 09:59:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MlV1TcPl"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i+RyA/S1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55A5E134A8;
-	Sat,  1 Jun 2024 09:59:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DCC780635;
+	Sat,  1 Jun 2024 09:59:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717235968; cv=none; b=MTDdRgGqUGSPwbKqun4vC515L27WAzwhRScMWEF6AV4m3GdwL0ugbnI2gJySkXbiRrAyRLZQiYN5L4By/oIOBvq3teuEc0NE/hGe+AMhwBxMYXbrsuyrFRQKFWUoaP8n4RxGAPwt4DrX6k6xxuQx+A5PbDADeKyaF3PGrnz4AxQ=
+	t=1717235984; cv=none; b=WRkvgsr0UxeTGMA/KkDFvBBAdqeiGeIBdCah5EK4LfhQktwYoJb6yeO4Isa1hc60T5ID7SeJk4t4jKZloSfhwuBzlFq9Tj5qY/FFarSyYCCkWaNyC5m8ebZEdZTxN2NwziOYc+YKBbl7fIE2wAA0UrCwLOrFVWvQD4DVqXfP8ZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717235968; c=relaxed/simple;
-	bh=nEa0ywGQFv6LInAcgt7D1fAcDzqFUPUe77ujVL4lYGQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CKYW6cfUiZ12tXIUVEq+NpBUdUAoQaAH5g8yp3XD7xkTVPxWLtITNYgMiimSjxQ6bnHCzx58hgVfcmsdxNXzdUDlb5JVQsl8oTMXu88qEFyXh2eEWUj8CrQ6f/a7XXbRBQYF7dnEINJQRl2xMkDrvIgcYOq8v7XhlloG38mp/BA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MlV1TcPl; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-6818eea9c3aso1299116a12.1;
-        Sat, 01 Jun 2024 02:59:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717235967; x=1717840767; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nEa0ywGQFv6LInAcgt7D1fAcDzqFUPUe77ujVL4lYGQ=;
-        b=MlV1TcPltr6aFi+9ySdciiNKcX/YCMweviKSxG1FKnh3BQ/onKSeCi+5gvUFZ/4P7O
-         DvpI9zbyqVPkMW6kynWHV5NSiZtWljuLIyOiDJd9Z01O8d783crtXrNgmc1UTXIWnNcV
-         wolLOg84CDFo8hdZLFLu0rbLd+HcxPyAciWciJzXKacpHcCOOJc3B9HzbiMesWi2Zroy
-         qXhHSUQyzaH1OQqgQvNMPg4V99zPGLHxBz++5KuvTeOyopbZPaPIfIVaa/7qJUB6Cds/
-         I6LeJzzfm7/TBaCyrJPX6iqK7ko66xsIkIlnWPNV8x3LtaiZ8oBXKgBSyJwnZzdMsYH4
-         ycSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717235967; x=1717840767;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nEa0ywGQFv6LInAcgt7D1fAcDzqFUPUe77ujVL4lYGQ=;
-        b=LugxFKRNs160OWNYJTdbmjQhXeUiW6ZOJqfZQtBx6nrvoCZiCJR9PFvIL/P0ew07kC
-         Diz5SWJv91d4vjWd6lRDdzwHTACQjKQrO+p4FcGzhTVw1//6I8sFVxY71OyzW8DmvP0t
-         k0aWttJb7Xa6+zpI/VieENP5WXnyrCR1v+Hp57b5pAa3ne14NRxihC3Mjy3+Ol6yoiX0
-         dDxM8TsvwrS0+1SEJeUwnebWJ7KaA+ZQMT1pasoFBDWJA4EjAEXhZ7nSrwDegshkaeA8
-         2nmRElDcMasoDQtcFB41La0gawi4h+RsZFn1xYLUdG3YRUIVoBeHVBz5kDn68MSL6mLW
-         3QjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUDeUfI78UyEeCsWZIsCuXuw8T0C9SFt/XgnY/8f/My6gUqMVdi4dMdm5OrG9oPwMXpzImafxw2Id3Fdb1pUZVYhgd92rAjDZF7no6ZOW5MizUGPAzn+01/jw7jcgyt97TleyeiLzePGinknhfCwcGXwzDuuIU4Q5MYQM+I+jbZZdXjmPHSyIPIOg==
-X-Gm-Message-State: AOJu0YyBN5HmppVE4Vnk7hpl2Y7HlXEHQF3IZ+CJhZJoApEgCVE5uAUV
-	4aCjmKv437nfHt/hxdX00DCDkahF1R0JzLynmKQxDj41vMOBI2OFAZC9JcgfWZ9CSLZhiA1Abf5
-	uCaAVrLycpQ6Zx3KmHwbe/D848lQ=
-X-Google-Smtp-Source: AGHT+IHN6K6n4hEXNDD6eTHZnFzEkaECDBjwO6nhkKRWAvpggvRxKavP3OcFNnmbnLG2Tv7rfzlwjQopZB5GoJNQk+g=
-X-Received: by 2002:a05:6a20:918d:b0:1b0:19d5:f400 with SMTP id
- adf61e73a8af0-1b26f1bb3f3mr4942384637.23.1717235966649; Sat, 01 Jun 2024
- 02:59:26 -0700 (PDT)
+	s=arc-20240116; t=1717235984; c=relaxed/simple;
+	bh=9u8gq+9PyBB4mSrF7hivzYp+QdvvifwLDjqpZQOf3W0=;
+	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
+	 Cc:Message-ID:Date; b=aplNdBFqtvx+AzmfeYzqpW0Ng8UP4dCHNHjRVTN+llojHWZ6EPPiKszhgzsX5RNwF7KCRIih66Iad+izt1WTzTHQDbvMDGClGu6w+WjWb4wSlDgb9ZbcaA+f8bikuGkdO5QhvgRQJWW+Ro7L9WzqeoXigYJBB6btb5FREV3yxOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i+RyA/S1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95DF7C116B1;
+	Sat,  1 Jun 2024 09:59:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717235984;
+	bh=9u8gq+9PyBB4mSrF7hivzYp+QdvvifwLDjqpZQOf3W0=;
+	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+	b=i+RyA/S1DiRdlPVFTlIAzT+fVvin1ANRNpleEHEbE7K65NxZY7z3ENqBZv+NU2Rna
+	 t8IzrksliUvBMiMQZpCbG1WF4ex+3nVrRSwVA1QX+3XtscaMzkXdUpnH0rpSHfvjg3
+	 LIu4OMyXdYUTMKMRVbek+voBvyLcaLitfHpQvuPrXI9tiZfBOg9q3SE190i33ENFAp
+	 ZGPhmzdFZ6Ozq80w+m2b2xwEqd3vH7E+qKtCx5qvta6BU0LwIZXqr9M1W4wQG92rVW
+	 5Q+MegA0k09yHs27FZm9cHbG9vSN9ASysBB86xIgsoakF9ptEDaNwkG3wEzaaz7y4d
+	 pIHHsobG+7T/A==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240601081806.531954-1-nmi@metaspace.dk> <20240601081806.531954-2-nmi@metaspace.dk>
- <47a8ce04-3901-49ae-abac-a7d85901f980@proton.me>
-In-Reply-To: <47a8ce04-3901-49ae-abac-a7d85901f980@proton.me>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Sat, 1 Jun 2024 11:59:13 +0200
-Message-ID: <CANiq72mtzX-OvY__dohQKmn+beU3pXDS798mVDnXYz32UK+WNg@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] rust: block: introduce `kernel::block::mq` module
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Andreas Hindborg <nmi@metaspace.dk>, Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>, 
-	Keith Busch <kbusch@kernel.org>, Damien Le Moal <dlemoal@kernel.org>, 
-	Bart Van Assche <bvanassche@acm.org>, Hannes Reinecke <hare@suse.de>, Ming Lei <ming.lei@redhat.com>, 
-	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Greg KH <gregkh@linuxfoundation.org>, 
-	Matthew Wilcox <willy@infradead.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Alice Ryhl <aliceryhl@google.com>, Chaitanya Kulkarni <chaitanyak@nvidia.com>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Yexuan Yang <1182282462@bupt.edu.cn>, 
-	=?UTF-8?Q?Sergio_Gonz=C3=A1lez_Collado?= <sergio.collado@gmail.com>, 
-	Joel Granados <j.granados@samsung.com>, 
-	"Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>, Daniel Gomez <da.gomez@samsung.com>, 
-	Niklas Cassel <Niklas.Cassel@wdc.com>, Philipp Stanner <pstanner@redhat.com>, 
-	Conor Dooley <conor@kernel.org>, Johannes Thumshirn <Johannes.Thumshirn@wdc.com>, 
-	=?UTF-8?Q?Matias_Bj=C3=B8rling?= <m@bjorling.me>, 
-	open list <linux-kernel@vger.kernel.org>, 
-	"rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>, 
-	"lsf-pc@lists.linux-foundation.org" <lsf-pc@lists.linux-foundation.org>, 
-	"gost.dev@samsung.com" <gost.dev@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH wireless 1/3] Revert "wifi: wilc1000: convert list
+ management to RCU"
+From: Kalle Valo <kvalo@kernel.org>
+In-Reply-To: <20240528-wilc_revert_srcu_to_rcu-v1-1-bce096e0798c@bootlin.com>
+References: <20240528-wilc_revert_srcu_to_rcu-v1-1-bce096e0798c@bootlin.com>
+To: =?utf-8?q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
+Cc: linux-wireless@vger.kernel.org, Ajay Singh <ajay.kathat@microchip.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ Dan Carpenter <dan.carpenter@linaro.org>, linux-kernel@vger.kernel.org,
+ =?utf-8?q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
+User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
+Message-ID: <171723598053.967328.11354175525825246331.kvalo@kernel.org>
+Date: Sat,  1 Jun 2024 09:59:42 +0000 (UTC)
 
-On Sat, Jun 1, 2024 at 11:44=E2=80=AFAM Benno Lossin <benno.lossin@proton.m=
-e> wrote:
->
-> AFAIK the 1.78 upgrade already is in rust-next (and also should appear
-> in v6.10-rc2, right?) do you have this on your radar?
+Alexis Lothoré <alexis.lothore@bootlin.com> wrote:
 
-It is in mainline already, yeah.
+> This reverts commit f236464f1db7bea80075e6e31ac70dc6eb80547f
+> 
+> Commit f236464f1db7 ("wifi: wilc1000: convert list management to RCU")
+> replaced SRCU with RCU, aiming to simplify RCU usage in the driver. No
+> documentation or commit history hinted about why SRCU has been preferred
+> in original design, so it has been assumed to be safe to do this
+> conversion.
+> Unfortunately, some static analyzers raised warnings, confirmed by runtime
+> checker, not long after the merge. At least three different issues arose
+> when switching to RCU:
+> - wilc_wlan_txq_filter_dup_tcp_ack is executed in a RCU read critical
+>   section yet calls wait_for_completion_timeout
+> - wilc_wfi_init_mon_interface calls kmalloc and register_netdevice while
+>   manipulating a vif retrieved from vif list
+> - set_channel sends command to chip (and so, also waits for a completion)
+>   while holding a vif retrieved from vif list (so, in RCU read critical
+>   section)
+> 
+> Some of those issues are not trivial to fix and would need bigger driver
+> rework. Fix those issues by reverting the SRCU to RCU conversion commit
+> 
+> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Closes: https://lore.kernel.org/linux-wireless/3b46ec7c-baee-49fd-b760-3bc12fb12eaf@moroto.mountain/
+> Fixes: f236464f1db7 ("wifi: wilc1000: convert list management to RCU")
+> Signed-off-by: Alexis Lothoré <alexis.lothore@bootlin.com>
 
-Cheers,
-Miguel
+3 patches applied to wireless.git, thanks.
+
+ebfb5e8fc8b4 Revert "wifi: wilc1000: convert list management to RCU"
+3596717a6fbd Revert "wifi: wilc1000: set atomic flag on kmemdup in srcu critical section"
+596c195680dc wifi: wilc1000: document SRCU usage instead of SRCU
+
+-- 
+https://patchwork.kernel.org/project/linux-wireless/patch/20240528-wilc_revert_srcu_to_rcu-v1-1-bce096e0798c@bootlin.com/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
 
