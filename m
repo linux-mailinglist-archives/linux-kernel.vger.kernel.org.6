@@ -1,148 +1,227 @@
-Return-Path: <linux-kernel+bounces-197840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01A068D6FD4
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 14:52:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5CF78D6FD8
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 15:00:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3DA81F216E5
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 12:52:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B932F1C2151C
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 13:00:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DECE014F9F0;
-	Sat,  1 Jun 2024 12:52:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kaMf7PO4"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DBE614F11D
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Jun 2024 12:52:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33B151509B1;
+	Sat,  1 Jun 2024 13:00:14 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0E711D52B;
+	Sat,  1 Jun 2024 13:00:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717246370; cv=none; b=QOcJZSEC9Q1HmsC8vI4DLeJZBx+vAPfSzNayVMMHWiz6tDXCXLrcrXwperUJZ+RfmbGCyaRH23NCt2HmDOQGbZIy2KPvDaBA28obhIa8iWALsJpNPCqbHgf0EX0MlMiSpLbTh5YCQGD9FNbAlmR/sdK1NNomyxfU9D30kruCOFg=
+	t=1717246813; cv=none; b=cIgCUx1KVor1KhgYMvMEcW0kE23599v2t0BZakdkViCEqvWEvzKgZ/7hhzZTX8pi1dFPL0BoPFymrw92r0WkFraISjNk+FBjOJRdkmevFcEbThHtLjUwGayS72zpjEQu7XuUtLyp/sumtVbu3GJeuDwdzx5HLzwL0SOe5v5DNoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717246370; c=relaxed/simple;
-	bh=HlQjZvK++Uq10ytKof9oWRg2BtTuHyHSFvSH6jqFv4w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Hun8vA1qKAqD2lJYYR3rD+kd3pG7y6t2In9bMDDgV+uSLoDJLOHUrkhq7WzwOzqasqx3FtRxGZ/Zo74iBBady0CPh5uGF6Y7mGtRw3TR78uf8aV3RY4b8QaC7wSogR9Xud/uOxlK2iQciNk2TIKek03SkoTL629R/Vqq2JBo77s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kaMf7PO4; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2ea85383b37so2657181fa.0
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Jun 2024 05:52:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717246367; x=1717851167; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ykRfs6ZMhFhtxzL78/zKz45DGl0mEcTPzTBsoi8m+SU=;
-        b=kaMf7PO4z6lpxBIArdHA8DqMWjIF6xBJkwx290pB1wWnIXPRMbRbrbR8ofGa7K3Sqm
-         nH419bmaMpljXNpHhhhTKnybaLa5KW5sukr92QZcPPzSMfA67AUGRonb+83LgCK94zZU
-         qvsppI7K3w/rEj7/5sZnL3iUAdY4ZTCZ2hjjtDocF+CwvUq5q99NqR1B7anWubT5/TO0
-         oyVNqSQYKO8YilXT54AUOnbF8xQ/iLXysE2wZZBynGvPAqsDh4XKv7YIesuLBLcMN5xs
-         d9eiqrv3nQASCWxBldyf1QhXf+TySV4eQFcT5W4Y1rC+8Veqnylu5oVQPED829krZbEK
-         Q5kA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717246367; x=1717851167;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ykRfs6ZMhFhtxzL78/zKz45DGl0mEcTPzTBsoi8m+SU=;
-        b=B2gliHUehcKpeB4Rayqptu5FgVlRfMpNX4HonV1fM4ortYCJC043MKBQYw8qSzlV3U
-         M3Oy2bUJkpsKJb1LK5HtjRo8DXoTGpgB5QCRxXOov6AyphOUUwp1rjomgFlGg/wcKTX0
-         /MXVVSsd97Jn49Q92FMLXJXrT8pKaL2MjM4Jph5s2yaZk03HoEaFee6LownMO2WaSulq
-         QCBuTJnXk3SHTPUh7baPCNIQTmndlM2bVxF/QTUT7cVkBY1KX/30w8fi8sB46MhQNTfQ
-         mU/t8q7bi+Tr9dAFrd/gl2Bz+ea2Gkq7MIUGHaI/i3LngTqlGmKuiRWA+xeqcciIVCJ0
-         pu5w==
-X-Forwarded-Encrypted: i=1; AJvYcCVfEb0VXMAMlsKfe+pj/9DlaDVVggU6BO/zGwQ7lWFVZtxHjGUraaAv0ilFst1QuI5aaqRPJ78LOwiTvGhQ4+Gl/Qc2SXXwxxI/8zJ1
-X-Gm-Message-State: AOJu0YwDM3AJz5nVx+EsAKJRM5w4xg/iz9IE3PfgaIE/T7Fow5bIHWs5
-	bl6moMaONXOC/bjhxtVHG4BcXAtLU397PSxHp0n4l6HtZWfYjDLrbwiYQg==
-X-Google-Smtp-Source: AGHT+IHd/pAWvjJsEfp1KcD+ulnGVj3E//0f3eame8CxZxw9yhFosP3aHErCVLoLj7T18c7zZOcbow==
-X-Received: by 2002:a05:6512:3b25:b0:52b:8909:58b1 with SMTP id 2adb3069b0e04-52b89702d1emr4122902e87.3.1717246366233;
-        Sat, 01 Jun 2024 05:52:46 -0700 (PDT)
-Received: from [192.168.0.102] (p57935a9b.dip0.t-ipconnect.de. [87.147.90.155])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a67ea67b23bsm196793466b.121.2024.06.01.05.52.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 01 Jun 2024 05:52:45 -0700 (PDT)
-Message-ID: <971c164f-5ebf-44cb-8cff-3a09c63bb77e@gmail.com>
-Date: Sat, 1 Jun 2024 14:52:45 +0200
+	s=arc-20240116; t=1717246813; c=relaxed/simple;
+	bh=2FPssmpebm/MsnMpER/LK4FbLSFxW33pyx7QWk2U8EA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=YWvHq17cHcfcqy0gITy9byyXFOpCrJf+UVDlEoyQvWd3dS1WHgveRFcqbotmo0vtRb51l5EbEH8OOkcKVefZ31aAuPx8+d2zw8IWrm2rnibK5PMujqHDBf86OKciW53HAN99ikd71MU7HhA/L1kmKEeFnIvppfePq34loNDxwXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5939E12FC;
+	Sat,  1 Jun 2024 06:00:28 -0700 (PDT)
+Received: from a079740.arm.com (unknown [10.163.70.164])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 262E03F792;
+	Sat,  1 Jun 2024 05:59:53 -0700 (PDT)
+From: Chaitanya S Prakash <ChaitanyaS.Prakash@arm.com>
+To: linux-perf-users@vger.kernel.org
+Cc: anshuman.khandual@arm.com,
+	james.clark@arm.com,
+	Chaitanya S Prakash <chaitanyas.prakash@arm.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>,
+	John Garry <john.g.garry@oracle.com>,
+	Will Deacon <will@kernel.org>,
+	Leo Yan <leo.yan@linaro.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Chenyuan Mi <cymi20@fudan.edu.cn>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Ravi Bangoria <ravi.bangoria@amd.com>,
+	=?UTF-8?q?Ahelenia=20Ziemia=C5=84ska?= <nabijaczleweli@nabijaczleweli.xyz>,
+	Colin Ian King <colin.i.king@gmail.com>,
+	Changbin Du <changbin.du@huawei.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+	Tiezhu Yang <yangtiezhu@loongson.cn>,
+	Alexey Dobriyan <adobriyan@gmail.com>,
+	=?UTF-8?q?Georg=20M=C3=BCller?= <georgmueller@gmx.net>,
+	Liam Howlett <liam.howlett@oracle.com>,
+	bpf@vger.kernel.org,
+	coresight@lists.linaro.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH V3 00/10] perf tools: Fix test "perf probe of function from different CU"
+Date: Sat,  1 Jun 2024 18:29:36 +0530
+Message-Id: <20240601125946.1741414-1-ChaitanyaS.Prakash@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] staging: r8712u: remove unused struct
- 'zero_bulkout_context'
-To: linux@treblig.org, Larry.Finger@lwfinger.net,
- florian.c.schilhabel@googlemail.com, gregkh@linuxfoundation.org
-Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20240529000814.233690-1-linux@treblig.org>
-Content-Language: en-US
-From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
-In-Reply-To: <20240529000814.233690-1-linux@treblig.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 5/29/24 02:08, linux@treblig.org wrote:
+From: Chaitanya S Prakash <chaitanyas.prakash@arm.com>
 
-please remove the following line:
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> 
-To me it is not important which commit introduced the struct. This is 
-not a bug. So I would omit this lines and use instead just:
-Remove struct zero_bulkout_context as it is unused.
-> 'zero_bulkout_context' is unused since the original
-> commit 2865d42c78a9 ("staging: r8712u: Add the new driver to the
-> mainline kernel").
-> 
-please remove the following line:
-> Remove it. >
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-> ---
->   drivers/staging/rtl8712/usb_ops_linux.c | 7 -------
->   1 file changed, 7 deletions(-)
-> 
-> diff --git a/drivers/staging/rtl8712/usb_ops_linux.c b/drivers/staging/rtl8712/usb_ops_linux.c
-> index b2181e1e2d38..0a3451cdc8a1 100644
-> --- a/drivers/staging/rtl8712/usb_ops_linux.c
-> +++ b/drivers/staging/rtl8712/usb_ops_linux.c
-> @@ -26,13 +26,6 @@
->   #define	RTL871X_VENQT_READ	0xc0
->   #define	RTL871X_VENQT_WRITE	0x40
->   
-> -struct zero_bulkout_context {
-> -	void *pbuf;
-> -	void *purb;
-> -	void *pirp;
-> -	void *padapter;
-> -};
-> -
->   uint r8712_usb_init_intf_priv(struct intf_priv *pintfpriv)
->   {
->   	pintfpriv->piorw_urb = usb_alloc_urb(0, GFP_ATOMIC);
+Perf treated all files beginning with "/tmp/perf-" as a map file despite
+them always ending in ".map", this caused the test "perf probe of
+function from different CU" to fail when Perf was built with NO_DWARF=1.
+As the file was parsed as a map file, the probe...--funcs command output
+garbage values instead of listing the functions in the binary. After
+fixing the issue an additional check to test the output of the
+probe...--funcs command has been added.
 
+Additionally, various functions within the codebase have been refactored
+and restructured. The definition of str_has_suffix() has been adopted
+from tools/bpf/bpftool/gen.c and added to tools/lib/string.c in an
+attempt to make the function more generic. The implementation has been
+retained but the return values have been modified to resemble that of
+str_has_prefix(), i.e., return strlen(suffix) on success and 0 on
+failure. In light of the new addition, "ends_with()", a locally defined
+function used for checking if a string had a given suffix has been
+deleted and str_has_suffix() has replaced its usage. A call to
+strtailcmp() has also been replaced as str_has_suffix() seemed more
+suited for that particular use case.
 
-Hi David,
+Finally str_has_prefix() is adopted from the kernel and is added to
+tools/lib/string.c, following which strstarts() is deleted and its use
+has been replaced with str_has_prefix().
 
-I would prefer the following changes:
-Subject: please change from r8712u which is the compiled driver name to 
-folder name of the driver: rtl8712
+This patch series has been tested on 6.10-rc1 mainline kernel, both on
+arm64 and x86 platforms.
 
-Please also consider the above hints.
+Changes in V3:
 
-If you send in a second version of this patch please use a change 
-history. Description from Dan under:
-https://staticthinking.wordpress.com/2022/07/27/how-to-send-a-v2-patch/
+- Patch adding configs required by "perf probe of function from different
+  CU" was originally part of the series but has been merged in 6.10-rc1.
+  https://github.com/torvalds/linux/commit/6b718ac6874c2233b8dec369a8a377d6c5b638e6
 
-Please contact me for any questions.
+- Restructure patches according to the maintainer trees.
+- Add explanation for why '| grep "foo"' is used.
+- Fix build errors for when perf is built with LLVM=1.
 
-Thanks for your support.
+Changes in V2:
+https://lore.kernel.org/all/20240408062230.1949882-1-ChaitanyaS.Prakash@arm.com/
 
-Bye Philipp
+- Add str_has_suffix() and str_has_prefix() to tools/lib/string.c
+- Delete ends_with() and replace its usage with str_has_suffix()
+- Replace an instance of strtailcmp() with str_has_suffix()
+- Delete strstarts() from tools/include/linux/string.h and replace its
+  usage with str_has_prefix()
 
+Changes in V1:
+https://lore.kernel.org/all/20240220042957.2022391-1-ChaitanyaS.Prakash@arm.com/
+
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc: Mike Leach <mike.leach@linaro.org>
+Cc: James Clark <james.clark@arm.com>
+Cc: John Garry <john.g.garry@oracle.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: Leo Yan <leo.yan@linaro.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Ian Rogers <irogers@google.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Chenyuan Mi <cymi20@fudan.edu.cn>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Ravi Bangoria <ravi.bangoria@amd.com>
+Cc: Ahelenia Ziemiańska <nabijaczleweli@nabijaczleweli.xyz>
+Cc: Colin Ian King <colin.i.king@gmail.com>
+Cc: Changbin Du <changbin.du@huawei.com>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+Cc: Tiezhu Yang <yangtiezhu@loongson.cn>
+Cc: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: Georg Müller <georgmueller@gmx.net>
+Cc: Liam Howlett <liam.howlett@oracle.com>
+Cc: bpf@vger.kernel.org
+Cc: coresight@lists.linaro.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-perf-users@vger.kernel.org
+
+Chaitanya S Prakash (10):
+  tools lib: adopt str_has_suffix() from bpftool/gen.c
+  perf util: Delete ends_with() and replace its use with
+    str_has_suffix()
+  perf util: Replace an instance of strtailcmp() by str_has_suffix()
+  tools lib: Adopt str_has_prefix() from kernel
+  libsubcmd: Replace strstarts() usage with str_has_prefix()
+  objtool: Replace strstarts() usage with str_has_prefix()
+  perf tools: Replace strstarts() usage with str_has_prefix()
+  tools lib: Remove strstarts() as all its usecases have been replaced
+    by str_has_prefix()
+  perf tools: Only treat files as map files when they have the extension
+    .map
+  perf test: Check output of the probe ... --funcs command
+
+ tools/include/linux/string.h                  | 12 ++---
+ tools/lib/string.c                            | 48 +++++++++++++++++++
+ tools/lib/subcmd/help.c                       |  2 +-
+ tools/lib/subcmd/parse-options.c              | 18 +++----
+ tools/objtool/check.c                         |  2 +-
+ tools/perf/arch/arm/util/pmu.c                |  4 +-
+ tools/perf/arch/x86/annotate/instructions.c   | 14 +++---
+ tools/perf/arch/x86/util/env.c                |  2 +-
+ tools/perf/builtin-c2c.c                      |  4 +-
+ tools/perf/builtin-config.c                   |  2 +-
+ tools/perf/builtin-daemon.c                   |  2 +-
+ tools/perf/builtin-ftrace.c                   |  2 +-
+ tools/perf/builtin-help.c                     |  6 +--
+ tools/perf/builtin-kmem.c                     |  2 +-
+ tools/perf/builtin-kvm.c                      | 14 +++---
+ tools/perf/builtin-kwork.c                    | 10 ++--
+ tools/perf/builtin-lock.c                     |  6 +--
+ tools/perf/builtin-mem.c                      |  4 +-
+ tools/perf/builtin-sched.c                    |  6 +--
+ tools/perf/builtin-script.c                   | 30 ++++--------
+ tools/perf/builtin-stat.c                     |  4 +-
+ tools/perf/builtin-timechart.c                |  2 +-
+ tools/perf/builtin-trace.c                    |  6 +--
+ tools/perf/perf.c                             | 12 ++---
+ .../shell/test_uprobe_from_different_cu.sh    |  2 +-
+ tools/perf/tests/symbols.c                    |  2 +-
+ tools/perf/ui/browser.c                       |  2 +-
+ tools/perf/ui/browsers/scripts.c              |  2 +-
+ tools/perf/ui/stdio/hist.c                    |  2 +-
+ tools/perf/util/amd-sample-raw.c              |  4 +-
+ tools/perf/util/annotate.c                    |  2 +-
+ tools/perf/util/callchain.c                   |  2 +-
+ tools/perf/util/config.c                      | 12 ++---
+ tools/perf/util/map.c                         |  8 ++--
+ tools/perf/util/pmus.c                        |  2 +-
+ tools/perf/util/probe-event.c                 |  2 +-
+ tools/perf/util/sample-raw.c                  |  2 +-
+ tools/perf/util/symbol-elf.c                  |  4 +-
+ tools/perf/util/symbol.c                      |  3 +-
+ 39 files changed, 148 insertions(+), 117 deletions(-)
+
+-- 
+2.34.1
 
 
