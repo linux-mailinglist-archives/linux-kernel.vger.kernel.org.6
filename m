@@ -1,217 +1,269 @@
-Return-Path: <linux-kernel+bounces-197624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ACDB8D6D34
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 02:49:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B3548D6D36
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 02:59:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 624CE1C2174B
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 00:49:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65C6E1C219D5
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 00:59:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80C08469D;
-	Sat,  1 Jun 2024 00:49:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55E8F4690;
+	Sat,  1 Jun 2024 00:59:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="SA5C+/qg"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2085.outbound.protection.outlook.com [40.107.94.85])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UyKSuw3W"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D609A6FB6;
-	Sat,  1 Jun 2024 00:49:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.85
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717202944; cv=fail; b=G11ERI89AaxkwFJ6k5XUP92HcEiIXDrnK7qanbsja3lO0clL+RG8E/3aWzwjemwp1FWfijPcKPlBY179udBMNyfqNw5MP70AMj9xDXZ8sDfiRM0RMn6bnxyEjMEt5l/KaqiRhXZWMWqKwzEEE9dNNadWfmJ/ckLntYALRV6WVzg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717202944; c=relaxed/simple;
-	bh=hSheAr1uPHW/ocTPDYc3WyKn4GKNbpjIbW/zSKj78A4=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=O0rRP5V+9xnkmpypHyNw9gugphg5a7ZgJg4yGRPl+tYGVjYvQpDrrC4oLB39JiBXzuQJjq/hEkduYQka0sw9oQ1HbVK5KVJ22p/JSoY6NKVDCQzzjrPKChDAeceqCxXOgYU3UEEJITgXgQzKhBR+A2cEr6dDuJMKaSWNk/p+aRk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=SA5C+/qg; arc=fail smtp.client-ip=40.107.94.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=So61LHcxj/K9xRsx+GbWfFlBzG5DW2GKXiYso6L5CBB0j4xqz609Q89se7O1ObO9oeZjFbr5lubNMUfmH4IG055XCq1WGu2piYQ24Pz0AtSmxgHJmTHyIqPYvcWekqI6aETYt39SxjSDJjuvLm+kLuPRDNOCkWPryZneFf522GUT8A45lqbkU26sXtW5AiHG7bq+3SX686qIh10cZZY0kfgWkduckne2qIt30B4KY/shd5w14TdD9mtmS5h+k5HGittfpNgC5FmiI8MJKpXiW6P+sjLqTrKRG0riPe0XhbKwd2rjn9bSqQprmK+OaWOgFM2J7dsXdt4eT2FQ+35IRA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=S4CjiUWzwWVDo5U5rggXo8NhTAk0+tvy0s6AgdaDpIY=;
- b=kyuPXDbs7GCpzCk87oiCcFB+XeQ0g5lRl0uyXeOO8K0GABIY7ShPB4brHwv8DU/9juihb2jaT1xbSrxhXVyq6ncDMcROrUBo0Om5jGnXYoX+rmnBob/bzft7Z2rAn5eKUzJkVJoQ9Dt0gRpYxDMi7BfP5T7akN9ySM47RTYRIaXWW4567DNm+sIpqN9RY26iQG58h30lJomo/gAmnNa+XQrxzy8aL1Ph2BxKAR4Dj7BoiaXb98x8oRcFtwqaexzl+KUrsz+mp7XFDhysqbstUYkfG5O/l8YSUYssIFfXq49b95iW6Sg7xrW/sTyb+PnTeNWRj9VQHZnt9DhRmI3Xsg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=S4CjiUWzwWVDo5U5rggXo8NhTAk0+tvy0s6AgdaDpIY=;
- b=SA5C+/qgqlDP1lM0EXZ19DC8Q6o3zvaqbO+fuAkmmycPEhFmS7UCAXur5SGehq8JB9eMmtmxVI5N2VbWMgiHcjvtQELjJP+AGKSC22z4/iYco9nDPIxK4jXrs011355RfEtGtC67a9B0fY3Kfo+ZUhyndlrn//SG5PUkSj3LIMZoSRySj7ua9lhhXwyFEC9UMBBmWYrCkqIET8Wzq7IjXn0lEq/CFTopqQ1tpbHWI+kaZ0hOcUpBsU9KPVKUPf6s0BShT2w7CBqpRXcpem/HcXmMSEeWrxWUxPy1+uz9NB0L5TQ0OhsKrMXxhnwnarUGuiFtgISZJXj1aq/ny1d3ZA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from BY5PR12MB4130.namprd12.prod.outlook.com (2603:10b6:a03:20b::16)
- by CY8PR12MB7682.namprd12.prod.outlook.com (2603:10b6:930:85::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.22; Sat, 1 Jun
- 2024 00:48:58 +0000
-Received: from BY5PR12MB4130.namprd12.prod.outlook.com
- ([fe80::2cf4:5198:354a:cd07]) by BY5PR12MB4130.namprd12.prod.outlook.com
- ([fe80::2cf4:5198:354a:cd07%4]) with mapi id 15.20.7633.021; Sat, 1 Jun 2024
- 00:48:58 +0000
-From: John Hubbard <jhubbard@nvidia.com>
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	linux-kbuild@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	John Hubbard <jhubbard@nvidia.com>
-Subject: [PATCH] Makefile: rust-analyzer target: better error handling and comments
-Date: Fri, 31 May 2024 17:48:56 -0700
-Message-ID: <20240601004856.206682-1-jhubbard@nvidia.com>
-X-Mailer: git-send-email 2.45.1
-X-NVConfidentiality: public
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BY5PR20CA0008.namprd20.prod.outlook.com
- (2603:10b6:a03:1f4::21) To BY5PR12MB4130.namprd12.prod.outlook.com
- (2603:10b6:a03:20b::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2DEDA38
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Jun 2024 00:59:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717203578; cv=none; b=nmJmMxcuimDF72EzSJDmJCOjjgYiE4bYPuMoLnaBs6IRNnK5e7YnvxPb6eR44mvBbHYtYyQDpTYve/qlYJiGyEEMmVLJyn9CLrtXK93H1mo5o6Ax6n1ZF+M3yqxL8Ky7V12CowhTHQgnyhzww0hV7VwzBgmKCysWJOhLxcoS9bE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717203578; c=relaxed/simple;
+	bh=daHGbC6GayCEq44f0zX+SRWAHrGGSVaTCEWXIIjZl/Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=URb22O5hvrcURgNOrCEBn0jpT6LjzETnJ4px7xASJLGpgrc8UNmghKkvb8A8AbbaW40Pd8s/+kQWN86l8xXZ3ba05aD0J+7wswZFErM9OImprL381jHh8ZJpFlXvwRYUUogG5UZMjrzVw/9rvjqaIpS5KgtkXmVKWYheloKL5ag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UyKSuw3W; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2e73359b900so30272311fa.2
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 17:59:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717203575; x=1717808375; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4c1H1czvW5wu5dZLp5czTd3lmrqNcfjJq6zE2Ej+bK8=;
+        b=UyKSuw3WC+P4SluOnWylG9U2pia64qApj7lo5Bn1vNoM9HpmY2vJynzcUWsRMQ98/I
+         zWFK7lP1iWzbSUaN4KSEtcx9IC8ah+3uPbrQNecXocDltSfCNQfpaL5tsZpkMKxHmzbw
+         /wnsuD15wUGUwHf49AIRvP9fDOwBFptET2w7AdaYY5G/B2z0ZKkfVQ9dbX1lsr/dF340
+         RtLFupi3YBYVgRqWL1yf3J9nvsYZKOlGy4F0+imkjNFhlPtwsFiMY/YxxKuD0pLrsfhg
+         KVd2Snx9ZOww69UQtOsSFzK97a1O3Z0wX2M/T7cxh/+wQgHdn0A+WWyZVu9uqBkzSOra
+         LECA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717203575; x=1717808375;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4c1H1czvW5wu5dZLp5czTd3lmrqNcfjJq6zE2Ej+bK8=;
+        b=FXojhU8/RrD1NQQS2RLxGJ7xUwSjXz/fOLfWVdZXl3HVH3vl3jsRHtzVuuvO6yzxxo
+         nRXJxniWaMl0Jo58oVl7ZLD1SRC7pQa6XFm7rieMbEDK3U4zyJQjKLM2OSnXE/MqB8hs
+         3fnm0CzkctSq0kjiY3oUOStdy77jtS+BHWz6BNx4GRay8fwT2YTkcXgBq80eWItL9ij2
+         2ZyYBnM0JKikZ3yfqcHlORMzcXJgQJIixr4ZzVc96Go8pHkF9dcVzk7IAw50WGUKxfkX
+         qrYvc/MT+sb31kkaGs/xlw0UMjKY8vjkfk0roKQ6q0TR6lqBZ0/4s/NVNb5I7enzG5dW
+         n4rA==
+X-Forwarded-Encrypted: i=1; AJvYcCUu/NTgDjcEroRk9QLcO2QJkk7j1sjiS48rwMoDjaZWduuOJwH5B/zXOFwx3cMbt83pTL61zf2a4HjiF37BMtvuoyCgE1z+4kk/IndU
+X-Gm-Message-State: AOJu0YxnDNemNskKCPPjch81FIpVh/C8tphU4g8CMGco7sUy7fF4SXdq
+	62Zc5ngbtjQAvjJpOP8PTAF+s5j7bcwJcQTX3Vt2pXDUwudkRHn5m6jb+kyz78NyOEA7V/9mFE6
+	0cHuhIX8BaVH4WUFfQypf4cTcbdQ=
+X-Google-Smtp-Source: AGHT+IHeoalXtZ3m7YrazfHsP5LzCh2JGOqNV7G4XfGNDHFGYgwWm2xv+wPuIMhJJDh5SJTmRIOAomfVKcyaXijLOF0=
+X-Received: by 2002:a2e:9054:0:b0:2d6:c43e:f0b3 with SMTP id
+ 38308e7fff4ca-2ea951d21f8mr19580481fa.50.1717203574325; Fri, 31 May 2024
+ 17:59:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BY5PR12MB4130:EE_|CY8PR12MB7682:EE_
-X-MS-Office365-Filtering-Correlation-Id: e3552b23-15b9-40a7-3bb7-08dc81d49f4c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|7416005|376005|366007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?zkldY+v0Z8iMSd3NjT/8zcG0HDr3dg3u7OODTARDGeM30AsrLFd7RAlwgChS?=
- =?us-ascii?Q?o6QaTth/ldChVy9+WjsrOukrBbDPiueYQhaMypYMpeswzlV0RxH4EUKM9I7R?=
- =?us-ascii?Q?De9/h+GM7JJ0ZDMXbftCQoWWW5FJkP8VTfyQYz+1o9Onfr/PntUWLNtmXJ6F?=
- =?us-ascii?Q?6JDuTpHRgWajuSpMW46eUsAWCmTSXOMHaWhWvKeM7UyLOIyaAPVagf/SGwOh?=
- =?us-ascii?Q?tDNbJD7H94gDkUw0roIKMBvKMy6nF0jpOsoVeg14Zw5vtvWT4q0Qt5vdB7s1?=
- =?us-ascii?Q?5aH5sPEB/o7Z6B0F95sZ8eZD2f7yaEgxjlxFdnH6HB2rbfskMMcaNh3DvwTW?=
- =?us-ascii?Q?0Y9VZF5dJyrMdPCNMpG8lRfymPwOYKlk1ic95EcQ+41co3ZHiEv7m5cl8Flz?=
- =?us-ascii?Q?AT00yD1eq1C7ZgkYX1s8TbNYG+4BjiBB4liw9x12Sh/QzD5maoTcihBSRMnc?=
- =?us-ascii?Q?OAKgrqmfeFtjkFzFUU19NeRJEhSi5KX8M4cWrNRvADmVUK40ro+BqyUmvFhs?=
- =?us-ascii?Q?YMMAOBtUOWZ/fyzt3G3vw6ikHVRBceCiz+heUNKmhYKtTQ1n7QfWT7x9i5Tk?=
- =?us-ascii?Q?Jg/NNIgunMmqGr3bm4S559bONjwtP9mDrivqh3Tq2z9rb2R12aTflqKe797w?=
- =?us-ascii?Q?Fm5xMSLaEEC3jTywoRspEueyJco8cT85/Ekjs9TrY9/UfGMIEmOZHtGJr5De?=
- =?us-ascii?Q?igwNauQmgESsbjYgLu1jFMYQwPt5zIoxTfQyCb4D3+f+MPS6JuwQhw/NkE9a?=
- =?us-ascii?Q?xxIO9HLiTBaf/+As8b/48pk9n0ZDu4xTZXuj2GnwQ1SY/jxtkIwQr3sOl7Su?=
- =?us-ascii?Q?zxwrnnp/loVuvKnQKLJ13PNpsSuA3DJsz3bLQcMQlPGvSlyPTjv2XN1pa7tj?=
- =?us-ascii?Q?BVjr5SyfJ7NxlpuRSXN7kAjmLK8459nH8hOPYM4q4KeCtER5fw7pzzTcNbEz?=
- =?us-ascii?Q?Xl1dPr0ET3YO8J21h8dcoxaomMvEQN9Jq6p/UtEhSnjat/VKdNRMv5rgWEsE?=
- =?us-ascii?Q?+XOeYBzNR2OjWQN7knq1IOgjLpsRcpndMGwsIHJ1gTo0Kb3b1vYQb8h1nYcn?=
- =?us-ascii?Q?hfolBgiS5T61Uln2Pls8A20/6WBk7KbeKlky2PiLv6aTiqSxn5NeZyCwXbD6?=
- =?us-ascii?Q?M/D8kSD+OOFOwOlNKten8FwU+KVNgXG75n7B8nEyToaqfgDwH+wpSzjM10Rb?=
- =?us-ascii?Q?/9MYjcCD2ykwEaM5Yoz9KuHNBGdnuT3bbCY79BNGTjaqTRcsCbN2upOnK3uX?=
- =?us-ascii?Q?RWw/7SHgnhAWDeQ00pMOTR5zQHgb/KFlycYnnKWMaw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR12MB4130.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(7416005)(376005)(366007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?YKDQOrrM7CDRUJvHcKBFVaE2BWMcUHimiJGFZSgGg6KT1hd5IAeXf+1+IuDR?=
- =?us-ascii?Q?cBqZbYecYx5IGlIUL9snXjwmYxLak5ZRsuUdSdSETdFadv0HMmHcAn4jv4f1?=
- =?us-ascii?Q?syVq/yVpOzqddANDHE525xJpesOq6qAGuyhye4Inw0sY4phPGNgPuoPrmqFk?=
- =?us-ascii?Q?rtcVoU7O+460TOJdFMHVV8iFj7Iao/m2k7nurS+boyMo6XR6BV2ljyA/EwL+?=
- =?us-ascii?Q?VbFKAG3EACNxXiNOO8o+UaXX1RnEnWA7sICILk/KkkR8xLwiTJnf18FTX+v5?=
- =?us-ascii?Q?9lJV6PNSuoE/gB5t20h19Y5B3BK8WUa343xuKNKRIUAmWAmgOEsfUo9W0NE/?=
- =?us-ascii?Q?tznee1GljiSx431JwaDBDr9Qw+VF7WaJz/6MeuU8n1APex0nKmW1Eru5ELXT?=
- =?us-ascii?Q?5CLW6aj3KhElAAk7KKPZvmc4R62IXr66/5SmwyfBs0AWLLiEnwiDw3NMBdP0?=
- =?us-ascii?Q?O+BPUhq1g1+WrcwzLDgUHS8MHw5YDDiKM/HrJtNqeMcyss/vNKgu5gQ/7U/1?=
- =?us-ascii?Q?ThYXOhhqI7u17Old6ZFinxSapwnMnewSIn5www4/i7cU3fQK1p/obS1LGHaa?=
- =?us-ascii?Q?j7XzwxJUjcffYLf6vw7F1Ge+m2LIVqY7MfevpvoB/gizlfOzphI3SKhwFCW0?=
- =?us-ascii?Q?1vd+uvRXgPfUyG4y2j7Szpq+ZFBhyIqX6IUOG2Y4Ci0hbeWdTBIKAV04RG0e?=
- =?us-ascii?Q?diwFBL1euveiPMwb7Sjm2dAYI97cHF8eWcEDMSdUGnit9Pl69NWO+rOiahCO?=
- =?us-ascii?Q?qXa+uRF8AY5ti7WG9p66vXhilLyCxGzCKfGUHwv8v7Kk+Bb7zVAtGsjnCYcW?=
- =?us-ascii?Q?g5xFPzbWQKKNlGmobrjgGH7Zx/xaTxoV4bvx7pMOS4l8C6THTbUWLP/H6IyY?=
- =?us-ascii?Q?4AjOCnue8WAOA7EZv5KmL2aKz7k5x1EjoAMo6DholV+D+bj7NROE7/aBWh3n?=
- =?us-ascii?Q?zkgnRu9cc/0ayGqtf+V5jduWQJYP3elLmQYCDdCwySpXV42QgCFdGPcfzSJp?=
- =?us-ascii?Q?38zSg9tVw6uo5ok13UKx7RJ1U+fZd/UA+oFcgdN/zUzgw2QpdD4xDGtu1xOg?=
- =?us-ascii?Q?LyDjWKCAPfXIQZ9iczau0Yv+V3n89/gj6VcOQ+FnvP7L34siZjFSHxgySFep?=
- =?us-ascii?Q?dU/kjqUlqOiAd+79EhCxLZTt6JlJjJrG2QqVn2m4kfMpcm8dk8EQY9SQMb9c?=
- =?us-ascii?Q?5awg/e0Ky7k2WwdtYVd2oIRGNItUWDw/bmolE3ATyJ28xBx0nIdxYTusppJW?=
- =?us-ascii?Q?9Fyh4SAbSjaBGRFqChRD50F1MJF/qclXc15qnU0NOqSpPhXZCsb3kr/nSjIy?=
- =?us-ascii?Q?uN54Ow8YXR6hOy+W7cUjVpvwCvOJhJ91DOkP8AnUUmeMgWvLb3dmB1B40+28?=
- =?us-ascii?Q?q43n7257rk63ORDyqjiKMhpcD3pMDM/dcXRieT0PUnXUsTAzRMRbrqOK9ioA?=
- =?us-ascii?Q?9HiXCtIDshUxZfaVOGpAa18skVNDisOpfJV4T4cNngzyh06HWIaza6xJ8ig9?=
- =?us-ascii?Q?WxIU9HJLz0AodQPufD6Bd6otRAxWBRaX4w10ySZAxa1JbRaeguK0Ff/OZqZZ?=
- =?us-ascii?Q?/SKzfxhAcahi7oA8bcVyWNcw792RHLHpvGbU1pkq?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e3552b23-15b9-40a7-3bb7-08dc81d49f4c
-X-MS-Exchange-CrossTenant-AuthSource: BY5PR12MB4130.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jun 2024 00:48:58.6179
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: NmH7EnXbEUqHaz0wutgp6d5sTnRCopDlQehJ21dZbe6D4AJf1LIIUbJmv7p6+v5kw7lM3TdPh2x0mpfObnYUjw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7682
+References: <202405311534.86cd4043-lkp@intel.com> <CAHbLzkpMhEuGkQDGWrK1LhvZ-ZxTJkV1xjmn-nRGZMH4U+F5ZA@mail.gmail.com>
+ <890e5a79-8574-4a24-90ab-b9888968d5e5@redhat.com> <ZlpcRnuZUEYJJ0JA@x1n> <CAHbLzkrRw-xf819gYJwRQ=-u971LQYnB2FNJMkN=s6u-pJ4Z8g@mail.gmail.com>
+In-Reply-To: <CAHbLzkrRw-xf819gYJwRQ=-u971LQYnB2FNJMkN=s6u-pJ4Z8g@mail.gmail.com>
+From: Yang Shi <shy828301@gmail.com>
+Date: Fri, 31 May 2024 17:59:22 -0700
+Message-ID: <CAHbLzkoB+oFTxtVYpeXQvko2q9HUVzUYrr83S6M6PUmXDQpkag@mail.gmail.com>
+Subject: Re: [linus:master] [mm] efa7df3e3b: kernel_BUG_at_include/linux/page_ref.h
+To: Peter Xu <peterx@redhat.com>
+Cc: David Hildenbrand <david@redhat.com>, kernel test robot <oliver.sang@intel.com>, 
+	Jason Gunthorpe <jgg@nvidia.com>, Vivek Kasireddy <vivek.kasireddy@intel.com>, 
+	Rik van Riel <riel@surriel.com>, oe-lkp@lists.linux.dev, lkp@intel.com, 
+	linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Matthew Wilcox <willy@infradead.org>, Christopher Lameter <cl@linux.com>, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-1) Provide a more self-explanatory error message for the "Rust not
-available" case. Without this patch, if Rust is not set up properly
-(which happens a lot, seeing as how one must routinely run "rustup
-override ..." with each new kernel release), the "make rust-analyzer"
-invocation generates a somewhat confusing message:
+On Fri, May 31, 2024 at 5:01=E2=80=AFPM Yang Shi <shy828301@gmail.com> wrot=
+e:
+>
+> On Fri, May 31, 2024 at 4:25=E2=80=AFPM Peter Xu <peterx@redhat.com> wrot=
+e:
+> >
+> > On Fri, May 31, 2024 at 07:46:41PM +0200, David Hildenbrand wrote:
+> > > try_grab_folio()->try_get_folio()->folio_ref_try_add_rcu()
+> > >
+> > > Is called (mm-unstable) from:
+> > >
+> > > (1) gup_fast function, here IRQs are disable
+> > > (2) gup_hugepte(), possibly problematic
+> > > (3) memfd_pin_folios(), possibly problematic
+> > > (4) __get_user_pages(), likely problematic
+> > >
+> > > (1) should be fine.
+> > >
+> > > (2) is possibly problematic on the !fast path. If so, due to commit
+> > >     a12083d721d7 ("mm/gup: handle hugepd for follow_page()") ? CCing =
+Peter.
+> > >
+> > > (3) is possibly wrong. CCing Vivek.
+> > >
+> > > (4) is what we hit here
+> >
+> > I guess it was overlooked because try_grab_folio() didn't have any comm=
+ent
+> > or implication on RCU or IRQ internal helpers being used, hence a bit
+> > confusing.  E.g. it has different context requirement on try_grab_page(=
+),
+> > even though they look like sister functions.  It might be helpful to ha=
+ve a
+> > better name, something like try_grab_folio_rcu() in this case.
+> >
+> > Btw, none of above cases (2-4) have real bug, but we're looking at some=
+ way
+> > to avoid triggering the sanity check, am I right?  I hope besides the h=
+ost
+> > splash I didn't overlook any other side effect this issue would cause, =
+and
+> > the splash IIUC should so far be benign, as either gup slow (2,4) or th=
+e
+> > newly added memfd_pin_folios() (3) look like to have the refcount stabl=
+ized
+> > anyway.
+> >
+> > Yang's patch in the other email looks sane to me, just that then we'll =
+add
+> > quite some code just to avoid this sanity check in paths 2-4 which seem=
+s
+> > like an slight overkill.
+> >
+> > One thing I'm thinking is whether folio_ref_try_add_rcu() can get rid o=
+f
+> > its RCU limitation. It boils down to whether we can use atomic_add_unle=
+ss()
+> > on TINY_RCU / UP setup too?  I mean, we do plenty of similar things
+> > (get_page_unless_zero, etc.) in generic code and I don't understand why
+> > here we need to treat folio_ref_try_add_rcu() specially.
+> >
+> > IOW, the assertions here we added:
+> >
+> >         VM_BUG_ON(!in_atomic() && !irqs_disabled());
+> >
+> > Is because we need atomicity of below sequences:
+> >
+> >         VM_BUG_ON_FOLIO(folio_ref_count(folio) =3D=3D 0, folio);
+> >         folio_ref_add(folio, count);
+> >
+> > But atomic ops avoids it.
+>
+> Yeah, I didn't think of why atomic can't do it either. But is it
+> written in this way because we want to catch the refcount =3D=3D 0 case
+> since it means a severe bug? Did we miss something?
 
-    "No rule to make target 'rust-analyzer"
+Thought more about it and disassembled the code. IIUC, this is an
+optimization for non-SMP kernel. When in rcu critical section or irq
+is disabled, we just need an atomic add instruction.
+folio_ref_add_unless() would yield more instructions, including branch
+instruction. But I'm wondering how useful it would be nowadays. Is it
+really worth the complexity? AFAIK, for example, ARM64 has not
+supported non-SMP kernel for years.
 
-This is confusing at first, because there is, in fact, a rust-analyzer
-build target. It's just not set up to handle errors gracefully.
+My patch actually replaced all folio_ref_add_unless() to
+folio_ref_add() for slow paths, so it is supposed to run faster, but
+we are already in slow path, it may be not measurable at all. So
+having more simple and readable code may outweigh the potential slight
+performance gain in this case?
 
-Instead of inflicting that on the developer, just print that Rust is
-not available, with a blank line above and below, so it doesn't get lost
-in the noise. Now the error case looks like this:
-
-    $ make rust-analyzer
-
-    Rust is not available
-
-    make[1]: *** [/kernel_work/linux-github/Makefile:1975: rust-analyzer] Error 1
-    make: *** [Makefile:240: __sub-make] Error 2
-
-2) As long as I'm there, also add some documentation about what
-rust-analyzer provides.
-
-Signed-off-by: John Hubbard <jhubbard@nvidia.com>
----
- Makefile | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/Makefile b/Makefile
-index f975b6396328..aca2c96820aa 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1967,9 +1967,13 @@ quiet_cmd_tags = GEN     $@
- tags TAGS cscope gtags: FORCE
- 	$(call cmd,tags)
- 
--# IDE support targets
-+# Generate rust-project.json, which does for Rust what clangd's
-+# compile_commands.json does for C/C++: provides a browsing database for code
-+# editors and IDEs.
- PHONY += rust-analyzer
- rust-analyzer:
-+	$(Q)$(CONFIG_SHELL) $(srctree)/scripts/rust_is_available.sh 2>/dev/null || \
-+	    { echo; echo "Rust is not available"; echo; false; }
- 	$(Q)$(MAKE) $(build)=rust $@
- 
- # Script to generate missing namespace dependencies
-
-base-commit: b050496579632f86ee1ef7e7501906db579f3457
--- 
-2.45.1
-
+>
+> >
+> > This chunk of code was (mostly) originally added in 2008 in commit
+> > e286781d5f2e ("mm: speculative page references").
+> >
+> > In short, I'm wondering whether something like below would make sense a=
+nd
+> > easier:
+> >
+> > =3D=3D=3D8<=3D=3D=3D
+> > diff --git a/include/linux/page_ref.h b/include/linux/page_ref.h
+> > index 1acf5bac7f50..c89a67d239d1 100644
+> > --- a/include/linux/page_ref.h
+> > +++ b/include/linux/page_ref.h
+> > @@ -258,26 +258,9 @@ static inline bool folio_try_get(struct folio *fol=
+io)
+> >         return folio_ref_add_unless(folio, 1, 0);
+> >  }
+> >
+> > -static inline bool folio_ref_try_add_rcu(struct folio *folio, int coun=
+t)
+> > -{
+> > -#ifdef CONFIG_TINY_RCU
+> > -       /*
+> > -        * The caller guarantees the folio will not be freed from inter=
+rupt
+> > -        * context, so (on !SMP) we only need preemption to be disabled
+> > -        * and TINY_RCU does that for us.
+> > -        */
+> > -# ifdef CONFIG_PREEMPT_COUNT
+> > -       VM_BUG_ON(!in_atomic() && !irqs_disabled());
+> > -# endif
+> > -       VM_BUG_ON_FOLIO(folio_ref_count(folio) =3D=3D 0, folio);
+> > -       folio_ref_add(folio, count);
+> > -#else
+> > -       if (unlikely(!folio_ref_add_unless(folio, count, 0))) {
+> > -               /* Either the folio has been freed, or will be freed. *=
+/
+> > -               return false;
+> > -       }
+> > -#endif
+> > -       return true;
+> > +static inline bool folio_ref_try_add(struct folio *folio, int count)
+> > +{
+> > +       return folio_ref_add_unless(folio, count, 0);
+> >  }
+> >
+> >  /**
+> > @@ -305,7 +288,7 @@ static inline bool folio_ref_try_add_rcu(struct fol=
+io *folio, int count)
+> >   */
+> >  static inline bool folio_try_get_rcu(struct folio *folio)
+> >  {
+> > -       return folio_ref_try_add_rcu(folio, 1);
+> > +       return folio_ref_try_add(folio, 1);
+> >  }
+> >
+> >  static inline int page_ref_freeze(struct page *page, int count)
+> > diff --git a/mm/gup.c b/mm/gup.c
+> > index e17466fd62bb..17f89e8d31f1 100644
+> > --- a/mm/gup.c
+> > +++ b/mm/gup.c
+> > @@ -78,7 +78,7 @@ static inline struct folio *try_get_folio(struct page=
+ *page, int refs)
+> >         folio =3D page_folio(page);
+> >         if (WARN_ON_ONCE(folio_ref_count(folio) < 0))
+> >                 return NULL;
+> > -       if (unlikely(!folio_ref_try_add_rcu(folio, refs)))
+> > +       if (unlikely(!folio_ref_try_add(folio, refs)))
+> >                 return NULL;
+> >
+> >         /*
+> > =3D=3D=3D8<=3D=3D=3D
+> >
+> > So instead of adding new code, we fix it by removing some.  There might=
+ be
+> > some implication on TINY_RCU / UP config on using the atomic_add_unless=
+()
+> > to replace one atomic_add(), but I'm not sure whether that's a major is=
+sue.
+> >
+> > The benefit is try_get_folio() then don't need a renaming then, because=
+ the
+> > rcu implication just went away.
+> >
+> > Thanks,
+> >
+> > --
+> > Peter Xu
+> >
 
