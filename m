@@ -1,51 +1,73 @@
-Return-Path: <linux-kernel+bounces-197751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7D1E8D6EA9
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 09:26:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A55168D6EAB
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 09:27:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1977DB23C01
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 07:26:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 617E91F23982
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 07:27:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73AC6182AE;
-	Sat,  1 Jun 2024 07:26:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51EFE1865B;
+	Sat,  1 Jun 2024 07:27:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="K+EWO2RD"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="bG+5p/3v"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6DC514F6C;
-	Sat,  1 Jun 2024 07:25:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 339DD175A5
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Jun 2024 07:27:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717226761; cv=none; b=sDDSUqrmJ696P3nd9FnnGngg1E+D1JZNAZtPkzVRPIB0juDk0b09mTh5A2WN4YY8iEayywxyEGSNPcwIrGkw8wfH2Ne5zs9AH3WafmaKgZCqg6/paD+P2b9JakG9LFXeELgJRWpw2Y76z+rv+/7jO52kKK5CHWaDxVezYY4m7Yc=
+	t=1717226855; cv=none; b=dqtPLRWRxmfsw3xXuwZgiiwAmAdYH9Je5jRGLED0ce5PMeeQd7M8XCnChbcLeDFs1p501C5zoRKfsyLX8CNAYrd0Sjro6+C85yiIDBJXoMjAvPgjZTN+/NWKFhXj6Ha+02FkB8q7zjQ6ahxirP8Dtl4QyAwYrgoDw8Tavawl/zU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717226761; c=relaxed/simple;
-	bh=qEeZxR5X4AcUAF1iEcT7FTRSRbJ4XFzeTcRFqAOoJyU=;
+	s=arc-20240116; t=1717226855; c=relaxed/simple;
+	bh=PCJyMuyEUt6FOSKpRSAJIF1DJ6gHGxPxtSzQDAWBqFA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sZJRXoHw4AAZLiNvZP5mHwtE8Qlsb1Z5vImMGE3k1J54DOPmdFA98+tlJsL7A7KNBS1OE+EJRqt5Gn/rzUtLqvf5LEcaltju42NmuAQ7cH5ZzcPrbTe8hy7O+U+3o8SBS1KkrDsKWJTUdtiae2kvAmP3pnWEw9v/f0oElf4FZWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=K+EWO2RD; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
-	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
-	In-Reply-To:References; bh=TmIqSXMQdjkDf/0BSM1RwUqt5bjGDpHqU9r76fJuUtQ=;
-	t=1717226759; x=1717658759; b=K+EWO2RDnIch/JR5YclcNj4UAp6/eMaglDkLhd4+dyJarXT
-	Iabw76WOthWiF2oZ/M3XtrXGrKMErC9tMxgcF872NUrHqzYX1anVNXleEeeD/ipv6dsoah28Qe7j3
-	kW1yiEDzn6jxn7Dx59uYzFSTIhdRxssIXNZdivfto4Vheyzx76DUTPgNpx44jwTeOKTJxnUFGvnea
-	66vluvg4xTJcIfvCFgqXbRVYBBolrmof0byatWnta+NcgKLpIWBQp36627NxQSsmXNR1hr5E9YVd1
-	6TMDW7+0UrkGZle/xQX9yQ1nlHspztwTfrn6C914RnVR15SAb4PntduGqcTWuGqQ==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1sDJ7l-0005R3-Oa; Sat, 01 Jun 2024 09:25:57 +0200
-Message-ID: <e15f3c63-922e-419c-b67e-b3aa174af1ae@leemhuis.info>
-Date: Sat, 1 Jun 2024 09:25:57 +0200
+	 In-Reply-To:Content-Type; b=ga/gDD05MIx2QNEIHto2npx0qstSz4RsShdgs3Pfsl1C5M4GTD3Eo20V3LhJwKG5RTSMhSyJN0lIIbbw8o2VljkWy53ZpxiASAozdZ2M2acGSYm9NJxU+xPmeMcE+xbiIrwuM+z4Nax9DHf+WoMwac7qI5g1EmVFq82jeqLjX0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=bG+5p/3v; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2e95a883101so35488721fa.3
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Jun 2024 00:27:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1717226850; x=1717831650; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Hge4VyxWituyIOOJfd321VcyqziYhhPj3o4Ih55xN00=;
+        b=bG+5p/3vyb4go8ANYQmZhD5TOLvBKYOZtyna3vgPdFAicvteo9XLLhyqvcVEfExBcD
+         B2Hphqk7brJzIaUXkIJkymckLcBMIzxZWmeo7Q3LFFnkrZ5EGNzEczwBkrnWWxpRAOv7
+         nIF3kci1SwqPE0lruSFN6mmekFJ1SDeEvoO77rNAyV5aa/d8bzLVOT2av2RqHAXuzH+T
+         tAlMETqBrMLWoqwYofytlpbcK8Dt2NAPIaNMrsWsUYlIGJbi3rcCsDXWnqGTSDAeQOFz
+         2KiZXj0wTSiQQwoQtQy+PB/BM/QDDxQUwbMwBkxGOBZ/r1N1P2dKpdAI0+fVDy7Mts1n
+         20Vw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717226850; x=1717831650;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Hge4VyxWituyIOOJfd321VcyqziYhhPj3o4Ih55xN00=;
+        b=AEKYScKNZhckrXns7+F5HkErGmiB9TiXzblsMYKQ9rsN+y58bCvNXYtWdwQwPCFApQ
+         b5VE6DGwax+3rQlVA9XxsEo43YmdgQZetN6nwRHyB1nODg+6pUEsQZ4Vfvt5OC+VjpMV
+         /vYw81TwHPboX/mmb3Qa1PPuYP/k2puUuJMbzkk9YY/uZxJyLRaxOtWDEvR//pmme2GK
+         q/mDZ8S+iPO+KCjdgn8+wntpzTZBxtK6u3x9kwuuZouytBBPBJCf9vDD6u7aQGdcQxgg
+         CNKDpNJngc8vKjg59CGsdpGx4pIQijOAFJTe0QI2ykf/5XOBIEcL8z+6MamRwNr6pha+
+         7QYw==
+X-Forwarded-Encrypted: i=1; AJvYcCVBm+HW2WkquHRQdE9UPogBcnSVpe/S8KTD1efDo4K2KJrYuC5shA1LpEvEp2tFQkCt9waeJ0p9PFIBVcUu7y9bVj/EBERlh3ROHzn9
+X-Gm-Message-State: AOJu0YyemAb/mFpY9LA9TdzWU7koZ0/OawkDVXjtYw6cUPqdqAP0AfRj
+	uwfUjL+OgmYavVtFD0TSOocDUoPM42uTUunJsq0q0NwfHDiApxEn4hujpWGw79k=
+X-Google-Smtp-Source: AGHT+IGNPhItELQLzA+6LD+5jArBZ6BmBN1IYQZrt8rOBPmW+ThPAYNFbxwNdlDHZheUKtu5Am8cBg==
+X-Received: by 2002:a2e:6a19:0:b0:2df:b7cf:9607 with SMTP id 38308e7fff4ca-2ea95114215mr28008081fa.22.1717226850126;
+        Sat, 01 Jun 2024 00:27:30 -0700 (PDT)
+Received: from ?IPV6:2a10:bac0:b000:5de0:5af9:fc8:27d7:ba3d? ([2a10:bac0:b000:5de0:5af9:fc8:27d7:ba3d])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4212b838b4asm46873915e9.6.2024.06.01.00.27.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 01 Jun 2024 00:27:29 -0700 (PDT)
+Message-ID: <a54db95c-e22a-4e13-ae4b-6a5a67d1c49b@suse.com>
+Date: Sat, 1 Jun 2024 10:27:28 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,59 +75,79 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: Kernel 6.9 regression: X86: Bogus messages from topology
- detection
-To: Thomas Gleixner <tglx@linutronix.de>,
- Peter Schneider <pschneider1968@googlemail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
- stable@vger.kernel.org, regressions@lists.linux.dev
-References: <877cffcs7h.ffs@tglx>
- <16cd76b1-a512-4a7b-a304-5e4e31af3c8a@googlemail.com>
- <ce3abe01-4c37-416e-a5ed-25703318318a@googlemail.com> <87zfs78zxq.ffs@tglx>
- <76b1e0b9-26ae-4915-920d-9093f057796b@googlemail.com> <87r0dj8ls4.ffs@tglx>
- <87o78n8fe2.ffs@tglx> <87le3r8dyw.ffs@tglx>
- <bd7ff2f3-bf2c-4431-9848-8eb41e7422c6@googlemail.com> <87ikyu8jp4.ffs@tglx>
- <87frty8j9p.ffs@tglx> <1e26effd-a142-44f5-9a72-90a823666d7c@leemhuis.info>
- <87mso56sdj.ffs@tglx>
-From: "Linux regression tracking (Thorsten Leemhuis)"
- <regressions@leemhuis.info>
-Content-Language: en-US, de-DE
-Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
-In-Reply-To: <87mso56sdj.ffs@tglx>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH] x86/boot: add prototype for __fortify_panic()
+To: Kees Cook <kees@kernel.org>, Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <20240529-fortify_panic-v1-1-9923d5c77657@quicinc.com>
+ <0d3f7c58-7fc0-4e8b-b6fb-c4d0d9969ce7@suse.com>
+ <e42c4984-d4a2-45b1-b93d-7471000766b7@quicinc.com>
+ <202405310923.78257B2B3@keescook>
+Content-Language: en-US
+From: Nikolay Borisov <nik.borisov@suse.com>
+In-Reply-To: <202405310923.78257B2B3@keescook>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1717226759;af59127b;
-X-HE-SMSGID: 1sDJ7l-0005R3-Oa
 
-On 01.06.24 09:20, Thomas Gleixner wrote:
-> On Sat, Jun 01 2024 at 09:06, Linux regression tracking (Thorsten Leemhuis) wrote:
->> On 31.05.24 10:42, Thomas Gleixner wrote:
->>> On Fri, May 31 2024 at 10:33, Thomas Gleixner wrote:
->>
->>> ---
->>> Subject: x86/topology/intel: Unlock CPUID before evaluating anything
->>> From: Thomas Gleixner <tglx@linutronix.de>
->>> Date: Thu, 30 May 2024 17:29:18 +0200
+
+
+On 31.05.24 г. 19:28 ч., Kees Cook wrote:
+> On Thu, May 30, 2024 at 09:23:36AM -0700, Jeff Johnson wrote:
+>> On 5/30/2024 8:42 AM, Nikolay Borisov wrote:
 >>>
->>> Intel CPUs have a MSR bit to limit CPUID enumeration to leaf two. If this
->>> bit is set by the BIOS then CPUID evaluation including topology enumeration
->>> does not work correctly as the evaluation code does not try to analyze any
->>> leaf greater than two.
->>> [...]
+>>>
+>>> On 29.05.24 г. 21:09 ч., Jeff Johnson wrote:
+>>>> As discussed in [1] add a prototype for __fortify_panic() to fix the
+>>>> 'make W=1 C=1' warning:
+>>>>
+>>>> arch/x86/boot/compressed/misc.c:535:6: warning: symbol '__fortify_panic' was not declared. Should it be static?
+>>>
+>>> Actually doesn't it make sense to have this defined under ../string.h ?
+>>> Actually given that we don't have any string fortification under the
+>>> boot/  why have the fortify _* functions at all ?
 >>
->> TWIMC, I noticed a bug report with a "12 × 12th Gen Intel® Core™
->> i7-1255U" where the reporter also noticed a lot of messages like these:
->>
->> archlinux kernel: [Firmware Bug]: CPU4: Topology domain 1 shift 7 != 6
->> archlinux kernel: [Firmware Bug]: CPU4: Topology domain 2 shift 7 != 6
->> archlinux kernel: [Firmware Bug]: CPU4: Topology domain 3 shift 7 != 6
->>
->> Asked the reporter to test this patch. For details see:
->> https://bugzilla.kernel.org/show_bug.cgi?id=218879
+>> I'll let Kees answer these questions since I just took guidance from him :)
 > 
-> Won't help. See: https://lore.kernel.org/all/87plt26m2b.ffs@tglx/
+> Ah-ha, I see what's happening. When not built with
+> CONFIG_FORTIFY_SOURCE, fortify-string.h isn't included. But since misc.c
+> has the function definition, we get a warning that the function
+> declaration was never seen. This is likely the better solution:
 
-Ahh, it was the other problem in this thread. Sorry for not noticing
-that, had not followed things that closely. Forwarded that info to the
-ticket. Many thx! Ciao, Thorsten
+fortify-strings.h is used in include/linux/string.h. However all the 
+files in the decompressor are using a local copy of string.h and not the 
+kernel-wide. When pre-processing misc.c with FORTIFY_SOURCE enabled 
+here's the status:
+
+$ grep -i fortify  arch/x86/boot/compressed/misc.i
+void __fortify_panic(const u8 reason, size_t avail, size_t size)
+
+It seems the decompressor is not using fortify-string at all because 
+it's not using the global string.h ?
+
+
+
+> 
+> 
+> diff --git a/arch/x86/boot/compressed/misc.c b/arch/x86/boot/compressed/misc.c
+> index b70e4a21c15f..3f21a5e218f8 100644
+> --- a/arch/x86/boot/compressed/misc.c
+> +++ b/arch/x86/boot/compressed/misc.c
+> @@ -532,7 +532,9 @@ asmlinkage __visible void *extract_kernel(void *rmode, unsigned char *output)
+>   	return output + entry_offset;
+>   }
+>   
+> +#ifdef CONFIG_FORTIFY_SOURCE
+>   void __fortify_panic(const u8 reason, size_t avail, size_t size)
+>   {
+>   	error("detected buffer overflow");
+>   }
+> +#endif
+> 
+> 
+> Jeff, can you test this? (I still haven't been able to reproduce the
+> warning.)
+> 
 
