@@ -1,97 +1,182 @@
-Return-Path: <linux-kernel+bounces-198039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FEBE8D72B3
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 01:20:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D14F68D72B6
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 01:23:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 253CC1F219F3
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 23:20:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED0F41C20B04
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 23:23:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA1354AEEA;
-	Sat,  1 Jun 2024 23:20:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C20C4437C;
+	Sat,  1 Jun 2024 23:23:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pti8llGT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CvjxNygJ"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30D841C680;
-	Sat,  1 Jun 2024 23:20:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F6712594;
+	Sat,  1 Jun 2024 23:23:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717284030; cv=none; b=gSsDgoqKtsiUsG/Sg3fKywlhwLQhIPqUv88AIGHYVh/cWmresHz84DrcvDh2jOT1rcMB4XwRh5wd37h3xgU2sCLsjjSXMDI21bwgnlSw0ElBRIPPtJMFw9rY/w2HYffLiXu6pG6wHiJfSgrRcm9X/bMU2jPywviqtc+Xr1DZio0=
+	t=1717284222; cv=none; b=KpMeJGqWzmsMr6FecnaMM7Bo5sjAYwx8vK7HwqIdCFT+3Rwv0D/byg+wIVcskAEDAJYgjEua6qZbkRYYsY1s3QG3wLXZNdgJclfNdT/LCJh0xtoOU13gimbRvjqMe5TiRhCistMxZNv7TvUno3vV4JjF7QF37jcpHqWe3i0Tf9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717284030; c=relaxed/simple;
-	bh=TnMNRk/w6PSirdgEmK2klgbQv1j+5PdUI5UdJVn345Q=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=QcOYU9nfyJCL7WpxLMhWCcldjPQbeufyI4me4DUfyjGQQZ29YHJD5dNKJRvCIbGFspW6ZhFXwjyfij0EXWki7ycFJv5OB+2IWGOPLwPNn1zX1KrjcfmlEWldpIbWdX2MVHi+dYPRDpVK1OJP4BWihNvphvMPO7J+sn39KMNRrmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pti8llGT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id B73ABC4AF07;
-	Sat,  1 Jun 2024 23:20:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717284029;
-	bh=TnMNRk/w6PSirdgEmK2klgbQv1j+5PdUI5UdJVn345Q=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=pti8llGT78EU3LOCGKz7Eb8J3EE86loJoSKMl0aiYWbqVZ4ds+FBuH53M2OZKuJ3f
-	 XG+RGThkQm2fupVZXDGWnSp0M/TymCA2T8++SBka6HZZKK08A98vG0V/DjTs8q8/9z
-	 mqB7kRzIGR3Elwz1ZC/GiPmzXAq7YOq+9ATYVP3Yepv3zuvdl0ZPRGPHgT2RQuxf9F
-	 qL8KTg9nUV+IvMDxbPXAVDjNSYlnmCq+BorkX1Wnt9sslyf+qRmoqhR+/OHf/rOiVL
-	 Cqkw+bIKJFuRPL/oV0kMCRiVlT4AJGBXskaWclEgvBpmVJHqEa4rnyyh/npbyhLiAD
-	 zoHQNPb9v6xag==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id A97E9DEA717;
-	Sat,  1 Jun 2024 23:20:29 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1717284222; c=relaxed/simple;
+	bh=F09WkOb4zjlbyJIQOG9CR9Mt37qnZbdjCOZPPd+57PE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HktE69l4zCQ+Kurcs8ZbKGxl6pWrase1JvagflAqELezz1Zs6iMAhFJpMZ/pxLvmI4OPB+CRG/PdhZcm6nhgkzFdbU+RcXFIPXD46TkfUutyqqvq9D0LOnhaqpTwxRp1bPg3ov98jvYjnF/gqvBdT5AzdQWN2QVOOVKJHSY7Wyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CvjxNygJ; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-60585faa69fso2123677a12.1;
+        Sat, 01 Jun 2024 16:23:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717284220; x=1717889020; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4PSTY5+233QjLpOpIMQneadANCFD05kjPw3PWERQR6E=;
+        b=CvjxNygJ3awyl/VdDJFBwQ/E7WlM1s/+Z+Y7tSnw0dt1Mc56GX+xLBzrdNhazZs12f
+         xNrhKMILuNFFuAf5icPFwuVFVIO0Axehsb5oy75mDMkVvLjfmNO8780q/3W8uPXBInT7
+         gel11qg21gEYFLllnNy5+wBqP5DBCMmpbp1yMcKr81v0i5mzEfroNtVOXMuT3IP6jqLT
+         BFvFlELJjS4VgHmMUK9JtLijmsYMXcKSfWFjZY0UXQKkurfK1Gy6FkpfsZhMRvQWFzPm
+         mhbDFlmFufusj1r7v1avsczOg+KDmlPY9/Dwa7zmMHuKOxDQzuB4D0YNzqKL1oHRgG5j
+         X+fA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717284220; x=1717889020;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4PSTY5+233QjLpOpIMQneadANCFD05kjPw3PWERQR6E=;
+        b=miVkUTnnirIH9UY6Wu2XfmvlcmcT/pw0SgkRQ1vE+dbcPHtnh33o9zrUstF8KemLzL
+         kkhgGPmR6DcX6ivSGaV+jtWEXBlTLww35bHaG374hDWQdAUP+qGINtVVw1XXqycaobpR
+         R30yJdcbQFY036SNrPklDSZ82lYznsTBTnrGYchKXshmjROlCtHNDZIrZ/0OiB5Ko3Za
+         wDs823vPlWyDBZr/oqBhWT1z+JyFCw7L1t07Wzuht9Zw5ZUgKAByxj15m2BqsfbjL+tJ
+         5dyO6o6EEvSKW9DHy1nk3FZTwHK0fqfnPuG2JFaiDRNSkxdDCNaFvNFPVzuHRNdKCacX
+         +7Fw==
+X-Forwarded-Encrypted: i=1; AJvYcCVd+IZEUrB2EUpzt/NPGnknES47eChnIblMUZc79Xc8HfmFZRNgcemoSt2GEAikua0y+KXMAx9Ts++cQng/SDucipLATb8l72Ne4fensA+kXnaAebtGINbhssY7MCNGMfpFTySA3CqBwBv1
+X-Gm-Message-State: AOJu0YxECokaLf+CNdI+ihzirwyI8AKl1N+EAtiGVR8Il3qr4GIV2kgw
+	1Asnn79kZvmC8LIToox7QmzNw+X0zZoFz9KwjxYU4k6xnoqQMLuj4WEIguC9CLPTm8Z4XU/mrCI
+	WN07ik927XHfu/xAwbh2wPWd7ujqiYg==
+X-Google-Smtp-Source: AGHT+IEm6OKLBJwf3PvplL5rwytM1rg5viWRXXh1JCjlse+po6akaQxyzBOT0LfVC1PCl1ISz55J/N9+px9/vmTNq2c=
+X-Received: by 2002:a17:90a:bf87:b0:2bd:d67b:6bf3 with SMTP id
+ 98e67ed59e1d1-2c1acd998ffmr11271494a91.20.1717284220399; Sat, 01 Jun 2024
+ 16:23:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v2 0/2] net: visibility of memory limits in netns
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171728402968.13922.4485290889430995702.git-patchwork-notify@kernel.org>
-Date: Sat, 01 Jun 2024 23:20:29 +0000
-References: <20240530232722.45255-1-technoboy85@gmail.com>
-In-Reply-To: <20240530232722.45255-1-technoboy85@gmail.com>
-To: Matteo Croce <technoboy85@gmail.com>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, shuah@kernel.org, shakeel.butt@linux.dev,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- teknoraver@meta.com
+References: <20240518114051.18125-3-shresthprasad7@gmail.com>
+In-Reply-To: <20240518114051.18125-3-shresthprasad7@gmail.com>
+From: Shresth Prasad <shresthprasad7@gmail.com>
+Date: Sun, 2 Jun 2024 04:53:28 +0530
+Message-ID: <CAE8VWiLT-bdRfs0DExVOxjG-tNRSBnkZ7KbDX+5bT_d9bkr9hg@mail.gmail.com>
+Subject: Re: [PATCH v3][next] tty: sunsu: Simplify device_node cleanup by
+ using __free
+To: davem@davemloft.net, gregkh@linuxfoundation.org, jirislaby@kernel.org
+Cc: sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-serial@vger.kernel.org, Julia Lawall <julia.lawall@inria.fr>, 
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>, Shuah Khan <skhan@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello:
+On Sat, May 18, 2024 at 5:11=E2=80=AFPM Shresth Prasad <shresthprasad7@gmai=
+l.com> wrote:
+>
+> Add `__free` function attribute to `ap` and `match` pointer
+> initialisations which ensure that the pointers are freed as soon as they
+> go out of scope, thus removing the need to manually free them using
+> `of_node_put`.
+>
+> This also removes the need for the `goto` statement and the `rc`
+> variable.
+>
+> Suggested-by: Julia Lawall <julia.lawall@inria.fr>
+> Signed-off-by: Shresth Prasad <shresthprasad7@gmail.com>
+> ---
+> Changes in v3:
+>     - Remove incorrect testing statement
+>
+> I've tested the patch by cross compiling it for sparc systems and
+> booting the produced `image` file in `qemu-system-sparc`.
+>
+> ---
+>  drivers/tty/serial/sunsu.c | 37 +++++++++++--------------------------
+>  1 file changed, 11 insertions(+), 26 deletions(-)
+>
+> diff --git a/drivers/tty/serial/sunsu.c b/drivers/tty/serial/sunsu.c
+> index 67a5fc70bb4b..0f463da5e7ce 100644
+> --- a/drivers/tty/serial/sunsu.c
+> +++ b/drivers/tty/serial/sunsu.c
+> @@ -1382,44 +1382,29 @@ static inline struct console *SUNSU_CONSOLE(void)
+>
+>  static enum su_type su_get_type(struct device_node *dp)
+>  {
+> -       struct device_node *ap =3D of_find_node_by_path("/aliases");
+> -       enum su_type rc =3D SU_PORT_PORT;
+> +       struct device_node *ap __free(device_node) =3D
+> +                           of_find_node_by_path("/aliases");
+>
+>         if (ap) {
+>                 const char *keyb =3D of_get_property(ap, "keyboard", NULL=
+);
+>                 const char *ms =3D of_get_property(ap, "mouse", NULL);
+> -               struct device_node *match;
+>
+>                 if (keyb) {
+> -                       match =3D of_find_node_by_path(keyb);
+> +                       struct device_node *match __free(device_node) =3D
+> +                                           of_find_node_by_path(keyb);
+>
+> -                       /*
+> -                        * The pointer is used as an identifier not
+> -                        * as a pointer, we can drop the refcount on
+> -                        * the of__node immediately after getting it.
+> -                        */
+> -                       of_node_put(match);
+> -
+> -                       if (dp =3D=3D match) {
+> -                               rc =3D SU_PORT_KBD;
+> -                               goto out;
+> -                       }
+> +                       if (dp =3D=3D match)
+> +                               return SU_PORT_KBD;
+>                 }
+>                 if (ms) {
+> -                       match =3D of_find_node_by_path(ms);
+> +                       struct device_node *match __free(device_node) =3D
+> +                                           of_find_node_by_path(ms);
+>
+> -                       of_node_put(match);
+> -
+> -                       if (dp =3D=3D match) {
+> -                               rc =3D SU_PORT_MS;
+> -                               goto out;
+> -                       }
+> +                       if (dp =3D=3D match)
+> +                               return SU_PORT_MS;
+>                 }
+>         }
+> -
+> -out:
+> -       of_node_put(ap);
+> -       return rc;
+> +       return SU_PORT_PORT;
+>  }
+>
+>  static int su_probe(struct platform_device *op)
+> --
+> 2.44.0
+>
 
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Hi,
 
-On Fri, 31 May 2024 01:27:20 +0200 you wrote:
-> From: Matteo Croce <teknoraver@meta.com>
-> 
-> Some programs need to know the size of the network buffers to operate
-> correctly, export the following sysctls read-only in network namespaces:
-> 
-> - net.core.rmem_default
-> - net.core.rmem_max
-> - net.core.wmem_default
-> - net.core.wmem_max
-> 
-> [...]
+Any updates on this patch?
 
-Here is the summary with links:
-  - [net-next,v2,1/2] net: make net.core.{r,w}mem_{default,max} namespaced
-    https://git.kernel.org/netdev/net-next/c/19249c0724f2
-  - [net-next,v2,2/2] selftests: net: tests net.core.{r,w}mem_{default,max} sysctls in a netns
-    https://git.kernel.org/netdev/net-next/c/5b5233fb81bf
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Regards,
+Shresth
 
