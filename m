@@ -1,90 +1,91 @@
-Return-Path: <linux-kernel+bounces-197764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF10C8D6ED5
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 10:22:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF7768D6ED9
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 10:22:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69D762856AF
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 08:22:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C1151C251D4
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 08:22:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D91AE1BDD0;
-	Sat,  1 Jun 2024 08:22:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58E0D219F3;
+	Sat,  1 Jun 2024 08:22:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ROMsGFrO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ovsoJpri"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A460ED8;
-	Sat,  1 Jun 2024 08:22:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ED0E208C4;
+	Sat,  1 Jun 2024 08:22:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717230152; cv=none; b=tIoMIGrRTbJUXsvF4HWSVH+4wZFgt6d/ioeNgpIjYXm2EaIngoCZKVVtu+7f78eAv34RlA24cRmiRw0kp1LcwIyH1x32CKjPYmDuhmb7qhSU6YirIKUd9yVt2Q5d7f6bmGjCiPKwXQTM02orjSvHNojGvifDrVxxk1QGjdR6i9E=
+	t=1717230158; cv=none; b=mrPbpaek6j7cH9YUXWEkmUkU2zn1ZJeyEOIZGl6mHOEZrKcihJJ2ET5NY7j0ReAsmcqGYFYZ6kg+HSPIszp+wT6EMJYcAITCeNWU+yWUSkQXH9NrBVvsYXYKH1PBptTsznNVAZtPLoh+9eDyP3hbbV6ekUTK0xxe8iUjTfYDAOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717230152; c=relaxed/simple;
-	bh=3Zpc4KSP5zsEw/HCmL80exkin2LGyBPvPU49ttgtTa4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=tj+qlNTQ3m7Gb5YMt5ZvngdS3CfzypAjJbEw1ljYiCAM6qpdu1Vt7RROIqtcyfVl1phVVIfYpUQMU1j5vSTh6nReRb37XQ7dlRH2Tx/KZrOgeRo+APihWkIT6OjPeMh85/YqVZAdcAKEybr2s8oZRDl0It5HIyrmmo8nil0J8CM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ROMsGFrO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FBC3C116B1;
-	Sat,  1 Jun 2024 08:22:30 +0000 (UTC)
+	s=arc-20240116; t=1717230158; c=relaxed/simple;
+	bh=JLVzQUB0aSZj9RaOqI41nLym0rfT53TOTj5bWG0vSNw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R9Ucri+IRs2MPepP2sb+GjspFRyfxInC7lZ3eCYq/BDGId3dfNxdMBh2bgSua0ASLNIyg5qkFTS7saaFneRs1/7HcL5/8Dr7adumvRpnkgRnVKWxx0Uah0f0URhs7J3yYEY5EpaMlAcKhy8hfdLf74P6r//u28OpsJYIpi2hhK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ovsoJpri; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BD07C116B1;
+	Sat,  1 Jun 2024 08:22:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717230151;
-	bh=3Zpc4KSP5zsEw/HCmL80exkin2LGyBPvPU49ttgtTa4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ROMsGFrOR2xkXoHgdDker2uIz62Gbt3bioZfPtfC8AeDfc3L+dAZjwjOXlt1/waLU
-	 ReSRefbxruGG9cZvOPVYLM37BCMS0fensfPQMoDiLRnVsAnDkMLFPCY51B6chm5lkr
-	 cloXaFxjzK1vtazczCt3S1qRbfZr9kieUvBw7aqSznWfTdnGCZqCZhvB5YGR1u2Z91
-	 Nec3fA7vb3YiiwZ7EpF/4pbYFvEzgBIRRPRQWxAQ9kbFaBC0Kia6+rq9S1LygLAaZJ
-	 B2ux1bkkp0evT3vV4eyb5IH33cSm2U0NDtjC/7RQB90vKddBUsanuDLzXhYueN3hZE
-	 JL0YYgJBwVzJQ==
-From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	don <zds100@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	mhiramat@kernel.org
-Subject: [PATCH v2 0/3] tracing/probes: Support tracepoint events on modules
-Date: Sat,  1 Jun 2024 17:22:27 +0900
-Message-Id: <171723014778.258703.6731294779199848686.stgit@devnote2>
-X-Mailer: git-send-email 2.34.1
-User-Agent: StGit/0.19
+	s=k20201202; t=1717230158;
+	bh=JLVzQUB0aSZj9RaOqI41nLym0rfT53TOTj5bWG0vSNw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ovsoJpri7gU/jksFE4nBfQJPMM9cquPrHOK4BrW+iOeh4K4BfiASUijafHNOFrTT2
+	 pzd2LwHNqWAD3h+H4QPjVPGGarGS0EccXBgL2/qXatcpzikdwLlD0lhQMA1PCaD5Ax
+	 rmfeOVxUzzAGlEk7SElpYJxH9ajoSPY+SpbxLyP+AXB+tq9t/sTX6hCVm+b70b4Vsw
+	 AKbhN34DS0eOyclUdPdvI8C5f2wIZR4zBLtHuQ5zz6LWdARTgHCgzTEbstEkTI1UBo
+	 qysivvmVgwVucs+Ss9ZrGTMzrd/5aj5UeV7H3cSD3kOMhXVwIfMEVUBKDin1Rb6iMv
+	 G19ibKu13KA2Q==
+Date: Sat, 1 Jun 2024 09:22:33 +0100
+From: Simon Horman <horms@kernel.org>
+To: Julian Anastasov <ja@ssi.bg>
+Cc: Ismael Luceno <iluceno@suse.de>, linux-kernel@vger.kernel.org,
+	Pablo Neira Ayuso <pablo@netfilter.org>,
+	Michal =?utf-8?Q?Kube=C4=8Dek?= <mkubecek@suse.com>,
+	lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org,
+	netdev@vger.kernel.org, coreteam@netfilter.org
+Subject: Re: [PATCH] ipvs: Avoid unnecessary calls to skb_is_gso_sctp
+Message-ID: <20240601082233.GW491852@kernel.org>
+References: <20240523165445.24016-1-iluceno@suse.de>
+ <16cacbcd-2f4c-1dc1-ecf7-8c081c84c6aa@ssi.bg>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <16cacbcd-2f4c-1dc1-ecf7-8c081c84c6aa@ssi.bg>
 
-Hi,
+On Mon, May 27, 2024 at 08:59:37PM +0300, Julian Anastasov wrote:
+> 
+> 	Hello,
+> 
+> On Thu, 23 May 2024, Ismael Luceno wrote:
+> 
+> > In the context of the SCTP SNAT/DNAT handler, these calls can only
+> > return true.
+> > 
+> > Ref: e10d3ba4d434 ("ipvs: Fix checksumming on GSO of SCTP packets")
+> 
+> 	checkpatch.pl prefers to see the "commit" word:
+> 
+> Ref: commit e10d3ba4d434 ("ipvs: Fix checksumming on GSO of SCTP packets")
+> 
+> > Signed-off-by: Ismael Luceno <iluceno@suse.de>
+> 
+> 	Looks good to me for nf-next, thanks!
+> 
+> Acked-by: Julian Anastasov <ja@ssi.bg>
 
-This series implements the tracepoint events on modules.
-This version separates a patch for tracepoint subsystem from
-fprobe-event patch, and adds a selftests for tracepoint
-events on modules.
+Likewise, looks good to me.
 
-Thank you,
+Acked-by: Simon Horman <horms@kernel.org>
 
----
-
-Masami Hiramatsu (Google) (3):
-      tracepoint: Support iterating over tracepoints on modules
-      tracing/fprobe: Support raw tracepoint events on modules
-      sefltests/tracing: Add a test for tracepoint events on modules
-
-
- include/linux/tracepoint.h                         |    7 +++
- kernel/trace/trace_fprobe.c                        |   46 +++++++++++++++++---
- kernel/tracepoint.c                                |   16 +++++++
- tools/testing/selftests/ftrace/config              |    1 
- .../test.d/dynevent/add_remove_tprobe_module.tc    |   34 +++++++++++++++
- 5 files changed, 96 insertions(+), 8 deletions(-)
- create mode 100644 tools/testing/selftests/ftrace/test.d/dynevent/add_remove_tprobe_module.tc
-
---
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+...
 
