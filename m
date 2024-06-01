@@ -1,78 +1,113 @@
-Return-Path: <linux-kernel+bounces-197952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCE208D712C
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 18:38:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AD718D7130
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 18:42:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7216F1F212B2
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 16:38:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B60B41C20FE7
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 16:42:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEB63153821;
-	Sat,  1 Jun 2024 16:38:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84347153510;
+	Sat,  1 Jun 2024 16:42:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GN59xD9J"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="sIS3bpZw"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E08F915380B;
-	Sat,  1 Jun 2024 16:38:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C54E1DFF7;
+	Sat,  1 Jun 2024 16:42:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717259903; cv=none; b=Jkq9Ssmf0mViXiW5O3yvhGoMXsdUw6PVZMRekkWoIAe4flUKt4JB0jQ93jS/Y4xG3VXMh/DZ5BD7Z4aUV5NQ4Z5i+4uccDpnVct8B5SydxHobbMr/2ITLQ0fKgKBzNrIjchSEopvI3rIIx3RNH/WD6nT4mjC/Ny9u66pA9gcGOw=
+	t=1717260135; cv=none; b=fcIGLpvofbVyIHMv5qFtrhKUSH9kfaHt8V9BNBfhwQaxfVzjleIPLnbggpqdWjUROLM4ZvpK+7L7gMsU5C501by3hO7/uqehHZjmM8nqwazoCH0lMzq30vNwNpx6vjTn99vEFAdrdXjXTeNXLms0y2UDdwPjYGXclVFdaa5WEp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717259903; c=relaxed/simple;
-	bh=ZTIOqlPeOJtfDE7M+UYDMIc2DXR3T+hPmjF53SmBOoU=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=j5elii4XReD8V2vn1IEO+YlXdYQ3TPCXDZKTB67v4OMNHVKrO26PcByga/lof/hMy/DZP0Q0P2GCtGBZ+tEp4A6hWnf/Tas+NJ+5Ehwk2FtUZxO/KvmMInuzaCKK3OmYX3Ntsv42AITyYqpQGdt6pTtM+qD5WxNhR/Yl/79tS5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GN59xD9J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 64B67C116B1;
-	Sat,  1 Jun 2024 16:38:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717259902;
-	bh=ZTIOqlPeOJtfDE7M+UYDMIc2DXR3T+hPmjF53SmBOoU=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=GN59xD9J4zozDTIj6dHGZMHPnpKGdIKxz9WYefLtRhG7/UisFoyzTKyo+OPJb3/fA
-	 3QcBZrhyue2RYb393NNdkwLrNr3AbV9WRn2r0Jqe2/fETIzJ1JRgPhQnVimDfMTQLG
-	 dnviJanCoBNx2hzy03WIYgnyDzdm7aymfKDkQvofBskTaplgwFogJ1+/tYKODlK/Qe
-	 umfsn68T8JXeHcwI01ZH5bz5B4hGLmKOQEewdEMzkS1U3UWfniZoPeU2DPUpjqnNYb
-	 CNV5GtSK8J4W52m8G7O0MZoX2jDoctw9kszxSNtQK4Z3at0o+H9h2WvRs9kGa5ewFv
-	 iKQ+Lw3XPgnMQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 53CB0C4361B;
-	Sat,  1 Jun 2024 16:38:22 +0000 (UTC)
-Subject: Re: [GIT PULL] Kbuild fixes for v6.10-rc2
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <CAK7LNATB7Gkq-rDeGy0VyZhEa1M8cMYQmUSQTQOLCGtJYUzD7g@mail.gmail.com>
-References: <CAK7LNATB7Gkq-rDeGy0VyZhEa1M8cMYQmUSQTQOLCGtJYUzD7g@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAK7LNATB7Gkq-rDeGy0VyZhEa1M8cMYQmUSQTQOLCGtJYUzD7g@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git tags/kbuild-fixes-v6.10
-X-PR-Tracked-Commit-Id: 1b1c9f0fd3fb70adf1f3b0aec58ab037d6e595d0
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: ec9eeb89e60d86fcc0243f47c2383399ce0de8f8
-Message-Id: <171725990233.19745.3359437306717795663.pr-tracker-bot@kernel.org>
-Date: Sat, 01 Jun 2024 16:38:22 +0000
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+	s=arc-20240116; t=1717260135; c=relaxed/simple;
+	bh=Xu3vkhgffNTzU2/HpNfT9+Hk1mZIlW14sUSAMdOAUcM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=SoQhUm6jk1+WQ++qoqeE98LpWiWVcouixQljEEkHzD8qaQllkFucF2ck8345UU7VetxYclKqhPJZRmmIk7eVwo7jiU15hrlTCNKjMHd3BpXwx69t+SqOneIPWa069awvYw0Sy7FbtEftXFmznF2C8Kb0DdrikCKbphSeKaUhKwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=sIS3bpZw; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 451GffZ8036681;
+	Sat, 1 Jun 2024 11:41:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1717260101;
+	bh=+ocxchH9u2Icz4prOAtSV5xvLRJJKRxfx+7US0r/Pik=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=sIS3bpZwCELHxccweU6x52eq+2O1Ue4QnQ+3wx6sWd9Ph/5SBvnFK0mTKgHaGJndb
+	 vKZsUkZ3Oe7to6ThCH6xsu0xc89qM9QE8q7nFH1EGG/+3PLTYE1IabyCy1d1zv0tG/
+	 +1848s9cQKrZRfDRz9FDEJPR6fOi8gD/x+EeypAc=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 451GffhU069778
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Sat, 1 Jun 2024 11:41:41 -0500
+Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sat, 1
+ Jun 2024 11:41:40 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Sat, 1 Jun 2024 11:41:40 -0500
+Received: from [10.249.130.181] ([10.249.130.181])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 451GfTpn129505;
+	Sat, 1 Jun 2024 11:41:30 -0500
+Message-ID: <1d35fe9f-79f3-4d64-81d6-97a63b333bfc@ti.com>
+Date: Sat, 1 Jun 2024 22:11:28 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 07/11] Documentation: core-api: Add math.h macros and
+ functions
+To: Randy Dunlap <rdunlap@infradead.org>, <mchehab@kernel.org>,
+        <hverkuil-cisco@xs4all.nl>, <linux-media@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <benjamin.gaignard@collabora.com>,
+        <sebastian.fricke@collabora.com>, <akpm@linux-foundation.org>,
+        <gregkh@linuxfoundation.org>, <andriy.shevchenko@linux.intel.com>,
+        <adobriyan@gmail.com>, <jani.nikula@intel.com>,
+        <p.zabel@pengutronix.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
+        <dri-devel@lists.freedesktop.org>, <corbet@lwn.net>,
+        <broonie@kernel.org>, <linux-doc@vger.kernel.org>
+CC: <laurent.pinchart@ideasonboard.com>, <praneeth@ti.com>, <nm@ti.com>,
+        <vigneshr@ti.com>, <a-bhatia1@ti.com>, <j-luthra@ti.com>,
+        <b-brnich@ti.com>, <detheridge@ti.com>, <p-mantena@ti.com>,
+        <vijayp@ti.com>, <andrzej.p@collabora.com>, <nicolas@ndufresne.ca>,
+        <davidgow@google.com>, <dlatypov@google.com>
+References: <20240531170229.1270828-1-devarsht@ti.com>
+ <20240531171220.1295881-1-devarsht@ti.com>
+ <c14215bd-96ff-4aec-83c4-e25375f6fe88@infradead.org>
+Content-Language: en-US
+From: Devarsh Thakkar <devarsht@ti.com>
+In-Reply-To: <c14215bd-96ff-4aec-83c4-e25375f6fe88@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-The pull request you sent on Sun, 2 Jun 2024 01:24:01 +0900:
+On 01/06/24 00:01, Randy Dunlap wrote:
+> Hi,
+> 
+> On 5/31/24 10:12 AM, Devarsh Thakkar wrote:
+>> Add documentation for rounding, scaling, absolute value and difference,
+>> 32-bit division related macros and functions exported by math.h header
+>> file.
+>>
+> 
+> I don't see any kernel-doc for division functions in this header file.
+> 
+> Do some division functions get rendered somehow?
+> 
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git tags/kbuild-fixes-v6.10
+Good catch. I see couple of them having adequate documentation just
+missing the sphynx syntax, will enable for DIV_ROUND_CLOSEST and
+DIV_ROUND_CLOSEST_ULL.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/ec9eeb89e60d86fcc0243f47c2383399ce0de8f8
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Regards
+Devarsh
 
