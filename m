@@ -1,190 +1,182 @@
-Return-Path: <linux-kernel+bounces-197759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CE558D6ECC
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 10:18:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94EC28D6ED3
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 10:19:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C881FB2260A
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 08:18:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8CB51C23E27
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 08:19:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 957331CD23;
-	Sat,  1 Jun 2024 08:17:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4BD12D03B;
+	Sat,  1 Jun 2024 08:18:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="s6bYa9xp"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=metaspace-dk.20230601.gappssmtp.com header.i=@metaspace-dk.20230601.gappssmtp.com header.b="Q2LJ6MxG"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75247134BC;
-	Sat,  1 Jun 2024 08:17:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38F351BF37
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Jun 2024 08:18:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717229870; cv=none; b=YlkCWx7B4xtMjc05lUqXha4p4vgjwjn7+I4ztHYoXLBHr+qJ2MCuU/eNQDgc9BbkiO8MAHIXO1ns8SVIhodo6/P3cHVbE/d1iBHUNZd0aj5bw138quCLhxsPRLVXThb1Cc1vRmgPGkSg8kpHxxQX9mRfoHnH/YCQ1h5PDGb6k9E=
+	t=1717229928; cv=none; b=Pay7LtqnArtTvvOS5sfV1l8cyIiw4TJHsHX9VFq2I7IiP+yXmnFNFxYb3hIFYMooiRJun+iP+irnpJWFerI98EQgxVbDwRAGVigmngf+rljEa1p0SOBO57+v9R72vykfVipwtVvc1fZXwpyklDglTIlBvh/SM727YeBFuhaRjD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717229870; c=relaxed/simple;
-	bh=7eeatt4CcPmiwk7FadqALe+uBEk9RzdNLVP4oBfTTKE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=bfyJIzG1PJRzJfFaCGj3gsqeNi4K1AIqw+mq2v+pIl7GVK7eDTEs2TGaUgRxp/zYmtfQ9YCsqq+DD3zVi5gzsN4weXib4QOJZlKpd55oE53izmrb/J5ctb0sUoxUSfirBhFxY3s3SDfxYXxIv2PotjMcK06jYJfhrtjXxKJTUAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=s6bYa9xp; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1717229848; x=1717834648; i=wahrenst@gmx.net;
-	bh=9g8i1E4J9Qgk8VQ+f5MzIOoR/utW2DTqj5vifxeAFu0=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=s6bYa9xp91jDDnaO2Kpu+8DRegMiTGOgaXKB5Mhg5+c0CxhX6N+KZEnbOhs284yb
-	 201Qihxzh59QbT6NLof7RVxYhmL4pyuH7gaBq4AsthocxoV14DKBRLF4tUs3WOLKf
-	 WEkW7PPdZx3/ipknLGdkZbrfqYlMEfiMg22lJJ0g+zcaJb90vbZKJFjMiF5ElEpMy
-	 q/jie6giETFV+PLeGydIgqlfu/HfaEFb5HLttNT9V6JhuprZEFpMc1GymbxLRPMR+
-	 VVB4wufjQ+f/hC9SwsS2T0SZXS0K9Ic+kqvghAuiikIb2zbzu4mXp4AY4+cJ+1MNN
-	 fIT0Jm0KATg9WbhHlw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.1.127] ([37.4.248.43]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1N6bfq-1sXTkM0R6U-01528i; Sat, 01
- Jun 2024 10:17:28 +0200
-Message-ID: <0a041812-875b-42e3-b303-4d984b0f9a54@gmx.net>
-Date: Sat, 1 Jun 2024 10:17:26 +0200
+	s=arc-20240116; t=1717229928; c=relaxed/simple;
+	bh=97vqWiRz/4WudPl9NVnJPUx380vb6H8qrelZ05oFnck=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OuEQlY5YCez2Zf3fI46l/cOK33M/TXsn43YhrzCE/6ZrwaDsQLILZJMzS0NXdmrNZvKARztNI2uIcH8ExskzDNgH8w1OE0yuR3lSOl784sND9FmVEmF9xs2f92xytrts79HEBQCZ2bOt4EVVtTFYdwHG+9wSm6LSNNRdJ0XDpY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=metaspace.dk; spf=none smtp.mailfrom=metaspace.dk; dkim=pass (2048-bit key) header.d=metaspace-dk.20230601.gappssmtp.com header.i=@metaspace-dk.20230601.gappssmtp.com header.b=Q2LJ6MxG; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=metaspace.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=metaspace.dk
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4210aa012e5so28490995e9.0
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Jun 2024 01:18:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=metaspace-dk.20230601.gappssmtp.com; s=20230601; t=1717229925; x=1717834725; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y8oXzqoqzC1jj2s3HB6B17KnN0ZXhFvh9dHdw9fUwwU=;
+        b=Q2LJ6MxGW8LdZ2Zha8dK0mNOwQf4PjoVN2qx8mut2mnxVrTaMnqyw5pRBk1JuAV9bd
+         ht94I5J6UqlcHbSMr6dtdPU3iVI22H35QKv8g2+4XPAUaVYXyyW/cv257DD4yCHYAlYS
+         SyFK3IIXAft0/mN5yuchU15hOma3g+INZ0bnPITu6FMbTMGgQo1iiSRjFpfYxQdv0Dds
+         eBhuYL3cAvXlCCCowfgmMp2FUAl9ns2ZDuYDbqzwL/QMmt4xEF+7R3gdctMG9Ij8Ste/
+         /dzhj40bUCYg8+wR14igiYexSdOd6BhbCtttoqjLnExTWQC0XzMd9KQUg/O/k+Rv8JML
+         +Vew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717229925; x=1717834725;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Y8oXzqoqzC1jj2s3HB6B17KnN0ZXhFvh9dHdw9fUwwU=;
+        b=GFE6g2RFK/DNEoQLJB9X/bU/e4YsX1Z0aGpqkZhBlqR9MRIxEtncmkLHJVlArN4Kti
+         B9S4BkI4c0rmwBD4s4QVAemz0DAjKiytGZxEG4Ld/A5Lp31o+PKxgqGHOcaleGoZIxUa
+         aw2R6Bfj4nus5a3qQxGNVAz6XsE71RuUBUTeLP+tiFtOx4oqH7PRLQGPUhQ23diuGzt6
+         XfH/BfiStBVHe0tTEzTEdwOJDJvar0qQaaFjDQ0UhlJyomD4YzfXO1PHJgUrqokIMyL2
+         xIZxk6Jnc9e7NpQN5lHCfNTFe9cJCc5kuFvepHTagZDKcoIrAEuYBu+rCF1vO/h115ht
+         En6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVWems8X7RDzhJjLD2hpUGiLF20Q5afw8CiLWWZpjVfLxTHA+CjeBy3X++sptd937FXAkWcieYNi/RZR9pmFbS2pxa48cq59HLi7ebC
+X-Gm-Message-State: AOJu0YyXKZQHfHnzmzOoJ9DO+VKgluCOgJkmEykk2tiEEdQko3kvLQJJ
+	+9vBW3tnBASM2RhnBGBK8aHQQrfbiblhjJpVy6GIus1yXDhkZshZj4Avh3Gv7kk=
+X-Google-Smtp-Source: AGHT+IHOjJD1FDj9KV1S+ZRW3wSuZC5DIELE42B4EytbWbUF+T1bVdC2cqj2yzvkv1dtXA3iOPMTpw==
+X-Received: by 2002:a05:600c:1383:b0:421:2711:cddb with SMTP id 5b1f17b1804b1-4212e06fefbmr31123385e9.21.1717229925519;
+        Sat, 01 Jun 2024 01:18:45 -0700 (PDT)
+Received: from localhost ([194.62.217.3])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35dd062edbcsm3542331f8f.84.2024.06.01.01.18.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 01 Jun 2024 01:18:45 -0700 (PDT)
+From: Andreas Hindborg <nmi@metaspace.dk>
+To: Jens Axboe <axboe@kernel.dk>,
+	Christoph Hellwig <hch@lst.de>,
+	Keith Busch <kbusch@kernel.org>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Bart Van Assche <bvanassche@acm.org>,
+	Hannes Reinecke <hare@suse.de>,
+	Ming Lei <ming.lei@redhat.com>,
+	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
+Cc: Andreas Hindborg <a.hindborg@samsung.com>,
+	Greg KH <gregkh@linuxfoundation.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Chaitanya Kulkarni <chaitanyak@nvidia.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Yexuan Yang <1182282462@bupt.edu.cn>,
+	=?UTF-8?q?Sergio=20Gonz=C3=A1lez=20Collado?= <sergio.collado@gmail.com>,
+	Joel Granados <j.granados@samsung.com>,
+	"Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
+	Daniel Gomez <da.gomez@samsung.com>,
+	Niklas Cassel <Niklas.Cassel@wdc.com>,
+	Philipp Stanner <pstanner@redhat.com>,
+	Conor Dooley <conor@kernel.org>,
+	Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+	=?UTF-8?q?Matias=20Bj=C3=B8rling?= <m@bjorling.me>,
+	open list <linux-kernel@vger.kernel.org>,
+	"rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>,
+	"lsf-pc@lists.linux-foundation.org" <lsf-pc@lists.linux-foundation.org>,
+	"gost.dev@samsung.com" <gost.dev@samsung.com>
+Subject: [PATCH v3 0/3] Rust block device driver API and null block driver
+Date: Sat,  1 Jun 2024 10:18:03 +0200
+Message-ID: <20240601081806.531954-1-nmi@metaspace.dk>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 0/4] Add minimal boot support for Raspberry Pi 5
-To: Andrea della Porta <andrea.porta@suse.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
- <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Ulf Hansson
- <ulf.hansson@linaro.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Kamal Dasu <kamal.dasu@broadcom.com>, Al Cooper <alcooperx@gmail.com>,
- devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mmc@vger.kernel.org
-References: <cover.1717061147.git.andrea.porta@suse.com>
- <36642bd8-c981-4190-9f44-072ac3c97c6b@gmx.net> <ZlnJzqnvTk70O3ap@apocalypse>
-Content-Language: en-US
-From: Stefan Wahren <wahrenst@gmx.net>
-In-Reply-To: <ZlnJzqnvTk70O3ap@apocalypse>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:goG2aefWUGM6HYTd+wn1rjaTrNzvf9I4cz3NFvFZ99ncYKSE6rO
- iJQzkald9qRVqEJ2oEE2aeOE0fxuGQfDjplO0NPDzwkzUisk2+SS0IcrfHLc/bV4Ii1yKsf
- i9ZV5Jb5zcumld0v0rACFuw8a/vtP1ZfF1j6fzo9zY6RlJdmUrDzmjmDJlyeBO7slxHXPbj
- ZHpwb5QMnwYkjDcqWGmtQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:f4k/wUKkgVI=;4dC/SJSfIquim+tu6BbxkI3Fa50
- 3mHopelSNKrGAnz6sAKWy+wmGFFdSoy5ZplfsfOF5qQXnZ5L9KbZfiZ8Ogm3/kMcFnBzd03ai
- OymQOumXnn98K93p1s1DvwQD5Y+Do/lZNywUqzjt1T+dwiqHffiZqUExRyk6T2ttfi6rgZFJl
- crBjYOLZU9PnwFxtnEYxdDsNxU0CwPzbttfoF0m/8XWrdNdg3dGdqbPrkw0Qi5jVrbkQfZeCg
- mNd3njO/3t7g4FyRBZVzVsVxaceCqMxP1iJqRZlrD7Gqogb1BVqFa6dYa2qcY0+/DXnSH0nEa
- ewvLP3kNv8dMyTYrf8p+52SzLV6KC5t0NIgd8IzRVSX4eo2vp7dzsKxfJYQjgIgUnSsySnwZ0
- f/Ws409+fdIr8qWx0/FinFJlWN4HmxcpxApcEPlrxi/bmOoL3199H9f56bFWfcJ5L8aRRspus
- cA6epR/LQxUNy0XHF7amOH9HXsBQbcpZNO1H+YE2XTdgrjggZtm1Ws/Lh6H9dJUFi5zKWyPgH
- Pw8jnMNfpUvyCeApCUfDhhK9+6BC0annUnkfc3B6nUIJdOz3cklfDQCoVeK7N76+mADDYpbE/
- qxGWSM87tkkUbW5T8iZjhhmrAI0VK4w2xpx9mr0s7PdQ3j2Scf+AhMnGFtplGBoRxW40/tzLe
- CBWTsaPyyDPebTSNyotf1ALh+Kd63qISh2hWXLsM73ZxNo4+uy6tzh7BIIv7+MLUvt3Uq9xQH
- LVVBi20eUDmQG99rWSqnzXQ4U6+z8lus8ad2ads3YjbV+z6AYGLoGkC8yY3XEV1r7evEAlAIO
- LckLuCpPucU7wz4uGz0o7BVaZahYsfiAG6UZZNVzz6eio=
+Content-Transfer-Encoding: 8bit
 
-Hi Andrea,
+From: Andreas Hindborg <a.hindborg@samsung.com>
 
-Am 31.05.24 um 14:59 schrieb Andrea della Porta:
-> Hi Stefan,
->
-> On 12:00 Fri 31 May     , Stefan Wahren wrote:
->> Hi Andrea,
->>
->> Am 30.05.24 um 12:11 schrieb Andrea della Porta:
->>> Hi,
->>>
->>> This patchset adds minimal support for the Broadcom BCM2712 SoC and fo=
-r
->>> the on-board SDHCI controller on Broadcom BCM2712 in order to make it
->>> possible to boot (particularly) a Raspberry Pi 5 from SD card and get =
-a
->>> console through uart.
->>> Changes to arm64/defconfig are not needed since the actual options wor=
-k
->>> as they are.
->>> This work is heavily based on downstream contributions.
->>>
->>> Tested on Tumbleweed substituting the stock kernel with upstream one,
->>> either chainloading uboot+grub+kernel or directly booting the kernel
->>> from 1st stage bootloader. Steps to reproduce:
->>> - prepare an SD card from a Raspberry enabled raw image, mount the fir=
-st
->>>     FAT partition.
->>> - make sure the FAT partition is big enough to contain the kernel,
->>>     anything bigger than 64Mb is usually enough, depending on your ker=
-nel
->>>     config options.
->>> - build the kernel and dtbs making sure that the support for your root
->>>     fs type is compiled as builtin.
->>> - copy the kernel image in your FAT partition overwriting the older on=
-e
->>>     (e.g. kernel*.img for Raspberry Pi OS or u-boot.bin for Tumbleweed=
-).
->>> - copy arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb on FAT partiti=
-on.
->>> - make sure you have a cmdline.txt file in FAT partition with the
->>>     following content:
->>>     # cat /boot/efi/cmdline.txt
->>>     root=3D/dev/mmcblk0p3 rootwait rw console=3Dtty ignore_loglevel ea=
-rlycon
->>>     console=3DttyAMA10,115200
->>> - if you experience random SD issues during boot, try to set
->>>     initial_turbo=3D0 in config.txt.
->> was this an issue since the beginning of this series?
->>
-> I experienced this even during early testing, using the complete downstr=
-eam
-> driver. It seems that when initual_turbo !=3D 0, the fw can throttle the=
- clock
-> to reduce the boot time and it (directly or indirectly) may affect SD fu=
-nctionality.
-> I believe that the probability of this to happen is likely a function of=
- SD
-> card speed, whether it requires timing tuning, initial_turbo exact value=
-  and whether
-> you are booting the kernel directly or chainloading u-boot + grub (or
-> whatever combination of secondary stage bootloader). For example, your
-> boot setup may have a timeout in the grub boot menu that is large enough=
- for the clocks
-> to settle and the boot process to end successfully, while faster boot ti=
-me can lead
-> to the issue described. Since this behaviour seems to depend on all of t=
-his factors and
-> does not necessarily arise in practice, disabling initial_turbo is just =
-a suggestion
-> in case things go haywire.
-yes in case the VPU changes the SD clock or one of the parent while the
-ARM cores tries to boot, they won't be informed about these changes
-which could ends up with the wrong SD clock frequency.
+Hi!
 
-Thanks for your explanations
->
->> What kind of SD issues?
->>
-> I wasn't able to boot from SD card due to clock issues.
->
->> Is there a downstream reference?
-> Some (old) reference e.g.:
-> https://forums.raspberrypi.com/viewtopic.php?t=3D112480#:~:text=3DIt%20s=
-ets%20turbo%20mode%20from,have%20turbo%20during%20the%20boot.
->
-> but there are probably more.
->
-> Many thanks,
-> Andrea
+Rebased on v6.10-rc1 and implemented a ton of improvements suggested by Benno. v2 is here [2]
+
+Changes from v2:
+
+ - implement `atomic_relaxed_op_return` in terms of `AtomicU64::fetch_update`.
+ - update `Request` docs with state tracking info
+ - link all types in docs
+ - add invariant to `TagSet`
+ - do not unwrap pin in `TagSet::drop`
+ - remove references to `try_ffi_init` from comments
+ - numerous typo fixes
+ - code formatting fixes
+ - remove remote completion logic
+ - move `gen_disk::try_new` into `GenDisk` impl
+ - make `GenDiskState` sealed
+ - add a default state for `GenDisk`
+ - conditionally call `del_gendisk` on `GenDisk` drop
+ - move `add_disk` into `init` functon in rnull module
+ - improve error message in request completion assertion
+ - rebased on v6.10-rc1
+
+Best regards,
+Andreas Hindborg
+
+
+Link: https://lore.kernel.org/all/20240521140323.2960069-1-nmi@metaspace.dk/ [1]
+
+
+Andreas Hindborg (3):
+  rust: block: introduce `kernel::block::mq` module
+  rust: block: add rnull, Rust null_blk implementation
+  MAINTAINERS: add entry for Rust block device driver API
+
+ MAINTAINERS                        |  14 ++
+ drivers/block/Kconfig              |   9 ++
+ drivers/block/Makefile             |   3 +
+ drivers/block/rnull.rs             |  78 +++++++++
+ rust/bindings/bindings_helper.h    |   2 +
+ rust/helpers.c                     |  16 ++
+ rust/kernel/block.rs               |   5 +
+ rust/kernel/block/mq.rs            |  97 ++++++++++++
+ rust/kernel/block/mq/gen_disk.rs   | 222 ++++++++++++++++++++++++++
+ rust/kernel/block/mq/operations.rs | 233 +++++++++++++++++++++++++++
+ rust/kernel/block/mq/raw_writer.rs |  55 +++++++
+ rust/kernel/block/mq/request.rs    | 246 +++++++++++++++++++++++++++++
+ rust/kernel/block/mq/tag_set.rs    |  97 ++++++++++++
+ rust/kernel/error.rs               |   6 +
+ rust/kernel/lib.rs                 |   2 +
+ 15 files changed, 1085 insertions(+)
+ create mode 100644 drivers/block/rnull.rs
+ create mode 100644 rust/kernel/block.rs
+ create mode 100644 rust/kernel/block/mq.rs
+ create mode 100644 rust/kernel/block/mq/gen_disk.rs
+ create mode 100644 rust/kernel/block/mq/operations.rs
+ create mode 100644 rust/kernel/block/mq/raw_writer.rs
+ create mode 100644 rust/kernel/block/mq/request.rs
+ create mode 100644 rust/kernel/block/mq/tag_set.rs
+
+
+base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
+-- 
+2.45.1
 
 
