@@ -1,97 +1,135 @@
-Return-Path: <linux-kernel+bounces-197863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 888438D7028
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 15:17:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DF398D7027
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 15:17:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45BDA28377A
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 13:17:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 289E92824C9
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 13:17:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1E3E152181;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82C1715216F;
 	Sat,  1 Jun 2024 13:16:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="GketFNtX"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qzwFtJx9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58FD9DDB8;
-	Sat,  1 Jun 2024 13:16:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C33DE8405D;
+	Sat,  1 Jun 2024 13:16:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717247786; cv=none; b=Imq4Xt90118QytTcLrsUTPR0yZimSXKPVlSvohet5yblX48hWomLozxR+otehPHrwhyb/W6s1enEPXr0BRocI1HrmmWa0ylZwfJm0yE1YXbVPo4lxGgp50GzgORVSfVcjdc6VB+KrSEQ8LyXBaAl5dmgRcgdGJBTJIRWiUJZpJs=
+	t=1717247786; cv=none; b=rlsxyo0/+JdxIeR33FLY7Jl1QSVmFQwF07iHhpJ5juDIblwwMp5R5iXkSNpA9sJwuO7w6tN09ZVnllvv81HaB3gPpRMfhb0lk5ReyFQbEi+BD2KAbhtyctg8RQ110sA8Krfd0F9HewhHm06zLdk1/PyQp6pJboPQuYUi2ahN3zM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1717247786; c=relaxed/simple;
-	bh=GcZoulpfNKwRDYAmVIZeAXOPBhs+++k+Rmiq/aZbe14=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sDfyZvCZr9SbYJXHcO7pmc8q6XIwTTswD8dziKV/HWHUcGNFnNGPqzP+Qdv+0QkEtIkJv5nXi6ssiF51hPXdFB2UpegYYHeQOrzDKi1u08d52rtQDnT7j3sJttSZEl5CNPLkaCven5033iPTjDVu7fvvL59LjOdR9KNviXl8H4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=GketFNtX; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=Xua/3eiXF3woSwR7tG90GsoW9bS2vNPBoTss/RlnlLA=; b=GketFNtXvmzI2wEc
-	NUQYf3OTU+/6pZ8WHUeKgqy1IWww5DPPHQF2KmOrAYgobG5tL0HYD6fhGbWD93QsDvowt6AUH9I5y
-	4PSxVMdfggXaKiYU/sWLck+d0duQapnRrtwiyosIu7+XnQ8JFX+8lffEMc6C+h4hZLk/cHyCkit9X
-	8JpRU4mi2oIFwrjF1iBkMxiwr9YRRG5h4JG+D0IdQn5wI0fcR+NAqZg2dHfFQ/7yoMp7uUhTfHxwF
-	PJVCPB7+gd+9D6Im7EgMw68g9c288FYct+tbaM8Cr354qrmGnwbd/sX5k+q9re6v0JAK7Py3tLyUX
-	rgOyX5zYVKAoOJsK0w==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1sDOak-003jMk-0S;
-	Sat, 01 Jun 2024 13:16:14 +0000
-From: linux@treblig.org
-To: philipp.g.hortmann@gmail.com,
-	Larry.Finger@lwfinger.net,
-	florian.c.schilhabel@googlemail.com,
-	gregkh@linuxfoundation.org
-Cc: linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH v2] staging: r8712u: remove unused struct 'zero_bulkout_context'
-Date: Sat,  1 Jun 2024 14:16:11 +0100
-Message-ID: <20240601131611.52441-1-linux@treblig.org>
-X-Mailer: git-send-email 2.45.1
+	bh=BDYiHLgOxFM07kj3mFIpBgiAJCFSiSzDEkmgs0Bz6e4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c/R9N2G2PGziMhsVckAst64v7ydA6Kf5airJk6VT0MwyO8zcWouFEDB4jJz5fGOZ/BGuQJGoSI4VB2TWBWiWhX9tqGJKz+YLYYRHBVOh+n8/7L4y6WfZBENpiGtG2sjWGWuzV8sPvVhtqv235Xej/eeiJgPiYEoVfjhMEy0X0Vw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qzwFtJx9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58868C116B1;
+	Sat,  1 Jun 2024 13:16:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717247786;
+	bh=BDYiHLgOxFM07kj3mFIpBgiAJCFSiSzDEkmgs0Bz6e4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qzwFtJx9UWUqPoJ4Ua9VVxFOHJjLpCQMH/v4XL3bqjyjBWK9AbgkffroAK4MHg/sx
+	 abTdKTKrMUgOkMcoVS0wgfQC8oCEzH6KzezX+liK4gT/0bwpdaYPx+ATXXbWjjU71D
+	 1wuknLzCU5a2G2kMcveLvPflbEj8xnWzryHQuVuFc9VQ27kqCjY79w+0yZU+dXkjx/
+	 3HsEfhq++XE0B7g3u1xbqIVdmctaLQhGTIg1vhvqS8wvc0ARn2jVAcxSHGlo1pW2K+
+	 Q9hsaLEH6XxBxKk03E19t217FEU7vFYefoZGTVefHpVrXdsnbVw81wiYEPD8FJHvcK
+	 w6ZjxKOc0ejJg==
+Date: Sat, 1 Jun 2024 14:16:20 +0100
+From: Simon Horman <horms@kernel.org>
+To: Ricky Wu <en-wei.wu@canonical.com>
+Cc: jesse.brandeburg@intel.com, anthony.l.nguyen@intel.com,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, intel-wired-lan@lists.osuosl.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	rickywu0421@gmail.com, wojciech.drewek@intel.com,
+	michal.swiatkowski@linux.intel.com, pmenzel@molgen.mpg.de,
+	Cyrus Lien <cyrus.lien@canonical.com>
+Subject: Re: [PATCH net,v2] ice: avoid IRQ collision to fix init failure on
+ ACPI S3 resume
+Message-ID: <20240601131620.GM491852@kernel.org>
+References: <20240530142131.26741-1-en-wei.wu@canonical.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240530142131.26741-1-en-wei.wu@canonical.com>
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On Thu, May 30, 2024 at 10:21:31PM +0800, Ricky Wu wrote:
+> A bug in https://bugzilla.kernel.org/show_bug.cgi?id=218906 describes
+> that irdma would break and report hardware initialization failed after
+> suspend/resume with Intel E810 NIC (tested on 6.9.0-rc5).
+> 
+> The problem is caused due to the collision between the irq numbers
+> requested in irdma and the irq numbers requested in other drivers
+> after suspend/resume.
+> 
+> The irq numbers used by irdma are derived from ice's ice_pf->msix_entries
+> which stores mappings between MSI-X index and Linux interrupt number.
+> It's supposed to be cleaned up when suspend and rebuilt in resume but
+> it's not, causing irdma using the old irq numbers stored in the old
+> ice_pf->msix_entries to request_irq() when resume. And eventually
+> collide with other drivers.
+> 
+> This patch fixes this problem. On suspend, we call ice_deinit_rdma() to
+> clean up the ice_pf->msix_entries (and free the MSI-X vectors used by
+> irdma if we've dynamically allocated them). On resume, we call
+> ice_init_rdma() to rebuild the ice_pf->msix_entries (and allocate the
+> MSI-X vectors if we would like to dynamically allocate them).
+> 
+> Fixes: f9f5301e7e2d ("ice: Register auxiliary device to provide RDMA")
+> Tested-by: Cyrus Lien <cyrus.lien@canonical.com>
+> Signed-off-by: Ricky Wu <en-wei.wu@canonical.com>
+> ---
+> Changes in v2:
+> - Change title
+> - Add Fixes and Tested-by tags
+> - Fix typo
+> ---
+>  drivers/net/ethernet/intel/ice/ice_main.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/ethernet/intel/ice/ice_main.c b/drivers/net/ethernet/intel/ice/ice_main.c
+> index f60c022f7960..ec3cbadaa162 100644
+> --- a/drivers/net/ethernet/intel/ice/ice_main.c
+> +++ b/drivers/net/ethernet/intel/ice/ice_main.c
+> @@ -5544,7 +5544,7 @@ static int ice_suspend(struct device *dev)
+>  	 */
+>  	disabled = ice_service_task_stop(pf);
+>  
+> -	ice_unplug_aux_dev(pf);
+> +	ice_deinit_rdma(pf);
+>  
+>  	/* Already suspended?, then there is nothing to do */
+>  	if (test_and_set_bit(ICE_SUSPENDED, pf->state)) {
+> @@ -5624,6 +5624,10 @@ static int ice_resume(struct device *dev)
+>  	if (ret)
+>  		dev_err(dev, "Cannot restore interrupt scheme: %d\n", ret);
+>  
+> +	ret = ice_init_rdma(pf);
+> +	if (ret)
+> +		dev_err(dev, "Reinitialize RDMA during resume failed: %d\n", ret);
+> +
 
-Remove struct zero_bulkout_context as it is unused.
+nit: The line above could trivially be wrapped to fit within 80 columns,
+     as is preferred for Networking code.
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
-V1 -> V2: Reword as per review
-  
- drivers/staging/rtl8712/usb_ops_linux.c | 7 -------
- 1 file changed, 7 deletions(-)
+     Flagged by checkpatch.pl --max-line-length=80
 
-diff --git a/drivers/staging/rtl8712/usb_ops_linux.c b/drivers/staging/rtl8712/usb_ops_linux.c
-index b2181e1e2d38..0a3451cdc8a1 100644
---- a/drivers/staging/rtl8712/usb_ops_linux.c
-+++ b/drivers/staging/rtl8712/usb_ops_linux.c
-@@ -26,13 +26,6 @@
- #define	RTL871X_VENQT_READ	0xc0
- #define	RTL871X_VENQT_WRITE	0x40
- 
--struct zero_bulkout_context {
--	void *pbuf;
--	void *purb;
--	void *pirp;
--	void *padapter;
--};
--
- uint r8712_usb_init_intf_priv(struct intf_priv *pintfpriv)
- {
- 	pintfpriv->piorw_urb = usb_alloc_urb(0, GFP_ATOMIC);
--- 
-2.45.1
-
+>  	clear_bit(ICE_DOWN, pf->state);
+>  	/* Now perform PF reset and rebuild */
+>  	reset_type = ICE_RESET_PFR;
+> -- 
+> 2.43.0
+> 
+> 
 
