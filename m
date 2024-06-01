@@ -1,397 +1,193 @@
-Return-Path: <linux-kernel+bounces-197817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B76548D6F96
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 13:54:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C94DF8D6F99
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 13:54:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E87111C20EA2
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 11:54:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84A17283C5D
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 11:54:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1614014F9D8;
-	Sat,  1 Jun 2024 11:54:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 868101509AE;
+	Sat,  1 Jun 2024 11:54:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aRySKWS9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="DUcjn+J5"
+Received: from mail-4325.protonmail.ch (mail-4325.protonmail.ch [185.70.43.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 108ED823A3;
-	Sat,  1 Jun 2024 11:54:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E39E15098E
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Jun 2024 11:54:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717242846; cv=none; b=Bso0WxCfU/9yXNqlCAb36Q9DgEVA9MYlnqtkBrOl+KQx75CEIM5EG4XjDYz+Bur6Ws5mC3LUXJ+v3ugrwco4qjww0udVGdlJ4Ekbog2uiYQkuYO4D9DrceZsd4Bk27+zmJ0fp4OvA65iEh8pNDfd/z/a25bd61Ai++Du9yfX/pA=
+	t=1717242850; cv=none; b=OZoD5zsilKrWf+4tpNKuXBv5JJr2VVgcWnSKOp5tRa80unhJJJVSP7zlT9rd23wJ4YPolvlcXgHAfdHExE1ldVEtpypHZhdhUte8OQu1v3pZV5QmbdZuiDNxGRJdaIi4LRs+tgMHY8dsCorkMzhrR1jJnYBdRqQ6h+ADQDXPWu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717242846; c=relaxed/simple;
-	bh=mQtDhd51AWq6YLrJqZrV321wR91AZdfTxW6PVSJC8xM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Goqjn62zANKtRmK0NcmcT87h9EKBWbdANPv+7HDGHuB79NTQ3iFjSex5ZhzQ11T6RYoucGqytkJmq2SIZLCSH4ljfUsjDsEU7WLyrx1tdWYK/Spoq9LoPil/RsAOs4u4P3niPoo0MdogzWmfvl0cgLoDvNWpJAkAtv2v2ZvZakI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aRySKWS9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A37A6C116B1;
-	Sat,  1 Jun 2024 11:54:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717242845;
-	bh=mQtDhd51AWq6YLrJqZrV321wR91AZdfTxW6PVSJC8xM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aRySKWS9iOByey0DiuIos6ZYSgpRFl6USVx4PiVvOnoVsTRdkxsW54AiZUS4A5huK
-	 qBZVv6YqAnjWJxBHd7xACe+XidTBLVJvWBOdVNFTFxLiMqk9pjCA72knD2QDNYAsAY
-	 iyDU2YzSen8mdqTwRWrDUT73ZCWwV/jPLG5mt7opeLRJE/mCDeninFk89ThuIcHQIt
-	 aVIdbKoLQsxk7Pi8+DTH8/sEb6qSwoAjWgu+At5e/0jYZuuu761Vlu6sjQWl617NM6
-	 yGk/oU6KUqfJrGMG3zJEs7VhzjFBNyreA2Zf8yeYocCUFO3QNtuAvbTUCPDUJ2i8A3
-	 nOyBVgFCmLoww==
-Date: Sat, 1 Jun 2024 13:53:51 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Jingbao Qiu <qiujingbao.dlmu@gmail.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	unicorn_wang@outlook.com, dlan@gentoo.org, linux-pwm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 2/2] pwm: sophgo: add pwm support for Sophgo CV1800 SoC
-Message-ID: <k6jbdbhkgwthxwutty6l4q75wds2nilb3chrv7n4ccycnzllw4@yubxfh5ciahr>
-References: <20240501083242.773305-1-qiujingbao.dlmu@gmail.com>
- <20240501083242.773305-3-qiujingbao.dlmu@gmail.com>
+	s=arc-20240116; t=1717242850; c=relaxed/simple;
+	bh=rTGNR1gjpqxgwEbWGFTcY+0ou57HsU3yOk3rGq/T+XQ=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=T+CWzkuPdsU2p/OQ/7Pt1VTN2/nCmlnskzBGEwOM2ajQs5bl2pyhXJ+9jk957fvv+iT37yZVJnNcL4HvuOieIyXvCrtB+5Q8EXg/Wx3BOzcL16usF8j7Tc0PhhHsdMPYpmxUd0/E01xNBAtx2nuxp6071OSPRERRQYOJs79hIz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=DUcjn+J5; arc=none smtp.client-ip=185.70.43.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1717242841; x=1717502041;
+	bh=ZQZES2BbNvBUeOffC7dAFTAqf4ZRcVbqy7kUlYlzRxU=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=DUcjn+J5bQOBpjzJPFGbK93HK4b50ocPdOIVe+MusH+LuPmCJCgaigQ5FBeZWIpdA
+	 F7zzQY57BSZ/+vSQfzJEvFij47CP5AtE7q/WGyeqIvMhTrnRl2moOxgtddnymFgb4c
+	 Ckud5tH8LTR970qlCotng7fgS1xOmdRGKb8Ka2WEBkQ/f7aBeIDfCWdVPD4jVyOEPc
+	 jBrb0N/sthOuiKduH8lAW9G21Op0mxBHnDFA407j5JrQZH6a5QNWyhZStE3wgOoNUf
+	 cgSIP5ua6apXFTjaRLMdtGpaunqCrC/v1aspx3lPxQxBk/IZ/CMASVys161GAEwrHi
+	 pBdAeK+1N8y1A==
+Date: Sat, 01 Jun 2024 11:53:57 +0000
+To: linux-kernel@vger.kernel.org
+From: Raymond Hackley <raymondhackley@protonmail.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, Siddharth Manthan <siddharth.manthan@gmail.com>, Stephan Gerhold <stephan@gerhold.net>, Nikita Travkin <nikita@trvn.ru>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, Joe Mason <buddyjojo06@outlook.com>
+Subject: [PATCH 1/3] arm64: dts: qcom: msm8916-samsung-gprimeltecan: Add NFC
+Message-ID: <20240601115321.25314-2-raymondhackley@protonmail.com>
+In-Reply-To: <20240601115321.25314-1-raymondhackley@protonmail.com>
+References: <20240601115321.25314-1-raymondhackley@protonmail.com>
+Feedback-ID: 49437091:user:proton
+X-Pm-Message-ID: fcf6c71ce66daa31f8cf29645cd200c4b361e6b1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="dmhnbedd5ai7tszy"
-Content-Disposition: inline
-In-Reply-To: <20240501083242.773305-3-qiujingbao.dlmu@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+From: Joe Mason <buddyjojo06@outlook.com>
+
+The Samsung Galaxy Grand Prime CAN has a Samsung S3FWRN5 NFC chip that
+works quite well with the s3fwrn5 driver in the Linux NFC subsystem.
+
+The clock setup for the NFC chip is a bit special (although this
+seems to be a common approach used for Qualcomm devices with NFC):
+
+The NFC chip has an output GPIO that is asserted whenever the clock
+is needed to function properly. On the A3/A5 this is wired up to
+PM8916 GPIO2, which is then configured with a special function
+(NFC_CLK_REQ or BB_CLK2_REQ).
+
+Enabling the rpmcc RPM_SMD_BB_CLK2_PIN clock will then instruct
+PM8916 to automatically enable the clock whenever the NFC chip
+requests it. The advantage is that the clock is only enabled when
+needed and we don't need to manage it ourselves from the NFC driver.
+
+Signed-off-by: Joe Mason <buddyjojo06@outlook.com>
+[Stephan: Put NFC pinctrl into common dtsi to share it with other variants]
+Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
+[Raymond: Use interrupts-extended. Keep &blsp_i2c6 enabled by default]
+Signed-off-by: Raymond Hackley <raymondhackley@protonmail.com>
+---
+ .../qcom/msm8916-samsung-fortuna-common.dtsi  | 38 +++++++++++++++++++
+ .../dts/qcom/msm8916-samsung-gprimeltecan.dts | 17 +++++++++
+ 2 files changed, 55 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/qcom/msm8916-samsung-fortuna-common.dtsi b=
+/arch/arm64/boot/dts/qcom/msm8916-samsung-fortuna-common.dtsi
+index 4f05cae68b37..4cc83b64e256 100644
+--- a/arch/arm64/boot/dts/qcom/msm8916-samsung-fortuna-common.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8916-samsung-fortuna-common.dtsi
+@@ -6,6 +6,7 @@
+ #include <dt-bindings/gpio/gpio.h>
+ #include <dt-bindings/input/input.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
++#include <dt-bindings/pinctrl/qcom,pmic-gpio.h>
+=20
+ / {
+ =09aliases {
+@@ -227,6 +228,10 @@ touchscreen: touchscreen@20 {
+ =09};
+ };
+=20
++&blsp_i2c6 {
++=09status =3D "okay";
++};
++
+ &blsp_uart2 {
+ =09status =3D "okay";
+ };
+@@ -346,6 +351,29 @@ muic_int_default: muic-int-default-state {
+ =09=09bias-disable;
+ =09};
+=20
++=09nfc_default: nfc-default-state {
++=09=09irq-pins {
++=09=09=09pins =3D "gpio21";
++=09=09=09function =3D "gpio";
++=09=09=09drive-strength =3D <2>;
++=09=09=09bias-pull-down;
++=09=09};
++
++=09=09nfc-pins {
++=09=09=09pins =3D "gpio20", "gpio49";
++=09=09=09function =3D "gpio";
++=09=09=09drive-strength =3D <2>;
++=09=09=09bias-disable;
++=09=09};
++=09};
++
++=09nfc_i2c_default: nfc-i2c-default-state {
++=09=09pins =3D "gpio0", "gpio1";
++=09=09function =3D "gpio";
++=09=09drive-strength =3D <2>;
++=09=09bias-disable;
++=09};
++
+ =09sdc2_cd_default: sdc2-cd-default-state {
+ =09=09pins =3D "gpio38";
+ =09=09function =3D "gpio";
+@@ -367,3 +395,13 @@ tsp_int_default: tsp-int-default-state {
+ =09=09bias-disable;
+ =09};
+ };
++
++&pm8916_gpios {
++=09nfc_clk_req: nfc-clk-req-state {
++=09=09pins =3D "gpio2";
++=09=09function =3D "func1";
++=09=09power-source =3D <PM8916_GPIO_L2>;
++=09=09bias-disable;
++=09=09input-enable;
++=09};
++};
+diff --git a/arch/arm64/boot/dts/qcom/msm8916-samsung-gprimeltecan.dts b/ar=
+ch/arm64/boot/dts/qcom/msm8916-samsung-gprimeltecan.dts
+index 4dc74e8bf1d8..7ac86fd3c703 100644
+--- a/arch/arm64/boot/dts/qcom/msm8916-samsung-gprimeltecan.dts
++++ b/arch/arm64/boot/dts/qcom/msm8916-samsung-gprimeltecan.dts
+@@ -29,6 +29,23 @@ &bosch_magn {
+ =09status =3D "okay";
+ };
+=20
++&blsp_i2c6 {
++=09nfc@27 {
++=09=09compatible =3D "samsung,s3fwrn5-i2c";
++=09=09reg =3D <0x27>;
++
++=09=09interrupts-extended =3D <&tlmm 21 IRQ_TYPE_EDGE_RISING>;
++
++=09=09en-gpios =3D <&tlmm 20 GPIO_ACTIVE_HIGH>;
++=09=09wake-gpios =3D <&tlmm 49 GPIO_ACTIVE_HIGH>;
++
++=09=09clocks =3D <&rpmcc RPM_SMD_BB_CLK2_PIN>;
++
++=09=09pinctrl-0 =3D <&nfc_default>, <&nfc_clk_req>;
++=09=09pinctrl-names =3D "default";
++=09};
++};
++
+ &mpss_mem {
+ =09/* Firmware for gprimeltecan needs more space */
+ =09reg =3D <0x0 0x86800000 0x0 0x5400000>;
+--=20
+2.39.2
 
 
---dmhnbedd5ai7tszy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-Hello,
-
-On Wed, May 01, 2024 at 04:32:42PM +0800, Jingbao Qiu wrote:
-> [...]
-> diff --git a/drivers/pwm/pwm-cv1800.c b/drivers/pwm/pwm-cv1800.c
-> new file mode 100644
-> index 000000000000..d487af637198
-> --- /dev/null
-> +++ b/drivers/pwm/pwm-cv1800.c
-> @@ -0,0 +1,293 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Sophgo CV1800 PWM driver
-> + * Author: Jingbao Qiu <qiujingbao.dlmu@gmail.com>
-> + *
-> + * Limitations:
-> + * - The hardware emits the inactive level when disabled.
-> + * - This pwm device supports dynamic loading of PWM parameters. When PWMSTART
-> + *   is written from 0 to 1, the register value (HLPERIODn, PERIODn) will be
-> + *   temporarily stored inside the PWM. If you want to dynamically change the
-> + *   waveform during PWM output, after writing the new value to HLPERIODn and
-> + *   PERIODn, write 1 and then 0 to PWMUPDATE[n] to make the new value effective.
-
-	To change polarity, the hardware has to be stopped though.
-
-> + * - Supports up to Rate/2 output, and the lowest is about Rate/(2^30-1).
-
-Rate = input clock rate?
-
-> + * - By setting HLPERIODn to 0, can produce 100% duty cycle.
-> + * - This hardware could support inverted polarity. By default, the value of the
-> + *   POLARITY register is 0x0. This means that HLPERIOD represents the number
-> + *   of low level beats.
-> + * - This hardware supports input mode and output mode, implemented through the
-> + *   Output-Enable/OE register. However, this driver has not yet implemented
-> + *   capture callback.
-
-> + */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/pwm.h>
-> +#include <linux/regmap.h>
-> +
-> +#define PWM_CV1800_HLPERIOD_BASE    0x00
-> +#define PWM_CV1800_PERIOD_BASE      0x04
-> +#define PWM_CV1800_POLARITY         0x40
-> +#define PWM_CV1800_START            0x44
-> +#define PWM_CV1800_DONE             0x48
-> +#define PWM_CV1800_UPDATE           0x4c
-> +#define PWM_CV1800_OE               0xd0
-> +
-> +#define PWM_CV1800_HLPERIOD(n)      (PWM_CV1800_HLPERIOD_BASE + ((n)*0x08))
-> +#define PWM_CV1800_PERIOD(n)        (PWM_CV1800_PERIOD_BASE + ((n)*0x08))
-
-I suggest to drop the ..._BASE defines and hardcode the 0 and 4
-respectively in the definition of PWM_CV1800_HLPERIOD and
-PWM_CV1800_PERIOD. Also please use spaces around the multiplication *.
-
-> +#define PWM_CV1800_UPDATE_MASK(n)   BIT(n)
-> +#define PWM_CV1800_OE_MASK(n)       BIT(n)
-> +#define PWM_CV1800_START_MASK(n)    BIT(n)
-> +#define PWM_CV1800_POLARITY_MASK(n) BIT(n)
-> +
-> +#define PWM_CV1800_MAXPERIOD        0x3fffffff
-> +#define PWM_CV1800_MINPERIOD        2
-> +#define PWM_CV1800_CHANNELS         4
-> +#define PWM_CV1800_PERIOD_RESET     BIT(1)
-
-This is strange, the PWM_CV1800_PERIOD can be programmed with values >=
-PWM_CV1800_MINPERIOD; if you program 2, you use period ==
-PWM_CV1800_PERIOD_RESET.
-
-> +#define PWM_CV1800_HLPERIOD_RESET   BIT(0)
-> +#define PWM_CV1800_REG_ENABLE(n)    BIT(n)
-> +
-> +struct cv1800_pwm {
-> +	struct regmap *map;
-> +	struct clk *clk;
-> +	unsigned long clk_rate;
-> +};
-> +
-> +static inline struct cv1800_pwm *to_cv1800_pwm_dev(struct pwm_chip *chip)
-> +{
-> +	return pwmchip_get_drvdata(chip);
-> +}
-> +
-> +static const struct regmap_config cv1800_pwm_regmap_config = {
-> +	.reg_bits = 32,
-> +	.val_bits = 32,
-> +	.reg_stride = 4,
-> +};
-> +
-> +static int cv1800_pwm_enable(struct pwm_chip *chip, struct pwm_device *pwm,
-> +			     bool enable)
-> +{
-> +	struct cv1800_pwm *priv = to_cv1800_pwm_dev(chip);
-> +	u32 pwm_enable, state;
-> +
-> +	regmap_read(priv->map, PWM_CV1800_START, &pwm_enable);
-> +	pwm_enable &= PWM_CV1800_START_MASK(pwm->hwpwm);
-
-This value tells if the HW is enabled, right. Maybe rename the variable
-to pwm_enabled (or pwm_is_enabled).
-
-> +	/*
-> +	 * If the parameters are changed during runtime, Register needs
-> +	 * to be updated to take effect.
-> +	 */
-> +	if (pwm_enable && enable) {
-> +		regmap_update_bits(priv->map, PWM_CV1800_UPDATE,
-> +				   PWM_CV1800_UPDATE_MASK(pwm->hwpwm),
-> +				   PWM_CV1800_REG_ENABLE(pwm->hwpwm));
-
-I would consider
-
-		regmap_set_bits(priv->map, PWM_CV1800_UPDATE, BIT(pwm->hwpwm));
-
-more readable.
-
-> +		regmap_update_bits(priv->map, PWM_CV1800_UPDATE,
-> +				   PWM_CV1800_UPDATE_MASK(pwm->hwpwm), 0);
-
-Maybe add a comment about why you modify the same bit here twice.
-
-> +	} else if (!pwm_enable && enable) {
-> +		regmap_update_bits(priv->map, PWM_CV1800_START,
-> +				   PWM_CV1800_START_MASK(pwm->hwpwm),
-> +				   PWM_CV1800_REG_ENABLE(pwm->hwpwm));
-> +	} else if (pwm_enable && !enable) {
-> +		regmap_update_bits(priv->map, PWM_CV1800_START,
-> +				   PWM_CV1800_START_MASK(pwm->hwpwm), 0);
-> +	}
-
-The previous construct can be (IMO) simplified by doing:
-
-	if (!enable) {
-		if (pwm_enabled)
-			regmap_clear_bits(...);
-		return 0;
-	}
-
-	if (pwm_enabled) {
-		...
-	} else {
-		...
-	}
-
-(This slightly changes semantics, but that's fine.)
-
-> +
-> +	/* check and set OE/Output-Enable mode */
-> +	regmap_read(priv->map, PWM_CV1800_OE, &state);
-> +
-> +	if ((state & BIT(pwm->hwpwm)) && enable)
-> +		regmap_update_bits(priv->map, PWM_CV1800_OE,
-> +				   PWM_CV1800_OE_MASK(pwm->hwpwm),
-> +				   PWM_CV1800_REG_ENABLE(pwm->hwpwm));
-
-This looks strange. If BIT(hwpwm) is already set, set it again?!
-Also if you used the caching implemented in regmap, you don't need to
-make this conditional.
-
-> +	return 0;
-> +}
-> +
-> +static void cv1800_pwm_set_polarity(struct pwm_chip *chip,
-> +				    struct pwm_device *pwm,
-> +				    enum pwm_polarity polarity)
-> +{
-> +	struct cv1800_pwm *priv = to_cv1800_pwm_dev(chip);
-> +	u32 config_polarity = 0;
-> +
-> +	if (pwm->state.enabled)
-> +		cv1800_pwm_enable(chip, pwm, !pwm->state.enabled);
-
-Using false instead of !pwm->state.enabled would be more straight
-forward.
-
-> +	if (polarity == PWM_POLARITY_NORMAL)
-> +		config_polarity = PWM_CV1800_POLARITY_MASK(pwm->hwpwm);
-> +
-> +	regmap_update_bits(priv->map, PWM_CV1800_POLARITY,
-> +			   PWM_CV1800_POLARITY_MASK(pwm->hwpwm),
-> +			   config_polarity);
-> +}
-> +
-> +static int cv1800_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
-> +			    const struct pwm_state *state)
-> +{
-> +	struct cv1800_pwm *priv = to_cv1800_pwm_dev(chip);
-> +	u32 period_val, hlperiod_val;
-> +	u64 ticks;
-> +
-> +	if (state->polarity != pwm->state.polarity)
-> +		cv1800_pwm_set_polarity(chip, pwm, state->polarity);
-> +
-> +	/*
-> +	 * This hardware use PERIOD and HLPERIOD registers to represent PWM waves.
-> +	 *
-> +	 * The meaning of PERIOD is how many clock cycles (from the clock source)
-> +	 * are used to represent PWM waves.
-> +	 * PERIOD = rate(MHz) / target(MHz)
-> +	 * PERIOD = period(ns) * rate(Hz) / NSEC_PER_SEC
-> +	 */
-> +	ticks = mul_u64_u64_div_u64(state->period, priv->clk_rate,
-> +				    NSEC_PER_SEC);
-> +	if (ticks < PWM_CV1800_MINPERIOD)
-> +		return -EINVAL;
-
-If you check this before configuring the period, it won't happen that
-the hw state is modified before you notice you cannot fulfill the
-requested state.
-
-> +	if (ticks > PWM_CV1800_MAXPERIOD)
-> +		ticks = PWM_CV1800_MAXPERIOD;
-> +	period_val = (u32)ticks;
-
-Maybe use period_ticks instead of period_val to have a consistent
-naming.
-
-> +
-> +	/*
-> +	 * After mapping, hlperiod represents the same polarity as duty.
-> +	 * HLPERIOD = rate(MHz) / duty(MHz)
-> +	 * HLPERIOD = duty(ns) * rate(Hz) / NSEC_PER_SEC
-> +	 */
-
-I don't understand that comment.
-
-> +	ticks = mul_u64_u64_div_u64(state->duty_cycle, priv->clk_rate,
-> +				    NSEC_PER_SEC);
-> +	if (ticks > period_val)
-> +		ticks = period_val;
-> +	hlperiod_val = (u32)ticks;
-> +
-> +	regmap_write(priv->map, PWM_CV1800_PERIOD(pwm->hwpwm), period_val);
-> +	regmap_write(priv->map, PWM_CV1800_HLPERIOD(pwm->hwpwm), hlperiod_val);
-> +
-> +	cv1800_pwm_enable(chip, pwm, state->enabled);
-> +
-> +	return 0;
-> +}
-> +
-> [...]
-> +static int cv1800_pwm_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct cv1800_pwm *priv;
-> +	struct pwm_chip *chip;
-> +	void __iomem *base;
-> +	int ret;
-> +
-> +	chip = devm_pwmchip_alloc(dev, PWM_CV1800_CHANNELS, sizeof(*priv));
-
-PWM_CV1800_CHANNELS is only used here. I'd prefer a plain 4 here. This
-also makes this value easier to grep for.
-
-> +	if (!chip)
-> +		return PTR_ERR(chip);
-> +	priv = to_cv1800_pwm_dev(chip);
-> +
-> +	base = devm_platform_ioremap_resource(pdev, 0);
-> +	if (IS_ERR(base))
-> +		return PTR_ERR(base);
-> +
-> +	priv->map = devm_regmap_init_mmio(&pdev->dev, base,
-> +					  &cv1800_pwm_regmap_config);
-> +	if (IS_ERR(priv->map)) {
-> +		dev_err(dev, "Couldn't create PWM regmap\n");
-> +		return PTR_ERR(priv->map);
-
-Use dev_err_probe please.
-
-> +	}
-> +
-> +	priv->clk = devm_clk_get_enabled(&pdev->dev, NULL);
-> +	if (IS_ERR(priv->clk))
-> +		return dev_err_probe(&pdev->dev, PTR_ERR(priv->clk),
-> +				     "clk not found\n");
-> +
-> +	ret = devm_clk_rate_exclusive_get(dev, priv->clk);
-> +	if (ret)
-> +		return dev_err_probe(&pdev->dev, ret,
-> +				     "failed to get exclusive rate\n");
-> +
-> +	priv->clk_rate = clk_get_rate(priv->clk);
-> +	if (!priv->clk_rate)
-> +		return dev_err_probe(&pdev->dev, -EINVAL,
-> +				     "Invalid clock rate: %lu\n",
-> +				     priv->clk_rate);
-
-Please also error out if clk_rate > NSEC_PER_SEC, because otherwise you
-might get overflows for the calculations in .apply().
-
-> +
-> +	chip->ops = &cv1800_pwm_ops;
-> +
-> +	ret = devm_pwmchip_add(dev, chip);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failed to add PWM chip\n");
-> +
-> +	return 0;
-> +}
-> [...]
-
-Best regards
-Uwe
-
---dmhnbedd5ai7tszy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmZbC7wACgkQj4D7WH0S
-/k5b1gf/RllMWyJU0W0EdBHc95DZbdJYePgvIo8GBPmcmcShca+0b+B81XlVkE9d
-O2/9v58B/0hI7F/g1vbxjk+h0j6lBLjgNeC8Ke2FWDTbuagxk+h3DDxbw3TAaF0M
-rErHO22dMFaIvJTB/AKM5r8B3COvZXtyLMRDEVhVK8zRvLcdQMu+Pw8L0QqSxja1
-LIzsbVltneMVG2s0CrM4oAwTguqCKSnScF31fsXbjbxbETI8A3z8SLDQGAb+j/Ge
-vTzFK8WCBX+ccNbCDD/tKRDgh/NVTvX/1JvEzhHuGyS5LWXK1wRI/qqKyqDw5x/W
-hDkTNm8z/S89qEF5MZdXlhO+LXtaEg==
-=rwZj
------END PGP SIGNATURE-----
-
---dmhnbedd5ai7tszy--
 
