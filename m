@@ -1,110 +1,135 @@
-Return-Path: <linux-kernel+bounces-197900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7723D8D7083
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 17:00:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43BAB8D7080
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 16:58:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ADA78B21989
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 15:00:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6FE31F22135
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 14:58:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC4ED1514F4;
-	Sat,  1 Jun 2024 15:00:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E01415252E;
+	Sat,  1 Jun 2024 14:58:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=danishpraka.sh header.i=@danishpraka.sh header.b="rqZM/y3i"
-Received: from out-15.pe-b.jellyfish.systems (out-15.pe-b.jellyfish.systems [198.54.127.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DJjml7BO"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3534D152533;
-	Sat,  1 Jun 2024 15:00:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.54.127.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 658E3152517
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Jun 2024 14:58:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717254004; cv=none; b=rnu6oF+c6BrFPzIZIRVj6e2UUbR2+QV86chQ/vvyBA/+51vUCW3kknleZVpBPqS6JYD7iM6Z99FooM+E/Koa0w7riAxG3xw5JKWyWxYGE7w8mjmMZeYcz0l1ZXpD0QRvb3wnKNduFKKsimcb8VX00GliEl6VAZNuokcHv+BIcnE=
+	t=1717253910; cv=none; b=mNgMSa59Y8uuXwVTFSTRXFW/VBCvJuWkBtfvATAS6lObSQ3gFAJY1ohSKca9OW6QEjeLrZvNu/7IwKPVMXGC3fGQgBpFGLVLN6g6Y6LalwkgcOmCrUnulF3+M6HAjcOUigywGJ9cbkxUc1HHuV7o4TMl2UYktVQMAsYZKiz3IP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717254004; c=relaxed/simple;
-	bh=lo3WERO5Od+lCrB7tZFl4JPJAq2xflULTe7KYhW0Ip4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lQ5tsXZE/6zlFPRM4G9p80JPB2Up3iQc0nmuGX2lBcd3OCM5xRoYbfyAbbKr7IwXisZcrgNjqoyr+B9XgOsxPGedhkklecfRSmxZ0+SSTxuVC6+WeHnYMZz2rT50Xn02R5ZY/AXGsPSuMHgpJRTW4vzO8wyxU4rHho6yURZGTro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=danishpraka.sh; spf=pass smtp.mailfrom=danishpraka.sh; dkim=fail (0-bit key) header.d=danishpraka.sh header.i=@danishpraka.sh header.b=rqZM/y3i reason="key not found in DNS"; arc=none smtp.client-ip=198.54.127.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=danishpraka.sh
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=danishpraka.sh
-Received: from output-router-d5c465c44-45n78 (new-01.privateemail.com [198.54.118.220])
-	by pe-b.jellyfish.systems (Postfix) with ESMTPA id 4Vs2z80JgnzGq2w;
-	Sat,  1 Jun 2024 14:52:52 +0000 (UTC)
-Received: from MTA-07.privateemail.com (unknown [10.50.14.17])
+	s=arc-20240116; t=1717253910; c=relaxed/simple;
+	bh=Bb+TRFM7V8s/HL0NSgEhXURHtI7QGhUiMMx/7RiChD0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I0nqC4jpOdnoRE8cmPfgBVxluyhSwPRQW/YKoqtECFVr2/jI4iIJ9FXNv//1Txbj2XwBT3P/3E2X4LorAyDcmmqkHHQVtCaoGs31/P8VB/mLBKftszlvDZ/4TIPE20OewByA4SeD4xA/l6nNrHC3AgrNsX9I8/Lwijb7ltjpnIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DJjml7BO; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717253907;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/5kPiW5A07zbRtUDxOb8oJ5nBRjGlAJMVIjdfIyLL80=;
+	b=DJjml7BOiZfJzufViOXBKi/GWCsFUMGDkID7FohphhZxzcChhJUpuFjXdQ1Q717c4d+GO0
+	J5kbhA8Mcrpqe9pofe/IfZNcTAr0oBXpxTp+BZjI05xPonvJ156p5L6kY/xlhXHksWxGeq
+	/+A1em05RPL9au8NTMu5ZHnKtF7unWA=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-474-aggDs1gsMgOO7qcp2lduvw-1; Sat, 01 Jun 2024 10:58:22 -0400
+X-MC-Unique: aggDs1gsMgOO7qcp2lduvw-1
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by NEW-01.privateemail.com (Postfix) with ESMTPS id EB84D18000D0;
-	Sat,  1 Jun 2024 10:52:51 -0400 (EDT)
-Received: from mta-07.privateemail.com (localhost [127.0.0.1])
-	by mta-07.privateemail.com (Postfix) with ESMTP id C2E2918000B0;
-	Sat,  1 Jun 2024 10:52:51 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=danishpraka.sh;
-	s=default; t=1717253571;
-	bh=lo3WERO5Od+lCrB7tZFl4JPJAq2xflULTe7KYhW0Ip4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=rqZM/y3iohM9HsGn1TL+LI2bnfmZBtSDmTndpPLP5aColQqUihT4nopGxg9WBwE9Z
-	 1hB13aEVLuf3WMdV+xW4vqPvHvWIqumpiCEmpmgBJnLTYC96oxrvsPHYMhmaXbmPyb
-	 G+uNScvNqe4p9K+z360D+1exRHkQpuVoph96Ng62KovldpxMBMOFMuVmNXIWiTwZns
-	 9DAtrZ/FUnhOUfyYLe4UV1aCRL5knt3sP348n/gHXN+OdCkY4sHgemNJA4hj3/Ig1x
-	 pIoqtgNbYi17KQa9TGCUb/rd58VI+5iBaXgtVPFE8G+eqzLxb4iYb5dxBJFBjjS2LT
-	 IDXsBXgSe9ecw==
-Received: from localhost.localdomain (unknown [122.171.21.36])
-	by mta-07.privateemail.com (Postfix) with ESMTPA;
-	Sat,  1 Jun 2024 10:52:37 -0400 (EDT)
-From: Danish Prakash <contact@danishpraka.sh>
-To: 
-Cc: Shuah Khan <skhan@linuxfoundation.org>,
-	Danish Prakash <contact@danishpraka.sh>,
-	Jeffrey Hugo <quic_jhugo@quicinc.com>,
-	Carl Vanderlip <quic_carlv@quicinc.com>,
-	Pranjal Ramajor Asha Kanojiya <quic_pkanojiy@quicinc.com>,
-	Oded Gabbay <ogabbay@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-arm-msm@vger.kernel.org (open list:QUALCOMM CLOUD AI (QAIC) DRIVER),
-	dri-devel@lists.freedesktop.org (open list:QUALCOMM CLOUD AI (QAIC) DRIVER),
-	linux-doc@vger.kernel.org (open list:DOCUMENTATION),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] Documentation/accel/qaic: Fix typo
-Date: Sat,  1 Jun 2024 20:21:24 +0530
-Message-ID: <20240601145216.32232-1-contact@danishpraka.sh>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <16b1bcb5-00c6-4b59-a880-188bed32d175@linuxfoundation.org>
-References: <16b1bcb5-00c6-4b59-a880-188bed32d175@linuxfoundation.org>
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A1F1181227E;
+	Sat,  1 Jun 2024 14:58:21 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.19])
+	by smtp.corp.redhat.com (Postfix) with SMTP id 4B67640004D;
+	Sat,  1 Jun 2024 14:58:20 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Sat,  1 Jun 2024 16:56:54 +0200 (CEST)
+Date: Sat, 1 Jun 2024 16:56:52 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tick: shift tick_nohz_switch_to_nohz() from
+ tick_check_oneshot_change() to hrtimer_run_queues()
+Message-ID: <20240601145651.GB3758@redhat.com>
+References: <20240530124203.GA26990@redhat.com>
+ <ZliaSISeFxx_FQ6O@localhost.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZliaSISeFxx_FQ6O@localhost.localdomain>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.10
 
-Fixed a typo in the docs where 'phsyical'
-was corrected to 'physical'.
+On 05/30, Frederic Weisbecker wrote:
+>
+> tick_nohz_switch_to_nohz() is only built with CONFIG_NO_HZ_COMMON
+>
+> You will have a build issue with CONFIG_HIGH_RES_TIMER && !CONFIG_NO_HZ_COMMON
 
-Signed-off-by: Danish Prakash <contact@danishpraka.sh>
----
- Documentation/accel/qaic/qaic.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks again.
 
-diff --git a/Documentation/accel/qaic/qaic.rst b/Documentation/accel/qaic/qaic.rst
-index efb7771273bb..628bf2f7a416 100644
---- a/Documentation/accel/qaic/qaic.rst
-+++ b/Documentation/accel/qaic/qaic.rst
-@@ -93,7 +93,7 @@ commands (does not impact QAIC).
- uAPI
- ====
+At first glance this patch needs a simple fixup below. I'll recheck and
+send V2.
+
+NO_HZ_COMMON selects TICK_ONESHOT. But even if it didn't,
+tick_check_oneshot_change() is dummy inline "return 0" without
+CONFIG_TICK_ONESHOT, hrtimer_run_queues() will never try to
+call tick_nohz_switch_to_nohz().
+
+Oleg.
+
+
+--- a/kernel/time/tick-internal.h
++++ b/kernel/time/tick-internal.h
+@@ -112,7 +112,6 @@ static inline bool tick_oneshot_possible(void) { return true; }
+ extern int tick_oneshot_mode_active(void);
+ extern void tick_clock_notify(void);
+ extern int tick_check_oneshot_change(void);
+-extern void tick_nohz_switch_to_nohz(void);
+ extern int tick_init_highres(void);
+ #else /* !CONFIG_TICK_ONESHOT: */
+ static inline
+@@ -126,7 +125,6 @@ static inline bool tick_oneshot_possible(void) { return false; }
+ static inline int tick_oneshot_mode_active(void) { return 0; }
+ static inline void tick_clock_notify(void) { }
+ static inline int tick_check_oneshot_change(void) { return 0; }
+-static inline void tick_nohz_switch_to_nohz(void) { }
+ #endif /* !CONFIG_TICK_ONESHOT */
  
--QAIC creates an accel device per phsyical PCIe device. This accel device exists
-+QAIC creates an accel device per physical PCIe device. This accel device exists
- for as long as the PCIe device is known to Linux.
+ /* Functions related to oneshot broadcasting */
+@@ -159,6 +157,7 @@ static inline void tick_nohz_init(void) { }
+ #endif
  
- The PCIe device may not be in the state to accept requests from userspace at
--- 
-2.45.1
+ #ifdef CONFIG_NO_HZ_COMMON
++extern void tick_nohz_switch_to_nohz(void);
+ extern unsigned long tick_nohz_active;
+ extern void timers_update_nohz(void);
+ extern u64 get_jiffies_update(unsigned long *basej);
+@@ -173,6 +172,7 @@ extern bool timer_base_is_idle(void);
+ extern void timer_expire_remote(unsigned int cpu);
+ # endif
+ #else /* CONFIG_NO_HZ_COMMON */
++static inline void tick_nohz_switch_to_nohz(void) { }
+ static inline void timers_update_nohz(void) { }
+ #define tick_nohz_active (0)
+ #endif
 
 
