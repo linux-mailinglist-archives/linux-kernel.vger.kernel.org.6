@@ -1,135 +1,244 @@
-Return-Path: <linux-kernel+bounces-197899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43BAB8D7080
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 16:58:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B926F8D7089
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 17:02:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6FE31F22135
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 14:58:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14A23B218F2
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 15:02:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E01415252E;
-	Sat,  1 Jun 2024 14:58:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA318152789;
+	Sat,  1 Jun 2024 15:01:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DJjml7BO"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="d4x+dacU"
+Received: from msa.smtpout.orange.fr (msa-208.smtpout.orange.fr [193.252.23.208])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 658E3152517
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Jun 2024 14:58:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C6991CD3D;
+	Sat,  1 Jun 2024 15:01:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717253910; cv=none; b=mNgMSa59Y8uuXwVTFSTRXFW/VBCvJuWkBtfvATAS6lObSQ3gFAJY1ohSKca9OW6QEjeLrZvNu/7IwKPVMXGC3fGQgBpFGLVLN6g6Y6LalwkgcOmCrUnulF3+M6HAjcOUigywGJ9cbkxUc1HHuV7o4TMl2UYktVQMAsYZKiz3IP0=
+	t=1717254118; cv=none; b=UBJjZIImEhkWLjMcPt7dT7sb7NHNBXRIOjCy3Yr3bU+srDqjx4wFROqVY/P9D4oUW7BsyLxsDC4OU7bvKpSQtK4+n129S9H/Ov5AhlC03T+ZbEmZ0v2mxsGvVK0NoXBrnO22tJOy8o5/5xVoaFhdwdgvzcwtHKgQZ/ArIx8AzCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717253910; c=relaxed/simple;
-	bh=Bb+TRFM7V8s/HL0NSgEhXURHtI7QGhUiMMx/7RiChD0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I0nqC4jpOdnoRE8cmPfgBVxluyhSwPRQW/YKoqtECFVr2/jI4iIJ9FXNv//1Txbj2XwBT3P/3E2X4LorAyDcmmqkHHQVtCaoGs31/P8VB/mLBKftszlvDZ/4TIPE20OewByA4SeD4xA/l6nNrHC3AgrNsX9I8/Lwijb7ltjpnIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DJjml7BO; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717253907;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/5kPiW5A07zbRtUDxOb8oJ5nBRjGlAJMVIjdfIyLL80=;
-	b=DJjml7BOiZfJzufViOXBKi/GWCsFUMGDkID7FohphhZxzcChhJUpuFjXdQ1Q717c4d+GO0
-	J5kbhA8Mcrpqe9pofe/IfZNcTAr0oBXpxTp+BZjI05xPonvJ156p5L6kY/xlhXHksWxGeq
-	/+A1em05RPL9au8NTMu5ZHnKtF7unWA=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-474-aggDs1gsMgOO7qcp2lduvw-1; Sat, 01 Jun 2024 10:58:22 -0400
-X-MC-Unique: aggDs1gsMgOO7qcp2lduvw-1
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A1F1181227E;
-	Sat,  1 Jun 2024 14:58:21 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.19])
-	by smtp.corp.redhat.com (Postfix) with SMTP id 4B67640004D;
-	Sat,  1 Jun 2024 14:58:20 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Sat,  1 Jun 2024 16:56:54 +0200 (CEST)
-Date: Sat, 1 Jun 2024 16:56:52 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tick: shift tick_nohz_switch_to_nohz() from
- tick_check_oneshot_change() to hrtimer_run_queues()
-Message-ID: <20240601145651.GB3758@redhat.com>
-References: <20240530124203.GA26990@redhat.com>
- <ZliaSISeFxx_FQ6O@localhost.localdomain>
+	s=arc-20240116; t=1717254118; c=relaxed/simple;
+	bh=Iq6pUEmxykmMPP8tuQyHJnvOL4YspIfNSqXdp0/B5C0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=YLgbDdzQo1OpoDgR7D3wKfZ5Jo2kan7KiawfEnkjYLyGnhDB2QTDh+nI/7MyHIkBlNsvUeqG+CL3mF7cwMwqvehgj7g14Q+HxcoBlrQ8KylrHQC4oFVpJZ/9ZwJGe4NoPrrY3B1uBZ9Z2w4v/Q49Z/DidyuKmd/bw2/AoHu783c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=d4x+dacU; arc=none smtp.client-ip=193.252.23.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([86.243.17.157])
+	by smtp.orange.fr with ESMTPA
+	id DQDisz5ua13tqDQDisovZV; Sat, 01 Jun 2024 17:00:35 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1717254035;
+	bh=9g+o5AqvViRoCMosYR6L5DJAcKPjQZBiCuO6+wDAnOo=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=d4x+dacUmybrb4yy3YoEEOG+Us65Ai8aKGXVPIWyMCkFLnqGIRvU/AHW2+6kapGAX
+	 z2de5Vmf4fr0OOJV1XnPMi4GszhsHRg+tQiRD+saXXn/bjZ7R30nWZhPmKofpmLmW8
+	 VUf504mTGd7Rhr08106AfF3WAaOsyvIggBazRSepAUfpGr8AkFbdn7BrCo3V4dIpNF
+	 korfwXfTDeNGXwpzTCa/PmFrG/7efVSBoCGHJ2ABGbrBaJg8x73fGaeOw9X1tubogK
+	 fvR/pQb7PbtHsM4AldcOYuSCTVwB2NaMm+U0Dxt1TJfgxXy993x/EFXpDUbmXwwcLB
+	 NT1sX5hYHWn8A==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 01 Jun 2024 17:00:35 +0200
+X-ME-IP: 86.243.17.157
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Sebastian Reichel <sre@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-pm@vger.kernel.org
+Subject: [PATCH 1/2] power: supply: samsung-sdi-battery: Constify struct power_supply_vbat_ri_table
+Date: Sat,  1 Jun 2024 17:00:28 +0200
+Message-ID: <bab3f44b62275c91d039b82dac1c32167c0c3bad.1717253900.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.1
+In-Reply-To: <cover.1717253900.git.christophe.jaillet@wanadoo.fr>
+References: <cover.1717253900.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZliaSISeFxx_FQ6O@localhost.localdomain>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.10
+Content-Transfer-Encoding: 8bit
 
-On 05/30, Frederic Weisbecker wrote:
->
-> tick_nohz_switch_to_nohz() is only built with CONFIG_NO_HZ_COMMON
->
-> You will have a build issue with CONFIG_HIGH_RES_TIMER && !CONFIG_NO_HZ_COMMON
+'struct power_supply_vbat_ri_table' are not modified in this driver.
 
-Thanks again.
+Constifying these structures moves some data to a read-only section, so
+increase overall security.
 
-At first glance this patch needs a simple fixup below. I'll recheck and
-send V2.
+In order to do it, some code also needs to be adjusted to this new const
+qualifier.
 
-NO_HZ_COMMON selects TICK_ONESHOT. But even if it didn't,
-tick_check_oneshot_change() is dummy inline "return 0" without
-CONFIG_TICK_ONESHOT, hrtimer_run_queues() will never try to
-call tick_nohz_switch_to_nohz().
+On a x86_64, with allmodconfig:
+Before:
+======
+$ size drivers/power/supply/samsung-sdi-battery.o
+   text	   data	    bss	    dec	    hex	filename
+    955	   7664	      0	   8619	   21ab	drivers/power/supply/samsung-sdi-battery.o
 
-Oleg.
+After:
+=====
+$ size drivers/power/supply/samsung-sdi-battery.o
+   text	   data	    bss	    dec	    hex	filename
+   4055	   4584	      0	   8639	   21bf	drivers/power/supply/samsung-sdi-battery.o
 
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested-only
+---
+ drivers/power/supply/power_supply_core.c   |  2 +-
+ drivers/power/supply/samsung-sdi-battery.c | 24 +++++++++++-----------
+ include/linux/power_supply.h               |  4 ++--
+ 3 files changed, 15 insertions(+), 15 deletions(-)
 
---- a/kernel/time/tick-internal.h
-+++ b/kernel/time/tick-internal.h
-@@ -112,7 +112,6 @@ static inline bool tick_oneshot_possible(void) { return true; }
- extern int tick_oneshot_mode_active(void);
- extern void tick_clock_notify(void);
- extern int tick_check_oneshot_change(void);
--extern void tick_nohz_switch_to_nohz(void);
- extern int tick_init_highres(void);
- #else /* !CONFIG_TICK_ONESHOT: */
- static inline
-@@ -126,7 +125,6 @@ static inline bool tick_oneshot_possible(void) { return false; }
- static inline int tick_oneshot_mode_active(void) { return 0; }
- static inline void tick_clock_notify(void) { }
- static inline int tick_check_oneshot_change(void) { return 0; }
--static inline void tick_nohz_switch_to_nohz(void) { }
- #endif /* !CONFIG_TICK_ONESHOT */
+diff --git a/drivers/power/supply/power_supply_core.c b/drivers/power/supply/power_supply_core.c
+index fefe938c9342..022d0e4bf621 100644
+--- a/drivers/power/supply/power_supply_core.c
++++ b/drivers/power/supply/power_supply_core.c
+@@ -1024,7 +1024,7 @@ EXPORT_SYMBOL_GPL(power_supply_temp2resist_simple);
+ int power_supply_vbat2ri(struct power_supply_battery_info *info,
+ 			 int vbat_uv, bool charging)
+ {
+-	struct power_supply_vbat_ri_table *vbat2ri;
++	const struct power_supply_vbat_ri_table *vbat2ri;
+ 	int table_len;
+ 	int i, high, low;
  
- /* Functions related to oneshot broadcasting */
-@@ -159,6 +157,7 @@ static inline void tick_nohz_init(void) { }
- #endif
+diff --git a/drivers/power/supply/samsung-sdi-battery.c b/drivers/power/supply/samsung-sdi-battery.c
+index b33daab798b9..725fbe09379e 100644
+--- a/drivers/power/supply/samsung-sdi-battery.c
++++ b/drivers/power/supply/samsung-sdi-battery.c
+@@ -25,7 +25,7 @@ struct samsung_sdi_battery {
+  * tables apply depending on whether we are charging or not.
+  */
  
- #ifdef CONFIG_NO_HZ_COMMON
-+extern void tick_nohz_switch_to_nohz(void);
- extern unsigned long tick_nohz_active;
- extern void timers_update_nohz(void);
- extern u64 get_jiffies_update(unsigned long *basej);
-@@ -173,6 +172,7 @@ extern bool timer_base_is_idle(void);
- extern void timer_expire_remote(unsigned int cpu);
- # endif
- #else /* CONFIG_NO_HZ_COMMON */
-+static inline void tick_nohz_switch_to_nohz(void) { }
- static inline void timers_update_nohz(void) { }
- #define tick_nohz_active (0)
- #endif
+-static struct power_supply_vbat_ri_table samsung_vbat2res_discharging_eb_l1m7flu[] = {
++static const struct power_supply_vbat_ri_table samsung_vbat2res_discharging_eb_l1m7flu[] = {
+ 	{ .vbat_uv = 4240000, .ri_uohm = 160000 },
+ 	{ .vbat_uv = 4210000, .ri_uohm = 179000 },
+ 	{ .vbat_uv = 4180000, .ri_uohm = 183000 },
+@@ -53,7 +53,7 @@ static struct power_supply_vbat_ri_table samsung_vbat2res_discharging_eb_l1m7flu
+ 	{ .vbat_uv = 3300000, .ri_uohm = 339000 },
+ };
+ 
+-static struct power_supply_vbat_ri_table samsung_vbat2res_charging_eb_l1m7flu[] = {
++static const struct power_supply_vbat_ri_table samsung_vbat2res_charging_eb_l1m7flu[] = {
+ 	{ .vbat_uv = 4302000, .ri_uohm = 230000 },
+ 	{ .vbat_uv = 4276000, .ri_uohm = 345000 },
+ 	{ .vbat_uv = 4227000, .ri_uohm = 345000 },
+@@ -73,7 +73,7 @@ static struct power_supply_vbat_ri_table samsung_vbat2res_charging_eb_l1m7flu[]
+ 	{ .vbat_uv = 3590000, .ri_uohm = 164000 },
+ };
+ 
+-static struct power_supply_vbat_ri_table samsung_vbat2res_discharging_eb425161la[] = {
++static const struct power_supply_vbat_ri_table samsung_vbat2res_discharging_eb425161la[] = {
+ 	{ .vbat_uv = 4240000, .ri_uohm = 160000 },
+ 	{ .vbat_uv = 4210000, .ri_uohm = 179000 },
+ 	{ .vbat_uv = 4180000, .ri_uohm = 183000 },
+@@ -105,7 +105,7 @@ static struct power_supply_vbat_ri_table samsung_vbat2res_discharging_eb425161la
+ 	{ .vbat_uv = 3300000, .ri_uohm = 339000 },
+ };
+ 
+-static struct power_supply_vbat_ri_table samsung_vbat2res_charging_eb425161la[] = {
++static const struct power_supply_vbat_ri_table samsung_vbat2res_charging_eb425161la[] = {
+ 	{ .vbat_uv = 4345000, .ri_uohm = 230000 },
+ 	{ .vbat_uv = 4329000, .ri_uohm = 238000 },
+ 	{ .vbat_uv = 4314000, .ri_uohm = 225000 },
+@@ -182,7 +182,7 @@ static struct power_supply_vbat_ri_table samsung_vbat2res_charging_eb425161la[]
+ 	{ .vbat_uv = 3590000, .ri_uohm = 164000 },
+ };
+ 
+-static struct power_supply_vbat_ri_table samsung_vbat2res_discharging_eb425161lu[] = {
++static const struct power_supply_vbat_ri_table samsung_vbat2res_discharging_eb425161lu[] = {
+ 	{ .vbat_uv = 4240000, .ri_uohm = 160000 },
+ 	{ .vbat_uv = 4210000, .ri_uohm = 179000 },
+ 	{ .vbat_uv = 4180000, .ri_uohm = 183000 },
+@@ -214,7 +214,7 @@ static struct power_supply_vbat_ri_table samsung_vbat2res_discharging_eb425161lu
+ 	{ .vbat_uv = 3300000, .ri_uohm = 339000 },
+ };
+ 
+-static struct power_supply_vbat_ri_table samsung_vbat2res_charging_eb425161lu[] = {
++static const struct power_supply_vbat_ri_table samsung_vbat2res_charging_eb425161lu[] = {
+ 	{ .vbat_uv = 4346000, .ri_uohm = 293000 },
+ 	{ .vbat_uv = 4336000, .ri_uohm = 290000 },
+ 	{ .vbat_uv = 4315000, .ri_uohm = 274000 },
+@@ -244,7 +244,7 @@ static struct power_supply_vbat_ri_table samsung_vbat2res_charging_eb425161lu[]
+ 	{ .vbat_uv = 3590000, .ri_uohm = 164000 },
+ };
+ 
+-static struct power_supply_vbat_ri_table samsung_vbat2res_discharging_eb485159lu[] = {
++static const struct power_supply_vbat_ri_table samsung_vbat2res_discharging_eb485159lu[] = {
+ 	{ .vbat_uv = 4240000, .ri_uohm = 160000 },
+ 	{ .vbat_uv = 4210000, .ri_uohm = 179000 },
+ 	{ .vbat_uv = 4180000, .ri_uohm = 183000 },
+@@ -271,7 +271,7 @@ static struct power_supply_vbat_ri_table samsung_vbat2res_discharging_eb485159lu
+ 	{ .vbat_uv = 3300000, .ri_uohm = 339000 },
+ };
+ 
+-static struct power_supply_vbat_ri_table samsung_vbat2res_charging_eb485159lu[] = {
++static const struct power_supply_vbat_ri_table samsung_vbat2res_charging_eb485159lu[] = {
+ 	{ .vbat_uv = 4302000, .ri_uohm = 200000 },
+ 	{ .vbat_uv = 4258000, .ri_uohm = 206000 },
+ 	{ .vbat_uv = 4200000, .ri_uohm = 231000 },
+@@ -291,7 +291,7 @@ static struct power_supply_vbat_ri_table samsung_vbat2res_charging_eb485159lu[]
+ 	{ .vbat_uv = 3590000, .ri_uohm = 164000 },
+ };
+ 
+-static struct power_supply_vbat_ri_table samsung_vbat2res_discharging_eb535151vu[] = {
++static const struct power_supply_vbat_ri_table samsung_vbat2res_discharging_eb535151vu[] = {
+ 	{ .vbat_uv = 4071000, .ri_uohm = 158000 },
+ 	{ .vbat_uv = 4019000, .ri_uohm = 187000 },
+ 	{ .vbat_uv = 3951000, .ri_uohm = 191000 },
+@@ -311,7 +311,7 @@ static struct power_supply_vbat_ri_table samsung_vbat2res_discharging_eb535151vu
+ 	{ .vbat_uv = 3280000, .ri_uohm = 250000 },
+ };
+ 
+-static struct power_supply_vbat_ri_table samsung_vbat2res_charging_eb535151vu[] = {
++static const struct power_supply_vbat_ri_table samsung_vbat2res_charging_eb535151vu[] = {
+ 	{ .vbat_uv = 4190000, .ri_uohm = 214000 },
+ 	{ .vbat_uv = 4159000, .ri_uohm = 252000 },
+ 	{ .vbat_uv = 4121000, .ri_uohm = 245000 },
+@@ -331,7 +331,7 @@ static struct power_supply_vbat_ri_table samsung_vbat2res_charging_eb535151vu[]
+ 	{ .vbat_uv = 3510000, .ri_uohm = 228000 },
+ };
+ 
+-static struct power_supply_vbat_ri_table samsung_vbat2res_discharging_eb585157lu[] = {
++static const struct power_supply_vbat_ri_table samsung_vbat2res_discharging_eb585157lu[] = {
+ 	{ .vbat_uv = 4194000, .ri_uohm = 121000 },
+ 	{ .vbat_uv = 4169000, .ri_uohm = 188000 },
+ 	{ .vbat_uv = 4136000, .ri_uohm = 173000 },
+@@ -401,7 +401,7 @@ static struct power_supply_vbat_ri_table samsung_vbat2res_discharging_eb585157lu
+ 	{ .vbat_uv = 3161000, .ri_uohm = 452000 },
+ };
+ 
+-static struct power_supply_vbat_ri_table samsung_vbat2res_charging_eb585157lu[] = {
++static const struct power_supply_vbat_ri_table samsung_vbat2res_charging_eb585157lu[] = {
+ 	{ .vbat_uv = 4360000, .ri_uohm = 128000 },
+ 	{ .vbat_uv = 4325000, .ri_uohm = 130000 },
+ 	{ .vbat_uv = 4316000, .ri_uohm = 148000 },
+diff --git a/include/linux/power_supply.h b/include/linux/power_supply.h
+index 8e5705a56b85..3ccf7d47f502 100644
+--- a/include/linux/power_supply.h
++++ b/include/linux/power_supply.h
+@@ -760,9 +760,9 @@ struct power_supply_battery_info {
+ 	int ocv_table_size[POWER_SUPPLY_OCV_TEMP_MAX];
+ 	struct power_supply_resistance_temp_table *resist_table;
+ 	int resist_table_size;
+-	struct power_supply_vbat_ri_table *vbat2ri_discharging;
++	const struct power_supply_vbat_ri_table *vbat2ri_discharging;
+ 	int vbat2ri_discharging_size;
+-	struct power_supply_vbat_ri_table *vbat2ri_charging;
++	const struct power_supply_vbat_ri_table *vbat2ri_charging;
+ 	int vbat2ri_charging_size;
+ 	int bti_resistance_ohm;
+ 	int bti_resistance_tolerance;
+-- 
+2.45.1
 
 
