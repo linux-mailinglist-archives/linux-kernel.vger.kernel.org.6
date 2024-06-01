@@ -1,235 +1,155 @@
-Return-Path: <linux-kernel+bounces-198010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A29F8D71FB
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 23:33:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B217C8D71FD
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 23:33:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E1B1B2167F
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 21:33:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 366062820A1
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 21:33:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81AC31CD2F;
-	Sat,  1 Jun 2024 21:33:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 481132374E;
+	Sat,  1 Jun 2024 21:33:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=freemail.hu header.i=@freemail.hu header.b="JDlDB9yO"
-Received: from smtp-out.freemail.hu (fmfe12.freemail.hu [46.107.16.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="TLwXvDBd"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45EB42D058
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Jun 2024 21:33:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.107.16.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C347B1CD2F
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Jun 2024 21:33:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717277589; cv=none; b=t/+B51Lh91DhaWR8mgBEz1Dq9ZpkwZ7M1wKUNPdBEe/D02NqXpXBTzPc6IdJ/IhhCUAeTwVEFhrSc6zh29f1AYHCF/kUqNYgn4e2dgCPy5AKoEwQyBmpx8ZS7pMsdKFy7nrnk4YarBFbRqVBmhOyRnJokfSrex2xtla7Sxd3tCI=
+	t=1717277613; cv=none; b=WzbCyVDmN77Z81KIghEF3xwEDGnKS6zbExIGQbe8iX+W8exTR1RzbtcBa5eA8UPz2V7Kn2E1cVYbQHNk/sqN8QJ0nGiyKuvriV8NrCb9hCrjNJDzjarY6IoXf/7fJwMeSzswIGxWJXgkKJx8WgOGvD2XP6f+TVau5l5x0WtiFRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717277589; c=relaxed/simple;
-	bh=kmCs3tuTpxHxU/J3vT0o4lQF95dFYC3u7ThGWPyd5js=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EI32ft0n+UBgdHnkJJfV9VZy22b3M5Be1TWWOMANm+Nst2BZy8L5+WZ3XScD2aO5BSFkXNTutV3r/ebRN2vuWdJUdQM49to6762odELSrO/M6Ke6XdruknPiAyGzS6P2z8JgB1NFpICWR1NNfx0NBTeBMysHrIrXagFqUE0LYAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freemail.hu; spf=pass smtp.mailfrom=freemail.hu; dkim=fail (2048-bit key) header.d=freemail.hu header.i=@freemail.hu header.b=JDlDB9yO reason="signature verification failed"; arc=none smtp.client-ip=46.107.16.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freemail.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freemail.hu
-Received: from fizweb.elte.hu (fizweb.elte.hu [157.181.183.248])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp.freemail.hu (Postfix) with ESMTPSA id 4VsCdP0FrDz1mp;
-	Sat,  1 Jun 2024 23:23:05 +0200 (CEST)
-From: egyszeregy@freemail.hu
-To: bskeggs@redhat.com,
-	kherbst@redhat.com,
-	lyude@redhat.com,
-	airlied@gmail.com,
-	daniel@ffwll.ch,
-	dri-devel@lists.freedesktop.org,
-	nouveau@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Benjamin=20Sz=C5=91ke?= <egyszeregy@freemail.hu>
-Subject: [PATCH] drm/nouveau/i2c: rename aux.c and aux.h to nvkm_i2c_aux.c and nvkm_i2c_aux.h
-Date: Sat,  1 Jun 2024 23:22:47 +0200
-Message-ID: <20240601212247.54786-1-egyszeregy@freemail.hu>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1717277613; c=relaxed/simple;
+	bh=3sBwYo/AqZ+0RfDJFg+GCK+aWleW3pxMfuHyAah0dzA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=m30IDPOeF+WiSOEz69hpm6ui9p+IGho5O1ZZ1MJ6GMjxl6GJyLgz544Dm7AJ7mK9u2dp3e1aCOSEssZgpb5hGPt5j+6D+GVb+09kRdyGAw4NdIqt+lMzQZJPBp2AeVhqEhPFr1phbMmA9zxP0qfaRI2gKTsi4Kfer4tX2UJ+/mE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=TLwXvDBd; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-421396e3918so1254105e9.0
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Jun 2024 14:33:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1717277610; x=1717882410; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HJt3Ya3JYlNDKcCqPU+4dBowkDesFTehUTcWLYXANYk=;
+        b=TLwXvDBd2KibpGurTDNi0sS+F1f2zelbruqHlBywSWqKU0TBnjVDV2I9he92JaYU+J
+         wkztfGH/CioZVK4nKw0NVukUyatKtpyj/Qw9a7+0w6AOW61OOyUmKQQK/YDiWuohdgj1
+         7hq0QEZu++TL9htN8+fffSxcA1BTQRsNaE9fv082V56CEc+wTYar/pfjMOhwxek2VFGc
+         HqkJRulNSTqpx5rfrUIglt6di5bT2mYLGJr/3yYSZMybL0C/13lEHP5uOSiipbdXvaAL
+         /d0ROzAFVNH7iXSpNoOgKPIn1MbQtYIMiooXq6730LwBebTl3KzTYl6xueNsTXl4Bx0S
+         JVTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717277610; x=1717882410;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HJt3Ya3JYlNDKcCqPU+4dBowkDesFTehUTcWLYXANYk=;
+        b=b4WYnEPSh2eUn55wtc9LZoeJL+DcXnGB0kgpnuLKn1z2fcWQp9yLD3L34IAwvm0l2l
+         J3zQwj1Rs64XViUXn+IXeCjm7r1ZelGmuCBKe9V7bqCb+jgT5G33fmLFVaAdrqa7n7w4
+         H5k78y+Lhtq2egCbEaRprNvhhSxYVLPGM3h0H9rY1nY69ciIufX6PgYQCaF4+pnRF30V
+         mJ5xs6ynTYy+h57kpcWER4jU38pgyZFLUc+yHjNIiTTgqKCM0URM85TsCz+iyORZuemx
+         weVdRWsJT5/vml6XBPsMpIrItM9Czy3/g+qwop0vkuQTpJBs4JHd8Y6/WrFo/UPPS5Q3
+         JuCA==
+X-Forwarded-Encrypted: i=1; AJvYcCVP+vPRJhS2DP1AbOevarraQzUlfOHwMNhGiv7FrN6Q5qxmKjPIhnYYdzn7KpFgDIFYkIFH+ILM6TnZDlGUNIE/20OU/bFqhAhDsTFv
+X-Gm-Message-State: AOJu0YzYbUelwbVijIw3qQ7essbi12RfeOm/GQ4sMCWTPsacjUPNDByZ
+	84GUNHP0SsV9R4P/nUvXfo7jJAj5IT+fuR7oPbESQLnHdD+YalHscUFsLAbOrLw=
+X-Google-Smtp-Source: AGHT+IGl9Hl1b8VRJQpVpXl7hCsSBOPLOHgRsVLux3bAWL4Geb2ApKKwM1lVHyceYADVoADXs17YOw==
+X-Received: by 2002:adf:e80f:0:b0:354:f724:6419 with SMTP id ffacd0b85a97d-35e0f25509fmr4554299f8f.8.1717277609843;
+        Sat, 01 Jun 2024 14:33:29 -0700 (PDT)
+Received: from airbuntu.. (host81-157-90-255.range81-157.btcentralplus.com. [81.157.90.255])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35dd04c0839sm4751324f8f.23.2024.06.01.14.33.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 01 Jun 2024 14:33:29 -0700 (PDT)
+From: Qais Yousef <qyousef@layalina.io>
+To: Ingo Molnar <mingo@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Steven Rostedt <rostedt@goodmis.org>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>,
+	Daniel Bristot de Oliveira <bristot@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jens Axboe <axboe@kernel.dk>,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	Qais Yousef <qyousef@layalina.io>
+Subject: [PATCH v4 0/2] Clean up usage of rt_task()
+Date: Sat,  1 Jun 2024 22:33:07 +0100
+Message-Id: <20240601213309.1262206-1-qyousef@layalina.io>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=simple/relaxed; t=1717276985;
-	s=20181004; d=freemail.hu;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
-	l=6462; bh=CnHSqkRX34kqCWN2/oPtvm9wm8HJCe8QhPwQypdpi3w=;
-	b=JDlDB9yOQDBY7EDnRMrt8qYnWfH8J/LKYKb90434FH1tuOL04za+3TXXSbU0uvs0
-	hWYDYjpbob4XGgUcd1s+lCkerOgDwkpWJWKFW8N5j6WENAKdR/hWJgcma2JEDDotXZ0
-	cisYRrLsQBfjyKkBWw0qv/5PDe7vliytix5oP2piBPJC+uR3pN8OKck/+zLBGlJY4za
-	qywwOiMNzHAdyOJT5kCg0yd+k186Oa1jX93iCpiRk5mxJQqJJcAxfW8rYbKRXi5QQTl
-	SymDGdZ72wK5PkHxGgpZ9qXZtFV3eH4+95xNzpoPowMkXFkBy1uMClZzxv1oBmRo8o6
-	CXPcfsWUsQ==
 
-From: Benjamin Szőke <egyszeregy@freemail.hu>
+Make rt_task() return true only for RT class and add new realtime_task() to
+return true for RT and DL classes to avoid some confusion the old API can
+cause.
 
-The goal is to clean-up Linux repository from AUX file names, because
-the use of such file names is prohibited on other operating systems
-such as Windows, so the Linux repository cannot be cloned and
-edited on them.
+No functional changes intended in patch 1. Patch 2 cleans up the return type as
+suggested by Steve.
 
-Signed-off-by: Benjamin Szőke <egyszeregy@freemail.hu>
----
- drivers/gpu/drm/nouveau/nvkm/subdev/i2c/Kbuild                  | 2 +-
- drivers/gpu/drm/nouveau/nvkm/subdev/i2c/anx9805.c               | 2 +-
- drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxg94.c                | 2 +-
- drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxgf119.c              | 2 +-
- drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxgm200.c              | 2 +-
- drivers/gpu/drm/nouveau/nvkm/subdev/i2c/base.c                  | 2 +-
- .../gpu/drm/nouveau/nvkm/subdev/i2c/{aux.c => nvkm_i2c_aux.c}   | 2 +-
- .../gpu/drm/nouveau/nvkm/subdev/i2c/{aux.h => nvkm_i2c_aux.h}   | 0
- drivers/gpu/drm/nouveau/nvkm/subdev/i2c/padg94.c                | 2 +-
- drivers/gpu/drm/nouveau/nvkm/subdev/i2c/padgf119.c              | 2 +-
- drivers/gpu/drm/nouveau/nvkm/subdev/i2c/padgm200.c              | 2 +-
- 11 files changed, 10 insertions(+), 10 deletions(-)
- rename drivers/gpu/drm/nouveau/nvkm/subdev/i2c/{aux.c => nvkm_i2c_aux.c} (99%)
- rename drivers/gpu/drm/nouveau/nvkm/subdev/i2c/{aux.h => nvkm_i2c_aux.h} (100%)
+Changes since v3:
 
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/Kbuild b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/Kbuild
-index 819703913a00..c488dfce4392 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/Kbuild
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/Kbuild
-@@ -25,7 +25,7 @@ nvkm-y += nvkm/subdev/i2c/busnv50.o
- nvkm-y += nvkm/subdev/i2c/busgf119.o
- nvkm-y += nvkm/subdev/i2c/bit.o
- 
--nvkm-y += nvkm/subdev/i2c/aux.o
-+nvkm-y += nvkm/subdev/i2c/nvkm_i2c_aux.o
- nvkm-y += nvkm/subdev/i2c/auxg94.o
- nvkm-y += nvkm/subdev/i2c/auxgf119.o
- nvkm-y += nvkm/subdev/i2c/auxgm200.o
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/anx9805.c b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/anx9805.c
-index dd391809fef7..30bf84e77db9 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/anx9805.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/anx9805.c
-@@ -24,7 +24,7 @@
- #define anx9805_pad(p) container_of((p), struct anx9805_pad, base)
- #define anx9805_bus(p) container_of((p), struct anx9805_bus, base)
- #define anx9805_aux(p) container_of((p), struct anx9805_aux, base)
--#include "aux.h"
-+#include "nvkm_i2c_aux.h"
- #include "bus.h"
- 
- struct anx9805_pad {
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxg94.c b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxg94.c
-index 47068f6f9c55..9e07ba444ca8 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxg94.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxg94.c
-@@ -22,7 +22,7 @@
-  * Authors: Ben Skeggs <bskeggs@redhat.com>
-  */
- #define g94_i2c_aux(p) container_of((p), struct g94_i2c_aux, base)
--#include "aux.h"
-+#include "nvkm_i2c_aux.h"
- 
- struct g94_i2c_aux {
- 	struct nvkm_i2c_aux base;
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxgf119.c b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxgf119.c
-index dab40cd8fe3a..8709b728c38b 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxgf119.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxgf119.c
-@@ -19,7 +19,7 @@
-  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-  * OTHER DEALINGS IN THE SOFTWARE.
-  */
--#include "aux.h"
-+#include "nvkm_i2c_aux.h"
- 
- static const struct nvkm_i2c_aux_func
- gf119_i2c_aux = {
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxgm200.c b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxgm200.c
-index 8bd1d442e465..f40c5709d217 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxgm200.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxgm200.c
-@@ -22,7 +22,7 @@
-  * Authors: Ben Skeggs <bskeggs@redhat.com>
-  */
- #define gm200_i2c_aux(p) container_of((p), struct gm200_i2c_aux, base)
--#include "aux.h"
-+#include "nvkm_i2c_aux.h"
- 
- struct gm200_i2c_aux {
- 	struct nvkm_i2c_aux base;
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/base.c b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/base.c
-index 976539de4220..736275f0c774 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/base.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/base.c
-@@ -22,7 +22,7 @@
-  * Authors: Ben Skeggs
-  */
- #include "priv.h"
--#include "aux.h"
-+#include "nvkm_i2c_aux.h"
- #include "bus.h"
- #include "pad.h"
- 
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/aux.c b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/nvkm_i2c_aux.c
-similarity index 99%
-rename from drivers/gpu/drm/nouveau/nvkm/subdev/i2c/aux.c
-rename to drivers/gpu/drm/nouveau/nvkm/subdev/i2c/nvkm_i2c_aux.c
-index d063d0dc13c5..6b76df02c63a 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/aux.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/nvkm_i2c_aux.c
-@@ -24,7 +24,7 @@
- 
- #include <linux/string_helpers.h>
- 
--#include "aux.h"
-+#include "nvkm_i2c_aux.h"
- #include "pad.h"
- 
- static int
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/aux.h b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/nvkm_i2c_aux.h
-similarity index 100%
-rename from drivers/gpu/drm/nouveau/nvkm/subdev/i2c/aux.h
-rename to drivers/gpu/drm/nouveau/nvkm/subdev/i2c/nvkm_i2c_aux.h
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/padg94.c b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/padg94.c
-index 5904bc5f2d2a..e9c55a57c878 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/padg94.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/padg94.c
-@@ -22,7 +22,7 @@
-  * Authors: Ben Skeggs
-  */
- #include "pad.h"
--#include "aux.h"
-+#include "nvkm_i2c_aux.h"
- #include "bus.h"
- 
- void
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/padgf119.c b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/padgf119.c
-index 3bc4d0310076..1af64e25d838 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/padgf119.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/padgf119.c
-@@ -22,7 +22,7 @@
-  * Authors: Ben Skeggs
-  */
- #include "pad.h"
--#include "aux.h"
-+#include "nvkm_i2c_aux.h"
- #include "bus.h"
- 
- static const struct nvkm_i2c_pad_func
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/padgm200.c b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/padgm200.c
-index 7d417f6a816e..997a5a2146c4 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/padgm200.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/padgm200.c
-@@ -22,7 +22,7 @@
-  * Authors: Ben Skeggs
-  */
- #include "pad.h"
--#include "aux.h"
-+#include "nvkm_i2c_aux.h"
- #include "bus.h"
- 
- static void
+	* Make sure the 'new' bool functions return true/false instead of 1/0.
+	* Drop patch 2 about hrtimer usage of realtime_task() as ongoing
+	  discussion on v1 indicates its scope outside of this simple cleanup.
+
+Changes since v2:
+
+	* Fix one user that should use realtime_task() but remained using
+	  rt_task() (Sebastian)
+	* New patch to convert all hrtimer users to use realtime_task_policy()
+	  (Sebastian)
+	* Add a new patch to convert return type to bool (Steve)
+	* Rebase on tip/sched/core and handle a conflict with code shuffle to
+	  syscalls.c
+	* Add Reviewed-by Steve
+
+Changes since v1:
+
+	* Use realtime_task_policy() instead task_has_realtime_policy() (Peter)
+	* Improve commit message readability about replace some rt_task()
+	  users.
+
+v1 discussion: https://lore.kernel.org/lkml/20240514234112.792989-1-qyousef@layalina.io/
+v2 discussion: https://lore.kernel.org/lkml/20240515220536.823145-1-qyousef@layalina.io/
+v3 discussion: https://lore.kernel.org/lkml/20240527234508.1062360-1-qyousef@layalina.io/
+
+Qais Yousef (2):
+  sched/rt: Clean up usage of rt_task()
+  sched/rt, dl: Convert functions to return bool
+
+ fs/bcachefs/six.c                 |  2 +-
+ fs/select.c                       |  2 +-
+ include/linux/ioprio.h            |  2 +-
+ include/linux/sched/deadline.h    | 14 +++++++------
+ include/linux/sched/prio.h        |  1 +
+ include/linux/sched/rt.h          | 35 ++++++++++++++++++++++++++-----
+ kernel/locking/rtmutex.c          |  4 ++--
+ kernel/locking/rwsem.c            |  4 ++--
+ kernel/locking/ww_mutex.h         |  2 +-
+ kernel/sched/core.c               |  4 ++--
+ kernel/sched/syscalls.c           |  2 +-
+ kernel/time/hrtimer.c             |  6 +++---
+ kernel/trace/trace_sched_wakeup.c |  2 +-
+ mm/page-writeback.c               |  4 ++--
+ mm/page_alloc.c                   |  2 +-
+ 15 files changed, 57 insertions(+), 29 deletions(-)
+
 -- 
-2.43.0
+2.34.1
 
 
