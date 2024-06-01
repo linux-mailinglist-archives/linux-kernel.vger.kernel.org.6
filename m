@@ -1,176 +1,118 @@
-Return-Path: <linux-kernel+bounces-197801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FB418D6F61
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 12:41:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 719A18D6F68
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 12:56:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E58C282B21
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 10:41:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A5A2282EFA
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 10:56:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D445F14EC46;
-	Sat,  1 Jun 2024 10:41:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 003F514EC55;
+	Sat,  1 Jun 2024 10:56:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="gKtw9kXx"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="jxWlgk+Z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69F0D1DDEA;
-	Sat,  1 Jun 2024 10:41:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16E5A208A4;
+	Sat,  1 Jun 2024 10:56:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717238474; cv=none; b=GCk35K3XoGiv0pK/B0aTYteFLlt8HLHlnVnqkF5BlfnYBBhWpb5G3fk0dleALwzyC/DxGwAmOmjt/VQ3IHouODhcrBuSNLeZ7/bz9RJVey8g6mRHx/9uPWB2SAQMqBOlPOYmmE6ogF+CJ3U9nh4HNDLbudQ05nPQk9Hw5jbeYwU=
+	t=1717239409; cv=none; b=LuVD/gsEYlVkpfF5/3r6BmZ12r23hMeNMaZxSQT0JmfV0tWgizr4SEeRx0ABykp7xjgvN5xM0pdm+UJocHjgQHs3qSZvGncACnF1Egv3zeTtvepGsUuHNFv+8loTrQde5/ejdnQixwzF8RCpJ3cZJTCFpPxBY9vzVlhlLkg2oj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717238474; c=relaxed/simple;
-	bh=nyxSrVcpxbGL5iI/vXuDn01y3NgVDhxDhqhSgyZeYyI=;
+	s=arc-20240116; t=1717239409; c=relaxed/simple;
+	bh=41DY8TV8S+YxvFiEAbKmnGhANeol4FJ3Mp4MdCpmIck=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oT6dr35MypPgcUOLMTmbmLCNcOOUS8CN/FUA0DZH+yLoYk214rz2biomFnXyBrDK8/IZRnd50NdqkX6XAZMkE5f540waxAoDwMDRsi/1+ml3cSpdzS7GJVEehvkeZx2Nxox9fY4wR9/rDWA3RYKlZ3N2XnrbQ0d53WwX2KI9lb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=gKtw9kXx; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1717238461;
-	bh=nyxSrVcpxbGL5iI/vXuDn01y3NgVDhxDhqhSgyZeYyI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gKtw9kXxtAF3HxhCIXp/6uu0k66j2vOZJSvHgKe8M84aY8Ne5MhHy8rdUzQyTeS5h
-	 OczKrBMt5Y9jgqT66Fs6T2e3imtWc1T4kgrOYkxudkyRwoHY8KnWBrQCj9eJe/EjUS
-	 YWv5Bql1TEAQ1NoS4QsOMA13xeefRzatMxc/bPU8=
-Date: Sat, 1 Jun 2024 12:41:00 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, Armin Wolf <W_Armin@gmx.de>, 
-	=?utf-8?B?UmVuw6k=?= Rebe <rene@exactcode.de>, Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: Re: [PATCH RFT v3 4/4] hwmon: (spd5118) Add support for reading SPD
- data
-Message-ID: <cf9d752e-0137-4a6d-85d3-fbe69293a43e@t-8ch.de>
-References: <20240531230556.1409532-1-linux@roeck-us.net>
- <20240531230556.1409532-5-linux@roeck-us.net>
- <4cc979c3-3ce0-4f31-b5d0-508e1af5fdf4@roeck-us.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=l71T74QMv8ruHcPdlJ3OYw4jLXLBqTIMODQ5BJTIfjAb7jlOMz7G0AXbczP7CdlBzmukeilcRMZKn7Rwi718Rx5Pm//m2YKTp0NG13JmarfF35Lk7aoLGyTe5Ese/bAjtZou7CZzP0U/vS86GBee1ocUgjE1AgKylqyvQiyGJIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=jxWlgk+Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CF40C116B1;
+	Sat,  1 Jun 2024 10:56:46 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="jxWlgk+Z"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1717239405;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=F3C8N1q5G5CmnDvpi3COJ8xyMm2eULKtCWXP4Sq6GaE=;
+	b=jxWlgk+ZWOpZZh5mjiYsYeT/ujL0Csc153a4DS7n5KhpFm2UZaHWVIpItNQEQwnh76T0Vp
+	VN/fbYyhjP/HQWQEvumkcMGyMOUQjoLcxrXSQSoVRzyBcc0pSpukUXkcdDReiYMpvZ9t5N
+	qRJXEQKGpsiYqCh4XdXcwNEkBWpL4zw=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id c390d7bc (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Sat, 1 Jun 2024 10:56:43 +0000 (UTC)
+Date: Sat, 1 Jun 2024 12:56:40 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: linux-kernel@vger.kernel.org, patches@lists.linux.dev,
+	tglx@linutronix.de, linux-crypto@vger.kernel.org,
+	linux-api@vger.kernel.org, x86@kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
+	Carlos O'Donell <carlos@redhat.com>,
+	Florian Weimer <fweimer@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+	Jann Horn <jannh@google.com>,
+	Christian Brauner <brauner@kernel.org>,
+	David Hildenbrand <dhildenb@redhat.com>
+Subject: Re: [PATCH v16 2/5] random: add vgetrandom_alloc() syscall
+Message-ID: <Zlr-aMJdAEgHOj9-@zx2c4.com>
+References: <20240528122352.2485958-1-Jason@zx2c4.com>
+ <20240528122352.2485958-3-Jason@zx2c4.com>
+ <20240531035917.GD6505@sol.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <4cc979c3-3ce0-4f31-b5d0-508e1af5fdf4@roeck-us.net>
+In-Reply-To: <20240531035917.GD6505@sol.localdomain>
 
-On 2024-05-31 22:42:24+0000, Guenter Roeck wrote:
-> On 5/31/24 16:05, Guenter Roeck wrote:
-> > Add support for reading SPD NVRAM data from SPD5118 (Jedec JESD300)
-> > compliant memory modules. NVRAM write operation is not supported.
-> > 
-> > Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-> > ---
-> > v3: New patch
-> > 
-> > RFT: I'd like to get some more test coverage before moving forward
-> >       with this patch. decode-dimms doesn't recognize the 'spd5118'
-> >       driver.
-> > 
-
-Looks good to me.
-
-Spot-checking against JSED400-5B and the embedded CRC are as expected.
-
+On Thu, May 30, 2024 at 08:59:17PM -0700, Eric Biggers wrote:
+> On Tue, May 28, 2024 at 02:19:51PM +0200, Jason A. Donenfeld wrote:
+> > +/**
+> > + * sys_vgetrandom_alloc - Allocate opaque states for use with vDSO getrandom().
+> > + *
+> > + * @num:	   On input, a pointer to a suggested hint of how many states to
+> > + * 		   allocate, and on return the number of states actually allocated.
+> > + *
+> > + * @size_per_each: On input, must be zero. On return, the size of each state allocated,
+> > + * 		   so that the caller can split up the returned allocation into
+> > + * 		   individual states.
+> > + *
+> > + * @addr:	   Reserved, must be zero.
+> > + *
+> > + * @flags:	   Reserved, must be zero.
+> > + *
+> > + * The getrandom() vDSO function in userspace requires an opaque state, which
+> > + * this function allocates by mapping a certain number of special pages into
+> > + * the calling process. It takes a hint as to the number of opaque states
+> > + * desired, and provides the caller with the number of opaque states actually
+> > + * allocated, the size of each one in bytes, and the address of the first
+> > + * state, which may be split up into @num states of @size_per_each bytes each,
+> > + * by adding @size_per_each to the returned first state @num times, while
+> > + * ensuring that no single state straddles a page boundary.
+> > + *
+> > + * Returns the address of the first state in the allocation on success, or a
+> > + * negative error value on failure.
+> > + *
+> > + * The returned address of the first state may be passed to munmap(2) with a
+> > + * length of `(size_t)num * (size_t)size_per_each`, in order to deallocate the
+> > + * memory, after which it is invalid to pass it to vDSO getrandom().
 > 
-> Looking for feedback:
-> 
-> [ ... ]
-> 
-> > +
-> > +	nvmem = devm_nvmem_register(dev, &nvmem_config);
-> 
-> This returns ERR_PTR(-EOPNOTSUPP) if CONFIG_NVRAM=n. We have two options:
-> 
-> - Ignore -EOPNOTSUPP and continue registering the hwmon device
-> 
-> or
-> 
-> - Add
-> 	select NVRAM
-> 	select NVRAM_SYSFS
->   to the driver's Kconfig entry.
+> Wouldn't a munmap with '(size_t)num * (size_t)size_per_each' be potentially too
+> short, due to how the allocation is sized such that states don't cross page
+> boundaries?
 
-s/NVRAM/NVMEM/g
+You're right, I think. The calculation should instead be something like:
 
-> Any preferences ?
+    DIV_ROUND_UP(num, PAGE_SIZE / size_per_each) * PAGE_SIZE
 
-It seems reasonable to support the module without the eeprom logic.
-When used in a fixed, embedded environment, the eeprom is of limited
-value as it's known beforehand, while the hwmon functionality is still
-useful.
+Does that seem correct to you?
 
-
-EEPROM dump in case anyone wants it:
-
-00000000: 3010 1203 0400 2062 0000 0000 b212 0d00  0..... b........
-00000010: 0000 0000 6501 f203 7aaf 0000 0000 c837  ....e...z......7
-00000020: c837 c837 906f 80bb 3075 2701 a000 8200  .7.7.o..0u'.....
-00000030: 0000 0000 0000 d400 0000 d400 0000 d400  ................
-00000040: 0000 d400 0000 8813 0888 1308 204e 2010  ............ N .
-00000050: 2710 1534 2010 2710 c409 044c 1d0c 0000  '..4 .'....L....
-00000060: 0000 0000 0000 0000 0000 0000 0000 0000  ................
-00000070: 0000 0000 0000 0000 0000 0000 0000 0000  ................
-00000080: 0000 0000 0000 0000 0000 0000 0000 0000  ................
-00000090: 0000 0000 0000 0000 0000 0000 0000 0000  ................
-000000a0: 0000 0000 0000 0000 0000 0000 0000 0000  ................
-000000b0: 0000 0000 0000 0000 0000 0000 0000 0000  ................
-000000c0: 1000 8632 8015 8a8c 8213 0000 0000 0000  ...2............
-000000d0: 0000 0000 0000 0000 0000 0000 0000 0000  ................
-000000e0: 0000 0000 0000 0f11 0171 0822 0000 0000  .........q."....
-000000f0: 0000 0000 0000 0000 0000 0000 0000 0000  ................
-00000100: 0000 0000 0000 0000 0000 0000 0000 0000  ................
-00000110: 0000 0000 0000 0000 0000 0000 0000 0000  ................
-00000120: 0000 0000 0000 0000 0000 0000 0000 0000  ................
-00000130: 0000 0000 0000 0000 0000 0000 0000 0000  ................
-00000140: 0000 0000 0000 0000 0000 0000 0000 0000  ................
-00000150: 0000 0000 0000 0000 0000 0000 0000 0000  ................
-00000160: 0000 0000 0000 0000 0000 0000 0000 0000  ................
-00000170: 0000 0000 0000 0000 0000 0000 0000 0000  ................
-00000180: 0000 0000 0000 0000 0000 0000 0000 0000  ................
-00000190: 0000 0000 0000 0000 0000 0000 0000 0000  ................
-000001a0: 0000 0000 0000 0000 0000 0000 0000 0000  ................
-000001b0: 0000 0000 0000 0000 0000 0000 0000 0000  ................
-000001c0: 0000 0000 0000 0000 0000 0000 0000 0000  ................
-000001d0: 0000 0000 0000 0000 0000 0000 0000 0000  ................
-000001e0: 0000 0000 0000 0000 0000 0000 0000 0000  ................
-000001f0: 0000 0000 0000 0000 0000 0000 0000 a14d  ...............M
-00000200: 0198 0823 328e 0a9b e84b 4635 3536 5334  ...#2....KF556S4
-00000210: 302d 3332 2020 2020 2020 2020 2020 2020  0-32            
-00000220: 2020 2020 2020 2000 80ad 4100 0831 3030         ...A..100
-00000230: 3139 3738 3700 0000 0000 0000 0000 0000  19787...........
-00000240: 0000 4100 0000 0000 0001 0000 0000 0000  ..A.............
-00000250: 0100 0000 0000 0000 0000 0000 0000 0000  ................
-00000260: 0000 0001 0100 0000 0000 0000 0000 0088  ................
-00000270: 0000 0000 0000 0000 0000 0000 0000 0000  ................
-00000280: 0000 0000 0000 0000 0000 0000 0000 0000  ................
-00000290: 0000 0000 0000 0000 0000 0000 0000 0000  ................
-000002a0: 0000 0000 0000 0000 0000 0000 0000 0000  ................
-000002b0: 0000 0000 0000 0000 0000 0000 0000 0000  ................
-000002c0: 0000 0000 0000 0000 0000 0000 0000 0000  ................
-000002d0: 0000 0000 0000 0000 0000 0000 0000 0000  ................
-000002e0: 0000 0000 0000 0000 0000 0000 0000 0000  ................
-000002f0: 0000 0000 0000 0000 0000 0000 0000 0000  ................
-00000300: 0000 0000 0000 0000 0000 0000 0000 0000  ................
-00000310: 0000 0000 0000 0000 0000 0000 0000 0000  ................
-00000320: 0000 0000 0000 0000 0000 0000 0000 0000  ................
-00000330: 0000 0000 0000 0000 0000 0000 0000 0000  ................
-00000340: 0000 0000 0000 0000 0000 0000 0000 0000  ................
-00000350: 0000 0000 0000 0000 0000 0000 0000 0000  ................
-00000360: 0000 0000 0000 0000 0000 0000 0000 0000  ................
-00000370: 0000 0000 0000 0000 0000 0000 0000 0000  ................
-00000380: 0000 0000 0000 0000 0000 0000 0000 0000  ................
-00000390: 0000 0000 0000 0000 0000 0000 0000 0000  ................
-000003a0: 0000 0000 0000 0000 0000 0000 0000 0000  ................
-000003b0: 0000 0000 0000 0000 0000 0000 0000 0000  ................
-000003c0: 0000 0000 0000 0000 0000 0000 0000 0000  ................
-000003d0: 0000 0000 0000 0000 0000 0000 0000 0000  ................
-000003e0: 0000 0000 0000 0000 0000 0000 0000 0000  ................
-000003f0: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+Jason
 
