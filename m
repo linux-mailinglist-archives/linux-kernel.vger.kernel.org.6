@@ -1,214 +1,114 @@
-Return-Path: <linux-kernel+bounces-198008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50FB78D71F0
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 23:05:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB84F8D71F3
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 23:14:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5794E1C20CD9
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 21:05:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80F311F21CFB
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 21:14:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B8E31527A0;
-	Sat,  1 Jun 2024 21:05:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F6C315350D;
+	Sat,  1 Jun 2024 21:14:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Op6iEKu4";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="dBvJNwmx";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Op6iEKu4";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="dBvJNwmx"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mSoAARe2"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFFAA3D69;
-	Sat,  1 Jun 2024 21:05:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E60EF1CD23;
+	Sat,  1 Jun 2024 21:14:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717275943; cv=none; b=rZb4JRMrhA3kEN52hN1S5vlr6P0c6UdVia3RRFLrTNWn4EbgjfPj+jhWlLNurMH1CW3hKkhqBjeWrvpfKni8eDV50Bn2b5rJ1uy6PiPtKfPUH/DW+cJFnMt15AJAcUin7i5xFaCSfYp/Xc+AY+ZF8dRi7u1qNYP9+AiYxLBQOmw=
+	t=1717276455; cv=none; b=RJ/YZi+MLcucv+5llRvi07+rSeIKo2pb9z6D+MzuNny2Dccx/3l/Xdx/DuSQjf7Jd53Qv1kaGAf6oPu1rioTuBAK6Sguy8AatoWbwSxZ9o5dwq7gAinWvaa4PYw+lONgBYRttTYXJjO59mSstb9k+67h7c3zmsUmtg1xw+ozUOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717275943; c=relaxed/simple;
-	bh=ljldlZuW5R96CDDUsml/oGI7I8C/lXL9K+6aVcKgyaU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FWBsqcvadJmW90jwDfyItCc94TwqB5AEVvCvh3glASipK5mMDervO9J6HllBazNiPiIRYzzH8f6j31StujYz8H+JANluRMQyqV5EvFF2Mkd9j2Lss3goqGDC1LMoci4q/mHnHTXxm3tUUOIX5tMkjKYiarzUBXFuoLLDGMN5h9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Op6iEKu4; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=dBvJNwmx; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Op6iEKu4; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=dBvJNwmx; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id A054E1FEEC;
-	Sat,  1 Jun 2024 21:05:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1717275939; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=kwPPQFqT3GBMJ/jhWI+Nr3RwsaB4dK6fZEkpDAERYTQ=;
-	b=Op6iEKu4yTxsRDrm0d/07HPUnilBG3ZXoBOScKonAsdbpsdm8eG42Qb2u4gd9E458+Ii0q
-	OPI50/Ik3a0JmhHkQ4PWipL+esmZc31VHBrpDiXvjhzWvP3OXrNckhvfOrvx8p/6cWHm5U
-	lLpyyNM6Lxc/1mYsjXKh/dtqlSa+Kt0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1717275939;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=kwPPQFqT3GBMJ/jhWI+Nr3RwsaB4dK6fZEkpDAERYTQ=;
-	b=dBvJNwmxTHGgr7p0bqPedHGk44G5htsVc2XQKZ6S5UbiFHvwpMCe771SfHo1hi8dPSxi5H
-	pDRq8raJlRoG1cDA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=Op6iEKu4;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=dBvJNwmx
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1717275939; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=kwPPQFqT3GBMJ/jhWI+Nr3RwsaB4dK6fZEkpDAERYTQ=;
-	b=Op6iEKu4yTxsRDrm0d/07HPUnilBG3ZXoBOScKonAsdbpsdm8eG42Qb2u4gd9E458+Ii0q
-	OPI50/Ik3a0JmhHkQ4PWipL+esmZc31VHBrpDiXvjhzWvP3OXrNckhvfOrvx8p/6cWHm5U
-	lLpyyNM6Lxc/1mYsjXKh/dtqlSa+Kt0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1717275939;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=kwPPQFqT3GBMJ/jhWI+Nr3RwsaB4dK6fZEkpDAERYTQ=;
-	b=dBvJNwmxTHGgr7p0bqPedHGk44G5htsVc2XQKZ6S5UbiFHvwpMCe771SfHo1hi8dPSxi5H
-	pDRq8raJlRoG1cDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8685D137C3;
-	Sat,  1 Jun 2024 21:05:39 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id k45SICONW2YUUgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Sat, 01 Jun 2024 21:05:39 +0000
-Message-ID: <03207187-9e85-412e-98a9-1965f31b0003@suse.cz>
-Date: Sat, 1 Jun 2024 23:05:39 +0200
+	s=arc-20240116; t=1717276455; c=relaxed/simple;
+	bh=qCQm7c8rkAYNOeNDGO+QtgYo39jEifLfdZ5r2gy+biw=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=kQ5QKNCMPQwKZosvnIoQOFAcOKs1w4pQDgiaGZnxheK6p0XJCvkscuzduZE1WDu90tcGfl/1+fQo700svkNVSpI9tIl5g+3oWODGdDVpwQk4cy93Vs4nYHA7dz/zO9lmEOAjO4pVBQWOIMVynbmbPCHDvmcfT8a9Br4AjvPPDP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mSoAARe2; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52b91f655d1so533102e87.1;
+        Sat, 01 Jun 2024 14:14:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717276452; x=1717881252; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=jof1YoOQbALrNF0HmF8zO+AXFV4ZYQLjGir3yALDwfs=;
+        b=mSoAARe2IXTkvxAHpbj7mhg2fCY/GdoCnitpvTHT/9p/8ai+GT0xNdWO1xzoPuvWl+
+         WjXIN/t+y6RWbkZ5+VLhXaVVnMpJJJRoOR7qdCOMBbmFP4bXXJtLpqGbunMGkscvgU+B
+         lmkhSN/9Gztx19J0RxgFrj9Yotnhrbw7e3sAlC7jS/nl8s4HNG1V8IY+F/ZzmRMlefPQ
+         0jlcLV/nQFHNnoi6D78cRyxn/je03hzwx67vcFmX9Y6B6q/sP04gGk9FDzc1cwItL6bM
+         g7aKp+WATOTX6EhhbaIBBTfmGr4zKslq26QwWrO/T9UpN2bJVUtOoyswGew1ZSOTQ3l0
+         EhxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717276452; x=1717881252;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jof1YoOQbALrNF0HmF8zO+AXFV4ZYQLjGir3yALDwfs=;
+        b=B//WH5ZsfJN9E5POxFAhwZ4whIut6I6WN6d/uv9Neakp0sinfutSvrdUpDk6FeSRre
+         CTcUfMuNyKJbHdj7LohGO9i7aIV4Jmow2l3+VaM1QDLskVfKxdlQ3VwpOInnBEzMmXRC
+         H1WGuQN3ztLNHulKZtuAKY8BpAC0NK4EmOQbJlT25BrozpWfK4GV0W/VFWnsIhhpeYEg
+         PUiSixIAl9zii1gWjQkn0Xq1gE8wzfQaT+J0xAsYtj+InKbCfddOtr83yB+Mq7uW3jjy
+         Xw6mNUFCQUjmaZgMtmh1DhH0jpNWM8J7K5OwbNfUq1bDi+kTxUgKKrIPRx4nEdpqZ3H2
+         Tsww==
+X-Forwarded-Encrypted: i=1; AJvYcCXCs5dLLZmrc2mktPBdXcNowh+vgmQv0dqbibjh6bnQLAEqR8rCX3lqjkK4KPVm0sKwT/FfjeetwcYvVTQkqxswZ/oreqAMi8l0VA==
+X-Gm-Message-State: AOJu0YzflyX7B++WBC20JcXeq1lrPqkRp6wKXCsg7apUT+wzKuDr+8B8
+	nhCIz9vtAA1UF1nB6ShVwx2tqcawRXJZMXLBQYiIUtXNzN0zRZ7ZQNelWdI5FGmgQkMrrQBaDSC
+	S6rE1G8/f6EQeh47HLdbUbHZm06gPs83V
+X-Google-Smtp-Source: AGHT+IHu7mzrFwMJ0oB5zAbkpUqinwwAWnmn4tlEiH/AUz1SDdi3nznnwWqX+lhFfSaQAzgtjenLckJnnrg2umnP0IA=
+X-Received: by 2002:a05:6512:3e7:b0:52b:8409:ffb2 with SMTP id
+ 2adb3069b0e04-52b840a0076mr1643262e87.29.1717276451595; Sat, 01 Jun 2024
+ 14:14:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] kunit/fortify: Remove __kmalloc_node() test
-Content-Language: en-US
-To: Kees Cook <kees@kernel.org>
-Cc: linux-mm@kvack.org, linux-hardening@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240531185703.work.588-kees@kernel.org>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <20240531185703.work.588-kees@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.40 / 50.00];
-	BAYES_HAM(-2.90)[99.56%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	XM_UA_NO_VERSION(0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: A054E1FEEC
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Score: -4.40
+From: Steve French <smfrench@gmail.com>
+Date: Sat, 1 Jun 2024 16:14:00 -0500
+Message-ID: <CAH2r5mstfGRS6XazUAM7uX=FkpJ+da7jesa1_8BcOvZgLx1RYQ@mail.gmail.com>
+Subject: [GIT PULL] smb3 client fixes
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, CIFS <linux-cifs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On 5/31/24 8:57 PM, Kees Cook wrote:
-> __kmalloc_node() is considered an "internal" function to the Slab, so
-> drop it from explicit testing.
+Please pull the following changes since commit
+1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
 
-So is __kmalloc() and so I have the removal of both as part of the cleanup here:
+  Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
 
-https://lore.kernel.org/all/20240527090127.21979-2-vbabka@suse.cz/
+are available in the Git repository at:
 
-which reminds me I should put it to -next at this point. Review still welcome :)
+  git://git.samba.org/sfrench/cifs-2.6.git tags/6.10-rc1-smb3-client-fixes
 
-> Signed-off-by: Kees Cook <kees@kernel.org>
-> ---
-> Cc: Vlastimil Babka <vbabka@suse.cz>
-> Cc: linux-mm@kvack.org
-> Cc: linux-hardening@vger.kernel.org
-> ---
->  lib/fortify_kunit.c | 3 ---
->  1 file changed, 3 deletions(-)
-> 
-> diff --git a/lib/fortify_kunit.c b/lib/fortify_kunit.c
-> index 39da5b3bc649..f9cc467334ce 100644
-> --- a/lib/fortify_kunit.c
-> +++ b/lib/fortify_kunit.c
-> @@ -235,9 +235,6 @@ static void fortify_test_alloc_size_##allocator##_dynamic(struct kunit *test) \
->  		kmalloc_array_node(alloc_size, 1, gfp, NUMA_NO_NODE),	\
->  		kfree(p));						\
->  	checker(expected_size, __kmalloc(alloc_size, gfp),		\
-> -		kfree(p));						\
-> -	checker(expected_size,						\
-> -		__kmalloc_node(alloc_size, gfp, NUMA_NO_NODE),		\
->  		kfree(p));						\
->  									\
->  	orig = kmalloc(alloc_size, gfp);				\
+for you to fetch changes up to 518549c120e671c4906f77d1802b97e9b23f673a:
 
+  cifs: fix creating sockets when using sfu mount options (2024-05-31
+10:55:15 -0500)
+
+----------------------------------------------------------------
+2 small smb3 fixes
+- Fix make socket with sfu mount option (spotted by test generic/423)
+- Minor cleanup: fix missing description in two files
+----------------------------------------------------------------
+Jeff Johnson (1):
+      fs: smb: common: add missing MODULE_DESCRIPTION() macros
+
+Steve French (1):
+      cifs: fix creating sockets when using sfu mount options
+
+ fs/smb/client/cifspdu.h   | 2 +-
+ fs/smb/client/inode.c     | 4 ++++
+ fs/smb/client/smb2ops.c   | 3 +++
+ fs/smb/common/cifs_arc4.c | 1 +
+ fs/smb/common/cifs_md4.c  | 1 +
+ 5 files changed, 10 insertions(+), 1 deletion(-)
+
+-- 
+Thanks,
+
+Steve
 
