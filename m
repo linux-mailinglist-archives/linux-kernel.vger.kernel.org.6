@@ -1,119 +1,125 @@
-Return-Path: <linux-kernel+bounces-197872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 201AA8D7039
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 15:32:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D44218D703C
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 15:35:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D12B0282480
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 13:32:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FA0728251E
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 13:35:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ED01152160;
-	Sat,  1 Jun 2024 13:32:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54EC71514F2;
+	Sat,  1 Jun 2024 13:35:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T15xZB6W"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OuU2BLIO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AAE4824AF;
-	Sat,  1 Jun 2024 13:32:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A464824AF
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Jun 2024 13:35:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717248753; cv=none; b=ip35AkpM3lY9Byo4xKx7gsWAs6N25A6z3Xwhv79tVkHeobB/PhEUcURNEn3YCaFSn/zzM0Sd5aPoRMwn4rrIPHb52Oh9ZB5ePf0F40tlfYbMbZ0num6Ouc7BFhX4qkrVcK23c7Qi29HeOkeu5hPuZkSj41xdEjsKM91EQg0o0zQ=
+	t=1717248934; cv=none; b=N6ugH2es97pieBb9/ZKlx0drRrl61oY1ksE7WTHeUhz9lGWk7Ito7kMOFwSwXwAH801gQiapMazJe/CqSsRvF1XbT8Bx2mSp/VoM3oIM56AgZZLnAZIkWv27aM0Jfl3ZEgkPd6CDLIe3vjDNn+8t1oGjgETFijO6EveWoAzEEvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717248753; c=relaxed/simple;
-	bh=7EtTzVj6JTYbamSlh/ugmpPHTyQpM3qUknqMlN3dIkg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ikTFbhevcCsliG4rIPJ396QM1eBaAHJnDBGOHytz67PGFQACpADo2Gdn1aph3hXjc6uGv3Njl12Mnrw1sTa4AB0H0v15D+RJeIfjXrmPqA9GUP3EqYZv7+k8tp6dIuQoqOJf1ueMAazayZHTYhIu44YvdU+XDG9nq/ZxYXbiBhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T15xZB6W; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a689b034b02so101977566b.2;
-        Sat, 01 Jun 2024 06:32:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717248751; x=1717853551; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=kbTQLLT1+DzwsmMMKzB43pdtvuNOrcQjXsarS5iz91E=;
-        b=T15xZB6WTgLE7fpsSKzoLjYi9vMiTdSiyaCI59tWi2jsTAdoqUE6RqUmctUX1w05jb
-         S47v0yNYI0i+ZBgg3JDQBFdaVDjI7tFFVWaWxGenRPZACNb02HW4P6VzcjVtMdd8NhNi
-         qeIkb6ZpbX7cNz4Za7pQAxZnJcZGskzJF0BicfegsESJoUuU46FcxJAhOHY9f5gHRUD9
-         DDKOAKZjfmUtVQvwHPAEXs+9MJHQ6YgcS3THB0nLoFGvUQLz0QA06bXwjHogQj6yTiq5
-         ufN2/npOwqzA9Jds4/mfR/xx4k9AKwBTX6XIGj3zMrn2CsMfryB90QBN5ejbwwE3tBm0
-         nujA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717248751; x=1717853551;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kbTQLLT1+DzwsmMMKzB43pdtvuNOrcQjXsarS5iz91E=;
-        b=mQWS6maxaiDuHy/i4mGkzTUAhATF4LJyqTqN+QxojccyA31vOfMf247q/3z4/FQY58
-         Ex66GE/L1RU75IJbvR/SpMdPL6LZUVFNnlKNJPjIjqh8wJtJnmvz8MyEsw9727P1hdnr
-         BSAJ3t8Fmf1O7wi/irKfSKqMUmG1n6I9IN7VGzlgypkzkdVGitUwTLKmgp0pqeIiGM7y
-         J7aQC8A72GYGHnVgnamMYOZz9OxPRKApjVZU+roo4BaKipucDLHC9aqdfcjhAdE2fejV
-         UBmtnZLOpqh5eU0YplsSYQgefe4P4D4+N4wYiUvposMkfUXs1oUXHgmywSE2v70umWSr
-         fFWg==
-X-Forwarded-Encrypted: i=1; AJvYcCXsBQW0Xh8mggQDYBmsSOO1IunqVFfPEbBF9Ggydu0dFoOy9+dnUpRvs/RkJiFh9l1jssTxhGZawb1nPFrv4Qp8NYCZ
-X-Gm-Message-State: AOJu0YyhCKvs33myNZCCmNXZ+pndyfx9/fmMuE7VsG9aG0x4nt0IRsX/
-	tFsBJuwJePDElOPzYYLNfqryJffPXIL+YVy9rZH3IxlbqoWtQ+pcUHg40Q==
-X-Google-Smtp-Source: AGHT+IESMUdilidyxdLArReNIpXvuoXnGx3g4rylvMHfSoTFIzuT4u9IXvyRWpixNCsuijClJVAKAA==
-X-Received: by 2002:a17:907:9046:b0:a68:413b:36f1 with SMTP id a640c23a62f3a-a68413b3739mr277560366b.32.1717248750486;
-        Sat, 01 Jun 2024 06:32:30 -0700 (PDT)
-Received: from f.. (cst-prg-8-232.cust.vodafone.cz. [46.135.8.232])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a68a9fdfb3dsm87401366b.154.2024.06.01.06.32.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 01 Jun 2024 06:32:29 -0700 (PDT)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: ast@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH] bpf: plug a warn about bpf_session_cookie without CONFIG_FPROBE
-Date: Sat,  1 Jun 2024 15:32:23 +0200
-Message-ID: <20240601133224.674784-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1717248934; c=relaxed/simple;
+	bh=JiTSl7JBicjiXWGa8n+n3pZllni9FozR6cvrsMHpZOg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FiMX921JKOWtnPciOtygW9ghHAantAMEB0KOnuuj0kE/WUmyrLSk3quJ6vI4LAt8zQ9jSAbzkpEWydiU4Lhg5l2eOuCO5tpYXE8eBUU9CNht1DWuq3lB0LC24dV5zWO+G/imEa3lfAt3dOdVXTL/U1R63oCpNf9qE/7EavWCJHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OuU2BLIO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10F5BC116B1;
+	Sat,  1 Jun 2024 13:35:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717248934;
+	bh=JiTSl7JBicjiXWGa8n+n3pZllni9FozR6cvrsMHpZOg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OuU2BLIOKPUdisGm/qv7+yh2X+cSqGwyYHqFqWTNY0wvIu4lFM1KPZkchK9GBHqSE
+	 qeizHQZTz+uBao790qeRX1OIVgZnOZRakm7N+kjec1IvWFFKsGiY0/5sXUogIDurgU
+	 3Y6IefIV6PnE+a8IJljRWCn0wuFIS5EjTxHYwkU8CNHRADzudWNLSjhbLZwk6+9RSr
+	 5JdOzWXvLW9TiEL55EvnGqR6LL7KQxvY82ykphSoiCrwTSux9PezeaYNPmRoP7BbHf
+	 LrZfcnh//TYL2vWwxxbcZ4lJfXJEPAtiXoS6jz6HCdTGWMXKOn7om7SxwkQ8VWd1yK
+	 wPkgx2b53nMZQ==
+Date: Sat, 1 Jun 2024 15:35:28 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: Re: [PATCH 0/4 v3] perf: Fix leaked sigtrap events
+Message-ID: <ZlsjoMycgmZ5hmIG@localhost.localdomain>
+References: <20240516140936.13694-1-frederic@kernel.org>
+ <Zln59lKDPwuBT1GZ@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <Zln59lKDPwuBT1GZ@x1>
 
-Building a kernel without said option results in:
-WARN: resolve_btfids: unresolved symbol bpf_session_cookie
+Le Fri, May 31, 2024 at 01:25:26PM -0300, Arnaldo Carvalho de Melo a écrit :
+> With Frederic's patchset:
+> 
+> [acme@nine linux]$ b4 am -ctsl --cc-trailers 20240516140936.13694-1-frederic@kernel.org
+> Grabbing thread from lore.kernel.org/all/20240516140936.13694-1-frederic@kernel.org/t.mbox.gz
+> Checking for newer revisions
+> Grabbing search results from lore.kernel.org
+> Analyzing 5 messages in the thread
+> Looking for additional code-review trailers on lore.kernel.org
+> <SNIP>
+> Total patches: 4
+> ---
+> Cover: ./v3_20240516_frederic_perf_fix_leaked_sigtrap_events.cover
+>  Link: https://lore.kernel.org/r/20240516140936.13694-1-frederic@kernel.org
+>  Base: not specified
+>        git am ./v3_20240516_frederic_perf_fix_leaked_sigtrap_events.mbx
+> [acme@nine linux]$        git am ./v3_20240516_frederic_perf_fix_leaked_sigtrap_events.mbx
+> Applying: task_work: s/task_work_cancel()/task_work_cancel_func()/
+> Applying: task_work: Introduce task_work_cancel() again
+> Applying: perf: Fix event leak upon exit
+> Applying: perf: Fix event leak upon exec and file release
+> [acme@nine linux]$
+> 
+> [acme@nine linux]$ git log --oneline -9
+> 1f88fa6e3adb (HEAD -> linux-rt-devel-6.10.y-rt-sigtrap-fix-frederic-v3) perf: Fix event leak upon exec and file release
+> 44cde14a096c perf: Fix event leak upon exit
+> 512f8f5cbaed task_work: Introduce task_work_cancel() again
+> e7bee294ec69 task_work: s/task_work_cancel()/task_work_cancel_func()/
+> 4de7b8e17201 Revert "perf: Move irq_work_queue() where the event is prepared."
+> 5efa195af234 Revert "perf: Enqueue SIGTRAP always via task_work."
+> 26ac4dfa180a Revert "perf: Remove perf_swevent_get_recursion_context() from perf_pending_task()."
+> c2fb5208a68e Revert "perf: Split __perf_pending_irq() out of perf_pending_irq()"
+> 6d20efa57a89 (tag: v6.10-rc1-rt1-rebase, tag: v6.10-rc1-rt1, linux-rt-devel/linux-6.10.y-rt-rebase, linux-rt-devel/linux-6.10.y-rt, linux-rt-devel/for-kbuild-bot/prepare-release, linux-rt-devel/for-kbuild-bot/current-stable) Add localversion for -RT release
+> [acme@nine linux]$
+> 
+> The workload that is used to do that, as a reminder, is 'perf test sigtrap'.
+> 
+> [  121.217475] BUG: scheduling while atomic: perf/7955/0x00000002
+> [  121.217478] BUG: scheduling while atomic: perf/7956/0x00000002
+> <SNIP list of modules>
+> [  121.217492] BUG: scheduling while atomic: perf/7954/0x00000002
+> <SNIP list of modules>
+> [  121.217570] Preemption disabled at:
+> <SNIP>
+> [  121.217571] [<0000000000000000>] 0x0
+> <SNIP>
+> [  121.217609] Preemption disabled at:
+> <SNIP>
+> [  121.217610] [<0000000000000000>] 0x0
 
-This is a bare-minimum patch to sort it out.
+Right because my patchset doesn't fix the pre-existing RT issue where
+perf_sigtrap takes a sleeping lock while preemption is disabled. Sebastian
+will need to rebase on top of this patchset and then also convert the perf
+recursion context to be per task on RT to avoid preemption disablement.
 
-There are other uses of the bpf_session_cookie thing spread out
-thorought the file, they don't seem to break anything though.
-
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
----
-
-I don't care how this gets addressed, I just want the warning gone.
-So I am not going to fight any ideas how to do it, as long as it gets
-done.
-
- kernel/bpf/verifier.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index 48f3a9acdef3..b081bdd6f477 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -11128,7 +11128,9 @@ BTF_ID(func, bpf_iter_css_task_new)
- #else
- BTF_ID_UNUSED
- #endif
-+#ifdef CONFIG_FPROBES
- BTF_ID(func, bpf_session_cookie)
-+#endif
- 
- static bool is_kfunc_ret_null(struct bpf_kfunc_call_arg_meta *meta)
- {
--- 
-2.39.2
-
+Thanks.
 
