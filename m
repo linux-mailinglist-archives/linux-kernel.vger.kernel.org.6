@@ -1,127 +1,120 @@
-Return-Path: <linux-kernel+bounces-197618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 472E28D6D28
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 02:29:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1587B8D6D2B
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 02:32:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B91F4B25BDC
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 00:29:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4FA5284EBA
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 00:32:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CB781860;
-	Sat,  1 Jun 2024 00:29:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 230333FD4;
+	Sat,  1 Jun 2024 00:32:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tq7t/fYJ"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="AsI5Dri+"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 448A717CD
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Jun 2024 00:29:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E68B1852;
+	Sat,  1 Jun 2024 00:32:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717201787; cv=none; b=hQkso75Bi+hRl4vT15tk2Eu7AhZwLcGjahSnV332MhlFbT4rYRExyrkIJRwRlxpbtBGCHw/fEKAW9We1V33Vb5YLUyK+aOan9dszg9u3LcqkfEMSfWBTAI16b4N5JG9ZmfTUlA8XhCtdWQyju72jO2JtSseVEwn4JmktRo1Kv+I=
+	t=1717201924; cv=none; b=M9fWEKsfjl4OLnjDSgn/TlUqFLI4jUDNbQ1FCCcto/0833gv5yFOKrFc319mn7fr/yjPLZH39xWMO5YgkIWsL0+ZEa+PcQC92hLjy9VTy0CdPlfFl66+4p/GP5d/n+UL0IUFTjy/c8KQXvQQI8PB0dYnCQE8fCiYVzRoaPKxlBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717201787; c=relaxed/simple;
-	bh=qv6/IpC1VDWNK2+IKFOunbwInfRR2ZUEIGvqOR25Ods=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Za+9+7tbiGdlJCcltI5t3egvhZ1fRix+dFCeLjsIcuZa/Ir+YaYkKpR/OFc57AEjaQEOEfmcnkTyc8u1dtnGC00NOnn960wMMN7lNj9fm5S86a8UX+qyVsa26v09cY4gNyXkrWJTNvQuTNTeD9NpZUZjN6HSrFK90NWHyZhL7kU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tq7t/fYJ; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4210aa012e5so26703435e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 17:29:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717201784; x=1717806584; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=v/DaJAvlAh/evryMn6v18BL5WWQj0E49Xgs9bgovJI8=;
-        b=Tq7t/fYJQlCEhTA2npo8JxcRyoqvpmYk4GEtdfgtma3iywq+179PgFtVT5R9RYowBR
-         d06YkgoCbfAVt/wmFpEMmry9DM1UICEsLYTwkKCbgCMgNKoIXhvUerhsIehT+5zHHo/4
-         3gxSG705XRdZMhyqIvrFM1gwaR3xc13wMfQryFsyQlhBLWGtXb+Oo6xcsRluQLdW20Pa
-         xL4tBGxE50/admmLsXc66Giwvi8Ct7vPMFcKcmKp/4uxO9D6gS01oU+dHy60JfdVvaPK
-         11CjS46wJ69cRVZs9YglzSd+NE8fAcVEFBROhjMJlKLvYcNOZz5o9YrN7dahzdCE+TFm
-         pF1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717201784; x=1717806584;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=v/DaJAvlAh/evryMn6v18BL5WWQj0E49Xgs9bgovJI8=;
-        b=PpBLn1EDEctR9CaqvmI0Ln3qz5N+ZvN7obpxuOScaGNff39anyN4i1v3u6i2fU9WoM
-         GR1fq4F6q72P4IorpDda8EjjgfUYkkI/AknUkYfKQbJN3CfyXuYCHu6cjz6LeHLtpATW
-         4yBos7jceWmx4RhGXpOvzVqEn8ldiSQDctTFckSO3P6xzjfVArRdflUV1wadLBT3hfjI
-         W2hTFotZFy+9bu4nnyXKoXDDXigo/GKMgoGmm1PG0jyrINkMV6S15WlP/KbXbVQGBN6n
-         NcXas/Iv6GXL9h+LXQFtuxmGtI3EBrxacRZATBsfEIYTUOm/nv0t5VuovHGJ2X1faSj+
-         BtbA==
-X-Forwarded-Encrypted: i=1; AJvYcCXppIbsmHQKcziBsUTzcrLv/WLFZG/SbFXmEtUA3wHIcmt1sq3Iamihqwierr2ldctByyPKWEq7ZJkEk7qCKE6bYP4NZgKltROBPhFO
-X-Gm-Message-State: AOJu0Yyf//4f7sgq4IdYGUeO+ASCv+JcSa+z4yhBz4Elvf+4Kxr4FCFC
-	QAepRL65n5HZYcb2Rn/0p6i7RLCE49Une6ypgra1yjx5r6EiGf+6gT5JJ3hNh5MxKzNR9Zd+efD
-	Ba5aBriuoyfQsO3SxyrMjhWhAAIc=
-X-Google-Smtp-Source: AGHT+IHDvkWHDFi3JxZ5vLTPdAw+pEcMPkt5HdsuJTtEWYpJX8JPqVOv6CccILcPHMXSu3kWv9s0xWIqx6kt4aKaSJE=
-X-Received: by 2002:a05:600c:6ca:b0:41a:b961:9495 with SMTP id
- 5b1f17b1804b1-4212e09cc32mr28877925e9.25.1717201784329; Fri, 31 May 2024
- 17:29:44 -0700 (PDT)
+	s=arc-20240116; t=1717201924; c=relaxed/simple;
+	bh=/JUvva5d6xnh5YGojWFizPY8QX9Bret9wnE8Y20VAlY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=feqvtpTl+AA0nG+C4+JoDyL5Le2z/RCdFPFIEuiNxuMuA7JQB9vDGP7sQPQbDcL/CbFd2eCkiJHzTCXZDtNOINT/ORjg2S5ailsXKvl3SVx6JKo7Fz2gAMCn6V2gn5LmVda9RDmH8DyrJfXwtxxc8fp//xrmLPiwnyJyMMQdNzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=AsI5Dri+; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44VF1b6V015761;
+	Sat, 1 Jun 2024 00:31:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=r1SBgs9XB2baeFN6Nj9QxP
+	fbNSA4lDfjaPqPkB877Sg=; b=AsI5Dri+XKI4FFOuel/Foull4aGAR4a/0OvoCH
+	AakhrNpExL7wRxWNwSr+FhypoiYCxvdUUQUbcRiVJfOk7tuh4F9Is8qhmoNldRjk
+	7aCMngYtqH7kKYvDHA54/CuDI9GB8MFTB0GclrRfR9vE4GjmMq+JKcDZHDN6otA4
+	kcjt3o2q57mucpkDAa6tGbnRJ2HEExXAHegVfqSDP6mTSvYQ5ZPbVJ3SWQaw6zn7
+	TsDX2NjFxHaiNWt1I+coTjp9/ShRxHxkQGEsr8/xsTfvjrBPRmj0c43vEwhXkklx
+	hlhQivbY3ytslPl0dUU1ekvsNj1jqlHEpDCOyE+Wpgbocqpw==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ydyws89s4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 01 Jun 2024 00:31:55 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 4510VsvQ002347
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 1 Jun 2024 00:31:54 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 31 May
+ 2024 17:31:54 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Fri, 31 May 2024 17:31:54 -0700
+Subject: [PATCH] lib: test_objpool: add missing MODULE_DESCRIPTION() macro
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <0000000000002e9eb506178cdd71@google.com> <20240531110652.8845-1-aha310510@gmail.com>
-In-Reply-To: <20240531110652.8845-1-aha310510@gmail.com>
-From: Changheon LEE <darklight2357@gmail.com>
-Date: Sat, 1 Jun 2024 09:29:34 +0900
-Message-ID: <CAJDnv3bHUUPT10O6_M64vNXXKuvAQMGEpzQs1XQvEHpGXS0zCQ@mail.gmail.com>
-Subject: Re: [syzbot] [jfs?] UBSAN: shift-out-of-bounds in extAlloc (2)
-To: Jeongjun Park <aha310510@gmail.com>
-Cc: syzbot+13e8cd4926977f8337b6@syzkaller.appspotmail.com, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240531-md-lib-test_objpool-v1-1-516efee92a05@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAPlrWmYC/x3MQQ6CMBBA0auQWTsJUKzoVYwxLR1kTGlJpxISw
+ t2tLt/i/x2EEpPArdoh0crCMRQ0pwqGyYQXIbtiaOu2q8+qwdmhZ4uZJD+jfS8xelSqd1d1GXu
+ tNZRySTTy9r/eH8XWCKFNJgzT7+U5fDacjWRKcBxfJB2fuoQAAAA=
+To: Andrew Morton <akpm@linux-foundation.org>,
+        Matt Wu
+	<wuqiang.matt@bytedance.com>
+CC: <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        "Jeff
+ Johnson" <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 75To4B6y4M4qkaRm6DuFTpvTCxqXs1Vl
+X-Proofpoint-GUID: 75To4B6y4M4qkaRm6DuFTpvTCxqXs1Vl
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-31_14,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 phishscore=0
+ malwarescore=0 impostorscore=0 suspectscore=0 mlxscore=0 mlxlogscore=999
+ priorityscore=1501 spamscore=0 lowpriorityscore=0 bulkscore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406010001
 
-Hello, park.
+make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_objpool.o
 
-Your proposed patch seems to have some glaring flaws, which I'd like
-to quickly point out and then suggest a simpler and clearer patch.
+Add the missing invocation of the MODULE_DESCRIPTION() macro.
 
-The part of the source code that is the subject of your patch performs
-a function that checks for free space in the block map and returns
--ENOSPC if there is no free space.
-
-Also, based on the stack trace, it is clear that this issue is caused
-by using a shift exponent (128) that is too large for S64.
-
-Your proposed patch doesn't check the shift exponent, but rather makes
-it return -ENOSPC if 'bmp->db_maxfreebud' is greater than 0 and less
-than 63, which is causing a logical error to return -ENOSPC when there
-is actually no free space.
-
-Also, it seems like it would be better to separate checking for free
-space in the block map from checking the range of the shift index.
-
-Based on the suggestions above, I propose the following patch for this issue.
-
----.
-diff --git a/fs/jfs/jfs_extent.c b/fs/jfs/jfs_extent.c
-Index 63d21822d309..b1a2c3d4e5f6 100644
---- a/fs/jfs/jfs_extent.c
-+++ b/fs/jfs/jfs_extent.c
-@@ -315,6 +315,10 @@ extBalloc(struct inode *ip, s64 hint, s64 *
-nblocks, s64 * blkno)
-         Returns -ENOSPC;
-
-+ /* Check if the shift exponent is within a valid range */.
-+ if (bmp->db_maxfreebud >= sizeof(s64) * 8)
-+ return -EINVAL; /* Invalid index */ + }
-+ }
-     max = (s64) 1 << bmp->db_maxfreebud;
-     if (*nblocks >= max && *nblocks > nbperpage)
-         nb = nblks = (max > nbperpage) ? max : nbperpage;
-     else
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 ---
+ lib/test_objpool.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-best regards.
+diff --git a/lib/test_objpool.c b/lib/test_objpool.c
+index bfdb81599832..5a3f6961a70f 100644
+--- a/lib/test_objpool.c
++++ b/lib/test_objpool.c
+@@ -687,4 +687,5 @@ static void __exit ot_mod_exit(void)
+ module_init(ot_mod_init);
+ module_exit(ot_mod_exit);
+ 
+-MODULE_LICENSE("GPL");
+\ No newline at end of file
++MODULE_DESCRIPTION("Test module for lockless object pool");
++MODULE_LICENSE("GPL");
 
-Changheon Lee.
+---
+base-commit: b050496579632f86ee1ef7e7501906db579f3457
+change-id: 20240531-md-lib-test_objpool-338d937f8666
+
 
