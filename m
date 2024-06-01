@@ -1,198 +1,334 @@
-Return-Path: <linux-kernel+bounces-197670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED4FF8D6DA7
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 05:17:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 134A88D6DAD
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 05:23:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59F8C1F23254
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 03:17:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4010D1C2135A
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 03:23:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB245AD48;
-	Sat,  1 Jun 2024 03:17:29 +0000 (UTC)
-Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 298A4B653;
+	Sat,  1 Jun 2024 03:22:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L5ojxIpS"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B066B3C3C
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Jun 2024 03:17:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717211849; cv=none; b=ZpAaiwaSYSGWjWHGUJZ2l4nnjYrH7Z8Kzs6DiFQQl2QFTeNeg714aWpaIaaprss9dnuBljLqB1BugRGrvikjGd9tmltQnQkwdUu51Ny065E2DGu6sz9XIjuki4ReEak8Uwb9vVYRCDeDqf0y+5X+HlOZ8UVNX2MNq2gLI7pOzKE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717211849; c=relaxed/simple;
-	bh=4d29TZl4lTt26iOUm+MtEENjXd1VDbmni0MygB0n7jo=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ftyPEfVLFv/R84n96FdCN97Z15RcHIb78CiMPb+jymuRDZUN+Cr4PvxZUEiNWQ1FMzDGT+jnN5zUiAvx/tuTcumMtzr1ssnMU4L5IR2xLOGPEi0rvUATDX8K3jKutewu2L0gukwfHPng3Si3nQrYETCd9/bwBwMLbDM8v2Ftrcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-7e6e4a83282so321660639f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 20:17:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717211847; x=1717816647;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=D3sUsRK852V8Vvd/TxZEvRHW2eRrz/ZMQVRoNxaSsDM=;
-        b=U6a37lQ94ybzcQmdWQ6ofk2XJBs8q6nbfbC0fVjqqYTvaawrjfU0us2QW64Khxcw43
-         2ekPnngIhxDEAOgxAPwZaIC2HaDYUelbIf125wj+Iew57QoPMfHL+A+RM3zaUXrn4D8S
-         giroERk/Kr+5z0HopI5/RvRmEhQWXXtlnYzTWDXkrtEC0UpIoBBdRmSbhsPQpP2vDsGj
-         7NGtxxN2VMA74p0TgBQ6qWw6vAvNoVwUbjlqZTs54SLMivWCecMqpCW8Kh/nwU4YCxGB
-         NmEpAH099fx94+7YYH+72ZZodzRnUJf82md5Inu64Wx1p4JBPnuFz/yQDy1XtrHrQZf+
-         S7ng==
-X-Forwarded-Encrypted: i=1; AJvYcCWJWM8Hki4fqnfeJXEfqCTlXczfM5H3BGFaPXmHtmIlNrJ6cv1BsKnI8zpJz+BHBMik72e1y+niN3LRormI9ncGSh49GmeMujEz/tNl
-X-Gm-Message-State: AOJu0YykqUVX8l4354aZu4dc+2EjNXcRg9J8KLOSFYbOsckoECQKvus2
-	D/8aYuXThtarh7wPBhDzZ64copmuZeMqqDwUJdj5zFkx2wu1hfOAwI7vrstXgGawzmdQiheB+0q
-	3MTc80NttKmyz0sSJd8cCONcywekjnAlD3WFudHCHAke5ALY+jtbj+Xs=
-X-Google-Smtp-Source: AGHT+IG7Nz/TBFuEpQWCC5JWwuNQSnb/H/iQIgdhXQdDwo3H7I/myjRvTrkzhq7swDaBy7CYH3XEZoZ29rFLJsa3/EAlB1tkwRgS
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FB2A3C3C;
+	Sat,  1 Jun 2024 03:22:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717212170; cv=fail; b=HYforON5ofUt4tGYKDL4Gblxqc1RXSPC96FdP+Hm3eN91iZIOyOwj/otoD1rBqtQhJ1ir80kLAG6WIPmj/QqTlx/3wMmz37RMOAqIV18dT2Totho+AcNwPEIDfB06cSEkqxbGLA1Ax75TVQO6dlYzySqhHkNW9J8U6AL+tkko5g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717212170; c=relaxed/simple;
+	bh=PKKeG4I82M4WuWW9JsNJbYVJxcCihRZAwdPI2aK08n8=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Ou5hc6qJP/eltl4QBBuCLnxMTZQWWqFap1n3QzcXtON8zpJOtosMyA4BiL1UGY0wZwbeznHnL0/Tmz5UNv9KPQ2Q+h3YBCiiWU98B/6T08awlIgG4XtK5yRxEBQqNAX00FPwW2M8C5iFgpfa62iiVBtUCUvQdm+Wumpv8aGxY2E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L5ojxIpS; arc=fail smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717212170; x=1748748170;
+  h=date:from:to:cc:subject:message-id:references:
+   content-transfer-encoding:in-reply-to:mime-version;
+  bh=PKKeG4I82M4WuWW9JsNJbYVJxcCihRZAwdPI2aK08n8=;
+  b=L5ojxIpSpkoADYLQ2E4F3+EwgbtNrLZeatB71IIxfgsnXPQvbjtEPP9N
+   tzRDdgetE/o4Ftwp5+dOE3EfDj7PnCe8m6iuOGJSHbmk1QrBq6KT7658r
+   OdkxtC3vbj3GpOYdgShtP4aaQ8jhJeSnhM9RFnxaDpscAT3uJeY7fVz/2
+   M5nluRnIDhZQ63+jQ4UPhlFDgxBGltLQ9PvGvcVnFZ90BAE4czjCVxw5A
+   Q4DILzXF3+peU1bg1FQ9I+eh9d9AangXiNfT5KjkbnAhZylHfpCkt+Ifd
+   P+/7S4mxPJFG8QmV7RQV2517vJQpm/sirWzDp+q/1w8IIEevD54Twmmz1
+   Q==;
+X-CSE-ConnectionGUID: 4vD72OVIQ0e+SbEMBtrOZg==
+X-CSE-MsgGUID: IlY/SA1hTC2DShwXM5HSRw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11089"; a="17599587"
+X-IronPort-AV: E=Sophos;i="6.08,206,1712646000"; 
+   d="scan'208";a="17599587"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 20:22:49 -0700
+X-CSE-ConnectionGUID: VkZsS/ffRL6qi8vPQRT0AA==
+X-CSE-MsgGUID: Gvm0R+CgR8W4/TISTzxcOA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,206,1712646000"; 
+   d="scan'208";a="40888365"
+Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 31 May 2024 20:22:49 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 31 May 2024 20:22:48 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 31 May 2024 20:22:48 -0700
+Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Fri, 31 May 2024 20:22:48 -0700
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.169)
+ by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 31 May 2024 20:22:47 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=iaBLkBZcmYHjZZLFMAppCQbl9O9pm2H5KNTAa+KCOqOBpOslhZ6I8NyR0g146qlp2Fu8jYz7nLPDXxWV84qYYf9bo+xfK9DzRFCFItiC2+AMY7IbgaelvQQ/D6lDax9sgLeAbFRrOmRfHq8iTwdwJMhg+sD1rwbOCto1vZnbVL/xDgRKfAjksWp14GUUT1KvTy2fGDetNIXkQFq/tbYsBy/8JQDdYeudAqMwCPuQY0Fmp+dw/WiXkwX7uT387iUFvBv7wMqXCFQBqu4tmwQygqNuP7cgvXzG4JJJdmQBdSFPOCVBldUTBLkklYreAKejbsp3HO1Xqas62VVPhhqztQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=19nra0uPaneGRmteVkdIx3ifmapMfZy/4ZLnIFlJ8xw=;
+ b=dIfLNTsaYijnrB/wBxQ08XDZ18ewyCepkNMr0Sj4ovqOHoYf7izkVqjR2L2s5dO2sEG4OqFw1OsjTblYIA0kJS07PTZr9vzkaO2bLSJhudaboqRs7DjDLmvqJTuHK/C6JTEHRmtbizX0pw+JCEpHV3XG7Nk5NlhkFIoHAajr8MGAVixcz/CzttsIowM3RsJs51z2gA5Mu5EJ0V7oCZd5l1QyBNREafYubEvCIWNEiMAr692X3Qu0/HukD5WJ73xJxRKzlLqp8ugkFt2lqqOxXuT/T8EpF2pa3RV7L6L3d8R/Pqx/6PY9F0XapAUMWLe+If9i9naH/i2DmkBeGaxdwg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
+ by MN0PR11MB6060.namprd11.prod.outlook.com (2603:10b6:208:378::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.24; Sat, 1 Jun
+ 2024 03:22:45 +0000
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::6b05:74cf:a304:ecd8]) by PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::6b05:74cf:a304:ecd8%6]) with mapi id 15.20.7611.025; Sat, 1 Jun 2024
+ 03:22:44 +0000
+Date: Fri, 31 May 2024 20:22:42 -0700
+From: Dan Williams <dan.j.williams@intel.com>
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Dongsheng Yang
+	<dongsheng.yang@easystack.cn>
+CC: Gregory Price <gregory.price@memverge.com>, Dan Williams
+	<dan.j.williams@intel.com>, John Groves <John@groves.net>, <axboe@kernel.dk>,
+	<linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-cxl@vger.kernel.org>, <nvdimm@lists.linux.dev>, <james.morse@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH RFC 0/7] block: Introduce CBD (CXL Block Device)
+Message-ID: <665a9402445ee_166872941d@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+References: <ef0ee621-a2d2-e59a-f601-e072e8790f06@easystack.cn>
+ <20240508164417.00006c69@Huawei.com>
+ <3d547577-e8f2-8765-0f63-07d1700fcefc@easystack.cn>
+ <20240509132134.00000ae9@Huawei.com>
+ <a571be12-2fd3-e0ee-a914-0a6e2c46bdbc@easystack.cn>
+ <664cead8eb0b6_add32947d@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+ <8f161b2d-eacd-ad35-8959-0f44c8d132b3@easystack.cn>
+ <ZldIzp0ncsRX5BZE@memverge.com>
+ <5db870de-ecb3-f127-f31c-b59443b4fbb4@easystack.cn>
+ <20240530143813.00006def@Huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240530143813.00006def@Huawei.com>
+X-ClientProxiedBy: MW4PR04CA0164.namprd04.prod.outlook.com
+ (2603:10b6:303:85::19) To PH8PR11MB8107.namprd11.prod.outlook.com
+ (2603:10b6:510:256::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:3406:b0:7ea:fc3b:3 with SMTP id
- ca18e2360f4ac-7eaffe9aae8mr23523239f.1.1717211846865; Fri, 31 May 2024
- 20:17:26 -0700 (PDT)
-Date: Fri, 31 May 2024 20:17:26 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000002304860619cb8aa1@google.com>
-Subject: [syzbot] [mm?] INFO: rcu detected stall in kcompactd (2)
-From: syzbot <syzbot+54594368fbd5a4f1754a@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|MN0PR11MB6060:EE_
+X-MS-Office365-Filtering-Correlation-Id: 35116f61-f083-427f-bf6f-08dc81ea1a7f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|7416005|1800799015|376005;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?M2MvUk1scW91NEliWG9DbWF6SG13UjN2V1RUSTZiZXJtcXlvMEFhcGdSK052?=
+ =?utf-8?B?cjJlSU5ObHl0YjZ6bnhSc3VacmkyVHE3TGFLL3VoMEFmNG0yWmZRbWVwMlM1?=
+ =?utf-8?B?SURKcnlqV2t4Q1dXQlo2cnpsZUpaL3dqZVY0UWIwK0NNL0ZzaWlnOCtub0lV?=
+ =?utf-8?B?RHlnMlY4SU12dDZuS2dmaWtVN08wcFNIS2tXT0JSdGkzS1BnRS9vaE1CWjdq?=
+ =?utf-8?B?WmxCMVVjQ05jOCs1c2JsTFpEZG1Wemt3NEs0RXZ4YnJKeS94cm5RNzZPWWxa?=
+ =?utf-8?B?WGR4dWhjZ1E2SU9QYVEreklTeUlGSzlhRnc1Qk9PS0ovd3VvTVA4ekN1STJQ?=
+ =?utf-8?B?SGhxelNYK2t4NC9tcG9paVFXNllON21PdzIrOUhTeTNVSzVJV0p3QnZpY21J?=
+ =?utf-8?B?YVFDNUg0T2RPM25DdXViTE15TDlRQlZGNkVnWHd0T1Njb09zcWMwNUZDOVlk?=
+ =?utf-8?B?RHB0NjZiTURSWkFRNHBiZU1vN0JubkU3Y1pQV2hQNEJJYm9LUmIyNXcxVStx?=
+ =?utf-8?B?WTZZVXV2dHYvM0VlNFhqLzI0RSs1VUdveVp5NFVITGRFVE5IVzEzNFdhVjRu?=
+ =?utf-8?B?TCtXeldLVDRjQ1VoYjh0V3dMQysrY3NpYnVrWFdzUEs4NlhUNW93Ti9QRW5L?=
+ =?utf-8?B?ajdOZmNqSFpnWm9IeTAwZHdIYUJRVXdJYVNidXdWbFNYaHMrU2ZZR21QSXpl?=
+ =?utf-8?B?SnFvMTBDb3VlUjhJcm4rcEp3dy9ZOVRSalJ0OHc2MlBMQTVCdkJCeHlQUWsv?=
+ =?utf-8?B?U2F0R1FVQ29iTVY0SERkRWZhRVk1RVVXWDVTdjZaemdYNGZ6VmFGSm0wZmE5?=
+ =?utf-8?B?K2gwc05JQzc3WUVURDFQUUE5Q05XSSs0Ujd1YmQvL2dKcDkzNzIzWWpmNmdP?=
+ =?utf-8?B?bFREbGhDL05ILzR2Z0FaYmdJa1A5YVJYR05EUngwY015STFPV2NZK2ZVVGVw?=
+ =?utf-8?B?UzVNTDFOZFBMYkw0NG9hTEpKc0ZTazRXaHJpOVQxaWcya3E4OVhqYzB2d0Yw?=
+ =?utf-8?B?NGtyRGpGOUdTUlcyRkZaQU91YlBtOGhZemdERTV1WExPbFg2c2hQNzVYOW1h?=
+ =?utf-8?B?VTNWVnU3MzZlTWJwMDdYVVhUcy9tRVY0NEZ1ZnNFZ09aOURhQ1JFM0lWWEZL?=
+ =?utf-8?B?ZXB4akNWVVQ5RXFwaEZqRGpnTkpUckpERTE3MWdaYktLMndGQlFGSXp0SWFp?=
+ =?utf-8?B?Ykt6ekF5TVdQczlEdDc4cEJVWHowVm4wNTB2bFkxdDIyakhFaGdkeXNWTE05?=
+ =?utf-8?B?UEdZbmYzakpJaTBGREZITzNsa2FVeGpZSys5MVlnVVZOcXUyMnFGNmtTVmds?=
+ =?utf-8?B?NHVoT3ZGaUhUZXVLYlZyQ2ErOW44Q252T1ROQnhjM0pWd2I4bk0rSkRMMGdk?=
+ =?utf-8?B?K1pFNnBuQXlGeWN0UlZWeW00TW1CN2lsSFlNYWlqT2U3RkVRNHBHK2lXY1Qy?=
+ =?utf-8?B?eUMzVElpbTJGbnBNNVhOdnZQRXl0Ym9WZmQwYkErekI4bFJYMVpJa3ZDS0s0?=
+ =?utf-8?B?WVQ2dGFXSW1vQi9SOGpaN0xLRjFHaFJZa0F1K1J6LzNwM29aS3dBM0lFVlQ4?=
+ =?utf-8?B?TndTTE5FTHhRakV3NTZMaG1IQUNSbHZwQldDeE9UVVBUOURjTkYwR3pxRFda?=
+ =?utf-8?B?ZTlZRHBHWVMxcEJSd2dmKy82R3lsVExiZ3B4bGU3ejNKVlBNMEROcGxpQy9n?=
+ =?utf-8?B?dW9sQjdnQWJHSnNGRDduSk5XbFFNbU1UcHN3cTltNXlvVzhnbks1cXh3PT0=?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(7416005)(1800799015)(376005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?YlpaVEpZc0JicnRsbG8xYTRiRld0djUzdDBYRzVtVHVjSlZGdGkxU1lqWVpN?=
+ =?utf-8?B?dTRiN2d6bUkxOHdFLzlhWVpCWXllWEZWR2dXOU5nWUtPMWtxYitaR1BJbTJs?=
+ =?utf-8?B?TnpaVjJDNHJtU0c4NlNMQ0N5ZjFVV3RZblRwL0lJbEhJSW5ibU5FaHlBRVht?=
+ =?utf-8?B?bExURFlnbk93NnlqWjVBazhEaktOTDRIRmNPblM3Snl4NEt0dFFEUGs0YXQw?=
+ =?utf-8?B?cjFMdHRDd1hTV0h4SWRUL1ArZnNNeGlPNDlYamdmZEZSb0hqNnE2RmNEKzlK?=
+ =?utf-8?B?dWN1Z3Ewa1pNcnBWVlJHL3UvS0VDQVBqem1iWUV5RS9XTUlIYlZGdmZEU3oy?=
+ =?utf-8?B?SGg2RzBNZmR2VWgvZXFkOFZIUGVLTHFoaTdQcUJqL0NYL2xEZ0g0WlNPU2VM?=
+ =?utf-8?B?a3hHU0dwTEdMenE1TExXTzdROXUvY1ZtNGNEbktvdkkwZmdFRCtndXRVbExq?=
+ =?utf-8?B?a1M3RTNmektDN3dGV3VCNWdpOExDS0hjeWNWMy94QURYcEdxdDdiS2FtSmJj?=
+ =?utf-8?B?ZGR5aHgybTVZek16YTJYUHdJOVRDSW5TMUVoeWZyWWJXS0NrbGJqbU91clYy?=
+ =?utf-8?B?bWNIK3QwWWRFTk1yNzUyWUljODdVenVrQmFPSDJvc1N6Wm12UXYxS2ZWb0VW?=
+ =?utf-8?B?ZUNSTy80SCs3encxWnVCQmtUenlXY0xlVHZ5YWFSeDZON0FxaFlDb1lkMHVB?=
+ =?utf-8?B?RlMxWVNPMmlsaEYxVG9GZmJTLzg4YUg1SkxmOUZxMFQxZXQreFRHZ3N5bE9u?=
+ =?utf-8?B?bi96QUZaamp2ZjltZnl2YVJNRXhObVRhWVBWS05RdnV5a0ZGa2FNNDJpQVUy?=
+ =?utf-8?B?TGpUOHMwclVYcDlCQkxROHh5dkxoVW1WamVnc3ZGaEhwZ2NrVE10blBqLzRS?=
+ =?utf-8?B?L0tDVWV4aUR3UkE5QlhUalRSZGc5MllMdzBCbW1aZi9GSjZld2ZsRnl6RmFw?=
+ =?utf-8?B?RUxCeHduRXl0dUEwa2NLNHZXVWVlOUdvNk0yRmFma3BGNXQ1NGEwQmFrampt?=
+ =?utf-8?B?L211RnFLQU5wei9zbmJQMlJKazZUZ0hLSkJCS2hWR2xzWUdUVFA1bFZhc1Jm?=
+ =?utf-8?B?OGxVZmFmVGZCeTZFYVRCa2gxWnMvdjZObjRUNml0Ti9ObEZpV3lmOUhpUm4v?=
+ =?utf-8?B?NGtSWjBDWU9kRU5yZFlEcjRORHJrelBNUWJLbFNuVWdiNk5wNCtqakJtZU10?=
+ =?utf-8?B?VXVTZndzTGw1N3JVVzVhSDZ0enM4dWhxZEVMNXR1OCtHUVBzTkZkeEphZlBC?=
+ =?utf-8?B?eENpL2piYkhqRi9oMGg0bzUydzBBbkFqT1RpaHIzV0YzR3BiY3MxWUpralBo?=
+ =?utf-8?B?K2lmbEM0UE5ua2NpOXk1UXBrYmF6WU9IZ2N4eisvTkY0OHdNV2FEWmZBcS9K?=
+ =?utf-8?B?WmZtSHB6TlJGVnVyZEdCQWQ1Z25xTWxqS3lGTXlYOHRHOVVRUmpsa3FJMEJL?=
+ =?utf-8?B?MXpJK1RHMWtVZHpaRU9raEhvcDFNKytiSnZMN05ScTRSRitxUGRybnVMOElm?=
+ =?utf-8?B?eERBa2FiUDBwMDRHYm9kOFNsem8yYjY0bEJac1g2MWRHNUdzV050cHJ6bGc5?=
+ =?utf-8?B?dTlweHJUWmN4c2Y2NUkyY1ZrTFBIM0RSbjczVFF0eDd0NFRldTlJMldzNzZE?=
+ =?utf-8?B?djlmV0dhU2o2clNDK2UvaWRIR3d4Y1pOb2pxbHRMZTJFUGRtOUl6Ym9ZUVNG?=
+ =?utf-8?B?aEdySnQyMFFYOGs1azhvTXlsRUxMdDlKOUJDUm1CZTMwSnViTGQ0RUZEWjBm?=
+ =?utf-8?B?TUlWUENBSER4eTFsSFNyM2JFK2NXOFMxcS9QSGNNakhPYWlSRlBtOGEvQ0NO?=
+ =?utf-8?B?MHN0TENaaGdqaHF5MEttNHJvWGZJTm9QYUR4cmRiT09NRGc1OHpOUTg2ZFlY?=
+ =?utf-8?B?V1p0MTVWZldXeXFESmJyVkNSdDc2RnM1TXp5dlAvSk92YVBPU3pITXl0NUcr?=
+ =?utf-8?B?QWt0TjI2TFdEWGdTbm5ZZTU0ZzdFcGZjbCtsbFhyTVVLRGpCWEN5NE1BL2lI?=
+ =?utf-8?B?UkJ4Um5MaVYvQ0EycW5rN3BwNnA2eHFiZHE3U3BVY3ZVSENneHlWWExmSTVy?=
+ =?utf-8?B?bTIxa0NDVVFrbm1iNDVzQ1QrS0d2M2NPdFFGOGxvMWNxYmUyQ3BtMTU2VWdI?=
+ =?utf-8?B?Z1oxRDh2MlQ5d1FHNzM4N1RxbWp4WGxuVDZRZENzdjlXeXFtcnhxTmJxNlhy?=
+ =?utf-8?B?SGc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 35116f61-f083-427f-bf6f-08dc81ea1a7f
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jun 2024 03:22:44.8386
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: mDucCJjhpr6AFlzoxQ05PfaSH6VR+E2nwSzo2cO2lZfsYkRiAZi6WJxQ+FZNyI1do2XTWzQe2fLj7McaELpInQNbx0a8KPZcOFv8heiaG6w=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR11MB6060
+X-OriginatorOrg: intel.com
 
-Hello,
+Jonathan Cameron wrote:
+> On Thu, 30 May 2024 14:59:38 +0800
+> Dongsheng Yang <dongsheng.yang@easystack.cn> wrote:
+> 
+> > 在 2024/5/29 星期三 下午 11:25, Gregory Price 写道:
+> > > On Wed, May 22, 2024 at 02:17:38PM +0800, Dongsheng Yang wrote:  
+> > >>
+> > >>
+> > >> 在 2024/5/22 星期三 上午 2:41, Dan Williams 写道:  
+> > >>> Dongsheng Yang wrote:
+> > >>>
+> > >>> What guarantees this property? How does the reader know that its local
+> > >>> cache invalidation is sufficient for reading data that has only reached
+> > >>> global visibility on the remote peer? As far as I can see, there is
+> > >>> nothing that guarantees that local global visibility translates to
+> > >>> remote visibility. In fact, the GPF feature is counter-evidence of the
+> > >>> fact that writes can be pending in buffers that are only flushed on a
+> > >>> GPF event.  
+> > >>
+> > >> Sounds correct. From what I learned from GPF, ADR, and eADR, there would
+> > >> still be data in WPQ even though we perform a CPU cache line flush in the
+> > >> OS.
+> > >>
+> > >> This means we don't have a explicit method to make data puncture all caches
+> > >> and land in the media after writing. also it seems there isn't a explicit
+> > >> method to invalidate all caches along the entire path.
+> > >>  
+> > >>>
+> > >>> I remain skeptical that a software managed inter-host cache-coherency
+> > >>> scheme can be made reliable with current CXL defined mechanisms.  
+> > >>
+> > >>
+> > >> I got your point now, acorrding current CXL Spec, it seems software managed
+> > >> cache-coherency for inter-host shared memory is not working. Will the next
+> > >> version of CXL spec consider it?  
+> > >>>  
+> > > 
+> > > Sorry for missing the conversation, have been out of office for a bit.
+> > > 
+> > > It's not just a CXL spec issue, though that is part of it. I think the
+> > > CXL spec would have to expose some form of puncturing flush, and this
+> > > makes the assumption that such a flush doesn't cause some kind of
+> > > race/deadlock issue.  Certainly this needs to be discussed.
+> > > 
+> > > However, consider that the upstream processor actually has to generate
+> > > this flush.  This means adding the flush to existing coherence protocols,
+> > > or at the very least a new instruction to generate the flush explicitly.
+> > > The latter seems more likely than the former.
+> > > 
+> > > This flush would need to ensure the data is forced out of the local WPQ
+> > > AND all WPQs south of the PCIE complex - because what you really want to
+> > > know is that the data has actually made it back to a place where remote
+> > > viewers are capable of percieving the change.
+> > > 
+> > > So this means:
+> > > 1) Spec revision with puncturing flush
+> > > 2) Buy-in from CPU vendors to generate such a flush
+> > > 3) A new instruction added to the architecture.
+> > > 
+> > > Call me in a decade or so.
+> > > 
+> > > 
+> > > But really, I think it likely we see hardware-coherence well before this.
+> > > For this reason, I have become skeptical of all but a few memory sharing
+> > > use cases that depend on software-controlled cache-coherency.  
+> > 
+> > Hi Gregory,
+> > 
+> > 	From my understanding, we actually has the same idea here. What I am 
+> > saying is that we need SPEC to consider this issue, meaning we need to 
+> > describe how the entire software-coherency mechanism operates, which 
+> > includes the necessary hardware support. Additionally, I agree that if 
+> > software-coherency also requires hardware support, it seems that 
+> > hardware-coherency is the better path.
+> > > 
+> > > There are some (FAMFS, for example). The coherence state of these
+> > > systems tend to be less volatile (e.g. mappings are read-only), or
+> > > they have inherent design limitations (cacheline-sized message passing
+> > > via write-ahead logging only).  
+> > 
+> > Can you explain more about this? I understand that if the reader in the 
+> > writer-reader model is using a readonly mapping, the interaction will be 
+> > much simpler. However, after the writer writes data, if we don't have a 
+> > mechanism to flush and invalidate puncturing all caches, how can the 
+> > readonly reader access the new data?
+> 
+> There is a mechanism for doing coarse grained flushing that is known to
+> work on some architectures. Look at cpu_cache_invalidate_memregion().
+> On intel/x86 it's wbinvd_on_all_cpu_cpus()
 
-syzbot found the following issue on:
+There is no guarantee on x86 that after cpu_cache_invalidate_memregion()
+that a remote shared memory consumer can be assured to see the writes
+from that event.
 
-HEAD commit:    2bfcfd584ff5 Merge tag 'pmdomain-v6.10-rc1' of git://git.k..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15099734980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=238430243a58f702
-dashboard link: https://syzkaller.appspot.com/bug?extid=54594368fbd5a4f1754a
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11ccc672980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17314572980000
+> on arm64 it's a PSCI firmware call CLEAN_INV_MEMREGION (there is a
+> public alpha specification for PSCI 1.3 with that defined but we
+> don't yet have kernel code.)
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/261f1cc4b66a/disk-2bfcfd58.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/e0a2dd5351d9/vmlinux-2bfcfd58.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/dab3ffb1a0d4/bzImage-2bfcfd58.xz
+That punches visibility through CXL shared memory devices?
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+54594368fbd5a4f1754a@syzkaller.appspotmail.com
+> These are very big hammers and so unsuited for anything fine grained.
+> In the extreme end of possible implementations they briefly stop all
+> CPUs and clean and invalidate all caches of all types.  So not suited
+> to anything fine grained, but may be acceptable for a rare setup event,
+> particularly if the main job of the writing host is to fill that memory
+> for lots of other hosts to use.
+> 
+> At least the ARM one takes a range so allows for a less painful
+> implementation.  I'm assuming we'll see new architecture over time
+> but this is a different (and potentially easier) problem space
+> to what you need.
 
-rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
-rcu: 	(detected by 1, t=10502 jiffies, g=9993, q=77 ncpus=2)
-rcu: All QSes seen, last rcu_preempt kthread activity 1800 (4294972632-4294970832), jiffies_till_next_fqs=1, root ->qsmask 0x0
-rcu: rcu_preempt kthread starved for 1800 jiffies! g9993 f0x2 RCU_GP_WAIT_FQS(5) ->state=0x0 ->cpu=1
-rcu: 	Unless rcu_preempt kthread gets sufficient CPU time, OOM is now expected behavior.
-rcu: RCU grace-period kthread stack dump:
-task:rcu_preempt     state:R  running task     stack:27680 pid:17    tgid:17    ppid:2      flags:0x00004000
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5408 [inline]
- __schedule+0xf15/0x5d00 kernel/sched/core.c:6745
- preempt_schedule_common+0x44/0xc0 kernel/sched/core.c:6924
- preempt_schedule_thunk+0x1a/0x30 arch/x86/entry/thunk.S:12
- __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:152 [inline]
- _raw_spin_unlock_irqrestore+0x61/0x80 kernel/locking/spinlock.c:194
- rcu_gp_fqs_loop+0x217/0xb00 kernel/rcu/tree.c:2000
- rcu_gp_kthread+0x271/0x380 kernel/rcu/tree.c:2202
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-rcu: Stack dump where RCU GP kthread last ran:
-CPU: 1 PID: 34 Comm: kcompactd0 Not tainted 6.10.0-rc1-syzkaller-00013-g2bfcfd584ff5 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
-RIP: 0010:__raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:152 [inline]
-RIP: 0010:_raw_spin_unlock_irqrestore+0x31/0x80 kernel/locking/spinlock.c:194
-Code: f5 53 48 8b 74 24 10 48 89 fb 48 83 c7 18 e8 26 68 80 f6 48 89 df e8 0e e5 80 f6 f7 c5 00 02 00 00 75 23 9c 58 f6 c4 02 75 37 <bf> 01 00 00 00 e8 25 27 72 f6 65 8b 05 b6 86 18 75 85 c0 74 16 5b
-RSP: 0018:ffffc90000a18248 EFLAGS: 00000246
-RAX: 0000000000000006 RBX: ffffffff94ca7948 RCX: 1ffffffff2857134
-RDX: 0000000000000000 RSI: ffffffff8b2cade0 RDI: ffffffff8b8fffc0
-RBP: 0000000000000286 R08: 0000000000000001 R09: fffffbfff284d670
-R10: ffffffff9426b387 R11: 0000000000000002 R12: ffffffff94ca7940
-R13: 0000000000000000 R14: 0000000000000000 R15: ffff888059c72800
-FS:  0000000000000000(0000) GS:ffff8880b9300000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fff8f455d78 CR3: 0000000049512000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <IRQ>
- __debug_check_no_obj_freed lib/debugobjects.c:998 [inline]
- debug_check_no_obj_freed+0x328/0x600 lib/debugobjects.c:1019
- slab_free_hook mm/slub.c:2162 [inline]
- slab_free mm/slub.c:4436 [inline]
- kfree+0x284/0x3b0 mm/slub.c:4557
- ieee80211_inform_bss+0x76e/0x1140 net/mac80211/scan.c:160
- rdev_inform_bss net/wireless/rdev-ops.h:418 [inline]
- cfg80211_inform_single_bss_data+0x893/0x1f70 net/wireless/scan.c:2277
- cfg80211_inform_bss_data+0x205/0x39d0 net/wireless/scan.c:3101
- cfg80211_inform_bss_frame_data+0x271/0x7c0 net/wireless/scan.c:3191
- ieee80211_bss_info_update+0x311/0xab0 net/mac80211/scan.c:226
- ieee80211_scan_rx+0x47c/0xad0 net/mac80211/scan.c:340
- __ieee80211_rx_handle_packet net/mac80211/rx.c:5222 [inline]
- ieee80211_rx_list+0x1be1/0x2e90 net/mac80211/rx.c:5459
- ieee80211_rx_napi+0xdd/0x400 net/mac80211/rx.c:5482
- ieee80211_rx include/net/mac80211.h:5093 [inline]
- ieee80211_tasklet_handler+0xd6/0x130 net/mac80211/main.c:438
- tasklet_action_common.constprop.0+0x24c/0x3e0 kernel/softirq.c:785
- handle_softirqs+0x216/0x8f0 kernel/softirq.c:554
- __do_softirq kernel/softirq.c:588 [inline]
- invoke_softirq kernel/softirq.c:428 [inline]
- __irq_exit_rcu kernel/softirq.c:637 [inline]
- irq_exit_rcu+0xbb/0x120 kernel/softirq.c:649
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1043 [inline]
- sysvec_apic_timer_interrupt+0x95/0xb0 arch/x86/kernel/apic/apic.c:1043
- </IRQ>
- <TASK>
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-RIP: 0010:free_object lib/debugobjects.c:423 [inline]
-RIP: 0010:debug_object_free+0x294/0x500 lib/debugobjects.c:866
-Code: 4d 89 6c 24 08 48 8b 7c 24 10 48 89 ce 48 b8 00 01 00 00 00 00 ad de 48 89 03 48 83 c0 22 48 89 43 08 e8 ff 6b 61 06 48 89 df <e8> e7 d0 ff ff 0f b6 05 e0 df 3f 10 84 c0 0f 85 13 fe ff ff 8b 05
-RSP: 0018:ffffc90000aa7bb0 EFLAGS: 00000286
-RAX: 0000000080000000 RBX: ffff88805aa2d070 RCX: 0000000000000000
-RDX: 0000000000000001 RSI: ffffffff8b2cade0 RDI: ffff88805aa2d070
-RBP: ffffc90000aa7ca0 R08: 0000000000000001 R09: 0000000000000001
-R10: ffffffff8fe45e57 R11: 0000000000000000 R12: ffff888021d9be00
-R13: ffffffff94d302d8 R14: ffffc90000aa7cd0 R15: 1ffff92000154f7a
- destroy_timer_on_stack kernel/time/timer.c:866 [inline]
- schedule_timeout+0x14f/0x2a0 kernel/time/timer.c:2585
- kcompactd+0xad3/0xde0 mm/compaction.c:3199
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+cpu_cache_invalidate_memregion() is only about making sure local CPU
+sees new contents after an DPA:HPA remap event. I hope CPUs are able to
+get away from that responsibility long term when / if future memory
+expanders just issue back-invalidate automatically when the HDM decoder
+configuration changes.
 
