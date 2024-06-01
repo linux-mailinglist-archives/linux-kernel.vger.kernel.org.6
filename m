@@ -1,275 +1,158 @@
-Return-Path: <linux-kernel+bounces-197961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFA838D7142
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 18:57:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 751548D7145
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 18:59:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E73228265C
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 16:57:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92D021C20A37
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 16:59:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62385153BF3;
-	Sat,  1 Jun 2024 16:56:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C7771527A0;
+	Sat,  1 Jun 2024 16:59:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="lg0W9sSd"
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05olkn2101.outbound.protection.outlook.com [40.92.89.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=metaspace-dk.20230601.gappssmtp.com header.i=@metaspace-dk.20230601.gappssmtp.com header.b="wwKh0pMr"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD5A154455;
-	Sat,  1 Jun 2024 16:56:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.89.101
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717261018; cv=fail; b=K7vYrO43gvGab1FfHjEHzjVjS1Gi3iNh5IDh2wrOLg9FNCvi/Bs+JrhIgWuMBXO5xlvNXnM+UdYijf9FDR1ClfRyPWpMAO8GsHuoC9IosvfzXsR7V95hZ3INzkZMbdBM3FF+Vvkv1Js8knUegnAC+CJaHpn40FY+9B/9ZPfoaZY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717261018; c=relaxed/simple;
-	bh=gOtst8h9RuljVsy21oj8WcjbC8wfPg/lGHLpU3534lQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Zy43gxvq/mYQMN97/NRBypzuddrqhmo3OFzOkqI/9qNoxI64zHNosm67pGjgZ4RMATww3unX9ffz6TKcE+LLUvJ1A2/hERZdL9b4dmwuDFONrtXssC88df/NTNRQ6m4Y7E6sfna5TKnTJ5BCU3mrNLYP4sqHXwrqUqK2ia38Ah4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=lg0W9sSd; arc=fail smtp.client-ip=40.92.89.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=NczhW1JIaHQQ1n9RydYpOEcf60530rnMMovH80nQyPGhz7jqadKiv7JSdf+wjRjZ888inz0k05XFW4UptK4yOrLDAbqNsu6Cxf+857uyKgTsS8QuBK1UK1LHvvzJKn2DkDVSBZ4WPgLDLi8S9AZ4SAXqJLMevoAUaPSBeV5jsr/ziNNVA9ei+xR2AMW2psioIeDLn+BZMbSvCNnvRG5pvw62zYRFROKglJzQ0eEujYlPXk4DkcbFL7h5zJdogzk+zXEQjRT7juGrhDrobMSYuQdF7AIzqJdmsB5P8XbAVRxjslM4mEv80srg2X2kb9aa9H29u/qwmehsc8f143aevQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=o0LRofeL7sn2e6PoBCwIy2JEjQsAf4pdnyi3QAUeokU=;
- b=F0LJ+UyZcRdUtDVMy5PBzNpIB2j6ww2dRDCH0aM6PWG+/lkwUTDHq2WEZJJAEfzDSwOBbWIUORN6ulB8ruAgh2d9UsDn4j0PLzQ59/dmVoWrtmfxhqanpdTEaUax5av1bifGHSLak75I94dlJzjNGXVWvEmT9yo4Tttvr2fe18rQ6dbFy9ie8oBOYYtOg5qbWlMEkC3cdQxH7wdRNew7x67fbXXUqH3J/aLdui6Ejo5iavGVcDRy7a2xusgNv2HmDskbidA7BDo/yuFHqc3GPrT0h4UQ9qV7mfxNA0/l6Yphd1Zugqhx2jw/qAKKhr0hAHw/0Re2WTmFPZIdVQEQ4w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=o0LRofeL7sn2e6PoBCwIy2JEjQsAf4pdnyi3QAUeokU=;
- b=lg0W9sSdxc/Tq3VPh1+gpWNV5HWYKjl6Qyu4J1FosrmgcJxVN1CWK7Q1rvSzLY0gfEfn24pea5Fn+bC8QZGt+ac/ZE4TDf2bzd4y9ooA1KVHERIu3VkBt3+HlNvisTMqd8NsjPOhIXovICuIiVF9soKGOBzLL1tcQWNFPr8mmPtFRyda2suWevrry5z15E727VhtQG2XSHQRJcQad95q7yJN8NlOW1rmhrHXwDaxneDX3LJZTkIHn2YRp1SA9K5R5TeNVxBe1XFPzrQ5e2QpnFjzq8cYrDjKIoFJJPO2KjdRdXp0aM6NXzwr0/C/DAhUDZW/uyfekMiBFUkgoNFgSA==
-Received: from AS8PR02MB7237.eurprd02.prod.outlook.com (2603:10a6:20b:3f1::10)
- by GV2PR02MB9373.eurprd02.prod.outlook.com (2603:10a6:150:d2::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.21; Sat, 1 Jun
- 2024 16:56:51 +0000
-Received: from AS8PR02MB7237.eurprd02.prod.outlook.com
- ([fe80::409b:1407:979b:f658]) by AS8PR02MB7237.eurprd02.prod.outlook.com
- ([fe80::409b:1407:979b:f658%5]) with mapi id 15.20.7633.021; Sat, 1 Jun 2024
- 16:56:51 +0000
-From: Erick Archer <erick.archer@outlook.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Kees Cook <keescook@chromium.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Matthew Wilcox <mawilcox@microsoft.com>
-Cc: Erick Archer <erick.archer@outlook.com>,
-	x86@kernel.org,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: [PATCH v4 3/3] perf/ring_buffer: Prefer struct_size over open coded arithmetic
-Date: Sat,  1 Jun 2024 18:56:18 +0200
-Message-ID:
- <AS8PR02MB7237DCB69448D5BE9E0615888BFD2@AS8PR02MB7237.eurprd02.prod.outlook.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240601165618.10020-1-erick.archer@outlook.com>
-References: <20240601165618.10020-1-erick.archer@outlook.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-TMN: [Cqac6udP/mVsrAgL9nOq8iGXfFGVlXqx]
-X-ClientProxiedBy: MA2P292CA0022.ESPP292.PROD.OUTLOOK.COM (2603:10a6:250::11)
- To AS8PR02MB7237.eurprd02.prod.outlook.com (2603:10a6:20b:3f1::10)
-X-Microsoft-Original-Message-ID:
- <20240601165618.10020-4-erick.archer@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91B041534FB
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Jun 2024 16:59:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717261181; cv=none; b=uA9hoDkM0mh8vyL/nR03rtbBaKkSUTDkrddZGFcfn6LQ650K3PBcjcsHYiHse5MZuV326mleJsO00LBRhdeiFNcEIBBNQeNj5Vl4EMWww+yveL6Ydtz23oYH/uprsFDevh0BstqvsT/p9NOZZpPIBbs/edfTpOLGuYOjlx3R9kY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717261181; c=relaxed/simple;
+	bh=vY83/g5DnlUfQZA9zDchrVy8+HtF22bRD22oke+NysM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=CBY0T7c1T8kz+8iqGLXP+D1yW0j2vLBDGlh97WvWoXskofbhuyaI081lTY/K0i/BoZFTG6YqzKRoDZHhjLbARpCF+/mZt4WjoIwjibIvLT9BRb5r6ucLvpU2Glj0Yv6KPIfXywo+Z/BNNTzeLqWAnCHCYmmRxJpM/gtLl+hTjVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=metaspace.dk; spf=none smtp.mailfrom=metaspace.dk; dkim=pass (2048-bit key) header.d=metaspace-dk.20230601.gappssmtp.com header.i=@metaspace-dk.20230601.gappssmtp.com header.b=wwKh0pMr; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=metaspace.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=metaspace.dk
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2e95a74d51fso46245291fa.2
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Jun 2024 09:59:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=metaspace-dk.20230601.gappssmtp.com; s=20230601; t=1717261178; x=1717865978; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2mL6l8seCFLH+FLqk0uzi6xe60dPnwEuIbsZWb+Jgs8=;
+        b=wwKh0pMrCWNf4pWpmwi3ABDnaTpDxSwyyrA80PhnQmjMYHVBfFwl1gU1tNehlN70yp
+         AjJVtXUN+8hXokiyJ4QYKhcpZsbH2K27Em0LrPQfHHzp5ud8CI1uNPsSH5In2/0iMC5w
+         zsicMxacBqOKMgUTEKxQCKKQxQn8p7iB838ge4xG4Y6IJqpHpNzmKUpWDWtfb/DLrP9u
+         d0fZhIEP7ExWRHBgIbhq9cF5dV0QFebPozDtHJEWTJmEBB74d7sMPhaqoP/3Z9PlRsFB
+         3l3Vc+c6tWQXlmYxHmUpRs/+fGnyzJ+XWXONFfpmAVWwSzZLkla5MghltLYFGqBEtbqS
+         fZkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717261178; x=1717865978;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2mL6l8seCFLH+FLqk0uzi6xe60dPnwEuIbsZWb+Jgs8=;
+        b=DULeOekf9LE0akBLADFdSLZpRJMoY2HVjfsA+ajday9k8EFbS8BlXIPoVNDe3YkVRd
+         tUvvG2xcCbrFT/1vaAiuhyyrV0HGmlIChYuBiVThPsgvhhgtlnGvqfhVARd83zlVmHI3
+         OUZY8o4DqCNNtBWxUEAjH8iEnoea+1xrFirvj+L0hGGDHO+MMhCQxIHxsCUxb9plKiqY
+         6IcNwKmYGonFPPkrCj+031VBv2ZbTKLTPLsDjsdgK3q7KvifKSnlZ2PYmuVgf0XJcrGR
+         qrx4laPQ0qHNTtaqqiTQ29XyImOg6INIIS/qnMcUOUNM+3PmhbN/hjBOwyHEzuQsPlmq
+         eEdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWxwZ5TmZjBRkLh3AMtEy/4TqLp1D/vxf8REdEwIiMmga8Sbxlqaan8u60xksrDYyk7VYTPSIW0FHjv+S6XOUCgzgb9CQGcdJ1ocmq0
+X-Gm-Message-State: AOJu0YyJRg1AbGByIhDI7m7ZObZWmUcviNited2S5AoUM4bDssVAy5j1
+	UkINT2TbHzA93453BcTz/P1H+sqAchn4GHVmjLGOM8/XFoaeA5VIg9uZJpAGg2x/axDGTiQMPvY
+	H
+X-Google-Smtp-Source: AGHT+IFVGuaNXbhM1O7OzZMAjBCAkB+1ODN3q2YCCYkCSfm5BH2IuT/IISoTcabi+6Ng5qUysh1/bw==
+X-Received: by 2002:a2e:3517:0:b0:2e2:a99a:4c4 with SMTP id 38308e7fff4ca-2ea951f5e53mr39476581fa.47.1717261177607;
+        Sat, 01 Jun 2024 09:59:37 -0700 (PDT)
+Received: from localhost ([79.142.230.34])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a67ea67b4b2sm217708466b.117.2024.06.01.09.59.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 01 Jun 2024 09:59:37 -0700 (PDT)
+From: Andreas Hindborg <nmi@metaspace.dk>
+To: Keith Busch <kbusch@kernel.org>
+Cc: Jens Axboe <axboe@kernel.dk>,  Christoph Hellwig <hch@lst.de>,  Damien
+ Le Moal <dlemoal@kernel.org>,  Bart Van Assche <bvanassche@acm.org>,
+  Hannes Reinecke <hare@suse.de>,  Ming Lei <ming.lei@redhat.com>,
+  "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,  Andreas
+ Hindborg <a.hindborg@samsung.com>,  Greg KH <gregkh@linuxfoundation.org>,
+  Matthew Wilcox <willy@infradead.org>,  Miguel Ojeda <ojeda@kernel.org>,
+  Alex Gaynor <alex.gaynor@gmail.com>,  Wedson Almeida Filho
+ <wedsonaf@gmail.com>,  Boqun Feng <boqun.feng@gmail.com>,  Gary Guo
+ <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  Benno
+ Lossin <benno.lossin@proton.me>,  Alice Ryhl <aliceryhl@google.com>,
+  Chaitanya Kulkarni <chaitanyak@nvidia.com>,  Luis Chamberlain
+ <mcgrof@kernel.org>,  Yexuan Yang <1182282462@bupt.edu.cn>,  Sergio
+ =?utf-8?Q?Gonz=C3=A1lez?= Collado <sergio.collado@gmail.com>,  Joel
+ Granados
+ <j.granados@samsung.com>,  "Pankaj Raghav (Samsung)"
+ <kernel@pankajraghav.com>,  Daniel Gomez <da.gomez@samsung.com>,  Niklas
+ Cassel <Niklas.Cassel@wdc.com>,  Philipp Stanner <pstanner@redhat.com>,
+  Conor Dooley <conor@kernel.org>,  Johannes Thumshirn
+ <Johannes.Thumshirn@wdc.com>,  Matias =?utf-8?Q?Bj=C3=B8rling?=
+ <m@bjorling.me>,  open list
+ <linux-kernel@vger.kernel.org>,  "rust-for-linux@vger.kernel.org"
+ <rust-for-linux@vger.kernel.org>,  "lsf-pc@lists.linux-foundation.org"
+ <lsf-pc@lists.linux-foundation.org>,  "gost.dev@samsung.com"
+ <gost.dev@samsung.com>
+Subject: Re: [PATCH v4 2/3] rust: block: add rnull, Rust null_blk
+ implementation
+In-Reply-To: <ZltF5NvDnKFphcOo@kbusch-mbp.dhcp.thefacebook.com> (Keith Busch's
+	message of "Sat, 1 Jun 2024 10:01:40 -0600")
+References: <20240601134005.621714-1-nmi@metaspace.dk>
+	<20240601134005.621714-3-nmi@metaspace.dk>
+	<ZlsvHV6y4DEdC8ja@kbusch-mbp.dhcp.thefacebook.com>
+	<875xusoetn.fsf@metaspace.dk>
+	<ZltF5NvDnKFphcOo@kbusch-mbp.dhcp.thefacebook.com>
+Date: Sat, 01 Jun 2024 18:59:31 +0200
+Message-ID: <871q5goaz0.fsf@metaspace.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR02MB7237:EE_|GV2PR02MB9373:EE_
-X-MS-Office365-Filtering-Correlation-Id: e3f81c36-2bec-4744-8d4d-08dc825bd52a
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|461199019|3412199016|440099019|1602099003|1710799017;
-X-Microsoft-Antispam-Message-Info:
-	npApg7Iy88JN6VNfIRSeDn9zCfGdPflyt+yleOZjxP/GqbVa/GZPXjgD9886TpRUa4Xj/T1ELIfaCTpOlLc7/iRGlpOOgdpGN+5mfDCC32AlRybvyTf2OQCR2cWcd91U+T0/iFY8eVl8BRptWtzeW/AFckfuzf/5RXvWet4JYTGAoDucFSfvA4/JvBN4HWrigyklBcAnbkBUSziKu/h6a/63hoa7VFg20hvJ3EGd6khWp9/NFlv60LvMfC2J0Kcxo3LPh1AqlLn4KAIqAQn++QUPE4XQWfBez2IY+hpZHqh8ULovV1ai5/t9JiHKO432CZZ3wgxRHcaF4bpiLoyd6nO4UDRwCDfZNtYoaELDxKbdLWfTZiqOIX1TbWrvFv8AF/rbAXnWwH5rezOH+541/lCJeJOmBDaQVDPF4QS3eruE6XBiRzg2WGkhLnmO1hlOEvviR2tySaGJQ+IuZumJS4ZW2Pv9YbJ3+s4oq9eJEPsXhTm7T/0oksYQOHcqo/hvue97XIy62zuFr/6jFexvbChm5cmCp9gKOwad4nbQ0HlpamBgvMXvltQaIRJ9JagPw6S4b9WCC7Q0rCbadzfyANb95/bJ0VriCzQeJMyjS7XA7q/3bTRExmwhJqPZgTqJfA7TXfbbIRIyd8yr36wYavzI4mt0OsxEDPfM/RPkaGvPjJJU4CMuk1w8TPhHoBaC/sI2fKomJjJxlkCx1DRuWw==
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?IN8FiE/QItlcjl0cHBadWUe4RhZkfrAFf5Xeo/TVdNAaDme1b5VJvl0zXeUg?=
- =?us-ascii?Q?9KKOMO1TCcvB+n/Q36wx8fBGjNBkwwqxZLZr28riT1+t/74Zc6SOOmr/1I+y?=
- =?us-ascii?Q?zTtfOpzL/P7hrPsIC1UXBfnnPx0VlGYqfTu1u2uJuHkIP1VjHFRSn+vZwrBY?=
- =?us-ascii?Q?3hCjTgaDn8HpPBpydn2lUl/qAjXzja9iOETsrfIwoVKnVTZdtysdL1YjSQjf?=
- =?us-ascii?Q?5YK2nTaSL6BnvBQj6nwogZRlhC71iN3cfBqhC3IZ5zcCjmFlcxM3iNtxZhKi?=
- =?us-ascii?Q?ucd6TIMncCiYr7EYynDVXU670HH/DvsrKgZixWKrURRwn6tU8UP3JEKrOUJc?=
- =?us-ascii?Q?zFMyL2ujtaVOx36r5a0bq4fJOOCEJE2BQB6tYdxH/KxoDaCnojZK0xWBWlzh?=
- =?us-ascii?Q?ibIp6imrbDRyTcZdggdrp1aQmpSKUz5U6adJ+vf9FgYx+UX8bjAWSAA7uHjL?=
- =?us-ascii?Q?ukpzdbsmOoCttXfe12XG5feNoG/revvFbftsbH+pNQ57U4tat732wzzWTUJE?=
- =?us-ascii?Q?KefHCATtfGs54PWF9JbyJk8qa0qkd/5uepDaJgWsFk78JUsFNkfTLxQLOkCz?=
- =?us-ascii?Q?qXA2NRWU9Wlmh0YTQHdlKndJ/KchfWQ8Ev5dWIRGIEvOImvMbGr0/4CyZ5Bh?=
- =?us-ascii?Q?BZsnH0Esi2bOI3GpAMS+XtBZbEqTV26AA/Hg+fxrQEH42zpbDW4O96Q9rj0O?=
- =?us-ascii?Q?sFzNmQ2/nBOLunQAJszdPkEuE2Ad+cLGdkIVnlar0+cVONMV7QAnVKoE6B4k?=
- =?us-ascii?Q?dZpmx+dX2FekUtQ6eCxGisy9x9QIMygJ3JzbUQPT742tEN91h8/g0V6Ekz7I?=
- =?us-ascii?Q?ctDzmD5iKYLBjIiXs2IDOe1My8aJCcRItrJjY7cUr8EonZclQjTlHmftFlrx?=
- =?us-ascii?Q?U+zykOXtAk5TA2sgrJc6zhiEyDwVXNbGgJs/rrWRNGO5v1IG2XVZ1d6dcaGS?=
- =?us-ascii?Q?trbfVPsHEE9JEOq53wBJ54chit8jrKtedblu0QJYrIiwkTdbKy9CiMl7AaNQ?=
- =?us-ascii?Q?i04H4EisVQyRQcb19R860i62rZVK0oY4adQXqXOQu7Tl57hfmtb0w0IEVIGx?=
- =?us-ascii?Q?3vk5JrmiPPsG36r4C4/h6p1gJiZWEtT8uMXfszguUDAxKwKjOoKXQjC6LWgo?=
- =?us-ascii?Q?WegnNXeXYpzfPtBB8BcEYLW08A79PyxWdxMn4jSgJk7Lu6PkZWvs6yboLtin?=
- =?us-ascii?Q?SeHB96yrVJpyFRJ8m2qsldHa5qT5b/cpgLcd2w15MJyG4N/o04Ub7now7UVM?=
- =?us-ascii?Q?peiSizDiXA88zoQpMSV/?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e3f81c36-2bec-4744-8d4d-08dc825bd52a
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR02MB7237.eurprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jun 2024 16:56:51.1191
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV2PR02MB9373
+Content-Type: text/plain
 
-This is an effort to get rid of all multiplications from allocation
-functions in order to prevent integer overflows [1][2].
+Keith Busch <kbusch@kernel.org> writes:
 
-As the "rb" variable is a pointer to "struct perf_buffer" and this
-structure ends in a flexible array:
+> On Sat, Jun 01, 2024 at 05:36:20PM +0200, Andreas Hindborg wrote:
+>> Keith Busch <kbusch@kernel.org> writes:
+>> 
+>> > On Sat, Jun 01, 2024 at 03:40:04PM +0200, Andreas Hindborg wrote:
+>> >> +impl kernel::Module for NullBlkModule {
+>> >> +    fn init(_module: &'static ThisModule) -> Result<Self> {
+>> >> +        pr_info!("Rust null_blk loaded\n");
+>> >> +        let tagset = Arc::pin_init(TagSet::try_new(1, 256, 1), flags::GFP_KERNEL)?;
+>> >> +
+>> >> +        let disk = {
+>> >> +            let block_size: u16 = 4096;
+>> >> +            if block_size % 512 != 0 || !(512..=4096).contains(&block_size) {
+>> >> +                return Err(kernel::error::code::EINVAL);
+>> >> +            }
+>> >
+>> > You've set block_size to the literal 4096, then validate its value
+>> > immediately after? Am I missing some way this could ever be invalid?
+>> 
+>> Good catch. It is because I have a patch in the outbound queue that allows setting
+>> the block size via a module parameter. The module parameter patch is not
+>> upstream yet. Once I have that up, I will send the patch with the block
+>> size config.
+>> 
+>> Do you think it is OK to have this redundancy? It would only be for a
+>> few cycles.
+>
+> It's fine, just wondering why it's there. But it also allows values like
+> 1536 and 3584, which are not valid block sizes, so I think you want the
+> check to be:
+>
+> 	if !(512..=4096).contains(&block_size) || ((block_size & (block_size - 1)) != 0)
 
-struct perf_buffer {
-	[...]
-	void	*data_pages[];
-};
+Right, that makes sense. I modeled it after the C null_blk validation
+code in `null_validate_conf`. It contains this:
 
-the preferred way in the kernel is to use the struct_size() helper to
-do the arithmetic instead of the calculation "size + count * size" in
-the kzalloc_node() functions.
+	dev->blocksize = round_down(dev->blocksize, 512);
+	dev->blocksize = clamp_t(unsigned int, dev->blocksize, 512, 4096);
 
-In the "rb_alloc" function defined in the else branch of the macro
+That would have the same semantics, right? I guess I'll try to make a
+device with a 1536 block size and see what happens.
 
- #ifndef CONFIG_PERF_USE_VMALLOC
-
-the count in the struct_size helper is the literal "1" since only one
-pointer to void is allocated. Also, remove the "size" variable as it
-is no longer needed.
-
-At the same time, prepare for the coming implementation by GCC and Clang
-of the __counted_by attribute. Flexible array members annotated with
-__counted_by can have their accesses bounds-checked at run-time via
-CONFIG_UBSAN_BOUNDS (for array indexing) and CONFIG_FORTIFY_SOURCE (for
-strcpy/memcpy-family functions). In this case, it is important to note
-that the logic needs a little refactoring to ensure that the "nr_pages"
-member is initialized before the first access to the flex array.
-
-In one case, it is only necessary to move the "nr_pages" assignment
-before the array-writing loop while in the other case the access to the
-flex array needs to be moved inside the if branch and after the
-"nr_pages" assignment.
-
-This way, the code is more safer.
-
-This code was detected with the help of Coccinelle, and audited and
-modified manually.
-
-Link: https://www.kernel.org/doc/html/latest/process/deprecated.html#open-coded-arithmetic-in-allocator-arguments [1]
-Link: https://github.com/KSPP/linux/issues/160 [2]
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Erick Archer <erick.archer@outlook.com>
----
- kernel/events/internal.h    |  2 +-
- kernel/events/ring_buffer.c | 15 ++++-----------
- 2 files changed, 5 insertions(+), 12 deletions(-)
-
-diff --git a/kernel/events/internal.h b/kernel/events/internal.h
-index 5150d5f84c03..dc8d39b01adb 100644
---- a/kernel/events/internal.h
-+++ b/kernel/events/internal.h
-@@ -55,7 +55,7 @@ struct perf_buffer {
- 	void				*aux_priv;
- 
- 	struct perf_event_mmap_page	*user_page;
--	void				*data_pages[];
-+	void				*data_pages[] __counted_by(nr_pages);
- };
- 
- extern void rb_free(struct perf_buffer *rb);
-diff --git a/kernel/events/ring_buffer.c b/kernel/events/ring_buffer.c
-index 4013408ce012..d123fa2096cf 100644
---- a/kernel/events/ring_buffer.c
-+++ b/kernel/events/ring_buffer.c
-@@ -822,9 +822,7 @@ struct perf_buffer *rb_alloc(int nr_pages, long watermark, int cpu, int flags)
- 	unsigned long size;
- 	int i, node;
- 
--	size = sizeof(struct perf_buffer);
--	size += nr_pages * sizeof(void *);
--
-+	size = struct_size(rb, data_pages, nr_pages);
- 	if (order_base_2(size) > PAGE_SHIFT+MAX_PAGE_ORDER)
- 		goto fail;
- 
-@@ -833,6 +831,7 @@ struct perf_buffer *rb_alloc(int nr_pages, long watermark, int cpu, int flags)
- 	if (!rb)
- 		goto fail;
- 
-+	rb->nr_pages = nr_pages;
- 	rb->user_page = perf_mmap_alloc_page(cpu);
- 	if (!rb->user_page)
- 		goto fail_user_page;
-@@ -843,8 +842,6 @@ struct perf_buffer *rb_alloc(int nr_pages, long watermark, int cpu, int flags)
- 			goto fail_data_pages;
- 	}
- 
--	rb->nr_pages = nr_pages;
--
- 	ring_buffer_init(rb, watermark, flags);
- 
- 	return rb;
-@@ -916,15 +913,11 @@ void rb_free(struct perf_buffer *rb)
- struct perf_buffer *rb_alloc(int nr_pages, long watermark, int cpu, int flags)
- {
- 	struct perf_buffer *rb;
--	unsigned long size;
- 	void *all_buf;
- 	int node;
- 
--	size = sizeof(struct perf_buffer);
--	size += sizeof(void *);
--
- 	node = (cpu == -1) ? cpu : cpu_to_node(cpu);
--	rb = kzalloc_node(size, GFP_KERNEL, node);
-+	rb = kzalloc_node(struct_size(rb, data_pages, 1), GFP_KERNEL, node);
- 	if (!rb)
- 		goto fail;
- 
-@@ -935,9 +928,9 @@ struct perf_buffer *rb_alloc(int nr_pages, long watermark, int cpu, int flags)
- 		goto fail_all_buf;
- 
- 	rb->user_page = all_buf;
--	rb->data_pages[0] = all_buf + PAGE_SIZE;
- 	if (nr_pages) {
- 		rb->nr_pages = 1;
-+		rb->data_pages[0] = all_buf + PAGE_SIZE;
- 		rb->page_order = ilog2(nr_pages);
- 	}
- 
--- 
-2.25.1
-
+BR Andreas
 
