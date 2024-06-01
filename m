@@ -1,207 +1,129 @@
-Return-Path: <linux-kernel+bounces-197929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48C768D70DC
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 17:26:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAEA88D70EA
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 17:30:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2C8B1F216F3
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 15:25:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67F002835BB
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 15:30:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D4DB152DF5;
-	Sat,  1 Jun 2024 15:25:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BAB2153582;
+	Sat,  1 Jun 2024 15:30:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UKNwUi/Z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HnU2+cMV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A76F111AD;
-	Sat,  1 Jun 2024 15:25:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C35C823CE;
+	Sat,  1 Jun 2024 15:30:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717255550; cv=none; b=QvxgD3yHZwCoVGWZUs1jKVi0B8JY/20Jt7VsgekquJFPphnqRgHXk0BN44/GnWxAQGaOCFrwkZPD0KAwtwR7r9PueCXCe0xLdPFUIBmiY+aMVezAJbE8U9oaiX6JvZJMH70Q6DmwLSE15/4EmJ0xazPEhPnH7bG7KZuDrYQ7zIQ=
+	t=1717255825; cv=none; b=mJk6xGtnbs9pYCyCte6oja+xT5ticTvINYC9p3LXrWz0L+NKohmxCUvvi6L/zfomlb6qIiM0cmmXyabI0ivcNmh6XkvieL0viuREEgUuRE3/43M22yRTvGRR/4YejOItYVqXNDpf6EK7SLiGiP7u0mFPG7CbqCJndT3pqtsx4Cw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717255550; c=relaxed/simple;
-	bh=6arLZDLJuJlo6JuZXNw8KfGVxYLRDu0gY7ndaZcELgs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R2fDMFs9zwBGwdbawpqvpQSvc6OISx2P52ILXDFtI+Hz9zNbaXRY1QhG0j0iDazZqoBW9jatjFaGSfAMSftfNlLBLvITKgiLMT5PzkGrtNtzMkRDQxDtHjRl8w707KaI1Zaevq+9PS5QC/0jPo5OW6qrOoesEqPOkI9pElNP4Go=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UKNwUi/Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED31FC116B1;
-	Sat,  1 Jun 2024 15:25:47 +0000 (UTC)
+	s=arc-20240116; t=1717255825; c=relaxed/simple;
+	bh=n8FgRSqS/0SH93OR/rSR5u3qt1CP4ZpLuUxyPWB99QQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=YXcSIClZ3u52iKM/w7EQ7iDlqllYz1Cg5DuJyIeEA1WYcTlwOBml/7+YgEWuc3l2HnJeCRYKy5kLzgFLIv++esMDPapqyyh8/uxIF97VwAqRoCxXiA5MjkRrrDwWnikt8oOISqJs8wLL4xMrdfrGf1hdp9wBB2SpydDk+Edj14M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HnU2+cMV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id F318BC116B1;
+	Sat,  1 Jun 2024 15:30:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717255550;
-	bh=6arLZDLJuJlo6JuZXNw8KfGVxYLRDu0gY7ndaZcELgs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=UKNwUi/ZG96iN4HmYc3blfQJ0y6H4YO4j/U1ogjpCJ7ZKqj3hwtlv7xNJWZinU1Wc
-	 M6LsTxD604zMz+m1MtLqCVhNNznq1eVhf0GbkELX1+prAF3fJl3NlrT26tVcr7gdcA
-	 Eihndo4ZPQwfN/5BoO1csMa0qqB1RLwMQE5zz3VkuA32hux7PpZzoFLoS8Der35fRj
-	 3+t7Lio5XC8QJyEtRSCi1IaN18zuwgnXZEioDdE+3sp7ZlY2ii6nt0fn3z7gkZaPLA
-	 XYvziZyT+8BjLyn3i8MCdR14/jTG452SGVUdKXFM2l4H028sLSISG5A4pFl2dj2qv4
-	 qbmcx9DRYO+sQ==
-Message-ID: <b78b14c7-e71c-4403-a606-80564a31e107@kernel.org>
-Date: Sat, 1 Jun 2024 17:25:46 +0200
+	s=k20201202; t=1717255825;
+	bh=n8FgRSqS/0SH93OR/rSR5u3qt1CP4ZpLuUxyPWB99QQ=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=HnU2+cMVXMJpyCL07v1DvBCsrGKY686c8dB6Q8nnF/FFpDuYqBOwiyGMkqao6goUA
+	 Cub3niKvs62ik0iqCLsL0Ftc3NnS1fpk/0I8CREUXEabt+JUxVToVJ/zk3cgwAtUem
+	 pmFscLqYzEZG/yC038/8DffZSJqQIAJ/WO37RAcO5dzPlWzEH9xEoSwMJG9H7nzOi7
+	 oXfH8tq1xl1OgB5IA9Q2+VDEeP8kvMf+HeS0WhDy9q/LJtSjJaOrprgpSnLCWDY2jc
+	 TqGqKWevJ741FyUve3zyuVCF33NzkCcTtJLxAuxBo34lGqU+jxc257n1b9v0AFAnVV
+	 CJTTWEAj3qzZw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7CD6C25B76;
+	Sat,  1 Jun 2024 15:30:24 +0000 (UTC)
+From: Joel Selvaraj via B4 Relay <devnull+joelselvaraj.oss.gmail.com@kernel.org>
+Subject: [PATCH v4 0/3] novatek-nvt-ts: add support for NT36672A
+ touchscreen
+Date: Sat, 01 Jun 2024 10:30:17 -0500
+Message-Id: <20240601-nvt-ts-devicetree-regulator-support-v4-0-e0c0174464c4@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] dt-bindings: mmc: Convert fsl-esdhc.txt to yaml
-To: Frank Li <Frank.Li@nxp.com>, Ulf Hansson <ulf.hansson@linaro.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- "open list:MULTIMEDIA CARD (MMC), SECURE DIGITAL (SD) AND..."
- <linux-mmc@vger.kernel.org>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Cc: imx@lists.linux.dev
-References: <20240531193745.1714046-1-Frank.Li@nxp.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240531193745.1714046-1-Frank.Li@nxp.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIk+W2YC/43OQQ7CIBAF0KsY1o4BihRceQ/jAoexkmjbABKN6
+ d1F40JddfknP+/PgyWKgRLbLB4sUgkpDH0NarlgeHJ9RxB8zUxyqfhaGOhLhpzA1y5SjkQQqbu
+ eXR4ipOs4DjGDQ0vKHlrjhGZVGiMdw+29stvXfAqp1u/v0SJe148vxSy/COBgfKs16sZ6dNvu4
+ sJ5hcOFvfwiv001z5TVPLTKqpY3BpX6N5tvU88zm2o6Z4wXHNHbnz+naXoCVIju4X4BAAA=
+To: Hans de Goede <hdegoede@redhat.com>, 
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
+ Joel Selvaraj <joelselvaraj.oss@gmail.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1717255824; l=2072;
+ i=joelselvaraj.oss@gmail.com; s=20240420; h=from:subject:message-id;
+ bh=n8FgRSqS/0SH93OR/rSR5u3qt1CP4ZpLuUxyPWB99QQ=;
+ b=3AMsyFGEo6VG5DEWahrUosuEQQpoCSe3tGbUVCSBQkn5X5r0mynSkXUb0mQ2BFYeZybdiKpAP
+ W9Q34YsH6tkBQbQndqobUTg7k11XAwVb9vGKea+6UwE5iGDqvGSmrlc
+X-Developer-Key: i=joelselvaraj.oss@gmail.com; a=ed25519;
+ pk=qT4gsuVtlPE0Dpr+tQA/Fumm7wzVP6qfeVaY+6pX04s=
+X-Endpoint-Received: by B4 Relay for joelselvaraj.oss@gmail.com/20240420
+ with auth_id=165
+X-Original-From: Joel Selvaraj <joelselvaraj.oss@gmail.com>
+Reply-To: joelselvaraj.oss@gmail.com
 
-On 31/05/2024 21:37, Frank Li wrote:
-> Convert layerscape fsl-esdhc binding doc from txt to yaml format.
-> 
-> Addtional change during convert:
-> - deprecate "sdhci,wp-inverted", "sdhci,1-bit-only".
-> - Add "reg" and "interrupts" property.
-> - change example "sdhci@2e000" to "mmc@2e000".
-> - compatible string require fsl,<chip>-esdhc followed by fsl,esdhc to match
-> most existed dts file.
-> 
+Extend the novatek touchscreen driver to support NT36672A chip which
+is found in phones like qcom/sdm845-xiaomi-beryllium-tianma.dts.
+Added devicetree support for the driver and used i2c chip data to handle
+the variation in chip id and wake type. Also added vcc and iovcc
+regulators which are used to power the touchscreen hardware.
 
+Signed-off-by: Joel Selvaraj <joelselvaraj.oss@gmail.com>
+---
+Changes in v4:
+- Use lowercase i2c device id as suggested by Hans de Goede.
+- Disable the regulators after nvt_ts_read_data during probe.
+- Link to v3: https://lore.kernel.org/r/20240526-nvt-ts-devicetree-regulator-support-v3-0-aa88d10ccd9a@gmail.com
 
-> -};
-> diff --git a/Documentation/devicetree/bindings/mmc/fsl-ls-esdhc.yaml b/Documentation/devicetree/bindings/mmc/fsl-ls-esdhc.yaml
-> new file mode 100644
-> index 0000000000000..cafc09c4f1234
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mmc/fsl-ls-esdhc.yaml
+Changes in v3:
+- Fix indentation in the binding as suggested by Krzysztof Kozlowski.
+- Picked up Krzysztof Kozlowski's Reviewed-by tag for the binding.
+- Link to v2: https://lore.kernel.org/r/20240524-nvt-ts-devicetree-regulator-support-v2-0-b74947038c44@gmail.com
 
-Filename: fsl,esdhc.yaml
+Changes in v2:
+- The generic i2c device id is now replaced with the correct IC variant
+  provided by Hans de Goede
+- Updated the bindings to reflect the latest changes and also incorporated
+  the suggestions provided by Krzysztof Kozlowski
+- Link to v1: https://lore.kernel.org/r/20240521-nvt-ts-devicetree-regulator-support-v1-0-8d766c639dca@gmail.com
 
-> @@ -0,0 +1,98 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
+---
+Joel Selvaraj (3):
+      Input: novatek-nvt-ts: replace generic i2c device id with specific IC variant
+      dt-bindings: input: document Novatek NVT touchscreen controller
+      Input: novatek-nvt-ts: add support for NT36672A touchscreen
 
-...
-
-> +  clock-frequency:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description: specifies eSDHC base clock frequency.
-> +
-> +  sdhci,wp-inverted:
-> +    $ref: /schemas/types.yaml#/definitions/flag
-> +    deprecated: true
-> +    description:
-> +      specifies that eSDHC controller reports
-> +      inverted write-protect state; New devices should use the generic
-> +      "wp-inverted" property.
-> +
-> +  sdhci,1-bit-only:
-> +    $ref: /schemas/types.yaml#/definitions/flag
-> +    deprecated: true
-> +    description:
-> +      specifies that a controller can only handle
-> +      1-bit data transfers. New devices should use the generic
-> +      "bus-width = <1>" property.
-> +
-> +  sdhci,auto-cmd12:
-> +    $ref: /schemas/types.yaml#/definitions/flag
-> +    description:
-> +      specifies that a controller can only handle auto CMD12.
-> +
-> +  voltage-ranges:
-> +    $ref: /schemas/types.yaml#/definitions/uint32-matrix
-> +    items:
-> +      items:
-> +        - description: specifies minimum slot voltage (mV).
-> +        - description: specifies maximum slot voltage (mV).
-> +
-> +  little-endian:
-> +    $ref: /schemas/types.yaml#/definitions/flag
-> +    description:
-> +      If the host controller is little-endian mode, specify
-> +      this property. The default endian mode is big-endian.
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-
-clock-frequency was required. Isn't it required now?
-
-> +
-> +allOf:
-> +  - $ref: sdhci-common.yaml#
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    mmc@2e000 {
-> +        compatible = "fsl,mpc8378-esdhc", "fsl,esdhc";
-> +        reg = <0x2e000 0x1000>;
-> +        interrupts = <42 0x8>;
-> +        interrupt-parent = <&ipic>;
-> +        /* Filled in by U-Boot */
-> +        clock-frequency = <0>;
-
-Please provide complete (final) example.
-
-> +        voltage-ranges = <3300 3300>;
-> +    };
+ .../bindings/input/touchscreen/novatek,nvt-ts.yaml | 62 +++++++++++++++++++
+ MAINTAINERS                                        |  1 +
+ drivers/input/touchscreen/novatek-nvt-ts.c         | 70 ++++++++++++++++++++--
+ drivers/platform/x86/x86-android-tablets/other.c   |  2 +-
+ 4 files changed, 128 insertions(+), 7 deletions(-)
+---
+base-commit: 6578aac6a270bd6deb9f9319b991dd430de263dd
+change-id: 20240518-nvt-ts-devicetree-regulator-support-ac9e49b78a16
 
 Best regards,
-Krzysztof
+-- 
+Joel Selvaraj <joelselvaraj.oss@gmail.com>
+
 
 
