@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-197795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A88B8D6F3D
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 11:59:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 29B478D6F47
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 12:09:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A96D1C21013
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 09:59:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B64D1C20F11
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 10:09:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4034F14EC42;
-	Sat,  1 Jun 2024 09:59:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6A0314EC44;
+	Sat,  1 Jun 2024 10:09:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i+RyA/S1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NYo6EkAv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DCC780635;
-	Sat,  1 Jun 2024 09:59:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBB2F14EC40;
+	Sat,  1 Jun 2024 10:09:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717235984; cv=none; b=WRkvgsr0UxeTGMA/KkDFvBBAdqeiGeIBdCah5EK4LfhQktwYoJb6yeO4Isa1hc60T5ID7SeJk4t4jKZloSfhwuBzlFq9Tj5qY/FFarSyYCCkWaNyC5m8ebZEdZTxN2NwziOYc+YKBbl7fIE2wAA0UrCwLOrFVWvQD4DVqXfP8ZQ=
+	t=1717236552; cv=none; b=DIxDFDSnU99jijlM4o294DIBIzT9V6qA+xoiLv4gQytixpOVKDdNP8d96ixvPdVk96JHN9wtuQ3j+UnHFh2a+Kyxw5cWPblcCBXAFSSpBUoIC4Jbla4G1vBKToG+SW3KB8ppFdeLXaK3Nu128TprvNfbGpU9OMrJuzJUevicyO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717235984; c=relaxed/simple;
-	bh=9u8gq+9PyBB4mSrF7hivzYp+QdvvifwLDjqpZQOf3W0=;
+	s=arc-20240116; t=1717236552; c=relaxed/simple;
+	bh=eg7kSV+oZNUijIr+n8b0PdQe/EUyo6Zlq8g8R/fM6rk=;
 	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
-	 Cc:Message-ID:Date; b=aplNdBFqtvx+AzmfeYzqpW0Ng8UP4dCHNHjRVTN+llojHWZ6EPPiKszhgzsX5RNwF7KCRIih66Iad+izt1WTzTHQDbvMDGClGu6w+WjWb4wSlDgb9ZbcaA+f8bikuGkdO5QhvgRQJWW+Ro7L9WzqeoXigYJBB6btb5FREV3yxOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i+RyA/S1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95DF7C116B1;
-	Sat,  1 Jun 2024 09:59:42 +0000 (UTC)
+	 Cc:Message-ID:Date; b=mfRWN2vc0FAupYmj8tlya30PCowC3JSDbwTgSE7iJmkPYuDWzx5zp/4yZQpo/CQAQ4bSLnQF4razuoEweMbyO+DHIhv+zOedQRHr3cte3DExqzusx9OCSY1FRYW+oPXIBQ4RzWW8/eO6htBvDMSxvyEak3DE917HW4HdR+fxcFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NYo6EkAv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC8D1C116B1;
+	Sat,  1 Jun 2024 10:09:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717235984;
-	bh=9u8gq+9PyBB4mSrF7hivzYp+QdvvifwLDjqpZQOf3W0=;
+	s=k20201202; t=1717236551;
+	bh=eg7kSV+oZNUijIr+n8b0PdQe/EUyo6Zlq8g8R/fM6rk=;
 	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-	b=i+RyA/S1DiRdlPVFTlIAzT+fVvin1ANRNpleEHEbE7K65NxZY7z3ENqBZv+NU2Rna
-	 t8IzrksliUvBMiMQZpCbG1WF4ex+3nVrRSwVA1QX+3XtscaMzkXdUpnH0rpSHfvjg3
-	 LIu4OMyXdYUTMKMRVbek+voBvyLcaLitfHpQvuPrXI9tiZfBOg9q3SE190i33ENFAp
-	 ZGPhmzdFZ6Ozq80w+m2b2xwEqd3vH7E+qKtCx5qvta6BU0LwIZXqr9M1W4wQG92rVW
-	 5Q+MegA0k09yHs27FZm9cHbG9vSN9ASysBB86xIgsoakF9ptEDaNwkG3wEzaaz7y4d
-	 pIHHsobG+7T/A==
+	b=NYo6EkAvZo0JzdwSsvsSMHY2GLZLqVDnuQ6e7WxF6HW0DjhhCYNBtlZr1AJYhfZRV
+	 wlII111ot1aUIcc04aO6cUqarzHFyLnxzYAJUIIW2EHngyaC+PJ96Mro7WG/tA7kQt
+	 Rt4RyTkOcwBKV8UGugO5ionsNb/pc7OY7wIpABtdxTHm0idw520vQfjJbZWfrOOKu6
+	 LOri+nJsX2VAaaSYbbCoQycCCDWT2/zwW2ugQnsraHaGyl1L83vpwfqIQCXAuEuRfX
+	 yD3v6zrjJ1BpLMH9aRqWnvHkUKAnu7B8SKyPm+jJuCH4MA6YbKC6UF33cestpSK4ax
+	 XTpnELiEv7k/w==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -47,58 +47,53 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH wireless 1/3] Revert "wifi: wilc1000: convert list
- management to RCU"
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v2] wifi: brcm80211: use sizeof(*pointer) instead of
+ sizeof(type)
 From: Kalle Valo <kvalo@kernel.org>
-In-Reply-To: <20240528-wilc_revert_srcu_to_rcu-v1-1-bce096e0798c@bootlin.com>
-References: <20240528-wilc_revert_srcu_to_rcu-v1-1-bce096e0798c@bootlin.com>
-To: =?utf-8?q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
-Cc: linux-wireless@vger.kernel.org, Ajay Singh <ajay.kathat@microchip.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Dan Carpenter <dan.carpenter@linaro.org>, linux-kernel@vger.kernel.org,
- =?utf-8?q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
+In-Reply-To: 
+ <AS8PR02MB7237FF1C2E880D1231684D708BF02@AS8PR02MB7237.eurprd02.prod.outlook.com>
+References: 
+ <AS8PR02MB7237FF1C2E880D1231684D708BF02@AS8PR02MB7237.eurprd02.prod.outlook.com>
+To: Erick Archer <erick.archer@outlook.com>
+Cc: Arend van Spriel <arend.vanspriel@broadcom.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Ulf Hansson <ulf.hansson@linaro.org>,
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ Yajun Deng <yajun.deng@linux.dev>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Alan Stern <stern@rowland.harvard.edu>, Dmitry Antipov <dmantipov@yandex.ru>,
+ Johannes Berg <johannes.berg@intel.com>, Arnd Bergmann <arnd@arndb.de>,
+ Jonas Gorski <jonas.gorski@gmail.com>,
+ Artem Chernyshev <artem.chernyshev@red-soft.ru>,
+ Kees Cook <keescook@chromium.org>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Justin Stitt <justinstitt@google.com>,
+ Erick Archer <erick.archer@outlook.com>, linux-wireless@vger.kernel.org,
+ brcm80211@lists.linux.dev, brcm80211-dev-list.pdl@broadcom.com,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
 User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
-Message-ID: <171723598053.967328.11354175525825246331.kvalo@kernel.org>
-Date: Sat,  1 Jun 2024 09:59:42 +0000 (UTC)
+Message-ID: <171723654505.1034023.720377583197621246.kvalo@kernel.org>
+Date: Sat,  1 Jun 2024 10:09:06 +0000 (UTC)
 
-Alexis Lothoré <alexis.lothore@bootlin.com> wrote:
+Erick Archer <erick.archer@outlook.com> wrote:
 
-> This reverts commit f236464f1db7bea80075e6e31ac70dc6eb80547f
+> It is preferred to use sizeof(*pointer) instead of sizeof(type)
+> due to the type of the variable can change and one needs not
+> change the former (unlike the latter). This patch has no effect
+> on runtime behavior.
 > 
-> Commit f236464f1db7 ("wifi: wilc1000: convert list management to RCU")
-> replaced SRCU with RCU, aiming to simplify RCU usage in the driver. No
-> documentation or commit history hinted about why SRCU has been preferred
-> in original design, so it has been assumed to be safe to do this
-> conversion.
-> Unfortunately, some static analyzers raised warnings, confirmed by runtime
-> checker, not long after the merge. At least three different issues arose
-> when switching to RCU:
-> - wilc_wlan_txq_filter_dup_tcp_ack is executed in a RCU read critical
->   section yet calls wait_for_completion_timeout
-> - wilc_wfi_init_mon_interface calls kmalloc and register_netdevice while
->   manipulating a vif retrieved from vif list
-> - set_channel sends command to chip (and so, also waits for a completion)
->   while holding a vif retrieved from vif list (so, in RCU read critical
->   section)
+> At the same time remove some redundant NULL initializations.
 > 
-> Some of those issues are not trivial to fix and would need bigger driver
-> rework. Fix those issues by reverting the SRCU to RCU conversion commit
-> 
-> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Closes: https://lore.kernel.org/linux-wireless/3b46ec7c-baee-49fd-b760-3bc12fb12eaf@moroto.mountain/
-> Fixes: f236464f1db7 ("wifi: wilc1000: convert list management to RCU")
-> Signed-off-by: Alexis Lothoré <alexis.lothore@bootlin.com>
+> Acked-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+> Signed-off-by: Erick Archer <erick.archer@outlook.com>
 
-3 patches applied to wireless.git, thanks.
+Patch applied to wireless-next.git, thanks.
 
-ebfb5e8fc8b4 Revert "wifi: wilc1000: convert list management to RCU"
-3596717a6fbd Revert "wifi: wilc1000: set atomic flag on kmemdup in srcu critical section"
-596c195680dc wifi: wilc1000: document SRCU usage instead of SRCU
+dcb77f854ae0 wifi: brcm80211: use sizeof(*pointer) instead of sizeof(type)
 
 -- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20240528-wilc_revert_srcu_to_rcu-v1-1-bce096e0798c@bootlin.com/
+https://patchwork.kernel.org/project/linux-wireless/patch/AS8PR02MB7237FF1C2E880D1231684D708BF02@AS8PR02MB7237.eurprd02.prod.outlook.com/
 
 https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
