@@ -1,147 +1,121 @@
-Return-Path: <linux-kernel+bounces-197788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEBBF8D6F27
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 11:32:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C57088D6F2B
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 11:34:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A68E0283670
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 09:32:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BE1B2853C1
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 09:34:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C86F614EC42;
-	Sat,  1 Jun 2024 09:32:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46D0E14EC48;
+	Sat,  1 Jun 2024 09:34:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VHOLZ8D/"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="dxwOQmNH"
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C85AD6AAD;
-	Sat,  1 Jun 2024 09:32:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE7AA14E2EC
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Jun 2024 09:34:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717234359; cv=none; b=hpaZ/ws3gYK4y8t8H41TI04PrXvhydju5dTPG++UIHbQRcHK+RN+6AsuKP7AC0LHH7C1hBldC2j748TgGCKrv2kfs7MFaBRXz8+FziW2OsHnhf5ixvlCG+ihuLSBFh/KN/1aAogLj9wQTTei7Bed/4DEUolYmeAEknXPid7pj/g=
+	t=1717234456; cv=none; b=INo7Yzatx333hyB5C/oRyeVQhTILk532/djOeI9n1CURHtWmc3kYE61wUvM3kcoz9dIpm3w5lzF5Od2j+CX6haKXnIuk2Wbv8rvsaRKz3uurhJ0UeM/6nmgWOMukg9h4w7bkQ0T6inuRJJHcTElkxjuKOBaBc38j9jh0NI3nYDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717234359; c=relaxed/simple;
-	bh=8qeuq/9NyK9dd0k3Ody3dB9SOCFgZ5HrBOGAyz4hQwo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=e15RouO2EVSVxKGZ2XqhXIok4YKQbcFeCQRGxueUhniUR1u/TExvAsQVAdBRc/5wFFM9C80hW67Nn+r/KvlgdJ03sxJcfQzTzY2Ah75IRX8LvmmoHKFFWpCyJnSuP5C6zHYG1+YBaT8cR2idxcEMePkLDDQsWbZ+PT694NMybR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VHOLZ8D/; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1f62fae8c3cso17325205ad.3;
-        Sat, 01 Jun 2024 02:32:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717234357; x=1717839157; darn=vger.kernel.org;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=WfDan29VxVHZmK0WASWdz2aN4PE4yQZdFHSJZf8M3Io=;
-        b=VHOLZ8D/0MKfMb5/9DzrnPU4zL+fMrFJPRGS0Y6qh4JeOtR2cJMjwtDR2x16H52DuB
-         LgZuzG+IX0/awRRIBFQhoHO5lzI8zpClqokIZBFUcCW9CsTZu/cHJnnrxWaaIjnXoS2B
-         kCK8M/tSVqQ+buIRmE4aydUALXc8Mi/szGmrJnDAqAYgRSfS47WgtuxheWDBYt7Is380
-         RqplniEn1zRs4TVbP3vEnmcdEFJq9uiyQgO42d71NLuH38z3m7Xtu27Ee9VIJh+E908x
-         rvZSoQEuKQwzZRiG0FFqiWadXD79YfsmCs6LhpnGM6r8FQhY+sCt/Tx22KPg6IdASiTB
-         UVYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717234357; x=1717839157;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WfDan29VxVHZmK0WASWdz2aN4PE4yQZdFHSJZf8M3Io=;
-        b=sMfo8sAEXFtVhj84AfQWvwOpIrxBRQD18wlDsb1zSMtklMtNstNvOFjjtGLNG1STQi
-         7D2uxDRq45df/zH9RGs1ryBTHM5FIWap/4vHngaWZ7WeGYbP5f3ghFvdqMtvd1kFjA4a
-         6ZQGFDkE9sQPXbJS5uWPfpoqqEiPHVtIccbsaydyhWEcbR0ue6vE4l8pA/OmsYTll5p5
-         RyYaelWP8pZyMdTAyM92YrhV3kys++d0ZR7Or9qYmmRFoYLanWPXfwUMhGifQGHg+Trf
-         dee7OEe/rkKrNrQ0/NP0rBaVjYY7Om0l6MkfnKVMxQAPIYxf14Dl3VEsMV5VOtAUnzkP
-         jLwg==
-X-Forwarded-Encrypted: i=1; AJvYcCUtU2kTDp4c+Sw7TqLvf43Qu2g0ZjmVHg6top6oaoXPCHFxvhK0OSTRnVOMOCAAVUsJdCDHFDgxqqgHh+IXUz/FQfkvUzCaOQuclTkCq+npgIb1x493s+xClBGIgpeESjknEn/uzg7N
-X-Gm-Message-State: AOJu0Ywqz+ENoMp4T0cGj1FkXEQl92OgLZEoHVXi9jr7h0KK42kis88N
-	uYPdApCrZjD4meKulfLo/HFDYymOc/XtX9Dhe8yL45WJySoG51lt
-X-Google-Smtp-Source: AGHT+IF2Y/lvJC2CHSbJ8VM+i+/4AWA1oMbbO9ctIjt+vHM9XrZrC5hZywfN/zjx0YrFt+wiVtSrww==
-X-Received: by 2002:a17:903:22c3:b0:1f4:bb5c:b7bd with SMTP id d9443c01a7336-1f6370b8aa1mr45185795ad.61.1717234357015;
-        Sat, 01 Jun 2024 02:32:37 -0700 (PDT)
-Received: from localhost ([219.144.1.218])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6323feaa0sm30271675ad.230.2024.06.01.02.32.36
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 01 Jun 2024 02:32:36 -0700 (PDT)
-From: joswang <joswang1221@gmail.com>
-To: Thinh.Nguyen@synopsys.com
-Cc: gregkh@linuxfoundation.org,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	joswang <joswang@lenovo.com>
-Subject: [PATCH 2/2] usb: dwc3: core: Workaround for CSR read timeout
-Date: Sat,  1 Jun 2024 17:32:32 +0800
-Message-Id: <20240601093232.52319-1-joswang1221@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20240601092646.52139-1-joswang1221@gmail.com>
-References: <20240601092646.52139-1-joswang1221@gmail.com>
+	s=arc-20240116; t=1717234456; c=relaxed/simple;
+	bh=PDIhnFKslvYdvVWIZtqzQUmt09I6mMJxyq/3liyAGkA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AjP9p+spEvFSsHeYVXnr6wHGxXw6jJ+On5eDDSt8wV2mbPxZshJBatjhIRolDgWFMaiGU3BZ0YXpyYXdqVav3hDufyubB260qFc1yZTD4HK7pNSlXJZVDQo9r7MHEaywxO3aWKLIJoQYTrNvWMJjnl+7kRpxnGAeAVEBDY5UZ9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=dxwOQmNH; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from macsyma.thunk.org (unn-149-40-50-25.datapacket.com [149.40.50.25] (may be forged))
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 4519XSrK015047
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 1 Jun 2024 05:33:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1717234413; bh=GZ0408TmIABRPqW2q8FHPsPmzLEavYEG/LOb2+cRwi4=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=dxwOQmNHGPD6R3ZrzWqaLbnYu5Bbbju7WhHtcVu/4qC5cef3PAcsJcrZhDHtHuNSo
+	 /BXQLgZwEGVWtOIkKNmwQEZRgME27WWPqTnlbNee2X5ucRMtEeA6ghuvsjrXupgQ9G
+	 46l5V5Tpa5ASaqfz40rmMEiCR8VMpUs+RxyeCSv6PEAsyu6mCjXSOurp9GKRLdgHA1
+	 Ezf5/WcPUMX7m6/MJLAajKA75JlXTDMCqxKx2IfgBQ2yqcnn+Zy4SPPdcUQWJd47Us
+	 g7q3sXLnOVWHY6WOBs/eDkygQshB0E4AuTK0hB37bTiksFYnZhmeRPZ4pWCtw8tVKA
+	 1ptBxtc1XtnRA==
+Received: by macsyma.thunk.org (Postfix, from userid 15806)
+	id D21FA340FB3; Sat, 01 Jun 2024 11:33:25 +0200 (CEST)
+Date: Sat, 1 Jun 2024 11:33:25 +0200
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: John Garry <john.g.garry@oracle.com>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, David Bueso <dave@stgolabs.net>,
+        lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-mm <linux-mm@kvack.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org,
+        catherine.hoang@oracle.com
+Subject: Re: [LSF/MM/BPF TOPIC] untorn buffered writes
+Message-ID: <20240601093325.GC247052@mit.edu>
+References: <20240228061257.GA106651@mit.edu>
+ <9e230104-4fb8-44f1-ae5a-a940f69b8d45@oracle.com>
+ <Zk5qKUJUOjGXEWus@bombadil.infradead.org>
+ <bf638db9-c4d3-44bd-a92c-d36e3d95adb6@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bf638db9-c4d3-44bd-a92c-d36e3d95adb6@oracle.com>
 
-From: joswang <joswang@lenovo.com>
+On Thu, May 23, 2024 at 12:59:57PM +0100, John Garry wrote:
+> 
+> That's my point really. There were some positive discussion. I put across
+> the idea of implementing buffered atomic writes, and now I want to ensure
+> that everyone is satisfied with that going forward. I think that a LWN
+> report is now being written.
 
-DWC31 version 2.00a have an issue that would cause
-a CSR read timeout When CSR read coincides with RAM
-Clock Gating Entry.
+I checked in with some PostgreSQL developers after LSF/MM, and
+unfortunately, the idea of immediately sending atomic buffered I/O
+directly to the storage device is going to be problematic for them.
+The problem is that they depend on the database to coalesce writes for
+them.  So if they are doing a large database commit that involves
+touching hundreds or thousands of 16k database pages, they today issue
+a separate buffered write request for each database page.  So if we
+turn each one into an immediate SCSI/NVMe write request, that would be
+disastrous for performance.  Yes, when they migrate to using Direct
+I/O, the database is going to have to figure out how to coalesce write
+requests; but this is why it's going to take at least 3 years to make
+this migration (and some will call this hopelessly optimistic), and
+then users will probably wait another 3 to 5 years before they trust
+that the database rewrite to use Direct I/O will get it right and
+trust their enterprise workloads to it....
 
-This workaround solution disable Clock Gating, sacrificing
-power consumption for normal operation.
+So I think this goes back to either (a) trying to track which writes
+we've promised atomic write semantics, or (b) using a completely
+different API that only promises "untorn writes with a specified
+granulatity" approach for the untorn buffered writes I/O interface,
+instead in addition to, or instead of, the current "atomic write"
+interface which we are currently trying to promulate for Direct I/O.
 
-Signed-off-by: joswang <joswang@lenovo.com>
----
- drivers/usb/dwc3/core.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+Personally, I'd advocate for two separate interfaces; one for "atomic"
+I/O's, and a different one for "untorn writes with a specified
+guaranteed granularity".  And if XFS folks want to turn the atomic I/O
+interface into something where you can do a multi-megabyte atomic
+write into something that requires allocating new blocks and
+atomically mutating the file system metadata to do this kind of
+atomicity --- even though the Database folks Don't Care --- God bless.
 
-diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-index 3a8fbc2d6b99..1df85c505c9e 100644
---- a/drivers/usb/dwc3/core.c
-+++ b/drivers/usb/dwc3/core.c
-@@ -978,11 +978,22 @@ static void dwc3_core_setup_global_control(struct dwc3 *dwc)
- 		 *
- 		 * STAR#9000588375: Clock Gating, SOF Issues when ref_clk-Based
- 		 * SOF/ITP Mode Used
-+		 *
-+		 * WORKAROUND: DWC31 version 2.00a have an issue that would
-+		 * cause a CSR read timeout When CSR read coincides with RAM
-+		 * Clock Gating Entry.
-+		 *
-+		 * This workaround solution disable Clock Gating, sacrificing
-+		 * power consumption for normal operation.
- 		 */
- 		if ((dwc->dr_mode == USB_DR_MODE_HOST ||
- 				dwc->dr_mode == USB_DR_MODE_OTG) &&
- 				DWC3_VER_IS_WITHIN(DWC3, 210A, 250A))
- 			reg |= DWC3_GCTL_DSBLCLKGTNG | DWC3_GCTL_SOFITPSYNC;
-+		else if ((dwc->dr_mode == USB_DR_MODE_HOST ||
-+				dwc->dr_mode == USB_DR_MODE_OTG) &&
-+				DWC3_VER_IS(DWC31, 200A))
-+			reg |= DWC3_GCTL_DSBLCLKGTNG;
- 		else
- 			reg &= ~DWC3_GCTL_DSBLCLKGTNG;
- 		break;
-@@ -992,6 +1003,18 @@ static void dwc3_core_setup_global_control(struct dwc3 *dwc)
- 		 * will work. Device-mode hibernation is not yet implemented.
- 		 */
- 		reg |= DWC3_GCTL_GBLHIBERNATIONEN;
-+
-+		/*
-+		 * WORKAROUND: DWC31 version 2.00a have an issue that would
-+		 * cause a CSR read timeout When CSR read coincides with RAM
-+		 * Clock Gating Entry.
-+		 *
-+		 * This workaround solution disable Clock Gating, sacrificing
-+		 * power consumption for normal operation.
-+		 */
-+		if ((dwc->dr_mode == USB_DR_MODE_HOST ||
-+		     dwc->dr_mode == USB_DR_MODE_OTG) && DWC3_VER_IS(DWC31, 200A))
-+			reg |= DWC3_GCTL_DSBLCLKGTNG;
- 		break;
- 	default:
- 		/* nothing */
--- 
-2.17.1
+But let's have something which *just* promises the guarantee requested
+by the primary requesteres of this interface, at least for the
+buffered I/O case.
 
+Cheers,
+
+						- Ted
 
