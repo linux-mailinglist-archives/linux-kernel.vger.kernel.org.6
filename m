@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-197927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78A9D8D70D5
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 17:19:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 603BE8D70D8
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 17:22:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9C551C20FE7
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 15:19:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 929391C21029
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 15:22:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 750EA1527AF;
-	Sat,  1 Jun 2024 15:19:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72480152DF5;
+	Sat,  1 Jun 2024 15:22:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dZQ4r/sS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iNsQ5pJH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA88D10949;
-	Sat,  1 Jun 2024 15:19:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABDEF14EC58;
+	Sat,  1 Jun 2024 15:22:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717255166; cv=none; b=QnlsyKEfqL7d3vQwcC40oxiqVd02CyAxfFXbGMB8GK3Up03Gwqei2Wdq+8zRfOQ99VbIBrVclVksHr18Ws5e1p5p3yIANZEutjPjhLA2kEoa3VNYQhvvMIjcsDDRq59CsiqrlGLiC8fU7edxhdXFngF3JrnmzDXxfKYijouRh1g=
+	t=1717255346; cv=none; b=eNnuhiYw71b4EXUM5Cw0lqzoYLkbfdRmrPV6PnexD+lbEaRefyvWtRSS+lL4oMGYQe08E9RNDBks1Nz2v09OO4qluXdjZbGFcTcB4qux9Qpv69iNJFKpC1BywHSTSCSMRZ8OscdZWcfMU2N2YUkth6KxpJxYtgBuo1GFEFVJBzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717255166; c=relaxed/simple;
-	bh=xhl4m/sGwLQwos4ljI30y0Ocr/Ljr5iV3f1lw4UeoBE=;
+	s=arc-20240116; t=1717255346; c=relaxed/simple;
+	bh=d1fhBJMNp7LfOS3u+BYRG62udbvv8i/BuoCejdIOb4E=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pmy3jKe5gzpJy4mdiHTcUnM8jjT4q0kjrh/GAhsF+cQK1Y93w9HT7LSQaqSBe9VeclEVsnpnPbJPVmWg2LLcL/CxGg2cx/jHQQlsMz1Dp0fp15iucIgR5hc98b0WsM8KiCPGwTJC90m6fKAscww/SBLYXd6a71/GJE+O6LmxuAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dZQ4r/sS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E73A7C116B1;
-	Sat,  1 Jun 2024 15:19:22 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=pOU1SjT/YmAB8v4Z/yBLvnUrCmk1xEWYsMAcEl1UrS39U0Duuu49JAv2+8S3mhdpXLs5HTyjDDNxPtOZrkrX9j5cppqO2zIOdfgqLA1ShteegB98aVRWVMjhlOvAQkzxUMK0OeIKJTYdYGp9cUAbKjcry1+NHLkUlb7WLvJkT+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iNsQ5pJH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 635BFC116B1;
+	Sat,  1 Jun 2024 15:22:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717255166;
-	bh=xhl4m/sGwLQwos4ljI30y0Ocr/Ljr5iV3f1lw4UeoBE=;
+	s=k20201202; t=1717255346;
+	bh=d1fhBJMNp7LfOS3u+BYRG62udbvv8i/BuoCejdIOb4E=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=dZQ4r/sSYpGrKhYoene0oFevA3igKq5BlaKGmZRaEzBluv+UKt8E70iQG1iFdz2hy
-	 Y1EIjbDdEwe0NmPyAcNDlfHS8R6/TOJp+RIsAoHvN14IP4WuOaQGbJGXOGY9TIh6W7
-	 cbEhcj29ZWsjlNYg0iYn9iIwX+rBFhH6RhoDksxk14lJKxeX6/52xJptqSdBYUqkXU
-	 eIHDqmjur522u+kIamDnxEhb9mIauYxNGjKFfXiadvkpO7HgOFt5sg+c13tDciLM7O
-	 0jye8J30uvynaG0SK1PWSabewf4dRSBTI+HC9p5c6bja3LJkS4IQ8NhxymUSVm4Cf2
-	 WClzSviCzGxaw==
-Message-ID: <30aabfb2-14b6-4064-8c34-32eb43bd7d49@kernel.org>
-Date: Sat, 1 Jun 2024 17:19:20 +0200
+	b=iNsQ5pJHLNaFmvGOIzJNrxIfcRRUKN1Lk0r522q0/NyLvReE8u8xIyiNOCAuh9W4r
+	 GuzKgphlTs7UbhDk9pAgVkXBVaq9L372gBV8arJwEuh8OR8C5G6T+cvlvrH9vDxwA8
+	 RDVnsXe7P3cjkDNjnDniTxHwkvIk8NDwW9Vti4mgmlrU25bDjH4+nXa0byeP3T9brr
+	 Vd1rDj+kS1wi4tKvEGaRI71SeNAsC18BS89P2Vh99EZJPxcv5DSZQwh6ctcaAKOWgy
+	 qhRz2cTZOUsPFbNeRIXaBlUrOh//LdsMblAHPnJqktvObb8UQgpJrpQcltV92WDJ6V
+	 CJGznVzi4Iumw==
+Message-ID: <fc09ed1b-a0ce-4540-b197-d77dff7a63c1@kernel.org>
+Date: Sat, 1 Jun 2024 17:21:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,16 +49,16 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/4] dt-bindings: trivial-devices: Add jedec,spd5118
-To: Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org
-Cc: devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
- Armin Wolf <W_Armin@gmx.de>, =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?=
- <linux@weissschuh.net>, =?UTF-8?Q?Ren=C3=A9_Rebe?= <rene@exactcode.de>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>
-References: <20240531230556.1409532-1-linux@roeck-us.net>
- <20240531230556.1409532-2-linux@roeck-us.net>
+Subject: Re: [PATCH 1/2] dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy:
+ Document the X1E80100 QMP PCIe PHY Gen4 x4
+To: Abel Vesa <abel.vesa@linaro.org>, Vinod Koul <vkoul@kernel.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: Johan Hovold <johan@kernel.org>, linux-arm-msm@vger.kernel.org,
+ linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240531-x1e80100-phy-add-gen4x4-v1-0-5c841dae7850@linaro.org>
+ <20240531-x1e80100-phy-add-gen4x4-v1-1-5c841dae7850@linaro.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -104,19 +104,18 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240531230556.1409532-2-linux@roeck-us.net>
+In-Reply-To: <20240531-x1e80100-phy-add-gen4x4-v1-1-5c841dae7850@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 01/06/2024 01:05, Guenter Roeck wrote:
-> Add bindings for the SPD hub present in DDR5 modules.
-> (https://www.jedec.org/standards-documents/docs/jesd300-5b01).
+On 31/05/2024 18:06, Abel Vesa wrote:
+> The PCIe 6th instance from X1E80100 can be used in both 4-lane mode or
+> 2-lane mode. Document the 4-lane mode as a separate compatible.
 > 
-> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-> ---
-> v3: Drop explicit bindings file; add binding to trivial devices
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
 Best regards,
 Krzysztof
