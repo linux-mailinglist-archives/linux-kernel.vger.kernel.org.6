@@ -1,190 +1,131 @@
-Return-Path: <linux-kernel+bounces-197659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EEE58D6D94
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 04:52:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 830A68D6D95
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 04:56:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 717CD1C2139F
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 02:52:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72C221C213BA
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 02:56:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95F83101E2;
-	Sat,  1 Jun 2024 02:52:02 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DEFA8F6D;
+	Sat,  1 Jun 2024 02:55:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CCcb9zpi"
+Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E350B67F;
-	Sat,  1 Jun 2024 02:51:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30D744A1C
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Jun 2024 02:55:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717210322; cv=none; b=pOKkqj/n/o3dpe3p/O8ZLPXG50ArPyHLvQ9g9AO2nGNoXlxUtX2twkIyKIzgsgCoMMEHFe/ivcqoQ4VSvadXoFVS6CoscZ+xuKwRCobd6DkO/G3luYsFtxmwpmQ/JiYQl/pdc0lj0KhEToMUPShYixklYAOrMpACGHuC+Pio+u4=
+	t=1717210555; cv=none; b=KYb5F7yRniKQasZEj1MPHFjLGVvVU804fcM4HuzAlRbf6Kb0WeGuoFIoXZGJJifIhBMoDY6nj0aGMde0eZjfCwEI6Kn/y2H2MoKsWHlUTfLb9C8/WJOtIEGrrTiMPOENfbNPplVusRgPecO7s+UWiNHQPrSl0kxIKfYMc7AM5fo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717210322; c=relaxed/simple;
-	bh=6B63JBkd1Kbgp5QxzejuH/3W+a00kkhWko8c7claGxU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PqdD1eD9uF0ihEJf1smUxH3BpVE8xxkwVgZyqp3R1NTDqy4mTKAuIM54ix8xCtF1koKj0ByXEGLA/tFQZspS03uTo6Yy+6MeAFsYtJEEOTyDGPGgDssnoFjxQujbFT+bTZkcKzdNk7/HGfc4cYlK8uU0hsGsb6YWGUbwsDuVvRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4Vrktn3KSwz1S8qj;
-	Sat,  1 Jun 2024 10:48:01 +0800 (CST)
-Received: from kwepemi500025.china.huawei.com (unknown [7.221.188.170])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3E96F18006C;
-	Sat,  1 Jun 2024 10:51:52 +0800 (CST)
-Received: from localhost.huawei.com (10.90.30.45) by
- kwepemi500025.china.huawei.com (7.221.188.170) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Sat, 1 Jun 2024 10:51:51 +0800
-From: Chenghai Huang <huangchenghai2@huawei.com>
-To: <herbert@gondor.apana.org.au>, <davem@davemloft.net>
-CC: <linux-kernel@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
-	<shenyang39@huawei.com>, <liulongfang@huawei.com>, <qianweili@huawei.com>
-Subject: [PATCH V3 2/2] crypto: hisilicon/zip - optimize the address offset of the reg query function
-Date: Sat, 1 Jun 2024 10:51:50 +0800
-Message-ID: <20240601025150.1660826-3-huangchenghai2@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20240601025150.1660826-1-huangchenghai2@huawei.com>
-References: <20240601025150.1660826-1-huangchenghai2@huawei.com>
+	s=arc-20240116; t=1717210555; c=relaxed/simple;
+	bh=lFDHCFuHx/4ELXBrao5r8KeIjTe8vc6reOF0OlBdfwk=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=Q4iCyhH2fUnY5Rj329RYs7ZaOF3PAJLEqCs0kfRnufiTejwcVMHUj7bohkd7IVBjioeNsPxtCRqk1qQnwI1fRdczyoXgtDYc93usLa+1VSNRWC+6hO4Ksm01a6R5p8d/XdQ6FBC+8WU1jrXcRn1Ag/T9fEEhn9sZsjXxxCcEMcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CCcb9zpi; arc=none smtp.client-ip=209.85.167.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-3d1d78b7418so1575753b6e.1
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2024 19:55:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717210553; x=1717815353; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6cuT18JOZza/4e5QCGWHwOGAqlrdJNqLc1S/ZVkgtOY=;
+        b=CCcb9zpiPkRvth5yak9vY+F8MD1InuLW+TxmzK40AgMhXkJS6G+EcIZkV6/VkvFuVu
+         cd0rLjxipTjRs09VYuFou98h2VzTsSoMQ8hdo6HHDzBM/hPofdEf9dfLt6OOPKiuvkKS
+         5+8jdrq0bScugh9KrhzNXC0k6jEn0Cw3uy/TjCRwoxKbpU2Dxt3iL159eGqrbcvK5zaH
+         q84jc6NAOUWqU17lqPSt27vWrj8uBAb1pK53jjLDKuk5chV/HxjLp6lqxqW1YOxHWz5q
+         OI/c1U+nbp6mhZjEJutsgkX4Y47pn4+CuxlAZ4ut2Je4AM1Xq3mjWMCI73FOJlONsY8w
+         JRFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717210553; x=1717815353;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6cuT18JOZza/4e5QCGWHwOGAqlrdJNqLc1S/ZVkgtOY=;
+        b=AijLhsJvg+aYsdqgBDQ7z7ym+e/4VYrPlTlB8cr09riCHQmSAJ7CdE6IOlOCQsVpa6
+         VjkWAHc+G5qNolkzWsP4ij+s+ACJ1B0BMz5/fKOxnekXxEUPZG+Y1ttdUUjheh1Vdkkv
+         96FoM1Nj64TLhT2THx8kh9KxIlz7FuOd+ujkNTt+5omk/gIFeXnUzVyxXU17IfGUJ3ZO
+         tD1oYzR/B/r650QY1pEuXT+X7irXXiW53FmLiquV9DDKd5Qx7xVrZuqhWkf4kV/jb88Z
+         AG1L3R2ByygSTp4m6OnMMuXnZ2KRsUnC6x4+KxXm1a3niushT5Nd8oSvJd3/nwlXRP8m
+         XXUA==
+X-Forwarded-Encrypted: i=1; AJvYcCWTAxYmUMQMn93h6090Q9gVZxaR/8BiA50vDweQ7dV0xLQIbp0WJNYm8sl14T7abTn5v4RL86RH/eBA/gG+AYgT3WoCfrpSYSH4QEQh
+X-Gm-Message-State: AOJu0Yy7yl7t5rsEMLyGS/CJnj6XWZPMCVi3YfOOolY4yIjsQRn106SE
+	FOJOZ70YE6BuzxYBQ5vJIdrTQbIP6GfUAzitwDRfP6FwZmpkT+Gm
+X-Google-Smtp-Source: AGHT+IFrOEgn2sLNc0d61WpIO9wZGaBK1cdMn0rPjsa2MBX+KCqZ7pFkGa07RP4vK6dSCwRJrb8JBg==
+X-Received: by 2002:a05:6808:b06:b0:3c8:4dcb:3d34 with SMTP id 5614622812f47-3d1e347668amr3484293b6e.7.1717210553073;
+        Fri, 31 May 2024 19:55:53 -0700 (PDT)
+Received: from localhost.localdomain ([180.69.210.41])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-70242b2effbsm2035817b3a.206.2024.05.31.19.55.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 May 2024 19:55:52 -0700 (PDT)
+From: Jung-JaeJoon <rgbi3307@gmail.com>
+X-Google-Original-From: Jung-JaeJoon <rgbi3307@naver.com>
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+Cc: Jung-JaeJoon <rgbi3307@gmail.com>,
+	maple-tree@lists.infradead.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] maple_tree: add mas_node_count() before going to slow_path in mas_wr_modify()
+Date: Sat,  1 Jun 2024 11:55:36 +0900
+Message-Id: <20240601025536.25682-1-rgbi3307@naver.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemi500025.china.huawei.com (7.221.188.170)
 
-Currently, the reg is queried based on the fixed address offset
-array. When the number of accelerator cores changes, the system
-can not flexibly respond to the change.
+From: Jung-JaeJoon <rgbi3307@gmail.com>
 
-Therefore, the reg to be queried is calculated based on the
-comp or decomp core base address.
+If there are not enough nodes, mas_node_count() set an error state via mas_set_err()
+and return control flow to the beginning.
 
-Signed-off-by: Chenghai Huang <huangchenghai2@huawei.com>
+In the return flow, mas_nomem() checks the error status, allocates new nodes,
+and resumes execution again.
+
+In particular,
+if this happens in mas_split() in the slow_path section executed in mas_wr_modify(),
+unnecessary work is repeated, causing a slowdown in speed as below flow:
+
+_begin:
+mas_wr_modify() --> if (new_end >= mt_slots[wr_mas->type]) --> goto slow_path
+slow_path:
+    --> mas_wr_bnode() --> mas_store_b_node() --> mas_commit_b_node() --> mas_split()
+    --> mas_node_count() return to _begin
+
+But, in the above flow, if mas_node_count() is executed before entering slow_path,
+execution efficiency is improved by allocating nodes without entering slow_path repeatedly.
+
+Signed-off-by: JaeJoon Jung <rgbi3307@gmail.com>
 ---
- drivers/crypto/hisilicon/zip/zip_main.c | 48 +++++++++++--------------
- 1 file changed, 20 insertions(+), 28 deletions(-)
+ lib/maple_tree.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/crypto/hisilicon/zip/zip_main.c b/drivers/crypto/hisilicon/zip/zip_main.c
-index 399b681ee423..e40d1539ba1e 100644
---- a/drivers/crypto/hisilicon/zip/zip_main.c
-+++ b/drivers/crypto/hisilicon/zip/zip_main.c
-@@ -37,7 +37,7 @@
- #define HZIP_QM_IDEL_STATUS		0x3040e4
+diff --git a/lib/maple_tree.c b/lib/maple_tree.c
+index 2d7d27e6ae3c..8ffabd73619f 100644
+--- a/lib/maple_tree.c
++++ b/lib/maple_tree.c
+@@ -4176,8 +4176,13 @@ static inline void mas_wr_modify(struct ma_wr_state *wr_mas)
+ 	 * path.
+ 	 */
+ 	new_end = mas_wr_new_end(wr_mas);
+-	if (new_end >= mt_slots[wr_mas->type])
++	if (new_end >= mt_slots[wr_mas->type]) {
++                mas->depth = mas_mt_height(mas);
++                mas_node_count(mas, 1 + mas->depth * 2);
++                if (mas_is_err(mas))
++                        return;
+ 		goto slow_path;
++        }
  
- #define HZIP_CORE_DFX_BASE		0x301000
--#define HZIP_CLOCK_GATED_CONTL		0X301004
-+#define HZIP_CORE_DFX_DECOMP_BASE	0x304000
- #define HZIP_CORE_DFX_COMP_0		0x302000
- #define HZIP_CORE_DFX_COMP_1		0x303000
- #define HZIP_CORE_DFX_DECOMP_0		0x304000
-@@ -48,6 +48,7 @@
- #define HZIP_CORE_DFX_DECOMP_5		0x309000
- #define HZIP_CORE_REGS_BASE_LEN		0xB0
- #define HZIP_CORE_REGS_DFX_LEN		0x28
-+#define HZIP_CORE_ADDR_INTRVL		0x1000
- 
- #define HZIP_CORE_INT_SOURCE		0x3010A0
- #define HZIP_CORE_INT_MASK_REG		0x3010A4
-@@ -269,28 +270,6 @@ static const u32 zip_pre_store_caps[] = {
- 	ZIP_DEV_ALG_BITMAP,
- };
- 
--enum {
--	HZIP_COMP_CORE0,
--	HZIP_COMP_CORE1,
--	HZIP_DECOMP_CORE0,
--	HZIP_DECOMP_CORE1,
--	HZIP_DECOMP_CORE2,
--	HZIP_DECOMP_CORE3,
--	HZIP_DECOMP_CORE4,
--	HZIP_DECOMP_CORE5,
--};
--
--static const u64 core_offsets[] = {
--	[HZIP_COMP_CORE0]   = 0x302000,
--	[HZIP_COMP_CORE1]   = 0x303000,
--	[HZIP_DECOMP_CORE0] = 0x304000,
--	[HZIP_DECOMP_CORE1] = 0x305000,
--	[HZIP_DECOMP_CORE2] = 0x306000,
--	[HZIP_DECOMP_CORE3] = 0x307000,
--	[HZIP_DECOMP_CORE4] = 0x308000,
--	[HZIP_DECOMP_CORE5] = 0x309000,
--};
--
- static const struct debugfs_reg32 hzip_dfx_regs[] = {
- 	{"HZIP_GET_BD_NUM                ",  0x00},
- 	{"HZIP_GET_RIGHT_BD              ",  0x04},
-@@ -807,6 +786,18 @@ static int hisi_zip_regs_show(struct seq_file *s, void *unused)
- 
- DEFINE_SHOW_ATTRIBUTE(hisi_zip_regs);
- 
-+static void __iomem *get_zip_core_addr(struct hisi_qm *qm, int core_num)
-+{
-+	u32 zip_comp_core_num = qm->cap_tables.dev_cap_table[ZIP_CLUSTER_COMP_NUM_CAP_IDX].cap_val;
-+
-+	if (core_num < zip_comp_core_num)
-+		return qm->io_base + HZIP_CORE_DFX_BASE +
-+			(core_num + 1) * HZIP_CORE_ADDR_INTRVL;
-+
-+	return qm->io_base + HZIP_CORE_DFX_DECOMP_BASE +
-+		(core_num - zip_comp_core_num) * HZIP_CORE_ADDR_INTRVL;
-+}
-+
- static int hisi_zip_core_debug_init(struct hisi_qm *qm)
- {
- 	u32 zip_core_num, zip_comp_core_num, i;
-@@ -831,7 +822,7 @@ static int hisi_zip_core_debug_init(struct hisi_qm *qm)
- 
- 		regset->regs = hzip_dfx_regs;
- 		regset->nregs = ARRAY_SIZE(hzip_dfx_regs);
--		regset->base = qm->io_base + core_offsets[i];
-+		regset->base = get_zip_core_addr(qm, i);
- 		regset->dev = dev;
- 
- 		tmp_d = debugfs_create_dir(buf, qm->debug.debug_root);
-@@ -920,13 +911,14 @@ static int hisi_zip_debugfs_init(struct hisi_qm *qm)
- /* hisi_zip_debug_regs_clear() - clear the zip debug regs */
- static void hisi_zip_debug_regs_clear(struct hisi_qm *qm)
- {
-+	u32 zip_core_num = qm->cap_tables.dev_cap_table[ZIP_CORE_NUM_CAP_IDX].cap_val;
- 	size_t i, j;
- 
- 	/* enable register read_clear bit */
- 	writel(HZIP_RD_CNT_CLR_CE_EN, qm->io_base + HZIP_SOFT_CTRL_CNT_CLR_CE);
--	for (i = 0; i < ARRAY_SIZE(core_offsets); i++)
-+	for (i = 0; i < zip_core_num; i++)
- 		for (j = 0; j < ARRAY_SIZE(hzip_dfx_regs); j++)
--			readl(qm->io_base + core_offsets[i] +
-+			readl(get_zip_core_addr(qm, i) +
- 			      hzip_dfx_regs[j].offset);
- 
- 	/* disable register read_clear bit */
-@@ -968,7 +960,7 @@ static int hisi_zip_show_last_regs_init(struct hisi_qm *qm)
- 	}
- 
- 	for (i = 0; i < zip_core_num; i++) {
--		io_base = qm->io_base + core_offsets[i];
-+		io_base = get_zip_core_addr(qm, i);
- 		for (j = 0; j < core_dfx_regs_num; j++) {
- 			idx = com_dfx_regs_num + i * core_dfx_regs_num + j;
- 			debug->last_words[idx] = readl_relaxed(
-@@ -1019,7 +1011,7 @@ static void hisi_zip_show_last_dfx_regs(struct hisi_qm *qm)
- 		else
- 			scnprintf(buf, sizeof(buf), "Decomp_core-%u",
- 				  i - zip_comp_core_num);
--		base = qm->io_base + core_offsets[i];
-+		base = get_zip_core_addr(qm, i);
- 
- 		pci_info(qm->pdev, "==>%s:\n", buf);
- 		/* dump last word for dfx regs during control resetting */
+ 	/* Attempt to append */
+ 	if (mas_wr_append(wr_mas, new_end))
 -- 
-2.33.0
+2.17.1
 
 
