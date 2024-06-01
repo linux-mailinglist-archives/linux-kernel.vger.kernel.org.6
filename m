@@ -1,102 +1,76 @@
-Return-Path: <linux-kernel+bounces-198018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB0058D7279
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 00:21:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B91788D727E
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 00:23:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B4031F21BE4
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 22:21:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C4FE1F219CF
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 22:23:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3926D481B4;
-	Sat,  1 Jun 2024 22:20:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ekUiqYeo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F0392E419;
-	Sat,  1 Jun 2024 22:20:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E2C12BAE8;
+	Sat,  1 Jun 2024 22:23:51 +0000 (UTC)
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6157A1C6BD;
+	Sat,  1 Jun 2024 22:23:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717280434; cv=none; b=ct7uJVPlFepP4bTqO+Y+7jzeWDRVpAIhl1ynhRZ137H0uACtmW9z7OU7keCs6Ly0GvzVpehkl9M1GSJJos8jHwPu2D/VbA8bXrIdGcdpFgi6aDOFxq+0y/6X6en3PohD7mlVLRKqMjczKep98CE48Jk8tu0Wn9vwEhQxIcWEUCQ=
+	t=1717280631; cv=none; b=ZGAfQ5LAmTz34NoyGycwmS4Ib0tVX2hD7udsyT3PoBTNmcIades+FMBLcXGwG1np+faisASLvNfLey6NwsAjDvsI30tJ+oKOYHNG9QkZo/4ZHmX/FRAlOvhOuzwyWBt/R905cJUbY1cm3QQ2UC2CxyM2emyfl06506AFiDI9yiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717280434; c=relaxed/simple;
-	bh=XjnMD6a0hUkG1KgGrbiFtD6v/4f1oiwyGF0enDh1n+k=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=Fr0rIpGNcG+RHD0jWrW/HFLv0w8SDWheZM88N/PwVfyk443KSybIiZAQEXNrNqhuwUWadxp7WsGbGXIIRYQkXBtUTUZ/JeFX9MKMkc2EoIftIb1CC6r0Y/Aeqqq/uZ4ZqIHHmcMfuJmsLk+QSBv7DqNauaH+ZEMQunaDAnVXCi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ekUiqYeo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 39B61C116B1;
-	Sat,  1 Jun 2024 22:20:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717280434;
-	bh=XjnMD6a0hUkG1KgGrbiFtD6v/4f1oiwyGF0enDh1n+k=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=ekUiqYeoHGfJo3C0gtOnWBgFwO5WDy79EAtDlmTBybfrdkz0BTrnaQqgS5DI6nHe+
-	 tr40bK8/gYmLq/3R+zknufiq/iO38+j8o1x/evOOX0w6y9u+E/OOHGn+O/yIS9gbe9
-	 eTqM/kyE5V7SljxiamDeR2UuVUJSQAds4yDhTTrk936UyFzbDmiTBnRccgWxFHG5Jx
-	 iRw4FhjkZS4UUMIQkP3k9hfDGXG7fL4qwjuTFOIi+wDWuT56fnGneKCfvjwHiu6TgH
-	 6H7+wnfvojc9m2RNeen6j1fnl/2eboAn6JCruSA9X4PgfDUALPipm0/lzhL/JdK83u
-	 eQGsv+oB0tN2w==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 2F3DFDEA716;
-	Sat,  1 Jun 2024 22:20:34 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1717280631; c=relaxed/simple;
+	bh=a2DEIn9JBgr/CBzEsnUbi8PgL8QTJbR6+n1UoaXTpVU=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=TmC3ElvkFC0oXMijhPmutGiHS02MzOFOV9CSNoA9Xg/bRL7BVFWn77eJ3lOGoDDyYWjvJQrRaJH5h1vxJRMgLlgdH8j1dGritLKI/zGU/xeBtypXznS1Hvi+J7B+k4AZiSNSexMfbvGsGtRRWMvxckrj3VAjvoh0iL6RAd5F/bs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+	id 1C9C592009C; Sun,  2 Jun 2024 00:23:40 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by angie.orcam.me.uk (Postfix) with ESMTP id 0E79192009B;
+	Sat,  1 Jun 2024 23:23:40 +0100 (BST)
+Date: Sat, 1 Jun 2024 23:23:39 +0100 (BST)
+From: "Maciej W. Rozycki" <macro@orcam.me.uk>
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>
+cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+    Serge Semin <fancer.lancer@gmail.com>, 
+    Daniel Lezcano <daniel.lezcano@linaro.org>, 
+    Thomas Gleixner <tglx@linutronix.de>, linux-mips@vger.kernel.org, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/7] MIPS: csrc-r4k: Refine rating computation
+In-Reply-To: <20240511-mips-clks-v1-1-ddb4a10ee9f9@flygoat.com>
+Message-ID: <alpine.DEB.2.21.2406012319200.23854@angie.orcam.me.uk>
+References: <20240511-mips-clks-v1-0-ddb4a10ee9f9@flygoat.com> <20240511-mips-clks-v1-1-ddb4a10ee9f9@flygoat.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [RESEND PATCH net-next v3] net: smc91x: Fix pointer types
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171728043418.17681.9343305042987013067.git-patchwork-notify@kernel.org>
-Date: Sat, 01 Jun 2024 22:20:34 +0000
-References: <20240529143859.108201-4-thorsten.blum@toblux.com>
-In-Reply-To: <20240529143859.108201-4-thorsten.blum@toblux.com>
-To: Thorsten Blum <thorsten.blum@toblux.com>
-Cc: nico@fluxnic.net, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, glaubitz@physik.fu-berlin.de,
- andrew@lunn.ch, arnd@arndb.de, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, lkp@intel.com
+Content-Type: text/plain; charset=US-ASCII
 
-Hello:
+On Sat, 11 May 2024, Jiaxun Yang wrote:
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+> Increase frequency addend dividend to 100000000 (10MHz) to
 
-On Wed, 29 May 2024 16:39:02 +0200 you wrote:
-> Use void __iomem pointers as parameters for mcf_insw() and mcf_outsw()
-> to align with the parameter types of readw() and writew() to fix the
-> following warnings reported by kernel test robot:
-> 
-> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse: warning: incorrect type in argument 1 (different address spaces)
-> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse:    expected void *a
-> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse:    got void [noderef] __iomem *
-> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse: warning: incorrect type in argument 1 (different address spaces)
-> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse:    expected void *a
-> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse:    got void [noderef] __iomem *
-> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse: warning: incorrect type in argument 1 (different address spaces)
-> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse:    expected void *a
-> drivers/net/ethernet/smsc/smc91x.c:590:9: sparse:    got void [noderef] __iomem *
-> drivers/net/ethernet/smsc/smc91x.c:483:17: sparse: warning: incorrect type in argument 1 (different address spaces)
-> drivers/net/ethernet/smsc/smc91x.c:483:17: sparse:    expected void *a
-> drivers/net/ethernet/smsc/smc91x.c:483:17: sparse:    got void [noderef] __iomem *
-> 
-> [...]
+ The value of 100000000 is AFAICT 100MHz.
 
-Here is the summary with links:
-  - [RESEND,net-next,v3] net: smc91x: Fix pointer types
-    https://git.kernel.org/netdev/net-next/c/6d9e9c36e1a6
+> diff --git a/arch/mips/kernel/csrc-r4k.c b/arch/mips/kernel/csrc-r4k.c
+> index edc4afc080fa..262896871351 100644
+> --- a/arch/mips/kernel/csrc-r4k.c
+> +++ b/arch/mips/kernel/csrc-r4k.c
+> @@ -111,7 +111,8 @@ int __init init_r4k_clocksource(void)
+>  		return -ENXIO;
+>  
+>  	/* Calculate a somewhat reasonable rating value */
+> -	clocksource_mips.rating = 200 + mips_hpt_frequency / 10000000;
+> +	clocksource_mips.rating = 200;
+> +	clocksource_mips.rating += clamp(mips_hpt_frequency / 100000000, 0, 99);
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+ And FAOD the code change does match it.
 
-
+  Maciej
 
