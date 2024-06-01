@@ -1,98 +1,85 @@
-Return-Path: <linux-kernel+bounces-197753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-197754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A66758D6EB0
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 09:38:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BC318D6EB2
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 09:39:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 623A1287F72
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 07:38:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D88F728811F
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2024 07:39:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9F1D18E2A;
-	Sat,  1 Jun 2024 07:38:46 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0808D1CF9A;
+	Sat,  1 Jun 2024 07:38:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mF0GPro4"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D379CD304;
-	Sat,  1 Jun 2024 07:38:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 623D91CF8A;
+	Sat,  1 Jun 2024 07:38:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717227526; cv=none; b=p23zENO05dlfWaACoINKBhirvpzbtu70O24nYAK2BbtADNVC7wWtG4x7E0ViHfBkj18YI3VFNUjAEHrt4qLk4C04wk/+11B7hFxR8ZUnkpLybt2qGVNkSaaBfFYDVPmwWmyxogF+D++wMey+dDE2SIS0q+lJGOeBg5aE3IgXCuU=
+	t=1717227534; cv=none; b=NvtovlEGb/H/cmFURW4M7Y8EYlcMhqdXYaBa2qUOEJ8c0anYbfEb2ZBOXUtdO3z04hORDm0b9UuAscUCVHcxciUiAZfoqc3ZgqnTrqjH+nLRLd6/afrSl8xAR08hrw43/ob65ezYUDWWIwiu23hultFg6agIpn/b/11FEaLjK+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717227526; c=relaxed/simple;
-	bh=TGhn62G3kHUo4+xm8IQf/8vUBogZ4sWXSEQEar1FMI4=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=Ea63JVrUnvuVyaMpSE7JM08r+dFnvdu01579mQErx4A+ySq1speLxduA1Td7tdrM3Wdc/9HPAv7P94LXqKkI53w5vFq52j0wwOV05iUx6bTE8lvR0J+SMkqxrOP8Y+ZJzL3OG/jiBeGdcopXgwBrP2YTnMHILWlVh275JhXqYx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VrsKw5MhNz4f3n5j;
-	Sat,  1 Jun 2024 15:38:28 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id AB0DC1A016E;
-	Sat,  1 Jun 2024 15:38:39 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP2 (Coremail) with SMTP id Syh0CgAXPA_9z1pmSDx2Og--.13740S3;
-	Sat, 01 Jun 2024 15:38:39 +0800 (CST)
-Subject: Re: [RFC PATCH v4 0/8] iomap/xfs: fix stale data exposure when
- truncating realtime inodes
-To: Christoph Hellwig <hch@infradead.org>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, djwong@kernel.org, brauner@kernel.org,
- david@fromorbit.com, chandanbabu@kernel.org, jack@suse.cz,
- willy@infradead.org, yi.zhang@huawei.com, chengzhihao1@huawei.com,
- yukuai3@huawei.com
-References: <20240529095206.2568162-1-yi.zhang@huaweicloud.com>
- <ZlnCAo0aM8tP__hc@infradead.org>
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-Message-ID: <eb8872e2-4651-5158-cd7c-33ef8cf3cd03@huaweicloud.com>
-Date: Sat, 1 Jun 2024 15:38:37 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+	s=arc-20240116; t=1717227534; c=relaxed/simple;
+	bh=81GRBH+lrxTIuODs8rxSwMPg/JEXNRN4/+g+I2BhgT4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OiGZdkP9MAHWlM6oFoYcDzUUif5Iy45PvPfmZTVS92ONHz5pJ45B3xMvMUdKc/HHNnsTBSVHyjaq0Cd+Yfo4+mRVwsBa87Q9sBgEU24l43XNcTGwUrXvmpV9qXrsQZAtdBJkih/IbIZrEzuBX4ZSerx9hrY+qge+xf9GKQY1Kh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=mF0GPro4; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Dka3jXUuZ9zCnAwMZuC7qBUE/eEypZOCr5R+gu3ZecQ=; b=mF0GPro4ofayNBAJAWk2bfKjcC
+	hFR+MvGLfZQK1U6dpvztoDhhR2NC2JYaVi8SbFQgzBomtvZol40/heJelh78o4FWYMR89fyFoZD/O
+	OeLgem+cSb+hM7xzLMeQvlWJFtoJDWc0CFyEzR0QhDX2sSJxcsitP6gz3Swp8+Z9KNjozgHYdDc+8
+	2tyvzy1Z5XmzUY/I1VqFg7GyiV/Jm7xMcwFkGj0zhq/vZh7vJ/Zzhcu3Qkj1HUr7SfjEdCFvu2OLF
+	BB5SKCv+vCHbcz+s6vVlJmyLOu8NG3zgdl3D4iTJTWHqVKUHghP0wHF3/mJWbNfXaNM/7yL0mOz1g
+	WOS2Kpmg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sDJKD-0000000CAbt-0kbJ;
+	Sat, 01 Jun 2024 07:38:49 +0000
+Date: Sat, 1 Jun 2024 00:38:49 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: hexue <xue01.he@samsung.com>
+Cc: axboe@kernel.dk, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] block: Avoid polling configuration errors
+Message-ID: <ZlrQCaR6xEaghWdQ@infradead.org>
+References: <CGME20240531091021epcas5p48fdbd6302bec7a91ff66272c600b0dab@epcas5p4.samsung.com>
+ <20240531091015.2636025-1-xue01.he@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ZlnCAo0aM8tP__hc@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:Syh0CgAXPA_9z1pmSDx2Og--.13740S3
-X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYI7kC6x804xWl14x267AKxVW8JVW5JwAF
-	c2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII
-	0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xv
-	wVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7
-	xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40E
-	FcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr
-	0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY
-	04v7Mxk0xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7
-	v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF
-	1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIx
-	AIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0D
-	MIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCT
-	nIWIevJa73UjIFyTuYvjxUrR6zUUUUU
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240531091015.2636025-1-xue01.he@samsung.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On 2024/5/31 20:26, Christoph Hellwig wrote:
-> Procedural question before I get into the actual review:  given we
-> are close to -rc3 and there is no user of the iomap change yet,
-> should we revert that for 6.10 and instead try again in 6.11 when
-> the XFS bits are sorted out?
+On Fri, May 31, 2024 at 05:10:15PM +0800, hexue wrote:
+> Here's a misconfigured if application is doing polled IO
+> for devices that don't have a poll queue, the process will
+> continue to do syscall between user space and kernel space,
+> as in normal poll IO, CPU utilization will be 100%. IO actually
+> arrives through interruption.
 > 
+> This patch returns a signal that does not support the operation
+> when the underlying device does not have a poll queue, avoiding
+> performance and CPU simultaneous loss.
 
-Okay, fine, it looks we still need some time to fix this issue.  I
-will send out a patch to revert the commit '943bc0882ceb ("iomap:
-don't increase i_size if it's not a write operation")' soon, other
-commits in my previous series looks harmless, so I think we can
-keep them.
+This feels like the wrong place to check for this.
 
-Thanks,
-Yi.
+As we've dropped synchronous polling we now only support
+thead based polling, right now only through io_uring.
+
+So we need to ensure REQ_POLLED doesn't even get set for any
+other I/O.
 
 
