@@ -1,58 +1,59 @@
-Return-Path: <linux-kernel+bounces-198140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0A2D8D7400
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 08:51:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57BB28D7405
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 08:56:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41CF9B2126E
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 06:51:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A04A1C20AC2
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 06:56:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3E451CAA6;
-	Sun,  2 Jun 2024 06:51:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BEA51CD23;
+	Sun,  2 Jun 2024 06:56:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ps9mufqz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b33G+vHm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08BC5171AB;
-	Sun,  2 Jun 2024 06:51:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FA3118622;
+	Sun,  2 Jun 2024 06:56:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717311091; cv=none; b=g/Kzs7tEcbI5dpQgfe8qYfJaoOhlouMoZSMdO4lMZU7NiTwPH8xS3j4feO0eoXInqqgsbhh4ZgB98p3hD7vhP7b4aM6iFh936YyVkBemZdqMEC0G5CiTFSNk8ghFJ4X12jbYTvLu8xR+Ryj8xZr1o/HV0F6+00KPOfy7Q+T1MIs=
+	t=1717311403; cv=none; b=GDLm8QKwHqIByXAkyWiNQxICdtDngEyAMfXjRUeEXb3deFNRb0veYySwb66WT0BRFosj7IS2JFDCkr4Az5vYql0GdXAP3sG+Z51wffl3h65XPRXxjy/0JcQqdcZDp50fOPGfGnbrWmdyahiSLg3VIpRogYYiIonO0GCV9BMkxUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717311091; c=relaxed/simple;
-	bh=vzcCoFuwMDbQyS/b582VM/ry7a4lbIwUTDMZef2tY9g=;
+	s=arc-20240116; t=1717311403; c=relaxed/simple;
+	bh=m2hTycT7b9I8OtE98CrtrOs2gLvWL0tABdGXhMXVPGc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K4NBRF2sjieuC5XIN1lAaX0C76K/GBWEZejEYWqslLELOACRdSzZ4xJqH3cDyaNSSP2JpRrLCmV4IzAySGbCSWwaOYRFcVVwwvCJi36XFyrC9Gy4kmpSJZh25l+eVqkHRSx1U10zhBydgjJ50y4XNGiTQuLf83SoAo5SSk/WAL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ps9mufqz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FE4AC2BBFC;
-	Sun,  2 Jun 2024 06:51:29 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=a+00tH6tSmCSCByj8GSTF5NAmKaOsq7uYkPGo5mXzWpC6yGhMGi05dnHCu3ARR/Al69ToWp91EFQUgcLxpgTwXq+DiC8QGXxtLGo4qH3D2g+QCU+TLF3PapRT50VlqslZ6UQlhWjHp5K1e5lqdo0KlVNTM8FvNhoq2+uP+d36uY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b33G+vHm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86767C2BBFC;
+	Sun,  2 Jun 2024 06:56:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717311090;
-	bh=vzcCoFuwMDbQyS/b582VM/ry7a4lbIwUTDMZef2tY9g=;
+	s=k20201202; t=1717311403;
+	bh=m2hTycT7b9I8OtE98CrtrOs2gLvWL0tABdGXhMXVPGc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ps9mufqzHLpBah6Gyo8TmqPvZ0IlX/pHuz4XIeBI0YU97ImY4chBqrw4NR24vKApi
-	 K6yqszCjo8H0hua2SVYoI51F4QIznSZ3TecDLDbnqgpqGsjTo0OsheDJ4X8ua+cOWJ
-	 OTtDofvk6C5BGmrpuuR/bBBY47qd0M8oeSsD7BpAOy+yI+3rh27bFsQW0oFGMJgGkt
-	 x+sg5eBdjYIKaLimAwrELZV1N2uvL2zD42bdURXz+zClXd6FM+We+w419gqtWN+9fV
-	 SNDMXGnTT1v4FRkdOYlY+aMhctHSMAwO36O/RNlyiwIFetroMs07+V47HV8xAk6dLw
-	 Ut5ey65umX3Pw==
-Date: Sun, 2 Jun 2024 09:51:25 +0300
+	b=b33G+vHmE24iEodIAibxO1C8u+/3rl3ozdtEuzZ5cRGPU5ecH95gALS7ESjyC8QAf
+	 6Ob+YDE8FPXtxOZBP4veD8WWUDzkHZhyrSrbN2GMQUU9FRWh6XVXmnrY+la8y34ih8
+	 inafnPqJwoXdqpMA/Ybf3qO0OaFJOuekaSLtyJ4biya3EuFY2tSGjlIY9Hn+PMcu04
+	 9qzBdVcHSUZCJAsvPoPtRQRY5K2I4nkk0bMkgWPdwm53l7uYRS04eGXAtfXBbPTtck
+	 X0aTwyUnViXciAvD4xBe8TT0gckTmX0ExXAHdF6NO/rVLAj4iw6WZKD0vvU2hwXZcL
+	 lYapyvygNt7vQ==
+Date: Sun, 2 Jun 2024 09:56:38 +0300
 From: Leon Romanovsky <leon@kernel.org>
-To: Bharat Bhushan <bbhushan2@marvell.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	sgoutham@marvell.com, gakula@marvell.com, sbhatta@marvell.com,
-	hkelam@marvell.com, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, jerinj@marvell.com,
-	lcherian@marvell.com, richardcochran@gmail.com
-Subject: Re: [net-next,v3 6/8] cn10k-ipsec: Process inline ipsec transmit
- offload
-Message-ID: <20240602065125.GH3884@unreal>
-References: <20240528135349.932669-1-bbhushan2@marvell.com>
- <20240528135349.932669-7-bbhushan2@marvell.com>
+To: Tejun Heo <tj@kernel.org>
+Cc: Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>, linux-kernel@vger.kernel.org,
+	Gal Pressman <gal@nvidia.com>, Tariq Toukan <tariqt@nvidia.com>,
+	RDMA mailing list <linux-rdma@vger.kernel.org>
+Subject: Re: [PATCH -rc] workqueue: Reimplement UAF fix to avoid lockdep
+ worning
+Message-ID: <20240602065638.GI3884@unreal>
+References: <4c4f1fb769a609a61010cb6d884ab2841ef716d3.1716885172.git.leon@kernel.org>
+ <ZljyqODpCD0_5-YD@slm.duckdns.org>
+ <20240531034851.GF3884@unreal>
+ <ZloMv29mmAKNPTrg@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,94 +62,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240528135349.932669-7-bbhushan2@marvell.com>
+In-Reply-To: <ZloMv29mmAKNPTrg@slm.duckdns.org>
 
-On Tue, May 28, 2024 at 07:23:47PM +0530, Bharat Bhushan wrote:
-> Prepare and submit crypto hardware (CPT) instruction for
-> outbound inline ipsec crypto mode offload. The CPT instruction
-> have authentication offset, IV offset and encapsulation offset
-> in input packet. Also provide SA context pointer which have
-> details about algo, keys, salt etc. Crypto hardware encrypt,
-> authenticate and provide the ESP packet to networking hardware.
+On Fri, May 31, 2024 at 07:45:35AM -1000, Tejun Heo wrote:
+> Hello,
 > 
-> Signed-off-by: Bharat Bhushan <bbhushan2@marvell.com>
-> ---
->  .../marvell/octeontx2/nic/cn10k_ipsec.c       | 224 ++++++++++++++++++
->  .../marvell/octeontx2/nic/cn10k_ipsec.h       |  40 ++++
->  .../marvell/octeontx2/nic/otx2_common.c       |  23 ++
->  .../marvell/octeontx2/nic/otx2_common.h       |   3 +
->  .../ethernet/marvell/octeontx2/nic/otx2_pf.c  |   2 +
->  .../marvell/octeontx2/nic/otx2_txrx.c         |  33 ++-
->  .../marvell/octeontx2/nic/otx2_txrx.h         |   3 +
->  7 files changed, 325 insertions(+), 3 deletions(-)
+> On Fri, May 31, 2024 at 06:48:51AM +0300, Leon Romanovsky wrote:
+> > We have similar issues but with different workqueue.
 > 
-> diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/cn10k_ipsec.c b/drivers/net/ethernet/marvell/octeontx2/nic/cn10k_ipsec.c
-> index 136aebe2a007..1974fda2e0d3 100644
-> --- a/drivers/net/ethernet/marvell/octeontx2/nic/cn10k_ipsec.c
-> +++ b/drivers/net/ethernet/marvell/octeontx2/nic/cn10k_ipsec.c
-> @@ -7,8 +7,11 @@
->  #include <net/xfrm.h>
->  #include <linux/netdevice.h>
->  #include <linux/bitfield.h>
-> +#include <crypto/aead.h>
-> +#include <crypto/gcm.h>
->  
->  #include "otx2_common.h"
-> +#include "otx2_struct.h"
->  #include "cn10k_ipsec.h"
->  
->  static bool is_dev_support_inline_ipsec(struct pci_dev *pdev)
-> @@ -843,3 +846,224 @@ void cn10k_ipsec_clean(struct otx2_nic *pf)
->  	cn10k_outb_cpt_clean(pf);
->  }
->  EXPORT_SYMBOL(cn10k_ipsec_clean);
+> So, the problem with the proposed patch is that pwq may still be in use by
+> then (due to async freeing) and thus can't be freed immediately. I still
+> don't understand why KASAN is triggering there. I tried to repro by
+> introducing a pwq alloc failure but couldn't. Can you please share the
+> repro?
 
-<...>
+The repro is part of our CI test, where we run traffic tests and at the
+end perform "restart driver" stage. At that stage, this lockdep is
+printed.
 
-> +bool cn10k_ipsec_transmit(struct otx2_nic *pf, struct netdev_queue *txq,
-> +			  struct otx2_snd_queue *sq, struct sk_buff *skb,
-> +			  int num_segs, int size)
-> +{
-> +	struct cpt_ctx_info_s *sa_info;
-> +	struct cpt_inst_s inst;
-> +	struct cpt_res_s *res;
-> +	struct xfrm_state *x;
-> +	dma_addr_t dptr_iova;
-> +	struct sec_path *sp;
-> +	u8 encap_offset;
-> +	u8 auth_offset;
-> +	u8 gthr_size;
-> +	u8 iv_offset;
-> +	u16 dlen;
-> +
-> +	/* Check for Inline IPSEC enabled */
-> +	if (!(pf->flags & OTX2_FLAG_INLINE_IPSEC_ENABLED)) {
-> +		netdev_err(pf->netdev, "Ipsec not enabled, drop packet\n");
-
-<...>
-
-> +		netdev_err(pf->netdev, "%s: no xfrm state len = %d\n",
-> +			   __func__, sp->len);
-
-<...>
-
-> +		netdev_err(pf->netdev, "no xfrm_input_state()\n");
-
-<...>
-
-> +		netdev_err(pf->netdev, "un supported offload mode %d\n",
-> +			   x->props.mode);
-
-<...>
-
-> +		netdev_err(pf->netdev, "Invalid IP header, ip-length zero\n");
-
-<...>
-
-> +		netdev_err(pf->netdev, "Invalid SA conext\n");
-
-All these prints are in datapath and can be triggered by network
-packets. These and RX prints need to be deleted.
+The test is:
+1. Create bond interfaces
+2. Run traffic
+3. Strop traffic and check that everything is OK
+4. Restart driver:
+modprobe -r -a bonding
+modprobe -r -a vfio-pci ip_gre ip6_gre bonding geneve ipip ip6_tunnel
+modprobe -r -a ib_umad ib_ipoib rdma_ucm mlx5_vfio_pci mlx5_ib mlx5_core mlx5-vfio-pci nf_tables
 
 Thanks
+
+> 
+> Thanks.
+> 
+> -- 
+> tejun
+> 
 
