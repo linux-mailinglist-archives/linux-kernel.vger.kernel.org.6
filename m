@@ -1,61 +1,62 @@
-Return-Path: <linux-kernel+bounces-198459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8833D8D78D9
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 00:25:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BFA58D78E4
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 00:37:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA0FC1C20CC3
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 22:25:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C7D41F21333
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 22:37:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 523CF7EF0C;
-	Sun,  2 Jun 2024 22:24:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 664337B3C1;
+	Sun,  2 Jun 2024 22:37:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="eDIwa0KM"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VSvO28yI"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14EC27E110;
-	Sun,  2 Jun 2024 22:24:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F69A3207;
+	Sun,  2 Jun 2024 22:37:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717367086; cv=none; b=bmYJVLjxGxH3E/TzfE4s74mKC7JHnt5ue2ooVGJl02s9Z1DFZ6HsCk6z4LwrK1OZnvATEqM2AiCLEjE70JnR+LXZpWBYjvkg37I6H5mznE92POq8u1bMNwyaQJGtQsJVeWwlmHp9+0pyjXnCzkaUw0V9rhhQVJZ4jNMoTTSMZxo=
+	t=1717367842; cv=none; b=i7YsiPBzbmuskpni+s0UtENGC1XL4jVkC/m4+DjrrcShtezg5vE+BORg0LKMCH4fEb2AYGAvIj5w7XDeftnW82/9+ZlMNZ5cADPNENEFiHQQx0+nAJ8kkhOGOgqK9q/tffHvjboA9pRmBuxN8PHILeNgk5YeIL7WbUklnJTafhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717367086; c=relaxed/simple;
-	bh=vfwNZlKpz4TNgLna05fDr4G878bn+dbKpAonUnZsQW4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=EdaZqoa2StHDi6cxJXOpc8tL3clcPFM6ePwPvOderuWbGBh6BO+cRY8eystMuXBlHEGA1bdD2PUGHjoptsRznQ0VGwkLeRF9cbU51WqWP5Gh2qFi+MwfsISlHTVZNlouqNmN1qxjK6MzGouJRtLjf/N99TYDU3bfMCF5nsxywrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=eDIwa0KM; arc=none smtp.client-ip=205.220.180.131
+	s=arc-20240116; t=1717367842; c=relaxed/simple;
+	bh=G3+pi39DXsLu5GOB3nNvWBkhX6gdL40MBr+mzLc1pEE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=e8nQUYh4jYQE+jO7IpaLTgXjyAkJO0Ds2ywCXWJgIVDePuOyJLDqfCUQoMc0JfOixcdbQVtyvUn47nANx0a6FdT30Dn10mKlb+qKQo6/1A2uyRBGa+/jtaw57jAmXnihX3afcIZ72K1F5pil7X2+DJEfHK9u79EssQecANwUUm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VSvO28yI; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 452MOevo013947;
-	Sun, 2 Jun 2024 22:24:40 GMT
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 452MbBIb011223;
+	Sun, 2 Jun 2024 22:37:11 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
 	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=DH86hZwMsk4NCjqy+2kZff
-	JO87KRTSnMXvi1enRmErM=; b=eDIwa0KMubaaEzMiDEKyz4aIQmg6gkq57tbsGm
-	oWFbutN9QYXDElgVzm16kR7WHqHMad9v4BXpWXOm8kxJWznMnwDbeATJ0oOGt8H0
-	A/I1HcskVXM35tHgEngggyTYWwM1xfSmQIenZ82zuDC9fBSSHGmJHFHVqw2y9mwV
-	F/0I02XjPNFoWSM1lDHQVh7wNpGnP+ZrJZ4J3pOQcxmPmqLG9t9n46otIGZ8Z7/w
-	1LuGBCgcIZqloOkgRTzewNlIkoAlwEHbEkOFhvB7LvUk29GdMvDqKKQ9Tp/lwk97
-	KWGNhp1n1PKe6vg0nPyRmEcgWyaeA22MAxy/KrhAzpcaZiYg==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfw4d2mvs-1
+	:mime-version:subject:to; s=qcppdkim1; bh=MmX33+HbK0PEuGl6iJkxQw
+	3i/jTUFnwPy5XrXhmZi5Y=; b=VSvO28yImd+ddpkrvUb4Kqq7GR24bkT0taVCLg
+	GC6ZVVv5Zt1HG6dh3vAc599LVBZxbWqJ69Kq5fDC3edWOWx1jdzwD/mnAtrYm1h9
+	TFKgG2Ur/9zjML9O9tZkxjZROhF/rWmLZrts2F9/UGLhJ1f+/xhpdk0y0YUwzXJt
+	XJpCsztUmgbu5g/pneNCfiDskoLk/3D/6hxFZaXk3C/Fu7SGfVOCX5LPryj3+E0o
+	ORNo/Z9+YL2fZFqAVqGffRQ/k8/cLhcWL3v6IgZCd68zmwIbCk5E5DwcsK2wXVz2
+	un15l95+e5PYpZLJHIzCKuM4zWdrfTeByvV6UpOpUWRfxnvA==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfw6v2md6-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 02 Jun 2024 22:24:40 +0000 (GMT)
+	Sun, 02 Jun 2024 22:37:11 +0000 (GMT)
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 452MOdxf022888
+	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 452MbAVh023345
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 2 Jun 2024 22:24:39 GMT
+	Sun, 2 Jun 2024 22:37:10 GMT
 Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
  (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 2 Jun 2024
- 15:24:39 -0700
+ 15:37:09 -0700
 From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Sun, 2 Jun 2024 15:24:38 -0700
-Subject: [PATCH] cpuidle: haltpoll: add missing MODULE_DESCRIPTION() macro
+Date: Sun, 2 Jun 2024 15:33:39 -0700
+Subject: [PATCH] crypto: atmel-sha204a - add missing MODULE_DESCRIPTION()
+ macro
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,56 +65,60 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-ID: <20240602-md-cpuidle-haltpoll-v1-1-8d649277ca23@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIACbxXGYC/x3MQQrDIBBA0auEWXfA2uCiVyldjDqpA8bImJRAy
- N1rs3yL/w9orMINnsMByl9pspSO+22AkKh8GCV2gzV2NM5YnCOGuknMjInyWpec0bmHC+TYBzt
- CL6vyJPt1fb27PTVGr1RC+r+ylG3HmdrKCuf5A2EDCcqEAAAA
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano
-	<daniel.lezcano@linaro.org>
-CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
+Message-ID: <20240602-md-atmel-sha204a-v1-1-ab02640a0cf2@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAELzXGYC/x3MwQrCMAyA4VcZORuosfTgq4iHbM1sYK2STBmMv
+ bvV43f4/x1cTMXhOuxg8lHXZ+s4nwaYCreHoOZuoEAxpEBYM/JaZUEvTCEyZqb5wokoJoGevUx
+ m3f7L2717ZBccjdtUfqNF23vDyr6KwXF8AZBNHa6BAAAA
+To: Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        "Alexandre Belloni" <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea
+	<claudiu.beznea@tuxon.dev>
+CC: <linux-crypto@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        "Jeff
+ Johnson" <quic_jjohnson@quicinc.com>
 X-Mailer: b4 0.13.0
 X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: Vktk-zav8c6qbEk5eSZK4bDnJ-x3smNO
-X-Proofpoint-GUID: Vktk-zav8c6qbEk5eSZK4bDnJ-x3smNO
+X-Proofpoint-GUID: QT5x1BqUQwaW_cE8jeMcjplxIs-Qu_z6
+X-Proofpoint-ORIG-GUID: QT5x1BqUQwaW_cE8jeMcjplxIs-Qu_z6
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
  definitions=2024-06-02_15,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 mlxscore=0 adultscore=0 impostorscore=0 bulkscore=0
- spamscore=0 phishscore=0 clxscore=1011 mlxlogscore=999 suspectscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406020195
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 malwarescore=0
+ impostorscore=0 mlxscore=0 suspectscore=0 adultscore=0 lowpriorityscore=0
+ clxscore=1011 spamscore=0 priorityscore=1501 mlxlogscore=999 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
+ definitions=main-2406020198
 
 make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cpuidle/cpuidle-haltpoll.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/crypto/atmel-sha204a.o
 
 Add the missing invocation of the MODULE_DESCRIPTION() macro.
 
 Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 ---
- drivers/cpuidle/cpuidle-haltpoll.c | 1 +
+ drivers/crypto/atmel-sha204a.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/cpuidle/cpuidle-haltpoll.c b/drivers/cpuidle/cpuidle-haltpoll.c
-index d8515d5c0853..bcd03e893a0a 100644
---- a/drivers/cpuidle/cpuidle-haltpoll.c
-+++ b/drivers/cpuidle/cpuidle-haltpoll.c
-@@ -141,5 +141,6 @@ static void __exit haltpoll_exit(void)
+diff --git a/drivers/crypto/atmel-sha204a.c b/drivers/crypto/atmel-sha204a.c
+index 24ffdf505023..1fd836eb2d89 100644
+--- a/drivers/crypto/atmel-sha204a.c
++++ b/drivers/crypto/atmel-sha204a.c
+@@ -232,4 +232,5 @@ module_init(atmel_sha204a_init);
+ module_exit(atmel_sha204a_exit);
  
- module_init(haltpoll_init);
- module_exit(haltpoll_exit);
-+MODULE_DESCRIPTION("cpuidle driver for haltpoll governor");
- MODULE_LICENSE("GPL");
- MODULE_AUTHOR("Marcelo Tosatti <mtosatti@redhat.com>");
+ MODULE_AUTHOR("Ard Biesheuvel <ard.biesheuvel@linaro.org>");
++MODULE_DESCRIPTION("Microchip / Atmel SHA204A (I2C) driver");
+ MODULE_LICENSE("GPL v2");
 
 ---
 base-commit: a693b9c95abd4947c2d06e05733de5d470ab6586
-change-id: 20240602-md-cpuidle-haltpoll-6636ca6ebc24
+change-id: 20240602-md-atmel-sha204a-da2f3a62246e
 
 
