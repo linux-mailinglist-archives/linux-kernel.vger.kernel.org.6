@@ -1,190 +1,111 @@
-Return-Path: <linux-kernel+bounces-198402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 416278D77CA
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 22:16:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39F918D77CF
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 22:18:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF8FC280CCC
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 20:16:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B7A2B20DE8
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 20:18:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E0C874E0C;
-	Sun,  2 Jun 2024 20:16:29 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A3F36FE16;
-	Sun,  2 Jun 2024 20:16:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EDB27581F;
+	Sun,  2 Jun 2024 20:18:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="QgkUH0cD"
+Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C364757E8
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Jun 2024 20:18:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717359388; cv=none; b=o7FoNxxWSDORmqn7PByHmt2RRRfTxJI8R2stYmFAJCO3veZr2qsPg3rglWXfF83vLcbZeIF1j1ieEN3swYi/5Nre8w1I6ncmJ+AY3Q61aRm2HcNq5+S/YVaIIHVCqyktBinh2NU2T6nZQe2wjfFWXR+xVE7SUxTZYemumD3ClK8=
+	t=1717359511; cv=none; b=NSmyUbDXL2GayGsQNwGT+235uoSq+pvSb0r7t9j07uO5dQSqDdSf8eivEy3C2qeYT953OqAkJ/31b7dZumaV0pJ1Fn7W9286ReWnfJyrkwTOqkGVLjWr9jsU2F8lGL+de3zak1FN3V47vYGEcSeMm4K6y1UWOTYNFvuQmjQuihw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717359388; c=relaxed/simple;
-	bh=Q98W32FFwdI1cAgJFPClVn7dyNiWNwmPQZQrnQtZNLw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lnP3g1QPstRriMRMUoWMeC4hcRjqCczovC8Hyi4TH+Y6DpIN62QDObLs4Jkk3f96EXHyJgz4D4YlIXs4JLTXm9FscjaShw3Ac/bHHZEvJkoFG6Uxv77+s/glJejupWVzxRoayNcAwCAwMNitGlGuZ2CV3raSuT8dR5HZcO466Qg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9F687113E;
-	Sun,  2 Jun 2024 13:16:48 -0700 (PDT)
-Received: from minigeek.lan (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E4BAF3F792;
-	Sun,  2 Jun 2024 13:16:22 -0700 (PDT)
-Date: Sun, 2 Jun 2024 21:15:09 +0100
-From: Andre Przywara <andre.przywara@arm.com>
-To: "harry.yu185" <harry.yu185@gmail.com>
-Cc: corbet@lwn.net, catalin.marinas@arm.com, will@kernel.org,
- tglx@linutronix.de, maz@kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi <linux-sunxi@lists.linux.dev>
-Subject: Re: [PATCH] irqchip/gic-v3: Add Allwinner sunxi001 erratum
- workaround
-Message-ID: <20240602211509.67df243e@minigeek.lan>
-In-Reply-To: <20240602071058.6405-1-harry.yu185@gmail.com>
-References: <20240602071058.6405-1-harry.yu185@gmail.com>
-Organization: Arm Ltd.
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.31; x86_64-slackware-linux-gnu)
+	s=arc-20240116; t=1717359511; c=relaxed/simple;
+	bh=mtPx8u7Uu9tuEappI7gmzj7YNw+G8ZFnAW4+i304kzs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O8wNjbTmIcD4QYmzC9aiw7kWQ9DfYQiWbePyXfVdOHSxx/+fUW5SecoOwBacPyPZSr6jrC23CLlHB8wJm9f+QOZxcZYDYFnzYYUAvTtv6hxeNN9zy9hCEsO+R/CYfX01/bSfy64z72X4vlPmKVBb4jKSrNbz4BRzzH8apXytQVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=QgkUH0cD; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=mtPx
+	8u7Uu9tuEappI7gmzj7YNw+G8ZFnAW4+i304kzs=; b=QgkUH0cDEtW1qKOiXyf0
+	vNIKB3sII/MUl8O+PrFQkACbE3p/6T/Vd8HYkxCaQc9dhjafD5f5vpuzz5cFi1DQ
+	hc/hpUF2WYkJgDTVnkgtSSsKxjOwzVY8v+SYxH3sfr284cqhXu2/JTwDyOWKPGPx
+	8ZpuhO2p56kMpiHhh3erAxk18KYw2RjpM5NySuvcQuAIZr5wIQcS8CvOrsKxexo2
+	GxQa8AYaG0OPhD/9qH+lWoYRKOEMNbPhrvml+vbDaqYBMCF2VUzaf2njA+bWT5ZF
+	Z3zkVKHLwECBdRSpvhG1ZnLPrebugfv7fyh83qA8lXYi2i2bTEVywD8aMX23eb35
+	2Q==
+Received: (qmail 1741334 invoked from network); 2 Jun 2024 22:18:19 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 2 Jun 2024 22:18:19 +0200
+X-UD-Smtp-Session: l3s3148p1@wIPf6u0ZOOlehhtB
+Date: Sun, 2 Jun 2024 22:18:17 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, Armin Wolf <W_Armin@gmx.de>, 
+	Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, =?utf-8?B?UmVuw6k=?= Rebe <rene@exactcode.de>
+Subject: Re: [PATCH v3 2/4] hwmon: Add support for SPD5118 compliant
+ temperature sensors
+Message-ID: <baktuhx525cyrxam63z4oyy62p35s3n7n7wsv3yz6opyoprp6z@vtxlfwdejdmt>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, Armin Wolf <W_Armin@gmx.de>, 
+	Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, =?utf-8?B?UmVuw6k=?= Rebe <rene@exactcode.de>
+References: <20240531230556.1409532-1-linux@roeck-us.net>
+ <20240531230556.1409532-3-linux@roeck-us.net>
+ <uvikiflwuoz3szchmvke7p3ymqvcngkydehk6cctdv24cxsh6r@7d5vxcvdca6l>
+ <e5d95d3d-1ca5-43f1-8c17-d24bd38f28b7@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="oxluy5kl3unneebw"
+Content-Disposition: inline
+In-Reply-To: <e5d95d3d-1ca5-43f1-8c17-d24bd38f28b7@roeck-us.net>
 
-On Sun,  2 Jun 2024 15:10:58 +0800
-"harry.yu185" <harry.yu185@gmail.com> wrote:
 
-Hi,
+--oxluy5kl3unneebw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-(please make sure to CC: the linux-sunxi mailing list on Allwinner
-related patches)
 
-I do hope that this whole patch is unnecessary, as Marc pointed out, but
-just for the records some comments for future reference, since this
-patch seems either premature or out of place.
+> would introduce a cross-subsystem dependency. Of course, that depends a bit
+> on your position about such dependencies. If I do that as part of this series,
+> would you Ack it, or would you want to handle that through the i2c tree ?
 
-> Allwinner A523 GIC600 integration does not support the
-> sharability feature. So assigned Erratum ID #sunxi001 for this
-> issue.
-> 
-> That the 0x0201643b ID is not Allwinner specific and thus
-> there is an extra of_machine_is_compatible() check.
-> 
-> Note, because more than one soc may have this problem, the 'sunxi'
-> name is used instead of a fixed soc name like A523.
-> 
-> Signed-off-by: harry.yu185 <harry.yu185@gmail.com>
-> ---
->  Documentation/arch/arm64/silicon-errata.rst |  2 ++
->  arch/arm64/Kconfig                          | 10 ++++++++++
->  drivers/irqchip/irq-gic-v3-its.c            | 21 +++++++++++++++++++++
->  3 files changed, 33 insertions(+)
-> 
-> diff --git a/Documentation/arch/arm64/silicon-errata.rst b/Documentation/arch/arm64/silicon-errata.rst
-> index eb8af8032c31..351dd6094a6c 100644
-> --- a/Documentation/arch/arm64/silicon-errata.rst
-> +++ b/Documentation/arch/arm64/silicon-errata.rst
-> @@ -242,6 +242,8 @@ stable kernels.
->  +----------------+-----------------+-----------------+-----------------------------+
->  | Rockchip       | RK3588          | #3588001        | ROCKCHIP_ERRATUM_3588001    |
->  +----------------+-----------------+-----------------+-----------------------------+
-> +| Allwinner      | SUN55IW3        | #sunxi001       | ALLWINNER_ERRATUM_SUNXI001  |
+I would ack it. If I'd have a conflicting commit in my tree (unlikely),
+I'd ask you for an immutable branch to pull into my tree.
 
-"sun55iw3" is a CPU die identifier only used in Allwinner's BSP
-kernels, mainline uses a different naming scheme.
 
-Also the erratum name looks odd, at the very least I'd expect it to
-read "ALLWINNER_ERRATUM_00001" or something. But there is already some
-Allwinner timer erratum, which we boldly gave ID 1 (short of an
-official erratum number from Allwinner), so using the same number again
-will surely lead to confusion.
+--oxluy5kl3unneebw
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> ++----------------+-----------------+-----------------+-----------------------------+
->  +----------------+-----------------+-----------------+-----------------------------+
->  | Fujitsu        | A64FX           | E#010001        | FUJITSU_ERRATUM_010001      |
->  +----------------+-----------------+-----------------+-----------------------------+
-> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> index 5d91259ee7b5..5a71227d119a 100644
-> --- a/arch/arm64/Kconfig
-> +++ b/arch/arm64/Kconfig
-> @@ -1279,6 +1279,16 @@ config ROCKCHIP_ERRATUM_3588001
->  
->  	  If unsure, say Y.
->  
-> +config ALLWINNER_ERRATUM_SUNXI001
-> +	bool "Allwinner sunxi001: GIC600 can not support shareability attributes"
-> +	default y
+-----BEGIN PGP SIGNATURE-----
 
-"default ARCH_SUNXI" would be better suited here, I think.
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmZc04UACgkQFA3kzBSg
+KbZinxAAqHFAFPtmwofD9up/UTGj2j9gC7X1COlNcXHK+tz5JQF+l0L5znQ9zUhz
+HRWxQDpC8OdW5k372rRcY1YTs+mLFfWCteDcjlUTLcP2c/jNqKg+Yqd/FS/fawaZ
+Pq+n4GZdp7LGTQG8GePfKo4UfrAFhVidepVZU5Fq2Q/faMX3OVe4H3vqpHXxWS2K
+IUYTlHtBJ6nmlViakbuopRkiMPeIFaCF1/9fJs/iQewExRtv/35zfTW0fBUa9DAR
+ThoTDjTqZ1SlrozOLQVszqjJl4bjdYPxaDCUOPyhwRvo/x7AuNooHBY3H3NnhwY+
+hfrRp9Z7iORXjTdJxqIiG01OjMXlXLl1s5pQ44kb0lFydp+eqnR1po/trqIaOGF3
+UWc6T5BDQUE04z2bwmFmN6iKx+kqCiYsmsscFUewSUxBT4n0kxxYRi3Y2BduAIWA
+5g024LHEobJ335ZFjC4Q+UXE+XCtnwr1g1F/LP0OHOzt9L9KOvELixDVXekGN4Is
+Qrcv11YdF1JKGjUVMRpSAV2m5tTdRbpqKaMSBljOVuLEqDsB92esbayaQksACOhG
+b3Zo+sqy3OhM2OXN5hYSQfdL9gAF9NsmmDEglLKUhsY5EgGuCz/tJ5AEhaulVdU8
+DPgWwfzqIlYv7lEaf/qjmVZfvuV1h+0guNItsXba+7JRbwXc7RE=
+=Kthw
+-----END PGP SIGNATURE-----
 
-> +	help
-> +	  The Allwinner GIC600 SoC integration does not support ACE/ACE-lite.
-> +	  This means, that its sharability feature may not be used, even though it
-> +	  is supported by the IP itself.
-> +
-> +	  If unsure, say Y.
-> +
->  config SOCIONEXT_SYNQUACER_PREITS
->  	bool "Socionext Synquacer: Workaround for GICv3 pre-ITS"
->  	default y
-> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-> index 40ebf1726393..d93348947353 100644
-> --- a/drivers/irqchip/irq-gic-v3-its.c
-> +++ b/drivers/irqchip/irq-gic-v3-its.c
-> @@ -4775,6 +4775,19 @@ static bool __maybe_unused its_enable_rk3588001(void *data)
->  	return true;
->  }
->  
-> +static bool __maybe_unused its_enable_sunxi001(void *data)
-> +{
-> +	struct its_node *its = data;
-> +
-> +	if (!of_machine_is_compatible("arm,sun55iw3p1"))
-
-You cannot reference a compatible name here that is not documented in
-the bindings. Which brings us to the elephant in the room: there is no
-upstream support for this SoC (family) yet. I have some
-work-in-progress series [1], but it's far from finished, mostly blocked
-by the lack of hackable hardware (hopefully fixed soon).
-
-So what kernel is this patch supposed to be applied against? You would
-need at least a pinctrl and clock driver for even basic operation, none
-of that I have seen posted.
-
-Cheers,
-Andre
-
-[1] https://github.com/apritzel/linux/commits/a523-EARLY/
-
-> +		return false;
-> +
-> +	its->flags |= ITS_FLAGS_FORCE_NON_SHAREABLE;
-> +	gic_rdists->flags |= RDIST_FLAGS_FORCE_NON_SHAREABLE;
-> +
-> +	return true;
-> +}
-> +
->  static bool its_set_non_coherent(void *data)
->  {
->  	struct its_node *its = data;
-> @@ -4836,6 +4849,14 @@ static const struct gic_quirk its_quirks[] = {
->  		.mask   = 0xffffffff,
->  		.init   = its_enable_rk3588001,
->  	},
-> +#endif
-> +#ifdef CONFIG_ALLWINNER_ERRATUM_SUNXI001
-> +	{
-> +		.desc   = "ITS: Allwinner erratum sunxi001",
-> +		.iidr   = 0x0201643b,
-> +		.mask   = 0xffffffff,
-> +		.init   = its_enable_sunxi001,
-> +	},
->  #endif
->  	{
->  		.desc   = "ITS: non-coherent attribute",
-
+--oxluy5kl3unneebw--
 
