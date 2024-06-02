@@ -1,190 +1,138 @@
-Return-Path: <linux-kernel+bounces-198271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A67C88D75DF
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 16:09:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97D728D761E
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 16:15:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C2912824A4
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 14:09:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23E331F2226E
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 14:15:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC9793D387;
-	Sun,  2 Jun 2024 14:09:25 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D47E4176E;
+	Sun,  2 Jun 2024 14:15:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aQNuF2ni"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 972381EB27
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Jun 2024 14:09:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B8C32628D;
+	Sun,  2 Jun 2024 14:15:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717337365; cv=none; b=Jf9i42ykenGP2DqmUI2k/g5cLsUduABSew5bmUUon4uXNMs6zYc/HWji5vNZISXV3NslXEtt3Qhz2ZlHMfjplTNwNl4fch9o5dGPZS68aqxaw7btY8tzxom39oxY7wPZqi3W371XaM5h84vW2vyoZiKRe+nXssUWRJRP8YzUdRU=
+	t=1717337731; cv=none; b=ILdq/t7Luoa4vRCzldzdXZog86vtEeREyZ9nC7GM0Hf7gxhB4MAXoldp2bbyKkP5rF3JAJcI3kcEzW/onMsHH25v+2qD4whDNFyqge/v62bQFduPJErhF3T+99S7Ak/nFbc6NybHDPMV6yBxE8ctAU9pgJAt9SRh2oWyn2Ku/iM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717337365; c=relaxed/simple;
-	bh=kJxeVbEqQW7ysv/Z1X5ieihf48ygtv9hKGZbBclL57c=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=tBfPx9ahNtAQxpHVwymvHeU1Awa9pBYGXh/yG7ILt/X/nUfKAYsFqbuuBFAxWKW6BHUX5YYdx2ctfPJLlqrMX1Is6oKne636JBzSeJh7XogMDJqAhh8/J7iDcdrVxlARjrEEAD/0borncYQ0dZ0AqZyu6utq2730fKETZUGHfPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3748a38e71bso19451365ab.2
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2024 07:09:23 -0700 (PDT)
+	s=arc-20240116; t=1717337731; c=relaxed/simple;
+	bh=yRl0Zy6wzI7m8PsJn21x3czS9XtE5+g9dbkMjfOVvSQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tlCHbRkFSt4WZfZIoWqorkN1V0eSeaTfOZK1y/g4d6Cx1Jq9zxgAJqWtHhKjD9cxQYO8T0+QrWPmZV9ylLjgEgZ4Vy3QAHpUWB1jbMcbG6Q/WAt54uZ3nDTpd5MD7DsKpjHgpUpeIQ5AdLfkVqYtIB3in8LLEbzUwVjDsyPkKnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aQNuF2ni; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2e95a75a90eso37786681fa.2;
+        Sun, 02 Jun 2024 07:15:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717337728; x=1717942528; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=KpXeC176RaICWlSlxpJ+NDHy2MPx5eaGXOEoT5L913w=;
+        b=aQNuF2niJA3QVpSN2o5KWli9J/p0jlLW+Qm0PkZRCQgo7ojgrmYFoFn9Ziq+YavUBb
+         k7znzSNeHn6rKlOGIyMQfwleISloEn4DuUd0cGAHMx8fBl9hrcClZObeMPIGaw/9s2S5
+         K0NDyFZUpJtg7iZ40y3S0qVguQeu5LDcPFdBxkqFcbhhwpMkFwdAY5epXBfcUgD6fW1d
+         gvmBQMpGDqNL4co+YzF8vyphrP+SFdigt3w0IS0uOJoSSr99HXo12VuowY9E5LbL3Tk0
+         M/1TBCgGbpq0jwXup0X0aMnhmSCRRByikEs9SlLxnRCQLVglpjZRm+hVt85DVUSNIZZW
+         qNXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717337363; x=1717942163;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=EmIyVt3WKHxn0afBt5IKOYUapABvxb3wOIfnd2NiOKU=;
-        b=p5NuJAYFm1wH+WZh7MZG8t5GqUKKt/nYX91paiZpE2ehBUD30ihyMQGcsyCSZ06b0c
-         GRWvvoSCZlNxOKdAbfHxLWa7iEr9xlpjJqPwcGwNJip2pJWAH5JxWfl+OykMea5OzV43
-         0x0/twnQ2uqrsno7GSXMCliipaGWRnm/6WNfzMxF5SEZ0zcf5U/UesooTHfp+GhbGXKh
-         4FAyEpjjWi5+92uEZJfIdI68yOEsm//ZRzOrFxEAGh8jMz3fkRSyBx4Ssy3PIxX4zp6V
-         BsJFRC1t2hRTvp9WDSTsCzopO+2dnlhSQhB+0wiC5EATZyLsBiKHZJSbl5isf/b7aG4S
-         YAZA==
-X-Forwarded-Encrypted: i=1; AJvYcCWVkPjrVS6nHdKrXmBS32coQPK2iV9j7Cm8WBUrTNYGwU7mCmpdSW1iSfUUyV3feBAClAFz16WlYpQdNki3cO7M9L3xLz6kgvPliWwr
-X-Gm-Message-State: AOJu0YyPYw+QSoxQxxz6Ji9VixQ5e2LNtgx7xwLxvZAHVsSeA5pj06oa
-	EhVqw6/7abPebgGA+QrkORs4jo/+TBaEo46zHXko9PKAl6Mtbc1Cqu0qxuWBQubvb7i9I1gCgle
-	Xei1TMDWyl4wC7mhTDw9mEfN4+i4fHfHU37NP2sQaEN5g+JsN0eFLkbI=
-X-Google-Smtp-Source: AGHT+IEc4x0OYbFZzOWOTZqTcZjZDZpUevfECQm4f4kBd6Hggep4jD8b8Tn/aRkAU4ZZksw1/skgZ+6BjGgNEkFKk/J+EcatIKTv
+        d=1e100.net; s=20230601; t=1717337728; x=1717942528;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KpXeC176RaICWlSlxpJ+NDHy2MPx5eaGXOEoT5L913w=;
+        b=Xlzx6DarQFBZbQu/lso4JXnnuk9GPOOnCVh0VsicAx5nBo6wrue4b53nOWdSIE9QQn
+         6hJhBFMP9LcA0N6l7zyVw88NL7Tjqg43bGhomM9IzwNo36jNdUHKi8R1AXRDiZVga3Mg
+         oeO0ejNksHl6n+cBMwGyW7DoJFrpcz0YWNiy2ZGrb9+5lk04UfflYYXMaIIQRk/SFPQ8
+         pTTrVHaK2rzghgcgvq8BgInfE67N+eqqbcSfjxyFwmQTYNVept/5qEQ5nAhkM/8tUgIB
+         PCQ6OUNJzPdyHY/xEKR1PqKK5DC8ykVBcBGfLowzwBXxdltqFaczsWLwMycfJploL44M
+         WIBg==
+X-Forwarded-Encrypted: i=1; AJvYcCWOVka6FnvMho/I8+6lqZeohSDYT8taGY6aSNGVIBeSWMTqZsP2fmCXlOYLGbMjiN4cQtGrguxGyTeadE6DvZgksHIj0eyhq2pyugp82g+Tz7dnzCEg7sXohIhFKfi15ZtjFi6U
+X-Gm-Message-State: AOJu0YzSRA2UwDYWUwj0s0GkSBfS2I00UFPa0RDKzXZMN6X3wk6uovg2
+	6xL7lKPp3tLbA3cIU0ElA7teoDzD0QgIWc2bTd5HTTyHOkwOdcuK
+X-Google-Smtp-Source: AGHT+IHhCeDc8Zsm3l7ZPMhThg8eoRnqf8HB2t/6rIPuOLXgMXpgQd1zMhnyuc4dATN2jc6yS4R9jA==
+X-Received: by 2002:a2e:99c2:0:b0:2ea:8abe:2319 with SMTP id 38308e7fff4ca-2ea94f69880mr43253701fa.0.1717337727848;
+        Sun, 02 Jun 2024 07:15:27 -0700 (PDT)
+Received: from skbuf ([188.25.55.166])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57a5dc1e2d6sm760305a12.59.2024.06.02.07.15.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 02 Jun 2024 07:15:27 -0700 (PDT)
+Date: Sun, 2 Jun 2024 17:15:24 +0300
+From: Vladimir Oltean <olteanv@gmail.com>
+To: Tristram.Ha@microchip.com
+Cc: Arun Ramadoss <arun.ramadoss@microchip.com>,
+	Woojung Huh <woojung.huh@microchip.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Vivien Didelot <vivien.didelot@gmail.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	UNGLinuxDriver@microchip.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 net] net: dsa: microchip: fix wrong register write
+ when masking interrupt
+Message-ID: <20240602141524.iap3b6w2dxilwzjg@skbuf>
+References: <1717119553-3441-1-git-send-email-Tristram.Ha@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2185:b0:374:491c:654a with SMTP id
- e9e14a558f8ab-3748b97c4d4mr2600685ab.1.1717337362961; Sun, 02 Jun 2024
- 07:09:22 -0700 (PDT)
-Date: Sun, 02 Jun 2024 07:09:22 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000007aa62a0619e8c330@google.com>
-Subject: [syzbot] [kernfs?] [bcachefs?] [exfat?] INFO: task hung in
- do_unlinkat (5)
-From: syzbot <syzbot+08b113332e19a9378dd5@syzkaller.appspotmail.com>
-To: brauner@kernel.org, gregkh@linuxfoundation.org, jack@suse.cz, 
-	kent.overstreet@linux.dev, linkinjeon@kernel.org, 
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, sj1557.seo@samsung.com, 
-	syzkaller-bugs@googlegroups.com, tj@kernel.org, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1717119553-3441-1-git-send-email-Tristram.Ha@microchip.com>
 
-Hello,
+On Thu, May 30, 2024 at 06:39:13PM -0700, Tristram.Ha@microchip.com wrote:
+> From: Tristram Ha <tristram.ha@microchip.com>
+> 
+> Initially the macro REG_SW_PORT_INT_MASK__4 is defined as 0x001C in
+> ksz9477_reg.h and REG_PORT_INT_MASK is defined as 0x#01F.  Because the
+> global and port interrupt handling is about the same the new
+> REG_SW_PORT_INT_MASK__1 is defined as 0x1F in ksz_common.h.  This works
+> as only the least significant bits have effect.  As a result the 32-bit
+> write needs to be changed to 8-bit.
+> 
+> Fixes: e1add7dd6183 ("net: dsa: microchip: use common irq routines for girq and pirq")
+> Signed-off-by: Tristram Ha <tristram.ha@microchip.com>
+> ---
+> v1
+>  - clarify the reason to change the code
 
-syzbot found the following issue on:
+After v1 comes v2.
 
-HEAD commit:    b6394d6f7159 Merge tag 'pull-misc' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=146989a4980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=713476114e57eef3
-dashboard link: https://syzkaller.appspot.com/bug?extid=08b113332e19a9378dd5
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> 
+>  drivers/net/dsa/microchip/ksz_common.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/dsa/microchip/ksz_common.c b/drivers/net/dsa/microchip/ksz_common.c
+> index 1e0085cd9a9a..3ad0879b00cd 100644
+> --- a/drivers/net/dsa/microchip/ksz_common.c
+> +++ b/drivers/net/dsa/microchip/ksz_common.c
+> @@ -2185,7 +2185,7 @@ static void ksz_irq_bus_sync_unlock(struct irq_data *d)
+>  	struct ksz_device *dev = kirq->dev;
+>  	int ret;
+>  
+> -	ret = ksz_write32(dev, kirq->reg_mask, kirq->masked);
+> +	ret = ksz_write8(dev, kirq->reg_mask, kirq->masked);
+>  	if (ret)
+>  		dev_err(dev->dev, "failed to change IRQ mask\n");
+>  
+> -- 
+> 2.34.1
+> 
 
-Unfortunately, I don't have any reproducer for this issue yet.
+What is the user-visible functional impact of the 32-bit access? Justify
+why this is a bug worth sending to stable kernels please.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/e8e1377d4772/disk-b6394d6f.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/19fbbb3b6dd5/vmlinux-b6394d6f.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/4dcce16af95d/bzImage-b6394d6f.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+08b113332e19a9378dd5@syzkaller.appspotmail.com
-
-INFO: task syz-executor.2:9894 blocked for more than 143 seconds.
-      Not tainted 6.9.0-syzkaller-10729-gb6394d6f7159 #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor.2  state:D stack:24688 pid:9894  tgid:9893  ppid:9055   flags:0x00004006
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5408 [inline]
- __schedule+0x1796/0x4a00 kernel/sched/core.c:6745
- __schedule_loop kernel/sched/core.c:6822 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6837
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6894
- rwsem_down_write_slowpath+0xeeb/0x13b0 kernel/locking/rwsem.c:1178
- __down_write_common+0x1af/0x200 kernel/locking/rwsem.c:1306
- inode_lock_nested include/linux/fs.h:826 [inline]
- do_unlinkat+0x26a/0x830 fs/namei.c:4394
- __do_sys_unlink fs/namei.c:4455 [inline]
- __se_sys_unlink fs/namei.c:4453 [inline]
- __x64_sys_unlink+0x49/0x60 fs/namei.c:4453
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7faae4e7cee9
-RSP: 002b:00007faae5c910c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000057
-RAX: ffffffffffffffda RBX: 00007faae4fabf80 RCX: 00007faae4e7cee9
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000020000a80
-RBP: 00007faae4ec949e R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 000000000000000b R14: 00007faae4fabf80 R15: 00007ffee8d5b6f8
- </TASK>
-
-Showing all locks held in the system:
-3 locks held by kworker/u8:1/12:
-1 lock held by khungtaskd/30:
- #0: ffffffff8e333d20 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:329 [inline]
- #0: ffffffff8e333d20 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:781 [inline]
- #0: ffffffff8e333d20 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6614
-2 locks held by kworker/u8:7/2801:
-2 locks held by getty/4839:
- #0: ffff88802f9390a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
- #1: ffffc90002f162f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0x6b5/0x1e10 drivers/tty/n_tty.c:2201
-2 locks held by syz-fuzzer/5091:
-3 locks held by kworker/1:6/5155:
- #0: ffff888015080948 ((wq_completion)events){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3206 [inline]
- #0: ffff888015080948 ((wq_completion)events){+.+.}-{0:0}, at: process_scheduled_works+0x90a/0x1830 kernel/workqueue.c:3312
- #1: ffffc90003a8fd00 (free_ipc_work){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3207 [inline]
- #1: ffffc90003a8fd00 (free_ipc_work){+.+.}-{0:0}, at: process_scheduled_works+0x945/0x1830 kernel/workqueue.c:3312
- #2: ffffffff8e3390f8 (rcu_state.exp_mutex){+.+.}-{3:3}, at: exp_funnel_lock kernel/rcu/tree_exp.h:291 [inline]
- #2: ffffffff8e3390f8 (rcu_state.exp_mutex){+.+.}-{3:3}, at: synchronize_rcu_expedited+0x381/0x830 kernel/rcu/tree_exp.h:939
-2 locks held by syz-executor.2/9894:
- #0: ffff888063566420 (sb_writers#35){.+.+}-{0:0}, at: mnt_want_write+0x3f/0x90 fs/namespace.c:409
- #1: ffff88805ef856a8 (&type->i_mutex_dir_key#29/1){+.+.}-{3:3}, at: inode_lock_nested include/linux/fs.h:826 [inline]
- #1: ffff88805ef856a8 (&type->i_mutex_dir_key#29/1){+.+.}-{3:3}, at: do_unlinkat+0x26a/0x830 fs/namei.c:4394
-2 locks held by syz-executor.2/9897:
-3 locks held by syz-executor.4/11013:
-2 locks held by syz-executor.4/11026:
- #0: ffff888021986420 (sb_writers#25){.+.+}-{0:0}, at: mnt_want_write+0x3f/0x90 fs/namespace.c:409
- #1: ffff88805505afe0 (&type->i_mutex_dir_key#20/1){+.+.}-{3:3}, at: inode_lock_nested include/linux/fs.h:826 [inline]
- #1: ffff88805505afe0 (&type->i_mutex_dir_key#20/1){+.+.}-{3:3}, at: filename_create+0x260/0x540 fs/namei.c:3900
-1 lock held by syz-executor.4/11030:
- #0: ffff88805505afe0 (&type->i_mutex_dir_key#20){++++}-{3:3}, at: inode_lock_shared include/linux/fs.h:801 [inline]
- #0: ffff88805505afe0 (&type->i_mutex_dir_key#20){++++}-{3:3}, at: lookup_slow+0x45/0x70 fs/namei.c:1708
-2 locks held by syz-executor.4/11037:
- #0: ffff888021986420 (sb_writers#25){.+.+}-{0:0}, at: mnt_want_write+0x3f/0x90 fs/namespace.c:409
- #1: ffff88805505afe0 (&type->i_mutex_dir_key#20/1){+.+.}-{3:3}, at: inode_lock_nested include/linux/fs.h:826 [inline]
- #1: ffff88805505afe0 (&type->i_mutex_dir_key#20/1){+.+.}-{3:3}, at: filename_create+0x260/0x540 fs/namei.c:3900
-2 locks held by syz-executor.4/11038:
- #0: ffff888021986420 (sb_writers#25){.+.+}-{0:0}, at: mnt_want_write+0x3f/0x90 fs/namespace.c:409
- #1: ffff88805505afe0 (&type->i_mutex_dir_key#20){++++}-{3:3}, at: inode_lock_shared include/linux/fs.h:801 [inline]
- #1: ffff88805505afe0 (&type->i_mutex_dir_key#20){++++}-{3:3}, at: open_last_lookups fs/namei.c:3573 [inline]
- #1: ffff88805505afe0 (&type->i_mutex_dir_key#20){++++}-{3:3}, at: path_openat+0x7c4/0x3280 fs/namei.c:3804
-4 locks held by kworker/0:2/11663:
- #0: ffff8880b943e798 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested+0x2a/0x140 kernel/sched/core.c:559
- #1: ffff8880b9428948 (&per_cpu_ptr(group->pcpu, cpu)->seq){-.-.}-{0:0}, at: psi_task_switch+0x441/0x770 kernel/sched/psi.c:988
- #2: ffff8880b942a718 (&base->lock){-.-.}-{2:2}, at: __debug_check_no_obj_freed lib/debugobjects.c:978 [inline]
- #2: ffff8880b942a718 (&base->lock){-.-.}-{2:2}, at: debug_check_no_obj_freed+0x234/0x580 lib/debugobjects.c:1019
- #3: ffffffff94a429d8 (&obj_hash[i].lock){-.-.}-{2:2}, at: debug_object_activate+0x16d/0x510 lib/debugobjects.c:708
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+FWIW, struct ksz_irq operates on 16-bit registers.
 
