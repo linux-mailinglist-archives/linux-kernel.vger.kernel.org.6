@@ -1,101 +1,118 @@
-Return-Path: <linux-kernel+bounces-198491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A99338D7937
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 01:42:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 913218D793A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 01:46:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE6DBB213C0
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 23:42:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C22261C2141F
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 23:46:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8162C82482;
-	Sun,  2 Jun 2024 23:41:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D84717F481;
+	Sun,  2 Jun 2024 23:46:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="f6G29Vwl"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hy1dzwrx"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6333C7F48E;
-	Sun,  2 Jun 2024 23:41:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1447262B6;
+	Sun,  2 Jun 2024 23:46:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717371703; cv=none; b=bsxcJJRpc0Er0EADfTpDSSBFi5979mboeNh0XLBkSeLPhD4bNNVTNfz36dTvj6NfHXyDkxkDFja40W+6EzASWZ5rivLb1UURfz6PheTceS8d8fMRyhNVSF/+lZz0UDe0t4AHDsrWqqoF4LvgJcORfYQfq6mk/wwD3aRaHh8EIuQ=
+	t=1717372003; cv=none; b=GDuFOui+my9mfnl2aSWGI0I6NqzgPEYNH9T1eZ0oZUQLS2dsGnVxeHcuYsqunltTGe4t4i394uLEYazvrYnHlJo3SSB7G2ws46DO1pqbSM3BMn+46hyZs/8x57X8NmBFt499KTbIgck7uprQm0jzsrkcZWX+d2QOkEWXB9oOxEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717371703; c=relaxed/simple;
-	bh=lTt0hR7LrlfS0w20RIwK96pw0np9sANpdXGv9S0898U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QnCYS4YAl5sov49Biqx8N8CdvyJ773itH83v+t9JqFez0kOzqsFUMWuB8nNMh7j4VxNzHFqKkf8IdJqyG+JEy6h7WyJV//o3id09EHm0V75g2YyZHVItogb1m2/Iat8KAtcp8XKtzGBBRf1+d+BPes07IqcxuglerWI6aEBqf5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=f6G29Vwl; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=0vSHaCER5RNLud6CSJnQ270WRt2oGu/Uj4sYe/neMus=; b=f6G29VwlfzCoz9aJ
-	rWiwIH77dURfoo9YYoSiWZvDhLzI1CPFhYZOl/qcrZbQ7ErT7AbBwffm3LmF4dpFnJ9NEhjyokBVi
-	1llp5VRNGK6dzyMlCD11XTDcf6o8v4rxAOK1w32A+aKNtezK5RE4randFUn2DYh3gR3D+bYhenxCy
-	rEvefHBf6MiQ/BBimwxrRzy9jEHOjpNbuhVNttKQGMETBgQni9HQsxv6B+4lvJMMA95aBu2VOjzzh
-	bwJ3YxqODkpsCdwDTctaNqCIEEspE28fDJq4DiRMYeGqC++BlZTIakeeK3G9Hx9rb9C/IeKy8XJVf
-	Hgrh5HEjhLcOw59ynA==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1sDupV-003r31-0b;
-	Sun, 02 Jun 2024 23:41:37 +0000
-From: linux@treblig.org
-To: andrii@kernel.org,
-	eddyz87@gmail.com,
-	mykolal@fb.com,
-	kpsingh@kernel.org,
-	shuah@kernel.org
-Cc: bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH 3/3] selftests/bpf: remove unused struct 'libcap'
-Date: Mon,  3 Jun 2024 00:41:12 +0100
-Message-ID: <20240602234112.225107-4-linux@treblig.org>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240602234112.225107-1-linux@treblig.org>
-References: <20240602234112.225107-1-linux@treblig.org>
+	s=arc-20240116; t=1717372003; c=relaxed/simple;
+	bh=+AVY8B406UA3Sr2AeXmjZg3eG/SM31mhuFjExpBndOk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=GspmxeaFe0dAcbmdkFuBPJYIoDsi2Zr77tXIhqhj9sqUNJLxFXzegW8f7i0pIaGvc/VUt5X7IfUKzMqqIxeaj6VtzeeiMFHh4XkW3+dIYtlsortOEe3y55kna29Ncm9gxZUM6XIoODC8N45MvIb/BKNYWzQyPYQdV47ec39oCb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hy1dzwrx; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 452LjQWw019693;
+	Sun, 2 Jun 2024 23:46:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=qMSKmHzTNfqaAlTk93UL3e
+	Iha71pItJolPFNbiTHD+c=; b=hy1dzwrxRxkuhr1MUYqhxJHzGrs9CcMClcrHAc
+	96tBn3BD7KNrWzorlfReqY8yLN/OHQBf5lLHJP+KbqDwa5txq0z5LHv/+4EA5LqY
+	/rN2y7abw7JUP5YxNBVX4a1hR+seE/kg9MKzi7ivoT8qKeYcaTGud4lXIa+7bcWM
+	bXvUGEOTlBnlcgYi2i7EPqpGJWHTo8UZm83p0rFRBt/4XZrijvwvG3dPQK/aAyrS
+	82WoIuDn+0vh4gFZ8zf6cJvUMf5J4UuTDBNh59UqXdcQjvY1xnjSd+Pb4dgICCGc
+	9OcYuOYTuOlsMe1kCMmh1WQ3ap1U1FX/M7Bb3Shr7uEsTqOw==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfw5wjk79-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 02 Jun 2024 23:46:33 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 452NkWjn017158
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 2 Jun 2024 23:46:32 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 2 Jun 2024
+ 16:46:25 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Sun, 2 Jun 2024 16:46:25 -0700
+Subject: [PATCH] brd: add missing MODULE_DESCRIPTION() macro
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240602-md-block-brd-v1-1-e71338e131b6@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAFAEXWYC/x3MywrCQAyF4VcpWRsYh1ovryJdZGaiDbZTSVQKp
+ e9udPnBOf8KxipscGlWUP6IyVwd+10DeaB6Z5TihhhiG7oQcSqYxjk/MGlBbimfzt3hSJHAL0/
+ lmyz/3LV3JzL2IdU8/CKj1PeCE9mLFbbtC8u0lYh9AAAA
+To: Jens Axboe <axboe@kernel.dk>
+CC: <linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: WTJvNnTsNT_634DVFL4EkwRVN1HKr2YH
+X-Proofpoint-ORIG-GUID: WTJvNnTsNT_634DVFL4EkwRVN1HKr2YH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-06-02_15,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
+ adultscore=0 suspectscore=0 priorityscore=1501 clxscore=1015
+ lowpriorityscore=0 mlxlogscore=999 bulkscore=0 spamscore=0 phishscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406020208
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+make allmodconfig && make W=1 C=1 reports:
+modpost: missing MODULE_DESCRIPTION() in drivers/block/brd.o
 
-'libcap' is unused since
-commit b1c2768a82b9 ("bpf: selftests: Remove libcap usage from
-test_verifier").
+Add the missing invocation of the MODULE_DESCRIPTION() macro.
 
-Remove it.
-
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 ---
- tools/testing/selftests/bpf/test_verifier.c | 5 -----
- 1 file changed, 5 deletions(-)
+ drivers/block/brd.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/tools/testing/selftests/bpf/test_verifier.c b/tools/testing/selftests/bpf/test_verifier.c
-index df04bda1c927..610392dfc4fb 100644
---- a/tools/testing/selftests/bpf/test_verifier.c
-+++ b/tools/testing/selftests/bpf/test_verifier.c
-@@ -1237,11 +1237,6 @@ static void do_test_fixup(struct bpf_test *test, enum bpf_prog_type prog_type,
- 	fixup_prog_kfuncs(prog, fd_array, test->fixup_kfunc_btf_id);
- }
+diff --git a/drivers/block/brd.c b/drivers/block/brd.c
+index 558d8e670566..3fb2f37ab893 100644
+--- a/drivers/block/brd.c
++++ b/drivers/block/brd.c
+@@ -296,6 +296,7 @@ static int max_part = 1;
+ module_param(max_part, int, 0444);
+ MODULE_PARM_DESC(max_part, "Num Minors to reserve between devices");
  
--struct libcap {
--	struct __user_cap_header_struct hdr;
--	struct __user_cap_data_struct data[2];
--};
--
- static int set_admin(bool admin)
- {
- 	int err;
--- 
-2.45.1
++MODULE_DESCRIPTION("Ram backed block device driver");
+ MODULE_LICENSE("GPL");
+ MODULE_ALIAS_BLOCKDEV_MAJOR(RAMDISK_MAJOR);
+ MODULE_ALIAS("rd");
+
+---
+base-commit: a693b9c95abd4947c2d06e05733de5d470ab6586
+change-id: 20240602-md-block-brd-e4ac89657a2a
 
 
