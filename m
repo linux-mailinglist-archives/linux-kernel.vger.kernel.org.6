@@ -1,109 +1,148 @@
-Return-Path: <linux-kernel+bounces-198131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 084CB8D73D7
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 06:29:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 031D38D73D9
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 06:36:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A86D61F2184C
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 04:29:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9361BB210F0
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 04:36:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3631C134A8;
-	Sun,  2 Jun 2024 04:29:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1019B12E7F;
+	Sun,  2 Jun 2024 04:36:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tzGP96jh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Iy+44CIj"
+Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BE6679C2;
-	Sun,  2 Jun 2024 04:29:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D2DA10949
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Jun 2024 04:36:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717302558; cv=none; b=dw2b80nHxOwPiheMlNkSt0CTyykMw0AsBQPbTa98eEZlf+8LdnfcorHOH1MddezfcywTtKR5oahB4TWEnre0XMSQCbLW4qRAriPc+/062rJ/Gn9c73qx3n1QO9F5G0SnrnxQbCEA+bpiLll2KWazgAiZbwWlzFcgIsPy5nZWvkY=
+	t=1717302995; cv=none; b=Pvrgg/2LJpuNkWvd9wq9XJCimxE4jVAvNaRQEP0TwepHieWrHISHpYQtIi5DUQHWPM9Xv6a2K7poKOb3L59EJqZKDGfDBLnujQe60b061M1lUIyrYh6zS050syRuqOgoJEjuYAgWUsnuPtHGAIBvhwo95Jcd0KFKY9cW2+LX+X0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717302558; c=relaxed/simple;
-	bh=oYpwUgb3R9s21VRsk1J9qoySXDBYWtk7Ai56w1NOPwM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j29MeOCoF68ADA6x+Lhi9sAy+YhoVMcDRHl2hnxXsDtMTx2EU6gkVT6Z3cycBwMAnHjOEpUWmvEpeKFgZlL5S7Si6bV537ZuW326Fkb1G85YcFXfjJ74KCDPyAEitYBgSqCEJ7waspkQFLIfCK/6prwNDJ2ORB75u15RXMHg228=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tzGP96jh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87BB2C2BBFC;
-	Sun,  2 Jun 2024 04:29:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717302557;
-	bh=oYpwUgb3R9s21VRsk1J9qoySXDBYWtk7Ai56w1NOPwM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tzGP96jhia4fn4mO1OIp3fqdmG7bjAFymlOTMwLkOW9c8n/Kc9VlrZ41tTUx9oe8z
-	 Kz1WGF9z41vlJW5ZfjsAE6XDAXyaMbhJbZZt0g9j7hX6fJ+F5iXV4JwwNvNPaSV5TB
-	 slG6HBdr78658hTU2gzuKDKwGXEtI6KlLIDkPiBoy4EqDTe9BeerCyusDyjT71Zn6l
-	 LOM8QBR0U1EgpKDidX009FSidAQkXS2B4yEnc5Lmx7i9wfMC5ZI9djpD+xOQHgupVU
-	 eD+3akz/e+MV13A6LIfpWw1sjyhAoV2xAs+T21Z2P9/OhMKzSeEJUKUKL+A93UooJ6
-	 283MPinGsm4/w==
-Date: Sat, 1 Jun 2024 23:29:14 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Taniya Das <quic_tdas@quicinc.com>, Konrad Dybcio <konrad.dybcio@somainline.org>, 
-	Jonathan Marek <jonathan@marek.ca>, Del Regno <angelogioacchino.delregno@somainline.org>, 
-	Loic Poulain <loic.poulain@linaro.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/16] dt-bindings: clock: qcom: reference qcom-gcc.yaml
-Message-ID: <dqk2jxt44lh3e4hlkfflqjyzmaujwtrzgxe7kem2soua3yryxt@hykweb47ku37>
-References: <20240531-dt-bindings-qcom-gcc-v1-0-b37d49fe1421@linaro.org>
- <l73uszlhnhyamfuwm7f6bbmockttwihsylkkgbyedkdseznlka@mtr5c7r4nqt4>
- <8ac8cc27-6c39-45fe-bdc2-40a310c815cc@linaro.org>
+	s=arc-20240116; t=1717302995; c=relaxed/simple;
+	bh=CWXF1V2TMTYlmotkfVH7GZLwf8hR5Ue0QdIpQrJnBW0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k9NcscaMNA9eywP/BhCnW5p/5Up1y+FVoTzcmQwGTEITCG53uo5G6L9hWAGVzSR4cjIKDh/sni0/1UAkXRtV6J8n6EBjkR31jhi4OKIZA7mqvnthy0SMUSlBczcn/6n/EyjcgtGWnSlih5ll6JscW1EFwu3p5A5TtF8oXXXABQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Iy+44CIj; arc=none smtp.client-ip=115.124.30.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1717302983; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=ZNZ5EiYzI8ePykWRaBhiaORawPDBRtocLTQhbcC0T/w=;
+	b=Iy+44CIjpJqHXC6FGQ0XuphIq3jIy4srnfIvCHG2EltzZcQ1H/UnE8WZBToQlI8ooLCMFCQz83HeBiDfUNUbJhq902WU0KzpgbAKlZmFlO3HcxoayHCbTI6buRLW3vkcZrVSG46Zj1ykxjN1apTyL6mqFDLeFnoo1qjR/qYo86k=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067111;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=16;SR=0;TI=SMTPD_---0W7dxKvB_1717302980;
+Received: from 192.168.0.106(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W7dxKvB_1717302980)
+          by smtp.aliyun-inc.com;
+          Sun, 02 Jun 2024 12:36:21 +0800
+Message-ID: <bba3ab3d-6e9c-4c62-9c85-3a3d338d9230@linux.alibaba.com>
+Date: Sun, 2 Jun 2024 12:36:19 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8ac8cc27-6c39-45fe-bdc2-40a310c815cc@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/6] mm: shmem: add multi-size THP sysfs interface for
+ anonymous shmem
+To: wang wei <a929244872@163.com>
+Cc: akpm@linux-foundation.org, hughd@google.com, willy@infradead.org,
+ david@redhat.com, wangkefeng.wang@huawei.com, ying.huang@intel.com,
+ 21cnbao@gmail.com, ryan.roberts@arm.com, shy828301@gmail.com,
+ ziy@nvidia.com, ioworker0@gmail.com, da.gomez@samsung.com,
+ p.raghav@samsung.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <cover.1717033868.git.baolin.wang@linux.alibaba.com>
+ <716c515156e8c891766d8fd3f1df231d289b2a37.1717033868.git.baolin.wang@linux.alibaba.com>
+ <4e918c74.1262.18fd1d870d6.Coremail.a929244872@163.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <4e918c74.1262.18fd1d870d6.Coremail.a929244872@163.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, May 31, 2024 at 05:19:19PM GMT, Krzysztof Kozlowski wrote:
-> On 31/05/2024 17:14, Dmitry Baryshkov wrote:
-> > On Fri, May 31, 2024 at 03:52:18PM +0200, Krzysztof Kozlowski wrote:
-> >> Hi,
-> >>
-> >> Unify Qualcomm clock controllers by referencing qcom,gcc.yaml where
-> >> applicable.  Several existing bindings for these display/GPU/CAM clock
-> >> controllers already do it.
-> > 
-> > The series looks good to me with a single point in mind. You are writing
-> > that dispcc/videocc/etc are a variant of GCC. However GCC is a Global
-> > Clock Controller. 
-> 
-> Yeah, that's simplification from my side and assumption that at first
-> they designed GCC and then they copied the design to other blocks.
-> 
 
-That may or may not be the case, who knows... I also don't have a strong
-opinion about tying it all to gcc.yaml if that work...
 
-But the claim in the commit messages should the be that we inherit
-gcc.yaml because it's convenient, not because all clock controllers are
-derived from gcc.
+On 2024/6/1 11:29, wang wei wrote:
+> At 2024-05-30 10:04:14, "Baolin Wang" <baolin.wang@linux.alibaba.com> wrote:
+> 
+>>To support the use of mTHP with anonymous shmem, add a new sysfs interface
+>>'shmem_enabled' in the '/sys/kernel/mm/transparent_hugepage/hugepages-kB/'
+>>directory for each mTHP to control whether shmem is enabled for that mTHP,
+>>with a value similar to the top level 'shmem_enabled', which can be set to:
+>>"always", "inherit (to inherit the top level setting)", "within_size", "advise",
+>>"never", "deny", "force". These values follow the same semantics as the top
+>>level, except the 'deny' is equivalent to 'never', and 'force' is equivalent
+>>to 'always' to keep compatibility.
+>>
+>>By default, PMD-sized hugepages have enabled="inherit" and all other hugepage
+>>sizes have enabled="never" for '/sys/kernel/mm/transparent_hugepage/hugepages-xxkB/shmem_enabled'.
+>>
+>>In addition, if top level value is 'force', then only PMD-sized hugepages
+>>have enabled="inherit", otherwise configuration will be failed and vice versa.
+>>That means now we will avoid using non-PMD sized THP to override the global
+>>huge allocation.
+>>
+>>Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+>>---
+>> Documentation/admin-guide/mm/transhuge.rst | 29 +++++++
+>> include/linux/huge_mm.h                    | 10 +++
+>> mm/huge_memory.c                           | 11 +--
+>> mm/shmem.c                                 | 96 ++++++++++++++++++++++
+>> 4 files changed, 138 insertions(+), 8 deletions(-)
+>>
+>>diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
+>>index d414d3f5592a..659459374032 100644
+>>--- a/Documentation/admin-guide/mm/transhuge.rst
+>>+++ b/Documentation/admin-guide/mm/transhuge.rst
+>>@@ -332,6 +332,35 @@ deny
+>> force
+>>     Force the huge option on for all - very useful for testing;
+>> 
+>>+Anonymous shmem can also use "multi-size THP" (mTHP) by adding a new sysfs knob
+>>+to control mTHP allocation: /sys/kernel/mm/transparent_hugepage/hugepages-<size>kB/shmem_enabled.
+>>+Its value for each mTHP is essentially consistent with the global setting, except
+>>+for the addition of 'inherit' to ensure compatibility with the global settings.
+>>+always
+>>+    Attempt to allocate <size> huge pages every time we need a new page;
+>>+
+>>+inherit
+>>+    Inherit the top-level "shmem_enabled" value. By default, PMD-sized hugepages
+>>+    have enabled="inherit" and all other hugepage sizes have enabled="never";
+>>+
+>>+never
+>>+    Do not allocate <size> huge pages;
+>>+
+>>+within_size
+>>+    Only allocate <size> huge page if it will be fully within i_size.
+>>+    Also respect fadvise()/madvise() hints;
+>>+
+>>+advise
+>>+    Only allocate <size> huge pages if requested with fadvise()/madvise();
+>>+
+>>+deny
+>>+    Has the same semantics as 'never', now mTHP allocation policy is only
+>>+    used for anonymous shmem and no not override tmpfs.
+>>+
+>>+force
+>>+    Has the same semantics as 'always', now mTHP allocation policy is only
+>>+    used for anonymous shmem and no not override tmpfs.
+>  >+
+> 
+> I just briefly reviewed the discussion about the value of 
+> hugepages-<size>kB/shmem_enabled
+> in V1 [PATCH 5/8]. Is there a conclusion now? Maybe I left out some 
+> important information.
 
-Regards,
-Bjorn
+You can refer to the this patch's commit message and documentation, 
+which are based on the conclusions of previous discussions.
 
-> > What about renaming qcom,gcc.yaml to
-> > qcom,cc-common.yaml ? Then the rest makes total sense to me.
-> 
-> Several gpu/disp/cam clock controllers already include qcom,gcc.yaml, so
-> I would say this should not be a requirement for this patchset.
-> 
-> We can rename, although it always is a bit of churn - git log needs
-> special option, backporting is a bit trickier.
-> 
-> 
-> Best regards,
-> Krzysztof
-> 
+In addition, you can also read more discussions from the last bi-weekly 
+MM meeting[1], summarized by David.
+
+[1] 
+https://lore.kernel.org/all/f1783ff0-65bd-4b2b-8952-52b6822a0835@redhat.com/#t
 
