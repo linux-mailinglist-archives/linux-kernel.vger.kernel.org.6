@@ -1,157 +1,119 @@
-Return-Path: <linux-kernel+bounces-198257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D70DB8D75AF
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 15:23:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B5F38D75B1
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 15:24:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78E791F218F1
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 13:23:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B449B1F21552
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 13:24:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC9963EA66;
-	Sun,  2 Jun 2024 13:23:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6EAE3D0D1;
+	Sun,  2 Jun 2024 13:23:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WVfc7J+W"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eAZJ1R3W"
+Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB4E03CF6A
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Jun 2024 13:23:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A768B3C0D;
+	Sun,  2 Jun 2024 13:23:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717334592; cv=none; b=ghMk31Vz1P0OTfycGZDbx+3KA1DkPnKuIkvrKb8eZqwzi+Qo4muhKJCF8pS5aKGfKqoPxLm4hIXTywTfEhn3Nwbu009QrqHwAwOwgwKITdcwaUk6+3HeaHCd4qa7GuyrzW+W3tJLRw49GqNfMNw+BKaMQeJ9NzlMRn4NiL5Pzn0=
+	t=1717334639; cv=none; b=KyKbJUe5jvD7rvfyId/MeK7wkmQOMhztMMMjUBcCddPMQlSP0FNm91v7pqSX89NrWTnTT4PN7l/hrrCWdZcBNc33SP1xTJBp8H/CGxRPS1NVmls5IWHCZYrgiTQR+VusSAH3pLmT0blgubpN9REpY+7a59PVUsDFyti1c+ekkcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717334592; c=relaxed/simple;
-	bh=vqOvPpShz9c4/2fZ9ulQIq1neCkg/aGM/PXFpXXYXnM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=H/+SfvEygv58gPX1Bee6Zr1IAjV+l5rTeP/qHtzmDUYyhQG0Msn8AMWa6CijwHbhIpRvOjkFp8iRZPMc3gx9myZJzT50372EgNY3pZj67NxlI433dZZ+D3Snsf8Sf4hRFZqSFBn7rEMD0EjjSOuDqN2N1z29mRCznnXwPPQh+e8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WVfc7J+W; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717334589;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zm40TjPLoYzCa0pq6+pwu4O/kjQl3e30AsjOxEDak28=;
-	b=WVfc7J+Wy+/GNJwk29kJDbSr+IR+WNT8Nmt9VifvkZ35CepHVFtqhicCurZrOFNowKc1m/
-	fjoXvIBIFEvymHuMLKbSEReaghEmaxBEc0VSYCkliGNZlFXGsg5BTSdyTqDaJQTaLUKSbG
-	H+KPi9lCU0DGoL+OpdTVfK8G8msfbC8=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-628-5dxXccA1M5e9jNwiZr2Jjg-1; Sun, 02 Jun 2024 09:23:07 -0400
-X-MC-Unique: 5dxXccA1M5e9jNwiZr2Jjg-1
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a68afe5b95dso71442066b.2
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2024 06:23:07 -0700 (PDT)
+	s=arc-20240116; t=1717334639; c=relaxed/simple;
+	bh=ph9RRZ9fJodzXeGXNZy1+uDuFKkDxa+ngjNPyvjGTPk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Cc+M8bom8wZHcEdwTFPqApELG0Xs1HKEAlYXNibRQV19wPrHuybGWlg+6vB04UcPwCe0VAw0RqW/CatX7GqOE4QP9j+YS8n4Dhg1oEAIj6F/mMRCmyU3ZgqkUoM8nCn7xDRQ+b9lWZDEE1ZxnVsY7UBBTWuP5kFMT58rBdsOp44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eAZJ1R3W; arc=none smtp.client-ip=209.85.221.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-4e93a260becso1405685e0c.1;
+        Sun, 02 Jun 2024 06:23:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717334636; x=1717939436; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kLqzVjLrq6hxp+JDJpVf8tQoG9jZMYyGVDIn8oS4rLg=;
+        b=eAZJ1R3WrOGewNqSWAbtVCnTWkWn/hvqYvYbHKQnaSHJP/KrUWJ2UfPErMJyg68T/l
+         hekM05M5JAGwa2V7ictHoXsmoCJq9WdUntnGU2peX9nE5x9R/e62W5tk6uXGuY032CVg
+         g8wbOBSfq5uYPMJAO7u1UbbHoZw/o+5hk+9zoEjpzxBwxDOBHOTWdYz6lHwfL/hAOjTK
+         AEQjMzq1wfeYUftL1t+RrmA2+35ZBwt/JOlRko++0K9sad5cbI8QRBH/IiP0vQG8qcNC
+         2yc/Df4ltGBI0LtTYjWyRWtPIx4efMZJxaTkkLkcNMuOVHOZudklslSU4hL+4UT/MB/4
+         sF5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717334586; x=1717939386;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zm40TjPLoYzCa0pq6+pwu4O/kjQl3e30AsjOxEDak28=;
-        b=HP7HAEPOaR2qwm7HN4xvdHeJhKZ2QhD8gwQyzSQenTlWr/FfK/xJBc45/KcdaEAuDc
-         9PGnKTeBXWbAZ712WAj6FJIzHjDGNb1ircVDBKOgCpfVk3RqXl3rUOEvifzTqG3VVufO
-         8CnYRlVb8UCSFO9XfIShIvxv0utxeMMciDPaSZ22XKH2zy+CWfNkXcb+75Xl5voUU/wK
-         wCAd8ugt7V95qtK4C9BXE9uIySIwkPtuiL8EOSdjQndsL2XEnm1btrDloskR+z8Tp6XI
-         MnLPYg5OHMM/c/mSRjnGrZmJ4oRzU3RamHl6KtqOGtUE/dhb9gWV1QxnIe3epB2kFb1Y
-         jXYA==
-X-Forwarded-Encrypted: i=1; AJvYcCWyBp/quHM3X3XguEq9sUeERQD7FnS/PYCXaPcdpwmB9hFWw1aZ3M2bTCq3zhZl0Hz3zQeztLc59ZDcTki9oL1hN9JmqD+MZxwiBm7i
-X-Gm-Message-State: AOJu0YwMigoQscYw0bdBEOhT1H/xcsh0cwJZk+jNiYZP/XWN7Ywyyo8f
-	YHtORAr61eHBtZQJuIAhauN5J3HwA6DnljcGxTJkst9EQpllCdbRyWDDlg0NgUwUBoqbfmrYjZR
-	S5NX6uu5GNt+/8C8xOsnrT86oD7utwp1taTYT0Wzh9Xm3hV2DGm8hJPiD0YlpEw==
-X-Received: by 2002:a17:906:a098:b0:a65:36cd:c7b7 with SMTP id a640c23a62f3a-a682198281dmr408166166b.56.1717334586544;
-        Sun, 02 Jun 2024 06:23:06 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGuyqfIYOG9J9rpYr5XZ8Uec9LHEAnWTSmDXK7waAs/CbXOhMfOQC9Rj6SVHmiLfDu5sov9Ow==
-X-Received: by 2002:a17:906:a098:b0:a65:36cd:c7b7 with SMTP id a640c23a62f3a-a682198281dmr408164466b.56.1717334585996;
-        Sun, 02 Jun 2024 06:23:05 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a69018adad6sm46286466b.97.2024.06.02.06.23.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 02 Jun 2024 06:23:05 -0700 (PDT)
-Message-ID: <2bd7e800-5449-4c09-baf3-74af4c9f0065@redhat.com>
-Date: Sun, 2 Jun 2024 15:23:04 +0200
+        d=1e100.net; s=20230601; t=1717334636; x=1717939436;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kLqzVjLrq6hxp+JDJpVf8tQoG9jZMYyGVDIn8oS4rLg=;
+        b=YQHdRcQ17fm1h/5NiUugH/+13357BQFy1oFTkxrL/ytnnayaaB8lYRgHnaVisbbSlh
+         ZU2jjR6Dzhwq1YOGt43M0xCswrLf4eWd6cWdv41IvV1aUDR0dj7vzG48xnOJVHVkDWbi
+         ttlqqjD3sTnBhz2WEUxPzb6mxStnwZ6wfWYZOZhiUfSoozzB2gMFbOyAh1v8/wP4xWRE
+         fRG4IuAk/84T6mkGgb5EBp+vnc6NxsulKnkBPHB3kfQBTh91iS7zpZwxWUWhXGbwCIzh
+         OrGgB20Fd120qCLSOu6KewFLm2wM6vA0Tqzvwiv/aQYrUvJio5kDu9lWwEFFPPjMZTH4
+         ouiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVxuSoaTxCAiq+inwxG9T3v12XS/8fsI5JKow6gBGt1KR7X4VRv6wu6sXJEWKhItg5E31O+dnhK9JosofBJJl/YMX8QxLqpRk6hn4BeEWNxlW8ktuS2TEzCtKFxh/xNSD0s+YRqO8VQ
+X-Gm-Message-State: AOJu0YzCNcxzwlQfywEI5dBDe43hkaCUdWqTFtBNvV5PWZJzvztPmTEk
+	9cfEEyFz7de2bDczhj9HjxgzGIk4m2oSJ8WgZ51m+wxFCW55ERXTYbQRBXZWxxKp/8R7ZEuNxBo
+	FOGv+qxHilWc+BaV47xN2bEjgwMA=
+X-Google-Smtp-Source: AGHT+IEl8GwNRu2NdrOvC9nHu/oHZJ70LfiidpzJbSMtzQQIKSvSiI7agY/ZviZHjTBl7KAjij2DpBPXMnMlNEjF13g=
+X-Received: by 2002:a05:6122:380c:b0:4df:281d:905 with SMTP id
+ 71dfb90a1353d-4eb02f37194mr6556291e0c.16.1717334636547; Sun, 02 Jun 2024
+ 06:23:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/3] Input: novatek-nvt-ts: replace generic i2c device
- id with specific IC variant
-To: joelselvaraj.oss@gmail.com, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
-References: <20240601-nvt-ts-devicetree-regulator-support-v5-0-aa9bf986347d@gmail.com>
- <20240601-nvt-ts-devicetree-regulator-support-v5-1-aa9bf986347d@gmail.com>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20240601-nvt-ts-devicetree-regulator-support-v5-1-aa9bf986347d@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240602071058.6405-1-harry.yu185@gmail.com> <86o78jlms2.wl-maz@kernel.org>
+In-Reply-To: <86o78jlms2.wl-maz@kernel.org>
+From: yu harry <harry.yu185@gmail.com>
+Date: Sun, 2 Jun 2024 21:23:43 +0800
+Message-ID: <CAAmx-DzLh7TYub-PDSX+A7h6KuPYAr9WeBFmhknPjxAr2dPBnA@mail.gmail.com>
+Subject: Re: [PATCH] irqchip/gic-v3: Add Allwinner sunxi001 erratum workaround
+To: Marc Zyngier <maz@kernel.org>
+Cc: corbet@lwn.net, catalin.marinas@arm.com, will@kernel.org, 
+	tglx@linutronix.de, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Sun, Jun 2, 2024 at 5:25=E2=80=AFPM Marc Zyngier <maz@kernel.org> wrote:
+>
+> On Sun, 02 Jun 2024 08:10:58 +0100,
+> "harry.yu185" <harry.yu185@gmail.com> wrote:
+> >
+> > Allwinner A523 GIC600 integration does not support the
+> > sharability feature. So assigned Erratum ID #sunxi001 for this
+> > issue.
+> >
+> > That the 0x0201643b ID is not Allwinner specific and thus
+> > there is an extra of_machine_is_compatible() check.
+> >
+> > Note, because more than one soc may have this problem, the 'sunxi'
+> > name is used instead of a fixed soc name like A523.
+> >
+> > Signed-off-by: harry.yu185 <harry.yu185@gmail.com>
+>
+> No, this is all already handled by the driver already (since 6.6).
+>
+> Please fix your DT to include the "dma-noncoherent" property in the
+> GIC and ITS nodes, which should paper over the integration bug.
+>
+> Thanks,
+>
+>         M.
+>
+> --
+> Without deviation from the norm, progress is not possible.
 
-On 6/1/24 10:44 PM, Joel Selvaraj via B4 Relay wrote:
-> From: Joel Selvaraj <joelselvaraj.oss@gmail.com>
-> 
-> This is done in preparation to introduce other variants of the Novatek NVT
-> touchscreen controller that can be supported by the driver.
-> 
-> Signed-off-by: Joel Selvaraj <joelselvaraj.oss@gmail.com>
-
-Also:
-
-Acked-by: Hans de Goede <hdegoede@redhat.com>
-
-for merging the drivers/platform/x86/x86-android-tablets/other.c change
-through the input tree.
-
-Regards,
-
-Hans
-
-
-
-
-> ---
->  drivers/input/touchscreen/novatek-nvt-ts.c       | 2 +-
->  drivers/platform/x86/x86-android-tablets/other.c | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/input/touchscreen/novatek-nvt-ts.c b/drivers/input/touchscreen/novatek-nvt-ts.c
-> index 1a797e410a3fa..9bee3a0c122fb 100644
-> --- a/drivers/input/touchscreen/novatek-nvt-ts.c
-> +++ b/drivers/input/touchscreen/novatek-nvt-ts.c
-> @@ -278,7 +278,7 @@ static int nvt_ts_probe(struct i2c_client *client)
->  }
->  
->  static const struct i2c_device_id nvt_ts_i2c_id[] = {
-> -	{ "NVT-ts" },
-> +	{ "nt11205-ts" },
->  	{ }
->  };
->  MODULE_DEVICE_TABLE(i2c, nvt_ts_i2c_id);
-> diff --git a/drivers/platform/x86/x86-android-tablets/other.c b/drivers/platform/x86/x86-android-tablets/other.c
-> index eb0e55c69dfed..129273df0fdeb 100644
-> --- a/drivers/platform/x86/x86-android-tablets/other.c
-> +++ b/drivers/platform/x86/x86-android-tablets/other.c
-> @@ -40,7 +40,7 @@ static const struct x86_i2c_client_info acer_b1_750_i2c_clients[] __initconst =
->  	{
->  		/* Novatek NVT-ts touchscreen */
->  		.board_info = {
-> -			.type = "NVT-ts",
-> +			.type = "nt11205-ts",
->  			.addr = 0x34,
->  			.dev_name = "NVT-ts",
->  		},
-> 
-
+Thank you for your reply,
+the method you said may not be suitable, because this SOC
+also needs RDIST_FLAGS_FORCE_NON_SHAREABLE,
+just like RK3588, but it is different from the RK3588 version.
 
