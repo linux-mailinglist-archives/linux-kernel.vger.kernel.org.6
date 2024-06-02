@@ -1,133 +1,142 @@
-Return-Path: <linux-kernel+bounces-198081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A7BF8D7340
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 05:36:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B80C8D7347
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 05:37:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 045F11F2175F
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 03:36:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95B33281B39
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 03:37:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76574A932;
-	Sun,  2 Jun 2024 03:36:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b="REwyQdi8"
-Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3895C17573;
+	Sun,  2 Jun 2024 03:37:25 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 393DE53AC
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Jun 2024 03:36:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AA8711712;
+	Sun,  2 Jun 2024 03:37:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717299364; cv=none; b=K7Wv5pth0ild2PB8B5AOWLxxG8GR70yL21r9v2OdFCmbaFcy5Rgbw8nXIlz4CswAmnXe70Y01HQk4+vIzy2APpg2GAL8NlrpNuC+GjO7DHzI+C5Z1CZ8vsPSP+BWjLKO7iy+2OLdPltZZQBljjoxcQRkSOV7s7Y2ABmtH0So4wI=
+	t=1717299444; cv=none; b=qg6R80zdPX2YsGlYFjfz9D+Ox3c/wXlXEcD02iqcvMmYcr5fKcxqHjdvwF0wAPIabE9nQg9T5sgv9evZ6pf1GFoSOOIXP/IBY9T5Z9q9guVx359pA6AwD5AqWneRE3cCwdL8G1dygtWh73YMh9RWfLGvr0Pe1LPs0HR/3SWEhXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717299364; c=relaxed/simple;
-	bh=OQf6M4tF0ZWxSgVI5UrjMjHF0y9AkvZRl3Xq1E4gGpg=;
-	h=Date:From:Subject:To:Cc:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=psVDAEmgnUlXCPa+CZJ7pXee4LMCA3o4fbC1pI6YvfY8whfa6Be6xuDDw5TQuF+rczvRH5XZcdbNqHRJmBtEmkyQn0RD2sr9GxHFxPdOuCaS+4Zx3f8GP8lqSLi2MrBLzxNq3++Tm3KsPL2RdvST7jv4xDWKfOiYCHc+Wjj6Buo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool; spf=pass smtp.mailfrom=packett.cool; dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b=REwyQdi8; arc=none smtp.client-ip=91.218.175.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=packett.cool
-X-Envelope-To: heiko@sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=packett.cool;
-	s=key1; t=1717299358;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4WnZLNXTxyDKxHBiNiWfRKN88LzF8Z4jtB2f1P6shSE=;
-	b=REwyQdi8bfi4u4XEBzbddwpO0MQxQfI9ErTXsxtufVF9fIcdf6NS62jw1lycOEWsOrB+Ju
-	GbI7Z85iRrcIVZZWL+MZnawhnmmEPmq/H6kwagha1ddxTkI3T78CuM81ffieSFZ4vKgAG3
-	KS5IOylF+9a+kyXEq5VA9pea0auYbzv63Suyqgx0iiFBh+zwhA1zVr7xuac0PUa1UbFiAm
-	IacXBPMpjGCXAEKzblB2h6LiBECq8s3INeyYTbisOIlICFVa4d+4YV6I1qxgSot231et1i
-	LvQnvfIGsgY4kNiCaZaqwEBaLxsBSlNIzHSShbwRW52eLxdU/I3sOEa8mrWzWQ==
-X-Envelope-To: stable@vger.kernel.org
-X-Envelope-To: hjc@rock-chips.com
-X-Envelope-To: andy.yan@rock-chips.com
-X-Envelope-To: maarten.lankhorst@linux.intel.com
-X-Envelope-To: mripard@kernel.org
-X-Envelope-To: tzimmermann@suse.de
-X-Envelope-To: airlied@gmail.com
-X-Envelope-To: daniel@ffwll.ch
-X-Envelope-To: dri-devel@lists.freedesktop.org
-X-Envelope-To: linux-arm-kernel@lists.infradead.org
-X-Envelope-To: linux-rockchip@lists.infradead.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-Date: Sun, 02 Jun 2024 00:35:36 -0300
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Val Packett <val@packett.cool>
-Subject: Re: [PATCH v3 1/2] drm/rockchip: vop: clear DMA stop bit upon vblank
- on RK3066
-To: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
-Cc: stable@vger.kernel.org, Sandy Huang <hjc@rock-chips.com>, Andy Yan
-	<andy.yan@rock-chips.com>, Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Message-Id: <CNOFES.QFA1L3UJ3SH82@packett.cool>
-In-Reply-To: <20240527231202.23365-1-val@packett.cool>
-References: <20240527231202.23365-1-val@packett.cool>
+	s=arc-20240116; t=1717299444; c=relaxed/simple;
+	bh=o6pCTeFxqRUBIZAPxPfqyRNbjqPbTPyf32oB9WTLbbA=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=CTwsTdf3MqCIn99MP79qKSU1E30jKnqOkd0ps7XvX+cfGyIXGWbKcoBXu7w4wdGVGDFxpZo2iIbvnpSPahWRorus34kIBWc/usz6rwVMwTZ9aRY0+xNaDjaBxKDADR2DIBCZtlqUS5cbV1MJqVv90BZdxJa+NJiK6JiY2Kmk78s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35E5BC3277B;
+	Sun,  2 Jun 2024 03:37:24 +0000 (UTC)
+Received: from rostedt by gandalf with local (Exim 4.97)
+	(envelope-from <rostedt@goodmis.org>)
+	id 1sDc3D-000000094J0-0veg;
+	Sat, 01 Jun 2024 23:38:31 -0400
+Message-ID: <20240602033744.563858532@goodmis.org>
+User-Agent: quilt/0.68
+Date: Sat, 01 Jun 2024 23:37:44 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+ Florent Revest <revest@chromium.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>,
+ bpf <bpf@vger.kernel.org>,
+ Sven Schnelle <svens@linux.ibm.com>,
+ Alexei Starovoitov <ast@kernel.org>,
+ Jiri Olsa <jolsa@kernel.org>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>,
+ Alan Maguire <alan.maguire@oracle.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Guo Ren <guoren@kernel.org>
+Subject: [PATCH v2 00/27] function_graph: Allow multiple users for function graph tracing 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=windows-1251; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Migadu-Flow: FLOW_OUT
 
 
+This is a continuation of the function graph multi user code.
+I wrote a proof of concept back in 2019 of this code[1] and
+Masami started cleaning it up. I started from Masami's work v10
+that can be found here:
 
-On Mon, May 27 2024 at 20:11:49 -03:00:00, Val Packett=20
-<val@packett.cool> wrote:
-> The RK3066 VOP sets a dma_stop bit when it's done scanning out a frame
-> and needs the driver to acknowledge that by clearing the bit.
->=20
-> So unless we clear it "between" frames, the RGB output only shows=20
-> noise
-> instead of the picture. vblank seems to be the most appropriate place=20
-> to
-> do it, since it indicates exactly that: that the hardware is done
-> with the frame.
->=20
-> This seems to be a redundant synchronization mechanism that was=20
-> removed
-> in later iterations of the VOP hardware block.
->=20
-> Fixes: f4a6de8 ("drm: rockchip: vop: add rk3066 vop definitions")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Val Packett <val@packett.cool>
-> ---
->  drivers/gpu/drm/rockchip/rockchip_drm_vop.c | 6 ++++++
->  drivers/gpu/drm/rockchip/rockchip_drm_vop.h | 1 +
->  drivers/gpu/drm/rockchip/rockchip_vop_reg.c | 1 +
->  3 files changed, 8 insertions(+)
->=20
-> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c=20
-> b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-> index a13473b2d..2731fe2b2 100644
-> --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-> @@ -1766,6 +1766,12 @@ static void vop_handle_vblank(struct vop *vop)
->  	}
->  	spin_unlock(&drm->event_lock);
->=20
-> +	if (VOP_HAS_REG(vop, common, dma_stop)) {
-> +		spin_lock(&vop->reg_lock);
-> +		VOP_REG_SET(vop, common, dma_stop, 0);
-> +		spin_unlock(&vop->reg_lock);
-> +	}
-> +
+ https://lore.kernel.org/linux-trace-kernel/171509088006.162236.7227326999861366050.stgit@devnote2/
 
-Oops=85 so doing it here actually causes deadlocks, unless we also=20
-change all other reg_lock usages to be spin_lock_irq/spin_unlock_irq.
+This is *only* the code that allows multiple users of function
+graph tracing. This is not the fprobe work that Masami is working
+to add on top of it. As Masami took my proof of concept, there
+was still several things I disliked about that code. Instead of
+having Masami clean it up even more, I decided to take over on just
+my code and change it up a bit.
 
-Not sure if doing that or going back to v1 would be better.
+Changes since v1: https://lore.kernel.org/linux-trace-kernel/20240525023652.903909489@goodmis.org/
 
+- Added ftrace helpers to allow an ftrace_ops to be a subop of a
+  managing ftrace_op. That is, the managing ftrace_op will enable
+  functions based off of the filters of the subops beneath it.
+  This could be extended for kprobes and fprobes, as the managing
+  ops does the multiplexing for the subops. This allows for only
+  adding a single callback to ftrace but have multiple ops that
+  represent many users.
 
+- At the end, I added static branch which also speeds up the
+  code quite a bit.
+
+Masami Hiramatsu (Google) (3):
+      function_graph: Handle tail calls for stack unwinding
+      function_graph: Use a simple LRU for fgraph_array index number
+      ftrace: Add multiple fgraph storage selftest
+
+Steven Rostedt (Google) (8):
+      ftrace: Allow subops filtering to be modified
+      function_graph: Add pid tracing back to function graph tracer
+      function_graph: Use for_each_set_bit() in __ftrace_return_to_handler()
+      function_graph: Use bitmask to loop on fgraph entry
+      function_graph: Use static_call and branch to optimize entry function
+      function_graph: Use static_call and branch to optimize return function
+      selftests/ftrace: Add function_graph tracer to func-filter-pid test
+      selftests/ftrace: Add fgraph-multi.tc test
+
+Steven Rostedt (VMware) (16):
+      function_graph: Convert ret_stack to a series of longs
+      fgraph: Use BUILD_BUG_ON() to make sure we have structures divisible by long
+      function_graph: Add an array structure that will allow multiple callbacks
+      function_graph: Allow multiple users to attach to function graph
+      function_graph: Remove logic around ftrace_graph_entry and return
+      ftrace/function_graph: Pass fgraph_ops to function graph callbacks
+      ftrace: Allow function_graph tracer to be enabled in instances
+      ftrace: Allow ftrace startup flags to exist without dynamic ftrace
+      ftrace: Add subops logic to allow one ops to manage many
+      function_graph: Have the instances use their own ftrace_ops for filtering
+      function_graph: Add "task variables" per task for fgraph_ops
+      function_graph: Move set_graph_function tests to shadow stack global var
+      function_graph: Move graph depth stored data to shadow stack global var
+      function_graph: Move graph notrace bit to shadow stack global var
+      function_graph: Implement fgraph_reserve_data() and fgraph_retrieve_data()
+      function_graph: Add selftest for passing local variables
+
+----
+ include/linux/ftrace.h                             |   43 +-
+ include/linux/sched.h                              |    2 +-
+ include/linux/trace_recursion.h                    |   39 -
+ kernel/trace/fgraph.c                              | 1044 ++++++++++++++++----
+ kernel/trace/ftrace.c                              |  482 ++++++++-
+ kernel/trace/ftrace_internal.h                     |    5 +-
+ kernel/trace/trace.h                               |   94 +-
+ kernel/trace/trace_functions.c                     |    8 +
+ kernel/trace/trace_functions_graph.c               |   96 +-
+ kernel/trace/trace_irqsoff.c                       |   10 +-
+ kernel/trace/trace_sched_wakeup.c                  |   10 +-
+ kernel/trace/trace_selftest.c                      |  259 ++++-
+ .../selftests/ftrace/test.d/ftrace/fgraph-multi.tc |  103 ++
+ .../ftrace/test.d/ftrace/func-filter-pid.tc        |   27 +-
+ 14 files changed, 1916 insertions(+), 306 deletions(-)
+ create mode 100644 tools/testing/selftests/ftrace/test.d/ftrace/fgraph-multi.tc
 
