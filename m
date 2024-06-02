@@ -1,250 +1,322 @@
-Return-Path: <linux-kernel+bounces-198175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5104E8D747B
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 11:11:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EA858D747F
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 11:14:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08FA8281BFE
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 09:11:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C89A3281CAE
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 09:14:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8610929CFB;
-	Sun,  2 Jun 2024 09:11:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C1B32C69B;
+	Sun,  2 Jun 2024 09:14:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mTvCKcB3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B4lKiRSd"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A12E61865;
-	Sun,  2 Jun 2024 09:11:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F9F620B35;
+	Sun,  2 Jun 2024 09:14:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717319486; cv=none; b=aUJWqRMWQCUm37MEBKCd2Cjly1htir3dgjOu5+nw8TLlmFMsBOXYo86M03+/0O6si/st+wL5dVdNQcGayQuCOk8yysuafXSDc7gu3WJSqvlBy2XYAgH5+UEzdRkIyD1gNb6CfkX8nocidfdEFsu9yjp/RUZXSWfO1MK7HBHV53Y=
+	t=1717319668; cv=none; b=po2nCFmvZ5xweXlPkZA5PPnHyzyAdXgOfZEYcvHe33jpoCjE381uAwgsRGZBM0Xi0zqHj6nsGuiYbMkbt6Sm14esD362ESZTWWVzY9AiyLn1Ma9XaqNWHuq7WmdmSP5gmFFQvGuiHAtbUqfSZGzMmOJ3FmF6sJGjbAoY8W5W9zs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717319486; c=relaxed/simple;
-	bh=LBjFPp3Q3rHJHdMdS/2R9oP/tIlB0vaTPAyhGdFWnmI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sOUG7F3eobhpdgxwF8MM0QHfCoijZJaFse/fntyJ7c6YHs/cj9LrGt2sbEz4CXHzjNirlEz2S6d6Xj4h7y8Z9sOpRLW4B1knxB71D0G+924fjE7oqZ/9LdRMGYztmNsx2jCUz4RhauxXGI4yi8D66CY1UQyxgUvKn6qU6mzO4so=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mTvCKcB3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 001CAC2BBFC;
-	Sun,  2 Jun 2024 09:11:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717319485;
-	bh=LBjFPp3Q3rHJHdMdS/2R9oP/tIlB0vaTPAyhGdFWnmI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=mTvCKcB3avs0o376VW9qMOx+JxrepXc4lT9feYZH8SMW9ceLeA22YtWa97QnZBaOX
-	 M0msA5K7kkDjLTsWhCULYchTKtQKO2ubWBypLA08zDo/8ZmN1A/i3QQ1DMu+l6JJWz
-	 OHAW3XtS+5kuMAeC/KHhPBCGUCKdKgx2GAqEBRi4POZlBZ1fYQE7+kkklCA3lxnmAx
-	 HuVxrUQVAl7CJlc/iVr/SAnQ8MW4it9bZTR/kqoU/KIZo9dwLlXuPGEKF2a4nobuyT
-	 ZoKV+TwGi3Pr4xv7dOHAa61MfmXsJTiuKa9w0CD7Ie6hUhxmxEwnkmIE8C+bYE/pyO
-	 qyQYr+wLsrNaw==
-Date: Sun, 2 Jun 2024 10:11:12 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Ramona Alexandra Nechita <ramona.nechita@analog.com>
-Cc: <linux-iio@vger.kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>, Rob Herring
- <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, <linux-kernel@vger.kernel.org>,
- <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v3 1/1] dt-bindings: iio: adc: add a7779 doc
-Message-ID: <20240602101112.28751a2c@jic23-huawei>
-In-Reply-To: <20240531133604.1380-2-ramona.nechita@analog.com>
-References: <20240531133604.1380-1-ramona.nechita@analog.com>
-	<20240531133604.1380-2-ramona.nechita@analog.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1717319668; c=relaxed/simple;
+	bh=X36867+LpiBA9y43s3Y4dA8Y3wnrcdfe7wY2/ETK8YI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=azvHcEIbCpNbtn8F2tg+zcpYTwWFmcLtGFKDQIXQ138zfpi3nuuhj3g8o1eXZYR8/Se4RpG+tMwfjAsVfePo1VJPUYIWN42lq3FJ0VbCVAtHYmx6XbFoduYSY4GsKqxq11NPnQEiQL/tgyjsaVGsKe8QJ22Ut5xi9y+NRhFQQXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B4lKiRSd; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42108856c33so19738255e9.1;
+        Sun, 02 Jun 2024 02:14:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717319665; x=1717924465; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ut4+EM76gCxPMu4zioSx9KBeQbO+/vLZz5SwVBXNdx0=;
+        b=B4lKiRSdn52MUN+2KXIgCi/JIp0wnGFbbaWM2+r8TyP7h/Fu9nI8s4yVCSz9PrhUu9
+         L3B443dQvSVFTpsjrH+W6vEFAs4YbHo/ptA5ES8VSC3kT5O2+vCc32mWKvLo+zXUHtNd
+         u96tLC2ALI4TkV6dJNlJSzxIpD7GwV/jp9R9v2p3VTxHQyDowUBI2G7tNlWrPraYUNnB
+         WhiJVHoaOvgd6Rc3cXvNSDm1BsZSsPHzM8utYTVEpDWAEM27kivZuS8u4SRehD3ibMz+
+         rNOdzKaRve+1YFcueqyF/QO7jsnzs4q05wpNvMuGFudwIrPo/s5xBbKGY/SGtPmrN+N5
+         mKRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717319665; x=1717924465;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ut4+EM76gCxPMu4zioSx9KBeQbO+/vLZz5SwVBXNdx0=;
+        b=UwQOO9MOYibKemqxi1ZAxJ6RqwzO3HOgb4GczrsnJiHOaaslnmu4nuDP4Hsozc/q+S
+         oKJTSq7tFUXm3vjMqTJB4OyXoHmBDy/Bek94mw03De8PaMkXZ+86F+vhF1bF9EENWSf/
+         zt1RJZOlNR66sIpGKUvMl0Rc7Ooj30bsJ8UYJXJybqnZGXVZ/TDzkHU2wzDzME9ZocgK
+         jMOOoGZFvdOPyDBIkA+sEthZyJN59RY6F6Rek6xsDImEP4Z7BP4+OXfIgxoFq/XlPpMl
+         fm3qqPp0wdiTQHm91FAXaRwHKS4kIW0hEmjK0sV/+3MUHra5b6CkChqmRUXZSAqWwvG7
+         2UqA==
+X-Forwarded-Encrypted: i=1; AJvYcCV43EL1fsHdqrC3kmBCUvnWhcV7lUctGUtQhjG1G/MTPG6P7zFE8g/89nd9WeL1zMqukZW4XT9SWw2ePo8Ttan4WS9+uYnCr4GduABgezevKKi6dSya0M5V3marX1GHz98sx2WgM8rrs4HH+B/H6KEeAno3px6jaUjxi+4+whKoPA==
+X-Gm-Message-State: AOJu0Yw+2S7BCLptVW/K6OLx7ie3cVIhmXPvAKkP6wBmiaauwI6jEV/n
+	3qcEcxOil0Dnr4REAnEN91uwbfmjP46Nglqg+ZptTXxMzzeWx9n8
+X-Google-Smtp-Source: AGHT+IHWgloFXlrvzr2nnL+svB3Bzs38WrQCZ6k2M0auFtqt55IYdlm20BgKbpAAv+VyT5IgGcXY4Q==
+X-Received: by 2002:a05:600c:1f81:b0:421:20e3:a25 with SMTP id 5b1f17b1804b1-4212dd322a8mr51976485e9.1.1717319664476;
+        Sun, 02 Jun 2024 02:14:24 -0700 (PDT)
+Received: from [172.27.19.72] ([193.47.165.251])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4212b84f8e7sm75315435e9.20.2024.06.02.02.14.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 02 Jun 2024 02:14:24 -0700 (PDT)
+Message-ID: <5b3a0f6a-5a03-45d7-ab10-1f1ba25504d3@gmail.com>
+Date: Sun, 2 Jun 2024 12:14:21 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC net-next v3 2/2] net/mlx5e: Add per queue netdev-genl stats
+To: Joe Damato <jdamato@fastly.com>, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org
+Cc: nalramli@fastly.com, Saeed Mahameed <saeedm@nvidia.com>,
+ Leon Romanovsky <leon@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Richard Cochran <richardcochran@gmail.com>,
+ "open list:MELLANOX MLX5 core VPI driver" <linux-rdma@vger.kernel.org>,
+ Tariq Toukan <tariqt@nvidia.com>
+References: <20240529031628.324117-1-jdamato@fastly.com>
+ <20240529031628.324117-3-jdamato@fastly.com>
+Content-Language: en-US
+From: Tariq Toukan <ttoukan.linux@gmail.com>
+In-Reply-To: <20240529031628.324117-3-jdamato@fastly.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, 31 May 2024 16:35:52 +0300
-Ramona Alexandra Nechita <ramona.nechita@analog.com> wrote:
 
-> Add dt bindings for adc ad7779.
->=20
-> Signed-off-by: Ramona Alexandra Nechita <ramona.nechita@analog.com>
+
+On 29/05/2024 6:16, Joe Damato wrote:
+> Add functions to support the netdev-genl per queue stats API.
+> 
+> ./cli.py --spec netlink/specs/netdev.yaml \
+>           --dump qstats-get --json '{"scope": "queue"}'
+> 
+> ...snip
+> 
+>   {'ifindex': 7,
+>    'queue-id': 62,
+>    'queue-type': 'rx',
+>    'rx-alloc-fail': 0,
+>    'rx-bytes': 105965251,
+>    'rx-packets': 179790},
+>   {'ifindex': 7,
+>    'queue-id': 0,
+>    'queue-type': 'tx',
+>    'tx-bytes': 9402665,
+>    'tx-packets': 17551},
+> 
+> ...snip
+> 
+> Also tested with the script tools/testing/selftests/drivers/net/stats.py
+> in several scenarios to ensure stats tallying was correct:
+> 
+> - on boot (default queue counts)
+> - adjusting queue count up or down (ethtool -L eth0 combined ...)
+> - adding mqprio TCs
+
+Please test also with interface down.
+
+> 
+> Signed-off-by: Joe Damato <jdamato@fastly.com>
 > ---
->  .../ABI/testing/sysfs-bus-iio-adc-ad777x      | 23 +++++
->  .../bindings/iio/adc/adi,ad7779.yaml          | 87 +++++++++++++++++++
->  2 files changed, 110 insertions(+)
->  create mode 100644 Documentation/ABI/testing/sysfs-bus-iio-adc-ad777x
->  create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ad7779.=
-yaml
->=20
-> diff --git a/Documentation/ABI/testing/sysfs-bus-iio-adc-ad777x b/Documen=
-tation/ABI/testing/sysfs-bus-iio-adc-ad777x
-> new file mode 100644
-> index 000000000000..0a57fda598e6
-> --- /dev/null
-> +++ b/Documentation/ABI/testing/sysfs-bus-iio-adc-ad777x
-> @@ -0,0 +1,23 @@
-> +What:		/sys/bus/iio/devices/iio:deviceX/filter_type_available
+>   .../net/ethernet/mellanox/mlx5/core/en_main.c | 132 ++++++++++++++++++
+>   1 file changed, 132 insertions(+)
+> 
+> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+> index ce15805ad55a..515c16a88a6c 100644
+> --- a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+> +++ b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+> @@ -39,6 +39,7 @@
+>   #include <linux/debugfs.h>
+>   #include <linux/if_bridge.h>
+>   #include <linux/filter.h>
+> +#include <net/netdev_queues.h>
+>   #include <net/page_pool/types.h>
+>   #include <net/pkt_sched.h>
+>   #include <net/xdp_sock_drv.h>
+> @@ -5293,6 +5294,136 @@ static bool mlx5e_tunnel_any_tx_proto_supported(struct mlx5_core_dev *mdev)
+>   	return (mlx5_vxlan_allowed(mdev->vxlan) || mlx5_geneve_tx_allowed(mdev));
+>   }
+>   
+> +static void mlx5e_get_queue_stats_rx(struct net_device *dev, int i,
+> +				     struct netdev_queue_stats_rx *stats)
+> +{
+> +	struct mlx5e_priv *priv = netdev_priv(dev);
+> +	struct mlx5e_channel_stats *channel_stats;
+> +	struct mlx5e_rq_stats *xskrq_stats;
+> +	struct mlx5e_rq_stats *rq_stats;
+> +
+> +	if (mlx5e_is_uplink_rep(priv))
+> +		return;
+> +
+> +	channel_stats = priv->channel_stats[i];
+> +	xskrq_stats = &channel_stats->xskrq;
+> +	rq_stats = &channel_stats->rq;
+> +
+> +	stats->packets = rq_stats->packets + xskrq_stats->packets;
+> +	stats->bytes = rq_stats->bytes + xskrq_stats->bytes;
+> +	stats->alloc_fail = rq_stats->buff_alloc_err +
+> +			    xskrq_stats->buff_alloc_err;
+> +}
+> +
+> +static void mlx5e_get_queue_stats_tx(struct net_device *dev, int i,
+> +				     struct netdev_queue_stats_tx *stats)
+> +{
+> +	struct mlx5e_priv *priv = netdev_priv(dev);
+> +	struct mlx5e_channel_stats *channel_stats;
+> +	struct mlx5e_sq_stats *sq_stats;
+> +	int ch_ix, tc_ix;
+> +
+> +	mutex_lock(&priv->state_lock);
+> +	txq_ix_to_chtc_ix(&priv->channels.params, i, &ch_ix, &tc_ix);
+> +	mutex_unlock(&priv->state_lock);
+> +
+> +	channel_stats = priv->channel_stats[ch_ix];
+> +	sq_stats = &channel_stats->sq[tc_ix];
+> +
+> +	stats->packets = sq_stats->packets;
+> +	stats->bytes = sq_stats->bytes;
+> +}
+> +
+> +static void mlx5e_get_base_stats(struct net_device *dev,
+> +				 struct netdev_queue_stats_rx *rx,
+> +				 struct netdev_queue_stats_tx *tx)
+> +{
+> +	struct mlx5e_priv *priv = netdev_priv(dev);
+> +	int i, j;
+> +
+> +	if (!mlx5e_is_uplink_rep(priv)) {
+> +		rx->packets = 0;
+> +		rx->bytes = 0;
+> +		rx->alloc_fail = 0;
+> +
+> +		/* compute stats for deactivated RX queues
+> +		 *
+> +		 * if priv->channels.num == 0 the device is down, so compute
+> +		 * stats for every queue.
+> +		 *
+> +		 * otherwise, compute only the queues which have been deactivated.
+> +		 */
+> +		mutex_lock(&priv->state_lock);
+> +		if (priv->channels.num == 0)
+> +			i = 0;
 
-This is a binding patch - ABI docs should be in the driver code patch not h=
-ere.
-A separate patch for ABI docs is also fine.
+This is not consistent with the above implementation of 
+mlx5e_get_queue_stats_rx(), which always returns the stats even if the 
+channel is down.
+This way, you'll double count the down channels.
 
-Also, it is also a documentation bug to have more than one sysfs docs file
-for an attribute with the same What line.  We already have this one in ad41=
-30.
+I think you should always start from priv->channels.params.num_channels.
 
-So the documentation needs to be combined into Documentation/ABI/testing/sy=
-sfs-bus-iio-adc
-or sysfs-bus-iio
+> +		else
+> +			i = priv->channels.params.num_channels;
+> +		mutex_unlock(&priv->state_lock);
 
-That means you need to write the doc so that is as generic as possible.
-There are a few places where we have previously documented device specific
-aspects - copy one of those if it is absolutely necessary, but there is info
-here that doesn't matter in ABI docs such as what the maximum ODR is for
-a particular part - that should be possible to read back from existing ABI.
+I understand that you're following the guidelines by taking the lock 
+here, I just don't think this improves anything... If channels can be 
+modified in between calls to mlx5e_get_base_stats / 
+mlx5e_get_queue_stats_rx, then wrapping the priv->channels access with a 
+lock can help protect each single deref, but not necessarily in giving a 
+consistent "screenshot" of the stats.
 
-> +KernelVersion:  6.1
-> +Contact:	linux-iio@vger.kernel.org
-> +Description:
-> +		Reading returns a list with the possible filter modes. Only supported =
-by
-> +		AD7771.
-> +
-> +		  * "sinc3"	- The digital sinc3 filter implements three main notches, =
-one at
-> +				the maximum ODR (128 kHz or 32 kHz, depending on the
-> +				power mode) and another two at the ODR frequency selected to
-> +				stop noise aliasing into the pass band.
-> +
-> +		  * "sinc5"	- The sinc5 filter implements five notches, one at
-> +				the maximum ODR (128 kHz or 32 kHz, depending on the
-> +				power mode) and another four at the ODR frequency
-> +				selected to stop noise aliasing into the pass band.
+The rtnl_lock should take care of that, as the driver holds it when 
+changing the number of channels and updating the real_numrx/tx_queues.
 
-This one sounds nice - so why don't I select it all the time?
-Helpful to state the disadvantages.
-
-I'm also a little confused by 4 notches at the ODR frequency. I see that
-text comes from the datasheet but that doesn't mean you can't improve it :)
-I think this really means notches at multiples of the sampling frequency.
-
-
-
-> +
-> +What:		/sys/bus/iio/devices/iio:deviceX/filter_type
-> +KernelVersion:  6.1
-> +Contact:	linux-iio@vger.kernel.org
-> +Description:
-> +		Set the filter mode of the differential channel. The current sampling_=
-frequency
-> +		is set according to the filter range. Only supported by AD7771.
-> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7779.yaml b/=
-Documentation/devicetree/bindings/iio/adc/adi,ad7779.yaml
-> new file mode 100644
-> index 000000000000..632e9ec0ab44
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7779.yaml
-> @@ -0,0 +1,87 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/iio/adc/adi,ad7779.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Analog Devices AD777X family 8-Channel, 24-Bit, Simultaneous Samp=
-ling ADCs
-> +
-> +maintainers:
-> +  - Ramona Nechita <ramona.nechita@analog.com>
-> +
-> +description: |
-> +  The AD777X family consist of 8-channel, simultaneous sampling analog-t=
-o-
-> +  digital converter (ADC). Eight full =CE=A3-=CE=94 ADCs are on-chip. The
-> +  AD7771 provides an ultralow input current to allow direct sensor
-> +  connection. Each input channel has a programmable gain stage
-> +  allowing gains of 1, 2, 4, and 8 to map lower amplitude sensor
-> +  outputs into the full-scale ADC input range, maximizing the
-> +  dynamic range of the signal chain.
-> +
-> +  https://www.analog.com/media/en/technical-documentation/data-sheets/ad=
-7770.pdf
-> +  https://www.analog.com/media/en/technical-documentation/data-sheets/ad=
-7771.pdf
-> +  https://www.analog.com/media/en/technical-documentation/data-sheets/ad=
-7779.pdf
-> +
-> +$ref: /schemas/spi/spi-peripheral-props.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - adi,ad7770
-> +      - adi,ad7771
-> +      - adi,ad7779
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  '#address-cells':
-> +    const: 1
-> +
-> +  '#size-cells':
-> +    const: 0
-> +
-> +  spi-max-frequency: true
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  vref-supply:
-> +    description:
-> +      ADC reference voltage supply
-> +
-> +  start-gpios:
-> +    description:
-> +      Pin that controls start synchronization pulse.
-> +    maxItems: 1
-> +
-> +  reset-gpios:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-You seem to be missing a whole raft of power supplies.
-AVDD1x, AVDD2,, IOVDD - maybe more.
-Some of those at least will be 'required'.
-Note that required doesn't rule out using fixed or dummy regulators=20
-(those supplied by the regulator framework if nothing is found in DT)
-but the binding should still reflect we need to provide power for the chip
-to function.
+This said, I would carefully say you can drop the mutex once following 
+the requested changes above.
 
 > +
-> +unevaluatedProperties: false
+> +		for (; i < priv->stats_nch; i++) {
+> +			struct netdev_queue_stats_rx rx_i = {0};
 > +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/gpio/gpio.h>
-> +    spi {
-> +        #address-cells =3D <1>;
-> +        #size-cells =3D <0>;
+> +			mlx5e_get_queue_stats_rx(dev, i, &rx_i);
 > +
-> +        adc@0 {
-> +          compatible =3D "adi,ad7779";
-> +          reg =3D <0>;
-> +          spi-max-frequency =3D <20000000>;
-> +          vref-supply =3D <&vref>;
-> +          start-gpios =3D <&gpio0 87 GPIO_ACTIVE_LOW>;
-> +          reset-gpios =3D <&gpio0 93 GPIO_ACTIVE_LOW>;
-> +          clocks =3D <&adc_clk>;
-> +        };
-> +    };
-> +...
+> +			rx->packets += rx_i.packets;
+> +			rx->bytes += rx_i.bytes;
+> +			rx->alloc_fail += rx_i.alloc_fail;
+> +		}
+> +
+> +		if (priv->rx_ptp_opened) {
+> +			struct mlx5e_rq_stats *rq_stats = &priv->ptp_stats.rq;
+> +
+> +			rx->packets += rq_stats->packets;
+> +			rx->bytes += rq_stats->bytes;
+> +		}
+> +	}
+> +
+> +	tx->packets = 0;
+> +	tx->bytes = 0;
+> +
+> +	mutex_lock(&priv->state_lock);
+> +	for (i = 0; i < priv->stats_nch; i++) {
+> +		struct mlx5e_channel_stats *channel_stats = priv->channel_stats[i];
+> +
+> +		/* while iterating through all channels [0, stats_nch], there
+> +		 * are two cases to handle:
+> +		 *
+> +		 *  1. the channel is available, so sum only the unavailable TCs
+> +		 *     [mlx5e_get_dcb_num_tc, max_opened_tc).
+> +		 *
+> +		 *  2. the channel is unavailable, so sum all TCs [0, max_opened_tc).
+> +		 */
 
+I wonder why not call the local var 'tc'?
+
+> +		if (i < priv->channels.params.num_channels) {
+> +			j = mlx5e_get_dcb_num_tc(&priv->channels.params);
+> +		} else {
+> +			j = 0;
+> +		}
+
+Remove parenthesis, or use ternary op.
+
+> +
+> +		for (; j < priv->max_opened_tc; j++) {
+> +			struct mlx5e_sq_stats *sq_stats = &channel_stats->sq[j];
+> +
+> +			tx->packets += sq_stats->packets;
+> +			tx->bytes += sq_stats->bytes;
+> +		}
+> +	}
+> +	mutex_unlock(&priv->state_lock);
+> +
+
+Same comment regarding dropping the mutex.
+
+> +	if (priv->tx_ptp_opened) {
+> +		for (j = 0; j < priv->max_opened_tc; j++) {
+> +			struct mlx5e_sq_stats *sq_stats = &priv->ptp_stats.sq[j];
+> +
+> +			tx->packets    += sq_stats->packets;
+> +			tx->bytes      += sq_stats->bytes;
+> +		}
+> +	}
+> +}
+> +
+> +static const struct netdev_stat_ops mlx5e_stat_ops = {
+> +	.get_queue_stats_rx     = mlx5e_get_queue_stats_rx,
+> +	.get_queue_stats_tx     = mlx5e_get_queue_stats_tx,
+> +	.get_base_stats         = mlx5e_get_base_stats,
+> +};
+> +
+>   static void mlx5e_build_nic_netdev(struct net_device *netdev)
+>   {
+>   	struct mlx5e_priv *priv = netdev_priv(netdev);
+> @@ -5310,6 +5441,7 @@ static void mlx5e_build_nic_netdev(struct net_device *netdev)
+>   
+>   	netdev->watchdog_timeo    = 15 * HZ;
+>   
+> +	netdev->stat_ops          = &mlx5e_stat_ops;
+>   	netdev->ethtool_ops	  = &mlx5e_ethtool_ops;
+>   
+>   	netdev->vlan_features    |= NETIF_F_SG;
 
