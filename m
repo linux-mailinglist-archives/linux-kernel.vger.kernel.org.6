@@ -1,120 +1,193 @@
-Return-Path: <linux-kernel+bounces-198206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B92A28D74E7
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 13:16:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2AB28D74EA
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 13:17:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38DC0B21511
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 11:16:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46A901F21558
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 11:17:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 457CE38FA0;
-	Sun,  2 Jun 2024 11:16:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CD30383BE;
+	Sun,  2 Jun 2024 11:16:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PFNfHbjs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ei3k5Lo1"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 789A02C694;
-	Sun,  2 Jun 2024 11:16:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B9E23A1CC
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Jun 2024 11:16:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717326990; cv=none; b=qvCjRC3EszkWFpGW6iWDWvjl4DBOwvoKt/PHIFAWtcjAIJyDbMNGZRuVCYz8Kt5c5jHn8ao4O2bly1zC23tP9GyHubE87TBODJHKH9K2pvJ/88u5t9jTSvRBjWYZ7llRwi95Ti93KH8nO9fK4QHsPXWksk4MoMhgTa1d2PQQGrw=
+	t=1717327002; cv=none; b=G0FgKubcfTbKu2n3G4Ubn7eanhcWSSSk5Z2l/jvtka6ZMPDtPVx7xrV08W+3vqvd2WTlwFvaIm5pmrlM3gbqphHj771/XrUvRO6IbxszCc6nspiIrKt0uo+jzbsUsPLBa/Px5qISiQBJuE/dsoF3Xm0WLIZBqxDDB0LkNAEC3AU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717326990; c=relaxed/simple;
-	bh=W9+6j3CJY2BQ6wjRbyfAkyac0heJKolaFZ45NLSp48I=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KFquE1t/10e/zOxHaQX3MKiwlcFfS6/O3+8KefKDMZYoL/N6Bzq/4YV2pxQy03/6Nf5+avPYeRc5QaFtH11wLRzV33dMVdEwGw5590Ja/LrmKI1mJaPRjzlj1K+Pxo1HMM1vFWyirhRjDmtqtZosneTFzdQ8uUmflvwshJjuN/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PFNfHbjs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05315C32789;
-	Sun,  2 Jun 2024 11:16:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717326990;
-	bh=W9+6j3CJY2BQ6wjRbyfAkyac0heJKolaFZ45NLSp48I=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=PFNfHbjsHFUCNzXGNt1XfZoonWjAv9Id5B3Nkx9wUZLz0XuCzHcFBxUddhZ9dq87b
-	 4bvCT7NEHitULcRvZA4YMMriOrFW44daFYaeAssxQesM4IZpusQyg4L8E5fLq3GQMX
-	 I86FX0Q9u4W56+GnhrXEHc6V10qqaqG6A7/g28WmD+nt2gIbh1EjTKeh0kvIOgY/gS
-	 LzUethw6b65FFf//s01gugnxKZLczMNezIIoRsUG30u0yZ/U0ws5Tyus/1XUgSk7vv
-	 zmiFSsWgUoDZx/Ua0M2E5ju9WhOugM54I/HkMStTQjlAwvRjTS3u5+WX0fFZpZ+x9T
-	 2xWzkwjJzLRCQ==
-Date: Sun, 2 Jun 2024 12:16:16 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>
-Cc: Ramona Gradinariu <ramona.bolboaca13@gmail.com>,
- linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
- linux-doc@vger.kernel.org, devicetree@vger.kernel.org, corbet@lwn.net,
- conor+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, robh@kernel.org,
- Ramona Gradinariu <ramona.gradinariu@analog.com>
-Subject: Re: [PATCH v2 0/6] Add support for adis16545/47
-Message-ID: <20240602121616.035d2775@jic23-huawei>
-In-Reply-To: <5b002e3b9df0da1a81b248a4e4dcb82464a61cf6.camel@gmail.com>
-References: <20240528142409.239187-1-ramona.gradinariu@analog.com>
-	<5b002e3b9df0da1a81b248a4e4dcb82464a61cf6.camel@gmail.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1717327002; c=relaxed/simple;
+	bh=YCmxdfhYQeXhWlaQwq3LcnFSAcFQkqT2we7Sk85tI9U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ilWCqYCIBPg8Mis98Xx9dOwqzJR/PUfK3P5fSJdBqkocP5gJH6eMAcP7sKozX2qiTpG4n9/I4q6oKE/qbg6fvJpiVEOw62a5UOZAKHG1WgckCyK2ln17V5HoT2KcmvQWXzAA1Hr/G5AjWibc9IGN9nFOHlO1bBkrpi8Hx43HdIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ei3k5Lo1; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717327000;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xB7XoRdgVTbFO1Td9v+EnfBLv3e5u1le/I3V6za6ljg=;
+	b=Ei3k5Lo1J+06ALEm3rBRIP+K1HPYPI1vdiW38UavH/EWUPo3Yyx1qtLrOkEWHmEqcfGIYR
+	WbBCfBymW/9ND4rkSp8YLNUNXxF8L3g/OT7tgacvGvHFDnx8U2yuouTeQBmV9u15LoPaiD
+	OFdg94sElFwOfKqQQCJfAVLNL+6ZiLg=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-62-3bU5Tr9hMr2vyiekgUpSTw-1; Sun, 02 Jun 2024 07:16:36 -0400
+X-MC-Unique: 3bU5Tr9hMr2vyiekgUpSTw-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id DD83881227E;
+	Sun,  2 Jun 2024 11:16:35 +0000 (UTC)
+Received: from bfoster (unknown [10.22.8.96])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id 21FFB36EC;
+	Sun,  2 Jun 2024 11:16:35 +0000 (UTC)
+Date: Sun, 2 Jun 2024 07:16:53 -0400
+From: Brian Foster <bfoster@redhat.com>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Zhang Yi <yi.zhang@huaweicloud.com>, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	djwong@kernel.org, brauner@kernel.org, david@fromorbit.com,
+	chandanbabu@kernel.org, jack@suse.cz, willy@infradead.org,
+	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
+Subject: Re: [RFC PATCH v4 3/8] iomap: pass blocksize to iomap_truncate_page()
+Message-ID: <ZlxUpYvb9dlOHFR3@bfoster>
+References: <20240529095206.2568162-1-yi.zhang@huaweicloud.com>
+ <20240529095206.2568162-4-yi.zhang@huaweicloud.com>
+ <ZlnE7vrk_dmrqUxC@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZlnE7vrk_dmrqUxC@infradead.org>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.1
 
-On Wed, 29 May 2024 10:40:01 +0200
-Nuno S=C3=A1 <noname.nuno@gmail.com> wrote:
+On Fri, May 31, 2024 at 05:39:10AM -0700, Christoph Hellwig wrote:
+> > -		const struct iomap_ops *ops)
+> > +iomap_truncate_page(struct inode *inode, loff_t pos, unsigned int blocksize,
+> > +		bool *did_zero, const struct iomap_ops *ops)
+> >  {
+> > -	unsigned int blocksize = i_blocksize(inode);
+> > -	unsigned int off = pos & (blocksize - 1);
+> > +	unsigned int off = rem_u64(pos, blocksize);
+> >  
+> >  	/* Block boundary? Nothing to do */
+> >  	if (!off)
+> 
+> Instad of passing yet another argument here, can we just kill
+> iomap_truncate_page?
+> 
+> I.e. just open code the rem_u64 and 0 offset check in the only caller
+> and call iomap_zero_range.  Same for the DAX variant and it's two
+> callers.
+> 
+> 
 
-> On Tue, 2024-05-28 at 17:24 +0300, Ramona Gradinariu wrote:
-> > Add support for delta angle and delta velocity channels in adis16480 dr=
-iver.
-> > Add support for ADIS16545/47 devices in already existing adis16480 driv=
-er.
-> > Add documentation for adis16480 driver.
-> >=20
-> > Ramona Gradinariu (6):
-> > =C2=A0 iio: adis16480: make the burst_max_speed configurable
-> > =C2=A0 iio: imu: adis16480.c: Add delta angle and delta velocity channe=
-ls
-> > =C2=A0 dt-bindings: iio: imu: Add ADIS16545/47 compatibles
-> > =C2=A0 iio: adis16480: add support for adis16545/7 families
-> > =C2=A0 docs: iio: add documentation for interfacing tools
-> > =C2=A0 docs: iio: add documentation for adis16480 driver
-> >=20
-> > =C2=A0.../bindings/iio/imu/adi,adis16480.yaml=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 |=C2=A0=C2=A0 6 +
-> > =C2=A0Documentation/iio/adis16475.rst=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 23 +-
-> > =C2=A0Documentation/iio/adis16480.rst=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 445 ++++++++++++++++++
-> > =C2=A0Documentation/iio/iio_tools.rst=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 27 ++
-> > =C2=A0Documentation/iio/index.rst=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=
-=C2=A0=C2=A0 2 +
-> > =C2=A0drivers/iio/imu/adis16480.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | =
-393 ++++++++++++++--
-> > =C2=A06 files changed, 825 insertions(+), 71 deletions(-)
-> > =C2=A0create mode 100644 Documentation/iio/adis16480.rst
-> > =C2=A0create mode 100644 Documentation/iio/iio_tools.rst
-> >=20
-> > --
-> > 2.34.1
-> >  =20
->=20
-> LGTM
-Me too.
-Applied to the togreg branch of iio.git and pushed out as testing for 0-day
-to poke at it and see if it can find anything we missed.
+Hey Christoph,
 
-Thanks,
+I've wondered the same about killing off iomap_truncate_page(), but JFYI
+one of the several prototypes I have around of other potential ways to
+address this problem slightly splits off truncate page from being a
+straight zero range wrapper. A quick diff [2] of that is inlined below
+for reference (only lightly tested, may be busted, etc.).
 
-Jonathan
+The idea is that IIRC truncate_page() was really the only zero range
+user that might actually encounter dirty cache over unwritten mappings,
+so given that and the typically constrained range size of truncate page,
+just let it be more aggressive about bypassing the unwritten mapping
+optimization in iomap_zero_iter(). Just something else to consider, and
+this is definitely not something you'd want to do for zero range proper.
 
->=20
-> Reviewed-by: Nuno Sa <nuno.sa@analog.com>
->=20
+Brian
+
+P.S., I think the last patches I actually posted around this were here
+[1], but I also have multiple versions of that selective flush approach
+ported to iomap instead of being XFS specific as well.
+
+[1] https://lore.kernel.org/linux-xfs/20221104182358.2007475-1-bfoster@redhat.com/
+    https://lore.kernel.org/linux-xfs/20221128173945.3953659-1-bfoster@redhat.com/
+[2] truncate page POC:
+
+--- 8< ---
+
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index c5802a459334..a261e732ea05 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -1380,7 +1380,8 @@ iomap_file_unshare(struct inode *inode, loff_t pos, loff_t len,
+ }
+ EXPORT_SYMBOL_GPL(iomap_file_unshare);
+ 
+-static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
++static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero,
++			      bool dirty_cache)
+ {
+ 	const struct iomap *srcmap = iomap_iter_srcmap(iter);
+ 	loff_t pos = iter->pos;
+@@ -1388,7 +1389,8 @@ static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
+ 	loff_t written = 0;
+ 
+ 	/* already zeroed?  we're done. */
+-	if (srcmap->type == IOMAP_HOLE || srcmap->type == IOMAP_UNWRITTEN)
++	if (srcmap->type == IOMAP_HOLE ||
++	    (!dirty_cache && srcmap->type == IOMAP_UNWRITTEN))
+ 		return length;
+ 
+ 	do {
+@@ -1439,7 +1441,7 @@ iomap_zero_range(struct inode *inode, loff_t pos, loff_t len, bool *did_zero,
+ 	int ret;
+ 
+ 	while ((ret = iomap_iter(&iter, ops)) > 0)
+-		iter.processed = iomap_zero_iter(&iter, did_zero);
++		iter.processed = iomap_zero_iter(&iter, did_zero, false);
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(iomap_zero_range);
+@@ -1450,11 +1452,29 @@ iomap_truncate_page(struct inode *inode, loff_t pos, bool *did_zero,
+ {
+ 	unsigned int blocksize = i_blocksize(inode);
+ 	unsigned int off = pos & (blocksize - 1);
++	struct iomap_iter iter = {
++		.inode		= inode,
++		.pos		= pos,
++		.len		= blocksize - off,
++		.flags		= IOMAP_ZERO,
++	};
++	loff_t end;
++	int ret;
++	bool dirty_cache = false;
+ 
+ 	/* Block boundary? Nothing to do */
+ 	if (!off)
+ 		return 0;
+-	return iomap_zero_range(inode, pos, blocksize - off, did_zero, ops);
++
++	/* overwrite unwritten ranges if any part of the range is dirty for
++	 * truncate page */
++	end = iter.pos + iter.len - 1;
++	if (filemap_range_needs_writeback(inode->i_mapping, iter.pos, end))
++		dirty_cache = true;
++
++	while ((ret = iomap_iter(&iter, ops)) > 0)
++		iter.processed = iomap_zero_iter(&iter, did_zero, dirty_cache);
++	return ret;
+ }
+ EXPORT_SYMBOL_GPL(iomap_truncate_page);
+ 
 
 
