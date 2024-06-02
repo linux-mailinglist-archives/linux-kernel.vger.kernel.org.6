@@ -1,242 +1,175 @@
-Return-Path: <linux-kernel+bounces-198137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 110008D73F8
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 08:15:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF7F58D73FA
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 08:20:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B51A5281E6B
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 06:15:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 064A71C20B13
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 06:20:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B6531B815;
-	Sun,  2 Jun 2024 06:15:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q62ItOIv"
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D112D1BC5C;
+	Sun,  2 Jun 2024 06:20:24 +0000 (UTC)
+Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B55417C7C;
-	Sun,  2 Jun 2024 06:15:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA5DC134A8
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Jun 2024 06:20:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717308929; cv=none; b=g/9jkpGTp1/nyrVbgrbxDfLGMzRO8uanxUP6QgZ0dYUPsxqyFjBt3YEgVMwdLjys64TmA+5A1Z2oeke+Mc8Hy3Z2LLECj4UytrMLvZ1wG9HFj4FGOfxfhA07zExp/SlmDzr7lChA7qAslaBlydQT2ROrOX8lWP+6UpvoBsuRPNM=
+	t=1717309224; cv=none; b=s7UakIP3Nwv99pCtE1GkMskl64wgfMXIXwvI41rk3ofTk+vzjaYUN8SCfbMiXBGsyEtbwdHhOHL/+04paJ48IEBr7U4qp+6/Ro231SWXl86GrBAiXF4MVR8ub0+rab3lK6DIienJUJLYF/MIyhoLs9QfAlZufB3YAy582aH3YtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717308929; c=relaxed/simple;
-	bh=Los8Ov7EyXlum763kU/ev3jxiQBgLzB/oqck/a0gAhY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o7LQkTqNCKarIe+e+BfeiyJEUU0wvfgZZWqOTde6aw5UcZrSpmoTuWykFRPzCl2RB5qn8E7ZDb2lhZG29CAKY7NKYPrRdyo79AX9052NzcPLOsiV8gmRcVPSx+c4Pl3uwkif6kRo89xX1CTPE6ZYE/Ld7LYDRLXBy3APtse7LZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q62ItOIv; arc=none smtp.client-ip=209.85.219.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-dfa48f505a3so3399554276.1;
-        Sat, 01 Jun 2024 23:15:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717308925; x=1717913725; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=KVjiwXFBtE1oOqyRTamGWqLptn8iyCLDvsbblHzrRdE=;
-        b=Q62ItOIv21DWd2rE5PhV23KL1wCmJNUr+G8gsjaCBOhyVImDHdT70TCFsbtY8KEgBo
-         g6dfWpAvOdAgy2T6sWkLop5J706id1NhEESSyGrEKL9h5+mfUYF5xCnnZqtihdHo4RmA
-         FCoQgCNsgc97kw2/J5Mlxu4iqA3xCXv3duz54bfTszdm1iyVdffBXhBTOeW7mEkTO2pz
-         vuMsxPv8nqryHSHcfvjQ/nMUJRZ/BIjAeDpQYI1c7UExymlWfH93pzDoX4K+V2aGOOT8
-         Cb6UGo9tfZNR+kCSZcSy18wQ6+FszpFhegnExMEoFOPTmaZpg22Y2KV2o2mLmPN9bZpz
-         8MYQ==
+	s=arc-20240116; t=1717309224; c=relaxed/simple;
+	bh=wxwWOV1DHtZf+U/E0W6APZNj5PyrYS0cyMVG0sxJZLw=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=rmwbogLb5u4xKSFj9VEhv5OmKiM8xfT0HrEsyz6THdCIol+KyJZIENTbPSa06YCNLdxIY9+iUAH1VdcdHAq7Fyf/I/s7zaAEe+roP2gCwqV4P2Tiz1FxJWt26HPObqbCArdDo7FsdKqk1aMX3YSRzv5r5PlwKgVw0q/mDtN+gKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-7e1fe2ba2e1so455937139f.3
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Jun 2024 23:20:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717308925; x=1717913725;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KVjiwXFBtE1oOqyRTamGWqLptn8iyCLDvsbblHzrRdE=;
-        b=tqs54Y1dlmrS9BmDPlF2R9Uy7fHvFbzjvk5McA/VqdLhmWbi5Yy3VZALe+uNfkRpE6
-         ZjF+hK02N1/CKGP8vwWPM5zOtCEUEvCGRScWgnUanWhMrBvAd/ReC7DdF/nQay2d2oMd
-         mLvhnqEGWq0dOeCqo4Tle7tb33N3KY7/6dO7Dqi4p/rUY6po6FMkU2d0RbOnfiAvPFYN
-         56lEOZQL9789oilstj4axN5CjoP6Kvj3PK+D+KqdiF/+/W+8DA3r7b7TlbLeqVl0tyyG
-         ZdurknJWs+goqDMVR7kB4tEawvkg9DlncqwZsomjsDDCN1b0xvM5BMStLX4WMEzVqiwn
-         mJYA==
-X-Forwarded-Encrypted: i=1; AJvYcCUtQxi0v+YbHzwAGyPkYCbOgMegLD7UB39VDs4gKkVUUB2yDqCC4sDfD/RUnLg24hu+U1HwrIOQneLafh+W0sRokE8hHsCaxhUnr2qi0433D72Dv7aah8nWWgIwTUML4iza2PW4AA==
-X-Gm-Message-State: AOJu0YwLjVj/dVcLyAan1EIMZNxmhSA5kqXw7VrbaW8ZYVL8B0U+ZmG5
-	3jvWq6HCcnU1PEKkEMGmVHkkqBoUbY5TXrUqDAywuq2ozrys/iOo4GZnxn2gkhCj8G4dAUXh8+1
-	KPRw9gcW/asjoyg2gxrwgzoo/rvE=
-X-Google-Smtp-Source: AGHT+IHzU7d27sCCp4NQBaatf3nzUotkZSiFvnl3BH+2PWIZ4QiHI8EK8bWQy/db4hkLKA2ay/UPCETfj9lFOCrUA80=
-X-Received: by 2002:a25:ce92:0:b0:dfa:5710:d8c5 with SMTP id
- 3f1490d57ef6-dfa73c49b40mr5947856276.31.1717308925325; Sat, 01 Jun 2024
- 23:15:25 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717309222; x=1717914022;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=htGAco0bPsov3LqE3CBGEk0l7m4jTDd+5G2UFFbuNvo=;
+        b=d5Zwie587P+E7/6BIX5Wa+E6yC2Zjz5QqKZ7S7qFZ3oqwoUUITumvVJ/4qm9ZE5cPH
+         ODwWmbBDHdi1ZiC0y8aXhYJxxCCqYRjma5Yu22oXZUuVjr8k3o2YdCpMwx+wACDsZzF4
+         MqTY/HPWrBOnYkQrdNOrfNtba5C6/uUNF0AnHVqL9VvsoWTbja1M5+3434Xfys6+P6U4
+         cZ4habkySuKWOCC6RJNb14Fs3Fa8abrmBp2gNnX2T0549jPRIb9R+/ITNIi0NuO30SSx
+         I/TeypkfTnaO9Ecy+NOO3FiqTtA9DTexgK3b363LReUsUCGljuX5pU0Gn8ZAGplAp0mk
+         YH1w==
+X-Forwarded-Encrypted: i=1; AJvYcCXt3aClwtgPnL/EOOh1cfoUx6/nLG94zBSzfW8Ki/PkEPeu96E3eDmZ4RsBsiYAUZMSI3Th68BpWjX2WlJs8IYFLG2HqmaM+hRlELpB
+X-Gm-Message-State: AOJu0YzvWutLq2YQiLPwpC1mw1yyV9XV7/f1dbwXoHdqYbOUPXGC+npF
+	ANKsYgZFQUhEMFxsH0osBoLbTFE2oxz0u3GQdQ5P7GuPmywEQVFrAtExNsFVXDxOYB22U3+2cQl
+	2hqQigLXOdMql0qIBq0Ql30IqjU1EZz6wW4Xm/7QBJqCFKzYj0IiEScw=
+X-Google-Smtp-Source: AGHT+IFOpgdxpCnn1FbIK5ys+0pV5dixwDRHp6XHcl5Vy5xYm2nr0UlihlD3N8MS3QaxBZWNvtbGcS1XeNkqJ9+fdFOoWwNRICXL
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240531141152.327592-1-kikuchan98@gmail.com> <20240531141152.327592-6-kikuchan98@gmail.com>
- <851280ad-ac0e-47d1-99e2-4f3b5ea29f2f@kernel.org> <CAG40kxEbMQc-ni0HDVR7rtj48aFu-jz8sYUAO+fdmZSmXWrizw@mail.gmail.com>
- <da382d43-fa82-44c0-9630-086f59e6efa2@kernel.org>
-In-Reply-To: <da382d43-fa82-44c0-9630-086f59e6efa2@kernel.org>
-From: Hironori KIKUCHI <kikuchan98@gmail.com>
-Date: Sun, 2 Jun 2024 15:15:13 +0900
-Message-ID: <CAG40kxHKdC=uwyWzsBo1LTAXARDQGs0N4TBdD5nE1zhos48cbg@mail.gmail.com>
-Subject: Re: [PATCH 5/5] dt-bindings: pwm: sun20i: Add options to select a
- clock source and DIV_M
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Samuel Holland <samuel@sholland.org>, Aleksandr Shubin <privatesub2@gmail.com>, 
-	Cheo Fusi <fusibrandon13@gmail.com>, linux-pwm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-sunxi@lists.linux.dev
+X-Received: by 2002:a05:6602:6425:b0:7de:de58:3b1f with SMTP id
+ ca18e2360f4ac-7eafff5f893mr41162539f.4.1717309221955; Sat, 01 Jun 2024
+ 23:20:21 -0700 (PDT)
+Date: Sat, 01 Jun 2024 23:20:21 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000002501960619e2366b@google.com>
+Subject: [syzbot] [gfs2?] BUG: corrupted list in gfs2_fill_super
+From: syzbot <syzbot+d34c2a269ed512c531b0@syzkaller.appspotmail.com>
+To: agruenba@redhat.com, gfs2@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-Hi Krzysztof,
+Hello,
 
-> On 31/05/2024 19:57, Hironori KIKUCHI wrote:
-> > Hello,
-> >
-> >>> This patch adds new options to select a clock source and DIV_M register
-> >>> value for each coupled PWM channels.
-> >>
-> >> Please do not use "This commit/patch/change", but imperative mood. See
-> >> longer explanation here:
-> >> https://elixir.bootlin.com/linux/v5.17.1/source/Documentation/process/submitting-patches.rst#L95
-> >>
-> >> Bindings are before their users. This should not be last patch, because
-> >> this implies there is no user.
-> >
-> > I'm sorry, I'll fix them.
-> >
-> >> This applies to all variants? Or the one you add? Confused...
-> >
-> > Apologies for confusing you. This applies to all variants.
-> >
-> >>
-> >>>
-> >>> Signed-off-by: Hironori KIKUCHI <kikuchan98@gmail.com>
-> >>> ---
-> >>>  .../bindings/pwm/allwinner,sun20i-pwm.yaml    | 19 +++++++++++++++++++
-> >>>  1 file changed, 19 insertions(+)
-> >>>
-> >>> diff --git a/Documentation/devicetree/bindings/pwm/allwinner,sun20i-pwm.yaml b/Documentation/devicetree/bindings/pwm/allwinner,sun20i-pwm.yaml
-> >>> index b9b6d7e7c87..436a1d344ab 100644
-> >>> --- a/Documentation/devicetree/bindings/pwm/allwinner,sun20i-pwm.yaml
-> >>> +++ b/Documentation/devicetree/bindings/pwm/allwinner,sun20i-pwm.yaml
-> >>> @@ -45,6 +45,25 @@ properties:
-> >>>      description: The number of PWM channels configured for this instance
-> >>>      enum: [6, 9]
-> >>>
-> >>> +  allwinner,pwm-pair-clock-sources:
-> >>> +    description: The clock source names for each PWM pair
-> >>> +    items:
-> >>> +      enum: [hosc, apb]
-> >>> +    minItems: 1
-> >>> +    maxItems: 8
-> >>
-> >> Missing type... and add 8 of such items to your example to make it complete.
-> >
-> > Thank you. I'll fix it.
-> >
-> >>
-> >>> +
-> >>> +  allwinner,pwm-pair-clock-prescales:
-> >>> +    description: The prescale (DIV_M register) values for each PWM pair
-> >>> +    $ref: /schemas/types.yaml#/definitions/uint32-matrix
-> >>> +    items:
-> >>> +      items:
-> >>> +        minimum: 0
-> >>> +        maximum: 8
-> >>> +      minItems: 1
-> >>> +      maxItems: 1
-> >>> +    minItems: 1
-> >>> +    maxItems: 8
-> >>
-> >> This does not look like matrix but array.
-> >
-> > I wanted to specify values like this:
-> >
-> >     allwinner,pwm-pair-clock-prescales = <0>, <1>, <3>;
-> >     allwinner,pwm-pair-clock-sources = "hosc", "apb", "hosc":
-> >
-> > These should correspond to each PWM pair.
-> > This way, I thought we might be able to visually understand the relationship
-> > between prescalers and sources, like clock-names and clocks.
-> >
-> > Is this notation uncommon, perhaps?
->
-> It's still an array.
+syzbot found the following issue on:
 
-Oh I understood and clear. Thank you.
+HEAD commit:    9d99040b1bc8 Add linux-next specific files for 20240529
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=166afa9a980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=735e953fee00ec19
+dashboard link: https://syzkaller.appspot.com/bug?extid=d34c2a269ed512c531b0
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=100817e6980000
 
-> >> Why clock DIV cannot be deduced from typical PWM attributes + clock
-> >> frequency?
-> >
-> > This SoC's PWM system has one shared prescaler and clock source for each pair
-> > of PWM channels. I should have noted this earlier, sorry.
-> >
-> > Actually, the original v9 patch automatically deduced the DIV value
-> > from the frequency.
-> > However, because the two channels share a single prescaler, once one channel is
-> > enabled, it affects and restricts the DIV value for the other channel
-> > in the pair.
-> > This introduces a problem of determining which channel should set the shared DIV
-> > value. The original behavior was that the first channel enabled would win.
->
-> There's nothing bad in this.
->
-> >
-> > Instead, this patch try to resolve the issue by specifying these
-> > values for each PWM
-> > pairs deterministically.
-> > That's why it requires the new options.
->
-> This does not solve that wrong divider can be programmed for second
-> channel in each pair.
->
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/f0deeb27b28b/disk-9d99040b.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/5acd2205cee1/vmlinux-9d99040b.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/222eebb6b9d8/bzImage-9d99040b.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/c09aa7fc8a5a/mount_0.gz
 
-Let me illustrate the connection of a paired PWM channels to be sure.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+d34c2a269ed512c531b0@syzkaller.appspotmail.com
 
-.    +------+                   +--------------+  +------+
-.    + HOSC +--+             +--+ prescale_k 0 +--+ PWM0 |
-.    +------+  |  +-------+  |  +--------------+  +------+
-.              +--+ DIV_M +--+
-.    +------+  |  +-------+  |  +--------------+  +------+
-.    + APBx +--+             +--+ prescale_k 1 +--+ PWM1 |
-.    +------+                   +--------------+  +------+
-.          CLK_SRC
+gfs2: fsid=syz:syz.0: can't create logd thread: -4
+list_del corruption, ffff88806f0fe010->prev is LIST_POISON2 (dead000000000122)
+------------[ cut here ]------------
+kernel BUG at lib/list_debug.c:61!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
+CPU: 1 PID: 5367 Comm: syz-executor.1 Not tainted 6.10.0-rc1-next-20240529-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+RIP: 0010:__list_del_entry_valid_or_report+0x106/0x140 lib/list_debug.c:59
+Code: e8 6f 50 d0 06 90 0f 0b 48 c7 c7 e0 03 20 8c 4c 89 fe e8 5d 50 d0 06 90 0f 0b 48 c7 c7 40 04 20 8c 4c 89 fe e8 4b 50 d0 06 90 <0f> 0b 48 c7 c7 a0 04 20 8c 4c 89 fe 48 89 d9 e8 36 50 d0 06 90 0f
+RSP: 0018:ffffc9000313f928 EFLAGS: 00010246
+RAX: 000000000000004e RBX: dead000000000122 RCX: 0a380b9a54d54400
+RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
+RBP: 1ffff11005247900 R08: ffffffff8176b139 R09: 1ffff92000627ec0
+R10: dffffc0000000000 R11: fffff52000627ec1 R12: dffffc0000000000
+R13: ffff88806f0fe000 R14: ffff88806f0fdc10 R15: ffff88806f0fe010
+FS:  000055558b8fd480(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055776d320f00 CR3: 000000002dc2c000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ __list_del_entry_valid include/linux/list.h:124 [inline]
+ __list_del_entry include/linux/list.h:215 [inline]
+ list_del_rcu include/linux/rculist.h:157 [inline]
+ destroy_workqueue+0x7b3/0xc40 kernel/workqueue.c:5859
+ gfs2_fill_super+0x12a4/0x2520 fs/gfs2/ops_fstype.c:1311
+ get_tree_bdev+0x3f7/0x570 fs/super.c:1615
+ gfs2_get_tree+0x54/0x220 fs/gfs2/ops_fstype.c:1330
+ vfs_get_tree+0x90/0x2a0 fs/super.c:1780
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3352
+ do_mount fs/namespace.c:3692 [inline]
+ __do_sys_mount fs/namespace.c:3898 [inline]
+ __se_sys_mount+0x2d9/0x3c0 fs/namespace.c:3875
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f40a8e7e5ea
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 09 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffe7139d798 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007ffe7139d820 RCX: 00007f40a8e7e5ea
+RDX: 0000000020000200 RSI: 00000000200002c0 RDI: 00007ffe7139d7e0
+RBP: 0000000020000200 R08: 00007ffe7139d820 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000200002c0
+R13: 00007ffe7139d7e0 R14: 0000000000037f59 R15: 0000000020000140
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:__list_del_entry_valid_or_report+0x106/0x140 lib/list_debug.c:59
+Code: e8 6f 50 d0 06 90 0f 0b 48 c7 c7 e0 03 20 8c 4c 89 fe e8 5d 50 d0 06 90 0f 0b 48 c7 c7 40 04 20 8c 4c 89 fe e8 4b 50 d0 06 90 <0f> 0b 48 c7 c7 a0 04 20 8c 4c 89 fe 48 89 d9 e8 36 50 d0 06 90 0f
+RSP: 0018:ffffc9000313f928 EFLAGS: 00010246
+RAX: 000000000000004e RBX: dead000000000122 RCX: 0a380b9a54d54400
+RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
+RBP: 1ffff11005247900 R08: ffffffff8176b139 R09: 1ffff92000627ec0
+R10: dffffc0000000000 R11: fffff52000627ec1 R12: dffffc0000000000
+R13: ffff88806f0fe000 R14: ffff88806f0fdc10 R15: ffff88806f0fe010
+FS:  000055558b8fd480(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f9b37cbc000 CR3: 000000002dc2c000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
-The PWM0 and PWM1 share DIV_M and CLK_SRC for them, and (not
-illustrated) PWM2 and PWM3 share another DIV_M and another CLK_SRC for
-them, and so on.
-The DIV_M ranges from 0 to 8 and is used as a 1 / 2^DIV_M prescaler,
-prescale_k ranges from 0 to 255 and is used as a 1 / (prescale_k + 1)
-prescaler.
 
-In the original v9 patch, enabling PWM0 determines CLK_SRC and
-calculates DIV_M from the period that is going to be set.
-Once the CLK_SRC and DIV_M are fixed, they cannot be changed until
-both channels are disabled, unless PWM0 is the only enabled channel.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Looks good so far, but there is a pitfall.
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-Selecting CLK_SRC and DIV_M means it defines the PWM resolution of the
-period and duty cycle for the pair of the PWM channels.
-In other words, the resolution is determined by the (most likely the
-very first) period, which can be arbitrary.
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-Consider an application that uses PWM channels to generate a square
-wave in stereo.
-The very first musical note played defines the entire resolution for
-the subsequent notes.
-The music quality depends on the first note.
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
-The problem is, there is NO way to fixate the resolution to be used.
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-The proposed method provides a simple way to deterministically fixate
-the resolution.
-(ofcourse, prescale_k is still calculated by period to be set)
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-> Best regards,
-> Krzysztof
-
-Best regards,
-kikuchan.
+If you want to undo deduplication, reply with:
+#syz undup
 
