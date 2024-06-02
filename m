@@ -1,247 +1,178 @@
-Return-Path: <linux-kernel+bounces-198234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA0718D7562
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 14:39:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D20D8D7564
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 14:41:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 167BFB20BE2
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 12:39:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAD5B1F22073
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 12:41:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EDA43B781;
-	Sun,  2 Jun 2024 12:39:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ADE83B2A2;
+	Sun,  2 Jun 2024 12:41:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ePosiyhv"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kxl9g28T"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41C951E52C;
-	Sun,  2 Jun 2024 12:39:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B7531E52C;
+	Sun,  2 Jun 2024 12:41:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717331954; cv=none; b=h7i7pkrK9dYNtMVV9RULOMCc8VINvlQ+S/eBCJM6JYo+meAPvAO0s62njX2VW2+mIqwJT9BzWsacRLsoc2mu6osCUUw2UbKtXivOTtEIrjnbfwwDn4CvngzLbRKQMOGWgxLdLAoynP3PabUBW+TUtXqyihokbb9Ur0XIDM9mVkY=
+	t=1717332075; cv=none; b=jFVcWjYn6PnOD+9qR/bpmMVilge+ipmDEKv5ZG+y42o0qC932L/jt2I+RECK8jnAB8QTWaKdHe3nsovlVZ3v6qqw+YiGbxs9kjSjiXM0KijVMCq9VOJ4XwK4/hhpuefeOBpiYZzixpYR+qRHWCpilp3pRl8PbsDxOK8HlWEbM/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717331954; c=relaxed/simple;
-	bh=6wIXclynsLFdchuG1Z21o7bIw4fgwFAhF255TAknuUc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eQ3IdSdy1WC1pUJBvv0OzJJDhJ3t4lZ6jL6YT3xPdtvmZBwgFfSMsVH3hK4mNvDFUSpYBpKczx5IEY1rpqnfGHCMvMbOJhwanYS4AbWELCpqQwgnf95CQwil1Tc1UXlcntj3Ct8zjVwoPFDugcIg7aTDPH9emKz1ol5SCd7b14w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.helo=mgamail.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ePosiyhv; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.helo=mgamail.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717331952; x=1748867952;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=6wIXclynsLFdchuG1Z21o7bIw4fgwFAhF255TAknuUc=;
-  b=ePosiyhvDC3p+FaDJnHSntO6AboidvJyHkqDpA5eQhnftOITPfcqzwTw
-   LbcBtXA5/BZFuK5bK87icK71/Z9eBeMLxEHAnzCUMm+AE2jPMIEZM6bSj
-   ikqjAe/NxX8wlxLMIDX/tFroxa9jA+vYNhlza6355iHDLf0p3NdJPepUE
-   n7z75Mf689Q1kgwW9KoHkGISCdmkqS0At41XPZ1NdyzjZvHYDeUeKEWT4
-   f6+OeDehRoye8gE6CNm/y0SRM8aMecAzw2IjqvMAg1sH9nCcsZdYzGEVf
-   wy04LmY9reN5JodkBNYLVjpPY+z26o5ry0XL/HCv8QZpXJu2/LUc99JXf
-   w==;
-X-CSE-ConnectionGUID: vD0DVm0JSAKGag2tvBWpkw==
-X-CSE-MsgGUID: oRBUN2CjRwOkxljcOg0t+A==
-X-IronPort-AV: E=McAfee;i="6600,9927,11091"; a="13584310"
-X-IronPort-AV: E=Sophos;i="6.08,209,1712646000"; 
-   d="scan'208";a="13584310"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2024 05:39:12 -0700
-X-CSE-ConnectionGUID: mxdIA+1+SVWoBP/D+j6xiQ==
-X-CSE-MsgGUID: xctQMwVMRiyCPZiO1FwPYA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,209,1712646000"; 
-   d="scan'208";a="59792150"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa002.fm.intel.com with ESMTP; 02 Jun 2024 05:39:05 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 9D79E1CB; Sun, 02 Jun 2024 15:39:04 +0300 (EEST)
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: bp@alien8.de
-Cc: adrian.hunter@intel.com,
-	ardb@kernel.org,
-	ashish.kalra@amd.com,
-	bhe@redhat.com,
-	dave.hansen@linux.intel.com,
-	elena.reshetova@intel.com,
-	haiyangz@microsoft.com,
-	hpa@zytor.com,
-	jun.nakajima@intel.com,
-	kai.huang@intel.com,
-	kexec@lists.infradead.org,
-	kirill.shutemov@linux.intel.com,
-	kys@microsoft.com,
-	linux-acpi@vger.kernel.org,
-	linux-coco@lists.linux.dev,
-	linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	ltao@redhat.com,
-	mingo@redhat.com,
-	nik.borisov@suse.com,
-	peterz@infradead.org,
-	rafael@kernel.org,
-	rick.p.edgecombe@intel.com,
-	sathyanarayanan.kuppuswamy@linux.intel.com,
-	seanjc@google.com,
-	tglx@linutronix.de,
-	thomas.lendacky@amd.com,
-	x86@kernel.org
-Subject: [PATCHv11.1 10/19] x86/mm: Add callbacks to prepare encrypted memory for kexec
-Date: Sun,  2 Jun 2024 15:39:03 +0300
-Message-ID: <20240602123903.2121883-1-kirill.shutemov@linux.intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240529104257.GIZlcGsTkJHVBblkrY@fat_crate.local>
-References: <20240529104257.GIZlcGsTkJHVBblkrY@fat_crate.local>
+	s=arc-20240116; t=1717332075; c=relaxed/simple;
+	bh=e9ruaYjZ2BLY8P+1mkXSJrdIehx162YjAQ2gr9G0pYM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hUJjJxweptUBsXxPI1yaA1m427OR3yiyegGd+HbYbAD8OCVoP9rlERO2MoGyX4NVyvKoXuhkiQ8ePiyO3GO+zBqxwxpeqbaam9OhaVAuRpLV5ZF3NBuAlXrZCsTrIrPu2VejXa/I0HDA/TTldHBx2SRT7u0JLyjUxnGtZeeeov0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kxl9g28T; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABB0AC2BBFC;
+	Sun,  2 Jun 2024 12:41:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717332074;
+	bh=e9ruaYjZ2BLY8P+1mkXSJrdIehx162YjAQ2gr9G0pYM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Kxl9g28Tl0KvisLlmzrW0k4M63wBeroNpymZ371hIuNmLhRzxKlPY+eYV2n4Ox6Nk
+	 LE7RHNZg5sReFGKsas50PdJei7tRoc2HShg0EXzm80LkAhnFRmx53hO28ppqM65+Fx
+	 M67TSaOBi9xB+3ZdqNka8UxIOp+SNoaAeOaGC5JDhE2xkduvhPh78yuf1LHrs+1D32
+	 l0MKBg0DokJcsr9R1HY+laORiGGzr/TxZTdKjHFYMqgxse1ssV9ydJEaW/RYuv9SfM
+	 LrTKS4QyMlbATdppTFtaztCkwusur2LykU5GEGSIX+5a8snt39ExDcSrEvpolZmFvu
+	 v1ViHPKvPfsWw==
+Date: Sun, 2 Jun 2024 13:41:06 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Vasileios Amoiridis <vassilisamir@gmail.com>
+Cc: lars@metafoo.de, himanshujha199640@gmail.com, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 04/17] iio: chemical: bme680: Fix sensor data read
+ operation
+Message-ID: <20240602134106.2538471a@jic23-huawei>
+In-Reply-To: <20240527183805.311501-5-vassilisamir@gmail.com>
+References: <20240527183805.311501-1-vassilisamir@gmail.com>
+	<20240527183805.311501-5-vassilisamir@gmail.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-AMD SEV and Intel TDX guests allocate shared buffers for performing I/O.
-This is done by allocating pages normally from the buddy allocator and
-then converting them to shared using set_memory_decrypted().
+On Mon, 27 May 2024 20:37:52 +0200
+Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
 
-On kexec, the second kernel is unaware of which memory has been
-converted in this manner. It only sees E820_TYPE_RAM. Accessing shared
-memory as private is fatal.
+> A read operation is happening as follows:
+> 
+> a) Set sensor to forced mode
+> b) Sensor measures values and update data registers and sleeps again
+> c) Read data registers
+> 
+> In the current implementation the read operation happens immediately
+> after the sensor is set to forced mode so the sensor does not have
+> the time to update properly the registers. This leads to the following
+> 2 problems:
+> 
+> 1) The first ever value which is read by the register is always wrong
+> 2) Every read operation, puts the register into forced mode and reads
+> the data that were calculated in the previous conversion.
+> 
+> This behaviour was tested in 2 ways:
+> 
+> 1) The internal meas_status_0 register was read before and after every
+> read operation in order to verify that the data were ready even before
+> the register was set to forced mode and also to check that after the
+> forced mode was set the new data were not yet ready.
+> 
+> 2) Physically changing the temperature and measuring the temperature
+> 
+> This commit adds the waiting time in between the set of the forced mode
+> and the read of the data. The function is taken from the Bosch BME68x
+> Sensor API [1].
+> 
+> [1]: https://github.com/boschsensortec/BME68x_SensorAPI/blob/v4.4.8/bme68x.c#L490
+> Fixes: 1b3bd8592780 ("iio: chemical: Add support for Bosch BME680 sensor")
+> Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
+> ---
+>  drivers/iio/chemical/bme680_core.c | 25 +++++++++++++++++++++++++
+>  1 file changed, 25 insertions(+)
+> 
+> diff --git a/drivers/iio/chemical/bme680_core.c b/drivers/iio/chemical/bme680_core.c
+> index 5db48f6d646c..dd2cd11b6dd3 100644
+> --- a/drivers/iio/chemical/bme680_core.c
+> +++ b/drivers/iio/chemical/bme680_core.c
+> @@ -10,6 +10,7 @@
+>   */
+>  #include <linux/acpi.h>
+>  #include <linux/bitfield.h>
+> +#include <linux/delay.h>
+>  #include <linux/device.h>
+>  #include <linux/module.h>
+>  #include <linux/log2.h>
+> @@ -532,6 +533,26 @@ static u8 bme680_oversampling_to_reg(u8 val)
+>  	return ilog2(val) + 1;
+>  }
+>  
+> +/*
+> + * Taken from Bosch BME680 API:
+> + * https://github.com/boschsensortec/BME68x_SensorAPI/blob/v4.4.8/bme68x.c#L490
+> + */
+> +static int bme680_conversion_time_us(u8 meas, u8 dur)
+> +{
+> +	/* Oversampling + TPH meas + Gas meas + Forced mode + heater duration */
+I'd break oversampling up
 
-Therefore, the memory state must be reset to its original state before
-starting the new kernel with kexec.
+	/* (Oversampling ratio * time per reading) ...
+or something along those lines because it's related to oversampling but isn't
+of itself oversampling.
 
-The process of converting shared memory back to private occurs in two
-steps:
+> +	return (meas * 1936) + (477 * 4) + (477 * 5) + 1000 + (dur * 1000);
 
-- enc_kexec_begin() stops new conversions.
+Trivial but I think we can rely on precedence both for correctness and readability
+and hence don't need the brackets
 
-- enc_kexec_finish() unshares all existing shared memory, reverting it
-  back to private.
+> +}
+> +
+> +static void bme680_wait_for_eoc(struct bme680_data *data)
+Don't call it wait as that implies something is being checked.
 
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
-Reviewed-by: Kai Huang <kai.huang@intel.com>
-Tested-by: Tao Liu <ltao@redhat.com>
----
- arch/x86/include/asm/x86_init.h |  9 +++++++++
- arch/x86/kernel/crash.c         | 12 ++++++++++++
- arch/x86/kernel/reboot.c        | 12 ++++++++++++
- arch/x86/kernel/x86_init.c      |  4 ++++
- 4 files changed, 37 insertions(+)
+bme680_conversion_sleep() or something like that.
 
-diff --git a/arch/x86/include/asm/x86_init.h b/arch/x86/include/asm/x86_init.h
-index 28ac3cb9b987..6cade48811cc 100644
---- a/arch/x86/include/asm/x86_init.h
-+++ b/arch/x86/include/asm/x86_init.h
-@@ -149,12 +149,21 @@ struct x86_init_acpi {
-  * @enc_status_change_finish	Notify HV after the encryption status of a range is changed
-  * @enc_tlb_flush_required	Returns true if a TLB flush is needed before changing page encryption status
-  * @enc_cache_flush_required	Returns true if a cache flush is needed before changing page encryption status
-+ * @enc_kexec_begin		Begin the two-step process of conversion shared memory back
-+ *				to private. It stops the new conversions from being started
-+ *				and waits in-flight conversions to finish, if possible.
-+ * @enc_kexec_finish		Finish the two-step process of conversion shared memory to
-+ *				private. All memory is private after the call.
-+ *				It called with all CPUs but one shutdown and interrupts
-+ *				disabled.
-  */
- struct x86_guest {
- 	int (*enc_status_change_prepare)(unsigned long vaddr, int npages, bool enc);
- 	int (*enc_status_change_finish)(unsigned long vaddr, int npages, bool enc);
- 	bool (*enc_tlb_flush_required)(bool enc);
- 	bool (*enc_cache_flush_required)(void);
-+	void (*enc_kexec_begin)(bool crash);
-+	void (*enc_kexec_finish)(void);
- };
- 
- /**
-diff --git a/arch/x86/kernel/crash.c b/arch/x86/kernel/crash.c
-index f06501445cd9..74f6305eb9ec 100644
---- a/arch/x86/kernel/crash.c
-+++ b/arch/x86/kernel/crash.c
-@@ -128,6 +128,18 @@ void native_machine_crash_shutdown(struct pt_regs *regs)
- #ifdef CONFIG_HPET_TIMER
- 	hpet_disable();
- #endif
-+
-+	/*
-+	 * Non-crash kexec calls enc_kexec_begin() while scheduling is still
-+	 * active. This allows the callback to wait until all in-flight
-+	 * shared<->private conversions are complete. In a crash scenario,
-+	 * enc_kexec_begin() get call after all but one CPU has been shut down
-+	 * and interrupts have been disabled. This only allows the callback to
-+	 * detect a race with the conversion and report it.
-+	 */
-+	x86_platform.guest.enc_kexec_begin(true);
-+	x86_platform.guest.enc_kexec_finish();
-+
- 	crash_save_cpu(regs, safe_smp_processor_id());
- }
- 
-diff --git a/arch/x86/kernel/reboot.c b/arch/x86/kernel/reboot.c
-index f3130f762784..097313147ad3 100644
---- a/arch/x86/kernel/reboot.c
-+++ b/arch/x86/kernel/reboot.c
-@@ -12,6 +12,7 @@
- #include <linux/delay.h>
- #include <linux/objtool.h>
- #include <linux/pgtable.h>
-+#include <linux/kexec.h>
- #include <acpi/reboot.h>
- #include <asm/io.h>
- #include <asm/apic.h>
-@@ -716,6 +717,14 @@ static void native_machine_emergency_restart(void)
- 
- void native_machine_shutdown(void)
- {
-+	/*
-+	 * Call enc_kexec_begin() while all CPUs are still active and
-+	 * interrupts are enabled. This will allow all in-flight memory
-+	 * conversions to finish cleanly.
-+	 */
-+	if (kexec_in_progress)
-+		x86_platform.guest.enc_kexec_begin(false);
-+
- 	/* Stop the cpus and apics */
- #ifdef CONFIG_X86_IO_APIC
- 	/*
-@@ -752,6 +761,9 @@ void native_machine_shutdown(void)
- #ifdef CONFIG_X86_64
- 	x86_platform.iommu_shutdown();
- #endif
-+
-+	if (kexec_in_progress)
-+		x86_platform.guest.enc_kexec_finish();
- }
- 
- static void __machine_emergency_restart(int emergency)
-diff --git a/arch/x86/kernel/x86_init.c b/arch/x86/kernel/x86_init.c
-index a7143bb7dd93..8a79fb505303 100644
---- a/arch/x86/kernel/x86_init.c
-+++ b/arch/x86/kernel/x86_init.c
-@@ -138,6 +138,8 @@ static int enc_status_change_prepare_noop(unsigned long vaddr, int npages, bool
- static int enc_status_change_finish_noop(unsigned long vaddr, int npages, bool enc) { return 0; }
- static bool enc_tlb_flush_required_noop(bool enc) { return false; }
- static bool enc_cache_flush_required_noop(void) { return false; }
-+static void enc_kexec_begin_noop(bool crash) {}
-+static void enc_kexec_finish_noop(void) {}
- static bool is_private_mmio_noop(u64 addr) {return false; }
- 
- struct x86_platform_ops x86_platform __ro_after_init = {
-@@ -161,6 +163,8 @@ struct x86_platform_ops x86_platform __ro_after_init = {
- 		.enc_status_change_finish  = enc_status_change_finish_noop,
- 		.enc_tlb_flush_required	   = enc_tlb_flush_required_noop,
- 		.enc_cache_flush_required  = enc_cache_flush_required_noop,
-+		.enc_kexec_begin	   = enc_kexec_begin_noop,
-+		.enc_kexec_finish	   = enc_kexec_finish_noop,
- 	},
- };
- 
--- 
-2.43.0
+> +{
+> +	int wait_eoc = bme680_conversion_time_us(data->oversampling_temp +
+> +						 data->oversampling_press +
+> +						 data->oversampling_press,
+> +						 data->heater_dur);
+
+I'd pull the calculation inline in here unless you are going to use it elsewhere
+in later patches.
+
+> +
+> +	usleep_range(wait_eoc, wait_eoc + 100);
+> +}
+> +
+>  static int bme680_chip_config(struct bme680_data *data)
+>  {
+>  	struct device *dev = regmap_get_device(data->regmap);
+> @@ -622,6 +643,8 @@ static int bme680_read_temp(struct bme680_data *data, int *val)
+>  	if (ret < 0)
+>  		return ret;
+>  
+> +	bme680_wait_for_eoc(data);
+> +
+>  	ret = regmap_bulk_read(data->regmap, BME680_REG_TEMP_MSB,
+>  			       &tmp, 3);
+>  	if (ret < 0) {
+> @@ -738,6 +761,8 @@ static int bme680_read_gas(struct bme680_data *data,
+>  	if (ret < 0)
+>  		return ret;
+>  
+> +	bme680_wait_for_eoc(data);
+> +
+>  	ret = regmap_read(data->regmap, BME680_REG_MEAS_STAT_0, &check);
+>  	if (check & BME680_GAS_MEAS_BIT) {
+>  		dev_err(dev, "gas measurement incomplete\n");
 
 
