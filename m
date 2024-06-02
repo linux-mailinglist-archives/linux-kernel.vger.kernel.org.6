@@ -1,132 +1,131 @@
-Return-Path: <linux-kernel+bounces-198068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C0318D7302
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 03:32:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D0988D7304
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 03:33:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF82A1F21A7C
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 01:32:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7DDE1F218F0
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 01:33:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE3994430;
-	Sun,  2 Jun 2024 01:32:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 291A01C36;
+	Sun,  2 Jun 2024 01:33:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="C3m+Z6mf"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="GxF7UmHy"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BFDF17FF;
-	Sun,  2 Jun 2024 01:32:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 980901C06;
+	Sun,  2 Jun 2024 01:33:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717291932; cv=none; b=naKw/wiG4yk6DlNcSLUxSh3NY9p4EGcm9edcRhblvRK09J8kQ2DfG9wH2vhqG8pVkwzeMh2mbePzCqTCXeayxjYJVECHDfF2F1YCOhBZlVAdVMmoPUNNao36ERtCoS1Nbmwb3hYhzcQ55qYf2MX8G4zglGJZh9EW8k+FvX8TMLk=
+	t=1717292030; cv=none; b=rDgeCNohARngVaYeZnV1Ed6BhadSjfsGXvj83zhwEl0TLzryr3TSgEA+YVccA/BMYJQfTHw+oX9G0mB1CJju5vGMpWWI9335Fq1HE9dZAFcS7K01XjAvB2ROMpiinAwI5XnHdewueSGE/ymA843kwW4E+FVLrLsHGLHt7+dq1vw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717291932; c=relaxed/simple;
-	bh=mT+6nJ8FcVSsFnNcnZugIXFAnJtFvgLnp40V97LZUMA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=Ie/8BwUIiRUEeAlDZQwoCUK/IOXnJlXr8zcpj13yJ7W2hHJIhWEGV06ipz/sB2EsQbrW8aOo8Kf3f5KqjXtM/sHqQP/NSR6kX2VxfbwEM0ixjJ79Z0Z5rT7y8cwRcpP+NY+738ykHmRP1VOEmZy+SInoR7rWeLNRo9rOXqMYFyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=C3m+Z6mf; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4521Ra3Y032528;
-	Sun, 2 Jun 2024 01:31:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=jeGhGowDT5KeLSUfSBOevN
-	8jGK6lhtgn0lpn7jZgyYQ=; b=C3m+Z6mfHp7eOK3uWt+c0wanTrerRf1BZ1XFge
-	OaRQIUj9RBeAja8ly7jsveNZHJTApUFsFKDkR+Am01HGKytZHy0nThlF828qTQ+S
-	07hyntTgJCn/2JZ0XKnukbQHpKvyQOxeIDuNUuRa6KVAvcNxJXdka7SghW1gsNfe
-	4D91Iga9jCLwIgMa6R1fXDM1MANNOS2TntfXhgiPjTYOagTyqR8MVjyZTvn+VasJ
-	hrYS0ZjuCuVwtk8jgwP5MGCU8le1KLvN+b1JSAv7lLZOADfbV3NsSGxZpXaOBimJ
-	Vx9t95YrRLkrH3iyRIJaubG/oCFABczHHkEEZ0XzQOKyKjRw==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfw4d1hdq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 02 Jun 2024 01:31:56 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 4521Vtc5007563
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 2 Jun 2024 01:31:55 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 1 Jun 2024
- 18:31:55 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Sat, 1 Jun 2024 18:31:55 -0700
-Subject: [PATCH] samples: kprobes: add missing MODULE_DESCRIPTION() macros
+	s=arc-20240116; t=1717292030; c=relaxed/simple;
+	bh=XdxcvQrH7p0DQxEfPUL/IAa4KIlheTgoqVanz15UsX0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kHfcIk0Vs8EFNgSxtEywfNbG6aWcVk+PEJdKOkyVT3qo6C6a9Zd9xIg5r3gcs/wQMIBAVCA+0rlNK8mgJB2u682foruTrXkLeIo3dNqz3RbQJ7K5TrusZRV1Qu5RrL1oHyj0IJFQQ1kZqBqHbU+GEB4h2aQvfsRowT/WW10qeCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=GxF7UmHy; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4521XNXO114874;
+	Sat, 1 Jun 2024 20:33:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1717292003;
+	bh=NxaxaTDvTYoiYmYWtCJv/7sGuhc5KKGpJm/etOuESak=;
+	h=From:To:CC:Subject:Date;
+	b=GxF7UmHy+kgERAmA2VCDcTeD1EDVsfvmqsIGkURjIzmfNZgit4DruF3nY/I653FCu
+	 7LTEQnpdpTMPCktptcbG9sH4ZYo7AGky8zbkucOYc9Swma1ZAF0COuBklZYpCUAPrH
+	 ggFpcNSEPZgnUfHzXUUhbfx1AuNJRQ2AYyC1DFdw=
+Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4521XNSE059863
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Sat, 1 Jun 2024 20:33:23 -0500
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sat, 1
+ Jun 2024 20:33:23 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Sat, 1 Jun 2024 20:33:23 -0500
+Received: from uda0492258.dhcp.ti.com (uda0492258.dhcp.ti.com [172.24.227.9])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4521XKQ0071063;
+	Sat, 1 Jun 2024 20:33:20 -0500
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: <peter.ujfalusi@gmail.com>, <vkoul@kernel.org>, <Markus.Elfring@web.de>
+CC: <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
+        <s-vadapalli@ti.com>
+Subject: [PATCH v2] dmaengine: ti: k3-udma-glue: Fix of_k3_udma_glue_parse_chn_by_id()
+Date: Sun, 2 Jun 2024 07:03:19 +0530
+Message-ID: <20240602013319.2975894-1-s-vadapalli@ti.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240601-md-samples-kprobes-v1-1-b6a772353893@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAIrLW2YC/x3MywrCQAyF4VcpWRuYjkXEVxEXc0ltsDMdEpVC6
- bs3ujp8i/NvoCRMCrduA6EvKy/V0J86SFOoT0LOZvDOD+7ieiwZNZQ2k+KryRJtaYxnn2JK15z
- Bjk1o5PUfvT/MMShhlFDT9EvNXD8rlqBvEtj3AzrptdGDAAAA
-To: "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-        Anil S Keshavamurthy
-	<anil.s.keshavamurthy@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: I1V2_EoRLvh0-cLZFrtMsUtLri_B_7eJ
-X-Proofpoint-GUID: I1V2_EoRLvh0-cLZFrtMsUtLri_B_7eJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-06-01_19,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 mlxscore=0 adultscore=0 impostorscore=0 bulkscore=0
- spamscore=0 phishscore=0 clxscore=1015 mlxlogscore=999 suspectscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406020011
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in samples/kprobes/kprobe_example.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in samples/kprobes/kretprobe_example.o
+The of_k3_udma_glue_parse_chn_by_id() helper function erroneously
+invokes "of_node_put()" on the "udmax_np" device-node passed to it,
+without having incremented its reference count at any point. Fix it.
 
-Add the missing invocations of the MODULE_DESCRIPTION() macro.
-
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+Fixes: 81a1f90f20af ("dmaengine: ti: k3-udma-glue: Add function to parse channel by ID")
+Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+Acked-by: Peter Ujfalusi <peter.ujfalusi@gmail.com>
 ---
- samples/kprobes/kprobe_example.c    | 1 +
- samples/kprobes/kretprobe_example.c | 1 +
- 2 files changed, 2 insertions(+)
 
-diff --git a/samples/kprobes/kprobe_example.c b/samples/kprobes/kprobe_example.c
-index ef44c614c6d9..53ec6c8b8c40 100644
---- a/samples/kprobes/kprobe_example.c
-+++ b/samples/kprobes/kprobe_example.c
-@@ -125,4 +125,5 @@ static void __exit kprobe_exit(void)
- 
- module_init(kprobe_init)
- module_exit(kprobe_exit)
-+MODULE_DESCRIPTION("sample kernel module showing the use of kprobes");
- MODULE_LICENSE("GPL");
-diff --git a/samples/kprobes/kretprobe_example.c b/samples/kprobes/kretprobe_example.c
-index ed79fd3d48fb..65d6dcafd742 100644
---- a/samples/kprobes/kretprobe_example.c
-+++ b/samples/kprobes/kretprobe_example.c
-@@ -104,4 +104,5 @@ static void __exit kretprobe_exit(void)
- 
- module_init(kretprobe_init)
- module_exit(kretprobe_exit)
-+MODULE_DESCRIPTION("sample kernel module showing the use of return probes");
- MODULE_LICENSE("GPL");
+Hello,
 
----
-base-commit: b050496579632f86ee1ef7e7501906db579f3457
-change-id: 20240601-md-samples-kprobes-efb32cbcc8dd
+This patch is based on commit
+83814698cf48 Merge tag 'powerpc-6.10-2' of git://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux
+of Mainline Linux.
+
+v1 of this patch is at:
+https://lore.kernel.org/r/20240518100556.2551788-1-s-vadapalli@ti.com/
+Changes since v1:
+- Rebased patch on latest Mainline Linux.
+- Collected "Acked-by" tag from Peter Ujfalusi <peter.ujfalusi@gmail.com>
+  from:
+  https://lore.kernel.org/r/8b2e4b7f-50ae-4017-adf2-2e990cd45a25@gmail.com/
+- Updated commit message based on feedback from
+  Markus Elfring <Markus.Elfring@web.de> at:
+  https://lore.kernel.org/r/22a66571-0a0c-46dd-899a-d24079372880@web.de/
+  with the change being:
+  s/..incremented its reference at../..incremented its reference count at../
+
+Regards,
+Siddharth.
+
+ drivers/dma/ti/k3-udma-glue.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/drivers/dma/ti/k3-udma-glue.c b/drivers/dma/ti/k3-udma-glue.c
+index c9b93055dc9d..f0a399cf45b2 100644
+--- a/drivers/dma/ti/k3-udma-glue.c
++++ b/drivers/dma/ti/k3-udma-glue.c
+@@ -200,12 +200,9 @@ of_k3_udma_glue_parse_chn_by_id(struct device_node *udmax_np, struct k3_udma_glu
+ 
+ 	ret = of_k3_udma_glue_parse(udmax_np, common);
+ 	if (ret)
+-		goto out_put_spec;
++		return ret;
+ 
+ 	ret = of_k3_udma_glue_parse_chn_common(common, thread_id, tx_chn);
+-
+-out_put_spec:
+-	of_node_put(udmax_np);
+ 	return ret;
+ }
+ 
+-- 
+2.40.1
 
 
