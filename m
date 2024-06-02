@@ -1,279 +1,199 @@
-Return-Path: <linux-kernel+bounces-198352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D11D28D7715
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 18:08:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8226B8D7716
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 18:12:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2CF21B20E99
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 16:08:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDDC01F2168C
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 16:12:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B8344F218;
-	Sun,  2 Jun 2024 16:08:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jacFGZFw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D92FA4F602;
+	Sun,  2 Jun 2024 16:12:30 +0000 (UTC)
+Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34B893BB4D;
-	Sun,  2 Jun 2024 16:08:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB02641A81
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Jun 2024 16:12:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717344523; cv=none; b=SvLffcr0exvrC3K33IRA7HUDLmItODZjgpuC2L5TeW7rqgrjDWPCWrUV7mAN4//gx9jlSqSqC+W+wXHo1uGzSjO8HHbmJXfb6Wk8eAixvdgF8PYgvkqeTbfO8fIvS4rnhTN9dg6HiopaBAo53+s7KrCIgh4Nv5nyAu9rspFWU+A=
+	t=1717344750; cv=none; b=XQXqfAYaOQba6NBa7hnyGC74wR0dE7ozlGLPLWzzuYVUZ6SfD+pMS0yWHVarVE2lX2PPoqBfSrSBsgWjpOn1wURAdSj+6SUcklf8F0Je/RQwaV/1k9Q7+gsHRHfwgrzDU2ER1kGr240IHMqXnlGziTS0xbCIuhVJEzfOlElYKxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717344523; c=relaxed/simple;
-	bh=0Y7dMVcRYVdZ5srU7zS2dyX2lFZDqcHAZbsTyEjY7VI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AtbG2LV8M8XZQcHlEpjRl1n/3p7nCONvfn5LAesTolVinxwuRU0Xjz5pePlDvIL/GSVFW57uUA95aY3ilcRT2fW4ZNjBgKAKkyDiOIOiEODHsuqfSlU/CoIjrwzzOAZM5bzsp2uqFUsUF8fm1PhwpTdHInnoKcX7/olj5ZMNrvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jacFGZFw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49822C2BBFC;
-	Sun,  2 Jun 2024 16:08:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717344522;
-	bh=0Y7dMVcRYVdZ5srU7zS2dyX2lFZDqcHAZbsTyEjY7VI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=jacFGZFwn2H6Q6zVC8vx6oScb0ruyuax5SH74pNSV3ezHz7mQHy1r+3Ly8EpeKjW2
-	 CYdVzohbZ1VVpmzTEY3ikE3qkVOHjhwATKOK70lOjo7l8BhMlGNDjvTnwpvHdorGY8
-	 KvlgBne77aGel10SxyeNn8bnw7Wknn2u5RG3BGNjhKQRkDQ9Kym0ay5twDFLYU51CB
-	 DydeRGeH9UZvbtoOpW5MKLfJd1YjRwzeIzIJgl0BF/kCfR5+/EFEs3ZhxonhNoyP1V
-	 z5Qb4eExr9F2LPrGLsRAQpex4B00aQMxnLceM3/2BdGQGSoPxVvx058Y4oFaj+r1h9
-	 nP7OBP4fNaKiw==
-Date: Sun, 2 Jun 2024 17:08:30 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Denis Benato <benato.denis96@gmail.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@Huawei.com>, Lars-Peter Clausen
- <lars@metafoo.de>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- Jagath Jog J <jagathjog1996@gmail.com>, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5p?=
- =?UTF-8?B?Zw==?= <u.kleine-koenig@pengutronix.de>, "Luke D . Jones"
- <luke@ljones.dev>, Jonathan LoBue <jlobue10@gmail.com>
-Subject: Re: iio: iio-trig-hrtimer bug on suspend/resume when used with
- bmi160 and bmi323
-Message-ID: <20240602170830.34d73c96@jic23-huawei>
-In-Reply-To: <c11328ef-b61e-489f-9016-e342c749c000@gmail.com>
-References: <31d7f7aa-e834-4fd0-a66a-e0ff528425dc@gmail.com>
-	<20240113174351.47a20239@jic23-huawei>
-	<053a5c27-68fd-41b1-8b40-783dfb83d488@gmail.com>
-	<20240115093703.00001f64@Huawei.com>
-	<c11328ef-b61e-489f-9016-e342c749c000@gmail.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1717344750; c=relaxed/simple;
+	bh=cr4+sYC7zS0bv15s4QqxxxMivQkk3+TAJgeKs+36yXw=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=T5bhvXEuaT2XsFzGqVljQG2Dk+RRpHfyuzmxH8HQGD3+vcN0ewXnkPBz+P6/1QYekvyA2S7tqQhfNMlohivkexD90lAubZwqLNynfROKbSpAs7u9pCes/XKi6cX1DsGhe86YSm/PQALhDJ8shIIc0oxy3AU5fXj7Vrlw/7+3QLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-7e8e7707356so433319439f.3
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2024 09:12:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717344748; x=1717949548;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OIthNeqaR2cObPoQ3PmKTBeUyl99JAwJc3b1aUsN0EM=;
+        b=tCOr/Y3V8HVa7b6KbwiewdigsXvsjbyXYs1ViHgkTdUPVwFlz/OvepxvWXx3C4baru
+         3hyvGUDtTmf1l6N7xSXAwD2rTxNJtdkCV9M7ww6bfLHw5/l9CExNkr2xjNOB1CS2+r+F
+         aRVeoom9dBi/euAZvpgloIa/yj1/r+j79Dirm3/FiA95nHVNa+7aia1yi883oiIlRJ1a
+         S6462JJ25oLOEiU5o3pod8UrW3h3Erp0OMiyzL66iwT0zl16v574+cBkY94/OSep3ZRa
+         gDllrGHOgbCIf+jVcRWZcGWfGqOutO6fUB9+uFAzPael/KW+zlzwuF64FKsq92kT+rGe
+         bcGw==
+X-Forwarded-Encrypted: i=1; AJvYcCW4swJlizXqkJwQi/2/1pOwokhe8BTyGwmaYIoD+rVfuKx7tOs2bmOLQe2LT3dbFXySnURViP/kOiPkocWcZ4Fg//LoXuJ5walmHIkB
+X-Gm-Message-State: AOJu0Yx5nKxsqy/WP4p/G+33/5zT9CpXpizT0940bykZKl7ei4T6Qi+x
+	XUfSQxuCvhpt0XadIh2hsws4T1/tZiypakPo9OJwrEiWtixHivNZd/6dgtr211MQSPI01W1vSik
+	sNwGXThBcFBDsJrXJk5778F6+EcoNDr7Sho+c0Hoq3G6wjcHylPZL0AI=
+X-Google-Smtp-Source: AGHT+IG1W7wEazQlDW7CylT5GrbqP1vJgfBieXOQ1h512Fe1y52aijY6Qt7qqOiKRJgfOx9OIkELLPJmjKlRuH1u3Q5bFD6yNGdb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:20c4:b0:373:80a6:ba6c with SMTP id
+ e9e14a558f8ab-3748b9d5b51mr5525695ab.3.1717344748065; Sun, 02 Jun 2024
+ 09:12:28 -0700 (PDT)
+Date: Sun, 02 Jun 2024 09:12:28 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000aa690a0619ea7b3d@google.com>
+Subject: [syzbot] [bcachefs?] KMSAN: uninit-value in bch2_extent_crc_append
+From: syzbot <syzbot+c816b9d76d3c2f738309@syzkaller.appspotmail.com>
+To: bfoster@redhat.com, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 30 May 2024 16:07:22 +0200
-Denis Benato <benato.denis96@gmail.com> wrote:
+Hello,
 
-> On 1/15/24 10:37, Jonathan Cameron wrote:
-> > On Sun, 14 Jan 2024 21:04:12 +0100
-> > Denis Benato <benato.denis96@gmail.com> wrote:
-> >   
-> >> On 1/13/24 18:46, Jonathan Cameron wrote:  
-> >>> On Wed, 10 Jan 2024 23:35:01 +0100
-> >>> Denis Benato <benato.denis96@gmail.com> wrote:
-> >>>     
-> >>>> Hello,
-> >>>>
-> >>>> With this mail I am submitting bug report that is probably related to
-> >>>> iio-trig-hrtimer but there is also the possibility for it to be
-> >>>> specific to bmi160 and bmi323.
-> >>>>
-> >>>> The described problem have been reproduced on my handheld PC (Asus
-> >>>> RC71L) and in another handheld PC with two different gyroscope
-> >>>> drivers: bmi323 (backported by me on v6.7, on RC71L) and bmi160.
-> >>>>
-> >>>> My target hardware (RC71L that yeld to this discovery) has a bmi323
-> >>>> chip that does not have any interrupt pins reaching the CPU, yet I
-> >>>> need to fetch periodically data from said device, therefore I used
-> >>>> iio-trig-hrtimer: created a trigger, set the device and trigger
-> >>>> sampling frequencies, bound the trigger to the device and enabled
-> >>>> buffer: data is being read and available over /dev/iio:device0.
-> >>>>
-> >>>> While in this state if I suspend my handheld I receive (from dmesg)
-> >>>> the warning reported below and at resume data is not coming out of
-> >>>> the iio device and the hrtimer appears to not be working. If I create
-> >>>> a new trigger and bind the new trigger to said iio device and
-> >>>> re-enable buffer data does come out of /dev/iio:device0 once more,
-> >>>> until the next sleep.
-> >>>>
-> >>>> Since this is important to me I have taken the time to look at both
-> >>>> drivers and iio-trig-hrtimer and I have identified three possible
-> >>>> reasons:
-> >>>>
-> >>>> 1) iio-trig-hrtimer won't work after suspend regardless of how it is
-> >>>> used (this is what I believe is the cause)    
-> >>> me too.    
-> >> who and how should investigate this issue? Would putting a kprintf in the hrtimer callback be enough to check?  
-> > The warning you have pretty much points at this being the problem, but sure
-> > you could add a print there to be absolutely sure.
-> >   
-> >>
-> >>
-> >> Just to make sure I understood correctly: is this a separate issue from the warning I receive or are those linked?  
-> > 
-> > I think it's all one issue.  
-> Hello,
-> 
-> Sorry for the delay, I was able to find some time just recently.
-> 
-> Sadly I don't think anymore this is just one issue:
-> 
-> I have setup a proof of concept that at suspend sets a boolean to true and at resume sets the same boolean to false, and on trigger_handler returns IRQ_NONE if the device is sleeping (everything guarded by an additional mutex) and it solved the warning: no more regmap access are being performed after the device is put to sleep, but unfortunately the acquisition does not automatically resume after waking up the device.
-> 
-> How shall we proceed?
+syzbot found the following issue on:
 
-It's been a while (and a busy day of reviewing) so I'm struggling
-a bit with the best away forwards.
+HEAD commit:    614da38e2f7a Merge tag 'hid-for-linus-2024051401' of git:/..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=15fc62b4980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f5d2cbf33633f507
+dashboard link: https://syzkaller.appspot.com/bug?extid=c816b9d76d3c2f738309
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-A hackyish approach might be to mask the interrupt at device side
-(fake interrupt used as part of the tree from a trigger to a pollfunc).
-A tidy wrapped up version of this might be the best route forwards
-though it won't currently stop the hrtimer merrily poking interrupts
-at no one
+Unfortunately, I don't have any reproducer for this issue yet.
 
-As a hack, could you try having your suspend call disable_irq() on
-the irq found in iio_dev->poll_func->irq and reenable it in resume?
-That might be sufficient.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/89eafb874b71/disk-614da38e.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/356000512ad9/vmlinux-614da38e.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/839c73939115/bzImage-614da38e.xz
 
-Check poll_func goes somewhere first though and that irq is > 0
-I think that will call iio_trig_subirq_mask() which should block
-any further interrupts until it's unmasked again.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+c816b9d76d3c2f738309@syzkaller.appspotmail.com
 
-We'll need to ensure this doesn't race with pollfunc going away though
-which will make it more complex, but the above test should tell us
-if there is a fairly smooth path to making this work.
+=====================================================
+BUG: KMSAN: uninit-value in variable__ffs arch/x86/include/asm/bitops.h:251 [inline]
+BUG: KMSAN: uninit-value in extent_entry_type fs/bcachefs/extents.h:60 [inline]
+BUG: KMSAN: uninit-value in extent_entry_bytes fs/bcachefs/extents.h:69 [inline]
+BUG: KMSAN: uninit-value in extent_entry_u64s fs/bcachefs/extents.h:82 [inline]
+BUG: KMSAN: uninit-value in bch2_extent_crc_append+0x7cd/0x830 fs/bcachefs/extents.c:574
+ variable__ffs arch/x86/include/asm/bitops.h:251 [inline]
+ extent_entry_type fs/bcachefs/extents.h:60 [inline]
+ extent_entry_bytes fs/bcachefs/extents.h:69 [inline]
+ extent_entry_u64s fs/bcachefs/extents.h:82 [inline]
+ bch2_extent_crc_append+0x7cd/0x830 fs/bcachefs/extents.c:574
+ init_append_extent+0x466/0x1050 fs/bcachefs/io_write.c:701
+ bch2_write_extent fs/bcachefs/io_write.c:1045 [inline]
+ __bch2_write+0x53a5/0x8530 fs/bcachefs/io_write.c:1451
+ bch2_write+0xe36/0x1c80 fs/bcachefs/io_write.c:1620
+ closure_queue include/linux/closure.h:257 [inline]
+ closure_call include/linux/closure.h:390 [inline]
+ bch2_dio_write_loop fs/bcachefs/fs-io-direct.c:531 [inline]
+ bch2_direct_write+0x290e/0x5340 fs/bcachefs/fs-io-direct.c:652
+ bch2_write_iter+0x46d/0x5b30 fs/bcachefs/fs-io-buffered.c:1143
+ call_write_iter include/linux/fs.h:2120 [inline]
+ new_sync_write fs/read_write.c:497 [inline]
+ vfs_write+0xb31/0x14d0 fs/read_write.c:590
+ ksys_pwrite64 fs/read_write.c:705 [inline]
+ __do_sys_pwrite64 fs/read_write.c:715 [inline]
+ __se_sys_pwrite64 fs/read_write.c:712 [inline]
+ __x64_sys_pwrite64+0x2c5/0x3b0 fs/read_write.c:712
+ x64_sys_call+0xa4f/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:19
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-I'll try and find time to do some testing myself, but it won't be
-for a few weeks :(
+Uninit was stored to memory at:
+ bch2_extent_crc_pack+0x686/0x6b0 fs/bcachefs/extents.c:530
+ bch2_extent_crc_append+0x645/0x830 fs/bcachefs/extents.c:572
+ init_append_extent+0x466/0x1050 fs/bcachefs/io_write.c:701
+ bch2_write_extent fs/bcachefs/io_write.c:1045 [inline]
+ __bch2_write+0x53a5/0x8530 fs/bcachefs/io_write.c:1451
+ bch2_write+0xe36/0x1c80 fs/bcachefs/io_write.c:1620
+ closure_queue include/linux/closure.h:257 [inline]
+ closure_call include/linux/closure.h:390 [inline]
+ bch2_dio_write_loop fs/bcachefs/fs-io-direct.c:531 [inline]
+ bch2_direct_write+0x290e/0x5340 fs/bcachefs/fs-io-direct.c:652
+ bch2_write_iter+0x46d/0x5b30 fs/bcachefs/fs-io-buffered.c:1143
+ call_write_iter include/linux/fs.h:2120 [inline]
+ new_sync_write fs/read_write.c:497 [inline]
+ vfs_write+0xb31/0x14d0 fs/read_write.c:590
+ ksys_pwrite64 fs/read_write.c:705 [inline]
+ __do_sys_pwrite64 fs/read_write.c:715 [inline]
+ __se_sys_pwrite64 fs/read_write.c:712 [inline]
+ __x64_sys_pwrite64+0x2c5/0x3b0 fs/read_write.c:712
+ x64_sys_call+0xa4f/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:19
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-Thanks,
+Uninit was created at:
+ __alloc_pages+0x9d6/0xe70 mm/page_alloc.c:4598
+ __alloc_pages_node include/linux/gfp.h:238 [inline]
+ alloc_pages_node include/linux/gfp.h:261 [inline]
+ alloc_slab_page mm/slub.c:2190 [inline]
+ allocate_slab mm/slub.c:2353 [inline]
+ new_slab+0x2de/0x1400 mm/slub.c:2406
+ ___slab_alloc+0x121d/0x34a0 mm/slub.c:3592
+ __slab_alloc mm/slub.c:3682 [inline]
+ __slab_alloc_node mm/slub.c:3735 [inline]
+ slab_alloc_node mm/slub.c:3908 [inline]
+ kmem_cache_alloc+0x6d6/0xc20 mm/slub.c:3925
+ mempool_alloc_slab+0x36/0x50 mm/mempool.c:565
+ mempool_alloc+0xfa/0x530 mm/mempool.c:408
+ bio_alloc_bioset+0xb7c/0x1c10 block/bio.c:554
+ bch2_direct_write+0xa50/0x5340 fs/bcachefs/fs-io-direct.c:624
+ bch2_write_iter+0x46d/0x5b30 fs/bcachefs/fs-io-buffered.c:1143
+ call_write_iter include/linux/fs.h:2120 [inline]
+ new_sync_write fs/read_write.c:497 [inline]
+ vfs_write+0xb31/0x14d0 fs/read_write.c:590
+ ksys_pwrite64 fs/read_write.c:705 [inline]
+ __do_sys_pwrite64 fs/read_write.c:715 [inline]
+ __se_sys_pwrite64 fs/read_write.c:712 [inline]
+ __x64_sys_pwrite64+0x2c5/0x3b0 fs/read_write.c:712
+ x64_sys_call+0xa4f/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:19
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-Jonathan
+CPU: 0 PID: 5884 Comm: syz-executor.4 Tainted: G        W          6.9.0-syzkaller-02707-g614da38e2f7a #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+=====================================================
 
 
-> >   
-> >>>     
-> >>>> 2) iio-trig-hrtimer is stopped by the -ESHTDOWN returned by the
-> >>>> function printing "Transfer while suspended", however that stack
-> >>>> trace does not include function calls related to iio-trig-hrtimer and
-> >>>> this seems less plausible 3) bmi160 and bmi323 appears to be similar
-> >>>> and maybe are sharing a common bug with suspend (this is also why I
-> >>>> have maintainers of those drivers in the recipient list)
-> >>>>
-> >>>> Thanks for your time, patience and understanding,    
-> >>>
-> >>> Hi Denis,
-> >>>
-> >>> I suspect this is the legacy of the platform I used to test the hrtimer
-> >>> and similar triggers on never had working suspend and resume (we ripped
-> >>> support for that board out of the kernel a while back now...)
-> >>> Hence those paths were never tested by me and others may not have cared
-> >>> about this particular case.
-> >>>
-> >>> Anyhow, so I think what is going on is fairly simple.
-> >>>
-> >>> There is no way for a driver to indicate to a trigger provided by a separate
-> >>> module / hardware device that it should stop triggering data capture.
-> >>> The driver in question doesn't block data capture when suspended, which
-> >>> would be easy enough to add but doesn't feel like the right solution.
-> >>>
-> >>> So my initial thought is that we should add suspend and resume callbacks to
-> >>> iio_trigger_ops and call them manually from iio device drivers in their
-> >>> suspend and resume callbacks.  These would simply pause whatever the
-> >>> trigger source was so that no attempts are made to trigger the use of
-> >>> the device when it is suspended.
-> >>>
-> >>> It gets a little messy though as triggers can be shared between
-> >>> multiple devices so we'd need to reference count suspend and resume
-> >>> for the trigger to make sure we only resume once all consumers of
-> >>> the trigger have said they are ready to cope with triggers again.
-> >>>
-> >>> As mentioned, the alternative would be to block the triggers at ingress
-> >>> to the bmi323 and bmi160 drivers.  There may be a helpful pm flag that could
-> >>> be used but if not, then setting an is_suspended flag under the data->mutex
-> >>> to avoid races. and reading it in the trigger_handler to decide whether
-> >>> to talk to the device should work.    
-> >> I was thinking of doing this too, but I don't know if adding a mutex to frequently invoked functions is going to introduce some timing problems and so I was waiting for some comments on that matter. If nothing bad is expected I can surely try it.  
-> >>>
-> >>> I'd kind of like the generic solution of actually letting the trigger
-> >>> know, but not sure how much work it would turn out to be.  Either way there
-> >>> are a lot of drivers to fix this problem in as in theory most triggers can
-> >>> be used with most drivers that support buffered data capture.
-> >>> There may also be fun corners where a hardware trigger from one IIO
-> >>> device A is being used by another B and the suspend timing is such that B
-> >>> finishing with the trigger results in A taking an action (in the try_reenable
-> >>> callback) that could result in bus traffic.
-> >>> That one is going to be much more fiddly to handle than the simpler case
-> >>> you have run into.    
-> >> Since more and more handheld PCs are coming and provided many vendors such as
-> >> asus tends to improve what they did built on previous generations I think a
-> >> general solution would be desirable.
-> >>
-> >> Plus there are handheld PCs that does not yet have a driver (bmi270) or are
-> >> using an existing one and it would be very difficult to fix it in every of
-> >> them as of now, in the future I fear it will become almost impossible or 
-> >> extremely time consuming as market expands.  
-> > 
-> > Both solutions require specific calls to be added to every driver that might
-> > encounter this - so most drivers that support triggers other than the ones
-> > they supply.
-> >   
-> >>>
-> >>> Thanks for the detailed bug report btw.   To get it fixed a few
-> >>> questions:
-> >>> 1) Are you happy to test proposed fixes?
-> >>> 2) Do you want to have a go at fixing it yourself? (I'd suggest trying
-> >>>    the fix in the bmi323 driver first rather than looking at the other 
-> >>>    solution)
-> >>>    If we eventually implement the more general version, then a bmi323
-> >>>    additional protection against this problem would not be a problem.
-> >>>
-> >>> Clearly I'd like the answers to be yes to both questions, but up to you!
-> >>>
-> >>> Jonathan
-> >>>
-> >>>     
-> >> Hello Jonathan and thank you kindly for you answer,
-> >>
-> >> I am very interested in the iio ecosystem as in those aforementioned
-> >> handheld PCs the gyroscope plays the role as a mouse so it's a pretty
-> >> important input device.
-> >>
-> >> I am writing to lkml not just as a single developer, but as part of a
-> >>  larger community in this matter: this means we will be able to test
-> >> any solution and in more than just one hardware.
-> >>
-> >> To answers your questions:
-> >> 1) yes, we all will be very happy to
-> >> 2) as I am very busy right now I might be unable to do that immediately,
-> >> but I will surely do it if one general solution cannot be found or is impractical.
-> >>
-> >> As of my limited knowledge the number of drivers now existing that are affected
-> >> are 2, and the number of drivers that will be affected, once the driver is
-> >> written, will be at least 3.  
-> > 
-> > The problem appears to be general unfortunately.
-> > 
-> > I'll have to see if I can fire up something where I can actually test solutions
-> > and I'm afraid I also don't have a lot of time at the moment.
-> > Perhaps I can find time in the next few weeks to hack together a prototype
-> > for one of the drivers you can test.
-> > 
-> > Jonathan
-> >   
-> >>
-> >> Thank you very much for your answer,
-> >> Denis
-> >>  
-> >   
-> 
-> Thank you for you time and patience,
-> Denis
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
