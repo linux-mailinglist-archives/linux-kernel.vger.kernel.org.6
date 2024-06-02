@@ -1,54 +1,73 @@
-Return-Path: <linux-kernel+bounces-198188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88A3D8D74AB
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 11:50:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5DB08D74AD
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 11:57:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0493282376
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 09:50:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E77391C212BA
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 09:57:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61CBE36AF5;
-	Sun,  2 Jun 2024 09:50:52 +0000 (UTC)
-Received: from mail115-100.sinamail.sina.com.cn (mail115-100.sinamail.sina.com.cn [218.30.115.100])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECD60374CC;
+	Sun,  2 Jun 2024 09:57:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="rN6lHVAh"
+Received: from out203-205-221-235.mail.qq.com (out203-205-221-235.mail.qq.com [203.205.221.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E49E29CFB
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Jun 2024 09:50:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D061029CFB;
+	Sun,  2 Jun 2024 09:56:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717321852; cv=none; b=d7vEn1B5Hdg8t84uIWWu9Zxnhr7rgC/zvK6vTb+jINRxwfsk5uNNj58ot37kUNDHbDNTHVwKhJdl6w32x0c17GPA5AR7HoBnsth3bvBmGZxKLSQWl0yZEMwkUXE1AV9CypHdS5nyeYO0HbDCA2VHps5cdgYWjjaNha8j+20Gn7o=
+	t=1717322221; cv=none; b=mvU9Z79E12NVvPOtSbOuU1c6IKKfub04Anr7RqyM+H+C57OJzuND1sWVDr05cqmbOyN3x11Dh8n1gNLGZMQbo3y8OUxzq38ys1iS7whpiOnWAVZGxCuUyM2hja4DbuRah5OSqTm9CP4nPONfdpIjg+V5whCxiLu1FLlkkEUDhHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717321852; c=relaxed/simple;
-	bh=6Qk3EhFI6l02CTzu7dOTv1ZIxT/EvVODd1HgAUac3ok=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=TuWiZ/rQNTQBdZXZcqwQKWMmhBi3AlckxZfH/tC7z3Xwj3UuewZgiVRsWaKWReLD9Tyg6YT2KelhuLBVPCUCq45tJL0n8LO/ulmHnY1nuOO9fXCPKoGApwk/FN9coj4tell4TgqnVOu2MxrqsY4l7uQRQYJlOBj6GmVJ/llQm8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([113.88.51.183])
-	by sina.com (172.16.235.24) with ESMTP
-	id 665C406A0000490E; Sun, 2 Jun 2024 17:50:36 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 53371945089237
-X-SMAIL-UIID: C0900DA4704744BC98FB16A3F5398444-20240602-175036-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+d34c2a269ed512c531b0@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
+	s=arc-20240116; t=1717322221; c=relaxed/simple;
+	bh=94oYn28sQMThSshDbznH0NXY+/CnYNyP4bnXq2olcDk=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=p8o8IBus637dG2v1TOAjY/rljDFS0wMiV54P+AJGRq2IuysiF3gy8btImbySY4iIZVYj9WZVlmIIN5RqgTY0sm/ZJ8BEk78yF6bb6z7hYDLvwOGe0tUuKnMGx+8STm+QLtoZKPRO0pNQIbqln2toIATmaa/ZT6wcBq1/n6wURMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=rN6lHVAh; arc=none smtp.client-ip=203.205.221.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1717322216; bh=yAGaiayGKFE1lZ7KHZ0iKdH2nu2needeaNKQWb5vLMI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=rN6lHVAhUCv1Igea2g9RpSjmIxYJ7JQeKqdMoerloOQiRAVMMd+XqkNdDC94SIK+j
+	 ouzdtD6C/kjqT5Gt2/h96zj+gFfwxSbF0Tf4lqe5IxT19AxOOFzI8dZ/c/bw4LeEER
+	 7E4US93CeX0N7TjkW33WI0ueWS+GUA5S+7HGJzF4=
+Received: from pek-lxu-l1.wrs.com ([111.198.228.153])
+	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
+	id E352E24B; Sun, 02 Jun 2024 17:56:53 +0800
+X-QQ-mid: xmsmtpt1717322213tn7qbsm37
+Message-ID: <tencent_706EA97643BAE446F774577CA6D6536A0305@qq.com>
+X-QQ-XMAILINFO: NDgMZBR9sMmapMNs4lAv6xsi5CZUvaxRTgDCnQpuxpUhHgwEi1dv+P3x72iO2i
+	 LjqWnzgBB0bGwr4vQJo2P58jK7IvrUD3ZGLdzHoznl65zQyNZnR6bUGbFhnkxsyZiDVqLObZ21m5
+	 Pms/pqYoXeoJZY0ub0vG6vzUX4yPZl+9i/GNAN0l7VBJb+KCZMwTOLwZojDBM8yZ8VKfQNMyNKyk
+	 jLo/iOv/OahfzPX5kzLm21SH/xJEBwWu/pHOTD0f6u6NV8bUDv84hwhvMbsC+l9wbgfoiWZx5YC1
+	 /l8hkbngeid7iKGV0pLxsI83ha1jN3/DlKV0XopX/PO0J/dOg5rRVRvyzcU7j/XwxMttNpfsrWVE
+	 7AdEH0Vqy4qz5IqcKn/Dc9VGyxgN2ZEM/U0LPdE1eHUk+v8ylM8LRBkILwqCB3QzzwUBJZz8EHEo
+	 lJM4dNz9v6FMClC0s3/1HE4VzyiDrrwjmACDwdc5OKXLj8yYnQHVmYgL1oyEV32ojzrptg+JDx/Q
+	 dGug62LLL3iu9d2JPOyVeK8Q4wiXFuyEcmKeQmDK7AXvhDvAhDY0hikIKT6Yes8itxYsRR7W75QW
+	 lu2qlhawXpDr+tRD8yIKyOpejqph9PsCPOB8t6XWQxmSFJnAPp/xf99F+RASZwZ3fQ+AHdWAz5T1
+	 anPtmWzLh9IOBuNiO1EZJPpNR/JHZhLwK3DL5sgai3csWhQ/5AAiOalHROQRL9lGKZpsov5K6WRn
+	 GSuYsQ5xo9BOOd+nn/u1yS5YyffqtuPHtzvcanq10EKAUa13l/J121mCfofqFlLa3FdnjjDBKDiI
+	 QUrvJrUQSXb1BxsTB6GcuoZZPEYHLB1elYXAEXBhn0e+vbKQsxN6QNIE1Hyk3VqZ/IhJqiDhTjL1
+	 vaVteTmfVMYrf/NvTGU0qnJ91LYCNTT6rAZ808YesXFil+M4ADlfz0SY96I2gdnU/oaXIKkaMh
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+5d34cc6474499a5ff516@syzkaller.appspotmail.com
+Cc: almaz.alexandrovich@paragon-software.com,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	ntfs3@lists.linux.dev,
 	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [gfs2?] BUG: corrupted list in gfs2_fill_super
-Date: Sun,  2 Jun 2024 17:50:24 +0800
-Message-Id: <20240602095024.3791-1-hdanton@sina.com>
-In-Reply-To: <0000000000002501960619e2366b@google.com>
-References: 
+Subject: [PATCH] fs/ntfs3: dealing with situations where dir_search_u may return null
+Date: Sun,  2 Jun 2024 17:56:54 +0800
+X-OQ-MSGID: <20240602095653.1544037-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <000000000000f386f90616fea5ef@google.com>
+References: <000000000000f386f90616fea5ef@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,42 +76,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On Sat, 01 Jun 2024 23:20:21 -0700
-> syzbot found the following issue on:
-> 
-> HEAD commit:    9d99040b1bc8 Add linux-next specific files for 20240529
-> git tree:       linux-next
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=100817e6980000
+If hdr_find_e() fails to find an entry in the index buffer, dir_search_u() maybe
+return NULL.
+Therefore, it is necessary to add relevant judgment conditions in ntfs_lookup().
 
-#syz test https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git  master
+Reported-and-tested-by: syzbot+5d34cc6474499a5ff516@syzkaller.appspotmail.com
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+---
+ fs/ntfs3/namei.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- x/fs/gfs2/ops_fstype.c
-+++ y/fs/gfs2/ops_fstype.c
-@@ -1137,6 +1137,7 @@ static int gfs2_fill_super(struct super_
- 	struct gfs2_sbd *sdp;
- 	struct gfs2_holder mount_gh;
- 	int error;
-+	int destroyed = 0;
- 
- 	sdp = init_sbd(sb);
- 	if (!sdp) {
-@@ -1301,6 +1302,7 @@ fail_locking:
- fail_lm:
- 	complete_all(&sdp->sd_journal_ready);
- 	gfs2_gl_hash_clear(sdp);
-+	destroyed = 1;
- 	gfs2_lm_unmount(sdp);
- fail_debug:
- 	gfs2_delete_debugfs_file(sdp);
-@@ -1308,7 +1310,8 @@ fail_debug:
- fail_delete_wq:
- 	destroy_workqueue(sdp->sd_delete_wq);
- fail_glock_wq:
--	destroy_workqueue(sdp->sd_glock_wq);
-+	if (!destroyed)
-+		destroy_workqueue(sdp->sd_glock_wq);
- fail_free:
- 	free_sbd(sdp);
- 	sb->s_fs_info = NULL;
---
+diff --git a/fs/ntfs3/namei.c b/fs/ntfs3/namei.c
+index 084d19d78397..293c37171d97 100644
+--- a/fs/ntfs3/namei.c
++++ b/fs/ntfs3/namei.c
+@@ -93,7 +93,7 @@ static struct dentry *ntfs_lookup(struct inode *dir, struct dentry *dentry,
+ 	 * If the MFT record of ntfs inode is not a base record, inode->i_op can be NULL.
+ 	 * This causes null pointer dereference in d_splice_alias().
+ 	 */
+-	if (!IS_ERR_OR_NULL(inode) && !inode->i_op) {
++	if (IS_ERR_OR_NULL(inode) || !inode->i_op) {
+ 		iput(inode);
+ 		inode = ERR_PTR(-EINVAL);
+ 	}
+-- 
+2.43.0
+
 
