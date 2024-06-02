@@ -1,148 +1,120 @@
-Return-Path: <linux-kernel+bounces-198132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 031D38D73D9
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 06:36:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C39F08D73DD
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 06:44:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9361BB210F0
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 04:36:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EA33281D50
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 04:44:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1019B12E7F;
-	Sun,  2 Jun 2024 04:36:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 530CB17573;
+	Sun,  2 Jun 2024 04:44:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Iy+44CIj"
-Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="EJu4CtrY"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D2DA10949
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Jun 2024 04:36:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D674171A5;
+	Sun,  2 Jun 2024 04:44:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717302995; cv=none; b=Pvrgg/2LJpuNkWvd9wq9XJCimxE4jVAvNaRQEP0TwepHieWrHISHpYQtIi5DUQHWPM9Xv6a2K7poKOb3L59EJqZKDGfDBLnujQe60b061M1lUIyrYh6zS050syRuqOgoJEjuYAgWUsnuPtHGAIBvhwo95Jcd0KFKY9cW2+LX+X0=
+	t=1717303474; cv=none; b=kIpUwGL0JtoLPcmskRWdR8ewFQ4pGZ4g5ck+M3gUJtQtpzKEBn9FmLabNnlYlsSCzz1pyGi/TBY7cjH9hnmsTKNuisGVzCbgOfwc24KtqsSLpMwFdc4Lc+89Ao+j15/FMAfjlOYaAPhtRUKh3My9js8eeCiTcwCxXMRhYqHPW08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717302995; c=relaxed/simple;
-	bh=CWXF1V2TMTYlmotkfVH7GZLwf8hR5Ue0QdIpQrJnBW0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k9NcscaMNA9eywP/BhCnW5p/5Up1y+FVoTzcmQwGTEITCG53uo5G6L9hWAGVzSR4cjIKDh/sni0/1UAkXRtV6J8n6EBjkR31jhi4OKIZA7mqvnthy0SMUSlBczcn/6n/EyjcgtGWnSlih5ll6JscW1EFwu3p5A5TtF8oXXXABQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Iy+44CIj; arc=none smtp.client-ip=115.124.30.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1717302983; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=ZNZ5EiYzI8ePykWRaBhiaORawPDBRtocLTQhbcC0T/w=;
-	b=Iy+44CIjpJqHXC6FGQ0XuphIq3jIy4srnfIvCHG2EltzZcQ1H/UnE8WZBToQlI8ooLCMFCQz83HeBiDfUNUbJhq902WU0KzpgbAKlZmFlO3HcxoayHCbTI6buRLW3vkcZrVSG46Zj1ykxjN1apTyL6mqFDLeFnoo1qjR/qYo86k=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067111;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=16;SR=0;TI=SMTPD_---0W7dxKvB_1717302980;
-Received: from 192.168.0.106(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W7dxKvB_1717302980)
-          by smtp.aliyun-inc.com;
-          Sun, 02 Jun 2024 12:36:21 +0800
-Message-ID: <bba3ab3d-6e9c-4c62-9c85-3a3d338d9230@linux.alibaba.com>
-Date: Sun, 2 Jun 2024 12:36:19 +0800
+	s=arc-20240116; t=1717303474; c=relaxed/simple;
+	bh=tcFWKldo0RI0JL1/1dQ+E5e/BJuI3bIOoLoqyG6veIo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=SmT2/Ovenmb+5uTIHFZw6fnAj9lV0GSOxT9pPuVjRmeTq7L6hHFwYPQuZCOPZjETPp+c6hzyfRRHpO859JGaJswRTBEIYjfvYqW2yfBs/m/xTd58U80ETDelmx9+05JTzRBcbJWsOi3cq0Wc9Bi7lNSg7hghaKDcgV5hwy83Mo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=EJu4CtrY; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4524VraK025385;
+	Sun, 2 Jun 2024 04:44:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=6tcUcaGv7JGo2XBUVsbn9R
+	w9/Ef8KQb6jKCpkZinco8=; b=EJu4CtrYkWcdcy86yCv7AK7BXYxGZkuho0Tl4H
+	pjUcOOUaPSUNJXdnpdFhYXYi8lyfsu3ekM5ZeDfitlZYdGFHxUcJETnUfLOi/LHZ
+	ad0/eayrCIc2Dqoke5JuAM58mEATNC7B+g4c3sdHo5KBz+aV67QDHjnVbJHM7RCO
+	/lrWTs2m+GnzX7rGbn07K0qszmcL1DID6U3oXm6NclU41O/ticHB0h6JcUZMkeNZ
+	onXrpdJPVQNcr8sHP2w9biMjzCLu4Lth2GcJHb2vFo7ubdDL1M2r6Fq/nkHMeHhc
+	Yh9pLg9CmmWlqCUcixwVo66+FejKsGYdY+tYEC41ZlzYwymQ==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfw42sq14-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 02 Jun 2024 04:44:24 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 4524iNsT010117
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 2 Jun 2024 04:44:23 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 1 Jun 2024
+ 21:44:22 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Sat, 1 Jun 2024 21:44:22 -0700
+Subject: [PATCH] clk: sophgo: add missing MODULE_DESCRIPTION() macro
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/6] mm: shmem: add multi-size THP sysfs interface for
- anonymous shmem
-To: wang wei <a929244872@163.com>
-Cc: akpm@linux-foundation.org, hughd@google.com, willy@infradead.org,
- david@redhat.com, wangkefeng.wang@huawei.com, ying.huang@intel.com,
- 21cnbao@gmail.com, ryan.roberts@arm.com, shy828301@gmail.com,
- ziy@nvidia.com, ioworker0@gmail.com, da.gomez@samsung.com,
- p.raghav@samsung.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <cover.1717033868.git.baolin.wang@linux.alibaba.com>
- <716c515156e8c891766d8fd3f1df231d289b2a37.1717033868.git.baolin.wang@linux.alibaba.com>
- <4e918c74.1262.18fd1d870d6.Coremail.a929244872@163.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <4e918c74.1262.18fd1d870d6.Coremail.a929244872@163.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-ID: <20240601-md-drivers-clk-sophgo-clk-sophgo-cv1800-v1-1-8e00d8c3a87b@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAKX4W2YC/1XNQQqDMBCF4avIrDuQSJC2VyldxGQ0QzXKjA2Ce
+ Pem3XX3vs3/DlASJoV7c4BQYeUlV9hLAyH5PBJyrIbWtM50xuIcMQoXEsUwvVCXNY3L3yz2agw
+ 6N9y6GK03LkKtrUID77+nx7O690rYi88hffsT5/eOs9eNBM7zA/9NjiKYAAAA
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@kernel.org>, Chen Wang <unicorn_wang@outlook.com>,
+        Inochi Amaoto
+	<inochiama@outlook.com>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Gp0o1UD4mX-ExkFxHSvd6uZEXqbBmQTC
+X-Proofpoint-ORIG-GUID: Gp0o1UD4mX-ExkFxHSvd6uZEXqbBmQTC
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-06-01_19,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
+ impostorscore=0 mlxlogscore=947 clxscore=1011 bulkscore=0
+ priorityscore=1501 suspectscore=0 phishscore=0 malwarescore=0 adultscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406020036
 
+make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sophgo/clk-sophgo-cv1800.o
 
+Add the missing invocation of the MODULE_DESCRIPTION() macro.
 
-On 2024/6/1 11:29, wang wei wrote:
-> At 2024-05-30 10:04:14, "Baolin Wang" <baolin.wang@linux.alibaba.com> wrote:
-> 
->>To support the use of mTHP with anonymous shmem, add a new sysfs interface
->>'shmem_enabled' in the '/sys/kernel/mm/transparent_hugepage/hugepages-kB/'
->>directory for each mTHP to control whether shmem is enabled for that mTHP,
->>with a value similar to the top level 'shmem_enabled', which can be set to:
->>"always", "inherit (to inherit the top level setting)", "within_size", "advise",
->>"never", "deny", "force". These values follow the same semantics as the top
->>level, except the 'deny' is equivalent to 'never', and 'force' is equivalent
->>to 'always' to keep compatibility.
->>
->>By default, PMD-sized hugepages have enabled="inherit" and all other hugepage
->>sizes have enabled="never" for '/sys/kernel/mm/transparent_hugepage/hugepages-xxkB/shmem_enabled'.
->>
->>In addition, if top level value is 'force', then only PMD-sized hugepages
->>have enabled="inherit", otherwise configuration will be failed and vice versa.
->>That means now we will avoid using non-PMD sized THP to override the global
->>huge allocation.
->>
->>Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
->>---
->> Documentation/admin-guide/mm/transhuge.rst | 29 +++++++
->> include/linux/huge_mm.h                    | 10 +++
->> mm/huge_memory.c                           | 11 +--
->> mm/shmem.c                                 | 96 ++++++++++++++++++++++
->> 4 files changed, 138 insertions(+), 8 deletions(-)
->>
->>diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
->>index d414d3f5592a..659459374032 100644
->>--- a/Documentation/admin-guide/mm/transhuge.rst
->>+++ b/Documentation/admin-guide/mm/transhuge.rst
->>@@ -332,6 +332,35 @@ deny
->> force
->>     Force the huge option on for all - very useful for testing;
->> 
->>+Anonymous shmem can also use "multi-size THP" (mTHP) by adding a new sysfs knob
->>+to control mTHP allocation: /sys/kernel/mm/transparent_hugepage/hugepages-<size>kB/shmem_enabled.
->>+Its value for each mTHP is essentially consistent with the global setting, except
->>+for the addition of 'inherit' to ensure compatibility with the global settings.
->>+always
->>+    Attempt to allocate <size> huge pages every time we need a new page;
->>+
->>+inherit
->>+    Inherit the top-level "shmem_enabled" value. By default, PMD-sized hugepages
->>+    have enabled="inherit" and all other hugepage sizes have enabled="never";
->>+
->>+never
->>+    Do not allocate <size> huge pages;
->>+
->>+within_size
->>+    Only allocate <size> huge page if it will be fully within i_size.
->>+    Also respect fadvise()/madvise() hints;
->>+
->>+advise
->>+    Only allocate <size> huge pages if requested with fadvise()/madvise();
->>+
->>+deny
->>+    Has the same semantics as 'never', now mTHP allocation policy is only
->>+    used for anonymous shmem and no not override tmpfs.
->>+
->>+force
->>+    Has the same semantics as 'always', now mTHP allocation policy is only
->>+    used for anonymous shmem and no not override tmpfs.
->  >+
-> 
-> I just briefly reviewed the discussion about the value of 
-> hugepages-<size>kB/shmem_enabled
-> in V1 [PATCH 5/8]. Is there a conclusion now? Maybe I left out some 
-> important information.
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ drivers/clk/sophgo/clk-cv1800.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-You can refer to the this patch's commit message and documentation, 
-which are based on the conclusions of previous discussions.
+diff --git a/drivers/clk/sophgo/clk-cv1800.c b/drivers/clk/sophgo/clk-cv1800.c
+index 2da4c24621cf..e0c4dc347579 100644
+--- a/drivers/clk/sophgo/clk-cv1800.c
++++ b/drivers/clk/sophgo/clk-cv1800.c
+@@ -1534,4 +1534,5 @@ static struct platform_driver cv1800_clk_driver = {
+ 	},
+ };
+ module_platform_driver(cv1800_clk_driver);
++MODULE_DESCRIPTION("Sophgo CV1800 series SoCs clock controller");
+ MODULE_LICENSE("GPL");
 
-In addition, you can also read more discussions from the last bi-weekly 
-MM meeting[1], summarized by David.
+---
+base-commit: 83814698cf48ce3aadc5d88a3f577f04482ff92a
+change-id: 20240601-md-drivers-clk-sophgo-clk-sophgo-cv1800-44f96dd1a04d
 
-[1] 
-https://lore.kernel.org/all/f1783ff0-65bd-4b2b-8952-52b6822a0835@redhat.com/#t
 
