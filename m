@@ -1,492 +1,455 @@
-Return-Path: <linux-kernel+bounces-198308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 255648D767D
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 16:58:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED7EC8D7682
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 17:08:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DE151F2257C
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 14:58:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DCBF1C20BEC
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 15:08:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E18443AC5;
-	Sun,  2 Jun 2024 14:58:24 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AB3F42ABE;
+	Sun,  2 Jun 2024 15:08:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P0+YdrBX"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CEEC40C03
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Jun 2024 14:58:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 396E73EA7B
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Jun 2024 15:08:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717340303; cv=none; b=hCK3swUzEvioH+fnfOVAvkN1bsj0QNxNkRwGYPSWiv2GY1xS+Djm7G34J3VQqdlEjZjJBr3QUGG0/7UlouHPslJNVBbIFvi6BvN50d1bg7Rpc4gJt730siWRjWr2QUv61pwSR0/gD/YwJc7feVkgJyFFayxqoB3bGtK9oMh1sXE=
+	t=1717340923; cv=none; b=jZo4GPnjvVPW8UTpjg8EeTnQClzpZHe0Vybqq6z+OA2Mx2bdfYkn02J+nYXH8Tkqn7eLkxdwnh8TZZ/mZdNnTfA4un46OIAscccS/yKvG/4MzcmuMOzO84z5RiyjDTEWSbPeI7MzDxFEnTlWDJCIOXPpiHrhtPdhj24hf3ivDp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717340303; c=relaxed/simple;
-	bh=bjJPdf7dw0Sf6rurcvAlXGRwiUG9jRONYEu3C1jnDHg=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=RNJH2n38AkKzfhcR1aaKH2UBIwqSUOWKX812U40c+zY1DBr1r0JhPt2QdvNEvds9iNH3G42XnUHyL7wBzNMPQm6IEd5yQPdQrCyXm5gb109fFJH0y9GHB+InCe+s0iWjRaVk7SAtr8ttuKHQF1/z3CouNanWi1eXDNMuxQXLADc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3748623a318so32459065ab.3
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2024 07:58:20 -0700 (PDT)
+	s=arc-20240116; t=1717340923; c=relaxed/simple;
+	bh=h2rpPmJ96/Kq5oqhQ9Mqlv0oQ+yGHQ757GDCJa7Tj3E=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=CYbdmlCs3z7BXshkw9jD1YzrCZTkSUT4pUYGTa5oynnczdPyL+Lov/XsK2R9sgkTZKrC48Q/qxW8ByzdTNOVAG7n2EMDhN17hkGlSYtSgicQrnd6k/CIMhCBm2IXx5jHMGfPMba1lPpObWw89qUnph8uwmaiQn/BJ7X8aExF/GU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P0+YdrBX; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2eaac465915so3077251fa.1
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2024 08:08:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717340916; x=1717945716; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3BpkQqyg+kXHUrSPNq0rPD/3G3JgBIdjTPY6bEzMwBg=;
+        b=P0+YdrBXc79HgzcPnQKlR1e3eBCTt+AxkzT4d7ttm00D0K81ilvyTZzprN3huIDEzw
+         wFvbpKbtWNuKqmTgysdClXVvuzvh1c+6UZlTPcaPw3ohrwZf40FUYnewN4pKWyfSuC7R
+         AorQgSVnqP7IhpgPyEtbM7IH8clVK92PgFkCwGL/y2WtTVLFrfmfjhCCGHyNASjso4q6
+         TJo2RzcKumNUCWlD95yW2DR/yGEKqGVrNxjJvDItTp/uBXk1wVofUw5ew3f5TAkJ/70t
+         1A9DiItmhSCkkvZ6NcyuEaMNjaP3ujycz80dc5g+iS9kKHgiE2wTdJkLZvU7EpT1Imte
+         JJQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717340300; x=1717945100;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BXAe+wheLfgmXaA9x02qenehw5PKgosPomur6/BLUeE=;
-        b=TOYINSSJCwiQswkkYBoRoFP2hxgkWj1cFwTX4IiImVBbO0Gw/O20L820ybghKLaTjw
-         ftwl8Zhjk3bSQAz8tDoJuOg70KA+kse26Tl5jv/4bANl3wAHSGrnTWR59hpCPMA7sNd8
-         +TmK/455sYoBOqMnfRHN+b+V8q/hlo0KpXBJaMXcop7wiWFRn7UUWX3SbzacQ1hnhjsa
-         n4i/AUBN9XVPnI1ni0FrNJFMl982E9hWBiQs6BB0dQMiEa2jWUegmyTYz92hhQy3F463
-         Ci0hkYVpqK2pTOs5JpuySY+yCgKuBnNkkQVcZZ2IahKWPLSXZ7y65sKX5QrNh58/5Izy
-         jTig==
-X-Forwarded-Encrypted: i=1; AJvYcCWa65sPCiIkbb3msScZZm5cnKlWwxeZ/pU+DQOQUAW+fVqhyolZ2fS8zkcnADgsMJwWnqzp/dlinIUyp2580v0VhqrtPUSZDENlVUkm
-X-Gm-Message-State: AOJu0YyPmuZIM5MH/ztjk0ix0P1eGppq9AkHkdGmVNHNVM5q9/wyxDdb
-	BtLWeS2JpNX4J7nZf5Nc0XaP0naTHfOleJUiVjT1z3zwkMuetF0mi+egz0gVGNf4Mi8ZIMuZg83
-	tZPLmCdDKXZI5+CunCggLpcKcXXsXXusBDjmHLX6vnt/+0gKtRmczRco=
-X-Google-Smtp-Source: AGHT+IHAjqUqgzaoxrFK0mz0r7Fs0J6DG898yFfUzkuTn0Vyoly1TNLjErWcjMj6mVGr/o/Tp7aKhGrGvLb+BzgYsqL/YzRMAcAv
+        d=1e100.net; s=20230601; t=1717340916; x=1717945716;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3BpkQqyg+kXHUrSPNq0rPD/3G3JgBIdjTPY6bEzMwBg=;
+        b=Ga39OYrU9PNztW4+yZc/A90idaGSsS8HyHgcgl7aWojnSDsIy953Uv+NEu+N6K5Vsy
+         seWKcHiIHJHbcnW/sliTLNadTa8kVBzVu6NGnz+r0mIo35CElPCfixNy5rpqd7waFVVU
+         b44YpukEQM7a4Df+cVAbngcrzBdEPovw1qa8C3QFs60ggrlRSl6ewDeGTjroY6bQ8e3L
+         e/4VqWH87fZYUKq6AVoTifOKrB7wRDKOToJ1plFnTrirxxBM1lPSrABkXsisVOnMIh/4
+         Ym9PhEsQMnwC+3MOR+VzPK4XtizAox7paIcSJwx54ZheOOvFKnTDZs3oZWrWJKzPIKzS
+         j0mw==
+X-Forwarded-Encrypted: i=1; AJvYcCVhg1VBg29OhlIrLyIwjTBn8lmA0pipK5cn1XlpBu02fVhnabyEhzOnrYLZw6IWCwUgP0kR5eGvNXvev5DRSQjUdjjzbFwbiBfYUBuy
+X-Gm-Message-State: AOJu0YxPMfQInHbUQYsUyqznjpX2SV2NMmnGC9IiV/JZ8mcGnNFqXmke
+	Y8IMyTktyf+WdZyUjbJcwnSG09RYcq6InGl+I1qRsdLwaGgK8VD0
+X-Google-Smtp-Source: AGHT+IHl5e+Uzs/MW1GAJnxmNOUn0sbPQDx3RQLlWpJSrU/pFOuiGtcwhC68SIo7FG2SiK5R1fUIGQ==
+X-Received: by 2002:a2e:9290:0:b0:2e9:d4fa:1cc with SMTP id 38308e7fff4ca-2ea951e1b97mr49703301fa.39.1717340914792;
+        Sun, 02 Jun 2024 08:08:34 -0700 (PDT)
+Received: from localhost.localdomain ([176.59.170.248])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ea91bb4c56sm9150291fa.30.2024.06.02.08.08.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 02 Jun 2024 08:08:34 -0700 (PDT)
+From: Alex Rusuf <yorha.op@gmail.com>
+To: sj@kernel.org
+Cc: damon@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	yorha.op@gmail.com
+Subject: Re: [PATCH v2 2/2] mm/damon/core: implement multi-context support
+Date: Sun,  2 Jun 2024 18:08:16 +0300
+Message-ID: <20240602150816.926407-1-yorha.op@gmail.com>
+X-Mailer: git-send-email 2.42.0
+In-Reply-To: <20240531193838.71538-1-sj@kernel.org>
+References: <20240531193838.71538-1-sj@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12c4:b0:374:70ae:e876 with SMTP id
- e9e14a558f8ab-3748b96cb5bmr4149855ab.1.1717340300169; Sun, 02 Jun 2024
- 07:58:20 -0700 (PDT)
-Date: Sun, 02 Jun 2024 07:58:20 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000008cec8b0619e97267@google.com>
-Subject: [syzbot] [usb?] INFO: rcu detected stall in __mod_timer (5)
-From: syzbot <syzbot+ab28cee83cdcfd7f87ca@syzkaller.appspotmail.com>
-To: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org, rafael@kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 
-Hello,
+Hi SJ,
 
-syzbot found the following issue on:
+> Hi Alex,
+> 
+> On Fri, 31 May 2024 15:23:20 +0300 Alex Rusuf <yorha.op@gmail.com> wrote:
+> 
+> > This patch actually implements support for
+> > multi-context design for kdamond daemon.
+> > 
+> > In pseudo code previous versions worked like
+> > the following:
+> > 
+> >     while (!kdamond_should_stop()) {
+> > 
+> > 	/* prepare accesses for only 1 context */
+> > 	prepare_accesses(damon_context);
+> > 
+> > 	sleep(sample_interval);
+> > 
+> > 	/* check accesses for only 1 context */
+> > 	check_accesses(damon_context);
+> > 
+> > 	...
+> >     }
+> > 
+> > With this patch kdamond workflow will look
+> > like the following:
+> > 
+> >     while (!kdamond_shoule_stop()) {
+> > 
+> > 	/* prepare accesses for all contexts in kdamond */
+> > 	damon_for_each_context(ctx, kdamond)
+> > 	    prepare_accesses(ctx);
+> > 
+> > 	sleep(sample_interval);
+> > 
+> > 	/* check_accesses for all contexts in kdamond */
+> > 	damon_for_each_context(ctx, kdamond)
+> > 	    check_accesses(ctx);
+> > 
+> > 	...
+> >     }
+> 
+> This is not what you do now, but on previous patch, right?  Let's modify the
+> mesage appropriately.
 
-HEAD commit:    e0cce98fe279 Merge tag 'tpmdd-next-6.10-rc2' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=177cdeaa980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b9016f104992d69c
-dashboard link: https://syzkaller.appspot.com/bug?extid=ab28cee83cdcfd7f87ca
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=126531d6980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12b27be6980000
+No, this is exactly what this patch is for, previous one only introduced
+'struct kdamond' and made all interfaces (sysfs/dbgfs/core) to use it.
+I mean previous patch doesn't include support for multiple contexts,
+functionality was the same as before.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/95b83b8b8ae7/disk-e0cce98f.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/32dac8e3cf35/vmlinux-e0cce98f.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/d2d8cd0ff617/bzImage-e0cce98f.xz
+> 
+> > 
+> > Another point to note is watermarks. Previous versions
+> > checked watermarks on each iteration for current context
+> > and if matric's value wan't acceptable kdamond waited
+> > for watermark's sleep interval.
+> 
+> Mention changes of versions on cover letter.
+> 
+> > 
+> > Now there's no need to wait for each context, we can
+> > just skip context if watermark's metric isn't ready,
+> > but if there's no contexts that can run we
+> > check for each context's watermark metric and
+> > sleep for the lowest interval of all contexts.
+> > 
+> > Signed-off-by: Alex Rusuf <yorha.op@gmail.com>
+> > ---
+> >  include/linux/damon.h        |  11 +-
+> >  include/trace/events/damon.h |  14 +-
+> >  mm/damon/core-test.h         |   2 +-
+> >  mm/damon/core.c              | 286 +++++++++++++++++------------
+> >  mm/damon/dbgfs-test.h        |   4 +-
+> >  mm/damon/dbgfs.c             | 342 +++++++++++++++++++++--------------
+> >  mm/damon/modules-common.c    |   1 -
+> >  mm/damon/sysfs.c             |  47 +++--
+> >  8 files changed, 431 insertions(+), 276 deletions(-)
+> > 
+> > diff --git a/include/linux/damon.h b/include/linux/damon.h
+> > index 7cb9979a0..2facf3a5f 100644
+> > --- a/include/linux/damon.h
+> > +++ b/include/linux/damon.h
+> > @@ -575,7 +575,6 @@ struct damon_attrs {
+> >   * @lock:	Kdamond's global lock, serializes accesses to any field.
+> >   * @self:	Kernel thread which is actually being executed.
+> >   * @contexts:	Head of contexts (&damon_ctx) list.
+> > - * @nr_ctxs:	Number of contexts being monitored.
+> >   *
+> >   * Each DAMON's background daemon has this structure. Once
+> >   * configured, daemon can be started by calling damon_start().
+> > @@ -589,7 +588,6 @@ struct kdamond {
+> >  	struct mutex lock;
+> >  	struct task_struct *self;
+> >  	struct list_head contexts;
+> > -	size_t nr_ctxs;
+> 
+> Why we add this on first patch, and then remove here?  Let's not make
+> unnecessary temporal change.  It only increase review time.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+ab28cee83cdcfd7f87ca@syzkaller.appspotmail.com
+This temporal change is needed only to not break DAMON functionality
+once first patch is applied (i.e. only 1st patch is applied). I mean
+to have constistancy between patches.
 
-rcu: INFO: rcu_preempt detected expedited stalls on CPUs/tasks: {
- 0-....
- } 2684 jiffies s: 7217 root: 0x1/.
-rcu: blocking rcu_node structures (internal RCU debug):
+I think, if I change the patch-history (the one you suggested in another
+reply) this could be avoided.
 
-Sending NMI from CPU 1 to CPUs 0:
-cdc_wdm 5-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 5-1:1.0: nonzero urb status received: -71
-NMI backtrace for cpu 0
-CPU: 0 PID: 5141 Comm: kworker/0:4 Not tainted 6.10.0-rc1-syzkaller-00021-ge0cce98fe279 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
-Workqueue: usb_hub_wq hub_event
-RIP: 0010:check_kcov_mode kernel/kcov.c:173 [inline]
-RIP: 0010:write_comp_data kernel/kcov.c:236 [inline]
-RIP: 0010:__sanitizer_cov_trace_switch+0xa4/0x120 kernel/kcov.c:341
-Code: 8b 00 00 00 4c 8b 4c 24 20 65 4c 8b 1c 25 00 d5 03 00 31 d2 eb 08 48 ff c2 49 39 d2 74 71 4c 8b 74 d6 10 65 8b 05 64 b8 6d 7e <a9> 00 01 ff 00 74 11 a9 00 01 00 00 74 de 41 83 bb 1c 16 00 00 00
-RSP: 0018:ffffc90000006558 EFLAGS: 00000002
-RAX: 0000000000010103 RBX: 000000000000006c RCX: ffff88802bab0000
-RDX: 0000000000000004 RSI: ffffffff8f94f9c0 RDI: 000000000000006c
-RBP: ffffc90000006670 R08: 0000000000000001 R09: ffffffff8b7f87ef
-R10: 0000000000000006 R11: ffff88802bab0000 R12: 1ffffffff1796ff0
-R13: ffffffff8bcb7f84 R14: 0000000000000074 R15: ffff000000000500
-FS:  0000000000000000(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f697c661b81 CR3: 000000001cbe8000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <NMI>
- </NMI>
- <IRQ>
- format_decode+0xdcf/0x1bb0 lib/vsprintf.c:2685
- vsnprintf+0x14f/0x1da0 lib/vsprintf.c:2776
- sprintf+0xda/0x120 lib/vsprintf.c:3028
- print_time kernel/printk/printk.c:1327 [inline]
- info_print_prefix+0x16b/0x310 kernel/printk/printk.c:1353
- record_print_text kernel/printk/printk.c:1402 [inline]
- printk_get_next_message+0x6da/0xbe0 kernel/printk/printk.c:2855
- console_emit_next_record kernel/printk/printk.c:2895 [inline]
- console_flush_all+0x410/0xfd0 kernel/printk/printk.c:2994
- console_unlock+0x13b/0x4d0 kernel/printk/printk.c:3063
- vprintk_emit+0x5a6/0x770 kernel/printk/printk.c:2345
- dev_vprintk_emit+0x2ae/0x330 drivers/base/core.c:4951
- dev_printk_emit+0xdd/0x120 drivers/base/core.c:4962
- _dev_err+0x122/0x170 drivers/base/core.c:5017
- wdm_int_callback+0x41f/0xac0 drivers/usb/class/cdc-wdm.c:269
- __usb_hcd_giveback_urb+0x373/0x530 drivers/usb/core/hcd.c:1648
- dummy_timer+0x830/0x45d0 drivers/usb/gadget/udc/dummy_hcd.c:1987
- __run_hrtimer kernel/time/hrtimer.c:1687 [inline]
- __hrtimer_run_queues+0x59b/0xd50 kernel/time/hrtimer.c:1751
- hrtimer_interrupt+0x396/0x990 kernel/time/hrtimer.c:1813
- local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1032 [inline]
- __sysvec_apic_timer_interrupt+0x110/0x3f0 arch/x86/kernel/apic/apic.c:1049
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1043 [inline]
- sysvec_apic_timer_interrupt+0x52/0xc0 arch/x86/kernel/apic/apic.c:1043
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-RIP: 0010:__raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:152 [inline]
-RIP: 0010:_raw_spin_unlock_irqrestore+0xd8/0x140 kernel/locking/spinlock.c:194
-Code: 9c 8f 44 24 20 42 80 3c 23 00 74 08 4c 89 f7 e8 6e c3 6a f6 f6 44 24 21 02 75 52 41 f7 c7 00 02 00 00 74 01 fb bf 01 00 00 00 <e8> c3 77 d4 f5 65 8b 05 f4 c1 72 74 85 c0 74 43 48 c7 04 24 0e 36
-RSP: 0018:ffffc900000079c0 EFLAGS: 00000206
-RAX: 11152d5d5b553100 RBX: 1ffff92000000f3c RCX: ffffffff8172c78a
-RDX: dffffc0000000000 RSI: ffffffff8bcaba80 RDI: 0000000000000001
-RBP: ffffc90000007a50 R08: ffffffff92fa85c7 R09: 1ffffffff25f50b8
-R10: dffffc0000000000 R11: fffffbfff25f50b9 R12: dffffc0000000000
-R13: 1ffff92000000f38 R14: ffffc900000079e0 R15: 0000000000000246
- __mod_timer+0xb89/0xeb0 kernel/time/timer.c:1186
- call_timer_fn+0x18e/0x650 kernel/time/timer.c:1792
- expire_timers kernel/time/timer.c:1843 [inline]
- __run_timers kernel/time/timer.c:2417 [inline]
- __run_timer_base+0x66a/0x8e0 kernel/time/timer.c:2428
- run_timer_base kernel/time/timer.c:2437 [inline]
- run_timer_softirq+0x103/0x170 kernel/time/timer.c:2448
- handle_softirqs+0x2c4/0x970 kernel/softirq.c:554
- __do_softirq kernel/softirq.c:588 [inline]
- invoke_softirq kernel/softirq.c:428 [inline]
- __irq_exit_rcu+0xf4/0x1c0 kernel/softirq.c:637
- irq_exit_rcu+0x9/0x30 kernel/softirq.c:649
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1043 [inline]
- sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1043
- </IRQ>
- <TASK>
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-RIP: 0010:console_flush_all+0xaad/0xfd0 kernel/printk/printk.c:3000
-Code: ff ff e8 16 d0 1f 00 90 0f 0b 90 e9 d8 f8 ff ff e8 08 d0 1f 00 e8 b3 f0 0f 0a 4d 85 f6 74 b6 e8 f9 cf 1f 00 fb 48 8b 44 24 70 <42> 0f b6 04 38 84 c0 48 8b 7c 24 30 0f 85 22 02 00 00 0f b6 1f 31
-RSP: 0018:ffffc9000431e480 EFLAGS: 00000293
-RAX: 1ffff92000863cdc RBX: 0000000000000000 RCX: ffff88802bab0000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffc9000431e630 R08: ffffffff81764624 R09: 1ffffffff25f50be
-R10: dffffc0000000000 R11: fffffbfff25f50bf R12: ffffffff8eb226b8
-R13: ffffffff8eb22660 R14: 0000000000000200 R15: dffffc0000000000
- console_unlock+0x13b/0x4d0 kernel/printk/printk.c:3063
- vprintk_emit+0x5a6/0x770 kernel/printk/printk.c:2345
- dev_vprintk_emit+0x2ae/0x330 drivers/base/core.c:4951
- dev_printk_emit+0xdd/0x120 drivers/base/core.c:4962
- _dev_info+0x122/0x170 drivers/base/core.c:5020
- wdm_create+0x1284/0x16d0 drivers/usb/class/cdc-wdm.c:1119
- wdm_probe+0x21e/0x300 drivers/usb/class/cdc-wdm.c:1165
- usb_probe_interface+0x645/0xbb0 drivers/usb/core/driver.c:399
- really_probe+0x2b8/0xad0 drivers/base/dd.c:656
- __driver_probe_device+0x1a2/0x390 drivers/base/dd.c:798
- driver_probe_device+0x50/0x430 drivers/base/dd.c:828
- __device_attach_driver+0x2d6/0x530 drivers/base/dd.c:956
- bus_for_each_drv+0x24e/0x2e0 drivers/base/bus.c:457
- __device_attach+0x333/0x520 drivers/base/dd.c:1028
- bus_probe_device+0x189/0x260 drivers/base/bus.c:532
- device_add+0x856/0xbf0 drivers/base/core.c:3721
- usb_set_configuration+0x1976/0x1fb0 drivers/usb/core/message.c:2210
- usb_generic_driver_probe+0x88/0x140 drivers/usb/core/generic.c:254
- usb_probe_device+0x1b8/0x380 drivers/usb/core/driver.c:294
- really_probe+0x2b8/0xad0 drivers/base/dd.c:656
- __driver_probe_device+0x1a2/0x390 drivers/base/dd.c:798
- driver_probe_device+0x50/0x430 drivers/base/dd.c:828
- __device_attach_driver+0x2d6/0x530 drivers/base/dd.c:956
- bus_for_each_drv+0x24e/0x2e0 drivers/base/bus.c:457
- __device_attach+0x333/0x520 drivers/base/dd.c:1028
- bus_probe_device+0x189/0x260 drivers/base/bus.c:532
- device_add+0x856/0xbf0 drivers/base/core.c:3721
- usb_new_device+0x104a/0x19a0 drivers/usb/core/hub.c:2651
- hub_port_connect drivers/usb/core/hub.c:5521 [inline]
- hub_port_connect_change drivers/usb/core/hub.c:5661 [inline]
- port_event drivers/usb/core/hub.c:5821 [inline]
- hub_event+0x2d6a/0x5150 drivers/usb/core/hub.c:5903
- process_one_work kernel/workqueue.c:3231 [inline]
- process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
- worker_thread+0x86d/0xd70 kernel/workqueue.c:3393
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-INFO: NMI handler (nmi_cpu_backtrace_handler) took too long to run: 5.801 msecs
-cdc_wdm 5-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 5-1:1.0: nonzero urb status received: -71
-cdc_wdm 5-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 5-1:1.0: nonzero urb status received: -71
-cdc_wdm 5-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 5-1:1.0: nonzero urb status received: -71
-cdc_wdm 5-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 5-1:1.0: nonzero urb status received: -71
-cdc_wdm 5-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 5-1:1.0: nonzero urb status received: -71
-cdc_wdm 5-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 5-1:1.0: nonzero urb status received: -71
-cdc_wdm 5-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 5-1:1.0: nonzero urb status received: -71
-cdc_wdm 5-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 5-1:1.0: nonzero urb status received: -71
-cdc_wdm 5-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 5-1:1.0: wdm_int_callback - usb_submit_urb failed with result -19
-cdc_wdm 3-1:1.0: nonzero urb status received: -71
-cdc_wdm 3-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 3-1:1.0: nonzero urb status received: -71
-cdc_wdm 3-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 3-1:1.0: nonzero urb status received: -71
-cdc_wdm 3-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 3-1:1.0: nonzero urb status received: -71
-cdc_wdm 3-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 3-1:1.0: nonzero urb status received: -71
-cdc_wdm 3-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 3-1:1.0: nonzero urb status received: -71
-cdc_wdm 3-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 3-1:1.0: nonzero urb status received: -71
-cdc_wdm 3-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 3-1:1.0: nonzero urb status received: -71
-cdc_wdm 3-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 3-1:1.0: nonzero urb status received: -71
-cdc_wdm 3-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 3-1:1.0: wdm_int_callback - usb_submit_urb failed with result -19
-cdc_wdm 2-1:1.0: nonzero urb status received: -71
-cdc_wdm 2-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 2-1:1.0: nonzero urb status received: -71
-cdc_wdm 2-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 2-1:1.0: nonzero urb status received: -71
-cdc_wdm 2-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 2-1:1.0: nonzero urb status received: -71
-cdc_wdm 2-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 2-1:1.0: nonzero urb status received: -71
-cdc_wdm 2-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 2-1:1.0: nonzero urb status received: -71
-cdc_wdm 2-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 2-1:1.0: nonzero urb status received: -71
-cdc_wdm 2-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 2-1:1.0: nonzero urb status received: -71
-cdc_wdm 2-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 2-1:1.0: nonzero urb status received: -71
-cdc_wdm 2-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 2-1:1.0: nonzero urb status received: -71
-cdc_wdm 2-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 2-1:1.0: nonzero urb status received: -71
-cdc_wdm 2-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 2-1:1.0: nonzero urb status received: -71
-cdc_wdm 2-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 2-1:1.0: nonzero urb status received: -71
-cdc_wdm 2-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 2-1:1.0: wdm_int_callback - usb_submit_urb failed with result -19
-cdc_wdm 3-1:1.0: nonzero urb status received: -71
-cdc_wdm 3-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 3-1:1.0: wdm_int_callback - usb_submit_urb failed with result -19
-cdc_wdm 5-1:1.0: nonzero urb status received: -71
-cdc_wdm 5-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 5-1:1.0: nonzero urb status received: -71
-cdc_wdm 5-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 5-1:1.0: nonzero urb status received: -71
-cdc_wdm 5-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 5-1:1.0: nonzero urb status received: -71
-cdc_wdm 5-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 5-1:1.0: nonzero urb status received: -71
-cdc_wdm 5-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 5-1:1.0: nonzero urb status received: -71
-cdc_wdm 5-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 5-1:1.0: nonzero urb status received: -71
-cdc_wdm 5-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 5-1:1.0: nonzero urb status received: -71
-cdc_wdm 5-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 5-1:1.0: nonzero urb status received: -71
-cdc_wdm 5-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 5-1:1.0: nonzero urb status received: -71
-cdc_wdm 5-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 5-1:1.0: nonzero urb status received: -71
-cdc_wdm 5-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 5-1:1.0: nonzero urb status received: -71
-cdc_wdm 5-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 5-1:1.0: nonzero urb status received: -71
-cdc_wdm 5-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 5-1:1.0: nonzero urb status received: -71
-cdc_wdm 5-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 5-1:1.0: nonzero urb status received: -71
-cdc_wdm 5-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 5-1:1.0: nonzero urb status received: -71
-cdc_wdm 5-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 5-1:1.0: nonzero urb status received: -71
-cdc_wdm 5-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 5-1:1.0: nonzero urb status received: -71
-cdc_wdm 5-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 5-1:1.0: nonzero urb status received: -71
-cdc_wdm 5-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 5-1:1.0: wdm_int_callback - usb_submit_urb failed with result -19
-cdc_wdm 3-1:1.0: nonzero urb status received: -71
-cdc_wdm 3-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 3-1:1.0: nonzero urb status received: -71
-cdc_wdm 3-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 3-1:1.0: wdm_int_callback - usb_submit_urb failed with result -19
-cdc_wdm 4-1:1.0: nonzero urb status received: -71
-cdc_wdm 4-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 4-1:1.0: nonzero urb status received: -71
-cdc_wdm 4-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 4-1:1.0: wdm_int_callback - usb_submit_urb failed with result -19
-cdc_wdm 1-1:1.0: nonzero urb status received: -71
-cdc_wdm 1-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 1-1:1.0: nonzero urb status received: -71
-cdc_wdm 1-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 1-1:1.0: wdm_int_callback - usb_submit_urb failed with result -19
-cdc_wdm 4-1:1.0: nonzero urb status received: -71
-cdc_wdm 4-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 4-1:1.0: nonzero urb status received: -71
-cdc_wdm 4-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 4-1:1.0: nonzero urb status received: -71
-cdc_wdm 4-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 4-1:1.0: nonzero urb status received: -71
-cdc_wdm 4-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 4-1:1.0: wdm_int_callback - usb_submit_urb failed with result -19
-cdc_wdm 1-1:1.0: nonzero urb status received: -71
-cdc_wdm 1-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 1-1:1.0: nonzero urb status received: -71
-cdc_wdm 1-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 1-1:1.0: wdm_int_callback - usb_submit_urb failed with result -19
-cdc_wdm 4-1:1.0: nonzero urb status received: -71
-cdc_wdm 4-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 4-1:1.0: nonzero urb status received: -71
-cdc_wdm 4-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 4-1:1.0: nonzero urb status received: -71
-cdc_wdm 4-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 4-1:1.0: nonzero urb status received: -71
-cdc_wdm 4-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 4-1:1.0: nonzero urb status received: -71
-cdc_wdm 4-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 4-1:1.0: nonzero urb status received: -71
-cdc_wdm 4-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 4-1:1.0: nonzero urb status received: -71
-cdc_wdm 4-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 4-1:1.0: nonzero urb status received: -71
-cdc_wdm 4-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 4-1:1.0: nonzero urb status received: -71
-cdc_wdm 4-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 4-1:1.0: nonzero urb status received: -71
-cdc_wdm 4-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 4-1:1.0: nonzero urb status received: -71
-cdc_wdm 4-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 4-1:1.0: nonzero urb status received: -71
-cdc_wdm 4-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 4-1:1.0: nonzero urb status received: -71
-cdc_wdm 4-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 4-1:1.0: wdm_int_callback - usb_submit_urb failed with result -1
-cdc_wdm 1-1:1.0: nonzero urb status received: -71
-cdc_wdm 1-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 1-1:1.0: nonzero urb status received: -71
-cdc_wdm 1-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 1-1:1.0: nonzero urb status received: -71
-cdc_wdm 1-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 1-1:1.0: nonzero urb status received: -71
-cdc_wdm 1-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 1-1:1.0: nonzero urb status received: -71
-cdc_wdm 1-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 1-1:1.0: nonzero urb status received: -71
-cdc_wdm 1-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 1-1:1.0: nonzero urb status received: -71
-cdc_wdm 1-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 1-1:1.0: wdm_int_callback - usb_submit_urb failed with result -19
-cdc_wdm 4-1:1.0: nonzero urb status received: -71
-cdc_wdm 4-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 4-1:1.0: nonzero urb status received: -71
-cdc_wdm 4-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 4-1:1.0: nonzero urb status received: -71
-cdc_wdm 4-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 4-1:1.0: nonzero urb status received: -71
-cdc_wdm 4-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 4-1:1.0: nonzero urb status received: -71
-cdc_wdm 4-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 4-1:1.0: nonzero urb status received: -71
-cdc_wdm 4-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 4-1:1.0: nonzero urb status received: -71
-cdc_wdm 4-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 4-1:1.0: wdm_int_callback - usb_submit_urb failed with result -19
-cdc_wdm 1-1:1.0: nonzero urb status received: -71
-cdc_wdm 1-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 1-1:1.0: nonzero urb status received: -71
-cdc_wdm 1-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 1-1:1.0: nonzero urb status received: -71
-cdc_wdm 1-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 1-1:1.0: nonzero urb status received: -71
-cdc_wdm 1-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 1-1:1.0: nonzero urb status received: -71
-cdc_wdm 1-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 1-1:1.0: nonzero urb status received: -71
-cdc_wdm 1-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 1-1:1.0: nonzero urb status received: -71
-cdc_wdm 1-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 1-1:1.0: wdm_int_callback - usb_submit_urb failed with result -19
-cdc_wdm 2-1:1.0: nonzero urb status received: -71
-cdc_wdm 2-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 2-1:1.0: nonzero urb status received: -71
-cdc_wdm 2-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 2-1:1.0: nonzero urb status received: -71
-cdc_wdm 2-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 2-1:1.0: nonzero urb status received: -71
-cdc_wdm 2-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 2-1:1.0: nonzero urb status received: -71
-cdc_wdm 2-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 2-1:1.0: nonzero urb status received: -71
-cdc_wdm 2-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 2-1:1.0: nonzero urb status received: -71
-cdc_wdm 2-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 2-1:1.0: nonzero urb status received: -71
-cdc_wdm 2-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 2-1:1.0: wdm_int_callback - usb_submit_urb failed with result -1
-cdc_wdm 2-1:1.0: nonzero urb status received: -71
-cdc_wdm 2-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 2-1:1.0: nonzero urb status received: -71
-cdc_wdm 2-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 2-1:1.0: nonzero urb status received: -71
-cdc_wdm 2-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 2-1:1.0: nonzero urb status received: -71
-cdc_wdm 2-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 2-1:1.0: nonzero urb status received: -71
-cdc_wdm 2-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 2-1:1.0: nonzero urb status received: -71
-cdc_wdm 2-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 2-1:1.0: nonzero urb status received: -71
-cdc_wdm 2-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 2-1:1.0: nonzero urb status received: -71
-cdc_wdm 2-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 2-1:1.0: nonzero urb status received: -71
-cdc_wdm 2-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 2-1:1.0: wdm_int_callback - usb_submit_urb failed with result -19
-cdc_wdm 4-1:1.0: nonzero urb status received: -71
-cdc_wdm 4-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 4-1:1.0: nonzero urb status received: -71
-cdc_wdm 4-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 4-1:1.0: wdm_int_callback - usb_submit_urb failed with result -19
+> 
+> >  
+> >  /* private: */
+> >  	/* for waiting until the execution of the kdamond_fn is started */
+> > @@ -634,7 +632,10 @@ struct damon_ctx {
+> >  	 * update
+> >  	 */
+> >  	unsigned long next_ops_update_sis;
+> > +	/* upper limit for each monitoring region */
+> >  	unsigned long sz_limit;
+> > +	/* marker to check if context is valid */
+> > +	bool valid;
+> 
+> What is the validity?
 
+This is a "flag" which indicates that the context is "valid" for kdamond
+to be able to call ->check_accesses() on it. Because we have many contexts
+we need a way to identify which context is valid while iterating over
+all of them (please, see kdamond_prepare_access_checks_ctx() function).
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Maybe name should be changed, but now I don't see a way how we could merge
+this into kdamond_valid_ctx() or so, because the main cause of this "valid"
+bit is that there's no more "valid" targets for this context, but also we could
+have ->after_sampling() returned something bad.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
+> >  
+> >  /* public: */
+> >  	struct kdamond *kdamond;
+> > @@ -682,6 +683,12 @@ static inline struct damon_ctx *damon_first_ctx(struct kdamond *kdamond)
+> >  	return list_first_entry(&kdamond->contexts, struct damon_ctx, list);
+> >  }
+> >  
+> > +static inline bool damon_is_last_ctx(struct damon_ctx *ctx,
+> > +				     struct kdamond *kdamond)
+> > +{
+> > +	return list_is_last(&ctx->list, &kdamond->contexts);
+> > +}
+> > +
+> >  #define damon_for_each_region(r, t) \
+> >  	list_for_each_entry(r, &t->regions_list, list)
+> >  
+> > diff --git a/include/trace/events/damon.h b/include/trace/events/damon.h
+> > index 23200aabc..d5287566c 100644
+> > --- a/include/trace/events/damon.h
+> > +++ b/include/trace/events/damon.h
+> 
+> Let's separate this change to another patch.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Separating patches we hardly be able to reach at least build
+consistency between patches. Moreover DAMON won't be able
+to function corretly in between.
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+> 
+> > @@ -50,12 +50,13 @@ TRACE_EVENT_CONDITION(damos_before_apply,
+> >  
+> >  TRACE_EVENT(damon_aggregated,
+> >  
+> > -	TP_PROTO(unsigned int target_id, struct damon_region *r,
+> > -		unsigned int nr_regions),
+> > +	TP_PROTO(unsigned int context_id, unsigned int target_id,
+> > +		struct damon_region *r, unsigned int nr_regions),
+> >  
+> > -	TP_ARGS(target_id, r, nr_regions),
+> > +	TP_ARGS(context_id, target_id, r, nr_regions),
+> >  
+> >  	TP_STRUCT__entry(
+> > +		__field(unsigned long, context_id)
+> >  		__field(unsigned long, target_id)
+> >  		__field(unsigned int, nr_regions)
+> >  		__field(unsigned long, start)
+> > @@ -65,6 +66,7 @@ TRACE_EVENT(damon_aggregated,
+> >  	),
+> >  
+> >  	TP_fast_assign(
+> > +		__entry->context_id = context_id;
+> >  		__entry->target_id = target_id;
+> >  		__entry->nr_regions = nr_regions;
+> >  		__entry->start = r->ar.start;
+> > @@ -73,9 +75,9 @@ TRACE_EVENT(damon_aggregated,
+> >  		__entry->age = r->age;
+> >  	),
+> >  
+> > -	TP_printk("target_id=%lu nr_regions=%u %lu-%lu: %u %u",
+> > -			__entry->target_id, __entry->nr_regions,
+> > -			__entry->start, __entry->end,
+> > +	TP_printk("context_id=%lu target_id=%lu nr_regions=%u %lu-%lu: %u %u",
+> > +			__entry->context_id, __entry->target_id,
+> > +			__entry->nr_regions, __entry->start, __entry->end,
+> >  			__entry->nr_accesses, __entry->age)
+> >  );
+> >  
+> > diff --git a/mm/damon/core-test.h b/mm/damon/core-test.h
+> > index 0cee634f3..7962c9a0e 100644
+> > --- a/mm/damon/core-test.h
+> > +++ b/mm/damon/core-test.h
+> > @@ -99,7 +99,7 @@ static void damon_test_aggregate(struct kunit *test)
+> >  		}
+> >  		it++;
+> >  	}
+> > -	kdamond_reset_aggregated(ctx);
+> > +	kdamond_reset_aggregated(ctx, 0);
+> >  	it = 0;
+> >  	damon_for_each_target(t, ctx) {
+> >  		ir = 0;
+> > diff --git a/mm/damon/core.c b/mm/damon/core.c
+> > index cfc9c803d..ad73752af 100644
+> > --- a/mm/damon/core.c
+> > +++ b/mm/damon/core.c
+> > @@ -500,6 +500,8 @@ struct damon_ctx *damon_new_ctx(void)
+> >  	ctx->attrs.min_nr_regions = 10;
+> >  	ctx->attrs.max_nr_regions = 1000;
+> >  
+> > +	ctx->valid = true;
+> > +
+> >  	INIT_LIST_HEAD(&ctx->adaptive_targets);
+> >  	INIT_LIST_HEAD(&ctx->schemes);
+> >  	INIT_LIST_HEAD(&ctx->list);
+> > @@ -513,7 +515,7 @@ struct damon_ctx *damon_new_ctx(void)
+> >  void damon_add_ctx(struct kdamond *kdamond, struct damon_ctx *ctx)
+> >  {
+> >  	list_add_tail(&ctx->list, &kdamond->contexts);
+> > -	++kdamond->nr_ctxs;
+> > +	ctx->kdamond = kdamond;
+> >  }
+> >  
+> >  struct kdamond *damon_new_kdamond(void)
+> > @@ -567,10 +569,8 @@ void damon_destroy_ctxs(struct kdamond *kdamond)
+> >  {
+> >  	struct damon_ctx *c, *next;
+> >  
+> > -	damon_for_each_context_safe(c, next, kdamond) {
+> > +	damon_for_each_context_safe(c, next, kdamond)
+> >  		damon_destroy_ctx(c);
+> > -		--kdamond->nr_ctxs;
+> > -	}
+> >  }
+> >  
+> >  void damon_destroy_kdamond(struct kdamond *kdamond)
+> > @@ -735,6 +735,20 @@ bool damon_kdamond_running(struct kdamond *kdamond)
+> >  	return running;
+> >  }
+> >  
+> > +/**
+> > + * kdamond_nr_ctxs() - Return number of contexts for this kdamond.
+> > + */
+> > +static int kdamond_nr_ctxs(struct kdamond *kdamond)
+> > +{
+> > +	struct list_head *pos;
+> > +	int nr_ctxs = 0;
+> > +
+> > +	list_for_each(pos, &kdamond->contexts)
+> > +		++nr_ctxs;
+> > +
+> > +	return nr_ctxs;
+> > +}
+> > +
+> >  /* Returns the size upper limit for each monitoring region */
+> >  static unsigned long damon_region_sz_limit(struct damon_ctx *ctx)
+> >  {
+> > @@ -793,11 +807,11 @@ static int __damon_start(struct kdamond *kdamond)
+> >   * @exclusive:	exclusiveness of this contexts group
+> >   *
+> >   * This function starts a group of monitoring threads for a group of monitoring
+> > - * contexts.  One thread per each context is created and run in parallel.  The
+> > - * caller should handle synchronization between the threads by itself.  If
+> > - * @exclusive is true and a group of threads that created by other
+> > + * contexts. If @exclusive is true and a group of contexts that created by other
+> >   * 'damon_start()' call is currently running, this function does nothing but
+> > - * returns -EBUSY.
+> > + * returns -EBUSY, if @exclusive is true and a given kdamond wants to run
+> > + * several contexts, then this function returns -EINVAL. kdamond can run
+> > + * exclusively only one context.
+> >   *
+> >   * Return: 0 on success, negative error code otherwise.
+> >   */
+> > @@ -806,10 +820,6 @@ int damon_start(struct kdamond *kdamond, bool exclusive)
+> >  	int err = 0;
+> >  
+> >  	BUG_ON(!kdamond);
+> > -	BUG_ON(!kdamond->nr_ctxs);
+> > -
+> > -	if (kdamond->nr_ctxs != 1)
+> > -		return -EINVAL;
+> >  
+> >  	mutex_lock(&damon_lock);
+> >  	if ((exclusive && nr_running_kdamonds) ||
+> > @@ -818,6 +828,11 @@ int damon_start(struct kdamond *kdamond, bool exclusive)
+> >  		return -EBUSY;
+> >  	}
+> >  
+> > +	if (exclusive && kdamond_nr_ctxs(kdamond) > 1) {
+> > +		mutex_unlock(&damon_lock);
+> > +		return -EINVAL;
+> > +	}
+> > +
+> >  	err = __damon_start(kdamond);
+> >  	if (err)
+> >  		return err;
+> > @@ -857,7 +872,7 @@ int damon_stop(struct kdamond *kdamond)
+> >  /*
+> >   * Reset the aggregated monitoring results ('nr_accesses' of each region).
+> >   */
+> > -static void kdamond_reset_aggregated(struct damon_ctx *c)
+> > +static void kdamond_reset_aggregated(struct damon_ctx *c, unsigned int ci)
+> >  {
+> >  	struct damon_target *t;
+> >  	unsigned int ti = 0;	/* target's index */
+> > @@ -866,7 +881,7 @@ static void kdamond_reset_aggregated(struct damon_ctx *c)
+> >  		struct damon_region *r;
+> >  
+> >  		damon_for_each_region(r, t) {
+> > -			trace_damon_aggregated(ti, r, damon_nr_regions(t));
+> > +			trace_damon_aggregated(ci, ti, r, damon_nr_regions(t));
+> 
+> Separate traceevent change into another patch.
+> 
+> >  			r->last_nr_accesses = r->nr_accesses;
+> >  			r->nr_accesses = 0;
+> >  		}
+> > @@ -1033,21 +1048,15 @@ static bool damos_filter_out(struct damon_ctx *ctx, struct damon_target *t,
+> >  	return false;
+> >  }
+> >  
+> > -static void damos_apply_scheme(struct damon_ctx *c, struct damon_target *t,
+> > -		struct damon_region *r, struct damos *s)
+> > +static void damos_apply_scheme(unsigned int cidx, struct damon_ctx *c,
+> > +			       struct damon_target *t, struct damon_region *r,
+> > +			       struct damos *s)
+> 
+> Unnecesary change.
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+What do you mean? Why is this unnecessary? Now DAMON iterates over
+contexts and calls kdamond_apply_schemes(ctx), so how can we know
+which context we print trace for? Sorry, maybe I misunderstood
+how DAMON does it, but I'm a bit confused.
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+Or maybe you mean indentation? The actual change is adding "cidx":
 
-If you want to undo deduplication, reply with:
-#syz undup
+	-static void damos_apply_scheme(struct damon_ctx *c, ...
+	+static void damos_apply_scheme(unsigned int cidx, struct damon_ctx *c,
+
+> 
+> As also mentioned on the reply to the first patch, I think this patch can
+> significantly changed if you agree to my opinion about the flow of patches that
+> I mentioned on the reply to the cover letter.  Hence, stopping review from here
+> for now.  Please let me know if you have a different opinion.
+
+I see. Anyway, thank you for your comments, I'll try my best to improve the patch.
+
+> 
+> 
+> Thanks,
+> SJ
+> 
+> [...]
+
+BR,
+Alex
 
