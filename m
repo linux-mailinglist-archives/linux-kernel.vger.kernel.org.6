@@ -1,208 +1,179 @@
-Return-Path: <linux-kernel+bounces-198325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B14188D76C2
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 17:31:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 792F68D76C7
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 17:31:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D600B1C20978
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 15:31:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FE532817FC
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 15:31:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC47E47A79;
-	Sun,  2 Jun 2024 15:31:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D847947F4A;
+	Sun,  2 Jun 2024 15:31:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X8ziF+pP"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mar+lBwc"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6293A20B35
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Jun 2024 15:31:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EF561EF01
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Jun 2024 15:31:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717342266; cv=none; b=abQGeOL6jQRClWmxOr3c1A/hSiL2Xqs6cLWMOR/FYYszo31iA+Fd1+eU4T5jH0REJ76vV8pn81ZFZVvH/tIDPc3R2K7p6HlToMDz4woEIP66EgL0ZMMr7OQbvjMvKk3RKDuKa74vlK9X3tdd3OVygfIYb1XwwsaZHBnuS4p2upY=
+	t=1717342305; cv=none; b=rS0oZOebAmkm5tDYAS/rgZ4HXWynH3EB0Q1yT+DQ3PzEviMdFZbQosO0dJHaA2YSQ5OAXyTrpcYpgZLf7Cn2j+Orh2uWOjwD9U/c7vD1yJNydTH7FsWXgKzKzFIYSuOLUAlgqnwrP32ZR995VojfGzjPC+Aod8vyb4CadDXTGA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717342266; c=relaxed/simple;
-	bh=iMrrITcYzd+RoOFIyCQD1UIiv8ZkY4HWWRv34mlMqzI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vh1PGD79NZS4FvLfXR3To0Qd16V5acP77C7b8RGOuuYZMMZ4JpRULbLwXiKx42IQWkHI6zu190GCl2+sy7sQuGvFtxbrcoJ/7DOjGiT8YiGC5UY5Ua23oFkT9CHR+8dLecX15CvgvQosp/5LUFlAv6dI3muODcf5ArFmiuy2n5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X8ziF+pP; arc=none smtp.client-ip=209.85.208.41
+	s=arc-20240116; t=1717342305; c=relaxed/simple;
+	bh=rNBnPWcv/UT24JI/E+LCM1Eixw1GOAQgxs2uWjTqgKY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=TRpECgdLIIVrSwd8VysyRiazJ8u8GxZornvfs7VSlxGDXKAmP4hsDntjX6s/Gs7xWGted9PV5qWl38JeR1B+wtFm1oqlNfTbO6Mx6bBwDiYKhH/H/DsFCBpMn+RoGuVbHo0yz6cnyLsjQoASetcE89tvdRohOCVL+q5ntxuwZco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mar+lBwc; arc=none smtp.client-ip=209.85.167.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-57a30dbdb7fso3349967a12.3
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2024 08:31:04 -0700 (PDT)
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52b976b5d22so452357e87.1
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2024 08:31:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717342263; x=1717947063; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=aPeMRTLQP1kufJff6402SOGzLmZ5nQceAsLZPxwEQro=;
-        b=X8ziF+pPIExQ79pCbYg9zVB+UEi+bYC2D2ZEaTmq1RDxORkp6hLNWKgx+KICNiCMHL
-         Ox/DCekd9WvNZxJi15242Jecg1mA/uDKCPhN+A4nqKN6d/5genCRnOG20yoRV3IhWOA+
-         nhOkPkKKXaxPhpDcscyFHq7ltoCTyvZv4gy9DQCa9ChGyZpF8uYOHgNmlr2YsBs2CjBL
-         X2I6pRFt27+8900E2/CoyydT/xQc02X9WzisOsRM6SrucH74eUJI31LyyNl3pf2cFCrR
-         lFSY9shfV19IxqFQI4p/+u1O4tkK+VcsyFTiprmf/gOD5DKEnDdkqk8BxfukbUmtz2JE
-         wMNQ==
+        d=gmail.com; s=20230601; t=1717342300; x=1717947100; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/ef+jPbCl/Q2MIEYpCmzzicRwWRwVQMPXcaN6w64uiM=;
+        b=mar+lBwc7SdpL6hPM64DMSqc1Usm8AQXICBGcwGJLppiboetZQyzK2zkBs1UevDqo5
+         uCn/2cA43nBkf9rw2Q29lmbumVGRgk4lU0Z9btP3+2y3rHn/SWjUK9Nl/EQ5kNL5aBxI
+         zKeCEnEp69NVSCJP5GNAvXYsm7qzY6GfW2GFo0gQ6nseMEp/WhOuqVm+hNy54NQ02ab0
+         fBM4Bxojtgi75x/iOOJ1JEJERnxSl2utZqMZWxrribBnQ963diQJ+tWBFnAqZvLDurjP
+         3V18sF+4rKeqKlJguxtxqKVpsVTMBmu9nN2gA1bDxprrP492NQjudGDqGHlf9XtA6IOj
+         eWRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717342263; x=1717947063;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aPeMRTLQP1kufJff6402SOGzLmZ5nQceAsLZPxwEQro=;
-        b=gTPiN0IOuPWz/tLdRI2SdM70KrX39OKttCcAfZO25P9Fi2o0pUX1qDkg/5LNgqd5Po
-         kwm2AYMsYzzzBNFDH3HL5UdsTVr+uNEHdF6PyBqRQoeF9b21x55NUWF4LQGyU3+Lrmoz
-         jDOcmqjBhuH87Ks/8/0huC7bFViHFmNIPWNVvyWF+7aWcdetX+dtyNNWP/1cyVj3IErt
-         sZIjcjVNexlDjdDyFEWulDEMu2BOxGsxw55WHht07B/5xiOwTxIXP89OtJRLty8NfKMf
-         LS7rJO2ossqqA22XjCctNg0SKpm54N2BVz1BNzpkeEP/mEtCl13JCZb9NUf3OONKMbQI
-         pKjw==
-X-Forwarded-Encrypted: i=1; AJvYcCUZjPv4tvbLB3sco7xWKheg2ZcKr8BlD8tnt0QAP3szOWkmHKTQNcjxZ3NKDLIxZ17joY3JcT0k7CC10aSFFbzLnGuoTONYRub3QdLi
-X-Gm-Message-State: AOJu0YwpvxZriXnTHiPlkxfKXG8+pt+ZP3RBKVi6defTWRx+O/WakMBM
-	pQcHkmJkAbiLG79G3T9hvcRxZhd3+7ZUMu6ED82sxkNUhpGVa7td
-X-Google-Smtp-Source: AGHT+IFnLY3CKJpeC281AVWzyFnvgsXkGBUU1G9iQxirdGcSeUBakZvGz4kcjbXwTw4aKyWcu75cIA==
-X-Received: by 2002:a17:906:cf8f:b0:a66:5064:cc73 with SMTP id a640c23a62f3a-a6821f4e311mr456012466b.55.1717342262285;
-        Sun, 02 Jun 2024 08:31:02 -0700 (PDT)
-Received: from f (cst-prg-8-232.cust.vodafone.cz. [46.135.8.232])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a690057d2dcsm64341966b.4.2024.06.02.08.30.58
+        d=1e100.net; s=20230601; t=1717342300; x=1717947100;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/ef+jPbCl/Q2MIEYpCmzzicRwWRwVQMPXcaN6w64uiM=;
+        b=xCWQsTYMBiS6e44EOQjxcd3LkFGgoECEz19vPs2zioBlDFfpkapbQ3DLwW2QI7e//s
+         50pZN5aUSliOqFOae4tHy3lwTpXuUx10At792D6wRj5masELWPFswgRFEx2D5vAToNxM
+         FjB/MJu1dHYk1B8jP+RQ+9RL5g6pb29Uaq8lnvjMLgk1kmZRrhK7/vmZiHI+j1aNrybv
+         X0tkEOqAg93jq6+4tO6aHbCgvFmIr2Dg+vcA7L97YeVEYLzOdu2VvgpWRzeNmM+UIOt7
+         O47cCc2y3qAxYJtryIjBxWq0IL6sBLv9Cl0OT/Tmt82Qtpav+9h2qoe2NDgZ3GFgLG7A
+         ksyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW1NLIMXhqgJoS0ey2Fry41yKWkxmhunefBVHlkkkWsgZ6s5MAbmfInH6ktQnH3QU67RNMEOWPK9rzfQLjgKJTy/bxhxKnLJHwmAjC4
+X-Gm-Message-State: AOJu0YyyZ5erGN9iTnCFksUAQpwdr155xOzBlp2YpnPjOKafpmVtN3n7
+	70wJyxI6nUACXh0yfgd+y77JApPHELKurw8n9F1NJ8V3syUpNtqP
+X-Google-Smtp-Source: AGHT+IFIStiDV5vU5Y0oUwFpyaRIxaKDE45IOTn0TWg6IK6lX2Mk28N1js/u5dlXb1ju4AViWHXdqA==
+X-Received: by 2002:ac2:544c:0:b0:52b:82d5:b36a with SMTP id 2adb3069b0e04-52b8957fe73mr4228460e87.2.1717342300040;
+        Sun, 02 Jun 2024 08:31:40 -0700 (PDT)
+Received: from localhost.localdomain ([176.59.170.248])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52b84d894c3sm969583e87.249.2024.06.02.08.31.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 02 Jun 2024 08:31:01 -0700 (PDT)
-Date: Sun, 2 Jun 2024 17:30:51 +0200
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: =?utf-8?B?w43DsWlnbw==?= Huguet <ihuguet@redhat.com>, 
-	Vincent MAILHOL <mailhol.vincent@wanadoo.fr>, Jonathan Corbet <corbet@lwn.net>, ojeda@kernel.org, 
-	danny@kdrag0n.dev, jgg@nvidia.com, mic@digikod.net, linux-kernel@vger.kernel.org, 
-	joe@perches.com, linux@rasmusvillemoes.dk, willy@infradead.org
-Subject: Re: [PATCH v4] Add .editorconfig file for basic formatting
-Message-ID: <thbrfziusf37nj5mwsj2a6zmjtenj5b5vhzwu2z5zkhr7ajsg6@whvx46y6mxbz>
-References: <20230601075333.14021-1-ihuguet@redhat.com>
- <CAMZ6RqLoRVHD_M8Jh2ELurhL8E=HWt2DZZFGQvmfFyxKjtNKhg@mail.gmail.com>
- <874jiikr6e.fsf@meer.lwn.net>
- <CAMZ6RqLJmTjM0dYvixMEAo+uW+zfhdL1n4rnajsHCZcq971oRA@mail.gmail.com>
- <CACT4oudYAK07+PJzJMhTazKe3LP-F4tpQf8CF0vs1pJLEE_4aA@mail.gmail.com>
- <CAK7LNATqNNVX8ECNoO82kY503ArfRPa9GdbYd9tOok_6tGOsew@mail.gmail.com>
+        Sun, 02 Jun 2024 08:31:39 -0700 (PDT)
+From: Alex Rusuf <yorha.op@gmail.com>
+To: sj@kernel.org
+Cc: damon@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	yorha.op@gmail.com
+Subject: Re: [PATCH v2 0/2] DAMON multiple contexts support
+Date: Sun,  2 Jun 2024 18:31:02 +0300
+Message-ID: <20240602153102.926789-1-yorha.op@gmail.com>
+X-Mailer: git-send-email 2.42.0
+In-Reply-To: <20240531193307.71424-1-sj@kernel.org>
+References: <20240531193307.71424-1-sj@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAK7LNATqNNVX8ECNoO82kY503ArfRPa9GdbYd9tOok_6tGOsew@mail.gmail.com>
+Content-Transfer-Encoding: 7bit
 
-On Tue, Dec 12, 2023 at 02:50:59AM +0900, Masahiro Yamada wrote:
-> On Mon, Oct 23, 2023 at 3:26 PM Íñigo Huguet <ihuguet@redhat.com> wrote:
+Hi SJ,
+
+> Hello Alex,
+> 
+> On Fri, 31 May 2024 15:23:18 +0300 Alex Rusuf <yorha.op@gmail.com> wrote:
+> 
+> > Currently kdamond uses only one context per kthread
+> > and most of its time it sleeps, so utilizing several
+> > contexts can scale kdamond and allow it to use
+> > another set of operations.
+> > 
+> > This patch-set implements support for multiple contexts
+> > per kdamond.
 > >
-> > On Mon, Oct 23, 2023 at 8:19 AM Vincent MAILHOL
-> > <mailhol.vincent@wanadoo.fr> wrote:
-> > >
-> > > On Mon. 23 Oct. 2023 at 11:28, Jonathan Corbet <corbet@lwn.net> wrote:
-> > > > Vincent MAILHOL <mailhol.vincent@wanadoo.fr> writes:
-> > > >
-> > > > > On Thu. 1 June 2023 at 16:53, Íñigo Huguet <ihuguet@redhat.com> wrote:
-> > > > >> EditorConfig is a specification to define the most basic code formatting
-> > > > >> stuff, and it's supported by many editors and IDEs, either directly or
-> > > > >> via plugins, including VSCode/VSCodium, Vim, emacs and more.
-> > > > >>
-> > > > >> It allows to define formatting style related to indentation, charset,
-> > > > >> end of lines and trailing whitespaces. It also allows to apply different
-> > > > >> formats for different files based on wildcards, so for example it is
-> > > > >> possible to apply different configs to *.{c,h}, *.py and *.rs.
-> > > > >>
-> > > > >> In linux project, defining a .editorconfig might help to those people
-> > > > >> that work on different projects with different indentation styles, so
-> > > > >> they cannot define a global style. Now they will directly see the
-> > > > >> correct indentation on every fresh clone of the project.
-> > > > >>
-> > > > >> See https://editorconfig.org
-> > > > >>
-> > > > >> Co-developed-by: Danny Lin <danny@kdrag0n.dev>
-> > > > >> Signed-off-by: Danny Lin <danny@kdrag0n.dev>
-> > > > >> Signed-off-by: Íñigo Huguet <ihuguet@redhat.com>
-> > > > >> ---
-> > > > >
-> > > > > Is there any news for this patch? I would really love this to become mainstream.
-> > > >
-> > > > I have concerns about this patch that I have expressed in the past.
-> > > >
-> > > > I'm not going to apply it... since it's a global change that affects all
-> > > > kernel developers, I don't think I *should* apply it.  I would recommend
-> > > > sending it directly to Linus; if you can get an ack from him, I'll apply
-> > > > it then.
-> > >
-> > > Hi Jonathan,
-> > >
-> > > Thanks for the comment, message taken.
-> > >
-> > > Hi Íñigo,
-> > >
-> > > The last version of the patch being from you, would you like to bring
-> > > the topic to Linus yourself or shall I do it instead?
-> >
-> > I'm not doing kernel development lately, so please go ahead pushing
-> > this if you want.
-> >
-> > Anyway, note that, as discussed in the thread, it is incorrect to say
-> > that it will affect all kernel developers: most IDEs and editors only
-> > have "opt-in" support for editorconfig, and the few that are not
-> > "opt-in", are either "opt-out" or has a workaround (Kate).
+> [...]
+> > 
+> > ---
+> > Changes from v1 (https://lore.kernel.org/damon/20240515152457.603724-1-yorha.op@gmail.com/)
+> > - Compatibility for DebugFS interface is kept
+> > - Kunit tests build/execution issues are fixed
+> > - Patches from v1 are sqaushed, so that consistency between patches is
+> > kept
+> 
+> My request was to avoid unnecessary temporal changes that will be removed in
+> next patches.  Some of those are well removed in this version, but I still show
+> some.  E.g., nr_contexts field.  Also, this resulted in two big patches.
+
+This makes sense and I actually wanted that as well, so I tried to separate
+them in previous version, looks like I misunderstood your request.
+
+Anyway, don't you mind if lru_sort/traceevents/etc. will not function
+correctly without applying the whole patch-set? I mean if we use the
+approach below, once core.c is modified at least lru_sort and reclaim
+will not work correctly, they even will not be built.
+
+> 
+> I'd also appreciate if you can separate changes into smaller ones of logical
+> single change.  For example, changes for lru_sort.c, reclaim.c, and sysfs.c on
+> first patch could be much smaller in my opinion.  Traceevent change can also be
+> separated from patch 2.  Some of multi-context support seems mixed in patch 1.
+> 
+> I'd suggest below patches flow.
+> 
+> Patch 1: Introduce new struct and control functions for the struct.  Don't
+> really use the struct and the functions.
+> 
+> Patch 2: Modify core.c to use the struct and implement multiple contexts
+> support.  Minimize changes to core.c users.  Just keep those work as before.
+> Don't implement multi contexts support on sysfs.c or trace events at this
+> point.
+> 
+> Patch 3: Update sysfs.c to support the multiple contexts.
+> 
+> Patch 4: Update trace events to better support it.
+> 
+> > - Added/Fixed comments about data structures/functions
+> 
+> Also, you don't need to put version history under '---' marker if it is a cover
+> letter.  You can put it on the body.
+> 
+> > 
+> > Alex Rusuf (2):
+> >   mm/damon/core: add 'struct kdamond' abstraction layer
+> >   mm/damon/core: implement multi-context support
+> 
+> I will try to put more detailed comments on each patch.
+> 
+> > 
+> >  include/linux/damon.h        |  80 ++++--
+> >  include/trace/events/damon.h |  14 +-
+> >  mm/damon/core-test.h         |   2 +-
+> >  mm/damon/core.c              | 509 ++++++++++++++++++++++-------------
+> >  mm/damon/dbgfs-test.h        |   4 +-
+> >  mm/damon/dbgfs.c             | 342 ++++++++++++++---------
+> >  mm/damon/lru_sort.c          |  31 ++-
+> >  mm/damon/modules-common.c    |  35 ++-
+> >  mm/damon/modules-common.h    |   3 +-
+> >  mm/damon/reclaim.c           |  30 ++-
+> >  mm/damon/sysfs.c             | 303 +++++++++++++--------
+> >  11 files changed, 872 insertions(+), 481 deletions(-)
+> > 
+> > -- 
+> > 2.42.0
 > 
 > 
-> 
-> 
-> Applied to linux-kbuild. Thanks.
-> 
-> We invested a significant amount of time in research and discussion,
-> and I do not want to lose our efforts.
-> 
-> If it turns out to be problematic, it is easy to revert it.
-> (although I do not think so, given the wide adoption in many projects.)
-> 
+> Thanks,
+> SJ
 
-So after recently switching to neovim I found that .editorconfig results
-in messing up my diffs.
-
-I'm screwing around in the vfs layer which has numerous pre-existing
-whitespace issues. neovim proceeds to *silently* whackall of the stray
-spaces and whatnot, which you only find out about after you git diff/git
-show
-
-You can try yourself by editing fs/dcache.c or fs/bad_inode.c.
-
-It stems from this line:
-trim_trailing_whitespace = true
-
-The problem is dodged by setting it to false or adding this to
-~/.config/nvim/init.lua:
-vim.g.editorconfig = false
-
-Is there a non-giant-hammer method to disable the thing? Maybe some lua
-magic to special-case that this is the kernel tree?
-
-Also note editing the shipped config shows as a diff to master, so doing
-it is not that great either.
-
-If someone could block new whitespace issues from appearing *and* sorted
-out all existing ones, I would have no comments. Definitely not going to
-try even myself though.
-
-A naive/shite grep claims 840 .c files with issues:
-find . -name '*.c' -print0 | xargs -0 grep -l ' $' | wc -l
-
-As is I think the config mostly gets in the way and most people have a
-setup which does not use it (for example my vim does not). Alternatively
-maye it is neovim which is overzalous here and other editors don't treat
-the entire file. If there is a way to convince the thing to only tend to
-whitespace issues in edited lines that would be great.
-
-I think the best way forward for the time being is to move .editorconfig
-somewhere (scripts/ even though it is not one?) and leave it there as a
-template for interested parties. Then people who insist on using the
-config can cp and modify (or not) as needed.
-
-I don't have a strong opinion as long as it buggers off the whitespace I
-did not even touch or a solution is given which whacks this aspect, but
-only for the Linux repo.
+BR,
+Alex
 
