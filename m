@@ -1,113 +1,250 @@
-Return-Path: <linux-kernel+bounces-198174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E93398D7478
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 11:06:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5104E8D747B
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 11:11:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5D7B282502
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 09:06:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08FA8281BFE
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 09:11:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F2D62E3EE;
-	Sun,  2 Jun 2024 09:06:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8610929CFB;
+	Sun,  2 Jun 2024 09:11:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E5EDzmfs"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mTvCKcB3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AF492D60C
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Jun 2024 09:06:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A12E61865;
+	Sun,  2 Jun 2024 09:11:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717319174; cv=none; b=NisHXPqac3Ehb53bPtPKy0UE9jsHHUobs52+ZPneqIel5S9rKhx7sjzoHud7ZRSs7U5P1BdBkeQxKyLxUeD65c2TQWpHwzIdXsdcK3Hi71entpTdQ9OzkX6na1kcWObV+z8pVXjQT7SzO/Zrw3LLYBBAV3Db6+o6L6HL0lkvT4k=
+	t=1717319486; cv=none; b=aUJWqRMWQCUm37MEBKCd2Cjly1htir3dgjOu5+nw8TLlmFMsBOXYo86M03+/0O6si/st+wL5dVdNQcGayQuCOk8yysuafXSDc7gu3WJSqvlBy2XYAgH5+UEzdRkIyD1gNb6CfkX8nocidfdEFsu9yjp/RUZXSWfO1MK7HBHV53Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717319174; c=relaxed/simple;
-	bh=rde+gS+/1SJ6Gr36HkKsuWVC84C5A7IxDaZV55cYZbE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fJePrJ/kn/cms3aMFIx9yNIYFVjb0hknWBgQvnKFfeyICbXzNiXK3SS9aiZZWLMLpwK50rFW4xLwU7OWvsxUYNUmlmvdl/Ql4x4ARWJ63yE9SMdjaYeUweuqBjBIRMBv9d6Ya7eSdt0WJKN0xOGMpUNQzTyfAibxz0XYjrohR2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=E5EDzmfs; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717319173; x=1748855173;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=rde+gS+/1SJ6Gr36HkKsuWVC84C5A7IxDaZV55cYZbE=;
-  b=E5EDzmfs6yyLRLai5U0rFOCL0hazf6S1DTsmcPb0tEYXp3bYY46uQSB+
-   OJmOB8NEQoRMMagXrRPwuwkZQshse+MLCqVKIaX7pfk8FdBxKctQm/aiv
-   0VA6D20dDA12nIosET3whQkiVETvro5zvF9Yz06IbN3XhqLE88aLviqqX
-   8/P0AkHNXHZwEiNOE+YjjLDfLONEiDUYprH+pnqIerO8Y6BZEOWMb+axs
-   q494vZRi45+so8FAhyepMLjsBm+eJtJOYfCsygwAj+Qw6pE02NIefqVAZ
-   v6MBu/R26N/imlA/RnRVDzniUTrKULoboLn51E9Ll8f8pB/YSFXA8Dp/I
-   g==;
-X-CSE-ConnectionGUID: cmXy2u5YTC2Vs5+U/Ck8Jg==
-X-CSE-MsgGUID: UD+rXYQvT2mLC6KxpAwv7w==
-X-IronPort-AV: E=McAfee;i="6600,9927,11090"; a="24942885"
-X-IronPort-AV: E=Sophos;i="6.08,209,1712646000"; 
-   d="scan'208";a="24942885"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2024 02:06:12 -0700
-X-CSE-ConnectionGUID: jTIoXAiyT9iJV/EfV4/gFQ==
-X-CSE-MsgGUID: tUBKbWb3Sd+hRJ9gH/mbdQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,209,1712646000"; 
-   d="scan'208";a="67780590"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2024 02:06:10 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sDhAE-0000000Cyf6-42sP;
-	Sun, 02 Jun 2024 12:06:06 +0300
-Date: Sun, 2 Jun 2024 12:06:06 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Chia-I Wu <olvaffe@gmail.com>
-Cc: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	christian.koenig@amd.com, alexander.deucher@amd.com,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>, Baoquan He <bhe@redhat.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kernel/resource: optimize find_next_iomem_res
-Message-ID: <Zlw1_n20oqchAYxH@smile.fi.intel.com>
-References: <20240531053704.2009827-1-olvaffe@gmail.com>
- <ZlmQ3_wcL3cgp4Hb@smile.fi.intel.com>
- <CAPaKu7SsD+X7KAO=3vEYU_7YGM_f+7k1fdC9nEK=-NaJw8oYaA@mail.gmail.com>
+	s=arc-20240116; t=1717319486; c=relaxed/simple;
+	bh=LBjFPp3Q3rHJHdMdS/2R9oP/tIlB0vaTPAyhGdFWnmI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sOUG7F3eobhpdgxwF8MM0QHfCoijZJaFse/fntyJ7c6YHs/cj9LrGt2sbEz4CXHzjNirlEz2S6d6Xj4h7y8Z9sOpRLW4B1knxB71D0G+924fjE7oqZ/9LdRMGYztmNsx2jCUz4RhauxXGI4yi8D66CY1UQyxgUvKn6qU6mzO4so=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mTvCKcB3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 001CAC2BBFC;
+	Sun,  2 Jun 2024 09:11:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717319485;
+	bh=LBjFPp3Q3rHJHdMdS/2R9oP/tIlB0vaTPAyhGdFWnmI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=mTvCKcB3avs0o376VW9qMOx+JxrepXc4lT9feYZH8SMW9ceLeA22YtWa97QnZBaOX
+	 M0msA5K7kkDjLTsWhCULYchTKtQKO2ubWBypLA08zDo/8ZmN1A/i3QQ1DMu+l6JJWz
+	 OHAW3XtS+5kuMAeC/KHhPBCGUCKdKgx2GAqEBRi4POZlBZ1fYQE7+kkklCA3lxnmAx
+	 HuVxrUQVAl7CJlc/iVr/SAnQ8MW4it9bZTR/kqoU/KIZo9dwLlXuPGEKF2a4nobuyT
+	 ZoKV+TwGi3Pr4xv7dOHAa61MfmXsJTiuKa9w0CD7Ie6hUhxmxEwnkmIE8C+bYE/pyO
+	 qyQYr+wLsrNaw==
+Date: Sun, 2 Jun 2024 10:11:12 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Ramona Alexandra Nechita <ramona.nechita@analog.com>
+Cc: <linux-iio@vger.kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>, Rob Herring
+ <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, <linux-kernel@vger.kernel.org>,
+ <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v3 1/1] dt-bindings: iio: adc: add a7779 doc
+Message-ID: <20240602101112.28751a2c@jic23-huawei>
+In-Reply-To: <20240531133604.1380-2-ramona.nechita@analog.com>
+References: <20240531133604.1380-1-ramona.nechita@analog.com>
+	<20240531133604.1380-2-ramona.nechita@analog.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAPaKu7SsD+X7KAO=3vEYU_7YGM_f+7k1fdC9nEK=-NaJw8oYaA@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 31, 2024 at 02:31:45PM -0700, Chia-I Wu wrote:
-> On Fri, May 31, 2024 at 1:57 AM Andy Shevchenko <
-> andriy.shevchenko@linux.intel.com> wrote:
-> > On Thu, May 30, 2024 at 10:36:57PM -0700, Chia-I Wu wrote:
+On Fri, 31 May 2024 16:35:52 +0300
+Ramona Alexandra Nechita <ramona.nechita@analog.com> wrote:
 
-...
+> Add dt bindings for adc ad7779.
+>=20
+> Signed-off-by: Ramona Alexandra Nechita <ramona.nechita@analog.com>
+> ---
+>  .../ABI/testing/sysfs-bus-iio-adc-ad777x      | 23 +++++
+>  .../bindings/iio/adc/adi,ad7779.yaml          | 87 +++++++++++++++++++
+>  2 files changed, 110 insertions(+)
+>  create mode 100644 Documentation/ABI/testing/sysfs-bus-iio-adc-ad777x
+>  create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ad7779.=
+yaml
+>=20
+> diff --git a/Documentation/ABI/testing/sysfs-bus-iio-adc-ad777x b/Documen=
+tation/ABI/testing/sysfs-bus-iio-adc-ad777x
+> new file mode 100644
+> index 000000000000..0a57fda598e6
+> --- /dev/null
+> +++ b/Documentation/ABI/testing/sysfs-bus-iio-adc-ad777x
+> @@ -0,0 +1,23 @@
+> +What:		/sys/bus/iio/devices/iio:deviceX/filter_type_available
 
-> > P.S> I'm not so sure about this change. It needs a thoroughly testing, esp.
-> > in PCI case. Cc'ing to Ilpo.
+This is a binding patch - ABI docs should be in the driver code patch not h=
+ere.
+A separate patch for ABI docs is also fine.
 
-> What's special about PCI?
+Also, it is also a documentation bug to have more than one sysfs docs file
+for an attribute with the same What line.  We already have this one in ad41=
+30.
 
-PCI, due to its nature, may rebuild resources either by shrinking or expanding
-of the entire subtree after the PCI bridge in question. And this may happen at
-run-time due to hotplug support. But I'm not a deep expert in this area, Ilpo
-knows much more than me.
+So the documentation needs to be combined into Documentation/ABI/testing/sy=
+sfs-bus-iio-adc
+or sysfs-bus-iio
 
--- 
-With Best Regards,
-Andy Shevchenko
+That means you need to write the doc so that is as generic as possible.
+There are a few places where we have previously documented device specific
+aspects - copy one of those if it is absolutely necessary, but there is info
+here that doesn't matter in ABI docs such as what the maximum ODR is for
+a particular part - that should be possible to read back from existing ABI.
 
+> +KernelVersion:  6.1
+> +Contact:	linux-iio@vger.kernel.org
+> +Description:
+> +		Reading returns a list with the possible filter modes. Only supported =
+by
+> +		AD7771.
+> +
+> +		  * "sinc3"	- The digital sinc3 filter implements three main notches, =
+one at
+> +				the maximum ODR (128 kHz or 32 kHz, depending on the
+> +				power mode) and another two at the ODR frequency selected to
+> +				stop noise aliasing into the pass band.
+> +
+> +		  * "sinc5"	- The sinc5 filter implements five notches, one at
+> +				the maximum ODR (128 kHz or 32 kHz, depending on the
+> +				power mode) and another four at the ODR frequency
+> +				selected to stop noise aliasing into the pass band.
+
+This one sounds nice - so why don't I select it all the time?
+Helpful to state the disadvantages.
+
+I'm also a little confused by 4 notches at the ODR frequency. I see that
+text comes from the datasheet but that doesn't mean you can't improve it :)
+I think this really means notches at multiples of the sampling frequency.
+
+
+
+> +
+> +What:		/sys/bus/iio/devices/iio:deviceX/filter_type
+> +KernelVersion:  6.1
+> +Contact:	linux-iio@vger.kernel.org
+> +Description:
+> +		Set the filter mode of the differential channel. The current sampling_=
+frequency
+> +		is set according to the filter range. Only supported by AD7771.
+> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7779.yaml b/=
+Documentation/devicetree/bindings/iio/adc/adi,ad7779.yaml
+> new file mode 100644
+> index 000000000000..632e9ec0ab44
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7779.yaml
+> @@ -0,0 +1,87 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/adc/adi,ad7779.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Analog Devices AD777X family 8-Channel, 24-Bit, Simultaneous Samp=
+ling ADCs
+> +
+> +maintainers:
+> +  - Ramona Nechita <ramona.nechita@analog.com>
+> +
+> +description: |
+> +  The AD777X family consist of 8-channel, simultaneous sampling analog-t=
+o-
+> +  digital converter (ADC). Eight full =CE=A3-=CE=94 ADCs are on-chip. The
+> +  AD7771 provides an ultralow input current to allow direct sensor
+> +  connection. Each input channel has a programmable gain stage
+> +  allowing gains of 1, 2, 4, and 8 to map lower amplitude sensor
+> +  outputs into the full-scale ADC input range, maximizing the
+> +  dynamic range of the signal chain.
+> +
+> +  https://www.analog.com/media/en/technical-documentation/data-sheets/ad=
+7770.pdf
+> +  https://www.analog.com/media/en/technical-documentation/data-sheets/ad=
+7771.pdf
+> +  https://www.analog.com/media/en/technical-documentation/data-sheets/ad=
+7779.pdf
+> +
+> +$ref: /schemas/spi/spi-peripheral-props.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - adi,ad7770
+> +      - adi,ad7771
+> +      - adi,ad7779
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  '#address-cells':
+> +    const: 1
+> +
+> +  '#size-cells':
+> +    const: 0
+> +
+> +  spi-max-frequency: true
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  vref-supply:
+> +    description:
+> +      ADC reference voltage supply
+> +
+> +  start-gpios:
+> +    description:
+> +      Pin that controls start synchronization pulse.
+> +    maxItems: 1
+> +
+> +  reset-gpios:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+You seem to be missing a whole raft of power supplies.
+AVDD1x, AVDD2,, IOVDD - maybe more.
+Some of those at least will be 'required'.
+Note that required doesn't rule out using fixed or dummy regulators=20
+(those supplied by the regulator framework if nothing is found in DT)
+but the binding should still reflect we need to provide power for the chip
+to function.
+
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/gpio/gpio.h>
+> +    spi {
+> +        #address-cells =3D <1>;
+> +        #size-cells =3D <0>;
+> +
+> +        adc@0 {
+> +          compatible =3D "adi,ad7779";
+> +          reg =3D <0>;
+> +          spi-max-frequency =3D <20000000>;
+> +          vref-supply =3D <&vref>;
+> +          start-gpios =3D <&gpio0 87 GPIO_ACTIVE_LOW>;
+> +          reset-gpios =3D <&gpio0 93 GPIO_ACTIVE_LOW>;
+> +          clocks =3D <&adc_clk>;
+> +        };
+> +    };
+> +...
 
 
