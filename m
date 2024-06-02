@@ -1,169 +1,141 @@
-Return-Path: <linux-kernel+bounces-198466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 189FC8D78F0
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 00:58:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73BB48D78F3
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 00:59:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 497B3281291
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 22:58:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 289021F212A8
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 22:59:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E1C277F30;
-	Sun,  2 Jun 2024 22:58:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D4B97B3FD;
+	Sun,  2 Jun 2024 22:59:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gIpnY5xp"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Xt5lKAa2"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEAE4A21;
-	Sun,  2 Jun 2024 22:58:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29005364A0;
+	Sun,  2 Jun 2024 22:59:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717369123; cv=none; b=XVP1tijxfraCQyoKyANsq2YcK6AcPoF6PiH7ZugZegGS/EkqQmDgroQ65qtcF6mJtiFkFrJdXk+sbLRwG4Awd5x5lg/I3MoRMTFMrphwNAS7kfHUYyGZC6rnILE/yDueF0Mzztvs5Hts6vbl0sK3C4MNr5FirjYUDpiz8Jl9YOE=
+	t=1717369182; cv=none; b=uMlj60pGs3vHEOtccBClahwSUzsu6qpgiLLKIVvrhKftKQy/IWCE7i44pqLpEeVmgk20JVk+pAFEQnQXHUs403L7cFNlxH3NEPjeR54TkNwUMqDiMy4SPoe6mB3audwTWEqg9YBZfE0TXAuhDaKquogkLr0945GnYqkVY/5W8GU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717369123; c=relaxed/simple;
-	bh=l5o5JcMau/VusknSuamjv+4ITRRlMR5KV3zcY3ndfCk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qeijnXO/nISjOOJlnNSpUhUoEg3ibPRGeL9pbcSd6b4ru+LTRPsz+7FfiKHdT1yleBI6xxzgwSnO9hZSbwdwhHEycqkcn2uGta2J3XajuSER1K9AdMLiJs2iqGSKT52EkAi40gFLsuue/svugrWiZtHK88fgfwtFQo57GJiHqUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gIpnY5xp; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42120e3911eso33377985e9.0;
-        Sun, 02 Jun 2024 15:58:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717369119; x=1717973919; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=aJN1BIYPem4Vicpm6XqYQ1DycrTK8vnRrbZGTtf9tP0=;
-        b=gIpnY5xpI4Cn6aCDcLpbhhZFczoQ91+0NhGsl3ZYLNKKIQOvJGQNxIDC4dLgRDtmtJ
-         WTrBDz/Pb/FGY6dMw8BKxmlN5hzl4qSL7s0PClV0FdXSgByKM5HGg7zXB6d630A7a2Of
-         x2FJOrDvdpLZ7QNTqBCSaQnrS/mdWr6kZrOZOK/dbspMv/1yo3MWjdN/bXBtXaYT+BGk
-         ZXC2QD74jDKVI/RAA/SxPcnsW1+gk2XDE2r4noUtwnPXDPac0DbI5rQ6TfwAwC/NSSP2
-         eszLrCgEdGytwP/dCo9Lz++S6fGTdUIVtzL/eoKoM/t5L/u2XphEhnfLHExWeR6DBHmD
-         j+gA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717369119; x=1717973919;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aJN1BIYPem4Vicpm6XqYQ1DycrTK8vnRrbZGTtf9tP0=;
-        b=SimxjH2Gpq01dRhPZ/kDT29MEroFWh2fkJ4KJMkjvMhKXDq9FXa2uYG4Up0FckpL90
-         b0TIWXgwPE5mC2PapqkBsTPxbAJpEfSX9DQfjc5HHb9mJj0qaVGnPK+awABVyYAK8qcM
-         oFI1Nl9fwLa+Qus3EtJuNpg94bqhI7ApSBt5ycIGFC+vnc1TBeS5H8rv5AeJe1Arj8So
-         rY0M2yhu12V3jXoJsHVCaKDUa/oLPc50aI2vVfcZgcjPkcfjuoZHGyz7zAumA6tTuj17
-         mozKI/Ys7nKYZZF479nLjFjSq9v9/y36la+4q1a6m8W3s2T5c0ImtNl7QaB7/up0C2gh
-         AjPg==
-X-Forwarded-Encrypted: i=1; AJvYcCWxan+r3nYaiIR/PDQqeFOapMgwswhCLiP8Vi6q/O8lUkxXBhryKbEF7N5xb5NnwQuyrvB7Jnq9V1x/1oKPfh+ca9xVv/8NlG9RcMKsO7+g9+4ANMGJ2+WUa0QGJoxcfpv8
-X-Gm-Message-State: AOJu0YxjV3zScpJfXSG43LPKr449Y46E03S+78BQXuc9Pc89ZCbEz9ew
-	0O3aCToC/nBTd2lD5n5J5oZOSmXTezoIrEAOmcRuSnnYh6Of4j0wRh8LFV6x
-X-Google-Smtp-Source: AGHT+IF0zeDftp2EVR0WrwbVei/VT7PflWWHur4Di2Pfg2B1bjup06PX3rrsIEX05i7ihSDvaLjM9Q==
-X-Received: by 2002:a05:600c:3144:b0:41a:c170:701f with SMTP id 5b1f17b1804b1-4212e0c4000mr61390705e9.38.1717369119206;
-        Sun, 02 Jun 2024 15:58:39 -0700 (PDT)
-Received: from localhost.localdomain ([2a02:8429:ddef:6d01:2c8c:394b:7d6f:b34b])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4212278968fsm111599385e9.0.2024.06.02.15.58.38
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Sun, 02 Jun 2024 15:58:38 -0700 (PDT)
-From: Swan Beaujard <beaujardswan@gmail.com>
-To: 
-Cc: beaujardswan@gmail.com,
-	Quentin Monnet <qmo@kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@google.com>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] tools/bpf: matric typo erro
-Date: Mon,  3 Jun 2024 00:58:12 +0200
-Message-Id: <20240602225812.81171-1-beaujardswan@gmail.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
+	s=arc-20240116; t=1717369182; c=relaxed/simple;
+	bh=yZcI6Fr8DY8YGyk+xlFWtHSX7RVfsv9IYwtg1aNm3Dk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RES2nGOW5ZRGBMfrxmThWVhD9YD98GmveiRoroPSSW6kHyiwK+o6dYLhRYPNBETff4NfU8NjFD1nUyrtKDj+WNfHFmqkeWdyEFhsHBpJZj1MWSCpiP9g00LXwhjwH//Y6Nm6LWdo1hQxETiayaQly8saacAzZnEWiW6HkkBR7mM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Xt5lKAa2; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1717369179;
+	bh=yZcI6Fr8DY8YGyk+xlFWtHSX7RVfsv9IYwtg1aNm3Dk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Xt5lKAa2N3tMMEZAl/UW+f8Y9W7VPr9vSsAoFdDCvYdq7/7ONk+5XwqPQQZPY0ot6
+	 5JRK43JEAp+dK+V8rndrKJk+I+TZp51YC4b0XStY+NlFZNQSMHsilaapsMrc3HTn4N
+	 kJoiaCyqWwwkqVeR8koopAbzsC+KCq8pSecRJpdMRezPtF6j6pPiLEsMK9pkV04rMY
+	 TSw0Sv82U+xAPsfe64NT84roQmjr8zEloSbBU92/+ciGrQLEmCQFst39g1blURMM/S
+	 uC250+2l0nJg0QgYl9UgqsR9pnXHVWBlRhuoqJ1TN798kf2Nbi2t2NfWSth3ST03tY
+	 akWNdkKgI/NuA==
+Received: from mercury (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: sre)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 517FE3781116;
+	Sun,  2 Jun 2024 22:59:39 +0000 (UTC)
+Received: by mercury (Postfix, from userid 1000)
+	id BA19B10611D2; Mon, 03 Jun 2024 00:59:38 +0200 (CEST)
+Date: Mon, 3 Jun 2024 00:59:38 +0200
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+	linux-pm@vger.kernel.org
+Subject: Re: [PATCH 2/2] power: supply: samsung-sdi-battery: Constify struct
+ power_supply_maintenance_charge_table
+Message-ID: <dgkqcnvnrw3sxzojjsteqpudf4sfjhsd6ifvwzn7murxeajs4w@2qededvny4vy>
+References: <cover.1717253900.git.christophe.jaillet@wanadoo.fr>
+ <02c6ad69a3ace192c9d609b7336a681a8fc7ba94.1717253900.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="3s5fgqs6cwwgl5ak"
+Content-Disposition: inline
+In-Reply-To: <02c6ad69a3ace192c9d609b7336a681a8fc7ba94.1717253900.git.christophe.jaillet@wanadoo.fr>
 
-Corrected typo in bpftool profiler.
 
-Changed all instances of 'MATRICS' to 'METRICS' in the profiler.bpf.c file.
+--3s5fgqs6cwwgl5ak
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Swan Beaujard <beaujardswan@gmail.com>
----
- tools/bpf/bpftool/skeleton/profiler.bpf.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+Hello,
 
-diff --git a/tools/bpf/bpftool/skeleton/profiler.bpf.c b/tools/bpf/bpftool/skeleton/profiler.bpf.c
-index 2f80edc68..f48c783cb 100644
---- a/tools/bpf/bpftool/skeleton/profiler.bpf.c
-+++ b/tools/bpf/bpftool/skeleton/profiler.bpf.c
-@@ -40,17 +40,17 @@ struct {
- 
- const volatile __u32 num_cpu = 1;
- const volatile __u32 num_metric = 1;
--#define MAX_NUM_MATRICS 4
-+#define MAX_NUM_METRICS 4
- 
- SEC("fentry/XXX")
- int BPF_PROG(fentry_XXX)
- {
--	struct bpf_perf_event_value___local *ptrs[MAX_NUM_MATRICS];
-+	struct bpf_perf_event_value___local *ptrs[MAX_NUM_METRICS];
- 	u32 key = bpf_get_smp_processor_id();
- 	u32 i;
- 
- 	/* look up before reading, to reduce error */
--	for (i = 0; i < num_metric && i < MAX_NUM_MATRICS; i++) {
-+	for (i = 0; i < num_metric && i < MAX_NUM_METRICS; i++) {
- 		u32 flag = i;
- 
- 		ptrs[i] = bpf_map_lookup_elem(&fentry_readings, &flag);
-@@ -58,7 +58,7 @@ int BPF_PROG(fentry_XXX)
- 			return 0;
- 	}
- 
--	for (i = 0; i < num_metric && i < MAX_NUM_MATRICS; i++) {
-+	for (i = 0; i < num_metric && i < MAX_NUM_METRICS; i++) {
- 		struct bpf_perf_event_value___local reading;
- 		int err;
- 
-@@ -99,14 +99,14 @@ fexit_update_maps(u32 id, struct bpf_perf_event_value___local *after)
- SEC("fexit/XXX")
- int BPF_PROG(fexit_XXX)
- {
--	struct bpf_perf_event_value___local readings[MAX_NUM_MATRICS];
-+	struct bpf_perf_event_value___local readings[MAX_NUM_METRICS];
- 	u32 cpu = bpf_get_smp_processor_id();
- 	u32 i, zero = 0;
- 	int err;
- 	u64 *count;
- 
- 	/* read all events before updating the maps, to reduce error */
--	for (i = 0; i < num_metric && i < MAX_NUM_MATRICS; i++) {
-+	for (i = 0; i < num_metric && i < MAX_NUM_METRICS; i++) {
- 		err = bpf_perf_event_read_value(&events, cpu + i * num_cpu,
- 						(void *)(readings + i),
- 						sizeof(*readings));
-@@ -116,7 +116,7 @@ int BPF_PROG(fexit_XXX)
- 	count = bpf_map_lookup_elem(&counts, &zero);
- 	if (count) {
- 		*count += 1;
--		for (i = 0; i < num_metric && i < MAX_NUM_MATRICS; i++)
-+		for (i = 0; i < num_metric && i < MAX_NUM_METRICS; i++)
- 			fexit_update_maps(i, &readings[i]);
- 	}
- 	return 0;
--- 
-2.39.3 (Apple Git-146)
+On Sat, Jun 01, 2024 at 05:00:29PM +0200, Christophe JAILLET wrote:
+> 'struct power_supply_maintenance_charge_table' is not modified in this
+> driver.
+>=20
+> Constifying this structure moves some data to a read-only section, so
+> increase overall security.
+>=20
+> In order to do it, some code also needs to be adjusted to this new const
+> qualifier.
+>=20
+> On a x86_64, with allmodconfig:
+> Before:
+> =3D=3D=3D=3D=3D=3D
+> $ size drivers/power/supply/samsung-sdi-battery.o
+>    text	   data	    bss	    dec	    hex	filename
+>    4055	   4584	      0	   8639	   21bf	drivers/power/supply/samsung-sdi-=
+battery.o
+>=20
+> After:
+> =3D=3D=3D=3D=3D
+> $ size drivers/power/supply/samsung-sdi-battery.o
+>    text	   data	    bss	    dec	    hex	filename
+>    4087	   4552	      0	   8639	   21bf	drivers/power/supply/samsung-sdi-=
+battery.o
+>=20
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> Compile tested-only
+> ---
 
+Looks like that compile testing did not include ab8500_chargalg :)
+Fixing the error reported by the Intel bot should be trivial (i.e.
+add another const). When you send a new version, please also Cc
+Linus Walleij <linus.walleij@linaro.org>.
+
+Thanks for your patches and greetings,
+
+-- Sebastian
+
+--3s5fgqs6cwwgl5ak
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmZc+VMACgkQ2O7X88g7
++pqjYhAAhWSnuCwUT8O+ov/tnAB82dz8t+GhKdxleL0ha+zqLdnA5j21cbUVOULS
+TRbokpnIOF5CHcoOYxsWCrKwM3vZvQ9ptLNCtCxe4+c7S13gfahv5UDYNzCyL2dF
+Z+9Ta5Lf2okzv/qsw+FO4uAcVhrUz2PpZ72BDsWBYWqWlHjd/vCGrTZ5kjwknHIz
+tbC2ql/YVQPcPau9ZAM5aOjeiDQqc+QL8e9D8aGAGokoWwx1LqW1AO7H+xUEb8XX
+NM7v+pOercZXQdC4hoMHwFdkyotJYRAZQ4TdRtfMC9Itt83dPzERoMKirQWtDsIG
+FuXfuQN4fAQH6S2vix1gkoaQjL3pHiVmay/ujUcLYA/iYVvC2u3nCwqcig/KDHFT
+3zaLdrs7L3WVeLlMVVYxuJ9JPzR2HEk+cBQrkn3ijf82VI+JzpdnABpAN2eydEuH
+uzOTZZXHDRoRL6rqLHEa+rFWY8Do3PiaHGWZSiWyCt1BahgDGd0jT3ElJ2IAJr8T
+7YXNxqGB6UujJGiO6CEiY96u0cQMeAuDx4mtxSgihIiAOyiHD3nwk3jDCeXIqfsT
+bHKdnCJg0IjgQE8l3F7ew69iZPT7vHp9vxeED4boWcCeqkCD4ARZF1jiNsLT7p8Q
+KNhOHFVm93cOmENyRPKoRDFwThz+ZA5G9v4EECP9Bo0ayvcyPvA=
+=z3Sd
+-----END PGP SIGNATURE-----
+
+--3s5fgqs6cwwgl5ak--
 
