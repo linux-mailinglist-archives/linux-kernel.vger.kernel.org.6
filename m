@@ -1,85 +1,80 @@
-Return-Path: <linux-kernel+bounces-198060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C378A8D72EF
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 02:45:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37F618D72F1
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 02:49:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4FF71C209E9
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 00:45:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7A25B211A2
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 00:49:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0AE4EC7;
-	Sun,  2 Jun 2024 00:45:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C788E1C17;
+	Sun,  2 Jun 2024 00:48:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b8B/HwKw"
-Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="kkTBybNl"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F7A47FB
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Jun 2024 00:45:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C2E8803
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Jun 2024 00:48:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717289124; cv=none; b=TCI4+VnKlZq8dGHpsPkswLL6L6HRo8/qnZDL5dADhhv8Z6efefMUKSIzeTV7BLNDtBVcxRkTy6mYfgO18GG9n8+Nz2pMPLiF1oD4x4iou/pZDEC1ZiVu1S00kTip+7LcZ4kuQlq/ffFPXcXMRaozMtqRSyzcGTUbc21x8f8ENCw=
+	t=1717289334; cv=none; b=EQ7uAbqR7VJQQAXFc3e76gPqxNFXqeVN43Yp5TaQvobQNBvDZ4jPbgYLkqzhelgFfFoJKaLB/oIyhzlkDov/WmbT4rHs8efnK3IwfbIk7Ox0olyZeCBBEDDGf0I/5h4k6LO2K7JHQbSDNqaqVP/xtF0I5n4xBHhgkgssBSTB4DU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717289124; c=relaxed/simple;
-	bh=yrwRMRjKMXjWPeaY75V1F17sHboGD5oEvhOLg9yUDBA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RehrBBgcy7XUJNGrPRmUrIiBkV5wGS1+ADB/Emwi71cTCrxmuMRDd6MXB+XgBpD/KvENHK+sRee0xnKq2sNEywApdPM1ctIWokbryYk03zyhnS00r2eM1d+J/dCgGhagpHNiQw4ZbE8/8zaOxHpq3MC7XAei5LDh+dMPv8bm6cI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b8B/HwKw; arc=none smtp.client-ip=209.85.161.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-5b9f9e7176eso1522107eaf.2
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Jun 2024 17:45:22 -0700 (PDT)
+	s=arc-20240116; t=1717289334; c=relaxed/simple;
+	bh=skOTCWiBMUfrNgI6qG58lDhMbfiUCYWh4Bm0Ml6LB0Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dxTQncVVs1HWFe7WNXa5pB2cwVmlt+QuQcdgCDLNm/s73uIIDvkxo1R6OWDPyIkKjuW5jAhls4Q+kALCd+klMkOSvqVmt/MG0FZwiVbp81QwGDH7GBActW+iWGEkVapd5iexoWBsYgm9WTt5+/ZMwNv4U6+jtCe3KMMA/KMzXrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=kkTBybNl; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42120e3911eso29542775e9.0
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Jun 2024 17:48:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717289121; x=1717893921; darn=vger.kernel.org;
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1717289330; x=1717894130; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ny3ufmHx1+bPqTe/RqTA9t4s0xhOCgE7MQam6lSXckQ=;
-        b=b8B/HwKwdq7BqDWiFytGhyx4F5SURSuBn0ksV8O7r6K/4A/HRKKM7gwC55dnlZw2LZ
-         cvGBcc6a1oZfVJThw04bGf9QshER/qHq4tVThWWdgd2p0fjow1/7qz6ukzK1qou0J+99
-         APAGGfsVDVqMaWFU715pU9cOyG5AbKgb9KTNOc8aXcXNDOa6G8Vu7YZ7FZne5Ai0ub2N
-         6Bb5F6CyS1Povp4q1ViwsaTDVPgaShNV+5OGbPAVS8EMLsco9XP5yFZsXa+6QSWzp91C
-         TZHAj073GBfo63Loy/3WKQEKUw3OIBJE/MykK5kqy7cExFwJHA2DHvm4P/c7cbB6t6bw
-         TVuw==
+        bh=0pfkDORkKu6jOLuT/dVRcuRsTdgtIlnoR0tgHKA6YVY=;
+        b=kkTBybNlS2F+EP/77m/rfdWPv3+Wn5a0s9vv8aQ6Wejf9zUsSxmWnndXhkaMvEteUt
+         EQBfTBxOCDQ8daT0OJrRi+Nj8aJwRL7GJweT4LvKj6jMl0xv4o2i8aXXlNtrBd2HjxM2
+         DmSLkWRqY0uW9XMceL7FMAbamt0eQPzb1HIYQJXD7r07UNPZcomyR0OvI1WjyZmPQb7K
+         WgrX9Sp5MRs0c2E+dOoERk7GypierK0Zn68HFdXrO9Z0OYXGQSAE9zMTldoctQZ5sXtt
+         UWtaNx0xnZ4I/W1gUujEcrn0s9M9A4+4CTcubCKdmfLqg65CSiFgiJ4INVzJbrAQE0nO
+         KhIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717289121; x=1717893921;
+        d=1e100.net; s=20230601; t=1717289330; x=1717894130;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ny3ufmHx1+bPqTe/RqTA9t4s0xhOCgE7MQam6lSXckQ=;
-        b=tgQsJmEAZxHIGY65Eq+1YyIWAZdI4eDPZcWOD4oLN1/g/NfZLoRccBNVsqH/EHCHcp
-         tTI+irfd+iINLMO5M9WpiQa0Uy1xv9w5Y6zm3PHHQ4a8MDGddGPMKC+mMGVkLI3wcFqU
-         NKThpXdsa9xQmIBkFKOCIOhshmMFl3u3MZXmBRqGUv6K2sd1jVn39Y0DDywcOkdpml6/
-         /l0EpBeYBmuSN2KpzMlPjhZBANaI1ULsEZnW0dCGqUCWZdUR8wyJpyvLmxhww7U/Jdwb
-         LQ3oIHrXwgoUJ5VF9yLbfXXh26z8rxVLz7ig2KV1bBKSQmf70VGUfX2RYl3tEfiFsnJw
-         1FYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV+WCzd0QEAg3I2Mtd9Sldxh2o+ALonW0sOJA4ERfVzGC33ruluRBV8aQKUECjR3oo6rk98LL+smyMK7uzVu1StnOlQnyFbZXrdXvWU
-X-Gm-Message-State: AOJu0Yxs2kfMjDM6QR5cyozC5Fx9EX3k1PVzbCzS9Sq+Ob+gGUCwqXQr
-	pk+uz3v1gZSRNLce8V0XD+KcMaERslFSZP0v8SLR9VbRvSObCrvf
-X-Google-Smtp-Source: AGHT+IHh1cIQ7orF2jvAI+3PDDIW+Q+O5ga+7R2QrzrMB6FWHK2QCyt/0bb6GGjNhBejybR7NX1Nkg==
-X-Received: by 2002:a05:6358:44e:b0:199:2a86:126b with SMTP id e5c5f4694b2df-19b48d7cf3cmr578625155d.8.1717289121340;
-        Sat, 01 Jun 2024 17:45:21 -0700 (PDT)
-Received: from barry-desktop.hub ([2407:7000:8942:5500:aaa1:59ff:fe57:eb97])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c1a9ae60b8sm5308820a91.30.2024.06.01.17.45.16
+        bh=0pfkDORkKu6jOLuT/dVRcuRsTdgtIlnoR0tgHKA6YVY=;
+        b=VvOfSORLANo3DWnxlnGEAbB6uPLsdnHu6Bvn3UI3OHhw7VKpQxCwTn7XaOQ/bKT5DY
+         dho9PebX0xhj/Owg6iQ2bOb7YpE4+h+7chnm6zutoh6bXuy0J6iN4TSkjem1er+WUlf8
+         I/LcH8BGUPEJWeTFrfQdLwqb81eOpEBf3hkjYrt2NBT3qfAZmFFPLEaqXsxh3oY7KZbJ
+         pj3KASSh2pOxvszj6wNB9gVyG4m+Vb2meniUURfOr0i3wTtY1nUdopUQhWp10YuBoJEq
+         dlYcShGyty8tUehObqp6s1wWeCcfh5vwlrGmEkKUo0YsjSLYoYT4LJ8j5VxJM50aA91e
+         moRA==
+X-Forwarded-Encrypted: i=1; AJvYcCWxEaQkiBUMH5oeGC1MBpTJGsGEDq7qSw8JklGm6kgb6UmekIXE0jg4XnkTH7EAxMGX90CZe/g/DmZh/wbT/TGVzlarVNroCWOvBjYR
+X-Gm-Message-State: AOJu0YzT4l1pBzchwNkFvOWAfQRke2M9ntDWNVr+Ss2m6p6Z0uM04c4R
+	KC8+3qT4gO/oaeHgt/d7GcEIZBLOqVqt4g/i+kKzGWJ/LcyrCsbwTPvrBYzXZGU=
+X-Google-Smtp-Source: AGHT+IG79CWnJbldIODO5br9IMw9VNhoYy/YZNA0SJFYF5/X35KGpMHC0WV8Yb69QFDB+3kmZ7T6UA==
+X-Received: by 2002:a05:600c:34d2:b0:420:177f:c2a6 with SMTP id 5b1f17b1804b1-4212e049938mr52672555e9.10.1717289330220;
+        Sat, 01 Jun 2024 17:48:50 -0700 (PDT)
+Received: from fedora.fritz.box (aftr-82-135-80-96.dynamic.mnet-online.de. [82.135.80.96])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35e56669a23sm67304f8f.83.2024.06.01.17.48.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 01 Jun 2024 17:45:20 -0700 (PDT)
-From: Barry Song <21cnbao@gmail.com>
-To: david@redhat.com,
-	akpm@linux-foundation.org,
-	linux-mm@kvack.org
-Cc: chrisl@kernel.org,
-	kasong@tencent.com,
+        Sat, 01 Jun 2024 17:48:49 -0700 (PDT)
+From: Thorsten Blum <thorsten.blum@toblux.com>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>
+Cc: linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	minchan@kernel.org,
-	ryan.roberts@arm.com,
-	surenb@google.com,
-	v-songbaohua@oppo.com,
-	willy@infradead.org
-Subject: [PATCH v2] mm: swap: reuse exclusive folio directly instead of wp page faults
-Date: Sun,  2 Jun 2024 12:45:02 +1200
-Message-Id: <20240602004502.26895-1-21cnbao@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	Thorsten Blum <thorsten.blum@toblux.com>
+Subject: [PATCH] readdir: Add missing quote in macro comment
+Date: Sun,  2 Jun 2024 02:47:30 +0200
+Message-ID: <20240602004729.229634-2-thorsten.blum@toblux.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,130 +83,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Barry Song <v-songbaohua@oppo.com>
+Add a missing double quote in the unsafe_copy_dirent_name() macro
+comment.
 
-After swapping out, we perform a swap-in operation. If we first read
-and then write, we encounter a major fault in do_swap_page for reading,
-along with additional minor faults in do_wp_page for writing. However,
-the latter appears to be unnecessary and inefficient. Instead, we can
-directly reuse in do_swap_page and completely eliminate the need for
-do_wp_page.
-
-This patch achieves that optimization specifically for exclusive folios.
-The following microbenchmark demonstrates the significant reduction in
-minor faults.
-
- #define DATA_SIZE (2UL * 1024 * 1024)
- #define PAGE_SIZE (4UL * 1024)
-
- static void *read_write_data(char *addr)
- {
-         char tmp;
-
-         for (int i = 0; i < DATA_SIZE; i += PAGE_SIZE) {
-                 tmp = *(volatile char *)(addr + i);
-                 *(volatile char *)(addr + i) = tmp;
-         }
- }
-
- int main(int argc, char **argv)
- {
-         struct rusage ru;
-
-         char *addr = mmap(NULL, DATA_SIZE, PROT_READ | PROT_WRITE,
-                         MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
-         memset(addr, 0x11, DATA_SIZE);
-
-         do {
-                 long old_ru_minflt, old_ru_majflt;
-                 long new_ru_minflt, new_ru_majflt;
-
-                 madvise(addr, DATA_SIZE, MADV_PAGEOUT);
-
-                 getrusage(RUSAGE_SELF, &ru);
-                 old_ru_minflt = ru.ru_minflt;
-                 old_ru_majflt = ru.ru_majflt;
-
-                 read_write_data(addr);
-                 getrusage(RUSAGE_SELF, &ru);
-                 new_ru_minflt = ru.ru_minflt;
-                 new_ru_majflt = ru.ru_majflt;
-
-                 printf("minor faults:%ld major faults:%ld\n",
-                         new_ru_minflt - old_ru_minflt,
-                         new_ru_majflt - old_ru_majflt);
-         } while(0);
-
-         return 0;
- }
-
-w/o patch,
-/ # ~/a.out
-minor faults:512 major faults:512
-
-w/ patch,
-/ # ~/a.out
-minor faults:0 major faults:512
-
-Minor faults decrease to 0!
-
-Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
 ---
- -v2:
- * don't set the dirty flag for read fault, per David;
- * make write-protect of uffd_wp clear and remove confusion(
-   it used to be "wrprotected->writable->wrprotected"), per
-   David;
- Thank you for reviewing, David.
+ fs/readdir.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- -v1:
- https://lore.kernel.org/linux-mm/20240531104819.140218-1-21cnbao@gmail.com/
-
- mm/memory.c | 18 +++++++++++-------
- 1 file changed, 11 insertions(+), 7 deletions(-)
-
-diff --git a/mm/memory.c b/mm/memory.c
-index eef4e482c0c2..9696c7397b85 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -4316,6 +4316,10 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
- 	add_mm_counter(vma->vm_mm, MM_ANONPAGES, nr_pages);
- 	add_mm_counter(vma->vm_mm, MM_SWAPENTS, -nr_pages);
- 	pte = mk_pte(page, vma->vm_page_prot);
-+	if (pte_swp_soft_dirty(vmf->orig_pte))
-+		pte = pte_mksoft_dirty(pte);
-+	if (pte_swp_uffd_wp(vmf->orig_pte))
-+		pte = pte_mkuffd_wp(pte);
+diff --git a/fs/readdir.c b/fs/readdir.c
+index 278bc0254732..5045e32f1cb6 100644
+--- a/fs/readdir.c
++++ b/fs/readdir.c
+@@ -72,7 +72,7 @@ int wrap_directory_iterator(struct file *file,
+ EXPORT_SYMBOL(wrap_directory_iterator);
  
- 	/*
- 	 * Same logic as in do_wp_page(); however, optimize for pages that are
-@@ -4325,18 +4329,18 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
- 	 */
- 	if (!folio_test_ksm(folio) &&
- 	    (exclusive || folio_ref_count(folio) == 1)) {
--		if (vmf->flags & FAULT_FLAG_WRITE) {
--			pte = maybe_mkwrite(pte_mkdirty(pte), vma);
--			vmf->flags &= ~FAULT_FLAG_WRITE;
-+		if ((vma->vm_flags & VM_WRITE) && !userfaultfd_pte_wp(vma, pte) &&
-+		    !vma_soft_dirty_enabled(vma)) {
-+			pte = pte_mkwrite(pte, vma);
-+			if (vmf->flags & FAULT_FLAG_WRITE) {
-+				pte = pte_mkdirty(pte);
-+				vmf->flags &= ~FAULT_FLAG_WRITE;
-+			}
- 		}
- 		rmap_flags |= RMAP_EXCLUSIVE;
- 	}
- 	folio_ref_add(folio, nr_pages - 1);
- 	flush_icache_pages(vma, page, nr_pages);
--	if (pte_swp_soft_dirty(vmf->orig_pte))
--		pte = pte_mksoft_dirty(pte);
--	if (pte_swp_uffd_wp(vmf->orig_pte))
--		pte = pte_mkuffd_wp(pte);
- 	vmf->orig_pte = pte_advance_pfn(pte, page_idx);
- 
- 	/* ksm created a completely new copy */
+ /*
+- * Note the "unsafe_put_user() semantics: we goto a
++ * Note the "unsafe_put_user()" semantics: we goto a
+  * label for errors.
+  */
+ #define unsafe_copy_dirent_name(_dst, _src, _len, label) do {	\
 -- 
-2.34.1
+2.45.1
 
 
