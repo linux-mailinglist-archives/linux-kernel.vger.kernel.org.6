@@ -1,234 +1,279 @@
-Return-Path: <linux-kernel+bounces-198351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3738F8D7713
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 18:08:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D11D28D7715
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 18:08:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7D3D1F2153B
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 16:08:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2CF21B20E99
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 16:08:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02ED94D5A5;
-	Sun,  2 Jun 2024 16:07:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B8344F218;
+	Sun,  2 Jun 2024 16:08:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="CRudVvgc"
-Received: from xry111.site (xry111.site [89.208.246.23])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jacFGZFw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64C894F883;
-	Sun,  2 Jun 2024 16:07:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34B893BB4D;
+	Sun,  2 Jun 2024 16:08:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717344473; cv=none; b=SXYcPg8wMhxW2sQtCdUs5Pb2xmOGT7plVaDgjb9G/zmarfAlSIyNa+ol7Blfzwulin7S466Gq2QAmajRJOCajggJohApwpQpGyKey8g1kPURioUmN9cV62UoIP0UQUuT8h4MxBcbDmNsKH7hWtXF/CJ9EfhmcYCQLjulEdDX/Wc=
+	t=1717344523; cv=none; b=SvLffcr0exvrC3K33IRA7HUDLmItODZjgpuC2L5TeW7rqgrjDWPCWrUV7mAN4//gx9jlSqSqC+W+wXHo1uGzSjO8HHbmJXfb6Wk8eAixvdgF8PYgvkqeTbfO8fIvS4rnhTN9dg6HiopaBAo53+s7KrCIgh4Nv5nyAu9rspFWU+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717344473; c=relaxed/simple;
-	bh=Ju0crAvUpQcXbkYu+TP9kmXKjP2IXGCY5n2DhpwUb1k=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=HK0aEcrT8JtPZvabPvLM7m1bfT+RV7SFFoRyqtylUbGr03u8M5/FQAnHBJEEuygVicA3jq/n/z5Ow6SK6IPPDgsY3snobcrVz2lZ0KuE3j9TD/sPcnNkqK64dIm09ZjsEK3PQt0yoEGfyMlx2jNj7LmdTy4ZlkoNNAL+z6boMMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=CRudVvgc; arc=none smtp.client-ip=89.208.246.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xry111.site;
-	s=default; t=1717344470;
-	bh=Ju0crAvUpQcXbkYu+TP9kmXKjP2IXGCY5n2DhpwUb1k=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=CRudVvgcHf332tCswXpVi85XP2ZZ1F5GyMm3DG3CElwam8NF28k4hEonEdQBnX4v/
-	 dMHaO3uxjnxsp6qSk17hsIjai9pm8Kh4dAs6umnVK8KJwpiJt0/WpcfnNmrjuLHSUU
-	 UE2d/oq6vtZpIW24i7FRdx98MglZp6wxyexPd8FM=
-Received: from [127.0.0.1] (unknown [IPv6:2001:470:683e::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-384) server-digest SHA384)
-	(Client did not present a certificate)
-	(Authenticated sender: xry111@xry111.site)
-	by xry111.site (Postfix) with ESMTPSA id 6485A66C4C;
-	Sun,  2 Jun 2024 12:07:49 -0400 (EDT)
-Message-ID: <f382e06635b3b52841d1e0c11dcf639d225edae0.camel@xry111.site>
-Subject: Re: [PATCH v1 2/6] cpufreq: intel_pstate: Do not update
- global.turbo_disabled after initialization
-From: Xi Ruoyao <xry111@xry111.site>
-To: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>, "Rafael J.
- Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Date: Mon, 03 Jun 2024 00:07:47 +0800
-In-Reply-To: <30a30c5107a47a2cc3fd39306728f70dd649d7fe.camel@linux.intel.com>
-References: <13494237.uLZWGnKmhe@kreacher> <8366982.T7Z3S40VBb@kreacher>
-	 <bf3ebf1571a4788e97daf861eb493c12d42639a3.camel@xry111.site>
-	 <6d5ee74605bd9574baa5ed111cb54e959414437a.camel@linux.intel.com>
-	 <6ebadacd8aaa307a5766cdb1b4d4a5c69acd87ac.camel@xry111.site>
-	 <30a30c5107a47a2cc3fd39306728f70dd649d7fe.camel@linux.intel.com>
-Content-Type: multipart/mixed; boundary="=-0tomkQd8cEbg33kYGmlc"
-User-Agent: Evolution 3.52.2 
+	s=arc-20240116; t=1717344523; c=relaxed/simple;
+	bh=0Y7dMVcRYVdZ5srU7zS2dyX2lFZDqcHAZbsTyEjY7VI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AtbG2LV8M8XZQcHlEpjRl1n/3p7nCONvfn5LAesTolVinxwuRU0Xjz5pePlDvIL/GSVFW57uUA95aY3ilcRT2fW4ZNjBgKAKkyDiOIOiEODHsuqfSlU/CoIjrwzzOAZM5bzsp2uqFUsUF8fm1PhwpTdHInnoKcX7/olj5ZMNrvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jacFGZFw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49822C2BBFC;
+	Sun,  2 Jun 2024 16:08:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717344522;
+	bh=0Y7dMVcRYVdZ5srU7zS2dyX2lFZDqcHAZbsTyEjY7VI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=jacFGZFwn2H6Q6zVC8vx6oScb0ruyuax5SH74pNSV3ezHz7mQHy1r+3Ly8EpeKjW2
+	 CYdVzohbZ1VVpmzTEY3ikE3qkVOHjhwATKOK70lOjo7l8BhMlGNDjvTnwpvHdorGY8
+	 KvlgBne77aGel10SxyeNn8bnw7Wknn2u5RG3BGNjhKQRkDQ9Kym0ay5twDFLYU51CB
+	 DydeRGeH9UZvbtoOpW5MKLfJd1YjRwzeIzIJgl0BF/kCfR5+/EFEs3ZhxonhNoyP1V
+	 z5Qb4eExr9F2LPrGLsRAQpex4B00aQMxnLceM3/2BdGQGSoPxVvx058Y4oFaj+r1h9
+	 nP7OBP4fNaKiw==
+Date: Sun, 2 Jun 2024 17:08:30 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Denis Benato <benato.denis96@gmail.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@Huawei.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Jagath Jog J <jagathjog1996@gmail.com>, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5p?=
+ =?UTF-8?B?Zw==?= <u.kleine-koenig@pengutronix.de>, "Luke D . Jones"
+ <luke@ljones.dev>, Jonathan LoBue <jlobue10@gmail.com>
+Subject: Re: iio: iio-trig-hrtimer bug on suspend/resume when used with
+ bmi160 and bmi323
+Message-ID: <20240602170830.34d73c96@jic23-huawei>
+In-Reply-To: <c11328ef-b61e-489f-9016-e342c749c000@gmail.com>
+References: <31d7f7aa-e834-4fd0-a66a-e0ff528425dc@gmail.com>
+	<20240113174351.47a20239@jic23-huawei>
+	<053a5c27-68fd-41b1-8b40-783dfb83d488@gmail.com>
+	<20240115093703.00001f64@Huawei.com>
+	<c11328ef-b61e-489f-9016-e342c749c000@gmail.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
---=-0tomkQd8cEbg33kYGmlc
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On Thu, 30 May 2024 16:07:22 +0200
+Denis Benato <benato.denis96@gmail.com> wrote:
 
-On Sun, 2024-06-02 at 06:40 -0700, srinivas pandruvada wrote:
+> On 1/15/24 10:37, Jonathan Cameron wrote:
+> > On Sun, 14 Jan 2024 21:04:12 +0100
+> > Denis Benato <benato.denis96@gmail.com> wrote:
+> >   
+> >> On 1/13/24 18:46, Jonathan Cameron wrote:  
+> >>> On Wed, 10 Jan 2024 23:35:01 +0100
+> >>> Denis Benato <benato.denis96@gmail.com> wrote:
+> >>>     
+> >>>> Hello,
+> >>>>
+> >>>> With this mail I am submitting bug report that is probably related to
+> >>>> iio-trig-hrtimer but there is also the possibility for it to be
+> >>>> specific to bmi160 and bmi323.
+> >>>>
+> >>>> The described problem have been reproduced on my handheld PC (Asus
+> >>>> RC71L) and in another handheld PC with two different gyroscope
+> >>>> drivers: bmi323 (backported by me on v6.7, on RC71L) and bmi160.
+> >>>>
+> >>>> My target hardware (RC71L that yeld to this discovery) has a bmi323
+> >>>> chip that does not have any interrupt pins reaching the CPU, yet I
+> >>>> need to fetch periodically data from said device, therefore I used
+> >>>> iio-trig-hrtimer: created a trigger, set the device and trigger
+> >>>> sampling frequencies, bound the trigger to the device and enabled
+> >>>> buffer: data is being read and available over /dev/iio:device0.
+> >>>>
+> >>>> While in this state if I suspend my handheld I receive (from dmesg)
+> >>>> the warning reported below and at resume data is not coming out of
+> >>>> the iio device and the hrtimer appears to not be working. If I create
+> >>>> a new trigger and bind the new trigger to said iio device and
+> >>>> re-enable buffer data does come out of /dev/iio:device0 once more,
+> >>>> until the next sleep.
+> >>>>
+> >>>> Since this is important to me I have taken the time to look at both
+> >>>> drivers and iio-trig-hrtimer and I have identified three possible
+> >>>> reasons:
+> >>>>
+> >>>> 1) iio-trig-hrtimer won't work after suspend regardless of how it is
+> >>>> used (this is what I believe is the cause)    
+> >>> me too.    
+> >> who and how should investigate this issue? Would putting a kprintf in the hrtimer callback be enough to check?  
+> > The warning you have pretty much points at this being the problem, but sure
+> > you could add a print there to be absolutely sure.
+> >   
+> >>
+> >>
+> >> Just to make sure I understood correctly: is this a separate issue from the warning I receive or are those linked?  
+> > 
+> > I think it's all one issue.  
+> Hello,
+> 
+> Sorry for the delay, I was able to find some time just recently.
+> 
+> Sadly I don't think anymore this is just one issue:
+> 
+> I have setup a proof of concept that at suspend sets a boolean to true and at resume sets the same boolean to false, and on trigger_handler returns IRQ_NONE if the device is sleeping (everything guarded by an additional mutex) and it solved the warning: no more regmap access are being performed after the device is put to sleep, but unfortunately the acquisition does not automatically resume after waking up the device.
+> 
+> How shall we proceed?
 
-/* snip */
+It's been a while (and a busy day of reviewing) so I'm struggling
+a bit with the best away forwards.
 
-> This requires user action,
-> Please add a
-> pr_info() to
-> https://elixir.bootlin.com/linux/v6.10-rc1/C/ident/acpi_processor_notify
->=20
-> Check if you got any message
+A hackyish approach might be to mask the interrupt at device side
+(fake interrupt used as part of the tree from a trigger to a pollfunc).
+A tidy wrapped up version of this might be the best route forwards
+though it won't currently stop the hrtimer merrily poking interrupts
+at no one
 
-With
+As a hack, could you try having your suspend call disable_irq() on
+the irq found in iio_dev->poll_func->irq and reenable it in resume?
+That might be sufficient.
 
-diff --git a/drivers/acpi/processor_driver.c b/drivers/acpi/processor_drive=
-r.c
-index 67db60eda370..4585eb6566c8 100644
---- a/drivers/acpi/processor_driver.c
-+++ b/drivers/acpi/processor_driver.c
-@@ -57,6 +57,8 @@ static void acpi_processor_notify(acpi_handle handle, u32=
- event, void *data)
- 	struct acpi_processor *pr;
- 	int saved;
-=20
-+	pr_info("acpi_processor_notify: %d\n", event);
-+
- 	if (device->handle !=3D handle)
- 		return;
+Check poll_func goes somewhere first though and that irq is > 0
+I think that will call iio_trig_subirq_mask() which should block
+any further interrupts until it's unmasked again.
 
+We'll need to ensure this doesn't race with pollfunc going away though
+which will make it more complex, but the above test should tell us
+if there is a fairly smooth path to making this work.
 
-I get nothing.
+I'll try and find time to do some testing myself, but it won't be
+for a few weeks :(
 
-> Also what is=20
-> cat /proc/cpuinfo
-> and
-> cpuid -1
+Thanks,
 
-Attached.
-
-
---=20
-Xi Ruoyao <xry111@xry111.site>
-School of Aerospace Science and Technology, Xidian University
-
---=-0tomkQd8cEbg33kYGmlc
-Content-Type: application/gzip; name="cpuid.gz"
-Content-Disposition: attachment; filename="cpuid.gz"
-Content-Transfer-Encoding: base64
-
-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
-7Nq/qTykNvEC6UR7lZ1zXanoLONnQ7lajHIxysUoF6NcjHIxysUoF6NcjHIxysUoF6NcjHIxysUo
-F6NcjHIxysUoF6NcjHIxysUoV7XwF0S5Wgcol8EoF6NcjHIxysUoF6NcjHJlP0a5GOV6jekZ5WKU
-i1GuH4FytX42lKvDKBejXIxyMcrFKBejXIxyMcrFKBejXIxyMcrFKBejXIxyMcrFKBejXIxyMcrF
-KBejXIxyVQt/QZSrc4BytRjlYpSLUS5GuRjlYpSLUa7sxygXo1yvMT2jXIxyMcr1I1Cu9s+GcnUZ
-5WKUi1EuRrkY5WKUi1EuRrkY5WKUi1EuRrkY5WKUi1EuRrkY5WKUi1EuRrkY5WKUi1GuauEviHJ1
-D1CuNqNcjHIxysUoF6NcjHIxypX9GOVilOs1pmeUi1EuRrl+BMrV+dlQLoNRLka5GOVilItRLka5
-GOVilItRLka5GOVilItRLka5GOVilItRLka5GOVilItRLka5GOWqFv6CKJdxgHI1C5TLYJSLUS5G
-uRjlYpSLUS5GuRjlYpTrL5+eUS5GuRjl+hEo19nPhnK1GeVilItRLka5GOVilItRLka5GOVilItR
-Lka5GOVilItRLka5GOVilItRLka5GOVilItRrmrhL4hytQ9QLoNRLka5GOVilItRLka5GOXKfoxy
-Mcr1GtMzysUoF6NcPwLl6v5sKNcZo1yMcjHKxSgXo1yMcjHKxSgXo1yMcjHKxSgXo1yMcjHKxSgX
-o1yMcjHKxSgXo1yMcjHKVS38BVGuswOUq8UoF6NcjHIxysUoF6NcjHJlP0a5GOV6jekZ5WKUi1Gu
-H4FyvfvZUK53jHIxysUoF6NcjHIxysUoF6NcjHIxysUoF6NcjHIxysUoF6NcjHIxysUoF6NcjHIx
-ysUoV7XwF0S53h2gXG1GuRjlYpSLUS5GuRjlYpQr+zHKxSjXa0zPKBejXIxyvTbK9X+seU34WC4B
-AA==
+Jonathan
 
 
---=-0tomkQd8cEbg33kYGmlc
-Content-Type: application/gzip; name="cpuinfo.gz"
-Content-Disposition: attachment; filename="cpuinfo.gz"
-Content-Transfer-Encoding: base64
+> >   
+> >>>     
+> >>>> 2) iio-trig-hrtimer is stopped by the -ESHTDOWN returned by the
+> >>>> function printing "Transfer while suspended", however that stack
+> >>>> trace does not include function calls related to iio-trig-hrtimer and
+> >>>> this seems less plausible 3) bmi160 and bmi323 appears to be similar
+> >>>> and maybe are sharing a common bug with suspend (this is also why I
+> >>>> have maintainers of those drivers in the recipient list)
+> >>>>
+> >>>> Thanks for your time, patience and understanding,    
+> >>>
+> >>> Hi Denis,
+> >>>
+> >>> I suspect this is the legacy of the platform I used to test the hrtimer
+> >>> and similar triggers on never had working suspend and resume (we ripped
+> >>> support for that board out of the kernel a while back now...)
+> >>> Hence those paths were never tested by me and others may not have cared
+> >>> about this particular case.
+> >>>
+> >>> Anyhow, so I think what is going on is fairly simple.
+> >>>
+> >>> There is no way for a driver to indicate to a trigger provided by a separate
+> >>> module / hardware device that it should stop triggering data capture.
+> >>> The driver in question doesn't block data capture when suspended, which
+> >>> would be easy enough to add but doesn't feel like the right solution.
+> >>>
+> >>> So my initial thought is that we should add suspend and resume callbacks to
+> >>> iio_trigger_ops and call them manually from iio device drivers in their
+> >>> suspend and resume callbacks.  These would simply pause whatever the
+> >>> trigger source was so that no attempts are made to trigger the use of
+> >>> the device when it is suspended.
+> >>>
+> >>> It gets a little messy though as triggers can be shared between
+> >>> multiple devices so we'd need to reference count suspend and resume
+> >>> for the trigger to make sure we only resume once all consumers of
+> >>> the trigger have said they are ready to cope with triggers again.
+> >>>
+> >>> As mentioned, the alternative would be to block the triggers at ingress
+> >>> to the bmi323 and bmi160 drivers.  There may be a helpful pm flag that could
+> >>> be used but if not, then setting an is_suspended flag under the data->mutex
+> >>> to avoid races. and reading it in the trigger_handler to decide whether
+> >>> to talk to the device should work.    
+> >> I was thinking of doing this too, but I don't know if adding a mutex to frequently invoked functions is going to introduce some timing problems and so I was waiting for some comments on that matter. If nothing bad is expected I can surely try it.  
+> >>>
+> >>> I'd kind of like the generic solution of actually letting the trigger
+> >>> know, but not sure how much work it would turn out to be.  Either way there
+> >>> are a lot of drivers to fix this problem in as in theory most triggers can
+> >>> be used with most drivers that support buffered data capture.
+> >>> There may also be fun corners where a hardware trigger from one IIO
+> >>> device A is being used by another B and the suspend timing is such that B
+> >>> finishing with the trigger results in A taking an action (in the try_reenable
+> >>> callback) that could result in bus traffic.
+> >>> That one is going to be much more fiddly to handle than the simpler case
+> >>> you have run into.    
+> >> Since more and more handheld PCs are coming and provided many vendors such as
+> >> asus tends to improve what they did built on previous generations I think a
+> >> general solution would be desirable.
+> >>
+> >> Plus there are handheld PCs that does not yet have a driver (bmi270) or are
+> >> using an existing one and it would be very difficult to fix it in every of
+> >> them as of now, in the future I fear it will become almost impossible or 
+> >> extremely time consuming as market expands.  
+> > 
+> > Both solutions require specific calls to be added to every driver that might
+> > encounter this - so most drivers that support triggers other than the ones
+> > they supply.
+> >   
+> >>>
+> >>> Thanks for the detailed bug report btw.   To get it fixed a few
+> >>> questions:
+> >>> 1) Are you happy to test proposed fixes?
+> >>> 2) Do you want to have a go at fixing it yourself? (I'd suggest trying
+> >>>    the fix in the bmi323 driver first rather than looking at the other 
+> >>>    solution)
+> >>>    If we eventually implement the more general version, then a bmi323
+> >>>    additional protection against this problem would not be a problem.
+> >>>
+> >>> Clearly I'd like the answers to be yes to both questions, but up to you!
+> >>>
+> >>> Jonathan
+> >>>
+> >>>     
+> >> Hello Jonathan and thank you kindly for you answer,
+> >>
+> >> I am very interested in the iio ecosystem as in those aforementioned
+> >> handheld PCs the gyroscope plays the role as a mouse so it's a pretty
+> >> important input device.
+> >>
+> >> I am writing to lkml not just as a single developer, but as part of a
+> >>  larger community in this matter: this means we will be able to test
+> >> any solution and in more than just one hardware.
+> >>
+> >> To answers your questions:
+> >> 1) yes, we all will be very happy to
+> >> 2) as I am very busy right now I might be unable to do that immediately,
+> >> but I will surely do it if one general solution cannot be found or is impractical.
+> >>
+> >> As of my limited knowledge the number of drivers now existing that are affected
+> >> are 2, and the number of drivers that will be affected, once the driver is
+> >> written, will be at least 3.  
+> > 
+> > The problem appears to be general unfortunately.
+> > 
+> > I'll have to see if I can fire up something where I can actually test solutions
+> > and I'm afraid I also don't have a lot of time at the moment.
+> > Perhaps I can find time in the next few weeks to hack together a prototype
+> > for one of the drivers you can test.
+> > 
+> > Jonathan
+> >   
+> >>
+> >> Thank you very much for your answer,
+> >> Denis
+> >>  
+> >   
+> 
+> Thank you for you time and patience,
+> Denis
 
-H4sICK2YXGYAA2NwdWluZm8A7ZlLb+M2EMfP1aeY4y7QGtbDsp1T0R52i2IvRe8ERVISG76WpGR5
-P32HkpO2CHIKFjAaHizxPZw/h/NDIuctEyFY/8MD7ItZGG49kRxrn4SZpBG/mShUwdwEPdVSXbGn
-LbTlQv2AxbLZbxUwVIvUUMYxTYV13oc/PsKv1osPf375CPLwU1nW+/1n+BnqXbn/9PlbEaJwTpoh
-zSy0ZLgbXC3tZena1eqXz9+SobqujrtDWxWMslFAkN/SqFN5ruD3Xwo3XoNkVMG6830RZKdw1ZCG
-FAw3kDrWnrRkakhdTUGdZE890sgocYlbW2rq3ZT6riKkIhELEy5Ka25tuJbkoMSMWjxAdSwu7nm4
-omgdKzgPZi2AC3BBQAwMdPDgqADNBLDltBqEIBzo6LFnSD0UmLYzDotpWt0CU72awgg8BqDMSdB6
-gX7BpQIui78KHzBGiBpchy3XgHrgsSzguBPl0IHHucyB0iiACZGaSNJ2qI/4YyNxwvfaGnCiC9Ch
-HS8cGazlYKxTsETrrLLDFas43bp19qYBXeemR/KQPBp7MaT34is4I8ExpSf1lX/F3YvQNoBWZLQe
-eCAMV57RFRHS1pMT6C4E3g3Qa1RhKVu07FAXztAzPJnkbEPK7VXBUq36oVrotbOOmbjugQvKMQYE
-iVILD1QEWAKdBdAZhStbhnp4avD86NgTFIV2GmqOO3de9CKycfON9HRSEYTrgNFIVAWMu/QKoeMg
-Ox/wgZ0h4mutE2FGapjggPsmYaTcXqBXYnFeWi/jFReLMDt0BQuEcujDEDq6hQfW/5pQjE7LMu0V
-DWmMDaxWILxGa2ZeZcDjJDSNOJRVf3ujxJ4HgaYpX3AidbcOuYq5xZBF60xdOlwJryjB2jaGobQj
-JXhgW7273Aqz2qRLE9cCg2UQsZvLrRogOCVRG8seUfcoWIQpiOR7iI946CNuHGMsBbPC+MLQGi8u
-/YixUfbXtUhZJBdpklipinlhfbvHgaRAmo1+2tiMYsCkpQP3OIEN7lHcesi86jT06MScjnz+J/ae
-RphnB0knI1XDc88WPauG6XAwpLj08vZumw7PKfnxNLpK+vmQvNWcMCWox/OPsIpMVMm3a8Woo51E
-fSTmhRTqW2542DzCYBN6TSq3QHUWcyInuLZPR/0cJguxRl2fIia90p3+T1ilizCvMWT7PgiMsXRx
-dOxRi3RHnsNuMpgAo5csWRqmdPfWESj0ADMOcArvklarmZTeSYpOjgkQjz6tn3IL5teim7YsFxyq
-4AXBiHguVmuRYKbAWnd1FPNTuFA3BBDrNXH46GDgmGxGWXR2sHikSZi2qva7E+bqW867Jfu22ZI/
-QduD0cLErZFyju6EdViaXp8BDzbAExR+hOa0tczSx4mqwtkLKq2poYNI6zwUhfsXB8s75mCzr8pd
-fTi8jYPlqxysXnKwyhzMHMwczBzMHHxfHKzumIPV+XTYHc+nt3GwepWDzUsONpmDmYOZg5mDmYPv
-i4P1HXPw3Jx2dXl+GwbrVzHYvsRgmzGYMZgxmDGYMfi+MNjcMQbr9ljumqb+Xp8Hy5ccLDMHMwcz
-BzMHMwffFwcPd8zBZr+vds35+L0+D9YvOVhnDmYOZg5mDmYOvi8OtnfMwep0OO+O7Rv/L/r658HD
-Sw4eMgczBzMHMwczB98XB493zEH8e3C33++/1+fB40sMHjMGMwYzBjMGMwb//xj8G2St3Ok+OAAA
-
-
-
---=-0tomkQd8cEbg33kYGmlc--
 
