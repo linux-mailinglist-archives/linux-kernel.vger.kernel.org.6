@@ -1,125 +1,145 @@
-Return-Path: <linux-kernel+bounces-198368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55ADD8D7734
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 18:44:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45A7D8D7736
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 18:45:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FE4E281A6E
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 16:44:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA0501F214A4
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 16:45:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94DFC548FD;
-	Sun,  2 Jun 2024 16:44:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB8FE548FD;
+	Sun,  2 Jun 2024 16:45:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KWhpsR21"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="eMV20MTy"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D919047A79;
-	Sun,  2 Jun 2024 16:44:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DDCA1DFF8;
+	Sun,  2 Jun 2024 16:45:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717346650; cv=none; b=my/aEj8oWLDpeynhZqsH5JGJexuMXPWZtGBEleNCKRDzqMCOVcdDtWbwYqBOHieO/m1jWYafX1V+zu4m4xuoMeMvNuNhaF9mbryd1SxHVsz7OSDld3YAFaZyGrHmQ20hhiOnCdBQJyhVVo+VubT+zjECAxCeHn2vRlsEn6pbBrQ=
+	t=1717346729; cv=none; b=BiQ1yLUquaEkHoCSAc76icNvS+/YUs2lz8waxHEL0yjV4y9fb56uuyAbVgKabGBV4/0iF8YQL3RdGAdgQbnMqnPPUl4s1ztl/L7pVQaNiIPh34ueefZd8oMSWGbTBd2oR8nb+bsL3DeVRsEe9ko4bsi8a2nLEBBLsDba12+VM+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717346650; c=relaxed/simple;
-	bh=3lRC7NF4U+hNtp0qmNHZHQryjhMfF1jFLTorEqnHhRo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tUldIftPR2fGvvhrspetC+KtHiiesIBCVxX9SG+Go32m4NmC3W8M+Vy96lDGHL0thsjBWJQtSG7MmKQpy7xpeZFGSP+4fHchvBVDWFH6pnQUadavVBgaAudenhG/IXoQHOLdN4idtrkIsmYqVu57cOWW7/nC/gUu7jUs9XUlwvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KWhpsR21; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48FDEC2BBFC;
-	Sun,  2 Jun 2024 16:44:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717346650;
-	bh=3lRC7NF4U+hNtp0qmNHZHQryjhMfF1jFLTorEqnHhRo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KWhpsR21TnMMKRju3JzzUi0U7J6QorSjJP89VTMT6D2Awm9pDrm6R1mfXGC1ETuJV
-	 3ubPdXxZgih3euF2MwrjuhjRb3Vvn2+BA+3Odxi2PW9YxFVY76Rhh3Wmcy3HQLx5td
-	 e5Yfe9GVD9U+owrAOfkaBIAbBPc47mUNb83fN0hF3I80HmMPjptJcF4uuxxmLkBwOv
-	 LAPR+PJB5NQ8FN0I8PmH77BpKN/qpot1bjIKy2HYBgRZKeg7IjG0EuePh5cCJPVnRm
-	 DgYJ8hPll34O/AngN520F1Pkn97/niaO9Lo55YB+cuDAXjbz0X7ARfzQ39JOXsJzb5
-	 lZMC+R505D/ZQ==
-Message-ID: <ff8096f2-4c55-40a4-9d5c-009fd0bdaabe@kernel.org>
-Date: Sun, 2 Jun 2024 18:44:06 +0200
+	s=arc-20240116; t=1717346729; c=relaxed/simple;
+	bh=c5LYpW+xTgQarazi/IQ7/kG9iiaYTqQFdkkLNpW95pw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fQwTWrX4Wfnn1qclyZ2AEZHmB90a+ejt1oiiBRCB/aVtt6NA7yQN70D5TYlbk6fDgB6H72cnFf/o9XjSuCoTKjpt8H5BlDKWvdJepZ16bHxQVGr6kRu4J0qVCoJtVKF0ZNI6fHDFqoCHy75QK3oM6LFN5YGBnd1G02bRNK6mjxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=eMV20MTy; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=E+ueS2eEFa2OpuuO5ZI4AFvsqau7YjoMECLisKyw7Wk=; b=eMV20MTyZ4k3m5ti7s7PxT6V6f
+	E4fWb4/PivFFAQ9A3x9BIRT/NiW9SWEh5zXBmzNLFqXnHZ1saDuqSnJ6E6gOpof8Gxg0GnJRZ8eVz
+	LQw8iHtNIxVqU8W1lOWDpw3k4UM0zh3HNrlVI6cyXXnUkFIamHzBW40HIYhvei8Hkcy4=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sDoKa-00Ge9U-Gf; Sun, 02 Jun 2024 18:45:16 +0200
+Date: Sun, 2 Jun 2024 18:45:16 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Yojana Mallik <y-mallik@ti.com>
+Cc: schnelle@linux.ibm.com, wsa+renesas@sang-engineering.com,
+	diogo.ivo@siemens.com, rdunlap@infradead.org, horms@kernel.org,
+	vigneshr@ti.com, rogerq@ti.com, danishanwar@ti.com,
+	pabeni@redhat.com, kuba@kernel.org, edumazet@google.com,
+	davem@davemloft.net, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, srk@ti.com, rogerq@kernel.org
+Subject: Re: [PATCH net-next v2 2/3] net: ethernet: ti: Register the RPMsg
+ driver as network device
+Message-ID: <4416ada7-399b-4ea0-88b0-32ca432d777b@lunn.ch>
+References: <20240531064006.1223417-1-y-mallik@ti.com>
+ <20240531064006.1223417-3-y-mallik@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: arm: mediatek: Add Bananapi BPI-R3 mini
-To: Chukun Pan <amadeus@jmu.edu.cn>, Matthias Brugger
- <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Rob Herring <robh@kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20240602104021.387713-1-amadeus@jmu.edu.cn>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240602104021.387713-1-amadeus@jmu.edu.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240531064006.1223417-3-y-mallik@ti.com>
 
-On 02/06/2024 12:40, Chukun Pan wrote:
-> Add compatible for Bananapi BPI-R3 mini Router (Filogic 830).
-> 
-> Signed-off-by: Chukun Pan <amadeus@jmu.edu.cn>
-> ---
->  Documentation/devicetree/bindings/arm/mediatek.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
+> +enum icve_rpmsg_type {
+> +	/* Request types */
+> +	ICVE_REQ_SHM_INFO = 0,
+> +	ICVE_REQ_SET_MAC_ADDR,
+> +
+> +	/* Response types */
+> +	ICVE_RESP_SHM_INFO,
+> +	ICVE_RESP_SET_MAC_ADDR,
+> +
+> +	/* Notification types */
+> +	ICVE_NOTIFY_PORT_UP,
+> +	ICVE_NOTIFY_PORT_DOWN,
+> +	ICVE_NOTIFY_PORT_READY,
+> +	ICVE_NOTIFY_REMOTE_READY,
+> +};
+
++struct message_header {
++       u32 src_id;
++       u32 msg_type; /* Do not use enum type, as enum size is compiler dependent */
++} __packed;
 
 
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+Given how you have defined icve_rpmsg_type, what is the point of
+message_header.msg_type?
 
-Best regards,
-Krzysztof
+It seems like this would make more sense:
 
+enum icve_rpmsg_request_type {
+	ICVE_REQ_SHM_INFO = 0,
+	ICVE_REQ_SET_MAC_ADDR,
+}
+
+enum icve_rpmsg_response_type {
+	ICVE_RESP_SHM_INFO,
+	ICVE_RESP_SET_MAC_ADDR,
+}
+enum icve_rpmsg_notify_type {
+	ICVE_NOTIFY_PORT_UP,
+	ICVE_NOTIFY_PORT_DOWN,
+	ICVE_NOTIFY_PORT_READY,
+	ICVE_NOTIFY_REMOTE_READY,
+};
+
+Also, why SET_MAC_ADDR? It would be good to document where the MAC
+address are coming from. And what address this is setting.
+
+In fact, please put all the protocol documentation into a .rst
+file. That will help us discuss the protocol independent of the
+implementation. The protocol is an ABI, so needs to be reviewed well.
+
+> +struct icve_shm_info {
+> +	/* Total shared memory size */
+> +	u32 total_shm_size;
+> +	/* Total number of buffers */
+> +	u32 num_pkt_bufs;
+> +	/* Per buff slot size i.e MTU Size + 4 bytes for magic number + 4 bytes
+> +	 * for Pkt len
+> +	 */
+
+What is your definition of MTU?
+
+enp2s0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc fq_codel state DOWN mode DEFAULT group default qlen 1000
+
+Typically, MTU does not include the Ethernet header or checksum. Is
+that what you mean here?
+
+> +	u32 buff_slot_size;
+> +	/* Base Address for Tx or Rx shared memory */
+> +	u32 base_addr;
+> +} __packed;
+
+What do you mean by address here? Virtual address, physical address,
+DMA address? And whos address is this, you have two CPUs here, with no
+guaranteed the shared memory is mapped to the same address in both
+address spaces.
+
+	Andrew
 
