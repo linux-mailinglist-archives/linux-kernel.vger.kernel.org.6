@@ -1,47 +1,43 @@
-Return-Path: <linux-kernel+bounces-198326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 876488D76C6
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 17:31:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E99748D76D3
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 17:39:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 855041C20E5E
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 15:31:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8869A1F2271D
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 15:39:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFA89502A9;
-	Sun,  2 Jun 2024 15:31:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC3494AEEA;
+	Sun,  2 Jun 2024 15:39:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aTHzgE4h"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=freemail.hu header.i=@freemail.hu header.b="vTjdqiLR"
+Received: from smtp-out.freemail.hu (fmfe35.freemail.hu [46.107.16.240])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBE704DA00;
-	Sun,  2 Jun 2024 15:31:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFD9517736;
+	Sun,  2 Jun 2024 15:39:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.107.16.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717342270; cv=none; b=ump7Uig0rlWF/NXfsOdWiVcHz2L8C7xNfluufBxAwEMSo5C+YEkWVk+DbTfc9ZmeW3t6gmfZ3rDnEUo84SU695Glc51IDspkLND8E1nL36fOrKxZd2YtdoCgfXqYtxbsJ4YROXAPTSo5vIaKsSjjz5kxTA4a9Mw2NHdWwWeP9v4=
+	t=1717342755; cv=none; b=VfUFt+EOWDUPERSOfX4wK4qWKZMn23YWHyyWrvFJP0ZLo79c9XjaghMqufDkPITzWG7Elrd123SKfEfFcpTh6AiSACmxSGKTSuIm9oMyGSF1ynxi/IUt/unBaEVU6GgQ1Zmcz0bXCau/b1rf1ee+53IM0dFXc0Hac4Mo4a875Pw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717342270; c=relaxed/simple;
-	bh=yKlrNeel+W0FBVodTd2JHRtUueeshhcl9m+psrBuhMs=;
+	s=arc-20240116; t=1717342755; c=relaxed/simple;
+	bh=cu1Ss0V90yPLtbBTiY5VNm7dU1DFjdCGGYetsr2pX8M=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MwrIvIYvwDLRrhCb0KYcnfz1nmLwk/kfdgCWmWXod0pCM9JFIJqWqbFbBg6VOL9pjYaeb7BD/KY3on6NVT0QTkaJU23aMeE5yU0qDDVkSCkVeFyXghHX8hLyJrJX/u8vgCQIKVbxnK0aCiRL4QV7RsU1+botjCphkkK7rDMSdHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aTHzgE4h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BD64C2BBFC;
-	Sun,  2 Jun 2024 15:31:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717342269;
-	bh=yKlrNeel+W0FBVodTd2JHRtUueeshhcl9m+psrBuhMs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=aTHzgE4hR2+nt48eEltimquqCHAd53tSW3SBr7ctMtENIdteu/9n087IjxqZP6YJm
-	 E98lyJhUFP8h2OgaOPBBG4EbEKEiFzuCp2YGMIgn6vUD66uwyNrtZjhlElSN46Gosa
-	 CrFIiTpCCdVI2Mr6999+rdTM61MGelY9CiuH9FZgnpzbtxu8RoAmx1Ywd6Oi9A8R6F
-	 LevnTyKBXu1yoxRmkSzVByzuLn3ebBzvdNW+xrG1tAecFLpRNxjglsmisA7MP+gJ4Z
-	 C4agy29eWCN5Q+WXGOPC55CqVSSRnZgjkj934lg0+pv2ZIdy3j+vG5DzCUs4CaIWoV
-	 TH1zBoDs2NDfw==
-Message-ID: <de6c28c6-3139-441e-8738-c8842b9a274b@kernel.org>
-Date: Sun, 2 Jun 2024 17:31:04 +0200
+	 In-Reply-To:Content-Type; b=JhT3+GoZ66EXL2U4auYIfJGg5HyLXScpoVssYTkpaIZc9U2XZcFAKIMcTSgzJ7NfAwzvEhmuHAP5hoU2VNKDupTeY41AbFgKRk/zUJZSo43r+9iiIDlRUnX5vZVjs6WeaIlhVYBz/KnBslf4ssxL87inNEHMBlw9o2Y1St6YYkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freemail.hu; spf=pass smtp.mailfrom=freemail.hu; dkim=fail (2048-bit key) header.d=freemail.hu header.i=@freemail.hu header.b=vTjdqiLR reason="signature verification failed"; arc=none smtp.client-ip=46.107.16.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freemail.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freemail.hu
+Received: from [192.168.0.16] (catv-80-98-74-198.catv.fixed.vodafone.hu [80.98.74.198])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp.freemail.hu (Postfix) with ESMTPSA id 4Vsgmz6970z4F6;
+	Sun,  2 Jun 2024 17:31:15 +0200 (CEST)
+Message-ID: <30944fda-6d18-4fc1-8c73-bcda4814a417@freemail.hu>
+Date: Sun, 2 Jun 2024 17:31:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,112 +45,108 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/4] dt-bindings: Add bindings for the Analog Devices
- ADP5585
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Conor Dooley <conor+dt@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Lee Jones <lee@kernel.org>,
- Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-References: <20240602152412.29136-1-laurent.pinchart@ideasonboard.com>
- <20240602152412.29136-2-laurent.pinchart@ideasonboard.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240602152412.29136-2-laurent.pinchart@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v2] spidev: Introduce "linux,spidev-name" property for
+ device tree of spidev.
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240519211346.30323-1-egyszeregy@freemail.hu>
+ <1ec9e8e5-0818-42b0-8776-d9cfb0585f42@sirena.org.uk>
+ <9ae65e3c-f1fa-4ca9-8d74-12d92c51c5c6@freemail.hu>
+ <e8837fe0-e93c-4133-aac1-f8f0a010f6de@sirena.org.uk>
+Content-Language: hu, en-US
+From: =?UTF-8?Q?Sz=C5=91ke_Benjamin?= <egyszeregy@freemail.hu>
+In-Reply-To: <e8837fe0-e93c-4133-aac1-f8f0a010f6de@sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=simple/relaxed; t=1717342276;
+	s=20181004; d=freemail.hu;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding;
+	l=3367; bh=Fd1Lsy5QNOanvMIRy/o0jKg+8qGYkFTM1ga4jW9aSxo=;
+	b=vTjdqiLR8mjuIVqAkyaMnTEB02XIsX9+HBbE21M3InL4/8FoE/GrIJM08VoYWTbL
+	OjGKneyr0KehwQ6onnMnK54diGTV3HJ84/KdyVXub9Ufx+qC9Wm5Qe+Qz6BIX81HsQ5
+	tip24fmmsj80XbUY9qcVWArgrz0H6slaQeQytsqyPuygYe+wm53aVIynEvZOL9AX6Cs
+	vk8jbemGU/DJK6kB6U4wlcZJiNdJCyKSryrToPwloFOyBbY3hXurdCfU6LHpZNMaLTf
+	/6yV4sfbvlH2Hs+IbxJTqfRxd/gLKrCjrkPUnk2YfzRQ8yrL6IOLCjEWQlb9cT3tsT9
+	dNuUv8Nujw==
 
-On 02/06/2024 17:24, Laurent Pinchart wrote:
-> The ADP5585 is a 10/11 input/output port expander with a built in keypad
-> matrix decoder, programmable logic, reset generator, and PWM generator.
-> These bindings model the device as an MFD, and support the GPIO expander
-> and PWM functions.
+2024. 05. 20. 22:14 keltezéssel, Mark Brown írta:
+> On Mon, May 20, 2024 at 07:20:12PM +0200, Szőke Benjamin wrote:
+> 
+>> So, in Yocto project build system point of view the best, if any Machine
+>> specific settings is stored in the device tree files of the target machine
+>> in driver levels/config, because it will be deterministic in 100% sure and
+>> it will be nicely separated from the SW meta layers which may not contains
+>> any machine specific hacking with udev and so on.
+> 
+> Given that with Yocto you're building a full system image it's not
+> super obvious to me that it is particularly harder to ship udev rules in
+> the image as opposed to modifying the DT.  It's a little more annoying
+> but not drastically so and it's not creating a burden on the ABI for
+> something that's mainly used within a vertically integrated software
+> stack.
 > 
 
-Please use subject prefixes matching the subsystem, e.g. dt-bindings: mfd:
+In Yocto and Buildroot it is harder and more ugly to provide MACHINE specific 
+settings in a rootfs config files than define it in the machine specific .dts 
+and .dtsi files because they are separated in meta-layers for SW recipes and HW 
+related machine recipes.
 
-A nit, subject: drop second/last, redundant "bindings for". The
-"dt-bindings" prefix is already stating that these are bindings.
-See also:
-https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+As i know udev is much older than device-tree in Linux kernel history. For 
+embedded Linux image maintaining/developing for ARM, RISC-V etc. to solve this 
+kind of features/issues is more elegant to do in device-tree than with udev, 
+moreover for an embedded Linux developer it is more familiar to do in 
+device-tree then udev.
 
+I spent 3-4 days to understand udev rules files and i tried to do it via udev, 
+but i gave up it due to it complexity and incomplete documentation about it.
 
-> These bindings support the GPIO and PWM functions.
+axi_quad_spi_0: axi_quad_spi@a00a0000 {
+     bits-per-word = <8>;
+     clock-names = "ext_spi_clk", "s_axi_aclk";
+     clocks = <&zynqmp_clk 71>, <&zynqmp_clk 71>;
+     compatible = "xlnx,axi-quad-spi-3.2", "xlnx,xps-spi-2.00.a";
+     fifo-size = <16>;
+     interrupt-names = "ip2intc_irpt";
+     interrupt-parent = <&gic>;
+     interrupts = <0 106 1>;
+     num-cs = <0x1>;
+     reg = <0x0 0xa00a0000 0x0 0x10000>;
+     xlnx,num-ss-bits = <0x1>;
+     xlnx,spi-mode = <0>;
+
+     #address-cells = <1>;
+     #size-cells = <0>;
+
+     spidev@0 {
+         reg = <0>;
+         compatible = "rohm,dh2228fv";
+         spi-max-frequency = <1000000>;
+
+         // via my kernel patch -> /dev/spidev-mysensor
+         // linux,spidev-name = "mysensor";
+     };
+};
+
+As i understand "axi_quad_spi@a00a0000" can be mapped via udev to a custom 
+symlink name but in a new adaptive SoC HWs like AMD ZynqMP, Intel Stratix, 
+Microchip PolarFire Soc etc. it is not possible and not good solution because 
+this axi reg address can be different and become to non-deterministic in day to 
+next when there is a new PL FW update for their FPGA part in the silicon.
+
+What udev rules have to use for it if you say it can be perfectly done via udev 
+and "axi_quad_spi@a00a0000" cannot be used for making this rule?
+
+>> DT binding would need to be documented later in a separated patch as a
+>> guideline mentioned it in Linux repo.
 > 
-> Drop the existing adi,adp5585 and adi,adp5585-02 compatible strings from
-> trivial-devices.yaml. They have been added there by mistake as the
-> driver that was submitted at the same time used different compatible
-> strings. We can take them over safely.
-> 
+> No, that needs to happen along with the code change.
 
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    i2c {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        mfd@34 {
+The official documentation says totally different:
+"The Documentation/ and include/dt-bindings/ portion of the patch should be a 
+separate patch. ..."
 
-mfd is Linuxism, so this should be probably "io-expander" or something
-similar.
+https://github.com/torvalds/linux/blob/master/Documentation/devicetree/bindings/submitting-patches.rst
 
-> +            compatible = "adi,adp5585-00", "adi,adp5585";
-> +            reg = <0x34>;
-> +
-> +            vdd-supply = <&reg_3v3>;
-
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Best regards,
-Krzysztof
+By the way where can i find .yml or .txt dt-bindings documentation of spidev driver?
 
 
