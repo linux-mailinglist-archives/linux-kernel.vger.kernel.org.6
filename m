@@ -1,142 +1,139 @@
-Return-Path: <linux-kernel+bounces-198347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 611698D7704
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 17:56:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E62508D7707
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 17:59:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B26C2281D76
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 15:56:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 667F6B225EE
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 15:59:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E40CF4AED1;
-	Sun,  2 Jun 2024 15:56:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C0004D5A5;
+	Sun,  2 Jun 2024 15:59:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GHHH/F8E"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GOfhTNEq"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EDF647F6A;
-	Sun,  2 Jun 2024 15:56:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 049B8481A7;
+	Sun,  2 Jun 2024 15:59:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717343776; cv=none; b=mnrw8GhlxRUt7vzY6YDwtnbrsoy/JcUEnv1wGcEJSDb5PInaA61/rnVdqnD5HGTo8ILtcLSPy7awfmfDHCm7nEet2PDnbnNyvEkqQ15TRTlt+C6rkPkPr19pI430wFjBOZHIX2W7bg+V4yF1OqJ16BdvF0o7ghUmP2JVFFmcA2M=
+	t=1717343979; cv=none; b=Vcjr1tWBYW3fkJTOQ3bY75flBZic/28EbOcXXIKrDkJPRbuT3KP1aVBcR4yk4gWbgORputrhZ4vfjjif+Sphv7KmjZ/2hll5f2c0azQVZccJJ6JymbySev0ngxqSZxj2EK/ADu6c4hzQSCfEVLyN8VQC6s5xMeczwVPBSeWE3pw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717343776; c=relaxed/simple;
-	bh=l8+GXFRaLRqbnJKvA06bKbF87+GahGFEyqWYIo+UKmI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=HaKrPZWKsUa7r2ftipmjp6cly3DX6Z2is5qDsH0idEri1vsBi39AwLA1tnZeo+o7Uvl5Y1QBF5fefS6yG2nSjZZOKDKv3qRbqixpyNuZqbykKj7ieMpgO4RRyRBMAE1Dddc4u3GzNj5mA8yWpvIuS3GTMY7nDmnQ/7SdRaemC4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GHHH/F8E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B9F6C2BBFC;
-	Sun,  2 Jun 2024 15:56:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717343775;
-	bh=l8+GXFRaLRqbnJKvA06bKbF87+GahGFEyqWYIo+UKmI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=GHHH/F8EXYJMsAai0VU+CJMTOUNXqZIau8RCzKJctcAEnyH8MyrsvvKNy7kbpNnSH
-	 icwF4JZIw7Ll17LUc4B50WQQIawFqsr2ovJwN2+WtJgGNXGna3XJM2Dc6G/wOzotti
-	 FU5FcEY4qVC0LfQzcx3NxIMx20LDMWvRGtLQvaTYt20QdcxkXBRYbDo+dNTY+u0XjG
-	 v+x3FXaFps7m7UayW0HUucDDobSfC6ePU+0miVu7imnOeRPwLfSeRE0j2PSiqvwpgM
-	 s65+0gqM4555/QinXnWeFQTWxDeoU9Cux2wXDgR5aTUkx0Ob9bftYM9fYStKAPKebO
-	 LoKsqlyjI+Qfg==
-From: SeongJae Park <sj@kernel.org>
-To: Alex Rusuf <yorha.op@gmail.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	damon@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH v2 0/2] DAMON multiple contexts support
-Date: Sun,  2 Jun 2024 08:56:12 -0700
-Message-Id: <20240602155612.91435-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240602153102.926789-1-yorha.op@gmail.com>
-References: 
+	s=arc-20240116; t=1717343979; c=relaxed/simple;
+	bh=NhRIo0Ra5R8aaKVasORj+WeRKMXMOqwqZC5Mr2clkok=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=Md0Wxpk3TQNilBO6UDMHUQi62oLxo8p4ou/XssjAMluXx7qjmfDc5w61Idc+Ns8N480cXQ9eVGDhkQP/s0iWt1W9hH6XS0ret4FZWzRVQ48kCJ2WJlat8O5AiSV2RSQqnF5ryWEIj4vSNw96NOoNV6mzpaY97/iE030ylb1q/PM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GOfhTNEq; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 452EwXLY031481;
+	Sun, 2 Jun 2024 15:59:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=P5kXeOJlMUyHG8oSeX/YqW
+	mTmy2VqA3LGlgqepAHGIo=; b=GOfhTNEqpw4rRO7aHKWd8+SNCSPAK02VM6npCV
+	FAq3bqhStDMGcpyuQS+f7CKulCJMcXCrnS43SZYMYlhfQEHCPmCvnGJ6uSnr9wGA
+	9xaXOs42I8gzKRYN70rdHPznXBCYkYZEbCYIxCoCyEk0UH/GZxAqGoWKFPuY9njj
+	MoaYzEXJqE9wXsbcpMXR8Am4kq2M4Gu/5GKg2vo5GNjBD1BRyz1vrc5wXGj7up1E
+	N5Ki0IoWsbZAzXe3u/mzVh2Asi29FYz1CJgdu9bVeQ/JBQ7MmYone3DM8w0g5p1A
+	UNspCZyWFkC3id957FMIfTMImMqq2xHTGFFUl7GPTIqEIZog==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfw5t258d-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 02 Jun 2024 15:59:19 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 452FxIb9020912
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 2 Jun 2024 15:59:18 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 2 Jun 2024
+ 08:59:18 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Sun, 2 Jun 2024 08:59:17 -0700
+Subject: [PATCH] clk: imx: add missing MODULE_DESCRIPTION() macros
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240602-md-clk-imx-v1-1-5c6d240f6fab@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIANSWXGYC/x3MwQrCMAyA4VcZORvoqlPxVWSHtM1ccK2SqBTG3
+ t3q8Tv8/wrGKmxw6VZQ/ojJozT0uw7iTOXGKKkZvPMHd3Qec8K43FFyxf3JTbFP54HCAC14Kk9
+ S/7Pr2BzIGINSifNvsUh5V8xkL1bYti/qHdp0ewAAAA==
+To: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+        "Michael
+ Turquette" <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, "Shawn
+ Guo" <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        "Pengutronix Kernel Team" <kernel@pengutronix.de>,
+        Fabio Estevam
+	<festevam@gmail.com>
+CC: <linux-clk@vger.kernel.org>, <imx@lists.linux.dev>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: oPbszWzkp-86_8BQxWEDpQG8g06bT1xJ
+X-Proofpoint-GUID: oPbszWzkp-86_8BQxWEDpQG8g06bT1xJ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-06-02_10,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 bulkscore=0
+ spamscore=0 suspectscore=0 priorityscore=1501 impostorscore=0
+ clxscore=1011 malwarescore=0 phishscore=0 mlxscore=0 lowpriorityscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406020138
 
-On Sun,  2 Jun 2024 18:31:02 +0300 Alex Rusuf <yorha.op@gmail.com> wrote:
+make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/imx/mxc-clk.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/imx/clk-imxrt1050.o
 
-> Hi SJ,
-> 
-> > Hello Alex,
-> > 
-> > On Fri, 31 May 2024 15:23:18 +0300 Alex Rusuf <yorha.op@gmail.com> wrote:
-> > 
-> > > Currently kdamond uses only one context per kthread
-> > > and most of its time it sleeps, so utilizing several
-> > > contexts can scale kdamond and allow it to use
-> > > another set of operations.
-> > > 
-> > > This patch-set implements support for multiple contexts
-> > > per kdamond.
-> > >
-> > [...]
-> > > 
-> > > ---
-> > > Changes from v1 (https://lore.kernel.org/damon/20240515152457.603724-1-yorha.op@gmail.com/)
-> > > - Compatibility for DebugFS interface is kept
-> > > - Kunit tests build/execution issues are fixed
-> > > - Patches from v1 are sqaushed, so that consistency between patches is
-> > > kept
-> > 
-> > My request was to avoid unnecessary temporal changes that will be removed in
-> > next patches.  Some of those are well removed in this version, but I still show
-> > some.  E.g., nr_contexts field.  Also, this resulted in two big patches.
-> 
-> This makes sense and I actually wanted that as well, so I tried to separate
-> them in previous version, looks like I misunderstood your request.
+Add the missing invocations of the MODULE_DESCRIPTION() macro.
 
-No problem, I think I should also be more clear about the point.  Happy to have
-a chance to develop my humble communication skill with the conversaions with
-you.
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ drivers/clk/imx/clk-imxrt1050.c | 1 +
+ drivers/clk/imx/clk.c           | 1 +
+ 2 files changed, 2 insertions(+)
 
-> 
-> Anyway, don't you mind if lru_sort/traceevents/etc. will not function
-> correctly without applying the whole patch-set? I mean if we use the
-> approach below, once core.c is modified at least lru_sort and reclaim
-> will not work correctly, they even will not be built.
+diff --git a/drivers/clk/imx/clk-imxrt1050.c b/drivers/clk/imx/clk-imxrt1050.c
+index 08d155feb035..efd1ac9d8eeb 100644
+--- a/drivers/clk/imx/clk-imxrt1050.c
++++ b/drivers/clk/imx/clk-imxrt1050.c
+@@ -176,6 +176,7 @@ static struct platform_driver imxrt1050_clk_driver = {
+ };
+ module_platform_driver(imxrt1050_clk_driver);
+ 
++MODULE_DESCRIPTION("NXP i.MX RT1050 clock driver");
+ MODULE_LICENSE("Dual BSD/GPL");
+ MODULE_AUTHOR("Jesse Taube <Mr.Bossman075@gmail.com>");
+ MODULE_AUTHOR("Giulio Benetti <giulio.benetti@benettiengineering.com>");
+diff --git a/drivers/clk/imx/clk.c b/drivers/clk/imx/clk.c
+index e35496af5ceb..df83bd939492 100644
+--- a/drivers/clk/imx/clk.c
++++ b/drivers/clk/imx/clk.c
+@@ -226,4 +226,5 @@ static int __init imx_clk_disable_uart(void)
+ late_initcall_sync(imx_clk_disable_uart);
+ #endif
+ 
++MODULE_DESCRIPTION("Common clock support for NXP i.MX SoC family");
+ MODULE_LICENSE("GPL v2");
 
-I mind those.  Everything should work without regression in the middle of the
-patchset.  Nonetheless, we should avoid only regression.  We don't need to make
-everything perfect.  Let's minimize changes to the other modules in the way.
+---
+base-commit: 83814698cf48ce3aadc5d88a3f577f04482ff92a
+change-id: 20240602-md-clk-imx-370fc1d85ab5
 
-I believe below suggested patches flow and my second reply to the second patch
-of this patchset can clarify the point.  Please let me know if not.
-
-> 
-> > 
-> > I'd also appreciate if you can separate changes into smaller ones of logical
-> > single change.  For example, changes for lru_sort.c, reclaim.c, and sysfs.c on
-> > first patch could be much smaller in my opinion.  Traceevent change can also be
-> > separated from patch 2.  Some of multi-context support seems mixed in patch 1.
-> > 
-> > I'd suggest below patches flow.
-> > 
-> > Patch 1: Introduce new struct and control functions for the struct.  Don't
-> > really use the struct and the functions.
-> > 
-> > Patch 2: Modify core.c to use the struct and implement multiple contexts
-> > support.  Minimize changes to core.c users.  Just keep those work as before.
-> > Don't implement multi contexts support on sysfs.c or trace events at this
-> > point.
-> > 
-> > Patch 3: Update sysfs.c to support the multiple contexts.
-> > 
-> > Patch 4: Update trace events to better support it.
-
-As I mentioned on my second reply to the second patch, you could swich patches
-3 and 4 if you want trace events to work perfect from the beginning of
-user-visible multi contexts support.
-
-
-Thanks,
-SJ
-
-[...]
 
