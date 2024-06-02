@@ -1,136 +1,143 @@
-Return-Path: <linux-kernel+bounces-198243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6E038D7577
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 14:54:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 23E608D757A
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 14:57:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03DB51C21565
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 12:54:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 551861C21373
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 12:57:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B10E3FE2A;
-	Sun,  2 Jun 2024 12:54:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C85473B781;
+	Sun,  2 Jun 2024 12:57:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QBlomwSg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gmQl8MDb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD8E13DBBF;
-	Sun,  2 Jun 2024 12:54:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1722817C7C;
+	Sun,  2 Jun 2024 12:57:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717332867; cv=none; b=CZxmk9exZmgo2VGWvG8UI3d3bKC93wE0gmpxtIzRquDok+jPMFZmyoIZJft8UKv0E5gtjlcgu5pEzxNpXTUS/2NuJ507qHmxt0C4LYcuf959+0iGEP3cYjns0yb9K1G555f7ppiARMJJ3KokwOWWQdqMs/1x+2LGGwYG1OGfoFU=
+	t=1717333059; cv=none; b=ez28/qgBqMiK7iBcb6J+u3NGAyvGqTDRGEl0GZ9pOyI1vyes2xs8a7bMELmB0ZNmFnxHwig6ZndsFPInDt14GubPUb7B7iC5exumefTx3r2B2E1smY5AgiQk+TwUfHINyFZA2mMv6r6G6B9iBi7iNOT6FR6Tx3nOT86SObYqyaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717332867; c=relaxed/simple;
-	bh=UPF+rTM68XnLpCea7WoA/GMqSo6CeLlyZ02RZ4r0zac=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=lXuJk3ikDqMqq6rJW/EP3YiURQnyR3G8K2jQ0XH2MdtXCOfLLBGzcjYuLOd0BH2+GUcRVrfWPdkP2G07SX3VgimR3aKslHfbSQ5s6HFT9x/Ac6QU818/nxCFbvGeI2fmf4IV3caHzcxsIL3nW+HnHGYR8pZJcZDdsGWzDQvkY9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QBlomwSg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A708AC4AF0A;
-	Sun,  2 Jun 2024 12:54:26 +0000 (UTC)
+	s=arc-20240116; t=1717333059; c=relaxed/simple;
+	bh=qJJp4ZLrJLL+e+iZKLTAp+ceTie0/gjPAkK9OxlXJ00=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rx+SOF0/FUqVmYax9ZO0QGsg8Rm3Dz79UZOx67pfU8j56UklQYn5qDwBmver0noCU6GhyJ1voyy7NSH4C7EJf6t0x+cRbhTEkP/YceTkuUHh9MyaPe1yd8earVUokOob70iwkP7tn/EATe7SPmNsntsaNtMUhZuvyJC2HobikVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gmQl8MDb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75D73C2BBFC;
+	Sun,  2 Jun 2024 12:57:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717332867;
-	bh=UPF+rTM68XnLpCea7WoA/GMqSo6CeLlyZ02RZ4r0zac=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=QBlomwSguqYcinAwop9pB9hUmtgoAkonroAhYBEAPS6PgSDsoS7gLuU/t9pkReNLi
-	 sVzdCZe09vnVN4vS715Srp+RZJN72Ikoi/SkqeGziROhnN0tBSCJ0IpRid80QjZ5G0
-	 pRoXZL7TE3JF0eWSVatt73qObCTMcDnzLe48TEBzAweRwSGzXGUCYSKRGPYnYTx/rJ
-	 9DhrrQGgwy1uOLHKYpTX6F1WhIjVw3mMWnM9L+n3ti4ACkvxMEMJLK1/8wcmV4a7g0
-	 xapAP5Vb/91MjelH/xgapwsGFjOtksA6htpew0THyWN+KJcN1OsuXUV8RnURl1nIlV
-	 jHQFtz0kniQ9Q==
-From: Masahiro Yamada <masahiroy@kernel.org>
-To: linux-kbuild@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>
-Subject: [PATCH 3/3] kconfig: refactor conf_write_defconfig() to reduce indentation level
-Date: Sun,  2 Jun 2024 21:54:16 +0900
-Message-Id: <20240602125416.976336-3-masahiroy@kernel.org>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20240602125416.976336-1-masahiroy@kernel.org>
-References: <20240602125416.976336-1-masahiroy@kernel.org>
+	s=k20201202; t=1717333058;
+	bh=qJJp4ZLrJLL+e+iZKLTAp+ceTie0/gjPAkK9OxlXJ00=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=gmQl8MDbNOiMHLN+ofyoYtfWf42a1YTDqVJaypqa7T/IbiyasGyIneewrKQh5vXGC
+	 5pjyTyp32B42TkNZDwCzI1mOmD2lRcc9NhU5RnTTMM+G85TwUwm8xHZPcc1hts2WMw
+	 l//RUBKUGLs95RfUzmYvo2YbTRS/UJ/cPE5l807NxSealGuESH17u/xhpow/DtKkn0
+	 as0NPEFZd2q6GANvQzqJXWRpidrmtGrXfYa8hcxvweVOzjJdgr+1Wgf4jkVdDIIJUA
+	 fBmiX2pdE9d3NmGQXvSZJZLfDe22QxkwYBm1OORfDn+LY7noDPT0tZRNg43OVYFzeS
+	 xnCn5Qd58YsOw==
+Date: Sun, 2 Jun 2024 13:57:26 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Vasileios Amoiridis <vassilisamir@gmail.com>
+Cc: lars@metafoo.de, himanshujha199640@gmail.com, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 11/17] iio: chemical: bme680: Use bulk reads for
+ calibration data
+Message-ID: <20240602135726.2f10fd2b@jic23-huawei>
+In-Reply-To: <20240527183805.311501-12-vassilisamir@gmail.com>
+References: <20240527183805.311501-1-vassilisamir@gmail.com>
+	<20240527183805.311501-12-vassilisamir@gmail.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Reduce the indentation level by continue'ing the loop earlier
-if (!sym || sym_is_choice(sym)).
+On Mon, 27 May 2024 20:37:59 +0200
+Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
 
-No functional change intended.
+> Calibration data are located in contiguous-ish registers
+> inside the chip. For that reason we can use bulk reads as is
+> done as well in the BME68x Sensor API [1].
+> 
+> The arrays that are used for reading the data out of the sensor
+> are located inside DMA safe buffer.
 
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
----
+See below. I think in this case that isn't necessary.
+However it's a quirk of how the custom regmap works. Whilst
+we can't rely on regmap core spi implementations continuing to
+bounce buffer, we can rely on one local to our particular driver.
 
- scripts/kconfig/confdata.c | 47 ++++++++++++++++++--------------------
- 1 file changed, 22 insertions(+), 25 deletions(-)
+> 
+> [1]: https://github.com/boschsensortec/BME68x_SensorAPI/blob/v4.4.8/bme68x.c#L1769
+> Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
 
-diff --git a/scripts/kconfig/confdata.c b/scripts/kconfig/confdata.c
-index 25c327ae3c5c..1ac7fc9ad756 100644
---- a/scripts/kconfig/confdata.c
-+++ b/scripts/kconfig/confdata.c
-@@ -774,34 +774,31 @@ int conf_write_defconfig(const char *filename)
- 		struct menu *choice;
- 
- 		sym = menu->sym;
--		if (sym && !sym_is_choice(sym)) {
--			sym_calc_value(sym);
--			if (!(sym->flags & SYMBOL_WRITE))
--				continue;
--			sym->flags &= ~SYMBOL_WRITE;
--			/* If we cannot change the symbol - skip */
--			if (!sym_is_changeable(sym))
--				continue;
--			/* If symbol equals to default value - skip */
--			if (strcmp(sym_get_string_value(sym), sym_get_string_default(sym)) == 0)
--				continue;
- 
--			/*
--			 * If symbol is a choice value and equals to the
--			 * default for a choice - skip.
--			 */
--			choice = sym_get_choice_menu(sym);
--			if (choice) {
--				struct symbol *ds;
-+		if (!sym || sym_is_choice(sym))
-+			continue;
- 
--				ds = sym_choice_default(choice->sym);
--				if (sym == ds) {
--					if (sym_get_tristate_value(sym) == yes)
--						continue;
--				}
--			}
--			print_symbol_for_dotconfig(out, sym);
-+		sym_calc_value(sym);
-+		if (!(sym->flags & SYMBOL_WRITE))
-+			continue;
-+		sym->flags &= ~SYMBOL_WRITE;
-+		/* Skip unchangeable symbols */
-+		if (!sym_is_changeable(sym))
-+			continue;
-+		/* Skip symbols that are equal to the default */
-+		if (!strcmp(sym_get_string_value(sym), sym_get_string_default(sym)))
-+			continue;
-+
-+		/* Skip choice values that are equal to the default */
-+		choice = sym_get_choice_menu(sym);
-+		if (choice) {
-+			struct symbol *ds;
-+
-+			ds = sym_choice_default(choice->sym);
-+			if (sym == ds && sym_get_tristate_value(sym) == yes)
-+				continue;
- 		}
-+		print_symbol_for_dotconfig(out, sym);
- 	}
- 	fclose(out);
- 	return 0;
--- 
-2.40.1
+
+> diff --git a/drivers/iio/chemical/bme680_core.c b/drivers/iio/chemical/bme680_core.c
+> index 681f271f9b06..ed4cdb4d64af 100644
+> --- a/drivers/iio/chemical/bme680_core.c
+> +++ b/drivers/iio/chemical/bme680_core.c
+
+> +
+>  struct bme680_calib {
+>  	u16 par_t1;
+>  	s16 par_t2;
+> @@ -64,6 +109,16 @@ struct bme680_data {
+>  	 * and humidity compensation calculations.
+>  	 */
+>  	s32 t_fine;
+> +
+> +	/*
+> +	 * DMA (thus cache coherency maintenance) may require the
+> +	 * transfer buffers to live in their own cache lines.
+> +	 */
+> +	union {
+> +		u8 bme680_cal_buf_1[BME680_CALIB_RANGE_1_LEN];
+> +		u8 bme680_cal_buf_2[BME680_CALIB_RANGE_2_LEN];
+> +		u8 bme680_cal_buf_3[BME680_CALIB_RANGE_3_LEN];
+> +	} __aligned(IIO_DMA_MINALIGN);
+Ah! I should have read ahead.  I don't think you need this alignment forcing
+because bme680_regmap_spi_read uses spi_write_then_read() which always
+bounces the data.
+
+>  };
+>  
+>  static const struct regmap_range bme680_volatile_ranges[] = {
+> @@ -112,217 +167,73 @@ static int bme680_read_calib(struct bme680_data *data,
+>  			     struct bme680_calib *calib)
+>  {
+
+
+> +	calib->par_h3 = data->bme680_cal_buf_2[H3];
+> +	calib->par_h4 = data->bme680_cal_buf_2[H4];
+> +	calib->par_h5 = data->bme680_cal_buf_2[H5];
+> +	calib->par_h6 = data->bme680_cal_buf_2[H6];
+> +	calib->par_h7 = data->bme680_cal_buf_2[H7];
+> +	calib->par_t1 = get_unaligned_le16(&data->bme680_cal_buf_2[T1_LSB]);
+> +	calib->par_gh2 = get_unaligned_le16(&data->bme680_cal_buf_2[GH2_LSB]);
+> +	calib->par_gh1 = data->bme680_cal_buf_2[GH1];
+> +	calib->par_gh3 = data->bme680_cal_buf_2[GH3];
+>  
+> -	ret = regmap_read(data->regmap, BME680_H7_REG, &tmp);
+> +	ret = regmap_bulk_read(data->regmap, BME680_REG_RES_HEAT_VAL,
+> +			       &data->bme680_cal_buf_3[0],
+This one is always debated, but personally I'd prefer
+				data->bme680_cal_buf_3,
+
+for cases like this. Up to you though.
+> +			       sizeof(data->bme680_cal_buf_3));
+>  	if (ret < 0) {
+> -		dev_err(dev, "failed to read BME680_H7_REG\n");
+> +		dev_err(dev, "failed to read 3rd set of calib data;\n");
+>  		return ret;
+>  	}
 
 
