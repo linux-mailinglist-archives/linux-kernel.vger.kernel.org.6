@@ -1,142 +1,98 @@
-Return-Path: <linux-kernel+bounces-198239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 045318D756F
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 14:50:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 955C08D7570
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 14:54:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 698A81F222EE
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 12:50:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B2491F22374
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 12:54:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B7653B2BB;
-	Sun,  2 Jun 2024 12:50:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 723EE39FDD;
+	Sun,  2 Jun 2024 12:54:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HspO+oaX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=gmx.com header.i=aros@gmx.com header.b="eDWE9+jc"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B60617C7C;
-	Sun,  2 Jun 2024 12:50:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 210B317C7C
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Jun 2024 12:54:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717332647; cv=none; b=nSlS+8EpmsR9bbOOcZ0PXP6cVX55bfvbVzma4J7zyjAsYmXU4hvhqMycd4HwQbSM66DVdDCHz/dsgg9c3g+KtYypy/TfBPsFmpM6ImsbAMBYwn09R8JM23tsfHP2CsubtSXwkYdSl1IiAPcS8LY3Ldqsg6Hq6pz0bc8AjkeBMcA=
+	t=1717332859; cv=none; b=CdRaJLcUc2qMBOpjKgcY52AadkPikuRKDCfxqDnhutyqL0CVx46ptzGAf6RFRG0wdIaI8TPUbgyQmBFZ58PgF/mKFLE1SSvb3rM4HT29XCkqudNWF3nPe9CVr/53dYcFB53wN+7uptjADGlC7o6ENtt03PLptAx28WabFVkYK/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717332647; c=relaxed/simple;
-	bh=ZzrJSXC2KX0xVuIkGuX0b53uOU8xn9fAxt0LCjbRsfU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kinKn7rNZ1Lz2pOri8kMYBg91WDbJh0qDOx3U/5zrow0E8hlO9uGgDZBnqEAq/EqtEUUvNFcxEcAWvVftuSZpDfQxuwSF7tZ34IOO7cFHtYjbxbFsharLO7fEBkSS6GG7g5qofzcMZwSLaRvtKYFeOL3rgzs4rxXX1O3hODV3As=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HspO+oaX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB4AEC2BBFC;
-	Sun,  2 Jun 2024 12:50:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717332646;
-	bh=ZzrJSXC2KX0xVuIkGuX0b53uOU8xn9fAxt0LCjbRsfU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=HspO+oaXCW/ii0XPseip0y6mCEOtkis+KCYTrlP98nKCYyybpxnfHLGHYVFIQo3Gk
-	 Q+O6ojoFDTu9iMIs0CXyjwBhwhhcKP2zbUzj1xqZgIWqV4eoP/7uFTzbRtySJ/1RWS
-	 rFJSgYVKsG88mCZw1Wi7CcgzsxvNBeSj5RES246EfdjyNZmzdHxos3Zym2fvTEpNIW
-	 TOoa2+//hsAlqoTIunJ8UpneHg3OY05MU39UODY+T1GpVpdK4OzjmqN1dnyDoGv6JG
-	 UYfzwO+Ky5QbaPV4q3lLhSJMUVfTNFKxQ2t2VwXKcO90Rydj1pWctc4tVgs++MrKCY
-	 cNy2fONTM5hFA==
-Date: Sun, 2 Jun 2024 13:50:36 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Vasileios Amoiridis <vassilisamir@gmail.com>
-Cc: lars@metafoo.de, himanshujha199640@gmail.com, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 10/17] iio: chemical: bme680: Remove duplicate
- register read
-Message-ID: <20240602135036.27b0ee9a@jic23-huawei>
-In-Reply-To: <20240527183805.311501-11-vassilisamir@gmail.com>
-References: <20240527183805.311501-1-vassilisamir@gmail.com>
-	<20240527183805.311501-11-vassilisamir@gmail.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1717332859; c=relaxed/simple;
+	bh=L++Vl/erQjkskbQxCxntq27twJw2gmNgkcz1HQ53or0=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Cc:Content-Type; b=HPSZe+A9zXeI7HO+46o9p5foteK1+miMQUmAUxgnTqfXWuCX2K+xZRad4ExDmsT+Rt3WSBfBatAxVyzUF7w3zV1aWE/4PR8W3H5dmLu5xV85ObLwUR+9pis53/Ky3mJS9R2G7M0LQfElW7sJUOu7EjjnXIRPzTsn8HKYNdM+/is=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=aros@gmx.com header.b=eDWE9+jc; arc=none smtp.client-ip=212.227.17.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
+	s=s31663417; t=1717332809; x=1717937609; i=aros@gmx.com;
+	bh=L++Vl/erQjkskbQxCxntq27twJw2gmNgkcz1HQ53or0=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:From:Subject:
+	 Cc:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=eDWE9+jc8Q01zvaYC3SWFSU3RwSltHtfPOBRfPTiNyWJHH8e7uWiJOkquWDJml5e
+	 mFSDWw7mK+ewlX7/Y4ddaHK2oxveUaLAQtu0rM2rXXUmRHY4fOcbsjeS587TAlY8t
+	 Edua59Z58f4jR1PRDMRY/fJNZDg10LStnlO1Vny1Nrfsn26jOg4bEdi426NQvEkRb
+	 uwlRaSF7EgYyOVx2fDRGYp0cl3bPt6gMP6RpTey5zYomZrX38tsU1cAiCNSMgHlUk
+	 18T8OopqndVIcJio9FISPjXejsijtBa0pzfz2liKkNEGxwvKMcTsXJbRP2FurhYIx
+	 Yj5Y4WIu+sfMpuCzUg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [10.23.110.14] ([98.159.234.106]) by mail.gmx.net (mrgmx105
+ [212.227.17.174]) with ESMTPSA (Nemesis) id 1MtwYu-1sS7Ge3Gdo-00uLrS; Sun, 02
+ Jun 2024 14:53:29 +0200
+Message-ID: <186367bb-9ed4-42de-add2-59d3f50ec170@gmx.com>
+Date: Sun, 2 Jun 2024 12:53:26 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+To: linux-kernel@vger.kernel.org
+Content-Language: en-US
+From: "Artem S. Tashkinov" <aros@gmx.com>
+Subject: PC speaker doesn't work under Linux, works in GRUB/EFI
+Cc: Thomas Gleixner <tglx@linutronix.de>, Takashi Iwai <tiwai@suse.de>,
+ Stas Sergeev <stsp@users.sourceforge.net>,
+ Vsevolod Volkov <home+kernel@vvv.kiev.ua>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:je52DwnSR5G4iUagH8spFTHJc9zmcLOiDELvQnN2QyCHt+5k3cl
+ pShrIaxiddqQmMZ5H+WI2NN8PFgOaijFqu6GUSYl0fqm5RbZZIzNaX6we/iim0sPvabGLza
+ IvysNdFG3j9qbCQVeTGqGVfD09LfEawif5BOJoaKGrNTY+jM2P/5xHJ6xF2BnH6RU+nOqSA
+ lFOT2i4IJIF06iffbdeXQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:r8vVeyy8+U4=;8EFD7OfhPC6+D/yN0YV6Bz+5f7y
+ 342LloUVMoD3QTPiDvalKFmGooOn9vNiC5Ld/jIJ9wqaoDUcsbkR2wRKgblBcpryMd4pV88MP
+ kiLT4WFPEcYEFCQEE2K95Yg91sTxjtjBk3RQh48EXjkEddojeOCcjqxcJtpOrp0w1DJhkKIkg
+ hE0eMqjUMcdGmvzXpTh6ZvbAURUmIukp0B0fbEVEDn7OUr5XbJfg9wf7iLQUR9qsr0sKEv844
+ H3upsdILrLnHoFjWYEdAb5apJEgUTu3GaRgnF2cso9NdW2MJRYf1W4Evs9x8imAV9lpDs8W/l
+ 4A+Ad8JhlAivEZXhvrSJshq66Tdb2tpZi0Cvu/d7Yqc4KN1px8ihIUsqVtvk81kAJWuxnpmfA
+ 35X6IoxQLUMQ92qqvLu7TJOPdNze36RPlCM3yMuPiq+/JhqK879da+OFuXHbupo4A8ukNkPta
+ ol5SvyMpRCPiH9Twz5cva0AZjoEdMX+d/Jhnt7w53bnmJ7qiM1q14DhioPZveN/ZuFvl9949s
+ +8apIIzC7d52/XjPQ75v9ATgyjYxAXRFyPjtxHgXUYYnASXz6Y+n6D3DfpYv+IYOuFUYdytqJ
+ qJmMQVc0E3t8fbxHFjNUqhGP6pp6o1NAHIwTyFZfixsVPrktUwxKeM/0Nl/hbi+rt75oMFP0X
+ DFejEYCBUbw3zTeCHnYPEUaqfONc2Q7K4UpNdgeqoXZ7zzaDEPtomQPAbchyhtMvNEFt40Zr3
+ 3vkqJyKsBuqgk8k03Zfs8tIMuhyPXJg4Pua7toXPF26/WLqRWO0+bk4pEDLVzSQHyGm6rV63g
+ +416MNc8l0PSeIDvuBGc5fEpSHCQ03/FnA+Cy80mbmhH0=
 
-On Mon, 27 May 2024 20:37:58 +0200
-Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
+Hello,
 
-> The LSB of the gas register was read first to check if the following
-> check was correct and then the MSB+LSB were read together. Simplify
-> this by reading together the MSB+LSB immediately.
-> 
-> Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
-A few trivial things. I wrote a nice comment on dma safe buffers then
-noticed this does a custom regmap using spi_write_then_read() so despite
-not looking like it from this code, DMA safe buffers are used.
-Just thought I'd mention it for any other reviewers!
+There's a bug filed in the kernel bugzilla where Vsevolod is unable to
+figure out why he cannot make his pc speaker work under Linux:
 
-> ---
->  drivers/iio/chemical/bme680_core.c | 21 ++++++++-------------
->  1 file changed, 8 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/iio/chemical/bme680_core.c b/drivers/iio/chemical/bme680_core.c
-> index 96423861c79a..681f271f9b06 100644
-> --- a/drivers/iio/chemical/bme680_core.c
-> +++ b/drivers/iio/chemical/bme680_core.c
-> @@ -748,7 +748,7 @@ static int bme680_read_gas(struct bme680_data *data,
->  	int ret;
->  	__be16 tmp = 0;
->  	unsigned int check;
-> -	u16 adc_gas_res;
-> +	u16 adc_gas_res, gas_regs_val;
->  	u8 gas_range;
->  
->  	/* Set heater settings */
-> @@ -771,11 +771,14 @@ static int bme680_read_gas(struct bme680_data *data,
->  		return -EBUSY;
->  	}
->  
-> -	ret = regmap_read(data->regmap, BME680_REG_GAS_R_LSB, &check);
-> +	ret = regmap_bulk_read(data->regmap, BME680_REG_GAS_MSB,
-> +			       &tmp, sizeof(tmp)); 
->  	if (ret < 0) {
-> -		dev_err(dev, "failed to read gas_r_lsb register\n");
-> +		dev_err(dev, "failed to read gas resistance\n");
->  		return ret;
->  	}
-> +	gas_regs_val = be16_to_cpu(tmp);
-> +	adc_gas_res = gas_regs_val >> BME680_ADC_GAS_RES_SHIFT;
-I'd rather see this as a FIELD_GET() but given this was what was originally
-here I guess I can cope with keeping it a little longer!
+https://bugzilla.kernel.org/show_bug.cgi?id=3D218918
 
->  
->  	/*
->  	 * occurs if either the gas heating duration was insuffient
-> @@ -783,20 +786,12 @@ static int bme680_read_gas(struct bme680_data *data,
->  	 * heater temperature was too high for the heater sink to
->  	 * reach.
->  	 */
-> -	if ((check & BME680_GAS_STAB_BIT) == 0) {
-> +	if ((gas_regs_val & BME680_GAS_STAB_BIT) == 0) {
->  		dev_err(dev, "heater failed to reach the target temperature\n");
->  		return -EINVAL;
->  	}
->  
-> -	ret = regmap_bulk_read(data->regmap, BME680_REG_GAS_MSB,
-> -			       &tmp, sizeof(tmp));
-> -	if (ret < 0) {
-> -		dev_err(dev, "failed to read gas resistance\n");
-> -		return ret;
-> -	}
-> -
-> -	gas_range = check & BME680_GAS_RANGE_MASK;
-> -	adc_gas_res = be16_to_cpu(tmp) >> BME680_ADC_GAS_RES_SHIFT;
-> +	gas_range = gas_regs_val & BME680_GAS_RANGE_MASK;
+Strangely, it works just fine as an EFI module and a GRUB module.
 
-Whilst you are here, may this a FIELD_GET() so we don't have to go
-check that it includes the LSB.
+What are the ways to debug the issue?
 
->  
->  	*val = bme680_compensate_gas(data, adc_gas_res, gas_range);
->  	return IIO_VAL_INT;
-
+Best regards,
+Artem
 
