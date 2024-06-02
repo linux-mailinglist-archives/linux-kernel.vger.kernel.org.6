@@ -1,111 +1,165 @@
-Return-Path: <linux-kernel+bounces-198265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C19F8D75CD
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 15:49:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67DF28D75D1
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 15:53:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC401282659
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 13:49:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 144A31F21819
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 13:53:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E09513FBA4;
-	Sun,  2 Jun 2024 13:49:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAEF73F9EC;
+	Sun,  2 Jun 2024 13:53:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LXR6BTbH"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ppHRVVz+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 617C63AC1F
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Jun 2024 13:49:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38F9C2B9BE;
+	Sun,  2 Jun 2024 13:53:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717336185; cv=none; b=LJCji/PM2IFI/eMMLC2pPjzcHuXcwvlV8HhFoWpyKHhlKOtMPw0E4SwI4ZPbsC+bibDrOg9cw98ctA3w/j6HBqi0uPPYg1iF6oEKpVJRiD6prZSS4EE11KPwUVo2Cwkg08qqj129WSWj/DUZ3xrYJCOkFMesOi8wAE//BN6/qgA=
+	t=1717336385; cv=none; b=a3a0IPGrcEJbcfBcZHaZ9rclXl5nvxOjk1WOS/RVOvKpTK+RptOp8d2mmCUTY2cHWEB9tIexjJzTbDFmctNUr6GVBFQZjIuLN2EIg2Si3FCpyprNNRQbuc+lw/13xchnCaGBW4ALNRcP5lO3H/kFyFzwHYXImfgW0moHqNtTp6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717336185; c=relaxed/simple;
-	bh=OFBLy/93aDcasO+7L2Af/xULO+GOP6Ah177EDibhun0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=newb32TAj7GeYQ2d9RYzbzoJtl9Q4X8/VRG2Z3gFkv/DhHuMvfArm2mVuH4Pcmn9/Ya3iCTnLqcomsJUjWLv/VNHn0NibjhLMLbMtXU+09mW7UL4Rcp2JUwOUiZmPLngdSd1Sicid60w+FX4XacvBCq3Wtk9oa1YJk44UfMrd6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LXR6BTbH; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52b82d57963so3352485e87.2
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2024 06:49:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717336180; x=1717940980; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RK+gSspnDvIjQ8g7XKh+hwU9n45tiCyCGsEgB2oOglo=;
-        b=LXR6BTbHkE/GeQ+iE/7+lWWLaUBANMlELk2e8im2xKHxF/7032gWxpWpvWS1jAUaOs
-         +LLADlmTl/n/uAKsAk5V6AfL9GGI0rEL2htjnDmoRac2pRxucAsx7rn2FITgu1qXLHkZ
-         ydzR7dyMWCa5S95WE24E2Uijk4BsdONj1Axc4COCna3k1MFVwfMWF9bDzJWUUP+dRuPo
-         oGcNHrLtL5EzvPiz6kWnvD4h7lMoXWTZLxlAwO9mQJtplnpTcbO1yFQ17VqCoAcKqk5V
-         dZFDFchgbzL5iBR+d8dFq2UpDZ2a0zPsPt12ZP7/cWR5b4mzEFnm41CZhgY1n3CLMDro
-         vGzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717336180; x=1717940980;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RK+gSspnDvIjQ8g7XKh+hwU9n45tiCyCGsEgB2oOglo=;
-        b=aSTXr9r+SL4g9E/RUcX7P9W+4F+aeRMIiJJeNboNo19/1ARvzpKnyfNln5gc5eb3Cq
-         MbsX9IYPNJZGMo1d3Jg+3IK81ooI1z19+uWmNNjzDe5F43FEp3J3OpH2vcNVHopTPtre
-         ymJ7i/w40i53KFIAByqk6MmFeSnXxbUCkIm69MCzsIM9t8DhzQ31TUjWeLeBaZBI62G1
-         BbjI4wEP/X2Jp/dvJYabT9sfDpMvSQVsWsqXxw2sozsNNe8nMFfB+M5kMAP93fRPCudP
-         wxYTPDEc6MFum+Cm4f/AT435G53w546Espc1nyTcmaugvMH3o8VSZdwlxFkETO1q6b72
-         6GdA==
-X-Forwarded-Encrypted: i=1; AJvYcCVgwYIUqeJ95kGGOc4kBKmVzObOMVwSCsG1Cb3nyEU+Ixaqut+uvXm3s2QF3KwxOEZCYX3SYQuiLl4V/d4zq/U7w81YQo6kUSfwNKj0
-X-Gm-Message-State: AOJu0Yz4KN9lwn1JOGGzVqi/y57J5FoTMEHWnwC0W9dm/9EmrbRKYgmb
-	nESAxVneJJjjI8xSvBoluCJvD4EtAIT5FkHmoJyedx3nGRYhw3TjDyb8ZlVW5GE=
-X-Google-Smtp-Source: AGHT+IFHtYW/9mmf4mBFaBwKb2/rlrKnB1nEhfK0SBxsg0mk+z6IYwfe5eM8PmYnq+8HBzEZeU9iBA==
-X-Received: by 2002:ac2:4246:0:b0:521:6c38:6949 with SMTP id 2adb3069b0e04-52b896dab8cmr4494872e87.45.1717336180547;
-        Sun, 02 Jun 2024 06:49:40 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52b84d8e557sm956327e87.297.2024.06.02.06.49.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 02 Jun 2024 06:49:39 -0700 (PDT)
-Date: Sun, 2 Jun 2024 16:49:38 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jagadeesh Kona <quic_jkona@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Taniya Das <quic_tdas@quicinc.com>, 
-	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, Ajit Pandey <quic_ajipan@quicinc.com>, 
-	Imran Shaik <quic_imrashai@quicinc.com>
-Subject: Re: [PATCH V4 8/8] arm64: dts: qcom: sm8650: Add video and camera
- clock controllers
-Message-ID: <fxh3urdpdugkdgqureddxurgusqrexomi2v4h77enm5ncvoa52@nkh2p7e6dsto>
-References: <20240602114439.1611-1-quic_jkona@quicinc.com>
- <20240602114439.1611-9-quic_jkona@quicinc.com>
+	s=arc-20240116; t=1717336385; c=relaxed/simple;
+	bh=DeL5aeSA5tvcVCR2KVHhivWXgJ21YbHHOT6rNYrcTrw=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=m2UZBVlXpAU5NLCP9Db9gnxW3OhDurnK07D3y5bzCTclBzqTtfTlxP30f8+IapRknHuN1Q41rCcWvesojVQSO023EQ7Pc47+UjC4u4KixBWBCxy9tiMByLccpC4M3y1z/AeaYgfT9efi6sFm98FmC8Fzp+XoH8P0j3GtFI5Js8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ppHRVVz+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A19C5C2BBFC;
+	Sun,  2 Jun 2024 13:53:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717336384;
+	bh=DeL5aeSA5tvcVCR2KVHhivWXgJ21YbHHOT6rNYrcTrw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ppHRVVz+0PtvG8TMK054YMKaO989L5de2R+5klqf3WnUm6UADjkIf4HPjx7DigvI1
+	 uLCe934prVquN6n8DGXkBdvh6kfbmDyFiwdv2RmFDIHn/RuQ/PBXmNbkAcp0Vtt41a
+	 iS2UzoTJhHhVScZEKY028TSq82FGtZzR1k4dZjgNkJRmNy8cUWWTw30KFsGw71LTfH
+	 kr1bc2fSButlekEwjT0eig4PL+WJL24SxAwwZbxNgAxr11pk/jxC3A4Dj55ocC7Vwa
+	 wlY1wjmmyk3ojnOty1ONIOJjbOHAzaHheR/8k1O6mBrSm9yn2UisoEccEoFx+L5x/Z
+	 TgBVXbFTQPRsw==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=wait-a-minute.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sDldu-00HZRE-3k;
+	Sun, 02 Jun 2024 14:53:02 +0100
+Date: Sun, 02 Jun 2024 14:53:02 +0100
+Message-ID: <87ikyr30zl.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: yu harry <harry.yu185@gmail.com>
+Cc: corbet@lwn.net,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	tglx@linutronix.de,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] irqchip/gic-v3: Add Allwinner sunxi001 erratum workaround
+In-Reply-To: <CAAmx-DzLh7TYub-PDSX+A7h6KuPYAr9WeBFmhknPjxAr2dPBnA@mail.gmail.com>
+References: <20240602071058.6405-1-harry.yu185@gmail.com>
+	<86o78jlms2.wl-maz@kernel.org>
+	<CAAmx-DzLh7TYub-PDSX+A7h6KuPYAr9WeBFmhknPjxAr2dPBnA@mail.gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/28.2
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240602114439.1611-9-quic_jkona@quicinc.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: harry.yu185@gmail.com, corbet@lwn.net, catalin.marinas@arm.com, will@kernel.org, tglx@linutronix.de, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Sun, Jun 02, 2024 at 05:14:39PM +0530, Jagadeesh Kona wrote:
-> Add device nodes for video and camera clock controllers on Qualcomm
-> SM8650 platform.
-> 
-> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
-> Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-> ---
->  arch/arm64/boot/dts/qcom/sm8650.dtsi | 26 ++++++++++++++++++++++++++
->  1 file changed, 26 insertions(+)
-> 
+On Sun, 02 Jun 2024 14:23:43 +0100,
+yu harry <harry.yu185@gmail.com> wrote:
+>=20
+> On Sun, Jun 2, 2024 at 5:25=E2=80=AFPM Marc Zyngier <maz@kernel.org> wrot=
+e:
+> >
+> > On Sun, 02 Jun 2024 08:10:58 +0100,
+> > "harry.yu185" <harry.yu185@gmail.com> wrote:
+> > >
+> > > Allwinner A523 GIC600 integration does not support the
+> > > sharability feature. So assigned Erratum ID #sunxi001 for this
+> > > issue.
+> > >
+> > > That the 0x0201643b ID is not Allwinner specific and thus
+> > > there is an extra of_machine_is_compatible() check.
+> > >
+> > > Note, because more than one soc may have this problem, the 'sunxi'
+> > > name is used instead of a fixed soc name like A523.
+> > >
+> > > Signed-off-by: harry.yu185 <harry.yu185@gmail.com>
+> >
+> > No, this is all already handled by the driver already (since 6.6).
+> >
+> > Please fix your DT to include the "dma-noncoherent" property in the
+> > GIC and ITS nodes, which should paper over the integration bug.
+> >
+> > Thanks,
+> >
+> >         M.
+> >
+> > --
+> > Without deviation from the norm, progress is not possible.
+>=20
+> Thank you for your reply,
+> the method you said may not be suitable, because this SOC
+> also needs RDIST_FLAGS_FORCE_NON_SHAREABLE,
+> just like RK3588, but it is different from the RK3588 version.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Who is talking of RK3588? Have you read what I wrote? Have you
+actually looked at what these attributes do?
 
+For context, here's what you're proposing:
 
--- 
-With best wishes
-Dmitry
++static bool __maybe_unused its_enable_sunxi001(void *data)
++{
++	struct its_node *its =3D data;
++
++	if (!of_machine_is_compatible("arm,sun55iw3p1"))
++		return false;
++
++	its->flags |=3D ITS_FLAGS_FORCE_NON_SHAREABLE;
++	gic_rdists->flags |=3D RDIST_FLAGS_FORCE_NON_SHAREABLE;
++
++	return true;
++}
++
+
+"dma-noncoherent" on the GIC node provides:
+
+static bool rd_set_non_coherent(void *data)
+{
+	struct gic_chip_data *d =3D data;
+
+	d->rdists.flags |=3D RDIST_FLAGS_FORCE_NON_SHAREABLE;
+	return true;
+}
+
+"dma-noncoherent" on the ITS node provides:
+
+static bool its_set_non_coherent(void *data)
+{
+	struct its_node *its =3D data;
+
+	its->flags |=3D ITS_FLAGS_FORCE_NON_SHAREABLE;
+	return true;
+}
+
+So please do explain how the combination of the two isn't equivalent
+to your patch. How does it fail to provide the required workaround?
+
+	M.
+
+--=20
+Without deviation from the norm, progress is not possible.
 
