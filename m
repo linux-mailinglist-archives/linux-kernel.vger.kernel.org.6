@@ -1,114 +1,112 @@
-Return-Path: <linux-kernel+bounces-198259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6D978D75B3
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 15:24:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DC1B8D75B5
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 15:26:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04EC81C20D94
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 13:24:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0E8AB208A5
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 13:26:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86B4E3EA9B;
-	Sun,  2 Jun 2024 13:24:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D72F3D551;
+	Sun,  2 Jun 2024 13:26:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qjfsh/Hd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="JJkBIEqc"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA3763C6AC;
-	Sun,  2 Jun 2024 13:24:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED1803BBC1;
+	Sun,  2 Jun 2024 13:26:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717334657; cv=none; b=lce7EUjptC/evQJGWnC7tSQvs//2hJUJGiLrUUlpoXasWMbmweTipkfdGaAshsG/D8WRDvj+dHVZ0ytvN3gYKWcpxxpnRyJcmaQNkjKaDxc/FY9K2YEZoMXaOM+3/BsaFeyz5fPuAC6GdLlBIpZGzdh9+OQNREo6QB4DJsQT9pY=
+	t=1717334786; cv=none; b=nuLwqaNP0xuYFafsTVkcQYFWpR+GREdZrJikcfT/8n77h7e2mPt3m8TuezUARL5W1rhriqJ3nQtpksg3nsB01d/qzVTjtfmzrYU3OgU4w1MyUl/9rW/lFtFfnfcccuXawrrIQ3vqPrHxjkzRy/NwwdGoVk9DHD7lq3mAGf0xRjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717334657; c=relaxed/simple;
-	bh=dnamS6gYRBTa9AM8C9UJNIgYkhTlgyuFI5Sr/Q8Rxek=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Bw6I9kLqRMXCNM41vQ9y9FKEDyj1frjQOvUqvbyE9bhPerYrVxPct0Lf0ghbwCe/G+cTfLJ70rrmXwEbPgwQlhquGrk5yhzOVjXyDeieSou51JlJSFsSp4GMfDnGlBpDA7RVvicPauQros8Z25siqczxoTV03gM+M69J8XgvPR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qjfsh/Hd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC4F5C2BBFC;
-	Sun,  2 Jun 2024 13:24:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717334657;
-	bh=dnamS6gYRBTa9AM8C9UJNIgYkhTlgyuFI5Sr/Q8Rxek=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=qjfsh/HdfPr5jRbfiGC87ljMrYiyrRuV9sHa1qrgvPOo+3/+dGR/cL1kU14hRSNZq
-	 EDogUu50Bq4pl+1ZJbFQcJXe54OHDHS+t43RgafeodGti1fDGO+rRJH9kO8WHcAHqX
-	 4ukUEG+tr+8TviqEyWnhlHBJAz3woViUjbkgRV0UZfXO8+AGv0kq3y73E8NFodslLy
-	 9dB+aw9IITRL8O8pydbA2ht1kBVGDiFNv+tzOmEWImN7dn6QY5XKAe+XfS1lu6NDc+
-	 lJjyowQ2+fWauN46qo5DWlypIvcitmInebFj+u8d2hVZvJX4aEoUELkkqeR55zNuSR
-	 QLnVBeFFqRXOg==
-Date: Sun, 2 Jun 2024 14:24:05 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Yasin Lee <yasin.lee.x@outlook.com>
-Cc: andy.shevchenko@gmail.com, lars@metafoo.de, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, nuno.a@analog.com, swboyd@chromium.org,
- u.kleine-koenig@pengutronix.de, yasin.lee.x@gmail.com
-Subject: Re: [PATCH v3 0/2]
- iio-proximity-hx9023s-Add-TYHX-HX9023S-sensor-driver
-Message-ID: <20240602142405.18a99cef@jic23-huawei>
-In-Reply-To: <SN7PR12MB81019093E9E5D29BEC4B821FA4F22@SN7PR12MB8101.namprd12.prod.outlook.com>
-References: <20240519162438.17af0ff8@jic23-huawei>
-	<SN7PR12MB81019093E9E5D29BEC4B821FA4F22@SN7PR12MB8101.namprd12.prod.outlook.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1717334786; c=relaxed/simple;
+	bh=iWRwIfh5UR3rNfLHd715boOG38Dp5ZMz8BiZ8y0AUTY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gsxpV1/0uKQoFA7/Tw27HOzP6ILN9CXshA4LBFnQ3Fevyiv/CSHloa3hpTgUIbMGUEYBJdxpX8mc3iJKEeLqnFzqVt57jcLeQAT3sq0whBeFZ/UgdFH0XuCzrzr9wFlNFXUuarq1XESkdfgIl5TcXYjlhYRJq2O5tQTKtVMo5UM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=JJkBIEqc; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1717334777;
+	bh=iWRwIfh5UR3rNfLHd715boOG38Dp5ZMz8BiZ8y0AUTY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=JJkBIEqcpisTcy0xjoakuO+LS/obIe4u0lqhpPICAKbmi+fAV0sfM0/dONY8N3kW4
+	 d1hVJb6wd1SO/YmNnix7+ILFP8Cs7WeyQleOGgJtyqtoDRJNg06raGSa8SspEsHNlp
+	 BLqU7qvxRT7qcQPUen/yfLup4DVN2O7daMRvctEK29mwIzjuoyyJtNTx738ivjBn8j
+	 55XGwsrXo/o8O4po9BpMtJJxoCxe+yLtyAHdCwaGhTxGlDOIkVTro6uPB1Thhj8POw
+	 uP2htmce4/b+zt2k7UcMatNv/ioRL1BAqNQ2LesoqBPe+LvdDu/XeDC4YhgDdgskhm
+	 iFlufY5NiUscw==
+Received: from localhost.localdomain (ec2-34-240-57-77.eu-west-1.compute.amazonaws.com [34.240.57.77])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: usama.anjum)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 8160B37813DA;
+	Sun,  2 Jun 2024 13:25:54 +0000 (UTC)
+From: Muhammad Usama Anjum <usama.anjum@collabora.com>
+To: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Shuah Khan <shuah@kernel.org>,
+	Muhammad Usama Anjum <usama.anjum@collabora.com>,
+	Kunwu Chan <chentao@kylinos.cn>
+Cc: kernel@collabora.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] selftests: arm64: tags_test: conform test to TAP output
+Date: Sun,  2 Jun 2024 18:24:59 +0500
+Message-Id: <20240602132502.4186771-1-usama.anjum@collabora.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Wed, 29 May 2024 12:57:47 +0800
-Yasin Lee <yasin.lee.x@outlook.com> wrote:
+Conform the layout, informational and status messages to TAP. No
+functional change is intended other than the layout of output messages.
 
-> From: Yasin Lee <yasin.lee.x@gmail.com>
-> 
-Hi Yasin,
+Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+---
+ tools/testing/selftests/arm64/tags/tags_test.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-Don't send a new version in reply to an old one.
-Given how many revisions some kernel patches go through, it becomes impossible
-to follow some threads where this is done.
-On a more practical basis it ends up off the top of my screen in my email client
-so I may miss your series entirely.
-
-Patchwork was tracking it so I noticed this time.
-
-Jonathan
-
-> v3:
->  - Renamed the files to keep the file names consistent with the chip name.
->  - Removed custom bit operation macro definitions.
->  - Deleted redundant documentation that duplicated the Standard ABI.
->  - Deleted unused header files.
->  - Deleted unused register definitions.
->  - Changed parts of the code related to circuit design to be configurable through DTS.
->  - Removed unnecessary print statements.
->  - Fixed the error in hx9031as_write_event_val.
->  - Removed unnecessary threshold settings in the probe.
->  - Replaced enable_irq(data->client->irq) with interrupt enable register operations.
->  - Fixed style issues.
-> 
-> v2:
->  - Deleted the global data structures, replacing them with dynamic allocation.
->  - Delete debugfs.
->  - Fixed styles issues.
-> 
-> Yasin Lee (2):
->   dt-bindings:iio:proximity: Add hx9023s binding
->   iio:proximity:hx9023s: Add TYHX HX9023S sensor driver
-> 
->  .../bindings/iio/proximity/tyhx,hx9023s.yaml  |  106 ++
->  .../devicetree/bindings/vendor-prefixes.yaml  |    2 +
->  drivers/iio/proximity/Kconfig                 |   14 +
->  drivers/iio/proximity/Makefile                |    2 +-
->  drivers/iio/proximity/hx9023s.c               | 1428 +++++++++++++++++
->  5 files changed, 1551 insertions(+), 1 deletion(-)
->  create mode 100644 Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.yaml
->  create mode 100644 drivers/iio/proximity/hx9023s.c
-> 
+diff --git a/tools/testing/selftests/arm64/tags/tags_test.c b/tools/testing/selftests/arm64/tags/tags_test.c
+index 955f87c1170d7..8ae26e496c89c 100644
+--- a/tools/testing/selftests/arm64/tags/tags_test.c
++++ b/tools/testing/selftests/arm64/tags/tags_test.c
+@@ -17,19 +17,21 @@ int main(void)
+ 	static int tbi_enabled = 0;
+ 	unsigned long tag = 0;
+ 	struct utsname *ptr;
+-	int err;
++
++	ksft_print_header();
++	ksft_set_plan(1);
+ 
+ 	if (prctl(PR_SET_TAGGED_ADDR_CTRL, PR_TAGGED_ADDR_ENABLE, 0, 0, 0) == 0)
+ 		tbi_enabled = 1;
+ 	ptr = (struct utsname *)malloc(sizeof(*ptr));
+ 	if (!ptr)
+-		ksft_exit_fail_msg("Failed to allocate utsname buffer\n");
++		ksft_exit_fail_perror("Failed to allocate utsname buffer");
+ 
+ 	if (tbi_enabled)
+ 		tag = 0x42;
+ 	ptr = (struct utsname *)SET_TAG(ptr, tag);
+-	err = uname(ptr);
++	ksft_test_result(!uname(ptr), "Syscall successful with tagged address\n");
+ 	free(ptr);
+ 
+-	return err;
++	ksft_finished();
+ }
+-- 
+2.39.2
 
 
