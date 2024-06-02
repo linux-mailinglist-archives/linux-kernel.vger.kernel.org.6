@@ -1,82 +1,95 @@
-Return-Path: <linux-kernel+bounces-198388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DB198D778E
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 21:17:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CE168D7790
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 21:23:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF8741C21599
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 19:17:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E9E21C210E2
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 19:23:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4C2A6EB74;
-	Sun,  2 Jun 2024 19:17:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFB053B7AC;
+	Sun,  2 Jun 2024 19:23:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l/e6RU5O"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="fBBponrG"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86B0D219E4;
-	Sun,  2 Jun 2024 19:17:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 544D75820E
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Jun 2024 19:22:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717355844; cv=none; b=lwzoZoJXoxqKiGRv/Vqse+yjWy8SQwaT9ME51UfVhMgdrrn6IIoFGQU/j74Ef4AiM5LEyW0uBxF5qHJZsO/Cp0uIhyWR+Y5o0jkC9ZQqvsMeypaPTc3SGv+FIscdWTYd2KXaenngzKjWfDCGt+voEEZB9oV4VW5Tc5rs3ima19c=
+	t=1717356180; cv=none; b=aJXDLFaVWt2FUAfsLi0RFO2/FqH27f4D9GD/WpsuXdCSJpkiRhFwQXUleGTghBv098SSqiyDYi4s2SNJllElke/n0RPh9ssqIRTTwcdz9ecYqvVEApqcHQ+1LdTbTGkIxUwmNgYQNoq8sNkVGKwlk6TxsbkdgtPSEcen+aG4yHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717355844; c=relaxed/simple;
-	bh=2TBWg/+qwWR97iXfi+OuCUPcDnucc4D2yfjxL8zhdmA=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uDwcP3tVLyJP5u/yW9b5KUSFFqQJvzc8M1M7ooD4SMQrYW2hoDU4imo0ZoXQOVY7IGfFXPXI6nfnRFR9MZHvDAa/PbQn3n5kanhWXK6NWuIa4Na2NGIPSSxXYqf73rUbIx4/sgBmF0Oxbd/R9r0hT57ozCGDT8uuu6P0hDKTmq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l/e6RU5O; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-42121d28664so31901995e9.2;
-        Sun, 02 Jun 2024 12:17:22 -0700 (PDT)
+	s=arc-20240116; t=1717356180; c=relaxed/simple;
+	bh=+p/p+sBxaVahfhxddUOMzIzx9u5f7xMb0tzl6gyB0EE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ay9udIXs9wp3fZdc0G4YRIFqCE40CHoEPYUmTdtDTgjE9sUarx03r6NbRgiklQtNvDAdA/XL7CpxSPAMcCyvrx72Jq+kJ4NKvOvqaKtwz2CLRuyKbL7OH4cHDSUoN+t8JVLk1Zl3mMKLTX63g0yEJ6RdXeZ0APx7xcoXuiJg1MM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=fBBponrG; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-6cc3e134f88so297368a12.0
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2024 12:22:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717355841; x=1717960641; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=HPpc1cNXUJlKcHgb3iTHYZlBD481psTql015HQxevII=;
-        b=l/e6RU5OahozqghSOdTGWJFT9UHjRBt1wvn9GLTipYkzDRcJl9yh1F+V7k9ztDldUf
-         6YvL7u8yO8ohRxyv07wabVEYfIy4IGiHQJ8yYcG41jbG4uWOuhbvvaHqgisn9MgJUY43
-         rna8usr/+Am/LBxLzjmtUwMAF+f++CjaGLl5DamJtV9At+UgHxW1h+FbJX42QGVmEcYe
-         kHf2SQwlqgtFcOMyd7bGxw8vR7f0A6z/9Q7t8bS1mm+v1eRQ1WS+WYx2H5glcwi9XgwL
-         6eXNZIm/yJTN82ANvNiwpSJIg3fkpoH+lJoa0tpjPT0BmTA1r9dC233OWlsMoE5G6mLg
-         R5jQ==
+        d=fastly.com; s=google; t=1717356178; x=1717960978; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=E6CN0GkVm8fJ9Piv7fNFcgMAHcn/4Sw1khoJK+SgkbE=;
+        b=fBBponrG3WuJPaIABJkLhfHGdO/ihIfDIX75hAxirvQBEuXwRXRdvqvreGRu95FsSw
+         uGm33P/+nWFz53cUxb1oAWgbqVDbRFDG1D5gDpZ6zwS55NfrU0qMGIxpfTkFET+AF0M+
+         Syyu50fJ1nXYq3VidWq4EsLvoWvNN6SkHsWZE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717355841; x=1717960641;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HPpc1cNXUJlKcHgb3iTHYZlBD481psTql015HQxevII=;
-        b=IYlKd+esvAEHlXK5t0TArxoAhN2YTrBObVweH/3ME+aPgvjTnH8SSDgnduxrM2BxhL
-         aICCFlEByfNkDXv5rVBz+bDdkScCPFGSL17zv438kXDsofs1YwpmxVAoWooKWgKypWoW
-         Me+MJehO8trDp1o6N9eOjb6Kmjvry32n88J7bcQF9JWa4sq1ST0mtTEjfejRQMwJkxbf
-         eUv9MeIhBZklLoAfm/UhGob9pHHcodtjAh4CYxLCILNvwjd3U1S7QHZ8jpqqjCtx9ev0
-         v9yqMmn9XWgLfYvYWLk5V/cpBALD9YBB3MyVkg7FJUS20DDJgy18Z6WGn4bkGbSV3x8E
-         qsRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWZ8nK8VWFKGSFG6QTbbjQ99iFMt2jREYcBJN09EDv58B26O+bqHtaxkZ/ngii5ndoyuV8fW+UyyPwYTOB1YTx3o9DntO5FKMg7j020uWuPK6XBN1rQi7wnJco2T97BmqU5RwDPQkzp
-X-Gm-Message-State: AOJu0Yyl2L/l/nDoOiD4yKh4kSu8mdxp6o9hrH+AgZ8IV6rP9eV76ujp
-	rWQ2296YxST4GZO4hJvLTAlpEcxSy7W0Mw88mnu+cW/ouofjCy7Q
-X-Google-Smtp-Source: AGHT+IHc5K5gLCarewdNGOEllukR+wh4z1BnFtsRopiMjOECNHauOfXbiZYAMUHzB12FW2vmEYZLaQ==
-X-Received: by 2002:a05:600c:1d82:b0:418:2a57:380c with SMTP id 5b1f17b1804b1-4212e0ae95emr56859425e9.26.1717355840440;
-        Sun, 02 Jun 2024 12:17:20 -0700 (PDT)
-Received: from vamoiridPC ([2a04:ee41:82:7577:add1:b1ad:7182:3e90])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42138260c5asm46317845e9.41.2024.06.02.12.17.19
+        d=1e100.net; s=20230601; t=1717356178; x=1717960978;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=E6CN0GkVm8fJ9Piv7fNFcgMAHcn/4Sw1khoJK+SgkbE=;
+        b=NRIG+uzHpfFWIqjSqq9hcZI1uzBm289HNwzL4DaH7+oolJH9wxNCCpQESiK0bO38pe
+         GtkyoaG89iZQ6m2maxd1xRjCXaShRRvndWCcckxdyH6InBOjdqTfPYOfGJgRTlEv2G+m
+         ldKRO/5squ6sdQC+FTB231OHNBPq45cx5Eer4D5bl/7E/VVczfKNcdIHfp04XrgwGMdW
+         deWbyeQawo4OvJVesMxfnOO0euhNq/f1JwT+T9xGHPiHVKdd+ulluX0vY9tNobUmQkut
+         Ee2swUmAcA0dIaJuI879WDiD48/aJ3CH8Vxv3fY+BSTk6YtMvhX6c3mtHbxB34nlfsAR
+         g92A==
+X-Gm-Message-State: AOJu0YxHeI7HkY1U+zIxmeGg+/IrBL7QHigFLS7+4RyjP//IptzYY5ZM
+	0L/xmsuWU/ThuL7ZGJ0AuJdyf7Ek9QGU3WBKXUJCYpgwZlZ9OEGx6SKrKo+Jz5c=
+X-Google-Smtp-Source: AGHT+IEhA4qMhYDN38lQFg3dzXtqMQx9B5qMRLpQJlpnRGXdDqWSGZtiQnKi9+5BsCRx/YOhcB39zg==
+X-Received: by 2002:a05:6a20:748d:b0:1b0:18e6:ac2c with SMTP id adf61e73a8af0-1b26f23cfcdmr7598667637.40.1717356177187;
+        Sun, 02 Jun 2024 12:22:57 -0700 (PDT)
+Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70242b05497sm4278203b3a.167.2024.06.02.12.22.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 02 Jun 2024 12:17:20 -0700 (PDT)
-From: Vasileios Amoiridis <vassilisamir@gmail.com>
-X-Google-Original-From: Vasileios Amoiridis <vamoirid@vamoiridPC>
-Date: Sun, 2 Jun 2024 21:17:18 +0200
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Vasileios Amoiridis <vassilisamir@gmail.com>, lars@metafoo.de,
-	himanshujha199640@gmail.com, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 05/17] iio: chemical: bme680: Fix type in define
-Message-ID: <20240602191718.GB387181@vamoiridPC>
-References: <20240527183805.311501-1-vassilisamir@gmail.com>
- <20240527183805.311501-6-vassilisamir@gmail.com>
- <20240602134150.6cdf01af@jic23-huawei>
+        Sun, 02 Jun 2024 12:22:56 -0700 (PDT)
+Date: Sun, 2 Jun 2024 12:22:53 -0700
+From: Joe Damato <jdamato@fastly.com>
+To: Tariq Toukan <ttoukan.linux@gmail.com>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	nalramli@fastly.com, Saeed Mahameed <saeedm@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	"open list:MELLANOX MLX5 core VPI driver" <linux-rdma@vger.kernel.org>,
+	Tariq Toukan <tariqt@nvidia.com>
+Subject: Re: [RFC net-next v3 2/2] net/mlx5e: Add per queue netdev-genl stats
+Message-ID: <ZlzGjXxVD-JClqIy@LQ3V64L9R2>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	Tariq Toukan <ttoukan.linux@gmail.com>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	nalramli@fastly.com, Saeed Mahameed <saeedm@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	"open list:MELLANOX MLX5 core VPI driver" <linux-rdma@vger.kernel.org>,
+	Tariq Toukan <tariqt@nvidia.com>
+References: <20240529031628.324117-1-jdamato@fastly.com>
+ <20240529031628.324117-3-jdamato@fastly.com>
+ <5b3a0f6a-5a03-45d7-ab10-1f1ba25504d3@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,53 +98,239 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240602134150.6cdf01af@jic23-huawei>
+In-Reply-To: <5b3a0f6a-5a03-45d7-ab10-1f1ba25504d3@gmail.com>
 
-On Sun, Jun 02, 2024 at 01:41:50PM +0100, Jonathan Cameron wrote:
-> On Mon, 27 May 2024 20:37:53 +0200
-> Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
-> Patch title "type" should be "typo". :)
+On Sun, Jun 02, 2024 at 12:14:21PM +0300, Tariq Toukan wrote:
 > 
-
-Ah, you are right thanks for pointing this out!
-
-Cheers,
-Vasilis
-
-> > Fix a define typo that instead of BME680_... it is
-> > saying BM6880_...
+> 
+> On 29/05/2024 6:16, Joe Damato wrote:
+> > Add functions to support the netdev-genl per queue stats API.
 > > 
-> > Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
+> > ./cli.py --spec netlink/specs/netdev.yaml \
+> >           --dump qstats-get --json '{"scope": "queue"}'
+> > 
+> > ...snip
+> > 
+> >   {'ifindex': 7,
+> >    'queue-id': 62,
+> >    'queue-type': 'rx',
+> >    'rx-alloc-fail': 0,
+> >    'rx-bytes': 105965251,
+> >    'rx-packets': 179790},
+> >   {'ifindex': 7,
+> >    'queue-id': 0,
+> >    'queue-type': 'tx',
+> >    'tx-bytes': 9402665,
+> >    'tx-packets': 17551},
+> > 
+> > ...snip
+> > 
+> > Also tested with the script tools/testing/selftests/drivers/net/stats.py
+> > in several scenarios to ensure stats tallying was correct:
+> > 
+> > - on boot (default queue counts)
+> > - adjusting queue count up or down (ethtool -L eth0 combined ...)
+> > - adding mqprio TCs
+> 
+> Please test also with interface down.
+
+OK. I'll test with the interface down.
+
+Is there some publicly available Mellanox script I can run to test
+all the different cases? That would make this much easier. Maybe
+this is something to include in mlnx-tools on github?
+
+The mlnx-tools scripts that includes some python scripts for setting
+up QoS doesn't seem to work on my system, and outputs vague error
+messages. I have no idea if I'm missing some kernel option, if the
+device doesn't support it, or if I need some other dependency
+installed.
+
+I have been testing these patches on a:
+
+Mellanox Technologies MT28800 Family [ConnectX-5 Ex]
+firmware-version: 16.29.2002 (MT_0000000013)
+
+> > 
+> > Signed-off-by: Joe Damato <jdamato@fastly.com>
 > > ---
-> >  drivers/iio/chemical/bme680.h      | 2 +-
-> >  drivers/iio/chemical/bme680_core.c | 2 +-
-> >  2 files changed, 2 insertions(+), 2 deletions(-)
+> >   .../net/ethernet/mellanox/mlx5/core/en_main.c | 132 ++++++++++++++++++
+> >   1 file changed, 132 insertions(+)
 > > 
-> > diff --git a/drivers/iio/chemical/bme680.h b/drivers/iio/chemical/bme680.h
-> > index 4edc5d21cb9f..3133d624270a 100644
-> > --- a/drivers/iio/chemical/bme680.h
-> > +++ b/drivers/iio/chemical/bme680.h
-> > @@ -12,7 +12,7 @@
-> >  
-> >  #define BME680_REG_TEMP_MSB			0x22
-> >  #define BME680_REG_PRESS_MSB			0x1F
-> > -#define BM6880_REG_HUMIDITY_MSB			0x25
-> > +#define BME680_REG_HUMIDITY_MSB			0x25
-> >  #define BME680_REG_GAS_MSB			0x2A
-> >  #define BME680_REG_GAS_R_LSB			0x2B
-> >  #define   BME680_GAS_STAB_BIT			BIT(4)
-> > diff --git a/drivers/iio/chemical/bme680_core.c b/drivers/iio/chemical/bme680_core.c
-> > index dd2cd11b6dd3..8b42c4716412 100644
-> > --- a/drivers/iio/chemical/bme680_core.c
-> > +++ b/drivers/iio/chemical/bme680_core.c
-> > @@ -719,7 +719,7 @@ static int bme680_read_humid(struct bme680_data *data,
-> >  	if (ret < 0)
-> >  		return ret;
-> >  
-> > -	ret = regmap_bulk_read(data->regmap, BM6880_REG_HUMIDITY_MSB,
-> > +	ret = regmap_bulk_read(data->regmap, BME680_REG_HUMIDITY_MSB,
-> >  			       &tmp, sizeof(tmp));
-> >  	if (ret < 0) {
-> >  		dev_err(dev, "failed to read humidity\n");
+> > diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+> > index ce15805ad55a..515c16a88a6c 100644
+> > --- a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+> > +++ b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+> > @@ -39,6 +39,7 @@
+> >   #include <linux/debugfs.h>
+> >   #include <linux/if_bridge.h>
+> >   #include <linux/filter.h>
+> > +#include <net/netdev_queues.h>
+> >   #include <net/page_pool/types.h>
+> >   #include <net/pkt_sched.h>
+> >   #include <net/xdp_sock_drv.h>
+> > @@ -5293,6 +5294,136 @@ static bool mlx5e_tunnel_any_tx_proto_supported(struct mlx5_core_dev *mdev)
+> >   	return (mlx5_vxlan_allowed(mdev->vxlan) || mlx5_geneve_tx_allowed(mdev));
+> >   }
+> > +static void mlx5e_get_queue_stats_rx(struct net_device *dev, int i,
+> > +				     struct netdev_queue_stats_rx *stats)
+> > +{
+> > +	struct mlx5e_priv *priv = netdev_priv(dev);
+> > +	struct mlx5e_channel_stats *channel_stats;
+> > +	struct mlx5e_rq_stats *xskrq_stats;
+> > +	struct mlx5e_rq_stats *rq_stats;
+> > +
+> > +	if (mlx5e_is_uplink_rep(priv))
+> > +		return;
+> > +
+> > +	channel_stats = priv->channel_stats[i];
+> > +	xskrq_stats = &channel_stats->xskrq;
+> > +	rq_stats = &channel_stats->rq;
+> > +
+> > +	stats->packets = rq_stats->packets + xskrq_stats->packets;
+> > +	stats->bytes = rq_stats->bytes + xskrq_stats->bytes;
+> > +	stats->alloc_fail = rq_stats->buff_alloc_err +
+> > +			    xskrq_stats->buff_alloc_err;
+> > +}
+> > +
+> > +static void mlx5e_get_queue_stats_tx(struct net_device *dev, int i,
+> > +				     struct netdev_queue_stats_tx *stats)
+> > +{
+> > +	struct mlx5e_priv *priv = netdev_priv(dev);
+> > +	struct mlx5e_channel_stats *channel_stats;
+> > +	struct mlx5e_sq_stats *sq_stats;
+> > +	int ch_ix, tc_ix;
+> > +
+> > +	mutex_lock(&priv->state_lock);
+> > +	txq_ix_to_chtc_ix(&priv->channels.params, i, &ch_ix, &tc_ix);
+> > +	mutex_unlock(&priv->state_lock);
+> > +
+> > +	channel_stats = priv->channel_stats[ch_ix];
+> > +	sq_stats = &channel_stats->sq[tc_ix];
+> > +
+> > +	stats->packets = sq_stats->packets;
+> > +	stats->bytes = sq_stats->bytes;
+> > +}
+> > +
+> > +static void mlx5e_get_base_stats(struct net_device *dev,
+> > +				 struct netdev_queue_stats_rx *rx,
+> > +				 struct netdev_queue_stats_tx *tx)
+> > +{
+> > +	struct mlx5e_priv *priv = netdev_priv(dev);
+> > +	int i, j;
+> > +
+> > +	if (!mlx5e_is_uplink_rep(priv)) {
+> > +		rx->packets = 0;
+> > +		rx->bytes = 0;
+> > +		rx->alloc_fail = 0;
+> > +
+> > +		/* compute stats for deactivated RX queues
+> > +		 *
+> > +		 * if priv->channels.num == 0 the device is down, so compute
+> > +		 * stats for every queue.
+> > +		 *
+> > +		 * otherwise, compute only the queues which have been deactivated.
+> > +		 */
+> > +		mutex_lock(&priv->state_lock);
+> > +		if (priv->channels.num == 0)
+> > +			i = 0;
 > 
+> This is not consistent with the above implementation of
+> mlx5e_get_queue_stats_rx(), which always returns the stats even if the
+> channel is down.
+> This way, you'll double count the down channels.
+> 
+> I think you should always start from priv->channels.params.num_channels.
+
+OK, I'll do that.
+
+> > +		else
+> > +			i = priv->channels.params.num_channels;
+> > +		mutex_unlock(&priv->state_lock);
+> 
+> I understand that you're following the guidelines by taking the lock here, I
+> just don't think this improves anything... If channels can be modified in
+> between calls to mlx5e_get_base_stats / mlx5e_get_queue_stats_rx, then
+> wrapping the priv->channels access with a lock can help protect each single
+> deref, but not necessarily in giving a consistent "screenshot" of the stats.
+> 
+> The rtnl_lock should take care of that, as the driver holds it when changing
+> the number of channels and updating the real_numrx/tx_queues.
+> 
+> This said, I would carefully say you can drop the mutex once following the
+> requested changes above.
+
+OK, that makes sense to me.
+
+So then I assume I can drop the mutex in mlx5e_get_queue_stats_tx
+above, as well, for the same reasons?
+
+Does this mean then that you are in favor of the implementation for
+tx stats provided in this RFC and that I've implemented option 1 as
+you described in the previous thread correctly?
+
+> > +
+> > +		for (; i < priv->stats_nch; i++) {
+> > +			struct netdev_queue_stats_rx rx_i = {0};
+> > +
+> > +			mlx5e_get_queue_stats_rx(dev, i, &rx_i);
+> > +
+> > +			rx->packets += rx_i.packets;
+> > +			rx->bytes += rx_i.bytes;
+> > +			rx->alloc_fail += rx_i.alloc_fail;
+> > +		}
+> > +
+> > +		if (priv->rx_ptp_opened) {
+> > +			struct mlx5e_rq_stats *rq_stats = &priv->ptp_stats.rq;
+> > +
+> > +			rx->packets += rq_stats->packets;
+> > +			rx->bytes += rq_stats->bytes;
+> > +		}
+> > +	}
+> > +
+> > +	tx->packets = 0;
+> > +	tx->bytes = 0;
+> > +
+> > +	mutex_lock(&priv->state_lock);
+> > +	for (i = 0; i < priv->stats_nch; i++) {
+> > +		struct mlx5e_channel_stats *channel_stats = priv->channel_stats[i];
+> > +
+> > +		/* while iterating through all channels [0, stats_nch], there
+> > +		 * are two cases to handle:
+> > +		 *
+> > +		 *  1. the channel is available, so sum only the unavailable TCs
+> > +		 *     [mlx5e_get_dcb_num_tc, max_opened_tc).
+> > +		 *
+> > +		 *  2. the channel is unavailable, so sum all TCs [0, max_opened_tc).
+> > +		 */
+> 
+> I wonder why not call the local var 'tc'?
+
+OK.
+
+> > +		if (i < priv->channels.params.num_channels) {
+> > +			j = mlx5e_get_dcb_num_tc(&priv->channels.params);
+> > +		} else {
+> > +			j = 0;
+> > +		}
+> 
+> Remove parenthesis, or use ternary op.
+
+I'll remove the parenthesis; I didn't run checkpatch.pl on this RFC
+(which catches this), but I should have.
+
+> > +
+> > +		for (; j < priv->max_opened_tc; j++) {
+> > +			struct mlx5e_sq_stats *sq_stats = &channel_stats->sq[j];
+> > +
+> > +			tx->packets += sq_stats->packets;
+> > +			tx->bytes += sq_stats->bytes;
+> > +		}
+> > +	}
+> > +	mutex_unlock(&priv->state_lock);
+> > +
+> 
+> Same comment regarding dropping the mutex.
+
+OK.
 
