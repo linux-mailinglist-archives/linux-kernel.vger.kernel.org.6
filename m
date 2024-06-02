@@ -1,103 +1,93 @@
-Return-Path: <linux-kernel+bounces-198236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D67F8D7567
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 14:42:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14D5A8D756A
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 14:42:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4FBFB20B05
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 12:42:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5ACC28213E
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 12:42:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 073B03B78D;
-	Sun,  2 Jun 2024 12:42:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD3F73BB24;
+	Sun,  2 Jun 2024 12:42:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nusNZtLu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dLrH8tx1"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 497323B2BB;
-	Sun,  2 Jun 2024 12:42:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A8873BBCB;
+	Sun,  2 Jun 2024 12:42:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717332120; cv=none; b=CyPPwVRVIyV/tfeTIbGSJlBeUFFZqM0UodP3oMkgcVNKomK6eiNUY72vGEQpcA25rx/uGr5K7KqRg2/hnAlznOjZx1FDKJia+RXVKYHkbo9VROScW8gQ2rm8x9i5oQiOu0aKQA6SHuh5o00ea5HvLRzT17Zs5UP+1Q88+rnvDak=
+	t=1717332142; cv=none; b=TNuQC3+BN7S3FEYuV4iHXY3czp9CNAjNu1VxuTSe7yi6gYnmODlwHHuqV156mPVNI2/gNA8xK97Mnx8oIrbHTlLgcXBhx+VfclCjb850PiQe0EO8QkhNPr5zKaspsmzMBWn1PT4jmejBMApsB8YA10UenZpuqvqMgtB4h3g9bm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717332120; c=relaxed/simple;
-	bh=/VwbBF5g70XFNUWtesKYS/kHHhxlo11Bi8yiiCJTQNg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=efEa67ikui0buOQqAPPat4iUH8EBKi0gMP8YtIooVssvPqn+5Q9jhmReVmSwNsbkxOgICJqq769RMC35YLKk5dEHIOwX2gxCH0NdW3at77JbZmefqBzFR1IQOMdkYDmZ4a2VIXU1/KneoOWLN63GSWInlZMCdK+5CxG7oFwo4xc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nusNZtLu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72514C2BBFC;
-	Sun,  2 Jun 2024 12:41:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717332119;
-	bh=/VwbBF5g70XFNUWtesKYS/kHHhxlo11Bi8yiiCJTQNg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=nusNZtLuYFZiPkzdHFtkyD4rZMmAB1hmGDYyAR/6+fXbGuWRSziRHWpYF/bzA+X8c
-	 SHtG+mXAx0TT1cU+ibkbIBREuUiSJa61DWXR+6Rg/CIf9pakYsucM2YiawusgGygYy
-	 ziZrJArqAv0zRnuFiOH31EUibvlWcz4wodfGmxKwuXJD109w++VJmF9NzhtdUcP9wI
-	 pHsUqeticzDIEb4jzS6RJxdoDN0d83q27bT7Kc0xwU4NcRzgz6wj3vsaut3T44KHu1
-	 VM6ASguaALtwGOvvVKwBdDzAbtGQ3oIIhWWobit7mrHNLpRfGTlO//bwnaLmRwU1rn
-	 rocFgkILPmc1Q==
-Date: Sun, 2 Jun 2024 13:41:50 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Vasileios Amoiridis <vassilisamir@gmail.com>
-Cc: lars@metafoo.de, himanshujha199640@gmail.com, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 05/17] iio: chemical: bme680: Fix type in define
-Message-ID: <20240602134150.6cdf01af@jic23-huawei>
-In-Reply-To: <20240527183805.311501-6-vassilisamir@gmail.com>
-References: <20240527183805.311501-1-vassilisamir@gmail.com>
-	<20240527183805.311501-6-vassilisamir@gmail.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1717332142; c=relaxed/simple;
+	bh=bd0Ky3nJOVfEJZnsWoWRij0lx/SkCJKPs7DSSagkBwQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dfjo14PwUKXcZikuYAvs2ow65qa0Qb1BUiJTu0cOddHzKIXTiRLeZhK82vmWHeLIJkGXuWV9WIZS5v7SqYLduR60Yd9jtfwjFwqaH+ymAxP8CYECJ9RlrGJ5IULwZ1yVu76IDn/yAecJnGHJItFMwGfMLrFPyGrTxa6MyCfe5P0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dLrH8tx1; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717332141; x=1748868141;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=bd0Ky3nJOVfEJZnsWoWRij0lx/SkCJKPs7DSSagkBwQ=;
+  b=dLrH8tx1LrlU1+a27Fu+4JcFCgWrBI/gQwogceJ0De8g1J1Atn45pEcW
+   btz/hHCOmMKgWy5wF+zwrtn4CkDW96cKaQ/LmWDAsMdpskx/D35L+vNCV
+   DOePUJ/Y7sAeOr+44WA1yVaNfYq8/2EotiCyBCH/ygq+bc8a1HyWYWzKm
+   /O0GPNHFgSJhvTofPnr28M2bMWa3w6XVehrWukqfTOBWRyyFWV+akRC4O
+   u7KnNalAlWwLGWGPsm54WuaZeTWKp4R7F3wZSxrcZgkH4iNmBSuDzpQlt
+   bzy9rjldD4f0WEo8fqb4rRZZRVYf2Mu25a/VRFLFMROFO6tqUa5LI0/sd
+   g==;
+X-CSE-ConnectionGUID: 0BgjrO1pTau1aw2ebZLXbQ==
+X-CSE-MsgGUID: MDxnFEZDTselJmk3EHxa3g==
+X-IronPort-AV: E=McAfee;i="6600,9927,11091"; a="17624416"
+X-IronPort-AV: E=Sophos;i="6.08,209,1712646000"; 
+   d="scan'208";a="17624416"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2024 05:42:21 -0700
+X-CSE-ConnectionGUID: tX8LoOEsRrWCzt7Ls4ZcdQ==
+X-CSE-MsgGUID: UuebdpjSSvGjZhnGNfe2DQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,209,1712646000"; 
+   d="scan'208";a="41061427"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa005.fm.intel.com with ESMTP; 02 Jun 2024 05:42:15 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id 9CA1A1CB; Sun, 02 Jun 2024 15:42:13 +0300 (EEST)
+Date: Sun, 2 Jun 2024 15:42:13 +0300
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: bp@alien8.de
+Cc: adrian.hunter@intel.com, ardb@kernel.org, ashish.kalra@amd.com, 
+	bhe@redhat.com, dave.hansen@linux.intel.com, elena.reshetova@intel.com, 
+	haiyangz@microsoft.com, hpa@zytor.com, jun.nakajima@intel.com, kai.huang@intel.com, 
+	kexec@lists.infradead.org, kys@microsoft.com, linux-acpi@vger.kernel.org, 
+	linux-coco@lists.linux.dev, linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	ltao@redhat.com, mingo@redhat.com, nik.borisov@suse.com, peterz@infradead.org, 
+	rafael@kernel.org, rick.p.edgecombe@intel.com, 
+	sathyanarayanan.kuppuswamy@linux.intel.com, seanjc@google.com, tglx@linutronix.de, thomas.lendacky@amd.com, 
+	x86@kernel.org
+Subject: Re: [PATCHv11.1 10/19] x86/mm: Add callbacks to prepare encrypted
+ memory for kexec
+Message-ID: <wu34snwuytiwqp3scpxl7c7jw47jiywjlvommoenpsmbrp6c5k@con7h3pomdst>
+References: <20240529104257.GIZlcGsTkJHVBblkrY@fat_crate.local>
+ <20240602123903.2121883-1-kirill.shutemov@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240602123903.2121883-1-kirill.shutemov@linux.intel.com>
 
-On Mon, 27 May 2024 20:37:53 +0200
-Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
-Patch title "type" should be "typo". :)
+Please disregard this. I failed to fold changes :/
 
-> Fix a define typo that instead of BME680_... it is
-> saying BM6880_...
-> 
-> Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
-> ---
->  drivers/iio/chemical/bme680.h      | 2 +-
->  drivers/iio/chemical/bme680_core.c | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/iio/chemical/bme680.h b/drivers/iio/chemical/bme680.h
-> index 4edc5d21cb9f..3133d624270a 100644
-> --- a/drivers/iio/chemical/bme680.h
-> +++ b/drivers/iio/chemical/bme680.h
-> @@ -12,7 +12,7 @@
->  
->  #define BME680_REG_TEMP_MSB			0x22
->  #define BME680_REG_PRESS_MSB			0x1F
-> -#define BM6880_REG_HUMIDITY_MSB			0x25
-> +#define BME680_REG_HUMIDITY_MSB			0x25
->  #define BME680_REG_GAS_MSB			0x2A
->  #define BME680_REG_GAS_R_LSB			0x2B
->  #define   BME680_GAS_STAB_BIT			BIT(4)
-> diff --git a/drivers/iio/chemical/bme680_core.c b/drivers/iio/chemical/bme680_core.c
-> index dd2cd11b6dd3..8b42c4716412 100644
-> --- a/drivers/iio/chemical/bme680_core.c
-> +++ b/drivers/iio/chemical/bme680_core.c
-> @@ -719,7 +719,7 @@ static int bme680_read_humid(struct bme680_data *data,
->  	if (ret < 0)
->  		return ret;
->  
-> -	ret = regmap_bulk_read(data->regmap, BM6880_REG_HUMIDITY_MSB,
-> +	ret = regmap_bulk_read(data->regmap, BME680_REG_HUMIDITY_MSB,
->  			       &tmp, sizeof(tmp));
->  	if (ret < 0) {
->  		dev_err(dev, "failed to read humidity\n");
-
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
