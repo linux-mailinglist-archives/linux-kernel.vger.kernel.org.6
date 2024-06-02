@@ -1,376 +1,159 @@
-Return-Path: <linux-kernel+bounces-198320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 724948D76AE
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 17:25:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C6AF8D769A
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 17:24:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 291AB281677
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 15:25:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4F49B212B7
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 15:24:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8F9F5F47D;
-	Sun,  2 Jun 2024 15:24:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C250944C93;
+	Sun,  2 Jun 2024 15:24:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="m7Q2qhwZ"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="N6jV4FxU"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49E9845C18;
-	Sun,  2 Jun 2024 15:24:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B63A43AAB
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Jun 2024 15:24:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717341878; cv=none; b=iT1SD0ARzTGiifNq7m5mWfNvuwFEufWp4M+o6UfPFF/k4eYmOrOUq3GCgYK/mkRB9PUxGtaOj3y0QTKs7K5/YHeSv6/DgRoKpt2xDtgOvd2k3YJJK6rg/xlYZzc55QAkmcDubsfeOIP/okFoK1YstcolKNNEe8OKGPf7nFRPFkk=
+	t=1717341865; cv=none; b=eibKflqT1cEybIEWLMsRPIWNG1V6Hspx831epGR7uTKFpG8aRvyPXQ68kwKnEgm2Dp76n3RHGR44GqdXxs6Bsb+A+puT1lLn6sfzQnnbT0sE5bknbu81291RoYuDJ4kd29GDEyMjQIvqhDzaJprVliwYuJNQW7LCHwPo4fC7VNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717341878; c=relaxed/simple;
-	bh=lcAAS8zGkvVNH7T8d8AHYO9lew0wYOyWYsKBW6B8qyU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RvnczD7Xvolv1AbvyXewlU6wNHuf/aWwzvOlAYUes6d+CQRxcxUDUjDXz/sJqiRj7zVwQRe+Ih9NsUNPZe0I+Jt5o7UgCWERgHLlio3DvASVdLBtN5a0qMH9F1WH+YBB95KbrekH+h5ISeW43QVQ1wChXpd68DAlvJ4DKopOiAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=m7Q2qhwZ; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 8ACFD39F;
-	Sun,  2 Jun 2024 17:24:26 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1717341866;
-	bh=lcAAS8zGkvVNH7T8d8AHYO9lew0wYOyWYsKBW6B8qyU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=m7Q2qhwZLWqSkL8nt97ejRoj3wPlPg6t4MwcPhiFCfM2gEf5yJ8DdK0ozjuhysjeE
-	 UqIpTeYiCLUIyVub1C9ElwGu45r2xR16hzwMcgTCpVFOMMR3eVGKFJmBAujURgrEp4
-	 YAiNVtIHCQlpM+StA0LFncGllWVVw4BnQiYrqTIw=
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-pwm@vger.kernel.org
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Lee Jones <lee@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
-	Clark Wang <xiaoning.wang@nxp.com>
-Subject: [PATCH v3 4/4] pwm: adp5585: Add Analog Devices ADP5585 support
-Date: Sun,  2 Jun 2024 18:24:12 +0300
-Message-ID: <20240602152412.29136-5-laurent.pinchart@ideasonboard.com>
-X-Mailer: git-send-email 2.44.2
-In-Reply-To: <20240602152412.29136-1-laurent.pinchart@ideasonboard.com>
-References: <20240602152412.29136-1-laurent.pinchart@ideasonboard.com>
+	s=arc-20240116; t=1717341865; c=relaxed/simple;
+	bh=zbfFxvGlEXGUfaHHWviHRptbB94E2bfNHZ0jEXb2pEI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CJTW9pYUj4nXoCxGL1catiVMIzc401y7XsCvS9VgtYDScvEPbOtyA0DZP8dWCxJ993WrCSnq+tfa1+Rqwwwa0qOSgrXeBiMnC9+vYFq2LtNBJoChWXw8ZWzpcCMMGiz5l1fuieFI6hgsqhd5d4g4uyn8KPw8ZOMVM17qb25tkxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=N6jV4FxU; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42108856c33so20632075e9.1
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2024 08:24:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717341862; x=1717946662; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=tMiI+pzwt8gCAhjNKrJ90bNjMXFRHK+EbNUFiFPHVKQ=;
+        b=N6jV4FxUatalvkKIrLlrgE89EtozZ+hKAmrEkpDI92hYUUnhYhR7vdU0sYBH9H4xbv
+         2aHZuWwiGNwP0nbIKMsG+alIq4RSqvA3choL0tFf7MgsLhXFNGZlctdaaGhGKvOxSXaa
+         WWCK+0LlL4GPMjantq3NUwY0XLMQlKuzQTHyN+ZfTnb7AuEayphYG7HVbscc2Wt+F9Qa
+         ioD9w6wKkBsAHsarIWv6e7tXYONY38SkEkWZycrqUcWzVI925VcedRZuvhSP2AKQOFTH
+         js41iD28qLdARc/rRk7LHwhfjPFncFOac+OpCPSGTT3BE2znTjnpqN1KcGES7aSVvqv1
+         VGYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717341862; x=1717946662;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tMiI+pzwt8gCAhjNKrJ90bNjMXFRHK+EbNUFiFPHVKQ=;
+        b=IYWmCqnylIh8mhsF4nivlXnMSg5EcJ7wUqhdFF3N7rTqtvd1x4BVK8/eP5GzYLCA6C
+         31k+tGpe/OvqwCMlNdFlUpt4xbmGmII1Dyu2/LHVrxVOIw10pIP3HhxryE7Vk9+sbSBh
+         CvAuJlraS7N6AwBMxBpS3gH9EOuYYEREszqwm7PcXUogoIHPJLDQgLoR8/ba9cKaYxdo
+         WeOzf9hXjxuadXIUCxI9fd4jGmL8q4/ueUg8z72EOal4K6D5ITTxRwnrpWdr4aUu+g7/
+         S2gGxW0dp+ew1V+Yn6+hy+vzovDExY12XZlO2ObCC98mHNnbhQ/8ENzxcEt89aejK3A/
+         lwiA==
+X-Forwarded-Encrypted: i=1; AJvYcCVIel5tYhaXjqTHL93EA6ZOu6bu2VE/OkanVq1xmaolSlMAiBg2iv6cjfxABE4zadDan9R31ANWrgJoIoExqJU4+aKJUE1d32EhSGf2
+X-Gm-Message-State: AOJu0YxJVbkvOQjgTxzkp1PaF3iMmY/RIAa5muLxZSknWDYrg3BAf9ZB
+	BCaoGVUrbvJNk9ap/jorDyxeBPWFVpD/vRaXEJEUSQ0uXWRUgczPQ2GDiyMbPJY=
+X-Google-Smtp-Source: AGHT+IETOMrja4wKw0rMOrsXFd90i6c3cKTX33VltInCVcoprxISJKq2c3li7oejtY03glp6os+G0g==
+X-Received: by 2002:a05:600c:4689:b0:41f:dc27:a7c1 with SMTP id 5b1f17b1804b1-4212dd4c9bfmr59976965e9.5.1717341861678;
+        Sun, 02 Jun 2024 08:24:21 -0700 (PDT)
+Received: from [192.168.2.24] ([110.93.11.116])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4213a74f6dcsm21284955e9.18.2024.06.02.08.24.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 02 Jun 2024 08:24:20 -0700 (PDT)
+Message-ID: <921bb7cb-3630-4d08-827f-b5a9315316f9@linaro.org>
+Date: Sun, 2 Jun 2024 17:24:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V4 1/8] dt-bindings: clock: qcom: Update SM8450 videocc
+ header file name
+To: Jagadeesh Kona <quic_jkona@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Taniya Das <quic_tdas@quicinc.com>,
+ Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+ Ajit Pandey <quic_ajipan@quicinc.com>,
+ Imran Shaik <quic_imrashai@quicinc.com>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+References: <20240602114439.1611-1-quic_jkona@quicinc.com>
+ <20240602114439.1611-2-quic_jkona@quicinc.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzTRLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnp5c3p0b2Yua296bG93c2tpQGxpbmFyby5vcmc+wsGUBBMBCgA+FiEE
+ m9B+DgxR+NWWd7dUG5NDfTtBYpsFAmI+BxMCGwMFCRRfreEFCwkIBwIGFQoJCAsCBBYCAwEC
+ HgECF4AACgkQG5NDfTtBYptgbhAAjAGunRoOTduBeC7V6GGOQMYIT5n3OuDSzG1oZyM4kyvO
+ XeodvvYv49/ng473E8ZFhXfrre+c1olbr1A8pnz9vKVQs9JGVa6wwr/6ddH7/yvcaCQnHRPK
+ mnXyP2BViBlyDWQ71UC3N12YCoHE2cVmfrn4JeyK/gHCvcW3hUW4i5rMd5M5WZAeiJj3rvYh
+ v8WMKDJOtZFXxwaYGbvFJNDdvdTHc2x2fGaWwmXMJn2xs1ZyFAeHQvrp49mS6PBQZzcx0XL5
+ cU9ZjhzOZDn6Apv45/C/lUJvPc3lo/pr5cmlOvPq1AsP6/xRXsEFX/SdvdxJ8w9KtGaxdJuf
+ rpzLQ8Ht+H0lY2On1duYhmro8WglOypHy+TusYrDEry2qDNlc/bApQKtd9uqyDZ+rx8bGxyY
+ qBP6bvsQx5YACI4p8R0J43tSqWwJTP/R5oPRQW2O1Ye1DEcdeyzZfifrQz58aoZrVQq+innR
+ aDwu8qDB5UgmMQ7cjDSeAQABdghq7pqrA4P8lkA7qTG+aw8Z21OoAyZdUNm8NWJoQy8m4nUP
+ gmeeQPRc0vjp5JkYPgTqwf08cluqO6vQuYL2YmwVBIbO7cE7LNGkPDA3RYMu+zPY9UUi/ln5
+ dcKuEStFZ5eqVyqVoZ9eu3RTCGIXAHe1NcfcMT9HT0DPp3+ieTxFx6RjY3kYTGLOwU0EVUNc
+ NAEQAM2StBhJERQvgPcbCzjokShn0cRA4q2SvCOvOXD+0KapXMRFE+/PZeDyfv4dEKuCqeh0
+ hihSHlaxTzg3TcqUu54w2xYskG8Fq5tg3gm4kh1Gvh1LijIXX99ABA8eHxOGmLPRIBkXHqJY
+ oHtCvPc6sYKNM9xbp6I4yF56xVLmHGJ61KaWKf5KKWYgA9kfHufbja7qR0c6H79LIsiYqf92
+ H1HNq1WlQpu/fh4/XAAaV1axHFt/dY/2kU05tLMj8GjeQDz1fHas7augL4argt4e+jum3Nwt
+ yupodQBxncKAUbzwKcDrPqUFmfRbJ7ARw8491xQHZDsP82JRj4cOJX32sBg8nO2N5OsFJOcd
+ 5IE9v6qfllkZDAh1Rb1h6DFYq9dcdPAHl4zOj9EHq99/CpyccOh7SrtWDNFFknCmLpowhct9
+ 5ZnlavBrDbOV0W47gO33WkXMFI4il4y1+Bv89979rVYn8aBohEgET41SpyQz7fMkcaZU+ok/
+ +HYjC/qfDxT7tjKXqBQEscVODaFicsUkjheOD4BfWEcVUqa+XdUEciwG/SgNyxBZepj41oVq
+ FPSVE+Ni2tNrW/e16b8mgXNngHSnbsr6pAIXZH3qFW+4TKPMGZ2rZ6zITrMip+12jgw4mGjy
+ 5y06JZvA02rZT2k9aa7i9dUUFggaanI09jNGbRA/ABEBAAHCwXwEGAEKACYCGwwWIQSb0H4O
+ DFH41ZZ3t1Qbk0N9O0FimwUCYDzvagUJFF+UtgAKCRAbk0N9O0Fim9JzD/0auoGtUu4mgnna
+ oEEpQEOjgT7l9TVuO3Qa/SeH+E0m55y5Fjpp6ZToc481za3xAcxK/BtIX5Wn1mQ6+szfrJQ6
+ 59y2io437BeuWIRjQniSxHz1kgtFECiV30yHRgOoQlzUea7FgsnuWdstgfWi6LxstswEzxLZ
+ Sj1EqpXYZE4uLjh6dW292sO+j4LEqPYr53hyV4I2LPmptPE9Rb9yCTAbSUlzgjiyyjuXhcwM
+ qf3lzsm02y7Ooq+ERVKiJzlvLd9tSe4jRx6Z6LMXhB21fa5DGs/tHAcUF35hSJrvMJzPT/+u
+ /oVmYDFZkbLlqs2XpWaVCo2jv8+iHxZZ9FL7F6AHFzqEFdqGnJQqmEApiRqH6b4jRBOgJ+cY
+ qc+rJggwMQcJL9F+oDm3wX47nr6jIsEB5ZftdybIzpMZ5V9v45lUwmdnMrSzZVgC4jRGXzsU
+ EViBQt2CopXtHtYfPAO5nAkIvKSNp3jmGxZw4aTc5xoAZBLo0OV+Ezo71pg3AYvq0a3/oGRG
+ KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
+ fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20240602114439.1611-2-quic_jkona@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Clark Wang <xiaoning.wang@nxp.com>
+On 02/06/2024 13:44, Jagadeesh Kona wrote:
+> Correct the videocc header file name in SM8450 videocc bindings.
+> 
+> Fixes: 1e910b2ba0ed ("dt-bindings: clock: qcom: Add SM8450 video clock controller")
+> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
-The ADP5585 is a 10/11 input/output port expander with a built in keypad
-matrix decoder, programmable logic, reset generator, and PWM generator.
-This driver supports the PWM function using the platform device
-registered by the core MFD driver.
+Where did this review happen? Can you provide lore link?
 
-The driver is derived from an initial implementation from NXP, available
-in commit 113113742208 ("MLK-25922-1 pwm: adp5585: add adp5585 PWM
-support") in their BSP kernel tree. It has been extensively rewritten.
-
-Signed-off-by: Clark Wang <xiaoning.wang@nxp.com>
-Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
-Changes since v2:
-
-- Add missing headers
-- Sort headers
-
-Changes since v1:
-
-- Drop mutex
-- Restore R3 pinconfig to known value
-- Simplify error check in pwm_adp5585_request()
-- Don't fake PWM_POLARITY_INVERSED
-- Fix rounding of period and duty cycle
-- Drop OF match table
-- Drop empty .remove() handler
-- Allocate pwm_chip dynamically
-- Document limitations
-- Add platform ID table
-- Set struct device of_node manually
-- Merge child DT node into parent node
-
-Changes compared to the NXP original version
-
-- Add MAINTAINERS entry
-- Drop pwm_ops.owner
-- Fix compilation
-- Add prefix to compatible string
-- Switch to regmap
-- Use devm_pwmchip_add()
-- Cleanup header includes
-- White space fixes
-- Drop ADP5585_REG_MASK
-- Fix register field names
-- Use mutex scope guards
-- Clear OSC_EN when freeing PWM
-- Reorder functions
-- Clear PWM_IN_AND and PWM_MODE bits
-- Support inverted polarity
-- Clean up on/off computations
-- Fix duty cycle computation in .get_state()
-- Destroy mutex on remove
-- Update copyright
-- Update license to GPL-2.0-only
----
- MAINTAINERS               |   1 +
- drivers/pwm/Kconfig       |   7 ++
- drivers/pwm/Makefile      |   1 +
- drivers/pwm/pwm-adp5585.c | 189 ++++++++++++++++++++++++++++++++++++++
- 4 files changed, 198 insertions(+)
- create mode 100644 drivers/pwm/pwm-adp5585.c
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 9c560d9a590a..9877fa342931 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -534,6 +534,7 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/*/adi,adp5585*.yaml
- F:	drivers/gpio/gpio-adp5585.c
- F:	drivers/mfd/adp5585.c
-+F:	drivers/pwm/pwm-adp5585.c
- F:	include/linux/mfd/adp5585.h
- 
- ADP5588 QWERTY KEYPAD AND IO EXPANDER DRIVER (ADP5588/ADP5587)
-diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
-index 1dd7921194f5..b778ecee3e9b 100644
---- a/drivers/pwm/Kconfig
-+++ b/drivers/pwm/Kconfig
-@@ -47,6 +47,13 @@ config PWM_AB8500
- 	  To compile this driver as a module, choose M here: the module
- 	  will be called pwm-ab8500.
- 
-+config PWM_ADP5585
-+	tristate "ADP5585 PWM support"
-+	depends on MFD_ADP5585
-+	help
-+	  This option enables support for the PWM function found in the Analog
-+	  Devices ADP5585.
-+
- config PWM_APPLE
- 	tristate "Apple SoC PWM support"
- 	depends on ARCH_APPLE || COMPILE_TEST
-diff --git a/drivers/pwm/Makefile b/drivers/pwm/Makefile
-index 90913519f11a..f24d518d20f2 100644
---- a/drivers/pwm/Makefile
-+++ b/drivers/pwm/Makefile
-@@ -1,6 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- obj-$(CONFIG_PWM)		+= core.o
- obj-$(CONFIG_PWM_AB8500)	+= pwm-ab8500.o
-+obj-$(CONFIG_PWM_ADP5585)	+= pwm-adp5585.o
- obj-$(CONFIG_PWM_APPLE)		+= pwm-apple.o
- obj-$(CONFIG_PWM_ATMEL)		+= pwm-atmel.o
- obj-$(CONFIG_PWM_ATMEL_HLCDC_PWM)	+= pwm-atmel-hlcdc.o
-diff --git a/drivers/pwm/pwm-adp5585.c b/drivers/pwm/pwm-adp5585.c
-new file mode 100644
-index 000000000000..0d201bf04d27
---- /dev/null
-+++ b/drivers/pwm/pwm-adp5585.c
-@@ -0,0 +1,189 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Analog Devices ADP5585 PWM driver
-+ *
-+ * Copyright 2022 NXP
-+ * Copyright 2024 Ideas on Board Oy
-+ *
-+ * Limitations:
-+ * - The .apply() operation executes atomically, but may not wait for the
-+ *   period to complete (this is not documented and would need to be tested).
-+ * - Disabling the PWM drives the output pin to a low level immediately.
-+ * - The hardware can only generate normal polarity output.
-+ */
-+
-+#include <linux/device.h>
-+#include <linux/err.h>
-+#include <linux/math64.h>
-+#include <linux/mfd/adp5585.h>
-+#include <linux/minmax.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/pwm.h>
-+#include <linux/regmap.h>
-+#include <linux/time.h>
-+#include <linux/types.h>
-+
-+#define ADP5585_PWM_CHAN_NUM		1
-+
-+#define ADP5585_PWM_OSC_FREQ_HZ		1000000U
-+#define ADP5585_PWM_MIN_PERIOD_NS	(2ULL * NSEC_PER_SEC / ADP5585_PWM_OSC_FREQ_HZ)
-+#define ADP5585_PWM_MAX_PERIOD_NS	(2ULL * 0xffff * NSEC_PER_SEC / ADP5585_PWM_OSC_FREQ_HZ)
-+
-+static int pwm_adp5585_request(struct pwm_chip *chip, struct pwm_device *pwm)
-+{
-+	struct regmap *regmap = pwmchip_get_drvdata(chip);
-+	int ret;
-+
-+	ret = regmap_update_bits(regmap, ADP5585_PIN_CONFIG_C,
-+				 ADP5585_R3_EXTEND_CFG_MASK,
-+				 ADP5585_R3_EXTEND_CFG_PWM_OUT);
-+	if (ret)
-+		return ret;
-+
-+	return regmap_update_bits(regmap, ADP5585_GENERAL_CFG,
-+				  ADP5585_OSC_EN, ADP5585_OSC_EN);
-+}
-+
-+static void pwm_adp5585_free(struct pwm_chip *chip, struct pwm_device *pwm)
-+{
-+	struct regmap *regmap = pwmchip_get_drvdata(chip);
-+
-+	regmap_update_bits(regmap, ADP5585_PIN_CONFIG_C,
-+			   ADP5585_R3_EXTEND_CFG_MASK,
-+			   ADP5585_R3_EXTEND_CFG_GPIO4);
-+	regmap_update_bits(regmap, ADP5585_GENERAL_CFG,
-+			   ADP5585_OSC_EN, 0);
-+}
-+
-+static int pwm_adp5585_apply(struct pwm_chip *chip,
-+			     struct pwm_device *pwm,
-+			     const struct pwm_state *state)
-+{
-+	struct regmap *regmap = pwmchip_get_drvdata(chip);
-+	u64 period, duty_cycle;
-+	u32 on, off;
-+	int ret;
-+
-+	if (!state->enabled)
-+		return regmap_update_bits(regmap, ADP5585_PWM_CFG,
-+					  ADP5585_PWM_EN, 0);
-+
-+	if (state->polarity != PWM_POLARITY_NORMAL)
-+		return -EINVAL;
-+
-+	if (state->period < ADP5585_PWM_MIN_PERIOD_NS)
-+		return -EINVAL;
-+
-+	period = min(state->period, ADP5585_PWM_MAX_PERIOD_NS);
-+	duty_cycle = min(state->duty_cycle, period);
-+
-+	/*
-+	 * Compute the on and off time. As the internal oscillator frequency is
-+	 * 1MHz, the calculation can be simplified without loss of precision.
-+	 */
-+	on = div_u64(duty_cycle, NSEC_PER_SEC / ADP5585_PWM_OSC_FREQ_HZ);
-+	off = div_u64(period, NSEC_PER_SEC / ADP5585_PWM_OSC_FREQ_HZ) - on;
-+
-+	ret = regmap_write(regmap, ADP5585_PWM_OFFT_LOW,
-+			   off & 0xff);
-+	if (ret)
-+		return ret;
-+	ret = regmap_write(regmap, ADP5585_PWM_OFFT_HIGH,
-+			   (off >> 8) & 0xff);
-+	if (ret)
-+		return ret;
-+	ret = regmap_write(regmap, ADP5585_PWM_ONT_LOW,
-+			   on & 0xff);
-+	if (ret)
-+		return ret;
-+	ret = regmap_write(regmap, ADP5585_PWM_ONT_HIGH,
-+			   (on >> 8) & 0xff);
-+	if (ret)
-+		return ret;
-+
-+	/* Enable PWM in continuous mode and no external AND'ing. */
-+	ret = regmap_update_bits(regmap, ADP5585_PWM_CFG,
-+				 ADP5585_PWM_IN_AND | ADP5585_PWM_MODE |
-+				 ADP5585_PWM_EN, ADP5585_PWM_EN);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static int pwm_adp5585_get_state(struct pwm_chip *chip,
-+				 struct pwm_device *pwm,
-+				 struct pwm_state *state)
-+{
-+	struct regmap *regmap = pwmchip_get_drvdata(chip);
-+	unsigned int on, off;
-+	unsigned int val;
-+
-+	regmap_read(regmap, ADP5585_PWM_OFFT_LOW, &off);
-+	regmap_read(regmap, ADP5585_PWM_OFFT_HIGH, &val);
-+	off |= val << 8;
-+
-+	regmap_read(regmap, ADP5585_PWM_ONT_LOW, &on);
-+	regmap_read(regmap, ADP5585_PWM_ONT_HIGH, &val);
-+	on |= val << 8;
-+
-+	state->duty_cycle = on * (NSEC_PER_SEC / ADP5585_PWM_OSC_FREQ_HZ);
-+	state->period = (on + off) * (NSEC_PER_SEC / ADP5585_PWM_OSC_FREQ_HZ);
-+
-+	state->polarity = PWM_POLARITY_NORMAL;
-+
-+	regmap_read(regmap, ADP5585_PWM_CFG, &val);
-+	state->enabled = !!(val & ADP5585_PWM_EN);
-+
-+	return 0;
-+}
-+
-+static const struct pwm_ops adp5585_pwm_ops = {
-+	.request = pwm_adp5585_request,
-+	.free = pwm_adp5585_free,
-+	.apply = pwm_adp5585_apply,
-+	.get_state = pwm_adp5585_get_state,
-+};
-+
-+static int adp5585_pwm_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct adp5585_dev *adp5585 = dev_get_drvdata(dev->parent);
-+	struct pwm_chip *chip;
-+	int ret;
-+
-+	chip = devm_pwmchip_alloc(dev, ADP5585_PWM_CHAN_NUM, 0);
-+	if (IS_ERR(chip))
-+		return PTR_ERR(chip);
-+
-+	device_set_of_node_from_dev(dev, dev->parent);
-+
-+	pwmchip_set_drvdata(chip, adp5585->regmap);
-+	chip->ops = &adp5585_pwm_ops;
-+
-+	ret = devm_pwmchip_add(dev, chip);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "failed to add PWM chip\n");
-+
-+	return 0;
-+}
-+
-+static const struct platform_device_id adp5585_pwm_id_table[] = {
-+	{ "adp5585-pwm" },
-+	{ /* Sentinel */ },
-+};
-+MODULE_DEVICE_TABLE(platform, adp5585_pwm_id_table);
-+
-+static struct platform_driver adp5585_pwm_driver = {
-+	.driver	= {
-+		.name = "adp5585-pwm",
-+	},
-+	.probe = adp5585_pwm_probe,
-+	.id_table = adp5585_pwm_id_table,
-+};
-+module_platform_driver(adp5585_pwm_driver);
-+
-+MODULE_AUTHOR("Xiaoning Wang <xiaoning.wang@nxp.com>");
-+MODULE_DESCRIPTION("ADP5585 PWM Driver");
-+MODULE_LICENSE("GPL");
--- 
-Regards,
-
-Laurent Pinchart
+Best regards,
+Krzysztof
 
 
