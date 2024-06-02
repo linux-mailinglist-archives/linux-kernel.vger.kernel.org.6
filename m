@@ -1,153 +1,109 @@
-Return-Path: <linux-kernel+bounces-198130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C1EC8D73D3
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 06:25:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 084CB8D73D7
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 06:29:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C73E1281DF9
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 04:25:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A86D61F2184C
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 04:29:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0F9511720;
-	Sun,  2 Jun 2024 04:25:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3631C134A8;
+	Sun,  2 Jun 2024 04:29:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="Pix/kfCr"
-Received: from xry111.site (xry111.site [89.208.246.23])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tzGP96jh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0BE5AD2D;
-	Sun,  2 Jun 2024 04:25:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BE6679C2;
+	Sun,  2 Jun 2024 04:29:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717302314; cv=none; b=oJfYUaKzBUkm2bZNJIjfepVf6T8E93TcBmQruzGbBlVW0DdH2U57neuD5xD1DBseNgmLmKoZ4dTruCvd4pVJVVFuKPfcbMgT5JCWWmLv4mJ8B8vgsQv6nV24XOr0RkCWsw/WL6rW9hLaIkSviaq/t/sEmA9eCxCats+WFqfQSbA=
+	t=1717302558; cv=none; b=dw2b80nHxOwPiheMlNkSt0CTyykMw0AsBQPbTa98eEZlf+8LdnfcorHOH1MddezfcywTtKR5oahB4TWEnre0XMSQCbLW4qRAriPc+/062rJ/Gn9c73qx3n1QO9F5G0SnrnxQbCEA+bpiLll2KWazgAiZbwWlzFcgIsPy5nZWvkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717302314; c=relaxed/simple;
-	bh=ZosBth80LyMdqOo6UU8+6GNKhEAgGgSWrz6ZGI1sWcY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=o5u3/U3Q08izk+OYH3gjkyQqDNzP0E27CfF3Bf77Hb+VG8//VLcKWxXEGqaEgPup/PO/eStOrtznWLt6yrVusucTOOC2wMJbHnwQVLAKm3wT+SB5FmKnvX+yAVk0b+6bn/qz+GeLA/sdF612BLlIyrl/dWXSGY7zTbBWMaTvHbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=Pix/kfCr; arc=none smtp.client-ip=89.208.246.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xry111.site;
-	s=default; t=1717302310;
-	bh=ZosBth80LyMdqOo6UU8+6GNKhEAgGgSWrz6ZGI1sWcY=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=Pix/kfCr2EAwk4bT1w75YXJIKdGumxsefudGZEPBhJ8aoARFziIhd9PIrEVZ7L7/X
-	 u7dCs91LQJ0kLAyRCSYE/1gChpXL/ui6z+vnjzvI046TlYJG84H4AtbHVNihHeXrX2
-	 kvuQRbLSFw79bl0y9efh1frxPIsMLiEyD3XY9vgY=
-Received: from [IPv6:240e:358:11e7:eb00:dc73:854d:832e:3] (unknown [IPv6:240e:358:11e7:eb00:dc73:854d:832e:3])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-384) server-digest SHA384)
-	(Client did not present a certificate)
-	(Authenticated sender: xry111@xry111.site)
-	by xry111.site (Postfix) with ESMTPSA id 46B1A67445;
-	Sun,  2 Jun 2024 00:25:07 -0400 (EDT)
-Message-ID: <6ebadacd8aaa307a5766cdb1b4d4a5c69acd87ac.camel@xry111.site>
-Subject: Re: [PATCH v1 2/6] cpufreq: intel_pstate: Do not update
- global.turbo_disabled after initialization
-From: Xi Ruoyao <xry111@xry111.site>
-To: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>, "Rafael J.
- Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Date: Sun, 02 Jun 2024 12:25:01 +0800
-In-Reply-To: <6d5ee74605bd9574baa5ed111cb54e959414437a.camel@linux.intel.com>
-References: <13494237.uLZWGnKmhe@kreacher> <8366982.T7Z3S40VBb@kreacher>
-	 <bf3ebf1571a4788e97daf861eb493c12d42639a3.camel@xry111.site>
-	 <6d5ee74605bd9574baa5ed111cb54e959414437a.camel@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 
+	s=arc-20240116; t=1717302558; c=relaxed/simple;
+	bh=oYpwUgb3R9s21VRsk1J9qoySXDBYWtk7Ai56w1NOPwM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j29MeOCoF68ADA6x+Lhi9sAy+YhoVMcDRHl2hnxXsDtMTx2EU6gkVT6Z3cycBwMAnHjOEpUWmvEpeKFgZlL5S7Si6bV537ZuW326Fkb1G85YcFXfjJ74KCDPyAEitYBgSqCEJ7waspkQFLIfCK/6prwNDJ2ORB75u15RXMHg228=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tzGP96jh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87BB2C2BBFC;
+	Sun,  2 Jun 2024 04:29:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717302557;
+	bh=oYpwUgb3R9s21VRsk1J9qoySXDBYWtk7Ai56w1NOPwM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tzGP96jhia4fn4mO1OIp3fqdmG7bjAFymlOTMwLkOW9c8n/Kc9VlrZ41tTUx9oe8z
+	 Kz1WGF9z41vlJW5ZfjsAE6XDAXyaMbhJbZZt0g9j7hX6fJ+F5iXV4JwwNvNPaSV5TB
+	 slG6HBdr78658hTU2gzuKDKwGXEtI6KlLIDkPiBoy4EqDTe9BeerCyusDyjT71Zn6l
+	 LOM8QBR0U1EgpKDidX009FSidAQkXS2B4yEnc5Lmx7i9wfMC5ZI9djpD+xOQHgupVU
+	 eD+3akz/e+MV13A6LIfpWw1sjyhAoV2xAs+T21Z2P9/OhMKzSeEJUKUKL+A93UooJ6
+	 283MPinGsm4/w==
+Date: Sat, 1 Jun 2024 23:29:14 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Taniya Das <quic_tdas@quicinc.com>, Konrad Dybcio <konrad.dybcio@somainline.org>, 
+	Jonathan Marek <jonathan@marek.ca>, Del Regno <angelogioacchino.delregno@somainline.org>, 
+	Loic Poulain <loic.poulain@linaro.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 00/16] dt-bindings: clock: qcom: reference qcom-gcc.yaml
+Message-ID: <dqk2jxt44lh3e4hlkfflqjyzmaujwtrzgxe7kem2soua3yryxt@hykweb47ku37>
+References: <20240531-dt-bindings-qcom-gcc-v1-0-b37d49fe1421@linaro.org>
+ <l73uszlhnhyamfuwm7f6bbmockttwihsylkkgbyedkdseznlka@mtr5c7r4nqt4>
+ <8ac8cc27-6c39-45fe-bdc2-40a310c815cc@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8ac8cc27-6c39-45fe-bdc2-40a310c815cc@linaro.org>
 
-On Sat, 2024-06-01 at 21:03 -0700, srinivas pandruvada wrote:
-> Hi Xi,
->=20
-> On Sun, 2024-06-02 at 11:21 +0800, Xi Ruoyao wrote:
-> > On Mon, 2024-03-25 at 18:02 +0100, Rafael J. Wysocki wrote:
-> > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > >=20
-> > > The global.turbo_disabled is updated quite often, especially in the
-> > > passive mode in which case it is updated every time the scheduler
-> > > calls
-> > > into the driver.=C2=A0 However, this is generally not necessary and i=
-t
-> > > adds
-> > > MSR read overhead to scheduler code paths (and that particular MSR
-> > > is
-> > > slow to read).
-> > >=20
-> > > For this reason, make the driver read
-> > > MSR_IA32_MISC_ENABLE_TURBO_DISABLE
-> > > just once at the cpufreq driver registration time and remove all of
-> > > the
-> > > in-flight updates of global.turbo_disabled.
-> >=20
-> > Hi Rafael and Srinivas,
-> >=20
-> > Thanks for the clean up, but unfortunately on one of my laptops
-> > (based
-> > on i5-11300H) MSR_IA32_MISC_ENABLE_TURBO_DISABLE is mysteriously
-> > changing from 1 to 0 in about one minute after system boot.=C2=A0 I've =
-no
-> > idea why this is happening (firmware is doing some stupid thing?)
-> >=20
-> > I've noticed the issue before and "hacked it around"
-> > (https://bugzilla.kernel.org/show_bug.cgi?id=3D218702). But after this
-> > change I can no longer hack it around and the system is much slower.
-> >=20
-> > Is it possible to hack it around again?
-> >=20
-> Please try the attached diff and build kernel and try.
->=20
-> git apply update_max_freq.diff
->=20
-> Then build kernel and install.
+On Fri, May 31, 2024 at 05:19:19PM GMT, Krzysztof Kozlowski wrote:
+> On 31/05/2024 17:14, Dmitry Baryshkov wrote:
+> > On Fri, May 31, 2024 at 03:52:18PM +0200, Krzysztof Kozlowski wrote:
+> >> Hi,
+> >>
+> >> Unify Qualcomm clock controllers by referencing qcom,gcc.yaml where
+> >> applicable.  Several existing bindings for these display/GPU/CAM clock
+> >> controllers already do it.
+> > 
+> > The series looks good to me with a single point in mind. You are writing
+> > that dispcc/videocc/etc are a variant of GCC. However GCC is a Global
+> > Clock Controller. 
+> 
+> Yeah, that's simplification from my side and assumption that at first
+> they designed GCC and then they copied the design to other blocks.
+> 
 
-Unfortunately it didn't work.  Then I tried:
+That may or may not be the case, who knows... I also don't have a strong
+opinion about tying it all to gcc.yaml if that work...
 
-@@ -1304,6 +1310,10 @@ static ssize_t store_no_turbo(struct kobject *a, str=
-uct kobj_attribute *b,
- 	if (no_turbo =3D=3D global.no_turbo)
- 		goto unlock_driver;
-=20
-+	global.turbo_disabled =3D turbo_is_disabled();
-+	global.no_turbo =3D global.turbo_disabled;
-+	arch_set_max_freq_ratio(global.turbo_disabled);
-+
- 	if (global.turbo_disabled) {
- 		pr_notice_once("Turbo disabled by BIOS or unavailable on processor\n");
- 		count =3D -EPERM;
+But the claim in the commit messages should the be that we inherit
+gcc.yaml because it's convenient, not because all clock controllers are
+derived from gcc.
 
-and my old hack worked again.  Curiously after I writing 0 to
-/sys/devices/system/cpu/intel_pstate/no_turbo successfully, your code is
-triggered.
+Regards,
+Bjorn
 
-$ dmesg | grep intel_pstate
-[    0.554425] intel_pstate: Intel P-state driver initializing
-[    0.554877] intel_pstate: HWP enabled
-[    1.780021] intel_pstate: Turbo disabled by BIOS or unavailable on proce=
-ssor
-[   21.789044] intel_pstate: intel_pstate_update_limits cpu:0
-[   21.789053] intel_pstate: intel_pstate_update_limits cpu:1
-[   21.789060] intel_pstate: intel_pstate_update_limits cpu:2
-[   21.789189] intel_pstate: intel_pstate_update_limits cpu:3
-[   21.789198] intel_pstate: intel_pstate_update_limits cpu:4
-[   21.789203] intel_pstate: intel_pstate_update_limits cpu:5
-[   21.789209] intel_pstate: intel_pstate_update_limits cpu:6
-[   21.789276] intel_pstate: intel_pstate_update_limits cpu:7
-
-The message at [1.780021] is from the first attempt writing 0 to
-/sys/devices/system/cpu/intel_pstate/no_turbo when
-MSR_IA32_MISC_ENABLE_TURBO_DISABLE is still 1.
-
---=20
-Xi Ruoyao <xry111@xry111.site>
-School of Aerospace Science and Technology, Xidian University
+> > What about renaming qcom,gcc.yaml to
+> > qcom,cc-common.yaml ? Then the rest makes total sense to me.
+> 
+> Several gpu/disp/cam clock controllers already include qcom,gcc.yaml, so
+> I would say this should not be a requirement for this patchset.
+> 
+> We can rename, although it always is a bit of churn - git log needs
+> special option, backporting is a bit trickier.
+> 
+> 
+> Best regards,
+> Krzysztof
+> 
 
