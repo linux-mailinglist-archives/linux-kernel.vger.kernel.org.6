@@ -1,456 +1,307 @@
-Return-Path: <linux-kernel+bounces-198434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 547D18D7828
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 22:42:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E21CC8D782B
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 22:43:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BDDF1F20F52
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 20:42:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 123C71C203AB
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 20:43:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96F187E765;
-	Sun,  2 Jun 2024 20:42:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HwCuU9l/"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CFF378C79;
+	Sun,  2 Jun 2024 20:43:22 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC6967CF30
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Jun 2024 20:42:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5BEA770E6
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Jun 2024 20:43:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717360941; cv=none; b=KXzFI63fi9807M9cUoSfpqQ7r0jed1dpCdii4m9Z3nYwJXjeI98Z4r8PkO08Ut9ka2fj7nBfz4cYj1GpsTf53YzVpZpgcssya3j5xno8i+a0XNrN5wv1EtURC1slnNcYaToQPHv28D1rQ0jfxACsKcQ9KBgU54DxMO4jLFbemjo=
+	t=1717361001; cv=none; b=HXyngg8f1djW3dhFHKCX6bNn+U8D1OPfg57tIL4d6+G26Ejpm4B4cms283mJczilHH033ECedkSjxoUYWMx+U+pyHDOX+9om5yGdiZMyYWDv+dAEF6/oUsZINuVOxqKqOw2iVP+FC0g1DxLU5w8Dyp0Qj3xsLAkTUx4/ePHsNbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717360941; c=relaxed/simple;
-	bh=nwiXh1kVMr1X74jPIV1B2PLO4mexVfukoir15XiKi8U=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=reNrSdk2llJ5ACbVjfjo6Gk+Ad7xIC1V5FaJBmaqkVZvW2EpY5JyAWvIy541WrTlztUBn4T8G0KTL/Q8h3ishqBwdqRjcBefpGdRfipEEoFTQ1rpwsnNUjoyafs1oDeRVPozE+ExG10tfdc/UaRFALViEscY7eu6RCmLCCYXxK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--sesse.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HwCuU9l/; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--sesse.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-df78acd5bbbso6477488276.1
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2024 13:42:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717360939; x=1717965739; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DvE27fZgMle3SbyuEBFL7kUJMzHMZ5tJiocuJ6FMpfw=;
-        b=HwCuU9l/QJ4NRUY5PiJHiXpC70kJybS5rhYeB2uJyIgtp56wuqml37Vk4ZIyRhBXE/
-         7clUCls3KUB5OWLHOLrFbrgH9HcaVhEtRXMf+dhwcVk41bpk1zdjEZ73REIg8mMmbANT
-         T1M/tQCax6O8lLjB2hdToplk9zOf23b8gbw9Mp+RQk3SAFydCC7aZpiSyaSxYFh8HeaD
-         yYOM/k3LtmkPSUpfZ3/jwNz10ek3qfOCNMinFy5zlvvTyezFdKGCROtcx4NIZw2oLAqd
-         QFIv2DemTNRGvQWAiLIB4kdCus3vcBLSd7A8qkZHt/2OpGsYA2Eibbd+ecuoF2eRzun8
-         9F7Q==
+	s=arc-20240116; t=1717361001; c=relaxed/simple;
+	bh=HQSxyWNxrpNbkdyWIHk/KCV/xyzvVytfQzX67SGoMvE=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ej9zSYoAQEhcVNzhwBZT/jdiqt1OuTXKa7Mba6kSppkv+3HJfAc9CZIv8S5EVl5Qcn1lMRXm1mLoOj1XgfAdQhX1U+P3roA9SB/IOTd43IEGYripnlSGJX7psoKGmTnNMn9XsV+sJ8qWqnkplPqybNT2rP2U/thLiingIaxNT0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-374933240bbso11457365ab.3
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2024 13:43:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717360939; x=1717965739;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DvE27fZgMle3SbyuEBFL7kUJMzHMZ5tJiocuJ6FMpfw=;
-        b=eIXshZTLc6nZlsLoUdFbr0ex8NPrxkCWhNg0mFiZrP9cIgak2/MItj8iI30URDk9QW
-         ae+h8jlSJDfwsQQUuPFS5YVwQN4PW48mm/9TGKNrvFQIk1UnZYDgVyA4y2f5j/t7a9bw
-         12wTcSJdvCGyfU3k9TMsSX3F23wwAXj+zdauNCTBlL/t+3BzIDMJ/pr4Jf/Fa2YctifK
-         csA/Ve7dnFtHArU06sDDjqfszUPb3OvqALkvwuR/6Gedc8L7aNoe3Fq3wUA0AR+VkRcE
-         oGtyqNhhBiYJ6mHCWGT0XOPtMIHJDjOvIHnNdcAzXwvOhk5qKaI4usShV7F1h5dlcOrS
-         dhzw==
-X-Forwarded-Encrypted: i=1; AJvYcCVOdMSmu4k0l4zGZjUxCt9SQ+cr6D4xQ8Y6Lpe/WYQAA8AhiHaOcFtmxFl8lsYiqxXAbGQ3+qgNGZRGk9pujYqbt4vFVfVi39hhfMAv
-X-Gm-Message-State: AOJu0YwcC6vTH26HfuMOpyLICPqieZ8wv1JJDoffsd+bVaFMz9b7lo6V
-	XTz4yJcDOmHB1//h9jtNKaJAknhGbmxMTadnUZN7kdWoY/t38Xz7KRRvoYXyfdMkyyTgmIbizw=
-	=
-X-Google-Smtp-Source: AGHT+IFfXtNdeFnunW+CX1eDr9cn54M2yEucpQxHcglhyCznAKsv0qbLZi3quNJBUnPHLmessPTOuq77AA==
-X-Received: from sesse.osl.corp.google.com ([2a00:79e0:18:10:138e:9906:1038:1841])
- (user=sesse job=sendgmr) by 2002:a05:6902:1542:b0:dd9:2a64:e98a with SMTP id
- 3f1490d57ef6-dfa73d8d92emr566773276.9.1717360938797; Sun, 02 Jun 2024
- 13:42:18 -0700 (PDT)
-Date: Sun,  2 Jun 2024 22:42:08 +0200
-In-Reply-To: <20240602204208.735793-1-sesse@google.com>
+        d=1e100.net; s=20230601; t=1717360999; x=1717965799;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mwY95BmSLa5iz9snCb7YRIMhZxZKOamjLjvZ8PEqLco=;
+        b=piwPG5K1vNFFmGi1FqhKn98JTlqbDl/eLgpZs3qBh8WqHhRELziWkrbuGUgyGO7xe9
+         4dPb039Ap0K67I7p0iyi8Z21Jc1rE0or6lq00GRqDPpOEa1cINj5+L1BdqPOM7EUGZ2t
+         wC8knA/5uit1LO0P3mMWqsLmaeX0qFf+xv+J4Z3Cdrr/hZx94aD5WZPFdGFlDZMZ64OX
+         N3i4ONAfleYxLv/HXbAoZraqBHFU1RsGdYN9flGyoY49b98Sg5DcfT+LuTmAQuFD02GQ
+         jVHfL8Ns5f98a7M6ipfK+rCnrPxqyoEy+KOA0TktxVwuul+HwRFYHjpI5nHzc+06U6WH
+         YQRA==
+X-Forwarded-Encrypted: i=1; AJvYcCXAXdo6D2YPXSsF1VGLeh4fgY4jITyT6uX485rZkQZAubSvdrDsuXidtAvs9aL0nW1LvtPGAOeqSGows7Urp1kybehKf2gvw5hfKV0K
+X-Gm-Message-State: AOJu0YwOB7UrJ3pJPnOVjHv2p59OXV9YnCCYXI9DyorehLTUdCtEdfEp
+	E6FyD5kiVwI310/awkzxT0/Wy9twGx971FoWC6eJe9RQCZhgfo0siU6D2RRHtvcAQwtTrkZmB5w
+	+9Xos0CNhJlkyyGDDh2VxdlOqELxU6HQzGMDTvE8SpXrdGaHKc3fT0qQ=
+X-Google-Smtp-Source: AGHT+IHPbj/FjRGVkD2dwN+hY8BCYZDpg+XYlS8hduH4LVKwHmrNs0VW6YHwimKTDUsqIy1sUFI87bRXcMTdc3WBnzkPP1BElDhF
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240602204208.735793-1-sesse@google.com>
-X-Mailer: git-send-email 2.45.1.288.g0e0cd299f1-goog
-Message-ID: <20240602204208.735793-3-sesse@google.com>
-Subject: [PATCH v8 3/3] perf annotate: LLVM-based disassembler
-From: "Steinar H. Gunderson" <sesse@google.com>
-To: acme@kernel.org
-Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	irogers@google.com, "Steinar H. Gunderson" <sesse@google.com>
+MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:10d1:b0:374:92d0:caa3 with SMTP id
+ e9e14a558f8ab-37492d0cc8cmr1751805ab.4.1717360998911; Sun, 02 Jun 2024
+ 13:43:18 -0700 (PDT)
+Date: Sun, 02 Jun 2024 13:43:18 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000004a9d530619ee4494@google.com>
+Subject: [syzbot] [btrfs?] possible deadlock in btrfs_quota_enable
+From: syzbot <syzbot+bec38eba8bd1096de8d2@syzkaller.appspotmail.com>
+To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-Support using LLVM as a disassembler method, allowing helperless
-annotation in non-distro builds. (It is also much faster than
-using libbfd or bfd objdump on binaries with a lot of debug
-information.)
+Hello,
 
-This is nearly identical to the output of llvm-objdump; there are
-some very rare whitespace differences, some minor changes to demangling
-(since we use perf's regular demangling and not LLVM's own) and
-the occasional case where llvm-objdump makes a different choice
-when multiple symbols share the same address. It should work across
-all of LLVM's supported architectures, although I've only tested 64-bit
-x86, and finding the right triple from perf's idea of machine
-architecture can sometimes be a bit tricky. Ideally, we should have
-some way of finding the triplet just from the file itself.
+syzbot found the following issue on:
 
-Signed-off-by: Steinar H. Gunderson <sesse@google.com>
+HEAD commit:    4a4be1ad3a6e Revert "vfs: Delete the associated dentry whe..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1252deaa980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=733cc7a95171d8e7
+dashboard link: https://syzkaller.appspot.com/bug?extid=bec38eba8bd1096de8d2
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: i386
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-4a4be1ad.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/a9bbdc63efe9/vmlinux-4a4be1ad.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/ed08b308e5d6/bzImage-4a4be1ad.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+bec38eba8bd1096de8d2@syzkaller.appspotmail.com
+
+======================================================
+WARNING: possible circular locking dependency detected
+6.10.0-rc1-syzkaller-00027-g4a4be1ad3a6e #0 Not tainted
+------------------------------------------------------
+syz-executor.0/10258 is trying to acquire lock:
+ffff888055fa1870 (&fs_info->qgroup_ioctl_lock){+.+.}-{3:3}, at: btrfs_quota_enable+0x3a1/0x1ef0 fs/btrfs/qgroup.c:1086
+
+but task is already holding lock:
+ffff888055fa2418 (btrfs_trans_num_extwriters){++++}-{0:0}, at: join_transaction+0x137/0xf40 fs/btrfs/transaction.c:314
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #3 (btrfs_trans_num_extwriters){++++}-{0:0}:
+       join_transaction+0x164/0xf40 fs/btrfs/transaction.c:315
+       start_transaction+0x427/0x1a70 fs/btrfs/transaction.c:700
+       btrfs_commit_super+0xa1/0x110 fs/btrfs/disk-io.c:4170
+       close_ctree+0xcb0/0xf90 fs/btrfs/disk-io.c:4324
+       generic_shutdown_super+0x159/0x3d0 fs/super.c:642
+       kill_anon_super+0x3a/0x60 fs/super.c:1226
+       btrfs_kill_super+0x3b/0x50 fs/btrfs/super.c:2096
+       deactivate_locked_super+0xbe/0x1a0 fs/super.c:473
+       deactivate_super+0xde/0x100 fs/super.c:506
+       cleanup_mnt+0x222/0x450 fs/namespace.c:1267
+       task_work_run+0x14e/0x250 kernel/task_work.c:180
+       resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+       exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+       exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+       __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+       syscall_exit_to_user_mode+0x278/0x2a0 kernel/entry/common.c:218
+       __do_fast_syscall_32+0x80/0x120 arch/x86/entry/common.c:389
+       do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
+       entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+
+-> #2 (btrfs_trans_num_writers){++++}-{0:0}:
+       __lock_release kernel/locking/lockdep.c:5468 [inline]
+       lock_release+0x33e/0x6c0 kernel/locking/lockdep.c:5774
+       percpu_up_read include/linux/percpu-rwsem.h:99 [inline]
+       __sb_end_write include/linux/fs.h:1650 [inline]
+       sb_end_intwrite include/linux/fs.h:1767 [inline]
+       __btrfs_end_transaction+0x5ca/0x920 fs/btrfs/transaction.c:1071
+       btrfs_commit_inode_delayed_inode+0x228/0x330 fs/btrfs/delayed-inode.c:1301
+       btrfs_evict_inode+0x960/0xe80 fs/btrfs/inode.c:5291
+       evict+0x2ed/0x6c0 fs/inode.c:667
+       iput_final fs/inode.c:1741 [inline]
+       iput.part.0+0x5a8/0x7f0 fs/inode.c:1767
+       iput+0x5c/0x80 fs/inode.c:1757
+       dentry_unlink_inode+0x295/0x480 fs/dcache.c:400
+       __dentry_kill+0x1d0/0x600 fs/dcache.c:603
+       dput.part.0+0x4b1/0x9b0 fs/dcache.c:845
+       dput+0x1f/0x30 fs/dcache.c:835
+       ovl_destroy_inode+0x3e/0x190 fs/overlayfs/super.c:181
+       destroy_inode+0xc4/0x1b0 fs/inode.c:311
+       iput_final fs/inode.c:1741 [inline]
+       iput.part.0+0x5a8/0x7f0 fs/inode.c:1767
+       iput+0x5c/0x80 fs/inode.c:1757
+       dentry_unlink_inode+0x295/0x480 fs/dcache.c:400
+       __dentry_kill+0x1d0/0x600 fs/dcache.c:603
+       shrink_kill fs/dcache.c:1048 [inline]
+       shrink_dentry_list+0x140/0x5d0 fs/dcache.c:1075
+       prune_dcache_sb+0xeb/0x150 fs/dcache.c:1156
+       super_cache_scan+0x32a/0x550 fs/super.c:221
+       do_shrink_slab+0x44f/0x11c0 mm/shrinker.c:435
+       shrink_slab_memcg mm/shrinker.c:548 [inline]
+       shrink_slab+0xa87/0x1310 mm/shrinker.c:626
+       shrink_one+0x493/0x7c0 mm/vmscan.c:4790
+       shrink_many mm/vmscan.c:4851 [inline]
+       lru_gen_shrink_node+0x89f/0x1750 mm/vmscan.c:4951
+       shrink_node mm/vmscan.c:5910 [inline]
+       kswapd_shrink_node mm/vmscan.c:6720 [inline]
+       balance_pgdat+0x1105/0x1970 mm/vmscan.c:6911
+       kswapd+0x5ea/0xbf0 mm/vmscan.c:7180
+       kthread+0x2c1/0x3a0 kernel/kthread.c:389
+       ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+-> #1 (fs_reclaim){+.+.}-{0:0}:
+       __fs_reclaim_acquire mm/page_alloc.c:3783 [inline]
+       fs_reclaim_acquire+0x102/0x160 mm/page_alloc.c:3797
+       might_alloc include/linux/sched/mm.h:334 [inline]
+       slab_pre_alloc_hook mm/slub.c:3890 [inline]
+       slab_alloc_node mm/slub.c:3980 [inline]
+       kmalloc_trace_noprof+0x51/0x310 mm/slub.c:4147
+       kmalloc_noprof include/linux/slab.h:660 [inline]
+       ulist_alloc+0x77/0x1c0 fs/btrfs/ulist.c:98
+       btrfs_quota_enable+0x342/0x1ef0 fs/btrfs/qgroup.c:1051
+       btrfs_ioctl_quota_ctl fs/btrfs/ioctl.c:3765 [inline]
+       btrfs_ioctl+0x6af4/0x8290 fs/btrfs/ioctl.c:4762
+       __do_compat_sys_ioctl+0x2c3/0x330 fs/ioctl.c:1007
+       do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+       __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
+       do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
+       entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+
+-> #0 (&fs_info->qgroup_ioctl_lock){+.+.}-{3:3}:
+       check_prev_add kernel/locking/lockdep.c:3134 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+       validate_chain kernel/locking/lockdep.c:3869 [inline]
+       __lock_acquire+0x2478/0x3b30 kernel/locking/lockdep.c:5137
+       lock_acquire kernel/locking/lockdep.c:5754 [inline]
+       lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
+       btrfs_quota_enable+0x3a1/0x1ef0 fs/btrfs/qgroup.c:1086
+       btrfs_ioctl_quota_ctl fs/btrfs/ioctl.c:3765 [inline]
+       btrfs_ioctl+0x6af4/0x8290 fs/btrfs/ioctl.c:4762
+       __do_compat_sys_ioctl+0x2c3/0x330 fs/ioctl.c:1007
+       do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+       __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
+       do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
+       entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+
+other info that might help us debug this:
+
+Chain exists of:
+  &fs_info->qgroup_ioctl_lock --> btrfs_trans_num_writers --> btrfs_trans_num_extwriters
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  rlock(btrfs_trans_num_extwriters);
+                               lock(btrfs_trans_num_writers);
+                               lock(btrfs_trans_num_extwriters);
+  lock(&fs_info->qgroup_ioctl_lock);
+
+ *** DEADLOCK ***
+
+5 locks held by syz-executor.0/10258:
+ #0: ffff88802565c420 (sb_writers#18){.+.+}-{0:0}, at: btrfs_ioctl_quota_ctl fs/btrfs/ioctl.c:3751 [inline]
+ #0: ffff88802565c420 (sb_writers#18){.+.+}-{0:0}, at: btrfs_ioctl+0x20a0/0x8290 fs/btrfs/ioctl.c:4762
+ #1: ffff888055fa0bd0 (&fs_info->subvol_sem){++++}-{3:3}, at: btrfs_ioctl_quota_ctl fs/btrfs/ioctl.c:3764 [inline]
+ #1: ffff888055fa0bd0 (&fs_info->subvol_sem){++++}-{3:3}, at: btrfs_ioctl+0x6ae9/0x8290 fs/btrfs/ioctl.c:4762
+ #2: ffff88802565c610 (sb_internal#3){.+.+}-{0:0}, at: btrfs_quota_enable+0x392/0x1ef0 fs/btrfs/qgroup.c:1084
+ #3: ffff888055fa23f0 (btrfs_trans_num_writers){++++}-{0:0}, at: join_transaction+0x137/0xf40 fs/btrfs/transaction.c:314
+ #4: ffff888055fa2418 (btrfs_trans_num_extwriters){++++}-{0:0}, at: join_transaction+0x137/0xf40 fs/btrfs/transaction.c:314
+
+stack backtrace:
+CPU: 1 PID: 10258 Comm: syz-executor.0 Not tainted 6.10.0-rc1-syzkaller-00027-g4a4be1ad3a6e #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:114
+ check_noncircular+0x31a/0x400 kernel/locking/lockdep.c:2187
+ check_prev_add kernel/locking/lockdep.c:3134 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+ validate_chain kernel/locking/lockdep.c:3869 [inline]
+ __lock_acquire+0x2478/0x3b30 kernel/locking/lockdep.c:5137
+ lock_acquire kernel/locking/lockdep.c:5754 [inline]
+ lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
+ __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+ __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
+ btrfs_quota_enable+0x3a1/0x1ef0 fs/btrfs/qgroup.c:1086
+ btrfs_ioctl_quota_ctl fs/btrfs/ioctl.c:3765 [inline]
+ btrfs_ioctl+0x6af4/0x8290 fs/btrfs/ioctl.c:4762
+ __do_compat_sys_ioctl+0x2c3/0x330 fs/ioctl.c:1007
+ do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+ __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
+ do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
+ entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+RIP: 0023:0xf7321579
+Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d b4 26 00 00 00 00 8d b4 26 00 00 00 00
+RSP: 002b:00000000f5f135ac EFLAGS: 00000292 ORIG_RAX: 0000000000000036
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00000000c0109428
+RDX: 0000000020000040 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000292 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+ </TASK>
+----------------
+Code disassembly (best guess), 2 bytes skipped:
+   0:	10 06                	adc    %al,(%rsi)
+   2:	03 74 b4 01          	add    0x1(%rsp,%rsi,4),%esi
+   6:	10 07                	adc    %al,(%rdi)
+   8:	03 74 b0 01          	add    0x1(%rax,%rsi,4),%esi
+   c:	10 08                	adc    %cl,(%rax)
+   e:	03 74 d8 01          	add    0x1(%rax,%rbx,8),%esi
+  1e:	00 51 52             	add    %dl,0x52(%rcx)
+  21:	55                   	push   %rbp
+  22:	89 e5                	mov    %esp,%ebp
+  24:	0f 34                	sysenter
+  26:	cd 80                	int    $0x80
+* 28:	5d                   	pop    %rbp <-- trapping instruction
+  29:	5a                   	pop    %rdx
+  2a:	59                   	pop    %rcx
+  2b:	c3                   	ret
+  2c:	90                   	nop
+  2d:	90                   	nop
+  2e:	90                   	nop
+  2f:	90                   	nop
+  30:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
+  37:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
+
+
 ---
- tools/perf/util/disasm.c           | 193 +++++++++++++++++++++++++++++
- tools/perf/util/llvm-c-helpers.cpp |  62 +++++++++
- tools/perf/util/llvm-c-helpers.h   |  11 ++
- 3 files changed, 266 insertions(+)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/tools/perf/util/disasm.c b/tools/perf/util/disasm.c
-index c0dbb955e61a..4946e9ccf93b 100644
---- a/tools/perf/util/disasm.c
-+++ b/tools/perf/util/disasm.c
-@@ -43,6 +43,7 @@ static int call__scnprintf(struct ins *ins, char *bf, size_t size,
- 
- static void ins__sort(struct arch *arch);
- static int disasm_line__parse(char *line, const char **namep, char **rawp);
-+static char *expand_tabs(char *line, char **storage, size_t *storage_len);
- 
- static __attribute__((constructor)) void symbol__init_regexpr(void)
- {
-@@ -1378,7 +1379,9 @@ static int open_capstone_handle(struct annotate_args *args, bool is_64bit,
- 
- 	return 0;
- }
-+#endif
- 
-+#if defined(HAVE_LIBCAPSTONE_SUPPORT) || defined(HAVE_LIBLLVM_SUPPORT)
- struct find_file_offset_data {
- 	u64 ip;
- 	u64 offset;
-@@ -1442,7 +1445,9 @@ read_symbol(const char *filename, struct map *map, struct symbol *sym,
- 	free(buf);
- 	return NULL;
- }
-+#endif
- 
-+#ifdef HAVE_LIBCAPSTONE_SUPPORT
- static void print_capstone_detail(cs_insn *insn, char *buf, size_t len,
- 				  struct annotate_args *args, u64 addr)
- {
-@@ -1606,6 +1611,189 @@ static int symbol__disassemble_capstone(char *filename, struct symbol *sym,
- }
- #endif
- 
-+#ifdef HAVE_LIBLLVM_SUPPORT
-+#include <llvm-c/Disassembler.h>
-+#include <llvm-c/Target.h>
-+#include "util/llvm-c-helpers.h"
-+
-+struct symbol_lookup_storage {
-+	u64 branch_addr;
-+	u64 pcrel_load_addr;
-+};
-+
-+/*
-+ * Whenever LLVM wants to resolve an address into a symbol, it calls this
-+ * callback. We don't ever actually _return_ anything (in particular, because
-+ * it puts quotation marks around what we return), but we use this as a hint
-+ * that there is a branch or PC-relative address in the expression that we
-+ * should add some textual annotation for after the instruction. The caller
-+ * will use this information to add the actual annotation.
-+ */
-+static const char *
-+symbol_lookup_callback(void *disinfo, uint64_t value,
-+		       uint64_t *ref_type,
-+		       uint64_t address __maybe_unused,
-+		       const char **ref __maybe_unused)
-+{
-+	struct symbol_lookup_storage *storage = disinfo;
-+
-+	if (*ref_type == LLVMDisassembler_ReferenceType_In_Branch)
-+		storage->branch_addr = value;
-+	else if (*ref_type == LLVMDisassembler_ReferenceType_In_PCrel_Load)
-+		storage->pcrel_load_addr = value;
-+	*ref_type = LLVMDisassembler_ReferenceType_InOut_None;
-+	return NULL;
-+}
-+
-+static int symbol__disassemble_llvm(char *filename, struct symbol *sym,
-+				    struct annotate_args *args)
-+{
-+	struct annotation *notes = symbol__annotation(sym);
-+	struct map *map = args->ms.map;
-+	struct dso *dso = map__dso(map);
-+	u64 start = map__rip_2objdump(map, sym->start);
-+	u8 *buf;
-+	u64 len;
-+	u64 pc;
-+	bool is_64bit;
-+	char triplet[64];
-+	char disasm_buf[2048];
-+	size_t disasm_len;
-+	struct disasm_line *dl;
-+	LLVMDisasmContextRef disasm = NULL;
-+	struct symbol_lookup_storage storage;
-+	char *line_storage = NULL;
-+	size_t line_storage_len = 0;
-+	int ret = -1;
-+
-+	if (args->options->objdump_path)
-+		return -1;
-+
-+	LLVMInitializeAllTargetInfos();
-+	LLVMInitializeAllTargetMCs();
-+	LLVMInitializeAllDisassemblers();
-+
-+	buf = read_symbol(filename, map, sym, &len, &is_64bit);
-+	if (buf == NULL)
-+		return -1;
-+
-+	if (arch__is(args->arch, "x86")) {
-+		if (is_64bit)
-+			scnprintf(triplet, sizeof(triplet), "x86_64-pc-linux");
-+		else
-+			scnprintf(triplet, sizeof(triplet), "i686-pc-linux");
-+	} else {
-+		scnprintf(triplet, sizeof(triplet), "%s-linux-gnu",
-+			  args->arch->name);
-+	}
-+
-+	disasm = LLVMCreateDisasm(triplet, &storage, 0, NULL,
-+				  symbol_lookup_callback);
-+	if (disasm == NULL)
-+		goto err;
-+
-+	if (args->options->disassembler_style &&
-+	    !strcmp(args->options->disassembler_style, "intel"))
-+		LLVMSetDisasmOptions(disasm,
-+				     LLVMDisassembler_Option_AsmPrinterVariant);
-+
-+	/*
-+	 * This needs to be set after AsmPrinterVariant, due to a bug in LLVM;
-+	 * setting AsmPrinterVariant makes a new instruction printer, making it
-+	 * forget about the PrintImmHex flag (which is applied before if both
-+	 * are given to the same call).
-+	 */
-+	LLVMSetDisasmOptions(disasm, LLVMDisassembler_Option_PrintImmHex);
-+
-+	/* add the function address and name */
-+	scnprintf(disasm_buf, sizeof(disasm_buf), "%#"PRIx64" <%s>:",
-+		  start, sym->name);
-+
-+	args->offset = -1;
-+	args->line = disasm_buf;
-+	args->line_nr = 0;
-+	args->fileloc = NULL;
-+	args->ms.sym = sym;
-+
-+	dl = disasm_line__new(args);
-+	if (dl == NULL)
-+		goto err;
-+
-+	annotation_line__add(&dl->al, &notes->src->source);
-+
-+	pc = start;
-+	for (u64 offset = 0; offset < len; ) {
-+		unsigned int ins_len;
-+
-+		storage.branch_addr = 0;
-+		storage.pcrel_load_addr = 0;
-+
-+		ins_len = LLVMDisasmInstruction(disasm, buf + offset,
-+						len - offset, pc,
-+						disasm_buf, sizeof(disasm_buf));
-+		if (ins_len == 0)
-+			goto err;
-+		disasm_len = strlen(disasm_buf);
-+
-+		if (storage.branch_addr != 0) {
-+			char *name = llvm_name_for_code(dso, filename,
-+							storage.branch_addr);
-+			if (name != NULL) {
-+				disasm_len += scnprintf(disasm_buf + disasm_len,
-+							sizeof(disasm_buf) -
-+								disasm_len,
-+							" <%s>", name);
-+				free(name);
-+			}
-+		}
-+		if (storage.pcrel_load_addr != 0) {
-+			char *name = llvm_name_for_data(dso, filename,
-+							storage.pcrel_load_addr);
-+			disasm_len += scnprintf(disasm_buf + disasm_len,
-+						sizeof(disasm_buf) - disasm_len,
-+						"  # %#"PRIx64,
-+						storage.pcrel_load_addr);
-+			if (name) {
-+				disasm_len += scnprintf(disasm_buf + disasm_len,
-+							sizeof(disasm_buf) -
-+							disasm_len,
-+							" <%s>", name);
-+				free(name);
-+			}
-+		}
-+
-+		args->offset = offset;
-+		args->line = expand_tabs(disasm_buf, &line_storage,
-+					 &line_storage_len);
-+		args->line_nr = 0;
-+		args->fileloc = NULL;
-+		args->ms.sym = sym;
-+
-+		llvm_addr2line(filename, pc, &args->fileloc,
-+			       (unsigned int *)&args->line_nr, false, NULL);
-+
-+		dl = disasm_line__new(args);
-+		if (dl == NULL)
-+			goto err;
-+
-+		annotation_line__add(&dl->al, &notes->src->source);
-+
-+		free(args->fileloc);
-+		pc += ins_len;
-+		offset += ins_len;
-+	}
-+
-+	ret = 0;
-+
-+err:
-+	LLVMDisasmDispose(disasm);
-+	free(buf);
-+	free(line_storage);
-+	return ret;
-+}
-+#endif
-+
-+
- /*
-  * Possibly create a new version of line with tabs expanded. Returns the
-  * existing or new line, storage is updated if a new line is allocated. If
-@@ -1730,6 +1918,11 @@ int symbol__disassemble(struct symbol *sym, struct annotate_args *args)
- 		strcpy(symfs_filename, tmp);
- 	}
- 
-+#ifdef HAVE_LIBLLVM_SUPPORT
-+	err = symbol__disassemble_llvm(symfs_filename, sym, args);
-+	if (err == 0)
-+		goto out_remove_tmp;
-+#endif
- #ifdef HAVE_LIBCAPSTONE_SUPPORT
- 	err = symbol__disassemble_capstone(symfs_filename, sym, args);
- 	if (err == 0)
-diff --git a/tools/perf/util/llvm-c-helpers.cpp b/tools/perf/util/llvm-c-helpers.cpp
-index 3cc967ec6f28..4070e2d5682f 100644
---- a/tools/perf/util/llvm-c-helpers.cpp
-+++ b/tools/perf/util/llvm-c-helpers.cpp
-@@ -8,6 +8,7 @@
- #pragma GCC diagnostic push
- #pragma GCC diagnostic ignored "-Wunused-parameter"  /* Needed for LLVM <= 15 */
- #include <llvm/DebugInfo/Symbolize/Symbolize.h>
-+#include <llvm/Support/TargetSelect.h>
- #pragma GCC diagnostic pop
- 
- #include <stdio.h>
-@@ -19,6 +20,9 @@ extern "C" {
- #include "symbol_conf.h"
- #include "llvm-c-helpers.h"
- 
-+extern "C"
-+char *dso__demangle_sym(struct dso *dso, int kmodule, const char *elf_name);
-+
- using namespace llvm;
- using llvm::symbolize::LLVMSymbolizer;
- 
-@@ -132,3 +136,61 @@ int llvm_addr2line(const char *dso_name, u64 addr,
- 		return extract_file_and_line(*res_or_err, file, line);
- 	}
- }
-+
-+static char *
-+make_symbol_relative_string(struct dso *dso, const char *sym_name,
-+			    u64 addr, u64 base_addr)
-+{
-+	if (!strcmp(sym_name, "<invalid>"))
-+		return NULL;
-+
-+	char *demangled = dso__demangle_sym(dso, 0, sym_name);
-+	if (base_addr && base_addr != addr) {
-+		char buf[256];
-+		snprintf(buf, sizeof(buf), "%s+0x%lx",
-+			 demangled ? demangled : sym_name, addr - base_addr);
-+		free(demangled);
-+		return strdup(buf);
-+	} else {
-+		if (demangled)
-+			return demangled;
-+		else
-+			return strdup(sym_name);
-+	}
-+}
-+
-+extern "C"
-+char *llvm_name_for_code(struct dso *dso, const char *dso_name, u64 addr)
-+{
-+	LLVMSymbolizer *symbolizer = get_symbolizer();
-+	object::SectionedAddress sectioned_addr = {
-+		addr,
-+		object::SectionedAddress::UndefSection
-+	};
-+	Expected<DILineInfo> res_or_err =
-+		symbolizer->symbolizeCode(dso_name, sectioned_addr);
-+	if (!res_or_err) {
-+		return NULL;
-+	}
-+	return make_symbol_relative_string(
-+		dso, res_or_err->FunctionName.c_str(),
-+		addr, res_or_err->StartAddress ? *res_or_err->StartAddress : 0);
-+}
-+
-+extern "C"
-+char *llvm_name_for_data(struct dso *dso, const char *dso_name, u64 addr)
-+{
-+	LLVMSymbolizer *symbolizer = get_symbolizer();
-+	object::SectionedAddress sectioned_addr = {
-+		addr,
-+		object::SectionedAddress::UndefSection
-+	};
-+	Expected<DIGlobal> res_or_err =
-+		symbolizer->symbolizeData(dso_name, sectioned_addr);
-+	if (!res_or_err) {
-+		return NULL;
-+	}
-+	return make_symbol_relative_string(
-+		dso, res_or_err->Name.c_str(),
-+		addr, res_or_err->Start);
-+}
-diff --git a/tools/perf/util/llvm-c-helpers.h b/tools/perf/util/llvm-c-helpers.h
-index 19332dd98e14..d2b99637a28a 100644
---- a/tools/perf/util/llvm-c-helpers.h
-+++ b/tools/perf/util/llvm-c-helpers.h
-@@ -13,6 +13,8 @@
- extern "C" {
- #endif
- 
-+struct dso;
-+
- struct llvm_a2l_frame {
-   char* filename;
-   char* funcname;
-@@ -42,6 +44,15 @@ int llvm_addr2line(const char* dso_name,
-                    bool unwind_inlines,
-                    struct llvm_a2l_frame** inline_frames);
- 
-+/*
-+ * Simple symbolizers for addresses; will convert something like
-+ * 0x12345 to "func+0x123". Will return NULL if no symbol was found.
-+ *
-+ * The returned value must be freed by the caller, with free().
-+ */
-+char *llvm_name_for_code(struct dso *dso, const char *dso_name, u64 addr);
-+char *llvm_name_for_data(struct dso *dso, const char *dso_name, u64 addr);
-+
- #ifdef __cplusplus
- }
- #endif
--- 
-2.45.1
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
