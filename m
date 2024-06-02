@@ -1,111 +1,124 @@
-Return-Path: <linux-kernel+bounces-198360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 923688D7724
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 18:29:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E93DF8D7726
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 18:30:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F07511F21458
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 16:29:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B1BD281960
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 16:30:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2257151016;
-	Sun,  2 Jun 2024 16:29:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7731554656;
+	Sun,  2 Jun 2024 16:30:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kYzbOrEb"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aySk10ev"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 443871DDD6
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Jun 2024 16:29:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68B621DA4E;
+	Sun,  2 Jun 2024 16:30:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717345745; cv=none; b=ugIx1q5rVLYuJ3UT+cIpwk83xpDB4q5f/knuFaFDoYvLZc6gwXTKSclycHSSJ6t8AwwVnLL1rGUi5rKHKmKj0KJeGisT6aKXSGxDOB7NyV0yNJ1+EG/yoBeeNrDdfr+U0ECTMT4GbYrq65XC4JY/QIfQV69T0huanaPZW7g4m+w=
+	t=1717345843; cv=none; b=WZAccKRBtGbpyNWeQd2JTb4kW1wmoGuBLwPyOfOEN6GoRFZCbFzm3NmqlrvVbDGAKJw/uz+N83qtoT1istlhqHW9cV3TKY0KOT8dhhV3JPjE0NxOkWHYWuNivWBdU5RqJA6m7zVUXYHney59bPTkV/rnMC59NbmzrvS5rlaUBSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717345745; c=relaxed/simple;
-	bh=bRAebncTr5dTqRVO5e1xTPCZ2Wb2ror0a6gDeuUh+WI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=od0ncIjKt1wZizX91C03JIq7T40IAG2Wb9598gigbzlbJcGV2hCLjtSSGDOlokolhog6PIYCmskatTJ1dtiR18uSIVfLCIFJB+XWWUdUGVxAgHBcOlaQtJD+tPZpHGaBShx/V9/BfvdhTHwzmZOivcGlaA35LqAxpnbfNM8gKik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kYzbOrEb; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-6c3b5c5e32cso1591289a12.1
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2024 09:29:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717345743; x=1717950543; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bRAebncTr5dTqRVO5e1xTPCZ2Wb2ror0a6gDeuUh+WI=;
-        b=kYzbOrEb6MSwNOI2zLUwsLLkCEt4RfsxQaUK2dP6pgX0brngZGMp5i1QKivYntb+mn
-         N1mpVguftp8JStpaTd2xm1fZgvIbrs+aV+UPcj7M21oCeq00jyKBnb83Rvz14sPa1UY0
-         Qk5ELv9eZE+71G924617MiBxZwXmz68TX9lgSWy1/pczgj+25MX0xPa+5UEjFPjmeY/g
-         wFCakZp0JnSbcpu1QK8zkFj8Y7+alnfxMlgHQhhAkHx6ezkYIRDbsgvfpthAstbxwxW+
-         aWjPp/hTybCuWiJ/UcqRm5TN/GxtJEcoOSNkU04DaM87vNm/U83Y04AbKNZUMnTFgW2a
-         DLsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717345743; x=1717950543;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bRAebncTr5dTqRVO5e1xTPCZ2Wb2ror0a6gDeuUh+WI=;
-        b=Twxe9Ow0uDwUY9eZ9PWcQhJybd9WNU7A7JKIvtaJOD1s/TJg5HrWHksntYtK9HS+E8
-         L18Y/wKy5wbSopY5EqBBuLeLZqQVcySHaHIKtkZ5jbUUjWh1g22M9Te/uuu5Q4NLhjg9
-         /PvmPW//Z8WHOOUo1T9SkxAJp4bHVyKPDlX1GbrfPUVN5hmpuL02W22lG2uc9ejzKnj+
-         VXyenpLpGWucivA86QJzV9irUYvjAwROMSwpk81RSEdJq7Q3QaI+M8nbdWxTGN3WTb0U
-         hF7gJsEjBeyx5LwrXfv9DBVKWi7fPootHqrVy9PViSDTBNhnDtUlebzCTXDX98OCC5Fp
-         FjAg==
-X-Forwarded-Encrypted: i=1; AJvYcCX6BE2DwpdENALVixST41hBzCHao/CNlfUJe7ImsEzUqO+N4ppT4kXYTCHP0i+ZBjg0Z0PYztaPwPZwxcni1G+cdcCq4Iug74QJ4lz2
-X-Gm-Message-State: AOJu0YwjkfTxHA7NE6riWoK5D9WsTX1yLQAsxxyKx2LCFlD/2emOShSX
-	Nndpfzl4YMgMu6niH2RoqBEwndkdAoQa23Efm/XQXDRsrfBKVNWtilWHPK6yPaLzak0wPJdqgV0
-	bowuJh4zo0QF72MGT/vLHriH/el8=
-X-Google-Smtp-Source: AGHT+IHGkfEpGVkMpVuPjcpKEqWpK/eX91V8bp4MaRNl9OXTvy8LmpuO9Rrs1HO+7yt4KR1DAcH/HECbCPFM0yYuOAM=
-X-Received: by 2002:a05:6a20:2451:b0:1af:d044:1395 with SMTP id
- adf61e73a8af0-1b26f141cfbmr7396195637.20.1717345743488; Sun, 02 Jun 2024
- 09:29:03 -0700 (PDT)
+	s=arc-20240116; t=1717345843; c=relaxed/simple;
+	bh=59+rZxWfeiQW9HhaaMn2cSYRmnsCAnFM81QQlR8WtTk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=WrWki9qfUTF1Rwh8X56K/0PtSGNz5K3vuq41u6H8k0uLHmfCK3I7HZ3xsklc9+R6nDUWHePlZMg1q0ObG5fHWNgryqXGoUBBd1SKjOT3jgleKL8IoFsIYldZzjqe9yZZ5bDq0L2qf8f+gVoSIvIw/dgauhZkea31Ic9GHIKk6EQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aySk10ev; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 452AJnbl024147;
+	Sun, 2 Jun 2024 16:30:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=/cX8LtmgzkXbHvhMCNjc2a
+	JIf8DHh2lY14nwv3J09WE=; b=aySk10evnB+8x++c+HoW0tiOlbdCDGLC2Bho3p
+	OCo1523LYOvzM1aDnidrqn2dqKM+Zrrbjs6pU/SLTupysoz0vuM1DAXo5zDn44sZ
+	vy5QTgS2weEdnqgFgh8xOOh3PYyYVJS0++3vjdv3YTUiBNNIFPP/G1Y5YrdttGs9
+	Mb7hEgZoDiEeMxn4SKzE/nUgEmHLMp9vLz/qy7+RLgNYS7ezwDnZUtrvFIXGKvSN
+	1Wcyj+cvgVdYm5mY6uZaz1JtLvOv6ww6RYSXkcj0aitQE4VHuhcoFqfKpFzBfBsl
+	Cf9uZMHo7cU2EuJUpe9Kcq1cNOhKw9zJAz+ewN0bL+KF7gRQ==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfw6v29ej-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 02 Jun 2024 16:30:15 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 452GUEAJ009411
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 2 Jun 2024 16:30:14 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 2 Jun 2024
+ 09:30:14 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Sun, 2 Jun 2024 09:30:13 -0700
+Subject: [PATCH] ASoC: mxs: add missing MODULE_DESCRIPTION() macro
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20230601075333.14021-1-ihuguet@redhat.com> <CAMZ6RqLoRVHD_M8Jh2ELurhL8E=HWt2DZZFGQvmfFyxKjtNKhg@mail.gmail.com>
- <874jiikr6e.fsf@meer.lwn.net> <CAMZ6RqLJmTjM0dYvixMEAo+uW+zfhdL1n4rnajsHCZcq971oRA@mail.gmail.com>
- <CACT4oudYAK07+PJzJMhTazKe3LP-F4tpQf8CF0vs1pJLEE_4aA@mail.gmail.com>
- <CAK7LNATqNNVX8ECNoO82kY503ArfRPa9GdbYd9tOok_6tGOsew@mail.gmail.com> <thbrfziusf37nj5mwsj2a6zmjtenj5b5vhzwu2z5zkhr7ajsg6@whvx46y6mxbz>
-In-Reply-To: <thbrfziusf37nj5mwsj2a6zmjtenj5b5vhzwu2z5zkhr7ajsg6@whvx46y6mxbz>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Sun, 2 Jun 2024 18:28:51 +0200
-Message-ID: <CANiq72kSyHxLUFYA0KyXoQszHoZpTXyN5oPyx2OMbQZVG4dzcg@mail.gmail.com>
-Subject: Re: [PATCH v4] Add .editorconfig file for basic formatting
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, =?UTF-8?B?w43DsWlnbyBIdWd1ZXQ=?= <ihuguet@redhat.com>, 
-	Vincent MAILHOL <mailhol.vincent@wanadoo.fr>, Jonathan Corbet <corbet@lwn.net>, ojeda@kernel.org, 
-	danny@kdrag0n.dev, jgg@nvidia.com, mic@digikod.net, 
-	linux-kernel@vger.kernel.org, joe@perches.com, linux@rasmusvillemoes.dk, 
-	willy@infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240602-md-snd-soc-mxs-pcm-v1-1-1e663d11328d@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIABSeXGYC/x3MQQrCMBCF4auUWTsQQ7XiVcRFkk7sgEnLjJZA6
+ d07uniLb/H+DZSESeHebSC0svJcDedTB2kK9UXIoxm88727Oo9lRK22OWFpiksq6C751scchzg
+ ksOMilLn9o4+nOQYljBJqmn6pN9dvwxL0QwL7fgCoUd27gwAAAA==
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Shawn Guo
+	<shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        "Pengutronix
+ Kernel Team" <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>
+CC: <linux-sound@vger.kernel.org>, <imx@lists.linux.dev>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 1CQGR3JMWU5Hg_KFP2QzDsUmMI-nHzBF
+X-Proofpoint-ORIG-GUID: 1CQGR3JMWU5Hg_KFP2QzDsUmMI-nHzBF
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-06-02_10,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 malwarescore=0
+ impostorscore=0 mlxscore=0 suspectscore=0 adultscore=0 lowpriorityscore=0
+ clxscore=1011 spamscore=0 priorityscore=1501 mlxlogscore=999 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
+ definitions=main-2406020142
 
-On Sun, Jun 2, 2024 at 5:31=E2=80=AFPM Mateusz Guzik <mjguzik@gmail.com> wr=
-ote:
->
-> You can try yourself by editing fs/dcache.c or fs/bad_inode.c.
->
-> It stems from this line:
-> trim_trailing_whitespace =3D true
->
-> The problem is dodged by setting it to false or adding this to
-> ~/.config/nvim/init.lua:
-> vim.g.editorconfig =3D false
->
-> Is there a non-giant-hammer method to disable the thing? Maybe some lua
-> magic to special-case that this is the kernel tree?
+make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in sound/soc/mxs/snd-soc-mxs-pcm.o
 
-It may be possible to disable it for particular folder/patterns and
-then try to get their maintainers to do a sweep eventually.
+Add the missing invocation of the MODULE_DESCRIPTION() macro.
 
-Cheers,
-Miguel
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ sound/soc/mxs/mxs-pcm.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/sound/soc/mxs/mxs-pcm.c b/sound/soc/mxs/mxs-pcm.c
+index df2e4be992d2..9bb08cadeb18 100644
+--- a/sound/soc/mxs/mxs-pcm.c
++++ b/sound/soc/mxs/mxs-pcm.c
+@@ -43,4 +43,5 @@ int mxs_pcm_platform_register(struct device *dev)
+ }
+ EXPORT_SYMBOL_GPL(mxs_pcm_platform_register);
+ 
++MODULE_DESCRIPTION("MXS ASoC PCM driver");
+ MODULE_LICENSE("GPL");
+
+---
+base-commit: 83814698cf48ce3aadc5d88a3f577f04482ff92a
+change-id: 20240602-md-snd-soc-mxs-pcm-05f84bfb7b7c
+
 
