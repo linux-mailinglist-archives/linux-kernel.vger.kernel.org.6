@@ -1,248 +1,121 @@
-Return-Path: <linux-kernel+bounces-198485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67D528D7927
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 01:33:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF8D98D7923
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 01:30:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D16081F2151D
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 23:33:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0FFE1C20CC5
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 23:30:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47B747D096;
-	Sun,  2 Jun 2024 23:33:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E8D17CF34;
+	Sun,  2 Jun 2024 23:30:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=freemail.hu header.i=@freemail.hu header.b="ELxkzDJF"
-Received: from smtp-out.freemail.hu (fmfe17.freemail.hu [46.107.16.210])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=howett-net.20230601.gappssmtp.com header.i=@howett-net.20230601.gappssmtp.com header.b="sNF2t+UK"
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B343F78283
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Jun 2024 23:33:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.107.16.210
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79B7F3FBAD
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Jun 2024 23:30:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717371219; cv=none; b=mitYhhr4VRffofuo61qzjc1ictaMTIPcyAXGPvPcP4l+DVASJmw2xsPWphqbdddnoxFPKOjg7aUhy4sEtog7hGhCO27mCqUT1QwFQJ8l3BqEZ3Xy/Z6E7SD7TpSyRpztiT9h9CRxCS7I/lgWTy34J9xluU6/c6lUppVewu9J+TM=
+	t=1717371019; cv=none; b=bfOj753dPF9f7q6WO5A55TTdlXrtcn2CKv6SZ5r7zbByCOeJoblzEEaE5/82bAcUyDo9vBtOkpp98hSALr9SVqrzYL9Dm1N1yDDeSQhA56IWQbaWK+s6SFeTU0POJIKKnA41W2LFCyHqbVcqGKDeQYXOzsJH+fJyTpkCPfl9h6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717371219; c=relaxed/simple;
-	bh=jaA9RKU8QoyMaMB7ZEarIcCGhuA2fwlIoYxPYii1AFQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=rfiAMFXIMaNx+sS8hAsqjIYdUSOHuhP6ogvrCG4xyaomQIZ0h8nShzQZlRLlJOHh6Iy2z7lgWF90uZIeCB0f5Bf7ID7OrnTDU5acf3G8qo6fgM5ROnvG2PI2mntE8463jwKs2Ny5y/VjCAsw7Ve8CsBHqZshkMaLgIycH3IvlCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freemail.hu; spf=pass smtp.mailfrom=freemail.hu; dkim=fail (2048-bit key) header.d=freemail.hu header.i=@freemail.hu header.b=ELxkzDJF reason="signature verification failed"; arc=none smtp.client-ip=46.107.16.210
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freemail.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freemail.hu
-Received: from [192.168.0.16] (catv-80-98-74-198.catv.fixed.vodafone.hu [80.98.74.198])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp.freemail.hu (Postfix) with ESMTPSA id 4VstLn25b4z2vv;
-	Mon,  3 Jun 2024 01:27:45 +0200 (CEST)
-Message-ID: <d8366db0-ceeb-44c5-bef3-8cffb9d74860@freemail.hu>
-Date: Mon, 3 Jun 2024 01:27:40 +0200
+	s=arc-20240116; t=1717371019; c=relaxed/simple;
+	bh=pMhsyKu03RmnmNJkv3yey1MD984VPwGhQB3gl4lX4tc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PLPOs5VkUufRYKsihiBA0y0mNW1fAxqmZ1agZP84cL2JvrcC+0XE6kPR9VTDE8dcL/cZtKroq4zR6Qj/DSw+akBllmd4eYTnAwlpytKF/E4w1xKBAYp+A9/up4By5dVfXjfDggvDzBOiUYusIkC1YftWfsSDcykgoSPQwvwCFkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=howett.net; spf=none smtp.mailfrom=howett.net; dkim=pass (2048-bit key) header.d=howett-net.20230601.gappssmtp.com header.i=@howett-net.20230601.gappssmtp.com header.b=sNF2t+UK; arc=none smtp.client-ip=209.85.219.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=howett.net
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=howett.net
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-dfa8427f22dso1658203276.0
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2024 16:30:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=howett-net.20230601.gappssmtp.com; s=20230601; t=1717371017; x=1717975817; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mA62qSvfUgabP8dHNNLvavVQ1hj8KoRhl88lff9+uKA=;
+        b=sNF2t+UKeuOoaLrKZGUybsg96BQzBdLaUvP3d4w3TMdefvNj6Q1qQA0L78p2hw7/Z0
+         0E/JLE0laQb1qmA6URiPh/zQMjXz6ODMGqcT//Nx7Y96voC/eNsytF5GaEm2Mc3SgN0R
+         JELByR6bWq26dFyy7QJCPr/7FIBV35xdL7iUVCdPGYfNhlmlXVD9kIooek7/ldFZ2/PR
+         DzWsLSboSjnnA7nBHsTp7BWasT1RmlFWQn1nwWVGTy7t10YOvNI2bKjPmho7a5VQmlEF
+         xvy+mFz+aVfC1+RITc4s9PoRuRZkxtqvFmUrShslguCaxEC7I8HvUbV0m1WBtL+XhxuW
+         PLkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717371017; x=1717975817;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mA62qSvfUgabP8dHNNLvavVQ1hj8KoRhl88lff9+uKA=;
+        b=w4jYYvG19uFxhIfAVz93mK+QiUgO4N4A3/PhnKPPeQcGcLK3kGBWt7nUvTWLBAsXIc
+         JK0LgZwbGWgntwvgwvCTECRO9jeFVQZ/R0va2UT/6PXeHlbc9MjfUE9PIW26bRbkyH62
+         A72E8HKFY1lLhe8w+Si2b4JLR2UznrEFtavcffMNrEm0iCEEOayATHTcPkdFy7/ozewA
+         HxmDELYoPyVr/1Jz97F3g/NZY2tHmt0dHjX06c7By9XvBoivvqVQKLq6OUOr+TlwOwgO
+         claT1rMEDYiTYLRNmbK6pXQYPmpZmw3AWELuVqvToRvP55ruGNxwWY21QQrEAWd01Cqg
+         0hoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWMJLgmVziUdW1/AXoKbtFlRN//IXY0n1ANQUjqUzdSarflqXQC/QUzMoisqh7H/FDBHhcQPEis/Ov5m4qBrMG2715v8PTnYv9Ml7EI
+X-Gm-Message-State: AOJu0Yzmw42+tY4qKT3Ozu6e11z37YqbKGTCRNoi2ftEDZqyDtH9VHvf
+	zb06QX96xTwbqtfDwsYNVR6pF5LTcCoHzgaYj9gI0wCK8zQAnB453DERGL0krNBOlxmJYPg2N9I
+	g8ncHg7j+Jp7144DGXXkG98wscZSLXlUzCtCo3WQyI2ZxV4SNW2Yi
+X-Google-Smtp-Source: AGHT+IH2wwVcPgtl3GNQdMf+HzL/lgwUkqm8BGFm5dIJFA3xpzq6zxsZqPM2NhtHVxlko5L+l8gNF8Ck50mvlyjfVRI=
+X-Received: by 2002:a25:bc08:0:b0:df7:978a:73de with SMTP id
+ 3f1490d57ef6-dfa73c1da12mr7346043276.19.1717371017435; Sun, 02 Jun 2024
+ 16:30:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/nouveau/i2c: rename aux.c and aux.h to nvkm_i2c_aux.c
- and nvkm_i2c_aux.h
-To: Ben Skeggs <bskeggs@nvidia.com>, kherbst@redhat.com, lyude@redhat.com,
- airlied@gmail.com, daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
- nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20240601212247.54786-1-egyszeregy@freemail.hu>
- <233ba844-7964-42ad-8962-95c371e402be@nvidia.com>
-Content-Language: hu, en-US
-From: =?UTF-8?Q?Sz=C5=91ke_Benjamin?= <egyszeregy@freemail.hu>
-In-Reply-To: <233ba844-7964-42ad-8962-95c371e402be@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=simple/relaxed; t=1717370867;
-	s=20181004; d=freemail.hu;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding;
-	l=7588; bh=MEMKy+zpzeM/b0SV9PKLhstRFfWTgKmOq/rJvbhZwXQ=;
-	b=ELxkzDJF/zs+wcGNMvH0gkpPqrA7mgMbamXNgxisVoafyqaOEcLygqrt+S5R4/AV
-	mn48KjRdpXTWR3//Jz3VpSnQQc2WS45dQDoaQhv9sd5ce/NnZo8NYQP2WWdTVCs2Btb
-	DsrUkDeG3dTngNRc/sdesH6EBp+qhnCDCnvyXzIWYvKMRXP3koNq56e6dSxRZ4C4bHF
-	/x8widEcfvs8giZ4FPhpXoooJTpj2Hoc9p4vZgsM7xxWmNe2Uob2vp4thdjG8noCmYO
-	3O8BtHqJYSpbTjJGu1JNdjew6rhNa81nLdQlIgM6mo5U24gCte+QdpN07InOMwMW1gE
-	mFAXUDVTmQ==
+References: <20240531-cros_ec-led-v2-0-6cc34408b40d@weissschuh.net>
+In-Reply-To: <20240531-cros_ec-led-v2-0-6cc34408b40d@weissschuh.net>
+From: Dustin Howett <dustin@howett.net>
+Date: Sun, 2 Jun 2024 18:30:06 -0500
+Message-ID: <CA+BfgNJf1Av7fRVUjpU3r6aRw6DWTHfkCuOYXP2ykhPzGTVzfw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/5] ChromeOS Embedded Controller LED driver
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
+	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@weissschuh.net>, 
+	Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>, 
+	Tzung-Bi Shih <tzungbi@kernel.org>, linux-leds@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, chrome-platform@lists.linux.dev, 
+	Mario Limonciello <mario.limonciello@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-2024. 06. 03. 0:08 keltezéssel, Ben Skeggs írta:
-> On 2/6/24 07:22, egyszeregy@freemail.hu wrote:
-> 
->> From: Benjamin Szőke <egyszeregy@freemail.hu>
->>
->> The goal is to clean-up Linux repository from AUX file names, because
->> the use of such file names is prohibited on other operating systems
->> such as Windows, so the Linux repository cannot be cloned and
->> edited on them.
->>
->> Signed-off-by: Benjamin Szőke <egyszeregy@freemail.hu>
->> ---
->>   drivers/gpu/drm/nouveau/nvkm/subdev/i2c/Kbuild                  | 2 +-
->>   drivers/gpu/drm/nouveau/nvkm/subdev/i2c/anx9805.c               | 2 +-
->>   drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxg94.c                | 2 +-
->>   drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxgf119.c              | 2 +-
->>   drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxgm200.c              | 2 +-
->>   drivers/gpu/drm/nouveau/nvkm/subdev/i2c/base.c                  | 2 +-
->>   .../gpu/drm/nouveau/nvkm/subdev/i2c/{aux.c => nvkm_i2c_aux.c}   | 2 +-
->>   .../gpu/drm/nouveau/nvkm/subdev/i2c/{aux.h => nvkm_i2c_aux.h}   | 0
->>   drivers/gpu/drm/nouveau/nvkm/subdev/i2c/padg94.c                | 2 +-
->>   drivers/gpu/drm/nouveau/nvkm/subdev/i2c/padgf119.c              | 2 +-
->>   drivers/gpu/drm/nouveau/nvkm/subdev/i2c/padgm200.c              | 2 +-
->>   11 files changed, 10 insertions(+), 10 deletions(-)
->>   rename drivers/gpu/drm/nouveau/nvkm/subdev/i2c/{aux.c => nvkm_i2c_aux.c} (99%)
->>   rename drivers/gpu/drm/nouveau/nvkm/subdev/i2c/{aux.h => nvkm_i2c_aux.h} (100%)
-> 
-> NACK on this rename.  No other part of NVKM uses filenames like this. If 
-> anything, auxch.[ch] would be a better choice.
-> 
-> Ben.
+On Fri, May 31, 2024 at 11:33=E2=80=AFAM Thomas Wei=C3=9Fschuh <linux@weiss=
+schuh.net> wrote:
+>
+> Add a LED driver that supports the LED devices exposed by the
+> ChromeOS Embedded Controller.
 
-Do you mean it would be better to rename them in the following way?
+I've tested this out on the Framework Laptop 13, 11th gen intel core
+and AMD Ryzen 7040 editions.
 
-rename drivers/gpu/drm/nouveau/nvkm/subdev/i2c/{aux.c => auxc.c}
-rename drivers/gpu/drm/nouveau/nvkm/subdev/i2c/{aux.h => auxh.h}
+It works fairly well! I found a couple minor issues in day-to-day use:
 
+- Restoring the trigger to chromeos-auto does not always put the EC
+back in control, e.g. the side lights no longer return to reporting
+charge status.
+  I believe this happens when you move from any trigger except "none"
+to chromeos-auto, without first setting "none".
+- The multicolor intensities report 6x 100 by default; if you set the
+brightness with the intensities set as such, it becomes only red. I
+would have
+  expected intensities of 100 0 0 0 0 0 if that were the case
 
-> 
->>
->> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/Kbuild 
->> b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/Kbuild
->> index 819703913a00..c488dfce4392 100644
->> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/Kbuild
->> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/Kbuild
->> @@ -25,7 +25,7 @@ nvkm-y += nvkm/subdev/i2c/busnv50.o
->>   nvkm-y += nvkm/subdev/i2c/busgf119.o
->>   nvkm-y += nvkm/subdev/i2c/bit.o
->> -nvkm-y += nvkm/subdev/i2c/aux.o
->> +nvkm-y += nvkm/subdev/i2c/nvkm_i2c_aux.o
->>   nvkm-y += nvkm/subdev/i2c/auxg94.o
->>   nvkm-y += nvkm/subdev/i2c/auxgf119.o
->>   nvkm-y += nvkm/subdev/i2c/auxgm200.o
->> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/anx9805.c 
->> b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/anx9805.c
->> index dd391809fef7..30bf84e77db9 100644
->> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/anx9805.c
->> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/anx9805.c
->> @@ -24,7 +24,7 @@
->>   #define anx9805_pad(p) container_of((p), struct anx9805_pad, base)
->>   #define anx9805_bus(p) container_of((p), struct anx9805_bus, base)
->>   #define anx9805_aux(p) container_of((p), struct anx9805_aux, base)
->> -#include "aux.h"
->> +#include "nvkm_i2c_aux.h"
->>   #include "bus.h"
->>   struct anx9805_pad {
->> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxg94.c 
->> b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxg94.c
->> index 47068f6f9c55..9e07ba444ca8 100644
->> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxg94.c
->> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxg94.c
->> @@ -22,7 +22,7 @@
->>    * Authors: Ben Skeggs <bskeggs@redhat.com>
->>    */
->>   #define g94_i2c_aux(p) container_of((p), struct g94_i2c_aux, base)
->> -#include "aux.h"
->> +#include "nvkm_i2c_aux.h"
->>   struct g94_i2c_aux {
->>       struct nvkm_i2c_aux base;
->> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxgf119.c 
->> b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxgf119.c
->> index dab40cd8fe3a..8709b728c38b 100644
->> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxgf119.c
->> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxgf119.c
->> @@ -19,7 +19,7 @@
->>    * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
->>    * OTHER DEALINGS IN THE SOFTWARE.
->>    */
->> -#include "aux.h"
->> +#include "nvkm_i2c_aux.h"
->>   static const struct nvkm_i2c_aux_func
->>   gf119_i2c_aux = {
->> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxgm200.c 
->> b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxgm200.c
->> index 8bd1d442e465..f40c5709d217 100644
->> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxgm200.c
->> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxgm200.c
->> @@ -22,7 +22,7 @@
->>    * Authors: Ben Skeggs <bskeggs@redhat.com>
->>    */
->>   #define gm200_i2c_aux(p) container_of((p), struct gm200_i2c_aux, base)
->> -#include "aux.h"
->> +#include "nvkm_i2c_aux.h"
->>   struct gm200_i2c_aux {
->>       struct nvkm_i2c_aux base;
->> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/base.c 
->> b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/base.c
->> index 976539de4220..736275f0c774 100644
->> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/base.c
->> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/base.c
->> @@ -22,7 +22,7 @@
->>    * Authors: Ben Skeggs
->>    */
->>   #include "priv.h"
->> -#include "aux.h"
->> +#include "nvkm_i2c_aux.h"
->>   #include "bus.h"
->>   #include "pad.h"
->> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/aux.c 
->> b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/nvkm_i2c_aux.c
->> similarity index 99%
->> rename from drivers/gpu/drm/nouveau/nvkm/subdev/i2c/aux.c
->> rename to drivers/gpu/drm/nouveau/nvkm/subdev/i2c/nvkm_i2c_aux.c
->> index d063d0dc13c5..6b76df02c63a 100644
->> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/aux.c
->> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/nvkm_i2c_aux.c
->> @@ -24,7 +24,7 @@
->>   #include <linux/string_helpers.h>
->> -#include "aux.h"
->> +#include "nvkm_i2c_aux.h"
->>   #include "pad.h"
->>   static int
->> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/aux.h 
->> b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/nvkm_i2c_aux.h
->> similarity index 100%
->> rename from drivers/gpu/drm/nouveau/nvkm/subdev/i2c/aux.h
->> rename to drivers/gpu/drm/nouveau/nvkm/subdev/i2c/nvkm_i2c_aux.h
->> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/padg94.c 
->> b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/padg94.c
->> index 5904bc5f2d2a..e9c55a57c878 100644
->> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/padg94.c
->> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/padg94.c
->> @@ -22,7 +22,7 @@
->>    * Authors: Ben Skeggs
->>    */
->>   #include "pad.h"
->> -#include "aux.h"
->> +#include "nvkm_i2c_aux.h"
->>   #include "bus.h"
->>   void
->> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/padgf119.c 
->> b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/padgf119.c
->> index 3bc4d0310076..1af64e25d838 100644
->> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/padgf119.c
->> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/padgf119.c
->> @@ -22,7 +22,7 @@
->>    * Authors: Ben Skeggs
->>    */
->>   #include "pad.h"
->> -#include "aux.h"
->> +#include "nvkm_i2c_aux.h"
->>   #include "bus.h"
->>   static const struct nvkm_i2c_pad_func
->> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/padgm200.c 
->> b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/padgm200.c
->> index 7d417f6a816e..997a5a2146c4 100644
->> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/padgm200.c
->> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/padgm200.c
->> @@ -22,7 +22,7 @@
->>    * Authors: Ben Skeggs
->>    */
->>   #include "pad.h"
->> -#include "aux.h"
->> +#include "nvkm_i2c_aux.h"
->>   #include "bus.h"
->>   static void
+Thomas, I apologize for the duplicate message; my mail client config
+here defaults to "reply" rather than "reply all."
 
+Thanks,
+Dustin
+
+>
+> Best regards,
+> --
+> Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
+>
 
