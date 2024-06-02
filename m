@@ -1,202 +1,111 @@
-Return-Path: <linux-kernel+bounces-198264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D3C68D75C4
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 15:40:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C19F8D75CD
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 15:49:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30F131C20F27
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 13:40:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC401282659
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 13:49:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAB7B3FB01;
-	Sun,  2 Jun 2024 13:40:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E09513FBA4;
+	Sun,  2 Jun 2024 13:49:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZMidcGMt"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LXR6BTbH"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69FBD3A1DC;
-	Sun,  2 Jun 2024 13:40:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 617C63AC1F
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Jun 2024 13:49:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717335634; cv=none; b=gGhi3FmtxZQNPDRMkglCnz7r+7inT+tOtOi9WYo2yRsvtrX4NiZDtwcj/iwcNeoUNsuf4KJYwpkReo8weAUDifSAISmZs/svuPzzc6RvBk3RMfA2z4GwOMpMUHfJ7PY//jzNF7yhMougkGUaH38RgsiHdGwPdvhg7pzfZ4AohkM=
+	t=1717336185; cv=none; b=LJCji/PM2IFI/eMMLC2pPjzcHuXcwvlV8HhFoWpyKHhlKOtMPw0E4SwI4ZPbsC+bibDrOg9cw98ctA3w/j6HBqi0uPPYg1iF6oEKpVJRiD6prZSS4EE11KPwUVo2Cwkg08qqj129WSWj/DUZ3xrYJCOkFMesOi8wAE//BN6/qgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717335634; c=relaxed/simple;
-	bh=NugtBoo6HeoPWFobyp5Dqem7d2GcQeN/7XD7a5PIxwY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Zj6I48yKbI8FvaQBcxbwoZI15qNqzU+7oHa/l6UgzDe62VHez3oHElqcEnDQBWys0kZjuagejnljKxE89GKaz69eaD7HFW6q3dxb33d0QKVrle5SLkOmwUjmKdqgOYRLUWBccehXVIcpxauPNeIv5AirFruEnN52KTqqYoLrTeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZMidcGMt; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717335633; x=1748871633;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=NugtBoo6HeoPWFobyp5Dqem7d2GcQeN/7XD7a5PIxwY=;
-  b=ZMidcGMtGeZ0LGYUflk9rYPxT6aTnWWJ4SIk4XwDNrKiwKJ2laXsawwm
-   grBzEe3UGwYk2L59eXd62s6ZNjKUNznL3+pPOclt/UTYIytdZARxJXQrP
-   ehmqX4PoWbEdGwK/MI06M6AoroviRqf2F0BYZsZtEfJLOPvwNTagy3/rR
-   6yNOkMqBG23/sMAVxQNwnjPm42IFzIU5pqP/trGavdCIZzryTURLGiIbC
-   XPiXHaQ+zBSjtNB7pUUU68SjudjXh2nN2PIs07VGBp8mo4p6sopt0OSDq
-   4r6Fjg1pn3fz95JC7Ig9PVEdkmSae0Ji5jdLv4+pWetI0EW0wMkmG1BM3
-   Q==;
-X-CSE-ConnectionGUID: lMHKWjjGQ8GVzXueetKhjA==
-X-CSE-MsgGUID: yBhArZPgQ5iW6CNOuunuMA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11091"; a="14021895"
-X-IronPort-AV: E=Sophos;i="6.08,209,1712646000"; 
-   d="scan'208";a="14021895"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2024 06:40:32 -0700
-X-CSE-ConnectionGUID: n126bJhYTfuM9l4t/0QEDg==
-X-CSE-MsgGUID: xn0Des1vRDSpMh3bPjxRzg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,209,1712646000"; 
-   d="scan'208";a="37079604"
-Received: from spandruv-desk.jf.intel.com ([10.54.75.19])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2024 06:40:32 -0700
-Message-ID: <30a30c5107a47a2cc3fd39306728f70dd649d7fe.camel@linux.intel.com>
-Subject: Re: [PATCH v1 2/6] cpufreq: intel_pstate: Do not update
- global.turbo_disabled after initialization
-From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
-To: Xi Ruoyao <xry111@xry111.site>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-  Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Date: Sun, 02 Jun 2024 06:40:31 -0700
-In-Reply-To: <6ebadacd8aaa307a5766cdb1b4d4a5c69acd87ac.camel@xry111.site>
-References: <13494237.uLZWGnKmhe@kreacher> <8366982.T7Z3S40VBb@kreacher>
-	 <bf3ebf1571a4788e97daf861eb493c12d42639a3.camel@xry111.site>
-	 <6d5ee74605bd9574baa5ed111cb54e959414437a.camel@linux.intel.com>
-	 <6ebadacd8aaa307a5766cdb1b4d4a5c69acd87ac.camel@xry111.site>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+	s=arc-20240116; t=1717336185; c=relaxed/simple;
+	bh=OFBLy/93aDcasO+7L2Af/xULO+GOP6Ah177EDibhun0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=newb32TAj7GeYQ2d9RYzbzoJtl9Q4X8/VRG2Z3gFkv/DhHuMvfArm2mVuH4Pcmn9/Ya3iCTnLqcomsJUjWLv/VNHn0NibjhLMLbMtXU+09mW7UL4Rcp2JUwOUiZmPLngdSd1Sicid60w+FX4XacvBCq3Wtk9oa1YJk44UfMrd6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LXR6BTbH; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52b82d57963so3352485e87.2
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2024 06:49:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717336180; x=1717940980; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=RK+gSspnDvIjQ8g7XKh+hwU9n45tiCyCGsEgB2oOglo=;
+        b=LXR6BTbHkE/GeQ+iE/7+lWWLaUBANMlELk2e8im2xKHxF/7032gWxpWpvWS1jAUaOs
+         +LLADlmTl/n/uAKsAk5V6AfL9GGI0rEL2htjnDmoRac2pRxucAsx7rn2FITgu1qXLHkZ
+         ydzR7dyMWCa5S95WE24E2Uijk4BsdONj1Axc4COCna3k1MFVwfMWF9bDzJWUUP+dRuPo
+         oGcNHrLtL5EzvPiz6kWnvD4h7lMoXWTZLxlAwO9mQJtplnpTcbO1yFQ17VqCoAcKqk5V
+         dZFDFchgbzL5iBR+d8dFq2UpDZ2a0zPsPt12ZP7/cWR5b4mzEFnm41CZhgY1n3CLMDro
+         vGzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717336180; x=1717940980;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RK+gSspnDvIjQ8g7XKh+hwU9n45tiCyCGsEgB2oOglo=;
+        b=aSTXr9r+SL4g9E/RUcX7P9W+4F+aeRMIiJJeNboNo19/1ARvzpKnyfNln5gc5eb3Cq
+         MbsX9IYPNJZGMo1d3Jg+3IK81ooI1z19+uWmNNjzDe5F43FEp3J3OpH2vcNVHopTPtre
+         ymJ7i/w40i53KFIAByqk6MmFeSnXxbUCkIm69MCzsIM9t8DhzQ31TUjWeLeBaZBI62G1
+         BbjI4wEP/X2Jp/dvJYabT9sfDpMvSQVsWsqXxw2sozsNNe8nMFfB+M5kMAP93fRPCudP
+         wxYTPDEc6MFum+Cm4f/AT435G53w546Espc1nyTcmaugvMH3o8VSZdwlxFkETO1q6b72
+         6GdA==
+X-Forwarded-Encrypted: i=1; AJvYcCVgwYIUqeJ95kGGOc4kBKmVzObOMVwSCsG1Cb3nyEU+Ixaqut+uvXm3s2QF3KwxOEZCYX3SYQuiLl4V/d4zq/U7w81YQo6kUSfwNKj0
+X-Gm-Message-State: AOJu0Yz4KN9lwn1JOGGzVqi/y57J5FoTMEHWnwC0W9dm/9EmrbRKYgmb
+	nESAxVneJJjjI8xSvBoluCJvD4EtAIT5FkHmoJyedx3nGRYhw3TjDyb8ZlVW5GE=
+X-Google-Smtp-Source: AGHT+IFHtYW/9mmf4mBFaBwKb2/rlrKnB1nEhfK0SBxsg0mk+z6IYwfe5eM8PmYnq+8HBzEZeU9iBA==
+X-Received: by 2002:ac2:4246:0:b0:521:6c38:6949 with SMTP id 2adb3069b0e04-52b896dab8cmr4494872e87.45.1717336180547;
+        Sun, 02 Jun 2024 06:49:40 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52b84d8e557sm956327e87.297.2024.06.02.06.49.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 02 Jun 2024 06:49:39 -0700 (PDT)
+Date: Sun, 2 Jun 2024 16:49:38 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Jagadeesh Kona <quic_jkona@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Taniya Das <quic_tdas@quicinc.com>, 
+	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, Ajit Pandey <quic_ajipan@quicinc.com>, 
+	Imran Shaik <quic_imrashai@quicinc.com>
+Subject: Re: [PATCH V4 8/8] arm64: dts: qcom: sm8650: Add video and camera
+ clock controllers
+Message-ID: <fxh3urdpdugkdgqureddxurgusqrexomi2v4h77enm5ncvoa52@nkh2p7e6dsto>
+References: <20240602114439.1611-1-quic_jkona@quicinc.com>
+ <20240602114439.1611-9-quic_jkona@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240602114439.1611-9-quic_jkona@quicinc.com>
 
-On Sun, 2024-06-02 at 12:25 +0800, Xi Ruoyao wrote:
-> On Sat, 2024-06-01 at 21:03 -0700, srinivas pandruvada wrote:
-> > Hi Xi,
-> >=20
-> > On Sun, 2024-06-02 at 11:21 +0800, Xi Ruoyao wrote:
-> > > On Mon, 2024-03-25 at 18:02 +0100, Rafael J. Wysocki wrote:
-> > > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > > >=20
-> > > > The global.turbo_disabled is updated quite often, especially in
-> > > > the
-> > > > passive mode in which case it is updated every time the
-> > > > scheduler
-> > > > calls
-> > > > into the driver.=C2=A0 However, this is generally not necessary and
-> > > > it
-> > > > adds
-> > > > MSR read overhead to scheduler code paths (and that particular
-> > > > MSR
-> > > > is
-> > > > slow to read).
-> > > >=20
-> > > > For this reason, make the driver read
-> > > > MSR_IA32_MISC_ENABLE_TURBO_DISABLE
-> > > > just once at the cpufreq driver registration time and remove
-> > > > all of
-> > > > the
-> > > > in-flight updates of global.turbo_disabled.
-> > >=20
-> > > Hi Rafael and Srinivas,
-> > >=20
-> > > Thanks for the clean up, but unfortunately on one of my laptops
-> > > (based
-> > > on i5-11300H) MSR_IA32_MISC_ENABLE_TURBO_DISABLE is mysteriously
-> > > changing from 1 to 0 in about one minute after system boot.=C2=A0 I'v=
-e
-> > > no
-> > > idea why this is happening (firmware is doing some stupid thing?)
-> > >=20
-> > > I've noticed the issue before and "hacked it around"
-> > > (https://bugzilla.kernel.org/show_bug.cgi?id=3D218702). But after
-> > > this
-> > > change I can no longer hack it around and the system is much
-> > > slower.
-> > >=20
-> > > Is it possible to hack it around again?
-> > >=20
-> > Please try the attached diff and build kernel and try.
-> >=20
-> > git apply update_max_freq.diff
-> >=20
-> > Then build kernel and install.
->=20
-> Unfortunately it didn't work.=C2=A0 Then I tried:
->=20
-> @@ -1304,6 +1310,10 @@ static ssize_t store_no_turbo(struct kobject
-> *a, struct kobj_attribute *b,
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (no_turbo =3D=3D globa=
-l.no_turbo)
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0goto unlock_driver;
-> =C2=A0
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0global.turbo_disabled =3D turb=
-o_is_disabled();
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0global.no_turbo =3D global.tur=
-bo_disabled;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0arch_set_max_freq_ratio(global=
-.turbo_disabled);
-> +
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (global.turbo_disabled=
-) {
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0pr_notice_once("Turbo disabled by BIOS or unavailab=
-le
-> on processor\n");
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0count =3D -EPERM;
->=20
-> and my old hack worked again.=C2=A0 Curiously after I writing 0 to
-> /sys/devices/system/cpu/intel_pstate/no_turbo successfully, your code
-> is
-> triggered.
->=20
-> $ dmesg | grep intel_pstate
-> [=C2=A0=C2=A0=C2=A0 0.554425] intel_pstate: Intel P-state driver initiali=
-zing
-> [=C2=A0=C2=A0=C2=A0 0.554877] intel_pstate: HWP enabled
-> [=C2=A0=C2=A0=C2=A0 1.780021] intel_pstate: Turbo disabled by BIOS or una=
-vailable on
-> processor
-> [=C2=A0=C2=A0 21.789044] intel_pstate: intel_pstate_update_limits cpu:0
-> [=C2=A0=C2=A0 21.789053] intel_pstate: intel_pstate_update_limits cpu:1
-> [=C2=A0=C2=A0 21.789060] intel_pstate: intel_pstate_update_limits cpu:2
-> [=C2=A0=C2=A0 21.789189] intel_pstate: intel_pstate_update_limits cpu:3
-> [=C2=A0=C2=A0 21.789198] intel_pstate: intel_pstate_update_limits cpu:4
-> [=C2=A0=C2=A0 21.789203] intel_pstate: intel_pstate_update_limits cpu:5
-> [=C2=A0=C2=A0 21.789209] intel_pstate: intel_pstate_update_limits cpu:6
-> [=C2=A0=C2=A0 21.789276] intel_pstate: intel_pstate_update_limits cpu:7
->=20
-> The message at [1.780021] is from the first attempt writing 0 to
-> /sys/devices/system/cpu/intel_pstate/no_turbo when
-> MSR_IA32_MISC_ENABLE_TURBO_DISABLE is still 1
+On Sun, Jun 02, 2024 at 05:14:39PM +0530, Jagadeesh Kona wrote:
+> Add device nodes for video and camera clock controllers on Qualcomm
+> SM8650 platform.
+> 
+> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+> Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+> ---
+>  arch/arm64/boot/dts/qcom/sm8650.dtsi | 26 ++++++++++++++++++++++++++
+>  1 file changed, 26 insertions(+)
+> 
 
-This requires user action,
-Please add a
-pr_info() to
-https://elixir.bootlin.com/linux/v6.10-rc1/C/ident/acpi_processor_notify
-
-Check if you got any message
-
-Also what is=20
-cat /proc/cpuinfo
-and
-cpuid -1
-
-Thanks,
-Srinivas
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
 
-
+-- 
+With best wishes
+Dmitry
 
