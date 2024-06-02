@@ -1,325 +1,238 @@
-Return-Path: <linux-kernel+bounces-198210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14ADA8D74F5
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 13:30:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F001F8D74F9
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 13:36:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC4C2282030
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 11:29:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12CA21C20F5C
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 11:36:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BED62383A3;
-	Sun,  2 Jun 2024 11:29:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BA5138DCD;
+	Sun,  2 Jun 2024 11:36:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eDsRiuZ7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TPhErJLf"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCD722574D;
-	Sun,  2 Jun 2024 11:29:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7206F17BD9;
+	Sun,  2 Jun 2024 11:36:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717327792; cv=none; b=RoqQRSnajhhZDdp8OtDOrNT1mfg9PDv55uxCffvdO1VzHBvwuD3WqbE4vWc+BLrhc3/ZNyzADkIuTNK02EzGYj4aGaUwPk7Lw8l8MwwqE9SvqLoJOOz9i41X5JHdXvoXq6IDmNVidvyiGeZBU13fDonpILzzlXgOgfMyuUPa3MA=
+	t=1717328170; cv=none; b=tSCO1Y/rWBIrO46DcjwauROQfgmxBvh8MyypQcyPuo68sDtJTXvPXAdZF9JqApQSufk5gSDjniA8sgIEEPapNo5ukDXgN7kef5j4kDMDCfLjAGeA1wh3KLSnNlE1roDAJpnUTRaGisoyVPsSmUpI749vcbqI2RWKh5P7a8sjey4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717327792; c=relaxed/simple;
-	bh=AYFVYkYawNKzmNOOxgWvekrO9Ajz7ik6QvipGBnlb6U=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cBgmLyCbH0NDwmUg+dDdDrmAFNxZdmYlUCHbYvmbpX+RsIk+0WsbQ5cv+K2kIH4Xrxe8tp2le5sRJJCTCy87r1yC1fXfLNu7KyGnC7Qbr8ASQReljcX2XyNP9hgZ4Jxsf7HrIKx0ZihyiiGrmrWp92XU7z/3Inl1iV6AYs7yw+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eDsRiuZ7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14FACC2BBFC;
-	Sun,  2 Jun 2024 11:29:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717327792;
-	bh=AYFVYkYawNKzmNOOxgWvekrO9Ajz7ik6QvipGBnlb6U=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=eDsRiuZ7fDqFrxjazH3kSdcZR+nSbQD128PDihBa9WncAgLh4Io3VKgfrF4Z3NFhz
-	 bttjWM/UnuLCJIhHTHzxqI5SZ+vlP+IM8lt34bm3YfMwHrXEWS9ltVcfRg1AgfrBEf
-	 ZKt5C3LWDi0vInAs5ngY0/o8nF248hc1gnAMMLukiXTeqZa3fA8xklVl8i7CFCO3vs
-	 bz1jXkk9X6zjWDgU5xioFRI2CB5OirpTNyz9rAoz9qDyrph7mCVkjf4ry5LtD5D9o1
-	 0fJIexTsG+li7r5XwaKvzy/nXSjmK1wTPcap3iLpAKKZ3H8v9KKvNqOpaAM6nfS4WW
-	 A2DneOk4LyU7Q==
-Date: Sun, 2 Jun 2024 12:29:40 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-Cc: Julien Stephan <jstephan@baylibre.com>, Lars-Peter Clausen
- <lars@metafoo.de>, <linux-iio@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, Nuno Sa <nuno.sa@analog.com>
-Subject: Re: [PATCH v2] driver: iio: add missing checks on iio_info's
- callback access
-Message-ID: <20240602122940.1ac61c4d@jic23-huawei>
-In-Reply-To: <20240529151204.00001293@Huawei.com>
-References: <20240529-iio-core-fix-segfault-v2-1-7b5a5fa6853f@baylibre.com>
-	<20240529130458.000049e6@Huawei.com>
-	<CAEHHSvZFfV9mMjnGprqfU-NyCFCdkTLCmfy8K6Ey83-Yg_wA6A@mail.gmail.com>
-	<20240529151204.00001293@Huawei.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1717328170; c=relaxed/simple;
+	bh=FOo2QvzzOgJw16ySqTtOHMK4PlRx+7XYznG2GztJOhg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L+mzKXQr/wXeWRh0+eF3ZZQKVVkLOHvh7i3x/c8Ewrg0hl/45bW/xexVMWAvY5v86V4nc8RJRqWAWHwn2l0o/HByFjxZ61EZgqzhfh7hEbf+1j1qQVXpMcNzfr1Z2dTHVWH5gR0tweWVNoqfw0iK8tXp0qxNB4cSY/rg+v232eM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TPhErJLf; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-57a196134d1so3881318a12.2;
+        Sun, 02 Jun 2024 04:36:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717328167; x=1717932967; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:reply-to:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=EJnUfRpYDIz1jm/Tu3w6AMIdtyuVPoIRBKnHAV8Af8U=;
+        b=TPhErJLfhILuBdQpHq7Few9YnSQAafK3TIefmj7aqUP7Ck5nekHRt9491UjZJjyRRS
+         /PIJGrWwp4XETs8FX1jGxybzDaFwoR3d0NXpZyBlFuw+/bDaN8Rvb/fMUs7vMcnx+eE1
+         p/df5gHJydn8UIH4KizXv0/n//GoPgK9Mwv5b+Qus2QF5Xg/uYiFM6Nz0sxi0W1JRKxs
+         73wl0fziWk5of4U3YyYUH+doHZNL57KVYjb8+1WxdYlg0LvxVUB3cfagrPRBK6XpT86r
+         ku9BVjYZxW3QojBOs9+rlVFjg7HvC2yZarNrJcgYU2Dp9iLdTQFvD00u/479pCrlCl3v
+         pwvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717328167; x=1717932967;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:reply-to:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EJnUfRpYDIz1jm/Tu3w6AMIdtyuVPoIRBKnHAV8Af8U=;
+        b=GNNCTwuxLk1dn43xw7PNlBBbbF2r0TQp5FqdsKQgE1oaYjy7uqu+EJsw1NLWmC0//u
+         13Bb2IuuTLqlA3kwbcWSmy2SZjYSk/7E6FpmnEpv5jRyiDhfsRrOBpl2/Qg0ckGD9qb+
+         0cJgEY6q0m2aiPpWoQ82i4iWdPPlrZHbyO61/xdGOHRKh6GdbX2Z+PouWoqEjWRSQ4a3
+         0ZKzrhwEWSMumDaMVw8GbV1arBizo4T6phrRpLnqMMLvtzUlaR/fQZoDKyr/Lq5xTvvp
+         pPzqy8Ghwinr7KXUNG0mWT72Ptkv8fhKRzYVs94I8xoDA6MHlFEUibS0IqcKfZ4kFK5w
+         oUzg==
+X-Forwarded-Encrypted: i=1; AJvYcCWQgtohwXDJB80EuOmwWtyd4sEbwZhSZ6frSoay8agkP5xaX5xJS0jlfP29TxGtch8wwyJAPjIbioTfXT6STJp+ATdvked6CD4qSAj43M6PVSS0qzNPM/UZ9TofNBg/lQ0aS6AJ6rOea7Thp7/UsEjd1MfC3ZKtTVNqygXUJQcvbC1bnQdM
+X-Gm-Message-State: AOJu0YzNhF6G2jyO5tJx1UJ4f0h/T/sqO6/isUWG5pn4kV5gd+F9Gws1
+	DQ8SpVFwI6UXelWCIdXzsyfGZ5u7Yow1AZd/KfXBE24xRaHKO7ck
+X-Google-Smtp-Source: AGHT+IGjoFBqQ+UJLG3MIUhLGnmrgpKYVEVPilTn/+DpSFGXEUPnSuIltG8U2ylx3xnjxCsjWVdjiw==
+X-Received: by 2002:a17:906:1455:b0:a69:2fc:8340 with SMTP id a640c23a62f3a-a6902fc841bmr32663866b.73.1717328166465;
+        Sun, 02 Jun 2024 04:36:06 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a68b59e925csm190030966b.220.2024.06.02.04.36.05
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 02 Jun 2024 04:36:05 -0700 (PDT)
+Date: Sun, 2 Jun 2024 11:36:04 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: Vlastimil Babka <vbabka@suse.cz>,
+	g@master.smtp.subspace.kernel.org
+Cc: Akinobu Mita <akinobu.mita@gmail.com>, Christoph Lameter <cl@linux.com>,
+	David Rientjes <rientjes@google.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+	Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mark Rutland <mark.rutland@arm.com>, Jiri Olsa <jolsa@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, bpf@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC 0/4] static key support for error injection functions
+Message-ID: <20240602113604.pn74o7g2lazr7ugk@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20240531-fault-injection-statickeys-v1-0-a513fd0a9614@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240531-fault-injection-statickeys-v1-0-a513fd0a9614@suse.cz>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
-On Wed, 29 May 2024 15:12:04 +0100
-Jonathan Cameron <Jonathan.Cameron@Huawei.com> wrote:
+On Fri, May 31, 2024 at 11:33:31AM +0200, Vlastimil Babka wrote:
+>Incomplete, help needed from ftrace/kprobe and bpf folks.
+>
+>As previously mentioned by myself [1] and others [2] the functions
+>designed for error injection can bring visible overhead in fastpaths
+>such as slab or page allocation, because even if nothing hooks into them
+>at a given moment, they are noninline function calls regardless of
+>CONFIG_ options since commits 4f6923fbb352 ("mm: make should_failslab
+>always available for fault injection") and af3b854492f3
+>("mm/page_alloc.c: allow error injection").
+>
+>Live patching their callsites has been also suggested in both [1] and
+>[2] threads, and this is an attempt to do that with static keys that
+>guard the call sites. When disabled, the error injection functions still
+>exist and are noinline, but are not being called. Any of the existing
+>mechanisms that can inject errors should make sure to enable the
+>respective static key. I have added that support to some of them but
+>need help with the others.
+>
+>- the legacy fault injection, i.e. CONFIG_FAILSLAB and
+>  CONFIG_FAIL_PAGE_ALLOC is handled in Patch 1, and can be passed the
+>  address of the static key if it exists. The key will be activated if the
+>  fault injection probability becomes non-zero, and deactivated in the
+>  opposite transition. This also removes the overhead of the evaluation
+>  (on top of the noninline function call) when these mechanisms are
+>  configured in the kernel but unused at the moment.
+>
+>- the generic error injection using kretprobes with
+>  override_function_with_return is handled in patch 2. The
+>  ALLOW_ERROR_INJECTION() annotation is extended so that static key
+>  address can be passed, and the framework controls it when error
+>  injection is enabled or disabled in debugfs for the function.
+>
+>There are two more users I know of but am not familiar enough to fix up
+>myself. I hope people that are more familiar can help me here.
+>
+>- ftrace seems to be using override_function_with_return from
+>  #define ftrace_override_function_with_return but I found no place
+>  where the latter is used. I assume it might be hidden behind more
+>  macro magic? But the point is if ftrace can be instructed to act like
+>  an error injection, it would also have to use some form of metadata
+>  (from patch 2 presumably?) to get to the static key and control it.
+>
+>  If ftrace can only observe the function being called, maybe it
+>  wouldn't be wrong to just observe nothing if the static key isn't
+>  enabled because nobody is doing the fault injection?
+>
+>- bpftrace, as can be seen from the example in commit 4f6923fbb352
+>  description. I suppose bpf is already aware what functions the
+>  currently loaded bpf programs hook into, so that it could look up the
+>  static key and control it. Maybe using again the metadata from patch 2,
+>  or extending its own, as I've noticed there's e.g. BTF_ID(func,
+>  should_failslab)
+>
+>Now I realize maybe handling this at the k(ret)probe level would be
+>sufficient for all cases except the legacy fault injection from Patch 1?
+>Also wanted to note that by AFAIU by using the static_key_slow_dec/inc
+>API (as done in patches 1/2) should allow all mechanisms to coexist
+>naturally without fighting each other on the static key state, and also
+>handle the reference count for e.g. active probes or bpf programs if
+>there's no similar internal mechanism.
+>
+>Patches 3 and 4 implement the static keys for the two mm fault injection
+>sites in slab and page allocators. For a quick demonstration I've run a
+>VM and the simple test from [1] that stresses the slab allocator and got
 
-> On Wed, 29 May 2024 15:10:42 +0200
-> Julien Stephan <jstephan@baylibre.com> wrote:
->=20
-> > Le mer. 29 mai 2024 =C3=A0 14:05, Jonathan Cameron
-> > <Jonathan.Cameron@huawei.com> a =C3=A9crit : =20
-> > >
-> > > On Wed, 29 May 2024 13:55:52 +0200
-> > > Julien Stephan <jstephan@baylibre.com> wrote:
-> > >   =20
-> > > > Some callbacks from iio_info structure are accessed without any che=
-ck, so
-> > > > if a driver doesn't implement them trying to access the correspondi=
-ng
-> > > > sysfs entries produce a kernel oops such as:
-> > > >
-> > > > [ 2203.527791] Unable to handle kernel NULL pointer dereference at =
-virtual address 00000000 when execute
-> > > > [...]
-> > > > [ 2203.783416] Call trace:
-> > > > [ 2203.783429]  iio_read_channel_info_avail from dev_attr_show+0x18=
-/0x48
-> > > > [ 2203.789807]  dev_attr_show from sysfs_kf_seq_show+0x90/0x120
-> > > > [ 2203.794181]  sysfs_kf_seq_show from seq_read_iter+0xd0/0x4e4
-> > > > [ 2203.798555]  seq_read_iter from vfs_read+0x238/0x2a0
-> > > > [ 2203.802236]  vfs_read from ksys_read+0xa4/0xd4
-> > > > [ 2203.805385]  ksys_read from ret_fast_syscall+0x0/0x54
-> > > > [ 2203.809135] Exception stack(0xe0badfa8 to 0xe0badff0)
-> > > > [ 2203.812880] dfa0:                   00000003 b6f10f80 00000003 b=
-6eab000 00020000 00000000
-> > > > [ 2203.819746] dfc0: 00000003 b6f10f80 7ff00000 00000003 00000003 0=
-0000000 00020000 00000000
-> > > > [ 2203.826619] dfe0: b6e1bc88 bed80958 b6e1bc94 b6e1bcb0
-> > > > [ 2203.830363] Code: bad PC value
-> > > > [ 2203.832695] ---[ end trace 0000000000000000 ]---
-> > > >
-> > > > Reviewed-by: Nuno Sa <nuno.sa@analog.com>
-> > > > Signed-off-by: Julien Stephan <jstephan@baylibre.com>   =20
-> > >
-> > > How bad would a registration time check look?
-> > > I'd rather catch this early than have drivers with missing hooks
-> > > that we don't notice because no one pokes the file.   =20
-Even if we make further improvements this patch feels like good hardening.
-So applied to the togreg branch of iio.git.
+I took a look into [1] and I see some data like "1.43% plus the overhead in
+its caller", but not clearly find which test cases are.
 
-Thanks,
+Sorry for my unfamiliarity, would you mind giving more words on the cases?
 
-Jonathan
+>this time before the series:
+>
+>real    0m8.349s
+>user    0m0.694s
+>sys     0m7.648s
+>
+>with perf showing
+>
+>   0.61%  nonexistent  [kernel.kallsyms]  [k] should_failslab.constprop.0
+>   0.00%  nonexistent  [kernel.kallsyms]  [k] should_fail_alloc_page                                                                                                                                                                                        ▒
+>
+>And after the series
+>
+>real    0m7.924s
+>user    0m0.727s
+>sys     0m7.191s
+>
 
-> >=20
-> > Hi Jonathan,
-> >=20
-> > Do you mean something like that (as it is done for ext_info for example=
-) :
-> >=20
-> > ret =3D __iio_add_chan_devattr(iio_chan_info_postfix[i],
-> >                  chan,
-> > -                &iio_read_channel_info,
-> > -                &iio_write_channel_info,
-> > +                indio_dev->info->read_raw ?
-> > +                    &iio_read_channel_info : NULL, =20
->=20
-> Doesn't work because of the read_raw_multi callback, but otherwise
-> this does improve our permissions handling a little at least.
-> It 'might' be considered an ABI change though :(
->=20
-> > +                indio_dev->info->write_raw ?
-> > +                    &iio_write_channel_info : NULL,
-> >                  i,
-> >                  shared_by,
-> >                  &indio_dev->dev,
-> >                  NULL,
-> >                  &iio_dev_opaque->channel_attr_list);
-> >=20
-> > Or do you want to check even before and do not create the  sysfs
-> > entry if there is no callback registered by the driver? =20
->=20
-> I was thinking a much more stupid option of a missing read_raw
-> and read_raw_multi + anything in the info_masks pretty much
-> indicates a bug.
->=20
-> I don't think we have any 'write only' attributes
->=20
-> Similar for read_event_config, though write_event_config is
-> trickier as we 'might' one day have a device where the events
-> are all fixed value and always on (so read only).
->=20
-> Perhaps what you have here is the simplest option as the exact
-> rules for what callbacks are provided area bit messy so checking
-> at use is fine.
->=20
-> However I'd like to see some scattered use of local variables like
-> in inkern.c
-> struct iio_info *info =3D chan->indio_dev->info;
-> to reduce the long lines.
->=20
->=20
-> >=20
-> > Julien
-> >  =20
-> > >
-> > > The inkern ones are good though.
-> > >
-> > > Jonathan
-> > >   =20
-> > > > ---
-> > > > Changes in v2:
-> > > > - crop dmesg log to show only pertinent info and reduce commit mess=
-age
-> > > > - Link to v1: https://lore.kernel.org/r/20240529-iio-core-fix-segfa=
-ult-v1-1-7ff1ba881d38@baylibre.com
-> > > > ---
-> > > >  drivers/iio/industrialio-core.c  |  7 ++++++-
-> > > >  drivers/iio/industrialio-event.c |  9 +++++++++
-> > > >  drivers/iio/inkern.c             | 16 +++++++++++-----
-> > > >  3 files changed, 26 insertions(+), 6 deletions(-)
-> > > >
-> > > > diff --git a/drivers/iio/industrialio-core.c b/drivers/iio/industri=
-alio-core.c
-> > > > index fa7cc051b4c4..2f185b386949 100644
-> > > > --- a/drivers/iio/industrialio-core.c
-> > > > +++ b/drivers/iio/industrialio-core.c
-> > > > @@ -758,9 +758,11 @@ static ssize_t iio_read_channel_info(struct de=
-vice *dev,
-> > > >                                                       INDIO_MAX_RAW=
-_ELEMENTS,
-> > > >                                                       vals, &val_le=
-n,
-> > > >                                                       this_attr->ad=
-dress);
-> > > > -     else
-> > > > +     else if (indio_dev->info->read_raw)
-> > > >               ret =3D indio_dev->info->read_raw(indio_dev, this_att=
-r->c,
-> > > >                                   &vals[0], &vals[1], this_attr->ad=
-dress);
-> > > > +     else
-> > > > +             return -EINVAL;
-> > > >
-> > > >       if (ret < 0)
-> > > >               return ret;
-> > > > @@ -842,6 +844,9 @@ static ssize_t iio_read_channel_info_avail(stru=
-ct device *dev,
-> > > >       int length;
-> > > >       int type;
-> > > >
-> > > > +     if (!indio_dev->info->read_avail)
-> > > > +             return -EINVAL;
-> > > > +
-> > > >       ret =3D indio_dev->info->read_avail(indio_dev, this_attr->c,
-> > > >                                         &vals, &type, &length,
-> > > >                                         this_attr->address);
-> > > > diff --git a/drivers/iio/industrialio-event.c b/drivers/iio/industr=
-ialio-event.c
-> > > > index 910c1f14abd5..a64f8fbac597 100644
-> > > > --- a/drivers/iio/industrialio-event.c
-> > > > +++ b/drivers/iio/industrialio-event.c
-> > > > @@ -285,6 +285,9 @@ static ssize_t iio_ev_state_store(struct device=
- *dev,
-> > > >       if (ret < 0)
-> > > >               return ret;
-> > > >
-> > > > +     if (!indio_dev->info->write_event_config)
-> > > > +             return -EINVAL;
-> > > > +
-> > > >       ret =3D indio_dev->info->write_event_config(indio_dev,
-> > > >               this_attr->c, iio_ev_attr_type(this_attr),
-> > > >               iio_ev_attr_dir(this_attr), val);
-> > > > @@ -300,6 +303,9 @@ static ssize_t iio_ev_state_show(struct device =
-*dev,
-> > > >       struct iio_dev_attr *this_attr =3D to_iio_dev_attr(attr);
-> > > >       int val;
-> > > >
-> > > > +     if (!indio_dev->info->read_event_config)
-> > > > +             return -EINVAL;
-> > > > +
-> > > >       val =3D indio_dev->info->read_event_config(indio_dev,
-> > > >               this_attr->c, iio_ev_attr_type(this_attr),
-> > > >               iio_ev_attr_dir(this_attr));
-> > > > @@ -318,6 +324,9 @@ static ssize_t iio_ev_value_show(struct device =
-*dev,
-> > > >       int val, val2, val_arr[2];
-> > > >       int ret;
-> > > >
-> > > > +     if (!indio_dev->info->read_event_value)
-> > > > +             return -EINVAL;
-> > > > +
-> > > >       ret =3D indio_dev->info->read_event_value(indio_dev,
-> > > >               this_attr->c, iio_ev_attr_type(this_attr),
-> > > >               iio_ev_attr_dir(this_attr), iio_ev_attr_info(this_att=
-r),
-> > > > diff --git a/drivers/iio/inkern.c b/drivers/iio/inkern.c
-> > > > index 52d773261828..74f87f6ac390 100644
-> > > > --- a/drivers/iio/inkern.c
-> > > > +++ b/drivers/iio/inkern.c
-> > > > @@ -560,9 +560,11 @@ static int iio_channel_read(struct iio_channel=
- *chan, int *val, int *val2,
-> > > >                                       vals, &val_len, info);
-> > > >               *val =3D vals[0];
-> > > >               *val2 =3D vals[1];
-> > > > -     } else {
-> > > > +     } else if (chan->indio_dev->info->read_raw) {
-> > > >               ret =3D chan->indio_dev->info->read_raw(chan->indio_d=
-ev,
-> > > >                                       chan->channel, val, val2, inf=
-o);
-> > > > +     } else {
-> > > > +             return -EINVAL;
-> > > >       }
-> > > >
-> > > >       return ret;
-> > > > @@ -753,8 +755,10 @@ static int iio_channel_read_avail(struct iio_c=
-hannel *chan,
-> > > >       if (!iio_channel_has_available(chan->channel, info))
-> > > >               return -EINVAL;
-> > > >
-> > > > -     return chan->indio_dev->info->read_avail(chan->indio_dev, cha=
-n->channel,
-> > > > -                                              vals, type, length, =
-info);
-> > > > +     if (chan->indio_dev->info->read_avail)
-> > > > +             return chan->indio_dev->info->read_avail(chan->indio_=
-dev, chan->channel,
-> > > > +                                                      vals, type, =
-length, info);
-> > > > +     return -EINVAL;
-> > > >  }
-> > > >
-> > > >  int iio_read_avail_channel_attribute(struct iio_channel *chan,
-> > > > @@ -917,8 +921,10 @@ EXPORT_SYMBOL_GPL(iio_get_channel_type);
-> > > >  static int iio_channel_write(struct iio_channel *chan, int val, in=
-t val2,
-> > > >                            enum iio_chan_info_enum info)
-> > > >  {
-> > > > -     return chan->indio_dev->info->write_raw(chan->indio_dev,
-> > > > -                                             chan->channel, val, v=
-al2, info);
-> > > > +     if (chan->indio_dev->info->write_raw)
-> > > > +             return chan->indio_dev->info->write_raw(chan->indio_d=
-ev,
-> > > > +                                                     chan->channel=
-, val, val2, info);
-> > > > +     return -EINVAL;
-> > > >  }
-> > > >
-> > > >  int iio_write_channel_attribute(struct iio_channel *chan, int val,=
- int val2,
-> > > >
-> > > > ---
-> > > > base-commit: 409b6d632f5078f3ae1018b6e43c32f2e12f6736
-> > > > change-id: 20240528-iio-core-fix-segfault-aa74be7eee4a
-> > > >
-> > > > Best regards,   =20
-> > >   =20
->=20
+Maybe add the percentage here would be more helpful.
 
+>and the functions gone from perf report.
+>
+>There might be other such fault injection callsites in hotpaths of other
+>subsystems but I didn't search for them at this point.
+>
+>[1] https://lore.kernel.org/all/6d5bb852-8703-4abf-a52b-90816bccbd7f@suse.cz/
+>[2] https://lore.kernel.org/all/3j5d3p22ssv7xoaghzraa7crcfih3h2qqjlhmjppbp6f42pg2t@kg7qoicog5ye/
+>
+>Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+>---
+>Vlastimil Babka (4):
+>      fault-inject: add support for static keys around fault injection sites
+>      error-injection: support static keys around injectable functions
+>      mm, slab: add static key for should_failslab()
+>      mm, page_alloc: add static key for should_fail_alloc_page()
+>
+> include/asm-generic/error-injection.h | 13 ++++++++++-
+> include/asm-generic/vmlinux.lds.h     |  2 +-
+> include/linux/error-injection.h       |  9 +++++---
+> include/linux/fault-inject.h          |  7 +++++-
+> kernel/fail_function.c                | 22 +++++++++++++++---
+> lib/error-inject.c                    |  6 ++++-
+> lib/fault-inject.c                    | 43 ++++++++++++++++++++++++++++++++++-
+> mm/fail_page_alloc.c                  |  3 ++-
+> mm/failslab.c                         |  2 +-
+> mm/internal.h                         |  2 ++
+> mm/page_alloc.c                       | 11 ++++++---
+> mm/slab.h                             |  3 +++
+> mm/slub.c                             | 10 +++++---
+> 13 files changed, 114 insertions(+), 19 deletions(-)
+>---
+>base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
+>change-id: 20240530-fault-injection-statickeys-66b7222e91b7
+>
+>Best regards,
+>-- 
+>Vlastimil Babka <vbabka@suse.cz>
+>
+
+-- 
+Wei Yang
+Help you, Help me
 
