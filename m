@@ -1,99 +1,116 @@
-Return-Path: <linux-kernel+bounces-198055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B4938D72E4
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 02:07:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C36B68D72E6
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 02:12:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F32B281CAD
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 00:07:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 54FC0B213CD
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 00:12:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D777B7F8;
-	Sun,  2 Jun 2024 00:07:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB947803;
+	Sun,  2 Jun 2024 00:12:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="CFsoEpXv"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YX8OeBCv"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA4D74A23;
-	Sun,  2 Jun 2024 00:07:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9139719A;
+	Sun,  2 Jun 2024 00:12:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717286851; cv=none; b=oeGeVzLhS/OwKiZ50MiRoVgnpSsBbYXqyds1JoeMo7O+jKrAsH392Qa0NfdxHZm5sl+4Wudy3E0CIa/bjMBcWdgSR07ZtUZKNAEpBPRg/zEzIrTfpembcoldsXVsRwIrkdFwgVYrtw2KjlcvlGU2TgmW7FrYaK4IGaAGzZ+oxYs=
+	t=1717287140; cv=none; b=VuAJfjsYlGrAnIJcOnXTDCyHqFLQxf34f62prGvkjuBwq9RVr2rAs86pQY+ToX4zEJESYP5p2ot8r578Qsr2zbX1/QxgWDAquwZABicQOHrK+FkamAucxI0MpW59YYXCR8zTnAUWWguBXwwa431dlftOhFGJ1NDBtmu6k3o4kM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717286851; c=relaxed/simple;
-	bh=bUazdPEUGXG7BVZAHP6iffcOY8WHso3Lci8AE22n8S8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nnMTIbho3sgI6a3yUuN0tdXfMDbL0wgQkkYnbvkX6h050s7GWQlMWebcIXZoYRrUUakrZdub/2Y7E6HsmGkRZjCp8oMAStRJGHANNDAbxh8OOUuc3Eqk6iNS2ip4m6g83Y7YwZmzJ321Xpb3NAbXDKnZAaOChNYVCnvOe3TqagE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=CFsoEpXv; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=BTg74Q8G7r9JfxNh0PyANZiqfRUsI/acV0wBtpvoB/M=; b=CFsoEpXvURX2mEFC
-	ziu4AsEolaQvdoo7wmh6nO0Hlob2JFANofBKi4H/FDOq/IYdxKxOjAyzI8X4okvb1yu90NuBUfBuw
-	bUoOdqUjotqn7u3RXOgVFTqILATC37Dk6N2AqwSZLWbgTUmIZvfGEJIx0sML/dqQrAYJpZGgGtHHx
-	KseISnAHgEq1Zn0IISAyiYmMJ7Z1TPqHeLl3UYK6zUX5lWOcFa+MiBvR4N4+Zgu+fFjxn2axEXon3
-	F+zMDDBb71an+m8iJqnlbpg6k7/oa32x1UgaEI5sAbWURV/QYiv1IZxZoBdLFWOtL3Lzj/UmuRyox
-	xJMSebOkLnLpnh9vNg==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1sDYkg-003m3O-2I;
-	Sun, 02 Jun 2024 00:07:11 +0000
-From: linux@treblig.org
-To: yangyicong@hisilicon.com,
-	jonathan.cameron@huawei.com,
-	peterz@infradead.org,
-	mingo@redhat.com,
-	jolsa@kernel.org,
-	irogers@google.com
-Cc: linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] perf hisi-ptt: remove unused struct 'hisi_ptt_queue'
-Date: Sun,  2 Jun 2024 01:07:09 +0100
-Message-ID: <20240602000709.213116-1-linux@treblig.org>
-X-Mailer: git-send-email 2.45.1
+	s=arc-20240116; t=1717287140; c=relaxed/simple;
+	bh=Hx+iGluzpP9m30SxgC6+Bo577T4Q7ybmYsV0lGwrUC8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=jJEfv+lrQCbZpz7w01hHjJogJAYlFlUE3f3jpBqvJncYuh0XvnwLGbolU+/7rTM0Y4VaXuGvk8JhnE86upIs1cM5Ext+qz9l9KkohFi37lYb9GedV8504NEedpdh2F2i4L6uCeaSbjn6Ooxb+VMdvMONlWgUYnzEZwdsFA0hz3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YX8OeBCv; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 451Nt2J7017348;
+	Sun, 2 Jun 2024 00:12:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=VoDAUxqCGDQ0m/UGVE4FJy
+	tBOl3eUNq6kvF9nrmxT98=; b=YX8OeBCv2sAno3WflACOWrYfiWCAPMyjEyvWio
+	aMyA22yo24K+sYegSi5pFfQt8fJFPNTgOZfKSVGINrJFjDz/qbUxltl9J2F2cR2n
+	sq2iUiMhjuT7s0g278YOQGdPc73WxD+cca1BnIMxbKLKAb8TpzhTOvoS2GyV+wrv
+	e6EWj8YMojhk1ABfZ2OFp35GYQ/+XBr72k2EVFHr8VnylyJ3iH3ni7nGyOhXVrwG
+	wDd/SUGBw93XehydKuGixdOjIdt60IGUNGkbs3aroyNByiKZbGeavreUTWgxmdcE
+	9GgNupXd9BR38a9IaUZrgxkY9TTEsa5y4SUnMpTDDy2LYb7A==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfw59hdnx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 02 Jun 2024 00:12:03 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 4520C2lI017039
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 2 Jun 2024 00:12:02 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 1 Jun 2024
+ 17:12:02 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Sat, 1 Jun 2024 17:12:01 -0700
+Subject: [PATCH] samples: configfs: add missing MODULE_DESCRIPTION() macro
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240601-md-samples-configfs-v1-1-83ef2d3c0088@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIANG4W2YC/x3MQQqDMBBA0avIrDsQJWjtVUoXk2SiAyZKxhZBv
+ HvTLt/i/xOUi7DCozmh8EdU1lzR3hrwM+WJUUI1dKazpjctpoBKaVtY0a85yhQVR9u7brjTGOw
+ AtdwKRzn+1+er2pEyukLZz7/XIvl9YCLducB1fQEKhDpihAAAAA==
+To: Joel Becker <jlbec@evilplan.org>, Christoph Hellwig <hch@lst.de>
+CC: <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        "Jeff
+ Johnson" <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: DoxmTHtQts6JAwJqzXkQOjofPxTIdcPi
+X-Proofpoint-ORIG-GUID: DoxmTHtQts6JAwJqzXkQOjofPxTIdcPi
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-06-01_11,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
+ spamscore=0 lowpriorityscore=0 priorityscore=1501 suspectscore=0
+ adultscore=0 clxscore=1011 mlxlogscore=999 bulkscore=0 phishscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406010194
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in samples/configfs/configfs_sample.o
 
-'hisi_ptt_queue' has been unused since the original
-commit 5e91e57e6809 ("perf auxtrace arm64: Add support for parsing
-HiSilicon PCIe Trace packet").
+Add the missing invocation of the MODULE_DESCRIPTION() macro.
 
-Remove it.
-
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 ---
- tools/perf/util/hisi-ptt.c | 5 -----
- 1 file changed, 5 deletions(-)
+ samples/configfs/configfs_sample.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/tools/perf/util/hisi-ptt.c b/tools/perf/util/hisi-ptt.c
-index 52d0ce302ca0..37ea987017f6 100644
---- a/tools/perf/util/hisi-ptt.c
-+++ b/tools/perf/util/hisi-ptt.c
-@@ -35,11 +35,6 @@ struct hisi_ptt {
- 	u32 pmu_type;
- };
+diff --git a/samples/configfs/configfs_sample.c b/samples/configfs/configfs_sample.c
+index 37a657b25d58..fd5d163828c5 100644
+--- a/samples/configfs/configfs_sample.c
++++ b/samples/configfs/configfs_sample.c
+@@ -364,4 +364,5 @@ static void __exit configfs_example_exit(void)
  
--struct hisi_ptt_queue {
--	struct hisi_ptt *ptt;
--	struct auxtrace_buffer *buffer;
--};
--
- static enum hisi_ptt_pkt_type hisi_ptt_check_packet_type(unsigned char *buf)
- {
- 	uint32_t head = *(uint32_t *)buf;
--- 
-2.45.1
+ module_init(configfs_example_init);
+ module_exit(configfs_example_exit);
++MODULE_DESCRIPTION("Sample configfs module");
+ MODULE_LICENSE("GPL");
+
+---
+base-commit: b050496579632f86ee1ef7e7501906db579f3457
+change-id: 20240601-md-samples-configfs-946b278a9d47
 
 
