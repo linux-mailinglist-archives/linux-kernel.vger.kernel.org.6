@@ -1,140 +1,190 @@
-Return-Path: <linux-kernel+bounces-198284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 634FA8D7625
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 16:19:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B0E08D7627
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 16:20:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA195B21D07
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 14:19:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 780F61F21465
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 14:20:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B1B64594C;
-	Sun,  2 Jun 2024 14:19:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0939D42040;
+	Sun,  2 Jun 2024 14:19:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="FM1O1hTM"
-Received: from msa.smtpout.orange.fr (msa-208.smtpout.orange.fr [193.252.23.208])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aeZtNGj8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC53444366;
-	Sun,  2 Jun 2024 14:19:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 329AD40861;
+	Sun,  2 Jun 2024 14:19:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717337955; cv=none; b=lCla5qBpR+4OX5STzl/C7p7FvhQXnPKugyjF1LWa6p2RxFfvzS3HvHC/HWSFnoB7caD/HRbYN8mguewOva98R7PbGn9J2xLOl9rwQTw54f5TmTD+ZAD0uTUAcHrQcZBkC1rKcKHkuDbnJtnrpnaN56X5x6VLVhxJIL/hi9HSBMQ=
+	t=1717337997; cv=none; b=BDvyWzcFf8b/ut+Iyr5rGpK/Zys2kaXXROlEA/cYdgOGmneE0uT5btdr3tzXyBLOvBVpFyrLJ3lf3U0QqIzjz4hoD9llFCQZJET5sKchhmE72JQ5INnuQnLaNM2hL1kFZHksfdy3fu0QeIGd4B5bwOPfpjl/8dEMRBMH/QsgVIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717337955; c=relaxed/simple;
-	bh=/ie5zhTuzVnG6guZfln69UgguCT3/wECkJkH3j8zbpM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ba34cMqCRhJY+KUHm6tYy93yFwLqsM9xe+wCznovdmE8/cmnI+JYMfbglL0QflDZAOOVpODAxuascq/EPxTG/pvGL0CKIfdxmoOvM+LejQVjhTnmbHRgzCvic4bqhAtNXa26xft2qtr+DUV5Q6J3cfRN1hgcvHw2RW9UPnomPIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=FM1O1hTM; arc=none smtp.client-ip=193.252.23.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([86.243.17.157])
-	by smtp.orange.fr with ESMTPA
-	id Dm2ns8x2vLmxrDm34sLKU9; Sun, 02 Jun 2024 16:19:02 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1717337942;
-	bh=8DCrRJgxsQW+5+97dKa8ee3w1WqnGfGM17kPgJs0kHQ=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=FM1O1hTM4WFxAG79oe1B7VmaCBJfo7x0hhU2ROmG5cyAqvPfzGfh46VLnVHeII7tj
-	 cIY7TAldPUG3qnbl3Wrv32zSOljsiR0BiJEYsAmXFwxYEkxg58neQsVKkSmOOnAL+x
-	 BNLzJmLKi0e21ihiR7TAzIpG24KV13eUnJAn0DVGTM9O+HYl90/vp3WfpZkOJBNpiK
-	 YS0qUpnZoUT7JvIzhvQ01INDqU038cGhcqRUFPMvxcreeUwixpkvntsGxTc5JcBaIv
-	 2VrPmEIDp1eh1NmcvbloUjVf1QRC6hp6WkYMuRCOYMXLS2+/UeiKa7crSP46kYbPnp
-	 cK/knB7LyZQxw==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 02 Jun 2024 16:19:02 +0200
-X-ME-IP: 86.243.17.157
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: idosch@nvidia.com,
-	petrm@nvidia.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	jiri@resnulli.us
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH 2/2 net-next] mlxsw: spectrum_router: Constify struct devlink_dpipe_table_ops
-Date: Sun,  2 Jun 2024 16:18:53 +0200
-Message-ID: <6d79c82023fd7e3c4b2da6ac92ecf478366e8dca.1717337525.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <cover.1717337525.git.christophe.jaillet@wanadoo.fr>
-References: <cover.1717337525.git.christophe.jaillet@wanadoo.fr>
+	s=arc-20240116; t=1717337997; c=relaxed/simple;
+	bh=SeH9oWFSVri/bYiL+0r6iXfVRwtJYCiDV4spRm85XH0=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=ET6Vk4icDIFvzFbwrITYHn8LupPoojii9wUvVBekNUcM1dFNt9BP/e4Jo972cqikMJXJxzFQ09oYw6cZCZUmmu20Os0C1KbdODvckAvxAjaY0+dzyUnPocWh/ZHNfWz1qt9vQ+6uNWLBRPoVxxZtebyJIVr0CD20G0av8j7InjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aeZtNGj8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADE04C2BBFC;
+	Sun,  2 Jun 2024 14:19:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717337996;
+	bh=SeH9oWFSVri/bYiL+0r6iXfVRwtJYCiDV4spRm85XH0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=aeZtNGj80P6dBrMVhzxBiC8mLZ9bYoUrqmjdD1dEvU+6K0j5kGcQ3+RwXldhxqspA
+	 x+cNLqDPTlDhsmZ/k06h+3sQeO9EMu2CpvFATRODDEt7O0Cpwf/7sSAOzeGLePKgw0
+	 uFfoLJ2++QZQUHQIPo88cMO/TxUy4IEphA6QNOzR6QJd2uVfjbV+3cA4WPU8c5BJlh
+	 c7u9OznZuzTZtyEIRsBExkYRo45mdJnj9zH61RljTC6obWI55KX5iXtvw90b3q3pFf
+	 PkarPFFsgewNvIHhvk0+MX/EAIhp9CPaLsEoyZXtftQv83jaCBu0ThMALHgJHXtEYS
+	 xOey6ph3aoZKw==
+Date: Sun, 2 Jun 2024 23:19:50 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Akinobu Mita <akinobu.mita@gmail.com>, Christoph Lameter <cl@linux.com>,
+ David Rientjes <rientjes@google.com>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko
+ <andrii@kernel.org>, "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>, Anil S
+ Keshavamurthy <anil.s.keshavamurthy@intel.com>, "David S. Miller"
+ <davem@davemloft.net>, Steven Rostedt <rostedt@goodmis.org>, Mark Rutland
+ <mark.rutland@arm.com>, Jiri Olsa <jolsa@kernel.org>, Roman Gushchin
+ <roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, bpf@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC 2/4] error-injection: support static keys around
+ injectable functions
+Message-Id: <20240602231950.cbb7bc65fce96934fb10dc06@kernel.org>
+In-Reply-To: <20240531-fault-injection-statickeys-v1-2-a513fd0a9614@suse.cz>
+References: <20240531-fault-injection-statickeys-v1-0-a513fd0a9614@suse.cz>
+	<20240531-fault-injection-statickeys-v1-2-a513fd0a9614@suse.cz>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-'struct devlink_dpipe_table_ops' are not modified in this driver.
+On Fri, 31 May 2024 11:33:33 +0200
+Vlastimil Babka <vbabka@suse.cz> wrote:
 
-Constifying these structures moves some data to a read-only section, so
-increase overall security.
+> Error injectable functions cannot be inlined and since some are called
+> from hot paths, this incurrs overhead even if no error injection is
+> enabled for them.
+> 
+> To remove this overhead when disabled, allow the callsites of error
+> injectable functions to put the calls behind a static key, which the
+> framework can control when error injection is enabled or disabled for
+> the function.
+> 
+> Introduce a new ALLOW_ERROR_INJECTION_KEY() macro that adds a parameter
+> with the static key's address, and store it in struct
+> error_injection_entry. This new field has caused a mismatch when
+> populating the injection list from the _error_injection_whitelist
+> section with the current STRUCT_ALIGN(), so change the alignment to 8.
+> 
+> During the population, copy the key's address also to struct ei_entry,
+> and make it possible to retrieve it along with the error type by
+> get_injectable_error_type().
+> 
+> Finally, make the processing of writes to the debugfs inject file enable
+> the static key when the function is added to the injection list, and
+> disable when removed.
+> 
+> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+> ---
+>  include/asm-generic/error-injection.h | 13 ++++++++++++-
+>  include/asm-generic/vmlinux.lds.h     |  2 +-
+>  include/linux/error-injection.h       |  9 ++++++---
+>  kernel/fail_function.c                | 22 +++++++++++++++++++---
+>  lib/error-inject.c                    |  6 +++++-
+>  5 files changed, 43 insertions(+), 9 deletions(-)
+> 
+> diff --git a/include/asm-generic/error-injection.h b/include/asm-generic/error-injection.h
+> index b05253f68eaa..eed2731f3820 100644
+> --- a/include/asm-generic/error-injection.h
+> +++ b/include/asm-generic/error-injection.h
+> @@ -12,6 +12,7 @@ enum {
+>  
+>  struct error_injection_entry {
+>  	unsigned long	addr;
+> +	unsigned long	static_key_addr;
+>  	int		etype;
+>  };
+>  
+> @@ -25,16 +26,26 @@ struct pt_regs;
+>   * 'Error Injectable Functions' section.
+>   */
+>  #define ALLOW_ERROR_INJECTION(fname, _etype)				\
+> -static struct error_injection_entry __used				\
+> +static struct error_injection_entry __used __aligned(8)			\
+>  	__section("_error_injection_whitelist")				\
+>  	_eil_addr_##fname = {						\
+>  		.addr = (unsigned long)fname,				\
+>  		.etype = EI_ETYPE_##_etype,				\
+>  	}
+>  
+> +#define ALLOW_ERROR_INJECTION_KEY(fname, _etype, key)			\
+> +static struct error_injection_entry __used __aligned(8)			\
+> +	__section("_error_injection_whitelist")				\
+> +	_eil_addr_##fname = {						\
+> +		.addr = (unsigned long)fname,				\
+> +		.static_key_addr = (unsigned long)key,			\
+> +		.etype = EI_ETYPE_##_etype,				\
+> +	}
+> +
+>  void override_function_with_return(struct pt_regs *regs);
+>  #else
+>  #define ALLOW_ERROR_INJECTION(fname, _etype)
+> +#define ALLOW_ERROR_INJECTION_KEY(fname, _etype, key)
+>  
+>  static inline void override_function_with_return(struct pt_regs *regs) { }
+>  #endif
+> diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
+> index 5703526d6ebf..1b15a0af2a00 100644
+> --- a/include/asm-generic/vmlinux.lds.h
+> +++ b/include/asm-generic/vmlinux.lds.h
+> @@ -248,7 +248,7 @@
+>  
+>  #ifdef CONFIG_FUNCTION_ERROR_INJECTION
+>  #define ERROR_INJECT_WHITELIST()			\
+> -	STRUCT_ALIGN();					\
+> +	. = ALIGN(8);					\
+>  	BOUNDED_SECTION(_error_injection_whitelist)
+>  #else
+>  #define ERROR_INJECT_WHITELIST()
+> diff --git a/include/linux/error-injection.h b/include/linux/error-injection.h
+> index 20e738f4eae8..bec81b57a9d5 100644
+> --- a/include/linux/error-injection.h
+> +++ b/include/linux/error-injection.h
+> @@ -6,10 +6,12 @@
+>  #include <linux/errno.h>
+>  #include <asm-generic/error-injection.h>
+>  
+> +struct static_key;
+> +
+>  #ifdef CONFIG_FUNCTION_ERROR_INJECTION
+>  
+> -extern bool within_error_injection_list(unsigned long addr);
+> -extern int get_injectable_error_type(unsigned long addr);
+> +bool within_error_injection_list(unsigned long addr);
+> +int get_injectable_error_type(unsigned long addr, struct static_key **key_addr);
 
-On a x86_64, with allmodconfig:
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
-  15557	    712	      0	  16269	   3f8d	drivers/net/ethernet/mellanox/mlxsw/spectrum_dpipe.o
+This seems like an add-hoc change. Since this is called in a cold path
+(only used when adding new function), can you add new 
+`struct static_key *get_injection_key(unsigned long addr)`
+to find the static_key from the address?
 
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
-  15789	    488	      0	  16277	   3f95	drivers/net/ethernet/mellanox/mlxsw/spectrum_dpipe.o
+Other part looks good to me.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/net/ethernet/mellanox/mlxsw/spectrum_dpipe.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Thank you,
 
-diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_dpipe.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_dpipe.c
-index ca80af06465f..fa6eddd27ecf 100644
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_dpipe.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_dpipe.c
-@@ -283,7 +283,7 @@ static u64 mlxsw_sp_dpipe_table_erif_size_get(void *priv)
- 	return MLXSW_CORE_RES_GET(mlxsw_sp->core, MAX_RIFS);
- }
- 
--static struct devlink_dpipe_table_ops mlxsw_sp_erif_ops = {
-+static const struct devlink_dpipe_table_ops mlxsw_sp_erif_ops = {
- 	.matches_dump = mlxsw_sp_dpipe_table_erif_matches_dump,
- 	.actions_dump = mlxsw_sp_dpipe_table_erif_actions_dump,
- 	.entries_dump = mlxsw_sp_dpipe_table_erif_entries_dump,
-@@ -734,7 +734,7 @@ static u64 mlxsw_sp_dpipe_table_host4_size_get(void *priv)
- 	return mlxsw_sp_dpipe_table_host_size_get(mlxsw_sp, AF_INET);
- }
- 
--static struct devlink_dpipe_table_ops mlxsw_sp_host4_ops = {
-+static const struct devlink_dpipe_table_ops mlxsw_sp_host4_ops = {
- 	.matches_dump = mlxsw_sp_dpipe_table_host4_matches_dump,
- 	.actions_dump = mlxsw_sp_dpipe_table_host_actions_dump,
- 	.entries_dump = mlxsw_sp_dpipe_table_host4_entries_dump,
-@@ -811,7 +811,7 @@ static u64 mlxsw_sp_dpipe_table_host6_size_get(void *priv)
- 	return mlxsw_sp_dpipe_table_host_size_get(mlxsw_sp, AF_INET6);
- }
- 
--static struct devlink_dpipe_table_ops mlxsw_sp_host6_ops = {
-+static const struct devlink_dpipe_table_ops mlxsw_sp_host6_ops = {
- 	.matches_dump = mlxsw_sp_dpipe_table_host6_matches_dump,
- 	.actions_dump = mlxsw_sp_dpipe_table_host_actions_dump,
- 	.entries_dump = mlxsw_sp_dpipe_table_host6_entries_dump,
-@@ -1230,7 +1230,7 @@ mlxsw_sp_dpipe_table_adj_size_get(void *priv)
- 	return size;
- }
- 
--static struct devlink_dpipe_table_ops mlxsw_sp_dpipe_table_adj_ops = {
-+static const struct devlink_dpipe_table_ops mlxsw_sp_dpipe_table_adj_ops = {
- 	.matches_dump = mlxsw_sp_dpipe_table_adj_matches_dump,
- 	.actions_dump = mlxsw_sp_dpipe_table_adj_actions_dump,
- 	.entries_dump = mlxsw_sp_dpipe_table_adj_entries_dump,
+
+
 -- 
-2.45.1
-
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
