@@ -1,121 +1,136 @@
-Return-Path: <linux-kernel+bounces-198449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD2068D78BE
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 00:05:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 928F98D78CA
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 00:20:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50660B20E72
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 22:05:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 287CCB20EAC
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 22:20:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17C2777118;
-	Sun,  2 Jun 2024 22:05:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EC30770E6;
+	Sun,  2 Jun 2024 22:20:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="adqdgAhX"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=mail.de header.i=@mail.de header.b="Wgv3/K+N"
+Received: from shout12.mail.de (shout12.mail.de [62.201.172.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABB1F7FB;
-	Sun,  2 Jun 2024 22:05:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BAB9374C4;
+	Sun,  2 Jun 2024 22:20:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.201.172.58
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717365935; cv=none; b=Mo8pVrAgaFz6Hah/mOkIHUP8szDaroJa8lD9VB0pDgmo1ZQ9+joaz76C4yn1XhP8VPDWx7l/CyQhPs5KAEPvXblXgedcOuLuy+6TyvuUgOLSGmgMn8QCPmEPo5gYhLJKjGFgDsjks8K0fyfDzkfU3EHoqRfiyJy6uzR1qOHKMH4=
+	t=1717366826; cv=none; b=jeuWozunod6osJ0y4ZjsA0psekR6VymCcsklwTom25rqX2u0hHcxWUeAKb0b5+cdCiMCCmWODmwlIxIwqdb+mXeurzFsdUCd8KX8TCBH5jMrIjDwKk1Bi7LF6zxqGubiPLegdqVqDxXHB2ubTxE0Lp8+1dfUyqI+fPXanfF0E6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717365935; c=relaxed/simple;
-	bh=akI2cmYIH8BRhGrXNcxVtTqIuIkhwvFFlVn7D/0tHyw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=ZgR4Hjr69VoluH1gHXTTv1DHOCQZ/1KkTdaKUHod7RH1nIkUH6AIARXxcbxHq1W1UK4aVPwQW5QKm6lHc9WRP2IwV7uzC4yi8cwkQfEShhJdUCpt02gYbpVbDW0CLnI/W8SFp7Gdq4Hubmcg83WD+GnSP9jc+20xmhAHVozhGvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=adqdgAhX; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 452LglLC005399;
-	Sun, 2 Jun 2024 22:05:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=BMPHGXGIxR/ObxS147U4qy
-	ITCbYNRDZJlVpWfB7Bp2M=; b=adqdgAhXoGiXgY5rxz9ayDMoZVQw0qUmZuqMhb
-	jhZGCZiF3jn45gc1NegaDfwKbf6ncypxilqXPk6Uo7jz0lacvwIUxW9FwKYthmaw
-	DqycM9nPzEeQ+h53yOb2RzToP2U09nV0kNMkAjnqJf3gY0K951Zgs7rDnLsO6Vh7
-	oYE1IItrAMcLz3219bQT2+TsRrYPQtUIEpLsoQAjpH0UM320pjktwKqiXtlnpCl9
-	R2IdHuyEhAz3kMZ55ZiOjl872sLsOEv3YueO34nBiTJG+TcO4NM10U0m84x1h39H
-	trfcyKBX2WI9e3EJyqCSXtDwg7gKRAG/zuoqappfqD8c5cbA==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfw59je0a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 02 Jun 2024 22:05:28 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 452M5Lj8019001
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 2 Jun 2024 22:05:21 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 2 Jun 2024
- 15:05:21 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Sun, 2 Jun 2024 15:05:20 -0700
-Subject: [PATCH] counter: ftm-quaddec: add missing MODULE_DESCRIPTION()
- macro
+	s=arc-20240116; t=1717366826; c=relaxed/simple;
+	bh=0PpPfOnAV9dATDb1aHsLlHM/c47rHUIRIb9Xva8BQM8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=DhYVz7Y6S9cBt0Nmw0+zzUl4eYazqgfwF4C9gDWUsDBZJAlbuP10PAuJUOoOG1hJZvrvvxLLrO8+qy3j+gyXHSXC1oVnZr5dGiuB5mNNdx6m+zhn+wIRtw2DcNCLMLWfOR0terVMid0KQNqOeQkY760X+cp4GOt57rE9hUhNEPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mail.de; spf=pass smtp.mailfrom=mail.de; dkim=pass (2048-bit key) header.d=mail.de header.i=@mail.de header.b=Wgv3/K+N; arc=none smtp.client-ip=62.201.172.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mail.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.de
+Received: from shout01.mail.de (unknown [10.0.120.221])
+	by shout12.mail.de (Postfix) with ESMTPS id 3DAFE240AD8;
+	Mon,  3 Jun 2024 00:20:23 +0200 (CEST)
+Received: from postfix02.mail.de (postfix02.bt.mail.de [10.0.121.126])
+	by shout01.mail.de (Postfix) with ESMTP id 131B1240B53;
+	Mon,  3 Jun 2024 00:20:23 +0200 (CEST)
+Received: from smtp01.mail.de (smtp04.bt.mail.de [10.0.121.214])
+	by postfix02.mail.de (Postfix) with ESMTP id DF7CDA03C4;
+	Mon,  3 Jun 2024 00:20:22 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mail.de;
+	s=mailde202009; t=1717366822;
+	bh=0PpPfOnAV9dATDb1aHsLlHM/c47rHUIRIb9Xva8BQM8=;
+	h=From:To:Cc:Subject:Date:Message-ID:From:To:CC:Subject:Reply-To;
+	b=Wgv3/K+N2SJ/BixD9oLK5+SRzYFf1/rkJEIfUmAQawIVwbiBBsTPdcT5bVsTFDBFF
+	 uIC06QYIBfnYHrOXQGNEEE0jDSA6E37GfsaJ1Gjie589N/ammTgsSX+32phwfNRvTi
+	 sGqBx/1BHvdlRElXujJyMW1bBO2Gfxu66/CXHb8xw/zm+hday76083ihUBxeEbkHKd
+	 sfBrkiJWjn4tfYVexGDybyT+YVWVEy7d129wmVM+V5FkUH/THaWLkmYs7Xiao1sNDp
+	 ocJxe+Ed35ArE+Et6Cr/fKnD6zYoaCyHnyT4XjGA0Gnc7H98BJHPQ+gdzfVuCrVJJ0
+	 1o1WylOpdzQeQ==
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp01.mail.de (Postfix) with ESMTPSA id C579B240099;
+	Mon,  3 Jun 2024 00:20:21 +0200 (CEST)
+From: Sebastian Kropatsch <seb-dev@mail.de>
+To: Heiko Stuebner <heiko@sntech.de>,
+	linux-rockchip@lists.infradead.org
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Dragan Simic <dsimic@manjaro.org>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Sebastian Kropatsch <seb-dev@web.de>
+Subject: [PATCH v2 1/2] dt-bindings: arm: rockchip: Add FriendlyElec CM3588 NAS
+Date: Sun,  2 Jun 2024 22:20:40 +0200
+Message-ID: <20240602202132.2012-1-seb-dev@mail.de>
+In-Reply-To: <20240602211901.237769-1-seb-dev@mail.de>
+References: <20240602211901.237769-1-seb-dev@mail.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240602-md-ftm-quaddec-v1-1-1bbdf705ad31@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAJ/sXGYC/x3MwQ6CMAyA4VchPdtkLIroqxgOZeukiZvagiEhv
- LvT43f4/w2MVdjg2myg/BGTZ6loDw2EicqdUWI1eOePrnMec8Q0Z3wvFCMHPF+cP3U9U2p7qNF
- LOcn6H96G6pGMcVQqYfptHlKWFTPZzAr7/gUzV89MfwAAAA==
-To: Patrick Havelange <patrick.havelange@essensium.com>,
-        "William Breathitt
- Gray" <wbg@kernel.org>
-CC: <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: LWs6Db7PNHnpGTHPqfvUnMN0fyMDayy0
-X-Proofpoint-ORIG-GUID: LWs6Db7PNHnpGTHPqfvUnMN0fyMDayy0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-06-02_15,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
- spamscore=0 lowpriorityscore=0 priorityscore=1501 suspectscore=0
- adultscore=0 clxscore=1011 mlxlogscore=999 bulkscore=0 phishscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406020193
+Content-Transfer-Encoding: 8bit
+X-purgate: clean
+X-purgate: This mail is considered clean (visit http://www.eleven.de for further information)
+X-purgate-type: clean
+X-purgate-Ad: Categorized by eleven eXpurgate (R) http://www.eleven.de
+X-purgate: This mail is considered clean (visit http://www.eleven.de for further information)
+X-purgate: clean
+X-purgate-size: 1422
+X-purgate-ID: 154282::1717366822-B4FEA338-D6DC935A/0/0
 
-make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/counter/ftm-quaddec.o
+From: Sebastian Kropatsch <seb-dev@web.de>
 
-Add the missing invocation of the MODULE_DESCRIPTION() macro.
+Add devicetree bindings for the FriendlyElec CM3588 NAS board.
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+The CM3588 NAS by FriendlyElec pairs the CM3588 compute module, based on
+the Rockchip RK3588 SoC, with the CM3588 NAS Kit carrier board.
+
+Signed-off-by: Sebastian Kropatsch <seb-dev@mail.de>
 ---
- drivers/counter/ftm-quaddec.c | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/counter/ftm-quaddec.c b/drivers/counter/ftm-quaddec.c
-index aea6622a9b13..200876f3ec04 100644
---- a/drivers/counter/ftm-quaddec.c
-+++ b/drivers/counter/ftm-quaddec.c
-@@ -322,6 +322,7 @@ static struct platform_driver ftm_quaddec_driver = {
- 
- module_platform_driver(ftm_quaddec_driver);
- 
-+MODULE_DESCRIPTION("Flex Timer Module Quadrature decoder");
- MODULE_LICENSE("GPL");
- MODULE_AUTHOR("Kjeld Flarup <kfa@deif.com>");
- MODULE_AUTHOR("Patrick Havelange <patrick.havelange@essensium.com>");
+The format (const for the SoM + enum with one entry with the baseboard)
+was suggested by Heiko.
+I did not collect "Acked-by: Krzysztof" since the diff changed. Please
+have a look at this new change.
+
+
+Changes in v2 (this patch):
+- split devicetree into two (SoM and baseboard)
 
 ---
-base-commit: a693b9c95abd4947c2d06e05733de5d470ab6586
-change-id: 20240602-md-ftm-quaddec-7902568eaf18
+ Documentation/devicetree/bindings/arm/rockchip.yaml | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml b/Documentation/devicetree/bindings/arm/rockchip.yaml
+index e04c213a0dee..2b8aff11fc73 100644
+--- a/Documentation/devicetree/bindings/arm/rockchip.yaml
++++ b/Documentation/devicetree/bindings/arm/rockchip.yaml
+@@ -248,6 +248,13 @@ properties:
+           - const: friendlyarm,nanopc-t6
+           - const: rockchip,rk3588
+ 
++      - description: FriendlyElec CM3588-based boards
++        items:
++          - enum:
++              - friendlyarm,cm3588-nas
++          - const: friendlyarm,cm3588
++          - const: rockchip,rk3588
++
+       - description: GameForce Chi
+         items:
+           - const: gameforce,chi
+-- 
+2.43.0
 
 
