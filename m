@@ -1,168 +1,146 @@
-Return-Path: <linux-kernel+bounces-198219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F3CD8D751A
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 13:46:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 54C138D7520
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 13:48:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4180F1C20F9D
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 11:46:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 806581C21063
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 11:48:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB02045948;
-	Sun,  2 Jun 2024 11:46:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FDD038DF2;
+	Sun,  2 Jun 2024 11:48:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="h6h4b9wX"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OfzTJbq2"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92BD039FFE;
-	Sun,  2 Jun 2024 11:45:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECBFB134A8;
+	Sun,  2 Jun 2024 11:48:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717328760; cv=none; b=QGqZNK0IexgKN75HZQdj16PHMUEhuZjYL8tzjhuUotW7fPzvFBcFF/j2HbEH881UB23Vx/Rptp4b1jW+RCIjQKtXx+IO4fT0wXHEa1SLy5FVgu/c3ah6LoWAZQ4wnv1pZZtoDZ/QJowKlwkCFcrwa8vxVe9Ev0OmAfXIGmYcxpo=
+	t=1717328896; cv=none; b=tJLbAhiISJRbH9VMnvdwwxHSv0jw0aOQ++DYegfmQ0V9Sy6ATAmuQ/n+wAKLvOcL24amyuUlOEKDgW4cve51ScAhhi2zyKa6+sj6q52wI3FEMQag9VnhscsMl6Zat3o7Ak6PjpHwqGErqYJW65MmyZ2EVVUPNXmrcRHdqvlNq70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717328760; c=relaxed/simple;
-	bh=1UI4sAYafKNzNcveCUCONTjOn68DMUAIek7OUkdFFjM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YTMaw8/TaXaUivYJG7jZAKnLwbc6AURz/3y7jhR8dl1bEIJPZqqpzMDhFSe4hJmDB06sTU5TdHiAdJyso0niw3Ab0pXhe4n2MQ8mR8Da/Mtmftm0o0AvSWn3nI5Ebfv0WonpYv4j+4s1xleP3+iubd9CZrGPMiC93V7nmtUMbSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=h6h4b9wX; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4529hIG0023230;
-	Sun, 2 Jun 2024 11:45:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	exztgzZs3OuubtANSB9eFm6gpGLwNC2z8voJ1HVHl0g=; b=h6h4b9wXVDMlUera
-	xl+ltgP1eHvV7d3KhMbZE0MIN4YXCxhymXgMGl1qhUWyy0LlGdlg0Q6epdZ6f8ME
-	gM/YaKw/ibQ+BPWuYlYibMVzjczVxcGZtBxcpj15QieGVHkyIEvtT6SWUWlcMLF6
-	JBKR4WuzGmpUbaxlTwcCLbikUVvmhu/M8KGErTUQbQNywkaisP6J7w1MIW+tk2hD
-	zIdNk9sivBV/u0h8gE9sFYYAqfZtOaFZKnBS+euBvdYIejECc1Rj/vGRUf+tanD9
-	NoVnS8yZ+RaSLm6cfRgg/f7H0Oqq+Rpdb0yrFxtasRf/ab8Z/wMRNnRy1SUy+57p
-	Nz5WTQ==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfw4d21ae-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 02 Jun 2024 11:45:54 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 452Bjr2D024280
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 2 Jun 2024 11:45:53 GMT
-Received: from hu-jkona-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Sun, 2 Jun 2024 04:45:48 -0700
-From: Jagadeesh Kona <quic_jkona@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>
-CC: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Taniya Das
-	<quic_tdas@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        "Satya
- Priya Kakitapalli" <quic_skakitap@quicinc.com>,
-        Ajit Pandey
-	<quic_ajipan@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>
-Subject: [PATCH V4 8/8] arm64: dts: qcom: sm8650: Add video and camera clock controllers
-Date: Sun, 2 Jun 2024 17:14:39 +0530
-Message-ID: <20240602114439.1611-9-quic_jkona@quicinc.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240602114439.1611-1-quic_jkona@quicinc.com>
-References: <20240602114439.1611-1-quic_jkona@quicinc.com>
+	s=arc-20240116; t=1717328896; c=relaxed/simple;
+	bh=+hNV2W0JijwpQjXKflQT777I6zGWMuYrdUwsg7UjIxU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ibg4aK7VmgC5JUJm0KuCguuw8tLOSluRVNgGa8ZNp1QWe1tteMF+6/MkQtdfofdBFcec8ZROCL41u1Ni9n8KlamjkS4MgA+haAz85D4ypQ7gAxXKA8fg9/d7ZPEOMjrIBJSz9HtGMd/i3xjGjU9IlUit/+NsT6c6fZLibNk7t8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OfzTJbq2; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a6265d48ec3so361661666b.0;
+        Sun, 02 Jun 2024 04:48:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717328893; x=1717933693; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8Oajb/kRUzc1WUZBn+VXOrie8WQ1s/4lpFkPQ6Q8aco=;
+        b=OfzTJbq2vUVjGCMb5zJSqWngoaBim/Scc5vcQqVcaRimOU11mz7VFnQ8lWPc00S7Qr
+         zhWHzUU2Rdhc1MXZ5Hpzi1BpdRZnERh/ZWqz6c426ryiY8tcq3BFE3KkUkaVe7cKIVAU
+         FW9b+FhztzUmRchX4z9JtI7lqNSa1dx8kbHv1HXt95ZDF8u5jjcg7Kd7LyiWad3Lk+k+
+         LVcjeWltEZpwqUqUW0rkIo1Dt0GVcauJTFb5fz8+5brdQZzXBTeM6ylj1SnIUZgiPthi
+         vpjAAv0ixs35XCWpLEfY0by9BK9LtVDbend4A0jytWMGEfu3G4iCF39Bbx8Jw+WS1uYL
+         wJ+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717328893; x=1717933693;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8Oajb/kRUzc1WUZBn+VXOrie8WQ1s/4lpFkPQ6Q8aco=;
+        b=bRsAgx/ioxHpvN9HPQfh+halLPN3rrGzWzPB8zelJLrNIBrugcYjJktvCBFMhNWCZe
+         SovQYtpWZQw+tTynBcI42Tc21yAKPopZpKjeWEnVBn/piPb9JNN41xZ8zvYC+Uu3+tD3
+         nb307gA4Bd6H//XA7QU+CRmPd8feJR8jmh7CJRQ3mF7B65k/qohzNERznjsWciNAxVuf
+         oCGKzwGrDw01QomGkeT0OpocFf849e+86koNncatXHAW1274h3g+JnjDHNSAyal/xNu7
+         8JnexQONj74vLdmcTA4S0WP6pGTnU5Ii0hrRPSR4ofQYrNqwIIyOvrkoVOagehkpbduf
+         9SqA==
+X-Forwarded-Encrypted: i=1; AJvYcCUgY29najmOvBzmACsoobCB0vrW/G52I3jQhWlCU20ZVTXvfFjAfUU4sAnNEI7JYfcbe+MT1E6Np25K/b4RweYYnuavEWsdXeI2oazY7aGlyI7/T+HSsVFBwFflupD16JM7rX4N6MQXgJUe
+X-Gm-Message-State: AOJu0YyJeo8kZtHE16MLI4iiFZAsgr7Y23bWcFQ5KvQI88mNhMpIMsMW
+	wT5PNCofYy4ZfYg3Lj0F/CfGfRbAGzf2eUCBXBW63apoXHGHU8iALfOve2t3
+X-Google-Smtp-Source: AGHT+IFvCtW+5CE30JLBkgRh/P611LTQD3C/kr+7FZcNtFCa1ZUcuSx9CNE+l1IcZBA7WdfadpNefQ==
+X-Received: by 2002:a17:906:a410:b0:a68:8950:9510 with SMTP id a640c23a62f3a-a68895099f7mr386775766b.25.1717328892984;
+        Sun, 02 Jun 2024 04:48:12 -0700 (PDT)
+Received: from [192.168.178.20] (dh207-41-151.xnet.hr. [88.207.41.151])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a68ccf77cd3sm143124166b.13.2024.06.02.04.48.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 02 Jun 2024 04:48:12 -0700 (PDT)
+Message-ID: <47e101e6-fbd2-4373-854a-db9431bf0d74@gmail.com>
+Date: Sun, 2 Jun 2024 13:48:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PROBLEM linux-next] Error in "make olddefconfig" and "make
+ menuconfig"
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Bagas Sanjaya <bagasdotme@gmail.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Kernel Build System <linux-kbuild@vger.kernel.org>
+References: <b948b14b-1543-4314-9e9e-58a54cf2b734@gmail.com>
+ <CAK7LNASTaxPDH4_wozMc9G6NE+HwFXgLiUAM5Ki9mc-Gwf4vmA@mail.gmail.com>
+Content-Language: en-US
+From: Mirsad Todorovac <mtodorovac69@gmail.com>
+In-Reply-To: <CAK7LNASTaxPDH4_wozMc9G6NE+HwFXgLiUAM5Ki9mc-Gwf4vmA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: bi5tbRWgBomQe2Sk7uhy3wp5KxFyw8o2
-X-Proofpoint-GUID: bi5tbRWgBomQe2Sk7uhy3wp5KxFyw8o2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-06-01_19,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 mlxscore=0 adultscore=0 impostorscore=0 bulkscore=0
- spamscore=0 phishscore=0 clxscore=1015 mlxlogscore=999 suspectscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406020100
 
-Add device nodes for video and camera clock controllers on Qualcomm
-SM8650 platform.
+On 5/15/24 06:17, Masahiro Yamada wrote:
+> On Wed, May 15, 2024 at 3:37 AM Mirsad Todorovac <mtodorovac69@gmail.com> wrote:
+>>
+>> Hi, Mr. Bagas,
+>>
+>> While bisecting a problem in linux-next tree, I came across the problem:
+> 
+> 
+> I checked out v6.7-rc5-2761-gefc11f34e25f
+> but 'make olddefconfig' worked fine with me.
+> 
+> 
+> If this issue occurs only during 'git bisect',
+> I need full steps to reproduce it because I do not
+> know what you did before v6.7-rc5-2761-gefc11f34e25f.
+> 
+> 
+>   $ git checkout <some commit>
+>   $ [ do something ]
+>   $ git v6.7-rc5-2761-gefc11f34e25f
+>   $ make olddefconfig
+> 
+> 
+> If I am able to reproduce the issue that way,
+> maybe I can have more insight.
 
-Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
-Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
----
- arch/arm64/boot/dts/qcom/sm8650.dtsi | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+Just to report that fresh cloning eliminated the error.
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8650.dtsi b/arch/arm64/boot/dts/qcom/sm8650.dtsi
-index 336c54242778..d964762b0532 100644
---- a/arch/arm64/boot/dts/qcom/sm8650.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8650.dtsi
-@@ -4,10 +4,12 @@
-  */
- 
- #include <dt-bindings/clock/qcom,rpmh.h>
-+#include <dt-bindings/clock/qcom,sm8650-camcc.h>
- #include <dt-bindings/clock/qcom,sm8650-dispcc.h>
- #include <dt-bindings/clock/qcom,sm8650-gcc.h>
- #include <dt-bindings/clock/qcom,sm8650-gpucc.h>
- #include <dt-bindings/clock/qcom,sm8650-tcsr.h>
-+#include <dt-bindings/clock/qcom,sm8650-videocc.h>
- #include <dt-bindings/dma/qcom-gpi.h>
- #include <dt-bindings/firmware/qcom,scm.h>
- #include <dt-bindings/gpio/gpio.h>
-@@ -3315,6 +3317,30 @@ opp-202000000 {
- 			};
- 		};
- 
-+		videocc: clock-controller@aaf0000 {
-+			compatible = "qcom,sm8650-videocc";
-+			reg = <0 0x0aaf0000 0 0x10000>;
-+			clocks = <&bi_tcxo_div2>,
-+				 <&gcc GCC_VIDEO_AHB_CLK>;
-+			power-domains = <&rpmhpd RPMHPD_MMCX>;
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			#power-domain-cells = <1>;
-+		};
-+
-+		camcc: clock-controller@ade0000 {
-+			compatible = "qcom,sm8650-camcc";
-+			reg = <0 0x0ade0000 0 0x20000>;
-+			clocks = <&gcc GCC_CAMERA_AHB_CLK>,
-+				 <&bi_tcxo_div2>,
-+				 <&bi_tcxo_ao_div2>,
-+				 <&sleep_clk>;
-+			power-domains = <&rpmhpd RPMHPD_MMCX>;
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			#power-domain-cells = <1>;
-+		};
-+
- 		mdss: display-subsystem@ae00000 {
- 			compatible = "qcom,sm8650-mdss";
- 			reg = <0 0x0ae00000 0 0x1000>;
--- 
-2.43.0
+Best regards,
+Mirsad Todorovac
 
+>> marvin@defiant:~/linux/kernel/linux-next$ git describe
+>> v6.7-rc5-2761-gefc11f34e25f
+>> marvin@defiant:~/linux/kernel/linux-next$ make olddefconfig
+>> make[2]: *** No targets.  Stop.
+>> make[1]: *** [/home/marvin/linux/kernel/linux-next/Makefile:621: scripts_basic] Error 2
+>> make: *** [Makefile:234: __sub-make] Error 2
+>> marvin@defiant:~/linux/kernel/linux-next$ make menuconfig
+>> make[2]: *** No targets.  Stop.
+>> make[1]: *** [/home/marvin/linux/kernel/linux-next/Makefile:621: scripts_basic] Error 2
+>> make: *** [Makefile:234: __sub-make] Error 2
+>> marvin@defiant:~/linux/kernel/linux-next$
+>>
+>> Now, this occurred for the first time, and I don't know how to bail out.
+>>
+>> I recall in past couple of years you have some insightful advice.
+>>
+>> Thank you very much.
+>>
+>> Best regards,
+>> Mirsad Todorovac
+>>
+> 
+> 
 
