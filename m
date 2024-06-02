@@ -1,477 +1,291 @@
-Return-Path: <linux-kernel+bounces-198335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5D578D76DB
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 17:48:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73DC28D76E3
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 17:50:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AB091F2189E
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 15:48:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 975971C212B4
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 15:50:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0015F4C61C;
-	Sun,  2 Jun 2024 15:48:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F92B55E5B;
+	Sun,  2 Jun 2024 15:49:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p0Ejmb6y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=solidrn.onmicrosoft.com header.i=@solidrn.onmicrosoft.com header.b="qMwEde2p"
+Received: from EUR04-HE1-obe.outbound.protection.outlook.com (mail-he1eur04on2135.outbound.protection.outlook.com [40.107.7.135])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BECF848CCC;
-	Sun,  2 Jun 2024 15:48:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717343331; cv=none; b=JpIg971DhaALMQ+31cvOqo3s4EwhBzaRgVSCLF3XbjDM1HPvndyPv86IvtYIOpUdz6znca3kfEZLvyhYVunbMZl4bpD+sObtcHroZ5hESEHToQx/p8s81UwbTctr+mdN9GWXJfguIXxuLZDPmIfB+7Blz5WH9QxbE5v/w8LgR18=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717343331; c=relaxed/simple;
-	bh=h2Zsso7dcCkUN4/x/26T9SY7gQTavcGtKfBd8Ge9jzY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=CHfRQW/Kn2xDpWCB/54Je2cFAUK6ikQP4/LSzBQdlGiZSdiUvm7UL0RjmiF0K4dI3zstzEiqEgTynEkmdm3C0rJkDtZg0xT/2qh9pdD21iJ82BSlbJp4kcGkk89Ks/XYKViVc/5BoEU3fRKfJwYeK9ndxMdHJuSWX0TLZvoCilw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p0Ejmb6y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D295BC2BBFC;
-	Sun,  2 Jun 2024 15:48:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717343331;
-	bh=h2Zsso7dcCkUN4/x/26T9SY7gQTavcGtKfBd8Ge9jzY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=p0Ejmb6yxHH7PyY3hScoX2x/JUGSNNHwey3kWWukQNvDI/rQNuzii541CcglH34WN
-	 OXmJMjhNbjTEqZ+5gyNtqohQziBQm9TCZ1uzHm1Fvc0qTdS2Bc448XGy2iYJIy824q
-	 VMx+btEARHSYACsqGPefynIyA/KaZDmuhj/Le5Iuyz65lMe/oV9kpgPH6NG7x2St4A
-	 hkZmlfcA2Uiy2A1WmgnRbIkiUNCn4X3LfiDnYUf8c+pDmJ58ouP1FM0AJSbyDWU1hp
-	 LlVI9h9IzDiHOfzd92ZC2xYGUHWFkbFMWWxcJorgxJk1hxjAC+pvIxdmiJecbqzP2G
-	 Z/xCFIdv7LVMg==
-From: SeongJae Park <sj@kernel.org>
-To: Alex Rusuf <yorha.op@gmail.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	damon@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH v2 2/2] mm/damon/core: implement multi-context support
-Date: Sun,  2 Jun 2024 08:48:48 -0700
-Message-Id: <20240602154848.91322-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240602150816.926407-1-yorha.op@gmail.com>
-References: 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 908C94AED1;
+	Sun,  2 Jun 2024 15:49:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.7.135
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717343387; cv=fail; b=i1RhL3bX81LFN9Q7wuqEYDlceN9hA94N6VfpYTV3V3likTLPRgs34JSWLmDNFDqjUAMn5QTb6yVoDDDmm+wnWDF50BPXp6IEjQViFBrZL3DH14JWVp4YXvN08siWGp6f3SmkjLb8lKdvV0Jnu5O+0a8kY9Ax5vOqlHl325yxjiU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717343387; c=relaxed/simple;
+	bh=yF2WjJebhM9u1UTN6ytXuZaSSDxmt0MCPbK9WhIwzq8=;
+	h=From:Subject:Date:Message-Id:Content-Type:To:Cc:MIME-Version; b=BSRStJttpRUxzfQlGBcYcA+U1fMI60UOBJ54Tcu2FKZsmvJFkiQz1/fyGTb8YYJ9tc0D0Xw8Wdo0pHJ7pbXZK5eV74cjngZz8Wie3nMbe1h/4YcsyqAew8v+A/Af1UxK7wtVO8b3NaDm6ahjwrD3Nx9OvK1zuMUYNgPhJ7vDPsk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=solid-run.com; spf=pass smtp.mailfrom=solid-run.com; dkim=pass (1024-bit key) header.d=solidrn.onmicrosoft.com header.i=@solidrn.onmicrosoft.com header.b=qMwEde2p; arc=fail smtp.client-ip=40.107.7.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=solid-run.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=solid-run.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=AYpLUg8UvMIjbF1DkXmz5UP1mR+/iiF99W/XLoMVFjwPD4HYK33KBLWRq5zwQuU6kFkpHjdmDwJv2af6gsAU7782t9H1eWAt/B9EZFsp/ISWfD8IO11MEMeBNDuR7msDwa2xJLH9xxDPaHt0oaTCpeRFDDrDcA2O80dqxV4xOoOzMHCpKe15pDPBWst3N1LeelN9c32z2SggekQYhTNjg48T9jPCbnYwC/n4kzhzyW+BlGjwANGj8Nwf4bgQGeMUF2eNYn+fuftObCI9ITq9XBQ6G5QegHRwcimIyT2T69dICoQkdtr73AF4ns974FzHIV2lD8A37qUMJKFhmaWAEg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0cnKwuQg7UXBwV6gGpPTkPILMWVN2zd9PNolhRt2/9U=;
+ b=b1sn17AyjiX7AqCf9QOQUGe89JXYX16tCVt5kYh1sjf5b2YgpGXFt2PlK5VLdkH3Ne6pJvRSpF+iJFqQCTY/adItJ7bauqzidoeBiVR+NP0WsFx+w7hM/ZHRELi04W6/P/rhNwKKFMxR9ArhGxGNMKd9q8LYbVTsumJ0476tv6vHxO6aEDen8MBXl934k0GZvfBd8yks9Gk3vn8y2vMh05d77+psfh171wg2UXUw85TfJJht4cEThA93Zf/PGBa+Z5f6RV8iWQhALhs9qhKf+KECHEwyfMgne84rMKpRAI+2yu/whvhc8JMnhN+wARIkfE4HjlLwfJ5G4YF2lHJ2zQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=solid-run.com; dmarc=pass action=none
+ header.from=solid-run.com; dkim=pass header.d=solid-run.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=solidrn.onmicrosoft.com; s=selector1-solidrn-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0cnKwuQg7UXBwV6gGpPTkPILMWVN2zd9PNolhRt2/9U=;
+ b=qMwEde2pd4qoBEe+zZK0u4i3vg9cO79VCQPu5Mjqlw4hVlKbPKitYomWn0Tfkm2lqqGQSac7cxelcpJE/LcmZQwty7Rwj5EUrsULvAOKbZM9TBvTAW/J/gvgHywOeQYyXp+4a1DeMEi9OutV8cEYAQeRWWHsnjR3GhTWtFxBfx8=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=solid-run.com;
+Received: from AM9PR04MB7586.eurprd04.prod.outlook.com (2603:10a6:20b:2d5::17)
+ by AS8PR04MB7512.eurprd04.prod.outlook.com (2603:10a6:20b:29e::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.27; Sun, 2 Jun
+ 2024 15:49:39 +0000
+Received: from AM9PR04MB7586.eurprd04.prod.outlook.com
+ ([fe80::c04e:8a97:516c:5529]) by AM9PR04MB7586.eurprd04.prod.outlook.com
+ ([fe80::c04e:8a97:516c:5529%7]) with mapi id 15.20.7633.021; Sun, 2 Jun 2024
+ 15:49:39 +0000
+From: Josua Mayer <josua@solid-run.com>
+Subject: [PATCH v6 0/7] arm64: dts: add description for solidrun cn9130 som
+ and clearfog boards
+Date: Sun, 02 Jun 2024 17:49:35 +0200
+Message-Id: <20240602-cn9130-som-v6-0-89393e86d4c7@solid-run.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAI+UXGYC/23OwWrEIBDG8VdZPNcyM2qMPfU9lh5cnXSFbizaD
+ S1L3r1mKWxCg6dv4PfHm6hcElfxcriJwlOqKY9tdE8HEc5+fGeZYtuCgDQo7GUYHSqQNV9kr3v
+ uOx9O4INo4LPwkL7vseNb2+dUv3L5ubcnXK5/GcJ1ZkIJ0iIiWa/BeX6t+SNFWa7jc8gXsaQme
+ vD2NpwaV34gIhdspLjH1YrjlquFG/CdjVoz+D2uH9wAbbhuHDwxDRgsxH6PmzV3G24ad0Y7xSc
+ TrPv3+XmefwHm/K2YpAEAAA==
+To: Andrew Lunn <andrew@lunn.ch>, 
+ Gregory Clement <gregory.clement@bootlin.com>, 
+ Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, 
+ Rob Herring <robh+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, 
+ Daniel Baluta <daniel.baluta@nxp.com>, Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Konstantin Porotchkin <kostap@marvell.com>, 
+ Richard Cochran <richardcochran@gmail.com>
+Cc: Yazan Shhady <yazan.shhady@solid-run.com>, 
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, 
+ linux-phy@lists.infradead.org, netdev@vger.kernel.org, 
+ Josua Mayer <josua@solid-run.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.12.4
+X-ClientProxiedBy: FR5P281CA0045.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:f3::12) To AM9PR04MB7586.eurprd04.prod.outlook.com
+ (2603:10a6:20b:2d5::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM9PR04MB7586:EE_|AS8PR04MB7512:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7399fbe5-61c1-4ce1-3e3f-08dc831b9c81
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|52116005|376005|1800799015|7416005|366007|921011|38350700005;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ZFlUQVhOazAxSGFtSzRPdzYyT2szY3N1TWxlb05yY0x0aWRuMzdHL2o0MGFu?=
+ =?utf-8?B?cm5HUGtNWDBUem9aRUF0cnBTZmNOaUhJUVUwMk9vaENFTHIvWTM5d2REWXJh?=
+ =?utf-8?B?a2xCZ3hYMkJubXRNL2pqU1BzYnJvWW9wMHl1NFhRbDBPNXQ5ODYzL1N2Nldx?=
+ =?utf-8?B?eGZ4dzhFYzJoWWZSU3p4eDE2QkFPKzdaZHI5OXJWaThEQ21aVThHZWVFR0JI?=
+ =?utf-8?B?UktIZ1Q0a1Q4UGJhMzAvc1VDaUJkclRCVW1aby9vMGFvL2pyeU9vNjY0Vkpj?=
+ =?utf-8?B?c2xFczJQV053dkFlQWsxQjVJMkNZbEVFc3hRSXhIR0J1eWZxREpQbW9FWWN4?=
+ =?utf-8?B?bjNENXdITEwreWVIRzl0Y2FHVkl3aG5XYnBJNWVKUGxzd3dIanQ5dlR2ZDht?=
+ =?utf-8?B?VXE1NUFBVGRjK0gyRnBLZGMyQ0RSemI4cGxaUnVxTFlFdWQ1b04wZG9KTlds?=
+ =?utf-8?B?L3JyNVRVOXE1VXh5Vk1tbnp0R2IxdGE2Sml6Q0VleS9TcklQTE5WSlNxRlZv?=
+ =?utf-8?B?TzNMbzlLa1d3QU1rbmd0QlpvUVl1dVRHTjMzUVFFZFJWY1Y1ajJjS0xTb1Z0?=
+ =?utf-8?B?WXdYMHJ4dk9ldFgzVWUzM3NjejZXYzJQMUtXT1JYYi8vRG8yaExDQkRNdjlM?=
+ =?utf-8?B?cW5Ka2dLcG1xK2tlSE12WWVPdVhMeFRWWEZHRGVnVWZZL0RFVUtmeEpraG9I?=
+ =?utf-8?B?aTlOaCtVVHk1SEVRYnF4aWxBc29XTVhRRWFsRFNmZVF4VnFrWlZFVnZyYTZT?=
+ =?utf-8?B?dWZlemw3TlBqc29ZNmx5L2ZXTzNQQ3ozdnhiZ04zam5ITlhJazNXU0pLb2F3?=
+ =?utf-8?B?MnQ0UzlyMldGNGt4Tk9lL2s0bFU0bm9nazhFNnpIcGpLZWFTQTRKZjJvSDRw?=
+ =?utf-8?B?RG1XMWdKMjh6V3R6QmhhNWc0OXZoQjQyUUo2ODVwRno1eDRJUFdXUjA5elpU?=
+ =?utf-8?B?YkdXVTdOVzBURnFtd1RYK3pLUG9VUndtTGlTMVg1OEVuTVlNaVpWSXVkQnZH?=
+ =?utf-8?B?azkvVWNWVm11bjBvUW9KN2FNQmxmb3pKaHNvcE4rMzFEWFVmWXpiVGFma05a?=
+ =?utf-8?B?RERIL2NkQWliT2FsTC9pWW1qaDFXaGVQY1J6aXdFTUJMTFdOTnhLUDdoS0NM?=
+ =?utf-8?B?NVhKVnQ2RVUrRGJSSjRMMHlOSWM4UFhiWlFyNHBramx1MXhOUng1KzlCUUht?=
+ =?utf-8?B?aFJ5bmFKclp2d1dBM0RUREpyekNWbUtUbHhUWnl4TkpsRDc4UWs5WGx1MjNK?=
+ =?utf-8?B?ZDE4V0dyMnFKN3Y0cDRDQWdNQWNBbUNLN2N5VHByOUxMTmpoTmwySWVDd0Ix?=
+ =?utf-8?B?UlBuTkhtL3BZNWU1ZXlpK3o2NkJxb3BYc2VGSmcxSjlwekloU09icDdYNnhB?=
+ =?utf-8?B?K2xJamsrSy9EeHNId1YvU09mV2R0cDl3Q2VoOHVIeTJOeUovTUxweFJReFJB?=
+ =?utf-8?B?TFZXV1o2ZGJGZzA4UHBqWVF2RW01bTBPcExMUTdGQXd3YkdQODRHZzZrVldh?=
+ =?utf-8?B?VGhCb0gwNTk5eFJyVmc3ekthT2ZCaG42eDdzcUJXWFZwSTduVThkUWlKc0hQ?=
+ =?utf-8?B?ZzJSWFhaT2NvYzBIMWZuOTg1ZjRXUTJzQnVQWjU0Vm9nWnNDa0g1Z2lkUkdY?=
+ =?utf-8?B?WUhhUVZRc3puV00vaDBoT0VUS0NsbTNERGd2aGx3a3daMkJiR281aHVoYk5N?=
+ =?utf-8?B?WlQ1VGNMTWNERkVwSkg2RExYNVlEQUFoMzhzU0xNRWRFVzZvM0NRRHNXUFdM?=
+ =?utf-8?Q?pjhtWSur4sUC0XbNDU=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR04MB7586.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(52116005)(376005)(1800799015)(7416005)(366007)(921011)(38350700005);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Q3FxSWFjWnpKbDRHTDBaVTdEdXg3TlB0c08wMVVjM09lamlrRHllQjEyNUNW?=
+ =?utf-8?B?QUZsN3dRRWVhYngxNGdEeGlTL1hONnZ3SEVCajRjcUkvblpraW5rVVdqY2pV?=
+ =?utf-8?B?K3RuWTVCbGVraHA1OW9UVzlKYUVzRkx5bUs5dW5yZHoxL2ZLaFd4VUxzdWZ0?=
+ =?utf-8?B?dWtzdzJFcEk1SUxsYmlOWHRNMWVjUlh3TnhySXFYQkhiMCs2TkxUK2FPYXJN?=
+ =?utf-8?B?MzJ6N3pGZ2RRYXlPZTRGcmlBSDZiOUVhUHYyRW9oVGFJalNFZWxSRFpEZng3?=
+ =?utf-8?B?SVBYdE95SGx2My9MMEJnY1ZBSk1lckttdGx4S2EzL1dQN3k2ZFlqeldoT2VZ?=
+ =?utf-8?B?eG1WNC91RStpdjdEbm9wRzJ3ZUlQVXNsbWtwMXI3WlZuRHJnUHozZFk5U1ZX?=
+ =?utf-8?B?blpRb0tEMWlmRGZuN1hTOGFwd3dTSFRROW9GcE1kdGx2OElDaHprMFB1b3FR?=
+ =?utf-8?B?OVFzeEtxczVJaDMvSG01UkprZ3FBckZrNjNoMFNETW9sZnVMcnZ2bCtnOWVM?=
+ =?utf-8?B?NWlzU3Z6SkwrV0hadjNyZ3hxaGRRSmI0NnBrbHRNQzJUcWxtYTRMajJTSitW?=
+ =?utf-8?B?U3BQTFp1U2xWcnhwMDVGbUMxenJwYTFnUzdmYXVQMFFteFRMOWRCL3lMOHgv?=
+ =?utf-8?B?MnVxTDlTNTFkaDFaYzRqeitwZWk5VDBUc1JIdHZtaW90bGRtVE5LMENUVkVI?=
+ =?utf-8?B?ei9IKzd4MzY4M0VQY3UrSm1ZbG90UTVEZFJRL3kvSW16dDluUWpHUGk2VDU4?=
+ =?utf-8?B?MDdkZ1JtYTFXeUhKblQ1ZVBiUUZINXJJZHQ4bzRLSHZhMUhSZzRzdm56c05L?=
+ =?utf-8?B?SFNaNmpmRFdMM3NBNWNCa2lyakVCTExaRXZvUHN3Y1MrcnpRZDllWHFackhh?=
+ =?utf-8?B?UWpMQmlqV2gyc2pUSGNUdVJBS0l1RERpZFBHbXhKTWJ1NWdTYmgyVnZYUVB3?=
+ =?utf-8?B?TzN1alFDTHloTXJDVFNkNFVPMmxUWVhSbGRDeER4QzZwcjV0SUhaa092OEhJ?=
+ =?utf-8?B?N0ptT1Q0VTlRZW1DZTBHQytGVzI5NmNXc3p2NDROQTJYcUo2OGhyRzFsTTJp?=
+ =?utf-8?B?M2VoOUV2UUwzUFZCUFV4Mlc3RE1vc20wazVFMTI0bEc1aW1OS0tReW0rTUdk?=
+ =?utf-8?B?bHYrbkVQYjdSbXVFV1NMV2xtY05CdHZJVGxDZTlWWHhsTGUraWJJdzYwVUda?=
+ =?utf-8?B?YVdtanpURlNxbVNOT2hDSkhjV3FTNElRb0dCZkpqR3RUUUdMOXo2QzRmd1Y0?=
+ =?utf-8?B?a1VPMi94Ykw5WU9ySFROUEs2ZlViMnYvSFJWYXZScVBCb0VEMVpzNXFaTDE2?=
+ =?utf-8?B?Zm5HVnY1YVBJVWthVjk4WUsyV2NDanV3d2tYVEFrbm9FSEJqRkNaUUZUQ0tY?=
+ =?utf-8?B?THppUVl4WmVndmRZUEJoNTFsTCt3NkM0eWZaZ2NTZ2p5R05hM2N3bmwrU2F4?=
+ =?utf-8?B?L3hrUEtNZmVscmJ5Y3lpSnVNWUhqNjN2ZUlqZ1hGZEdHTloydTlDWHczd2ln?=
+ =?utf-8?B?THcrUVpubnBwZFFRenlPbjRMRXpXb0ZRRFFrSmZvUm55TzNlZ3dHQXdJQ0lF?=
+ =?utf-8?B?MzdMdUZnWG5zZWh6UzUvSm9RUFg1OVp1WUtXLzNLR1A4eFpmWU5rUGZkM1hK?=
+ =?utf-8?B?dTlveWM5aFdZblZHSUtJM0JyS2ZDSEtxMXAwSmtQd3RPTC9NQnpNNkxiR1B4?=
+ =?utf-8?B?TEhEVHlyeDgxdFc5UEZ0blBPVHlUTWlQdkh2bzZTSWZpS2Z5WnJHL3RTem9v?=
+ =?utf-8?B?dTc3SFlTMTJ4WXZOSTZaa1hjTDBrWmx5U28xR0FFYTRKT1draUlPcmViUkhE?=
+ =?utf-8?B?Q3JuUFc3OFhDT2pEc0tMRCtXcWU2Q2ZBWCswOU1lVnordWJna1hLZzVJTFlt?=
+ =?utf-8?B?ajZFUW1sWGs1alVuYW5CZGIybklETSswcy8yNmV3YURGVjgvTFo5c3ZTS1Ur?=
+ =?utf-8?B?WEVaRmJ5bVBaaU5ycXk1eXpRbENhWExXeVhmbitTRGNESGxweldCOHN2Sy85?=
+ =?utf-8?B?RnlPWjBBMk5ML21hQmVaSHRma0JxUzkzOVJuQmg1R3JXUTYzd1VJb05EL0Rl?=
+ =?utf-8?B?WWN4d3lOVHpaMHJ1bnNmTVBVYlJ1NmpoS3dyeU1IK2xLQU5HRHc1c2J5Z0lw?=
+ =?utf-8?Q?XxPLwUjj8/kTqYHUm6wjSJBLw?=
+X-OriginatorOrg: solid-run.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7399fbe5-61c1-4ce1-3e3f-08dc831b9c81
+X-MS-Exchange-CrossTenant-AuthSource: AM9PR04MB7586.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jun 2024 15:49:39.3649
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: a4a8aaf3-fd27-4e27-add2-604707ce5b82
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: q61hN6/n0AQDNiR98WBwBDSdP79LvTYi4+bIzb/wWPXOqn4CK3xtE+TosS1wvnRje7iJDEc3hfDZATCptWzSuA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB7512
 
-On Sun,  2 Jun 2024 18:08:16 +0300 Alex Rusuf <yorha.op@gmail.com> wrote:
+SolidRun CN9130 SoM is a mostly pin-comptible replacement for Armada 388
+SoM used in Clearfog and Clearfog Pro boards.
 
-> Hi SJ,
-> 
-> > Hi Alex,
-> > 
-> > On Fri, 31 May 2024 15:23:20 +0300 Alex Rusuf <yorha.op@gmail.com> wrote:
-> > 
-> > > This patch actually implements support for
-> > > multi-context design for kdamond daemon.
-> > > 
-> > > In pseudo code previous versions worked like
-> > > the following:
-> > > 
-> > >     while (!kdamond_should_stop()) {
-> > > 
-> > > 	/* prepare accesses for only 1 context */
-> > > 	prepare_accesses(damon_context);
-> > > 
-> > > 	sleep(sample_interval);
-> > > 
-> > > 	/* check accesses for only 1 context */
-> > > 	check_accesses(damon_context);
-> > > 
-> > > 	...
-> > >     }
-> > > 
-> > > With this patch kdamond workflow will look
-> > > like the following:
-> > > 
-> > >     while (!kdamond_shoule_stop()) {
-> > > 
-> > > 	/* prepare accesses for all contexts in kdamond */
-> > > 	damon_for_each_context(ctx, kdamond)
-> > > 	    prepare_accesses(ctx);
-> > > 
-> > > 	sleep(sample_interval);
-> > > 
-> > > 	/* check_accesses for all contexts in kdamond */
-> > > 	damon_for_each_context(ctx, kdamond)
-> > > 	    check_accesses(ctx);
-> > > 
-> > > 	...
-> > >     }
-> > 
-> > This is not what you do now, but on previous patch, right?  Let's modify the
-> > mesage appropriately.
-> 
-> No, this is exactly what this patch is for, previous one only introduced
-> 'struct kdamond' and made all interfaces (sysfs/dbgfs/core) to use it.
-> I mean previous patch doesn't include support for multiple contexts,
-> functionality was the same as before.
+1. Add new binding for compatible strings closely matching the original.
 
-Thank you for clarifying.  Indeed the first patch didn't update access check
-part, but did update contexts initializations (kdamond_init_ctx()) and
-termination (kdamond_finish_ctxs()) logics to support multiple contexts.  Let's
-do such things in one separate patch, as I suggested on the reply to the cover
-letter.
+2. Add device-tree includes for SoM and carrier shared design.
 
-> 
-> > 
-> > > 
-> > > Another point to note is watermarks. Previous versions
-> > > checked watermarks on each iteration for current context
-> > > and if matric's value wan't acceptable kdamond waited
-> > > for watermark's sleep interval.
-> > 
-> > Mention changes of versions on cover letter.
-> > 
-> > > 
-> > > Now there's no need to wait for each context, we can
-> > > just skip context if watermark's metric isn't ready,
-> > > but if there's no contexts that can run we
-> > > check for each context's watermark metric and
-> > > sleep for the lowest interval of all contexts.
-> > > 
-> > > Signed-off-by: Alex Rusuf <yorha.op@gmail.com>
-> > > ---
-> > >  include/linux/damon.h        |  11 +-
-> > >  include/trace/events/damon.h |  14 +-
-> > >  mm/damon/core-test.h         |   2 +-
-> > >  mm/damon/core.c              | 286 +++++++++++++++++------------
-> > >  mm/damon/dbgfs-test.h        |   4 +-
-> > >  mm/damon/dbgfs.c             | 342 +++++++++++++++++++++--------------
-> > >  mm/damon/modules-common.c    |   1 -
-> > >  mm/damon/sysfs.c             |  47 +++--
-> > >  8 files changed, 431 insertions(+), 276 deletions(-)
-> > > 
-> > > diff --git a/include/linux/damon.h b/include/linux/damon.h
-> > > index 7cb9979a0..2facf3a5f 100644
-> > > --- a/include/linux/damon.h
-> > > +++ b/include/linux/damon.h
-> > > @@ -575,7 +575,6 @@ struct damon_attrs {
-> > >   * @lock:	Kdamond's global lock, serializes accesses to any field.
-> > >   * @self:	Kernel thread which is actually being executed.
-> > >   * @contexts:	Head of contexts (&damon_ctx) list.
-> > > - * @nr_ctxs:	Number of contexts being monitored.
-> > >   *
-> > >   * Each DAMON's background daemon has this structure. Once
-> > >   * configured, daemon can be started by calling damon_start().
-> > > @@ -589,7 +588,6 @@ struct kdamond {
-> > >  	struct mutex lock;
-> > >  	struct task_struct *self;
-> > >  	struct list_head contexts;
-> > > -	size_t nr_ctxs;
-> > 
-> > Why we add this on first patch, and then remove here?  Let's not make
-> > unnecessary temporal change.  It only increase review time.
-> 
-> This temporal change is needed only to not break DAMON functionality
-> once first patch is applied (i.e. only 1st patch is applied). I mean
-> to have constistancy between patches.
-> 
-> I think, if I change the patch-history (the one you suggested in another
-> reply) this could be avoided.
+3. Add device-tree for both Clearfog Base and Pro.
 
-Yes, I think that would be helpful for reviewing :)
+While dtbs_check is happy with LED descriptions behind dsa switch,
+functionally they require supporting code by Andrew Lunn:
+https://lore.kernel.org/r/20240401-v6-8-0-net-next-mv88e6xxx-leds-v4-v3-0-221b3fa55f78@lunn.ch
 
-> 
-> > 
-> > >  
-> > >  /* private: */
-> > >  	/* for waiting until the execution of the kdamond_fn is started */
-> > > @@ -634,7 +632,10 @@ struct damon_ctx {
-> > >  	 * update
-> > >  	 */
-> > >  	unsigned long next_ops_update_sis;
-> > > +	/* upper limit for each monitoring region */
-> > >  	unsigned long sz_limit;
-> > > +	/* marker to check if context is valid */
-> > > +	bool valid;
-> > 
-> > What is the validity?
-> 
-> This is a "flag" which indicates that the context is "valid" for kdamond
-> to be able to call ->check_accesses() on it. Because we have many contexts
-> we need a way to identify which context is valid while iterating over
-> all of them (please, see kdamond_prepare_access_checks_ctx() function).
+NOTICE IN CASE ANYBODY WANTS TO SELF-UPGRADE:
+CN9130 SoM has a different footprint from Armada 388 SoM.
+Components on the carrier board below the SoM may collide causing
+damage, such as on Clearfog Base.
 
-It's still not very clear to me.  When it is "valid" or not for kdamond to be
-able to call ->check_accesses()?  I assume you mean it is valid if the
-monitoring operations set's ->target_valid() returns zero?
+Signed-off-by: Josua Mayer <josua@solid-run.com>
+---
+Changes in v6:
+- add device-tree for cn9132 clearfog and CEX-7 module
+- add dt compatible for tla2021 adc
+  --> I don't plan to submit a driver patch because I can't test it
+  --> might share untested patch
+- add dt property for swapping d+-/d- on cp110 utmi phy
+  --> I plan to submit a driver patch, already prototyped
+- removed duplicate node reference / status=okay for cp0_utmi from
+  cn9131-cf-solidwan.dts
+- rebased on 6.10-rc1
+- Link to v5: https://lore.kernel.org/r/20240509-cn9130-som-v5-0-95493eb5c79d@solid-run.com
 
-The callback is not for preventing unnecessary ->check_accesses(), but for
-knowing if continuing the monitoring makes sense or not.  For example, the
-callback of 'vaddr' operation set checks if the virtual address space still
-exists (whether the target process is still running)  Calling
-->check_accesses() for ->target_valid() returned non-zero target is totally ok,
-though it is meaningless.  And therefore kdamond stops if it returns non-zero.
+Changes in v5:
+- replaced *-gpio properties with preferred *-gpios
+  (Reported-by: robh@kernel.org)
+- removed fixed-regulator regulator-oc-protection-microamp properties
+  This property is intended to set a configurable over-current limit to
+  a particular value. The physical component however is not
+  configurable, remove the property.
+- kept all review tags since the changes were minor, hope that is okay
+  with everybody.
+- Link to v4: https://lore.kernel.org/r/20240502-cn9130-som-v4-0-0a2e2f1c70d8@solid-run.com
 
-> 
-> Maybe name should be changed,
+Changes in v4:
+- Picked up reviewed-by tags by Andrew Lunn.
+- fixed a typo and changed 3-line comment into single-line comment
+  for clearfog-base/-pro dts, but kept review tags since change was
+  minor.
+- Updated SFP led labels to use "sfp?:colour" without "color" property,
+  to avoid duplicate labels while reflecting they are each dual-colour.
+- Link to v3: https://lore.kernel.org/r/20240414-cn9130-som-v3-0-350a67d44e0a@solid-run.com
 
-At least some more detailed comment would be appreciated, imo.
+Changes in v3:
+- picked up acked-by for dt-bindings
+- skipped acked-by for dts because additional changes were made:
+  - moved legacy netdev aliases to carrier dts
+  - fix status property style errors
+  - add pinctrl for secondary spi chip-select on mikrobus header (& som)
+  - specify spi bus frequency limits for som
+- Added CN9131 SolidWAN board
+- Link to v2: https://lore.kernel.org/r/20240404-cn9130-som-v2-0-3af2229c7d2d@solid-run.com
 
-> but now I don't see a way how we could merge
-> this into kdamond_valid_ctx() or so, because the main cause of this "valid"
-> bit is that there's no more "valid" targets for this context, but also we could
-> have ->after_sampling() returned something bad.
+Changes in v2:
+- rewrote dt bindings dropping unnecessary compatibles
+  (Reported-By: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>)
+- added bindings for two additional boards (cn9131/9132)
+  support planned for the coming weeks, mostly serves
+  illustrational purposes, to understand cn913x variants
+- cf-pro: add description for LEDs behind DSA switch
+- cf-base: add description for LEDs behind PHYs
+  (Reported-By: Andrew Lunn <andrew@lunn.ch>)
+- Link to v1: https://lore.kernel.org/r/20240321-cn9130-som-v1-0-711127a409ae@solid-run.com
 
-As mentioned above, calling ->check_accesses() or others towards invalidated
-targets (e.g., terminated processes's virtual address spaces) should be ok, if
-any of the targets are still valid.  So I don't show special technical
-difficulties here.  Please let me know if I'm missing something.
+---
+Josua Mayer (7):
+      dt-bindings: arm64: marvell: add solidrun cn9130 som based boards
+      dt-bindings: arm64: marvell: add solidrun cn9132 CEX-7 evaluation board
+      dt-bindings: iio: adc: ti,ads1015: add compatible for tla2021
+      dt-bindings: phy: armada-cp110-utmi: add optional swap-dx-lanes property
+      arm64: dts: add description for solidrun cn9130 som and clearfog boards
+      arm64: dts: add description for solidrun cn9131 solidwan board
+      arm64: dts: add description for solidrun cn9132 cex7 module and clearfog board
 
-> 
-> > 
-> > >  
-> > >  /* public: */
-> > >  	struct kdamond *kdamond;
-> > > @@ -682,6 +683,12 @@ static inline struct damon_ctx *damon_first_ctx(struct kdamond *kdamond)
-> > >  	return list_first_entry(&kdamond->contexts, struct damon_ctx, list);
-> > >  }
-> > >  
-> > > +static inline bool damon_is_last_ctx(struct damon_ctx *ctx,
-> > > +				     struct kdamond *kdamond)
-> > > +{
-> > > +	return list_is_last(&ctx->list, &kdamond->contexts);
-> > > +}
-> > > +
-> > >  #define damon_for_each_region(r, t) \
-> > >  	list_for_each_entry(r, &t->regions_list, list)
-> > >  
-> > > diff --git a/include/trace/events/damon.h b/include/trace/events/damon.h
-> > > index 23200aabc..d5287566c 100644
-> > > --- a/include/trace/events/damon.h
-> > > +++ b/include/trace/events/damon.h
-> > 
-> > Let's separate this change to another patch.
-> 
-> Separating patches we hardly be able to reach at least build
-> consistency between patches. Moreover DAMON won't be able
-> to function corretly in between.
+ .../bindings/arm/marvell/armada-7k-8k.yaml         |  18 +
+ .../devicetree/bindings/iio/adc/ti,ads1015.yaml    |   1 +
+ .../phy/marvell,armada-cp110-utmi-phy.yaml         |   6 +
+ arch/arm64/boot/dts/marvell/Makefile               |   4 +
+ arch/arm64/boot/dts/marvell/cn9130-cf-base.dts     | 178 ++++++
+ arch/arm64/boot/dts/marvell/cn9130-cf-pro.dts      | 375 +++++++++++
+ arch/arm64/boot/dts/marvell/cn9130-cf.dtsi         | 197 ++++++
+ arch/arm64/boot/dts/marvell/cn9130-sr-som.dtsi     | 160 +++++
+ arch/arm64/boot/dts/marvell/cn9131-cf-solidwan.dts | 637 ++++++++++++++++++
+ arch/arm64/boot/dts/marvell/cn9132-clearfog.dts    | 673 +++++++++++++++++++
+ arch/arm64/boot/dts/marvell/cn9132-sr-cex7.dtsi    | 712 +++++++++++++++++++++
+ 11 files changed, 2961 insertions(+)
+---
+base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
+change-id: 20240318-cn9130-som-848e86acb0ac
 
-I agree that it's not very easy, indeed.  But let's try.  In terms of
-functionality, we need to keep the old behavior that visible to users.  For
-example, this change tries to make the traceevent changed for the multi
-contexts support.  It is for making the behavior _better_, not for keeping old
-behavior.  Rather than that, this is introducing a new change to the tracepoint
-output.  Just make no change here.  Users may get confused when they use
-multiple contexts, but what they see is not changed.
+Sincerely,
+-- 
+Josua Mayer <josua@solid-run.com>
 
-Further, you can delay letting users (user-space) using the multiple contexts
-(allowing >1 input to nr_contexts of DAMON sysfs interface) after making this
-change in a separate patch.
-
-> 
-> > 
-> > > @@ -50,12 +50,13 @@ TRACE_EVENT_CONDITION(damos_before_apply,
-> > >  
-> > >  TRACE_EVENT(damon_aggregated,
-> > >  
-> > > -	TP_PROTO(unsigned int target_id, struct damon_region *r,
-> > > -		unsigned int nr_regions),
-> > > +	TP_PROTO(unsigned int context_id, unsigned int target_id,
-> > > +		struct damon_region *r, unsigned int nr_regions),
-> > >  
-> > > -	TP_ARGS(target_id, r, nr_regions),
-> > > +	TP_ARGS(context_id, target_id, r, nr_regions),
-> > >  
-> > >  	TP_STRUCT__entry(
-> > > +		__field(unsigned long, context_id)
-> > >  		__field(unsigned long, target_id)
-> > >  		__field(unsigned int, nr_regions)
-> > >  		__field(unsigned long, start)
-> > > @@ -65,6 +66,7 @@ TRACE_EVENT(damon_aggregated,
-> > >  	),
-> > >  
-> > >  	TP_fast_assign(
-> > > +		__entry->context_id = context_id;
-> > >  		__entry->target_id = target_id;
-> > >  		__entry->nr_regions = nr_regions;
-> > >  		__entry->start = r->ar.start;
-> > > @@ -73,9 +75,9 @@ TRACE_EVENT(damon_aggregated,
-> > >  		__entry->age = r->age;
-> > >  	),
-> > >  
-> > > -	TP_printk("target_id=%lu nr_regions=%u %lu-%lu: %u %u",
-> > > -			__entry->target_id, __entry->nr_regions,
-> > > -			__entry->start, __entry->end,
-> > > +	TP_printk("context_id=%lu target_id=%lu nr_regions=%u %lu-%lu: %u %u",
-> > > +			__entry->context_id, __entry->target_id,
-> > > +			__entry->nr_regions, __entry->start, __entry->end,
-> > >  			__entry->nr_accesses, __entry->age)
-> > >  );
-> > >  
-> > > diff --git a/mm/damon/core-test.h b/mm/damon/core-test.h
-> > > index 0cee634f3..7962c9a0e 100644
-> > > --- a/mm/damon/core-test.h
-> > > +++ b/mm/damon/core-test.h
-> > > @@ -99,7 +99,7 @@ static void damon_test_aggregate(struct kunit *test)
-> > >  		}
-> > >  		it++;
-> > >  	}
-> > > -	kdamond_reset_aggregated(ctx);
-> > > +	kdamond_reset_aggregated(ctx, 0);
-> > >  	it = 0;
-> > >  	damon_for_each_target(t, ctx) {
-> > >  		ir = 0;
-> > > diff --git a/mm/damon/core.c b/mm/damon/core.c
-> > > index cfc9c803d..ad73752af 100644
-> > > --- a/mm/damon/core.c
-> > > +++ b/mm/damon/core.c
-> > > @@ -500,6 +500,8 @@ struct damon_ctx *damon_new_ctx(void)
-> > >  	ctx->attrs.min_nr_regions = 10;
-> > >  	ctx->attrs.max_nr_regions = 1000;
-> > >  
-> > > +	ctx->valid = true;
-> > > +
-> > >  	INIT_LIST_HEAD(&ctx->adaptive_targets);
-> > >  	INIT_LIST_HEAD(&ctx->schemes);
-> > >  	INIT_LIST_HEAD(&ctx->list);
-> > > @@ -513,7 +515,7 @@ struct damon_ctx *damon_new_ctx(void)
-> > >  void damon_add_ctx(struct kdamond *kdamond, struct damon_ctx *ctx)
-> > >  {
-> > >  	list_add_tail(&ctx->list, &kdamond->contexts);
-> > > -	++kdamond->nr_ctxs;
-> > > +	ctx->kdamond = kdamond;
-> > >  }
-> > >  
-> > >  struct kdamond *damon_new_kdamond(void)
-> > > @@ -567,10 +569,8 @@ void damon_destroy_ctxs(struct kdamond *kdamond)
-> > >  {
-> > >  	struct damon_ctx *c, *next;
-> > >  
-> > > -	damon_for_each_context_safe(c, next, kdamond) {
-> > > +	damon_for_each_context_safe(c, next, kdamond)
-> > >  		damon_destroy_ctx(c);
-> > > -		--kdamond->nr_ctxs;
-> > > -	}
-> > >  }
-> > >  
-> > >  void damon_destroy_kdamond(struct kdamond *kdamond)
-> > > @@ -735,6 +735,20 @@ bool damon_kdamond_running(struct kdamond *kdamond)
-> > >  	return running;
-> > >  }
-> > >  
-> > > +/**
-> > > + * kdamond_nr_ctxs() - Return number of contexts for this kdamond.
-> > > + */
-> > > +static int kdamond_nr_ctxs(struct kdamond *kdamond)
-> > > +{
-> > > +	struct list_head *pos;
-> > > +	int nr_ctxs = 0;
-> > > +
-> > > +	list_for_each(pos, &kdamond->contexts)
-> > > +		++nr_ctxs;
-> > > +
-> > > +	return nr_ctxs;
-> > > +}
-> > > +
-> > >  /* Returns the size upper limit for each monitoring region */
-> > >  static unsigned long damon_region_sz_limit(struct damon_ctx *ctx)
-> > >  {
-> > > @@ -793,11 +807,11 @@ static int __damon_start(struct kdamond *kdamond)
-> > >   * @exclusive:	exclusiveness of this contexts group
-> > >   *
-> > >   * This function starts a group of monitoring threads for a group of monitoring
-> > > - * contexts.  One thread per each context is created and run in parallel.  The
-> > > - * caller should handle synchronization between the threads by itself.  If
-> > > - * @exclusive is true and a group of threads that created by other
-> > > + * contexts. If @exclusive is true and a group of contexts that created by other
-> > >   * 'damon_start()' call is currently running, this function does nothing but
-> > > - * returns -EBUSY.
-> > > + * returns -EBUSY, if @exclusive is true and a given kdamond wants to run
-> > > + * several contexts, then this function returns -EINVAL. kdamond can run
-> > > + * exclusively only one context.
-> > >   *
-> > >   * Return: 0 on success, negative error code otherwise.
-> > >   */
-> > > @@ -806,10 +820,6 @@ int damon_start(struct kdamond *kdamond, bool exclusive)
-> > >  	int err = 0;
-> > >  
-> > >  	BUG_ON(!kdamond);
-> > > -	BUG_ON(!kdamond->nr_ctxs);
-> > > -
-> > > -	if (kdamond->nr_ctxs != 1)
-> > > -		return -EINVAL;
-> > >  
-> > >  	mutex_lock(&damon_lock);
-> > >  	if ((exclusive && nr_running_kdamonds) ||
-> > > @@ -818,6 +828,11 @@ int damon_start(struct kdamond *kdamond, bool exclusive)
-> > >  		return -EBUSY;
-> > >  	}
-> > >  
-> > > +	if (exclusive && kdamond_nr_ctxs(kdamond) > 1) {
-> > > +		mutex_unlock(&damon_lock);
-> > > +		return -EINVAL;
-> > > +	}
-> > > +
-> > >  	err = __damon_start(kdamond);
-> > >  	if (err)
-> > >  		return err;
-> > > @@ -857,7 +872,7 @@ int damon_stop(struct kdamond *kdamond)
-> > >  /*
-> > >   * Reset the aggregated monitoring results ('nr_accesses' of each region).
-> > >   */
-> > > -static void kdamond_reset_aggregated(struct damon_ctx *c)
-> > > +static void kdamond_reset_aggregated(struct damon_ctx *c, unsigned int ci)
-> > >  {
-> > >  	struct damon_target *t;
-> > >  	unsigned int ti = 0;	/* target's index */
-> > > @@ -866,7 +881,7 @@ static void kdamond_reset_aggregated(struct damon_ctx *c)
-> > >  		struct damon_region *r;
-> > >  
-> > >  		damon_for_each_region(r, t) {
-> > > -			trace_damon_aggregated(ti, r, damon_nr_regions(t));
-> > > +			trace_damon_aggregated(ci, ti, r, damon_nr_regions(t));
-> > 
-> > Separate traceevent change into another patch.
-> > 
-> > >  			r->last_nr_accesses = r->nr_accesses;
-> > >  			r->nr_accesses = 0;
-> > >  		}
-> > > @@ -1033,21 +1048,15 @@ static bool damos_filter_out(struct damon_ctx *ctx, struct damon_target *t,
-> > >  	return false;
-> > >  }
-> > >  
-> > > -static void damos_apply_scheme(struct damon_ctx *c, struct damon_target *t,
-> > > -		struct damon_region *r, struct damos *s)
-> > > +static void damos_apply_scheme(unsigned int cidx, struct damon_ctx *c,
-> > > +			       struct damon_target *t, struct damon_region *r,
-> > > +			       struct damos *s)
-> > 
-> > Unnecesary change.
-> 
-> What do you mean? Why is this unnecessary? Now DAMON iterates over
-> contexts and calls kdamond_apply_schemes(ctx), so how can we know
-> which context we print trace for? Sorry, maybe I misunderstood
-> how DAMON does it, but I'm a bit confused.
-
-I believe the above comment to tracevent change explains this.
-
-> 
-> Or maybe you mean indentation? The actual change is adding "cidx":
-> 
-> 	-static void damos_apply_scheme(struct damon_ctx *c, ...
-> 	+static void damos_apply_scheme(unsigned int cidx, struct damon_ctx *c,
-> 
-> > 
-> > As also mentioned on the reply to the first patch, I think this patch can
-> > significantly changed if you agree to my opinion about the flow of patches that
-> > I mentioned on the reply to the cover letter.  Hence, stopping review from here
-> > for now.  Please let me know if you have a different opinion.
-> 
-> I see. Anyway, thank you for your comments, I'll try my best to improve the patch.
-
-No problem, appreciate your patience and great works on this patchset!
-
-
-Thanks,
-SJ
-
-[...]
 
