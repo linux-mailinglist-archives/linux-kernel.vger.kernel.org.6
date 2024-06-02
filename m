@@ -1,125 +1,96 @@
-Return-Path: <linux-kernel+bounces-198344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C3878D76FF
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 17:52:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F4018D7701
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 17:54:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9432B22B2F
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 15:52:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D08FF28221F
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 15:54:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7B4355880;
-	Sun,  2 Jun 2024 15:50:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7B784AEEA;
+	Sun,  2 Jun 2024 15:54:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="q/hMyIaX"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ZehAeZcv"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90CC4537FF;
-	Sun,  2 Jun 2024 15:50:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3B4813AF2;
+	Sun,  2 Jun 2024 15:54:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717343433; cv=none; b=PRF90SSEDaRn5Dt/D6RWHvvUjdSlG1r/kDKz9sa9fmn5ewAPKDbCGzR+EUGVzJjAcNhLiS1jpmqYcA4VhABIEiw5RxQu07AxzoZ9uzrTmtdv3DPMeHpWZ86We71alYCK+zyNeTN2BUBxtGN/XHAKMgCMiAOpXcyP1JoP8hH868k=
+	t=1717343660; cv=none; b=KLUGJm9Te39Gs/IxsCzcVMtucs+KF88ak9ylwi4vMs3tNFNmq4ninrXiBz8E5FWmXV0QKfA6jNtV8qbQ9VtCHSG/hWceoBP9yMpZf/Oebtlvy8wqmvsGJFdXiqrrNgRLJN4KgdP08Zu+4NpnPKvlACmPZw+Z9d+76m25lU0bmfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717343433; c=relaxed/simple;
-	bh=7uc1dFxQhU4B3TuqPQ7wNf0z173494wt+6TFV8F0t1M=;
+	s=arc-20240116; t=1717343660; c=relaxed/simple;
+	bh=O8x9QJjrChVP+uJek3aA1p8gux7bi0OdNCSQ/EwzXYM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q5WH0hBahFnKFbNCwzxl59D8hgaBvKa99O0navFjvxkOORnQYSrWAMbDfIAcjFl9iS6VrqwTuqV3zqk2k0Kr0QKAvNnRbV6KSfzmwVYbJ2f4LKBx/uRaAiV3OUbAhfGGqAhNZINK3XF/OAxZ+owNSrQy8gqDNqeUEYqt4LRLZqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=q/hMyIaX; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 7B3B939F;
-	Sun,  2 Jun 2024 17:50:23 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1717343423;
-	bh=7uc1dFxQhU4B3TuqPQ7wNf0z173494wt+6TFV8F0t1M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=q/hMyIaXuyPSc48P9lKOIr8VNKikwAfoAyV0mpU6jiPGdYHHChDF30tosQeapT1Ky
-	 2nhWTulodpmo9ljS2skiFNMBVTgoZo+EODh3VpSnBBIGt/TlEhkZm/lkQzcCl7hEZv
-	 1STyyiox8aQk1IhOKOtF0niyqWUNEpqbijfNhM4w=
-Date: Sun, 2 Jun 2024 18:50:15 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Lee Jones <lee@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-Subject: Re: [PATCH v3 1/4] dt-bindings: Add bindings for the Analog Devices
- ADP5585
-Message-ID: <20240602155015.GI6683@pendragon.ideasonboard.com>
-References: <20240602152412.29136-1-laurent.pinchart@ideasonboard.com>
- <20240602152412.29136-2-laurent.pinchart@ideasonboard.com>
- <de6c28c6-3139-441e-8738-c8842b9a274b@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=A1cuLfXLAYSjYm7CRzkLc5kshkCzrCBZFkTKjdJFUxwGZOntpkMZJMcnYKPdn0UC+ADFyVF1VxQuos77rSwrlOLc7fPk6eOpMneb9qbl6GaH+/S/33oDKOkvgzGVo023/rrAZ6rXfJovfDcF7BVkAy2KacdCX9oL/8nwRtf5bCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=ZehAeZcv; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=jAp9ulkP+aIOZlRN7+1gRLXP/ryNz1Huu1tcBNgtGD0=; b=ZehAeZcvlmuFe91tGL05XO7Yta
+	W+UTUi4HdWUITRmOA6euQ6KGGqfE41bGfxW86WhQ5XnjCEKQaREP1rGz7IoL6vec6C2MAmk69DS7v
+	FY2IjDQQAqy/TaQGI1DVdmPcQyW7q6BqNkPDdUT2yUrWSBhVWQcApeV525APxecWxcnI=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sDnX6-00Gdvb-37; Sun, 02 Jun 2024 17:54:08 +0200
+Date: Sun, 2 Jun 2024 17:54:08 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Siddharth Vadapalli <s-vadapalli@ti.com>
+Cc: Yojana Mallik <y-mallik@ti.com>, schnelle@linux.ibm.com,
+	wsa+renesas@sang-engineering.com, diogo.ivo@siemens.com,
+	rdunlap@infradead.org, horms@kernel.org, vigneshr@ti.com,
+	rogerq@ti.com, danishanwar@ti.com, pabeni@redhat.com,
+	kuba@kernel.org, edumazet@google.com, davem@davemloft.net,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, srk@ti.com,
+	rogerq@kernel.org
+Subject: Re: [PATCH net-next v2 2/3] net: ethernet: ti: Register the RPMsg
+ driver as network device
+Message-ID: <16504fb9-f786-492b-8982-b46854a7de1e@lunn.ch>
+References: <20240531064006.1223417-1-y-mallik@ti.com>
+ <20240531064006.1223417-3-y-mallik@ti.com>
+ <cae9e96a-50ff-496d-93e7-fe1f16db7b89@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <de6c28c6-3139-441e-8738-c8842b9a274b@kernel.org>
+In-Reply-To: <cae9e96a-50ff-496d-93e7-fe1f16db7b89@ti.com>
 
-Hi Krzysztof,
-
-On Sun, Jun 02, 2024 at 05:31:04PM +0200, Krzysztof Kozlowski wrote:
-> On 02/06/2024 17:24, Laurent Pinchart wrote:
-> > The ADP5585 is a 10/11 input/output port expander with a built in keypad
-> > matrix decoder, programmable logic, reset generator, and PWM generator.
-> > These bindings model the device as an MFD, and support the GPIO expander
-> > and PWM functions.
+> > +#define ICVE_MIN_PACKET_SIZE ETH_ZLEN
+> > +#define ICVE_MAX_PACKET_SIZE 1540 //(ETH_FRAME_LEN + ETH_FCS_LEN)
 > 
-> Please use subject prefixes matching the subsystem, e.g. dt-bindings: mfd:
+> Is the commented portion above required?
+
+I would actually say the comment part is better, since it gives an
+idea where the number comes from. However, 1514 + 4 != 1540. So there
+is something missing here.
+
+> >  struct icve_port {
+> > +	struct icve_shared_mem *tx_buffer; /* Write buffer for data to be consumed remote side */
+> > +	struct icve_shared_mem *rx_buffer; /* Read buffer for data to be consumed by this driver */
+> > +	struct timer_list rx_timer;
+> >  	struct icve_common *common;
+> > -} __packed;
 > 
-> A nit, subject: drop second/last, redundant "bindings for". The
-> "dt-bindings" prefix is already stating that these are bindings.
-> See also:
-> https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+> Is the "__packed" attribute no longer required, or was it overlooked?
 
-I'll do that. It would be nice if someone could teach checkpatch about
-this rule.
+Why is packed even needed? This is not a message structure to be
+passed over the RPC is it?
 
-> > These bindings support the GPIO and PWM functions.
-> > 
-> > Drop the existing adi,adp5585 and adi,adp5585-02 compatible strings from
-> > trivial-devices.yaml. They have been added there by mistake as the
-> > driver that was submitted at the same time used different compatible
-> > strings. We can take them over safely.
-> > 
-> 
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    i2c {
-> > +        #address-cells = <1>;
-> > +        #size-cells = <0>;
-> > +
-> > +        mfd@34 {
-> 
-> mfd is Linuxism, so this should be probably "io-expander" or something
-> similar.
+I think this is the second time code has been added in one patch, and
+then removed in the next. That is bad practice and suggests the
+overall code quality is not good. Please do some internal reviews.
 
-Sure.
-
-> > +            compatible = "adi,adp5585-00", "adi,adp5585";
-> > +            reg = <0x34>;
-> > +
-> > +            vdd-supply = <&reg_3v3>;
-> 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
--- 
-Regards,
-
-Laurent Pinchart
+	Andrew
 
