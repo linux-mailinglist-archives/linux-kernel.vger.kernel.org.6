@@ -1,95 +1,147 @@
-Return-Path: <linux-kernel+bounces-198123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50BE68D73AA
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 05:55:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 018B98D73AE
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 06:03:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81F141C211A1
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 03:55:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D4B71C20A8A
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 04:03:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B2C53BBF5;
-	Sun,  2 Jun 2024 03:54:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E198CBE47;
+	Sun,  2 Jun 2024 04:03:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G8mVZnH5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c0ODv2c8"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBBD73B2A2;
-	Sun,  2 Jun 2024 03:54:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E0316FCC;
+	Sun,  2 Jun 2024 04:03:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717300442; cv=none; b=mQUCPF1oRRJDfA3dFObmdFAMBNXTuO6opxNj4zUuR7tuVy3ybckXFIfSbItcum/v7aHphhxdeuNP+XJVUN/LaY3Z90FgDl4vVvNi6AG3KCokCflNG3k46y3PDd2L3A0K+9V/Wc/PrSrUFPowwqZRzj2keOLTqB7OZbIliK7RBOg=
+	t=1717301009; cv=none; b=Hd+GqYaM+5VoJpZ86IVAb1A1DPKwrrKoV1t9XdAwypQb+cyOIdJgbTByt49HC/4RBZtOSO9BH0qKZN7l/pH9CpsIoGfyMotl5ZWrogJ12a6ieYeo0F8eBIeB06b4LlmoaNatn4D0x1HIoV7joU2CHOI3QWATEsY9dZ1CL5g3DC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717300442; c=relaxed/simple;
-	bh=pCsS5ItjtVSjKnYxIpks10S712aXGTHVX+1+zeNy078=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ruq7FX8WYFjBXEfRrtwznt5iexEAvmtFAsN1eEsJmbc9sbgWEKV8hwfW21FaEzoGe3Za3LabTMzn6One+g6aBYmE3o/Ib6EhIsEnPTc675bi6g6yxykhe2Z87K3rRPlTHZyK09qYpzqQCEJ1cegS25w6KK6Et9Q85LanvmKXNz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G8mVZnH5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F344DC4AF07;
-	Sun,  2 Jun 2024 03:54:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717300442;
-	bh=pCsS5ItjtVSjKnYxIpks10S712aXGTHVX+1+zeNy078=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=G8mVZnH5M/7h+DHAxDCufggmP+Bv7lqzLCW6ZOeVFajPPOFp7twZjHzxFnLS1jVlY
-	 YK+ohfPJZqhIkUBJFZeq1ceMadJloFcVDXaZZsCx/ocX5VofjlIzy/naRLpA1shX9q
-	 5dkfNABQN9VfxidqTH3mqhqov4Tk0Zb0lHmOzjcwgH+pqyY4Bik/OyxcJiuCBsYqZC
-	 AOwKRjYHNWRC6JBTz1qKI2JFXT7nrJSA6+VdiKv1YBNlYqPFGSbIEgKvMdfykHyFb7
-	 /i+GvpgeNo9sxYXeAJypKKjhU4PIQJO33r2K9SzOOXXYIHQHZBHzfolRzwxMc0gBL0
-	 /EH2sQUxeSG9g==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Unnathi Chalicheemala <quic_uchalich@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel@quicinc.com
-Subject: Re: (subset) [PATCH v6 0/5] LLCC: Support for Broadcast_AND region
-Date: Sat,  1 Jun 2024 22:53:48 -0500
-Message-ID: <171730042577.665897.8196444348725965878.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <cover.1717014052.git.quic_uchalich@quicinc.com>
-References: <cover.1717014052.git.quic_uchalich@quicinc.com>
+	s=arc-20240116; t=1717301009; c=relaxed/simple;
+	bh=5kCl8uorB1nKwMgl3Tyy4pULV+LlG5gIqTfnpnUbIEI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Eo1wtr4EvugtX8tzCPqb/W4SFhW+xhUduotFbaSFY2YE8i89qX3fkgWmKf7xDutYdQ45hrs26+o7O0Vldzwxkj3YVKLXpZv8238i0Yj1x56oeb29cECwAel5g+Wl9oDp65GRx+mcm02ZWJMogdyC9JkV6NJVS1wOQOniFcCoM2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c0ODv2c8; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717301008; x=1748837008;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:mime-version;
+  bh=5kCl8uorB1nKwMgl3Tyy4pULV+LlG5gIqTfnpnUbIEI=;
+  b=c0ODv2c8BcIXzdNDYjV20XGBbQbo9Rg5dIhRwIUNxv45KZraCLsFPm3I
+   okB9B8IX8+4bcAE1oNM93VYmkGYNn3YFh4kQq9UWGzyl3RqY5aFKYeuO3
+   Cag1tv2QyBwTyKg+MWFt+oymf5c2I91JjqGVUVqfTvqKZ4mEA2n1I4b1X
+   ps5dN3zc7wR3bV4uDbueXNf3L1L6nhVziFSxQhHP4GrOkKVWcbfEdwk9W
+   IfV74dq7CetT6S4JBoSP5jfpcAAC4qrVGSDeQDqE+4a7MmuSRfS4VxOMj
+   G1j8caQqDkHvdgaR7gMFtJz8Mok3Oot63thHsqPQUHNW3DV3kS7iPCtDU
+   A==;
+X-CSE-ConnectionGUID: W7sgabexR9yQSsyIF7hWCA==
+X-CSE-MsgGUID: TQOUou/bQlqRHZkyZ89L5A==
+X-IronPort-AV: E=McAfee;i="6600,9927,11090"; a="25219015"
+X-IronPort-AV: E=Sophos;i="6.08,208,1712646000"; 
+   d="diff'?scan'208";a="25219015"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jun 2024 21:03:27 -0700
+X-CSE-ConnectionGUID: R6L1sIQuSiCS4gM1rT3wUQ==
+X-CSE-MsgGUID: ye4e3pN9QW6ORCXpHg/Hgw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,208,1712646000"; 
+   d="diff'?scan'208";a="41627519"
+Received: from spandruv-desk.jf.intel.com ([10.54.75.19])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jun 2024 21:03:27 -0700
+Message-ID: <6d5ee74605bd9574baa5ed111cb54e959414437a.camel@linux.intel.com>
+Subject: Re: [PATCH v1 2/6] cpufreq: intel_pstate: Do not update
+ global.turbo_disabled after initialization
+From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
+To: Xi Ruoyao <xry111@xry111.site>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+  Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+Date: Sat, 01 Jun 2024 21:03:18 -0700
+In-Reply-To: <bf3ebf1571a4788e97daf861eb493c12d42639a3.camel@xry111.site>
+References: <13494237.uLZWGnKmhe@kreacher> <8366982.T7Z3S40VBb@kreacher>
+	 <bf3ebf1571a4788e97daf861eb493c12d42639a3.camel@xry111.site>
+Content-Type: multipart/mixed; boundary="=-3gzlBN4siQgWAYD7n7Rk"
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+
+--=-3gzlBN4siQgWAYD7n7Rk
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Hi Xi,
+
+On Sun, 2024-06-02 at 11:21 +0800, Xi Ruoyao wrote:
+> On Mon, 2024-03-25 at 18:02 +0100, Rafael J. Wysocki wrote:
+> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >=20
+> > The global.turbo_disabled is updated quite often, especially in the
+> > passive mode in which case it is updated every time the scheduler
+> > calls
+> > into the driver.=C2=A0 However, this is generally not necessary and it
+> > adds
+> > MSR read overhead to scheduler code paths (and that particular MSR
+> > is
+> > slow to read).
+> >=20
+> > For this reason, make the driver read
+> > MSR_IA32_MISC_ENABLE_TURBO_DISABLE
+> > just once at the cpufreq driver registration time and remove all of
+> > the
+> > in-flight updates of global.turbo_disabled.
+>=20
+> Hi Rafael and Srinivas,
+>=20
+> Thanks for the clean up, but unfortunately on one of my laptops
+> (based
+> on i5-11300H) MSR_IA32_MISC_ENABLE_TURBO_DISABLE is mysteriously
+> changing from 1 to 0 in about one minute after system boot.=C2=A0 I've no
+> idea why this is happening (firmware is doing some stupid thing?)
+>=20
+> I've noticed the issue before and "hacked it around"
+> (https://bugzilla.kernel.org/show_bug.cgi?id=3D218702). But after this
+> change I can no longer hack it around and the system is much slower.
+>=20
+> Is it possible to hack it around again?
+>=20
+Please try the attached diff and build kernel and try.
+
+git apply update_max_freq.diff
+
+Then build kernel and install.
+
+Thanks,
+Srinivas
+
+--=-3gzlBN4siQgWAYD7n7Rk
+Content-Disposition: attachment; filename="update_max_freq.diff"
+Content-Type: text/x-patch; name="update_max_freq.diff"; charset="UTF-8"
+Content-Transfer-Encoding: base64
+
+ZGlmZiAtLWdpdCBhL2RyaXZlcnMvY3B1ZnJlcS9pbnRlbF9wc3RhdGUuYyBiL2RyaXZlcnMvY3B1
+ZnJlcS9pbnRlbF9wc3RhdGUuYwppbmRleCA0Yjk4NmMwNDQ3NDEuLmRlYWI5NmQ4ZDRiZiAxMDA2
+NDQKLS0tIGEvZHJpdmVycy9jcHVmcmVxL2ludGVsX3BzdGF0ZS5jCisrKyBiL2RyaXZlcnMvY3B1
+ZnJlcS9pbnRlbF9wc3RhdGUuYwpAQCAtMTE2OCw2ICsxMTY4LDEyIEBAIHN0YXRpYyB2b2lkIGlu
+dGVsX3BzdGF0ZV91cGRhdGVfbGltaXRzKHVuc2lnbmVkIGludCBjcHUpCiAJaWYgKCFwb2xpY3kp
+CiAJCXJldHVybjsKIAorCXByX2luZm8oIiVzIGNwdTolZFxuIiwgX19mdW5jX18sIGNwdSk7CisK
+KwlnbG9iYWwudHVyYm9fZGlzYWJsZWQgPSB0dXJib19pc19kaXNhYmxlZCgpOworCWdsb2JhbC5u
+b190dXJibyA9IGdsb2JhbC50dXJib19kaXNhYmxlZDsKKwlhcmNoX3NldF9tYXhfZnJlcV9yYXRp
+byhnbG9iYWwudHVyYm9fZGlzYWJsZWQpOworCiAJX19pbnRlbF9wc3RhdGVfdXBkYXRlX21heF9m
+cmVxKGFsbF9jcHVfZGF0YVtjcHVdLCBwb2xpY3kpOwogCiAJY3B1ZnJlcV9jcHVfcmVsZWFzZShw
+b2xpY3kpOwo=
 
 
-On Fri, 31 May 2024 09:45:23 -0700, Unnathi Chalicheemala wrote:
-> This series adds:
-> 1. Device tree register mapping for Broadcast_AND region in SM8450,
-> SM8550, SM8650.
-> 2. LLCC driver updates to reflect addition of Broadcast_AND regmap.
-> 
-> To support CSR programming, a broadcast interface is used to program all
-> channels in a single command. Until SM8450 there was only one broadcast
-> region (Broadcast_OR) used to broadcast write and check for status bit
-> 0. From SM8450 onwards another broadcast region (Broadcast_AND) has been
-> added which checks for status bit 1.
-> 
-> [...]
-
-Applied, thanks!
-
-[3/5] arm64: dts: qcom: sm8450: Add Broadcast_AND register in LLCC block
-      commit: c566143137aaacfed1af09d8710edab1971c312d
-[4/5] arm64: dts: qcom: sm8550: Add Broadcast_AND register in LLCC block
-      commit: 2a71a2eb1f5ec438f0ac1c7e294cd7ed32119af3
-[5/5] arm64: dts: qcom: sm8650: Add Broadcast_AND register in LLCC block
-      commit: a7823576f7f7b1cb0a595332ab6b0b38e15f45a7
-
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
+--=-3gzlBN4siQgWAYD7n7Rk--
 
