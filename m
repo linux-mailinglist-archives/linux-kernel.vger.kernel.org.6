@@ -1,249 +1,165 @@
-Return-Path: <linux-kernel+bounces-198158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 516938D7437
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 09:59:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E1728D7441
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 10:18:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6A911F21696
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 07:59:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 123192819A0
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 08:18:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B9C9208A4;
-	Sun,  2 Jun 2024 07:59:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D61292135A;
+	Sun,  2 Jun 2024 08:18:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MKQqLGI1"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="ZCUWoacO"
+Received: from EUR04-VI1-obe.outbound.protection.outlook.com (mail-vi1eur04olkn2051.outbound.protection.outlook.com [40.92.75.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 030742135A;
-	Sun,  2 Jun 2024 07:59:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717315153; cv=none; b=o0AXzCNXE/0cYV8cmjcrsC898VrWRfrw44WKTsBr/hZ49KVZF1vtIg5fETmACV22HAywsLyxgqetHe+d6MT31HYa1SH8XDl1b4scmdVt6qTkDFEvBxqO9a7dnqxpnCE93BrDbQKMgftX/ySRTwfEsVFBwlzt8hWrLvla6W4Y5UM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717315153; c=relaxed/simple;
-	bh=sSq5iPDhjRIQEyOd3MlHOSmfykEAsomRGR+IFEzP7Ho=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=tLxBhBWaECjUWF3RPq8mf2quaIg7c6pEBLFWFSKu805GFJm4QK5vSNumJgkJvOv+FPVNeguQF9KGbS3BZh8ZeC/5/pusY2CE3x7eow5JxPpxkZfO+q5JQQEdI/IJKJO4YFV3UCJgZCh1aPjyyMskDUJ/W4pNEZiV9idgqUGIcpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MKQqLGI1; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-57a2ed9af7dso3086995a12.1;
-        Sun, 02 Jun 2024 00:59:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717315150; x=1717919950; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GNH+q9S8FeOpIJMVISEmaZGU+MHC6ijhQj3KIdeVPco=;
-        b=MKQqLGI1RNkDHW8svjNoD7NL7z5xloU7Eth1iBssB6IratS62qgMiDIrlPjrBYieV+
-         7N+/HGRRgHQKVaImyckHeTUuV3LxpQ5hMUYPgsbQTufOUA/wJRu3pORAdmZDMgfgCq1z
-         fyrkdW2QmPeNwgggyED6Ew3XL1uizfhTQmwv38IzmrRLknBkIUlMPvH4a4tqYfMMbduH
-         S2iyyyNsT/4T0YINe/u2qbW3mS39+BcLUIUty6mGt3TY/MT48Zygs37uULiIrQoZ26Za
-         aO3m1ittbxBBtvtpx822gO8Fxu1vNRTVVGWAsAcyWERJ5uV5rhyzeLEXcwYJSFra7Beu
-         czTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717315150; x=1717919950;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GNH+q9S8FeOpIJMVISEmaZGU+MHC6ijhQj3KIdeVPco=;
-        b=rO4L4aKBMw2PaCYYaCEslmzdudeN/MtzY1636FV07qYqZk818xHH/hdBu1pFhdgCNM
-         9HKBbdCQZ6f3m5nsXn92jyoSvOvHiZba8L9mTrELUBAiZFtxxnJ1ZLfGRlQ+xFpxhq+x
-         pEpEQfWjxqzDFE9Ua9w9nnNDOBaLmqjpYuX3XKCk37nZjR12ubJKtDkbsMIPlFNq12JI
-         h8wBJj5AIK1Ie/YpQDMbCBqclq988vLiqrlQUfQPcfDABFKQElNZmiuV5Ex2Ehpbk3IA
-         YmSSeRmWsX0XozwzTAYous9pk0WzXq95uMQ0OUswrAETKlHXodMlrvoRtPiArhIjRlcj
-         0Ghg==
-X-Forwarded-Encrypted: i=1; AJvYcCVG7RIYZIrEyPEnxvVF+YJvjQbKtL89bVs8RV32x8yxmFJ2zVpeWAf4JVKnjumWcJ5vPxFfAIpcP1R7HgJWIh72dH13ZCJgQ0cDnjQVrqrhJ17C6/w9flz2dnl/IDCVE7dswA7bv3MFWA==
-X-Gm-Message-State: AOJu0Yx21qBXs3yKwe2vFV1Oe+nztkzeE4F0B65hfhXUzGp2iMKX3Off
-	+nOpuwZtOchRV3bvr7V7cLYq0gnLAqNd9tErffAahKspeasFdtDW
-X-Google-Smtp-Source: AGHT+IEzoVR/QekSFlxwlG1y8gK8vH3Bdx5XnDmjrRTB2zenBkCf2dUGrpltlAYKRVdfu3RIHU7Dww==
-X-Received: by 2002:a17:906:f59c:b0:a68:e335:3e67 with SMTP id a640c23a62f3a-a68e3354039mr160861566b.17.1717315149813;
-        Sun, 02 Jun 2024 00:59:09 -0700 (PDT)
-Received: from smtpclient.apple (84-10-100-139.static.chello.pl. [84.10.100.139])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a68f6a557f9sm42073966b.83.2024.06.02.00.59.07
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 02 Jun 2024 00:59:09 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 152CA1CAA6;
+	Sun,  2 Jun 2024 08:18:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.75.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717316330; cv=fail; b=IH+Lx27ZnKpHzWmJ8Jfiz6zIORyYKuC0AEwxatW/gSZkrM7Ttj6Z4K9k89DpXRtFMyHlVTxYv5HhoRrt8tl8KT6gA+jB7rfC3YEa/emYXGkWncemyCKBL1kXcNiV99THdD4sH6adnC5wJHLAO4uMlOlsbb4DpTdAVQwxY68m/8c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717316330; c=relaxed/simple;
+	bh=RVLSh558LEQUCGew58xaBnwmWcm/TdYO/JJX8HpSq6Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=OnmLnm3raLQpvAAebh9FDlkOvoSwVvA7ZHN3DM03emf2riilp39Zch61aiqC8StDXulvySaP/Fo9kEpKvt/D5qD6QKgTwoa4Y9p1q7Uxu5yHNt2nTxIRH6TpqTiMlkmi/QKAp0XlibEiZk4qetm53wLqYvGiJ5GqnCBkDeKG77k=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=ZCUWoacO; arc=fail smtp.client-ip=40.92.75.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=bLAXJnbsBzbfewKdJ8CvmE19FmwpaxdipmZP60klf6eN3BWjuKsTO2A65MbmwJhYsbXLPWbjcA6DlgfMItRI+KUwqHRmtaR4KqiKlPWNbobt2UM45JigC7UwfuG2gQvwY0ejpmHOCWWmTwbKMyO5TY00MTox3BHaY2CSK1aEkyndjOTx1N2nInSF/v76yBK5kmGS2umlOFisVkRYXhA63DgqDX1kj3ZGxUcekbmd60jZddDvHE3+MY8QIenNw7yYbCBsqu4gdh46dZrRek2/LdmMdqP6f2WuXuSBRQr5KPAIo2+RKRo0xJvvo/4kqOoqPEtV/JLt2nP+1m6zplQTmQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=YZMGFTuKJtqHfCuTi1jhKwZDUrlLhH4uVis8rjYKUoM=;
+ b=P3RgK4DXNhrED99Yq1TFD9S70sRg4q4dLtxQnYu3In0H4kOfJOI+0IgB8VWeyXdTAAiCbVbHSEmGYA9glfU7cFVjjiMo7kwBwNyVJrYax/yMBZNXK60vCjM2fuXKAa5TLA+HpAVwq0P1nTo4SF4tmzI5oOwz6N4dDIejU0c2dM/0WOQf7bhwDpzo2VR6Kbi6G6wln1W/Y8shLtftG/LuI8kdIYcrdGIxb5v6urTI0B8BGrLyQEwBc+tPXnNwgCJOlW/R75wXdRVmzVpkS5632VBfvja42nN+W89DChueaSNZliCQn3xcm9skzKMj4G4Gq0Bood5ANBAdGwlbSCMKjg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YZMGFTuKJtqHfCuTi1jhKwZDUrlLhH4uVis8rjYKUoM=;
+ b=ZCUWoacOEtse0SxZPf4pg24M4OpBKdCNWCWGmU2WQ8FOxSRBi9jdKDPOFLZo59yTfnb+4brzf8uODuCMj5AJWeD/ZulwZr7qERo1ZGZSd8gscSr9iotsisg6DuByENyE9F9ZcS3UnKCeJ3VhphyVY/mv9mnRdpOLDMT2dZo/aXKdhDJMxGUtBSlf4sruDU9peDEux4YJYJ1QsgJo+n0WpjtWAXxQBCnqFY68pejyr+dIchnz/U2R+VhfMc0gPrxikntSdboIrC4YnmQAhjMW1WRWmRAFdQWfAlmAImvpglrJps+oRC3itwsr5nm5j+gvoRhUZVL2YipeWI95VyhCeA==
+Received: from AS8PR02MB7237.eurprd02.prod.outlook.com (2603:10a6:20b:3f1::10)
+ by DU2PR02MB10207.eurprd02.prod.outlook.com (2603:10a6:10:46d::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.25; Sun, 2 Jun
+ 2024 08:18:43 +0000
+Received: from AS8PR02MB7237.eurprd02.prod.outlook.com
+ ([fe80::409b:1407:979b:f658]) by AS8PR02MB7237.eurprd02.prod.outlook.com
+ ([fe80::409b:1407:979b:f658%5]) with mapi id 15.20.7633.021; Sun, 2 Jun 2024
+ 08:18:43 +0000
+From: Erick Archer <erick.archer@outlook.com>
+To: Vishal Verma <vishal.l.verma@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Kees Cook <keescook@chromium.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Justin Stitt <justinstitt@google.com>
+Cc: Erick Archer <erick.archer@outlook.com>,
+	nvdimm@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH] nvdimm/btt: use sizeof(*pointer) instead of sizeof(type)
+Date: Sun,  2 Jun 2024 10:18:23 +0200
+Message-ID:
+ <AS8PR02MB72372490C53FB2E35DA1ADD08BFE2@AS8PR02MB7237.eurprd02.prod.outlook.com>
+X-Mailer: git-send-email 2.25.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TMN: [u8DozTSoAjZnmjIBqh8TQse2TGCPkhDa]
+X-ClientProxiedBy: MA4P292CA0009.ESPP292.PROD.OUTLOOK.COM
+ (2603:10a6:250:2d::6) To AS8PR02MB7237.eurprd02.prod.outlook.com
+ (2603:10a6:20b:3f1::10)
+X-Microsoft-Original-Message-ID:
+ <20240602081823.7297-1-erick.archer@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 14.0 \(3654.120.0.1.15\))
-Subject: Re: [PATCH 00/14] Add initial support for the Rockchip RK3588 HDMI TX
- Controller
-From: Piotr Oniszczuk <piotr.oniszczuk@gmail.com>
-In-Reply-To: <20240601-b4-rk3588-bridge-upstream-v1-0-f6203753232b@collabora.com>
-Date: Sun, 2 Jun 2024 09:59:03 +0200
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>,
- Sandy Huang <hjc@rock-chips.com>,
- Heiko Stuebner <heiko@sntech.de>,
- Andy Yan <andy.yan@rock-chips.com>,
- Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Mark Yao <markyao0591@gmail.com>,
- dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org,
- devicetree@vger.kernel.org,
- kernel@collabora.com,
- Alexandre ARNOUD <aarnoud@me.com>,
- Luis de Arquer <ldearquer@gmail.com>,
- Algea Cao <algea.cao@rock-chips.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <E1316DC2-0822-4B82-BCD0-99904D4741EF@gmail.com>
-References: <20240601-b4-rk3588-bridge-upstream-v1-0-f6203753232b@collabora.com>
-To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-X-Mailer: Apple Mail (2.3654.120.0.1.15)
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS8PR02MB7237:EE_|DU2PR02MB10207:EE_
+X-MS-Office365-Filtering-Correlation-Id: 87b51c5a-de56-44ff-5306-08dc82dc9dfa
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|461199019|440099019|3412199016|1710799017;
+X-Microsoft-Antispam-Message-Info:
+	c/lxDm9FuiMut7tS/vXpPRy+XlmWRG9D57HOg8ndnJ1R5tvE2900DftH5tZETQTaEWwAurCxLSNA+6pU61w9gr4yJJ3ZGHk2wAiFU/Ec+ReP1Kyv4CF+ZMMYTLW9dzsOlcODZ1PQBaCyd1laoKxmdMFXQjUmn3hFpXxck9Z4X2Nd7uwehKmEsWQdszzSuIw4X1bh9ZKp2SV1BNADB+T3nHdsXdvRtfAjcfajGyovSx0rgaRQOP6EThcuV2Oll2O9Mn8y+fn2DiXOTCK1PaWYG/pxyRgUg6qnXbbsjS0p1JYLrkAm7L+2CN4IUkMVmTcSJHhdviZ4UB/gtjOq9BlvIJYdYnm7bifbePbS46TQ6fMcdhOFzumBbOZ+BeBdhmuwGYXzNNVVa4Y2hy/2whrCU03nkrgGF43i2Z8nwB2PE2hfDTjQ8/s6JBz9eDNYDXlmaQk7TJZQPsMMEZeC9iYKePOrTumStTnpenjvFuebHIM0JFlJ5pD3o1tOYLVrhNzihS0RUWmspspQ0tAUyJm29KiqPwAGXir3GZspTgOVO+1ENSHHm4YQDMNJnkzwexKZ5REN85Re//EjACo+OLlCXBSAFsQ3ThTUbe/4Cr/bFZLk4FeLPTz9nP0PWNwdx2D3
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?MyjDCtnYSZsAa4VR1LHiJxn00df6vF6UTwVegsVS8JWLGf9FP5YrEvFoM5hA?=
+ =?us-ascii?Q?6DDkLbYNxW5G5aIW7UciLjYLwkv/qk/sqW4XM4fisZBsKDdQF4WfUEVa469O?=
+ =?us-ascii?Q?TBLTkbef62LklfG2/j6MTUodSf1LT7t5YtM070JdAnoR6IHNKVbrI0E9m3iq?=
+ =?us-ascii?Q?Uf1nguNPMTYQVoUPTFmOre4nE+E0j2O5HJs64izLcmBweb8L1pldsKLsf6iD?=
+ =?us-ascii?Q?fD3tDtC0hjNJLECKNS7ybcJGh1E+otqcxF06agHkK4LWIFICKnT5/+uOwlUT?=
+ =?us-ascii?Q?6NBQ/CLMZIeQDsk9P3lK3CNUySqqc/kSFzob1llmqtmVFz9tdzL6h3Bm9/l4?=
+ =?us-ascii?Q?L1nqd9fqlQkxVxODVplKW68RB+qqn6L+RqORgceH92Qcs5C142xNSAj2HCsD?=
+ =?us-ascii?Q?JcspQjXhrVPMXyCW1p/WkM/r73TUq+CV7yFek7KJ9uRn9uFwHpYRBTNUaSqy?=
+ =?us-ascii?Q?7xegoYR+WtQCCoIT5DvyZqjqQd1hDS+DfUAAz9SskTQDlM2EFOou+OSNGP/y?=
+ =?us-ascii?Q?uUxh4Ix6/9Bnlpr+DP1lCkoQmHg9oTD/0pfT+A381bw6exINsrqW67fhQFZ9?=
+ =?us-ascii?Q?xROykq00ovCx2PiqktbJetTuvR7amCnBfaNwqs86xqSU01k4WXRiYfHEuBNQ?=
+ =?us-ascii?Q?LIFYxKkcq50TxBVGcnVR/dhBv3jKTUeG5rtpS4UqVBnZJuNTO7iYtoVGaAap?=
+ =?us-ascii?Q?63wApR5rjjKv6nuToNfOuk1F1lPXB+hQwOYZjKTlIR2AQeSlhKK27Bu+b3I2?=
+ =?us-ascii?Q?sznOxsIeiUXESEsbpmm1yOH4dpSER+qhviYJKD7TGBNaYNfm4BhZlxSWCmyX?=
+ =?us-ascii?Q?rqM6b44j7XuJKRTDJeu3ljReDIMCzpKgrqcMkEYKeFkSPZMYhK83nG1CD0Ye?=
+ =?us-ascii?Q?fIpOVC833C0qpUgDIxOZ6kx4+G3nn/zupGfXH+4ANu9/hA68Nl4QhvnnZr6G?=
+ =?us-ascii?Q?9ePEG3BrWPxMsYhH24ThG+YNF2nNgDcUzFC2zHIvaoQqfzB3cGWVZGX0Fgsy?=
+ =?us-ascii?Q?PRR3o09aA9lTbzcwczYtyIJr3QR+Mvjha6X7tYe97Ms2l6CHlJC26zbq4tPr?=
+ =?us-ascii?Q?NewZEiKw5E1DQcEJTltHWxooqPOm8oBQKtfGkQ+OltlTFh7x9FmjfIVG0gE4?=
+ =?us-ascii?Q?HqB62ooSS8FsRITG8xM/wgsqt32BuTYD19uhPx/e9QS86v/WVoLqxW6YoWvn?=
+ =?us-ascii?Q?E9JDMPEmzxeYt6akO4rPak6Upw90gtswzmrr+tKUJ8VMU4zO8c9+eJYIkaWk?=
+ =?us-ascii?Q?2VOj+Hm8BJylKHomGdGp?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 87b51c5a-de56-44ff-5306-08dc82dc9dfa
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR02MB7237.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jun 2024 08:18:43.7433
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR02MB10207
 
-(resent as plain text instead of html)
-=20
-Cristian,
+It is preferred to use sizeof(*pointer) instead of sizeof(type)
+due to the type of the variable can change and one needs not
+change the former (unlike the latter). This patch has no effect
+on runtime behavior.
 
-I was awaiting over year for this work!
+Signed-off-by: Erick Archer <erick.archer@outlook.com>
+---
+ drivers/nvdimm/btt.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-I=E2=80=99m devel. 2 distros where single mainline kernel serves =
-2835/2711/2712/h6/h313/h616/h618/rk3328/rk3399/rk3566/rk3568/rk3588/s905/s=
-912/sm1/g12.
-
-Before this work rk3588 was excluded because rk3588 hdmi was regressing =
-hdmi on other socs.
-With this code all other socs seems work ok now. Perfect.
-
-As one of my project is multimedia appliance - good news is that now i =
-can nicely play hdtv on rk3588 using mainline common 6.9.3 kernel =
-and=E2=80=A6.started to hear from my users a lot of Qs like: =E2=80=9Eah =
-so nice! rk3588 now works nicely=E2=80=A6.but where is hdmi audio and =
-cec?=E2=80=9D
-
-It will be fantastic to add (e.g. by backport Detlev =
-https://gitlab.collabora.com/hardware-enablement/rockchip-3588/linux/-/tre=
-e/rk3588-hdmi-audio?ref_type=3Dheads ) audio code to get basic support =
-hdmi audio?
-  =20
-thx again for fantastic work!
-
-> Wiadomo=C5=9B=C4=87 napisana przez Cristian Ciocaltea =
-<cristian.ciocaltea@collabora.com> w dniu 01.06.2024, o godz. 15:12:
->=20
-> The RK3588 SoC family integrates a Quad-Pixel (QP) variant of the
-> Synopsys DesignWare HDMI TX controller used in the previous SoCs.
->=20
-> It is HDMI 2.1 compliant and supports the following features, among
-> others:
->=20
-> * Fixed Rate Link (FRL)
-> * 4K@120Hz and 8K@60Hz video modes
-> * Variable Refresh Rate (VRR) including Quick Media Switching (QMS)
-> * Fast Vactive (FVA)
-> * SCDC I2C DDC access
-> * TMDS Scrambler enabling 2160p@60Hz with RGB/YCbCr4:4:4
-> * YCbCr4:2:0 enabling 2160p@60Hz at lower HDMI link speeds
-> * Multi-stream audio
-> * Enhanced Audio Return Channel (EARC)
->=20
-> This is the last required component that needs to be supported in =
-order
-> to enable the HDMI output functionality on the RK3588 based SBCs, such
-> as the RADXA Rock 5B. The other components are the Video Output
-> Processor (VOP2) and the Samsung IP based HDMI/eDP TX Combo PHY, for
-> which basic support has been already made available via [1] and [2],
-> respectively.
->=20
-> The patches are grouped as follows:
-> * PATCH 1..7: DW HDMI TX driver refactor to minimize code duplication =
-in
->  the new QP driver (no functional changes intended)
->=20
-> * PATCH 8..11: Rockchip DW HDMI glue driver cleanup/improvements (no
->  functional changes intended)
->=20
-> * PATCH 12..13: The new DW HDMI QP TX driver reusing the previously
->  exported functions and structs from existing DW HDMI TX driver
->=20
-> * PATCH 14: Rockchip DW HDMI glue driver update to support RK3588 and
->  make use of DW HDMI QP TX
->=20
-> They provide just the basic HDMI support for now, i.e. RGB output up =
-to
-> 4K@60Hz, without audio, CEC or any of the HDMI 2.1 specific features.
-> Also note the vop2 driver is currently not able to properly handle all
-> display modes supported by the connected screens, e.g. it doesn't cope
-> with non-integer refresh rates.
->=20
-> A possible workaround consists of enabling the display controller to
-> make use of the clock provided by the HDMI PHY PLL. This is still work
-> in progress and will be submitted later, as well as the required DTS
-> updates.
->=20
-> To facilitate testing and experimentation, all HDMI output related
-> patches, including those part of this series, are available at [3].
-> So far I could only verify this on the RADXA Rock 3A and 5B boards.
->=20
-> Thanks,
-> Cristian
->=20
-> [1]: 5a028e8f062f ("drm/rockchip: vop2: Add support for rk3588")
-> [2]: 553be2830c5f ("phy: rockchip: Add Samsung HDMI/eDP Combo PHY =
-driver")
-> [3]: =
-https://gitlab.collabora.com/hardware-enablement/rockchip-3588/linux/-/com=
-mits/rk3588-hdmi-bridge-v6.10-rc1
->=20
-> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-> ---
-> Cristian Ciocaltea (14):
->      drm/bridge: dw-hdmi: Simplify clock handling
->      drm/bridge: dw-hdmi: Add dw-hdmi-common.h header
->      drm/bridge: dw-hdmi: Commonize dw_hdmi_i2c_adapter()
->      drm/bridge: dw-hdmi: Factor out AVI infoframe setup
->      drm/bridge: dw-hdmi: Factor out vmode setup
->      drm/bridge: dw-hdmi: Factor out hdmi_data_info setup
->      drm/bridge: dw-hdmi: Commonize dw_hdmi_connector_create()
->      drm/rockchip: dw_hdmi: Use modern drm_device based logging
->      drm/rockchip: dw_hdmi: Simplify clock handling
->      drm/rockchip: dw_hdmi: Use devm_regulator_get_enable()
->      drm/rockchip: dw_hdmi: Drop superfluous assignments of mpll_cfg, =
-cur_ctr and phy_config
->      dt-bindings: display: rockchip,dw-hdmi: Add compatible for RK3588
->      drm/bridge: synopsys: Add DW HDMI QP TX controller driver
->      drm/rockchip: dw_hdmi: Add basic RK3588 support
->=20
-> .../display/rockchip/rockchip,dw-hdmi.yaml         | 127 +++-
-> drivers/gpu/drm/bridge/synopsys/Makefile           |   2 +-
-> drivers/gpu/drm/bridge/synopsys/dw-hdmi-common.h   | 179 +++++
-> drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.c       | 787 =
-+++++++++++++++++++
-> drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.h       | 831 =
-+++++++++++++++++++++
-> drivers/gpu/drm/bridge/synopsys/dw-hdmi.c          | 353 +++------
-> drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c        | 351 +++++++--
-> include/drm/bridge/dw_hdmi.h                       |   8 +
-> 8 files changed, 2290 insertions(+), 348 deletions(-)
-> ---
-> base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
-> change-id: 20240601-b4-rk3588-bridge-upstream-a27baff1b8fc
->=20
->=20
-> _______________________________________________
-> Linux-rockchip mailing list
-> Linux-rockchip@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-rockchip
+diff --git a/drivers/nvdimm/btt.c b/drivers/nvdimm/btt.c
+index 1e5aedaf8c7b..b25df8fa8e8e 100644
+--- a/drivers/nvdimm/btt.c
++++ b/drivers/nvdimm/btt.c
+@@ -751,7 +751,7 @@ static struct arena_info *alloc_arena(struct btt *btt, size_t size,
+ 	u64 logsize, mapsize, datasize;
+ 	u64 available = size;
+ 
+-	arena = kzalloc(sizeof(struct arena_info), GFP_KERNEL);
++	arena = kzalloc(sizeof(*arena), GFP_KERNEL);
+ 	if (!arena)
+ 		return NULL;
+ 	arena->nd_btt = btt->nd_btt;
+@@ -978,7 +978,7 @@ static int btt_arena_write_layout(struct arena_info *arena)
+ 	if (ret)
+ 		return ret;
+ 
+-	super = kzalloc(sizeof(struct btt_sb), GFP_NOIO);
++	super = kzalloc(sizeof(*super), GFP_NOIO);
+ 	if (!super)
+ 		return -ENOMEM;
+ 
+-- 
+2.25.1
 
 
