@@ -1,141 +1,121 @@
-Return-Path: <linux-kernel+bounces-198467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73BB48D78F3
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 00:59:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EAA98D78F6
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 01:04:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 289021F212A8
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 22:59:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B25671F2126F
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 23:04:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D4B97B3FD;
-	Sun,  2 Jun 2024 22:59:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B9B37C6D5;
+	Sun,  2 Jun 2024 23:04:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Xt5lKAa2"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ejNx9c1+"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29005364A0;
-	Sun,  2 Jun 2024 22:59:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A77F2232B;
+	Sun,  2 Jun 2024 23:04:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717369182; cv=none; b=uMlj60pGs3vHEOtccBClahwSUzsu6qpgiLLKIVvrhKftKQy/IWCE7i44pqLpEeVmgk20JVk+pAFEQnQXHUs403L7cFNlxH3NEPjeR54TkNwUMqDiMy4SPoe6mB3audwTWEqg9YBZfE0TXAuhDaKquogkLr0945GnYqkVY/5W8GU=
+	t=1717369444; cv=none; b=juCkmhvwFrwPVFRi8wk/OUGt8X/L621RO05xwVh8qPi20fxkFTXwPRo5wkqg6itWUiYLWe0brClkNj7DPz40HEUPxoutAywiB+710eKWHSpYXOzGejB6oDRZcIRBvPnYMtf4mr9enrekw1vxGUYLn6HS9IU2arRIUQXD+QH3YXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717369182; c=relaxed/simple;
-	bh=yZcI6Fr8DY8YGyk+xlFWtHSX7RVfsv9IYwtg1aNm3Dk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RES2nGOW5ZRGBMfrxmThWVhD9YD98GmveiRoroPSSW6kHyiwK+o6dYLhRYPNBETff4NfU8NjFD1nUyrtKDj+WNfHFmqkeWdyEFhsHBpJZj1MWSCpiP9g00LXwhjwH//Y6Nm6LWdo1hQxETiayaQly8saacAzZnEWiW6HkkBR7mM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Xt5lKAa2; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1717369179;
-	bh=yZcI6Fr8DY8YGyk+xlFWtHSX7RVfsv9IYwtg1aNm3Dk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Xt5lKAa2N3tMMEZAl/UW+f8Y9W7VPr9vSsAoFdDCvYdq7/7ONk+5XwqPQQZPY0ot6
-	 5JRK43JEAp+dK+V8rndrKJk+I+TZp51YC4b0XStY+NlFZNQSMHsilaapsMrc3HTn4N
-	 kJoiaCyqWwwkqVeR8koopAbzsC+KCq8pSecRJpdMRezPtF6j6pPiLEsMK9pkV04rMY
-	 TSw0Sv82U+xAPsfe64NT84roQmjr8zEloSbBU92/+ciGrQLEmCQFst39g1blURMM/S
-	 uC250+2l0nJg0QgYl9UgqsR9pnXHVWBlRhuoqJ1TN798kf2Nbi2t2NfWSth3ST03tY
-	 akWNdkKgI/NuA==
-Received: from mercury (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: sre)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 517FE3781116;
-	Sun,  2 Jun 2024 22:59:39 +0000 (UTC)
-Received: by mercury (Postfix, from userid 1000)
-	id BA19B10611D2; Mon, 03 Jun 2024 00:59:38 +0200 (CEST)
-Date: Mon, 3 Jun 2024 00:59:38 +0200
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
-	linux-pm@vger.kernel.org
-Subject: Re: [PATCH 2/2] power: supply: samsung-sdi-battery: Constify struct
- power_supply_maintenance_charge_table
-Message-ID: <dgkqcnvnrw3sxzojjsteqpudf4sfjhsd6ifvwzn7murxeajs4w@2qededvny4vy>
-References: <cover.1717253900.git.christophe.jaillet@wanadoo.fr>
- <02c6ad69a3ace192c9d609b7336a681a8fc7ba94.1717253900.git.christophe.jaillet@wanadoo.fr>
+	s=arc-20240116; t=1717369444; c=relaxed/simple;
+	bh=ZOALy1t+4RTIifpPkkNIxH66T0COawLvTd8pvZT4ILg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=puLZCrmkEdjWBBvsxkOke95VEcQfR2q4bP4qV1qlGHtC9+szPm/FvYCb/aStRecNJySqgy8n9hOVOR8JS5e81gmSRG7BNN8yQxdienyLICacCslqPRNl4+hXkpiuPbWs/LrtDGGSr9d45myZ8i4AYnJs1uxm5ZqRoJklbdnF7es=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ejNx9c1+; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 452Mb09H002754;
+	Sun, 2 Jun 2024 23:03:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=4aKW/wTZD8T4tplibG4C+R
+	VT/GFDNuDPw6FhCBkzuMs=; b=ejNx9c1+uiVjOsSzS1jEaxZgNAz0HTA3x4Ut7d
+	lh0Xk54F2zNjUVHzZavkItUHZ1oY2+4DYc84tdZ6h5iXBHz1GcqIbeLuOQjI8EKD
+	1hjrBHTrBqviNmc9u4k9uNoqTPDQN2rLfKNfcNtM8dxqpf4WJFWKhQ48YAX9dq71
+	SjbWSN9G1DYr1QlHRzRIS1mgGwp+o58UGyBfLEffV28r/JGKxwnv/ATE0jQfwyPf
+	pJYNXkmnIMxf/PPMGHHZabPuyNvzMxzl6eg4PQmQ9KrvbgGtVaUINur1ymR3tM8x
+	zB4CtPIUtcuthb88erxvpKnyrpdFBi9feF6GEYQREyD6AA3A==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfw5t2fbc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 02 Jun 2024 23:03:55 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 452N3swT006021
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 2 Jun 2024 23:03:54 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 2 Jun 2024
+ 16:03:54 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Sun, 2 Jun 2024 16:03:54 -0700
+Subject: [PATCH] crypto: keembay - add missing MODULE_DESCRIPTION() macro
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="3s5fgqs6cwwgl5ak"
-Content-Disposition: inline
-In-Reply-To: <02c6ad69a3ace192c9d609b7336a681a8fc7ba94.1717253900.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240602-md-keembay-ocs-hcu-v1-1-22741e1c3d13@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAFn6XGYC/x3MQQrCMBBA0auUWTuQxqDoVcTFJJ2YQZNKxkql9
+ O6NXb7F/wsoV2GFa7dA5a+ojKWhP3QQEpUHowzNYI115mQs5gGfzNnTD8egmMKE0fXnC0WmoyN
+ o4btylHmf3u7NnpTRVyoh/VcvKdOMmfTDFdZ1A/6WnxODAAAA
+To: Daniele Alessandrelli <daniele.alessandrelli@intel.com>,
+        Declan Murphy
+	<declan.murphy@intel.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David
+ S. Miller" <davem@davemloft.net>
+CC: <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 7mi913pG-nTtbapVTGpdtstJiLtCNEZ0
+X-Proofpoint-GUID: 7mi913pG-nTtbapVTGpdtstJiLtCNEZ0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-06-02_15,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 bulkscore=0
+ spamscore=0 suspectscore=0 priorityscore=1501 impostorscore=0
+ clxscore=1011 malwarescore=0 phishscore=0 mlxscore=0 lowpriorityscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406020201
 
+make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/crypto/intel/keembay/keembay-ocs-hcu.o
 
---3s5fgqs6cwwgl5ak
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Add the missing invocation of the MODULE_DESCRIPTION() macro.
 
-Hello,
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ drivers/crypto/intel/keembay/ocs-hcu.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-On Sat, Jun 01, 2024 at 05:00:29PM +0200, Christophe JAILLET wrote:
-> 'struct power_supply_maintenance_charge_table' is not modified in this
-> driver.
->=20
-> Constifying this structure moves some data to a read-only section, so
-> increase overall security.
->=20
-> In order to do it, some code also needs to be adjusted to this new const
-> qualifier.
->=20
-> On a x86_64, with allmodconfig:
-> Before:
-> =3D=3D=3D=3D=3D=3D
-> $ size drivers/power/supply/samsung-sdi-battery.o
->    text	   data	    bss	    dec	    hex	filename
->    4055	   4584	      0	   8639	   21bf	drivers/power/supply/samsung-sdi-=
-battery.o
->=20
-> After:
-> =3D=3D=3D=3D=3D
-> $ size drivers/power/supply/samsung-sdi-battery.o
->    text	   data	    bss	    dec	    hex	filename
->    4087	   4552	      0	   8639	   21bf	drivers/power/supply/samsung-sdi-=
-battery.o
->=20
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Compile tested-only
-> ---
+diff --git a/drivers/crypto/intel/keembay/ocs-hcu.c b/drivers/crypto/intel/keembay/ocs-hcu.c
+index deb9bd460ee6..55a41e6ab103 100644
+--- a/drivers/crypto/intel/keembay/ocs-hcu.c
++++ b/drivers/crypto/intel/keembay/ocs-hcu.c
+@@ -837,4 +837,5 @@ irqreturn_t ocs_hcu_irq_handler(int irq, void *dev_id)
+ 	return IRQ_HANDLED;
+ }
+ 
++MODULE_DESCRIPTION("Intel Keem Bay OCS HCU Crypto Driver");
+ MODULE_LICENSE("GPL");
 
-Looks like that compile testing did not include ab8500_chargalg :)
-Fixing the error reported by the Intel bot should be trivial (i.e.
-add another const). When you send a new version, please also Cc
-Linus Walleij <linus.walleij@linaro.org>.
+---
+base-commit: a693b9c95abd4947c2d06e05733de5d470ab6586
+change-id: 20240602-md-keembay-ocs-hcu-f4179afea34a
 
-Thanks for your patches and greetings,
-
--- Sebastian
-
---3s5fgqs6cwwgl5ak
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmZc+VMACgkQ2O7X88g7
-+pqjYhAAhWSnuCwUT8O+ov/tnAB82dz8t+GhKdxleL0ha+zqLdnA5j21cbUVOULS
-TRbokpnIOF5CHcoOYxsWCrKwM3vZvQ9ptLNCtCxe4+c7S13gfahv5UDYNzCyL2dF
-Z+9Ta5Lf2okzv/qsw+FO4uAcVhrUz2PpZ72BDsWBYWqWlHjd/vCGrTZ5kjwknHIz
-tbC2ql/YVQPcPau9ZAM5aOjeiDQqc+QL8e9D8aGAGokoWwx1LqW1AO7H+xUEb8XX
-NM7v+pOercZXQdC4hoMHwFdkyotJYRAZQ4TdRtfMC9Itt83dPzERoMKirQWtDsIG
-FuXfuQN4fAQH6S2vix1gkoaQjL3pHiVmay/ujUcLYA/iYVvC2u3nCwqcig/KDHFT
-3zaLdrs7L3WVeLlMVVYxuJ9JPzR2HEk+cBQrkn3ijf82VI+JzpdnABpAN2eydEuH
-uzOTZZXHDRoRL6rqLHEa+rFWY8Do3PiaHGWZSiWyCt1BahgDGd0jT3ElJ2IAJr8T
-7YXNxqGB6UujJGiO6CEiY96u0cQMeAuDx4mtxSgihIiAOyiHD3nwk3jDCeXIqfsT
-bHKdnCJg0IjgQE8l3F7ew69iZPT7vHp9vxeED4boWcCeqkCD4ARZF1jiNsLT7p8Q
-KNhOHFVm93cOmENyRPKoRDFwThz+ZA5G9v4EECP9Bo0ayvcyPvA=
-=z3Sd
------END PGP SIGNATURE-----
-
---3s5fgqs6cwwgl5ak--
 
