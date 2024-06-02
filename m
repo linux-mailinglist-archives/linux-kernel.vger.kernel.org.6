@@ -1,190 +1,144 @@
-Return-Path: <linux-kernel+bounces-198285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B0E08D7627
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 16:20:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7C1A8D762A
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 16:21:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 780F61F21465
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 14:20:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C5381F213CB
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 14:21:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0939D42040;
-	Sun,  2 Jun 2024 14:19:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BC0D41C73;
+	Sun,  2 Jun 2024 14:21:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aeZtNGj8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KRaN60GA"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 329AD40861;
-	Sun,  2 Jun 2024 14:19:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 851A61E864;
+	Sun,  2 Jun 2024 14:21:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717337997; cv=none; b=BDvyWzcFf8b/ut+Iyr5rGpK/Zys2kaXXROlEA/cYdgOGmneE0uT5btdr3tzXyBLOvBVpFyrLJ3lf3U0QqIzjz4hoD9llFCQZJET5sKchhmE72JQ5INnuQnLaNM2hL1kFZHksfdy3fu0QeIGd4B5bwOPfpjl/8dEMRBMH/QsgVIQ=
+	t=1717338064; cv=none; b=VHWhDmH3VRa+0fHp+B4gnKPWHDywsB74beUpjQRpo6M3WezZsxRsj+mZKshdtHTEQ+FBrZvDquQc6O/1Yv1YECHl+4UtD+l97vE0L/HZi/hDxlBZfN5NbozVZPpt50FF9s+ynnf0g+ZVnn9y5T2cmlHwzzoR5IXCYeuXLpyR7Ug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717337997; c=relaxed/simple;
-	bh=SeH9oWFSVri/bYiL+0r6iXfVRwtJYCiDV4spRm85XH0=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=ET6Vk4icDIFvzFbwrITYHn8LupPoojii9wUvVBekNUcM1dFNt9BP/e4Jo972cqikMJXJxzFQ09oYw6cZCZUmmu20Os0C1KbdODvckAvxAjaY0+dzyUnPocWh/ZHNfWz1qt9vQ+6uNWLBRPoVxxZtebyJIVr0CD20G0av8j7InjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aeZtNGj8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADE04C2BBFC;
-	Sun,  2 Jun 2024 14:19:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717337996;
-	bh=SeH9oWFSVri/bYiL+0r6iXfVRwtJYCiDV4spRm85XH0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=aeZtNGj80P6dBrMVhzxBiC8mLZ9bYoUrqmjdD1dEvU+6K0j5kGcQ3+RwXldhxqspA
-	 x+cNLqDPTlDhsmZ/k06h+3sQeO9EMu2CpvFATRODDEt7O0Cpwf/7sSAOzeGLePKgw0
-	 uFfoLJ2++QZQUHQIPo88cMO/TxUy4IEphA6QNOzR6QJd2uVfjbV+3cA4WPU8c5BJlh
-	 c7u9OznZuzTZtyEIRsBExkYRo45mdJnj9zH61RljTC6obWI55KX5iXtvw90b3q3pFf
-	 PkarPFFsgewNvIHhvk0+MX/EAIhp9CPaLsEoyZXtftQv83jaCBu0ThMALHgJHXtEYS
-	 xOey6ph3aoZKw==
-Date: Sun, 2 Jun 2024 23:19:50 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Akinobu Mita <akinobu.mita@gmail.com>, Christoph Lameter <cl@linux.com>,
- David Rientjes <rientjes@google.com>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko
- <andrii@kernel.org>, "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>, Anil S
- Keshavamurthy <anil.s.keshavamurthy@intel.com>, "David S. Miller"
- <davem@davemloft.net>, Steven Rostedt <rostedt@goodmis.org>, Mark Rutland
- <mark.rutland@arm.com>, Jiri Olsa <jolsa@kernel.org>, Roman Gushchin
- <roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, bpf@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 2/4] error-injection: support static keys around
- injectable functions
-Message-Id: <20240602231950.cbb7bc65fce96934fb10dc06@kernel.org>
-In-Reply-To: <20240531-fault-injection-statickeys-v1-2-a513fd0a9614@suse.cz>
-References: <20240531-fault-injection-statickeys-v1-0-a513fd0a9614@suse.cz>
-	<20240531-fault-injection-statickeys-v1-2-a513fd0a9614@suse.cz>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1717338064; c=relaxed/simple;
+	bh=HHQSybEJxUEGfYcVhVIrgQp0w28pkdQd7EvfJc/M9y4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i8iwnidfypXwEd4+AkLlC87kPLQOroLb+QAd41XWRAopV5f1+VmEMKl54uoxQx/bzWQbS4Wa8g5nvvWJsbfhbcMxyctgkjAw+kpKIARIMDdCNEhw5SoMaPQH1ROIKnwOyv/jz786ZnxNhU3eeHYEXabygNVuo/no4XWIxfKDZW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KRaN60GA; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717338063; x=1748874063;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=HHQSybEJxUEGfYcVhVIrgQp0w28pkdQd7EvfJc/M9y4=;
+  b=KRaN60GAGZyOjUNO3g0xz+gK5q0gMkxFJ2LBHc7wYNg0VEOqYI7YO/Qq
+   Pka3bqfqiB//2meE7xQrWQ6qVgYMQ4tc7kPB8Xmmqzwla1XuD7QSYTIQc
+   BTf5T3dRrklBAz5lPOpxuaOVWAD6VpcOz/M8M1nh70AsFeUl628SHgS2H
+   e2vOmNVJuVFh6XIW2lpg5Hut4X/dFRlwsZ35W3s03bnfbZXaNxHpA/kb+
+   COLcifD9GawiGJXUoszHouVWTa0mvW+rvKU+CL69H/LTZzDfagDu94ulI
+   +0Q/tuzBpJ0HKvSto0qReYIC0XPW8Fo6lXVuajdBAyowQuuvwhz4x8vtZ
+   Q==;
+X-CSE-ConnectionGUID: MNRyaDBSSret6HRQT6553Q==
+X-CSE-MsgGUID: aWI4htLaT9WMFn1LpuJ9fA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11091"; a="17629013"
+X-IronPort-AV: E=Sophos;i="6.08,209,1712646000"; 
+   d="scan'208";a="17629013"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2024 07:21:02 -0700
+X-CSE-ConnectionGUID: ke8Ahaw5T768IbxDwu8Qog==
+X-CSE-MsgGUID: wlmiIkyFSpy2c6mxIJT/Ww==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,209,1712646000"; 
+   d="scan'208";a="36560562"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa010.jf.intel.com with ESMTP; 02 Jun 2024 07:20:56 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id B8B441CB; Sun, 02 Jun 2024 17:20:54 +0300 (EEST)
+Date: Sun, 2 Jun 2024 17:20:54 +0300
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>, Elena Reshetova <elena.reshetova@intel.com>, 
+	Jun Nakajima <jun.nakajima@intel.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
+	Tom Lendacky <thomas.lendacky@amd.com>, "Kalra, Ashish" <ashish.kalra@amd.com>, 
+	Sean Christopherson <seanjc@google.com>, "Huang, Kai" <kai.huang@intel.com>, 
+	Ard Biesheuvel <ardb@kernel.org>, Baoquan He <bhe@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	"K. Y. Srinivasan" <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, 
+	kexec@lists.infradead.org, linux-hyperv@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org, Tao Liu <ltao@redhat.com>
+Subject: Re: [PATCHv11 11/19] x86/tdx: Convert shared memory back to private
+ on kexec
+Message-ID: <tur63s5trxwwnwfs43f4jcc6pfostpw6cchwhrgo7tsfzicozn@mvqrntyi6x4w>
+References: <20240528095522.509667-1-kirill.shutemov@linux.intel.com>
+ <20240528095522.509667-12-kirill.shutemov@linux.intel.com>
+ <20240531151442.GMZlnpYkDCRlg1_YS0@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240531151442.GMZlnpYkDCRlg1_YS0@fat_crate.local>
 
-On Fri, 31 May 2024 11:33:33 +0200
-Vlastimil Babka <vbabka@suse.cz> wrote:
+On Fri, May 31, 2024 at 05:14:42PM +0200, Borislav Petkov wrote:
+> On Tue, May 28, 2024 at 12:55:14PM +0300, Kirill A. Shutemov wrote:
+> > +static void tdx_kexec_finish(void)
+> > +{
+> > +	unsigned long addr, end;
+> > +	long found = 0, shared;
+> > +
+> > +	lockdep_assert_irqs_disabled();
+> > +
+> > +	addr = PAGE_OFFSET;
+> > +	end  = PAGE_OFFSET + get_max_mapped();
+> > +
+> > +	while (addr < end) {
+> > +		unsigned long size;
+> > +		unsigned int level;
+> > +		pte_t *pte;
+> > +
+> > +		pte = lookup_address(addr, &level);
+> > +		size = page_level_size(level);
+> > +
+> > +		if (pte && pte_decrypted(*pte)) {
+> > +			int pages = size / PAGE_SIZE;
+> > +
+> > +			/*
+> > +			 * Touching memory with shared bit set triggers implicit
+> > +			 * conversion to shared.
+> > +			 *
+> > +			 * Make sure nobody touches the shared range from
+> > +			 * now on.
+> > +			 */
+> > +			set_pte(pte, __pte(0));
+> > +
+> 
+> Format the below into a comment here:
+> 
+> /* 
+> 
+> The only thing one can do at this point on failure is panic. It is
+> reasonable to proceed, especially for the crash case because the
+> kexec-ed kernel is using a different page table so there won't be
+> a mismatch between shared/private marking of the page so it doesn't
+> matter.
 
-> Error injectable functions cannot be inlined and since some are called
-> from hot paths, this incurrs overhead even if no error injection is
-> enabled for them.
-> 
-> To remove this overhead when disabled, allow the callsites of error
-> injectable functions to put the calls behind a static key, which the
-> framework can control when error injection is enabled or disabled for
-> the function.
-> 
-> Introduce a new ALLOW_ERROR_INJECTION_KEY() macro that adds a parameter
-> with the static key's address, and store it in struct
-> error_injection_entry. This new field has caused a mismatch when
-> populating the injection list from the _error_injection_whitelist
-> section with the current STRUCT_ALIGN(), so change the alignment to 8.
-> 
-> During the population, copy the key's address also to struct ei_entry,
-> and make it possible to retrieve it along with the error type by
-> get_injectable_error_type().
-> 
-> Finally, make the processing of writes to the debugfs inject file enable
-> the static key when the function is added to the injection list, and
-> disable when removed.
-> 
-> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-> ---
->  include/asm-generic/error-injection.h | 13 ++++++++++++-
->  include/asm-generic/vmlinux.lds.h     |  2 +-
->  include/linux/error-injection.h       |  9 ++++++---
->  kernel/fail_function.c                | 22 +++++++++++++++++++---
->  lib/error-inject.c                    |  6 +++++-
->  5 files changed, 43 insertions(+), 9 deletions(-)
-> 
-> diff --git a/include/asm-generic/error-injection.h b/include/asm-generic/error-injection.h
-> index b05253f68eaa..eed2731f3820 100644
-> --- a/include/asm-generic/error-injection.h
-> +++ b/include/asm-generic/error-injection.h
-> @@ -12,6 +12,7 @@ enum {
->  
->  struct error_injection_entry {
->  	unsigned long	addr;
-> +	unsigned long	static_key_addr;
->  	int		etype;
->  };
->  
-> @@ -25,16 +26,26 @@ struct pt_regs;
->   * 'Error Injectable Functions' section.
->   */
->  #define ALLOW_ERROR_INJECTION(fname, _etype)				\
-> -static struct error_injection_entry __used				\
-> +static struct error_injection_entry __used __aligned(8)			\
->  	__section("_error_injection_whitelist")				\
->  	_eil_addr_##fname = {						\
->  		.addr = (unsigned long)fname,				\
->  		.etype = EI_ETYPE_##_etype,				\
->  	}
->  
-> +#define ALLOW_ERROR_INJECTION_KEY(fname, _etype, key)			\
-> +static struct error_injection_entry __used __aligned(8)			\
-> +	__section("_error_injection_whitelist")				\
-> +	_eil_addr_##fname = {						\
-> +		.addr = (unsigned long)fname,				\
-> +		.static_key_addr = (unsigned long)key,			\
-> +		.etype = EI_ETYPE_##_etype,				\
-> +	}
-> +
->  void override_function_with_return(struct pt_regs *regs);
->  #else
->  #define ALLOW_ERROR_INJECTION(fname, _etype)
-> +#define ALLOW_ERROR_INJECTION_KEY(fname, _etype, key)
->  
->  static inline void override_function_with_return(struct pt_regs *regs) { }
->  #endif
-> diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
-> index 5703526d6ebf..1b15a0af2a00 100644
-> --- a/include/asm-generic/vmlinux.lds.h
-> +++ b/include/asm-generic/vmlinux.lds.h
-> @@ -248,7 +248,7 @@
->  
->  #ifdef CONFIG_FUNCTION_ERROR_INJECTION
->  #define ERROR_INJECT_WHITELIST()			\
-> -	STRUCT_ALIGN();					\
-> +	. = ALIGN(8);					\
->  	BOUNDED_SECTION(_error_injection_whitelist)
->  #else
->  #define ERROR_INJECT_WHITELIST()
-> diff --git a/include/linux/error-injection.h b/include/linux/error-injection.h
-> index 20e738f4eae8..bec81b57a9d5 100644
-> --- a/include/linux/error-injection.h
-> +++ b/include/linux/error-injection.h
-> @@ -6,10 +6,12 @@
->  #include <linux/errno.h>
->  #include <asm-generic/error-injection.h>
->  
-> +struct static_key;
-> +
->  #ifdef CONFIG_FUNCTION_ERROR_INJECTION
->  
-> -extern bool within_error_injection_list(unsigned long addr);
-> -extern int get_injectable_error_type(unsigned long addr);
-> +bool within_error_injection_list(unsigned long addr);
-> +int get_injectable_error_type(unsigned long addr, struct static_key **key_addr);
+Page tables would not make a difference here. We will switch to identity
+mappings soon. And kexec-ed kernel will build new page tables from
+scratch.
 
-This seems like an add-hoc change. Since this is called in a cold path
-(only used when adding new function), can you add new 
-`struct static_key *get_injection_key(unsigned long addr)`
-to find the static_key from the address?
-
-Other part looks good to me.
-
-Thank you,
-
+I will drop the part after "It is reasonable to proceed".
 
 
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+  Kiryl Shutsemau / Kirill A. Shutemov
 
