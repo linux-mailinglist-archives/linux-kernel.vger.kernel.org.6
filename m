@@ -1,124 +1,115 @@
-Return-Path: <linux-kernel+bounces-198461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BFA58D78E4
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 00:37:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48E438D78E0
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 00:37:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C7D41F21333
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 22:37:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A3B71C20C9F
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 22:37:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 664337B3C1;
-	Sun,  2 Jun 2024 22:37:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB63778C6E;
+	Sun,  2 Jun 2024 22:36:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VSvO28yI"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CE+IGWTD"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F69A3207;
-	Sun,  2 Jun 2024 22:37:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B4A53207
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Jun 2024 22:36:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717367842; cv=none; b=i7YsiPBzbmuskpni+s0UtENGC1XL4jVkC/m4+DjrrcShtezg5vE+BORg0LKMCH4fEb2AYGAvIj5w7XDeftnW82/9+ZlMNZ5cADPNENEFiHQQx0+nAJ8kkhOGOgqK9q/tffHvjboA9pRmBuxN8PHILeNgk5YeIL7WbUklnJTafhI=
+	t=1717367815; cv=none; b=fIExPh/lOyn63r8VJ8xuIachfkbTm0zD+NkbG2kehV3t7GT/zyyVRBRlpYO+d2XJFiNUiHciSYTA3hP+2wfYSwbqB4AWSlYpXsmvZaEdaWCVIbruUS6YAttHavCq9LokYeMMwBBthw3izrgJgmGUasu3CAO/jGL7c7C85UITOtc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717367842; c=relaxed/simple;
-	bh=G3+pi39DXsLu5GOB3nNvWBkhX6gdL40MBr+mzLc1pEE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=e8nQUYh4jYQE+jO7IpaLTgXjyAkJO0Ds2ywCXWJgIVDePuOyJLDqfCUQoMc0JfOixcdbQVtyvUn47nANx0a6FdT30Dn10mKlb+qKQo6/1A2uyRBGa+/jtaw57jAmXnihX3afcIZ72K1F5pil7X2+DJEfHK9u79EssQecANwUUm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VSvO28yI; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 452MbBIb011223;
-	Sun, 2 Jun 2024 22:37:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=MmX33+HbK0PEuGl6iJkxQw
-	3i/jTUFnwPy5XrXhmZi5Y=; b=VSvO28yImd+ddpkrvUb4Kqq7GR24bkT0taVCLg
-	GC6ZVVv5Zt1HG6dh3vAc599LVBZxbWqJ69Kq5fDC3edWOWx1jdzwD/mnAtrYm1h9
-	TFKgG2Ur/9zjML9O9tZkxjZROhF/rWmLZrts2F9/UGLhJ1f+/xhpdk0y0YUwzXJt
-	XJpCsztUmgbu5g/pneNCfiDskoLk/3D/6hxFZaXk3C/Fu7SGfVOCX5LPryj3+E0o
-	ORNo/Z9+YL2fZFqAVqGffRQ/k8/cLhcWL3v6IgZCd68zmwIbCk5E5DwcsK2wXVz2
-	un15l95+e5PYpZLJHIzCKuM4zWdrfTeByvV6UpOpUWRfxnvA==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfw6v2md6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 02 Jun 2024 22:37:11 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 452MbAVh023345
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 2 Jun 2024 22:37:10 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 2 Jun 2024
- 15:37:09 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Sun, 2 Jun 2024 15:33:39 -0700
-Subject: [PATCH] crypto: atmel-sha204a - add missing MODULE_DESCRIPTION()
- macro
+	s=arc-20240116; t=1717367815; c=relaxed/simple;
+	bh=5dGF7R9CLj6sRsLJo1BIQdYTRbCyIltr8b1bfvV1nL8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z2GWLldV8XvgV8UjMhYhVCm3Qx1I4q8+gkK+40KpBlpGw0/a9KUZBYfdjkOIoF0LDkxvRQOuYPGz8NN41hk7706mOlQ2sLu5qWP975Ti7IC/vXuRjkXBelrLTkY0jZPaFnLN6lEtRqzmAkA+OED6aPCKQsEkaVvScLL/FAkkdPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CE+IGWTD; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52b8254338dso4284367e87.2
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2024 15:36:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717367812; x=1717972612; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=K9SX0TsF2/cPQADBAaomFhPbmi6Lu7sZbQJaAY9VKGY=;
+        b=CE+IGWTDsQpFPtxTqi2DhTVYR+dBhhdrg9QxuD5gIQIZy9cGweAD7R5swJWanDOYH9
+         gjZwmKJ3UsSDRPxaeBisw8PoFh9P0Mez/G1JVvhmWoOL8s4Ry2Y/oGzJyo2x1hPQ4lvr
+         VZwrd8iAZpZxVYFaVl97VF8LQcZ/EF5bUfCMi4DRcsGBNL5YlbuYFj2EZ44w2sDe0l6r
+         5xFHPCBVR3XqDOHATXn9fa5yED+kf84mt+K274u7UjdNH0JEQl+tjJXblOkn0WxyrNWd
+         sJJKES88x8kMK6CvKRCdj0nwvFYXNAX1Z6JTqyJUCfQ9kQmnm74FfVx4tXIZm9Wbf6JK
+         MbLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717367812; x=1717972612;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=K9SX0TsF2/cPQADBAaomFhPbmi6Lu7sZbQJaAY9VKGY=;
+        b=vOlAAkDT3B/whQ7CgIfqF9BHeCV/2kK2rbU/BYR33kH44ixzJgJC254R5TkowQN8NC
+         2RlWnfRj2D9IPRXiU6GqIS+OynAW3Ox6mhKikzoNgLSCX5aPCV9gwyftR7hSJve396O0
+         8grrAAkjmoSyFIFJ5nyrCI6AAqIh9b4L+VmuaKqQSbjKbvxgnrUCWhspBhOBtkeFzmgE
+         sf0I6UztwQgierwjvMKQhOr4d8cRnYL5AxSdDdrD7s+v7bJ99n4WFmI1/6btTNiNDaEn
+         p5t8FpemqVbG1MPzCO/kSxok4U02CENqT5sCldcF31b88PTqqAfa+bivYsPoEcTvrFWM
+         Ftfw==
+X-Forwarded-Encrypted: i=1; AJvYcCWPeGz9K4lo/YkFxj1bmr3TpDZlPBbP+oKVwv6NPrGlvRk3XltHe0wQXM4D4xnk0zas621TDrncXw+OwMVmex2ZVfiRDqFU3w8oRTDb
+X-Gm-Message-State: AOJu0Yy1hCUB4lfbs10dC6MKUSzfliGZMQ6Vqp1ofAZzEKAI361QVCI4
+	K3e/+zeh/iSNidKAw3SeUbPEDYiasGycjuT+IvCn+8Kc/Xz2VDnlXAvFGtly+cY=
+X-Google-Smtp-Source: AGHT+IG531Vlad8qpchsRzAJnfYYzKUVZyytZbyY2UfIItKHXoXiLCKlPLGPxjjYCDJM5rlTX67rPw==
+X-Received: by 2002:ac2:518e:0:b0:51d:1d42:3eef with SMTP id 2adb3069b0e04-52b89585dfdmr5492633e87.29.1717367811595;
+        Sun, 02 Jun 2024 15:36:51 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52b84d89279sm1045502e87.244.2024.06.02.15.36.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 02 Jun 2024 15:36:51 -0700 (PDT)
+Date: Mon, 3 Jun 2024 01:36:49 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Abel Vesa <abel.vesa@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: qcom: x1e80100: Disable the SMB2360 4th
+ instance by default
+Message-ID: <hlzev7r3j6ok4a2iqgoezxrm272wynueznsefpr2fpj3j4nnyf@jtfbaiw4kfzl>
+References: <20240602-x1e80100-dts-pmics-drop-4th-smb2360-from-crd-v1-1-0adf4dd87a9b@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240602-md-atmel-sha204a-v1-1-ab02640a0cf2@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAELzXGYC/x3MwQrCMAyA4VcZORuosfTgq4iHbM1sYK2STBmMv
- bvV43f4/x1cTMXhOuxg8lHXZ+s4nwaYCreHoOZuoEAxpEBYM/JaZUEvTCEyZqb5wokoJoGevUx
- m3f7L2717ZBccjdtUfqNF23vDyr6KwXF8AZBNHa6BAAAA
-To: Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller"
-	<davem@davemloft.net>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        "Alexandre Belloni" <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea
-	<claudiu.beznea@tuxon.dev>
-CC: <linux-crypto@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        "Jeff
- Johnson" <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: QT5x1BqUQwaW_cE8jeMcjplxIs-Qu_z6
-X-Proofpoint-ORIG-GUID: QT5x1BqUQwaW_cE8jeMcjplxIs-Qu_z6
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-06-02_15,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 malwarescore=0
- impostorscore=0 mlxscore=0 suspectscore=0 adultscore=0 lowpriorityscore=0
- clxscore=1011 spamscore=0 priorityscore=1501 mlxlogscore=999 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
- definitions=main-2406020198
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240602-x1e80100-dts-pmics-drop-4th-smb2360-from-crd-v1-1-0adf4dd87a9b@linaro.org>
 
-make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/crypto/atmel-sha204a.o
+On Sun, Jun 02, 2024 at 05:56:24PM +0300, Abel Vesa wrote:
+> The CRD board doesn't have the 4th SMB2360 PMIC populated while the QCP
+> does. So enabled it on QCP only.
 
-Add the missing invocation of the MODULE_DESCRIPTION() macro.
+s/enabled/enable/
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/crypto/atmel-sha204a.c | 1 +
- 1 file changed, 1 insertion(+)
+With that in place:
 
-diff --git a/drivers/crypto/atmel-sha204a.c b/drivers/crypto/atmel-sha204a.c
-index 24ffdf505023..1fd836eb2d89 100644
---- a/drivers/crypto/atmel-sha204a.c
-+++ b/drivers/crypto/atmel-sha204a.c
-@@ -232,4 +232,5 @@ module_init(atmel_sha204a_init);
- module_exit(atmel_sha204a_exit);
- 
- MODULE_AUTHOR("Ard Biesheuvel <ard.biesheuvel@linaro.org>");
-+MODULE_DESCRIPTION("Microchip / Atmel SHA204A (I2C) driver");
- MODULE_LICENSE("GPL v2");
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
----
-base-commit: a693b9c95abd4947c2d06e05733de5d470ab6586
-change-id: 20240602-md-atmel-sha204a-da2f3a62246e
+foo-pmics.dtsi definitely is not the best solution, but it seems to be a
+lesser evil.
 
+> 
+> Fixes: 2559e61e7ef4 ("arm64: dts: qcom: x1e80100-pmics: Add the missing PMICs")
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> ---
+>  arch/arm64/boot/dts/qcom/x1e80100-pmics.dtsi | 2 ++
+>  arch/arm64/boot/dts/qcom/x1e80100-qcp.dts    | 4 ++++
+>  2 files changed, 6 insertions(+)
+> 
+
+
+-- 
+With best wishes
+Dmitry
 
