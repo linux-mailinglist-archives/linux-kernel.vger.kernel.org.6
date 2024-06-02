@@ -1,116 +1,98 @@
-Return-Path: <linux-kernel+bounces-198187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 347A78D74A9
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 11:47:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88A3D8D74AB
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 11:50:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A65D1C20CDA
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 09:47:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0493282376
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 09:50:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2431C374CC;
-	Sun,  2 Jun 2024 09:47:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SAYVDWjx"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61CBE36AF5;
+	Sun,  2 Jun 2024 09:50:52 +0000 (UTC)
+Received: from mail115-100.sinamail.sina.com.cn (mail115-100.sinamail.sina.com.cn [218.30.115.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FD262E83F;
-	Sun,  2 Jun 2024 09:47:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E49E29CFB
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Jun 2024 09:50:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717321623; cv=none; b=i45F0RaeB+q7cNh2YzBnL8PLtWvCpgQXk60R7OCfdKlJi0vCSoF7A3xam/0Qj3IblyKiXU1eJXSaCe5gxRhFHENzf08V4Yb9hsmNEGvYovWzNmxunSDLJBcK58llMTvJ6qUzRwQgVlzmDDNF/z+Mv2Bmu0RSyWpe4RiCMIJA5a0=
+	t=1717321852; cv=none; b=d7vEn1B5Hdg8t84uIWWu9Zxnhr7rgC/zvK6vTb+jINRxwfsk5uNNj58ot37kUNDHbDNTHVwKhJdl6w32x0c17GPA5AR7HoBnsth3bvBmGZxKLSQWl0yZEMwkUXE1AV9CypHdS5nyeYO0HbDCA2VHps5cdgYWjjaNha8j+20Gn7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717321623; c=relaxed/simple;
-	bh=e/MmA0lqNIytmpj8MKctzTRAhRhDttTY7BgrLSVLdcM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QthvF7naIhmi4lsGQ2w3+d7ztNvEM24vHs2cxccVNvCBMghsVBhFQwEsNgbJiU7aXsgVq4+tXzka7ADNXcq2sM45qhfsE0a33+YQ4ankg/pBqnBvPaOQJ1mqxq/2QSO6o98i/92xyE821LhUSeHkcjHZL5I2YeahrpL5Kzm80TA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SAYVDWjx; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717321622; x=1748857622;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=e/MmA0lqNIytmpj8MKctzTRAhRhDttTY7BgrLSVLdcM=;
-  b=SAYVDWjxym4oyUhBdFIE7xWIsxRwRjahDV09FJ6UWE+/h3vOTe9V9Zdg
-   YS92BveK8hXolsJkpXH7m/NIXImUFAk201qb9zY0+LVJWiTpKnVQ3AFUF
-   HFuLOUxzP7cgnaL5O1vRuNYJJcMVysKsXu/aTjZNLxxWDGQhlz43UnnY1
-   XGzT8IMVniQAMJiwnnq+KcAfgfSHKZEPF1ww89dKlQKJk6agvTir8uIet
-   PSlIb0B8z4O1QD+yRxJANr5tdSo1hYJ3sHTHK6Efwc5Dr3XtDJO8/+MgT
-   SoXWCndCjxN8Nu46QEItfRKSpPpIx/5FBXzuI04TzCRRF+PTWoJVXozNu
-   Q==;
-X-CSE-ConnectionGUID: p1h2xrb4RNm1Mt61L0+56w==
-X-CSE-MsgGUID: 1ofNRL8DR86W+KmffbWLtQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11090"; a="14013857"
-X-IronPort-AV: E=Sophos;i="6.08,209,1712646000"; 
-   d="scan'208";a="14013857"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2024 02:47:01 -0700
-X-CSE-ConnectionGUID: hB+Y+hpcRFO514COcgAVVQ==
-X-CSE-MsgGUID: rCz+UrgQSRGFTu/loLXfMw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,209,1712646000"; 
-   d="scan'208";a="41516784"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2024 02:46:57 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sDhnh-0000000Cz9y-40jX;
-	Sun, 02 Jun 2024 12:46:53 +0300
-Date: Sun, 2 Jun 2024 12:46:53 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org, linux-leds@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-	Lars-Peter Clausen <lars@metafoo.de>, Pavel Machek <pavel@ucw.cz>,
-	Daniel Thompson <daniel.thompson@linaro.org>,
-	Jingoo Han <jingoohan1@gmail.com>, Helge Deller <deller@gmx.de>,
-	Johan Hovold <jhovold@gmail.com>
-Subject: Re: [PATCH v1 2/4] iio: light: lm3533-als: Remove the driver
-Message-ID: <Zlw_jVoJ7w3bTFYX@smile.fi.intel.com>
-References: <20240531170844.1595468-1-andriy.shevchenko@linux.intel.com>
- <20240531170844.1595468-3-andriy.shevchenko@linux.intel.com>
- <20240601140508.0466386e@jic23-huawei>
+	s=arc-20240116; t=1717321852; c=relaxed/simple;
+	bh=6Qk3EhFI6l02CTzu7dOTv1ZIxT/EvVODd1HgAUac3ok=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=TuWiZ/rQNTQBdZXZcqwQKWMmhBi3AlckxZfH/tC7z3Xwj3UuewZgiVRsWaKWReLD9Tyg6YT2KelhuLBVPCUCq45tJL0n8LO/ulmHnY1nuOO9fXCPKoGApwk/FN9coj4tell4TgqnVOu2MxrqsY4l7uQRQYJlOBj6GmVJ/llQm8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.88.51.183])
+	by sina.com (172.16.235.24) with ESMTP
+	id 665C406A0000490E; Sun, 2 Jun 2024 17:50:36 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 53371945089237
+X-SMAIL-UIID: C0900DA4704744BC98FB16A3F5398444-20240602-175036-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+d34c2a269ed512c531b0@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [gfs2?] BUG: corrupted list in gfs2_fill_super
+Date: Sun,  2 Jun 2024 17:50:24 +0800
+Message-Id: <20240602095024.3791-1-hdanton@sina.com>
+In-Reply-To: <0000000000002501960619e2366b@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240601140508.0466386e@jic23-huawei>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Sat, Jun 01, 2024 at 02:05:08PM +0100, Jonathan Cameron wrote:
-> On Fri, 31 May 2024 19:56:14 +0300
-> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+On Sat, 01 Jun 2024 23:20:21 -0700
+> syzbot found the following issue on:
 > 
-> > The driver has no in kernel users and requires a board file
-> > to be instantiated. Remove basically a dead code.
-> > 
-> > If ever needed, it can be reinstantiated and converted to one
-> > that uses firmware node interfaces.
-> > 
-> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Given the header removal in patch 4, I assume these all need to go together
-> via mfd.
-> 
-> Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> HEAD commit:    9d99040b1bc8 Add linux-next specific files for 20240529
+> git tree:       linux-next
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=100817e6980000
 
-Thank you! We are waiting for Johan to tell what his plans about the driver.
-If it comes to removal, I add your tag to the new version of this mini-series.
+#syz test https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git  master
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+--- x/fs/gfs2/ops_fstype.c
++++ y/fs/gfs2/ops_fstype.c
+@@ -1137,6 +1137,7 @@ static int gfs2_fill_super(struct super_
+ 	struct gfs2_sbd *sdp;
+ 	struct gfs2_holder mount_gh;
+ 	int error;
++	int destroyed = 0;
+ 
+ 	sdp = init_sbd(sb);
+ 	if (!sdp) {
+@@ -1301,6 +1302,7 @@ fail_locking:
+ fail_lm:
+ 	complete_all(&sdp->sd_journal_ready);
+ 	gfs2_gl_hash_clear(sdp);
++	destroyed = 1;
+ 	gfs2_lm_unmount(sdp);
+ fail_debug:
+ 	gfs2_delete_debugfs_file(sdp);
+@@ -1308,7 +1310,8 @@ fail_debug:
+ fail_delete_wq:
+ 	destroy_workqueue(sdp->sd_delete_wq);
+ fail_glock_wq:
+-	destroy_workqueue(sdp->sd_glock_wq);
++	if (!destroyed)
++		destroy_workqueue(sdp->sd_glock_wq);
+ fail_free:
+ 	free_sbd(sdp);
+ 	sb->s_fs_info = NULL;
+--
 
