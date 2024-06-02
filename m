@@ -1,155 +1,235 @@
-Return-Path: <linux-kernel+bounces-198447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3BE98D7847
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 23:31:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 216CA8D77D9
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 22:19:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 312A4281412
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 21:31:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76043B21590
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 20:19:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 825986E619;
-	Sun,  2 Jun 2024 21:31:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62C757C083;
+	Sun,  2 Jun 2024 20:19:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mail.de header.i=@mail.de header.b="JiLWe6aO"
-Received: from shout12.mail.de (shout12.mail.de [62.201.172.58])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=luigi311.com header.i=@luigi311.com header.b="QTKrsM2L"
+Received: from mail-108-mta249.mxroute.com (mail-108-mta249.mxroute.com [136.175.108.249])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53859EDF;
-	Sun,  2 Jun 2024 21:31:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.201.172.58
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3A1674E0C
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Jun 2024 20:19:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=136.175.108.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717363875; cv=none; b=heoWNSSXHP1qwqLlz232hdhLGIhwDl9duL1Wa+SZLUpDfnGRSCyufWJ2UZKGDuPVK+rQ/yBvVRRm2E8JtdV5jALaUgftPWORDKd/3ugq8Bjn2n6cQZHMRYKf0xC8tjwx5+Tawh9Jlw0kDVh7SOjuXFsUcEVNsR6s5ZTRzGHYY+M=
+	t=1717359555; cv=none; b=fi8vsfT0XC0e0umJHLJMZbt8B5+kjMhK7U8HDCxcYDrfd48hdl52i48eMy5PSqOFzddjxPqxLnLGSTFfbfMOqcMX4+04T2FY/WRUDIhvFMcc8ha7t+3zrFT6UG+aIOtv1AHjV9DMAddUNXulUNDaGxm5ugVk4aEbkFRFWb91LIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717363875; c=relaxed/simple;
-	bh=QGydLqg5nD7goLUdbsX1bHCF1IzK/yJxggqZg1PvGhQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TURl7SBJx1jSuU9rXoK4VudqVSbaQNKF7WDXDHVsQlmbDrmqRrBpfYazmuljs6doRG5rRijQQIjn4U/GPKCWKTfqXAMOAsj1s2+Nf9DhjsINpoVbecwffELdwrkZVtmtSxEM599sRKA6Cr/8aAo+OkklQQKP+Q0OWRKdjVSzS0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mail.de; spf=pass smtp.mailfrom=mail.de; dkim=pass (2048-bit key) header.d=mail.de header.i=@mail.de header.b=JiLWe6aO; arc=none smtp.client-ip=62.201.172.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mail.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.de
-Received: from shout02.mail.de (unknown [10.0.120.222])
-	by shout12.mail.de (Postfix) with ESMTPS id 5EC0C240AF1;
-	Sun,  2 Jun 2024 23:22:33 +0200 (CEST)
-Received: from postfix03.mail.de (postfix03.bt.mail.de [10.0.121.127])
-	by shout02.mail.de (Postfix) with ESMTP id 3D0A3240BF0;
-	Sun,  2 Jun 2024 23:22:33 +0200 (CEST)
-Received: from smtp01.mail.de (smtp04.bt.mail.de [10.0.121.214])
-	by postfix03.mail.de (Postfix) with ESMTP id 1AC1C80065;
-	Sun,  2 Jun 2024 23:22:33 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mail.de;
-	s=mailde202009; t=1717363353;
-	bh=QGydLqg5nD7goLUdbsX1bHCF1IzK/yJxggqZg1PvGhQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:From:To:CC:Subject:Reply-To;
-	b=JiLWe6aOXiY8MqxPHwwnpommmxQuAzd9xnFV9HqgiODg0WYoFanwH2ubKSGTvfQAn
-	 r1EYSOfAzkEt2yOmIQmLqProJwZRKOVjSt9LEWzs2B75Q0mVv+5hCftr8cShGio/Ef
-	 K0BXKnT3UOUxAYfX98s2xDdOMHCzHDzmchEev/TkUqkUubgFs/ehDMukTuWlOX+MSO
-	 IqQco5uLmKjzJVL2aHtgGiJsoUmFUCF6xB/zA+l/6Hb2HOWq9Q9u5tSkohwQK8pNT0
-	 gclExeVxIc9FrsrZ7ipI0UViFgfF92OO67qdWre1j4AAiHeUYPlSuSTuOkNFhlnUpI
-	 1u4H5WACYCLtA==
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp01.mail.de (Postfix) with ESMTPSA id 1721F2409AB;
-	Sun,  2 Jun 2024 23:22:28 +0200 (CEST)
-From: Sebastian Kropatsch <seb-dev@mail.de>
-To: Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org
-Cc: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Dragan Simic <dsimic@manjaro.org>,
+	s=arc-20240116; t=1717359555; c=relaxed/simple;
+	bh=hpqRJ08lO+PkGRfiEidrZnzYIHlnwSGsXOGXGN2+H+Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Oke5y9cysOqcCWdVN5FyczskIqIucZYonVKfetju2LO+NwlWMD9z3cuNvC1st5sM11Lkb0MsfxjtZSp9PW2O7BQAD41ZOK8+FUFgsykj2VRCs/EI293N0c1Vy92nnftGUubwhbusobZL5keKyeFiaid74arRqQN0n6MvOV6xLJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=luigi311.com; spf=pass smtp.mailfrom=luigi311.com; dkim=pass (2048-bit key) header.d=luigi311.com header.i=@luigi311.com header.b=QTKrsM2L; arc=none smtp.client-ip=136.175.108.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=luigi311.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=luigi311.com
+Received: from filter006.mxroute.com ([136.175.111.3] filter006.mxroute.com)
+ (Authenticated sender: mN4UYu2MZsgR)
+ by mail-108-mta249.mxroute.com (ZoneMTA) with ESMTPSA id 18fda965140000e2b6.010
+ for <linux-kernel@vger.kernel.org>
+ (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
+ Sun, 02 Jun 2024 20:13:55 +0000
+X-Zone-Loop: 203a0b71d70aa6a1d9a7e225426a28588f694241afd0
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=luigi311.com; s=x; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
+	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=I3FqIou2Hw7O0efOoyCcVKinCXA2Rt++X7FET/AdEQE=; b=QTKrsM2LdjwUEnqP/XjPTl1EGJ
+	FiWB0i8NLOJirjDBDMVw6U/AZP1qNSnA7AwizchtRgluuVos3zoY9Kjkn59f72zrS4FJAx0YS1izZ
+	ubNA7peLxdx/tg3P/bAyk+gGZyvfpmtyflk8vVj2LMc373EiQrR5i4JXpaRjSXpbv5fMeisqomnSe
+	brSbpE1FaUftnaKZkbJO95VAe9bwiPAxnN4WRa59SffIi13d/LFS2sI14KI5agkMwEfauaWvOVEva
+	bax9STn2Zkgg6/4JxX8c8lTwVoSBatYQT+nCJ7hPMza+vYgCQYqI6BDHplT7WcCHvS0RPSqh91yUh
+	y0JdxxdA==;
+From: git@luigi311.com
+To: linux-media@vger.kernel.org
+Cc: dave.stevenson@raspberrypi.com,
+	jacopo.mondi@ideasonboard.com,
+	mchehab@kernel.org,
+	robh@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	festevam@gmail.com,
+	sakari.ailus@linux.intel.com,
 	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Sebastian Kropatsch <seb-dev@mail.de>
-Subject: [PATCH v2 0/2] RK3588: FriendlyElec CM3588 NAS board support
-Date: Sun,  2 Jun 2024 22:08:18 +0200
-Message-ID: <20240602211901.237769-1-seb-dev@mail.de>
+	pavel@ucw.cz,
+	phone-devel@vger.kernel.org,
+	Luis Garcia <git@luigi311.com>
+Subject: [PATCH v6 00/23] imx258 improvement series
+Date: Sun,  2 Jun 2024 14:13:22 -0600
+Message-ID: <20240602201345.328737-1-git@luigi311.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-purgate: clean
-X-purgate: This mail is considered clean (visit http://www.eleven.de for further information)
-X-purgate-type: clean
-X-purgate-Ad: Categorized by eleven eXpurgate (R) http://www.eleven.de
-X-purgate: This mail is considered clean (visit http://www.eleven.de for further information)
-X-purgate: clean
-X-purgate-size: 2883
-X-purgate-ID: 154282::1717363352-1CB7D338-9AE4CCBC/0/0
+X-Authenticated-Id: personal@luigi311.com
 
-Hello!
+From: Luis Garcia <git@luigi311.com>
 
-This adds support for the FriendlyElec CM3588 NAS board.
-The board's device tree makes use of the latest upstream advances on the
-RK3588 like USB3 DRD and GPU support as well as the latest Rockchip PCIe
-driver bifurcation fixes, but some features such as thermal management
-and HDMI will have to be added later when SoC support for these features
-is merged.
-Since the hardware has similarities with FriendlyElec's NanoPC T6, the
-device tree for the CM3588 NAS took some inspirations from and also
-partially shares some sections with the NanoPC T6 tree.
+v6:
+  - Drop powerdown-gpio patches
+    - per Sakari Ailus request as it is not part or 
+      not used by the sensor
+    - I tested without it and PPP still works
+    - Dave mentioned its not part of the datasheet 
+      for the imx258
+    - Ondrej Jirman also tested it and it doesnt seem
+      to be needed
 
-Minor issue:
-The device enumeration of NVMe SSDs plugged into the four PCIe M.2 slots
-does not follow the order of the slots on the board: The slots are
-physically named from 1 to 4, top to bottom. However, they do not show
-up in this same order in Linux when all slots are polulated:
-   - SSD in physical slot 1 shows up as nvme0
-   - SSD in physical slot 2 shows up as nvme2
-   - SSD in physical slot 3 shows up as nvme1
-   - SSD in physical slot 4 shows up as nvme3
-This is the same order in which the data lanes are mapped for PCIe
-bifurcation (dts property: data-lanes = <1 3 2 4>).
-I could not solve this by using aliases for the PCIe nodes in the device
-tree. Perhaps this is something that can only be solved at driver level?
-I am not sure if this behaviour is even considered a bug or if this is
-intended behaviour by design.
 
-Devicetree validation:
-`make CHECK_DTBS=y rockchip/rk3588-cm3588-nas.dtb` does not give any
-warnings or errors, tested on Linux next-20240523.
+v5:
+  - Changed ownership of a few patches to Ondrej Jirman
+  - Implement feedback from Tommy Merciai
+    - media: i2c: imx258: Add support for reset gpio
+    - media: i2c: imx258: Use v4l2_link_freq_to_bitmap helper
+    - media: i2c: imx258: Convert to new CCI register access helpers
 
-Best regards,
-Sebastian Kropatsch
----
+v4:
+  - Swapped out the use macro patch for a patch that uses the new
+    CCI register access helpers per Sakari Ailus
+  - Fix order of reset and powerdown gpio before disable regulators
+  - Fix formating of all patches
+  
+  - Implemented feedback from Pavel Machek
+    - media: i2c: imx258: Follow normal V4L2 behaviours
+    - media: i2c: imx258: Allow configuration of clock
+  - Implemented feedback from Sakari Ailus
+    - media: i2c: imx258: Add support for powerdown gpio
 
-Changes in v2:
-- split dts into two files (CM and carrier board)
-- rename fixed regulators with preferred 'regulator-' prefix
-- use preferred 'gpios' property instead of 'gpio'
-- add 'pinctrl-names' property for every pinctrl
-- add several pwm nodes
-- drop HMDI PHY and VOP support
-- drop unneeded &wdt node
-- remove i2c4 since it's not availabe according to the schematics
-- &sdhci: drop 'full-pwr-cycle-in-suspend' flag
-- &sdmmc: drop 'cap-mmc-highspeed' flag because of no-mmc
-- &sdmmc: drop 'cd-gpios' property, unneeded w/ using sdmmc_det pinctrl
-- &usb_host0_xhci, &usb_host2_xhci: remove default 'dr_mode' property
 
----
-Sebastian Kropatsch (2):
-  dt-bindings: arm: rockchip: Add FriendlyElec CM3588 NAS
-  arm64: dts: rockchip: Add FriendlyElec CM3588 NAS board
+v3 Luis Garcia
 
- .../devicetree/bindings/arm/rockchip.yaml     |   7 +
- arch/arm64/boot/dts/rockchip/Makefile         |   1 +
- .../rk3588-friendlyelec-cm3588-nas.dts        | 705 ++++++++++++++++++
- .../rockchip/rk3588-friendlyelec-cm3588.dtsi  | 660 ++++++++++++++++
- 4 files changed, 1373 insertions(+)
- create mode 100644 arch/arm64/boot/dts/rockchip/rk3588-friendlyelec-cm3588-nas.dts
- create mode 100644 arch/arm64/boot/dts/rockchip/rk3588-friendlyelec-cm3588.dtsi
+- Add Use v4l2_link_freq_to_bitmap helper patch per Sakari Ailus
+- Separate dt-bindings for powerdown per Rob Herring
+- Fix dt-bindings for imx258.yaml
+- Fix sign offs per Dang Huynh 
+- Fix versioning per Conor Dooley and Kieran Bingham
+- Use scripts to validate and fix patches
+- Implemented feedback from Sakari Ailus
+  - media: i2c: imx258: Add support for 24MHz clock
+  - media: i2c: imx258: Add support for running on 2 CSI data lanes
+
+- Implemented feedback from Rob Herring
+  - dt-bindings: media: imx258: Add alternate compatible strings
+
+
+
+v2 Luis Garcia
+
+- Add use macros patch 
+- Add support for powerdown gpio patch
+- Add support for reset gpio patch
+- Dropped Add support for long exposure modes patch
+- Implemented feedback from Jacopo Mondi
+  - media: i2c: imx258: Add regulator control
+  - media: i2c: imx258: Add support for 24MHz clock
+  - media: i2c: imx258: Add support for running on 2 CSI data lanes
+  - media: i2c: imx258: Add get_selection for pixel array information
+  - media: i2c: imx258: Issue reset before starting streaming
+  - media: i2c: imx258: Set pixel_rate range to the same as the value
+  - dt-bindings: media: imx258: Add alternate compatible strings
+  - media: i2c: imx258: Change register settings for variants of the sensor
+  - media: i2c: imx258: Make HFLIP and VFLIP controls writable
+
+This adds a few more patches and drops one. The long exposure mode patch
+was dropped due to the bug that Jacopo found. The powerdown and reset gpio
+patches were added as that fixes support for the Pinephone Pro, without
+them the sensor doesn't initialize correctly.
+
+Tested on a Pinephone Pro by forcing 24 mhz clock. The two lower 
+resolutions had some artifacts but that is expected as more changes are 
+required to fix them for the Pinephone Pro specifically, kept all 
+registers the same as Dave's original patch since that works on dedicated
+imx258 hardware and the artifacts are PPP specific so it shouldn't 
+be a regression.
+
+
+
+v1 Dave Stevenson
+
+This is a set of patches for imx258 that allow it to work with alternate
+clock frequencies, over either 2 or 4 lanes, and generally adding
+flexibility to the driver.
+
+Tested with an IMX258 module from Soho Enterprises that has a 24MHz
+oscillator. Both 2 and 4 lane configurations work with correct link
+frequencies and pixel rates.
+
+Jacopo has tested on a PinePhone Pro which has an ~19.2MHz clock fed from
+the SoC, He confirms that the two lower resolution modes work, but not the
+full res mode. Comparing to the BSP it looks like they have some weird
+clock configuration in the 4208x3120 mode (nominally 1224Mb/s/lane instead
+of 1267). As it has never previously worked directly with the mainline
+driver this isn't a regression but may indicate that there is a need for
+support of additional link frequencies in the future.
+
+The last patch that makes HFLIP and VFLIP configurable may be contentious
+as I've retained the default configuration of inverted from the original
+driver. I know this was discussed recently, but I can't recall the final
+outcome.
+
+I am relying on someone from Intel testing this out, as correcting the
+cropping and supporting flips has changed the Bayer order. Seeing as this
+is all above board in V4L2 terms I really hope that the layers above it
+behave themselves.
+
+Dave Stevenson (20):
+  media: i2c: imx258: Remove unused defines
+  media: i2c: imx258: Make image geometry meet sensor requirements
+  media: i2c: imx258: Disable digital cropping on binned modes
+  media: i2c: imx258: Remove redundant I2C writes.
+  media: i2c: imx258: Add regulator control
+  media: i2c: imx258: Make V4L2_CID_VBLANK configurable.
+  media: i2c: imx258: Split out common registers from the mode based
+    ones
+  media: i2c: imx258: Add support for 24MHz clock
+  media: i2c: imx258: Add support for running on 2 CSI data lanes
+  media: i2c: imx258: Follow normal V4L2 behaviours for clipping
+    exposure
+  media: i2c: imx258: Add get_selection for pixel array information
+  media: i2c: imx258: Allow configuration of clock lane behaviour
+  media: i2c: imx258: Correct max FRM_LENGTH_LINES value
+  media: i2c: imx258: Issue reset before starting streaming
+  media: i2c: imx258: Set pixel_rate range to the same as the value
+  media: i2c: imx258: Support faster pixel rate on binned modes
+  dt-bindings: media: imx258: Rename to include vendor prefix
+  dt-bindings: media: imx258: Add alternate compatible strings
+  media: i2c: imx258: Change register settings for variants of the
+    sensor
+  media: i2c: imx258: Make HFLIP and VFLIP controls writable
+
+Luis Garcia (2):
+  media: i2c: imx258: Use v4l2_link_freq_to_bitmap helper
+  media: i2c: imx258: Convert to new CCI register access helpers
+
+Ondrej Jirman (1):
+  media: i2c: imx258: Add support for reset gpio
+
+ .../i2c/{imx258.yaml => sony,imx258.yaml}     |   11 +-
+ MAINTAINERS                                   |    2 +-
+ drivers/media/i2c/Kconfig                     |    1 +
+ drivers/media/i2c/imx258.c                    | 1440 ++++++++++-------
+ 4 files changed, 835 insertions(+), 619 deletions(-)
+ rename Documentation/devicetree/bindings/media/i2c/{imx258.yaml => sony,imx258.yaml} (88%)
 
 -- 
-2.43.0
+2.44.0
 
 
