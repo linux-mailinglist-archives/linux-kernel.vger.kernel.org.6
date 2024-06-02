@@ -1,209 +1,228 @@
-Return-Path: <linux-kernel+bounces-198394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1A548D779D
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 21:34:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30B0C8D779F
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 21:40:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 313C71F21C5D
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 19:34:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61DD71C2164E
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 19:40:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CE457174F;
-	Sun,  2 Jun 2024 19:34:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88F5A74069;
+	Sun,  2 Jun 2024 19:40:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Bw2UouR3"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W0jctvoX"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C4E8262B6
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Jun 2024 19:34:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6003262B6;
+	Sun,  2 Jun 2024 19:40:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717356850; cv=none; b=j9A0zqITEhUDVc4FCHnfrR7tdVCu5r8XH1tUHp0ypBkuzhniA89btIxTTOlndNo5dMDaJBVSjDTCrWVZS7HC3KuJf9rvF6DV9fmfNh1x24WvEnMOjb528W0zgzyTsQ/Xx+8eOAHfBJIbrSrZAMecA4pIxd3+NDbvtTca37dW/kU=
+	t=1717357248; cv=none; b=qLqOc9i1zOyrZt9NhE0eUPna1dxT6umwUFTrVS2HGMEn49N6rNujdnzWByPVJAEQDXUkEtqiD3ysyvt9Be+Webjhh70Nw1Y+TOebV9Z4KD7xYXaOWiTot8NEXPeDDbhPiap6rmFCyhrR8gPUiF3WUyPgBQPmAJK3kyhFriW29kk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717356850; c=relaxed/simple;
-	bh=jU1KE6cNBFB8q2MqyQaMmOaoAHM28bYwChglFAXBwts=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=T4958WEHcPy0eHRTuLwCeFUznm6+PaHstQi2k3nso4k3MTtC8dS+/Fjer6hL01hn04q9h/wStnI9z8AYzZ3Ly4sryeOuT+56f1Hw8a24mjZ1gsuXwZL5ZwVf+20Ww5W5Ri3UtqhnFNu4qzwE6zC9YjuKNsywb4qNOXfcTgSYmjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Bw2UouR3; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717356848; x=1748892848;
-  h=date:from:to:cc:subject:message-id;
-  bh=jU1KE6cNBFB8q2MqyQaMmOaoAHM28bYwChglFAXBwts=;
-  b=Bw2UouR34UJ5cvXL8QBGZflvaSSU+oGw1TIC+4J+26N9aJ+/tM5KSwaK
-   nd3crDnRqHn/R1gasGVLN4rZdRMFTxC7BVZX6MrSku4ekC+nxNzrByJiU
-   wJlXjRHQ/ybTTSdehR4wUH9kQCiXf1ue56EGJNy8KC3ce9ZoFfkWocKdp
-   UfesOHnDsls4SRIoOjVpyLEiNdd0P7Z5zeljcWJ/H9rXn4G7xYq3FSo/b
-   F1K1K1UDVbMS045cb68QPEOKv1/TC1Cc99yKQP9enZOiYNkcjzQ5G3Nmi
-   mOYyFP6CEIPVnenQiMlU5OwCxHnOiXIyFojHKVEb50miWIRVl+tBMKoBU
-   Q==;
-X-CSE-ConnectionGUID: kYVaIAaLR3yu+cPJO5Pwbg==
-X-CSE-MsgGUID: U8Bb3+MNTGeJsdutYFvvjQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11091"; a="13715899"
-X-IronPort-AV: E=Sophos;i="6.08,210,1712646000"; 
-   d="scan'208";a="13715899"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2024 12:34:08 -0700
-X-CSE-ConnectionGUID: 4t9qS947SGKtOl6INu3+OQ==
-X-CSE-MsgGUID: Rs8m886oTkic7PgNevGFmg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,210,1712646000"; 
-   d="scan'208";a="37276056"
-Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
-  by orviesa008.jf.intel.com with ESMTP; 02 Jun 2024 12:34:06 -0700
-Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sDqxw-000KLb-09;
-	Sun, 02 Jun 2024 19:34:04 +0000
-Date: Mon, 03 Jun 2024 03:34:03 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/cpu] BUILD SUCCESS
- eb9d3c0bb065e55af6ec88e82a94b57fa1bb6e5d
-Message-ID: <202406030300.Rof7K4V9-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1717357248; c=relaxed/simple;
+	bh=B2VgIlsViZs57tj2fSDvldLthYxPZ8KkrbbuQ7SvQ9U=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZxwfbLjs4g7rA7Jf2nIDlrOJkdHQg7g6JZSF3VS4ogFCZoPSB6WGZurwfhqNv5L4dQIUqnhIuX4D8L4ucEUelr9nlSpphyWfvBFRzUYAecOCn4z+jVh/+ye6DItU4UkTCQ4DN9SFdxeSd1Kq2t8Msn0/Gqdky7xF5eKdA9IBjqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W0jctvoX; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52b936c958dso1342105e87.0;
+        Sun, 02 Jun 2024 12:40:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717357245; x=1717962045; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YZQ5jW+8VG+i6oC3GccbqmhN/bn0o76pBkEl22tOlts=;
+        b=W0jctvoXGKnv4UxHhEUSIxPrA+EbDtG8QDTTInryfyxt6sv82pMoJcGzjobr1mWEyB
+         AQI3a3tNHVQy8viR0fgUpXkSfG22BBNAbdjeYQ+sxe93uRLs9PJ2VixiR1irtzGkRMLe
+         t8NdRoMIrwXNWVptK3gDXNXM9nLN7Fjs7SPOXVFI4Vx9150beBlyUQp3vADPm6FDjhMZ
+         yJ+WwNnNSk6fS0AxLM7FWVMGKJsjLtiKj3ohMkIIBZxS66bcAMH3Awxq+PHz2RzIWaDG
+         CNo/VTuuXxbOF9Y9z681no1XJVmdR8B2d+VFw5RTvXzLBEmztpRSK3VPbNw363iCvhTx
+         Uq9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717357245; x=1717962045;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YZQ5jW+8VG+i6oC3GccbqmhN/bn0o76pBkEl22tOlts=;
+        b=SmxFMDy318MLJ1mg47/axNY5R9fOSlal+NECbA5M25bTVamxhNtnkjFrGf4+MXvUE4
+         dmKiEZ4CrudE3bPb+x8Fu7mslyLALF5Z5TzBsLHhJCWU9LYggKATfiijALJKVk2ZPUGr
+         jLtRyWyxKGjjxSvMcwI0YDhfJAYBWE2XlN0Np/Y8y8lny7LISiBcC/8yiimUpXJIwTa+
+         X3+3xzaH9Wxz5P/LED3BSWVQEzdXPLCPDIrIT3UAXju7T2Ou2DO/g9ESneuwfTCMVoDQ
+         m/vNO/ODMbfO1Udyb8mpFpbzIL/2OL3iIBo2GdXawZV9O32XvyVA0cZlHVGtMNg1BG3x
+         pDcg==
+X-Forwarded-Encrypted: i=1; AJvYcCXPDSJapERKiByGz+9IsoKMGo3/kWkyvU0YMBEX1G6w7SeHJ3GdKDzfoXfAyk5JZ5wbRxeLJIfJACPWqaWTdGFklnMcC9TPo2cnZUXPAKhutb6f5HiDDO+fb15fUWQs5KxU+ovtvsjo
+X-Gm-Message-State: AOJu0YzkevBDWj9wTritdRziAGkz1tHl0wJM5Ai2/BC69FP+05IJJhsr
+	w/Wfey+YpNp7s6UUSIrrr/eu04gP2tkxhGHJ+9dczR+fzaOzcNdfSe0QFg==
+X-Google-Smtp-Source: AGHT+IElXkeLv81Nw6DWcSG9OurBo8XlxP703RRwvH95i36c4ia2xxVDsJ13/Jp2bO9oCS7cvXKVcg==
+X-Received: by 2002:ac2:47e4:0:b0:529:b717:2a14 with SMTP id 2adb3069b0e04-52b8955c254mr4509420e87.14.1717357244639;
+        Sun, 02 Jun 2024 12:40:44 -0700 (PDT)
+Received: from vamoiridPC ([2a04:ee41:82:7577:add1:b1ad:7182:3e90])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a68cbb64834sm193225866b.1.2024.06.02.12.40.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 02 Jun 2024 12:40:44 -0700 (PDT)
+From: Vasileios Amoiridis <vassilisamir@gmail.com>
+X-Google-Original-From: Vasileios Amoiridis <vamoirid@vamoiridPC>
+Date: Sun, 2 Jun 2024 21:40:42 +0200
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Vasileios Amoiridis <vassilisamir@gmail.com>, lars@metafoo.de,
+	himanshujha199640@gmail.com, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 14/17] iio: chemical: bme680: Modify startup procedure
+Message-ID: <20240602194042.GF387181@vamoiridPC>
+References: <20240527183805.311501-1-vassilisamir@gmail.com>
+ <20240527183805.311501-15-vassilisamir@gmail.com>
+ <20240602140123.3dd1b793@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240602140123.3dd1b793@jic23-huawei>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/cpu
-branch HEAD: eb9d3c0bb065e55af6ec88e82a94b57fa1bb6e5d  x86/mce/inject: Add missing MODULE_DESCRIPTION() line
+On Sun, Jun 02, 2024 at 02:01:23PM +0100, Jonathan Cameron wrote:
+> On Mon, 27 May 2024 20:38:02 +0200
+> Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
+> 
+> > Modify the startup procedure to reflect the procedure of
+> > the Bosch BME68x Sensor API. The initial readings and
+> > configuration of the sensor need to happen in the
+> > following order:
+> > 
+> > 1) Read calibration data [1,2]
+> > 2) Chip general configuration [3]
+> > 3) Gas configuration [4]
+> > 
+> > After the chip configuration it is necessary to ensure that
+> > the sensor is in sleeping mode, in order to apply the gas
+> > configuration settings [5].
+> > 
+> > Also, after the soft reset, it is advised to wait for 5ms [6].
+> > 
+> > [1]: https://github.com/boschsensortec/BME68x_SensorAPI/blob/v4.4.8/bme68x.c#L162
+> > [2]: https://github.com/boschsensortec/BME68x_SensorAPI/blob/v4.4.8/examples/forced_mode/forced_mode.c#L44
+> > [3]: https://github.com/boschsensortec/BME68x_SensorAPI/blob/v4.4.8/examples/forced_mode/forced_mode.c#L53
+> > [4]: https://github.com/boschsensortec/BME68x_SensorAPI/blob/v4.4.8/examples/forced_mode/forced_mode.c#L60
+> > [5]: https://github.com/boschsensortec/BME68x_SensorAPI/blob/v4.4.8/bme68x.c#L640
+> > [6]: https://github.com/boschsensortec/BME68x_SensorAPI/blob/v4.4.8/bme68x.c#L294
+> > Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
+> > ---
+> >  drivers/iio/chemical/bme680.h      |  2 ++
+> >  drivers/iio/chemical/bme680_core.c | 27 ++++++++++++++++++---------
+> >  2 files changed, 20 insertions(+), 9 deletions(-)
+> > 
+> > diff --git a/drivers/iio/chemical/bme680.h b/drivers/iio/chemical/bme680.h
+> > index 17ea59253923..3be2f76a5bfb 100644
+> > --- a/drivers/iio/chemical/bme680.h
+> > +++ b/drivers/iio/chemical/bme680.h
+> > @@ -61,6 +61,8 @@
+> >  
+> >  #define BME680_MEAS_TRIM_MASK			GENMASK(24, 4)
+> >  
+> > +#define BME680_STARTUP_TIME_US			5000
+> > +
+> >  /* Calibration Parameters */
+> >  #define BME680_T2_LSB_REG	0x8A
+> >  #define BME680_H2_MSB_REG	0xE1
+> > diff --git a/drivers/iio/chemical/bme680_core.c b/drivers/iio/chemical/bme680_core.c
+> > index b055eeee8f1c..afaa43ec3241 100644
+> > --- a/drivers/iio/chemical/bme680_core.c
+> > +++ b/drivers/iio/chemical/bme680_core.c
+> > @@ -505,10 +505,12 @@ static int bme680_chip_config(struct bme680_data *data)
+> >  	ret = regmap_write_bits(data->regmap, BME680_REG_CTRL_MEAS,
+> >  				BME680_OSRS_TEMP_MASK | BME680_OSRS_PRESS_MASK,
+> >  				osrs);
+> > -	if (ret < 0)
+> > +	if (ret < 0) {
+> >  		dev_err(dev, "failed to write ctrl_meas register\n");
+> > +		return ret;
+> > +	}
+> >  
+> > -	return ret;
+> > +	return 0;
+> >  }
+> 
+> I think this is an unrelated change so if you want to do this - different patch.
+> 
 
-elapsed time: 728m
+Well, it is not completely unrelated. This function is only doing regmap_reads() 
+and after every regmap in case of error it returns in the if statement that exists
+after the regmap_read(). In the last check though, instead of exiting inside the if
+statement it just sends a dev_err() message, exits the if() and then exits from
+the last return. Functionality is the same, it is just not consistent. But I could
+split it in 2 commits, no problem!
 
-configs tested: 117
-configs skipped: 135
+> >  
+> >  static int bme680_gas_config(struct bme680_data *data)
+> > @@ -517,6 +519,11 @@ static int bme680_gas_config(struct bme680_data *data)
+> >  	int ret;
+> >  	u8 heatr_res, heatr_dur;
+> >  
+> > +	/* Go to sleep */
+> > +	ret = bme680_set_mode(data, false);
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> >  	heatr_res = bme680_calc_heater_res(data, data->heater_temp);
+> >  
+> >  	/* set target heater temperature */
+> > @@ -847,6 +854,8 @@ int bme680_core_probe(struct device *dev, struct regmap *regmap,
+> >  		return ret;
+> >  	}
+> >  
+> > +	usleep_range(BME680_STARTUP_TIME_US, BME680_STARTUP_TIME_US + 1000);
+> > +
+> >  	ret = regmap_read(regmap, BME680_REG_CHIP_ID, &data->check);
+> >  	if (ret < 0) {
+> >  		dev_err(dev, "Error reading chip ID\n");
+> > @@ -859,22 +868,22 @@ int bme680_core_probe(struct device *dev, struct regmap *regmap,
+> >  		return -ENODEV;
+> >  	}
+> >  
+> > -	ret = bme680_chip_config(data);
+> > +	ret = bme680_read_calib(data, &data->bme680);
+> >  	if (ret < 0) {
+> > -		dev_err(dev, "failed to set chip_config data\n");
+> > +		dev_err(dev,
+> > +			"failed to read calibration coefficients at probe\n");
+> >  		return ret;
+> 
+> Maybe you have it in a later patch (it definitely wants to be a different patch from
+> this one as different issue), but feels like a bunch of places where
+> dev_err_probe() would be good.
+> 
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Well, since they are in the probe function I guess I could also change those to
+dev_err_probe() in a separate commit.
 
-tested configs:
-alpha                             allnoconfig   gcc  
-alpha                            allyesconfig   gcc  
-alpha                               defconfig   gcc  
-arc                               allnoconfig   gcc  
-arc                                 defconfig   gcc  
-arc                   randconfig-001-20240602   gcc  
-arc                   randconfig-002-20240602   gcc  
-arm                   randconfig-003-20240602   gcc  
-arm64                             allnoconfig   gcc  
-arm64                               defconfig   gcc  
-arm64                 randconfig-002-20240602   gcc  
-csky                              allnoconfig   gcc  
-csky                                defconfig   gcc  
-csky                  randconfig-001-20240602   gcc  
-csky                  randconfig-002-20240602   gcc  
-hexagon                          allmodconfig   clang
-hexagon                          allyesconfig   clang
-i386                             allmodconfig   gcc  
-i386                              allnoconfig   gcc  
-i386                             allyesconfig   gcc  
-i386         buildonly-randconfig-001-20240602   clang
-i386         buildonly-randconfig-002-20240602   gcc  
-i386         buildonly-randconfig-003-20240602   clang
-i386         buildonly-randconfig-004-20240602   clang
-i386         buildonly-randconfig-005-20240602   clang
-i386         buildonly-randconfig-006-20240602   clang
-i386                                defconfig   clang
-i386                  randconfig-001-20240602   clang
-i386                  randconfig-002-20240602   clang
-i386                  randconfig-003-20240602   clang
-i386                  randconfig-004-20240602   gcc  
-i386                  randconfig-005-20240602   clang
-i386                  randconfig-006-20240602   clang
-i386                  randconfig-011-20240602   clang
-i386                  randconfig-012-20240602   clang
-i386                  randconfig-013-20240602   clang
-i386                  randconfig-014-20240602   gcc  
-i386                  randconfig-015-20240602   gcc  
-i386                  randconfig-016-20240602   gcc  
-loongarch                        allmodconfig   gcc  
-loongarch                         allnoconfig   gcc  
-loongarch                           defconfig   gcc  
-loongarch             randconfig-001-20240602   gcc  
-loongarch             randconfig-002-20240602   gcc  
-m68k                             allmodconfig   gcc  
-m68k                              allnoconfig   gcc  
-m68k                             allyesconfig   gcc  
-m68k                                defconfig   gcc  
-microblaze                       allmodconfig   gcc  
-microblaze                        allnoconfig   gcc  
-microblaze                       allyesconfig   gcc  
-microblaze                          defconfig   gcc  
-mips                              allnoconfig   gcc  
-mips                             allyesconfig   gcc  
-nios2                            allmodconfig   gcc  
-nios2                             allnoconfig   gcc  
-nios2                            allyesconfig   gcc  
-nios2                               defconfig   gcc  
-nios2                 randconfig-001-20240602   gcc  
-nios2                 randconfig-002-20240602   gcc  
-openrisc                          allnoconfig   gcc  
-openrisc                            defconfig   gcc  
-parisc                            allnoconfig   gcc  
-parisc                              defconfig   gcc  
-parisc                randconfig-001-20240602   gcc  
-parisc                randconfig-002-20240602   gcc  
-parisc64                            defconfig   gcc  
-powerpc                           allnoconfig   gcc  
-powerpc                          allyesconfig   clang
-powerpc               randconfig-002-20240602   gcc  
-powerpc64             randconfig-002-20240602   gcc  
-riscv                            allmodconfig   clang
-riscv                             allnoconfig   gcc  
-riscv                            allyesconfig   clang
-s390                             allmodconfig   clang
-s390                             allyesconfig   gcc  
-s390                  randconfig-001-20240602   gcc  
-sh                               allmodconfig   gcc  
-sh                                allnoconfig   gcc  
-sh                               allyesconfig   gcc  
-sh                                  defconfig   gcc  
-sh                    randconfig-001-20240602   gcc  
-sh                    randconfig-002-20240602   gcc  
-sparc                            allmodconfig   gcc  
-sparc                             allnoconfig   gcc  
-sparc                               defconfig   gcc  
-sparc64                          allmodconfig   gcc  
-sparc64                          allyesconfig   gcc  
-sparc64                             defconfig   gcc  
-sparc64               randconfig-001-20240602   gcc  
-sparc64               randconfig-002-20240602   gcc  
-um                               allmodconfig   clang
-um                               allyesconfig   gcc  
-um                             i386_defconfig   gcc  
-um                    randconfig-001-20240602   gcc  
-x86_64                            allnoconfig   clang
-x86_64                           allyesconfig   clang
-x86_64       buildonly-randconfig-002-20240602   clang
-x86_64       buildonly-randconfig-003-20240602   clang
-x86_64       buildonly-randconfig-005-20240602   clang
-x86_64       buildonly-randconfig-006-20240602   clang
-x86_64                              defconfig   gcc  
-x86_64                randconfig-002-20240602   clang
-x86_64                randconfig-003-20240602   clang
-x86_64                randconfig-005-20240602   clang
-x86_64                randconfig-006-20240602   clang
-x86_64                randconfig-012-20240602   clang
-x86_64                randconfig-013-20240602   clang
-x86_64                randconfig-015-20240602   clang
-x86_64                randconfig-072-20240602   clang
-x86_64                randconfig-074-20240602   clang
-x86_64                randconfig-075-20240602   clang
-x86_64                randconfig-076-20240602   clang
-x86_64                          rhel-8.3-rust   clang
-xtensa                            allnoconfig   gcc  
-xtensa                randconfig-001-20240602   gcc  
-xtensa                randconfig-002-20240602   gcc  
+Cheers,
+Vasilis
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> >  	}
+> >  
+> > -	ret = bme680_gas_config(data);
+> > +	ret = bme680_chip_config(data);
+> >  	if (ret < 0) {
+> > -		dev_err(dev, "failed to set gas config data\n");
+> > +		dev_err(dev, "failed to set chip_config data\n");
+> >  		return ret;
+> >  	}
+> >  
+> > -	ret = bme680_read_calib(data, &data->bme680);
+> > +	ret = bme680_gas_config(data);
+> >  	if (ret < 0) {
+> > -		dev_err(dev,
+> > -			"failed to read calibration coefficients at probe\n");
+> > +		dev_err(dev, "failed to set gas config data\n");
+> >  		return ret;
+> >  	}
+> >  
+> 
 
