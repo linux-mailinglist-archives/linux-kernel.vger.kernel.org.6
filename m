@@ -1,856 +1,249 @@
-Return-Path: <linux-kernel+bounces-198199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 054E38D74C9
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 12:53:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32D798D74CB
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 12:57:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEFA6282846
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 10:53:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D34C5281C16
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 10:57:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12CDF37703;
-	Sun,  2 Jun 2024 10:53:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nECyuJAr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A2F3381BE;
+	Sun,  2 Jun 2024 10:57:22 +0000 (UTC)
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9780B10A3D;
-	Sun,  2 Jun 2024 10:53:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717325615; cv=none; b=KFfoU8SdrXNZUvFqU/cinLQle4wYdnGcr5ScKGteShOrpXoL9Yad9/3XrxBW9cWoOQE17mHPWOMOUuXQGsugRNRJwTlxZNK7PzCBHZ2GEJTIJaxJYEA02MtMxOvPvGrV/GdMillvhFSz0uwmk7PoK0Ivzz9+BDD0MXxx4QCfTQs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717325615; c=relaxed/simple;
-	bh=bW6JY1oiafd6UKkp+Ffqz2g75+KR0i3bRctrCicrxHM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KAiqbpqgcrXpJuRFkvJq+9lC/3mWpMoNeDRUkqWQWKZB5I970z9DWyj6krYLZBURuEsWc6c+bU0EZDg+NC731sKDEsCGRiABnFzIj9c60ohsN7gY/LvOS9UpgeMV07Obw+eqEINAPd2CFZnOsGwK/9F6SKUZywpQ5vf8LyuSBxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nECyuJAr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26251C2BBFC;
-	Sun,  2 Jun 2024 10:53:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717325615;
-	bh=bW6JY1oiafd6UKkp+Ffqz2g75+KR0i3bRctrCicrxHM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=nECyuJArQKz38GmyAo4CWVsBxbGS8nWyxPRaqb8bviUu+NNc1bR3MbCZX+1wfUx/a
-	 cwHH1hFteIO9AeLvzF/Qhg+J6iS6BD5cQf5hHvU6qLWgF9i3YKlkDOuakpDc+m3vPv
-	 EYq0A6rWm/3dORwpVgQts8HT1e4eFANqXnw4reTk3382ixZ11pYRdC9dSLwHehPUeq
-	 wQAreAl4VwYhjq02nfnh041B79uDc0Bh3Y2whHyJdiaT2cJYQ5rBQ5PuUrJ93beke/
-	 UGFnJPeDstcnS0KgnMAk2jHkB749T0wOaT9oHryR8+6j/EjFI1mUI7F2L+TCZIC3Hf
-	 N5poq4OepPB/w==
-Date: Sun, 2 Jun 2024 11:53:19 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: ranechita <ramona.nechita@analog.com>
-Cc: <linux-iio@vger.kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>, Liam Girdwood
- <lgirdwood@gmail.com>, "Mark Brown" <broonie@kernel.org>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, Nuno Sa <nuno.sa@analog.com>, "Marcelo
- Schmitt" <marcelo.schmitt@analog.com>, Marius Cristea
- <marius.cristea@microchip.com>, Maksim Kiselev <bigunclemax@gmail.com>,
- Marcus Folkesson <marcus.folkesson@gmail.com>, Okan Sahin
- <okan.sahin@analog.com>, Mike Looijmans <mike.looijmans@topic.nl>, "Liam
- Beguin" <liambeguin@gmail.com>, Ivan Mikhaylov <fr0st61te@gmail.com>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] drivers: iio: adc: add support for ad777x family
-Message-ID: <20240602115319.686a2a80@jic23-huawei>
-In-Reply-To: <20240529150322.28018-1-ramona.nechita@analog.com>
-References: <20240529150322.28018-1-ramona.nechita@analog.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA81A224DC;
+	Sun,  2 Jun 2024 10:57:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717325841; cv=fail; b=QIiMzWmxm2Fyq6dbCbF94dooMNu4EOzRPelQclhgvxix0YYUgLk43/PHTy4BCn4PrvdTO7c2Bq0MoYdMv0Enkmn89uBEiNO6HlKSXRGO6v+pN7uZbiQFsb4icB7BRzXbNFMJ6P79jSWPUP9v9jMOHZ7OW7dCKj1IEbik0aCjEZ0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717325841; c=relaxed/simple;
+	bh=5zLhooXENdFHGV0zpKwhiTuf2cAb9YB5JZNlfVTgjd4=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=oK10xvki0+mIVIwI+w/S53Nyck5OTnvSYhIywyi8wqUAMRm1dxicFNBK89Pnmmlew1PYPihjJpYXEBeovj6noOrMFndvb4m6tY6GmUKRD0RiSp5BP+Znar4tx3K3DGlzwhvhWDfVY9jyuCuS70A+BoawnfP0W5R+cuKHVcDaSlE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 4524uwxx030931;
+	Sun, 2 Jun 2024 10:57:12 GMT
+DKIM-Signature: =?UTF-8?Q?v=3D1;_a=3Drsa-sha256;_c=3Drelaxed/relaxed;_d=3Doracle.com;_h?=
+ =?UTF-8?Q?=3Dcc:content-transfer-encoding:content-type:date:from:in-reply?=
+ =?UTF-8?Q?-to:message-id:mime-version:references:subject:to;_s=3Dcorp-202?=
+ =?UTF-8?Q?3-11-20;_bh=3DDfp+ZGO1685zi6LLnyu79ayBV1RHue4YnxK/I4toHfk=3D;_b?=
+ =?UTF-8?Q?=3DTtIUytlmZYEM/btVdAa2dF1AWJdptr71xVKYMFDe2yq3J/wOjZAiGLyEf9My?=
+ =?UTF-8?Q?ZGMxj5pB_lX0KWXV6HiDr9EpwngTC7oM2PnVQdBgeVDJWudt1mZz6bUzauaUWzv?=
+ =?UTF-8?Q?/SnU46T6BMUFPg_Oj7W/Fr9/cIJN7Wk1iai9cBp7OqtaluhyP1FPkozFqiw9bdj?=
+ =?UTF-8?Q?OKCyQORsJYJzJMwULjRf_bIxjUE0tV424tEqEN3XJcvmCUovoW8EnUVEdyA/6st?=
+ =?UTF-8?Q?1M5LunE6juuoVSM51WFRBunk/X_VaJZ4dY1K5ZYzoq3b/zQYrjWUTqJ2elX0pnz?=
+ =?UTF-8?Q?E1pjVWaSxPCGwr1bkuCIfLsvK+9n7HQe_dA=3D=3D_?=
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3yfv07s97h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 02 Jun 2024 10:57:11 +0000
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 4527LwST004448;
+	Sun, 2 Jun 2024 10:57:10 GMT
+Received: from nam02-dm3-obe.outbound.protection.outlook.com (mail-dm3nam02lp2040.outbound.protection.outlook.com [104.47.56.40])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3yft3bweeg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 02 Jun 2024 10:57:10 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=b3GthmRgLX6qBVJ9ZR6OCvK2le7OkpIOPhprk1hoO/TZsJdk85FRf/X+VCS558PSr5b3YYRFwtLNQC+6iK+hBW0i6Slmg+JoZU9C/9/u9VJFUh4voRNqm9hbOCKxj8Wzx/ldYLI6pLZjYlnPOzwuaWUYIRsWAqnCb0Z1pBq44TLdceUIIl/dXYEPu9DULxIU+FboQjcnO42XDj8CZwiPRN6QADpoDxnCq5ofHX6lDerPq8hn3LdJ0Cj+IK1RAsC5AeBZkuLIzF6Qby0npo54N+HFY01aWp8Fq8wxGHjMu/e4jJ3o0onXAZOJ8l3LTMGQ8e+YopUa2or+Cbpv4OYgwA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Dfp+ZGO1685zi6LLnyu79ayBV1RHue4YnxK/I4toHfk=;
+ b=ebsMvKZj3lDVfulo1D/6mWkknrPd0mBkBaOZJGHJG3hL0NVLYGzPiM6LwlLxcHCDNAc2/5VGoOzfUFez28wbMDyA/3MjE2jsxvWbQzJZaNQKgal1jtPEVGIfbaZAxg4iqrQZTLf/L119c+l1WuTwVJxHfXkXDZpNK3XPzCU/kI3VKgLU9ZZBWpi+pHylgNMejHjpMWR2EIISGcFM//PocH8zpHoLa5yLZPcnTU22rnwcF9sQw3+E7/l3Lm9h2nfszRo6JicgFNS6HoWsP99LQtDd8Be7r/SGW+J2Y8Il9f2uZU3i31yquNYW4z7yOEvgx3Y2Dg6L4boPEddTNOgrsg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Dfp+ZGO1685zi6LLnyu79ayBV1RHue4YnxK/I4toHfk=;
+ b=N9yAxwjAZnYyAe6VxpqcM9pREOgZrb9VqhQ7YfnlN2Kp4zFxioe8Tw6/AaYe9iOc07SJobtcR/yfj/oMZzKee8lSbPrt+uqiNuYR1avDZtVP/6QSue0rzLEIxCwOJBwehPadlWFM6N73Ekx6JXCv/KUgi3bESZbrur8tfntIZWU=
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
+ by CH3PR10MB6764.namprd10.prod.outlook.com (2603:10b6:610:144::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.22; Sun, 2 Jun
+ 2024 10:57:08 +0000
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088%5]) with mapi id 15.20.7633.018; Sun, 2 Jun 2024
+ 10:57:07 +0000
+Message-ID: <d6999fef-aadf-494e-ad58-f27dfd975535@oracle.com>
+Date: Sun, 2 Jun 2024 11:57:03 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] null_blk: fix validation of block size
+To: Andreas Hindborg <nmi@metaspace.dk>, Jens Axboe <axboe@kernel.dk>
+Cc: Andreas Hindborg <a.hindborg@samsung.com>,
+        Keith Busch
+ <kbusch@kernel.org>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20240601202351.691952-1-nmi@metaspace.dk>
+Content-Language: en-US
+From: John Garry <john.g.garry@oracle.com>
+Organization: Oracle Corporation
+In-Reply-To: <20240601202351.691952-1-nmi@metaspace.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO4P123CA0307.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:197::6) To DM6PR10MB4313.namprd10.prod.outlook.com
+ (2603:10b6:5:212::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|CH3PR10MB6764:EE_
+X-MS-Office365-Filtering-Correlation-Id: 492a782d-17d5-4a7a-4316-08dc82f2bec0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|376005|366007;
+X-Microsoft-Antispam-Message-Info: 
+	=?utf-8?B?L0EzelFtL3JIdm9PQjZOWUphMWd0MGF5aG1OZ3R4Qk4vVnFmby9sYzh6aEZR?=
+ =?utf-8?B?RDdoSDREVW5yWlNhUVl3b2ZaMzlTQm1kSDJUWXZWaDdtT2tGWmtwVG9xQkNB?=
+ =?utf-8?B?WHpLTWgrVFlLSE04VkNaa2dldkNJcklYY0VKaVIyVmhaQjA2cy9Td3BNSmZh?=
+ =?utf-8?B?OHFvdFZ4NzNDOGxtSjRxc1puZ3JrOTVPZXdnNmZQOVRlWVkvS0FyekZGRTFh?=
+ =?utf-8?B?KzBkTGpMRytCQzMzakVUOEgxVU94b0NWZlVRMUlaeGQ5clNKb1RLS1E0TVdk?=
+ =?utf-8?B?UlBGUG50bmhHcnVpZlRXcFArVnNwUlJ4RWljTS85dUJHZ3VNUExtZlBQSGQr?=
+ =?utf-8?B?UEZmZnJWb2RtRkdXT0dodGprV3RrTWZOMzVkS3NXZFh4ZUQrdldXZW92Rkh4?=
+ =?utf-8?B?cExscTJVblhSRDE0UGhVRTI4YUZZR2RuemhOYlJ6WmY1Q0VIRFpob2hIK0ly?=
+ =?utf-8?B?b3RKb2JOd2pyK3d2bG1iSk4wYlFDTDUvTllPa2dGS1hqWk9Xb1pRYkJJTHpH?=
+ =?utf-8?B?dVVERWhDUFByOHZFeUhVQXFTR2hnYnV4Lyt6OWJLMFRMUHZ4TUM1VmxmeHA5?=
+ =?utf-8?B?YXdLUVg5WkhIYlU1SWl0aitJc0dXVVo5NTVieXMxOElFYVhVaDlGN2IrMStz?=
+ =?utf-8?B?bnYvUFRmRUZ3UjJLdkp6NGZUWks4UmExQ0EzYk1NUnEyYmVxMzhSaEgxOWxK?=
+ =?utf-8?B?ZUJkRUFGQ0grbHBGUmFxUlhjKzNVRHhHQ2dGbEQ4blZJUDFPeFNZVWJsSGcz?=
+ =?utf-8?B?TGU2RXFDcWdteitwUGRsOEFDN05oZE1ndTlPOGx5SW83cGhCRTdHNXlla1Zv?=
+ =?utf-8?B?SzhScG9kUVBia0xDa1o1NGNubmltV1Y5d216SEhRVkJtOGs2UU4vZUhQUG42?=
+ =?utf-8?B?bisvY0Q2Sll6OFRTbFE3dXoweW5aclJBL2xIVnU0RXBJOU9kOHJNVzRtU0tF?=
+ =?utf-8?B?RU9pU2hzU0hvZ3N0SnZVbW9GTlB6UXR6M1hwclZsYzhZcXppQzVOZU9IdEJV?=
+ =?utf-8?B?enRhWU1LMkM4Q0ZJUHJONG5QcFZwZDBNZ3E0c1RmMndJbS9wTndYRm5YWnlR?=
+ =?utf-8?B?NXovVHFpUkhYY3VpYXMrMkNkWDFjYmRCdnpYOGtCYTlIbXo5RVArRUVsdDFo?=
+ =?utf-8?B?bnhodGhqVFN4b1RYQWcwZHJ2MG5uWHc5ZWlMSXNLQjJsWC9mOE9XY1BhVElH?=
+ =?utf-8?B?U1Foa0hGei9zZ1pVZitzbi9RUWN6QVg1ODU1bVJSTUlxcnFsUy9KRkhveXBl?=
+ =?utf-8?B?cTF0UUhFME9rSW84VUpZQW1PdFlJY3M0Rm5mbGRFN3h4S01nVWtTNE9Tb0Fy?=
+ =?utf-8?B?UUlOZTIyNENRTXBxOGNibDFXK1dHcmczaXJObWhJNUFTYytSMmtxdlFTWjd6?=
+ =?utf-8?B?S1FQNjNUZHh0a0JPQU5CRjJjR2VQMU4wbDduYVdsV09zekY0S3pDdkZXeTFV?=
+ =?utf-8?B?cm1CTndUd0Q4eHJOUkorcndTR0RFUGg1aTJEZmZTL3ZxN21Ccno2TVJKNjdn?=
+ =?utf-8?B?SXdQTWZYT1h6NnRqcFRXZjA5cGEwS1Z4K2tQcXlVWHhlbnJxWFhsczI5RGhS?=
+ =?utf-8?B?YVM1b09nZXI4ZkwxdXpyQTRFRUd3UTVYYlZ0dWhSdEROSFErS1RVeVhMek1S?=
+ =?utf-8?Q?2TFbgcOr0bA2/52CD82/TxCtmR1qsIXUzYO929HNMw5w=3D?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005)(366007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?R0VJVG5RSndkWFErS0FqeEdBMGFmcmowbnpRM3JJUG0rU3J0c2xGK2VURk1o?=
+ =?utf-8?B?MStEWCtFTklDK29hcUV5Q0hXRE42WUkvUitFSUtCdFJJVk1wTFVoQnp5MUtX?=
+ =?utf-8?B?aDFlM290Wm9WUGROK09oZHU5ajhKaElleTVqdktsYTQ3V25QOUNKWFc5OGxZ?=
+ =?utf-8?B?WitibDJQWjdId3V2THRRaXl3RDBmOWtudWt3dU1XNWk2TWt6OTZ5dmM0SFV2?=
+ =?utf-8?B?bWVJbHlEWVJZNWdxbi94eUNTVDFpUUkxeEZHTWRTZlFxOFdJOS9kK0xkR3ZX?=
+ =?utf-8?B?U3RyWkwxSHBSb0Q5ZytoSldUMzFaNTN6QXAxRWhVSE5jd2VjY2xEdGZRMk44?=
+ =?utf-8?B?djJndGNaTGxBOHJRbmxuY3NpaHJlaEZpL1NGREVJVDlGUkNhTnNxUWRrN0pU?=
+ =?utf-8?B?NVUya3YwNVcxd1QxQTdxbmw5Y1BZVWo3YnhVR09NZENjbkZEcXRHRWQ5R0Ju?=
+ =?utf-8?B?RGVsSmlWYWh1R01vbitQYmJsNmJzdmtkbHNDalFJLzVneHhBaGMyY3QvS2NX?=
+ =?utf-8?B?aUNWOWRjK1pZQ0lGWlovYnVqWG5YdStRVDVKdkkvZ21ENU9RaGFmOXo0MFNZ?=
+ =?utf-8?B?SVozL2pEY3BTZzJ4S1c5dks1RlVpMjZpS3NHN2JWZW45dlB2ODNvQWpCTWFR?=
+ =?utf-8?B?amJsQVlkWXArTENXeWxwa3FGcG5zQjUxcVV1bXUvdldJVTVFRFQvT3lRYkxq?=
+ =?utf-8?B?bWJSTzluOVpUZVNNZnNnZHRuc2lYY0NsYWpBOVlxbnVrcEVmRk91RGtQbzRz?=
+ =?utf-8?B?c2hvVFBhM3BDeUsrWUxuNXVvcUlNUjZuZ3g5OS9PVkpPWWQ5ZklWNU9ETWlN?=
+ =?utf-8?B?aUJ0bUFENmZTdmdpMlV2NmNDQ0dPdTBYbVBPRExwaVBSMEZYRjVoOVdjeHpB?=
+ =?utf-8?B?MytEYUI2LzRiaTN2ZE9mUWE1UHVtWFA0bFZpMk9LNCtSdlkzQmtITEV1YzlH?=
+ =?utf-8?B?MHozT3FJa1RFVmxhZ1BqQW94MzU4bHQwUW14M01JTEtwM1VOMURBV3lkQW1i?=
+ =?utf-8?B?c0wzckVJSy9Mdy9tZGx0Rm9zRUJ5SWhNdVZsRXdQWjJUZUZ5VlVrQTkydzFx?=
+ =?utf-8?B?Q1Rxc0MzRHB2STFVMTliS3hPWnh1MDFraTczYmxFczZLWDVnOTJ5ZDJySDNK?=
+ =?utf-8?B?RjBRZHovRG1rc3A3RkE3VkxRVnBCRmJzaTdCdWtzOG5oWjBnUklkVThwclh6?=
+ =?utf-8?B?ZHIzazNxNFQyTTdKRWxOMkhCaUNjL2hXMDlYQWJPTGhWWm41OHovbGQ4MDla?=
+ =?utf-8?B?MGVrdDQzWUtSRlA4TkV2VHdRME1UVEtUYi9PYytWbWQ2VDBiNndJUi8ySFl1?=
+ =?utf-8?B?d3VHVmtlMXJhVGlpbXpXckF4cDZiSkdyOXlOSnVlOThmOWtSTU5LSVNkVlls?=
+ =?utf-8?B?OVdPUWlNN0x2a0FjdmpNSDdzQkpBRmxJZm0xTEMvb2dzMGIrbnAySUdQRXB1?=
+ =?utf-8?B?bkFPYzQrTFIxcEQyQ0hpM0RYNU9kaDcxa1JSWE40RHd0d3N0ZGdzZ3pDZmU2?=
+ =?utf-8?B?V3BNclFBRW0ybTMrY3VGaGIvMTBwczBUSmkrS2NkVmhsVkJNaUE4aVVGVlA0?=
+ =?utf-8?B?WlVlSk5HK2h0NnBTVzVRQlVGZmVCSXVmSTFva0RzQnBWTjlEbEc3RkZlWTIr?=
+ =?utf-8?B?YXZYdTRFSTQ1RTRybmFCMWZ4b3pYV3EyR3QrdEp6NWJEQlNzYzZSQXVWYmVP?=
+ =?utf-8?B?OFlCYXB5bnpzZmhKRXl3MnZQbWRVUlN5dmkySENFS2hjMHp0SFBrZ2hhbThp?=
+ =?utf-8?B?RnVJcVhDc0c5TTNmcE9DL1dEM3NJWkF2QnQ4Q2tseVZsR0lqb2hjTEZBTzlt?=
+ =?utf-8?B?NDBtVkFaOEl3aU5xNXRiUW1oYnJYQjY3cU5lV0tnWE5iYlcrMHpGUUtNK2ht?=
+ =?utf-8?B?N0wyd2MrRHVRSjJRclFSTWFTRDJubm9tZDl4c0VPQnZqUE5takFZU2F0L0J1?=
+ =?utf-8?B?TVg3SGRSVnhmTUx1cUtzekRrcnJ2ODI4WVl1TDl4eHFYb2pleXk1eU9DU0JG?=
+ =?utf-8?B?K2FWSDFUbkE0ZEhXTUhZWlZ4R3ZwVm5mMTNNbGNKeW9CdTRwVXZNbHIrTFlM?=
+ =?utf-8?B?bUZsckFIK09ONW44VHBTNW5RMm1RbDRUTENqR2FTZk5QOGxMYmdobWtSVHBk?=
+ =?utf-8?Q?PQ0TMSVUEnjBfmZaUE7Fj3X2E?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	wuAk8jktp4cxgZ4+L27gNOQ0EVBI2hMnzYrKWMDOwRSFC8MnY7aYsWvCAQd4GjiS1U7MQZr97LBNZLOuUCSLPOQAseuGiiotLMa4oN/iqqQMR6T+ZNLcmCNdrMddznithVlUYBmlglgcQGgxepqbHFiBo9zudF8DfLuZ/wQm41VlTyVPrMqN63rnVTpGVPJyxoaooKsf5swAz4bqW7CAaTVMZO7HserpmYljotVF/S1brhGKfDJa+Nd+EpsBuCDh6I7aYwvVTDVZPImhU1+SRioDM+unP7/Luv+x86EJGP+0rkRu+mghM9uop83b85PHb3mRR1fN7PR6tX6Qc7SHo2ntUdxJhAyIM/UW3LUhrSDrJ8nk/3GyrRH3Ty9jJTDZVpLCNDCCv9hMCVXmwwMjg3tNsKCKcEpeA1Tqxj91S8kGIZB86GvJyA1BbKYV08/0MP1kbDGujPS9xHa0zWJtKfm9gU8yXaqAu9K9vUWxH3UkGa8RwoVrzt6aqegafLwlbQ2GkAglZONQDCI3kuG7TvXg33pQQfXEpiwNW8+qSx/teFQzwI74A5pqG/k7PSJCXXOzjKxhUhq+jdmGuje+iI5RIBJ7Os0H5xGiBrfvArQ=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 492a782d-17d5-4a7a-4316-08dc82f2bec0
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jun 2024 10:57:07.6667
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ++etkopnzvSNC5UgiTbL/vXKAlBJMdmNPXXahrfZEEJqYWGrMpWR2kRWQPaXJrqzaXMPcpc+Gv55vWBF9PmvzA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR10MB6764
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-06-01_19,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 bulkscore=0 spamscore=0
+ phishscore=0 adultscore=0 malwarescore=0 suspectscore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2405010000
+ definitions=main-2406020093
+X-Proofpoint-GUID: oK3mfMDXs-Lu2WoJaQmPkh5O03DxLJda
+X-Proofpoint-ORIG-GUID: oK3mfMDXs-Lu2WoJaQmPkh5O03DxLJda
 
-On Wed, 29 May 2024 18:03:09 +0300
-ranechita <ramona.nechita@analog.com> wrote:
-
-> Added support for ad7770,ad7771,ad7779 ADCs. The
-> data is streamed only on the spi-mode, without
-> using the data lines.
+On 01/06/2024 21:23, Andreas Hindborg wrote:
+> From: Andreas Hindborg <a.hindborg@samsung.com>
 > 
-> Signed-off-by: ranechita <ramona.nechita@analog.com>
-Others have commented on need to sort your patch submissions out.
-Make sure that's fixed for next version.  1 series with driver
-and bindings, fixed sign off etc.
+> Block size should be between 512
 
 
-Various comments inline.
+>and 4096
 
-Jonathan
+Or PAGE_SIZE?
 
+  and be a power of 2. The current
+> check does not validate this, so update the check.
+> 
+> Without this patch, null_blk would Oops due to a null pointer deref when
+> loaded with bs=1536 [1].
+> 
+> Link: https://urldefense.com/v3/__https://lore.kernel.org/all/87wmn8mocd.fsf@metaspace.dk/__;!!ACWV5N9M2RV99hQ!OWXI3DGxeIAWvKfM5oVSiA5fTWmiRvUctIdVrcBcKnO_HF-vgkarVfd27jkvQ1-JjNgX5IFIvBWcsUttvg$
+> 
+> Signed-off-by: Andreas Hindborg <a.hindborg@samsung.com>
 > ---
->  drivers/iio/adc/Kconfig  |  11 +
->  drivers/iio/adc/Makefile |   1 +
->  drivers/iio/adc/ad7779.c | 951 +++++++++++++++++++++++++++++++++++++++
->  3 files changed, 963 insertions(+)
->  create mode 100644 drivers/iio/adc/ad7779.c
+>   drivers/block/null_blk/main.c | 6 ++++--
+>   1 file changed, 4 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-> index 0d9282fa67f5..3e42cbc365d7 100644
-> --- a/drivers/iio/adc/Kconfig
-> +++ b/drivers/iio/adc/Kconfig
-> @@ -206,6 +206,17 @@ config AD7768_1
->  	  To compile this driver as a module, choose M here: the module will be
->  	  called ad7768-1.
->  
-> +config AD7779
-> +	tristate "Analog Devices AD7779 ADC driver"
-> +	depends on SPI
-> +	select IIO_BUFFER
-> +	help
-> +	  Say yes here to build support for Analog Devices AD7779 SPI
-In help text list all supported parts so that people can grep for them.
-
-> +	  analog to digital converter (ADC)
-It's not just an SPI converter. Seems to have a 4 wide serial interface
-for directly clocking out the data as well. Might be worth mentioning that
-even if the driver doesn't yet support it.
-
-> +
-> +	  To compile this driver as a module, choose M here: the module will be
-> +	  called ad7779.
-> +
-
-> diff --git a/drivers/iio/adc/ad7779.c b/drivers/iio/adc/ad7779.c
-> new file mode 100644
-> index 000000000000..089e352e2d40
-> --- /dev/null
-> +++ b/drivers/iio/adc/ad7779.c
-> @@ -0,0 +1,951 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * AD777X ADC
-> + *
-> + * Copyright 2023 Analog Devices Inc.
-
-Probably worth updating given how much this is changing!
-
-
-> +#define AD777X_CRC8_POLY			0x07
-> +DECLARE_CRC8_TABLE(ad777x_crc8_table);
-> +
-> +enum ad777x_filter {
-Don't use wild cards for defines. Just name it after a suitable specific
-part number. Wild cards go wrong far too often.
-> +	AD777X_SINC3,
-> +	AD777X_SINC5,
-> +};
-> +
-> +enum ad777x_variant {
-> +	ad7770,
-> +	ad7771,
-> +	ad7779,
-> +};
-> +
-> +enum ad777x_power_mode {
-> +	AD777X_LOW_POWER,
-> +	AD777X_HIGH_POWER,
-> +};
-> +
-> +struct ad777x_chip_info {
-> +	const char *name;
-> +	struct iio_chan_spec const *channels;
-> +};
-> +
-> +struct ad777x_state {
-
-Choose a supported part and name after that. Wild cards go
-wrong far too often because manufacturers love to put incompatible
-and sometimes completely unrelated parts numbers between those used
-for other devices.
-
-> +	struct spi_device		*spi;
-> +	const struct ad777x_chip_info	*chip_info;
-> +	struct clk			*mclk;
-> +	struct regulator		*vref;
-> +	unsigned int			sampling_freq;
-> +	enum ad777x_power_mode		power_mode;
-> +	enum ad777x_filter		filter_enabled;
-> +	unsigned int			active_ch;
-> +	unsigned int			spidata_mode;
-> +	unsigned int			crc_enabled;
-> +
-> +	/*
-> +	 * DMA (thus cache coherency maintenance) requires the
-> +	 * transfer buffers to live in their own cache lines.
-> +	 */
-> +	u8			reg_rx_buf[3] ____cacheline_aligned;
-
-Comment is correct, but that alignment isn't.   Unfortunately
-____cacheline_aligned is (on a few platforms) not sufficient as
-it is the l1 cacheline size and DMA is done from last level cache
-which has a larger cacheline.
-
-use __aligned(IIO_DMA_MINALIGN) which handles this corner case.
-
-> +	u8			reg_tx_buf[3];
-> +	__be32			spidata_rx[8];
-> +	__be32			spidata_tx[8];
-> +	u8			reset_buf[8];
-> +};
-> +
-> +static const char * const ad777x_filter_type[] = {
-> +	[AD777X_SINC3] = "sinc3_filter",
-> +	[AD777X_SINC5] = "sinc5_filter",
-> +};
-> +
-> +static int ad777x_spi_read(struct ad777x_state *st, u8 reg, u8 *rbuf)
-> +{
-> +	int ret;
-> +	int length = 2;
-> +	u8 crc_buf[2];
-> +	u8 exp_crc = 0;
-> +	struct spi_transfer reg_read_tr[] = {
-> +		{
-> +			.tx_buf = st->reg_tx_buf,
-> +			.rx_buf = st->reg_rx_buf,
-> +		},
-> +	};
-> +
-> +	if (st->crc_enabled)
-> +		length = 3;
-> +	reg_read_tr[0].len = length;
-> +
-> +	st->reg_tx_buf[0] = AD777X_SPI_READ_CMD | (reg & 0x7F);
-> +	st->reg_tx_buf[1] = 0;
-> +	st->reg_tx_buf[2] = crc8(ad777x_crc8_table, st->reg_tx_buf, 2, 0);
-> +
-> +	ret = spi_sync_transfer(st->spi, reg_read_tr, ARRAY_SIZE(reg_read_tr));
-> +	if (ret)
-> +		return ret;
-> +
-> +	crc_buf[0] = AD777X_SPI_READ_CMD | FIELD_GET(AD777X_REG_READ_MSK, reg);
-> +	crc_buf[1] = st->reg_rx_buf[1];
-> +	exp_crc = crc8(ad777x_crc8_table, crc_buf, 2, 0);
-> +	if (st->crc_enabled && exp_crc != st->reg_rx_buf[2]) {
-> +		dev_err(&st->spi->dev, "Bad CRC %x, expected %x",
-> +			st->reg_rx_buf[2], exp_crc);
+> diff --git a/drivers/block/null_blk/main.c b/drivers/block/null_blk/main.c
+> index eb023d267369..6a26888c52bb 100644
+> --- a/drivers/block/null_blk/main.c
+> +++ b/drivers/block/null_blk/main.c
+> @@ -1823,8 +1823,10 @@ static int null_validate_conf(struct nullb_device *dev)
+>   		dev->queue_mode = NULL_Q_MQ;
+>   	}
+>   
+> -	dev->blocksize = round_down(dev->blocksize, 512);
+> -	dev->blocksize = clamp_t(unsigned int, dev->blocksize, 512, 4096);
+> +	if ((dev->blocksize < 512 || dev->blocksize > 4096) ||
+> +	    ((dev->blocksize & (dev->blocksize - 1)) != 0)) {
 > +		return -EINVAL;
 > +	}
-> +	*rbuf = st->reg_rx_buf[1];
-> +
-> +	return 0;
-> +}
-> +
-> +static int ad777x_spi_write(struct ad777x_state *st, u8 reg, u8 val)
-> +{
-> +	int length = 2;
-> +	struct spi_transfer reg_write_tr[] = {
-> +		{
-> +			.tx_buf = st->reg_tx_buf,
-> +		},
-> +	};
-> +
-> +	if (st->crc_enabled)
-> +		length = 3;
-> +	reg_write_tr[0].len = length;
-> +
-> +	st->reg_tx_buf[0] = reg & 0x7F;
-> +	st->reg_tx_buf[1] = val;
-> +	st->reg_tx_buf[2] = crc8(ad777x_crc8_table, st->reg_tx_buf, 2, 0);
 
-only fill that in if crc_enabled is set. 
+Looks like blk_validate_block_size(), modulo PAGE_SIZE check
 
-> +
-> +	return spi_sync_transfer(st->spi, reg_write_tr, ARRAY_SIZE(reg_write_tr));
-> +}
-> +
-> +static int ad777x_spi_write_mask(struct ad777x_state *st, u8 reg, u8 mask,
-> +				 u8 val)
-> +{
-> +	int ret;
-> +	u8 regval, data;
-> +
-> +	ret = ad777x_spi_read(st, reg, &data);
+>   
+>   	if (dev->use_per_node_hctx) {
+>   		if (dev->submit_queues != nr_online_nodes)
+> 
+> base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
 
-When I see this sort of helper, it's usually a good sign that the author
-should consider a custom regmap. I'm not 100% sure it is a good fit here
-but it seems likely looking at this section of code.
-
-> +	if (ret)
-> +		return ret;
-> +
-> +	regval = data;
-> +	regval &= ~mask;
-> +	regval |= val;
-> +
-> +	if (regval == data)
-> +		return 0;
-> +
-> +	return ad777x_spi_write(st, reg, regval);
-> +
-> +}
-
-> +static int ad777x_set_sampling_frequency(struct ad777x_state *st,
-> +					 unsigned int sampling_freq)
-> +{
-> +	int ret;
-> +	unsigned int dec;
-> +	unsigned int div;
-> +	unsigned int decimal;
-> +	int temp;
-> +	unsigned int kfreq;
-> +	u8 msb, lsb;
-> +
-> +	if (st->filter_enabled == AD777X_SINC3 &&
-> +	    sampling_freq > AD777X_SINC3_MAXFREQ)
-> +		return -EINVAL;
-> +
-> +	if (st->filter_enabled == AD777X_SINC5 &&
-> +		sampling_freq > AD777X_SINC5_MAXFREQ)
-
-Align after ( as done on the one above.
-
-> +		return -EINVAL;
-> +
-> +	if (st->spidata_mode == 1 &&
-> +	    sampling_freq > AD777X_SPIMODE_MAX_SAMP_FREQ)
-> +		return -EINVAL;
-> +
-> +	if (st->power_mode == AD777X_LOW_POWER)
-> +		div = AD777X_LOWPOWER_DIV;
-> +	else
-> +		div = AD777X_HIGHPOWER_DIV;
-> +
-> +	kfreq = sampling_freq / KILO;
-> +	dec = div / kfreq;
-> +
-> +	lsb = FIELD_GET(AD777X_FREQ_LSB_MSK, dec);
-> +	msb = FIELD_GET(AD777X_FREQ_MSB_MSK, dec);
-
-These local variables don't add much. Just use the
-FIELD_GET() calls in appropriate places.
-
-> +
-> +	ret = ad777x_spi_write(st, AD777X_REG_SRC_N_LSB, lsb);
-> +	if (ret)
-> +		return ret;
-> +	ret = ad777x_spi_write(st, AD777X_REG_SRC_N_MSB, msb);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (div % kfreq) {
-> +		temp = (div * KILO) / kfreq;
-> +		decimal = ((temp -  dec * KILO) << 16) / KILO;
-> +		lsb = FIELD_GET(AD777X_FREQ_LSB_MSK, decimal);
-> +		msb = FIELD_GET(AD777X_FREQ_MSB_MSK, decimal);
-> +
-> +		ret = ad777x_spi_write(st, AD777X_REG_SRC_IF_LSB, lsb);
-> +		if (ret)
-> +			return ret;
-> +		ret = ad777x_spi_write(st, AD777X_REG_SRC_IF_MSB, msb);
-> +		if (ret)
-> +			return ret;
-> +	} else {
-> +		ret = ad777x_spi_write(st, AD777X_REG_SRC_IF_LSB, 0x0);
-> +		if (ret)
-> +			return ret;
-> +		ret = ad777x_spi_write(st, AD777X_REG_SRC_IF_MSB, 0x0);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +	ret = ad777x_spi_write(st, AD777X_REG_SRC_UPDATE, 0x1);
-> +	if (ret)
-> +		return ret;
-> +	fsleep(15);
-> +	ret = ad777x_spi_write(st, AD777X_REG_SRC_UPDATE, 0x0);
-> +	if (ret)
-> +		return ret;
-> +	fsleep(15);
-> +
-> +	st->sampling_freq = sampling_freq;
-> +
-> +	return 0;
-> +}
-
-...
-
-
-> +static int ad777x_set_calibscale(struct ad777x_state *st, int channel, int val)
-> +{
-> +	int ret;
-> +	u8 msb, mid, lsb;
-> +	unsigned int gain;
-> +	unsigned long long tmp;
-> +
-> +	tmp = val * 5592405LL;
-> +	gain = DIV_ROUND_CLOSEST_ULL(tmp, MEGA);
-> +	msb = FIELD_GET(AD777X_UPPER, gain);
-> +	mid = FIELD_GET(AD777X_MID, gain);
-> +	lsb = FIELD_GET(AD777X_LOWER, gain);
-> +	ret = ad777x_spi_write(st,
-> +			       AD777X_REG_CH_GAIN_UPPER_BYTE(channel),
-> +			       msb);
-> +	if (ret)
-> +		return ret;
-> +	ret = ad777x_spi_write(st,
-> +			       AD777X_REG_CH_GAIN_MID_BYTE(channel),
-> +			       mid);
-> +	if (ret)
-> +		return ret;
-> +	return ad777x_spi_write(st,
-> +				AD777X_REG_CH_GAIN_LOWER_BYTE(channel),
-> +				lsb);
-I assume these regisers are next to each other. If so I think Andy suggested
-creating your own bulk read /write.  That would be a good cleanup.
-
-> +}
-> +
-> +static int ad777x_get_calibbias(struct ad777x_state *st, int channel)
-> +{
-> +	int ret;
-> +	u8 low, mid, high;
-> +
-> +	ret = ad777x_spi_read(st, AD777X_REG_CH_OFFSET_LOWER_BYTE(channel),
-> +			      &low);
-> +	if (ret)
-> +		return ret;
-> +	ret = ad777x_spi_read(st, AD777X_REG_CH_OFFSET_MID_BYTE(channel), &mid);
-> +	if (ret)
-> +		return ret;
-> +	ret = ad777x_spi_read(st,
-> +			      AD777X_REG_CH_OFFSET_UPPER_BYTE(channel),
-> +			      &high);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return FIELD_PREP(AD777X_UPPER, high) | FIELD_PREP(AD777X_MID, mid) |
-> +	       FIELD_PREP(AD777X_LOWER, low);
-
-get them directly into different bytes of a byte array then use a
-get_unaligned_be24() call here to build this.
-
-> +}
-> +
-> +static int ad777x_set_calibbias(struct ad777x_state *st, int channel, int val)
-> +{
-> +	int ret;
-> +	u8 msb, mid, lsb;
-> +
-> +	msb = FIELD_GET(AD777X_UPPER, val);
-> +	mid = FIELD_GET(AD777X_MID, val);
-> +	lsb = FIELD_GET(AD777X_LOWER, val);
-> +	ret = ad777x_spi_write(st,
-> +			       AD777X_REG_CH_OFFSET_UPPER_BYTE(channel),
-> +			       msb);
-
-Put the FIELD_GET() inline.  Doing as above doesn't h elp mcuh.
-
-> +	if (ret)
-> +		return ret;
-As below blank lines in appropriate locations to separate the blocks of code.
-
-
-> +	ret = ad777x_spi_write(st,
-> +			       AD777X_REG_CH_OFFSET_MID_BYTE(channel),
-> +			       mid);
-> +	if (ret)
-> +		return ret;
-> +	return ad777x_spi_write(st,
-> +				AD777X_REG_CH_OFFSET_LOWER_BYTE(channel),
-> +				lsb);
-> +}
-> +
-> +static int ad777x_read_raw(struct iio_dev *indio_dev,
-> +			   struct iio_chan_spec const *chan,
-> +			   int *val,
-> +			   int *val2,
-> +			   long mask)
-> +{
-> +	struct ad777x_state *st = iio_priv(indio_dev);
-> +	int ret;
-> +
-> +	ret = iio_device_claim_direct_mode(indio_dev);
-
-Use the scoped version to simplify this quite a bit.
-
-
-> +	if (ret)
-> +		return ret;
-> +
-> +	switch (mask) {
-> +	case IIO_CHAN_INFO_CALIBSCALE:
-> +		*val = ad777x_get_calibscale(st, chan->channel);
-> +		iio_device_release_direct_mode(indio_dev);
-> +		if (ret)
-ret isn't set by anyone...
-
-> +			return ret;
-> +		*val2 = GAIN_REL;
-> +		return IIO_VAL_FRACTIONAL;
-> +	case IIO_CHAN_INFO_CALIBBIAS:
-> +		*val = ad777x_get_calibbias(st, chan->channel);
-> +		iio_device_release_direct_mode(indio_dev);
-> +		if (ret)
-as above.
-> +			return ret;
-> +		return IIO_VAL_INT;
-> +	case IIO_CHAN_INFO_SAMP_FREQ:
-> +		*val = st->sampling_freq;
-> +		iio_device_release_direct_mode(indio_dev);
-> +		if (ret)
-and here.
-> +			return ret;
-> +		return IIO_VAL_INT;
-> +	}
-> +
-> +	iio_device_release_direct_mode(indio_dev);
-> +
-> +	return -EINVAL;
-> +}
-> +
-
-> +
-> +static int ad777x_update_scan_mode(struct iio_dev *indio_dev,
-> +				   const unsigned long *scan_mask)
-> +{
-> +	struct ad777x_state *st = iio_priv(indio_dev);
-> +
-> +	bitmap_copy((unsigned long *)&st->active_ch, scan_mask, AD777X_NUM_CHANNELS);
-
-Why have your own local tracking?  Just use the active_scan_mask directly.
-Then this function can go away.
-
-> +
-> +	return 0;
-> +}
-
-> +
-> +static int ad777x_buffer_predisable(struct iio_dev *indio_dev)
-> +{
-> +	int ret;
-> +	struct ad777x_state *st = iio_priv(indio_dev);
-> +
-> +	disable_irq_nosync(st->spi->irq);
-
-I suspect to close the race of you thinking you are in buffered mode when
-you aren't that the nosync variant isn't the right choice here.
-
-> +	ret = ad777x_spi_write(st,
-> +			       AD777X_REG_GENERAL_USER_CONFIG_3,
-> +			       AD777X_DISABLE_SD);
-> +	return ret;
-
-return ad777x ..
-
-> +}
-> +
-> +static irqreturn_t ad777x_irq_handler(int irq, void *data)
-> +{
-> +	struct iio_dev *indio_dev = data;
-> +	struct ad777x_state *st = iio_priv(indio_dev);
-> +	int ret;
-> +	__be32 tmp[8];
-> +	int i;
-> +	int k = 0;
-> +
-> +	struct spi_transfer sd_readback_tr[] = {
-> +		{
-> +			.rx_buf = st->spidata_rx,
-> +			.tx_buf = st->spidata_tx,
-> +			.len = 32,
-> +		}
-> +	};
-> +
-> +	if (iio_buffer_enabled(indio_dev)) {
-
-How do we get here without that being true?  Add a comment given if we did I'd
-expect to see an alternative set of things to do in here. Also invert condition
-to reduce indent.
-
-	if (!iio_buffer_enabled(indio_dev))
-		return IRQ_HANDLED;
-
-	st->...
-
-> +		st->spidata_tx[0] = AD777X_SPI_READ_CMD;
-> +		ret = spi_sync_transfer(st->spi, sd_readback_tr,
-> +					ARRAY_SIZE(sd_readback_tr));
-> +		if (ret) {
-> +			dev_err(&st->spi->dev,
-> +				"spi transfer error in irq handler");
-> +			return IRQ_HANDLED;
-> +		}
-> +		for (i = 0; i < AD777X_NUM_CHANNELS; i++) {
-> +			if (st->active_ch & BIT(i))
-> +				tmp[k++] = __be32_to_cpu(st->spidata_rx[i]);
-Why?  We generally leave data reordering to userspace. Just report as a be32
-channel if that's what it is.
-
-> +		}
-> +		iio_push_to_buffers(indio_dev, &tmp[0]);
-
-Not obvious why you can't provide a timestamp given this is in the interrupt
-handler for that capture completing (no fifo or similar to make that complex).
-You will need to expand tmp though to allow for the timestamp to be inserted.
-
-> +	}
-> +
-> +	return IRQ_HANDLED;
-> +}
-> +
-> +static int ad777x_reset(struct iio_dev *indio_dev, struct gpio_desc *reset_gpio)
-> +{
-> +	struct ad777x_state *st = iio_priv(indio_dev);
-> +	int ret;
-> +	struct spi_transfer reg_read_tr[] = {
-> +		{
-> +			.tx_buf = st->reset_buf,
-> +			.len = 8,
-> +		},
-> +	};
-> +
-> +	memset(st->reset_buf, 0xff, sizeof(st->reset_buf));
-> +
-> +	if (reset_gpio) {
-> +		gpiod_set_value(reset_gpio, 1);
-> +		fsleep(230);
-> +		return 0;
-> +	}
-> +
-> +	ret = spi_sync_transfer(st->spi, reg_read_tr,
-> +				ARRAY_SIZE(reg_read_tr));
-> +	if (ret)
-> +		return ret;
-> +
-> +	fsleep(230);
-
-Add a spec reference for these sleep times.
-
-> +
-> +	return 0;
-> +}
-
-
-> +static int ad777x_register(struct ad777x_state *st, struct iio_dev *indio_dev)
-> +{
-
-There is no obvious reason to break this out from probe. Just put the
-code inline.  There may be reasons to break out some parts like the
-irq setup, but currently the break doesn't help with readability.
-
-> +	int ret;
-> +	struct device *dev = &st->spi->dev;
-> +
-> +	indio_dev->name = st->chip_info->name;
-> +	indio_dev->info = &ad777x_info;
-> +	indio_dev->modes = INDIO_DIRECT_MODE;
-> +	indio_dev->channels = st->chip_info->channels;
-> +	indio_dev->num_channels = ARRAY_SIZE(ad777x_channels);
-> +
-> +	ret = devm_request_threaded_irq(dev, st->spi->irq, NULL,
-> +					ad777x_irq_handler, IRQF_ONESHOT,
-> +					indio_dev->name, indio_dev);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "request irq %d failed\n",
-> +				     st->spi->irq);
-> +
-> +	ret = devm_iio_kfifo_buffer_setup_ext(dev, indio_dev,
-> +					      &ad777x_buffer_setup_ops,
-> +					      NULL);
-Does this device have a fifo or similar reason for directly managing
-the buffer rather than providing a trigger?
-So far I'm not seeing any code to indicate the need for not using
-the more common approach of a data ready trigger and a pollfunc
-etc to actually grab the data.
-
-
-> +	if (ret)
-> +		return dev_err_probe(dev, ret,
-> +				     "setup buffer failed\n");
-> +
-> +	ret = ad777x_spi_write_mask(st, AD777X_REG_DOUT_FORMAT,
-> +				    AD777X_DCLK_CLK_DIV_MSK,
-> +				    FIELD_PREP(AD777X_DCLK_CLK_DIV_MSK, 7));
-> +	if (ret)
-> +		return ret;
-> +	st->spidata_mode = 1;
-Always seems to be set when it might be queried. As such feels like a feature
-you haven't implemented yet?  If so don't have the code here.
-> +
-> +	disable_irq_nosync(st->spi->irq);
-
-Look at IRQF_NO_AUTOEN rather than turning it on then off again.
-> +
-> +	return devm_iio_device_register(&st->spi->dev, indio_dev);
-> +}
-> +
-> +static int ad777x_powerup(struct ad777x_state *st, struct gpio_desc *start_gpio)
-> +{
-> +	int ret;
-> +
-> +	ret = ad777x_spi_write_mask(st, AD777X_REG_GENERAL_USER_CONFIG_1,
-> +				    AD777X_MOD_POWERMODE_MSK,
-> +				    FIELD_PREP(AD777X_MOD_POWERMODE_MSK, 1));
-> +	if (ret)
-> +		return ret;
-
-blank line here.
-
-> +	ret = ad777x_spi_write_mask(st, AD777X_REG_GENERAL_USER_CONFIG_1,
-> +				    AD777X_MOD_PDB_REFOUT_MSK,
-> +				    FIELD_PREP(AD777X_MOD_PDB_REFOUT_MSK, 1));
-> +	if (ret)
-> +		return ret;
-
-and here etc.  Basically separate every call + error handler block.
-That helps readability a little.
-
-> +	ret = ad777x_spi_write_mask(st, AD777X_REG_DOUT_FORMAT,
-> +				    AD777X_DCLK_CLK_DIV_MSK,
-> +				    FIELD_PREP(AD777X_DCLK_CLK_DIV_MSK, 1));
-> +	if (ret)
-> +		return ret;
-> +	ret = ad777x_spi_write_mask(st, AD777X_REG_ADC_MUX_CONFIG,
-> +				    AD777X_REFMUX_CTRL_MSK,
-> +				    FIELD_PREP(AD777X_REFMUX_CTRL_MSK, 1));
-> +	if (ret)
-> +		return ret;
-> +	ret = ad777x_spi_write_mask(st, AD777X_REG_GEN_ERR_REG_1_EN,
-> +				    AD777X_SPI_CRC_EN_MSK,
-> +				    FIELD_PREP(AD777X_SPI_CRC_EN_MSK, 1));
-> +	if (ret)
-> +		return ret;
-> +
-> +	st->power_mode = AD777X_HIGH_POWER;
-> +	st->crc_enabled = true;
-I'd be tempted to enable crc earlier and open code the spi write for that
-instead of using helpers.  That way you can assume it is always on and
-simplify the code.
-
-No one ever wants to disable CRC on a chip that has it. It's rare enough
-that people only fit such chips if they want that feature.
-
-If there are reasons it can't be done earlier such as need to be
-in particular power states or similar add a comment
-
-> +	ret = ad777x_set_sampling_frequency(st, AD777X_DEFAULT_SAMPLING_FREQ);
-> +	if (ret)
-> +		return ret;
-> +
-> +	gpiod_set_value(start_gpio, 0);
-> +	fsleep(15);
-> +	gpiod_set_value(start_gpio, 1);
-> +	fsleep(15);
-> +	gpiod_set_value(start_gpio, 0);
-> +	fsleep(15);
-> +
-> +	return 0;
-> +}
-> +
-> +static int ad777x_probe(struct spi_device *spi)
-> +{
-> +	struct iio_dev *indio_dev;
-> +	struct ad777x_state *st;
-> +	struct gpio_desc *reset_gpio;
-> +	struct gpio_desc *start_gpio;
-> +	int ret;
-> +
-> +	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*st));
-> +	if (!indio_dev)
-> +		return -ENOMEM;
-> +
-> +	st = iio_priv(indio_dev);
-> +
-> +	st->vref = devm_regulator_get_optional(&spi->dev, "vref");
-> +	if (IS_ERR(st->vref))
-> +		return PTR_ERR(st->vref);
-> +
-> +	ret = regulator_enable(st->vref);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = devm_add_action_or_reset(&spi->dev, ad777x_reg_disable,
-> +				       st->vref);
-> +	if (ret)
-> +		return ret;
-I'm surprised not to see the voltage on vref being queried.  I would think
-the new
-	devm_regulator_get_enable_read_voltage()
-may be appropriate.
-
-Why is it optional?  That can make sense if there is an internal
-regulator but you aren't doing appropriate handling for that.
-
-
-> +
-> +	st->mclk = devm_clk_get(&spi->dev, "mclk");
-> +	if (IS_ERR(st->mclk))
-> +		return PTR_ERR(st->mclk);
-> +
-> +	ret = clk_prepare_enable(st->mclk);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	ret = devm_add_action_or_reset(&spi->dev, ad777x_clk_disable,
-> +				       st->mclk);
-> +	if (ret)
-> +		return ret;
-As Andy pointed out, there are helpers for these sequences of code.
-
-> +
-> +	reset_gpio = devm_gpiod_get_optional(&spi->dev, "reset", GPIOD_OUT_LOW);
-> +	if (IS_ERR(reset_gpio))
-> +		return PTR_ERR(reset_gpio);
-> +
-> +	start_gpio = devm_gpiod_get(&spi->dev, "start", GPIOD_OUT_HIGH);
-> +	if (IS_ERR(start_gpio))
-> +		return PTR_ERR(start_gpio);
-> +
-> +	crc8_populate_msb(ad777x_crc8_table, AD777X_CRC8_POLY);
-> +	st->spi = spi;
-> +
-> +	st->chip_info = spi_get_device_match_data(spi);
-> +	if (!st->chip_info)
-> +		return -ENODEV;
-> +
-> +	ret = ad777x_reset(indio_dev, start_gpio);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ad777x_powerup(st, start_gpio);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (spi->irq)
-
-Why?  If the device is only registered if the irq is present then
-check that earlier and error out earlier.
-
-Right now I think that a missing irq means the driver probe succeeds
-but no user interfaces are provided. That doesn't make much sense.
-
-> +		ret = ad777x_register(st, indio_dev);
-> +
-> +	return ret;
-> +}
-> +
-> +static int __maybe_unused ad777x_suspend(struct device *dev)
-> +{
-> +	struct iio_dev *indio_dev = dev_get_drvdata(dev);
-> +	struct ad777x_state *st = iio_priv(indio_dev);
-> +	int ret;
-> +
-> +	ret = ad777x_spi_write_mask(st, AD777X_REG_GENERAL_USER_CONFIG_1,
-> +				    AD777X_MOD_POWERMODE_MSK,
-> +				    FIELD_PREP(AD777X_MOD_POWERMODE_MSK,
-> +					       AD777X_LOW_POWER));
-> +	if (ret)
-> +		return ret;
-> +
-> +	st->power_mode = AD777X_LOW_POWER;
-
-This is never queried - so don't store this info until you
-add code that needs to know the current state and for some reason
-can't just read it from the register.
-
-> +	return 0;
-> +}
-> +
 
