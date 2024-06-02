@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-198421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A58BB8D7804
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 22:24:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD9518D7807
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 22:25:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57EAE1F22B92
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 20:24:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3EE87B23BD5
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 20:25:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 769D685631;
-	Sun,  2 Jun 2024 20:20:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0DA785923;
+	Sun,  2 Jun 2024 20:20:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=luigi311.com header.i=@luigi311.com header.b="tTvuGlY2"
-Received: from mail-108-mta41.mxroute.com (mail-108-mta41.mxroute.com [136.175.108.41])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=luigi311.com header.i=@luigi311.com header.b="EE7R9Cas"
+Received: from mail-108-mta204.mxroute.com (mail-108-mta204.mxroute.com [136.175.108.204])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57FEB85289
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Jun 2024 20:20:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=136.175.108.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62BCA81730
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Jun 2024 20:20:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=136.175.108.204
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717359648; cv=none; b=WZAb341X+6s2SZ9fwgHc7gapvXVF1sV5JOzVlWHmqOcLacmQExMvp5MHKutyg5gcQcN8VSPbWytMvMYa5VcfI5wvAa7e1ulG2zIquV53k9stRK+TtZNY9DlhM5o/yuDP4gKq4YSoBB+FV4xSbNoEJZBgdkarlLLeUs6bPBUDzIw=
+	t=1717359650; cv=none; b=oyEYLmOoKTvDZeb/HlKKkDZmntEiHHpMTa+w6HBHsdtfWACsuTuUyb01Ms/qTKLrGeD5uVyIqbLyudIVAJJ+4O61U3fuLYA0XfWgHmaHKSuNVU1qZAPbkmddT9oQaPmiuAQznyJM0XrnT3oMuE+EW7hNq4f7asm9vCMoeDbVEXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717359648; c=relaxed/simple;
-	bh=liAeCOCis53oq3GtruCxMWUheY7cl+d70gOgO+0PYV8=;
+	s=arc-20240116; t=1717359650; c=relaxed/simple;
+	bh=/appuRh7QR4oppenmbepS6ozjwx24OFaCqI22tl7X/A=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KCkrsvEd7BEMFG7scg3YyLCNtNKC3EP3394qHEsCNcp+LWfGVukGbo2T6ktiEXlYu4fn1Z9az6iVO/uWdMx71O0jM5MyuXw2E8hrqpxqex32wPVugc6nFCT4auORQL7EZ9KRqFqg4lke0XdsqfP6kJOLU9HDcUO/SXlz7nCA1IU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=luigi311.com; spf=pass smtp.mailfrom=luigi311.com; dkim=pass (2048-bit key) header.d=luigi311.com header.i=@luigi311.com header.b=tTvuGlY2; arc=none smtp.client-ip=136.175.108.41
+	 MIME-Version; b=psbbVWl9/ZXV1Quy7VFpiz8rvHvg2oGJObMGtPKl1guEbL9KJC936pKUPm8PVcI9Zz+m/+Lj6hJjSA0iASHZO1dceI/Mj4TK1VoYUKoFZKknGLQbNoGj58JDcrGGu+pA6CzNVjGbVINGNP0PfUhTA/Jv9Rq+zzDdixzZXgzVrGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=luigi311.com; spf=pass smtp.mailfrom=luigi311.com; dkim=pass (2048-bit key) header.d=luigi311.com header.i=@luigi311.com header.b=EE7R9Cas; arc=none smtp.client-ip=136.175.108.204
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=luigi311.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=luigi311.com
 Received: from filter006.mxroute.com ([136.175.111.3] filter006.mxroute.com)
  (Authenticated sender: mN4UYu2MZsgR)
- by mail-108-mta41.mxroute.com (ZoneMTA) with ESMTPSA id 18fda96e095000e2b6.011
+ by mail-108-mta204.mxroute.com (ZoneMTA) with ESMTPSA id 18fda96e8c9000e2b6.010
  for <linux-kernel@vger.kernel.org>
  (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
- Sun, 02 Jun 2024 20:14:32 +0000
-X-Zone-Loop: 75c7acd39329e6f7cf41883a26bbcba920ac0bdb474e
+ Sun, 02 Jun 2024 20:14:34 +0000
+X-Zone-Loop: 52e5fba3aa0f73a0e6aa9df5f207e8c064e2f6b0a497
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=luigi311.com; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
 	In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
 	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
 	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
 	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=PzT4xTOEeVDL66kJK8reXjWQ9fp0oEJkeO2UsrLAT0g=; b=tTvuGlY2R/yvA8ERPzoTDtgZ6I
-	FUy0FdxvmaYyVNxmLqegOkq+sAY5FHGlaL5r99/LJtJqt+4ZOGkTntUNaz6yHqitfMaNXJ4bNkF+a
-	N0jg3DKgq6PiWo3Vs+fhPpasirB2xOeaKKex461ShwZCVntTqceMSG97yJ26hb3gjdd50Zrh2CeLb
-	WhPWFupwfjYy89IkpQrMf0aKZkM1NXfJQnlycbOwSD/eebB9DO8fPT4PbqOmSwyD2Xb9ONM1kyO5Q
-	PZ9Xp9rxByYL1hlyzqLM6ZqPdYDFGBHHex9XF5jmDSPjf9kj/L1VqBI4GTA3b6kGw/2qMRVbvlECn
-	/StAqmRA==;
+	bh=8JaICCDIbxfFQFB9p4l2NBR215uf+cJpoqKWqbp9IrI=; b=EE7R9CasiTwutVKUKjVSoQe6TP
+	tFHI6I2oIj67o/ApWq9Uiu1aat3KXnrP8jzaOes3esZ54wojMAgKSKu47N/Z5PJgwg4Magu8bcj5K
+	nXeRnEsynI9kHr9/PLi5R9yobcny7iCZU/OfkL93llLsjdFQvdp5NnNRk6wZ8h7fvClLCafjQb7CP
+	y1CJCDpGu13WUiff/MNUoFv2jfyQgW/qoZpU+iFohegZ7Tb6aSuFqRkkevtiH9S9QbXad78iQ8Hnc
+	j+b8slpxlBc7GeGCKcgL3N4x9BglZn2vTm7YsYEad2CspU5pv2Osum6Xh6cO5JF42Mn5w8zIcjy5m
+	h2mFpY7A==;
 From: git@luigi311.com
 To: linux-media@vger.kernel.org
 Cc: dave.stevenson@raspberrypi.com,
@@ -68,11 +68,10 @@ Cc: dave.stevenson@raspberrypi.com,
 	linux-kernel@vger.kernel.org,
 	pavel@ucw.cz,
 	phone-devel@vger.kernel.org,
-	Luis Garcia <git@luigi311.com>,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: [PATCH v6 18/23] dt-bindings: media: imx258: Add alternate compatible strings
-Date: Sun,  2 Jun 2024 14:13:40 -0600
-Message-ID: <20240602201345.328737-19-git@luigi311.com>
+	Luis Garcia <git@luigi311.com>
+Subject: [PATCH v6 19/23] media: i2c: imx258: Change register settings for variants of the sensor
+Date: Sun,  2 Jun 2024 14:13:41 -0600
+Message-ID: <20240602201345.328737-20-git@luigi311.com>
 In-Reply-To: <20240602201345.328737-1-git@luigi311.com>
 References: <20240602201345.328737-1-git@luigi311.com>
 Precedence: bulk
@@ -86,42 +85,123 @@ X-Authenticated-Id: personal@luigi311.com
 
 From: Dave Stevenson <dave.stevenson@raspberrypi.com>
 
-There are a number of variants of the imx258 modules that can not
-be differentiated at runtime, so add compatible strings for the
-PDAF variant.
+Sony have advised that there are variants of the IMX258 sensor which
+require slightly different register configuration to the mainline
+imx258 driver defaults.
+
+There is no available run-time detection for the variant, so add
+configuration via the DT compatible string.
+
+The Vision Components imx258 module supports PDAF, so add the
+register differences for that variant
 
 Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
 Signed-off-by: Luis Garcia <git@luigi311.com>
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
 Reviewed-by: Pavel Machek <pavel@ucw.cz>
-Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- .../devicetree/bindings/media/i2c/sony,imx258.yaml       | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ drivers/media/i2c/imx258.c | 47 ++++++++++++++++++++++++++++++++++----
+ 1 file changed, 43 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/media/i2c/sony,imx258.yaml b/Documentation/devicetree/bindings/media/i2c/sony,imx258.yaml
-index bee61a443b23..c978abc0cdb3 100644
---- a/Documentation/devicetree/bindings/media/i2c/sony,imx258.yaml
-+++ b/Documentation/devicetree/bindings/media/i2c/sony,imx258.yaml
-@@ -13,11 +13,16 @@ description: |-
-   IMX258 is a diagonal 5.867mm (Type 1/3.06) 13 Mega-pixel CMOS active pixel
-   type stacked image sensor with a square pixel array of size 4208 x 3120. It
-   is programmable through I2C interface.  Image data is sent through MIPI
--  CSI-2.
-+  CSI-2. The sensor exists in two different models, a standard variant
-+  (IMX258) and a variant with phase detection autofocus (IMX258-PDAF).
-+  The camera module does not expose the model through registers, so the
-+  exact model needs to be specified.
+diff --git a/drivers/media/i2c/imx258.c b/drivers/media/i2c/imx258.c
+index 32267d36b8f3..54f7625e60a3 100644
+--- a/drivers/media/i2c/imx258.c
++++ b/drivers/media/i2c/imx258.c
+@@ -321,8 +321,6 @@ static const struct imx258_reg mipi_642mbps_24mhz_4l[] = {
  
- properties:
-   compatible:
--    const: sony,imx258
-+    enum:
-+      - sony,imx258
-+      - sony,imx258-pdaf
+ static const struct imx258_reg mode_common_regs[] = {
+ 	{ 0x3051, 0x00 },
+-	{ 0x3052, 0x00 },
+-	{ 0x4E21, 0x14 },
+ 	{ 0x6B11, 0xCF },
+ 	{ 0x7FF0, 0x08 },
+ 	{ 0x7FF1, 0x0F },
+@@ -345,7 +343,6 @@ static const struct imx258_reg mode_common_regs[] = {
+ 	{ 0x7FA8, 0x03 },
+ 	{ 0x7FA9, 0xFE },
+ 	{ 0x7B24, 0x81 },
+-	{ 0x7B25, 0x00 },
+ 	{ 0x6564, 0x07 },
+ 	{ 0x6B0D, 0x41 },
+ 	{ 0x653D, 0x04 },
+@@ -460,6 +457,33 @@ static const struct imx258_reg mode_1048_780_regs[] = {
+ 	{ 0x034F, 0x0C },
+ };
  
-   assigned-clocks: true
-   assigned-clock-parents: true
++struct imx258_variant_cfg {
++	const struct imx258_reg *regs;
++	unsigned int num_regs;
++};
++
++static const struct imx258_reg imx258_cfg_regs[] = {
++	{ 0x3052, 0x00 },
++	{ 0x4E21, 0x14 },
++	{ 0x7B25, 0x00 },
++};
++
++static const struct imx258_variant_cfg imx258_cfg = {
++	.regs = imx258_cfg_regs,
++	.num_regs = ARRAY_SIZE(imx258_cfg_regs),
++};
++
++static const struct imx258_reg imx258_pdaf_cfg_regs[] = {
++	{ 0x3052, 0x01 },
++	{ 0x4E21, 0x10 },
++	{ 0x7B25, 0x01 },
++};
++
++static const struct imx258_variant_cfg imx258_pdaf_cfg = {
++	.regs = imx258_pdaf_cfg_regs,
++	.num_regs = ARRAY_SIZE(imx258_pdaf_cfg_regs),
++};
++
+ static const char * const imx258_test_pattern_menu[] = {
+ 	"Disabled",
+ 	"Solid Colour",
+@@ -637,6 +661,8 @@ struct imx258 {
+ 	struct v4l2_subdev sd;
+ 	struct media_pad pad;
+ 
++	const struct imx258_variant_cfg *variant_cfg;
++
+ 	struct v4l2_ctrl_handler ctrl_handler;
+ 	/* V4L2 Controls */
+ 	struct v4l2_ctrl *link_freq;
+@@ -1104,6 +1130,14 @@ static int imx258_start_streaming(struct imx258 *imx258)
+ 		return ret;
+ 	}
+ 
++	ret = imx258_write_regs(imx258, imx258->variant_cfg->regs,
++				imx258->variant_cfg->num_regs);
++	if (ret) {
++		dev_err(&client->dev, "%s failed to set variant config\n",
++			__func__);
++		return ret;
++	}
++
+ 	ret = imx258_write_reg(imx258, IMX258_CLK_BLANK_STOP,
+ 			       IMX258_REG_VALUE_08BIT,
+ 			       !!(imx258->csi2_flags & V4L2_MBUS_CSI2_NONCONTINUOUS_CLOCK));
+@@ -1491,6 +1525,10 @@ static int imx258_probe(struct i2c_client *client)
+ 
+ 	imx258->csi2_flags = ep.bus.mipi_csi2.flags;
+ 
++	imx258->variant_cfg = device_get_match_data(&client->dev);
++	if (!imx258->variant_cfg)
++		imx258->variant_cfg = &imx258_cfg;
++
+ 	/* Initialize subdev */
+ 	v4l2_i2c_subdev_init(&imx258->sd, client, &imx258_subdev_ops);
+ 
+@@ -1578,7 +1616,8 @@ MODULE_DEVICE_TABLE(acpi, imx258_acpi_ids);
+ #endif
+ 
+ static const struct of_device_id imx258_dt_ids[] = {
+-	{ .compatible = "sony,imx258" },
++	{ .compatible = "sony,imx258", .data = &imx258_cfg },
++	{ .compatible = "sony,imx258-pdaf", .data = &imx258_pdaf_cfg },
+ 	{ /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(of, imx258_dt_ids);
 -- 
 2.44.0
 
