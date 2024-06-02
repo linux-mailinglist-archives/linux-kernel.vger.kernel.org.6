@@ -1,105 +1,134 @@
-Return-Path: <linux-kernel+bounces-198196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7689C8D74C3
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 12:41:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 472AD8D74C7
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 12:47:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC8651C20A37
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 10:41:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6EEFF1C20F2A
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 10:47:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57058376E6;
-	Sun,  2 Jun 2024 10:41:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DB2A376E6;
+	Sun,  2 Jun 2024 10:47:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UCVOL/rZ"
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TIolOa7h"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 284B82D60C
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Jun 2024 10:41:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D78525745
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Jun 2024 10:47:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717324865; cv=none; b=OQypd9U3Nn6Cyo6Yr6kSY2OHPjc5giZ/gxz8KBAbxCyApxuSYO4jyS83CUywoYKTjuWCo6Yoh3YN59XIG/bjxwFXctmyoj819X0NZLb7o0w/6zIIjMqtm/gXdstujZy/RL0+1/hKNG6qmRgEq1EmO/meiWMjOhqFHnj0ewyBxhw=
+	t=1717325244; cv=none; b=W6ofgFpJ1ig3E3Mc+bs5X+re2kTy6S4itehVUtvPyowE4jJ8fTbEgL9zE3nUZVZ7GtQQI/wO4c3MLmP+HAWNsgm95V+136kmENZOSypb6cSLuaniZFyzyPowbyy8FZrCF7vDoW3EhjyueXNYjrkqHPd8INc4a+wFt4vrha9eFao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717324865; c=relaxed/simple;
-	bh=4lF60Tp1ZKHlgeQKqBEl0y1eoXo68jynVkVk5IO43gc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=emqt3CMll/ElUmhP4YByFck7+uf8FhmnE4qkiY3ZB/MVwKK4yF+dEzN20606zMNSg3Ju8o8tsmhTuP+i5qS75H552rZ6q5F86IdYtXsKxwY75JC0o9hBXEIZypB0eQ1IwhfNuH0Qp9UuMxSzRzG3iPk0pNs+nPIFGkIM4A8sx54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UCVOL/rZ; arc=none smtp.client-ip=209.85.219.173
+	s=arc-20240116; t=1717325244; c=relaxed/simple;
+	bh=1/+2llMpQdP/3+o/5wjiyOWh74XNKa5CnOfSFGvFbOE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=dv5Mw51sA1mFAH7uxgfMSiRe6VIHAPFrYnS5rvW+xQs2x43jx/LNX7bKyB4s5q2hPItaJrAGAiRuXb5zuJA9W07PrIRkMn7Bj2qD7p5KUhUbI1sB3znDjTXkcLp2R4F1SR1xJLRE+gvJCU9/+GyLmrXJakV+/7OWHwuniBGthoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TIolOa7h; arc=none smtp.client-ip=209.85.167.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-df7722171bcso3336025276.3
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2024 03:41:04 -0700 (PDT)
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52b82d57963so3245549e87.2
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2024 03:47:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717324863; x=1717929663; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=mFM4fI0BfVhoIuFo3oNmTS1/Tw1vlv77X7lObWK8gXo=;
-        b=UCVOL/rZ46y+nqDNCTB2VxHDzLs7OveTj1xFO+V9xTTVZGDhNCKeMBFVMDp2cSzSFB
-         EslNoMOsssw1/Zd1oSM3SZ23gSZ89oULhtK89GyTUu6mUlWIT4AO/tq1t2ayTaC9ptVg
-         +cRUWKEFxe6lftRuyyppC9Uyt/9fxt5dxCGObSDFmXX3G0JiuTAhCakJO5UjLF/bvK2Q
-         u9MFM3IhoZJhVJHlS2YEp9bmKZJ3YCUMTBqPFKFLY8tJ0BCDBPBBI7LTDxfeVLtH3LNW
-         nACTdTMWx/yocZr3nh5Sx+3TWCrb/TxIiBkjFzjV24/KaT4tbncXYBWvREPpFwuAXe3+
-         tbRA==
+        d=linaro.org; s=google; t=1717325241; x=1717930041; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4+cEYgp87ni0KKsYzhCn64iTe9kQ3eMZgy4fJLAApoU=;
+        b=TIolOa7hwJQX8j3+/SvMqH07J7w+fU8IZoUUlGLpE05BcqwfgV29twiLCFWri3g/VK
+         t+0BGk4+PHv5EN+LdqOgQrsRszJkM/U/3KnAEKyZY/PLPG9zbd/HpjkdqOjIsQ1R+ZJi
+         /LHY5OhVul78v1ib8/Bbtbgpvrxg2/8Uk6OT2dDndXnDirLxZNcr0TQyJjDnHk5fsTz4
+         7rN1lUbGyRvIbA+G2yXYgIfOkKtDz5ilOmmNTWA1A24XDaRBoyKdr1dfOGEgZ/7ps8UR
+         Xp769/1LGWWClxGWY40X7fgbfr7F0Q2NssHZSQYeZtpVJ1yj5du6PD6wWNEgORsaCLpE
+         5Gtg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717324863; x=1717929663;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1717325241; x=1717930041;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=mFM4fI0BfVhoIuFo3oNmTS1/Tw1vlv77X7lObWK8gXo=;
-        b=fzI6dzjgE2dQtr+Y7RYwqxfpojPZrZqKukXUGI6Xr9rSTNm7NAO8foFhVAptxSs5Or
-         sTJ3dMjYfqX3xzZIe7PowuryYNHmUFaCZLIN9cj71ToGkZtUcOuRk0j9zfms4ZmUHEsQ
-         54dlg8QGj8ARpgFVhgz2fqjGdgzWGbAOtQJ9ByKsI12r/H5d44DBivE1dBpB2TR3fDu1
-         juGjz/PiFN8xRBEtMxPHzjJtVaJ+s1CMUrl4/rmVIjvQwNk/02LKyB2ZMLC6hFpJ7wmS
-         blDDuZrcw5t1TXZ7ChI2os35CUwfNZn3G2mI44GCOZL1uLpEnGfOODRSNS5tNXe/Ft+h
-         gxeA==
-X-Forwarded-Encrypted: i=1; AJvYcCWZQWKrvIvni72wzDdZKayx9Qzc1LxEpqe7Lm3y+h/lM3aOkrVACI1BA3jnnIkAzLPXZ8LAwbxOPIPMdqbYIn54I0FFAnSuFmiXwv+d
-X-Gm-Message-State: AOJu0YxVESUWYjr2L/K8viOP4xDFW5tc9926+NzEDOL66jNJMyryKvmx
-	7mja4zk01nrW+W9jlSJEx7wtwR9qjedI0GcjtcudSIHQqk19k3yhumiqr9BgQ8/4iyA7WE4q1+0
-	1h+eswy72s47MARq/S4dDRTpTWKJIwR8xoM0tlg==
-X-Google-Smtp-Source: AGHT+IGAvjZUn9usqBaQXStHYMiIq+xkcrPxemQDbOh6Td+kMNg2WV2GXfOZ2G0rsURmY5+qN2Tsi0NdkrstgDyKMNk=
-X-Received: by 2002:a25:ac95:0:b0:df4:ab39:8c1f with SMTP id
- 3f1490d57ef6-dfa73dd2735mr6280143276.53.1717324863129; Sun, 02 Jun 2024
- 03:41:03 -0700 (PDT)
+        bh=4+cEYgp87ni0KKsYzhCn64iTe9kQ3eMZgy4fJLAApoU=;
+        b=VCdXKnCAcmum6g3/N5QDcngwKtHouu4SvHQfD6S6Ot70/4P9ZJvBTSYH3JYuOgAUyt
+         wRBQR9lDP/Ew0sSrsQNEN8WEAf8vxcs3YzXvPuJNZoqIAfGWsdhuXZ2DvVSjQKBToc+R
+         XSNMA7LkKDwZyJyatWMkrXWueQ0ZdAxjV75yT/zSo5a1+qTcajnMipfiGWGbypK5Wlde
+         ZY4Dvfz+RNRdAMXNjSiY2pzCO6C7ZMQ18V8fnv6d9NZLF9JqXFmij6VwT6EXfNYIXzsK
+         L7WUNIg04rgZRS4zN0bGkhXSeQwMRm+e8GvNqRkrWq85sMClLiq6Mey8pYV0/0hZhxYM
+         naUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWKXp2fmpvsUL1kj2Z0w4l1SePbJMahUkNhJML0r8DuumJ/+P55+qtfiuOWDQGJ0Hzl3RjypjVX6pO9AX+zKzxMyDDg3yBNpLQEMgKm
+X-Gm-Message-State: AOJu0Yw/bOoWzQTbLIy1GeZMx6ZRr0XEBZDtHUsvMerT+u0ir3162E54
+	pzkbRGEBAPl12PjPVS2uA+N7WSeEkmckWPJoicSaUJwtyV5b44pEd8QS7/w98F8=
+X-Google-Smtp-Source: AGHT+IGozxv1VWYFsf9D8aRKbHwKqmUaoTabG0HYVCxenmdRvpAZjxLWQ7YD8mdajF0g2zEAaACOPA==
+X-Received: by 2002:a05:6512:39c5:b0:516:cc2d:f6a1 with SMTP id 2adb3069b0e04-52b896dc4f6mr5799698e87.51.1717325241201;
+        Sun, 02 Jun 2024 03:47:21 -0700 (PDT)
+Received: from umbar.lan ([192.130.178.91])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52b84d3f327sm925261e87.97.2024.06.02.03.47.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 02 Jun 2024 03:47:20 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Sun, 02 Jun 2024 13:47:20 +0300
+Subject: [PATCH] ARM: imx_v6_v6_defconfig: enable DRM_SII902X and
+ DRM_DISPLAY_CONNECTOR
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240514030718.533169-1-victor.liu@nxp.com>
-In-Reply-To: <20240514030718.533169-1-victor.liu@nxp.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Sun, 2 Jun 2024 13:40:52 +0300
-Message-ID: <CAA8EJpra3jfmhEmAM6PSpu6eKNdMGuNN3eX2r2JT6YEd7hWsiQ@mail.gmail.com>
-Subject: Re: [PATCH] arm: dts: imx53-qsb-hdmi: Disable panel instead of
- deleting node
-To: Liu Ying <victor.liu@nxp.com>
-Cc: imx@lists.linux.dev, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org, 
-	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240602-imx-sii902x-defconfig-v1-1-71a6c382b422@linaro.org>
+X-B4-Tracking: v=1; b=H4sIALdNXGYC/x3MywqDMBBG4VcJs3ZgjCVWX0W68DKx/8IoCZSA5
+ N0NXX6Lc25KGqGJRnNT1B8SzlDRNobW7xx2ZWzVZMW+xIllHJkTMIjNvKlfz+Cxc++k9255dzI
+ 4qu0V1SP/v9OnlAd6ZWsoZwAAAA==
+To: Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, Chris Healy <cphealy@gmail.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=991;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=1/+2llMpQdP/3+o/5wjiyOWh74XNKa5CnOfSFGvFbOE=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmXE24oJTSygDI0XRWsAL8mENsW+cDFmr+XKazP
+ qHwJcelldmJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZlxNuAAKCRCLPIo+Aiko
+ 1bGEB/9Q2zDWKpIlKO9dqdQAohnRKBlkPWRUjQ4r0mBQXYfoqqDLv8zgLmKR9alSGDOBauYlkDh
+ jQ1CF4GUaKtSz/QRvJ8YzecuYumFXc2k5M2Zs4WQHhvKL6XHKej+DQFpX3wlGzcM1us1EuSyJxT
+ mqDOD+1DSyaG7rS2dmbOijObFKyjH6bH8qJMi9ACg30wV5IHwcZfOPec4JlF5ZP3gsyusIeKxxB
+ 20UST1x7y2tjfWy7IX3YLDJzy5zuKjYXmwGuIFcr5X/+O38bJa3BVRpQiK27U/vSLDhaTdUsxst
+ J/tuTq4nAX8Btn2ZM1v7pFM/Jwt8izNMd5NcEtZ4FcEZMydD
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-On Tue, 14 May 2024 at 05:59, Liu Ying <victor.liu@nxp.com> wrote:
->
-> We cannot use /delete-node/ directive to delete a node in a DT
-> overlay.  The node won't be deleted effectively.  Instead, set
-> the node's status property to "disabled" to achieve something
-> similar.
->
-> Fixes: eeb403df953f ("ARM: dts: imx53-qsb: add support for the HDMI expander")
-> Signed-off-by: Liu Ying <victor.liu@nxp.com>
-> ---
->  arch/arm/boot/dts/nxp/imx/imx53-qsb-common.dtsi | 2 +-
->  arch/arm/boot/dts/nxp/imx/imx53-qsb-hdmi.dtso   | 6 ++++--
->  2 files changed, 5 insertions(+), 3 deletions(-)
+Enable the LVDS-to-HDMI bridge and the HDMI display connector drivers
+used on the iMX53 board with the HDMI mezzanine.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Chris Healy <cphealy@gmail.com>
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+ arch/arm/configs/imx_v6_v7_defconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
+diff --git a/arch/arm/configs/imx_v6_v7_defconfig b/arch/arm/configs/imx_v6_v7_defconfig
+index cf2480dce285..b6a2d0689cb6 100644
+--- a/arch/arm/configs/imx_v6_v7_defconfig
++++ b/arch/arm/configs/imx_v6_v7_defconfig
+@@ -282,6 +282,8 @@ CONFIG_DRM_PANEL_LVDS=y
+ CONFIG_DRM_PANEL_SIMPLE=y
+ CONFIG_DRM_PANEL_EDP=y
+ CONFIG_DRM_PANEL_SEIKO_43WVF1G=y
++CONFIG_DRM_DISPLAY_CONNECTOR=y
++CONFIG_DRM_SII902X=y
+ CONFIG_DRM_TI_TFP410=y
+ CONFIG_DRM_DW_HDMI_AHB_AUDIO=m
+ CONFIG_DRM_DW_HDMI_CEC=y
+
+---
+base-commit: 0e1980c40b6edfa68b6acf926bab22448a6e40c9
+change-id: 20240602-imx-sii902x-defconfig-7607f6b83096
+
+Best regards,
 -- 
-With best wishes
-Dmitry
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
 
