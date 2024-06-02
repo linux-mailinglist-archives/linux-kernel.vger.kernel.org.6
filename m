@@ -1,232 +1,86 @@
-Return-Path: <linux-kernel+bounces-198184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 501238D74A2
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 11:41:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C12D8D74A3
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 11:45:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15E20B214E0
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 09:41:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C19B1C20D46
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 09:45:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9697236AEC;
-	Sun,  2 Jun 2024 09:41:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nVOXBDGp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9D11364A9;
+	Sun,  2 Jun 2024 09:45:08 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B86E4134A8;
-	Sun,  2 Jun 2024 09:41:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 308DA29422
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Jun 2024 09:45:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717321260; cv=none; b=YVxz5TYHtnxxO9K3j9UXq5XMxbJxmtU20AMMzyonMHIYHNZpnJjIxw+OXOE3J07Na6o5HYBk5iMs7mbSXlJJBoEtfAPktJPohsDF+tXbgPoV3VSvB05ymST64pEI2W4ghbDaqxITVbhaWVADlLtGpJ1e23NPnLEPAdQ81s3+ZjE=
+	t=1717321508; cv=none; b=hzGgWOgM1FIxaRDEhBQKwYeDESM+gqyHxB1zZ+xCmblyf22c5B9yPjqM9vjeEupWnzRYEfxH1ILhZ5NF/N0/GIhEXy45xSLf6o/1XcEA2w5RqmjmbGR8OcJHKkcc4s59nVM2ELOTquPWEPX73Gw1xTk51qkkLfrEaRo6tTjgfYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717321260; c=relaxed/simple;
-	bh=VMlBozhDWH6kdWLkZ7dwGtTG1UnJSOHejuxNsB0HXYU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LPROCmO08G+iMic7hQn+1y2ZcNIw4TYeDrlWuQ4LUEZXoFivwb6C2aYf63dqn5Zuq1KwrQ80dZFHxJZmqpQYaNwPHmk1o2Mh0k6Q+7Y8snt7gc0GZsxSvI02s1HqrhrJCkht/kq7ciqiMuai3exqFZ3bAXR47QNTtS/s/Eu9mI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nVOXBDGp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E2FBC2BBFC;
-	Sun,  2 Jun 2024 09:40:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717321260;
-	bh=VMlBozhDWH6kdWLkZ7dwGtTG1UnJSOHejuxNsB0HXYU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=nVOXBDGpyyrv03WZHl6pg/rtQShiNtSOtbUdIYJ4Lmnw1W3r+kcF2AoSoGwN0FUWu
-	 JVCO3glQhtHl7POXvKz/Z+nAUypc9dm+uLQgXOcoJ9yWE1Z6ResDlVR0XUEFndiwvc
-	 Y6WHw9KV5gEFmsdY2rTE768qSRic65NB+7xwg7pC895Bm++9AM5RM6wbwNvTJwlPqD
-	 6DBtf+0NQJXpohHncSRMy0O1MnO+tVaeJo4WV+dZLxwYmehbc9YI5asmPPpIH/UuoP
-	 NDQnPxI0tLHp2e8x8BGX4meln+5lXRSQX43x4lmo2peQ1qwwx090tR3bUxO9+ZCSVk
-	 LVwg8j3EaxMUg==
-Date: Sun, 2 Jun 2024 10:40:48 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, matthias.bgg@gmail.com, lee@kernel.org,
- andy@kernel.org, nuno.sa@analog.com, bigunclemax@gmail.com,
- dlechner@baylibre.com, marius.cristea@microchip.com,
- marcelo.schmitt@analog.com, fr0st61te@gmail.com, mitrutzceclan@gmail.com,
- mike.looijmans@topic.nl, marcus.folkesson@gmail.com,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, kernel@collabora.com
-Subject: Re: [PATCH v1 1/4] dt-bindings: iio: adc: Add MediaTek MT6359 PMIC
- AUXADC
-Message-ID: <20240602104048.14c75d7b@jic23-huawei>
-In-Reply-To: <20240530093410.112716-2-angelogioacchino.delregno@collabora.com>
-References: <20240530093410.112716-1-angelogioacchino.delregno@collabora.com>
-	<20240530093410.112716-2-angelogioacchino.delregno@collabora.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1717321508; c=relaxed/simple;
+	bh=X02ZqsYm+8mJeG58fa3PnsuTia0k6am3tu6V/1Vj+Ks=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=kX8gnAlrcI8QEmo7XaNA/aZwfPlg62mKUq5QbuUajI7KyJygu+ORBwrUxU5DWJbuNdDqQx0wc0J2Zp9PAytvR5vi8YoDcS//nqHJJfjZZm0ChtKlo69GIdv57yhQ8Wyq+/vi9HFlF82SWYUU8UgWT53pPXnEZewADqGsAq414x0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7e25de500d2so304173939f.3
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2024 02:45:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717321506; x=1717926306;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vT1M6AljpZm6aS2bdrORp3SnIYZ1thPi3eJ9ZKOWJAA=;
+        b=TYHqMXADcTrADd00gh4xBsonTgtdZgbqmTQN43gua24VKTbh4COmxDM8u10kbbsil7
+         OwJFfV+tNL0kYrZnlzWkKZuV5pyy2ikDQ1SnbXfADnPkQe5Mg3mppY90g+tztXQbKlje
+         Tdzj3K7N7E0ihw/ezvV1dAWGCW4SVt+7On7p/67Gj8W/7ol7cdKIQe//FgJbvBCdnuSd
+         cMIeskTrMe4xPNNGCLOqBQwTNFmSi56jpu7HPhiZMGFIHZnV7d2hasu6z9PcC7wkTLrt
+         RYaD1uKe//+7Un++dGV1qw8fa/3ra8MdGzcfb/7R2jkCe8HEUCBmclbvIB5rFvGSuLkb
+         d6jw==
+X-Forwarded-Encrypted: i=1; AJvYcCWYtDOVyXvRI32BCy7zqmlxPLoz410iuvobxiyvrGBYECBXdiOGVrlYplDYJJ2dvf0IHge2S2XoypznfzjOHhshp/u7lQlyTY5vvga/
+X-Gm-Message-State: AOJu0YyRs6e5bdDCH/TVT8jz2K3IcP+zRgQDlfRAU/YooAFP7FxBOp/b
+	90tBkASdDxVXG4sMrcvE1jE/hESRKYCMrPIycXlWUR5G/cuFMAzcZ18iphPg7wcqGM4Oc+qttDi
+	gQUSM3/kOLEJ6lC+NQTLi5zwp+dBfSl1TdipdYdS5VSxAIdah3o5XBzk=
+X-Google-Smtp-Source: AGHT+IEYLTlofTjfOA4vNEE8Mp/pZSsLeF8zezoko3sypdOkzTZxEXy+oFFgNL1Memn4HTCuel/dIFmaflM1qn4v0nNFxtMus/+F
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6602:2dc8:b0:7de:e10d:34e9 with SMTP id
+ ca18e2360f4ac-7eafff5c963mr39628439f.4.1717321504945; Sun, 02 Jun 2024
+ 02:45:04 -0700 (PDT)
+Date: Sun, 02 Jun 2024 02:45:04 -0700
+In-Reply-To: <tencent_D0FA12FAC65F09B4AEC6AED04C8C67C38606@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000448b320619e51259@google.com>
+Subject: Re: [syzbot] [ntfs3?] KASAN: slab-use-after-free Read in chrdev_open
+From: syzbot <syzbot+5d34cc6474499a5ff516@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 30 May 2024 11:34:07 +0200
-AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com> wrote:
+Hello,
 
-> Add a new binding for the MT6350 Series (MT6357/8/9) PMIC AUXADC,
-> providing various ADC channels for both internal temperatures and
-> voltages, audio accessory detection (hp/mic/hp+mic and buttons,
-> usually on a 3.5mm jack) other than some basic battery statistics
-> on boards where the battery is managed by this PMIC.
-> 
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Hi,
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-What are all the headers for given the binding doc doesn't use anything from
-them?
+Reported-and-tested-by: syzbot+5d34cc6474499a5ff516@syzkaller.appspotmail.com
 
-Jonathan
+Tested on:
 
-> ---
->  .../iio/adc/mediatek,mt6359-auxadc.yaml       | 43 +++++++++++++++++++
->  .../iio/adc/mediatek,mt6357-auxadc.h          | 21 +++++++++
->  .../iio/adc/mediatek,mt6358-auxadc.h          | 22 ++++++++++
->  .../iio/adc/mediatek,mt6359-auxadc.h          | 22 ++++++++++
->  4 files changed, 108 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/adc/mediatek,mt6359-auxadc.yaml
->  create mode 100644 include/dt-bindings/iio/adc/mediatek,mt6357-auxadc.h
->  create mode 100644 include/dt-bindings/iio/adc/mediatek,mt6358-auxadc.h
->  create mode 100644 include/dt-bindings/iio/adc/mediatek,mt6359-auxadc.h
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/adc/mediatek,mt6359-auxadc.yaml b/Documentation/devicetree/bindings/iio/adc/mediatek,mt6359-auxadc.yaml
-> new file mode 100644
-> index 000000000000..dd6c331905cf
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/adc/mediatek,mt6359-auxadc.yaml
-> @@ -0,0 +1,43 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/iio/adc/mediatek,mt6359-auxadc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: MediaTek MT6350 series PMIC AUXADC
-> +
-> +maintainers:
-> +  - AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> +
-> +description:
-> +  The Auxiliary Analog/Digital Converter (AUXADC) is an ADC found
-> +  in some MediaTek PMICs, performing various PMIC related measurements
-> +  such as battery and PMIC internal voltage regulators temperatures,
-> +  accessory detection resistance (usually, for a 3.5mm audio jack)
-> +  other than voltages for various PMIC internal components.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - mediatek,mt6357-auxadc
-> +      - mediatek,mt6358-auxadc
-> +      - mediatek,mt6359-auxadc
-> +
-> +  "#io-channel-cells":
-> +    const: 1
-> +
-> +additionalProperties: false
-> +
-> +required:
-> +  - compatible
-> +  - "#io-channel-cells"
-> +
-> +examples:
-> +  - |
-> +    pmic {
-> +        pmic_adc: adc {
-> +            compatible = "mediatek,mt6359-auxadc";
-> +            #io-channel-cells = <1>;
-> +        };
-> +    };
-> +...
-> diff --git a/include/dt-bindings/iio/adc/mediatek,mt6357-auxadc.h b/include/dt-bindings/iio/adc/mediatek,mt6357-auxadc.h
-> new file mode 100644
-> index 000000000000..03ebb1d23953
-> --- /dev/null
-> +++ b/include/dt-bindings/iio/adc/mediatek,mt6357-auxadc.h
-> @@ -0,0 +1,21 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause */
-> +
-> +#ifndef _DT_BINDINGS_MEDIATEK_MT6357_AUXADC_H
-> +#define _DT_BINDINGS_MEDIATEK_MT6357_AUXADC_H
-> +
-> +/* ADC Channel Index */
-> +#define MT6357_AUXADC_BATADC		0
-> +#define MT6357_AUXADC_ISENSE		1
-> +#define MT6357_AUXADC_VCDT		2
-> +#define MT6357_AUXADC_BAT_TEMP		3
-> +#define MT6357_AUXADC_CHIP_TEMP		4
-> +#define MT6357_AUXADC_ACCDET		5
-> +#define MT6357_AUXADC_VDCXO		6
-> +#define MT6357_AUXADC_TSX_TEMP		7
-> +#define MT6357_AUXADC_HPOFS_CAL		8
-> +#define MT6357_AUXADC_DCXO_TEMP		9
-> +#define MT6357_AUXADC_VCORE_TEMP	10
-> +#define MT6357_AUXADC_VPROC_TEMP	11
-> +#define MT6357_AUXADC_VBAT		12
-> +
-> +#endif
-> diff --git a/include/dt-bindings/iio/adc/mediatek,mt6358-auxadc.h b/include/dt-bindings/iio/adc/mediatek,mt6358-auxadc.h
-> new file mode 100644
-> index 000000000000..efa08398fafd
-> --- /dev/null
-> +++ b/include/dt-bindings/iio/adc/mediatek,mt6358-auxadc.h
-> @@ -0,0 +1,22 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause */
-> +
-> +#ifndef _DT_BINDINGS_MEDIATEK_MT6358_AUXADC_H
-> +#define _DT_BINDINGS_MEDIATEK_MT6358_AUXADC_H
-> +
-> +/* ADC Channel Index */
-> +#define MT6358_AUXADC_BATADC		0
-> +#define MT6358_AUXADC_VCDT		1
-> +#define MT6358_AUXADC_BAT_TEMP		2
-> +#define MT6358_AUXADC_CHIP_TEMP		3
-> +#define MT6358_AUXADC_ACCDET		4
-> +#define MT6358_AUXADC_VDCXO		5
-> +#define MT6358_AUXADC_TSX_TEMP		6
-> +#define MT6358_AUXADC_HPOFS_CAL		7
-> +#define MT6358_AUXADC_DCXO_TEMP		8
-> +#define MT6358_AUXADC_VBIF		9
-> +#define MT6358_AUXADC_VCORE_TEMP	10
-> +#define MT6358_AUXADC_VPROC_TEMP	11
-> +#define MT6358_AUXADC_VGPU_TEMP		12
-> +#define MT6358_AUXADC_VBAT		13
-> +
-> +#endif
-> diff --git a/include/dt-bindings/iio/adc/mediatek,mt6359-auxadc.h b/include/dt-bindings/iio/adc/mediatek,mt6359-auxadc.h
-> new file mode 100644
-> index 000000000000..59826393ee7e
-> --- /dev/null
-> +++ b/include/dt-bindings/iio/adc/mediatek,mt6359-auxadc.h
-> @@ -0,0 +1,22 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause */
-> +
-> +#ifndef _DT_BINDINGS_MEDIATEK_MT6359_AUXADC_H
-> +#define _DT_BINDINGS_MEDIATEK_MT6359_AUXADC_H
-> +
-> +/* ADC Channel Index */
-> +#define MT6359_AUXADC_BATADC		0
-> +#define MT6359_AUXADC_BAT_TEMP		1
-> +#define MT6359_AUXADC_CHIP_TEMP		2
-> +#define MT6359_AUXADC_ACCDET		3
-> +#define MT6359_AUXADC_VDCXO		4
-> +#define MT6359_AUXADC_TSX_TEMP		5
-> +#define MT6359_AUXADC_HPOFS_CAL		6
-> +#define MT6359_AUXADC_DCXO_TEMP		7
-> +#define MT6359_AUXADC_VBIF		8
-> +#define MT6359_AUXADC_VCORE_TEMP	9
-> +#define MT6359_AUXADC_VPROC_TEMP	10
-> +#define MT6359_AUXADC_VGPU_TEMP		11
-> +#define MT6359_AUXADC_VBAT		12
-> +#define MT6359_AUXADC_IBAT		13
-> +
-> +#endif
+commit:         e33c4963 Merge tag 'nfsd-6.9-5' of git://git.kernel.or..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=16456bc2980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5a05c230e142f2bc
+dashboard link: https://syzkaller.appspot.com/bug?extid=5d34cc6474499a5ff516
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1670df2c980000
 
+Note: testing is done by a robot and is best-effort only.
 
