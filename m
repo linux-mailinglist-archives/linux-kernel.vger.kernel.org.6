@@ -1,80 +1,100 @@
-Return-Path: <linux-kernel+bounces-198233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A04FB8D755D
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 14:37:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA0718D7562
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 14:39:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7FFA1C20F9C
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 12:37:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 167BFB20BE2
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 12:39:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33B5B3B290;
-	Sun,  2 Jun 2024 12:37:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EDA43B781;
+	Sun,  2 Jun 2024 12:39:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T0q06Qgj"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ePosiyhv"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 004BE1BF3F;
-	Sun,  2 Jun 2024 12:37:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41C951E52C;
+	Sun,  2 Jun 2024 12:39:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717331852; cv=none; b=gw2f7a5b26cRK2I4dcxsiNdFgmLxCv+ZFr1lPaQN9G51wJmXiVqnfzLT8BWzAEgly7M3IyLrLieqt4vprYIiLWwORUpNeGAlyTcih41smRyzjQnm9ia3ebXYx3a7itauvF610Pjxto/0VWCFHQUQv0r2YPHXr/AL3YcOn0rs6Fs=
+	t=1717331954; cv=none; b=h7i7pkrK9dYNtMVV9RULOMCc8VINvlQ+S/eBCJM6JYo+meAPvAO0s62njX2VW2+mIqwJT9BzWsacRLsoc2mu6osCUUw2UbKtXivOTtEIrjnbfwwDn4CvngzLbRKQMOGWgxLdLAoynP3PabUBW+TUtXqyihokbb9Ur0XIDM9mVkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717331852; c=relaxed/simple;
-	bh=t3lhITYihlyBuINvTQDldM9iS91lFh6g6ieokskjtOI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pYsjjN/C3io4aev8Auao43qWEmAldW9kXWmay9z+XYmWGhF9/nO5WaZ8BpA2cnmy+qmCNt/oUI+sZwsmdkoddZv+RqUdMIj+H1ycnPNco9FfDVbzhsxR/blQHP8Ch/OKTgYjw+XJcjTyfj9+iaJzUzAMSBBSKND/+0kzQyLxRLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T0q06Qgj; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a6302bdb54aso440553366b.0;
-        Sun, 02 Jun 2024 05:37:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717331849; x=1717936649; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jMVpBdm/RCzwpbeUfndCQVwoxC4l89U2dNUnW0vsaEI=;
-        b=T0q06Qgj+rwuEfVvNBlS/B0EYcJDFcgV0NKACv2XGRN6slp1HS6unix1++qgCgz79X
-         QF0VjKPe9cXIfOfhZCDamGMsk4VcZ1HatCS11nME+42kj6gZGaflWYSAHPegVB5f1Ti1
-         K0kdm8hU9GpRGfWj0YUsjir0mYc+GDGWdDvlLbtBKvYBQWH0EknvQXYotAnSsACW4/74
-         84NVm/LLHTSyS2MWqGXDsAjzJUNlDnmMXZ5En0o6OK6SbcGUwCM1aAlvHVvQpoXZxqsV
-         prbpf196/GWwwSDm0h2bRd9FURKWiX94XEwy792MhqKCNso2Ibsg5msnrI5X0szTIjLr
-         XIsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717331849; x=1717936649;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jMVpBdm/RCzwpbeUfndCQVwoxC4l89U2dNUnW0vsaEI=;
-        b=Z1tGn1mlojkUA8JQ7Y6MBMEx+POCmRJNC0eOUn1lndLvORQNibSPH3yxXENgv+Ta4U
-         ZLxaWnnHEjxL+UcdxJyAVKivmhbhjX855mCRBTDucqCFINNHYWm5PMfIgweaEM9KVx3W
-         M9nzosrxmuMJZVup9Ini6oQYi5N2WC3ox1C6lil+uZGec59ZeHziCLJag53ttRyWh3XG
-         52IkfW+N2UuKtsBVaPcqIz/HsBVu6039av+Bstq7qBY1xLrdOxSRmBhYhi7BNMeunWJP
-         Py+BHq6NJzwao9lXCL2tAUkpdA8Yg2YcyOsc6zAKV5krxhS9KwBVnQaHO+uCFBAheXuR
-         bEvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX+0yDoMHr0WCMHIwlgv9ruHfu0pomyQO/u9JjMMBcizHraQsjvt23/8MyMNUxEgVLhW+OMsxPQIHyTwAwrPprLwCFYUT9BRc5vGHuVmXldtcC4jeVwcT65g8hkrIa6Ix7K1GIBJhBKYvXsFw==
-X-Gm-Message-State: AOJu0YyR3ct5pCZdVYHMYcilJhSLMzbk9fuS4/ZbcFbG8M1NFF9zmgho
-	T0uV0vKF7s5ZnZswvuBQzRweB2IdpglrS6hnw6mVevNe6fm5SUKA
-X-Google-Smtp-Source: AGHT+IFBYda+EUVs1nNvxJdlmbUYexuFTELjIhX7PaURRmveeMK0U2gjH/Qf5Muphj02LlJr078s7A==
-X-Received: by 2002:a17:906:fa90:b0:a68:4804:1eab with SMTP id a640c23a62f3a-a6848042247mr383998866b.69.1717331849130;
-        Sun, 02 Jun 2024 05:37:29 -0700 (PDT)
-Received: from f.. (cst-prg-8-232.cust.vodafone.cz. [46.135.8.232])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a68a1dc4e8csm230644466b.225.2024.06.02.05.37.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 02 Jun 2024 05:37:28 -0700 (PDT)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: brauner@kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	jack@suse.cz,
+	s=arc-20240116; t=1717331954; c=relaxed/simple;
+	bh=6wIXclynsLFdchuG1Z21o7bIw4fgwFAhF255TAknuUc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=eQ3IdSdy1WC1pUJBvv0OzJJDhJ3t4lZ6jL6YT3xPdtvmZBwgFfSMsVH3hK4mNvDFUSpYBpKczx5IEY1rpqnfGHCMvMbOJhwanYS4AbWELCpqQwgnf95CQwil1Tc1UXlcntj3Ct8zjVwoPFDugcIg7aTDPH9emKz1ol5SCd7b14w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.helo=mgamail.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ePosiyhv; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.helo=mgamail.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717331952; x=1748867952;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=6wIXclynsLFdchuG1Z21o7bIw4fgwFAhF255TAknuUc=;
+  b=ePosiyhvDC3p+FaDJnHSntO6AboidvJyHkqDpA5eQhnftOITPfcqzwTw
+   LbcBtXA5/BZFuK5bK87icK71/Z9eBeMLxEHAnzCUMm+AE2jPMIEZM6bSj
+   ikqjAe/NxX8wlxLMIDX/tFroxa9jA+vYNhlza6355iHDLf0p3NdJPepUE
+   n7z75Mf689Q1kgwW9KoHkGISCdmkqS0At41XPZ1NdyzjZvHYDeUeKEWT4
+   f6+OeDehRoye8gE6CNm/y0SRM8aMecAzw2IjqvMAg1sH9nCcsZdYzGEVf
+   wy04LmY9reN5JodkBNYLVjpPY+z26o5ry0XL/HCv8QZpXJu2/LUc99JXf
+   w==;
+X-CSE-ConnectionGUID: vD0DVm0JSAKGag2tvBWpkw==
+X-CSE-MsgGUID: oRBUN2CjRwOkxljcOg0t+A==
+X-IronPort-AV: E=McAfee;i="6600,9927,11091"; a="13584310"
+X-IronPort-AV: E=Sophos;i="6.08,209,1712646000"; 
+   d="scan'208";a="13584310"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2024 05:39:12 -0700
+X-CSE-ConnectionGUID: mxdIA+1+SVWoBP/D+j6xiQ==
+X-CSE-MsgGUID: xctQMwVMRiyCPZiO1FwPYA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,209,1712646000"; 
+   d="scan'208";a="59792150"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa002.fm.intel.com with ESMTP; 02 Jun 2024 05:39:05 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id 9D79E1CB; Sun, 02 Jun 2024 15:39:04 +0300 (EEST)
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: bp@alien8.de
+Cc: adrian.hunter@intel.com,
+	ardb@kernel.org,
+	ashish.kalra@amd.com,
+	bhe@redhat.com,
+	dave.hansen@linux.intel.com,
+	elena.reshetova@intel.com,
+	haiyangz@microsoft.com,
+	hpa@zytor.com,
+	jun.nakajima@intel.com,
+	kai.huang@intel.com,
+	kexec@lists.infradead.org,
+	kirill.shutemov@linux.intel.com,
+	kys@microsoft.com,
+	linux-acpi@vger.kernel.org,
+	linux-coco@lists.linux.dev,
+	linux-hyperv@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH] vfs: replace WARN(down_read_trylock, ...) abuse with proper asserts
-Date: Sun,  2 Jun 2024 14:37:19 +0200
-Message-ID: <20240602123720.775702-1-mjguzik@gmail.com>
+	ltao@redhat.com,
+	mingo@redhat.com,
+	nik.borisov@suse.com,
+	peterz@infradead.org,
+	rafael@kernel.org,
+	rick.p.edgecombe@intel.com,
+	sathyanarayanan.kuppuswamy@linux.intel.com,
+	seanjc@google.com,
+	tglx@linutronix.de,
+	thomas.lendacky@amd.com,
+	x86@kernel.org
+Subject: [PATCHv11.1 10/19] x86/mm: Add callbacks to prepare encrypted memory for kexec
+Date: Sun,  2 Jun 2024 15:39:03 +0300
+Message-ID: <20240602123903.2121883-1-kirill.shutemov@linux.intel.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240529104257.GIZlcGsTkJHVBblkrY@fat_crate.local>
+References: <20240529104257.GIZlcGsTkJHVBblkrY@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,54 +103,145 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Note the macro used here works regardless of LOCKDEP.
+AMD SEV and Intel TDX guests allocate shared buffers for performing I/O.
+This is done by allocating pages normally from the buddy allocator and
+then converting them to shared using set_memory_decrypted().
 
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+On kexec, the second kernel is unaware of which memory has been
+converted in this manner. It only sees E820_TYPE_RAM. Accessing shared
+memory as private is fatal.
+
+Therefore, the memory state must be reset to its original state before
+starting the new kernel with kexec.
+
+The process of converting shared memory back to private occurs in two
+steps:
+
+- enc_kexec_begin() stops new conversions.
+
+- enc_kexec_finish() unshares all existing shared memory, reverting it
+  back to private.
+
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
+Reviewed-by: Kai Huang <kai.huang@intel.com>
+Tested-by: Tao Liu <ltao@redhat.com>
 ---
- fs/dcache.c      | 2 +-
- fs/quota/dquot.c | 8 ++------
- 2 files changed, 3 insertions(+), 7 deletions(-)
+ arch/x86/include/asm/x86_init.h |  9 +++++++++
+ arch/x86/kernel/crash.c         | 12 ++++++++++++
+ arch/x86/kernel/reboot.c        | 12 ++++++++++++
+ arch/x86/kernel/x86_init.c      |  4 ++++
+ 4 files changed, 37 insertions(+)
 
-diff --git a/fs/dcache.c b/fs/dcache.c
-index 407095188f83..a0a944fd3a1c 100644
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -1548,7 +1548,7 @@ void shrink_dcache_for_umount(struct super_block *sb)
+diff --git a/arch/x86/include/asm/x86_init.h b/arch/x86/include/asm/x86_init.h
+index 28ac3cb9b987..6cade48811cc 100644
+--- a/arch/x86/include/asm/x86_init.h
++++ b/arch/x86/include/asm/x86_init.h
+@@ -149,12 +149,21 @@ struct x86_init_acpi {
+  * @enc_status_change_finish	Notify HV after the encryption status of a range is changed
+  * @enc_tlb_flush_required	Returns true if a TLB flush is needed before changing page encryption status
+  * @enc_cache_flush_required	Returns true if a cache flush is needed before changing page encryption status
++ * @enc_kexec_begin		Begin the two-step process of conversion shared memory back
++ *				to private. It stops the new conversions from being started
++ *				and waits in-flight conversions to finish, if possible.
++ * @enc_kexec_finish		Finish the two-step process of conversion shared memory to
++ *				private. All memory is private after the call.
++ *				It called with all CPUs but one shutdown and interrupts
++ *				disabled.
+  */
+ struct x86_guest {
+ 	int (*enc_status_change_prepare)(unsigned long vaddr, int npages, bool enc);
+ 	int (*enc_status_change_finish)(unsigned long vaddr, int npages, bool enc);
+ 	bool (*enc_tlb_flush_required)(bool enc);
+ 	bool (*enc_cache_flush_required)(void);
++	void (*enc_kexec_begin)(bool crash);
++	void (*enc_kexec_finish)(void);
+ };
+ 
+ /**
+diff --git a/arch/x86/kernel/crash.c b/arch/x86/kernel/crash.c
+index f06501445cd9..74f6305eb9ec 100644
+--- a/arch/x86/kernel/crash.c
++++ b/arch/x86/kernel/crash.c
+@@ -128,6 +128,18 @@ void native_machine_crash_shutdown(struct pt_regs *regs)
+ #ifdef CONFIG_HPET_TIMER
+ 	hpet_disable();
+ #endif
++
++	/*
++	 * Non-crash kexec calls enc_kexec_begin() while scheduling is still
++	 * active. This allows the callback to wait until all in-flight
++	 * shared<->private conversions are complete. In a crash scenario,
++	 * enc_kexec_begin() get call after all but one CPU has been shut down
++	 * and interrupts have been disabled. This only allows the callback to
++	 * detect a race with the conversion and report it.
++	 */
++	x86_platform.guest.enc_kexec_begin(true);
++	x86_platform.guest.enc_kexec_finish();
++
+ 	crash_save_cpu(regs, safe_smp_processor_id());
+ }
+ 
+diff --git a/arch/x86/kernel/reboot.c b/arch/x86/kernel/reboot.c
+index f3130f762784..097313147ad3 100644
+--- a/arch/x86/kernel/reboot.c
++++ b/arch/x86/kernel/reboot.c
+@@ -12,6 +12,7 @@
+ #include <linux/delay.h>
+ #include <linux/objtool.h>
+ #include <linux/pgtable.h>
++#include <linux/kexec.h>
+ #include <acpi/reboot.h>
+ #include <asm/io.h>
+ #include <asm/apic.h>
+@@ -716,6 +717,14 @@ static void native_machine_emergency_restart(void)
+ 
+ void native_machine_shutdown(void)
  {
- 	struct dentry *dentry;
++	/*
++	 * Call enc_kexec_begin() while all CPUs are still active and
++	 * interrupts are enabled. This will allow all in-flight memory
++	 * conversions to finish cleanly.
++	 */
++	if (kexec_in_progress)
++		x86_platform.guest.enc_kexec_begin(false);
++
+ 	/* Stop the cpus and apics */
+ #ifdef CONFIG_X86_IO_APIC
+ 	/*
+@@ -752,6 +761,9 @@ void native_machine_shutdown(void)
+ #ifdef CONFIG_X86_64
+ 	x86_platform.iommu_shutdown();
+ #endif
++
++	if (kexec_in_progress)
++		x86_platform.guest.enc_kexec_finish();
+ }
  
--	WARN(down_read_trylock(&sb->s_umount), "s_umount should've been locked");
-+	rwsem_assert_held_write(&sb->s_umount);
+ static void __machine_emergency_restart(int emergency)
+diff --git a/arch/x86/kernel/x86_init.c b/arch/x86/kernel/x86_init.c
+index a7143bb7dd93..8a79fb505303 100644
+--- a/arch/x86/kernel/x86_init.c
++++ b/arch/x86/kernel/x86_init.c
+@@ -138,6 +138,8 @@ static int enc_status_change_prepare_noop(unsigned long vaddr, int npages, bool
+ static int enc_status_change_finish_noop(unsigned long vaddr, int npages, bool enc) { return 0; }
+ static bool enc_tlb_flush_required_noop(bool enc) { return false; }
+ static bool enc_cache_flush_required_noop(void) { return false; }
++static void enc_kexec_begin_noop(bool crash) {}
++static void enc_kexec_finish_noop(void) {}
+ static bool is_private_mmio_noop(u64 addr) {return false; }
  
- 	dentry = sb->s_root;
- 	sb->s_root = NULL;
-diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
-index 627eb2f72ef3..a2b256dac36e 100644
---- a/fs/quota/dquot.c
-+++ b/fs/quota/dquot.c
-@@ -2246,9 +2246,7 @@ int dquot_disable(struct super_block *sb, int type, unsigned int flags)
- 	int cnt;
- 	struct quota_info *dqopt = sb_dqopt(sb);
+ struct x86_platform_ops x86_platform __ro_after_init = {
+@@ -161,6 +163,8 @@ struct x86_platform_ops x86_platform __ro_after_init = {
+ 		.enc_status_change_finish  = enc_status_change_finish_noop,
+ 		.enc_tlb_flush_required	   = enc_tlb_flush_required_noop,
+ 		.enc_cache_flush_required  = enc_cache_flush_required_noop,
++		.enc_kexec_begin	   = enc_kexec_begin_noop,
++		.enc_kexec_finish	   = enc_kexec_finish_noop,
+ 	},
+ };
  
--	/* s_umount should be held in exclusive mode */
--	if (WARN_ON_ONCE(down_read_trylock(&sb->s_umount)))
--		up_read(&sb->s_umount);
-+	rwsem_assert_held_write(&sb->s_umount);
- 
- 	/* Cannot turn off usage accounting without turning off limits, or
- 	 * suspend quotas and simultaneously turn quotas off. */
-@@ -2510,9 +2508,7 @@ int dquot_resume(struct super_block *sb, int type)
- 	int ret = 0, cnt;
- 	unsigned int flags;
- 
--	/* s_umount should be held in exclusive mode */
--	if (WARN_ON_ONCE(down_read_trylock(&sb->s_umount)))
--		up_read(&sb->s_umount);
-+	rwsem_assert_held_write(&sb->s_umount);
- 
- 	for (cnt = 0; cnt < MAXQUOTAS; cnt++) {
- 		if (type != -1 && cnt != type)
 -- 
-2.39.2
+2.43.0
 
 
