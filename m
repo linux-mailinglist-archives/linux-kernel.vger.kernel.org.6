@@ -1,120 +1,189 @@
-Return-Path: <linux-kernel+bounces-198127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 386E78D73BF
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 06:17:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A51B8D73CD
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 06:23:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 652991C20F9E
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 04:17:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97685B21256
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 04:23:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13D04CA7D;
-	Sun,  2 Jun 2024 04:17:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="lL+ACjZN"
-Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DF8112E61;
+	Sun,  2 Jun 2024 04:23:25 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D8FABA46
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Jun 2024 04:16:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10CBFCA7D
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Jun 2024 04:23:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717301820; cv=none; b=uLFY1WsNQgEm52dEm3lUIDifKk/jhRFV6bOepCodtuOduAxH0iychrsJ9iP69soBvevJKmoUp98drb051kP68rPyj0QKoso59t2NxHG44iwK5+CPeSQozd7fhTwNIuWwgFm6Pwu9zynMmLk7iIaO5d7PJVOWR7iyku0fQNzpn3Y=
+	t=1717302204; cv=none; b=gpMlbgJW3C0+bq/xMYacoUe1DzumsxF5kR2HT8Qo31hoG3zSkGTE3qF+s8YE9FOyEq1F9IzGm6vNPHM8Nmf7xYz9U2rs2Mo/uGJBYYT0PFc76WpHgMTMao9HdW+7KeAnz89HNZP1fnpIxVyP4QRrkGw073bwk1iUOxB5O9Fln5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717301820; c=relaxed/simple;
-	bh=JNWq8IPKk7PrsPl7hktkVKNVpVOyMrlNF/BTNAohg/Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dWmLVE+XaXTXv87EaWWk4jNJPVsgX9SmOFnWxuUIl6sow4Mqs0Q6q5vGEfjohCD2pMpNIP+91Ga0etvLK7uLzAYWSu5eGEzofCss1PdF3jEP6ZqvPVqvhFcvd9p2njyQ/6XXSznT85/y6O7JK3XC781bq5R0i3A4+kJywoAFkiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=lL+ACjZN; arc=none smtp.client-ip=115.124.30.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1717301810; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=BBVFMf4e3TqS0Oa0nQR45WmAiVghu2BOQgzSAUs3Mfg=;
-	b=lL+ACjZNxPy2XiZsFWu+h3zBUpeBMsQWF1s3Cc84C1Ga+iIkgtF2tFW6pB/XQrT8OJj5V5JmpzCAkTI0Qno+PvRwJD1iHlNIK/o+vK5MVaBCpOCstQmoROKHdCKE4ScniX8Rf58yF9MWWtneaXwPZ1yPhdScKAL79kcyPK7fTVU=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067112;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=18;SR=0;TI=SMTPD_---0W7do2aW_1717301742;
-Received: from 192.168.0.106(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W7do2aW_1717301742)
-          by smtp.aliyun-inc.com;
-          Sun, 02 Jun 2024 12:16:49 +0800
-Message-ID: <515fba2a-342e-4d8b-85c2-a89038a0c4e0@linux.alibaba.com>
-Date: Sun, 2 Jun 2024 12:16:48 +0800
+	s=arc-20240116; t=1717302204; c=relaxed/simple;
+	bh=kvRtTa8G53aWf6UIJRUU0CiTqcgw0GVRDp2YilQ3WLU=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=hFQ4XgxwPA9FmtJj/7Gi6PGrSoBWgEcpTcri7I/F5ZUNSfEWn9JlP9H9QfNr2AcPjBNvbOFPYt2mkTfJRALkFFvlJSw+df9KrWF/+AwBlv7oycEBq02azW5JlwT+eml7zjTNDWRbvr3ZByMz5N5aoddhO3+S5vgShZnFtFo61XA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3737b4129deso28229345ab.3
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Jun 2024 21:23:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717302202; x=1717907002;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=oD+YLbtgQEleh1P+vIl7eQt0IQLu6eC6x4hua9MlLCg=;
+        b=gxXzLJp/6IVSx3ZreRCS2ZCpNWbT3Sv4vhR7Hq+96Jv27J3dVlepllJyEOombEzh5U
+         Yzzv1aUDiWT+dvKQ/tMdsHO5bKe/x11d9NnVKlP2SgxL/smcZMBjhIhkIR9450IuIv+E
+         6NTNIxSMFWvL8zhMznOt+Dd+92+m/7vDLXpPnDaNjb+U+saUAtG7CsChVgCZM7n02dhL
+         gZJScCQsDNJHQh8h0Y2gMtrij6mKE0v93Ttf4y6VL5HSKyRXNwDQXlqJU9tAegxpK07U
+         RAL780z2vIyPyQJ2smWX4fAMeJBJKL5SDw2+6UXnG5dy+V/PBVWaMVOehsx8f/guTaO3
+         3Buw==
+X-Forwarded-Encrypted: i=1; AJvYcCUlsNh5B511S5JHfa6pObcq4T+051bw0xfarhlshc1hdyV5MdRAg1MoUlrTwnNkjh398rhHKV2RAsOruVqRvnZR7bQZ6bwJAWt87Qlt
+X-Gm-Message-State: AOJu0Yye+RZyQ4SAkisbnQ7wDN0Gz0I25OecSfMo6WL6FN4qxHLaSx9x
+	ETe2cDP4GC4QR+Sym1Mbsi2bArjY7r73vnaEvd6Iu0vuygWdf4Aqr1OtpridoRT7sgXGq5e76VX
+	MipH4ooIoXCJHLCcgO5z6ery7GZ3zgGDl05B2WKN+4kFhWXPXTRMGNbc=
+X-Google-Smtp-Source: AGHT+IGDLJfJdJYbMKOuFRSK+4kmDDxlpHwswnzyb1YbzHY14Bj1QDcmXHeyIMVVxxpk+99QulCdxxfBtOg/bYe5+/IpBxm6dLRl
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/6] mm: shmem: add mTHP support for anonymous shmem
-To: kernel test robot <lkp@intel.com>, akpm@linux-foundation.org,
- hughd@google.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, willy@infradead.org,
- david@redhat.com, wangkefeng.wang@huawei.com, ying.huang@intel.com,
- 21cnbao@gmail.com, ryan.roberts@arm.com, shy828301@gmail.com,
- ziy@nvidia.com, ioworker0@gmail.com, da.gomez@samsung.com,
- p.raghav@samsung.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <ec35a23026dd016705d211e85163cabe07681516.1717033868.git.baolin.wang@linux.alibaba.com>
- <202405301430.0NRLTOWU-lkp@intel.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <202405301430.0NRLTOWU-lkp@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:13af:b0:374:9bc4:cdf0 with SMTP id
+ e9e14a558f8ab-3749bc4d147mr218455ab.3.1717302202229; Sat, 01 Jun 2024
+ 21:23:22 -0700 (PDT)
+Date: Sat, 01 Jun 2024 21:23:22 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000bc759e0619e093dc@google.com>
+Subject: [syzbot] [block?] WARNING in mempool_init_node
+From: syzbot <syzbot+9c496b2b58571de670a3@syzkaller.appspotmail.com>
+To: axboe@kernel.dk, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    e0cce98fe279 Merge tag 'tpmdd-next-6.10-rc2' of git://git...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=176e80ec980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=733cc7a95171d8e7
+dashboard link: https://syzkaller.appspot.com/bug?extid=9c496b2b58571de670a3
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: i386
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-e0cce98f.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/eb24795b031d/vmlinux-e0cce98f.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/bcfa9241b1bb/bzImage-e0cce98f.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+9c496b2b58571de670a3@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+DEBUG_LOCKS_WARN_ON(l->owner)
+WARNING: CPU: 3 PID: 6747 at include/linux/local_lock_internal.h:30 local_lock_acquire include/linux/local_lock_internal.h:30 [inline]
+WARNING: CPU: 3 PID: 6747 at include/linux/local_lock_internal.h:30 ___slab_alloc+0x16c2/0x1870 mm/slub.c:3715
+Modules linked in:
+CPU: 3 PID: 6747 Comm: syz-executor.1 Not tainted 6.10.0-rc1-syzkaller-00021-ge0cce98fe279 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+RIP: 0010:local_lock_acquire include/linux/local_lock_internal.h:30 [inline]
+RIP: 0010:___slab_alloc+0x16c2/0x1870 mm/slub.c:3715
+Code: 9a 02 85 c0 74 09 83 3d 2f 45 01 0e 00 74 21 90 e9 30 ff ff ff 90 48 c7 c6 7f 8c 37 8d 48 c7 c7 c8 57 37 8d e8 cf 58 6f ff 90 <0f> 0b 90 90 eb c6 90 48 c7 c6 88 8c 37 8d 48 c7 c7 c8 57 37 8d e8
+RSP: 0018:ffffc9000715f200 EFLAGS: 00010082
+RAX: 0000000000000000 RBX: 0000000000000246 RCX: ffffc90002f82000
+RDX: 0000000000040000 RSI: ffffffff81510236 RDI: 0000000000000001
+RBP: ffffc9000715f2e0 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000000 R11: 000000002d2d2d2d R12: ffff88801dd74880
+R13: ffff888026ef1400 R14: ffffe8ffad369220 R15: ffffe8ffad369200
+FS:  0000000000000000(0000) GS:ffff88802c300000(0063) knlGS:00000000f5ea4b40
+CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
+CR2: 00000000ee082000 CR3: 000000004abc2000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3756
+ __slab_alloc_node mm/slub.c:3809 [inline]
+ slab_alloc_node mm/slub.c:3988 [inline]
+ kmem_cache_alloc_noprof+0x2ae/0x2f0 mm/slub.c:4007
+ mempool_init_node+0x31e/0x760 mm/mempool.c:217
+ mempool_init_noprof+0x3a/0x50 mm/mempool.c:246
+ bioset_init+0x324/0x7a0 block/bio.c:1785
+ bch2_fs_io_read_init+0x29/0xc0 fs/bcachefs/io_read.c:1216
+ bch2_fs_alloc+0x19b0/0x2550 fs/bcachefs/super.c:918
+ bch2_fs_open+0x713/0x10f0 fs/bcachefs/super.c:2102
+ bch2_mount+0xd41/0x1090 fs/bcachefs/fs.c:1917
+ legacy_get_tree+0x109/0x220 fs/fs_context.c:662
+ vfs_get_tree+0x8f/0x380 fs/super.c:1780
+ do_new_mount fs/namespace.c:3352 [inline]
+ path_mount+0x6e1/0x1f10 fs/namespace.c:3679
+ do_mount fs/namespace.c:3692 [inline]
+ __do_sys_mount fs/namespace.c:3898 [inline]
+ __se_sys_mount fs/namespace.c:3875 [inline]
+ __ia32_sys_mount+0x295/0x320 fs/namespace.c:3875
+ do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+ __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
+ do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
+ entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+RIP: 0023:0xf72b2579
+Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d b4 26 00 00 00 00 8d b4 26 00 00 00 00
+RSP: 002b:00000000f5ea4400 EFLAGS: 00000292 ORIG_RAX: 0000000000000015
+RAX: ffffffffffffffda RBX: 00000000f5ea4460 RCX: 0000000020011a40
+RDX: 0000000020011a00 RSI: 0000000001200014 RDI: 00000000f5ea44a0
+RBP: 00000000f5ea4460 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000296 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+ </TASK>
+----------------
+Code disassembly (best guess), 2 bytes skipped:
+   0:	10 06                	adc    %al,(%rsi)
+   2:	03 74 b4 01          	add    0x1(%rsp,%rsi,4),%esi
+   6:	10 07                	adc    %al,(%rdi)
+   8:	03 74 b0 01          	add    0x1(%rax,%rsi,4),%esi
+   c:	10 08                	adc    %cl,(%rax)
+   e:	03 74 d8 01          	add    0x1(%rax,%rbx,8),%esi
+  1e:	00 51 52             	add    %dl,0x52(%rcx)
+  21:	55                   	push   %rbp
+  22:	89 e5                	mov    %esp,%ebp
+  24:	0f 34                	sysenter
+  26:	cd 80                	int    $0x80
+* 28:	5d                   	pop    %rbp <-- trapping instruction
+  29:	5a                   	pop    %rdx
+  2a:	59                   	pop    %rcx
+  2b:	c3                   	ret
+  2c:	90                   	nop
+  2d:	90                   	nop
+  2e:	90                   	nop
+  2f:	90                   	nop
+  30:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
+  37:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-On 2024/5/30 14:36, kernel test robot wrote:
-> Hi Baolin,
-> 
-> kernel test robot noticed the following build warnings:
-> 
-> [auto build test WARNING on akpm-mm/mm-everything]
-> [also build test WARNING on next-20240529]
-> [cannot apply to linus/master v6.10-rc1]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
-> 
-> url:    https://github.com/intel-lab-lkp/linux/commits/Baolin-Wang/mm-memory-extend-finish_fault-to-support-large-folio/20240530-100805
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-> patch link:    https://lore.kernel.org/r/ec35a23026dd016705d211e85163cabe07681516.1717033868.git.baolin.wang%40linux.alibaba.com
-> patch subject: [PATCH v3 4/6] mm: shmem: add mTHP support for anonymous shmem
-> config: riscv-defconfig (https://download.01.org/0day-ci/archive/20240530/202405301430.0NRLTOWU-lkp@intel.com/config)
-> compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project bafda89a0944d947fc4b3b5663185e07a397ac30)
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240530/202405301430.0NRLTOWU-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202405301430.0NRLTOWU-lkp@intel.com/
-> 
-> All warnings (new ones prefixed by >>):
-> 
->     In file included from mm/shmem.c:28:
->     In file included from include/linux/ramfs.h:5:
->     In file included from include/linux/fs_parser.h:11:
->     In file included from include/linux/fs_context.h:14:
->     In file included from include/linux/security.h:33:
->     In file included from include/linux/mm.h:2245:
->     include/linux/vmstat.h:514:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
->       514 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
->           |                               ~~~~~~~~~~~ ^ ~~~
->>> mm/shmem.c:1748:14: warning: variable 'suitable_orders' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
->      1748 |                 } else if (orders & BIT(HPAGE_PMD_ORDER)) {
->           |                            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->     mm/shmem.c:1766:25: note: uninitialized use occurs here
->      1766 |                 order = highest_order(suitable_orders);
->           |                                       ^~~~~~~~~~~~~~~
->     mm/shmem.c:1748:10: note: remove the 'if' if its condition is always true
->      1748 |                 } else if (orders & BIT(HPAGE_PMD_ORDER)) {
->           |                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->     mm/shmem.c:1736:31: note: initialize the variable 'suitable_orders' to silence this warning
->      1736 |         unsigned long suitable_orders;
->           |                                      ^
->           |                                       = 0
->     2 warnings generated.
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-Thanks for reporting. Will fix the warning in next version.
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
