@@ -1,231 +1,116 @@
-Return-Path: <linux-kernel+bounces-198186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 044EA8D74A5
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 11:46:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 347A78D74A9
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 11:47:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7F232813E1
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 09:46:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A65D1C20CDA
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 09:47:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A118636AF5;
-	Sun,  2 Jun 2024 09:46:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2431C374CC;
+	Sun,  2 Jun 2024 09:47:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="ZFmM/uM9"
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SAYVDWjx"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3427C2940F;
-	Sun,  2 Jun 2024 09:46:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FD262E83F;
+	Sun,  2 Jun 2024 09:47:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717321572; cv=none; b=kR06V17ebjlp8+fiUTurR3sxsEodhSEI4hcwa6u0U1Mqel7OTOiDne8vDMClo6tPkg1Cnz8eoTb67YFMMf4OR6Edu+yFQjIxqxpqDfHco1Mfy4RHNRi1g789rE45rk3KWL9VNzf0q89KvT7bYEovzNgTw4UyVjqmY29+TKYXkMo=
+	t=1717321623; cv=none; b=i45F0RaeB+q7cNh2YzBnL8PLtWvCpgQXk60R7OCfdKlJi0vCSoF7A3xam/0Qj3IblyKiXU1eJXSaCe5gxRhFHENzf08V4Yb9hsmNEGvYovWzNmxunSDLJBcK58llMTvJ6qUzRwQgVlzmDDNF/z+Mv2Bmu0RSyWpe4RiCMIJA5a0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717321572; c=relaxed/simple;
-	bh=rZQdH55qQNRJ+oPz8I2FNyBtIDd6V4p/NcS1HbWfaA8=;
+	s=arc-20240116; t=1717321623; c=relaxed/simple;
+	bh=e/MmA0lqNIytmpj8MKctzTRAhRhDttTY7BgrLSVLdcM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HVUIvLrQ9EvlcqSD15iJ7igSgMdEWrOx0gpH7u/V4Vt9qCvMvDZ3g36evN00CKliM0WxZAgEgubJOyriQk4oGkCO4tmhJ3byb8d/swrwHL5bySLrxF6Y6GrKvAkMd/ZNCbyAnzqbWel7SN/KBaW45e2kv/dYWkc6Wf3ShvsrNM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=ZFmM/uM9; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4VsX6b6bGRz9sbl;
-	Sun,  2 Jun 2024 11:45:59 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1717321559;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4MGu+gYZhHiqQdLEwANI+Rx5K32ShCShDlDKn8KZM4I=;
-	b=ZFmM/uM9aQEG5iqhB8sZv+w10ZBsfRncNOSL2unXs6RzGq/blznplwjgtysGSuruIFy30B
-	ooPcAByTguqi7yXwAmEZnhm8nBclfdQP6O2Cen8zOdI5B2vJ70gBg8SNKx3DGuk6Ibzzct
-	/GozljH3xX/ItFtWaJbDdxiY8q24KbHeExCQJz5k7xfe1hUiEO9OjwiOjFl8ZblIu6uQ0p
-	KFqs6maZ3e+E+NEmBuVrMuc32kxUINiyHvUt7x0NYyZrdubL3pxu93gSi1+8xNhRpmF2aZ
-	S6p7jAdCxR1cxll1LiEVESfy6Q/OKDw6nYyvQCgWQKneDmlBd9aZ9V9pWcCiFA==
-Date: Sun, 2 Jun 2024 02:45:44 -0700
-From: Aleksa Sarai <cyphar@cyphar.com>
-To: Jeff Xu <jeffxu@google.com>
-Cc: Jeff Xu <jeffxu@chromium.org>, David Rheinsberg <david@readahead.eu>, 
-	=?utf-8?Q?Barnab=C3=A1s_P=C5=91cze?= <pobrn@protonmail.com>, Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, dmitry.torokhov@gmail.com, 
-	Daniel Verkamp <dverkamp@chromium.org>, hughd@google.com, jorgelo@chromium.org, 
-	skhan@linuxfoundation.org, Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH v1] memfd: `MFD_NOEXEC_SEAL` should not imply
- `MFD_ALLOW_SEALING`
-Message-ID: <20240602.091422-rusty.lint.soft.almond-nzWkHp0rBUnx@cyphar.com>
-References: <20240513191544.94754-1-pobrn@protonmail.com>
- <CALmYWFt7MYbWrCDVEKH4DrMQGxaXA2kK8qth-JVxzkvMd6Ohtg@mail.gmail.com>
- <20240522162324.0aeba086228eddd8aff4f628@linux-foundation.org>
- <1KDsEBw8g7ymBVpGJZp9NRH1HmCBsQ_jjQ_jKOg90gLUFhW5W6lcG-bI4-5OPkrD24RiG7G83VoZL4SXPQjfldsNFDg7bFnFFgrVZWwSWXQ=@protonmail.com>
- <08450f80-4c33-40db-886f-fee18e531545@app.fastmail.com>
- <CALmYWFv9dK5ZPzwx3WCLMXzuuDadvFxh84+8rrT7aL105+ZZAQ@mail.gmail.com>
- <20240524.160158-custard.odds.smutty.cuff-caukvmB4EWP9@cyphar.com>
- <CALmYWFs18vUwXx5p-VxNO5BZ0wvaHE54cG8n_+UdAL5-etAK=w@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QthvF7naIhmi4lsGQ2w3+d7ztNvEM24vHs2cxccVNvCBMghsVBhFQwEsNgbJiU7aXsgVq4+tXzka7ADNXcq2sM45qhfsE0a33+YQ4ankg/pBqnBvPaOQJ1mqxq/2QSO6o98i/92xyE821LhUSeHkcjHZL5I2YeahrpL5Kzm80TA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SAYVDWjx; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717321622; x=1748857622;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=e/MmA0lqNIytmpj8MKctzTRAhRhDttTY7BgrLSVLdcM=;
+  b=SAYVDWjxym4oyUhBdFIE7xWIsxRwRjahDV09FJ6UWE+/h3vOTe9V9Zdg
+   YS92BveK8hXolsJkpXH7m/NIXImUFAk201qb9zY0+LVJWiTpKnVQ3AFUF
+   HFuLOUxzP7cgnaL5O1vRuNYJJcMVysKsXu/aTjZNLxxWDGQhlz43UnnY1
+   XGzT8IMVniQAMJiwnnq+KcAfgfSHKZEPF1ww89dKlQKJk6agvTir8uIet
+   PSlIb0B8z4O1QD+yRxJANr5tdSo1hYJ3sHTHK6Efwc5Dr3XtDJO8/+MgT
+   SoXWCndCjxN8Nu46QEItfRKSpPpIx/5FBXzuI04TzCRRF+PTWoJVXozNu
+   Q==;
+X-CSE-ConnectionGUID: p1h2xrb4RNm1Mt61L0+56w==
+X-CSE-MsgGUID: 1ofNRL8DR86W+KmffbWLtQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11090"; a="14013857"
+X-IronPort-AV: E=Sophos;i="6.08,209,1712646000"; 
+   d="scan'208";a="14013857"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2024 02:47:01 -0700
+X-CSE-ConnectionGUID: hB+Y+hpcRFO514COcgAVVQ==
+X-CSE-MsgGUID: rCz+UrgQSRGFTu/loLXfMw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,209,1712646000"; 
+   d="scan'208";a="41516784"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2024 02:46:57 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sDhnh-0000000Cz9y-40jX;
+	Sun, 02 Jun 2024 12:46:53 +0300
+Date: Sun, 2 Jun 2024 12:46:53 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-iio@vger.kernel.org, linux-leds@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+	Lars-Peter Clausen <lars@metafoo.de>, Pavel Machek <pavel@ucw.cz>,
+	Daniel Thompson <daniel.thompson@linaro.org>,
+	Jingoo Han <jingoohan1@gmail.com>, Helge Deller <deller@gmx.de>,
+	Johan Hovold <jhovold@gmail.com>
+Subject: Re: [PATCH v1 2/4] iio: light: lm3533-als: Remove the driver
+Message-ID: <Zlw_jVoJ7w3bTFYX@smile.fi.intel.com>
+References: <20240531170844.1595468-1-andriy.shevchenko@linux.intel.com>
+ <20240531170844.1595468-3-andriy.shevchenko@linux.intel.com>
+ <20240601140508.0466386e@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="nsxvarx63lbmw3nq"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CALmYWFs18vUwXx5p-VxNO5BZ0wvaHE54cG8n_+UdAL5-etAK=w@mail.gmail.com>
-X-Rspamd-Queue-Id: 4VsX6b6bGRz9sbl
+In-Reply-To: <20240601140508.0466386e@jic23-huawei>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+
+On Sat, Jun 01, 2024 at 02:05:08PM +0100, Jonathan Cameron wrote:
+> On Fri, 31 May 2024 19:56:14 +0300
+> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+> 
+> > The driver has no in kernel users and requires a board file
+> > to be instantiated. Remove basically a dead code.
+> > 
+> > If ever needed, it can be reinstantiated and converted to one
+> > that uses firmware node interfaces.
+> > 
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Given the header removal in patch 4, I assume these all need to go together
+> via mfd.
+> 
+> Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+
+Thank you! We are waiting for Johan to tell what his plans about the driver.
+If it comes to removal, I add your tag to the new version of this mini-series.
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
---nsxvarx63lbmw3nq
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On 2024-05-28, Jeff Xu <jeffxu@google.com> wrote:
-> Hi Aleksa,
->=20
-> On Fri, May 24, 2024 at 9:12=E2=80=AFAM Aleksa Sarai <cyphar@cyphar.com> =
-wrote:
-> >
-> > On 2024-05-23, Jeff Xu <jeffxu@google.com> wrote:
->=20
-> > > Regarding vm.memfd_noexec, on another topic.
-> > > I think in addition to  vm.memfd_noexec =3D 1 and 2,  there still cou=
-ld
-> > > be another state: 3
-> > >
-> > > =3D0. Do nothing.
-> > > =3D1. This will add MFD_NOEXEC_SEAL if application didn't set EXEC or
-> > > MFD_NOEXE_SEAL (to help with the migration)
-> > > =3D2: This will reject all calls without MFD_NOEXEC_SEAL (the whole
-> > > system doesn't allow executable memfd)
-> > > =3D3:  Application must set MFD_EXEC or MFD_NOEXEC_SEAL explicitly, or
-> > > else it will be rejected.
-> > >
-> > > 3 is useful because it lets applications choose what to use, and
-> > > forces applications to migrate to new semantics (this is what 2 did
-> > > before 9876cfe8).
-> > > The caveat is 3 is less restrictive than 2, so must document it clear=
-ly.
-> >
-> > As discussed at the time, "you must use this flag" is not a useful
-> > setting for a general purpose operating system because it explicitly
-> > disables backwards compatibility (breaking any application that was
-> > written in the past 10 years!) for no reason other than "new is better".
-> >
-> Are you referring to ratcheting in the sysctl in my original patch or
-> is this something else ?
-> I do not disagree with your change of  "removing the ratcheting" from
-> the admin point of view.
-
-I'm referring to your original patch making vm.memfd_noexec=3D2 reject
-memfd_create() when called without MFD_EXEC or MFD_NOEXEC_SEAL (which is
-what every program written pre-mid-2023 did, since those flags didn't
-exist yet). This was fixed in 202e14222fad, and is separate to
-ratcheting (which was fixed in 9876cfe8ec1c).
-
-We definitely had a long discussion about it at the time.
-
-> > As I suggested when we fixed the semantics of vm.memfd_noexec, if you
-> > really want to block a particular flag from not being set, seccomp lets
-> > you do this incredibly easily without acting as a footgun for admins.
->=20
-> seccomp can but it requires more work for the container, e.g.
-> container needs to allow-list all the syscalls.
-
-If you're applying the rule for a single syscall you can create a
-deny-list, so no need for a full-on filter for everything. Also, most
-containers already have allow-list seccomp filters applied, so adjusting
-them to add a restriction for one syscall is not that complicated.
-
-> I'm trying to point out that seccomp might not cover all user-cases.
-
-One of the reasons I'm suggesting seccomp because I think that this
-"use-case" probably only exists within ChromeOS, and so adding more
-kernel infrastructure around it makes little sense. seccomp has
-effectively no performance overhead for something this simple and lets
-you block this if you really want to.
-
-For general purpose distributions and systems, an administrative knob to
-make working programs error out if they don't pass an effectively-noop
-flag to memfd_create(2) doesn't help pressure anyone into migrating
-because the random unmaintained program using memfd_create(2) isn't
-developed by the same company making the distribution...
-
-How would an admin setting vm.memfd_break_random_programs=3D1 help
-random_app_downloaded_from_the_internet get patched to use
-MFD_EXEC/MFD_NOEXEC_SEAL? (It doesn't.)
-
-> "ratcheting" in the vm.memfd_noexec is lightweight  and can be applied
-> to the sandbox  of the container in advance, but since admin doesn't
-> like ratcheting in sysctl, maybe prctl or LSM are ways to implement
-> such restriction.
->
-> > Yes, vm.memfd_noexec can break programs that use executable memfds, but
-> > that is the point of the sysctl -- making vm.memfd_noexec break programs
-> > that don't use executable memfds (they are only guilty of being written
-> > before mid-2023) is not useful.
-> >
-> > In addition, making 3 less restrictive than 2 would make the original
-> > restriction mechanism useless. A malicious process could raise the
-> > setting to 3 and disable the "protection" (as discussed before, I really
-> > don't understand the threat model here, but making it possible to
-> > disable easily is pretty clearly).
-> > You could change the policy, but now
-> > you're adding more complexity for a feature that IMO doesn't really make
-> > sense in the first place.
-> >
-> The reason of 3 is help with migration (not for threat-model), e.g. a
-> container can force every apps run in the container migrates their
-> memfd_create  to use either MFD_EXEC or MFD_NOEXEC_SEAL.
-
-This is the argument you had for the behaviour of vm.memfd_noexec=3D2 at
-the time. In the discussion we had last year, I explained that this is
-not "helpful" for the reasons explained above.
-
-There are plenty of old interfaces in Linux and we don't generally push
-people to migrate to newer interfaces, especially since in this case
-we're talking about a flag that is a no-op for the vast majority of
-programs on most systems.
-
-Only programs that need MFD_EXEC actually _need_ to switch (if distros
-eventually make vm.memfd_noexec=3D1 the default in a decade or two) and
-the most well-known programs that use MFD_EXEC have already been patched
-(runc is probably the most obvious one, and we patched this last year).
-
-Not to mention that a lot of programs that are maintained have already
-switched to the mostly-noop MFD_NOEXEC_SEAL, so the only programs that
-would be affected by this migration "help" would be older programs that
-won't be pressured to update because they're unmaintained.
-
-> But I understand what you mean, with current code,  adding 3 would
-> cause more confusion to vm.memfd_noexec. Perhaps a new sysctl or prctl
-> is the way to go if the app wants to force migration.
-> In the hinder sight: two sysctls would work betters:  the first deal
-> with migration, the second enforces NO_EXEC_SEAL.
-
-The "help with migration" feature shouldn't exist, and I removed it in
-9876cfe8ec1c for a reason.
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
-
---nsxvarx63lbmw3nq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCZlw/SAAKCRAol/rSt+lE
-b6A4AP9fzI5YnQ1cBUbCzMflLGqWUZpRUakBfO3/Jz7O67iKtQD+I9fniZeHnJ/i
-Wv8Omud46bsFJbnEyO1ZrAiM2HXO+Aw=
-=ZDBf
------END PGP SIGNATURE-----
-
---nsxvarx63lbmw3nq--
 
