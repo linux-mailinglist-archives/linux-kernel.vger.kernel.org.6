@@ -1,74 +1,76 @@
-Return-Path: <linux-kernel+bounces-198474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 702138D790E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 01:25:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F0D3E8D790F
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 01:25:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 600021C20AD7
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 23:25:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EB511C20A79
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 23:25:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E02DC7E59A;
-	Sun,  2 Jun 2024 23:25:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FA097EF0C;
+	Sun,  2 Jun 2024 23:25:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ivb2tEn/"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yNaX5mD+"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 338787604F
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Jun 2024 23:24:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF56977115
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Jun 2024 23:24:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717370701; cv=none; b=H6AT7MSm/7ktl6X/MwIFQ1IevnaVWUoQsD37dk5v+i3TkET+IfZiDh5CksxbgfSr7RXSzel9coyXapQV1XPFVlRAE0Lx11grXJQsLdDICeD0whgZsr1sxmLRQJesvQZu/zn4EgisBhsp8wFHUiOzI93rMib3Q69QUYtIxYyTVyM=
+	t=1717370701; cv=none; b=Zugs/FGcNGd5IrohVN5EI/iDa3eMJVGFR8DsmV2woDr9N6E2LyterKhGAjVajHAJKCSs7WKK9k6Z8TPXWmCNuT0reVZgWpn/LeFSmZh3aOUqm5rD+mtZ3hVHhbDe9hg4rUV87Md5eMUV68jCeGAGeY5QyFM5r4xxSwXUV5r4JbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1717370701; c=relaxed/simple;
-	bh=gBMQdnHYBqt0Cz6vbwrln0vxA5FTa/0tj8FaEe/b0zs=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=XfoFtK4RuQAM2csiFYcd9/yQBh1I1ekd7WdIc++B1j23vV3Hu9aHOFvewX1hhqFNjDuQaEaghxHe/d8QPaWQNbZ0jJaqtNOY1Saoy31nesL4KF/uW9A4mrAPXExXpCbVs8cB/Mw45o3zWQ44TcwF2EhdSr3y3dCfpDy+dJF+n7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ivb2tEn/; arc=none smtp.client-ip=209.85.167.53
+	bh=J3HQOCyfSVpr1YUtYQZItLe+bN2QWt7En48aq2hwcDQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=jKqheodsYAawRISBS6YfNronRnfsKG6pN94JmriKlNxKALdiX3KvLS66FV0Ob85WhO7gnqkXXn62BeGlL5n0S8ndvtqFIixNAGKWvYFGPVzMBpfcAKj/Htq0dzyg2HwmxlJrQDjIOfhIGGVbTdO6i3PvBdDOJTddrOi19D7XRXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yNaX5mD+; arc=none smtp.client-ip=209.85.208.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52b78ef397bso3654770e87.0
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2024 16:24:58 -0700 (PDT)
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2eaa80cb4d3so15728541fa.1
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2024 16:24:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717370697; x=1717975497; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=9GW/P8HNtUj4gAsXICqtNm+UsqGq0aT7yVz6HhJrHSA=;
-        b=ivb2tEn/f0eXQd4WM9F2WmETh5+xEYQUj4Dqacb9CKGak5IaTROJB8kUWCgpv9v1gI
-         3DjAZoK/qdwYAW0KFWwVixZE9xEYoQYKHrHW2FoFBJOjH2HagT2RYdofjWSodgOH98eE
-         ugy53o9QTnM2sPOjmeviM/QB+7NVGefyBxq6Gpfn8ee2qDc1PbjDYhHO0YOoy9+cUy/k
-         eaxVr0TubZnAlXciCpUlUPj5O8cTSwdVzfz7H1aUzmv/phKLqpcNCu3aevsrAM1fxTsd
-         psBfP6IjU264ipomR7T5neiSLm3tkO6shc3LoTynIvqwv9ErsYPAsbJ/f1MKJPbkE+y8
-         CQpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717370697; x=1717975497;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1717370698; x=1717975498; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=9GW/P8HNtUj4gAsXICqtNm+UsqGq0aT7yVz6HhJrHSA=;
-        b=jsI/8hT26p2imYo7/PH8tL4jXXOIr5EOU+bV4jPv9msQVWcuwBcSuX5gl/FzPObBtl
-         FAnU+3Z0uBOMlsuOnAwWHuYYKmZzC9TBphdiSo7bkd/jehv1HlzJoFD4j455bTWMFhAU
-         yeGxBU4Wk3a7Qqs+5JiDu4czQxnoFyczOMB8/gP+HU8s2zdI3dj9lFPz//3iqwCcUh/Y
-         nX8OUebJqnB5PLNkAAuJObT0KHbyxY6B0UxXvDNw5jKkrei1lRKRp2O2b4v6Ym1FAsl+
-         +NQ3b3FFrMCxHBkWM7DgDZovAT64MJLEdbQlc6vk/dXxGqD1ftH/n+HOvIjr1BYOlVtK
-         lEmw==
-X-Forwarded-Encrypted: i=1; AJvYcCXXoEwZmL1Sn2Yu32Y7gx/u5cbhsEJBwiRuoqXNYoM0zHo57OU405gHF7B+ttLRKRBtSgQ+UR6+sHY07ZRBrFZXphMoSygcEOiHvrS9
-X-Gm-Message-State: AOJu0Yxgc7umWYzMg2stU/ZAoDZ7mXA4xVVsUOAIqWfmc/3TElliDyoT
-	aRk3100e6aUd3e94Mgobe4zrACCwRBxqvOyZGWQY3PZDZhE1YiqeCxuXTt6Er6JPPvHKuWDbYnW
-	/
-X-Google-Smtp-Source: AGHT+IFObhCSI9ATwzqYvUqFHXDu4y0kBGo1nJVdLLy4L1+PoQcx3K73d/nUhKyCvcqieX4Kw6RrLw==
-X-Received: by 2002:ac2:4889:0:b0:51f:8df0:fbf1 with SMTP id 2adb3069b0e04-52b7e350b53mr2917997e87.30.1717370696998;
-        Sun, 02 Jun 2024 16:24:56 -0700 (PDT)
+        bh=/H9omkcKfSMWKhyxE8ouaq15vBQZtQgKk2aVI95FWUU=;
+        b=yNaX5mD+ZHcJG2x0A5zcsz3WYkYeb/zQ4hQl/Mv61tOdX4y3na1tySyveXCJerKUbn
+         WinAsn0wNpO+iGcfvIVYWuWOvUKh9APKVvTUtFVN4XYHydJTSpSrLthLVfmLc+tfKTfL
+         GvEgjCfSYdPP0EzkRfiYpVOgBnT013WIax4BkoT9sQdvjC9y/YIteodT3YFURHwrTpel
+         sX7LFopmtMfwrcw2Vuk0l4LRh+J09DN33oXCTO+fRN2qf4XNgELLdUFf7B16WjfiyKDC
+         pLiye5PknEsd0vYtXngFdpi27EcUvEx2zFeFL3K/JnoPbvoPlSkKU219Tang11FhO+4b
+         fQoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717370698; x=1717975498;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/H9omkcKfSMWKhyxE8ouaq15vBQZtQgKk2aVI95FWUU=;
+        b=niiStDlMCzsChKUTG8cGcqOuKkuYRkAORJvBf5spp7cPVEGzbYeDTA358x6BOxLqd6
+         /KXFno29TjDvAGd++tttwssXH9eYrYiQ0RGP2umBeQMsNyHK8rXU9q70JUJnwb32NQXT
+         QokUulU6lHO97KFsD+T5ny660Kvootkn/iJJ+w+kEhaFmt6ew/5VjGJnfuHP0NDXpTBF
+         D40qZ++I4LSE1l+2XuohJeXGhbGY0hqKfPx7ad5OtSwwJxjXxuukNSTJvXxjh7zjK0Vi
+         7XvbI5jRT8qvpelEY4pQKCM1+5R+5KG1rDJePdbg0gPSDgsmVCSBiIVCH2zfd6KlhHsZ
+         WTYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVjypt+UwojQnHFjB48rDHll7JQYC5pEgg1K4H1Soa+mRFDcUzgREG9f0lLH/DXNOpd4Z0jHXZ3ku48yJEmN5CH5z1EzEOjs1Ty2nLB
+X-Gm-Message-State: AOJu0YxwB3BLYzHpasJ2LUo1CEmthooiO3pae7oEoZ87bEzP8y4mFY3i
+	igatDLkdwgb36I0s86PQMYJV0c03vOTWyTcYYeGFbpQm3tt88GAjlk732LU3P8SWRPBCf1s1VCh
+	2
+X-Google-Smtp-Source: AGHT+IE2CkuVfuEeWibh2syHVvCT2BYHUAnYl4Dc3HsXN2GwvEWq+MuVV84p30lXkZjv/MWuXo6EyQ==
+X-Received: by 2002:a19:2d14:0:b0:52b:9046:c44c with SMTP id 2adb3069b0e04-52b9046c59amr4014987e87.58.1717370697587;
+        Sun, 02 Jun 2024 16:24:57 -0700 (PDT)
 Received: from umbar.lan ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52b959008aasm392369e87.269.2024.06.02.16.24.56
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52b959008aasm392369e87.269.2024.06.02.16.24.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 02 Jun 2024 16:24:56 -0700 (PDT)
+        Sun, 02 Jun 2024 16:24:57 -0700 (PDT)
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Subject: [PATCH RFC 0/7] usb: typec: ucsi: rework glue driver interface
-Date: Mon, 03 Jun 2024 02:24:53 +0300
-Message-Id: <20240603-ucsi-rework-interface-v1-0-99a6d544cec8@linaro.org>
+Date: Mon, 03 Jun 2024 02:24:54 +0300
+Subject: [PATCH RFC 1/7] usb: typec: ucsi: move ucsi_acknowledge() from
+ ucsi_read_error()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,9 +79,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAEX/XGYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDUyNT3dLk4kzdotTy/KJs3cy8ktSitMTkVF3TtDQjIzOTNLPE1GQloN6
- CotS0zAqwudFKQW7OSrG1tQAdoJOsbAAAAA==
+Message-Id: <20240603-ucsi-rework-interface-v1-1-99a6d544cec8@linaro.org>
+References: <20240603-ucsi-rework-interface-v1-0-99a6d544cec8@linaro.org>
+In-Reply-To: <20240603-ucsi-rework-interface-v1-0-99a6d544cec8@linaro.org>
 To: Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
  Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
  Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
@@ -89,70 +91,66 @@ Cc: Nikita Travkin <nikita@trvn.ru>,
  linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
  linux-arm-kernel@lists.infradead.org
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2404;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1294;
  i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=gBMQdnHYBqt0Cz6vbwrln0vxA5FTa/0tj8FaEe/b0zs=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmXP9GP5gxL64nLA9ixHwOAFBfXBDUwb3IytFr9
- MzqXPncK2KJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZlz/RgAKCRCLPIo+Aiko
- 1QMtB/9Ey2KOkOoXQtrK3z40/JUfDsmj8HhHIM+2tx5HLtM3vh51/enSM0NG8/7joFYK3odgHCr
- Qog87gI4VxOkkiZ2uolgr+BS+iYg9qCg9l5KwpUqE3pDu3mYNHlId+ZWojI23jfAAffFI0VHuRQ
- jbehKAnAkH+8sY9knuzynaOHFpu4qwJO5dHUcEIrfEUP/rSaiL4z/1jJopD3q1uajUH1SBAOwLG
- OXf4RS3IsMDMVGMa0s0X+u3vuhy2itfvTF5Njhb47z4yvz4IAe8xFlq7k9d5y/G85oy70S6Clwp
- ozyuGd4VH5nNmhlUka6xJw3tBeUIsue8TLMONydFvPfh1hL9
+ bh=J3HQOCyfSVpr1YUtYQZItLe+bN2QWt7En48aq2hwcDQ=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmXP9H/f3ba1SNbSVuQnOo1uz7VMfWjPKCe7tix
+ noDzdNH6tGJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZlz/RwAKCRCLPIo+Aiko
+ 1d7IB/9MbaRNYHyugOOeccBgAd/6xgYFC8GC5EoakGOk+XO8fa4kUcKuCnypn9hKPcv5XYKagzt
+ bPXUTZq47XUYgE1J2OW32LsWJ8dMV6Cw2Ue2hziAmhcMgc89R453njTxTc3eKF40ARb3FTptROQ
+ xs3VZx2ERK741nPOXeoCPU79RmeSG7uMAZT9UFFi2yHZrrTfXV2g/IgAAmuNd0jQLCUQvGyFOcc
+ G5i9jn4wNWURcR3K/mq8HTwfFr/kw5JW8Jtpeu3j1UTNSiRxVZMEjOH57d8d6thIm5tobzMtC0P
+ e0YbXHJ8z8bldV5HBiq8FkRuTzcIgMVoIFCmG4pGI6WE2/w8
 X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
  fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-The interface between UCSI and the glue driver is very low-level. It
-allows reading the UCSI data from any offset (but in reality the UCSI
-driver reads only VERSION, CCI an MESSAGE_IN data). All event handling
-is to be done by the glue driver (which already resulted in several
-similar-but-slightly different implementations). It leaves no place to
-optimize the write-read-read sequence for the command execution (which
-might be beneficial for some of the drivers), etc.
-
-The patchseries attempts to restructure the UCSI glue driver interface
-in order to provide sensible operations instead of a low-level read /
-write calls.
-
-If this approach is found to be acceptable, I plan to further rework the
-command interface, moving reading CCI and MESSAGE_IN to the common
-control code, which should simplify driver's implementation and remove
-necessity to split quirks between sync_control and read_message_in e.g.
-as implemented in the ucsi_ccg.c.
-
-Note, the series was tested only on the ucsi_glink platforms. Further
-testing is appreciated.
-
-Depends: [1], [2]
-
-[1] https://lore.kernel.org/linux-usb/20240521151109.3078775-1-fabrice.gasnier@foss.st.com/
-
-[2] https://lore.kernel.org/linux-usb/20240531104653.1303519-1-heikki.krogerus@linux.intel.com/
+As a preparation for reworking UCSI command handling, move
+ucsi_acknowledge() for the failed command from ucsi_read_error() to
+ucsi_exec_command().
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
-Dmitry Baryshkov (7):
-      usb: typec: ucsi: move ucsi_acknowledge() from ucsi_read_error()
-      usb: typec: ucsi: simplify command sending API
-      usb: typec: ucsi: split read operation
-      usb: typec: ucsi: rework command execution functions
-      usb: typec: ucsi: inline ucsi_read_message_in
-      usb: typec: ucsi: extract common code for command handling
-      usb: typec: ucsi: reorder operations in ucsi_run_command()
+ drivers/usb/typec/ucsi/ucsi.c | 16 ++++++----------
+ 1 file changed, 6 insertions(+), 10 deletions(-)
 
- drivers/usb/typec/ucsi/ucsi.c         | 215 ++++++++++++++++++----------------
- drivers/usb/typec/ucsi/ucsi.h         |  26 ++--
- drivers/usb/typec/ucsi/ucsi_acpi.c    | 100 ++++++++--------
- drivers/usb/typec/ucsi/ucsi_ccg.c     | 103 +++++++---------
- drivers/usb/typec/ucsi/ucsi_glink.c   |  74 ++++--------
- drivers/usb/typec/ucsi/ucsi_stm32g0.c |  79 +++++--------
- 6 files changed, 277 insertions(+), 320 deletions(-)
----
-base-commit: 975aa2136eebb8c7c716ac2d24d9bfdb002f87fd
-change-id: 20240525-ucsi-rework-interface-5ff2264f6aec
+diff --git a/drivers/usb/typec/ucsi/ucsi.c b/drivers/usb/typec/ucsi/ucsi.c
+index 2cc7aedd490f..953196ca35a3 100644
+--- a/drivers/usb/typec/ucsi/ucsi.c
++++ b/drivers/usb/typec/ucsi/ucsi.c
+@@ -70,11 +70,6 @@ static int ucsi_read_error(struct ucsi *ucsi)
+ 	u16 error;
+ 	int ret;
+ 
+-	/* Acknowledge the command that failed */
+-	ret = ucsi_acknowledge(ucsi, false);
+-	if (ret)
+-		return ret;
+-
+ 	ret = ucsi_exec_command(ucsi, UCSI_GET_ERROR_STATUS);
+ 	if (ret < 0)
+ 		return ret;
+@@ -153,13 +148,14 @@ static int ucsi_exec_command(struct ucsi *ucsi, u64 cmd)
+ 	}
+ 
+ 	if (cci & UCSI_CCI_ERROR) {
+-		if (cmd == UCSI_GET_ERROR_STATUS) {
+-			ret = ucsi_acknowledge(ucsi, false);
+-			if (ret)
+-				return ret;
++		/* Acknowledge the command that failed */
++		ret = ucsi_acknowledge(ucsi, false);
++		if (ret)
++			return ret;
+ 
++		if (cmd == UCSI_GET_ERROR_STATUS)
+ 			return -EIO;
+-		}
++
+ 		return ucsi_read_error(ucsi);
+ 	}
+ 
 
-Best regards,
 -- 
-Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+2.39.2
 
 
