@@ -1,172 +1,188 @@
-Return-Path: <linux-kernel+bounces-198472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0BDD8D7900
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 01:20:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BB7F8D7903
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 01:22:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E2212816B8
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 23:20:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B72F728122F
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 23:22:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E33957C086;
-	Sun,  2 Jun 2024 23:20:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18A827D3E6;
+	Sun,  2 Jun 2024 23:22:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="amSNSSK4"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="uwHb1KUx"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D35092232B;
-	Sun,  2 Jun 2024 23:20:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA8A4770E6
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Jun 2024 23:22:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717370451; cv=none; b=VCm2R3E1oxxcaxKX7an4hKbT5yo2WM0wYzFJvJVqG+/SK6jF2h7UYkeWzdql2fCcFb3Hoh8hf1eWKeCDBZdirT8d0UY5uoBJB/rnYt5ImKdtF7DNaW4gUsQ3O6DC2SXa3yaw4Zrm8KkmmLML9qElzraDsitPA6NUA148JkxPgiE=
+	t=1717370560; cv=none; b=rDGtREdgABMiqR7G/+vJ4wtFaTIzk1Q6XpSbiq9e4IiBOuchgoaCquvgRc1vGmRqwLHQ4eFOwwUMDidPiMRHbZZleHJifQS1OF996wcRSC2rufTFzQkyhau10+Pg3JvgerpfezXZBPlds8Ud3UcuS9mQPqe0R0VIhNTyDFf78zQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717370451; c=relaxed/simple;
-	bh=m2pHOs+8mizs3w/BcsgtC4LcAv7doMQX/7GNMunWl1U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=A11zfi2FyRH+Ptpe+Rl7nYNXdqkug9I7Lw1zU2YN1mmuxzmhgN5hw5OwHfI2eFBBFjWgL2/HZAqE4ckp7mY5rsZJXDZN4DxbAt6NOWmEP5Gv/sVLvd5eWcOonj8mWt3PlyFNkYv5i8CmK2aAbippK1q/2PY8DBllEBZzPLolWKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=amSNSSK4; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-6f4603237e0so2431845b3a.0;
-        Sun, 02 Jun 2024 16:20:49 -0700 (PDT)
+	s=arc-20240116; t=1717370560; c=relaxed/simple;
+	bh=BCauVUfC8uXO3rNkcLkFyjigTfVZ/pWoopZn06saXKc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UJ/nWqRLY2ICuvb/AB8zGvYPhzjSjJC6+wiG2NtQBlj7R3WR/vILcgw7RP6r/aWAPNt23A4KIeuYhRdRVM0gpgJmO95CaD92taSB22iiBduGmlpg8EBbLSRMgm6jv8/4rlIuQtTYjjg0bQyeZzxejLTpCxM5ISBfgE/W3NpPFBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=uwHb1KUx; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-70259bdcf7cso801984b3a.0
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2024 16:22:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717370449; x=1717975249; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NyDfIrRI6Xr2FPV9NA4UwhKworxEDEXmt1u7Ay0b8XY=;
-        b=amSNSSK4Rpg8105r3TiKib1hJ/hE6Y6pCCBuhmPUVWXpV1P/o9jy3WKbbpCKMFUeFl
-         yeW6TsysWKAvo+socz+dZaFJRXFLodhKKYGOwhcOvQnbWYfkuci9KsE/TZc46hyfMcCE
-         DtV1LZllgUOVCqd8262cw3WCnZ2ODURhQ5VZH1ckZMJHBSEjVi/fIyDUvhJRP6/Z92cp
-         /d12hJLbMROYq7MCrNuNiBNIAz7zNgpYRTCnduZPKxwIByIeNXab2lycA2qJSVppJCbb
-         W8lSo/gE8a8lN36ep1osQ6u0Rfjnu8gQaCNcK2I5f25by5hDPm0Tg2xDeuJg0O9XXFWP
-         62Cg==
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1717370558; x=1717975358; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=sMZz/hfMDPMeBm9TTQvgkTSQG2xm4Pd/LaSyXt2DrG8=;
+        b=uwHb1KUxNCu20iyc3uJzW4W9vlaCaXkyBNvr4F+FVofX7BVWdqCgN2AC81hy7c4S4h
+         XlpvPNaEuO+Xf3wT3JFPvpccBjDMJjxO/zJyiXp/G0IdBB6T0d0npvp/IDdyKNEpjkT2
+         00qw8gXEFwkYdyP0heWr0SF3+8fkKGxckpg4aKy4KHr0LDFHyrC/x0i+gNp4BjPdrX03
+         84vZBi8nC4RKDE5R2eGjnWG5i5T3Uq2p5fXtjSF6MKJFLFbo3BKdfoz3tVqLepH0BHv6
+         NKd6vFZ6YIcqZJTjhh3108nnCUk5G9E6DaDulKYEpShQoeTUXXbrJOjA3aaYnSYctyo0
+         sfZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717370449; x=1717975249;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NyDfIrRI6Xr2FPV9NA4UwhKworxEDEXmt1u7Ay0b8XY=;
-        b=Or5RRQ7g2h2oPAmJIGSxbJXEfilhUxJlw3B8u7JdjDOcBCYzRdIGO72+sImmjJNR8R
-         KHy/rSa3hJDl+ZMIlGoshc2eq0LY+xnSfA4+G9+C02Xf9TVBjzQ6nZ2rkzqOXf3jVAEt
-         JJt93/9TeI4VRDH/mjKZmjuAaA0H9sOCDTuPc0+nEM6NKF73UuNjjMbiS5XMrb9cZqpB
-         DCc3+Iz72xPq3eBEu6leQ6w/d0ihb50MqyOJOaJVRHtW0D9MeJY3zjEX11oCpogChewG
-         iLEqU5b6px4B2j5EO3IUx3Wx11GmGXi6j7mGkbFRIjvxZneaVBHld927ldR9d9F/mmcY
-         XU1A==
-X-Forwarded-Encrypted: i=1; AJvYcCX1F/MRdpFwP57O7AAxsPdoIPMHKk8tVvefioWfYNl9GU5g5TOsuJmGO+gUh3u2obt6VJEQeuRe+hveI4ZYLaB/wLEbKKstsMbOXI3hhYR4UtzQb+g4b18RKhV5R9aCT1m0Cch9CZGeTMYcpk5FBQ==
-X-Gm-Message-State: AOJu0YxPQ+0fE71OIhqK5xQ80aorHkKvWdQ6r1e5rcYY2m8M6BHtv17n
-	RA3C1y/diDKcbcYUKVSsGeaUAdAtchDnV3e1mu3P0dDCw+ZiUw58
-X-Google-Smtp-Source: AGHT+IFJq5LYRcUEEjxAMk6PVmWi+a4oSEIgOthgjSU4iDbv/4r9AFwvWlJKA7pAof2aT+oWuPqi+Q==
-X-Received: by 2002:a05:6a00:2e08:b0:702:3c08:826a with SMTP id d2e1a72fcca58-702457ab678mr11180557b3a.11.1717370449066;
-        Sun, 02 Jun 2024 16:20:49 -0700 (PDT)
-Received: from bangji.corp.google.com ([2620:15c:2c0:5:a70f:559b:bc7c:dcd2])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6c4d3a52b65sm3660907a12.87.2024.06.02.16.20.47
+        d=1e100.net; s=20230601; t=1717370558; x=1717975358;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sMZz/hfMDPMeBm9TTQvgkTSQG2xm4Pd/LaSyXt2DrG8=;
+        b=Jgx3JQr8XJVEhymIhhlWlcsAW07C7hJU9hAFoRKxnkp585jXcM3eifvDY6kj7Kbb34
+         OZzST8KS3CBUwvBTjBCFpRb7Qot0mz2bJOYpW+RkX2v59xrVCS4ZIFJ3r6K6/WIMMvjF
+         RJsrCY+QhJwuAx6oCkbYyrAKJLKGFFNLAxj8mBXvK4hJOfdFMOD/r/8o98vpf6Q+CeWO
+         yv/hf86RTp6xulzHgbqPCSYnqYFHrpTB5du7ZBdQITkJm7rRyOjhdk45RYVl7UkrZRLr
+         IRmIjQbYc2VbWnxaMrvbcA74FXGRM/DmoHaBI+PtOckuINIQNsuUmJmi7GJDIM9+in3G
+         ecrw==
+X-Forwarded-Encrypted: i=1; AJvYcCV7kGOxOP6cxi+4aokCyEnu8iXr0lW5bZsjasGxrXD1/9AHElIeErpfWxrlT+wwGrKiA/dYnUwtkfpQ3rUIVUODH0VuJS2mISVdw0XW
+X-Gm-Message-State: AOJu0YyssfNwKza3Kocksztobm7VR2vWmMOMiFhqzeLBczTRt0XuEOL2
+	XHA9mxRAExGUg/aH3XL+92TGLri79rR00A/fzQT6e3gGvJq12XSaZajYKaIU8KI=
+X-Google-Smtp-Source: AGHT+IGpRpKITHqY9FQ8NaSVtN7UtSeOVKDshRosxLiBJXgm9K3AzmnrJgeBMI9D7eZ56TtOGV2AnQ==
+X-Received: by 2002:a05:6a00:847:b0:6f8:b262:5b15 with SMTP id d2e1a72fcca58-702477e9f67mr8377508b3a.11.1717370557986;
+        Sun, 02 Jun 2024 16:22:37 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-32-121.pa.nsw.optusnet.com.au. [49.179.32.121])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70242aea324sm4633288b3a.109.2024.06.02.16.22.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 02 Jun 2024 16:20:48 -0700 (PDT)
-From: Namhyung Kim <namhyung@gmail.com>
-X-Google-Original-From: Namhyung Kim <namhyung@google.com>
-To: weilin.wang@intel.com
-Cc: namhyung@google.com,
-	Namhyung Kim <namhyung@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Perry Taylor <perry.taylor@intel.com>,
-	Samantha Alt <samantha.alt@intel.com>,
-	Caleb Biggers <caleb.biggers@intel.com>
-Subject: Re: [RFC PATCH v10 8/8] perf test: Add test for Intel TPEBS counting mode
-Date: Sun,  2 Jun 2024 16:20:31 -0700
-Message-ID: <20240602232041.1730256-1-namhyung@google.com>
-X-Mailer: git-send-email 2.45.1.288.g0e0cd299f1-goog
-In-Reply-To: <20240529064327.4080674-9-weilin.wang@intel.com>
-References: 
+        Sun, 02 Jun 2024 16:22:37 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1sDuX4-002DDg-0z;
+	Mon, 03 Jun 2024 09:22:34 +1000
+Date: Mon, 3 Jun 2024 09:22:34 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+Cc: chandan.babu@oracle.com, akpm@linux-foundation.org, brauner@kernel.org,
+	willy@infradead.org, djwong@kernel.org,
+	linux-kernel@vger.kernel.org, hare@suse.de, john.g.garry@oracle.com,
+	gost.dev@samsung.com, yang@os.amperecomputing.com,
+	p.raghav@samsung.com, cl@os.amperecomputing.com,
+	linux-xfs@vger.kernel.org, hch@lst.de, mcgrof@kernel.org,
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v6 07/11] iomap: fix iomap_dio_zero() for fs bs > system
+ page size
+Message-ID: <Zlz+upnpESvduk7L@dread.disaster.area>
+References: <20240529134509.120826-1-kernel@pankajraghav.com>
+ <20240529134509.120826-8-kernel@pankajraghav.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240529134509.120826-8-kernel@pankajraghav.com>
 
-From: namhyung@google.com
-
-On Wed, 29 May 2024 02:43:24 -0400 weilin.wang@intel.com wrote:
-
-> From: Weilin Wang <weilin.wang@intel.com>
+On Wed, May 29, 2024 at 03:45:05PM +0200, Pankaj Raghav (Samsung) wrote:
+> From: Pankaj Raghav <p.raghav@samsung.com>
 > 
-> Intel TPEBS sampling mode is supported through perf record. The counting mode
-> code uses perf record to capture retire_latency value and use it in metric
-> calculation. This test checks the counting mode code.
+> iomap_dio_zero() will pad a fs block with zeroes if the direct IO size
+> < fs block size. iomap_dio_zero() has an implicit assumption that fs block
+> size < page_size. This is true for most filesystems at the moment.
 > 
-> Signed-off-by: Weilin Wang <weilin.wang@intel.com>
+> If the block size > page size, this will send the contents of the page
+> next to zero page(as len > PAGE_SIZE) to the underlying block device,
+> causing FS corruption.
+> 
+> iomap is a generic infrastructure and it should not make any assumptions
+> about the fs block size and the page size of the system.
+> 
+> Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
 > ---
->  .../perf/tests/shell/test_stat_intel_tpebs.sh | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
->  create mode 100755 tools/perf/tests/shell/test_stat_intel_tpebs.sh
 > 
-> diff --git a/tools/perf/tests/shell/test_stat_intel_tpebs.sh b/tools/perf/tests/shell/test_stat_intel_tpebs.sh
-> new file mode 100755
-> index 000000000000..43f75055fee4
-> --- /dev/null
-> +++ b/tools/perf/tests/shell/test_stat_intel_tpebs.sh
-> @@ -0,0 +1,19 @@
-> +#!/bin/bash
-> +# test Intel TPEBS counting mode
-> +# SPDX-License-Identifier: GPL-2.0
+> After disucssing a bit in LSFMM about this, it was clear that using a
+> PMD sized zero folio might not be a good idea[0], especially in platforms
+> with 64k base page size, the huge zero folio can be as high as
+> 512M just for zeroing small block sizes in the direct IO path.
+> 
+> The idea to use iomap_init to allocate 64k zero buffer was suggested by
+> Dave Chinner as it gives decent tradeoff between memory usage and efficiency.
+> 
+> This is a good enough solution for now as moving beyond 64k block size
+> in XFS might take a while. We can work on a more generic solution in the
+> future to offer different sized zero folio that can go beyond 64k.
+> 
+> [0] https://lore.kernel.org/linux-fsdevel/ZkdcAsENj2mBHh91@casper.infradead.org/
+> 
+>  fs/internal.h          | 8 ++++++++
+>  fs/iomap/buffered-io.c | 5 +++++
+>  fs/iomap/direct-io.c   | 9 +++++++--
+>  3 files changed, 20 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/internal.h b/fs/internal.h
+> index 84f371193f74..18eedbb82c50 100644
+> --- a/fs/internal.h
+> +++ b/fs/internal.h
+> @@ -35,6 +35,14 @@ static inline void bdev_cache_init(void)
+>  int __block_write_begin_int(struct folio *folio, loff_t pos, unsigned len,
+>  		get_block_t *get_block, const struct iomap *iomap);
+>  
+> +/*
+> + * iomap/buffered-io.c
+> + */
 > +
-> +set e
-> +err=0
+> +#define ZERO_FSB_SIZE (65536)
+> +#define ZERO_FSB_ORDER (get_order(ZERO_FSB_SIZE))
+> +extern struct page *zero_fs_block;
+
+This is really iomap direct IO private stuff. It should be visible
+anywhere else...
+
 > +
-> +# Use this event for testing because it should exist in all platforms
-> +e=cache-misses:R
+>  /*
+>   * char_dev.c
+>   */
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index c5802a459334..2c0149c827cd 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -42,6 +42,7 @@ struct iomap_folio_state {
+>  };
+>  
+>  static struct bio_set iomap_ioend_bioset;
+> +struct page *zero_fs_block;
+>  
+>  static inline bool ifs_is_fully_uptodate(struct folio *folio,
+>  		struct iomap_folio_state *ifs)
+> @@ -1998,6 +1999,10 @@ EXPORT_SYMBOL_GPL(iomap_writepages);
+>  
+>  static int __init iomap_init(void)
+>  {
+> +	zero_fs_block = alloc_pages(GFP_KERNEL | __GFP_ZERO, ZERO_FSB_ORDER);
+> +	if (!zero_fs_block)
+> +		return -ENOMEM;
 > +
-> +# Without this cmd option, default value or zero is returned
-> +echo "Testing without --enable-tpebs-recording"
-> +result=$(perf stat -e "$e" true 2>&1)
-> +[[ "$result" =~ "$e" ]] || exit 1
-> +
-> +# In platforms that do not support TPEBS, it should execute without error.
-> +echo "Testing with --enable-tpebs-recording"
-> +result=$(perf stat -e "$e" --enable-tpebs-recording -a sleep 0.01 2>&1)
-> +[[ "$result" =~ "perf record" && "$result" =~ "$e" ]] || exit 1
+>  	return bioset_init(&iomap_ioend_bioset, 4 * (PAGE_SIZE / SECTOR_SIZE),
+>  			   offsetof(struct iomap_ioend, io_bio),
+>  			   BIOSET_NEED_BVECS);
 
-I got these build errors:
+just create an iomap_dio_init() function in iomap/direct-io.c
+and call that from here. Then everything can be private to
+iomap/direct-io.c...
 
-Thanks,
-Namhyung
-
----
-
-  TEST    tests/shell/test_stat_intel_tpebs.sh.shellcheck_log
-
-In tests/shell/test_stat_intel_tpebs.sh line 6:
-err=0
-^-^ SC2034 (warning): err appears unused. Verify use (or export if used externally).
-
-
-In tests/shell/test_stat_intel_tpebs.sh line 14:
-[[ "$result" =~ "$e" ]] || exit 1
-                ^--^ SC2076 (warning): Remove quotes from right-hand side of =~ to match as a regex rather than literally.
-
-
-In tests/shell/test_stat_intel_tpebs.sh line 19:
-[[ "$result" =~ "perf record" && "$result" =~ "$e" ]] || exit 1
-                                              ^--^ SC2076 (warning): Remove quotes from right-hand side of =~ to match as a regex rather than literally.
-
-For more information:
-  https://www.shellcheck.net/wiki/SC2034 -- err appears unused. Verify use (o...
-  https://www.shellcheck.net/wiki/SC2076 -- Remove quotes from right-hand sid...
-make[4]: *** [tests/Build:91: tests/shell/test_stat_intel_tpebs.sh.shellcheck_log] Error 1
-
-
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
