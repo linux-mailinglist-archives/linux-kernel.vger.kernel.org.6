@@ -1,274 +1,202 @@
-Return-Path: <linux-kernel+bounces-198263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80C448D75BF
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 15:35:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D3C68D75C4
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 15:40:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D460C1F213C3
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 13:35:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30F131C20F27
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 13:40:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68AE73EA9B;
-	Sun,  2 Jun 2024 13:35:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAB7B3FB01;
+	Sun,  2 Jun 2024 13:40:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kRdn+J97"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZMidcGMt"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C2E11173F;
-	Sun,  2 Jun 2024 13:35:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69FBD3A1DC;
+	Sun,  2 Jun 2024 13:40:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717335300; cv=none; b=rC6PrURBjDciUfzZkIZaUhe6Tn18tXknFytcKzR2ThH4qeOg1+PhIjvO/163tciqTdchmtXclmDqjvYZTfsI3nBkiXviZoq9nKmu0lBmVW4COaEx11YzZHhLyUePEbzAOSJEoVw4hYPxAA+mw6m/IQ6jYgK73CTGbciIGJmK1lE=
+	t=1717335634; cv=none; b=gGhi3FmtxZQNPDRMkglCnz7r+7inT+tOtOi9WYo2yRsvtrX4NiZDtwcj/iwcNeoUNsuf4KJYwpkReo8weAUDifSAISmZs/svuPzzc6RvBk3RMfA2z4GwOMpMUHfJ7PY//jzNF7yhMougkGUaH38RgsiHdGwPdvhg7pzfZ4AohkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717335300; c=relaxed/simple;
-	bh=fGo0CkAMVlwKZk/3VQRHsXRBENz0lBseVBEwFCY/wg0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ipr9LqFTxXeAFAlL2czUTReBcvCQpCYsMW3GtBAL+B5W8QBvan5rWt+VyVxZkWgKtI8fpWAPCuztR/EJ/x24LKc9ruQL2e0xfkaZmBUm1I53dKL7hFiWAI2GbiZTYifEWATxXKYYM8zQrBojkIvOX1xUyTzBNniGgXFUcuTo58U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kRdn+J97; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD1B8C2BBFC;
-	Sun,  2 Jun 2024 13:34:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717335300;
-	bh=fGo0CkAMVlwKZk/3VQRHsXRBENz0lBseVBEwFCY/wg0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=kRdn+J97mVKvljg+4exXX0lmX9OKbJ4xFvbyIK8mYZsD/gsvRE5jmicKWU1Z0CxVd
-	 ukpyfUVReVBF3ubjghbtFdhm/ITvs3pXYBRJIS+z5UnXi1uQhK3aedWF2KMDdLUeXV
-	 FQreJfdtXtU2PoR4nnKDzgsdhEF0UK5uSgAGEoo1TytPioVXs0ObQKvxf/+OzcHE7U
-	 KTie0TTsdZoSxeJgJ6ig0ECUUbjslcRkV5nzzr/k+BisCfay2U/lfWe/IzfLitybRR
-	 sbJpjkhz333WTZd5HMYkOUuhonbNhuwogPPxow0vlA/i2bGo11jo9WstUDAtog5vXn
-	 PJjS777xFoOhg==
-Date: Sun, 2 Jun 2024 14:34:49 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Yasin Lee <yasin.lee.x@outlook.com>
-Cc: andy.shevchenko@gmail.com, lars@metafoo.de, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, nuno.a@analog.com, swboyd@chromium.org,
- u.kleine-koenig@pengutronix.de, yasin.lee.x@gmail.com
-Subject: Re: [PATCH v3 1/2] dt-bindings:iio:proximity: Add hx9023s binding
-Message-ID: <20240602143449.44491d98@jic23-huawei>
-In-Reply-To: <SN7PR12MB8101FD306CBFC84DDF3D2466A4F22@SN7PR12MB8101.namprd12.prod.outlook.com>
-References: <20240519162438.17af0ff8@jic23-huawei>
-	<20240529045749.530039-1-yasin.lee.x@outlook.com>
-	<SN7PR12MB8101FD306CBFC84DDF3D2466A4F22@SN7PR12MB8101.namprd12.prod.outlook.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1717335634; c=relaxed/simple;
+	bh=NugtBoo6HeoPWFobyp5Dqem7d2GcQeN/7XD7a5PIxwY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Zj6I48yKbI8FvaQBcxbwoZI15qNqzU+7oHa/l6UgzDe62VHez3oHElqcEnDQBWys0kZjuagejnljKxE89GKaz69eaD7HFW6q3dxb33d0QKVrle5SLkOmwUjmKdqgOYRLUWBccehXVIcpxauPNeIv5AirFruEnN52KTqqYoLrTeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZMidcGMt; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717335633; x=1748871633;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=NugtBoo6HeoPWFobyp5Dqem7d2GcQeN/7XD7a5PIxwY=;
+  b=ZMidcGMtGeZ0LGYUflk9rYPxT6aTnWWJ4SIk4XwDNrKiwKJ2laXsawwm
+   grBzEe3UGwYk2L59eXd62s6ZNjKUNznL3+pPOclt/UTYIytdZARxJXQrP
+   ehmqX4PoWbEdGwK/MI06M6AoroviRqf2F0BYZsZtEfJLOPvwNTagy3/rR
+   6yNOkMqBG23/sMAVxQNwnjPm42IFzIU5pqP/trGavdCIZzryTURLGiIbC
+   XPiXHaQ+zBSjtNB7pUUU68SjudjXh2nN2PIs07VGBp8mo4p6sopt0OSDq
+   4r6Fjg1pn3fz95JC7Ig9PVEdkmSae0Ji5jdLv4+pWetI0EW0wMkmG1BM3
+   Q==;
+X-CSE-ConnectionGUID: lMHKWjjGQ8GVzXueetKhjA==
+X-CSE-MsgGUID: yBhArZPgQ5iW6CNOuunuMA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11091"; a="14021895"
+X-IronPort-AV: E=Sophos;i="6.08,209,1712646000"; 
+   d="scan'208";a="14021895"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2024 06:40:32 -0700
+X-CSE-ConnectionGUID: n126bJhYTfuM9l4t/0QEDg==
+X-CSE-MsgGUID: xn0Des1vRDSpMh3bPjxRzg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,209,1712646000"; 
+   d="scan'208";a="37079604"
+Received: from spandruv-desk.jf.intel.com ([10.54.75.19])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2024 06:40:32 -0700
+Message-ID: <30a30c5107a47a2cc3fd39306728f70dd649d7fe.camel@linux.intel.com>
+Subject: Re: [PATCH v1 2/6] cpufreq: intel_pstate: Do not update
+ global.turbo_disabled after initialization
+From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
+To: Xi Ruoyao <xry111@xry111.site>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+  Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+Date: Sun, 02 Jun 2024 06:40:31 -0700
+In-Reply-To: <6ebadacd8aaa307a5766cdb1b4d4a5c69acd87ac.camel@xry111.site>
+References: <13494237.uLZWGnKmhe@kreacher> <8366982.T7Z3S40VBb@kreacher>
+	 <bf3ebf1571a4788e97daf861eb493c12d42639a3.camel@xry111.site>
+	 <6d5ee74605bd9574baa5ed111cb54e959414437a.camel@linux.intel.com>
+	 <6ebadacd8aaa307a5766cdb1b4d4a5c69acd87ac.camel@xry111.site>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, 29 May 2024 12:57:48 +0800
-Yasin Lee <yasin.lee.x@outlook.com> wrote:
-
-> From: Yasin Lee <yasin.lee.x@gmail.com>
+On Sun, 2024-06-02 at 12:25 +0800, Xi Ruoyao wrote:
+> On Sat, 2024-06-01 at 21:03 -0700, srinivas pandruvada wrote:
+> > Hi Xi,
+> >=20
+> > On Sun, 2024-06-02 at 11:21 +0800, Xi Ruoyao wrote:
+> > > On Mon, 2024-03-25 at 18:02 +0100, Rafael J. Wysocki wrote:
+> > > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > > >=20
+> > > > The global.turbo_disabled is updated quite often, especially in
+> > > > the
+> > > > passive mode in which case it is updated every time the
+> > > > scheduler
+> > > > calls
+> > > > into the driver.=C2=A0 However, this is generally not necessary and
+> > > > it
+> > > > adds
+> > > > MSR read overhead to scheduler code paths (and that particular
+> > > > MSR
+> > > > is
+> > > > slow to read).
+> > > >=20
+> > > > For this reason, make the driver read
+> > > > MSR_IA32_MISC_ENABLE_TURBO_DISABLE
+> > > > just once at the cpufreq driver registration time and remove
+> > > > all of
+> > > > the
+> > > > in-flight updates of global.turbo_disabled.
+> > >=20
+> > > Hi Rafael and Srinivas,
+> > >=20
+> > > Thanks for the clean up, but unfortunately on one of my laptops
+> > > (based
+> > > on i5-11300H) MSR_IA32_MISC_ENABLE_TURBO_DISABLE is mysteriously
+> > > changing from 1 to 0 in about one minute after system boot.=C2=A0 I'v=
+e
+> > > no
+> > > idea why this is happening (firmware is doing some stupid thing?)
+> > >=20
+> > > I've noticed the issue before and "hacked it around"
+> > > (https://bugzilla.kernel.org/show_bug.cgi?id=3D218702). But after
+> > > this
+> > > change I can no longer hack it around and the system is much
+> > > slower.
+> > >=20
+> > > Is it possible to hack it around again?
+> > >=20
+> > Please try the attached diff and build kernel and try.
+> >=20
+> > git apply update_max_freq.diff
+> >=20
+> > Then build kernel and install.
 >=20
-> A capacitive proximity sensor
+> Unfortunately it didn't work.=C2=A0 Then I tried:
 >=20
-> Signed-off-by: Yasin Lee <yasin.lee.x@gmail.com>
-Hi Yasin,
-
-Some comments inline.
-
-A lot of what you have here sounds like it should be under userspace
-control, not in the dt-binding.
-
-Also, look at how we handled optional channels for ADCs and copy that
-approach here.
-
-Jonathan
-
-
-> ---
->  .../bindings/iio/proximity/tyhx,hx9023s.yaml  | 106 ++++++++++++++++++
->  .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
->  2 files changed, 108 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/proximity/tyhx,=
-hx9023s.yaml
+> @@ -1304,6 +1310,10 @@ static ssize_t store_no_turbo(struct kobject
+> *a, struct kobj_attribute *b,
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (no_turbo =3D=3D globa=
+l.no_turbo)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0goto unlock_driver;
+> =C2=A0
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0global.turbo_disabled =3D turb=
+o_is_disabled();
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0global.no_turbo =3D global.tur=
+bo_disabled;
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0arch_set_max_freq_ratio(global=
+.turbo_disabled);
+> +
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (global.turbo_disabled=
+) {
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0pr_notice_once("Turbo disabled by BIOS or unavailab=
+le
+> on processor\n");
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0count =3D -EPERM;
 >=20
-> diff --git a/Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s=
-.yaml b/Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.yaml
-> new file mode 100644
-> index 000000000000..ba4d7343bb30
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.yaml
-> @@ -0,0 +1,106 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/iio/proximity/tyhx,hx9023s.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: TYHX HX9023S capacitive proximity sensor
-> +
-> +maintainers:
-> +  - Yasin Lee <yasin.lee.x@gmail.com>
-> +
-> +description: |
-> +  TYHX HX9023S proximity sensor
-> +
-> +allOf:
-> +  - $ref: /schemas/iio/iio.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    const: tyhx,hx9023s
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    description: |
-> +      Generated by device to announce preceding read request has finished
-> +      and data is available or that a close/far proximity event has happ=
-ened.
-> +    maxItems: 1
-> +
-> +  vdd-supply:
-> +    description: Main power supply
-vdd-supply: true
-is enough.  vdd is pretty much always used for the main power supply so the
-docs are are redundant.
-> +
-> +  accuracy:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description: Accuracy level of the sensor
+> and my old hack worked again.=C2=A0 Curiously after I writing 0 to
+> /sys/devices/system/cpu/intel_pstate/no_turbo successfully, your code
+> is
+> triggered.
+>=20
+> $ dmesg | grep intel_pstate
+> [=C2=A0=C2=A0=C2=A0 0.554425] intel_pstate: Intel P-state driver initiali=
+zing
+> [=C2=A0=C2=A0=C2=A0 0.554877] intel_pstate: HWP enabled
+> [=C2=A0=C2=A0=C2=A0 1.780021] intel_pstate: Turbo disabled by BIOS or una=
+vailable on
+> processor
+> [=C2=A0=C2=A0 21.789044] intel_pstate: intel_pstate_update_limits cpu:0
+> [=C2=A0=C2=A0 21.789053] intel_pstate: intel_pstate_update_limits cpu:1
+> [=C2=A0=C2=A0 21.789060] intel_pstate: intel_pstate_update_limits cpu:2
+> [=C2=A0=C2=A0 21.789189] intel_pstate: intel_pstate_update_limits cpu:3
+> [=C2=A0=C2=A0 21.789198] intel_pstate: intel_pstate_update_limits cpu:4
+> [=C2=A0=C2=A0 21.789203] intel_pstate: intel_pstate_update_limits cpu:5
+> [=C2=A0=C2=A0 21.789209] intel_pstate: intel_pstate_update_limits cpu:6
+> [=C2=A0=C2=A0 21.789276] intel_pstate: intel_pstate_update_limits cpu:7
+>=20
+> The message at [1.780021] is from the first attempt writing 0 to
+> /sys/devices/system/cpu/intel_pstate/no_turbo when
+> MSR_IA32_MISC_ENABLE_TURBO_DISABLE is still 1
 
-No idea what this means!
+This requires user action,
+Please add a
+pr_info() to
+https://elixir.bootlin.com/linux/v6.10-rc1/C/ident/acpi_processor_notify
 
-> +
-> +  channel-used-flag:
-> +    description: Bit flag indicating which channels are used
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-As below - subnodes not a bunch of arrays. If the subnode is there
-it should be used.
+Check if you got any message
 
-> +
-> +  odr:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description: Set ODR for all channenls.
+Also what is=20
+cat /proc/cpuinfo
+and
+cpuid -1
 
-I assume output data rate?  That's something for userspace not the DT bindi=
-ng.
-
-> +
-> +  integration-sample:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description: Set Integration number and Sample number for each chann=
-enl.
-Ok. This one might possibly be hardware related as it depends on the wiring
-and physical elements of the board.  If so give a good description on how
-this should be set.
-
-> +
-> +  osr:
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    description: Set number of OSR for each channenl.
-Expand the acronym.  This sounds like oversampling ratio which
-would be odd to see alongside an average control. Hence
-more detail needed and consider if it should be controlled by
-the dt binding.
-
-> +
-> +  avg:
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    description: Set number of AVG for each channenl.
-
-This sounds like oversampling? If so that is normally a userspace
-problem not a binding thing.  Is it related to the physical wiring?
-If not don't put it in the binding.
-
-> +
-> +  lp-alpha:
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    description: Set lp-alpha for each channenl.
-Spell check.
-
-Also this needs more description.
-> +
-> +  cs-position:
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    description: |
-> +      Position of the CS pins.
-> +      Indicates the corresponding bit for each CS pin in the register.
-
-I've no idea what this. Add more description. Normally CS is chip select
-and there is only one of those.  Also this not general dt binding material
-so vendor prefix this stuff.
-
-> +
-> +  channel-positive:
-
-Use per channel nodes.  There are examples in for example adc/adc.yaml
-on how to do this.  Not having a child node is a lot easier to follow
-than magic values to say something isn't there.
-
-=46rom what is here these look like differential channels. Use the adc
-style binding for that.
+Thanks,
+Srinivas
 
 
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    description: Positive channel assignments. Use 255 for not connected
-> +
-> +  channel-negative:
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    description: |
-> +      Negative channel assignments. Use 255 for not connected
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    i2c {
-> +      #address-cells =3D <1>;
-> +      #size-cells =3D <0>;
-> +      hx9023s@2a {
-
-As was pointed out in earlier patch review - generic node names only.
-
-> +        compatible =3D "tyhx,hx9023s";
-> +        reg =3D <0x2a>;
-> +        interrupt-parent =3D <&pio>;
-> +        interrupts =3D <16 IRQ_TYPE_EDGE_FALLING>;
-> +        vdd-supply =3D <&pp1800_prox>;
-> +        accuracy =3D <16>;
-> +        channel-used-flag =3D <0x1F>;
-> +        odr =3D <0x17>;
-> +        integration-sample =3D <0x0065>;
-> +        osr =3D <0x4 0x4 0x4 0x0 0x0>;
-> +        avg =3D <0x3 0x3 0x3 0x0 0x0>;
-> +        lp-alpha =3D <0x8 0x8 0x8 0x8 0x2>;
-> +        cs-position =3D <0 2 4 6 8>;
-> +        channel-positive =3D <0 1 2 3 4>;
-> +        channel-negative =3D <255 255 255 255 255>;
-> +      };
-> +    };
-> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Doc=
-umentation/devicetree/bindings/vendor-prefixes.yaml
-> index b97d298b3eb6..e2224eea9ab9 100644
-> --- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
-> +++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-> @@ -1507,6 +1507,8 @@ patternProperties:
->      description: Turing Machines, Inc.
->    "^tyan,.*":
->      description: Tyan Computer Corporation
-> +  "^tyhx,.*":
-> +    description: NanjingTianyihexin Electronics Ltd.
-
-Convention is separate patch for vendor prefix editions. Makes it
-easier for people to cherrypick them for a different device driver binding.
-
->    "^u-blox,.*":
->      description: u-blox
->    "^u-boot,.*":
 
 
