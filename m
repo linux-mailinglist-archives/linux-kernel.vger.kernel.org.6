@@ -1,104 +1,105 @@
-Return-Path: <linux-kernel+bounces-198177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0578B8D748F
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 11:25:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 857F48D7491
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 11:25:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36AC31C20A02
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 09:25:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B1CC281BFC
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 09:25:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FEDC2C694;
-	Sun,  2 Jun 2024 09:25:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C53BD2E3E9;
+	Sun,  2 Jun 2024 09:25:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YE0dNHqL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q4B4mmCB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C201F1AACC;
-	Sun,  2 Jun 2024 09:25:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D7C82A1A4;
+	Sun,  2 Jun 2024 09:25:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717320305; cv=none; b=d/A/JYrqOorvckuTI+FBVmbGRa1nIvppK0xIo3NoRVAulVYoeM6uDk1HJ/eImeMqZFs0hWdKvG+DBkdGb4hN7guoon8HQi8joJy1Lqa7QHCbZdlpIKcqZjyBw+3b6cIl5S23eeTiQfOx8OfEDyq5RUqCdWrB9dhv31gRxxTHB6w=
+	t=1717320330; cv=none; b=e2RzTtrhV5Aph3xke2Pyidl3AETLAn8jQORVr2M1p6L0YYV+giAR4QqEecHrr+3CY2FDBT9wSfPSsyyysOkIew86fy7msFr989uy2Wmyn0Ga8rfKrgdPLbjxUsYubPl6rYVEICIky9xxNKd5Bb0tRD7ADx7TnRLThPJ/40BvJXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717320305; c=relaxed/simple;
-	bh=KnYh/uIn/EyIgQppSeKU0rho3O4e8yMDZXchOjRbnKw=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=W099I3WWOCcfHiPOaZI4ufNNN2/B1h4O94M63Ssy477x0fyNSYz7+7PsVGkv4niu7SaP35xpaViqu2Gr7wnokwJ2e1IYXg07qVFeXHJWxywklLmCTkagPvXhZpnXijRsTTSWEjtzj/kGDtUvDYGqvEBeuxhUBHaBtpEbQBhSSSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YE0dNHqL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 486DEC2BBFC;
-	Sun,  2 Jun 2024 09:25:05 +0000 (UTC)
+	s=arc-20240116; t=1717320330; c=relaxed/simple;
+	bh=5G59ZGZ8Bb9BUnNuLFJr5g+hoeRVgjc6AjAo+T/emE4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Yp27kqXEk1rM3ehdUgP8+okUNGxRtAOtjRSocuTIX/KU+MmzqJ4egIPUldDoiLrt4Dmqa+PfBu6MIBaLgnNBUhQW40I/TGjNnhahN307wR1SEIq74P1tw5CSH5sFRMUdeyQAAHnXHbiDoorVn+OkX1XnQFGK00NLEXRVFF3AmEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q4B4mmCB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 818E2C2BBFC;
+	Sun,  2 Jun 2024 09:25:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717320305;
-	bh=KnYh/uIn/EyIgQppSeKU0rho3O4e8yMDZXchOjRbnKw=;
+	s=k20201202; t=1717320329;
+	bh=5G59ZGZ8Bb9BUnNuLFJr5g+hoeRVgjc6AjAo+T/emE4=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=YE0dNHqLE7QkXosVSA6VOCbJVEn69Ck/iy4k09tIdCM8J8ihYKmQRsy6rm0kr79Ux
-	 9cb8geV1pptMrITeFeTyvY/bfmccfcfVP8zdaAVOu8KodjEy1fMeVOIzvwPPSyM4z+
-	 EliDp7pTdtGnwsYf3yLMCZawfaqMXQQkmStrK+1BL3bmACqzemZzqOa4GPBarRSYPN
-	 sOwjuIeyauB8dTcO3iY3bS1BGqQ/MbFod/otCUuF1roG6acU5b3EX0o2HOVlRzmlGD
-	 AhLrQlROXvuiP0czSL6XQORKGzbVH/7yXJPwvdAHU9LigDtm03WUnkgDrBSe/itHzY
-	 e5ikRLZV1TsaA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sDhSY-00HXO9-Gr;
-	Sun, 02 Jun 2024 10:25:02 +0100
-Date: Sun, 02 Jun 2024 10:25:01 +0100
-Message-ID: <86o78jlms2.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: "harry.yu185" <harry.yu185@gmail.com>
-Cc: corbet@lwn.net,
-	catalin.marinas@arm.com,
-	will@kernel.org,
-	tglx@linutronix.de,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] irqchip/gic-v3: Add Allwinner sunxi001 erratum workaround
-In-Reply-To: <20240602071058.6405-1-harry.yu185@gmail.com>
-References: <20240602071058.6405-1-harry.yu185@gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.2
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	b=Q4B4mmCB0JsdTvvK4drlVkcTbuajYl1u2yOzkq+cO18GtM+D9jf2UNLkn0caQd9wW
+	 TQi/1mj6AFIBKQ4T1cjryb6nGuBJYWky0tLY6IMxDf1o/hO2p/4fC104KZfYGA16/X
+	 YhV9oloOgRfbOEUfCd+cEkYn0fy8nEzrVHnU4QgtgRu7ao+VIhZvZcnuceCtiIrJ+J
+	 12Ol5D6xP0e0gVucAiThrLy/isjbl9Nm79J18N6ilbIY03Cv1J4ecoKSKm6omkT3QB
+	 ZQ1DL/kg9uZP27c8x1uclL4vn4aWyz/qHdh6qS0p7xJccrQVYRzPhb/pcWAiXixXn9
+	 rCmHO3YqTWzhw==
+Date: Sun, 2 Jun 2024 10:25:17 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Michael Hennerich <Michael.Hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, Julien Stephan <jstephan@baylibre.com>, Esteban Blanc
+ <eblanc@baylibre.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/5] iio: add support for multiple scan types
+Message-ID: <20240602102517.438b51b8@jic23-huawei>
+In-Reply-To: <20240530-iio-add-support-for-multiple-scan-types-v3-0-cbc4acea2cfa@baylibre.com>
+References: <20240530-iio-add-support-for-multiple-scan-types-v3-0-cbc4acea2cfa@baylibre.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: harry.yu185@gmail.com, corbet@lwn.net, catalin.marinas@arm.com, will@kernel.org, tglx@linutronix.de, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+Content-Transfer-Encoding: 7bit
 
-On Sun, 02 Jun 2024 08:10:58 +0100,
-"harry.yu185" <harry.yu185@gmail.com> wrote:
-> 
-> Allwinner A523 GIC600 integration does not support the
-> sharability feature. So assigned Erratum ID #sunxi001 for this
-> issue.
-> 
-> That the 0x0201643b ID is not Allwinner specific and thus
-> there is an extra of_machine_is_compatible() check.
-> 
-> Note, because more than one soc may have this problem, the 'sunxi'
-> name is used instead of a fixed soc name like A523.
-> 
-> Signed-off-by: harry.yu185 <harry.yu185@gmail.com>
+On Thu, 30 May 2024 10:14:07 -0500
+David Lechner <dlechner@baylibre.com> wrote:
 
-No, this is all already handled by the driver already (since 6.6).
+> Up to now, the IIO subsystem has only supported a single scan type per
+> channel. This scan type determines the binary format of the data in the
+> buffer when doing buffered reads.
+> 
+> For simple devices, there is only one scan type and all is well. But
+> for more complex devices, there may be multiple scan types. For example,
+> ADCs with a resolution boost feature that adds more bits to the raw
+> sample data. Traditionally, for slow devices, we've just always used the
+> highest resolution mode, but for high performance ADCs, this may not be
+> always practical. Manipulating data after every read can hurt performance
+> and in the case of hardware buffers, it may not be possible to change the
+> format of the data in the buffer at all. There are also ADCs where
+> enabling the higher resolution can only be done if oversampling is also
+> enabled which may not be desireable.
+> 
+> To allow for more flexibility, we would like to add support for multiple
+> scan types per channel.
+> 
+> To avoid having to touch every driver, we implemented this in a way that
+> preserves the existing scan_type field. See the "iio: add support for
+> multiple scan types per channel" the details. The first couple of patches
+> are just preparation for this.
+> 
+> [1]: https://lore.kernel.org/linux-iio/CAMknhBHOXaff__QyU-wFSNNENvs23vDX5n_ddH-Dw3s6-sQ9sg@mail.gmail.com/
 
-Please fix your DT to include the "dma-noncoherent" property in the
-GIC and ITS nodes, which should paper over the integration bug.
+Nice series. Applied to the togreg branch of iio.git and pushed out as
+testing for 0-day to poke at it.
+
+Obviously this v3 hasn't been on list that long, but there is still time
+as I doubt I'll push out a non rebasing tree for a week or so.
+This week is looking too busy!
 
 Thanks,
 
-	M.
+Jonathan
 
--- 
-Without deviation from the norm, progress is not possible.
+
+
 
