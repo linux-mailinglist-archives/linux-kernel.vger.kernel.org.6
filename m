@@ -1,98 +1,133 @@
-Return-Path: <linux-kernel+bounces-198080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AF7D8D733C
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 05:22:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A7BF8D7340
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 05:36:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BC2C1F21658
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 03:22:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 045F11F2175F
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 03:36:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFCE39445;
-	Sun,  2 Jun 2024 03:22:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76574A932;
+	Sun,  2 Jun 2024 03:36:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="DGYQFQwh"
-Received: from xry111.site (xry111.site [89.208.246.23])
+	dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b="REwyQdi8"
+Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DAFB79C2;
-	Sun,  2 Jun 2024 03:22:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 393DE53AC
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Jun 2024 03:36:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717298531; cv=none; b=gSoFeZw9hphr2G/2bY68PU8qNhJV0K61//2IXay6y2QqmK6AmmHbqN4IqY/HWDK/E2psD+OYu6lw2ltMcnpuofj22U1mY5QRMmSMtLA2qDjxADB9QNQOQZrMYb1LjsRA+q8NOuaMaaoBJ8U2KbZn87O0YUt5nEUx7Co1q+EYPHc=
+	t=1717299364; cv=none; b=K7Wv5pth0ild2PB8B5AOWLxxG8GR70yL21r9v2OdFCmbaFcy5Rgbw8nXIlz4CswAmnXe70Y01HQk4+vIzy2APpg2GAL8NlrpNuC+GjO7DHzI+C5Z1CZ8vsPSP+BWjLKO7iy+2OLdPltZZQBljjoxcQRkSOV7s7Y2ABmtH0So4wI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717298531; c=relaxed/simple;
-	bh=ZT4I4nTMNjP+16wPoejISiX4teMein0dpUSm1Zq1j4M=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=tKC1U5QnsRqYR6ZKOlXhLZs8R3MQbdyje4/cqowYBMc5vGlbihAkqBPkIYrUN1y+BmIDq3eMURxar6MgdDHomKpBURJ9BpiVls0KkehYqwpkIHOyQTpvcf6l6TlckX8omIgQmXaGLfFMzwc2GbKFcBY9bvpj17YS1tFhnLHoyt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=DGYQFQwh; arc=none smtp.client-ip=89.208.246.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xry111.site;
-	s=default; t=1717298522;
-	bh=ZT4I4nTMNjP+16wPoejISiX4teMein0dpUSm1Zq1j4M=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=DGYQFQwhdWFJkqK6QXKRA7qVl7tR+o4rln86Hj8riI4rd2f0eOXf9PgtxtRinV07p
-	 Vqmvzexd+dR/u4XeGT8/tRP3mSgQCMNPPRHnneFWk0tDToT7PTYEGpxhaZrA9NP0DX
-	 DJ7uhoRB7CJ5d5VSddXAEsRydzeVNaVQHiC0DCjk=
-Received: from [IPv6:240e:358:11e7:eb00:dc73:854d:832e:3] (unknown [IPv6:240e:358:11e7:eb00:dc73:854d:832e:3])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-384) server-digest SHA384)
-	(Client did not present a certificate)
-	(Authenticated sender: xry111@xry111.site)
-	by xry111.site (Postfix) with ESMTPSA id 18E356732C;
-	Sat,  1 Jun 2024 23:21:59 -0400 (EDT)
-Message-ID: <bf3ebf1571a4788e97daf861eb493c12d42639a3.camel@xry111.site>
-Subject: Re: [PATCH v1 2/6] cpufreq: intel_pstate: Do not update
- global.turbo_disabled after initialization
-From: Xi Ruoyao <xry111@xry111.site>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM
- <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Srinivas Pandruvada
-	 <srinivas.pandruvada@linux.intel.com>
-Date: Sun, 02 Jun 2024 11:21:51 +0800
-In-Reply-To: <8366982.T7Z3S40VBb@kreacher>
-References: <13494237.uLZWGnKmhe@kreacher> <8366982.T7Z3S40VBb@kreacher>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 
+	s=arc-20240116; t=1717299364; c=relaxed/simple;
+	bh=OQf6M4tF0ZWxSgVI5UrjMjHF0y9AkvZRl3Xq1E4gGpg=;
+	h=Date:From:Subject:To:Cc:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=psVDAEmgnUlXCPa+CZJ7pXee4LMCA3o4fbC1pI6YvfY8whfa6Be6xuDDw5TQuF+rczvRH5XZcdbNqHRJmBtEmkyQn0RD2sr9GxHFxPdOuCaS+4Zx3f8GP8lqSLi2MrBLzxNq3++Tm3KsPL2RdvST7jv4xDWKfOiYCHc+Wjj6Buo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool; spf=pass smtp.mailfrom=packett.cool; dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b=REwyQdi8; arc=none smtp.client-ip=91.218.175.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=packett.cool
+X-Envelope-To: heiko@sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=packett.cool;
+	s=key1; t=1717299358;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4WnZLNXTxyDKxHBiNiWfRKN88LzF8Z4jtB2f1P6shSE=;
+	b=REwyQdi8bfi4u4XEBzbddwpO0MQxQfI9ErTXsxtufVF9fIcdf6NS62jw1lycOEWsOrB+Ju
+	GbI7Z85iRrcIVZZWL+MZnawhnmmEPmq/H6kwagha1ddxTkI3T78CuM81ffieSFZ4vKgAG3
+	KS5IOylF+9a+kyXEq5VA9pea0auYbzv63Suyqgx0iiFBh+zwhA1zVr7xuac0PUa1UbFiAm
+	IacXBPMpjGCXAEKzblB2h6LiBECq8s3INeyYTbisOIlICFVa4d+4YV6I1qxgSot231et1i
+	LvQnvfIGsgY4kNiCaZaqwEBaLxsBSlNIzHSShbwRW52eLxdU/I3sOEa8mrWzWQ==
+X-Envelope-To: stable@vger.kernel.org
+X-Envelope-To: hjc@rock-chips.com
+X-Envelope-To: andy.yan@rock-chips.com
+X-Envelope-To: maarten.lankhorst@linux.intel.com
+X-Envelope-To: mripard@kernel.org
+X-Envelope-To: tzimmermann@suse.de
+X-Envelope-To: airlied@gmail.com
+X-Envelope-To: daniel@ffwll.ch
+X-Envelope-To: dri-devel@lists.freedesktop.org
+X-Envelope-To: linux-arm-kernel@lists.infradead.org
+X-Envelope-To: linux-rockchip@lists.infradead.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+Date: Sun, 02 Jun 2024 00:35:36 -0300
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Val Packett <val@packett.cool>
+Subject: Re: [PATCH v3 1/2] drm/rockchip: vop: clear DMA stop bit upon vblank
+ on RK3066
+To: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
+Cc: stable@vger.kernel.org, Sandy Huang <hjc@rock-chips.com>, Andy Yan
+	<andy.yan@rock-chips.com>, Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Message-Id: <CNOFES.QFA1L3UJ3SH82@packett.cool>
+In-Reply-To: <20240527231202.23365-1-val@packett.cool>
+References: <20240527231202.23365-1-val@packett.cool>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=windows-1251; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, 2024-03-25 at 18:02 +0100, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+
+
+On Mon, May 27 2024 at 20:11:49 -03:00:00, Val Packett=20
+<val@packett.cool> wrote:
+> The RK3066 VOP sets a dma_stop bit when it's done scanning out a frame
+> and needs the driver to acknowledge that by clearing the bit.
 >=20
-> The global.turbo_disabled is updated quite often, especially in the
-> passive mode in which case it is updated every time the scheduler calls
-> into the driver.=C2=A0 However, this is generally not necessary and it ad=
-ds
-> MSR read overhead to scheduler code paths (and that particular MSR is
-> slow to read).
+> So unless we clear it "between" frames, the RGB output only shows=20
+> noise
+> instead of the picture. vblank seems to be the most appropriate place=20
+> to
+> do it, since it indicates exactly that: that the hardware is done
+> with the frame.
 >=20
-> For this reason, make the driver read MSR_IA32_MISC_ENABLE_TURBO_DISABLE
-> just once at the cpufreq driver registration time and remove all of the
-> in-flight updates of global.turbo_disabled.
+> This seems to be a redundant synchronization mechanism that was=20
+> removed
+> in later iterations of the VOP hardware block.
+>=20
+> Fixes: f4a6de8 ("drm: rockchip: vop: add rk3066 vop definitions")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Val Packett <val@packett.cool>
+> ---
+>  drivers/gpu/drm/rockchip/rockchip_drm_vop.c | 6 ++++++
+>  drivers/gpu/drm/rockchip/rockchip_drm_vop.h | 1 +
+>  drivers/gpu/drm/rockchip/rockchip_vop_reg.c | 1 +
+>  3 files changed, 8 insertions(+)
+>=20
+> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c=20
+> b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+> index a13473b2d..2731fe2b2 100644
+> --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+> @@ -1766,6 +1766,12 @@ static void vop_handle_vblank(struct vop *vop)
+>  	}
+>  	spin_unlock(&drm->event_lock);
+>=20
+> +	if (VOP_HAS_REG(vop, common, dma_stop)) {
+> +		spin_lock(&vop->reg_lock);
+> +		VOP_REG_SET(vop, common, dma_stop, 0);
+> +		spin_unlock(&vop->reg_lock);
+> +	}
+> +
 
-Hi Rafael and Srinivas,
+Oops=85 so doing it here actually causes deadlocks, unless we also=20
+change all other reg_lock usages to be spin_lock_irq/spin_unlock_irq.
 
-Thanks for the clean up, but unfortunately on one of my laptops (based
-on i5-11300H) MSR_IA32_MISC_ENABLE_TURBO_DISABLE is mysteriously
-changing from 1 to 0 in about one minute after system boot.  I've no
-idea why this is happening (firmware is doing some stupid thing?)
+Not sure if doing that or going back to v1 would be better.
 
-I've noticed the issue before and "hacked it around"
-(https://bugzilla.kernel.org/show_bug.cgi?id=3D218702). But after this
-change I can no longer hack it around and the system is much slower.
 
-Is it possible to hack it around again?
-
---=20
-Xi Ruoyao <xry111@xry111.site>
-School of Aerospace Science and Technology, Xidian University
 
