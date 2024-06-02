@@ -1,83 +1,134 @@
-Return-Path: <linux-kernel+bounces-198486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 121B18D7929
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 01:33:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B1DD48D792D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 01:40:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C04AF281A59
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 23:33:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DABF28169A
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 23:40:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C38B77F496;
-	Sun,  2 Jun 2024 23:33:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D33177D08D;
+	Sun,  2 Jun 2024 23:40:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qh1ej48X"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=howett-net.20230601.gappssmtp.com header.i=@howett-net.20230601.gappssmtp.com header.b="xKOkSB7o"
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11FBF78283;
-	Sun,  2 Jun 2024 23:33:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E248E76EEA
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Jun 2024 23:40:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717371227; cv=none; b=Kqk5LORIc4J7oHJxBlHB9sM8T4xD6G9MAwbvSkIjDAbPN6ezU+xIlrJ1RRGuEtyRDvJIS0xVchSoAurob7Bam45f+8q8aO3HAYxaQOti2ox5UNz4EB+t2zAmStBfczn9cb/o5MD+2puqPG14WG7DGfedsUFdTK4qwEA7tDrSkWE=
+	t=1717371632; cv=none; b=MRZgpZtbwVTJv4DAh8xLjBskYDmRQ7E4GbG0n8RlBmiRJH07irdJUHN62XoawMsZUhPRN61O4gUQmTUnPazvdx009CytcB3+cNtjteV5PWemTrKKrsV/W8cn1kAb/bTRZZe5xoadNgz1sbHBdKVkQJKuw6joTUTcNdoRxRlI1b4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717371227; c=relaxed/simple;
-	bh=cdM87lmlrIHNiUm1YK2XV5w3mcdumawnrY5eacXrA3E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sSwrSDz9tiSFCAjxjsWZTLEDyCzg2eQbeHvfllQlDOdksYFbVPdWe/BAaho8tN99MuOmRy69riC2IkvpFv0pucujKHaN2q9V4I3U7OM1JApo4Wrta9HSCjunbhGKxJhrIEpR+0aAOfgqc7J/iEl/53jq2RjY0t+VNd05H3YrHcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qh1ej48X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83D6FC2BBFC;
-	Sun,  2 Jun 2024 23:33:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717371226;
-	bh=cdM87lmlrIHNiUm1YK2XV5w3mcdumawnrY5eacXrA3E=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Qh1ej48Xs5WtSkUNTSWqioP0oVtnycasxVxcMSkmEQNPjluzrPeItZVYma4u1FgMQ
-	 /AtQLAn9AAE1b3LSM/i4kE/IKJwn3zMZoe9CO9n0K1nzPKLokzguif6ySQeLtkriy3
-	 BDpKWbxLmtnN8C8xUDup1nDUdT2Ezb1cDRI2kYqYPgerYMPFSkjAXR4jnxX60BVkAj
-	 GR2GTSErDvEapbeW+Mf0xhhYIbbAiHrWNDSf3KHprfk1ThDM8rDla61dEdYiAqdCgN
-	 oW6xeqzOmedggyJ72z/0lrhKLivKiWeiGQ6zcZu73LULhkPfwKkcH9B+puG51FIa5t
-	 bBiu9Jhvagpxg==
-Message-ID: <746e0ddd-de6c-49f6-b836-3b8fcc5f18c5@kernel.org>
-Date: Mon, 3 Jun 2024 00:33:41 +0100
+	s=arc-20240116; t=1717371632; c=relaxed/simple;
+	bh=EHRepVezwMfVoPL6Mw07oqATYl7aotVo1rQYOCPwKrQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=txBj1+hRVCe+abUJ2Vv9UA4+gU6yx6YRex0DWGOINMeTyujjt7+AdhVPgUHMl6QMOQaFx18eVtlpRWarNkpDcGeFMNPq0CfGbC0rmfXee50xGy5cGp+B1vUomGGgYwD7VBEknoe5aHUcecLc03syNB8SuDlopOqOqJi7D3Veo9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=howett.net; spf=none smtp.mailfrom=howett.net; dkim=pass (2048-bit key) header.d=howett-net.20230601.gappssmtp.com header.i=@howett-net.20230601.gappssmtp.com header.b=xKOkSB7o; arc=none smtp.client-ip=209.85.219.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=howett.net
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=howett.net
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-df771959b5bso3515846276.1
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2024 16:40:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=howett-net.20230601.gappssmtp.com; s=20230601; t=1717371630; x=1717976430; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kB05bl6nBL/GV64EJffHVt909Yg9H0aq3pdV1Zuvdyk=;
+        b=xKOkSB7oh/e/9KgGaEufvfOXMLfzwsjPWwaDW7q6CrnFWn9YUtQgumz3p/1g5pGLaK
+         TAeXTeZE3MK2lo/1FWXQRUJ+6Pck2SglvhvTKwmozzSdKMmUXcJ3ZLu3MaYKg9gUjQ/j
+         b/KvX0sTxa8pdyIpqyPwsrOlkIS30H7OJAb/ruHu9IIwmwFzE7sgcDCX7Ma2C4VgxME1
+         yaLoz1liugftYl9yBPGv02gYOuA/DnudTwIvfsFlNxFrOf+IdUtoepnZaD8oVgDQjhmD
+         j4Ei2pHB/zge1KsDjAKV9vtCCsSjTXCjDRUHmD7VLO7C6YzCA6hjjiHumdkVrJwg4ebr
+         TdZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717371630; x=1717976430;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kB05bl6nBL/GV64EJffHVt909Yg9H0aq3pdV1Zuvdyk=;
+        b=KSiTgpYsLv0qmgxP1AyyEqRIA5pXd8umn9/tkJcMrqLQcvl/mLJUU846gEMFMgt5He
+         H18Sy0FS7L2AurXOjDOR2m2IYLuzbnnK6iOdIT0fLRnacUFV107IlD0iwFQnoEg4RXC2
+         rC0kkIQx3vSRmoe3eyGQmN1mTMSd6UJzerPezPAk18HaAoIOqouSYTe1i6W8FnGkI3Mo
+         EYlndo+bxOvoQbIfHoEvalWyMGSJog7TAsv4H7newVnAKoScwZ/8+tzoslHbIdE3o7Cw
+         nkm86JWpNVFzRe/eSrF4bHxOROlDmEJYwbePJbUzgU+iywUEbkW+avylcgsTT3z/VuLN
+         64ww==
+X-Forwarded-Encrypted: i=1; AJvYcCULloEMqQueJWBPWlb9VESFhoLAsg9jZh/DWQorCigqkzvZ4D4mVlx1ybGKtmODupRWo48xYY9+ovBPRlHXToVkXZFr1rDihm58RPJM
+X-Gm-Message-State: AOJu0Yz05q7iJSONLTU6HFG72n9mts6Qm+3+mHei3zlZ6cOFAVwKMBGs
+	/7sJf4d2oJzcu7qP2cwtOdAbLrqCcAGajcbZ2W0URU1Kazt1ofo2nMz5dxGsH2kPUtpCsoz9Xlt
+	UCzQm4O+Dk3O+5Bti/UdO2DoCwYOEZlx5WiUu
+X-Google-Smtp-Source: AGHT+IFdFbO/JdCzTUHIjfXmLV6Vnd6UNkZHgxfb8QNHaFRuKatU9hk38ie3OnpmMurJr4aQmZNPxtlWwl7vAEgGwFw=
+X-Received: by 2002:a25:d890:0:b0:dfa:5a2f:9e56 with SMTP id
+ 3f1490d57ef6-dfa73bed87emr6826339276.6.1717371629757; Sun, 02 Jun 2024
+ 16:40:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH] tools/bpf: matric typo erro
-To: Swan Beaujard <beaujardswan@gmail.com>
-Cc: Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
- <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240602225812.81171-1-beaujardswan@gmail.com>
-From: Quentin Monnet <qmo@kernel.org>
-Content-Language: en-GB
-In-Reply-To: <20240602225812.81171-1-beaujardswan@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240528-cros_ec-charge-control-v2-0-81fb27e1cff4@weissschuh.net>
+In-Reply-To: <20240528-cros_ec-charge-control-v2-0-81fb27e1cff4@weissschuh.net>
+From: Dustin Howett <dustin@howett.net>
+Date: Sun, 2 Jun 2024 18:40:18 -0500
+Message-ID: <CA+BfgNJByawxkZukaCXYcmOo_K9aQ0W1x8B6Y+Hyg_fZaJ4axw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/3] ChromeOS Embedded Controller charge control driver
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>, 
+	Sebastian Reichel <sre@kernel.org>, Lee Jones <lee@kernel.org>, 
+	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@weissschuh.net>, 
+	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, Mario Limonciello <mario.limonciello@amd.com>, 
+	Stephen Horvath <s.horvath@outlook.com.au>, Rajas Paranjpe <paranjperajas@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 02/06/2024 23:58, Swan Beaujard wrote:
-> Corrected typo in bpftool profiler.
-> 
-> Changed all instances of 'MATRICS' to 'METRICS' in the profiler.bpf.c file.
-> 
-> Signed-off-by: Swan Beaujard <beaujardswan@gmail.com>
-Acked-by: Quentin Monnet <qmo@kernel.org>
+On Tue, May 28, 2024 at 3:05=E2=80=AFPM Thomas Wei=C3=9Fschuh <linux@weisss=
+chuh.net> wrote:
+>
+> Add a power supply driver that supports charge thresholds and behaviour
+> configuration.
+>
+> This is a complete rework of
+> "platform/chrome: cros_ec_framework_laptop: new driver" [0], which used
+> Framework specific EC commands.
+>
+> The driver propsed in this series only uses upstream CrOS functionality.
+>
+> Tested on a Framework 13 AMD, Firmware 3.05.
+>
 
-For future bpftool patches, please use directly "bpftool:" rather than
-"tools/bpf:" as component prefix for the commit object, and make sure to
-have a clear title ("erro" seems to be a typo itself).
+I've tested this out on the Framework Laptop 13, 11th gen intel core
+and AMD Ryzen 7040 editions.
 
-Thanks!
+The problem is that the AMD framework laptop *reports* support for the
+CrOS charge controller, but it does not truly support it.
+As with the 11th Gen Intel Core (and by proxy the 12th, 13th) it still
+does require the OEM-specific command.
+
+This is evinced by a mismatch between the firmware-configured value
+and the value reported by the charge control subsystem through this
+driver.
+
+$ cat /sys/class/power_supply/BAT1/charge_control_end_threshold
+100
+
+$ ectool raw 0x3E03 b8 # OEM command 0x3E03 with BIT(3) in the payload
+is Framework's charge limit query host command
+Read 2 bytes
+ 50 00                                           |P.              |
+(in my case, 80 in decimal)
+
+The charge limit is managed at [1], and it does not appear to
+integrate with the standard charge control machinery.
+
+I'll pursue getting this board not to report support for CrOS charge
+control. This driver is still entirely fit for purpose, just not for
+this board.
+
+Cheers,
+d
 
