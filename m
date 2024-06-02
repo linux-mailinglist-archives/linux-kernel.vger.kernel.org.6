@@ -1,115 +1,180 @@
-Return-Path: <linux-kernel+bounces-198460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48E438D78E0
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 00:37:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82F658D78E6
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 00:40:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A3B71C20C9F
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 22:37:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B52992812CE
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 22:40:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB63778C6E;
-	Sun,  2 Jun 2024 22:36:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50BF6364A0;
+	Sun,  2 Jun 2024 22:40:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CE+IGWTD"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="whACvm+5"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B4A53207
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Jun 2024 22:36:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD36D3EA7B;
+	Sun,  2 Jun 2024 22:40:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717367815; cv=none; b=fIExPh/lOyn63r8VJ8xuIachfkbTm0zD+NkbG2kehV3t7GT/zyyVRBRlpYO+d2XJFiNUiHciSYTA3hP+2wfYSwbqB4AWSlYpXsmvZaEdaWCVIbruUS6YAttHavCq9LokYeMMwBBthw3izrgJgmGUasu3CAO/jGL7c7C85UITOtc=
+	t=1717368025; cv=none; b=SjKeAXdSrE7dzyJuvwFssMPFOxr2V+h5M9m4vws8uZuNFPB2BHrs+g+ds3dfzlW9JJ5JcJwan+s9W9tEFHDOVknhMqO2dZKrRPmYZ/Cx+3p/Iaa3+9k8JNqjFOZdFtLecdIMR0wq7SLyrtBypLunY61KNsuKsDyh+6mlBEkh7ZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717367815; c=relaxed/simple;
-	bh=5dGF7R9CLj6sRsLJo1BIQdYTRbCyIltr8b1bfvV1nL8=;
+	s=arc-20240116; t=1717368025; c=relaxed/simple;
+	bh=To7mGo/owzLvX5xUigMpm7M8kw8jHdspRx1v+79dzYw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z2GWLldV8XvgV8UjMhYhVCm3Qx1I4q8+gkK+40KpBlpGw0/a9KUZBYfdjkOIoF0LDkxvRQOuYPGz8NN41hk7706mOlQ2sLu5qWP975Ti7IC/vXuRjkXBelrLTkY0jZPaFnLN6lEtRqzmAkA+OED6aPCKQsEkaVvScLL/FAkkdPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CE+IGWTD; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52b8254338dso4284367e87.2
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2024 15:36:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717367812; x=1717972612; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=K9SX0TsF2/cPQADBAaomFhPbmi6Lu7sZbQJaAY9VKGY=;
-        b=CE+IGWTDsQpFPtxTqi2DhTVYR+dBhhdrg9QxuD5gIQIZy9cGweAD7R5swJWanDOYH9
-         gjZwmKJ3UsSDRPxaeBisw8PoFh9P0Mez/G1JVvhmWoOL8s4Ry2Y/oGzJyo2x1hPQ4lvr
-         VZwrd8iAZpZxVYFaVl97VF8LQcZ/EF5bUfCMi4DRcsGBNL5YlbuYFj2EZ44w2sDe0l6r
-         5xFHPCBVR3XqDOHATXn9fa5yED+kf84mt+K274u7UjdNH0JEQl+tjJXblOkn0WxyrNWd
-         sJJKES88x8kMK6CvKRCdj0nwvFYXNAX1Z6JTqyJUCfQ9kQmnm74FfVx4tXIZm9Wbf6JK
-         MbLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717367812; x=1717972612;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=K9SX0TsF2/cPQADBAaomFhPbmi6Lu7sZbQJaAY9VKGY=;
-        b=vOlAAkDT3B/whQ7CgIfqF9BHeCV/2kK2rbU/BYR33kH44ixzJgJC254R5TkowQN8NC
-         2RlWnfRj2D9IPRXiU6GqIS+OynAW3Ox6mhKikzoNgLSCX5aPCV9gwyftR7hSJve396O0
-         8grrAAkjmoSyFIFJ5nyrCI6AAqIh9b4L+VmuaKqQSbjKbvxgnrUCWhspBhOBtkeFzmgE
-         sf0I6UztwQgierwjvMKQhOr4d8cRnYL5AxSdDdrD7s+v7bJ99n4WFmI1/6btTNiNDaEn
-         p5t8FpemqVbG1MPzCO/kSxok4U02CENqT5sCldcF31b88PTqqAfa+bivYsPoEcTvrFWM
-         Ftfw==
-X-Forwarded-Encrypted: i=1; AJvYcCWPeGz9K4lo/YkFxj1bmr3TpDZlPBbP+oKVwv6NPrGlvRk3XltHe0wQXM4D4xnk0zas621TDrncXw+OwMVmex2ZVfiRDqFU3w8oRTDb
-X-Gm-Message-State: AOJu0Yy1hCUB4lfbs10dC6MKUSzfliGZMQ6Vqp1ofAZzEKAI361QVCI4
-	K3e/+zeh/iSNidKAw3SeUbPEDYiasGycjuT+IvCn+8Kc/Xz2VDnlXAvFGtly+cY=
-X-Google-Smtp-Source: AGHT+IG531Vlad8qpchsRzAJnfYYzKUVZyytZbyY2UfIItKHXoXiLCKlPLGPxjjYCDJM5rlTX67rPw==
-X-Received: by 2002:ac2:518e:0:b0:51d:1d42:3eef with SMTP id 2adb3069b0e04-52b89585dfdmr5492633e87.29.1717367811595;
-        Sun, 02 Jun 2024 15:36:51 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52b84d89279sm1045502e87.244.2024.06.02.15.36.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 02 Jun 2024 15:36:51 -0700 (PDT)
-Date: Mon, 3 Jun 2024 01:36:49 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: qcom: x1e80100: Disable the SMB2360 4th
- instance by default
-Message-ID: <hlzev7r3j6ok4a2iqgoezxrm272wynueznsefpr2fpj3j4nnyf@jtfbaiw4kfzl>
-References: <20240602-x1e80100-dts-pmics-drop-4th-smb2360-from-crd-v1-1-0adf4dd87a9b@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=g2ftocTrPDdtwkdTyIn8K0yGcMCuNJVhaB49fOtHHMxRNfAxGtA+tz0wqjANB/M3ssf9QjB65JnLEq701mxq3LlDq5TTPxm1OrIgFX7ztXzRrpJ4xOWw4zsip61jVpJ4kcvh2wjUNAAIowurX87TFFN/Md/HI1N1/ft5ive2dFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=whACvm+5; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1717368021;
+	bh=To7mGo/owzLvX5xUigMpm7M8kw8jHdspRx1v+79dzYw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=whACvm+54yIA2WDMF7neBAFOQrY9Rt16RksWO0h1moCmCqECGlpntwlFPr07mXtfU
+	 ELW8QlCqwAhjkQyNMS3JUy0LjOqX2B0yY4Tgv4mJkUErgi9YuRNOIHQdNq0QW92MIL
+	 brDyNL9aQAWwtTDd6C33+kWucOlPsgyI6fix4oSZLaE+XfH5ePRiz4jCQqpdoOvDyA
+	 5Cs+N8x5Ihf/bZIiS5qDbMvY32F36yJNVoAEk7yirBSIHVJw7qg2CYy/hwri2PiewA
+	 jCkoYVsDn9WwQ8KR7mSmIuJ0Ow4AMLA7uq6n9Wv2lpLjMbVXGozrEXZSsl5F7WhyXQ
+	 PR9Sap9o8k9LA==
+Received: from mercury (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sre)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id B096D378148F;
+	Sun,  2 Jun 2024 22:40:21 +0000 (UTC)
+Received: by mercury (Postfix, from userid 1000)
+	id 24CFD10611D2; Mon, 03 Jun 2024 00:40:21 +0200 (CEST)
+Date: Mon, 3 Jun 2024 00:40:20 +0200
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Mike Looijmans <mike.looijmans@topic.nl>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 5/5] power: supply: ltc3350-charger: Add driver
+Message-ID: <wqvc3uasq4bzkwuhdpaeu34hyhag2h2trff4ryhecenjvx6nei@bx4sdp66oxew>
+References: <20240416121818.543896-1-mike.looijmans@topic.nl>
+ <1b153bce-a66a-45ee-a5c6-963ea6fb1c82.949ef384-8293-46b8-903f-40a477c056ae.4a7cccf3-e7cb-4980-be8e-de8bd2795354@emailsignatures365.codetwo.com>
+ <20240416121818.543896-5-mike.looijmans@topic.nl>
+ <t4avn7fmzw355a73hu3yu4wzdxyc5gkupi5s4yfio5iyiygkx6@5eubzdbqthqx>
+ <fb93cdd9-0c9b-4cb1-91c1-ccf832fcba75@topic.nl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="hnayuqdj26rfnhzn"
+Content-Disposition: inline
+In-Reply-To: <fb93cdd9-0c9b-4cb1-91c1-ccf832fcba75@topic.nl>
+
+
+--hnayuqdj26rfnhzn
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240602-x1e80100-dts-pmics-drop-4th-smb2360-from-crd-v1-1-0adf4dd87a9b@linaro.org>
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jun 02, 2024 at 05:56:24PM +0300, Abel Vesa wrote:
-> The CRD board doesn't have the 4th SMB2360 PMIC populated while the QCP
-> does. So enabled it on QCP only.
+Hi,
 
-s/enabled/enable/
+On Tue, May 28, 2024 at 11:41:36AM +0200, Mike Looijmans wrote:
+> On 27-05-2024 22:40, Sebastian Reichel wrote:
+> > > ...
+> > > +static int ltc3350_get_property(struct power_supply *psy, enum power=
+_supply_property psp,
+> > > +				union power_supply_propval *val)
+> > > +{
+> > > +	struct ltc3350_info *info =3D power_supply_get_drvdata(psy);
+> > > +
+> > > +	switch (psp) {
+> > > +	case POWER_SUPPLY_PROP_STATUS:
+> > > +		return ltc3350_get_status(info, val);
+> > > +	case POWER_SUPPLY_PROP_CHARGE_TYPE:
+> > > +		return ltc3350_get_charge_type(info, val);
+> > > +	case POWER_SUPPLY_PROP_ONLINE:
+> > > +		return ltc3350_get_online(info, val);
+> > > +	case POWER_SUPPLY_PROP_VOLTAGE_NOW:
+> > > +		return ltc3350_get_scaled(info, LTC3350_REG_MEAS_VOUT, 22100, &val=
+->intval);
+> > > +	case POWER_SUPPLY_PROP_VOLTAGE_MIN:
+> > > +		return ltc3350_get_scaled(info, LTC3350_REG_VOUT_UV_LVL, 22100, &v=
+al->intval);
+> > > +	case POWER_SUPPLY_PROP_VOLTAGE_MAX:
+> > > +		return ltc3350_get_scaled(info, LTC3350_REG_VOUT_OV_LVL, 22100, &v=
+al->intval);
+> > For USB chargers VOLTAGE_NOW/MIN/MAX refers to VBUS, which is the
+> > voltage on the USB lines and thus the input voltage. From my
+> > understanding of the LTC3350 this would be VIN and not VOUT. With
+> > VOUT being supplied by either VIN or the Capacitors.
+> >=20
+> > So I think your custom vin/vin_uv/vin_ov should be exposed with the
+> > above properties.
+>=20
+> Yeah, power supplies report their input voltage. So this should
+> report VIN.
+>=20
+> > My understanding for VOUT is, that this is basically the system
+> > supply - I would expect more regulators to follow, which convert
+> > it to typical voltages like 3.3V or 1.8V. In that case it would
+> > make sense to expose VOUT as regulator, so that it can be referenced
+> > as vin-supply. You can find a few examples for charger drivers doing
+> > that for USB-OTG functionality.
+>=20
+> Looked at other drivers for that. Significant difference is that those ha=
+ve
+> something useful to supply to other drivers, e.g. being able to
+> enable/disable the output for one thing.
+>=20
+> For the LTC3350, the output (voltage) is just a measurement and there's
+> nothing for the driver to configure. Any regulator_ops would be completely
+> empty.
 
-With that in place:
+Which is also true for fixed regulators, see fixed_voltage_ops in
+drivers/regulator/fixed.c. Not having any control options is not a
+problem per se.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Note, that regulators have pre-defined events for the functionality
+you are trying to provide for VOUT, e.g.
+ - REGULATOR_EVENT_OVER_VOLTAGE_WARN
+ - REGULATOR_EVENT_UNDER_VOLTAGE
+ - REGULATOR_EVENT_UNDER_VOLTAGE_WARN
 
-foo-pmics.dtsi definitely is not the best solution, but it seems to be a
-lesser evil.
+> Given that, I think it should get the same treatment as GPI, so either a
+> custom property or some other device (IIO). Or maybe add a VOLTAGE_OUT
+> property? It's not uncommon for power management devices to report their
+> output voltage.
 
-> 
-> Fixes: 2559e61e7ef4 ("arm64: dts: qcom: x1e80100-pmics: Add the missing PMICs")
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> ---
->  arch/arm64/boot/dts/qcom/x1e80100-pmics.dtsi | 2 ++
->  arch/arm64/boot/dts/qcom/x1e80100-qcp.dts    | 4 ++++
->  2 files changed, 6 insertions(+)
-> 
+power-supply handles batteries and battery chargers. For both cases
+the kernel already has properties for the output voltage (which
+would be the charging voltage in case of a charger). Other PM voltage
+regulation elements are so far handled via the regulator subsystem
+and hwmon is used for monitoring.
 
+Greetings,
 
--- 
-With best wishes
-Dmitry
+-- Sebastian
+
+--hnayuqdj26rfnhzn
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmZc9NEACgkQ2O7X88g7
++prK8g/+KrIg6jyostU7AAlJ6XQjuFjR/XRqyoLCaZ9VZvfEudd4volkjse8Oxrp
+T95sQd0cJXRP6rzXNAhmKZjY+XmNMW3zJIO99rLArWjsTIc0ryru2K/dc3kyL3OZ
+Z1hVyvi9qUqHjXg5Ci1A34etVNOAqbo4n4taAg3Z8PC/crL34zFClUlcshhIgrZ6
+qDyGw/ZzFWW3FXlvMxuxpeYQkIxnhnvMzhk08fcDmbOmLxGjvK9INBIDIzt67Xci
+TiE+uZemOcvOZA65CiqXIxw1XtHv4IOjA3bZ96YmqP7mdERsXkbYkjlWZKVRR+9K
+n9QLdLdexWwK7xr8IxETj894B9JCM3Of9pUkuq6tJzZWu4k4sWL40un0RAZTMDpl
+78mIJ3USM0kFrFmLRgJNQWmb5V8v6NCtEKM+yARL3G/x9OPp4yc0c1iCnNgHCoMT
+sEVVc1PQy/Jt/TUz0AB7MeNJvS7CcK57/iygHP/Gny5DqmTCbC+rNvuvbp+3CoGs
+48oFoazcvsclCNNfUBo+cqr0uEnPt9sCZlb2+aoEkKr4FXDFBIA/j8fCoX6pVeh0
+f0VsHj2b/LALV8TLORWjBz9SDptMEFxAigYbhKaAzPF7h/zc+44euj93OkI9vG2E
+/Z4idtNcFxvhTMRkedkU3sefOcvIbcAL2Lqg3Hbhp7UmHSE8/PU=
+=P2wV
+-----END PGP SIGNATURE-----
+
+--hnayuqdj26rfnhzn--
 
