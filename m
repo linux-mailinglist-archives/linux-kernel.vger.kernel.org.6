@@ -1,89 +1,142 @@
-Return-Path: <linux-kernel+bounces-198346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 097548D7703
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 17:54:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 611698D7704
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 17:56:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3AA671C219DC
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 15:54:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B26C2281D76
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 15:56:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C7D04AEE0;
-	Sun,  2 Jun 2024 15:54:30 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E109B537FF;
-	Sun,  2 Jun 2024 15:54:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E40CF4AED1;
+	Sun,  2 Jun 2024 15:56:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GHHH/F8E"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EDF647F6A;
+	Sun,  2 Jun 2024 15:56:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717343669; cv=none; b=XIsxCPwcdeB9NW6GQtMbT2naPLlM+AfatMkCexAPQxvx0oQJt2cfXMRBEV1AiG47YjSSS0tngGMiaeh+d5c5SCbfuXcu2dwaMp8OXgHWH5pVP53l7fuh3uDZ3DQFZkPvo9qAnqXx/97lbXqXqrycSI7r+pTgHR9wXsVVbS1GrWM=
+	t=1717343776; cv=none; b=mnrw8GhlxRUt7vzY6YDwtnbrsoy/JcUEnv1wGcEJSDb5PInaA61/rnVdqnD5HGTo8ILtcLSPy7awfmfDHCm7nEet2PDnbnNyvEkqQ15TRTlt+C6rkPkPr19pI430wFjBOZHIX2W7bg+V4yF1OqJ16BdvF0o7ghUmP2JVFFmcA2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717343669; c=relaxed/simple;
-	bh=Pial4zPTFNynySNton0QC3/Qd1accVop8Xud9f9QmJE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OrCVv1NpEzmosbPKAglb2p03BVKuRXGV6M+euOODT6jg3qmW2D1hH8R0jnpE/i9wmjBdb2hD31V6O8bG9HPrCcn1a32qNm1SxOUjOjlSFKBv8GtKgbXw2yi3z+E2EFEnzhKzLLX1ponXU66bAcTk5W0nMfxdvH03YDybPYmTqWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DC4D8113E;
-	Sun,  2 Jun 2024 08:54:45 -0700 (PDT)
-Received: from bogus (unknown [10.57.83.6])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 09DE23F792;
-	Sun,  2 Jun 2024 08:54:18 -0700 (PDT)
-Date: Sun, 2 Jun 2024 16:54:16 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>
-Subject: Re: [PATCH 1/2] dt-bindings: arm: arm,juno-fpga-apb-regs: document
- FPGA syscon
-Message-ID: <20240602155416.5gkm7w3snba57vxa@bogus>
-References: <20240518203903.119608-1-krzysztof.kozlowski@linaro.org>
- <CACRpkdayDnBw0wCWffSwOX1EfPkq5TbkBH_wBJAwiZKaRbgdWA@mail.gmail.com>
+	s=arc-20240116; t=1717343776; c=relaxed/simple;
+	bh=l8+GXFRaLRqbnJKvA06bKbF87+GahGFEyqWYIo+UKmI=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=HaKrPZWKsUa7r2ftipmjp6cly3DX6Z2is5qDsH0idEri1vsBi39AwLA1tnZeo+o7Uvl5Y1QBF5fefS6yG2nSjZZOKDKv3qRbqixpyNuZqbykKj7ieMpgO4RRyRBMAE1Dddc4u3GzNj5mA8yWpvIuS3GTMY7nDmnQ/7SdRaemC4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GHHH/F8E; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B9F6C2BBFC;
+	Sun,  2 Jun 2024 15:56:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717343775;
+	bh=l8+GXFRaLRqbnJKvA06bKbF87+GahGFEyqWYIo+UKmI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=GHHH/F8EXYJMsAai0VU+CJMTOUNXqZIau8RCzKJctcAEnyH8MyrsvvKNy7kbpNnSH
+	 icwF4JZIw7Ll17LUc4B50WQQIawFqsr2ovJwN2+WtJgGNXGna3XJM2Dc6G/wOzotti
+	 FU5FcEY4qVC0LfQzcx3NxIMx20LDMWvRGtLQvaTYt20QdcxkXBRYbDo+dNTY+u0XjG
+	 v+x3FXaFps7m7UayW0HUucDDobSfC6ePU+0miVu7imnOeRPwLfSeRE0j2PSiqvwpgM
+	 s65+0gqM4555/QinXnWeFQTWxDeoU9Cux2wXDgR5aTUkx0Ob9bftYM9fYStKAPKebO
+	 LoKsqlyjI+Qfg==
+From: SeongJae Park <sj@kernel.org>
+To: Alex Rusuf <yorha.op@gmail.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	damon@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH v2 0/2] DAMON multiple contexts support
+Date: Sun,  2 Jun 2024 08:56:12 -0700
+Message-Id: <20240602155612.91435-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240602153102.926789-1-yorha.op@gmail.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACRpkdayDnBw0wCWffSwOX1EfPkq5TbkBH_wBJAwiZKaRbgdWA@mail.gmail.com>
 
-On Tue, May 28, 2024 at 01:47:33PM +0200, Linus Walleij wrote:
-> On Sat, May 18, 2024 at 10:39 PM Krzysztof Kozlowski
-> <krzysztof.kozlowski@linaro.org> wrote:
+On Sun,  2 Jun 2024 18:31:02 +0300 Alex Rusuf <yorha.op@gmail.com> wrote:
+
+> Hi SJ,
 > 
-> > Add dedicated bindings for the FPGA syscon registers on ARM Juno board,
-> > to fully document the block and also fix dtbs_check warning:
-> >
-> >   juno.dtb: apbregs@10000: compatible: ['syscon', 'simple-mfd'] is too short
-> >
-> > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> (...)
-> > +maintainers:
-> > +  - Linus Walleij <linus.walleij@linaro.org>
+> > Hello Alex,
+> > 
+> > On Fri, 31 May 2024 15:23:18 +0300 Alex Rusuf <yorha.op@gmail.com> wrote:
+> > 
+> > > Currently kdamond uses only one context per kthread
+> > > and most of its time it sleeps, so utilizing several
+> > > contexts can scale kdamond and allow it to use
+> > > another set of operations.
+> > > 
+> > > This patch-set implements support for multiple contexts
+> > > per kdamond.
+> > >
+> > [...]
+> > > 
+> > > ---
+> > > Changes from v1 (https://lore.kernel.org/damon/20240515152457.603724-1-yorha.op@gmail.com/)
+> > > - Compatibility for DebugFS interface is kept
+> > > - Kunit tests build/execution issues are fixed
+> > > - Patches from v1 are sqaushed, so that consistency between patches is
+> > > kept
+> > 
+> > My request was to avoid unnecessary temporal changes that will be removed in
+> > next patches.  Some of those are well removed in this version, but I still show
+> > some.  E.g., nr_contexts field.  Also, this resulted in two big patches.
 > 
-> This feels more like a Sudeep area of responsibility than
-> mine, so please use:
-> Sudeep Holla <sudeep.holla@arm.com>
->
+> This makes sense and I actually wanted that as well, so I tried to separate
+> them in previous version, looks like I misunderstood your request.
 
-Indeed, I queued them a week before -rc1 and was away last week. I plan to
-rebase and reply after applying them officially 😄
+No problem, I think I should also be more clear about the point.  Happy to have
+a chance to develop my humble communication skill with the conversaions with
+you.
 
--- 
-Regards,
-Sudeep
+> 
+> Anyway, don't you mind if lru_sort/traceevents/etc. will not function
+> correctly without applying the whole patch-set? I mean if we use the
+> approach below, once core.c is modified at least lru_sort and reclaim
+> will not work correctly, they even will not be built.
+
+I mind those.  Everything should work without regression in the middle of the
+patchset.  Nonetheless, we should avoid only regression.  We don't need to make
+everything perfect.  Let's minimize changes to the other modules in the way.
+
+I believe below suggested patches flow and my second reply to the second patch
+of this patchset can clarify the point.  Please let me know if not.
+
+> 
+> > 
+> > I'd also appreciate if you can separate changes into smaller ones of logical
+> > single change.  For example, changes for lru_sort.c, reclaim.c, and sysfs.c on
+> > first patch could be much smaller in my opinion.  Traceevent change can also be
+> > separated from patch 2.  Some of multi-context support seems mixed in patch 1.
+> > 
+> > I'd suggest below patches flow.
+> > 
+> > Patch 1: Introduce new struct and control functions for the struct.  Don't
+> > really use the struct and the functions.
+> > 
+> > Patch 2: Modify core.c to use the struct and implement multiple contexts
+> > support.  Minimize changes to core.c users.  Just keep those work as before.
+> > Don't implement multi contexts support on sysfs.c or trace events at this
+> > point.
+> > 
+> > Patch 3: Update sysfs.c to support the multiple contexts.
+> > 
+> > Patch 4: Update trace events to better support it.
+
+As I mentioned on my second reply to the second patch, you could swich patches
+3 and 4 if you want trace events to work perfect from the beginning of
+user-visible multi contexts support.
+
+
+Thanks,
+SJ
+
+[...]
 
