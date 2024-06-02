@@ -1,124 +1,113 @@
-Return-Path: <linux-kernel+bounces-198142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 841B48D740B
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 09:02:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D81F8D740D
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 09:09:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 175761F21820
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 07:02:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EAD41F21954
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 07:09:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03C651CD23;
-	Sun,  2 Jun 2024 07:02:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E9BE18EB1;
+	Sun,  2 Jun 2024 07:09:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="QkNbQRTP"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NSGIDRpK"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61F52639;
-	Sun,  2 Jun 2024 07:02:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21B2821360
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Jun 2024 07:08:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717311726; cv=none; b=VPH+1SXW2OFlH6aNuvIx42Bb0N7bTh+PgAKugHhaw7Wle01LBPh7K1Q0dGgXtLo9VDmWwNrfSNVwH0107MCvN7+YJRQLUou5f7ieeH/5eZSphcKmOClghW/RKciNPb6MlvCJ2XiEI5Xca40JHdzqi3gVgBiSfaw43DCjXcofYaw=
+	t=1717312139; cv=none; b=O8WdmMipln7G3PFKQza63ooNK89Azdc6/oC11QfcOyyxJQd5HRLw+B66Vm+mH+M1UvGwUMwA0VU/C5KZs3/eCzQqumV4d1pqh12Hy9SPnvgzDkpZh92nGZvV43rqcEdERP9mVBREQCKQ3Oqu8lTbVYplmBCX/D4COLiFBjgRvhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717311726; c=relaxed/simple;
-	bh=rwBS9iZRg7crwH13dt5ijAnAHthmADY3XvpiDiRMn8M=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DBxe7waMUtoZUNQ2xI6QRflM4iUCT8QEXFUZCCQ6fRK7Y4E+RPGlzQ+fKoZECZxyrCOupSByBPkQcuRKTzicW2wYmk83evT8OeYL9xrjDAlZvqzL4dyLWYtO7UnzLemhDEhSNKbRdnT1U17g8HR6RgQPdlOHNlIm6uE1DmfDGrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=QkNbQRTP; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45271PFH069057;
-	Sun, 2 Jun 2024 02:01:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1717311685;
-	bh=5r6d2PrPEEBsRenND0H/QwNv0hmJvFyqBuIX5o3zYbs=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=QkNbQRTP3+KSCJyh0zcB1xZ98etDB1KPY4zo9VTOqEfdi+nCdFq6ao2ZBclkYPj57
-	 biB7dy4WQkgaXtRQ/3oYQeX6qGlGXLG89CvLZ9muUF8ifYeLroNYV1qcKmLDTHsJr7
-	 jsOoWFAXLFZ3W2lr1WYLU7gEGP4wGGbSol/YVjs0=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45271PQh073449
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sun, 2 Jun 2024 02:01:25 -0500
-Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sun, 2
- Jun 2024 02:01:25 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Sun, 2 Jun 2024 02:01:24 -0500
-Received: from localhost (uda0492258.dhcp.ti.com [172.24.227.9])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45271Owd121334;
-	Sun, 2 Jun 2024 02:01:24 -0500
-Date: Sun, 2 Jun 2024 12:31:23 +0530
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: Yojana Mallik <y-mallik@ti.com>
-CC: <schnelle@linux.ibm.com>, <wsa+renesas@sang-engineering.com>,
-        <diogo.ivo@siemens.com>, <rdunlap@infradead.org>, <horms@kernel.org>,
-        <vigneshr@ti.com>, <rogerq@ti.com>, <danishanwar@ti.com>,
-        <pabeni@redhat.com>, <kuba@kernel.org>, <edumazet@google.com>,
-        <davem@davemloft.net>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <srk@ti.com>, <rogerq@kernel.org>,
-        <s-vadapalli@ti.com>
-Subject: Re: [PATCH net-next v2 1/3] net: ethernet: ti: RPMsg based shared
- memory ethernet driver
-Message-ID: <f13bf55e-9cc6-42dc-a32d-41bbbd8358e7@ti.com>
-References: <20240531064006.1223417-1-y-mallik@ti.com>
- <20240531064006.1223417-2-y-mallik@ti.com>
+	s=arc-20240116; t=1717312139; c=relaxed/simple;
+	bh=gKUM/KW3iSLa4w3XPzxQSgDSbU18u/D2UZTh1jv4FhU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Zi9vwpbHYqQKE3hBJ4mIdEcTmK13IcJWcfNjrQo4dqjnSzwNNmk54ZU09rnUPs5U6hmgDuhJxynnxW49uPmhW9+TgJg6WJuA8LBDXZxfmpv5KsEDGnZFCoCXS//ReLxa+6Ek3KWDAhGFUtHg6nSextBKzWzzTkG/OC4ZpBKHXoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NSGIDRpK; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-35dcd5377c4so2519393f8f.2
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2024 00:08:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717312136; x=1717916936; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=BQ6YOiyl/A9+XYvV66iPJpqggxomWAoI9rBqL8ggIUs=;
+        b=NSGIDRpKQ50F+3m8PcmbvAeBejYf68enVcyJ+9o1WJQvLB0LuGhjx/8nSgAxMUcVIP
+         /pm4fQ629IRmNOhMIsbEt/eR554pujWCjF1v3Vj6MX1S1NkcS27ZboCkrJrjDCd5mCcK
+         ZrqtT5RVyRwImNWO4/0+j8lIxB3vjWmy7W5dWItpngCDq6KATXg3pW1wq2mWXK/I/sgA
+         3edwzKIJJ0VzmEOnlT0kj7YjE8g8dMkv1m0NOvRu8ctev/QsCbsLbkdZss+RSATQR5kH
+         4+tRzig6EZTHc0U+4yBdNFP7PyrQ3N/a67cKiIcq+OecUpcxINc2SnbGd7/va9GyzpCS
+         aVsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717312136; x=1717916936;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :sender:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BQ6YOiyl/A9+XYvV66iPJpqggxomWAoI9rBqL8ggIUs=;
+        b=Fa+uxAXUiUEkYkU6daKV9Kflhxrvhfh6CibDA6zw7k04WwL7tFlXRwzC37mfcdONRu
+         IFl3L4ebV/s63Au99qOrTix513T7ypunPHSumMe8STli8Jxh1xANve45IlnZ3vKUILeJ
+         UONv12ToGfDBL6H3O5f491HMk24ODCgaOE1xaTHZgzU8efqE80mKyGkpWEUZi8Att9tR
+         psBmj1LW0Hrv9tzW7jnYf0qDNaYCiVjQpJ4ohiVwck37XO1hKscT6v0ozbh3VtpuFbZt
+         Qk6CePtkrKJeRrzeOqeZrdjfrOVltDY4RTXG4rIFeCF+78IXt7o2jPTDL9aBDVeNOjXD
+         ARXA==
+X-Gm-Message-State: AOJu0Yz9Hr2cN4NjepEXiuEXEk7FbXE905RRuCYWuEyIYvF9XFj5Jcme
+	Ny/6Q6He1Sm1koSKF8fwARK4efgn9n/aUH0r/H2/iylmgGQdDSE89HXK6YvR
+X-Google-Smtp-Source: AGHT+IGriSulddDdo8WqUbAG+qBhSedmgn4K+OPkYi6OhnA+GPPylHnoeNeMgTqhpMc5RdveRRrorg==
+X-Received: by 2002:adf:fd0a:0:b0:35d:bf62:773d with SMTP id ffacd0b85a97d-35e0f26c808mr4432657f8f.16.1717312136125;
+        Sun, 02 Jun 2024 00:08:56 -0700 (PDT)
+Received: from gmail.com (1F2EF2F4.nat.pool.telekom.hu. [31.46.242.244])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35dd064ca96sm5423249f8f.107.2024.06.02.00.08.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 02 Jun 2024 00:08:55 -0700 (PDT)
+Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
+Date: Sun, 2 Jun 2024 09:08:53 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: [GIT PULL] perf events fixes
+Message-ID: <ZlwahYzxhwYTa7IP@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240531064006.1223417-2-y-mallik@ti.com>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Fri, May 31, 2024 at 12:10:04PM +0530, Yojana Mallik wrote:
-> From: Ravi Gunasekaran <r-gunasekaran@ti.com>
-> 
-> TI's K3 SoCs comprises heterogeneous processors (Cortex A, Cortex R).
-> When the ethernet controller is completely managed by a core (Cortex R)
-> running a flavor of RTOS, in a non virtualized environment, network traffic
-> tunnelling between heterogeneous processors can be realized by means of
-> RPMsg based shared memory ethernet driver. With the shared memory used
-> for the data plane and the RPMsg end point channel used for control plane.
-> 
-> inter-core-virt-eth driver is modelled as a RPMsg based shared
-> memory ethernet driver for such an use case.
-> 
-> As a first step, register the inter-core-virt-eth as a RPMsg driver.
-> And introduce basic control messages for querying and responding.
-> 
+Linus,
 
-Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+Please pull the latest perf/urgent Git tree from:
 
-My "Signed-off-by" tag was present in the RFC patch at:
-https://lore.kernel.org/r/20240130110944.26771-2-r-gunasekaran@ti.com/
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf-urgent-2024-06-02
 
-Any reason for dropping it? Also, I was in the Cc list of the RFC series.
-Please ensure that you don't drop emails which were present in earlier
-versions of the series (unless the email is no longer valid), and also
-ensure that you Cc all individuals who have commented on the series when
-you post a new version of the series.
+   # HEAD: dc8e5dfb52d56e955ad09174330252710845b8d2 perf/x86/intel: Add missing MODULE_DESCRIPTION() lines
 
-> Signed-off-by: Ravi Gunasekaran <r-gunasekaran@ti.com>
-> Signed-off-by: Yojana Mallik <y-mallik@ti.com>
-> ---
->  drivers/net/ethernet/ti/Kconfig               |  9 +++
->  drivers/net/ethernet/ti/Makefile              |  1 +
->  drivers/net/ethernet/ti/icve_rpmsg_common.h   | 47 +++++++++++
->  drivers/net/ethernet/ti/inter_core_virt_eth.c | 81 +++++++++++++++++++
+Add missing MODULE_DESCRIPTION() lines.
 
-[...]
+ Thanks,
 
-Regards,
-Siddharth.
+	Ingo
+
+------------------>
+Jeff Johnson (2):
+      perf/x86/rapl: Add missing MODULE_DESCRIPTION() line
+      perf/x86/intel: Add missing MODULE_DESCRIPTION() lines
+
+
+ arch/x86/events/intel/cstate.c | 1 +
+ arch/x86/events/intel/uncore.c | 1 +
+ arch/x86/events/rapl.c         | 1 +
+ 3 files changed, 3 insertions(+)
 
