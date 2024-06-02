@@ -1,96 +1,89 @@
-Return-Path: <linux-kernel+bounces-198345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F4018D7701
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 17:54:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 097548D7703
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 17:54:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D08FF28221F
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 15:54:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3AA671C219DC
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 15:54:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7B784AEEA;
-	Sun,  2 Jun 2024 15:54:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ZehAeZcv"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3B4813AF2;
-	Sun,  2 Jun 2024 15:54:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C7D04AEE0;
+	Sun,  2 Jun 2024 15:54:30 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E109B537FF;
+	Sun,  2 Jun 2024 15:54:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717343660; cv=none; b=KLUGJm9Te39Gs/IxsCzcVMtucs+KF88ak9ylwi4vMs3tNFNmq4ninrXiBz8E5FWmXV0QKfA6jNtV8qbQ9VtCHSG/hWceoBP9yMpZf/Oebtlvy8wqmvsGJFdXiqrrNgRLJN4KgdP08Zu+4NpnPKvlACmPZw+Z9d+76m25lU0bmfs=
+	t=1717343669; cv=none; b=XIsxCPwcdeB9NW6GQtMbT2naPLlM+AfatMkCexAPQxvx0oQJt2cfXMRBEV1AiG47YjSSS0tngGMiaeh+d5c5SCbfuXcu2dwaMp8OXgHWH5pVP53l7fuh3uDZ3DQFZkPvo9qAnqXx/97lbXqXqrycSI7r+pTgHR9wXsVVbS1GrWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717343660; c=relaxed/simple;
-	bh=O8x9QJjrChVP+uJek3aA1p8gux7bi0OdNCSQ/EwzXYM=;
+	s=arc-20240116; t=1717343669; c=relaxed/simple;
+	bh=Pial4zPTFNynySNton0QC3/Qd1accVop8Xud9f9QmJE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A1cuLfXLAYSjYm7CRzkLc5kshkCzrCBZFkTKjdJFUxwGZOntpkMZJMcnYKPdn0UC+ADFyVF1VxQuos77rSwrlOLc7fPk6eOpMneb9qbl6GaH+/S/33oDKOkvgzGVo023/rrAZ6rXfJovfDcF7BVkAy2KacdCX9oL/8nwRtf5bCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=ZehAeZcv; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=jAp9ulkP+aIOZlRN7+1gRLXP/ryNz1Huu1tcBNgtGD0=; b=ZehAeZcvlmuFe91tGL05XO7Yta
-	W+UTUi4HdWUITRmOA6euQ6KGGqfE41bGfxW86WhQ5XnjCEKQaREP1rGz7IoL6vec6C2MAmk69DS7v
-	FY2IjDQQAqy/TaQGI1DVdmPcQyW7q6BqNkPDdUT2yUrWSBhVWQcApeV525APxecWxcnI=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sDnX6-00Gdvb-37; Sun, 02 Jun 2024 17:54:08 +0200
-Date: Sun, 2 Jun 2024 17:54:08 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Siddharth Vadapalli <s-vadapalli@ti.com>
-Cc: Yojana Mallik <y-mallik@ti.com>, schnelle@linux.ibm.com,
-	wsa+renesas@sang-engineering.com, diogo.ivo@siemens.com,
-	rdunlap@infradead.org, horms@kernel.org, vigneshr@ti.com,
-	rogerq@ti.com, danishanwar@ti.com, pabeni@redhat.com,
-	kuba@kernel.org, edumazet@google.com, davem@davemloft.net,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, srk@ti.com,
-	rogerq@kernel.org
-Subject: Re: [PATCH net-next v2 2/3] net: ethernet: ti: Register the RPMsg
- driver as network device
-Message-ID: <16504fb9-f786-492b-8982-b46854a7de1e@lunn.ch>
-References: <20240531064006.1223417-1-y-mallik@ti.com>
- <20240531064006.1223417-3-y-mallik@ti.com>
- <cae9e96a-50ff-496d-93e7-fe1f16db7b89@ti.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OrCVv1NpEzmosbPKAglb2p03BVKuRXGV6M+euOODT6jg3qmW2D1hH8R0jnpE/i9wmjBdb2hD31V6O8bG9HPrCcn1a32qNm1SxOUjOjlSFKBv8GtKgbXw2yi3z+E2EFEnzhKzLLX1ponXU66bAcTk5W0nMfxdvH03YDybPYmTqWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DC4D8113E;
+	Sun,  2 Jun 2024 08:54:45 -0700 (PDT)
+Received: from bogus (unknown [10.57.83.6])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 09DE23F792;
+	Sun,  2 Jun 2024 08:54:18 -0700 (PDT)
+Date: Sun, 2 Jun 2024 16:54:16 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>
+Subject: Re: [PATCH 1/2] dt-bindings: arm: arm,juno-fpga-apb-regs: document
+ FPGA syscon
+Message-ID: <20240602155416.5gkm7w3snba57vxa@bogus>
+References: <20240518203903.119608-1-krzysztof.kozlowski@linaro.org>
+ <CACRpkdayDnBw0wCWffSwOX1EfPkq5TbkBH_wBJAwiZKaRbgdWA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <cae9e96a-50ff-496d-93e7-fe1f16db7b89@ti.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACRpkdayDnBw0wCWffSwOX1EfPkq5TbkBH_wBJAwiZKaRbgdWA@mail.gmail.com>
 
-> > +#define ICVE_MIN_PACKET_SIZE ETH_ZLEN
-> > +#define ICVE_MAX_PACKET_SIZE 1540 //(ETH_FRAME_LEN + ETH_FCS_LEN)
+On Tue, May 28, 2024 at 01:47:33PM +0200, Linus Walleij wrote:
+> On Sat, May 18, 2024 at 10:39 PM Krzysztof Kozlowski
+> <krzysztof.kozlowski@linaro.org> wrote:
 > 
-> Is the commented portion above required?
-
-I would actually say the comment part is better, since it gives an
-idea where the number comes from. However, 1514 + 4 != 1540. So there
-is something missing here.
-
-> >  struct icve_port {
-> > +	struct icve_shared_mem *tx_buffer; /* Write buffer for data to be consumed remote side */
-> > +	struct icve_shared_mem *rx_buffer; /* Read buffer for data to be consumed by this driver */
-> > +	struct timer_list rx_timer;
-> >  	struct icve_common *common;
-> > -} __packed;
+> > Add dedicated bindings for the FPGA syscon registers on ARM Juno board,
+> > to fully document the block and also fix dtbs_check warning:
+> >
+> >   juno.dtb: apbregs@10000: compatible: ['syscon', 'simple-mfd'] is too short
+> >
+> > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> (...)
+> > +maintainers:
+> > +  - Linus Walleij <linus.walleij@linaro.org>
 > 
-> Is the "__packed" attribute no longer required, or was it overlooked?
+> This feels more like a Sudeep area of responsibility than
+> mine, so please use:
+> Sudeep Holla <sudeep.holla@arm.com>
+>
 
-Why is packed even needed? This is not a message structure to be
-passed over the RPC is it?
+Indeed, I queued them a week before -rc1 and was away last week. I plan to
+rebase and reply after applying them officially 😄
 
-I think this is the second time code has been added in one patch, and
-then removed in the next. That is bad practice and suggests the
-overall code quality is not good. Please do some internal reviews.
-
-	Andrew
+-- 
+Regards,
+Sudeep
 
