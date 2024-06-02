@@ -1,136 +1,164 @@
-Return-Path: <linux-kernel+bounces-198248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 031028D7590
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 15:07:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C77F68D7593
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 15:08:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75750B218FB
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 13:07:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04DE91C20C04
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 13:08:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A5B33BBEC;
-	Sun,  2 Jun 2024 13:07:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F318C3BBCE;
+	Sun,  2 Jun 2024 13:08:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bHCcJoWI"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cu5OP0yy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 140533A29C;
-	Sun,  2 Jun 2024 13:07:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39BB210795;
+	Sun,  2 Jun 2024 13:08:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717333644; cv=none; b=BFBz9tL8nq4rS41vQZL3e1pAfBKsHo7r/krCp93BBZpJke4OzHZEKWg1tPMOO0psmKTBzek98BiGOxaF6mOmv10O4nXPqEG7gZPrCaCZ5sWMdmNUDrcCcblMRg8b2u6tf10/JZP79qPjLT4e4HIOX45mW0LkRY0MnLIO22vTs/k=
+	t=1717333704; cv=none; b=Yrf/daOrwtmMC4813g6RYpgc2EpN7ScLZ1enRgBpBSlrEFtoIcPqzn4M9SAqtCDzjo7Sl8cZSxExP9tyOxpNt1Hy1P7jMjMfdix5bdoLxL6JRg7Wvl10HXi0PI2fSdiLZsjbV4rjM1KD3n2l1m086M6V4GV2182lEfT3pTkUf9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717333644; c=relaxed/simple;
-	bh=Cgksc72eAMMIcTvh3wyCdxIKeFLm1F+kDhJGe5dZzak=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tYCk/wloZLMUkhi7VkRPGZ/4jtIvxohm5A2rqGL2yRmdfX0zxqPwo7uHOzCakqInxagyLkR6QDrHOWKzuyg1SbZefuNPejt9ObIXzvUxs4lOuva03qt3w91DomuTpbeRTB5pYCOHYl14HUJ/irLtfQ25oydsbHVhKAInQF9clvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bHCcJoWI; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-57a20c600a7so3785522a12.3;
-        Sun, 02 Jun 2024 06:07:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717333641; x=1717938441; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AZQ5HXBwQ88FT7B7s1/v7gqMjd/4lRJq+5TYb9UVsi8=;
-        b=bHCcJoWIQGc5cMaHa9ox37gs39YoL4QP3TcDllEmACHJUgrRhcqfF0CQvbJF/YklR2
-         frCgUE7YXTfPMcaeh3JD7pLrt2lor8iutHZoWUOgSzl0diHHzuxaWOgJKVkwCsTui86E
-         hGB1tiiVuo/VOet1KtpOrMSYHBFLKHqucrgDI7bYPjo2gVxg2j+DOdBCeUCR4S4M98I4
-         HIp/jFdj8nrrIQv3T0smffoHYuVcWlWeYAkllG/kGVRZNdvFPlGNcQ4NcQINp7V/Ktir
-         vd/8q168TK3T6QJGHy8Y2zYmtBmHW4JS7DbIWtrhPFNxckK+QiYSn1obMcG9nFipGL8z
-         mYQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717333641; x=1717938441;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AZQ5HXBwQ88FT7B7s1/v7gqMjd/4lRJq+5TYb9UVsi8=;
-        b=frbVTMhVwg8SmWAohU6kwsy/36lZRVHJL1vyN3AaLSgcQkLDfaHC1IVlriX2n1TGQb
-         3rE0Ow8FLHSfNrGeRXMDZ/htkRKzezjbpWhvZI9XcgQ0HAGHdDMq2373cVlH30imoq88
-         w6PukgpS9JKGBmzn52WUs0+pq/e9b5RrXtUx6z9hzLvvh15Rl+3SL27zJpccx3VEvJqm
-         vHeSQ8G/180ODRr/VmBpEGtD9tlh72cCGaPeyaG/ggjvukWkovDEC6R5/FRmN224/BrE
-         08heT9eYgqEawLabarhMLU/1IuuYAVqLyanNSd0vLcRQ3o0enkZMISg+RvEXLRS7TVFU
-         gtdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXKWmKPnvZ1MC6Ij31TZP96CRuD6N7koYjb59x+CfPmEiAvumne8LqVqQmUCXbw6rjJhCGXmQAp+XmZCMhKGu4fLhfQB45QgCx0Pp61uP601zbTZF6w8PUYLLLW+hKonrwdl7ydu3Gah0LhmwG60CNTa9TFt9lvcQN4U8O2FxSD
-X-Gm-Message-State: AOJu0YyWOxjeQzF0ZpGMAJLfx7gaS34kDogiDjxsVoxSxShkRW98x98m
-	L7sCkVQ0DR9YLmzFB9y8wx84U2LyQrlX7a6btZs3lbRSo8K7h1CWmdne2MRWRyKbWEjn4P4He3x
-	16OFngb7QvScXVXvFHkxoK0pbWHo=
-X-Google-Smtp-Source: AGHT+IGKQNEUlUoT4M7yQQXU1HHxklUwAPHbBIEteybFFusX4q7/PREa8DEMOkDcDd6Jpmxx7OIdwdHQNYu7dlIl9xw=
-X-Received: by 2002:a50:aa93:0:b0:57a:2537:a730 with SMTP id
- 4fb4d7f45d1cf-57a36382342mr4828360a12.4.1717333641105; Sun, 02 Jun 2024
- 06:07:21 -0700 (PDT)
+	s=arc-20240116; t=1717333704; c=relaxed/simple;
+	bh=gGA8q7p+HL++NKusv8U13tSZ+AcCuP1M407ZMinv5V8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cS3VvJgY9dtGbBm0AexqdwN2QpjHnq07F6fFIQxqGNxNujgKZUM5egmaNxvWF/HWGDJ8ex8bnOo66MDyOaDNJ7MKo/yc0pwEKpOr9l2yIXn6ivDO+hHMPoO1Up2PvwFzTNcr2Q+yafyh5tdICO19QIx4Me265DCZYJPk3RGOKBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cu5OP0yy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3043C2BBFC;
+	Sun,  2 Jun 2024 13:08:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717333703;
+	bh=gGA8q7p+HL++NKusv8U13tSZ+AcCuP1M407ZMinv5V8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=cu5OP0yy5qkHwglCJBgKIiwSAegEkQGaL7n75TV8f+tz943v0K5NbQMJOvYejY1o1
+	 PMGKAHmSErTQlC0mmYuYoKzDNQB+pdbSPWjxAZXZvvwEBnohGzl6qNCB3mM87/D+Kr
+	 BREMP3Cn8ykJIIC52YBxRDaxa916/2mkz4pgN5kgBU2Z51/Gax98LWOspMaUAB13+Y
+	 ZEOzTsCxAnnBCZs2tfoMimO+qj8wbw2jDsVr7T00w0/2lndWvGVN6DMAuO129Qu+Ss
+	 nMSf8cjUTnzrqhTw2kmW+KMMz5AUmUsTY6kolLq55MLu5LvNkYH56fa1EW+/Z/OI3K
+	 nT1HTFWsog3kA==
+Date: Sun, 2 Jun 2024 14:08:14 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Val Packett <val@packett.cool>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Stephen Rothwell
+ <sfr@canb.auug.org.au>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: accel: mma7660: add mount-matrix support
+Message-ID: <20240602140814.642417b2@jic23-huawei>
+In-Reply-To: <20240527080043.2709-1-val@packett.cool>
+References: <20240527080043.2709-1-val@packett.cool>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240520153932.116731-1-grygorii.tertychnyi@leica-geosystems.com>
-In-Reply-To: <20240520153932.116731-1-grygorii.tertychnyi@leica-geosystems.com>
-From: grygorii tertychnyi <grembeter@gmail.com>
-Date: Sun, 2 Jun 2024 15:07:11 +0200
-Message-ID: <CAGFuAux2BRy8SS=OqU=e4vryTnNLm0oKD6OCbEecy4ZoPO1yqA@mail.gmail.com>
-Subject: Re: [PATCH v2] i2c: ocores: set IACK bit after core is enabled
-To: Peter Korsgaard <peter@korsgaard.com>, Andrew Lunn <andrew@lunn.ch>, 
-	Thomas Gleixner <tglx@linutronix.de>, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Cc: Grygorii Tertychnyi <grygorii.tertychnyi@leica-geosystems.com>, 
-	bsp-development.geo@leica-geosystems.com, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On Mon, 27 May 2024 05:00:18 -0300
+Val Packett <val@packett.cool> wrote:
 
-just a gentle ping...  Is there anything missing?
+> Allow using the mount-matrix device tree property to align the
+> accelerometer relative to the whole device.
+> 
+> Signed-off-by: Val Packett <val@packett.cool>
+Applied to the togreg branch of iio.git.  Initially pushed out as testing
+to let 0-day see if it can find anything we missed
 
-regards
+Thanks,
 
-On Mon, May 20, 2024 at 5:40=E2=80=AFPM Grygorii Tertychnyi <grembeter@gmai=
-l.com> wrote:
->
-> Setting IACK bit when core is disabled does not clear the "Interrupt Flag=
-"
-> bit in the status register, and the interrupt remains pending.
->
-> Sometimes it causes failure for the very first message transfer, that is
-> usually a device probe.
->
-> Hence, set IACK bit after core is enabled to clear pending interrupt.
->
-> Fixes: 18f98b1e3147 ("[PATCH] i2c: New bus driver for the OpenCores I2C c=
-ontroller")
-> Signed-off-by: Grygorii Tertychnyi <grygorii.tertychnyi@leica-geosystems.=
-com>
-> Acked-by: Peter Korsgaard <peter@korsgaard.com>
-> Cc: stable@vger.kernel.org
+Jonathan
+
 > ---
-> V1 -> V2: Added "Acked-by:", "Fixes:" and "Cc:" tags
->
->  drivers/i2c/busses/i2c-ocores.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/i2c/busses/i2c-ocores.c b/drivers/i2c/busses/i2c-oco=
-res.c
-> index e106af83cef4..350ccfbe8634 100644
-> --- a/drivers/i2c/busses/i2c-ocores.c
-> +++ b/drivers/i2c/busses/i2c-ocores.c
-> @@ -442,8 +442,8 @@ static int ocores_init(struct device *dev, struct oco=
-res_i2c *i2c)
->         oc_setreg(i2c, OCI2C_PREHIGH, prescale >> 8);
->
->         /* Init the device */
-> -       oc_setreg(i2c, OCI2C_CMD, OCI2C_CMD_IACK);
->         oc_setreg(i2c, OCI2C_CONTROL, ctrl | OCI2C_CTRL_EN);
-> +       oc_setreg(i2c, OCI2C_CMD, OCI2C_CMD_IACK);
->
->         return 0;
->  }
-> --
-> 2.43.0
->
+>  drivers/iio/accel/mma7660.c | 50 ++++++++++++++++++++++++++-----------
+>  1 file changed, 35 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/iio/accel/mma7660.c b/drivers/iio/accel/mma7660.c
+> index 260cbceaa..9d23f28d5 100644
+> --- a/drivers/iio/accel/mma7660.c
+> +++ b/drivers/iio/accel/mma7660.c
+> @@ -38,21 +38,6 @@
+>  
+>  static const int mma7660_nscale = 467142857;
+>  
+> -#define MMA7660_CHANNEL(reg, axis) {	\
+> -	.type = IIO_ACCEL,	\
+> -	.address = reg,	\
+> -	.modified = 1,	\
+> -	.channel2 = IIO_MOD_##axis,	\
+> -	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),	\
+> -	.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE),	\
+> -}
+> -
+> -static const struct iio_chan_spec mma7660_channels[] = {
+> -	MMA7660_CHANNEL(MMA7660_REG_XOUT, X),
+> -	MMA7660_CHANNEL(MMA7660_REG_YOUT, Y),
+> -	MMA7660_CHANNEL(MMA7660_REG_ZOUT, Z),
+> -};
+> -
+>  enum mma7660_mode {
+>  	MMA7660_MODE_STANDBY,
+>  	MMA7660_MODE_ACTIVE
+> @@ -62,6 +47,21 @@ struct mma7660_data {
+>  	struct i2c_client *client;
+>  	struct mutex lock;
+>  	enum mma7660_mode mode;
+> +	struct iio_mount_matrix orientation;
+> +};
+> +
+> +static const struct iio_mount_matrix *
+> +mma7660_get_mount_matrix(const struct iio_dev *indio_dev,
+> +			const struct iio_chan_spec *chan)
+> +{
+> +	struct mma7660_data *data = iio_priv(indio_dev);
+> +
+> +	return &data->orientation;
+> +}
+> +
+> +static const struct iio_chan_spec_ext_info mma7660_ext_info[] = {
+> +	IIO_MOUNT_MATRIX(IIO_SHARED_BY_DIR, mma7660_get_mount_matrix),
+> +	{ }
+>  };
+>  
+>  static IIO_CONST_ATTR(in_accel_scale_available, MMA7660_SCALE_AVAIL);
+> @@ -75,6 +75,22 @@ static const struct attribute_group mma7660_attribute_group = {
+>  	.attrs = mma7660_attributes
+>  };
+>  
+> +#define MMA7660_CHANNEL(reg, axis) {	\
+> +	.type = IIO_ACCEL,	\
+> +	.address = reg,	\
+> +	.modified = 1,	\
+> +	.channel2 = IIO_MOD_##axis,	\
+> +	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),	\
+> +	.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE),	\
+> +	.ext_info = mma7660_ext_info,				\
+> +}
+> +
+> +static const struct iio_chan_spec mma7660_channels[] = {
+> +	MMA7660_CHANNEL(MMA7660_REG_XOUT, X),
+> +	MMA7660_CHANNEL(MMA7660_REG_YOUT, Y),
+> +	MMA7660_CHANNEL(MMA7660_REG_ZOUT, Z),
+> +};
+> +
+>  static int mma7660_set_mode(struct mma7660_data *data,
+>  				enum mma7660_mode mode)
+>  {
+> @@ -187,6 +203,10 @@ static int mma7660_probe(struct i2c_client *client)
+>  	mutex_init(&data->lock);
+>  	data->mode = MMA7660_MODE_STANDBY;
+>  
+> +	ret = iio_read_mount_matrix(&client->dev, &data->orientation);
+> +	if (ret)
+> +		return ret;
+> +
+>  	indio_dev->info = &mma7660_info;
+>  	indio_dev->name = MMA7660_DRIVER_NAME;
+>  	indio_dev->modes = INDIO_DIRECT_MODE;
+
 
