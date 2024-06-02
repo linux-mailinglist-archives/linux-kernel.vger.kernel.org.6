@@ -1,131 +1,185 @@
-Return-Path: <linux-kernel+bounces-198069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D0988D7304
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 03:33:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E60E58D7308
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 03:44:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7DDE1F218F0
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 01:33:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47ABFB21571
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 01:44:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 291A01C36;
-	Sun,  2 Jun 2024 01:33:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="GxF7UmHy"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 082146138;
+	Sun,  2 Jun 2024 01:44:33 +0000 (UTC)
+Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 980901C06;
-	Sun,  2 Jun 2024 01:33:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E73CFA21
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Jun 2024 01:44:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717292030; cv=none; b=rDgeCNohARngVaYeZnV1Ed6BhadSjfsGXvj83zhwEl0TLzryr3TSgEA+YVccA/BMYJQfTHw+oX9G0mB1CJju5vGMpWWI9335Fq1HE9dZAFcS7K01XjAvB2ROMpiinAwI5XnHdewueSGE/ymA843kwW4E+FVLrLsHGLHt7+dq1vw=
+	t=1717292672; cv=none; b=i1fpGUU/Ku1qTh5e5IRmb+Qt7jFGxns2sYcKvCVREtOVf0W5UT2qzSHF64c4lUX4knpyyJjOMmQwRk1coBnKoxeEVJC13nq+Om4cl9ukK0COxrUjIS1Cq13XHAN1i7cu9LZcxG6Y8Ize7hjguGAk0mNp4vNydih8znRXwoc7d8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717292030; c=relaxed/simple;
-	bh=XdxcvQrH7p0DQxEfPUL/IAa4KIlheTgoqVanz15UsX0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kHfcIk0Vs8EFNgSxtEywfNbG6aWcVk+PEJdKOkyVT3qo6C6a9Zd9xIg5r3gcs/wQMIBAVCA+0rlNK8mgJB2u682foruTrXkLeIo3dNqz3RbQJ7K5TrusZRV1Qu5RrL1oHyj0IJFQQ1kZqBqHbU+GEB4h2aQvfsRowT/WW10qeCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=GxF7UmHy; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4521XNXO114874;
-	Sat, 1 Jun 2024 20:33:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1717292003;
-	bh=NxaxaTDvTYoiYmYWtCJv/7sGuhc5KKGpJm/etOuESak=;
-	h=From:To:CC:Subject:Date;
-	b=GxF7UmHy+kgERAmA2VCDcTeD1EDVsfvmqsIGkURjIzmfNZgit4DruF3nY/I653FCu
-	 7LTEQnpdpTMPCktptcbG9sH4ZYo7AGky8zbkucOYc9Swma1ZAF0COuBklZYpCUAPrH
-	 ggFpcNSEPZgnUfHzXUUhbfx1AuNJRQ2AYyC1DFdw=
-Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4521XNSE059863
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sat, 1 Jun 2024 20:33:23 -0500
-Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sat, 1
- Jun 2024 20:33:23 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Sat, 1 Jun 2024 20:33:23 -0500
-Received: from uda0492258.dhcp.ti.com (uda0492258.dhcp.ti.com [172.24.227.9])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4521XKQ0071063;
-	Sat, 1 Jun 2024 20:33:20 -0500
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: <peter.ujfalusi@gmail.com>, <vkoul@kernel.org>, <Markus.Elfring@web.de>
-CC: <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
-        <s-vadapalli@ti.com>
-Subject: [PATCH v2] dmaengine: ti: k3-udma-glue: Fix of_k3_udma_glue_parse_chn_by_id()
-Date: Sun, 2 Jun 2024 07:03:19 +0530
-Message-ID: <20240602013319.2975894-1-s-vadapalli@ti.com>
-X-Mailer: git-send-email 2.40.1
+	s=arc-20240116; t=1717292672; c=relaxed/simple;
+	bh=L6huh4WFyKIVkBNbX6dnvyVqd/LbRjammXro5OYz/Yg=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=hBTd1+goxSUjxteE+e2LwzI92uTJfsCkk80MsfMbI2ciCt1eKnVhena191IXNeI/FNInB0XAuO4nILMLEcvFEM3u4WQXKPrTIxVFo4VuslV+xoi0HvEhvNP4tCaYv+oM3EZKU47uBL8y2KRHM7rblt+3FPmQukpp/6SGrAHR7zk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-7e94cac3ee5so405042139f.0
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Jun 2024 18:44:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717292670; x=1717897470;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=N/E2HjWx2Ed6dFkXX1+r4wbdkwC7c6bpCT2rElMK7a8=;
+        b=duDWaMHDS1rilzIrKRtOgX2woyESGqA/ltlBxkt5nIkmNUT1WZp5vZprB50HgWX0q1
+         2uSdKis+n1jTGTmEO4tO3W1H1WRxCGKvahfA6KcaWypHR5HUBS0WHjLZ4hp+P0nzsCL1
+         AbgqoRgKpbIZcG4BPON5VIJtteCLxSjmAySmrO65GQW+N6QN/q2PA+g/rgjQlzkcZHOl
+         rsYWulMfKge34Lg0usWvo4DfonNzLZqfKYAoy5OXFKyT9eZ3FZE7Zl3ijzkKJhnRVk8w
+         xaWjhfv4IsRX2ERC3X0EbxMKWzWM0y+MUpc/sATF3UuijBBhaw0La6UhS4R9w4vsccVh
+         XSqA==
+X-Gm-Message-State: AOJu0YwCPTNJKiDxhujZ3HPpmnk2L5ahgM8IguaEDsZrQ6zAFcTIRkiq
+	WSkv2lApPEvrXoHZ/LpF9ukv0nNaAXskwDXFU2qUIGRyZ2ZQxV2GlMt4jzWmJ3liGq6USbzKvSZ
+	W8ei32r1e7E8apKeJ/J7o/lMNpo2mqipksYD/kEE/msP9iUIG5YUIIRRBGw==
+X-Google-Smtp-Source: AGHT+IHXplj+0MNWzfVC72xih9Sii5ngPfH5O60jBILqhsEw5CMXbNzF1Pz9GrlfgFQVjONUdaJYA4q0jm6lX9bTNXEHaEfHBU5I
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
-
-The of_k3_udma_glue_parse_chn_by_id() helper function erroneously
-invokes "of_node_put()" on the "udmax_np" device-node passed to it,
-without having incremented its reference count at any point. Fix it.
-
-Fixes: 81a1f90f20af ("dmaengine: ti: k3-udma-glue: Add function to parse channel by ID")
-Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
-Acked-by: Peter Ujfalusi <peter.ujfalusi@gmail.com>
----
+X-Received: by 2002:a05:6602:640f:b0:7de:da9b:21f4 with SMTP id
+ ca18e2360f4ac-7eafff0ac29mr47505339f.2.1717292669999; Sat, 01 Jun 2024
+ 18:44:29 -0700 (PDT)
+Date: Sat, 01 Jun 2024 18:44:29 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000922b0b0619de5b8f@google.com>
+Subject: [syzbot] [media?] [usb?] WARNING in usb_free_urb
+From: syzbot <syzbot+b466336413a1fba398a5@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	linux-usb@vger.kernel.org, mchehab@kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
 Hello,
 
-This patch is based on commit
-83814698cf48 Merge tag 'powerpc-6.10-2' of git://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux
-of Mainline Linux.
+syzbot found the following issue on:
 
-v1 of this patch is at:
-https://lore.kernel.org/r/20240518100556.2551788-1-s-vadapalli@ti.com/
-Changes since v1:
-- Rebased patch on latest Mainline Linux.
-- Collected "Acked-by" tag from Peter Ujfalusi <peter.ujfalusi@gmail.com>
-  from:
-  https://lore.kernel.org/r/8b2e4b7f-50ae-4017-adf2-2e990cd45a25@gmail.com/
-- Updated commit message based on feedback from
-  Markus Elfring <Markus.Elfring@web.de> at:
-  https://lore.kernel.org/r/22a66571-0a0c-46dd-899a-d24079372880@web.de/
-  with the change being:
-  s/..incremented its reference at../..incremented its reference count at../
+HEAD commit:    e0cce98fe279 Merge tag 'tpmdd-next-6.10-rc2' of git://git...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=15c9b13c980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=238430243a58f702
+dashboard link: https://syzkaller.appspot.com/bug?extid=b466336413a1fba398a5
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15f3e2fc980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=157ada62980000
 
-Regards,
-Siddharth.
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-e0cce98f.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/5a8fbe5a0be1/vmlinux-e0cce98f.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/1f8ed6b81845/bzImage-e0cce98f.xz
 
- drivers/dma/ti/k3-udma-glue.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+b466336413a1fba398a5@syzkaller.appspotmail.com
 
-diff --git a/drivers/dma/ti/k3-udma-glue.c b/drivers/dma/ti/k3-udma-glue.c
-index c9b93055dc9d..f0a399cf45b2 100644
---- a/drivers/dma/ti/k3-udma-glue.c
-+++ b/drivers/dma/ti/k3-udma-glue.c
-@@ -200,12 +200,9 @@ of_k3_udma_glue_parse_chn_by_id(struct device_node *udmax_np, struct k3_udma_glu
- 
- 	ret = of_k3_udma_glue_parse(udmax_np, common);
- 	if (ret)
--		goto out_put_spec;
-+		return ret;
- 
- 	ret = of_k3_udma_glue_parse_chn_common(common, thread_id, tx_chn);
--
--out_put_spec:
--	of_node_put(udmax_np);
- 	return ret;
- }
- 
--- 
-2.40.1
+usb 5-1: Product: syz
+usb 5-1: Manufacturer: syz
+usb 5-1: SerialNumber: syz
+smsusb:smsusb_probe: board id=7, interface number 55
+smsusb:smsusb_probe: board id=7, interface number 147
+smsusb:smsusb_probe: board id=7, interface number 0
+smsusb:siano_media_device_register: media controller created
+smsusb:smsusb_start_streaming: smsusb_submit_urb(...) failed
+smsusb:smsusb_init_device: smsusb_start_streaming(...) failed
+------------[ cut here ]------------
+WARNING: CPU: 2 PID: 55 at mm/slub.c:4519 free_large_kmalloc+0xda/0x140 mm/slub.c:4519
+Modules linked in:
+CPU: 2 PID: 55 Comm: kworker/2:1 Not tainted 6.10.0-rc1-syzkaller-00021-ge0cce98fe279 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+Workqueue: usb_hub_wq hub_event
+RIP: 0010:free_large_kmalloc+0xda/0x140 mm/slub.c:4519
+Code: 56 fb 8b 43 34 85 c0 75 c7 48 c7 c6 90 f0 26 8d 48 89 df e8 e8 08 f1 ff 90 0f 0b 48 89 df 5b 5d 41 5c 41 5d e9 47 a2 e4 ff 90 <0f> 0b 90 80 3d 3c b9 ee 0d 00 74 28 48 8b 74 24 20 48 89 ef e8 bd
+RSP: 0018:ffffc90000a76e18 EFLAGS: 00010246
+RAX: 00fff00000000000 RBX: ffffea0000c9d880 RCX: ffffffff813e21dc
+RDX: ffff88801a924880 RSI: ffff888032762000 RDI: ffffea0000c9d880
+RBP: ffff888032762000 R08: 0000000000000007 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: ffff88801ade0000
+R13: ffff88801ac2b000 R14: dffffc0000000000 R15: ffff88801ade00f0
+FS:  0000000000000000(0000) GS:ffff88806b200000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f66ab5c8388 CR3: 000000002a16a000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ urb_destroy drivers/usb/core/urb.c:25 [inline]
+ kref_put include/linux/kref.h:65 [inline]
+ usb_free_urb.part.0+0xf8/0x110 drivers/usb/core/urb.c:97
+ usb_free_urb+0x1f/0x30 drivers/usb/core/urb.c:96
+ smsusb_term_device+0x108/0x1e0 drivers/media/usb/siano/smsusb.c:352
+ smsusb_init_device+0xaa2/0xe10 drivers/media/usb/siano/smsusb.c:497
+ smsusb_probe+0x5e2/0x10b0 drivers/media/usb/siano/smsusb.c:575
+ usb_probe_interface+0x309/0x9d0 drivers/usb/core/driver.c:399
+ call_driver_probe drivers/base/dd.c:578 [inline]
+ really_probe+0x23e/0xa90 drivers/base/dd.c:656
+ __driver_probe_device+0x1de/0x440 drivers/base/dd.c:798
+ driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:828
+ __device_attach_driver+0x1df/0x310 drivers/base/dd.c:956
+ bus_for_each_drv+0x157/0x1e0 drivers/base/bus.c:457
+ __device_attach+0x1e8/0x4b0 drivers/base/dd.c:1028
+ bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:532
+ device_add+0x114b/0x1a70 drivers/base/core.c:3721
+ usb_set_configuration+0x10cb/0x1c50 drivers/usb/core/message.c:2210
+ usb_generic_driver_probe+0xb1/0x110 drivers/usb/core/generic.c:254
+ usb_probe_device+0xec/0x3e0 drivers/usb/core/driver.c:294
+ call_driver_probe drivers/base/dd.c:578 [inline]
+ really_probe+0x23e/0xa90 drivers/base/dd.c:656
+ __driver_probe_device+0x1de/0x440 drivers/base/dd.c:798
+ driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:828
+ __device_attach_driver+0x1df/0x310 drivers/base/dd.c:956
+ bus_for_each_drv+0x157/0x1e0 drivers/base/bus.c:457
+ __device_attach+0x1e8/0x4b0 drivers/base/dd.c:1028
+ bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:532
+ device_add+0x114b/0x1a70 drivers/base/core.c:3721
+ usb_new_device+0xd90/0x1a10 drivers/usb/core/hub.c:2651
+ hub_port_connect drivers/usb/core/hub.c:5521 [inline]
+ hub_port_connect_change drivers/usb/core/hub.c:5661 [inline]
+ port_event drivers/usb/core/hub.c:5821 [inline]
+ hub_event+0x2db0/0x4e20 drivers/usb/core/hub.c:5903
+ process_one_work+0x9fb/0x1b60 kernel/workqueue.c:3231
+ process_scheduled_works kernel/workqueue.c:3312 [inline]
+ worker_thread+0x6c8/0xf70 kernel/workqueue.c:3393
+ kthread+0x2c1/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
 
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
