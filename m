@@ -1,111 +1,87 @@
-Return-Path: <linux-kernel+bounces-198113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22D088D7389
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 05:49:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BA4E8D738C
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 05:54:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5416A1C20EC8
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 03:49:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E801F2829AF
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 03:53:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70D73BA4B;
-	Sun,  2 Jun 2024 03:49:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CC15BA42;
+	Sun,  2 Jun 2024 03:53:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KbMIzHs5"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q9X2/eDk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE28333FE;
-	Sun,  2 Jun 2024 03:49:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 634D22F2C;
+	Sun,  2 Jun 2024 03:53:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717300177; cv=none; b=jePFDSloUdBfj/S48GNJ7hIiAV2JnAtiTAlzy3vVEzbY+mOtoH7spkJD6O/Xm7Q2PUN3KlDoEtDsYqW/DrmbxaXG3BoEE9cIB3tA2VEZI9khaThNy9qSqIXmSG9AJTCvKg7iWWlmiSu1OB4+TQbdYGVlVtzSQu40ybox2F0Ouog=
+	t=1717300432; cv=none; b=GXT3U2AOU4Te4RzrwE+UC8XMsZq0ks5M7HaHd732bu+d6F2SRg9gsfN2/I9EXwFrZR7Ifrb4xWlAAZ1sjgFjHZcXiNfoIDV9610pL6OacpMmCD9qGzlGG162Kck+7w+PZMNv9UWyniJOdm8NKuHntrGsaGejzBZdiNztmLcBPAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717300177; c=relaxed/simple;
-	bh=nI+JdCdtSJsrLAJ8ilaI4AYR3YEqWcnZFiRDQVHYHO8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ChoxLPI/jGzmrT3pI1ZuLqiQWeupN6UtrJQtViWtt0FLLGrYhy+PSMlTpj4RmCHt04DradaoPJM8k8nBR+rz7qvf/RVxJNgW9EM+GcRSoz4oGibioVU/v6xTqH7qJpZ3hj0TyY06O25Vqf+UpvzjvzMCk5urhvyMf1UvhbsP9WA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=KbMIzHs5; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=o7NoMXzPthc9zQlJ66cfUGuyRStXBoiGWt66Jwklgk8=; b=KbMIzHs5gt1BcRON61TXatunNp
-	q3vENuIK+gxN6Givz28UrOa3Uc8zlgPpsxgsGti80Yxy7URNy2r5h2EWzydq0h1qljXa/4f12VrQg
-	ZbId0F5kiYsw/TJxH9jXcTjD6cPiXrVR1uJ+zy1Y9CX8/DG9uYpz6Q7cIezrHEx1+S9vHlqeIaLBX
-	YnTOEv4PPHUFeMm2kqbzdqP0unuraFAlyI4W8aCeI1HYe//ziQqUpuRPYnSb0pak9t5NNgMJI4ocI
-	zJzfF+gMyiUKkXPxzpOKUmq6YQ8G/LjvX2iKHO/eNK+9QABDKwE4OjkLk2ZuOPdCnkoFBEVihi5zw
-	JfIiXu8g==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sDcDh-0000000D1A1-0j0Z;
-	Sun, 02 Jun 2024 03:49:21 +0000
-Date: Sun, 2 Jun 2024 04:49:21 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Keith Busch <kbusch@kernel.org>
-Cc: Andreas Hindborg <nmi@metaspace.dk>, Jens Axboe <axboe@kernel.dk>,
-	Christoph Hellwig <hch@lst.de>, Damien Le Moal <dlemoal@kernel.org>,
-	Bart Van Assche <bvanassche@acm.org>,
-	Hannes Reinecke <hare@suse.de>, Ming Lei <ming.lei@redhat.com>,
-	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Greg KH <gregkh@linuxfoundation.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Chaitanya Kulkarni <chaitanyak@nvidia.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Yexuan Yang <1182282462@bupt.edu.cn>,
-	Sergio =?iso-8859-1?Q?Gonz=E1lez?= Collado <sergio.collado@gmail.com>,
-	Joel Granados <j.granados@samsung.com>,
-	"Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
-	Daniel Gomez <da.gomez@samsung.com>,
-	Niklas Cassel <Niklas.Cassel@wdc.com>,
-	Philipp Stanner <pstanner@redhat.com>,
-	Conor Dooley <conor@kernel.org>,
-	Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
-	Matias =?iso-8859-1?Q?Bj=F8rling?= <m@bjorling.me>,
-	open list <linux-kernel@vger.kernel.org>,
-	"rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>,
-	"lsf-pc@lists.linux-foundation.org" <lsf-pc@lists.linux-foundation.org>,
-	"gost.dev@samsung.com" <gost.dev@samsung.com>
-Subject: Re: [PATCH v4 2/3] rust: block: add rnull, Rust null_blk
- implementation
-Message-ID: <ZlvrwbQ1WJZQ6_KR@casper.infradead.org>
-References: <20240601134005.621714-1-nmi@metaspace.dk>
- <20240601134005.621714-3-nmi@metaspace.dk>
- <ZlsvHV6y4DEdC8ja@kbusch-mbp.dhcp.thefacebook.com>
- <875xusoetn.fsf@metaspace.dk>
- <ZltF5NvDnKFphcOo@kbusch-mbp.dhcp.thefacebook.com>
+	s=arc-20240116; t=1717300432; c=relaxed/simple;
+	bh=31vacXdRidHiNH68N0KAfJcNVUH4wgAyTY7bsyTHzZs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=u/HQfGQCopKtWnfGSntlM6Zi5Kd1YoUChqtdOJVK0tmrVeI3wu6unmmjUIxDHhXDKRgW1Yoya+xzdqT2gEBp0GXbduPKvfpTVEU12m25WqJ1Xdc0/6l2lEOr3LlPOie2iRZ32j+KnlLCMIY3+f1b/rEz6tG2hOQSpyKrKY432z0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q9X2/eDk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19C62C2BBFC;
+	Sun,  2 Jun 2024 03:53:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717300431;
+	bh=31vacXdRidHiNH68N0KAfJcNVUH4wgAyTY7bsyTHzZs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=q9X2/eDkb+AT0v3UkGoBpvPUziOikNwETdI+pB5bJ/NifveHZlJXTS013QLofKrxh
+	 gBKYMw3xZYO94zx0NWUjuMdmHM0+KgMlFBrGXg58nTyzmK4jB1EoqaXv+k4oKd7uhq
+	 An6xKuNNSGCMoxDZxbvOzEmfnJWGO/oXarRIPehgQq8Le1W+y61uoHuvaGSDjhx2He
+	 GV6lzZ6u3Z0kFdgCh6O9SzOxCaBEmMEv2oO30/Ypv7mE9bcWgHTBjNoLPxdgM3MyP/
+	 Vmk536o9K/bZShmYGheVefpxxrmqKIBphJLUETH1IHhP6UXbbIURKaMGuQGRpW1kkS
+	 TlbDqEFLzrozg==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Rajendra Nayak <quic_rjendra@quicinc.com>,
+	Sibi Sankar <quic_sibis@quicinc.com>,
+	Abel Vesa <abel.vesa@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] arm64: dts: qcom: x1e80100: Fix the supplies to the USB1 SS[0-2] PHYs
+Date: Sat,  1 Jun 2024 22:53:38 -0500
+Message-ID: <171730042584.665897.3533769147362670886.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.44.0
+In-Reply-To: <20240530-x1e80100-dts-fix-usb-phy-supplies-v1-0-6eb72a546227@linaro.org>
+References: <20240530-x1e80100-dts-fix-usb-phy-supplies-v1-0-6eb72a546227@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZltF5NvDnKFphcOo@kbusch-mbp.dhcp.thefacebook.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Sat, Jun 01, 2024 at 10:01:40AM -0600, Keith Busch wrote:
-> It's fine, just wondering why it's there. But it also allows values like
-> 1536 and 3584, which are not valid block sizes, so I think you want the
-> check to be:
+
+On Thu, 30 May 2024 19:35:44 +0300, Abel Vesa wrote:
+> According to documentation, the current supplies for the USB1 SS0,
+> SS1 and SS2 both QMP combo PHYS and eUSB2 PHYs are all wrong. Fix
+> them accordingly.
 > 
-> 	if !(512..=4096).contains(&block_size) || ((block_size & (block_size - 1)) != 0)
+> 
 
-I'd drop the range check.  We're pretty close to landing the bs>PS
-patches, so just
+Applied, thanks!
 
-	if block_size & block_size - 1 != 0
+[1/2] arm64: dts: qcom: x1e80100-crd: Fix USB PHYs regulators
+      commit: ae5cee8e7349d7e5deff4cf90a08cbd738287155
+[2/2] arm64: dts: qcom: x1e80100-qcp: Fix USB PHYs regulators
+      commit: 20676f7819d7364b7e8bd437b212106faa893b49
 
-should be enough of a validation.  Is it considered "good style" in
-Rust to omit the brackets here?
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
 
