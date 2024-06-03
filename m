@@ -1,168 +1,248 @@
-Return-Path: <linux-kernel+bounces-198766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83D678D7D25
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 10:17:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81A1E8D7D27
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 10:17:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A3A62832C6
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 08:17:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D4A51F23162
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 08:17:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ED3757CBB;
-	Mon,  3 Jun 2024 08:17:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33B905674B;
+	Mon,  3 Jun 2024 08:17:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="W+003EVM"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="ae4voBO8"
+Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0321455C0A
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 08:17:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA5E050281
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 08:17:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717402649; cv=none; b=VpRQ/uocrr1DBT7pQV6dRAl0qzPy4olA4ekzzCmluSpBZDs5UOZjlnFzqAS29QdnpmSdnbqmQfSRwKj88MA0yX+E1Jcbm/j8uwL5zfBtfcKk9X5E3zyKHJSTKHGNVJI1DoImGivpDygQi4aD4ulfVP8/yb24M+WepkDJ0QRVr60=
+	t=1717402666; cv=none; b=G/0Jrf2nRnQg/BQAxQ9xw7EFleSIfd42jrs+tp+woMX2GXiIZbvqoM7DZNHVLhDkLinStoth9X9OaKHO7CvR9cpfGOukGRvFW8FCsogLBdj0wRPYtDo4QmDC5TjD1yCYjzVg+UHa9fWW6xB4uLaSWWwcQeR9i8LT74zal0+b/As=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717402649; c=relaxed/simple;
-	bh=GYQwyqieU5pgk0RpDLcK9N1jttSb3ko070lVFg1uSEM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=bdF5YpJGfHqrGPEthytMj5/M75f1/F24VfHaTgEKoOfkQwuEVwNtNgRzn04JmOOXD5iEsE3hb9Ry76vB6GWCcgrSFaxDdp4reoAbrTS8NhNe3Kom7+TYmBqjHuF/akG1grlqCqr+1vTJKH+TMazvBWdr3/qjekn72LHYeT8D9xY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=W+003EVM; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5751bcb3139so4832024a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 01:17:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717402646; x=1718007446; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=U5auj/DxsumSSLcpeBxnhVyl1FBew61ppgHTyRT0DrM=;
-        b=W+003EVMkY8KfKIlDcjhAdpUesEcsibCC4NQ6G68DxGSYEPltFCo23iTWYdppGXTCl
-         XI7D6U5xbthDkHex8Dx5TtkO85QrjHbGWzFrQsHn7P9u8HX6cUMsS/Nf4go120ilaYT8
-         qjWwuc787291ZC2n4Zdgh0uzSj8zkd4hzKHG9D6LvzdTY/PuJee38B0ivR9NqM7yUAgz
-         /CngUiAXCEn8V5zkkxBGdjxJOBTYQGeeYHFKKCgMiXx84pgSruF3FuHi4A2fnlVwPaJP
-         NFakyQnur+Qi4+obLOSVGpRtfr4Rky81I4aHLb7/jrCfdBf0V0uMRduo7AGkdafiIZcW
-         JKbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717402646; x=1718007446;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=U5auj/DxsumSSLcpeBxnhVyl1FBew61ppgHTyRT0DrM=;
-        b=GvHrI2UlTsGAHvoJjY5xtE5DEobrEATPv2wkIzVzDG5NkGVyhN3dwmciOTfcd2XHZS
-         sIp1UcPtjCS7I23nLQ6DWziROfAo/bYR4PnVVggO6HdhmwxVvPWjDMyqWqIVVi3Q/5GH
-         v1yGfP7jRAGpBJHNHKTqS8k+6Et6PQiE4ovHLKk392hPz8civWQHq/X4zTHwW4Ok6sgE
-         dY+/Ea750GThgnupCQJLMQ9uA7XeDyDTecbzCXHBuUNgO84MlAgDXH0QS0uH4SO3YNV0
-         unnfm1742IK8npWpYtlulSouhy0oJ4xd1TVnlR5f6aLmAykHAKUFauLfTNxln2DqpWUc
-         OnnA==
-X-Forwarded-Encrypted: i=1; AJvYcCUZYih5X4tu9QXtEuExr818hHgPEzDRl7a8EOr4tE9Im+p27QUHyLtLL7wwMDCVDnPlJWt9PzdVHMTACYRh4v+u7ng3MwcuKmj3yQMj
-X-Gm-Message-State: AOJu0YxT2IXD6XXMeN2iI9IVk0fLgQ5+HipsQ+KmgQFDVwB9tTyAC3Mx
-	HMix5lbWrD+pxAt4j2l3yCdJu9ITck9pyC3sgFlABh0CHCPtAsXnCngokBErvPY=
-X-Google-Smtp-Source: AGHT+IFQCcQ+4xqx3uVgd4j1etV1G5jXaWznVKyyoBTDSVxep7J4PHOlSZg36mckXW36/cw79Hiong==
-X-Received: by 2002:a50:8e59:0:b0:57a:1c24:8b6 with SMTP id 4fb4d7f45d1cf-57a363a4286mr6341681a12.22.1717402646049;
-        Mon, 03 Jun 2024 01:17:26 -0700 (PDT)
-Received: from [127.0.1.1] ([188.27.161.69])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57a31b98de7sm4853418a12.10.2024.06.03.01.17.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Jun 2024 01:17:25 -0700 (PDT)
-From: Abel Vesa <abel.vesa@linaro.org>
-Date: Mon, 03 Jun 2024 11:17:17 +0300
-Subject: [PATCH v2] arm64: dts: qcom: x1e80100: Disable the SMB2360 4th
- instance by default
+	s=arc-20240116; t=1717402666; c=relaxed/simple;
+	bh=yfRSzrRoL9vy6nbZ+fUhxkdWuu97gBrCpIUgaRTU4+Y=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=gW73Enpj6Y6M2GQ15FQfnAb8H5lEU9qJgd1mYjiMdRVbqIMcIe6RCX79BT3+WuEsrFw6G+A7fnEEuKQCya+Mc503/bzgTGkS9E1IQPQHBKqYH2ga90tffOmRh+rdee2yzTpipZME+rQiXfGImZXXgvx82Wpfm3gOXHJN7wTLg8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=ae4voBO8; arc=none smtp.client-ip=188.40.30.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
+	s=default2211; h=Content-Type:MIME-Version:Message-ID:Date:References:
+	In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=w6IyClQK/kc4lt86XGWiJYJOQ9Forzheld/77UOVrsM=; b=ae4voBO8kWGkKvdktk/0jaOa7w
+	2gnqYNN7o6Pj66YzGtMlheAPGRKISf80F9dBd2714P/AhcwhlWcL9Dd/CZWEQyYdLu0/H/UxZQ7xU
+	AjnuEiet7KMcik4MrkbInK5oW+0G9mCwiIayb8QC1trQQIRFDCmWORgATQlBPfpaksKtyX4HB7Ii3
+	lkHBrT+q8yr5mOZnVqLgGRjby1fp8Gt0dxXNWIdvsIP4VZN+I53gPZk4Typ1OO2vYVvxAokuFCQeH
+	XQtDO93+8ONMV1GKGjWlXdUVu/p2cYB1h6J8kB+ldwL6Li5sSQpNv6Bnz1PYxkSjkBeCDK68o+ElG
+	4ombfphw==;
+Received: from sslproxy05.your-server.de ([78.46.172.2])
+	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <esben@geanix.com>)
+	id 1sE2sr-0000FZ-2d; Mon, 03 Jun 2024 10:17:33 +0200
+Received: from [185.17.218.86] (helo=localhost)
+	by sslproxy05.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <esben@geanix.com>)
+	id 1sE2sn-0000Xn-1Q;
+	Mon, 03 Jun 2024 10:17:33 +0200
+From: Esben Haabendal <esben@geanix.com>
+To: "Michael Walle" <mwalle@kernel.org>
+Cc: "Tudor Ambarus" <tudor.ambarus@linaro.org>,  "Pratyush Yadav"
+ <pratyush@kernel.org>,  "Miquel Raynal" <miquel.raynal@bootlin.com>,
+  "Richard Weinberger" <richard@nod.at>,  "Vignesh Raghavendra"
+ <vigneshr@ti.com>,  <linux-mtd@lists.infradead.org>,
+  <linux-kernel@vger.kernel.org>,  "Rasmus Villemoes"
+ <rasmus.villemoes@prevas.dk>
+Subject: Re: [PATCH] mtd: spi-nor: macronix: workaround for device id re-use
+In-Reply-To: <D1Q7BU6PJ356.1CTXPUZE8U6XX@kernel.org> (Michael Walle's message
+	of "Mon, 03 Jun 2024 09:25:42 +0200")
+References: <20240524-macronix-mx25l3205d-fixups-v1-1-ee152e56afb3@geanix.com>
+	<D1Q7BU6PJ356.1CTXPUZE8U6XX@kernel.org>
+Date: Mon, 03 Jun 2024 10:17:32 +0200
+Message-ID: <87frtuigo3.fsf@geanix.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240603-x1e80100-dts-pmics-drop-4th-smb2360-from-crd-v2-1-fb63973cc07d@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAAx8XWYC/52NQQ6CMBBFr0K6dsy0AoIr72FYtLSFSYQ2U0Iwh
- LtbOYLL9/Pz3i6SY3JJPIpdsFspUZgzqEsh+lHPgwOymYVCVWKNCjbpGpSIYJcEcaI+geUQoVx
- GSJNRtxrBc5igZwsV5rcxjfFtJbIysvO0nblXl3mktAT+nPVV/tY/Q6sECaitL61t7ro1zzfNm
- sM18CC64zi+cylcFekAAAA=
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Johan Hovold <johan+linaro@kernel.org>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
- Abel Vesa <abel.vesa@linaro.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2051; i=abel.vesa@linaro.org;
- h=from:subject:message-id; bh=GYQwyqieU5pgk0RpDLcK9N1jttSb3ko070lVFg1uSEM=;
- b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBmXXwQCYFtMZWSdfs1i++mv0H4E5hgzd5CMAkrU
- pDq8M22by2JAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZl18EAAKCRAbX0TJAJUV
- Vj5wD/wLYMhnWywjDKkYp3CbTRu4kF58dd744Eeue7XiYiDAUA4FrKqO/gM3wkSgBiTUACGUAX0
- wmjW6+kmK7Mj+g81NUrrKzjaSkyIQdKC9yWAhPcKCTEr/DECQZN+iFW3iWlIdynS/TM9XcKhnXC
- 6ji7Cba19+93LYDzTOLhVcPwKqS0ukFfo/dk2EA/iFtwbg/nLLWPSwQWUzjulPixYALJCT6uzD0
- HYby1At5EtRDdy4TD0xXNYVCH6wk9nYz0UqrNN7iBj/2GZsiUIzL5q9x6tRZalGdWJKa+MSOfaA
- Ac1//S6Sjx1vaxNsgKBkIuanbI9QZ74YbuBsVWM729AxONmSJEXbeFwDi5ogfL1hGwpJ8/NFHxx
- Y78n98nfHYHH5FIdgHB02MyUf/ibqrAJjeLDDu/8MdLJ5M2Jdl67UKmHiNdJTnjA8/qIlEDcxLV
- wDaDDi0ygx2c67FIZ1T5jmfd4+XSIORgJ1o1c6R1g35u/WJA/lygNe1XCFZmF02t5ruVaRoyoiN
- oVp93O6aZTviqC75vW7oh7G7AA6XzZMinN4grnlv0u6mKIO6F3DEuyBXK1EXvbLYLT6+FEtLKZO
- Q9HZltWd2tD/hTvOMr8MXzpNRIRLWugLjfXnIla4DyFi+wpz4qoB3sJaz5LrsgWaT40mQThNgcY
- XRmMOAIDLSRi+2w==
-X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
- fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
+Content-Type: text/plain
+X-Authenticated-Sender: esben@geanix.com
+X-Virus-Scanned: Clear (ClamAV 0.103.10/27294/Sun Jun  2 10:29:37 2024)
 
-The CRD board doesn't have the 4th SMB2360 PMIC populated while the QCP
-does. So enable it on QCP only. This fixes the warning for the missing
-PMIC on CRD as well.
+"Michael Walle" <mwalle@kernel.org> writes:
 
-Fixes: 2559e61e7ef4 ("arm64: dts: qcom: x1e80100-pmics: Add the missing PMICs")
-Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
-Tested-by: Johan Hovold <johan+linaro@kernel.org>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
----
-Changes in v2:
-- Fetched all R-b and T-b tags
-- Rebased on next-20240603
-- Mentioned in the commit message that the patch is fixing a warning
-  w.r.t. missing PMIC on CRD
-- Link to v1: https://lore.kernel.org/r/20240602-x1e80100-dts-pmics-drop-4th-smb2360-from-crd-v1-1-0adf4dd87a9b@linaro.org
----
- arch/arm64/boot/dts/qcom/x1e80100-pmics.dtsi | 2 ++
- arch/arm64/boot/dts/qcom/x1e80100-qcp.dts    | 4 ++++
- 2 files changed, 6 insertions(+)
+> Hi,
+>
+> On Fri May 24, 2024 at 12:48 PM CEST, Esben Haabendal wrote:
+>> Macronix engineers apparantly do not understand the purpose of having
+>> an ID actually identify the chip and its capabilities. Sigh.
+>>
+>> The original Macronix SPI NOR flash that identifies itself as 0xC22016
+>> with RDID was MX25L3205D. This chip does not support SFDP, but does
+>> support the 2READ command (1-2-2).
+>>
+>> When Macronix announced EoL for MX25L3205D, the recommended
+>> replacement part was MX25L3206E, which conveniently also identifies
+>> itself as 0xC22016. It does not support 2READ, but supports DREAD
+>> (1-1-2) instead, and supports SFDP for discovering this.
+>>
+>> When Macronix announced EoL for MX25L3206E, the recommended
+>> replacement part was MX25L3233F, which also identifies itself as
+>> 0xC22016. It supports DREAD, 2READ, and the quad modes QREAD (1-1-4)
+>> and 4READ (1-4-4). This also support SFDP.
+>
+> Thanks for collecting all this info!
+>
+>> So far, all of these chips have been handled the same way by the Linux
+>> driver. The SFDP information have not been read, and no dual and quad
+>> read modes have been enabled.
+>>
+>> The trouble begins when we want to enable the faster read modes. The
+>> RDID command only return the same 3 bytes for all 3 chips, so that
+>> doesn't really help.
+>>
+>> But we can take advantage of the fact that only the old MX25L3205D
+>> chip does not support SFDP, so by triggering the old initialization
+>> mechanism where we try to read and parse SFDP, but has a fall-back
+>> configuration in place, we can configure all 3 chips to their optimal
+>> configurations.
+>
+> You are (mis)using the quad info bits to trigger an sfdp read,
+> correct?
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100-pmics.dtsi b/arch/arm64/boot/dts/qcom/x1e80100-pmics.dtsi
-index a5662d39fdff..e34e70922cd3 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100-pmics.dtsi
-+++ b/arch/arm64/boot/dts/qcom/x1e80100-pmics.dtsi
-@@ -522,6 +522,8 @@ smb2360_3: pmic@c {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 
-+		status = "disabled";
-+
- 		smb2360_3_eusb2_repeater: phy@fd00 {
- 			compatible = "qcom,smb2360-eusb2-repeater";
- 			reg = <0xfd00>;
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts b/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
-index a8d0f743228a..1b2caa63859b 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
-+++ b/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
-@@ -524,6 +524,10 @@ &remoteproc_cdsp {
- 	status = "okay";
- };
- 
-+&smb2360_3 {
-+	status = "okay";
-+};
-+
- &smb2360_0_eusb2_repeater {
- 	vdd18-supply = <&vreg_l3d_1p8>;
- 	vdd3-supply = <&vreg_l2b_3p0>;
+Correct.
 
----
-base-commit: 861a3cb5a2a8480d361fa6708da24747d6fa72fe
-change-id: 20240602-x1e80100-dts-pmics-drop-4th-smb2360-from-crd-501e8bb8bf95
+> In that case, I'd rather see a new flag in .no_sfdp_flags
+> to explicitly trigger the SFDP read. Then your new flash would only
+> need this flag and doesn't require the shenanigans with the fixup,
+> right?
 
-Best regards,
--- 
-Abel Vesa <abel.vesa@linaro.org>
+I fixup would still be required in order to enable 1-2-2 for MX25L3205D,
+as it will fail the SFDP read, but actually does support 1-2-2.
 
+>> With this, MX25L3205D will get the faster 2READ command enabled,
+>> speading up reads. This should be safe.
+>>
+>> MX25L3206E will get the faster DREAD command enabled. This should also
+>> be safe.
+>>
+>> MX25L3233F will get all of DREAD, 2READ, QREAD and 4READ enabled. In
+>> order for this to actually work, the WP#/SIO2 and HOLD#/SIO3 pins must
+>> be correctly wired to the SPI controller.
+>
+> That should already be taken care of with the spi-{tx,rx}-bus-width.
+
+Yes. Which defaults to 1, which should take care of the backwards
+compatibility.
+
+/Esben
+
+>> Signed-off-by: Esben Haabendal <esben@geanix.com>
+>> ---
+>> I only have access to boards with MX25L3233F flashes, so haven't been
+>> able to test the backwards compatibility. If anybody has boards with
+>> MX25L3205D and/or MX25L3206E, please help test this patch. Keep an eye
+>> for read performance regression.
+>>
+>> It is worth nothing that both MX25L3205D and MX25L3206E are
+>> end-of-life, and is unavailable from Macronix, so any new boards
+>> featuring a Macronix flash with this ID will likely be using
+>> MX25L3233F.
+>> ---
+>>  drivers/mtd/spi-nor/macronix.c | 60 +++++++++++++++++++++++++++++++++++++++++-
+>>  1 file changed, 59 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/mtd/spi-nor/macronix.c b/drivers/mtd/spi-nor/macronix.c
+>> index ea6be95e75a5..c1e64ee3baa3 100644
+>> --- a/drivers/mtd/spi-nor/macronix.c
+>> +++ b/drivers/mtd/spi-nor/macronix.c
+>> @@ -8,6 +8,63 @@
+>>  
+>>  #include "core.h"
+>>  
+>> +/*
+>> + * There is a whole sequence of chips from Macronix that uses the same device
+>> + * id. These are recommended as EoL replacement parts by Macronix, although they
+>> + * are only partly software compatible.
+>> + *
+>> + * Recommended replacement for MX25L3205D was MX25L3206E.
+>> + * Recommended replacement for MX25L3206E was MX25L3233F.
+>> + *
+>> + * MX25L3205D does not support RDSFDP. The other two does.
+>> + *
+>> + * MX25L3205D supports 1-2-2 (2READ) command.
+>> + * MX25L3206E supports 1-1-2 (DREAD) command.
+>> + * MX25L3233F supports 1-1-2 (DREAD), 1-2-2 (2READ), 1-1-4 (QREAD), and 1-4-4
+>> + * (4READ) commands.
+>> + *
+>> + * In order to trigger reading optional SFDP configuration, the
+>> + * SPI_NOR_DUAL_READ|SPI_NOR_QUAD_READ flags are set, seemingly enabling 1-1-2
+>> + * and 1-1-4 for MX25L3205D. The other chips supporting RDSFDP will have the
+>> + * correct read commands configured based on SFDP information.
+>> + *
+>> + * As none of the other will enable 1-1-4 and NOT 1-4-4, so we identify
+>> + * MX25L3205D when we see that.
+>> + */
+>> +static int
+>> +mx25l3205d_late_init(struct spi_nor *nor)
+>> +{
+>> +	struct spi_nor_flash_parameter *params = nor->params;
+>> +
+>> +	/*                          DREAD  2READ  QREAD  4READ
+>> +	 *                          1-1-2  1-2-2  1-1-4  1-4-4
+>> +	 * Before SFDP parse          1      0      1      0
+>> +	 * 3206e after SFDP parse     1      0      0      0
+>> +	 * 3233f after SFDP parse     1      1      1      1
+>> +	 * 3205d after this func      0      1      0      0
+>> +	 */
+>> +	if ((params->hwcaps.mask & SNOR_HWCAPS_READ_1_1_4) &&
+>> +	    !(params->hwcaps.mask & SNOR_HWCAPS_READ_1_4_4)) {
+>> +		/* Should be MX25L3205D */
+>> +		params->hwcaps.mask &= ~SNOR_HWCAPS_READ_1_1_2;
+>> +		spi_nor_set_read_settings(&params->reads[SNOR_CMD_READ_1_1_2],
+>> +					  0, 0, 0, 0);
+>> +		params->hwcaps.mask &= ~SNOR_HWCAPS_READ_1_1_4;
+>> +		spi_nor_set_read_settings(&params->reads[SNOR_CMD_READ_1_1_4],
+>> +					  0, 0, 0, 0);
+>> +		params->hwcaps.mask |= SNOR_HWCAPS_READ_1_2_2;
+>> +		spi_nor_set_read_settings(&params->reads[SNOR_CMD_READ_1_2_2],
+>> +					  0, 4, SPINOR_OP_READ_1_2_2,
+>> +					  SNOR_PROTO_1_2_2);
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static const struct spi_nor_fixups mx25l3205d_fixups = {
+>> +	.late_init = mx25l3205d_late_init,
+>> +};
+>> +
+>>  static int
+>>  mx25l25635_post_bfpt_fixups(struct spi_nor *nor,
+>>  			    const struct sfdp_parameter_header *bfpt_header,
+>> @@ -61,7 +118,8 @@ static const struct flash_info macronix_nor_parts[] = {
+>>  		.id = SNOR_ID(0xc2, 0x20, 0x16),
+>>  		.name = "mx25l3205d",
+>>  		.size = SZ_4M,
+>> -		.no_sfdp_flags = SECT_4K,
+>> +		.no_sfdp_flags = SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ,
+>> +		.fixups = &mx25l3205d_fixups
+>>  	}, {
+>>  		.id = SNOR_ID(0xc2, 0x20, 0x17),
+>>  		.name = "mx25l6405d",
+>>
+>> ---
+>> base-commit: a38297e3fb012ddfa7ce0321a7e5a8daeb1872b6
+>> change-id: 20240524-macronix-mx25l3205d-fixups-882e92eed7d7
+>>
+>> Best regards,
 
