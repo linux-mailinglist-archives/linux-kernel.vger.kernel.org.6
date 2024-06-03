@@ -1,236 +1,140 @@
-Return-Path: <linux-kernel+bounces-199140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F45B8D82F0
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 14:53:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E748D8D82EB
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 14:53:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFC751F23858
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 12:53:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F5EC1C24030
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 12:53:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E2C612C52E;
-	Mon,  3 Jun 2024 12:53:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E80A412D74D;
+	Mon,  3 Jun 2024 12:52:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="DIxv5Akl"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CIUDWMUB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4F7412CD8E
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 12:52:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A55012D742;
+	Mon,  3 Jun 2024 12:52:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717419182; cv=none; b=gzPYAyE8W2nshP5hCCXg9Zx4d6WbHs+MqcohuEEBklX8fIMRf2SDazSrWrqVrLRhP/LnuTOxwtMFDmPQJoYhVYmFmGmixGFsctsc8EjbJLgCDh9Ozz9KFzVBRlcYRmTSYspszjQRf2y9qi1C1naOK37H88+9d86qfh8DFwczHoY=
+	t=1717419169; cv=none; b=BVTowF2xmPO3d1Qxfe1Zyxj/3TFQ+tHR3Av1l4PItyVPRLii9uPBfV+dV+mMYeuqXi/I/9DPyJv8++MyVKnVXhEqWI7ovxgIZt64iFMXAHtlHG1MpAXEBT9WU2P7SnhFvk5Yw+X0HWHzYOs1jenlP0pQhBtrShudeFu4bEvWpcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717419182; c=relaxed/simple;
-	bh=pNq1s3DpJNlX0e3eT1st05PC02KAmTuKksptOpchj0Y=;
+	s=arc-20240116; t=1717419169; c=relaxed/simple;
+	bh=ywpaA1EH3oNy9EEn3g4JabojjmcP8mrY7cp3FkFdaz8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rtzyTUQG+07g33BKV9bKco+xNqPgtu/rr0BrxlsX02r5/3JxhAFSSB679Fhk3yNFAgYSukY7m/7iPdFOw4I2znYjGsfCMfLwQki/X0dUW3YE/8yuBjcyYN4VA61SzuBbzEUTH2rw8O5vklAgWeDBuP12sLkzi8aYZikwm+ghBKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=DIxv5Akl; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2eaa80cb4d3so27666921fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 05:52:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1717419177; x=1718023977; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=L1vdMIjKLbGuERAwMMc+hoHFnU3loELjM3GLOoEq1gI=;
-        b=DIxv5AkleP4d8CCcenZvq+9lRtAnNfFmxcY651Qe7/V8ekSYlnNWELc6syxICXonk6
-         h2bgBVQ6LRpfH7jV6quATxfM78h3d4RSdSzcvxkYq/UKJ5ZmgtXwNXa5l07QVkUxgWAh
-         i/+OE7b4GetTRBKkQ9LlioPcVDmfCxYVT+Hc64ZZl9uMGrKmovRPkPiaHUzpJqjOiVDu
-         AhrAwT6cs+UkeYbBdiy9ew3ejWBzffcpWfwCTK3ZFDGdyIj0Q9lTTb6pAhvTxJuBZR4b
-         QeWb6JdRQbyF1hbxUBjavoK4xS9agWS5sjbwj8OqYOzQSTRSpLTaoO+2m/QJOPR+zTwB
-         caMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717419177; x=1718023977;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=L1vdMIjKLbGuERAwMMc+hoHFnU3loELjM3GLOoEq1gI=;
-        b=Ifi4/X0jU7hVzjb9us0TwltauIO030Vsr451kxxK+dB/p/j4nKoQvXZYxjYuwhr5gA
-         4keB/zsQzuqKuefTlj8RTY9eol4Iczjbhac7xTy0d2v2E9ZJ0hOQlCf+V0SYRVeH0PcF
-         4DnMiPr2ngWNJG0aAk2+jp4Sz3hQCX22cOiGkQtpw8fEOYFf5T93xPNvKNLDezWd4i9t
-         LVzsQr4YE1pl0upCI7YejJQE9s3wF5cO3JEWEJZufzAQYNigyUyqqVXDRbHSerPSMInu
-         WaipThua3zdSOmJHqeVh644lEZfPfU/E9glZpQJjKVFUA2esbmFRGo9DBPzQhXrU1bQz
-         Tc/g==
-X-Forwarded-Encrypted: i=1; AJvYcCUWVfe6O/0gHTf7pil+3RxFxoyHgLKe9AypGLl7xTrMLJaNjyoQt7JMwy3Wru22AN/Tntk2UGOQtXbh6xM313XZlmXXBdjQPBqlSL5o
-X-Gm-Message-State: AOJu0YxiBiqO5OgZnd1v3S4EZ2i3BkvAOxA923Nx7mXPl5s/M4OlEIec
-	nUlLf8qO8KKeyrzjn9sCKfIjRq9Dw7lzlW0WEW2NdJhmgb5rKd7B77mIlAINTmg=
-X-Google-Smtp-Source: AGHT+IFexEDdIc9suGe8USwivPE4g3apQQFJLnkcTrlu4EUxJ9iQoDZJj4mPTRlDUrxswZmvnGocOQ==
-X-Received: by 2002:a2e:818c:0:b0:2ea:8163:5f4f with SMTP id 38308e7fff4ca-2ea951ddf8emr83938091fa.41.1717419176882;
-        Mon, 03 Jun 2024 05:52:56 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6c35a88cfaasm5213953a12.94.2024.06.03.05.52.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Jun 2024 05:52:56 -0700 (PDT)
-Date: Mon, 3 Jun 2024 14:52:45 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Marcos Paulo de Souza <mpdesouza@suse.com>
-Cc: Joe Lawrence <joe.lawrence@redhat.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
-	Shuah Khan <shuah@kernel.org>, live-patching@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] selftests: livepatch: Test atomic replace against
- multiple modules
-Message-ID: <Zl28ne_laBawq-KP@pathway.suse.cz>
-References: <20240525-lp-atomic-replace-v2-1-142199bb65a1@suse.com>
- <ZloormpDnnc4SDub@redhat.com>
- <92d683bd138a76e6c7100f4984be202dd06c9424.camel@suse.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gN1hG+izQEqpxYZM9o0dd5iE1GjZKMjAWwJOtoVhFT+t8qh/7rjO4zCDM5gFfBVHR7ZCzbani3Tql8JHYmTr9eXS1kdI3Imeg45v6PtBYdHPGsrR6xQ44GXnl+RXHPRrxS4kztGnX5OBNH0NPopbxmp4EMitBMVO9vgSNvVzSoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CIUDWMUB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACCE6C2BD10;
+	Mon,  3 Jun 2024 12:52:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717419168;
+	bh=ywpaA1EH3oNy9EEn3g4JabojjmcP8mrY7cp3FkFdaz8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CIUDWMUBnfcAJ28QxhZIYAQWijx7MXKlOCQwvau55PtvY0v3JysjrqkHToHEsLJOz
+	 Zy+TrfIrXPDbkkk8TM10LoSvA/JdL33yKUFPj1ESFYLxPy3up44tzsZKrmUY5DF4Dt
+	 t+QmmCredUCOVuiN5ZC/38n70eVsL+dpmQevX8ceeKNUCjnoiFf1K6QoQ7oU27monU
+	 ZuH+RNyX8T8QWQwHXE8dN5x+wOtfgfTauzGuQn4O2tNW4LogD+rNza2/ebroDf4yLW
+	 LUCVP4k+bY3fm3Jj6LlYMsjekANUYWpHNSlUwV+RS7YG4ci3FN9cHGXe34z8kURd3l
+	 VM7M9e66Clklg==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1sE7B8-000000000po-12ID;
+	Mon, 03 Jun 2024 14:52:46 +0200
+Date: Mon, 3 Jun 2024 14:52:46 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Abel Vesa <abel.vesa@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Rajendra Nayak <quic_rjendra@quicinc.com>,
+	Sibi Sankar <quic_sibis@quicinc.com>, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] arm64: dts: qcom: x1e80100: Make the PCIe 6a PHY
+ support 4 lanes mode
+Message-ID: <Zl28nvnpGFRsYpGh@hovoldconsulting.com>
+References: <20240531-x1e80100-dts-fixes-pcie6a-v1-0-1573ebcae1e8@linaro.org>
+ <20240531-x1e80100-dts-fixes-pcie6a-v1-2-1573ebcae1e8@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <92d683bd138a76e6c7100f4984be202dd06c9424.camel@suse.com>
+In-Reply-To: <20240531-x1e80100-dts-fixes-pcie6a-v1-2-1573ebcae1e8@linaro.org>
 
-On Fri 2024-05-31 18:06:48, Marcos Paulo de Souza wrote:
-> On Fri, 2024-05-31 at 15:44 -0400, Joe Lawrence wrote:
-> > On Sat, May 25, 2024 at 11:34:08AM -0300, Marcos Paulo de Souza
-> > wrote:
-> > > Adapt the current test-livepatch.sh script to account the number of
-> > > applied livepatches and ensure that an atomic replace livepatch
-> > > disables
-> > > all previously applied livepatches.
-> > > 
-> > > Signed-off-by: Marcos Paulo de Souza <mpdesouza@suse.com>
-> > > ---
-> > > Changes since v1:
-> > > * Added checks in the existing test-livepatch.sh instead of
-> > > creating a
-> > >   new test file. (Joe)
-> > > * Fixed issues reported by ShellCheck (Joe)
-> > > ---
-> > >  .../testing/selftests/livepatch/test-livepatch.sh  | 46
-> > > ++++++++++++++++++++--
-> > >  1 file changed, 42 insertions(+), 4 deletions(-)
-> > > 
-> > > diff --git a/tools/testing/selftests/livepatch/test-livepatch.sh
-> > > b/tools/testing/selftests/livepatch/test-livepatch.sh
-> > > index e3455a6b1158..d85405d18e54 100755
-> > > --- a/tools/testing/selftests/livepatch/test-livepatch.sh
-> > > +++ b/tools/testing/selftests/livepatch/test-livepatch.sh
-> > > @@ -107,9 +107,12 @@ livepatch: '$MOD_LIVEPATCH': unpatching
-> > > complete
-> > >  
-> > >  # - load a livepatch that modifies the output from /proc/cmdline
-> > > and
-> > >  #   verify correct behavior
-> > > -# - load an atomic replace livepatch and verify that only the
-> > > second is active
-> > > -# - remove the first livepatch and verify that the atomic replace
-> > > livepatch
-> > > -#   is still active
-> > > +# - load two addtional livepatches and check the number of
-> > > livepatch modules
-> > > +#   applied
-> > > +# - load an atomic replace livepatch and check that the other
-> > > three modules were
-> > > +#   disabled
-> > > +# - remove all livepatches besides the atomic replace one and
-> > > verify that the
-> > > +#   atomic replace livepatch is still active
-> > >  # - remove the atomic replace livepatch and verify that none are
-> > > active
-> > >  
-> > >  start_test "atomic replace livepatch"
-> > > @@ -119,12 +122,31 @@ load_lp $MOD_LIVEPATCH
-> > >  grep 'live patched' /proc/cmdline > /dev/kmsg
-> > >  grep 'live patched' /proc/meminfo > /dev/kmsg
-> > >  
-> > > +for mod in test_klp_syscall test_klp_callbacks_demo; do
-> > 
-> > Slightly nitpicky here, but the tests were originally written with
-> > the
-> > livepatch module names via variables like $MOD_LIVEPATCH.  Would
-> > using
-> > $MOD_LIVEPATCH{1,2,3} help indicate that their specifics aren't
-> > really
-> > interesting, that we just need 3 of them?
+On Fri, May 31, 2024 at 08:00:32PM +0300, Abel Vesa wrote:
+> So the PCIe 6 can be configured in 4-lane mode or 2-lane mode. For
+
+s/So the PCIe 6/The PCIe 6a controller and PHY/
+
+> 4-lane mode, it fetches the lanes provided by PCIe 6b. For 2-lane mode,
+
+s/fetches/uses/
+
+> PCIe 6a uses 2 lanes and then PCIe 6b uses the other 2 lanes. Configure
+> it in 4-lane mode and then each board can configure it depending on the
+> design. Both the QCP and CRD boards, currently upstream, use the 6a for
+
+s/use the/use PCIe 6a/
+
+> NVMe in 4-lane mode. Also, mark the controller as 4-lane as well.
 > 
-> Makes sense. I thought about it when I was changing the code, but I
-> didn't want to change it too much, so it was the result. But that makes
-> sense to have the modules better named.
+> Fixes: 5eb83fc10289 ("arm64: dts: qcom: x1e80100: Add PCIe nodes")
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
 
-I like this.
+> @@ -2903,19 +2903,21 @@ &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
+>  		};
+>  
+>  		pcie6a_phy: phy@1bfc000 {
+> -			compatible = "qcom,x1e80100-qmp-gen4x2-pcie-phy";
+> -			reg = <0 0x01bfc000 0 0x2000>;
+> +			compatible = "qcom,x1e80100-qmp-gen4x4-pcie-phy";
+> +			reg = <0 0x01bfc000 0 0x2000>,
+> +			      <0 0x01bfe000 0 0x2000>;
+>  
+>  			clocks = <&gcc GCC_PCIE_6A_PHY_AUX_CLK>,
+>  				 <&gcc GCC_PCIE_6A_CFG_AHB_CLK>,
+>  				 <&rpmhcc RPMH_CXO_CLK>,
+>  				 <&gcc GCC_PCIE_6A_PHY_RCHNG_CLK>,
+> -				 <&gcc GCC_PCIE_6A_PIPE_CLK>;
 
-> > > +	load_lp $mod
-> > > +done
-> > > +
-> > > +mods=(/sys/kernel/livepatch/*)
-> > > +nmods=${#mods[@]}
-> > > +if [ "$nmods" -ne 3 ]; then
-> > > +	die "Expecting three modules listed, found $nmods"
-> > > +fi
-> > > +
-> > 
-> > I was going to suggest that we might protect against a situation
-> > where
-> > other livepatch modules were active, that a simple count wouldn't be
-> > sufficient.  But then I thought about this test, atomic replace!
-> > Anything previously loaded is going to be pushed aside anyway.
-> > 
-> > So maybe (in another patch or set) it would be worth enhancing
-> > functions.sh :: start_test() do a quick sanity check to see that the
-> > initial conditions are safe?  That might also prevent some collateral
-> > damage when test A fails and leaves the world a strange place for
-> > tests
-> > B, C, etc.
-> 
-> We have been discussing about start/end functions that would check for
-> leftover modules... maybe should be a good think to implement soon as
-> we land more tests.
+This one should not be removed as was already pointed out.
 
-Makes sense :-)
+> +				 <&gcc GCC_PCIE_6A_PIPEDIV2_CLK>;
+>  			clock-names = "aux",
+>  				      "cfg_ahb",
+>  				      "ref",
+>  				      "rchng",
+> -				      "pipe";
+> +				      "pipe",
+> +				      "pipediv2";
+>  
+>  			resets = <&gcc GCC_PCIE_6A_PHY_BCR>,
+>  				 <&gcc GCC_PCIE_6A_NOCSR_COM_PHY_BCR>;
+> @@ -2927,6 +2929,8 @@ pcie6a_phy: phy@1bfc000 {
+>  
+>  			power-domains = <&gcc GCC_PCIE_6_PHY_GDSC>;
+>  
+> +			qcom,4ln-config-sel = <&tcsr 0x1a000 0>;
+> +
+>  			#clock-cells = <0>;
+>  			clock-output-names = "pcie6a_pipe_clk";
 
-> > >  load_lp $MOD_REPLACE replace=1
-> > >  
-> > >  grep 'live patched' /proc/cmdline > /dev/kmsg
-> > >  grep 'live patched' /proc/meminfo > /dev/kmsg
-> > >  
-> > > -unload_lp $MOD_LIVEPATCH
-> > > +mods=(/sys/kernel/livepatch/*)
-> > > +nmods=${#mods[@]}
-> > > +if [ "$nmods" -ne 1 ]; then
-> > > +	die "Expecting only one moduled listed, found $nmods"
-> > > +fi
-> > > +
-> > > +# These modules were disabled by the atomic replace
-> > > +for mod in test_klp_callbacks_demo test_klp_syscall
-> > > $MOD_LIVEPATCH; do
-> > > +	unload_lp "$mod"
-> > > +done
-> > >  
-> > >  grep 'live patched' /proc/cmdline > /dev/kmsg
-> > >  grep 'live patched' /proc/meminfo > /dev/kmsg
-> > > @@ -142,6 +164,20 @@ livepatch: '$MOD_LIVEPATCH': starting patching
-> > > transition
-> > >  livepatch: '$MOD_LIVEPATCH': completing patching transition
-> > >  livepatch: '$MOD_LIVEPATCH': patching complete
-> > >  $MOD_LIVEPATCH: this has been live patched
-> > > +% insmod test_modules/test_klp_syscall.ko
-> > 
-> > Similar minor nit here, too.  If we think copy/pasting all the
-> > $MOD_FOO
-> > is annoying, I am fine with leaving this as is.  I don't have a
-> > strong
-> > opinion other than following some convention.
-> > 
-> > With that, I'm happy to ack as-is or with variable names.
-> 
-> Thanks Joe! I think that is Petr's call, either way I can rework this
-> patch, or send additional ones to adjust the tests.
+As I just mentioned in my reply on the PHY patch, this does not seem to
+work on the CRD were the link still come up as 2-lane (also with the
+clocks fixed):
 
-I would prefer if you did respin this patch. The use of
-$MOD_LIVEPATCH{1,2,3} would make even the patch easier to follow.
+	qcom-pcie 1bf8000.pci: PCIe Gen.4 x2 link up
 
-Best Regards,
-Petr
+So something appears to be wrong here or in the PHY changes.
+
+Johan
 
