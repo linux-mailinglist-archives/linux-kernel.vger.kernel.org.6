@@ -1,113 +1,128 @@
-Return-Path: <linux-kernel+bounces-199752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A523B8FA558
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 00:02:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F3AA8FA6A0
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 01:47:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 249971F23440
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 22:02:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 463181C22243
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 23:47:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC66213C9DE;
-	Mon,  3 Jun 2024 22:02:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE9A713CF96;
+	Mon,  3 Jun 2024 23:47:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tbRzgWfi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="F6kPfk5m"
+Received: from terminus.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FE0113C91F;
-	Mon,  3 Jun 2024 22:02:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 950788061F;
+	Mon,  3 Jun 2024 23:47:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717452124; cv=none; b=Bu+ZgwHxxbiVTdWNgdK1YkLS7ornT+DeL+Ifoq3Jik04SDRLBAatKN8UJqaM3ekf8yfG0JZrh8wWsDEcpbNcueeLRpPG17I+wasB+lrN8an6ljje9DLLTvhXSJBaTRsUiAeP058LYFUHW/dFQBjUYhv/d5VZD1yukP4FSlTWsdA=
+	t=1717458454; cv=none; b=VokH/e3Z9hqU+3tQqTD9rzsF3LcBamZUMZ7XY+xryxnKR40FOxEZh+9+xRf2SBv2FfV3CaCxU7Ulj1DWakLUjU7YDCGiD4Fv2RmBLdZyD+TjKgbdSwLq4/g/ecgKI7fyDvsAX2JdvRew2pnQCeVNGBKx60tDKoI6xuHl5XDzj/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717452124; c=relaxed/simple;
-	bh=djC34ORqw2xb3Cf7QYPDabOUVU/AAmQubNKuizP0gBg=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=MME8c1aDgZzKR2dIU1T57v79dehSE+yCQCAKIPQpesZb/JB/Y1Nw9E24Y6NZGVB4yYouts4rz9Bc8EG5mmEDFV6xX/mmYTTkgRmhhKMLvfiZ5naIA3AXRORPvmMrYSPBi4E5OeMCX4gjqR6geNMj7uHcka5WlWWcELEY3mpZYRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tbRzgWfi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 867CAC2BD10;
-	Mon,  3 Jun 2024 22:02:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717452123;
-	bh=djC34ORqw2xb3Cf7QYPDabOUVU/AAmQubNKuizP0gBg=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=tbRzgWfixxLCCAnv86IJhJm3P/kq8T5W9Nv/ov0UFl8E8KFqBurN17GHgyofXsMrD
-	 pgEPlwTODDI97U0KPzHTUvLA7ro/O/NMFPJrBkuEgEaok154AUrdZQMLkqhmgBH04b
-	 F2nARv+gmHL8NxRGcT+bgM6wnJIvk45H8jqzl7soKWoFCwPpiwJIlR2OQ73F7cwkLG
-	 /rVtdIACiJNv8VJjbNht4RoaTqve4DGL4AapG1+dsnMuOJaIIAAxFwdDVJhgSRuhKl
-	 nduLa666srYuD7qNk06xHNEAfGKdiRszER/GhC/naKhAWhdng7C+rirXbplWGnD9E+
-	 APXqfKXj/LK8A==
-Message-ID: <ac141363f0b6c44b11c421f752776ef9.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1717458454; c=relaxed/simple;
+	bh=6bEpQgcxUVGW2oHLoP+LTHY1R7E8TDG7aTpirGPEYG4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=inshmYfGXCBcBmM3d1In0pqcIl85d6R1mOS+ML8aYVM5rvRFzFF26L0jPIgI/IuveUuS72sY9uAPG5HbvvYJEztX5O15OiDR3Eh+5RlGZevtArJ8TX6HXYRMNETrIvnE3prrgYtJQjhfmAbUvqO6ed3LePuGB8uQzWw2jJJYY9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=F6kPfk5m; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [IPV6:2601:646:8002:4641:eb14:ad94:2806:1c1a] ([IPv6:2601:646:8002:4641:eb14:ad94:2806:1c1a])
+	(authenticated bits=0)
+	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 453EhCwn3610090
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Mon, 3 Jun 2024 07:43:12 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 453EhCwn3610090
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2024051501; t=1717425794;
+	bh=sOv2pml39rCUmYtq263pd0Mke6ArsY5AX7diMAElB7o=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=F6kPfk5mkSk5h0hAkB5UJ45Gs5fwkaIkIuhFTy8KR1NFWRKyqxjf62B+INqAcQtYS
+	 1K1lC+HHZJuFQJH2hrVwQHOc06tWtoXdTqdjxCtihWqxWYG502lPDyIQ4rkBMhLEhX
+	 K5hZO67HdOTy/G6fEJulnDhrID0NSaitVzskOa4cHmaexkEmC7pQImZo+W84PK6HAo
+	 bnuJkaQAPQoM+KjEcz2CDmaFd2wNeI3Zuz5LkufhuWzQsKUTxlzUbNf3l2hZnESq6D
+	 qE+/LWd5MSggxOHt2HBe0b+7WMwUp6U2gtRzKKnfqNHrh1XhfRO17fyfW7MrCcVKLc
+	 kcU1XkhpOZnLg==
+Message-ID: <5d7dca1e-5889-4440-b3a0-48610f11200e@zytor.com>
+Date: Mon, 3 Jun 2024 07:43:06 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240422232404.213174-7-sboyd@kernel.org>
-References: <20240422232404.213174-1-sboyd@kernel.org> <20240422232404.213174-7-sboyd@kernel.org>
-Subject: Re: [PATCH v4 06/10] dt-bindings: kunit: Add fixed rate clk consumer test
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, patches@lists.linux.dev, kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org, devicetree@vger.kernel.org, Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rafael J . Wysocki <rafael@kernel.org>, Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, Daniel Latypov <dlatypov@google.com>, Christian Marangi <ansuelsmth@gmail.com>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, Maxime Ripard <maxime@cerno.tech>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Date: Mon, 03 Jun 2024 15:02:01 -0700
-User-Agent: alot/0.10
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv11 05/19] x86/relocate_kernel: Use named labels for less
+ confusion
+To: Nikolay Borisov <nik.borisov@suse.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        Jun Nakajima <jun.nakajima@intel.com>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        "Kalra, Ashish"
+ <ashish.kalra@amd.com>,
+        Sean Christopherson <seanjc@google.com>,
+        "Huang, Kai" <kai.huang@intel.com>, Ard Biesheuvel <ardb@kernel.org>,
+        Baoquan He <bhe@redhat.com>, "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>, kexec@lists.infradead.org,
+        linux-hyperv@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20240528095522.509667-1-kirill.shutemov@linux.intel.com>
+ <20240528095522.509667-6-kirill.shutemov@linux.intel.com>
+ <1e1d1aea-7346-4022-9f5f-402d171adfda@suse.com>
+Content-Language: en-US
+From: "H. Peter Anvin" <hpa@zytor.com>
+In-Reply-To: <1e1d1aea-7346-4022-9f5f-402d171adfda@suse.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Quoting Stephen Boyd (2024-04-22 16:23:59)
-> diff --git a/Documentation/devicetree/bindings/test/test,clk-fixed-rate.y=
-aml b/Documentation/devicetree/bindings/test/test,clk-fixed-rate.yaml
-> new file mode 100644
-> index 000000000000..b9f58cba944c
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/test/test,clk-fixed-rate.yaml
-> @@ -0,0 +1,35 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/test/test,clk-fixed-rate.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: KUnit clk fixed rate test clk consumer
+On 5/29/24 03:47, Nikolay Borisov wrote:
+>>
+>> diff --git a/arch/x86/kernel/relocate_kernel_64.S 
+>> b/arch/x86/kernel/relocate_kernel_64.S
+>> index 56cab1bb25f5..085eef5c3904 100644
+>> --- a/arch/x86/kernel/relocate_kernel_64.S
+>> +++ b/arch/x86/kernel/relocate_kernel_64.S
+>> @@ -148,9 +148,10 @@ SYM_CODE_START_LOCAL_NOALIGN(identity_mapped)
+>>        */
+>>       movl    $X86_CR4_PAE, %eax
+>>       testq    $X86_CR4_LA57, %r13
+>> -    jz    1f
+>> +    jz    .Lno_la57
+>>       orl    $X86_CR4_LA57, %eax
+>> -1:
+>> +.Lno_la57:
+>> +
+>>       movq    %rax, %cr4
+>>       jmp 1f
+> 
+> That jmp 1f becomes redundant now as it simply jumps 1 line below.
+> 
 
-Removed KUnit from the title.
+Uh... am I the only person to notice that ALL that is needed here is:
 
-> +
-> +maintainers:
-> +  - Stephen Boyd <sboyd@kernel.org>
-> +
-> +description:
-> +  A clk consumer of a fixed rate clk used to test the fixed rate clk
-> +  implementation.
-> +
-> +properties:
-> +  compatible:
-> +    const: test,clk-fixed-rate
+	andl $(X86_CR4_PAE|X86_CR4_LA57), %r13d
+	movq %r13, %rax
 
-None of this is really fixed rate clk specific. I'm going to rename this
-to "test,single-clk-consumer" so that it can be used anywhere we want to
-consume a single clock cell. Someone can introduce a double/multiple
-binding as needed.
+... since %r13 is dead afterwards, and PAE *will* have been set in %r13 
+already?
 
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - clocks
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    clock-consumer {
-> +      compatible =3D "test,clk-fixed-rate";
-> +      clocks =3D <&fixed_clk>;
-> +    };
-> +...
+I don't believe that this specific jmp is actually needed -- there are 
+several more synchronizing jumps later -- but it doesn't hurt.
+
+However, if the effort is for improving the readability, it might be 
+worthwhile to encapsulate the "jmp 1f; 1:" as a macro, e.g. "SYNC_CODE".
+
+	-hpa
 
