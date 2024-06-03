@@ -1,167 +1,130 @@
-Return-Path: <linux-kernel+bounces-199296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 712748D850F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:31:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47A308D84F5
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:29:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E81A28330B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 14:31:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6D8C1F2132C
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 14:29:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53F43136669;
-	Mon,  3 Jun 2024 14:30:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 878B612EBEC;
+	Mon,  3 Jun 2024 14:29:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="U5JsTJpK"
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RGhhYIUV"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB9A9134406;
-	Mon,  3 Jun 2024 14:30:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55FFA12C81D;
+	Mon,  3 Jun 2024 14:29:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717425018; cv=none; b=IjQuYv9L9JPWHYQWATivkT6bDwE/s28rYiTOGUvLcx0thXLqmvt9Sc8p2keWCjEjhuilhrkAbarkb0HoVp0smMhDSokw+g+L9Jf/FE6/erqNdVrw4erWbjC0BUtTbymjjX3iv9Lqx8uu7hsE6kogw+DRgQlSMf0+C4TLHmLk5Dc=
+	t=1717424947; cv=none; b=F5w9vLPoPIaDPKKS/2kFxsxAu/Ly7HvDWmL4Qe8pUQ0Qr2HMT8Ir4t51PkhJjwvpDNsXyBhc8zR3FqU6k6dRFBLmYOD2BdorPrS3ucyI571CiQu3545PgGHOysYrmjAtS7gRvrqS/uNVZCtxkSSKtr6BC/TgzIGubuB5+g3rrJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717425018; c=relaxed/simple;
-	bh=ca3PFMqvf2PEgoAA0VG4VlDQamgfG44SJn7TGmIqUT8=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Qg96lQVlrSesoc1C4NHmM2wjeSJTPJ6no4ynXaHygDMwJ9EPTtAW/j3X0bxxlgb6zYnO5ZzAKx6aWFI7k7i3EKYquF6EQVirgzK0QIz89nS/rvbop4KFelVR5vXMFaH4i1XXu6IJg6Mlv2ov9j/PjDKzYpXDFpSZqD+9ndogOEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=U5JsTJpK; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-	(No client certificate requested)
-	(Authenticated sender: marex@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id E7E2D88308;
-	Mon,  3 Jun 2024 16:30:13 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1717425015;
-	bh=D1FOb8+LRm3aTJoqLkva7vJcqtsDNNOiof4KFRfCgww=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-	b=U5JsTJpKB9XrS+tOJLOdQnsrjPnXzbEKxTliEtCsqgl9KiPEoZiH/ruyYK8A4xR6w
-	 6BTejiu4wQw10P32WDrayv4apql6SINcNU1zBEL1UleFpWvNjsXYUWPagQhgFk1d7C
-	 AOnA5FvELgXNYWpNKVmVbPMvFUvBhKE3FNFkFO46G1s3+Keqj69pNyCis9vnebE+Po
-	 QgJ8ePGlpDpOea5a0C3f+LEQF70txG3PZy1lQ4PqAlIjg1X4ztyN/N1vGSXaUIVHNp
-	 o1J7lMtU3Se4D24YoY8YTLAaEg06HeQdXRgkQrCEMt6L1j1I9L/B6n/KE25YxFMyM0
-	 t+0qPGhF12zDQ==
-Message-ID: <f1c30ac7-cec1-422f-9114-7b30321d3563@denx.de>
-Date: Mon, 3 Jun 2024 16:27:06 +0200
+	s=arc-20240116; t=1717424947; c=relaxed/simple;
+	bh=kGkn/VyFT7RT5SaJPj4Gnp36roPKLueE55uWRqmXPJQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=FlZb5yIJmRivwqkIpXLE0V6KYIbjWyN4wA5Z6XReiSwT4aX+LUkpzIVKpqk4JVa6naOG0noaTU/miDctsRD4iZxjHw10Ja408qPnYfu9eMpf0b4H3n+fPu5QEDI/fEZ/mZXNzSR/tHtApsypiK8wO/ri1e7fUYv4qZultAumA7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RGhhYIUV; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 453AFoQL020531;
+	Mon, 3 Jun 2024 14:29:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=a8+iJWMkZBS4Gqc3lI03RH
+	0aIEuaBm+EuMCpnqHFpkU=; b=RGhhYIUVn+9Z+ZK08GGcLMxszyei/rmGjzmWlc
+	byowdPQDaG7mbzyQCHw7oyyhBBEKLCljoGLDRuK+9uXylBQBoZlBFwGramKpyGiK
+	YY4YgnU4dkR+2xXU9YkcckmhzNiQ1D6MV1XKUcuYq+LUdE5L7ocEvdGrvXXN4Mdj
+	6LP530wdpf2RAV+pSWmWm/YpO2bFEfWv3IlxP3ED16Qk9DfLqHvymSOexKPg5Aqx
+	b+EIM/pfrATl7QeKBehTU+6GLR7TRlV8dTmMmhOr+KQkosGV3Wr4dL7dTsezfWcM
+	RzyK4qcdh+DVwCvu3YMUrG6Hzp/NCv1fpmknas7Mp03s3+Bw==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfw6qm59m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 03 Jun 2024 14:29:03 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 453ET2KL027199
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 3 Jun 2024 14:29:02 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 3 Jun 2024
+ 07:29:02 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Mon, 3 Jun 2024 07:29:02 -0700
+Subject: [PATCH] ACPI: add missing MODULE_DESCRIPTION() macros
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Marek Vasut <marex@denx.de>
-Subject: Re: [PATCH v3 02/11] net: stmmac: dwmac-stm32: Separate out external
- clock rate validation
-To: Christophe Roullier <christophe.roullier@foss.st.com>,
- "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Richard Cochran <richardcochran@gmail.com>, Jose Abreu
- <joabreu@synopsys.com>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Sai Krishna Gajula <saikrishnag@marvell.com>
-Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240603092757.71902-1-christophe.roullier@foss.st.com>
- <20240603092757.71902-3-christophe.roullier@foss.st.com>
-Content-Language: en-US
-In-Reply-To: <20240603092757.71902-3-christophe.roullier@foss.st.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+Message-ID: <20240603-md-drivers-acpi-misc-v1-1-fd7f7de1ce19@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAC3TXWYC/x3MwQqDMAyA4VeRnBeonSuyVxk7xDbOwNpJsokgv
+ vuqx+/w/xsYq7DBvdlAeRGTT6loLw3EicqLUVI1eOc7F9wVc8KksrAaUpwFs1jEPvrgwi313dh
+ CTWflUdZz+3hWD2SMg1KJ0zF7S/mtmMm+rLDvf61YnqWFAAAA
+To: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>
+CC: <linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: oYU_7dzEqJu0rz6lv1-nKUAhHf7V139u
+X-Proofpoint-ORIG-GUID: oYU_7dzEqJu0rz6lv1-nKUAhHf7V139u
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-06-03_11,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ bulkscore=0 mlxlogscore=999 clxscore=1015 impostorscore=0 malwarescore=0
+ mlxscore=0 adultscore=0 lowpriorityscore=0 suspectscore=0 spamscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406030120
 
-On 6/3/24 11:27 AM, Christophe Roullier wrote:
-> From: Marek Vasut <marex@denx.de>
-> 
-> Pull the external clock frequency validation into a separate function,
-> to avoid conflating it with external clock DT property decoding and
-> clock mux register configuration. This should make the code easier to
-> read and understand.
-> 
-> This does change the code behavior slightly. The clock mux PMCR register
-> setting now depends solely on the DT properties which configure the clock
-> mux between external clock and internal RCC generated clock. The mux PMCR
-> register settings no longer depend on the supplied clock frequency, that
-> supplied clock frequency is now only validated, and if the clock frequency
-> is invalid for a mode, it is rejected.
-> 
-> Previously, the code would switch the PMCR register clock mux to internal
-> RCC generated clock if external clock couldn't provide suitable frequency,
-> without checking whether the RCC generated clock frequency is correct. Such
-> behavior is risky at best, user should have configured their clock correctly
-> in the first place, so this behavior is removed here.
-> 
-> Signed-off-by: Marek Vasut <marex@denx.de>
-> ---
->   .../net/ethernet/stmicro/stmmac/dwmac-stm32.c | 54 +++++++++++++++----
->   1 file changed, 44 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c
-> index c92dfc4ecf570..43340a5573c64 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c
-> @@ -157,25 +157,57 @@ static int stm32_dwmac_init(struct plat_stmmacenet_data *plat_dat, bool resume)
->   	return stm32_dwmac_clk_enable(dwmac, resume);
->   }
->   
-> +static int stm32mp1_validate_ethck_rate(struct plat_stmmacenet_data *plat_dat)
-> +{
-> +	struct stm32_dwmac *dwmac = plat_dat->bsp_priv;
-> +	const u32 clk_rate = clk_get_rate(dwmac->clk_eth_ck);
+make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/acpi/acpi_tad.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/acpi/platform_profile.o
 
- From Sai in
-Re: [net-next,RFC,PATCH 1/5] net: stmmac: dwmac-stm32: Separate out 
-external clock rate validation
+Add the missing invocations of the MODULE_DESCRIPTION() macro.
 
-Please check reverse x-mass tree is followed for these variables, if 
-possible.
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ drivers/acpi/acpi_tad.c         | 1 +
+ drivers/acpi/platform_profile.c | 1 +
+ 2 files changed, 2 insertions(+)
 
-> +	switch (plat_dat->mac_interface) {
-> +	case PHY_INTERFACE_MODE_MII:
-> +		if (clk_rate == ETH_CK_F_25M)
-> +			return 0;
-> +		break;
-> +	case PHY_INTERFACE_MODE_GMII:
-> +		if (clk_rate == ETH_CK_F_25M)
-> +			return 0;
-> +		break;
+diff --git a/drivers/acpi/acpi_tad.c b/drivers/acpi/acpi_tad.c
+index 1d670dbe4d1d..b831cb8e53dc 100644
+--- a/drivers/acpi/acpi_tad.c
++++ b/drivers/acpi/acpi_tad.c
+@@ -27,6 +27,7 @@
+ #include <linux/pm_runtime.h>
+ #include <linux/suspend.h>
+ 
++MODULE_DESCRIPTION("ACPI Time and Alarm (TAD) Device Driver");
+ MODULE_LICENSE("GPL v2");
+ MODULE_AUTHOR("Rafael J. Wysocki");
+ 
+diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_profile.c
+index 4a9704730224..d2f7fd7743a1 100644
+--- a/drivers/acpi/platform_profile.c
++++ b/drivers/acpi/platform_profile.c
+@@ -217,4 +217,5 @@ int platform_profile_remove(void)
+ EXPORT_SYMBOL_GPL(platform_profile_remove);
+ 
+ MODULE_AUTHOR("Mark Pearson <markpearson@lenovo.com>");
++MODULE_DESCRIPTION("ACPI platform profile sysfs interface");
+ MODULE_LICENSE("GPL");
 
- From Sai in
-Re: [net-next,RFC,PATCH 1/5] net: stmmac: dwmac-stm32: Separate out 
-external clock rate validation
+---
+base-commit: a693b9c95abd4947c2d06e05733de5d470ab6586
+change-id: 20240603-md-drivers-acpi-misc-8c26065d84f1
 
-Please check, whether we can combine the two cases..
-
-> +	case PHY_INTERFACE_MODE_RMII:
-> +		if (clk_rate == ETH_CK_F_25M || clk_rate == ETH_CK_F_50M)
-> +			return 0;
-> +		break;
-> +	case PHY_INTERFACE_MODE_RGMII:
-> +	case PHY_INTERFACE_MODE_RGMII_ID:
-> +	case PHY_INTERFACE_MODE_RGMII_RXID:
-> +	case PHY_INTERFACE_MODE_RGMII_TXID:
-> +		if (clk_rate == ETH_CK_F_25M || clk_rate == ETH_CK_F_125M)
-> +			return 0;
-> +		break;
-> +	default:
-> +		break;
-> +	}
-> +
-> +	dev_err(dwmac->dev, "Mode %s does not match eth-ck frequency %d Hz",
-> +		phy_modes(plat_dat->mac_interface), clk_rate);
-> +	return -EINVAL;
-> +}
-
-[...]
 
