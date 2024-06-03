@@ -1,86 +1,157 @@
-Return-Path: <linux-kernel+bounces-199017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 725208D8092
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:08:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73C488D8095
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:09:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E94D5B24550
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:08:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1096B24D03
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:09:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C369B83CD9;
-	Mon,  3 Jun 2024 11:08:05 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0421D78C80
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 11:08:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD8A584A28;
+	Mon,  3 Jun 2024 11:09:38 +0000 (UTC)
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 577EB78C80;
+	Mon,  3 Jun 2024 11:09:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717412885; cv=none; b=bOFCX4UkzH8G6ufo+SAg44xKt+zLdIdLMaFH/YyPguxaOmmfevwxv969uVV+I6xc9HAEIyJAINFaHgvI8UbvL4pLhyUW1Gnu9H6gXLy0bqMWpyKOwZ9YKq73nlVS4Y9NuDEQ0zPEEixm90W0JAVjABQfa5YXRIS0lJlcC4na5nM=
+	t=1717412978; cv=none; b=tZf0r65E1ULaD59j+Ok/vQr3ATNSfue53ovMb7FKc7kjq+So+HNu3nLU/thlKN4EI8NLBBJb42G4L5uYZoGH3J/tZIx6tzbb0iHDtHQzamVC3IINVbReKq0R6h/awH3/Rjum3pKSOOz7IXzXSNC3DbP3pTRmRyqUxCKH/tmQTFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717412885; c=relaxed/simple;
-	bh=sSnrdm6fiDMdh+mUriHCshz7fel1CQDzhH5UGPn5TcU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=U3KKkXBcf48O/YPJpxBwYbTqcOy37HNcfKuY4vGNdGbEMU3UTX4dgHPVdWWURov94dm+0fpjs8YiuRoz2K6GGJvuSqwVWPijElsez4z9j+6yMNXaPZQMPTOuO4SXrqNBMf5Unk3OMKEk9HU/7ULYk+yt7QOhxurCnUGzVn7OWVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7ea27057813so386878139f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 04:08:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717412883; x=1718017683;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oKvFpMrg4A8MMwFB/KRbvRNv1mKGfqvNXY/PALqu65Q=;
-        b=ng8/Z4YOcMwo6f2OhybdN5RzwkGqcjOE0UE+qZaCg+WSd4ZKMu9KhMHUlsiyzB3cfb
-         uexSYh/NtXXNUoLdR92kEgvyDELOTniSL/uAq2x5YtuVj3qJP7i6wUrd3DnLSTAxyQD5
-         8wmqaCVG1vg7gs9HN55GDo3ns6ITloGuwbAX+cPZK9nMPhmnOR0feQMUW3mn2DOX4/8v
-         aRD6DzoZ4b1rrcZ9zSpeMOz/7g9r1krJnNNvxEZ2NdNwDxprqyRw/kqaL4IbZ1BLFfND
-         aXHAzC7xVuJ3KyaMxcRKNAQQqaY2VxnjviSaWvynQbfSR6YmXNsuqGW3vK6nZ2gQDjNN
-         2/dw==
-X-Forwarded-Encrypted: i=1; AJvYcCXTvNl75d1BEy5mtjknUU9gK/rcZPKjg6l3p1WUIKmnnvurlvGTx6OEjd5Wpk5oIcRS0mH4eOyh59Dflcq1IZyl2StUTWZp9ybfRjiA
-X-Gm-Message-State: AOJu0YxVFUc97C3fL94n54kcYm75jGpsUJM0ky/kEqR88xZCP2pr3U7I
-	hn3qdzG4wYOKfgztxcVV94rmWNDPn/qxkUUAFf3MqLFA+mapcjRdNAn1dAdNDJ34nesyk7+BG0F
-	ok3GbI9atMCItg/yxQo8vSUhiskoBdno5uYv5+pI4FL0PpPGGgiFwo0k=
-X-Google-Smtp-Source: AGHT+IGPiEVOmTSdgPOa4JfrnGrlMsd7U3oUjbReyuXn+Abt9k1AH/sNxmNUUo/LBOr2UvbdwWIpvNqTXlcXtHrsyXhVALecwN34
+	s=arc-20240116; t=1717412978; c=relaxed/simple;
+	bh=PtCqHPVS3FFL6uoO57jPPA1TNGctf3qqzV2I29OQeBQ=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=k/xJ8F9Sy+saqonc7tocLJn76wEloKTu2XgFAKEfWfoGAMXM1gFkWiDvCAo6pXWZHuntDusgnQHF5tTb42Js+QcTUJplZA59wCP/JMq9OMrGIsMgrVs7P91NB68CTEIkUixt1Y/yys2pYhWhcTDG2lybiN6UwXSLmIryE3/+FiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+	id 00D3592009C; Mon,  3 Jun 2024 13:09:27 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by angie.orcam.me.uk (Postfix) with ESMTP id ED57992009B;
+	Mon,  3 Jun 2024 12:09:27 +0100 (BST)
+Date: Mon, 3 Jun 2024 12:09:27 +0100 (BST)
+From: "Maciej W. Rozycki" <macro@orcam.me.uk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+cc: "Paul E. McKenney" <paulmck@kernel.org>, 
+    John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
+    Arnd Bergmann <arnd@kernel.org>, linux-alpha@vger.kernel.org, 
+    Arnd Bergmann <arnd@arndb.de>, 
+    Richard Henderson <richard.henderson@linaro.org>, 
+    Ivan Kokshaysky <ink@jurassic.park.msu.ru>, 
+    Matt Turner <mattst88@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+    Marc Zyngier <maz@kernel.org>, linux-kernel@vger.kernel.org, 
+    Michael Cree <mcree@orcon.net.nz>, Frank Scheiner <frank.scheiner@web.de>
+Subject: Re: [PATCH 00/14] alpha: cleanups for 6.10
+In-Reply-To: <CAHk-=whiH6g+T7+YWSYgAhJ9HsJ2bUUDJfLLo_Yhbi8CVgkHDg@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.2405310457060.23854@angie.orcam.me.uk>
+References: <20240503081125.67990-1-arnd@kernel.org> <272a909522f2790a30b9a8be73ab7145bf06d486.camel@physik.fu-berlin.de> <alpine.DEB.2.21.2405280041550.23854@angie.orcam.me.uk> <aa397ad5-a08a-48a1-a9c0-75cfd5f6a3a5@paulmck-laptop>
+ <alpine.DEB.2.21.2405291432450.23854@angie.orcam.me.uk> <CAHk-=wi7WfDSfunEXmCqDnH+55gumjhDar-KO_=66ziuP33piw@mail.gmail.com> <alpine.DEB.2.21.2405302115130.23854@angie.orcam.me.uk> <CAHk-=whiH6g+T7+YWSYgAhJ9HsJ2bUUDJfLLo_Yhbi8CVgkHDg@mail.gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:6415:b0:7cc:2522:f5fd with SMTP id
- ca18e2360f4ac-7eaffe956bbmr53266039f.1.1717412883162; Mon, 03 Jun 2024
- 04:08:03 -0700 (PDT)
-Date: Mon, 03 Jun 2024 04:08:03 -0700
-In-Reply-To: <20240603104211.1526-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d5767c0619fa5845@google.com>
-Subject: Re: [syzbot] [ext4?] INFO: task hung in vfs_rmdir (2)
-From: syzbot <syzbot+42986aeeddfd7ed93c8b@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 
-Hello,
+On Thu, 30 May 2024, Linus Torvalds wrote:
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+> > > The 21064 actually did atomicity with an external pin on the bus, the
+> > > same way people used to do before caches even existed.
+> >
+> >  Umm, 8086's LOCK#, anyone?
+> 
+> Well, yes and no.
+> 
+> So yes, exactly like 8086 did before having caches.
 
-Reported-and-tested-by: syzbot+42986aeeddfd7ed93c8b@syzkaller.appspotmail.com
+ Well I wrote 8086 specifically, not x86.
 
-Tested on:
+> But no, not like the alpha contemporary PPro that did have caches. The
+> PPro already did locked cycles in the caches.
 
-commit:         c3f38fa6 Linux 6.10-rc2
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-console output: https://syzkaller.appspot.com/x/log.txt?x=12385cba980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=eb72437243175f22
-dashboard link: https://syzkaller.appspot.com/bug?extid=42986aeeddfd7ed93c8b
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=16784f14980000
+ But the 21064 does predate the PPro by a couple of years: Feb 1992 vs Nov 
+1995, so surely Intel folks had extra time to resolve this stuff properly.  
 
-Note: testing is done by a robot and is best-effort only.
+ Conversely the R4000 came about in Oct 1991, so before the 21064.  But 
+only so slightly and not as much as I remembered (I thought the 21064 was 
+more like 1993), so it seems like DEC couldn't have had enough time after 
+all to figure out what SGI did (patents notwithstanding).  Surely the 
+R4000MC cache coherency protocol was complex for the silicon technology of 
+the time, but it's just MOESI in modern terms AFAICT, and LL/SC is handled 
+there (and is in fact undefined for uncached accesses).
+
+ I'm not sure what else was out there at the time, but going back to x86 
+the i486 was contemporary, the original write-through cache version, which 
+if memory serves, was not any better in this respect (and the "write-back 
+enhanced" DX2/DX4 models with proper MESI cache protocol came out much 
+later, after Pentium only, which they borrowed from).
+
+> So I really feel the 21064 was broken.
+> 
+> It's probably related to the whole cache coherency being designed to
+> be external to the built-in caches - or even the Bcache. The caches
+> basically are write-through, and the weak memory ordering was designed
+> for allowing this horrible model.
+
+ In retrospect perhaps it wasn't the best design, but they have learnt 
+from their mistakes.
+
+> > > In fact, it's worse than "not thread safe". It's not even safe on UP
+> > > with interrupts, or even signals in user space.
+> >
+> >  Ouch, I find it a surprising oversight.
+> 
+> The sad part is that it doesn't seem to have been an oversight. It
+> really was broken-as-designed.
+> 
+> Basically, the CPU was designed for single-threaded Spec benchmarks
+> and absolutely nothing else. Classic RISC where you recompile to fix
+> problems like the atomicity thing - "just use a 32-bit sig_atomic_t
+> and you're fine")
+
+ Not OK however, as you correctly point out, for plain ordinary non-atomic 
+stuff.  Point me at any document that claims that a pair of threads poking 
+at even and odd byte vector elements each is not allowed.  Caches may not 
+enjoy it, but there's nothing AFAIK saying this is UB or whatever.
+
+> The original alpha architecture handbook makes a big deal of how
+> clever the lack of byte and word operations is. I also remember
+
+ I've seen that; dropped in v3 with the addition of the BWX extension.
+
+> reading an article by Dick Sites - one of the main designers - talking
+> a lot about how the lack of byte operations is great, and encourages
+> vectorizing byte accesses and doing string operations in whole words.
+
+ Yeah, the software folks at DEC must have been delighted porting all the 
+VAX VMS software.  But pehaps this was the last attempt to try something 
+different from the CPU architecture standards established back in 1970s 
+(by the VAX among others) that make current designs so similar to one 
+another.
+
+ Anyway, back to my point.  A feasible solution non-intrusive for Linux 
+and low-overhead for GCC has been found.  I can expedite implementation 
+and I'll see if I can regression-test it too, but I may have to rely on 
+other people to complete it after all, as I haven't been prepared for this 
+effort in the light of certain issues I have recently suffered from in my 
+lab.
+
+ Is that going to be enough to bring the platform bits back?
+
+ FAOD, with all the hacks so eagerly being removed now happily left in the 
+dust bin where they belong, and which I wholeheartedly agree with: we 
+shouldn't be suffering from design mistakes of systems that are no longer 
+relevant, but I fail to see the reason why we should disallow their use 
+where the burden is confined or plain elsewhere.
+
+ For example we continue supporting old UP MIPS platforms that predate 
+LL/SC, by just trapping and emulating these instructions.  Surely it sucks 
+performance-wise and it's possibly hundreds of cycles too, but it works 
+and the burden is confined to the exception handler, so not a big deal.
+
+  Maciej
 
