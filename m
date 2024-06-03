@@ -1,263 +1,192 @@
-Return-Path: <linux-kernel+bounces-199721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0174C8D8B4B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 23:07:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43FD68D8B51
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 23:13:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABC5628CB43
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 21:07:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCFAE1F24404
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 21:13:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAA4413BC38;
-	Mon,  3 Jun 2024 21:06:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E898713B5A6;
+	Mon,  3 Jun 2024 21:12:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZBCZZ1v+"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B2e4kRq+"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F72513B7AA
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 21:06:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 879E225601
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 21:12:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717448812; cv=none; b=YJxMSs6Ik2ZGyzFmVVT+ZWO0x7lt86326eggwYPM+cZaGH3WM8ARAJUxB8F6dKlten4L0snqU2LqI9jTBxReTIa0TbmoZD+jGSbdE1DtIdevmlNre6SyyVW6aWQAlaYE155Ek2JQVrNNpAeuQ4SDQrsC2fXUiR3scOOobISpiME=
+	t=1717449177; cv=none; b=smJhLQkzOImYqKb2RRI/d9S1Gvi7itAflx8cIFE6z+zdgqEJIDzj3WGbcsjlCTR62UxjHludpPGnoqM6Gk1ewzeVIILVvWjGlrNtyklOFi9lSU5Pey7Klcw9HI1QfPGdcc2NbINcMcOFkiXch2bqSrFspaiMKtg6dzJleUfu5nk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717448812; c=relaxed/simple;
-	bh=HFAYt0puR53CWQ6Pgn+7Lo+EGQ8Qqo707WzU7YvmSA8=;
+	s=arc-20240116; t=1717449177; c=relaxed/simple;
+	bh=Ma2G1XUY+OMiYrLLXyxX+9ZtaW+ETGjLX3E9Ph3uSks=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uYYganQg13Z/VkAhuh9bquEGUKsU58AtAwARqR9jYVeULA6Htsvo7JaQcKZ8RW5cDGIjWKcTvzHvOd+WTRPCUKZmkVvqAee5fFZUGR05B366aqfds5u01RoTghS5lOVpuy0h6ABo8yr6gmewu6gCLixtOEcxghIuwmsnjLwnsbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZBCZZ1v+; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717448809;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5mpP1bV7IatGdUBDoGBtNKggDenXs8Jb/0Iy96M5NTo=;
-	b=ZBCZZ1v+OG7THhmB3fgBLO4MEgObvF69jsJfl/DHkFnmqaZLiQnPbFWdiOmXJpqSPUlm2k
-	8yJSh7G42Dr6uQWaC5Px7fxNaKRiOhwwn0G5G+gQvJFb1a1Ww+Pu6nKNTwxCHKLW5lWe6f
-	Axt4rZ8SVaFOA8b+0gNDbAznGm6i288=
-Received: from mail-oi1-f198.google.com (mail-oi1-f198.google.com
- [209.85.167.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-203-eXUHnjq7PYCqcoDNIEFBxg-1; Mon, 03 Jun 2024 17:06:47 -0400
-X-MC-Unique: eXUHnjq7PYCqcoDNIEFBxg-1
-Received: by mail-oi1-f198.google.com with SMTP id 5614622812f47-3d1ca308617so252679b6e.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 14:06:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717448807; x=1718053607;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	 Content-Type:Content-Disposition:In-Reply-To; b=TxIHyKmvPekCTSzoMuxDywIMTgFnNb08WuaqWq1D/8ZA/aDL6jgIEff+bHeYTUfDvEVYZ5Elbz7voc6wFcvxeDkkuZ2pEhVzCeUWhe3yC8+Aq89HfyLhiW+B0PNMubDMO7CuAcTdb9RMTVwPp7VxQH8Hy2yb17Rh8Lq14QIFmAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B2e4kRq+; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4213485697fso23590665e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 14:12:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717449174; x=1718053974; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=5mpP1bV7IatGdUBDoGBtNKggDenXs8Jb/0Iy96M5NTo=;
-        b=MvVml09X1kCgCEHuieRw6b6F7tf1T6id+EdUK79f8FtbxbE1rr8abXFxEav4DFavPW
-         G5yHR9U9BphZJ7QEGswuoULdwqA2mfBDMIqk78bk1Ae7PtgOEflQJga8xAbEPjxUBhLG
-         nEBQfOCDZxxEcMzwBpP1m2i4gnCL8Jt6s0xHHVVk02qtD1isxIHM0lU6m/6yd5J4wxhs
-         oim2jU5WNz4pg3dEe/+KiGSYXOg24k5JXlZfwkdPTn2rLkxmIPhdltFYwUsL7eSBChAn
-         mV0xPZ3eBt4rYsxqERQduzYfAMMDhQ1Z5IxsKjdZK5J5bm3JidiMiu4Trf9jz0jrJXHp
-         cpDA==
-X-Forwarded-Encrypted: i=1; AJvYcCXwSKPY8+RRQZWz7nhrhPnlMM7EGv2y4DExx5s6GX98CH96EjySdBRg9gxRLPW24CCYZ6Y3iAoL027r8RNlIxYmajF56lEbFkq+fKTK
-X-Gm-Message-State: AOJu0YyZiTMEqg1joFpdkm+97f8MTmKh4De1dyy2s1pekZBOxsbJhRsE
-	Q43KZEBfPLQ4k3k2YuXAwRp6T4GFw/m3A5QxNfSMsnb7kAdGCf8LnoIUOQ/YqLyGiYpiCbMHtvn
-	nQ7RSp2iJMPgPDsbiC6sC3QkUruEaIM5xH/aLk2byDjiqVtloFbYSUV0TZY8OOQ==
-X-Received: by 2002:a05:6808:1512:b0:3d1:e2e4:5125 with SMTP id 5614622812f47-3d1e31e37dbmr12179447b6e.0.1717448806753;
-        Mon, 03 Jun 2024 14:06:46 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE8jB6meUwwpNA02EeXQJDBrJdfBASmS7Fy8XgHkACdk5SzpeO5m7B+8abySuaYnkZeZlgyWA==
-X-Received: by 2002:a05:6808:1512:b0:3d1:e2e4:5125 with SMTP id 5614622812f47-3d1e31e37dbmr12179416b6e.0.1717448806034;
-        Mon, 03 Jun 2024 14:06:46 -0700 (PDT)
-Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6afb70d5741sm16591106d6.137.2024.06.03.14.06.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Jun 2024 14:06:45 -0700 (PDT)
-Date: Mon, 3 Jun 2024 17:06:43 -0400
-From: Peter Xu <peterx@redhat.com>
-To: David Hildenbrand <david@redhat.com>,
-	Nicholas Piggin <npiggin@gmail.com>
-Cc: Yang Shi <shy828301@gmail.com>,
-	kernel test robot <oliver.sang@intel.com>,
-	Jason Gunthorpe <jgg@nvidia.com>,
-	Vivek Kasireddy <vivek.kasireddy@intel.com>,
-	Rik van Riel <riel@surriel.com>, oe-lkp@lists.linux.dev,
-	lkp@intel.com, linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Christopher Lameter <cl@linux.com>, linux-mm@kvack.org
-Subject: Re: [linus:master] [mm] efa7df3e3b:
- kernel_BUG_at_include/linux/page_ref.h
-Message-ID: <Zl4wY68a5QI8Ph6w@x1n>
-References: <890e5a79-8574-4a24-90ab-b9888968d5e5@redhat.com>
- <ZlpcRnuZUEYJJ0JA@x1n>
- <CAHbLzkrRw-xf819gYJwRQ=-u971LQYnB2FNJMkN=s6u-pJ4Z8g@mail.gmail.com>
- <CAHbLzkoB+oFTxtVYpeXQvko2q9HUVzUYrr83S6M6PUmXDQpkag@mail.gmail.com>
- <0edfcfed-e8c4-4c46-bbce-528c07084792@redhat.com>
- <Zl3cakfiRsPQDb8q@x1n>
- <8da12503-839d-459f-a2fa-4abd6d21935d@redhat.com>
- <Zl4m-sAhZknHOHdb@x1n>
- <9d9a5730-161b-4a9d-a696-1cf6d0c5123c@redhat.com>
- <Zl4vlGJsbHiahYil@x1n>
+        bh=PB2BDnYwWYgmg1wgRjgteD5ghAK6/IehyECeOgz8gPU=;
+        b=B2e4kRq+EgyHya9lgygS3nIBN2jMfM/Zbnd5Z5ltLrYcG2GlISNDVeVN17clYtZHCa
+         JJRqMIArumdHlJ998rXdk91TPcXzHJ7CJ8Kr4Jid2gIKix/4KyF5ZHQNxkprHb7Xz3n0
+         wV7f0b2O8rcc1L3mUs+InYYbEyiEB2Ab/ZiX8pk1g5viQJ1f4c2d8HBrPQkDsM553FKV
+         e4AhjLmyggLDGXhUX7umYEzpkNVSkPdRblp91qRuhlBMeW6H1ohAmnOajFlAXg2LoMsQ
+         1nOqmkaj++EFGweEuWlFYYzO7whVtXEaU9XP8gxZpzp0uo91euYH0VQGdxCAto+OVeKM
+         59hQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717449174; x=1718053974;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=PB2BDnYwWYgmg1wgRjgteD5ghAK6/IehyECeOgz8gPU=;
+        b=e2V8tMQFJaOlWfNCPyUxM8cVkTTo+V9r7xrSX8CLFP26BpZONO/kOmBHC6n3eREgbV
+         6PxQ70GXLhEANmCuJM6toEQNvwcuADrJ54oAJKS/vuhIw3/Uqki+v/mfXobzApVjp1up
+         bu6unYWQIDtXw1Kz6uod185MJiKepOQbBDQy9JS3SyNh+dx9CYPMfCRiibYt8muT/AXL
+         AeiI8MMd7H4Mnj3Oo9LhB/2qyZk67ltDLiuBgv2mPVM50mXSy2NN2fH/bWmh0my/7Hlk
+         NCTTtV/WSDPE1Hdn7PrJsn5ji6XuRiicZvhNzYZRG6ePlvwc+B0WzEV/0kANZBVtO/40
+         cfbA==
+X-Forwarded-Encrypted: i=1; AJvYcCVIqf35DgQFHnL6FK0w9aLFhQD/uTtl6lmEMZHLKuOv+/3ONEZLAfNIfOMVRkKLl8VB54znT6Y3tw5pb7eHwUN6k6EaNVUBLqLnnqMX
+X-Gm-Message-State: AOJu0YzhS+Q7BecvXm++WcZyhtXdjBYCnX2O66g58jePVKCvvJcZeCkG
+	AiHk8gIqHlq29c6aufoUr/vXvXxfnvcrdhEFRtPvS8Lc6we98CLk
+X-Google-Smtp-Source: AGHT+IE2Y+SempoAvOfyCcHhR1wRYb2Sw5aqYx+0WauKtMkawcxWBTuVsMP3NeENU001Q8VYMsFijw==
+X-Received: by 2002:a05:600c:4713:b0:41b:b07a:c54c with SMTP id 5b1f17b1804b1-4212e049943mr74431125e9.9.1717449173499;
+        Mon, 03 Jun 2024 14:12:53 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57a515bcb0dsm3955762a12.82.2024.06.03.14.12.52
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 03 Jun 2024 14:12:53 -0700 (PDT)
+Date: Mon, 3 Jun 2024 21:12:52 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Wei Yang <richard.weiyang@gmail.com>, tglx@linutronix.de,
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+	x86@kernel.org, linux-kernel@vger.kernel.org,
+	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+	Ingo Molnar <mingo@kernel.org>, Steve Wahl <steve.wahl@hpe.com>
+Subject: Re: [Patch v3] x86/head/64: remove redundant check on
+ level2_kernel_pgt's _PAGE_PRESENT bit
+Message-ID: <20240603211252.6jsxxo5dn5xbd6q2@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20240523123539.14260-1-richard.weiyang@gmail.com>
+ <9e9669a6-de37-4140-bdc5-7d660b8427c3@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zl4vlGJsbHiahYil@x1n>
+In-Reply-To: <9e9669a6-de37-4140-bdc5-7d660b8427c3@intel.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
-[Copy Nicolas for real]
+On Mon, Jun 03, 2024 at 11:50:06AM -0700, Dave Hansen wrote:
+>On 5/23/24 05:35, Wei Yang wrote:
+>> --- a/arch/x86/kernel/head64.c
+>> +++ b/arch/x86/kernel/head64.c
+>> @@ -260,8 +260,7 @@ unsigned long __head __startup_64(unsigned long physaddr,
+>>  
+>>  	/* fixup pages that are part of the kernel image */
+>>  	for (; i <= pmd_index((unsigned long)_end); i++)
+>> -		if (pmd[i] & _PAGE_PRESENT)
+>> -			pmd[i] += load_delta;
+>> +		pmd[i] += load_delta;
+>
+>So, I think this is correct.  But, man, I wish folks would go through
+>the git history and make it clear that they understand _how_ thecode
+>got the way it is.
+>
 
-On Mon, Jun 03, 2024 at 05:03:16PM -0400, Peter Xu wrote:
-> On Mon, Jun 03, 2024 at 10:37:55PM +0200, David Hildenbrand wrote:
-> > > > try_get_folio() is all about grabbing a folio that might get freed
-> > > > concurrently. That's why it calls folio_ref_try_add_rcu() and does
-> > > > complicated stuff.
-> > > 
-> > > IMHO we can define it.. e.g. try_get_page() wasn't defined as so.
-> > > 
-> > > If we want to be crystal clear on that and if we think that's what we want,
-> > > again I would suggest we rename it differently from try_get_page() to avoid
-> > > future misuses, then add documents. We may want to also even assert the
-> > 
-> > Yes, absolutely.
-> > 
-> > > rcu/irq implications in try_get_folio() at entrance, then that'll be
-> > > detected even without TINY_RCU config.
-> > > 
-> > > > 
-> > > > On !CONFIG_TINY_RCU, it performs a folio_ref_add_unless(). That's
-> > > > essentially a atomic_add_unless(), which in the worst case ends up being a
-> > > > cmpxchg loop.
-> > > > 
-> > > > 
-> > > > Stating that we should be using try_get_folio() in paths where we are sure
-> > > > the folio refcount is not 0 is the same as using folio_try_get() where
-> > > > folio_get() would be sufficient.
-> > > > 
-> > > > The VM_BUG_ON in folio_ref_try_add_rcu() really tells us here that we are
-> > > > using a function in the wrong context, although in our case, it is safe to
-> > > > use (there is now BUG). Which is true, because we know we have a folio
-> > > > reference and can simply use a simple folio_ref_add().
-> > > > 
-> > > > Again, just like we have folio_get() and folio_try_get(), we should
-> > > > distinguish in GUP whether we are adding more reference to a folio (and
-> > > > effectively do what folio_get() would), or whether we are actually grabbing
-> > > > a folio that could be freed concurrently (what folio_try_get() would do).
-> > > 
-> > > Yes we can.  Again, IMHO it's a matter of whether it will worth it.
-> > > 
-> > > Note that even with SMP and even if we keep this code, the
-> > > atomic_add_unless only affects gup slow on THP only, and even with that
-> > > overhead it is much faster than before when that path was introduced.. and
-> > > per my previous experience we don't care too much there, really.
-> > > 
-> > > So it's literally only three paths that are relevant here on the "unless"
-> > > overhead:
-> > > 
-> > >    - gup slow on THP (I just added it; used to be even slower..)
-> > > 
-> > >    - vivik's new path
-> > > 
-> > >    - hugepd (which may be gone for good in a few months..)
-> > > IMHO none of them has perf concerns.  The real perf concern paths is
-> > > gup-fast when pgtable entry existed, but that must use atomic_add_unless()
-> > > anyway.  Even gup-slow !thp case won't regress as that uses try_get_page().
-> > 
-> > My point is primarily that we should be clear that the one thing is
-> > GUP-fast, and the other is for GUP-slow.
-> 
-> Yes, understood.
-> 
-> > 
-> > Sooner or later we'll see more code that uses try_grab_page() to be
-> > converted to folios, and people might naturally use try_grab_folio(), just
-> > like we did with Vivik's code.
-> > 
-> > And I don't think we'll want to make GUP-slow in general using
-> > try_grab_folio() in the future.
-> > 
-> > So ...
-> > 
-> > > 
-> > > So again, IMHO the easist way to fix this WARN is we drop the TINY_RCU bit,
-> > > if nobody worries on UP perf.
-> > > 
-> > > I don't have a strong opinion, if any of us really worry about above three
-> > > use cases on "unless" overhead, and think it worthwhile to add the code to
-> > > support it, I won't object. But to me it's adding pain with no real benefit
-> > > we could ever measure, and adding complexity to backport too since we'll
-> > > need a fix for as old as 6.6.
-> > 
-> > ... for the sake of fixing this WARN, I don't primarily care. Adjusting the
-> > TINY_RCU feels wrong because I suspect somebody had good reasons to do it
-> > like that, and it actually reported something valuable (using the wrong
-> > function for the job).
-> > 
-> > In any case, if we take the easy route to fix the WARN, I'll come back and
-> > clean the functions here up properly.
-> 
-> Definitely, then there can also be some measurements which will be even
-> better.  I mean, if the diff is minimal, we can be clearer on the path we
-> choose; while if it shows improvements we have more solid results than
-> predictions and discussions.
-> 
-> Yes I do worry about the UP change too, hence I sincerely was trying to
-> collect some feedback.  My current guess is the UP was still important in
-> 2008 when the code first wrote, and maybe it changed over the 16 years. I
-> just notice Nicolas wrote it; I know he's still active so I've added him
-> into the loop too.
-> 
-> Just for easier reference, the commit introduced the UP change is:
-> 
-> commit e286781d5f2e9c846e012a39653a166e9d31777d
-> Author: Nicholas Piggin <npiggin@gmail.com>
-> Date:   Fri Jul 25 19:45:30 2008 -0700
-> 
->     mm: speculative page references
-> 
-> +static inline int page_cache_get_speculative(struct page *page)
-> +{
-> +       VM_BUG_ON(in_interrupt());
-> +
-> +#if !defined(CONFIG_SMP) && defined(CONFIG_CLASSIC_RCU)
-> +# ifdef CONFIG_PREEMPT
-> +       VM_BUG_ON(!in_atomic());
-> +# endif
-> +       /*
-> +        * Preempt must be disabled here - we rely on rcu_read_lock doing
-> +        * this for us.
-> +        *
-> +        * Pagecache won't be truncated from interrupt context, so if we have
-> +        * found a page in the radix tree here, we have pinned its refcount by
-> +        * disabling preempt, and hence no need for the "speculative get" that
-> +        * SMP requires.
-> +        */
-> +       VM_BUG_ON(page_count(page) == 0);
-> +       atomic_inc(&page->_count);
-> +
-> +#else
-> +       if (unlikely(!get_page_unless_zero(page))) {
-> +               /*
-> +                * Either the page has been freed, or will be freed.
-> +                * In either case, retry here and the caller should
-> +                * do the right thing (see comments above).
-> +                */
-> +               return 0;
-> +       }
-> +#endif
-> +       VM_BUG_ON(PageTail(page));
-> +
-> +       return 1;
-> +}
-> 
-> Thanks,
-> 
-> -- 
-> Peter Xu
+Dave
+
+Thanks for your comment.
+
+In my first version, it lists the historical change, while Thomas thought they
+are not relevant. So I remove those descriptions.
+
+https://lkml.org/lkml/2024/3/23/350
+
+>I suspect that the original _PAGE_PRESENT check wasn't even necessary if
+>cleanup_highmap() really did fix things up.  But this commit:
+>
+>	2aa85f246c18 ("x86/boot/64: Make level2_kernel_pgt pages invalid
+>		       outside kernel area")
+>
+>tweaked things to actively clear out PMDs that weren't populated in
+>Kirill's original loop.  It didn't touch the _PAGE_PRESENT check.  But
+>it certainly did imply that the PMD doesn't have any holes in it and
+>there's nothing int he middle that needs _PAGE_PRESENT cleared.
+>
+
+As I mentioned in my first version, the original code is introduced by
+
+	commit 1ab60e0f72f7 ("[PATCH] x86-64: Relocatable Kernel Support")
+
+The reason for the check on _PAGE_PRESENT is at that moment, level2_kernel_pgt
+is defined as:
+
+NEXT_PAGE(level2_kernel_pgt)
+	/* 40MB kernel mapping. The kernel code cannot be bigger than that.
+	   When you change this change KERNEL_TEXT_SIZE in page.h too. */
+	/* (2^48-(2*1024*1024*1024)-((2^39)*511)-((2^30)*510)) = 0 */
+	PMDS(0x0000000000000000, __PAGE_KERNEL_LARGE_EXEC|_PAGE_GLOBAL,
+		KERNEL_TEXT_SIZE/PMD_SIZE)
+	/* Module mapping starts here */
+	.fill	(PTRS_PER_PMD - (KERNEL_TEXT_SIZE/PMD_SIZE)),8,0
+
+While now, it looks like this:
+
+SYM_DATA_START_PAGE_ALIGNED(level2_kernel_pgt)
+	/*
+	 * Kernel high mapping.
+	 *
+	 * The kernel code+data+bss must be located below KERNEL_IMAGE_SIZE in
+	 * virtual address space, which is 1 GiB if RANDOMIZE_BASE is enabled,
+	 * 512 MiB otherwise.
+	 *
+	 * (NOTE: after that starts the module area, see MODULES_VADDR.)
+	 *
+	 * This table is eventually used by the kernel during normal runtime.
+	 * Care must be taken to clear out undesired bits later, like _PAGE_RW
+	 * or _PAGE_GLOBAL in some cases.
+	 */
+	PMDS(0, __PAGE_KERNEL_LARGE_EXEC, KERNEL_IMAGE_SIZE/PMD_SIZE)
+SYM_DATA_END(level2_kernel_pgt)
+
+The difference is at the original version, level2_kernel_pgt is not all
+defined with _PAGE_PRESENT set. I didn't dig into from which commit we expand
+the level2_kernel_pgt to full, while I think from that point, the check is
+redundant.
+
+>> level2_kernel_pgt compiled with _PAGE_PRESENT set. The check is
+>> redundant
+>
+>This isn't super reassuring.  It also depends on nothing having munged
+>the page tables up to this point.  The code is also a bit cruel in that
+>it manipulates two different sets of PMDs with the same 'pmd' variable.
+>
+>Also, is this comment still accurate after '2aa85f246c18'?
+>
+>>          * Fixup the kernel text+data virtual addresses. Note that
+>>          * we might write invalid pmds, when the kernel is relocated
+>>          * cleanup_highmap() fixes this up along with the mappings
+>>          * beyond _end.
+
+Sounds this is not necessary any more. Do you prefer to remove this in next
+version of this patch.
 
 -- 
-Peter Xu
-
+Wei Yang
+Help you, Help me
 
