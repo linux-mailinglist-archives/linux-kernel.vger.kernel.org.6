@@ -1,72 +1,62 @@
-Return-Path: <linux-kernel+bounces-199239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F08898D843F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:42:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CE288D843C
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:42:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABE99289A3F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:42:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26A8F1F21F6A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:42:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76D0312DD8A;
-	Mon,  3 Jun 2024 13:42:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2D4512E1E0;
+	Mon,  3 Jun 2024 13:41:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="acmdbPFN"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mrVLPgLC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56CD912D766
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 13:42:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0791912DD91;
+	Mon,  3 Jun 2024 13:41:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717422160; cv=none; b=PWJSb2THq4GeDA1PDyWgCjVHvyjI/51Bq1awYEWcK44fAXR30olSU83PGe2eElug00BcRuv5Ttg45W0icPwthJ2xNweWbHThm4SQr1eSy5SENCK5dJYh0e9/eCts47UppsR+llsLEG2PoVUJiD5BtLWUBj20ucPLfKxS29MLa74=
+	t=1717422085; cv=none; b=qAdRlizbaGdT5YyPXz/X3lUGSV+6Is9TGsk6UL2/0z+qBuIdsJFOb8aPP/DJ5wTx5PCrIxE2zRd8JNcDWjXp0lswn0ZKqrmrtWwtEXyKZQ5uL3wWl4GEgopq2oYfbl60bDi6T43VH6NvI3H7Xjkr2VEP26zk3QQDYGo2veR0ogs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717422160; c=relaxed/simple;
-	bh=fucPh4NT8afq/yJKF9Csi293Nc1OxsYl4BBLX3mkZgA=;
+	s=arc-20240116; t=1717422085; c=relaxed/simple;
+	bh=xJc0AqiQQy29me8ABZmN4bLw9qKXRmQk/m23w3aMWzo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Tgu8BhcxIHurrmQ802sZuXkJSSje8cRDrlNyG4U+INUbiB2wPpkfKkcnvTtA0Js76HPQDBESatX7kTGDbnPTXgc0YcbEHZoC9BV5JyHXtmPGA3Ee755DGxCDcsFCDY90/D/Wj7LPUv8mLCzeskQT3r8wDNbTdDkH9XniKoIWJ4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=acmdbPFN; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717422158;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0XiDMYcq96Z7HWc66TmciFozG2sGDtvjwN27J1yBx8E=;
-	b=acmdbPFNBEppepSlZCniWH1t8w8HBMilHLFaUbdyOsWn9zY/onkyGzstJkBBLgZrZnnsnQ
-	BgG3HFr+wlOsesInihjgl+lRXuEoadjxq0Y8UwYE+g9uBVY59a8MW/igo601PROwjy3G21
-	grQw1+sHb08au+F2rH1FM166AUKI4cE=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-414-HxOPD2R1O7ylb4JT3OAfXw-1; Mon, 03 Jun 2024 09:42:32 -0400
-X-MC-Unique: HxOPD2R1O7ylb4JT3OAfXw-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 1F697800CA5;
-	Mon,  3 Jun 2024 13:42:32 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.103])
-	by smtp.corp.redhat.com (Postfix) with SMTP id B788E2011C42;
-	Mon,  3 Jun 2024 13:42:30 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Mon,  3 Jun 2024 15:41:03 +0200 (CEST)
-Date: Mon, 3 Jun 2024 15:41:01 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] tick: shift tick_nohz_switch_to_nohz() from
- tick_check_oneshot_change() to hrtimer_run_queues()
-Message-ID: <20240603134100.GA388@redhat.com>
-References: <20240530124203.GA26990@redhat.com>
- <20240602102007.GA27454@redhat.com>
- <87jzj6789b.ffs@tglx>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XuqoFmDzkdj3e0DxbYJEfATV2FgxmqkP/v9NYo+U9yq0Xbde38xB9ffQgiz8NBrw7PTv5tqHQ+qGnZSjQnTywF9PmgNAqki1O7ZLHx+5G2kbqRiKMnwaC1DYR7niv2SDUrBDla9kNkj+azh9vYp0Do2LumRS6DX5wQ6KmtCLOM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mrVLPgLC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AC77C32781;
+	Mon,  3 Jun 2024 13:41:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717422084;
+	bh=xJc0AqiQQy29me8ABZmN4bLw9qKXRmQk/m23w3aMWzo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mrVLPgLC5HvIM6QZDKMEmG2pQz6gMGTRQCTff9vNcCCNSJXylXLt3Gv6xP5sO+7Ks
+	 8P1Q9ERz0Xvf4zWFziee5N4XdHSvaRVJQ9Y0/0MNXScCpBEsYHHuMO1ZFTH1j4CjS6
+	 K3HnlWV5VqFdod/imHOqV2U9SPGlr/WhdYmOOt8m6BNfmnHVblKYjMlZCrN3LTteFx
+	 EwnfAqGe/lVTWeiLNguwOOBkENiY7RpjU95yZ3OE1him7TZWVpqGHNytWrVA6lsspF
+	 vts19f5E9lahhL/yFdFdiKY8Nn9sTnf8Moz7KTCylek4wevly8MyUkUkOK0lx1rQ+P
+	 g782GKVj+0SIg==
+Date: Mon, 3 Jun 2024 08:41:21 -0500
+From: Rob Herring <robh@kernel.org>
+To: Kanak Shilledar <kanakshilledar@gmail.com>
+Cc: Kanak Shilledar <kanakshilledar111@protonmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Stefan Wahren <wahrenst@gmx.net>, linux-spi@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [RESEND v3] dt-bindings: spi: brcm,bcm2835-spi: convert to
+ dtschema
+Message-ID: <20240603134121.GA168897-robh@kernel.org>
+References: <20240531122941.3524-1-kanakshilledar111@protonmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,37 +65,119 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87jzj6789b.ffs@tglx>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.4
+In-Reply-To: <20240531122941.3524-1-kanakshilledar111@protonmail.com>
 
-On 06/03, Thomas Gleixner wrote:
->
-> On Sun, Jun 02 2024 at 12:20, Oleg Nesterov wrote:
-> > @@ -1891,8 +1891,11 @@ void hrtimer_run_queues(void)
-> >  	 * there only sets the check bit in the tick_oneshot code,
-> >  	 * otherwise we might deadlock vs. xtime_lock.
-> >  	 */
-> > -	if (tick_check_oneshot_change(!hrtimer_is_hres_enabled())) {
-> > -		hrtimer_switch_to_hres();
-> > +	if (tick_check_oneshot_change()) {
-> > +		if (hrtimer_is_hres_enabled())
-> > +			hrtimer_switch_to_hres();
-> > +		else
-> > +			tick_nohz_switch_to_nohz();
->
-> hrtimers have no business with tick_nohz_switch_to_nohz(),
-> really. That's a strict tick/nohz specific thing. hrtimers do not care
-> about NOHZ much. They care about whether they can switch to high
-> resolution mode.
+On Fri, May 31, 2024 at 05:59:37PM +0530, Kanak Shilledar wrote:
+> From: Kanak Shilledar <kanakshilledar@gmail.com>
+> 
+> Convert the Broadcom BCM2835 SPI0 controller to newer DT
+> schema. Created DT schema based on the .txt file which had
+> `comaptible`, `reg`, `interrupts`, `clocks` as required
+> properties.
+> Added GPL-2.0 OR BSD-2-Clause License
+> 
+> Signed-off-by: Kanak Shilledar <kanakshilledar111@protonmail.com>
 
-OK, lets forget this patch then.
+You forgot Conor's Reviewed-by tag.
 
-But note that the comment above the tick_check_oneshot_change() says
-"switch to highres and / or nohz mode".
-
-Thanks,
-
-Oleg.
-
+> ---
+> Changes in v3:
+> - Updated DCO email address
+> Changes in v2:
+> - Updated the maintainers
+> ---
+>  .../bindings/spi/brcm,bcm2835-spi.txt         | 23 ---------
+>  .../bindings/spi/brcm,bcm2835-spi.yaml        | 50 +++++++++++++++++++
+>  2 files changed, 50 insertions(+), 23 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/spi/brcm,bcm2835-spi.txt
+>  create mode 100644 Documentation/devicetree/bindings/spi/brcm,bcm2835-spi.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/spi/brcm,bcm2835-spi.txt b/Documentation/devicetree/bindings/spi/brcm,bcm2835-spi.txt
+> deleted file mode 100644
+> index 3d55dd64b1be..000000000000
+> --- a/Documentation/devicetree/bindings/spi/brcm,bcm2835-spi.txt
+> +++ /dev/null
+> @@ -1,23 +0,0 @@
+> -Broadcom BCM2835 SPI0 controller
+> -
+> -The BCM2835 contains two forms of SPI master controller, one known simply as
+> -SPI0, and the other known as the "Universal SPI Master"; part of the
+> -auxiliary block. This binding applies to the SPI0 controller.
+> -
+> -Required properties:
+> -- compatible: Should be one of "brcm,bcm2835-spi" for BCM2835/2836/2837 or
+> -  "brcm,bcm2711-spi" for BCM2711 or "brcm,bcm7211-spi" for BCM7211.
+> -- reg: Should contain register location and length.
+> -- interrupts: Should contain interrupt.
+> -- clocks: The clock feeding the SPI controller.
+> -
+> -Example:
+> -
+> -spi@20204000 {
+> -	compatible = "brcm,bcm2835-spi";
+> -	reg = <0x7e204000 0x1000>;
+> -	interrupts = <2 22>;
+> -	clocks = <&clk_spi>;
+> -	#address-cells = <1>;
+> -	#size-cells = <0>;
+> -};
+> diff --git a/Documentation/devicetree/bindings/spi/brcm,bcm2835-spi.yaml b/Documentation/devicetree/bindings/spi/brcm,bcm2835-spi.yaml
+> new file mode 100644
+> index 000000000000..94da68792194
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/spi/brcm,bcm2835-spi.yaml
+> @@ -0,0 +1,50 @@
+> +# SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/spi/brcm,bcm2835-spi.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Broadcom BCM2835 SPI0 controller
+> +
+> +maintainers:
+> +  - Florian Fainelli <florian.fainelli@broadcom.com>
+> +  - Kanak Shilledar <kanakshilledar111@protonmail.com>
+> +  - Stefan Wahren <wahrenst@gmx.net>
+> +
+> +allOf:
+> +  - $ref: spi-controller.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - brcm,bcm2835-spi
+> +      - brcm,bcm2711-spi
+> +      - brcm,bcm7211-spi
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - clocks
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    spi@20204000 {
+> +        compatible = "brcm,bcm2835-spi";
+> +        reg = <0x7e204000 0x1000>;
+> +        interrupts = <2 22>;
+> +        clocks = <&clk_spi>;
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +    };
+> -- 
+> 2.34.1
+> 
 
