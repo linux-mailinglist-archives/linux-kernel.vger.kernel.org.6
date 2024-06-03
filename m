@@ -1,212 +1,130 @@
-Return-Path: <linux-kernel+bounces-199804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FC9D8FA622
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 01:02:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 685928FA627
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 01:02:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3760A1C22148
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 23:02:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DDDE1F241C1
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 23:02:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17DB613CFA1;
-	Mon,  3 Jun 2024 23:02:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 860325028C;
+	Mon,  3 Jun 2024 23:02:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UbXLYWI2"
-Received: from mail-wm1-f67.google.com (mail-wm1-f67.google.com [209.85.128.67])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ICuYMLam"
+Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67CF571747
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 23:02:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 380557E583
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 23:02:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717455733; cv=none; b=b4MCq23MwoDjeAq+0Nlkks0b0+hiH0j//AzLpeglv9N/bL3dt3Cl+Cq5/d3w1IvrAn8APzhaAmi6OwGZrM1HadlSLbtH6DiDLo7uc5ESo2dZGRy+qJz4z3Zu6F5jKmwhLEOJLHRrRFcihhuXQFgcquWiY+Hv0QvaPaY1CYHKluY=
+	t=1717455762; cv=none; b=df0U/xDCsz0UDfAU+BU0/bDDJWVwUjcFFmUd6VeKfOSPWyKnqFye/oWRR3QYE/VxUCmy2tKsW2godaKOc44irWSpIaYgvuiHCVV189nmRgPabNs4GTz/1YceAG+KXbCdYmyA5X9cMknNb5HKhc33F/Wmc3L5opm9WqZEUJwjxaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717455733; c=relaxed/simple;
-	bh=0jZi6KDIf1K2W/UDkvFfqguppsND1IA8K+Mx7olaYcw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UpvA90qQsU1FmzleN5yAk4+13+o2GnKEZW5xdcaf07P+LKwDZ89YHQl1nFR0i8bJFxYqBR2qNxlAx8DQE7nSEEFojldVkni2i7reG6ATbEoBPme+aoZcrc+wQ9PP2MdjCBcFxNGrTJ0D2HqeG8+FTXyvW+o3mg67krCicTzYsw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UbXLYWI2; arc=none smtp.client-ip=209.85.128.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f67.google.com with SMTP id 5b1f17b1804b1-421396e3918so24616625e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 16:02:11 -0700 (PDT)
+	s=arc-20240116; t=1717455762; c=relaxed/simple;
+	bh=5tOD2pHjMWWdT8TSGj9EPKKaUP3pnp/j6cP/I84FMmg=;
+	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JDIZ0YwQbevZidzypGg1rdgB32iziUcm7uInWIUsU3kOy3Lwommqq2+BCfgpNbpvTqjrcEoUl+fWuEzYHWnTonJhMIv7KI13EPg8Z+Xwr9qhpbIOs7ygy2/whH3ql6hSdBvZ8ahn8i+mkMoGXNM5mzPyE8jESfGQWyoO4qT7268=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ICuYMLam; arc=none smtp.client-ip=209.85.161.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-5b9778bb7c8so2844198eaf.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 16:02:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717455730; x=1718060530; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kSyt1luXPfolxaJFzIiXo2v2aq7LyOeBXFD6yzHDT/c=;
-        b=UbXLYWI2bSmCik3AfdH4ORblsXmoxXBJdygmzYrHyxZzDRHcXc3ND10OD1CydyK0Em
-         avASTW01PwupE6iA+h7KDWWbg9/hcIgjIF0VpZvaa6LvBEJsL186abIhVfKJzC4ITsoK
-         vazI+DeU9oi2DnnkkGrlOLOsvNjeex4ac8Lqj5bTOiHvYTnJdYC8VQiVfDFwPsgLJw/L
-         4MAPey1diXt1vn0wVlI8P/B+i8LNdZwY8htjcwIU1QHDSReoxz+ZlBQDlcTbyuDq+u5h
-         pIIwdmQsCIPs4nt1iRNUcxb9Qoe1wjcOaYVIpjFULQXa46SvqL37XsO4rhjKG7wfcurz
-         zIkw==
+        d=chromium.org; s=google; t=1717455759; x=1718060559; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ggaQ6J5T1IxPl9jccfKKlkkSH+FkZbGLyq3WMqICX4c=;
+        b=ICuYMLamE/chWrfVWwNlsbzjO57nSS56w+ONXVTWS8yzc71ECSuIjvJnPXBVCjYVkP
+         PrscTxhX9+Z1SKVYBYdeB4JmFPj2qYnL45xhIWlO5snkkfLV+9CAmANwx6LhlLNqVdZG
+         COsNljzFFRJpyjfhN6gQnaYAuD5bxwPSck6uQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717455730; x=1718060530;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kSyt1luXPfolxaJFzIiXo2v2aq7LyOeBXFD6yzHDT/c=;
-        b=xEa2zNeqt/x1JFv8ffglDc55JjDhvIYSGwlN39AJ9DM85cnuHdepyr05EAoVg+9E0T
-         cRbSivehBPm7Rq+cqExqlIBmTZ3IEHY6o5OLheSOGEa2HbuGQlRgKFjdAdFffLfCE96V
-         wz/g3fLz44XEtTGIJXfsQI/1MUF+A12KpVL4aEQimxoMpRX9QeiaNBR9xKCbQa/Ko60t
-         1kEBTQwWrm6stnFK5ui11e/0GWXFEG71N8h3FphiS5A94HrpWldMtVCG0E/I78LV/gRM
-         L8m+0Nce+BvnaOETXZllQElqw/5MU36kN/kYvFbN1NW6/83YW6A18tWo+pBrltcLpjKK
-         HTXQ==
-X-Gm-Message-State: AOJu0Yy615vA0klkS6358O2GZ1h4XY0/YVtG8ebgzV0XhnVKQPxkvMMQ
-	1nvZLjZMiSEifj0Q/DB1w+PuyjkqTSuFcLVH9+Umc5AtKu0VmXgT6Bv1ufwG4AU=
-X-Google-Smtp-Source: AGHT+IFH1dqVFdu0WORd1M0vWphzQ+CUSs7JJzkjEEqfH4oyoXjfHod5f+1x+jjn72SC3LPFAx44cg==
-X-Received: by 2002:a05:600c:4f0f:b0:41b:f116:8868 with SMTP id 5b1f17b1804b1-4212e0502e7mr105289885e9.12.1717455729708;
-        Mon, 03 Jun 2024 16:02:09 -0700 (PDT)
-Received: from [192.168.0.3] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4214ecbb563sm82895e9.21.2024.06.03.16.02.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Jun 2024 16:02:09 -0700 (PDT)
-Message-ID: <0d254b5e-0dcf-41c2-949e-2edd880b2de6@linaro.org>
-Date: Tue, 4 Jun 2024 00:02:08 +0100
+        d=1e100.net; s=20230601; t=1717455759; x=1718060559;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ggaQ6J5T1IxPl9jccfKKlkkSH+FkZbGLyq3WMqICX4c=;
+        b=qAL38kg/glIH25Ar0zGXLJy6fngOesW4yz7zIZFIZb3yYPQL+XzA+RnrL8ltZ0nrwQ
+         Y33Z1IwJj6ucEjlVpfXpPeIktvwso6klLkNpqoKyt+L5zV7uKR6HnQ2bBoILjshK1FMQ
+         fGLgAhXNNu6AAx+b4esnW8Pw4w1tmd1d/rbiLJldCR51oWZNVCCCWMI087zElMYIh7vn
+         gfDVDPXFk0RIVRtcgbR3XpxscxNbqN/9YLbwDCoDzYEQ2IL1thfYdp5TRtLz7oJAAslz
+         fZnHgtS6p/3Xhu9V+5oi0pV3xYHJFQqv9Oks9M6APK64bBot2Zht9w8v36Hd3ksYigDl
+         FZGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXktQRBgoCs0wvUygk0T/lGXZ5/9GoamYHQj9qOPugyhmqD/cT2QIC8EwLVGaIZyfVeIGj9jtHezU+MvDhQqN8iO8vZf6FziG781yyg
+X-Gm-Message-State: AOJu0YzJJrj39/I80aU5CbJ3hNqtFZOwoTKa2W3kLxgR62I39/JAleh7
+	iyMSuPCiqXGS3VCnFZmS6pEKklj7XL11HS9v7Fw8MjMqyIx8mNN2LsrraROyIGuyClHt5HB87g8
+	AH4a1Mct3HPTGy3epaa2q/vEtGLA5dXwkkhZz
+X-Google-Smtp-Source: AGHT+IF7d/TDt2PvSfLYQF36A+sjUkHpPi0ohhg8rJGf+olIn56FTIptan9DUYCXFiaG4Z93Ic9j80AfvaYOMw8ZPZU=
+X-Received: by 2002:a05:6870:d8d3:b0:24f:d6c1:692 with SMTP id
+ 586e51a60fabf-2508ba20045mr12189521fac.29.1717455759199; Mon, 03 Jun 2024
+ 16:02:39 -0700 (PDT)
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Mon, 3 Jun 2024 16:02:38 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] media: venus: Constify struct dec_bufsize_ops and
- enc_bufsize_ops
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org
-References: <9bc4b24a55c42fa49125cae0304c8b0f208550b1.1717313173.git.christophe.jaillet@wanadoo.fr>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <9bc4b24a55c42fa49125cae0304c8b0f208550b1.1717313173.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20221006224212.569555-8-gpiccoli@igalia.com>
+References: <20221006224212.569555-1-gpiccoli@igalia.com> <20221006224212.569555-8-gpiccoli@igalia.com>
+From: Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.10
+Date: Mon, 3 Jun 2024 16:02:38 -0700
+Message-ID: <CAE-0n50vo5xkUNK0-cF9HZRXShsxbikqmdVnmMzRsn+Z7MEJTg@mail.gmail.com>
+Subject: Re: [PATCH 7/8] efi: pstore: Follow convention for the efi-pstore
+ backend name
+To: "Guilherme G. Piccoli" <gpiccoli@igalia.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Cc: kernel-dev@igalia.com, kernel@gpiccoli.net, keescook@chromium.org, 
+	anton@enomsg.org, ccross@android.com, tony.luck@intel.com, 
+	linux-efi@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On 02/06/2024 15:27, Christophe JAILLET wrote:
-> "struct dec_bufsize_ops and "struct enc_bufsize_ops" are not modified in
-> this driver.
-> 
-> Constifying these structures moves some data to a read-only section, so
-> increase overall security.
-> 
-> On a x86_64, with allmodconfig:
-> Before:
->     text	   data	    bss	    dec	    hex	filename
->    12494	    822	      0	  13316	   3404	drivers/media/platform/qcom/venus/hfi_plat_bufs_v6.o
-> 
-> After:
->     text	   data	    bss	    dec	    hex	filename
->    12766	    566	      0	  13332	   3414	drivers/media/platform/qcom/venus/hfi_plat_bufs_v6.o
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Quoting Guilherme G. Piccoli (2022-10-06 15:42:11)
+> For some reason, the efi-pstore backend name (exposed through the
+> pstore infrastructure) is hardcoded as "efi", whereas all the other
+> backends follow a kind of convention in using the module name.
+>
+> Let's do it here as well, to make user's life easier (they might
+> use this info for unloading the module backend, for example).
+
+This patch broke ChromeOS' crash reporter when running on EFI[1], which
+luckily isn't the typical mode of operation for Chromebooks. The problem
+was that we had hardcoded something like dmesg-efi-<number> into the
+regex logic that finds EFI pstore records. I didn't write the original
+code but I think the idea was to speed things up by parsing the
+filenames themselves to collect the files related to a crash record
+instead of opening and parsing the header from the files to figure out
+which file corresponds to which record.
+
+I suspect the fix is pretty simple (make the driver name match either
+one via a regex) but I just wanted to drop a note here that this made
+some lives harder, not easier.
+
+>
+> Cc: Ard Biesheuvel <ardb@kernel.org>
+> Signed-off-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
 > ---
-> Changes in v2:
->     - Add missing prefix in the subject
-> 
-> v1: https://lore.kernel.org/all/9bc4b28a55c42fa4a125c3e03d4c8b0f208550b4.1717313173.git.christophe.jaillet@wanadoo.fr/
-> 
-> While looking at lore to find the reference above, I found that this
-> patch had already been sent by Rikard Falkeborn <rikard.falkeborn@gmail.com>
-> See: https://lore.kernel.org/all/20211212123534.4473-1-rikard.falkeborn@gmail.com/
-> 
-> So, if applied, credits should be for him.
-> So feel free to add a Co-Developed-by:, Reported-by:, Suggested-by: or
-> whatever makes sense, including removing my Signed-off-by: to put his if
-> it sounds better to do it this way.
-> 
->   .../platform/qcom/venus/hfi_plat_bufs_v6.c    | 20 +++++++++----------
->   1 file changed, 10 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/media/platform/qcom/venus/hfi_plat_bufs_v6.c b/drivers/media/platform/qcom/venus/hfi_plat_bufs_v6.c
-> index f5a655973c08..6289166786ec 100644
-> --- a/drivers/media/platform/qcom/venus/hfi_plat_bufs_v6.c
-> +++ b/drivers/media/platform/qcom/venus/hfi_plat_bufs_v6.c
-> @@ -1063,51 +1063,51 @@ struct enc_bufsize_ops {
->   	u32 (*persist)(void);
->   };
->   
-> -static struct dec_bufsize_ops dec_h264_ops = {
-> +static const struct dec_bufsize_ops dec_h264_ops = {
->   	.scratch = h264d_scratch_size,
->   	.scratch1 = h264d_scratch1_size,
->   	.persist1 = h264d_persist1_size,
->   };
->   
-> -static struct dec_bufsize_ops dec_h265_ops = {
-> +static const struct dec_bufsize_ops dec_h265_ops = {
->   	.scratch = h265d_scratch_size,
->   	.scratch1 = h265d_scratch1_size,
->   	.persist1 = h265d_persist1_size,
->   };
->   
-> -static struct dec_bufsize_ops dec_vp8_ops = {
-> +static const struct dec_bufsize_ops dec_vp8_ops = {
->   	.scratch = vpxd_scratch_size,
->   	.scratch1 = vp8d_scratch1_size,
->   	.persist1 = vp8d_persist1_size,
->   };
->   
-> -static struct dec_bufsize_ops dec_vp9_ops = {
-> +static const struct dec_bufsize_ops dec_vp9_ops = {
->   	.scratch = vpxd_scratch_size,
->   	.scratch1 = vp9d_scratch1_size,
->   	.persist1 = vp9d_persist1_size,
->   };
->   
-> -static struct dec_bufsize_ops dec_mpeg2_ops = {
-> +static const struct dec_bufsize_ops dec_mpeg2_ops = {
->   	.scratch = mpeg2d_scratch_size,
->   	.scratch1 = mpeg2d_scratch1_size,
->   	.persist1 = mpeg2d_persist1_size,
->   };
->   
-> -static struct enc_bufsize_ops enc_h264_ops = {
-> +static const struct enc_bufsize_ops enc_h264_ops = {
->   	.scratch = h264e_scratch_size,
->   	.scratch1 = h264e_scratch1_size,
->   	.scratch2 = enc_scratch2_size,
->   	.persist = enc_persist_size,
->   };
->   
-> -static struct enc_bufsize_ops enc_h265_ops = {
-> +static const struct enc_bufsize_ops enc_h265_ops = {
->   	.scratch = h265e_scratch_size,
->   	.scratch1 = h265e_scratch1_size,
->   	.scratch2 = enc_scratch2_size,
->   	.persist = enc_persist_size,
->   };
->   
-> -static struct enc_bufsize_ops enc_vp8_ops = {
-> +static const struct enc_bufsize_ops enc_vp8_ops = {
->   	.scratch = vp8e_scratch_size,
->   	.scratch1 = vp8e_scratch1_size,
->   	.scratch2 = enc_scratch2_size,
-> @@ -1186,7 +1186,7 @@ static int bufreq_dec(struct hfi_plat_buffers_params *params, u32 buftype,
->   	u32 codec = params->codec;
->   	u32 width = params->width, height = params->height, out_min_count;
->   	u32 out_width = params->out_width, out_height = params->out_height;
-> -	struct dec_bufsize_ops *dec_ops;
-> +	const struct dec_bufsize_ops *dec_ops;
->   	bool is_secondary_output = params->dec.is_secondary_output;
->   	bool is_interlaced = params->dec.is_interlaced;
->   	u32 max_mbs_per_frame = params->dec.max_mbs_per_frame;
-> @@ -1260,7 +1260,7 @@ static int bufreq_enc(struct hfi_plat_buffers_params *params, u32 buftype,
->   		      struct hfi_buffer_requirements *bufreq)
->   {
->   	enum hfi_version version = params->version;
-> -	struct enc_bufsize_ops *enc_ops;
-> +	const struct enc_bufsize_ops *enc_ops;
->   	u32 width = params->width;
->   	u32 height = params->height;
->   	bool is_tenbit = params->enc.is_tenbit;
+>  drivers/firmware/efi/efi-pstore.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/firmware/efi/efi-pstore.c b/drivers/firmware/efi/efi-pstore.c
+> index 3bddc152fcd4..97a9e84840a0 100644
+> --- a/drivers/firmware/efi/efi-pstore.c
+> +++ b/drivers/firmware/efi/efi-pstore.c
+> @@ -207,7 +207,7 @@ static int efi_pstore_erase(struct pstore_record *record)
+>
+>  static struct pstore_info efi_pstore_info = {
+>         .owner          = THIS_MODULE,
+> -       .name           = "efi",
+> +       .name           = KBUILD_MODNAME,
+>         .flags          = PSTORE_FLAGS_DMESG,
+>         .open           = efi_pstore_open,
+>         .close          = efi_pstore_close,
 
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+[1] https://source.chromium.org/chromiumos/chromiumos/codesearch/+/main:src/platform2/crash-reporter/kernel_collector.cc;l=54;drc=7a522166f0b2b32ece60f520b5d3d571c7545b0b
 
