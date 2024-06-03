@@ -1,82 +1,94 @@
-Return-Path: <linux-kernel+bounces-199219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B856D8D83FE
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:31:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A466C8D8403
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:32:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 639FD1F20FE6
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:31:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 599AB28DF40
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:32:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C74B012D76B;
-	Mon,  3 Jun 2024 13:31:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KHy5ljMU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 117E412E1D3;
+	Mon,  3 Jun 2024 13:32:10 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E8CB8174C;
-	Mon,  3 Jun 2024 13:31:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9F1212D1FA;
+	Mon,  3 Jun 2024 13:32:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717421493; cv=none; b=jcIGeg5ALyjGK8LTRU31iOhdeuzKjfXtJU239s1bxwgqo2twVX50Cwfs4tNDyvhef7CkSy/LL5ZFA5tzIwy1p9HTppSH2RlsqjUm9H/qieNzrXSiHQcmEFDh/HHBTxClQ+JZUPbyUshQD9Jb93bHYmgQPtiG5MxJe3fOqh0aGTw=
+	t=1717421529; cv=none; b=c4/jIXYVhpoS+Eu5stzG53TJMtGNuxqFFucpLrzZWU01CZcd8SPs7c5B22vpUlP2F0Ih27rB0tdda6R600JZNS0fAYqO6oHh5VgAx3jgcYMp8WelPhrkC1h7puKa/WgVYB26GMDTRH0r7y/M6EzxGaa0aXMX+1tY9RM6QlWO5Wo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717421493; c=relaxed/simple;
-	bh=UptWuo5qgHi9d/+bS7xljBG7+CacnWbYGCzJFJXbkOA=;
+	s=arc-20240116; t=1717421529; c=relaxed/simple;
+	bh=i7qyliEW3tXAHVQUR36q8o9p80BoaaM8/W3VFHNn2Wc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dJyzj/r9LIQL06PypmHQ8DDKqEmXNdp45vJtq/mPTzuwXKR9RPR/U0SrCD1qbr6R2rQxE/UXpH8cSqagVyUrBK8nvf7xoYimtRuJLb02dQcPamsYGkVRWTv9l6x+9iafMHxhXHd6MUOYD7Sa9g+EdfR9QJ4HYp92rNtaAt5jq6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KHy5ljMU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A72A6C2BD10;
-	Mon,  3 Jun 2024 13:31:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717421492;
-	bh=UptWuo5qgHi9d/+bS7xljBG7+CacnWbYGCzJFJXbkOA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KHy5ljMUVZerc5t9oZ2492IgTFmObb/RHi5HJgiiP8DD5dMtXaTPg37EUA3DR0GG2
-	 +fzWwU9aaSeS2MqpspB6E7cXl1dNWbIAgL5SJPE//HT5T4cAuNj8IvT1CZ8mkumf5Z
-	 hDr7GR4N/ylS8J3H9wMckBy9mj1SwI6oWxK4L9M8kVGA4nvOBkeoAW05eVe7psw5Ij
-	 QKFWtNxMyZkuqyAhOeRsRmj1EamRTg7hYGyb7pmL11rFCc/TkwZVDfDsYbzXbt/pyt
-	 /dqADjyfBZu0TTPSGTVEErpJgljI8HQt1mMey7PirtU4uQY6mK1peD1UVjC3Ug5sEl
-	 gnm8O7JbNKzLg==
-Date: Mon, 3 Jun 2024 15:31:27 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Eric Sandeen <sandeen@redhat.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, David Howells <dhowells@redhat.com>, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] debugfs: ignore auto and noauto options if given
-Message-ID: <20240603-holzschnitt-abwaschen-2f5261637ca8@brauner>
-References: <20240522083851.37668-1-wsa+renesas@sang-engineering.com>
- <20240524-glasfaser-gerede-fdff887f8ae2@brauner>
- <20240527100618.np2wqiw5mz7as3vk@ninjato>
- <20240527-pittoresk-kneipen-652000baed56@brauner>
- <nr46caxz7tgxo6q6t2puoj36onat65pt7fcgsvjikyaid5x2lt@gnw5rkhq2p5r>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gTg3c5bmGFsZcKZ5Jcs9if7Os55gMR8f7Mue9UOLLSSZwYnLbyCHXTeNQxDeT4nSTH5vj0L2I3PDhs9dNBoEAF7VikadId9qm2CHr0X3ZgbQpmdFXXLlMHGGgAuGGbIiZfJfBCDbvCSvdV+wVUHQeiRDzwjL2JJXghe5gWoHRRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.97.1)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1sE7mv-000000001SM-47uV;
+	Mon, 03 Jun 2024 13:31:50 +0000
+Date: Mon, 3 Jun 2024 14:31:46 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Sky Huang <SkyLake.Huang@mediatek.com>, Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Qingfang Deng <dqfext@gmail.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Steven Liu <Steven.Liu@mediatek.com>
+Subject: Re: [PATCH net-next v6 5/5] net: phy: add driver for built-in 2.5G
+ ethernet PHY on MT7988
+Message-ID: <Zl3Fwoiv1bJlGaQZ@makrotopia.org>
+References: <20240603121834.27433-1-SkyLake.Huang@mediatek.com>
+ <20240603121834.27433-6-SkyLake.Huang@mediatek.com>
+ <Zl3ELbG8c8y0/4DN@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <nr46caxz7tgxo6q6t2puoj36onat65pt7fcgsvjikyaid5x2lt@gnw5rkhq2p5r>
+In-Reply-To: <Zl3ELbG8c8y0/4DN@shell.armlinux.org.uk>
 
-On Mon, Jun 03, 2024 at 09:24:50AM +0200, Wolfram Sang wrote:
+On Mon, Jun 03, 2024 at 02:25:01PM +0100, Russell King (Oracle) wrote:
+> On Mon, Jun 03, 2024 at 08:18:34PM +0800, Sky Huang wrote:
+> > Add support for internal 2.5Gphy on MT7988. This driver will load
+> > necessary firmware, add appropriate time delay and figure out LED.
+> > Also, certain control registers will be set to fix link-up issues.
 > 
-> > > > Does that fix it for you?
-> > > 
-> > > Yes, it does, thank you.
-> > > 
-> > > Reported-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> > > Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> > 
-> > Thanks, applied. Should be fixed by end of the week.
+> Based on our previous discussion, it may be worth checking in the
+> .config_init() method whether phydev->interface is one of the
+> PHY interface modes that this PHY supports. As I understand from one
+> of your previous emails, the possibilities are XGMII, USXGMII or
+> INTERNAL. Thus:
 > 
-> It is in -next but not in rc2. rc3 then?
+> > +static int mt798x_2p5ge_phy_config_init(struct phy_device *phydev)
+> > +{
+> > +	struct pinctrl *pinctrl;
+> > +	int ret;
+> 
+> 	/* Check that the PHY interface type is compatible */
+> 	if (phydev->interface != PHY_INTERFACE_MODE_INTERNAL &&
+> 	    phydev->interface != PHY_INTERFACE_MODE_XGMII &&
+> 	    phydev->interface != PHY_INTERFACE_MODE_USXGMII)
+> 		return -ENODEV;
 
-Yes, it wasn't ready when I sent the fixes for -rc2 as I just put it in
-that day.
+The PHY is built-into the SoC, and as such the connection type should
+always be "internal". The PHY does not exist as dedicated IC, only
+as built-in part of the MT7988 SoC.
 
