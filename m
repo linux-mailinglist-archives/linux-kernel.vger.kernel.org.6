@@ -1,188 +1,78 @@
-Return-Path: <linux-kernel+bounces-199699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 835998D8B0A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 22:46:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 073DD8D8B0B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 22:46:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A31EC1C231E6
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 20:46:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85B0BB241C2
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 20:46:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFB7F13B59C;
-	Mon,  3 Jun 2024 20:46:14 +0000 (UTC)
-Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4404C13B58C;
+	Mon,  3 Jun 2024 20:46:46 +0000 (UTC)
+Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79C32B651;
-	Mon,  3 Jun 2024 20:46:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C614B13958C
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 20:46:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717447574; cv=none; b=Bp8k6QPsb1D1sUWELzrEcxSWOcu9mQ1JxQa2zQgcjfAP/u9tlbMQfiXR81KQmryhojTnmliWq0yNxWKnoGfES61noUS7z/dyLzh0I2/XjIfvxNQU8AaN7uqpeirDmtavW44I1CS45T/OLtxz8S9EKB0gz0QZ25iArJSTN/yw8Sk=
+	t=1717447605; cv=none; b=NeKOILm8TeLKafZPvDRpABtxJhtk+j9PsdMM72ONhGLcUGA1+fGGo9dcdOBgrvtasYHBIf7et50CmybGdxTIMTM+w8IOLi9g8VM7Q/Swde4GaZkY7wOELSZlzo/8uwgyRdME/0+0ll21TwZXcAjP23oJnSMTLTo2YZ+UymPNlcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717447574; c=relaxed/simple;
-	bh=R2QkOlhuMFFxiF5tENr/6ZI22OVqBhT81sSAayPR0k8=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=e1ZLvQtS2gtADCItfXNu5m1/nZO7m4EQk/zRMQz1T2BhL4S17T6cLindZpLTYcZbpTvNckISBKLM3Lh95g58V7SSxdkW4UgF9jd7ZLLKEMExEiQP6pV6paqVIcyz0tlSiuT4XVwB1qowZMDbRUCq/c37v1IQEKHDuQveaPDCOPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
-Received: from [192.168.1.105] (178.176.75.167) by msexch01.omp.ru
- (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Mon, 3 Jun
- 2024 23:45:52 +0300
-Subject: Re: [net-next PATCH v4 7/7] net: ravb: Allocate RX buffers via page
- pool
-To: Paul Barker <paul.barker.ct@bp.renesas.com>, Simon Horman
-	<horms@kernel.org>
-CC: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
-	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, =?UTF-8?Q?Niklas_S=c3=b6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>, Biju Das
-	<biju.das.jz@bp.renesas.com>, Claudiu Beznea
-	<claudiu.beznea.uj@bp.renesas.com>, Yoshihiro Shimoda
-	<yoshihiro.shimoda.uh@renesas.com>, <netdev@vger.kernel.org>,
-	<linux-renesas-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240528150339.6791-1-paul.barker.ct@bp.renesas.com>
- <20240528150339.6791-8-paul.barker.ct@bp.renesas.com>
- <20240601101300.GA491852@kernel.org>
- <6165a9a3-15ec-4a40-901a-17c2be64daf1@bp.renesas.com>
-From: Sergey Shtylyov <s.shtylyov@omp.ru>
-Organization: Open Mobile Platform
-Message-ID: <d0c47784-ec5f-eabf-8fe9-9405093accf8@omp.ru>
-Date: Mon, 3 Jun 2024 23:45:51 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+	s=arc-20240116; t=1717447605; c=relaxed/simple;
+	bh=FsvxSX/KBaDFhi+ZDmk2mVbiVY6TXD1Hp+ZfY7jSulQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nTQerzEH9QF4YM4bu0ScmD5QbSKCPki+xXhwugwaMPQemSPfQbAefB1YBJS3fJVMWK74EfuqKEBOe3aCyND/trh3nYpKaKX8aWrail9VuXZijxD5vn09wqRW6TU6Z8qBpvKsNyG50G3qP4Hjc0WSF2D0BJkWOWIOErbk9VVD2wc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=176.9.242.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout3.hostsharing.net (Postfix) with ESMTPS id 131C3100EF4A2;
+	Mon,  3 Jun 2024 22:46:35 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id CC119FAB5C; Mon,  3 Jun 2024 22:46:34 +0200 (CEST)
+Date: Mon, 3 Jun 2024 22:46:34 +0200
+From: Lukas Wunner <lukas@wunner.de>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Ard Biesheuvel <ardb@kernel.org>, linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: Re: [PATCH] sysfs: Add stub sysfs_bin_attr_simple_read() for
+ !CONFIG_SYSFS
+Message-ID: <Zl4rqswlbGM-eRY6@wunner.de>
+References: <0-v1-44baae71b833+ab-sysfs_simple_read_jgg@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <6165a9a3-15ec-4a40-901a-17c2be64daf1@bp.renesas.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
- (10.188.4.12)
-X-KSE-ServerInfo: msexch01.omp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.0, Database issued on: 06/03/2024 20:26:14
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 59
-X-KSE-AntiSpam-Info: Lua profiles 185692 [Jun 03 2024]
-X-KSE-AntiSpam-Info: Version: 6.1.0.4
-X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
-X-KSE-AntiSpam-Info: LuaCore: 20 0.3.20
- 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f
-X-KSE-AntiSpam-Info: {rep_avail}
-X-KSE-AntiSpam-Info: {Tracking_uf_ne_domains}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: {relay has no DNS name}
-X-KSE-AntiSpam-Info: {SMTP from is not routable}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 178.176.75.167 in (user)
- b.barracudacentral.org}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 178.176.75.167 in (user)
- dbl.spamhaus.org}
-X-KSE-AntiSpam-Info:
-	lore.kernel.org:7.1.1;www.kernel.org:7.1.1;omp.ru:7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1
-X-KSE-AntiSpam-Info: ApMailHostAddress: 178.176.75.167
-X-KSE-AntiSpam-Info: {DNS response errors}
-X-KSE-AntiSpam-Info: Rate: 59
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
- smtp.mailfrom=omp.ru;dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 06/03/2024 20:31:00
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 6/3/2024 5:58:00 PM
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0-v1-44baae71b833+ab-sysfs_simple_read_jgg@nvidia.com>
 
-On 6/3/24 11:02 AM, Paul Barker wrote:
+On Mon, Jun 03, 2024 at 02:30:45PM -0300, Jason Gunthorpe wrote:
+> Since the only declaration for sysfs_bin_attr_simple_read() is inside the
+> "#ifdef CONFIG_SYSFS". Add a stub to the #else section too.
 [...]
->>> This patch makes multiple changes that can't be separated:
->>>
->>>   1) Allocate plain RX buffers via a page pool instead of allocating
->>>      SKBs, then use build_skb() when a packet is received.
->>>   2) For GbEth IP, reduce the RX buffer size to 2kB.
->>>   3) For GbEth IP, merge packets which span more than one RX descriptor
->>>      as SKB fragments instead of copying data.
->>>
->>> Implementing (1) without (2) would require the use of an order-1 page
->>> pool (instead of an order-0 page pool split into page fragments) for
->>> GbEth.
->>>
->>> Implementing (2) without (3) would leave us no space to re-assemble
->>> packets which span more than one RX descriptor.
->>>
->>> Implementing (3) without (1) would not be possible as the network stack
->>> expects to use put_page() or page_pool_put_page() to free SKB fragments
->>> after an SKB is consumed.
->>>
->>> RX checksum offload support is adjusted to handle both linear and
->>> nonlinear (fragmented) packets.
->>>
->>> This patch gives the following improvements during testing with iperf3.
->>>
->>>   * RZ/G2L:
->>>     * TCP RX: same bandwidth at -43% CPU load (70% -> 40%)
->>>     * UDP RX: same bandwidth at -17% CPU load (88% -> 74%)
->>>
->>>   * RZ/G2UL:
->>>     * TCP RX: +30% bandwidth (726Mbps -> 941Mbps)
->>>     * UDP RX: +417% bandwidth (108Mbps -> 558Mbps)
->>>
->>>   * RZ/G3S:
->>>     * TCP RX: +64% bandwidth (562Mbps -> 920Mbps)
->>>     * UDP RX: +420% bandwidth (90Mbps -> 468Mbps)
->>>
->>>   * RZ/Five:
->>>     * TCP RX: +217% bandwidth (145Mbps -> 459Mbps)
->>>     * UDP RX: +470% bandwidth (20Mbps -> 114Mbps)
->>>
->>> There is no significant impact on bandwidth or CPU load in testing on
->>> RZ/G2H or R-Car M3N.
->>>
->>> Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
-
-[...]
-
->>> diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-[...]
->>> @@ -298,13 +269,14 @@ static void ravb_ring_free(struct net_device *ndev, int q)
->>>  		priv->tx_ring[q] = NULL;
->>>  	}
->>>  
->>> -	/* Free RX skb ringbuffer */
->>> -	if (priv->rx_skb[q]) {
->>> -		for (i = 0; i < priv->num_rx_ring[q]; i++)
->>> -			dev_kfree_skb(priv->rx_skb[q][i]);
->>> +	/* Free RX buffers */
->>> +	for (i = 0; i < priv->num_rx_ring[q]; i++) {
->>> +		if (priv->rx_buffers[q][i].page)
->>> +			page_pool_put_page(priv->rx_pool[q], priv->rx_buffers[q][i].page, 0, true);
->>
->> nit: Networking still prefers code to be 80 columns wide or less.
->>      It looks like that can be trivially achieved here.
->>
->>      Flagged by checkpatch.pl --max-line-length=80
+> I don't see a patch for this yet, but I did find a 0-day robot complaint:
 > 
-> Sergey has asked me to wrap to 100 cols [1]. I can only find a reference
-> to 80 in the docs though [2], so I guess you may be right.
-> 
-> [1]: https://lore.kernel.org/all/611a49b8-ecdb-6b91-9d3e-262bf3851f5b@omp.ru/
-> [2]: https://www.kernel.org/doc/html/latest/process/coding-style.html
+> https://lore.kernel.org/all/202404200345.eGdn5uxW-lkp@intel.com/
 
-   Note that I (mostly) meant the comments...
+I already submitted a patch on May 23, but it hasn't been applied yet:
 
-[...]
+https://lore.kernel.org/all/05f4290439a58730738a15b0c99cd8576c4aa0d9.1716461752.git.lukas@wunner.de/
 
-MBR, Sergey
+(My patch returns 0, yours -EINVAL, but I don't think that matters.)
+
+Thanks (and sorry for the breakage)!
+
+Lukas
 
