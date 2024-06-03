@@ -1,97 +1,197 @@
-Return-Path: <linux-kernel+bounces-198591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3EF58D7AC1
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 06:24:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D6BF8D7AC3
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 06:27:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91234282160
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 04:24:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58C701C21511
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 04:27:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D228C17C77;
-	Mon,  3 Jun 2024 04:24:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 093A217BB9;
+	Mon,  3 Jun 2024 04:27:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jc+Sp4nU"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ufc/Fcf3"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C8C718E02;
-	Mon,  3 Jun 2024 04:24:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95A5910F1
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 04:27:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717388663; cv=none; b=t+09z2h6YTgHNsw1tzAxz1K355CkSun+HR5OP0iCU8Fa/yFnGLTkQ1nHCu7xV7HYOWAzzFb1FAlxjy5aQ2WS9riES98SHe+tPneX1dsJbxQ0ax5EmO6HK9PhsIRmt5wJGTJmaLcgKwTovtmhHiu2owjLtbRxLwpxSsyRJZ5Q++E=
+	t=1717388847; cv=none; b=DKXYTqTbTcJcfhMlLxGW0QglBZLb6IxvdnC42+8W/MRqur25kv2ElmfNq+20rCIeak8RVm3WH/t2NHkv83y2P9JL1UT2zu8Zoo6O9AZbZ3LivMWypX605xuau7IxxWhz766+YPyAGaRfLUpWCN2nc0TZ2XYAPRQ3p0Vc91AVO2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717388663; c=relaxed/simple;
-	bh=7+AARR9EM1lImN7ABWdHMnV6qmvU1VFk6uEUzZRdd8A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=luNgt1FnywPUNBRMHcupGB1NfRLZe6pXwqo6uukK8jQH02pTP+9aSmMpklJN9Fe/Rcivu6Uqag2AWH7CwQqE58+29S/i+WHYNOXroP+JDGc21gGy5niiTCPoQgI1q1Ogoz1UlPwU+rRcxXy/RKmqfxvY5oqv1uv2uGkW6T9bqhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jc+Sp4nU; arc=none smtp.client-ip=209.85.214.177
+	s=arc-20240116; t=1717388847; c=relaxed/simple;
+	bh=t9uHrRS4KFkljpjCuYI2/7oYBr0iY+/XkHCfMqpyTYs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=U4wJH7olKGz3gnn6d1CNP1yMCt9/dAG9O0UjFXBa6GyNuz0r+uyUwZFrGn93ttK1TPK17oB+75vYxS3883LgvWVkFEB2DnDgc33swNLldtT1PdBcLQhUyx5FoDnD/SPam6zdCKI4TRgqQkbQZROXQjBYPUPogiyPPPA0aUDrGt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ufc/Fcf3; arc=none smtp.client-ip=209.85.167.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1f4a5344ec7so28288365ad.1;
-        Sun, 02 Jun 2024 21:24:21 -0700 (PDT)
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52965199234so4377782e87.2
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2024 21:27:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717388661; x=1717993461; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jlVcDS1I5Bxaw0wfjWq8Hm3Z3QjYdFcFypu8e1ti3i0=;
-        b=Jc+Sp4nUh869WTixzyV28/JeSRQam1wYfbzweasR8TBJ1fYbNvT0vKaD0Fhva6I+aO
-         9l/6MHpbzZ92l40mg22iiMC9f/6WOx1RE0rPObjo9iViDld0+To1kxzzWjc/yWnssjr2
-         UqHA6SA66/FjvDBfbr6NWrelShE7GpT9JemeYkEUDb25Sl8AMB9VPRYLPNAFU6Xrovpj
-         WQriijPoFwxyrT7pifw30Fe0MZN7qeQ6zl1H8k/JuaYb9yrkoAD3JNNk/boggKdmCki4
-         u25+CCEaa/ruZbKCiOQPBnXM4ktAxuS5dJwqASymu9s7/hvGKKHFDZZ0zpDnGY6wX3Pw
-         vpow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717388661; x=1717993461;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1717388843; x=1717993643; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jlVcDS1I5Bxaw0wfjWq8Hm3Z3QjYdFcFypu8e1ti3i0=;
-        b=JcVBem3eL71tJnXYVHjpWOd0b7AwLqRWvGC8Qff1zaWVTkYiOR50R8yjjXnJZ2JE0H
-         pVeTd1I5nEC+N3FWzI1ceIspJ/eXc+WKAOHk7DqKN+74faNwf8cfOsEHkXCo9URGlBCJ
-         kYc9/Ymc24R9Q6uWHW5PqRz5odWyHc8TdYdvtweLwCVZQqYfncPQDv/5WZua632JxykD
-         wYbH9sDDWDYlW6gUG0ZwVboS0gviK8n/CuA3CGn64WlzlZonjRXD5pIW0uU8i4Tp3CzO
-         //BWRqKrRtKA2GdbYN+X/zGzPgXaPunNW+za27+DOdIjaUe+K2aeD9VvMwcwJlrodpQL
-         TfBw==
-X-Forwarded-Encrypted: i=1; AJvYcCW9blYL/300h84Xuy76Bv0HFQKo5daYV9asWp+TjRizIZQwUyGZuzPAbuOaUSWkxDGB+DUkQhJS3N2eFtSNrXj1OP3E4nUzwi9QGpNT
-X-Gm-Message-State: AOJu0Yx5h6e3J0A0m4yGIzD5tqXB+8ohsNBSjlJL8dkYO3EHSZmnXdh0
-	XF0xT+IDO/gwRhl1oGJlwB1pHr5lJ1n2xt3Ot0q1Tiw3QnlkwvqNRmY4vA==
-X-Google-Smtp-Source: AGHT+IGXt0fnlq6CpCAtwReNBByWPtMcGO/yr7sbU8IV9d6nmLBLvr+Z8wrao2HVo0ZNolIaI0QHDQ==
-X-Received: by 2002:a17:903:22d2:b0:1f3:830:783e with SMTP id d9443c01a7336-1f6359f183amr113258965ad.20.1717388660562;
-        Sun, 02 Jun 2024 21:24:20 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:17fd:ad4d:2690:4ce2])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f63235aab4sm54606685ad.71.2024.06.02.21.24.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 02 Jun 2024 21:24:20 -0700 (PDT)
-Date: Sun, 2 Jun 2024 21:24:17 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: tjakobi@math.uni-bielefeld.de
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Input: i8042 - add Ayaneo Kun to i8042 quirk table
-Message-ID: <Zl1FcW36Qh1zIi5t@google.com>
-References: <20240531190100.3874731-1-tjakobi@math.uni-bielefeld.de>
+        bh=h9qPC6w1NV4TD2a+FwRxTwDP6kMv2SLCKMCaWmtBFqU=;
+        b=Ufc/Fcf3SDj8SQm6ijscxK5sbGhXKdd5keBMVbPPG36r2mQW1ug5upJxEsgEi2Cg1k
+         BiJbcThvmlCvLJQ/Mh+LfbEBxY8djDJFodJqjlFwOomk0UrTDMOTkV0jC42ofEX5cMH6
+         ZW0/3euc8/hCxu4TV+Cm1NNt5W8F3+6TtfqjbMSQeQzILRFIduWAwHbqksS9Q9JlDeBh
+         tg6pQDfxYQffII2BpH3lNqjWQk6K6T4M74rxYaOWtwQ7rkHhSy63SKYJT3AHJ6tcAGwH
+         hBqjvKcMhHnIvZMEO/HSiAxVo7s3HHdSc91CfrlmuxX1PtMUZzJ7wZiq/evQpVFSUkqr
+         T5JA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717388843; x=1717993643;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=h9qPC6w1NV4TD2a+FwRxTwDP6kMv2SLCKMCaWmtBFqU=;
+        b=jF5BJYMfR5U3DWSIhu6IyaEzVgjMtOpBTz+2SPgDqz2n/R7McF3G0aWePZdLfxGKQN
+         WGyDMlGUNdyy1VES9Ocqbx9lEv8Lh+Q8wLx1cAlkebgH3VWHsGZW162f3atOGoLrs6Gj
+         2V3pvuYsCnIVItmuG+ruy9r44LI0XzXtZnjmWFhTv8vfpVVTZBAyFjMrGugTMNrH4oql
+         /ZWrIJE6QBZtE7GuVYzj2tU1iATtqbqmife23g7MHSDEeksqmzvEUyEYmxtt8Jg12yg4
+         dBTU1dOccFKxBPktwzDWZ+WYFfyXSWldC1kekDp7xoicS+rgsFVretIAzb+KkxJKLWtu
+         hVkw==
+X-Forwarded-Encrypted: i=1; AJvYcCUWVwVDVfKjDCi7QnTKp1IkZKFtoTp8uOfghw2mBBlfWIIlht1zYpv/kpE3Xfoszy1fU2GxOcqPdTOSzPWPiu7wmx+xDzkXo75I2CEA
+X-Gm-Message-State: AOJu0YwiRBWk+tCqnu7ewR13/W8+WNXcxqEWvIzcTDdxcWX/ZJXmUAMZ
+	QRHXJzxDhkhPx8+77w6NeICDQ6ncxtOt3LmDxWBO+mBm5Zwnt1r069LdnWpLmuDK1El0lGXPTar
+	h2GmvAwO9gvezAecttzLP2Wz34ig=
+X-Google-Smtp-Source: AGHT+IGfPkHs5bDh5yAfeHOJLWnOKEj2ZHrjS6wPzQziS2Fnw04L03cMa96XkUhTXnCZhJ+UwC0E8fmq+ee9Roh9d6s=
+X-Received: by 2002:ac2:544c:0:b0:51c:a0e1:2a44 with SMTP id
+ 2adb3069b0e04-52b8957f627mr4896967e87.26.1717388843141; Sun, 02 Jun 2024
+ 21:27:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240531190100.3874731-1-tjakobi@math.uni-bielefeld.de>
+References: <20240603033118.76457-1-ioworker0@gmail.com> <CAGsJ_4wxPk+bk9UM+PvA3x=LJG+mWmTD3e2HSEsS83X3vMWTJQ@mail.gmail.com>
+In-Reply-To: <CAGsJ_4wxPk+bk9UM+PvA3x=LJG+mWmTD3e2HSEsS83X3vMWTJQ@mail.gmail.com>
+From: Lance Yang <ioworker0@gmail.com>
+Date: Mon, 3 Jun 2024 12:27:09 +0800
+Message-ID: <CAK1f24=30RmJ2s0pqVNyj--BuB78k3P_2tXNsezAFQOnmqoa7w@mail.gmail.com>
+Subject: Re: [PATCH 1/1] mm/mlock: implement folio_mlock_step() using folio_pte_batch()
+To: Barry Song <21cnbao@gmail.com>
+Cc: akpm@linux-foundation.org, ryan.roberts@arm.com, david@redhat.com, 
+	baolin.wang@linux.alibaba.com, ziy@nvidia.com, fengwei.yin@intel.com, 
+	ying.huang@intel.com, libang.li@antgroup.com, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 31, 2024 at 09:00:59PM +0200, tjakobi@math.uni-bielefeld.de wrote:
-> From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-> 
-> See the added comment for details. Also fix a typo in the
-> quirk's define.
-> 
-> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Hi Barry,
 
-Applied, thank you.
+Thanks for taking time to review!
 
--- 
-Dmitry
+On Mon, Jun 3, 2024 at 12:14=E2=80=AFPM Barry Song <21cnbao@gmail.com> wrot=
+e:
+>
+> On Mon, Jun 3, 2024 at 3:31=E2=80=AFPM Lance Yang <ioworker0@gmail.com> w=
+rote:
+> >
+> > Let's make folio_mlock_step() simply a wrapper around folio_pte_batch()=
+,
+> > which will greatly reduce the cost of ptep_get() when scanning a range =
+of
+> > contptes.
+> >
+> > Signed-off-by: Lance Yang <ioworker0@gmail.com>
+> > ---
+> >  mm/mlock.c | 23 ++++++-----------------
+> >  1 file changed, 6 insertions(+), 17 deletions(-)
+> >
+> > diff --git a/mm/mlock.c b/mm/mlock.c
+> > index 30b51cdea89d..1ae6232d38cf 100644
+> > --- a/mm/mlock.c
+> > +++ b/mm/mlock.c
+> > @@ -307,26 +307,15 @@ void munlock_folio(struct folio *folio)
+> >  static inline unsigned int folio_mlock_step(struct folio *folio,
+> >                 pte_t *pte, unsigned long addr, unsigned long end)
+> >  {
+> > -       unsigned int count, i, nr =3D folio_nr_pages(folio);
+> > -       unsigned long pfn =3D folio_pfn(folio);
+> > -       pte_t ptent =3D ptep_get(pte);
+> > -
+> > -       if (!folio_test_large(folio))
+> > +       if (likely(!folio_test_large(folio)))
+> >                 return 1;
+> >
+> > -       count =3D pfn + nr - pte_pfn(ptent);
+> > -       count =3D min_t(unsigned int, count, (end - addr) >> PAGE_SHIFT=
+);
+> > -
+> > -       for (i =3D 0; i < count; i++, pte++) {
+> > -               pte_t entry =3D ptep_get(pte);
+> > -
+> > -               if (!pte_present(entry))
+> > -                       break;
+> > -               if (pte_pfn(entry) - pfn >=3D nr)
+> > -                       break;
+> > -       }
+> > +       const fpb_t fpb_flags =3D FPB_IGNORE_DIRTY | FPB_IGNORE_SOFT_DI=
+RTY;
+> > +       int max_nr =3D (end - addr) / PAGE_SIZE;
+> > +       pte_t ptent =3D ptep_get(pte);
+> >
+> > -       return i;
+> > +       return folio_pte_batch(folio, addr, pte, ptent, max_nr, fpb_fla=
+gs, NULL,
+> > +                              NULL, NULL);
+> >  }
+>
+> what about a minimum change as below?
+
+Nice, that makes sense to me ;)
+I'll adjust as you suggested.
+
+Thanks again for your time!
+Lance
+
+> index 30b51cdea89d..e8b98f84fbd2 100644
+> --- a/mm/mlock.c
+> +++ b/mm/mlock.c
+> @@ -307,26 +307,15 @@ void munlock_folio(struct folio *folio)
+>  static inline unsigned int folio_mlock_step(struct folio *folio,
+>                 pte_t *pte, unsigned long addr, unsigned long end)
+>  {
+> -       unsigned int count, i, nr =3D folio_nr_pages(folio);
+> -       unsigned long pfn =3D folio_pfn(folio);
+> +       unsigned int count =3D (end - addr) >> PAGE_SHIFT;
+>         pte_t ptent =3D ptep_get(pte);
+> +       const fpb_t fpb_flags =3D FPB_IGNORE_DIRTY | FPB_IGNORE_SOFT_DIRT=
+Y;
+>
+>         if (!folio_test_large(folio))
+>                 return 1;
+>
+> -       count =3D pfn + nr - pte_pfn(ptent);
+> -       count =3D min_t(unsigned int, count, (end - addr) >> PAGE_SHIFT);
+> -
+> -       for (i =3D 0; i < count; i++, pte++) {
+> -               pte_t entry =3D ptep_get(pte);
+> -
+> -               if (!pte_present(entry))
+> -                       break;
+> -               if (pte_pfn(entry) - pfn >=3D nr)
+> -                       break;
+> -       }
+> -
+> -       return i;
+> +       return folio_pte_batch(folio, addr, pte, ptent, count, fpb_flags,=
+ NULL,
+> +                              NULL, NULL);
+>  }
+>
+>
+>
+> >
+> >  static inline bool allow_mlock_munlock(struct folio *folio,
+> > --
+> > 2.33.1
+> >
 
