@@ -1,226 +1,171 @@
-Return-Path: <linux-kernel+bounces-198726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41B2B8D7C9B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:39:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 023828D7C9D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:40:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84AADB2308F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 07:39:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADA17283A12
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 07:40:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D9E34AEEA;
-	Mon,  3 Jun 2024 07:39:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F14B487BF;
+	Mon,  3 Jun 2024 07:40:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CSRirevb"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NPaW8jAg"
+Received: from mail-oa1-f67.google.com (mail-oa1-f67.google.com [209.85.160.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C6AC47A4C;
-	Mon,  3 Jun 2024 07:39:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CABF047A4C;
+	Mon,  3 Jun 2024 07:40:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717400342; cv=none; b=RJwsEJ7spy9YX2K+mYYcU01sa/o5pCqRvURJVBwZtdzGEPvahFMm+PHQok1xI73ioIXUW4AHSFYj3ILv7s7jHOcmTo4wvQrK3AkXCw+xsMyi6pKCSX6LNFeVIYUAzQRpTP4asjnMiZcfgSe4K+btyzUXilAIuHwr4AbzzKuGOhE=
+	t=1717400413; cv=none; b=mYkLEA9CV7H0TZrpexURzAmFYhTkHwU6/XAW0XFhzswIneKm5MCQSg7f+RDwJJjrIGp5JwERi3m2kgQ/dbpdCXw/GwlUdZ0dN6LwhPDDNYrA5mAs2qbT5xcAkYc5FzbMx/iph31oPbVzLSIzc0wJxOvmVUpyc1hqM22fT2aHWGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717400342; c=relaxed/simple;
-	bh=3OdgjKpZPkAQHLcck0rkvVYntYujmuP6aMxqQFcAWrw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=f5uXeeZsWhVubHMtEhu3pY97h3OIUcNEMxu2cQWPtNG2ZRckmc9wDn6DId0FMGOCho600UTcHTURxOgHUv0pZYInhmPLiQHiA+7BybF4F5+SdMglR8U4SEyjAPZsXhu4C6uw7661AS1UeRii+0WFM5JN9gBkVCjuFbdiDvVtUsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CSRirevb; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 452NYVca009764;
-	Mon, 3 Jun 2024 07:38:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	WxEi7sRy7iK+COlhc2ROTwcgjGcfbLpHiMuNpxfg+T8=; b=CSRirevbxgEOMAfp
-	EYvrbbTEp18R+tPNkiX1sUqCi8zr0LG8cR3hIgjyCy8vDIjkttfQ9rTscm0w7d0U
-	j5SRl2jebaAI1WhAj8nLsJRPSRyKay7kEflU4PvD+FMP42AOnQCaEd2R8MzJqGRi
-	zxNF2D/zRjS8ErEsrJN6fcu8ER5hsaXYBDSRfXur0cagm47SwMWOWsJYoP35T1o6
-	5ddi3MJZ3SDSXBYJNZQTf2MBJbC2X/4rV3Mm+KQuUd3UanCL0+FZDz7hQaGbL8ku
-	PbXkNSb3p8egYkhXk9lLnheBp7SAyGXcDSFWR3Ci8PQen0Xn5cRzl+uliLsiB1A2
-	KKfglg==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfw3r3fq7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 03 Jun 2024 07:38:54 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 4537croY014756
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 3 Jun 2024 07:38:53 GMT
-Received: from [10.239.132.204] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 3 Jun 2024
- 00:38:46 -0700
-Message-ID: <89c5c663-df8a-43d4-91b3-0a84b0c9a324@quicinc.com>
-Date: Mon, 3 Jun 2024 15:38:44 +0800
+	s=arc-20240116; t=1717400413; c=relaxed/simple;
+	bh=Y0TmL0BXrE37/+np5aA/hDi1fG033tdMSsomY2CBrCM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JBPC+K2kG9Z5HaHeoaBeowke7GINyRjlE37qt3B30XJ7C6LZm/a9KJ1PE4Xvu/Vcqlk7VZELLCiNMyVgHcnpmyR0iOJqvnJOL0yimN7AHs24KOlhOlzuo7iWPvm3fJHHVjC4mEDR8zbebJPs+o5cOCZzbywNeviVQ2RD61xuWso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NPaW8jAg; arc=none smtp.client-ip=209.85.160.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f67.google.com with SMTP id 586e51a60fabf-24c9f297524so2141073fac.0;
+        Mon, 03 Jun 2024 00:40:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717400411; x=1718005211; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2FWb75cH+3iCprEXqTnOlMXbH+prg3pAb1WVvaGmF9A=;
+        b=NPaW8jAgn0bAeuVRNIZrSoycEllrR4eVfEcGrCkJSGAq1w0nSMTGXZ3DXcPXtPUW0i
+         kSDDKKPM5i/wgOiER4RH9z4k/NCDFxvNigb1GIxiwSfVzcUUzCn3FdUtglfslIr5qOq+
+         hno7pwj8OUH2D2w1w+BUTk1yqfEQrcfS0LYEM0B3uzDrjF27aBwq0RVgmvSPdLsg/NWR
+         VYhd36JBF4OCw+Ak6j1GPL2aUxeQ7kBlKdErrjlXt7jT2WX8zRU2N1ruBJRdPp5r91Gq
+         MFdauejkWlhbYmKb4yN6qHoDU/OQ4301FGYakHfIIRVSceO8OcmHKikXJqcisNpivGFI
+         K0XA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717400411; x=1718005211;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2FWb75cH+3iCprEXqTnOlMXbH+prg3pAb1WVvaGmF9A=;
+        b=MyY1LLXLbGTrk1mLpiR93nb6nGg1zbgw9iQBoJS8W/hUesqdvPkHBOsBQj1OO8om6o
+         9+1cARBcx5zKJf3MOsJFC2ElPJH5R4NJigShn+aA/hl24jpLtaOkaaQXg+TTcOGx6zaH
+         3G8CDTluqmOT9WlpoTskIvy/OrySJM0P6zQyf3qlxbp00CKyZzYAzbLBhe7GYpfhmcsT
+         c97a0s1HqBAUJ50prwyHy5jLcWoq/J6k9tc9lhiPMYBntoq8fldyjxy7oClSMoxwimzL
+         vYZ3kk5SiO4wcYM3+E9MKaUH4WO1ZXGJimiGnf5V6JYRmAS8Shmwky0BeGevYZsCsvdW
+         Y+zg==
+X-Forwarded-Encrypted: i=1; AJvYcCXffMpAvXoDFUcY+cVECL1P6iFbO4FpAuohJJ/4hyVsg5Qdv1nlY1Z98KIOInlZEoPWvK6WkZvmtRZO56ApbcbIiFJRlf2xKN201TkytOrZpkyIzkWKKlsEOmsLIDaDUdMFYjnc
+X-Gm-Message-State: AOJu0YzD9M8DJEwD5xZCZliz9+T0YDHiNZe9vX0hzAehBEo5r99HnSYz
+	FXZ/d0/GznHPCzYhy49jBlC3HPcQbkoQfpBXajkS3BlsFrnWzl2y
+X-Google-Smtp-Source: AGHT+IF5/ByL3b/SC1mcU5unJApgzzwn4Zx24MkG74MKNAPQfKKM9gMvAoT31/rXitQaS4tx8uULRQ==
+X-Received: by 2002:a05:6870:a714:b0:24f:f413:3039 with SMTP id 586e51a60fabf-2508b9b8415mr9956592fac.2.1717400410647;
+        Mon, 03 Jun 2024 00:40:10 -0700 (PDT)
+Received: from twhmp6px (mxsmtp211.mxic.com.tw. [211.75.127.162])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-702423cb705sm4904998b3a.4.2024.06.03.00.40.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Jun 2024 00:40:10 -0700 (PDT)
+Received: from hqs-appsw-a2o.mp600.macronix.com (linux-patcher [172.17.236.67])
+	by twhmp6px (Postfix) with ESMTPS id 117BE8095A;
+	Mon,  3 Jun 2024 15:43:08 +0800 (CST)
+From: Cheng Ming Lin <linchengming884@gmail.com>
+To: miquel.raynal@bootlin.com,
+	dwmw2@infradead.org,
+	computersforpeace@gmail.com,
+	marek.vasut@gmail.com,
+	vigneshr@ti.com,
+	linux-mtd@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: richard@nod.at,
+	alvinzhou@mxic.com.tw,
+	leoyu@mxic.com.tw,
+	Cheng Ming Lin <chengminglin@mxic.com.tw>
+Subject: [PATCH] Documentation: mtd: spinand: macronix: Add support for serial NAND flash
+Date: Mon,  3 Jun 2024 15:39:53 +0800
+Message-Id: <20240603073953.16399-1-linchengming884@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 4/4] arm64: dts: qcom: aim300: add AIM300 AIoT
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <andersson@kernel.org>, <konrad.dybcio@linaro.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>,
-        Qiang Yu <quic_qianyu@quicinc.com>,
-        Ziyue Zhang
-	<quic_ziyuzhan@quicinc.com>, <quic_chenlei@quicinc.com>
-References: <20240529100926.3166325-1-quic_tengfan@quicinc.com>
- <20240529100926.3166325-5-quic_tengfan@quicinc.com>
- <s5gt3p6zsd5ebrkop4dhd33tykln33f6ahu3pibymecxsmakyd@lg5wfgec6dat>
- <205de8b7-507f-45c9-83ce-6eceb1466cb2@quicinc.com>
- <CAA8EJpqFq=6YFcUpjdkKikN54iQ76i8Rk_z+mLH1Tt0zFFmciQ@mail.gmail.com>
-From: Tengfei Fan <quic_tengfan@quicinc.com>
-In-Reply-To: <CAA8EJpqFq=6YFcUpjdkKikN54iQ76i8Rk_z+mLH1Tt0zFFmciQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 17CZvZQvUzItZmzYtah8R3pekd3KxjMK
-X-Proofpoint-GUID: 17CZvZQvUzItZmzYtah8R3pekd3KxjMK
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-06-03_04,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
- lowpriorityscore=0 suspectscore=0 adultscore=0 spamscore=0 mlxscore=0
- clxscore=1015 priorityscore=1501 malwarescore=0 mlxlogscore=999
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406030063
+Content-Transfer-Encoding: 8bit
 
+From: Cheng Ming Lin <chengminglin@mxic.com.tw>
 
+MX35UF{1,2,4}GE4AD and MX35UF{1,2}GE4AC have been merge into 
+Linux kernel mainline. 
+Commit ID: "c374839f9b4475173e536d1eaddff45cb481dbdf".
 
-On 5/31/2024 4:38 PM, Dmitry Baryshkov wrote:
-> On Fri, 31 May 2024 at 11:35, Tengfei Fan <quic_tengfan@quicinc.com> wrote:
->>
->>
->>
->> On 5/29/2024 11:18 PM, Dmitry Baryshkov wrote:
->>> On Wed, May 29, 2024 at 06:09:26PM +0800, Tengfei Fan wrote:
->>>> Add AIM300 AIoT Carrier board DTS support, including usb, UART, PCIe,
->>>> I2C functions support.
->>>> Here is a diagram of AIM300 AIoT Carrie Board and SoM
->>>>    +--------------------------------------------------+
->>>>    |             AIM300 AIOT Carrier Board            |
->>>>    |                                                  |
->>>>    |           +-----------------+                    |
->>>>    |power----->| Fixed regulator |---------+          |
->>>>    |           +-----------------+         |          |
->>>>    |                                       |          |
->>>>    |                                       v VPH_PWR  |
->>>>    | +----------------------------------------------+ |
->>>>    | |                          AIM300 SOM |        | |
->>>>    | |                                     |VPH_PWR | |
->>>>    | |                                     v        | |
->>>>    | |   +-------+       +--------+     +------+    | |
->>>>    | |   | UFS   |       | QCS8550|     |PMIC  |    | |
->>>>    | |   +-------+       +--------+     +------+    | |
->>>>    | |                                              | |
->>>>    | +----------------------------------------------+ |
->>>>    |                                                  |
->>>>    |                    +----+          +------+      |
->>>>    |                    |USB |          | UART |      |
->>>>    |                    +----+          +------+      |
->>>>    +--------------------------------------------------+
->>>>
->>>> Co-developed-by: Qiang Yu <quic_qianyu@quicinc.com>
->>>> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
->>>> Co-developed-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
->>>> Signed-off-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
->>>> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
->>>> ---
->>>>    arch/arm64/boot/dts/qcom/Makefile             |   1 +
->>>>    .../boot/dts/qcom/qcs8550-aim300-aiot.dts     | 322 ++++++++++++++++++
->>>>    2 files changed, 323 insertions(+)
->>>>    create mode 100644 arch/arm64/boot/dts/qcom/qcs8550-aim300-aiot.dts
->>>
->>> [trimmed]
->>>
->>>> +&remoteproc_adsp {
->>>> +    firmware-name = "qcom/qcs8550/adsp.mbn",
->>>> +                    "qcom/qcs8550/adsp_dtbs.elf";
->>>
->>> Please excuse me, I think I missed those on the previous run.
->>>
->>> adsp_dtb.mbn
->>
->> Currently, waht we have released is adsp_dtbs.elf. If we modify it to
->> adsp_dtb.mbn, it may cause the ADSP functionality can not boot normally.
-> 
-> Released where? linux-firmware doesn't have such a file. And the modem
-> partition most likely has a different path for it anyway.
+For SPI-NAND flash support on Linux kernel LTS v5.4.y,
+add SPI-NAND flash MX35UF{1,2,4}GE4AD and MX35UF{1,2}GE4AC in id tables.
 
-Firmware releases can be obtained from 
-https://qpm-git.qualcomm.com/home2/git/qualcomm/qualcomm-linux-spf-1-0_test_device_public.git 
-after users sign up for free accounts on both 
-https://qpm-git.qualcomm.com and https://chipmaster2.qti.qualcomm.com.
+Those five flashes have been validate on Xilinx zynq-picozed board and
+Linux kernel LTS v5.4.y.
 
-> 
->>
->>>
->>>> +    status = "okay";
->>>> +};
->>>> +
->>>> +&remoteproc_cdsp {
->>>> +    firmware-name = "qcom/qcs8550/cdsp.mbn",
->>>> +                    "qcom/qcs8550/cdsp_dtbs.elf";
->>>
->>> cdsp_dtb.mbn
->>
->> CDSP also as above ADSP.
->>
->>>
-> 
->>>> +
->>>> +    te_active: te-active-state {
->>>> +            pins = "gpio86";
->>>> +            function = "mdp_vsync";
->>>> +            drive-strength = <2>;
->>>> +            bias-pull-down;
->>>> +    };
->>>> +
->>>> +    te_suspend: te-suspend-state {
->>>> +            pins = "gpio86"
->>>> +            function = "mdp_vsync";
->>>> +            drive-strength = <2>;
->>>> +            bias-pull-down;
->>>> +    };
->>>
->>> What is the difference between these two?
->>
->> TE pin needs to be pulled down for both active and suspend states. There
->> is no difference.
-> 
-> So why do you need two different states for it?
+Signed-off-by: Cheng Ming Lin <chengminglin@mxic.com.tw>
+---
+ drivers/mtd/nand/spi/macronix.c | 45 +++++++++++++++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
 
-Dividing into two different states can provide a clearer expression of 
-whether the corresponging functionality is avtive or suspend.
-
-We can also find similar settings in the other SM8550 and SM8650 
-platform dts files, such as sm8550-qrd.dts and sm8650-qrd.dts.
-
-[1] sm8550-qrd.dts: 
-https://elixir.bootlin.com/linux/v6.9.3/source/arch/arm64/boot/dts/qcom/sm8550-qrd.dts#L1052
-
-[2] sm8650-qrd.dts: 
-https://elixir.bootlin.com/linux/v6.9.3/source/arch/arm64/boot/dts/qcom/sm8650-qrd.dts#L1098
-
-> 
-> 
-> 
-> 
-> 
-
+diff --git a/drivers/mtd/nand/spi/macronix.c b/drivers/mtd/nand/spi/macronix.c
+index f18c6cfe8ff5..e1446798bfb3 100644
+--- a/drivers/mtd/nand/spi/macronix.c
++++ b/drivers/mtd/nand/spi/macronix.c
+@@ -132,6 +132,51 @@ static const struct spinand_info macronix_spinand_table[] = {
+ 					      &update_cache_variants),
+ 		     SPINAND_HAS_QE_BIT,
+ 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout, NULL)),
++	SPINAND_INFO("MX35UF4GE4AD", 0xb7,
++		     NAND_MEMORG(1, 4096, 256, 64, 2048, 40, 1, 1, 1),
++		     NAND_ECCREQ(8, 512),
++		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
++					      &write_cache_variants,
++					      &update_cache_variants),
++		     SPINAND_HAS_QE_BIT,
++		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
++				     mx35lf1ge4ab_ecc_get_status)),
++	SPINAND_INFO("MX35UF2GE4AD", 0xa6,
++		     NAND_MEMORG(1, 2048, 128, 64, 2048, 40, 1, 1, 1),
++		     NAND_ECCREQ(8, 512),
++		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
++					      &write_cache_variants,
++					      &update_cache_variants),
++		     SPINAND_HAS_QE_BIT,
++		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
++				     mx35lf1ge4ab_ecc_get_status)),
++	SPINAND_INFO("MX35UF2GE4AC", 0xa2,
++		     NAND_MEMORG(1, 2048, 64, 64, 2048, 40, 1, 1, 1),
++		     NAND_ECCREQ(4, 512),
++		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
++					      &write_cache_variants,
++					      &update_cache_variants),
++		     SPINAND_HAS_QE_BIT,
++		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
++				     mx35lf1ge4ab_ecc_get_status)),
++	SPINAND_INFO("MX35UF1GE4AD", 0x96,
++		     NAND_MEMORG(1, 2048, 128, 64, 1024, 20, 1, 1, 1),
++		     NAND_ECCREQ(8, 512),
++		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
++					      &write_cache_variants,
++					      &update_cache_variants),
++		     SPINAND_HAS_QE_BIT,
++		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
++				     mx35lf1ge4ab_ecc_get_status)),
++	SPINAND_INFO("MX35UF1GE4AC", 0x92,
++		     NAND_MEMORG(1, 2048, 64, 64, 1024, 20, 1, 1, 1),
++		     NAND_ECCREQ(4, 512),
++		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
++					      &write_cache_variants,
++					      &update_cache_variants),
++		     SPINAND_HAS_QE_BIT,
++		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
++				     mx35lf1ge4ab_ecc_get_status)),
+ };
+ 
+ static int macronix_spinand_detect(struct spinand_device *spinand)
 -- 
-Thx and BRs,
-Tengfei Fan
+2.25.1
+
 
