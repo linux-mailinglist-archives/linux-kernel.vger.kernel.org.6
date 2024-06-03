@@ -1,290 +1,139 @@
-Return-Path: <linux-kernel+bounces-199091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74E228D81FE
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 14:13:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B68C38D81DD
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 14:07:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A66891C21C34
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 12:13:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F902287D6C
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 12:07:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39E45128823;
-	Mon,  3 Jun 2024 12:12:53 +0000 (UTC)
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A800E1272B5;
+	Mon,  3 Jun 2024 12:06:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="wLoukTGL"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F301B1292D3
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 12:12:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 732241272A2
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 12:06:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717416772; cv=none; b=XtNjHvTEQZ5L0Nt7ARRCcIiGP/knaCrIquM7GEEeanx/7OezeJTjZJCQ9kHfbgQIoNl6qWM0XFXrDXS6oOtFEqUC5rIG0hyzHtB3/i3NXs3dp0NGLb7v5ZD1A0/k71luO+1UwVG2yM+3HpGld8LJk3ztBR2Ec3S4BBKvwZxuelA=
+	t=1717416418; cv=none; b=tdeYnlcv6/amso3VD/1VgZG17OlVg4d+xI0od1ip+7AFFzG9jZuQs8khpTiRCPipP7oPs1N2madfzozmz2N/KO/LlxhEAS2gr4aGDC7vLKTETgcWYCg3XLsBLgG01D1mU5HzQ2rJBHzLY7I7M5WNILei01nsbr/+ib8+CUe9zTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717416772; c=relaxed/simple;
-	bh=3+yrHg4BbTAhVyeLVG8IYHorFBV3XxzzNtDX/G8hIzA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hlBLemDQsWYRNXclbyck+gs4IzIgd8GkAW9t8Jb8IDwr72AgdBinOx0lHI4P1wWeYNX81qPUfyWl5QPBnJqgILNGvxmQxBblGne8B9ErqHlh23C3+lYAvInJ9ct2pQ9w6QuoanKzB/wKU2QyQTeAhiB8cFOPhQS//qNWw3+fV1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4VtCFH1fNyz1S67t;
-	Mon,  3 Jun 2024 20:09:07 +0800 (CST)
-Received: from dggpeml500023.china.huawei.com (unknown [7.185.36.114])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3ED841A016C;
-	Mon,  3 Jun 2024 20:12:47 +0800 (CST)
-Received: from hulk-vt.huawei.com (10.67.174.26) by
- dggpeml500023.china.huawei.com (7.185.36.114) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 3 Jun 2024 20:12:47 +0800
-From: Xiu Jianfeng <xiujianfeng@huawei.com>
-To: <akpm@linux-foundation.org>, <muchun.song@linux.dev>
-CC: <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH -next 3/3] mm/hugetlb_cgroup: switch to the new cftypes
-Date: Mon, 3 Jun 2024 12:05:06 +0000
-Message-ID: <20240603120506.1837322-4-xiujianfeng@huawei.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240603120506.1837322-1-xiujianfeng@huawei.com>
-References: <20240603120506.1837322-1-xiujianfeng@huawei.com>
+	s=arc-20240116; t=1717416418; c=relaxed/simple;
+	bh=K0CDQC1akX83WqstZzLmNolRnOazVmg2PvHJe4bg5Q0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=c3UbcahCN96tzpkntQGKaMSldaJ7mz+tRlfdEmvp5DvzbKuXD1gycE/W3e9zpAa7zZEMCfB96OjSB+YjBh6+6oGbdlg1wptTMjoVgJB/rsyVrXx/qWvmLje2WwQqHOHF3ZVHqaIoJKiCG5aBCr7OHGRppp8N91QVssZ6N7IXDsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=wLoukTGL; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42121d27861so38326745e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 05:06:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1717416415; x=1718021215; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vzs/x1WCN5t2imfhC6zu+ZDUGVxVyZ0jYD0hK5bZuVY=;
+        b=wLoukTGLJpEsD6AT16CgBdR3IGYZrQahG+3Eq2KvKJ8ID1yrZPZAVH2O6i4leZl/ED
+         hAc0IycPPTiDu4VX/Zu+WGhl7f4DSB9vFd4HpmxcaweUzPzyWT0j+iQC2GuANebydUAF
+         EicstHtLv2YmhoWo3gC/vc9qO2ybHU2tjZJ9jIgNWp0Fcjkm3oH7qHqet45zB+Kl/RZE
+         iYV+od+GZVTcuS8jlorcnXNAnThB7oqFm7BiytBr9pQPDN49fQxULf3hPIUkHM45PoPB
+         MAKQKAv4cvK3ocCwoSPDL+IC0iqCVNpxuTcsCrhc6anZV/IdJld1kIjbjfCe9rrr+3y+
+         P3fg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717416415; x=1718021215;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vzs/x1WCN5t2imfhC6zu+ZDUGVxVyZ0jYD0hK5bZuVY=;
+        b=Vob/+YGc6uw9jTmUsl2wxVtxj5A14VKaKP3WBLav2iVaDnbDRieqGGKJQSEFTJ25el
+         F/n+Odlgshbqq3AaEL0dHWdq8NVd8posKdHK2eNixQnFxOOTNofaKzd57TH8f0KE7kC2
+         dnOg+cHaNyfUrEhQV1cBuHS5i1QM09qv/mZaVwIUCBDHOVNzssZ9xCWywOGG2NnYrvpS
+         v5dTYaA/Rk25m8fh57wcSsSdEkQZargFnIC2UTUxNhprG0xLw8lMprH79lq4ch9MLwZ0
+         rBZcEQWJcN+OEEIIcVK7H4x3ODTJrmlr40DxiJ1pV254UVlp7hMRjnjwfherZRDhp9rH
+         F+yg==
+X-Forwarded-Encrypted: i=1; AJvYcCVbPDDamI/103ZdUbp3I2Nzvu8UL3ZXtVlkyR9+gz6MfQ1+Bp6p9gUcqc+CXSvpQIdcYaUuRUkTt2cCKt+Mq0oqZBmYy2ExtMHL9Mux
+X-Gm-Message-State: AOJu0Yxl1UKMrAsDtR6VcAv9ASyHX1n8kq96/sloZKhyzSCCWgyI3t2x
+	oDMLvDnX5CSXVgaWR+ghMhCA54FcfuO070Ratqv1JApnEh9rWAMKtu/CUsfmQaI=
+X-Google-Smtp-Source: AGHT+IHUt9RC5PnZgMhb+jbLRK9Usa/RFjFRgNU7nFyyp0EjKf8YEFj7904Gl2PsM4H49yscOAhb2A==
+X-Received: by 2002:a05:600c:1e27:b0:41b:de8d:dcd7 with SMTP id 5b1f17b1804b1-4212e05f21dmr64794825e9.20.1717416414555;
+        Mon, 03 Jun 2024 05:06:54 -0700 (PDT)
+Received: from [127.0.1.1] ([84.102.31.231])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4212b8a758csm114805625e9.36.2024.06.03.05.06.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Jun 2024 05:06:54 -0700 (PDT)
+From: Julien Panis <jpanis@baylibre.com>
+Date: Mon, 03 Jun 2024 14:06:49 +0200
+Subject: [PATCH] thermal/drivers/mediatek/lvts_thermal: Return error in
+ case of invalid efuse data
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- dggpeml500023.china.huawei.com (7.185.36.114)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240603-mtk-thermal-calib-check-v1-1-5d6bf040414c@baylibre.com>
+X-B4-Tracking: v=1; b=H4sIANixXWYC/x3MPQqAMAxA4atIZgM1ioNXEYcYow3+0ooI4t0tj
+ t/w3gNRg2mEJnsg6GXR9i2hyDMQz9ukaEMykKPK1a7E9Zzx9BpWXlB4sR7Fq8zYM6lQxYWUBKk
+ +go52/+e2e98PFKMvwGkAAAA=
+To: "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
+ Lukasz Luba <lukasz.luba@arm.com>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Nicolas Pitre <npitre@baylibre.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ Julien Panis <jpanis@baylibre.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1717416412; l=1350;
+ i=jpanis@baylibre.com; s=20230526; h=from:subject:message-id;
+ bh=K0CDQC1akX83WqstZzLmNolRnOazVmg2PvHJe4bg5Q0=;
+ b=sKRmkGPrCbvTekNrVxBLMIUjflnb9FNPMqlYmPYKF9gHcSfU2hOCEY6bHSIh7DWFYzVrvifv+
+ y++zucbPtypDRYxmAMdAcYHk+bJiO+sNe3XEydI64hVHnRlwdB73rxL
+X-Developer-Key: i=jpanis@baylibre.com; a=ed25519;
+ pk=8eSM4/xkiHWz2M1Cw1U3m2/YfPbsUdEJPCWY3Mh9ekQ=
 
-The previous patch has already reconstructed the cftype attributes
-based on the templates and saved them in dfl_cftypes and legacy_cftypes.
-then remove the old procedure and switch to the new cftypes.
+This patch prevents from registering thermal entries and letting the
+driver misbehave if efuse data is invalid. A device is not properly
+calibrated if the golden temperature is zero.
 
-Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
+Signed-off-by: Julien Panis <jpanis@baylibre.com>
 ---
- include/linux/hugetlb.h |   5 --
- mm/hugetlb_cgroup.c     | 163 +++++-----------------------------------
- 2 files changed, 17 insertions(+), 151 deletions(-)
+Guard against invalid calibration data, following this discussion:
+https://lore.kernel.org/all/ad047631-16b8-42ce-8a8d-1429e6af4517@collabora.com/
+---
+ drivers/thermal/mediatek/lvts_thermal.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
-index 279aca379b95..a951c0d06061 100644
---- a/include/linux/hugetlb.h
-+++ b/include/linux/hugetlb.h
-@@ -686,11 +686,6 @@ struct hstate {
- 	unsigned int nr_huge_pages_node[MAX_NUMNODES];
- 	unsigned int free_huge_pages_node[MAX_NUMNODES];
- 	unsigned int surplus_huge_pages_node[MAX_NUMNODES];
--#ifdef CONFIG_CGROUP_HUGETLB
--	/* cgroup control files */
--	struct cftype cgroup_files_dfl[8];
--	struct cftype cgroup_files_legacy[10];
--#endif
- 	char name[HSTATE_NAME_LEN];
- };
+diff --git a/drivers/thermal/mediatek/lvts_thermal.c b/drivers/thermal/mediatek/lvts_thermal.c
+index 0bb3a495b56e..185d5a32711f 100644
+--- a/drivers/thermal/mediatek/lvts_thermal.c
++++ b/drivers/thermal/mediatek/lvts_thermal.c
+@@ -769,7 +769,11 @@ static int lvts_golden_temp_init(struct device *dev, u8 *calib,
+ 	 */
+ 	gt = (((u32 *)calib)[0] >> lvts_data->gt_calib_bit_offset) & 0xff;
  
-diff --git a/mm/hugetlb_cgroup.c b/mm/hugetlb_cgroup.c
-index 378f2353443f..856296d865c6 100644
---- a/mm/hugetlb_cgroup.c
-+++ b/mm/hugetlb_cgroup.c
-@@ -840,164 +840,26 @@ hugetlb_cgroup_cfttypes_init(struct hstate *h, struct cftype *cft,
- 	}
- }
- 
--static void __init __hugetlb_cgroup_file_dfl_init(int idx)
-+static void __init __hugetlb_cgroup_file_dfl_init(struct hstate *h)
- {
--	char buf[32];
--	struct cftype *cft;
--	struct hstate *h = &hstates[idx];
-+	int idx = hstate_index(h);
- 
- 	hugetlb_cgroup_cfttypes_init(h, dfl_files + idx * DFL_TMPL_SIZE,
- 				     hugetlb_dfl_tmpl, DFL_TMPL_SIZE);
--
--	/* format the size */
--	mem_fmt(buf, sizeof(buf), huge_page_size(h));
--
--	/* Add the limit file */
--	cft = &h->cgroup_files_dfl[0];
--	snprintf(cft->name, MAX_CFTYPE_NAME, "%s.max", buf);
--	cft->private = MEMFILE_PRIVATE(idx, RES_LIMIT);
--	cft->seq_show = hugetlb_cgroup_read_u64_max;
--	cft->write = hugetlb_cgroup_write_dfl;
--	cft->flags = CFTYPE_NOT_ON_ROOT;
--
--	/* Add the reservation limit file */
--	cft = &h->cgroup_files_dfl[1];
--	snprintf(cft->name, MAX_CFTYPE_NAME, "%s.rsvd.max", buf);
--	cft->private = MEMFILE_PRIVATE(idx, RES_RSVD_LIMIT);
--	cft->seq_show = hugetlb_cgroup_read_u64_max;
--	cft->write = hugetlb_cgroup_write_dfl;
--	cft->flags = CFTYPE_NOT_ON_ROOT;
--
--	/* Add the current usage file */
--	cft = &h->cgroup_files_dfl[2];
--	snprintf(cft->name, MAX_CFTYPE_NAME, "%s.current", buf);
--	cft->private = MEMFILE_PRIVATE(idx, RES_USAGE);
--	cft->seq_show = hugetlb_cgroup_read_u64_max;
--	cft->flags = CFTYPE_NOT_ON_ROOT;
--
--	/* Add the current reservation usage file */
--	cft = &h->cgroup_files_dfl[3];
--	snprintf(cft->name, MAX_CFTYPE_NAME, "%s.rsvd.current", buf);
--	cft->private = MEMFILE_PRIVATE(idx, RES_RSVD_USAGE);
--	cft->seq_show = hugetlb_cgroup_read_u64_max;
--	cft->flags = CFTYPE_NOT_ON_ROOT;
--
--	/* Add the events file */
--	cft = &h->cgroup_files_dfl[4];
--	snprintf(cft->name, MAX_CFTYPE_NAME, "%s.events", buf);
--	cft->private = MEMFILE_PRIVATE(idx, 0);
--	cft->seq_show = hugetlb_events_show;
--	cft->file_offset = offsetof(struct hugetlb_cgroup, events_file[idx]);
--	cft->flags = CFTYPE_NOT_ON_ROOT;
--
--	/* Add the events.local file */
--	cft = &h->cgroup_files_dfl[5];
--	snprintf(cft->name, MAX_CFTYPE_NAME, "%s.events.local", buf);
--	cft->private = MEMFILE_PRIVATE(idx, 0);
--	cft->seq_show = hugetlb_events_local_show;
--	cft->file_offset = offsetof(struct hugetlb_cgroup,
--				    events_local_file[idx]);
--	cft->flags = CFTYPE_NOT_ON_ROOT;
--
--	/* Add the numa stat file */
--	cft = &h->cgroup_files_dfl[6];
--	snprintf(cft->name, MAX_CFTYPE_NAME, "%s.numa_stat", buf);
--	cft->private = MEMFILE_PRIVATE(idx, 0);
--	cft->seq_show = hugetlb_cgroup_read_numa_stat;
--	cft->flags = CFTYPE_NOT_ON_ROOT;
--
--	/* NULL terminate the last cft */
--	cft = &h->cgroup_files_dfl[7];
--	memset(cft, 0, sizeof(*cft));
--
--	WARN_ON(cgroup_add_dfl_cftypes(&hugetlb_cgrp_subsys,
--				       h->cgroup_files_dfl));
- }
- 
--static void __init __hugetlb_cgroup_file_legacy_init(int idx)
-+static void __init __hugetlb_cgroup_file_legacy_init(struct hstate *h)
- {
--	char buf[32];
--	struct cftype *cft;
--	struct hstate *h = &hstates[idx];
-+	int idx = hstate_index(h);
- 
- 	hugetlb_cgroup_cfttypes_init(h, legacy_files + idx * LEGACY_TMPL_SIZE,
- 				     hugetlb_legacy_tmpl, LEGACY_TMPL_SIZE);
--
--	/* format the size */
--	mem_fmt(buf, sizeof(buf), huge_page_size(h));
--
--	/* Add the limit file */
--	cft = &h->cgroup_files_legacy[0];
--	snprintf(cft->name, MAX_CFTYPE_NAME, "%s.limit_in_bytes", buf);
--	cft->private = MEMFILE_PRIVATE(idx, RES_LIMIT);
--	cft->read_u64 = hugetlb_cgroup_read_u64;
--	cft->write = hugetlb_cgroup_write_legacy;
--
--	/* Add the reservation limit file */
--	cft = &h->cgroup_files_legacy[1];
--	snprintf(cft->name, MAX_CFTYPE_NAME, "%s.rsvd.limit_in_bytes", buf);
--	cft->private = MEMFILE_PRIVATE(idx, RES_RSVD_LIMIT);
--	cft->read_u64 = hugetlb_cgroup_read_u64;
--	cft->write = hugetlb_cgroup_write_legacy;
--
--	/* Add the usage file */
--	cft = &h->cgroup_files_legacy[2];
--	snprintf(cft->name, MAX_CFTYPE_NAME, "%s.usage_in_bytes", buf);
--	cft->private = MEMFILE_PRIVATE(idx, RES_USAGE);
--	cft->read_u64 = hugetlb_cgroup_read_u64;
--
--	/* Add the reservation usage file */
--	cft = &h->cgroup_files_legacy[3];
--	snprintf(cft->name, MAX_CFTYPE_NAME, "%s.rsvd.usage_in_bytes", buf);
--	cft->private = MEMFILE_PRIVATE(idx, RES_RSVD_USAGE);
--	cft->read_u64 = hugetlb_cgroup_read_u64;
--
--	/* Add the MAX usage file */
--	cft = &h->cgroup_files_legacy[4];
--	snprintf(cft->name, MAX_CFTYPE_NAME, "%s.max_usage_in_bytes", buf);
--	cft->private = MEMFILE_PRIVATE(idx, RES_MAX_USAGE);
--	cft->write = hugetlb_cgroup_reset;
--	cft->read_u64 = hugetlb_cgroup_read_u64;
--
--	/* Add the MAX reservation usage file */
--	cft = &h->cgroup_files_legacy[5];
--	snprintf(cft->name, MAX_CFTYPE_NAME, "%s.rsvd.max_usage_in_bytes", buf);
--	cft->private = MEMFILE_PRIVATE(idx, RES_RSVD_MAX_USAGE);
--	cft->write = hugetlb_cgroup_reset;
--	cft->read_u64 = hugetlb_cgroup_read_u64;
--
--	/* Add the failcntfile */
--	cft = &h->cgroup_files_legacy[6];
--	snprintf(cft->name, MAX_CFTYPE_NAME, "%s.failcnt", buf);
--	cft->private = MEMFILE_PRIVATE(idx, RES_FAILCNT);
--	cft->write = hugetlb_cgroup_reset;
--	cft->read_u64 = hugetlb_cgroup_read_u64;
--
--	/* Add the reservation failcntfile */
--	cft = &h->cgroup_files_legacy[7];
--	snprintf(cft->name, MAX_CFTYPE_NAME, "%s.rsvd.failcnt", buf);
--	cft->private = MEMFILE_PRIVATE(idx, RES_RSVD_FAILCNT);
--	cft->write = hugetlb_cgroup_reset;
--	cft->read_u64 = hugetlb_cgroup_read_u64;
--
--	/* Add the numa stat file */
--	cft = &h->cgroup_files_legacy[8];
--	snprintf(cft->name, MAX_CFTYPE_NAME, "%s.numa_stat", buf);
--	cft->private = MEMFILE_PRIVATE(idx, 0);
--	cft->seq_show = hugetlb_cgroup_read_numa_stat;
--
--	/* NULL terminate the last cft */
--	cft = &h->cgroup_files_legacy[9];
--	memset(cft, 0, sizeof(*cft));
--
--	WARN_ON(cgroup_add_legacy_cftypes(&hugetlb_cgrp_subsys,
--					  h->cgroup_files_legacy));
- }
- 
--static void __init __hugetlb_cgroup_file_init(int idx)
-+static void __init __hugetlb_cgroup_file_init(struct hstate *h)
- {
--	__hugetlb_cgroup_file_dfl_init(idx);
--	__hugetlb_cgroup_file_legacy_init(idx);
-+	__hugetlb_cgroup_file_dfl_init(h);
-+	__hugetlb_cgroup_file_legacy_init(h);
- }
- 
- static void __init __hugetlb_cgroup_file_pre_init(void)
-@@ -1012,13 +874,22 @@ static void __init __hugetlb_cgroup_file_pre_init(void)
- 	BUG_ON(!legacy_files);
- }
- 
-+static void __init __hugetlb_cgroup_file_post_init(void)
-+{
-+	WARN_ON(cgroup_add_dfl_cftypes(&hugetlb_cgrp_subsys,
-+				       dfl_files));
-+	WARN_ON(cgroup_add_legacy_cftypes(&hugetlb_cgrp_subsys,
-+					  legacy_files));
-+}
+-	if (gt && gt < LVTS_GOLDEN_TEMP_MAX)
++	/* A zero value for gt means that device has invalid efuse data */
++	if (!gt)
++		return -ENODATA;
 +
- void __init hugetlb_cgroup_file_init(void)
- {
- 	struct hstate *h;
++	if (gt < LVTS_GOLDEN_TEMP_MAX)
+ 		golden_temp = gt;
  
- 	__hugetlb_cgroup_file_pre_init();
- 	for_each_hstate(h)
--		__hugetlb_cgroup_file_init(hstate_index(h));
-+		__hugetlb_cgroup_file_init(h);
-+	__hugetlb_cgroup_file_post_init();
- }
- 
- /*
+ 	golden_temp_offset = golden_temp * 500 + lvts_data->temp_offset;
+
+---
+base-commit: 632483ea8004edfadd035de36e1ab2c7c4f53158
+change-id: 20240603-mtk-thermal-calib-check-ba2ec24a1c32
+
+Best regards,
 -- 
-2.34.1
+Julien Panis <jpanis@baylibre.com>
 
 
