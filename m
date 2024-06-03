@@ -1,109 +1,148 @@
-Return-Path: <linux-kernel+bounces-199667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8FBE8D8A8E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 21:54:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B52B8D8AAE
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 22:02:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E12F1F2620F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:54:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5D0C1F26E4D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 20:02:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5CCB13B297;
-	Mon,  3 Jun 2024 19:54:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D76413B2A9;
+	Mon,  3 Jun 2024 20:02:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZH1W2WnO"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="IWYq40oB"
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C299F20ED;
-	Mon,  3 Jun 2024 19:54:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CC1D46A4;
+	Mon,  3 Jun 2024 20:02:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717444463; cv=none; b=CDs+59+Y+XcQi2FP8wwiwsxGoIa2VPct9uB2uDnTeApbBosWLzh1AbdaMr1P4iAf3qrdz7A3sgjZ+Gpp3X0ny/1kd1ecAY9+olhRtwnpwSTVi4gNlobV4SLj6BF+3QgbCk1l/uR1orn3h0exnMVh5RIhUed7l46MEvfqxWC2ajg=
+	t=1717444954; cv=none; b=F0wk3INgurKel+LKp4DKPskOLU08b7VNVPlXtvV1wFpAUXvDQCjG0QbM9Z3rNPZ093Kwq3S2v+XNW8CQmDrNlhzq8oIRN5vJ1IORQJPvtkSPjYmvtbOzsRW3t+j3pY4jsH7UwP/ay4bozrMQZDR/BU7kdn2qA8sU5OgG5TDBvIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717444463; c=relaxed/simple;
-	bh=e5m7Kn4ioMIeYs9Jnk1vXY28Wu0K4/ZqmMFp2F5Q8Wo=;
+	s=arc-20240116; t=1717444954; c=relaxed/simple;
+	bh=AYBltyibmcS4U4asfxC/o8WuJGFyFsZjjosU4fSNOks=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bEFgloF33KLFKjYOI5mkG660JMztbmSzZsIzSdOIspP/15Tjchu4usaZR6nPc12rlyzI4g5wL92UgbkYxcp4L+iNn8dWT0VqVVdy20WE/Y+AGrT5sbzlybXp5Hy6bKyZrNBcjGENErkj6TTOCbsmOdfDSJJNyF/lh9fBY/kUXH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZH1W2WnO; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717444462; x=1748980462;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=e5m7Kn4ioMIeYs9Jnk1vXY28Wu0K4/ZqmMFp2F5Q8Wo=;
-  b=ZH1W2WnOiSUG6H8YXRFqChdMKKUf25cBMRxptIhpz2gf8y17TJ72Jq8J
-   ozfVyvtRcGIPKHRA3gkHCuqkcPTse3p6lqOiGHDnZuV4NB/70bvTWYTp/
-   gIU3y9akbzm69bHDqPwNH/axVJm2rNNO9Sq9dhMaoYytC/QVHv7/1a4Qr
-   Vt/0725xjEkAd/Xs0SOMLLz+EQEGXNsKNxna6gckCqkxVM9YUgnKksgWa
-   GPuG4UnS+OpITVPYt1PjPxEz5vDeF11p0EZlZUrgx7xLzTpE5Xy3DHOTR
-   jD+3tiayM4lTO3jmxdtOquXI8unIDEYFG1vBl387JSE3UsG7+GPwElC8g
-   A==;
-X-CSE-ConnectionGUID: oiPXffbvR+KlwcYrYjmbtw==
-X-CSE-MsgGUID: zL6V4iOfSJ6c/FnZShk71w==
-X-IronPort-AV: E=McAfee;i="6600,9927,11092"; a="13707120"
-X-IronPort-AV: E=Sophos;i="6.08,212,1712646000"; 
-   d="scan'208";a="13707120"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2024 12:54:21 -0700
-X-CSE-ConnectionGUID: 1go9N50LTaC9DlhD1lLMQw==
-X-CSE-MsgGUID: Q2PdtJQET1GkYEqYGUH3Dg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,212,1712646000"; 
-   d="scan'208";a="37612029"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2024 12:54:18 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sEDl0-0000000DNN9-1Wh1;
-	Mon, 03 Jun 2024 22:54:14 +0300
-Date: Mon, 3 Jun 2024 22:54:14 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>,
-	Yang Yingliang <yangyingliang@huawei.com>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Thangaraj Samynathan <thangaraj.s@microchip.com>,
-	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Daniel Mack <daniel@zonque.org>,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	=?iso-8859-1?Q?N=EDcolas_F_=2E_R_=2E_A_=2E?= Prado <nfraprado@collabora.com>
-Subject: Re: [PATCH v1 0/8] spi: Rework DMA mapped flag
-Message-ID: <Zl4fZq-zj5v9EI10@smile.fi.intel.com>
-References: <20240531194723.1761567-1-andriy.shevchenko@linux.intel.com>
- <7c54ed90-538c-4b32-91f4-85bf6c27cd6c@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GczYloGZjRroDsjzOAWfzpgEf5ST0aOhTdszo/qWy6K87MyMUduoqb2IMe54WM/mWOfTy3m9fT8hXkoUbjOR4Ora76QczFCRxpz4apjj74PEMibZqVWVmTfaejq3IFRnOt0+jBYIhjtW9vUR0iK8m5VeKtUnURdWExPgSyanXAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=IWYq40oB; arc=none smtp.client-ip=83.149.199.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
+Received: from fpc (unknown [5.228.116.47])
+	by mail.ispras.ru (Postfix) with ESMTPSA id 79F9C4076749;
+	Mon,  3 Jun 2024 19:54:52 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 79F9C4076749
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1717444492;
+	bh=PcR2bwlZQti/encT2nDoXfnro9OdenjYjbHAMNVXpYU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IWYq40oBY/kBriaYjrguGEQPgQHJNTs1L3nJCnOvYRDD7mfHqTd/QM68t0w45kGN3
+	 kmLLTStm3qw64DiVhXnzKdUJ+c9eKCXGbsV3q//0igVRu5IlAlCCCdTXQxUpv7ooSD
+	 /tstzyUTlNyEJQyM7xBXImsSIegkTc+1KDWeHZyI=
+Date: Mon, 3 Jun 2024 22:54:47 +0300
+From: Fedor Pchelkin <pchelkin@ispras.ru>
+To: David Hildenbrand <david@redhat.com>
+Cc: Anastasia Belova <abelova@astralinux.ru>, lvc-project@linuxtesting.org,
+	linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, Oscar Salvador <osalvador@suse.de>,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] mm/memory_hotplug: prevent accessing by index=-1
+Message-ID: <20240603-4f7a5fd957aa1f9cbc8d5f14-pchelkin@ispras.ru>
+References: <20240603112830.7432-1-abelova@astralinux.ru>
+ <3c2b1b1e-c9b3-442e-8f7b-5c7518d3fbdb@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <7c54ed90-538c-4b32-91f4-85bf6c27cd6c@linaro.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <3c2b1b1e-c9b3-442e-8f7b-5c7518d3fbdb@redhat.com>
 
-On Mon, Jun 03, 2024 at 11:10:54AM +0200, Neil Armstrong wrote:
-> On 31/05/2024 21:42, Andy Shevchenko wrote:
-
-...
-
-> I applied the serie on next-20240603, it worked fine:
+On Mon, 03. Jun 18:07, David Hildenbrand wrote:
+> On 03.06.24 13:28, Anastasia Belova wrote:
+> > nid may be equal to NUMA_NO_NODE=-1. Prevent accessing node_data
+> > array by invalid index with check for nid.
+> > 
+> > Found by Linux Verification Center (linuxtesting.org) with SVACE.
+> > 
+> > Fixes: e83a437faa62 ("mm/memory_hotplug: introduce "auto-movable" online policy")
+> > Signed-off-by: Anastasia Belova <abelova@astralinux.ru>
+> > ---
+> >   mm/memory_hotplug.c | 2 +-
+> >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+> > index 431b1f6753c0..bb98ee8fe698 100644
+> > --- a/mm/memory_hotplug.c
+> > +++ b/mm/memory_hotplug.c
+> > @@ -846,7 +846,7 @@ static bool auto_movable_can_online_movable(int nid, struct memory_group *group,
+> >   	unsigned long kernel_early_pages, movable_pages;
+> >   	struct auto_movable_group_stats group_stats = {};
+> >   	struct auto_movable_stats stats = {};
+> > -	pg_data_t *pgdat = NODE_DATA(nid);
+> > +	pg_data_t *pgdat = (nid != NUMA_NO_NODE) ? NODE_DATA(nid) : NULL;
+> >   	struct zone *zone;
+> >   	int i;
 > 
-> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-QRD
+> 
+> pgdat is never dereferenced when "nid == NUMA_NO_NODE".
+> 
+> NODE_DATA is defined as
+> 
+> arch/arm64/include/asm/mmzone.h:#define NODE_DATA(nid)          (node_data[(nid)])
+> arch/loongarch/include/asm/mmzone.h:#define NODE_DATA(nid)      (node_data[(nid)])
+> arch/mips/include/asm/mach-ip27/mmzone.h:#define NODE_DATA(n)           (&__node_data[(n)]->pglist)
+> arch/mips/include/asm/mach-loongson64/mmzone.h:#define NODE_DATA(n)             (__node_data[n])
+> arch/powerpc/include/asm/mmzone.h:#define NODE_DATA(nid)                (node_data[nid])
+> arch/riscv/include/asm/mmzone.h:#define NODE_DATA(nid)          (node_data[(nid)])
+> arch/s390/include/asm/mmzone.h:#define NODE_DATA(nid) (node_data[nid])
+> arch/sh/include/asm/mmzone.h:#define NODE_DATA(nid)             (node_data[nid])
+> arch/sparc/include/asm/mmzone.h:#define NODE_DATA(nid)          (node_data[nid])
+> arch/x86/include/asm/mmzone_32.h:#define NODE_DATA(nid) (node_data[nid])
+> arch/x86/include/asm/mmzone_64.h:#define NODE_DATA(nid)         (node_data[nid])
 
-Thank you!
+node_data array is declared as follows on most archs:
 
--- 
-With Best Regards,
-Andy Shevchenko
+  struct pglist_data *node_data[MAX_NUMNODES];
 
+It's an array of pointers to struct pglist_data. When doing node_data[-1],
+it is actually dereferencing something before the start of the array in
+order to obtain a pointer to struct pglist_data, isn't it?
 
+   (C99, 6.5.2.1) The definition of the subscript operator [] is that
+   E1[E2] is identical to (*((E1)+(E2))).
+
+> 
+> Regarding architectures that's actually support memory hotplug, this is pure pointer arithmetic.
+> (it is for mips as well, just less obvious)
+
+Speaking in a dry language of C standard, pointer arithmetic with one
+before the first array element is also considered undefined behaviour:
+
+  (C99, 6.5.6p8) "If both the pointer operand and the result point to
+  elements of the same array object, or one past the last element of the
+  array object, the evaluation shall not produce an overflow; otherwise,
+  the behavior is undefined."
+
+Although it doesn't ever crash and probably never won't give any problems,
+but who knows what the compiler optimisations would do with this.
+
+> 
+> So how is that a real problem? Do we have a reproducer?
+
+This code looks to be executed with memory_hotplug.online_policy=auto-movable,
+I suppose it's not a real big problem due to the fact that node_data is a
+global variable as otherwise [-1] array access would lead to crashes..
+
+I've triggered the code with node_data[-1] on kernel with UBSAN enabled,
+and no splats were observed. Is it due to that node_data is a global
+variable or I somehow managed to misuse UBSAN for catching oob access?
+Cc'ing linux-hardening.
+
+Nonetheless, maybe it'd be better to define pgdat inside the else-block
+in auto_movable_can_online_movable() where it's only used?
 
