@@ -1,91 +1,99 @@
-Return-Path: <linux-kernel+bounces-198951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CA8C8D7F9C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 12:04:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C2228D7F93
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 12:02:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5EF11F256CD
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 10:04:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC98E1C226FF
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 10:02:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC70B81AC7;
-	Mon,  3 Jun 2024 10:04:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DB2A823BF;
+	Mon,  3 Jun 2024 10:01:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="T6MnWyrb"
-Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pV7kgAp/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B70F763E4
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 10:03:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9951715BB;
+	Mon,  3 Jun 2024 10:01:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717409041; cv=none; b=gIpAMjOGG4GI5d6CkElDr1h+fsAe5cU5fFsNH0cokMV1LkPRBp+THAicLwA4PrLXbl/OsBLkxOMHX2T6WWTtnvk0KPpm3fwUpQK2fmvVDgJG2A9b8QsKNJqY1nh5qttOhFYjQNrxb1IpXDrTGB6U2auIeinhBfTwz4wtmwsR4+M=
+	t=1717408912; cv=none; b=J8kLraQuTtDHs5lQAgwudKRT5y/rjxJ5d1QgldUFEGViVQ12GiEtgFH4qnpv4MRiI3xAfUb/sbK979+PeYrGeP5n/J1j/qp1uuJSr7xFahG5GjhHUO/BWVEuZGAI9FiWwRQcK82GYE9YkB0jjisVd/JAL0PpRYw/B/9EhfXW33s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717409041; c=relaxed/simple;
-	bh=Uwm71QwiZiskaFNE5hC3kDx6Ghn2eJwESg9uo3KSEzI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ja2VjEJmH5xSDro6zr4DC8cTLkxA/mTiP5Vs2rZzbzq1Hfa2UTNlmgwVjv8YCI5HUVl9qs8/5YnK4QEEcDMSvnotg3TFXQRfaWcj3XjS0PoL/k/5ugr1uOlY5m749WEQq7LTmkGA58pwZWTH9qAUJQhiJhO31T8UCvjNz+Ecds0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=T6MnWyrb; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:mime-version:content-transfer-encoding; s=k1; bh=/RLCNyizVaI6Dm
-	AjebjIJepF3QUYj0BeBbucccNDlEc=; b=T6MnWyrb0h/vF3FCuyteOwdtBPggtj
-	qePz2QgVmsibLy3Esa9SnAcFvF8HrJDG3FoMiSmi7rtmuTEnMQnjLktDqPOdVPGE
-	8VZsQFI9h5rD+J23Hox2+XsHKY/FRMs6TIsKFFO0mc/4v8j0tMW6qCsV6qdmdcgA
-	RoR75keyI2EYAfguBluRuOi7ZgNiEJuD5oayAMcNEq6nTdFIr8Axchzyf8a1Q9dC
-	st5UEcU34JhIx77WZDwOHVK3RsILipKePp0JtKet+afgOFU5SohRbFsKUs6ptpgc
-	aqj/9wufPE6eo/MW8dZ/VZMq58QKD3LHmgq+0ods6l7rKpZu4FoSoiHA==
-Received: (qmail 1913243 invoked from network); 3 Jun 2024 12:03:56 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 3 Jun 2024 12:03:56 +0200
-X-UD-Smtp-Session: l3s3148p1@fBSFc/kZjJ8gAwDPXzLGAH1eNELjOc3g
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	linux-media@vger.kernel.org
-Subject: [PATCH] MAINTAINERS: delete email for Anton Sviridenko
-Date: Mon,  3 Jun 2024 12:01:17 +0200
-Message-ID: <20240603100346.10678-2-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1717408912; c=relaxed/simple;
+	bh=uLEf7qEfTUJ9Z6AQPw+OI7k1bYnoKO7ZNGc7O+74gYQ=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=BHAqjknl9IFUHE+ctPhyO5C4yVMmDIQ9oox3Q9okZoAMEPGeGP2TuIVvpOFucN7k3W+HjzDRZn3DrOAavT8gsBkQzYJdzcEtjLKHwHbIRq38cpdwPt/PjlMFsf3P1wKUttvYFqOFfeQH9tsQtYHgqhXclVCNJqf+kcej/3ZCMys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pV7kgAp/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAC2AC2BD10;
+	Mon,  3 Jun 2024 10:01:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717408912;
+	bh=uLEf7qEfTUJ9Z6AQPw+OI7k1bYnoKO7ZNGc7O+74gYQ=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+	b=pV7kgAp/1w6u0Oh8cJkZpvcuEDwm2zeICSqbmhqCS7c6qqSTk1towBosbbVdI3O85
+	 tXozP2v5TXqlXMiYKXGN2uofVNrqrApnvu9kO90kkkBTIc2UDsX3E6+CavZLq1zxat
+	 JV2ru4YZQmfTkdgHZ4zmjKokczxJskuMeErjnsCckEKW4veT5g8iEWa6YsYtcbqei7
+	 1lFP/25YT1qeVDDRxoiEtri5K5Fndtj5i0YUcLrkn1vh+56ask+g+H2fPfrCmioQ0M
+	 RUSI/1Jr9Z/tTZv9si4YB0XF1DdrWAGF4yN3nXEVcWMrjMMHpfVaTTnT7SbHglL/Ey
+	 JM9XEM+yZKzkA==
+From: Kalle Valo <kvalo@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Johannes Berg <johannes@sipsolutions.net>,  Wireless
+ <linux-wireless@vger.kernel.org>,  Alexis =?utf-8?Q?Lothor=C3=A9?=
+ <alexis.lothore@bootlin.com>,  Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>,  Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the wireless-next tree with the
+ wireless tree
+References: <20240603110023.23572803@canb.auug.org.au>
+Date: Mon, 03 Jun 2024 13:01:48 +0300
+In-Reply-To: <20240603110023.23572803@canb.auug.org.au> (Stephen Rothwell's
+	message of "Mon, 3 Jun 2024 11:01:12 +1000")
+Message-ID: <875xuquyyb.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-The email address bounced. I couldn't find a newer one in recent git history,
-so update MAINTAINERS accordingly.
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- MAINTAINERS | 2 --
- 1 file changed, 2 deletions(-)
+> Hi all,
+>
+> Today's linux-next merge of the wireless-next tree got a conflict in:
+>
+>   drivers/net/wireless/microchip/wilc1000/netdev.c
+>
+> between commit:
+>
+>   ebfb5e8fc8b4 ("Revert "wifi: wilc1000: convert list management to RCU"")
+>
+> from the wireless tree and commit:
+>
+>   6fe46d5c0a84 ("wifi: wilc1000: set net device registration as last
+> step during interface creation")
+>
+> from the wireless-next tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 523d84b2d613..947f9b25d139 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -20724,7 +20724,6 @@ F:	include/uapi/rdma/rdma_user_rxe.h
- 
- SOFTLOGIC 6x10 MPEG CODEC
- M:	Bluecherry Maintainers <maintainers@bluecherrydvr.com>
--M:	Anton Sviridenko <anton@corp.bluecherry.net>
- M:	Andrey Utkin <andrey_utkin@fastmail.com>
- M:	Ismael Luceno <ismael@iodev.co.uk>
- L:	linux-media@vger.kernel.org
-@@ -22927,7 +22926,6 @@ F:	tools/testing/selftests/turbostat/
- 
- TW5864 VIDEO4LINUX DRIVER
- M:	Bluecherry Maintainers <maintainers@bluecherrydvr.com>
--M:	Anton Sviridenko <anton@corp.bluecherry.net>
- M:	Andrey Utkin <andrey.utkin@corp.bluecherry.net>
- M:	Andrey Utkin <andrey_utkin@fastmail.com>
- L:	linux-media@vger.kernel.org
+Thanks. We need to figure out how we solve this conflict, most probably
+we'll ask network maintainers to fix it when they pull wireless-next.
+
 -- 
-2.43.0
+https://patchwork.kernel.org/project/linux-wireless/list/
 
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
