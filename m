@@ -1,185 +1,80 @@
-Return-Path: <linux-kernel+bounces-198547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 821E38D7A19
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 04:37:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C1C418D7A1C
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 04:41:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 338312812F5
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 02:37:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 027562810F0
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 02:41:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 127938820;
-	Mon,  3 Jun 2024 02:37:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6D786FC3;
+	Mon,  3 Jun 2024 02:41:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JaZ1Qs4j"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BD662566;
-	Mon,  3 Jun 2024 02:37:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="YkomyI/n"
+Received: from mail-177132.yeah.net (mail-177132.yeah.net [123.58.177.132])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 809D82566;
+	Mon,  3 Jun 2024 02:41:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=123.58.177.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717382250; cv=none; b=jkdrdGzwvh1MHNniJvSxBoR9poIoGTgfTiOGqRKUyEypfnoH+fnX8X6Kk6auxbHAflg1/Y01+lHzIurxDcBZsdwGjRr8nHYcOCtBaSaOkgplljUrVP2bc89xCtIsk2NnUX0JGqnTjfsBdSFOH6irXc2UsPQZAemvVZvkcLOHasc=
+	t=1717382463; cv=none; b=N459ErR6ETYeNDp7JJSHsZTVkQmBDWeLSw7Erf+F706qakcyE0bU13oWmoR2gvHQCffwIT0AwiH31XKsEa/M40973PHnFfCZaBeUUUGraeTQ26CIR0CjatZMZCwr4RtV8+cTj7O7OTQvcsIKRj1G6Mem7ztyfCBEtCVdi/41b/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717382250; c=relaxed/simple;
-	bh=NIzaEEdmhkDh0uGhxZPp5iX+ogXWqvyKuKECBW+n7O0=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=CK+hT1Cb94eWXs4efN21wlwwpVmSPckhAlnF8TlG9T9C6PdxIGvCeLEhgure19PizwO14eYlnHch0wkOrBcUP48pH/T3+lmxjqmdLexfbyck6YUFIpqj5fEkoun0QiCyAbR9DJm4X66BrVk9tx9Pa+tjtlOv7jXMqoRiIZr97fs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JaZ1Qs4j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8A3AC2BBFC;
-	Mon,  3 Jun 2024 02:37:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717382250;
-	bh=NIzaEEdmhkDh0uGhxZPp5iX+ogXWqvyKuKECBW+n7O0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=JaZ1Qs4jkK7eicqpf+ZVdQ1SaHd5SmbcssQBSbE4iOc0WoSt0WLKrecFRW2wDVgdS
-	 SNn5ZWMPBxaXvE5qiKjEprt/dKFJYLMR7mFPa7RJpabL7t983AzQ0IYGrnVqO1TwyV
-	 gsgrapyOQ2kNVE/1ru+zjW4sj2Uiw2/anoy+/y3Ib9b8MHRL1PQND97NRXEa+pkf18
-	 t6KQR+IPkfV79/mqCMTxJuvbk6rIvtdSNsaL+p6+3LSLZ3PUK7DWccu6RpB12Fv5Nb
-	 QLxjZIgFnukVllECh4huW3R5Lu3Os2WXvGyYn/m6TRRQQaLFypp6Jov9MS1ZOAFRew
-	 9lcST+XFzf5NQ==
-Date: Mon, 3 Jun 2024 11:37:23 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Masami
- Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
- <akpm@linux-foundation.org>, Alexei Starovoitov
- <alexei.starovoitov@gmail.com>, Florent Revest <revest@chromium.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, bpf <bpf@vger.kernel.org>, Sven
- Schnelle <svens@linux.ibm.com>, Alexei Starovoitov <ast@kernel.org>, Jiri
- Olsa <jolsa@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, Daniel
- Borkmann <daniel@iogearbox.net>, Alan Maguire <alan.maguire@oracle.com>,
- Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner
- <tglx@linutronix.de>, Guo Ren <guoren@kernel.org>
-Subject: Re: [PATCH v2 11/27] ftrace: Allow subops filtering to be modified
-Message-Id: <20240603113723.b192c8c346e0ed55cb94b61a@kernel.org>
-In-Reply-To: <20240602033832.870736657@goodmis.org>
-References: <20240602033744.563858532@goodmis.org>
-	<20240602033832.870736657@goodmis.org>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1717382463; c=relaxed/simple;
+	bh=f/LNo8wZ1TxjZ6NHh1Ki8vmUnMpxjFitkOVr7lruCUw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NTdBQ+i6W0NC/KSsyZE0J3z118zWI8a/6yXcmTkQuOiSMP+ba+MgOtNDqsTMRmN4atDQfsJ4UjZThnl+uNAB9o3NyUYCAeUxWH5R9S+CjX/Ef7ONr+8MStYD6nudls/Bs0sHaGCwaVYPI9JNjPIH1J9tfwSDQxQi4aIWfMHKuvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=YkomyI/n; arc=none smtp.client-ip=123.58.177.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=HQ5RWTQSwYYSKe8sFZkPkiko6uKlUYaB9AsbqDpjXYM=;
+	b=YkomyI/nMAH6avSV5SU/KY8r3qJ2N0C1lM8TcoQGfdwQcOo8sB+Qvq2EoU8/I2
+	A/KYvItF6btX84Wd7j5e2gHu0jzi8a+oVhk2SYSLPyZIcC6Uva7mySFRbPP19Pfs
+	1l8pC0r/vDNv/feIOWip2DfqIQJQWcRHXBC2cMSLUvGfs=
+Received: from dragon (unknown [114.216.76.201])
+	by smtp2 (Coremail) with SMTP id C1UQrACH7xgULV1mDyXtBw--.58598S3;
+	Mon, 03 Jun 2024 10:40:22 +0800 (CST)
+Date: Mon, 3 Jun 2024 10:40:20 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Christian Gmeiner <christian.gmeiner@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Christian Gmeiner <cgmeiner@igalia.com>, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] arm64: dts: imx8qm: Add GPU nodes
+Message-ID: <Zl0tFA0vUoDBxLbN@dragon>
+References: <20240503212249.3102288-1-christian.gmeiner@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240503212249.3102288-1-christian.gmeiner@gmail.com>
+X-CM-TRANSID:C1UQrACH7xgULV1mDyXtBw--.58598S3
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxU3oGQUUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiDRbyZVszXjZcnQAAsN
 
-On Sat, 01 Jun 2024 23:37:55 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
-
-[...]
->  
-> +static int ftrace_hash_move_and_update_subops(struct ftrace_ops *subops,
-> +					      struct ftrace_hash **orig_subhash,
-> +					      struct ftrace_hash *hash,
-> +					      int enable)
-> +{
-> +	struct ftrace_ops *ops = subops->managed;
-> +	struct ftrace_hash **orig_hash;
-> +	struct ftrace_hash *save_hash;
-> +	struct ftrace_hash *new_hash;
-> +	int ret;
-> +
-> +	/* Manager ops can not be subops (yet) */
-> +	if (WARN_ON_ONCE(!ops || ops->flags & FTRACE_OPS_FL_SUBOP))
-> +		return -EINVAL;
-
-This does return if ops->flags & FTRACE_OPS_FL_SUBOP, but --> (1)
-
-> +
-> +	/* Move the new hash over to the subops hash */
-> +	save_hash = *orig_subhash;
-> +	*orig_subhash = __ftrace_hash_move(hash);
-> +	if (!*orig_subhash) {
-> +		*orig_subhash = save_hash;
-> +		return -ENOMEM;
-> +	}
-> +
-> +	/* Create a new_hash to hold the ops new functions */
-> +	if (enable) {
-> +		orig_hash = &ops->func_hash->filter_hash;
-> +		new_hash = append_hashes(ops);
-> +	} else {
-> +		orig_hash = &ops->func_hash->notrace_hash;
-> +		new_hash = intersect_hashes(ops);
-> +	}
-> +
-> +	/* Move the hash over to the new hash */
-> +	ret = ftrace_hash_move_and_update_ops(ops, orig_hash, new_hash, enable);
-
-This also a bit wired to me. maybe we need simple version like
-
-`__ftrace_hash_move_and_update_ops()`
-
-And call it from ftrace_hash_move_and_update_ops() and here?
-
-> +
-> +	free_ftrace_hash(new_hash);
-> +
-> +	if (ret) {
-> +		/* Put back the original hash */
-> +		free_ftrace_hash_rcu(*orig_subhash);
-> +		*orig_subhash = save_hash;
-> +	} else {
-> +		free_ftrace_hash_rcu(save_hash);
-> +	}
-> +	return ret;
-> +}
-> +
-> +
->  static u64		ftrace_update_time;
->  unsigned long		ftrace_update_tot_cnt;
->  unsigned long		ftrace_number_of_pages;
-> @@ -4770,8 +4823,33 @@ static int ftrace_hash_move_and_update_ops(struct ftrace_ops *ops,
->  {
->  	struct ftrace_ops_hash old_hash_ops;
->  	struct ftrace_hash *old_hash;
-> +	struct ftrace_ops *op;
->  	int ret;
->  
-> +	if (ops->flags & FTRACE_OPS_FL_SUBOP)
-> +		return ftrace_hash_move_and_update_subops(ops, orig_hash, hash, enable);
-
-(1) This calls ftrace_hash_move_and_update_subops() if ops->flags & FTRACE_OPS_FL_SUBOP ?
-
-Thank you,
-
-> +
-> +	/*
-> +	 * If this ops is not enabled, it could be sharing its filters
-> +	 * with a subop. If that's the case, update the subop instead of
-> +	 * this ops. Shared filters are only allowed to have one ops set
-> +	 * at a time, and if we update the ops that is not enabled,
-> +	 * it will not affect subops that share it.
-> +	 */
-> +	if (!(ops->flags & FTRACE_OPS_FL_ENABLED)) {
-> +		/* Check if any other manager subops maps to this hash */
-> +		do_for_each_ftrace_op(op, ftrace_ops_list) {
-> +			struct ftrace_ops *subops;
-> +
-> +			list_for_each_entry(subops, &op->subop_list, list) {
-> +				if ((subops->flags & FTRACE_OPS_FL_ENABLED) &&
-> +				     subops->func_hash == ops->func_hash) {
-> +					return ftrace_hash_move_and_update_subops(subops, orig_hash, hash, enable);
-> +				}
-> +			}
-> +		} while_for_each_ftrace_op(op);
-> +	}
-> +
->  	old_hash = *orig_hash;
->  	old_hash_ops.filter_hash = ops->func_hash->filter_hash;
->  	old_hash_ops.notrace_hash = ops->func_hash->notrace_hash;
-> -- 
-> 2.43.0
+On Fri, May 03, 2024 at 11:22:48PM +0200, Christian Gmeiner wrote:
+> From: Christian Gmeiner <cgmeiner@igalia.com>
 > 
+> Add the DT node for the GPU core found on the i.MX8QM.
 > 
+> etnaviv-gpu 53100000.gpu: model: GC7000, revision: 6009
+> [drm] Initialized etnaviv 1.4.0 20151214 for etnaviv on minor 0
+> 
+> Signed-off-by: Christian Gmeiner <cgmeiner@igalia.com>
 
+Applied, thanks!
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
