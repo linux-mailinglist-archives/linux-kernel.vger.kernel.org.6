@@ -1,39 +1,62 @@
-Return-Path: <linux-kernel+bounces-199508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7561B8D87E8
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:29:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 056B68D87EF
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:30:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BAC12849B7
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:29:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 627F6B21388
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:30:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C648137758;
-	Mon,  3 Jun 2024 17:29:01 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8329925622;
-	Mon,  3 Jun 2024 17:28:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27DC7136E3F;
+	Mon,  3 Jun 2024 17:30:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="GBYRi3yR"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80CA225622
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 17:29:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717435740; cv=none; b=OZldw19/ZAPmOerXulL5apL/YAWxcnxoyZ45ATX+JXhZNnmPpqT8mw6H6NmBputhS5MJceh9zTlENLQ/wAE14xnpU28kOinj00TS/UPt3/WwAej27lt5wirY8f74vqwRaOIw7h/tWwBe7jWPWepat1KWAqDnwuSlSyAkm4XskZM=
+	t=1717435800; cv=none; b=tJ4C/Ga6gzmQul9XMHaGs/wKOTLm5DXFmzy0bnJiWtxfO1EGCkRkXs/U0jFsWUSmGVHN6v91YEQvLKyEAfB6VKB0K3tRW06zCqZMRwTFnryxD1KoLIE09/wtgaHw4DGssl5V97pS0NYFSwQlU1d+36tV9TGRek4KhvQu+rb/JjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717435740; c=relaxed/simple;
-	bh=+tB52iHPbmCXMHOeWlpQnCHMtEmXi/u7YpuslWqxPqk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e5jFvk8FbLlLblVcgrECOFRVqzgUVW0EJpZMxo+Zxa0U3QzQIrrna/h/Bjz5PAskvMTqZkClc+dczPxjWvEKScJ9JXrTvCg7x7LoeJtaZIcyebBVSSCfQoyJ1NwcO6gLNnKcrvZ6U8gXQvSqWFWTHAOBWIfgsK4VKW9/Ymuq8rc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F1A151042;
-	Mon,  3 Jun 2024 10:29:21 -0700 (PDT)
-Received: from [10.1.196.28] (eglon.cambridge.arm.com [10.1.196.28])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3B2A83F792;
-	Mon,  3 Jun 2024 10:28:56 -0700 (PDT)
-Message-ID: <3c7c9b07-78b2-4b8d-968e-0c395c8f22b3@arm.com>
-Date: Mon, 3 Jun 2024 18:28:51 +0100
+	s=arc-20240116; t=1717435800; c=relaxed/simple;
+	bh=ZzxnOGtNW2O6ExH3FSlj2NRoSMcCTYIZdCNOd3pEuL8=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=T5FbgHA3+Br3GMLX+Vcu3i0U16cwWnm17ObAZwCpGJxAu2Uhj2dOQhxgW+mQvXV7mcJTNZVw/2vHr5KdX7gvHhDijryhyW4K1FAEwye4O/d4q7YN7aneqN/yQetgp0TM9cwna7LNce2nlyag93RGIFJnvN/HHdLIE7xa3R0Sn6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=GBYRi3yR; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 453HTptp088167;
+	Mon, 3 Jun 2024 12:29:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1717435791;
+	bh=z08zoGQqJpPUnrI4i9x8DARfEvuyIUnb5LgFpYgkjSo=;
+	h=Date:Subject:From:To:CC:References:In-Reply-To;
+	b=GBYRi3yRVlEAURYpY2oeVWEcdnWvJxWwLclB7yeetOv1mYoIa86VzmcZaE7GhFdhe
+	 IJOlt0e2XrC0cc9Ub4XmS1qvIu5bi9kQ38s1drkYdMcLHRfaCIahmTwcNh+Xu7RHiz
+	 xXHrfvizIDh/TNWjVLYmAjEEPL7hm7I0A/I4KcSo=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 453HTp40060965
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 3 Jun 2024 12:29:51 -0500
+Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 3
+ Jun 2024 12:29:50 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 3 Jun 2024 12:29:50 -0500
+Received: from [10.249.141.75] ([10.249.141.75])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 453HTljl009267;
+	Mon, 3 Jun 2024 12:29:48 -0500
+Message-ID: <b88a7dda-da4d-48df-b878-9dd88ff487e6@ti.com>
+Date: Mon, 3 Jun 2024 22:59:46 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,177 +64,78 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 0/7] block: Introduce CBD (CXL Block Device)
-Content-Language: en-GB
-To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>,
- Dan Williams <dan.j.williams@intel.com>
-Cc: Dongsheng Yang <dongsheng.yang@easystack.cn>,
- Gregory Price <gregory.price@memverge.com>, John Groves <John@groves.net>,
- axboe@kernel.dk, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev,
- Mark Rutland <mark.rutland@arm.com>
-References: <ef0ee621-a2d2-e59a-f601-e072e8790f06@easystack.cn>
- <20240508164417.00006c69@Huawei.com>
- <3d547577-e8f2-8765-0f63-07d1700fcefc@easystack.cn>
- <20240509132134.00000ae9@Huawei.com>
- <a571be12-2fd3-e0ee-a914-0a6e2c46bdbc@easystack.cn>
- <664cead8eb0b6_add32947d@dwillia2-mobl3.amr.corp.intel.com.notmuch>
- <8f161b2d-eacd-ad35-8959-0f44c8d132b3@easystack.cn>
- <ZldIzp0ncsRX5BZE@memverge.com>
- <5db870de-ecb3-f127-f31c-b59443b4fbb4@easystack.cn>
- <20240530143813.00006def@Huawei.com>
- <665a9402445ee_166872941d@dwillia2-mobl3.amr.corp.intel.com.notmuch>
- <20240603134819.00001c5f@Huawei.com>
-From: James Morse <james.morse@arm.com>
-In-Reply-To: <20240603134819.00001c5f@Huawei.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH v1 1/1] Correct nr_types assignment for TPS6594/3 and
+ TPS65224
+From: "Kumar, Udit" <u-kumar1@ti.com>
+To: Shree Ramamoorthy <s-ramamoorthy@ti.com>, <lgirdwood@gmail.com>,
+        <linux-kernel@vger.kernel.org>
+CC: <m-leonard@ti.com>, <n-francis@ti.com>, <bhargav.r@ltts.com>,
+        <m.nirmaladevi@ltts.com>, <vigneshr@ti.com>, <u-kumar1@ti.com>
+References: <20240603170524.643010-1-s-ramamoorthy@ti.com>
+ <20240603170524.643010-2-s-ramamoorthy@ti.com>
+ <63167c3f-f583-4b2d-83c8-632827594ebb@ti.com>
+Content-Language: en-US
+In-Reply-To: <63167c3f-f583-4b2d-83c8-632827594ebb@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hi guys,
 
-On 03/06/2024 13:48, Jonathan Cameron wrote:
-> On Fri, 31 May 2024 20:22:42 -0700
-> Dan Williams <dan.j.williams@intel.com> wrote:
->> Jonathan Cameron wrote:
->>> On Thu, 30 May 2024 14:59:38 +0800
->>> Dongsheng Yang <dongsheng.yang@easystack.cn> wrote:
->>>> 在 2024/5/29 星期三 下午 11:25, Gregory Price 写道:  
->>>>> It's not just a CXL spec issue, though that is part of it. I think the
->>>>> CXL spec would have to expose some form of puncturing flush, and this
->>>>> makes the assumption that such a flush doesn't cause some kind of
->>>>> race/deadlock issue.  Certainly this needs to be discussed.
->>>>>
->>>>> However, consider that the upstream processor actually has to generate
->>>>> this flush.  This means adding the flush to existing coherence protocols,
->>>>> or at the very least a new instruction to generate the flush explicitly.
->>>>> The latter seems more likely than the former.
->>>>>
->>>>> This flush would need to ensure the data is forced out of the local WPQ
->>>>> AND all WPQs south of the PCIE complex - because what you really want to
->>>>> know is that the data has actually made it back to a place where remote
->>>>> viewers are capable of percieving the change.
->>>>>
->>>>> So this means:
->>>>> 1) Spec revision with puncturing flush
->>>>> 2) Buy-in from CPU vendors to generate such a flush
->>>>> 3) A new instruction added to the architecture.
->>>>>
->>>>> Call me in a decade or so.
->>>>>
->>>>>
->>>>> But really, I think it likely we see hardware-coherence well before this.
->>>>> For this reason, I have become skeptical of all but a few memory sharing
->>>>> use cases that depend on software-controlled cache-coherency.    
->>>>
->>>> Hi Gregory,
->>>>
->>>> 	From my understanding, we actually has the same idea here. What I am 
->>>> saying is that we need SPEC to consider this issue, meaning we need to 
->>>> describe how the entire software-coherency mechanism operates, which 
->>>> includes the necessary hardware support. Additionally, I agree that if 
->>>> software-coherency also requires hardware support, it seems that 
->>>> hardware-coherency is the better path.  
->>>>>
->>>>> There are some (FAMFS, for example). The coherence state of these
->>>>> systems tend to be less volatile (e.g. mappings are read-only), or
->>>>> they have inherent design limitations (cacheline-sized message passing
->>>>> via write-ahead logging only).    
->>>>
->>>> Can you explain more about this? I understand that if the reader in the 
->>>> writer-reader model is using a readonly mapping, the interaction will be 
->>>> much simpler. However, after the writer writes data, if we don't have a 
->>>> mechanism to flush and invalidate puncturing all caches, how can the 
->>>> readonly reader access the new data?  
->>>
->>> There is a mechanism for doing coarse grained flushing that is known to
->>> work on some architectures. Look at cpu_cache_invalidate_memregion().
->>> On intel/x86 it's wbinvd_on_all_cpu_cpus()  
+Please ignore below response .
+
+Sent by mistake.
+
+
+Thanks
+
+Udit
+
+
+On 6/3/2024 10:46 PM, Kumar, Udit wrote:
+>
+> On 6/3/2024 10:35 PM, Shree Ramamoorthy wrote:
+>> Swap nr_types assignment for TPS6594/3 and TPS65224.
+>> Issue detected with v6.10-rc1 and tested using a TI J7200 EVM board.
+>
+>
+> Please prefix line, where you want this patch to go
+>
+> like tiL6.6 or so
+>
+>
+>> Log:
+>> [   13.974024] Call trace:
+>> [   13.974025]  _regulator_put.part.0+0x40/0x48
+>> [   13.974028]  regulator_register+0x2b0/0xa00
+>> [   13.974031]  devm_regulator_register+0x58/0xa0
+>> [   13.974035]  tps6594_regulator_probe+0x4e0/0x5f0 [tps6594_regulator]
+>> ...
+>> [   13.974178] Unable to handle kernel NULL pointer dereference at 
+>> virtual address 0000000000000004
 >>
->> There is no guarantee on x86 that after cpu_cache_invalidate_memregion()
->> that a remote shared memory consumer can be assured to see the writes
->> from that event.
-> 
-> I was wondering about that after I wrote this...  I guess it guarantees
-> we won't get a late landing write or is that not even true?
-> 
-> So if we remove memory, then added fresh memory again quickly enough
-> can we get a left over write showing up?  I guess that doesn't matter as
-> the kernel will chase it with a memset(0) anyway and that will be ordered
-> as to the same address.
-> 
-> However we won't be able to elide that zeroing even if we know the device
-> did it which is makes some operations the device might support rather
-> pointless :(
-
->>> on arm64 it's a PSCI firmware call CLEAN_INV_MEMREGION (there is a
->>> public alpha specification for PSCI 1.3 with that defined but we
->>> don't yet have kernel code.)  
-
-I have an RFC for that - but I haven't had time to update and re-test it.
-
-If you need this, and have a platform where it can be implemented, please get in touch
-with the people that look after the specs to move it along from alpha.
-
-
->> That punches visibility through CXL shared memory devices?
-
-> It's a draft spec and Mark + James in +CC can hopefully confirm.
-> It does say
-> "Cleans and invalidates all caches, including system caches".
-> which I'd read as meaning it should but good to confirm.
-
-It's intended to remove any cached entries - including lines in what the arm-arm calls
-"invisible" system caches, which typically only platform firmware can touch. The next
-access should have to go all the way to the media. (I don't know enough about CXL to say
-what a remote shared memory consumer observes)
-
-Without it, all we have are the by-VA operations which are painfully slow for large
-regions, and insufficient for system caches.
-
-As with all those firmware interfaces - its for the platform implementer to wire up
-whatever is necessary to remove cached content for the specified range. Just because there
-is an (alpha!) spec doesn't mean it can be supported efficiently by a particular platform.
-
-
->>> These are very big hammers and so unsuited for anything fine grained.
-
-You forgot really ugly too!
-
-
->>> In the extreme end of possible implementations they briefly stop all
->>> CPUs and clean and invalidate all caches of all types. So not suited
->>> to anything fine grained, but may be acceptable for a rare setup event,
->>> particularly if the main job of the writing host is to fill that memory
->>> for lots of other hosts to use.
->>>
->>> At least the ARM one takes a range so allows for a less painful
->>> implementation. 
-
-That is to allow some ranges to fail. (e.g. you can do this to the CXL windows, but not
-the regular DRAM).
-
-On the less painful implementation, arm's interconnect has a gadget that does "Address
-based flush" which could be used here. I'd hope platforms with that don't need to
-interrupt all CPUs - but it depends on what else needs to be done.
-
-
->>> I'm assuming we'll see new architecture over time
->>> but this is a different (and potentially easier) problem space
->>> to what you need.  
+>> Signed-off-by: Shree Ramamoorthy <s-ramamoorthy@ti.com>
+>> ---
+>>   drivers/regulator/tps6594-regulator.c | 4 ++--
+>>   1 file changed, 2 insertions(+), 2 deletions(-)
 >>
->> cpu_cache_invalidate_memregion() is only about making sure local CPU
->> sees new contents after an DPA:HPA remap event. I hope CPUs are able to
->> get away from that responsibility long term when / if future memory
->> expanders just issue back-invalidate automatically when the HDM decoder
->> configuration changes.
-> 
-> I would love that to be the way things go, but I fear the overheads of
-> doing that on the protocol means people will want the option of the painful
-> approach.
-
-
-
-Thanks,
-
-James
+>> diff --git a/drivers/regulator/tps6594-regulator.c 
+>> b/drivers/regulator/tps6594-regulator.c
+>> index 4a859f4c0f83..b66608ab2546 100644
+>> --- a/drivers/regulator/tps6594-regulator.c
+>> +++ b/drivers/regulator/tps6594-regulator.c
+>> @@ -660,11 +660,11 @@ static int tps6594_regulator_probe(struct 
+>> platform_device *pdev)
+>>       } else if (tps->chip_id == TPS65224) {
+>>           nr_buck = ARRAY_SIZE(tps65224_buck_regs);
+>>           nr_ldo = ARRAY_SIZE(tps65224_ldo_regs);
+>> -        nr_types = REGS_INT_NB;
+>> +        nr_types = TPS65224_REGS_INT_NB;
+>>       } else {
+>>           nr_buck = ARRAY_SIZE(buck_regs);
+>>           nr_ldo = ARRAY_SIZE(tps6594_ldo_regs);
+>> -        nr_types = TPS65224_REGS_INT_NB;
+>> +        nr_types = REGS_INT_NB;
+>>       }
+>>         reg_irq_nb = nr_types * (nr_buck + nr_ldo);
+>> -- 
 
