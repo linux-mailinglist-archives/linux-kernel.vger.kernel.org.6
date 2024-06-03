@@ -1,171 +1,141 @@
-Return-Path: <linux-kernel+bounces-198727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 023828D7C9D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:40:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C0C9D8D7C9F
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:40:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADA17283A12
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 07:40:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CC5B283B9E
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 07:40:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F14B487BF;
-	Mon,  3 Jun 2024 07:40:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E40B74AEEA;
+	Mon,  3 Jun 2024 07:40:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NPaW8jAg"
-Received: from mail-oa1-f67.google.com (mail-oa1-f67.google.com [209.85.160.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UXfBP6n5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CABF047A4C;
-	Mon,  3 Jun 2024 07:40:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F5B347A4C;
+	Mon,  3 Jun 2024 07:40:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717400413; cv=none; b=mYkLEA9CV7H0TZrpexURzAmFYhTkHwU6/XAW0XFhzswIneKm5MCQSg7f+RDwJJjrIGp5JwERi3m2kgQ/dbpdCXw/GwlUdZ0dN6LwhPDDNYrA5mAs2qbT5xcAkYc5FzbMx/iph31oPbVzLSIzc0wJxOvmVUpyc1hqM22fT2aHWGQ=
+	t=1717400427; cv=none; b=aKOBQLUZNbExBGutYADJuDK8GAUJEu5e87lUkHSWw1iFo9Wg3OjR4nDHJExNO05nJBcQ5+HyyabH137B4U0YXy9CL2Q0fhvgFXU+tWl5GLqUyEczQ1F3o0iehXyP8VwNkfXufK/lgdY7edI2lJeci3bAJQTjU1XJdVsA3z4wuIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717400413; c=relaxed/simple;
-	bh=Y0TmL0BXrE37/+np5aA/hDi1fG033tdMSsomY2CBrCM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JBPC+K2kG9Z5HaHeoaBeowke7GINyRjlE37qt3B30XJ7C6LZm/a9KJ1PE4Xvu/Vcqlk7VZELLCiNMyVgHcnpmyR0iOJqvnJOL0yimN7AHs24KOlhOlzuo7iWPvm3fJHHVjC4mEDR8zbebJPs+o5cOCZzbywNeviVQ2RD61xuWso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NPaW8jAg; arc=none smtp.client-ip=209.85.160.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f67.google.com with SMTP id 586e51a60fabf-24c9f297524so2141073fac.0;
-        Mon, 03 Jun 2024 00:40:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717400411; x=1718005211; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2FWb75cH+3iCprEXqTnOlMXbH+prg3pAb1WVvaGmF9A=;
-        b=NPaW8jAgn0bAeuVRNIZrSoycEllrR4eVfEcGrCkJSGAq1w0nSMTGXZ3DXcPXtPUW0i
-         kSDDKKPM5i/wgOiER4RH9z4k/NCDFxvNigb1GIxiwSfVzcUUzCn3FdUtglfslIr5qOq+
-         hno7pwj8OUH2D2w1w+BUTk1yqfEQrcfS0LYEM0B3uzDrjF27aBwq0RVgmvSPdLsg/NWR
-         VYhd36JBF4OCw+Ak6j1GPL2aUxeQ7kBlKdErrjlXt7jT2WX8zRU2N1ruBJRdPp5r91Gq
-         MFdauejkWlhbYmKb4yN6qHoDU/OQ4301FGYakHfIIRVSceO8OcmHKikXJqcisNpivGFI
-         K0XA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717400411; x=1718005211;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2FWb75cH+3iCprEXqTnOlMXbH+prg3pAb1WVvaGmF9A=;
-        b=MyY1LLXLbGTrk1mLpiR93nb6nGg1zbgw9iQBoJS8W/hUesqdvPkHBOsBQj1OO8om6o
-         9+1cARBcx5zKJf3MOsJFC2ElPJH5R4NJigShn+aA/hl24jpLtaOkaaQXg+TTcOGx6zaH
-         3G8CDTluqmOT9WlpoTskIvy/OrySJM0P6zQyf3qlxbp00CKyZzYAzbLBhe7GYpfhmcsT
-         c97a0s1HqBAUJ50prwyHy5jLcWoq/J6k9tc9lhiPMYBntoq8fldyjxy7oClSMoxwimzL
-         vYZ3kk5SiO4wcYM3+E9MKaUH4WO1ZXGJimiGnf5V6JYRmAS8Shmwky0BeGevYZsCsvdW
-         Y+zg==
-X-Forwarded-Encrypted: i=1; AJvYcCXffMpAvXoDFUcY+cVECL1P6iFbO4FpAuohJJ/4hyVsg5Qdv1nlY1Z98KIOInlZEoPWvK6WkZvmtRZO56ApbcbIiFJRlf2xKN201TkytOrZpkyIzkWKKlsEOmsLIDaDUdMFYjnc
-X-Gm-Message-State: AOJu0YzD9M8DJEwD5xZCZliz9+T0YDHiNZe9vX0hzAehBEo5r99HnSYz
-	FXZ/d0/GznHPCzYhy49jBlC3HPcQbkoQfpBXajkS3BlsFrnWzl2y
-X-Google-Smtp-Source: AGHT+IF5/ByL3b/SC1mcU5unJApgzzwn4Zx24MkG74MKNAPQfKKM9gMvAoT31/rXitQaS4tx8uULRQ==
-X-Received: by 2002:a05:6870:a714:b0:24f:f413:3039 with SMTP id 586e51a60fabf-2508b9b8415mr9956592fac.2.1717400410647;
-        Mon, 03 Jun 2024 00:40:10 -0700 (PDT)
-Received: from twhmp6px (mxsmtp211.mxic.com.tw. [211.75.127.162])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-702423cb705sm4904998b3a.4.2024.06.03.00.40.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Jun 2024 00:40:10 -0700 (PDT)
-Received: from hqs-appsw-a2o.mp600.macronix.com (linux-patcher [172.17.236.67])
-	by twhmp6px (Postfix) with ESMTPS id 117BE8095A;
-	Mon,  3 Jun 2024 15:43:08 +0800 (CST)
-From: Cheng Ming Lin <linchengming884@gmail.com>
-To: miquel.raynal@bootlin.com,
-	dwmw2@infradead.org,
-	computersforpeace@gmail.com,
-	marek.vasut@gmail.com,
-	vigneshr@ti.com,
-	linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: richard@nod.at,
-	alvinzhou@mxic.com.tw,
-	leoyu@mxic.com.tw,
-	Cheng Ming Lin <chengminglin@mxic.com.tw>
-Subject: [PATCH] Documentation: mtd: spinand: macronix: Add support for serial NAND flash
-Date: Mon,  3 Jun 2024 15:39:53 +0800
-Message-Id: <20240603073953.16399-1-linchengming884@gmail.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1717400427; c=relaxed/simple;
+	bh=9rBCxnNOqL19PhtN8Ev8Pt2LG9neDHVmcXIvCefgzec=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dIQCJGspaGmERF6neT83kJFfPTuCsnPQy0EkeP+KRF0wYkCJ8ukopmOO2CTNr/yTOPENbfG3/raLH6dOeNWUOYimRbT+JM6Xj+5LalwvxWFepnUdgu7kRqa142vBlVrkTZOd8I5fUrcrbcSfqJR5ni/EF9tV5mLnPHbJPZWH9l4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UXfBP6n5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C910BC2BD10;
+	Mon,  3 Jun 2024 07:40:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717400426;
+	bh=9rBCxnNOqL19PhtN8Ev8Pt2LG9neDHVmcXIvCefgzec=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UXfBP6n5YKpnpIqXq39RpLHYgCW8Niq2bWdBki6s5CTiKVZD1bPk6+fey8Yt4aMHQ
+	 lZDmH78vbZcqpbais3P2jbWcihAnjRHR4eaqY29qdxyOP15U9NDtRRz98zhjKRQiaU
+	 SNDgP44uoxEtngXnnT88fTiJECnUTJewvTc8Y/sYlSUhu0FCXUlDHXCTCWuO34DfFQ
+	 p8nZctkihrFLHTOtXdYd7w7FGAyRoaq7DnkNL32j53mTpFemI45EsUtRgMPWa+5RCM
+	 HGeeTJSaKewpr+NfxU+Q7Zxo9t/hN0keqQVn9+Ue6N4pE4lwufaiX5mrf5c/eNGlQo
+	 xeVDNkLrn6fNQ==
+Date: Mon, 3 Jun 2024 08:40:21 +0100
+From: Simon Horman <horms@kernel.org>
+To: Vladimir Oltean <olteanv@gmail.com>
+Cc: Tristram.Ha@microchip.com, Woojung.Huh@microchip.com, andrew@lunn.ch,
+	vivien.didelot@gmail.com, f.fainelli@gmail.com, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	UNGLinuxDriver@microchip.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] net: dsa: microchip: fix initial port flush problem
+Message-ID: <20240603074021.GV491852@kernel.org>
+References: <1716932145-3486-1-git-send-email-Tristram.Ha@microchip.com>
+ <20240531190234.GT491852@kernel.org>
+ <BYAPR11MB35583B3BA16BFB2F78615DBBECFC2@BYAPR11MB3558.namprd11.prod.outlook.com>
+ <20240601120545.GG491852@kernel.org>
+ <20240602140118.nnlvydm4dp6wr4c3@skbuf>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240602140118.nnlvydm4dp6wr4c3@skbuf>
 
-From: Cheng Ming Lin <chengminglin@mxic.com.tw>
+On Sun, Jun 02, 2024 at 05:01:18PM +0300, Vladimir Oltean wrote:
+> On Sat, Jun 01, 2024 at 01:05:45PM +0100, Simon Horman wrote:
+> > On Fri, May 31, 2024 at 07:19:54PM +0000, Tristram.Ha@microchip.com wrote:
+> > > > Subject: Re: [PATCH net] net: dsa: microchip: fix initial port flush problem
+> > > > 
+> > > > EXTERNAL EMAIL: Do not click links or open attachments unless you know the content
+> > > > is safe
+> > > > 
+> > > > On Tue, May 28, 2024 at 02:35:45PM -0700, Tristram.Ha@microchip.com wrote:
+> > > > > From: Tristram Ha <tristram.ha@microchip.com>
+> > > > >
+> > > > > The very first flush in any port will flush all learned addresses in all
+> > > > > ports.  This can be observed by unplugging a cable from one port while
+> > > > > additional ports are connected and dumping the fdb entries.
+> > > > >
+> > > > > This problem is caused by the initially wrong value programmed to the
+> > > > > register.  After the first flush the value is reset back to the normal so
+> > > > > the next port flush will not cause such problem again.
+> > > > 
+> > > > Hi Tristram,
+> > > > 
+> > > > I think it would be worth spelling out why it is correct to:
+> > > > 1. Not set SW_FLUSH_STP_TABLE or SW_FLUSH_MSTP_TABLE; and
+> > > > 2. Preserve the value of the other bits of REG_SW_LUE_CTRL_1
+> > > 
+> > > Setting SW_FLUSH_STP_TABLE and SW_FLUSH_MSTP_TABLE bits are wrong as they
+> > > are action bits.  The bit should be set only when doing an action like
+> > > flushing.
+> > 
+> > Understood, thanks. And I guess that only bits that are being configured
+> > should be changed, thus the values other bits are preserved with this
+> > change.
+> > 
+> > FWIIW, I do think it would be worth adding something about this to the
+> > patch description.
+> 
+> I agree the description is confusing and I had to look it up in the
+> datasheet to understand.
+> 
+> I would suggest something along the lines of:
+> 
+> Setting the SW_FLUSH_STP_TABLE | SW_FLUSH_MSTP_TABLE bits of
+> REG_SW_LUE_CTRL_1 does not do anything right away. They are
+> just one-shot modifiers of the upcoming flush action executed by
+> ksz9477_flush_dyn_mac_table().
+> 
+> It is wrong to set these bits at ksz9477_reset_switch() time, because
+> it makes ksz9477_flush_dyn_mac_table() have an unexpected and incorrect
+> behavior during its first run. When DSA calls ksz_port_fast_age() on a
+> single port for the first time, due to this modifier being set, the
+> entire FDB will be flushed of dynamically learned entries, across all
+> ports.
+> 
+> Additionally, there is another mistake in the original code, which is
+> that the value read from the REG_SW_LUE_CTRL_1 is immediately discarded,
+> rather than preserved. The relevant bit which is set by default in this
+> register (but we are mistakenly clearing) is:
+> 
+> Bit 3: Multicast Source Address Filtering
+> 1 = Forward packets with a multicast source address
+> 0 = Drop packets with a multicast source address
 
-MX35UF{1,2,4}GE4AD and MX35UF{1,2}GE4AC have been merge into 
-Linux kernel mainline. 
-Commit ID: "c374839f9b4475173e536d1eaddff45cb481dbdf".
+Thanks, that makes things a lot clearer to me.
 
-For SPI-NAND flash support on Linux kernel LTS v5.4.y,
-add SPI-NAND flash MX35UF{1,2,4}GE4AD and MX35UF{1,2}GE4AC in id tables.
+> Tristram, now a question to you: why would we want to forward packets
+> with a multicast source address? It looks like clearing that field is
+> one of those things which were accidentally correct.
+> 
+> The cleanest way to not make a functional change where none is intended
+> is to simply delete the read.
 
-Those five flashes have been validate on Xilinx zynq-picozed board and
-Linux kernel LTS v5.4.y.
-
-Signed-off-by: Cheng Ming Lin <chengminglin@mxic.com.tw>
----
- drivers/mtd/nand/spi/macronix.c | 45 +++++++++++++++++++++++++++++++++
- 1 file changed, 45 insertions(+)
-
-diff --git a/drivers/mtd/nand/spi/macronix.c b/drivers/mtd/nand/spi/macronix.c
-index f18c6cfe8ff5..e1446798bfb3 100644
---- a/drivers/mtd/nand/spi/macronix.c
-+++ b/drivers/mtd/nand/spi/macronix.c
-@@ -132,6 +132,51 @@ static const struct spinand_info macronix_spinand_table[] = {
- 					      &update_cache_variants),
- 		     SPINAND_HAS_QE_BIT,
- 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout, NULL)),
-+	SPINAND_INFO("MX35UF4GE4AD", 0xb7,
-+		     NAND_MEMORG(1, 4096, 256, 64, 2048, 40, 1, 1, 1),
-+		     NAND_ECCREQ(8, 512),
-+		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
-+					      &write_cache_variants,
-+					      &update_cache_variants),
-+		     SPINAND_HAS_QE_BIT,
-+		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
-+				     mx35lf1ge4ab_ecc_get_status)),
-+	SPINAND_INFO("MX35UF2GE4AD", 0xa6,
-+		     NAND_MEMORG(1, 2048, 128, 64, 2048, 40, 1, 1, 1),
-+		     NAND_ECCREQ(8, 512),
-+		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
-+					      &write_cache_variants,
-+					      &update_cache_variants),
-+		     SPINAND_HAS_QE_BIT,
-+		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
-+				     mx35lf1ge4ab_ecc_get_status)),
-+	SPINAND_INFO("MX35UF2GE4AC", 0xa2,
-+		     NAND_MEMORG(1, 2048, 64, 64, 2048, 40, 1, 1, 1),
-+		     NAND_ECCREQ(4, 512),
-+		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
-+					      &write_cache_variants,
-+					      &update_cache_variants),
-+		     SPINAND_HAS_QE_BIT,
-+		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
-+				     mx35lf1ge4ab_ecc_get_status)),
-+	SPINAND_INFO("MX35UF1GE4AD", 0x96,
-+		     NAND_MEMORG(1, 2048, 128, 64, 1024, 20, 1, 1, 1),
-+		     NAND_ECCREQ(8, 512),
-+		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
-+					      &write_cache_variants,
-+					      &update_cache_variants),
-+		     SPINAND_HAS_QE_BIT,
-+		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
-+				     mx35lf1ge4ab_ecc_get_status)),
-+	SPINAND_INFO("MX35UF1GE4AC", 0x92,
-+		     NAND_MEMORG(1, 2048, 64, 64, 1024, 20, 1, 1, 1),
-+		     NAND_ECCREQ(4, 512),
-+		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
-+					      &write_cache_variants,
-+					      &update_cache_variants),
-+		     SPINAND_HAS_QE_BIT,
-+		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
-+				     mx35lf1ge4ab_ecc_get_status)),
- };
- 
- static int macronix_spinand_detect(struct spinand_device *spinand)
--- 
-2.25.1
-
+FWIIW, I thought about that too. But I was concerned that perhaps the read
+has a side effect, because I don't know the hw well enough to say otherwise.
 
