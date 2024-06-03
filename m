@@ -1,169 +1,166 @@
-Return-Path: <linux-kernel+bounces-199044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72D318D8126
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:26:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F1C38D8130
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:27:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F57A1C21D27
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:26:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 051AB28479C
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:27:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E61B484A3B;
-	Mon,  3 Jun 2024 11:26:28 +0000 (UTC)
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFBAB84D09;
+	Mon,  3 Jun 2024 11:27:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="y6W/tjwL";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="p2RIwMKT";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="flPfk7AO";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="FUz/Pj4g"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC3191366;
-	Mon,  3 Jun 2024 11:26:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A6482C6A3;
+	Mon,  3 Jun 2024 11:27:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717413988; cv=none; b=K0KTRa2v6IdxXxMjS6swomhbComDf+PHODWScimIvHE9bZN25vhCtdGHT1o49EqUcC2DDtPmab/b61wxbzSmX/sXvUNg+WFYZ07vZU4iSp9+MfBEAN9+l7QUDuv+UB4NdlXvaxZ8zU0Z+4ecRHqCY9ovqCgck5dANlgNCKoESNA=
+	t=1717414035; cv=none; b=p8kD0k5JkZyR3doAe5gJmsVR/RbCG0MtsxjD6PVFb29dYlzVbszi4EwmjBSKGwjtPfKOtCtbGwlTlklO7MhUMk97ZHSUH1NzhAGV/MPar3xZdJcYitHeseCbT/5l3zlilZAw6LvyKBkFdgfBQrVQzazFHWiJwnESWHzPQVJ0O3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717413988; c=relaxed/simple;
-	bh=U5nhK6N3AY+7D8Nic9cgW9P7u0jQsPlGNJPN6Yco6fI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=n9AxcZJRp3XK6H9U+n+wRalhgyfbvfYfx+n4jR+NPLMYx8IqKDFkODfcZlXBpKJllAyj6HY4+4mDxsSwElto8MsgjpsH8uBmJ6ekJNj/2XpGcMkt8c+KkO1rx1vhINtsY9Y+fP2BumQK3encOek48427PJng+vm2Pj7gUEZZYyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Received: from i53875b65.versanet.de ([83.135.91.101] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1sE5pU-0006rj-BG; Mon, 03 Jun 2024 13:26:20 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: ulf.hansson@linaro.org, Adrian Hunter <adrian.hunter@intel.com>
-Cc: serghox@gmail.com, linux-mmc@vger.kernel.org,
- linux-kernel@vger.kernel.org, quentin.schulz@cherry.de,
- Heiko Stuebner <heiko.stuebner@cherry.de>
-Subject:
- Re: [PATCH] mmc: sdhci-of-dwcmshc: don't enable CQE without a suitable irq
- handler
-Date: Mon, 03 Jun 2024 13:26:19 +0200
-Message-ID: <4015176.ZaRXLXkqSa@diego>
-In-Reply-To: <55cea03b-e685-4f7b-a93b-cb464417d364@intel.com>
-References:
- <20240530215532.2192423-1-heiko@sntech.de>
- <55cea03b-e685-4f7b-a93b-cb464417d364@intel.com>
+	s=arc-20240116; t=1717414035; c=relaxed/simple;
+	bh=cJPnpg2hCwgHukR1vYoWJ+DVnA03/FFtOwtTCUJ8wkY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YMs2O09di+tB4XMzUfMUv/nXqsLLfeTKOLs4EwYrOkWKppwk7D+uRuivGFsQekBYqaX9r+tu8UdjKofIzZ5xoCPq9uCpJ+LalTB1Iy6pUFZs/lAnQlyjCrHA1BbYcEd2p+yXpi3NQYYr5rRELQAtzEE2NMeyBw51FL2L5Xe8lCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=y6W/tjwL; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=p2RIwMKT; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=flPfk7AO; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=FUz/Pj4g; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 63A272224D;
+	Mon,  3 Jun 2024 11:27:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1717414031; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7pfFFXzKIW4SMjbgPuQqcNQPPQGz7PtcZJ46Fj089Is=;
+	b=y6W/tjwLyJFxYOMqAVNiil/WQmavDW8lR/py1GpPK1u/XNM6fc+gV0qTEt47HpLOW1/hh5
+	PxMOJvMm4dp6wluFyY5UtrEO0BIEH67CI8b0a4TdpSMtj1pS+ULuY7XCKL7hK+gy1lSLAA
+	I6CDN8g9JIBJoxujiCClmPECcCM4g00=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1717414031;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7pfFFXzKIW4SMjbgPuQqcNQPPQGz7PtcZJ46Fj089Is=;
+	b=p2RIwMKT1kTsj9NXcpvegHJol5lw/KUIDeHqirTbn039oAQbu8V8mzDa3yH6SBTEjIrlTa
+	ts0FHhDL8vR+S0Bw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=flPfk7AO;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="FUz/Pj4g"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1717414030; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7pfFFXzKIW4SMjbgPuQqcNQPPQGz7PtcZJ46Fj089Is=;
+	b=flPfk7AOOeYAnUfLtCpiJv36/Q16dFQN4aXjltYqF/2fKTOb1Xw4Qoxp34/tZvKvR5tb1K
+	Pav9u71FY5VZRtJowJ4bon3w0m134DzwyfCGDFQSW6S6Msg2qSpjft255ZXFkLlexH4Sjf
+	8REr4OA0CUrTdkFoqT27hgkFO7z1znY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1717414030;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7pfFFXzKIW4SMjbgPuQqcNQPPQGz7PtcZJ46Fj089Is=;
+	b=FUz/Pj4gT+sjqZWtu+0NyY8suUgunZRzh1/vNXe92rZEbWS7Ha0DJnNTVHro4FGrP5i/C9
+	29QjW+mtQUuUzOBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 59687139CB;
+	Mon,  3 Jun 2024 11:27:10 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id nr/PFY6oXWb/JwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 03 Jun 2024 11:27:10 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 0799EA087F; Mon,  3 Jun 2024 13:27:05 +0200 (CEST)
+Date: Mon, 3 Jun 2024 13:27:05 +0200
+From: Jan Kara <jack@suse.cz>
+To: syzbot <syzbot+42986aeeddfd7ed93c8b@syzkaller.appspotmail.com>
+Cc: brauner@kernel.org, jack@suse.cz, linux-ext4@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Subject: Re: [syzbot] [ext4?] INFO: task hung in vfs_rmdir (2)
+Message-ID: <20240603112705.hafr4gh5foxccw7f@quack3>
+References: <00000000000054d8540619f43b86@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <00000000000054d8540619f43b86@google.com>
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Level: 
+X-Spamd-Result: default: False [-0.92 / 50.00];
+	BAYES_HAM(-2.41)[97.28%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=47d282ddffae809f];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[42986aeeddfd7ed93c8b];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	MISSING_XM_UA(0.00)[];
+	SUBJECT_HAS_QUESTION(0.00)[]
+X-Rspamd-Queue-Id: 63A272224D
+X-Spam-Flag: NO
+X-Spam-Score: -0.92
+X-Spamd-Bar: /
 
-Am Montag, 3. Juni 2024, 10:01:23 CEST schrieb Adrian Hunter:
-> On 31/05/24 00:55, Heiko Stuebner wrote:
-> > From: Heiko Stuebner <heiko.stuebner@cherry.de>
-> > 
-> > supports-cqe is an established dt property so can appear in devicetrees
-> > at any time. CQE support in the sdhci-of-dwcmshc driver does require a
-> > special irq handler in the platform-specific ops, to handle the CQE
-> > interrupt.
-> > 
-> > Without this special handler we end up with a spew of unhandled interrupt
-> > messages on devices with supports-cqe property but without irq handler:
-> > 
-> > [   11.624143] mmc0: Unexpected interrupt 0x00004000.
-> > [   11.629504] mmc0: sdhci: ============ SDHCI REGISTER DUMP ===========
-> > [   11.636711] mmc0: sdhci: Sys addr:  0x00000008 | Version:  0x00000005
-> > [   11.643919] mmc0: sdhci: Blk size:  0x00007200 | Blk cnt:  0x00000000
-> > [   11.651128] mmc0: sdhci: Argument:  0x00018000 | Trn mode: 0x00000033
-> > [   11.658336] mmc0: sdhci: Present:   0x13f700f0 | Host ctl: 0x00000034
-> > [   11.665545] mmc0: sdhci: Power:     0x00000001 | Blk gap:  0x00000000
-> > [   11.672753] mmc0: sdhci: Wake-up:   0x00000000 | Clock:    0x00000407
-> > [   11.679961] mmc0: sdhci: Timeout:   0x0000000e | Int stat: 0x00004000
-> > [   11.687169] mmc0: sdhci: Int enab:  0x02ff4000 | Sig enab: 0x02ff4000
-> > [   11.694378] mmc0: sdhci: ACmd stat: 0x00000000 | Slot int: 0x00000000
-> > [   11.701586] mmc0: sdhci: Caps:      0x226dc881 | Caps_1:   0x08000007
-> > [   11.708794] mmc0: sdhci: Cmd:       0x00000d1e | Max curr: 0x00000000
-> > [   11.716003] mmc0: sdhci: Resp[0]:   0x00000900 | Resp[1]:  0x00000000
-> > [   11.723211] mmc0: sdhci: Resp[2]:   0x328f5903 | Resp[3]:  0x000007cd
-> > [   11.730419] mmc0: sdhci: Host ctl2: 0x0000000f
-> > [   11.735392] mmc0: sdhci: ADMA Err:  0x00000000 | ADMA Ptr: 0xee28f008
-> > [   11.742600] mmc0: sdhci: ============================================
-> > 
-> > So don't enable CQE if a usable interrupt handler is not defined and warn
-> > instead about this fact.
-> > 
-> > Fixes: 53ab7f7fe412 ("mmc: sdhci-of-dwcmshc: Implement SDHCI CQE support")
-> > Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
-> > ---
-> > My rk3588-tiger and rk3588-jaguar devicetrees had an accidential
-> > supports-cqe in their devicetree, which made me run into this problem
-> > with 6.10-rc1 .
-> > 
-> >  drivers/mmc/host/sdhci-of-dwcmshc.c | 10 +++++++---
-> >  1 file changed, 7 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/mmc/host/sdhci-of-dwcmshc.c b/drivers/mmc/host/sdhci-of-dwcmshc.c
-> > index 39edf04fedcf7..4410d4523728d 100644
-> > --- a/drivers/mmc/host/sdhci-of-dwcmshc.c
-> > +++ b/drivers/mmc/host/sdhci-of-dwcmshc.c
-> > @@ -1254,10 +1254,14 @@ static int dwcmshc_probe(struct platform_device *pdev)
-> >  
-> >  	/* Setup Command Queue Engine if enabled */
-> >  	if (device_property_read_bool(&pdev->dev, "supports-cqe")) {
-> > -		priv->vendor_specific_area2 =
-> > -			sdhci_readw(host, DWCMSHC_P_VENDOR_AREA2);
-> > +		if (pltfm_data && pltfm_data->ops && pltfm_data->ops->irq) {
+On Sun 02-06-24 20:50:18, syzbot wrote:
+> syzbot found the following issue on:
 > 
-> ->irq() could be used for other things, so checking it for CQE
-> support is not appropriate.
+> HEAD commit:    4a4be1ad3a6e Revert "vfs: Delete the associated dentry whe..
+> git tree:       upstream
+> console+strace: https://syzkaller.appspot.com/x/log.txt?x=1466269a980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=47d282ddffae809f
+> dashboard link: https://syzkaller.appspot.com/bug?extid=42986aeeddfd7ed93c8b
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12a5b3ec980000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=103820f2980000
 
-though here we are in the very limited scope of only the dwcmshc sdhci
-controller.
+Based on strace (and also the reproducer) this looks purely in exfat
+driver. So:
 
-And at this point, any controller using the generic sdhci_dwcmshc_ops
-will always get the CQE irq handler, while _all other_ controllers
-will need to define one to handle the CQE irqs.
+#syz set subsystems: exfat
 
-So any variant trying to enable CQE needs to define an irq handler, hence
-the check simply was meant to not allow CQE enablement without any irq
-handler, because that will always cause those unhandled irq issues.
-
-> If necessary, it would be better to flag which variants support
-> CQE in their platform data.
-
-I guess we can assume that all of the dwcmshc IP variants support
-CQE, it's just that the implementation is slightly strange in that
-a DT can enable CQE support and this will cause the driver to enable the
-CQE interrupt, even if nothing is there to handle it.
-
-
-For my own case I can also just live with the Rockchip irq handler
-patch going in (ideally as a fix) and I just wanted to try to fix this
-will definitly fail if irq-handler not present case.
-
-
-Heiko
-
-
-> However that would probably mean introducing something
-> like struct dwcmshc_pltfm_data as described here:
-> 
-> https://lore.kernel.org/linux-mmc/ed900af1-f090-49a9-bc7e-363a28a4ac2b@intel.com/
-> 
-> 
-> > +			priv->vendor_specific_area2 =
-> > +				sdhci_readw(host, DWCMSHC_P_VENDOR_AREA2);
-> >  
-> > -		dwcmshc_cqhci_init(host, pdev);
-> > +			dwcmshc_cqhci_init(host, pdev);
-> > +		} else {
-> > +			dev_warn(&pdev->dev, "can't enable cqe support without irq handler\n");
-> > +		}
-> >  	}
-> >  
-> >  	if (rk_priv)
-> 
-> 
-
-
-
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
