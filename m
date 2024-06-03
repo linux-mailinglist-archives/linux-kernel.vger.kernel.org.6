@@ -1,98 +1,115 @@
-Return-Path: <linux-kernel+bounces-199663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85F688D8A81
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 21:52:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F1998D8A84
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 21:52:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8AD65B23476
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:52:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4182E1C236B7
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:52:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8061913A89C;
-	Mon,  3 Jun 2024 19:51:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 076CD13B287;
+	Mon,  3 Jun 2024 19:52:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZGQvSD3i"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="PA53yrNX"
+Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39689131182;
-	Mon,  3 Jun 2024 19:51:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B44413A252
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 19:52:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717444315; cv=none; b=WCI2CKPX3Zc+KKneu7z4eWDrso3BFDV5dyz+YP44diTSsPQxwW+bRp+H2fFChIUP7Cl6ipgi12WF7TZig9bdWfrrfKtLeDSA2aX0xQ3WSIRO1wFLNamKEbuOcQSr9KuFTiqZ6XUcEHZw1DBPFkoy22AeIL6cNsYwcXWx2Z0ixMM=
+	t=1717444334; cv=none; b=eO3b30e/8Zh/QK9d4Nw2weSvjM/QIC5vnFUYPBk4Hm61gaInS/GXI84WijiBy0mDmTUR6iHIQaaVHLgLFNtGGFqEzC6cBuF+7LSNwwbd9CQXsTEf00odfbuliBP6F7kf8Lln7kT8p9k6jTgph/w4SS/PE5ICudAwDKlyyjk/l04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717444315; c=relaxed/simple;
-	bh=ZWhiK/w50bV0NCShUl0fkyj2IEFUugwoTs25t/6gc/c=;
+	s=arc-20240116; t=1717444334; c=relaxed/simple;
+	bh=ycipNAyZv8lr2sKL8eIKshyoPFGMPBYVwhKD907X/n0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L5gkIPtePhkyATTjJ67GMIAZ7NU5KWOmy+pjgl8kvuIDrgZdBg1tzTkByl4cPnW0HfyHr0LGT9b2lzwC3JzzNAfUCdAC7jm9RXO/u+KNq93a1a+0iEi2JFiNqSPXC84j8b4bRKPrQMH3M7+sPVLHvvC2FZ3G81PbpeTWmShAlr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZGQvSD3i; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717444314; x=1748980314;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ZWhiK/w50bV0NCShUl0fkyj2IEFUugwoTs25t/6gc/c=;
-  b=ZGQvSD3is5J3vMIA6qJE1N8SqmFV+1Fur5oVBFUHkri2O0AqLJmfKkQG
-   lDUo3R25NK7TCS0aS9th3DqR3IQ9VQvLBpuXdQiXL/7F3J1wOIUVw8nTJ
-   RbbWhCbmNhdTvdajDSez8+A6jcUxUoWmnE6bS0KufpMT+VoTIYNmgXxfE
-   3C+37tFVrPAB230dPe/ZLluuA6Jzn0qe6pp3WNKmzATFOxYfr6beVMCg2
-   58yCUSOkOCfceegZsSYoNUkmCaifIulIsFcuhGpB13mRdrwbMrw1xwx6R
-   L6ff9zOacE0v5ZivIFA0vIWS1CPVqWzk29djYcKUgsIH0y9qs6iI0YrPe
-   A==;
-X-CSE-ConnectionGUID: GfrLpE8cRDSoOIE4oFagCg==
-X-CSE-MsgGUID: yMzxy3VzQw2q/m6Ng12pOw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11092"; a="16897855"
-X-IronPort-AV: E=Sophos;i="6.08,212,1712646000"; 
-   d="scan'208";a="16897855"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2024 12:51:53 -0700
-X-CSE-ConnectionGUID: jSg2/r8sTAiypEYzuewOPQ==
-X-CSE-MsgGUID: qVXP+vu5Tl6FGX1tndm6jw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,212,1712646000"; 
-   d="scan'208";a="41430244"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2024 12:51:52 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sEDig-0000000DNKW-08gc;
-	Mon, 03 Jun 2024 22:51:50 +0300
-Date: Mon, 3 Jun 2024 22:51:49 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] uuid: add missing MODULE_DESCRIPTION() macro
-Message-ID: <Zl4e1XkYXhJLRSOY@smile.fi.intel.com>
-References: <20240531-md-lib-test_uuid-v1-1-67fa498104c0@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MHSN0C7rNMGqDyKIovDEhFphOelseUE9589TFXKqNEbpp8OJJD5oHt5hkhFkLkpyP7Vg6IYzq3GyON7rTsnNvw0mrrku3hLZ1P6T9GcJtJIrune/EvwRBVYktOKpFQV3ogDKaHSnFWgpU5H5Bl0Ju2bg14aM1Ww7vqreYJtHOv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=PA53yrNX; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=ycip
+	NAyZv8lr2sKL8eIKshyoPFGMPBYVwhKD907X/n0=; b=PA53yrNXqMk2P8wnc/yj
+	klnm/zcqtv71pnkyA8u8tI+1iVJ0zb1yk4IMt+Pb6csg71t2khz0qX7vFSQxXVsM
+	/d3gxm3EBf9oGP7n2vvJetrQp2+8W3QR5MsgRymzFunSXCqfalLNGvCb9b91bRS4
+	B62Lpjv0+NQ5lMLQwmzylf5WuYxtjupj8J/uRyDneJ3920uLL5xI1hK7QFx/M7s9
+	MCJmQh8PQMBG7Onj05y52D4+E712/XVtZnKjNDNXChVHXoHYk64iNr4Y7bCV+7k0
+	0tg0TYtPRNgOAiEBESttVWLY24t+IlgJHRgZ40xt8Txgx5WAwuV3x43PuGFkWyAR
+	3Q==
+Received: (qmail 2061899 invoked from network); 3 Jun 2024 21:52:07 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 3 Jun 2024 21:52:07 +0200
+X-UD-Smtp-Session: l3s3148p1@IlQQqwEa/OVehhtB
+Date: Mon, 3 Jun 2024 21:52:07 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Eric Sandeen <sandeen@redhat.com>
+Cc: Christian Brauner <brauner@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	David Howells <dhowells@redhat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] debugfs: ignore auto and noauto options if given
+Message-ID: <clozc33lz7y4audw2nkgvuehqjbpurqr2ematmjs4vgxvnct3l@4wxkkmhjke54>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Eric Sandeen <sandeen@redhat.com>, Christian Brauner <brauner@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	David Howells <dhowells@redhat.com>, linux-kernel@vger.kernel.org
+References: <20240522083851.37668-1-wsa+renesas@sang-engineering.com>
+ <20240524-glasfaser-gerede-fdff887f8ae2@brauner>
+ <20240527100618.np2wqiw5mz7as3vk@ninjato>
+ <20240527-pittoresk-kneipen-652000baed56@brauner>
+ <nr46caxz7tgxo6q6t2puoj36onat65pt7fcgsvjikyaid5x2lt@gnw5rkhq2p5r>
+ <20240603-holzschnitt-abwaschen-2f5261637ca8@brauner>
+ <7e8f8a6c-0f8e-4237-9048-a504c8174363@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="uv5iqsmng6shuhb3"
+Content-Disposition: inline
+In-Reply-To: <7e8f8a6c-0f8e-4237-9048-a504c8174363@redhat.com>
+
+
+--uv5iqsmng6shuhb3
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240531-md-lib-test_uuid-v1-1-67fa498104c0@quicinc.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-
-On Fri, May 31, 2024 at 07:19:09PM -0700, Jeff Johnson wrote:
-> make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_uuid.o
-> 
-> Add the missing invocation of the MODULE_DESCRIPTION() macro.
-
-Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-
-(We have no designated tree for UUID, so I would expect that Andrew takes this)
-
--- 
-With Best Regards,
-Andy Shevchenko
 
 
+> See my other reply, are you sure we should make this change? From a
+> "keep the old behavior" POV maybe so, but this looks to me like a
+> bug in busybox, passing fstab hint "options" like "auto" as actual mount
+> options being the root cause of the problem. debugfs isn't uniquely
+> affected by this behavior.
+
+For the record, I plan to fix busybox. However, there are still a lot of
+old versions around...
+
+
+--uv5iqsmng6shuhb3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmZeHuMACgkQFA3kzBSg
+KbZBARAAo4+DwSklHeObgKZ3QYHcKwh3O9XQefTdCw0cmV/UXijzCw8OKj5pwQN7
+Jx1vU/YMnODQ1WO2+HhAC7DpTLFXhctfzqqNxLbww05x4UH7rH74mTaLOIyHQ/ad
+THTfAKC8Ig5H437eQpikKsQC3fUW0lgCjqaYbTP1JLQu5Eohyl67JenjCRf04O0S
+vAko8vvPOjc/pgst970csJQrrCvIgQS/uFlXDZjxjWSK8Yz2tUzRNPH+1OKvoqNB
+XYf4Q/78IhTjv8iktMkQDNfshLxi9dFDKqwWaIicInyldsjIZGwB9+gygrJUkF+m
+wcuNAHobiF5OGE4Acco9LREKp/LXS9AyGhUwq8ZZFy7dEiQKA4tu5QVheMWpAyAb
+f5x5w2FM8kx2cHbivNGKvB0EjZ4JOVZP+nwa34FOjrpIuaT3W4cPNyhOMpICLFZi
+XKtjmGFwM/y06O6rjz5ys7AwLWB0IOqkCWpythVKl2wrp1fYg4ckFGQ9j2fAg4Gq
+Q8W4pZulKbqhew1OIXSUynwsiTaplxUkASq/Umh06YyT7FwMbbuNljT71Acia4Ue
+FPD6a1Vp6G8ZiiLvKZLrNoW9GxJDuRE213hEdFHjcz0faxW89KIIgrRJpxXXTO4O
++YExcbUUiXSAYAhnNVu1De2k458U5K+z00tBA++k2OO60yR9lYs=
+=wj9/
+-----END PGP SIGNATURE-----
+
+--uv5iqsmng6shuhb3--
 
