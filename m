@@ -1,127 +1,78 @@
-Return-Path: <linux-kernel+bounces-199450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81B048D875B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 18:35:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB4928D875D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 18:36:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B28061C2173B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:35:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67BADB20B5B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:36:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7FBD13699A;
-	Mon,  3 Jun 2024 16:35:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5ED5136997;
+	Mon,  3 Jun 2024 16:36:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dljAJy3f"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H9prRXjT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3A397E8;
-	Mon,  3 Jun 2024 16:35:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E14177E8;
+	Mon,  3 Jun 2024 16:36:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717432524; cv=none; b=pU6iqQ4YzVTZis6xSAN30828v+t3AfjeER7GN4HPaVSlbYR0ZOFpTddHoHr2mUtiet202qGMeuhZucgkkjO+a/lZq+dFzs+z1BP+xm/6xv9DkGocHlt7r74pj3+JOEoHTD9bltKSjP2/1eYSfTSrXr+lzYFP2ND65KxXXgnGDeM=
+	t=1717432595; cv=none; b=R9V+f3QqgLiTFt9D9H1vrgg2QX/qLHgojIf7BQ94bKFXnlyQ71fBmVfPNCq+4+AUzZ1Qu/bjfD/ndmprrqQjof6NhDxe4gpR2BJnPL1lSbC6DRgfYJ3d8H8DkUI9AMz4GAMvpxnu4V2wvZ8cUKL2TCiR+J5CteGJMFtTqTXIYPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717432524; c=relaxed/simple;
-	bh=BO3aVJ0FfkEKoNFzLUlb3mwvrU9V3ipNtcJaX7DM/Ys=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=XUVL1uwRzZhrnWq6L5pclXoxg2tQDUdMWrrgj9ra3B6SRU2APsP0xsAoRWAGT3CtwBsKmH7eMV+oWwkGxDUavMXV3KX/yvBcSMkb9xha3MR/YYaYGxYJ9j3B+JAN3S4lNJxX8xQd2Inis5AEl/2WLDadSQYt01mw07coiUxngOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dljAJy3f; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 453C5K9P009078;
-	Mon, 3 Jun 2024 16:35:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	VladUwHMx4+LGUlSn+CNhK4B9YObfz94IGIKwRIcgiM=; b=dljAJy3f/Lz929yF
-	bjSOATzpw8uaZUJ1mq6PNWEvm16PKKaFCj9BBDmAsoSsfmBCxApyaZc0Nx/btNbG
-	qfYGVOB/+VaV7TQn5ltrtumQto6i9yFeWAuyuNE02VwppoJTfqJ4M4zVlJmoXJkH
-	+Zs9xfSl/ofnIUTyLJQYX+NE93MEmFn42FscGgLO7oX33Qf/W+3cDhHJhG964H+a
-	TYNOj2BR/0OtONTqy3exSnsyLOGn8tuWU/eEdJdFLenM2HonhnUtWw2L6UbJYFr5
-	LoaCledEc3ggw5uIJPFaBAZ5TsFk5NiND7uIkHI457Et0J2m62lhw6rYAgq1t1UM
-	6cjUtQ==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfw7dmesp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 03 Jun 2024 16:35:18 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 453GZGsV008159
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 3 Jun 2024 16:35:16 GMT
-Received: from [10.110.33.27] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 3 Jun 2024
- 09:35:13 -0700
-Message-ID: <5adaf1ec-7e10-49f8-9b2c-ece932a835fd@quicinc.com>
-Date: Mon, 3 Jun 2024 09:35:08 -0700
+	s=arc-20240116; t=1717432595; c=relaxed/simple;
+	bh=cN/du6aSTMzl08k/VN4ACbbSNT3SAGtqX9W9ddPQnOA=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=JPQghilZiRMLo+hu0tA6rEeTqp5IQhzqxLE29oyzCEjlqjciB1YOwWKpU7+ZUZ7vXeD4ij1CvYjo6rIti1/tR8HxQqTF3jGj5SjFdsZBDgPnMYmoLDIzIZTbp4VT/cWZ1D069WpJ32bTybX3hTy9mI8vWM6dGWW3+gffRy9c0I8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H9prRXjT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B5CB0C2BD10;
+	Mon,  3 Jun 2024 16:36:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717432594;
+	bh=cN/du6aSTMzl08k/VN4ACbbSNT3SAGtqX9W9ddPQnOA=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=H9prRXjTwRB4t0rTRXWtNQ/LJYad5Il01DSQ/k+r+DbW+sD7jk/Rse/PR79q2X+c+
+	 9WpAcb8MdSA8xDpoZcdD2kq0sAfqchOi0TmChTzXKYbMNapCs8uku0Bwy/Sgffgsl9
+	 sVGr130KH0Pi72SXrrcFICxFmDRcRCg862rKCLzEBaWerrTKHu92tEiN2tuGU4Roo6
+	 CMpWMiNN+fpvhSjK/I0arMboAXMjDzO97rUnwr9a9iSj/5qSeuLOO5vDkFLD/Z1ndk
+	 uJMMmN2aMYC7KDjehLO8CCmswy+35gko4XFNQ7d0R0o8FaUxwxC+Q+h/KZLOfdDiGu
+	 2FYsuoJaSajWg==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id AC8B8C4361C;
+	Mon,  3 Jun 2024 16:36:34 +0000 (UTC)
+Subject: Re: [GIT PULL] LoongArch fixes for v6.10-rc3
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20240603143158.2625704-1-chenhuacai@loongson.cn>
+References: <20240603143158.2625704-1-chenhuacai@loongson.cn>
+X-PR-Tracked-List-Id: <loongarch.lists.linux.dev>
+X-PR-Tracked-Message-Id: <20240603143158.2625704-1-chenhuacai@loongson.cn>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/chenhuacai/linux-loongson.git tags/loongarch-fixes-6.10-1
+X-PR-Tracked-Commit-Id: eb36e520f4f1b690fd776f15cbac452f82ff7bfa
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: f06ce441457d4abc4d76be7acba26868a2d02b1c
+Message-Id: <171743259469.18580.3203876992620951432.pr-tracker-bot@kernel.org>
+Date: Mon, 03 Jun 2024 16:36:34 +0000
+To: Huacai Chen <chenhuacai@loongson.cn>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, Huacai Chen <chenhuacai@kernel.org>, loongarch@lists.linux.dev, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, Guo Ren <guoren@kernel.org>, Xuerui Wang <kernel@xen0n.name>, Jiaxun Yang <jiaxun.yang@flygoat.com>, Huacai Chen <chenhuacai@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: (subset) [PATCH v6 0/5] LLCC: Support for Broadcast_AND region
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>
-References: <cover.1717014052.git.quic_uchalich@quicinc.com>
- <171730042577.665897.8196444348725965878.b4-ty@kernel.org>
-Content-Language: en-US
-From: Unnathi Chalicheemala <quic_uchalich@quicinc.com>
-In-Reply-To: <171730042577.665897.8196444348725965878.b4-ty@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: tFYtsQJ0OHMoNJ_3SbZr_3oDYerD8arS
-X-Proofpoint-GUID: tFYtsQJ0OHMoNJ_3SbZr_3oDYerD8arS
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-06-03_13,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- mlxlogscore=888 impostorscore=0 malwarescore=0 phishscore=0 adultscore=0
- clxscore=1015 bulkscore=0 priorityscore=1501 lowpriorityscore=0
- spamscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406030136
 
-On 6/1/2024 8:53 PM, Bjorn Andersson wrote:
-> 
-> On Fri, 31 May 2024 09:45:23 -0700, Unnathi Chalicheemala wrote:
->> This series adds:
->> 1. Device tree register mapping for Broadcast_AND region in SM8450,
->> SM8550, SM8650.
->> 2. LLCC driver updates to reflect addition of Broadcast_AND regmap.
->>
->> To support CSR programming, a broadcast interface is used to program all
->> channels in a single command. Until SM8450 there was only one broadcast
->> region (Broadcast_OR) used to broadcast write and check for status bit
->> 0. From SM8450 onwards another broadcast region (Broadcast_AND) has been
->> added which checks for status bit 1.
->>
->> [...]
-> 
-> Applied, thanks!
-> 
-Thanks Bjorn, Krzystof and Konrad for the reviews!
-> [3/5] arm64: dts: qcom: sm8450: Add Broadcast_AND register in LLCC block
->       commit: c566143137aaacfed1af09d8710edab1971c312d
-> [4/5] arm64: dts: qcom: sm8550: Add Broadcast_AND register in LLCC block
->       commit: 2a71a2eb1f5ec438f0ac1c7e294cd7ed32119af3
-> [5/5] arm64: dts: qcom: sm8650: Add Broadcast_AND register in LLCC block
->       commit: a7823576f7f7b1cb0a595332ab6b0b38e15f45a7
-> 
-> Best regards,
+The pull request you sent on Mon,  3 Jun 2024 22:31:57 +0800:
+
+> git://git.kernel.org/pub/scm/linux/kernel/git/chenhuacai/linux-loongson.git tags/loongarch-fixes-6.10-1
+
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/f06ce441457d4abc4d76be7acba26868a2d02b1c
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
