@@ -1,159 +1,334 @@
-Return-Path: <linux-kernel+bounces-199181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5F868D8377
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:07:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8FEC8D8378
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:07:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15A16B22B02
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:07:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6065A289C08
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:07:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61C19130487;
-	Mon,  3 Jun 2024 13:05:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JiNRe/6j"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA8CE1311A3;
+	Mon,  3 Jun 2024 13:05:39 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2204212F360
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 13:05:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E95CE12FF7B
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 13:05:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717419936; cv=none; b=Ebtyg4UNt3xeQeMmkkLiqEqgyjHg8FLD+llSY3JN2e3VquSKTglgzCGwA4SvroPYiK3Z1Mhm7FpDsTuv5xWZOU8CL4bfzc15+K15P2wCp45PYcdvWmXoPBXCLef1FjUp8POdQHQdQP5PpF3lOdfvWKQwDi2ruSUlTfbcz4rDcvk=
+	t=1717419938; cv=none; b=LZ6T2Jd2ppH5hUwCFh3QKCz3fvA+Q6qXhFeHngCuwWQr/1tXTQxj2KgBYLDfj5MA/6TFIGvwj6yDeeaMJE8KiQY5Ujlb16FOf2WUer2vMcgd1XbEmFb2o+Sl9ynZQmNcI5SkSjO7bwqjoI51OW403lsUY/mjQPl/8fBENbbANAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717419936; c=relaxed/simple;
-	bh=Xg3rnsN00i+ckdDX25UYE+Fpofh+iwRaHfKXTsHVsqY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZWCFAT3OP8ppQE1KdAjTfZMANcNgwZfHBU5SwKZsNr1gusuwgsJmO+9EGDM/+9bLFWDlDMOMsqQbIpZ+1+EPWC/pl9Q5OKQoo+eeTBKmhGR1Hl30Rj2s8vxJCWQTt2109g2q8SjTpQJt9E+o9yGsrIxF6bVCwm32dGdgr52f0Bc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JiNRe/6j; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717419934;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IvEydmzzbvl2Ff0xpZlhwXwl7LHoKN1DgH3CccwPGZw=;
-	b=JiNRe/6jfe6gW9ME/ieHCX7eSgkd77ACa2/8fdziYwtoWXtBAxJ27/5pyeKW92KTmL86jf
-	lV7jh3e5U9X/U941nwE1PhoxbeWbxwpCw2UdEhFSBdseiO00e1Hb3nt8AjoFJbwCj/7M33
-	AJ16W6eTKTYTuE1Mgpmh7Lhi1U5jaPg=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-290-gX13Fg-6N_ObKaiGZhgVnA-1; Mon, 03 Jun 2024 09:05:32 -0400
-X-MC-Unique: gX13Fg-6N_ObKaiGZhgVnA-1
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6ae1535f30fso44309256d6.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 06:05:32 -0700 (PDT)
+	s=arc-20240116; t=1717419938; c=relaxed/simple;
+	bh=ZE/9DOEbNj6Jwwg0TxVGkIOgaBnrzbtYpp6IPdg3FV0=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=YiVB5D5yZXAfiiw9d1iTFfMdl23KOtCqHPP5M9lyn8fvzTMKlpuVQnx03JJZytGs8PHPhkhxxex73GHmKjExv4sm2U93ReWE6w4QGfTOGDYBF29sSLcIIRR7UbGXzUcUL/I1YZvDGXlZDSxM5yyH0CJGeer9AHX69+2jFmY4nAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-7eb21854dcdso48670939f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 06:05:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717419932; x=1718024732;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IvEydmzzbvl2Ff0xpZlhwXwl7LHoKN1DgH3CccwPGZw=;
-        b=tpjOQqUk5yIkSVWWMJedQGxv8wq3NsBC1mKd72IV2jAVXV0mrr8VrjAznK5UWevZ9p
-         8FUnkGSZysY1a/1DSdzcEk1XIlO5vhMoAfIRC92qtuYFuhjJ/25v9IomEnPigjpdls39
-         7zWRXeufQogw9yJTjyjPU+sL+uO+/ZDw9q7aGfWQHZ/DhbgrtUFbY+oDaHV/5WLjjHqw
-         QIO3dbxJ8anE7mu5TDM4EVN6NZlcarhu00nZwVzHcWJuE4BFSPV+LvJmRBDZ7jE6jZ2M
-         N8UJl9a+mQKBamybudE1tXBIENkOpZgrFJAHYZoBmgXtlhx6B6qQKBAyLfpTNeqFj7Nf
-         0hiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWTgvb7fiOtGFdHSHmocy1HarwK1tSIwosj4AN19Ef3P5LBxtxcrj2Uc2YAn2JJ5NNL/CFqaX5o2EIWzNp01ZbX7iVib38M9WS48qs+
-X-Gm-Message-State: AOJu0YxqrpPgrPubeNytk+GwNSCHeaKeWQgFBSNp9p5J7QV4WlyF9a98
-	yilO48l4bR89LfNjCUWRQCUEOLI541c/ieBNbA91nUNye9FxdrjwFayoY44oO3kqW5195uTublm
-	XWAvAdOwgn19KDp4Yf/yqFaHatLXoY4SyRxqPBFTGgT39tp3xFvbn2JO8ZdFj8Q==
-X-Received: by 2002:a05:6214:3f8d:b0:6ae:1063:eea7 with SMTP id 6a1803df08f44-6aecd598cafmr108985796d6.20.1717419931976;
-        Mon, 03 Jun 2024 06:05:31 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG7+iy/Dv8ZzX13aFueLNEWj86HkkwR7fT77Dxvoy35+yUzuJEcF3YgXQkFlAET0CFWorT4Fg==
-X-Received: by 2002:a05:6214:3f8d:b0:6ae:1063:eea7 with SMTP id 6a1803df08f44-6aecd598cafmr108985266d6.20.1717419931395;
-        Mon, 03 Jun 2024 06:05:31 -0700 (PDT)
-Received: from rh.redhat.com (p200300c93f02d1004c157eb0f018dd01.dip0.t-ipconnect.de. [2003:c9:3f02:d100:4c15:7eb0:f018:dd01])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ae4b4179f4sm30558826d6.113.2024.06.03.06.05.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Jun 2024 06:05:30 -0700 (PDT)
-From: Sebastian Ott <sebott@redhat.com>
-To: linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Shaoqin Huang <shahuang@redhat.com>,
-	Eric Auger <eric.auger@redhat.com>
-Subject: [PATCH v4 6/6] KVM: selftests: arm64: Test writes to CTR_EL0
-Date: Mon,  3 Jun 2024 15:05:07 +0200
-Message-ID: <20240603130507.17597-7-sebott@redhat.com>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240603130507.17597-1-sebott@redhat.com>
-References: <20240603130507.17597-1-sebott@redhat.com>
+        d=1e100.net; s=20230601; t=1717419936; x=1718024736;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kDs+Jy5W9nY4VTAydTFq2pw4YqdIVNkDNMQOStvR6Hc=;
+        b=ZyhepUM0pWrp+23vjfNZ6QLPy+jGRT0ntefMRVFqw/8nzht1OJFITxqJJVcPcAahDe
+         EMIitQS7fvSEX/0JWwBnmR8lFdQJNEtBtKCGVC8zEsN7InNxxPFTDAmwmFsh8A3WrXQ2
+         Fv0zMRPGxgl6/QW8Bq86XZbWRGUI2x3AQGht8Z8CoLyia1X0aFvhsBX/F5J4+If4qWLY
+         hZt7OKhIhF4JAxrAT4SisBuvIwKTZNy2V+GZYgy4QhYUolZM4CaNuj00HEZVJ4L29jxN
+         hZt6yPUvhhkiudq/axv9I259hQ0f/ft2kQZxSdEWrmCcmNVeHhRUJ9omDRTyfa4B245A
+         Lg2A==
+X-Forwarded-Encrypted: i=1; AJvYcCWc1peKDe4NehYWxWZmsoQrUj9tBUH++8ZcxuWJkn0H8kfOFjdBVjHnWGPg+oM6Bldv+vGECmJ7zF5n/aQI30ETmwgtOSg0n5+pxBjA
+X-Gm-Message-State: AOJu0YzAF2VzyHOLxA8drJdmP7dqugYyk2xgfWg+/Gxykb82Ceis5SLl
+	vpcfXNOZM0IOlxJg8itRiBkag/+12YjS3LToSd5Cxo/jqfDsgR88Gp3XGqrVjPSMTdHgdX9Z2HC
+	JEZP2HX1UjtfI9iR0d3I5XbTOG/0K1IyR3yRvm+KH23aD6cIOg6hfOx4=
+X-Google-Smtp-Source: AGHT+IET237czKJjaZusM6rvDcjlogMh6mfGSMRAaS3ThVYtJW8nLJxTt6K2qwl9febm+DX9Lfe9q3f7LPB9tKL2J6/HqkAJnmei
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a6b:6f12:0:b0:7e2:481e:7dbe with SMTP id
+ ca18e2360f4ac-7eaf6d13075mr27722639f.1.1717419933246; Mon, 03 Jun 2024
+ 06:05:33 -0700 (PDT)
+Date: Mon, 03 Jun 2024 06:05:33 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000000d38460619fbfd92@google.com>
+Subject: [syzbot] [bcachefs?] possible deadlock in bch2_btree_roots_to_journal_entries
+From: syzbot <syzbot+49f73403c9dd50916299@syzkaller.appspotmail.com>
+To: bfoster@redhat.com, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Test that CTR_EL0 is modifiable from userspace, that changes are
-visible to guests, and that they are preserved across a vCPU reset.
+Hello,
 
-Signed-off-by: Sebastian Ott <sebott@redhat.com>
-Reviewed-by: Eric Auger <eric.auger@redhat.com>
+syzbot found the following issue on:
+
+HEAD commit:    0e1980c40b6e Add linux-next specific files for 20240531
+git tree:       linux-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=165e4206980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d9c3ca4e54577b88
+dashboard link: https://syzkaller.appspot.com/bug?extid=49f73403c9dd50916299
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=165bfa9a980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10dc7ef2980000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/44fb1d8b5978/disk-0e1980c4.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/a66ce5caf0b2/vmlinux-0e1980c4.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/8992fc8fe046/bzImage-0e1980c4.xz
+mounted in repro #1: https://storage.googleapis.com/syzbot-assets/6e6980c5e9d0/mount_0.gz
+mounted in repro #2: https://storage.googleapis.com/syzbot-assets/84607f339774/mount_1.gz
+
+The issue was bisected to:
+
+commit 228e1c91ae5ec44f38aa8852aa3953005badce82
+Author: Kent Overstreet <kent.overstreet@linux.dev>
+Date:   Wed Dec 27 23:31:46 2023 +0000
+
+    bcachefs: KEY_TYPE_accounting
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10de95fc980000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=12de95fc980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=14de95fc980000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+49f73403c9dd50916299@syzkaller.appspotmail.com
+Fixes: 228e1c91ae5e ("bcachefs: KEY_TYPE_accounting")
+
+bcachefs (loop0): flushing journal and stopping allocators complete, journal seq 15
+bcachefs (loop0): shutdown complete, journal seq 16
+bcachefs (loop0): marking filesystem clean
+======================================================
+WARNING: possible circular locking dependency detected
+6.10.0-rc1-next-20240531-syzkaller #0 Not tainted
+------------------------------------------------------
+syz-executor537/5091 is trying to acquire lock:
+ffff888077801a60 (&c->btree_root_lock){+.+.}-{3:3}, at: bch2_btree_roots_to_journal_entries+0xbb/0x980 fs/bcachefs/btree_update_interior.c:2633
+
+but task is already holding lock:
+ffff888077800918 (&c->sb_lock){+.+.}-{3:3}, at: bch2_fs_mark_clean+0x35/0x9f0 fs/bcachefs/sb-clean.c:287
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #1 (&c->sb_lock){+.+.}-{3:3}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5817
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
+       bch2_gc_mark_key+0xb3e/0x1050 fs/bcachefs/btree_gc.c:602
+       bch2_gc_btree fs/bcachefs/btree_gc.c:650 [inline]
+       bch2_gc_btrees fs/bcachefs/btree_gc.c:699 [inline]
+       bch2_check_allocations+0xa1db/0xb9d0 fs/bcachefs/btree_gc.c:1121
+       bch2_run_recovery_pass+0xf0/0x1e0 fs/bcachefs/recovery_passes.c:183
+       bch2_run_recovery_passes+0x19e/0x820 fs/bcachefs/recovery_passes.c:226
+       bch2_fs_recovery+0x238b/0x3730 fs/bcachefs/recovery.c:846
+       bch2_fs_start+0x356/0x5b0 fs/bcachefs/super.c:1017
+       bch2_fs_open+0xa8d/0xdf0 fs/bcachefs/super.c:2113
+       bch2_mount fs/bcachefs/fs.c:1908 [inline]
+       bch2_fs_get_tree+0x75e/0x14d0 fs/bcachefs/fs.c:2069
+       vfs_get_tree+0x90/0x2a0 fs/super.c:1780
+       do_new_mount+0x2be/0xb40 fs/namespace.c:3352
+       do_mount fs/namespace.c:3692 [inline]
+       __do_sys_mount fs/namespace.c:3898 [inline]
+       __se_sys_mount+0x2d9/0x3c0 fs/namespace.c:3875
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #0 (&c->btree_root_lock){+.+.}-{3:3}:
+       check_prev_add kernel/locking/lockdep.c:3159 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3278 [inline]
+       validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3902
+       __lock_acquire+0x1359/0x2000 kernel/locking/lockdep.c:5194
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5817
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
+       bch2_btree_roots_to_journal_entries+0xbb/0x980 fs/bcachefs/btree_update_interior.c:2633
+       bch2_fs_mark_clean+0x4a9/0x9f0 fs/bcachefs/sb-clean.c:314
+       bch2_fs_read_only+0x1115/0x1220 fs/bcachefs/super.c:367
+       __bch2_fs_stop+0x105/0x540 fs/bcachefs/super.c:601
+       generic_shutdown_super+0x136/0x2d0 fs/super.c:642
+       bch2_kill_sb+0x41/0x50 fs/bcachefs/fs.c:2025
+       deactivate_locked_super+0xc4/0x130 fs/super.c:473
+       cleanup_mnt+0x41f/0x4b0 fs/namespace.c:1267
+       task_work_run+0x24f/0x310 kernel/task_work.c:180
+       ptrace_notify+0x2d2/0x380 kernel/signal.c:2402
+       ptrace_report_syscall include/linux/ptrace.h:415 [inline]
+       ptrace_report_syscall_exit include/linux/ptrace.h:477 [inline]
+       syscall_exit_work+0xc6/0x190 kernel/entry/common.c:173
+       syscall_exit_to_user_mode_prepare kernel/entry/common.c:200 [inline]
+       __syscall_exit_to_user_mode_work kernel/entry/common.c:205 [inline]
+       syscall_exit_to_user_mode+0x273/0x370 kernel/entry/common.c:218
+       do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+other info that might help us debug this:
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&c->sb_lock);
+                               lock(&c->btree_root_lock);
+                               lock(&c->sb_lock);
+  lock(&c->btree_root_lock);
+
+ *** DEADLOCK ***
+
+3 locks held by syz-executor537/5091:
+ #0: ffff88807fdf00e0 (&type->s_umount_key#44){+.+.}-{3:3}, at: __super_lock fs/super.c:56 [inline]
+ #0: ffff88807fdf00e0 (&type->s_umount_key#44){+.+.}-{3:3}, at: __super_lock_excl fs/super.c:71 [inline]
+ #0: ffff88807fdf00e0 (&type->s_umount_key#44){+.+.}-{3:3}, at: deactivate_super+0xb5/0xf0 fs/super.c:505
+ #1: ffff888077800278 (&c->state_lock){+.+.}-{3:3}, at: __bch2_fs_stop+0xfd/0x540 fs/bcachefs/super.c:600
+ #2: ffff888077800918 (&c->sb_lock){+.+.}-{3:3}, at: bch2_fs_mark_clean+0x35/0x9f0 fs/bcachefs/sb-clean.c:287
+
+stack backtrace:
+CPU: 0 PID: 5091 Comm: syz-executor537 Not tainted 6.10.0-rc1-next-20240531-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+ print_circular_bug+0x13a/0x1b0 kernel/locking/lockdep.c:2075
+ check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2204
+ check_prev_add kernel/locking/lockdep.c:3159 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3278 [inline]
+ validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3902
+ __lock_acquire+0x1359/0x2000 kernel/locking/lockdep.c:5194
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5817
+ __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+ __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
+ bch2_btree_roots_to_journal_entries+0xbb/0x980 fs/bcachefs/btree_update_interior.c:2633
+ bch2_fs_mark_clean+0x4a9/0x9f0 fs/bcachefs/sb-clean.c:314
+ bch2_fs_read_only+0x1115/0x1220 fs/bcachefs/super.c:367
+ __bch2_fs_stop+0x105/0x540 fs/bcachefs/super.c:601
+ generic_shutdown_super+0x136/0x2d0 fs/super.c:642
+ bch2_kill_sb+0x41/0x50 fs/bcachefs/fs.c:2025
+ deactivate_locked_super+0xc4/0x130 fs/super.c:473
+ cleanup_mnt+0x41f/0x4b0 fs/namespace.c:1267
+ task_work_run+0x24f/0x310 kernel/task_work.c:180
+ ptrace_notify+0x2d2/0x380 kernel/signal.c:2402
+ ptrace_report_syscall include/linux/ptrace.h:415 [inline]
+ ptrace_report_syscall_exit include/linux/ptrace.h:477 [inline]
+ syscall_exit_work+0xc6/0x190 kernel/entry/common.c:173
+ syscall_exit_to_user_mode_prepare kernel/entry/common.c:200 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:205 [inline]
+ syscall_exit_to_user_mode+0x273/0x370 kernel/entry/common.c:218
+ do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f61d2db54c7
+Code: 07 00 48 83 c4 08 5b 5d c3 66 2e 0f 1f 84 00 00 00 00 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 a6 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 01 c3 48 c7 c2 b8 ff ff ff f7 d8 64 89 02 b8
+RSP: 002b:00007ffd384f1498 EFLAGS: 00000202 ORIG_RAX: 00000000000000a6
+RAX: 0000000000000000 RBX: 000000000000e4de RCX: 00007f61d2db54c7
+RDX: 0000000000000000 RSI: 0000000000000009 RDI: 00007ffd384f1550
+RBP: 00007ffd384f1550 R08: 0000000000000000 R09: 0000000000000000
+R10: 00000000ffffffff R11: 0000000000000202 R12: 00007ffd384f25c0
+R13: 000055557a8f46c0 R14: 431bde82d7b634db R15: 00007ffd384f25e0
+ </TASK>
+bcachefs (loop0): shutdown complete
+bcachefs (loop0): shutting down
+bcachefs (loop0): going read-only
+bcachefs (loop0): finished waiting for writes to stop
+bcachefs (loop0): flushing journal and stopping allocators, journal seq 14
+bcachefs (loop0): flushing journal and stopping allocators complete, journal seq 14
+bcachefs (loop0): shutdown complete, journal seq 15
+bcachefs (loop0): marking filesystem clean
+bcachefs (loop0): shutdown complete
+bcachefs (loop0): shutting down
+bcachefs (loop0): going read-only
+bcachefs (loop0): finished waiting for writes to stop
+bcachefs (loop0): flushing journal and stopping allocators, journal seq 15
+bcachefs (loop0): flushing journal and stopping allocators complete, journal seq 15
+bcachefs (loop0): shutdown complete, journal seq 16
+bcachefs (loop0): marking filesystem clean
+bcachefs (loop0): shutdown complete
+bcachefs (loop0): shutting down
+bcachefs (loop0): going read-only
+bcachefs (loop0): finished waiting for writes to stop
+bcachefs (loop0): flushing journal and stopping allocators, journal seq 14
+bcachefs (loop0): flushing journal and stopping allocators complete, journal seq 14
+bcachefs (loop0): shutdown complete, journal seq 15
+bcachefs (loop0): marking filesystem clean
+bcachefs (loop0): shutdown complete
+bcachefs (loop0): shutting down
+bcachefs (loop0): going read-only
+bcachefs (loop0): finished waiting for writes to stop
+bcachefs (loop0): flushing journal and stopping allocators, journal seq 14
+bcachefs (loop0): flushing journal and stopping allocators complete, journal seq 14
+bcachefs (loop0): shutdown complete, journal seq 15
+bcachefs (loop0): marking filesystem clean
+bcachefs (loop0): shutdown complete
+bcachefs (loop0): shutting down
+bcachefs (loop0): going read-only
+bcachefs (loop0): finished waiting for writes to stop
+bcachefs (loop0): flushing journal and stopping allocators, journal seq 15
+bcachefs (loop0): flushing journal and stopping allocators complete, journal seq 15
+bcachefs (loop0): shutdown complete, journal seq 16
+bcachefs (loop0): marking filesystem clean
+bcachefs (loop0): shutdown complete
+bcachefs (loop0): shutting down
+bcachefs (loop0): going read-only
+bcachefs (loop0): finished waiting for writes to stop
+bcachefs (loop0): flushing journal and stopping allocators, journal seq 14
+bcachefs (loop0): flushing journal and stopping allocators complete, journal seq 14
+bcachefs (loop0): shutdown complete, journal seq 15
+bcachefs (loop0): marking filesystem clean
+bcachefs (loop0): shutdown complete
+bcachefs (loop0): shutting down
+bcachefs (loop0): going read-only
+bcachefs (loop0): finished waiting for writes to stop
+bcachefs (loop0): flushing journal and stopping allocators, journal seq 15
+bcachefs (loop0): flushing journal and stopping allocators complete, journal seq 15
+bcachefs (loop0): shutdown complete, journal seq 16
+bcachefs (loop0): marking filesystem clean
+bcachefs (loop0): shutdown complete
+bcachefs (loop0): shutting down
+bcachefs (loop0): going read-only
+bcachefs (loop0): finished waiting for writes to stop
+bcachefs (loop0): flushing journal and stopping allocators, journal seq 15
+bcachefs (loop0): flushing journal and stopping allocators complete, journal seq 15
+bcachefs (loop0): shutdown complete, journal seq 16
+bcachefs (loop0): marking filesystem clean
+bcachefs (loop0): shutdown complete
+bcachefs (loop0): shutting down
+bcachefs (loop0): going read-only
+bcachefs (loop0): finished waiting for writes to stop
+bcachefs (loop0): flushing journal and stopping allocators, journal seq 14
+bcachefs (loop0): flushing journal and stopping allocators complete, journal seq 14
+bcachefs (loop0): shutdown complete, journal seq 15
+
+
 ---
- .../testing/selftests/kvm/aarch64/set_id_regs.c  | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/tools/testing/selftests/kvm/aarch64/set_id_regs.c b/tools/testing/selftests/kvm/aarch64/set_id_regs.c
-index a7de39fa2a0a..9583c04f1228 100644
---- a/tools/testing/selftests/kvm/aarch64/set_id_regs.c
-+++ b/tools/testing/selftests/kvm/aarch64/set_id_regs.c
-@@ -219,6 +219,7 @@ static void guest_code(void)
- 	GUEST_REG_SYNC(SYS_ID_AA64MMFR1_EL1);
- 	GUEST_REG_SYNC(SYS_ID_AA64MMFR2_EL1);
- 	GUEST_REG_SYNC(SYS_ID_AA64ZFR0_EL1);
-+	GUEST_REG_SYNC(SYS_CTR_EL0);
- 
- 	GUEST_DONE();
- }
-@@ -490,11 +491,25 @@ static void test_clidr(struct kvm_vcpu *vcpu)
- 	test_reg_vals[encoding_to_range_idx(SYS_CLIDR_EL1)] = clidr;
- }
- 
-+static void test_ctr(struct kvm_vcpu *vcpu)
-+{
-+	u64 ctr;
-+
-+	vcpu_get_reg(vcpu, KVM_ARM64_SYS_REG(SYS_CTR_EL0), &ctr);
-+	ctr &= ~CTR_EL0_DIC_MASK;
-+	if (ctr & CTR_EL0_IminLine_MASK)
-+		ctr--;
-+
-+	vcpu_set_reg(vcpu, KVM_ARM64_SYS_REG(SYS_CTR_EL0), ctr);
-+	test_reg_vals[encoding_to_range_idx(SYS_CTR_EL0)] = ctr;
-+}
-+
- static void test_vcpu_ftr_id_regs(struct kvm_vcpu *vcpu)
- {
- 	u64 val;
- 
- 	test_clidr(vcpu);
-+	test_ctr(vcpu);
- 
- 	vcpu_get_reg(vcpu, KVM_ARM64_SYS_REG(SYS_MPIDR_EL1), &val);
- 	val++;
-@@ -525,6 +540,7 @@ static void test_reset_preserves_id_regs(struct kvm_vcpu *vcpu)
- 		test_assert_id_reg_unchanged(vcpu, test_regs[i].reg);
- 
- 	test_assert_id_reg_unchanged(vcpu, SYS_CLIDR_EL1);
-+	test_assert_id_reg_unchanged(vcpu, SYS_CTR_EL0);
- 
- 	ksft_test_result_pass("%s\n", __func__);
- }
--- 
-2.42.0
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
