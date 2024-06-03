@@ -1,154 +1,222 @@
-Return-Path: <linux-kernel+bounces-198759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5753E8D7D13
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 10:14:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D27E88D7D07
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 10:06:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C2951F212BD
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 08:14:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84A9B2823DC
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 08:06:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D1B557333;
-	Mon,  3 Jun 2024 08:13:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 227FA5674B;
+	Mon,  3 Jun 2024 08:06:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="k8EuRzzC"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ghEdjv20"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2DF7487BF;
-	Mon,  3 Jun 2024 08:13:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4FC34EB30;
+	Mon,  3 Jun 2024 08:06:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717402431; cv=none; b=Es2dZBjQLmkabrEnIPRuuaZYKoDaykULPLgNqHN4LcfPFRMRsUHF+NXGJmqWT5UCgaqn0BZW5lqwyGFKWp6D5SmOgQ7wm9Eu4OSgPYhSudf8SNzwOS9OUqaW8VKnM4gvJBLodQq9MLtJ2GDhKwRoK5nOtrTlhhsI6+SbIB1XmCs=
+	t=1717402006; cv=none; b=enB3jlLMeWa4STOg9D7yDkG74ymbZiH5IF6bKvGm2TRV0fYbMiEd61jI1KxLzOgkNNLpitj7lcEeird6si2cr8wPdYDEk69AlA1OCliDI/lOXwX182WOV0iisYsX4JRdfFLQbQw0k1O8t+VdYQSVlDQeTp0DtMYQCZrOGPH6lSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717402431; c=relaxed/simple;
-	bh=dw35w2HlX6uEnLlGNP7oEeKFfwVxxiVEbHS8HsSh6Pc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RLmtzltzhsC9yqBv6wiGonsf4liBWvELcdn/v2eh9IKa7GR3RdKSoWDSrtMIy8E0kSjDxNKZTgrKfw6v4v052i6Oz0SW9Wci/he1KRN0c1tqAiOdqh6Rba768TqQOMQl3FJBOsu38mZLOyqqYnLHTuRre6WKa/TBxJas6Qon1Ig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=k8EuRzzC; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=59CM1T4kNHLXN8iP2xZIPMYXtUjSOpZ37vbcWdKyQJY=; b=k8EuRzzCfKfASeTkUM2IU1ILOO
-	wJkGORLCBY5HaUOijcxWfp3qDWtOYt2ghO1T3T8m6SHBTf4uYr5NlTmkwQG1F/QCnZH4l8aiw4jPP
-	9Av/CfwaGZWtgawb95ZQt/1ExzH8/nCNWS4Z9AGRzpMQe4gvf7z/i6hqgp/PfZbtGcXStlSnU9EIE
-	VfikzYJdeyrQzEuuVz6X0HL/rfP1aFGjcyvpHOow3m/Xdk+MqpeL03AAUYWNKiIsUPexZ6RY5deUb
-	ybosb0beHgkpRMEIIGgU4EsSIt/Cmxp5Qk1tiImUk5AUp0ZnwzhaYKWAy96LRL/bVAkX8hTH0aqyT
-	ye9H7dLA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:50452)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sE2hz-0002PF-31;
-	Mon, 03 Jun 2024 09:06:24 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sE2hy-0000Fn-FF; Mon, 03 Jun 2024 09:06:22 +0100
-Date: Mon, 3 Jun 2024 09:06:22 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: SkyLake Huang =?utf-8?B?KOm7g+WVn+a+pCk=?= <SkyLake.Huang@mediatek.com>
-Cc: "andrew@lunn.ch" <andrew@lunn.ch>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
-	"kuba@kernel.org" <kuba@kernel.org>,
-	"pabeni@redhat.com" <pabeni@redhat.com>,
-	"edumazet@google.com" <edumazet@google.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"dqfext@gmail.com" <dqfext@gmail.com>,
-	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
-	Steven Liu =?utf-8?B?KOWKieS6uuixqik=?= <steven.liu@mediatek.com>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"hkallweit1@gmail.com" <hkallweit1@gmail.com>,
-	"angelogioacchino.delregno@collabora.com" <angelogioacchino.delregno@collabora.com>,
-	"daniel@makrotopia.org" <daniel@makrotopia.org>
-Subject: Re: [PATCH net-next v5 4/5] net: phy: mediatek: Extend 1G TX/RX link
- pulse time
-Message-ID: <Zl15fh7y2oZmFfd7@shell.armlinux.org.uk>
-References: <20240530034844.11176-1-SkyLake.Huang@mediatek.com>
- <20240530034844.11176-5-SkyLake.Huang@mediatek.com>
- <ZlhTtSHRVrjWO0KD@shell.armlinux.org.uk>
- <a6280b885cf1cffa845310e7e565e1dd7421dc66.camel@mediatek.com>
- <Zlik7TfUsOanlBMV@shell.armlinux.org.uk>
- <e25de8898d594d14ade148004fdddb1f2c5b47f7.camel@mediatek.com>
+	s=arc-20240116; t=1717402006; c=relaxed/simple;
+	bh=Tw661DcLrL32BiuFUViIhHCb+H0PLMasetFtQXJTuE0=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=ga9I1F8DxRAEgUGi2ngPQjR4ideL9i+XET/Z7R1i7YiF8MriStGlrWablNr07y0VbNuqWwAFwdA0gxyr2DQ+HT6S3zYU3rWOuAii7DpzKvYKVy7rmUq/i+CTiWstJlcODifeTmzX08FYXhwCrGehfH5y6mABIFhIYndmX+IhCoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ghEdjv20; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7026ad046a2so501501b3a.2;
+        Mon, 03 Jun 2024 01:06:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717402004; x=1718006804; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7+YI0NLfFFhJ1Ir8e+Xv+54jNSfB0DM2jKBTzfdKYSc=;
+        b=ghEdjv20CO2EjShT5mNaXCyiQJ6rVavKCGfWRBW6DFci7PJTDMKE95NGROerlqg/Vk
+         d0W6LcttXlBgNbapQlLizhmumPn/O8buzf9kAeyLhyH/7Uk4Y6oPebPe+TCPuhv9XuLx
+         UZ8FYb2k3kzpDa52jX5It5CDPFIJjcUuHS+iZDeupm5CspDQC9RzN+yOTm9RVUKKUjb7
+         /RItVVpW1xweJoCUXzdOZ6EJ2tRcw7POmivqQW1CP6tb0eDiEyN4DkXnJ64lLaeDr3gb
+         qjti5s/EdHeZxV+Ssb+I1qtK95Z07O87c2BdKQW9DfmaeWt5NKq/0Yvzqb2gG8Izyzs0
+         Z5DQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717402004; x=1718006804;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=7+YI0NLfFFhJ1Ir8e+Xv+54jNSfB0DM2jKBTzfdKYSc=;
+        b=dyUTh0zLhB0dG8+HQOVhl5C/xuhFrAPXD/5wJLmlJHOtbRlPcBAjqlRY6veR9hcLZq
+         Fpk4Pi4Z+SA0EzjLi2OkHYeug5xnJMuoFrqBDmquhPrXERv6wFgfLsk6bPKTP59rMcRV
+         2Qq/z5qWs2G7Nn7E0yW5Wlx6ESb/m30+IgX6LZk1MYPZd/ztNLlSkIm98P8b7W/Kzpwa
+         v1AfuUBKvJ74nXQ3SNvJCoLL95TH0bySvGaBMQoU0M8JKsrtHgeiyTZdwTDUGmCdPNd8
+         8Aw+5urdciecclnuA25KKdIaqig8Cy1GOElnCiYesNtwbVumwY+Oh5wLhIH9TL0uMx+f
+         ZLPw==
+X-Forwarded-Encrypted: i=1; AJvYcCX0M9AROeMQ2LDKG7hNRaDTA6Zc5fDctU5Xx1WaZFmf+4xJoDI2M8qvur2iMvZkKUY9h+uQzOSVI6EsxUVXLwPz3HPv99CJwP8G3jlx5BGlpItGFtMQjYtAiTCk3d5q8b6O/YZltKGyMX2q27U7IFvB0uIP9D4I0TPPPfq6tWPCyII13ofqMoR6pU5LN//eigNdX8xQ
+X-Gm-Message-State: AOJu0YwBo8MkDtsqgZGs5xdKa8vSEeyAIw80Du+plHi0ApmY+s09RuAs
+	u4aFnuy71St3/lUocXJSdEo5zaGCbsgFfStqnUKjGAb6Res7gaWK
+X-Google-Smtp-Source: AGHT+IFaSCiBLUqxuj94VGdEbKH32ndbrZ5lhrXNp1WeqlQIk5zQGJLCHuJbczmyaB3iwXX3V10u8g==
+X-Received: by 2002:a05:6a20:1585:b0:1b2:5674:2225 with SMTP id adf61e73a8af0-1b26f205176mr8935937637.28.1717402003835;
+        Mon, 03 Jun 2024 01:06:43 -0700 (PDT)
+Received: from localhost ([1.128.198.72])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6323dd824sm59986955ad.128.2024.06.03.01.06.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Jun 2024 01:06:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e25de8898d594d14ade148004fdddb1f2c5b47f7.camel@mediatek.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 03 Jun 2024 18:06:34 +1000
+Message-Id: <D1Q874JKY23A.3LB0GHUQQEEAW@gmail.com>
+Cc: <mpe@ellerman.id.au>, <christophe.leroy@csgroup.eu>,
+ <aneesh.kumar@kernel.org>, <naveen.n.rao@linux.ibm.com>, <corbet@lwn.net>,
+ <linuxppc-dev@lists.ozlabs.org>, <kvm@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+ <stable@vger.kernel.org>
+Subject: Re: [PATCH v1 RESEND] arch/powerpc/kvm: Fix doorbell emulation by
+ adding DPDES support
+From: "Nicholas Piggin" <npiggin@gmail.com>
+To: "Gautam Menghani" <gautam@linux.ibm.com>
+X-Mailer: aerc 0.17.0
+References: <20240522084949.123148-1-gautam@linux.ibm.com>
+ <D1Q54PY40E3B.22QS5DMQRA58N@gmail.com>
+ <r74chlv6bgs5csvuf4nxxtylmgartvibftp3xuztyfuynqetp5@ythddpzo6yfi>
+In-Reply-To: <r74chlv6bgs5csvuf4nxxtylmgartvibftp3xuztyfuynqetp5@ythddpzo6yfi>
 
-On Mon, Jun 03, 2024 at 03:15:36AM +0000, SkyLake Huang (黃啟澤) wrote:
-> On Thu, 2024-05-30 at 17:10 +0100, Russell King (Oracle) wrote:
-> >  	 
-> > External email : Please do not click links or open attachments until
-> > you have verified the sender or the content.
-> >  On Thu, May 30, 2024 at 04:01:08PM +0000, SkyLake Huang (黃啟澤) wrote:
-> > > I'm not going to handle timeout case here. If we can't detect
-> > > MTK_PHY_FINAL_SPEED_1000 in 1 second, let it go and we'll detect it
-> > > next round.
-> > 
-> > With this waiting up to one second for MTK_PHY_FINAL_SPEED_1000 to be
-> > set...
-> > 
-> > > > > +int mtk_gphy_cl22_read_status(struct phy_device *phydev)
-> > > > > +{
-> > > > > +int ret;
-> > > > > +
-> > > > > +ret = genphy_read_status(phydev);
-> > > > > +if (ret)
-> > > > > +return ret;
-> > > > > +
-> > > > > +if (phydev->autoneg == AUTONEG_ENABLE && !phydev-
-> > > > >autoneg_complete) {
-> > 
-> > Are you sure you want this condition like this? When the link is
-> > down,
-> > and 1G speeds are being advertised, it means that you'll call
-> > extend_an_new_lp_cnt_limit(). If MTK_PHY_FINAL_SPEED_1000 doesn't get
-> > set, that'll take one second each and every time we poll the PHY for
-> > its status - which will be done while holding phydev->lock.
-> > 
-> > This doesn't sound very good.
-> > 
-> > -- 
-> > RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-> > FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
-> 
-> I add another condition to make sure we enter
-> extend_an_new_lp_cnt_limit() only in first few seconds when we plug in
-> cable.
-> 
-> It will look like this:
-> ===============================================================
-> #define MTK_PHY_AUX_CTRL_AND_STATUS		0x14
-> #define   MTK_PHY_LP_DETECTED_MASK		GENMASK(7, 6)
-> 
-> if (phydev->autoneg == AUTONEG_ENABLE && !phydev->autoneg_complete) {
-> 	phy_select_page(phydev, MTK_PHY_PAGE_EXTENDED_1);
-> 	ret = __phy_read(phydev, MTK_PHY_AUX_CTRL_AND_STATUS);
-> 	phy_restore_page(phydev, MTK_PHY_PAGE_STANDARD, 0);
+On Mon Jun 3, 2024 at 5:09 PM AEST, Gautam Menghani wrote:
+> On Mon, Jun 03, 2024 at 03:42:22PM GMT, Nicholas Piggin wrote:
+> > On Wed May 22, 2024 at 6:49 PM AEST, Gautam Menghani wrote:
+> > > Doorbell emulation is broken for KVM on PowerVM guests as support for
+> > > DPDES was not added in the initial patch series. Due to this, a KVM o=
+n
+> > > PowerVM guest cannot be booted with the XICS interrupt controller as
+> > > doorbells are to be setup in the initial probe path when using XICS
+> > > (pSeries_smp_probe()). Add DPDES support in the host KVM code to fix
+> > > doorbell emulation.
+> >=20
+> > This is broken when the KVM guest has SMT > 1? Or is it broken for SMT=
+=3D1
+> > as well? Can you explain a bit more of what breaks if it's the latter?
+>
+> Yes, doorbells are only setup when we use SMT>1 and interrupt controller
+> is XICS. So without this patch, L2 KOP guest with XICS IC mode and SMT>1=
+=20
+> does not boot. SMT 1 is fine in all cases.
 
-We provide a helper for this:
+Okay good. Make that clear in the changelog, ideally if you can give
+a recipe the reader is able to recreate is good too, (e.g., run the
+guest machine with -smp 4,threads=3D4 and xive=3Doff boot parameter).
 
-	ret = phy_read_paged(phydev, MTK_PHY_PAGE_EXTENDED_1,
-			     MTK_PHY_AUX_CTRL_AND_STATUS);
+> > > Fixes: 6ccbbc33f06a ("KVM: PPC: Add helper library for Guest State Bu=
+ffers")
+> > > Cc: stable@vger.kernel.org
+> > > Signed-off-by: Gautam Menghani <gautam@linux.ibm.com>
+> > > ---
+> > > v1 -> v1 resend:
+> > > 1. Add the stable tag
+> > >
+> > >  Documentation/arch/powerpc/kvm-nested.rst     |  4 +++-
+> > >  arch/powerpc/include/asm/guest-state-buffer.h |  3 ++-
+> > >  arch/powerpc/include/asm/kvm_book3s.h         |  1 +
+> > >  arch/powerpc/kvm/book3s_hv.c                  | 14 +++++++++++++-
+> > >  arch/powerpc/kvm/book3s_hv_nestedv2.c         |  7 +++++++
+> > >  arch/powerpc/kvm/test-guest-state-buffer.c    |  2 +-
+> > >  6 files changed, 27 insertions(+), 4 deletions(-)
+> > >
+> > > diff --git a/Documentation/arch/powerpc/kvm-nested.rst b/Documentatio=
+n/arch/powerpc/kvm-nested.rst
+> > > index 630602a8aa00..5defd13cc6c1 100644
+> > > --- a/Documentation/arch/powerpc/kvm-nested.rst
+> > > +++ b/Documentation/arch/powerpc/kvm-nested.rst
+> > > @@ -546,7 +546,9 @@ table information.
+> > >  +--------+-------+----+--------+----------------------------------+
+> > >  | 0x1052 | 0x08  | RW |   T    | CTRL                             |
+> > >  +--------+-------+----+--------+----------------------------------+
+> > > -| 0x1053-|       |    |        | Reserved                         |
+> > > +| 0x1053 | 0x08  | RW |   T    | DPDES                            |
+> > > ++--------+-------+----+--------+----------------------------------+
+> > > +| 0x1054-|       |    |        | Reserved                         |
+> > >  | 0x1FFF |       |    |        |                                  |
+> > >  +--------+-------+----+--------+----------------------------------+
+> > >  | 0x2000 | 0x04  | RW |   T    | CR                               |
+> > > diff --git a/arch/powerpc/include/asm/guest-state-buffer.h b/arch/pow=
+erpc/include/asm/guest-state-buffer.h
+> > > index 808149f31576..d107abe1468f 100644
+> > > --- a/arch/powerpc/include/asm/guest-state-buffer.h
+> > > +++ b/arch/powerpc/include/asm/guest-state-buffer.h
+> > > @@ -81,6 +81,7 @@
+> > >  #define KVMPPC_GSID_HASHKEYR			0x1050
+> > >  #define KVMPPC_GSID_HASHPKEYR			0x1051
+> > >  #define KVMPPC_GSID_CTRL			0x1052
+> > > +#define KVMPPC_GSID_DPDES			0x1053
+> > > =20
+> > >  #define KVMPPC_GSID_CR				0x2000
+> > >  #define KVMPPC_GSID_PIDR			0x2001
+> > > @@ -110,7 +111,7 @@
+> > >  #define KVMPPC_GSE_META_COUNT (KVMPPC_GSE_META_END - KVMPPC_GSE_META=
+_START + 1)
+> > > =20
+> > >  #define KVMPPC_GSE_DW_REGS_START KVMPPC_GSID_GPR(0)
+> > > -#define KVMPPC_GSE_DW_REGS_END KVMPPC_GSID_CTRL
+> > > +#define KVMPPC_GSE_DW_REGS_END KVMPPC_GSID_DPDES
+> > >  #define KVMPPC_GSE_DW_REGS_COUNT \
+> > >  	(KVMPPC_GSE_DW_REGS_END - KVMPPC_GSE_DW_REGS_START + 1)
+> > > =20
+> > > diff --git a/arch/powerpc/include/asm/kvm_book3s.h b/arch/powerpc/inc=
+lude/asm/kvm_book3s.h
+> > > index 3e1e2a698c9e..10618622d7ef 100644
+> > > --- a/arch/powerpc/include/asm/kvm_book3s.h
+> > > +++ b/arch/powerpc/include/asm/kvm_book3s.h
+> > > @@ -594,6 +594,7 @@ static inline u##size kvmppc_get_##reg(struct kvm=
+_vcpu *vcpu)		\
+> > > =20
+> > > =20
+> > >  KVMPPC_BOOK3S_VCORE_ACCESSOR(vtb, 64, KVMPPC_GSID_VTB)
+> > > +KVMPPC_BOOK3S_VCORE_ACCESSOR(dpdes, 64, KVMPPC_GSID_DPDES)
+> > >  KVMPPC_BOOK3S_VCORE_ACCESSOR_GET(arch_compat, 32, KVMPPC_GSID_LOGICA=
+L_PVR)
+> > >  KVMPPC_BOOK3S_VCORE_ACCESSOR_GET(lpcr, 64, KVMPPC_GSID_LPCR)
+> > >  KVMPPC_BOOK3S_VCORE_ACCESSOR_SET(tb_offset, 64, KVMPPC_GSID_TB_OFFSE=
+T)
+> > > diff --git a/arch/powerpc/kvm/book3s_hv.c b/arch/powerpc/kvm/book3s_h=
+v.c
+> > > index 35cb014a0c51..cf285e5153ba 100644
+> > > --- a/arch/powerpc/kvm/book3s_hv.c
+> > > +++ b/arch/powerpc/kvm/book3s_hv.c
+> > > @@ -4116,6 +4116,11 @@ static int kvmhv_vcpu_entry_nestedv2(struct kv=
+m_vcpu *vcpu, u64 time_limit,
+> > >  	int trap;
+> > >  	long rc;
+> > > =20
+> > > +	if (vcpu->arch.doorbell_request) {
+> > > +		vcpu->arch.doorbell_request =3D 0;
+> > > +		kvmppc_set_dpdes(vcpu, 1);
+> > > +	}
+> >=20
+> > This probably looks okay... hmm, is the v1 KVM emulating doorbells
+> > correctly for SMT L2 guests? I wonder if doorbell emulation isn't
+> > broken there too because the L1 code looks to be passing in vc->dpdes
+> > but all the POWER9 emulation code uses doorbell_request.
+> >=20
+>
+> Yes launching SMT L2 on V1 API fails with a kernel Oops, I'll see if I
+> can fix that as well.
 
-but please check "ret" for errors.
+Okay then I didn't miss something. Thanks v1 fix would be good too.
+I think it should look something like putting doorbell_request into
+hv_guest_state->dpdes that make the H_ENTER_NESTED call with.
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+For v1 you will need to restore the state back from dpdes back to
+doorbell_request on exit, because the L0 doesn't keep it for you.
+
+Thanks,
+Nick
 
