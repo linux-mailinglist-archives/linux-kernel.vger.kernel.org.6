@@ -1,218 +1,154 @@
-Return-Path: <linux-kernel+bounces-199734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70DFA8E2FA0
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 23:30:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3C9D8E9945
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 23:34:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9BA0B235D1
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 21:30:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFCAC1C2260A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 21:34:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDAE213C3C0;
-	Mon,  3 Jun 2024 21:30:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC4D213C682;
+	Mon,  3 Jun 2024 21:33:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="vHCBqKTA"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lCf9oSWG"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFAA54F1EE;
-	Mon,  3 Jun 2024 21:30:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 852E813A244;
+	Mon,  3 Jun 2024 21:33:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717450215; cv=none; b=VxVMWAFk+uQnKrb7AJ39iWxKJCbNWg5f7QwG3OF2DkvUyrXyd7dB78ncGvU2CBPKILhRL3Jwb9oAYrl8bCVeRZizALbWK0fnMcS2aHano847WZkMMDGgyDmCmQxVIB6YRVKBYGWS2D8+ikHXBMmQMMAqomt7/m4yS9YISmZ/fXY=
+	t=1717450437; cv=none; b=KYAR3LG4Y3cV9m5DxuDz5T7JCBA6FLjWtt3nwd9iybaCGFIFWl+F1R7kQGF6Q6jMGBWTJ7Kf8Px8c9g8tXCICCcdxc2Nc846+rJWfdsu2S8kc/esuXRuJRrp2pN0yzFWOcLTsqZ/IJEuiuxUHeILs40YvvvEqQ5lPf0gW65SF9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717450215; c=relaxed/simple;
-	bh=x+PY2+ekSSRWKPMhWSep1QpgDeF1C+GK06p8Hqoiqbk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=upt9Rhea8YvxtmSVAVWGxg7VCYr3cdVHgaW14PzrXSVXZR/K4VnnwyRdgFTMpMFsKszmKqB9BKp5BuFAuyzNV+p6p96nMZQld/Cd9xArvIuHj7LR0VVVBAcdKkGe/7MPLHUD/nNVlHiLWGXjT4lO57nipvDISL5f1Y4OH+dd25E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=vHCBqKTA; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=0tMr/IjcicAgcE4qukmRutDbwjqPU9tdzdTY92kBc2E=; b=vHCBqKTAuZOlkkVF+PKQEMwK44
-	e1kmPmV3x4S07kSpXLFu3Ghuq4JDBewe4yb4vBxEy/p7yIWuT5lT95SE3YIq+cbBH2fmTKUYwXpd0
-	ZPUBcE/zircojWxbtYLjl3IQLmO3DropajD5G/8C/01Zkp4rsTO0rU2vmr5byH8lsptzxasFsCtIG
-	74GhtVscXTqao0/gpCWWYKl8JO2OYgtMhijfW9rRkbtF8FHNSdvwGyfmcCWA23Jxrlw6BjsX2VZB/
-	+m3rh6X9GxS8/MdjVkiJwUyzJixQpod7IDJtVijOqjN1Q/bWgKQ7TOa0iuY6A+TUPwFm/Ij2OXUnA
-	v3oD6Uyg==;
-Received: from [50.53.4.147] (helo=[192.168.254.15])
-	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sEFFs-00000000Otw-3zcn;
-	Mon, 03 Jun 2024 21:30:13 +0000
-Message-ID: <96132fe8-a0ba-4bd7-8019-816f02afc426@infradead.org>
-Date: Mon, 3 Jun 2024 14:30:12 -0700
+	s=arc-20240116; t=1717450437; c=relaxed/simple;
+	bh=+WAVr7Cr9XJko6qLCCjaOI8VDhsbvA5KZNsxHN21Bjc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iL3csRXsDZdY30Kh+aVQ0kMCYO/jVu9hfUjId5cOXpzv42+HiI0OIN5QwlVFcL75sjDAytiS0W5eHYMRcfHayvABWw1ypDp4wN4ZcHeEr9UgE+kSALruHigJJ8UE9halfPZJ4qm5B1VfTf/oJdCDZ+Mu44CtKHgN2ZtRWuDD5fw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lCf9oSWG; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717450436; x=1748986436;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=+WAVr7Cr9XJko6qLCCjaOI8VDhsbvA5KZNsxHN21Bjc=;
+  b=lCf9oSWGd6ldqlVNFtRP0oFOHb/FcDj+k88HqngTJaWpz59IAEE8kuVf
+   +DTiXWZp6GNkZvsXQZrbiCxow6NgjkksDkSDEtEdA0yqfc7g2mqDKDR6l
+   GxCDd6hUJTCAwsbeUjZsyAHrggmYgSV4dEI1as4w/0M38pc42PIegkOWf
+   9T9hlpuBCVFOu5YgplZLi755ByrFDhoeUEk/jMg7032viD6VaiO8Q0tXH
+   h0jOPyHdhdas8iKQ6sBQZGq6hVwm37b6KoyS7F7TPMPH3DqP/uJD68X3M
+   RDSvhlRnTvBkBen2FqYgFxsw5zyHGrsSmw6OP1CaxICPJwA/bIqKtbmBA
+   Q==;
+X-CSE-ConnectionGUID: eBxkM+7sSxmbuSNHgogz1A==
+X-CSE-MsgGUID: JIqM9ELST4+TvcIuQ5+Kzw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11092"; a="17754278"
+X-IronPort-AV: E=Sophos;i="6.08,212,1712646000"; 
+   d="scan'208";a="17754278"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2024 14:33:55 -0700
+X-CSE-ConnectionGUID: BVT8Mfq7QcCyeWc3iTkFNA==
+X-CSE-MsgGUID: MX87PzPBQhC/KM/+zBMT+Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,212,1712646000"; 
+   d="scan'208";a="36991062"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2024 14:33:53 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id DD6B111FB5E;
+	Tue,  4 Jun 2024 00:33:49 +0300 (EEST)
+Date: Mon, 3 Jun 2024 21:33:49 +0000
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
+	Wentong Wu <wentong.wu@intel.com>,
+	Tomas Winkler <tomas.winkler@intel.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-acpi@vger.kernel.org, Kate Hsuan <hpa@redhat.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mei: vsc: Fix wrong invocation of ACPI SID method
+Message-ID: <Zl42vYs40MJiPxl7@kekkonen.localdomain>
+References: <20240603205050.505389-1-hdegoede@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] kconfig: remove wrong expr_trans_bool()
-To: Masahiro Yamada <masahiroy@kernel.org>, linux-kbuild@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-References: <20240603161904.1663388-1-masahiroy@kernel.org>
- <20240603161904.1663388-3-masahiroy@kernel.org>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20240603161904.1663388-3-masahiroy@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240603205050.505389-1-hdegoede@redhat.com>
 
+Hi Hans,
 
+Thanks for the patch.
 
-On 6/3/24 9:19 AM, Masahiro Yamada wrote:
-> expr_trans_bool() performs an incorrect transformation.
+On Mon, Jun 03, 2024 at 10:50:50PM +0200, Hans de Goede wrote:
+> When using an initializer for a union only one of the union members
+> must be initialized. The initializer for the acpi_object union variable
+> passed as argument to the SID ACPI method was initializing both
+> the type and the integer members of the union.
 > 
-> [Test Code]
+> Unfortunately rather then complaining about this gcc simply ignores
+> the first initializer and only used the second integer.value = 1
+> initializer. Leaving type set to 0 which leads to the argument being
+> skipped by acpi acpi_ns_evaluate() resulting in:
 > 
->     config MODULES
->             def_bool y
->             modules
+> ACPI Warning: \_SB.PC00.SPI1.SPFD.CVFD.SID: Insufficient arguments -
+> Caller passed 0, method requires 1 (20240322/nsarguments-232)
 > 
->     config A
->             def_bool y
->             select C if B != n
+> Fix this by initializing only the integer struct part of the union
+> and initializing both members of the integer struct.
 > 
->     config B
->             def_tristate m
-> 
->     config C
->             tristate
-> 
-> [Result]
-> 
->     CONFIG_MODULES=y
->     CONFIG_A=y
->     CONFIG_B=m
->     CONFIG_C=m
-> 
-> This result is incorrect because CONFIG_C=y is expected.
-> 
-> Documentation/kbuild/kconfig-language.rst clearly explains the function
-> of the '!=' operator:
-> 
->   (3) If the values of both symbols are equal, it returns 'n',
->       otherwise 'y'.
-> 
-> Therefore, the statement:
-> 
->     select C if A != n
-> 
-> should be equivalent to:
-> 
->     select C if y
-> 
-> Hence, the symbol C should be selected by 'y' instead of 'm'.
-> 
-> The comment block of expr_trans_bool() correctly explains its intention:
-> 
->   * bool FOO!=n => FOO
->     ^^^^
-> 
-> If FOO is bool, FOO!=n can be simplified into FOO. This is correct.
-> 
-> However, the actual code performs this transformation when FOO is
-> tristate.
-> 
->     if (e->left.sym->type == S_TRISTATE) {
->                              ^^^^^^^^^^
-> 
-> While, it can be fixed to S_BOOLEAN, there is no point in doing so
+> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+> ---
+> Even though this is a one-liner, figuring out what was actually going
+> wrong here took quite a while.
 
-  While it can
-
-> because expr_tranform() already transforms FOO!=n to FOO when FOO is
-> bool. (see the "case E_UNEQUAL" part)
-> 
-> expr_trans_bool() is wrong and unnecessary.
-> 
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
-
-Thanks.
+I was wondering this with Wentong, too...!
 
 > ---
+>  drivers/misc/mei/vsc-fw-loader.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
->  scripts/kconfig/expr.c | 29 -----------------------------
->  scripts/kconfig/expr.h |  1 -
->  scripts/kconfig/menu.c |  2 --
->  3 files changed, 32 deletions(-)
-> 
-> diff --git a/scripts/kconfig/expr.c b/scripts/kconfig/expr.c
-> index 4d95fce5f9a7..fcc190b67b6f 100644
-> --- a/scripts/kconfig/expr.c
-> +++ b/scripts/kconfig/expr.c
-> @@ -396,35 +396,6 @@ static struct expr *expr_eliminate_yn(struct expr *e)
->  	return e;
->  }
->  
-> -/*
-> - * bool FOO!=n => FOO
-> - */
-> -struct expr *expr_trans_bool(struct expr *e)
-> -{
-> -	if (!e)
-> -		return NULL;
-> -	switch (e->type) {
-> -	case E_AND:
-> -	case E_OR:
-> -	case E_NOT:
-> -		e->left.expr = expr_trans_bool(e->left.expr);
-> -		e->right.expr = expr_trans_bool(e->right.expr);
-> -		break;
-> -	case E_UNEQUAL:
-> -		// FOO!=n -> FOO
-> -		if (e->left.sym->type == S_TRISTATE) {
-> -			if (e->right.sym == &symbol_no) {
-> -				e->type = E_SYMBOL;
-> -				e->right.sym = NULL;
-> -			}
-> -		}
-> -		break;
-> -	default:
-> -		;
-> -	}
-> -	return e;
-> -}
-> -
->  /*
->   * e1 || e2 -> ?
->   */
-> diff --git a/scripts/kconfig/expr.h b/scripts/kconfig/expr.h
-> index fa50fc45622e..7c0c242318bc 100644
-> --- a/scripts/kconfig/expr.h
-> +++ b/scripts/kconfig/expr.h
-> @@ -284,7 +284,6 @@ void expr_free(struct expr *e);
->  void expr_eliminate_eq(struct expr **ep1, struct expr **ep2);
->  int expr_eq(struct expr *e1, struct expr *e2);
->  tristate expr_calc_value(struct expr *e);
-> -struct expr *expr_trans_bool(struct expr *e);
->  struct expr *expr_eliminate_dups(struct expr *e);
->  struct expr *expr_transform(struct expr *e);
->  int expr_contains_symbol(struct expr *dep, struct symbol *sym);
-> diff --git a/scripts/kconfig/menu.c b/scripts/kconfig/menu.c
-> index 53151c5a6028..eef9b63cdf11 100644
-> --- a/scripts/kconfig/menu.c
-> +++ b/scripts/kconfig/menu.c
-> @@ -398,8 +398,6 @@ static void _menu_finalize(struct menu *parent, bool inside_choice)
->  				dep = expr_transform(dep);
->  				dep = expr_alloc_and(expr_copy(basedep), dep);
->  				dep = expr_eliminate_dups(dep);
-> -				if (menu->sym && menu->sym->type != S_TRISTATE)
-> -					dep = expr_trans_bool(dep);
->  				prop->visible.expr = dep;
->  
->  				/*
+> diff --git a/drivers/misc/mei/vsc-fw-loader.c b/drivers/misc/mei/vsc-fw-loader.c
+> index ffa4ccd96a10..596a9d695dfc 100644
+> --- a/drivers/misc/mei/vsc-fw-loader.c
+> +++ b/drivers/misc/mei/vsc-fw-loader.c
+> @@ -252,7 +252,7 @@ static int vsc_get_sensor_name(struct vsc_fw_loader *fw_loader,
+>  {
+>  	struct acpi_buffer buffer = { ACPI_ALLOCATE_BUFFER };
+>  	union acpi_object obj = {
+> -		.type = ACPI_TYPE_INTEGER,
+> +		.integer.type = ACPI_TYPE_INTEGER,
+>  		.integer.value = 1,
+
+I guess initialising integer.value implies that all integer fields are set
+to zero (and so zeroing type set the line above)? Maybe moving setting type
+below setting integer.value might do the trick as well? ;-)
+
+It'd be useful to be warned by the compiler in such a case. There are much
+less useful warnings out there.
+
+Excellent finding indeed.
+
+Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+
+This could be cc'd to stable, this warning will display for a lot of
+systems. I.e. I think:
+
+Fixes: 566f5ca97680 ("mei: Add transport driver for IVSC device")
+Cc: stable@vger.kernel.org # for 6.8 and later
+
+>  	};
+>  	struct acpi_object_list arg_list = {
 
 -- 
-#Randy
-https://people.kernel.org/tglx/notes-about-netiquette
-https://subspace.kernel.org/etiquette.html
+Kind regards,
+
+Sakari Ailus
 
