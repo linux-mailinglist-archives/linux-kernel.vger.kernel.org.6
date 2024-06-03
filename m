@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-199178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CCBA8D8373
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:06:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B354B8D838A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:10:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC9BE286057
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:06:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 614561F210D0
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:10:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56E3712E1FE;
-	Mon,  3 Jun 2024 13:05:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53B3B12C552;
+	Mon,  3 Jun 2024 13:09:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Yg3efjl8"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="drm6WUCS"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4140712C491
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 13:05:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 602FC12E1C6
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 13:09:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717419933; cv=none; b=drD4pmOIjtZjR8J7ebRGi2l+mWQKwM9T6sNAp6Oco41K5iErMGMZiorF3+eughdyn1VmCRCBdj5l9rAMJFiCK/qXIU6x6jKylhiCxSf3z+A0hJ1O/bcQu8Ue4lQOpGfSdy5MC1UiVlyzTfvgdjGrcR0lR7npmmBBS0/JzAOtL3w=
+	t=1717420189; cv=none; b=mQxLM77yPN8o1E1E5tlKF9HLvISxMEV66rA2zUvNzL0IXzW/WefkrvUNIijXCKWKm1WzTWlC9PnTg49kS5otA7ZiCoB2dmqms3AnzZHH/M+0WysMHg1yU4ENjQDxNZAWfluTqPq8gSu+st2i3IFEhFnyiVrDFKvvmRD+qP4tVcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717419933; c=relaxed/simple;
-	bh=71m52FJi8Um7FJFoETG+FaMXe3M/vfBj7cNFVRSvdGg=;
+	s=arc-20240116; t=1717420189; c=relaxed/simple;
+	bh=YhcdwzH90218JoOWdcc1NwAP0Li4AXv2Tb893sr7v9I=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Z7kHskSLYO5Bp8xP2J3s+CYAvh1AywlpIsnAF752Rud8Efa4ftaRNeTyLjnimlGTBXp6D5kLmtpTxYw1b88y07n5vvQK+St/5Gc5uFxgXcHkkIHugOhEFNlBGir1X6olJks8n67ygtKR8BsKgZmOpnnb96iYQr5o7AQCa6aVyUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Yg3efjl8; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=GNIjhjShwzbS4KajdZ+yoPMKYx4XI+g/1WaSFrDP0nfDjsf/nm5YM7TNE0CWaXwmZ3pb+G4IVpVXK+b/OP1i1qV4uCRuvLbYz80h5uZFiq2XGGyeTNm+B6x3QZLvhtaBaGD+HGzTZrJSikIE6D3b1Lu2RH334zfPfyPzAtfPtyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=drm6WUCS; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717419931;
+	s=mimecast20190719; t=1717420177;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=2hDp3mJM+KL3UzD0Xul7NRSgkymM8l/Ae4m4/fkqIqo=;
-	b=Yg3efjl85g1Qp5zzEfL834tXrpUlox4SznO8JEiEdmx/KCJzcg2DCe+H4HI8GqZf+bcqU6
-	xn9G1Qtqa+62OTQINpAJ6ZWlXnAOmOI1S4yFABPbBvPDSgyPyF94w75JIuFTqd6qZ+7kjc
-	5N7ZigHqbCRDNAp9KFBzRNwo7DhZkwA=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=cXAmMQrgrXIFLyB/yIKENXCHvnmz0ML8IZSHNgowrl8=;
+	b=drm6WUCSFiAUQ/Yy/lMllPY2nvmPDWVFRy4cmi/kGzfJ7KSlGPk1jvbj8Hp/zAAmAd8tMD
+	cnPjIFsjzbsu2olvDBbySfP1Nv27ekhNgHA3CI5OjgbfMjdpXJKLBHs7CerldCm5yALepa
+	0xzsN3cSYqeoG9aLy+fsfW6NIXf+whY=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-130-HcoRjgNdMAqHB-X06LZWYg-1; Mon, 03 Jun 2024 09:05:30 -0400
-X-MC-Unique: HcoRjgNdMAqHB-X06LZWYg-1
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6af22efee18so35966776d6.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 06:05:30 -0700 (PDT)
+ us-mta-5-AzBsRabIO4SWrz_DQFw8JA-1; Mon, 03 Jun 2024 09:05:32 -0400
+X-MC-Unique: AzBsRabIO4SWrz_DQFw8JA-1
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-43ff7b96a3fso33491541cf.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 06:05:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717419930; x=1718024730;
+        d=1e100.net; s=20230601; t=1717419926; x=1718024726;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=2hDp3mJM+KL3UzD0Xul7NRSgkymM8l/Ae4m4/fkqIqo=;
-        b=iTPr6Ns/HNSpveKL/DS3rbagvBdg3WhiN5meVmhdNiVUeoJG/M4D0lVb/mxY8LYfRb
-         EA6JGdb/iWq+fzijfuOUvf8bJx2FYzAYUHRGlgIu7WOmo0QXGbFq+QpjtcbIL0dBGai9
-         qhMOSQv/cI9avQVebCURtlh3HpLBp8vnXsXz3BTCydBUG6/v+wtjdNi9n7kyn5Ly5hAS
-         DkngGZyrIy+hZFE84x0/D/4XqGKv1Lii4zallMn9wdnqkln0h2SE8N7ETimoevQbgDwd
-         HaGyukMTlaVgOkMsFNBe3FcvcJZxpsmu+8OAOkZbdxWbRi2taNNlvL+eJzz/u+G5RYX8
-         UJqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW/5KaO+2dxPGB9va3pDKK9aDzVal4NJ2nEsz+i9bx6qfxNOLDGF1XLX7rmm9m0uwrFLsBuz1dlTlnt50NefzVNer0ZQGytbXCgynlh
-X-Gm-Message-State: AOJu0YwL+LgsXNUOz+S4KggxzGzC9FDNCVexmsYRm6mMieu91oOa4p0v
-	SG3nkUINf1Cm60o4xDEjrfhJW5n9PUInbKuh6jScPh0p5NqtvR3luvOr7VRU9WC9ivA/ypiAOzo
-	k4VNK3uHycs3FiI7rgp1KCheG/QdYhNLkVvCDTT4OcE06z/sCJvrcqorkPNLfoQ==
-X-Received: by 2002:a05:6214:53c2:b0:6ae:ba6:2136 with SMTP id 6a1803df08f44-6aecd69c655mr116485986d6.36.1717419928916;
-        Mon, 03 Jun 2024 06:05:28 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHIqrN3yZy5lXpQG4/otUItFzer4jmPLCycJ2Rj//HPLUZeLLc+f0g23vFqngAb9IsidJe/Vg==
-X-Received: by 2002:a05:6214:53c2:b0:6ae:ba6:2136 with SMTP id 6a1803df08f44-6aecd69c655mr116485636d6.36.1717419928535;
-        Mon, 03 Jun 2024 06:05:28 -0700 (PDT)
+        bh=cXAmMQrgrXIFLyB/yIKENXCHvnmz0ML8IZSHNgowrl8=;
+        b=OcpZhrNOhWvhPd5BZ/5kHEl1cGq2kkse0fw3SM4e8HGd7CZBDpXcb/SH0rQrXeBsRV
+         zwOMm7ZLZL5JLAdrEVvzum4mMFyf4I2sp//5NTXJ1HKFSX0NBOmj3VB5wRf7Gv/po9CC
+         W9w5eyJus2M5bTsDd4TdzKdL8pmIaqipXAfE529BJbrtjTQuOEeYNtIVOL9K8RJYq5EM
+         3E62QenpqnKKfGH8bhAakkclBqG0iy8egg8uFa87VEePWvkYCjOH3fpoIDE1oDv0/sgp
+         KMOh92Dqgeyd8rl8iTjHsmrt/7dKQNk6R4/3DUNURBBYA5HBsKxCLuV7QvIpJ1CYj23J
+         w1Vg==
+X-Forwarded-Encrypted: i=1; AJvYcCVWdd5iemjEeeU1ZweFg1V3oJwUM82RzM6zHNhYG8B3QKUlf0qvG8ssuDs+meXDjTvWKu0U9cEkOQ8NV7hfAihtU3TNHnnoyt9NHM2j
+X-Gm-Message-State: AOJu0YzTqy2TAk6lRPxLjgH8StJ9nAVRa01unNN1Lb6mSURroBLNPyDY
+	N/xpJ3DMEwC0yBJ/ZiT0qPrtLxfuRA//qK0EqvzeDP0uCxFrSwanhLZg95Ly6RF+aarkw1l600P
+	LNAr898DGQV4vhyLwfpG1KnzC8Yed/CxRITywCU7yiXaIA4nmc3JMGdiDxqirCA==
+X-Received: by 2002:a05:6214:3b87:b0:6af:b70d:55e9 with SMTP id 6a1803df08f44-6afb70d56b0mr37258186d6.42.1717419926036;
+        Mon, 03 Jun 2024 06:05:26 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHLGteIxc3SVsMMA5OIbdqpk/I/qYvB4QX9ht7y8iaF54/X1TCt3zDCTxhbKhkVly5RHbTheQ==
+X-Received: by 2002:a05:6214:3b87:b0:6af:b70d:55e9 with SMTP id 6a1803df08f44-6afb70d56b0mr37257636d6.42.1717419925390;
+        Mon, 03 Jun 2024 06:05:25 -0700 (PDT)
 Received: from rh.redhat.com (p200300c93f02d1004c157eb0f018dd01.dip0.t-ipconnect.de. [2003:c9:3f02:d100:4c15:7eb0:f018:dd01])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ae4b4179f4sm30558826d6.113.2024.06.03.06.05.25
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ae4b4179f4sm30558826d6.113.2024.06.03.06.05.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Jun 2024 06:05:28 -0700 (PDT)
+        Mon, 03 Jun 2024 06:05:25 -0700 (PDT)
 From: Sebastian Ott <sebott@redhat.com>
 To: linux-arm-kernel@lists.infradead.org,
 	kvmarm@lists.linux.dev,
@@ -84,9 +84,9 @@ Cc: Marc Zyngier <maz@kernel.org>,
 	Will Deacon <will@kernel.org>,
 	Shaoqin Huang <shahuang@redhat.com>,
 	Eric Auger <eric.auger@redhat.com>
-Subject: [PATCH v4 5/6] KVM: arm64: rename functions for invariant sys regs
-Date: Mon,  3 Jun 2024 15:05:06 +0200
-Message-ID: <20240603130507.17597-6-sebott@redhat.com>
+Subject: [PATCH v4 4/6] KVM: arm64: show writable masks for feature registers
+Date: Mon,  3 Jun 2024 15:05:05 +0200
+Message-ID: <20240603130507.17597-5-sebott@redhat.com>
 X-Mailer: git-send-email 2.45.1
 In-Reply-To: <20240603130507.17597-1-sebott@redhat.com>
 References: <20240603130507.17597-1-sebott@redhat.com>
@@ -98,49 +98,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Invariant system id registers are populated with host values
-at initialization time using their .reset function cb.
+Instead of using ~0UL provide the actual writable mask for
+non-id feature registers in the output of the
+KVM_ARM_GET_REG_WRITABLE_MASKS ioctl.
 
-These are currently called get_* which is usually used by
-the functions implementing the .get_user callback.
-
-Change their function names to reset_* to reflect what they
-are used for.
+This changes the mask for the CTR_EL0 and CLIDR_EL1 registers.
 
 Signed-off-by: Sebastian Ott <sebott@redhat.com>
 Reviewed-by: Eric Auger <eric.auger@redhat.com>
 ---
- arch/arm64/kvm/sys_regs.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ arch/arm64/kvm/sys_regs.c | 19 +++++--------------
+ 1 file changed, 5 insertions(+), 14 deletions(-)
 
 diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
-index 8008120d021b..12ce8461323a 100644
+index 39057718fbcd..8008120d021b 100644
 --- a/arch/arm64/kvm/sys_regs.c
 +++ b/arch/arm64/kvm/sys_regs.c
-@@ -3799,8 +3799,8 @@ id_to_sys_reg_desc(struct kvm_vcpu *vcpu, u64 id,
-  */
+@@ -2566,7 +2566,7 @@ static const struct sys_reg_desc sys_reg_descs[] = {
  
- #define FUNCTION_INVARIANT(reg)						\
--	static u64 get_##reg(struct kvm_vcpu *v,			\
--			      const struct sys_reg_desc *r)		\
-+	static u64 reset_##reg(struct kvm_vcpu *v,			\
-+			       const struct sys_reg_desc *r)		\
- 	{								\
- 		((struct sys_reg_desc *)r)->val = read_sysreg(reg);	\
- 		return ((struct sys_reg_desc *)r)->val;			\
-@@ -3812,9 +3812,9 @@ FUNCTION_INVARIANT(aidr_el1)
+ 	{ SYS_DESC(SYS_CCSIDR_EL1), access_ccsidr },
+ 	{ SYS_DESC(SYS_CLIDR_EL1), access_clidr, reset_clidr, CLIDR_EL1,
+-	  .set_user = set_clidr },
++	  .set_user = set_clidr, .val = ~CLIDR_EL1_RES0 },
+ 	{ SYS_DESC(SYS_CCSIDR2_EL1), undef_access },
+ 	{ SYS_DESC(SYS_SMIDR_EL1), undef_access },
+ 	{ SYS_DESC(SYS_CSSELR_EL1), access_csselr, reset_unknown, CSSELR_EL1 },
+@@ -4125,20 +4125,11 @@ int kvm_vm_ioctl_get_reg_writable_masks(struct kvm *kvm, struct reg_mask_range *
+ 		if (!is_feature_id_reg(encoding) || !reg->set_user)
+ 			continue;
  
- /* ->val is filled in by kvm_sys_reg_table_init() */
- static struct sys_reg_desc invariant_sys_regs[] __ro_after_init = {
--	{ SYS_DESC(SYS_MIDR_EL1), NULL, get_midr_el1 },
--	{ SYS_DESC(SYS_REVIDR_EL1), NULL, get_revidr_el1 },
--	{ SYS_DESC(SYS_AIDR_EL1), NULL, get_aidr_el1 },
-+	{ SYS_DESC(SYS_MIDR_EL1), NULL, reset_midr_el1 },
-+	{ SYS_DESC(SYS_REVIDR_EL1), NULL, reset_revidr_el1 },
-+	{ SYS_DESC(SYS_AIDR_EL1), NULL, reset_aidr_el1 },
- };
+-		/*
+-		 * For ID registers, we return the writable mask. Other feature
+-		 * registers return a full 64bit mask. That's not necessary
+-		 * compliant with a given revision of the architecture, but the
+-		 * RES0/RES1 definitions allow us to do that.
+-		 */
+-		if (is_vm_ftr_id_reg(encoding)) {
+-			if (!reg->val ||
+-			    (is_aa32_id_reg(encoding) && !kvm_supports_32bit_el0()))
+-				continue;
+-			val = reg->val;
+-		} else {
+-			val = ~0UL;
++		if (!reg->val ||
++		    (is_aa32_id_reg(encoding) && !kvm_supports_32bit_el0())) {
++			continue;
+ 		}
++		val = reg->val;
  
- static int get_invariant_sys_reg(u64 id, u64 __user *uaddr)
+ 		if (put_user(val, (masks + KVM_ARM_FEATURE_ID_RANGE_INDEX(encoding))))
+ 			return -EFAULT;
 -- 
 2.42.0
 
