@@ -1,133 +1,119 @@
-Return-Path: <linux-kernel+bounces-199653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B56AB8D8A63
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 21:39:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D54408D8A3F
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 21:34:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7881228592B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:39:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8957A1F22833
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:34:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B42F13776F;
-	Mon,  3 Jun 2024 19:39:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75ACD13A244;
+	Mon,  3 Jun 2024 19:34:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bens.haus header.i=@bens.haus header.b="HBMnh5vl"
-Received: from w4.tutanota.de (w4.tutanota.de [81.3.6.165])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q8A992Fi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8ABE259C
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 19:39:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.3.6.165
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3223374EA;
+	Mon,  3 Jun 2024 19:33:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717443589; cv=none; b=lZrm9QQZpBoXo+DbTG9zaRTUbQiag1hW2X3kXSYZNAe9ujZndVoSVVOAsva6+vWYmkPX7WFeYjqK/GqR7OteHAmgVKNtWiqGWKwNFqPHsu/P7cRdgfHVm3mothWU5zLF2K5WLQ8t+xOye5YrgQ0TRlyYIPUjKGBOXmOwrr90tMY=
+	t=1717443239; cv=none; b=pSjh/hdWS2TOvDl/z34txmmxRU6sAzWR8i/pHOfC+E4qHcb0OwIHS0/BEfAa62Tr3NTXoJsFV49tYocYPTyAM5YBIvZDK+DEvUruY99NXbR3yVKoJNo8lIVDIP5AvUJDddEKb6sqQlDa4qaixYZJwHUkTpuHtAbB5xF9NLo4gso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717443589; c=relaxed/simple;
-	bh=2FaW7jU8Cx/GwNp4bNE8A3s5T06Tt97CBdNwcgcim9g=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=t7m83OE9izfPlWMY8x4vgTwXsHMMeFEYci3AC8fTcW4sVSnfJbyIggIcHfRQugRAE8idP4HvjMG2Y+18EKNtlbFkFgjGvskgG0qVY7Ircbwhpi05pWHGcn3IHbLVXyIAtKR1vpuRArd6JaaTRCCaSAEweXg+DM4pM9GxPm65Chk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bens.haus; spf=pass smtp.mailfrom=bens.haus; dkim=pass (2048-bit key) header.d=bens.haus header.i=@bens.haus header.b=HBMnh5vl; arc=none smtp.client-ip=81.3.6.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bens.haus
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bens.haus
-Received: from tutadb.w10.tutanota.de (unknown [192.168.1.10])
-	by w4.tutanota.de (Postfix) with ESMTP id 97FAD106013E;
-	Mon,  3 Jun 2024 19:33:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1717443199;
-	s=s1; d=bens.haus;
-	h=From:From:To:To:Subject:Subject:Content-Description:Content-ID:Content-Type:Content-Type:Content-Transfer-Encoding:Content-Transfer-Encoding:Cc:Cc:Date:Date:In-Reply-To:In-Reply-To:MIME-Version:MIME-Version:Message-ID:Message-ID:Reply-To:References:References:Sender;
-	bh=2FaW7jU8Cx/GwNp4bNE8A3s5T06Tt97CBdNwcgcim9g=;
-	b=HBMnh5vleQlaTPovT+nccD1i9T6GqApnbvH/85UGMyoP4F2Sdm7o21gvPxdQVABI
-	LvYo/WP243sTk4GPHlXaX2yZW0IHtJZFrDkXXTc25AanJcz12qkOg+G7uPhekqgAO3T
-	iaXEA+2pSlJiqsrYTllR06Ue284+L7F8bxe/R5Z8OkOeR4xfN/K5avlZtjfWTZW70U0
-	kQtkt1tcaO12AcHWWU8J/JEu5m9xZgKqQA3fTD7UQ+bP+aettwgdMI53z9+5NJJ4r3W
-	ihQYQi2+5Fi0Px8VOq9NXQLS/NX35r3fDxprk4M8NN4QsAUSzHr9/mL7hskm++/swOU
-	nLlTdoBEiw==
-Date: Mon, 3 Jun 2024 21:33:19 +0200 (CEST)
-From: Ben Schneider <ben@bens.haus>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Benjamin Schneider <bschnei@gmail.com>,
-	Gregory Clement <gregory.clement@bootlin.com>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Linux Arm Kernel <linux-arm-kernel@lists.infradead.org>,
-	Linux Kernel <linux-kernel@vger.kernel.org>
-Message-ID: <NzURcjd--3-9@bens.haus>
-In-Reply-To: <f2284d6b-2e75-4896-9e10-caf2f72854a0@lunn.ch>
-References: <20240603012804.122215-1-ben@bens.haus> <20240603012804.122215-2-ben@bens.haus> <f2284d6b-2e75-4896-9e10-caf2f72854a0@lunn.ch>
-Subject: Re: [PATCH] cpufreq: enable 1200Mhz clock speed for armada-37xx
+	s=arc-20240116; t=1717443239; c=relaxed/simple;
+	bh=haGlENCzcFeEXC5BXPb/UFco0FCHDxQhg1Se5YhH8qE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=R3/1MJ0EK0K9QN8/jl/KAvzx3QKh5z2/4AQH3iNjVRZP9XnavBLCerJnF4FF2XJIhmeXAgCSGfYhUZ2sj6q2yoxshtIOUHYPBm9kMdAQNxmo89drB3xi+IFVyfFQbg0crBiE+3Mt/mVWTu/nGvXIjAuH5aVu/AtSuhQnxcodzh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q8A992Fi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84DC7C2BD10;
+	Mon,  3 Jun 2024 19:33:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717443239;
+	bh=haGlENCzcFeEXC5BXPb/UFco0FCHDxQhg1Se5YhH8qE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Q8A992FibBYI/zwb/sU6+7SmTf3NUsSL0fhlEw+0WRb73i5bNOzn8ay2tT/zzHAa1
+	 ngW4j2IEQW1b0bo5ZtE27BQtILZ8F9TkgANV8GS+YIrlH9yukecLDsoIntYk/7Wvc4
+	 BeGYdi1mManqWYbuazFX0Ga1kHBnWCHvRcSbqI8nlGiJ/Opsl1+AIPZNqdpcb5QCzO
+	 SDPBXHt5sWkAYvYqtQV1nplQ0DDbmbouIh4h/PJfKpHOGzlCtiHCzuRl+C7TmLCsQb
+	 ouTw/G2BY6/xuQyD6tO+gXJaKUHJn5DN1dAIL/7dgDBdgZ5o1RlrbbUo3LV68sAmqO
+	 v1i8moNnZW9pQ==
+Date: Mon, 3 Jun 2024 20:33:47 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Johan Hovold <johan@kernel.org>
+Cc: Johan Hovold <johan+linaro@kernel.org>, Lars-Peter Clausen
+ <lars@metafoo.de>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Nuno Sa <nuno.sa@analog.com>
+Subject: Re: [PATCH] iio: inkern: fix channel read regression
+Message-ID: <20240603203347.46500fb4@jic23-huawei>
+In-Reply-To: <Zl1vttlXz3FRVyYS@hovoldconsulting.com>
+References: <20240530074416.13697-1-johan+linaro@kernel.org>
+	<20240601142147.3ac40207@jic23-huawei>
+	<Zl1vttlXz3FRVyYS@hovoldconsulting.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Jun 3, 2024, 05:46 by andrew@lunn.ch:
+On Mon, 3 Jun 2024 09:24:38 +0200
+Johan Hovold <johan@kernel.org> wrote:
 
-> The problem is, most systems don't have the new bootloader. And so if
-> you enable 1.2GHz, they are going to be unstable.
->
-Based on my testing, the A3720 was unstable using a bootloader built
-with Marvell's source without regard to clock speed or frequency scaling.
+> Hi Jonathan,
+> 
+> On Sat, Jun 01, 2024 at 02:21:47PM +0100, Jonathan Cameron wrote:
+> > On Thu, 30 May 2024 09:44:16 +0200
+> > Johan Hovold <johan+linaro@kernel.org> wrote:
+> >   
+> > > A recent "cleanup" broke IIO channel read outs and thereby thermal
+> > > mitigation on the Lenovo ThinkPad X13s by returning zero instead of the
+> > > expected IIO value type in iio_read_channel_processed_scale():
+> > > 
+> > > 	thermal thermal_zone12: failed to read out thermal zone (-22)
+> > > 
+> > > Fixes: 3092bde731ca ("iio: inkern: move to the cleanup.h magic")
+> > > Cc: Nuno Sa <nuno.sa@analog.com>
+> > > Signed-off-by: Johan Hovold <johan+linaro@kernel.org>  
+> 
+> > In meantime, Nuno please take another look at these and see if
+> > we have additional problem cases like this.  Given the patch
+> > queue I have and a busy few days it will be a while before I
+> > get to it but I'll try and take a close look soon as well.  
+> 
+> Please consider getting this one into mainline as soon as possible as it
+> breaks thermal mitigation, which can cause literal skin burns, on all
+> Qualcomm platforms (and probably other platforms too).
 
-That is, it didn't matter if 1.2Ghz was enabled or not, and it didn't matte=
-r
-if cpufreq-dt was loaded or not, my devices were reliably crashing when
-trying to use Marvell's source instead of Globalscale's for building the
-bootloader. When I dug in to find the difference, this DDRPHY setting
-was one of two that I found. I also found that setting it to the value in
-Globalscale's repos restored stability to the devices.
+I'll queue this fix and we can follow with any others that surface
+from reviews.
 
-I then tested 1.2Ghz bootloader speeds as well as frequency scaling and
-found that they worked fine. I've been keeping track here:
-https://github.com/bschnei/ebu-bootloader
+Need it to sit in linux-next for a day or two before a pull request though
+as I've just pushed some other fixes out that needs some build coverage.
 
-> Rather than making this unconditional, i think it needs to be
-> conditional on knowing the bootloader has been upgraded. Could you add
-> code which looks in the DDRPHY and see if 0xC0001004 has the correct
-> value. Only then enable the additional clock speed.
->
-I think there are two potential issues with doing something like that. Firs=
-t,
-that DDRPHY=C2=A0value has been flipped back and forth. The change I
-submitted to Marvell just undoes this change from January 2021:
-https://github.com/MarvellEmbeddedProcessors/mv-ddr-marvell/commit/c3a8d3c7=
-ff4bd460770b0cf601e57a6f70cb1871
-Perhaps it would be OK if the older code is also stable, but I haven't
-tested it.
+> 
+> > Longer term, in my view the readability and chance of bugs
+> > is reduced, but churn always introduces the possibility of
+> > issues like this in the short term :(  
+> 
+> I just worry about some of the cleanup.h conversion I've seen where
+> inexperienced developers potentially break tested and reviewed code for
+> something which is often not very readable and for very little gain.
+> 
 
-Second, the value seems to be deliberately different for other memory
-configurations (DDR3) which makes the conditional logic more complex
-if it's meant to work for all A37XX variants, and I don't have other varian=
-ts
-to test.
+Fair comment. There have been some 'interesting' patches.
+On the plus side this one highlighted that our docs are wrong.
 
-Given the history of this setting getting flipped back and forth, and
-having read through a few old threads on this subject, it's my theory
-that some of the instability issues that were attributed to kernel frequenc=
-y
-scaling and/or 1.2Ghz as a speed were more likely attributable to bad
-bootloaders all along. I've reached out to Armbian and Arch communities
-to let them know in the hope of finding other users of these devices
-that might be willing to test, but have not received any responses.
+Applied to the fixes-togreg branch of iio.git
 
-It's also worth noting that my devices came from the factory with the
-bootloader clocked at 800Mhz. I'm pretty sure the OS cannot set a
-speed above=C2=A0the bootloader=C2=A0clock speed. As a result, at least for=
- the
-ESPRESSObin Ultra, the only devices I would expect to break are those
-where users have put in the work to build (or taken the risk of flashing)
-a bootloader clocked at 1.2Ghz. When the kernel encounters one of
-those devices it currently disables frequency scaling entirely (cpufreq-dt
-will not load) leaving them to run at full speed constantly. If there are
-users who can't/won't update their bootloader and for which frequency
-scaling is unstable, it seems like it would make more sense and facilitate
-further testing to use kernel config or userspace tools as the place to
-disable scaling.
+Jonathan
 
-Thanks!
 
-Ben
+> Johan
+
 
