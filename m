@@ -1,171 +1,162 @@
-Return-Path: <linux-kernel+bounces-199843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E79CE8FA69A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 01:43:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F0A638FA697
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 01:43:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42674B23877
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 23:43:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 73012B2451F
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 23:43:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 799E113D298;
-	Mon,  3 Jun 2024 23:43:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EA9413D24C;
+	Mon,  3 Jun 2024 23:43:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MrbGUOIA"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hYd2cOdp"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 389E513D25F;
-	Mon,  3 Jun 2024 23:43:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50336137931
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 23:43:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717458185; cv=none; b=REhVzomy+BdBWEyO2TTXIWWzbaKIhvy+4xBngvDRKMfaR8QWxZ91O29YbHzuldLiaKN2o1DD2kddgX3Bi2ghNDQdO1upr5AqzJffPXFdj1NrGwyT6npC4DJv+OLayQ0jq+b2NkeM20hO0Je5OinJD8zp1IzUu0gtAFWILlXw9k0=
+	t=1717458182; cv=none; b=pS/A599XmLikowB1dh2GDfzOI80z6qO2v6dNHNe2r0lDLluZ7RpUfxOOlI1VGfdWwp9S86AEnuOO+uC2LoOixkfKeXu0tPyiAi4t5pbXdoYEEuCdpeAaJ2Le8zgdEyr7btMXCg4rNddNjKAo6Dj8S3vzDd4AslonURCsf27fj8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717458185; c=relaxed/simple;
-	bh=53fQuKYZZtXT7cR92uUaUEjQHBqiDVfL8vWkByJoNzk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=Odvvrl9a60GUabpZ8/yo0G3EKT6JPJAPAYghO0nZzjk//xgPl1lAEZwCf/swMbmaTvSh/vqsron1sqKP1CrOIavj1O2Pl+N7VAES166tE4LwHDEEvlbsPof90/5UXruiy0/b7h4XJTFlbhp3DU9WioyYF/df+6Oga1/I/QuUVWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MrbGUOIA; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 453L4V1k031125;
-	Mon, 3 Jun 2024 23:42:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=71tCYSv6wOqxXZ/r6UR9yB
-	38tyMXZmPGp5fIJM2z7ko=; b=MrbGUOIAKxfO+Or3eL29yvKJmbu3HjprBTM+pL
-	EK+G+1bspcGg1D8/+ILVfJts6VZM18xB2PoepCixPq4Ts0mqeJIHYFfXFeTz2guo
-	oMMbNilFQfFBD0MM15s1pYbOc3URwU5K14Hf9mQL/FW6d5JlBZPIMD2H1Noqgbsb
-	lOc2A1LscafafhNV3q1hr7nBsQYFzed9BvuxtL9li9UT3TaWSRZEc0AX/1YQWY06
-	HaXnHx6bODcayKHENfPA6mJu3/qru6wfMlpFuQDQbe23R7T0yNpm38OPZjo0la/b
-	OnMj+Vy95p3AxFgiBHBhcRhi0B6d9uP5Xq3z55L4q0mECvcQ==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfw6v5dwm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 03 Jun 2024 23:42:50 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 453NgnEp024045
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 3 Jun 2024 23:42:49 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 3 Jun 2024
- 16:42:49 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Mon, 3 Jun 2024 16:42:48 -0700
-Subject: [PATCH] interconnect: imx: add missing MODULE_DESCRIPTION() macros
+	s=arc-20240116; t=1717458182; c=relaxed/simple;
+	bh=V3fEIuQymV976CLe41KoEQSFCwFNlwcObBa1MX7WNZM=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=uPorHFFoUMBrEZuTi3WqVo4nftZI5CfZ9hs9XmAOvhGE0TDG9wlw72q/eVlVxbuG7HTh8eSIoqFGyIagrfpO+6qtzP9fInEYW43VMHPeHLRweaqEvpNoHYvFQMkAU3alyTrQOiLGZHboF5ab1KFydFsiwibdowHsy6fhQ/JVYzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hYd2cOdp; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-7026fe79eeaso1431986b3a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 16:43:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1717458180; x=1718062980; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ix1wBJXtB+Dz1uENt+vCOboXGMIz++QIsMDaGY5XcG0=;
+        b=hYd2cOdpnCzmLdJLRRINBKE9ll/K0coq7EHE01h2Kr7JbF0I7lp7qVDOyu2jYXl3Vc
+         4HWppem3GP2StIs0KtnUNVN0Nw7AASYRN08pheXyVX90hM5sc1DNxxAwrneiFF7EXQIF
+         3U0VmiusJiuzZMe0lBnemMDPG/yW34VEM6qpW3Q29bvv0WPnu3q0UhTGLkLjQa4ULAj4
+         oIJs56oGOn9PaPUYf1MV7u0uG6ugHHkCG53/TAyTTkx6Ec3YJloky1d6Cik7ocZd9Yqi
+         5Yv2zBM/ulvMXm5MI91wm3Y69czS10eLIuvChTXz/h7I3sYgG5grRI+RTynx2GRdsQk+
+         9LBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717458180; x=1718062980;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ix1wBJXtB+Dz1uENt+vCOboXGMIz++QIsMDaGY5XcG0=;
+        b=STbhaVED1x6YmffNaCr2sIvqjm6eCIFB4FkdxHEY/RUMkXOnXKccN0Gl8ydtx9jdoM
+         yWHpSpY6QFLjgZ4NJ3RPjTxKyXYVuqh1EwBdt/uUxmgwQKA7jJD2vC/tORucR5FCAaF+
+         YlmEu+2iau0VKq0kLceGZsxl+d/YbpTksH8EeD2zlNDke/3Wt7h4xihipPkwgA4jUOzs
+         qW6865bVUS+7mYcEHU/KNz/k24Fw9WY/fNO/GIyhSWgEeK9rholqTXALulKi0lCiFvVf
+         xVBk25ozrx5KPPFQ5QzVCIhk+3s84LSo4HHJUaNMSCl6MBOYgiH3/BpIJh/eDCV/nTgH
+         26rQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUzB3ZjWP8E6a6o9wuZnnIdJbLh7X2ek2P1e/xT+IldHMVFgVqhDTNkYQKao0cgwevLotgCR4f1WRP3wJtOv5yScHIqrIxWQnHZW7qx
+X-Gm-Message-State: AOJu0Yw5bBy0Qwk46KN0iZRxWXVixVbDJ3nvNcrwBwxRtGlrZdferDlu
+	glL/zSMIEWz2zXwSVn41Kx4tWjQsQcq29bB/cxxU84JPXUmh4FkUFfR6vITeT+2Z3ou7LgWsUuA
+	tkg==
+X-Google-Smtp-Source: AGHT+IHqaNu096+Zwzp8CVw1P6SzEE6P0P87czRc7jhnRB8aCHCFmhBfG3lGqTDH2L6pdWw4pe0K6jzFHnw=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6a00:847:b0:6f4:47dd:5f41 with SMTP id
+ d2e1a72fcca58-70247a9eb6bmr511116b3a.6.1717458179407; Mon, 03 Jun 2024
+ 16:42:59 -0700 (PDT)
+Date: Mon, 3 Jun 2024 16:42:57 -0700
+In-Reply-To: <20240503142548.194585-1-wei.w.wang@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240603-md-interconnect-imx-v1-1-348a9205506c@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAPhUXmYC/x3MwQrCMAyA4VcZORuoaxH0VcRDm2ZbwGbSTimMv
- bvR43f4/x0aV+EGt2GHyh9psqrhfBqAlqgzo2QzjG4M7uI8loyiG1daVZk2lNIxeCZKPlx9ymD
- lq/Ik/X+9P8wpNsZUo9Lyez1F3x1LbLaB4/gCepcqqIQAAAA=
-To: Georgi Djakov <djakov@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-        "Sascha Hauer" <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team
-	<kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>
-CC: <linux-pm@vger.kernel.org>, <imx@lists.linux.dev>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: gaTp2YX5HM4QLrN-CWxhi2IhdJr0qC6K
-X-Proofpoint-ORIG-GUID: gaTp2YX5HM4QLrN-CWxhi2IhdJr0qC6K
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-06-03_17,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 malwarescore=0
- impostorscore=0 mlxscore=0 suspectscore=0 adultscore=0 lowpriorityscore=0
- clxscore=1011 spamscore=0 priorityscore=1501 mlxlogscore=999 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
- definitions=main-2406030192
+Mime-Version: 1.0
+References: <20240503142548.194585-1-wei.w.wang@intel.com>
+Message-ID: <Zl5VAWlw5XfkqLC-@google.com>
+Subject: Re: [PATCH v1] KVM: x86: 0-initialize kvm_caps.supported_xss on definition
+From: Sean Christopherson <seanjc@google.com>
+To: Wei Wang <wei.w.wang@intel.com>
+Cc: pbonzini@redhat.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/interconnect/imx/imx-interconnect.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/interconnect/imx/imx8mm-interconnect.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/interconnect/imx/imx8mq-interconnect.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/interconnect/imx/imx8mn-interconnect.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/interconnect/imx/imx8mp-interconnect.o
+On Fri, May 03, 2024, Wei Wang wrote:
+> 0-initialize kvm_caps.supported_xss on definition, so that it doesn't
+> need to be explicitly zero-ed either in the common x86 or VMX/SVM
+> initialization paths. This simplifies the code and reduces LOCs.
 
-Add the missing invocations of the MODULE_DESCRIPTION() macro.
+Heh, nope, see commit 40269c03fdbf ("KVM: x86: Explicitly zero kvm_caps during
+vendor module load").
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/interconnect/imx/imx.c    | 1 +
- drivers/interconnect/imx/imx8mm.c | 1 +
- drivers/interconnect/imx/imx8mn.c | 1 +
- drivers/interconnect/imx/imx8mp.c | 1 +
- drivers/interconnect/imx/imx8mq.c | 1 +
- 5 files changed, 5 insertions(+)
+I do agree the code in kvm_x86_vendor_init() in particular is a bit odd, but it's
+there because KVM support for XSAVES could be cleared by ->hardware_setup()
+(XSAVES has a VMX knob, XSAVE for XCR0 does not).
 
-diff --git a/drivers/interconnect/imx/imx.c b/drivers/interconnect/imx/imx.c
-index 979ed610f704..9511f80cf041 100644
---- a/drivers/interconnect/imx/imx.c
-+++ b/drivers/interconnect/imx/imx.c
-@@ -334,4 +334,5 @@ void imx_icc_unregister(struct platform_device *pdev)
- }
- EXPORT_SYMBOL_GPL(imx_icc_unregister);
- 
-+MODULE_DESCRIPTION("Interconnect framework driver for i.MX SoC");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/interconnect/imx/imx8mm.c b/drivers/interconnect/imx/imx8mm.c
-index 8c40f4182263..a36aaaf106ae 100644
---- a/drivers/interconnect/imx/imx8mm.c
-+++ b/drivers/interconnect/imx/imx8mm.c
-@@ -96,5 +96,6 @@ static struct platform_driver imx8mm_icc_driver = {
- 
- module_platform_driver(imx8mm_icc_driver);
- MODULE_AUTHOR("Alexandre Bailon <abailon@baylibre.com>");
-+MODULE_DESCRIPTION("Interconnect framework driver for i.MX8MM SoC");
- MODULE_LICENSE("GPL v2");
- MODULE_ALIAS("platform:imx8mm-interconnect");
-diff --git a/drivers/interconnect/imx/imx8mn.c b/drivers/interconnect/imx/imx8mn.c
-index fa3d4f97dfa4..2a97c74e875b 100644
---- a/drivers/interconnect/imx/imx8mn.c
-+++ b/drivers/interconnect/imx/imx8mn.c
-@@ -86,4 +86,5 @@ static struct platform_driver imx8mn_icc_driver = {
- module_platform_driver(imx8mn_icc_driver);
- MODULE_ALIAS("platform:imx8mn-interconnect");
- MODULE_AUTHOR("Leonard Crestez <leonard.crestez@nxp.com>");
-+MODULE_DESCRIPTION("Interconnect framework driver for i.MX8MN SoC");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/interconnect/imx/imx8mp.c b/drivers/interconnect/imx/imx8mp.c
-index d218bb47757a..86d4c1517b26 100644
---- a/drivers/interconnect/imx/imx8mp.c
-+++ b/drivers/interconnect/imx/imx8mp.c
-@@ -249,5 +249,6 @@ static struct platform_driver imx8mp_icc_driver = {
- 
- module_platform_driver(imx8mp_icc_driver);
- MODULE_AUTHOR("Peng Fan <peng.fan@nxp.com>");
-+MODULE_DESCRIPTION("Interconnect framework driver for i.MX8MP SoC");
- MODULE_LICENSE("GPL");
- MODULE_ALIAS("platform:imx8mp-interconnect");
-diff --git a/drivers/interconnect/imx/imx8mq.c b/drivers/interconnect/imx/imx8mq.c
-index 8bbd672b346e..f817d24aeefb 100644
---- a/drivers/interconnect/imx/imx8mq.c
-+++ b/drivers/interconnect/imx/imx8mq.c
-@@ -97,4 +97,5 @@ static struct platform_driver imx8mq_icc_driver = {
- module_platform_driver(imx8mq_icc_driver);
- MODULE_ALIAS("platform:imx8mq-interconnect");
- MODULE_AUTHOR("Leonard Crestez <leonard.crestez@nxp.com>");
-+MODULE_DESCRIPTION("Interconnect framework driver for i.MX8MQ SoC");
- MODULE_LICENSE("GPL v2");
+And while I agree it's also odd that vendor code explicitly zeros supported_xss,
+that too serves a purpose.  It reduces the probability of advertising XSS support
+in vendor code that doesn't yet fully support the feature, e.g. if KVM VMX supports
+CET before KVM SVM, then KVM SVM "needs" to clear supported_xss.  In quotes because
+common KVM should also do the clearing based on CET CPUID features.  But, it's
+still a nice reminder that vendor code likely needs additional support.
 
----
-base-commit: a693b9c95abd4947c2d06e05733de5d470ab6586
-change-id: 20240603-md-interconnect-imx-43eccb3493bd
-
+> No functional changes intended.
+> 
+> Signed-off-by: Wei Wang <wei.w.wang@intel.com>
+> ---
+>  arch/x86/kvm/svm/svm.c | 1 -
+>  arch/x86/kvm/vmx/vmx.c | 2 --
+>  arch/x86/kvm/x86.c     | 4 +---
+>  3 files changed, 1 insertion(+), 6 deletions(-)
+> 
+> diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
+> index 9aaf83c8d57d..8105e5383b62 100644
+> --- a/arch/x86/kvm/svm/svm.c
+> +++ b/arch/x86/kvm/svm/svm.c
+> @@ -5092,7 +5092,6 @@ static __init void svm_set_cpu_caps(void)
+>  	kvm_set_cpu_caps();
+>  
+>  	kvm_caps.supported_perf_cap = 0;
+> -	kvm_caps.supported_xss = 0;
+>  
+>  	/* CPUID 0x80000001 and 0x8000000A (SVM features) */
+>  	if (nested) {
+> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> index 22411f4aff53..495125723c15 100644
+> --- a/arch/x86/kvm/vmx/vmx.c
+> +++ b/arch/x86/kvm/vmx/vmx.c
+> @@ -7952,8 +7952,6 @@ static __init void vmx_set_cpu_caps(void)
+>  	if (vmx_umip_emulated())
+>  		kvm_cpu_cap_set(X86_FEATURE_UMIP);
+>  
+> -	/* CPUID 0xD.1 */
+> -	kvm_caps.supported_xss = 0;
+>  	if (!cpu_has_vmx_xsaves())
+>  		kvm_cpu_cap_clear(X86_FEATURE_XSAVES);
+>  
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index 91478b769af0..6a97592950ff 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -94,6 +94,7 @@
+>  
+>  struct kvm_caps kvm_caps __read_mostly = {
+>  	.supported_mce_cap = MCG_CTL_P | MCG_SER_P,
+> +	.supported_xss = 0,
+>  };
+>  EXPORT_SYMBOL_GPL(kvm_caps);
+>  
+> @@ -9795,9 +9796,6 @@ int kvm_x86_vendor_init(struct kvm_x86_init_ops *ops)
+>  
+>  	kvm_register_perf_callbacks(ops->handle_intel_pt_intr);
+>  
+> -	if (!kvm_cpu_cap_has(X86_FEATURE_XSAVES))
+> -		kvm_caps.supported_xss = 0;
+> -
+>  #define __kvm_cpu_cap_has(UNUSED_, f) kvm_cpu_cap_has(f)
+>  	cr4_reserved_bits = __cr4_reserved_bits(__kvm_cpu_cap_has, UNUSED_);
+>  #undef __kvm_cpu_cap_has
+> 
+> base-commit: 16c20208b9c2fff73015ad4e609072feafbf81ad
+> -- 
+> 2.27.0
+> 
 
