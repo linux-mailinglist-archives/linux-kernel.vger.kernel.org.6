@@ -1,141 +1,126 @@
-Return-Path: <linux-kernel+bounces-199139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A16A8D82ED
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 14:53:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACAC58D82D2
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 14:52:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 475DC1F2232C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 12:53:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A125B21B79
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 12:52:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A076A12D745;
-	Mon,  3 Jun 2024 12:52:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AF6B12C482;
+	Mon,  3 Jun 2024 12:52:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EGkdIlS0"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HL1QWV2I"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C2F512D744
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 12:52:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36896286A6
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 12:52:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717419170; cv=none; b=B2FSDQvMqkp2S1neCFSvpQM8KfNw3GN9i6rRgbCEw0fOPrVOdMVkljJdvYka7vWZziyk/no7Zc/OeA0ZpzfHf35gMepYEalBuaPl+mkHh6yOYL4+72OQY/FALwPjwhmedSy20oqC07BPDePqGYqLJT6SPgV38XHg3Ud2xG9PMxA=
+	t=1717419153; cv=none; b=o8kYOjY9hjMP7T4z+9nAX4Tu1zJQkln68DS2cNKPhW02dP1W6Jkt2/MT70Lj4Z66A97QvbQ6E1Pg/cwOorhV/zbbS7sRj1mB/G5BQVF9mMv6sagtFlrAFsnTaVcBReq7celk6jLN8pxSR93brugeaVt4ibix6/G3IAUBf1RI47c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717419170; c=relaxed/simple;
-	bh=7v9FKgUqKFbpR+fiy5xFQPfdqVj5LYeiTEIerHmnZCs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=r123tT/pPLHnMW4biSxO3/RYgBlKFlc6oG3rKSG6N0riXMOwCQsgW4Gf2uKwjCq/AJoOpORv4kNwIz3H3pl3t3ltn+5uNIX3X/B+mMCi5HEskETjr3/c4Ax18BLMmL4kOjvEdbeckr3BWkulEWFwVAYG6U93jhSvSLT5BMLyAik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EGkdIlS0; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52b950aa47bso2116384e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 05:52:48 -0700 (PDT)
+	s=arc-20240116; t=1717419153; c=relaxed/simple;
+	bh=JadfoHdtygKM61WU7kYRFYh3wqb4hbUSntCtUEQugPM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=R1RwD6aXKzCnjvEbWpsRzgBbm03WRUmsij5tArByOMA/tSpXEvAH+58ZgWBaZKQbloD6sJ31AN6gpZyl9DGPolcnAwy1JY1OE94h4VnTp94PmbIXalesfNdisbWk3apmWHAu3erDazUlCRkhZwNdyPBCk/8PgzJE9W+My3GCoHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HL1QWV2I; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a68ee841138so158193966b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 05:52:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717419167; x=1718023967; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=uTu5V8RnBUPKj0gRaqvuNUzSh+9gop4uU31wlbyxsg4=;
-        b=EGkdIlS0I8XdDD3jNbZgR8rGXhjFZ4Vj04SA7gz2WayV8PvGGbLR1oyJhasptgWfcH
-         H8cPOTBVG5MTlpn5p6s4AVwq2jvCnn4n4PdiR0PNTfD9XgWlILWXzbjF+K6JIbAvq6Rb
-         lfDLidHFr4By/6MPWEZSBSn7HHa6iFlUgEX+oanMu7FPcZjWRS6eR8OVOWt+K9hFOSIB
-         z9EfYcWNldxZxGZaEhFAJrFLzrwQUaSWYG+RMFe3JTiGULwa1P/Ct5p67vtPbMgVlUkz
-         Pt/e/whwbEZ7nSNGvrIb28xgdS+Ekgo4lGzX70YJK/P7/PgmZkh6jqeEuUjP9wqJ4cOK
-         7evQ==
+        d=gmail.com; s=20230601; t=1717419150; x=1718023950; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JadfoHdtygKM61WU7kYRFYh3wqb4hbUSntCtUEQugPM=;
+        b=HL1QWV2I3Zn80z8vfxR5iVwLi2g097ZSkz2N8Zm2i1hI1zbMhA/sC4XaqYRCuSRGzm
+         HmVhLZDvZU94iL7Dv7fg38UeUtGpaGktLDBrkEEqnpIvfY/hAg6KhMep1/EoSUzUXSfd
+         YXGnv42W/wnDeYzLZmPTG03XXC+/t0G5h5OgpBaTqv1SVpsrcAXg04owWhTvKCQA0B47
+         1t6CvR/s82zZki/b1AdS5OMAC1ja/DSNryN3F3h0jCPlkyhdggJ0zIaQBQSVgK307f25
+         97R8QGvlmpWPrsGewbstN9j/3KKozb0GZvjadwPZZgln96mm6mdIZLKvbMg6BfBupQD/
+         LH0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717419167; x=1718023967;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uTu5V8RnBUPKj0gRaqvuNUzSh+9gop4uU31wlbyxsg4=;
-        b=pBIm62/UKYvloteskXWHeYwS1RAujxAeTJVjtx34vliQgHIf8ca2OHqsREq2Q0tTPR
-         Y8m6g+BKmOfi16KYOwD/LnqfuV3OLoznVw0LA52Ee2d1oTMX72J8t/X2sgT/FmCCGh50
-         jEIWREPp/OJxD1YFPkcRMh1++G/Z6xTdL65QlcvMXhFebqROKXii5ltVkZy1XWKhm7nR
-         SPfwzUP1+R3ntmvvxo7+C5ci7pgRaTIZ9DboIjsp8mjWowwy5RmJKb0YJRBrkz6tCOb0
-         F+BB5zQCFQGughgNrSNhkUJyHeT2qKiz7uQAhoFwyeRO4AgfAeFYCbSs64wKO3lReUE9
-         rlVA==
-X-Forwarded-Encrypted: i=1; AJvYcCUKZbbJ2JB2sZiAqnyacb64h8mGEYONRBPIbvaAGAqxarEAquwyz0ZfaH0OLudRGuPlmr0v+735ErR6sp+dH+YTldyhhyajOWdrxnjo
-X-Gm-Message-State: AOJu0YyLUXN+xU+IRmwWw3xmwe8m+zRwBl1Pv4M2OLP3lqgJAWe2gsO+
-	1Yk8hg107WJoV6IUysg3fflFz9ZCRKFJiPd+d4EbVYb2sVCw0oejT2zkj+Cc6e0=
-X-Google-Smtp-Source: AGHT+IE1BEKoZRYDbW5hxVR1pX5u20qC6T3Vipt4QAhlPzMJacpQ0FKYnbjre5Sw+WPuPojCbFWiuQ==
-X-Received: by 2002:a05:6512:3145:b0:52a:f859:fe4 with SMTP id 2adb3069b0e04-52b8958ba08mr5536679e87.7.1717419167248;
-        Mon, 03 Jun 2024 05:52:47 -0700 (PDT)
-Received: from umbar.lan ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52b9a93d408sm295804e87.304.2024.06.03.05.52.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Jun 2024 05:52:46 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Mon, 03 Jun 2024 15:51:49 +0300
-Subject: [PATCH] arm64: defconfig: enable several Qualcomm interconnects
+        d=1e100.net; s=20230601; t=1717419150; x=1718023950;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JadfoHdtygKM61WU7kYRFYh3wqb4hbUSntCtUEQugPM=;
+        b=rvNhKxbFzm1+xdfYWhLnUrnl2LseLYjAZwEu809TdZyjK0HabtmDRGGzXmuQVSb3hW
+         +lBx8OGZZ0dF5UH/rwiTI6P2ES9DdIwIZ2SIvGmgHFFO+XwkWHvohVwksRlsR6tLxcrz
+         9mdyVFMzI9rNv2cAX+mbUJcgNwvr1ZOxCx2M1frh2XyH1UfoQuJPpl3NgD15evONfHPh
+         wQvY0T2tu6V9ZjI7S/dTG5NymjlHL5UdmZfQiRvLhq+QwjGHDDQYYykm48bElI5o6QkM
+         bJhegpZSTB5ijqXM0p5OR+I26PsWi1XnVwFGos0a/tmPhvqtP592igDBfx7RlSN2mIO2
+         gxng==
+X-Forwarded-Encrypted: i=1; AJvYcCXceDW0pu+XjmFK2H6K290tdEOHh2Hu5/rbE1kooTQFfsuRdS35VbbCkrDSKJ1oZ8PYwN4ZK8YMsgqGoisxFQWhJrnb53QcteYFRdiQ
+X-Gm-Message-State: AOJu0YzVpwdr2PVFtl7kzD1Olh3M8JQn05kyQVaYLd6iYwJbF1mM38dJ
+	fSTaY8R9QRrFSIievJlJpvH9Whdqs15yns+VQzQgd+Nlv7q5D6aBgeToRXFF40UV66dI8VVQR8x
+	CRTOWxxYKxNbsJW3aHOl31rFQd8Y=
+X-Google-Smtp-Source: AGHT+IH+hFOoB5n9mksl1sTJcqgRo5z8ZFztQ7reoKx7ztNpC8OUPWrAL4RoN66lVacXrfm8Whe41NrkKqRo2+hvnNw=
+X-Received: by 2002:a17:907:516:b0:a59:b88c:2b2a with SMTP id
+ a640c23a62f3a-a6821b71cdemr466092666b.50.1717419150212; Mon, 03 Jun 2024
+ 05:52:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240603-icc-msm8996-builtin-v1-1-3e3d1b0a78ee@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAGS8XWYC/x3MTQqAIBBA4avErBsw++8q0aJ0rIGy0IogvHvS8
- lu894Inx+ShS15wdLPn3UZkaQJqGe1MyDoapJCFqESOrBRufmvatsLp4vVki0oaMk1dSp0ZiOX
- hyPDzX/shhA9ZdhGIZQAAAA==
-To: Catalin Marinas <catalin.marinas@arm.com>, 
- Will Deacon <will@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1388;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=7v9FKgUqKFbpR+fiy5xFQPfdqVj5LYeiTEIerHmnZCs=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmXbyezRg2NvWoC/NVyWFt2Hij37OOgNDKwEMK6
- dH+jGLqhQmJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZl28ngAKCRCLPIo+Aiko
- 1SlhCACyo+rw+aQQ/5D9jp16CjycJtktp/q5cCsnW0GxjWkDu0sDvTxVmqBzM+xqGvuS4lTHBn8
- 4zO25no5hGLgkei7dJluN9R7SXwQkMg9WDWEVM8CuDEPPISjgmN1C3hEP/DZAkvTQBIQ3lTRDFb
- sEW4sB48qBmToBC485tb6t38MqOHwBCc+eCeW9HXNRkHC72TnpitNQcy77V2FE4tYLscKFa1OLq
- 2RvxoHZAn1oJWWz+WJXaZWiFNd6KyjBl03KS6fma8g7QpGvh9GKcEIeu+apSAEznmZ33JhXPxKM
- nbjj25IPZ93D99uVyeWbtwqI7UIZgPH62/NYohsxDu+/WEIM
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
+References: <20230601075333.14021-1-ihuguet@redhat.com> <CAMZ6RqLoRVHD_M8Jh2ELurhL8E=HWt2DZZFGQvmfFyxKjtNKhg@mail.gmail.com>
+ <874jiikr6e.fsf@meer.lwn.net> <CAMZ6RqLJmTjM0dYvixMEAo+uW+zfhdL1n4rnajsHCZcq971oRA@mail.gmail.com>
+ <CACT4oudYAK07+PJzJMhTazKe3LP-F4tpQf8CF0vs1pJLEE_4aA@mail.gmail.com>
+ <CAK7LNATqNNVX8ECNoO82kY503ArfRPa9GdbYd9tOok_6tGOsew@mail.gmail.com>
+ <thbrfziusf37nj5mwsj2a6zmjtenj5b5vhzwu2z5zkhr7ajsg6@whvx46y6mxbz> <20240603121853.GA19897@nvidia.com>
+In-Reply-To: <20240603121853.GA19897@nvidia.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Mon, 3 Jun 2024 14:52:18 +0200
+Message-ID: <CAGudoHEe=AiRpkyLJTZzU8MtiGC86Kivbyi1xF-Hh0hGJKWhCg@mail.gmail.com>
+Subject: Re: [PATCH v4] Add .editorconfig file for basic formatting
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, =?UTF-8?B?w43DsWlnbyBIdWd1ZXQ=?= <ihuguet@redhat.com>, 
+	Vincent MAILHOL <mailhol.vincent@wanadoo.fr>, Jonathan Corbet <corbet@lwn.net>, ojeda@kernel.org, 
+	danny@kdrag0n.dev, mic@digikod.net, linux-kernel@vger.kernel.org, 
+	joe@perches.com, linux@rasmusvillemoes.dk, willy@infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Enable drivers for interconnects on Qualcomm MSM8996 (Dragonboard 820c)
-and SM8150 (SM8150 HDK) to be built-in. Otherwise boot time issues are
-observed on these platforms.
+On Mon, Jun 3, 2024 at 2:18=E2=80=AFPM Jason Gunthorpe <jgg@nvidia.com> wro=
+te:
+>
+> On Sun, Jun 02, 2024 at 05:30:51PM +0200, Mateusz Guzik wrote:
+>
+> > As is I think the config mostly gets in the way and most people have a
+> > setup which does not use it (for example my vim does not). Alternativel=
+y
+> > maye it is neovim which is overzalous here and other editors don't trea=
+t
+> > the entire file. If there is a way to convince the thing to only tend t=
+o
+> > whitespace issues in edited lines that would be great.
+>
+> Yes, I think that is quite overzealous, I'd view it as a vim issue.
+>
 
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- arch/arm64/configs/defconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I don't know about vim specifically, it was neovim here, for the record.
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 9a467dec78b7..d4d0f8e05dce 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -1597,7 +1597,7 @@ CONFIG_INTERCONNECT_IMX8MQ=m
- CONFIG_INTERCONNECT_IMX8MP=y
- CONFIG_INTERCONNECT_QCOM=y
- CONFIG_INTERCONNECT_QCOM_MSM8916=m
--CONFIG_INTERCONNECT_QCOM_MSM8996=m
-+CONFIG_INTERCONNECT_QCOM_MSM8996=y
- CONFIG_INTERCONNECT_QCOM_OSM_L3=m
- CONFIG_INTERCONNECT_QCOM_QCM2290=y
- CONFIG_INTERCONNECT_QCOM_QCS404=m
-@@ -1610,7 +1610,7 @@ CONFIG_INTERCONNECT_QCOM_SC8280XP=y
- CONFIG_INTERCONNECT_QCOM_SDM845=y
- CONFIG_INTERCONNECT_QCOM_SDX75=y
- CONFIG_INTERCONNECT_QCOM_SM6115=y
--CONFIG_INTERCONNECT_QCOM_SM8150=m
-+CONFIG_INTERCONNECT_QCOM_SM8150=y
- CONFIG_INTERCONNECT_QCOM_SM8250=y
- CONFIG_INTERCONNECT_QCOM_SM8350=y
- CONFIG_INTERCONNECT_QCOM_SM8450=y
+Anyhow I put on latex gloves and typed in "apt install emacs", added
+the plugin as documented on github
+(https://github.com/editorconfig/editorconfig-emacs + entries to
+.emacs.d/init.el) and got precisely the same behavior.
 
----
-base-commit: 0e1980c40b6edfa68b6acf926bab22448a6e40c9
-change-id: 20240603-icc-msm8996-builtin-c2fef8752d1f
+There is no way I'm trying to other editors.
 
-Best regards,
--- 
-Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+At this point I suspect this *is* the intended behavior and other
+people don't run into it because their editor does not look at
+.editorconfig to begin with.
 
+Note my vim does not either, I only ran into it after experimenting with ne=
+ovim.
+
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
