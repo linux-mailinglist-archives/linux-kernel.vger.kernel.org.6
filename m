@@ -1,82 +1,80 @@
-Return-Path: <linux-kernel+bounces-199363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB4708D860A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:27:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DA8B48D860D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:29:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C29B1F23544
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:27:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61B801F23496
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:29:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C0A1130A47;
-	Mon,  3 Jun 2024 15:27:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 298B7130A40;
+	Mon,  3 Jun 2024 15:28:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="jrcHkDad"
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aYs+R2d+"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C56712FB0B
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 15:27:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 649EB12F596
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 15:28:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717428449; cv=none; b=gM8FAM3nhkNuNeuY2X+82ljDmRZGVyklVFXuqCQkG4+Hk/pRgr+L6QGasTUQXmI98O4dhskTKVr3GXmA29MMg50RtINyS8fmoSIwpowgcah73zfdMjLH6z1hgDHQrsqV6+viBIHURTBJL9lPHC2++gvbWY7W3Byak9GHz2Coku4=
+	t=1717428535; cv=none; b=ZbXHwvyAdgune5NcU+sxlwzicckVDPFp77636S0L006nBSCe4pc9DwV/YJDq4sFlqujlfPkdo6Wzfvqwc9rOlhjuwNBbXDCxwIvJDkgBaEnz2u+EBf75CpjWpGbSyP/1gWlw5McG4YTuKoVzzGr0C5K1p1ZaS5HgsJikebXX+tI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717428449; c=relaxed/simple;
-	bh=SXVAUYuBVvyG9bJHg70o7CBVGk1DxD39f2tNbedrQxs=;
+	s=arc-20240116; t=1717428535; c=relaxed/simple;
+	bh=jgd88n1fpOCFhS0XRFLq5gBP6vDKq95S79LnrkHYpH4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Vj+VH8OGcW4Ag77Thh7MPoWgNavLYr1zJ5Bf/azMs83aNBg0DmqWsHps5DhE1HNSj0TyYd530RyeKuHAN/mG1ZPugvqUImcCtIrbYX999J+6iMCPp8WKZRxkoM29qQANW5nSMDkolfeegbUtNy4ueggLfjSZkNzjAxkk8J6Eb7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=jrcHkDad; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com [209.85.167.69])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 4801E3F6FD
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 15:27:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1717428445;
-	bh=Fr+lwAk3qfyLZR/E+av3Bn4ZLoKvig7SyD53fLchvOA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type;
-	b=jrcHkDadeOO4NAAucQUZqKM5VCZ5fi1KAVBtQfgowc0WaNodP+yvtnYWNNR2EmlPv
-	 fwEqibOWTZpRDuYRpTIggaawODJuRe1mPglGpC1QOAmjNqs8s1stBELIUQIFi/SgV5
-	 esY5z3Rja1/fGCn84PEirfVz6//7OGD/d1h70LlJ+y4gOAMtXY3MJsRPVCE2GmbanI
-	 arjsClpeWLfbCtPO2HXI3baM3hddKC1uYQPQj3ePyKyr7GItNzFRO8TJFzmIAldTmh
-	 eueHVbWTuTiUswSocMMqlLGpRJzCtJTXJ0wNHLqDB2tRyH/bnhvonWMDT5bSPQ08O0
-	 rtWAmUeLJ0ORA==
-Received: by mail-lf1-f69.google.com with SMTP id 2adb3069b0e04-52b98d73cf9so927725e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 08:27:25 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=EJTIZ2h3dyyRGn34mS99fvwhqgJjkCwzJyEEBH7AkdDm9wCQCjRPV2ndM4U2PK5YND2WTJXjkpzBloaYi4C0SD8uazQWO5buLirD1GgYoKZztZtoKPMTeDTc/xdtiHOuFW+RS5Te370x9zL7NEvCwa4cX1ORepkn/evHIAb26XI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aYs+R2d+; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717428527;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ar9gzrik4rhckEVRPLbE8X2OcbLolgrz1g9vN29eeQg=;
+	b=aYs+R2d+gbC30DA6kMYBzxB9FjoLfxwTUrIx/S7ofhZWwjmbecQxrNhJhhrERsDyTNMUav
+	ecgYUfz64a/f7o55PgCCRQr11IkUtg15dISRDDHu2HnhM0kpAj7cD7FpWNF+fOpxfOcqnX
+	HG7u6wp8zzRcMoIL71KJj+SDq322sWY=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-117-mVkyJwYbOEyO-MWxEc83YQ-1; Mon, 03 Jun 2024 11:27:42 -0400
+X-MC-Unique: mVkyJwYbOEyO-MWxEc83YQ-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4212941e244so10177225e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 08:27:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717428443; x=1718033243;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Fr+lwAk3qfyLZR/E+av3Bn4ZLoKvig7SyD53fLchvOA=;
-        b=PSPxEeLbvhuwrWGsdr2iy0qGgqNiBFgW9EEnPeOhu76YqMpG4FOs5x+4CNyvMlFL77
-         QZrscH6Zgn8RQTOf2i502cIcLRf8Wb9EVX4tMm58pDI7AV/knGtZHX5b/AQ0RyO3eCEY
-         nMpzDrxkyGb3C78ZOAKsFXjqgePOCUaeuUkyxACnw/TcVjTm1kQTtjhA62a0eWNsAgs8
-         p5q7LNv1A75CRHJnb1R5+OaJanOyQSWkRvu8Q8qHFc5/LQTpQ6QyvhqXCkGjndCgQ8Kz
-         XYcDfRzZBwSDIIsCHNLS5iXB85Bofhs4QgcL0cCsrE2QZQ4q6WolLHP9gwOrHhvkX2ja
-         +6tw==
-X-Forwarded-Encrypted: i=1; AJvYcCWJd1ykoCyFg0hv9NTR5z5RDvX6WDFcOLygM4/63cBhy5rYrE8iNC7+L/NC8rsK1kptLiWvnz/+Uo03aacKVdHtvWOL5NCSYyEbggJb
-X-Gm-Message-State: AOJu0Yz4Np9rWfN+kwwUzjxpl0kCvn83dYYdDKIzN1S2AL0kVHXpYvGO
-	/zTIvqqsuHX+mgGyAv95nRiiH8cDozBn7je3G+Zvu41aWD2+NnGG9UsOgGwc1FjQAiJpQdV/M/1
-	4zJm5NJnt+7efEiMuS6F740nTq3BG9/L40eP0n9utLk/pNgk6RB6P5mUOquT5rDSEYpM0awPwfG
-	tk8A==
-X-Received: by 2002:ac2:58d8:0:b0:525:32aa:443e with SMTP id 2adb3069b0e04-52b8954e931mr7769743e87.17.1717428442713;
-        Mon, 03 Jun 2024 08:27:22 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF4tA4IuchCsdrErWQrGd4V6yhmYuIPHnknJtEIeTtg0eU4jolMUpFBqZbhOrx6k/P93dx1fw==
-X-Received: by 2002:ac2:58d8:0:b0:525:32aa:443e with SMTP id 2adb3069b0e04-52b8954e931mr7769726e87.17.1717428442197;
-        Mon, 03 Jun 2024 08:27:22 -0700 (PDT)
-Received: from ?IPV6:2a00:20:d00b:f75d:a576:8b02:7e96:f388? ([2a00:20:d00b:f75d:a576:8b02:7e96:f388])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a68a53d38bdsm402013066b.172.2024.06.03.08.27.20
+        d=1e100.net; s=20230601; t=1717428447; x=1718033247;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ar9gzrik4rhckEVRPLbE8X2OcbLolgrz1g9vN29eeQg=;
+        b=F9eML21knqN1rZRbG2MQnStT/LKvxP9yNot1T8XzlMOIMwSTzuHyum5o8e6A4rnz20
+         GRg+uJtEBRRUekuPdT2G74MpJ7BxRqgB/b7wvLcKKv2jMVEyzcMaVhT84GdcAoygCnjh
+         BrOXczga3eOhrSUcxOuVI/StzBiewhCbN3u+Sxap6VB+j/IgXPToNrjINavqHEtH2E4t
+         kTepd+Peqj3Kn54bAiJnKYDKJQY5KEIErpA1VHAAYaTxfJ8C6CFP7tXdoHWY4Imz2++O
+         gkkERlwuE85igjdccbwUnmcN581uyRhlBFMvFcXoJURLLrPfjDy9HrBDWrIjV25SNlhl
+         VsCA==
+X-Forwarded-Encrypted: i=1; AJvYcCU8tsTyrhfNNLZhefrar5D3LB7hZkTV0K1ngeQwfdVpzqbUx+CWZztdQOlMxjjUyViSkM57AiKb1Afqvx4p+Hr9gQvw74fC9K3+VyEc
+X-Gm-Message-State: AOJu0Yx9as7QHRrajrXC3pQLgx5m/sEYXziWpaYcO62dqBBBU+rpsU5z
+	jeoWgfgr1KM2TyveOK78qvE+fo6V6W0F8cAnO//e4Un13wXI4uiJuD153YwetGmKUedZE5Fz7ng
+	nyAKBw9wREVcVw4jeHW0YJ7Lu7fFTSMV/VEnrdxqpv11Qh9mgoxJtGNcVNE3Ceg==
+X-Received: by 2002:a05:600c:3d8c:b0:420:fcd:10e0 with SMTP id 5b1f17b1804b1-4212e05dfa2mr72664665e9.15.1717428447502;
+        Mon, 03 Jun 2024 08:27:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFpBRQbamqxXLfeZ0zqOXC87vSWhwtU762ZehParQC2zaOtREMaeN0/9mqa3qf0Xr6Fcsku9w==
+X-Received: by 2002:a05:600c:3d8c:b0:420:fcd:10e0 with SMTP id 5b1f17b1804b1-4212e05dfa2mr72664475e9.15.1717428447161;
+        Mon, 03 Jun 2024 08:27:27 -0700 (PDT)
+Received: from ?IPV6:2a01:599:908:c963:af9b:c64c:dfd8:5999? ([2a01:599:908:c963:af9b:c64c:dfd8:5999])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4212b83d4e2sm121728565e9.2.2024.06.03.08.27.25
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Jun 2024 08:27:21 -0700 (PDT)
-Message-ID: <8e50216c-2a3a-4946-ad90-9d66c6aae20c@canonical.com>
-Date: Mon, 3 Jun 2024 17:27:19 +0200
+        Mon, 03 Jun 2024 08:27:26 -0700 (PDT)
+Message-ID: <f85228ee-5e81-43ac-96c5-9687fc0c596f@redhat.com>
+Date: Mon, 3 Jun 2024 17:27:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,70 +82,105 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] riscv: dts: starfive: Update flash partition layout
-To: matthias.bgg@kernel.org
-Cc: devicetree@vger.kernel.org, aou@eecs.berkeley.edu, duwe@suse.de,
- linux-kernel@vger.kernel.org, palmer@dabbelt.com, paul.walmsley@sifive.com,
- linux-riscv@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>,
- kernel@esmil.dk, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- Hal Feng <hal.feng@starfivetech.com>,
- Minda Chen <minda.chen@starfivetech.com>
-References: <20240603150759.9643-1-matthias.bgg@kernel.org>
+Subject: Re: [PATCH v2 1/1] mm/mlock: implement folio_mlock_step() using
+ folio_pte_batch()
+To: Lance Yang <ioworker0@gmail.com>
+Cc: Matthew Wilcox <willy@infradead.org>, akpm@linux-foundation.org,
+ ryan.roberts@arm.com, 21cnbao@gmail.com, baolin.wang@linux.alibaba.com,
+ ziy@nvidia.com, fengwei.yin@intel.com, ying.huang@intel.com,
+ libang.li@antgroup.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20240603140745.83880-1-ioworker0@gmail.com>
+ <Zl3Wjh9_aGY8Xxm7@casper.infradead.org>
+ <c0309ab6-8bae-42b7-8d27-1df895689fb8@redhat.com>
+ <CAK1f24n9UB=Xqj23vLG7fYKUfvZgLqFVF-tsyc_nDrwAKC98CQ@mail.gmail.com>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-From: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
-In-Reply-To: <20240603150759.9643-1-matthias.bgg@kernel.org>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <CAK1f24n9UB=Xqj23vLG7fYKUfvZgLqFVF-tsyc_nDrwAKC98CQ@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 03.06.24 17:07, matthias.bgg@kernel.org wrote:
-> From: Matthias Brugger <matthias.bgg@gmail.com>
+On 03.06.24 17:08, Lance Yang wrote:
+> On Mon, Jun 3, 2024 at 10:56 PM David Hildenbrand <david@redhat.com> wrote:
+>>
+>> On 03.06.24 16:43, Matthew Wilcox wrote:
+>>> On Mon, Jun 03, 2024 at 10:07:45PM +0800, Lance Yang wrote:
+>>>> +++ b/mm/mlock.c
+>>>> @@ -307,26 +307,15 @@ void munlock_folio(struct folio *folio)
+>>>>    static inline unsigned int folio_mlock_step(struct folio *folio,
+>>>>               pte_t *pte, unsigned long addr, unsigned long end)
+>>>>    {
+>>>> -    unsigned int count, i, nr = folio_nr_pages(folio);
+>>>> -    unsigned long pfn = folio_pfn(folio);
+>>>> +    const fpb_t fpb_flags = FPB_IGNORE_DIRTY | FPB_IGNORE_SOFT_DIRTY;
+>>>> +    unsigned int count = (end - addr) >> PAGE_SHIFT;
+>>>
+>>> This is a pre-existing bug, but ... what happens if you're on a 64-bit
+>>> system and you mlock() a range that is exactly 2^44 bytes?  Seems to me
+>>> that count becomes 0.  Why not use an unsigned long here and avoid the
+>>> problem entirely?
+>>>
+>>> folio_pte_batch() also needs to take an unsigned long max_nr in that
+>>> case, because you aren't restricting it to folio_nr_pages().
+>>
+>> Yeah, likely we should also take a look at other folio_pte_batch() users
+>> like copy_present_ptes() that pass the count as an int. Nothing should
+>> really be broken, but we might not batch as much as we could, which is
+>> unfortunate.
 > 
-> Up to now, the describe flash partition layout has some gaps.
-> Use the whole flash chip by getting rid of the gaps.
-> 
-> Suggested-by: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
-> Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
+> Could I change folio_pte_batch() to take an unsigned long max_nr?
 
-For flashing larger firmware like EDK II it is helpful to maximize the 
-partition sizes. Thanks for sending the patch.
+It might be more future proof; see my other mail, I think currently all 
+is fine, because "end" is not the end of the VMA but the end of the PMD. 
+Please double-check.
 
-Commit 8384087a ("riscv: dts: starfive: Add QSPI controller node for 
-StarFive JH7110 SoC") 
-https://lore.kernel.org/linux-riscv/20230804020254.291239-4-william.qiu@starfivetech.com/ 
-introduced the current layout.
+-- 
+Cheers,
 
-CCing Starfive's U-Boot reviewers.
-
-Reviewed-by: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
-
-> 
-> ---
-> 
->   arch/riscv/boot/dts/starfive/jh7110-common.dtsi | 7 ++-----
->   1 file changed, 2 insertions(+), 5 deletions(-)
-> 
-> diff --git a/arch/riscv/boot/dts/starfive/jh7110-common.dtsi b/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
-> index 8ff6ea64f0489..37b4c294ffcc5 100644
-> --- a/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
-> +++ b/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
-> @@ -321,16 +321,13 @@ partitions {
->   			#size-cells = <1>;
->   
->   			spl@0 {
-> -				reg = <0x0 0x80000>;
-> +				reg = <0x0 0xf0000>;
->   			};
->   			uboot-env@f0000 {
->   				reg = <0xf0000 0x10000>;
->   			};
->   			uboot@100000 {
-> -				reg = <0x100000 0x400000>;
-> -			};
-> -			reserved-data@600000 {
-> -				reg = <0x600000 0xa00000>;
-> +				reg = <0x100000 0xf00000>;
->   			};
->   		};
->   	};
+David / dhildenb
 
 
