@@ -1,310 +1,122 @@
-Return-Path: <linux-kernel+bounces-198596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 240CE8D7ACD
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 06:39:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4953F8D7AD4
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 06:40:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 474C11C21712
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 04:39:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05962282887
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 04:40:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 803C817C77;
-	Mon,  3 Jun 2024 04:38:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A6D42C6A3;
+	Mon,  3 Jun 2024 04:39:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="Hun3mTKj"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Rdh8KwsP"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9809722075
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 04:38:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74AD824A08;
+	Mon,  3 Jun 2024 04:39:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717389537; cv=none; b=PXU6JW9twO0GkOkAVaSN4NSP6upeIK+kOdW2joKC/hVo6NdRG1dhAgjFnf80fCql93gcuPnmjt3g/8pnq0AjkqWB2fcB85ELb+OJ5aJrr/52p9h+sQJ9GKvNw4gUrXTNongJux366H4VN3u5EOrEL+siKa9Aw8nPWLDipZ+238c=
+	t=1717389580; cv=none; b=r2jYfhGjSPVaTEqxbpBLG70Ce1Vl2PL01AeFK0YCSQDyIEgCsCPvDyGMiLoBhAPzGOBd3IPDq5/mHf2xVRsq+WDSVKq0m5EsLAL5aAQz28zekdT9BUQBZttfPsr7wanVCR3Q5mo1LisEJB/Ci8TrmRq5HmijqOP/9tVkBLa54Os=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717389537; c=relaxed/simple;
-	bh=HT2RJQzODI8X1LUeizuMEThdjBgTTIczO4lb7eSemaQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NDHtlrD7PdO+XOF33dWJiH4JGJpF0BdF9A0KbN6IFn+PDhZ43U+smEDbvSHqtsEifGTDDe78S7UH+F7PZxloxo4nCNvL8dwIPCIyG+KVqpYOvnpCI3l0mgz06fsA7U3FGAvZKnDgqwK6Uxea85AgdjI5UDxlxC44zsbe9stDWgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=Hun3mTKj; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1f60a17e3e7so2985375ad.1
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2024 21:38:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tenstorrent.com; s=google; t=1717389533; x=1717994333; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6k5sK+Hr2ZSGgW+wJxFNZmjPnb3EAslefUHNzs6g9pE=;
-        b=Hun3mTKjxQRkg0xk+pG0IxE3n5NHEwmd3aumKWftA2yeFJzlMl83gQ2d/JwR0FtqkP
-         hbls2qBFbBtPVj8UDfp0tF5vFDJWfpD2ZZ4idaSyE6WaaEJHNFQGfQGXGlhy9ih9r6Fd
-         MP4jO6/qLwcRqV7ISEn1ZUmiZ5j+hrq6VJNKjbT8y50B2OcqCP70KJNy3kZ5poL6hXeu
-         uzSFht39P12FL+mfiHuryDmYEGYHTYg3cbRvyHUOC6EbSaX/a/VBXEr5AowxgFLNKR8M
-         DGSIgW/U4Z87JWCFWZ+I/ZJ3bvvpxmDIu9jVFOSePCkJ0EGfceqHE/BINPrRcxI5cFAR
-         ltWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717389533; x=1717994333;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6k5sK+Hr2ZSGgW+wJxFNZmjPnb3EAslefUHNzs6g9pE=;
-        b=MXjSy3roSq0M7YIOrE3lH+owXUhth1RwD9JzayAZjEH+bk//Z6hOfHTyZ6/29LB102
-         lP5uFrNsXPaFCmPLxoc/qkVqSYlEHzuto8eyHkS5yBf+7qNYGyRVxvN7/dPuGeUSuq/L
-         R25P2EGLb3RlP1ZTSgJh0uvOT6PtkOTlB86hLX7ffQIeBxHHn5q74vUCk6pN33wvKfVW
-         gRRN1OestdNNTvM1Aw3pAWSs4dmrtTFtiphuZ1RZJ456gE+MiKMBvy0nXLvm+HDcOpxo
-         Krrc0Z4w4pAOVN5nFmR+R+/MbdiOhQT+v3T5ffqTNpwJSYSmoWIJOvO77IBEi1uxNy4b
-         SHuA==
-X-Forwarded-Encrypted: i=1; AJvYcCVXLRONdLwHCqb3aqnoTmumNLoFqVKJw977lH54A7dwqeQGJp7AUxxj0JaYqnSM6gZ4mXk712iB1Z7Pguxuk+3GLvW0rCcg9bDHb1qQ
-X-Gm-Message-State: AOJu0YzklcUDU955ZrPj95q4plDZidwcVSVvfU05egdmdPEEzl2wLpPW
-	Xbm536tZy8eZdceVECxbeVGmF2R3O6gwW9ZyPOJDmh0Ge6STRIWv+DFGDf645dSGPl+ugAA58Ri
-	Gud2GidRt5ef5wt9figelhCVsVYy4qYgzMMOm
-X-Google-Smtp-Source: AGHT+IGS/JQfmk0q0ZLbJQ7wvdlvLFCpoE0OEzYlQawKoJxSaifXyBH+XjMva5HN775Mk1IPgrZOi1teF8vm46OvDF8=
-X-Received: by 2002:a17:90a:fe0a:b0:2bf:bcde:d2b0 with SMTP id
- 98e67ed59e1d1-2c1dc6136f0mr7170757a91.4.1717389532791; Sun, 02 Jun 2024
- 21:38:52 -0700 (PDT)
+	s=arc-20240116; t=1717389580; c=relaxed/simple;
+	bh=mmxiUMbaaQpISNm7DUxBngqFyA7lzsyvpGql6s9suLw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rIXpxOLh15hp/pNCxKiQB28tN+B71mhTTV+efLRVWR1o9wdbZY8+xtsDqueNGMVQiFfTxtSilZrx+9K7LEeqdTW0HwTPQ0I8yIir/Xg7CT1YCECN73wWrbSrQY7ookMurQNyd3wsfVzOv9zPsJW+ud7BMwviMfa+Wn75Rndrmw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Rdh8KwsP; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717389579; x=1748925579;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=mmxiUMbaaQpISNm7DUxBngqFyA7lzsyvpGql6s9suLw=;
+  b=Rdh8KwsP2mi8oi13XNpCEZ05Gf+84zaJbyOOZb5cWlUgf/G03JlNgEdH
+   MhRWY5PLewRP53Y9ItB2yM91eB46I79yReDEx8kpW6icTXE9AVraD5/Jx
+   m7RrdRlshBBUYBTKzvryKrw2ODv9bfOTsyPaYGWZ8Ld4rnWCzVZ4QLCIu
+   hD89XQJwb1hN4qrC72F14sh4a3coeCZrsV2hA4+taspifxCe+Wlgx5anA
+   P/9NjDLllMpC1nFV3doWhTNl+5i4+q+lQL6B5YDmrfWrLeeSo+kfufKu4
+   hblLnbVDBp06M5rJAwz0sPw68+yJZ2s/j6mgcrsJLJYRxZpSPW7eHC1eY
+   w==;
+X-CSE-ConnectionGUID: 5dtZgN/hSkWvrXY6cyQfLw==
+X-CSE-MsgGUID: QEFZEbx0QTuMrqUlkU/i/Q==
+X-IronPort-AV: E=McAfee;i="6600,9927,11091"; a="13988344"
+X-IronPort-AV: E=Sophos;i="6.08,210,1712646000"; 
+   d="scan'208";a="13988344"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2024 21:39:38 -0700
+X-CSE-ConnectionGUID: Hyb4cl2cTOGyetGmFtMZ1g==
+X-CSE-MsgGUID: WbZLiAmjTPei0x3AmwcJtA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,210,1712646000"; 
+   d="scan'208";a="41846183"
+Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
+  by orviesa004.jf.intel.com with ESMTP; 02 Jun 2024 21:39:35 -0700
+Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sDzTo-000L1x-1R;
+	Mon, 03 Jun 2024 04:39:32 +0000
+Date: Mon, 3 Jun 2024 12:38:45 +0800
+From: kernel test robot <lkp@intel.com>
+To: Kent Overstreet <kent.overstreet@linux.dev>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Jens Axboe <axboe@kernel.dk>,
+	Kent Overstreet <kent.overstreet@linux.dev>, brauner@kernel.org,
+	viro@zeniv.linux.org.uk,
+	Bernd Schubert <bernd.schubert@fastmail.fm>, linux-mm@kvack.org,
+	Josef Bacik <josef@toxicpanda.com>
+Subject: Re: [PATCH 3/5] fs: sys_ringbuffer
+Message-ID: <202406031256.z8k8v6AW-lkp@intel.com>
+References: <20240603003306.2030491-4-kent.overstreet@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231225040018.1660554-1-antonb@tenstorrent.com> <ZYpO/pfbea7hWu3r@gmail.com>
-In-Reply-To: <ZYpO/pfbea7hWu3r@gmail.com>
-From: Cyril Bur <cyrilbur@tenstorrent.com>
-Date: Mon, 3 Jun 2024 14:38:41 +1000
-Message-ID: <CANtDSirRq0W7AhA8xi0c-3a7_e27RKHWbkK27AR9JhZfW+pTwg@mail.gmail.com>
-Subject: Re: [PATCH] riscv: Improve exception and system call latency
-To: Guo Ren <guoren@kernel.org>
-Cc: Anton Blanchard <antonb@tenstorrent.com>, paul.walmsley@sifive.com, palmer@dabbelt.com, 
-	aou@eecs.berkeley.edu, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240603003306.2030491-4-kent.overstreet@linux.dev>
 
-[ apologies, I think my mailer is going to mess up the formatting ]
+Hi Kent,
 
-On 26 Dec 2023, at 2:56=E2=80=AFPM, Guo Ren <guoren@kernel.org> wrote:
+kernel test robot noticed the following build errors:
 
-On Sun, Dec 24, 2023 at 08:00:18PM -0800, Anton Blanchard wrote:
+[auto build test ERROR on tip/locking/core]
+[also build test ERROR on linus/master v6.10-rc2]
+[cannot apply to akpm-mm/mm-nonmm-unstable tip/x86/asm akpm-mm/mm-everything next-20240531]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Many CPUs implement return address branch prediction as a stack. The
-RISCV architecture refers to this as a return address stack (RAS). If
-this gets corrupted then the CPU will mispredict at least one but
-potentally many function returns.
+url:    https://github.com/intel-lab-lkp/linux/commits/Kent-Overstreet/darray-lift-from-bcachefs/20240603-083536
+base:   tip/locking/core
+patch link:    https://lore.kernel.org/r/20240603003306.2030491-4-kent.overstreet%40linux.dev
+patch subject: [PATCH 3/5] fs: sys_ringbuffer
+config: i386-buildonly-randconfig-002-20240603 (https://download.01.org/0day-ci/archive/20240603/202406031256.z8k8v6AW-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240603/202406031256.z8k8v6AW-lkp@intel.com/reproduce)
 
-There are two issues with the current RISCV exception code:
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406031256.z8k8v6AW-lkp@intel.com/
 
-- We are using the alternate link stack (x5/t0) for the indirect branch
- which makes the hardware think this is a function return. This will
- corrupt the RAS.
+All errors (new ones prefixed by >>):
 
-- We modify the return address of handle_exception to point to
- ret_from_exception. This will also corrupt the RAS.
+   In file included from <built-in>:1:
+>> ./usr/include/linux/ringbuffer_sys.h:5:10: fatal error: 'uapi/linux/types.h' file not found
+       5 | #include <uapi/linux/types.h>
+         |          ^~~~~~~~~~~~~~~~~~~~
+   1 error generated.
 
-Testing the null system call latency before and after the patch:
-
-Visionfive2 (StarFive JH7110 / U74)
-baseline: 189.87 ns
-patched:  176.76 ns
-
-Lichee pi 4a (T-Head TH1520 / C910)
-baseline: 666.58 ns
-patched:  636.90 ns
-
-Just over 7% on the U74 and just over 4% on the C910.
-
-
-Yes, the wrong "jalr zero, t0/ra" would pop RAS and destroy the RAS
-layout of the hardware for the userspace. How about giving a fake push
-for the RAS to connect "jalr zero, ra" of sub-function call return? I'm
-curious if you could measure the difference with only one RAS
-misprediction.
-
-diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
-index 54ca4564a926..94c7d2be35d0 100644
---- a/arch/riscv/kernel/entry.S
-+++ b/arch/riscv/kernel/entry.S
-@@ -93,7 +93,8 @@ SYM_CODE_START(handle_exception)
-       bge s4, zero, 1f
-
-       /* Handle interrupts */
--       tail do_irq
-+       auipc t0, do_irq
-+       jalr  t0, t0
-1:
-       /* Handle other exceptions */
-       slli t0, s4, RISCV_LGPTR
-@@ -103,9 +104,10 @@ SYM_CODE_START(handle_exception)
-       /* Check if exception code lies within bounds */
-       bgeu t0, t2, 1f
-       REG_L t0, 0(t0)
--       jr t0
-+       jalr t0, t0
-1:
--       tail do_trap_unknown
-+       auipc t0, do_trap_unknown
-+       jalr  t0, t0
-SYM_CODE_END(handle_exception)
-
-You could prepare a deeper userspace stack calling if you want better
-measurement results.
-
-
-Signed-off-by: Anton Blanchard <antonb@tenstorrent.com>
-Reviewed-by: Jisheng Zhang <jszhang@kernel.org>
----
-
-This introduces some complexity in the stackframe walk code. PowerPC
-resolves the multiple exception exit paths issue by placing a value into
-the exception stack frame (basically the word "REGS") that the stack frame
-code can look for. Perhaps something to look at.
-
-arch/riscv/kernel/entry.S      | 21 ++++++++++++++-------
-arch/riscv/kernel/stacktrace.c | 14 +++++++++++++-
-2 files changed, 27 insertions(+), 8 deletions(-)
-
-diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
-index 54ca4564a926..89af35edbf6c 100644
---- a/arch/riscv/kernel/entry.S
-+++ b/arch/riscv/kernel/entry.S
-@@ -84,7 +84,6 @@ SYM_CODE_START(handle_exception)
-scs_load_current_if_task_changed s5
-
-move a0, sp /* pt_regs */
-- la ra, ret_from_exception
-
-/*
-* MSB of cause differentiates between
-@@ -93,7 +92,10 @@ SYM_CODE_START(handle_exception)
-bge s4, zero, 1f
-
-/* Handle interrupts */
-- tail do_irq
-+ call do_irq
-+.globl ret_from_irq_exception
-+ret_from_irq_exception:
-+ j ret_from_exception
-1:
-/* Handle other exceptions */
-slli t0, s4, RISCV_LGPTR
-@@ -101,11 +103,16 @@ SYM_CODE_START(handle_exception)
-la t2, excp_vect_table_end
-add t0, t1, t0
-/* Check if exception code lies within bounds */
-- bgeu t0, t2, 1f
-- REG_L t0, 0(t0)
-- jr t0
--1:
-- tail do_trap_unknown
-+ bgeu t0, t2, 3f
-+ REG_L t1, 0(t0)
-+2: jalr ra,t1
-+.globl ret_from_other_exception
-+ret_from_other_exception:
-+ j ret_from_exception
-+3:
-+
-+ la t1, do_trap_unknown
-+ j 2b
-SYM_CODE_END(handle_exception)
-
-/*
-diff --git a/arch/riscv/kernel/stacktrace.c b/arch/riscv/kernel/stacktrace.=
-c
-index 64a9c093aef9..b9cd131bbc4c 100644
---- a/arch/riscv/kernel/stacktrace.c
-+++ b/arch/riscv/kernel/stacktrace.c
-@@ -17,6 +17,18 @@
-#ifdef CONFIG_FRAME_POINTER
-
-extern asmlinkage void ret_from_exception(void);
-+extern asmlinkage void ret_from_irq_exception(void);
-+extern asmlinkage void ret_from_other_exception(void);
-+
-+static inline bool is_exception_frame(unsigned long pc)
-+{
-+ if ((pc =3D=3D (unsigned long)ret_from_exception) ||
-+    (pc =3D=3D (unsigned long)ret_from_irq_exception) ||
-+    (pc =3D=3D (unsigned long)ret_from_other_exception))
-+ return true;
-+
-+ return false;
-+}
-
-We needn't put too many .globl in the entry.S, and just check that pc is
-in SYM_CODE_START/END(handle_exception), then entry.S would be cleaner:
-
-Hi Guo,
-
-I've taken this patch over from Anton, mostly just to tidy it up. I'd
-like to incorporate
-what you mention here but I'm not sure how to achieve it. Have I
-missed something
-obvious? As things currently stand there doesn't seem to be a way to get th=
-e end
-(or size) of handle_exception in C code.
-
-Your advice is greatly appreciated,
-
-Thanks,
-
-Cyril
-
-diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
-index 54ca4564a926..d452d5f12b1b 100644
---- a/arch/riscv/kernel/entry.S
-+++ b/arch/riscv/kernel/entry.S
-@@ -84,7 +84,6 @@ SYM_CODE_START(handle_exception)
-       scs_load_current_if_task_changed s5
-
-       move a0, sp /* pt_regs */
-
-       /*
-        * MSB of cause differentiates between
-@@ -93,7 +92,8 @@ SYM_CODE_START(handle_exception)
-       bge s4, zero, 1f
-
-       /* Handle interrupts */
-       call do_irq
-       j ret_from_exception
-1:
-       /* Handle other exceptions */
-       slli t0, s4, RISCV_LGPTR
-@@ -102,10 +102,12 @@ SYM_CODE_START(handle_exception)
-       add t0, t1, t0
-       /* Check if exception code lies within bounds */
-       bgeu t0, t2, 1f
-       REG_L ra, 0(t0)
-       jalr ra, ra
-       j ret_from_exception
-1:
-       call do_trap_unknown
-       j ret_from_exception
-SYM_CODE_END(handle_exception)
-
-
-
-void notrace walk_stackframe(struct task_struct *task, struct pt_regs *regs=
-,
-    bool (*fn)(void *, unsigned long), void *arg)
-@@ -62,7 +74,7 @@ void notrace walk_stackframe(struct task_struct
-*task, struct pt_regs *regs,
-fp =3D frame->fp;
-pc =3D ftrace_graph_ret_addr(current, NULL, frame->ra,
-  &frame->ra);
-- if (pc =3D=3D (unsigned long)ret_from_exception) {
-+ if (is_exception_frame(pc)) {
-if (unlikely(!__kernel_text_address(pc) || !fn(arg, pc)))
-break;
-
---=20
-2.25.1
-
-
-_______________________________________________
-linux-riscv mailing list
-linux-riscv@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-riscv
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
