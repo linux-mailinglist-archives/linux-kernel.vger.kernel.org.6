@@ -1,200 +1,434 @@
-Return-Path: <linux-kernel+bounces-199069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCFFC8D81A4
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:53:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAD388D8178
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:44:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EED021C21D8C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:53:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F69B1F25D58
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:44:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26D1186244;
-	Mon,  3 Jun 2024 11:53:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0115B84FA2;
+	Mon,  3 Jun 2024 11:44:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="fP+DAI06"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ePCs3Sta"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27F4684D06
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 11:53:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B53D084E07;
+	Mon,  3 Jun 2024 11:44:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717415609; cv=none; b=iJHeIYxzf7Q4QInOpxKqP3DEzAUfNFAuyOp9k4wyb8m21jykiHlnFuZfK2OuAurXvwVyraTR2gLYUUXul0J4jm9FDJrd0JRrArOkWx8YvgkVbr1Mb6TKpJM6t9AEsm+GL2vNBz+RGf+dvBx1O1NqnuoSAm1AIIrz/1GP/T89Ns8=
+	t=1717415078; cv=none; b=U/J9Wi4Ginj4qQ+F1qJpg+g+M1AXeXDuMCtos3uDT8JkZkuyvrmSZrCaHrCoLSgNKNx1bNWBM9h/3qCJrlaKbVG8DXpry9t397zHIdDwO0wjZioLEUAkCUd54VrN4C8ZJjYnMyezYw4p7xYC3CFBHyoLv0HpyC6HzeESTrQ+Zo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717415609; c=relaxed/simple;
-	bh=yyNUMLw/GbUO1MJCYZB6GVLkpbdu8CsKGpnKsH8egEY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
-	 Content-Type:References; b=J8S1MFk6aCaBYM8Yvb7FKwDKmS7Er59VtggftKdssJkq0z5crHX6Us1vFVBv3/hrU0feaEHSY+cwperFMu/oFddFH1LV9o/9xzCC1X6jA5ri56amvZxqNIal5d6/m5CG0cdmc+2WEmtXg0H2PcnX/u7LjG1Z2xftyqAT7oiWtOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=fP+DAI06; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240603115325epoutp0326eaeffb71633bfd039de4b9abc86bf4~VfGTKa0f_2066020660epoutp03j
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 11:53:25 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240603115325epoutp0326eaeffb71633bfd039de4b9abc86bf4~VfGTKa0f_2066020660epoutp03j
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1717415605;
-	bh=LcKYgdyDMyHXraxQxmDzCTSZymeakJlnkz6ezAKVGEQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=fP+DAI06tMvyyGgS+6+6Qj6y6AqIJI7EZrwW9N4siuCnFMedcp7Zhy7EIaZvXRn/H
-	 79eXl+75vclvvIIC+AN09nC/4fS9TvF8Ex9PdqdE4/4XWxETKR1R3gDq3d99KcTcqo
-	 AhSZzxjQZl+OP+6vV+bmak+KBgEv179sfmqmAJAQ=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-	20240603115324epcas5p3e77764cde13ea6a0ae34e3ca3687866b~VfGSjgeNx2720327203epcas5p3H;
-	Mon,  3 Jun 2024 11:53:24 +0000 (GMT)
-Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.181]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4VtBv73FtVz4x9Q6; Mon,  3 Jun
-	2024 11:53:23 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	01.06.19174.3BEAD566; Mon,  3 Jun 2024 20:53:23 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240603114332epcas5p26f0bff3af640acf73819b485b02ea318~Ve9qyqWb91520015200epcas5p2R;
-	Mon,  3 Jun 2024 11:43:32 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240603114332epsmtrp227d5502c0abfcd0cc2120278ca9eff6f~Ve9qwgjRP2552225522epsmtrp2V;
-	Mon,  3 Jun 2024 11:43:32 +0000 (GMT)
-X-AuditID: b6c32a50-87fff70000004ae6-c4-665daeb3ffe2
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	EA.8E.08622.36CAD566; Mon,  3 Jun 2024 20:43:31 +0900 (KST)
-Received: from nj.shetty?samsung.com (unknown [107.99.41.245]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240603114328epsmtip217510b9a96c0c468e513a20910da8803~Ve9nGlrbV2032820328epsmtip2V;
-	Mon,  3 Jun 2024 11:43:28 +0000 (GMT)
-Date: Mon, 3 Jun 2024 11:43:40 +0000
-From: Nitesh Shetty <nj.shetty@samsung.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>, Alasdair
-	Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka
-	<mpatocka@redhat.com>, Keith Busch <kbusch@kernel.org>, Sagi Grimberg
-	<sagi@grimberg.me>, Chaitanya Kulkarni <kch@nvidia.com>, Alexander Viro
-	<viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara
-	<jack@suse.cz>, martin.petersen@oracle.com, bvanassche@acm.org,
-	david@fromorbit.com, hare@suse.de, damien.lemoal@opensource.wdc.com,
-	anuj20.g@samsung.com, joshi.k@samsung.com, nitheshshetty@gmail.com,
-	gost.dev@samsung.com, Javier Gonz??lez <javier.gonz@samsung.com>,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, dm-devel@lists.linux.dev,
-	linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v20 07/12] nvme: add copy offload support
-Message-ID: <20240603114340.5rvx3o57h2zojfjs@nj.shetty@samsung.com>
+	s=arc-20240116; t=1717415078; c=relaxed/simple;
+	bh=KunT4nlCg7911ALJa7lOcyXfpiQdVZ5znExOTbbLGV4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pS1otxpgAm1CSZ4I0VAelB+ryq8d7W5ATv6B3Xl9VrgfPxpCVFvjTGdBub5HehtyeNEOr6/bCF6RgS5deN7mZ8UrdDGH8RRv8ENPfxzecfDmNpQSBI+iqMSAHfvA1F8PjZ/2Nb27f26HJyG242vJsHNwTk/jykfvrEy9hoIoaYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ePCs3Sta; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F941C4AF0F;
+	Mon,  3 Jun 2024 11:44:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717415078;
+	bh=KunT4nlCg7911ALJa7lOcyXfpiQdVZ5znExOTbbLGV4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ePCs3StafjXPiSuIR3m+UDXUptsbPwB+J4owwXzQyO4HLyKwu8aRXbJbkzKZXt1xW
+	 Pja7YvCqTx3qawexmh3abjlxifBpZLBCO2P7aOzEQSeZOgnRO1Vvs5Dj6S5ZZd6mqm
+	 3RWPx1yac6MBEGh1UoseIt8s1TLZmkLkXz4e3h3afchdT2EIthZXWsXm8qbYsQjFKZ
+	 OoTrQT70nfoPWmEp+GafKXo5EKYOqZ4z5lkXnJoU13kcI/AAWNlU368p+7PhYpOw2U
+	 veeBcDi6he7jPkP3bXixb8gK+FEKuJw6MOQjru81EzfOGSetmsWcZeB3vm20wJUIjp
+	 3yRb6VLrHLahw==
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-57a2ed9af7dso4199931a12.1;
+        Mon, 03 Jun 2024 04:44:38 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUQEFn3OBuF6CvDcBtOz68IjCx7cpPDto3EPWRseBNFjck3NThvDHm8WTT9zgNJQnr/5mmi0pIREjGSQ11ghTZc3XLjlf+gehmTsTaS+w2dPnC4Q37YVxoQfMbsncWfp9hpocFW2dxcoq9Om/ppjsXD1+kAt8F60eBDXIVHs5Xm+VnsbQ==
+X-Gm-Message-State: AOJu0Yx5ITkzZJZJKSddW0DDjRwpcHJBI/If+1xAw/ghryp1wWTysDA4
+	5ld4ueAd8PsGjU4x42kV26VCiSvXpWQD8rz5XAbW9AZSKETKpTbL6NQFmmrKabcikoLt8wy7x/4
+	E4VbE/l3VaVe/KY4PfBapSt/kauc=
+X-Google-Smtp-Source: AGHT+IG7/H90hc63WWNMkeMAnOX13JzopJNEYk51UGPzqfuIlsmZ8ozivL78F9eXs+/MfUByP3kU+MuoZdk04N08DSY=
+X-Received: by 2002:a50:9e05:0:b0:57a:2400:3a56 with SMTP id
+ 4fb4d7f45d1cf-57a3651f208mr6105897a12.23.1717415076817; Mon, 03 Jun 2024
+ 04:44:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240601062219.GB6221@lst.de>
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Te0xTVxzHc+5tbwsOcwUWz+qLFNxABrSTsgODKZHMm0gysmUzkTmo9NIi
-	pS19KO4PLfIYj4HgcEARRWBD3u+Np5MiIEWCjoGB8AqWbQJTXsMZAqylsO2/z+97fu9fDhu3
-	LWdx2BEyNa2UCaVcwprxY6eLs1t91dlw3u1Fe1Rt6MbR1Yx1HJWPXyPQXOcSQN8tvMaR8f7X
-	AK31D+CooXsCoILCfAYaud+MobbC6xgqLe/CUF52HIaejS2zUNfmnwS6rh8GaGZIh6H2UVd0
-	J7GYgdraexlosOUmgW7/MMNCJT0bGMpMGsJQkzEWoKq5lwz0cHQfGljvYR7fTw3+eooyFEKq
-	WTfOogYmahnUYL+GqitLJqj64ivUH/W5gGod0RJUUfq3TCot7gVBNSdMMqnFmVEG9fLeEEGl
-	N5QB6lHBA1aQ3ZlIXwktFNFKB1oWJhdFyMR+3FOfhpwIEXjx+G58b/Q+10EmjKL9uAGBQW4f
-	RUhNG+I6XBBKNSYpSKhScT0+9FXKNWraQSJXqf24tEIkVXgq3FXCKJVGJnaX0WofPo/3nsDk
-	GBop2ch4SCj+2h2zWjHD0gL9GynAig1JT/h9+s9ECrBm25JtAP7UeBezGEsAdg42MS3GKoAp
-	HVX4TshK4hjDzLZkO4DxC7TFaRnAip5azPzAIJ3gVHMJKwWw2QTpCvs22WbZnuTCmdl+YPbH
-	yQ4CJizmbCW1I/1g6uMaYGYb8gTsy0/d5j2wN9e4VczKlKfrceNWR5ActoJxuVqWpaMA2D3R
-	ASxsB2d7GrZ1Dlx+0U5Y+CIszbpLWILjAdQ91W0HHIMJhmu4uVOclMDW5BCLfADeMFRtDYOT
-	u2HamhGz6Daw6dYOO8KK6oLt/G/B4Vex20zB8vguYNnKGIBpHZlEBjio+99Auv/K6bZK+MDk
-	hatMi7wPlmywLegCq1s8CgCzDHBohSpKTIcJFHw3GX3x3yuHyaPqwNavORLUBMpr1t31AGMD
-	PYBsnGtvk345ONzWRiS89BWtlIcoNVJapQcC04Eycc6bYXLTt5OpQ/ie3jxPLy8vT++jXnzu
-	Xpu5hHyRLSkWqulImlbQyp04jG3F0WLOv/jmlMW0ygsD0z3rRvytxZzYXbnOgRlPj2k+Od3g
-	314VOnE6SmqfuktQp71RvHxu2uPc9Osp68DJw8yKPXG+KzftW4gx2Hh+1CBYLepaOZTzeX9b
-	KGfjQdzzPu/MgP3zktbz4hkf/QdTssUn2ZEnYypnsyuNzq8+PuTYEGHnv3ynwRh98lKvk93f
-	tZXfzM7D3/YSpUVanuiCUTInfnLvnfVp77MxgUkHDj/Kqn63pN0pezM6L0udwB1qWZtW35Im
-	tQoOhrumBFP6vKVCxxr49rOW4Uh15LWgM9FftM0PqFzwlMuV5JdXYng63bhHbuJnEeX5k8ex
-	o4ai4PjnrYO/z3VyGSqJkH8EV6qE/wCfm8hgvgQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrLIsWRmVeSWpSXmKPExsWy7bCSvG7ymtg0g7PrzS3WnzrGbNE04S+z
-	xeq7/WwWrw9/YrSY9uEns8WTA+2MFr/Pnme22HLsHqPFgkVzWSxuHtjJZLFn0SQmi5WrjzJZ
-	zJ7ezGTx+M5ndouj/9+yWUw6dI3R4unVWUwWe29pWyxsW8JisWfvSRaLy7vmsFnMX/aU3WL5
-	8X9MFhM7rjJZ7HjSyGix7vV7FosTt6Qtzv89zuog43H5irfHqUUSHjtn3WX3OH9vI4vH5bOl
-	HptWdbJ5bF5S7/Fi80xGj903G9g8FvdNZvXobX7H5rGz9T6rx8ent1g83u+7yubRt2UVo8eZ
-	BUfYA4SjuGxSUnMyy1KL9O0SuDK2NS1hLVjOU/G6fxV7A2MfVxcjJ4eEgInEl7Y7LF2MXBxC
-	ArsZJVY9u80IkZCUWPb3CDOELSyx8t9zdoiij4wStyeeZANJsAioSDzYuRwowcHBJqAtcfo/
-	B0hYREBJ4umrs4wg9cwCR9kkFm6YDDZIWMBWovvCBrAFvALOEqfndjNCDL3HKPFt+xqohKDE
-	yZlPWEBsZgEziXmbHzKDLGAWkJZY/g9sASfQrqMXtrJOYBSYhaRjFpKOWQgdCxiZVzFKphYU
-	56bnFhsWGOWllusVJ+YWl+al6yXn525iBKcILa0djHtWfdA7xMjEwXiIUYKDWUmEt68uOk2I
-	NyWxsiq1KD++qDQntfgQozQHi5I477fXvSlCAumJJanZqakFqUUwWSYOTqkGpqMVaxNYnjGW
-	z4n4EqYgctqC8yTzjKyqjcW+yn/08rZbvm7dMc2s2XfRr17vlx/kbdXZag+VS1XpiJmonmXZ
-	catLhauorJrX1zjY5bJF+M2V8h9yKrhEiuZNVfBoVKpkMPaNWOAzSe92i7rF87Kce+5vzVxr
-	ezQOXZOzcahc5HHYx0Uw4kjxBbGiZ556V6eYJsfvf7k11J1z4cmX4uE1EzRZbh4OfOf4Ivv6
-	uSdzFDf+bW6YePRaxSG/Gv8um02dIU6LpZgWeDFdnMyx/83UqVGV9g2nXi5rSb1bO/3Ex08V
-	7D9OPpX7MS3c4akJb3h3inztRrNvjqciKs4+vvzQJUnD9GzfrH8ii7dfLTBTYinOSDTUYi4q
-	TgQARi3hiYADAAA=
-X-CMS-MailID: 20240603114332epcas5p26f0bff3af640acf73819b485b02ea318
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-	boundary="----Fualeei1.f5fhWGYL679EBd0hH5-OLgtfrOtH6wInDZGwDEe=_52166_"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240520102940epcas5p2b5f38ceabe94bed3905fb386a0d65ec7
-References: <20240520102033.9361-1-nj.shetty@samsung.com>
-	<CGME20240520102940epcas5p2b5f38ceabe94bed3905fb386a0d65ec7@epcas5p2.samsung.com>
-	<20240520102033.9361-8-nj.shetty@samsung.com> <20240601062219.GB6221@lst.de>
+References: <20240528151052.313031-1-alexghiti@rivosinc.com>
+ <20240528151052.313031-8-alexghiti@rivosinc.com> <CAJF2gTQgg-7Fzoz9TsjWD-_8ABbS7M66aEztCsZ9Ejk8LOvmiQ@mail.gmail.com>
+ <CAHVXubg=T3AMER0z8-iRqqFmDQp8iEM92cXwPZcW2Sfm=_KOHQ@mail.gmail.com>
+ <CAJF2gTT51oZqEq-1TV_UEUufsrq=jRr4FAbmdtrChAHyUC1rXg@mail.gmail.com>
+ <b6b6d273-4d57-4611-8c67-1a67d443b7d0@ghiti.fr> <CAJF2gTTiz_gkaA8OVkZynKUAFHFGij1W97qVSS3RKyMK5vkpdw@mail.gmail.com>
+ <1cb05816-6f2f-4940-8051-b645f9f52c14@ghiti.fr>
+In-Reply-To: <1cb05816-6f2f-4940-8051-b645f9f52c14@ghiti.fr>
+From: Guo Ren <guoren@kernel.org>
+Date: Mon, 3 Jun 2024 19:44:23 +0800
+X-Gmail-Original-Message-ID: <CAJF2gTS-8KHs8LqiR70AxKQB9=sAZznXAXSbk=Q8PVwdKQSrbg@mail.gmail.com>
+Message-ID: <CAJF2gTS-8KHs8LqiR70AxKQB9=sAZznXAXSbk=Q8PVwdKQSrbg@mail.gmail.com>
+Subject: Re: [PATCH 7/7] riscv: Add qspinlock support based on Zabha extension
+To: Alexandre Ghiti <alex@ghiti.fr>
+Cc: Alexandre Ghiti <alexghiti@rivosinc.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Arnd Bergmann <arnd@arndb.de>, Leonardo Bras <leobras@redhat.com>, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-arch@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-------Fualeei1.f5fhWGYL679EBd0hH5-OLgtfrOtH6wInDZGwDEe=_52166_
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Disposition: inline
+On Mon, Jun 3, 2024 at 7:34=E2=80=AFPM Alexandre Ghiti <alex@ghiti.fr> wrot=
+e:
+>
+> On 03/06/2024 13:28, Guo Ren wrote:
+> > On Mon, Jun 3, 2024 at 5:49=E2=80=AFPM Alexandre Ghiti <alex@ghiti.fr> =
+wrote:
+> >> Hi Guo,
+> >>
+> >> On 31/05/2024 15:10, Guo Ren wrote:
+> >>> On Wed, May 29, 2024 at 9:03=E2=80=AFPM Alexandre Ghiti <alexghiti@ri=
+vosinc.com> wrote:
+> >>>> Hi Guo,
+> >>>>
+> >>>> On Wed, May 29, 2024 at 11:24=E2=80=AFAM Guo Ren <guoren@kernel.org>=
+ wrote:
+> >>>>> On Tue, May 28, 2024 at 11:18=E2=80=AFPM Alexandre Ghiti <alexghiti=
+@rivosinc.com> wrote:
+> >>>>>> In order to produce a generic kernel, a user can select
+> >>>>>> CONFIG_QUEUED_SPINLOCKS which will fallback at runtime to the tick=
+et
+> >>>>>> spinlock implementation if Zabha is not present.
+> >>>>>>
+> >>>>>> Note that we can't use alternatives here because the discovery of
+> >>>>>> extensions is done too late and we need to start with the qspinloc=
+k
+> >>>>>> implementation because the ticket spinlock implementation would po=
+llute
+> >>>>>> the spinlock value, so let's use static keys.
+> >>> Zabha is not a prerequisite for qspinlock; the prerequisite for
+> >>> qspinlock is the *forward progress guarantee* in the atomic operation
+> >>> loop during intense contention. Even with Zabha enabled to meet the
+> >>> requirements of xchg_tail, that still only applies when the number of
+> >>> CPUs is less than 16K. The qspinlock uses cmpxchg loop instead of
+> >>> xchg_tail when the number of cores is more than 16K. Thus, hardware
+> >>> support for Zabha does not equate to the safe use of qspinlock.
+> >>
+> >> But if we have Zacas to implement cmpxchg(), we still provide the
+> >> "forward progress guarantee" then right? Let me know if I missed somet=
+hing.
+> > The qspinlock needs a "forward progress guarantee," not Zacas, and
+> > Zabha could give a guarantee to qspinlock xchg_tail (CPUs < 16K) with
+> > AMOSWAP.H instruction. But, using "LR/SC pairs" also could give enough
+> > fwd guarantee that depends on the micro-arch design of the riscv core.
+> > I think the help of AMO instead of LR/SC is it could off-load AMO
+> > operations from LSU to CIU(Next Level Cache or Interconnect), which
+> > gains better performance. "LR/SC pairs" only provide Near-Atomic, but
+> > AMO gives Far-Atomic additionally.
+>
+>
+> I understand qspinlocks require forward progress and that your company's
+> LR/SC implementations provide such guarantee, I'm not arguing against
+> your new extension proposal.
+>
+> It seemed to me in your previous message that you implied that when
+> NR_CPUS > 16k, we should not use qspinlocks. My question was: "Don't
+> Zacas provide such guarantee"? I think it does, so qspinlocks should
+> actually depend on Zabha *and* Zacas. Is that correct to you?
+See kernel/locking/qspinlock.c
+#if _Q_PENDING_BITS =3D=3D 8 (NR_CPUS < 16K)
+static __always_inline u32 xchg_tail(struct qspinlock *lock, u32 tail)
+{
+        /*
+         * We can use relaxed semantics since the caller ensures that the
+         * MCS node is properly initialized before updating the tail.
+         */
+        return (u32)xchg_relaxed(&lock->tail,
+                                 tail >> _Q_TAIL_OFFSET) << _Q_TAIL_OFFSET;
+}
+#else /* NR_CPUS >=3D 16K */
+static __always_inline u32 xchg_tail(struct qspinlock *lock, u32 tail)
+{
+        u32 old, new;
 
-On 01/06/24 08:22AM, Christoph Hellwig wrote:
->On Mon, May 20, 2024 at 03:50:20PM +0530, Nitesh Shetty wrote:
->> +	if (blk_rq_nr_phys_segments(req) != BLK_COPY_MAX_SEGMENTS)
->> +		return BLK_STS_IOERR;
->
->This sounds like BLK_COPY_MAX_SEGMENTS is misnamed.  Right now this is
->not a max segments, but the exact number of segments required.
->
-We will move this check to block layer, with name
-BLK_COPY_TOTAL_SEGMENTS.
+        old =3D atomic_read(&lock->val);
+        do {
+                new =3D (old & _Q_LOCKED_PENDING_MASK) | tail;
+                /*
+                 * We can use relaxed semantics since the caller ensures th=
+at
+                 * the MCS node is properly initialized before updating the
+                 * tail.
+                 */
+        } while (!atomic_try_cmpxchg_relaxed(&lock->val, &old, new));
 
->>  /*
->>   * Recommended frequency for KATO commands per NVMe 1.4 section 7.12.1:
->> - *
->> + *
->
->Please submit this whitespace fix separately.
->
->> diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
->> index 8b1edb46880a..1c5974bb23d5 100644
->> --- a/include/linux/blkdev.h
->> +++ b/include/linux/blkdev.h
->> @@ -1287,6 +1287,7 @@ static inline unsigned int bdev_discard_granularity(struct block_device *bdev)
->>
->>  /* maximum copy offload length, this is set to 128MB based on current testing */
->>  #define BLK_COPY_MAX_BYTES		(1 << 27)
->> +#define BLK_COPY_MAX_SEGMENTS		2
->
->... and this doesn't belong into a NVMe patch.  I'd also expect that
->the block layer would verify this before sending of the request to the driver.
->
-Acked
+        return old;
+}
+#endif
 
->> diff --git a/include/linux/nvme.h b/include/linux/nvme.h
->> index 425573202295..5275a0962a02 100644
->> --- a/include/linux/nvme.h
->> +++ b/include/linux/nvme.h
+Look! You, Zacas, still need an additional FWD guarantee to break the
+loop. That is, how *stickiness* your cache line is?
+
 >
->Note that we've usually kept adding new protocol bits to nvme.h separate
->from the implementation in the host or target code.
+> Let me know if I misunderstood something again.
 >
-Acked, will move it to a separate patch.
+> Thanks,
+>
+> Alex
+>
+>
+> >
+> >
+> >> Thanks,
+> >>
+> >> Alex
+> >>
+> >>
+> >>> Therefore, I would like to propose a new ISA extension: Zafpg(Atomic
+> >>> Forward Progress Guarantee). If RISC-V vendors can ensure the progres=
+s
+> >>> of LR/SC or CMPXCHG LOOP at the microarchitectural level or if cache
+> >>> lines are sufficiently sticky, they could then claim support for this
+> >>> extension. Linux could then select different spinlock implementations
+> >>> based on this extension's support or not.
+> >>>
+> >>>>>> This is largely based on Guo's work and Leonardo reviews at [1].
+> >>>>>>
+> >>>>>> Link: https://lore.kernel.org/linux-riscv/20231225125847.2778638-1=
+-guoren@kernel.org/ [1]
+> >>>>>> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+> >>>>>> ---
+> >>>>>>    .../locking/queued-spinlocks/arch-support.txt |  2 +-
+> >>>>>>    arch/riscv/Kconfig                            |  1 +
+> >>>>>>    arch/riscv/include/asm/Kbuild                 |  4 +-
+> >>>>>>    arch/riscv/include/asm/spinlock.h             | 39 ++++++++++++=
++++++++
+> >>>>>>    arch/riscv/kernel/setup.c                     | 18 +++++++++
+> >>>>>>    include/asm-generic/qspinlock.h               |  2 +
+> >>>>>>    include/asm-generic/ticket_spinlock.h         |  2 +
+> >>>>>>    7 files changed, 66 insertions(+), 2 deletions(-)
+> >>>>>>    create mode 100644 arch/riscv/include/asm/spinlock.h
+> >>>>>>
+> >>>>>> diff --git a/Documentation/features/locking/queued-spinlocks/arch-=
+support.txt b/Documentation/features/locking/queued-spinlocks/arch-support.=
+txt
+> >>>>>> index 22f2990392ff..cf26042480e2 100644
+> >>>>>> --- a/Documentation/features/locking/queued-spinlocks/arch-support=
+.txt
+> >>>>>> +++ b/Documentation/features/locking/queued-spinlocks/arch-support=
+.txt
+> >>>>>> @@ -20,7 +20,7 @@
+> >>>>>>        |    openrisc: |  ok  |
+> >>>>>>        |      parisc: | TODO |
+> >>>>>>        |     powerpc: |  ok  |
+> >>>>>> -    |       riscv: | TODO |
+> >>>>>> +    |       riscv: |  ok  |
+> >>>>>>        |        s390: | TODO |
+> >>>>>>        |          sh: | TODO |
+> >>>>>>        |       sparc: |  ok  |
+> >>>>>> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> >>>>>> index 184a9edb04e0..ccf1703edeb9 100644
+> >>>>>> --- a/arch/riscv/Kconfig
+> >>>>>> +++ b/arch/riscv/Kconfig
+> >>>>>> @@ -59,6 +59,7 @@ config RISCV
+> >>>>>>           select ARCH_SUPPORTS_SHADOW_CALL_STACK if HAVE_SHADOW_CA=
+LL_STACK
+> >>>>>>           select ARCH_USE_MEMTEST
+> >>>>>>           select ARCH_USE_QUEUED_RWLOCKS
+> >>>>>> +       select ARCH_USE_QUEUED_SPINLOCKS if TOOLCHAIN_HAS_ZABHA
+> >>>>> Using qspinlock or not depends on real hardware capabilities, not t=
+he
+> >>>>> compiler flag. That's why I introduced combo-spinlock, ticket-spinl=
+ock
+> >>>>> & qspinlock three Kconfigs, and the combo-spinlock would compat all
+> >>>>> hardware platforms but waste some qspinlock code size.
+> >>>> You're right, and I think your comment matches what Conor mentioned
+> >>>> about the lack of clarity with some extensions: TOOLCHAIN_HAS_ZABHA
+> >>>> will allow a platform with Zabha capability to use qspinlocks. But i=
+f
+> >>>> the hardware does not, it will fallback to the ticket spinlocks.
+> >>>>
+> >>>> But I agree that looking at the config alone may be misleading, even
+> >>>> though it will work as expected at runtime. So I agree with you:
+> >>>> unless anyone is strongly against the combo spinlocks, I will do wha=
+t
+> >>>> you suggest and add them.
+> >>>>
+> >>>> Thanks again for your initial work,
+> >>>>
+> >>>> Alex
+> >>>>
+> >>>>>>           select ARCH_USES_CFI_TRAPS if CFI_CLANG
+> >>>>>>           select ARCH_WANT_BATCHED_UNMAP_TLB_FLUSH if SMP && MMU
+> >>>>>>           select ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT if MMU
+> >>>>>> diff --git a/arch/riscv/include/asm/Kbuild b/arch/riscv/include/as=
+m/Kbuild
+> >>>>>> index 504f8b7e72d4..ad72f2bd4cc9 100644
+> >>>>>> --- a/arch/riscv/include/asm/Kbuild
+> >>>>>> +++ b/arch/riscv/include/asm/Kbuild
+> >>>>>> @@ -2,10 +2,12 @@
+> >>>>>>    generic-y +=3D early_ioremap.h
+> >>>>>>    generic-y +=3D flat.h
+> >>>>>>    generic-y +=3D kvm_para.h
+> >>>>>> +generic-y +=3D mcs_spinlock.h
+> >>>>>>    generic-y +=3D parport.h
+> >>>>>> -generic-y +=3D spinlock.h
+> >>>>>>    generic-y +=3D spinlock_types.h
+> >>>>>> +generic-y +=3D ticket_spinlock.h
+> >>>>>>    generic-y +=3D qrwlock.h
+> >>>>>>    generic-y +=3D qrwlock_types.h
+> >>>>>> +generic-y +=3D qspinlock.h
+> >>>>>>    generic-y +=3D user.h
+> >>>>>>    generic-y +=3D vmlinux.lds.h
+> >>>>>> diff --git a/arch/riscv/include/asm/spinlock.h b/arch/riscv/includ=
+e/asm/spinlock.h
+> >>>>>> new file mode 100644
+> >>>>>> index 000000000000..e00429ac20ed
+> >>>>>> --- /dev/null
+> >>>>>> +++ b/arch/riscv/include/asm/spinlock.h
+> >>>>>> @@ -0,0 +1,39 @@
+> >>>>>> +/* SPDX-License-Identifier: GPL-2.0 */
+> >>>>>> +
+> >>>>>> +#ifndef __ASM_RISCV_SPINLOCK_H
+> >>>>>> +#define __ASM_RISCV_SPINLOCK_H
+> >>>>>> +
+> >>>>>> +#ifdef CONFIG_QUEUED_SPINLOCKS
+> >>>>>> +#define _Q_PENDING_LOOPS       (1 << 9)
+> >>>>>> +
+> >>>>>> +#define __no_arch_spinlock_redefine
+> >>>>>> +#include <asm/ticket_spinlock.h>
+> >>>>>> +#include <asm/qspinlock.h>
+> >>>>>> +#include <asm/alternative.h>
+> >>>>>> +
+> >>>>>> +DECLARE_STATIC_KEY_TRUE(qspinlock_key);
+> >>>>>> +
+> >>>>>> +#define SPINLOCK_BASE_DECLARE(op, type, type_lock)               =
+      \
+> >>>>>> +static __always_inline type arch_spin_##op(type_lock lock)       =
+      \
+> >>>>>> +{                                                                =
+      \
+> >>>>>> +       if (static_branch_unlikely(&qspinlock_key))               =
+      \
+> >>>>>> +               return queued_spin_##op(lock);                    =
+      \
+> >>>>>> +       return ticket_spin_##op(lock);                            =
+      \
+> >>>>>> +}
+> >>>>>> +
+> >>>>>> +SPINLOCK_BASE_DECLARE(lock, void, arch_spinlock_t *)
+> >>>>>> +SPINLOCK_BASE_DECLARE(unlock, void, arch_spinlock_t *)
+> >>>>>> +SPINLOCK_BASE_DECLARE(is_locked, int, arch_spinlock_t *)
+> >>>>>> +SPINLOCK_BASE_DECLARE(is_contended, int, arch_spinlock_t *)
+> >>>>>> +SPINLOCK_BASE_DECLARE(trylock, bool, arch_spinlock_t *)
+> >>>>>> +SPINLOCK_BASE_DECLARE(value_unlocked, int, arch_spinlock_t)
+> >>>>>> +
+> >>>>>> +#else
+> >>>>>> +
+> >>>>>> +#include <asm/ticket_spinlock.h>
+> >>>>>> +
+> >>>>>> +#endif
+> >>>>>> +
+> >>>>>> +#include <asm/qrwlock.h>
+> >>>>>> +
+> >>>>>> +#endif /* __ASM_RISCV_SPINLOCK_H */
+> >>>>>> diff --git a/arch/riscv/kernel/setup.c b/arch/riscv/kernel/setup.c
+> >>>>>> index 4f73c0ae44b2..31ce75522fd4 100644
+> >>>>>> --- a/arch/riscv/kernel/setup.c
+> >>>>>> +++ b/arch/riscv/kernel/setup.c
+> >>>>>> @@ -244,6 +244,23 @@ static void __init parse_dtb(void)
+> >>>>>>    #endif
+> >>>>>>    }
+> >>>>>>
+> >>>>>> +DEFINE_STATIC_KEY_TRUE(qspinlock_key);
+> >>>>>> +EXPORT_SYMBOL(qspinlock_key);
+> >>>>>> +
+> >>>>>> +static void __init riscv_spinlock_init(void)
+> >>>>>> +{
+> >>>>>> +       asm goto(ALTERNATIVE("nop", "j %[qspinlock]", 0, RISCV_ISA=
+_EXT_ZABHA, 1)
+> >>>>>> +                : : : : qspinlock);
+> >>>>>> +
+> >>>>>> +       static_branch_disable(&qspinlock_key);
+> >>>>>> +       pr_info("Ticket spinlock: enabled\n");
+> >>>>>> +
+> >>>>>> +       return;
+> >>>>>> +
+> >>>>>> +qspinlock:
+> >>>>>> +       pr_info("Queued spinlock: enabled\n");
+> >>>>>> +}
+> >>>>>> +
+> >>>>>>    extern void __init init_rt_signal_env(void);
+> >>>>>>
+> >>>>>>    void __init setup_arch(char **cmdline_p)
+> >>>>>> @@ -295,6 +312,7 @@ void __init setup_arch(char **cmdline_p)
+> >>>>>>           riscv_set_dma_cache_alignment();
+> >>>>>>
+> >>>>>>           riscv_user_isa_enable();
+> >>>>>> +       riscv_spinlock_init();
+> >>>>>>    }
+> >>>>>>
+> >>>>>>    bool arch_cpu_is_hotpluggable(int cpu)
+> >>>>>> diff --git a/include/asm-generic/qspinlock.h b/include/asm-generic=
+/qspinlock.h
+> >>>>>> index 0655aa5b57b2..bf47cca2c375 100644
+> >>>>>> --- a/include/asm-generic/qspinlock.h
+> >>>>>> +++ b/include/asm-generic/qspinlock.h
+> >>>>>> @@ -136,6 +136,7 @@ static __always_inline bool virt_spin_lock(str=
+uct qspinlock *lock)
+> >>>>>>    }
+> >>>>>>    #endif
+> >>>>>>
+> >>>>>> +#ifndef __no_arch_spinlock_redefine
+> >>>>>>    /*
+> >>>>>>     * Remapping spinlock architecture specific functions to the co=
+rresponding
+> >>>>>>     * queued spinlock functions.
+> >>>>>> @@ -146,5 +147,6 @@ static __always_inline bool virt_spin_lock(str=
+uct qspinlock *lock)
+> >>>>>>    #define arch_spin_lock(l)              queued_spin_lock(l)
+> >>>>>>    #define arch_spin_trylock(l)           queued_spin_trylock(l)
+> >>>>>>    #define arch_spin_unlock(l)            queued_spin_unlock(l)
+> >>>>>> +#endif
+> >>>>>>
+> >>>>>>    #endif /* __ASM_GENERIC_QSPINLOCK_H */
+> >>>>>> diff --git a/include/asm-generic/ticket_spinlock.h b/include/asm-g=
+eneric/ticket_spinlock.h
+> >>>>>> index cfcff22b37b3..325779970d8a 100644
+> >>>>>> --- a/include/asm-generic/ticket_spinlock.h
+> >>>>>> +++ b/include/asm-generic/ticket_spinlock.h
+> >>>>>> @@ -89,6 +89,7 @@ static __always_inline int ticket_spin_is_conten=
+ded(arch_spinlock_t *lock)
+> >>>>>>           return (s16)((val >> 16) - (val & 0xffff)) > 1;
+> >>>>>>    }
+> >>>>>>
+> >>>>>> +#ifndef __no_arch_spinlock_redefine
+> >>>>>>    /*
+> >>>>>>     * Remapping spinlock architecture specific functions to the co=
+rresponding
+> >>>>>>     * ticket spinlock functions.
+> >>>>>> @@ -99,5 +100,6 @@ static __always_inline int ticket_spin_is_conte=
+nded(arch_spinlock_t *lock)
+> >>>>>>    #define arch_spin_lock(l)              ticket_spin_lock(l)
+> >>>>>>    #define arch_spin_trylock(l)           ticket_spin_trylock(l)
+> >>>>>>    #define arch_spin_unlock(l)            ticket_spin_unlock(l)
+> >>>>>> +#endif
+> >>>>>>
+> >>>>>>    #endif /* __ASM_GENERIC_TICKET_SPINLOCK_H */
+> >>>>>> --
+> >>>>>> 2.39.2
+> >>>>>>
+> >>>>> --
+> >>>>> Best Regards
+> >>>>>    Guo Ren
+> >>>
+> >
+> >
 
-Thank you,
-Nitesh Shetty
-
-------Fualeei1.f5fhWGYL679EBd0hH5-OLgtfrOtH6wInDZGwDEe=_52166_
-Content-Type: text/plain; charset="utf-8"
 
 
-------Fualeei1.f5fhWGYL679EBd0hH5-OLgtfrOtH6wInDZGwDEe=_52166_--
+--=20
+Best Regards
+ Guo Ren
 
