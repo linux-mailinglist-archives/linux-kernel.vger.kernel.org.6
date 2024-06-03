@@ -1,102 +1,238 @@
-Return-Path: <linux-kernel+bounces-199354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA3178D85EF
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:22:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 829AB8D85F1
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:22:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26D871C21827
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:22:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC5FFB22738
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:22:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1206E1304B1;
-	Mon,  3 Jun 2024 15:22:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB6731304AF;
+	Mon,  3 Jun 2024 15:22:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pIvjks5A"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="FCviUm6O"
+Received: from smtp-8fab.mail.infomaniak.ch (smtp-8fab.mail.infomaniak.ch [83.166.143.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48B506E619;
-	Mon,  3 Jun 2024 15:22:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBC2B6E619
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 15:22:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717428134; cv=none; b=gLhzB2cx4MV4qI3QoqvugY1WxcYjNwv60vYRzSp7u8ZGzzhfxgsrMCKLgoeGcfds7TkJNHP56unJKX04W3ivm3jVPb7BoNF+UAubM9fQIj8D9yXPVHUxlKmSHAk8DQ2bqiPxe8BhAQF5cmWPmD9blhVf5sIe/8aEYx3gBDxiXV8=
+	t=1717428151; cv=none; b=AcA5V02m/DEkJvDIu7GQlEJ/9mrpm7TbzEjpCGG8PibeXvFFo/nK5Dd/p7oh6hVM4K3G6QxWt5Y7FY8vWwbsBv9vgbecghLcE0HqY2gWnAsVUpdjnm9q6l4/HJVpEyd6aQhMAa8IJLLoKkSlcgfuOJCwNX9bZ1K8rwN1bB/q/U0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717428134; c=relaxed/simple;
-	bh=aA3t6AtzH0dxyZQ/b6e+4u91SqW6efiyYat2JPiMyI8=;
+	s=arc-20240116; t=1717428151; c=relaxed/simple;
+	bh=/mjcv62h20/YuCxxk+v08bUG5s4jmTFwSRETq+kYZyY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZN6/hgM1441b7AFV9jKZnUKr/vpRm48oVMX4vTpDG8D8NAXXJJGURiUUKvB9Si8INFZzsUQTelqnHmC/JpnEvAG+0iAVsJUC8chWaY/yEEq0eGq7JYT2ZXBK/3Hte7YN/7mrWbtFhnCo0Ui+tdqjKx7i4P88oI+8P1Q+0qlZMag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pIvjks5A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28907C2BD10;
-	Mon,  3 Jun 2024 15:22:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717428133;
-	bh=aA3t6AtzH0dxyZQ/b6e+4u91SqW6efiyYat2JPiMyI8=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=LNqCA4ON+Sn7ZgD7Q1xuQonY6PEb/g0Vzt9FW39kuRKtMv6h1D2Ra0z4s0B/Sr3bW34wZ3tae5n0nnJyI7SwI4lEXtb1CQO6VYZY8FzTsh+gDk38U2enVl6H197wiOoogXFchzG9uip/scxImrc5D3E5h+yi2dKJvr3EpV1/A4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=FCviUm6O; arc=none smtp.client-ip=83.166.143.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4VtHXC0M63zslV;
+	Mon,  3 Jun 2024 17:22:19 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1717428138;
+	bh=f72YWsPTvzhPYR8mlANeq/hcliyb10E3qJT1dzHyWlE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pIvjks5AoVluZfMA3Wk1JSJx5EKY7pa3A1J4ZhCIrg2F2O4YJaaX3Y0PEgvU/A54H
-	 pN7aEdp26lB4WkY+0vcGW0ACK/XdJLtAle+GdYrKH0gpDijiwSCzHCUISPnkrf0ML4
-	 S5xsR3cFB4rl7qqJqxk+AyK5FVwQAyLI7zgU1ksITHmA+ZwS4n4SgZSJRKm/Kp3swh
-	 ttagu9cBARvcc/pqd8PoojnUrBkdCZmpyec0F/jkBnnvM6QNCyCOtfTtnC1Kqo5WIA
-	 jaYODqMk6ZevJHHfnQPHCFLpCFehe7m/uMDWiM7ShLmIWvhXYuuZV7y4MQEJrEpIhR
-	 q5Rx/dNQqGPbA==
-Date: Mon, 3 Jun 2024 16:22:08 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Ricard Wanderlof <ricard.wanderlof@axis.com>
-Cc: Shenghao Ding <shenghao-ding@ti.com>, Kevin Lu <kevin-lu@ti.com>,
-	Baojun Xu <baojun.xu@ti.com>, Liam Girdwood <lgirdwood@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, alsa-devel@alsa-project.org,
-	linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel@axis.com
-Subject: Re: [PATCH] dt-bindings: sound: tlv320adc3xxx: Fix incorrect GPIO
- description
-Message-ID: <d8da45ee-d996-4043-9bc9-f94df52540f6@sirena.org.uk>
-References: <20240528-tlv320adc3xxx-dt-gpio-fix-v1-1-209fb2c2f86f@axis.com>
+	b=FCviUm6OSZIQsFmYeFMuIVZSwN3n7uizhrCyJkHYNEMuBhApx6FQ67CDILxyskfop
+	 aVAyh5a/QaxyW5HZqgTV0n+wufcPEfHn7T9x3Uhpb8+S66FQgwXnapRugQg/6mMUQc
+	 oPo+VOLyV3QwXGr/GGUFWisYCXLdGXACc30gwVBA=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4VtHX95W5szJ1K;
+	Mon,  3 Jun 2024 17:22:17 +0200 (CEST)
+Date: Mon, 3 Jun 2024 17:22:12 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Tahera Fahimi <fahimitahera@gmail.com>
+Cc: aul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E.Hallyn" <serge@hallyn.com>, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, outreachy@lists.linux.dev, netdev@vger.kernel.org, 
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Jann Horn <jannh@google.com>, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Subject: Re: [PATCH v2] landlock: Add abstract unix socket connect
+ restrictions
+Message-ID: <20240603.Quaes2eich5f@digikod.net>
+References: <ZgX5TRTrSDPrJFfF@tahera-OptiPlex-5000>
+ <20240401.ieC2uqua5sha@digikod.net>
+ <ZhcRnhVKFUgCleDi@tahera-OptiPlex-5000>
+ <20240411.ahgeefeiNg4i@digikod.net>
+ <ZlkIAIpWG/l64Pl9@tahera-OptiPlex-5000>
+ <20240531.Ahg5aap6caeG@digikod.net>
+ <ZlotXL4sfY5Ez3I5@tahera-OptiPlex-5000>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="QVLkXQLHvp1n2raV"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240528-tlv320adc3xxx-dt-gpio-fix-v1-1-209fb2c2f86f@axis.com>
-X-Cookie: Don't let your status become too quo!
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZlotXL4sfY5Ez3I5@tahera-OptiPlex-5000>
+X-Infomaniak-Routing: alpha
 
+OK, thanks to your examples I found some issues with this "send/recv"
+design.  A sandboxed process should not be able to block actions on
+its own socket from a higher privileged domain (or a process without
+domain).  One issue is that if a domain D2 denies access (to its
+abstract unix sockets) to its parent D1, processes without domains (e.g.
+parent of D1) should not be restricted in any way.  Furthermore, it
+should not be possible for a process to enforce such restriction if it
+is not already sandboxed in a domain.  Implementing such mechanism would
+require to add exceptions, which makes this design inconsistent.
 
---QVLkXQLHvp1n2raV
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Let's get back to the initial "scope" design, which is simpler and
+consistent with the ptrace restrictions.  Sorry for the back and forth.
+This discussions will be useful for the rationale though. ;)
+I kept the relevant parts:
 
-On Tue, May 28, 2024 at 05:40:04PM +0200, Ricard Wanderlof wrote:
-> Fix the description for the ti,dmdin-gpio1 and ti,dmclk-gpio2
-> properties to correctly describe that when configured as general
-> purpose outputs (ADC3XXX_GPIO_GPO), the pins are available via
-> the GPIO framework.
+On Fri, May 31, 2024 at 02:04:44PM -0600, Tahera Fahimi wrote:
+> On Fri, May 31, 2024 at 11:39:12AM +0200, Mickaël Salaün wrote:
+> > On Thu, May 30, 2024 at 05:13:04PM -0600, Tahera Fahimi wrote:
+> > > On Tue, Apr 30, 2024 at 05:24:45PM +0200, Mickaël Salaün wrote:
+> > > > On Wed, Apr 10, 2024 at 04:24:30PM -0600, Tahera Fahimi wrote:
+> > > > > On Tue, Apr 02, 2024 at 11:53:09AM +0200, Mickaël Salaün wrote:
 
-Please submit patches using subject lines reflecting the style for the
-subsystem, this makes it easier for people to identify relevant patches.
-Look at what existing commits in the area you're changing are doing and
-make sure your subject lines visually resemble what they're doing.
-There's no need to resubmit to fix this alone.
+[...]
 
---QVLkXQLHvp1n2raV
-Content-Type: application/pgp-signature; name="signature.asc"
+> > > > > > Because of compatibility reasons, and because Landlock should be
+> > > > > > flexible, we need to extend the user space interface.  As explained in
+> > > > > > the GitHub issue, we need to add a new "scoped" field to the
+> > > > > > landlock_ruleset_attr struct. This field will optionally contain a
+> > > > > > LANDLOCK_RULESET_SCOPED_ABSTRACT_UNIX_SOCKET flag to specify that this
+> > > > > > ruleset will deny any connection from within the sandbox to its parents
+> > > > > > (i.e. any parent sandbox or not-sandboxed processes).
+> > > > 
+> > > > > Thanks for the feedback. Here is what I understood, please correct me if
+> > > > > I am wrong. First, I should add another field to the
+> > > > > landlock_ruleset_attr (a field like handled_access_net, but for the unix
+> > > > > sockets) with a flag LANDLOCK_ACCESS_UNIX_CONNECT (it is a flag like
+> > > > > LANDLOCK_ACCESS_NET_CONNECT_TCP but fot the unix sockets connect).
 
------BEGIN PGP SIGNATURE-----
+Yes, but the field's name should be "scoped", and it will only accept a
+LANDLOCK_RULESET_SCOPED_ABSTRACT_UNIX_SOCKET flag.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZd358ACgkQJNaLcl1U
-h9CLzQf/b+lwQaBGqVNATDsBF2IwxA1qUDV5bLz/4HDHSc5OhqKJ0IvCZmP0ZeVb
-RktIPoEpdLDxtlQZgleTML5wFRFTsQabYXOFxOihSj7l+FNAqaH8I/CeibarFAXk
-+OSKfIsJADrycI7tLfOjcVcX4pmlkiNKOrfNOSOtMiEWhVjDCdPxiovYb1x01lVA
-5YsXXa1vz7oLXY3WY2VaVBirsmWVN/pGQktSvSRFBb0nfzawbBJIHeMC94UQKp7F
-Th+f+F7QU0cuxAONGIKXF9GGkuXL9GJ6vJzs/pfaixWv9ASwC7gye9prfpGQYVnI
-9jS/EKt7f1EEQbL9pRFpm/+qc1zhPA==
-=2QNh
------END PGP SIGNATURE-----
+This is a bit different than handled_access_net because there is no rule
+that would accept LANDLOCK_RULESET_SCOPED_ABSTRACT_UNIX_SOCKET (i.e. it
+is a restriction-only).
 
---QVLkXQLHvp1n2raV--
+Without LANDLOCK_RULESET_SCOPED_ABSTRACT_UNIX_SOCKET, the current
+behavior should not be changed.  This should be covered with appropriate
+tests.
+
+Taking the following examples for domains with
+LANDLOCK_RULESET_SCOPED_ABSTRACT_UNIX_SOCKET, we get the same
+restrictions as with ptrace:
+
+[...]
+
+> /*
+>  *        No domain
+>  *
+>  *   P1-.               P1 -> P2 : allow
+>  *       \              P2 -> P1 : allow
+>  *        'P2
+>  */
+
+This is still correct.
+
+> /*
+>  *        Child domain:
+>  *
+>  *   P1--.              P1 -> P2 : deny
+>  *        \             P2 -> P1 : deny
+>  *        .'-----.
+>  *        |  P2  |
+>  *        '------'
+>  */
+
+With the "scoped" approach:
+P1 -> P2: allow
+P2 -> P1: deny
+
+> /*
+>  *        Parent domain
+>  * .------.
+>  * |  P1  --.           P1 -> P2 : allow
+>  * '------'  \          P2 -> P1 : allow
+>  *            '
+>  *            P2
+>  */
+
+With the "scoped" approach:
+P1 -> P2: deny
+P2 -> P1: allow
+
+Indeed, only the domain hierarchy matters, not the process hierarchy.
+This works the same way with ptrace restrictions.
+
+> /*
+>  *        Parent + child domain(inherited)
+>  * .------.
+>  * |  P1  ---.          P1 -> P2 : deny
+>  * '------'   \         P2 -> P1 : deny
+>  *         .---'--.
+>  *         |  P2  |
+>  *         '------'
+>  */
+
+This is still correct.
+
+> /*
+>  *         Same domain (sibling)
+>  * .-------------.
+>  * | P1----.     |      P1 -> P2 : allow
+>  * |        \    |      P2 -> P1 : allow
+>  * |         '   |
+>  * |         P2  |
+>  * '-------------'
+>  */
+
+This is still correct.
+
+> /*
+>  *         Inherited + child domain
+>  * .-----------------.
+>  * |  P1----.        |  P1 -> P2 : deny
+>  * |         \       |  P2 -> P1 : deny
+>  * |        .-'----. |
+>  * |        |  P2  | |
+>  * |        '------' |
+>  * '-----------------'
+>  */
+
+With the "scoped" approach:
+P1 -> P2: allow
+P2 -> P1: deny
+
+> /*
+>  *         Inherited + parent domain
+>  * .-----------------.
+>  * |.------.         |  P1 -> P2 : allow
+>  * ||  P1  ----.     |  P2 -> P1 : allow
+>  * |'------'    \    |
+>  * |             '   |
+>  * |             P2  |
+>  * '-----------------'
+>  */
+
+With the "scoped" approach:
+P1 -> P2: deny
+P2 -> P1: allow
+
+> /*
+>  *         Inherited + parent and child domain
+>  * .-----------------.
+>  * | .------.        |  P1 -> P2 : deny
+>  * | |  P1  .        |  P2 -> P1 : deny
+>  * | '------'\       |
+>  * |          \      |
+>  * |        .--'---. |
+>  * |        |  P2  | |
+>  * |        '------' |
+>  * '-----------------'
+>  */
+
+This is still correct.
 
