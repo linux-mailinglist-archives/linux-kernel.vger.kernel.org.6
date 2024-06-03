@@ -1,270 +1,210 @@
-Return-Path: <linux-kernel+bounces-199685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 042EC8D8ADA
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 22:26:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B46628D8ADE
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 22:30:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20B161C23829
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 20:26:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89B811C23869
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 20:29:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACDF013B2B2;
-	Mon,  3 Jun 2024 20:26:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A933D13B5A6;
+	Mon,  3 Jun 2024 20:29:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="a+DPStpo"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CIgKQPSs"
+Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 119A9136E17
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 20:26:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4028B4BAA6;
+	Mon,  3 Jun 2024 20:29:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717446403; cv=none; b=WjsMP6o48qUwA/KnC07n3EDDAO3RzGxir3MKI6H4LSTtYVtcp5FPEpOxDvzZLrAyf1DJGGjscCKL1XuSWdgY754ZCSUrNYEgRjlF6d5DsseoLB5e+IbVZLf52r5nj/TLqmY8TausZ4aPTY1PvDsVvIo/MDcYw2pUIEAQsktXxFs=
+	t=1717446588; cv=none; b=YBa3leX5rVfq6oQjWk1FGNcLdvqAN+WhwYuKVAAC9a3xzO7Qg6gQb48UT56mUB353oc3VvnTbmzqIWZZE/uUNMXkv5HjLAGMLUjprGbtK3JvGXmvVKmQ/g29pVJuTLmn/3qfWT9AkYubl89JCufA+TJYny9MP2GW3bcEC6YCPso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717446403; c=relaxed/simple;
-	bh=6KED2x1S/AF4bVjAfBoJ8Vqth9qeQwkpN4AMgVXZgRw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kO86mYckTg9O26HMQr1pyvb+vUS+17VVRbRJaDuDXokWyWAXI6AphFJRqTGtuLas4Z+JMwHyHsjZWifpZ4zFmO7QlWFTDxMWmpPnrnPz14XukUaIMBgNz7DpEjCqOgP6tO4D/JHZahFDNs/rhPlwXRpNjrkT8XiYL18/BUZX87o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=a+DPStpo; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717446401;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V+S0TmYnUWJsVE+qAIQ7Ikzh2XCDPu61uY5s9c+MZA8=;
-	b=a+DPStpouAuafEt3rHPtqOeCIbfD1EWFskEvo69d48jC0C2ZI+vPYpslT50+DaWxEoQiSN
-	OOjEbGczmvz9lBZk82rrWpKFKgZpyk6zUZyErD6b+s3eRAGkPyxzb/OleWsK5gOUhJEqbN
-	SisMvy36lJMo88eEIwLVIWvMdDm6dco=
-Received: from mail-oi1-f200.google.com (mail-oi1-f200.google.com
- [209.85.167.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-52-MR4QUJ_zMY-4zB9-Lr-mTA-1; Mon, 03 Jun 2024 16:26:39 -0400
-X-MC-Unique: MR4QUJ_zMY-4zB9-Lr-mTA-1
-Received: by mail-oi1-f200.google.com with SMTP id 5614622812f47-3d1bdefedb9so673432b6e.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 13:26:39 -0700 (PDT)
+	s=arc-20240116; t=1717446588; c=relaxed/simple;
+	bh=j3gfTKddyYWmSxXQuoNeqUkMME14BCZN3zYIx14emZI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=u3nYVN5UxhzpfabPNsvmAKlW158Qw2NAtrGWrLD1+whytjN3zGzn/QxqwNkfYKDzQpAks0LALcMaQPckVQGTky/B4OWGQ9V3v4ZD/mLeCFr8I43Vxht9Po6wsFPwhrq5VmL5w3ovZN0s2Hy8VRQfjmp6bDHS0tIi6a4c+vWuD7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CIgKQPSs; arc=none smtp.client-ip=209.85.217.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-48bc4350b19so117088137.2;
+        Mon, 03 Jun 2024 13:29:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717446586; x=1718051386; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5X2AoY/lQVZz1FKCa6KHvqy44zzQ3mhz+ruaolMEMaw=;
+        b=CIgKQPSsPWAcarOJaRigCbKR+zq29KpWz8a+jmm17mqJpFPCt/Mqs9mpufx2Qu6sXC
+         nL1bUPZPlBiKAY22lRqq16AWCEsn4IsvD7uVEWWTNaeJPAabCxYVRw1uv5A5ZH2zPfMF
+         o7fwnM2FPZTYlq9izkvEEOT8byIcWkCbJtoFRUtgOcOFK/JsIDY4OIie/fDJzIkmpJv1
+         6eyb7YNbo0r/eZn0zzBgymutBz4QWaIO+lxdzowRKJSA0mhaAwLE52BrsURwnOnE8nFz
+         WlwSUbUq17GrUbf13mUiGkCFlN9W6pkXIlJCmsalk7racxvNuTuTdFu6fpcoPlxR/aNe
+         wa5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717446399; x=1718051199;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1717446586; x=1718051386;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=V+S0TmYnUWJsVE+qAIQ7Ikzh2XCDPu61uY5s9c+MZA8=;
-        b=Oi7ZO237e5SG9HIK6gRUNeHporqxBU4GCYO/+Owz7rqb6d1yC1BGcZcGMwNtpOC4e2
-         HTvOztnKMMcdS6QTfSyaDx4717NSOPx5oKlWttR2fgTcKnqodYs0dGvgYSQ0d6Hb4knB
-         NlFxS7JBU8wGE2LZ+c0T83RhWeTwYzyBYVLsttgz6hbnvyxdhc+PIbHLLkmMM+33KWZf
-         yIV6fXIat3iSpVy9MaVOg8LcpUU1tVcMnST8h1MVqTNIMTtYMya/TNGrkP2kRDH73yQx
-         5aLeUZj2L3tGluOsx2m0bzUdoTH1T9hSQSELQrMLBAv7ExnKx9uqToKSsp+YyfXG4+zc
-         N2aw==
-X-Forwarded-Encrypted: i=1; AJvYcCVLlaNbwIKSNxX27TaRICVPlgLlxxdaEfT+bsUg01nPkVS/kqaK/xvbvCj11S1LmoBiT61htG+nqsRgBfDVSYTP5N3CFp6XXoc2hDJi
-X-Gm-Message-State: AOJu0Yxw2sV+R0RSbKpqFtGs5lk57MW40pP6C2NFoR8wcTvMBV0b3KOR
-	EpxVzIX07eRfQO/w9MgtgY2Nd1r7VOysf/+/1Rb6H5zB8PhnAdV78Mn4Zp29eKlU2a6pnnm98VL
-	iZkLP4+QTv0aYqJC3lrKmUKIrnZRvhs1B+kfrKYw6gXKsj8bGNx3XFCehH4NOdw==
-X-Received: by 2002:a9d:7e97:0:b0:6f1:20c0:9389 with SMTP id 46e09a7af769-6f911fc46b4mr11408294a34.3.1717446398188;
-        Mon, 03 Jun 2024 13:26:38 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEmQKyITcnJ2LSx16OQfyq5/LqJdCt26jP1ib/TsOV9aEhnRvFLpzfPL7T2Sz/Pb31GmODPOQ==
-X-Received: by 2002:a9d:7e97:0:b0:6f1:20c0:9389 with SMTP id 46e09a7af769-6f911fc46b4mr11408251a34.3.1717446397492;
-        Mon, 03 Jun 2024 13:26:37 -0700 (PDT)
-Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-44015cda8fcsm6933851cf.95.2024.06.03.13.26.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Jun 2024 13:26:36 -0700 (PDT)
-Date: Mon, 3 Jun 2024 16:26:34 -0400
-From: Peter Xu <peterx@redhat.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Yang Shi <shy828301@gmail.com>,
-	kernel test robot <oliver.sang@intel.com>,
-	Jason Gunthorpe <jgg@nvidia.com>,
-	Vivek Kasireddy <vivek.kasireddy@intel.com>,
-	Rik van Riel <riel@surriel.com>, oe-lkp@lists.linux.dev,
-	lkp@intel.com, linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Christopher Lameter <cl@linux.com>, linux-mm@kvack.org
-Subject: Re: [linus:master] [mm] efa7df3e3b:
- kernel_BUG_at_include/linux/page_ref.h
-Message-ID: <Zl4m-sAhZknHOHdb@x1n>
-References: <202405311534.86cd4043-lkp@intel.com>
- <CAHbLzkpMhEuGkQDGWrK1LhvZ-ZxTJkV1xjmn-nRGZMH4U+F5ZA@mail.gmail.com>
- <890e5a79-8574-4a24-90ab-b9888968d5e5@redhat.com>
- <ZlpcRnuZUEYJJ0JA@x1n>
- <CAHbLzkrRw-xf819gYJwRQ=-u971LQYnB2FNJMkN=s6u-pJ4Z8g@mail.gmail.com>
- <CAHbLzkoB+oFTxtVYpeXQvko2q9HUVzUYrr83S6M6PUmXDQpkag@mail.gmail.com>
- <0edfcfed-e8c4-4c46-bbce-528c07084792@redhat.com>
- <Zl3cakfiRsPQDb8q@x1n>
- <8da12503-839d-459f-a2fa-4abd6d21935d@redhat.com>
+        bh=5X2AoY/lQVZz1FKCa6KHvqy44zzQ3mhz+ruaolMEMaw=;
+        b=lW39H0rDDt1iD27C0ABZImSJZJOasptR5rropCe5Ia8lKPeaKai6fHpLQnsikXXFuS
+         THFY1ptO7Rf5UdKa5kll5mDG0ERnmBPDr+jukm8sewsnl43ju+443gU9uNAjybG7Rrxs
+         ogC9UQwOGl1nDDp5jNuSreH3Gprue51EhsD6aQzmmQtZtly9g/8c/LvRfWr/ElJh7N2w
+         v6Ejo09zlvl6PHb2hIE0x2BknIZKVDyqJE6Dh0Nw0OMxJngIEPWddDczbuMDqa67/o9q
+         Z7vPP+Ioyx+MQfAXPB//7Rpe/1e63BX1PkSEXk2SqXGU11AD6koX/2T6VPmLj1Y2cLeY
+         mT+A==
+X-Forwarded-Encrypted: i=1; AJvYcCUoMw7bZuaZaa/37v2HyYsn1g3dpSzzG/2v3nI71TD3giDUpqE4Xm2yiNanM95lZuN2LWsSiVRuwpTAkmrnBx98xjCR9wZd8OAu6G907xZF9NKWNWw+jhSxhuxRvEWoB1k+GAarXFx5u/9OSmUKOhNa0URuaqL88HXLfMEJr9GWJQlEO5hm+R8HNFibmzkRgeI+xTqatbX5gQ==
+X-Gm-Message-State: AOJu0YyPLIvIIrfPzjnl/CI9d1WUnI+GqbQ3Rc7uwOJQ7TCnXT4lwUfJ
+	78hXc/9IdsIV37JSNs8+MOz9JEnzBVhHB28ymBE8TZFq4QBQlEJk
+X-Google-Smtp-Source: AGHT+IGWrKHzvzbDJxYZB9izbaKjENhQiSF4aLl0mt855tkbfFf0g9cOXHABW4R9S8b+9ENLJgRQIw==
+X-Received: by 2002:a05:6122:309e:b0:4eb:152e:cf92 with SMTP id 71dfb90a1353d-4eb152ed501mr5250710e0c.0.1717446586037;
+        Mon, 03 Jun 2024 13:29:46 -0700 (PDT)
+Received: from ?IPV6:2a02:2f04:920e:e000:3b36:462:775e:2626? ([2a02:2f04:920e:e000:3b36:462:775e:2626])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-794f2efc67csm311044785a.20.2024.06.03.13.29.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Jun 2024 13:29:45 -0700 (PDT)
+Message-ID: <7edbdb11-5135-4f26-be12-c86f4dc4c0ff@gmail.com>
+Date: Mon, 3 Jun 2024 23:29:38 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 08/12] PCI: imx6: Config look up table(LUT) to support
+ MSI ITS and IOMMU for i.MX95
+To: Robin Murphy <robin.murphy@arm.com>, Bjorn Helgaas <helgaas@kernel.org>,
+ Frank Li <Frank.Li@nxp.com>
+Cc: Richard Zhu <hongxing.zhu@nxp.com>, Lucas Stach <l.stach@pengutronix.de>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-pci@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+ devicetree@vger.kernel.org, Will Deacon <will@kernel.org>,
+ Joerg Roedel <joro@8bytes.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Alyssa Rosenzweig <alyssa@rosenzweig.io>, Marc Zyngier <maz@kernel.org>
+References: <20240530230832.GA474962@bhelgaas>
+ <974f1d23-aba8-432e-85b5-0e4b1c2005e7@arm.com>
+Content-Language: en-US
+From: Laurentiu Tudor <tudor.laurentiu.oss@gmail.com>
+In-Reply-To: <974f1d23-aba8-432e-85b5-0e4b1c2005e7@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <8da12503-839d-459f-a2fa-4abd6d21935d@redhat.com>
 
-On Mon, Jun 03, 2024 at 05:42:44PM +0200, David Hildenbrand wrote:
-> On 03.06.24 17:08, Peter Xu wrote:
-> > On Sat, Jun 01, 2024 at 08:22:21AM +0200, David Hildenbrand wrote:
-> > > On 01.06.24 02:59, Yang Shi wrote:
-> > > > On Fri, May 31, 2024 at 5:01 PM Yang Shi <shy828301@gmail.com> wrote:
-> > > > > 
-> > > > > On Fri, May 31, 2024 at 4:25 PM Peter Xu <peterx@redhat.com> wrote:
-> > > > > > 
-> > > > > > On Fri, May 31, 2024 at 07:46:41PM +0200, David Hildenbrand wrote:
-> > > > > > > try_grab_folio()->try_get_folio()->folio_ref_try_add_rcu()
-> > > > > > > 
-> > > > > > > Is called (mm-unstable) from:
-> > > > > > > 
-> > > > > > > (1) gup_fast function, here IRQs are disable
-> > > > > > > (2) gup_hugepte(), possibly problematic
-> > > > > > > (3) memfd_pin_folios(), possibly problematic
-> > > > > > > (4) __get_user_pages(), likely problematic
-> > > > > > > 
-> > > > > > > (1) should be fine.
-> > > > > > > 
-> > > > > > > (2) is possibly problematic on the !fast path. If so, due to commit
-> > > > > > >       a12083d721d7 ("mm/gup: handle hugepd for follow_page()") ? CCing Peter.
-> > > > > > > 
-> > > > > > > (3) is possibly wrong. CCing Vivek.
-> > > > > > > 
-> > > > > > > (4) is what we hit here
-> > > > > > 
-> > > > > > I guess it was overlooked because try_grab_folio() didn't have any comment
-> > > > > > or implication on RCU or IRQ internal helpers being used, hence a bit
-> > > > > > confusing.  E.g. it has different context requirement on try_grab_page(),
-> > > > > > even though they look like sister functions.  It might be helpful to have a
-> > > > > > better name, something like try_grab_folio_rcu() in this case.
-> > > > > > 
-> > > > > > Btw, none of above cases (2-4) have real bug, but we're looking at some way
-> > > > > > to avoid triggering the sanity check, am I right?  I hope besides the host
-> > > > > > splash I didn't overlook any other side effect this issue would cause, and
-> > > > > > the splash IIUC should so far be benign, as either gup slow (2,4) or the
-> > > > > > newly added memfd_pin_folios() (3) look like to have the refcount stablized
-> > > > > > anyway.
-> > > > > > 
-> > > > > > Yang's patch in the other email looks sane to me, just that then we'll add
-> > > > > > quite some code just to avoid this sanity check in paths 2-4 which seems
-> > > > > > like an slight overkill.
-> > > > > > 
-> > > > > > One thing I'm thinking is whether folio_ref_try_add_rcu() can get rid of
-> > > > > > its RCU limitation. It boils down to whether we can use atomic_add_unless()
-> > > > > > on TINY_RCU / UP setup too?  I mean, we do plenty of similar things
-> > > > > > (get_page_unless_zero, etc.) in generic code and I don't understand why
-> > > > > > here we need to treat folio_ref_try_add_rcu() specially.
-> > > > > > 
-> > > > > > IOW, the assertions here we added:
-> > > > > > 
-> > > > > >           VM_BUG_ON(!in_atomic() && !irqs_disabled());
-> > > > > > 
-> > > > > > Is because we need atomicity of below sequences:
-> > > > > > 
-> > > > > >           VM_BUG_ON_FOLIO(folio_ref_count(folio) == 0, folio);
-> > > > > >           folio_ref_add(folio, count);
-> > > > > > 
-> > > > > > But atomic ops avoids it.
-> > > > > 
-> > > > > Yeah, I didn't think of why atomic can't do it either. But is it
-> > > > > written in this way because we want to catch the refcount == 0 case
-> > > > > since it means a severe bug? Did we miss something?
-> > > > 
-> > > > Thought more about it and disassembled the code. IIUC, this is an
-> > > > optimization for non-SMP kernel. When in rcu critical section or irq
-> > > > is disabled, we just need an atomic add instruction.
-> > > > folio_ref_add_unless() would yield more instructions, including branch
-> > > > instruction. But I'm wondering how useful it would be nowadays. Is it
-> > > > really worth the complexity? AFAIK, for example, ARM64 has not
-> > > > supported non-SMP kernel for years.
-> > > > 
-> > > > My patch actually replaced all folio_ref_add_unless() to
-> > > > folio_ref_add() for slow paths, so it is supposed to run faster, but
-> > > > we are already in slow path, it may be not measurable at all. So
-> > > > having more simple and readable code may outweigh the potential slight
-> > > > performance gain in this case?
-> > > 
-> > > Yes, we don't want to use atomic RMW that return values where we can use
-> > > atomic RMW that don't return values. The former is slower and implies a
-> > > memory barrier, that can be optimized out on some arcitectures (arm64 IIRC)
-> > > 
-> > > We should clean that up here, and make it clearer that the old function is
-> > > only for grabbing a folio if it can be freed concurrently -- GUP-fast.
-> > 
-> > Note again that this only affects TINY_RCU, which mostly implies
-> > !PREEMPTION and UP.  It's a matter of whether we prefer adding these bunch
-> > of code to optimize that.
-> > 
-> > Also we didn't yet measure that in a real workload and see how that
-> > "unless" plays when buried in other paths, but then we'll need a special
-> > kernel build first, and again I'm not sure whether it'll be worthwhile.
+
+
+On 5/31/24 17:58, Robin Murphy wrote:
+> On 2024-05-31 12:08 am, Bjorn Helgaas wrote:
+>> [+cc IOMMU and pcie-apple.c folks for comment]
+>>
+>> On Tue, May 28, 2024 at 03:39:21PM -0400, Frank Li wrote:
+>>> For the i.MX95, configuration of a LUT is necessary to convert Bus 
+>>> Device
+>>> Function (BDF) to stream IDs, which are utilized by both IOMMU and ITS.
+>>> This involves examining the msi-map and smmu-map to ensure consistent
+>>> mapping of PCI BDF to the same stream IDs. Subsequently, LUT-related
+>>> registers are configured. In the absence of an msi-map, the built-in MSI
+>>> controller is utilized as a fallback.
+>>>
+>>> Additionally, register a PCI bus notifier to trigger 
+>>> imx_pcie_add_device()
+>>> upon the appearance of a new PCI device and when the bus is an iMX6 PCI
+>>> controller. This function configures the correct LUT based on Device 
+>>> Tree
+>>> Settings (DTS).
+>>
+>> This scheme is pretty similar to apple_pcie_bus_notifier().  If we
+>> have to do this, I wish it were *more* similar, i.e., copy the
+>> function names, bitmap tracking, code structure, etc.
+>>
+>> I don't really know how stream IDs work, but I assume they are used on
+>> most or all arm64 platforms, so I'm a little surprised that of all the
+>> PCI host drivers used on arm64, only pcie-apple.c and pci-imx6.c need
+>> this notifier.
 > 
-> try_get_folio() is all about grabbing a folio that might get freed
-> concurrently. That's why it calls folio_ref_try_add_rcu() and does
-> complicated stuff.
+> This is one of those things that's mostly at the mercy of the PCIe root 
+> complex implementation. Typically the SMMU StreamID and/or GIC ITS 
+> DeviceID is derived directly from the PCI RID, sometimes with additional 
+> high-order bits hard-wired to disambiguate PCI segments. I believe this 
+> RID-translation LUT is a particular feature of the the Synopsys IP - I 
+> know there's also one on the NXP Layerscape platforms, but on those it's 
+> programmed by the bootloader, which also generates the appropriate 
+> "msi-map" and "iommu-map" properties to match. Ideally that's what i.MX 
+> should do as well, but hey.
 
-IMHO we can define it.. e.g. try_get_page() wasn't defined as so.
+That's usually fine, except when SRIOV and/or hotplug devices (that is, 
+not discoverable at bootloader time) come into play. We came up with 
+this "solution" to cover these more dynamic scenarios.
 
-If we want to be crystal clear on that and if we think that's what we want,
-again I would suggest we rename it differently from try_get_page() to avoid
-future misuses, then add documents. We may want to also even assert the
-rcu/irq implications in try_get_folio() at entrance, then that'll be
-detected even without TINY_RCU config.
+https://source.denx.de/u-boot/u-boot/-/commit/2a5bbb13cc39102a68fcc31056925427ab44b591
 
+---
+Best Regards, Laurentiu
+
+>> There's this path, which is pretty generic and does at least the
+>> of_map_id() part of what you're doing in imx_pcie_add_device():
+>>
+>>      __driver_probe_device
+>>        really_probe
+>>          pci_dma_configure                       # 
+>> pci_bus_type.dma_configure
+>>            of_dma_configure
+>>              of_dma_configure_id
+>>                of_iommu_configure
+>>                  of_pci_iommu_init
+>>                    of_iommu_configure_dev_id
+>>                      of_map_id
+>>                      of_iommu_xlate
+>>                        ops = iommu_ops_from_fwnode
+>>                        iommu_fwspec_init
+>>                        ops->of_xlate(dev, iommu_spec)
+>>
+>> Maybe this needs to be extended somehow with a hook to do the
+>> device-specific work like updating the LUT?  Just speculating here,
+>> the IOMMU folks will know how this is expected to work.
 > 
-> On !CONFIG_TINY_RCU, it performs a folio_ref_add_unless(). That's
-> essentially a atomic_add_unless(), which in the worst case ends up being a
-> cmpxchg loop.
+> Note that that particular code path has fundamental issues and much of 
+> it needs to go away (I'm working on it, but it's a rich ~8-year-old pile 
+> of technical debt...). IOMMU configuration needs to be happening at 
+> device_add() time via the IOMMU layer's own bus notifier.
 > 
+> If it's really necessary to do this programming from Linux, then there's 
+> still no point in it being dynamic - the mappings cannot ever change, 
+> since the rest of the kernel believes that what the DT said at boot time 
+> was already a property of the hardware. It would be a lot more logical, 
+> and likely simpler, for the driver to just read the relevant map 
+> property and program the entire LUT to match, all in one go at 
+> controller probe time. Rather like what's already commonly done with the 
+> parsing of "dma-ranges" to program address-translation LUTs for inbound 
+> windows.
 > 
-> Stating that we should be using try_get_folio() in paths where we are sure
-> the folio refcount is not 0 is the same as using folio_try_get() where
-> folio_get() would be sufficient.
+> Plus that would also give a chance of safely dealing with bad DTs 
+> specifying invalid ID mappings (by refusing to probe at all). As it is, 
+> returning an error from a child's BUS_NOTIFY_ADD_DEVICE does nothing 
+> except prevent any further notifiers from running at that point - the 
+> device will still be added, allowed to bind a driver, and able to start 
+> sending DMA/MSI traffic without the controller being correctly 
+> programmed, which at best won't work and at worst may break the whole 
+> system.
 > 
-> The VM_BUG_ON in folio_ref_try_add_rcu() really tells us here that we are
-> using a function in the wrong context, although in our case, it is safe to
-> use (there is now BUG). Which is true, because we know we have a folio
-> reference and can simply use a simple folio_ref_add().
+> Thanks,
+> Robin.
 > 
-> Again, just like we have folio_get() and folio_try_get(), we should
-> distinguish in GUP whether we are adding more reference to a folio (and
-> effectively do what folio_get() would), or whether we are actually grabbing
-> a folio that could be freed concurrently (what folio_try_get() would do).
-
-Yes we can.  Again, IMHO it's a matter of whether it will worth it.
-
-Note that even with SMP and even if we keep this code, the
-atomic_add_unless only affects gup slow on THP only, and even with that
-overhead it is much faster than before when that path was introduced.. and
-per my previous experience we don't care too much there, really.
-
-So it's literally only three paths that are relevant here on the "unless"
-overhead:
-
-  - gup slow on THP (I just added it; used to be even slower..)
-
-  - vivik's new path
-
-  - hugepd (which may be gone for good in a few months..)
-  
-IMHO none of them has perf concerns.  The real perf concern paths is
-gup-fast when pgtable entry existed, but that must use atomic_add_unless()
-anyway.  Even gup-slow !thp case won't regress as that uses try_get_page().
-
-So again, IMHO the easist way to fix this WARN is we drop the TINY_RCU bit,
-if nobody worries on UP perf.
-
-I don't have a strong opinion, if any of us really worry about above three
-use cases on "unless" overhead, and think it worthwhile to add the code to
-support it, I won't object. But to me it's adding pain with no real benefit
-we could ever measure, and adding complexity to backport too since we'll
-need a fix for as old as 6.6.
-
-Thanks,
-
--- 
-Peter Xu
-
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
