@@ -1,198 +1,233 @@
-Return-Path: <linux-kernel+bounces-199121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD6F88D828D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 14:40:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DA8D8D8290
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 14:41:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF62A1C21755
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 12:40:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB7F71F25761
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 12:41:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2852D12C7FD;
-	Mon,  3 Jun 2024 12:40:24 +0000 (UTC)
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C40A12C47D;
+	Mon,  3 Jun 2024 12:41:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="tDB4cice"
+Received: from out-187.mta0.migadu.com (out-187.mta0.migadu.com [91.218.175.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EF5583CAE;
-	Mon,  3 Jun 2024 12:40:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A795D83CAE
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 12:41:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717418423; cv=none; b=QeJCa4o/0G6qJ9YuO66y7xCyG8CZQKLBM3W3Klm7wSEod9l6BWtwgY+uErKLDnESyZhvOfXyVFanELHrux9dIWEGsEw1kdiaVoMsUK0GpnDZ5a71ibNHQK0bYgrQA/aZWEiof2tCh+CK1u80d2lZMlx6U7SvZO3frhCVXssli4w=
+	t=1717418491; cv=none; b=ZtUgj2tLb0FL49ZUfdyGzAzeVm9u7exUFk7rGmu64BF5jREn3snso7H0f6D/zpxJ60XQQ3Zvre9Oy475G12lgP7h/TH/pNOO19W/46ClvctaCdd/SeKlz+YDPLrUfwybGIkgQS42LBN0lUh46WCr0ddSjxElyFkL8kxF1SnlPJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717418423; c=relaxed/simple;
-	bh=Z1LbbjT1HTuXOORfAk5bbAHP08+Y9Osfj2fJ39uD5Kc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ru5ZxGa/xR3naHkzrmwTzWvKYX8rFujVQPBkjHPGo608QSIvJxEzi1aVO2ALCWzArx2I7nTDFLkEoq7wXzqOVRelg3Uqs2t07MTZiekRlvPHGwh2op1MIwxkcrMl0uPMXyJZDPoXyJNh61P2VoIQj3nnlUb9vaFN35oo9XQWeRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Received: from [213.70.33.226] (helo=phil.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1sE6z0-0007IM-MA; Mon, 03 Jun 2024 14:40:14 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: ulf.hansson@linaro.org, Adrian Hunter <adrian.hunter@intel.com>
-Cc: serghox@gmail.com, linux-mmc@vger.kernel.org,
- linux-kernel@vger.kernel.org, quentin.schulz@cherry.de,
- Heiko Stuebner <heiko.stuebner@cherry.de>
-Subject:
- Re: [PATCH] mmc: sdhci-of-dwcmshc: don't enable CQE without a suitable irq
- handler
-Date: Mon, 03 Jun 2024 14:40:13 +0200
-Message-ID: <6504160.iIbC2pHGDl@phil>
-In-Reply-To: <24c34023-e6c1-471a-ad0e-ee229cba8b3c@intel.com>
-References:
- <20240530215532.2192423-1-heiko@sntech.de> <4015176.ZaRXLXkqSa@diego>
- <24c34023-e6c1-471a-ad0e-ee229cba8b3c@intel.com>
+	s=arc-20240116; t=1717418491; c=relaxed/simple;
+	bh=pw7/zYtOWsqdcg5Rb5GIBVjlAHj3ZBd1Pr2in+MLPNg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=U7NyOfFuDkHdwATXiqPYzs3HhFYr4MKHPYfY7bFejyXEITCMn1P6gJT8RcDs32B78TjZo9Xzrnvq60f/yUPUBpG+XRyVAdSK8DruCB31aXJVw4dZeqNStlbOOLOpdwqcxwIld6bnHxDg7rY6nf1WVLaAH4IG2KE69+D4/BA9WvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=tDB4cice; arc=none smtp.client-ip=91.218.175.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: akpm@linux-foundation.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1717418486;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=r9ORv+D4KXvQw4kDs7LTGsygzFqYpk/yJ4Bzv0bGNrk=;
+	b=tDB4ciceghAj/5wh/U5v3RkLjY6MlxxUatHh8wJtp+DjEwwESQu+JHk0ILtWTJpF3a9rjL
+	VHbO2J0PHNrrWu8tLe5f/7bQFZv+b0nFpxmrtJdCIaWXwxmiXUklwRMRVOIBcl/iWqFuG9
+	ndQbs2tpG22gH4zKmemKBAMvRxPO20U=
+X-Envelope-To: rppt@kernel.org
+X-Envelope-To: hannes@cmpxchg.org
+X-Envelope-To: linux-mm@kvack.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: yajun.deng@linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yajun Deng <yajun.deng@linux.dev>
+To: akpm@linux-foundation.org,
+	rppt@kernel.org,
+	hannes@cmpxchg.org
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Yajun Deng <yajun.deng@linux.dev>
+Subject: [PATCH] mm: pass the pfn to set_pageblock_migratetype
+Date: Mon,  3 Jun 2024 20:41:00 +0800
+Message-Id: <20240603124100.2834-1-yajun.deng@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Am Montag, 3. Juni 2024, 13:49:34 CEST schrieb Adrian Hunter:
-> On 3/06/24 14:26, Heiko St=FCbner wrote:
-> > Am Montag, 3. Juni 2024, 10:01:23 CEST schrieb Adrian Hunter:
-> >> On 31/05/24 00:55, Heiko Stuebner wrote:
-> >>> From: Heiko Stuebner <heiko.stuebner@cherry.de>
-> >>>
-> >>> supports-cqe is an established dt property so can appear in devicetre=
-es
-> >>> at any time. CQE support in the sdhci-of-dwcmshc driver does require a
-> >>> special irq handler in the platform-specific ops, to handle the CQE
-> >>> interrupt.
-> >>>
-> >>> Without this special handler we end up with a spew of unhandled inter=
-rupt
-> >>> messages on devices with supports-cqe property but without irq handle=
-r:
-> >>>
-> >>> [   11.624143] mmc0: Unexpected interrupt 0x00004000.
-> >>> [   11.629504] mmc0: sdhci: =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D SDHC=
-I REGISTER DUMP =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >>> [   11.636711] mmc0: sdhci: Sys addr:  0x00000008 | Version:  0x00000=
-005
-> >>> [   11.643919] mmc0: sdhci: Blk size:  0x00007200 | Blk cnt:  0x00000=
-000
-> >>> [   11.651128] mmc0: sdhci: Argument:  0x00018000 | Trn mode: 0x00000=
-033
-> >>> [   11.658336] mmc0: sdhci: Present:   0x13f700f0 | Host ctl: 0x00000=
-034
-> >>> [   11.665545] mmc0: sdhci: Power:     0x00000001 | Blk gap:  0x00000=
-000
-> >>> [   11.672753] mmc0: sdhci: Wake-up:   0x00000000 | Clock:    0x00000=
-407
-> >>> [   11.679961] mmc0: sdhci: Timeout:   0x0000000e | Int stat: 0x00004=
-000
-> >>> [   11.687169] mmc0: sdhci: Int enab:  0x02ff4000 | Sig enab: 0x02ff4=
-000
-> >>> [   11.694378] mmc0: sdhci: ACmd stat: 0x00000000 | Slot int: 0x00000=
-000
-> >>> [   11.701586] mmc0: sdhci: Caps:      0x226dc881 | Caps_1:   0x08000=
-007
-> >>> [   11.708794] mmc0: sdhci: Cmd:       0x00000d1e | Max curr: 0x00000=
-000
-> >>> [   11.716003] mmc0: sdhci: Resp[0]:   0x00000900 | Resp[1]:  0x00000=
-000
-> >>> [   11.723211] mmc0: sdhci: Resp[2]:   0x328f5903 | Resp[3]:  0x00000=
-7cd
-> >>> [   11.730419] mmc0: sdhci: Host ctl2: 0x0000000f
-> >>> [   11.735392] mmc0: sdhci: ADMA Err:  0x00000000 | ADMA Ptr: 0xee28f=
-008
-> >>> [   11.742600] mmc0: sdhci: =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D
-> >>>
-> >>> So don't enable CQE if a usable interrupt handler is not defined and =
-warn
-> >>> instead about this fact.
-> >>>
-> >>> Fixes: 53ab7f7fe412 ("mmc: sdhci-of-dwcmshc: Implement SDHCI CQE supp=
-ort")
-> >>> Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
-> >>> ---
-> >>> My rk3588-tiger and rk3588-jaguar devicetrees had an accidential
-> >>> supports-cqe in their devicetree, which made me run into this problem
-> >>> with 6.10-rc1 .
-> >>>
-> >>>  drivers/mmc/host/sdhci-of-dwcmshc.c | 10 +++++++---
-> >>>  1 file changed, 7 insertions(+), 3 deletions(-)
-> >>>
-> >>> diff --git a/drivers/mmc/host/sdhci-of-dwcmshc.c b/drivers/mmc/host/s=
-dhci-of-dwcmshc.c
-> >>> index 39edf04fedcf7..4410d4523728d 100644
-> >>> --- a/drivers/mmc/host/sdhci-of-dwcmshc.c
-> >>> +++ b/drivers/mmc/host/sdhci-of-dwcmshc.c
-> >>> @@ -1254,10 +1254,14 @@ static int dwcmshc_probe(struct platform_devi=
-ce *pdev)
-> >>> =20
-> >>>  	/* Setup Command Queue Engine if enabled */
-> >>>  	if (device_property_read_bool(&pdev->dev, "supports-cqe")) {
-> >>> -		priv->vendor_specific_area2 =3D
-> >>> -			sdhci_readw(host, DWCMSHC_P_VENDOR_AREA2);
-> >>> +		if (pltfm_data && pltfm_data->ops && pltfm_data->ops->irq) {
-> >>
-> >> ->irq() could be used for other things, so checking it for CQE
-> >> support is not appropriate.
-> >=20
-> > though here we are in the very limited scope of only the dwcmshc sdhci
-> > controller.
->=20
-> I am afraid that does not justify it.  It can still create
-> problems in the future if that very limited scope changes
-> i.e. someone wants to use the ->irq() callback in
-> sdhci-of-dwcmshc.c for something else.
->=20
-> >=20
-> > And at this point, any controller using the generic sdhci_dwcmshc_ops
-> > will always get the CQE irq handler, while _all other_ controllers
-> > will need to define one to handle the CQE irqs.
-> >=20
-> > So any variant trying to enable CQE needs to define an irq handler, hen=
-ce
-> > the check simply was meant to not allow CQE enablement without any irq
-> > handler, because that will always cause those unhandled irq issues.
-> >=20
-> >> If necessary, it would be better to flag which variants support
-> >> CQE in their platform data.
-> >=20
-> > I guess we can assume that all of the dwcmshc IP variants support
-> > CQE, it's just that the implementation is slightly strange in that
-> > a DT can enable CQE support and this will cause the driver to enable the
-> > CQE interrupt, even if nothing is there to handle it.
->=20
-> Isn't the problem that the IP may support CQE but the driver does
-> not for the given variant, but switches it on anyway.
+It is necessary to calculate the pfn in the set_pageblock_migratetype(),
+but most of the callers already have the pfn.
 
-exactly ... that is the problem I have with that accidential "supports-cqe"
-in that devicetree.
+To reduce the calculation, pass the pfn to set_pageblock_migratetype().
 
+Signed-off-by: Yajun Deng <yajun.deng@linux.dev>
+---
+ include/linux/page-isolation.h |  2 +-
+ mm/mm_init.c                   | 10 +++++-----
+ mm/page_alloc.c                | 18 +++++++++---------
+ mm/page_isolation.c            |  2 +-
+ 4 files changed, 16 insertions(+), 16 deletions(-)
 
-The sdhci-of-dwmshc has already some
-	if (pltfm_data =3D=3D &sdhci_dwcmshc_rk35xx_pdata)
-conditionals in its probe function for variant-specific init, so I guess
-we could also just move the CQE init into those?
-
-bool supports_cqe =3D false;
-
-if (pltfm_data =3D=3D &sdhci_dwcmshc_pdata)
-	supports_cqe =3D true;
-
-if (pltfm_data =3D=3D &sdhci_dwcmshc_rk35xx_pdata)
-{
-=2E...
-	supports_cqe =3D true;
-}
-
-Because in the end I would guess once every variant has check it's CQE
-support, we'll have all of them supporting it anyway, so that can
-handling could than get removed again.
-
+diff --git a/include/linux/page-isolation.h b/include/linux/page-isolation.h
+index c16db0067090..b7d55f35eac0 100644
+--- a/include/linux/page-isolation.h
++++ b/include/linux/page-isolation.h
+@@ -33,7 +33,7 @@ static inline bool is_migrate_isolate(int migratetype)
+ #define MEMORY_OFFLINE	0x1
+ #define REPORT_FAILURE	0x2
+ 
+-void set_pageblock_migratetype(struct page *page, int migratetype);
++void set_pageblock_migratetype(struct page *page, unsigned long pfn, int migratetype);
+ 
+ bool move_freepages_block_isolate(struct zone *zone, struct page *page,
+ 				  int migratetype);
+diff --git a/mm/mm_init.c b/mm/mm_init.c
+index 426314eeecec..85a98d3b8c0e 100644
+--- a/mm/mm_init.c
++++ b/mm/mm_init.c
+@@ -901,7 +901,7 @@ void __meminit memmap_init_range(unsigned long size, int nid, unsigned long zone
+ 		 * over the place during system boot.
+ 		 */
+ 		if (pageblock_aligned(pfn)) {
+-			set_pageblock_migratetype(page, migratetype);
++			set_pageblock_migratetype(page, pfn, migratetype);
+ 			cond_resched();
+ 		}
+ 		pfn++;
+@@ -1005,7 +1005,7 @@ static void __ref __init_zone_device_page(struct page *page, unsigned long pfn,
+ 	 * because this is done early in section_activate()
+ 	 */
+ 	if (pageblock_aligned(pfn)) {
+-		set_pageblock_migratetype(page, MIGRATE_MOVABLE);
++		set_pageblock_migratetype(page, pfn, MIGRATE_MOVABLE);
+ 		cond_resched();
+ 	}
+ 
+@@ -1927,7 +1927,7 @@ static void __init deferred_free_range(unsigned long pfn,
+ 	/* Free a large naturally-aligned chunk if possible */
+ 	if (nr_pages == MAX_ORDER_NR_PAGES && IS_MAX_ORDER_ALIGNED(pfn)) {
+ 		for (i = 0; i < nr_pages; i += pageblock_nr_pages)
+-			set_pageblock_migratetype(page + i, MIGRATE_MOVABLE);
++			set_pageblock_migratetype(page + i, pfn + i, MIGRATE_MOVABLE);
+ 		__free_pages_core(page, MAX_PAGE_ORDER);
+ 		return;
+ 	}
+@@ -1937,7 +1937,7 @@ static void __init deferred_free_range(unsigned long pfn,
+ 
+ 	for (i = 0; i < nr_pages; i++, page++, pfn++) {
+ 		if (pageblock_aligned(pfn))
+-			set_pageblock_migratetype(page, MIGRATE_MOVABLE);
++			set_pageblock_migratetype(page, pfn, MIGRATE_MOVABLE);
+ 		__free_pages_core(page, 0);
+ 	}
+ }
+@@ -2291,7 +2291,7 @@ void __init init_cma_reserved_pageblock(struct page *page)
+ 		set_page_count(p, 0);
+ 	} while (++p, --i);
+ 
+-	set_pageblock_migratetype(page, MIGRATE_CMA);
++	set_pageblock_migratetype(page, page_to_pfn(page), MIGRATE_CMA);
+ 	set_page_refcounted(page);
+ 	__free_pages(page, pageblock_order);
+ 
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 3734fe7e67c0..fe9d37f1b1e4 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -412,14 +412,14 @@ void set_pfnblock_flags_mask(struct page *page, unsigned long flags,
+ 	} while (!try_cmpxchg(&bitmap[word_bitidx], &word, (word & ~mask) | flags));
+ }
+ 
+-void set_pageblock_migratetype(struct page *page, int migratetype)
++void set_pageblock_migratetype(struct page *page, unsigned long pfn, int migratetype)
+ {
+ 	if (unlikely(page_group_by_mobility_disabled &&
+ 		     migratetype < MIGRATE_PCPTYPES))
+ 		migratetype = MIGRATE_UNMOVABLE;
+ 
+ 	set_pfnblock_flags_mask(page, (unsigned long)migratetype,
+-				page_to_pfn(page), MIGRATETYPE_MASK);
++				pfn, MIGRATETYPE_MASK);
+ }
+ 
+ #ifdef CONFIG_DEBUG_VM
+@@ -817,7 +817,7 @@ static inline void __free_one_page(struct page *page,
+ 			 * expand() down the line puts the sub-blocks
+ 			 * on the right freelists.
+ 			 */
+-			set_pageblock_migratetype(buddy, migratetype);
++			set_pageblock_migratetype(buddy, buddy_pfn, migratetype);
+ 		}
+ 
+ 		combined_pfn = buddy_pfn & pfn;
+@@ -1579,7 +1579,7 @@ static int __move_freepages_block(struct zone *zone, unsigned long start_pfn,
+ 		pages_moved += 1 << order;
+ 	}
+ 
+-	set_pageblock_migratetype(pfn_to_page(start_pfn), new_mt);
++	set_pageblock_migratetype(pfn_to_page(start_pfn), start_pfn, new_mt);
+ 
+ 	return pages_moved;
+ }
+@@ -1730,7 +1730,7 @@ bool move_freepages_block_isolate(struct zone *zone, struct page *page,
+ 
+ 		del_page_from_free_list(buddy, zone, order,
+ 					get_pfnblock_migratetype(buddy, pfn));
+-		set_pageblock_migratetype(page, migratetype);
++		set_pageblock_migratetype(page, page_to_pfn(page), migratetype);
+ 		split_large_buddy(zone, buddy, pfn, order);
+ 		return true;
+ 	}
+@@ -1741,7 +1741,7 @@ bool move_freepages_block_isolate(struct zone *zone, struct page *page,
+ 
+ 		del_page_from_free_list(page, zone, order,
+ 					get_pfnblock_migratetype(page, pfn));
+-		set_pageblock_migratetype(page, migratetype);
++		set_pageblock_migratetype(page, pfn, migratetype);
+ 		split_large_buddy(zone, page, pfn, order);
+ 		return true;
+ 	}
+@@ -1753,14 +1753,14 @@ bool move_freepages_block_isolate(struct zone *zone, struct page *page,
+ }
+ #endif /* CONFIG_MEMORY_ISOLATION */
+ 
+-static void change_pageblock_range(struct page *pageblock_page,
++static void change_pageblock_range(struct page *page,
+ 					int start_order, int migratetype)
+ {
+ 	int nr_pageblocks = 1 << (start_order - pageblock_order);
+ 
+ 	while (nr_pageblocks--) {
+-		set_pageblock_migratetype(pageblock_page, migratetype);
+-		pageblock_page += pageblock_nr_pages;
++		set_pageblock_migratetype(page, page_to_pfn(page), migratetype);
++		page += pageblock_nr_pages;
+ 	}
+ }
+ 
+diff --git a/mm/page_isolation.c b/mm/page_isolation.c
+index 042937d5abe4..a436bf4da04e 100644
+--- a/mm/page_isolation.c
++++ b/mm/page_isolation.c
+@@ -254,7 +254,7 @@ static void unset_migratetype_isolate(struct page *page, int migratetype)
+ 		 */
+ 		WARN_ON_ONCE(!move_freepages_block_isolate(zone, page, migratetype));
+ 	} else {
+-		set_pageblock_migratetype(page, migratetype);
++		set_pageblock_migratetype(page, page_to_pfn(page), migratetype);
+ 		__putback_isolated_page(page, order, migratetype);
+ 	}
+ 	zone->nr_isolate_pageblock--;
+-- 
+2.25.1
 
 
