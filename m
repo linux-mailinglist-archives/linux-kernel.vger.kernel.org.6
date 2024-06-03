@@ -1,148 +1,96 @@
-Return-Path: <linux-kernel+bounces-198838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0A068D7E27
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:09:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 432DB8D7E28
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:10:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4E9C282301
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:09:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D59611F24470
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:10:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41B247829C;
-	Mon,  3 Jun 2024 09:09:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB0677A140;
+	Mon,  3 Jun 2024 09:10:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T648A4jU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 801154DA06;
-	Mon,  3 Jun 2024 09:09:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=mecka.net header.i=@mecka.net header.b="rekliKSH"
+Received: from mecka.net (mecka.net [159.69.159.214])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 686DF58AA5;
+	Mon,  3 Jun 2024 09:10:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.159.214
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717405783; cv=none; b=M4qvbCtIXrk5iYp1QjDCi8S/dgdWIVo5iRKRhk7R8y03mq71+7czsTbTbrjcrLl9R0Jqazq1wb71SwXXw0R2teXV3xQ8hVPGA75FrgacryR93h73sG2zFpVqh9u4N4mjvkyDZF7CCruARb9Xi19FEEdcH08Y6UybTLmEpoL4B1s=
+	t=1717405817; cv=none; b=qoibs/JNk9pu6sDSBqrbmVIeocDL5WbkGOqIMre6ZdyHNBX7QHwGK9sNcuMrwCnbH64dGILiwc+NcLBTPfvaj4Y1bBYWNmbH2+Gb5q84+IL5x79z559CuYE12GSMACTlypMYj7KVAdZWDrUGVYNO46NMk7V9QwvSnCgM4JXOVQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717405783; c=relaxed/simple;
-	bh=zts/QRsUM8k00Nfd4l4iKWD2XkKbZM/dD/eqgptURNI=;
+	s=arc-20240116; t=1717405817; c=relaxed/simple;
+	bh=oS5YZddoPc4pdpbHd3+FPlRMuiMilpWAdNoYT9363KQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TLi0TwBCml6yxAfelvfWHovUKPGLBq3t05BCuFDyAwEbHX7BRahymfCyjiHvPBozlqxv31JEAy4qKUIzMAzpynC0TvZNS/4UFnem8NGpvz9MZAEZqWm52SxnH9saUg6u3464IXJM9UZM71CAb/21vI13M5iFENcEr7fNZyv6Rsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T648A4jU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E1C2C2BD10;
-	Mon,  3 Jun 2024 09:09:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717405783;
-	bh=zts/QRsUM8k00Nfd4l4iKWD2XkKbZM/dD/eqgptURNI=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=s8Kop4M+fP1OtDp8LWnmZcHt6IePm6f+UwSiqSsCgb590mAvkWDE6bENTBkpuAOV4irhUHDThUZWiG7N/L0Cgth98jdlhPld2ujCxeu24y6dQ5X/KGyaRCV80ROPh3qMTsAWfQNFcGeAST6S2MmUilAJEQ/D/dgJ5TLomSMyZXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mecka.net; spf=none smtp.mailfrom=manut.de; dkim=fail (0-bit key) header.d=mecka.net header.i=@mecka.net header.b=rekliKSH reason="key not found in DNS"; arc=none smtp.client-ip=159.69.159.214
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mecka.net
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=manut.de
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=mecka.net; s=2016.11;
+	t=1717405805; bh=oS5YZddoPc4pdpbHd3+FPlRMuiMilpWAdNoYT9363KQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=T648A4jUN6PelkRNGIl7hxRPXuYGfhKc0w4IhBdXrxin6cs+UrZQ3iATqdbNlnwO/
-	 KxPcKK6ZCShnQ+GaQC9n4ex2n28ltok8NIJ0V6EW3e5v0aeJ5IiClJmujEzx+TQ0+h
-	 MdNWLKLm+Y90vuEh2SCvq/zRyhx6SMrakl0xnH5uxMsRGDdKPYTn1eXvCNhUCML2GX
-	 Uw3VAizHiVNE0Di3sUDp6fp+o6LOQH/4uWYxowr8Cwj9t37ro+AAZMe665XGis/Zo/
-	 3uVRKrB0nlv0jcHFZUcP9ITZznCVPZYLtDhwhYOUqjxAqrDTksyuEDzOUnq4TpKu3T
-	 Wa/Ig9liJjoyw==
-Date: Mon, 3 Jun 2024 11:09:40 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Rob Clark <robdclark@gmail.com>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/9] drm/connector: hdmi: accept NULL for Audio
- Infoframe
-Message-ID: <20240603-therapeutic-warm-fox-890bee@houat>
-References: <20240531-bridge-hdmi-connector-v4-0-5110f7943622@linaro.org>
- <20240531-bridge-hdmi-connector-v4-1-5110f7943622@linaro.org>
+	b=rekliKSHCind4MUrk/8G3AJXqOlSTrnFhXiuGX+m/TIb4xl0QB5r8M0485lu/JRgJ
+	 2+rS0xnduZ2+v61t76tL4Fx2Bd6CiBENRrnfUf7KgAdUZVmP7dRZ8ay8XcXhEukglT
+	 6r/n3gwigb7u8DXX2YTT3VMfBLbWv8FcNX0tsKt1IfpF7XCaQZa9LQ0QvE7kd3EHHO
+	 WtpWHUkGmmShUxuHqq1Pjzqs0Ry2q2RJIRpvv9nvY5ce95LOKhi87fQ/pbI9RcAkVL
+	 MMAzWh1dxEYSmKvhjTz8MyWiNC+Jbxfq38FZxblWsWqhYThWvC8KldhiMwnt5A8bCG
+	 Fjrn2atMya2gg==
+Received: by mecka.net (Postfix, from userid 1000)
+	id A46F950F212; Mon,  3 Jun 2024 11:10:05 +0200 (CEST)
+Date: Mon, 3 Jun 2024 11:10:05 +0200
+From: Manuel Traut <manut@mecka.net>
+To: Jens Wiklander <jens.wiklander@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
+	op-tee@lists.trustedfirmware.org,
+	Shyam Saini <shyamsaini@linux.microsoft.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Jerome Forissier <jerome.forissier@linaro.org>,
+	Sumit Garg <sumit.garg@linaro.org>,
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+	Bart Van Assche <bvanassche@acm.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Ard Biesheuvel <ardb@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Mikko Rapeli <mikko.rapeli@linaro.org>
+Subject: Re: [PATCH v7 4/4] optee: probe RPMB device using RPMB subsystem
+Message-ID: <Zl2Ibey9Qck-VLWE@manut.de>
+References: <20240527121340.3931987-1-jens.wiklander@linaro.org>
+ <20240527121340.3931987-5-jens.wiklander@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="cjo537cz6gzry5k7"
-Content-Disposition: inline
-In-Reply-To: <20240531-bridge-hdmi-connector-v4-1-5110f7943622@linaro.org>
-
-
---cjo537cz6gzry5k7
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240527121340.3931987-5-jens.wiklander@linaro.org>
 
-Hi,
+On 14:13 Mon 27 May     , Jens Wiklander wrote:
+> --- a/drivers/tee/optee/ffa_abi.c
+> +++ b/drivers/tee/optee/ffa_abi.c
+> @@ -7,6 +7,7 @@
+>  
+>  #include <linux/arm_ffa.h>
+>  #include <linux/errno.h>
+> +#include <linux/rpmb.h>
+>  #include <linux/scatterlist.h>
+>  #include <linux/sched.h>
+>  #include <linux/slab.h>
+> @@ -903,6 +904,10 @@ static int optee_ffa_probe(struct ffa_device *ffa_dev)
+>  	optee->ffa.bottom_half_value = U32_MAX;
+>  	optee->rpc_param_count = rpc_param_count;
+>  
+> +	if (IS_REACHABLE(CONFIG_RPMB) &&
+> +	    (sec_caps & OPTEE_FFA_SEC_CAP_RPMB_PROBE))
+> +		optee->in_kernel_rpmb_routing = true;
 
-Sorry for not answering your mail on the previous version sooner.
+The SEC_CAP_RPMB_PROBE flag seems to be missing in optee_os at the moment.
+If I remove this check here, the series works for me.
 
-On Fri, May 31, 2024 at 11:07:24PM GMT, Dmitry Baryshkov wrote:
-> Allow passing NULL as audio infoframe as a way to disable Audio
-> Infoframe generation.
->=20
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->  drivers/gpu/drm/display/drm_hdmi_state_helper.c | 14 ++++++++++----
->  1 file changed, 10 insertions(+), 4 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/display/drm_hdmi_state_helper.c b/drivers/gp=
-u/drm/display/drm_hdmi_state_helper.c
-> index ce96837eea65..5356723d21f5 100644
-> --- a/drivers/gpu/drm/display/drm_hdmi_state_helper.c
-> +++ b/drivers/gpu/drm/display/drm_hdmi_state_helper.c
-> @@ -681,7 +681,7 @@ EXPORT_SYMBOL(drm_atomic_helper_connector_hdmi_update=
-_infoframes);
->  /**
->   * drm_atomic_helper_connector_hdmi_update_audio_infoframe - Update the =
-Audio Infoframe
->   * @connector: A pointer to the HDMI connector
-> - * @frame: A pointer to the audio infoframe to write
-> + * @frame: A pointer to the audio infoframe to write or NULL to disable =
-sending the frame
-
-I'm still two-minded about this. I think I would like a separate helper
-better, to also make things consistent with the HDMI helpers.
-
-Most importantly, it looks like you're not using it at all in your series?
-
->   * This function is meant for HDMI connector drivers to update their
->   * audio infoframe. It will typically be used in one of the ALSA hooks
-> @@ -704,10 +704,16 @@ drm_atomic_helper_connector_hdmi_update_audio_infof=
-rame(struct drm_connector *co
-> =20
->  	mutex_lock(&connector->hdmi.infoframes.lock);
-> =20
-> -	memcpy(&infoframe->data, frame, sizeof(infoframe->data));
-> -	infoframe->set =3D true;
-> +	if (frame) {
-> +		memcpy(&infoframe->data, frame, sizeof(infoframe->data));
-> +		infoframe->set =3D true;
-> +
-> +		ret =3D write_infoframe(connector, infoframe);
-> +	} else {
-> +		infoframe->set =3D false;
-> =20
-> -	ret =3D write_infoframe(connector, infoframe);
-> +		ret =3D clear_infoframe(connector, infoframe);
-> +	}
-
-We should probably clear infoframe->data here too
-
-Maxime
-
---cjo537cz6gzry5k7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZl2ITQAKCRAnX84Zoj2+
-dqkOAX9UmBzsHTKxHZS1nYELnt3AKt9186dxlneShEm4OxdrXK29/MwOCb+UL69k
-SkvYtVkBfiYyBRgWMuoXlPMgdMZe/SKJIwO19JoO1q6utvRCW6k9RMmkiAFCjD1d
-J6ZyAccWMA==
-=wp6q
------END PGP SIGNATURE-----
-
---cjo537cz6gzry5k7--
+Cheers
+Manuel
 
