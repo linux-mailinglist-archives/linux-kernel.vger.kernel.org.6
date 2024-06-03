@@ -1,150 +1,237 @@
-Return-Path: <linux-kernel+bounces-199454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 895478D8761
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 18:38:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 296B88D8766
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 18:40:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42B1028A09F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:38:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3CD928A0A0
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:40:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 335FE13699A;
-	Mon,  3 Jun 2024 16:38:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F8F81369A0;
+	Mon,  3 Jun 2024 16:39:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="K37P7wLI";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yq075rAD"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F+nZAGOD"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FB6E13541B
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 16:38:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0052B7E8;
+	Mon,  3 Jun 2024 16:39:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717432691; cv=none; b=mRE3yOU1jW++heAS+krZWEYHkov6Cz2LXDokZKRLoIhlQFnV9I2g1RjUJLhbgUvbZyexkri8GlEk9i3FwiaVzBpuIJcVQlnIid+299xFRaVKMCdo8Wo5VNYMfjye5TiqswYJ3A/cvYgRGxrAQYoPsnsN0eucufIGpxZ75Hfhpb0=
+	t=1717432792; cv=none; b=tjfqosIEUNuf8mMR6OxWy5k5lKEHawc4O9hZ1ReXzM8Eq+zCMaTpQbJhzIK6TBEkCZt4Jnz27D7qq6TDVK3Q3XB//Hpi7qZcrrQCOY4586rxgCW0jfz3JVck1nyD37ga4H6eVA7NdsGwF7CZqjxJ7pjU8+jm2EbdSpAJMUtY2ko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717432691; c=relaxed/simple;
-	bh=JoOQFYwq20f6YN5GiixuBNV8lqwmsNmiY+Ko8UeCnIE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=HHuS3YG1btLHW2la8IiX79fd+oxcBTy8Thu3hFhdOTX/sRXGc1+hyPFEmGC50SwsZtbYaaChjQVt9QsckANrXL2gbDclS8g4QKQ0a94QrP6wBhuzTlXN8tKOEi7WyzJWLfiyjGlSwB7nXkHS8WSl6JV/vl1U3Q8C7yLC4B9hGKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=K37P7wLI; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yq075rAD; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1717432688;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kg6f1ocuXVfrhbUY0XBH44cgSaMciaYAuuNaspVSgRs=;
-	b=K37P7wLIE+RGMCG4x+PN4V+DxQOpX907Fl/zRBD9C0qqLYEJ8kuhEHmEZWdSYh0pA3XDAT
-	D2l7G+VwgZZ+QcswHO9wiybv1Yzs7Y2Q8dQCQKJ7lYmmDcTRdstMy9BKw4UcvZfbhIlzBs
-	HE3Tpw0gTZagItphDUPgFGAwt6jeBDW9Dzq0NHKEEsB0upqQ7KkPuUCvFgfohodGfEWxyL
-	z+XUK5QPPzZvtOerDrqZyNoZ0+Q1/OsUC2f/zTzGL63E0+2jfZeL+IJI1Pa1yC3Hlr811W
-	VH7sOMbfevCOcO4WntB5lBT/qgr6ujmrq5mWcT7f7BqUrdpcZwDEdVOLZK/5nA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1717432688;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kg6f1ocuXVfrhbUY0XBH44cgSaMciaYAuuNaspVSgRs=;
-	b=yq075rAD98dkF5sO8rtY60ZxHgR2ZCVjTWS/74tVMTtqBSIx+XHd13ECMqn+tRee6+nI05
-	5oWfkmjpGiY2hHDw==
-To: Matti Vaittinen <mazziesaccount@gmail.com>, Matti Vaittinen
- <matti.vaittinen@fi.rohmeurope.com>
-Cc: Mark Brown <broonie@kernel.org>, Lee Jones <lee@kernel.org>,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 07/10] irqdomain: Allow giving name suffix for domain
-In-Reply-To: <77c64d75-43fa-47bf-bb3a-e0e49d51189d@gmail.com>
-References: <cover.1716533790.git.mazziesaccount@gmail.com>
- <2ea1749587d9e5a74a80a8eee7caf58c3e954a6e.1716533790.git.mazziesaccount@gmail.com>
- <87h6ea72f9.ffs@tglx> <77c64d75-43fa-47bf-bb3a-e0e49d51189d@gmail.com>
-Date: Mon, 03 Jun 2024 18:38:07 +0200
-Message-ID: <8734pu6ky8.ffs@tglx>
+	s=arc-20240116; t=1717432792; c=relaxed/simple;
+	bh=rnR5iPB01lsns52vG/tA2Gfh3HK2RdIOyDH7P6NAYdU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pIZ6bRUZLARwp4N/iN12xD68atgD/Xhiue0w1JPLPa0daXUgR2HU/qhOjHevepAVG6synkl678CaSONQnuYXFOW4rfyz29+I8OdmnfvTT5RdmqC+nrf6X9U78m2Jujvbqo/tJExVmwkZbPcHP69e3HkfYALz2yTMQFT5ks5D7j8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F+nZAGOD; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4214053918aso263935e9.2;
+        Mon, 03 Jun 2024 09:39:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717432789; x=1718037589; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NmucZefJaS9oSAR+UXzx3NPh83JYXnJgaWeSAXKZsFg=;
+        b=F+nZAGODw+dZ4N83cBoS4/Kz/rB4mJNKsiH6/YAJk4uhn+ORGGb6281YlTdb33S++i
+         ioie4XX2Dyi2B19WAZDHKucliax/JM/tsUSQAds4lDNxnVkwrBYftdYDpbKOd9ZrXUiP
+         IgayVKv3aJmyxHPpLa8msZ5iLAXI7QxMEWH2hP1w807ArI7vGChm1emT0sSJxeiLw5LW
+         sAhAW2LtRJrPEdFmhhmioklUYvkEGGogbA34zRzZwEiMNyYu6GqM0+UgoUyzWJcp6Wvt
+         rWOjKT9spjf9mbYjTmYIttra5L6ME9Q8xvxGdawiSF7LyOGcUxsCB414SmbDISuESjJe
+         VJeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717432789; x=1718037589;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NmucZefJaS9oSAR+UXzx3NPh83JYXnJgaWeSAXKZsFg=;
+        b=HvYGYJMdlo8jP0SKAarQEMNSg/42iWojNaCtkLI/lVDrn2kiDXnTxv0A9Y5uW8wYMf
+         tA8WygIlrqBTa9SAlNv1uhm9nhRzxHoiQDz1RgdhFIMJzg5h/hwCMrcxjcR30corZMOj
+         Db3mzBUr2ps7wMzdTrRvN51bWCgqB7waXnvaniiS86+A/561pvXYF0kU0kqB9m6o6Y7m
+         5sKHnbzjKfx29TD6/R41456v+oSWWASsMaGYMdMLp7l3hyFI2J7bwPs2Soyh8X70X+H/
+         bXjq5yZYglpeC5tlhOPr3nwAj+e6J7fPLD+vFya1qUS6+2MemGI/D/UjXtDRxj/joAjK
+         atHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUndehoYcLG/SfGYbyzNSjXKt5QYmhgaObTIwOPtzq5wl5ObYpi2w/P5bwgvmNcGVQCPZwSQ3wwq3Hva73Lj7+pXKnXAKnZJ4sq7Wf9BjE+Q0shrvj6v+qX+mUXFsKKdAdSTBwMmzNpPc7iUWajLw4QfG+PLkaFc6moQ12gCsBsgpGP0w==
+X-Gm-Message-State: AOJu0Ywnbpo8gZzjCRVB6CT77kozyWnU60HNVy2nMrr46s80aa3EG6g7
+	FqFFGr4k+KPBn6pU+so5STAzjtaW/xe52Qw3roZLUbTV5z04coJ2
+X-Google-Smtp-Source: AGHT+IGcSUsHtQDHF3KX5AZeA/IawTF2iTfkVdyvpmBBr3Hj/bs0e01mGLyruH0gX37jLzXz4SWHgg==
+X-Received: by 2002:a05:600c:4f13:b0:421:418d:8f7 with SMTP id 5b1f17b1804b1-421418d0be6mr10237555e9.12.1717432788875;
+        Mon, 03 Jun 2024 09:39:48 -0700 (PDT)
+Received: from [192.168.242.235] ([109.166.154.147])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35dd04c0e8fsm9168075f8f.2.2024.06.03.09.39.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Jun 2024 09:39:48 -0700 (PDT)
+Message-ID: <64fd8918-0c5e-462d-8ffe-964ed6404bde@gmail.com>
+Date: Mon, 3 Jun 2024 19:39:46 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 3/6] iio: adc: ad7173: refactor ain and vref selection
+To: David Lechner <dlechner@baylibre.com>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <noname.nuno@gmail.com>, Jonathan Cameron <jic23@kernel.org>,
+ Dumitru Ceclan via B4 Relay <devnull+dumitru.ceclan.analog.com@kernel.org>
+Cc: dumitru.ceclan@analog.com, Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240531-ad4111-v4-0-64607301c057@analog.com>
+ <20240531-ad4111-v4-3-64607301c057@analog.com>
+ <20240601194925.23123071@jic23-huawei>
+ <e9ade241e57383d5342d377bc865046e612a7033.camel@gmail.com>
+ <d2370ad2-5fed-41b3-bdd5-c6c895283c18@gmail.com>
+ <2df46968-ff5f-43bc-98fd-506840c1aaa9@baylibre.com>
+Content-Language: en-US
+From: "Ceclan, Dumitru" <mitrutzceclan@gmail.com>
+In-Reply-To: <2df46968-ff5f-43bc-98fd-506840c1aaa9@baylibre.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Matti!
+On 03/06/2024 19:00, David Lechner wrote:
+> On 6/3/24 8:08 AM, Ceclan, Dumitru wrote:
+>> On 03/06/2024 16:00, Nuno Sá wrote:
+>>> On Sat, 2024-06-01 at 19:49 +0100, Jonathan Cameron wrote:
+>>>> On Fri, 31 May 2024 22:42:29 +0300
+>>>> Dumitru Ceclan via B4 Relay <devnull+dumitru.ceclan.analog.com@kernel.org> wrote:
+>>>>
+>>>>> From: Dumitru Ceclan <dumitru.ceclan@analog.com>
+>>>>>
+>>>>> Move validation of analog inputs and reference voltage selection to
+>>>>> separate functions to reduce the size of the channel config parsing
+>>>>> function and improve readability.
+>>>>> Add defines for the number of analog inputs in a channel.
+>>>>>
+>>>>> Reviewed-by: David Lechner <dlechner@baylibre.com>
+>>>>> Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
+>>>>> ---
+>>>>>  drivers/iio/adc/ad7173.c | 71 ++++++++++++++++++++++++++++++++++--------------
+>>>>>  1 file changed, 50 insertions(+), 21 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/iio/adc/ad7173.c b/drivers/iio/adc/ad7173.c
+>>>>> index 6e249628bc64..a20831d99aa5 100644
+>>>>> --- a/drivers/iio/adc/ad7173.c
+>>>>> +++ b/drivers/iio/adc/ad7173.c
+>>>>> @@ -60,6 +60,7 @@
+>>>>>  #define AD7173_CH_SETUP_AINPOS_MASK	GENMASK(9, 5)
+>>>>>  #define AD7173_CH_SETUP_AINNEG_MASK	GENMASK(4, 0)
+>>>>>  
+>>>>> +#define AD7173_NO_AINS_PER_CHANNEL	2
+>>>>>  #define AD7173_CH_ADDRESS(pos, neg) \
+>>>>>  	(FIELD_PREP(AD7173_CH_SETUP_AINPOS_MASK, pos) | \
+>>>>>  	 FIELD_PREP(AD7173_CH_SETUP_AINNEG_MASK, neg))
+>>>>> @@ -623,6 +624,7 @@ static int ad7173_setup(struct iio_dev *indio_dev)
+>>>>>  static unsigned int ad7173_get_ref_voltage_milli(struct ad7173_state *st,
+>>>>>  						 u8 reference_select)
+>>>>>  {
+>>>>> +	struct device *dev = &st->sd.spi->dev;
+>>>>>  	int vref;
+>>>>>  
+>>>>>  	switch (reference_select) {
+>>>>> @@ -646,9 +648,11 @@ static unsigned int ad7173_get_ref_voltage_milli(struct
+>>>>> ad7173_state *st,
+>>>>>  		return -EINVAL;
+>>>>>  	}
+>>>>>  
+>>>>> -	if (vref < 0)
+>>>>> +	if (vref < 0) {
+>>>>> +		dev_err(dev, "Cannot use reference %u. Error:%d\n",
+>>>>> +			reference_select, vref);
+>>>>>  		return vref;
+>>>>> -
+>>>>> +	}
+>>>>>  	return vref / (MICRO / MILLI);
+>>>>>  }
+>>>>>  
+>>>>> @@ -905,13 +909,50 @@ static int ad7173_register_clk_provider(struct iio_dev
+>>>>> *indio_dev)
+>>>>>  					   &st->int_clk_hw);
+>>>>>  }
+>>>>>  
+>>>>> +static int ad7173_validate_voltage_ain_inputs(struct ad7173_state *st,
+>>>>> +					      const unsigned int
+>>>>> ain[AD7173_NO_AINS_PER_CHANNEL])
+>>>> I was late to the game in replying to previous thread.
+>>>>
+>>>> This is neater without the loop and with 2 parameters.  Anyhow see reply to v3.
+>>>>
+>>>
+>>> Yeps, even more given that we're passing/copying the complete array which always
+>>> fells awkward to me :)
+>>>
+>>> - Nuno Sá
+>>>
+>>>
+>>
+>> I rewrote the function, but it feels a bit awkward, perhaps I could get a bit of
+>> advice before sending V5:
+> 
+> Maybe we could make this easier to read with macros?
+> 
+>>
+>> static int ad7173_validate_voltage_ain_inputs(struct ad7173_state *st,
+>> 					      unsigned int ain0, unsigned int ain1)
+>> {
+>> 	struct device *dev = &st->sd.spi->dev;
+>> 	bool special_input0, special_input1;
+>>
+>> 	special_input0 = ain0 == AD7173_AIN_REF_POS || ain0 == AD7173_AIN_REF_NEG ||
+>> 			 ((ain0 == AD7173_AIN_COM_IN_POS || ain0 == AD7173_AIN_COM_IN_NEG) &&
+>> 			 (st->info->has_common_input)) || ain0 == AD4111_VINCOM_INPUT;
+>> 	special_input1 = (ain1 == AD7173_AIN_REF_POS || ain1 == AD7173_AIN_REF_NEG) ||
+>> 			 ((ain1 == AD7173_AIN_COM_IN_POS || ain1 == AD7173_AIN_COM_IN_NEG) &&
+>> 			 (st->info->has_common_input)) || ain1 == AD4111_VINCOM_INPUT;
+>>
+> 
+> 	special_input0 = AD7173_IS_SPECIAL_INPUT(ain0);
+> 	special_input1 = AD7173_IS_SPECIAL_INPUT(ain1);
+> 
+>> 	if (st->info->has_vincom_input) {
+>> 		if (ain0 == AD4111_VINCOM_INPUT &&
+>> 		    ain1 < st->info->num_voltage_in && /* Normal input */
+>> 		    ain1 >= st->info->num_voltage_in_div) /* Input without divider */
+>> 			return dev_err_probe(dev, -EINVAL,
+>> 				"VINCOM must be paired with inputs having divider.\n");
+>>
+>> 		if (ain1 == AD4111_VINCOM_INPUT &&
+>> 		    ain0 < st->info->num_voltage_in && /* Normal input */
+>> 		    ain0 >= st->info->num_voltage_in_div) /* Input without divider */
+>> 			return dev_err_probe(dev, -EINVAL,
+>> 				"VINCOM must be paired with inputs having divider.\n");
+> 
+> 		if (AD7173_IS_VINCOM_MISMATCH(ain0, ain1) ||
+> 		    AD7173_IS_VINCOM_MISMATCH(ain1, ain0)) {
+>  			return dev_err_probe(dev, -EINVAL,
+>  				"VINCOM must be paired with inputs having divider.\n");
+> 
+>> 	}
+>>
+>> 	if ((ain0 >= st->info->num_voltage_in && !special_input0) ||
+>> 	    (ain1 >= st->info->num_voltage_in && !special_input1))
+>> 		return dev_err_probe(dev, -EINVAL,
+>> 				     "Input pin number out of range for pair (%d %d).\n",
+>> 				     ain0, ain1);
+>>
+>> 	if (!special_input0 && !special_input1 &&
+>> 	    ((ain0 >= st->info->num_voltage_in_div) !=
+>> 	     (ain1 >= st->info->num_voltage_in_div)))
+>> 		return dev_err_probe(dev, -EINVAL,
+>> 			"Both inputs must either have a voltage divider or not have: (%d %d).\n",
+>> 			ain0, ain1);
+> 
+> These last two don't seem so bad.
+> 
+>>
 
-On Mon, Jun 03 2024 at 15:19, Matti Vaittinen wrote:
-> On 6/3/24 13:20, Thomas Gleixner wrote:
->> On Fri, May 24 2024 at 11:18, Matti Vaittinen wrote:
->> Now you start talking about parent interrupts. Can you please make your
->> mind up and concisely explain what this is about?
->
-> I hope I can explain what I am after here. I am also very happy when 
-> incorrect terminology is pointed out! So, it'd be great to know if I 
-> should use 'parent' or 'physical IRQ' here after I explain this further.
->
-> What I am dealing with is an I2C device (PMIC) which provides two GPIO 
-> IRQ lines for SOC. This is what I meant by "physical IRQs".
->
-> ----------------	INTB IRQ	-----------------
-> |		|-----------------------|		|
-> |	PMIC	|			|    SOC	|
-> |		|-----------------------|		|
-> -----------------	ERRB IRQ	-----------------
->
->
-> Both the INTB and ERRB can report various events, and correct event can 
-> be further read from the PMIC registers when IRQ line is asserted. I 
-> think this is business as usual.
->
-> I'd like to use the regmap_irq for representing these events as separate 
-> 'IRQs' (which can be handled using handlers registered with 
-> request_threaded_irq() as usual).
->
-> Here, when talking about 'parent IRQ', I was referring to ERRB or INTB 
-> as 'parent IRQ'. My thinking was that, the regmap IRQ instance uses INTB 
-> or ERRB as it's parent IRQ, which it splits (demuxes) to separate "child 
-> IRQs" for the rest of the PMIC drivers to use. I'd be grateful if better 
-> terms were suggested so that readers can stay on same page with me.
->
-> After talking with Mark:
->
-> we both thought it'd be cleaner to have separate regmap IRQ instances 
-> for the ERRB and INTB lines. This makes sense (to me) because a lot of 
-> (almost all of?) the regmap IRQ internal data describe the IRQ line 
-> related things like registers related to the IRQ line, IRQ line polarity 
-> etc. Hence, making single regmap-IRQ instance to support more than one 
-> <please, add what is the correct term for INTB / ERRB like line> would 
-> require duplicating a plenty of the regmap data. This would make 
-> registering an regmap-IRQ entity much more complex and additionally it'd 
-> also complicate the internals of the regmap-IRQ. It'd be a bit like 
-> trying to fill and drink a six-pack of lemonade at once, instead of 
-> going a bottle by bottle :)
+Thanks for the quick review :)
 
-This makes a lot more sense now. So what I read out of this in change
-log style is:
-
-  Devices can have subfunctions where each has its own interrupt
-  line. Each interrupt line acts as demultiplex interrupt for
-  subfunction specific interrupts and has its distinct set of registers.
-
-  regmap can support such a setup, but the interrupt domain code ends up
-  to assign the same device name when creating the underlying per
-  subfunction interrupt domains. This causes name space collision in the
-  debugfs code and also leads to confusion in other places, e.g. 
-  /proc/interrupts would show two distinct interrupts with the same
-  domain name and hardware interrupt number.
-
-  Instead of working around this in the driver or the regmap code, allow
-  to provide a name suffix for the domain name when creating the
-  interrupt domains.
-
-  Add the infrastructure to __irq_domain_add() and expose it via
-  irq_domain_create_linear_named() which is the only function required
-  by the regmap code to support such setups.
-
-Did I get it halfways right?
-
-Thanks,
-
-        tglx
 
