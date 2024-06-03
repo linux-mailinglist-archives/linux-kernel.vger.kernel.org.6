@@ -1,191 +1,188 @@
-Return-Path: <linux-kernel+bounces-198693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18C918D7C2C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:07:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F04D8D7C2F
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:09:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F9F21F22BCE
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 07:07:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2B501F222B0
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 07:09:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FAFD3BBD5;
-	Mon,  3 Jun 2024 07:07:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f4z3CfQ1"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 925BC3D0D9;
+	Mon,  3 Jun 2024 07:09:19 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6A093FBB7;
-	Mon,  3 Jun 2024 07:07:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17C3D3AC0C;
+	Mon,  3 Jun 2024 07:09:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717398464; cv=none; b=uSmI5PJpxQCt30Ya8TSfW0Te6gXoZYMAeBnD5gQSGjrBiud6OtPdFeUSAdJboZ4/aNstPp5oRNPkktsg4qCtLkEesXjhsXV0G8LYrXyPd+ImTw9pBocLv+o9vY1WIKlAieHfke1IJwtLyUe22KOc+JLqylS275FaNMe5NY9qTw4=
+	t=1717398559; cv=none; b=dOmfvvEaZZ6aFZdyOgC/Zdcm2SkL4i6g+Ny7GxTZ10RfTofje3Rwsc7EkU0CUDa6nlRTJQwvzUl29CdCm08Qf+57ANKpeTX4g8DitE7+GBVE98bdFHfTmNi/Jb75oCS+7K5ZiJ6Nf9IUNHphBqyn6FyngRA8lbhepbMi241r8T4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717398464; c=relaxed/simple;
-	bh=7bLHus1w4I0H00CVIohqk6b85k/ALsgSRLOtf5tu+uU=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=u64GwLH+UuGLYFW7ziSEOaOe809NY3SvUSaxfqfTlJ5oxEHMyfyqPzVggyqoK+5mTz6UnAnod00qDZBgDj8OVteNNJHcMZaK7KEDn47rgpto8QdzbCpjkfGBNgNHX8W9MnqgQCgvfOwICV102AD3pdvUO8lnlCVUgQvlTA7Y9e8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f4z3CfQ1; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717398463; x=1748934463;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version:content-id;
-  bh=7bLHus1w4I0H00CVIohqk6b85k/ALsgSRLOtf5tu+uU=;
-  b=f4z3CfQ12yfETHx0+A4x0O8urVO8235SeTFcLIkXiqLnOnswtE/246Qz
-   BMyP7sNw+ICYIEIBYOHAVjWiHx8P7mhQavVo0fSqn8nXlhzycjcXHPxkY
-   KUaqV2q6marqhkKHXn1V+j/dNMOBRy9n/oX0cvrB6TP1jvW5PwWFSA/jw
-   nwIFVGh2EQK3aRtfyVQh0KIaxjmADF8yv1yPbZxkT8pxZJnl2oR3VGrF/
-   CdeEnKNB1hTLPpeOQkfqbT2w4BWAat1fH3zSdBZMwGaBjqNRfc2MjDSTb
-   wW8DiMtm0iLF/3NzlwtK2VWqCDPValM7p40O60KyUHtKyxzSfk50KxvnZ
-   A==;
-X-CSE-ConnectionGUID: agH3RbLKRWyxe+ScTyPJdg==
-X-CSE-MsgGUID: +zg/HxqBTPawhQoUXfyeRw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11091"; a="14037704"
-X-IronPort-AV: E=Sophos;i="6.08,210,1712646000"; 
-   d="scan'208";a="14037704"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2024 00:07:43 -0700
-X-CSE-ConnectionGUID: ImDIemN4Rem3g8ch1zyFRw==
-X-CSE-MsgGUID: vU+cfdDfRAWGPzKCN0G5Ig==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,210,1712646000"; 
-   d="scan'208";a="36871007"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.161])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2024 00:07:39 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 3 Jun 2024 10:07:35 +0300 (EEST)
-To: Reinette Chatre <reinette.chatre@intel.com>
-cc: linux-kselftest@vger.kernel.org, Shuah Khan <shuah@kernel.org>, 
-    Babu Moger <babu.moger@amd.com>, 
-    =?ISO-8859-15?Q?Maciej_Wiecz=F3r-Retman?= <maciej.wieczor-retman@intel.com>, 
-    LKML <linux-kernel@vger.kernel.org>, Fenghua Yu <fenghua.yu@intel.com>, 
-    Shuah Khan <skhan@linuxfoundation.org>
-Subject: Re: [PATCH v5 02/16] selftests/resctrl: Calculate resctrl FS derived
- mem bw over sleep(1) only
-In-Reply-To: <f6b1cf5f-b282-4a52-b09a-ac01ff5a6144@intel.com>
-Message-ID: <a8f550a2-b9f0-5656-e8e4-bafc977c4dac@linux.intel.com>
-References: <20240531131142.1716-1-ilpo.jarvinen@linux.intel.com> <20240531131142.1716-3-ilpo.jarvinen@linux.intel.com> <f6b1cf5f-b282-4a52-b09a-ac01ff5a6144@intel.com>
+	s=arc-20240116; t=1717398559; c=relaxed/simple;
+	bh=TSAOtr8sheTBhZFjKCBZYmQPbrwbVxDGpOMc1B0GEyc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WpblOdP1jyfSMoXJe4G/9T8S6NQKL3Yt7ZeoO8D5yStYT6537i8WTUWYcm8cCvE7kdJ9zWJqfsqbUcJ2EB3h3Z0zi71tjgmpXvYyV1KtMijH1O7mqyGUEP92zXBA/jchRAisx/NPwBwcEeU8anf72p9g1M8K8vyuV65RuBTB/oY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [192.168.0.224] (ip5f5aee76.dynamic.kabel-deutschland.de [95.90.238.118])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 11CD661E5FE01;
+	Mon,  3 Jun 2024 09:08:59 +0200 (CEST)
+Message-ID: <1793d793-2282-43a4-a65d-abfcb590f5cc@molgen.mpg.de>
+Date: Mon, 3 Jun 2024 09:08:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="8323328-673171939-1717398144=:1529"
-Content-ID: <0fbd535e-c7be-3209-6627-5908e1495f37@linux.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/1] Bluetooth: btnxpuart: Add handling for
+ boot-signature timeout errors
+To: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
+Cc: marcel@holtmann.org, luiz.dentz@gmail.com,
+ linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+ amitkumar.karwar@nxp.com, rohit.fule@nxp.com, sherry.sun@nxp.com,
+ ziniu.wang_1@nxp.com, haibo.chen@nxp.com, LnxRevLi@nxp.com
+References: <20240603063753.134272-1-neeraj.sanjaykale@nxp.com>
+Content-Language: en-US
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <20240603063753.134272-1-neeraj.sanjaykale@nxp.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Dear Neeraj,
 
---8323328-673171939-1717398144=:1529
-Content-Type: text/plain; CHARSET=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Content-ID: <3143f12d-da6e-7a86-8815-6930cb9d94db@linux.intel.com>
 
-On Fri, 31 May 2024, Reinette Chatre wrote:
-> On 5/31/24 6:11 AM, Ilpo J=E4rvinen wrote:
-> > For MBM/MBA tests, measure_vals() calls get_mem_bw_imc() that performs
-> > the measurement over a duration of sleep(1) call. The memory bandwidth
-> > numbers from IMC are derived over this duration. The resctrl FS derived
-> > memory bandwidth, however, is calculated inside measure_vals() and only
-> > takes delta between the previous value and the current one which
-> > besides the actual test, also samples inter-test noise.
-> >=20
-> > Rework the logic in measure_vals() and get_mem_bw_imc() such that the
-> > resctrl FS memory bandwidth section covers much shorter duration
-> > closely matching that of the IMC perf counters to improve measurement
-> > accuracy.
-> >=20
-> > For the second read after rewind() to return a fresh value, also
-> > newline has to be consumed by the fscanf().
-> >=20
-> > Suggested-by: Reinette Chatre <reinette.chatre@intel.com>
-> > Signed-off-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
-> > ---
-> >=20
-> > v5:
-> > - Open mem bw file once and use rewind()
-> > - Read \n from the mem bw file to allow rewind to return a new value.
-> > v4:
-> > - Open resctrl mem bw file (twice) beforehand to avoid opening it durin=
-g
-> >    the test
-> > v3:
-> > - Don't drop Return: entry from perf_open_imc_mem_bw() func comment
-> > ---
-> >   tools/testing/selftests/resctrl/resctrl_val.c | 115 ++++++++++++-----=
--
-> >   1 file changed, 80 insertions(+), 35 deletions(-)
-> >=20
-> > diff --git a/tools/testing/selftests/resctrl/resctrl_val.c
-> > b/tools/testing/selftests/resctrl/resctrl_val.c
-> > index f55f5989de72..6231275a6e6c 100644
-> > --- a/tools/testing/selftests/resctrl/resctrl_val.c
-> > +++ b/tools/testing/selftests/resctrl/resctrl_val.c
+Am 03.06.24 um 08:37 schrieb Neeraj Sanjay Kale:
+> This handles the timeout errors seen in the bootloader signatures during
+> FW download.
 
-> >   @@ -616,13 +645,17 @@ static void initialize_llc_occu_resctrl(const c=
-har
-> > *ctrlgrp, const char *mongrp,
-> >   }
-> >     static int measure_vals(const struct user_params *uparams,
-> > -=09=09=09struct resctrl_val_param *param,
-> > -=09=09=09unsigned long *bw_resc_start)
-> > +=09=09=09struct resctrl_val_param *param)
-> >   {
-> > -=09unsigned long bw_resc, bw_resc_end;
-> > +=09unsigned long bw_resc, bw_resc_start, bw_resc_end;
-> > +=09FILE *mem_bw_fp;
-> >   =09float bw_imc;
-> >   =09int ret;
-> >   +=09mem_bw_fp =3D open_mem_bw_resctrl(mbm_total_path);
-> > +=09if (!mem_bw_fp)
-> > +=09=09return -1;
-> > +
->=20
-> The comment below seems to refer to the resctrl measurement
-> that starts with the above snippet. Any reason why this snippet
-> is above the comment that follows since the comment seems to
-> apply to it?
+Please add the error to the commit message.
 
-No particular reason. I've made the comment a function one now which=20
-seemed better placement for it.
+> When the bootloader does not receive a response packet from the host
+> within a specific time, it adds an error code to the bootloader
+> signature while requesting for the FW chunk from the same offset.
+> 
+> The host is expected to clear this error code with a NAK, and reply to
+> only those bootloader signatures which have error code 0.
+> 
+> This error handling is valid for data_req bootloader signatures for V3
+> and future bootloader versions.
+> 
+> Signed-off-by: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
 
-> >   =09/*
-> >   =09 * Measure memory bandwidth from resctrl and from
-> >   =09 * another source which is perf imc value or could
+Add a Fixes: tag?
 
-> > @@ -630,22 +663,35 @@ static int measure_vals(const struct user_params
-> > *uparams,
-> >   =09 * Compare the two values to validate resctrl value.
-> >   =09 * It takes 1sec to measure the data.
-> >   =09 */
-> > -=09ret =3D get_mem_bw_imc(uparams->cpu, param->bw_report, &bw_imc);
-> > +=09ret =3D perf_open_imc_mem_bw(uparams->cpu);
-> >   =09if (ret < 0)
-> > -=09=09return ret;
-> > +=09=09goto close_fp;
-> >   -=09ret =3D get_mem_bw_resctrl(&bw_resc_end);
-> > +=09ret =3D get_mem_bw_resctrl(mem_bw_fp, &bw_resc_start);
-> >   =09if (ret < 0)
-> > -=09=09return ret;
-> > +=09=09goto close_fp;
->=20
-> perf_close_imc_mem_bw() seems to be missing from error path?
->=20
-> Symmetrical code is easier to understand. Looks like
-> perf_close_imc_mem_bw() stayed behind in get_mem_bw_imc() but I think
-> it would make things easier if get_mem_bw_imc() no longer calls
-> perf_close_imc_mem_bw() but instead leave that to the one that
-> calls perf_open_imc_mem_bw().
+> ---
+>   drivers/bluetooth/btnxpuart.c | 46 ++++++++++++++++++++++++++++++++---
+>   1 file changed, 42 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/bluetooth/btnxpuart.c b/drivers/bluetooth/btnxpuart.c
+> index 0b93c2ff29e4..2018513fb961 100644
+> --- a/drivers/bluetooth/btnxpuart.c
+> +++ b/drivers/bluetooth/btnxpuart.c
+> @@ -187,6 +187,10 @@ struct btnxpuart_dev {
+>   #define NXP_NAK_V3		0x7b
+>   #define NXP_CRC_ERROR_V3	0x7c
+>   
+> +#define NXP_ACK_RX_TIMEOUT	0x0002
+> +#define NXP_HDR_RX_TIMEOUT	0x0003
+> +#define NXP_DATA_RX_TIMEOUT	0x0004
+> +
 
-Okay yeah, it makes things more tractable.
+Please mention the datasheet name, revision and section in the commit 
+message for review.
 
---=20
- i.
---8323328-673171939-1717398144=:1529--
+>   #define HDR_LEN			16
+>   
+>   #define NXP_RECV_CHIP_VER_V1 \
+> @@ -277,6 +281,12 @@ struct nxp_bootloader_cmd {
+>   	__be32 crc;
+>   } __packed;
+>   
+> +struct nxp_v3_rx_timeout_nak {
+> +	u8 nak;
+> +	__le32 offset;
+> +	u8 crc;
+> +} __packed;
+> +
+>   static u8 crc8_table[CRC8_TABLE_SIZE];
+>   
+>   /* Default configurations */
+> @@ -899,6 +909,32 @@ static int nxp_recv_chip_ver_v3(struct hci_dev *hdev, struct sk_buff *skb)
+>   	return 0;
+>   }
+>   
+> +static void nxp_handle_fw_dnld_error(struct hci_dev *hdev, struct v3_data_req *req)
+
+I would not use abbreviations, and use download.
+
+> +{
+> +	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
+> +	__u32 offset = __le32_to_cpu(req->offset);
+> +	__u16 err = __le16_to_cpu(req->error);
+> +	struct nxp_v3_rx_timeout_nak nak_tx_buf;
+> +
+> +	switch (err) {
+> +	case NXP_ACK_RX_TIMEOUT:
+> +	case NXP_HDR_RX_TIMEOUT:
+> +	case NXP_DATA_RX_TIMEOUT:
+> +		nak_tx_buf.nak = NXP_NAK_V3;
+> +		nak_tx_buf.offset = __cpu_to_le32(offset);
+> +		nak_tx_buf.crc = crc8(crc8_table, (u8 *)&nak_tx_buf,
+
+Can the cast be avoided and written differently?
+
+> +				      sizeof(nak_tx_buf) - 1, 0xff);
+> +		serdev_device_write_buf(nxpdev->serdev, (u8 *)&nak_tx_buf,
+> +					sizeof(nak_tx_buf));
+> +		break;
+> +	default:
+> +		bt_dev_dbg(hdev, "Unknown bootloader error: %d", err);
+> +		break;
+> +
+> +	}
+> +
+> +}
+> +
+>   static int nxp_recv_fw_req_v3(struct hci_dev *hdev, struct sk_buff *skb)
+>   {
+>   	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
+> @@ -913,7 +949,12 @@ static int nxp_recv_fw_req_v3(struct hci_dev *hdev, struct sk_buff *skb)
+>   	if (!req || !nxpdev->fw)
+>   		goto free_skb;
+>   
+> -	nxp_send_ack(NXP_ACK_V3, hdev);
+> +	if (!req->error) {
+> +		nxp_send_ack(NXP_ACK_V3, hdev);
+> +	} else {
+> +		nxp_handle_fw_dnld_error(hdev, req);
+> +		goto free_skb;
+> +	}
+>   
+>   	len = __le16_to_cpu(req->len);
+>   
+> @@ -940,9 +981,6 @@ static int nxp_recv_fw_req_v3(struct hci_dev *hdev, struct sk_buff *skb)
+>   		wake_up_interruptible(&nxpdev->fw_dnld_done_wait_q);
+>   		goto free_skb;
+>   	}
+> -	if (req->error)
+> -		bt_dev_dbg(hdev, "FW Download received err 0x%02x from chip",
+> -			   req->error);
+>   
+>   	offset = __le32_to_cpu(req->offset);
+>   	if (offset < nxpdev->fw_v3_offset_correction) {
+
+
+Kind regards,
+
+Paul
 
