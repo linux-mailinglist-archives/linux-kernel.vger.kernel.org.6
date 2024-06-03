@@ -1,104 +1,60 @@
-Return-Path: <linux-kernel+bounces-199393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38EBB8D86B2
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:55:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 16B3A8D86B5
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:56:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E847A2821F8
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:55:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C679A283CE8
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:56:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3F72135A51;
-	Mon,  3 Jun 2024 15:55:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9719C132C39;
+	Mon,  3 Jun 2024 15:56:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TW4lU+On"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VljIBWF+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFFC7131736;
-	Mon,  3 Jun 2024 15:55:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D45511E525;
+	Mon,  3 Jun 2024 15:56:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717430112; cv=none; b=OGACf7maD/fXtTj/O/9U8i4572FHHRLHqn0GG1a1A2QLIfrpHpoBhNJK8rVxu3RBP+hmRI1UCjqLWgBZToZ/nxlVM89TsjRkdTPPo9AFlTQhhP4I3pAp7Oi/Wtmw8JDUtqm3aIT8jJdiy9CJK/ihFE3xQhCRB4r1U3eiNkL/F6o=
+	t=1717430179; cv=none; b=jynPtsd/d9naYq1/HZlP87dUbqkk0amPLl1R25u+iMZ1/1VxRvqRA+NiDuaoAL1sjBjQIw7Y4JNFYKvw3nGojDSONNvr/+ilH4TQvNc0eKyYsC1Xv/udiIUUMkYIda15vXvq0UirDcCtcc0ZIu8B8EuxNr2ZnpLsjmEKW+dzgLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717430112; c=relaxed/simple;
-	bh=ReQXmTcvg08RqCaBOPd0ceRbHCmA79vsnPwpqNQ/OWs=;
+	s=arc-20240116; t=1717430179; c=relaxed/simple;
+	bh=futJcvAhuekfJi6Omn7IDi2rhi/asO2I+BKkZvgElD0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dJ998Exgzww4610rs8iJERsllNiZvrxaW+r0ng3PYB18v7gDZcXsT3nc0vRVY/60NISsEiG0mGl2Nom08Xb+Tn1z9vGGPDHBxd0HQtoFBocSdunw0in3p8+YPnKQvdI1r/MHv+NVzg4MVi1qTb6uTVJy8j2u6XbI+qBfwel+Sng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TW4lU+On; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6ACBC2BD10;
-	Mon,  3 Jun 2024 15:55:10 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=LkRjDGGyUbDxMVwt+pV0TnCErnA2BP9Fc04De9siXhDxj2EhiCtH9YKepXrQ6Gp4MnIj66W74INKebmpeW1N8UoVTzZP5ghI7d1gXjH/pf7IOww1XG+hUUAoPByzCr7ESuNdLyte7aY8eFFYuY7xzw644+GpqGawnzD8ERqEXiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VljIBWF+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13EADC2BD10;
+	Mon,  3 Jun 2024 15:56:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717430111;
-	bh=ReQXmTcvg08RqCaBOPd0ceRbHCmA79vsnPwpqNQ/OWs=;
+	s=k20201202; t=1717430179;
+	bh=futJcvAhuekfJi6Omn7IDi2rhi/asO2I+BKkZvgElD0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TW4lU+OnMLar1IkIptx6eovxmB4sv5QKfLrew2PGPPZ+6BD0EIZZZmfgPtlTXcJtA
-	 UbSb4lL4Kh4+KTQIRL4yL2m+v4o9lEQ5iHqLr68Ko3fxznlnn+qHpDi3MYmyxEhi4Z
-	 UFVf3ZGpzDBYi/mI+pDoizSK2aUiFzrF2XrTNLOWkNp2Yc02tBrOe3E7wrHs4joDzs
-	 Wsre3VN1F+4IQsCowKmGcRC3ke3K+kQrU2by149l+IwTvXMiNfyPwvM5Y+GExAKKFT
-	 xAL+dlm6hLv7BQAjEN/qVtl1hWLWqoc9J7cNH1urPkOPIW/mFGU1ZZyakOjZIlYU31
-	 miadAsHe6IvzQ==
-Date: Mon, 3 Jun 2024 10:55:08 -0500
+	b=VljIBWF+dF5NH50qa7/pjnUwX8u4zmTFEdKqAtElPselZAWfTQWGquNldjtc6QorB
+	 xLJIRbYv5GblmgpQVMRgzkud0jMZaO/wXyoaFCxSL4YB/8kVpXIB6/BuMirHRkTtQA
+	 PSwe4ewy560D80s3uy6x9rz1FK439Z+Fjv4dSs7z5/XwT6JkLHsQnvTUjlfRObv9oH
+	 O6qA5r4omEBw06am6z03aXxwI/2OCfK4uyvmypWvQ9Z2lVn7LpnAMTWZYSOoQ0xuzv
+	 cli7XbUcMs7hjGScsIeJYyAx4Y3ejoybgJyEDZOCWNKhtIrpVqoFDQ1fYFJUDi1fyH
+	 4IYRNNw9eqabQ==
+Date: Mon, 3 Jun 2024 10:56:16 -0500
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Sebastian Reichel <sre@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Rich Felker <dalias@libc.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Javier Martinez Canillas <javierm@redhat.com>,
-	linux-renesas-soc@vger.kernel.org,
-	Kefeng Wang <wangkefeng.wang@huawei.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-fbdev@vger.kernel.org,
-	Chris Morgan <macromorgan@hotmail.com>,
-	Jiri Slaby <jirislaby@kernel.org>, Baoquan He <bhe@redhat.com>,
-	Helge Deller <deller@gmx.de>, David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-kernel@vger.kernel.org, Magnus Damm <magnus.damm@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sam Ravnborg <sam@ravnborg.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Guo Ren <guoren@kernel.org>, linux-pci@vger.kernel.org,
-	Anup Patel <apatel@ventanamicro.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Jacky Huang <ychuang3@nuvoton.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	Azeem Shaikh <azeemshaikh38@gmail.com>,
-	Niklas Cassel <cassel@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Max Filippov <jcmvbkbc@gmail.com>, linux-ide@vger.kernel.org,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Stephen Boyd <sboyd@kernel.org>, linux-serial@vger.kernel.org,
-	Sergey Shtylyov <s.shtylyov@omp.ru>, devicetree@vger.kernel.org,
-	Jonathan Corbet <corbet@lwn.net>,
-	Guenter Roeck <linux@roeck-us.net>, linux-sh@vger.kernel.org,
-	Heiko Stuebner <heiko.stuebner@cherry.de>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, dri-devel@lists.freedesktop.org,
-	Lee Jones <lee@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	linux-clk@vger.kernel.org, Thomas Zimmermann <tzimmermann@suse.de>,
-	Damien Le Moal <dlemoal@kernel.org>
-Subject: Re: [DO NOT MERGE v8 21/36] dt-bindings: serial: renesas,scif: Add
- scif-sh7751.
-Message-ID: <171743010672.507323.12704296584097795619.robh@kernel.org>
-References: <cover.1716965617.git.ysato@users.sourceforge.jp>
- <76fffb1383820a701e0c787dcb3a25da52f6e8b7.1716965617.git.ysato@users.sourceforge.jp>
+To: Shengjiu Wang <shengjiu.wang@nxp.com>
+Cc: robh+dt@kernel.org, Xiubo.Lee@gmail.com, conor+dt@kernel.org,
+	broonie@kernel.org, nicoleotsuka@gmail.com,
+	alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org,
+	devicetree@vger.kernel.org, festevam@gmail.com,
+	linux-sound@vger.kernel.org, shengjiu.wang@gmail.com,
+	krzysztof.kozlowski+dt@linaro.org, tiwai@suse.com,
+	lgirdwood@gmail.com, perex@perex.cz, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] ASoC: dt-bindings: fsl,xcvr: Add compatible
+ string for i.MX95
+Message-ID: <171743017410.508888.18301786325836336214.robh@kernel.org>
+References: <1716972002-2315-1-git-send-email-shengjiu.wang@nxp.com>
+ <1716972002-2315-2-git-send-email-shengjiu.wang@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -107,19 +63,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <76fffb1383820a701e0c787dcb3a25da52f6e8b7.1716965617.git.ysato@users.sourceforge.jp>
+In-Reply-To: <1716972002-2315-2-git-send-email-shengjiu.wang@nxp.com>
 
 
-On Wed, 29 May 2024 17:01:07 +0900, Yoshinori Sato wrote:
-> Add Renesas SH7751 SCIF.
+On Wed, 29 May 2024 16:40:01 +0800, Shengjiu Wang wrote:
+> Add compatible string "fsl,imx95-xcvr" for i.MX95 platform.
 > 
-> Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> The difference between each platform is in below table.
+> 
+> +---------+--------+----------+--------+
+> |  SOC	  |  PHY   | eARC/ARC | SPDIF  |
+> +---------+--------+----------+--------+
+> | i.MX8MP |  V1    |  Yes     |  Yes   |
+> +---------+--------+----------+--------+
+> | i.MX93  |  N/A   |  N/A     |  Yes   |
+> +---------+--------+----------+--------+
+> | i.MX95  |  V2    |  N/A     |  Yes   |
+> +---------+--------+----------+--------+
+> 
+> On i.MX95, there are two PLL clock sources, they are the parent
+> clocks of the XCVR root clock. one is for 8kHz series rates, named
+> as 'pll8k', another one is for 11kHz series rates, named as 'pll11k'.
+> They are optional clocks, if there are such clocks, then the driver
+> can switch between them to support more accurate sample rates.
+> 
+> As 'pll8k' and 'pll11k' are optional, then add 'minItems: 4' for
+> clocks and clock-names properties.
+> 
+> On i.MX95, the 'interrupts' configuration has the same constraint
+> as i.MX93.
+> 
+> Only on i.MX8MP, the 'resets' is required, but for i.MX95 and i.MX93
+> there is no such hardware setting.
+> 
+> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
 > ---
->  Documentation/devicetree/bindings/serial/renesas,scif.yaml | 1 +
->  1 file changed, 1 insertion(+)
+>  .../devicetree/bindings/sound/fsl,xcvr.yaml   | 32 ++++++++++++++++++-
+>  1 file changed, 31 insertions(+), 1 deletion(-)
 > 
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
 
