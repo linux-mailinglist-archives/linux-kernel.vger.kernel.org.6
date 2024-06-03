@@ -1,112 +1,157 @@
-Return-Path: <linux-kernel+bounces-199205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05FA38D83D3
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:25:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CC8D8D83DF
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:26:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 870FDB25DAF
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:25:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27FA41F2310B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:26:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D92A12D757;
-	Mon,  3 Jun 2024 13:25:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 949E612D761;
+	Mon,  3 Jun 2024 13:26:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="KEveu3xA"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="W1Fq/MEo"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B42F12C48A;
-	Mon,  3 Jun 2024 13:25:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6077384D10;
+	Mon,  3 Jun 2024 13:26:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717421120; cv=none; b=hfhyTNorjApPaqNmlrn2YjFjA3Q7TuslrCa1jhrH66I9NHFvoUxkJuyrDmENGF+0faKplReCPbaeoRSd/EU6HrFP8Bw/Pop6J+vo2DH7BtFl4h3hWpCvpSOe43o75SSApOBOxUrP0XT0/lm72FCgxebrGa/yx72L+sK4v9IAGxo=
+	t=1717421194; cv=none; b=c6GWzoVA6kSFWkN/Qav/NWDdt5YQCCqGQYfbHRBbR5KCxYGGBGd4rq0ZXrJC3mT2kndtbjmNoQW0B1nd04xZTPp9eL//Q9brg34g1DbBfls+Mw1rbZ8RYu0jLCnbjoZbxilKq9PHZIXN+cxcE+natl6HDUzWBT2K7oVLCbLssDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717421120; c=relaxed/simple;
-	bh=bMPPMt40JcCI7qT1Vp8JvvHPnPCsgx0PvHanmVERJPc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pesHdVEQRjEXVXTgnfgqTEdcVhlDbNAaersirK2GCnNxhf7quE1+B80yUqEv2+f/GXYFYMXOr+OSbSkuqrOdg4nppOD89hRgWNB8tM3M15nC1WCmuIpS2DIEPnrVf6wKZE5EQWM0ZLgevBbD8iQdJc/NYfFisEcOip0dsePAxLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=KEveu3xA; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=tWf90TqEv33tkhaPkxRH0Ei2G5Na7AiQ0T1KjGRgchw=; b=KEveu3xARg02n//HGVdyAS3k0L
-	0+OpND2w3tEvWcNfABvyknDo0o4Q3G8SkiWap/eZf6kwJ+ySQmBG9ZX/j3s5aiUwRrTDge/PuDKf3
-	JKEvayPNO0SyM13/UbRXnO51WTWvW7FDqovIWEDp0OyYn8kqbL4e9Su8kHXIK2NiyP6TKYfVGKRr1
-	VQZSW8WjTL5OHx5X6+TOjBiHSpNEFf5Fp+Y4UFRQgBFxC6/wbJ3hhIgski9LdhdeUEgQf6pyPNMMW
-	0IlL2dpuX5/ambYbTQEFw52BvsCWq+Y3KeCUMTWLtL2DA2irbleJ9rTIRye4KE1/OoykgFQHk5Eas
-	Pb+GEH2g==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:52102)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sE7gL-0002mY-2H;
-	Mon, 03 Jun 2024 14:25:01 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sE7gL-0000T6-H9; Mon, 03 Jun 2024 14:25:01 +0100
-Date: Mon, 3 Jun 2024 14:25:01 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Sky Huang <SkyLake.Huang@mediatek.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	Qingfang Deng <dqfext@gmail.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Steven Liu <Steven.Liu@mediatek.com>
-Subject: Re: [PATCH net-next v6 5/5] net: phy: add driver for built-in 2.5G
- ethernet PHY on MT7988
-Message-ID: <Zl3ELbG8c8y0/4DN@shell.armlinux.org.uk>
-References: <20240603121834.27433-1-SkyLake.Huang@mediatek.com>
- <20240603121834.27433-6-SkyLake.Huang@mediatek.com>
+	s=arc-20240116; t=1717421194; c=relaxed/simple;
+	bh=WGK8e6et2Jc1PekWJ5Q/87WxJ0aFOpzIdbL1g64OCrI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=KHUkd+PkQkKonYTnyUQtO/pynwOHu8nHFmtOoyS45CbKEg1EH/KQIK3u2+Z6/Vv9CVJhLMGKVBfo25XBa8dVzL58XHB7O05K3oG56jjmhRH5JKzfsZGWQUW8N7sN690MiJXPFCEmXWJXapy5SREQlNVPz2vADlywomxr+yzECpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=W1Fq/MEo; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 453CbsnW000360;
+	Mon, 3 Jun 2024 13:26:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	bxrD1PBB/smpCbgN2RLudDCE7GpM9cWp7s3S21m9/4M=; b=W1Fq/MEo6LPXKptZ
+	MUyKS8bTM/0FEZlDMizmEYcX8LUayP847qHw99yHsHyYezBxhDdj0Dqktn51w6i4
+	exr0F5GkhVa1LBc/4rCZMNbtyR70aDkUZvxME7WXs4Q+hiuwPoao1Hx2dhfb9m71
+	7yzABhEIGDK4hK4wWNPh9pMnXk1u42/VcV8r1F80pYlShnrG6uLJoqOJA3mfX7fo
+	OoNmfb1EK30PeRUy5gQCwXvgPdyHGEckQCoBUxpQ3zB7Fpfep2ZfNW53usWQrWx/
+	w6eK67DLh9sBSUiAwBjF86s3o0lbWh1HB5JXmtCBi2cppQhaCw+2BUGLNRcQwQ0t
+	7ycMZw==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfw4bc0ae-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 03 Jun 2024 13:26:27 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 453DQQsT023911
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 3 Jun 2024 13:26:26 GMT
+Received: from [10.216.21.127] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 3 Jun 2024
+ 06:26:20 -0700
+Message-ID: <88b683c8-56c8-493c-8f22-832cd6d13279@quicinc.com>
+Date: Mon, 3 Jun 2024 18:56:08 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240603121834.27433-6-SkyLake.Huang@mediatek.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V4 6/8] dt-bindings: clock: qcom: Add SM8650 camera clock
+ controller
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Stephen
+ Boyd" <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>
+CC: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Taniya Das
+	<quic_tdas@quicinc.com>,
+        Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+        Ajit Pandey <quic_ajipan@quicinc.com>,
+        Imran Shaik
+	<quic_imrashai@quicinc.com>
+References: <20240602114439.1611-1-quic_jkona@quicinc.com>
+ <20240602114439.1611-7-quic_jkona@quicinc.com>
+ <9fdf4c46-a07e-4dfc-9992-4dd94d8dab5f@linaro.org>
+Content-Language: en-US
+From: Jagadeesh Kona <quic_jkona@quicinc.com>
+In-Reply-To: <9fdf4c46-a07e-4dfc-9992-4dd94d8dab5f@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 2xrUARPnkj9-HyJSV7Zvj3_-ILPl18ru
+X-Proofpoint-GUID: 2xrUARPnkj9-HyJSV7Zvj3_-ILPl18ru
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-06-03_08,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 suspectscore=0
+ phishscore=0 malwarescore=0 priorityscore=1501 mlxscore=0 impostorscore=0
+ bulkscore=0 lowpriorityscore=0 spamscore=0 mlxlogscore=979 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
+ definitions=main-2406030110
 
-On Mon, Jun 03, 2024 at 08:18:34PM +0800, Sky Huang wrote:
-> Add support for internal 2.5Gphy on MT7988. This driver will load
-> necessary firmware, add appropriate time delay and figure out LED.
-> Also, certain control registers will be set to fix link-up issues.
 
-Based on our previous discussion, it may be worth checking in the
-.config_init() method whether phydev->interface is one of the
-PHY interface modes that this PHY supports. As I understand from one
-of your previous emails, the possibilities are XGMII, USXGMII or
-INTERNAL. Thus:
 
-> +static int mt798x_2p5ge_phy_config_init(struct phy_device *phydev)
-> +{
-> +	struct pinctrl *pinctrl;
-> +	int ret;
+On 6/2/2024 8:56 PM, Krzysztof Kozlowski wrote:
+> On 02/06/2024 13:44, Jagadeesh Kona wrote:
+>> Add device tree bindings for the camera clock controller on
+>> Qualcomm SM8650 platform.
+>>
+>> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>> Acked-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+>> ---
+>>   .../bindings/clock/qcom,sm8450-camcc.yaml     |   3 +
+>>   include/dt-bindings/clock/qcom,sm8650-camcc.h | 195 ++++++++++++++++++
+>>   2 files changed, 198 insertions(+)
+>>   create mode 100644 include/dt-bindings/clock/qcom,sm8650-camcc.h
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
+>> index 645080b848f0..f58edfc10f4c 100644
+>> --- a/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
+>> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
+>> @@ -8,6 +8,7 @@ title: Qualcomm Camera Clock & Reset Controller on SM8450
+>>   
+>>   maintainers:
+>>     - Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+>> +  - Jagadeesh Kona <quic_jkona@quicinc.com>
+>>   
+>>   description: |
+>>     Qualcomm camera clock control module provides the clocks, resets and power
+>> @@ -17,6 +18,7 @@ description: |
+>>       include/dt-bindings/clock/qcom,sc8280xp-camcc.h
+>>       include/dt-bindings/clock/qcom,sm8450-camcc.h
+>>       include/dt-bindings/clock/qcom,sm8550-camcc.h
+>> +    include/dt-bindings/clock/qcom,sm8650-camcc.h
+>>       include/dt-bindings/clock/qcom,x1e80100-camcc.h
+> 
+> Just squash the other patch here or drop it completely.
+> 
+> Best regards,
+> Krzysztof
+> 
 
-	/* Check that the PHY interface type is compatible */
-	if (phydev->interface != PHY_INTERFACE_MODE_INTERNAL &&
-	    phydev->interface != PHY_INTERFACE_MODE_XGMII &&
-	    phydev->interface != PHY_INTERFACE_MODE_USXGMII)
-		return -ENODEV;
+Sure, will squash it to this patch in next series.
 
-Thanks.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Thanks,
+Jagadeesh
 
