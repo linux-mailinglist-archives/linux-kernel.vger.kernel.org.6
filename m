@@ -1,62 +1,95 @@
-Return-Path: <linux-kernel+bounces-198867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D1088D7E7C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:27:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 60BF38D7E7A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:27:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4236B2824B3
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:27:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16C0328320C
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:27:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC97D7F7F6;
-	Mon,  3 Jun 2024 09:27:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 843127F7D5;
+	Mon,  3 Jun 2024 09:27:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="PdLafWwM"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="m2ClgOjD";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="YXtbz/Hh";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="m2ClgOjD";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="YXtbz/Hh"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E90E757E0;
-	Mon,  3 Jun 2024 09:27:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B7ED7E578
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 09:27:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717406859; cv=none; b=kqnnh95iyNoDPmxe0WLbxAG4TYbBQt5wn1WJq9cxWKYI3uXZCAgs0VYUvRyOYKODOu72WSP7+ERNyZbuoYvD6dCSf3+CsKKZpioxdvguT8+RpvAYIgPQvhdmqsO0zRcI0z14g/ntryWyHoV9uoUNlgPOfwqMxuIfYP70JPE+Nuo=
+	t=1717406822; cv=none; b=psJvm5xNXxMSev/IambVv0kWjTgd7TniE9NflCbGRppuqvWeFXk/WFgNlOjLFQEtms7k5V3tHQDggWL+EXWv7N3X9eOumHYO+0zUaDrbkvN2ktUmDlNhqJkPxV0gNdORabT7AtEFyY9zWTuAVj1ac4ScWgw1dGswdPvnawLRdmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717406859; c=relaxed/simple;
-	bh=x9ikFYNncfJUkrFfp9JJ8ryQsRSyVgqBkaGtU/Z/r4g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=otrmccm3c8Kw+kqCXZpcS36j152enVasl3uy6nm2Dgz6vnFU5giHFFQheFfW5wR9LeNHHaN5tk6FPIzubCEo/+NtXl7UYGFwlCY7sHG4dqzHxbsclQQcZ4DI+t6FfgQHyUfQQmwVV+aQukqqsy1uM36BXvPmrxkjfZGCRKZ72so=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=PdLafWwM; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4539R1xf081601;
-	Mon, 3 Jun 2024 04:27:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1717406821;
-	bh=SB5jmnTW30z7D427AIs51/dYcHrGUq+FjEIld/CWbLY=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=PdLafWwMwv4a4/btdJOZNlxq40sxLkDWcVu8S6JJci8GPFuqmKiNi1Zi9ycjoEiy9
-	 KaqJotzBQ8VgW3hK52PLTDCu2zBJ60yxLZzxQfCdz7/5SBaTFBE/5EA9TffFE17Ge4
-	 V8U+2IqNS9TwWaCtaYPGjaxijP8HeoCoOkm6czLM=
-Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4539R1ec110664
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 3 Jun 2024 04:27:01 -0500
-Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 3
- Jun 2024 04:27:00 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 3 Jun 2024 04:27:00 -0500
-Received: from [172.24.227.57] (linux-team-01.dhcp.ti.com [172.24.227.57])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4539Qsjq056761;
-	Mon, 3 Jun 2024 04:26:55 -0500
-Message-ID: <c1380aa4-d8ae-4e77-88a8-59555dffdd57@ti.com>
-Date: Mon, 3 Jun 2024 14:56:53 +0530
+	s=arc-20240116; t=1717406822; c=relaxed/simple;
+	bh=JnqgnbluSpxGX3/XEWJInIKCr9TkBqPGjkMIdXOPcAQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WCN4G6ERTXuavruApwGV1raEqfUzrqcWDOQHXt1tF+LH1xsIsltp98SrLrjrZSe2CK+ZXdbMhht3sANHXkizW0eo9m/ns/bU78sz57Py6JCLLVnCdr9XGqh+DStqNi95zL6BqtjgVJDd6UEVKknnM0SLd9l9K0FtF9y9Fpg5BFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=m2ClgOjD; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=YXtbz/Hh; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=m2ClgOjD; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=YXtbz/Hh; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 3170820021;
+	Mon,  3 Jun 2024 09:26:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1717406819; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=BBmtgSc5+8tDW8x9zpQyWMicQzt+mzz1arbpmd9iXI0=;
+	b=m2ClgOjDD/0FhdJ5Xjt17d9Ur/Xe2+sYqNX6yIfAIHmk3wIlOBz2lP6C6WCronU37v9TxC
+	uklcO4GCpmbAZMi3YO/5xoCadh6mvmyBfZm5pSqHOdVNXuVO1mCCygxJUJiEFwQm3XgqqI
+	30hubML3Upvo+tVyQPUrjF7h9I3+y10=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1717406819;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=BBmtgSc5+8tDW8x9zpQyWMicQzt+mzz1arbpmd9iXI0=;
+	b=YXtbz/HhwLz1eVwHcVpdU7nnIC/Gc8WQPdKBe+z03XZ1yzdJF5+zA/Zut730otPWFNSilV
+	BkYH6uoFdNok7QAw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=m2ClgOjD;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="YXtbz/Hh"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1717406819; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=BBmtgSc5+8tDW8x9zpQyWMicQzt+mzz1arbpmd9iXI0=;
+	b=m2ClgOjDD/0FhdJ5Xjt17d9Ur/Xe2+sYqNX6yIfAIHmk3wIlOBz2lP6C6WCronU37v9TxC
+	uklcO4GCpmbAZMi3YO/5xoCadh6mvmyBfZm5pSqHOdVNXuVO1mCCygxJUJiEFwQm3XgqqI
+	30hubML3Upvo+tVyQPUrjF7h9I3+y10=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1717406819;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=BBmtgSc5+8tDW8x9zpQyWMicQzt+mzz1arbpmd9iXI0=;
+	b=YXtbz/HhwLz1eVwHcVpdU7nnIC/Gc8WQPdKBe+z03XZ1yzdJF5+zA/Zut730otPWFNSilV
+	BkYH6uoFdNok7QAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 17B4C139CB;
+	Mon,  3 Jun 2024 09:26:59 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id hFB0BWOMXWZPAgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Mon, 03 Jun 2024 09:26:59 +0000
+Message-ID: <377fd8bc-acb5-4ef3-8c1c-67cb2e90065b@suse.cz>
+Date: Mon, 3 Jun 2024 11:26:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,111 +97,104 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2 2/3] net: ethernet: ti: Register the RPMsg
- driver as network device
-To: kernel test robot <lkp@intel.com>, <schnelle@linux.ibm.com>,
-        <wsa+renesas@sang-engineering.com>, <diogo.ivo@siemens.com>,
-        <rdunlap@infradead.org>, <horms@kernel.org>, <vigneshr@ti.com>,
-        <rogerq@ti.com>, <danishanwar@ti.com>, <pabeni@redhat.com>,
-        <kuba@kernel.org>, <edumazet@google.com>, <davem@davemloft.net>
-CC: <llvm@lists.linux.dev>, <oe-kbuild-all@lists.linux.dev>,
-        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <srk@ti.com>,
-        <rogerq@kernel.org>, <s-vadapalli@ti.com>, <y-mallik@ti.com>
-References: <20240531064006.1223417-3-y-mallik@ti.com>
- <202406011038.AwLZhQpy-lkp@intel.com>
+Subject: Re: [PATCH 3/3] slab: delete useless RED_INACTIVE and RED_ACTIVE
 Content-Language: en-US
-From: Yojana Mallik <y-mallik@ti.com>
-In-Reply-To: <202406011038.AwLZhQpy-lkp@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+To: Chengming Zhou <chengming.zhou@linux.dev>,
+ Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
+ David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Hyeonggon Yoo <42.hyeyoo@gmail.com>, Feng Tang <feng.tang@intel.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ zhouchengming@bytedance.com
+References: <20240528-b4-slab-debug-v1-0-8694ef4802df@linux.dev>
+ <20240528-b4-slab-debug-v1-3-8694ef4802df@linux.dev>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <20240528-b4-slab-debug-v1-3-8694ef4802df@linux.dev>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.89 / 50.00];
+	BAYES_HAM(-2.89)[99.52%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	MX_GOOD(-0.01)[];
+	FREEMAIL_TO(0.00)[linux.dev,linux.com,kernel.org,google.com,lge.com,linux-foundation.org,gmail.com,intel.com];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[linux.dev:email,suse.cz:dkim]
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: 3170820021
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Score: -2.89
 
+On 5/28/24 9:16 AM, Chengming Zhou wrote:
+> These seem useless since we use the SLUB_RED_INACTIVE and SLUB_RED_ACTIVE,
+> so just delete them, no functional change.
+> 
+> Signed-off-by: Chengming Zhou <chengming.zhou@linux.dev>
 
+Hm right, only SLAB was using those. Thanks.
 
-On 6/1/24 08:43, kernel test robot wrote:
-> Hi Yojana,
-> 
-> kernel test robot noticed the following build warnings:
-> 
-> [auto build test WARNING on net-next/main]
-> 
-> url:    https://github.com/intel-lab-lkp/linux/commits/Yojana-Mallik/net-ethernet-ti-RPMsg-based-shared-memory-ethernet-driver/20240531-144258
-> base:   net-next/main
-> patch link:    https://lore.kernel.org/r/20240531064006.1223417-3-y-mallik%40ti.com
-> patch subject: [PATCH net-next v2 2/3] net: ethernet: ti: Register the RPMsg driver as network device
-> config: x86_64-allyesconfig (https://download.01.org/0day-ci/archive/20240601/202406011038.AwLZhQpy-lkp@intel.com/config)
-> compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240601/202406011038.AwLZhQpy-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202406011038.AwLZhQpy-lkp@intel.com/
-> 
-> All warnings (new ones prefixed by >>):
-> 
->>> drivers/net/ethernet/ti/inter_core_virt_eth.c:76:6: warning: variable 'ret' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
->       76 |         if (wait) {
->          |             ^~~~
->    drivers/net/ethernet/ti/inter_core_virt_eth.c:87:9: note: uninitialized use occurs here
->       87 |         return ret;
->          |                ^~~
->    drivers/net/ethernet/ti/inter_core_virt_eth.c:76:2: note: remove the 'if' if its condition is always true
->       76 |         if (wait) {
->          |         ^~~~~~~~~
->    drivers/net/ethernet/ti/inter_core_virt_eth.c:65:9: note: initialize the variable 'ret' to silence this warning
->       65 |         int ret;
->          |                ^
->          |                 = 0
->    drivers/net/ethernet/ti/inter_core_virt_eth.c:330:24: error: use of undeclared identifier 'icve_del_mc_addr'
->      330 |         __dev_mc_unsync(ndev, icve_del_mc_addr);
->          |                               ^
->    drivers/net/ethernet/ti/inter_core_virt_eth.c:331:26: error: no member named 'mc_list' in 'struct icve_common'
->      331 |         __hw_addr_init(&common->mc_list);
->          |                         ~~~~~~  ^
->    drivers/net/ethernet/ti/inter_core_virt_eth.c:337:28: error: no member named 'rx_mode_work' in 'struct icve_common'
->      337 |         cancel_work_sync(&common->rx_mode_work);
->          |                           ~~~~~~  ^
->    1 warning and 3 errors generated.
-> 
-> 
-> vim +76 drivers/net/ethernet/ti/inter_core_virt_eth.c
-> 
->     59	
->     60	static int icve_create_send_request(struct icve_common *common,
->     61					    enum icve_rpmsg_type rpmsg_type,
->     62					    bool wait)
->     63	{
->     64		unsigned long flags;
->     65		int ret;
->     66	
->     67		if (wait)
->     68			reinit_completion(&common->sync_msg);
->     69	
->     70		spin_lock_irqsave(&common->send_msg_lock, flags);
->     71		create_request(common, rpmsg_type);
->     72		rpmsg_send(common->rpdev->ept, (void *)(&common->send_msg),
->     73			   sizeof(common->send_msg));
->     74		spin_unlock_irqrestore(&common->send_msg_lock, flags);
->     75	
->   > 76		if (wait) {
->     77			ret = wait_for_completion_timeout(&common->sync_msg,
->     78							  ICVE_REQ_TIMEOUT);
->     79	
->     80			if (!ret) {
->     81				dev_err(common->dev, "Failed to receive response within %ld jiffies\n",
->     82					ICVE_REQ_TIMEOUT);
->     83				ret = -ETIMEDOUT;
->     84				return ret;
->     85			}
->     86		}
->     87		return ret;
->     88	}
->     89	
-> 
-
-I will fix all these issues in v3.
-
-Regards,
-Yojana Mallik
 
