@@ -1,56 +1,58 @@
-Return-Path: <linux-kernel+bounces-198588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5D2C8D7AB7
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 06:20:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EC918D7ABA
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 06:21:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38A6E2818E5
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 04:20:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 580CF28181C
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 04:21:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAE5117C7C;
-	Mon,  3 Jun 2024 04:20:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC40F1C695;
+	Mon,  3 Jun 2024 04:21:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GA7i5jyH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="djNta4cJ"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EABCA10F1;
-	Mon,  3 Jun 2024 04:20:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A0C310F1;
+	Mon,  3 Jun 2024 04:21:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717388413; cv=none; b=bC/9BCHYmnvPq0qbVBxddH/sN5deLuQzhtnBYP0jgis6KgmKM0s5FWnQfjCf8YMPuUK+sCMM/4bB0ak7KZTdadql1HdSNxx/EAgESx2pDUwowEKErPSqfgt7zr1GNJRURtRy+jUlYOkQNs8mwU8rpWmTsz1n2rU7PzZeDhNWnNg=
+	t=1717388483; cv=none; b=U4EKG5VReAbes/MOd+RaIOOd8lSzkz9aJdLdMpb9lr0ESBtbz4CZw2vD4ggKTGTRb13FyPfXp+tI9G8JzMQgq/YjapQLPJ7Mcvt5o0XqsPIM8163kcR9ck+TMP3/o27xyRxSAKGpTtYJ0OELVOKMzHdhbQ1FRK6VeTmqe4s9WNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717388413; c=relaxed/simple;
-	bh=T4P767ww2/x3jH+PERXYM2WqkwiMDoGRFxv3GqDt0y0=;
+	s=arc-20240116; t=1717388483; c=relaxed/simple;
+	bh=SNXuoG7G49CyPjlS/0kFiwme3PuzasR7iDQtmZK1Cn8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iowBsiAlvdRsDxpiUUCaeO6agWyFM9kTakx1uuTWjU+S5fBR44dgbnbqYuENJxwDSu5kqsy41cUiRI+NTAPEMof/xB7vwoHReMLZ0nJ8JSmlI8Gt+G8KF11LouxHXRvecdtZEHdINCFvHsUWkOFxx9DYn87JoYE7YxPphomwq7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GA7i5jyH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65ABFC2BD10;
-	Mon,  3 Jun 2024 04:20:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717388412;
-	bh=T4P767ww2/x3jH+PERXYM2WqkwiMDoGRFxv3GqDt0y0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GA7i5jyHumlEPqBbHPtyyQDLB15JrUrB70DGWLV34cRxfGRmK9kp2ntC4nO9Wi0oL
-	 Yd2ZJiQHGEH7XU6/OxCwNphi6YuYc65uX6elAyRhMvwzX0ESBv63GUvflJ5iz/s1GY
-	 7bSCFfS2b5a8MmR8w53EnRK4+7Iu0ZlpE343WvwljKDimS6C37VvJhVnA2Hyq2ueW6
-	 QWWebf6/7fQpBaFVhcDXXSjoSx14/fA6VHjSgJnMq4p7MNpG0J72leGS1LRgkyoEqr
-	 QNYb+PmP+MbBqd6ydB61N7fMyhMDEXmnxMTTkTNxH0EDjlP7qv1UqohutumxsQbFlo
-	 fci9Q9IoNAnfw==
-Date: Mon, 3 Jun 2024 04:20:09 +0000
-From: Tzung-Bi Shih <tzungbi@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Benson Leung <bleung@google.com>, Guenter Roeck <groeck@chromium.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of the chrome-platform tree
-Message-ID: <Zl1EefBEvsQgnEZv@google.com>
-References: <20240603132517.7f344f9f@canb.auug.org.au>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VgI6F7QckQXBtZccPjE4rynPgzqcsMX3/Xx2hm7bC2cHWpx1bvc6snnqYOFwzABjYoR5/5OvNabJRBx0In1Dq10Zsf5x3uHL7GtVm8H9Mip3IlEYQd9QpdjfaUTHQXL9YrlIrqbo/0KmYM2Pwt9xBKK5rFTsf1Me5CaKf6d4nr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=djNta4cJ; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=0vxTDSVzCVRSihsSVFtuGL4BJR8wJ68tmUrgMWWoh04=; b=djNta4cJ3k7aRO5ua40KZt9ERI
+	wXUgvlu0RFpevrrf02BIOciNgnfurVXvRAsAccnfHS/zHsjHGuWfXkG7c+La6vHQCj+mS5zvjmxPs
+	AlyPbrtr1ukjOAWx0w8GU8m2K2Jl26b6amdABbW+d78wnEBvjBji/RhAH2dK++vwYjMJsdF84W67O
+	ChYJQ3M2mEnOXWnWmPdBJRfg2XXkD47LgjncgAdcXJb9R46VQ75BnbSVCS3CENVWC3T7GozjULaCJ
+	JYokaxzZNFAHvl/KsiopnmyGynKXx4jD345En2enpWBHZtgDFpkhle7TjVkTg38XLiWbraYRi8fux
+	DnT4KulQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1sDzC8-00BNqd-22;
+	Mon, 03 Jun 2024 04:21:16 +0000
+Date: Mon, 3 Jun 2024 05:21:16 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: syzbot <syzbot+42986aeeddfd7ed93c8b@syzkaller.appspotmail.com>
+Cc: brauner@kernel.org, jack@suse.cz, linux-ext4@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [ext4?] INFO: task hung in vfs_rmdir (2)
+Message-ID: <20240603042116.GL1629371@ZenIV>
+References: <00000000000054d8540619f43b86@google.com>
+ <20240603035649.GK1629371@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,17 +61,14 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240603132517.7f344f9f@canb.auug.org.au>
+In-Reply-To: <20240603035649.GK1629371@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Mon, Jun 03, 2024 at 01:25:36PM +1000, Stephen Rothwell wrote:
-> After merging the chrome-platform tree, today's linux-next build
-> (htmldocs) produced this warning:
+On Mon, Jun 03, 2024 at 04:56:49AM +0100, Al Viro wrote:
+> On Sun, Jun 02, 2024 at 08:50:18PM -0700, syzbot wrote:
 > 
-> MAINTAINERS:11167: WARNING: unknown document: '../hwmon/chros_ec_hwmon'
+> > If you want syzbot to run the reproducer, reply with:
 > 
-> Introduced by commit
-> 
->   e8665a172378 ("hwmon: add ChromeOS EC driver")
 
-A typo in the applied patch.  Fixed.
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux-2.6 v5.0
 
