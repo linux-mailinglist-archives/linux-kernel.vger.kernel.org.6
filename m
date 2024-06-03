@@ -1,62 +1,95 @@
-Return-Path: <linux-kernel+bounces-198638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F00128D7B8D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 08:28:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3A5D8D7B90
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 08:28:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 283451C20E10
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 06:28:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 512E7B21777
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 06:28:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0444D2C1BA;
-	Mon,  3 Jun 2024 06:28:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51B5D2CCC2;
+	Mon,  3 Jun 2024 06:28:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Q5yGXO7R"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="icedoS8t";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Dr3NTjY7";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="bkMILn3a";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="O1enm+Co"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECB332C697;
-	Mon,  3 Jun 2024 06:28:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEDEB374C3;
+	Mon,  3 Jun 2024 06:28:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717396085; cv=none; b=p4waVdK5EzpLVCVQ3gtZgLjbUvu2Ixez93yhKzORdBxi1KFSbmojphgQHMINnigh8poYNnk9EhJkzYeKKAT6VgOT+zIuEQNt77GARepTgkKHzW2CiMBZhFy4XrZGWtoJ/fSOSS2ch01TgBYMAOTsNQGB0unFfNAJIt8Gv4+zn+E=
+	t=1717396099; cv=none; b=OUieYiMHvFwAVicvfmEhii+LagV8bjKmqjux8BrS7cNXnwMIKMfnFiUPTExAKesyn02X8n8AGTKMO5wqtU8eF/fRobAZ3bwYsxcBrnPQDBIiDANvbkd27y1T3/KT7U1vznOqa/MSAnttaATO4GbP6uQf9FY+qvMl/lGgvj8n0ho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717396085; c=relaxed/simple;
-	bh=m3uCOw5Oq6Ws4VLe0UebFiUBCCSn9H/PxdviJYo/6FA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=uQ34lzR1KaQuqjo0nGaIaymuHHyrIHUy6fwgapbMjNLX9E7l/9Er2eiBItVwNy7+/8Bs4Juy18Q9P29ugqmc8mp03DqlLbogefosFBSeClFepJm/G1Wbedd3s5raUgkya2Ms/CWsrJfSiX1InelK9h7EB0SvxCTYm/b2FjrZZd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Q5yGXO7R; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4530TMw2015299;
-	Mon, 3 Jun 2024 06:27:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	2PRQC6fus/63q1Oq0gbaSfUmF+VTJt5AADZnZIVWM1E=; b=Q5yGXO7R7Q9LMEFU
-	GGsAPCZQsdesvXKX61yzYKeRtlG5Ns8ZKozzwAu1QGvqwNzaI6MH/bi6PSZlTydj
-	ML0sgV2iwJoKYBOddLq4z6qpILmJEHxNNCLwQG5j0Yu39uzQaOLgjqDzncGnpjUZ
-	GknBdUtgMTxdyJZ4QHFiXfSSWoqtYgCpOdvTIjfFsas7C909tge2v1ZUMoRaUR8e
-	EonzttpbSNeeDZQLLukMbqUA4C+kZsfkcfM5E0dvx/r5XnuwFRr/aieiSzMCRWIb
-	PZAxCZ12Dh8cK45fkcDPI27QOeY2eCxI0vwqRaM+maeckVXDlg4U49I6MtAAPkmj
-	LZt4Tg==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfw5wk3db-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 03 Jun 2024 06:27:59 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 4536RwcZ018593
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 3 Jun 2024 06:27:58 GMT
-Received: from [10.204.67.150] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 2 Jun 2024
- 23:27:55 -0700
-Message-ID: <6c026f78-d397-4375-a347-85f41bff1e99@quicinc.com>
-Date: Mon, 3 Jun 2024 11:57:52 +0530
+	s=arc-20240116; t=1717396099; c=relaxed/simple;
+	bh=7AaEvVMfY/4GKdSeCZCV1fOqUcNHAMZgXIepet8NVLE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=a21IH9G2Her9KM9jspLsQ6m/OOkot/016NRzZXVyWLpoVA1H/fuAYQvcKLOvXJo7GBwKKrkHvq5aSc+v7x+ZR7ikB5cEowfgvTpyUNZKHVGjVPOpBUR4TZMy0Xu4DNF2JfFtZ7mh0d20clV7YpGQoarBy3j6zDTnMYS/ozDyx3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=icedoS8t; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Dr3NTjY7; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=bkMILn3a; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=O1enm+Co; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id C3E9D222D3;
+	Mon,  3 Jun 2024 06:28:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1717396090; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=G4kktwsbW6z/0NnNeugpgEFh8XvGTwwRbkxW1BafLgg=;
+	b=icedoS8tE74qqGZXCIqtKhe2cdZjIqwBGKwvLk5Gl0tXhYgq/PpnmabeIM0HCpfth0iMA8
+	1nLePLBZ6In4scqhcGwb8peKkIOvVTgA+8mzjM5IaThEIX5hhezYRaBW6MeNp7Z2eiFYnG
+	rhn6+JBvhdqjlkjb/XDgf3vpb9NV044=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1717396090;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=G4kktwsbW6z/0NnNeugpgEFh8XvGTwwRbkxW1BafLgg=;
+	b=Dr3NTjY7gE5DszwjwybB1Q8k6oUnim+TIzbFGQ008cbbIHxhpj/U47nEoI4CXLTchFJTMv
+	3Z4AmNaE3qS+AsBg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=bkMILn3a;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=O1enm+Co
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1717396089; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=G4kktwsbW6z/0NnNeugpgEFh8XvGTwwRbkxW1BafLgg=;
+	b=bkMILn3auV3QWoiQ5ga+r46ZiJ+280ioTuMGqZagiAU+5c8RTDw70jvCjmRvnHZsHjzQ/c
+	3Rh+ynPdXvVpoedKoEiS5L0hpdTYve5+UYhJ4tsnv97pc5bR9rsjcobNl74/ydnZ0ozVZ9
+	XBTFf+s+3c+GqYdnZtF17v6xs9/sVBQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1717396089;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=G4kktwsbW6z/0NnNeugpgEFh8XvGTwwRbkxW1BafLgg=;
+	b=O1enm+CoV2gDRN/SuNkMFZv6hZrjo79EFfoVDo0656LVgdlemDUskF5ctP6eMNX9vWdYxu
+	tzfw5l2puMAIEPCA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0EA3413A93;
+	Mon,  3 Jun 2024 06:28:09 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id bl1wAHliXWb9RwAAD6G6ig
+	(envelope-from <hare@suse.de>); Mon, 03 Jun 2024 06:28:09 +0000
+Message-ID: <5ace80c8-8b70-4227-aa63-914b69fa32cb@suse.de>
+Date: Mon, 3 Jun 2024 08:28:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,120 +97,78 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 8/9] misc: fastrpc: Restrict untrusted app to spawn
- signed PD
+Subject: Re: [PATCH v6 02/11] fs: Allow fine-grained control of folio sizes
 Content-Language: en-US
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <gregkh@linuxfoundation.org>, <quic_bkumar@quicinc.com>,
-        <linux-kernel@vger.kernel.org>, <quic_chennak@quicinc.com>,
-        stable
-	<stable@kernel.org>
-References: <20240530102032.27179-1-quic_ekangupt@quicinc.com>
- <20240530102032.27179-9-quic_ekangupt@quicinc.com>
- <q6vl2d7ekrjiwbr4h6cieh6q7vewhbiqay67wrglurphkigq4c@zoeyzywhypww>
-From: Ekansh Gupta <quic_ekangupt@quicinc.com>
-In-Reply-To: <q6vl2d7ekrjiwbr4h6cieh6q7vewhbiqay67wrglurphkigq4c@zoeyzywhypww>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: yLcKAAH6bW9SF5b1fDWXuSEKuRkl_bhm
-X-Proofpoint-ORIG-GUID: yLcKAAH6bW9SF5b1fDWXuSEKuRkl_bhm
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-06-02_15,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
- adultscore=0 suspectscore=0 priorityscore=1501 clxscore=1015
- lowpriorityscore=0 mlxlogscore=999 bulkscore=0 spamscore=0 phishscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406030053
+To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>, david@fromorbit.com,
+ chandan.babu@oracle.com, akpm@linux-foundation.org, brauner@kernel.org,
+ willy@infradead.org, djwong@kernel.org
+Cc: linux-kernel@vger.kernel.org, john.g.garry@oracle.com,
+ gost.dev@samsung.com, yang@os.amperecomputing.com, p.raghav@samsung.com,
+ cl@os.amperecomputing.com, linux-xfs@vger.kernel.org, hch@lst.de,
+ mcgrof@kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+References: <20240529134509.120826-1-kernel@pankajraghav.com>
+ <20240529134509.120826-3-kernel@pankajraghav.com>
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20240529134509.120826-3-kernel@pankajraghav.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Flag: NO
+X-Spam-Score: -6.50
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: C3E9D222D3
+X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-6.50 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	XM_UA_NO_VERSION(0.01)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[18];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:email,infradead.org:email];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DKIM_TRACE(0.00)[suse.de:+]
 
+On 5/29/24 15:45, Pankaj Raghav (Samsung) wrote:
+> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+> 
+> We need filesystems to be able to communicate acceptable folio sizes
+> to the pagecache for a variety of uses (e.g. large block sizes).
+> Support a range of folio sizes between order-0 and order-31.
+> 
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> Co-developed-by: Pankaj Raghav <p.raghav@samsung.com>
+> Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
+> ---
+>   include/linux/pagemap.h | 86 ++++++++++++++++++++++++++++++++++-------
+>   mm/filemap.c            |  6 +--
+>   mm/readahead.c          |  4 +-
+>   3 files changed, 77 insertions(+), 19 deletions(-)
+> 
+Reviewed-by: Hannes Reinecke <hare@suse.de>
 
-On 5/31/2024 5:19 AM, Dmitry Baryshkov wrote:
-> On Thu, May 30, 2024 at 03:50:26PM +0530, Ekansh Gupta wrote:
->> Some untrusted applications will not have access to open fastrpc
->> device nodes and a privileged process can open the device node on
->> behalf of the application. Add a check to restrict such untrusted
->> applications from offloading to signed PD.
->>
->> Fixes: 7f1f481263c3 ("misc: fastrpc: check before loading process to the DSP")
->> Cc: stable <stable@kernel.org>
->> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
->> ---
->>   drivers/misc/fastrpc.c | 23 ++++++++++++++++++-----
->>   1 file changed, 18 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
->> index 73fa0e536cf9..32615ccde7ac 100644
->> --- a/drivers/misc/fastrpc.c
->> +++ b/drivers/misc/fastrpc.c
->> @@ -328,6 +328,7 @@ struct fastrpc_user {
->>   	int pd;
->>   	bool is_secure_dev;
->>   	bool is_unsigned_pd;
->> +	bool untrusted_process;
->>   	char *servloc_name;
->>   	/* Lock for lists */
->>   	spinlock_t lock;
->> @@ -1249,13 +1250,17 @@ static bool is_session_rejected(struct fastrpc_user *fl, bool unsigned_pd_reques
->>   		 * channel is configured as secure and block untrusted apps on channel
->>   		 * that does not support unsigned PD offload
->>   		 */
->> -		if (!fl->cctx->unsigned_support || !unsigned_pd_request) {
->> -			dev_err(&fl->cctx->rpdev->dev, "Error: Untrusted application trying to offload to signed PD\n");
->> -			return true;
->> -		}
->> +		if (!fl->cctx->unsigned_support || !unsigned_pd_request)
->> +			goto reject_session;
->>   	}
->> +	/* Check if untrusted process is trying to offload to signed PD */
->> +	if (fl->untrusted_process && !unsigned_pd_request)
->> +		goto reject_session;
->>   
->>   	return false;
->> +reject_session:
->> +	dev_dbg(&fl->cctx->rpdev->dev, "Error: Untrusted application trying to offload to signed PD\n");
->> +	return true;
->>   }
->>   
->>   static void fastrpc_mmap_remove_pdr(struct fastrpc_static_pd *spd)
->> @@ -1504,12 +1509,20 @@ static int fastrpc_init_create_process(struct fastrpc_user *fl,
->>   		goto err;
->>   	}
->>   
->> +	/*
->> +	 * Third-party apps don't have permission to open the fastrpc device, so
-> Permissions depend on the end-user setup. Is it going to break if the
-> user sets 0666 mode for fastrpc nodes?
+Cheers,
 
-If the root user sets 0666 for fastrpc nodes, it is expected that this check will get bypassed.
+Hannes
+-- 
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
->
->> +	 * it is opened on their behalf by a priveleged process. This is detected
->> +	 * by comparing current PID with the one stored during device open.
->> +	 */
->> +	if (current->tgid != fl->tgid)
->> +		fl->untrusted_process = true;
-> If the comment talks about PIDs, when why are you comparing GIDs here?
-
-It should be GID, I'll update the comment in next spin.
-
->
->> +
->>   	if (init.attrs & FASTRPC_MODE_UNSIGNED_MODULE)
->>   		fl->is_unsigned_pd = true;
->>   
->>   
->>   	if (is_session_rejected(fl, fl->is_unsigned_pd)) {
->> -		err = -ECONNREFUSED;
->> +		err = -EACCES;
->>   		goto err;
->>   	}
->>   
->> -- 
->> 2.43.0
->>
 
