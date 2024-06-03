@@ -1,59 +1,77 @@
-Return-Path: <linux-kernel+bounces-198590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26A328D7ABD
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 06:22:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3EF58D7AC1
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 06:24:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 592A51C2165A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 04:22:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91234282160
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 04:24:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67EDF1C695;
-	Mon,  3 Jun 2024 04:22:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D228C17C77;
+	Mon,  3 Jun 2024 04:24:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="ILhwXv59"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jc+Sp4nU"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF11A22EF3;
-	Mon,  3 Jun 2024 04:22:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C8C718E02;
+	Mon,  3 Jun 2024 04:24:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717388542; cv=none; b=QRSepV0zOhBmIwt9YZtOm6ZCobUQn9pp8vDIb52HfkO5kGB3UhCRgxaax4evh6WNo8iSL4YTMpinkRhzwzQX5zp8hfCDFaRPTWsn359VSyzRXTYI5/8siq0r530y/3sZyYxBtCNmWv0Q4HynIxXMDzFlNG5srIjWzWU0ujEOqRA=
+	t=1717388663; cv=none; b=t+09z2h6YTgHNsw1tzAxz1K355CkSun+HR5OP0iCU8Fa/yFnGLTkQ1nHCu7xV7HYOWAzzFb1FAlxjy5aQ2WS9riES98SHe+tPneX1dsJbxQ0ax5EmO6HK9PhsIRmt5wJGTJmaLcgKwTovtmhHiu2owjLtbRxLwpxSsyRJZ5Q++E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717388542; c=relaxed/simple;
-	bh=wgWSawi6GZWqzc+lXIj+9IuBPtVgwv89a7ixklgwWeU=;
+	s=arc-20240116; t=1717388663; c=relaxed/simple;
+	bh=7+AARR9EM1lImN7ABWdHMnV6qmvU1VFk6uEUzZRdd8A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hVLLghgyP4JKyM5qnj9L6EGs0VLXCQkZcXYBNZjxvKYIR9YCRmca4bpQfS8HZmc0IoXTHkQ6VuQMksbnuPzokz7ybxyF5cFq2jL9xwQtIdXzif55aXbLaXXEqXC7sM0eUsrIZHuj1Cb+ZCvGLeEllkOp6dESaHoYIVIBljZEWGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=ILhwXv59; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=8ZxYJOB8I/g2EW9YC3FY5qj4JtQHrj3cefvdsvrPlP8=; b=ILhwXv59gBAfZPDwPC5Xt7aZAg
-	HNsoInMBcQaBdPhKXKiwegFbM1BA/xZkrDk/63obvMdvBcbx6rzlmcE3/uKLy6Tf9rYBqMhlZdCn8
-	6R/tyk4/Iy+AxDjsw/PBFemP6fxAOF9tY/lGPvif46iEmO8xG+yGrHy7+FwYVZYn6ChfzNDKBso4u
-	OziTYzXP5JqTOiql44sG5ZaQtpgqA3TNLVNluc/adKTLOk1vWPgyFATc5ztwP0QsifFpCjk5XVqsD
-	R/l8pxCXmDFdiv+JP7WRQ+wtwp096xwyNVSObsz6aXSrSjj8K95dxo9MFr7sxfUGuK82NEbaUpHrD
-	1vawaISA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1sDzD8-00BNuF-05;
-	Mon, 03 Jun 2024 04:22:18 +0000
-Date: Mon, 3 Jun 2024 05:22:17 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: syzbot <syzbot+42986aeeddfd7ed93c8b@syzkaller.appspotmail.com>
-Cc: brauner@kernel.org, jack@suse.cz, linux-ext4@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [ext4?] INFO: task hung in vfs_rmdir (2)
-Message-ID: <20240603042217.GA2713366@ZenIV>
-References: <00000000000054d8540619f43b86@google.com>
- <20240603035649.GK1629371@ZenIV>
- <20240603042116.GL1629371@ZenIV>
+	 Content-Type:Content-Disposition:In-Reply-To; b=luNgt1FnywPUNBRMHcupGB1NfRLZe6pXwqo6uukK8jQH02pTP+9aSmMpklJN9Fe/Rcivu6Uqag2AWH7CwQqE58+29S/i+WHYNOXroP+JDGc21gGy5niiTCPoQgI1q1Ogoz1UlPwU+rRcxXy/RKmqfxvY5oqv1uv2uGkW6T9bqhc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jc+Sp4nU; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1f4a5344ec7so28288365ad.1;
+        Sun, 02 Jun 2024 21:24:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717388661; x=1717993461; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=jlVcDS1I5Bxaw0wfjWq8Hm3Z3QjYdFcFypu8e1ti3i0=;
+        b=Jc+Sp4nUh869WTixzyV28/JeSRQam1wYfbzweasR8TBJ1fYbNvT0vKaD0Fhva6I+aO
+         9l/6MHpbzZ92l40mg22iiMC9f/6WOx1RE0rPObjo9iViDld0+To1kxzzWjc/yWnssjr2
+         UqHA6SA66/FjvDBfbr6NWrelShE7GpT9JemeYkEUDb25Sl8AMB9VPRYLPNAFU6Xrovpj
+         WQriijPoFwxyrT7pifw30Fe0MZN7qeQ6zl1H8k/JuaYb9yrkoAD3JNNk/boggKdmCki4
+         u25+CCEaa/ruZbKCiOQPBnXM4ktAxuS5dJwqASymu9s7/hvGKKHFDZZ0zpDnGY6wX3Pw
+         vpow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717388661; x=1717993461;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jlVcDS1I5Bxaw0wfjWq8Hm3Z3QjYdFcFypu8e1ti3i0=;
+        b=JcVBem3eL71tJnXYVHjpWOd0b7AwLqRWvGC8Qff1zaWVTkYiOR50R8yjjXnJZ2JE0H
+         pVeTd1I5nEC+N3FWzI1ceIspJ/eXc+WKAOHk7DqKN+74faNwf8cfOsEHkXCo9URGlBCJ
+         kYc9/Ymc24R9Q6uWHW5PqRz5odWyHc8TdYdvtweLwCVZQqYfncPQDv/5WZua632JxykD
+         wYbH9sDDWDYlW6gUG0ZwVboS0gviK8n/CuA3CGn64WlzlZonjRXD5pIW0uU8i4Tp3CzO
+         //BWRqKrRtKA2GdbYN+X/zGzPgXaPunNW+za27+DOdIjaUe+K2aeD9VvMwcwJlrodpQL
+         TfBw==
+X-Forwarded-Encrypted: i=1; AJvYcCW9blYL/300h84Xuy76Bv0HFQKo5daYV9asWp+TjRizIZQwUyGZuzPAbuOaUSWkxDGB+DUkQhJS3N2eFtSNrXj1OP3E4nUzwi9QGpNT
+X-Gm-Message-State: AOJu0Yx5h6e3J0A0m4yGIzD5tqXB+8ohsNBSjlJL8dkYO3EHSZmnXdh0
+	XF0xT+IDO/gwRhl1oGJlwB1pHr5lJ1n2xt3Ot0q1Tiw3QnlkwvqNRmY4vA==
+X-Google-Smtp-Source: AGHT+IGXt0fnlq6CpCAtwReNBByWPtMcGO/yr7sbU8IV9d6nmLBLvr+Z8wrao2HVo0ZNolIaI0QHDQ==
+X-Received: by 2002:a17:903:22d2:b0:1f3:830:783e with SMTP id d9443c01a7336-1f6359f183amr113258965ad.20.1717388660562;
+        Sun, 02 Jun 2024 21:24:20 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:17fd:ad4d:2690:4ce2])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f63235aab4sm54606685ad.71.2024.06.02.21.24.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 02 Jun 2024 21:24:20 -0700 (PDT)
+Date: Sun, 2 Jun 2024 21:24:17 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: tjakobi@math.uni-bielefeld.de
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Input: i8042 - add Ayaneo Kun to i8042 quirk table
+Message-ID: <Zl1FcW36Qh1zIi5t@google.com>
+References: <20240531190100.3874731-1-tjakobi@math.uni-bielefeld.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,17 +80,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240603042116.GL1629371@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <20240531190100.3874731-1-tjakobi@math.uni-bielefeld.de>
 
-On Mon, Jun 03, 2024 at 05:21:16AM +0100, Al Viro wrote:
-> On Mon, Jun 03, 2024 at 04:56:49AM +0100, Al Viro wrote:
-> > On Sun, Jun 02, 2024 at 08:50:18PM -0700, syzbot wrote:
-> > 
-> > > If you want syzbot to run the reproducer, reply with:
-> > 
+On Fri, May 31, 2024 at 09:00:59PM +0200, tjakobi@math.uni-bielefeld.de wrote:
+> From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 > 
-> #syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux-2.6 v5.0
+> See the added comment for details. Also fix a typo in the
+> quirk's define.
+> 
+> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-[IOW, let's see how far back does that go]
+Applied, thank you.
+
+-- 
+Dmitry
 
