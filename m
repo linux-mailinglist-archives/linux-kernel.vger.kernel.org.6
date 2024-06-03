@@ -1,184 +1,226 @@
-Return-Path: <linux-kernel+bounces-199946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20E158FA810
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 04:03:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C41C18FA8C8
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 05:29:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72F89B22903
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 02:03:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDECF1C23401
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 03:29:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 870ED13D53F;
-	Tue,  4 Jun 2024 02:03:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7212C13D88B;
+	Tue,  4 Jun 2024 03:28:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Yf9mXlIE"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="tNcvNOlR"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB487339BC;
-	Tue,  4 Jun 2024 02:03:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF27C13D619
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 03:28:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717466602; cv=none; b=Zby2ADGDrVEHEDCVF7ft9IysK/rAQ/rQqB3jUpRe4gQ883n8bHSOQgGklvKxSVnjoWqUW6LNYE5aOvRXhyL5lkNXIuUA9sXXJ/XSn3/yCTzyMq8EO1XseGAzOnXXmjWei6fG8wvyCZL8z0Qcv1+TQ6eGtcC6AT7sM84NauMNvJk=
+	t=1717471736; cv=none; b=f82XMKBP+OVKNzvmP0KvryWvsKPKhlRyRD0m5rzdzRBe/kNijyDugM/VPcicCo1qlBVI3vx6DAYuM78Yh1TWBo4fYtUHuiAYRuWZgbv2OiGTNppt/KlJTelCCZSwvvbB6+Kco0ydii/NQtp3bNqOj+JL/+JtZtC0TVSjxwHdh/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717466602; c=relaxed/simple;
-	bh=A1VJ7Kg+25xUFxA9IX1CWPDqIcCTtBx8/S3fEPVKlPw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CUvMOhLFRBph71WMuL9SliRTPPCg/zHrV21Ju7Mz+lWY4GOwsyGm47ofN560PqknbYPHrsAfEeLOzgex+0ZaVbOw3u4ftrVVWKDfqecB8Y8KFedmuY6jQSh1V57vDUk5TQFvpuB9/oXP8N/NLBCfSY9osqFVkqd9FCNtpr6paDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Yf9mXlIE; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717466601; x=1749002601;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=A1VJ7Kg+25xUFxA9IX1CWPDqIcCTtBx8/S3fEPVKlPw=;
-  b=Yf9mXlIEgXIaDX29J6FBhALTA5snYQl+H1ZXIwcPD2sif5eE6ez9SDQL
-   t9GKPW2Yz3yfgXASYvYxhkUukV9ZwuO2pgNixwyvu08EdTePzo8dpz6+3
-   z4Njr78dZGx25oJRh27b9YQRVpEREdbZPeWbdBWXUsJ66KokcXTI5DAnv
-   sPbSKcfGYuhmek4tf6ivSh7v/6R9xbKlOrlhkgm+TmOfyPNspZcOVHg8l
-   G/RsMAC7H/lo4uZilHl2nH3xSwrAQVn2gcHzGkccgCGX1LOlWK6AWUi+W
-   S4p2WFZl3WfQQN5wUmxEN02v3XlpxWEcosI811eweCTDUhzCtUHYvnFAw
-   g==;
-X-CSE-ConnectionGUID: RuBTzHsCR7CmKqc3eti0fA==
-X-CSE-MsgGUID: ja2j2rTDR/yOffNMIE5rIw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11092"; a="11884917"
-X-IronPort-AV: E=Sophos;i="6.08,213,1712646000"; 
-   d="scan'208";a="11884917"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2024 19:03:16 -0700
-X-CSE-ConnectionGUID: /RXsYtFYTHSOGyfKAl8y0A==
-X-CSE-MsgGUID: 5yEXjRrIQJSy0rqrvoI25A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,212,1712646000"; 
-   d="scan'208";a="74557148"
-Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
-  by orviesa001.jf.intel.com with ESMTP; 03 Jun 2024 19:03:12 -0700
-Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sEJVz-000MQw-2v;
-	Tue, 04 Jun 2024 02:03:09 +0000
-Date: Tue, 4 Jun 2024 10:02:30 +0800
-From: kernel test robot <lkp@intel.com>
-To: Mao Jinlong <quic_jinlmao@quicinc.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>,
-	James Clark <james.clark@arm.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	Tingwei Zhang <quic_tingweiz@quicinc.com>,
-	Yuanfang Zhang <quic_yuanfang@quicinc.com>,
-	Tao Zhang <quic_taozha@quicinc.com>,
-	songchai <quic_songchai@quicinc.com>
-Subject: Re: [PATCH v2 2/3] coresight: Add support to get preferred id for
- system trace sources
-Message-ID: <202406040902.AybuHOVD-lkp@intel.com>
-References: <20240603094354.2348-3-quic_jinlmao@quicinc.com>
+	s=arc-20240116; t=1717471736; c=relaxed/simple;
+	bh=BmnSM780gtlucE+xybG8Q/hhbxyboU3CWExMeE8IYw8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
+	 Content-Type:References; b=L4bo7Pl+/dEKgJnYao2ZuF1fu5QFrbsWm1XTh4KpvZ+d1utQzSYmEd3wYbVYhwxlfcQe/FlRCg552tScRyfnRDaGwWO02rZ2Nb8xUn4Je8XdhCCHE1DOGeFHN6jtmRq+raWAmhkI0AGBg4hk19ChhF9ctqRWA9Q9s0ECm2e61yA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=tNcvNOlR; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240604032847epoutp01f6d46da0a2254c7623ab389f16e1ba40~Vr2-EfeDA2617426174epoutp01H
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 03:28:47 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240604032847epoutp01f6d46da0a2254c7623ab389f16e1ba40~Vr2-EfeDA2617426174epoutp01H
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1717471727;
+	bh=7VN6ZUoN/sVx9OFQYPCvCDso3Uou5inchmMvd4vuq5E=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=tNcvNOlRXnI5bedxJ26y9w6TRzG50YcynA+2cGwniUTGpbgpPHphBAsVudbrcN6WS
+	 Fpv7ucxsfE765eTLhxyisAVREhNHMPqO/FB5cH81xO6io/wNvfYuyBtGTssgD1G/vj
+	 9fPq3lfnRj7akJXFtacojDMp/JpXoMaqAMTH/PV8=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+	20240604032846epcas5p1f1c03e377b238d49df5eb58251bf4543~Vr29wVx_50292302923epcas5p1T;
+	Tue,  4 Jun 2024 03:28:46 +0000 (GMT)
+Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.177]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4VtbfN3yFfz4x9Pv; Tue,  4 Jun
+	2024 03:28:44 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	46.70.08853.CE98E566; Tue,  4 Jun 2024 12:28:44 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240603065101epcas5p2acde37ff1854ff6f455f51ec940caf65~Va_R6KOZ01423114231epcas5p2p;
+	Mon,  3 Jun 2024 06:51:01 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240603065101epsmtrp18e7b805f6f3c250176196fb7d0105d49~Va_R3vysa1582915829epsmtrp1i;
+	Mon,  3 Jun 2024 06:51:01 +0000 (GMT)
+X-AuditID: b6c32a44-fc3fa70000002295-08-665e89ec9f67
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	B8.4E.07412.5D76D566; Mon,  3 Jun 2024 15:51:01 +0900 (KST)
+Received: from nj.shetty?samsung.com (unknown [107.99.41.245]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240603065058epsmtip19af2886049d9888391a19a98b3e4be4f~Va_OP59sS2735927359epsmtip1k;
+	Mon,  3 Jun 2024 06:50:57 +0000 (GMT)
+Date: Mon, 3 Jun 2024 06:43:56 +0000
+From: Nitesh Shetty <nj.shetty@samsung.com>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>, Alasdair
+	Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka
+	<mpatocka@redhat.com>, Keith Busch <kbusch@kernel.org>, Sagi Grimberg
+	<sagi@grimberg.me>, Chaitanya Kulkarni <kch@nvidia.com>, Alexander Viro
+	<viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara
+	<jack@suse.cz>, martin.petersen@oracle.com, bvanassche@acm.org,
+	david@fromorbit.com, hare@suse.de, damien.lemoal@opensource.wdc.com,
+	anuj20.g@samsung.com, joshi.k@samsung.com, nitheshshetty@gmail.com,
+	gost.dev@samsung.com, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	dm-devel@lists.linux.dev, linux-nvme@lists.infradead.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v20 01/12] block: Introduce queue limits and sysfs for
+ copy-offload support
+Message-ID: <20240603064356.nujnjbtje3vjnti2@nj.shetty@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20240601055323.GB5613@lst.de>
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Te1BUVRzHO3fv3r1YS5eHcVgmh7nSFO9dWeDgiDVBdiebEXPGHHvACpdH
+	7Kt9aOAMgYiKBCvyilXj2RJgkkLyTmMFAsOdIEAQqCG2SCKIxqBBoIULjf99ft/ze//mkDxH
+	k0BEJih1rEYpk9PENvym2dPT94/M92PFE2MuqK63i4dOXVjhodpxA4FmzAsAFc7/y0NTt88C
+	tNxn4aGGrgmASsuv4GjkdjOG2sovYqi6thNDl4rSMdS5Nkugix1DAFkHjRhqH/VGZWcqcdTW
+	3oOjgZbLBCoxWQWoqnsVQ7nnBjHUNJUG0LWZORx9N+qGLCvd/FfcmIEf9zO95ZBpNo4LGMvE
+	dZwZ6NMzN2oyCaa+8mNmur4YMK0jqQRTkZPHZ7LT/ySY5oyf+Mxf1lGcmftmkGByGmoA833p
+	HUGE09HEPfGsLIbVuLPKaFVMgjIulN5/KDIsMjBILPGVhKBg2l0pU7ChdPibEb77EuS25dDu
+	x2VyvU2KkGm1tP/ePRqVXse6x6u0ulCaVcfI1VK1n1am0OqVcX5KVrdbIhbvCrQ5RiXGD+Xm
+	EOoml4+WUx+AVHDZ6TywIyElhYbGbOI82EY6Uq0Amq63YpyxYDNquvmc8Q+A5ol6sBUyXFDF
+	4x7aAVypz8U5428A+/v6BeteOOUBR0x9NiZJgvKGd9fIddmZoqH1Yd9GIh5VQMA1o9s6O1Ey
+	WDXSvqELqTA435DK59gB9hRP4etsZ0tjqf4NrNeClNkOdt0twdfzQyocDjTSXHNO8GF3g4Bj
+	EfzdcGaTT8Dq/C8ILvY0gMZh4+Y0L8OMXgOPaygeThuaN/XnYUHvNYzT7WH28hTG6ULY9NkW
+	74RX60oJjl3h0GLaJjPwktW8uccxANubR4gLYIfxiYGMT9TjeDfMnD/FN9rm4VFusGqV5NAT
+	1rX4lwJ+DXBl1VpFHBsdqJYo2RP/XzlapbgBNj6MV3gTuF+y6tcBMBJ0AEjyaGdhTso7sY7C
+	GFlSMqtRRWr0clbbAQJt98nlibZHq2w/TqmLlEhDxNKgoCBpSECQhHYRzmRciXGk4mQ6NpFl
+	1axmKw4j7USpmNbhhaIM/x37rMdGH096e/RGer8OF6ZKBhZe1VdbzvmW2S+99O4PC4uxB1qy
+	8O3DFSaHR1SQ988+gcVzTsSXT0fLVvL1hx8veS2W+3j0BVTy3eSubrOFSQejzaFRDj4ftpc3
+	HFz61kQeD//1tChX+uCWpL86eWz6yNfBj5JffHb4lmtN8lMnG1Wiyp7X8kZO7m1+65muubiZ
+	A8E6C23+tKzLPiSrRGLubCtO/4ScrZisXYHiqGBBRlpjvn/YB8OfKwwBR2OdQrRnj1Ue0jt/
+	9UvKnY6hhTcUeT5Fh7N2Ls1O7up2vPreTUHpkdnkzKSU+jihIF5xr+i+6G2DOOBhoTx/vPbe
+	czSujZdJvHgarew/c/aterkEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa1BMYRzGveeczp5KzbGFN2vEYQyhbLm8bg3pwyG5fHC/rjptxm7lHJGI
+	Te4Ry5A2tdmy22VEl2mkwoRSrGUS2lJkl6ZGchmTtGGL4dtvnmd+z//Ln8LF74gR1LaInRwf
+	IVMwpBNRcpcZNaVevjFsaqraG12rrcLRwTM2HOW9Ok2ijrufAbrQ9R1HljtHAfphNOGouKoZ
+	oAxdGoEa7pRiqFx3FkM5efcxlJqcgKH7Pz+Q6Gzlc4Cs9RoMVZgnoctHsghUXlFDoLqbl0ik
+	1VtFyFDdhyH1sXoM3bDEA5Tf8ZFAD8wSZLJVO8yXsHXPgthaHWRLNa9ErKm5gGDrjNFsYe5x
+	ki3KOsC2FaUAtqxBRbKZSecc2FMJnSRberjFgf1kNRPsx1v1JJtUnAvYRxn3RMvd1jnNDeUU
+	23ZxvI//Fqfwruuv8ah295ib3V8IFWijTwBHCtLT4IvzBvwEcKLEdBmAVxKywUDhAfW2e/gA
+	u8GcvvciO4vpTwDGl0XbmaDHwQa98XdOUSQ9CT78Sdljd5qB1nZj/wxOp5DwkVZpZzdaBg0N
+	Ff25C70QdhWrHAbuNgNY01vypxgCa1IsxIA8A6YXvcHt+zgtgYa+/n3H36dMOe/BGUBr/jM0
+	/xmaf0YGwHOBBxclKOXKEGmUNILb7S3IlEJ0hNw7JFJZCPpfwWvCDdCs7fOuBBgFKgGkcMbd
+	JWn/+jCxS6hsTyzHR27moxWcUAkkFMEMd5FeTA0V03LZTm47x0Vx/N8WoxxHqLAnr0s8Dab8
+	HYOFdml25ju3mF3hwTHg3OygC641TSPfjI50DnRfuSy4VzK0HDsd19p5e6Rv+u1GV7WlZ30h
+	o57o17bEjxcWrs5sKpuXtT/3pbOGyWiM6clp8dN5JQtjtQFKcUpHYkCLdebe+Yf4VYpbBZvG
+	zYzfNyNZsXzNrMTW2N6tcdN1vk+bwiaO7VmRPV5fsEXDLYBV5rql7f6iOSHINoyIm+ATaYv1
+	T0+bM+Zq59vjlpA8n1W+rtb8tEBPc+rswK/axsXTHq+t/abu3mw+/FxuuxLsMciTmTylep+q
+	V7ge1prw42T2kw0feH2tsWqrYdHVtaODlN+htYlx7vYJiGMIIVwm9cJ5QfYLXINCcHkDAAA=
+X-CMS-MailID: 20240603065101epcas5p2acde37ff1854ff6f455f51ec940caf65
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+	boundary="----Fualeei1.f5fhWGYL679EBd0hH5-OLgtfrOtH6wInDZGwDEe=_50408_"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240520102830epcas5p27274901f3d0c2738c515709890b1dec4
+References: <20240520102033.9361-1-nj.shetty@samsung.com>
+	<CGME20240520102830epcas5p27274901f3d0c2738c515709890b1dec4@epcas5p2.samsung.com>
+	<20240520102033.9361-2-nj.shetty@samsung.com> <20240601055323.GB5613@lst.de>
+
+------Fualeei1.f5fhWGYL679EBd0hH5-OLgtfrOtH6wInDZGwDEe=_50408_
+Content-Type: text/plain; charset="utf-8"; format="flowed"
 Content-Disposition: inline
-In-Reply-To: <20240603094354.2348-3-quic_jinlmao@quicinc.com>
 
-Hi Mao,
+On 01/06/24 07:53AM, Christoph Hellwig wrote:
+>On Mon, May 20, 2024 at 03:50:14PM +0530, Nitesh Shetty wrote:
+>> Add device limits as sysfs entries,
+>> 	- copy_max_bytes (RW)
+>> 	- copy_max_hw_bytes (RO)
+>>
+>> Above limits help to split the copy payload in block layer.
+>> copy_max_bytes: maximum total length of copy in single payload.
+>> copy_max_hw_bytes: Reflects the device supported maximum limit.
+>
+>That's a bit of a weird way to phrase the commit log as the queue_limits
+>are the main thing (and there are three of them as required for the
+>scheme to work).  The sysfs attributes really are just an artifact.
+>
+Acked, we will update commit log.
 
-kernel test robot noticed the following build errors:
+>> @@ -231,10 +237,11 @@ int blk_set_default_limits(struct queue_limits *lim)
+>>  {
+>>  	/*
+>>  	 * Most defaults are set by capping the bounds in blk_validate_limits,
+>> -	 * but max_user_discard_sectors is special and needs an explicit
+>> -	 * initialization to the max value here.
+>> +	 * but max_user_discard_sectors and max_user_copy_sectors are special
+>> +	 * and needs an explicit initialization to the max value here.
+>
+>s/needs/need/
+>
+Acked.
 
-[auto build test ERROR on robh/for-next]
-[also build test ERROR on atorgue-stm32/stm32-next linus/master v6.10-rc2 next-20240603]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+>> +/*
+>> + * blk_queue_max_copy_hw_sectors - set max sectors for a single copy payload
+>> + * @q:	the request queue for the device
+>> + * @max_copy_sectors: maximum number of sectors to copy
+>> + */
+>> +void blk_queue_max_copy_hw_sectors(struct request_queue *q,
+>> +				   unsigned int max_copy_sectors)
+>> +{
+>> +	struct queue_limits *lim = &q->limits;
+>> +
+>> +	if (max_copy_sectors > (BLK_COPY_MAX_BYTES >> SECTOR_SHIFT))
+>> +		max_copy_sectors = BLK_COPY_MAX_BYTES >> SECTOR_SHIFT;
+>> +
+>> +	lim->max_copy_hw_sectors = max_copy_sectors;
+>> +	lim->max_copy_sectors =
+>> +		min(max_copy_sectors, lim->max_user_copy_sectors);
+>> +}
+>> +EXPORT_SYMBOL_GPL(blk_queue_max_copy_hw_sectors);
+>
+>Please don't add new blk_queue_* helpers, everything should go through
+>the atomic queue limits API now.  Also capping the hardware limit
+>here looks odd.
+>
+This was a mistake, we are not using this function. We will remove this
+function in next version.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Mao-Jinlong/dt-bindings-arm-Add-trace-id-for-coresight-dummy-source/20240603-175023
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-patch link:    https://lore.kernel.org/r/20240603094354.2348-3-quic_jinlmao%40quicinc.com
-patch subject: [PATCH v2 2/3] coresight: Add support to get preferred id for system trace sources
-config: arm64-randconfig-001-20240604 (https://download.01.org/0day-ci/archive/20240604/202406040902.AybuHOVD-lkp@intel.com/config)
-compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project d7d2d4f53fc79b4b58e8d8d08151b577c3699d4a)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240604/202406040902.AybuHOVD-lkp@intel.com/reproduce)
+>> +	if (max_copy_bytes & (queue_logical_block_size(q) - 1))
+>> +		return -EINVAL;
+>
+>This should probably go into blk_validate_limits and just round down.
+>
+Bart also pointed out similar thing. We do same check before issuing
+copy offload, so we will remove this check.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406040902.AybuHOVD-lkp@intel.com/
+>Also most block limits are in kb.  Not that I really know why we are
+>doing that, but is there a good reason to deviate from that scheme?
+>
+We followed discard as a reference, but we can move to kb, if that helps
+with overall readability.
 
-All errors (new ones prefixed by >>):
+Thank you,
+Nitesh Shetty
 
-   In file included from drivers/hwtracing/coresight/coresight-tpda.c:6:
-   In file included from include/linux/amba/bus.h:19:
-   In file included from include/linux/regulator/consumer.h:35:
-   In file included from include/linux/suspend.h:5:
-   In file included from include/linux/swap.h:9:
-   In file included from include/linux/memcontrol.h:21:
-   In file included from include/linux/mm.h:2253:
-   include/linux/vmstat.h:500:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     500 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     501 |                            item];
-         |                            ~~~~
-   include/linux/vmstat.h:507:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     507 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     508 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/vmstat.h:514:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     514 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   include/linux/vmstat.h:519:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     519 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     520 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/vmstat.h:528:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     528 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     529 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
->> drivers/hwtracing/coresight/coresight-tpda.c:254:42: error: too few arguments to function call, single argument 'id' was not specified
-     254 |         atid = coresight_trace_id_get_system_id();
-         |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ^
-   drivers/hwtracing/coresight/coresight-trace-id.h:126:5: note: 'coresight_trace_id_get_system_id' declared here
-     126 | int coresight_trace_id_get_system_id(int id);
-         |     ^                                ~~~~~~
-   5 warnings and 1 error generated.
+------Fualeei1.f5fhWGYL679EBd0hH5-OLgtfrOtH6wInDZGwDEe=_50408_
+Content-Type: text/plain; charset="utf-8"
 
 
-vim +/id +254 drivers/hwtracing/coresight/coresight-tpda.c
-
-5b7916625c017e Mao Jinlong 2023-01-17  243  
-5b7916625c017e Mao Jinlong 2023-01-17  244  static int tpda_init_default_data(struct tpda_drvdata *drvdata)
-5b7916625c017e Mao Jinlong 2023-01-17  245  {
-5b7916625c017e Mao Jinlong 2023-01-17  246  	int atid;
-5b7916625c017e Mao Jinlong 2023-01-17  247  	/*
-5b7916625c017e Mao Jinlong 2023-01-17  248  	 * TPDA must has a unique atid. This atid can uniquely
-5b7916625c017e Mao Jinlong 2023-01-17  249  	 * identify the TPDM trace source connected to the TPDA.
-5b7916625c017e Mao Jinlong 2023-01-17  250  	 * The TPDMs which are connected to same TPDA share the
-5b7916625c017e Mao Jinlong 2023-01-17  251  	 * same trace-id. When TPDA does packetization, different
-5b7916625c017e Mao Jinlong 2023-01-17  252  	 * port will have unique channel number for decoding.
-5b7916625c017e Mao Jinlong 2023-01-17  253  	 */
-5b7916625c017e Mao Jinlong 2023-01-17 @254  	atid = coresight_trace_id_get_system_id();
-5b7916625c017e Mao Jinlong 2023-01-17  255  	if (atid < 0)
-5b7916625c017e Mao Jinlong 2023-01-17  256  		return atid;
-5b7916625c017e Mao Jinlong 2023-01-17  257  
-5b7916625c017e Mao Jinlong 2023-01-17  258  	drvdata->atid = atid;
-5b7916625c017e Mao Jinlong 2023-01-17  259  	return 0;
-5b7916625c017e Mao Jinlong 2023-01-17  260  }
-5b7916625c017e Mao Jinlong 2023-01-17  261  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+------Fualeei1.f5fhWGYL679EBd0hH5-OLgtfrOtH6wInDZGwDEe=_50408_--
 
