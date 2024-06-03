@@ -1,209 +1,134 @@
-Return-Path: <linux-kernel+bounces-198832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 353B48D7E11
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:05:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A29218D7E14
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:06:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0A871F2107A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:05:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E545282632
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:06:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D93776F17;
-	Mon,  3 Jun 2024 09:05:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD39F76F17;
+	Mon,  3 Jun 2024 09:06:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kky3hHnt"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="RlT25X1h";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="MkqWUf2P"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEF233BBF3
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 09:05:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4466A7E574;
+	Mon,  3 Jun 2024 09:06:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717405551; cv=none; b=n0uMc0Vsl561+b/uSnXYkzi7DjUdcAplL4jNc929HyMt+ZIAhq3uSvWrjRMaRosgjd7hv/+Nf+PTM85wrEjuuUs0WmdPk9W3TtCFrEZ9DKsZnmwv8LtXkpCj3qeugPVaPqVVEH0M5Y5Zz23s0JJ+D6173Z4Y5oS2GY5Uz+b9Ky8=
+	t=1717405583; cv=none; b=cnBWlemBKFsT2igFQtX5yPAyRlgrKlLVAvfnq1/T7DI7pLtrummk/JLx/WEkoU4DFrRw8XM0j5g+YGbSEg/X38QcsrMapXT5X468cCN8llriqZ7xFEXlPVxpRhfg4U2fDkVOulniIh4CXKDjIh6AmX+31NI0k7TKdJzaJTt8nCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717405551; c=relaxed/simple;
-	bh=6WLa7LruKri98nPh55YBV/dK/7sYjTWL0W7ZcMRoybo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Eldy8B2QAWC1jUk95LkA6hZbCNrPpfsRwY4v70czowEHX1h58WWAfjDz3+ohm+85t3bwVrRvBXSAAXnV3qKeu9iIefbX5Sz8CkJPP5xGQirDHVlrwrTBZyWVzNvyCC1qVwU6q182b0rKVeEWvgtq3DMZTX1uoyGgfJg6ku1WLnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kky3hHnt; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-35e4aaa0f33so1560493f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 02:05:49 -0700 (PDT)
+	s=arc-20240116; t=1717405583; c=relaxed/simple;
+	bh=tPh6FXqgRbk0T9fW+LucBxh2D9g9iXidnjVQC35HepE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gX8/7B41Ojm6GgQ3Fd9a7t732a6YGv+FhP4a0x+l48mfhkMKnv6jFhoQwApyCqtZ9cauUYSE+FEE9Dcuh56BiV/Q73ceRjNlJlqH04tfHC9sD8Hh83Zgbu6g7jWBg4xHoMA1gxetJMuMhpdfkJUANH01Uq8TrEoRIizJbmRCbtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=RlT25X1h; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=MkqWUf2P reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717405548; x=1718010348; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xSQVPnz7myYAOgmYIoz+PW++0ntehkTkLHzuX99TEyc=;
-        b=kky3hHntKi/fstQtWPFhESoFPYn335JCfQXHzFwn/Rm3V1j3plyGhC7NTMWl8btc9n
-         ABFJIc4ygslpMVubhu2DC3JSEKB2v6bqfiFqvdSPk2ZeXArsUduNyTdHPXmB2K6Ig9A1
-         XiXqM5QpWcBGVNEKPaJrI9OJgg3nVDQRELRRY2NqkOOjECkL8yrtJb7zMB82k3rlEBiL
-         bK6JnmxCQQwW0jDDJewfnygKEYKuoSec53GK1NSjcqiVm08lT7Ed1IvyLX/AzMAC3Ip5
-         UtOV5z12Noz99wuN9Atu/1aFoVMyrdV/jgLJcEbmaTheWB3CUlisrXwTqnfrRry1DPwJ
-         On1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717405548; x=1718010348;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xSQVPnz7myYAOgmYIoz+PW++0ntehkTkLHzuX99TEyc=;
-        b=BA/1H1wuBMN9kWuU/WCl8yY142/esxL88X16hCGaw45NeLUuwzosKk5Uby8vPP7DHb
-         IXoJCqESfphLM6OyvLLH+0MIaVKmZub2gP8w/92lTLJ4hGBMCUpttC7DyvoBuHXb6sdC
-         O37c1rLQ2wGwle/gdS/GuiErNrdXN2CduDMBMV70duMVcz1+jPQJlaWils2sHcqKZHMu
-         A/IPOKcH1EciK2FZSL+g4cwkjL87mlVeM+hvUHlKsnToflQ1P9ia+EjmWKJYSBGWomVf
-         SUu4M6u8phPlC1HSf1/xG+PMsnsOMJGF7lrHhPs/f0+BlgWcymfuuXzm4n211ZUXeoTP
-         qu/A==
-X-Forwarded-Encrypted: i=1; AJvYcCUnIvwOIthP858YDeGQjpFqxYA7PPHiWpaALlSGTsuCZERx7ftZexxW7JBeRrMK19fdYfzu7Tu/BC4+UZX+R7Kkx+M2SrkGgKA4A+bJ
-X-Gm-Message-State: AOJu0YyX9AYhQmTl1oiLn9Jm36fW5i9zcZ419CGaefP7beQVp+6ghXWV
-	jrIm6EfpAhvTdJIqVhC/7xxyDSYbK+wrBhilBi4FF67TJ19kwDVrB8Ejk0/yR/bAjtcDV6SU+qk
-	hDsCN0KE5sQl/e0W1EmcxXmI/ukyAtd5IdQY=
-X-Google-Smtp-Source: AGHT+IF6++1LgATf/3YMjs1tFLt22xdXcldrBzpJboHBzvEckJfcXDY+IuIp7q2opq5t1jO5g0VwBtK1ZfFXWvAYsfY=
-X-Received: by 2002:a5d:5350:0:b0:351:b56e:8bc3 with SMTP id
- ffacd0b85a97d-35e0f325baemr7011366f8f.53.1717405547911; Mon, 03 Jun 2024
- 02:05:47 -0700 (PDT)
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1717405579; x=1748941579;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=tPh6FXqgRbk0T9fW+LucBxh2D9g9iXidnjVQC35HepE=;
+  b=RlT25X1hcgMBpe/eZncwMeLvcfFWX5IahubAp+eAqSW4HmVgI252NpCC
+   r2m3Y2iccTGf5haqgnv6/WTyxnQ4QAg1ripIWR3WxjZzjzHmT4+27xzRy
+   4F4FzksrX52QuIbX/sKOU52FOPG5e25OZ9ZleBNRYIX4PzaVZBVRa5MxE
+   AElvSz6Jp6qMNeswwH+B+yNqrLzDkzz5GVtls19qSMGk+NL197rReDxmq
+   CVdktaYcx1psY5+p65d+mHOFuvFGHDyU6Ep3Ch8QjEtX4MqtDT1i8TiGN
+   YIPYGCdHOi6M0UmftWD/Y6W+dZpjd55wARaW3NYHGSYnQ0FTD21KZbcse
+   g==;
+X-CSE-ConnectionGUID: eaxFAt3gQ0+oOfNgD3D3tw==
+X-CSE-MsgGUID: jXPCe+ufS5uSPNF3wgASEg==
+X-IronPort-AV: E=Sophos;i="6.08,211,1712613600"; 
+   d="scan'208";a="37183844"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 03 Jun 2024 11:06:11 +0200
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id BA211161492;
+	Mon,  3 Jun 2024 11:06:05 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1717405567;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=tPh6FXqgRbk0T9fW+LucBxh2D9g9iXidnjVQC35HepE=;
+	b=MkqWUf2PAj51NVcOrglx/84MjlP0YX3cIjyX5+FxOHd8khDdNI70Q9+z99RpYNxu/Kyabe
+	3jaPy0uKE1B/gSMBIEOuv7w8uItHD9m+az7Rg3cNnsUd2cdhvZ2Sm4Rgx0Tns7BvHPNCT3
+	ijISrLwMf89hB7vU05YiYIn+RHK0FZj/7eVgCjkhMfOtMH5HdKvcvjyRaC0tgG8dSqHBDf
+	TDohh7iyKS3EJXu/1Vm6h+z5pCO5RT+XA+0sAdDoIE7KlW33oxG3r5k3ujX6ck/4ml4CxI
+	OYq82LiGp3tpmvyQCCGVjxultuNgATS67vUPagHw8GEosAVd7D49oyrW/2f+pQ==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [PATCH v2 2/2] gpiolib: Show more info for interrupt only lines in debugfs
+Date: Mon, 03 Jun 2024 11:06:06 +0200
+Message-ID: <12451373.O9o76ZdvQC@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <ZlnREkzvS0rnMUDv@smile.fi.intel.com>
+References: <20240530191418.1138003-1-andriy.shevchenko@linux.intel.com> <7750850.EvYhyI6sBW@steina-w> <ZlnREkzvS0rnMUDv@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1716204978-29455-1-git-send-email-zhiguo.niu@unisoc.com> <446c7e4a-2a1e-402d-8238-2eee7cdfd5c2@kernel.org>
-In-Reply-To: <446c7e4a-2a1e-402d-8238-2eee7cdfd5c2@kernel.org>
-From: Zhiguo Niu <niuzhiguo84@gmail.com>
-Date: Mon, 3 Jun 2024 17:05:36 +0800
-Message-ID: <CAHJ8P3J2NkSfVTEcpxR+n3CjtywMxxEDMg4cLSL=8UOX8KcM+Q@mail.gmail.com>
-Subject: Re: [PATCH] f2fs: enable atgc if atgc_age_threshold from user is less
- than elapsed_time
-To: Chao Yu <chao@kernel.org>
-Cc: Zhiguo Niu <zhiguo.niu@unisoc.com>, jaegeuk@kernel.org, 
-	linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
-	ke.wang@unisoc.com
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Mon, Jun 3, 2024 at 3:41=E2=80=AFPM Chao Yu <chao@kernel.org> wrote:
->
-> On 2024/5/20 19:36, Zhiguo Niu wrote:
-> > Now atgc can be enabled based on the following conditions:
-> > -ATGC mount option is set
-> > -elapsed_time is more than atgc_age_threshold already
-> > but these conditions are check when umounted->mounted device again.
-> > If the device has not be umounted->mounted for a long time, atgc can
-> > not work even the above conditions met.
-> >
-> > It is better to enable atgc dynamiclly when user change atgc_age_thresh=
-old
-> > meanwhile this vale is less than elapsed_time and ATGC mount option is =
-on.
-> >
-> > Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
-> > ---
-> >   fs/f2fs/f2fs.h    |  1 +
-> >   fs/f2fs/segment.c |  9 ++++-----
-> >   fs/f2fs/sysfs.c   | 16 ++++++++++++++++
-> >   3 files changed, 21 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> > index 1974b6a..e441d2d 100644
-> > --- a/fs/f2fs/f2fs.h
-> > +++ b/fs/f2fs/f2fs.h
-> > @@ -3694,6 +3694,7 @@ void f2fs_clear_prefree_segments(struct f2fs_sb_i=
-nfo *sbi,
-> >   int f2fs_init_inmem_curseg(struct f2fs_sb_info *sbi);
-> >   void f2fs_save_inmem_curseg(struct f2fs_sb_info *sbi);
-> >   void f2fs_restore_inmem_curseg(struct f2fs_sb_info *sbi);
-> > +int f2fs_init_atgc_curseg(struct f2fs_sb_info *sbi);
-> >   int f2fs_allocate_segment_for_resize(struct f2fs_sb_info *sbi, int ty=
-pe,
-> >                                       unsigned int start, unsigned int =
-end);
-> >   int f2fs_allocate_new_section(struct f2fs_sb_info *sbi, int type, boo=
-l force);
-> > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> > index 71dc8042..44923d4 100644
-> > --- a/fs/f2fs/segment.c
-> > +++ b/fs/f2fs/segment.c
-> > @@ -2931,14 +2931,11 @@ static int get_atssr_segment(struct f2fs_sb_inf=
-o *sbi, int type,
-> >       return ret;
-> >   }
-> >
-> > -static int __f2fs_init_atgc_curseg(struct f2fs_sb_info *sbi)
-> > +int f2fs_init_atgc_curseg(struct f2fs_sb_info *sbi)
-> >   {
-> >       struct curseg_info *curseg =3D CURSEG_I(sbi, CURSEG_ALL_DATA_ATGC=
-);
-> >       int ret =3D 0;
-> >
-> > -     if (!sbi->am.atgc_enabled)
-> > -             return 0;
-> > -
-> >       f2fs_down_read(&SM_I(sbi)->curseg_lock);
-> >
-> >       mutex_lock(&curseg->curseg_mutex);
-> > @@ -2955,7 +2952,9 @@ static int __f2fs_init_atgc_curseg(struct f2fs_sb=
-_info *sbi)
-> >   }
-> >   int f2fs_init_inmem_curseg(struct f2fs_sb_info *sbi)
-> >   {
-> > -     return __f2fs_init_atgc_curseg(sbi);
-> > +     if (!sbi->am.atgc_enabled)
-> > +             return 0;
-> > +     return f2fs_init_atgc_curseg(sbi);
-> >   }
-> >
-> >   static void __f2fs_save_inmem_curseg(struct f2fs_sb_info *sbi, int ty=
-pe)
-> > diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-> > index 09d3ecf..72676c5 100644
-> > --- a/fs/f2fs/sysfs.c
-> > +++ b/fs/f2fs/sysfs.c
-> > @@ -673,6 +673,22 @@ static ssize_t __sbi_store(struct f2fs_attr *a,
-> >               return count;
-> >       }
-> >
-> > +     if (!strcmp(a->attr.name, "atgc_age_threshold")) {
-> > +             if (t < 0)
-> > +                     return -EINVAL;
-> > +             sbi->am.age_threshold =3D t;
-> > +             if (sbi->am.atgc_enabled)
-> > +                     return count;
-> > +
-> > +             if (test_opt(sbi, ATGC) &&
-> > +                     le64_to_cpu(sbi->ckpt->elapsed_time) >=3D t) {
->
-Hi Chao,
-> Oh, I guess you want to fix this:
-Yes,  Sorry for not making it clear before.
->
-> static void init_atgc_management(struct f2fs_sb_info *sbi)
-> {
-> ...
->         if (test_opt(sbi, ATGC) &&
->                 SIT_I(sbi)->elapsed_time >=3D DEF_GC_THREAD_AGE_THRESHOLD=
-)
->                 am->atgc_enabled =3D true;
->
-> What about enabling atgc_enabled during checkpoint once elapsed time is
-> satisfed w/ the condition? I guess this can give another chance whenever
-> CP is been triggered, and it can avoid the racing condition as well.
-1. I'm not sure if this will increase checkpoint time consumption?
-2. dynamically enabling atgc may have other problems. Is this confirmed?
-thanks=EF=BC=81
->
-> Thanks,
->
-> > +                     if (f2fs_init_atgc_curseg(sbi))
-> > +                             return -EINVAL;
-> > +                     sbi->am.atgc_enabled =3D true;
-> > +             }
-> > +             return count;
-> > +     }
-> > +
-> >       if (!strcmp(a->attr.name, "gc_segment_mode")) {
-> >               if (t < MAX_GC_MODE)
-> >                       sbi->gc_segment_mode =3D t;
+Hi,
+
+Am Freitag, 31. Mai 2024, 15:30:58 CEST schrieb Andy Shevchenko:
+> On Fri, May 31, 2024 at 01:19:56PM +0200, Alexander Stein wrote:
+> > Am Donnerstag, 30. Mai 2024, 21:12:30 CEST schrieb Andy Shevchenko:
+> > > Show more info for interrupt only lines in debugfs. It's useful
+> > > to monitor the lines that have been never requested as GPIOs,
+> > > but IRQs.
+> >=20
+> > I was trying to test this on TQMa8MPQL (i.MX8MP) using gpio-mxc.c.
+>=20
+> Thank you for trying!
+>=20
+> > But apparently this series only has an effect when gpiochip_lock_as_irq=
+()
+> > is called eventually. I'm wondering what needs to be done so IRQ only
+> > GPIOs are listed in debugfs. Using irq_request_resources/irq_release_re=
+sources
+> > similar to what pinctrl-at91.c is doing?
+>=20
+> I haven't looked deeply into this and I don't know if it's relevant, but.=
+=2E.
+>=20
+> The idea is that GPIO driver has an IRQ chip that announces handle_bad_ir=
+q()
+> as a handler and IRQ_TYPE_NONE as default type at probe stage. It also ne=
+eds
+> to implement ->set_irq_type() callback where actual handler is going to be
+> locked.
+>=20
+> That's what I do not see implemented in the driver. Moreover, I do see it
+> implements its own ->to_irq() callback which shouldn't be there.
+>=20
+> Taking all above into consideration _I think_ the drivers need a bit of
+> refreshments.
+
+I noticed this driver is using irq_chip_generic and a dedicated irq domain.
+I'm not sure if this is superseded meanwhile using the integrated IRQ chip
+inside that GPIO chip.
+Thanks for looking into this.
+
+Best regards,
+Alexander
+=2D-=20
+TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht M=FCnchen, HRB 105018
+Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
+http://www.tq-group.com/
+
+
 
