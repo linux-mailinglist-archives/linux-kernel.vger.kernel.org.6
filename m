@@ -1,54 +1,57 @@
-Return-Path: <linux-kernel+bounces-199287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E8108D84EC
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:27:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D6508D84EF
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:27:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF4821F21F1F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 14:27:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE52A28AD79
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 14:27:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E9601311A7;
-	Mon,  3 Jun 2024 14:26:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 918F612EBCA;
+	Mon,  3 Jun 2024 14:26:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uU8RFvtq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nziQ/mVX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9635A130A79
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 14:26:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBA01132110;
+	Mon,  3 Jun 2024 14:26:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717424807; cv=none; b=bJgrEJiWXfAh1PzO92q+GH5Bn6+ZTZt7GGvu6xyb9VnoQmuUWD/fF9XS08zy5PuA42HmuVb9qrP1Kh9wEskPQiGSvd0G8Ct0EiwCDkpuw5s7B5A8CPMnppNTNcWJTPh17lYA9gRTLshLe+j8ySehrQybGx5BqyWEU/o1oVrKrZs=
+	t=1717424811; cv=none; b=cBXNuOUJJj3Ak+I+fOiwom9p53VBnAobCjBc0v4MCpIBwjzWXhYV9CA6ZhmvtFSzE71hvm4eF5GwajEWPCFr7YBZftvsEeUVo9fkBqrt7WpBc46Jce30BaBmbVePsN3JlxXaG0N9LH6oE56NQpZxPLkGM5Bu99ZfVyzDHctDPXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717424807; c=relaxed/simple;
-	bh=ro77ju63wQnu5SRrClZDNDdDunh4smtgqd5dihJwcTw=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=lWcb3R2bqrJT/J0AVsc0o2tkSk0GUHx1uDDzLgDRD/VOL+AnIPwg7xwCTnNmfKaNpgS3nQcI+/k1WFumP2oPlU52qpOkpzHsJK7y3NtHmvEAZqUNZtVPtqBXvXrWy1pXZhtjP79Pf5eD9CEQSNeymxMoLjSYpjTelAZ9AMX09JI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uU8RFvtq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC639C2BD10;
-	Mon,  3 Jun 2024 14:26:45 +0000 (UTC)
+	s=arc-20240116; t=1717424811; c=relaxed/simple;
+	bh=axgOU2f60G0C43RP1CrPbQ4L1znDGnP/69ACpWN0I38=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=tWv1g5uvuqmkOqvHUdKssb03TAuFpIHBKrDXyo778WHp6aDkeIXD5PvY7vdnl8eSKAzFQxqWT2KYqtTIVbgVUi15fVfXsBaKc8Z+4ro3sN4piQdkR1RXV7J57RXQyn2iHbu8FuZcprSPfsy3hX72xzeXkg92XSlbYF242PJXX70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nziQ/mVX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9FCEC2BD10;
+	Mon,  3 Jun 2024 14:26:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717424807;
-	bh=ro77ju63wQnu5SRrClZDNDdDunh4smtgqd5dihJwcTw=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=uU8RFvtqIrb4XuK/Z4mDEvv6qQlnBq0q6G3SxryRN9n2jMJuwXzDcAmcyN7OJ+SHD
-	 Z/mR5uem+aTRYDnu8ecx4Mk7h7GfvkHUaPjHEWTTS4+xDpMP7VPXpBJBzeQeX/oQ0Z
-	 z3GKNmdDjobQFqF1Drc9XFoFqxrmHGi66q9ttcPJBjsHd5ZpcNd//DC594rBx5OSHV
-	 oeiakR0yFA93Sd7Ezz7PNrKD700YLuIMaDbsMfwZMCWjj8bSEhrFex8j4GAyb+D3e9
-	 GmRtOsvMVfyXbwAINW3C7xETsgHNYXJ4kh7B+5gXSbpAqnJ1xs7JLHlTKkUiEjSDlJ
-	 TMHmej29pff9g==
+	s=k20201202; t=1717424811;
+	bh=axgOU2f60G0C43RP1CrPbQ4L1znDGnP/69ACpWN0I38=;
+	h=From:To:In-Reply-To:References:Subject:Date:From;
+	b=nziQ/mVXp7YCNa7p4zsni3uaJ3zs9YhugkQBFdbHAS/9jJ8XhXpqeimMgVzz0cxlq
+	 C7c4Hy89R/6ZW4SyO4GmPdkf/y05AbxgcXYNONDPNFcbYvb6bhYjxIq5LTYqbOhriO
+	 7A74qQWsotYogJsqml0n7f01l8Upy2ligRZrIgMs1byEiZw7yg3FcpEGsgPoQZZSAy
+	 r/7ei65O8uBcEGznjUL53Un+QiqZclw4v0zmpxuUk6djf543JXoYJHgRcSC3xn/D9o
+	 JTsVFdLlPQnD+FGKiZTnoIveEvKQC+IAY4NoHZ6Hysu9BYZV1gAkcIwQfBFbEKRvlR
+	 +IWGh2HFYtxrg==
 From: Vinod Koul <vkoul@kernel.org>
-To: patrice.chotard@foss.st.com, linux@treblig.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240527205844.165279-1-linux@treblig.org>
-References: <20240527205844.165279-1-linux@treblig.org>
-Subject: Re: [PATCH] phy: miphy28lp: remove unused struct 'miphy_initval'
-Message-Id: <171742480532.106728.7665267575086699177.b4-ty@kernel.org>
-Date: Mon, 03 Jun 2024 19:56:45 +0530
+To: kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+ conor+dt@kernel.org, dmitry.baryshkov@linaro.org, neil.armstrong@linaro.org, 
+ quic_msarkar@quicinc.com, quic_qianyu@quicinc.com, abel.vesa@linaro.org, 
+ quic_cang@quicinc.com, linux-arm-msm@vger.kernel.org, 
+ linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, devi priya <quic_devipriy@quicinc.com>
+In-Reply-To: <20240516032436.2681828-1-quic_devipriy@quicinc.com>
+References: <20240516032436.2681828-1-quic_devipriy@quicinc.com>
+Subject: Re: [PATCH V4 0/4] Add support for PCIe PHY in IPQ9574
+Message-Id: <171742480737.106728.8115956533813966138.b4-ty@kernel.org>
+Date: Mon, 03 Jun 2024 19:56:47 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,20 +63,32 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.13.0
 
 
-On Mon, 27 May 2024 21:58:44 +0100, linux@treblig.org wrote:
-> 'miphy_initval' is unused since the original
-> commit 2c14e9be0c60 ("phy: miphy28lp: Provide support for the MiPHY28lp
-> Generic PHY").
+On Thu, 16 May 2024 08:54:32 +0530, devi priya wrote:
+> This series adds support for a single-lane and two-lane PCIe PHYs
+> found on Qualcomm IPQ9574 platform.
 > 
-> Remove it.
-> 
+> [V4]
+> 	Picked up the R-b/A-b tags.
+> 	Split the phy driver and headers to individual patches.
+> [V3]
+> 	https://lore.kernel.org/linux-arm-msm/20240512082541.1805335-1-quic_devipriy@quicinc.com/
+> [V2]
+> 	https://lore.kernel.org/linux-arm-msm/20230519085723.15601-1-quic_devipriy@quicinc.com/
+> [V1]
+> 	https://lore.kernel.org/linux-arm-msm/20230421124150.21190-1-quic_devipriy@quicinc.com/
 > 
 > [...]
 
 Applied, thanks!
 
-[1/1] phy: miphy28lp: remove unused struct 'miphy_initval'
-      commit: 3f8bb7a7b4e016df586f464279936a5767c2a36a
+[1/4] dt-bindings: phy: qcom,ipq8074-qmp-pcie: Document the IPQ9574 QMP PCIe PHYs
+      commit: 29f09daab910c797f5468afda91a51e3e29de7ee
+[2/4] phy: qcom-qmp: Add missing offsets for Qserdes PLL registers.
+      commit: f1aaa788b997ba8a7810da0696e89fd3f79ecce3
+[3/4] phy: qcom-qmp: Add missing register definitions for PCS V5
+      commit: 71ae2acf1d7542ecd21c6933cae8fe65d550074b
+[4/4] phy: qcom-qmp-pcie: Add support for IPQ9574 g3x1 and g3x2 PCIEs
+      commit: 2f2f5c13cc5ea87f1dd2debfd06fe5f624e5c0fd
 
 Best regards,
 -- 
