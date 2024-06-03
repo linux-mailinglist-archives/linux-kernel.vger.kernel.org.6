@@ -1,193 +1,435 @@
-Return-Path: <linux-kernel+bounces-198609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E04578D7AF2
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 07:17:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66C3B8D7AF4
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 07:19:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F55BB21A2C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 05:17:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D03011F217FA
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 05:19:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2640D1DDF6;
-	Mon,  3 Jun 2024 05:17:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7363208D4;
+	Mon,  3 Jun 2024 05:19:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=eckelmann.de header.i=@eckelmann.de header.b="AAl28D2N"
-Received: from DEU01-BE0-obe.outbound.protection.outlook.com (mail-be0deu01on2133.outbound.protection.outlook.com [40.107.127.133])
+	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="P2NCXTpu";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ho9Pn92R"
+Received: from wfhigh4-smtp.messagingengine.com (wfhigh4-smtp.messagingengine.com [64.147.123.155])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89AF329411;
-	Mon,  3 Jun 2024 05:17:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.127.133
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717391848; cv=fail; b=gqqe7G2vWAosd0CFRP+Q4IxZZkVBH+sd27nWKd8wtg20SKRZ51Vf7mysNYBCRSkuUCopyRnRyBUUSC6FlDxHyJGX9FxLXZFQiwrDEocp1oTGUqKdy6R6P+2TFq3hBJmbSiaNGOgfqngOPtz7Aj9OsR1Im4mR+MpE5r6taPPsVj4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717391848; c=relaxed/simple;
-	bh=7chkfxR2wrsDHz5xEPvZlusbPhU0Uk4eIglKK+g4laE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=of3UNMgiS09amAef+3yiuaDgplm8Gw3CZonegs0qUSdZdzMda1sMkrB/jHpbAIc4id+yQtNMxNexEWC8oLTmJHoXIdbT1HQ0Zl6SirR0wMpsocD+Q+V4klsNA8DDJ2PSe0iczpz/GxB4cOqfkgg09dgh7fVXSxE0YZHx8zA6xaQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eckelmann.de; spf=pass smtp.mailfrom=eckelmann.de; dkim=pass (1024-bit key) header.d=eckelmann.de header.i=@eckelmann.de header.b=AAl28D2N; arc=fail smtp.client-ip=40.107.127.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eckelmann.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eckelmann.de
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=R96+DqzE6s0JlJo6mdKoNdd2Guq8GNEbS7fbY7rdmEiAOCtLoG+l5XemiXTCeZPjrTku3svAsjpzjoJeupv1+AXHgIcJR4uPHu6hJuUfM4olH/6m5fYz/5GYYmU+TvD5Q+0BHfbdWi1wBfNbzs1mz3gjk9tMT523+rB5zHS2daFdJDd7Q5kiJz3A37Cxad6ChJV8Z5k2zgzEc/FTuIJ7kFEtWFTg4IHu+T1yyOFytLbLYgPDO0vPAOMLv5sslZvrBDN3p6YY1jWVEFRUvTzxYeeFcqebxNTDO0U8XbOY2Egnkzs27uFwY+p1kuE1wuZK2BgSZ4xjeK8HkG+QauwRYQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZUSZj/NrWsc5H/ZLEYQw/WLHtj+ERBr7+o4vatuGwJs=;
- b=k4bQa+C/DzSe7qDcujeFBJ1/riYCDPpzUUfJO3Br2XWHtW7l75zF/Z5QwGm5sigeWpH3BkJmZYL/IvV0jeOjeLVD+HtoMT6zBGCDg5e8UB4pzqTdIgUkzt62ToBCUwrKQc1Y8+DQnEm3tYtZgj26SA8TKMiihP77fA8qg0nHAXVTnsfWt9AiwMIGE+KcApT3jNiMQEXOHiDEZTprlNfVtHy3fmlfmrUj3k4+hH0jm1A/XX+sAhAiApyzTE7iAQ4USs5G90TPTI3xV6S+nN0XuOl4qpLHSNHZ5NQiOcDm6+qD5QG5j0SjztZc9YIrOriIQG4B8rCg4MYd2QloDw/pUg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=eckelmann.de; dmarc=pass action=none header.from=eckelmann.de;
- dkim=pass header.d=eckelmann.de; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=eckelmann.de;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZUSZj/NrWsc5H/ZLEYQw/WLHtj+ERBr7+o4vatuGwJs=;
- b=AAl28D2Nc4cieGgdOfBd8yOEp128x7dwfNy0G3VxDnlavkkPlUzt39iGKGC+9tW9j47FLUNj6vpVt9smwE946ignuK30udre73l2B9UMMZGcBjVSu1ui2vBjLjM2UnrLXwThusf3fArfHKwZ+AnhFpyBFRtdupAsEyqFp7M2j+U=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=eckelmann.de;
-Received: from FR4P281MB3510.DEUP281.PROD.OUTLOOK.COM (2603:10a6:d10:da::13)
- by FRYP281MB3049.DEUP281.PROD.OUTLOOK.COM (2603:10a6:d10:6a::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7656.7; Mon, 3 Jun
- 2024 05:17:22 +0000
-Received: from FR4P281MB3510.DEUP281.PROD.OUTLOOK.COM
- ([fe80::3927:fe99:bb4:1aa7]) by FR4P281MB3510.DEUP281.PROD.OUTLOOK.COM
- ([fe80::3927:fe99:bb4:1aa7%3]) with mapi id 15.20.7633.021; Mon, 3 Jun 2024
- 05:17:22 +0000
-Date: Mon, 3 Jun 2024 07:17:21 +0200
-From: Thorsten Scherer <T.Scherer@eckelmann.de>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] siox: bus-gpio: add missing MODULE_DESCRIPTION()
-Message-ID: <6qzhpezww52kpqjx7npxoevihrimfwqgrq5ksxkaetkrnbgxev@kepw2evc42rk>
-References: <20240530-md-siox-bus-gpio-v1-1-6a2f943ac8ad@quicinc.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240530-md-siox-bus-gpio-v1-1-6a2f943ac8ad@quicinc.com>
-X-ClientProxiedBy: FR5P281CA0045.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:f3::12) To FR4P281MB3510.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:da::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4AA11DDF6;
+	Mon,  3 Jun 2024 05:19:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.155
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717391970; cv=none; b=BqRCX6b/kAQ3VDao7HjJXS+4iDwv2ddrk5KAK6GRhPjvDKotTb9jA3hNX5fVi3r+hmFZ42FwPUGe8BkeloC6ZnuL2X32xzw/Wu7jiU1qLKQjO+x42goFth0rbiufVQvo7v4Bxt1ev+IESO8/H5I1el5lwzh6YyzUtFVri45jDx0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717391970; c=relaxed/simple;
+	bh=eJyETce/sRtvByHjTbVNifMksIreBZmkd+8tqnlYUn4=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=JiHULGnMGE5Q09H+JfMj+4X7BmVzdMre7as4wNXKniFfZmjm2AZG5r6Da2yoOPmNu6V3gtu7P8IHITUE39GUamZ6YIbV6GV3j0Q82sz8L/16jTP950vUxln4dkOtc+BAngSHWe3kR3VkoF4QK1DCzbZQL0cT09hUymG32+eYlRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=P2NCXTpu; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ho9Pn92R; arc=none smtp.client-ip=64.147.123.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+	by mailfhigh.west.internal (Postfix) with ESMTP id AA7F7180015E;
+	Mon,  3 Jun 2024 01:19:25 -0400 (EDT)
+Received: from imap41 ([10.202.2.91])
+  by compute2.internal (MEProxy); Mon, 03 Jun 2024 01:19:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1717391965;
+	 x=1717478365; bh=EWgyi7PW7a2EXvu9lY274UDQksjpO45Tm83OEaSkHtU=; b=
+	P2NCXTpuczRR6RdL5XHK84BjSwlnoil04vTHuxZdpIYjjgjdOJRBytaSVUBBEUUv
+	JaQbcytwYSdrhO2w8rsQ68QaB3Zn6dUhhVqXvm4IyCwwH+0ZJSeIZHq4Gn6UX4Xs
+	r88vFruFju68oWu/KA/GpWXNi7pnHuckz+90J9a+SbaRTKSv9DCIl9CCmO17bH3P
+	vHAf2PgdGUk0gDKMEfKAhhmEwkznEKjLWWvj0ApK2hFvkucfYl2mV5wxTXI6D9ft
+	4RIE82NmntxjVqtFkh7Sjm7UmaeNH51+fMN1I5gWS2pzemVB/HjeRTUmi04e+Esj
+	pRiczN/zlMPlne3fp63SaA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1717391965; x=
+	1717478365; bh=EWgyi7PW7a2EXvu9lY274UDQksjpO45Tm83OEaSkHtU=; b=h
+	o9Pn92Rpnnh48MFKSxz8Fx1Aza/sxJldV6PQ8c8WTwZIcYzVe4DBfY/4baFQrX/C
+	xB1bD2pRNFHLyiax0MApHQy1es0OlY0t6MInQf0y5KzMplvZzssi5m1toaDcUgK7
+	bi/fyCbpk4WFgEWNL3CqIisH94to8cSH8SNSpXDOCRFXfI4PKjPIND83JqAkjF58
+	jxv6rPWpJZ0U+un26Bn8SmkkhxS/mr1qlKveakaweljZVeniG5C4qN8RmtJV3SZZ
+	AaJDz7holTYwq3VI0hkxs56kyHiotGWePX1S4YGpwPLkYve1FSOSa1ajZBDFumxV
+	1nWdhV1Ue8MDImKrPoJZg==
+X-ME-Sender: <xms:XFJdZiy_PfOlVLg8jAa7mfwB30xkC3BA9nC29VQp-BXmFxuFQ8MJNQ>
+    <xme:XFJdZuQJkrdgdDKS7AdL1IGjI-pbvsUKjyL-fpav6U_2rWEbEzPHHpemwlBHO7SnF
+    9JLzJRzRZD_NjH8Zpw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdeluddgledvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdfn
+    uhhkvgculfhonhgvshdfuceolhhukhgvsehljhhonhgvshdruggvvheqnecuggftrfgrth
+    htvghrnhepfeeugffhvdeufeehieelvdegfeffveegleehtddvheegkeetueegtdegueeh
+    vdelnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheplh
+    hukhgvsehljhhonhgvshdruggvvh
+X-ME-Proxy: <xmx:XFJdZkVmoSvczGa0rCfp6tl5EedWZdAOJu5_BGjBWRY0Sx4oyDHdcw>
+    <xmx:XFJdZoj1Gfi8pRRDG42Fm4-C9MUWvOmfZK5oa5WLXy5mLn0leA7t1w>
+    <xmx:XFJdZkB_SXva347jNI76N8vq01DlBuukrI1IbCXfL89syohz2qgXYA>
+    <xmx:XFJdZpJKhdaloiKvJZTFhV-JMmCNYrsn_99W8fTqKYueprAZblT3QA>
+    <xmx:XVJdZn8SF8xi80A0gPRyr5Tnvw4L26I_FJ8DtN4ZhMNqw5OEYnnWbUiy>
+Feedback-ID: i5ec1447f:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 726042340080; Mon,  3 Jun 2024 01:19:24 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-491-g033e30d24-fm-20240520.001-g033e30d2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: FR4P281MB3510:EE_|FRYP281MB3049:EE_
-X-MS-Office365-Filtering-Correlation-Id: dc926d67-5764-4728-9fe2-08dc838c72af
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|366007|1800799015;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?fVmSjMafuIEtGOSsABOdQ7OGRRs3X14ghMtRqJKXuNFWA6rfxrreCohSc2oN?=
- =?us-ascii?Q?Rb2YqaiE2dpGYbGgO1xm/A/FBNmZO3Y/43D/EFOhJollhgIsKk7rl6RuQYZL?=
- =?us-ascii?Q?l0c1MvaCcmPRkcWP02rjNOK+wk9Xfv3FzPrsdoJFpz92NNoEp5HF63jieel/?=
- =?us-ascii?Q?Hqx55DgOulF3iXed34qElDjdivgAs08vufhTYqUo/ct40fVVmOxwjiIASb5k?=
- =?us-ascii?Q?rUCcb2JBzpnmYTKExatSSynnGGq/Ukm3tROkAB5E6Lk9Zwb8Y3u05KWhB3z5?=
- =?us-ascii?Q?ZWSw8v7XbWZQsc0ObeKffy5slcJfbY2LSqaueZhWW0nkGnXKl4Jf66s2Scwo?=
- =?us-ascii?Q?znlOP1y7akcg3LIZj1Hy7VvjOn0ZnPZx+g+Qosen0XLfPJvxgItwE/7khDbd?=
- =?us-ascii?Q?wVCCg4z5+D0pTI9495s72ENcb9stg0Y0tH+IGnjNR2jgMaqlEbmekgQYcYuG?=
- =?us-ascii?Q?G1hl5KxUS8CVMz6aV/adguu2VUQInqvsbA1yD1TLiP4Vm46t8BNtIkA7ca1j?=
- =?us-ascii?Q?ceB3mIzhyY8KdEoiDAWak17NhsSHtQYTC0mrKIzF/PBoYnfxlS9BHDYgQenm?=
- =?us-ascii?Q?/p7LaYBNYsUgD4pi4to11/fCeueiWMdaaXXNto7M0seflEjK3ylHgUVeQhsf?=
- =?us-ascii?Q?DPdyU0p8zhrx459bGEy8emWN050NmhW4wFGHmUEE2QCSEY+hGVvwUfHPYyM1?=
- =?us-ascii?Q?OWbADAjlqmxZP2JFei7p2nX2XzSkpQS9y5P2Ko+7EvmRabZJSm983n6oFya9?=
- =?us-ascii?Q?DRR0LnrISsdTPNMc2VvlxeyqrvEnBhr//HyDk9Ly7HwX/tHBHYGBAzfbhXRs?=
- =?us-ascii?Q?7GU5eJLve8IvaD50HKQZT/VEnY6Mbbhq3O3M2Ip5cc/4X0BCZXCINOaVn94j?=
- =?us-ascii?Q?+w/NG+fWDG3UXY018G1vq3Wt41RlErA2q0fn25JUlBQPgBh4WFMm7OK5/0U+?=
- =?us-ascii?Q?Gg9znFu1Y34rTxC51tkUhSo3srYyyeB4ykp5BT2/xkB7xH78jKjhO/I162XZ?=
- =?us-ascii?Q?9to6e91SihrNwZiAxSQ6IPvpGvFmCQRT18FcS4QflkyhTg3bG9U24VjfJowT?=
- =?us-ascii?Q?Az9FaoAuunLsrZ229OWDDTb0eNlUR7Wys3B4twH/qKbLUkyRuZ5By1yh4zfo?=
- =?us-ascii?Q?5/+SnkvcMrgL4dbCLfyXida7BUeescrvm2PbLWUeaWsr4q0uMEU/GKJk3BR+?=
- =?us-ascii?Q?Z2MKwnYLhpBczocX1unvuQAukeGeVvUrjt3qvl4rz9j/WF4UZHMQJTk7niJk?=
- =?us-ascii?Q?zgB3byD5AUuTwx8D5ToYYVWNGWPGJ5oBZeWjoFnlSw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:FR4P281MB3510.DEUP281.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(376005)(366007)(1800799015);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?pK9a/UGSBTFhaNe+jWw4/qbPSlNlC9qpTP64IgDD9dpVPLSqSPG66DYZjR+h?=
- =?us-ascii?Q?iW5ExsdRnc+8kid+irtRsehlx5vRt7bUuU4UvuVCqgfR7KTwerCh2KtdWDPZ?=
- =?us-ascii?Q?2bKWKVH/4ZOtKv6FFp+qH9ov27ToIQAc6xqZRjHN672cJC17VdhFRuivILFB?=
- =?us-ascii?Q?MtQdEh5VjF7JUASGnRlxXKF+A6koxYLtT8shUktwGILlYBmUDjBZZBMoXPuF?=
- =?us-ascii?Q?jVVOq0x+doUcUsz0TmpxP+ocRaZVBKtvIJm/ds5r9uqD7dnTWTFAKZwuoC81?=
- =?us-ascii?Q?D7+o5DhDV3TWzTbPuWtBQQXE0O+SzRHvA/p2Dspw5NOIIj1EOfQk7I//2bvk?=
- =?us-ascii?Q?H3d0TH5bM8vxaCIA6AAGcZdw5U4p6miJZtiHlCYCCU6l71YA/nA/fbPF+DGK?=
- =?us-ascii?Q?TKJvER+765EXKAdfocYq7Oa1SrDl5bgWz5BIs2+kuG2makbSz8zn9RDyNvpF?=
- =?us-ascii?Q?CYUZ5rELXQXfyjlqYL8n3+JYMs6PhhAcnTumRzOV4j+HZ5cwRnlYlQhFNpS2?=
- =?us-ascii?Q?qMW3pkwFhiBzoLwh8M8XJSAbJp2P7TcMsvg66gkq0lCFGb9OeEQMBB2Dn/W0?=
- =?us-ascii?Q?H50H2v9oDo1iSrKFrEVMahM0TO33Nio15+Is7obVz8ErBGG4v0R78Heq+BjC?=
- =?us-ascii?Q?E66+ar7F6BMcLV9vk5zRxeQBRpSHsgxP90O+MJwfBzKxCUjM5aplHa+XKsms?=
- =?us-ascii?Q?zrGBbNpBLH5wXqtACemGzAc08Y4hqmwog3HGwX5eLMbV3Iw5YSvAjkDjx2Lc?=
- =?us-ascii?Q?FGsam58TlaXsKpzaFfeuRwyGkvxHwy7fgr0KQWitQPfYPdbIjuYKemZIoZxX?=
- =?us-ascii?Q?c25OBldk/l4BVbMhusZlaUomYH2doYR3k1nC1Bi1tlCg2MOSijoIt6U/ZImd?=
- =?us-ascii?Q?R7SV9qC12OCf7129r3Xw6SJWdGREEKp+FXyJsFIktPOwIEA45vzjlKXvCUIf?=
- =?us-ascii?Q?9toZ/0p7QuwpNMMMTt9PdS9D2fVrX4DGyk1VQYa4MilkWOfTbLIdzZm2DjJz?=
- =?us-ascii?Q?ko5VqAj7K2N+m4rrwuUrx3bh4aaex+9EXoXgK5ilTMy31nP+tuTEKWd3TCDY?=
- =?us-ascii?Q?PPMjvFVEXBdgiqAVOS2hjL/aa0FZvkqH1P4PRIpA9oSIGN/f7vukZe+EFGP3?=
- =?us-ascii?Q?c2zDefg8k517fNiylQIMvV9obzqKCRPDDLNz4WLegzZ/6dLxir0jtLacdQKJ?=
- =?us-ascii?Q?NOPxEEecfDyGWYX/Znfb9b/bDoG64Izz7Xq9jzfr+REHH3vPZLy7mXRVJ29m?=
- =?us-ascii?Q?uEz8PwdYwjR+pciJZV2S1ge8gLTFXQHw2LHyHgLVyCW0fp8gFhRJD0Qsk4wa?=
- =?us-ascii?Q?MnlF4+6BZsIBXCZzEClL03KDP282hU8NyTg2BhcMlusqSSzLIhzUcK3xWqeC?=
- =?us-ascii?Q?x3iPfvOGVitU65W50wEMoLieCl8rEl6yylD5DngGmtJtOOS8Kq2jvAn+LTT2?=
- =?us-ascii?Q?BLGEcFc4FB0FHFMVGoK7QyEGOSIFA/KXITvuta1d66ca0Y0oGS4xOycWnGaf?=
- =?us-ascii?Q?/y1Ohj4eQTKZ2PRXvHrERyHlzDKX1QtSfbPjv+S3sEHo5kx+EKa0a91nupC5?=
- =?us-ascii?Q?AThJKklK1L6shFGZYY5UyjKfqAf9aN4EhpjnpaS8zqDIxI2kZ1U2pa7kehwG?=
- =?us-ascii?Q?gwG0FYfxTOKcmb84SPMYzLI2eydEeyfBDRIw/FBjfH7kY/Wxy496jopIVy7W?=
- =?us-ascii?Q?EeB8DQ=3D=3D?=
-X-OriginatorOrg: eckelmann.de
-X-MS-Exchange-CrossTenant-Network-Message-Id: dc926d67-5764-4728-9fe2-08dc838c72af
-X-MS-Exchange-CrossTenant-AuthSource: FR4P281MB3510.DEUP281.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jun 2024 05:17:22.3739
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 62e24f58-823c-4d73-8ff2-db0a5f20156c
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: LuJWHXAbfqS7U5IuSK2P/vHIgzV8OAHLvElWg3et1y0OOM9XvmlaDD+tiP7jdpNvTBlyuy7y/Xsul/bBfV56oQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: FRYP281MB3049
+Message-Id: <aee09e9f-6269-43ef-b509-a9a7b5e1752f@app.fastmail.com>
+In-Reply-To: <de8fcb82-3e08-41e6-b099-75df27c6df23@redhat.com>
+References: <20240421194320.48258-1-mohamed.ghanmi@supcom.tn>
+ <20240421194320.48258-2-mohamed.ghanmi@supcom.tn>
+ <de8fcb82-3e08-41e6-b099-75df27c6df23@redhat.com>
+Date: Mon, 03 Jun 2024 17:19:03 +1200
+From: "Luke Jones" <luke@ljones.dev>
+To: "Hans de Goede" <hdegoede@redhat.com>,
+ "Mohamed Ghanmi" <mohamed.ghanmi@supcom.tn>
+Cc: corentin.chary@gmail.com,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/1] platform/x86: asus-wmi: add support for vivobook fan
+ profiles
+Content-Type: text/plain;charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Mon, 29 Apr 2024, at 10:20 PM, Hans de Goede wrote:
+> Hi,
+>=20
+> On 4/21/24 9:43 PM, Mohamed Ghanmi wrote:
+> > Add support for vivobook fan profiles wmi call on the ASUS VIVOBOOK
+> > to adjust power limits.
+> >=20
+> > These fan profiles have a different device id than the ROG series
+> > and different order. This reorders the existing modes and adds a new
+> > full speed mode available on these laptops.
+> >=20
+> > As part of keeping the patch clean the throttle_thermal_policy_avail=
+able
+> > boolean stored in the driver struct is removed and
+> > throttle_thermal_policy_dev is used in place (as on init it is zeroe=
+d).
+> >=20
+> > Signed-off-by: Mohamed Ghanmi <mohamed.ghanmi@supcom.tn>
+> > Co-developed-by: Luke D. Jones <luke@ljones.dev>
+> > Signed-off-by: Luke D. Jones <luke@ljones.dev>
+> > Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+> > ---
+> >  drivers/platform/x86/asus-wmi.c            | 93 ++++++++++++-------=
+---
+> >  include/linux/platform_data/x86/asus-wmi.h |  1 +
+> >  2 files changed, 51 insertions(+), 43 deletions(-)
+> >=20
+> > diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/=
+asus-wmi.c
+> > index 3c61d75a3..1f54596ca 100644
+> > --- a/drivers/platform/x86/asus-wmi.c
+> > +++ b/drivers/platform/x86/asus-wmi.c
+> > @@ -97,6 +97,11 @@ module_param(fnlock_default, bool, 0444);
+> >  #define ASUS_THROTTLE_THERMAL_POLICY_OVERBOOST 1
+> >  #define ASUS_THROTTLE_THERMAL_POLICY_SILENT 2
+> > =20
+> > +#define ASUS_THROTTLE_THERMAL_POLICY_DEFAULT_VIVO 0
+> > +#define ASUS_THROTTLE_THERMAL_POLICY_SILENT_VIVO 1
+> > +#define ASUS_THROTTLE_THERMAL_POLICY_OVERBOOST_VIVO 2
+> > +#define ASUS_THROTTLE_THERMAL_POLICY_FULLSPEED 3
+> > +
+> >  #define USB_INTEL_XUSB2PR 0xD0
+> >  #define PCI_DEVICE_ID_INTEL_LYNXPOINT_LP_XHCI 0x9c31
+> > =20
+> > @@ -293,8 +298,8 @@ struct asus_wmi {
+> >  u32 kbd_rgb_dev;
+> >  bool kbd_rgb_state_available;
+> > =20
+> > - bool throttle_thermal_policy_available;
+> >  u8 throttle_thermal_policy_mode;
+> > + u32 throttle_thermal_policy_dev;
+> > =20
+> >  bool cpu_fan_curve_available;
+> >  bool gpu_fan_curve_available;
+> > @@ -3152,7 +3157,7 @@ static int fan_curve_get_factory_default(struc=
+t asus_wmi *asus, u32 fan_dev)
+> >  int err, fan_idx;
+> >  u8 mode =3D 0;
+> > =20
+> > - if (asus->throttle_thermal_policy_available)
+> > + if (asus->throttle_thermal_policy_dev)
+> >  mode =3D asus->throttle_thermal_policy_mode;
+> >  /* DEVID_<C/G>PU_FAN_CURVE is switched for OVERBOOST vs SILENT */
+> >  if (mode =3D=3D 2)
+> > @@ -3359,7 +3364,7 @@ static ssize_t fan_curve_enable_store(struct d=
+evice *dev,
+> >  * For machines with throttle this is the only way to reset fans
+> >  * to default mode of operation (does not erase curve data).
+> >  */
+> > - if (asus->throttle_thermal_policy_available) {
+> > + if (asus->throttle_thermal_policy_dev) {
+> >  err =3D throttle_thermal_policy_write(asus);
+> >  if (err)
+> >  return err;
+> > @@ -3576,8 +3581,8 @@ static const struct attribute_group asus_fan_c=
+urve_attr_group =3D {
+> >  __ATTRIBUTE_GROUPS(asus_fan_curve_attr);
+> > =20
+> >  /*
+> > - * Must be initialised after throttle_thermal_policy_check_present(=
+) as
+> > - * we check the status of throttle_thermal_policy_available during =
+init.
+> > + * Must be initialised after throttle_thermal_policy_dev is set as
+> > + * we check the status of throttle_thermal_policy_dev during init.
+> >   */
+> >  static int asus_wmi_custom_fan_curve_init(struct asus_wmi *asus)
+> >  {
+> > @@ -3618,38 +3623,37 @@ static int asus_wmi_custom_fan_curve_init(st=
+ruct asus_wmi *asus)
+> >  }
+> > =20
+> >  /* Throttle thermal policy ****************************************=
+************/
+> > -
+> > -static int throttle_thermal_policy_check_present(struct asus_wmi *a=
+sus)
+> > +static u8 throttle_thermal_policy_max_mode(struct asus_wmi *asus)
+> >  {
+> > - u32 result;
+> > - int err;
+> > -
+> > - asus->throttle_thermal_policy_available =3D false;
+> > -
+> > - err =3D asus_wmi_get_devstate(asus,
+> > -     ASUS_WMI_DEVID_THROTTLE_THERMAL_POLICY,
+> > -     &result);
+> > - if (err) {
+> > - if (err =3D=3D -ENODEV)
+> > - return 0;
+> > - return err;
+> > - }
+> > -
+> > - if (result & ASUS_WMI_DSTS_PRESENCE_BIT)
+> > - asus->throttle_thermal_policy_available =3D true;
+> > -
+> > - return 0;
+> > + if (asus->throttle_thermal_policy_dev =3D=3D ASUS_WMI_DEVID_THROTT=
+LE_THERMAL_POLICY_VIVO)
+> > + return ASUS_THROTTLE_THERMAL_POLICY_FULLSPEED;
+> > + else
+> > + return ASUS_THROTTLE_THERMAL_POLICY_SILENT;
+> >  }
+> > =20
+> >  static int throttle_thermal_policy_write(struct asus_wmi *asus)
+> >  {
+> > - int err;
+> > - u8 value;
+> > + u8 value =3D asus->throttle_thermal_policy_mode;
+> >  u32 retval;
+> > + bool vivo;
+> > + int err;
+> > =20
+> > - value =3D asus->throttle_thermal_policy_mode;
+> > + vivo =3D asus->throttle_thermal_policy_dev =3D=3D ASUS_WMI_DEVID_T=
+HROTTLE_THERMAL_POLICY_VIVO;
+> > + if (vivo) {
+> > + switch (value) {
+> > + case ASUS_THROTTLE_THERMAL_POLICY_DEFAULT:
+> > + value =3D ASUS_THROTTLE_THERMAL_POLICY_DEFAULT_VIVO;
+> > + break;
+> > + case ASUS_THROTTLE_THERMAL_POLICY_OVERBOOST:
+> > + value =3D ASUS_THROTTLE_THERMAL_POLICY_OVERBOOST_VIVO;
+> > + break;
+> > + case ASUS_THROTTLE_THERMAL_POLICY_SILENT:
+> > + value =3D ASUS_THROTTLE_THERMAL_POLICY_SILENT_VIVO;
+> > + break;
+> > + }
+> > + }
+> > =20
+> > - err =3D asus_wmi_set_devstate(ASUS_WMI_DEVID_THROTTLE_THERMAL_POLI=
+CY,
+> > + err =3D asus_wmi_set_devstate(asus->throttle_thermal_policy_dev,
+> >      value, &retval);
+> > =20
+> >  sysfs_notify(&asus->platform_device->dev.kobj, NULL,
+> > @@ -3679,7 +3683,7 @@ static int throttle_thermal_policy_write(struc=
+t asus_wmi *asus)
+> > =20
+> >  static int throttle_thermal_policy_set_default(struct asus_wmi *asu=
+s)
+> >  {
+> > - if (!asus->throttle_thermal_policy_available)
+> > + if (!asus->throttle_thermal_policy_dev)
+> >  return 0;
+> > =20
+> >  asus->throttle_thermal_policy_mode =3D ASUS_THROTTLE_THERMAL_POLICY=
+_DEFAULT;
+> > @@ -3689,9 +3693,10 @@ static int throttle_thermal_policy_set_defaul=
+t(struct asus_wmi *asus)
+> >  static int throttle_thermal_policy_switch_next(struct asus_wmi *asu=
+s)
+> >  {
+> >  u8 new_mode =3D asus->throttle_thermal_policy_mode + 1;
+> > + u8 max_mode =3D throttle_thermal_policy_max_mode(asus);
+> >  int err;
+> > =20
+> > - if (new_mode > ASUS_THROTTLE_THERMAL_POLICY_SILENT)
+> > + if (new_mode > max_mode)
+> >  new_mode =3D ASUS_THROTTLE_THERMAL_POLICY_DEFAULT;
+> > =20
+> >  asus->throttle_thermal_policy_mode =3D new_mode;
+> > @@ -3722,6 +3727,7 @@ static ssize_t throttle_thermal_policy_store(s=
+truct device *dev,
+> >      const char *buf, size_t count)
+> >  {
+> >  struct asus_wmi *asus =3D dev_get_drvdata(dev);
+> > + u8 max_mode =3D throttle_thermal_policy_max_mode(asus);
+> >  u8 new_mode;
+> >  int result;
+> >  int err;
+> > @@ -3730,7 +3736,7 @@ static ssize_t throttle_thermal_policy_store(s=
+truct device *dev,
+> >  if (result < 0)
+> >  return result;
+> > =20
+> > - if (new_mode > ASUS_THROTTLE_THERMAL_POLICY_SILENT)
+> > + if (new_mode > max_mode)
+> >  return -EINVAL;
+> > =20
+> >  asus->throttle_thermal_policy_mode =3D new_mode;
+> > @@ -3747,7 +3753,10 @@ static ssize_t throttle_thermal_policy_store(=
+struct device *dev,
+> >  return count;
+> >  }
+> > =20
+> > -// Throttle thermal policy: 0 - default, 1 - overboost, 2 - silent
+> > +/*
+> > + * Throttle thermal policy: 0 - default, 1 - overboost, 2 - silent
+> > + * Throttle thermal policy vivobook : 0 - default, 1 - silent, 2 - =
+overboost, 3 - fullspeed
+> > + */
+>=20
+> throttle_thermal_policy_write() always expects normal (non vivobook) v=
+alues and
+> then translates those to vivo values, so this comment is not correct.
+>=20
+> The only difference is that vivobook also has fullspeed, but the way u=
+serspace
+> sees it 1/2 or silent/overspeed are not swapped, since the swapping is=
+ taking
+> care of in throttle_thermal_policy_write().
+>=20
+> Also the new fullspeed is not exported through the platform_profile in=
+terface,
+> for setting values this is somewhat ok, but fullspeed can be set throu=
+gh
+> sysfs, and this will then cause asus_wmi_platform_profile_get() to fail
+> with -EINVAL, so this need to be fixed. Either map fullspeed to
+> PLATFORM_PROFILE_PERFORMANCE in asus_wmi_platform_profile_get(), or add
+> a new platform_profile value for this.
+>
 
-On Thu, May 30, 2024 at 09:25:37PM -0700, Jeff Johnson wrote:
-> make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/siox/siox-bus-gpio.o
-> 
-> Add the missing invocation of the MODULE_DESCRIPTION() macro.
-> 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+I would much prefer if "fullspeed" was not included at all unless it was=
+ an individual setting. It very rarely contributes anything good to the =
+driver, and most certainly won't be of value in the platform_profile.
 
-Acked-by: Thorsten Scherer <t.scherer@eckelmann.de>
+Otherwise, what is the status on this?=20
 
-@gregkh: Would you please pick up this patch?
-
-Thanks to you both.
-
-> ---
->  drivers/siox/siox-bus-gpio.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/siox/siox-bus-gpio.c b/drivers/siox/siox-bus-gpio.c
-> index 9e01642e72de..d6f936464063 100644
-> --- a/drivers/siox/siox-bus-gpio.c
-> +++ b/drivers/siox/siox-bus-gpio.c
-> @@ -148,5 +148,6 @@ static struct platform_driver siox_gpio_driver = {
->  module_platform_driver(siox_gpio_driver);
->  
->  MODULE_AUTHOR("Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>");
-> +MODULE_DESCRIPTION("SIOX GPIO bus driver");
->  MODULE_LICENSE("GPL v2");
->  MODULE_ALIAS("platform:" DRIVER_NAME);
-> 
-> ---
-> base-commit: 4a4be1ad3a6efea16c56615f31117590fd881358
-> change-id: 20240530-md-siox-bus-gpio-72cba921cf84
-> 
-
-Best regards
-Thorsten
+>=20
+> >  static DEVICE_ATTR_RW(throttle_thermal_policy);
+> > =20
+> >  /* Platform profile ***********************************************=
+************/
+> > @@ -3813,7 +3822,7 @@ static int platform_profile_setup(struct asus_=
+wmi *asus)
+> >  * Not an error if a component platform_profile relies on is unavail=
+able
+> >  * so early return, skipping the setup of platform_profile.
+> >  */
+> > - if (!asus->throttle_thermal_policy_available)
+> > + if (!asus->throttle_thermal_policy_dev)
+> >  return 0;
+> > =20
+> >  dev_info(dev, "Using throttle_thermal_policy for platform_profile s=
+upport\n");
+> > @@ -4228,7 +4237,7 @@ static void asus_wmi_handle_event_code(int cod=
+e, struct asus_wmi *asus)
+> >  if (code =3D=3D NOTIFY_KBD_FBM || code =3D=3D NOTIFY_KBD_TTP) {
+> >  if (asus->fan_boost_mode_available)
+> >  fan_boost_mode_switch_next(asus);
+> > - if (asus->throttle_thermal_policy_available)
+> > + if (asus->throttle_thermal_policy_dev)
+> >  throttle_thermal_policy_switch_next(asus);
+> >  return;
+> > =20
+> > @@ -4436,7 +4445,7 @@ static umode_t asus_sysfs_is_visible(struct ko=
+bject *kobj,
+> >  else if (attr =3D=3D &dev_attr_fan_boost_mode.attr)
+> >  ok =3D asus->fan_boost_mode_available;
+> >  else if (attr =3D=3D &dev_attr_throttle_thermal_policy.attr)
+> > - ok =3D asus->throttle_thermal_policy_available;
+> > + ok =3D asus->throttle_thermal_policy_dev !=3D 0;
+> >  else if (attr =3D=3D &dev_attr_ppt_pl2_sppt.attr)
+> >  devid =3D ASUS_WMI_DEVID_PPT_PL2_SPPT;
+> >  else if (attr =3D=3D &dev_attr_ppt_pl1_spl.attr)
+> > @@ -4745,16 +4754,15 @@ static int asus_wmi_add(struct platform_devi=
+ce *pdev)
+> >  else if (asus_wmi_dev_is_present(asus, ASUS_WMI_DEVID_TUF_RGB_MODE2=
+))
+> >  asus->kbd_rgb_dev =3D ASUS_WMI_DEVID_TUF_RGB_MODE2;
+> > =20
+> > + if (asus_wmi_dev_is_present(asus, ASUS_WMI_DEVID_THROTTLE_THERMAL_=
+POLICY))
+> > + asus->throttle_thermal_policy_dev =3D ASUS_WMI_DEVID_THROTTLE_THER=
+MAL_POLICY;
+> > + else if (asus_wmi_dev_is_present(asus, ASUS_WMI_DEVID_THROTTLE_THE=
+RMAL_POLICY_VIVO))
+> > + asus->throttle_thermal_policy_dev =3D ASUS_WMI_DEVID_THROTTLE_THER=
+MAL_POLICY_VIVO;
+> > +
+> >  err =3D fan_boost_mode_check_present(asus);
+> >  if (err)
+> >  goto fail_fan_boost_mode;
+> > =20
+> > - err =3D throttle_thermal_policy_check_present(asus);
+> > - if (err)
+> > - goto fail_throttle_thermal_policy;
+> > - else
+> > - throttle_thermal_policy_set_default(asus);
+> > -
+> >  err =3D platform_profile_setup(asus);
+> >  if (err)
+> >  goto fail_platform_profile_setup;
+> > @@ -4849,7 +4857,6 @@ static int asus_wmi_add(struct platform_device=
+ *pdev)
+> >  fail_input:
+> >  asus_wmi_sysfs_exit(asus->platform_device);
+> >  fail_sysfs:
+> > -fail_throttle_thermal_policy:
+> >  fail_custom_fan_curve:
+> >  fail_platform_profile_setup:
+> >  if (asus->platform_profile_support)
+> > diff --git a/include/linux/platform_data/x86/asus-wmi.h b/include/li=
+nux/platform_data/x86/asus-wmi.h
+> > index 3eb5cd677..982a63774 100644
+> > --- a/include/linux/platform_data/x86/asus-wmi.h
+> > +++ b/include/linux/platform_data/x86/asus-wmi.h
+> > @@ -64,6 +64,7 @@
+> >  #define ASUS_WMI_DEVID_SCREENPAD_LIGHT 0x00050032
+> >  #define ASUS_WMI_DEVID_FAN_BOOST_MODE 0x00110018
+> >  #define ASUS_WMI_DEVID_THROTTLE_THERMAL_POLICY 0x00120075
+> > +#define ASUS_WMI_DEVID_THROTTLE_THERMAL_POLICY_VIVO 0x00110019
+> > =20
+> >  /* Misc */
+> >  #define ASUS_WMI_DEVID_PANEL_OD 0x00050019
+>=20
+>=20
 
