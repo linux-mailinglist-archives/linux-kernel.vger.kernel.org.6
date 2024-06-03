@@ -1,126 +1,118 @@
-Return-Path: <linux-kernel+bounces-198494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C98498D793F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 01:59:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D01F38D7945
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 02:05:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67D181F21C2C
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2024 23:59:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E392C1C2145D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 00:05:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEE4E7F7D1;
-	Sun,  2 Jun 2024 23:59:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6D0910E6;
+	Mon,  3 Jun 2024 00:05:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lZ4cfxlM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="oiQouVkv"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 097BF7E765;
-	Sun,  2 Jun 2024 23:59:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A08A19E;
+	Mon,  3 Jun 2024 00:05:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717372753; cv=none; b=Z2thakL7TgxXTlBk3cuk85FVkuUC7Y8v8mHLVIxO9l4z9Ge9s8+XtY2rMgdD7yzylAJ6O+lx1fui5M7px6JWKgkLqMx/blmYDcAHz6W7Y4hYdRRyzjpddOPIWOy3rdHlZb/beuVAFPHsLOxfVAFRN+9DZGF6l2Paze/S5+yjRjg=
+	t=1717373138; cv=none; b=Wh6UFn3wxjbztUlERtzC1Ujn5lO4PACJlmQZsyfVUmhe5bjfFnwVcypehbaamFOX/X60od+MZdUDEtifUxxewvy+AXr2J3X/HLlaRFxvJ7xibvwezleEo2+FZDTX7De8uyqjwe6GK6O1o8OOO1F8gzPr9B2caRleSJKuz4fOo+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717372753; c=relaxed/simple;
-	bh=f9O5QybcaMD2WnAIw2zJMF2wywEOo5ijEP+aNWm+CN4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IiVGFslJfd7h3bcqG6w+UCji3ROPX+oJFNRhreaLcbrHBQKk/VMLF1L8x/nn+ZLN5p1yMZq2ZYrBhxZdEKSorCZgFBVmAJKTp5ZeEne4e0941VzhQxcYnE0HT+c7VW7KDiCInhLFirpD4Q2BIen/LvV+Oq4SU/G/u6Rnb28ueLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lZ4cfxlM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81146C2BBFC;
-	Sun,  2 Jun 2024 23:59:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717372752;
-	bh=f9O5QybcaMD2WnAIw2zJMF2wywEOo5ijEP+aNWm+CN4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=lZ4cfxlMdcwhOVhbqsf9w4uFBEq+LN8pDb0XkjLabo/Zy97mJnI9UreSoibY7uHl7
-	 3ZpWy1VJOLx3FpzUmjzhhsXsXRpzoFTlA8q3sp+cXgdrSBw8DRZcStV9JGQ37KhzVh
-	 RJ4N/06Hcvml4sBrmT2zbaXVJoo3Xif7/7QLvtYSTuU+AEBV2WWTlz+FKseOz6w4zC
-	 JW79RueDt6DIdpx0uwHAgcHV1TCJtLDWZJ4mhHO1Jd0vvRKbQI+DvFFnsn8XD4wmwq
-	 zuLmEogyxrmCesQe9NSvRHAf3mKQCNFKx6ZQRFNlD0Jkk7ZKrxHAHGsyemQDXFcc8U
-	 F5ZjC0rwW0a1w==
-Message-ID: <9d68c7c1-b1e6-4f42-8d4b-8c986ab688b5@kernel.org>
-Date: Mon, 3 Jun 2024 08:59:10 +0900
+	s=arc-20240116; t=1717373138; c=relaxed/simple;
+	bh=zy1trVZNXdzSYKGFjksmzJXN/QGq0Sj95jtxuW3Bblc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=FGmmYSkknmqlArf9FtYqkZOI6JCZXUONjgRc91VOVaLynbEUhevHom4kPFC8u80gSP7PM611WjRm9LzupRNLvggCs2/y7v2/ngip6zWM1/GH8LPFSMH7s/aG+a+8ZTc//OxgBWvhhydUZ+UP9MaIqQT8ulT1/FdTiVM+wVozSMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=oiQouVkv; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 452Np6bX026166;
+	Mon, 3 Jun 2024 00:05:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=e1fRDQ19gGIsI4uZjga8MO
+	ag9mx43TrLxWHagrL2+Oc=; b=oiQouVkvC1uiW8lu8wLf/lEVngYqY9vmd9PBnb
+	sO5KDXEb2gi4o8IJDtN0oV2DUZ986beUpQeSUA5gFrXE9uCC+1uyTOrp2e7bz88n
+	DTvpZbx2jzgtKPqHUuYe7kw+iFIhSvwwuCQqjceHyIL0FJrdwh/KzFamCu6OF8Xo
+	bhe+jbBwg01tvyht/z9O7A13iP5RVLu59E6ONq+JiTkyIX5nE4/N4rmoTQLYGN7B
+	Hc7aqbbgHpRXLAkBOaLUvm0CH9omk2/ge9je0a4QN2ojLI3DGOqHZeHC7VmY2kpR
+	dZKe2QZyHVOLsLY10XlUm9NMbsSh0EqOe1HBhkbk0fBgcSvQ==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfw6qjm0x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 03 Jun 2024 00:05:33 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 45305WJo030020
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 3 Jun 2024 00:05:32 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 2 Jun 2024
+ 17:05:31 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Sun, 2 Jun 2024 17:05:31 -0700
+Subject: [PATCH] floppy: add missing MODULE_DESCRIPTION() macro
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] null_blk: fix validation of block size
-To: John Garry <john.g.garry@oracle.com>, Andreas Hindborg
- <nmi@metaspace.dk>, Jens Axboe <axboe@kernel.dk>
-Cc: Andreas Hindborg <a.hindborg@samsung.com>, Keith Busch
- <kbusch@kernel.org>, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240601202351.691952-1-nmi@metaspace.dk>
- <d6999fef-aadf-494e-ad58-f27dfd975535@oracle.com>
-From: Damien Le Moal <dlemoal@kernel.org>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <d6999fef-aadf-494e-ad58-f27dfd975535@oracle.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-ID: <20240602-md-block-floppy-v1-1-bc628ea5eb84@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAMoIXWYC/x3MTQ7CIBBA4as0s3YSwNa/qzQugE7tRApkUFPT9
+ O5Fl9/ivRUKCVOBW7OC0IcLp1ihDw34ycYHIQ/VYJRp1UkZnAd0IfknjiHl/EV9vbRan4+dIg+
+ 1ykIjL/9jf692thA6sdFPv0/g+F5wtuVFAtu2A8kF3tuAAAAA
+To: Denis Efremov <efremov@linux.com>, Jens Axboe <axboe@kernel.dk>
+CC: <linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: GQmSe479sB2skAGlDyFgRaaaZbsc3AQn
+X-Proofpoint-ORIG-GUID: GQmSe479sB2skAGlDyFgRaaaZbsc3AQn
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-06-02_15,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ bulkscore=0 mlxlogscore=929 clxscore=1011 impostorscore=0 malwarescore=0
+ mlxscore=0 adultscore=0 lowpriorityscore=0 suspectscore=0 spamscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406020211
 
-On 6/2/24 19:57, John Garry wrote:
-> On 01/06/2024 21:23, Andreas Hindborg wrote:
->> From: Andreas Hindborg <a.hindborg@samsung.com>
->>
->> Block size should be between 512
-> 
-> 
->> and 4096
-> 
-> Or PAGE_SIZE?
+make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/block/floppy.o
 
-PAGE_SIZE can be larger than 4096. But most drives are 512 or 4096 LBA-sized.
+Add the missing invocation of the MODULE_DESCRIPTION() macro.
 
-> 
->   and be a power of 2. The current
->> check does not validate this, so update the check.
->>
->> Without this patch, null_blk would Oops due to a null pointer deref when
->> loaded with bs=1536 [1].
->>
->> Link: https://urldefense.com/v3/__https://lore.kernel.org/all/87wmn8mocd.fsf@metaspace.dk/__;!!ACWV5N9M2RV99hQ!OWXI3DGxeIAWvKfM5oVSiA5fTWmiRvUctIdVrcBcKnO_HF-vgkarVfd27jkvQ1-JjNgX5IFIvBWcsUttvg$
->>
->> Signed-off-by: Andreas Hindborg <a.hindborg@samsung.com>
->> ---
->>   drivers/block/null_blk/main.c | 6 ++++--
->>   1 file changed, 4 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/block/null_blk/main.c b/drivers/block/null_blk/main.c
->> index eb023d267369..6a26888c52bb 100644
->> --- a/drivers/block/null_blk/main.c
->> +++ b/drivers/block/null_blk/main.c
->> @@ -1823,8 +1823,10 @@ static int null_validate_conf(struct nullb_device *dev)
->>   		dev->queue_mode = NULL_Q_MQ;
->>   	}
->>   
->> -	dev->blocksize = round_down(dev->blocksize, 512);
->> -	dev->blocksize = clamp_t(unsigned int, dev->blocksize, 512, 4096);
->> +	if ((dev->blocksize < 512 || dev->blocksize > 4096) ||
->> +	    ((dev->blocksize & (dev->blocksize - 1)) != 0)) {
->> +		return -EINVAL;
->> +	}
-> 
-> Looks like blk_validate_block_size(), modulo PAGE_SIZE check
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ drivers/block/floppy.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Not PAGE_SIZE...
+diff --git a/drivers/block/floppy.c b/drivers/block/floppy.c
+index 25c9d85667f1..854a88cf56bd 100644
+--- a/drivers/block/floppy.c
++++ b/drivers/block/floppy.c
+@@ -5016,6 +5016,7 @@ module_param(floppy, charp, 0);
+ module_param(FLOPPY_IRQ, int, 0);
+ module_param(FLOPPY_DMA, int, 0);
+ MODULE_AUTHOR("Alain L. Knaff");
++MODULE_DESCRIPTION("Normal floppy disk support");
+ MODULE_LICENSE("GPL");
+ 
+ /* This doesn't actually get used other than for module information */
 
-> 
->>   
->>   	if (dev->use_per_node_hctx) {
->>   		if (dev->submit_queues != nr_online_nodes)
->>
->> base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
-> 
-> 
-
--- 
-Damien Le Moal
-Western Digital Research
+---
+base-commit: a693b9c95abd4947c2d06e05733de5d470ab6586
+change-id: 20240602-md-block-floppy-1984117350ec
 
 
