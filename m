@@ -1,117 +1,162 @@
-Return-Path: <linux-kernel+bounces-199564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38CF68D889B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 20:30:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6226B8D889E
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 20:30:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7D4A288F9E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 18:30:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17509288EE5
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 18:30:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4EF91386D0;
-	Mon,  3 Jun 2024 18:29:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB0731386D8;
+	Mon,  3 Jun 2024 18:30:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OkZuV1eV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="QfcmgenT"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2DF6132804;
-	Mon,  3 Jun 2024 18:29:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1379C1CD38;
+	Mon,  3 Jun 2024 18:30:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717439393; cv=none; b=gzwqarSgrj82kLq0M690jWVR8HoZdsJOazPJwPkbRfpqk477ReXQi0KcENemIvmnVwwz2Dhd7qRMmuGi3IDHMBN46XDySpbXD5wGvSnFdM3xVphvtUMjOu2lFKjKDFduMobZ6v6T+7qMf7jqEvc8eVDJHbskntfk1n9bwSDjl7I=
+	t=1717439444; cv=none; b=tpaVTn4MYVdPobvXxaEZlbX4y2M2ewXvFnsYwj2eiTq3fGSOzZe01hnYBA3KR0PmtxYHv/lp+ENDcZfRgkPqSkkEmztl+M2CWlP7GIbxwvCkpX0QikEpeDPkJVwGygqnxAWe+hPp5KNMhklUG3YJ+FVOCKM+2PCpT2UCfekOElw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717439393; c=relaxed/simple;
-	bh=mNhvVNlm7lR5BWW0xTcHRwGUWRDr+XPiKpnaTJtSDTI=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=reWDAwotov+xkrZ0wdw74Qk7bMJBlCg8vmnqM7p7YDPxO4z62vJqlGiLOtHTDjIN438CNIbTBLnm8C7n3PEBqssnYBwlQ5Pqil7K/3/YfsSIa9EZHU3FIGzAkVHeH93TjW++S8HPpMsdvKuVi1/bJMgbxnpQzVQubP4iK0ldZ68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OkZuV1eV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0ECD0C2BD10;
-	Mon,  3 Jun 2024 18:29:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717439392;
-	bh=mNhvVNlm7lR5BWW0xTcHRwGUWRDr+XPiKpnaTJtSDTI=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-	b=OkZuV1eVes1bmZwBJfIiWe1TuYU2eCulaWhDYbIQ6vzMFyaOAD8QPRxLbAyVHL9wa
-	 aOkkSIhSzuJEqQBog1tDRdXeLpG0m/VC1G9Om4eLmdkgUqTbgYBXSXgzzzezGrrF0L
-	 c2htHuvtT5if3G7uXQRjvkAhGsd9+9OwRi6wvWjUhRMoTbUvhi610iohydI++HjNHe
-	 LpcZh2FSschBweqG/H5aKQNvQCEM8ZB9Ic02r9Fb67jykDi82yuxpgetbw8D0rIp/V
-	 GTNZSGBtL1yRhYXTQypgCTgnc+OoLITtnoyQnItFbQw6FK/mcgi80sDmAmWTx7rS0H
-	 9ignmGxUFxgZQ==
-From: Kalle Valo <kvalo@kernel.org>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Dan Williams <dan.j.williams@intel.com>,  Dave Jiang
- <dave.jiang@intel.com>,  Bjorn Helgaas <bhelgaas@google.com>,
-  linux-wireless@vger.kernel.org,  ath11k@lists.infradead.org,
-  regressions@lists.linux.dev,  Jeff Johnson <quic_jjohnson@quicinc.com>,
-  linux-kernel@vger.kernel.org,  linux-cxl@vger.kernel.org,
-  linux-pci@vger.kernel.org
-Subject: Re: [regression] BUG: KASAN: use-after-free in
- lockdep_register_key+0x755/0x8f0
-References: <20240603165342.GA685076@bhelgaas>
-Date: Mon, 03 Jun 2024 21:29:47 +0300
-In-Reply-To: <20240603165342.GA685076@bhelgaas> (Bjorn Helgaas's message of
-	"Mon, 3 Jun 2024 11:53:42 -0500")
-Message-ID: <87wmn5ubfo.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1717439444; c=relaxed/simple;
+	bh=9v8yk8hhCWhRa9NmC3FvjjlL9Rh/7lRdVrGZtOgPerQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=slDKWaTEfYImRpzksTKtoJVMMvoEgLbROnmvgn/oMxmUTri1qte1Yr54oRZwFe15lbMVL8RX4Ivx+/uxHc7rdg3M0HKD+743OhcR3NtJYOGRpHwQJRcDMUBg3ZLoIVMkufIewHzYW3LQN0fQScfaCZGir8JTrjPt5T6enW05I1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=QfcmgenT; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=oCvWTMBZzFyQI14e28Nz1Gd7RpB4B15zOofvtVYziac=; b=QfcmgenTxMFEewMSOKyAloZXNF
+	K2qEiU+N51KbMp0eCj/A8qCg+g59IRTKIYInxtDu03ueIA5QIYfPZdoUWoHFSgmEJLFHdk69jfSkV
+	GZuu3G981AM4lxNY/pAc5MIgiGavYg1boBE1eQRjHVChzLcPrJOZuc7JtF4OdKu4DPWijvHbhpjYX
+	Zf92F7Z64mgG/k37NAFo6VG/kKzNpKbVPt0mQSpoIauHsKf/llM8CmUzT0OQomqIJm/ivVDXLgD9u
+	M1gSWH9Dslp/5E/2NCzjOAu0BzwztH8e07Bi3b5r6co4a+kslXyzH5dLSS/Lnv2s/mipYCrnwZuwb
+	BmyO1vrA==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:56784)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sECRq-00034t-0s;
+	Mon, 03 Jun 2024 19:30:22 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sECRo-0000eL-Ly; Mon, 03 Jun 2024 19:30:20 +0100
+Date: Mon, 3 Jun 2024 19:30:20 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Daniel Golle <daniel@makrotopia.org>
+Cc: Sky Huang <SkyLake.Huang@mediatek.com>, Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Qingfang Deng <dqfext@gmail.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Steven Liu <Steven.Liu@mediatek.com>
+Subject: Re: [PATCH net-next v6 5/5] net: phy: add driver for built-in 2.5G
+ ethernet PHY on MT7988
+Message-ID: <Zl4LvKlhty/9o38y@shell.armlinux.org.uk>
+References: <20240603121834.27433-1-SkyLake.Huang@mediatek.com>
+ <20240603121834.27433-6-SkyLake.Huang@mediatek.com>
+ <Zl3ELbG8c8y0/4DN@shell.armlinux.org.uk>
+ <Zl3Fwoiv1bJlGaQZ@makrotopia.org>
+ <Zl3IGN5ZHCQfQfmt@shell.armlinux.org.uk>
+ <Zl3Yo3dwQlXEfP3i@makrotopia.org>
+ <Zl3lkIDqnt4JD//u@shell.armlinux.org.uk>
+ <Zl32waW34yTiuF9u@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zl32waW34yTiuF9u@makrotopia.org>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Bjorn Helgaas <helgaas@kernel.org> writes:
+On Mon, Jun 03, 2024 at 06:00:49PM +0100, Daniel Golle wrote:
+> On Mon, Jun 03, 2024 at 04:47:28PM +0100, Russell King (Oracle) wrote:
+> > On Mon, Jun 03, 2024 at 03:52:19PM +0100, Daniel Golle wrote:
+> > > On Mon, Jun 03, 2024 at 02:41:44PM +0100, Russell King (Oracle) wrote:
+> > > > On Mon, Jun 03, 2024 at 02:31:46PM +0100, Daniel Golle wrote:
+> > > > > On Mon, Jun 03, 2024 at 02:25:01PM +0100, Russell King (Oracle) wrote:
+> > > > > > On Mon, Jun 03, 2024 at 08:18:34PM +0800, Sky Huang wrote:
+> > > > > > > Add support for internal 2.5Gphy on MT7988. This driver will load
+> > > > > > > necessary firmware, add appropriate time delay and figure out LED.
+> > > > > > > Also, certain control registers will be set to fix link-up issues.
+> > > > > > 
+> > > > > > Based on our previous discussion, it may be worth checking in the
+> > > > > > .config_init() method whether phydev->interface is one of the
+> > > > > > PHY interface modes that this PHY supports. As I understand from one
+> > > > > > of your previous emails, the possibilities are XGMII, USXGMII or
+> > > > > > INTERNAL. Thus:
+> > > > > > 
+> > > > > > > +static int mt798x_2p5ge_phy_config_init(struct phy_device *phydev)
+> > > > > > > +{
+> > > > > > > +	struct pinctrl *pinctrl;
+> > > > > > > +	int ret;
+> > > > > > 
+> > > > > > 	/* Check that the PHY interface type is compatible */
+> > > > > > 	if (phydev->interface != PHY_INTERFACE_MODE_INTERNAL &&
+> > > > > > 	    phydev->interface != PHY_INTERFACE_MODE_XGMII &&
+> > > > > > 	    phydev->interface != PHY_INTERFACE_MODE_USXGMII)
+> > > > > > 		return -ENODEV;
+> > > > > 
+> > > > > The PHY is built-into the SoC, and as such the connection type should
+> > > > > always be "internal". The PHY does not exist as dedicated IC, only
+> > > > > as built-in part of the MT7988 SoC.
+> > > > 
+> > > > That's not how it was described to me by Sky.
+> > > > 
+> > > > If what you say is correct, then the implementation of
+> > > > mt798x_2p5ge_phy_get_rate_matching() which checks for interface modes
+> > > > other than INTERNAL is not correct. Also it means that config_init()
+> > > > should not permit anything but INTERNAL.
+> > > 
+> > > The way the PHY is connected to the MAC *inside the chip* is XGMII
+> > > according the MediaTek. So call it "internal" or "xgmii", however, up to
+> > > my knowledge it's a fact that there is **only one way** this PHY is
+> > > connected and used, and that is being an internal part of the MT7988 SoC.
+> > > 
+> > > Imho, as there are no actual XGMII signals exposed anywhere I'd use
+> > > "internal" to describe the link between MAC and PHY (which are both
+> > > inside the same chip package).
+> > 
+> > I don't care what gets decided about what's acceptable for the PHY to
+> > accept, just that it checks for the acceptable modes in .config_init()
+> > and the .get_rate_matching() method is not checking for interface
+> > modes that are not permitted.
+> 
+> What I meant to express is that there is no need for such a check, also
+> not in config_init. There is only one way and one MAC-side interface mode
+> to operate that PHY, so the value will anyway not be considered anywhere
+> in the driver.
 
-> On Sat, Jun 01, 2024 at 11:39:03AM +0300, Kalle Valo wrote:
->
->> Kalle Valo <kvalo@kernel.org> writes:
->> 
->> > Dan Williams <dan.j.williams@intel.com> writes:
->> >
->> >> Kalle Valo wrote:
->> >> [..]
->> >>> >> The proposed fix for that is here:
->> >>> >>
->> >>> >> http://lore.kernel.org/r/66560aa9dbedb_195e294b0@dwillia2-mobl3.amr.corp.intel.com.notmuch
->> >>> >
->> >>> > I get "Not Found" from that link, is there a typo?
->> >>> 
->> >>> I found this fix from for-linus branch:
->> >>> 
->> >>> # PCI: Fix missing lockdep annotation for pci_cfg_access_trylock()for-linus
->> >>> https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/commit/?h=for-linus&id=f941b9182c54a885a9d5d4cfd97af66873c98560
->> >>> 
->> >>> But at least that doesn't fix my crash.
->> >>
->> >> Sorry for the broken link I mistakenly used a message-id from an
->> >> internal thread with the intel.com reporter. However, it is moot now
->> >> because the new direction is to revert the lockdep infrastructure:
->> >>
->> >> https://lore.kernel.org/r/171711745834.1628941.5259278474013108507.stgit@dwillia2-xfh.jf.intel.com
->> >>
->> >> (that link works...)
->> >
->> > Thanks, that links works :) I did a quick test with the three patches
->> > and I didn't see any crashes anymore. But to be confident I need to run
->> > overnight tests, I'll provide my Tested-by after that.
->> 
->> Ok, I'm now quite confident that the issues I saw are solved so:
->> 
->> Tested-by: Kalle Valo <kvalo@kernel.org>
->
-> Thanks for reporting the issue and testing the fix!  Can you please
-> respond with your Tested-by to the actual patch(es) you tested?
+No, it matters. With drivers using phylink, the PHY interface mode is
+used in certain circumstances to constrain what the net device can do.
+So, it makes sense for new PHY drivers to ensure that the PHY interface
+mode is one that they can support, rather than just accepting whatever
+is passed to them (which then can lead to maintainability issues for
+subsystems.)
 
-Not easily as I'm not subscribed to linux-pci list and I haven't
-researched how to import mbox files to my mailer :) So feel free to
-ignore my Tested-by tag in this case.
+So, excuse me for disagreeing with you, but I do want to see such a
+check in new PHY drivers.
 
 -- 
-https://patchwork.kernel.org/project/linux-wireless/list/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
