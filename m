@@ -1,117 +1,104 @@
-Return-Path: <linux-kernel+bounces-199558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE9818D8890
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 20:24:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D3398D8891
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 20:25:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69B18B22D58
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 18:24:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26DF62830A4
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 18:25:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B91EA1384B3;
-	Mon,  3 Jun 2024 18:24:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3317D137C5B;
+	Mon,  3 Jun 2024 18:25:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WetvLmim"
-Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="ip5Fq3qj"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB61D137C4A;
-	Mon,  3 Jun 2024 18:24:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D591E137C4A
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 18:25:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717439052; cv=none; b=cyc09YjMPu6IBG3tS28XTEo+n9OHW1kQuBVvabyb+mP4+0C/iJZjCtJr+KnnvlWQn/YWrZdoBbPoTrl6fCC+bXWacnOtm2jankZOIbLp+Pm1wUI5gQUoiWOXdSDT8quSjCMvlh+mljwYYH7GGW0fEnjcu1astrWYMG9Pu8j8jY0=
+	t=1717439110; cv=none; b=p3AEaV0s+uBDmMXR0AH4BaUT87BekhdK2JHZtRNsNLTKSgyRcczQ5MX/OSFSbUQPc9d4BJQyIz8tBjgZoyEE6apxrBdxehbd2vqreZq1Fk8l0wkm2vLAJtZ1xCFvGkzinJOzYYv5CssFX0WMfN1ke84RxLh37J81Rb4tvznv+w8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717439052; c=relaxed/simple;
-	bh=hDcknhcOYWbRk6WkT26dnpu/5uKCkV7h6LNO0ijMspA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Pi8N37wEVelnQND3jYO4I/yueTob6g8028gQHWC93gnakvSvvzizLtJhGpk8EFUuQ/SiZRjX+F1mZ9QOW7iELS3zwd5Cw29wJnMX0hRPwtDWaXyALCXyXAqkP53113kbIyNY4Bu0VRsK0zpu6uIEXQ04ExZuz2UxteDF0xD9ykQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WetvLmim; arc=none smtp.client-ip=209.85.161.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-5b3241a69f4so2220034eaf.2;
-        Mon, 03 Jun 2024 11:24:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717439050; x=1718043850; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=5EI4ejkvsKs4g2VYFTyDLmFa3QzZwi5NQWive6oeaWA=;
-        b=WetvLmimo28CDbCThVCrz0/B+CodS7qK1CVeYair99Dk5L5LitBL1bu/8e9ikyZwXn
-         qEW0kf6y0N10foLfhnkoJqWKaWeSdNTw+nNF3u3ldOMYF7xB97lbUd8Jn6A+6kVm5Jgf
-         gE/nX5OG68RD8ol3QcXByR9WiQJIym3jRxXFCrwVMvqKRKEpKC5MS1huy5djEcQZ7Hiq
-         pxZyvWaM/1vWETbEOtW7Sm1wyz/qYi87YcoFAWmuxuW3WdpkdGyvVAqi4DXnwwEUDCvM
-         AXpyAu3R/sQit94Ft3Zy+QUUdtTLph9fUZ7rHWl1+GNZFzV5wi0EeIWotRfFz4PZMpKz
-         Sw8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717439050; x=1718043850;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5EI4ejkvsKs4g2VYFTyDLmFa3QzZwi5NQWive6oeaWA=;
-        b=KQwtzJBbBmBf26WTHlX8iaqbdAuVHXOsJeFKJAVzatJ30a8CTBDqiE/wCEfgVcc5Fy
-         cP9G5hvPcDBmnRMht+7gRXKuAx65UT2fIT5l2X/S/m5cyFJ8XYOyHY6v+i7Xm9K8bJ58
-         NEQCA1oVmW/LeQ8LEGqPKMK7viMXF1C9C4NjrB8hCzrw59FGxgXfjRAPrKcz5b8Ufl/W
-         4WfXz7Aje4VUeIAa8GGdmScRK+eCkn9KNAEOFE1sRmjgvdhtKvmoi4TaUYpPuTcC2c+7
-         wd0lZxmDylnxRSAolM1ftiEv8F5cJ3tFOOfdIEPqkkgj/Sc9kh10UMgyDumTM1Yz1/GS
-         S+Xg==
-X-Forwarded-Encrypted: i=1; AJvYcCWbF80KvX3+mh4WMNeQ7DQXI8+bsPj3oOU5OSxQ7v3Lt9oJh1kqalGE4ApyKTrflVSwVO7vCcJiKdCjnihbCktCjCLMeOyVI2x/hHlahtbK5TS7fUTPMug6ikovUXhX/Dy6yjLpsVjLd90/sA==
-X-Gm-Message-State: AOJu0Yx1OzbmFIlL5M/f8B3NX9OF+6t+5AJx7Df/clLfyNYib101WvXx
-	6lWDQ4RZR8EkLLWJIAcNfIuVgVq3wVXpCHaclsmKQKf+3l7CcviiTuaf97aW
-X-Google-Smtp-Source: AGHT+IF/PMhSgjeWGpH+lwhjVNWk5wZqk+U9pM49w8GWSnAmdfw1UbZDr9/cU2rHjJbRKm8oEEESpQ==
-X-Received: by 2002:a05:6358:f44:b0:183:612d:44a1 with SMTP id e5c5f4694b2df-19b490c54bamr1072290955d.28.1717439049552;
-        Mon, 03 Jun 2024 11:24:09 -0700 (PDT)
-Received: from localhost.localdomain ([2409:40c1:3c:9322:2d09:c2c:3b62:755a])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6c35a4ba741sm5075892a12.85.2024.06.03.11.24.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Jun 2024 11:24:09 -0700 (PDT)
-From: Amit Vadhavana <av2082000@gmail.com>
-To: dhowells@redhat.com,
-	jlayton@kernel.org,
-	netfs@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: skhan@linuxfoundation.org,
-	av2082000@gmail.com
-Subject: [PATCH] netfs: Fix documentation comment for netfs_wait_for_outstanding_io()
-Date: Mon,  3 Jun 2024 23:53:56 +0530
-Message-Id: <20240603182356.11682-1-av2082000@gmail.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1717439110; c=relaxed/simple;
+	bh=J4i4nzVP6ByO8GiNsx37/x+9O99dx2cNcPJdboNN3Ik=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IVRI9k47KAg0t8TF5nhXZ8Xv43ZBhyfdQroAc/0NqPqagclr31Xx1eFenNKQbD9OPjdXi9vA3ekQw8GkRCTyBQ4W/nXVpIt5HgKeZJjLd6p6Gxbb0BO9ug1r23ZJl2JEXpGNtU2AXdoSVa+UYCF9sfGcjFroiyoXZk5OETBxLCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=ip5Fq3qj; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id A1D6540E00C9;
+	Mon,  3 Jun 2024 18:25:06 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 036XX_kGuaVT; Mon,  3 Jun 2024 18:25:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1717439103; bh=nrDJ8q1CYtcH12efiesq/geD7h4Qs+kx3ITpcO547CA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ip5Fq3qj4924YESplzKtoI9h3pimZRXgqBVL2O0lkiz8r3r9/gRq8f8HRVKQGJTXO
+	 AXpqn1EFWGxybOa+BPH21GgLupzwysLu06GdBDk8qWoLwwXPM9HCj4h76JK1QixCZX
+	 JkaFZLd68AV8T7Cl8pLyyRyYqU/RjfgR9p3yIQZNz8xlT5h45CxzJM/KqxUg0R4VAB
+	 Iw73kB4974o40rt8PnM7hi2C+hbeuRLNMGnNBdhiLJLHREzUqr5drdhKG5Jozc62tK
+	 FQwSTtv4t5W3fiZ/8cYIIkmjPLkshh+EGkxrOCQMMidOXZoOHDZyZbeyvKDcbeaZ2r
+	 DSYShMis5f6dMOdsanqKBLi9jc6Ka8CmiEvKRP7ezZvipXelWgwhCilp1EunmR59sO
+	 y5a4ORBto8cmWf15JKJEgqc819kwfNiEEmXxGVrK+97xSK83XhZPZrZ1YynAQEAOPH
+	 WXRmMpYdJ6RqU9eOgurskRzf1APKYozUZerDOu9rbNJNNSf8F4IaeEcofK01PmHwiP
+	 g7CMlu9S9qGyG8G5eT6K8UAJLIL2hYr99EDi9ZuHzKInpHJZp2G9YgpI17kcbPmtlx
+	 e4yuvnqOIczNdTLXVDLKzLMlPWoVFgiKapYqu5yezYcz2Y/XJ6sk5ULzIjh/XrBJEg
+	 JBN/c1ofR3RCyE9XKaIxNLT4=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id F0EE540E016E;
+	Mon,  3 Jun 2024 18:24:48 +0000 (UTC)
+Date: Mon, 3 Jun 2024 20:24:42 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: "Luck, Tony" <tony.luck@intel.com>
+Cc: "Chatre, Reinette" <reinette.chatre@intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"Yu, Fenghua" <fenghua.yu@intel.com>,
+	"Wieczor-Retman, Maciej" <maciej.wieczor-retman@intel.com>,
+	Peter Newman <peternewman@google.com>,
+	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>,
+	Drew Fustini <dfustini@baylibre.com>,
+	Dave Martin <Dave.Martin@arm.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"patches@lists.linux.dev" <patches@lists.linux.dev>
+Subject: Re: [PATCH 0/3] Add and use get_cpu_cacheinfo_level()
+Message-ID: <20240603182442.GLZl4KasdZWjtZ3jgD@fat_crate.local>
+References: <20240531195720.232561-1-tony.luck@intel.com>
+ <22569491-1b29-4b3d-8e9c-a5d10b73b6ab@intel.com>
+ <20240603170106.GHZl320tVKXp2HyUfb@fat_crate.local>
+ <SJ1PR11MB608311F25E4B0B789E54866AFCFF2@SJ1PR11MB6083.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <SJ1PR11MB608311F25E4B0B789E54866AFCFF2@SJ1PR11MB6083.namprd11.prod.outlook.com>
 
-Correct the parameter name in the documentation comment of the
-netfs_wait_for_outstanding_io() to match the actual function parameter.
-This change ensures that the kernel-doc tool can generate accurate
-documentation and eliminates any warnings related to parameter mismatches.
+On Mon, Jun 03, 2024 at 05:18:37PM +0000, Luck, Tony wrote:
+> The two resctrl patches depend on the patch to <linux/cacheinfo.h>
+> So you'd need to take that patch through tip x86/cache as well.
 
-kernel-doc warning:
-  ./include/linux/netfs.h:532: warning: Function parameter or struct member 'inode' not described in 'netfs_wait_for_outstanding_io'
-  ./include/linux/netfs.h:532: warning: Excess function parameter 'ctx' description in 'netfs_wait_for_outstanding_io'
+Sure, as it is usually done.
 
-Signed-off-by: Amit Vadhavana <av2082000@gmail.com>
----
- include/linux/netfs.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/linux/netfs.h b/include/linux/netfs.h
-index 3ca3906bb8da..5d0288938cc2 100644
---- a/include/linux/netfs.h
-+++ b/include/linux/netfs.h
-@@ -521,7 +521,7 @@ static inline struct fscache_cookie *netfs_i_cookie(struct netfs_inode *ctx)
- 
- /**
-  * netfs_wait_for_outstanding_io - Wait for outstanding I/O to complete
-- * @ctx: The netfs inode to wait on
-+ * @inode: The netfs inode to wait on
-  *
-  * Wait for outstanding I/O requests of any type to complete.  This is intended
-  * to be called from inode eviction routines.  This makes sure that any
 -- 
-2.25.1
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
