@@ -1,100 +1,150 @@
-Return-Path: <linux-kernel+bounces-198636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF9A38D7B88
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 08:25:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B13928D7B81
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 08:23:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAECC281C3A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 06:25:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64BE8282241
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 06:23:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 840682C6A3;
-	Mon,  3 Jun 2024 06:25:14 +0000 (UTC)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16B4628385;
+	Mon,  3 Jun 2024 06:23:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dR7Z3oP+"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65D3D219E8;
-	Mon,  3 Jun 2024 06:25:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9C4F1862;
+	Mon,  3 Jun 2024 06:23:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717395914; cv=none; b=QCrTFx3gf4tZZoBB/VLJfs/FSxlVyASIWhBswZ/C854xCVUi2CGeYiqwyYHgNTA669jtmHZnue99VFZOYQiyFCSbrysy8q66F4gIchS7dQEw3hQlcDMRUrnG/2L4T21kJW/M73XAYyqGUQzokI755ZMyns6KD3ji7hnE0Eff6gg=
+	t=1717395821; cv=none; b=JZs38JTdWkGAzlp+qnfR7E5nkOCZZkFB1JEa3fXU0r9uEnFQf0hjEUuSUaYsGEEGv8r2InoYPnxfObFVyeFu1XUAl9mPQhfpXgm2jW4W4FlWqqjX4Cn5Jx2y4qVCPJj1urueCME96QGDnPymQymcVNZvXHVcdsaZImwRBZDi38Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717395914; c=relaxed/simple;
-	bh=DN8MJhZE/6ABuaOgDNbrslUWBDHWkr4DQN1q02HGp+I=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GOL+tOV35QCdNYNwJmPimFthrn3GzWq9c7eftOUnrhSlKmoy8QmG3vLgg3UEiIgzj2WBvHUVCK2Q09FnM7JPVT1agSrQUYzK3nQDryToFxz4FeWVPWxphOAM9TYWUmUd6OX0y/YJASFDO8YuS/nMLljnkjadRbPnqhItCZ3Wx6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 193BA1A163A;
-	Mon,  3 Jun 2024 08:25:05 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 9D8861A0BBF;
-	Mon,  3 Jun 2024 08:25:04 +0200 (CEST)
-Received: from pe-lt8779.in-pnq01.nxp.com (pe-lt8779.in-pnq01.nxp.com [10.17.104.141])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 0A8771820F59;
-	Mon,  3 Jun 2024 14:25:02 +0800 (+08)
-From: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
-To: marcel@holtmann.org,
-	luiz.dentz@gmail.com
-Cc: linux-bluetooth@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	amitkumar.karwar@nxp.com,
-	rohit.fule@nxp.com,
-	neeraj.sanjaykale@nxp.com,
-	sherry.sun@nxp.com,
-	ziniu.wang_1@nxp.com,
-	haibo.chen@nxp.com,
-	LnxRevLi@nxp.com
-Subject: [PATCH v2] Bluetooth: btnxpuart: Enable Power Save feature on startup
-Date: Mon,  3 Jun 2024 11:52:55 +0530
-Message-Id: <20240603062255.121063-1-neeraj.sanjaykale@nxp.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1717395821; c=relaxed/simple;
+	bh=DGlE/4+R+Sb1oNzmtY0jIER3mm8hnJVWVnxSeQkaYQA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=n/MMMHC9J3T8Mfz/NmYJofmiBL0nCpnqEeKT7Y3ONYGTQgHCsWD69ogf/UVFOT5++w5ken52glVG2uCNY2tPD9KJRl28NdZJkeZ42r6QeD/uiISeJeQN7AViY+8HAOckbeaYDx/gO/SDlXNvheIqP8Gmegmr8AaMRHol6zqlr1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dR7Z3oP+; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 452MlKoV020615;
+	Mon, 3 Jun 2024 06:23:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	rNJn4ac5jJpSFOdty/48Yed+nrWk8GDYFHRY+uMSSwk=; b=dR7Z3oP++6RFDzH6
+	KhKwzFmO8Z78O+5ppj0h7XdQcwDZKiEsmUG5PcCzX+CFiu+OH/1UuWL7/So8dWG4
+	N/CeGOwkGpBwZ3KdLz8o0utEjulyrLlucobd3iG/QA8euXDKlN9r0tVWhCdFE49R
+	iWM0Cv4IA41uYsRIGY+I8dnVSZyiM9uKUuV8AZkrcUVtHinRnlrVvpfNtr2wamQi
+	ZxNcPVauILMPtpMmGT/3yqrkYa83NmvHt0avCpjgDexnxoQ6WMQ6JkX2qnVx128C
+	/bGh2VKTjkXDGnBTjvqaTXE5sUQa+456l9Pdyu78efWdik0qIqI/f2VGvvytXdkc
+	d4dgUw==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfw5wk35k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 03 Jun 2024 06:23:34 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 4536NYNI011597
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 3 Jun 2024 06:23:34 GMT
+Received: from [10.204.67.150] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 2 Jun 2024
+ 23:23:31 -0700
+Message-ID: <ba110bd9-c042-472e-b761-10ad01f027dc@quicinc.com>
+Date: Mon, 3 Jun 2024 11:53:28 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/9] misc: fastrpc: Fix memory corruption in DSP
+ capabilities
+Content-Language: en-US
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>
+CC: <gregkh@linuxfoundation.org>, <quic_bkumar@quicinc.com>,
+        <linux-kernel@vger.kernel.org>, <quic_chennak@quicinc.com>,
+        stable
+	<stable@kernel.org>
+References: <20240530102032.27179-1-quic_ekangupt@quicinc.com>
+ <20240530102032.27179-4-quic_ekangupt@quicinc.com>
+ <6bdd3a9e-2c02-4b65-89ac-918a1157b120@linaro.org>
+From: Ekansh Gupta <quic_ekangupt@quicinc.com>
+In-Reply-To: <6bdd3a9e-2c02-4b65-89ac-918a1157b120@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: I3PhUeZsAgpkiQm8y6SiayBBSIXh3BMK
+X-Proofpoint-ORIG-GUID: I3PhUeZsAgpkiQm8y6SiayBBSIXh3BMK
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-06-02_15,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
+ adultscore=0 suspectscore=0 priorityscore=1501 clxscore=1015
+ lowpriorityscore=0 mlxlogscore=999 bulkscore=0 spamscore=0 phishscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406030052
 
-This sets the default power save mode setting to enabled.
 
-The power save feature is now stable and stress test issues, such as the
-TX timeout error, have been resolved.
-commit c7ee0bc8db32 ("Bluetooth: btnxpuart: Resolve TX timeout error in
-power save stress test")
+On 5/31/2024 3:06 PM, Srinivas Kandagatla wrote:
+>
+>
+> On 30/05/2024 11:20, Ekansh Gupta wrote:
+>> DSP capabilities request is sending bad size to utilities skel
+> What you exactly mean by this?
+>
+> Curretly driver is sending 1024 bytes of buffer, why is DSP not happy 
+> with this size?
 
-With this setting, the driver will send the vendor command to FW at
-startup, to enable power save feature.
+Copying the comment sent to Dmitry's queries:
+args[0] is expected to carry the information about the total number of attributes to be copied from DSP
+and not the information about the size to be copied. Passing the size information leads to a failure
+suggesting bad arguments passed to DSP.
 
-User can disable this feature using the following vendor command:
-hcitool cmd 3f 23 03 00 00 (HCI_NXP_AUTO_SLEEP_MODE)
+>
+>> call which is resulting in memory corruption. Pass proper size
+> What does proper size mean?
 
-Signed-off-by: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
-Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
----
-v2: Corrected subject line. Added commit reference. (Paul Menzel)
- drivers/bluetooth/btnxpuart.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+args[1] is not carrying the information for full 256 sized array. It's sending the input argument as the first
+index of the array, &dsp_attr_buf[1](resulting in total 255 size req), so sending 256 length will result in
+copying of information out of the array which would result in problems
 
-diff --git a/drivers/bluetooth/btnxpuart.c b/drivers/bluetooth/btnxpuart.c
-index 7f88b6f52f26..42e929f0d141 100644
---- a/drivers/bluetooth/btnxpuart.c
-+++ b/drivers/bluetooth/btnxpuart.c
-@@ -281,7 +281,7 @@ static u8 crc8_table[CRC8_TABLE_SIZE];
- 
- /* Default configurations */
- #define DEFAULT_H2C_WAKEUP_MODE	WAKEUP_METHOD_BREAK
--#define DEFAULT_PS_MODE		PS_MODE_DISABLE
-+#define DEFAULT_PS_MODE		PS_MODE_ENABLE
- #define FW_INIT_BAUDRATE	HCI_NXP_PRI_BAUDRATE
- 
- static struct sk_buff *nxp_drv_send_cmd(struct hci_dev *hdev, u16 opcode,
--- 
-2.34.1
-
+>> to avoid the corruption.
+>>
+>> Fixes: 6c16fd8bdd40 ("misc: fastrpc: Add support to get DSP 
+>> capabilities")
+>> Cc: stable <stable@kernel.org>
+>> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
+>> ---
+>>   drivers/misc/fastrpc.c | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
+>> index 61389795f498..3e1ab58038ed 100644
+>> --- a/drivers/misc/fastrpc.c
+>> +++ b/drivers/misc/fastrpc.c
+>> @@ -1695,6 +1695,7 @@ static int fastrpc_get_info_from_dsp(struct 
+>> fastrpc_user *fl, uint32_t *dsp_attr
+>>         /* Capability filled in userspace */
+>>       dsp_attr_buf[0] = 0;
+>> +    dsp_attr_buf_len -= 1;
+>
+> is DSP expecting 255 *4 bytes instead of 256 *4?
+DSP is expecting the information about the number of attributes to be 
+updated, i.e., 255.
+>
+> --srini
+>
+>>         args[0].ptr = (u64)(uintptr_t)&dsp_attr_buf_len;
+>>       args[0].length = sizeof(dsp_attr_buf_len);
 
