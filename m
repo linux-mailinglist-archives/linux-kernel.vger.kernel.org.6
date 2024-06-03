@@ -1,149 +1,181 @@
-Return-Path: <linux-kernel+bounces-199746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC9538FA461
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 23:50:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CC4888FA509
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 23:57:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71C221F2548A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 21:50:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5474B1F2479F
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 21:57:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D792E13C698;
-	Mon,  3 Jun 2024 21:50:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE8BD13C8FF;
+	Mon,  3 Jun 2024 21:57:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="qYHIkmV7"
-Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kgRBbbf3"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5A4A80603
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 21:50:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FB793236;
+	Mon,  3 Jun 2024 21:57:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717451422; cv=none; b=Y7hrVGaDssaxC63LByfxF79oMPUpa9k8vgpySaRtYy4ZZ0Xks0h2egDa/HZozJLcM2/Kn4MBE1wZHJyBGUuF4GqIE1I6Jv6KwG32n6VWsmdoKGhvXN3PFVR6jbWP8hUZRDXvihuGnDn4w68bYgveVAERWu0Mph0tBHCRn/3/td4=
+	t=1717451869; cv=none; b=mMawfEbYUeRWdiq0yYtRWCAk+Z5fXmH0AJ8WBHqBt1EpwSUP2s5OkTQyp1V4L3gI9LGEvo+I9sWpJkr5bUi9QvkuVSqm7pyzFlxrhipGsHhh9zy+v64LDkI9GyuuccaI+Xa7UNPmuSbqEZ4wsPUnlTdJ92/KyF+jPYAgsTiLlBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717451422; c=relaxed/simple;
-	bh=jQETexEejuJ/VAhqGR17NqtTNOI2iX3uh3MiiJifQJw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mNPKRQ8y1vgh3SFjRAbJzDUx857ssXuxb1DQjfTyWugoncEjBpgw5/Wuf2J1p7rRCEg1Lkrgch9DJtTz8B9kOEea6hpUOgqV0ri+wdEivjO0VEtKiRLCCgYYiY1TscECwBKSX+BdN2gClgHGgPVfGGK+v3FU4AvKx0iuzNjYMk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=qYHIkmV7; arc=none smtp.client-ip=209.85.160.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-245435c02e1so2650271fac.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 14:50:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1717451420; x=1718056220; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZziI2v+i5IGjIKB8mlMLCYTpY3QI/oZfBdzVvUiG3pw=;
-        b=qYHIkmV7eR++1Jk87ogdHtjoEcI5ih1MRWLIA3J5MvcNcogA1uejXla+1L9xhQnePr
-         FEOVvJIyyqXHADsMR8Ry+0w6+vaws0JTHn2IVjk9hz8K3AAw4vWrM4OXu2bp00mp0sO4
-         uTIFOU10bmKcXBYNyAKa7ZM3lX3VldG3zpsG0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717451420; x=1718056220;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZziI2v+i5IGjIKB8mlMLCYTpY3QI/oZfBdzVvUiG3pw=;
-        b=Qfh5oG2Q/BH6/tCXxOrFj0KJfWWUTx6s3EAyDDO+rC7I7IZQN7AqWeFvIrx83awUTU
-         C6+g3WnjTZaymvjl4Wnivabcfz5MZLbnKb1/cq8Xrwmsf4aTY/xWjxJ7MIEBZRPnJKJg
-         YfxSa6MTdVBVO0F+FgLsg2MNlw/WljUOH5x2YW/rIDN/6VBtp7Nxi9PKEEzoyeYEGryo
-         VPtXjwh10SD8qT0oUTRvSsznNUPAdSpY5kcOdhdQ+1Sw8s+6yAtpNpr99LmRcJC7253l
-         OqCctUdgKbn1V4GrKhkDon/dsQKoLkDpFYwiyMWgJnCwYOniDiT/hjLE9PzSOkBw90Uv
-         UzXQ==
-X-Gm-Message-State: AOJu0YzalfOXm9CPGdCGYN599OzXWLzkv7gpeTCsyzH6yk4WaoG+0m1g
-	uucgaYbK/dd6ZyuANEihCkeau6QsWlNl1QFngCKiTaL9qx5myf3I+i+e6oZuqrA=
-X-Google-Smtp-Source: AGHT+IExaHxmG4w13jF3tz6Wk1yFelIINj206SDMlX2noHX3ytwoyWzS/nopw4WIncY0zt7vHmmxvA==
-X-Received: by 2002:a05:6871:88b:b0:24c:ae57:b4ab with SMTP id 586e51a60fabf-2508b80dc81mr12624917fac.11.1717451419771;
-        Mon, 03 Jun 2024 14:50:19 -0700 (PDT)
-Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70242b09133sm6158526b3a.178.2024.06.03.14.50.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Jun 2024 14:50:19 -0700 (PDT)
-Date: Mon, 3 Jun 2024 14:50:16 -0700
-From: Joe Damato <jdamato@fastly.com>
-To: Tariq Toukan <ttoukan.linux@gmail.com>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	nalramli@fastly.com, Saeed Mahameed <saeedm@nvidia.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	"open list:MELLANOX MLX5 core VPI driver" <linux-rdma@vger.kernel.org>,
-	Tariq Toukan <tariqt@nvidia.com>
-Subject: Re: [RFC net-next v3 2/2] net/mlx5e: Add per queue netdev-genl stats
-Message-ID: <Zl46mKIn_cLaqcad@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Tariq Toukan <ttoukan.linux@gmail.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	nalramli@fastly.com, Saeed Mahameed <saeedm@nvidia.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	"open list:MELLANOX MLX5 core VPI driver" <linux-rdma@vger.kernel.org>,
-	Tariq Toukan <tariqt@nvidia.com>
-References: <20240529031628.324117-1-jdamato@fastly.com>
- <20240529031628.324117-3-jdamato@fastly.com>
- <5b3a0f6a-5a03-45d7-ab10-1f1ba25504d3@gmail.com>
- <ZlzGjXxVD-JClqIy@LQ3V64L9R2>
- <eda43490-8d77-4d7d-9b24-1aafd073d760@gmail.com>
- <Zl4X82y3ecR2Mnye@LQ3V64L9R2>
- <eedb6e7e-bd99-400d-81d9-6f72e6009acb@gmail.com>
+	s=arc-20240116; t=1717451869; c=relaxed/simple;
+	bh=uGjlFGkxYZ4n2nf5+mWi19eRsaCZv5UkZwE+PGMYBB4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=TRTtm9Uv/ysrpfRWDl51gcgzyLV53L+V/wFCW5jPub/j+rENOUAndIPDnArygup8JJqJD/9TX/w2iVyvANfuiyNX3pKWjKeooLA9m38Iow6QNA+twYnkSdnIY3PhKXQBGJyWFvuahQ6xVzw4dopDmVadTUxzgTEgDd9hC/WjGGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kgRBbbf3; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 453ASsNE015299;
+	Mon, 3 Jun 2024 21:57:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	+huiNJRLt44NCN/r6bDMvnL/tWOjvPnxr5JvMN59Ows=; b=kgRBbbf3F8N+RvZy
+	v3h1WYFs24UFg3u4O6SWivJdpRvFEAWZra4YVi3/rqoD6CvzxRVQ3LNTV+5a3ixt
+	xRmkfabk/5rjHWn8NFOWAAUuXmM4gKK6Sprsd/ffCJFbvX3cYxCqtPI9XHuU/qHO
+	V/Q8GDyEiY4YkqkOcZAW8nQqnOdVWuYnzMYFV8G6YwkbkEQ9EFiOC8KL69Nf3T9z
+	Udr10aRZek1P3ZyoghvW+8fdpSQkSjgr/vgCr1mBq6IZwXNTmr+ejZm94CcFeYUq
+	HMcREi5ysrSj76TLAuuLRnCi9FXoFPcLVxXLiavKBlSaPpoivxO6g9hFJRc60aKW
+	tIteyw==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfw5wn2fn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 03 Jun 2024 21:57:45 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 453LviYm002952
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 3 Jun 2024 21:57:44 GMT
+Received: from [10.110.69.141] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 3 Jun 2024
+ 14:57:43 -0700
+Message-ID: <5f2ea1a4-17a9-4fdd-badc-386b9cc57183@quicinc.com>
+Date: Mon, 3 Jun 2024 14:57:43 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <eedb6e7e-bd99-400d-81d9-6f72e6009acb@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] bus: mhi: ep: Do not allocate memory for MHI objects from
+ DMA zone
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        <mhi@lists.linux.dev>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <stable@vger.kernel.org>
+References: <20240603164354.79035-1-manivannan.sadhasivam@linaro.org>
+Content-Language: en-US
+From: Mayank Rana <quic_mrana@quicinc.com>
+In-Reply-To: <20240603164354.79035-1-manivannan.sadhasivam@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 7sqVywnf2gZBqIARLB72d1cYTxFVVZtx
+X-Proofpoint-ORIG-GUID: 7sqVywnf2gZBqIARLB72d1cYTxFVVZtx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-06-03_17,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
+ adultscore=0 suspectscore=0 priorityscore=1501 clxscore=1011
+ lowpriorityscore=0 mlxlogscore=999 bulkscore=0 spamscore=0 phishscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406030178
 
-On Tue, Jun 04, 2024 at 12:36:16AM +0300, Tariq Toukan wrote:
-> 
-> 
-> On 03/06/2024 22:22, Joe Damato wrote:
-> > On Mon, Jun 03, 2024 at 02:11:14PM +0300, Tariq Toukan wrote:
-> > > 
-> 
-> ...
-> 
-> > > 
-> > > I still don't really like this design, so I gave some more thought on
-> > > this...
-> > > 
-> > > I think we should come up with a new mapping array under priv, that maps i
-> > > (from real_num_tx_queues) to the matching sq_stats struct.
-> > > This array would be maintained in the channels open/close functions,
-> > > similarly to priv->txq2sq.
-> > > 
-> > > Then, we would not calculate the mapping per call, but just get the proper
-> > > pointer from the array. This eases the handling of htb and ptp queues, which
-> > > were missed in your txq_ix_to_chtc_ix().
-> > 
-> > Maybe I am just getting way off track here, but I noticed this in
-> > drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c in
-> > set_pflag_tx_port_ts:
-> > 
-> >    if (!err)
-> >      priv->tx_ptp_opened = true;
-> > 
-> > but what if enable is false, meaning the user is disabling ptp via
-> > ethtool?
-> > 
-> 
-> This bool field under priv acts as a flag, means: ptp was ever opened.
-> It's the same idea as max_opened_tc, but with boolean instead of numeric.
 
-OK, but then to avoid double counting ptp, I suppose we don't
-output ptp stats in base and only when the correct txq_ix is passed
-in to the tx stats function which refers to the PTP queue?
 
-It's either that or we dont include ptp's sqstats in the
-txq2sq_stats mapping you've proposed, if I understand correctly.
+On 6/3/2024 9:43 AM, Manivannan Sadhasivam wrote:
+> MHI endpoint stack accidentally started allocating memory for objects from
+> DMA zone since commit 62210a26cd4f ("bus: mhi: ep: Use slab allocator
+Going through mentioned commit it seems that it was intended purpose to 
+use GFP_DMA/SLAB
+> where applicable"). But there is no real need to allocate memory from this
+> naturally limited DMA zone. This also causes the MHI endpoint stack to run
+> out of memory while doing high bandwidth transfers.
+> 
+> So let's switch over to normal memory.
+> 
+> Cc: stable@vger.kernel.org # 6.8
+> Fixes: 62210a26cd4f ("bus: mhi: ep: Use slab allocator where applicable")
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
+>   drivers/bus/mhi/ep/main.c | 14 +++++++-------
+>   1 file changed, 7 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/bus/mhi/ep/main.c b/drivers/bus/mhi/ep/main.c
+> index f8f674adf1d4..4acfac73ca9a 100644
+> --- a/drivers/bus/mhi/ep/main.c
+> +++ b/drivers/bus/mhi/ep/main.c
+> @@ -90,7 +90,7 @@ static int mhi_ep_send_completion_event(struct mhi_ep_cntrl *mhi_cntrl, struct m
+>   	struct mhi_ring_element *event;
+>   	int ret;
+>   
+> -	event = kmem_cache_zalloc(mhi_cntrl->ev_ring_el_cache, GFP_KERNEL | GFP_DMA);
+> +	event = kmem_cache_zalloc(mhi_cntrl->ev_ring_el_cache, GFP_KERNEL);
+>   	if (!event)
+>   		return -ENOMEM;
+>   
+> @@ -109,7 +109,7 @@ int mhi_ep_send_state_change_event(struct mhi_ep_cntrl *mhi_cntrl, enum mhi_stat
+>   	struct mhi_ring_element *event;
+>   	int ret;
+>   
+> -	event = kmem_cache_zalloc(mhi_cntrl->ev_ring_el_cache, GFP_KERNEL | GFP_DMA);
+> +	event = kmem_cache_zalloc(mhi_cntrl->ev_ring_el_cache, GFP_KERNEL);
+>   	if (!event)
+>   		return -ENOMEM;
+>   
+> @@ -127,7 +127,7 @@ int mhi_ep_send_ee_event(struct mhi_ep_cntrl *mhi_cntrl, enum mhi_ee_type exec_e
+>   	struct mhi_ring_element *event;
+>   	int ret;
+>   
+> -	event = kmem_cache_zalloc(mhi_cntrl->ev_ring_el_cache, GFP_KERNEL | GFP_DMA);
+> +	event = kmem_cache_zalloc(mhi_cntrl->ev_ring_el_cache, GFP_KERNEL);
+>   	if (!event)
+>   		return -ENOMEM;
+>   
+> @@ -146,7 +146,7 @@ static int mhi_ep_send_cmd_comp_event(struct mhi_ep_cntrl *mhi_cntrl, enum mhi_e
+>   	struct mhi_ring_element *event;
+>   	int ret;
+>   
+> -	event = kmem_cache_zalloc(mhi_cntrl->ev_ring_el_cache, GFP_KERNEL | GFP_DMA);
+> +	event = kmem_cache_zalloc(mhi_cntrl->ev_ring_el_cache, GFP_KERNEL);
+>   	if (!event)
+>   		return -ENOMEM;
+>   
+> @@ -438,7 +438,7 @@ static int mhi_ep_read_channel(struct mhi_ep_cntrl *mhi_cntrl,
+>   		read_offset = mhi_chan->tre_size - mhi_chan->tre_bytes_left;
+>   		write_offset = len - buf_left;
+>   
+> -		buf_addr = kmem_cache_zalloc(mhi_cntrl->tre_buf_cache, GFP_KERNEL | GFP_DMA);
+> +		buf_addr = kmem_cache_zalloc(mhi_cntrl->tre_buf_cache, GFP_KERNEL);
+>   		if (!buf_addr)
+>   			return -ENOMEM;
+>   
+> @@ -1481,14 +1481,14 @@ int mhi_ep_register_controller(struct mhi_ep_cntrl *mhi_cntrl,
+>   
+>   	mhi_cntrl->ev_ring_el_cache = kmem_cache_create("mhi_ep_event_ring_el",
+>   							sizeof(struct mhi_ring_element), 0,
+> -							SLAB_CACHE_DMA, NULL);
+> +							0, NULL);
+>   	if (!mhi_cntrl->ev_ring_el_cache) {
+>   		ret = -ENOMEM;
+>   		goto err_free_cmd;
+>   	}
+>   
+>   	mhi_cntrl->tre_buf_cache = kmem_cache_create("mhi_ep_tre_buf", MHI_EP_DEFAULT_MTU, 0,
+> -						      SLAB_CACHE_DMA, NULL);
+> +						      0, NULL);
+>   	if (!mhi_cntrl->tre_buf_cache) {
+>   		ret = -ENOMEM;
+>   		goto err_destroy_ev_ring_el_cache;
+Reviewed-by: Mayank Rana <quic_mrana@quicinc.com>
 
