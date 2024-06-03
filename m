@@ -1,409 +1,300 @@
-Return-Path: <linux-kernel+bounces-198695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3CE98D7C32
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:09:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB6C38D7C36
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:10:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79C6028527B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 07:09:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 579F51F2153C
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 07:10:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0784140877;
-	Mon,  3 Jun 2024 07:09:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCE0547F45;
+	Mon,  3 Jun 2024 07:09:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="q5lme7dv"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="crukal6q"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 409523B297;
-	Mon,  3 Jun 2024 07:09:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 694F447A6C;
+	Mon,  3 Jun 2024 07:09:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717398576; cv=none; b=sjsyTx+/oj1sVw7Q3sWFsmNLNDURV8P/xvU36tAQUCF+9QH3K4SVl4vcSWrbxSEtz8W592N98f7oDjm4hsSTShuqpFvxgNxVgEpi1u3B1quLQnMMBA87WZLsQl7UpgpYJy0FuRvk7x4YIxJqlPX+gUR2OR26HvXM/eN49+xFcSs=
+	t=1717398584; cv=none; b=PcoR3GKuXgbmpYdH/OmqV66g6mcfFBuJLULq3aWoTfWmAc2k5j+bXYflVP1HdynzcUsU5Vh4DLeWikP/T8TURLnyReUeaBK+l3AjRur3uDyGiadu/c5MX731CfFgrP7aHaacLcMUtXd2u/40vHPBHy+kJA7gn0Hq9wofV7wzzYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717398576; c=relaxed/simple;
-	bh=7ugu+6bkjE+KB/YtSRKnXmti/vB38R8XnolG71eebZ0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ftaI59TCYvITaksDGwLwIlHBFTeMMlrhg3roZ+eho+rjMZCTcsCKhKBUCRTHlFcB/w1xTHU0aXBLV338zgNgWQTvUov9+1CTxY8gCMajzRrqvor55bmm1VY7d2oMhxw593TbfKj3qlIuwY/a4vLcRAt6AyxH8Li2HYxBzYM05N4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=q5lme7dv; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=/JZ5P7Z02l8WZ3cRpitT5VAHx/w1IRQf9UE3sfmYEn4=; t=1717398574;
-	x=1717830574; b=q5lme7dvdooP4c51KJJ6qNZSg0KEhgzKMc3K3QKWZzvqiyitXjNvEkO8udV4Q
-	orVQ3Fb8UaWY682UCAjPl2zdjrGC8dMuQDpRauKU7zmi2u+qR/sEn5BKleSzkmsmt/BAp3KdYxYvr
-	vYRibSB3IhAkm170GNme1JdWf5+WGEmDjkBZNNtG1f0Ly/LabLSSJ6YVMP+DAuo61FDhIU9+Z+HZB
-	6W9m/QhDY6/23/ZQ+khg12tOCDAf2KyjQEpGE8d/WW4sXdMW/pN47xsNrT3mh7eSQKEWQKfilkB5v
-	HAWJtRlY1oOcGVRR7UWqX9wJ370Y+uOY4ktDNrXdNEyq8Aylkw==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1sE1oh-0004xw-Vo; Mon, 03 Jun 2024 09:09:16 +0200
-Message-ID: <de980a49-b802-417a-a57e-2c47f67b08e4@leemhuis.info>
-Date: Mon, 3 Jun 2024 09:09:12 +0200
+	s=arc-20240116; t=1717398584; c=relaxed/simple;
+	bh=MGKhftAoxpTowHiv0oeOJrpeohaKsDS4/rlu9Zcsyko=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=feHnvY6H+2WN4HunxOf6wD1jRrQHR9qNQQpiZKs0hX4B/tUHUH/5jyAnx+X9V262rrnk0pK8AqZqxKiaU5gaBDo71z0CsfUjSr7KPEz7mEFtfissKD/J5aXTxQEKZGQ95pYPnqAKjGWps8tPEPqrBYga3ogSF13rvJrC/zlzDus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=crukal6q; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353728.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 4536kVEl012204;
+	Mon, 3 Jun 2024 07:09:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc : content-type : date
+ : from : in-reply-to : message-id : mime-version : references : subject :
+ to; s=pp1; bh=PD3QtyIGk6oeWGALWzB54J823YO78nWKEPR6OQkor9w=;
+ b=crukal6q3L7fRmamiZViY4nCy7HxPQ1SzJjNWRSIKEvQgM0RavCZLtGi6Tjk27QvF1Nl
+ U6i+bJ1DgoXxrjXnnrTD7RiKqxc8aUE2bphiM80b0Ktb30nIDyZY1lERrtvkdwSA1MoO
+ G4WgtNXA2+Og8YJ1EIvFMc5yhlmfkq+4ORwlcNwzhbOsOsNrQNXsmPyCYKy0WdJ2dg5+
+ sGRWcQxys1k8NYbRk73l+TFcgooXAIlANVg01Ukun/MvJryHlFhQ2gde0yHdmz+86qbJ
+ HtEkDJqeMpl9jiR3dza3yf2iifTx5Z91PzVgcnY9pA23pIuSEfVox+qq4lLt1Zofqq6p 7g== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yh7pkr7vt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 03 Jun 2024 07:09:26 +0000
+Received: from m0353728.ppops.net (m0353728.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 45379QPc019761;
+	Mon, 3 Jun 2024 07:09:26 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yh7pkr7vr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 03 Jun 2024 07:09:26 +0000
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 4535DsRa000781;
+	Mon, 3 Jun 2024 07:09:25 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3ygdytppc3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 03 Jun 2024 07:09:25 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45379LK451839364
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 3 Jun 2024 07:09:23 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4C3682004F;
+	Mon,  3 Jun 2024 07:09:21 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1FD4B2004E;
+	Mon,  3 Jun 2024 07:09:19 +0000 (GMT)
+Received: from li-c6426e4c-27cf-11b2-a85c-95d65bc0de0e.ibm.com (unknown [9.204.206.66])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Mon,  3 Jun 2024 07:09:18 +0000 (GMT)
+Date: Mon, 3 Jun 2024 12:39:16 +0530
+From: Gautam Menghani <gautam@linux.ibm.com>
+To: Nicholas Piggin <npiggin@gmail.com>
+Cc: mpe@ellerman.id.au, christophe.leroy@csgroup.eu, aneesh.kumar@kernel.org,
+        naveen.n.rao@linux.ibm.com, corbet@lwn.net,
+        linuxppc-dev@lists.ozlabs.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH v1 RESEND] arch/powerpc/kvm: Fix doorbell emulation by
+ adding DPDES support
+Message-ID: <r74chlv6bgs5csvuf4nxxtylmgartvibftp3xuztyfuynqetp5@ythddpzo6yfi>
+References: <20240522084949.123148-1-gautam@linux.ibm.com>
+ <D1Q54PY40E3B.22QS5DMQRA58N@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: "ERROR: modpost: "icssg_queue_pop" [...] undefined" on arm64 (was:
- [PATCH net-next v6 1/3] net: ti: icssg-prueth: Add helper functions to
- configure FDB)
-To: MD Danish Anwar <danishanwar@ti.com>,
- Dan Carpenter <dan.carpenter@linaro.org>, Jan Kiszka
- <jan.kiszka@siemens.com>, Simon Horman <horms@kernel.org>,
- Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <vladimir.oltean@nxp.com>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Niklas Schnelle <schnelle@linux.ibm.com>, Arnd Bergmann <arnd@arndb.de>,
- Diogo Ivo <diogo.ivo@siemens.com>, Roger Quadros <rogerq@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
- Eric Dumazet <edumazet@google.com>, "David S. Miller" <davem@davemloft.net>
-Cc: linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, srk@ti.com,
- Vignesh Raghavendra <vigneshr@ti.com>
-References: <20240528113734.379422-1-danishanwar@ti.com>
- <20240528113734.379422-2-danishanwar@ti.com>
-From: Thorsten Leemhuis <linux@leemhuis.info>
-Content-Language: en-US, de-DE
-Autocrypt: addr=linux@leemhuis.info; keydata=
- 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 n7RI
-In-Reply-To: <20240528113734.379422-2-danishanwar@ti.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;linux@leemhuis.info;1717398574;fe658f45;
-X-HE-SMSGID: 1sE1oh-0004xw-Vo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <D1Q54PY40E3B.22QS5DMQRA58N@gmail.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: uoAnUEoMhWz5bq3pU5HjQOk-GAk36tl3
+X-Proofpoint-GUID: DwVUpsKaAiVwLUFyfEy-lclbLHzjmCl8
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-06-03_04,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ mlxlogscore=508 mlxscore=0 clxscore=1015 bulkscore=0 spamscore=0
+ adultscore=0 priorityscore=1501 phishscore=0 malwarescore=0
+ lowpriorityscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2405010000 definitions=main-2406030058
 
-On 28.05.24 13:37, MD Danish Anwar wrote:
-> Introduce helper functions to configure firmware FDB tables, VLAN tables
-> and Port VLAN ID settings to aid adding Switch mode support.
+On Mon, Jun 03, 2024 at 03:42:22PM GMT, Nicholas Piggin wrote:
+> On Wed May 22, 2024 at 6:49 PM AEST, Gautam Menghani wrote:
+> > Doorbell emulation is broken for KVM on PowerVM guests as support for
+> > DPDES was not added in the initial patch series. Due to this, a KVM on
+> > PowerVM guest cannot be booted with the XICS interrupt controller as
+> > doorbells are to be setup in the initial probe path when using XICS
+> > (pSeries_smp_probe()). Add DPDES support in the host KVM code to fix
+> > doorbell emulation.
 > 
-> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+> This is broken when the KVM guest has SMT > 1? Or is it broken for SMT=1
+> as well? Can you explain a bit more of what breaks if it's the latter?
 
-Hi! Since Friday I get a compile error in my -next builds for Fedora:
+Yes, doorbells are only setup when we use SMT>1 and interrupt controller
+is XICS. So without this patch, L2 KOP guest with XICS IC mode and SMT>1 
+does not boot. SMT 1 is fine in all cases.
 
-ERROR: modpost: "icssg_queue_push"
-[drivers/net/ethernet/ti/icssg-prueth-sr1.ko] undefined!
-ERROR: modpost: "icssg_queue_pop"
-[drivers/net/ethernet/ti/icssg-prueth-sr1.ko] undefined!
-
-Looks like this problem was found and reported mid May by the kernel
-test robot already, which identified a earlier version of the patch I'm
-replying to to be the cause:
-https://lore.kernel.org/all/202405182038.ncf1mL7Z-lkp@intel.com/
-
-That and the fact that the patch showed up in -next on Friday makes me
-assume that my problem is caused by this change as well as well. A build
-log can be found here:
-https://download.copr.fedorainfracloud.org/results/@kernel-vanilla/next/fedora-39-aarch64/07523690-next-next-all/builder-live.log.gz
-
-I don't have the .config at hand, but can provide it when needed.
-
-Ciao, Thorsten
-
-> ---
->  drivers/net/ethernet/ti/icssg/icssg_config.c | 170 +++++++++++++++++++
->  drivers/net/ethernet/ti/icssg/icssg_config.h |  19 +++
->  drivers/net/ethernet/ti/icssg/icssg_prueth.h |  12 ++
->  3 files changed, 201 insertions(+)
 > 
-> diff --git a/drivers/net/ethernet/ti/icssg/icssg_config.c b/drivers/net/ethernet/ti/icssg/icssg_config.c
-> index 15f2235bf90f..2213374d4d45 100644
-> --- a/drivers/net/ethernet/ti/icssg/icssg_config.c
-> +++ b/drivers/net/ethernet/ti/icssg/icssg_config.c
-> @@ -477,3 +477,173 @@ void icssg_config_set_speed(struct prueth_emac *emac)
->  
->  	writeb(fw_speed, emac->dram.va + PORT_LINK_SPEED_OFFSET);
->  }
-> +
-> +int icssg_send_fdb_msg(struct prueth_emac *emac, struct mgmt_cmd *cmd,
-> +		       struct mgmt_cmd_rsp *rsp)
-> +{
-> +	struct prueth *prueth = emac->prueth;
-> +	int slice = prueth_emac_slice(emac);
-> +	int addr, ret;
-> +
-> +	addr = icssg_queue_pop(prueth, slice == 0 ?
-> +			       ICSSG_CMD_POP_SLICE0 : ICSSG_CMD_POP_SLICE1);
-> +	if (addr < 0)
-> +		return addr;
-> +
-> +	/* First 4 bytes have FW owned buffer linking info which should
-> +	 * not be touched
-> +	 */
-> +	memcpy_toio(prueth->shram.va + addr + 4, cmd, sizeof(*cmd));
-> +	icssg_queue_push(prueth, slice == 0 ?
-> +			 ICSSG_CMD_PUSH_SLICE0 : ICSSG_CMD_PUSH_SLICE1, addr);
-> +	ret = read_poll_timeout(icssg_queue_pop, addr, addr >= 0,
-> +				2000, 20000000, false, prueth, slice == 0 ?
-> +				ICSSG_RSP_POP_SLICE0 : ICSSG_RSP_POP_SLICE1);
-> +	if (ret) {
-> +		netdev_err(emac->ndev, "Timedout sending HWQ message\n");
-> +		return ret;
-> +	}
-> +
-> +	memcpy_fromio(rsp, prueth->shram.va + addr, sizeof(*rsp));
-> +	/* Return buffer back for to pool */
-> +	icssg_queue_push(prueth, slice == 0 ?
-> +			 ICSSG_RSP_PUSH_SLICE0 : ICSSG_RSP_PUSH_SLICE1, addr);
-> +
-> +	return 0;
-> +}
-> +
-> +static void icssg_fdb_setup(struct prueth_emac *emac, struct mgmt_cmd *fdb_cmd,
-> +			    const unsigned char *addr, u8 fid, int cmd)
-> +{
-> +	int slice = prueth_emac_slice(emac);
-> +	u8 mac_fid[ETH_ALEN + 2];
-> +	u16 fdb_slot;
-> +
-> +	ether_addr_copy(mac_fid, addr);
-> +
-> +	/* 1-1 VID-FID mapping is already setup */
-> +	mac_fid[ETH_ALEN] = fid;
-> +	mac_fid[ETH_ALEN + 1] = 0;
-> +
-> +	fdb_slot = bitrev32(crc32_le(0, mac_fid, 8)) & PRUETH_SWITCH_FDB_MASK;
-> +
-> +	fdb_cmd->header = ICSSG_FW_MGMT_CMD_HEADER;
-> +	fdb_cmd->type   = ICSSG_FW_MGMT_FDB_CMD_TYPE;
-> +	fdb_cmd->seqnum = ++(emac->prueth->icssg_hwcmdseq);
-> +	fdb_cmd->param  = cmd;
-> +	fdb_cmd->param |= (slice << 4);
-> +
-> +	memcpy(&fdb_cmd->cmd_args[0], addr, 4);
-> +	memcpy(&fdb_cmd->cmd_args[1], &addr[4], 2);
-> +	fdb_cmd->cmd_args[2] = fdb_slot;
-> +
-> +	netdev_dbg(emac->ndev, "MAC %pM slot %X FID %X\n", addr, fdb_slot, fid);
-> +}
-> +
-> +int icssg_fdb_add_del(struct prueth_emac *emac, const unsigned char *addr,
-> +		      u8 vid, u8 fid_c2, bool add)
-> +{
-> +	struct mgmt_cmd_rsp fdb_cmd_rsp = { 0 };
-> +	struct mgmt_cmd fdb_cmd = { 0 };
-> +	u8 fid = vid;
-> +	int ret;
-> +
-> +	icssg_fdb_setup(emac, &fdb_cmd, addr, fid, add ? ICSS_CMD_ADD_FDB : ICSS_CMD_DEL_FDB);
-> +
-> +	fid_c2 |= ICSSG_FDB_ENTRY_VALID;
-> +	fdb_cmd.cmd_args[1] |= ((fid << 16) | (fid_c2 << 24));
-> +
-> +	ret = icssg_send_fdb_msg(emac, &fdb_cmd, &fdb_cmd_rsp);
-> +	if (ret)
-> +		return ret;
-> +
-> +	WARN_ON(fdb_cmd.seqnum != fdb_cmd_rsp.seqnum);
-> +	if (fdb_cmd_rsp.status == 1)
-> +		return 0;
-> +
-> +	return -EINVAL;
-> +}
-> +
-> +int icssg_fdb_lookup(struct prueth_emac *emac, const unsigned char *addr,
-> +		     u8 vid)
-> +{
-> +	struct mgmt_cmd_rsp fdb_cmd_rsp = { 0 };
-> +	struct mgmt_cmd fdb_cmd = { 0 };
-> +	struct prueth_fdb_slot *slot;
-> +	u8 fid = vid;
-> +	int ret, i;
-> +
-> +	icssg_fdb_setup(emac, &fdb_cmd, addr, fid, ICSS_CMD_GET_FDB_SLOT);
-> +
-> +	fdb_cmd.cmd_args[1] |= fid << 16;
-> +
-> +	ret = icssg_send_fdb_msg(emac, &fdb_cmd, &fdb_cmd_rsp);
-> +	if (ret)
-> +		return ret;
-> +
-> +	WARN_ON(fdb_cmd.seqnum != fdb_cmd_rsp.seqnum);
-> +
-> +	slot = (struct prueth_fdb_slot __force *)(emac->dram.va + FDB_CMD_BUFFER);
-> +	for (i = 0; i < 4; i++) {
-> +		if (ether_addr_equal(addr, slot->mac) && vid == slot->fid)
-> +			return (slot->fid_c2 & ~ICSSG_FDB_ENTRY_VALID);
-> +		slot++;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +void icssg_vtbl_modify(struct prueth_emac *emac, u8 vid, u8 port_mask,
-> +		       u8 untag_mask, bool add)
-> +{
-> +	struct prueth *prueth = emac->prueth;
-> +	struct prueth_vlan_tbl *tbl;
-> +	u8 fid_c1;
-> +
-> +	tbl = prueth->vlan_tbl;
-> +	fid_c1 = tbl[vid].fid_c1;
-> +
-> +	/* FID_C1: bit0..2 port membership mask,
-> +	 * bit3..5 tagging mask for each port
-> +	 * bit6 Stream VID (not handled currently)
-> +	 * bit7 MC flood (not handled currently)
-> +	 */
-> +	if (add) {
-> +		fid_c1 |= (port_mask | port_mask << 3);
-> +		fid_c1 &= ~(untag_mask << 3);
-> +	} else {
-> +		fid_c1 &= ~(port_mask | port_mask << 3);
-> +	}
-> +
-> +	tbl[vid].fid_c1 = fid_c1;
-> +}
-> +
-> +u16 icssg_get_pvid(struct prueth_emac *emac)
-> +{
-> +	struct prueth *prueth = emac->prueth;
-> +	u32 pvid;
-> +
-> +	if (emac->port_id == PRUETH_PORT_MII0)
-> +		pvid = readl(prueth->shram.va + EMAC_ICSSG_SWITCH_PORT1_DEFAULT_VLAN_OFFSET);
-> +	else
-> +		pvid = readl(prueth->shram.va + EMAC_ICSSG_SWITCH_PORT2_DEFAULT_VLAN_OFFSET);
-> +
-> +	pvid = pvid >> 24;
-> +
-> +	return pvid;
-> +}
-> +
-> +void icssg_set_pvid(struct prueth *prueth, u8 vid, u8 port)
-> +{
-> +	u32 pvid;
-> +
-> +	/* only 256 VLANs are supported */
-> +	pvid = (u32 __force)cpu_to_be32((ETH_P_8021Q << 16) | (vid & 0xff));
-> +
-> +	if (port == PRUETH_PORT_MII0)
-> +		writel(pvid, prueth->shram.va + EMAC_ICSSG_SWITCH_PORT1_DEFAULT_VLAN_OFFSET);
-> +	else if (port == PRUETH_PORT_MII1)
-> +		writel(pvid, prueth->shram.va + EMAC_ICSSG_SWITCH_PORT2_DEFAULT_VLAN_OFFSET);
-> +	else
-> +		writel(pvid, prueth->shram.va + EMAC_ICSSG_SWITCH_PORT0_DEFAULT_VLAN_OFFSET);
-> +}
-> diff --git a/drivers/net/ethernet/ti/icssg/icssg_config.h b/drivers/net/ethernet/ti/icssg/icssg_config.h
-> index cf2ea4bd22a2..4a9721aa6057 100644
-> --- a/drivers/net/ethernet/ti/icssg/icssg_config.h
-> +++ b/drivers/net/ethernet/ti/icssg/icssg_config.h
-> @@ -35,6 +35,8 @@ struct icssg_flow_cfg {
->  	(2 * (PRUETH_EMAC_BUF_POOL_SIZE * PRUETH_NUM_BUF_POOLS + \
->  	 PRUETH_EMAC_RX_CTX_BUF_SIZE * 2))
->  
-> +#define PRUETH_SWITCH_FDB_MASK ((SIZE_OF_FDB / NUMBER_OF_FDB_BUCKET_ENTRIES) - 1)
-> +
->  struct icssg_rxq_ctx {
->  	__le32 start[3];
->  	__le32 end;
-> @@ -202,6 +204,23 @@ struct icssg_setclock_desc {
->  #define ICSSG_TS_PUSH_SLICE0	40
->  #define ICSSG_TS_PUSH_SLICE1	41
->  
-> +struct mgmt_cmd {
-> +	u8 param;
-> +	u8 seqnum;
-> +	u8 type;
-> +	u8 header;
-> +	u32 cmd_args[3];
-> +};
-> +
-> +struct mgmt_cmd_rsp {
-> +	u32 reserved;
-> +	u8 status;
-> +	u8 seqnum;
-> +	u8 type;
-> +	u8 header;
-> +	u32 cmd_args[3];
-> +};
-> +
->  /* FDB FID_C2 flag definitions */
->  /* Indicates host port membership.*/
->  #define ICSSG_FDB_ENTRY_P0_MEMBERSHIP         BIT(0)
-> diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.h b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
-> index a78c5eb75fb8..82bdad9702c3 100644
-> --- a/drivers/net/ethernet/ti/icssg/icssg_prueth.h
-> +++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
-> @@ -232,6 +232,7 @@ struct icssg_firmwares {
->   * @emacs_initialized: num of EMACs/ext ports that are up/running
->   * @iep0: pointer to IEP0 device
->   * @iep1: pointer to IEP1 device
-> + * @vlan_tbl: VLAN-FID table pointer
->   */
->  struct prueth {
->  	struct device *dev;
-> @@ -256,6 +257,7 @@ struct prueth {
->  	int emacs_initialized;
->  	struct icss_iep *iep0;
->  	struct icss_iep *iep1;
-> +	struct prueth_vlan_tbl *vlan_tbl;
->  };
->  
->  struct emac_tx_ts_response {
-> @@ -313,6 +315,16 @@ int icssg_queue_pop(struct prueth *prueth, u8 queue);
->  void icssg_queue_push(struct prueth *prueth, int queue, u16 addr);
->  u32 icssg_queue_level(struct prueth *prueth, int queue);
->  
-> +int icssg_send_fdb_msg(struct prueth_emac *emac, struct mgmt_cmd *cmd,
-> +		       struct mgmt_cmd_rsp *rsp);
-> +int icssg_fdb_add_del(struct prueth_emac *emac,  const unsigned char *addr,
-> +		      u8 vid, u8 fid_c2, bool add);
-> +int icssg_fdb_lookup(struct prueth_emac *emac, const unsigned char *addr,
-> +		     u8 vid);
-> +void icssg_vtbl_modify(struct prueth_emac *emac, u8 vid, u8 port_mask,
-> +		       u8 untag_mask, bool add);
-> +u16 icssg_get_pvid(struct prueth_emac *emac);
-> +void icssg_set_pvid(struct prueth *prueth, u8 vid, u8 port);
->  #define prueth_napi_to_tx_chn(pnapi) \
->  	container_of(pnapi, struct prueth_tx_chn, napi_tx)
->  
+> > Fixes: 6ccbbc33f06a ("KVM: PPC: Add helper library for Guest State Buffers")
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Gautam Menghani <gautam@linux.ibm.com>
+> > ---
+> > v1 -> v1 resend:
+> > 1. Add the stable tag
+> >
+> >  Documentation/arch/powerpc/kvm-nested.rst     |  4 +++-
+> >  arch/powerpc/include/asm/guest-state-buffer.h |  3 ++-
+> >  arch/powerpc/include/asm/kvm_book3s.h         |  1 +
+> >  arch/powerpc/kvm/book3s_hv.c                  | 14 +++++++++++++-
+> >  arch/powerpc/kvm/book3s_hv_nestedv2.c         |  7 +++++++
+> >  arch/powerpc/kvm/test-guest-state-buffer.c    |  2 +-
+> >  6 files changed, 27 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/Documentation/arch/powerpc/kvm-nested.rst b/Documentation/arch/powerpc/kvm-nested.rst
+> > index 630602a8aa00..5defd13cc6c1 100644
+> > --- a/Documentation/arch/powerpc/kvm-nested.rst
+> > +++ b/Documentation/arch/powerpc/kvm-nested.rst
+> > @@ -546,7 +546,9 @@ table information.
+> >  +--------+-------+----+--------+----------------------------------+
+> >  | 0x1052 | 0x08  | RW |   T    | CTRL                             |
+> >  +--------+-------+----+--------+----------------------------------+
+> > -| 0x1053-|       |    |        | Reserved                         |
+> > +| 0x1053 | 0x08  | RW |   T    | DPDES                            |
+> > ++--------+-------+----+--------+----------------------------------+
+> > +| 0x1054-|       |    |        | Reserved                         |
+> >  | 0x1FFF |       |    |        |                                  |
+> >  +--------+-------+----+--------+----------------------------------+
+> >  | 0x2000 | 0x04  | RW |   T    | CR                               |
+> > diff --git a/arch/powerpc/include/asm/guest-state-buffer.h b/arch/powerpc/include/asm/guest-state-buffer.h
+> > index 808149f31576..d107abe1468f 100644
+> > --- a/arch/powerpc/include/asm/guest-state-buffer.h
+> > +++ b/arch/powerpc/include/asm/guest-state-buffer.h
+> > @@ -81,6 +81,7 @@
+> >  #define KVMPPC_GSID_HASHKEYR			0x1050
+> >  #define KVMPPC_GSID_HASHPKEYR			0x1051
+> >  #define KVMPPC_GSID_CTRL			0x1052
+> > +#define KVMPPC_GSID_DPDES			0x1053
+> >  
+> >  #define KVMPPC_GSID_CR				0x2000
+> >  #define KVMPPC_GSID_PIDR			0x2001
+> > @@ -110,7 +111,7 @@
+> >  #define KVMPPC_GSE_META_COUNT (KVMPPC_GSE_META_END - KVMPPC_GSE_META_START + 1)
+> >  
+> >  #define KVMPPC_GSE_DW_REGS_START KVMPPC_GSID_GPR(0)
+> > -#define KVMPPC_GSE_DW_REGS_END KVMPPC_GSID_CTRL
+> > +#define KVMPPC_GSE_DW_REGS_END KVMPPC_GSID_DPDES
+> >  #define KVMPPC_GSE_DW_REGS_COUNT \
+> >  	(KVMPPC_GSE_DW_REGS_END - KVMPPC_GSE_DW_REGS_START + 1)
+> >  
+> > diff --git a/arch/powerpc/include/asm/kvm_book3s.h b/arch/powerpc/include/asm/kvm_book3s.h
+> > index 3e1e2a698c9e..10618622d7ef 100644
+> > --- a/arch/powerpc/include/asm/kvm_book3s.h
+> > +++ b/arch/powerpc/include/asm/kvm_book3s.h
+> > @@ -594,6 +594,7 @@ static inline u##size kvmppc_get_##reg(struct kvm_vcpu *vcpu)		\
+> >  
+> >  
+> >  KVMPPC_BOOK3S_VCORE_ACCESSOR(vtb, 64, KVMPPC_GSID_VTB)
+> > +KVMPPC_BOOK3S_VCORE_ACCESSOR(dpdes, 64, KVMPPC_GSID_DPDES)
+> >  KVMPPC_BOOK3S_VCORE_ACCESSOR_GET(arch_compat, 32, KVMPPC_GSID_LOGICAL_PVR)
+> >  KVMPPC_BOOK3S_VCORE_ACCESSOR_GET(lpcr, 64, KVMPPC_GSID_LPCR)
+> >  KVMPPC_BOOK3S_VCORE_ACCESSOR_SET(tb_offset, 64, KVMPPC_GSID_TB_OFFSET)
+> > diff --git a/arch/powerpc/kvm/book3s_hv.c b/arch/powerpc/kvm/book3s_hv.c
+> > index 35cb014a0c51..cf285e5153ba 100644
+> > --- a/arch/powerpc/kvm/book3s_hv.c
+> > +++ b/arch/powerpc/kvm/book3s_hv.c
+> > @@ -4116,6 +4116,11 @@ static int kvmhv_vcpu_entry_nestedv2(struct kvm_vcpu *vcpu, u64 time_limit,
+> >  	int trap;
+> >  	long rc;
+> >  
+> > +	if (vcpu->arch.doorbell_request) {
+> > +		vcpu->arch.doorbell_request = 0;
+> > +		kvmppc_set_dpdes(vcpu, 1);
+> > +	}
+> 
+> This probably looks okay... hmm, is the v1 KVM emulating doorbells
+> correctly for SMT L2 guests? I wonder if doorbell emulation isn't
+> broken there too because the L1 code looks to be passing in vc->dpdes
+> but all the POWER9 emulation code uses doorbell_request.
+> 
+
+Yes launching SMT L2 on V1 API fails with a kernel Oops, I'll see if I
+can fix that as well.
+
+> > +
+> >  	io = &vcpu->arch.nestedv2_io;
+> >  
+> >  	msr = mfmsr();
+> > @@ -4278,9 +4283,16 @@ static int kvmhv_p9_guest_entry(struct kvm_vcpu *vcpu, u64 time_limit,
+> >  	if (kvmhv_on_pseries()) {
+> >  		if (kvmhv_is_nestedv1())
+> >  			trap = kvmhv_vcpu_entry_p9_nested(vcpu, time_limit, lpcr, tb);
+> > -		else
+> > +		else {
+> >  			trap = kvmhv_vcpu_entry_nestedv2(vcpu, time_limit, lpcr, tb);
+> >  
+> > +			/* Remember doorbell if it is pending  */
+> > +			if (kvmppc_get_dpdes(vcpu)) {
+> > +				vcpu->arch.doorbell_request = 1;
+> > +				kvmppc_set_dpdes(vcpu, 0);
+> > +			}
+> 
+> This is adding an extra get state for every entry, not good. I don't
+> think it's actually needed though. I don't think the L1 cares at this
+> stage what the L2 DPDES state is. So you sholud be able to drop this
+> hunk.
+> 
+Yes ok.
+
+> > +		}
+> > +
+> >  		/* H_CEDE has to be handled now, not later */
+> >  		if (trap == BOOK3S_INTERRUPT_SYSCALL && !nested &&
+> >  		    kvmppc_get_gpr(vcpu, 3) == H_CEDE) {
+> > diff --git a/arch/powerpc/kvm/book3s_hv_nestedv2.c b/arch/powerpc/kvm/book3s_hv_nestedv2.c
+> > index 8e6f5355f08b..36863fff2a99 100644
+> > --- a/arch/powerpc/kvm/book3s_hv_nestedv2.c
+> > +++ b/arch/powerpc/kvm/book3s_hv_nestedv2.c
+> > @@ -311,6 +311,10 @@ static int gs_msg_ops_vcpu_fill_info(struct kvmppc_gs_buff *gsb,
+> >  			rc = kvmppc_gse_put_u64(gsb, iden,
+> >  						vcpu->arch.vcore->vtb);
+> >  			break;
+> > +		case KVMPPC_GSID_DPDES:
+> > +			rc = kvmppc_gse_put_u64(gsb, iden,
+> > +						vcpu->arch.vcore->dpdes);
+> > +			break;
+> >  		case KVMPPC_GSID_LPCR:
+> >  			rc = kvmppc_gse_put_u64(gsb, iden,
+> >  						vcpu->arch.vcore->lpcr);
+> > @@ -543,6 +547,9 @@ static int gs_msg_ops_vcpu_refresh_info(struct kvmppc_gs_msg *gsm,
+> >  		case KVMPPC_GSID_VTB:
+> >  			vcpu->arch.vcore->vtb = kvmppc_gse_get_u64(gse);
+> >  			break;
+> > +		case KVMPPC_GSID_DPDES:
+> > +			vcpu->arch.vcore->dpdes = kvmppc_gse_get_u64(gse);
+> > +			break;
+> >  		case KVMPPC_GSID_LPCR:
+> >  			vcpu->arch.vcore->lpcr = kvmppc_gse_get_u64(gse);
+> >  			break;
+> 
+> I would split all the wiring up of the DPDES GSID stuff into its own
+> patch, it obviously looks fine.
+> 
+Noted, will do.
+
+> > diff --git a/arch/powerpc/kvm/test-guest-state-buffer.c b/arch/powerpc/kvm/test-guest-state-buffer.c
+> > index 4720b8dc8837..91ae660cfe21 100644
+> > --- a/arch/powerpc/kvm/test-guest-state-buffer.c
+> > +++ b/arch/powerpc/kvm/test-guest-state-buffer.c
+> > @@ -151,7 +151,7 @@ static void test_gs_bitmap(struct kunit *test)
+> >  		i++;
+> >  	}
+> >  
+> > -	for (u16 iden = KVMPPC_GSID_GPR(0); iden <= KVMPPC_GSID_CTRL; iden++) {
+> > +	for (u16 iden = KVMPPC_GSID_GPR(0); iden <= KVMPPC_GSID_DPDES; iden++) {
+> >  		kvmppc_gsbm_set(&gsbm, iden);
+> >  		kvmppc_gsbm_set(&gsbm1, iden);
+> >  		KUNIT_EXPECT_TRUE(test, kvmppc_gsbm_test(&gsbm, iden));
+> 
+> It would be good to have a  _LAST define for such loops. It's very easy
+> to miss when adding KVMPPC_GSID_DPDES that you need to grep for
+> KVMPPC_GSID_CTRL. Very easy to see that you need to update _LAST.
+> 
+> You just need to work out a good name for it since there's a few
+> "namespaces" of numbers with similar prefix. Good luck :)
+> 
+
+Well we already have a "KVMPPC_GSE_DW_REGS_END" defined, just missed to
+use that. 
+
+
+> Thanks,
+> Nick
 
