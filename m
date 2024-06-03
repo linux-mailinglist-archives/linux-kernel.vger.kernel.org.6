@@ -1,946 +1,198 @@
-Return-Path: <linux-kernel+bounces-198684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4117B8D7C16
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:00:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54AC08D7BDC
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 08:51:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA6CF1F229DF
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 07:00:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09FCC280FCE
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 06:51:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 577F23770D;
-	Mon,  3 Jun 2024 06:59:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D3122E83F;
+	Mon,  3 Jun 2024 06:51:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hanyang-ac-kr.20230601.gappssmtp.com header.i=@hanyang-ac-kr.20230601.gappssmtp.com header.b="M8EjFAoi"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="lbU+kX9k"
+Received: from EUR04-VI1-obe.outbound.protection.outlook.com (mail-vi1eur04on2051.outbound.protection.outlook.com [40.107.8.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE17E38382
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 06:59:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717397993; cv=none; b=cR8DnbXYk9QwNALtcxPZAzlx7vR9vOk0daDfWszxGwrr8acTSG0ncp3CN5eds1bO1dzi7V8679lOT2cfdiqiExdK96myG2Cv5yRTwxsdeZxv2oon7BrQQZopzOsrwo5s3kcFvjHVvlvVJGmndMf71xK/QpSSU43hPejC0S9/nkI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717397993; c=relaxed/simple;
-	bh=tysG+VtKFjhXkewX73V9Cqn1SCV4SP1Sy8rPTTOOIi4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kYmU+QvrUHp33bKFkMOc5bvTWGgCLzDe/3+5MgHKw54lhV4WZKW1ZTTEVjCNEBbtkxfa1725mNtol2DyIm0/Cb9jnFTbUc+JXdomAf7zwgsh203mPzA2H77VXKPxkh6U7VfFhP9syB9BgJIRu3/PmjQUubV2Xl5vcZi9E1u6rDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hanyang.ac.kr; spf=pass smtp.mailfrom=hanyang.ac.kr; dkim=pass (2048-bit key) header.d=hanyang-ac-kr.20230601.gappssmtp.com header.i=@hanyang-ac-kr.20230601.gappssmtp.com header.b=M8EjFAoi; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hanyang.ac.kr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hanyang.ac.kr
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1f44b594deeso29206135ad.2
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2024 23:59:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=hanyang-ac-kr.20230601.gappssmtp.com; s=20230601; t=1717397990; x=1718002790; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=vF7rB6Cu+Wq4UK+UQoSQm7y3X2eNP9b5ZHC6cVx6wSg=;
-        b=M8EjFAoi+8HOjTkQ9NmY8S+9WaizexcbQLMSrEZZKjzkBpjJcxXvsdKHWQojslsC5f
-         tAfnngazInFxGIVJfXpWm0Uj9q9tVNFb8+gVMFdbbaoGeA8FkXeKnwyVJPnj8w9LO0x6
-         aQoeVWI9Yv+PX6zZz6sSAzeokOpIfkCE0d6vJbx+0m2mU4iajL3xZOGSQZUX65Qdlw/d
-         c63HIJ8Vd6wSyNffqpNrFohqPPKIjASHpBt1GPe9Z34nyT8W+lF+2EHawbYQ9jke5q0+
-         FcDgUaKceLi9EGS7+rqRSh8mxxvcsqxH3SFGnc6pBOP/hYDTsNeRxRzgabWI7gbGotFC
-         UzlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717397990; x=1718002790;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vF7rB6Cu+Wq4UK+UQoSQm7y3X2eNP9b5ZHC6cVx6wSg=;
-        b=GBWvO37fPFtSMBPy0JPzrwSHWqHhiyiX0pKTPzkHlHy+bmEMPAXkpM6mpwXXC9755J
-         EpnqwFfCETAr46QTmjYSq8o26t7ZHdryPh7zPFUb7ps0EZxSDSnvNbVI7SiGDd0Xt4+P
-         5T5ZBu6zl+ksHu1jDb1uaZC87EYmTtrTqizpyTNtREZLOpLwF2dtTR/ezPNHo2k+V5En
-         tioAPj3Rcio0GIIn1EEgsGhrx0sszNTC2ejmCC6IlDVN4bHJ8QFq6MQqIUwTf6Muauow
-         QSRAvGWi+UFD2eq6XHe7jfAfz/8G1LcwBzPqsq1RUZo4mcMgNMOX0/tR3Tp1G5mOt5fT
-         DaWw==
-X-Forwarded-Encrypted: i=1; AJvYcCUH0KRZjPaND/2LxhluZARAcbjFXkv4/3tknAKVB0gx9/jOs2mHZMhFUraCN72OwN+7XCBW8l6ilK2mWyWP9zjhOS1eQgyr/yoYyNa0
-X-Gm-Message-State: AOJu0Yy3O0T1ZmaLge7EFavrwQiGKZw8ks/OjUAAnSC9Dci7iBkCNrlt
-	55Vyp1EGVa4sR2k6Be/qUYcvtc91VpAdBP2e3CkwisZphAmdEdIT26ySHepevA==
-X-Google-Smtp-Source: AGHT+IEaoDx0o97ovI/CER5a6YauPTV4IxYW76MtLa6q7mCjkEML5Q8ztjNvMaKlcCDmzMIZQiUDUA==
-X-Received: by 2002:a17:90a:f495:b0:2ae:6cc7:23d8 with SMTP id 98e67ed59e1d1-2c1dc5cd0e3mr6552945a91.41.1717397989968;
-        Sun, 02 Jun 2024 23:59:49 -0700 (PDT)
-Received: from localhost.localdomain ([58.75.155.172])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c1c27ad3f6sm5466846a91.4.2024.06.02.23.59.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 02 Jun 2024 23:59:49 -0700 (PDT)
-From: Hyeonwoo Cha <chw1119@hanyang.ac.kr>
-To: david.sterba@suse.com
-Cc: aivazian.tigran@gmail.com,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	tytso@mit.edu,
-	adilger.kernel@dilger.ca,
-	hirofumi@mail.parknet.co.jp,
-	sfr@canb.auug.org.au,
-	chw1119@hanyang.ac.kr,
-	linux-fsdevel@vger.kernel.org,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C5794A0C
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 06:51:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.8.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717397474; cv=fail; b=qtEg/FDHvV1DtWmPJHhfmWWN7I7430GTJIZFXp7VSOEsdg3e7bOHrycHB1+VoIMZ8/gZ0HzXSpk2PWzv/cHTfAAUKvH9nDSc6dKKzbgFo2PZ0Qn6ua3/zptDe0qX7XBq6pmvw/Hzi+mViZ0Ys9Gq0n3AVMEw9izWw71PR9t9DsU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717397474; c=relaxed/simple;
+	bh=IMLeaSVGzxlrPy6pLHbU6FAWljTDAhorNEHd0/dR4rE=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=HplTJCALXfUI+DX838exk6GLDH+p5sZ4QUb9JUBL6y+ELyr5yXa+PKmuLGxGsFeJCR9ci9kqbeglj1ZT21OpCwWLOjMO5EavVMy5hDEdTgSSGIigNtuDTFQLF/Q90bgfzMTo0o0sn8yzpZiQNL9sAuxWfKWfSraHJytNEMfDlxA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (1024-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=lbU+kX9k; arc=fail smtp.client-ip=40.107.8.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=m6oeQ95CvJwuIqq8bjzJrX0rbfZuv0+O9VSak5kD7qhP8M1QCEHTGy/uMzcv18INbEycQxqG08J8+BGooIQ+QUl5jqe90cR99sOmlZAauiTWqilO/e1JvolSAgkJQA4UEArXRU3qQOodbHTleZveg/Pz17MUwXW0BW69NehJrSag+XiFmIgnNgY/zdCXz7FThFgj3zvWP+dYgzOzaALpoHZy/ZJbCqNSlvDkBWatz4HaKdIFuE8Kg6FHOtDzpuwTCYmGdWPtEQkq3HTUGM+5zCDs2Ttk0tDeV8YZmmaJH2yyFCS8vR8jBNI2opYJA5g1n5xBcx4d2c9ngw85ot/y3g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QPmT+/2+DWraD4gM0JgxS7uTJRJmd3icIGiJAhoHm1c=;
+ b=JvdYgCrDSbNw5JAduB5+N5flvaX/nqo1fha08qRvfWb5OHFEfNjJQmLmQTSR4Oabf73jI5+z9PQF+x/d66Jbou4ugiDCin0kn6OpApMQvVo03iwgCTcvJib+XLE/CAJzYbkgJYfjcmio9oM6RQh5a4UNiD6cT1NdPGeKE8jBJFCnDe6qNsquzZrbCnV1ZlcmmmNrlnN/LxnEW+i9AwGXY/DLLSQW8wLuY1MLxpxdb6CFDcK67FGRNDNFR9I1Jk1qse+3GoxXwrzVL1lE+RfCPyntyQnPv8h7y8LfeLvc0oyRrjMEEzfjIOkWjg2+1I7rKOHKM7lFxK6YWDcI2YNIQQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector2-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QPmT+/2+DWraD4gM0JgxS7uTJRJmd3icIGiJAhoHm1c=;
+ b=lbU+kX9k1nlAHr3x6GfA+IIQyTRr7AsZEzcKo2PFFHLo7RUf/G8k7JLuX2FIMZAlPMwiOCZghrkgqBWTG7SSpGXM4PdfOlWVGp9UKfuWJDi56R5NmEnXoRzpP6Gtw21G+O9JcqKN5vAYtDy4Y0nYKkINvUB5Ga2FhCPCsB2juJs=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
+ by VI2PR04MB10191.eurprd04.prod.outlook.com (2603:10a6:800:22c::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.21; Mon, 3 Jun
+ 2024 06:51:08 +0000
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::557f:6fcf:a5a7:981c]) by DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::557f:6fcf:a5a7:981c%7]) with mapi id 15.20.7633.021; Mon, 3 Jun 2024
+ 06:51:08 +0000
+From: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+To: srinivas.kandagatla@linaro.org,
+	shawnguo@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	linux-ext4@vger.kernel.org,
-	reiserfs-devel@vger.kernel.org
-Subject: [PATCH] Fix filesystem issue: description of the fix Fix mark_buffer_dirty_inode to mark_buffer_dirty_fsync Signed-off-by: HyeonWoo Cha <chw1119@hanyang.ac.kr>
-Date: Mon,  3 Jun 2024 15:59:10 +0900
-Message-Id: <20240603065910.20736-1-chw1119@hanyang.ac.kr>
-X-Mailer: git-send-email 2.34.1
+	aisheng.dong@nxp.com,
+	Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH 1/2] nvmem: kconfig: set i.MX OCOTP default y
+Date: Mon,  3 Jun 2024 15:00:06 +0800
+Message-Id: <20240603070007.2413599-1-peng.fan@oss.nxp.com>
+X-Mailer: git-send-email 2.37.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI1PR02CA0027.apcprd02.prod.outlook.com
+ (2603:1096:4:1f4::18) To DU0PR04MB9417.eurprd04.prod.outlook.com
+ (2603:10a6:10:358::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU0PR04MB9417:EE_|VI2PR04MB10191:EE_
+X-MS-Office365-Filtering-Correlation-Id: 316f9ade-8300-4b54-a1a1-08dc83998bcd
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|366007|376005|52116005|1800799015|38350700005;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?5Jp0r056qZaWW8J1IkPQ62qwzl/LLvwtTWmqA3JqZX7cZv/5fABcFUecwnhy?=
+ =?us-ascii?Q?lLYTgWOzLP0OrV7owh9FLZugPnfGWGVDxpFx998c7nyy4rC2dlqrGVlYsqs9?=
+ =?us-ascii?Q?KjzMbhNh5xcB2+u6naMGYyUVcl/ZrfJ3Pc4M7pWv1ECrKxaF/QZtTuiwIq6I?=
+ =?us-ascii?Q?i4zNl7nzQ5NqIRQdRrZ+IP2iZvXd/1JCCSeRhOwCe21D4AFmuiirr4lKVM8r?=
+ =?us-ascii?Q?FJ2J4/df8/tZOhjhRp1X+7d9lIvJ2wDBFqBnX8/Cbg9vxivHnmofNXVVZeWd?=
+ =?us-ascii?Q?d59yJ7UQgMcm2aTyxyz1uESqfTJFpdJAxKnshriKLAGwc6zY1lBCdxbEFT2j?=
+ =?us-ascii?Q?CW6iC08h9nVdNIDoFGRWxh5SLAhPKutO8nYSiOuRMbdS4gR00nXRWuG0mR49?=
+ =?us-ascii?Q?6snuwqpnHZjfzVYicLW6ZkrJU8YHYxfI/TMkNWnAgyRu7mD+E1fkcHbJeSe9?=
+ =?us-ascii?Q?2djOcjlDTOaKdBBmMWqdsyHni0X1GLVFavvmBB1U9cEMlykDDmxZujJ2IPlM?=
+ =?us-ascii?Q?vzsBBHwq9LEQXOfd6hA45Nj2IuxGq4RI6P66tcWCjqd764BuAOb1ZgBrOhB+?=
+ =?us-ascii?Q?CjaY9FsJuvpPGysSlPQ9yNi/FJ84S7OBSe2oECYfUF7Wy+w8bbKYR6321mYe?=
+ =?us-ascii?Q?RgA06hhSBGGGycvREInzrwZu+mTbI9bMQvJj018krIfezmN/RP7Vjj8Re6uS?=
+ =?us-ascii?Q?uh+bWmzVdUrLBxNJLhYewKh0qK6ZQYoFxzwg7tM8OGjq70BK6vPQ1+pe+kbt?=
+ =?us-ascii?Q?KQI/jGS8NtMs5f6Ns7QFx5IODcmsoqxNg4fmbBwMJTvH/Fp/RKFIeau3Jp8T?=
+ =?us-ascii?Q?lBFAiNYqXiuHvL8V1zswCIm91DmlCYpYbw4m4RoN6m16zCDziRm/2BvOGA+t?=
+ =?us-ascii?Q?CL/vsgBU2gQJjkEQrexDOsVuIiE46504yLtgdyAlhBH7lWCOsak2KoyrwXvx?=
+ =?us-ascii?Q?vLBhjAIPCWDTp586J0OV4swNSjiE72dkHX/mu9Y1vVT3JValgxdb52A8m4ao?=
+ =?us-ascii?Q?venMnqKgFM7pdE2GR1EOtAyirMVeW+v037n0Z33oLNLhOEAuXp94A3HOs6qB?=
+ =?us-ascii?Q?8haX5e6cjjjlRMWHdnC80oBtch37X9ZCqDQEIIB0k5bYXVHOv1Sv/mc6yjFC?=
+ =?us-ascii?Q?eiY2PHX0QSJN+R5z4nm8IIAdAAjFevnCZ7Woz9cboStSvgu4lE/HiTqP1YlM?=
+ =?us-ascii?Q?17o+QFuwRDYiCWc3KtaNw1x/iRr5sCHgByFeguqfm8FRLXAOt4CEfkhSjmn0?=
+ =?us-ascii?Q?SFnzLHFhYKBezPSE44v4VuT0cV8EmxW1uXmJR31YgFzlFpzoUOvwlFcgaERF?=
+ =?us-ascii?Q?6sdosHDapoxly9utrm/hv79kAxtYGpX5R409QmARbeOZ9g=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(52116005)(1800799015)(38350700005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Nenhar041HTsb4gUjP+GTfU4Vu6pYLkFdf7hq821ZSpxIhNc95PxGLveCz7X?=
+ =?us-ascii?Q?2Iz1t4tH6rhQuHLPVXg0BtDeR9OuP4QkVgdLGSFBw3eOVY9ErJwTtBa4xeUH?=
+ =?us-ascii?Q?4GF7qPtJ1TCustvMBkSi2sxzTL/FwW8mMA2jGitO9HF1Qx1Zf1x+BBbIYyP3?=
+ =?us-ascii?Q?Iz+0NkwPmO5AvyaqFQYa+gHEXjD8RkU4WyWt6oT7gWS1GdXstOAKfE1Sf+XX?=
+ =?us-ascii?Q?HxNyZnzJaaiefXpWSsJTTHva6Wx2OnLGk1qgF5yzxgMVTil/pnN57gBfVbam?=
+ =?us-ascii?Q?gSsoQs2emXYuvRfE9jD+KUgZcTj2b9m9WQGNLMTpWcsyoH6RULobTbMkOCVO?=
+ =?us-ascii?Q?v891lT7mDg5KsOO+qfOaM9PT4jb2LZis8s7tEROLsawSFMeQ7G/4b+J8j7p/?=
+ =?us-ascii?Q?6CQ/LsBKItAea6a/d4ZxtfdWfEXV7ZMK5rsYLA6dZMbBeU8B1rfQtSqTCKtL?=
+ =?us-ascii?Q?beUZnG/9ZXxLSM4BfXwfNjbIsCcZBqhNZB7O89AvNhF92kF/llj4hPSwi8Oh?=
+ =?us-ascii?Q?bH1FkGHAybdb7tWJWDG02QyAqEpRNYGM1DdpfoIDwcAmXlpz2dqhh5V8GbsI?=
+ =?us-ascii?Q?jt+VdOv80MOt2OnVC//ISQ/CYiBwFYzNtQD1HXdvihv1dNquFPaEEUE1uu8J?=
+ =?us-ascii?Q?TVihgfIozYeOfWZZFGoGP9fqzMmeq2CMjGbD2KHj98GsNrwRWN6pxpW0b7Gt?=
+ =?us-ascii?Q?91UjZ386LcwEAzStKgKtAvXuICbcr5KRSlYOholgzrTKjSF6o3uTOYJFevoj?=
+ =?us-ascii?Q?2JMEBKk86iPxwSf/LEN/6KG+lFVNNjf9zMciuCWX8fL/ummxT9XjY5ze6ilL?=
+ =?us-ascii?Q?ik4SD12mnAEy/2r8cwbPRqBGWZlYAu35lC8OGwJ9iaFLcI4MZvkGQ92or2H5?=
+ =?us-ascii?Q?p20UJ3ehivrzjKN8BcSu92/JYsgyK+bsBPQ+3tCnudGpB1qX1JvY2ar/vJuV?=
+ =?us-ascii?Q?rdJE8zgQR6zDUseVcpiNwrJfzDeJe5jUiPDbECxZi+Oh1BkcpYz7GFq4km3Y?=
+ =?us-ascii?Q?3JLRuqPi/EuwLg5goBaeCP0eB8z9r1UKNpw38g9aFmlqDrOz6KapXUENCVlj?=
+ =?us-ascii?Q?UB7mFkiMsLfOB0N0Okn0Rdeg6ELQe+YNS0clJt3nsHgHKbTrSLZ7YVi+K9qA?=
+ =?us-ascii?Q?TYjUlQAtRExrZtBctAGwX4TQcSPvBZHOy+OWyUmnrA8j3RdETw8GSKnB28Uc?=
+ =?us-ascii?Q?38uoQH3OrbbxYnM6wx9HJQ8wufEau5QuFEOTmhxdXrmBAS2KPtt8R5ihSK7n?=
+ =?us-ascii?Q?y1XRxDW6444wZ3bM5G9LB2+qAVxF6leGRBuEe7poh5nhukrt5rqlHov+MUZk?=
+ =?us-ascii?Q?Tjdv3qwNgSii1Hga6B9OyFyZjSK6N3/rRGob7nxgquexQ9wu5A1KLMbSqVEx?=
+ =?us-ascii?Q?XNxCPa8WO7ZcYSCCbzVJLPlTJ8SDtZJfoVjQLWCeNQzP5kDWj2xVoACVPd0s?=
+ =?us-ascii?Q?4cBq655xwOh4bYfyCgJdZX5ECLy68OikLkotGeSkX4dhZyL3YuZCSFVth1+r?=
+ =?us-ascii?Q?s3nu+19r0cNmnN+Fn3ZlW53yhwQtd3Mwb6Ygs0rQmmd079IoP2LEqKAXs3ZH?=
+ =?us-ascii?Q?FavtOs1Ex+Ss91YuoOFNezoIahaB3+utrcfpbCzk?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 316f9ade-8300-4b54-a1a1-08dc83998bcd
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jun 2024 06:51:08.5845
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: WRcwVYrPGHzFx+WRThCHt6UppOthRrqCz/B99l+qHuxU+6/6uGBRqsGUKN7gqp0NDRu1x6w1ieWA7t7E3aGsNA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI2PR04MB10191
 
+From: Peng Fan <peng.fan@nxp.com>
+
+If ARCH_MXC is selected, set NVMEM_IMX_OCOTP[*] default y which will make
+nfs rootfs work since i.MX network driver needs read mac address from
+fuse.
+
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
 ---
- fs/affs/amigaffs.c          | 17 +++++++++++------
- fs/affs/file.c              | 26 ++++++++++++++------------
- fs/affs/inode.c             | 16 ++++++++++------
- fs/affs/namei.c             |  9 +++++----
- fs/bfs/dir.c                |  7 ++++---
- fs/buffer.c                 | 36 ++++++++++++++++++------------------
- fs/ext2/inode.c             |  8 ++++----
- fs/ext4/ext4_jbd2.c         |  2 +-
- fs/fat/dir.c                | 14 +++++++-------
- fs/fat/fatent.c             | 10 +++++-----
- fs/fat/namei_msdos.c        |  4 ++--
- fs/fat/namei_vfat.c         |  2 +-
- fs/minix/itree_common.c     |  8 ++++----
- fs/reiserfs/fix_node.c      |  7 +++++--
- fs/sysv/itree.c             |  2 +-
- fs/udf/directory.c          |  4 ++--
- fs/udf/inode.c              | 12 ++++++------
- fs/udf/namei.c              |  2 +-
- fs/udf/truncate.c           |  2 +-
- include/linux/buffer_head.h |  2 +-
- 20 files changed, 103 insertions(+), 87 deletions(-)
+ drivers/nvmem/Kconfig | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/fs/affs/amigaffs.c b/fs/affs/amigaffs.c
-index fd669daa4..b11e7fcb2 100644
---- a/fs/affs/amigaffs.c
-+++ b/fs/affs/amigaffs.c
-@@ -27,6 +27,7 @@ affs_insert_hash(struct inode *dir, struct buffer_head *bh)
- {
- 	struct super_block *sb = dir->i_sb;
- 	struct buffer_head *dir_bh;
-+	struct address_space *mapping = dir->i_mapping;
- 	u32 ino, hash_ino;
- 	int offset;
- 
-@@ -57,7 +58,7 @@ affs_insert_hash(struct inode *dir, struct buffer_head *bh)
- 		AFFS_TAIL(sb, dir_bh)->hash_chain = cpu_to_be32(ino);
- 
- 	affs_adjust_checksum(dir_bh, ino);
--	mark_buffer_dirty_inode(dir_bh, dir);
-+	mark_buffer_dirty_fsync(dir_bh, mapping);
- 	affs_brelse(dir_bh);
- 
- 	inode_set_mtime_to_ts(dir, inode_set_ctime_current(dir));
-@@ -74,6 +75,7 @@ affs_insert_hash(struct inode *dir, struct buffer_head *bh)
- int
- affs_remove_hash(struct inode *dir, struct buffer_head *rem_bh)
- {
-+	struct address_space *mapping = dir->i_mapping;
- 	struct super_block *sb;
- 	struct buffer_head *bh;
- 	u32 rem_ino, hash_ino;
-@@ -100,7 +102,7 @@ affs_remove_hash(struct inode *dir, struct buffer_head *rem_bh)
- 			else
- 				AFFS_TAIL(sb, bh)->hash_chain = ino;
- 			affs_adjust_checksum(bh, be32_to_cpu(ino) - hash_ino);
--			mark_buffer_dirty_inode(bh, dir);
-+			mark_buffer_dirty_fsync(bh, mapping);
- 			AFFS_TAIL(sb, rem_bh)->parent = 0;
- 			retval = 0;
- 			break;
-@@ -142,6 +144,7 @@ static int
- affs_remove_link(struct dentry *dentry)
- {
- 	struct inode *dir, *inode = d_inode(dentry);
-+	struct address_space *mapping = inode->i_mapping;
- 	struct super_block *sb = inode->i_sb;
- 	struct buffer_head *bh, *link_bh = NULL;
- 	u32 link_ino, ino;
-@@ -180,7 +183,7 @@ affs_remove_link(struct dentry *dentry)
- 			affs_unlock_dir(dir);
- 			goto done;
- 		}
--		mark_buffer_dirty_inode(link_bh, inode);
-+		mark_buffer_dirty_fsync(link_bh, mapping);
- 
- 		memcpy(AFFS_TAIL(sb, bh)->name, AFFS_TAIL(sb, link_bh)->name, 32);
- 		retval = affs_insert_hash(dir, bh);
-@@ -188,7 +191,7 @@ affs_remove_link(struct dentry *dentry)
- 			affs_unlock_dir(dir);
- 			goto done;
- 		}
--		mark_buffer_dirty_inode(bh, inode);
-+		mark_buffer_dirty_fsync(bh, mapping);
- 
- 		affs_unlock_dir(dir);
- 		iput(dir);
-@@ -203,7 +206,7 @@ affs_remove_link(struct dentry *dentry)
- 			__be32 ino2 = AFFS_TAIL(sb, link_bh)->link_chain;
- 			AFFS_TAIL(sb, bh)->link_chain = ino2;
- 			affs_adjust_checksum(bh, be32_to_cpu(ino2) - link_ino);
--			mark_buffer_dirty_inode(bh, inode);
-+			mark_buffer_dirty_fsync(bh, mapping);
- 			retval = 0;
- 			/* Fix the link count, if bh is a normal header block without links */
- 			switch (be32_to_cpu(AFFS_TAIL(sb, bh)->stype)) {
-@@ -276,6 +279,8 @@ affs_remove_header(struct dentry *dentry)
- 
- 	retval = -ENOENT;
- 	inode = d_inode(dentry);
-+	struct address_space *mapping = inode->i_mapping;
-+
- 	if (!inode)
- 		goto done;
- 
-@@ -306,7 +311,7 @@ affs_remove_header(struct dentry *dentry)
- 	retval = affs_remove_hash(dir, bh);
- 	if (retval)
- 		goto done_unlock;
--	mark_buffer_dirty_inode(bh, inode);
-+	mark_buffer_dirty_fsync(bh, mapping);
- 
- 	affs_unlock_dir(dir);
- 
-diff --git a/fs/affs/file.c b/fs/affs/file.c
-index 04c018e19..1d769bf43 100644
---- a/fs/affs/file.c
-+++ b/fs/affs/file.c
-@@ -119,6 +119,7 @@ affs_grow_extcache(struct inode *inode, u32 lc_idx)
- static struct buffer_head *
- affs_alloc_extblock(struct inode *inode, struct buffer_head *bh, u32 ext)
- {
-+	struct address_space *mapping = inode->i_mapping;
- 	struct super_block *sb = inode->i_sb;
- 	struct buffer_head *new_bh;
- 	u32 blocknr, tmp;
-@@ -139,14 +140,14 @@ affs_alloc_extblock(struct inode *inode, struct buffer_head *bh, u32 ext)
- 	AFFS_TAIL(sb, new_bh)->parent = cpu_to_be32(inode->i_ino);
- 	affs_fix_checksum(sb, new_bh);
- 
--	mark_buffer_dirty_inode(new_bh, inode);
-+	mark_buffer_dirty_fsync(new_bh, mapping);
- 
- 	tmp = be32_to_cpu(AFFS_TAIL(sb, bh)->extension);
- 	if (tmp)
- 		affs_warning(sb, "alloc_ext", "previous extension set (%x)", tmp);
- 	AFFS_TAIL(sb, bh)->extension = cpu_to_be32(blocknr);
- 	affs_adjust_checksum(bh, blocknr - tmp);
--	mark_buffer_dirty_inode(bh, inode);
-+	mark_buffer_dirty_fsync(bh, mapping);
- 
- 	AFFS_I(inode)->i_extcnt++;
- 	mark_inode_dirty(inode);
-@@ -558,6 +559,7 @@ static int affs_do_read_folio_ofs(struct folio *folio, size_t to, int create)
- static int
- affs_extent_file_ofs(struct inode *inode, u32 newsize)
- {
-+	struct address_space *mapping = inode->i_mapping;
- 	struct super_block *sb = inode->i_sb;
- 	struct buffer_head *bh, *prev_bh;
- 	u32 bidx, boff;
-@@ -579,7 +581,7 @@ affs_extent_file_ofs(struct inode *inode, u32 newsize)
- 		memset(AFFS_DATA(bh) + boff, 0, tmp);
- 		be32_add_cpu(&AFFS_DATA_HEAD(bh)->size, tmp);
- 		affs_fix_checksum(sb, bh);
--		mark_buffer_dirty_inode(bh, inode);
-+		mark_buffer_dirty_fsync(bh, mapping);
- 		size += tmp;
- 		bidx++;
- 	} else if (bidx) {
-@@ -601,7 +603,7 @@ affs_extent_file_ofs(struct inode *inode, u32 newsize)
- 		AFFS_DATA_HEAD(bh)->size = cpu_to_be32(tmp);
- 		affs_fix_checksum(sb, bh);
- 		bh->b_state &= ~(1UL << BH_New);
--		mark_buffer_dirty_inode(bh, inode);
-+		mark_buffer_dirty_fsync(bh, mapping);
- 		if (prev_bh) {
- 			u32 tmp_next = be32_to_cpu(AFFS_DATA_HEAD(prev_bh)->next);
- 
-@@ -611,7 +613,7 @@ affs_extent_file_ofs(struct inode *inode, u32 newsize)
- 					     bidx, tmp_next);
- 			AFFS_DATA_HEAD(prev_bh)->next = cpu_to_be32(bh->b_blocknr);
- 			affs_adjust_checksum(prev_bh, bh->b_blocknr - tmp_next);
--			mark_buffer_dirty_inode(prev_bh, inode);
-+			mark_buffer_dirty_fsync(prev_bh, mapping);
- 			affs_brelse(prev_bh);
- 		}
- 		size += bsize;
-@@ -728,7 +730,7 @@ static int affs_write_end_ofs(struct file *file, struct address_space *mapping,
- 		memcpy(AFFS_DATA(bh) + boff, data + from, tmp);
- 		be32_add_cpu(&AFFS_DATA_HEAD(bh)->size, tmp);
- 		affs_fix_checksum(sb, bh);
--		mark_buffer_dirty_inode(bh, inode);
-+		mark_buffer_dirty_fsync(bh, mapping);
- 		written += tmp;
- 		from += tmp;
- 		bidx++;
-@@ -761,12 +763,12 @@ static int affs_write_end_ofs(struct file *file, struct address_space *mapping,
- 						     bidx, tmp_next);
- 				AFFS_DATA_HEAD(prev_bh)->next = cpu_to_be32(bh->b_blocknr);
- 				affs_adjust_checksum(prev_bh, bh->b_blocknr - tmp_next);
--				mark_buffer_dirty_inode(prev_bh, inode);
-+				mark_buffer_dirty_fsync(prev_bh, mapping);
- 			}
- 		}
- 		affs_brelse(prev_bh);
- 		affs_fix_checksum(sb, bh);
--		mark_buffer_dirty_inode(bh, inode);
-+		mark_buffer_dirty_fsync(bh, mapping);
- 		written += bsize;
- 		from += bsize;
- 		bidx++;
-@@ -795,13 +797,13 @@ static int affs_write_end_ofs(struct file *file, struct address_space *mapping,
- 						     bidx, tmp_next);
- 				AFFS_DATA_HEAD(prev_bh)->next = cpu_to_be32(bh->b_blocknr);
- 				affs_adjust_checksum(prev_bh, bh->b_blocknr - tmp_next);
--				mark_buffer_dirty_inode(prev_bh, inode);
-+				mark_buffer_dirty_fsync(prev_bh, mapping);
- 			}
- 		} else if (be32_to_cpu(AFFS_DATA_HEAD(bh)->size) < tmp)
- 			AFFS_DATA_HEAD(bh)->size = cpu_to_be32(tmp);
- 		affs_brelse(prev_bh);
- 		affs_fix_checksum(sb, bh);
--		mark_buffer_dirty_inode(bh, inode);
-+		mark_buffer_dirty_fsync(bh, mapping);
- 		written += tmp;
- 		from += tmp;
- 		bidx++;
-@@ -863,6 +865,7 @@ affs_free_prealloc(struct inode *inode)
- void
- affs_truncate(struct inode *inode)
- {
-+	struct address_space *mapping = inode->i_mapping;
- 	struct super_block *sb = inode->i_sb;
- 	u32 ext, ext_key;
- 	u32 last_blk, blkcnt, blk;
-@@ -881,7 +884,6 @@ affs_truncate(struct inode *inode)
- 	}
- 
- 	if (inode->i_size > AFFS_I(inode)->mmu_private) {
--		struct address_space *mapping = inode->i_mapping;
- 		struct page *page;
- 		void *fsdata = NULL;
- 		loff_t isize = inode->i_size;
-@@ -938,7 +940,7 @@ affs_truncate(struct inode *inode)
- 	}
- 	AFFS_TAIL(sb, ext_bh)->extension = 0;
- 	affs_fix_checksum(sb, ext_bh);
--	mark_buffer_dirty_inode(ext_bh, inode);
-+	mark_buffer_dirty_fsync(ext_bh, mapping);
- 	affs_brelse(ext_bh);
- 
- 	if (inode->i_size) {
-diff --git a/fs/affs/inode.c b/fs/affs/inode.c
-index 0210df8d3..a4e610944 100644
---- a/fs/affs/inode.c
-+++ b/fs/affs/inode.c
-@@ -165,6 +165,8 @@ struct inode *affs_iget(struct super_block *sb, unsigned long ino)
- int
- affs_write_inode(struct inode *inode, struct writeback_control *wbc)
- {
-+	
-+	struct address_space *mapping = inode->i_mapping;
- 	struct super_block	*sb = inode->i_sb;
- 	struct buffer_head	*bh;
- 	struct affs_tail	*tail;
-@@ -206,7 +208,7 @@ affs_write_inode(struct inode *inode, struct writeback_control *wbc)
- 		}
- 	}
- 	affs_fix_checksum(sb, bh);
--	mark_buffer_dirty_inode(bh, inode);
-+	mark_buffer_dirty_fsync(bh, mapping);
- 	affs_brelse(bh);
- 	affs_free_prealloc(inode);
- 	return 0;
-@@ -289,7 +291,8 @@ affs_evict_inode(struct inode *inode)
- 
- struct inode *
- affs_new_inode(struct inode *dir)
--{
-+{	
-+	struct address_space *mapping = dir->i_mapping;
- 	struct super_block	*sb = dir->i_sb;
- 	struct inode		*inode;
- 	u32			 block;
-@@ -304,7 +307,7 @@ affs_new_inode(struct inode *dir)
- 	bh = affs_getzeroblk(sb, block);
- 	if (!bh)
- 		goto err_bh;
--	mark_buffer_dirty_inode(bh, inode);
-+	mark_buffer_dirty_fsync(bh, mapping);
- 	affs_brelse(bh);
- 
- 	inode->i_uid     = current_fsuid();
-@@ -347,6 +350,7 @@ affs_new_inode(struct inode *dir)
- int
- affs_add_entry(struct inode *dir, struct inode *inode, struct dentry *dentry, s32 type)
- {
-+	struct address_space *mapping = inode->i_mapping;
- 	struct super_block *sb = dir->i_sb;
- 	struct buffer_head *inode_bh = NULL;
- 	struct buffer_head *bh;
-@@ -392,17 +396,17 @@ affs_add_entry(struct inode *dir, struct inode *inode, struct dentry *dentry, s3
- 		AFFS_TAIL(sb, bh)->link_chain = chain;
- 		AFFS_TAIL(sb, inode_bh)->link_chain = cpu_to_be32(block);
- 		affs_adjust_checksum(inode_bh, block - be32_to_cpu(chain));
--		mark_buffer_dirty_inode(inode_bh, inode);
-+		mark_buffer_dirty_fsync(inode_bh, mapping);
- 		set_nlink(inode, 2);
- 		ihold(inode);
- 	}
- 	affs_fix_checksum(sb, bh);
--	mark_buffer_dirty_inode(bh, inode);
-+	mark_buffer_dirty_fsync(bh, mapping);
- 	dentry->d_fsdata = (void *)(long)bh->b_blocknr;
- 
- 	affs_lock_dir(dir);
- 	retval = affs_insert_hash(dir, bh);
--	mark_buffer_dirty_inode(bh, inode);
-+	mark_buffer_dirty_fsync(bh, mapping);
- 	affs_unlock_dir(dir);
- 	affs_unlock_link(inode);
- 
-diff --git a/fs/affs/namei.c b/fs/affs/namei.c
-index 8c154490a..a434ce621 100644
---- a/fs/affs/namei.c
-+++ b/fs/affs/namei.c
-@@ -373,7 +373,8 @@ affs_symlink(struct mnt_idmap *idmap, struct inode *dir,
- 	}
- 	*p = 0;
- 	inode->i_size = i + 1;
--	mark_buffer_dirty_inode(bh, inode);
-+	struct address_space *mapping = inode->i_mapping
-+	mark_buffer_dirty_fsync(bh, mapping);
- 	affs_brelse(bh);
- 	mark_inode_dirty(inode);
- 
-@@ -443,7 +444,7 @@ affs_rename(struct inode *old_dir, struct dentry *old_dentry,
- 	/* TODO: move it back to old_dir, if error? */
- 
- done:
--	mark_buffer_dirty_inode(bh, retval ? old_dir : new_dir);
-+	mark_buffer_dirty_fsync(bh, retval ? old_dir->i_mapping : new_dir->i_mapping);
- 	affs_brelse(bh);
- 	return retval;
- }
-@@ -496,8 +497,8 @@ affs_xrename(struct inode *old_dir, struct dentry *old_dentry,
- 	retval = affs_insert_hash(old_dir, bh_new);
- 	affs_unlock_dir(old_dir);
- done:
--	mark_buffer_dirty_inode(bh_old, new_dir);
--	mark_buffer_dirty_inode(bh_new, old_dir);
-+	mark_buffer_dirty_fsync(bh_old, new_dir->i_mapping);
-+	mark_buffer_dirty_fsync(bh_new, old_dir->i_mapping);
- 	affs_brelse(bh_old);
- 	affs_brelse(bh_new);
- 	return retval;
-diff --git a/fs/bfs/dir.c b/fs/bfs/dir.c
-index c375e22c4..b344a1b4a 100644
---- a/fs/bfs/dir.c
-+++ b/fs/bfs/dir.c
-@@ -169,6 +169,7 @@ static int bfs_link(struct dentry *old, struct inode *dir,
- static int bfs_unlink(struct inode *dir, struct dentry *dentry)
- {
- 	int error = -ENOENT;
-+	struct address_space *mapping = dir->i_mapping;
- 	struct inode *inode = d_inode(dentry);
- 	struct buffer_head *bh;
- 	struct bfs_dirent *de;
-@@ -186,7 +187,7 @@ static int bfs_unlink(struct inode *dir, struct dentry *dentry)
- 		set_nlink(inode, 1);
- 	}
- 	de->ino = 0;
--	mark_buffer_dirty_inode(bh, dir);
-+	mark_buffer_dirty_fsync(bh, mapping);
- 	inode_set_mtime_to_ts(dir, inode_set_ctime_current(dir));
- 	mark_inode_dirty(dir);
- 	inode_set_ctime_to_ts(inode, inode_get_ctime(dir));
-@@ -246,7 +247,7 @@ static int bfs_rename(struct mnt_idmap *idmap, struct inode *old_dir,
- 		inode_set_ctime_current(new_inode);
- 		inode_dec_link_count(new_inode);
- 	}
--	mark_buffer_dirty_inode(old_bh, old_dir);
-+	mark_buffer_dirty_fsync(old_bh, old_dir->i_mapping);
- 	error = 0;
- 
- end_rename:
-@@ -296,7 +297,7 @@ static int bfs_add_entry(struct inode *dir, const struct qstr *child, int ino)
- 				for (i = 0; i < BFS_NAMELEN; i++)
- 					de->name[i] =
- 						(i < namelen) ? name[i] : 0;
--				mark_buffer_dirty_inode(bh, dir);
-+				mark_buffer_dirty_fsync(bh, dir->i_mapping);
- 				brelse(bh);
- 				return 0;
- 			}
-diff --git a/fs/buffer.c b/fs/buffer.c
-index 8c19e705b..508851619 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -118,7 +118,7 @@ void buffer_check_dirty_writeback(struct folio *folio,
-  * from becoming locked again - you have to lock it yourself
-  * if you want to preserve its state.
-  */
--void __wait_on_buffer(struct buffer_head * bh)
-+void __wait_on_buffer(struct buffer_head *bh)
- {
- 	wait_on_bit_io(&bh->b_state, BH_Lock, TASK_UNINTERRUPTIBLE);
- }
-@@ -473,7 +473,7 @@ EXPORT_SYMBOL(mark_buffer_async_write);
-  * try_to_free_buffers() will be operating against the *blockdev* mapping
-  * at the time, not against the S_ISREG file which depends on those buffers.
-  * So the locking for i_private_list is via the i_private_lock in the address_space
-- * which backs the buffers.  Which is different from the address_space 
-+ * which backs the buffers.  Which is different from the address_space
-  * against which the buffers are listed.  So for a particular address_space,
-  * mapping->i_private_lock does *not* protect mapping->i_private_list!  In fact,
-  * mapping->i_private_list will always be protected by the backing blockdev's
-@@ -666,26 +666,27 @@ void write_boundary_block(struct block_device *bdev,
- 	}
- }
- 
--void mark_buffer_dirty_inode(struct buffer_head *bh, struct inode *inode)
-+void mark_buffer_dirty_fsync(struct buffer_head *bh, struct address_space *mapping)
- {
--	struct address_space *mapping = inode->i_mapping;
- 	struct address_space *buffer_mapping = bh->b_folio->mapping;
- 
- 	mark_buffer_dirty(bh);
-+
-+	if (bh->b_assoc_map)
-+        return;
-+
- 	if (!mapping->i_private_data) {
--		mapping->i_private_data = buffer_mapping;
--	} else {
--		BUG_ON(mapping->i_private_data != buffer_mapping);
--	}
--	if (!bh->b_assoc_map) {
--		spin_lock(&buffer_mapping->i_private_lock);
--		list_move_tail(&bh->b_assoc_buffers,
--				&mapping->i_private_list);
--		bh->b_assoc_map = mapping;
--		spin_unlock(&buffer_mapping->i_private_lock);
--	}
-+    	mapping->i_private_data = buffer_mapping;
-+    } else {
-+        BUG_ON(mapping->i_private_data != buffer_mapping);
-+    }
-+
-+    spin_lock(&buffer_mapping->i_private_lock);
-+    list_move_tail(&bh->b_assoc_buffers, &mapping->i_private_list);
-+    bh->b_assoc_map = mapping;
-+    spin_unlock(&buffer_mapping->i_private_lock);
- }
--EXPORT_SYMBOL(mark_buffer_dirty_inode);
-+EXPORT_SYMBOL(mark_buffer_dirty_fsync);
- 
- /**
-  * block_dirty_folio - Mark a folio as dirty.
-@@ -843,7 +844,6 @@ static int fsync_buffers_list(spinlock_t *lock, struct list_head *list)
- 		brelse(bh);
- 		spin_lock(lock);
- 	}
--	
- 	spin_unlock(lock);
- 	err2 = osync_buffers_list(lock, list);
- 	if (err)
-@@ -2155,7 +2155,7 @@ int __block_write_begin_int(struct folio *folio, loff_t pos, unsigned len,
- 		    !buffer_unwritten(bh) &&
- 		     (block_start < from || block_end > to)) {
- 			bh_read_nowait(bh, 0);
--			*wait_bh++=bh;
-+			*wait_bh++ = bh;
- 		}
- 	}
- 	/*
-diff --git a/fs/ext2/inode.c b/fs/ext2/inode.c
-index 0caa1650c..5410d3f47 100644
---- a/fs/ext2/inode.c
-+++ b/fs/ext2/inode.c
-@@ -526,7 +526,7 @@ static int ext2_alloc_branch(struct inode *inode,
- 		}
- 		set_buffer_uptodate(bh);
- 		unlock_buffer(bh);
--		mark_buffer_dirty_inode(bh, inode);
-+		mark_buffer_dirty_fsync(bh, inode->i_mapping);
- 		/* We used to sync bh here if IS_SYNC(inode).
- 		 * But we now rely upon generic_write_sync()
- 		 * and b_inode_buffers.  But not for directories.
-@@ -597,7 +597,7 @@ static void ext2_splice_branch(struct inode *inode,
- 
- 	/* had we spliced it onto indirect block? */
- 	if (where->bh)
--		mark_buffer_dirty_inode(where->bh, inode);
-+		mark_buffer_dirty_fsync(where->bh, inode->i_mapping);
- 
- 	inode_set_ctime_current(inode);
- 	mark_inode_dirty(inode);
-@@ -1199,7 +1199,7 @@ static void __ext2_truncate_blocks(struct inode *inode, loff_t offset)
- 		if (partial == chain)
- 			mark_inode_dirty(inode);
- 		else
--			mark_buffer_dirty_inode(partial->bh, inode);
-+			mark_buffer_dirty_fsync(partial->bh, inode->i_mapping);
- 		ext2_free_branches(inode, &nr, &nr+1, (chain+n-1) - partial);
- 	}
- 	/* Clear the ends of indirect blocks on the shared branch */
-@@ -1208,7 +1208,7 @@ static void __ext2_truncate_blocks(struct inode *inode, loff_t offset)
- 				   partial->p + 1,
- 				   (__le32*)partial->bh->b_data+addr_per_block,
- 				   (chain+n-1) - partial);
--		mark_buffer_dirty_inode(partial->bh, inode);
-+		mark_buffer_dirty_fsync(partial->bh, inode->i_mapping);
- 		brelse (partial->bh);
- 		partial--;
- 	}
-diff --git a/fs/ext4/ext4_jbd2.c b/fs/ext4/ext4_jbd2.c
-index da4a82456..93fe0ec45 100644
---- a/fs/ext4/ext4_jbd2.c
-+++ b/fs/ext4/ext4_jbd2.c
-@@ -379,7 +379,7 @@ int __ext4_handle_dirty_metadata(const char *where, unsigned int line,
- 		}
- 	} else {
- 		if (inode)
--			mark_buffer_dirty_inode(bh, inode);
-+			mark_buffer_dirty_fsync(bh, inode->i_mapping);
- 		else
- 			mark_buffer_dirty(bh);
- 		if (inode && inode_needs_sync(inode)) {
-diff --git a/fs/fat/dir.c b/fs/fat/dir.c
-index acbec5bdd..85f84c633 100644
---- a/fs/fat/dir.c
-+++ b/fs/fat/dir.c
-@@ -1024,7 +1024,7 @@ static int __fat_remove_entries(struct inode *dir, loff_t pos, int nr_slots)
- 			de++;
- 			nr_slots--;
- 		}
--		mark_buffer_dirty_inode(bh, dir);
-+		mark_buffer_dirty_fsync(bh, dir->i_mapping);
- 		if (IS_DIRSYNC(dir))
- 			err = sync_dirty_buffer(bh);
- 		brelse(bh);
-@@ -1059,7 +1059,7 @@ int fat_remove_entries(struct inode *dir, struct fat_slot_info *sinfo)
- 		de--;
- 		nr_slots--;
- 	}
--	mark_buffer_dirty_inode(bh, dir);
-+	mark_buffer_dirty_fsync(bh, dir->i_mapping);
- 	if (IS_DIRSYNC(dir))
- 		err = sync_dirty_buffer(bh);
- 	brelse(bh);
-@@ -1111,7 +1111,7 @@ static int fat_zeroed_cluster(struct inode *dir, sector_t blknr, int nr_used,
- 		memset(bhs[n]->b_data, 0, sb->s_blocksize);
- 		set_buffer_uptodate(bhs[n]);
- 		unlock_buffer(bhs[n]);
--		mark_buffer_dirty_inode(bhs[n], dir);
-+		mark_buffer_dirty_fsync(bhs[n], dir->i_mapping);
- 
- 		n++;
- 		blknr++;
-@@ -1192,7 +1192,7 @@ int fat_alloc_new_dir(struct inode *dir, struct timespec64 *ts)
- 	memset(de + 2, 0, sb->s_blocksize - 2 * sizeof(*de));
- 	set_buffer_uptodate(bhs[0]);
- 	unlock_buffer(bhs[0]);
--	mark_buffer_dirty_inode(bhs[0], dir);
-+	mark_buffer_dirty_fsync(bhs[0], dir->i_mapping);
- 
- 	err = fat_zeroed_cluster(dir, blknr, 1, bhs, MAX_BUF_PER_PAGE);
- 	if (err)
-@@ -1254,7 +1254,7 @@ static int fat_add_new_entries(struct inode *dir, void *slots, int nr_slots,
- 			memcpy(bhs[n]->b_data, slots, copy);
- 			set_buffer_uptodate(bhs[n]);
- 			unlock_buffer(bhs[n]);
--			mark_buffer_dirty_inode(bhs[n], dir);
-+			mark_buffer_dirty_fsync(bhs[n], dir->i_mapping);
- 			slots += copy;
- 			size -= copy;
- 			if (!size)
-@@ -1356,7 +1356,7 @@ int fat_add_entries(struct inode *dir, void *slots, int nr_slots,
- 		for (i = 0; i < long_bhs; i++) {
- 			int copy = min_t(int, sb->s_blocksize - offset, size);
- 			memcpy(bhs[i]->b_data + offset, slots, copy);
--			mark_buffer_dirty_inode(bhs[i], dir);
-+			mark_buffer_dirty_fsync(bhs[i], dir->i_mapping);
- 			offset = 0;
- 			slots += copy;
- 			size -= copy;
-@@ -1367,7 +1367,7 @@ int fat_add_entries(struct inode *dir, void *slots, int nr_slots,
- 			/* Fill the short name slot. */
- 			int copy = min_t(int, sb->s_blocksize - offset, size);
- 			memcpy(bhs[i]->b_data + offset, slots, copy);
--			mark_buffer_dirty_inode(bhs[i], dir);
-+			mark_buffer_dirty_fsync(bhs[i], dir->i_mapping);
- 			if (IS_DIRSYNC(dir))
- 				err = sync_dirty_buffer(bhs[i]);
- 		}
-diff --git a/fs/fat/fatent.c b/fs/fat/fatent.c
-index 1db348f8f..4aa928e09 100644
---- a/fs/fat/fatent.c
-+++ b/fs/fat/fatent.c
-@@ -170,9 +170,9 @@ static void fat12_ent_put(struct fat_entry *fatent, int new)
- 	}
- 	spin_unlock(&fat12_entry_lock);
- 
--	mark_buffer_dirty_inode(fatent->bhs[0], fatent->fat_inode);
-+	mark_buffer_dirty_fsync(fatent->bhs[0], fatent->fat_inode->i_mapping);
- 	if (fatent->nr_bhs == 2)
--		mark_buffer_dirty_inode(fatent->bhs[1], fatent->fat_inode);
-+		mark_buffer_dirty_fsync(fatent->bhs[1], fatent->fat_inode->i_mapping);
- }
- 
- static void fat16_ent_put(struct fat_entry *fatent, int new)
-@@ -181,7 +181,7 @@ static void fat16_ent_put(struct fat_entry *fatent, int new)
- 		new = EOF_FAT16;
- 
- 	*fatent->u.ent16_p = cpu_to_le16(new);
--	mark_buffer_dirty_inode(fatent->bhs[0], fatent->fat_inode);
-+	mark_buffer_dirty_fsync(fatent->bhs[0], fatent->fat_inode->i_mapping);
- }
- 
- static void fat32_ent_put(struct fat_entry *fatent, int new)
-@@ -189,7 +189,7 @@ static void fat32_ent_put(struct fat_entry *fatent, int new)
- 	WARN_ON(new & 0xf0000000);
- 	new |= le32_to_cpu(*fatent->u.ent32_p) & ~0x0fffffff;
- 	*fatent->u.ent32_p = cpu_to_le32(new);
--	mark_buffer_dirty_inode(fatent->bhs[0], fatent->fat_inode);
-+	mark_buffer_dirty_fsync(fatent->bhs[0], fatent->fat_inode->i_mapping);
- }
- 
- static int fat12_ent_next(struct fat_entry *fatent)
-@@ -395,7 +395,7 @@ static int fat_mirror_bhs(struct super_block *sb, struct buffer_head **bhs,
- 			memcpy(c_bh->b_data, bhs[n]->b_data, sb->s_blocksize);
- 			set_buffer_uptodate(c_bh);
- 			unlock_buffer(c_bh);
--			mark_buffer_dirty_inode(c_bh, sbi->fat_inode);
-+			mark_buffer_dirty_fsync(c_bh, sbi->fat_inode->i_mapping);
- 			if (sb->s_flags & SB_SYNCHRONOUS)
- 				err = sync_dirty_buffer(c_bh);
- 			brelse(c_bh);
-diff --git a/fs/fat/namei_msdos.c b/fs/fat/namei_msdos.c
-index 2116c4868..2fa341ba6 100644
---- a/fs/fat/namei_msdos.c
-+++ b/fs/fat/namei_msdos.c
-@@ -524,7 +524,7 @@ static int do_msdos_rename(struct inode *old_dir, unsigned char *old_name,
- 
- 	if (update_dotdot) {
- 		fat_set_start(dotdot_de, MSDOS_I(new_dir)->i_logstart);
--		mark_buffer_dirty_inode(dotdot_bh, old_inode);
-+		mark_buffer_dirty_fsync(dotdot_bh, old_inode->i_mapping);
- 		if (IS_DIRSYNC(new_dir)) {
- 			err = sync_dirty_buffer(dotdot_bh);
- 			if (err)
-@@ -564,7 +564,7 @@ static int do_msdos_rename(struct inode *old_dir, unsigned char *old_name,
- 
- 	if (update_dotdot) {
- 		fat_set_start(dotdot_de, MSDOS_I(old_dir)->i_logstart);
--		mark_buffer_dirty_inode(dotdot_bh, old_inode);
-+		mark_buffer_dirty_fsync(dotdot_bh, old_inode->i_mapping);
- 		corrupt |= sync_dirty_buffer(dotdot_bh);
- 	}
- error_inode:
-diff --git a/fs/fat/namei_vfat.c b/fs/fat/namei_vfat.c
-index c4d00999a..c4ed9fd7d 100644
---- a/fs/fat/namei_vfat.c
-+++ b/fs/fat/namei_vfat.c
-@@ -912,7 +912,7 @@ static int vfat_update_dotdot_de(struct inode *dir, struct inode *inode,
- 				 struct msdos_dir_entry *dotdot_de)
- {
- 	fat_set_start(dotdot_de, MSDOS_I(dir)->i_logstart);
--	mark_buffer_dirty_inode(dotdot_bh, inode);
-+	mark_buffer_dirty_fsync(dotdot_bh, inode->i_mapping);
- 	if (IS_DIRSYNC(dir))
- 		return sync_dirty_buffer(dotdot_bh);
- 	return 0;
-diff --git a/fs/minix/itree_common.c b/fs/minix/itree_common.c
-index dad131e30..4354da0ce 100644
---- a/fs/minix/itree_common.c
-+++ b/fs/minix/itree_common.c
-@@ -98,7 +98,7 @@ static int alloc_branch(struct inode *inode,
- 		*branch[n].p = branch[n].key;
- 		set_buffer_uptodate(bh);
- 		unlock_buffer(bh);
--		mark_buffer_dirty_inode(bh, inode);
-+		mark_buffer_dirty_fsync(bh, inode->i_mapping);
- 		parent = nr;
- 	}
- 	if (n == num)
-@@ -135,7 +135,7 @@ static inline int splice_branch(struct inode *inode,
- 
- 	/* had we spliced it onto indirect block? */
- 	if (where->bh)
--		mark_buffer_dirty_inode(where->bh, inode);
-+		mark_buffer_dirty_fsync(where->bh, inode->i_mapping);
- 
- 	mark_inode_dirty(inode);
- 	return 0;
-@@ -328,14 +328,14 @@ static inline void truncate (struct inode * inode)
- 		if (partial == chain)
- 			mark_inode_dirty(inode);
- 		else
--			mark_buffer_dirty_inode(partial->bh, inode);
-+			mark_buffer_dirty_fsync(partial->bh, inode->i_mapping);
- 		free_branches(inode, &nr, &nr+1, (chain+n-1) - partial);
- 	}
- 	/* Clear the ends of indirect blocks on the shared branch */
- 	while (partial > chain) {
- 		free_branches(inode, partial->p + 1, block_end(partial->bh),
- 				(chain+n-1) - partial);
--		mark_buffer_dirty_inode(partial->bh, inode);
-+		mark_buffer_dirty_fsync(partial->bh, inode->i_mapping);
- 		brelse (partial->bh);
- 		partial--;
- 	}
-diff --git a/fs/reiserfs/fix_node.c b/fs/reiserfs/fix_node.c
-index 6c13a8d9a..ce94efe0a 100644
---- a/fs/reiserfs/fix_node.c
-+++ b/fs/reiserfs/fix_node.c
-@@ -2623,9 +2623,12 @@ int fix_nodes(int op_mode, struct tree_balance *tb,
- 	}
- #endif
- 
--	if (get_mem_for_virtual_node(tb) == REPEAT_SEARCH)
--		/* FIXME: maybe -ENOMEM when tb->vn_buf == 0? Now just repeat */
-+	if (get_mem_for_virtual_node(tb) == REPEAT_SEARCH) {
-+		if (tb->vn_buf == 0) {
-+        	return -ENOMEM;
-+   		}
- 		return REPEAT_SEARCH;
-+	}
- 
- 	/* Starting from the leaf level; for all levels h of the tree. */
- 	for (h = 0; h < MAX_HEIGHT && tb->insert_size[h]; h++) {
-diff --git a/fs/sysv/itree.c b/fs/sysv/itree.c
-index 19bcb51a2..c50a77a4d 100644
---- a/fs/sysv/itree.c
-+++ b/fs/sysv/itree.c
-@@ -16,7 +16,7 @@ enum {DIRECT = 10, DEPTH = 4};	/* Have triple indirect */
- 
- static inline void dirty_indirect(struct buffer_head *bh, struct inode *inode)
- {
--	mark_buffer_dirty_inode(bh, inode);
-+	mark_buffer_dirty_fsync(bh, inode->i_mapping);
- 	if (IS_SYNC(inode))
- 		sync_dirty_buffer(bh);
- }
-diff --git a/fs/udf/directory.c b/fs/udf/directory.c
-index 93153665e..4ecb058c0 100644
---- a/fs/udf/directory.c
-+++ b/fs/udf/directory.c
-@@ -423,9 +423,9 @@ void udf_fiiter_write_fi(struct udf_fileident_iter *iter, uint8_t *impuse)
- 	if (iinfo->i_alloc_type == ICBTAG_FLAG_AD_IN_ICB) {
- 		mark_inode_dirty(iter->dir);
- 	} else {
--		mark_buffer_dirty_inode(iter->bh[0], iter->dir);
-+		mark_buffer_dirty_fsync(iter->bh[0], iter->dir->i_mapping);
- 		if (iter->bh[1])
--			mark_buffer_dirty_inode(iter->bh[1], iter->dir);
-+			mark_buffer_dirty_fsync(iter->bh[1], iter->dir->i_mapping);
- 	}
- 	inode_inc_iversion(iter->dir);
- }
-diff --git a/fs/udf/inode.c b/fs/udf/inode.c
-index 2fb21c5ff..3f2d8b150 100644
---- a/fs/udf/inode.c
-+++ b/fs/udf/inode.c
-@@ -1226,7 +1226,7 @@ struct buffer_head *udf_bread(struct inode *inode, udf_pblk_t block,
- 		memset(bh->b_data, 0x00, inode->i_sb->s_blocksize);
- 		set_buffer_uptodate(bh);
- 		unlock_buffer(bh);
--		mark_buffer_dirty_inode(bh, inode);
-+		mark_buffer_dirty_fsync(bh, inode->i_mapping);
- 		return bh;
- 	}
- 
-@@ -1978,7 +1978,7 @@ int udf_setup_indirect_aext(struct inode *inode, udf_pblk_t block,
- 	memset(bh->b_data, 0x00, sb->s_blocksize);
- 	set_buffer_uptodate(bh);
- 	unlock_buffer(bh);
--	mark_buffer_dirty_inode(bh, inode);
-+	mark_buffer_dirty_fsync(bh, inode->i_mapping);
- 
- 	aed = (struct allocExtDesc *)(bh->b_data);
- 	if (!UDF_QUERY_FLAG(sb, UDF_FLAG_STRICT)) {
-@@ -2068,7 +2068,7 @@ int __udf_add_aext(struct inode *inode, struct extent_position *epos,
- 		else
- 			udf_update_tag(epos->bh->b_data,
- 					sizeof(struct allocExtDesc));
--		mark_buffer_dirty_inode(epos->bh, inode);
-+		mark_buffer_dirty_fsync(epos->bh, inode->i_mapping);
- 	}
- 
- 	return 0;
-@@ -2152,7 +2152,7 @@ void udf_write_aext(struct inode *inode, struct extent_position *epos,
- 				       le32_to_cpu(aed->lengthAllocDescs) +
- 				       sizeof(struct allocExtDesc));
- 		}
--		mark_buffer_dirty_inode(epos->bh, inode);
-+		mark_buffer_dirty_fsync(epos->bh, inode->i_mapping);
- 	} else {
- 		mark_inode_dirty(inode);
- 	}
-@@ -2331,7 +2331,7 @@ int8_t udf_delete_aext(struct inode *inode, struct extent_position epos)
- 			else
- 				udf_update_tag(oepos.bh->b_data,
- 						sizeof(struct allocExtDesc));
--			mark_buffer_dirty_inode(oepos.bh, inode);
-+			mark_buffer_dirty_fsync(oepos.bh, inode->i_mapping);
- 		}
- 	} else {
- 		udf_write_aext(inode, &oepos, &eloc, elen, 1);
-@@ -2348,7 +2348,7 @@ int8_t udf_delete_aext(struct inode *inode, struct extent_position epos)
- 			else
- 				udf_update_tag(oepos.bh->b_data,
- 						sizeof(struct allocExtDesc));
--			mark_buffer_dirty_inode(oepos.bh, inode);
-+			mark_buffer_dirty_fsync(oepos.bh, inode->i_mapping);
- 		}
- 	}
- 
-diff --git a/fs/udf/namei.c b/fs/udf/namei.c
-index 1308109fd..b6dfa195a 100644
---- a/fs/udf/namei.c
-+++ b/fs/udf/namei.c
-@@ -634,7 +634,7 @@ static int udf_symlink(struct mnt_idmap *idmap, struct inode *dir,
- 		memset(epos.bh->b_data, 0x00, bsize);
- 		set_buffer_uptodate(epos.bh);
- 		unlock_buffer(epos.bh);
--		mark_buffer_dirty_inode(epos.bh, inode);
-+		mark_buffer_dirty_fsync(epos.bh, inode->i_mapping);
- 		ea = epos.bh->b_data + udf_ext0_offset(inode);
- 	} else
- 		ea = iinfo->i_data + iinfo->i_lenEAttr;
-diff --git a/fs/udf/truncate.c b/fs/udf/truncate.c
-index a686c10fd..c73fabb8f 100644
---- a/fs/udf/truncate.c
-+++ b/fs/udf/truncate.c
-@@ -169,7 +169,7 @@ static void udf_update_alloc_ext_desc(struct inode *inode,
- 		len += lenalloc;
- 
- 	udf_update_tag(epos->bh->b_data, len);
--	mark_buffer_dirty_inode(epos->bh, inode);
-+	mark_buffer_dirty_fsync(epos->bh, inode->i_mapping);
- }
- 
- /*
-diff --git a/include/linux/buffer_head.h b/include/linux/buffer_head.h
-index 14acf1bbe..d8f650883 100644
---- a/include/linux/buffer_head.h
-+++ b/include/linux/buffer_head.h
-@@ -207,7 +207,7 @@ void end_buffer_read_sync(struct buffer_head *bh, int uptodate);
- void end_buffer_write_sync(struct buffer_head *bh, int uptodate);
- 
- /* Things to do with buffers at mapping->private_list */
--void mark_buffer_dirty_inode(struct buffer_head *bh, struct inode *inode);
-+void mark_buffer_dirty_fsync(struct buffer_head *bh, struct address_space *inode);
- int generic_buffers_fsync_noflush(struct file *file, loff_t start, loff_t end,
- 				  bool datasync);
- int generic_buffers_fsync(struct file *file, loff_t start, loff_t end,
+diff --git a/drivers/nvmem/Kconfig b/drivers/nvmem/Kconfig
+index 283134498fbc..7e92e855eb50 100644
+--- a/drivers/nvmem/Kconfig
++++ b/drivers/nvmem/Kconfig
+@@ -76,6 +76,7 @@ config NVMEM_IMX_OCOTP
+ 	tristate "i.MX 6/7/8 On-Chip OTP Controller support"
+ 	depends on ARCH_MXC || COMPILE_TEST
+ 	depends on HAS_IOMEM
++	default y if ARCH_MXC
+ 	help
+ 	  This is a driver for the On-Chip OTP Controller (OCOTP) available on
+ 	  i.MX6 SoCs, providing access to 4 Kbits of one-time programmable
+@@ -89,6 +90,7 @@ config NVMEM_IMX_OCOTP_ELE
+ 	depends on ARCH_MXC || COMPILE_TEST
+ 	depends on HAS_IOMEM
+ 	depends on OF
++	default y if ARCH_MXC
+ 	help
+ 	  This is a driver for the On-Chip OTP Controller (OCOTP)
+ 	  available on i.MX SoCs which has ELE.
+@@ -97,6 +99,7 @@ config NVMEM_IMX_OCOTP_SCU
+ 	tristate "i.MX8 SCU On-Chip OTP Controller support"
+ 	depends on IMX_SCU
+ 	depends on HAVE_ARM_SMCCC
++	default y if ARCH_MXC
+ 	help
+ 	  This is a driver for the SCU On-Chip OTP Controller (OCOTP)
+ 	  available on i.MX8 SoCs.
 -- 
-2.34.1
+2.37.1
 
 
