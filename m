@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-199583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 683D28D8914
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 20:57:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 784E28D8918
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 20:57:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3AC91F26164
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 18:57:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B02001C22DC6
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 18:57:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5767713A240;
-	Mon,  3 Jun 2024 18:57:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F7A213A3F4;
+	Mon,  3 Jun 2024 18:57:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VHhHqSZj"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fy2w9xqe"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26BAC139CEE
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 18:57:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4223E139D04
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 18:57:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717441028; cv=none; b=h315TVe8hE8WMtYmUu62XeLzyse+/JdwapYOglWGoQSGEGbTAJwWgmyeW08zoBCifnBUIGBRbjqS+xCpJPWnxyAXZMKnExDuCEoth1ecQ3OAyxYClsBx6S6bM6aXi6LYgxrLLAY36/c+yLhHODg1gw45Bjtat6zty4FOGMQF4zU=
+	t=1717441043; cv=none; b=lQrcE0pKGo2HnWSB9rWcwHapW4ZagNh0kbPvTxp39a09VwHbO9dRkbi71b8YOAVd1XlJ9iQSC+tmjX2nHsdIXQ0erhYEWpRDWc30RGyGtwMUxVnMxD75GQ0nkq/0AC1j5QAn9ie82IxhPci79P7PSSNxFw/hzSmAP3H9vS1P1II=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717441028; c=relaxed/simple;
-	bh=Ct9vywJmGK1CJloPL/bRZTZdgNRV/LmvFmSZ5WDVHwA=;
+	s=arc-20240116; t=1717441043; c=relaxed/simple;
+	bh=yM5qseCWt564Cmf039ulCGk2NlpYr8Eqlkdgkt1H3Tg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=I1QVEA3xV6d4ItLKEVbinMA39FwKZd5Aa2emWls95Sj4YgiHXiWyEj7aRC7RNM8tLkaO9KBVa91J+d0R8VeKxecZHT2GJCNE9ubQTUQT2FlVEZQs/MCBHNPJ7Izp+qiu/mSBp2Poa8oNgAfHOVJ1PKQm9cCpg4TQ1BxZMTQpaBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VHhHqSZj; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=P8gWOQqkYvBRwkwIcdgnHxFR6NTu3TccuzvG3K3q4yU8a4kIL7z7cHioJz8zPvqVUYA/NUHVL3fiGKY8BkJfUSzook5252e53opWuujz32am3WiAU6PMjw71MIrjI5A3BTu2OB+ppb7GooXTDyZzewBPIku/c1E1mU6j6CUpg2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fy2w9xqe; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717441026;
+	s=mimecast20190719; t=1717441041;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=FIDPi7gUErWP223w2FklBtvKymIuybnwzHfEv4BqDmM=;
-	b=VHhHqSZjUmA7mC9ymjWIrTwKPvSzJ8OIIeNchvoWVASNjKwnsV+nnlXImeYK+qgjltu5Bj
-	21wRvsJRYYHgrZmzj+e4NHvPhEJUqW1/U8FRMCogcutXZL0klMqANriAuGsEWCvaKqWm+p
-	VTEg/kDz5VRGHfMow0jW31DmVDDTgTc=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+	bh=6CzlCyA1y81ZtK6UbQuoaGFwW2RItiC/hGJ5T4RGkSU=;
+	b=fy2w9xqewHrGjwUYyo6DL3w6QV7lkpV/eIUlN4ywaPdMIODpnuydKnxglDBTkvcTmu9Qiu
+	4hcuO8hT6naDni7fOI+3sDNCvs++XyRd93GtmpbUgLPoazaLT5MtQGFY9Ox4fKYScDelcy
+	tHZp8rS2M0R6DuSvnTqBs1ybPUqoKsc=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-530-_gplJciDNQavFqhIJSVcGw-1; Mon,
- 03 Jun 2024 14:56:59 -0400
-X-MC-Unique: _gplJciDNQavFqhIJSVcGw-1
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-662-IqIftfUPOlqDpI0MlbJ9sA-1; Mon,
+ 03 Jun 2024 14:57:15 -0400
+X-MC-Unique: IqIftfUPOlqDpI0MlbJ9sA-1
 Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 359E81913F40;
-	Mon,  3 Jun 2024 18:56:58 +0000 (UTC)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BB1DC191DAE1;
+	Mon,  3 Jun 2024 18:57:13 +0000 (UTC)
 Received: from antares.redhat.com (unknown [10.39.193.112])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 3A0AF190DB3B;
-	Mon,  3 Jun 2024 18:56:52 +0000 (UTC)
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C073418B916A;
+	Mon,  3 Jun 2024 18:56:58 +0000 (UTC)
 From: Adrian Moreno <amorenoz@redhat.com>
 To: netdev@vger.kernel.org
 Cc: aconole@redhat.com,
@@ -63,15 +63,17 @@ Cc: aconole@redhat.com,
 	i.maximets@ovn.org,
 	dev@openvswitch.org,
 	Adrian Moreno <amorenoz@redhat.com>,
-	Yotam Gigi <yotam.gi@gmail.com>,
+	Jamal Hadi Salim <jhs@mojatatu.com>,
+	Cong Wang <xiyou.wangcong@gmail.com>,
+	Jiri Pirko <jiri@resnulli.us>,
 	"David S. Miller" <davem@davemloft.net>,
 	Eric Dumazet <edumazet@google.com>,
 	Jakub Kicinski <kuba@kernel.org>,
 	Paolo Abeni <pabeni@redhat.com>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v2 1/9] net: psample: add user cookie
-Date: Mon,  3 Jun 2024 20:56:35 +0200
-Message-ID: <20240603185647.2310748-2-amorenoz@redhat.com>
+Subject: [PATCH net-next v2 2/9] net: sched: act_sample: add action cookie to sample
+Date: Mon,  3 Jun 2024 20:56:36 +0200
+Message-ID: <20240603185647.2310748-3-amorenoz@redhat.com>
 In-Reply-To: <20240603185647.2310748-1-amorenoz@redhat.com>
 References: <20240603185647.2310748-1-amorenoz@redhat.com>
 Precedence: bulk
@@ -83,71 +85,47 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Add a user cookie to the sample metadata so that sample emitters can
-provide more contextual information to samples.
-
-If present, send the user cookie in a new attribute:
-PSAMPLE_ATTR_USER_COOKIE.
+If the action has a user_cookie, pass it along to the sample so it can
+be easily identified.
 
 Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
 ---
- include/net/psample.h        | 2 ++
- include/uapi/linux/psample.h | 1 +
- net/psample/psample.c        | 9 ++++++++-
- 3 files changed, 11 insertions(+), 1 deletion(-)
+ net/sched/act_sample.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/include/net/psample.h b/include/net/psample.h
-index 0509d2d6be67..2ac71260a546 100644
---- a/include/net/psample.h
-+++ b/include/net/psample.h
-@@ -25,6 +25,8 @@ struct psample_metadata {
- 	   out_tc_occ_valid:1,
- 	   latency_valid:1,
- 	   unused:5;
-+	const u8 *user_cookie;
-+	u32 user_cookie_len;
- };
+diff --git a/net/sched/act_sample.c b/net/sched/act_sample.c
+index a69b53d54039..5c3f86ec964a 100644
+--- a/net/sched/act_sample.c
++++ b/net/sched/act_sample.c
+@@ -165,9 +165,11 @@ TC_INDIRECT_SCOPE int tcf_sample_act(struct sk_buff *skb,
+ 				     const struct tc_action *a,
+ 				     struct tcf_result *res)
+ {
++	u8 cookie_data[TC_COOKIE_MAX_SIZE] = {};
+ 	struct tcf_sample *s = to_sample(a);
+ 	struct psample_group *psample_group;
+ 	struct psample_metadata md = {};
++	struct tc_cookie *user_cookie;
+ 	int retval;
  
- struct psample_group *psample_group_get(struct net *net, u32 group_num);
-diff --git a/include/uapi/linux/psample.h b/include/uapi/linux/psample.h
-index e585db5bf2d2..e80637e1d97b 100644
---- a/include/uapi/linux/psample.h
-+++ b/include/uapi/linux/psample.h
-@@ -19,6 +19,7 @@ enum {
- 	PSAMPLE_ATTR_LATENCY,		/* u64, nanoseconds */
- 	PSAMPLE_ATTR_TIMESTAMP,		/* u64, nanoseconds */
- 	PSAMPLE_ATTR_PROTO,		/* u16 */
-+	PSAMPLE_ATTR_USER_COOKIE,	/* binary, user provided data */
+ 	tcf_lastuse_update(&s->tcf_tm);
+@@ -189,6 +191,16 @@ TC_INDIRECT_SCOPE int tcf_sample_act(struct sk_buff *skb,
+ 		if (skb_at_tc_ingress(skb) && tcf_sample_dev_ok_push(skb->dev))
+ 			skb_push(skb, skb->mac_len);
  
- 	__PSAMPLE_ATTR_MAX
- };
-diff --git a/net/psample/psample.c b/net/psample/psample.c
-index a5d9b8446f77..b37488f426bc 100644
---- a/net/psample/psample.c
-+++ b/net/psample/psample.c
-@@ -386,7 +386,9 @@ void psample_sample_packet(struct psample_group *group, struct sk_buff *skb,
- 		   nla_total_size(sizeof(u32)) +	/* group_num */
- 		   nla_total_size(sizeof(u32)) +	/* seq */
- 		   nla_total_size_64bit(sizeof(u64)) +	/* timestamp */
--		   nla_total_size(sizeof(u16));		/* protocol */
-+		   nla_total_size(sizeof(u16)) +	/* protocol */
-+		   (md->user_cookie_len ?
-+		    nla_total_size(md->user_cookie_len) : 0); /* user cookie */
- 
- #ifdef CONFIG_INET
- 	tun_info = skb_tunnel_info(skb);
-@@ -486,6 +488,11 @@ void psample_sample_packet(struct psample_group *group, struct sk_buff *skb,
- 	}
- #endif
- 
-+	if (md->user_cookie && md->user_cookie_len &&
-+	    nla_put(nl_skb, PSAMPLE_ATTR_USER_COOKIE, md->user_cookie_len,
-+		    md->user_cookie))
-+		goto error;
++		rcu_read_lock();
++		user_cookie = rcu_dereference(a->user_cookie);
++		if (user_cookie) {
++			memcpy(cookie_data, user_cookie->data,
++			       user_cookie->len);
++			md.user_cookie = cookie_data;
++			md.user_cookie_len = user_cookie->len;
++		}
++		rcu_read_unlock();
 +
- 	genlmsg_end(nl_skb, data);
- 	genlmsg_multicast_netns(&psample_nl_family, group->net, nl_skb, 0,
- 				PSAMPLE_NL_MCGRP_SAMPLE, GFP_ATOMIC);
+ 		md.trunc_size = s->truncate ? s->trunc_size : skb->len;
+ 		psample_sample_packet(psample_group, skb, s->rate, &md);
+ 
 -- 
 2.45.1
 
