@@ -1,75 +1,64 @@
-Return-Path: <linux-kernel+bounces-199625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 029258D89AB
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 21:15:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BCAE8D88E9
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 20:50:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 339161C242EF
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:15:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EAAF1C22DF2
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 18:50:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6F9813BAC6;
-	Mon,  3 Jun 2024 19:10:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 365D1139CE3;
+	Mon,  3 Jun 2024 18:50:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.de header.i=@yahoo.de header.b="J1JsREm1"
-Received: from sonic313-21.consmr.mail.ir2.yahoo.com (sonic313-21.consmr.mail.ir2.yahoo.com [77.238.179.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ES5fRWWZ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5821F13A876
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 19:10:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=77.238.179.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E961F9E9
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 18:50:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717441825; cv=none; b=fGfqEm4wBfr8rSXulLrRZN/H6rEWVyhvJpi2QntH+RSmuFmwa8Y2BXPk9uKDh6fKBs3KZui4fj2ezEBe5wK93n5aCnbvVC1M1wD69GooeLDuXaEl88w7+/lVwoNCC9VgVwx8Ulfvp8XrccFQZl0hZ+gUIQGIeYkekstmOs0EyMQ=
+	t=1717440609; cv=none; b=RYD2OliQWwaVGBAfnqMzYiE+LktzeF623+Yv3DVhGPXER/2mhvEzURmuVZxLOMXBYPCZGLXds9Dco+TEsVa7FzuBUr6cXMJsH/yVGYxs4l5P3Exp0TmGlbE7h7X0qC/dykWfi7mBrpO+hpLV7N7WypH5cGhrLwWp0ueZjhpir7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717441825; c=relaxed/simple;
-	bh=KPYkAqhmju7XsyzBTxmcRoWn5S92tOqYTNT7Zf42wUw=;
+	s=arc-20240116; t=1717440609; c=relaxed/simple;
+	bh=QA+vaRbtkGhWSrbG2wOmwjPkFyY/1qMbT6pd7+j4xe4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NLIdMqIoqS0+zCCZcynXvAsl+ATLAQ6OisBtG7oT005Ifq7TGyw1CkuA50+9/CA4UhyIiDYPt/mzA3VGD0wlo+jt0wkMCSigRyq3XRNq7iU+510x4ZEVmWUs9xZvo666r6XezhHq/RIRRixTogcJqk5anZcMlPy6rK3/A+kyKEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.de; spf=pass smtp.mailfrom=yahoo.de; dkim=pass (2048-bit key) header.d=yahoo.de header.i=@yahoo.de header.b=J1JsREm1; arc=none smtp.client-ip=77.238.179.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.de; s=s2048; t=1717441816; bh=edWCNicz5SLkhidXgXtdvBzRygTru67Exq0izoAmB5E=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=J1JsREm1GMQyjSBjtQPGnapUvJYCq2JZfCXRXdfBJ1dJRQaxMgDD9ZQreCpnZFN8KjYxupZOFgY8b6ju/GnctuTNW+Ke5xKhIzSlFUvd6kQRWBuF55ZoGAzkbdx1/5S4loUdNlrjauTZRYieE0ugbYbqJpa+gqNGFY0n9zhFSknDGI36IFKNsRwrjUrX5nu7VpDbtoel3DgDhR7xsBZXyYsTI/gl9G78oX9H1tZtGT08sYg+yWjXaMtCW1jEFficU7ke7FEf7IJX+mU85ZqtV43xuy3wgxLP2QqValdES2VShCuYT+02DYQIbrPS4KYiFx5W/d1EBdOHBL0ruhSczw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1717441816; bh=HLLzKbN86DMWAOiWBMzfwvF233zZVKaahPOtp3NrJ2l=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=O3gxnjEk528WBpcvGNkUp+l0J4TaTDaWUZL20MhwoI+/IIDXzUQC5T7kK2kvSEHlj8U/VH6dfyt4fvMbQazRIstgzCHZfVB6pi9K9E43kLpIhgRIbj/NcD2cZwcQUX0nhl6ndiU8MTodkksB7Mnje/cW+dEH8z4kiLerW36evjo6NnDRgH/Eo0L/uEub/LoMXlGOu5sG7MeodlrkSknuUghuKXqanONJiS/eQmjMmjYHrjR7tjlGdGAXNpidUXVpYZnXcnpyljOQkFMDlrvBQKlbZ9lPGPGAmCA7z9oVe81MFu6W+e48qav5c/fG74QYJHbVqH5crZm34WGdEpqvFA==
-X-YMail-OSG: RRRAq.cVM1n6crMbCT.spnjMTieSo.tt0qvtB4AOa0lp934HpKZRmcMBUd.S_Fs
- pqKphfUtzKyDdzA0YyYE_2_O5wds9gfEJHib7hAywVMfMKFSIYpdBpb9khpv0e0n.0UEnoPCdBhv
- O3wF1k7a7OzlcFMzX84f_cAo56wUB92GVfIeXQSWK9KSewfWkTE2Fadgap0U93tlS_ONLoqOldOa
- QNkeTZDtXt2cMCoZJP.be62Hm4fjUlCbxIpvkuo6FPXlbv7PyIZAbklVazvfFTW9JPAku1Nllhdh
- OaBDpvdiqdgZM7NjZeiWKNFOWDah2Xcurs2qLEbGPAK8.jD8wfSIkjPOHj00c8yepEQowSgPi_MW
- vBUlcUBLj5Oa5DCYwNg7KZb.6uyTBh1mDz14pv.gb9sp9OaYbLHMKGcikhLextuU0sfe9rvLP0Si
- _6SFGmQ7UwNqTK2YdjOJR62CQF3W5TnqYpJdKc0eyoHdGKwkFCrxpMiZTJ7hAbBvw2iETrABl8hr
- tvADER.UGLaUsf47f70aclGO7w1cAz7sngtu5tq.THxK2fyX8_PrXb2fKVHogj4JnXCuzokj8bI7
- 7RJ56L82la.HeIumagtCCEf06xQ1HTyY1HmWivB_UWqDcSH9twW4awJim9pDZpbE2F.itilM3wr9
- e6HMUjnEcglfYUrKgQcdnUTw.cuwAztFaBu5c9HrpI3YJNQ3sySn4YvUMR7cbZKkm_JbVz9gz0kG
- FCTOT47xmaSw7y_HWcbgQqg0H94d5gTh0eAd5TeR6RVqHJm6fBvz7Yh3dt0e9bMwxR3ly_ambSPk
- 7vnJHa9Ycg79VMdy2yGRKtBY2b9YQ3KgAMD0zn5VaR7xpD5ct3dN0_tYiv_Xgj6_TmZ41JU88ept
- 3O3_R8MzeohgmAQ6jiBh_4LsuQVRCly5ZQzLLUkiUxNpNWbXhy0uhGde01.IsrRKL498bIUWTotK
- hlazkSrXHiISCeeDIC73LnFLwfWtHU.GHSsz30_Yp0dBoSqIxjKu32Y.jfQ.f2BNNPZmizE86FQf
- E..nYeW__tvIDYDiPv474VlxieQvJ260emljUo2DqB3Ehh13kUbBFnH7S4Zar5N10CUiY2QWl6jx
- fRRtKL6MjBopYdy46jpc43pOHvyuHFZv06J_e2Dbz4gGJ3sQSXywrcPBzcM_BDQeocn7rGUxpJnA
- B763QKOGlvPgTaYQmZiQWMxJB6QCNKG1k71265Unc33l.RYiu50HoFVlycBlID1rALmHvjKeLht5
- mMvvcV6pGOzDgHihvoUHiGR.wESEDOYKEzOzJt39H3i41vcR0zXxDY3dQ9Sgqia_6p8eON4ZA9eG
- Y.xx9baR.EFAS3HxTPaPq.0RFkxvGNHh5ZNv1r4GA6QeadYTdwTZr8SngRzw6P3r8a8MaLjcMNDi
- uVoCDx0BpKfk7CEFCupCJK8X2VjhNDTmpAdBE_zUMNdZ46QawukiKtVfATKS0vkVwADWcylZSdt_
- BxkLBol9tx3RWMuGNo7RNG7l9HPou49C3TbuIPNvrVgpZs4qn6_Hgbabmr.nOuJbqqzY5kbvMM2z
- DzkJ0HaQlz.wWfVfiU781crKod9984S8_eFAdaJKfrbBVpsbT02LInBFo3CaqQRYDwanjuVQrLJd
- f05E3qei4DnL.gKzlDsOdnh6WYH7kcXDAZB2nWd6Ty2nwK32ZKUD_keGuayhfvYFp72NSGNi_oki
- SD3npZa3yqP_1Lu8gKP_JajAa7F5zxjNvRnaaqY8T51weOQCTmUWNjI17FbCw.8js1DDbbkmuZeB
- SBWIfhzCESrYtg0Dl7zsW2hAH.SULdOxKK5Y55LlC7Va8qN1SNlWgOX44We9bxI3POXeJMu4M03j
- WeVYwgz3QKr5AGFHW.CKI19r.40xMIVC.Tv6fVWsdbThv6.kBB585UxEg4adCdTqO2WCAaeGRwPF
- tVcCtT6J.iZLb2OPLkA9tzg4e1XBa1h2jjInP_fTMUtC3ib5hhjnA8P2Chk9GQztEjJKAab6JlIv
- sixBpNiOvdzL3nxgrJ8as0Wzhc5WGHSRtzeGuF2OqizEUjqtbnL989FBQ8ealhkUvLgmrKoEv8zQ
- qC7ktR51sFka5I7Bmqohewtn51_zL5u4q57FahRZGq6yj54y6Mqu0yVWpWa_0v4pjIDAqPu9c5LC
- HfQ6wPD2pV7geth9K5w5.pfbloEKJzoPdxBqjxruAwMGAlVeVBUdIABkQDeyDMsQL18zmdRk7gLA
- QMb7xc0jYZBMBF2L3sAgZALgqeBuxzBr47wEvxPa_Z1_SHiO9LXUzluhM3AHm
-X-Sonic-MF: <fhortner@yahoo.de>
-X-Sonic-ID: 83e29caa-1270-46e0-bf41-7b4f52bbe70c
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.ir2.yahoo.com with HTTP; Mon, 3 Jun 2024 19:10:16 +0000
-Received: by hermes--production-ir2-7b99fc9bb6-z99rq (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID abd44bd1c36a5049a30287d79d773928;
-          Mon, 03 Jun 2024 18:49:57 +0000 (UTC)
-Message-ID: <829c478d-f547-4e12-9976-ed465dd8d4ed@yahoo.de>
-Date: Mon, 3 Jun 2024 20:49:55 +0200
+	 In-Reply-To:Content-Type; b=EdOLeqayK9p9ipJLcPHSAjNoW1cnouWOm3DVjFWWpBFB3fjUjevuzvqByGsI9+nK8kdpEg/cNzt5klt3cFDTopRnS4R2WM8MeF5asjFqifYb+nEnSJyyiAXiqLCrDRMZdTx7tFd6cBnDR9LqhHuT3wFnE0wNf5d+5s8htv8EKEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ES5fRWWZ; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717440607; x=1748976607;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=QA+vaRbtkGhWSrbG2wOmwjPkFyY/1qMbT6pd7+j4xe4=;
+  b=ES5fRWWZVEpi8a30XIua0zhjBkz6CooArLMc4vQYD/hX7bs3+uss0nL6
+   3ACJRpf4+FKwaLqn4QJb6DcHnxlmnix0N1M6ghlQzyrbGs3NTvswhmKS9
+   0OE6BgZ1n/THJkAOqkjRYpdcVg/By3CKp3/IIhCIssmHZtP8d5hnU/C+l
+   5GuVGqSBJIKup0467NlXE5tkPb2lSgkzyVvNNU2rPgMq4ocZ+yCaaMfn6
+   cRq0KWLBn7CHPRpgNm1SetYdRhhEQKPplZPBZpzuI13sEiQbv0bPDEO23
+   8gNmsnFteFdzBkF3lkpq988LGw84deBO9cpJgD2CWGes6pQlyxRTUlSHL
+   w==;
+X-CSE-ConnectionGUID: 1TMsLRRJQ3ikRwntNIv/6g==
+X-CSE-MsgGUID: 0omL4f7LRbKhoxGsX/oQrQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11092"; a="36471470"
+X-IronPort-AV: E=Sophos;i="6.08,212,1712646000"; 
+   d="scan'208";a="36471470"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2024 11:50:06 -0700
+X-CSE-ConnectionGUID: ErXB3GqMR9Sm9HFD+ljFMA==
+X-CSE-MsgGUID: 73TKcnPTTm6f6CffGCOeTQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,212,1712646000"; 
+   d="scan'208";a="37031198"
+Received: from ibganev-desk.amr.corp.intel.com (HELO [10.125.108.143]) ([10.125.108.143])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2024 11:50:07 -0700
+Message-ID: <9e9669a6-de37-4140-bdc5-7d660b8427c3@intel.com>
+Date: Mon, 3 Jun 2024 11:50:06 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,75 +66,101 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: Regression, thermal: core: battery reading wrong after wake from
- S3 [Was: Bug Report according to thermal_core.c]
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Linux regressions mailing list <regressions@lists.linux.dev>,
- "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, linux-pm@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>
-References: <1051df4c-067f-455e-8c7f-9dc47dc8ed00@yahoo.de>
- <7f4a777b-88f6-4429-b168-d1337d291386@yahoo.de>
- <435867b5-029b-419f-bb7f-2d4902c62556@leemhuis.info>
- <a97f9f4d-17f1-44cf-a0f4-634fd38aba2a@yahoo.de>
- <CAJZ5v0jwvq6W0u7Zx4GzQxJOnrF4KvN1RHtqqDcaMvN6yp0hDg@mail.gmail.com>
-From: "fhortner@yahoo.de" <fhortner@yahoo.de>
+Subject: Re: [Patch v3] x86/head/64: remove redundant check on
+ level2_kernel_pgt's _PAGE_PRESENT bit
+To: Wei Yang <richard.weiyang@gmail.com>, tglx@linutronix.de,
+ mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
+ "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+ Ingo Molnar <mingo@kernel.org>, Steve Wahl <steve.wahl@hpe.com>
+References: <20240523123539.14260-1-richard.weiyang@gmail.com>
 Content-Language: en-US
-In-Reply-To: <CAJZ5v0jwvq6W0u7Zx4GzQxJOnrF4KvN1RHtqqDcaMvN6yp0hDg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Mailer: WebService/1.1.22407 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+From: Dave Hansen <dave.hansen@intel.com>
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
+ oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
+ 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
+ ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
+ VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
+ iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
+ c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
+ pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
+ ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
+ QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzUVEYXZpZCBDaHJp
+ c3RvcGhlciBIYW5zZW4gKEludGVsIFdvcmsgQWRkcmVzcykgPGRhdmUuaGFuc2VuQGludGVs
+ LmNvbT7CwXgEEwECACIFAlQ+9J0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEGg1
+ lTBwyZKwLZUP/0dnbhDc229u2u6WtK1s1cSd9WsflGXGagkR6liJ4um3XCfYWDHvIdkHYC1t
+ MNcVHFBwmQkawxsYvgO8kXT3SaFZe4ISfB4K4CL2qp4JO+nJdlFUbZI7cz/Td9z8nHjMcWYF
+ IQuTsWOLs/LBMTs+ANumibtw6UkiGVD3dfHJAOPNApjVr+M0P/lVmTeP8w0uVcd2syiaU5jB
+ aht9CYATn+ytFGWZnBEEQFnqcibIaOrmoBLu2b3fKJEd8Jp7NHDSIdrvrMjYynmc6sZKUqH2
+ I1qOevaa8jUg7wlLJAWGfIqnu85kkqrVOkbNbk4TPub7VOqA6qG5GCNEIv6ZY7HLYd/vAkVY
+ E8Plzq/NwLAuOWxvGrOl7OPuwVeR4hBDfcrNb990MFPpjGgACzAZyjdmYoMu8j3/MAEW4P0z
+ F5+EYJAOZ+z212y1pchNNauehORXgjrNKsZwxwKpPY9qb84E3O9KYpwfATsqOoQ6tTgr+1BR
+ CCwP712H+E9U5HJ0iibN/CDZFVPL1bRerHziuwuQuvE0qWg0+0SChFe9oq0KAwEkVs6ZDMB2
+ P16MieEEQ6StQRlvy2YBv80L1TMl3T90Bo1UUn6ARXEpcbFE0/aORH/jEXcRteb+vuik5UGY
+ 5TsyLYdPur3TXm7XDBdmmyQVJjnJKYK9AQxj95KlXLVO38lczsFNBFRjzmoBEACyAxbvUEhd
+ GDGNg0JhDdezyTdN8C9BFsdxyTLnSH31NRiyp1QtuxvcqGZjb2trDVuCbIzRrgMZLVgo3upr
+ MIOx1CXEgmn23Zhh0EpdVHM8IKx9Z7V0r+rrpRWFE8/wQZngKYVi49PGoZj50ZEifEJ5qn/H
+ Nsp2+Y+bTUjDdgWMATg9DiFMyv8fvoqgNsNyrrZTnSgoLzdxr89FGHZCoSoAK8gfgFHuO54B
+ lI8QOfPDG9WDPJ66HCodjTlBEr/Cwq6GruxS5i2Y33YVqxvFvDa1tUtl+iJ2SWKS9kCai2DR
+ 3BwVONJEYSDQaven/EHMlY1q8Vln3lGPsS11vSUK3QcNJjmrgYxH5KsVsf6PNRj9mp8Z1kIG
+ qjRx08+nnyStWC0gZH6NrYyS9rpqH3j+hA2WcI7De51L4Rv9pFwzp161mvtc6eC/GxaiUGuH
+ BNAVP0PY0fqvIC68p3rLIAW3f97uv4ce2RSQ7LbsPsimOeCo/5vgS6YQsj83E+AipPr09Caj
+ 0hloj+hFoqiticNpmsxdWKoOsV0PftcQvBCCYuhKbZV9s5hjt9qn8CE86A5g5KqDf83Fxqm/
+ vXKgHNFHE5zgXGZnrmaf6resQzbvJHO0Fb0CcIohzrpPaL3YepcLDoCCgElGMGQjdCcSQ+Ci
+ FCRl0Bvyj1YZUql+ZkptgGjikQARAQABwsFfBBgBAgAJBQJUY85qAhsMAAoJEGg1lTBwyZKw
+ l4IQAIKHs/9po4spZDFyfDjunimEhVHqlUt7ggR1Hsl/tkvTSze8pI1P6dGp2XW6AnH1iayn
+ yRcoyT0ZJ+Zmm4xAH1zqKjWplzqdb/dO28qk0bPso8+1oPO8oDhLm1+tY+cOvufXkBTm+whm
+ +AyNTjaCRt6aSMnA/QHVGSJ8grrTJCoACVNhnXg/R0g90g8iV8Q+IBZyDkG0tBThaDdw1B2l
+ asInUTeb9EiVfL/Zjdg5VWiF9LL7iS+9hTeVdR09vThQ/DhVbCNxVk+DtyBHsjOKifrVsYep
+ WpRGBIAu3bK8eXtyvrw1igWTNs2wazJ71+0z2jMzbclKAyRHKU9JdN6Hkkgr2nPb561yjcB8
+ sIq1pFXKyO+nKy6SZYxOvHxCcjk2fkw6UmPU6/j/nQlj2lfOAgNVKuDLothIxzi8pndB8Jju
+ KktE5HJqUUMXePkAYIxEQ0mMc8Po7tuXdejgPMwgP7x65xtfEqI0RuzbUioFltsp1jUaRwQZ
+ MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
+ hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
+ vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
+In-Reply-To: <20240523123539.14260-1-richard.weiyang@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-I Totally agree, this was also my first thought, what has the battery 
-state to do with thermals.
-But at least, so far, we have in total three repros confirmed in the bug 
-report. All of the same machine.
-Thinkpad X1 Xtreme Gen2 = Thinkpad P1 Gen2. The only difference is the 
-graphics Nvidia Geforce vs Nvidia Quadro
+On 5/23/24 05:35, Wei Yang wrote:
+> --- a/arch/x86/kernel/head64.c
+> +++ b/arch/x86/kernel/head64.c
+> @@ -260,8 +260,7 @@ unsigned long __head __startup_64(unsigned long physaddr,
+>  
+>  	/* fixup pages that are part of the kernel image */
+>  	for (; i <= pmd_index((unsigned long)_end); i++)
+> -		if (pmd[i] & _PAGE_PRESENT)
+> -			pmd[i] += load_delta;
+> +		pmd[i] += load_delta;
 
-these are the types of thermal zones:
+So, I think this is correct.  But, man, I wish folks would go through
+the git history and make it clear that they understand _how_ the code
+got the way it is.
 
-cat /sys/class/thermal/thermal_zone*/type
-acpitz
-SEN6
-SEN7
-SEN8
-SEN9
-SENA
-SENB
-SENC
-SEND
-x86_pkg_temp
-iwlwifi_1
-INT3400 Thermal
-SEN1
-SEN2
-pch_cannonlake
-SEN3
-SEN0
-B0D4
-SEN4
-SEN5
+I suspect that the original _PAGE_PRESENT check wasn't even necessary if
+cleanup_highmap() really did fix things up.  But this commit:
 
+	2aa85f246c18 ("x86/boot/64: Make level2_kernel_pgt pages invalid
+		       outside kernel area")
 
-Am 03.06.24 um 20:38 schrieb Rafael J. Wysocki:
-> On Thu, May 30, 2024 at 1:10 PM fhortner@yahoo.de <fhortner@yahoo.de> wrote:
->> Thanks Thorsten for the side note.
->>
->> I have compiled kernel 6.8.11 with reverted commit
->> 5a5efdaffda5d23717d9117cf36cda9eafcf2fae.
->>
->> Battery Status works fine now with reverted commit after S3 Sleep and
->> Wake cycles.
-> Well, the connection between the battery status and the resume of
-> thermal zones is somewhat unclear to me at the moment.
->
-> Most likely, the commit in question changes the timing of system
-> resume which affects the battery behavior and it seems to be related
-> to the EC somehow.
->
-> Let's first see what thermal zones there are on your system, so please
-> send the output of
->
-> $ cat /sys/class/thermal/thermal_zone*/type
+tweaked things to actively clear out PMDs that weren't populated in
+Kirill's original loop.  It didn't touch the _PAGE_PRESENT check.  But
+it certainly did imply that the PMD doesn't have any holes in it and
+there's nothing int he middle that needs _PAGE_PRESENT cleared.
+
+> level2_kernel_pgt compiled with _PAGE_PRESENT set. The check is
+> redundant
+
+This isn't super reassuring.  It also depends on nothing having munged
+the page tables up to this point.  The code is also a bit cruel in that
+it manipulates two different sets of PMDs with the same 'pmd' variable.
+
+Also, is this comment still accurate after '2aa85f246c18'?
+
+>          * Fixup the kernel text+data virtual addresses. Note that
+>          * we might write invalid pmds, when the kernel is relocated
+>          * cleanup_highmap() fixes this up along with the mappings
+>          * beyond _end.
 
 
