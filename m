@@ -1,126 +1,108 @@
-Return-Path: <linux-kernel+bounces-199124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74BA78D8296
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 14:43:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4750E8D8293
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 14:43:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A63F61C23913
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 12:43:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E83001F2639A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 12:43:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 886BB12C814;
-	Mon,  3 Jun 2024 12:43:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1126D12C47A;
+	Mon,  3 Jun 2024 12:43:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lCvfpsXI"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="dRUKEDrH"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48FE377105;
-	Mon,  3 Jun 2024 12:43:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F01C177105
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 12:42:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717418585; cv=none; b=Xi7u/rjTpyznmSUhhKDWAUGPeUP3RRwFDZRahxNM0Us1l9QCsWviS1tCW2Ldu/WnKnUGwmCgVFdUNRWD+K+4sp+21a/Nzc6aW3El1JzW18JBONc7GTLOnd1vrkkUDkZ9Zm77CFC0MQ4Qxeuh09ol4hNP11QmBFcOJPAQKWTjK/c=
+	t=1717418580; cv=none; b=uSgMAmYPcTRqOgx7ftPpmQ4SkK9+YRD2z9Y/Y02JaVAr/0GJSS6wLueb9qx88F04Z4guR9dBXO3mSbOKLmOoGVbOBDKXK0FaK6Rt0bVBrcCdIew79NXJ7ObFOQVOEEp02SXHtQVXbgAbKHqmWx9PJmbQljq1xgd+awjgLRIjFg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717418585; c=relaxed/simple;
-	bh=H4fmjwOwpParEuoJtbAW3YxLLR84hx0EJGLqThf2o7M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QBFGk2XfChOxkNY3zZX1fX1EVoer3VxunBUf9FIr8CQX0PXf6VSoEnvDoHPn0GgNZcr4CFUupBlOWnghcG5bCnLqN3sifksyGES8OVygyvJe5AkNGDlO335exBZkGUdVY5eiwFblqI8MYrtiPRdjop+Vvr23BheKlY+vtVmDUGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lCvfpsXI; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-57a31d63b6bso3669828a12.0;
-        Mon, 03 Jun 2024 05:43:03 -0700 (PDT)
+	s=arc-20240116; t=1717418580; c=relaxed/simple;
+	bh=hyw7FeH5zXqqRiWwpndpSm83YNiACzGxeYh4iQDnAcg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l0vz7QsHDUkZawHahG/xeTGFhhTWwNf8WCcLTKM8LEJ4DafPVPlB4JtGe39DjLdV6aKJMAYcT+xsNQ98axeGCgiOWUY3prQXkZ+N5dnKxWLmaM/g+44N49J5EteOZy30XTK8eCsi2F9wYLWVeZJvfjbRfO1v5oyiXlwnQaGZGJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=dRUKEDrH; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2e95a74d51fso64299491fa.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 05:42:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717418582; x=1718023382; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UqoQJRN01PNk+bAVmoa7Kjw5CtJf1nAglZVWYHoV7wI=;
-        b=lCvfpsXIwAo9toNGzUb0N6DsQmbNsPu3Wpzr16CwuRRAMlp71LzBBCINSlVvB625No
-         sgvRKJoVvHuYk/QNsxt1xgGrelUR4fg2pWxGEEPcsxuY0oMv8HbTrgVxreLaUPW28rW6
-         LFqNKxUteTA6HYyoR3utRgWBxcS92Kk7vYsTE/C+TK78fCxBRyPTnCNAoO2JoEWPS1/u
-         b6Z21goylK5qS7xs3l99Ovrlx1+yCVSxjV/TiuYuM5GvVG/vUJXEqZbKpsyMpsCPWl9L
-         P5D51lJdz5riTCpl5vr8f7L9Lb7mpV6WlGYA6RpeVXT61yJbfpBlVp8dfYw12QZujtDj
-         Jtlw==
+        d=suse.com; s=google; t=1717418575; x=1718023375; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hyw7FeH5zXqqRiWwpndpSm83YNiACzGxeYh4iQDnAcg=;
+        b=dRUKEDrH18KKqvNnix+v6zWrZ0N/TbSPxz48S3e2naiFWT+YfyYsY6E9yxuiuAT2Ni
+         CL1mPOAPFN5oCIIxg2ocOijU/IHCZMSjrnv232oqfBtmkrpbwojpXX0SmOEeiYe3vxqn
+         6ZuZHrJx0+21ZPTFFaU7GhWApTGVGnx+vxKZQydRWEcRYtmjKjtSpLQfvMPJLBX4kyOx
+         MnRTDYZNHsmx7NFq68TjIYlk+JSykWO0f0DXeyn2Za2cc0YHzaxoScOqhzR2g7OIyj6o
+         CCQuptNQ+BRBvnLmYxT0+AfK79Q/R8cHzkEs2eTnNTJ0tV8lalPPlWl4vQ9A6rqILHz+
+         l68A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717418582; x=1718023382;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UqoQJRN01PNk+bAVmoa7Kjw5CtJf1nAglZVWYHoV7wI=;
-        b=avT85eDTlpAjlEKVZKlD3sqw032P8IquGhQc0wR1o23uI+onFwfTPtGegqpWx8px6Z
-         4WPFaJACHjtPZMp6pnJMAT3Z2kGB126/McXj5lYuBju6uXKQR3wbrSMWuCJUYty4yYnI
-         7yxQplebmDzLVTtKobZA/xpWVu9zsxiNPnLPCDoKA9y6eUGkcgQQKjRigkEruJ1POG99
-         oSKL/exeMGe4AQc4Il86ouRd3hSCfJ9FmuVKFupjdNRaooFd1KfGunuTOA74fUij6hW5
-         XR+I/tV6CKjKD7ldDUN+RmpWOPYrswKhoSP6+z7tV8BtHoPltiEurLcgz+zOEklu+rBB
-         L3nQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVQcu8CZLPKfZCAosZzCsiOpdFmK5IukY3Irarc/914BD43eyUfuZvSs+FMp5pK1MF23ByqJBvMylckX7IuSg7S7UVMDpV11qrhkz4IWukM0s/a+1A3/Tx+rtufAjbdl/JtYEDqQBOLNdgtgvlZ5o0UeOvTzn36Ocoi2j2ZH9SqIQmRYltyhwwl0C7Lxg==
-X-Gm-Message-State: AOJu0YybQzXzy/H9OTEGK88tPus1inCY0vyimnLvr1RYaXxToN5JLWK6
-	KHRJdg0o8oLS0SkH+CeBEPIQ8XrThH6qR8QNU7z0k9tYjQTxzHVI8skFGF4Elb0=
-X-Google-Smtp-Source: AGHT+IEVUqFQKNVU07/Yn+CcKliW8whW8qzl9ojbUF81UIpNNC/tIg+ZIK/esE7bOiPUPXXCUi5xLw==
-X-Received: by 2002:a50:8ac4:0:b0:57a:4af6:319e with SMTP id 4fb4d7f45d1cf-57a4af632b3mr3729283a12.1.1717418582387;
-        Mon, 03 Jun 2024 05:43:02 -0700 (PDT)
-Received: from xps-15.. ([91.90.123.30])
-        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-57a3e776c47sm4658364a12.20.2024.06.03.05.43.01
+        d=1e100.net; s=20230601; t=1717418575; x=1718023375;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hyw7FeH5zXqqRiWwpndpSm83YNiACzGxeYh4iQDnAcg=;
+        b=HbHgMV2wN6GuhE3lGkSQii66w2MpZcpWfQ7pZqzmktnMZyTeHFWqVjmZaGypeNdDTF
+         o/DCYOcqzK+ZbszxqITOT2jIuYStnHuq45Zoi+UtIKKFGw/uqF3tgPZyzF8cm3FTBS/s
+         1bBJsMhG7C2UusnJn1ZeIHGahMxCLM4UTjV3KBtIIeIWC5L0E+p267KnfWDcKP1k4XJQ
+         cavfpaE/JIfGhPp99dtz7gveqZs+lq/otUmemoqvy4nn7LhQ/zrwqv1LabSWaQGTiVgw
+         EQq9FMigYOeS/SosP+qNe9lnI/DaFggq0lirol8/SeMh9ACgZPnmdL+sSvTHWHoawgAU
+         RgVg==
+X-Forwarded-Encrypted: i=1; AJvYcCXkx833g5qsK6BfECDkAoeQI2F+MgP/geaMAWvNSDSA75uz9WipVNxBU3kPXahvSEAGBL/sW61g+p8GscY9+QnpEvHuxAKJNyNo3ijM
+X-Gm-Message-State: AOJu0Ywqpv8p7mUB/5LarnbvPphkWigY/lkU2uHXY7Ty470j4YtEVtaf
+	wNu+9Wf7bed9dmrvkunYSh6tNYrQgJLvMq0+dlEnmx0o/O78l3l1tHRmQ+C92or181f4nFBLi6J
+	u
+X-Google-Smtp-Source: AGHT+IH1AoUhmWaH2/VV/vmujB3NiMF/fudntLa6lvqqGwFso05mADVd2hsufbrTRxe5dUYxXGRgCg==
+X-Received: by 2002:a2e:2a43:0:b0:2de:8697:e08b with SMTP id 38308e7fff4ca-2ea9515426amr64684751fa.26.1717418575172;
+        Mon, 03 Jun 2024 05:42:55 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c1a77baebcsm8365156a91.53.2024.06.03.05.42.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Jun 2024 05:43:02 -0700 (PDT)
-From: Amer Al Shanawany <amer.shanawany@gmail.com>
-To: Shuah Khan <shuah@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Alexey Dobriyan <adobriyan@gmail.com>,
-	Swarup Laxman Kotiaklapudi <swarupkotikalapudi@gmail.com>,
-	Hugh Dickins <hughd@google.com>,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Cc: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	kernel test robot <lkp@intel.com>,
-	Amer Al Shanawany <amer.shanawany@gmail.com>
-Subject: [PATCH] selftests: proc: remove unreached code and fix build warning
-Date: Mon,  3 Jun 2024 14:42:20 +0200
-Message-ID: <20240603124220.33778-1-amer.shanawany@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <202404010211.ygidvMwa-lkp@intel.com>
-References: <202404010211.ygidvMwa-lkp@intel.com>
+        Mon, 03 Jun 2024 05:42:54 -0700 (PDT)
+Date: Mon, 3 Jun 2024 14:42:44 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: "gxxa03070307@gmail.com" <gxxa03070307@gmail.com>
+Cc: "john.ogness" <john.ogness@linutronix.de>,
+	rostedt <rostedt@goodmis.org>,
+	senozhatsky <senozhatsky@chromium.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	fengqi <fengqi@xiaomi.com>,
+	=?utf-8?B?6auY57+U?= <gaoxiang19870307@163.com>
+Subject: Re: [PATCH] printk: Increase PRINTK_PREFIX_MAX and the buf size in
+ print_caller.
+Message-ID: <Zl26LDOV_v946kOv@pathway.suse.cz>
+References: <20240527091929.316471-1-gxxa03070307@gmail.com>
+ <ZlSewPTyQ-jMpW5n@pathway.suse.cz>
+ <87y17tktze.fsf@jogness.linutronix.de>
+ <1717404421510.qmo40jy5kubcunlrdknzajsf@android.mail.163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1717404421510.qmo40jy5kubcunlrdknzajsf@android.mail.163.com>
 
-fix the following warning:
-proc-empty-vm.c:385:17: warning: ignoring return value of ‘write’
- declared with attribute ‘warn_unused_result’ [-Wunused-result]
-  385 |                 write(1, buf, rv);
-      |                 ^~~~~~~~~~~~~~~~~
+On Mon 2024-06-03 16:47:01, gxxa03070307@gmail.com wrote:
+> I need to populate the temporary variable "caller" in "print_caller" func with the additional information. And it's no use defining a buf in out-of-tree patch.
+> In out-of-tree patch, I can only add hooks (special cases), I can't change anything else, because it needs to be consistent with mainline linux.
+> caller buf in mainline linux is it better to make the buf bigger and leave some space?
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/r/202404010211.ygidvMwa-lkp@intel.com/
-Signed-off-by: Amer Al Shanawany <amer.shanawany@gmail.com>
----
- tools/testing/selftests/proc/proc-empty-vm.c | 3 ---
- 1 file changed, 3 deletions(-)
+I do not understand. Why the buffer size has to be consistent with
+mainline linux?
 
-diff --git a/tools/testing/selftests/proc/proc-empty-vm.c b/tools/testing/selftests/proc/proc-empty-vm.c
-index 56198d4ca2bf..b3f898aab4ab 100644
---- a/tools/testing/selftests/proc/proc-empty-vm.c
-+++ b/tools/testing/selftests/proc/proc-empty-vm.c
-@@ -381,9 +381,6 @@ static int test_proc_pid_statm(pid_t pid)
- 
- 	assert(rv >= 0);
- 	assert(rv <= sizeof(buf));
--	if (0) {
--		write(1, buf, rv);
--	}
- 
- 	const char *p = buf;
- 	const char *const end = p + rv;
--- 
-2.43.0
+Really, it does not make much sense to upstream just this part
+of your out-of-tree patch?
 
+Best Regards,
+Petr
 
