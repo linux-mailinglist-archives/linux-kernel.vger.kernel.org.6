@@ -1,65 +1,54 @@
-Return-Path: <linux-kernel+bounces-199285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC7E08D84EA
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:27:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A50C8D84EB
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:27:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE3F81C20E97
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 14:27:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56ABF28952F
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 14:27:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65A9A12FF84;
-	Mon,  3 Jun 2024 14:26:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E629F1304AF;
+	Mon,  3 Jun 2024 14:26:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uF7mpjO1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ufmipIw6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A13812EBC2;
-	Mon,  3 Jun 2024 14:26:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A238130487
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 14:26:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717424803; cv=none; b=qTIg/uKQBmmPMxl9pVw4BxZVx9hKzSZ9yxZray9uSz64CmvIFURd84n8NSxWrixFFWg5UWsK6V4DszQnjhAcALfv5G4R5yAAh5z89qpwLj+YJaexKIspimPDzSSTt8y4XreYE+5eWpx+qQP0GaBduW1NPeAr0St1jOS59d9U6Xo=
+	t=1717424805; cv=none; b=mIv97ZgBjDbt0WoxA81+aqPM2O71MgGtfv8wbUL4KyaxXGKy+6U1h4hDrYU3+jhyqSPHM+7QHjJNBHFPKPWR5ajoARJLu7tXjm42HlvyDVx+VPKZ8xBYSlGZEESqmZEBPWxNK3yqA8vXlXobO2/aB6+AjNwYHOLDv49esFbMlBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717424803; c=relaxed/simple;
-	bh=mzZQjszM9qLA+McsUnJwdEB659wLnZJXh3P3zEeI1wk=;
+	s=arc-20240116; t=1717424805; c=relaxed/simple;
+	bh=XbqgDvXBz98fW3K9TL4sNj0U9UCGx6HAtAQovA5h28s=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=i87XDpV8IxvZdO08b4nCD7sGHX89bjqChGe/vCcJszzOdbXzN7YTywfdHOJNUS6CmZBqaPvJ+u0UEviDEBrF3acILFkUTpJrdFPPCZLpgMo0Iu1YPu2qk5V6pc1616svGB28AY0+qzJ8ncTYJDnkhx+tP8htld1Zgxlh5gmUhfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uF7mpjO1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38219C2BD10;
-	Mon,  3 Jun 2024 14:26:37 +0000 (UTC)
+	 MIME-Version:Content-Type; b=fZP70cxqO06BAHbHpZEHo2zdjfcItqClimztMLwoqPke2oFnpzulUm0bTNjJj+MvfaSJ5NUKgk/Cnz73lITbTqRgmBwjfYmtR0JnJT5rNYbCasvphrm2tyJKEK5m2vgC8gVxdKPpd1GUYrwAjuqSV3HUcrGEUnDVM/58p4Xomjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ufmipIw6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3332C4AF0A;
+	Mon,  3 Jun 2024 14:26:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717424803;
-	bh=mzZQjszM9qLA+McsUnJwdEB659wLnZJXh3P3zEeI1wk=;
+	s=k20201202; t=1717424805;
+	bh=XbqgDvXBz98fW3K9TL4sNj0U9UCGx6HAtAQovA5h28s=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=uF7mpjO1nlKl+IjvGnzdDBsKCoRmz5xQjnUM5K9gAbLsnd16EeV4AKyNq1wAbZtHu
-	 0XagtJ54UHRwUOuNbqv/dINNcJQ47Wq+wEKMeIpCl6PmGnef4s6Zk1k1Osl5GurXRg
-	 qUXWXWI5CqA1+eV34JP677LJXsBtU7EKNQUTUVs/5ZLxRjDf+EoiCyl5JKc2rWTly7
-	 rFqZIF+A69SfRAOG9x8BEdsYDal5b6AQFwNZF2lubP4yNewwxaIjegtayNpK5A8QJA
-	 wGxKohOjkQBxGa1meoxC9t8N8BlHtHLiJrL42ePFaYDdMhR0xqliDUjaEF99IQpErd
-	 IC6UXRUN/IQ3w==
+	b=ufmipIw6HeUA1zK8bogPfLmZ8Fh6eSCqboINCFI5xx/hRTF1XqchAidWd73FPqCeT
+	 7XeYctIoXT21+dZ4f46/3686ykWa9Nz/oOTmZ/PMf59xMFTmOBpIg1+o8X1XYElmIO
+	 0PjbT8YlRm9uLwGk4i6i91VMFxeWK7KHrrSdc3r1RQXFqGWGWq0mpZBlCyGCQAjqPz
+	 74S3QYgDLvWkb93LlC0qNz9+EEwRkljUOQnEyuWCdeBUckMxTXy1rNiIZBaZ+Mq4Vj
+	 JjlQBc2RNn2nZRCmPzhmc9wKhv2aBruDB0J0aHUYbw/OWT927cCGRMt38Wrd4PIqCO
+	 DVldp0g8Pt+1g==
 From: Vinod Koul <vkoul@kernel.org>
-To: Kishon Vijay Abraham I <kishon@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Wesley Cheng <quic_wcheng@quicinc.com>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, 
- Bjorn Andersson <andersson@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-clk@vger.kernel.org, linux-usb@vger.kernel.org, 
- Bjorn Andersson <quic_bjorande@quicinc.com>
-In-Reply-To: <20240525-sc8180x-usb-mp-v1-0-60a904392438@quicinc.com>
-References: <20240525-sc8180x-usb-mp-v1-0-60a904392438@quicinc.com>
-Subject: Re: (subset) [PATCH 00/10] arm64: dts: qcom: sc8180x: Enable the
- USB multiport controller
-Message-Id: <171742479784.106728.422190017656643757.b4-ty@kernel.org>
-Date: Mon, 03 Jun 2024 19:56:37 +0530
+To: jack.zhu@starfivetech.com, changhuang.liang@starfivetech.com, 
+ linux@treblig.org
+Cc: linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240527205937.165325-1-linux@treblig.org>
+References: <20240527205937.165325-1-linux@treblig.org>
+Subject: Re: [PATCH] phy: starfive: remove unused struct 'regval'
+Message-Id: <171742480328.106728.1799790392907893940.b4-ty@kernel.org>
+Date: Mon, 03 Jun 2024 19:56:43 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,19 +60,18 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.13.0
 
 
-On Sat, 25 May 2024 11:03:53 -0700, Bjorn Andersson wrote:
-> The USB multiport controller found in SC8180X is used to driver the
-> camera in the Lenovo Flex 5G, and a couple of additional USB ports on
-> the Primus AUX board.
+On Mon, 27 May 2024 21:59:37 +0100, linux@treblig.org wrote:
+> 'regval' is unused since the original
+> commit f8aa660841bc ("phy: starfive: Add mipi dphy rx support").
+> 
+> Remove it.
 > 
 > 
 
 Applied, thanks!
 
-[01/10] dt-bindings: phy: qcom,sc8280xp-qmp-usb3-uni: Add sc8180x USB3 compatible
-        commit: 4dc7e51a9e40f07dc0da7eea05577633984ea9f2
-[02/10] phy: qcom-qmp-usb: Add sc8180x USB UNIPHY
-        commit: b279a835192834565db5025205394e3ef943fbd2
+[1/1] phy: starfive: remove unused struct 'regval'
+      commit: 9d3799c3e807ab5777cda6ae48ebc127b83bc8b0
 
 Best regards,
 -- 
