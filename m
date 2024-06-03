@@ -1,94 +1,166 @@
-Return-Path: <linux-kernel+bounces-198762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EE7B8D7D18
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 10:15:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F01828D7D1C
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 10:15:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04335B20DC8
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 08:14:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD2202812C0
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 08:15:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A13657333;
-	Mon,  3 Jun 2024 08:14:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7498E5674B;
+	Mon,  3 Jun 2024 08:15:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PW0vZG3l";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hAptKNFn"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="T3TJ2Ds5"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D95EC487BF
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 08:14:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEC6B3209;
+	Mon,  3 Jun 2024 08:15:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717402491; cv=none; b=sQdQAOF0r6QSFPQPGXK/fzR/Ur4BsmgneoZj4+VfsRmHvzrM1acnlswTQjhpjpnaSJPHH3KMNskXu339ZbYkTU6d/fIRiy+zoRJ7cb0tvKAV4muwy0glyhGWk9IccETG8NTSUw4RVtj4X7Sz3Gj3HoT2y/1Mc0EaMu1ZydJaCIg=
+	t=1717402543; cv=none; b=QaIkv9s/XQ8gxWjFU3qAmiX7ikugrzwMQNSrfidGNgkg0wrGpWgP+Yqq0fBwlBXIJwKYHN231PTowfTRUCn5mSpd/zwt1bPwTm4kgH10HRIMLgM0L3yAuEekLw9r0+xC/aAOMMB1BAubqKMoz8HiJRynPh5P4QY04BEKBDsS6Y8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717402491; c=relaxed/simple;
-	bh=lYCWB40QEFcFcjHUBJCzIlFs9DPHH5OHRa5rhdNjrck=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ipEzccLgp6QXrf9aWTl02qYazBh0WYdeH94bV2+r15LeGrqjOOTpgYUiEI+yKTM5+x0URAUbUV+bzhBPLWkRdfCE6C4qSQjd5w4rxEdkUuU9Gg8sAnS3rOzi6NI3H8lvIgo6KkGlUpZr2pp9vS6cr3ZV9bI0TL+4X3b9yjapcwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PW0vZG3l; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hAptKNFn; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1717402481;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=w1jsjob6JOgoEKksTIk7OReiRSSnVDB4hkBuPdbwUOw=;
-	b=PW0vZG3lkQUYjDefCBBGr4ZP1iXvH7TcDTOCbIHu9Qu735a+LDNnFZakJGL2+Liah+jwQD
-	CLpVgeY2DAUJ6rHQHU7RML4XsJ+Tb2Px4ChcAnxUuJKdewVpAUUyUPxnNd26yAa7kJrJF+
-	v+1qPtUCVohltqB3C32d25eObqu+qwa+z6/Zzl5L4HCEl9Alv88S58QbXdx+5I76lEzLIx
-	fbg5iXDdHPOIPDc70PuqpSqIwL6n13X++8E9vVxliBhrhv29uXO/QAu6EdUTT422QTAiiY
-	nW2HqM3Dx/aI3v3hNF4VGmypT5qQNDyd+z9+37hOVnfltowCGWybcED51/XCFg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1717402481;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=w1jsjob6JOgoEKksTIk7OReiRSSnVDB4hkBuPdbwUOw=;
-	b=hAptKNFnggbiil8RC3Zh/DZrePMF9wRmBBAgCFH0g68XKlgxGraAy1HXHzAbQt+u/FX9SB
-	Al+fggy1bBa9OhAA==
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker
- <frederic@kernel.org>, Ingo Molnar <mingo@kernel.org>,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] tick: shift tick_nohz_switch_to_nohz() from
- tick_check_oneshot_change() to hrtimer_run_queues()
-In-Reply-To: <20240602102007.GA27454@redhat.com>
-References: <20240530124203.GA26990@redhat.com>
- <20240602102007.GA27454@redhat.com>
-Date: Mon, 03 Jun 2024 10:14:40 +0200
-Message-ID: <87jzj6789b.ffs@tglx>
+	s=arc-20240116; t=1717402543; c=relaxed/simple;
+	bh=1eCTuiou3HfcQnMc21I72HS3WKJE0285PhpncV0zcBQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=sO1mB/2uhw5RlAxP2T8lxSCrx0t4Y5HGleSEn9TyJ2Bwhbrd5TtC8t+u4uD7Su+ecl33ebMz2FBCrBl2jkx72QSBUWOL8w1Q8cq5IW+0hIoiH4Yyha5ca3u8MHc1n+HBcBnaQwMJ8ukNqbFm+OLxu0eP9E/7me92lREv9K9kxSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=T3TJ2Ds5; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4538F2Re078821;
+	Mon, 3 Jun 2024 03:15:02 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1717402502;
+	bh=cuyAjV2HDIfTM5xAajcR3acONEE4m9KGW7HlevF+gfQ=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=T3TJ2Ds5C1J7kH43IYAD2y4MCdcLDB9BduJ3s/Be5V3x8dQyqnsZtyqyW6Lp33NMG
+	 D83t9Q/jGL6LQerJh6kqCRm7SuY60fL0eBSMF3jA+x8s56RM0zaLsMnUBqiliewAZd
+	 WXf7C+Py3PSU7ddZo/M5GDJoDV/uaRtUSi3hd19M=
+Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4538F1MG009107
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 3 Jun 2024 03:15:02 -0500
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 3
+ Jun 2024 03:15:01 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 3 Jun 2024 03:15:01 -0500
+Received: from [10.24.69.25] (danish-tpc.dhcp.ti.com [10.24.69.25])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4538EsDi071578;
+	Mon, 3 Jun 2024 03:14:55 -0500
+Message-ID: <b4256b15-997d-4e10-a6a9-a1b41011c867@ti.com>
+Date: Mon, 3 Jun 2024 13:44:54 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: "ERROR: modpost: "icssg_queue_pop" [...] undefined" on arm64
+Content-Language: en-US
+To: Thorsten Leemhuis <linux@leemhuis.info>,
+        Dan Carpenter
+	<dan.carpenter@linaro.org>,
+        Jan Kiszka <jan.kiszka@siemens.com>, Simon Horman
+	<horms@kernel.org>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Vladimir Oltean
+	<vladimir.oltean@nxp.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Niklas Schnelle <schnelle@linux.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>, Diogo Ivo <diogo.ivo@siemens.com>,
+        Roger Quadros <rogerq@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>,
+        Jakub Kicinski <kuba@kernel.org>, Eric Dumazet
+	<edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+CC: <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <srk@ti.com>,
+        Vignesh Raghavendra
+	<vigneshr@ti.com>
+References: <20240528113734.379422-1-danishanwar@ti.com>
+ <20240528113734.379422-2-danishanwar@ti.com>
+ <de980a49-b802-417a-a57e-2c47f67b08e4@leemhuis.info>
+From: MD Danish Anwar <danishanwar@ti.com>
+In-Reply-To: <de980a49-b802-417a-a57e-2c47f67b08e4@leemhuis.info>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Sun, Jun 02 2024 at 12:20, Oleg Nesterov wrote:
-> @@ -1891,8 +1891,11 @@ void hrtimer_run_queues(void)
->  	 * there only sets the check bit in the tick_oneshot code,
->  	 * otherwise we might deadlock vs. xtime_lock.
->  	 */
-> -	if (tick_check_oneshot_change(!hrtimer_is_hres_enabled())) {
-> -		hrtimer_switch_to_hres();
-> +	if (tick_check_oneshot_change()) {
-> +		if (hrtimer_is_hres_enabled())
-> +			hrtimer_switch_to_hres();
-> +		else
-> +			tick_nohz_switch_to_nohz();
+Hi Thorsten,
 
-hrtimers have no business with tick_nohz_switch_to_nohz(),
-really. That's a strict tick/nohz specific thing. hrtimers do not care
-about NOHZ much. They care about whether they can switch to high
-resolution mode.
+On 03/06/24 12:39 pm, Thorsten Leemhuis wrote:
+> On 28.05.24 13:37, MD Danish Anwar wrote:
+>> Introduce helper functions to configure firmware FDB tables, VLAN tables
+>> and Port VLAN ID settings to aid adding Switch mode support.
+>>
+>> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+> 
+> Hi! Since Friday I get a compile error in my -next builds for Fedora:
+> 
+> ERROR: modpost: "icssg_queue_push"
+> [drivers/net/ethernet/ti/icssg-prueth-sr1.ko] undefined!
+> ERROR: modpost: "icssg_queue_pop"
+> [drivers/net/ethernet/ti/icssg-prueth-sr1.ko] undefined!
+> 
 
-Thanks,
+Before posting the patches I had tested them with defconfig and I didn't
+see any ERRORs.
 
-        tglx
+I think in the config that you are using most probably
+CONFIG_TI_ICSSG_PRUETH_SR1 is enabled. The patch adds APIs in
+icssg_config.c which uses APIs added in icssg_qeueus.c.
+
+Now CONFIG_TI_ICSSG_PRUETH_SR1 also uses icssg_config.c but
+icssg_queues.c is not built for SR1 as a result this error is coming.
+
+Fix for this will be to build icssg_queues as well for SR1 driver.
+
+I will test the fix and post it to net-next soon.
+
+> Looks like this problem was found and reported mid May by the kernel
+> test robot already, which identified a earlier version of the patch I'm
+> replying to to be the cause:
+> https://lore.kernel.org/all/202405182038.ncf1mL7Z-lkp@intel.com/
+> 
+> That and the fact that the patch showed up in -next on Friday makes me
+> assume that my problem is caused by this change as well as well. A build
+> log can be found here:
+> https://download.copr.fedorainfracloud.org/results/@kernel-vanilla/next/fedora-39-aarch64/07523690-next-next-all/builder-live.log.gz
+> 
+> I don't have the .config at hand, but can provide it when needed.
+> 
+
+Yes that would be helpful. If possible just check in the .config what
+symbols are enabled related to ICSS. (`cat .config | grep ICSS`)
+
+> Ciao, Thorsten
+> 
+>> ---
+>>  drivers/net/ethernet/ti/icssg/icssg_config.c | 170 +++++++++++++++++++
+>>  drivers/net/ethernet/ti/icssg/icssg_config.h |  19 +++
+>>  drivers/net/ethernet/ti/icssg/icssg_prueth.h |  12 ++
+>>  3 files changed, 201 insertions(+)
+>>
+>> diff --git a/drivers/net/ethernet/ti/icssg/icssg_config.c b/drivers/net/ethernet/ti/icssg/icssg_config.c
+>> index 15f2235bf90f..2213374d4d45 100644
+>> --- a/drivers/net/ethernet/ti/icssg/icssg_config.c
+>> +++ b/drivers/net/ethernet/ti/icssg/icssg_config.c
+>> @@ -477,3 +477,173 @@ void icssg_config_set_speed(struct prueth_emac *emac)
+>>  
+
+[...]
+
+
+-- 
+Thanks and Regards,
+Danish
 
