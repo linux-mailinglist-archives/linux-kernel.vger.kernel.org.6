@@ -1,73 +1,62 @@
-Return-Path: <linux-kernel+bounces-199801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38BDD8FA617
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 00:57:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DFDC8FA619
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 00:57:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA7551F2563B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 22:57:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A02F71F25B69
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 22:57:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F41F613CF9F;
-	Mon,  3 Jun 2024 22:57:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FB3913CF8D;
+	Mon,  3 Jun 2024 22:57:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ueaRVIcX"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YYZMFLwx"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 012B213B791
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 22:57:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1349F9E9;
+	Mon,  3 Jun 2024 22:57:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717455446; cv=none; b=JQcdsRrLl0NeklGxqCCJmF84F2ZnqikKIbAZ0BBM0Czfh9sxRJnWLGxcrtxSKQK138PeTeExR/aAaqJ5iYhoWjgbYT5YbMUNsTFse1nXRYYCGE2JQ5etgJdKRM3sCVYWI9D69N5OMTxOKcvKQJALPTlvHFW8k/Rxi2KGkYzhjT4=
+	t=1717455468; cv=none; b=euIazc6mpU3veJiGyeRoCiXrO+dmVBr6sH8H8zEHapNooyFNfSDKrfCKlJp9GAuj1iVnzbqFfSePkZ9qcAebICgVkHMQhaXg3brJ6ZQRlseyy/e7MVWBkol6Var75N5o9tVTktbjfp35U9cicJ0TSbHzvBI4/PrHwO2Fh8Dsrbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717455446; c=relaxed/simple;
-	bh=nX8Q858K/UmNdE+z62x6jtKRo1bZV/rL+IfvqhMwRuY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XG8EjdOvfqOVaR+lHAFY9FJSRCr7tjGTJ2TJsDmHtnMgxqQCuXKgczX0vjqvQBBKwctVRQtImzBqddHqSUQAEc0ouLNo88hZ24TUI0NZUZngyoNCAYCeRjNUDfgGURqjzXkotp0eqrjcNVwkXgqS6UTiLJFQwGu+Zl3yeKVbsCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ueaRVIcX; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4213b94b7e7so9857775e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 15:57:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717455442; x=1718060242; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kaRccFa+6mxaTnJf9D0VBEY8DTyZXYaK2LVRdTyB+bQ=;
-        b=ueaRVIcXKglswx4gl2cq1Aijd8R2m2gi7Uuy2IpT9zskCCNYxWDYqPVQlfthcF9xOL
-         8BVD6gd+8SumfHuCQuIDNG8zDg+hIwfPixfTH9eYlaldzlLpGsm/IPWL4fYjdot3SJaM
-         nJ/UwDDxi7XYZixar/p7p7xv1RoPBlIWL7V/d4jpjVXVy0gueNhbrOy0q54GicrSWxoB
-         k8R6Ef6aoVIuR55rGFib9TNUf21o4g/93F32Cr0Slaj0IpndBTuHarYPMca1gngMneLT
-         /6qcSvIeSDHbVUGKKPcK/6PGlHb1qsAZYD3//UmgWUAnEK/lfnqjvxS7A2/dAJK3LRuY
-         gxJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717455442; x=1718060242;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kaRccFa+6mxaTnJf9D0VBEY8DTyZXYaK2LVRdTyB+bQ=;
-        b=hvgydqhcrmQbDE1X4WgVxp5B92fAlfwI0COnnXYsuahJ1p2ti8MKHTqo8HEI62//3w
-         9vKVdIv+AI4ndp0aApCauCcX465idRA6F5Oe6YbCiihT3A88vkC+PxcUY6gj/RFHz/FD
-         VuL4LkDXyDjKD+VBAI3NfKdCTzynIa9oLmKpBQPvuJHd4+Yg7SaSr9kj9/Nn+/hPq1vY
-         qBbHHApMsK+QiiYsLpp9/SoqHoctaUw1jdYPobFjfcvGZaMn+EzgzSExdI6BD9nfoDRo
-         BovHXYIQhqBr2/Mc289/d+xzH3Y7ceVYqM+YhwmbEZG52/S9maKW3TAjtiva0LxgRDRD
-         ISdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVBzvawL7oeApm1VOXyfghELP4uZxdaUDg6Vr6ea6CYTTdroAUB/UTbY2GY6rNINOTWdlrc8DFPav8um3H2ic7pMMd/Z2x9ER7iSc/g
-X-Gm-Message-State: AOJu0Yx8B//rl8KMI7aDfLj5DzJlo2pAgPetyzwKmhFyXhJ7hWNf0gBT
-	MroajvSoZ1moK5z5zWyYvy8faFziJgEQQcNZAMhzb8KSbeBePynVcpGs41QVnWM=
-X-Google-Smtp-Source: AGHT+IGiXS4WQoXBvbqy+BdwxG9f6EOIMgJ0rplbncVnlwUWF4HFgLrwxI87sB/oru9jfGD7Z8jwcA==
-X-Received: by 2002:a05:600c:198f:b0:41b:4caa:554c with SMTP id 5b1f17b1804b1-421451157admr8603335e9.2.1717455442308;
-        Mon, 03 Jun 2024 15:57:22 -0700 (PDT)
-Received: from [192.168.0.3] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35dd064aa6csm9942393f8f.93.2024.06.03.15.57.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Jun 2024 15:57:21 -0700 (PDT)
-Message-ID: <9083b1c8-655c-4812-9641-17c93addc964@linaro.org>
-Date: Mon, 3 Jun 2024 23:57:20 +0100
+	s=arc-20240116; t=1717455468; c=relaxed/simple;
+	bh=KqPryLWc7zoc2VYG8QXuXcI0TeNlclWzwv+GWOys33s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=bZrFOKckARhNwmaanuTcC8PsuhR7TfvCflBC8xQtOErmmteguTTJ9pgGlSXjrO/2dwwqt9t2/HPdjWm1izTIdTdbLJmQOU4biHswpsPasMPRvLh6aO9kiDpy09FEqt/8iL1z0lJV/+85jXnlkrVooGTft9S+TjajVRASBFinXuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YYZMFLwx; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 453Bl8qM017816;
+	Mon, 3 Jun 2024 22:57:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Y4QY+F1FJbsM/wDJgEBzeFcAgoh0auxhIr9S0zEFsxk=; b=YYZMFLwxjWhT35F6
+	YBOKzW3GwNCoPchaIgQN2YgatIGOBj7Y3CFIM/b53d0mzsEQz9Mpw7jdAoAJ1I/F
+	IYilULFa9UP9NWGIPE3i3YVt/WYMvx2vjWPyysVvOTkIRB/PmgEQ7SKDypuJ7Cp5
+	Zr5dYxXrL3Xo258U2toVn/U8G7MJhlahlEFj9U8UjCVxZ3yf/fplopQPqjLj0lqb
+	0uPCYgzj2aD1o95bn3d7B2fdqWj5wtXr5eMbixFMlCJhQMUzLVngvX+snstvWrho
+	MZfUgCUEw95C97gqLJJpI0uNPABKiKrFFSwefio/9Q62DJj/5dJxsto907NGBgav
+	dCZ1Eg==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfw3r5e1q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 03 Jun 2024 22:57:36 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 453MvZjH001996
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 3 Jun 2024 22:57:35 GMT
+Received: from [10.48.241.139] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 3 Jun 2024
+ 15:57:28 -0700
+Message-ID: <47cc9455-6efb-4b1c-8743-c992e502633d@quicinc.com>
+Date: Mon, 3 Jun 2024 15:57:28 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,55 +64,106 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: qrb4210-rb2: make L9A always-on
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240603-rb2-l9a-aon-v1-1-81c35a0de43d@linaro.org>
+Subject: Re: [PATCH 1/6] wifi: ath11k: use 'time_left' variable with
+ wait_event_timeout()
 Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20240603-rb2-l9a-aon-v1-1-81c35a0de43d@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        <linux-kernel@vger.kernel.org>
+CC: Kalle Valo <kvalo@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
+        <linux-wireless@vger.kernel.org>, <ath11k@lists.infradead.org>
+References: <20240603091541.8367-1-wsa+renesas@sang-engineering.com>
+ <20240603091541.8367-2-wsa+renesas@sang-engineering.com>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <20240603091541.8367-2-wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: gFeYGuRClnezr6hNISr4C3GIahKB3ZbI
+X-Proofpoint-GUID: gFeYGuRClnezr6hNISr4C3GIahKB3ZbI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-06-03_17,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
+ lowpriorityscore=0 suspectscore=0 adultscore=0 spamscore=0 mlxscore=0
+ clxscore=1011 priorityscore=1501 malwarescore=0 mlxlogscore=999
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406030186
 
-On 03/06/2024 13:49, Dmitry Baryshkov wrote:
-> The L9A regulator is used to further control voltage regulators on the
-> board. Make sure that is stays always on to prevent undervolting some of
-> the volage rails.
+On 6/3/2024 2:15 AM, Wolfram Sang wrote:
+> There is a confusing pattern in the kernel to use a variable named 'timeout' to
+> store the result of wait_event_timeout() causing patterns like:
 > 
-> Fixes: 8d58a8c0d930 ("arm64: dts: qcom: Add base qrb4210-rb2 board dts")
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> 	timeout = wait_event_timeout(...)
+> 	if (!timeout) return -ETIMEDOUT;
+> 
+> with all kinds of permutations. Use 'time_left' as a variable to make the code
+> self explaining.
+> 
+> Fix to the proper variable type 'long' while here.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 > ---
->   arch/arm64/boot/dts/qcom/qrb4210-rb2.dts | 2 ++
->   1 file changed, 2 insertions(+)
+>  drivers/net/wireless/ath/ath11k/qmi.c | 20 ++++++++++----------
+>  1 file changed, 10 insertions(+), 10 deletions(-)
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts b/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts
-> index 2c39bb1b97db..e0c14d23b909 100644
-> --- a/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts
-> +++ b/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts
-> @@ -403,6 +403,8 @@ vreg_l9a_1p8: l9 {
->   			regulator-min-microvolt = <1800000>;
->   			regulator-max-microvolt = <1800000>;
->   			regulator-allow-set-load;
-> +			regulator-always-on;
-> +			regulator-boot-on;
->   		};
->   
->   		vreg_l10a_1p8: l10 {
-> 
-> ---
-> base-commit: 0e1980c40b6edfa68b6acf926bab22448a6e40c9
-> change-id: 20240603-rb2-l9a-aon-d1292bad5aaa
-> 
-> Best regards,
+> diff --git a/drivers/net/wireless/ath/ath11k/qmi.c b/drivers/net/wireless/ath/ath11k/qmi.c
+> index d4a243b64f6c..2fe0ef660456 100644
+> --- a/drivers/net/wireless/ath/ath11k/qmi.c
+> +++ b/drivers/net/wireless/ath/ath11k/qmi.c
+> @@ -2859,7 +2859,7 @@ int ath11k_qmi_firmware_start(struct ath11k_base *ab,
+>  
+>  int ath11k_qmi_fwreset_from_cold_boot(struct ath11k_base *ab)
+>  {
+> -	int timeout;
+> +	long time_left;
+>  
+>  	if (!ath11k_core_coldboot_cal_support(ab) ||
+>  	    ab->hw_params.cbcal_restart_fw == 0)
+> @@ -2867,11 +2867,11 @@ int ath11k_qmi_fwreset_from_cold_boot(struct ath11k_base *ab)
+>  
+>  	ath11k_dbg(ab, ATH11K_DBG_QMI, "wait for cold boot done\n");
+>  
+> -	timeout = wait_event_timeout(ab->qmi.cold_boot_waitq,
+> -				     (ab->qmi.cal_done == 1),
+> -				     ATH11K_COLD_BOOT_FW_RESET_DELAY);
+> +	time_left = wait_event_timeout(ab->qmi.cold_boot_waitq,
+> +				       (ab->qmi.cal_done == 1),
+> +				       ATH11K_COLD_BOOT_FW_RESET_DELAY);
+>  
+> -	if (timeout <= 0) {
+> +	if (time_left <= 0) {
+>  		ath11k_warn(ab, "Coldboot Calibration timed out\n");
+>  		return -ETIMEDOUT;
+>  	}
+> @@ -2886,7 +2886,7 @@ EXPORT_SYMBOL(ath11k_qmi_fwreset_from_cold_boot);
+>  
+>  static int ath11k_qmi_process_coldboot_calibration(struct ath11k_base *ab)
+>  {
+> -	int timeout;
+> +	long time_left;
+>  	int ret;
+>  
+>  	ret = ath11k_qmi_wlanfw_mode_send(ab, ATH11K_FIRMWARE_MODE_COLD_BOOT);
+> @@ -2897,10 +2897,10 @@ static int ath11k_qmi_process_coldboot_calibration(struct ath11k_base *ab)
+>  
+>  	ath11k_dbg(ab, ATH11K_DBG_QMI, "Coldboot calibration wait started\n");
+>  
+> -	timeout = wait_event_timeout(ab->qmi.cold_boot_waitq,
+> -				     (ab->qmi.cal_done  == 1),
+> -				     ATH11K_COLD_BOOT_FW_RESET_DELAY);
+> -	if (timeout <= 0) {
+> +	time_left = wait_event_timeout(ab->qmi.cold_boot_waitq,
+> +				       (ab->qmi.cal_done  == 1),
+> +				       ATH11K_COLD_BOOT_FW_RESET_DELAY);
+> +	if (time_left <= 0) {
+>  		ath11k_warn(ab, "coldboot calibration timed out\n");
+>  		return 0;
+>  	}
 
-It'd be nice to have some more detail on which rails and the further 
-side effects, in a V2 if you're of a mind to do so.
-
-Either way.
-
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+This looks ok to me, but note that changes to ath11k go through the ath tree,
+so, unless Kalle has a different opinion, this should be submitted separately
+from changes that go through the wireless tree.
 
