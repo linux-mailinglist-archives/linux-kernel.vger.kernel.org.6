@@ -1,164 +1,102 @@
-Return-Path: <linux-kernel+bounces-198919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 477E08D7F19
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:43:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E86278D7F1D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:43:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03C84285DA8
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:43:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69C38B215F6
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:43:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B921086647;
-	Mon,  3 Jun 2024 09:38:03 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D415584E0E;
-	Mon,  3 Jun 2024 09:38:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16AB9126F0F;
+	Mon,  3 Jun 2024 09:38:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="ByhlWGRI"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7948B667;
+	Mon,  3 Jun 2024 09:38:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717407483; cv=none; b=HrXzx4I0YOy5hyU0uTlsPqSFjleq96baLchrgPFFX8sQvd1RQiVPdiSHDWJSXjIJLTtVPd1jfiHCQ8638jhj/eyO/YhEMBK1ZAVX88Cyr/lHTBvQuUhgdSf6kfv7O8fVn8wYbU8wZy9QARR+hm1sBWIowLBv+gf9qROCr41u2is=
+	t=1717407503; cv=none; b=W2xabk+ESShePnQVum+2UtgtYXabC6N6Bmx8ZJbIZ43HTHaETcmJZRZYpuelHJwicWyiqkHiEquvePZ9ri2a97yXuSuBlnZ+17r2koCA4UL0wA3cZC0LCnC+1VaG7SJSWXPBArksloSeOMkHSKGObJzJSF6iXHnSS6M5ZxOAR6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717407483; c=relaxed/simple;
-	bh=lPJ1JmCapYhEez5XfczXf0VJ7ZKz/jUNpv2J1VIled8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aJ8SLnnqINrEyLei6raNNpkSv67MX+mbSezcCVNsMM104gR+0P+AECLJschVJs1VcAz8XVuMMt4sk24GcJ/yoY+p2+IzorQrwUyV0vlFQ56vMt9fmGCr32MDzikTTeBitoTAItIQJJ/GL3IxFuAajq59hR9nm3PlreO6Wc/DHL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 634F21042;
-	Mon,  3 Jun 2024 02:38:25 -0700 (PDT)
-Received: from [10.57.69.99] (unknown [10.57.69.99])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 680F43F762;
-	Mon,  3 Jun 2024 02:37:59 -0700 (PDT)
-Message-ID: <cf08f5ee-ccd5-4c37-90a6-c88fb3ab2a49@arm.com>
-Date: Mon, 3 Jun 2024 10:37:57 +0100
+	s=arc-20240116; t=1717407503; c=relaxed/simple;
+	bh=nsLDjTZTaB6IlVf1YN+Z1Ok82/GbhJFUrL0xBcqN0mA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uADUAhITw3PJJP0CnxXmboeRGAEvdXfEHlBxjMB8M3qNC0+HqQRU8DwgpD3SNoZ/hUY+jk4p87RvowI8WfZVPMACJ01yluB85kPLWllAXktURPUihBCLM4oVYmMMQt1A4rDQ968cw+cgKLQuSxueVIDuk7AzoUSs6Q69UqUzDRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=ByhlWGRI; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=U7Ho4zKhkkiYFTzTY91pGPL2i6KvNE8h4Vbogb5wZs0=; b=ByhlWGRI2Ktx47DAPDLPq8dnm1
+	B+CX9jUK47LjL+lCl8e6Mu8Syjci2Ufq1RkI4Z127sWqr85wz6jhqmCKiL0uopS32LmM8l6iaRhUp
+	2x5rRl0dhueE2SS1UwhflKFjjY+lm5ObcN3H1OykMtzbKp/UFET4iJldTTwxKTymYbOYYQcQCIMMV
+	YCknfBryxH45AJqMzIsExz4ZGIES33S6GCQlD/WLTB6ljQw1Lk20MBTSqmdIws+jFyOsKe98OaqXb
+	xpLDDT54wpVXB5pdsJGyFsl9lmfw0cdeQGASvSQKYp/Zu6qb9+tqTavOkS7Dz1Drpgtqh0aeQUX7o
+	pdWUlSew==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:44764)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sE48g-0002Xl-1z;
+	Mon, 03 Jun 2024 10:38:02 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sE48g-0000Jm-09; Mon, 03 Jun 2024 10:38:02 +0100
+Date: Mon, 3 Jun 2024 10:38:01 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Christophe Roullier <christophe.roullier@foss.st.com>
+Cc: "David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Marek Vasut <marex@denx.de>,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 02/11] net: stmmac: dwmac-stm32: Separate out external
+ clock rate validation
+Message-ID: <Zl2O+eJF9vOTqFx2@shell.armlinux.org.uk>
+References: <20240603092757.71902-1-christophe.roullier@foss.st.com>
+ <20240603092757.71902-3-christophe.roullier@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] perf lock info: Display both map and thread by
- default
-To: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
- namhyung@kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>
-References: <20240513091413.738537-1-nick.forrington@arm.com>
- <20240513091413.738537-2-nick.forrington@arm.com>
-Content-Language: en-GB
-From: Nick Forrington <nick.forrington@arm.com>
-In-Reply-To: <20240513091413.738537-2-nick.forrington@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240603092757.71902-3-christophe.roullier@foss.st.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Is this ok to be applied now?
+On Mon, Jun 03, 2024 at 11:27:48AM +0200, Christophe Roullier wrote:
+> +static int stm32mp1_validate_ethck_rate(struct plat_stmmacenet_data *plat_dat)
+> +{
+> +	struct stm32_dwmac *dwmac = plat_dat->bsp_priv;
+> +	const u32 clk_rate = clk_get_rate(dwmac->clk_eth_ck);
+> +
+> +	switch (plat_dat->mac_interface) {
 
-Thanks,
-Nick
+Should these be phy_interface? Does this clock depend on the interface
+mode used with the PHY?
 
-On 13/05/2024 10:14, Nick Forrington wrote:
-> Change "perf lock info" argument handling to:
->
-> Display both map and thread info (rather than an error) when neither are
-> specified.
->
-> Display both map and thread info (rather than just thread info) when
-> both are requested.
->
-> Signed-off-by: Nick Forrington <nick.forrington@arm.com>
-> ---
->   tools/perf/Documentation/perf-lock.txt |  4 ++--
->   tools/perf/builtin-lock.c              | 27 ++++++++++++++------------
->   2 files changed, 17 insertions(+), 14 deletions(-)
->
-> diff --git a/tools/perf/Documentation/perf-lock.txt b/tools/perf/Documentation/perf-lock.txt
-> index f5938d616d75..57a940399de0 100644
-> --- a/tools/perf/Documentation/perf-lock.txt
-> +++ b/tools/perf/Documentation/perf-lock.txt
-> @@ -111,11 +111,11 @@ INFO OPTIONS
->   
->   -t::
->   --threads::
-> -	dump thread list in perf.data
-> +	dump only the thread list in perf.data
->   
->   -m::
->   --map::
-> -	dump map of lock instances (address:name table)
-> +	dump only the map of lock instances (address:name table)
->   
->   
->   CONTENTION OPTIONS
-> diff --git a/tools/perf/builtin-lock.c b/tools/perf/builtin-lock.c
-> index 230461280e45..7eb115aeb927 100644
-> --- a/tools/perf/builtin-lock.c
-> +++ b/tools/perf/builtin-lock.c
-> @@ -1477,20 +1477,16 @@ static void dump_map(void)
->   		fprintf(lock_output, " %#llx: %s\n", (unsigned long long)st->addr, st->name);
->   }
->   
-> -static int dump_info(void)
-> +static void dump_info(void)
->   {
-> -	int rc = 0;
-> -
->   	if (info_threads)
->   		dump_threads();
-> -	else if (info_map)
-> +
-> +	if (info_map) {
-> +		if (info_threads)
-> +			fputc('\n', lock_output);
->   		dump_map();
-> -	else {
-> -		rc = -1;
-> -		pr_err("Unknown type of information\n");
->   	}
-> -
-> -	return rc;
->   }
->   
->   static const struct evsel_str_handler lock_tracepoints[] = {
-> @@ -1992,7 +1988,7 @@ static int __cmd_report(bool display_info)
->   
->   	setup_pager();
->   	if (display_info) /* used for info subcommand */
-> -		err = dump_info();
-> +		dump_info();
->   	else {
->   		combine_result();
->   		sort_result();
-> @@ -2578,9 +2574,9 @@ int cmd_lock(int argc, const char **argv)
->   
->   	const struct option info_options[] = {
->   	OPT_BOOLEAN('t', "threads", &info_threads,
-> -		    "dump thread list in perf.data"),
-> +		    "dump the thread list in perf.data"),
->   	OPT_BOOLEAN('m', "map", &info_map,
-> -		    "map of lock instances (address:name table)"),
-> +		    "dump the map of lock instances (address:name table)"),
->   	OPT_PARENT(lock_options)
->   	};
->   
-> @@ -2694,6 +2690,13 @@ int cmd_lock(int argc, const char **argv)
->   			if (argc)
->   				usage_with_options(info_usage, info_options);
->   		}
-> +
-> +		/* If neither threads nor map requested, display both */
-> +		if (!info_threads && !info_map) {
-> +			info_threads = true;
-> +			info_map = true;
-> +		}
-> +
->   		/* recycling report_lock_ops */
->   		trace_handler = &report_lock_ops;
->   		rc = __cmd_report(true);
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
