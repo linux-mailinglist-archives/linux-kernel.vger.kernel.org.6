@@ -1,116 +1,132 @@
-Return-Path: <linux-kernel+bounces-198498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A53F8D7952
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 02:23:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E1C48D7954
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 02:24:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB4C31F21CC4
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 00:23:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8815B21251
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 00:24:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A452915C9;
-	Mon,  3 Jun 2024 00:23:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BAA81362;
+	Mon,  3 Jun 2024 00:24:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VXHHKdip"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="UwgUsMTf"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 233C87E8;
-	Mon,  3 Jun 2024 00:23:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4E3910FA;
+	Mon,  3 Jun 2024 00:24:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717374221; cv=none; b=QyYkPFrS5//Bvfg6RUhC3TE4ip/olEyn3ydoAwEOcVG1Qt7DAqYO22C63jpTq1GvZSLz9Z+KZOJWyHqMN0GjGZlsGFOQE2iyb4yDpzPLa0GldJ+UF1MrvyegCaLN7hYlWHxO83L3y5ZOxKsdMeJQGnYJ1KekcoWfRc2jv/Hyt4c=
+	t=1717374256; cv=none; b=r/8G/crp1rMFv2gNp2w+OzZzr4gUliECwgV//3nf8V3AKcx9DDd2gNUgCarGfvNt/8Mk6PFXxvGW29jfySL2JavXPv3XRF0Fb/qwIWL9T6MZ71alwlKBZPycRwBdZKbngJupbtclDqXTFh+zgYPA96l/+o2YGFyt2j//uF+M/xs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717374221; c=relaxed/simple;
-	bh=oVwIw/4/q1TC18VGQ+PRIRB4JDznam0T9iKRu1hyQ/w=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=Veuxv0V52Q2Mfy+leHgn3RQ2KVQYsrfrT9+OWn5Y//Lp7F081Cu7jL6xwtZEVw7cQvYjuqGLXIPeXtgOfPhahwyqdZnSDgC+g3Fse0p0q/TuHE3GCW/47GgDwEGQ8r7Mitj9b+mAPpTqJlwoftfPqUWNyU3aepLofCL3RCRTbRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VXHHKdip; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 452NqfsH013372;
-	Mon, 3 Jun 2024 00:23:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=073kHdKzGn1Ra0KLlAs1Hl
-	sRhqT70W/vazQ7/xmTLMQ=; b=VXHHKdipqYbUGnQgSFeSB2fWPvwL+hWpBXNwkB
-	uvfDzTyNnqO47MRp0Oj66pPwmtaIVwtDT+V72HfN1gnsKq/wXcDKjHWiP6M1NpVL
-	/F7gf2RtjyOs9/kpo++uwCt37a3cDKw0Pksx+mHxQeqBTBKI9EjC99NxxB0L7fgS
-	h4nyFfiotNhBDAHehnq1dpWbl5dl+OGW34Z6KzI+csL3E7H4EiL9YCR9vrXVizuy
-	m5ebz7f6qJq8PTNLDQQn0wyR4UdA1XXlX1FUgloqeWqm85Sr6Q5dSnYV70hw2olj
-	VgFiebDnqpWGD0KbkSn6plar3rtgMaGvDJmtMzZieQnPSgFA==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfw42tn26-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 03 Jun 2024 00:23:36 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 4530NYG8014774
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 3 Jun 2024 00:23:34 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 2 Jun 2024
- 17:23:28 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Sun, 2 Jun 2024 17:23:26 -0700
-Subject: [PATCH] ublk_drv: add missing MODULE_DESCRIPTION() macro
+	s=arc-20240116; t=1717374256; c=relaxed/simple;
+	bh=LSAp8Cr/LG5FuU8CWIKK9zBzOR5kb6IKr1WgPLU5Ok0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=lyQ4VzYwst3gbZWMXVHRUKXI4s31FkeGgrUUNph8TWs2BTiGYL6NJhJBtf4RjGoISKJslH8UfJqwerX1F9pmoIWX7uUoI7hmZG3sobvr2OCz1fNOUAgIqiQXbx2jvyjkSsQS64/njatNex/813mEz4aOhLfm06u4ihglphBXgAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=UwgUsMTf; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1717374251;
+	bh=vWKe8VRthQhxeyeMjSp0QzUbN7rpJesSgX3VsIJGR7A=;
+	h=Date:From:To:Cc:Subject:From;
+	b=UwgUsMTfh9S6jNq3/eVozEDYxA7mevdpmUO2cO84QSv9qfE/DCVzmV0m69TrZTFR7
+	 cBPPM8klon9yZhvLXeeKQqRM4j+8Em1MV67P1CNTdOuXyLpFT3XNixyccFsFZkHpqE
+	 1KF9xNjaXk76Sd6HuDALhu+tu6vyouNmNXR1GE1saDwggpkARxlJfFwjRT10LXIomO
+	 zUAXn/EX69whjW2NrbHuaIea8PndYPbYBohgi6bCAk7HZNdrgin4mJ2940dsrxVYdn
+	 DjTeHNzZ3kQxJng0aAFdr+yGzv3ENg0bSvLYg4iTEpHtvFOIcGv/hYs2y90L59aBvy
+	 6Q1WV3sJ0x8JA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Vsvbt5HJtz4wcl;
+	Mon,  3 Jun 2024 10:24:10 +1000 (AEST)
+Date: Mon, 3 Jun 2024 10:24:09 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi
+ <lpieralisi@kernel.org>, Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?=
+ <kw@linux.com>
+Cc: Dan Williams <dan.j.williams@intel.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the pci tree with the pci-current tree
+Message-ID: <20240603102335.79926f54@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240602-md-block-ublk_drv-v1-1-995474cafff0@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAP0MXWYC/x3M0QrCMAxA0V8ZeTaQFZ3gr4hI02YurOskdWMw9
- u9WH8/DvTsUMZUCt2YHk1WLzrmiPTUQBp9fghqrwZE7U0cOp4ic5jDiwml8RluR2gtdPbHveob
- avU163f7P+6OafRFk8zkMv1PSvGw4+fIRg+P4AneYzZ6CAAAA
-To: Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>
-CC: <linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: V4nv9X0vEL1ByMMSDI35ROfz21lkW5dM
-X-Proofpoint-ORIG-GUID: V4nv9X0vEL1ByMMSDI35ROfz21lkW5dM
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-06-02_15,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
- impostorscore=0 mlxlogscore=999 clxscore=1011 bulkscore=0
- priorityscore=1501 suspectscore=0 phishscore=0 malwarescore=0 adultscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406030001
+Content-Type: multipart/signed; boundary="Sig_/2S78U.EVaT4vkiTNtNC8Uqb";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/block/ublk_drv.o
+--Sig_/2S78U.EVaT4vkiTNtNC8Uqb
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Add the missing invocation of the MODULE_DESCRIPTION() macro.
+Hi all,
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/block/ublk_drv.c | 1 +
- 1 file changed, 1 insertion(+)
+Today's linux-next merge of the pci tree got a conflict in:
 
-diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
-index 4e159948c912..59916895ee2e 100644
---- a/drivers/block/ublk_drv.c
-+++ b/drivers/block/ublk_drv.c
-@@ -3017,4 +3017,5 @@ module_param_cb(ublks_max, &ublk_max_ublks_ops, &ublks_max, 0644);
- MODULE_PARM_DESC(ublks_max, "max number of ublk devices allowed to add(default: 64)");
- 
- MODULE_AUTHOR("Ming Lei <ming.lei@redhat.com>");
-+MODULE_DESCRIPTION("Userspace block device");
- MODULE_LICENSE("GPL");
+  drivers/pci/pci.c
 
----
-base-commit: a693b9c95abd4947c2d06e05733de5d470ab6586
-change-id: 20240602-md-block-ublk_drv-01507a0ba6fb
+between commit:
 
+  e6d1cd96b33c ("PCI: Revert the cfg_access_lock lockdep mechanism")
+
+from the pci-current tree and commit:
+
+  0d1a1c6745a8 ("PCI: Warn on missing cfg_access_lock during secondary bus =
+reset")
+
+from the pci tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/pci/pci.c
+index 35fb1f17a589,d2c388761ba9..000000000000
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@@ -4883,6 -4883,10 +4883,9 @@@ void __weak pcibios_reset_secondary_bus
+   */
+  int pci_bridge_secondary_bus_reset(struct pci_dev *dev)
+  {
+ -	lock_map_assert_held(&dev->cfg_access_lock);
++ 	if (!dev->block_cfg_access)
++ 		pci_warn_once(dev, "unlocked secondary bus reset via: %pS\n",
++ 			      __builtin_return_address(0));
+  	pcibios_reset_secondary_bus(dev);
+ =20
+  	return pci_bridge_wait_for_secondary_bus(dev, "bus reset");
+
+--Sig_/2S78U.EVaT4vkiTNtNC8Uqb
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZdDSoACgkQAVBC80lX
+0Gz7rQgAlA4LEVI6h7Nqu9He2WnsU7DgaAv0kE/JB1sXYYqGLPh3ThWDrT2PHX+Q
+BfH7M5BIk1M/qjcS5HZA4KsUcCFgsU8Q+SALcfjW6hz5eEK+Tu/DDtr2ZBINFGKm
+4GazoFwpaFWYI0G5QsPiQyPFxUKbSo+qzC095FWAa1rGhdPp0wZ9+HNx7yeD7hI0
+QosYXAPhlRP3NtUYHxfY3dcXN46aOnT1ED8391TvbsUIHPpsdEnhEOqPJvpl2JnL
+J95iiXW7puxKiuQp4xWVmf+EaxJ85Wr6e4/IsJWyhEBxDUZODnituaOr4upigi24
+3TEBFFBU6khgB9jkRn+FLSqO7Nqi8A==
+=+YZ8
+-----END PGP SIGNATURE-----
+
+--Sig_/2S78U.EVaT4vkiTNtNC8Uqb--
 
