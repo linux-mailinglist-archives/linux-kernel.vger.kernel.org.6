@@ -1,95 +1,99 @@
-Return-Path: <linux-kernel+bounces-199358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA8668D85F9
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:24:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 032178D8603
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:26:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4C4FB238B4
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:24:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91B0FB24580
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:26:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8E81130495;
-	Mon,  3 Jun 2024 15:24:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA3C5130AFF;
+	Mon,  3 Jun 2024 15:26:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="XmDU5A6f"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="OikmosAw"
+Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 681DC36127;
-	Mon,  3 Jun 2024 15:24:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1599C12FF71;
+	Mon,  3 Jun 2024 15:26:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.120.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717428284; cv=none; b=AZZ9Qasy56Gha2P/EeDF299ORvXgrTrzW0+jSGNXIMi1/r1Dw6aP+Y7DSZac9x6AUGpqI7cpk0hCkyEQwSkgt8tMxst+aH82eVwm6ecbrJRuTszTTBrcmELOmyKDaJzmlVRkXcSM0Cz9JyS3P6p7a+j05VMnb3cJ4S1EOArlJx4=
+	t=1717428396; cv=none; b=TUs3BPFVlgIK1hzYbE6iY/u24/4QXpXSOrpmqLFOIuGEeIWTUIFXIMxAyCSGQZLNqA+wOGznk0q4NNPKOaQpgcxUnqzdoos4PcqMuucREEzUpQopTNzHLVrYAQSrQfGuesmYTuPK+U8F84tO4HBXn8f0bIpSTllfUUsvSqvBpJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717428284; c=relaxed/simple;
-	bh=pcUOL5LiR5J/CzdCNHXZbfLCkEHG/X+2CW9HB0Pml9o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Sh0fTnwvxgee5EEMriRXF5mUdEAjxQKqZIVVntrimoZgRoH3GbG7qZayTZnxODBEozO6Xn7dRS4bNB3HXfiDcT053V0edfszsTaU6bZl5uhvwOkipfVro1sauSKVwPZG84fk2DbhtKUmSnPMGE5DGHK1n6qxzCwV1iVZzvQDdAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=XmDU5A6f; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 2179340E00C9;
-	Mon,  3 Jun 2024 15:24:39 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id uXVwUpOPpISw; Mon,  3 Jun 2024 15:24:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1717428275; bh=sxQevx+L0CskB61iTRhCSmaUNjmsrKe/AVv6Tub2IcY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XmDU5A6f8BqHwAmUT6bgJLLZr2vwOmpU1/ujS40Pr0Q5+GnBbPm4Htr2wxyz1SUe2
-	 34RgyqdJSDtfFkxB+sjZn5xcPVfg3agebarXCi3ymUUBcHrPLY1GDZd9J5yjmMAWj3
-	 jI4HaWAu66M7Ee5wSPbyq2YzkN8P5Qe64/zSQ/l/g+KRkYwB06vPqqeZfoOfdAZ0AJ
-	 4hOUOgRZnRiByG4qBUjhpUHo2fJR1EwQGzkQ/gUgJQmjT+SHD5h+CRUgGVeZ2RaliF
-	 F67NHM7RsxQf74m6YtzwbC5lo1sipBSVFJ6AQcUwL5KOlOXxgACcD1UXbsIQLZsEVf
-	 JZ9AlJ/JNRol4hA+Jo1fZLEzvmkQcNSEsDntiDcsVXXoLTm3rJsbQHkA4E9vFf9kbQ
-	 BfoYY8+iA/P9LzLsur0PEwPuzHAORPUUq8PWTNrZSkwfATfYHNMagxLUNTOC+aEoTb
-	 71VRKvZ4NfPExHXMYWVHtUKnUsTxBrOyYjHwW0NZgiAg/0ZdskdVTCKRmexu6vEVx3
-	 dVyx8kFb3Dp6YW9Sa/L3mnhx3K4PmLntUilS5AMF9gZi9JPENywVMWxaV9CFKr55a0
-	 WHMvZZ2J1eR7tX1IizGhpx6uZ8NLFHWTbM+BbMraJjGfkVCTbyfk7gy03fhbL9jvMS
-	 FJR2f5V9kJqdKkCSnuwkHVEs=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4C81240E0081;
-	Mon,  3 Jun 2024 15:24:28 +0000 (UTC)
-Date: Mon, 3 Jun 2024 17:24:27 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Yazen Ghannam <yazen.ghannam@amd.com>
-Cc: linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
-	tony.luck@intel.com, x86@kernel.org, avadhut.naik@amd.com,
-	john.allen@amd.com
-Subject: Re: [PATCH 3/9] x86/mce: Increment MCP count only for timer calls
-Message-ID: <20240603152427.GEZl3gKy75YAwJaZZH@fat_crate.local>
-References: <20240523155641.2805411-1-yazen.ghannam@amd.com>
- <20240523155641.2805411-4-yazen.ghannam@amd.com>
- <20240524145335.GAZlCp7wAO22acrGyP@fat_crate.local>
- <3990ab6d-6217-4e10-bda9-6b5c7bd668c0@amd.com>
+	s=arc-20240116; t=1717428396; c=relaxed/simple;
+	bh=JCmpgMiGgIyv7XnOdg2rf7zHPVYaPivGVJaMkoyZHGU=;
+	h=From:To:Cc:Date:Message-Id:MIME-Version:Subject; b=u5ZTlsxejOUKgZVSBd1THxCH1w2OwwxYzZ46QtRhrYCGqvZJg5zegXg3PxAcqnYGC1AI/eqlWNQS2dJzE+16arpBz2dq/LQnnFx/rdhGbnsLA0pji4bA4JBCNvb090PJ+xNyHXfMV/1kM4OW4hAZjrvaL0tWjz70Pk7IVLCelGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=OikmosAw; arc=none smtp.client-ip=162.243.120.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
+	; s=x; h=Subject:Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Cc:To
+	:From:subject:date:message-id:reply-to;
+	bh=4DlPd6ZxkfmBXAbzJO+INo9sFI8HWNVTBaTEg++gh/E=; b=OikmosAwt236m0i5UK4x2hdMyt
+	3Eslc5HwZ37tnXozBOayvCWJCxKaFncbsityaH8T3mJ1J27AyOHgRVkH2KKByosBQe7dNzBRLwMTo
+	ufGcSt63LNyHS3f8Mp+jnVSt9t+ig+btnrAiJ6mPHEm3NuNZZk4Hy/G4r5tbFucl3jX4=;
+Received: from modemcable061.19-161-184.mc.videotron.ca ([184.161.19.61]:34112 helo=pettiford.lan)
+	by mail.hugovil.com with esmtpa (Exim 4.92)
+	(envelope-from <hugo@hugovil.com>)
+	id 1sE9Zt-0000dO-4e; Mon, 03 Jun 2024 11:26:29 -0400
+From: Hugo Villeneuve <hugo@hugovil.com>
+To: gregkh@linuxfoundation.org,
+	jirislaby@kernel.org,
+	hvilleneuve@dimonoff.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	hugo@hugovil.com
+Date: Mon,  3 Jun 2024 11:25:59 -0400
+Message-Id: <20240603152601.3689319-1-hugo@hugovil.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <3990ab6d-6217-4e10-bda9-6b5c7bd668c0@amd.com>
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 184.161.19.61
+X-SA-Exim-Mail-From: hugo@hugovil.com
+X-Spam-Level: 
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	* -0.0 T_SCC_BODY_TEXT_LINE No description available.
+Subject: [PATCH 0/2] serial: sc16is7xx: Kconfig fixes after I2C/SPI driver split
+X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
+X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
 
-On Mon, Jun 03, 2024 at 10:22:22AM -0400, Yazen Ghannam wrote:
-> In this case, should we also increment the count in __mc_scan_banks()?
+From: Hugo Villeneuve <hvilleneuve@dimonoff.com>
 
-Well, that's called only in do_machine_check() and latter's not polling
-the banks but called as a result of a #MC exception raised.
+Hello,
+this patch series brings some Kconfig fixes to the sc16is7xx driver. These fixes
+are related to the I2C/SPI driver split:
 
+https://lore.kernel.org/all/20240430090333.5c5f029553cabcdf699310cb@hugovil.com/
+
+I have tested the changes on a custom board with two SC16IS752 DUART over
+a SPI interface using a Variscite IMX8MN NANO SOM. The four UARTs are
+configured in RS-485 mode.
+
+I did not test the change on a SC16is7xx using I2C interface, as my custom
+board is only using SPI.
+
+Thank you.
+
+Hugo Villeneuve (2):
+  serial: sc16is7xx: rename Kconfig CONFIG_SERIAL_SC16IS7XX_CORE
+  serial: sc16is7xx: re-add Kconfig SPI or I2C dependency
+
+ drivers/tty/serial/Kconfig  | 3 ++-
+ drivers/tty/serial/Makefile | 2 +-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
+
+
+base-commit: c3f38fa61af77b49866b006939479069cd451173
 -- 
-Regards/Gruss,
-    Boris.
+2.39.2
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
