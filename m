@@ -1,131 +1,211 @@
-Return-Path: <linux-kernel+bounces-198967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFC458D7FCA
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 12:11:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 774988D7FCD
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 12:11:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43B6DB20D10
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 10:11:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D5D82861F1
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 10:11:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60FF7824B1;
-	Mon,  3 Jun 2024 10:11:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D25082D6C;
+	Mon,  3 Jun 2024 10:11:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XwSwei1s"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XZeaB8o4"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EBAF7FBA3;
-	Mon,  3 Jun 2024 10:11:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D2837FBA3;
+	Mon,  3 Jun 2024 10:11:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717409486; cv=none; b=Csw0LVM0R04wrk6f8X+wuHvYoUjp+X/2a2jglnv6w51wIBaMZVYOfF7pNWpQjdtfASlfpR5B1dPW5Ahv3EMirL7Eq5ZkD5jsBQNwXxmDGPO4IvPko/qu/C2NoCZKm0y/Noh5Pw4/KrWhsEwuaXjv9+Vt6GvKBxoYOuqvLTHt8pg=
+	t=1717409499; cv=none; b=DKyTQCfX3vefzPTmOLZSKNA9kLFC80VhEHutFg5RIF0KWEX6nAyXQHozoRQz/DF7oUQEu+rl6JtN9QHDiia8Uez4RtF0RDUS4/cSDsVCx2cJ2WKdy4bXzcbWl/n0xLsMPyP2XkAcA0Udv8dMyfWQGDw2hZQDMcM7kOUzUOWYQ4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717409486; c=relaxed/simple;
-	bh=LXJ5YB9dO8bdDQzIQLLZk5NeS3HkpILHWFU/5/MlRzI=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=tsOO0iLk3wvBKgTD5q9dJU4AAGA32wW9XJTPQYGQ3XYsHO7+CM0L8hqrhlSl2FswotJpRR0DQ6I/AXmUCwHcGnWslIQhXteo/hRCgo/0hj6SkTl1uNMq0ftzooJGS/Nb2xLEeR8urptC9OogqjQBNcsOHe9hT144YmZeC4BnPLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XwSwei1s; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717409485; x=1748945485;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version:content-id;
-  bh=LXJ5YB9dO8bdDQzIQLLZk5NeS3HkpILHWFU/5/MlRzI=;
-  b=XwSwei1s/O8UgiK7HiYXa8OzmINZAv8oBKDcw2SJLFsHA0KBhVg+GVeR
-   j9kcNPiGVYhSNvA1dnkDq2LFQyMCvIJhDv6Kpez5bWr6eetEK8xMS6rl1
-   /CcYZor/EQgWmxuFndOFdb65fdLIYuLkxLuqDA8CNMryAUos6sM5i3LyL
-   EDbUdI55K5O4FFDIUziN52EVOXxseM2JQCQVE7kRRImZsNqSysU+L3J4y
-   gD2fhGtsCsUydCyPBBBlvT8i43gcbXWdS/RtCZGDFwL02VTcSmCyqTJ3F
-   k/gbLHptIaVKjY/ZKvDaRY52XejVfXjO92l/O1mIflJuPR0fctR3VcflS
-   Q==;
-X-CSE-ConnectionGUID: ro3fiQByT4GrsZr3nnc5Cw==
-X-CSE-MsgGUID: ZuWRFJn+SBqpQzIrSwFj0Q==
-X-IronPort-AV: E=McAfee;i="6600,9927,11091"; a="36417814"
-X-IronPort-AV: E=Sophos;i="6.08,211,1712646000"; 
-   d="scan'208";a="36417814"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2024 03:11:24 -0700
-X-CSE-ConnectionGUID: UxAv791oS8mk3WmdWhwBxQ==
-X-CSE-MsgGUID: B85axv69RP2GwBoopIV9lg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,211,1712646000"; 
-   d="scan'208";a="36915625"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.161])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2024 03:11:20 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 3 Jun 2024 13:11:16 +0300 (EEST)
-To: "Chang S. Bae" <chang.seok.bae@intel.com>
-cc: LKML <linux-kernel@vger.kernel.org>, x86@kernel.org, 
-    platform-driver-x86@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com, 
-    bp@alien8.de, dave.hansen@linux.intel.com, 
-    Hans de Goede <hdegoede@redhat.com>, tony.luck@intel.com, 
-    ashok.raj@intel.com, jithu.joseph@intel.com, 
-    sathyanarayanan.kuppuswamy@linux.intel.com
-Subject: Re: [PATCH v3 0/3] x86/fpu: Allow the In-Field Scan driver to
- initialize FPU state
-In-Reply-To: <20240530192739.172566-1-chang.seok.bae@intel.com>
-Message-ID: <676bfc09-c1f4-9272-a198-3fb865868c10@linux.intel.com>
-References: <20240530192739.172566-1-chang.seok.bae@intel.com>
+	s=arc-20240116; t=1717409499; c=relaxed/simple;
+	bh=N2+1b4UvL2h8BghC0xvtCBiF9o0kiifts/5HQ9Tplak=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ULFA4yROkkgohKp3Bi7CYS/QqZcGwB5DKeQzLtDK1qNf1ABMCOx0q5o3cb5++/k+86R/6Iu5CCs8bYcr408+47eKsDL1seMPy29oGPAP3DCJmRxqgu7YkfMHh54OukpFrM5BeDHEnQ+jBisOgbEWbBc64grAtAoUv8E7XdPVm5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XZeaB8o4; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52b7c82e39eso4067869e87.1;
+        Mon, 03 Jun 2024 03:11:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717409496; x=1718014296; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6NGoqdJtENVZUa+qRol7I9OdMjwyIhmPcJwjIRPRNrg=;
+        b=XZeaB8o4EHXFcVFqoWwd4v9wFAZ+pnYoVf4lodcMzCoEhkpFTSS2lO0zkeFPCgBCXo
+         LjVPW5t8o2NMnmR5YIubJw0bIzsxbGB6GJ7zMAG1hBIxnK44gzm4b92XFhWI56mLoAly
+         8rF/YPJL/cgUgTikV5hZZ7BrJfoVfqJjlbm2g23sMQjHjfEtMmguvUN5NM8bKa96BJEM
+         C+8u7Uu+rrxbzw0pPHCdB4ZxM7PYpoiNV+6i32W7km/IR4IznTU1Xa0CeVNa81MDalMM
+         HTvTPazPJnCRF3uww74aN6JNGLMCoeHHcU4nzm7sDt7xPv2Rr3sxksfZQSB4WHviIrjo
+         ftKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717409496; x=1718014296;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6NGoqdJtENVZUa+qRol7I9OdMjwyIhmPcJwjIRPRNrg=;
+        b=WZVqNqfaH/LZNtu/Pe+DvXdvm659mx3ea2MDEdjTSsWnDPiyNZvYjjWKdtf9NuAwkF
+         KIIKp1tilbjnu3+fBcgvGDDu+ND9++4EYLmtTlClP3J1SLk48L1mldvlQgcmgUY7Znue
+         nDCgrOFsS7QTXFhmxdQt/y9lT8G9/3T7QAkqiAeWpscXJxGm1AyzeZiW6lUdH+FDXUxi
+         aaK2freCyPf06s1JFoPq6AVlV5+NAfJToUiQznB+MF67dtJWxYbCqp2qMW84Ln6htTHD
+         fheE/Y/z9XM7mxtlyU8bV86Bswxpe2WLBTEjt31o77VmH/3piy5FMy+DRZeNQxjL68uS
+         d+UQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUkvZlU3s/A1SFQGDhNBy2sNx0Fhb5jo6LnH3GGIYUW95teErPtdsqx8ouXULNpYrhucxvjy6ax95Jkh/y+/J+XvZinsLRQbVxiS+AoN72L3gVFQbTA2Nkx4gWEyVfN53qyBqmuRD9vS7Kx2LP2iuYEgsHBuW3Uf9w+tQTxwET0IUiKXg==
+X-Gm-Message-State: AOJu0YwGHZt32o09C8fSkFcRiaGUFmw6naZjA5LzdRWtCZ5YEOt0X3wt
+	juOQSkqiOXdbOdeorh1q5L7D53MPgY0UdcFZ48SCJC6qPdgI2etQ
+X-Google-Smtp-Source: AGHT+IEcX9mOOMxH+a53YuuVbcvysJP9F7UT5wYgpTKNO0VJka12hKDGJZvicsmRPhRtvDwuSYpSyg==
+X-Received: by 2002:a19:9111:0:b0:52a:5fa8:d565 with SMTP id 2adb3069b0e04-52b896dad9cmr6184155e87.68.1717409495155;
+        Mon, 03 Jun 2024 03:11:35 -0700 (PDT)
+Received: from [10.76.84.176] ([5.2.194.157])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a68f1797afbsm222711966b.40.2024.06.03.03.11.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Jun 2024 03:11:34 -0700 (PDT)
+Message-ID: <93ebe75b-5a7d-4d69-9515-7cbeb66c8e7e@gmail.com>
+Date: Mon, 3 Jun 2024 13:11:33 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="8323328-81316292-1717409305=:1529"
-Content-ID: <afc06685-6e39-74d5-a470-df656471d706@linux.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 6/6] iio: adc: ad7173: Add support for AD411x devices
+To: Jonathan Cameron <jic23@kernel.org>,
+ Dumitru Ceclan via B4 Relay <devnull+dumitru.ceclan.analog.com@kernel.org>
+Cc: dumitru.ceclan@analog.com, Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, David Lechner <dlechner@baylibre.com>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240531-ad4111-v4-0-64607301c057@analog.com>
+ <20240531-ad4111-v4-6-64607301c057@analog.com>
+ <20240601201912.32fe3524@jic23-huawei>
+Content-Language: en-US
+From: "Ceclan, Dumitru" <mitrutzceclan@gmail.com>
+In-Reply-To: <20240601201912.32fe3524@jic23-huawei>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
-
---8323328-81316292-1717409305=:1529
-Content-Type: text/plain; CHARSET=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Content-ID: <0a16be6f-9c4b-800e-b144-cd96f45b85a3@linux.intel.com>
-
-On Thu, 30 May 2024, Chang S. Bae wrote:
-
-> This revision switches to a new approach by providing a helper to
-> initialize user FPU states for the driver, which is considerably simpler.
-> This approach could serve as an example for addressing similar situations
-> from a non-critical path.
->=20
-> I thought fpu_reset_fpregs() as the helper name. There is already one
-> with this name. Then, I realized the existing one is a bit misaligned, so
-> renamed it first here.
->=20
-> Thanks to Dave for the reviews and the suggestion.
->=20
+On 01/06/2024 22:19, Jonathan Cameron wrote:
+> On Fri, 31 May 2024 22:42:32 +0300
+> Dumitru Ceclan via B4 Relay <devnull+dumitru.ceclan.analog.com@kernel.org> wrote:
+> 
+>> From: Dumitru Ceclan <dumitru.ceclan@analog.com>
+>>
+>> Add support for AD4111/AD4112/AD4114/AD4115/AD4116.
+>>
+>> The AD411X family encompasses a series of low power, low noise, 24-bit,
+>> sigma-delta analog-to-digital converters that offer a versatile range of
+>> specifications.
+>>
+>> This family of ADCs integrates an analog front end suitable for processing
+>> both fully differential and single-ended, bipolar voltage inputs
+>> addressing a wide array of industrial and instrumentation requirements.
+>>
+>> - All ADCs have inputs with a precision voltage divider with a division
+>>   ratio of 10.
+>> - AD4116 has 5 low level inputs without a voltage divider.
+>> - AD4111 and AD4112 support current inputs (0 mA to 20 mA) using a 50ohm
+>>   shunt resistor.
+>>
+>> Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
+> Hi Dumitru,
+> 
+> A follow on comment on the validation code.
+> Also there is some good docs for the sampling frequency but are they
+> actually related to the rest of this change?  They also raise
+> questions about ABI compliance that we may want to deal with as
+> a follow up patch.
+> 
+> A few other trivial things inline.
+> 
+> This is looking pretty good, so hopefully we'll get the last few corners
+> sorted in v5.
+> 
 > Thanks,
-> Chang
->=20
-> The previous postings:
-> V2: https://lore.kernel.org/all/20240507235344.249103-1-chang.seok.bae@in=
-tel.com
-> V1: https://lore.kernel.org/all/20240430212508.105117-1-chang.seok.bae@in=
-tel.com
->=20
-> Chang S. Bae (3):
->   x86/fpu: Rename fpu_reset_fpregs() to fpu_reset_fpstate_regs()
->   x86/fpu: Allow FPU users to initialize FPU state
->   platform/x86/intel/ifs: Initialize FPU states for the scan test
->=20
->  arch/x86/include/asm/fpu/api.h           |  2 ++
->  arch/x86/kernel/fpu/core.c               | 17 ++++++++++++++---
->  drivers/platform/x86/intel/ifs/ifs.h     |  1 +
->  drivers/platform/x86/intel/ifs/runtest.c |  7 +++++++
->  4 files changed, 24 insertions(+), 3 deletions(-)
+> 
+> Jonathan
+> 
+> 
+>> ---
+>>  drivers/iio/adc/ad7173.c | 336 +++++++++++++++++++++++++++++++++++++++++++----
+>>  1 file changed, 307 insertions(+), 29 deletions(-)
+>>
+>> diff --git a/drivers/iio/adc/ad7173.c b/drivers/iio/adc/ad7173.c
+>> index ed8ff8c5f343..91ff984eedf4 100644
+>> --- a/drivers/iio/adc/ad7173.c
+>> +++ b/drivers/iio/adc/ad7173.c
+>> @@ -1,8 +1,9 @@
+> 
+>>  #define AD7173_INTERFACE_DATA_STAT	BIT(6)
+>> @@ -125,26 +132,46 @@
+>>  #define AD7173_VOLTAGE_INT_REF_uV	2500000
+>>  #define AD7173_TEMP_SENSIIVITY_uV_per_C	477
+>>  #define AD7177_ODR_START_VALUE		0x07
+>> +#define AD4111_SHUNT_RESISTOR_OHM	50
+>> +#define AD4111_DIVIDER_RATIO		10
+>> +#define AD411X_VCOM_INPUT		0X10
+> 
+> AD4111_VCOM_INPUT . Looks like one wildcard escaped an earlier edit?
+> 
+>> +#define AD4111_CURRENT_CHAN_CUTOFF	16
+>>  
+>> @@ -736,6 +918,21 @@ static int ad7173_write_raw(struct iio_dev *indio_dev,
+>>  		return ret;
+>>  
+>>  	switch (info) {
+>> +	/*
+>> +	 * This attribute sets the sampling frequency to each channel individually.
+> 
+> frequency for each channel?
+> 
+>> +	 * There are no issues for raw or buffered reads of an individual channel.
+>> +	 *
+>> +	 * When multiple channels are enabled in buffered mode, the effective
+>> +	 * sampling rate of a channel is lowered in correlation to the number
+>> +	 * of channels enabled and the sampling rate of the other channels.
+>> +	 *
+>> +	 * Example: 3 channels enabled with rates CH1:6211sps CH2,CH3:10sps
+>> +	 * While the reading of CH1 takes only 0.16ms, the reading of CH2 and CH3
+>> +	 * will take 100ms each.
+>> +	 *
+>> +	 * This will cause the reading of CH1 to be actually done once every
+>> +	 * 200.16ms, an effective rate of 4.99sps.
+> 
+> Hmm. This is a bit unfortunate as if I understand correctly that's not really what
+> people will expect when they configure the sampling frequency.  However I can't immediately
+> think of a better solution.  You could let userspace write a value that is cached
+> then attempt to get as near as possible as channels are enabled.
+> 
+> Still this looks like a documentation enhancement of existing behavior
+> in which case any functional change can be in a future patch.
+> However I don't think the docs update belongs in this patch unless
+> I'm missing some reason for it?
+>
 
-Acked-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+Well, it would seem like this exact behaviour is already documented:
 
-Do x86 maintainers plan to take these through their tree?
+ "
+ What:		/sys/bus/iio/devices/iio:deviceX/in_voltageX_sampling_frequency
+ What:		/sys/bus/iio/devices/iio:deviceX/in_powerY_sampling_frequency
+ What:		/sys/bus/iio/devices/iio:deviceX/in_currentZ_sampling_frequency
+ KernelVersion:	5.20
+ Contact:	linux-iio@vger.kernel.org
+ Description:
+		Some devices have separate controls of sampling frequency for
+		individual channels. If multiple channels are enabled in a scan,
+		then the sampling_frequency of the scan may be computed from the
+		per channel sampling frequencies.
+ "
+Does it still make sense to keep this comment here? But if kept, yeah, a different patch
 
---=20
- i.
---8323328-81316292-1717409305=:1529--
+...
 
