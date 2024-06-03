@@ -1,171 +1,129 @@
-Return-Path: <linux-kernel+bounces-199526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BCA88D8822
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:42:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A16FC8D8821
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:42:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B43FB1F21B05
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:42:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBE151C20901
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:42:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F743137925;
-	Mon,  3 Jun 2024 17:42:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40961137923;
+	Mon,  3 Jun 2024 17:42:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lcATzdGS"
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="PJrzINqc"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 085B3135A6F;
-	Mon,  3 Jun 2024 17:42:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E85D0135A6F;
+	Mon,  3 Jun 2024 17:42:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717436563; cv=none; b=apXD1M23RVEWF94N77fxsnk9fMbMi+Do1G+pAYnB5qxMysTs1CODJ1KSd17rgy/n3k/D99+5AXue1zY+RpBqdFlR9EKT7+R8QV/JEfuc6Fj7/LR5N6vOn5wr6XpyXJBX5oMFnw9lyN2PJ6ynfIwNyN0h6xbQ+4+Gusv/rFV4ICU=
+	t=1717436529; cv=none; b=X/EGjX+b327Mn/mXuqokKFf4+c+QXqKnBg5gBalxXbxlrUJaG/u5Q5ra4/HeCfX2QVnS8M/l7t2nkEmaR2lgybDS6+XjJoui1leFGnmL3bZ3tOoSyE/6t+chhgDD27wFzsj/0ZIufi0FQTl8Se2XJ0vrKMCRsu6/iy+jWoLWQUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717436563; c=relaxed/simple;
-	bh=epvhLo1mWE99TSJ4TRY/EC7cNxGbjrIEgwOICO3Bt3o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YVf/lAxI/UFs4s8DoaNwhh0+zn8DcoFLABp/qjvnbHUb2dx9td8VIOBvAaHJ/9p2t3/lck1lfl+VrHSgEN93OhTeb5jdVFzz/4lR7KG+FOy421R3jTy8mdK9Tazh8HOLcy0q7pUETAJo/hn6bAyAhLIL04Hzb1oDfXR5x3BDZJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lcATzdGS; arc=none smtp.client-ip=209.85.222.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-794ab0ae817so265299685a.2;
-        Mon, 03 Jun 2024 10:42:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717436561; x=1718041361; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lqo8/N2WL4gT1OcLo3qtSeNxyML4fela4YEeG8cnJxQ=;
-        b=lcATzdGSJn1yZ9xfDVR6N6R4EueZpZapx8iH0pgOKSvAtC9RxkEsvoUs9cvKw92upk
-         QDldr6/a+UGs5cjW0FNdytMnobzrtF0AuKQFPeCGmZWyBE3IUiamqJt+46nRYPy5o6nz
-         lz4Qi3PfJwkyC71SIiy8jI4kWorux0JIEoJT4tc08c8/3/x+fPpkaiBG7adZuUpVusOG
-         270o9nqUkxCcsf4LgwrybRYDNGKRK2VlaVgi3JkJoH3qVzyitZ3vKOQWyhow+q7VZWyd
-         A+3+ZmcrdHjSd73ks/k7NZhPmL7rnTKbKLqlg073tVvpupd5tYFashWF9SP5X0VoRYSN
-         ThrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717436561; x=1718041361;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lqo8/N2WL4gT1OcLo3qtSeNxyML4fela4YEeG8cnJxQ=;
-        b=NfNGqc6MFQv55FCDbribHj3auNATqWduNQjoazwlR5AJ/JqlOeQLUxp6LfV5XTzZ8U
-         tRVR9O/WSsh+JXsc4KbarS4uT9XzJaeN8UeJeYDBkl0A0PXzs+AMKMjX9onmoA4chSvm
-         kAzweIW+/in3wQgSexyMrNwN6GKjEP+PqkdusY9IgJNLZYQBYdwKyGwVGxFQARqgXwBd
-         jzxm76yLL1AdYCtA3LDMy7b3LvUnj/A58mUWJrV/2ppa94edSOjW6fscPcCRFaG141vb
-         h8gAQJQFWMLY21l0ZDzJABw+NhmtGmyZ3KnOna9KDuGzAIw5WW9YZJiBYXPvnnbOrla+
-         YTVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUuGB9T/g2rh+gsLSgHrQJwIcpOPsXAWyr24LHBS4X8PLJlu2XED1QK6MS2hiEHSxq+voQbOjAoMaGqKSVcnqXaiguaM6A186mY61DJWn0iyZmjRWLbPQqIt+MifhTttuCpy2j16xMuXnInrd0=
-X-Gm-Message-State: AOJu0YyPF2nzA1no6uN2GIy1FRqZ8h1LoHq3i6MsgKYrzIXHEQwNcmET
-	t7NOGaE3r9vFGVMIcZtKU+1xvYheMurqaDqos1SKTdYKlX3/7bS7
-X-Google-Smtp-Source: AGHT+IEmh2P7iFc4eHQR6V8pIF45N/E5P3S8BMMDUYIxJmX1LvdjLvcw/Fv4sfFtQsIF/XDScyoEpA==
-X-Received: by 2002:a05:620a:4720:b0:790:ef5d:25ae with SMTP id af79cd13be357-794f5ebf4f1mr1306054385a.56.1717436560788;
-        Mon, 03 Jun 2024 10:42:40 -0700 (PDT)
-Received: from fauth1-smtp.messagingengine.com (fauth1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-794f328fcc9sm298141885a.129.2024.06.03.10.42.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Jun 2024 10:42:40 -0700 (PDT)
-Received: from compute7.internal (compute7.nyi.internal [10.202.2.48])
-	by mailfauth.nyi.internal (Postfix) with ESMTP id 76B861200032;
-	Mon,  3 Jun 2024 13:42:39 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute7.internal (MEProxy); Mon, 03 Jun 2024 13:42:39 -0400
-X-ME-Sender: <xms:jwBeZvliBAJQ0jP-BL4p-l7CeLV7KYQdICONxbrU2Ewc_G8L3GIXew>
-    <xme:jwBeZi32S0DdEk9I-SzRsdREWh6B1uDORSNy10puQGJ8_dQ0kNkPkKmDqOGfDDZKK
-    UG-R8JnzAMdr5jD7A>
-X-ME-Received: <xmr:jwBeZlqXYI4edETMm1XtM9OTjx3cp09au2r8qClcbPBjNod4N4Y6bZcG_4D9PA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdelvddgudduhecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhq
-    uhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrf
-    grthhtvghrnhepkeekledtgeffgeduvefgffelieetgfeuudevudefleeugeekkedutdeg
-    heejveelnecuffhomhgrihhnpehnvgigthdrmhgrphenucevlhhushhtvghrufhiiigvpe
-    dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhp
-    vghrshhonhgrlhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrd
-    hfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvg
-X-ME-Proxy: <xmx:jwBeZnm59j4LA_c1AdI-Aa8Txi-EcRsYRibQmayXtKiTUm7BWI4X3w>
-    <xmx:jwBeZt1yf5-CSsgvJT8RpzyqV3qUmvhFh2vrUsTx821XdpgjL8cv8g>
-    <xmx:jwBeZmsSGXVyLnSFdKtMZw0B3ova98VK2txeU52tz4ETF_uxM60fHA>
-    <xmx:jwBeZhWLepnyZdiN8bnxj5y1fCMpRjHaTfp9KeedynaRJy8nLGafcw>
-    <xmx:jwBeZs3iLugazPjHs1ztSUEElg-VohepnO5UAEcHAFoj3aPjL0n3yKGT>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 3 Jun 2024 13:42:38 -0400 (EDT)
-Date: Mon, 3 Jun 2024 10:41:41 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Matt Gilbride <mattgilbride@google.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Carlos Llamas <cmllamas@google.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Rob Landley <rob@landley.net>, Davidlohr Bueso <dave@stgolabs.net>,
-	Michel Lespinasse <michel@lespinasse.org>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 4/6] rust: rbtree: add mutable iterator
-Message-ID: <Zl4AVUqq8Hd-a230@boqun-archlinux>
-References: <20240603-b4-rbtree-v4-0-308e43d6abfc@google.com>
- <20240603-b4-rbtree-v4-4-308e43d6abfc@google.com>
+	s=arc-20240116; t=1717436529; c=relaxed/simple;
+	bh=FTMHYBDXrMSnzSW1m3RkobvbHdA+rKpO/+FvnIJ+Qt4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=AWKO8JNzjQjmG6TvbQYOfJkB2LqKUDAp6S0OorJbYpcs6m1jdM+6jDRJPs8aKhUWsKTfT6ABWx5RblRFOq4Uo3HTNuFgiRIxvG8Um3xzrV7b+pJ8TgjwwkKIb+cDN+3pwbczL4uzj4GlL3FVxyK9NNT5yE1VzxJGzGbtH2kzWts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=PJrzINqc; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 453HfsKw090374;
+	Mon, 3 Jun 2024 12:41:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1717436514;
+	bh=TRuU8G9/d6lkp3hInz5RWXba11O8+BAQ5y7S3nHRwEw=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=PJrzINqcZ9Rdj/ryi7UrbPQqzzmZffuvavnkkk/PnSsSErwZfikiEhpuSmLlek7lq
+	 dBP8JRq4FoevchYIgWbcsnxJsyIE/qbSEztaHvDl6FwEWkls4hBlILYfoqtaiERt6Q
+	 H2rgG3+ORj5DUoQ1YfvMGQLKcSd9QFQ1hmwjYw3M=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 453HfsgA032152
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 3 Jun 2024 12:41:54 -0500
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 3
+ Jun 2024 12:41:54 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 3 Jun 2024 12:41:54 -0500
+Received: from [172.24.227.94] (uda0132425.dhcp.ti.com [172.24.227.94])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 453HfoOg069313;
+	Mon, 3 Jun 2024 12:41:51 -0500
+Message-ID: <4ac40139-eda0-4f6a-8bbe-99110605f91e@ti.com>
+Date: Mon, 3 Jun 2024 23:11:49 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240603-b4-rbtree-v4-4-308e43d6abfc@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/4] Add overlays to disable optional hardware in
+ k3-am6xx-phycore-som boards
+To: Nathan Morrisson <nmorrisson@phytec.com>, <nm@ti.com>, <kristo@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <upstream@lists.phytec.de>,
+        <w.egorov@phytec.de>
+References: <20240528225137.3629698-1-nmorrisson@phytec.com>
+From: Vignesh Raghavendra <vigneshr@ti.com>
+Content-Language: en-US
+In-Reply-To: <20240528225137.3629698-1-nmorrisson@phytec.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Mon, Jun 03, 2024 at 04:05:19PM +0000, Matt Gilbride wrote:
-[...]
-> +/// A mutable iterator over the nodes of a [`RBTree`].
-> +///
-> +/// Instances are created by calling [`RBTree::iter_mut`].
-> +pub struct IterMut<'a, K, V> {
-> +    _tree: PhantomData<&'a mut RBTree<K, V>>,
-> +    iter_raw: IterRaw<K, V>,
-> +}
-> +
-> +// SAFETY: The [`RBTreeIterator`] gives out mutable references to K and V, so it has the same
+Hi Nathan,
 
-s/RBTreeIterator/IterMut ?
+On 29/05/24 04:21, Nathan Morrisson wrote:
+> Add three overlays to disable the eth phy, rtc, and spi nor. These
+> overlays will be used to disable device tree nodes for components
+> that are optionally not populated.
+> 
+> v2:
+>   - Add build time tests in makefile
+> 
+> Nathan Morrisson (4):
+>   arm64: dts: ti: k3-am64-phycore-som: Add serial_flash label
 
-Also `IterMut` doesn't give out mutable references to K, which makes
-me think...
 
-> +// thread safety requirements as mutable references.
-> +unsafe impl<'a, K: Send, V: Send> Send for IterMut<'a, K, V> {}
-> +
+>   arm64: dts: ti: k3-am6xx-phycore-som: Add overlay to disable eth phy
+>   arm64: dts: ti: k3-am6xx-phycore-som: Add overlay to disable rtc
+>   arm64: dts: ti: k3-am6xx-phycore-som: Add overlay to disabl spi nor
+> 
+>  arch/arm64/boot/dts/ti/Makefile               | 17 +++++++++++++++++
+>  .../boot/dts/ti/k3-am64-phycore-som.dtsi      |  2 +-
+>  .../ti/k3-am6xx-phycore-disable-eth-phy.dtso  | 19 +++++++++++++++++++
+>  .../dts/ti/k3-am6xx-phycore-disable-rtc.dtso  | 15 +++++++++++++++
+>  .../ti/k3-am6xx-phycore-disable-spi-nor.dtso  | 15 +++++++++++++++
+>  5 files changed, 67 insertions(+), 1 deletion(-)
 
-we can lose the constrains to `K: Sync`, right?
+>  create mode 100644 arch/arm64/boot/dts/ti/k3-am6xx-phycore-disable-eth-phy.dtso
+>  create mode 100644 arch/arm64/boot/dts/ti/k3-am6xx-phycore-disable-rtc.dtso
+>  create mode 100644 arch/arm64/boot/dts/ti/k3-am6xx-phycore-disable-spi-nor.dtso
+> 
 
-Regards,
-Boqun
+I am not sure if this a common practice to have overlays to disable
+missing components (at least I dont see such dtso in kernel). I would
+like to see an what DT maintainers feel as such dtsos can explode in
+numbers.
 
-> +// SAFETY: The [`RBTreeIterator`] gives out mutable references to K and V, so it has the same
-> +// thread safety requirements as mutable references.
-> +unsafe impl<'a, K: Sync, V: Sync> Sync for IterMut<'a, K, V> {}
-> +
-> +impl<'a, K, V> Iterator for IterMut<'a, K, V> {
-> +    type Item = (&'a K, &'a mut V);
-> +
-> +    fn next(&mut self) -> Option<Self::Item> {
-> +        self.iter_raw.next().map(|(k, v)|
-> +            // SAFETY: Due to `&mut self`, we have exclusive access to `k` and `v`, for the lifetime of `'a`.
-> +            unsafe { (&*k, &mut *v) })
-> +    }
-> +}
-> +
-[...]
+Is this something that U-Boot can detect and fix up for the Linux DT?
+
+Unpopulated SPI flash and RTC should ideally not be an issue as drivers
+would gracefully fail albeit with some sort of error msg.
+Not so sure about Eth PHYs though.
+
+Also, Are these dtso's mutually exclusive? ie can SoM have SPI flash but
+not RTC, have RTC and SPI Flash but no ETH PHY?
+
+-- 
+Regards
+Vignesh
 
