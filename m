@@ -1,510 +1,212 @@
-Return-Path: <linux-kernel+bounces-199002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02CC48D8059
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 12:53:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD5C98D80CE
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:17:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58C7FB251F0
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 10:53:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CF8E1C21B42
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:17:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1EE883CBB;
-	Mon,  3 Jun 2024 10:53:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F9F684A37;
+	Mon,  3 Jun 2024 11:17:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A8IoTd8c"
-Received: from mail-ej1-f68.google.com (mail-ej1-f68.google.com [209.85.218.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="fBCyfFmm"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 753B758AA5
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 10:53:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF7C9A21
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 11:17:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717412010; cv=none; b=RaFlLl3W+PQgRkZPido7h4Ql0FuNFWB2v7Q/nJqN01X77Bt3TPUBjn/5Iqoru296HhTTyPp82+VeMk2cRCS4hBEH9l1YcmdI3iUh6UILeKLlUESVG6Nrfbid3SOVR41w0HsrZSgFE9ib5oUfGIqOZUxahmbvPEfVGHhzsU35aSY=
+	t=1717413453; cv=none; b=X8/Wsn8n5LsAh+97/ZLJOfZ7bZAzYBgUw6GbhZwaCgu+S9m1eQnJ1uUQhoL5U/5e4krV5jFCm3VtxAnLORZvcPhFqodK3qwt33T5oYFz4Y7VfNyrJQ98wreNVdxfMW2dBhSt+9gbIMHXv3nzLLeLpLyue7TXuo+soSQUJt8cKzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717412010; c=relaxed/simple;
-	bh=US8/l6GXafYtCE4uYPr8wJq/FBX4ibcTG40y7Z0uKf0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Quas2dsk1W6aleba82I33BHQTRIJmMIFEClmFuxQGXr9Wm1Cdhl9st4YO4WYx6zi8oFwh51sbE2dr6iT6kc7u8qVAaEqMFavnS2bHVfOgprrtfEMeepw9cUYMNYsszzU74ky7HH1n3W0kJw1o3tPmUx/6g/fWG4/x3nGibosxgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=A8IoTd8c; arc=none smtp.client-ip=209.85.218.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f68.google.com with SMTP id a640c23a62f3a-a6302bdb54aso546747466b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 03:53:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717412007; x=1718016807; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hwzveekuWwk2XlalkFz95t9+01SJnCPbZOtZsqrbFNo=;
-        b=A8IoTd8c56921hl6ESrikMld/27LxmcKVrbKcYyeiP0tLChqEEWtB5E97gyhUtavFy
-         LBxm7LcpnCMS9UJoFj4bYg59j9xHG5J2WuweIZAIupSHOzxHk/V1ZJKV9JgmbuwPXS2T
-         wolKmbsJYwZ9Sp5SqzDeWeOPRuoUYeGWQNT3f2Waj13x2KS5aNF1D5b3+1nP+ud9dj5W
-         BE7vEjuOT6bE/+PghBQRcXw+aP/lRwzvP1t3gy7QVMDIbe0NPnuHa9V6PTtPTFOvJ9ca
-         Gc6O0qzPhmkKSdZVWQhq2oG7lO61168voai1K3RGyCBwXB7nWYp4x02xtfegJltIli4b
-         FhKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717412007; x=1718016807;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hwzveekuWwk2XlalkFz95t9+01SJnCPbZOtZsqrbFNo=;
-        b=sE6ozaNKU2tEBsWg/3V0OX5llmL8iI+TN6FL46PdpcrJAe4fSe3t3XBnGa27/ul1s4
-         YXeUrwyhuRqblzTlJnNP6frveqljmWdFzshsWiwqyagVXUkCapY7FL8kWsIaUPprgk+k
-         2IdYAiwZ635Yy8xc0uCrpBEaS7mxysXUcRMAUeBtt6xRSnQ5s54WHz8thgSOEkHok7tG
-         KPCpDmMyXKYTkxMmputvFfu2t/2k5FqEeHKkNv+b+tMwUPFY3A6cFXgyXlEeiTolyIsb
-         qJEyoLQ+FqaY9TqX6ECTI6ZSpds/DBTbQEaoF4sEnZVcITbGI9PMabawxqeyEviJgoAn
-         kAKA==
-X-Forwarded-Encrypted: i=1; AJvYcCUrh1Nz0iPUBAxV9vI8jyFZ15Jcea6jAqFv+svPwQEtyTQVHfsBAN3mLCojkNvU1oKj4qZRadlbcz7Q3AKvrL0kNCzJzADROU8Y1Dg8
-X-Gm-Message-State: AOJu0YwvjRlTaKdn6kiEX8XW2aXlnHui60VmwNG5zReLVXhgfqsCYR1H
-	TtaurXSY+1pnln7RzVTZ6Rwup2yKRTUoVmUOIAKWFf+1ZD2TvUXkEkgz7ZGo/MQ=
-X-Google-Smtp-Source: AGHT+IGwe4Q3nu3IhSTKnCBpW/4vXT9ThIlel0mtDkpm+QeIwUzhtbSv5LxEVE5c0VKGaNUOFtSFlQ==
-X-Received: by 2002:a17:906:1f07:b0:a65:19f1:6e50 with SMTP id a640c23a62f3a-a6821f52ca3mr569236966b.50.1717412006760;
-        Mon, 03 Jun 2024 03:53:26 -0700 (PDT)
-Received: from ?IPV6:2a02:8109:aa0d:be00::8090? ([2a02:8109:aa0d:be00::8090])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a691a8f98ffsm90520266b.123.2024.06.03.03.53.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Jun 2024 03:53:26 -0700 (PDT)
-Message-ID: <f0dbb385-6aea-4721-92fa-a1f560fc7c5a@linaro.org>
-Date: Mon, 3 Jun 2024 12:53:24 +0200
+	s=arc-20240116; t=1717413453; c=relaxed/simple;
+	bh=X9ILtM/+5hKq9Dskgzk3jggSkTrWGbcydimSrAcZB/c=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
+	 Content-Type:References; b=PJXOA6SWSamLJLZ0a+Io2J1EtCc/H7lS0Pkx62ocETvYvSA/V/wTk+pmujyYqCKgV05dRpN3G7Grclg9m1cefsQ6XgRDYfJxwgjxPaK9wdyt8A/pPINLuf19JGlqjjlOJLJOOM4n0MtrIBClt7d4h/UdGTA/1Z1kZMBUpOp5RE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=fBCyfFmm; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240603111728epoutp0420b264c6d944aa589af6365214c168cb~Vem6xfG6g1944519445epoutp04J
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 11:17:28 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240603111728epoutp0420b264c6d944aa589af6365214c168cb~Vem6xfG6g1944519445epoutp04J
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1717413448;
+	bh=NdbbPTU401HPnUoOaw/F+ZPaUI8FnwtrRdYBN1GmdNc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=fBCyfFmmOdsx9UkBEa9C/gMGpiNyDk4AnmSWtZbFfDv+7gBM+/il6hdrezNZoUm6u
+	 brNd0Yu+RFdFsvyiRq3EIXyNs2rR5HOPiAJA2VvMW5i5ShY8k0rytDknHtWX3ygeiW
+	 3INEWIAMTs1GV2KS6JZWO4Og6VhdoTW05ZmMqKO8=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+	20240603111727epcas5p447c1effda385c696f1a1dab79263bc00~Vem6CshrS0313903139epcas5p4f;
+	Mon,  3 Jun 2024 11:17:27 +0000 (GMT)
+Received: from epsmges5p3new.samsung.com (unknown [182.195.38.182]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4VtB5f5Krnz4x9Pr; Mon,  3 Jun
+	2024 11:17:26 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	F7.39.10035.646AD566; Mon,  3 Jun 2024 20:17:26 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240603110051epcas5p1210a0ffdd361216c504cc342c8d4f247~VeYaUA-3V1603316033epcas5p10;
+	Mon,  3 Jun 2024 11:00:51 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240603110051epsmtrp274773a1330edafc070774ea66a2e82c2~VeYaSaTm90159301593epsmtrp2H;
+	Mon,  3 Jun 2024 11:00:51 +0000 (GMT)
+X-AuditID: b6c32a4b-b11fa70000002733-8b-665da646c938
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	2F.BD.18846.362AD566; Mon,  3 Jun 2024 20:00:51 +0900 (KST)
+Received: from nj.shetty?samsung.com (unknown [107.99.41.245]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240603110042epsmtip288f7ecce5d34cdfe18b68ceb823a3cdb~VeYRdfn010474404744epsmtip2K;
+	Mon,  3 Jun 2024 11:00:41 +0000 (GMT)
+Date: Mon, 3 Jun 2024 10:53:39 +0000
+From: Nitesh Shetty <nj.shetty@samsung.com>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>, Alasdair
+	Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka
+	<mpatocka@redhat.com>, Keith Busch <kbusch@kernel.org>, Sagi Grimberg
+	<sagi@grimberg.me>, Chaitanya Kulkarni <kch@nvidia.com>, Alexander Viro
+	<viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara
+	<jack@suse.cz>, martin.petersen@oracle.com, bvanassche@acm.org,
+	david@fromorbit.com, hare@suse.de, damien.lemoal@opensource.wdc.com,
+	anuj20.g@samsung.com, joshi.k@samsung.com, nitheshshetty@gmail.com,
+	gost.dev@samsung.com, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	dm-devel@lists.linux.dev, linux-nvme@lists.infradead.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v20 00/12] Implement copy offload support
+Message-ID: <20240603105339.keuiudmeplxdmczj@nj.shetty@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/9] misc: fastrpc: Add static PD restart support
-To: Ekansh Gupta <quic_ekangupt@quicinc.com>, srinivas.kandagatla@linaro.org,
- linux-arm-msm@vger.kernel.org
-Cc: gregkh@linuxfoundation.org, quic_bkumar@quicinc.com,
- linux-kernel@vger.kernel.org, quic_chennak@quicinc.com,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-References: <20240530102032.27179-1-quic_ekangupt@quicinc.com>
- <20240530102032.27179-5-quic_ekangupt@quicinc.com>
-Content-Language: en-US
-From: Caleb Connolly <caleb.connolly@linaro.org>
-In-Reply-To: <20240530102032.27179-5-quic_ekangupt@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20240601054701.GA5613@lst.de>
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Te0xTVxzHd+5tby9OSFeQHWAyUkkcEqBVigcGbAmM3Ag69jJOY6CDKyCl
+	bdoizi1bEXDQjbeFWYExROQlRGgWysMQHjJBRhwClilDUjYGE8pLtjBgLReN/31+33N+7/xI
+	nHed40wmSFW0QiqW8IldrJ+6Pd7yCqs6fUawsroPNfbfwdHFvA0c1T3OJdBc9xJAReZ/cWTq
+	/Aag9cEhHOnvTABUXlHKQsZOA4baKwowVFPXi6GrxWkY6t16SqCCrlGApkd0GOoY90Q/Xqpk
+	ofaOuyw03FpCoB+qpjnoRt8mhvIzRzDUYkoFqGFugYV+HndBQxt97HddqOEH4VR/BaQMuscc
+	amjiFosaHkymmmqzCKq58mtqpvkKoNqMaoK6llPIprLT5gnKkPE7m1qcHmdRC7dHCCpHXwuo
+	e+U9nEj7k4mB8bQ4lla40dIYWWyCNC6IH/5RVEiUyE8g9BL6o8N8N6k4iQ7ih0ZEeoUlSCzD
+	4budE0uSLVKkWKnk+wQHKmTJKtotXqZUBfFpeaxE7iv3VoqTlMnSOG8prQoQCgQHRZaP0Ynx
+	xrV6XK53PG9Qa3A1aOBpgA0Jub5wYWOcZWUetw3A4jpPDdhl4SUAq41m4oUx3ToGNIDc9vi+
+	3IXRDQBmG9IxxlgGcLJnHLeGYnHdYeb6M8zqQHA94cAWaZUduHw4PTsIrIxztQTc0rlY2Z4b
+	BB8Z0jlWtuWGQM3NX9gMvwbvXjFtV2djCbOVVcay5oLcbhtYrF7FmRZC4dMnjzgM28PZPv0O
+	O8Pl+Q6C4RRYc7maYJzTAdSN6QDz8A7M6M/FmYriYf53uWxG3wu1/Q0Yo9vB7HUTxui2sKXs
+	Oe+D9Y3lOwmc4Oha6g5T8B9DEYuZSj2A2sJMkAdcdS91pHspH8MBMMt80cKkhV3gjU2SQQ/Y
+	2OpTDti1wImWK5PiaKVIfkhKp7xYcowsqQls38uB8BYwNWn27gIYCboAJHG+g23OV6fO8Gxj
+	xZ9foBWyKEWyhFZ2AZFlQfm4854YmeXgpKoooa+/wNfPz8/X/5CfkP+67VxGaSyPGydW0Yk0
+	LacVz/0w0sZZjb0nQidHP/6vLUtysPJIxG52WrNaqx345Bbvr0vVwYE+JZKZ/pnmtxtOzM27
+	hx6btdfrucvHg7X3H+ZoTkx0NmUeKZy3Xzmv+yJHL8j+M6YwoyAsYtgMvDP17qbotr72cyub
+	xN6JJfKD0T+qJn1MxoCzu/Ubixd0ZYtRutknzbMxqa7Hist//XDt6LPj1Gqz/5RScjXvjW+F
+	sOhU18M3Py0tM3V3hxyVgmDDkpvA10MD3/dTO4X08FJXzKU1Zx1faT1sU8ZZfjCWYzfQc+3m
+	7czeXNeUtLXl03bZX/69qBjec490d7xfMph62Ri91eiwXxTx6vXfCj+bj7Hr3L/iTU7hcxl8
+	ljJeLDyAK5Ti/wH/DoZ6uAQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTYRjHe897dnY0xOOsfGtFsRJKa2ZEvZGZIOWhqwZBF8yGntRyKptK
+	N0ydWY4yXVG6zKaGppKR95W3vJXpWmaGqSnaVpYsL6BdbFpzRH378/yf3+/58tBQMEQuoUPD
+	ozhZuCRMRNmSFY2i5esCc/xPrC9+vQY/fNECcUKqGeKi99coPNI4AfDNsR8QG+ovATyt00Nc
+	1tIPsCbnDonf1WsJXJ2jInBBUTOBb99SELh51kRhVcNbgI1dagLX9Lji7KR7JK6uaSVx5+NM
+	Ct/NM/Jx/rMZAqdd7iJwlSEe4OKRURI/7xFivfkZz0vIdr7Zzb7IQaxW/Z7P6vsfkWynLpot
+	KUym2NJ7F9jh0gzAPnkXR7G5Kdd57FXFV4rVXhzgsePGHpIdre2i2JSyQsC2a5r4vo5HbD2C
+	uLDQGE7m5nncNiTtzSSM/Oh4+pUpHsaBn/ZKQNOI2YjSNUIlsKUFTCVAU0kaoAQ2f+aLUZ65
+	CVqzIyqY+cS3Lo0DlParl7IUJLMKXZ6eIiwiinFFbbO0ZbyAESHjF92cBzIZFGq/K7VkR2Yb
+	6tMm8i3ZjvFGygcveVZnMUATug7KWjig1gwDaYU3oazSQWjxQ0aI8mfm/DZ/Ts0mZ5GpgFH/
+	R6j/I9T/CA2AhWAhFymXBksDI93FcolUHh0eLA6MkJaAuTdwOVAF8h6axQ2AoEEDQDQULbBL
+	iT16QmAXJDlzlpNFBMiiwzh5AxDSpMjJbmVYcpCACZZEcac4LpKT/W0J2mZJHOEcXxck2Pnj
+	RsXgMpW9h+LLPi+uT/C5XjI0lPi0dsywM9VZNfw6pm7qW1tiwOihRZPrH+gdmkM2+/Wq0n+2
+	d7tFB4bejPWpluY2yUIcYMyq4fjpiOzTwerNHU3MYdGy3pbDWr/z4+f3KHwmfHJXCCeieN6v
+	GpeuXVq+McVTW1F00XQrf/7qWuPKgYCWc7vGElCsl7D8ujIrs1vX4X7QO1Fvr1gBObHO5Jm9
+	/9jyAH/z99X9hbvNb8XqHsP4d+xrSuoe0eaNeoSehO5tNbvcPsw7g2euODlzGemyrcIhp0d1
+	8ytbJ/f2VSTlZm7ZMLCDBE8y2xNcpxy2p7sUzLvf9WtQRMpDJO4uUCaX/AYjgqMpdQMAAA==
+X-CMS-MailID: 20240603110051epcas5p1210a0ffdd361216c504cc342c8d4f247
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+	boundary="----atUsqPFm-1W_PDIhMRaVeMNpJ8wr1jcbO3GdUizRktR65zpR=_520e5_"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240520102747epcas5p33497a911ca70c991e5da8e22c5d1336b
+References: <CGME20240520102747epcas5p33497a911ca70c991e5da8e22c5d1336b@epcas5p3.samsung.com>
+	<20240520102033.9361-1-nj.shetty@samsung.com> <20240601054701.GA5613@lst.de>
 
-Hi Ekansh,
+------atUsqPFm-1W_PDIhMRaVeMNpJ8wr1jcbO3GdUizRktR65zpR=_520e5_
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Disposition: inline
 
-On 30/05/2024 12:20, Ekansh Gupta wrote:
-> Static PDs on the audio and sensor domains are expected to support
-> PD restart. The kernel resource handling for the PDs are expected
-> to be handled by fastrpc driver. For this, there is a requirement
-> of PD service locator to get the event notifications for static PD
-> services. Also when events are received, the driver needs to handle
-> based on PD states. Added changes to add service locator for audio
-> and sensor domain static PDs and handle the PD restart sequence.
+On 01/06/24 07:47AM, Christoph Hellwig wrote:
+>On Mon, May 20, 2024 at 03:50:13PM +0530, Nitesh Shetty wrote:
+>> So copy offload works only for request based storage drivers.
+>
+>I don't think that is actually true.  It just requires a fair amount of
+>code in a bio based driver to match the bios up.
+>
+>I'm missing any kind of information on what this patch set as-is
+>actually helps with.  What operations are sped up, for what operations
+>does it reduce resource usage?
+>
+The major benefit of this copy-offload/emulation framework is
+observed in fabrics setup, for copy workloads across the network.
+The host will send offload command over the network and actual copy
+can be achieved using emulation on the target (hence patch 4).
+This results in higher performance and lower network consumption,
+as compared to read and write travelling across the network.
+With this design of copy-offload/emulation we are able to see the
+following improvements as compared to userspace read + write on a
+NVMeOF TCP setup:
 
-Thanks for the patch, I wanted to bring up a larger issue which I've 
-been noticing with the fastrpc driver.
+Setup1: Network Speed: 1000Mb/s
+	Host PC: Intel(R) Core(TM) i7-8700 CPU @ 3.20GHz
+	Target PC: AMD Ryzen 9 5900X 12-Core Processor
+	block size 8k:
+	Improvement in IO BW from 106 MiB/s to 360 MiB/s
+	Network utilisation drops from  97% to 6%.
+	block-size 1M:
+	Improvement in IO BW from 104 MiB/s to 2677 MiB/s
+	Network utilisation drops from 92% to 0.66%.
 
-This file is now >2.5k LOC, and to my knowledge it features:
+Setup2: Network Speed: 100Gb/s
+	Server: Intel(R) Xeon(R) Gold 6240 CPU @ 2.60GHz, 72 cores
+	(host and target have the same configuration)
+	block-size 8k:
+	17.5% improvement in IO BW (794 MiB/s to 933 MiB/s).
+	Network utilisation drops from  6.75% to 0.16%.
 
-* Two different memory mapping/unmapping interfaces to the DSP (three if 
-you count dmabufs!)
-* Different branching codepaths for static vs dynamic processes (with 
-totally different lifetimes).
-* Over 8 structs just for state management, with the largest being >1500 
-bytes
-* Zero context for which code paths are relevant for which contexts
+>Part of that might be that the included use case of offloading
+>copy_file_range doesn't seem particularly useful - on any advance
+>file system that would be done using reflinks anyway.
+>
+Instead of coining a new user interface just for copy,
+we thought of using existing infra for plumbing.
+When this series gets merged, we can add io-uring interface.
 
-Your series is a combination of bug fixes and cleanup which span most of 
-the file -- suggesting that the state management is also spread all ove 
-rthe file. Even for someone with some familiarity with the driver these 
-patches are really non-trivial to review (patch 5 being a good example 
-of this), while in addition you introduce new features like this in 
-patch. This doesn't make for a coherent story for reviewers.
+>Have you considered hooking into dm-kcopyd which would be an
+>instant win instead?  Or into garbage collection in zoned or other
+>log structured file systems?  Those would probably really like
+>multiple source bios, though.
+>
+Our initial few version of the series had dm-kcopyd use case.
+We dropped it, to make overall series lightweight and make it
+easier to review and test.
+When the current series gets merged, we will start adding
+more in-kernel users in next phase.
 
-On top of that, there is very minimal, if any comments in this hugely 
-complex code, and seemingly zero consideration for how to model state or 
-the lifetime of objects.
+Thank you,
+Nitesh Shetty
 
-Finally, there is next-to-no public documentation or easily obtained 
-(and used) userspace for this driver. Certainly nothing that I could use 
-to offer a Tested-by on your patches.
+------atUsqPFm-1W_PDIhMRaVeMNpJ8wr1jcbO3GdUizRktR65zpR=_520e5_
+Content-Type: text/plain; charset="utf-8"
 
-I am not the maintainer, so while it's not my place, I want to offer 
-some suggestions here:
 
-1. Split the fastrpc driver up into more bite-size chunks which can 
-actually be reasoned about (I would start by splitting the 
-implementation details out from the business logic, and then further 
-abstracting out the static PD support, PDR, etc. Just the "invoke" 
-mechanism should be in it's own file with it's own state...).
-
-2. Add detailed documentation explaining fastrpc from at least a high 
-level (ideally with lower level and driver details too), and code 
-comments (where relevant).
-
-3. Release (and maintain) a reference tool(s) that can be used to 
-validate the driver and better understand proposed new features (you 
-could take inspiration from https://gitlab.com/flamingradian/sensh/).
-
-A mechanism to test at least parts of this driver without needing a DSP 
-on the other end would likely help a lot here, but that's obviously a 
-much larger scope.
-
-Please let me know your thoughts.
-
-Kind Regards,
-> 
-> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
-> ---
->   drivers/misc/Kconfig   |   2 +
->   drivers/misc/fastrpc.c | 205 ++++++++++++++++++++++++++++++++++++++---
->   2 files changed, 195 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
-> index faf983680040..e2d83cd085b5 100644
-> --- a/drivers/misc/Kconfig
-> +++ b/drivers/misc/Kconfig
-> @@ -280,8 +280,10 @@ config QCOM_FASTRPC
->   	tristate "Qualcomm FastRPC"
->   	depends on ARCH_QCOM || COMPILE_TEST
->   	depends on RPMSG
-> +	depends on NET
->   	select DMA_SHARED_BUFFER
->   	select QCOM_SCM
-> +	select QCOM_PDR_HELPERS
->   	help
->   	  Provides a communication mechanism that allows for clients to
->   	  make remote method invocations across processor boundary to
-> diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
-> index 3e1ab58038ed..d115860fc356 100644
-> --- a/drivers/misc/fastrpc.c
-> +++ b/drivers/misc/fastrpc.c
-> @@ -22,6 +22,7 @@
->   #include <linux/firmware/qcom/qcom_scm.h>
->   #include <uapi/misc/fastrpc.h>
->   #include <linux/of_reserved_mem.h>
-> +#include <linux/soc/qcom/pdr.h>
->   
->   #define ADSP_DOMAIN_ID (0)
->   #define MDSP_DOMAIN_ID (1)
-> @@ -29,6 +30,7 @@
->   #define CDSP_DOMAIN_ID (3)
->   #define FASTRPC_DEV_MAX		4 /* adsp, mdsp, slpi, cdsp*/
->   #define FASTRPC_MAX_SESSIONS	14
-> +#define FASTRPC_MAX_SPD		4
->   #define FASTRPC_MAX_VMIDS	16
->   #define FASTRPC_ALIGN		128
->   #define FASTRPC_MAX_FDLIST	16
-> @@ -105,6 +107,18 @@
->   
->   #define miscdev_to_fdevice(d) container_of(d, struct fastrpc_device, miscdev)
->   
-> +#define AUDIO_PDR_SERVICE_LOCATION_CLIENT_NAME   "audio_pdr_adsp"
-> +#define AUDIO_PDR_ADSP_SERVICE_NAME              "avs/audio"
-> +#define ADSP_AUDIOPD_NAME                        "msm/adsp/audio_pd"
-> +
-> +#define SENSORS_PDR_ADSP_SERVICE_LOCATION_CLIENT_NAME   "sensors_pdr_adsp"
-> +#define SENSORS_PDR_ADSP_SERVICE_NAME              "tms/servreg"
-> +#define ADSP_SENSORPD_NAME                       "msm/adsp/sensor_pd"
-> +
-> +#define SENSORS_PDR_SLPI_SERVICE_LOCATION_CLIENT_NAME "sensors_pdr_slpi"
-> +#define SENSORS_PDR_SLPI_SERVICE_NAME            SENSORS_PDR_ADSP_SERVICE_NAME
-> +#define SLPI_SENSORPD_NAME                       "msm/slpi/sensor_pd"
-> +
->   static const char *domains[FASTRPC_DEV_MAX] = { "adsp", "mdsp",
->   						"sdsp", "cdsp"};
->   struct fastrpc_phy_page {
-> @@ -259,6 +273,15 @@ struct fastrpc_session_ctx {
->   	bool valid;
->   };
->   
-> +struct fastrpc_static_pd {
-> +	char *servloc_name;
-> +	char *spdname;
-> +	void *pdrhandle;
-> +	struct fastrpc_channel_ctx *cctx;
-> +	struct fastrpc_user *fl;
-> +	bool ispdup;
-> +};
-> +
->   struct fastrpc_channel_ctx {
->   	int domain_id;
->   	int sesscount;
-> @@ -266,6 +289,7 @@ struct fastrpc_channel_ctx {
->   	struct qcom_scm_vmperm vmperms[FASTRPC_MAX_VMIDS];
->   	struct rpmsg_device *rpdev;
->   	struct fastrpc_session_ctx session[FASTRPC_MAX_SESSIONS];
-> +	struct fastrpc_static_pd spd[FASTRPC_MAX_SPD];
->   	spinlock_t lock;
->   	struct idr ctx_idr;
->   	struct list_head users;
-> @@ -297,10 +321,12 @@ struct fastrpc_user {
->   	struct fastrpc_channel_ctx *cctx;
->   	struct fastrpc_session_ctx *sctx;
->   	struct fastrpc_buf *init_mem;
-> +	struct fastrpc_static_pd *spd;
->   
->   	int tgid;
->   	int pd;
->   	bool is_secure_dev;
-> +	char *servloc_name;
->   	/* Lock for lists */
->   	spinlock_t lock;
->   	/* lock for allocations */
-> @@ -1230,12 +1256,33 @@ static bool is_session_rejected(struct fastrpc_user *fl, bool unsigned_pd_reques
->   	return false;
->   }
->   
-> +static struct fastrpc_static_pd *fastrpc_get_spd_session(
-> +				struct fastrpc_user *fl)
-> +{
-> +	int i;
-> +	struct fastrpc_static_pd *spd = NULL;
-> +	struct fastrpc_channel_ctx *cctx = fl->cctx;
-> +
-> +	for (i = 0; i < FASTRPC_MAX_SPD ; i++) {
-> +		if (!cctx->spd[i].servloc_name)
-> +			continue;
-> +		if (!strcmp(fl->servloc_name, cctx->spd[i].servloc_name)) {
-> +			spd = &cctx->spd[i];
-> +			spd->fl = fl;
-> +			break;
-> +		}
-> +	}
-> +
-> +	return spd;
-> +}
-> +
->   static int fastrpc_init_create_static_process(struct fastrpc_user *fl,
->   					      char __user *argp)
->   {
->   	struct fastrpc_init_create_static init;
->   	struct fastrpc_invoke_args *args;
->   	struct fastrpc_phy_page pages[1];
-> +	struct fastrpc_static_pd *spd = NULL;
->   	char *name;
->   	int err;
->   	struct {
-> @@ -1270,6 +1317,19 @@ static int fastrpc_init_create_static_process(struct fastrpc_user *fl,
->   		goto err_name;
->   	}
->   
-> +	fl->servloc_name = AUDIO_PDR_SERVICE_LOCATION_CLIENT_NAME;
-> +
-> +	spd = fastrpc_get_spd_session(fl);
-> +	if (!spd) {
-> +		err = -EUSERS;
-> +		goto err_name;
-> +	}
-> +
-> +	if (!spd->ispdup) {
-> +		err = -ENOTCONN;
-> +		goto err_name;
-> +	}
-> +	fl->spd = spd;
->   	if (!fl->cctx->remote_heap) {
->   		err = fastrpc_remote_heap_alloc(fl, fl->sctx->dev, init.memlen,
->   						&fl->cctx->remote_heap);
-> @@ -1645,6 +1705,7 @@ static int fastrpc_dmabuf_alloc(struct fastrpc_user *fl, char __user *argp)
->   static int fastrpc_init_attach(struct fastrpc_user *fl, int pd)
->   {
->   	struct fastrpc_invoke_args args[1];
-> +	struct fastrpc_static_pd *spd = NULL;
->   	int tgid = fl->tgid;
->   	u32 sc;
->   
-> @@ -1654,6 +1715,22 @@ static int fastrpc_init_attach(struct fastrpc_user *fl, int pd)
->   	sc = FASTRPC_SCALARS(FASTRPC_RMID_INIT_ATTACH, 1, 0);
->   	fl->pd = pd;
->   
-> +	if (pd == SENSORS_PD) {
-> +		if (fl->cctx->domain_id == ADSP_DOMAIN_ID)
-> +			fl->servloc_name = SENSORS_PDR_ADSP_SERVICE_LOCATION_CLIENT_NAME;
-> +		else if (fl->cctx->domain_id == SDSP_DOMAIN_ID)
-> +			fl->servloc_name = SENSORS_PDR_SLPI_SERVICE_LOCATION_CLIENT_NAME;
-> +
-> +		spd = fastrpc_get_spd_session(fl);
-> +		if (!spd)
-> +			return -EUSERS;
-> +
-> +		if (!spd->ispdup)
-> +			return -ENOTCONN;
-> +
-> +		fl->spd = spd;
-> +	}
-> +
->   	return fastrpc_internal_invoke(fl, true, FASTRPC_INIT_HANDLE,
->   				       sc, &args[0]);
->   }
-> @@ -2129,6 +2206,64 @@ static long fastrpc_device_ioctl(struct file *file, unsigned int cmd,
->   	return err;
->   }
->   
-> +static void fastrpc_notify_users(struct fastrpc_user *user)
-> +{
-> +	struct fastrpc_invoke_ctx *ctx;
-> +
-> +	spin_lock(&user->lock);
-> +	list_for_each_entry(ctx, &user->pending, node) {
-> +		ctx->retval = -EPIPE;
-> +		complete(&ctx->work);
-> +	}
-> +	spin_unlock(&user->lock);
-> +}
-> +
-> +static void fastrpc_notify_pdr_drivers(struct fastrpc_channel_ctx *cctx,
-> +		char *servloc_name)
-> +{
-> +	struct fastrpc_user *fl;
-> +	unsigned long flags;
-> +
-> +	spin_lock_irqsave(&cctx->lock, flags);
-> +	list_for_each_entry(fl, &cctx->users, user) {
-> +		if (fl->servloc_name && !strcmp(servloc_name, fl->servloc_name))
-> +			fastrpc_notify_users(fl);
-> +	}
-> +	spin_unlock_irqrestore(&cctx->lock, flags);
-> +}
-> +
-> +static void fastrpc_pdr_cb(int state, char *service_path, void *priv)
-> +{
-> +	struct fastrpc_static_pd *spd = (struct fastrpc_static_pd *)priv;
-> +	struct fastrpc_channel_ctx *cctx;
-> +
-> +	if (!spd)
-> +		return;
-> +
-> +	cctx = spd->cctx;
-> +	switch (state) {
-> +	case SERVREG_SERVICE_STATE_DOWN:
-> +		dev_info(&cctx->rpdev->dev,
-> +			"%s: %s (%s) is down for PDR on %s\n",
-> +			__func__, spd->spdname,
-> +			spd->servloc_name,
-> +			domains[cctx->domain_id]);
-> +		spd->ispdup = false;
-> +		fastrpc_notify_pdr_drivers(cctx, spd->servloc_name);
-> +		break;
-> +	case SERVREG_SERVICE_STATE_UP:
-> +		dev_info(&cctx->rpdev->dev,
-> +			"%s: %s (%s) is up for PDR on %s\n",
-> +			__func__, spd->spdname,
-> +			spd->servloc_name,
-> +			domains[cctx->domain_id]);
-> +		spd->ispdup = true;
-> +		break;
-> +	default:
-> +		break;
-> +	}
-> +}
-> +
->   static const struct file_operations fastrpc_fops = {
->   	.open = fastrpc_device_open,
->   	.release = fastrpc_device_release,
-> @@ -2248,6 +2383,39 @@ static int fastrpc_device_register(struct device *dev, struct fastrpc_channel_ct
->   	return err;
->   }
->   
-> +static int fastrpc_setup_service_locator(struct fastrpc_channel_ctx *cctx, char *client_name,
-> +			char *service_name, char *service_path, int domain, int spd_session)
-> +{
-> +	int err = 0;
-> +	struct pdr_handle *handle = NULL;
-> +	struct pdr_service *service = NULL;
-> +
-> +	/* Register the service locator's callback function */
-> +	handle = pdr_handle_alloc(fastrpc_pdr_cb, &cctx->spd[spd_session]);
-> +	if (IS_ERR(handle)) {
-> +		err = PTR_ERR(handle);
-> +		goto bail;
-> +	}
-> +	cctx->spd[spd_session].pdrhandle = handle;
-> +	cctx->spd[spd_session].servloc_name = client_name;
-> +	cctx->spd[spd_session].spdname = service_path;
-> +	cctx->spd[spd_session].cctx = cctx;
-> +	service = pdr_add_lookup(handle, service_name, service_path);
-> +	if (IS_ERR(service)) {
-> +		err = PTR_ERR(service);
-> +		goto bail;
-> +	}
-> +	pr_info("fastrpc: %s: pdr_add_lookup enabled for %s (%s, %s)\n",
-> +		__func__, service_name, client_name, service_path);
-> +
-> +bail:
-> +	if (err) {
-> +		pr_warn("fastrpc: %s: failed for %s (%s, %s)with err %d\n",
-> +				__func__, service_name, client_name, service_path, err);
-> +	}
-> +	return err;
-> +}
-> +
->   static int fastrpc_rpmsg_probe(struct rpmsg_device *rpdev)
->   {
->   	struct device *rdev = &rpdev->dev;
-> @@ -2326,6 +2494,25 @@ static int fastrpc_rpmsg_probe(struct rpmsg_device *rpdev)
->   		goto fdev_error;
->   	}
->   
-> +	if (domain_id == ADSP_DOMAIN_ID) {
-> +		err = fastrpc_setup_service_locator(data, AUDIO_PDR_SERVICE_LOCATION_CLIENT_NAME,
-> +			AUDIO_PDR_ADSP_SERVICE_NAME, ADSP_AUDIOPD_NAME, domain_id, 0);
-> +		if (err)
-> +			goto populate_error;
-> +
-> +		err = fastrpc_setup_service_locator(data,
-> +			SENSORS_PDR_ADSP_SERVICE_LOCATION_CLIENT_NAME,
-> +			SENSORS_PDR_ADSP_SERVICE_NAME, ADSP_SENSORPD_NAME, domain_id, 1);
-> +		if (err)
-> +			goto populate_error;
-> +	} else if (domain_id == SDSP_DOMAIN_ID) {
-> +		err = fastrpc_setup_service_locator(data,
-> +			SENSORS_PDR_SLPI_SERVICE_LOCATION_CLIENT_NAME,
-> +			SENSORS_PDR_SLPI_SERVICE_NAME, SLPI_SENSORPD_NAME, domain_id, 0);
-> +		if (err)
-> +			goto populate_error;
-> +	}
-> +
->   	kref_init(&data->refcount);
->   
->   	dev_set_drvdata(&rpdev->dev, data);
-> @@ -2355,24 +2542,13 @@ static int fastrpc_rpmsg_probe(struct rpmsg_device *rpdev)
->   	return err;
->   }
->   
-> -static void fastrpc_notify_users(struct fastrpc_user *user)
-> -{
-> -	struct fastrpc_invoke_ctx *ctx;
-> -
-> -	spin_lock(&user->lock);
-> -	list_for_each_entry(ctx, &user->pending, node) {
-> -		ctx->retval = -EPIPE;
-> -		complete(&ctx->work);
-> -	}
-> -	spin_unlock(&user->lock);
-> -}
-> -
->   static void fastrpc_rpmsg_remove(struct rpmsg_device *rpdev)
->   {
->   	struct fastrpc_channel_ctx *cctx = dev_get_drvdata(&rpdev->dev);
->   	struct fastrpc_buf *buf, *b;
->   	struct fastrpc_user *user;
->   	unsigned long flags;
-> +	int i;
->   
->   	/* No invocations past this point */
->   	spin_lock_irqsave(&cctx->lock, flags);
-> @@ -2393,6 +2569,11 @@ static void fastrpc_rpmsg_remove(struct rpmsg_device *rpdev)
->   	if (cctx->remote_heap)
->   		fastrpc_buf_free(cctx->remote_heap);
->   
-> +	for (i = 0; i < FASTRPC_MAX_SPD; i++) {
-> +		if (cctx->spd[i].pdrhandle)
-> +			pdr_handle_release(cctx->spd[i].pdrhandle);
-> +	}
-> +
->   	of_platform_depopulate(&rpdev->dev);
->   
->   	fastrpc_channel_ctx_put(cctx);
-
--- 
-// Caleb (they/them)
+------atUsqPFm-1W_PDIhMRaVeMNpJ8wr1jcbO3GdUizRktR65zpR=_520e5_--
 
