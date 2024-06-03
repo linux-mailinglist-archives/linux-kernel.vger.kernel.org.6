@@ -1,114 +1,165 @@
-Return-Path: <linux-kernel+bounces-199167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF1D78D835F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:03:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84FA08D8362
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:04:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AACD128BB9A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:03:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C6071F277DC
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:04:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF16012D1E9;
-	Mon,  3 Jun 2024 13:01:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F86D12D759;
+	Mon,  3 Jun 2024 13:01:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U9feCv+f"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QbSaRR89"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C5B412C484;
-	Mon,  3 Jun 2024 13:01:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71A57548F7;
+	Mon,  3 Jun 2024 13:01:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717419669; cv=none; b=tNmzodaiwPhH3s7O4fpebZBTfcwe6ejMU0y3RwH9Izo8nlD3xVuXRaJo7eBJMcEmFpbKwm1taulKCPbmXCAl026NuU2aTb412R54kwGj1cPIkoPvm7yI4Mq0Gqkt9C2xpRfDYaRy4aFyVQdusnzY+c+fsLHhEAnGOmhE+ZIAA7g=
+	t=1717419696; cv=none; b=qSW1HyeeJcj0bpSeshOqHHy/ODCHOYw53fYos42pOc7+wswI9YXfAOSre5APZm7G0ZGhCz8Jm0a6RROfAS07tgnM1K2FG/W2S5H04Nogc9P9TXcoZnyybmEdVdQT79dYs374rMOVKYuKPau2O3I5JVkIVm9NULjvAU1uOhTAci8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717419669; c=relaxed/simple;
-	bh=hJYwoFGlnugTymRGVt1UgZWaPCCiUj0gq+QrUUX/45E=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=rHd6DdQEwWJufCVx+fpfBEBsyzlje/ypxTdZLwIT7WXGdXFB5QDAwMg4mVOqq+fkJ7BB6KFLaSUkaTJJcIcVwytZX25kM6inKqVfpFfEdx/0H5cfVIt8svAR/eK/KkrAIwl7ks7MsQNzsg/gh3tOINNlWoyOXBYSGtVywbrRSis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U9feCv+f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 0C118C2BD10;
-	Mon,  3 Jun 2024 13:01:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717419669;
-	bh=hJYwoFGlnugTymRGVt1UgZWaPCCiUj0gq+QrUUX/45E=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=U9feCv+fYTluUBwM4FpOl8q47QdLHhSbMGDa7v6J4r2GBJYbYLwO2ZxIlrKH8Q4+j
-	 tSq3yQiYAwpRGvJoeSPBDYQeAbbgiFwn+5lhXyMubLMao/4uLTxUXBenwAwtES8vbe
-	 R6UW5fk9ZzQoXMUih9Z49Ds1sMYuFcjyTjBeL0QC5cmpEo6lbAImf3J8IngtBAVzSx
-	 sx3VXcxelzYtVl9wPxviYkyz2j5RSyZupIwXf9eq/IEDAQTdH0zova4wQTint0KVdp
-	 IEPiPV2kIn+qi04NbEHKrwU8iNMcn7c++i1QtNAj0Ql1gfS0+RPa4u45TR7JpMCWpq
-	 Lx9zZgVxoMn9Q==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA63EC25B75;
-	Mon,  3 Jun 2024 13:01:08 +0000 (UTC)
-From: Nathan Lynch via B4 Relay <devnull+nathanl.linux.ibm.com@kernel.org>
-Date: Mon, 03 Jun 2024 08:01:03 -0500
-Subject: [PATCH] powerpc/crypto: Add generated P8 asm to .gitignore
+	s=arc-20240116; t=1717419696; c=relaxed/simple;
+	bh=PrLCp0GMZR2AicoILi5xjZz0ZaYXxDiO5O/INT0TxmA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=dcklFj4nSTZSQ6E55v8HtF0Rcw5BZgvuWTTm5HGC6pdzhgkChRSPQ5N+khbyyhrAT9TnqZIDJ+rBXjCbncVG9nE7RaHJw4s+yeMzeufoGeEuOrCuwaUVxe7oPx8GkMQmWiiiepxS+aX8C0yNtye/MoaR4ftLTAa0pbMCqNB8E/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QbSaRR89; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1f32a3b9491so32440925ad.0;
+        Mon, 03 Jun 2024 06:01:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717419695; x=1718024495; darn=vger.kernel.org;
+        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=V5Eco+bAOpNwEo9sPBF5nVVnr6HX74idMy7ovbj8FmQ=;
+        b=QbSaRR898pF7X5tztDKirq8cjB+WK3mPMb5Wn7uspcCNC7HS+dcY+k9n+sQiXUiN6B
+         qCspKCnsOD8vSA8W2RgZfa+Z2cCkBIhRPnFoJDjz1J9ovfoOIbO/bPRnn3zgQPjgg5NF
+         SHT7i8ZQQBueLIxc+8yZLdtzJ1WrO2gIlfNHnlsMMlSzlmP3ZX0lMIC6UiE2yJE9ZAa2
+         tOLNeV+0jyN6H1AyLqYMV2ZcEaYzVgJmUyrEmoUj2oXmumP9oFoDlFtxrhT1tIHeMXxh
+         IiDmYxuFMYCmYxfwDMBCfysWXG3knwsSx11Q2t8K/APsRVXiQQ02Gf4cOkXSvwDcjduY
+         Ylhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717419695; x=1718024495;
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=V5Eco+bAOpNwEo9sPBF5nVVnr6HX74idMy7ovbj8FmQ=;
+        b=JaigiFGiH8ScJhpt7L7ZxDmkc19c8cKRvrBeL+q1h5wqsFd0kUMI9+mWSVID9W8HJE
+         kEw8x00tKl2kmrHT1Ub3qVxkoEz3RNzxHDbbEcmtdLtHWeKO7UdAdeN7d9S8yjQKz89W
+         umxsDtcLYDhUjaRNCTrIKPAB8OJhRDxtihfMSLDY9+D8CZ5Z/eXaF1nxKsiqi0GjN/My
+         VXv+V7PnFw1oI8+TdszG3OyBi2Ls40r0Kyrj3cvebLa+qNs/J06uc5KFlIyHMGlxu2BQ
+         JhFSH3Ie57vGBGW8ZKdGojbtJrkLyPxQE/ewHrFK42YOJXiGKxFd3jTnafRu6FX31o5X
+         OrlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWP9oKU1BF250OHQJL0+QZnrCzwOwijR2/52mgCigtKLyLebGjfjOtkE7apAZB61/NcTYLW0whEb0x8Zd8juQTCuP52RXJIoaQTI6UI7xUUZtTyhUjIWo6OasCODB7kwlaxunB3Q2+Qe4thGaUMuJqUspDJad26GVzQerAddV6LrgoxYQ==
+X-Gm-Message-State: AOJu0YzbWiw1RqvP1LYrDcmRqiZToryV/KrqX9w4kFwsBf31yFOtr+KR
+	Pr3+9tUvGMpgGyCkOs0xPHvG/gEXZZowH8tz4VN9CQtOs1OaSIv1y64sFmESrTo4Cg==
+X-Google-Smtp-Source: AGHT+IGu0uqO6bboZ3ylaYT0xnOgZ6BdrPSrQAS6swrdZEy0eKPDV9aF2els8oTYVPJ+mYkovbwpPg==
+X-Received: by 2002:a17:903:41cd:b0:1f6:6ef0:dae9 with SMTP id d9443c01a7336-1f66ef0dcbfmr39640165ad.42.1717419694383;
+        Mon, 03 Jun 2024 06:01:34 -0700 (PDT)
+Received: from localhost ([36.45.244.211])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6323562b6sm64138665ad.73.2024.06.03.06.01.32
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 03 Jun 2024 06:01:34 -0700 (PDT)
+From: joswang <joswang1221@gmail.com>
+To: Thinh.Nguyen@synopsys.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: gregkh@linuxfoundation.org,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	balbi@kernel.org,
+	devicetree@vger.kernel.org,
+	joswang <joswang@lenovo.com>
+Subject: [PATCH v2, 2/3] usb: dwc3: core: add p3p2tranok quirk
+Date: Mon,  3 Jun 2024 21:01:26 +0800
+Message-Id: <20240603130126.25758-1-joswang1221@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20240601092646.52139-1-joswang1221@gmail.com>
+References: <20240601092646.52139-1-joswang1221@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240603-powerpc-crypto-ignore-p8-asm-v1-1-05843fec2bb7@linux.ibm.com>
-X-B4-Tracking: v=1; b=H4sIAI6+XWYC/x3MOw6DMAwA0Ksgz1hy+VSlV0EdosSAhyaWU1EQ4
- u5EjG95B2Q24Qzv6gDjVbKkWPCoK/CLizOjhGJoqOnoSS1q+rOpR2+7/hLKHJMx6gtd/mIXhqk
- fgiNqGUqhxpNsdz9+zvMCr/+Njm4AAAA=
-To: Herbert Xu <herbert@gondor.apana.org.au>, 
- "David S. Miller" <davem@davemloft.net>, 
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
- Christophe Leroy <christophe.leroy@csgroup.eu>, 
- "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>, 
- Danny Tsen <dtsen@linux.ibm.com>
-Cc: linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
- linux-kernel@vger.kernel.org, Nathan Lynch <nathanl@linux.ibm.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1717419668; l=931;
- i=nathanl@linux.ibm.com; s=20230817; h=from:subject:message-id;
- bh=QihzfT/yvBcFqpbTNR7ndCqh7WaXVJqXBsXhRlZPQ90=;
- b=QGuEuclbxZu65XOLMH9NK3EWtZhcZw+0yN7nFsIHy+I7MoKKPXUPvM7Gsd3TDDsqn7GmZ3CUN
- CjIqTKmsh3OARa/D/u5bqr2EQMRnMMb17I33uslOf1hxKx6/We9aCDd
-X-Developer-Key: i=nathanl@linux.ibm.com; a=ed25519;
- pk=jPDF44RvT+9DGFOH3NGoIu1xN9dF+82pjdpnKjXfoJ0=
-X-Endpoint-Received: by B4 Relay for nathanl@linux.ibm.com/20230817 with
- auth_id=78
-X-Original-From: Nathan Lynch <nathanl@linux.ibm.com>
-Reply-To: nathanl@linux.ibm.com
 
-From: Nathan Lynch <nathanl@linux.ibm.com>
+From: joswang <joswang@lenovo.com>
 
-Looks like drivers/crypto/vmx/.gitignore should have been merged into
-arch/powerpc/crypto/.gitignore as part of commit
-109303336a0c ("crypto: vmx - Move to arch/powerpc/crypto") so that all
-generated asm files are ignored.
+In the case of enable hibernation, there is an issue with
+the DWC31 2.00a and earlier versions where the controller
+link power state transition from P3/P3CPM/P4 to P2 may take
+longer than expected, ultimately resulting in the hibernation
+D3 entering time exceeding the expected 10ms.
 
-Signed-off-by: Nathan Lynch <nathanl@linux.ibm.com>
-Fixes: 109303336a0c ("crypto: vmx - Move to arch/powerpc/crypto")
+Synopsys workaround:
+If the PHY supports direct P3 to P2 transition, program
+GUSB3PIPECTL.P3P2Tran0K=1.
+
+Therefore, adding p3p2tranok quirk for workaround hibernation
+D3 exceeded the expected entry time.
+
+Signed-off-by: joswang <joswang@lenovo.com>
 ---
- arch/powerpc/crypto/.gitignore | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/usb/dwc3/core.c | 5 +++++
+ drivers/usb/dwc3/core.h | 4 ++++
+ 2 files changed, 9 insertions(+)
 
-diff --git a/arch/powerpc/crypto/.gitignore b/arch/powerpc/crypto/.gitignore
-index e1094f08f713..e9fe73aac8b6 100644
---- a/arch/powerpc/crypto/.gitignore
-+++ b/arch/powerpc/crypto/.gitignore
-@@ -1,3 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0-only
- aesp10-ppc.S
-+aesp8-ppc.S
- ghashp10-ppc.S
-+ghashp8-ppc.S
-
----
-base-commit: be2fc65d66e0406cc9d39d40becaecdf4ee765f3
-change-id: 20240603-powerpc-crypto-ignore-p8-asm-4d9f59da003e
-
-Best regards,
+diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+index 7ee61a89520b..3a8fbc2d6b99 100644
+--- a/drivers/usb/dwc3/core.c
++++ b/drivers/usb/dwc3/core.c
+@@ -666,6 +666,9 @@ static int dwc3_ss_phy_setup(struct dwc3 *dwc, int index)
+ 	if (dwc->dis_del_phy_power_chg_quirk)
+ 		reg &= ~DWC3_GUSB3PIPECTL_DEPOCHANGE;
+ 
++	if (dwc->p2p3tranok_quirk)
++		reg |= DWC3_GUSB3PIPECTL_P3P2TRANOK;
++
+ 	dwc3_writel(dwc->regs, DWC3_GUSB3PIPECTL(index), reg);
+ 
+ 	return 0;
+@@ -1715,6 +1718,8 @@ static void dwc3_get_properties(struct dwc3 *dwc)
+ 
+ 	dwc->dis_split_quirk = device_property_read_bool(dev,
+ 				"snps,dis-split-quirk");
++	dwc->p2p3tranok_quirk = device_property_read_bool(dev,
++				"snps,p2p3tranok-quirk");
+ 
+ 	dwc->lpm_nyet_threshold = lpm_nyet_threshold;
+ 	dwc->tx_de_emphasis = tx_de_emphasis;
+diff --git a/drivers/usb/dwc3/core.h b/drivers/usb/dwc3/core.h
+index 3781c736c1a1..2810dce8b42e 100644
+--- a/drivers/usb/dwc3/core.h
++++ b/drivers/usb/dwc3/core.h
+@@ -327,6 +327,7 @@
+ #define DWC3_GUSB3PIPECTL_DEP1P2P3_EN	DWC3_GUSB3PIPECTL_DEP1P2P3(1)
+ #define DWC3_GUSB3PIPECTL_DEPOCHANGE	BIT(18)
+ #define DWC3_GUSB3PIPECTL_SUSPHY	BIT(17)
++#define DWC3_GUSB3PIPECTL_P3P2TRANOK	BIT(11)
+ #define DWC3_GUSB3PIPECTL_LFPSFILT	BIT(9)
+ #define DWC3_GUSB3PIPECTL_RX_DETOPOLL	BIT(8)
+ #define DWC3_GUSB3PIPECTL_TX_DEEPH_MASK	DWC3_GUSB3PIPECTL_TX_DEEPH(3)
+@@ -1132,6 +1133,8 @@ struct dwc3_scratchpad_array {
+  *			instances in park mode.
+  * @parkmode_disable_hs_quirk: set if we need to disable all HishSpeed
+  *			instances in park mode.
++ * @p2p3tranok_quirk: set if Controller transitions directly from phy
++ *			power state P2 to P3 or from state P3 to P2.
+  * @gfladj_refclk_lpm_sel: set if we need to enable SOF/ITP counter
+  *                          running based on ref_clk
+  * @tx_de_emphasis_quirk: set if we enable Tx de-emphasis quirk
+@@ -1361,6 +1364,7 @@ struct dwc3 {
+ 	unsigned		ulpi_ext_vbus_drv:1;
+ 	unsigned		parkmode_disable_ss_quirk:1;
+ 	unsigned		parkmode_disable_hs_quirk:1;
++	unsigned		p2p3tranok_quirk:1;
+ 	unsigned		gfladj_refclk_lpm_sel:1;
+ 
+ 	unsigned		tx_de_emphasis_quirk:1;
 -- 
-Nathan Lynch <nathanl@linux.ibm.com>
-
+2.17.1
 
 
