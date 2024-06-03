@@ -1,112 +1,115 @@
-Return-Path: <linux-kernel+bounces-198667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 161F88D7BD3
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 08:43:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B64D8D7BD8
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 08:46:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47BE51C215EC
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 06:43:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA91228304A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 06:46:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 234103A1C9;
-	Mon,  3 Jun 2024 06:42:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E1A337707;
+	Mon,  3 Jun 2024 06:45:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ooq/Yzsq"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JeSelYwV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F14433BB24;
-	Mon,  3 Jun 2024 06:42:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BFC42C1BA;
+	Mon,  3 Jun 2024 06:45:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717396937; cv=none; b=pn9xKecEzRgysId7MKrKxhvzolF3XjRnZ4HpkRIy6+HmjsdNBvyEYDCYCK8G58TnDDeADbgjv7dPHIc5kt1bF3PHLHsUnzAoy5poM9ziyNunvV6joaB7tydezX5RQKaWvHEZnaXM1tvJyJRhUnMHfPZ3ZLmsT6e/uWMhL0+2eyg=
+	t=1717397153; cv=none; b=dEkmrMmkHmgWKLh9Uequi0wMxf23jR6nG18zkjWgkfFgi9i1MNejNqa3nz3iWxYf18JfFGbcWnYckTgWwjS+tcKXgsji1Ra8+dIuiPDWi2SsNPLHT18A03hyedTuocP1PKxZPULwID9NouOrMVcW1rZJesWZVmYeUxKN3Kw/xZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717396937; c=relaxed/simple;
-	bh=v2BsmmHhSga2JSNupjuKacxr8Tj3Xu00xalQSDY1tes=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=rzvBnZa2v2Wn9NDKhlahizVGJX0YjyeZyjx0tUR06ZZ3X/EjTtBHnHZznnTV0x14HWD1hKv1y3RSwhq7c0Yx1eq0y6TA0OER0BMG2LIqqTB+oeU+iffXmO4PZWPke4DF1/JfklFsBVgoLlpMxbc5ne0Qv7c8chByM8ikPHkqlds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ooq/Yzsq; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717396936; x=1748932936;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=v2BsmmHhSga2JSNupjuKacxr8Tj3Xu00xalQSDY1tes=;
-  b=Ooq/YzsqPAqoHmESygrv4WoDEtZJRs4/tWVd4of2rsFHhR1c+kjwm9pC
-   j9eGPjnoFqZXBH6b3x7HxspU/bMS8mEw/KAgYxXLliyZpXHenq79oXOJn
-   D/rz3hh1+QTRasEJviE8OX+x6UZ6Xd/14m3nh1ozQ2xFavwTjtrZaGM6z
-   Li+L0xD/Ic6Nj3q/zgyPB9AFlbyfSAftP7UEflm/mISAD1/JA+3LpiYeA
-   OdSTCMWKoJulUA0S0Q2Zp/Y1ivMEIBxRQqUxUOMj1sN3vN0X9TQE24VkS
-   yYsO6rr7w+8g3ayX23mxt2Po2nwGOyio6TWlwnvfHEipzA48A+kmGwbd+
-   w==;
-X-CSE-ConnectionGUID: 7tlacnIUQYa9l9oPT+6ivg==
-X-CSE-MsgGUID: tgtOVGXaTw2QTtudSLQE2A==
-X-IronPort-AV: E=McAfee;i="6600,9927,11091"; a="14101240"
-X-IronPort-AV: E=Sophos;i="6.08,210,1712646000"; 
-   d="scan'208";a="14101240"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2024 23:42:15 -0700
-X-CSE-ConnectionGUID: RZsgW1MLTCOhr0vOpBaDJA==
-X-CSE-MsgGUID: MIgSmXdxTxKTJat0m9wcyw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,210,1712646000"; 
-   d="scan'208";a="36862542"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.161])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2024 23:42:12 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 3 Jun 2024 09:42:08 +0300 (EEST)
-To: Reinette Chatre <reinette.chatre@intel.com>
-cc: linux-kselftest@vger.kernel.org, Shuah Khan <shuah@kernel.org>, 
-    Babu Moger <babu.moger@amd.com>, 
-    =?ISO-8859-15?Q?Maciej_Wiecz=F3r-Retman?= <maciej.wieczor-retman@intel.com>, 
-    LKML <linux-kernel@vger.kernel.org>, Fenghua Yu <fenghua.yu@intel.com>, 
-    Shuah Khan <skhan@linuxfoundation.org>
-Subject: Re: [PATCH v5 13/16] selftests/resctrl: Convert ctrlgrp & mongrp to
- pointers
-In-Reply-To: <1fa7f60d-6feb-4b99-bc3b-3dcdd22515f5@intel.com>
-Message-ID: <9cd4bda2-92ba-d958-d9c6-1c255f3d62db@linux.intel.com>
-References: <20240531131142.1716-1-ilpo.jarvinen@linux.intel.com> <20240531131142.1716-14-ilpo.jarvinen@linux.intel.com> <1fa7f60d-6feb-4b99-bc3b-3dcdd22515f5@intel.com>
+	s=arc-20240116; t=1717397153; c=relaxed/simple;
+	bh=Pyy4ovwtosXvgy2lviTvJPTsT5T7HV7laF3GNbepqV0=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=Vcy9zmT9TQ5ly2FGVR67jftsSfAvHPYMpO75fMt8s3kHArzwC1RGNSJbKeL82nmvbY3bUJ6S/PNEz6ctUpAFX4VwsVo37HuMsIXpJF6QSpYNGsWsFgM6xqucrFnLX9fmHu+i0nf+fvVKG/MySifS838A0wRNv804upyZc3O+mtk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JeSelYwV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DA60C2BD10;
+	Mon,  3 Jun 2024 06:45:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717397153;
+	bh=Pyy4ovwtosXvgy2lviTvJPTsT5T7HV7laF3GNbepqV0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=JeSelYwVyATu2d0wuRrkm6e1MRFGHHe72Da39BIBi3U+N1y3TXLokPnU+WxakED6/
+	 +fZosFTt9Y0Ioskn1LRKbfX2Czi67V89SAgviKFaUDotkVO3B2Z3asoglIbVSdljYO
+	 hgmphj9FjS3srvCXSxpuhGuK2oP7OyS2eEXARmV7WjRok4tri/oRRv5p82FA2GuxW6
+	 4JS8F9CLD0vuuQ7x3v97dgKtg5bz3/svlPTsthCo6Sj6jLjdzIVuOOmsBtCG+yZYpN
+	 wDhBwFT19Ap9dlVnp5FSH1NoPdASV44swkuhRpbQurZDFiNxeJpJnGAPfNqY7zEgOD
+	 v0vR2cJCQB3Hg==
+Date: Mon, 3 Jun 2024 15:45:49 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: "wuqiang.matt" <wuqiang.matt@bytedance.com>
+Cc: Jeff Johnson <quic_jjohnson@quicinc.com>, Andrew Morton
+ <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH] lib: test_objpool: add missing MODULE_DESCRIPTION()
+ macro
+Message-Id: <20240603154549.4a338c065e42f07c8c3d1b82@kernel.org>
+In-Reply-To: <7ba64e00-373b-4c13-a30a-113646dad588@bytedance.com>
+References: <20240531-md-lib-test_objpool-v1-1-516efee92a05@quicinc.com>
+	<7ba64e00-373b-4c13-a30a-113646dad588@bytedance.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1320720624-1717396928=:1529"
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Mon, 3 Jun 2024 11:25:59 +0800
+"wuqiang.matt" <wuqiang.matt@bytedance.com> wrote:
 
---8323328-1320720624-1717396928=:1529
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+> On 2024/6/1 08:31, Jeff Johnson wrote:
+> > make allmodconfig && make W=1 C=1 reports:
+> > WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_objpool.o
+> > 
+> > Add the missing invocation of the MODULE_DESCRIPTION() macro.
+> > 
+> > Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> > ---
+> >   lib/test_objpool.c | 3 ++-
+> >   1 file changed, 2 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/lib/test_objpool.c b/lib/test_objpool.c
+> > index bfdb81599832..5a3f6961a70f 100644
+> > --- a/lib/test_objpool.c
+> > +++ b/lib/test_objpool.c
+> > @@ -687,4 +687,5 @@ static void __exit ot_mod_exit(void)
+> >   module_init(ot_mod_init);
+> >   module_exit(ot_mod_exit);
+> >   
+> > -MODULE_LICENSE("GPL");
+> > \ No newline at end of file
+> > +MODULE_DESCRIPTION("Test module for lockless object pool");
+> > +MODULE_LICENSE("GPL");
+> > 
+> > ---
+> > base-commit: b050496579632f86ee1ef7e7501906db579f3457
+> > change-id: 20240531-md-lib-test_objpool-338d937f8666
+> > 
+> 
+> Looks good to me. Thanks for the update.
+> 
+> I added Masami Hiramatsu and linux-trace in the loop.
+> 
+> Reviewed-by: Matt Wu <wuqiang.matt@bytedance.com>
 
-On Fri, 31 May 2024, Reinette Chatre wrote:
-> On 5/31/24 6:11 AM, Ilpo J=C3=A4rvinen wrote:
-> > The struct resctrl_val_param has control and monitor groups as char
-> > arrays but they are not supposed to be mutated within resctrl_val().
-> >=20
-> > Convert the ctrlgrp and mongrp char array within resctrl_val_param to
-> > plain const char pointers and adjust the strlen() based checks to
-> > check NULL instead.
-> >=20
-> > Convert !grp_name check in create_grp() into internal sanity check by
-> > returning error if the caller asked to create a group but doesn't
-> > provide a name for the group. The existing code already abides this by
-> > only calling create_grp() if mongrp is non-NULL so the error should
-> > never be returned with the current selftests (ctrlgrp is never NULL).
->=20
-> This paragraph is no longer relevant and can be dropped.
+Thanks, let me pick this to probes/for-next branch.
 
-Thanks for catching this. I'm absolutely sure I had this open one in=20
-my editor and removed it but it seems I did not, no idea what happened.
+Thank you,
 
---=20
- i.
+> 
+> Regards,
+> Matt Wu
+> 
 
---8323328-1320720624-1717396928=:1529--
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
