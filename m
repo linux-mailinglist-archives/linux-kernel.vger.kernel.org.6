@@ -1,330 +1,151 @@
-Return-Path: <linux-kernel+bounces-198942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7024D8D7F83
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:56:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 330A98D7F85
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:56:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8689B24CF9
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:56:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D821628998B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:56:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1B307E0F1;
-	Mon,  3 Jun 2024 09:56:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 911B1811E0;
+	Mon,  3 Jun 2024 09:56:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TQLNxMDu"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ls5yTesZ"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 465C0763E4
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 09:56:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AA237FBBE
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 09:56:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717408572; cv=none; b=qfJixL0+J9jH6ofMd0QEYlp8rqrMu+ih2usKNYugivUrEVF+54XEQCWoqTQ5jPjTUgEF70TNWPTbNmwJ72SdapngBJUEdVmSH3D9nhj2mSIF6rlRhbVl/oo+nHe1KP0+51f1i34UgCg9MgcE0SyLuqVlL6NLpUExuW5VVHjDtik=
+	t=1717408586; cv=none; b=bjVxhrTy5KUHHCFaNdL56bl0uy+xdLgjj8+lYMwwdjJPmhb9D/yQU9LI9ZYZocglpanI8Mph4Ixw1fZR26Uf+moShcqzAERdyPgOI79tu/ATuQ+Btogs4rMpsvZh7NLMZQhcnZVHUsV3TBoMLUprU5v9kuHZLflTCLEQgNyBnf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717408572; c=relaxed/simple;
-	bh=PMjK+KLl77YzoHb+FEHFo7PKU5+RwaJIEKLuac1VPwk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Cy+WM72BLATlHTmxrVIe7xOcqEBd0LNVOUqGRLftwEPMpjRC5gRBEKSqxbusqs3kOdNztPz/Xj20gw8FZ6zxYLYyCSRW9k2MQQ8QLxKnOh8vOv/JQ8j4xiT/7IydUgNUwQzQIzQ+UCEVohBozCEOckfaKJs4JBj7LYzYBerdwDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TQLNxMDu; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717408570;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=q1PCm2xaf5YJmMIBfGCQNf9GhmSy39Dl1iW2ZFEa2jc=;
-	b=TQLNxMDucYnRGhf7PUNFSBKIveJBjLSv89ApYwIEmEqKqRDOEiiL7Smg8ZNQsts6G8Br36
-	UKSMXLR5Y11awe72fzZUx/TigIuGoP2YuvfdO1Ftq4O7QFZxU/uOqY+CAqLvNV9NxR9R79
-	OvxS6/XGQeoz7wniueBpPBJ8LvfoB+o=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-25-sEEhTg5TPX--IIo32ZLuLQ-1; Mon, 03 Jun 2024 05:56:05 -0400
-X-MC-Unique: sEEhTg5TPX--IIo32ZLuLQ-1
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-a6917eb045bso32683766b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 02:56:05 -0700 (PDT)
+	s=arc-20240116; t=1717408586; c=relaxed/simple;
+	bh=bZUi/bPPjZgfedSE6wxqW2H8bc6Pp8KMu+hHEjG8Lhg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gOGzSs8dZ0DdVy4dciCW6LPh7OOCaqQBtScYS7bbUcZPTBWiOi4ybIDmvA3MspC2IY0REwQICoDb3O7k2qlwsJXLfTjBHybe1LkLSF4KO5tXtI/a+6e+f/5LXmsCyjk3G5TJI/wRsieTi7MU6bhukV6Iivt7PYpx/WwOqoGCOCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ls5yTesZ; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2eaa80cb4d3so23731281fa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 02:56:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717408582; x=1718013382; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=6mTx7uYu4uJ3l4mrzFi9l5SnvCCSSuUrVpO+YQxuP+o=;
+        b=Ls5yTesZBBW4LluHqpLYjVFrY5l84rcHuU0emvN3RKEiaMjFydB9KHd9MnhVXxizB5
+         ZiLXC81KLCcZv11yRO77QmqTMWLxuv33v5/8EdPmb4p515vfizU8jnH17lxAmL6U+U9G
+         LmL5J8B+r5Lbh12CBJf7guDCCJ112ETLR6nH4SJ4KTVBhGQ94gqAvo2VGlRNnl9mUlmD
+         vYAcGRTlv4q8F4Iuk0b1ppf6UOuScSBbZ23czlq4LQzXLUhta7vYEJ0/heMCI+2ldHR8
+         OV2N364WBnq8Hwr0y81LwFIgzdWWcV2eH3cF4oUg/eGqj5BdyPezFyqX06w/zECXTZCK
+         UiaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717408564; x=1718013364;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1717408582; x=1718013382;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=q1PCm2xaf5YJmMIBfGCQNf9GhmSy39Dl1iW2ZFEa2jc=;
-        b=jH/qsp3VAnl1jR8+deDqjsddn+NodosPdSFTJsDP+cQqS9cJxrPcPOfSLJeqL7OCNa
-         NtbX5tE/Risgt+M+MT5IWszG4ff2HMXi9ogCMXyhaCtW7jp8VgJuzxx7KAf3vD25J0+p
-         Sj1lzJklIHobpqpgbFg1r+xVRMy0oS+Lz/JpSbXl8/NuR8TzMPGtvrqgI8nJPpNe42mc
-         UDrtM5pPtgJs323XDLVRaQPHXvlr0W6Mq1UO6kQbKcMFsSQV3tQ6suPvaHuKza9siZKx
-         kYwniG1YueNbfylRzeNJNisEhe9OX2W/SCUCkr6WIMyTmhvCAhxySzMrq6eow/5/doln
-         R3lg==
-X-Forwarded-Encrypted: i=1; AJvYcCUzasp8a/6+OJ6de4rg13WQGN95D9ng2jSHEt/ExWFEMPEPFWQuYPOs0r/jokAdvYOu3Axc5FePn3icPV0f2/SCeBdHLwZ/EtQoZNo7
-X-Gm-Message-State: AOJu0YxyPkftn/qjn2Fw6ryS/o0dti3/HT3LNv5x2ZWhDz2LC3ftyCZs
-	RXOo4MzC5B//2WgkUXCFuhRwwNbnoGM539KjqubTxoA+uYd8esV0tio4xvRAS6awcNZyiwf1N9M
-	Qe6s5QZpE4QDq/6bLFAXRxc67iz72p1D3V8a/YG/ToZR3SLgDN9A3XKRqZRh0iw==
-X-Received: by 2002:a17:907:7ea1:b0:a68:ea13:f68 with SMTP id a640c23a62f3a-a68ea131343mr279879566b.54.1717408564302;
-        Mon, 03 Jun 2024 02:56:04 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEWuRFY3ZUBvH5asyPgmDl2PAvt3sfRx7QBGchc3qg3zTbB4WTJ4nudg3EQQfkLme21VB/cuQ==
-X-Received: by 2002:a17:907:7ea1:b0:a68:ea13:f68 with SMTP id a640c23a62f3a-a68ea131343mr279878266b.54.1717408563792;
-        Mon, 03 Jun 2024 02:56:03 -0700 (PDT)
-Received: from [10.40.98.157] ([78.108.130.194])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a691bde21e2sm80180666b.104.2024.06.03.02.56.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Jun 2024 02:56:03 -0700 (PDT)
-Message-ID: <138380cf-465a-4d0a-a4bc-657bfd83237e@redhat.com>
-Date: Mon, 3 Jun 2024 11:56:02 +0200
+        bh=6mTx7uYu4uJ3l4mrzFi9l5SnvCCSSuUrVpO+YQxuP+o=;
+        b=XCs1EsDeb1iQ+qCikb+vWHotFUcbXrapPL41sxzILKsbW1uqawORMBvKtdkaIROcJ/
+         bUE4gENEIjYTZJ4Oc3xpSHETUQyIoai5cl7Md1Scp7LmZPdc70lEwZfytLpTeu0m72Tc
+         wkJp+R5PO35DR0Ggh2+5d+NzRvoPnqmTTGC8fXJylpvnGOW4e32QiZ1aquFOdM/EdkHU
+         1v4SQzw/UB3BRRWrQAtNudZLL7wNfssiGkM67jEgPlzNNia9SxvKJP4J7uaH/oD+o+mE
+         4bISwoxu/DuU6KeCFyab/vm3lub9eDNbn+EKV3MSeuGrw+yJ0AtZiIOyV1Q9w8XL8rAI
+         MVGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV/s0IPSXNRjEdfGCH0JD4qcfEtYmeqXDfhx9ee627jc9NhuJEk4pmO/HmYmVZzjmveOvpil77k2a9zoGHkl2UIVAe58qidcrFM+yzq
+X-Gm-Message-State: AOJu0YxDtw3ziCDE7yn5Ux8ywJoG/4Mg44YyqSQukbJ3MFO48L+3zsdu
+	cXM0nlqVnwqdCywAjPiwY9QN/yX1DFBLhMNNh3mzoanq4WoXjRGzWCSBTsaeVT0=
+X-Google-Smtp-Source: AGHT+IHSCdyvp5+2eOYDj+674cfzeGayLmBYOuR9dLBJlHksV+pWHaAVt9NSdLi9tKQ+HUr0r3f86g==
+X-Received: by 2002:a05:651c:61f:b0:2ea:8201:4a10 with SMTP id 38308e7fff4ca-2ea951de6b0mr59670731fa.42.1717408582459;
+        Mon, 03 Jun 2024 02:56:22 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ea91bb4c07sm11243601fa.45.2024.06.03.02.56.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Jun 2024 02:56:22 -0700 (PDT)
+Date: Mon, 3 Jun 2024 12:56:20 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Ekansh Gupta <quic_ekangupt@quicinc.com>
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+	linux-arm-msm@vger.kernel.org, gregkh@linuxfoundation.org, quic_bkumar@quicinc.com, 
+	linux-kernel@vger.kernel.org, quic_chennak@quicinc.com, stable <stable@kernel.org>
+Subject: Re: [PATCH v3 2/9] misc: fastrpc: Fix DSP capabilities request
+Message-ID: <ci2l4g4jsefq3pdjdxzan4hnuuii2d3faa3wjh5lbiiqo7t6nj@mxu5oka3r6oz>
+References: <20240530102032.27179-1-quic_ekangupt@quicinc.com>
+ <20240530102032.27179-3-quic_ekangupt@quicinc.com>
+ <32750882-2e4c-44b7-af6d-a1ec0857b69a@linaro.org>
+ <7e316c16-47a3-4a87-81da-529bb857f4db@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] platform/x86: dell-smbios: Fix wrong token data in
- sysfs
-To: Armin Wolf <W_Armin@gmx.de>, ilpo.jarvinen@linux.intel.com
-Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240528204903.445546-1-W_Armin@gmx.de>
-Content-Language: en-US
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20240528204903.445546-1-W_Armin@gmx.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7e316c16-47a3-4a87-81da-529bb857f4db@quicinc.com>
 
-Hi,
+On Mon, Jun 03, 2024 at 12:35:40PM +0530, Ekansh Gupta wrote:
+> 
+> 
+> On 5/31/2024 3:03 PM, Srinivas Kandagatla wrote:
+> >
+> >
+> > On 30/05/2024 11:20, Ekansh Gupta wrote:
+> >> Incorrect remote arguments are getting passed when requesting for
+> >> capabilities from DSP. Also there is no requirement to update the
+> >> PD type as it might cause problems for any PD other than user PD.
+> >> In addition to this, the collected capability information is not
+> >> getting copied properly to user. Add changes to address these
+> >> problems and get correct DSP capabilities.
+> >>
+> >> Fixes: 6c16fd8bdd40 ("misc: fastrpc: Add support to get DSP capabilities")
+> >> Cc: stable <stable@kernel.org>
+> >> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
+> >> ---
+> >>   drivers/misc/fastrpc.c | 7 +++----
+> >>   1 file changed, 3 insertions(+), 4 deletions(-)
+> >
+> >
+> >>       if (err == DSP_UNSUPPORTED_API) {
+> >>           dev_info(&cctx->rpdev->dev,
+> >>                "Warning: DSP capabilities not supported on domain: %d\n", domain);
+> >> @@ -1783,7 +1782,7 @@ static int fastrpc_get_dsp_info(struct fastrpc_user *fl, char __user *argp)
+> >>       if (err)
+> >>           return err;
+> >>   -    if (copy_to_user(argp, &cap.capability, sizeof(cap.capability)))
+> >> +    if (copy_to_user(argp, &cap, sizeof(cap)))
+> >
+> > Why are we copying the full struct here? All that user needs is cap.capability?
+> as argp sent from user during ioctl is the capability structure, the
+> same argp is copied to a local fastrpc_ioctl_capability structure(cap)
+> to get the domain and attribute_id information. Copying just the
+> capability member to argp will cause problem when the user tries to
+> read the capability. While testing the capability, I was observing
+> this failure and it is resolved once we copy the information properly.
 
-On 5/28/24 10:49 PM, Armin Wolf wrote:
-> When reading token data from sysfs on my Inspiron 3505, the token
-> locations and values are wrong. This happens because match_attribute()
-> blindly assumes that all entries in da_tokens have an associated
-> entry in token_attrs.
-> 
-> This however is not true as soon as da_tokens[] contains zeroed
-> token entries. Those entries are being skipped when initialising
-> token_attrs, breaking the core assumption of match_attribute().
-> 
-> Fix this by defining an extra struct for each pair of token attributes
-> and use container_of() to retrieve token information.
-> 
-> Tested on a Dell Inspiron 3050.
-> 
-> Fixes: 33b9ca1e53b4 ("platform/x86: dell-smbios: Add a sysfs interface for SMBIOS tokens")
-> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
-> ---
-> Changes since v1:
-> - remove style changes
-> - improve sizeof() usage with pointer targets
+What kind of failure? Which problems? Why do we need to get all the
+details from you by asking for more and more details. All this
+information must be explained in the commit message.
 
-Thank you for your patch-series, I've applied this series to my
-review-hans branch:
-https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/log/?h=review-hans
+[please wrap your lines in a some sensible way, I had to do that for you]
 
-Note it will show up in my review-hans branch once I've pushed my
-local branch there, which might take a while.
-
-I will include this patch in my next fixes pull-req to Linus
-for the current kernel development cycle.
-
-Regards,
-
-Hans
-
-
-
-
-> ---
->  drivers/platform/x86/dell/dell-smbios-base.c | 92 ++++++++------------
->  1 file changed, 36 insertions(+), 56 deletions(-)
-> 
-> diff --git a/drivers/platform/x86/dell/dell-smbios-base.c b/drivers/platform/x86/dell/dell-smbios-base.c
-> index e61bfaf8b5c4..86b95206cb1b 100644
-> --- a/drivers/platform/x86/dell/dell-smbios-base.c
-> +++ b/drivers/platform/x86/dell/dell-smbios-base.c
-> @@ -11,6 +11,7 @@
->   */
->  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-> 
-> +#include <linux/container_of.h>
->  #include <linux/kernel.h>
->  #include <linux/module.h>
->  #include <linux/capability.h>
-> @@ -25,11 +26,16 @@ static u32 da_supported_commands;
->  static int da_num_tokens;
->  static struct platform_device *platform_device;
->  static struct calling_interface_token *da_tokens;
-> -static struct device_attribute *token_location_attrs;
-> -static struct device_attribute *token_value_attrs;
-> +static struct token_sysfs_data *token_entries;
->  static struct attribute **token_attrs;
->  static DEFINE_MUTEX(smbios_mutex);
-> 
-> +struct token_sysfs_data {
-> +	struct device_attribute location_attr;
-> +	struct device_attribute value_attr;
-> +	struct calling_interface_token *token;
-> +};
-> +
->  struct smbios_device {
->  	struct list_head list;
->  	struct device *device;
-> @@ -416,47 +422,26 @@ static void __init find_tokens(const struct dmi_header *dm, void *dummy)
->  	}
->  }
-> 
-> -static int match_attribute(struct device *dev,
-> -			   struct device_attribute *attr)
-> -{
-> -	int i;
-> -
-> -	for (i = 0; i < da_num_tokens * 2; i++) {
-> -		if (!token_attrs[i])
-> -			continue;
-> -		if (strcmp(token_attrs[i]->name, attr->attr.name) == 0)
-> -			return i/2;
-> -	}
-> -	dev_dbg(dev, "couldn't match: %s\n", attr->attr.name);
-> -	return -EINVAL;
-> -}
-> -
->  static ssize_t location_show(struct device *dev,
->  			     struct device_attribute *attr, char *buf)
->  {
-> -	int i;
-> +	struct token_sysfs_data *data = container_of(attr, struct token_sysfs_data, location_attr);
-> 
->  	if (!capable(CAP_SYS_ADMIN))
->  		return -EPERM;
-> 
-> -	i = match_attribute(dev, attr);
-> -	if (i > 0)
-> -		return sysfs_emit(buf, "%08x", da_tokens[i].location);
-> -	return 0;
-> +	return sysfs_emit(buf, "%08x", data->token->location);
->  }
-> 
->  static ssize_t value_show(struct device *dev,
->  			  struct device_attribute *attr, char *buf)
->  {
-> -	int i;
-> +	struct token_sysfs_data *data = container_of(attr, struct token_sysfs_data, value_attr);
-> 
->  	if (!capable(CAP_SYS_ADMIN))
->  		return -EPERM;
-> 
-> -	i = match_attribute(dev, attr);
-> -	if (i > 0)
-> -		return sysfs_emit(buf, "%08x", da_tokens[i].value);
-> -	return 0;
-> +	return sysfs_emit(buf, "%08x", data->token->value);
->  }
-> 
->  static struct attribute_group smbios_attribute_group = {
-> @@ -473,22 +458,15 @@ static int build_tokens_sysfs(struct platform_device *dev)
->  {
->  	char *location_name;
->  	char *value_name;
-> -	size_t size;
->  	int ret;
->  	int i, j;
-> 
-> -	/* (number of tokens  + 1 for null terminated */
-> -	size = sizeof(struct device_attribute) * (da_num_tokens + 1);
-> -	token_location_attrs = kzalloc(size, GFP_KERNEL);
-> -	if (!token_location_attrs)
-> +	token_entries = kcalloc(da_num_tokens, sizeof(*token_entries), GFP_KERNEL);
-> +	if (!token_entries)
->  		return -ENOMEM;
-> -	token_value_attrs = kzalloc(size, GFP_KERNEL);
-> -	if (!token_value_attrs)
-> -		goto out_allocate_value;
-> 
->  	/* need to store both location and value + terminator*/
-> -	size = sizeof(struct attribute *) * ((2 * da_num_tokens) + 1);
-> -	token_attrs = kzalloc(size, GFP_KERNEL);
-> +	token_attrs = kcalloc((2 * da_num_tokens) + 1, sizeof(*token_attrs), GFP_KERNEL);
->  	if (!token_attrs)
->  		goto out_allocate_attrs;
-> 
-> @@ -496,27 +474,32 @@ static int build_tokens_sysfs(struct platform_device *dev)
->  		/* skip empty */
->  		if (da_tokens[i].tokenID == 0)
->  			continue;
-> +
-> +		token_entries[i].token = &da_tokens[i];
-> +
->  		/* add location */
->  		location_name = kasprintf(GFP_KERNEL, "%04x_location",
->  					  da_tokens[i].tokenID);
->  		if (location_name == NULL)
->  			goto out_unwind_strings;
-> -		sysfs_attr_init(&token_location_attrs[i].attr);
-> -		token_location_attrs[i].attr.name = location_name;
-> -		token_location_attrs[i].attr.mode = 0444;
-> -		token_location_attrs[i].show = location_show;
-> -		token_attrs[j++] = &token_location_attrs[i].attr;
-> +
-> +		sysfs_attr_init(&token_entries[i].location_attr.attr);
-> +		token_entries[i].location_attr.attr.name = location_name;
-> +		token_entries[i].location_attr.attr.mode = 0444;
-> +		token_entries[i].location_attr.show = location_show;
-> +		token_attrs[j++] = &token_entries[i].location_attr.attr;
-> 
->  		/* add value */
->  		value_name = kasprintf(GFP_KERNEL, "%04x_value",
->  				       da_tokens[i].tokenID);
->  		if (value_name == NULL)
->  			goto loop_fail_create_value;
-> -		sysfs_attr_init(&token_value_attrs[i].attr);
-> -		token_value_attrs[i].attr.name = value_name;
-> -		token_value_attrs[i].attr.mode = 0444;
-> -		token_value_attrs[i].show = value_show;
-> -		token_attrs[j++] = &token_value_attrs[i].attr;
-> +
-> +		sysfs_attr_init(&token_entries[i].value_attr.attr);
-> +		token_entries[i].value_attr.attr.name = value_name;
-> +		token_entries[i].value_attr.attr.mode = 0444;
-> +		token_entries[i].value_attr.show = value_show;
-> +		token_attrs[j++] = &token_entries[i].value_attr.attr;
->  		continue;
-> 
->  loop_fail_create_value:
-> @@ -532,14 +515,12 @@ static int build_tokens_sysfs(struct platform_device *dev)
-> 
->  out_unwind_strings:
->  	while (i--) {
-> -		kfree(token_location_attrs[i].attr.name);
-> -		kfree(token_value_attrs[i].attr.name);
-> +		kfree(token_entries[i].location_attr.attr.name);
-> +		kfree(token_entries[i].value_attr.attr.name);
->  	}
->  	kfree(token_attrs);
->  out_allocate_attrs:
-> -	kfree(token_value_attrs);
-> -out_allocate_value:
-> -	kfree(token_location_attrs);
-> +	kfree(token_entries);
-> 
->  	return -ENOMEM;
->  }
-> @@ -551,12 +532,11 @@ static void free_group(struct platform_device *pdev)
->  	sysfs_remove_group(&pdev->dev.kobj,
->  				&smbios_attribute_group);
->  	for (i = 0; i < da_num_tokens; i++) {
-> -		kfree(token_location_attrs[i].attr.name);
-> -		kfree(token_value_attrs[i].attr.name);
-> +		kfree(token_entries[i].location_attr.attr.name);
-> +		kfree(token_entries[i].value_attr.attr.name);
->  	}
->  	kfree(token_attrs);
-> -	kfree(token_value_attrs);
-> -	kfree(token_location_attrs);
-> +	kfree(token_entries);
->  }
-> 
->  static int __init dell_smbios_init(void)
-> --
-> 2.39.2
+> >
+> >
+> >
+> > --srini
+> >
+> >
+> >>           return -EFAULT;
+> >>         return 0;
+> >
 > 
 
+-- 
+With best wishes
+Dmitry
 
