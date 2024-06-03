@@ -1,123 +1,162 @@
-Return-Path: <linux-kernel+bounces-200081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42B068FAA66
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 08:01:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97B218FAA80
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 08:08:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73A2D1C2275A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 06:01:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C7B0283C81
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 06:08:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF184137C23;
-	Tue,  4 Jun 2024 06:01:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B347E13D88F;
+	Tue,  4 Jun 2024 06:08:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="o5ocVEPq"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="s45Z7N0g"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04933A5F;
-	Tue,  4 Jun 2024 06:01:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FAC813D2B7
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 06:08:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717480873; cv=none; b=kINz3Xn1tKa2Eat9OFuS05/CfDStVrMaSvO9hvUqKxHrDwTWG4DVPmUB/GGdWFQbIUEt4kFOw0f9yYK+Q5wn+jeZIXqrHPK/NsgpmV+z3NME/Wb4diFgS0kOg81qFspZPOyG584CA4ejdUIRVKiXjhWsQtfrTr7LbWU/HSviHcQ=
+	t=1717481284; cv=none; b=Z97GkUpdk+hfbClqY3KDQB2KcqMJRezJCqqlCGknUwUHAX3SpD4MJJHS05Z29c9bAbcqD+vn7dZHGVXQ0MZT59ZH2wzOcoTg1Ivx9q06pbPm5+qdkrc14Xi7S9pFUoC7qSDAJIKCg+8jAA3yU/KLodb0g5IN1I6zCKqnh3PRLcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717480873; c=relaxed/simple;
-	bh=Jd4fUlb0i7EadQ2VxIkjPkJAQ7Q9m454Ry4odrQcn3g=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=SfEA5PNcvLm2u7CPj2z7SGUjIqz+mSXQwIF8xXBX9vmPJr3BTofZldRK5p+bkSp4sElDYCsy09d9C+A7J8C05i+iuIIX3esD47miop/uN+RrecUqwC2prAzs3kwkmurfSZkiaq+LNjOTjC11yrqjB4MsM0lYh1a9hP7b2ac7PwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=o5ocVEPq; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 453K0tDG005301;
-	Tue, 4 Jun 2024 06:01:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=51ZA9OiJpjlX0ruhcneVre
-	O/iIJUTw0mzhQfZaG+KDA=; b=o5ocVEPqNyxdwR7hpCdb3JcV5OAxJyVGHVbuEc
-	4SYSTBQnKhRLiMDc0YK57BzgT51IviK1Nd1ialbWU5LEehsaa71IdZrM5xOZZUBP
-	zvL8Q29X8FPBDmIL/EnkG7bPQWVdpfIJYD0INa/DYFhd2qwwTsMWC4WSGvnV52Zn
-	Q/5/wmCKm0Wbd9i8o/4sJ/ooh5xqsJdydJp+/rLDA+E7x/S/6gNTwFyUbwUc88/o
-	W5CTUuerxdTw2V5e4x05eQhezQu3CxJx6FOJ9doccISmEjsDCfBKMkyUspVPSGhR
-	kl6toRsh+mwYOB5SFY4fEu/i2qtBIn+N8sz+07RR3kUebGBw==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfw5kp2my-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 04 Jun 2024 06:01:01 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 454610HC003914
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 4 Jun 2024 06:01:00 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 3 Jun 2024
- 23:01:00 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Mon, 3 Jun 2024 23:00:59 -0700
-Subject: [PATCH] HID: logitech-hidpp: add missing MODULE_DESCRIPTION()
- macro
+	s=arc-20240116; t=1717481284; c=relaxed/simple;
+	bh=gvH3c0FW48yhnKWny/ep84l1B7/4sRdVkNsiDvcVAnE=;
+	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:References; b=H1Op3qdBf5zlo7FTQ+y6V4lShJybKHhhj+G6eF88npR9ZDFJsYD13GCFavQO4IJWGa0VnCasphKYtN2oREgUtmBX8YFl1Dyv6xKrplQm10Fst36IRftYnnTogbEhNvJHX6oK7xj74GP003nZ70ikH/z27hHkmExal+EMGH5PEZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=s45Z7N0g; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240604060800euoutp02ec12c03ade8e3415119dfcfaa802b026~VuCAB2zKx0472204722euoutp02m
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 06:08:00 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240604060800euoutp02ec12c03ade8e3415119dfcfaa802b026~VuCAB2zKx0472204722euoutp02m
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1717481280;
+	bh=ecaboJMjx0Lduj0jKkhatc0G1F3oFpydwyMrzPU8vkI=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=s45Z7N0g/ZRiY2YtE9vr2T63rC5JTqyZ9xb2bgJXCZfCfkwtRO7y+TdBqRgotOeGG
+	 wqbZ8kXzvwmAr5CTf2INt9mnRmMvg92+ZKT5EmUO0Z3kJnnXAucggeqafzZzYDWy80
+	 WvKIQshwb148JlaEnYeZsgnQS9K5F6ok3+cXgqCY=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20240604060800eucas1p1aef68ce3eb267c641012e52771407de4~VuB-15l5h2225722257eucas1p1H;
+	Tue,  4 Jun 2024 06:08:00 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges1new.samsung.com (EUCPMTA) with SMTP id 5A.AC.09624.04FAE566; Tue,  4
+	Jun 2024 07:08:00 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240604060759eucas1p16ab4ee54cca46d6d19fa97af3b40bb07~VuB-dijLP1146711467eucas1p19;
+	Tue,  4 Jun 2024 06:07:59 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240604060759eusmtrp135fcbf5f2f5d052b452483fd11b3c1e3~VuB-dD2uv2259022590eusmtrp1j;
+	Tue,  4 Jun 2024 06:07:59 +0000 (GMT)
+X-AuditID: cbfec7f2-c11ff70000002598-ce-665eaf40c88f
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms2.samsung.com (EUCPMTA) with SMTP id 8E.90.09010.F3FAE566; Tue,  4
+	Jun 2024 07:07:59 +0100 (BST)
+Received: from CAMSVWEXC01.scsc.local (unknown [106.1.227.71]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240604060759eusmtip14af216b4d418c29d87720b55079a7439~VuB-SZE9_2251322513eusmtip11;
+	Tue,  4 Jun 2024 06:07:59 +0000 (GMT)
+Received: from localhost (106.210.248.71) by CAMSVWEXC01.scsc.local
+	(2002:6a01:e347::6a01:e347) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+	Tue, 4 Jun 2024 07:07:59 +0100
+Date: Mon, 3 Jun 2024 14:53:32 +0200
+From: Joel Granados <j.granados@samsung.com>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+CC: Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <keescook@chromium.org>,
+	<linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+	<kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH] kernel/sysctl-test: add MODULE_DESCRIPTION()
+Message-ID: <20240603125332.3zsv255k3zhyy6x5@joelS2.panther.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240603-md-hid-logitech-hidpp-v1-1-060f06e4529f@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAJqtXmYC/x3MwQqDMAyA4VeRnBfoqgjbq4wdYprZgNbSuCGI7
- 27d8Tv8/w4mRcXg2exQ5KemS6q43xrgSGkU1FAN3vnO9a7FOWDUgNMy6iocL+SM3j1Yeib2roX
- a5iIf3f7f17t6IBMcCiWO123S9N1wJlulwHGclIMc9oYAAAA=
-To: =?utf-8?q?Filipe_La=C3=ADns?= <lains@riseup.net>,
-        Bastien Nocera
-	<hadess@hadess.net>, Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires
-	<bentiss@kernel.org>
-CC: <linux-input@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: i3oyWRPZ8PX9b7siS9EgUDdGUjiZ2Eex
-X-Proofpoint-ORIG-GUID: i3oyWRPZ8PX9b7siS9EgUDdGUjiZ2Eex
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-06-04_02,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- impostorscore=0 suspectscore=0 malwarescore=0 clxscore=1011 phishscore=0
- mlxscore=0 priorityscore=1501 adultscore=0 bulkscore=0 spamscore=0
- mlxlogscore=934 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406040047
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240529-md-kernel-sysctl-test-v1-1-32597f712634@quicinc.com>
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+	CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmplleLIzCtJLcpLzFFi42LZduznOV2H9XFpBhs+81mc6c612HpL2mLP
+	3pMsFpd3zWGzuDHhKaNF45a7rA5sHrMbLrJ4bFrVyeYxcU+dx+dNcgEsUVw2Kak5mWWpRfp2
+	CVwZFz+2MhY0sFe8WPudpYHxBWsXIyeHhICJxKLO88wgtpDACkaJlqUJXYxcQPYXRokFd6cz
+	QjifGSVa/zWww3T0HfzIDpFYzijxelc7C1zV/c1fmCBmbWaUWHqlBsRmEVCRePizhwXEZhPQ
+	kTj/5g7YPhEgu/XpFjaQZmaQ+nM/9rGBJIQFHCXu7J4HVsQr4CDRvbmfDcIWlDg58wnYIGag
+	5gW7PwHFOYBsaYnl/zhAwpwC3hIzP+5nhLhUSeLgxfcsEHatxNpjZ8CulhA4wyFx6+t8aAC4
+	SKzavQiqSFji1fEtUG/KSJye3MMC0TCZUWL/vw9Q3asZJZY1fmWCqLKWaLnyhB3kCgmgq/cf
+	toYw+SRuvBWEuJNPYtK26cwQYV6JjjYhiEY1idX33rBMYFSeheSzWUg+m4Xw2QJG5lWM4qml
+	xbnpqcWGeanlesWJucWleel6yfm5mxiBKeX0v+OfdjDOffVR7xAjEwfjIUYJDmYlEd6+uug0
+	Id6UxMqq1KL8+KLSnNTiQ4zSHCxK4ryqKfKpQgLpiSWp2ampBalFMFkmDk6pBiaD3+VvXksl
+	Xbr0TF8/z5g1gS2v1cDvc8nXzf9No+TuVq98FPuysm2DQsuhfSnvL2+fqbrLwzA4bfd5p93a
+	Z0+0Zfi6GHw22De/+8ux+QEZ+37ZdE/i8bmcfkdGy53TZ+XybUotVSrdybKvHoeaPDxp/VF0
+	v1OX7CSDucLLpLZsm7i2bZGPfq7XoYjc8uyvb0OvhHl83d5XuPQOg2uMyHeuLLWMyyLH5d8V
+	qt52q5U+0+48zf3Bn4vrf6nr6Ot3M99IvV4qNG13pgVzxEPGJO1l61i2TuNaslppteImKeVV
+	OVJ3N20s6j90YsHhtetOW2QwPPywJDZDw2Bm+cFj8x6JLn3YV7P/9fRyY9a0l/1KLMUZiYZa
+	zEXFiQBRCa6MmAMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrCIsWRmVeSWpSXmKPExsVy+t/xu7r26+PSDB5fN7I4051rsfWWtMWe
+	vSdZLC7vmsNmcWPCU0aLxi13WR3YPGY3XGTx2LSqk81j4p46j8+b5AJYovRsivJLS1IVMvKL
+	S2yVog0tjPQMLS30jEws9QyNzWOtjEyV9O1sUlJzMstSi/TtEvQyLn5sZSxoYK94sfY7SwPj
+	C9YuRk4OCQETib6DH9m7GLk4hASWMkpcPXGeESIhI7Hxy1WoImGJP9e62CCKPjJK7Hs5gRnC
+	2cwoceD/HCaQKhYBFYmHP3tYQGw2AR2J82/uMIPYIkB269MtYN3MIA3nfuxjA0kICzhK3Nk9
+	D6yIV8BBontzP9SKeYwS3yctYoNICEqcnPkEbCoz0KQFuz8BxTmAbGmJ5f84QMKcAt4SMz/u
+	hzpbSeLgxfcsEHatxKv7uxknMArPQjJpFpJJsxAmLWBkXsUoklpanJueW2ykV5yYW1yal66X
+	nJ+7iREYXduO/dyyg3Hlq496hxiZOBgPMUpwMCuJ8PbVRacJ8aYkVlalFuXHF5XmpBYfYjQF
+	hsVEZinR5HxgfOeVxBuaGZgamphZGphamhkrifN6FnQkCgmkJ5akZqemFqQWwfQxcXBKNTDt
+	EX78qJO/46Xko66//FG2qSom73Nlj9YUn394SvRD3rWK/U3zeMP2bE08teSRzyK59aITovsc
+	mBWVfi+bI3nc3O1vS+qDsIwLG6c5XG/U/7z2urSOR89ezaoJOuwmz17F9M83/PPlyAODho7X
+	P1/P1N5v0Vgl9Ojg47pivllh2XkXnwf733ae1bXM+NIZ7o3/U0PYr3G4pugXKYTNVTiYFe45
+	Yf8RTtO6s5fb5NqzHJpOyLNFrnsTbTdF41Shxq6VE1ctKVG/aCN+d7XX43At+4rIsObsA/Zp
+	zBoe0j4XlV1Yd8eJJje7LJ1ms/P50sWsW/0bk4VF1lluiTDTOf4sktWlWLa0ddmZ0zdeqSix
+	FGckGmoxFxUnAgAI5dORNwMAAA==
+X-CMS-MailID: 20240604060759eucas1p16ab4ee54cca46d6d19fa97af3b40bb07
+X-Msg-Generator: CA
+X-RootMTR: 20240529212552eucas1p1810ee5a1c17fb966eada0b0562338c23
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240529212552eucas1p1810ee5a1c17fb966eada0b0562338c23
+References: <CGME20240529212552eucas1p1810ee5a1c17fb966eada0b0562338c23@eucas1p1.samsung.com>
+	<20240529-md-kernel-sysctl-test-v1-1-32597f712634@quicinc.com>
 
-make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-logitech-hidpp.o
+On Wed, May 29, 2024 at 02:25:41PM -0700, Jeff Johnson wrote:
+> Fix the 'make W=1' warning:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/sysctl-test.o
+> 
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+>  kernel/sysctl-test.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/kernel/sysctl-test.c b/kernel/sysctl-test.c
+> index 6ef887c19c48..92f94ea28957 100644
+> --- a/kernel/sysctl-test.c
+> +++ b/kernel/sysctl-test.c
+> @@ -388,4 +388,5 @@ static struct kunit_suite sysctl_test_suite = {
+>  
+>  kunit_test_suites(&sysctl_test_suite);
+>  
+> +MODULE_DESCRIPTION("KUnit test of proc sysctl");
 
-Add the missing invocation of the MODULE_DESCRIPTION() macro.
+thx
+Reviewed-by: Joel Granados <j.granados@samsung.com>
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/hid/hid-logitech-hidpp.c | 1 +
- 1 file changed, 1 insertion(+)
+>  MODULE_LICENSE("GPL v2");
+> 
+> ---
+> base-commit: 4a4be1ad3a6efea16c56615f31117590fd881358
+> change-id: 20240529-md-kernel-sysctl-test-2bbad793ac62
+> 
 
-diff --git a/drivers/hid/hid-logitech-hidpp.c b/drivers/hid/hid-logitech-hidpp.c
-index b81d5bcc76a7..400d70e6dbe2 100644
---- a/drivers/hid/hid-logitech-hidpp.c
-+++ b/drivers/hid/hid-logitech-hidpp.c
-@@ -27,6 +27,7 @@
- #include "usbhid/usbhid.h"
- #include "hid-ids.h"
- 
-+MODULE_DESCRIPTION("Support for Logitech devices relying on the HID++ specification");
- MODULE_LICENSE("GPL");
- MODULE_AUTHOR("Benjamin Tissoires <benjamin.tissoires@gmail.com>");
- MODULE_AUTHOR("Nestor Lopez Casado <nlopezcasad@logitech.com>");
 
----
-base-commit: a693b9c95abd4947c2d06e05733de5d470ab6586
-change-id: 20240603-md-hid-logitech-hidpp-209ce6cac203
+-- 
 
+Joel Granados
 
