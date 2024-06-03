@@ -1,165 +1,90 @@
-Return-Path: <linux-kernel+bounces-199011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8561D8D807F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:04:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81AFC8D8083
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:04:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B78051C2163E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:04:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DE58283E8A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:04:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EECD184A53;
-	Mon,  3 Jun 2024 11:03:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Nh7Jx1bh";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="1iUSXdMP";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Nh7Jx1bh";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="1iUSXdMP"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8B8784A2F;
+	Mon,  3 Jun 2024 11:04:28 +0000 (UTC)
+Received: from smtp134-32.sina.com.cn (smtp134-32.sina.com.cn [180.149.134.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1270482891;
-	Mon,  3 Jun 2024 11:03:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAE5978C80
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 11:04:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.149.134.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717412637; cv=none; b=HHdnBbfAjjcDtLZdOmW814Ca0+gThb3NBDSBz32n2tXuuHG14R6LiTTXJrVBTk3/p4dEhvm1myAGeztYUkYJwxQ5b4A9Ctka4oy7QNHMNJXmTajhasK3l2L8xfz6CIzVsCOtv9F59beksq8CF7sS7KlCD4my31T7Gz4fqAa0dj8=
+	t=1717412668; cv=none; b=XF1xUO2nzwAbRm8+1vmTBFOnimx1pUhd2YeYcWmq6LApqkzZ0aLt07AMDZ1b1lDKWbP9DBJmahhIkw6L+1NqbISTv0k0FWD7M0OgAcq11twNpkMZbTysH6qx5RvccpVP6bhy9lm0kHjicv/5RCt3YMl7o8XmPnjMk36VtCpGaHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717412637; c=relaxed/simple;
-	bh=bQPnQcAIRDKBdTp8lMVtsR76hFtMqgQtFqFIcPainMQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VAxjHIgW41wyJO4yJHM4ZJ9ACYJXi6rYOQBQLdMWzYuIeIapqQp8TUOwsXOWcXyn8B3Eo6XQpax8AftSuiNrbOBIPit24hr+CUTTPpX0rH/XhHIEwnJOmGJGTXETgc8PBiv1He9N/sPSiWOsQHgbtzCkvXJ/LK700KwrA2AgrCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Nh7Jx1bh; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=1iUSXdMP; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Nh7Jx1bh; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=1iUSXdMP; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 2815C20031;
-	Mon,  3 Jun 2024 11:03:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1717412633; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=n5/X7Y8BzC0MwNPhikLy5onR3o+8EW7j6LOz1oCOdHI=;
-	b=Nh7Jx1bhwQOzWC/cAEBaBv9sKXguMByr35SycoUAom89Kq49Sem/mNaa7AuAUtUAzM3HCB
-	oXNmoRWYGFDGdmULGcmcO6gZU/tCthgmu2YGaKENOef/hJo0G64bEEY8NI6Thb8VGcryvO
-	hJ+RYydNYLtYe1F04WZnCVG04tVNWmo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1717412633;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=n5/X7Y8BzC0MwNPhikLy5onR3o+8EW7j6LOz1oCOdHI=;
-	b=1iUSXdMPGHYkVyXbvZjtcYCsEeoal+Q2EaMTFibvUMei9mIIFGSPz/vFU5HWxO980EDFZK
-	xDZd6aS7rG9Ck9Cw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1717412633; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=n5/X7Y8BzC0MwNPhikLy5onR3o+8EW7j6LOz1oCOdHI=;
-	b=Nh7Jx1bhwQOzWC/cAEBaBv9sKXguMByr35SycoUAom89Kq49Sem/mNaa7AuAUtUAzM3HCB
-	oXNmoRWYGFDGdmULGcmcO6gZU/tCthgmu2YGaKENOef/hJo0G64bEEY8NI6Thb8VGcryvO
-	hJ+RYydNYLtYe1F04WZnCVG04tVNWmo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1717412633;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=n5/X7Y8BzC0MwNPhikLy5onR3o+8EW7j6LOz1oCOdHI=;
-	b=1iUSXdMPGHYkVyXbvZjtcYCsEeoal+Q2EaMTFibvUMei9mIIFGSPz/vFU5HWxO980EDFZK
-	xDZd6aS7rG9Ck9Cw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 102CD13A93;
-	Mon,  3 Jun 2024 11:03:53 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id KrWlAxmjXWagIAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 03 Jun 2024 11:03:53 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id A10FFA087F; Mon,  3 Jun 2024 13:03:44 +0200 (CEST)
-Date: Mon, 3 Jun 2024 13:03:44 +0200
-From: Jan Kara <jack@suse.cz>
-To: Thorsten Blum <thorsten.blum@toblux.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] readdir: Add missing quote in macro comment
-Message-ID: <20240603110344.weobnu6augggrbdw@quack3>
-References: <20240602004729.229634-2-thorsten.blum@toblux.com>
+	s=arc-20240116; t=1717412668; c=relaxed/simple;
+	bh=8vqp2CCDZ0RAWzYrbyjrsBwEkza5gxC/UurRQDd4Sco=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=LUiGXn1pYD63w20Pe8Tx6H5DnUx12HAu4hb3BQmVJoKRLuB4O0/NG4by4iM/4xvdCkJ+2lt9fLo97nBzaGLEalYIS18YMRNmwPvHLw/wFbX3zbb+DqFcNb/CPEEAHUvgD8DGqnDWZdiDPfbyhXuCU8U7tlscZdhZzGqEMXl1Wac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=180.149.134.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.118.66.186])
+	by sina.com (10.185.250.21) with ESMTP
+	id 665DA32A00000E68; Mon, 3 Jun 2024 19:04:12 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 2263583408501
+X-SMAIL-UIID: D4937BB46EC843979FC1444F050976C8-20240603-190412-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+558f67d44ad7f098a3de@syzkaller.appspotmail.com>
+Cc: frederic@kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com,
+	tglx@linutronix.de
+Subject: Re: [syzbot] [kernel?] BUG: unable to handle kernel NULL pointer dereference in __hrtimer_run_queues
+Date: Mon,  3 Jun 2024 19:04:01 +0800
+Message-Id: <20240603110401.1580-1-hdanton@sina.com>
+In-Reply-To: <000000000000deb5250619f9b5f4@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240602004729.229634-2-thorsten.blum@toblux.com>
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.com:email,imap1.dmz-prg2.suse.org:helo]
+Content-Transfer-Encoding: 8bit
 
-On Sun 02-06-24 02:47:30, Thorsten Blum wrote:
-> Add a missing double quote in the unsafe_copy_dirent_name() macro
-> comment.
-> 
-> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+On Mon, 03 Jun 2024 03:22:29 -0700
+> Unable to handle kernel NULL pointer dereference at virtual address 0000000000000090
+> CPU: 0 PID: 3192 Comm: syz-executor607 Not tainted 6.10.0-rc1-syzkaller-00027-g4a4be1ad3a6e #0
+> Hardware name: linux,dummy-virt (DT)
+> pstate: 204000c9 (nzCv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> pc : rb_next+0x1c/0x54 lib/rbtree.c:505
+> lr : rb_erase_cached include/linux/rbtree.h:124 [inline]
+> lr : timerqueue_del+0x38/0x70 lib/timerqueue.c:57
+> sp : ffff800080003e70
+> x29: ffff800080003e70 x28: 0000000000000000 x27: fff000007f8cf780
+> x26: 0000000000000001 x25: 00000000000000c0 x24: 0000001f0198bc90
+> x23: fff000007f8cf780 x22: fff000007f8cf7e0 x21: fff000007f8cf780
+> x20: fff000007f8cf7e0 x19: ffff800088c3bd60 x18: 0000000000000000
+> x17: fff07ffffd319000 x16: ffff800080000000 x15: 0000ffffef309d38
+> x14: 00000000000003bb x13: 0000000000000000 x12: ffff8000825e0028
+> x11: 0000000000000001 x10: 0000000000000200 x9 : 0000000000200000
+> x8 : 0008000000000000 x7 : ff7ffffffffffbff x6 : 00000000019a23f5
+> x5 : fff07ffffd319000 x4 : 000000000a2dca90 x3 : ffff800088c3bd60
+> x2 : ff7000007f8cf8e8 x1 : 0000000000000080 x0 : 0000000000000080
+> Call trace:
+>  rb_next+0x1c/0x54 lib/rbtree.c:505
+>  __remove_hrtimer kernel/time/hrtimer.c:1118 [inline]
+>  __run_hrtimer kernel/time/hrtimer.c:1667 [inline]
+>  __hrtimer_run_queues+0x104/0x1bc kernel/time/hrtimer.c:1751
+>  hrtimer_interrupt+0xe8/0x244 kernel/time/hrtimer.c:1813
 
-Looks good. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  fs/readdir.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/readdir.c b/fs/readdir.c
-> index 278bc0254732..5045e32f1cb6 100644
-> --- a/fs/readdir.c
-> +++ b/fs/readdir.c
-> @@ -72,7 +72,7 @@ int wrap_directory_iterator(struct file *file,
->  EXPORT_SYMBOL(wrap_directory_iterator);
->  
->  /*
-> - * Note the "unsafe_put_user() semantics: we goto a
-> + * Note the "unsafe_put_user()" semantics: we goto a
->   * label for errors.
->   */
->  #define unsafe_copy_dirent_name(_dst, _src, _len, label) do {	\
-> -- 
-> 2.45.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+After scratching head skin 30 minutes I failed to work out how the timer
+was armed.
 
