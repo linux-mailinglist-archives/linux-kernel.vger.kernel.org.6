@@ -1,239 +1,198 @@
-Return-Path: <linux-kernel+bounces-199400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02A498D86D1
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 18:00:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9708D8D86D3
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 18:00:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 259CF1C21694
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:00:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAF231C21FCE
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:00:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5DD7134409;
-	Mon,  3 Jun 2024 16:00:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19E1012D205;
+	Mon,  3 Jun 2024 16:00:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="0KWIQ6u7"
-Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="RsnCLtkA"
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2062.outbound.protection.outlook.com [40.107.100.62])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EE03B65C
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 16:00:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717430418; cv=none; b=bU36hNX8VnZsf/HHWYLvZrmsi9gTsYnkG7JRlnzuN0LlJ2j7MIV/yhnf4tJww9Cjyimfs4pKQ/+B7WuRrtAanx0/Fla37SGEqdsb2eonNLjslLxeGqd1tOxFbnHNKZYlDjPw3OA/C2IuV1VHDmNcREGXQNus+edtu8eextkYGX4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717430418; c=relaxed/simple;
-	bh=ZVmmqm2gePgCHbgRtZjzvJC1acAthJMX0qTqhdOD0n0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kfrxEBvr7nTmNlT4TZNq4SsH3Bq9wBqmHdmOkV4mFed6XeiY4BQzgaFG+tepfqFQ41R8viIGU1GHDV4snxS3z/8sxVzVv7chca/bs1GQcWvJQqC45jEQvQOgYEr2rV63tYmbZ1AhhIPFKBP0iTFLEO1orpqKRm9/BuavGZ4Y4b4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=0KWIQ6u7; arc=none smtp.client-ip=209.85.210.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-6f12ed79fdfso2653696a34.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 09:00:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1717430414; x=1718035214; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GfeQA5RNRJgv87my+Y8NPK/KqfRgxtKa/KFauEIvYss=;
-        b=0KWIQ6u72VDXxwMo44SWqciC/xDHgGgxAPPTWLldVVEvWR/TMxyhUKdpcqBQ7G/xAC
-         +9ukKNBj84OSx2QuegHZiPZm4EL4pywOKUtqNh+cXWLtRh9was3heZpeXIrClHA3VAsj
-         /ohH4a8XGYpRieC03ciZCnyIXLzsY1dC++/USuNkhoP1uSL+3Z/HiN+ac7vzxDVrKITb
-         fe0+NiHlJ1SU5/JX49J3p5SEDm1HtoRLgaIY+jRFG9REIVP/SBfB7TLdivSkdNLeLQWG
-         erJt/krQkDWUGqP3yeKrr7iJacThzpDyb4WrgTnr9Ut9EkzgeIXJYltC3wAo794aH5vN
-         cMeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717430414; x=1718035214;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GfeQA5RNRJgv87my+Y8NPK/KqfRgxtKa/KFauEIvYss=;
-        b=khhvzCMVVMfmGIpomm8R/cazgYXGar6RAz7ivwGxguRnCXIuivcjhfwG4SoHIHGD1E
-         9v+WNSYOyrr1orGTjqYHnUPyXQ5OIOWKClOWEajt1DrmCYCY3fwgoM5NI8gvxjwcij2i
-         M99mI6i+S+xt/rHJC7+I+PS6fsHvNw2Nigv4gUkiT4DzVqk5pu6SjcyXgOVw7/duZf0X
-         fNi3TX/Rm5ol5XoyAy2GBsNc2n15PbFfT3GvdqTBz2wmkFoiW3kUILX6scXzaPldqh/g
-         h+gFhLWPXWXM0mKq8D91bfxgVoWt4dohmTG2vD2Qtpkbo6Srx91I/9eRRYtIw65wTHWS
-         AdWA==
-X-Forwarded-Encrypted: i=1; AJvYcCUGFbalx67ZdSmoQHJ88DuHwU126CbvzlNXcBFG7dwrWZscsMyIUaHllx1PZ+WNBbqKs7H3nkrVXdjdqY+klwPubGQL4yrnA4KFLSI9
-X-Gm-Message-State: AOJu0YynJQDdQ05Bokrnfr665kQevVSaSozYltPwXR/ftTTPl+toFIIR
-	l2lO/aUjbhJYNDJImOGRmWmeu20vkxLX93/Y3Vh94wajfmUJNYvY+JpgUl+3Y+4=
-X-Google-Smtp-Source: AGHT+IGTlHNJVslE6UXb6KM6zbiO1iPpViMFSEIvv4eTobL0M2MR8UH3PgujM5HpvfFAmIPaSVMo3w==
-X-Received: by 2002:a05:6830:1b78:b0:6f1:2215:e1e3 with SMTP id 46e09a7af769-6f911f1fe3emr9493205a34.6.1717430414142;
-        Mon, 03 Jun 2024 09:00:14 -0700 (PDT)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-6f91059ce02sm1491108a34.54.2024.06.03.09.00.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Jun 2024 09:00:13 -0700 (PDT)
-Message-ID: <2df46968-ff5f-43bc-98fd-506840c1aaa9@baylibre.com>
-Date: Mon, 3 Jun 2024 11:00:12 -0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C48FE26AD0
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 16:00:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.62
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717430437; cv=fail; b=Gaz/UuF6r5i585OSYLX70AA0B9d0uiDwrzBfbqkzpNH2Sq64TeUxr2EcDkvtJhwNAY5LZRl8zjOUdSFI5zSSLjury9+Jtca53KP0TZQH+gNic0iMfhaL6P8fq2HyM0SRXfowXuZdmqG8rmto/9iGa0Xqizzans2vZctcx0d9vvs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717430437; c=relaxed/simple;
+	bh=VN7PP6zhrnG+GC8Bzt1gBNYKaje1nytSz3p4ROODqdc=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=sbE+Mze+SPzX/6Ym0qHgr09OAOrOT9oAYe2I1byu8/8aeU46gnRKb9+ehnGA5biSHTpGPSb1ESSqzJH8NAzytvvNfM7FiIPyjgS2V4yiEUjSRmKWrRhwDJX4R7GXff/83K4d9+0Y7k+benq3KCwJ6vpnfBk+MwdCYKRUI/1vobc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=RsnCLtkA; arc=fail smtp.client-ip=40.107.100.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=S35Fa43pxzM41Udkd0Ep3OyQPYFgWYmy6zoVHSzt+1YaUAJsWVfPqD59APDdHP1FIv6KmNKU++4i+G/Nw38ni5JzArroxu2iPfE5SVs5WYvBLmG6qZqR5yIS+AwWaRYMb2AdfICHxGrlECIg7cwQjUddl7T1PmX9H2V2wH4M0oq1wRdIwHue0sFDH46s66YImSqHQ4jo3uvaNl48BvVzAUigxndv9TFLIhuoPTtZo3l6BhF1yu6Krtw6bEKpYAyM/M9Psu5YLmVjaCUs9+nKqqiVGmQBxc7pGLsb3MZPX+lvt2VnznD263zyyDEX4uDddGTDiFA8z7f1OYfP4Ag1wA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=brpowqMrq+/kbiC0TDOQYqOnPq5MGkXlCKXuszmyVgw=;
+ b=CRR5TGuBN4/mDzzezSJu2p0r+wsp6PGcd4K0dL1DjXXzPDB9brQqx/VeDFthYv/FKNdCMUjJGXug+eJZrzAelTbooYzcyz3zuM4ErRrUZ8wdHAi0acMZJOdVzjPwLxORfcbQESYtgc3y9MxLRQEabOtX1w4Xoa6uN65f0VuIwgxouXvZCvHSJ0IYf+ZRdI+BjtMrkT2BnCEqTHbbujMEnpSJ6HOrbR/uklCHraG4PQAWY1Smv1rlbW0oaGdnoc13opj39utCJCMe5HtZUrslrcIQZ+SRofiJhDEdIpgmuMq9Vn2SOISSfy1c95Lq5mLhMKr6Pp35ulUWwk1xgMoNaA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=brpowqMrq+/kbiC0TDOQYqOnPq5MGkXlCKXuszmyVgw=;
+ b=RsnCLtkApJK52PLl5/xbCPkIjBIRNu9w21vbTxSNZUYkUQVRI8VZmH9O9IE7Awy7YeC7gIGJjv2pKi9pfbwiUl955QFYs2/GG9fS/uUaB+8J9bi3FtYG2FWNecuUF5MPXw+/YKbD/+jVD357SNYtar15s3X6PeS+o/tVLLD7+aE=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
+ by PH0PR12MB8098.namprd12.prod.outlook.com (2603:10b6:510:29a::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.22; Mon, 3 Jun
+ 2024 16:00:25 +0000
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca%7]) with mapi id 15.20.7633.018; Mon, 3 Jun 2024
+ 16:00:25 +0000
+Message-ID: <c8d765bc-4e45-40b3-a33d-b4cc1bbd67bd@amd.com>
+Date: Mon, 3 Jun 2024 11:00:22 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/5] platform/chrome: cros_ec_lpc: Add a new quirk for
+ ACPI id
+To: Tzung-Bi Shih <tzungbi@kernel.org>, Ben Walsh <ben@jubnut.com>
+Cc: Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
+ "Dustin L. Howett" <dustin@howett.net>, Kieran Levin <ktl@frame.work>,
+ =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+ chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20240603063834.5580-1-ben@jubnut.com>
+ <20240603063834.5580-4-ben@jubnut.com> <Zl2NTbhk96dhTV2n@google.com>
+Content-Language: en-US
+From: Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <Zl2NTbhk96dhTV2n@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: DM6PR06CA0049.namprd06.prod.outlook.com
+ (2603:10b6:5:54::26) To MN0PR12MB6101.namprd12.prod.outlook.com
+ (2603:10b6:208:3cb::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/6] iio: adc: ad7173: refactor ain and vref selection
-To: "Ceclan, Dumitru" <mitrutzceclan@gmail.com>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>,
- Jonathan Cameron <jic23@kernel.org>,
- Dumitru Ceclan via B4 Relay <devnull+dumitru.ceclan.analog.com@kernel.org>
-Cc: dumitru.ceclan@analog.com, Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240531-ad4111-v4-0-64607301c057@analog.com>
- <20240531-ad4111-v4-3-64607301c057@analog.com>
- <20240601194925.23123071@jic23-huawei>
- <e9ade241e57383d5342d377bc865046e612a7033.camel@gmail.com>
- <d2370ad2-5fed-41b3-bdd5-c6c895283c18@gmail.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <d2370ad2-5fed-41b3-bdd5-c6c895283c18@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|PH0PR12MB8098:EE_
+X-MS-Office365-Filtering-Correlation-Id: 09c5e1da-fb67-442b-7d8c-08dc83e6481d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|366007|1800799015;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Z3h1SkpxL25Mb1RuUWFhL0ViY25wSE5kQy9NUHZ3SzVzRUdNczdTcEwwTDBS?=
+ =?utf-8?B?V2k4em1tL2t1MlU3UjFGOG5YNE9CUjBBYUI5Y2ZhYkd0R3dzOHhwQlNNKzhC?=
+ =?utf-8?B?R1Nza2tuZEZiK0lXTUIxT29PYktIYThUM0g5clhZcDBjNU80VXlSTDEzQWRR?=
+ =?utf-8?B?SEZuR1l1NWpxU0RXU1MzdjVzS1JadFh5a01tdk5MK1FGZ1hYdXhZdzdTQkZH?=
+ =?utf-8?B?d0JEeEVxTmNQV1lzSzZUZmtUNEdKZXMvY1dXcmNYV2hwZERqV1craXlGQTdj?=
+ =?utf-8?B?WnQwYTZsWkNoTDd0N1JQK2Q4RitvTGJac3h4MmQzYXYvcktraDBGRzhPSW9D?=
+ =?utf-8?B?R0JRUkNNRHJhRHJEWi9CaVl5eHhmWUIwWHo2SGFmOEJOT2crdG9adjFOdlJ2?=
+ =?utf-8?B?djRKT09UNGF6S3l4OTNiQm1mUUFxZ3RTUzNIc3U4NERmN2hhN2tQaDJOMTNs?=
+ =?utf-8?B?VTdQZTJlR3VLVFpORmdvU1c0ZDd1cEF0UDZhN3FVbUFBMU1SRXdBM2FqbHNw?=
+ =?utf-8?B?NjhUeHRqc3RyUS9tQS94MWNpdUMreUkzd2tmei9PTC9reUcvSHUxb2s0V3Bs?=
+ =?utf-8?B?SmxITEZHdWZtVFgwRmhvK2tKOFlOQ2JRYm5Zem1vKzFXbXNUcUNzU2FkTjVy?=
+ =?utf-8?B?T2lmVU0rQ3UvMlI4WnhrUG1DcHBmblVUekFtdDY5akY1VytXR0E3WDRPZFN1?=
+ =?utf-8?B?cnEyTEZqbDEwbkw4VklLbnV5Ymg0Z3FOa1NITWt6dkVEZ1JvbjFPc2RZNzRt?=
+ =?utf-8?B?SjRFa1pYUEVJMktyalMyUDdXck1PdmpxcGdoN3NlQlRaeUxSNGZ6T0hLN0VH?=
+ =?utf-8?B?dTFjSnBLNmZ3S1c1Mm52bnVWUVBxYWx0WFFaUzJQTGZoN1pmTlRGNmtaRXUx?=
+ =?utf-8?B?N2pvay9UWFV0Nnp1NTJNeWhxVUhQL0NqOHcwZE5mTWNtRTg3SnNST0FNZk82?=
+ =?utf-8?B?b05HZ2NkSlVqY1VkTjhmdGlaL0lLejZ5M2Vtc3F1bVIyUGxyN3ArcG1IWGRn?=
+ =?utf-8?B?SDlCdERJSTFOWHNKTi9aUGhxZUF3dzZ5MnhtSkphZXFtUzdLSzJiWGQyNmNQ?=
+ =?utf-8?B?aDNFK0JneEVJYzMwdHNHZHRnM2Z4YXk5QnpjRnBoN3doWU1SeXpVaWppc3U2?=
+ =?utf-8?B?dlFhc21TMm9Wd2NwZWFUTUpoNVYvaFhrZ243dGpzeFM5M2pyNmI2SEdhdnFO?=
+ =?utf-8?B?bnlSaG1RNnUwVHkxR2JCd013eFo0NzFzY1ZjSWdOK0QvYmJoN0lUVlV6cGVT?=
+ =?utf-8?B?THk0Q2Ixd2FGeXJBekxkdmFiSnhwNHRjVlZyeEg3QjBGUSt0dkJFc1FZTHVN?=
+ =?utf-8?B?NDI3ekIwZ096UVEydjdFZGUzYWJpTGxNbW9Nb1JDZnA3WnAwOWlESmlaU05x?=
+ =?utf-8?B?dC83ckxDMTRWSlQzckJqa1RmZk9BeDZzVlJueUllMnY2MDhyTFZYaHpYaWlK?=
+ =?utf-8?B?TGprR0VHWkJsc0RaSTZlR1F1cytFMm40VUZ3U3VCSlY1ZXgxWVl6cldqMFkz?=
+ =?utf-8?B?d2dyck04V3o2VGtxYS9ZajNzT0hnOTAySE1GSGZSQ1RpK1c1NjI2T3ljaEdB?=
+ =?utf-8?B?S1dyWjRvYVN1dUlMSmt1QUVnakVuVlhZUW5Va1JBNFpOOWd4b1B1Q1Q5MHlX?=
+ =?utf-8?B?cHBqREhZU3E2NDRWY25DOEdlVVJZemZRUU5wY1p4VnBHVm1nTWwvWTA3ekVV?=
+ =?utf-8?B?UlBtK1ZrMGFqUE5nK1A5cWdUVVNYa3lndXVXemlrT0FsTndKQWtBQnZ3PT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(366007)(1800799015);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?NGIrekxzYXBEamR0dW9TUXVQdmlBS3JpeFBqYnoxT1pTUXg0K05DaElSajNH?=
+ =?utf-8?B?QUllYmNHME9HNWQwMDBTdHQ5dVcrWTRRVHdvLzcvOHlqYlZXOWR1RWQ3Sm1O?=
+ =?utf-8?B?ay9IVUc0WFBHT2gzejBrOUhRKzdGUW5lWW0vYmFhUEZOYlJ2QXdKRWV0K1RO?=
+ =?utf-8?B?REpBNmw3U0lXYTZvZFJHcEI2QVVaVW4reWw1cXBCa2RGY1kvVE1SMlE3S2pF?=
+ =?utf-8?B?V1ozOTRjOTlSWHlVUUxYZnNvOWFWMFZBSGUxeDNsN3BWMU5aQ1R1S0hQWi90?=
+ =?utf-8?B?dWpqMnFSb0w1cEFQNlQyaGVyQXVRcUdkL21NbCttQzIxM0k0LytQV0w2d2wv?=
+ =?utf-8?B?eVVlbVo4NktyemFlL1BhdnVCL3hFUmxTYzVJZWNaWk9vTkh0MFpnaXExQnFU?=
+ =?utf-8?B?d0RzUnJ1QjhMd2JwL2tUMEJQOFd3aG1meUhndWJZVDhjNG5GV2VHVzlwVVV4?=
+ =?utf-8?B?dGZxclZwZlhsci96cHJQQUJmMlhpeWJTWjVOU2p5ZVdaNzZ4aGtpeitOM3hi?=
+ =?utf-8?B?RVVXZitaWm02OXV5RjNFUGVCTjlLR0t3YnExU0h0cnEvczRvNVdNWUlreXN6?=
+ =?utf-8?B?a3FRMW9pQWdzTE1ZUlVwSVNuYmliQzE2WXBGeE4zRjZUWHBsekhZUVFXNFVk?=
+ =?utf-8?B?MS9EWldhYlJrUFU2T1NuRXlDWTFSRStISDYwUHg2OTlaaGh1a3hMWW5xcCsv?=
+ =?utf-8?B?VUZiV1J4b25yNFRiaGsyNnFuZndaVlBWU2tib1pLbzAzODRJN3QvQ0d1S1FB?=
+ =?utf-8?B?SFI1SGVxcnFiYXphbUdRQmhmL2FDUi9QM2x5U0d2NmRQVjFheFgrZ0tXTjI2?=
+ =?utf-8?B?REtHVkZPUjBQaGZTTTBHWjJRcThmME9ZNEtTK0FyN2pFTnNreTVTRHR3YVFT?=
+ =?utf-8?B?ckt6MDliTlUvRVlmcHA4TitsWkpJWEdsdTZTTzRjYTBVd0c1NDFpMlQ3KzZa?=
+ =?utf-8?B?Vm5YbGFjVHNtckZRaWdDWm80aVI4anl6ZGxuVTdFVjkzVmpqeEtDS1VBTk1G?=
+ =?utf-8?B?Yi9SVllmMXpDaTYxM0JhbXByc0dUajZUT0txUm1DOXFwdzZsbVU3ZWwyamhy?=
+ =?utf-8?B?UzUrVmFZbWwvdXNtd3VkcklWOEp2NXl3OWZEUnZ4N3ZKZ2xJRXIxLzhDcXpl?=
+ =?utf-8?B?eU50MXlYcWtYRENYaG5zMnJOaDM3VTZFWlRnZlYzTDEvb1YyYWROV09YUXFQ?=
+ =?utf-8?B?V1lRZU1ScVdCSTc0N2pTVXF5QlhDM0grOGtxcUxNTkREZEtUZkJYMFRnM1lx?=
+ =?utf-8?B?UnluVU9BMEJiSTBPYnh0aTlnYnFLaXdkemRRU2duS2RwR2JmZThyL0t2RXpo?=
+ =?utf-8?B?TWdwMkxIaGkvQUtpMUNNME0yMENtN0JUQ0d5SEt0eUROTnNRNk4zLzgweFUx?=
+ =?utf-8?B?cS9PRkRuZlcyWUVVdWtzT2Mrdm9Jc3BOOVk1L3A4SjRxZ3BQUkNUejlXN2Jz?=
+ =?utf-8?B?ZlpJOE1EdHJDNjJVRFUxWnFXRGhHTkI4UWtsT2xRUGh4WTcwL2YvZ0p5QW1k?=
+ =?utf-8?B?bXF3RVd0V2t0KzAyNGVweFd5anRRdFJTU0l1S1V2RkV6U3pjNVF5OExudGRB?=
+ =?utf-8?B?S053ZmZJajdWZnM3SExjTDAyUFBHWGxXVE91ZVQwcjVGOVhYYndPcjhBRS9I?=
+ =?utf-8?B?Z2JLZVI5K0ZXdW5EREVUUzVYTmJ5ZTE2UGR2dDYvaXFremladHNLcmFlaVV6?=
+ =?utf-8?B?YjExUXZ5d2J5UFlCd1JHR2R6bGdJVUhTZ2VQUVN6RENGMVVXMHcrWTROcGw2?=
+ =?utf-8?B?bTc0QzZCY0w1UTdGQjFzbHNsSmNVR3RUZTJIZEx1NFdCMmc5WEtkYWhPUGpK?=
+ =?utf-8?B?SVIyWUtEU3FLY0tXRW9ibysyb3B0aE5hWm14VUcwVE90Y3ZGZlZXM1hwUGwy?=
+ =?utf-8?B?aGptem5tL2dETncxVjlJenVDTDZIMGQ4c2ZmcFdVbDdvWjI4TS9pR05scVEw?=
+ =?utf-8?B?ZjZCWHdFVXAvQTBhUVRxWDh4dk9ZQzRNRm9TUVVUTUVLeU1uWUtMYXBFWEpq?=
+ =?utf-8?B?NUlUQ28xY2luZkdjM0hNWTR2MkxZZEtwUElQYzdWZCtLTm1vaDRmVk9kYkhJ?=
+ =?utf-8?B?cmY0SUcrdXhMTVhYclFqVFJ2aWRMUDE0MjF3bldmbkY4b1dnM2pTemxwY1hx?=
+ =?utf-8?Q?TyvKTi7FDhgktP3lNyFa9lpqJ?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 09c5e1da-fb67-442b-7d8c-08dc83e6481d
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jun 2024 16:00:25.7052
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 4EmN76CgeWSa76e2jBLU9zccGLa6UX8AIPm/KsDTumE1YDWoXVQyQ8RzTL9vMZIT7DagMi3BFFOXVB2KqqkbPg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB8098
 
-On 6/3/24 8:08 AM, Ceclan, Dumitru wrote:
-> On 03/06/2024 16:00, Nuno Sá wrote:
->> On Sat, 2024-06-01 at 19:49 +0100, Jonathan Cameron wrote:
->>> On Fri, 31 May 2024 22:42:29 +0300
->>> Dumitru Ceclan via B4 Relay <devnull+dumitru.ceclan.analog.com@kernel.org> wrote:
->>>
->>>> From: Dumitru Ceclan <dumitru.ceclan@analog.com>
->>>>
->>>> Move validation of analog inputs and reference voltage selection to
->>>> separate functions to reduce the size of the channel config parsing
->>>> function and improve readability.
->>>> Add defines for the number of analog inputs in a channel.
->>>>
->>>> Reviewed-by: David Lechner <dlechner@baylibre.com>
->>>> Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
->>>> ---
->>>>  drivers/iio/adc/ad7173.c | 71 ++++++++++++++++++++++++++++++++++--------------
->>>>  1 file changed, 50 insertions(+), 21 deletions(-)
->>>>
->>>> diff --git a/drivers/iio/adc/ad7173.c b/drivers/iio/adc/ad7173.c
->>>> index 6e249628bc64..a20831d99aa5 100644
->>>> --- a/drivers/iio/adc/ad7173.c
->>>> +++ b/drivers/iio/adc/ad7173.c
->>>> @@ -60,6 +60,7 @@
->>>>  #define AD7173_CH_SETUP_AINPOS_MASK	GENMASK(9, 5)
->>>>  #define AD7173_CH_SETUP_AINNEG_MASK	GENMASK(4, 0)
->>>>  
->>>> +#define AD7173_NO_AINS_PER_CHANNEL	2
->>>>  #define AD7173_CH_ADDRESS(pos, neg) \
->>>>  	(FIELD_PREP(AD7173_CH_SETUP_AINPOS_MASK, pos) | \
->>>>  	 FIELD_PREP(AD7173_CH_SETUP_AINNEG_MASK, neg))
->>>> @@ -623,6 +624,7 @@ static int ad7173_setup(struct iio_dev *indio_dev)
->>>>  static unsigned int ad7173_get_ref_voltage_milli(struct ad7173_state *st,
->>>>  						 u8 reference_select)
->>>>  {
->>>> +	struct device *dev = &st->sd.spi->dev;
->>>>  	int vref;
->>>>  
->>>>  	switch (reference_select) {
->>>> @@ -646,9 +648,11 @@ static unsigned int ad7173_get_ref_voltage_milli(struct
->>>> ad7173_state *st,
->>>>  		return -EINVAL;
->>>>  	}
->>>>  
->>>> -	if (vref < 0)
->>>> +	if (vref < 0) {
->>>> +		dev_err(dev, "Cannot use reference %u. Error:%d\n",
->>>> +			reference_select, vref);
->>>>  		return vref;
->>>> -
->>>> +	}
->>>>  	return vref / (MICRO / MILLI);
->>>>  }
->>>>  
->>>> @@ -905,13 +909,50 @@ static int ad7173_register_clk_provider(struct iio_dev
->>>> *indio_dev)
->>>>  					   &st->int_clk_hw);
->>>>  }
->>>>  
->>>> +static int ad7173_validate_voltage_ain_inputs(struct ad7173_state *st,
->>>> +					      const unsigned int
->>>> ain[AD7173_NO_AINS_PER_CHANNEL])
->>> I was late to the game in replying to previous thread.
->>>
->>> This is neater without the loop and with 2 parameters.  Anyhow see reply to v3.
->>>
->>
->> Yeps, even more given that we're passing/copying the complete array which always
->> fells awkward to me :)
->>
->> - Nuno Sá
->>
->>
+On 6/3/2024 04:30, Tzung-Bi Shih wrote:
+> On Mon, Jun 03, 2024 at 07:38:32AM +0100, Ben Walsh wrote:
+>> @@ -436,6 +463,8 @@ static int cros_ec_lpc_probe(struct platform_device *pdev)
+>>   
+>>   	ec_lpc->mmio_memory_base = EC_LPC_ADDR_MEMMAP;
+>>   
+>> +	adev = ACPI_COMPANION(dev);
+>> +
 > 
-> I rewrote the function, but it feels a bit awkward, perhaps I could get a bit of
-> advice before sending V5:
+> The change is irrelevant to the patch.
 
-Maybe we could make this easier to read with macros?
-
-> 
-> static int ad7173_validate_voltage_ain_inputs(struct ad7173_state *st,
-> 					      unsigned int ain0, unsigned int ain1)
-> {
-> 	struct device *dev = &st->sd.spi->dev;
-> 	bool special_input0, special_input1;
-> 
-> 	special_input0 = ain0 == AD7173_AIN_REF_POS || ain0 == AD7173_AIN_REF_NEG ||
-> 			 ((ain0 == AD7173_AIN_COM_IN_POS || ain0 == AD7173_AIN_COM_IN_NEG) &&
-> 			 (st->info->has_common_input)) || ain0 == AD4111_VINCOM_INPUT;
-> 	special_input1 = (ain1 == AD7173_AIN_REF_POS || ain1 == AD7173_AIN_REF_NEG) ||
-> 			 ((ain1 == AD7173_AIN_COM_IN_POS || ain1 == AD7173_AIN_COM_IN_NEG) &&
-> 			 (st->info->has_common_input)) || ain1 == AD4111_VINCOM_INPUT;
-> 
-
-	special_input0 = AD7173_IS_SPECIAL_INPUT(ain0);
-	special_input1 = AD7173_IS_SPECIAL_INPUT(ain1);
-
-> 	if (st->info->has_vincom_input) {
-> 		if (ain0 == AD4111_VINCOM_INPUT &&
-> 		    ain1 < st->info->num_voltage_in && /* Normal input */
-> 		    ain1 >= st->info->num_voltage_in_div) /* Input without divider */
-> 			return dev_err_probe(dev, -EINVAL,
-> 				"VINCOM must be paired with inputs having divider.\n");
-> 
-> 		if (ain1 == AD4111_VINCOM_INPUT &&
-> 		    ain0 < st->info->num_voltage_in && /* Normal input */
-> 		    ain0 >= st->info->num_voltage_in_div) /* Input without divider */
-> 			return dev_err_probe(dev, -EINVAL,
-> 				"VINCOM must be paired with inputs having divider.\n");
-
-		if (AD7173_IS_VINCOM_MISMATCH(ain0, ain1) ||
-		    AD7173_IS_VINCOM_MISMATCH(ain1, ain0)) {
- 			return dev_err_probe(dev, -EINVAL,
- 				"VINCOM must be paired with inputs having divider.\n");
-
-> 	}
-> 
-> 	if ((ain0 >= st->info->num_voltage_in && !special_input0) ||
-> 	    (ain1 >= st->info->num_voltage_in && !special_input1))
-> 		return dev_err_probe(dev, -EINVAL,
-> 				     "Input pin number out of range for pair (%d %d).\n",
-> 				     ain0, ain1);
-> 
-> 	if (!special_input0 && !special_input1 &&
-> 	    ((ain0 >= st->info->num_voltage_in_div) !=
-> 	     (ain1 >= st->info->num_voltage_in_div)))
-> 		return dev_err_probe(dev, -EINVAL,
-> 			"Both inputs must either have a voltage divider or not have: (%d %d).\n",
-> 			ain0, ain1);
-
-These last two don't seem so bad.
+It looks relevant to me.  The companion needs to get set before the 
+quirk overwrites it.
 
 > 
-> 	return 0;
-> }
+>> @@ -538,7 +577,6 @@ static int cros_ec_lpc_probe(struct platform_device *pdev)
+>>   	 * Connect a notify handler to process MKBP messages if we have a
+>>   	 * companion ACPI device.
+>>   	 */
+>> -	adev = ACPI_COMPANION(dev);
+>>   	if (adev) {
+>>   		status = acpi_install_notify_handler(adev->handle,
+>>   						     ACPI_ALL_NOTIFY,
 > 
-> It feels a bit too verbose, but I could not come up with a better way to
-> incorporate all those cases.
+> See above comment.
 
 
