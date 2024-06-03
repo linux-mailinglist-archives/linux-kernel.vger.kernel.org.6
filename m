@@ -1,108 +1,86 @@
-Return-Path: <linux-kernel+bounces-199259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22C268D8486
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:00:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F9CD8D8488
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:01:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D230D28A779
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 14:00:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C3F21F22774
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 14:01:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C028381207;
-	Mon,  3 Jun 2024 14:00:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 804037FBA3;
+	Mon,  3 Jun 2024 14:01:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Vnk9rxj2"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="HRfPJWLO"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F5BF1E504
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 14:00:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30AE01F60A;
+	Mon,  3 Jun 2024 14:00:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717423234; cv=none; b=agU8pfOq/ffI8AkdXW6l7j6kZJ9j9Bv7rxO86zDsWUrQ7HV+PbQzAxInE0+ne6+9UKmGljXDI08jGdpD0/nR7FTQfBcN1mjQzu1a7ITR8iv2aElacAsn19WdAaLQ0ux42m71+Qo+ujsF+CdJCg564RZyeUbL0J+W/J4zciY2PQQ=
+	t=1717423270; cv=none; b=AQVjNCZu6pJVgLgqXDgxP4HvQzFUXz8Jd6Hv1hE601pcleDm1Ud5n2aMu4VSE1pbDHzWUuMy2t9JLAVHdLqKfjGE3Ru+Ox29Km7wwsm2MxWANJcWI4e4HVjiApLr6GHLdkwnXFfzK3Y7aoHV7sHdNKDYAAlVDXRikMOPMiz//q0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717423234; c=relaxed/simple;
-	bh=Tq+fTOP9a85zGx81hI5MmId6I7YXI6owwkdLPoka3YQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VnhWhKOI+0AIjKcjajt+b8V6t5703NN6m2DKfQ+lG1OmI1sEoceAaSuLC9Pe7CrHS+dAW5DJGHJVHxhFTpf0HT1RXetB07HgPBcpGr566NqdoWTUCoxJnAMpK1YAKPnJqOXd+IGITSckCPLIGJTSwlpqq8Ck0DLX3cUYXbwIyTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Vnk9rxj2; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 5293F40019;
-	Mon,  3 Jun 2024 14:00:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1717423223;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eUiKeSDAw5PSWaHAWumiSmz2tV9iwBOhkTk5YbNtRJw=;
-	b=Vnk9rxj2LrJ31ASbDAuodEeVDzQEiuJI6BXER38I5f8OLktmjqg4+Ot1G7uXJrLWYDCMPj
-	r4c1Ejhl02HzHSrCCx+M31d9nMPrNl6Ewk55kp1kGd1EowRllfKsbSxfY8PiOVyq6xH6YD
-	m/8WOmH+Ojb/qlevO6BD5LPiCUpo0HG5MHXTF+fRt4pjI0aJ7vdJBFRg8appj96hZhvHQf
-	KtEY+gP+5Ao7sQMYTeQqKbNEi9AsPbIK+yKoVP4sbrORpGDW2PLjnyj+P7OUfwMkUAasAX
-	+39x0pHa2zrVb3Rwxi931X2VeKDeY7yNKIX0zirc72/gyF1cUoQEeq40ch5sxA==
-Date: Mon, 3 Jun 2024 16:00:18 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Conor Culhane <conor.culhane@silvaco.com>, Alexandre Belloni
- <alexandre.belloni@bootlin.com>, linux-i3c@lists.infradead.org (moderated
- list:SILVACO I3C DUAL-ROLE MASTER), linux-kernel@vger.kernel.org (open
- list), imx@lists.linux.dev
-Subject: Re: [PATCH 1/1] i3c: master: svc: resend target address when get
- NACK
-Message-ID: <20240603160018.29498c2f@xps-13>
-In-Reply-To: <20240531163301.1401281-1-Frank.Li@nxp.com>
-References: <20240531163301.1401281-1-Frank.Li@nxp.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1717423270; c=relaxed/simple;
+	bh=KigDkYlUVYPi4VN0FAZUwqLgtCcxe8P3YdnN1njj9/Y=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=CjvBr5ZyKgdOKtTe/b4Cm+W5/f7QopTgUp2a83Y2zAh+pbr0Yx+/IB3urSVWZN2a0kEBT7Z9OpVE6dOcZQBa7MEkR+7zzfv9OGr/u4hOtQcO2gWTudNr1hi2XIYTJz3f0fpJKtwFW0zMskb6ad7QOH3dIh5GyTcRz1R69CIal+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=HRfPJWLO; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=6kJmTBIsZBFDNMW5B06DOo6mCcxLehfhy0Mtld07+lw=;
+	t=1717423234; x=1718632834; b=HRfPJWLOrivt0ckOtGb1GNlab96wxOPm+QOmGzGLNpWfLwu
+	jLrX3WjFG4FplBi0h7b5YXidvTFpRRMa/j2bnYnzHGHiK8My2VpiQkpiqxvtVTPVHZ2UOXHXWFrHl
+	NvDIXONFmlH+mnksuIsT7eVSSjGogkRJpzNypfBiI/Gd1o3sjqjg/5yp2xSVsa9hp70HRmsh2kNon
+	9pB3HdWbH6fTZtR4V3oyi4wONqj3HXYJ2ExJ93PpMv7F/uRT99QdwgotKQx+oyE8ngDsGmwlOZa3v
+	Q7BqXK5A9IIjNQ7beleklLU8pkIZEPTXxIpRd6TS93Lj4Gxu86eNUEU1vE9R4SBQ==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.97)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1sE8EX-0000000A2ab-2BZw;
+	Mon, 03 Jun 2024 16:00:21 +0200
+Message-ID: <3ce1e435e28b1c7fbec9e8009b0c52ca8c9c730b.camel@sipsolutions.net>
+Subject: Re: AC 8265: Microcode SW error detected. Restarting 0x82000000.
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Paul Menzel <pmenzel@molgen.mpg.de>, Miri Korenblit
+	 <miriam.rachel.korenblit@intel.com>
+Cc: linux-wireless@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Date: Mon, 03 Jun 2024 16:00:20 +0200
+In-Reply-To: <6f5b433e-889d-4d24-ba59-5df89f3ba4a5@molgen.mpg.de>
+References: <6f5b433e-889d-4d24-ba59-5df89f3ba4a5@molgen.mpg.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+X-malware-bazaar: not-scanned
 
-Hi Frank,
-
-Frank.Li@nxp.com wrote on Fri, 31 May 2024 12:33:00 -0400:
-
-> According to I3C Spec 1.1.1, 11-Jun-2021, section: 5.1.2.2.3:
 >=20
-> If the Controller chooses to start an I3C Message with an I3C Dynamic
-> Address, then special provisions shall be made because that same I3C Targ=
-et
-> may be initiating an IBI or a Controller Role Request. So, one of three
-> things may happen: (skip 1, 2)
->=20
-> 3. The Addresses match and the RnW bits also match, and so neither
-> Controller nor Target will ACK since both are expecting the other side to
-> provide ACK. As a result, each side might think it had "won" arbitration,
-> but neither side would continue, as each would subsequently see that the
-> other did not provide ACK.
-> ...
-> For either value of RnW: Due to the NACK, the Controller shall defer the
-> Private Write or Private Read, and should typically transmit the Target
-> 						    ^^^^^^^^^^^^^^^^^^^
-> Address again after a Repeated START (i.e., the next one or any one prior
-> ^^^^^^^^^^^^^
-> to a STOP in the Frame). Since the Address Header following a Repeated
-> START is not arbitrated, the Controller will always win (see Section
-> 5.1.2.2.4).
->=20
-> Resend target address again if address is not 7E and controller get NACK.
->=20
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+>      [   12.828399] iwlwifi 0000:02:00.0: Detected Intel(R) Dual Band  Wi=
+reless AC 8265, REV=3D0x230
 
-I'm not getting 100% of it, but looks okay, so:
+>      [   13.509514] iwlwifi 0000:02:00.0: Loaded firmware version: 36.ca7=
+b901d.0 8265-36.ucode
+>      [   13.509540] iwlwifi 0000:02:00.0: 0x00000038 | BAD_COMMAND
 
-Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
+>      [   13.513527]  iwl_mvm_send_cmd_pdu+0x58/0x90 [iwlmvm]
+>      [   13.513552]  iwl_mvm_sar_select_profile+0xea/0x160 [iwlmvm]
+>=20
 
-Thanks,
-Miqu=C3=A8l
+I think that's probably (also) fixed by=20
+
+https://git.kernel.org/pub/scm/linux/kernel/git/wireless/wireless.git/commi=
+t/?id=3D788e4c75f831d06fcfbbec1d455fac429521e607
+
+johannes
 
