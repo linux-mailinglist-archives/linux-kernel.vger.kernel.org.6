@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-198873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BF5F8D7E92
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:30:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28F328D7E98
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:30:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA6AA283483
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:30:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF6F0B23BF4
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:30:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25A9684A28;
-	Mon,  3 Jun 2024 09:28:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 010A684D10;
+	Mon,  3 Jun 2024 09:28:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Ui6X3A16"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="MBAb4wq6"
 Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B39E882D89
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 09:28:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 873CF83CD4
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 09:28:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717406935; cv=none; b=NoPJ32HL3Aovu3MDhv0A9oKl8GxAWAsOFPmjL+nqg5ii+c+EApJmzWuDar/CjAuKPq7moDY2SykVNDD8H3CCs8lQYlK7oKm6Jj3RlDLMWQ0FRjDdo/SFHbDMBw/qbbwp/20rgvO6YNqSjga6j75hIzUvLDeZq7HdlfnbhE1hCjM=
+	t=1717406937; cv=none; b=Wzi/OImff92FUoFoMQa0QKF8VaLQdwLSDqP1YJMpTwGFgY/yD7iLcl6ujl/2oZJnVwPqSKzPRHVd/qwchCyX+RbhMJog63C6Kkc2KqAZjYiO2wZranTa8LS9e32UBAZAH543SSACkOTrAgMUnx4UwNlpz9k8pv3qePUdt6p0RT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717406935; c=relaxed/simple;
-	bh=cXNr8lvilFqgnUnNUc6PKltH1qdIyJCwlrLCI0cyV1c=;
+	s=arc-20240116; t=1717406937; c=relaxed/simple;
+	bh=C/9KYYddj4qZHqa8y2yNasr0MNOy2tpH9zFMadog84M=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lo5oUpZmT0KFBObWd7HtISMjQV8f/SXhrzhVtTVGaGiPTeDf7/j5u2d2Smf9proS57OA3For+lHtPQfMvjblyPnHE2+L/MXQxHACMR+wRWD1DWO4QKaCJIH4/hJWREnmXjWYOx4MPMcsfiW37MasytZlbrCc/rI4zCbL7p/ju0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Ui6X3A16; arc=none smtp.client-ip=194.117.254.33
+	 MIME-Version; b=ZCgj5wSWlsAXcnBy31LUZKhElYpQvWfT7VnKhsMZPnrmPpY8Fxdkma9IHWFQyTVIL/kVD8CrSLoKxexx9lMJTE4n68v0oN0rd9UJG2lczueYiCIrjYNWNZON1Hfl5zPfnidInHaHHGVza/sQvlDBEAL4K4Vn03U0aD4SkIWK7KA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=MBAb4wq6; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=from:to:cc:subject:date:message-id
 	:in-reply-to:references:mime-version:content-transfer-encoding;
-	 s=k1; bh=zB4c4eCfnz+o1bXx+7F5PGzh74D33KxHOsl6JG4Vi7Q=; b=Ui6X3A
-	16IW+rxfswIUoOxPQdNpXJb1qt3Ej/swGYi6cEelNUy/BktzD+4Tpu7wJwctJTNZ
-	ItJTxPDmyhlfxRD4fstRaD5jZooxNJcLWCqTNaSTX4PBsYJCqZlV1AqXbAD3icee
-	lsCQyGA3knPCwkO75kFOVX0+UIPFAhzwOa9pz/zG9KmMuRzxI2TWUHE6X1nKzONJ
-	uv5pxs7ovC83bXEGAdmEomI5n5gYKO9VpyifUCNlqOVoLa9N6AFM+/fn2Htl4lxU
-	xwRnPPwCRdoOum2yV5w7b/k7ODs2L8BgriX+kYIyCS1uxEtR3Z+kLN9CrsV0Yn5A
-	nhe8Xl1j2VQdAtDA==
-Received: (qmail 1903230 invoked from network); 3 Jun 2024 11:28:50 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 3 Jun 2024 11:28:50 +0200
-X-UD-Smtp-Session: l3s3148p1@LNQF9vgZPJEgAwDPXzLGAH1eNELjOc3g
+	 s=k1; bh=ytP13Gl64JFAwriGV8x2mCJjir2yJaQn5QnGdupCrjA=; b=MBAb4w
+	q69zxA+YcZZEOrgzDEnFtr6xBSFn364fpPZ6+qK6Y/su7ZXQFcmRwJIFNww3OzwF
+	RAUa94ILtECzH37bOtAQu37FdSUImWbUcfU7p0BjjFiEQq0Ab8ab1IpBH8AEFvP8
+	kVcz6xUCj4+/40Q2q8Sh/1aBUtDtTB1Ki0Z+uuwlUMHO3n+g99NRrbjOW4a0CDh3
+	deVPj18S4Ym2IlHtrHdJDEMLBmmTpJdvFHDcSOMa5TzJKe+qewd7KQInb0LH6s1m
+	fN8aC4iwhdUo/khS/xSVkI/0k2K6i1OFAb791YJDTqRMBQ+uDzMbVziamd0m7wZI
+	c9L5H/3ullyFP1Wg==
+Received: (qmail 1903270 invoked from network); 3 Jun 2024 11:28:51 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 3 Jun 2024 11:28:51 +0200
+X-UD-Smtp-Session: l3s3148p1@HZUS9vgZPNcgAwDPXzLGAH1eNELjOc3g
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-kernel@vger.kernel.org
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Bluecherry Maintainers <maintainers@bluecherrydvr.com>,
+	Anton Sviridenko <anton@corp.bluecherry.net>,
+	Andrey Utkin <andrey_utkin@fastmail.com>,
+	Ismael Luceno <ismael@iodev.co.uk>,
 	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	linux-media@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org
-Subject: [PATCH 5/8] media: platform: exynos-gsc: use 'time_left' variable with wait_event_timeout()
-Date: Mon,  3 Jun 2024 11:28:36 +0200
-Message-ID: <20240603092841.9500-6-wsa+renesas@sang-engineering.com>
+	linux-media@vger.kernel.org
+Subject: [PATCH 6/8] media: solo6x10: use 'time_left' variable with wait_for_completion_timeout()
+Date: Mon,  3 Jun 2024 11:28:37 +0200
+Message-ID: <20240603092841.9500-7-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240603092841.9500-1-wsa+renesas@sang-engineering.com>
 References: <20240603092841.9500-1-wsa+renesas@sang-engineering.com>
@@ -67,51 +67,50 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
 There is a confusing pattern in the kernel to use a variable named 'timeout' to
-store the result of wait_event_timeout() causing patterns like:
+store the result of wait_for_completion_timeout() causing patterns like:
 
-	timeout = wait_event_timeout(...)
+	timeout = wait_for_completion_timeout(...)
 	if (!timeout) return -ETIMEDOUT;
 
 with all kinds of permutations. Use 'time_left' as a variable to make the code
 self explaining.
 
-Fix to the proper variable type 'long' while here.
+Fix to the proper variable type 'unsigned long' while here.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/media/platform/samsung/exynos-gsc/gsc-core.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/media/pci/solo6x10/solo6x10-p2m.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/media/platform/samsung/exynos-gsc/gsc-core.c b/drivers/media/platform/samsung/exynos-gsc/gsc-core.c
-index 618ae55fe396..f45f5c8612a6 100644
---- a/drivers/media/platform/samsung/exynos-gsc/gsc-core.c
-+++ b/drivers/media/platform/samsung/exynos-gsc/gsc-core.c
-@@ -1225,7 +1225,7 @@ static void gsc_remove(struct platform_device *pdev)
- static int gsc_m2m_suspend(struct gsc_dev *gsc)
+diff --git a/drivers/media/pci/solo6x10/solo6x10-p2m.c b/drivers/media/pci/solo6x10/solo6x10-p2m.c
+index ca70a864a3ef..5f100e5e03d9 100644
+--- a/drivers/media/pci/solo6x10/solo6x10-p2m.c
++++ b/drivers/media/pci/solo6x10/solo6x10-p2m.c
+@@ -57,7 +57,7 @@ int solo_p2m_dma_desc(struct solo_dev *solo_dev,
+ 		      int desc_cnt)
  {
- 	unsigned long flags;
--	int timeout;
-+	long time_left;
+ 	struct solo_p2m_dev *p2m_dev;
+-	unsigned int timeout;
++	unsigned long time_left;
+ 	unsigned int config = 0;
+ 	int ret = 0;
+ 	unsigned int p2m_id = 0;
+@@ -99,12 +99,12 @@ int solo_p2m_dma_desc(struct solo_dev *solo_dev,
+ 			       desc[1].ctrl);
+ 	}
  
- 	spin_lock_irqsave(&gsc->slock, flags);
- 	if (!gsc_m2m_pending(gsc)) {
-@@ -1236,12 +1236,12 @@ static int gsc_m2m_suspend(struct gsc_dev *gsc)
- 	set_bit(ST_M2M_SUSPENDING, &gsc->state);
- 	spin_unlock_irqrestore(&gsc->slock, flags);
+-	timeout = wait_for_completion_timeout(&p2m_dev->completion,
+-					      solo_dev->p2m_jiffies);
++	time_left = wait_for_completion_timeout(&p2m_dev->completion,
++						solo_dev->p2m_jiffies);
  
--	timeout = wait_event_timeout(gsc->irq_queue,
--			     test_bit(ST_M2M_SUSPENDED, &gsc->state),
--			     GSC_SHUTDOWN_TIMEOUT);
-+	time_left = wait_event_timeout(gsc->irq_queue,
-+				       test_bit(ST_M2M_SUSPENDED, &gsc->state),
-+				       GSC_SHUTDOWN_TIMEOUT);
- 
- 	clear_bit(ST_M2M_SUSPENDING, &gsc->state);
--	return timeout == 0 ? -EAGAIN : 0;
-+	return time_left == 0 ? -EAGAIN : 0;
- }
- 
- static void gsc_m2m_resume(struct gsc_dev *gsc)
+ 	if (WARN_ON_ONCE(p2m_dev->error))
+ 		ret = -EIO;
+-	else if (timeout == 0) {
++	else if (time_left == 0) {
+ 		solo_dev->p2m_timeouts++;
+ 		ret = -EAGAIN;
+ 	}
 -- 
 2.43.0
 
