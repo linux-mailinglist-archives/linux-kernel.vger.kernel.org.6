@@ -1,166 +1,180 @@
-Return-Path: <linux-kernel+bounces-199580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BCAE8D88E9
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 20:50:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2D318D8910
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 20:56:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EAAF1C22DF2
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 18:50:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 725361F261B5
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 18:56:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 365D1139CE3;
-	Mon,  3 Jun 2024 18:50:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBD3013A271;
+	Mon,  3 Jun 2024 18:56:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ES5fRWWZ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IFOI3/OU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E961F9E9
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 18:50:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7C57139568;
+	Mon,  3 Jun 2024 18:56:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717440609; cv=none; b=RYD2OliQWwaVGBAfnqMzYiE+LktzeF623+Yv3DVhGPXER/2mhvEzURmuVZxLOMXBYPCZGLXds9Dco+TEsVa7FzuBUr6cXMJsH/yVGYxs4l5P3Exp0TmGlbE7h7X0qC/dykWfi7mBrpO+hpLV7N7WypH5cGhrLwWp0ueZjhpir7E=
+	t=1717440990; cv=none; b=ri0mX0RRVy4vzOgDWr+tFwIx3q3XpuXT8/vgPiXmIqCbZ6dxYrGHcHJvCJC3HQM6iBW/YVhRnY2t1HqfNUBUJJ5a59zaPcGYrd106K9cN7TtdMi+7nJ73WeBLc03+kTRatWVM79NPuKvLq9ShE7oofUVKx7ygmQnWQxBDx7RacI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717440609; c=relaxed/simple;
-	bh=QA+vaRbtkGhWSrbG2wOmwjPkFyY/1qMbT6pd7+j4xe4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EdOLeqayK9p9ipJLcPHSAjNoW1cnouWOm3DVjFWWpBFB3fjUjevuzvqByGsI9+nK8kdpEg/cNzt5klt3cFDTopRnS4R2WM8MeF5asjFqifYb+nEnSJyyiAXiqLCrDRMZdTx7tFd6cBnDR9LqhHuT3wFnE0wNf5d+5s8htv8EKEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ES5fRWWZ; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717440607; x=1748976607;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=QA+vaRbtkGhWSrbG2wOmwjPkFyY/1qMbT6pd7+j4xe4=;
-  b=ES5fRWWZVEpi8a30XIua0zhjBkz6CooArLMc4vQYD/hX7bs3+uss0nL6
-   3ACJRpf4+FKwaLqn4QJb6DcHnxlmnix0N1M6ghlQzyrbGs3NTvswhmKS9
-   0OE6BgZ1n/THJkAOqkjRYpdcVg/By3CKp3/IIhCIssmHZtP8d5hnU/C+l
-   5GuVGqSBJIKup0467NlXE5tkPb2lSgkzyVvNNU2rPgMq4ocZ+yCaaMfn6
-   cRq0KWLBn7CHPRpgNm1SetYdRhhEQKPplZPBZpzuI13sEiQbv0bPDEO23
-   8gNmsnFteFdzBkF3lkpq988LGw84deBO9cpJgD2CWGes6pQlyxRTUlSHL
-   w==;
-X-CSE-ConnectionGUID: 1TMsLRRJQ3ikRwntNIv/6g==
-X-CSE-MsgGUID: 0omL4f7LRbKhoxGsX/oQrQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11092"; a="36471470"
-X-IronPort-AV: E=Sophos;i="6.08,212,1712646000"; 
-   d="scan'208";a="36471470"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2024 11:50:06 -0700
-X-CSE-ConnectionGUID: ErXB3GqMR9Sm9HFD+ljFMA==
-X-CSE-MsgGUID: 73TKcnPTTm6f6CffGCOeTQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,212,1712646000"; 
-   d="scan'208";a="37031198"
-Received: from ibganev-desk.amr.corp.intel.com (HELO [10.125.108.143]) ([10.125.108.143])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2024 11:50:07 -0700
-Message-ID: <9e9669a6-de37-4140-bdc5-7d660b8427c3@intel.com>
-Date: Mon, 3 Jun 2024 11:50:06 -0700
+	s=arc-20240116; t=1717440990; c=relaxed/simple;
+	bh=mQUeynsA1hCoLIuqXaZMidYcSSx7+hiPX4gB4B5Gzxc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=BeJyBNVe+GZUVYbpCTikK+vDc01rPJrPEo9ZPPfYh/wzb375w0swd36izf3JBL494Uthx8nCuPTgJPTMWcyPCYGJgzghoK/mtNYwCTpEnucylelh5gjtCLccgas477zHPd+mkVKli0R7Eq1AgsAbOjF04xwq3ps/STOyuFjPW98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IFOI3/OU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40310C2BD10;
+	Mon,  3 Jun 2024 18:56:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717440989;
+	bh=mQUeynsA1hCoLIuqXaZMidYcSSx7+hiPX4gB4B5Gzxc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=IFOI3/OUiur+QsHtc/r94fWKtsR/eV5g7H6lneT+e8Q6UGHWjG7VzprEPHZwzw0zF
+	 ww0VmfJoWXQfc6FCQMeTeeyrsfuTvJhEsFuOPL6p35jzp0IgEPJEV4qm73aaUrOpGx
+	 fC1l6Dyj0AEc+YWWIsdgr4g2fGCi12XJS3Vf6hT6ULEkLMjaZUrmdabaF72vyKoZxU
+	 yi04hMmPlrrkle2UK1PzKO9oV/2V8Y1db8hfz5iyOs579XcJnO0Zajp4rA/5nbJ8tK
+	 UjYE/igET+Aw+ZEvxuGwjh5CKP9IxavCTk1E9q+TBGo5rHkXbM3kpDLKucKndBwV8a
+	 w3eo8Q99kG26w==
+Date: Mon, 3 Jun 2024 13:56:27 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Robin Murphy <robin.murphy@arm.com>, Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	NXP Linux Team <linux-imx@nxp.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-pci@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	devicetree@vger.kernel.org, Will Deacon <will@kernel.org>,
+	Joerg Roedel <joro@8bytes.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Marc Zyngier <maz@kernel.org>
+Subject: Re: [PATCH v5 08/12] PCI: imx6: Config look up table(LUT) to support
+ MSI ITS and IOMMU for i.MX95
+Message-ID: <20240603185627.GA687746@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Patch v3] x86/head/64: remove redundant check on
- level2_kernel_pgt's _PAGE_PRESENT bit
-To: Wei Yang <richard.weiyang@gmail.com>, tglx@linutronix.de,
- mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
- "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
- Ingo Molnar <mingo@kernel.org>, Steve Wahl <steve.wahl@hpe.com>
-References: <20240523123539.14260-1-richard.weiyang@gmail.com>
-Content-Language: en-US
-From: Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20240523123539.14260-1-richard.weiyang@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zl4OpTfcfqMHELiX@lizhi-Precision-Tower-5810>
 
-On 5/23/24 05:35, Wei Yang wrote:
-> --- a/arch/x86/kernel/head64.c
-> +++ b/arch/x86/kernel/head64.c
-> @@ -260,8 +260,7 @@ unsigned long __head __startup_64(unsigned long physaddr,
->  
->  	/* fixup pages that are part of the kernel image */
->  	for (; i <= pmd_index((unsigned long)_end); i++)
-> -		if (pmd[i] & _PAGE_PRESENT)
-> -			pmd[i] += load_delta;
-> +		pmd[i] += load_delta;
+On Mon, Jun 03, 2024 at 02:42:45PM -0400, Frank Li wrote:
+> On Mon, Jun 03, 2024 at 12:19:21PM -0500, Bjorn Helgaas wrote:
+> > On Fri, May 31, 2024 at 03:58:49PM +0100, Robin Murphy wrote:
+> > > On 2024-05-31 12:08 am, Bjorn Helgaas wrote:
+> > > > [+cc IOMMU and pcie-apple.c folks for comment]
+> > > > 
+> > > > On Tue, May 28, 2024 at 03:39:21PM -0400, Frank Li wrote:
+> > > > > For the i.MX95, configuration of a LUT is necessary to convert Bus Device
+> > > > > Function (BDF) to stream IDs, which are utilized by both IOMMU and ITS.
+> > > > > This involves examining the msi-map and smmu-map to ensure consistent
+> > > > > mapping of PCI BDF to the same stream IDs. Subsequently, LUT-related
+> > > > > registers are configured. In the absence of an msi-map, the built-in MSI
+> > > > > controller is utilized as a fallback.
+> > > > > 
+> > > > > Additionally, register a PCI bus notifier to trigger imx_pcie_add_device()
+> > > > > upon the appearance of a new PCI device and when the bus is an iMX6 PCI
+> > > > > controller. This function configures the correct LUT based on Device Tree
+> > > > > Settings (DTS).
+> > > > 
+> > > > This scheme is pretty similar to apple_pcie_bus_notifier().  If we
+> > > > have to do this, I wish it were *more* similar, i.e., copy the
+> > > > function names, bitmap tracking, code structure, etc.
+> > > > 
+> > > > I don't really know how stream IDs work, but I assume they are used on
+> > > > most or all arm64 platforms, so I'm a little surprised that of all the
+> > > > PCI host drivers used on arm64, only pcie-apple.c and pci-imx6.c need
+> > > > this notifier.
+> > > 
+> > > This is one of those things that's mostly at the mercy of the PCIe root
+> > > complex implementation. Typically the SMMU StreamID and/or GIC ITS DeviceID
+> > > is derived directly from the PCI RID, sometimes with additional high-order
+> > > bits hard-wired to disambiguate PCI segments. I believe this RID-translation
+> > > LUT is a particular feature of the the Synopsys IP - I know there's also one
+> > > on the NXP Layerscape platforms, but on those it's programmed by the
+> > > bootloader, which also generates the appropriate "msi-map" and "iommu-map"
+> > > properties to match. Ideally that's what i.MX should do as well, but hey.
+> > 
+> > Maybe this RID-translation is a feature of i.MX, not of Synopsys?  I
+> > see that the LUT CSR accesses use IMX95_* definitions.
+> 
+> Yes, it convert 16bit RID to 6bit stream id.
 
-So, I think this is correct.  But, man, I wish folks would go through
-the git history and make it clear that they understand _how_ the code
-got the way it is.
+IIUC, you're saying this is not a Synopsys feature, it's an i.MX
+feature.
 
-I suspect that the original _PAGE_PRESENT check wasn't even necessary if
-cleanup_highmap() really did fix things up.  But this commit:
+> > > If it's really necessary to do this programming from Linux, then there's
+> > > still no point in it being dynamic - the mappings cannot ever change, since
+> > > the rest of the kernel believes that what the DT said at boot time was
+> > > already a property of the hardware. It would be a lot more logical, and
+> > > likely simpler, for the driver to just read the relevant map property and
+> > > program the entire LUT to match, all in one go at controller probe time.
+> > > Rather like what's already commonly done with the parsing of "dma-ranges" to
+> > > program address-translation LUTs for inbound windows.
+> > > 
+> > > Plus that would also give a chance of safely dealing with bad DTs specifying
+> > > invalid ID mappings (by refusing to probe at all). As it is, returning an
+> > > error from a child's BUS_NOTIFY_ADD_DEVICE does nothing except prevent any
+> > > further notifiers from running at that point - the device will still be
+> > > added, allowed to bind a driver, and able to start sending DMA/MSI traffic
+> > > without the controller being correctly programmed, which at best won't work
+> > > and at worst may break the whole system.
+> > 
+> > Frank, could the imx LUT be programmed once at boot-time instead of at
+> > device-add time?  I'm guessing maybe not because apparently there is a
+> > risk of running out of LUT entries?
+> 
+> It is not good idea to depend on boot loader so much.
 
-	2aa85f246c18 ("x86/boot/64: Make level2_kernel_pgt pages invalid
-		       outside kernel area")
+I meant "could this be programmed once when the Linux imx host
+controller driver is probed?"  But from the below, it sounds like
+that's not possible in general because you don't have enough stream
+IDs to do that.
 
-tweaked things to actively clear out PMDs that weren't populated in
-Kirill's original loop.  It didn't touch the _PAGE_PRESENT check.  But
-it certainly did imply that the PMD doesn't have any holes in it and
-there's nothing int he middle that needs _PAGE_PRESENT cleared.
+> Some hot plug devics
+> (SD7.0) may plug after system boot. Two PCIe instances shared one set
+> of 6bits stream id (total 64). Assume total 16 assign to two PCIe
+> controllers. each have 8 stream id. If use uboot assign it static, each
+> PCIe controller have below 8 devices.  It will be failrue one controller
+> connect 7, another connect 9. but if dynamtic alloc when devices add, both
+> controller can work.
+> 
+> Although we have not so much devices now,  this way give us possility to
+> improve it in future.
+> 
+> > It sounds like the consequences of running out of LUT entries are
+> > catastrophic, e.g., memory corruption from mis-directed DMA?  If
+> > that's possible, I think we need to figure out how to prevent the
+> > device from being used, not just dev_warn() about it.
+> 
+> Yes, but so far, we have not met such problem now. We can improve it when
+> we really face such problem.
 
-> level2_kernel_pgt compiled with _PAGE_PRESENT set. The check is
-> redundant
+If this controller can only support DMA from a limited number of
+endpoints below it, I think we should figure out how to enforce that
+directly.  Maybe we can prevent drivers from enabling bus mastering or
+something.  I'm not happy with the idea of waiting for and debugging a
+report of data corruption.
 
-This isn't super reassuring.  It also depends on nothing having munged
-the page tables up to this point.  The code is also a bit cruel in that
-it manipulates two different sets of PMDs with the same 'pmd' variable.
-
-Also, is this comment still accurate after '2aa85f246c18'?
-
->          * Fixup the kernel text+data virtual addresses. Note that
->          * we might write invalid pmds, when the kernel is relocated
->          * cleanup_highmap() fixes this up along with the mappings
->          * beyond _end.
-
+Bjorn
 
