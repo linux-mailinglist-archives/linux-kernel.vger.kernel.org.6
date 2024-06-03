@@ -1,129 +1,108 @@
-Return-Path: <linux-kernel+bounces-199444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EA778D874A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 18:28:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 549718D874D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 18:28:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0887C2888E8
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:28:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E7202814BA
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:28:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 921291369A1;
-	Mon,  3 Jun 2024 16:27:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XTDQCUZ7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0ADB132134;
-	Mon,  3 Jun 2024 16:27:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27DB0136987;
+	Mon,  3 Jun 2024 16:28:38 +0000 (UTC)
+Received: from iodev.co.uk (iodev.co.uk [46.30.189.100])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6714313664B;
+	Mon,  3 Jun 2024 16:28:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.189.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717432072; cv=none; b=fHfa9D5SnfamtRjxlaQtTaVIvqi6zDjsq3qx6yseItXeAizt2r3H7+qHNnVHBnfu6XWOBm7DGzJobLhL40UgsDrtdheglEBcDFnO3EB5N45yRzo7qLR90BHmEN8cKJENGJqLsuAUWldGupQiE3tmmSxSdyugn3tEnzQwSuyW9pc=
+	t=1717432117; cv=none; b=qTim4ydLnesTr7Xy2QYVHkzOiV9t9mtpa9IL12foYjNks/ygOM8M7sI66wjV/4M3SMFwr0Pz/rG/KpzJME7wkuzQvZIpO3hutjAey2o8ExuflNDzM4S2n1FknrtdzHg4fSsruye5R3YX19A9YrUMYBaFdKxjUxVaDsCNV+ReuxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717432072; c=relaxed/simple;
-	bh=oRnkuVfmEo68h8xsojH0l6YCZM7vKTDbSA9MjVX8lcI=;
+	s=arc-20240116; t=1717432117; c=relaxed/simple;
+	bh=S41KtMNy578ooBZOlpzT9d0b338WCUrzYp5MEJGF7PE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UkAUgo4ChS62jfRRc0Il/QszXYDEKcSLFn4j/vz1tCRA5DOU/FudeZKXOq+c6bUG92/suswTOTiPz6IvYKNYCWrK8Y3e4zAHaJEVQuof/G5VSNYFt80q4b4uKHLYYM4YeUsFlQZBbBfuAVi8TdKPsyE5fo/XvJsYZB0vmbwYWls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XTDQCUZ7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94A0DC2BD10;
-	Mon,  3 Jun 2024 16:27:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717432072;
-	bh=oRnkuVfmEo68h8xsojH0l6YCZM7vKTDbSA9MjVX8lcI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XTDQCUZ72bRlkxaGtCsAqytSxIUqNNsLDD45miaFV68weGEv3pg0ZBst7gtAFNIHg
-	 zItZc18cuDfFBVyrhoFztU2cZCGIWsYIvFgCm3YdtCqJJawZ7JI/Rcfw6x4j2IZuNm
-	 wwJJnVm1re9PVNhckzmO4qN+yp2hxSTVPI17Q40/w4gqcKB0pn1NhpOIhIbwfXZjFQ
-	 gn+dAf2KAveEpqKNb2RKKaxGVKty3ReE8eF2T8HVjYENoq4KpNogOFm0XQ+8Lrd6xP
-	 UG/I+9/1iOTdEh21gPaiAwQKeyuOEKiy2a32p5eL1hmUC05Z/BUe9Seec1FGNDQq4x
-	 0f06xk90PpiYg==
-Date: Mon, 3 Jun 2024 17:27:43 +0100
-From: Mark Brown <broonie@kernel.org>
-To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jakub Kicinski <kuba@kernel.org>, Kees Cook <keescook@chromium.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Sasha Levin <sashal@kernel.org>,
-	Sean Christopherson <seanjc@google.com>,
-	Shengyu Li <shengyu.li.evgeny@gmail.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Bagas Sanjaya <bagasdotme@gmail.com>,
-	Brendan Higgins <brendanhiggins@google.com>,
-	David Gow <davidgow@google.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
-	Jon Hunter <jonathanh@nvidia.com>, Ron Economos <re@w6rz.net>,
-	Ronald Warsow <rwarsow@gmx.de>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	Will Drewry <wad@chromium.org>,
-	kernel test robot <oliver.sang@intel.com>, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	netdev@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v7 04/10] selftests/harness: Fix interleaved scheduling
- leading to race conditions
-Message-ID: <187423fb-ec78-4318-9da0-5b27df62b71f@sirena.org.uk>
-References: <20240511171445.904356-1-mic@digikod.net>
- <20240511171445.904356-5-mic@digikod.net>
- <9341d4db-5e21-418c-bf9e-9ae2da7877e1@sirena.org.uk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=i4t/KUjVxm301QzuuMUktFzY2+CWiSH2eN6wynzcAPVgMzuBBgYq1Hzh1puYKBeBCnVzYvez0dDK+im4K4eZnja+8D5CXsGzA5UH5TAegeJK45sGAB/68psdNfNw4h/ojV3eppRLcloz5V/Zt4GuU+wSq0iU5V23FsBtKT2gCVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=iodev.co.uk; spf=pass smtp.mailfrom=iodev.co.uk; arc=none smtp.client-ip=46.30.189.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=iodev.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iodev.co.uk
+Received: from pirotess (222.red-83-46-228.dynamicip.rima-tde.net [83.46.228.222])
+	by iodev.co.uk (Postfix) with ESMTPSA id 1C0222EF964;
+	Mon, 03 Jun 2024 18:28:34 +0200 (CEST)
+Date: Mon, 3 Jun 2024 18:28:32 +0200
+From: Ismael Luceno <ismael@iodev.co.uk>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-kernel@vger.kernel.org,
+	Bluecherry Maintainers <maintainers@bluecherrydvr.com>,
+	Anton Sviridenko <anton@corp.bluecherry.net>,
+	Andrey Utkin <andrey_utkin@fastmail.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org
+Subject: Re: [PATCH 6/8] media: solo6x10: use 'time_left' variable with
+ wait_for_completion_timeout()
+Message-ID: <Zl3vMKEbsCFFwOAe@pirotess>
+References: <20240603092841.9500-1-wsa+renesas@sang-engineering.com>
+ <20240603092841.9500-7-wsa+renesas@sang-engineering.com>
+ <Zl3ujm4KEBviJIWP@pirotess>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="fOjdVNyedpGvq4UL"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9341d4db-5e21-418c-bf9e-9ae2da7877e1@sirena.org.uk>
-X-Cookie: Don't let your status become too quo!
+In-Reply-To: <Zl3ujm4KEBviJIWP@pirotess>
 
+On 03/Jun/2024 18:25, Ismael Luceno wrote:
+> On 03/Jun/2024 11:28, Wolfram Sang wrote:
+> > There is a confusing pattern in the kernel to use a variable named 'timeout' to
+> > store the result of wait_for_completion_timeout() causing patterns like:
+> > 
+> > 	timeout = wait_for_completion_timeout(...)
+> > 	if (!timeout) return -ETIMEDOUT;
+> > 
+> > with all kinds of permutations. Use 'time_left' as a variable to make the code
+> > self explaining.
+> > 
+> > Fix to the proper variable type 'unsigned long' while here.
+> > 
+> > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> > ---
+> >  drivers/media/pci/solo6x10/solo6x10-p2m.c | 8 ++++----
+> >  1 file changed, 4 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/drivers/media/pci/solo6x10/solo6x10-p2m.c b/drivers/media/pci/solo6x10/solo6x10-p2m.c
+> > index ca70a864a3ef..5f100e5e03d9 100644
+> > --- a/drivers/media/pci/solo6x10/solo6x10-p2m.c
+> > +++ b/drivers/media/pci/solo6x10/solo6x10-p2m.c
+> > @@ -57,7 +57,7 @@ int solo_p2m_dma_desc(struct solo_dev *solo_dev,
+> >  		      int desc_cnt)
+> >  {
+> >  	struct solo_p2m_dev *p2m_dev;
+> > -	unsigned int timeout;
+> > +	unsigned long time_left;
+> >  	unsigned int config = 0;
+> >  	int ret = 0;
+> >  	unsigned int p2m_id = 0;
+> > @@ -99,12 +99,12 @@ int solo_p2m_dma_desc(struct solo_dev *solo_dev,
+> >  			       desc[1].ctrl);
+> >  	}
+> >  
+> > -	timeout = wait_for_completion_timeout(&p2m_dev->completion,
+> > -					      solo_dev->p2m_jiffies);
+> > +	time_left = wait_for_completion_timeout(&p2m_dev->completion,
+> > +						solo_dev->p2m_jiffies);
+> >  
+> >  	if (WARN_ON_ONCE(p2m_dev->error))
+> >  		ret = -EIO;
+> > -	else if (timeout == 0) {
+> > +	else if (time_left == 0) {
+> >  		solo_dev->p2m_timeouts++;
+> >  		ret = -EAGAIN;
+> >  	}
+> 
+> Signed-off-by: Ismael Luceno <ismael@iodev.co.uk>
 
---fOjdVNyedpGvq4UL
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, May 27, 2024 at 08:07:40PM +0100, Mark Brown wrote:
-> On Sat, May 11, 2024 at 07:14:39PM +0200, Micka=EBl Sala=FCn wrote:
-
-> > Fix a race condition when running several FIXTURE_TEARDOWN() managing
-> > the same resource.  This fixes a race condition in the Landlock file
-> > system tests when creating or unmounting the same directory.
->=20
-> > Using clone3() with CLONE_VFORK guarantees that the child and grandchild
-> > test processes are sequentially scheduled.  This is implemented with a
-> > new clone3_vfork() helper replacing the fork() call.
->=20
-> This is now in mainline and appears to be causing several tests (at
-> least the ptrace vmaccess global_attach test on arm64, possibly also
-> some of the epoll tests) that previously were timed out by the harness
-> to to hang instead.  A bisect seems to point at this patch in
-> particular, there was a bunch of discussion of the fallout of these
-> patches but I'm afraid I lost track of it, is there something in flight
-> for this?  -next is affected as well from the looks of it.
-
-FWIW I'm still seeing this on -rc2...
-
---fOjdVNyedpGvq4UL
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZd7v4ACgkQJNaLcl1U
-h9AM+wf/ZmkJuaskXgcwXDXT1jI3wnrjvwPBo1nyTsX3wcmiDZXCGtR9qwuVn+XC
-0N4ICDlxmX4lBZ8v6GJhe1blCagYT9WHp5g6aVe5D/kAf7m0IJG+I8JgPWjjg0J+
-QIZ6vf4WjCml2ZpHWv/gB8ZAJeZyiRvpKlldLnZfrzJaGQFx4hhIj2G44jUa4T1y
-3yHEgwaZfeeAYa2jZ1sZYD74zrPceqOUF38syHzbT9OgKDbPxXtI4KKDjXwe/aTp
-6IOZMgeT5ivv0/47+PtodbX2QXl/5fSpQ/LOUW55xzIarOAhPx2EsfcBQW6RTaAv
-R7Vzezy0MyONRIEvmdT1iCjwnlZvDw==
-=tzUV
------END PGP SIGNATURE-----
-
---fOjdVNyedpGvq4UL--
+Sorry, I meant Acked-by.
 
