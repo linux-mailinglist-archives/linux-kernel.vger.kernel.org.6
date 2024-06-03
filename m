@@ -1,81 +1,183 @@
-Return-Path: <linux-kernel+bounces-198993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 124F88D8036
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 12:42:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FA208D8041
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 12:51:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9937B28609D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 10:42:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3107281E4B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 10:51:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0DBA82D9A;
-	Mon,  3 Jun 2024 10:42:40 +0000 (UTC)
-Received: from mail114-241.sinamail.sina.com.cn (mail114-241.sinamail.sina.com.cn [218.30.114.241])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F078883A0E;
+	Mon,  3 Jun 2024 10:51:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="1xOC5/uK"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B33F019F
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 10:42:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.114.241
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FE8442AA9
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 10:50:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717411360; cv=none; b=cRIKAy5KOGWbvMx+3fZnmnMFOGfflRa/MGU8OMRy4S4f6w9KIJ3tIxrtGUjGykQnttKDTo2Ato6xU5KnDafvR404m5qSV/kuJbzXwy3sMpwg8Ts5b4Tm0/d8Ig4wrougDS+eanSfYUVR+f0tM1jULhAANV4welE1qCxmEju9gEQ=
+	t=1717411862; cv=none; b=nSPXo9jzVS6et8yYGss87S79ywQVh3llOgFqcYlIB9oanSW9y8RnDp5pNImRntKhhepBhLRPXg3zmkI0/NBml1EyCBwKJAsvX7Tz8N609BKNnKxkkRrCo6oSQwl9btGZIGGYfFH6LASYRvJ4433R9rPLUxEhGR+9JJmKEOAmsYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717411360; c=relaxed/simple;
-	bh=WZE/wXk4w/29dBkOrSGAcse3U2x0Hn9pieqgKvJkZvw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Ol7PBvf4J4Cs7q/BhJd0tNXDNbdOP9DzHMi/T7k0O0wJeHZsF9BECA+f/wCndmS6bK24bYdNh6EG+vZvxEg2y7lwIG3RmhfymzYWTPxv7bVOS+TekkaTOwSbincdljnvX1FPDYKTvwXfRKdHkTKgqKtdzchFzHEpgCep4ecArOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.114.241
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([113.118.66.186])
-	by sina.com (172.16.235.24) with ESMTP
-	id 665D9E0B00002490; Mon, 3 Jun 2024 18:42:22 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 56327145089299
-X-SMAIL-UIID: FAB669AF052A4A4A995B53A1ACC9F0A6-20240603-184222-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+42986aeeddfd7ed93c8b@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [ext4?] INFO: task hung in vfs_rmdir (2)
-Date: Mon,  3 Jun 2024 18:42:11 +0800
-Message-Id: <20240603104211.1526-1-hdanton@sina.com>
-In-Reply-To: <00000000000054d8540619f43b86@google.com>
-References: 
+	s=arc-20240116; t=1717411862; c=relaxed/simple;
+	bh=5DVeAMWdqWUXERR27J00cNATFK2F7gYJVhCAomHF6Qg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Voddd9kGW9ZOXVXuUI+Tu/gIuCyeBf+5Sb93xNjM+DBD1NTDl4kfwskKK2/MHb/S6AaQq758FjUxyX5LtjVst+E6ETkSvWyF1Fyoh4ttVe6YuPJCI4so/G0P9ycUC+ap3fyp3Mf0n13NQi6rxLku4el2sqSS1PTcuj/9SrVmuRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=1xOC5/uK; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-421338c4c3bso20047535e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 03:50:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1717411858; x=1718016658; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UdnKk0U8YIgyphmfdZ5S6P2OG6FjluzorDu+ngQ8lF4=;
+        b=1xOC5/uKK561AeGal4BxLbtBiEClk2dZgvYeOtPpkOaSGQ6A6801ofQyb4ZmnGB1WB
+         TqwH/7qMHV+XDskaY7VhNAzxBUaD57U4Hcv14MWWNfEQ2s+KQsrXOuJjlPa4g3y7UsCj
+         vV3k27qR3Ocj9epZI0bEYHitjQdeq5Xirqgj1lyZgvlfpvFYaS5AziXP3b7sVpMO0E5c
+         yXZXW7gEDwRMTl3PWKj1zRXgf5qLs5Twp7i6gyXDb/eFmJZLHmCTJeHt3P5wKVNMD58G
+         HFQNAjaObj1zUoVl67HaUmtdJQF2bXzgJNPhn7maYRPctGg4lEEgViGxGvcNVyYjYjur
+         Gm0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717411858; x=1718016658;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UdnKk0U8YIgyphmfdZ5S6P2OG6FjluzorDu+ngQ8lF4=;
+        b=G3v3nLx6jNkGVUoWwPYU6d3+GHhdkRtk8SOS2JZLRbTcxwgZE2vdWtMUnuCYStBJon
+         5TucnRY/zAyFjO0OaW0urPJCCpsN4y3HYWyKrxfBqXAufQms07Ja/QSeK7zgkHaDmQAO
+         zmLtfifJqdgV2QjeKn1vaQA+dav6Sx77xFKkksPG5UrhBpjZyBsc6J2B+NGNrW1o4jMa
+         RX9GNdOh9muYrxeIaDK8ipbRkVuFPNXP61yZPDBi65LubHQoDqt+AUmgmimCoS7Qyg/I
+         nNLbxJVSR/AzvXpftQVPfhuY50GPgZ8QkEfB4cJpP4D1xyaW65xgoIDLfZdmfswCBBJN
+         lVSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWjfEzLhH4OaXZonVtil9qo2X5np0bMGVY/kHIJI99M5CQNo2Ao1952bm+NgX0/EdDaRv2zbn/nZqhXeuc+FB3GkiCbPSWhGl01j6Z0
+X-Gm-Message-State: AOJu0YwVB8IgAFdQEE+duGEBykjc5C9jHEi5gwCaQ29VREpLuKpTOvyc
+	WyJdpfay6EjVnOCBRbuPYlkOZ4ilnBHe5u34/uRkodgmGGNj2WqFpQFVwKh1v2c=
+X-Google-Smtp-Source: AGHT+IFaWoT1e6TvoB0AgmpyT+2utdI+mwIyeAACDTQGOs0bgoK2STYvUX7gmBuqBz+wV3mWSKvPyA==
+X-Received: by 2002:a05:600c:511f:b0:41e:3272:6476 with SMTP id 5b1f17b1804b1-4212e049d8dmr81844775e9.10.1717411857652;
+        Mon, 03 Jun 2024 03:50:57 -0700 (PDT)
+Received: from [127.0.1.1] ([84.102.31.231])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42133227f8asm95372535e9.19.2024.06.03.03.50.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Jun 2024 03:50:57 -0700 (PDT)
+From: Julien Panis <jpanis@baylibre.com>
+Subject: [PATCH v7 0/6] Mediatek thermal sensor driver support for MT8186
+ and MT8188
+Date: Mon, 03 Jun 2024 12:50:47 +0200
+Message-Id: <20240603-mtk-thermal-mt818x-dtsi-v7-0-8c8e3c7a3643@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAegXWYC/3XNSwqDMBCA4auUrJuSxDy76j1KFzGONdRHSUQU8
+ e6NQkFK3c0/MN/MKELwENH1NKMAg4++a1Oo8wm5yrZPwL5IjRhhnAhGcNO/cF9BaGydZk31iIs
+ +egzOZkqXJpeWoHT9DlD6cZPvj9SVj30Xpu3RwNft16SH5sAxwbmhAFJpTqm75XaqfR7g4roGr
+ ewg9hQ/pkSihCy1UEYzAuoPJfeUOaZkoohTlCttjct+qWVZPubgLqFXAQAA
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>, 
+ Nicolas Pitre <npitre@baylibre.com>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>, 
+ Lukasz Luba <lukasz.luba@arm.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ linux-pm@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, 
+ Julien Panis <jpanis@baylibre.com>, 
+ Conor Dooley <conor.dooley@microchip.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1717411855; l=3307;
+ i=jpanis@baylibre.com; s=20230526; h=from:subject:message-id;
+ bh=5DVeAMWdqWUXERR27J00cNATFK2F7gYJVhCAomHF6Qg=;
+ b=NesfOkcMI7jH2us7UExx5sohtZ+j/QjcLttLXw1c0jGe3ZLnWMyVUDrdRjdSDV57lDUh26sOi
+ fHX5skCdve7D6y0WGoeYBsNs3MWYJRL/097ekokb7VojvzooFZVV7AN
+X-Developer-Key: i=jpanis@baylibre.com; a=ed25519;
+ pk=8eSM4/xkiHWz2M1Cw1U3m2/YfPbsUdEJPCWY3Mh9ekQ=
 
-On Sun, 02 Jun 2024 20:50:18 -0700
-> syzbot found the following issue on:
-> 
-> HEAD commit:    4a4be1ad3a6e Revert "vfs: Delete the associated dentry whe..
-> git tree:       upstream
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=103820f2980000
+This is a bunch of patches to support the MT8186 and MT8188 thermal
+sensor configurations.
 
-#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git  master
+Since the patches of v3 were applied except those related to the SoC
+device trees, this series includes mainly patches for 'mt8186.dtsi'
+and 'mt8188.dtsi'. Due to some thermal zone renaming in these 2 device
+trees, the related definitions were also renamed in the dt-bindings and
+in the driver.
 
---- x/fs/namei.c
-+++ y/fs/namei.c
-@@ -4198,6 +4198,8 @@ int vfs_rmdir(struct mnt_idmap *idmap, s
- 
- 	if (!dir->i_op->rmdir)
- 		return -EPERM;
-+	if (dir == dentry->d_inode)
-+		return -EDEADLK;
- 
- 	dget(dentry);
- 	inode_lock(dentry->d_inode);
---
+Because of the GPU thermal zone, this series must be applied on top of [1].
+
+[1] https://lore.kernel.org/all/20240527093908.97574-1-angelogioacchino.delregno@collabora.com/
+
+Signed-off-by: Julien Panis <jpanis@baylibre.com>
+---
+Changes in v7:
+- Change commit message for dt-bindings patches.
+- Link to v6: https://lore.kernel.org/r/20240529-mtk-thermal-mt818x-dtsi-v6-0-0c71478a9c37@baylibre.com
+
+Changes in v6:
+- Reorganize patches related to thermal zone renaming (dt-bindings + driver).
+- Add cooling-cells property to GPU node in 'mt8188.dtsi'
+- Link to v5: https://lore.kernel.org/r/20240524-mtk-thermal-mt818x-dtsi-v5-0-56f8579820e7@baylibre.com
+
+Changes in v5:
+- Rename some thermal zones
+  (mfg -> gpu / soc1 -> adsp / soc2 -> vdo / soc3 -> infra).
+- Add cooling-device for GPUs.
+- Link to v4: https://lore.kernel.org/r/20240521-mtk-thermal-mt818x-dtsi-v4-0-b91ee678411c@baylibre.com
+
+Changes in v4:
+- Fix wrong thermal zone names.
+- Lower 'polling-delay-passive' values.
+- Set 'hysteresis' value to 0 for 'critical' trips.
+- Add a 'hot' trip point in between 'passive' and 'critical' trips.
+- Link to v3: https://lore.kernel.org/all/20240402032729.2736685-1-nico@fluxnic.net/
+
+Changes in v3:
+- use meaningful name for binding index definitions
+- reuse LVTS_COEFF_*_MT7988 on MT8186 per reviewer request
+- do similarly for MT8188 that now reuses LVTS_COEFF_*_MT8195
+- use thermal zone names the svs driver wants
+- adjust some DT node names and iospace length
+- remove variable .hw_tshut_temp as it is constant across all SOCs
+- Link to v2: https://lore.kernel.org/all/20240318212428.3843952-1-nico@fluxnic.net/
+
+Changes in v2:
+- renamed CPU cluster thermal zones in DT
+- fixed logic to cope with empty controller slots at the beginning
+- isolated bindings to their own patches
+- added MT8188 default thermal zones
+- Link to v1: https://lore.kernel.org/all/20240111223020.3593558-1-nico@fluxnic.net/T/
+
+---
+Julien Panis (2):
+      dt-bindings: thermal: mediatek: Fix thermal zone definition for MT8186
+      dt-bindings: thermal: mediatek: Fix thermal zone definitions for MT8188
+
+Nicolas Pitre (4):
+      arm64: dts: mediatek: mt8186: add lvts definitions
+      arm64: dts: mediatek: mt8186: add default thermal zones
+      arm64: dts: mediatek: mt8188: add lvts definitions
+      arm64: dts: mediatek: mt8188: add default thermal zones
+
+ arch/arm64/boot/dts/mediatek/mt8186.dtsi           | 316 ++++++++++++++
+ arch/arm64/boot/dts/mediatek/mt8188.dtsi           | 482 +++++++++++++++++++++
+ drivers/thermal/mediatek/lvts_thermal.c            |  12 +-
+ .../dt-bindings/thermal/mediatek,lvts-thermal.h    |  12 +-
+ 4 files changed, 810 insertions(+), 12 deletions(-)
+---
+base-commit: b321abd919e22b240d53329cd726ea7afa8aca98
+change-id: 20240520-mtk-thermal-mt818x-dtsi-eca378f9b6a0
+
+Best regards,
+-- 
+Julien Panis <jpanis@baylibre.com>
+
 
