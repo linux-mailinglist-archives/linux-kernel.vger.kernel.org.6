@@ -1,87 +1,159 @@
-Return-Path: <linux-kernel+bounces-199425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 312D58D870D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 18:20:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 973F48D8711
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 18:22:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E103C282A88
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:20:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22CA828116E
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:22:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1AF012F596;
-	Mon,  3 Jun 2024 16:20:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C3D313664B;
+	Mon,  3 Jun 2024 16:22:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4ioz63HV";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nkifY63Y"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IhPEccFU"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8534132134;
-	Mon,  3 Jun 2024 16:20:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 383BF107A8;
+	Mon,  3 Jun 2024 16:21:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717431646; cv=none; b=RaWxLxDU8aclGnXX1D7xCiGE+VjoZwPI8cdX0IhtSqpL7eEi9wpr77FWHn/FtMsChzWuw4hfO7ns/ig0/HBw5E65EDpASORhx+Goacij/XZJfno3mSkYm2+ZCqhLHaVcRUiyYkBssJ/UHK9uZAmLzoCwzSQ0Bf/EsKyn8zidGk8=
+	t=1717431720; cv=none; b=GAqXaDmMznDZH95q4zWOSGtubnu6y5T5KiZJjRZdY37Iv484iLzKOfXdnzNr2A0Jzh1d+i0yF2S475wzZGkI68eGKh2Eb5iA4OCvvKrqkXtk0bUagvjRJkT/jiySc/l5gcGqsOrDzLUtZHcWvTVZ3UVApz0UtXT/Y0hh8zxRa5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717431646; c=relaxed/simple;
-	bh=tAh8BEKe9KGyLkew/OUaE+pHQOosCHCwdAXwE/GUMU0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=KqO1Xjih7fTv8E824/uGhLwOGttOEoJzP3p1jw7yvIDlNUC06JRAkfY9n/a3CtOF/DreDiZIouFdRl2e7hG/+OVcSawdEoAdUuyerOmouCPwkMitTmXXBuTyrggRSwsaCMfpesUzCcxbAQbO4Vx+MHSenDEGc37RUoGwQkXMguQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4ioz63HV; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nkifY63Y; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1717431643;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=a9B+7uwm/MkuKDK5YQG4gGBGAExES3AfLJdIdJres/Q=;
-	b=4ioz63HVkWP70a4QHN4OIHUu2Ie5KAVQhHVpmIyI6scnRpLDG7rKqdZtcrRv/AYQDlsm0F
-	grIY3fqgZHFeyoPcXwstRjcZYyXdMsQHzqEr72yxURbkDwU381cGyESPyzGZIkUz28dmpW
-	9RUJLSHq+m8dqnTPA+wviLkcfFXvXQSbjGJBfJFmo15Z0IYhaitiXD0uKzC+lM7eTwgwpB
-	nxo4CnNoyGYDJ7jquaNADTZLn8k0M6PWTgnK2qRvZpLttW+sHLCEcyjAvVzEeu6FTSydLu
-	tFKID6PJBbJpjWrZIoJ640ZUAhN3ssIbaTlHu7wpNc5LAUCFJwKL1OTtuBZeUA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1717431643;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=a9B+7uwm/MkuKDK5YQG4gGBGAExES3AfLJdIdJres/Q=;
-	b=nkifY63Yem/s1TH/4C8SaefAeBLme2UHLQFDqeVK3hXsXye4FEDoVyUdU4yfyVeBlhmjP8
-	GRrjjS+vVsx7XkCQ==
-To: Marc Zyngier <maz@kernel.org>, linux-kernel@vger.kernel.org
-Cc: linux-tip-commits@vger.kernel.org, Hagar Hemdan <hagarhem@amazon.com>,
- stable@vger.kernel.org, x86@kernel.org
-Subject: Re: [tip: irq/urgent] irqchip/gic-v3-its: Fix potential race
- condition in its_vlpi_prop_update()
-In-Reply-To: <86h6eakoc9.wl-maz@kernel.org>
-References: <20240531162144.28650-1-hagarhem@amazon.com>
- <171741750653.10875.4371546608500601999.tip-bot2@tip-bot2>
- <86h6eakoc9.wl-maz@kernel.org>
-Date: Mon, 03 Jun 2024 18:20:42 +0200
-Message-ID: <875xuq6lr9.ffs@tglx>
+	s=arc-20240116; t=1717431720; c=relaxed/simple;
+	bh=5UdqhTYDdJ6XCunroqHqe5/BwihyhEMQZXMlLIW0q2w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=md5sDV+8WZxPJepjkhkARk1cPzvZTwlll2v7wV9QDA5F3cMCbI3GZvsE8c8Hlvv8mY/eizIS3oaBLBGVnTY236+B3hKaNCMWfuvRntpx5opNQ/flKFqAXbHK5yuYrnXuRPlapuLhXAeNaWDk3drhwX6gDvLGiqqKwu8Uvq7noMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IhPEccFU; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2ea903cd11bso47115971fa.1;
+        Mon, 03 Jun 2024 09:21:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717431717; x=1718036517; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UT/n64RkdFWABWe/J3nAKJc1oXeovt/hfh7Nn3LCSOg=;
+        b=IhPEccFUqxfqvdQv8f7Il+3av/iWODU7tlrcxWHF74lhcp9Lp3Yx3YWP+R5CbWkGBp
+         AwcD6QQYiOVZnIfidzL9bPnwKxySAY/XD6sieHqlJaWghJtJsFXHZ+U3kpmukBEQ96Zn
+         6wcM/0NSQlUy5LIQbCAetnrTpDGYqOR1+2J4/PonqKRhaziaGxL+v/07NmcOPTrAaBjc
+         fheUa9BXGITRcE4kBpt+fSmbMGAUmb7Qzc+KPV94wvAGq7WnGa9th3GsFuu6U4pJMTaE
+         +hMC/mUYC6ejUVnxW12N4YgihC1OcicXzLRCiyVdKNClJ4oLxq7J0WZ6/N4WUpTOG7F6
+         ZpGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717431717; x=1718036517;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UT/n64RkdFWABWe/J3nAKJc1oXeovt/hfh7Nn3LCSOg=;
+        b=p0j8Vm3pMaiK0owxahBDW214vfcplpd1mzYbwfGWrGgpDp/gVV5KUm5Tv0AhSug8BW
+         6L6IaR5UVsG7xwRFrOeyFexweUuta8M+jy/oJb2ZsVwFKAP+FjGZKtIIIhhD86VVZqVT
+         KIxEPaMQdayiUD0wzcbfxowJUBFMUHDNjutJuPa7ebpGsak2cxrRSfXXDd0TPzRH9/js
+         0YOyjtYuP2h3oMvd2Be+2/WPGvOSVJxeMFfoY+WEqfKvLb2xQ7AGJ0OB4tnZf4n7pSt0
+         Ozr0gAigwPDCPVT7Yg9Pnagy64Z7EYjdjMQ6cUohKXB1qISka8FJ7Piu4keTEYy6OoY4
+         C7eA==
+X-Forwarded-Encrypted: i=1; AJvYcCXQL2d4rC+SZpdIuNj4AXmKOCn3Uvnm46CELpuE3yxQT3ks+w+QT85m3GTpAWeiDvu/ljKS7ZpxnmWVCINVwNfNyzILacqn+YURlR8SuPFf9G40JVbeYCmVUveOCWC/AaCPXK8Ia9MCOwgISVytSxqZNJO1lVLSCs79p3MK4tbo+HcQQw==
+X-Gm-Message-State: AOJu0YxXghjG4ewCs8e4oWjMW2FcXOqOstiBhmdvsMG1avTUYBYkUuip
+	BYGoGmwyUQCpGLQeBqzvd6pFtPi7kMmgAc78KghmXsw7PLNxg8SH
+X-Google-Smtp-Source: AGHT+IHt7Kf9ZH7iwEqH8mZHyCmmBac2J8bezy5Ix5RpF+bJ6OCeEuOCUbk2YVM8MpEs2KAuu1IwIg==
+X-Received: by 2002:a2e:b693:0:b0:2e9:8852:3d20 with SMTP id 38308e7fff4ca-2ea951e4c52mr77531291fa.41.1717431716922;
+        Mon, 03 Jun 2024 09:21:56 -0700 (PDT)
+Received: from localhost.localdomain ([167.98.27.226])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4213cd1c075sm43697765e9.0.2024.06.03.09.21.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Jun 2024 09:21:56 -0700 (PDT)
+From: Mudit Sharma <muditsharma.info@gmail.com>
+To: ivan.orlov0322@gmail.com,
+	jic23@kernel.org,
+	lars@metafoo.de,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	robh@kernel.org
+Cc: Mudit Sharma <muditsharma.info@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH v2 1/3] dt-bindings: iio: light: ROHM BH1745
+Date: Mon,  3 Jun 2024 17:21:20 +0100
+Message-ID: <20240603162122.165943-1-muditsharma.info@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 03 2024 at 17:01, Marc Zyngier wrote:
-> On Mon, 03 Jun 2024 13:25:06 +0100,
->> @@ -1992,6 +1970,8 @@ static int its_irq_set_vcpu_affinity(struct irq_data *d, void *vcpu_info)
->>  	if (!is_v4(its_dev->its))
->>  		return -EINVAL;
->>  
->> +	guard(raw_spinlock_irq, &its_dev->event_map.vlpi_lock);
->> +
->
-> I don't think this compiles as is, due to the funky syntax required.
+Add ROHM BH1745 - 4 channel I2C colour sensor's dt-bindings.
 
-Stupid me. I obviously compiled the wrong config to validate...
+Signed-off-by: Mudit Sharma <muditsharma.info@gmail.com>
+---
+v1->v2:
+- Fix yaml issue: Make `maintainers` a list
 
-Fixed now.
+ .../bindings/iio/light/rohm,bh1745.yaml       | 49 +++++++++++++++++++
+ 1 file changed, 49 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/light/rohm,bh1745.yaml
+
+diff --git a/Documentation/devicetree/bindings/iio/light/rohm,bh1745.yaml b/Documentation/devicetree/bindings/iio/light/rohm,bh1745.yaml
+new file mode 100644
+index 000000000000..ac5c4d160513
+--- /dev/null
++++ b/Documentation/devicetree/bindings/iio/light/rohm,bh1745.yaml
+@@ -0,0 +1,49 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/iio/light/rohm,bh1745.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: ROHM BH1745 colour sensor
++
++maintainers:
++  - Mudit Sharma <muditsharma.info@gmail.com>
++
++description: |
++  BH1745 is an I2C colour sensor with red, green, blue and clear
++  channels. It has a programmable active low interrupt pin.
++  Interrupt occurs when the signal from the selected interrupt
++  source channel crosses set interrupt threshold high/low level.
++
++properties:
++  compatible:
++    const: rohm,bh1745
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++additionalProperties: false
++
++required:
++  - compatible
++  - reg
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        colour-sensor@38 {
++            compatible = "rohm,bh1745";
++            reg = <0x38>;
++            interrupt-parent = <&gpio>;
++            interrupts = <19 IRQ_TYPE_LEVEL_LOW>;
++        };
++    };
++
++...
+-- 
+2.43.0
+
 
