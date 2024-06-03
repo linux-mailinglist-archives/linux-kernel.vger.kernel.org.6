@@ -1,252 +1,96 @@
-Return-Path: <linux-kernel+bounces-199848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A42118FA6A7
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 01:50:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABE078FA6A9
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 01:54:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2EBCDB22DA3
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 23:50:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 638362896A1
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 23:54:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE5B013CF96;
-	Mon,  3 Jun 2024 23:49:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F27FA13CFAB;
+	Mon,  3 Jun 2024 23:54:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZfsmoDwN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cJuAI/FS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EE5A81736;
-	Mon,  3 Jun 2024 23:49:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E7EC81736;
+	Mon,  3 Jun 2024 23:54:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717458599; cv=none; b=PFBhog5+0+ohQ2+SACHG/G3mHmHc4uc+V9Ej9UM3p/FCCSb7AkVn8GFFNVfsyBp7doJYe8WX8lJNWa8fmjAbdiQ5h0Qi6uf/yHmfWcw+jBZPyf4TAbW2Zv4VWEVHrpwK1oeZllm2N8cJM/u4c9Tpf7q53qkH3GYBm+B61ROD0XY=
+	t=1717458845; cv=none; b=GwA3NFFQszlZkoAKYgO4bEosbugTKzu2ld3utSR88wUSNFRJHB5JXjGgRKfz20C9GqExkmnfl8WqBVP8m+MEUIuuUd2stRywcFY5v5zDJ62OFhRgcq1nTSJlDDbiB+ks5sAQlgeE9T7stuTMrqMiPyNx8AqPw+YhIPrkbR9fojU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717458599; c=relaxed/simple;
-	bh=J7ujfKDIro1AuoqzLXhgulpzg2GDQ0yWj3lCNmLSGEg=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=sbvtV0RTj1/x1WfD+6qYVztAUZM1KkjZMjEck2Zg4jU2xyzaALNWs/nistTwzytKzpmkhQHvBo0nsRZfc35qCI3GrMMrzKdnvd2Kza7M2/wy9UXjJu0Uubhrm78oMIm4XIBA/M/FN+WT5ctifYZqQJ2hJ6323oh+5PZN7gLVvGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZfsmoDwN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D331C2BD10;
-	Mon,  3 Jun 2024 23:49:57 +0000 (UTC)
+	s=arc-20240116; t=1717458845; c=relaxed/simple;
+	bh=3iqePMcRCpRmCaztme16eVBY3ZAraIQTl1ul9uEadqk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=X6tKyxu43q2+mKujbj6SCdVK+VUlCi/CUYRx+wn6/K1dkhRH2T289xHBpSJFmWg9QV+s96L+oRWpG7l9esFgzI/3K5zhJGBH6I26wNqNGIwiYsvTu7gQsCGpzspl1qteQMiT6TeP04u65cIqCKugJIA3AD76HGrO13hHrBon6uQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cJuAI/FS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 175A2C2BD10;
+	Mon,  3 Jun 2024 23:54:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717458598;
-	bh=J7ujfKDIro1AuoqzLXhgulpzg2GDQ0yWj3lCNmLSGEg=;
+	s=k20201202; t=1717458844;
+	bh=3iqePMcRCpRmCaztme16eVBY3ZAraIQTl1ul9uEadqk=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ZfsmoDwNz6sK6wfcnrzqNKad6rKRLCFADnrkpDTawNrzIrwJCLVeL8fe/6AKQyT3t
-	 xAd7d+BQrQXW4mUMItVpAF5L2GzD8Ij52IeFlElwa3ps8oTtX4ZkEUCAJOs1+Vaxhx
-	 4ny836Bm7WoroUYa9nePsW1of5ae5MI+lFvPHWfBTtPYraFz0hBe8e41Qd1fEYMwIv
-	 MGbbqut/3KDHMAE04EUjEAyI/pP8NZ9fozvnHSUkC5tsMGmP3RqUT9rjfcLi9qniz9
-	 yrEbVHbGqfWKwg/5qeWPFGn3+pmIVc2XB9oFuO0bBuHvGwypnNkoLcnUYrKWhZtTWz
-	 p+DiVM4Q+rYkg==
-Date: Tue, 4 Jun 2024 08:49:55 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, don <zds100@gmail.com>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] tracing/fprobe: Support raw tracepoint events on
- modules
-Message-Id: <20240604084955.29b9440687522a1347e0e7cd@kernel.org>
-In-Reply-To: <fbfec8d9-d0ed-4384-bbd2-dd5c1e568ed1@efficios.com>
-References: <171723014778.258703.6731294779199848686.stgit@devnote2>
-	<171723016594.258703.1629777910752596529.stgit@devnote2>
-	<fbfec8d9-d0ed-4384-bbd2-dd5c1e568ed1@efficios.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	b=cJuAI/FSiBhygz2JM9O4fcI4fU/klINi8S9mHKliPtRTIBucQZu+ihg5dBt9Bing1
+	 2a5a1G5wQxnUeX5n6T7ia/z0xwQMZEIVEZ0WEz1h3y4D7ZZ0V0g1ymaMDXUoaRmz25
+	 6JCiQqLNb+vaKbZQ6Tlzem5JwCo+2uqr20sH64OQhzzbePsE+3QsXpwj9w2JXdKV7u
+	 C+y9u+5PZFC/qUJLHqgwuDsH77+qUU2H7OdvdgQVGFv7/V+44AxRof6i10I///blQT
+	 qHjK3nMx6t9a6w28TbOh9txjMGXuSBvc5j2Hkg5LXYNBB/Iwro1SHKE5UZ839E0ENA
+	 Scb0Uivq0S74w==
+Date: Mon, 3 Jun 2024 16:54:03 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Yojana Mallik <y-mallik@ti.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, schnelle@linux.ibm.com,
+ wsa+renesas@sang-engineering.com, diogo.ivo@siemens.com,
+ rdunlap@infradead.org, horms@kernel.org, vigneshr@ti.com, rogerq@ti.com,
+ danishanwar@ti.com, pabeni@redhat.com, edumazet@google.com,
+ davem@davemloft.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ srk@ti.com, rogerq@kernel.org
+Subject: Re: [PATCH net-next v2 0/3] Introducing Intercore Virtual Ethernet
+ (ICVE) driver
+Message-ID: <20240603165403.1133217c@kernel.org>
+In-Reply-To: <8f5d2448-bfd7-48a5-be12-fb16cdc4de79@lunn.ch>
+References: <20240531064006.1223417-1-y-mallik@ti.com>
+	<8f5d2448-bfd7-48a5-be12-fb16cdc4de79@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Mon, 3 Jun 2024 15:50:55 -0400
-Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
-
-> On 2024-06-01 04:22, Masami Hiramatsu (Google) wrote:
-> > From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+On Sun, 2 Jun 2024 17:45:29 +0200 Andrew Lunn wrote:
+> On Fri, May 31, 2024 at 12:10:03PM +0530, Yojana Mallik wrote:
+> > virtio-net provides a solution for virtual ethernet interface in a
+> > virtualized environment.
 > > 
-> > Support raw tracepoint event on module by fprobe events.
-> > Since it only uses for_each_kernel_tracepoint() to find a tracepoint,
-> > the tracepoints on modules are not handled. Thus if user specified a
-> > tracepoint on a module, it shows an error.
-> > This adds new for_each_module_tracepoint() API to tracepoint subsystem,
-> > and uses it to find tracepoints on modules.
-> 
-> Hi Masami,
-> 
-> Why prevent module unload when a fprobe tracepoint is attached to a
-> module ? This changes the kernel's behavior significantly just for the
-> sake of instrumentation.
-
-I don't prevent module unloading all the time, just before registering
-tracepoint handler (something like booking a ticket :-) ).
-See the last hunk of this patch, it puts the module before exiting
-__trace_fprobe_create().
-
-> 
-> As an alternative, LTTng-modules attach/detach to/from modules with the
-> coming/going notifiers, so the instrumentation gets removed when a
-> module is unloaded rather than preventing its unload by holding a module
-> reference count. I would recommend a similar approach for fprobe.
-
-Yes, since tracepoint subsystem provides a notifier API to notify the
-tracepoint is gone, fprobe already uses it to find unloading and
-unregister the target function. (see __tracepoint_probe_module_cb)
-
-Thank you!
-
-
-> 
-> Thanks,
-> 
-> Mathieu
-> 
-> 
+> > There might be a use-case for traffic tunneling between heterogeneous
+> > processors in a non virtualized environment such as TI's AM64x that has
+> > Cortex A53 and Cortex R5 where Linux runs on A53 and a flavour of RTOS
+> > on R5(FreeRTOS) and the ethernet controller is managed by R5 and needs
+> > to pass some low priority data to A53.
 > > 
-> > Reported-by: don <zds100@gmail.com>
-> > Closes: https://lore.kernel.org/all/20240530215718.aeec973a1d0bf058d39cb1e3@kernel.org/
-> > Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> > ---
-> >   Changes in v2:
-> >    - Fix build errors with CONFIG_MODULES=y.
-> > ---
-> >   kernel/trace/trace_fprobe.c |   46 ++++++++++++++++++++++++++++++++++++-------
-> >   1 file changed, 38 insertions(+), 8 deletions(-)
-> > 
-> > diff --git a/kernel/trace/trace_fprobe.c b/kernel/trace/trace_fprobe.c
-> > index 62e6a8f4aae9..1d8a983e1edc 100644
-> > --- a/kernel/trace/trace_fprobe.c
-> > +++ b/kernel/trace/trace_fprobe.c
-> > @@ -385,6 +385,7 @@ static struct trace_fprobe *alloc_trace_fprobe(const char *group,
-> >   					       const char *event,
-> >   					       const char *symbol,
-> >   					       struct tracepoint *tpoint,
-> > +					       struct module *mod,
-> >   					       int maxactive,
-> >   					       int nargs, bool is_return)
-> >   {
-> > @@ -405,6 +406,7 @@ static struct trace_fprobe *alloc_trace_fprobe(const char *group,
-> >   		tf->fp.entry_handler = fentry_dispatcher;
-> >   
-> >   	tf->tpoint = tpoint;
-> > +	tf->mod = mod;
-> >   	tf->fp.nr_maxactive = maxactive;
-> >   
-> >   	ret = trace_probe_init(&tf->tp, event, group, false, nargs);
-> > @@ -895,8 +897,23 @@ static struct notifier_block tracepoint_module_nb = {
-> >   struct __find_tracepoint_cb_data {
-> >   	const char *tp_name;
-> >   	struct tracepoint *tpoint;
-> > +	struct module *mod;
-> >   };
-> >   
-> > +static void __find_tracepoint_module_cb(struct tracepoint *tp, void *priv)
-> > +{
-> > +	struct __find_tracepoint_cb_data *data = priv;
-> > +
-> > +	if (!data->tpoint && !strcmp(data->tp_name, tp->name)) {
-> > +		data->tpoint = tp;
-> > +		data->mod = __module_text_address((unsigned long)tp->probestub);
-> > +		if (!try_module_get(data->mod)) {
-> > +			data->tpoint = NULL;
-> > +			data->mod = NULL;
-> > +		}
-> > +	}
-> > +}
-> > +
-> >   static void __find_tracepoint_cb(struct tracepoint *tp, void *priv)
-> >   {
-> >   	struct __find_tracepoint_cb_data *data = priv;
-> > @@ -905,14 +922,28 @@ static void __find_tracepoint_cb(struct tracepoint *tp, void *priv)
-> >   		data->tpoint = tp;
-> >   }
-> >   
-> > -static struct tracepoint *find_tracepoint(const char *tp_name)
-> > +/*
-> > + * Find a tracepoint from kernel and module. If the tracepoint is in a module,
-> > + * this increments the module refcount to prevent unloading until the
-> > + * trace_fprobe is registered to the list. After registering the trace_fprobe
-> > + * on the trace_fprobe list, the module refcount is decremented because
-> > + * tracepoint_probe_module_cb will handle it.
-> > + */
-> > +static struct tracepoint *find_tracepoint(const char *tp_name,
-> > +					  struct module **tp_mod)
-> >   {
-> >   	struct __find_tracepoint_cb_data data = {
-> >   		.tp_name = tp_name,
-> > +		.mod = NULL,
-> >   	};
-> >   
-> >   	for_each_kernel_tracepoint(__find_tracepoint_cb, &data);
-> >   
-> > +	if (!data.tpoint && IS_ENABLED(CONFIG_MODULES)) {
-> > +		for_each_module_tracepoint(__find_tracepoint_module_cb, &data);
-> > +		*tp_mod = data.mod;
-> > +	}
-> > +
-> >   	return data.tpoint;
-> >   }
-> >   
-> > @@ -996,6 +1027,7 @@ static int __trace_fprobe_create(int argc, const char *argv[])
-> >   	char abuf[MAX_BTF_ARGS_LEN];
-> >   	char *dbuf = NULL;
-> >   	bool is_tracepoint = false;
-> > +	struct module *tp_mod = NULL;
-> >   	struct tracepoint *tpoint = NULL;
-> >   	struct traceprobe_parse_context ctx = {
-> >   		.flags = TPARG_FL_KERNEL | TPARG_FL_FPROBE,
-> > @@ -1080,7 +1112,7 @@ static int __trace_fprobe_create(int argc, const char *argv[])
-> >   
-> >   	if (is_tracepoint) {
-> >   		ctx.flags |= TPARG_FL_TPOINT;
-> > -		tpoint = find_tracepoint(symbol);
-> > +		tpoint = find_tracepoint(symbol, &tp_mod);
-> >   		if (!tpoint) {
-> >   			trace_probe_log_set_index(1);
-> >   			trace_probe_log_err(0, NO_TRACEPOINT);
-> > @@ -1110,8 +1142,8 @@ static int __trace_fprobe_create(int argc, const char *argv[])
-> >   		goto out;
-> >   
-> >   	/* setup a probe */
-> > -	tf = alloc_trace_fprobe(group, event, symbol, tpoint, maxactive,
-> > -				argc, is_return);
-> > +	tf = alloc_trace_fprobe(group, event, symbol, tpoint, tp_mod,
-> > +				maxactive, argc, is_return);
-> >   	if (IS_ERR(tf)) {
-> >   		ret = PTR_ERR(tf);
-> >   		/* This must return -ENOMEM, else there is a bug */
-> > @@ -1119,10 +1151,6 @@ static int __trace_fprobe_create(int argc, const char *argv[])
-> >   		goto out;	/* We know tf is not allocated */
-> >   	}
-> >   
-> > -	if (is_tracepoint)
-> > -		tf->mod = __module_text_address(
-> > -				(unsigned long)tf->tpoint->probestub);
-> > -
-> >   	/* parse arguments */
-> >   	for (i = 0; i < argc && i < MAX_TRACE_ARGS; i++) {
-> >   		trace_probe_log_set_index(i + 2);
-> > @@ -1155,6 +1183,8 @@ static int __trace_fprobe_create(int argc, const char *argv[])
-> >   	}
-> >   
-> >   out:
-> > +	if (tp_mod)
-> > +		module_put(tp_mod);
-> >   	traceprobe_finish_parse(&ctx);
-> >   	trace_probe_log_clear();
-> >   	kfree(new_argv);
-> > 
+> > One solution for such an use case where the ethernet controller does
+> > not support DMA for Tx/Rx channel, could be a RPMsg based shared memory
+> > ethernet driver.  
 > 
-> -- 
-> Mathieu Desnoyers
-> EfficiOS Inc.
-> https://www.efficios.com
+> virtio-net is very generic and vendor agnostic.
 > 
+> Looking at icve, what is TI specific? Why not define a generic
+> solution which could be used for any heterogeneous system? We are
+> seeming more and more such systems, and there is no point everybody
+> re-inventing the wheel. So what i would like to see is something
+> similar to driver/tty/rpmsg_tty.c, a driver/net/ethernet/rpmsg_eth.c,
+> with good documentation of the protocol used, so that others can
+> implement it. And since you say you have FreeRTOS on the other end,
+> you could also contribute that side to FreeRTOS as well. A complete
+> open source solution everybody can use.
 
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+100% agreed! FWIW there's also a PCIe NTB driver which provides very
+similar functionality.
 
