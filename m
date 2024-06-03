@@ -1,96 +1,100 @@
-Return-Path: <linux-kernel+bounces-198633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A446C8D7B7E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 08:19:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EF9A38D7B88
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 08:25:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47757281BCE
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 06:19:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAECC281C3A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 06:25:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BEB923748;
-	Mon,  3 Jun 2024 06:19:49 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 840682C6A3;
+	Mon,  3 Jun 2024 06:25:14 +0000 (UTC)
+Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B7581862
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 06:19:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65D3D219E8;
+	Mon,  3 Jun 2024 06:25:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717395588; cv=none; b=mHn4m0LtOsFI1jntKgnw7zija+11GbOB+6s3Zcw3QqWrs1ob/OvBjoLk333WeGA+8IAULA9doSRuzmY16UBfuqpqIG0/TlYDT0xpOK3DvLLfbV5CDkAqNJa6zGxZEDTk0CScu/quNvNZvM5NCCPtEIZm2l0eRiwiSuujHuyhVE8=
+	t=1717395914; cv=none; b=QCrTFx3gf4tZZoBB/VLJfs/FSxlVyASIWhBswZ/C854xCVUi2CGeYiqwyYHgNTA669jtmHZnue99VFZOYQiyFCSbrysy8q66F4gIchS7dQEw3hQlcDMRUrnG/2L4T21kJW/M73XAYyqGUQzokI755ZMyns6KD3ji7hnE0Eff6gg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717395588; c=relaxed/simple;
-	bh=ERpoqRuEgORZysCLk8j55EXajPRul8XJuKC6ZTZrYB4=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=YSo3tJqLnrEpyF4mLwc6hZxSmYsVDyE/kaSk1G/atD9g5Ug0w/agv4MJtZtPcGfyO/85RG/SzgNGn2dca8DibueGW0fKyz4d2k0irphJLFjFy7q4c5Bvc7BlyUPAsO+pyk8lxu6jhOHIV5tJ9Q9ztkNofaFhGwFf0YtdzJlhnIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-37497a1aff0so12004465ab.1
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2024 23:19:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717395586; x=1718000386;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=S60wj1E9PIFQ4v7IFpqz93cVCy0cxZgNjz23WFAjpzE=;
-        b=njmPu2lh9VsdI5ypZtnFBdVnhyzXmcGlj0hD45q7wN4x6B8Qj8oK+Z7OwjXBYaBkf/
-         WeEmU/qJaO1DL8QzEshvmlUfXmDbv7eZxhEb36F0ULW5R2v2GYiH65tk7BI/TeXuvFqv
-         LVfIcFviSzOgy+S5mJRwHOMWCynkJO/jpkXia+1kkMMV3GK4Hhr/Hp+4BOIPaZiRSb2+
-         zDt3IB+D/Vfs8/znztjbU3ziAmvRr+sPvJnaW0fMZf3JRTIFEDAOJQtzXT3SyP9Dm9NT
-         zIuJLlumhZ/NNFzrskmazXJgA6IHp8drqQqP0MMqVyX9Yb7Vr32t9CatYWT/2atgBnSH
-         xJNA==
-X-Gm-Message-State: AOJu0YxDdC99+amWIZM+JrcNgyeIJbotJOjRbw+rFo1zSrFxvLw5Tveu
-	zJWdjxX4/8rHUOx831c/1d04ykgiGrzlErFlkaCzO84X1FcVksOSjc2nx1DQI1IwOVGIS3TQ4RB
-	xZ2aArR2an00079wssesOEur+1OVXQ2A8br01/bWLwr4JJRmJlNaM7DA=
-X-Google-Smtp-Source: AGHT+IGmWTxSBFCulhzNPbvFleywuj967c1HWLXTIbtvk1F8z93ITsxy68rITkORqpkugtgyvdhDVNEfZYbIx1NeBHfxmQ69a/vC
+	s=arc-20240116; t=1717395914; c=relaxed/simple;
+	bh=DN8MJhZE/6ABuaOgDNbrslUWBDHWkr4DQN1q02HGp+I=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GOL+tOV35QCdNYNwJmPimFthrn3GzWq9c7eftOUnrhSlKmoy8QmG3vLgg3UEiIgzj2WBvHUVCK2Q09FnM7JPVT1agSrQUYzK3nQDryToFxz4FeWVPWxphOAM9TYWUmUd6OX0y/YJASFDO8YuS/nMLljnkjadRbPnqhItCZ3Wx6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 193BA1A163A;
+	Mon,  3 Jun 2024 08:25:05 +0200 (CEST)
+Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
+	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 9D8861A0BBF;
+	Mon,  3 Jun 2024 08:25:04 +0200 (CEST)
+Received: from pe-lt8779.in-pnq01.nxp.com (pe-lt8779.in-pnq01.nxp.com [10.17.104.141])
+	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 0A8771820F59;
+	Mon,  3 Jun 2024 14:25:02 +0800 (+08)
+From: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
+To: marcel@holtmann.org,
+	luiz.dentz@gmail.com
+Cc: linux-bluetooth@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	amitkumar.karwar@nxp.com,
+	rohit.fule@nxp.com,
+	neeraj.sanjaykale@nxp.com,
+	sherry.sun@nxp.com,
+	ziniu.wang_1@nxp.com,
+	haibo.chen@nxp.com,
+	LnxRevLi@nxp.com
+Subject: [PATCH v2] Bluetooth: btnxpuart: Enable Power Save feature on startup
+Date: Mon,  3 Jun 2024 11:52:55 +0530
+Message-Id: <20240603062255.121063-1-neeraj.sanjaykale@nxp.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1887:b0:374:9aa2:9155 with SMTP id
- e9e14a558f8ab-3749aa2952bmr3312215ab.2.1717395586780; Sun, 02 Jun 2024
- 23:19:46 -0700 (PDT)
-Date: Sun, 02 Jun 2024 23:19:46 -0700
-In-Reply-To: <000000000000a82e6e0619e9c192@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e39ee90619f65123@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [squashfs?] VFS: Close: file count is zero (use-after-free)
-From: syzbot <syzbot+b2cfdac9ae5278d4b621@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: ClamAV using ClamSMTP
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+This sets the default power save mode setting to enabled.
 
-***
+The power save feature is now stable and stress test issues, such as the
+TX timeout error, have been resolved.
+commit c7ee0bc8db32 ("Bluetooth: btnxpuart: Resolve TX timeout error in
+power save stress test")
 
-Subject: Re: [syzbot] [squashfs?] VFS: Close: file count is zero (use-after-free)
-Author: nightu.pwn@gmail.com
+With this setting, the driver will send the vendor command to FW at
+startup, to enable power save feature.
 
-please test file uaf in udmabuf_create
+User can disable this feature using the following vendor command:
+hcitool cmd 3f 23 03 00 00 (HCI_NXP_AUTO_SLEEP_MODE)
 
-#syz test
-
+Signed-off-by: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
+Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
 ---
- drivers/dma-buf/udmabuf.c | 1 +
- 1 file changed, 1 insertion(+)
+v2: Corrected subject line. Added commit reference. (Paul Menzel)
+ drivers/bluetooth/btnxpuart.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/dma-buf/udmabuf.c b/drivers/dma-buf/udmabuf.c
-index afa8bfd2a2a9..53035c601e92 100644
---- a/drivers/dma-buf/udmabuf.c
-+++ b/drivers/dma-buf/udmabuf.c
-@@ -382,6 +382,7 @@ static long udmabuf_create(struct miscdevice *device,
+diff --git a/drivers/bluetooth/btnxpuart.c b/drivers/bluetooth/btnxpuart.c
+index 7f88b6f52f26..42e929f0d141 100644
+--- a/drivers/bluetooth/btnxpuart.c
++++ b/drivers/bluetooth/btnxpuart.c
+@@ -281,7 +281,7 @@ static u8 crc8_table[CRC8_TABLE_SIZE];
+ 
+ /* Default configurations */
+ #define DEFAULT_H2C_WAKEUP_MODE	WAKEUP_METHOD_BREAK
+-#define DEFAULT_PS_MODE		PS_MODE_DISABLE
++#define DEFAULT_PS_MODE		PS_MODE_ENABLE
+ #define FW_INIT_BAUDRATE	HCI_NXP_PRI_BAUDRATE
+ 
+ static struct sk_buff *nxp_drv_send_cmd(struct hci_dev *hdev, u16 opcode,
+-- 
+2.34.1
 
-                kfree(folios);
-                fput(memfd);
-+               memfd = NULL;
-        }
-
-        flags = head->flags & UDMABUF_FLAGS_CLOEXEC ? O_CLOEXEC : 0;
---
 
