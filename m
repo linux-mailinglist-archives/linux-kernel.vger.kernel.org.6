@@ -1,205 +1,203 @@
-Return-Path: <linux-kernel+bounces-199257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85C0F8D8479
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:56:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6F4A8D8483
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:59:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35BD61F22852
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:56:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0429F1C22458
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:59:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DB5812E1C6;
-	Mon,  3 Jun 2024 13:56:34 +0000 (UTC)
-Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8301712E1D4;
+	Mon,  3 Jun 2024 13:59:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lYDdyh9D"
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B07B12D761
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 13:56:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E60201E892
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 13:59:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717422994; cv=none; b=d1wJtp69lJ2P1JEb9FBNGadQ65rp/PyGxcukxF+X7qDBFKg3smV06sJSs6O8F0lwa9SwAsocG69Ca58JruZhEiutqZn6CBmYbdxKgurlVP4Os1TXCEOKDMHm1v759p2TwATgnsHwHWVUWLvEc9NSotj1etJklzM/jmdjucyBNig=
+	t=1717423166; cv=none; b=odzTcpLs/7XKEyWv1/6aI5WUd/PUx4nTnFW1iOhiM2dgnPbjKrAb//frilY98Km2goZmLuHTYSCubQBOPQ3u/e1+83s+4q0NzxhjRGRcq97dg1eGiSiP/Qw0ivdEGmRvkZ3Lhn1jrh43iLvnkljCkjJjVAwlTyibGFjQhwrPW70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717422994; c=relaxed/simple;
-	bh=F9tchKgJ+0Tly6PvSUL6opwzK6X+g/0Pfpb1+P3qmbY=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=eBT+596vux9CbLGCYpzz4d28SFWC1XHAZUYW7M5GN7UHfrmFkC2Tl/7db/iUiyHKegZp6gKvtbN1Q67FVSZRTHMMAFKi4ykypRJluLv083Tq0viKZsLBazFsvOsSkFuCg7gkqWrTXAyVT27KEMhpkq12IE2Os0PoyE0owRcTf4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-7eb130d11bdso138848039f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 06:56:32 -0700 (PDT)
+	s=arc-20240116; t=1717423166; c=relaxed/simple;
+	bh=cp0EWn+6r/LDs36eodL94/fGja5GAeIBzCYRxpW1QoQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hXv6JPvcOp0ytPkCQ2aHPQXcpFr+jABIGzyWBWLcMz7BWP7RmqmqUcS2W5exoWXwuTaTmTYbNKTsXdzavFUQIJi81im8oBJAF4EH8gJON+AvgJr30tNvgFpy3iZGKkJvueyX+d+il9lXDWT55ReIwx0N287kz9UVZ8xoskHpMT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lYDdyh9D; arc=none smtp.client-ip=209.85.219.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-df7722171bcso4304038276.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 06:59:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717423164; x=1718027964; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=o2BkymhQ/db2q0Xr2SvTMdgw34Lx4ntfmiWk5iS8ce4=;
+        b=lYDdyh9DSxC8f0IuGLcT7CDeWTvZcmaYqLJrGECfN4NcTa8cQnzervbRRG+b4DDgK3
+         2RUASGHSsZZamZV1/zQD6R0lpRpvSIE0s20ZFXE+vTNth+1Zh7Wsd89Gc/m42s5yplWz
+         XJ0wo0s5cM0X5ZKj5QtpTN+o8HlcJ/aEOsZ37e7W+KyBQsUgA0ERXjUl/zDNfhaaProM
+         EuRNEFIPZ+LDBlIEOkwL6N0S1qzbyvdoMGfE8xGqZztuzMmLzK78T0TsxCvHa5tUmXqX
+         sTe0XC7LvAAaKvW63yWK3iwZjZ46A9MQ11KHgo0TM46ULrkCtwshujEp8rZfyL8YvsWp
+         aTfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717422991; x=1718027791;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=j4vlyFUctzrtFKgPihrdjpd13Jl9JMv1iQ2ZzCeOYTQ=;
-        b=NGTNM7z0+jVS7ExKGkmguSQVLwAtFQIxnqY18vda+FKnRDeL/4JfJpRpMLmM30ck9n
-         wkDZmMmONiEjf3ZFuNkk36J0AxPnfDqP6G0L/8WetUhXZ7TUj6C07t+qHJSc0zfjSpdk
-         QoE8f4I9LVLAuNIWMsqBk+3CnYCUv1SHc2UGUB30bComuF/APflB2OZCrMKPjBVqUhDH
-         M0f3jItXlS2lUrQ2ybmvcc4Xtc5hHcZ8YtICAjw0IzWQt/EJ+4vQo1+5yoBbaIUoVq6r
-         0DM5mvAMP8phNmP5b+Qk3p1dkpR8GcZHLD+GzUuqbOx6SaI/JKLShatJxm8YWaxeRskN
-         ZN1w==
-X-Forwarded-Encrypted: i=1; AJvYcCWTftlGy8NcQRSarY9swpNlHbR7hRypg9ezLRuxXKsR7fwDowj/jsERb/+KefvzWnI8r7eT32O5h7ss0AFImVRDgaZ+wYaY1xfZZz/9
-X-Gm-Message-State: AOJu0YwNstwXTvcKZEe/gKivxbbV9Bb5KHaAUoi+SjNtVRabMnOvt1hN
-	HV5y30QUwlOdYUvJnoOq3IqALi+aGdy05BhQ/djA7M8POc+pCWRGwBY0XjJIdZbL4w88Hzw/Ns4
-	VUndO2Z2RgO7bJxXaPZRN5jsHhTEtkvRH3ljRU7qS++tsuvyS4IfAG1o=
-X-Google-Smtp-Source: AGHT+IFzBWhiGwssVfD9HFF2BBQ2iVB5ycLjjzU4CStCPzUU97rq9FmFriD52EB6XT3HrJTgQa7oL6pqEGlz5tsEHr2+Nc/gwlbp
+        d=1e100.net; s=20230601; t=1717423164; x=1718027964;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=o2BkymhQ/db2q0Xr2SvTMdgw34Lx4ntfmiWk5iS8ce4=;
+        b=LqwuB+7YeCX1B5D4f3QnLFoweEcpyRjkta4CeuTyPRNH/gihhIDQAq+7poSOcXRuPC
+         qOcFxJ3r09bdqIE5rxvgXfHV+n//meFVZfwy2bh6RENuLd9Cd2SfmlFGyHvwSICYPRNB
+         nPvGjAAdxPr9XU2o7Pqxfn1Gc0H3j4CHQEhybpVwJjc7HQgt4rfAHVvnrO3ELL7fbWpp
+         j/82EEqV2wVuQpybVRdOneFo36UXK1/93hY5IjP01YL8PRcWSZfqoY3vQHS5yIPcapFp
+         EGTjZ7Q1HXAWh6YZMlVfytufqBTWKZTlQXJrXzKqcCthGdnC5ViqIHBKmoXKB/tVbLEp
+         nMYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXMurpmIsc8szsC4T8fWo2+ft4N1V3SWo48dYo7/4z0VCEOmXaDQuE1HRlE86PmD0dF6a9QaidrFKN2pCHI3aSfwd8PGMk7bIr2XTHF
+X-Gm-Message-State: AOJu0Yx8eF2CNMthjMQ6fyaVYcaXrReTBJkJGidRpOaVBO+Q86sB+nbF
+	Va4JULgreP45SjX2/E/5cEINpUhpyeojytchgZxFj5GoOo/BR4C9YuIL7pqR/2i+Wft/2HTNbBP
+	Ic/kMam8iOGLPWivtU8HyZWSwn4KorytxypLyOw==
+X-Google-Smtp-Source: AGHT+IE+Sp67UTouHkbbALinQ0QcvpOUd55hi+8TrM3/1VlCwjirTrjQWAm0YMJPdgvUF3kqgf48s/3BvbWC4dkjd7A=
+X-Received: by 2002:a05:6902:260c:b0:de6:dcd:20ae with SMTP id
+ 3f1490d57ef6-dfa73c229e7mr10000393276.27.1717423163818; Mon, 03 Jun 2024
+ 06:59:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:24c8:b0:4b5:dbcb:9bff with SMTP id
- 8926c6da1cb9f-4b5dbcb9dadmr110626173.0.1717422991679; Mon, 03 Jun 2024
- 06:56:31 -0700 (PDT)
-Date: Mon, 03 Jun 2024 06:56:31 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000059334d0619fcb362@google.com>
-Subject: [syzbot] [btrfs?] general protection fault in apply_wqattrs_cleanup
-From: syzbot <syzbot+1b5f11df288ca3853de9@syzkaller.appspotmail.com>
-To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <20240527142557.321610-1-ulf.hansson@linaro.org>
+ <20240527142557.321610-2-ulf.hansson@linaro.org> <52dce8d3-acfa-4f2c-92d0-c25aa59d6526@quicinc.com>
+ <CAPDyKFq0V9ke30zYAGzS1aU0yq49DdfDkfYzxkLBZuaVGsyGDA@mail.gmail.com> <24570028-42cf-43b1-95f2-b6f48233bef9@quicinc.com>
+In-Reply-To: <24570028-42cf-43b1-95f2-b6f48233bef9@quicinc.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 3 Jun 2024 15:58:47 +0200
+Message-ID: <CAPDyKFoOxa1tmzxY4jrbPET5RKF6s-OAfYV=eZY9sPrJMR6jaQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/7] pmdomain: core: Enable s2idle for CPU PM domains
+ on PREEMPT_RT
+To: Nikunj Kela <quic_nkela@quicinc.com>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>, linux-pm@vger.kernel.org, 
+	Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>, Nikunj Kela <nkela@quicinc.com>, 
+	Prasad Sodagudi <psodagud@quicinc.com>, Maulik Shah <quic_mkshah@quicinc.com>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, linux-rt-users@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+On Thu, 30 May 2024 at 16:23, Nikunj Kela <quic_nkela@quicinc.com> wrote:
+>
+>
+> On 5/30/2024 1:15 AM, Ulf Hansson wrote:
+> > On Tue, 28 May 2024 at 21:56, Nikunj Kela <quic_nkela@quicinc.com> wrote:
+> >>
+> >> On 5/27/2024 7:25 AM, Ulf Hansson wrote:
+> >>> To allow a genpd provider for a CPU PM domain to enter a domain-idle-state
+> >>> during s2idle on a PREEMPT_RT based configuration, we can't use the regular
+> >>> spinlock, as they are turned into sleepable locks on PREEMPT_RT.
+> >>>
+> >>> To address this problem, let's convert into using the raw spinlock, but
+> >>> only for genpd providers that have the GENPD_FLAG_CPU_DOMAIN bit set. In
+> >>> this way, the lock can still be acquired/released in atomic context, which
+> >>> is needed in the idle-path for PREEMPT_RT.
+> >>>
+> >>> Do note that the genpd power-on/off notifiers may also be fired during
+> >>> s2idle, but these are already prepared for PREEMPT_RT as they are based on
+> >>> the raw notifiers. However, consumers of them may need to adopt accordingly
+> >>> to work properly on PREEMPT_RT.
+> >>>
+> >>> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> >>> ---
+> >>>
+> >>> Changes in v2:
+> >>>       - None.
+> >>>
+> >>> ---
+> >>>  drivers/pmdomain/core.c   | 47 ++++++++++++++++++++++++++++++++++++++-
+> >>>  include/linux/pm_domain.h |  5 ++++-
+> >>>  2 files changed, 50 insertions(+), 2 deletions(-)
+> >>>
+> >>> diff --git a/drivers/pmdomain/core.c b/drivers/pmdomain/core.c
+> >>> index 623d15b68707..072e6bdb6ee6 100644
+> >>> --- a/drivers/pmdomain/core.c
+> >>> +++ b/drivers/pmdomain/core.c
+> >>> @@ -117,6 +117,48 @@ static const struct genpd_lock_ops genpd_spin_ops = {
+> >>>       .unlock = genpd_unlock_spin,
+> >>>  };
+> >>>
+> >>> +static void genpd_lock_raw_spin(struct generic_pm_domain *genpd)
+> >>> +     __acquires(&genpd->raw_slock)
+> >>> +{
+> >>> +     unsigned long flags;
+> >>> +
+> >>> +     raw_spin_lock_irqsave(&genpd->raw_slock, flags);
+> >>> +     genpd->raw_lock_flags = flags;
+> >>> +}
+> >>> +
+> >>> +static void genpd_lock_nested_raw_spin(struct generic_pm_domain *genpd,
+> >>> +                                     int depth)
+> >>> +     __acquires(&genpd->raw_slock)
+> >>> +{
+> >>> +     unsigned long flags;
+> >>> +
+> >>> +     raw_spin_lock_irqsave_nested(&genpd->raw_slock, flags, depth);
+> >>> +     genpd->raw_lock_flags = flags;
+> >>> +}
+> >>> +
+> >>> +static int genpd_lock_interruptible_raw_spin(struct generic_pm_domain *genpd)
+> >>> +     __acquires(&genpd->raw_slock)
+> >>> +{
+> >>> +     unsigned long flags;
+> >>> +
+> >>> +     raw_spin_lock_irqsave(&genpd->raw_slock, flags);
+> >>> +     genpd->raw_lock_flags = flags;
+> >>> +     return 0;
+> >>> +}
+> >>> +
+> >>> +static void genpd_unlock_raw_spin(struct generic_pm_domain *genpd)
+> >>> +     __releases(&genpd->raw_slock)
+> >>> +{
+> >>> +     raw_spin_unlock_irqrestore(&genpd->raw_slock, genpd->raw_lock_flags);
+> >>> +}
+> >>> +
+> >>> +static const struct genpd_lock_ops genpd_raw_spin_ops = {
+> >>> +     .lock = genpd_lock_raw_spin,
+> >>> +     .lock_nested = genpd_lock_nested_raw_spin,
+> >>> +     .lock_interruptible = genpd_lock_interruptible_raw_spin,
+> >>> +     .unlock = genpd_unlock_raw_spin,
+> >>> +};
+> >>> +
+> >>>  #define genpd_lock(p)                        p->lock_ops->lock(p)
+> >>>  #define genpd_lock_nested(p, d)              p->lock_ops->lock_nested(p, d)
+> >>>  #define genpd_lock_interruptible(p)  p->lock_ops->lock_interruptible(p)
+> >>> @@ -2079,7 +2121,10 @@ static void genpd_free_data(struct generic_pm_domain *genpd)
+> >>>
+> >>>  static void genpd_lock_init(struct generic_pm_domain *genpd)
+> >>>  {
+> >>> -     if (genpd->flags & GENPD_FLAG_IRQ_SAFE) {
+> >>> +     if (genpd->flags & GENPD_FLAG_CPU_DOMAIN) {
+> >>> +             raw_spin_lock_init(&genpd->raw_slock);
+> >>> +             genpd->lock_ops = &genpd_raw_spin_ops;
+> >>> +     } else if (genpd->flags & GENPD_FLAG_IRQ_SAFE) {
+> >> Hi Ulf, though you are targeting only CPU domains for now, I wonder if
+> >> FLAG_IRQ_SAFE will be a better choice?  The description of the flag says
+> >> it is safe for atomic context which won't be the case for PREEMPT_RT?
+> > You have a point!
+> >
+> > However, we also need to limit the use of raw spinlocks, from
+> > PREEMPT_RT point of view. In other words, just because a genpd
+> > provider is capable of executing its callbacks in atomic context,
+> > doesn't always mean that it should use raw spinlocks too.
+>
+> Got it! Thanks. Maybe in future, if there is a need, a new GENPD FLAG
+> for RT, something like GENPD_FLAG_IRQ_SAFE_RT, can be added to address this.
 
-syzbot found the following issue on:
+Yes, I agree, something along those lines would make sense.
 
-HEAD commit:    c3f38fa61af7 Linux 6.10-rc2
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=127bdaba980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=998c63c06e77f5e7
-dashboard link: https://syzkaller.appspot.com/bug?extid=1b5f11df288ca3853de9
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: i386
+BTW, did you manage to get some time to test the series on your end?
 
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-c3f38fa6.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/af6a0b581dee/vmlinux-c3f38fa6.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/47864da8bd74/bzImage-c3f38fa6.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+1b5f11df288ca3853de9@syzkaller.appspotmail.com
-
-BTRFS info (device loop3): using crc32c (crc32c-intel) checksum algorithm
-BTRFS info (device loop3): using free-space-tree
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN NOPTI
-KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-CPU: 3 PID: 6690 Comm: syz-executor.3 Not tainted 6.10.0-rc2-syzkaller #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-RIP: 0010:put_pwq_unlocked kernel/workqueue.c:1662 [inline]
-RIP: 0010:put_pwq_unlocked kernel/workqueue.c:1655 [inline]
-RIP: 0010:apply_wqattrs_cleanup.part.0+0xbc/0x2b0 kernel/workqueue.c:5223
-Code: dd 28 48 89 f8 48 c1 e8 03 42 80 3c 20 00 0f 85 8e 01 00 00 48 8b 5c dd 28 48 85 db 74 41 e8 4b ce 35 00 48 89 d8 48 c1 e8 03 <42> 80 3c 20 00 0f 85 92 01 00 00 48 8b 3b e8 21 70 87 09 48 89 df
-RSP: 0018:ffffc900078ef740 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: 0000000000000001 RCX: ffffc90003133000
-RDX: 0000000000040000 RSI: ffffffff8158b125 RDI: ffff8880002d1128
-RBP: ffff8880002d1100 R08: 0000000000000005 R09: 0000000000000007
-R10: 0000000000000000 R11: 0000000000000000 R12: dffffc0000000000
-R13: fffffbfff1a92c7d R14: 0000000000000001 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff88802c300000(0063) knlGS:00000000f5ef9b40
-CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
-CR2: 00000000f7fe3ea0 CR3: 0000000025356000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- apply_wqattrs_cleanup kernel/workqueue.c:5222 [inline]
- apply_workqueue_attrs_locked+0x9e/0xe0 kernel/workqueue.c:5344
- apply_workqueue_attrs kernel/workqueue.c:5374 [inline]
- alloc_and_link_pwqs kernel/workqueue.c:5502 [inline]
- alloc_workqueue+0x1496/0x1ca0 kernel/workqueue.c:5717
- btrfs_alloc_workqueue+0x21c/0x510 fs/btrfs/async-thread.c:112
- btrfs_init_workqueues fs/btrfs/disk-io.c:2015 [inline]
- open_ctree+0x165d/0x52e0 fs/btrfs/disk-io.c:3362
- btrfs_fill_super fs/btrfs/super.c:946 [inline]
- btrfs_get_tree_super fs/btrfs/super.c:1863 [inline]
- btrfs_get_tree+0x11e9/0x1b90 fs/btrfs/super.c:2089
- vfs_get_tree+0x8f/0x380 fs/super.c:1780
- fc_mount+0x16/0xc0 fs/namespace.c:1125
- btrfs_get_tree_subvol fs/btrfs/super.c:2052 [inline]
- btrfs_get_tree+0xa53/0x1b90 fs/btrfs/super.c:2090
- vfs_get_tree+0x8f/0x380 fs/super.c:1780
- do_new_mount fs/namespace.c:3352 [inline]
- path_mount+0x6e1/0x1f10 fs/namespace.c:3679
- do_mount fs/namespace.c:3692 [inline]
- __do_sys_mount fs/namespace.c:3898 [inline]
- __se_sys_mount fs/namespace.c:3875 [inline]
- __ia32_sys_mount+0x295/0x320 fs/namespace.c:3875
- do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
- __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
- do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
- entry_SYSENTER_compat_after_hwframe+0x84/0x8e
-RIP: 0023:0xf7307579
-Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d b4 26 00 00 00 00 8d b4 26 00 00 00 00
-RSP: 002b:00000000f5ef9400 EFLAGS: 00000292 ORIG_RAX: 0000000000000015
-RAX: ffffffffffffffda RBX: 00000000f5ef9460 RCX: 0000000020005140
-RDX: 0000000020000100 RSI: 0000000000000816 RDI: 00000000f5ef94a0
-RBP: 00000000f5ef9460 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000296 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:put_pwq_unlocked kernel/workqueue.c:1662 [inline]
-RIP: 0010:put_pwq_unlocked kernel/workqueue.c:1655 [inline]
-RIP: 0010:apply_wqattrs_cleanup.part.0+0xbc/0x2b0 kernel/workqueue.c:5223
-Code: dd 28 48 89 f8 48 c1 e8 03 42 80 3c 20 00 0f 85 8e 01 00 00 48 8b 5c dd 28 48 85 db 74 41 e8 4b ce 35 00 48 89 d8 48 c1 e8 03 <42> 80 3c 20 00 0f 85 92 01 00 00 48 8b 3b e8 21 70 87 09 48 89 df
-RSP: 0018:ffffc900078ef740 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: 0000000000000001 RCX: ffffc90003133000
-RDX: 0000000000040000 RSI: ffffffff8158b125 RDI: ffff8880002d1128
-RBP: ffff8880002d1100 R08: 0000000000000005 R09: 0000000000000007
-R10: 0000000000000000 R11: 0000000000000000 R12: dffffc0000000000
-R13: fffffbfff1a92c7d R14: 0000000000000001 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff88802c200000(0063) knlGS:00000000f5ef9b40
-CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
-CR2: 00000000f74ba0c4 CR3: 0000000025356000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	dd 28                	(bad)  (%rax)
-   2:	48 89 f8             	mov    %rdi,%rax
-   5:	48 c1 e8 03          	shr    $0x3,%rax
-   9:	42 80 3c 20 00       	cmpb   $0x0,(%rax,%r12,1)
-   e:	0f 85 8e 01 00 00    	jne    0x1a2
-  14:	48 8b 5c dd 28       	mov    0x28(%rbp,%rbx,8),%rbx
-  19:	48 85 db             	test   %rbx,%rbx
-  1c:	74 41                	je     0x5f
-  1e:	e8 4b ce 35 00       	call   0x35ce6e
-  23:	48 89 d8             	mov    %rbx,%rax
-  26:	48 c1 e8 03          	shr    $0x3,%rax
-* 2a:	42 80 3c 20 00       	cmpb   $0x0,(%rax,%r12,1) <-- trapping instruction
-  2f:	0f 85 92 01 00 00    	jne    0x1c7
-  35:	48 8b 3b             	mov    (%rbx),%rdi
-  38:	e8 21 70 87 09       	call   0x987705e
-  3d:	48 89 df             	mov    %rbx,%rdi
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Kind regards
+Uffe
 
