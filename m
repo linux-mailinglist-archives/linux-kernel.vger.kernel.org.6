@@ -1,145 +1,141 @@
-Return-Path: <linux-kernel+bounces-198573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4B448D7A76
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 05:29:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 333988D7A77
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 05:31:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80D231F21411
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 03:29:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA5D81F214D1
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 03:31:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA09DBE6F;
-	Mon,  3 Jun 2024 03:29:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58D36EAE6;
+	Mon,  3 Jun 2024 03:31:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GlPyku4v"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="negNszjJ"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9777AB67D
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 03:29:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56778BE55
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 03:31:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717385357; cv=none; b=euy9zaABOOJZQXNnrc7Bc98TgAjySN+W+WJBTGt0KVv6KI+UakoLVZTbL7XfW4yCpBUb/wwFo5fVVPPWmKqkUU0YH+XJUDUpH2GfSwUiE5Po4/YL3yYDXG8SgQe1+PeeqXTLyCWMDx+4A4jotLHQtveGsyNucpJKQrMXTLviwo8=
+	t=1717385508; cv=none; b=oXFRi+IBaf11tNTLqzletabeUhc2nIIi0LurDk9+sHBvOcj8YAfEXkvqN38nA2XZBs5QD2d51EFg/DJvgnbv9hMNb/vEi4ocn1q3HCgbru40N93NAyl0ZOmX6cv1dRbeMpxorb1s27lVh22u/72kJt2QlqOCN0Tl+WB4IuwKoyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717385357; c=relaxed/simple;
-	bh=Itozid0Uq5J7jjr3EzC4B5DvjdhT5De96tQux4vbmo0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tEvzAUTvSuF+yIQmSbQ/XygLPjSf1Nye1mJQ3GH93OZQPHVvdWhEM/yu9/dyoNsD/9N3RUaIfECr03vzgO5eYPd8X06Afse89ZZZZs4w5eUQQkZpO41KPtB9l5ngoNtBv505VEqcDmFrazCYtUhvgHY+Qf5aWpBeNc4fWpLQnGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=GlPyku4v; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52b9dda4906so75884e87.2
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2024 20:29:15 -0700 (PDT)
+	s=arc-20240116; t=1717385508; c=relaxed/simple;
+	bh=vMM4le4I/Rh6HCtDPBkC0QTwy5cG+JRqSBCvYNdg4Ds=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pnoxtRYZXEC+p4NYskhoWwLDJ+CuKdn2QjR0q8/WI3ByQHm2dxy1sWBz57Cgyqpd7lmm7066apFaCda3aNKEjiRUae669uCQwTLEUjQEQbNSvm0J+FfiGoryVa1zAPEtfyc8kJXv6xXuv6CG/Hb/3YZtDF32vIuUYgtB0cjqFhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=negNszjJ; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1f630e35a01so21581815ad.1
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2024 20:31:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1717385354; x=1717990154; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gqoXXfkLNaBeFUlnpo3xHv3wq1HsyXPs641ijeJqfYU=;
-        b=GlPyku4vIgAWQTU5d1BOgnsLpQ9wR/wZR3KuT9Cef3UNruXlz4dgVHvFks7E4ZN+Lp
-         M5fBxc3Cjjm6qYpXP993phl0LzP0pypxkVNyf1htr5KHmz0gn0Rzs3HjH6RwgZgLH9WY
-         aCzeqrG1WWaq5j7U4QBY/63PhOZ3jIAPMZhhw=
+        d=gmail.com; s=20230601; t=1717385507; x=1717990307; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wnXzlpt+ewq8VcN12LI23XP9wCUpW3QP7SwmLBsuIIs=;
+        b=negNszjJx5cuRAW50M8dEjF2hm+EyD77DDiLY/NNjxmwBtYqlcOcVxznH9PFz5YMDD
+         U4Tk7GMi5JowhIrmTEETfJZ6qvoBWL+KbjupylaHeM7KpwzwSlvIPYuDAjoMLYRYqh5R
+         o2GVKzjtCzCrTcojIS686ITrk0TBvuRch4tPhAfpIYhJzJV+Gz0IKcmrXbvpUuR78wuG
+         /dgWmMUujiVaRwUlErTJ/QEIC+f3BQdpWnNhxgzSho20XfMSQOUeWjz33aR6ShJ/Dmxa
+         TjmFQabWg0jZS1l5MQNWo8yFFHU2gwq/dpoNdYZzxhH8fudNN1pr5iD8NLvEaOLCC6VX
+         43aQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717385354; x=1717990154;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gqoXXfkLNaBeFUlnpo3xHv3wq1HsyXPs641ijeJqfYU=;
-        b=Tssgt/gqZ4QFhtSsL0yrvwcQ14Ho9YgqV4sjlPsHGaYZOrkaSYC4GpmIJ5XoWrsd61
-         d1jW7BBWK5As3y0CuxU3u6rUYPIW0u+lnkKF9/MCy3oS0dsvkwP+rVfbr3H/o654unBr
-         0WlN8SgI1ErS/RNOlcoyDWfYgJBXXKSUVunwSSlvX+SPva8tMSlEZyZjxM1eymhAH6Kg
-         mwQKJXj5bLWuyiR9aIFp67UCAvVq8Z9taLDidGNY/GqKOGtwZO74/TRUfOqf+xtqFgBq
-         MuxACcp9jp1T2bMUQvKETE1SdiYK8ReoccnNCA9Nrgo9vg6IBHN0B/KZI4hZZrdrIKsc
-         JvMg==
-X-Forwarded-Encrypted: i=1; AJvYcCVmDO3njo/+kIR0ThSATQi7MRTBTre5P1zlwxU+84TlP+gruzAYj94VUff/Ylzfg4AopxbqM2V2iN2t3Kv10cLd1yJEe0FIxcH7ulLp
-X-Gm-Message-State: AOJu0YzXfDOj3g9nA06XzWOdPbwEVi+OcsveGmIDusz5EflyfLk5+0X1
-	Y3BO3iUyYJEItbRvJdZjELq9bsW8sLrZXyLxbOlDpjIZonS9Jwj8TnyxY1HrnJUaLnlE+blXOhG
-	Ws1iLl5AFSh6lncBiT9Htqzkpr4mBtQ35jzsLEiMw89ApFMA=
-X-Google-Smtp-Source: AGHT+IEDtRtBaOGSJnBChD4ejorRQ3d5tt8uQF6LU8aQIF4mUQzWnXLmkerka4FGapEkwbPEkl429n/sIzWje66CjaU=
-X-Received: by 2002:a05:6512:3145:b0:52b:7a3d:1e12 with SMTP id
- 2adb3069b0e04-52b896d9115mr5870986e87.65.1717385353646; Sun, 02 Jun 2024
- 20:29:13 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717385507; x=1717990307;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wnXzlpt+ewq8VcN12LI23XP9wCUpW3QP7SwmLBsuIIs=;
+        b=iMQisOhg//uhqpDvxz9bB1kMNx1nTprmMo0Hvzp7rQxoPtn4LeBtw1h2YXIiRLyiTH
+         xhpfGtpnP/WyqO3Flrp3VKayNaEj/ndyl9pn+T0qjE6OU/KBAlia/CljICJT4uv47G9o
+         JaIKk+Vs4nU3K+YiFZRRPKMxduWiozh3bcKajDM/Kju1ilhqJ/erSIQ2dG+CAa/TCOMf
+         Cz/wjXQxghsD6u0igoiOlxzDBFijNiYkENdWgV4tw+Pzi77vL80pRtSiL6pnJ9yyFLc7
+         aXcn6MCwXnSEUrrBzPfIhGnX794zBZwSyUjZqJn5i2NT93VbMiS5Q+L8Or1NOZfZb9iT
+         QVxw==
+X-Forwarded-Encrypted: i=1; AJvYcCXrGuUQkZ/FLtx4Lyrzp7m5OZJDELV9MizPYNOO5XeWBGm/AbL9jud8LSgb50yRNTWGkDd/bMxQykDAIvrUAV2Kp5luoQ9lV9e+fgKj
+X-Gm-Message-State: AOJu0Ywpl3PcheqM0leiaf5aA8ELh0HiKvf8Weh721b3W3jO/ZQ45nY8
+	UKc07PfmBzIFYT+Xz7r3+/W+yWluCWwvMyRS/lS2IBtcC81pTXmj
+X-Google-Smtp-Source: AGHT+IEKzX/tqYS1avrxEP31ld9oCkHDAefsyiUM5IBHFIPplNgcj6wzYu7/aa2RlIzfrp+zBiaX5A==
+X-Received: by 2002:a17:902:f689:b0:1f6:7e02:6af2 with SMTP id d9443c01a7336-1f67e026dfbmr16656045ad.22.1717385506595;
+        Sun, 02 Jun 2024 20:31:46 -0700 (PDT)
+Received: from LancedeMBP.lan.lan ([2403:2c80:6::3038])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f63235f88dsm54568635ad.88.2024.06.02.20.31.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 02 Jun 2024 20:31:46 -0700 (PDT)
+From: Lance Yang <ioworker0@gmail.com>
+To: akpm@linux-foundation.org
+Cc: ryan.roberts@arm.com,
+	david@redhat.com,
+	21cnbao@gmail.com,
+	baolin.wang@linux.alibaba.com,
+	ziy@nvidia.com,
+	fengwei.yin@intel.com,
+	ying.huang@intel.com,
+	libang.li@antgroup.com,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Lance Yang <ioworker0@gmail.com>
+Subject: [PATCH 1/1] mm/mlock: implement folio_mlock_step() using folio_pte_batch()
+Date: Mon,  3 Jun 2024 11:31:17 +0800
+Message-Id: <20240603033118.76457-1-ioworker0@gmail.com>
+X-Mailer: git-send-email 2.33.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240530083513.4135052-1-wenst@chromium.org> <20240530083513.4135052-5-wenst@chromium.org>
- <efdacd820d13368816973f57c4a817e039ec4a2d.camel@imgtec.com>
-In-Reply-To: <efdacd820d13368816973f57c4a817e039ec4a2d.camel@imgtec.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Mon, 3 Jun 2024 11:29:02 +0800
-Message-ID: <CAGXv+5EMMNCbxaBqiBSQwGrQt-0KXWAtJU54K20sUU8PBh8faQ@mail.gmail.com>
-Subject: Re: [PATCH 4/6] drm/imagination: Add compatible string entry for Series6XT
-To: Frank Binns <Frank.Binns@imgtec.com>
-Cc: "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>, "tzimmermann@suse.de" <tzimmermann@suse.de>, 
-	Matt Coster <Matt.Coster@imgtec.com>, "sboyd@kernel.org" <sboyd@kernel.org>, 
-	"robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>, 
-	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>, 
-	"mripard@kernel.org" <mripard@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>, 
-	"angelogioacchino.delregno@collabora.com" <angelogioacchino.delregno@collabora.com>, 
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "airlied@gmail.com" <airlied@gmail.com>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>, "daniel@ffwll.ch" <daniel@ffwll.ch>, 
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Boris Brezillon <boris.brezillon@collabora.com>, 
-	Steven Price <steven.price@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, May 31, 2024 at 7:18=E2=80=AFPM Frank Binns <Frank.Binns@imgtec.com=
-> wrote:
->
-> On Thu, 2024-05-30 at 16:35 +0800, Chen-Yu Tsai wrote:
-> > The MediaTek MT8173 comes with a PowerVR Rogue GX6250, which is part
-> > of the Series6XT, another variation of the Rogue family of GPUs.
-> >
-> > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
-> > ---
-> >  drivers/gpu/drm/imagination/pvr_drv.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/drivers/gpu/drm/imagination/pvr_drv.c b/drivers/gpu/drm/im=
-agination/pvr_drv.c
-> > index 5c3b2d58d766..3d1a933c8303 100644
-> > --- a/drivers/gpu/drm/imagination/pvr_drv.c
-> > +++ b/drivers/gpu/drm/imagination/pvr_drv.c
-> > @@ -1475,6 +1475,7 @@ pvr_remove(struct platform_device *plat_dev)
-> >
-> >  static const struct of_device_id dt_match[] =3D {
-> >       { .compatible =3D "img,img-axe", .data =3D NULL },
-> > +     { .compatible =3D "img,powervr-6xt", .data =3D NULL },
->
-> I assume that by adding this to the list of supported devices we're essen=
-tially
-> freezing the existing uapi. This concerns me, as we've not yet started ru=
-nning
-> Vulkan conformance on any Series6XT GPUs and there's a chance we may need=
- to
-> make some tweaks.
->
-> I'm not really sure what the accepted approach is to hardware enablement =
-/
-> experimental support. I'm not sure if it's sufficient to hide support beh=
-ind a
-> Kconfig option and/or module parameter or whether we just have to hold th=
-is
-> patch back for the time being.
+Let's make folio_mlock_step() simply a wrapper around folio_pte_batch(),
+which will greatly reduce the cost of ptep_get() when scanning a range of
+contptes.
 
-I guess this is more of a question for the DRM maintainers.
-Added a couple Panfrost/Panthor folks for ideas.
+Signed-off-by: Lance Yang <ioworker0@gmail.com>
+---
+ mm/mlock.c | 23 ++++++-----------------
+ 1 file changed, 6 insertions(+), 17 deletions(-)
 
+diff --git a/mm/mlock.c b/mm/mlock.c
+index 30b51cdea89d..1ae6232d38cf 100644
+--- a/mm/mlock.c
++++ b/mm/mlock.c
+@@ -307,26 +307,15 @@ void munlock_folio(struct folio *folio)
+ static inline unsigned int folio_mlock_step(struct folio *folio,
+ 		pte_t *pte, unsigned long addr, unsigned long end)
+ {
+-	unsigned int count, i, nr = folio_nr_pages(folio);
+-	unsigned long pfn = folio_pfn(folio);
+-	pte_t ptent = ptep_get(pte);
+-
+-	if (!folio_test_large(folio))
++	if (likely(!folio_test_large(folio)))
+ 		return 1;
+ 
+-	count = pfn + nr - pte_pfn(ptent);
+-	count = min_t(unsigned int, count, (end - addr) >> PAGE_SHIFT);
+-
+-	for (i = 0; i < count; i++, pte++) {
+-		pte_t entry = ptep_get(pte);
+-
+-		if (!pte_present(entry))
+-			break;
+-		if (pte_pfn(entry) - pfn >= nr)
+-			break;
+-	}
++	const fpb_t fpb_flags = FPB_IGNORE_DIRTY | FPB_IGNORE_SOFT_DIRTY;
++	int max_nr = (end - addr) / PAGE_SIZE;
++	pte_t ptent = ptep_get(pte);
+ 
+-	return i;
++	return folio_pte_batch(folio, addr, pte, ptent, max_nr, fpb_flags, NULL,
++			       NULL, NULL);
+ }
+ 
+ static inline bool allow_mlock_munlock(struct folio *folio,
+-- 
+2.33.1
 
-ChenYu
-
-> Thanks
-> Frank
->
-> >       {}
-> >  };
-> >  MODULE_DEVICE_TABLE(of, dt_match);
 
