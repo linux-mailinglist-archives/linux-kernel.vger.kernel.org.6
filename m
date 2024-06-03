@@ -1,181 +1,77 @@
-Return-Path: <linux-kernel+bounces-199747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC4888FA509
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 23:57:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 877DC8FA50E
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 23:58:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5474B1F2479F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 21:57:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A166AB259E5
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 21:58:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE8BD13C8FF;
-	Mon,  3 Jun 2024 21:57:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A77C13C818;
+	Mon,  3 Jun 2024 21:58:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kgRBbbf3"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ZfUo2Zmv"
+Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FB793236;
-	Mon,  3 Jun 2024 21:57:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 081491369A1
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 21:58:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717451869; cv=none; b=mMawfEbYUeRWdiq0yYtRWCAk+Z5fXmH0AJ8WBHqBt1EpwSUP2s5OkTQyp1V4L3gI9LGEvo+I9sWpJkr5bUi9QvkuVSqm7pyzFlxrhipGsHhh9zy+v64LDkI9GyuuccaI+Xa7UNPmuSbqEZ4wsPUnlTdJ92/KyF+jPYAgsTiLlBI=
+	t=1717451889; cv=none; b=aqB1l1W5YxTwPBXRRArr7VjT2Nucnn+xHukRSDlhRLm+vYT+9urrMMCkwu7cDnRwVbVYSJJWKvVs/a5A/57bXV/l+orj2OFY2BN6MolO8MggSX4Mq3MAkl5gwe3U6XuFsyEZgGRF5X8db6EhhijJuxsRpVOIUG+yGHpNn+dsy3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717451869; c=relaxed/simple;
-	bh=uGjlFGkxYZ4n2nf5+mWi19eRsaCZv5UkZwE+PGMYBB4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=TRTtm9Uv/ysrpfRWDl51gcgzyLV53L+V/wFCW5jPub/j+rENOUAndIPDnArygup8JJqJD/9TX/w2iVyvANfuiyNX3pKWjKeooLA9m38Iow6QNA+twYnkSdnIY3PhKXQBGJyWFvuahQ6xVzw4dopDmVadTUxzgTEgDd9hC/WjGGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kgRBbbf3; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 453ASsNE015299;
-	Mon, 3 Jun 2024 21:57:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	+huiNJRLt44NCN/r6bDMvnL/tWOjvPnxr5JvMN59Ows=; b=kgRBbbf3F8N+RvZy
-	v3h1WYFs24UFg3u4O6SWivJdpRvFEAWZra4YVi3/rqoD6CvzxRVQ3LNTV+5a3ixt
-	xRmkfabk/5rjHWn8NFOWAAUuXmM4gKK6Sprsd/ffCJFbvX3cYxCqtPI9XHuU/qHO
-	V/Q8GDyEiY4YkqkOcZAW8nQqnOdVWuYnzMYFV8G6YwkbkEQ9EFiOC8KL69Nf3T9z
-	Udr10aRZek1P3ZyoghvW+8fdpSQkSjgr/vgCr1mBq6IZwXNTmr+ejZm94CcFeYUq
-	HMcREi5ysrSj76TLAuuLRnCi9FXoFPcLVxXLiavKBlSaPpoivxO6g9hFJRc60aKW
-	tIteyw==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfw5wn2fn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 03 Jun 2024 21:57:45 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 453LviYm002952
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 3 Jun 2024 21:57:44 GMT
-Received: from [10.110.69.141] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 3 Jun 2024
- 14:57:43 -0700
-Message-ID: <5f2ea1a4-17a9-4fdd-badc-386b9cc57183@quicinc.com>
-Date: Mon, 3 Jun 2024 14:57:43 -0700
+	s=arc-20240116; t=1717451889; c=relaxed/simple;
+	bh=MVpwNnNRW1Y1ytE1Vtg6j8ox35ZkDK0zKcoia68uR50=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FhGyKCoYPloBkRkQS/KfhgkMsbA2slyhfOK6uiQs5GTmxm+8RMbpFIdxnDcv/soeswrY+hfDS5PLETfk12Ly0M0KWcRFfN55kFsAreuoHFqG/9gAhiD5Q1pixE65rE2Si3O63aKSCY9alOymyH0/DyuNDxrKCTfF03wuRK/4SPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ZfUo2Zmv; arc=none smtp.client-ip=91.218.175.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: ariel.miculas@gmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1717451878;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=J5ncs5YXMlmcc+Cu4jooVAXUIwvu4vyhBOgiv7B+Y4M=;
+	b=ZfUo2Zmv0H/xTaJ9qBv8B2yInG7GCa7dXmbCSfQDLwzHDhi1QKARaXYidJMJVqFbP/7n6H
+	gl5a01/DqrYlbhby1MlZ1O3kivxp0ZFfeSRo4wdLUfv66Jmm7v9ZiRtvKGCPfo23NMvLmF
+	Ktcyx83OMPvj3uYuP9QuGB6gcnV28/M=
+X-Envelope-To: linux-bcachefs@vger.kernel.org
+X-Envelope-To: bfoster@redhat.com
+X-Envelope-To: linux-kernel@vger.kernel.org
+Date: Mon, 3 Jun 2024 17:57:54 -0400
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Ariel Miculas <ariel.miculas@gmail.com>
+Cc: linux-bcachefs@vger.kernel.org, Brian Foster <bfoster@redhat.com>, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] bcachefs: bch2_btree_insert() - add btree iter flags
+Message-ID: <licutoqnsmubo22fnqdrnq4rkqfpy5cubnelhbynn44lfjuh5t@2dhvbs2hh5h4>
+References: <20240603204732.2011734-1-ariel.miculas@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] bus: mhi: ep: Do not allocate memory for MHI objects from
- DMA zone
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        <mhi@lists.linux.dev>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <stable@vger.kernel.org>
-References: <20240603164354.79035-1-manivannan.sadhasivam@linaro.org>
-Content-Language: en-US
-From: Mayank Rana <quic_mrana@quicinc.com>
-In-Reply-To: <20240603164354.79035-1-manivannan.sadhasivam@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 7sqVywnf2gZBqIARLB72d1cYTxFVVZtx
-X-Proofpoint-ORIG-GUID: 7sqVywnf2gZBqIARLB72d1cYTxFVVZtx
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-06-03_17,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
- adultscore=0 suspectscore=0 priorityscore=1501 clxscore=1011
- lowpriorityscore=0 mlxlogscore=999 bulkscore=0 spamscore=0 phishscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406030178
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240603204732.2011734-1-ariel.miculas@gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
+On Mon, Jun 03, 2024 at 11:47:31PM +0300, Ariel Miculas wrote:
+> The commit 65bd44239727 ("bcachefs: bch2_btree_insert_trans() no longer
+> specifies BTREE_ITER_cached") removes BTREE_ITER_cached from
+> bch2_btree_insert_trans, which causes the update_inode function from
+> bcachefs-tools to take a long time (~20s).  Add an iter_flags parameter
+> to bch2_btree_insert, so the users can specify iter update trigger
+> flags, such as BTREE_ITER_cached.
+> 
+> Signed-off-by: Ariel Miculas <ariel.miculas@gmail.com>
 
-
-On 6/3/2024 9:43 AM, Manivannan Sadhasivam wrote:
-> MHI endpoint stack accidentally started allocating memory for objects from
-> DMA zone since commit 62210a26cd4f ("bus: mhi: ep: Use slab allocator
-Going through mentioned commit it seems that it was intended purpose to 
-use GFP_DMA/SLAB
-> where applicable"). But there is no real need to allocate memory from this
-> naturally limited DMA zone. This also causes the MHI endpoint stack to run
-> out of memory while doing high bandwidth transfers.
-> 
-> So let's switch over to normal memory.
-> 
-> Cc: stable@vger.kernel.org # 6.8
-> Fixes: 62210a26cd4f ("bus: mhi: ep: Use slab allocator where applicable")
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
->   drivers/bus/mhi/ep/main.c | 14 +++++++-------
->   1 file changed, 7 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/bus/mhi/ep/main.c b/drivers/bus/mhi/ep/main.c
-> index f8f674adf1d4..4acfac73ca9a 100644
-> --- a/drivers/bus/mhi/ep/main.c
-> +++ b/drivers/bus/mhi/ep/main.c
-> @@ -90,7 +90,7 @@ static int mhi_ep_send_completion_event(struct mhi_ep_cntrl *mhi_cntrl, struct m
->   	struct mhi_ring_element *event;
->   	int ret;
->   
-> -	event = kmem_cache_zalloc(mhi_cntrl->ev_ring_el_cache, GFP_KERNEL | GFP_DMA);
-> +	event = kmem_cache_zalloc(mhi_cntrl->ev_ring_el_cache, GFP_KERNEL);
->   	if (!event)
->   		return -ENOMEM;
->   
-> @@ -109,7 +109,7 @@ int mhi_ep_send_state_change_event(struct mhi_ep_cntrl *mhi_cntrl, enum mhi_stat
->   	struct mhi_ring_element *event;
->   	int ret;
->   
-> -	event = kmem_cache_zalloc(mhi_cntrl->ev_ring_el_cache, GFP_KERNEL | GFP_DMA);
-> +	event = kmem_cache_zalloc(mhi_cntrl->ev_ring_el_cache, GFP_KERNEL);
->   	if (!event)
->   		return -ENOMEM;
->   
-> @@ -127,7 +127,7 @@ int mhi_ep_send_ee_event(struct mhi_ep_cntrl *mhi_cntrl, enum mhi_ee_type exec_e
->   	struct mhi_ring_element *event;
->   	int ret;
->   
-> -	event = kmem_cache_zalloc(mhi_cntrl->ev_ring_el_cache, GFP_KERNEL | GFP_DMA);
-> +	event = kmem_cache_zalloc(mhi_cntrl->ev_ring_el_cache, GFP_KERNEL);
->   	if (!event)
->   		return -ENOMEM;
->   
-> @@ -146,7 +146,7 @@ static int mhi_ep_send_cmd_comp_event(struct mhi_ep_cntrl *mhi_cntrl, enum mhi_e
->   	struct mhi_ring_element *event;
->   	int ret;
->   
-> -	event = kmem_cache_zalloc(mhi_cntrl->ev_ring_el_cache, GFP_KERNEL | GFP_DMA);
-> +	event = kmem_cache_zalloc(mhi_cntrl->ev_ring_el_cache, GFP_KERNEL);
->   	if (!event)
->   		return -ENOMEM;
->   
-> @@ -438,7 +438,7 @@ static int mhi_ep_read_channel(struct mhi_ep_cntrl *mhi_cntrl,
->   		read_offset = mhi_chan->tre_size - mhi_chan->tre_bytes_left;
->   		write_offset = len - buf_left;
->   
-> -		buf_addr = kmem_cache_zalloc(mhi_cntrl->tre_buf_cache, GFP_KERNEL | GFP_DMA);
-> +		buf_addr = kmem_cache_zalloc(mhi_cntrl->tre_buf_cache, GFP_KERNEL);
->   		if (!buf_addr)
->   			return -ENOMEM;
->   
-> @@ -1481,14 +1481,14 @@ int mhi_ep_register_controller(struct mhi_ep_cntrl *mhi_cntrl,
->   
->   	mhi_cntrl->ev_ring_el_cache = kmem_cache_create("mhi_ep_event_ring_el",
->   							sizeof(struct mhi_ring_element), 0,
-> -							SLAB_CACHE_DMA, NULL);
-> +							0, NULL);
->   	if (!mhi_cntrl->ev_ring_el_cache) {
->   		ret = -ENOMEM;
->   		goto err_free_cmd;
->   	}
->   
->   	mhi_cntrl->tre_buf_cache = kmem_cache_create("mhi_ep_tre_buf", MHI_EP_DEFAULT_MTU, 0,
-> -						      SLAB_CACHE_DMA, NULL);
-> +						      0, NULL);
->   	if (!mhi_cntrl->tre_buf_cache) {
->   		ret = -ENOMEM;
->   		goto err_destroy_ev_ring_el_cache;
-Reviewed-by: Mayank Rana <quic_mrana@quicinc.com>
+Applied
 
