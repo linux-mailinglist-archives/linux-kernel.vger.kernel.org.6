@@ -1,136 +1,151 @@
-Return-Path: <linux-kernel+bounces-198735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CF5E8D7CB8
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:49:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47E018D7CAB
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:43:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C48BB216A8
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 07:49:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7896E1C21CC0
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 07:43:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F9C54C631;
-	Mon,  3 Jun 2024 07:49:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42DC14C61C;
+	Mon,  3 Jun 2024 07:43:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=walle.cc header.i=@walle.cc header.b="mKfgfIw0"
-Received: from mail.3ffe.de (0001.3ffe.de [159.69.201.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d5CisiQy"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6A2915E88;
-	Mon,  3 Jun 2024 07:49:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.201.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E54C647A4C;
+	Mon,  3 Jun 2024 07:43:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717400952; cv=none; b=LTtS4GjSGh5VnqFUwvRGxzrBAP/IWut8LfcX0DkWBK2ckK15if5wuM+YYQdaum3vhbomePnAty7ami4CZK4deq3lD4mGbrqOUjd7vzaPDjzWIRE96XQOKB6M6QS1uZlvXdh5AeSxWDFKOHHowywqISA3GLE8Li2hmElIoqRLD/A=
+	t=1717400623; cv=none; b=OHPnB0Bn3CdZsnp7hz9bBJ4HuS20B9Ctp43vVmDmadb4LgTIUWcgWiW/5encBgi1klPj4to3FBgSd79XMy38S5hh7IWVOAi2sI62QgDBFESGtEscEU2G+9fepiYvDuwUyXHVXb2X8/0JGXlGoUbULypnR3CrdCwEgGBA0lRVhTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717400952; c=relaxed/simple;
-	bh=l/sXJWAR9U+t8PuJjd67PbuHh01c02nSqxd7Y8bCUpM=;
-	h=Content-Type:Date:Message-Id:From:To:Subject:Cc:References:
-	 In-Reply-To; b=iYTWTcFKXHUxV+BzKoQghOkZIizoJ47xmR+UZRomZh9TOB4JpXf1sBZ4ViUFQuG+g3WVfeG3dPodkEFa2RgENvgqX5QF60jfroPs/B3K0HEVSDwyDuHtb4+yQYo/DKp9AJGuBjGR2znTEGbon130N4XC6CAmFdHVOefthSF0UeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=walle.cc; spf=pass smtp.mailfrom=walle.cc; dkim=pass (2048-bit key) header.d=walle.cc header.i=@walle.cc header.b=mKfgfIw0; arc=none smtp.client-ip=159.69.201.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=walle.cc
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=walle.cc
-Received: from localhost (unknown [213.135.10.150])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.3ffe.de (Postfix) with ESMTPSA id 30CEA136A;
-	Mon,  3 Jun 2024 09:42:34 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2022082101;
-	t=1717400554;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:content-type:content-type:in-reply-to:in-reply-to:
-	 references:references; bh=l/sXJWAR9U+t8PuJjd67PbuHh01c02nSqxd7Y8bCUpM=;
-	b=mKfgfIw0rVXzUB2hP0B2WxtTyKBz9VHQ5GW0H/acJGDGO7XYNyllK5U2aU0laMQOncMNxb
-	63+o3L3cwsC9BhAZl30ZY1W9aOEIKA0BadMQEvJfy28XQnJ6+Ag1UrmyyEpsPO+vKug+un
-	VIOmTj0ewguhvmUIc59KofVhqUsJ34y4Vz9XPQBBUgMTDGUnRQXFk6+nrb3CaP/4hXmPHs
-	bCgss0RdUhLImzMiLhXc+o9Y5G8Q2Shz99/HZYYA3JDlD/Bysg/DzDX2nPvCthzELAPQCH
-	N2RKaKynB4Z4wd5LO7zIxX5MplhmoRaMzAQ9NZNTakTdQUCwqGCiLUgX0z004g==
-Content-Type: multipart/signed;
- boundary=3ed5ea633b485a24b502befa1bea475237ec606cb99637397be66d7a74b8;
- micalg=pgp-sha384; protocol="application/pgp-signature"
-Date: Mon, 03 Jun 2024 09:42:31 +0200
-Message-Id: <D1Q7OPR0TRFG.1WLSI7EBAPUWX@walle.cc>
-From: "Michael Walle" <michael@walle.cc>
-To: "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>,
- <chunkuang.hu@kernel.org>
-Subject: Re: [PATCH v4 3/3] drm/mediatek: Implement OF graphs support for
- display paths
-Cc: <robh@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
- <conor+dt@kernel.org>, <p.zabel@pengutronix.de>, <airlied@gmail.com>,
- <daniel@ffwll.ch>, <maarten.lankhorst@linux.intel.com>,
- <mripard@kernel.org>, <tzimmermann@suse.de>, <matthias.bgg@gmail.com>,
- <shawn.sung@mediatek.com>, <yu-chang.lee@mediatek.com>,
- <ck.hu@mediatek.com>, <jitao.shi@mediatek.com>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <dri-devel@lists.freedesktop.org>, <linux-mediatek@lists.infradead.org>,
- <linux-arm-kernel@lists.infradead.org>, <wenst@chromium.org>,
- <kernel@collabora.com>
-X-Mailer: aerc 0.16.0
-References: <20240516081104.83458-1-angelogioacchino.delregno@collabora.com>
- <20240516081104.83458-4-angelogioacchino.delregno@collabora.com>
- <D1BTQIQ2AQIS.G12ROFB149QB@walle.cc>
- <84cd0ac7-99d9-42cb-af79-a0fba09c1ebb@collabora.com>
-In-Reply-To: <84cd0ac7-99d9-42cb-af79-a0fba09c1ebb@collabora.com>
+	s=arc-20240116; t=1717400623; c=relaxed/simple;
+	bh=m1D/sHfPfHRZFlkY+CEB8mS07gtrCM2m0LDbYaEiwPU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X7hoZzSJNgkWzLOHLw5PdbgfY1OZ7LYzoF1ZDMTQZQDkwb3LpgTwRTNFmEFl03v/eutuk6nDFWmgjyy44i1wCBX+JGw5OfzPjFOn+0tWz5m6lR92f51ij1UDbX3wY6g3RPrzjhKPnEpgtLq2E4o/oHt12rAA5SI0/zeyLneBPNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d5CisiQy; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-35dc9cef36dso3226587f8f.3;
+        Mon, 03 Jun 2024 00:43:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717400619; x=1718005419; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9+3KpBVqTTJeo965A1KR/YlsEUxQQiOfIdsh4+kRbIs=;
+        b=d5CisiQyz5aEuNDdgQYZxzAdrMN7b+Je01hVu17jqWlO/zqC8yKbzff4ySJc4Rb1B/
+         BFlUHb7i3bB97TWz3QhDnvA1cvvOWHZBiH/xHeLbojpBW3p+CE2CqDjz1JL0G+H4cjgk
+         77HpLgi2EgUrtCyjf3pfFKPysmpCTlnv0pP8zApuVTr5Z6yLeeLra5KsvbQpT5oVJ4If
+         s2GyacdrzUGFMtoAETThS/ml1hK1QXK5I4H5Bf9VNtWUfq85rrinXAerjKDh7JW0Posz
+         x5cYR3y9bzVDkhcjtk4abC01CTApxnFNMGZleUPMLDoW2e1xRwTYJFGU6cm3tJuO34+n
+         pwuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717400619; x=1718005419;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9+3KpBVqTTJeo965A1KR/YlsEUxQQiOfIdsh4+kRbIs=;
+        b=UXKWbyVHZVB2uY+KH+qkkTn21Yg0o/lf8SDbIt1E583e+5z+a2taDDA3q5YWeHSJMB
+         DRv3M38U1ep/vanSZQTV+ODNHV+Rwf/A3lZsITSvRl33wtwW2n44uHVaff74A+sgtZ6F
+         sDsNr3egT46I1IbG/EDqmyCo0A/IlFw3amovbBrPswmmLRatyGQUJ1shfi/L4f9paihK
+         fy+YyCqbEuip4u4iGD2DLVJn8TM3BPEWxTtkqTvT8dWpN4ojTc6KNU4J2aYF2roU0K0L
+         OU0gg4gkYZ8hNdSx5JZwDQrahf7WkPy53CxuksHpXqpYnlvDLHBqriITqfDjobs3QZz0
+         vNWw==
+X-Forwarded-Encrypted: i=1; AJvYcCVN+EXTg9sUZWcvgRizGPiGQGoT44Cx5OZnbs+ebUIRCzjimlJHwi6QlKlVPHB8VXGA2Y0uNbeSJa6pnhp2u2CIbLuFnr+leG/ByNxL6MPRHbHZ1EnnAnpv87aFwBrs6l9CL/1SyWpvLaK8lf22W9yYFjOTDjvipt09OD7pxMh1VNQc
+X-Gm-Message-State: AOJu0YzIzujgGJkOHZ8QUVOsUDn30D3UK6sYrPZsR+zTnyff3I5bzoCh
+	PuW/hVAn/jlbgH8Head7rPqEp+4KT38rcR25Fcho7gN7CpBzr+7f
+X-Google-Smtp-Source: AGHT+IEanqGnQyE0VRVI9jQex6bQ4+XQs3Oue5+MhhMZ/CjI0wOwj0rSpqUdBr/gjbzmQgzPke+uJA==
+X-Received: by 2002:a05:6000:1944:b0:34c:cca6:3d18 with SMTP id ffacd0b85a97d-35e0f333b6emr5523593f8f.68.1717400619152;
+        Mon, 03 Jun 2024 00:43:39 -0700 (PDT)
+Received: from eichest-laptop ([2a02:168:af72:0:2b03:375:843f:be9d])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35dd062ea66sm7981749f8f.78.2024.06.03.00.43.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Jun 2024 00:43:37 -0700 (PDT)
+Date: Mon, 3 Jun 2024 09:43:35 +0200
+From: Stefan Eichenberger <eichest@gmail.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: o.rempel@pengutronix.de, kernel@pengutronix.de, andi.shyti@kernel.org,
+	shawnguo@kernel.org, s.hauer@pengutronix.de, festevam@gmail.com,
+	jic23@kernel.org, lars@metafoo.de, nuno.sa@analog.com,
+	u.kleine-koenig@pengutronix.de, marcelo.schmitt@analog.com,
+	gnstark@salutedevices.com, francesco.dolcini@toradex.com,
+	linux-i2c@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-iio@vger.kernel.org,
+	Stefan Eichenberger <stefan.eichenberger@toradex.com>
+Subject: Re: [RFC PATCH] i2c: imx: avoid rescheduling when waiting for bus
+ not busy
+Message-ID: <Zl10J9H+8k0KXAPR@eichest-laptop>
+References: <20240531142437.74831-1-eichest@gmail.com>
+ <Zlnidi62gEWwdQ3U@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zlnidi62gEWwdQ3U@smile.fi.intel.com>
 
---3ed5ea633b485a24b502befa1bea475237ec606cb99637397be66d7a74b8
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+On Fri, May 31, 2024 at 05:45:10PM +0300, Andy Shevchenko wrote:
+> On Fri, May 31, 2024 at 04:24:37PM +0200, Stefan Eichenberger wrote:
+> > From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
+> > 
+> > On our i.MX8M Mini based module we have an ADS1015 I2C ADC connected to
+> > the I2C bus. The ADS1015 I2C ADC will timeout after 25ms when the I2C
+> > bus is idle. The imx i2c driver will call schedule when waiting for the
+> > bus to become idle after switching to master mode. When the i2c
+> > controller switches to master mode it pulls SCL and SDA low, if the
+> > ADS1015 I2C ADC sees this for more than 25 ms without seeing SCL
+> > clocking, it will timeout and ignore all signals until the next start
+> > condition occurs (SCL and SDA low). This can occur when the system load
+> > is high and schedule returns after more than 25 ms.
+> > 
+> > This rfc tries to solve the problem by using a udelay for the first 10
+> > ms before calling schedule. This reduces the chance that we will
+> > reschedule. However, it is still theoretically possible for the problem
+> > to occur. To properly solve the problem, we would also need to disable
+> > interrupts during the transfer.
+> > 
+> > After some internal discussion, we see three possible solutions:
+> > 1. Use udelay as shown in this rfc and also disable the interrupts
+> >    during the transfer. This would solve the problem but disable the
+> >    interrupts. Also, we would have to re-enable the interrupts if the
+> >    timeout is longer than 1ms (TBD).
+> > 2. We use a retry mechanism in the ti-ads1015 driver. When we see a
+> >    timeout, we try again.
+> > 3. We use the suggested solution and accept that there is an edge case
+> >    where the timeout can happen.
+> > 
+> > There may be a better way to do this, which is why this is an RFC.
+> 
+> ...
+> 
+> > +			/*
+> > +			 * Avoid rescheduling in the first 10 ms to avoid
+> > +			 * timeouts for SMBus like devices
+> > +			 */
+> > +			if (time_before(jiffies, orig_jiffies + msecs_to_jiffies(10)))
+> > +				udelay(10);
+> > +			else
+> > +				schedule();
+> 
+> Isn't there cond_resched() or so for such things?
+> More info here: 494e46d08d35 ("airo: Replace in_atomic() usage.")
 
-Hi Angelo,
+The problem would be that I have to disable preemption during the
+transfer, then cond_resched would do nothing if I understand it
+correctly. However, an I2C transfer @100kHz for 3 bytes takes at least
+240us + overhead (e.g. waiting for the bus idle) which might end in a
+close to ms ranage. This is what concerns me.
 
-> >> Implement OF graphs support to the mediatek-drm drivers, allowing to
-> >> stop hardcoding the paths, and preventing this driver to get a huge
-> >> amount of arrays for each board and SoC combination, also paving the
-> >> way to share the same mtk_mmsys_driver_data between multiple SoCs,
-> >> making it more straightforward to add support for new chips.
-> >=20
-> > paths might be optional, see comment in mtk_drm_kms_init(). But with
-> > this patch, you'll get an -EINVAL with a disabled path. See my
-> > proposals how to fix that below.
->
-> I might not be understanding the reason behind allowing that but, per my =
-logic, if
-> a board does have a path, then it's written in devicetree and enabled - o=
-therwise,
-> it should not be there at all, in principle.
->
->
-> Can you explain a bit more extensively the reason(s) why we need to accou=
-nt
-> for disabled paths?
+Regards,
+Stefan
 
-Paths should be (and this was already supported before this patch
-with the hardcoded paths) disabled with the status property. This
-way you can have a common board configuration where all the paths
-are already described but are disabled. An overlay (or maybe another
-dts variant) can then just enable the pipeline/output port by
-overwriting the status property.
 
-Also, this is the usual DT usage, as a node with status =3D "disabled"
-should just be skipped. Without handling this, the current code will
-return -EINVAL during probe (IIRC, my vacation might have reset my
-memory :o).
-
--michael
-
---3ed5ea633b485a24b502befa1bea475237ec606cb99637397be66d7a74b8
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iKcEABMJAC8WIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCZl1z6BEcbWljaGFlbEB3
-YWxsZS5jYwAKCRASJzzuPgIf+EuiAYCiS0ktYeqW3WREzRyRaWz/fZqG9E+chTLp
-Eq2F71PR2kPsrQjcJqjw9P8PJP1Tb7IBf1Xo00KNX/YZCxZd7B2+oCO6cjri7/ym
-ZBbCHMlAM8XqJvXrDFXC1OxZkA8QuPDVng==
-=F2kN
------END PGP SIGNATURE-----
-
---3ed5ea633b485a24b502befa1bea475237ec606cb99637397be66d7a74b8--
 
