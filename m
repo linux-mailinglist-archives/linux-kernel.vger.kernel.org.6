@@ -1,361 +1,120 @@
-Return-Path: <linux-kernel+bounces-198505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5728A8D7961
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 02:34:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CAA08D7963
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 02:37:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D2092815E5
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 00:34:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4966B2817E1
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 00:37:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D360017C7C;
-	Mon,  3 Jun 2024 00:33:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF1CA1C14;
+	Mon,  3 Jun 2024 00:37:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="vMHc0xIm"
-Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GtQviHh4"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07A0CAD56
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 00:33:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7845D625;
+	Mon,  3 Jun 2024 00:37:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717374807; cv=none; b=ieWxVSAaintRrtDCDZS/e91cGgigqZOB/4DNPOJGb/AbJW40bZNhFT+kEX4+rxzdRUmb7aKhutgtSoe/PInd0/DGJUapRQz+FmpKQDueXwmYGDxS1nRSU2VYyewxznFmh1ta78grMskPaziUs9xPaf0Iyray/SFpWo0Ne1hskCI=
+	t=1717375060; cv=none; b=Z2UJTRSgFfyZf8HQqvvXhKIYc5k5R9y88DAmK71ORgM710vbHbsjiA892VuvPvHy+vCV5OOlFs/JCY5hAEiErjWoUm+3Pdc+OdW9bwQmXheu0nDKcH663iMj7tvWxtsaIRRb6T2MPd36780Ubz3wsNnomHLO6k0xNPndqs8QkDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717374807; c=relaxed/simple;
-	bh=kEKiOFdh5hpyo/igNooYbtGOy+7574G9SztbHRdwO4c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nVP0AiMyPP65YJmYR9sGdnXua6MO41fdkiAyfn+QAQXUXdCI6vIkvVBsTdDXNfyS/0D621cupxjCI8UItJgKZO3hsiyXuH4T28wdooMigrO6PeF3BmYLc0SYuFqzopJyB2fpcmMBfPdfOFUXgQT91IMrQ95MMX3xiLZGysn1ajM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=vMHc0xIm; arc=none smtp.client-ip=91.218.175.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: linux-fsdevel@vger.kernel.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1717374802;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lid2ntMsw00JkkyCn7zuRGFLtASs70M1/6euqfBnjHA=;
-	b=vMHc0xImlmkfSN8LhsrQzghIWopuZAElfRf+f441af22PU9ZUB9dOBzOPR/W52K54OE5lJ
-	ulGnaHSIEheKlAZ35eLPPSJucr1Gk1tN0GHJw1pOIN7gpiBlfWtWSF1YYoyX4vIn5gBLDX
-	VhFiQT9b5tZ2sh/SwGXNGNM3J6EAkR4=
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: axboe@kernel.dk
-X-Envelope-To: kent.overstreet@linux.dev
-X-Envelope-To: brauner@kernel.org
-X-Envelope-To: viro@zeniv.linux.org.uk
-X-Envelope-To: bernd.schubert@fastmail.fm
-X-Envelope-To: linux-mm@kvack.org
-X-Envelope-To: josef@toxicpanda.com
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Jens Axboe <axboe@kernel.dk>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	brauner@kernel.org,
-	viro@zeniv.linux.org.uk,
-	Bernd Schubert <bernd.schubert@fastmail.fm>,
-	linux-mm@kvack.org,
-	Josef Bacik <josef@toxicpanda.com>
-Subject: [PATCH 5/5] ringbuffer: Userspace test helper
-Date: Sun,  2 Jun 2024 20:33:02 -0400
-Message-ID: <20240603003306.2030491-6-kent.overstreet@linux.dev>
-In-Reply-To: <20240603003306.2030491-1-kent.overstreet@linux.dev>
-References: <20240603003306.2030491-1-kent.overstreet@linux.dev>
+	s=arc-20240116; t=1717375060; c=relaxed/simple;
+	bh=kdpFuQTuCSLNRU2EL+jLXtx8jipwlUsdIWkrfismr70=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=FTdblHiiG42wfBLEbl6f7tagqUvKmuNWRtvXdBVwxj0YBPhjaTO3pLWdtFyK5T7tuJmmj7l6vqhZYNul+25ZyHxVMJ7rqc9Co8zaprxHchskKLk3WzdfDwWuUDm2PG1GeBxM1onlaaoIuO3IRN17sDGIxzTrgTgiSfoXOeZ5Kb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GtQviHh4; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 452NgCVZ029983;
+	Mon, 3 Jun 2024 00:37:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=gI23069akMvv2fLPXYYcSC
+	TFV09EJupDQM5/X6eZXMI=; b=GtQviHh4QfXIpYC/XJTYu3uGqqDBP2fbEExWgT
+	T9OP7YIdlxKV3H63+gq3RccikmQWrjzkIxczGEhHvuIB3H8w1Hx52RNKKY4+es26
+	Qpj8ALOvEtDMuzd4XWsRUbozIjobUIpr4Y0CkJKf3wIm1TEgCs/5dJq8sLRXHp2/
+	EoBzIDzBapY7YUY/8vy7MxW6fzk9vIFOfCecK0Cgzbg9LX/ShYMJm1NGk5f50Ser
+	NFA/g2PTMT/UWrqGdO19rPElQBuhye/PB4qMZ/58zP6J51KgaYFbPqUhqLIe6gki
+	0y/cugFGr6UGwoc5+Pz/814gdZWv9LKPAMl8oqBxXUgfZP3Q==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfw7djnw2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 03 Jun 2024 00:37:31 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 4530bTpn029167
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 3 Jun 2024 00:37:29 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 2 Jun 2024
+ 17:37:29 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Sun, 2 Jun 2024 17:37:28 -0700
+Subject: [PATCH] xen/blkback: add missing MODULE_DESCRIPTION() macro
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240602-md-block-xen-blkback-v1-1-6ff5b58bdee1@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAEcQXWYC/x2MQQrCMBAAv1L27EIMwaJfEQ+bZGuXtqlsqgRK/
+ +7qbeYws0NlFa5w63ZQ/kiVtZicTx2kkcqTUbI5eOeDuziPS8Y4r2nCxsVoimTscgzXkH3f0wC
+ WvpQHaf/t/WEeqTJGpZLG32yW8m64UN1Y4Ti+leS1yYUAAAA=
+To: =?utf-8?q?Roger_Pau_Monn=C3=A9?= <roger.pau@citrix.com>,
+        Jens Axboe
+	<axboe@kernel.dk>
+CC: <xen-devel@lists.xenproject.org>, <linux-block@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        "Jeff
+ Johnson" <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: gIsLlGKjs2kiMEpeW4_9gb3LGjvCXwcn
+X-Proofpoint-GUID: gIsLlGKjs2kiMEpeW4_9gb3LGjvCXwcn
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-06-02_15,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ mlxlogscore=999 impostorscore=0 malwarescore=0 phishscore=0 adultscore=0
+ clxscore=1011 bulkscore=0 priorityscore=1501 lowpriorityscore=0
+ spamscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406030003
 
-This adds a helper for testing the new ringbuffer syscall using
-/dev/ringbuffer-test; it can do performance testing of both normal reads
-and writes, and reads and writes via the ringbuffer interface.
+make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/block/xen-blkback/xen-blkback.o
 
-Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
+Add the missing invocation of the MODULE_DESCRIPTION() macro.
+
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 ---
- tools/ringbuffer/Makefile          |   3 +
- tools/ringbuffer/ringbuffer-test.c | 254 +++++++++++++++++++++++++++++
- 2 files changed, 257 insertions(+)
- create mode 100644 tools/ringbuffer/Makefile
- create mode 100644 tools/ringbuffer/ringbuffer-test.c
+ drivers/block/xen-blkback/blkback.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/tools/ringbuffer/Makefile b/tools/ringbuffer/Makefile
-new file mode 100644
-index 000000000000..2fb27a19b43e
---- /dev/null
-+++ b/tools/ringbuffer/Makefile
-@@ -0,0 +1,3 @@
-+CFLAGS=-g -O2 -Wall -Werror -I../../include
-+
-+all: ringbuffer-test
-diff --git a/tools/ringbuffer/ringbuffer-test.c b/tools/ringbuffer/ringbuffer-test.c
-new file mode 100644
-index 000000000000..0fba99e40858
---- /dev/null
-+++ b/tools/ringbuffer/ringbuffer-test.c
-@@ -0,0 +1,254 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <errno.h>
-+#include <fcntl.h>
-+#include <getopt.h>
-+#include <stdint.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <sys/time.h>
-+#include <unistd.h>
-+
-+#define READ	0
-+#define WRITE	1
-+
-+#define min(a, b) (a < b ? a : b)
-+
-+#define __EXPORTED_HEADERS__
-+#include <uapi/linux/ringbuffer_sys.h>
-+
-+#define BUF_NR		4
-+
-+typedef uint32_t u32;
-+typedef unsigned long ulong;
-+
-+static inline struct ringbuffer_ptrs *ringbuffer(int fd, int rw, u32 size)
-+{
-+	ulong addr = 0;
-+	int ret = syscall(463, fd, rw, size, &addr);
-+	if (ret < 0)
-+		errno = -ret;
-+	return (void *) addr;
-+}
-+
-+static inline int ringbuffer_wait(int fd, int rw)
-+{
-+	return syscall(464, fd, rw);
-+}
-+
-+static inline int ringbuffer_wakeup(int fd, int rw)
-+{
-+	return syscall(465, fd, rw);
-+}
-+
-+static ssize_t ringbuffer_read(int fd, struct ringbuffer_ptrs *rb,
-+			       void *buf, size_t len)
-+{
-+	void *rb_data = (void *) rb + rb->data_offset;
-+
-+	u32 head, orig_tail = rb->tail, tail = orig_tail;
-+
-+	while ((head = __atomic_load_n(&rb->head, __ATOMIC_ACQUIRE)) == tail)
-+		ringbuffer_wait(fd, READ);
-+
-+	while (len && head != tail) {
-+		u32 tail_masked = tail & rb->mask;
-+		unsigned b = min(len,
-+			     min(head - tail,
-+				 rb->size - tail_masked));
-+
-+		memcpy(buf, rb_data + tail_masked, b);
-+		buf += b;
-+		len -= b;
-+		tail += b;
-+	}
-+
-+	__atomic_store_n(&rb->tail, tail, __ATOMIC_RELEASE);
-+
-+	__atomic_thread_fence(__ATOMIC_SEQ_CST);
-+
-+	if (rb->head - orig_tail >= rb->size)
-+		ringbuffer_wakeup(fd, READ);
-+
-+	return tail - orig_tail;
-+}
-+
-+static ssize_t ringbuffer_write(int fd, struct ringbuffer_ptrs *rb,
-+				void *buf, size_t len)
-+{
-+	void *rb_data = (void *) rb + rb->data_offset;
-+
-+	u32 orig_head = rb->head, head = orig_head, tail;
-+
-+	while (head - (tail = __atomic_load_n(&rb->tail, __ATOMIC_ACQUIRE)) >= rb->size)
-+		ringbuffer_wait(fd, WRITE);
-+
-+	while (len && head - tail < rb->size) {
-+		u32 head_masked = head & rb->mask;
-+		unsigned b = min(len,
-+			     min(tail - head + rb->size,
-+				 rb->size - head_masked));
-+
-+		memcpy(rb_data + head_masked, buf, b);
-+		buf += b;
-+		len -= b;
-+		head += b;
-+	}
-+
-+	__atomic_store_n(&rb->head, head, __ATOMIC_RELEASE);
-+
-+	__atomic_thread_fence(__ATOMIC_SEQ_CST);
-+
-+	if ((s32) (rb->tail - orig_head) >= 0)
-+		ringbuffer_wakeup(fd, WRITE);
-+
-+	return head - orig_head;
-+}
-+
-+static void usage(void)
-+{
-+	puts("ringbuffer-test - test ringbuffer syscall\n"
-+	     "Usage: ringbuffer-test [OPTION]...\n"
-+	     "\n"
-+	     "Options:\n"
-+	     "      --type=(io|ringbuffer)\n"
-+	     "      --rw=(read|write)\n"
-+	     "  -h, --help                Display this help and exit\n");
-+}
-+
-+static inline ssize_t rb_test_read(int fd, struct ringbuffer_ptrs *rb,
-+				   void *buf, size_t len)
-+{
-+	return rb
-+		? ringbuffer_read(fd, rb, buf, len)
-+		: read(fd, buf, len);
-+}
-+
-+static inline ssize_t rb_test_write(int fd, struct ringbuffer_ptrs *rb,
-+				    void *buf, size_t len)
-+{
-+	return rb
-+		? ringbuffer_write(fd, rb, buf, len)
-+		: write(fd, buf, len);
-+}
-+
-+int main(int argc, char *argv[])
-+{
-+	const struct option longopts[] = {
-+		{ "type",		required_argument,	NULL, 't' },
-+		{ "rw",			required_argument,	NULL, 'r' },
-+		{ "help",		no_argument,		NULL, 'h' },
-+		{ NULL }
-+	};
-+	int use_ringbuffer = false, rw = false;
-+	int opt;
-+
-+	while ((opt = getopt_long(argc, argv, "h", longopts, NULL)) != -1) {
-+		switch (opt) {
-+		case 't':
-+			if (!strcmp(optarg, "io"))
-+				use_ringbuffer = false;
-+			else if (!strcmp(optarg, "ringbuffer") ||
-+				 !strcmp(optarg, "rb"))
-+				use_ringbuffer = true;
-+			else {
-+				fprintf(stderr, "Invalid type %s\n", optarg);
-+				exit(EXIT_FAILURE);
-+			}
-+			break;
-+		case 'r':
-+			if (!strcmp(optarg, "read"))
-+				rw = false;
-+			else if (!strcmp(optarg, "write"))
-+				rw = true;
-+			else {
-+				fprintf(stderr, "Invalid rw %s\n", optarg);
-+				exit(EXIT_FAILURE);
-+			}
-+			break;
-+		case '?':
-+			fprintf(stderr, "Invalid option %c\n", opt);
-+			usage();
-+			exit(EXIT_FAILURE);
-+		case 'h':
-+			usage();
-+			exit(EXIT_SUCCESS);
-+		}
-+	}
-+
-+	int fd = open("/dev/ringbuffer-test", O_RDWR);
-+	if (fd < 0) {
-+		fprintf(stderr, "Error opening /dev/ringbuffer-test: %m\n");
-+		exit(EXIT_FAILURE);
-+	}
-+
-+	struct ringbuffer_ptrs *rb = NULL;
-+	if (use_ringbuffer) {
-+		rb = ringbuffer(fd, rw, 4096);
-+		if (!rb) {
-+			fprintf(stderr, "Error from sys_ringbuffer: %m\n");
-+			exit(EXIT_FAILURE);
-+		}
-+
-+		fprintf(stderr, "got ringbuffer %p\n", rb);
-+	}
-+
-+	printf("Starting test with ringbuffer=%u, rw=%u\n", use_ringbuffer, rw);
-+	static const char * const rw_str[] = { "read", "wrote" };
-+
-+	struct timeval start;
-+	gettimeofday(&start, NULL);
-+	size_t nr_prints = 1;
-+
-+	u32 buf[BUF_NR];
-+	u32 idx = 0;
-+
-+	while (true) {
-+		struct timeval now;
-+		gettimeofday(&now, NULL);
-+
-+		struct timeval next_print = start;
-+		next_print.tv_sec += nr_prints;
-+
-+		if (timercmp(&now, &next_print, >)) {
-+			printf("%s %u u32s, %lu mb/sec\n", rw_str[rw], idx,
-+			       (idx * sizeof(u32) / (now.tv_sec - start.tv_sec)) / (1UL << 20));
-+			nr_prints++;
-+			if (nr_prints > 20)
-+				break;
-+		}
-+
-+		if (rw == READ) {
-+			int r = rb_test_read(fd, rb, buf, sizeof(buf));
-+			if (r <= 0) {
-+				fprintf(stderr, "Read returned %i (%m)\n", r);
-+				exit(EXIT_FAILURE);
-+			}
-+
-+			unsigned nr = r / sizeof(u32);
-+			for (unsigned i = 0; i < nr; i++) {
-+				if (buf[i] != idx + i) {
-+					fprintf(stderr, "Read returned wrong data at idx %u: got %u instead\n",
-+						idx + i, buf[i]);
-+					exit(EXIT_FAILURE);
-+				}
-+			}
-+
-+			idx += nr;
-+		} else {
-+			for (unsigned i = 0; i < BUF_NR; i++)
-+				buf[i] = idx + i;
-+
-+			int r = rb_test_write(fd, rb, buf, sizeof(buf));
-+			if (r <= 0) {
-+				fprintf(stderr, "Write returned %i (%m)\n", r);
-+				exit(EXIT_FAILURE);
-+			}
-+
-+			unsigned nr = r / sizeof(u32);
-+			idx += nr;
-+		}
-+	}
-+
-+	exit(EXIT_SUCCESS);
-+}
--- 
-2.45.1
+diff --git a/drivers/block/xen-blkback/blkback.c b/drivers/block/xen-blkback/blkback.c
+index 944576d582fb..838064593f62 100644
+--- a/drivers/block/xen-blkback/blkback.c
++++ b/drivers/block/xen-blkback/blkback.c
+@@ -1563,5 +1563,6 @@ static void __exit xen_blkif_fini(void)
+ 
+ module_exit(xen_blkif_fini);
+ 
++MODULE_DESCRIPTION("Virtual block device back-end driver");
+ MODULE_LICENSE("Dual BSD/GPL");
+ MODULE_ALIAS("xen-backend:vbd");
+
+---
+base-commit: a693b9c95abd4947c2d06e05733de5d470ab6586
+change-id: 20240602-md-block-xen-blkback-0db494d277af
 
 
