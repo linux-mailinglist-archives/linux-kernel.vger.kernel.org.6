@@ -1,188 +1,124 @@
-Return-Path: <linux-kernel+bounces-198657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 867ED8D7BBB
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 08:40:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2ABBC8D7BAF
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 08:39:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9D411C215E9
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 06:40:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6D15B21613
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 06:39:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B67BC2C1AC;
-	Mon,  3 Jun 2024 06:39:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 299622C859;
+	Mon,  3 Jun 2024 06:38:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q8knMSnV"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=jubnut.com header.i=@jubnut.com header.b="ELqibcfm"
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BE005BACF
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 06:39:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DA892942A
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 06:38:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717396771; cv=none; b=VhD+1PFgPUgZL20S8rU6R83gAFnLxPIFLWJfmJGH5bBi1KRBunYfjjucwKov4hLCPJc9pTD0cWooAic48iCk/TFIxesCfrMWwENpA81lCsAXsvhOYuCD+/e8kCx4EU08ruK1uT03pfWrjPo3G51KL9NZgdtPt7y6Axw2la17c7Y=
+	t=1717396734; cv=none; b=oNBPHdIpOeFpkeOJM/zH2BP6EJ4qBN8Nd+2e5Y171nuXVfwCnwe4AQKkAkrH/hjGInzn1UVBEfBxMT1BlvfX/3NBbUYH0r7muV+kH09Rg9UDOcy5GFu5pJnWq9gIVjv+zzyzl0FtITACmqFsECKQatm6NHzN1A7dyzxXKAILN9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717396771; c=relaxed/simple;
-	bh=1BZZMsPFwPpGXIX87G1hn2zFFzt5yAvYEmZSxoqHeTY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=qxRUzstZmK953IU9IA1ZlyKcK69BHIiRenjaeSmkpH9OHWpABTJLam3YWecDQLCdWR7Akbi/PVDj7T2D8QSvAjeUlWsZerU/ugLsoRDZvw/tew6gqdVzCkP6NYRGc5cfb6ycZez7R23oOozNs0gdzMfjD+8CcKNXbvH9eJ31yTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q8knMSnV; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717396769; x=1748932769;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=1BZZMsPFwPpGXIX87G1hn2zFFzt5yAvYEmZSxoqHeTY=;
-  b=Q8knMSnVetlThnqiYaWV3F49036J00hOWopd26+VQkgXcHKDwwLXTvRB
-   ZcbjIwIb9SYA7PbqBiO9U00VeYIwAz5ALKBZgk5+jHAxAyK3gKz7sc2Cf
-   VOjTAyunMwakTsYVbgiBGBvZCcEvQk9Tt6SMy4NTBdzNKFPXXJSKirhtB
-   /moTQhc7b2WuEnQdfv4tNNUUjgxEemHUYh1abJNlSgwNZoF1PbnokmaZV
-   sDjUwamQISL/sHtDYeKib4jQIB9rPLjwcpLxO/ZRqGotFgXQy05knzOC9
-   Fj2VVl89fWnrBdpf6glh9zem12aTtfweEMJFVPrSLBOnCUqfDKcniXatw
-   w==;
-X-CSE-ConnectionGUID: 8Af6wzbVRiennJ1AsZmS6Q==
-X-CSE-MsgGUID: pcltKiBYS+q+vrf/pTQR7A==
-X-IronPort-AV: E=McAfee;i="6600,9927,11091"; a="13688998"
-X-IronPort-AV: E=Sophos;i="6.08,210,1712646000"; 
-   d="scan'208";a="13688998"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2024 23:39:28 -0700
-X-CSE-ConnectionGUID: erGpIcptQAe/GvypGlxCfw==
-X-CSE-MsgGUID: PAgDW9EuQvaGNOEDNgbZOg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,210,1712646000"; 
-   d="scan'208";a="36704400"
-Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
-  by orviesa010.jf.intel.com with ESMTP; 02 Jun 2024 23:39:27 -0700
-Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sE1Lp-000L7C-07;
-	Mon, 03 Jun 2024 06:39:25 +0000
-Date: Mon, 3 Jun 2024 14:38:04 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: [paulmck-rcu:dev.2024.05.30a 5/50]
- arch/arm/include/asm/cmpxchg.h:167:12: error: call to undeclared function
- 'cmpxchg_emu_u8'; ISO C99 and later do not support implicit function
- declarations
-Message-ID: <202406031410.LcIbbCfd-lkp@intel.com>
+	s=arc-20240116; t=1717396734; c=relaxed/simple;
+	bh=yibBB4lOxd9vur4SNzElTohzttt2uGk9m3X60fKMBOA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QkjNTXjuBn/GeEjZk4ZgpFw+F5Nkjaw5xroAjKFzX1zdbystzg7xaBz0sg+RBUaqtUJVGJvpdm7oELANmlHQ1mPEU5yT89uT+8XQRseA23UwWrAN9P5GsnNveyWHvQeeWsE5KDcSbXcYWUc62YaIn5R6EXkAyC3Qrb0MV1TkwTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jubnut.com; spf=pass smtp.mailfrom=jubnut.com; dkim=pass (2048-bit key) header.d=jubnut.com header.i=@jubnut.com header.b=ELqibcfm; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jubnut.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jubnut.com
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4Vt3w843L9z9sjN;
+	Mon,  3 Jun 2024 08:38:48 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jubnut.com; s=MBO0001;
+	t=1717396728;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=5oSTVWW+H1Kox75DhQW50O5IADS4+f1wVfp/EM0Cd5Q=;
+	b=ELqibcfmUUMwKNXGnPXIjv4XG443YVpasOMeWUyq0b5jYyVlDtpzF0P8xGhKVgUB0yttLi
+	dur7rsI42KOx7pLNWwLp/MtE9806W+HUGXDSq2O4PK7onuFQ8Cba/KKhShSGVDnXYijx8B
+	CulpmeSWEo1Vz9NFSCJ5x3EKchm1lBWfncKd4l7LE0ZsJxfvUuys376w0vI4lFRW6kOZoU
+	/hJzu7a4TeCPEJKRR33Vjn+Gd6XofH93JWHSEA7F2s7dC9JP8VDaEYbyCyjAW/zEtgS46a
+	lO5cSazTfOLXBZ+NpChflWmtCvtwy3I2FBdNQGt3ZLM6ndqMXGMfwPRrEFJPwg==
+From: Ben Walsh <ben@jubnut.com>
+To: Benson Leung <bleung@chromium.org>,
+	Tzung-Bi Shih <tzungbi@kernel.org>,
+	Guenter Roeck <groeck@chromium.org>,
+	"Dustin L. Howett" <dustin@howett.net>,
+	Kieran Levin <ktl@frame.work>,
+	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	chrome-platform@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: Ben Walsh <ben@jubnut.com>
+Subject: [PATCH v2 0/5] platform/chrome: Fix MEC concurrency problems for Framework Laptop
+Date: Mon,  3 Jun 2024 07:38:29 +0100
+Message-ID: <20240603063834.5580-1-ben@jubnut.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 4Vt3w843L9z9sjN
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git dev.2024.05.30a
-head:   3d08b2c4a149fdf966e1b0768c14bbf4048e4070
-commit: 6ba3d5014d24a46ed329fc567e554c218eb62cfa [5/50] ARM: Emulate one-byte cmpxchg
-config: arm-randconfig-r052-20240603 (https://download.01.org/0day-ci/archive/20240603/202406031410.LcIbbCfd-lkp@intel.com/config)
-compiler: clang version 15.0.7 (https://github.com/llvm/llvm-project 8dfdcc7b7bf66834a761bd8de445840ef68e4d1a)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240603/202406031410.LcIbbCfd-lkp@intel.com/reproduce)
+Framework Laptops with the Microchip EC have a problem where the EC
+"stops working" after a while. Symptoms include the Fn key not
+working, and "bad packet checksum" errors appearing in the system log.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406031410.LcIbbCfd-lkp@intel.com/
+The problem is caused by ACPI code which accesses the Microchip EC
+(MEC) memory using the Microchip EMI protocol. It uses an AML mutex to
+prevent concurrent access. But the cros_ec_lpc driver is not aware of
+this mutex. The ACPI code and LPC driver both attempt to talk to the
+EC at the same time, messing up communication with the EC.
 
-Note: the paulmck-rcu/dev.2024.05.30a HEAD 3d08b2c4a149fdf966e1b0768c14bbf4048e4070 builds fine.
-      It only hurts bisectability.
+The solution is to have the cros_ec_lpc_mec code find and use the AML
+mutex. But to make it all work we have to do a few more things:
 
-All errors (new ones prefixed by >>):
+  * Allow the cros_ec_lpc_mec code to return error codes in case it
+    can't lock the mutex.
 
-   In file included from kernel/bounds.c:13:
-   In file included from include/linux/log2.h:12:
-   In file included from include/linux/bitops.h:63:
-   In file included from arch/arm/include/asm/bitops.h:245:
-   In file included from include/asm-generic/bitops/lock.h:5:
-   In file included from include/linux/atomic.h:7:
-   In file included from arch/arm/include/asm/atomic.h:16:
->> arch/arm/include/asm/cmpxchg.h:167:12: error: call to undeclared function 'cmpxchg_emu_u8'; ISO C99 and later do not support implicit function declarations [-Werror,-Wimplicit-function-declaration]
-                   oldval = cmpxchg_emu_u8((volatile u8 *)ptr, old, new);
-                            ^
-   1 error generated.
-   make[3]: *** [scripts/Makefile.build:117: kernel/bounds.s] Error 1
-   make[3]: Target 'prepare' not remade because of errors.
-   make[2]: *** [Makefile:1208: prepare0] Error 2
-   make[2]: Target 'prepare' not remade because of errors.
-   make[1]: *** [Makefile:240: __sub-make] Error 2
-   make[1]: Target 'prepare' not remade because of errors.
-   make: *** [Makefile:240: __sub-make] Error 2
-   make: Target 'prepare' not remade because of errors.
+  * Have the cros_ec_lpc code find the correct ACPI device (PNP0C09)
+    and then the AML mutex itself.
+
+  * Use the quirks mechanism to specify the AML mutex name.
+
+The code has been tested on an 11th-generation Intel Framework Laptop
+(with Microchip EC) and an AMD Framework Laptop (without Microchip
+EC). It has _not_ been tested on any Chromebook devices.
+
+Changes in v2:
+
+  * Put ACPI id in a quirk, not the acpi_match_table.
+  * Add return code check for mutex unlock.
+  * Remove "in_range" check which belongs in a separate patch.
+  * Use "ret" not "sum" variable (same value but clearer).
+  * Remove excessive error logging.
+  * Rebase to latest ChromeOS for-next branch.
+
+Ben Walsh (5):
+  platform/chrome: cros_ec_lpc: MEC access can return error code
+  platform/chrome: cros_ec_lpc: MEC access can use an AML mutex
+  platform/chrome: cros_ec_lpc: Add a new quirk for ACPI id
+  platform/chrome: cros_ec_lpc: Add a new quirk for AML mutex
+  platform/chrome: cros_ec_lpc: Add quirks for Framework Laptop
+
+ drivers/platform/chrome/cros_ec_lpc.c      | 210 +++++++++++++++------
+ drivers/platform/chrome/cros_ec_lpc_mec.c  |  87 ++++++++-
+ drivers/platform/chrome/cros_ec_lpc_mec.h  |  18 +-
+ drivers/platform/chrome/wilco_ec/mailbox.c |  22 ++-
+ 4 files changed, 264 insertions(+), 73 deletions(-)
 
 
-vim +/cmpxchg_emu_u8 +167 arch/arm/include/asm/cmpxchg.h
-
-   152	
-   153	/*
-   154	 * cmpxchg only support 32-bits operands on ARMv6.
-   155	 */
-   156	
-   157	static inline unsigned long __cmpxchg(volatile void *ptr, unsigned long old,
-   158					      unsigned long new, int size)
-   159	{
-   160		unsigned long oldval, res;
-   161	
-   162		prefetchw((const void *)ptr);
-   163	
-   164		switch (size) {
-   165	#ifdef CONFIG_CPU_V6	/* min ARCH >= ARMv6K */
-   166		case 1:
- > 167			oldval = cmpxchg_emu_u8((volatile u8 *)ptr, old, new);
-   168			break;
-   169	#else
-   170		case 1:
-   171			do {
-   172				asm volatile("@ __cmpxchg1\n"
-   173				"	ldrexb	%1, [%2]\n"
-   174				"	mov	%0, #0\n"
-   175				"	teq	%1, %3\n"
-   176				"	strexbeq %0, %4, [%2]\n"
-   177					: "=&r" (res), "=&r" (oldval)
-   178					: "r" (ptr), "Ir" (old), "r" (new)
-   179					: "memory", "cc");
-   180			} while (res);
-   181			break;
-   182		case 2:
-   183			do {
-   184				asm volatile("@ __cmpxchg1\n"
-   185				"	ldrexh	%1, [%2]\n"
-   186				"	mov	%0, #0\n"
-   187				"	teq	%1, %3\n"
-   188				"	strexheq %0, %4, [%2]\n"
-   189					: "=&r" (res), "=&r" (oldval)
-   190					: "r" (ptr), "Ir" (old), "r" (new)
-   191					: "memory", "cc");
-   192			} while (res);
-   193			break;
-   194	#endif
-   195		case 4:
-   196			do {
-   197				asm volatile("@ __cmpxchg4\n"
-   198				"	ldrex	%1, [%2]\n"
-   199				"	mov	%0, #0\n"
-   200				"	teq	%1, %3\n"
-   201				"	strexeq %0, %4, [%2]\n"
-   202					: "=&r" (res), "=&r" (oldval)
-   203					: "r" (ptr), "Ir" (old), "r" (new)
-   204					: "memory", "cc");
-   205			} while (res);
-   206			break;
-   207		default:
-   208			__bad_cmpxchg(ptr, size);
-   209			oldval = 0;
-   210		}
-   211	
-   212		return oldval;
-   213	}
-   214	
-
+base-commit: bc3e45258096f2ea2116302abefde4b1cb9bc3c1
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.45.1
+
 
