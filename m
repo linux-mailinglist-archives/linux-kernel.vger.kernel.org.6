@@ -1,146 +1,120 @@
-Return-Path: <linux-kernel+bounces-199593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC7C08D8948
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 21:03:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15B528D8954
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 21:04:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 384FAB21A37
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:03:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 938E9B2133E
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:04:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A73B139590;
-	Mon,  3 Jun 2024 19:02:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31BA913A3F2;
+	Mon,  3 Jun 2024 19:04:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DNl7k9Ua"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mVEjz1iW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 286D7259C
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 19:02:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EBE7137923;
+	Mon,  3 Jun 2024 19:04:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717441373; cv=none; b=uYcm/tVee5DehVf34Wu6pmG3U/Bq9MxXlw9u3aZcY8IPO75k06STXJkhBLug1h268R11ehs3NSOTTrYgAGG7DIkJhfHQPauB6grN0EeGQjfhyk3rvhzLDIbYQc0IPuCTQcWEX7gGY7Xky7YU1xrdAcGx7dKL3KnolP+vyHdOe8g=
+	t=1717441480; cv=none; b=tv0QiDGivrhu5GLSUUlvnJqBo/u0WdUmEE9uK6NSGmWVCNcPGDlRojvh3g9UcHfJo22LY44p3XzVjJ6Arg+0m+m7boz0AedOE0BS9QIAzikNRVUic/VDRUzUVwJyXuTaomUYyJAFyCCkz+oj+elvCLjHMAOYzkRdBDNsL/BpsM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717441373; c=relaxed/simple;
-	bh=o1242Noh5DwPdRlCuDUUZfqQFqyeDP+F6RVt3zLnvi8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=H/H7+Ah6e4JDbaFBRpdXNB8ORQ7IZoONMG4Qib/Gx6qujWO2szEVKewGKdXVTwbzHHG1aWI47xKtlzAb+K4yWy7pjFOwKUYNngedYQy8DQJykyRv7707b49mmCGWd11TxfziOq/v5mmJjvnzQVgdJTtBHaKSLy2yEVkpjVYIBNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DNl7k9Ua; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717441371;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TKPs5UyXdPWSkTr2LDWrvXdNXvQrucoVoL0neTHxTus=;
-	b=DNl7k9Ua5i2REuCNbejuVUgqh/uVnw/LmvcjkfyDyLW+2Kd6Qa5l+GoTb+LaonD1xcwhKa
-	yKhk7U5migcijeGFnwOIKW2mVgsrnUvmGvsXMI83l3HP4MxIo0FziOjYbjUS+TH95FezBV
-	OdJ3HVztoQFDGPNwed7H3TXGHqFbLuE=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-508-kKEZ1Yu9PGSd-Q2E547EFw-1; Mon,
- 03 Jun 2024 15:02:47 -0400
-X-MC-Unique: kKEZ1Yu9PGSd-Q2E547EFw-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 5C1D43C025AD;
-	Mon,  3 Jun 2024 19:02:47 +0000 (UTC)
-Received: from RHTRH0061144 (unknown [10.22.16.249])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id D141C1C0654B;
-	Mon,  3 Jun 2024 19:02:46 +0000 (UTC)
-From: Aaron Conole <aconole@redhat.com>
-To: Adrian Moreno <amorenoz@redhat.com>
-Cc: netdev@vger.kernel.org,  Pravin B Shelar <pshelar@ovn.org>,  "David S.
- Miller" <davem@davemloft.net>,  Eric Dumazet <edumazet@google.com>,  Jakub
- Kicinski <kuba@kernel.org>,  Paolo Abeni <pabeni@redhat.com>,  Shuah Khan
- <shuah@kernel.org>,  dev@openvswitch.org,
-  linux-kselftest@vger.kernel.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 2/2] selftests: openvswitch: set value to nla
- flags
-In-Reply-To: <20240603183121.2305013-2-amorenoz@redhat.com> (Adrian Moreno's
-	message of "Mon, 3 Jun 2024 20:31:20 +0200")
-References: <20240603183121.2305013-1-amorenoz@redhat.com>
-	<20240603183121.2305013-2-amorenoz@redhat.com>
-Date: Mon, 03 Jun 2024 15:02:46 -0400
-Message-ID: <f7t5xup26jt.fsf@redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1717441480; c=relaxed/simple;
+	bh=SiJjhq+F76gd2xYIUJnRmLkcW/pcUax1GZT5innf0yw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qrLXKE9zFrK+JZcref+Ur9RqY+W8j2Drr6f+IxLfJQvtd6vEl57ThmYQrDrGMdKW0o+STTtLGmWLuNuh1/nQneEGOsVpFxyV8XacbJvR/RjEWf5OTDPgQNDtOaWQRMlcFyFJ3Naj6Vo1ZK6NcNSATt8WGdkF5OwpBxrWHCAN7G4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mVEjz1iW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C3E2C4AF09;
+	Mon,  3 Jun 2024 19:04:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717441479;
+	bh=SiJjhq+F76gd2xYIUJnRmLkcW/pcUax1GZT5innf0yw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=mVEjz1iWVYBbZpGBAolpFKdBtmgSZ54sICUew0JuIbETnve4H0k0gJUmsATrApj22
+	 8bWCeCg0OiCcFi8uFYMNo/cmw9Mdg40sZ37IMLuOwKlDV10UtX24GdQtamSiblknQ7
+	 N8ZkVCyqV4APP+2d/iduxIXrKn4DMTP8dQ/ahGfBmnajMRdjdlyXqtB1VaT76QmQlo
+	 LSL/mPn4tlLMwEhLzA2regmdBiIcSJT8Ez7w0fwfNO/cK5YfOO+6t9It2nEp6lThez
+	 e6YA2G3EYNY4dDwNQPVvzVNZo0dbgKD4Jp/qBlvlqBEzpZDV1paa2JMVpnOOEXq42d
+	 VfVXoXkIukNyA==
+From: SeongJae Park <sj@kernel.org>
+To: yskelg@gmail.com
+Cc: SeongJae Park <sj@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Jinwoo Park <pmnxis@gmail.com>,
+	Austin Kim <austindh.kim@gmail.com>,
+	shjy180909@gmail.com,
+	workflows@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] Documentation: cve Korean translation
+Date: Mon,  3 Jun 2024 12:04:36 -0700
+Message-Id: <20240603190436.222077-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240603161530.80789-1-yskelg@gmail.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.7
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Adrian Moreno <amorenoz@redhat.com> writes:
+On Tue,  4 Jun 2024 01:15:31 +0900 yskelg@gmail.com wrote:
 
-> Netlink flags, although they don't have payload at the netlink level,
-> are represented as having a "True" value in pyroute2.
->
-> Without it, trying to add a flow with a flag-type action (e.g: pop_vlan)
-> fails with the following traceback:
->
-> Traceback (most recent call last):
->   File "[...]/ovs-dpctl.py", line 2498, in <module>
->     sys.exit(main(sys.argv))
->              ^^^^^^^^^^^^^^
->   File "[...]/ovs-dpctl.py", line 2487, in main
->     ovsflow.add_flow(rep["dpifindex"], flow)
->   File "[...]/ovs-dpctl.py", line 2136, in add_flow
->     reply = self.nlm_request(
->             ^^^^^^^^^^^^^^^^^
->   File "[...]/pyroute2/netlink/nlsocket.py", line 822, in nlm_request
->     return tuple(self._genlm_request(*argv, **kwarg))
->                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->   File "[...]/pyroute2/netlink/generic/__init__.py", line 126, in
-> nlm_request
->     return tuple(super().nlm_request(*argv, **kwarg))
->            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->   File "[...]/pyroute2/netlink/nlsocket.py", line 1124, in nlm_request
->     self.put(msg, msg_type, msg_flags, msg_seq=msg_seq)
->   File "[...]/pyroute2/netlink/nlsocket.py", line 389, in put
->     self.sendto_gate(msg, addr)
->   File "[...]/pyroute2/netlink/nlsocket.py", line 1056, in sendto_gate
->     msg.encode()
->   File "[...]/pyroute2/netlink/__init__.py", line 1245, in encode
->     offset = self.encode_nlas(offset)
->              ^^^^^^^^^^^^^^^^^^^^^^^^
->   File "[...]/pyroute2/netlink/__init__.py", line 1560, in encode_nlas
->     nla_instance.setvalue(cell[1])
->   File "[...]/pyroute2/netlink/__init__.py", line 1265, in setvalue
->     nlv.setvalue(nla_tuple[1])
->                  ~~~~~~~~~^^^
-> IndexError: list index out of range
->
-> Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
+> From: Yunseong Kim <yskelg@gmail.com>
+> 
+> This is a Documentation/process/cve korean version.
+> 
+> The following changes have been updated based on SeongJae Park’s feedback
+> and Austin Kim’s from the last v2 and v3 patches.
+> 
+> Signed-off-by: Yunseong Kim <yskelg@gmail.com>
 > ---
+>  Documentation/translations/ko_KR/index.rst    |   2 +-
+>  .../translations/ko_KR/process/cve.rst        | 119 +++++++++---------
+>  2 files changed, 61 insertions(+), 60 deletions(-)
+> 
+> diff --git a/Documentation/translations/ko_KR/index.rst b/Documentation/translations/ko_KR/index.rst
+> index 4add6b2fe1f2..f38f0ce19a1e 100644
+> --- a/Documentation/translations/ko_KR/index.rst
+> +++ b/Documentation/translations/ko_KR/index.rst
+> @@ -12,7 +12,7 @@
+>     :maxdepth: 1
+>  
+>     howto
+> -
 
-Acked-by: Aaron Conole <aconole@redhat.com>
+I don't think you need to delete the above line.
 
-I don't know which pyroute2 version I had used when I tested this
-previously, but even on my current system I get this error now.  Thanks
-for the fix.
+> +   process/cve
+>  
+>  리눅스 커널 메모리 배리어
+>  -------------------------
+> diff --git a/Documentation/translations/ko_KR/process/cve.rst b/Documentation/translations/ko_KR/process/cve.rst
+> index 94610c177f17..5a84d0d4266f 100644
+> --- a/Documentation/translations/ko_KR/process/cve.rst
+> +++ b/Documentation/translations/ko_KR/process/cve.rst
+> @@ -1,7 +1,9 @@
+>  .. SPDX-License-Identifier: GPL-2.0
+>  
+> -:Original: Documentation/process/cve.rst
+> -:Translator: Yunseong Kim <yskelg@gmail.com>
+> +:원문: Documentation/process/cve.rst
+> +:역자: 김윤성 <yskelg@gmail.com>
+> +:감수: 박진우 <pmnxis@gmail.com>, 박성재 <sj@kernel.org>,
 
->  tools/testing/selftests/net/openvswitch/ovs-dpctl.py | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/tools/testing/selftests/net/openvswitch/ovs-dpctl.py b/tools/testing/selftests/net/openvswitch/ovs-dpctl.py
-> index b76907ac0092..a2395c3f37a1 100644
-> --- a/tools/testing/selftests/net/openvswitch/ovs-dpctl.py
-> +++ b/tools/testing/selftests/net/openvswitch/ovs-dpctl.py
-> @@ -537,7 +537,7 @@ class ovsactions(nla):
->              for flat_act in parse_flat_map:
->                  if parse_starts_block(actstr, flat_act[0], False):
->                      actstr = actstr[len(flat_act[0]):]
-> -                    self["attrs"].append([flat_act[1]])
-> +                    self["attrs"].append([flat_act[1], True])
->                      actstr = actstr[strspn(actstr, ", ") :]
->                      parsed = True
+Thank you for adding me.  However, please don't add me here unless I ask you
+to.
 
+
+Thanks,
+SJ
+
+[...]
 
