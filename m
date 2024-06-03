@@ -1,148 +1,107 @@
-Return-Path: <linux-kernel+bounces-198940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B1FA8D7F7D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:55:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31EFC8D7F80
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:56:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C9711F255C0
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:55:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 985BFB24AE2
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:56:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ADBA84A46;
-	Mon,  3 Jun 2024 09:54:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02A608172E;
+	Mon,  3 Jun 2024 09:55:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nPJJ1ZsL";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JSEWZVyJ"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=siemens.com header.i=diogo.ivo@siemens.com header.b="EAtM1oJJ"
+Received: from mta-65-227.siemens.flowmailer.net (mta-65-227.siemens.flowmailer.net [185.136.65.227])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31F723BBE0;
-	Mon,  3 Jun 2024 09:54:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 851506E619
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 09:55:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.65.227
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717408468; cv=none; b=SiKNgDtrcxeaWw+4V3H0aBYaPgSRzdLnPELAqshtiax2e0FsAhdiwdWQnfPuvR7FEPS4IFTy9Z6d9fbHIo06PSxs6M93ztIlKAoqh/71r1dDIfMMH8kvAZnxFjseN7Ypv+LpGlqw62/HZ6KzIS/utV7rUGCAZjr2nTtxJV+4YE0=
+	t=1717408535; cv=none; b=D1wIfxrIGK+w7OOqF0uTAI2JEjSdl3DrBHYo2GEzUZHAe2SLERMV8yrcey4TUGnbqCu9ssf+gd6ay3WgumVdbaWMwph6Q1GFR9kaBmwOxO6KNEriKWrrdeCQ0auFMvv7le3V1m1S3P3pinXufnmmSBIiQ1zSLI9UAYlhXEaSxpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717408468; c=relaxed/simple;
-	bh=In4lom+hG/oJFTmkvxRNExZc1lPNnnRUofZrzHVTmKM=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=jjYKMd5sQCrpeyJlzHNrIEY/bcbbtGUYDDfhAhqaPJ6CXd5R7t7BCUJS1qi2OZyQpYN0mW2J8eWBTnflTbO6PzbNJ7ZJ5965iwkyybSLAN6oiIMXoTzS6/vv9+X6Dw0GR0ydZ/nCRxK1A72d5Z9G65LpHkF8OZq1UuMaIkrbXZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nPJJ1ZsL; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JSEWZVyJ; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 03 Jun 2024 09:54:24 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1717408465;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=X7hulflvLTgJgmFgkRqAnHWG0dfGWjMefusBg5L/RII=;
-	b=nPJJ1ZsLWKbNtE6FCgfa9Ou2J4OaD6R89xHdL7Ky2FRS+l6fGClbcxfvgXnK5NBlegIg4A
-	nh3qinlTDIVQlDsl4x3aeJ59MOYinKscdpl57lp1XpJYndwCfyHjOPIZCpynU5sxPb6umj
-	bmmvkz2yoSg/zuRtfJ+e0kIMm1AiSp0z9CCP9rQuD0VMCccBNUghGg7gjIb6z10U3Mw/4I
-	U6958w+jhmnv7Q+ish1UfN1O0I9NApg3VyZjpT03r4Ox4BRtnA2Qcxqn+T082RgNa2YwCC
-	8pvav06AmesI17128jcYYY4R5hwN6tAl0xeWAzWB4QzZil1tGg1NHvQ2m066iQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1717408465;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=X7hulflvLTgJgmFgkRqAnHWG0dfGWjMefusBg5L/RII=;
-	b=JSEWZVyJAIDLlaqKZJbyTGVvYmId6xRrv2tLEQ7c7MrhWUj0fEHoP5iNg8gikCGUp6RuPP
-	wpgV67UDsbnUtZCA==
-From: "tip-bot2 for Adrian Huang" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: irq/core] genirq/proc: Simplify irqdesc::kstat_irqs handling further
-Cc: Thomas Gleixner <tglx@linutronix.de>, Adrian Huang <ahuang12@lenovo.com>,
- Jiwei Sun <sunjw10@lenovo.com>, x86@kernel.org, linux-kernel@vger.kernel.org,
- maz@kernel.org
-In-Reply-To: <20240515100632.1419-1-ahuang12@lenovo.com>
-References: <20240515100632.1419-1-ahuang12@lenovo.com>
+	s=arc-20240116; t=1717408535; c=relaxed/simple;
+	bh=lL2Ep04N9IkRCflt5sypx9BiodtRGfqnFOebllX1i0E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YmOKOqTrgYVXJIOCXLZ0UxjuONQ7kZkIyaZ1Ktqtzo9mi17+jO3WkWbHOkN6Wz6Dztk6GK95nXyvt/qIg51PaRnVmFBk3KrJqeG7UpK9s2G/AStvV3WoYlRVdvUj7cewhpucpHUMVqx0e9nrc7VLPyMz5uJe21uyXR2RksPmci4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (1024-bit key) header.d=siemens.com header.i=diogo.ivo@siemens.com header.b=EAtM1oJJ; arc=none smtp.client-ip=185.136.65.227
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
+Received: by mta-65-227.siemens.flowmailer.net with ESMTPSA id 20240603095523c98113b46a8eff0b85
+        for <linux-kernel@vger.kernel.org>;
+        Mon, 03 Jun 2024 11:55:23 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
+ d=siemens.com; i=diogo.ivo@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
+ bh=K2NhIIxwnO29SOrESPQPqcbmOltZikEuQZMvrX9OqLo=;
+ b=EAtM1oJJ1uG6vD32L6V/qiEtHANr03uo1AdeJy6VDLZOmV8CuFNuM79V1AC9LvgZJ9uKxR
+ gDUZvEMW1s0ooOioVRH+gVT1Y6t347+8G8iyuw+XSTMZsKcr0dbeL7dkpmooec9MvPF3DXIX
+ +Vfz80I9DLgvhQ75ULMtnjWI9YYAQ=;
+Message-ID: <b154663e-db1b-4f9b-8f8e-8da832b0edfd@siemens.com>
+Date: Mon, 3 Jun 2024 10:55:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <171740846466.10875.8507564060524290466.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+Subject: Re: [PATCH 1/3] net: ti: icssg-prueth: Enable PTP timestamping
+ support for SR1.0 devices
+To: Jacob Keller <jacob.e.keller@intel.com>,
+ MD Danish Anwar <danishanwar@ti.com>, Roger Quadros <rogerq@kernel.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Richard Cochran <richardcochran@gmail.com>, Nishanth Menon <nm@ti.com>,
+ Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jan Kiszka <jan.kiszka@siemens.com>
+Cc: linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ diogo.ivo@siemens.com
+References: <20240529-iep-v1-0-7273c07592d3@siemens.com>
+ <20240529-iep-v1-1-7273c07592d3@siemens.com>
+ <46b4e8f4-e86a-4755-8e82-a3975973c43e@intel.com>
+Content-Language: en-US
+From: Diogo Ivo <diogo.ivo@siemens.com>
+In-Reply-To: <46b4e8f4-e86a-4755-8e82-a3975973c43e@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-1320519:519-21489:flowmailer
 
-The following commit has been merged into the irq/core branch of tip:
+Hi Jacob,
 
-Commit-ID:     540588772ed0b191969c7902bf90d561ab0035be
-Gitweb:        https://git.kernel.org/tip/540588772ed0b191969c7902bf90d561ab0035be
-Author:        Adrian Huang <ahuang12@lenovo.com>
-AuthorDate:    Wed, 15 May 2024 18:06:32 +08:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Mon, 03 Jun 2024 11:48:29 +02:00
+On 5/30/24 7:43 PM, Jacob Keller wrote:
+> 
+> 
+> On 5/29/2024 9:05 AM, Diogo Ivo wrote:
+>> +	ret = icss_iep_init(prueth->iep0, NULL, NULL, 0);
+>> +	if (ret) {
+>> +		dev_err_probe(dev, ret, "failed to init iep0\n");
+>> +		goto put_iep;
+>> +	}
+>> +
+>> +	ret = icss_iep_init(prueth->iep1, NULL, NULL, 0);
+>> +	if (ret) {
+>> +		dev_err_probe(dev, ret, "failed to init iep1\n");
+>> +		goto exit_iep0;
+>> +	}
+>> +
+> 
+> Once initialized, the icss_iep driver logic must implement the actual
+> PTP clock interfaces?
 
-genirq/proc: Simplify irqdesc::kstat_irqs handling further
+Yes exactly, the IEP driver then implements the PHC operations.
 
-Interrupts which have no action and chained interrupts can be
-ignored due to the following reasons (as per tglx's comment):
+> Neat.
+> 
+> Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
 
-  1) Interrupts which have no action are completely uninteresting as
-     there is no real information attached.
+Thank you for the review!
 
-  2) Chained interrupts do not have a count at all.
-
-So there is no point to evaluate the number of accounted interrupts before
-checking for non-requested or chained interrupts.
-
-Remove the any_count logic and simply check whether the interrupt
-descriptor has the kstat_irqs member populated.
-
-[ tglx: Adapted to upstream changes ]
-
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Adrian Huang <ahuang12@lenovo.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Jiwei Sun <sunjw10@lenovo.com>
-Link: https://lore.kernel.org/r/20240515100632.1419-1-ahuang12@lenovo.com
-Link: https://lore.kernel.org/lkml/87h6f0knau.ffs@tglx/
----
- kernel/irq/proc.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
-
-diff --git a/kernel/irq/proc.c b/kernel/irq/proc.c
-index 5c320c3..8cccdf4 100644
---- a/kernel/irq/proc.c
-+++ b/kernel/irq/proc.c
-@@ -461,10 +461,10 @@ int show_interrupts(struct seq_file *p, void *v)
- {
- 	static int prec;
- 
--	unsigned long flags, any_count = 0;
- 	int i = *(loff_t *) v, j;
- 	struct irqaction *action;
- 	struct irq_desc *desc;
-+	unsigned long flags;
- 
- 	if (i > ACTUAL_NR_IRQS)
- 		return 0;
-@@ -488,10 +488,7 @@ int show_interrupts(struct seq_file *p, void *v)
- 	if (!desc || irq_settings_is_hidden(desc))
- 		goto outsparse;
- 
--	if (desc->kstat_irqs)
--		any_count = kstat_irqs_desc(desc, cpu_online_mask);
--
--	if ((!desc->action || irq_desc_is_chained(desc)) && !any_count)
-+	if (!desc->action || irq_desc_is_chained(desc) || !desc->kstat_irqs)
- 		goto outsparse;
- 
- 	seq_printf(p, "%*d: ", prec, i);
+Best regards,
+Diogo
 
