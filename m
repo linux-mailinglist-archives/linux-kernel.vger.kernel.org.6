@@ -1,113 +1,75 @@
-Return-Path: <linux-kernel+bounces-198513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 548458D797B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 03:07:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30C848D797E
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 03:08:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EADCA1F217E8
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 01:07:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BDABDB211B6
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 01:08:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC5EF139F;
-	Mon,  3 Jun 2024 01:07:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37E791C2D;
+	Mon,  3 Jun 2024 01:08:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D8I6psrO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F0C715C3;
-	Mon,  3 Jun 2024 01:07:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="VVyJN1sg"
+Received: from mail-177132.yeah.net (mail-177132.yeah.net [123.58.177.132])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C7B810FA;
+	Mon,  3 Jun 2024 01:08:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=123.58.177.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717376872; cv=none; b=IGedzKrTmRYIvd7m4XxPWKlOdmmqbMytkLKp2yd6K/e1W25nYKZbZ5mKI1sBMKKZ4F3crWLcnNaOIrzVB8FSn1g3bbsYewaMYLYzDLOc4j3rzBb2E5/P32PASbb2/dcwhP9tC2SqTyK64uA7DJOqPlKzbbMndTXpC77z584r4Dc=
+	t=1717376895; cv=none; b=ZM0HFxsxmGYRVM6LGsaiVNNKAmCYLRpp73kdAoH3vwyDQ5euQ8sME9ywEM9iQ+jn1+Y5qvz4FnfECRMBLiVLlptNEHbGfsTW5k6hPz6KVUV6YP8X/O4qyS1ttFKa7/vMBctZD/DJUX3q+xIW0qKDa0Xppod3TJH5W/M38P0rems=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717376872; c=relaxed/simple;
-	bh=GyS3Y18rQu9OR8fVI2mcAQN7lotZDqwO7TwKorRv4EU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pbbksNBeSvjra6wOIU2xygXGpYeQIvZQeITSDHzgLFX5F1YBbcXPpwo3M65f98i+x18cT/6nAMDkVVlh9qvMwEE23v82ecTtxmkglftwsupdG+PAVs6f951A/+eCBDknC+5H6s0G64fygvIVQYMjUkmrXYYDiJNYUPLiaJswinI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D8I6psrO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA742C2BBFC;
-	Mon,  3 Jun 2024 01:07:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717376871;
-	bh=GyS3Y18rQu9OR8fVI2mcAQN7lotZDqwO7TwKorRv4EU=;
-	h=From:To:Cc:Subject:Date:From;
-	b=D8I6psrOyyBzeNkPVfedoZlzta/z5THqXNORMTgZ5A0RQI/v+TJOqRqmH4D7+/PUj
-	 gHTflezQyoMqWeED145AQQ3KUlN3HipnoZnclRTN8m2aodbbtowkSf7PoWHuoUy7UO
-	 L1lLnFlyxMedO0CZhiH6sqPRMouCrLxpJ5tnpgeYtp8pelFoNC9jCCtMgllMvemqPI
-	 FWIMtR4GWWlz8i1M2OQ/GbhOkyb9xO3xpG3qowJE88M+jv/CiAasmw1xSH6ueqTuTz
-	 gRHkq4SxsKSKuvle9yl8+4TCYQpgBYI3vQ+QYC8lHDhp+CtM/ToFNNxniYIx06zlLV
-	 avCdw2mc20OHA==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Chao Yu <chao@kernel.org>,
-	stable@vger.kernel.org,
-	syzbot+848062ba19c8782ca5c8@syzkaller.appspotmail.com
-Subject: [PATCH] f2fs: fix return value of f2fs_convert_inline_inode()
-Date: Mon,  3 Jun 2024 09:07:45 +0800
-Message-Id: <20240603010745.2246488-1-chao@kernel.org>
-X-Mailer: git-send-email 2.40.1
+	s=arc-20240116; t=1717376895; c=relaxed/simple;
+	bh=AJxGqelg0blaxEfUwaK4bxSO4X7eGYRg9Lopc0VXZiI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qxd7NmK6hcJfAPaKeu/s10mLeZo9fG8pXZI8/VtdWPkhvZJ+R29YpL8ZkUfTrj4a6vEPyVO1MDzQ7WkWADeXc4eJiHME7LDiOjm6l7yK4MJB4O2rnhqCGH2IJbpHtBpNexMpekeYnoABb0JdJEPA40YWypja8GZB2et+CyqMs+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=VVyJN1sg; arc=none smtp.client-ip=123.58.177.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=8k4gT2nqBFGqyZpCaHqPeKXyYM2eTwYAEViYCARACp4=;
+	b=VVyJN1sgTyinA5KMAya98HGWpnxuyr3WS284tcF7qj+DWguzyIUYmUGlQj7EuD
+	lT/li4MsfaK8GfxkLwiUy5Dh9XQXWvn7iTi1CpVVvLBDLBFMEIWECJN7+OCB+0Jn
+	1VHf/9HZc5z4dABzLZ4dV6+knvVq/DrH/tyn94az9O+ss=
+Received: from dragon (unknown [114.216.76.201])
+	by smtp2 (Coremail) with SMTP id C1UQrACHT+JiF11mjQ7sBw--.2328S3;
+	Mon, 03 Jun 2024 09:07:47 +0800 (CST)
+Date: Mon, 3 Jun 2024 09:07:46 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Alexander Stein <alexander.stein@ew.tq-group.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, linux@ew.tq-group.com,
+	devicetree@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] arm64: dts: mba93xxla: Add USB support
+Message-ID: <Zl0XYo+Ls25xM/SP@dragon>
+References: <20240423093341.1927592-1-alexander.stein@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240423093341.1927592-1-alexander.stein@ew.tq-group.com>
+X-CM-TRANSID:C1UQrACHT+JiF11mjQ7sBw--.2328S3
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUIxpnUUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiDQPyZVszXjYKlAAAsH
 
-If device is readonly, make f2fs_convert_inline_inode()
-return EROFS instead of zero, otherwise it may trigger
-panic during writeback of inline inode's dirty page as
-below:
+On Tue, Apr 23, 2024 at 11:33:40AM +0200, Alexander Stein wrote:
+> This adds support for both USB host and USB Type-C ports. This includes
+> the on-board USB hub.
+> 
+> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
 
- f2fs_write_single_data_page+0xbb6/0x1e90 fs/f2fs/data.c:2888
- f2fs_write_cache_pages fs/f2fs/data.c:3187 [inline]
- __f2fs_write_data_pages fs/f2fs/data.c:3342 [inline]
- f2fs_write_data_pages+0x1efe/0x3a90 fs/f2fs/data.c:3369
- do_writepages+0x359/0x870 mm/page-writeback.c:2634
- filemap_fdatawrite_wbc+0x125/0x180 mm/filemap.c:397
- __filemap_fdatawrite_range mm/filemap.c:430 [inline]
- file_write_and_wait_range+0x1aa/0x290 mm/filemap.c:788
- f2fs_do_sync_file+0x68a/0x1ae0 fs/f2fs/file.c:276
- generic_write_sync include/linux/fs.h:2806 [inline]
- f2fs_file_write_iter+0x7bd/0x24e0 fs/f2fs/file.c:4977
- call_write_iter include/linux/fs.h:2114 [inline]
- new_sync_write fs/read_write.c:497 [inline]
- vfs_write+0xa72/0xc90 fs/read_write.c:590
- ksys_write+0x1a0/0x2c0 fs/read_write.c:643
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Cc: stable@vger.kernel.org
-Reported-by: syzbot+848062ba19c8782ca5c8@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/linux-f2fs-devel/000000000000d103ce06174d7ec3@google.com
-Signed-off-by: Chao Yu <chao@kernel.org>
----
- fs/f2fs/inline.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index 0203c3baabb6..1fba5728be70 100644
---- a/fs/f2fs/inline.c
-+++ b/fs/f2fs/inline.c
-@@ -221,8 +221,10 @@ int f2fs_convert_inline_inode(struct inode *inode)
- 	struct page *ipage, *page;
- 	int err = 0;
- 
--	if (!f2fs_has_inline_data(inode) ||
--			f2fs_hw_is_readonly(sbi) || f2fs_readonly(sbi->sb))
-+	if (f2fs_hw_is_readonly(sbi) || f2fs_readonly(sbi->sb))
-+		return -EROFS;
-+
-+	if (!f2fs_has_inline_data(inode))
- 		return 0;
- 
- 	err = f2fs_dquot_initialize(inode);
--- 
-2.40.1
+Applied both, thanks!
 
 
