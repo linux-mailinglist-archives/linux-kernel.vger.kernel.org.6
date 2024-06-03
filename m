@@ -1,108 +1,210 @@
-Return-Path: <linux-kernel+bounces-199511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78C2A8D87F4
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:30:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D28578D87F5
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:31:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 258461F2289C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:30:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3FD77B213B3
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:30:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 147F612E1CE;
-	Mon,  3 Jun 2024 17:30:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4146130487;
+	Mon,  3 Jun 2024 17:30:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="d/I1cH1f"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="rLYv1Oj4"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2086.outbound.protection.outlook.com [40.107.93.86])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 065992913
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 17:30:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717435841; cv=none; b=cxc5UCTx/IVZved3xqgKbDTUMl4fuUh9TkJ2ZAkk1pk9yHiH6gz1b5KR23ikKC72iLGeI2UFzqXSCG8CBySs4MrZPqpYbcnuAf6TQUWl6luMu0+Fl1LUXWYuDycl1/PpGHvxpc05uYiwgXu58tZvejOu0PIqiUCRuDWl39+YuUk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717435841; c=relaxed/simple;
-	bh=AH0ORQ2+FiOgmROqUAU5kSCSmx4ZC+ymAxvmuq/3NWc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HKIJz/TECBDSaDjX/MUrjNnFe7j54/zn/I2Lb3sW1niNIDCWUW3MKAQkrX2yeQez1aO2WBjsX/8oj5lDp1ycRGk/jsWFYCW7LS7YTrEwvmdqAaL4NcCcttPM4xej0BkAK4JWO03bASih0rCbCcz1GMfsDqGbbBHr5fPBYQSI/2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=d/I1cH1f; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=N1rA3ay0tZG+PPeHYHe8unqz8YmRW6XYkHVM0lfB4Dw=; b=d/I1cH1fk5K56xrJ
-	nJHlCjeC/Gt73oh4PlPiL3mfaYyOMq4eUTIJy6ZVuYB0zxtn/SGyPd39jH2VUhEsqNxzeNuOdGWaW
-	NMS8WAATQNy4apezaQHsCPsHD3U0QvpHGLfhgI1mvhu+hkM33TALSVtwl74ZL0R2GmDTj3QMijweG
-	Yrxm3q3Jjd2LqRBgxUIbKXYLOU0eJMaFG0s5njtZjgiS16KO5fNhxeuYVkPKkdCRIbS7d9C4e8aSk
-	L/Ob5zua3j1qmS8RRJP7cS5KNxPw/hF+V0Tzg1XMTMHZ6l+1s+xI0LPdp1Vl8/Lz3s4SbZnIi3rzv
-	zw49hFDcVq8D9Hz7Pw==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1sEBVz-003zuI-0j;
-	Mon, 03 Jun 2024 17:30:35 +0000
-Date: Mon, 3 Jun 2024 17:30:35 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: kherbst@redhat.com, lyude@redhat.com, dakr@redhat.com
-Cc: bskeggs@redhat.com, daniel@ffwll.ch, nouveau@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/6] drm/nouveau: remove unused struct 'init_exec'
-Message-ID: <Zl39u4zOif2Sw4Sa@gallifrey>
-References: <20240517232617.230767-1-linux@treblig.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29E1C2913
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 17:30:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.86
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717435852; cv=fail; b=qndNSGxfBFo5pYFKWU1Y5+NONbazCPlCx/J5u0Cfub5z4GxSPDJLPJtY+cGqwdaFxaKsdtogbffZHY5qmIb13BzIPuOsGdLcQ+JetRSAba5vdmGGOIoeFSyhOMTKK+LKTMusCBWVbV0bFiWZ09F5BwwuQ58g4lp5cNrV0tHQQ70=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717435852; c=relaxed/simple;
+	bh=lSEMEvqfj6TA8Z7AFN33vJd04hrpuean2xSsWzNk2Pk=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=G67nTBtruXX6adnyq5QR2OYihS7KSOUx9XdOXSTDhHYiN/fPcyZk2S1Dj1rEzXdGD0Ac2DKmR7PKeXuf98j1PzAA8WAZ0tYicLG/4dLJuUQxKymHAx88jYyMFv7rxpblGRSJEfmyEKXId7fxd+K9SdIyt02cFE9ScdU3niEhuy8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=rLYv1Oj4; arc=fail smtp.client-ip=40.107.93.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=dDpG8G+yL/T/NOv9JVnNo1/6+Bgn0oc9k46Wz1CVr0WSgvlQWlDLG8l3A5OdUuKq3E/XXMNHp5MNzyWjd/DcCdxeldXcUEUJI3zqpEZgbz3xazbIpmg6y14Yw8Joe/ZNW+SSlPvUPBZzjAEHHp+2jqGCYGKkUHv1fq7e7DQ9o/zKeDl2IP28FDeQjDPn6o9ebjJ7tlk+vEGVNJZbYh+H0Y088U+1+k8MwvJdaYw/O792+CNaVq+cBszLkabKpaMZELox3TIflW8Lzz/uX5Jh6qpkffDGCuN0m47fIIJ9JyqthCyAEHJO6Jouxj9a8BPjqsvFluPBSVinhtdjTbZBPg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=O3xn7fYNYS4Jtm6bZr51fqoA40jZaUxKzpyvaUfgYI0=;
+ b=BtP875vPrKshJSpZvuvk9+w7uDPplT5cgHvRJ1UhDiwVmw5a5NUZErwhqeaFISFtbbPMUwg5n5JDASAvz31NjfSfh4qvJoc7o29mRltJdDnI+ys7niNNpRz8TMLRazTMou9++SxKMtbMYp57h/XnAtqHw6Wx9KJEjhiuPjzuqiwwivRKk89UCZ9vVyUrSUse+l0f0zRbQx2JuYZqvUQKKb//H+ZWR5WEGrwyq1pcSGRw7mk0rk3dAiJJEbBdGdUx7rpRxGcmUJj442emOGOwGSicZouwg/Phyc5oJg/ScCPC/DwLoNFWwzvo/pjFuCkltIFZTFS/eSMR18+EunTqPA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=O3xn7fYNYS4Jtm6bZr51fqoA40jZaUxKzpyvaUfgYI0=;
+ b=rLYv1Oj495G5AtX46786DfEcWBHJs4AI1mfuR0Ijl0Vl548dE6+31lJkz/KkNhFcJnS5R/BpoQmLoT+8387WSpyrvOM364pRRdIieoj9DHien5lIM+1wmKjVWCueIkAKcEN7Hsb2JJNIRutvBqtUE1kqTuY0lIWe9Xg4QaTXtCiQTZ2QzBXIbGHlFIStEV/4iBy/AY+vfkCzV8eSSv21W/Z9VZbHnZI/UR584fDUUysLrlYkEGVNvmByDaECO0WumkGycDaZd0jhIVayG/PxjFVSHahX3VJTC42FV1tulZ6w3RcdFflfcA8D63D7s7RNfwHjo1jN0jpubHnxWDqBYg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DM6PR12MB3849.namprd12.prod.outlook.com (2603:10b6:5:1c7::26)
+ by LV8PR12MB9153.namprd12.prod.outlook.com (2603:10b6:408:185::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.24; Mon, 3 Jun
+ 2024 17:30:47 +0000
+Received: from DM6PR12MB3849.namprd12.prod.outlook.com
+ ([fe80::c296:774b:a5fc:965e]) by DM6PR12MB3849.namprd12.prod.outlook.com
+ ([fe80::c296:774b:a5fc:965e%4]) with mapi id 15.20.7633.021; Mon, 3 Jun 2024
+ 17:30:46 +0000
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Ard Biesheuvel <ardb@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Lukas Wunner <lukas@wunner.de>,
+	patches@lists.linux.dev,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH] sysfs: Add stub sysfs_bin_attr_simple_read() for !CONFIG_SYSFS
+Date: Mon,  3 Jun 2024 14:30:45 -0300
+Message-ID: <0-v1-44baae71b833+ab-sysfs_simple_read_jgg@nvidia.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: YT4PR01CA0473.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:d6::6) To DM6PR12MB3849.namprd12.prod.outlook.com
+ (2603:10b6:5:1c7::26)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <20240517232617.230767-1-linux@treblig.org>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 17:29:59 up 26 days,  4:44,  1 user,  load average: 0.00, 0.00, 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR12MB3849:EE_|LV8PR12MB9153:EE_
+X-MS-Office365-Filtering-Correlation-Id: d96bd659-69d1-4d94-8f4b-08dc83f2e771
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|376005|1800799015;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ZGsGUgM5Dejs+kalWgLWVHKsOa1dkq41+TXF41CQPvsAn2CCrE5bv2Bw5JBC?=
+ =?us-ascii?Q?D2eGkTIEIUrm3rxl3tGmTG7VOik6WqmSHS8tPDy7bOBnmlJE9WJ5UPdTRrR7?=
+ =?us-ascii?Q?UsSaQiS75sT+HF37kJtFVvcOsu+9Jm3u3BVgZCNWr3gqTBT2nTyzVRuy9EtJ?=
+ =?us-ascii?Q?DRQ/yQjAEk+zy1O4gnnOhP9JSNir3sb7CPpXt9CcW6yuAlKLRecd1up6EL/p?=
+ =?us-ascii?Q?Ad6g4o45eXrvgd9JFhZj+6aG1Sqp73DJU2CEZz03Hyi6vnaR3rESeOJiVVyW?=
+ =?us-ascii?Q?CBieH+lSBbqZYCM6VHnj110sJa5FQqUl6HDaVVKl6qvAh8cDYvDMTdLmUppN?=
+ =?us-ascii?Q?YqrYX9X3Av1S2lXgflN7S0ozjUVrBg5cwYicQDtti+uQc4IKFRud3qaZzMtE?=
+ =?us-ascii?Q?l48++wWavNEy6LHID5ORfBXv1LNFQWL1UaDWuW9P/SRrXveVRU1A8Ix+ZEzc?=
+ =?us-ascii?Q?w7I7hbYSgMObXxSoCSPnuJ/5OD1apj1eOyKJwlJKHlO4seLc3QmXILdu8L+o?=
+ =?us-ascii?Q?4jz0tL2dOpjnb9qqZCf92UvhP0XebKPr6/mQPG3qC26jeOjgYXL0/026TdU0?=
+ =?us-ascii?Q?URhK6IbK+Qh28DrcstnBUfLPQqdS/TTLaXDkQuAxbF/MuPwwbUJ95sdw6Qo/?=
+ =?us-ascii?Q?S78yqxrWA7D5yf5xocdaqo2//2id1XACUh4AvUfEMaf0EEnw/nhnijalj8ah?=
+ =?us-ascii?Q?HSpu+jNL7BLbaaZzoW3898ZG5UKgB/Bk1Gg82aM847NUcpi+CqbONF5SS7v5?=
+ =?us-ascii?Q?F4opDKOzhcbeZGElGxfkEuO2/Sd0xBCUzDLad0S9HZeivceeaqYx8s61ccf8?=
+ =?us-ascii?Q?WUX4/NPepgLUiPU2/9pZog/nNCeftGB2HR/AYk6VaxZSXJXnX8J+LmzpAayH?=
+ =?us-ascii?Q?Eu5P8DZXjpc5e6YmIcKtccTl2lBeuy9a+BsF6iyTRzUdhHsFUmazkBvkY1Jl?=
+ =?us-ascii?Q?KhirLW3XegcztKQcsAqEccggxHPaIFWnzPpXou7bcMvm542ZkkM1P3Hwlh7M?=
+ =?us-ascii?Q?7DiUXHrZHgFyMAfmkg6STAbbBORzfLfphrVRM5EafLzBGseCxfLGq6RCtt05?=
+ =?us-ascii?Q?SqIlWF7qdmLXJt8KPj0H9hPJsJWXsoP+0ARheS7FPbwoI8jepEgokP6AO29F?=
+ =?us-ascii?Q?b6AFHF8IZ7R8pS2xmFNHVW7ZpAxZgcv9xw+Y4okm+HqfIln/7bXhhovjd3aJ?=
+ =?us-ascii?Q?+pYlelUITtr4OlSRrFVeCAYQjKSS0kGnIPxK20sXXDT4WdoNV2Fda8+9TzM9?=
+ =?us-ascii?Q?KgXtMa6Ba2EAhAT127YpNEYWNurtYuVzFa9SZKmP7A=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB3849.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(1800799015);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?RIFn/ufITVfWoO7AeiPMWIMPIUI7hGml5+0i79CceikT2GypO0+fU+95Ioiz?=
+ =?us-ascii?Q?3JLm7QxexdOlwTRPLhsdKe9yNMpXXKMhLY+cBNtWKspH0gFdFOLD/WI2gsVU?=
+ =?us-ascii?Q?MaGb1crs72dmQNnFgZ+zMiW9e+pBQOltg5Siq55tvhzkWS3JATmCRBN9cJBt?=
+ =?us-ascii?Q?3TYAG2VJY+zLKTsvL0W4leY3njnprpD6gGmUyW5LJMNRhmGmWhpYL1KXLbtc?=
+ =?us-ascii?Q?IyEiOPdB8PIpohrGfk0NoqDN26jQOiweWXVXbALShjx8FXNRrXr+hdV+nHgh?=
+ =?us-ascii?Q?e1UUkiNLsMOwJlgtn/wFhXLFscFxLO2nTaA7Je61yC/hr1CGumgXOrj1aiIs?=
+ =?us-ascii?Q?wTWXENsuPeuVv13Buw/cfrLGPg/Yp95CGxbBPGTaafVoTRDSnVkwRVqBLaoz?=
+ =?us-ascii?Q?kbH3FKnoT3hC6SIZeXnXfkeapbs73KogLYQVcl/LV2PGXXb5WeyPUvLIRv92?=
+ =?us-ascii?Q?GV5abmN3N1c6uw+idAppfc0CxVT6TZE4KxsrTcD4NKY6/ACJj+ffyvOzJ/M8?=
+ =?us-ascii?Q?tOiIRAaqS/o306DP9XcAKWKIOrs4Sw2Abo9WvjLiTUFfG0FQloev99Filnp4?=
+ =?us-ascii?Q?xf/0hLIbALHm2dYrClA8wkTI7FnVpv425B8uRWfGQV08ZUKHy/TofxZDV2jN?=
+ =?us-ascii?Q?AZ6aHRs0NlnHMUb+cGTBSrUJznptHgy8iHJvAxrdeF1nTadqqbG/xoUsMdA3?=
+ =?us-ascii?Q?laHJkDVEQeRavX+O+uMNOKCmBGz0OeMN+RhV9EgZhGUjqGEsP6cOjPGp5zYm?=
+ =?us-ascii?Q?ii7x0Q3wIFegoTwn25/81I+E8lKgSDNDyHytUxOWRXOpn1gKn6NQsInvezP4?=
+ =?us-ascii?Q?6MLzgBY8nV8OsR9/7t/B8s3Yug8NVvzgyaOlBYBEqiHFrSJmcK758K1dGjnO?=
+ =?us-ascii?Q?UUyVBI9HD6159YNSpgJe7pY69GMmZLKXIrBdZCe+Rb5/Eg7tHdGdQD1IDsE8?=
+ =?us-ascii?Q?b+VNiiO70/6BYJOnE7BP13f011VEXUB4MfEvuxScUH5MQD91ops/1SaQ7SbK?=
+ =?us-ascii?Q?JUw9EDOLcm4YwzOMzVKpkbU9ZApnMqHRWY4PQAr6Wws1ChwdJPpsqHs4aWVp?=
+ =?us-ascii?Q?NQZWg9NETthEoA3OOvgi82ATtBFxNRPxhHiEsQGH6Ar3dxLzQLMy64xo9TKO?=
+ =?us-ascii?Q?Ifs/fdzmw7zWiwSTDwoaofc5wj9oXZUPpG2Ucou4wi+Jjcr9FXndOEFPAN/e?=
+ =?us-ascii?Q?pD3UFp2kYh7Kp7Jnht7f8AJKS/pq+SiNi4rLbrGm2cXsvbT9tTMXJ0pPIXjP?=
+ =?us-ascii?Q?CkGYiWXDVxs1JNCWCYIBi3j4kzYdT4VBWu15ddM2A3RnssszW3j/VNu09448?=
+ =?us-ascii?Q?yZ4T4ZN/qycDYw0ms7+WgRfi72+fEv8UzIUs0VdLR9voEz0MCTtIzH2xlPLT?=
+ =?us-ascii?Q?SMODUEDQetvmbO4gEXEJr/RN47vYMsCQm7I109ZbEmWu2VFihelMdTFFm5fP?=
+ =?us-ascii?Q?sOEr4ypbKaoNMUfB9g/vPUwSA81IZrrE+aQTQnBNDnDdNJB5HeHv67c+m3T8?=
+ =?us-ascii?Q?Bsyuhnr49vDsK2KcFQv6DdQzFrYPP8J5UgRhceQIob4BPF4PK/3HWTMcQPGQ?=
+ =?us-ascii?Q?LwjW2J0Wjs2+QY/Hwh1phrcNtwahJTHPLHfG88dB?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d96bd659-69d1-4d94-8f4b-08dc83f2e771
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB3849.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jun 2024 17:30:46.9067
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5/xFeBFZgkf7HTK9TlV7EfzsIz0SClUbNtKjm6++SCUHsL+gCoytGGYYMEKjPTP8
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9153
 
-* linux@treblig.org (linux@treblig.org) wrote:
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> 
-> 'init_exec' is unused since
-> commit cb75d97e9c77 ("drm/nouveau: implement devinit subdev, and new
-> init table parser")
-> Remove it.
-> 
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+At least dmi_scan.c fails to compile:
 
-Ping.
+../drivers/firmware/dmi_scan.c:764:8: error: use of undeclared identifier 'sysfs_bin_attr_simple_read'
+  764 | static BIN_ATTR_SIMPLE_ADMIN_RO(smbios_entry_point);
+      |        ^
+../include/linux/sysfs.h:383:41: note: expanded from macro 'BIN_ATTR_SIMPLE_ADMIN_RO'
+  383 | struct bin_attribute bin_attr_##_name = __BIN_ATTR_SIMPLE_RO(_name, 0400)
+      |                                         ^
+../include/linux/sysfs.h:376:10: note: expanded from macro '__BIN_ATTR_SIMPLE_RO'
+  376 |         .read   = sysfs_bin_attr_simple_read,                           \
+      |                   ^
+../drivers/firmware/dmi_scan.c:765:8: error: use of undeclared identifier 'sysfs_bin_attr_simple_read'
+  765 | static BIN_ATTR_SIMPLE_ADMIN_RO(DMI);
+      |        ^
+../include/linux/sysfs.h:383:41: note: expanded from macro 'BIN_ATTR_SIMPLE_ADMIN_RO'
+  383 | struct bin_attribute bin_attr_##_name = __BIN_ATTR_SIMPLE_RO(_name, 0400)
+      |                                         ^
+../include/linux/sysfs.h:376:10: note: expanded from macro '__BIN_ATTR_SIMPLE_RO'
+  376 |         .read   = sysfs_bin_attr_simple_read,                           \
+      |                   ^
 
+Since the only declaration for sysfs_bin_attr_simple_read() is inside the
+"#ifdef CONFIG_SYSFS". Add a stub to the #else section too.
 
-> ---
->  drivers/gpu/drm/nouveau/nouveau_bios.c | 5 -----
->  1 file changed, 5 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/nouveau/nouveau_bios.c b/drivers/gpu/drm/nouveau/nouveau_bios.c
-> index 79cfab53f80e..8c3c1f1e01c5 100644
-> --- a/drivers/gpu/drm/nouveau/nouveau_bios.c
-> +++ b/drivers/gpu/drm/nouveau/nouveau_bios.c
-> @@ -43,11 +43,6 @@
->  #define BIOSLOG(sip, fmt, arg...) NV_DEBUG(sip->dev, fmt, ##arg)
->  #define LOG_OLD_VALUE(x)
->  
-> -struct init_exec {
-> -	bool execute;
-> -	bool repeat;
-> -};
-> -
->  static bool nv_cksum(const uint8_t *data, unsigned int length)
->  {
->  	/*
-> -- 
-> 2.45.1
-> 
+Fixes: d48c03198a92 ("sysfs: Add sysfs_bin_attr_simple_read() helper")
+Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
+---
+ include/linux/sysfs.h | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+I don't see a patch for this yet, but I did find a 0-day robot complaint:
+
+https://lore.kernel.org/all/202404200345.eGdn5uxW-lkp@intel.com/
+
+diff --git a/include/linux/sysfs.h b/include/linux/sysfs.h
+index a7d725fbf73937..e672a927d650a3 100644
+--- a/include/linux/sysfs.h
++++ b/include/linux/sysfs.h
+@@ -750,6 +750,15 @@ static inline int sysfs_emit_at(char *buf, int at, const char *fmt, ...)
+ {
+ 	return 0;
+ }
++
++static inline ssize_t sysfs_bin_attr_simple_read(struct file *file,
++						 struct kobject *kobj,
++						 struct bin_attribute *attr,
++						 char *buf, loff_t off,
++						 size_t count)
++{
++	return -EINVAL;
++}
+ #endif /* CONFIG_SYSFS */
+ 
+ static inline int __must_check sysfs_create_file(struct kobject *kobj,
+
+base-commit: c58a77fe0ba1b708759338ad8bd3828b75a26035
 -- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+2.45.2
+
 
