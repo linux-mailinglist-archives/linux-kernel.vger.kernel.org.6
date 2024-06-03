@@ -1,105 +1,183 @@
-Return-Path: <linux-kernel+bounces-199226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 708CC8D8422
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:38:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 358B78D8424
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:38:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 033BA1F22105
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:38:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC5FE286662
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:38:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC8ED12D776;
-	Mon,  3 Jun 2024 13:38:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDEFD12D76B;
+	Mon,  3 Jun 2024 13:38:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BagTaSxm"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="MFdnv7I5"
+Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69B9A12D758
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 13:38:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 859F312BF3A
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 13:38:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717421889; cv=none; b=n77zuzlBde3pM+oTutPi0YDPqNJNTC++4l7xYsx3Q4sPxMCkT9o7JacYvku5sO6sNg3B+0udcHGhwC0fTVnFdgI/VsMw4Rt2ViG03On5IB2VRretlStktjLnFVEQ47esmKBYryA0+0b1rc3qio+KDHpaQghfpuZJZJmqwiutWIw=
+	t=1717421918; cv=none; b=VLEqI0zbX7i+33CIVhUpb+pGW5jKgIiqpIY56fs5O/2dj9YaSUopV575nXwdbNImxhcM6wQBZm3S5ItexiiUuFgWg7FJHq8nmhzV2A1me9ocwMg8axn8wsq1R8u0/tnawtsPHZIxC8ysQCwhK2Dls2qJGMcGIAc5PcJOnOUM1j8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717421889; c=relaxed/simple;
-	bh=s5oY5VB/ZeLchozmlxHpgn0jJCP7I7onyi92IM4s3Jk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=D1I6DN4JykX/gP7uWEgMg4tgmoSI2YcSkSMGFse8YTMgjutZHky2NJxdhCkXpD7+nvA86tEwdo/n+4Br47sHQph3kpyhWY5jaEXWN2TAYB9WigBnopZG4/IpruOHnFm/SwHycGOMIqyXePDE6mO0fgrD7c+nU6c08NGultwmzEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BagTaSxm; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2e96f298fbdso46136551fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 06:38:07 -0700 (PDT)
+	s=arc-20240116; t=1717421918; c=relaxed/simple;
+	bh=vtWc8iVFqsvABRv79bFQ/v9WSZIoE8OBawLvKAFSD5M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fA0xhFaDjbPBGwQiRjquR9GD7yooyiNnyM1hr/i6T+PczoG/EcdwxbqG4vtt4BxV4vSMWBf7bhLZITflfxjnMvspJaH/+FiZcIkVmCh2igjnRfnVeYnlwT+Heq9+0hbB3biFta/t3JmpMLlIaG/saUPEzFytDRGVG7bb/wH58Ec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=MFdnv7I5; arc=none smtp.client-ip=209.85.160.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-24c10207d15so2079075fac.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 06:38:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717421885; x=1718026685; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=s5oY5VB/ZeLchozmlxHpgn0jJCP7I7onyi92IM4s3Jk=;
-        b=BagTaSxmjSKP/D9vBOzKTAm3wVu/iGGJVQxrHNpFf7HCEPYYKRvQypYt+VxodVYLcO
-         DWBzlLmlQk6p3jpZ1wrPMUfdjXnrVNYEBWJUYaa81bJbT5HCodbgazA+2mJa7SrCymgC
-         IxzvY5GRjuDycLbpEF4tbCbPtLNmpnNMS4tVJDJL4wr2XxFsUiuBUioq0YZQlXOjBj7z
-         bCVBCZqZzj6bTbf6qN+jT4tRXWTpGy60Y2BTCVl6ikz6bKaV+T9Bj/IOxkK58xlYoUSj
-         pdDQFr3ebN2YgJCf0QstUUAigoq2KNUeUnWAwY1Aj2VPp/6rWygtRaWPNVLbp5meCY63
-         P7zg==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1717421915; x=1718026715; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yi0mazzB+1gBreHBUe8h9eRnw4We/Z3jQeykzO1tsNI=;
+        b=MFdnv7I591E91zbrvgkEbtOuEZp29WCU2YITuUqJzNNR5eTknblW/5S1n0whmj1tae
+         eY92BcGPZhLCQwd3o5zchL+jD4bGBhTBrmvVhe9vArPthJm+KsHVeLLj77M1/AT+RLxc
+         gcyyDQs4N97py134bA+4qhqTeO4Eh60CxbIMsXHtALs1giq7lewlzXdrkvTIbRo1fIPf
+         Uh8CjchNgLUhhimLug4goz6HE/AbqIkT8etLSVGkqU6gKJTFZzZLG8c7meppUL9OyCoS
+         DN+OURhlhFwiWhn5GPfjUpS8RGhHjccs/CpuyxdDJAr3saRBJgl7kxagq3CMwfl/fcFp
+         fTaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717421885; x=1718026685;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=s5oY5VB/ZeLchozmlxHpgn0jJCP7I7onyi92IM4s3Jk=;
-        b=MHi7LCMyw0e0CnSbt02dM8C1Je0dXdXkCkY3hACYeYS4S5oEAeCr4ZNUlMQLGuPfzk
-         kOHr80xEJPd2+CUJpgSQeHvg3Ku/jDkF+d+6dGkoidnlZi14GXLqCOv1725g44r6sJdO
-         eZPppOQRxQDBpJJWlkRaYbAU75tdCMpDKuu66qysLBwAhYYiHw1Gx9LvhkHIN9397t21
-         6U3GKAwnOoawAGqjP2qm0me3Z5EHWKKPzvnlz6NnWJhzWZLW+PJzvkfyf/z+z47EazpD
-         svYr32gLm/iXXDV0IAE6/hgTRcmfWjrM9mclT8z+lSiCvIYHqww8gl13L2CRAcjxaHjd
-         7GXg==
-X-Forwarded-Encrypted: i=1; AJvYcCU3vpUZTfAIdoS1Lfy1xpwjt6aRV1vgKvDlpul720j/HJWefdsopfm+gUecpAUd+lRvhXGc9RJw8er1KCXAA8gxkcrfApX5pRSyqm0T
-X-Gm-Message-State: AOJu0Yyjheu56AcGZnHGE3CY/gza2sAFHKuLuDLNJ61IZ7s+YbZ8BC9u
-	GdsEf4ZTA0UF2yq0P8ZQHv4zaDcjNGn3IIBrxwjzcfeJF+f8v5wHb1JJhGDzKqUfftEaQYUZ7lB
-	6ANHs4ZWqzPTPvXo1nRUvmOG2YBm5V2GEanYtCQ==
-X-Google-Smtp-Source: AGHT+IGGEfsiDSa9MS2XjdxinT6DC4pr32ZQOQc6Alq++FGKHA8V9dvlrQ4QnDerXJqsX5VfWRcTedSN+rX53wc9/AQ=
-X-Received: by 2002:a2e:b053:0:b0:2ea:938f:a23d with SMTP id
- 38308e7fff4ca-2ea951b6102mr59561591fa.42.1717421885548; Mon, 03 Jun 2024
- 06:38:05 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717421915; x=1718026715;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yi0mazzB+1gBreHBUe8h9eRnw4We/Z3jQeykzO1tsNI=;
+        b=S0dsiNykouzJahXPaXAteN+iIUEBD8I0UCAVvfRZNJ4FrhXX1YoicdnWMM7koilqE5
+         cka4cSWoJESjIzlGPMBe3iRhd0k0iYIbNBvET9m1o5fJ0KfCxmvBqxCAkRsNFeeWNwLq
+         7nqVcSd8ryeBgNp6l2LGMxRls5D84h/37gibZ+d2hvxOPsPVx+5lRHaX2cNuoExnzupD
+         1h2KWI8ofsqKymcgdUfiSgC3yHXrEqmHx3loUrEh0IMXoSrmceMEqwigi91FBpdfUJBy
+         DHYEL+eYRs7RgTv89UrSSGw6eON70Dgqh4DPvQj3/0IqAZ0Bw51jugr8rGpYOKuLGMj0
+         QpDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVvviXSIzdE4b7sDh7HUiRqOhTGxgz6nkfUPYty4SOdU/LtKoyvLgGP1JbCMKLu5aP98r4Nsz/6PUT+H2HVmJKF6aN6Jg3Xtcc2I6Yn
+X-Gm-Message-State: AOJu0YwogwghQ/Cc3YYe3DDU7Gk3jo3jf2Z+ebsbnjD7N3PlCXy5u4wa
+	IuYMcwJYOo1FadbWdqLJBfLHZZON6+/ejPltqARuQPeVP97tvA89HZ7vznNhqMc=
+X-Google-Smtp-Source: AGHT+IGobSbMwH2za+FkJIH5iveN+S3Y3iLQ2Xhg/S0TlsXdCGh2UJY3hlJJprZpjPOIYzixp+Gpxw==
+X-Received: by 2002:a05:6871:54c:b0:24f:e09d:3c82 with SMTP id 586e51a60fabf-2508b7de2ecmr10411175fac.12.1717421915552;
+        Mon, 03 Jun 2024 06:38:35 -0700 (PDT)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-250852c97a8sm2442529fac.50.2024.06.03.06.38.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Jun 2024 06:38:35 -0700 (PDT)
+Message-ID: <f2e7a1f4-0362-4851-885e-3f7dfe3ab457@baylibre.com>
+Date: Mon, 3 Jun 2024 08:38:34 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240503162217.1999467-1-sean.anderson@linux.dev>
- <CACRpkdbOAoSDNFhXfz3djUZh1_MQ_T75CC+-LmojRXvyCbUusA@mail.gmail.com>
- <06a4e5fd-3d26-4923-bcbf-0bdd66d756c4@linux.dev> <CACRpkdbSsgxtKqF6ORXubufTaegjysHU7zH-tJfDfKNd=Kdoeg@mail.gmail.com>
- <51d984f5-896e-469f-914d-2c902be91748@linux.dev> <CACRpkdZ19+zUCEBCJJ+MBnnaF+caZKFTDxYiWZ0BRGx+PxN3bw@mail.gmail.com>
- <e4972a07-18d6-4a8b-bb5a-4b832aa2d20e@linux.dev> <CACRpkdbL63ZWcopgBbANKzr476rO6_cwZL6JLqkvTDXbzzpkpw@mail.gmail.com>
- <38cd5e6d-f18b-4ea2-8fa1-40416d4370a9@amd.com>
-In-Reply-To: <38cd5e6d-f18b-4ea2-8fa1-40416d4370a9@amd.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 3 Jun 2024 15:37:53 +0200
-Message-ID: <CACRpkdbKgjdA9MFs6VtXxrULAY0VA3PFim+qYwbX08OaHxZKKQ@mail.gmail.com>
-Subject: Re: [PATCH 0/2] pinctrl: zynqmp: Support muxing individual pins
-To: Michal Simek <michal.simek@amd.com>
-Cc: Sean Anderson <sean.anderson@linux.dev>, linux-gpio@vger.kernel.org, 
-	Krishna Potthuri <sai.krishna.potthuri@amd.com>, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/5] iio: adc: ad7944: use
+ devm_regulator_get_enable_read_voltage
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Marcelo Schmitt <marcelo.schmitt1@gmail.com>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Michael Hennerich <Michael.Hennerich@analog.com>,
+ Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240531-iio-adc-ref-supply-refactor-v1-0-4b313c0615ad@baylibre.com>
+ <20240531-iio-adc-ref-supply-refactor-v1-5-4b313c0615ad@baylibre.com>
+ <20240601140139.3166dcaf@jic23-huawei>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <20240601140139.3166dcaf@jic23-huawei>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jun 3, 2024 at 2:37=E2=80=AFPM Michal Simek <michal.simek@amd.com> =
-wrote:
+On 6/1/24 8:01 AM, Jonathan Cameron wrote:
+> On Fri, 31 May 2024 16:19:36 -0500
+> David Lechner <dlechner@baylibre.com> wrote:
+> 
+>> This makes use of the new devm_regulator_get_enable_read_voltage()
+>> function to reduce boilerplate code.
+>>
+>> Signed-off-by: David Lechner <dlechner@baylibre.com>
+> A possible corner case inline.
+> 
+> Patches 2-4 lgtm.
+>> ---
+>>  drivers/iio/adc/ad7944.c | 62 +++++++++++++++---------------------------------
+>>  1 file changed, 19 insertions(+), 43 deletions(-)
+>>
+>> diff --git a/drivers/iio/adc/ad7944.c b/drivers/iio/adc/ad7944.c
+>> index e2cb64cef476..42bbcb904778 100644
+>> --- a/drivers/iio/adc/ad7944.c
+>> +++ b/drivers/iio/adc/ad7944.c
+>> @@ -464,23 +464,16 @@ static const char * const ad7944_power_supplies[] = {
+>>  	"avdd",	"dvdd",	"bvdd", "vio"
+>>  };
+>>  
+>> -static void ad7944_ref_disable(void *ref)
+>> -{
+>> -	regulator_disable(ref);
+>> -}
+>> -
+>>  static int ad7944_probe(struct spi_device *spi)
+>>  {
+>>  	const struct ad7944_chip_info *chip_info;
+>>  	struct device *dev = &spi->dev;
+>>  	struct iio_dev *indio_dev;
+>>  	struct ad7944_adc *adc;
+>> -	bool have_refin = false;
+>> -	struct regulator *ref;
+>>  	struct iio_chan_spec *chain_chan;
+>>  	unsigned long *chain_scan_masks;
+>>  	u32 n_chain_dev;
+>> -	int ret;
+>> +	int ret, ref_mv, refin_mv;
+>>  
+>>  	indio_dev = devm_iio_device_alloc(dev, sizeof(*adc));
+>>  	if (!indio_dev)
+>> @@ -531,47 +524,30 @@ static int ad7944_probe(struct spi_device *spi)
+>>  	 * - external reference: REF is connected, REFIN is not connected
+>>  	 */
+>>  
+>> -	ref = devm_regulator_get_optional(dev, "ref");
+>> -	if (IS_ERR(ref)) {
+>> -		if (PTR_ERR(ref) != -ENODEV)
+>> -			return dev_err_probe(dev, PTR_ERR(ref),
+>> -					     "failed to get REF supply\n");
+>> -
+>> -		ref = NULL;
+>> -	}
+>> +	ret = devm_regulator_get_enable_read_voltage(dev, "ref");
+>> +	if (ret == -ENODEV)
+>> +		ref_mv = 0;
+>> +	else if (ret < 0)
+>> +		return dev_err_probe(dev, ret, "failed to get REF voltage\n");
+>> +	else
+>> +		ref_mv = ret / 1000;
+>>  
+>> -	ret = devm_regulator_get_enable_optional(dev, "refin");
+>> -	if (ret == 0)
+>> -		have_refin = true;
+>> -	else if (ret != -ENODEV)
+>> -		return dev_err_probe(dev, ret,
+>> -				     "failed to get and enable REFIN supply\n");
+>> +	ret = devm_regulator_get_enable_read_voltage(dev, "refin");
+>> +	if (ret == -ENODEV)
+>> +		refin_mv = 0;
+>> +	else if (ret < 0)
+>> +		return dev_err_probe(dev, ret, "failed to get REFIN voltage\n");
+>> +	else
+>> +		refin_mv = ret / 1000;
+> How does refin_mv get used?  Previously we never queried it's voltage (I assume
+> because it supplies an internal reference?
+> 
+> Are there any regulators that are real enough to enable but for which a voltage
+> can't be queried?  I think fixed regulators with gpio control are in this
+> category...
+> 
 
-> I have asked Sai (driver owner) to take a look at the patch more closely.
+Hmm... don't remember why I did it that way (was a while ago). I will bring
+back the have_refin flag instead.
 
-OK if you and Sai both provide your Reviewed-by tags so I know this is what=
- you
-want to happen, then I'll apply the patch.
 
-Thanks Michal!
-
-Yours,
-Linus Walleij
 
