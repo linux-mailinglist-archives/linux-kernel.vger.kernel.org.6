@@ -1,93 +1,87 @@
-Return-Path: <linux-kernel+bounces-198661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4FAB8D7BC8
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 08:42:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27D7B8D7BCD
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 08:42:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 986851F22559
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 06:42:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 595211C21679
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 06:42:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DF6D7D096;
-	Mon,  3 Jun 2024 06:39:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F6Wjim7A"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAA0A47A57;
+	Mon,  3 Jun 2024 06:40:05 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94B5F364A0
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 06:39:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 087303FB1C
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 06:40:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717396797; cv=none; b=DNQzrArbLj0UDHpXnbBdWZgeVvv5jYobm/7m9oddYvsKzCENIrciT8Zo4vTMOmTnlMxJWntXGS7coSgoQj1ckAHUoa2+L5TjXZgLJtpA1w4uVUSyHGW+6cPSJsVmlEp9NkfdH7jQtcWMafTuRUf76ZXxrlDzXVw9N/t0CP9r0gU=
+	t=1717396805; cv=none; b=siKe8jjpGH7uTQfZiulg1Ebr9B4hVz/PvdTx2ZRHTd/rGcS3Vy4+50fllFh8Nfxz2J2tPSdnf0FJQ75aXqxyG58usVq7RfajwKh7ByWq6DfJ6xLjw+xydN20GYrEODren0gm9KkO6qu9yEf7FrZUPWqzAarm3H9yoncGyK9DmV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717396797; c=relaxed/simple;
-	bh=yMVHDPZTk2KiIA4M5duiDTFOwyQCPZJ4+zZKOyjLkCQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cT4zevaL+Fd9yGmVByEk4W3YHflun7J164NvdDF+7yHU3lVfPpHFL/9gzLFQrm7fESJI5Jf2WaDtfWdJiK53TzWIKalJOPquntdW8DnxpWgE76X55wcwZPr7AOoe2D03FX/nQe4xhscmYz/n9E3vfNNknZ5nyXIrWKByOxe90x8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F6Wjim7A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A936DC2BD10;
-	Mon,  3 Jun 2024 06:39:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717396797;
-	bh=yMVHDPZTk2KiIA4M5duiDTFOwyQCPZJ4+zZKOyjLkCQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=F6Wjim7ABkZMuZmkWslsUYfIjuqeMGoOQ5VHlSs7N4rpNsgE09DypCXPvJb51g3kt
-	 UoBg/grrCvrX7PT5SkbG/8O50M9pL0eIRFfrGY8TKPkeVduPouTL4t2a+AcI+mj7+Y
-	 +cgwyWZKKEaE3Njox0+uxrz5kIMd+r/AnF/n3bWnZE2feQquAY7bTxaZPTJ45uTYGS
-	 +c9YAe77T8hz9SvEtxtuv5ibtGbk+f8yIYJVSbPzh20nsi7XOeTScdv+xFA34iz/2Y
-	 3mPkXf++5nxkgtDbHzvjuxAMetR3bQ4cqdhOfnF3T1vrdHM7IUz0u7jM8lsqsfI3Sb
-	 Mj5y4ewYMOIVg==
-Message-ID: <b0c9f3dc-417a-4891-bdf0-25b849828e3b@kernel.org>
-Date: Mon, 3 Jun 2024 14:39:53 +0800
+	s=arc-20240116; t=1717396805; c=relaxed/simple;
+	bh=tCEFDNCtU4kyih6I5/tTRMmRIK4lL5BSpzOjWhYQVqY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Ui3Osld573FLvNux9kc5aNEvYJ2Kacs0i6WTWMqSoIBOwhDE1T0vzkHNsnXsOSwvugQ7kirAFvrF2KdH5zUfZn2YngsC9OxAv1Qia9DGeBu3TufMtG1uQ2dB1WT0lbsYV6qTIFGA1glDD+i2RHuE7GiKhds7gBjt/G3yjW1miyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7eb10ca258eso188979939f.1
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2024 23:40:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717396803; x=1718001603;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=P0t8wwmBsbHGb0/ZeZAIbcOtAtOvGwdxIUvrebAW9I4=;
+        b=Vzx3oQWkvzcppng7OzmW6uAmIXluird1qI5IP+NKRDPQWTznLzMk6iWi+HdOgc+CP3
+         x6MFF1HziVEiaQdxA5ZKQZf3KzyTQ7WyXelUnULDJp7Qn2JxD7nOaNBDeVicheJ8R73N
+         3y6v5svQJT5kEFp/mRKku+sZ+py8fu6mNs7tLne+wunQsJfkCLz+75jbRLKRp8nwv0le
+         SdKoHYfXvDXV10kkGBAglH/y/YPvfuscddDttN3UhC6FDDQdDAYwo8cWmgPGe374dOmw
+         u+ZywBGDozSC8oFbT9Vs+KrAnf2G9VJu+xvWT1Lm17IoqwSudD55WgauKoOrkowvekNu
+         g3Qg==
+X-Gm-Message-State: AOJu0YwsYS3P+lyZq338MSyJqKtTTIUR1vCzHHS3K4Phwr1fxr0c+xl3
+	3QWisrP4K17HeHqrhknsXYgSvAxDQgQMdN5zXe1/ZjYIWcMVU3sESIY80DqbfDLUoW50Y2lOmqh
+	wuC2KEpffBMrCtU9B/A1NXqpRn3BF7kR2Yk18Ape639uQoSpMn4FDInM=
+X-Google-Smtp-Source: AGHT+IHZ5bWxWmd3oHPrq0zW/nUxrCGYc/96WjbGLpuW/bQgh2XevJyqWgV0Y/sCQ4d7S6b9Tro2Z4xh6mloExHnWsXAlZq0a9MX
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] f2fs: use new ioprio Macro to get ckpt thread ioprio data
-To: Zhiguo Niu <zhiguo.niu@unisoc.com>, jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
- niuzhiguo84@gmail.com, ke.wang@unisoc.com
-References: <1717146645-18829-1-git-send-email-zhiguo.niu@unisoc.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <1717146645-18829-1-git-send-email-zhiguo.niu@unisoc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6602:3406:b0:7ea:fcf7:7b2e with SMTP id
+ ca18e2360f4ac-7eaffe970ebmr51329339f.1.1717396803318; Sun, 02 Jun 2024
+ 23:40:03 -0700 (PDT)
+Date: Sun, 02 Jun 2024 23:40:03 -0700
+In-Reply-To: <CAN-2BNRG3qMSVgBm=6jD3tv=nDAzByebEJF8k2UWUdo=vAEeSw@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000006682760619f69aa8@google.com>
+Subject: Re: [syzbot] [squashfs?] VFS: Close: file count is zero (use-after-free)
+From: syzbot <syzbot+b2cfdac9ae5278d4b621@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, nightu.pwn@gmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 2024/5/31 17:10, Zhiguo Niu wrote:
-> Use new Macro IOPRIO_PRIO_LEVEL to get ckpt thread ioprio data(level),
-> it is more accurate and consisten with the way setting ckpt thread
-> ioprio(IOPRIO_PRIO_VALUE(class, data)).
-> 
-> Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
-> ---
->   fs/f2fs/sysfs.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-> index 72676c5..55d46da 100644
-> --- a/fs/f2fs/sysfs.c
-> +++ b/fs/f2fs/sysfs.c
-> @@ -340,7 +340,7 @@ static ssize_t f2fs_sbi_show(struct f2fs_attr *a,
->   	if (!strcmp(a->attr.name, "ckpt_thread_ioprio")) {
->   		struct ckpt_req_control *cprc = &sbi->cprc_info;
->   		int class = IOPRIO_PRIO_CLASS(cprc->ckpt_thread_ioprio);
-> -		int data = IOPRIO_PRIO_DATA(cprc->ckpt_thread_ioprio);
-> +		int data = IOPRIO_PRIO_LEVEL(cprc->ckpt_thread_ioprio);
+Hello,
 
-So, can you please use 'level' to instead 'data' in f2fs_sbi_show() and
-__sbi_store()?
+syzbot tried to test the proposed patch but the build/boot failed:
 
-Thanks,
+failed to apply patch:
+checking file drivers/dma-buf/udmabuf.c
+patch: **** unexpected end of file in patch
 
->   
->   		if (class != IOPRIO_CLASS_RT && class != IOPRIO_CLASS_BE)
->   			return -EINVAL;
+
+
+Tested on:
+
+commit:         861a3cb5 Add linux-next specific files for 20240603
+git tree:       linux-next
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d9c3ca4e54577b88
+dashboard link: https://syzkaller.appspot.com/bug?extid=b2cfdac9ae5278d4b621
+compiler:       
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=171aa5f2980000
 
 
