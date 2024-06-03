@@ -1,82 +1,70 @@
-Return-Path: <linux-kernel+bounces-199640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87F308D8A20
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 21:27:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AC678D8A2D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 21:28:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DBE91F25A37
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:27:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4653C289856
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:28:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22D30137923;
-	Mon,  3 Jun 2024 19:27:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C72C137923;
+	Mon,  3 Jun 2024 19:27:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=metaspace-dk.20230601.gappssmtp.com header.i=@metaspace-dk.20230601.gappssmtp.com header.b="VC5X3SyU"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WzbsAMde"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCDFB137748
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 19:26:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5589E13B58A;
+	Mon,  3 Jun 2024 19:27:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717442821; cv=none; b=tzgbBXE/qg//KlWWSIkruOWL4iUkYJcxn2t73UhOr5wmUlN5Tm+QVl863lIbd0vpD/Vt0+e0I2MuUJW67AUod0fF63ozESlp/pykSulzh6y3RRpYJYs4vq61g5nrUfi+ZXL6W38hhOpT23Di8W2vMEeIQRiSmVu9SB5OMt5UU8Q=
+	t=1717442854; cv=none; b=ctDz7xnw59UL91L9UgysoVm0dUtdJUlhrU7FIeAH7WxN0gTbY1p8HWBxHxce95gRiVKk1nCIyZFvJRaSZTcKoLM5Lvrh55XFPXV2WRfiOWOltGA33MBG2rOpzVR7m4P/75D2XDJLbK3HTj9JA52DR++4O42YHSojTYUY0Mk6pyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717442821; c=relaxed/simple;
-	bh=5tryiqGWz7woo9GeAI9cW9IgeIA3mnTyekQazR6n7B4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SuY+SF0VUysyLpcmhAwsUTmqdYAbn/gHhjDBPp+osRt3KYvr034qpLePIHZzGVUok6R5nyQEiRtK/zIQCwQshNunRPEOnbyq8fWmZ7qdxGOyHyRPmAUTNxKoNFuOPCfQI4LPY5hS3zUuBd33MR5EAcNO3IIJkAa+4eivw/4kcFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=metaspace.dk; spf=none smtp.mailfrom=metaspace.dk; dkim=pass (2048-bit key) header.d=metaspace-dk.20230601.gappssmtp.com header.i=@metaspace-dk.20230601.gappssmtp.com header.b=VC5X3SyU; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=metaspace.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=metaspace.dk
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5295e488248so4989129e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 12:26:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=metaspace-dk.20230601.gappssmtp.com; s=20230601; t=1717442818; x=1718047618; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Bgq00PUjrhCM1KT9z8TW3RB/dgS4Xp/0LzoRpKh5jRs=;
-        b=VC5X3SyUAX39DOqxIZieCJeam9lTh7o1tGDRr39FCQjSum+iV0kRiLYJqXbT/XadTx
-         Zd4C8geUfvFnvXlVPvq51RbcxsGSgCgw66Y5MB4QdzG9y339gcj3ffadEK262Tqsz9u0
-         xE9Hdf6mEAwFJDmCoSEabrpdvHy68D2E9GDv16HAIDqwss6QEFo2Fa84Q6YkfhTVBiCM
-         zuc9VxnowYCjcU5h4RX8m7fJIAdq9f5k9LmqmuSJVEBm/MfOc1B2LAKeNAzG3O3GgVb8
-         1o3SH6UeVfxCa2/fVPXL1QDHrPb5N+1OHdk9F7Ok/qVXmjwjBvL8mLQ1nHbyxXSZTIO7
-         WlTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717442818; x=1718047618;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Bgq00PUjrhCM1KT9z8TW3RB/dgS4Xp/0LzoRpKh5jRs=;
-        b=t021imCD9/lMpZmd+idK0sIjz8Kr+uTB68rEZv29B23CwR3wPDIj2zP0yZw8aJuilw
-         QNyH0SQ90GUU+3idnV+VnKzppngZi/77zX7oQ6ynjIQhUcUTvAIqVjuZZWJ+42Kb+NKR
-         dq61IcGLSQ/ZnhkqDrClOeOAYP5iK+04U5YvuDB9TRHFfzdY7edp7PO7Th8muP2i9NKR
-         EtQkOOYcHJVqNROo5jCDWskyjSxSGRx8SNFXh8/B76/G0rMUGMjwtWFxQANm4ApqMBWu
-         HRovxVqNMB6CEqs+NQT/5sNRzZBBvSQ7w3naGu8Z/8dGBBVEwtYpM3aV4l5n6Pgq4neJ
-         0XTg==
-X-Forwarded-Encrypted: i=1; AJvYcCXSGxmDBhf78eRo8X8PCUGNLtKBYLzqa67p06Ah8Z7pEVrTPGqUid8zDfy17F7z9rfNeFbARCKMUhf4xUk+6bUng711exC6O/45vgY1
-X-Gm-Message-State: AOJu0YzVZURTDBz0VQ5ZV1VKKJ5qTHZSs4r0NNrBWKvkC9RTAKxW5UO9
-	v27Blzq1DDf5qy731Oef4KwhHWsfC1H9n5Iuhr6JsfBgRU5uPNkb38PQgLC74oA=
-X-Google-Smtp-Source: AGHT+IEEdiuK70dIt0kRQ6ZqIyfF8/dtIItu00A5a5CGgt7ADEjKNbKwIlbZf+kUgc+loKojBUe4Pw==
-X-Received: by 2002:a19:a40a:0:b0:522:3551:35f5 with SMTP id 2adb3069b0e04-52b89564058mr6258471e87.14.1717442817779;
-        Mon, 03 Jun 2024 12:26:57 -0700 (PDT)
-Received: from localhost ([79.142.230.34])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6900c692b0sm235052066b.151.2024.06.03.12.26.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Jun 2024 12:26:56 -0700 (PDT)
-From: Andreas Hindborg <nmi@metaspace.dk>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Andreas Hindborg <a.hindborg@samsung.com>,
-	Keith Busch <kbusch@kernel.org>,
-	Bart Van Assche <bvanassche@acm.org>,
-	John Garry <john.g.garry@oracle.com>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] null_blk: fix validation of block size
-Date: Mon,  3 Jun 2024 21:26:45 +0200
-Message-ID: <20240603192645.977968-1-nmi@metaspace.dk>
-X-Mailer: git-send-email 2.45.1
+	s=arc-20240116; t=1717442854; c=relaxed/simple;
+	bh=M13JtfGg2Uk/kUvNWpoAyXvKRbE2DFPEk7UXEXSTI3E=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=eWg1hQaVr5qZuq6nCmhGRbBhF/EWZfkchR05d8oQ1AJzY70IIRf5QQm+SIdFulDLJyrmMFXsdjd8RDUYI/zNgzwMpQCNWdAr66rVavtElfvINpALYTbJowo8o9xRj0BbJDusCJOGYtj6tyg+e5jod6emeoIsKyJoDRZZdER/HvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WzbsAMde; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 453B7tNm020753;
+	Mon, 3 Jun 2024 19:27:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=5HQNZKuI1YuyRTYlGzxrLd
+	baSt72aBmKz7cvaL941FM=; b=WzbsAMdeTeQAwgg6+NoWS5F/UVas6x3mTnfKl/
+	CKrcI1gMSUZj2P+ESpfIYZzXmnfke6Yl/Z07txaX+43NJZZYml3dzZmvJsQCKNMZ
+	q2eLU9PqiKLjbuhufLomcTZPdydxuxb81vyCHuN9yz4vitSeNgm2C9p+XP9W1rcA
+	jpwu0v97qtbaZ9VKa+ULogluDSwFIyQDa+OTSUBj+lxVQgjGOUPiTodvllT/26bx
+	5IEvrhcubWF7NCARBrE+6/Bf49xWl6/DnTZoRo1hRG0CCgFEd6s1YZhKdG5JHm5K
+	7nKG2+OpoI8vqPpBi/sjlioRHVsy6qYVgAhKQn+m/nPGL/Pw==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfw59mmd1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 03 Jun 2024 19:27:17 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 453JRGnL011977
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 3 Jun 2024 19:27:16 GMT
+Received: from hu-sibis-blr.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 3 Jun 2024 12:27:10 -0700
+From: Sibi Sankar <quic_sibis@quicinc.com>
+To: <sudeep.holla@arm.com>, <cristian.marussi@arm.com>, <rafael@kernel.org>,
+        <viresh.kumar@linaro.org>, <morten.rasmussen@arm.com>,
+        <dietmar.eggemann@arm.com>, <lukasz.luba@arm.com>,
+        <pierre.gondois@arm.com>, <vincent.guittot@linaro.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-pm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_mdtipton@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, Sibi Sankar <quic_sibis@quicinc.com>
+Subject: [PATCH V5 0/1] firmware: arm_scmi: Register and handle limits change notification
+Date: Tue, 4 Jun 2024 00:56:53 +0530
+Message-ID: <20240603192654.2167620-1-quic_sibis@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,49 +72,54 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: r0N6LlZCwti3nGFuHzdgR2zYLk4WcBNv
+X-Proofpoint-ORIG-GUID: r0N6LlZCwti3nGFuHzdgR2zYLk4WcBNv
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-06-03_15,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
+ spamscore=0 lowpriorityscore=0 priorityscore=1501 suspectscore=0
+ adultscore=0 clxscore=1015 mlxlogscore=852 bulkscore=0 phishscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406030158
 
-From: Andreas Hindborg <a.hindborg@samsung.com>
+This series registers for scmi limits change notifications to determine
+the throttled frequency and apply HW pressure.
 
-Block size should be between 512 and PAGE_SIZE and be a power of 2. The current
-check does not validate this, so update the check.
+V5:
+* Drop patch 1 and use pm_qos to update constraints. [Vincent]
+* Use sdev instead of cpu_dev in dev_warn. [Christian]
+* Pass sdev directly through private data. [Christian]
+* Dropping Rb's for now.
 
-Without this patch, null_blk would Oops due to a null pointer deref when
-loaded with bs=1536 [1].
+V4:
+* Use EXPORT_SYMBOL_GPL instead. [Trilok]
+* Use a interim variable to show the khz calc. [Lukasz]
+* Use driver_data to pass on the handle and scmi_dev instead of using
+  global variables. Dropped Lukasz's Rb due to adding these minor
+  changes.
 
-Link: https://lore.kernel.org/all/87wmn8mocd.fsf@metaspace.dk/
+V3:
+* Sanitize range_max received from the notifier. [Pierre]
+* Drop patches 1/2 from v2. [Cristian]
+* Update commit message in patch 2.
 
-Signed-off-by: Andreas Hindborg <a.hindborg@samsung.com>
----
+V2:
+* Rename opp_xlate -> freq_xlate [Viresh]
+* Export cpufreq_update_pressure and use it directly [Lukasz]
 
-Changes from v2:
+Sibi Sankar (1):
+  cpufreq: scmi: Register for limit change notifications
 
- - Use blk_validate_block_size instead of open coding the check.
- - Change upper bound of chec from 4096 to PAGE_SIZE.
+ drivers/cpufreq/scmi-cpufreq.c | 36 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
 
-V1: https://lore.kernel.org/all/20240601202351.691952-1-nmi@metaspace.dk/
-
- drivers/block/null_blk/main.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/block/null_blk/main.c b/drivers/block/null_blk/main.c
-index eb023d267369..967d39d191ca 100644
---- a/drivers/block/null_blk/main.c
-+++ b/drivers/block/null_blk/main.c
-@@ -1823,8 +1823,9 @@ static int null_validate_conf(struct nullb_device *dev)
- 		dev->queue_mode = NULL_Q_MQ;
- 	}
- 
--	dev->blocksize = round_down(dev->blocksize, 512);
--	dev->blocksize = clamp_t(unsigned int, dev->blocksize, 512, 4096);
-+	if (blk_validate_block_size(dev->blocksize) != 0) {
-+		return -EINVAL;
-+	}
- 
- 	if (dev->use_per_node_hctx) {
- 		if (dev->submit_queues != nr_online_nodes)
-
-base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
 -- 
-2.45.1
+2.34.1
 
 
