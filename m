@@ -1,265 +1,165 @@
-Return-Path: <linux-kernel+bounces-198704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74EBD8D7C59
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:21:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 882B98D7C5A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:21:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 988071C21B6C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 07:21:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E816283E6D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 07:21:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D0464DA06;
-	Mon,  3 Jun 2024 07:21:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A137D433BE;
+	Mon,  3 Jun 2024 07:21:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lbKy+ACO"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="UT0va7Om"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9743B48CC6;
-	Mon,  3 Jun 2024 07:21:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.18
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717399271; cv=fail; b=jggWRjtZauwi7QNvfkEkd5u55WHzMGgFgBI7XYZH4y9lGf2/UV+NnA2I02FqYR4CaLWtvyY0O057MdtfMoRcKl5Hb226gX7eUUK7/zKG+K26pwbeSM9rlnNUXaRoafhq+3jQuoQKYknD42JkXVvtcpto643XH3BhIBN0WQuNFOE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717399271; c=relaxed/simple;
-	bh=s+DlywGaVIoHDRJtp7Eb0YEGmn9TgA6lZPS301mIuqE=;
-	h=Date:From:To:CC:Subject:Message-ID:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Ut5H0xAMUWRfk+yqphvFwdA50lZxp7ZtUd4w1m7pPQy303UI6G77KNBNTillQsIXawzzY7q0iU4u7xxmYHujztkm1kRcofADpkp9KbMabBcPOpqqA7vP7/Oa0Jmu4oA+cPbWOOJMTsc57KVPaYe89VULpbWs0ULteplZQbN7jGw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lbKy+ACO; arc=fail smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717399268; x=1748935268;
-  h=date:from:to:cc:subject:message-id:in-reply-to:
-   mime-version;
-  bh=s+DlywGaVIoHDRJtp7Eb0YEGmn9TgA6lZPS301mIuqE=;
-  b=lbKy+ACOG//BQVJLiMyRHb0wcq6I0MG+2wEiFhSzUiE4bV5bCKqJoi7q
-   LZfRMWtBZGs/j4geiPnZXg3SKrC17CGm0xrxQ2NiwFNwIDqQUPYZEOvsD
-   RZsuZMpWKLwLC5jtB9YEFNvwol3nbW+81P5LK/vgskRMOqnRwApmNn6b3
-   pC+SLJFvZHxAu+Uq0g6d3ZnH05SXsbz1xlh8wRdnQERHS+0TX6NDbQ8Np
-   n0bGR+1qQloOwYOpxgWjqggJKHWHf8C+dyMKZslJdXRtwbbCOexoeibjG
-   Q4DIhpdvKiS9jwOrxQTLCo4MZYl828W8HTenTwz8qw6Jf2JymBuRA8WBE
-   w==;
-X-CSE-ConnectionGUID: UGHo72bvR/6wuPl2uVxL2A==
-X-CSE-MsgGUID: KALJt7W3T42V9RrkyxSwOQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11091"; a="14039304"
-X-IronPort-AV: E=Sophos;i="6.08,210,1712646000"; 
-   d="scan'208";a="14039304"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2024 00:21:08 -0700
-X-CSE-ConnectionGUID: 9spVlBG/SbGnw9mMlGAuKQ==
-X-CSE-MsgGUID: 719kk609RlSp4+MBjfxe8g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,210,1712646000"; 
-   d="scan'208";a="37388505"
-Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
-  by orviesa008.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 03 Jun 2024 00:21:08 -0700
-Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 3 Jun 2024 00:21:07 -0700
-Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
- fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 3 Jun 2024 00:21:07 -0700
-Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
- fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Mon, 3 Jun 2024 00:21:07 -0700
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.168)
- by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 3 Jun 2024 00:21:06 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=cpvrUmpxMLzNaDZQGhYaVCnQPiIaPJbPSAOFm5Im55kvvhZlsGKQMrJ5ORiI6EzsX/zLtjoIP/uhA1UqfgCiXk66pcUHEl0ItNd3d6r9ALbrKY6clNp0izaGQC/Sxm+dUnJiXIcyX7OhfxJT0+4YO0DZw7hG3PIPGp/+3hePUGetfimxC2m883M6TFgh3i43xfgdNRb+k7kCHFJH6FWF4I+4g+lwVrWCAPmDvZcRXXoy9NthWA0v7RpRR1p+79o9Vn1CYVOAqKsY3/L+RBTnMQTaitaJ0HUrZKte6DyJaz8wGUHflDBEoik7aVCuFwDb4mD/0uhBI82aV1etb+qocg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5MqsarY+MV6U8OAY0qbzc+kTzXVqTPKXkanPda5OWwg=;
- b=XwPaYRPNB2lUhYtsrlc+Faq5LCUg65uRAOpCdou8MODbFLF26EmDQAY2riLxzUABSZOBsy4d48B4o0H2FQw26GAO5h6g1DVMCXtbTAaN1QAMinqhAuBK9hcW2gc3a6y3DAtahdabJTUliuqCK4CCn7kDjQ+Z+DntoPelKtG59kYySZMq0a7QTgW4Z6KXUL+CeaAdiC9c+pF35F7mU578szamSD/FhmN7fSQLxDndRAMOaFkuitIVY6T8NPeyGw5BD3iz3/3477O/PemtF94X6xyjB4Nmwp6AJcO4khJOR+J86EUIgTRYZRRBk7Sgj87A3KEpaUL6jt80hzMHEXDtrg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
- by SN7PR11MB6750.namprd11.prod.outlook.com (2603:10b6:806:266::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.22; Mon, 3 Jun
- 2024 07:21:04 +0000
-Received: from LV3PR11MB8603.namprd11.prod.outlook.com
- ([fe80::4622:29cf:32b:7e5c]) by LV3PR11MB8603.namprd11.prod.outlook.com
- ([fe80::4622:29cf:32b:7e5c%2]) with mapi id 15.20.7633.021; Mon, 3 Jun 2024
- 07:21:04 +0000
-Date: Mon, 3 Jun 2024 15:20:56 +0800
-From: kernel test robot <oliver.sang@intel.com>
-To: Kenton Groombridge <concord@gentoo.org>
-CC: <oe-lkp@lists.linux.dev>, <lkp@intel.com>, Kees Cook
-	<keescook@chromium.org>, <linux-wireless@vger.kernel.org>,
-	<johannes@sipsolutions.net>, <concord@gentoo.org>, <davem@davemloft.net>,
-	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-hardening@vger.kernel.org>, <oliver.sang@intel.com>
-Subject: Re: [PATCH v2] wifi: mac80211: Avoid address calculations via out of
- bounds array indexing
-Message-ID: <202406031527.5530f205-oliver.sang@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240517145420.8891-1-concord@gentoo.org>
-X-ClientProxiedBy: TY2PR06CA0036.apcprd06.prod.outlook.com
- (2603:1096:404:2e::24) To LV3PR11MB8603.namprd11.prod.outlook.com
- (2603:10b6:408:1b6::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B033F9EC
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 07:21:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717399301; cv=none; b=Wc7WU6f2oe4nHja13ay6V21SnakFMaLYzr/ikQ7wlrvtu+ltyCVFLZsyTx9PJ/abXinkuqQa3UXsCbSrs3qQse5kOzqEy1xbB1yUhi4zpjqMt+ZvG7FvPUBkWXeAC9+SiWU6CHx6vwD86cs1agyQtpyWFH0j4fc713le4dg0kHE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717399301; c=relaxed/simple;
+	bh=eoCWKqOHYN2ze7yljZBylfR7DEimxZMJimxi2bjNq+s=;
+	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:References; b=nAKVrG4fhumpoWmcIsYbiipe+7rUBGxMepwENWVBVUGAicWc9uKOcw7YB3TdUoF6A+LJQ3Fen1+Z2BNum6AApkKW6PTFSr+A/u2VG4WhbQJS22DjOO0NHGOJ2Ohakdvw7fDbIjGpeqmjI2VyR8t6FbEP7YBzAmLUpjnRvak6lzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=UT0va7Om; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240603072130euoutp02b3dff7617bac94560bfc7b87cd174c5d~VbY5VSWLX2414924149euoutp02h
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 07:21:30 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240603072130euoutp02b3dff7617bac94560bfc7b87cd174c5d~VbY5VSWLX2414924149euoutp02h
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1717399291;
+	bh=A3GJqBOGda1XX1J1THbvxvncPq9YyoJs+9JK1OPRqLw=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=UT0va7OmlGC4TWQ5dyOvsSjUcMdQT+z9dO6Xtkgtw0fO+L+Hf1qPXuwW8d6pXrLNI
+	 2U7vUfHgZEUSJpFw2kS+OevYGMbd8VPd8ALVbn9/vOUMMaUemqV0x7gEUHjSw6VKnr
+	 WA1GB20GRyVZyINR6drT8o0YPmDn8dBYFyl56uK8=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20240603072130eucas1p1614496ab167ccda86c91200fb968570d~VbY5Cr4Ac2940629406eucas1p1s;
+	Mon,  3 Jun 2024 07:21:30 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges1new.samsung.com (EUCPMTA) with SMTP id 71.CD.09624.AFE6D566; Mon,  3
+	Jun 2024 08:21:30 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240603072130eucas1p11d5ede76d3a846a2d8a73781196ac482~VbY4p3M1s2940629406eucas1p1r;
+	Mon,  3 Jun 2024 07:21:30 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240603072130eusmtrp10a9b3a16213ae34263f174550bd59013~VbY4pSpr80870508705eusmtrp1Q;
+	Mon,  3 Jun 2024 07:21:30 +0000 (GMT)
+X-AuditID: cbfec7f2-bfbff70000002598-f6-665d6efa6b81
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms2.samsung.com (EUCPMTA) with SMTP id A0.CE.09010.AFE6D566; Mon,  3
+	Jun 2024 08:21:30 +0100 (BST)
+Received: from CAMSVWEXC01.scsc.local (unknown [106.1.227.71]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240603072129eusmtip2fbcc0a3471f04bc43786482b21eefbe7~VbY4ZxQO32701327013eusmtip2s;
+	Mon,  3 Jun 2024 07:21:29 +0000 (GMT)
+Received: from localhost (106.110.32.44) by CAMSVWEXC01.scsc.local
+	(2002:6a01:e347::6a01:e347) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+	Mon, 3 Jun 2024 08:21:29 +0100
+Date: Mon, 3 Jun 2024 09:21:24 +0200
+From: Joel Granados <j.granados@samsung.com>
+To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas@t-8ch.de>
+CC: Luis Chamberlain <mcgrof@kernel.org>, <linux-kernel@vger.kernel.org>,
+	Kees Cook <keescook@chromium.org>
+Subject: Re: Current state of the sysctl constification effort
+Message-ID: <20240603072124.gagi6uxkdux2p6qa@joelS2.panther.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV3PR11MB8603:EE_|SN7PR11MB6750:EE_
-X-MS-Office365-Filtering-Correlation-Id: 84a0be18-68dc-486d-1b49-08dc839dba95
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|1800799015|376005|7416005;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?EojBqrYoftR9ii21u8pZJeEF/s4q/PjbA63WYXev+wdJgWouiYZSIYrvu0SU?=
- =?us-ascii?Q?jmdmwyu0Ja5Ntj4SvSQOe6rLVocFWeumTqHYinkTVJgWSU7A3iW9L7T5Vqw/?=
- =?us-ascii?Q?aIQJHpAm8gUXdedeBs+yoSt6XHaHYUgEhhe+L2HsQRN89ToPV7dCoZdFqchl?=
- =?us-ascii?Q?sTZLgHAZv6f1Q/5D8ojH6NWD50Oupy7CbFcqiggUTkdnzjDyaqCvNotzG6Lj?=
- =?us-ascii?Q?34RFwsdblX9XcWefHi/b2ajPgypCx6ZS4/6bPUs2hZN2LDtjBl+Fw9O2CkkN?=
- =?us-ascii?Q?LwIaaaPCESf9CsIinF48XhbxSg307n+/d43Kox9yw6dIkcCus68qWsgsLTFW?=
- =?us-ascii?Q?rtHEgHJ0pzFvhsXLbV5W5AcEgo2jawwy+4PzfkHBghD8mTYZJQWSEHnts86J?=
- =?us-ascii?Q?WphyaQ8mOrlMGsgIDPnGKEGdIqjkhZqGSEmIBqWKX9HMmrxt2Jaj4nShGfDG?=
- =?us-ascii?Q?HV9SdytPMdfxjtch72/XSVb6W4Icw4tIGIOHErH3KJvXg1j2fDBg7jpZe4uz?=
- =?us-ascii?Q?IqQPz/rtrcx6FxyL4AaW0jjv7l/KrylON6VW8bUfrDHpc7X4gWEvRCSIhw9I?=
- =?us-ascii?Q?cjN50Q0q5qK11uJZe+JN28ClhCPumB+0BqWCE9B6/qZqLzQ0bDAROmGmxgOj?=
- =?us-ascii?Q?iMFpGOjQgsUpdehM+jE+WkJesZBVKo71BkclR2P05Rm3gdXntw6DcM8Ok3Af?=
- =?us-ascii?Q?xf2wflAdL3cqOFvL17zYwD+7xPf13Js5rkgd090xWaKGLJ7WO1GAhZfD6slf?=
- =?us-ascii?Q?CUq63vj50/zoWnTRypoBuTf1Y74lgR9UetZCr1svzLVIVseYSnwJALTKJmoB?=
- =?us-ascii?Q?O6HCktTOCFuKvL9YFD8NCZSKupRAZzawDo347ZL3YCKINMXcp51PvFL3ypLg?=
- =?us-ascii?Q?oo4SHx/m70yWZYmjriJppHqNjWDzcNKPqH0DEsjhTKRJ+FrT2aIcayKV6IDR?=
- =?us-ascii?Q?jYtWxpCyRxkZjTsEJOtpYtJKXKy1Xaf0Mk0HTvj3BypbaBscRe3EMDmC7XeY?=
- =?us-ascii?Q?xMwYXPqxHDL/SY3qYjWV8REjnpnc/h0k1hPLfAF8pZ0zBqLlmeuyGAJ8rTWG?=
- =?us-ascii?Q?KcRCTjH+CELgfw/UIWFyD5YpGNxKVO3v2xnZJntx6s0XmP/uOIO1RlsS7ykc?=
- =?us-ascii?Q?FrP75FGAnK/488Ea30b2s6L+bXaydEP2vqA4Pt27u40bwuRt3AKMG4nUtdwF?=
- =?us-ascii?Q?y9eTrmxpjAK0ztzIOVzB5N4+QL60+LZ5bDoVh1ufqQTo6xw48rsWW5Qi5vc?=
- =?us-ascii?Q?=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR11MB8603.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(376005)(7416005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?oAM4XtVlS/y+L0SaRC1LkAXkftuwBTIGLidSgHL64xUi5ObZIC9M8T7/kZFM?=
- =?us-ascii?Q?NNY1b/lCugVCfbQcyRDzJ8/C1AHXv5ifTVtPspkr0b+NTFMQFxhjCv3n8YXF?=
- =?us-ascii?Q?BWVneLrbhwg97HMaHi7BG9KhZt9tFbtDWQRTJwdHlWhNcEVXOotmLNz1wVJv?=
- =?us-ascii?Q?tQKwvgK+kwht3gubplRUsYkp8/Sh2uswozvkUE6cAKo8ubCzVmlJHS9IVhW6?=
- =?us-ascii?Q?cB7M6zau5A/2b60rOZ0K7Opo+qHRdbF+KCETz7RrBcnClYbATm+lJe+CgiW4?=
- =?us-ascii?Q?BS4vmPakgWQtqisv5q7tDsNwcBxcW8wfa0BYVaJr+CTCD1wUCylHDUZxeowM?=
- =?us-ascii?Q?MqGwy2MB0AnZcIm1drkNu0mAxpuXwTeZhfvqeCLrHVcw5g036xAxyqzemLkj?=
- =?us-ascii?Q?odt+eJoFxNUXanOmy9TdEoEg0v0sJbEQlzGR05EqfuT5m1cuzmCNnl2DdBrY?=
- =?us-ascii?Q?UGJmFfUCwNbludrMHTeXJ14vXcgyn2cjJ0dCaaa8Gtr9enV6kvqqqnBSIY1p?=
- =?us-ascii?Q?7D71IafJYA7RQMGICYJUDPT9wbdckUktqzY8chOMhx85MGhh0i/kZXr4O5HU?=
- =?us-ascii?Q?zNMcNFY17q3/DdEh/GR9MKmEZV2fWp6H7zOavzoMiZyTSf0Gb/mvtd8cB1jH?=
- =?us-ascii?Q?WCWnK4GcPdfe/ZVZBDH164TqgKo8q4othUhpHqa6luT2f6qkS8st3SJZXING?=
- =?us-ascii?Q?konCM3bX8c9lVrFp7rxrTuvKIJ74VoaNX5Dh9aMQhBRcQPO8Qtt8TSd+rRrf?=
- =?us-ascii?Q?cBmV5FWnt5aRCaM0ioxKwdycSy8YB2WjWlx7iEJI93ZaPEv5FGMG9XilkW08?=
- =?us-ascii?Q?+14Mn8RjNyDp6uJTe9kT3QyNv5bdUh9Cz30ZwaQ27ImFJYiNHpydpx+LgdKW?=
- =?us-ascii?Q?tFlZO3KwDpuGHwhlbxMxS3tmvChHDR5GB2zHqhBOAKjjltGUxqsPYMgC5jsX?=
- =?us-ascii?Q?bk0HxE3UnYY9naVNMIHY6YKKBQJQ4vfdQLOJQRpBcU17+NAJ5xp2pZmHAdCG?=
- =?us-ascii?Q?TUM9EE/I52KMUgzNST6oLOZ3qkwgomEj8Ip2ZyCsVnTqJ7Uq0tFTfPeE3Utn?=
- =?us-ascii?Q?MAZ60zu/GTaYadjsZl8rHsqpB0kjmDo0RtFoNUHf7buZSAEJBEX6mrA+QBjm?=
- =?us-ascii?Q?J8mWSVqUhYl42s0i/02wi1K/SVP20Ateqcc7uVRf9Wia7r7/MgwFHhjLBvMv?=
- =?us-ascii?Q?0Nsq0v7s7QXKQsrXYjLz53ssDBLzbOeehDJrRTa2Sz3k/TG/PMoa4N5i4ssR?=
- =?us-ascii?Q?hR6LZ0ZkO1NodKKDvNaNWDhi/B5CLS8irKZcWq/Y9JNJ6GVYjOOtSHbEoY8m?=
- =?us-ascii?Q?NOfyPqNQaErvFXsqOVsBYpaFmBpxvGqvImXqa3Cvv/EjpEWACMCHz3u2siCk?=
- =?us-ascii?Q?tkPZbXZZVuh6cAtVyaZfrKTKx/mIqm+b77uMUDsDFzgFVl3rFsZINVMk0jhC?=
- =?us-ascii?Q?Yj2KLmO/sn2FnJ6lJrZWKVdeYC6gLXvbegRmLA5JlRAqDfT+OUK6/WaeiBYi?=
- =?us-ascii?Q?bnJJjU4vgUFEqlJlpPXNB8yfA2a7q89T87OrereSmVgnZqzuCx/0ajif2hlH?=
- =?us-ascii?Q?jCci38PPEceO5EM0VwzDuUiJBEY+pBNXZsrSrAJOH1KOp7ypamPgqWLw8F3T?=
- =?us-ascii?Q?AQ=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 84a0be18-68dc-486d-1b49-08dc839dba95
-X-MS-Exchange-CrossTenant-AuthSource: LV3PR11MB8603.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jun 2024 07:21:04.5935
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: BobLyQN942fEmMkBIC6fQjoDhouK5Iy3F47u+yr1T8u8bc57/yUMKexM9VXURSD6snOQgBGTgqwTEw7vGL9p2A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR11MB6750
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7823ff95-1490-4c1b-b489-a9c05adad645@t-8ch.de>
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+	CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupileLIzCtJLcpLzFFi42LZduzned1febFpBrPuq1uc6c61uLxrDpvF
+	jQlPGS0OvZ3O5sDiMbvhIovHplWdbB6zl9xg8fi8SS6AJYrLJiU1J7MstUjfLoEr48SRVYwF
+	S7gqDvyYzdLAuImji5GTQ0LARGLSjz3sXYxcHEICKxglnq/ewAbhfGGUaPt2mBXC+cwocXvx
+	RlaYlm0T70NVLWeUmLTgDzNc1cuva6FaNjFKLOvbC9bCIqAi8fH4biYQm01AR+L8mzvMILaI
+	gLnEnYOzwWxmgVyJeZe62UFsYQE7iT0bloPZvAIOEs0/5rFA2IISJ2c+YYGo15O4MXUK0Bkc
+	QLa0xPJ/HBBheYnmrRAjOQVsJGbs38UGcbWixNfF91gg7FqJtcfOgD0tIXCBQ+LV99tgcyQE
+	XCS+LU+CqBGWeHV8CzuELSNxenIPC0T9ZEaJ/f8+QDWvBnqy8SsTRJW1RMuVJ1AdjhIrHi6H
+	GsonceOtIMRxfBKTtk1nhgjzSnS0CU1gVJmF5LNZSD6bhfDZLCSfLWBkWcUonlpanJueWmyY
+	l1quV5yYW1yal66XnJ+7iRGYXE7/O/5pB+PcVx/1DjEycTAeYpTgYFYS4e2ri04T4k1JrKxK
+	LcqPLyrNSS0+xCjNwaIkzquaIp8qJJCeWJKanZpakFoEk2Xi4JRqYNKJiHEseG+yq3ZHg8Ke
+	O6JPk3edKDc2PBObKyQ/7fb5go0qr67WpFQ+bTb8oqVq2/xAR6VwwuSVpvr1NzaeT86qTLvq
+	l6VSPsE1yqzCYMEsqZqkjad4tv1xZs8+r732VLH7lTb2Ipelt0LeFhZPPKtRazl/d5s71+V/
+	O6OyT/Bqhky9ctDxv9fXCL2M2UHLuPJenGviOLKxwXe+/9E9mrJBBmKay04mPtRavNW66IXy
+	omWKlysc2j6vXKax9MFb3ls1yrUyJX4Nd/JkWXdHqSWIerYJbUxhmM/if3qXk3/Kk6mvdlss
+	jW8s3GDJ/9Vz9tNVsalrar/bvZS5vNFb7PumoEn9U3oEuGJLorNllFiKMxINtZiLihMBo1Sx
+	9Z0DAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrMIsWRmVeSWpSXmKPExsVy+t/xe7q/8mLTDJYv4rY4051rcXnXHDaL
+	GxOeMlocejudzYHFY3bDRRaPTas62TxmL7nB4vF5k1wAS5SeTVF+aUmqQkZ+cYmtUrShhZGe
+	oaWFnpGJpZ6hsXmslZGpkr6dTUpqTmZZapG+XYJexokjqxgLlnBVHPgxm6WBcRNHFyMnh4SA
+	icS2iffZuhi5OIQEljJKNNw8yw6RkJHY+OUqK4QtLPHnWhdU0UdGiRuNZxghnE2MEpNOzGYC
+	qWIRUJH4eHw3mM0moCNx/s0dZhBbRMBc4s7B2WA2s0CuxNsT88FsYQE7iT0bloNt4xVwkGj+
+	MY8FYmg/o8SdZ1MYIRKCEidnPmGBaNaTuDF1CtAZHEC2tMTyfxwQYXmJ5q0Q8zkFbCRm7N/F
+	BnG1osTXxfdYIOxaiVf3dzNOYBSZhWTqLCRTZyFMnYVk6gJGllWMIqmlxbnpucVGesWJucWl
+	eel6yfm5mxiBsbft2M8tOxhXvvqod4iRiYPxEKMEB7OSCG9fXXSaEG9KYmVValF+fFFpTmrx
+	IUZTYBBNZJYSTc4HRn9eSbyhmYGpoYmZpYGppZmxkjivZ0FHopBAemJJanZqakFqEUwfEwen
+	VANTuPzka5/j/h89d/zk7KLecM2t/iKB96WVfqzYMcsrpWG6Zdgy3kiJHqOEgKD2CZF7a1Ze
+	0g/Q4ZuVNps3VN1+21eDf04B7wUunLhYW+KivKjx5sztu1+0JLlKFrK9dczZkfvJ72QbW1T7
+	wfwEw4rkV4eaGnTWJUf1Xijb0f3EJTDv9lq79tuzP3DYzppcn9yd62q49uTmI42918V/9Pfw
+	bO+88fnhQokC0fnbZwi0H7k5y8Nr59XSLSUK52INzdIfrruw6eta56dJnW8WP72xi2vqmhX3
+	zP29WK+dVVy+vOt/++/QYqG5N66ZeE+LmdG2+oPkjjVL2Ldqur2atbh+Qd3XOTckXq2xPnew
+	Y3/nWyWW4oxEQy3mouJEAP3rBGlGAwAA
+X-CMS-MailID: 20240603072130eucas1p11d5ede76d3a846a2d8a73781196ac482
+X-Msg-Generator: CA
+X-RootMTR: 20240531105042eucas1p1bcf3ee22d224c8d88aca633e5f01e0d2
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240531105042eucas1p1bcf3ee22d224c8d88aca633e5f01e0d2
+References: <CGME20240531105042eucas1p1bcf3ee22d224c8d88aca633e5f01e0d2@eucas1p1.samsung.com>
+	<7823ff95-1490-4c1b-b489-a9c05adad645@t-8ch.de>
 
+On Fri, May 31, 2024 at 12:50:32PM +0200, Thomas Weißschuh wrote:
+> Hi Joel, Hi Luis,
+> 
+> most of the sysctl handler preparation patches have been picked up by
+> the subsystem maintainers and are available in -next.
+> 
+> Only two are missing:
+> 
+> * utsname: constify ctl_table arguments of utility function [0]
+> * sysctl: constify ctl_table arguments of utility function [1]
+> 
+> Both of them are going through the sysctl tree anyways.
+Indeed. These are going to go into sysctl-next as soon as I get around
+to creating the branch (this week, if all goes well :)
 
+> 
+> With this done it should be possible to also queue up 
+> sysctl: treewide: constify the ctl_table argument of handlers [2]
+> for the bots to chew on in -next.
+> 
+> My local builds are still succeeding on the last submitted version of
+> the patch.
+Indeed, and I have also tested it in the kernel test bots through my
+kernel.org repos. So this is no surprise. 
 
-Hello,
-
-kernel test robot noticed "hwsim.autogo_force_diff_channel.fail" on:
-
-commit: f68b86b282be59dcb687700c3b9ede5cd16e36cf ("[PATCH v2] wifi: mac80211: Avoid address calculations via out of bounds array indexing")
-url: https://github.com/intel-lab-lkp/linux/commits/Kenton-Groombridge/wifi-mac80211-Avoid-address-calculations-via-out-of-bounds-array-indexing/20240517-230100
-base: https://git.kernel.org/cgit/linux/kernel/git/wireless/wireless-next.git main
-patch link: https://lore.kernel.org/all/20240517145420.8891-1-concord@gentoo.org/
-patch subject: [PATCH v2] wifi: mac80211: Avoid address calculations via out of bounds array indexing
-
-in testcase: hwsim
-version: hwsim-x86_64-07c9f183e-1_20240402
-with following parameters:
-
-	test: group-14
-
-
-
-compiler: gcc-13
-test machine: 8 threads 1 sockets Intel(R) Core(TM) i7-4770 CPU @ 3.40GHz (Haswell) with 8G memory
-
-(please refer to attached dmesg/kmsg for entire log/backtrace)
-
-
-
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <oliver.sang@intel.com>
-| Closes: https://lore.kernel.org/oe-lkp/202406031527.5530f205-oliver.sang@intel.com
-
-
-
-2024-06-01 05:33:00 ./run-tests.py autogo_force_diff_channel
-DEV: wlan0: 02:00:00:00:00:00
-DEV: wlan1: 02:00:00:00:01:00
-DEV: wlan2: 02:00:00:00:02:00
-APDEV: wlan3
-APDEV: wlan4
-START autogo_force_diff_channel 1/1
-Test: P2P autonomous GO and station interface operate on different channels
-Starting AP wlan3
-Connect STA wlan7 to AP
-Connection timed out
-Traceback (most recent call last):
-  File "/lkp/benchmarks/hwsim/tests/hwsim/./run-tests.py", line 591, in main
-    t(dev, apdev)
-  File "/lkp/benchmarks/hwsim/tests/hwsim/test_p2p_channel.py", line 444, in test_autogo_force_diff_channel
-    wpas.connect("ap-test", key_mgmt="NONE", scan_freq="2412")
-  File "/lkp/benchmarks/hwsim/tests/hwsim/wpasupplicant.py", line 1153, in connect
-    self.connect_network(id, timeout=timeout)
-  File "/lkp/benchmarks/hwsim/tests/hwsim/wpasupplicant.py", line 506, in connect_network
-    self.wait_connected(timeout=timeout)
-  File "/lkp/benchmarks/hwsim/tests/hwsim/wpasupplicant.py", line 1437, in wait_connected
-    raise Exception(error)
-Exception: Connection timed out
-FAIL autogo_force_diff_channel 29.021569 2024-06-01 05:33:42.767850
-passed 0 test case(s)
-skipped 0 test case(s)
-failed tests: autogo_force_diff_channel
-
-
-
-The kernel config and materials to reproduce are available at:
-https://download.01.org/0day-ci/archive/20240603/202406031527.5530f205-oliver.sang@intel.com
-
-
+> 
+> 
+> Thomas
+> 
+> [0] https://lore.kernel.org/lkml/20240518-sysctl-const-handler-utsname-v1-1-27a6c8813620@weissschuh.net/
+> [1] https://lore.kernel.org/lkml/20240513-jag-constfy_sysctl_proc_args-v1-1-bba870a480d5@samsung.com/
+> [2] https://lore.kernel.org/lkml/20240423-sysctl-const-handler-v3-11-e0beccb836e2@weissschuh.net/
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
+Joel Granados
 
