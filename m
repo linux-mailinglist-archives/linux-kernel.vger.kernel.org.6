@@ -1,217 +1,220 @@
-Return-Path: <linux-kernel+bounces-199183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9139A8D837C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:07:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB3A78D8380
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:08:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFCF71C246C0
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:07:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2B15283115
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:08:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A78BE12C491;
-	Mon,  3 Jun 2024 13:07:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2117012C528;
+	Mon,  3 Jun 2024 13:08:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="359Uva2S"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2081.outbound.protection.outlook.com [40.107.244.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P7N7YxIX"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B70D12C528
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 13:07:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.81
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717420025; cv=fail; b=Tq7mUfC25ybseXlKwy9q/jMpAzRzY0mkF+tqa+Pyz5siVOrSlGYiO+Mdm4nTwl38JhJfr2u2ELIrLA4A7WGPZv/rBjMe6zPjAduHFunIVcmbYRiaxIvbBYVz+WIuvjsWIRsBp0juWisfPeovOImGgroD/aClTof3YDULgkkElQQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717420025; c=relaxed/simple;
-	bh=zZz+0qfucC3nmXbva/Uio85a91kFwbaaJgUYbpskoiQ=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=p9x2tMiC0Sau26G8NjvoJT6wP/MMVm+PACKfvh+m28V4Z50kfN7rpJO5r5g05q/llwQlaobq8BW37wfhja0jC0O3pNp2OYVZ9m0U21sbjQuuzYv0B0xr45r54WyRwxBWf82wqGXo9sJOalziEUPN6kIXnjOVDDVcqeqkkLtYEk8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=359Uva2S; arc=fail smtp.client-ip=40.107.244.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=S5de58JP0Z607J58SZllKw40mKNdI+ejL9/gGQc+hW9pUfLoHmpBU3UUi3vJQbx+FmsvdC50GNTXGiyXEvpk1ihLtkcMBFLGEaT/ErzY6ulcCPbP4dwTlmvc/5GL3vB3W0Ft3I/1sn7AZrRZJVEua0OQZS7gnw5ICU1iCQC9kQtuhqQheReLRYb5QZg2jUZtCpNlYoyfnj/ym6QOX5OxZV+j0BQ+bzATwybLAqVQgxLNU+PksaadmVGGCOsSSUgUAn2ncpClMk/wWm4jHtsBNglcjdEX+LKhog4yTxpA6KCaVMy18u8PIsJumKY97ZYgowqBYxPrcvKLG+R/WZw+YA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zZz+0qfucC3nmXbva/Uio85a91kFwbaaJgUYbpskoiQ=;
- b=edPCB0gYJHub/zIZ3nnK/pDY/DMKPRXe5YhWoyLcSttIGSMDZXCj+/Xy4SaLfR/jEVEUJSf9n6WpCkrNwDE+w5dZv/g4YC/5TNjLk3XYT7YZLWAkQ7IcdYYX/QH2YSdyFDsOQNPSz9lV1NxdcIUoHphUZ9N62R7r30JDoc/r1+30imyGBzBiZz6Fy1zJCquhsLSWROCM/q4LMM5QCn72XvZ/bOcvNp215Zp+A4FkmbZqV3DcSwoYknQpQzbOvmOSu41blY8cHyFrC0xAY8Y/Cru6kV4/aeVy0m6kL6n8N7l+QAoZTWE8/2JHeGAUQ+UXHopgIsL+sPCqQs/Ez1CG8A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zZz+0qfucC3nmXbva/Uio85a91kFwbaaJgUYbpskoiQ=;
- b=359Uva2SL6NePRwfeXePMrZGYzU3yvbDaAD3opW/s9/VucXQse2pOovc9HhH/BqCcsEiqhkI75bIGfP65O95COzIxyXmglQ1VCUWZsgRGRrVLjoP+wXHs+drQv1LFSz/Ptze5YPDvrsMmCOyx1O9DxyEWwGSzFgaeB7Wb8uxX/0=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from SN6PR12MB2767.namprd12.prod.outlook.com (2603:10b6:805:75::23)
- by SJ2PR12MB9161.namprd12.prod.outlook.com (2603:10b6:a03:566::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.22; Mon, 3 Jun
- 2024 13:07:01 +0000
-Received: from SN6PR12MB2767.namprd12.prod.outlook.com
- ([fe80::e441:89a7:4dd:dce7]) by SN6PR12MB2767.namprd12.prod.outlook.com
- ([fe80::e441:89a7:4dd:dce7%5]) with mapi id 15.20.7633.021; Mon, 3 Jun 2024
- 13:07:01 +0000
-Message-ID: <8e3dfc15-f609-4839-85c7-1cc8cefd7acc@amd.com>
-Date: Mon, 3 Jun 2024 08:06:56 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 1/3] efi/x86: Fix EFI memory map corruption with kexec
-Content-Language: en-US
-To: Borislav Petkov <bp@alien8.de>, Mike Rapoport <rppt@kernel.org>
-Cc: tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
- x86@kernel.org, rafael@kernel.org, hpa@zytor.com, peterz@infradead.org,
- adrian.hunter@intel.com, sathyanarayanan.kuppuswamy@linux.intel.com,
- jun.nakajima@intel.com, rick.p.edgecombe@intel.com, thomas.lendacky@amd.com,
- michael.roth@amd.com, seanjc@google.com, kai.huang@intel.com,
- bhe@redhat.com, kirill.shutemov@linux.intel.com, bdas@redhat.com,
- vkuznets@redhat.com, dionnaglaze@google.com, anisinha@redhat.com,
- jroedel@suse.de, ardb@kernel.org, kexec@lists.infradead.org,
- linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20240528095522.509667-1-kirill.shutemov@linux.intel.com>
- <cover.1717111180.git.ashish.kalra@amd.com>
- <f4be03b8488665f56a1e5c6e6459f447352dfcf5.1717111180.git.ashish.kalra@amd.com>
- <20240603085654.GBZl2FVjPd-gagt-UA@fat_crate.local>
-From: "Kalra, Ashish" <ashish.kalra@amd.com>
-In-Reply-To: <20240603085654.GBZl2FVjPd-gagt-UA@fat_crate.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: DM6PR07CA0057.namprd07.prod.outlook.com
- (2603:10b6:5:74::34) To SN6PR12MB2767.namprd12.prod.outlook.com
- (2603:10b6:805:75::23)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8801812C552;
+	Mon,  3 Jun 2024 13:08:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717420110; cv=none; b=OQF67UyhkDRFNcRZZy/WuC3SNEQSoSnaVDnaFG8u8AmFi9xat1SQZskpCyp97DrbIEboj4Tp0JQDY3QpcGBXS/98EVeSrEzK9arlyfonpodK4gToZVeMFAiTmB4xpygO2jOR6ssBYFv8L9+iBbWXDYDtLB15d9cwUC1fqKH+HGA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717420110; c=relaxed/simple;
+	bh=d1jKSQXV/+hiSgBSN07jICt/1zBKhvpv+CtvkGHUXBg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dFyxiHB6pybrhOATjyQ2TZIRDtSEU3BXIHjfNPJ6xqkb3uq+irwZzFYR5TOSZvSxv/JmUMSxjLNmqj0b/2SQMbUWzm905YbvjXoIP+BOteSOHKvvLU4Hukb+ftJs8wpzrchhwmDEIzYHH3xLE/tlu70o62kE70Ol/t7BeG9prhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P7N7YxIX; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a6266ffdba8so384890466b.1;
+        Mon, 03 Jun 2024 06:08:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717420107; x=1718024907; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qAZowHbU1vntJza1gFJRRVj1jWWarUdVjdkpZ7c+cdY=;
+        b=P7N7YxIXaT2tSImJ8K6UK0JM1X8V99rSvdvRUS1vqR+eozUK8jm0F8mnWk/pXs2sRO
+         1bcqZ9cRYGd5wai8Q/DY9cR7pVXkI7zLW/RVb/7+d+HJqLqXDRUTPfssiLgcQ2Dd3Ta4
+         fCVK1BOQ34YME4V3xVHg/OyvglBDTvLufJOLoTXb6vuwJM5gOXAzIVDj5DDFfLOVHmxC
+         tMj6cbxym16WP1uhKFnSgj9RtL39te86461bzgIJgGvClbEQ2eE3wd0IaaSgNK/9U2FS
+         fdBrn6rTEuSkHFRDZqfXYMWseEZzUid1+Hdbt1YQ1XbzvpmI7ML97aHpjRG+n15+Slqy
+         sKXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717420107; x=1718024907;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qAZowHbU1vntJza1gFJRRVj1jWWarUdVjdkpZ7c+cdY=;
+        b=M9hGGkFE7YE3yP56Bn7kAlcPS1uKDMu2k0NBEjtiJQIYUyVvDB+BgUYjqz385b3RDx
+         J/DNOYwWQlXDj4iGUdC+YLfDJPG1GOJjeVxKs0yHcqiR6Z4Z/C5eytyqmZ6Tz3WDpkE8
+         SS1LZ8p3AOHovdht9WFLGLUAl6UoypQ9TEDOgNHgcG+uu6rCgvacRqaAKsm8ZjgSJeFC
+         MpF9G+7AgWjvrka58UwyaojWBkKxPeiaN8OB5rK6JZUa86slWURDln0yjBTGGrnrMNzF
+         tdBhJsZxxw52UXGvqDpDMgElDqGTnEwuES13xWnUqOloc195PQ+MqXDUj+TpdJxFFIJi
+         25/A==
+X-Forwarded-Encrypted: i=1; AJvYcCXqBpwbrieEmQfPoDpGTPBNYYBhKNLMNgviR176fGV4RK0qgj0LOZPkjPTD6guWzJE0l+OuplDt0UrGEILIwG99uExLm7M4TxV7emm22/87OoKafM2MLfwustdNnbbi+o48ymLP49uAPgYjMzIoSQ191z4nVFB85qWDK6CYt0MKFJFwbg==
+X-Gm-Message-State: AOJu0YzudqcUVbX+F2RtDsnY5XkxnqFoywCPMhaS/0nP+sNbK6ZqK2fl
+	eTUnF3wh2k2uLertuiC31fOP5p8HQRxWf3m4R5jTAu+zpDv45UaD
+X-Google-Smtp-Source: AGHT+IGnj+9M9LN3jV9fbWA5m/49stg2bFbulep5osCaO0G4XJ06eOYrjW09nbcbn9uMP2k4GUe/dA==
+X-Received: by 2002:a17:906:4e87:b0:a66:d1a1:f92f with SMTP id a640c23a62f3a-a681fe4e434mr635709966b.14.1717420106446;
+        Mon, 03 Jun 2024 06:08:26 -0700 (PDT)
+Received: from [10.76.84.176] ([5.2.194.157])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a68a9fdfb3dsm367032666b.154.2024.06.03.06.08.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Jun 2024 06:08:25 -0700 (PDT)
+Message-ID: <d2370ad2-5fed-41b3-bdd5-c6c895283c18@gmail.com>
+Date: Mon, 3 Jun 2024 16:08:24 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN6PR12MB2767:EE_|SJ2PR12MB9161:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7de18f8e-e8db-4b14-d3ea-08dc83ce0e84
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|376005|7416005|366007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VnRoTzJDMWdCUzA2d3FxaE43VzNjZjhlYlh5bHNOUllPaXFEYTVuWFhsbWg4?=
- =?utf-8?B?Z0VGS2tERk94c2VmczdrMlpydmFxb3A2VFMyN1htMW5paU41SHNKRTEzQzc0?=
- =?utf-8?B?cjI2M3ZSNU85THFvdXEvcWljL0V5N05UUGRuVzdndVBzK2VJazNWd2t0ZmZ1?=
- =?utf-8?B?Wk1LM0dDVi94QmhZWm5pKzRLVDdnNVpUVVZIdkJkVjdlL0ltc1VYZFpNbzVu?=
- =?utf-8?B?L0FJcVA4WFljN0FsZVFydUdENWg3R0sxMDcxOXo5dUxRb0x0TFl5M3pzUmNh?=
- =?utf-8?B?eHUwV2d3ZzBHNlBMVUw1L0JiUmoxRTB5WnFhMjNHanNlOTJzLzNBSDR1VTkz?=
- =?utf-8?B?VkZaVnMxWkFOdXBWVFJxR25XOHBWZG9CVzhBeDVkRjR6K01oZ0xocWE5MFdi?=
- =?utf-8?B?UVRIZTRDbVE2M1l1a1EvbC9Ua0Y4WTc2WVhBb1dnSWowMXpqTDkrMHUyQ2dv?=
- =?utf-8?B?ZmxtYWhhOElvdmk2MmQ2NTBHWEZiMU96bVJvZXl6aXFXaW5HTytvNisyUVQ5?=
- =?utf-8?B?Q25CRmtnalJ5Sy9Yb25OR0YrWUFpQXF2Wk5tZVZqdlRYMkd0aU1ET0c4VG9m?=
- =?utf-8?B?ZldLSmVTc2lHUG9PU2NuYUtuQ0dLaEdXVDZmYXJkZFlzNVkzN0VFQXRzZWZH?=
- =?utf-8?B?bmxjVE9zQ0cwam9ubHNZK2VoRnU0aEMyU0Y4c01XZ1lkM25ObmVkSi94T0py?=
- =?utf-8?B?UHRhNlFubFFVZWhjTHpTWUxoQjFzby9yZlBya2N4S0Z4Vng4ZjM0ZXJkOW9S?=
- =?utf-8?B?RUZqWXkrODd2OGlNRWFaODRDVkVRVkhvdkZqQ0ZKT3VUOHQ1cHM2RGJCU2Jr?=
- =?utf-8?B?SUo3OVUxdlVxNU9IZGpxNVFkRUgyNzZ2Y3lnTlJYVUFRVWdNUGVQZWNWdytw?=
- =?utf-8?B?L3J3UUhsWm45TjQrc05sWk1FOUJ0clA3bmtjZTZnKzFGaW1QOG9XQTR0TlBt?=
- =?utf-8?B?eXRxaE11UnhwWHRTamk0cTdjY1NWUDU3THUrcDRRWTJXTUVXekRidW9uVldB?=
- =?utf-8?B?cHBPYkI4RDZURUpITlZFWnppY0JCU1NjL1A3Sk9IcEcwLytCdzZFWlIwSUp4?=
- =?utf-8?B?TFR5R3o2S0xoVzRSQkp5cDA4T0IyeTNhUkRZdWdhaWQrUHZWNmFPSncxdGJ3?=
- =?utf-8?B?cmR3VmlKNEwwak9JSlFoeEx5bWZWclhNbG9Gb25vYXllQ1YxSVFCOGVpbDM4?=
- =?utf-8?B?L2pPWWtQbUFSUm91RHZMd2oxYjE0ZlZKeDVFMmdBa0F0WXNmNGZ3NWxqQlNo?=
- =?utf-8?B?QUNoYUJNdElpWjIxWjBlZVN5dmd2MmRGUXliZ1NqQnhod0R6OUhjS3NOZUtx?=
- =?utf-8?B?VzVPOXgxbnI3a3BhZHlqYVZZRjdkWlBGTGFYRWNTZlRSUy9ITm8wLzI0YzR4?=
- =?utf-8?B?L2Q5UFFnNEh1ekJkT1EvQmpPVWQrdnZiZXZIbnNkMkNnR1h6RUl0NGJsOHA3?=
- =?utf-8?B?TGVlcmx2L2x4eExDZ0M3Rkh0c1U1RldvY3ArQUVMRVhaY1g4TGFzVWpnNW5E?=
- =?utf-8?B?Y05yR0lvUkVRVThWTzhUVllXTk1xa0UwamIyTHNGNmRjRjdDQ3E3RUtQZGo1?=
- =?utf-8?B?b1UvUkF5L0hzR0M3OUcrdG1wY09yS3JnUUUwQXJuV0M1aWZLLy8xSmdDVGVw?=
- =?utf-8?B?Vkpidmk4aEp1ekVFQXFJVzU1UXpMaXFHNFNZeDhSU3Z1aVRFdlo5NHlCaWhD?=
- =?utf-8?B?SUZTL3lidFVhNXRVREtDM1RqWVdVVlkrbkJvQmtrSWMvclZpUWV6Q1hRPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN6PR12MB2767.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005)(7416005)(366007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NlFqUFNCNWd5a0JZN2Fnb3poRjlXdzdCVy9ZMmhUeWE1MUZZMjQwN2puWEZE?=
- =?utf-8?B?aU9pNmI3d1JLb0VWN0hhank2U0wwaVc1NlhCNENFa2tBUEhHS29JTG1QSEFE?=
- =?utf-8?B?aFRNelJleDl3ZnFuU0xhK1gwazRZT3kwOXhWRjRNdHEvMVNKdG1SNUh0cDhn?=
- =?utf-8?B?QXFtWTF5cWhzc0t0cE1UeFkrNC8zT1JvamRuSG1WeWVpY2F5eTcwZW0xZXhD?=
- =?utf-8?B?RytsNjJlVXlYK2w2MVVzeENoeVEzOXhIR245QTJpczlhNEtWS056OGhrdWlq?=
- =?utf-8?B?SkNtVEZHbmluZE9LZUhCYmZTby9rSXRUdUZxaW9QWnNWM1g3c0xzODQ0TjQw?=
- =?utf-8?B?VHdUMUE2SXZocllaaXZ0SzF4QWVqSWtuUzNGTjU3Y3ZEY1Iwd0JyOHBiMW9o?=
- =?utf-8?B?RXJpL1hmWlJZdzV2U3dTTC9SeGRiSkY2VGVKSjc5WTlBeVFIMDhLZ05RU2d2?=
- =?utf-8?B?L0lwbVRVWTF4K0VtQmVaNXZFSXd6aU1mQnE4cUlWMTR2TG1IbTN3K1lJVnE4?=
- =?utf-8?B?NFJ3eVFKdGdIWlF4NjFldHc4S0ZDNWpmTTVWZGRkVFF6a2V5dzlHLzc3MDF3?=
- =?utf-8?B?clk1SThZbGxQbTN2WmFkcStwc0FVaWIvWWxrcnE5TkJ2MUFBTXhHNzhrTWFn?=
- =?utf-8?B?YW9sT05nSnJZeW4yTmxHYkNsZkFUZTRydHpkbXFYRzlZem83dG5DTHpZZ3Ex?=
- =?utf-8?B?Z0g2czE0NVQyVnFOUkFyVDR1aGFXM1dnbkhJWHA5SXh2Ylk5bGhicGx2VWFN?=
- =?utf-8?B?YlY4TmIxbEhkbkJxL25FdWxyK2wwZUZzVTJyelc0TTJYRjNzc3VXRWdDRXRG?=
- =?utf-8?B?aXpoaVJockR0WXI3cHFoa0d1M0hrUFpOS2k0WjBBOHViL2kxbGpUTXlvTFRq?=
- =?utf-8?B?MkRyREVtRGtYM1I1WWpaaCtnVE9UMjlySTV6UEJFOE5YMU5aL1NKMWhucmtY?=
- =?utf-8?B?UWlLVlZaVWNKUmhiR2M5NDBJMmNBelI0VUVIdm8wMCtjYk9kMTV0RElFTUYx?=
- =?utf-8?B?ZytiR3FnTTNEVXk0ekd2L0lwd2lRUWdNTDFVWlFCQnRDRmUvUWhZVHhuOWVX?=
- =?utf-8?B?TWQ3cE9ERVFPalU5RlhYRytvcm5OajJFaHBXR0dvcU81SXo3Y1ZaM2dNbWtt?=
- =?utf-8?B?UUtMUDlvN2Q4VFhjSVpwQ1VpcGE1SHJUMzdEQ0RHaGVuQTQyNXIwbVFRcmlv?=
- =?utf-8?B?Ry9RRUhEeFJSeGh3RG0wU0ZiMG0ycWZwSkM2dDhOR3E2SzUza0pWM25YdDh3?=
- =?utf-8?B?OGMwVDVjaFVrRFFuVzFhcG5PY2hQQ3RjMzFTb3Awc2NpWHVFUzFucnFEVUpl?=
- =?utf-8?B?Y01XS3FsbERUY2RPMEdWQUFwK3hTQ0lWdHBhcmVtSXVtZFRxcmIvVVY1NjFp?=
- =?utf-8?B?WHViaXl3OHBnelJyeDBVaG5zY1NJNUpaL2o1azNSWjRqVlgvY3NVUm9VMlhU?=
- =?utf-8?B?a2N2a2pIYWxsZ3RZaVZSSWdIOTRWSlE3QldpY0FCQkkyaXFSUmJjZk9aelpq?=
- =?utf-8?B?SElnWU1pSTBObVdTSGxJTm1Pa3R0b3QyOGIyUXBHemViMjk4M3Y2ZVNtY3JH?=
- =?utf-8?B?QVZUMStCMnRtRTVmb1dRNFpuWXBQMmNOWkw1dDl6WEZwTkg3eTJrZVNNMTFV?=
- =?utf-8?B?bUhCdk1IWmowYWRvQmpUS3QrUTRSVWpSUHRqNW8zdk1aOSthWXZreGV2TzBu?=
- =?utf-8?B?alI5U2haL3ZuaVpnL0d4dnlpWi9FaHhWZXVmQnRVbGF4QXl5bWY1LzFnT3Na?=
- =?utf-8?B?NmU3MlpyQmJIWmZ5TmxpM1FoUGZSN21BMHFFc09tajhnVXEvOFMyZHBvT1BE?=
- =?utf-8?B?bnNwUGhObG41RlB1bVFFQ0Nqci91WjgvbnRleVcwN25HRjNQRmVEcUVoeDds?=
- =?utf-8?B?TW1uL0ZhQXJ0T20yTHBlcnZmeGE3T2hwcytHNlpKeDlGc2V1SkROdFlkV1Na?=
- =?utf-8?B?WWZDcG5EU2hkN2hTRGdMZkI4MzZMMmtTdmxiRTRrak1KTWpXYkJlc3B0L0V0?=
- =?utf-8?B?MkZwTm1LTGxNQTZmTmlyZHdETUEvYzFia1B4dkM3WEZ0TkUxL3FhdXV2dzBs?=
- =?utf-8?B?dXNlSVFZK3ZGN2ZEM3NhMWlTVGxkU1Y3NmZ2K2lTSXVObnc2T0JtVWE1a0Zz?=
- =?utf-8?Q?HgIsAtWPrmj96SPAUtp7cMyqN?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7de18f8e-e8db-4b14-d3ea-08dc83ce0e84
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR12MB2767.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jun 2024 13:07:01.1599
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: CaOIGH8srzmzEn8UcX3eNYrL2S4y9sk/v5hFRfcLeHCpJnaX5KaCwcS071N++V4yA6BdzCOyWY+njREDapCYiQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB9161
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 3/6] iio: adc: ad7173: refactor ain and vref selection
+To: =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>,
+ Jonathan Cameron <jic23@kernel.org>,
+ Dumitru Ceclan via B4 Relay <devnull+dumitru.ceclan.analog.com@kernel.org>
+Cc: dumitru.ceclan@analog.com, Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, David Lechner <dlechner@baylibre.com>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240531-ad4111-v4-0-64607301c057@analog.com>
+ <20240531-ad4111-v4-3-64607301c057@analog.com>
+ <20240601194925.23123071@jic23-huawei>
+ <e9ade241e57383d5342d377bc865046e612a7033.camel@gmail.com>
+Content-Language: en-US
+From: "Ceclan, Dumitru" <mitrutzceclan@gmail.com>
+In-Reply-To: <e9ade241e57383d5342d377bc865046e612a7033.camel@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 6/3/2024 3:56 AM, Borislav Petkov wrote
-
->> EFI memory map and due to early allocation it uses memblock allocation.
+On 03/06/2024 16:00, Nuno Sá wrote:
+> On Sat, 2024-06-01 at 19:49 +0100, Jonathan Cameron wrote:
+>> On Fri, 31 May 2024 22:42:29 +0300
+>> Dumitru Ceclan via B4 Relay <devnull+dumitru.ceclan.analog.com@kernel.org> wrote:
 >>
->> Later during boot, efi_enter_virtual_mode() calls kexec_enter_virtual_mode()
->> in case of a kexec-ed kernel boot.
+>>> From: Dumitru Ceclan <dumitru.ceclan@analog.com>
+>>>
+>>> Move validation of analog inputs and reference voltage selection to
+>>> separate functions to reduce the size of the channel config parsing
+>>> function and improve readability.
+>>> Add defines for the number of analog inputs in a channel.
+>>>
+>>> Reviewed-by: David Lechner <dlechner@baylibre.com>
+>>> Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
+>>> ---
+>>>  drivers/iio/adc/ad7173.c | 71 ++++++++++++++++++++++++++++++++++--------------
+>>>  1 file changed, 50 insertions(+), 21 deletions(-)
+>>>
+>>> diff --git a/drivers/iio/adc/ad7173.c b/drivers/iio/adc/ad7173.c
+>>> index 6e249628bc64..a20831d99aa5 100644
+>>> --- a/drivers/iio/adc/ad7173.c
+>>> +++ b/drivers/iio/adc/ad7173.c
+>>> @@ -60,6 +60,7 @@
+>>>  #define AD7173_CH_SETUP_AINPOS_MASK	GENMASK(9, 5)
+>>>  #define AD7173_CH_SETUP_AINNEG_MASK	GENMASK(4, 0)
+>>>  
+>>> +#define AD7173_NO_AINS_PER_CHANNEL	2
+>>>  #define AD7173_CH_ADDRESS(pos, neg) \
+>>>  	(FIELD_PREP(AD7173_CH_SETUP_AINPOS_MASK, pos) | \
+>>>  	 FIELD_PREP(AD7173_CH_SETUP_AINNEG_MASK, neg))
+>>> @@ -623,6 +624,7 @@ static int ad7173_setup(struct iio_dev *indio_dev)
+>>>  static unsigned int ad7173_get_ref_voltage_milli(struct ad7173_state *st,
+>>>  						 u8 reference_select)
+>>>  {
+>>> +	struct device *dev = &st->sd.spi->dev;
+>>>  	int vref;
+>>>  
+>>>  	switch (reference_select) {
+>>> @@ -646,9 +648,11 @@ static unsigned int ad7173_get_ref_voltage_milli(struct
+>>> ad7173_state *st,
+>>>  		return -EINVAL;
+>>>  	}
+>>>  
+>>> -	if (vref < 0)
+>>> +	if (vref < 0) {
+>>> +		dev_err(dev, "Cannot use reference %u. Error:%d\n",
+>>> +			reference_select, vref);
+>>>  		return vref;
+>>> -
+>>> +	}
+>>>  	return vref / (MICRO / MILLI);
+>>>  }
+>>>  
+>>> @@ -905,13 +909,50 @@ static int ad7173_register_clk_provider(struct iio_dev
+>>> *indio_dev)
+>>>  					   &st->int_clk_hw);
+>>>  }
+>>>  
+>>> +static int ad7173_validate_voltage_ain_inputs(struct ad7173_state *st,
+>>> +					      const unsigned int
+>>> ain[AD7173_NO_AINS_PER_CHANNEL])
+>> I was late to the game in replying to previous thread.
 >>
->> This function kexec_enter_virtual_mode() installs the new EFI memory map by
->> calling efi_memmap_init_late() which remaps the efi_memmap physically allocated
->> in efi_arch_mem_reserve(), but this remapping is still using memblock allocation.
+>> This is neater without the loop and with 2 parameters.  Anyhow see reply to v3.
 >>
->> Subsequently, when memblock is freed later in boot flow, this remapped
->> efi_memmap will have random corruption (similar to a use-after-free scenario).
->>
->> The corrupted EFI memory map is then passed to the next kexec-ed kernel
->> which causes a panic when trying to use the corrupted EFI memory map.
-> This sounds fishy: memblock allocated memory is not freed later in the
-> boot - it remains reserved. Only free memory is freed from memblock to
-> the buddy allocator.
->
-> Or is the problem that memblock-allocated memory cannot be memremapped
-> because *raisins*?
+> 
+> Yeps, even more given that we're passing/copying the complete array which always
+> fells awkward to me :)
+> 
+> - Nuno Sá
+> 
+> 
 
-This is what seems to be happening:
+I rewrote the function, but it feels a bit awkward, perhaps I could get a bit of
+advice before sending V5:
 
-efi_arch_mem_reserve() calls efi_memmap_alloc() to allocate memory for
-EFI memory map and due to early allocation it uses memblock allocation.
+static int ad7173_validate_voltage_ain_inputs(struct ad7173_state *st,
+					      unsigned int ain0, unsigned int ain1)
+{
+	struct device *dev = &st->sd.spi->dev;
+	bool special_input0, special_input1;
 
-And later efi_enter_virtual_mode() calls kexec_enter_virtual_mode()
-in case of a kexec-ed kernel boot.
+	special_input0 = ain0 == AD7173_AIN_REF_POS || ain0 == AD7173_AIN_REF_NEG ||
+			 ((ain0 == AD7173_AIN_COM_IN_POS || ain0 == AD7173_AIN_COM_IN_NEG) &&
+			 (st->info->has_common_input)) || ain0 == AD4111_VINCOM_INPUT;
+	special_input1 = (ain1 == AD7173_AIN_REF_POS || ain1 == AD7173_AIN_REF_NEG) ||
+			 ((ain1 == AD7173_AIN_COM_IN_POS || ain1 == AD7173_AIN_COM_IN_NEG) &&
+			 (st->info->has_common_input)) || ain1 == AD4111_VINCOM_INPUT;
 
-This function kexec_enter_virtual_mode() installs the new EFI memory map by
-calling efi_memmap_init_late() which does memremap() on memblock-allocated memory.
+	if (st->info->has_vincom_input) {
+		if (ain0 == AD4111_VINCOM_INPUT &&
+		    ain1 < st->info->num_voltage_in && /* Normal input */
+		    ain1 >= st->info->num_voltage_in_div) /* Input without divider */
+			return dev_err_probe(dev, -EINVAL,
+				"VINCOM must be paired with inputs having divider.\n");
 
-Thanks, Ashish
+		if (ain1 == AD4111_VINCOM_INPUT &&
+		    ain0 < st->info->num_voltage_in && /* Normal input */
+		    ain0 >= st->info->num_voltage_in_div) /* Input without divider */
+			return dev_err_probe(dev, -EINVAL,
+				"VINCOM must be paired with inputs having divider.\n");
+	}
 
->
-> Mike?
->
+	if ((ain0 >= st->info->num_voltage_in && !special_input0) ||
+	    (ain1 >= st->info->num_voltage_in && !special_input1))
+		return dev_err_probe(dev, -EINVAL,
+				     "Input pin number out of range for pair (%d %d).\n",
+				     ain0, ain1);
+
+	if (!special_input0 && !special_input1 &&
+	    ((ain0 >= st->info->num_voltage_in_div) !=
+	     (ain1 >= st->info->num_voltage_in_div)))
+		return dev_err_probe(dev, -EINVAL,
+			"Both inputs must either have a voltage divider or not have: (%d %d).\n",
+			ain0, ain1);
+
+	return 0;
+}
+
+It feels a bit too verbose, but I could not come up with a better way to
+incorporate all those cases.
 
