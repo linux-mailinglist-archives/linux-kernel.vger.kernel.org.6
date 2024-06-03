@@ -1,138 +1,75 @@
-Return-Path: <linux-kernel+bounces-199078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE0EA8D81DF
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 14:07:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43C568D81FA
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 14:12:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E702B1C217CE
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 12:07:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 806A2B25826
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 12:12:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 994C81272DB;
-	Mon,  3 Jun 2024 12:07:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=metaspace-dk.20230601.gappssmtp.com header.i=@metaspace-dk.20230601.gappssmtp.com header.b="tZPl3dxq"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F396128833;
+	Mon,  3 Jun 2024 12:12:49 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52B1885634
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 12:07:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 489668665A
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 12:12:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717416453; cv=none; b=jE/r28e97QIIx/ismSXtQCsK/0KgJ+oFxU4B6enUmwVA642krPuNsgz4LVEpjKpbdR2FMrjC4r/Fq8v2l1ZkB7qf7M81Sx3XffCbUk1nrIjSwclShDVpFy7B+dhQrwcCSpoKRpx0qTSkrrK12hivfD+ifdi+F3HaUmsJEqvb7mM=
+	t=1717416768; cv=none; b=OdXBKfOYgdsMgaePct3WzgDs1oYWBcJ9mz3i5G5YDyLlCxwojvP+nhRd6EQ+1hXiwbZXY9ODgdQKXhl07G51D3qNSRKsrj4lseJvBmf3i1s2NC86cO+44TT8ebczvdn+vpcWeaz7Z6+PzENoKKRexD7BqMc3ubr/AleYq01VMG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717416453; c=relaxed/simple;
-	bh=Y3gF7BbKcqa4JwB0PvnAnvWiJxHmYd92raETWsFFdRQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=pZMnpBMznJ5DkoBNAtXAvFOvMNZclmvxsRIAU6QCd8nU/t2MeAkaz0PT31Ddo1tsAXP3wZnurMxXKzcGjBlDKH+k798O4KZ0lDVclBH8iMmX7kW998AA7sQBmDNt/8BVRRZ4eZblWzIdZV85HuGpA54nx0fK1hagnJydvJYCnjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=metaspace.dk; spf=none smtp.mailfrom=metaspace.dk; dkim=pass (2048-bit key) header.d=metaspace-dk.20230601.gappssmtp.com header.i=@metaspace-dk.20230601.gappssmtp.com header.b=tZPl3dxq; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=metaspace.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=metaspace.dk
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4213b94b7e7so5944835e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 05:07:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=metaspace-dk.20230601.gappssmtp.com; s=20230601; t=1717416451; x=1718021251; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:cc:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=N43+9H6E0yFDxtyEp5leqtS2IT5bU0sKoqZhcVUnDjg=;
-        b=tZPl3dxqYf9d3vwn+V7fPEZEbncNj6gj9Z+Su3MetWZlqYyp/kN//gENoi5IkVapeo
-         6LsBVU7+0mgOLKMEc2vnXNr4C5T6eXTxiGCP4v1ZWOyoNDoAZtG+3fv4y4qmgJxtWubH
-         +tCAuB2MnzRyffwwlO4ERu2XgWhQoUAg5Y7bF01qHsp+Xl0VPCRhJTtqO8S7MD7nXRw0
-         NyxMNJPiBOe6ij25a7+UXsmjEjhB763e2YdLrzqSM7Ye5l6SDhyeVVo8ZwMiGgZqFKau
-         AmaNv1jkO7g0OSUt2RmWtz1boULWDZMeF8TQuWN0BlPuhXhuDx7BLK4PcPwvgfSME4X6
-         p2bQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717416451; x=1718021251;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=N43+9H6E0yFDxtyEp5leqtS2IT5bU0sKoqZhcVUnDjg=;
-        b=lIVtU1TUEkOtH6HiUEDpTisJv5K+aOXAejj3nQD5J2SiXV2vG68VFJ+A7NrlsUpQps
-         m+MOT1zuCb0XEsb+13d57uRhu4oCuzv+TNXdnHhjvtHTTXRmxMQttW/AZltIV7oo2au/
-         2XsgliPVhRI8gCsQq1N8p7Rv7cQ8ms2sgDiysewvJlPC5oKDa5IMq2eWM0gsuurTRGEC
-         gIegymBRuLjCBrZItS5QeNeP6FEynNXvxtNkxXrHyBeK/k9PawWCBRpSKqChaUa8Kwpw
-         lhGFyIj4AXG78uqBgS6ZETDCgOTA1pvGMHbXIP1iIyR5CgGS23wRoNJ6Z3FGTl4c0D36
-         RPxw==
-X-Forwarded-Encrypted: i=1; AJvYcCWp6wnIm+aHuSa0uixSTmmfcofUEtlDRm+jBWTVlHkNkiPUUdWcjysks5UDXvkreb09xIBGsICs5M9G7A0IAa+Q3AAOsWItLjs3jsEY
-X-Gm-Message-State: AOJu0YxqpmyYvL02dl7h3548FXuPu9pD50ubpq8ZHVw9kXpPAe4aPGZ3
-	hi485hCsVCT+jdCnJRiKQrMVbFUKmfNc2zLtGwRSl3LkQQRvXHLcsSWraOl2f7o=
-X-Google-Smtp-Source: AGHT+IEtb1E9CA27ySEC8+JzZdUXyME6wqrjg4eprqNL3aHZhI5qpOxKKzkltHbM4Nklg291mS+POA==
-X-Received: by 2002:a05:600c:1e27:b0:41b:8041:53c2 with SMTP id 5b1f17b1804b1-4212ddb68d0mr81757385e9.15.1717416450440;
-        Mon, 03 Jun 2024 05:07:30 -0700 (PDT)
-Received: from localhost ([165.225.194.205])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4213837673csm70127375e9.31.2024.06.03.05.07.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Jun 2024 05:07:30 -0700 (PDT)
-From: Andreas Hindborg <nmi@metaspace.dk>
-To: John Garry <john.g.garry@oracle.com>
-Cc: Jens Axboe <axboe@kernel.dk>,  Andreas Hindborg
- <a.hindborg@samsung.com>,  Keith Busch <kbusch@kernel.org>,
-  linux-block@vger.kernel.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] null_blk: fix validation of block size
-In-Reply-To: <d6999fef-aadf-494e-ad58-f27dfd975535@oracle.com> (John Garry's
-	message of "Sun, 2 Jun 2024 11:57:03 +0100")
-References: <20240601202351.691952-1-nmi@metaspace.dk>
-	<d6999fef-aadf-494e-ad58-f27dfd975535@oracle.com>
-Date: Mon, 03 Jun 2024 14:03:34 +0200
-Message-ID: <87frtumdwp.fsf@metaspace.dk>
+	s=arc-20240116; t=1717416768; c=relaxed/simple;
+	bh=AvUWYGDHtuHLcncmswdVuG69zTNb7cxVXEL5p2+4Zig=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rbdXIUCmgqJWTUr6RIVCCtzTyByrK72IiAd3pG43HTwbDLZzAJfP/8TvAOWNty44WrPeqGtl5sbcqSSdnWjMMqzWoqeD5Nyg3V4oXozGzJWVQuofSGJbMOsX48akpXXDF5OLwmF1ZubGyvZmpiu/jDffvogoGFhP7CpkxhXOVqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4VtCDF1WGRzmXVV;
+	Mon,  3 Jun 2024 20:08:13 +0800 (CST)
+Received: from dggpeml500023.china.huawei.com (unknown [7.185.36.114])
+	by mail.maildlp.com (Postfix) with ESMTPS id 6B911180060;
+	Mon,  3 Jun 2024 20:12:43 +0800 (CST)
+Received: from hulk-vt.huawei.com (10.67.174.26) by
+ dggpeml500023.china.huawei.com (7.185.36.114) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 3 Jun 2024 20:12:43 +0800
+From: Xiu Jianfeng <xiujianfeng@huawei.com>
+To: <akpm@linux-foundation.org>, <muchun.song@linux.dev>
+CC: <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH -next 0/3] mm/hugetlb_cgroup: rework on cftypes
+Date: Mon, 3 Jun 2024 12:05:03 +0000
+Message-ID: <20240603120506.1837322-1-xiujianfeng@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ dggpeml500023.china.huawei.com (7.185.36.114)
 
-John Garry <john.g.garry@oracle.com> writes:
+Hi,
 
-> On 01/06/2024 21:23, Andreas Hindborg wrote:
->> From: Andreas Hindborg <a.hindborg@samsung.com>
->> Block size should be between 512
->
->
->>and 4096
->
-> Or PAGE_SIZE?
+This patchset provides an intuitive view of the control files through
+static templates of cftypes, improve the readability of the code.
 
-Right =F0=9F=91=8D
+Xiu Jianfeng (3):
+  mm/hugetlb_cgroup: identify the legacy using cgroup_subsys_on_dfl()
+  mm/hugetlb_cgroup: prepare cftypes based on template
+  mm/hugetlb_cgroup: switch to the new cftypes
 
->
->  and be a power of 2. The current
->> check does not validate this, so update the check.
->> Without this patch, null_blk would Oops due to a null pointer deref when
->> loaded with bs=3D1536 [1].
->> Link:
->> https://urldefense.com/v3/__https://lore.kernel.org/all/87wmn8mocd.fsf@m=
-etaspace.dk/__;!!ACWV5N9M2RV99hQ!OWXI3DGxeIAWvKfM5oVSiA5fTWmiRvUctIdVrcBcKn=
-O_HF-vgkarVfd27jkvQ1-JjNgX5IFIvBWcsUttvg$
->> Signed-off-by: Andreas Hindborg <a.hindborg@samsung.com>
->> ---
->>   drivers/block/null_blk/main.c | 6 ++++--
->>   1 file changed, 4 insertions(+), 2 deletions(-)
->> diff --git a/drivers/block/null_blk/main.c b/drivers/block/null_blk/main=
-.c
->> index eb023d267369..6a26888c52bb 100644
->> --- a/drivers/block/null_blk/main.c
->> +++ b/drivers/block/null_blk/main.c
->> @@ -1823,8 +1823,10 @@ static int null_validate_conf(struct nullb_device=
- *dev)
->>   		dev->queue_mode =3D NULL_Q_MQ;
->>   	}
->>   -	dev->blocksize =3D round_down(dev->blocksize, 512);
->> -	dev->blocksize =3D clamp_t(unsigned int, dev->blocksize, 512, 4096);
->> +	if ((dev->blocksize < 512 || dev->blocksize > 4096) ||
->> +	    ((dev->blocksize & (dev->blocksize - 1)) !=3D 0)) {
->> +		return -EINVAL;
->> +	}
->
-> Looks like blk_validate_block_size(), modulo PAGE_SIZE check
+ include/linux/hugetlb.h |   5 -
+ mm/hugetlb_cgroup.c     | 303 ++++++++++++++++++++++------------------
+ 2 files changed, 165 insertions(+), 143 deletions(-)
 
-Cool, I will use that instead.
+-- 
+2.34.1
 
-
-BR Andreas
 
