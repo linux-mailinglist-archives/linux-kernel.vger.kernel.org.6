@@ -1,112 +1,163 @@
-Return-Path: <linux-kernel+bounces-199368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E42168D8616
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:32:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C6CB8D8618
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:33:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D1571F232A7
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:32:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E00D81F22AE1
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:33:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61273130A47;
-	Mon,  3 Jun 2024 15:32:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDF90132107;
+	Mon,  3 Jun 2024 15:32:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kQ3CYvko"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="FIWJPd3l";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Fkjra8FF"
+Received: from fout4-smtp.messagingengine.com (fout4-smtp.messagingengine.com [103.168.172.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B2711EF1A;
-	Mon,  3 Jun 2024 15:32:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EB821EF1A;
+	Mon,  3 Jun 2024 15:32:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717428757; cv=none; b=B63aQh2uM2j8z1rlvviSVaxEdAg5TQoiY9uDGMdCpTD66PhZLa2OYS1qMnD7XN52DEL3YG1eB4I+pXpueJKSt2PFVS68S0w3TymbMqXH+JNIpwFyHSUxhzKubQzA7YJA+ou4M2xncXVRvpFAjRAnYnJQwpHOtKMeDXSm1O4TuM0=
+	t=1717428763; cv=none; b=qQzPtGKLDyFd7gkkT29Y2JQabTRNMLTCuaLwCGmQA+K8nCXdkaJmK7UkctstLcSLOvhQZW4EuXiSN5fLbmWZKmcYXp1jRKba9exy+vzf2DnqgdhcHifZbD5/1j1o+EY8+87aPEqTaKmFqgAmxZ0SjoAxrLeNTLKl9z2J60Cd7ac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717428757; c=relaxed/simple;
-	bh=q4oMvhBk1KUtZfzGp4xFNoiHbYTq2R2RFWXRAm7gEIs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P9xJ73HZulkDm10lk3kZSyjO7MdLKMFIp3CJUul+vYsZtdx+HYBWv664VJ33PXY53W7mf1FkWskiAvx3KvmcSubo5Vf9B6z4XLr/ZJ7XtiFMwm+HtqIZUy2GzmRhvW0CEzxwZ06yCGVl8phv+YyGmQOp+AVZ4nOYFsRBk3esQQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kQ3CYvko; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9563EC2BD10;
-	Mon,  3 Jun 2024 15:32:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717428757;
-	bh=q4oMvhBk1KUtZfzGp4xFNoiHbYTq2R2RFWXRAm7gEIs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kQ3CYvkoed4OsodNkOOI4ar7YyO8scOxmVRmL0iGhN/hBCO0WtqknKQ0lZSyScNsz
-	 PB0dZg2Tc8Skvf+4YhW5x7P59xBfwV5cVrOB5b7R6H076cDR1I9xmSdHBWpydPn3ke
-	 T1pZA51NGcAF/zHSZOL6dZ5t461Yp9sqAc70Rdw85VzBiTItI3BxDYZb9lPKzaTyY3
-	 hDpAVxjrta8A9R5r4nDbss3Q1mJ+59bpQK8RaPzAYmc3V/93NG9mZt/GDUbrWcXrMM
-	 D9WxB5G8JI92oPPDW4IpLX+cyOZAZO8PECRB70bBR3W2L0Z0RLsTHjDd/ysi670E94
-	 PjH8GJmvn4+sA==
-Date: Mon, 3 Jun 2024 16:32:30 +0100
-From: Mark Brown <broonie@kernel.org>
-To: John Hubbard <jhubbard@nvidia.com>
-Cc: Shuah Khan <shuah@kernel.org>,
-	Muhammad Usama Anjum <usama.anjum@collabora.com>,
-	Beau Belgrave <beaub@linux.microsoft.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Naresh Kamboju <naresh.kamboju@linaro.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Bill Wendling <morbo@google.com>, sunliming <sunliming@kylinos.cn>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Valentin Obst <kernel@valentinobst.de>,
-	linux-kselftest@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>, llvm@lists.linux.dev,
-	Nathan Chancellor <nathan@kernel.org>,
-	Ryan Roberts <ryan.roberts@arm.com>
-Subject: Re: [PATCH v2 1/2] selftests/lib.mk: handle both LLVM=1 and CC=clang
- builds
-Message-ID: <306eebf8-bb5d-4e1a-9fa3-ad3f4ea11b9c@sirena.org.uk>
-References: <20240531183751.100541-1-jhubbard@nvidia.com>
- <20240531183751.100541-2-jhubbard@nvidia.com>
+	s=arc-20240116; t=1717428763; c=relaxed/simple;
+	bh=1PB5TAZWxS/S7OzA5Yx0jsbtLvaHqz8kwPOK5A57Bhg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Fn6jaFzS2MB7V5AZLaagsjBcG6yeL8tlk5Pyu03I8ZcSSiFm6I6a9FKQYOKa7+eENy/5nPmtwYRrIG33L+Eet7jsLpWMRo2ZiyfgNskEo5O8KTYXwuXloH3WIso85o2NYhEYa9PlSay6NDGyJAWJEdtCyTqWLBbN3ZE0767uqZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=FIWJPd3l; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Fkjra8FF; arc=none smtp.client-ip=103.168.172.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 24A7313800D4;
+	Mon,  3 Jun 2024 11:32:41 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Mon, 03 Jun 2024 11:32:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1717428761;
+	 x=1717515161; bh=/TZQ0dkrHtiebumwKyexBxCJNAE82zu8Fq9CXg3TirY=; b=
+	FIWJPd3lO3IbyjBq1T358WBBsg49l+qrtihAccUkUtpax0B7TZ4IAzu4Dk15YUz9
+	oR2aPD6QsxACU42UmQscdjfNSDz1cz9Ly7retRalj2xIvLe7WRWn4Kk9o0OF0Nvm
+	yXwgMSr9xucrlS/I/4hpWg1imjc+82EUGBD4iK2zb0IeavRlbai42hb+w12Rfyao
+	iYdhvsOKrPl2MWiKKRbTnUsdd6wmeiK46e43qsHeDbGaCh5MXqcyn3BTrZNjzB+Y
+	DEHvGxd/dbUeVkPGLOJ2fNQuQesAZvvjG+FN7JQGr10a0/jYj5EUEs+kBP2jMd1n
+	PbtvhxIMTwFQ/SGigXzvkQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1717428761; x=
+	1717515161; bh=/TZQ0dkrHtiebumwKyexBxCJNAE82zu8Fq9CXg3TirY=; b=F
+	kjra8FF/JcxV4aWFINBDv2Pq4p5vGBJJY33XUzsNYl+j9qD9kPxyA+wTrJLQECNR
+	JyaTjCSJlR94KrUd0iIWasMJYShV84rtGbvsmLVUILQonZ2KAVtb0okptQA13Rvr
+	dlfDcIZdbVtJ9xNM5ONIpQE3A2A106T/PBQHy+wpxvjquQpIgefV/nCyLBAOmedO
+	6j5SR4iuSsu7yTu5Zs49HplwyZM+nGadWA3HmQwP1LFpeqHt0JygecTZ6/qFJbgv
+	1SttApnG3/CwmA7e4T/Z/09wPjGFaIdMOmz+/Gg2dHaxMFu7FDKsLGkA4gVmCVWK
+	i0ch8Rv+IZaWtvXF8wnog==
+X-ME-Sender: <xms:GOJdZi-zgAIbVI8HbgqXUYxVcIq0WgKA_tp0JYh6in9nROiCg4mG4g>
+    <xme:GOJdZiuhEutFf4a-h3CQ33fGF3ydYeO9P4PMDOKvNmikA7hQmhjDO0i4mCA_C3OEB
+    RKQRfoLzdZJ_0Rt>
+X-ME-Received: <xmr:GOJdZoCZv6hLDd7qMjpmff7CQn4PHUO_TZUIw4UQBRCGn_lLFJHMFwAgwGyfpl84BQ7WGYxYCm5iN0wNHvhM_nJ288sqDk1W7ifBsQ5QgQXM6JJkjc6_>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdelvddgkeelucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeeuvghr
+    nhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrih
+    hlrdhfmheqnecuggftrfgrthhtvghrnhepvefhgfdvledtudfgtdfggeelfedvheefieev
+    jeeifeevieetgefggffgueelgfejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilhdr
+    fhhm
+X-ME-Proxy: <xmx:GOJdZqfHYMTjCH-XhXTRY_qFG5KL0x5zn6LmyADj-Bw3p1SUcyIopg>
+    <xmx:GOJdZnPQzKwEnOZi1QB9f-7RQ444p4Mkve4kS4iBd5mEpbVsifYflA>
+    <xmx:GOJdZkmvZvuOeK4yWRqQzua1rywEBJehYJVRNuIxswhEvIOQE3iP0Q>
+    <xmx:GOJdZpvJHaSMbo_F2xXJZ0YRpF1K-U2VIpAxE2shbThOhnGAArnpYw>
+    <xmx:GeJdZi1Y3Wa6YulPVs5fs1H6zO1wnOwy7FCS95LL5CAKj2Dx-UEvIirL>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 3 Jun 2024 11:32:39 -0400 (EDT)
+Message-ID: <233a9fdf-13ea-488b-a593-5566fc9f5d92@fastmail.fm>
+Date: Mon, 3 Jun 2024 17:32:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="LwQaHvdHhiWHyo0G"
-Content-Disposition: inline
-In-Reply-To: <20240531183751.100541-2-jhubbard@nvidia.com>
-X-Cookie: Don't let your status become too quo!
+User-Agent: Mozilla Thunderbird
+Subject: Re: [HELP] FUSE writeback performance bottleneck
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Jingbo Xu <jefflexu@linux.alibaba.com>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ lege.wang@jaguarmicro.com
+References: <495d2400-1d96-4924-99d3-8b2952e05fc3@linux.alibaba.com>
+ <67771830-977f-4fca-9d0b-0126abf120a5@fastmail.fm>
+ <CAJfpeguts=V9KkBsMJN_WfdkLHPzB6RswGvumVHUMJ87zOAbDQ@mail.gmail.com>
+From: Bernd Schubert <bernd.schubert@fastmail.fm>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <CAJfpeguts=V9KkBsMJN_WfdkLHPzB6RswGvumVHUMJ87zOAbDQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
---LwQaHvdHhiWHyo0G
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 31, 2024 at 11:37:50AM -0700, John Hubbard wrote:
-> The kselftests may be built in a couple different ways:
->     make LLVM=3D1
->     make CC=3Dclang
->=20
-> In order to handle both cases, set LLVM=3D1 if CC=3Dclang. That way,the r=
-est
-> of lib.mk, and any Makefiles that include lib.mk, can base decisions
-> solely on whether or not LLVM is set.
+On 6/3/24 17:19, Miklos Szeredi wrote:
+> On Mon, 3 Jun 2024 at 16:43, Bernd Schubert <bernd.schubert@fastmail.fm> wrote:
+>>
+>>
+>>
+>> On 6/3/24 08:17, Jingbo Xu wrote:
+>>> Hi, Miklos,
+>>>
+>>> We spotted a performance bottleneck for FUSE writeback in which the
+>>> writeback kworker has consumed nearly 100% CPU, among which 40% CPU is
+>>> used for copy_page().
+>>>
+>>> fuse_writepages_fill
+>>>   alloc tmp_page
+>>>   copy_highpage
+>>>
+>>> This is because of FUSE writeback design (see commit 3be5a52b30aa
+>>> ("fuse: support writable mmap")), which newly allocates a temp page for
+>>> each dirty page to be written back, copy content of dirty page to temp
+>>> page, and then write back the temp page instead.  This special design is
+>>> intentional to avoid potential deadlocked due to buggy or even malicious
+>>> fuse user daemon.
+>>
+>> I also noticed that and I admin that I don't understand it yet. The commit says
+>>
+>> <quote>
+>>     The basic problem is that there can be no guarantee about the time in which
+>>     the userspace filesystem will complete a write.  It may be buggy or even
+>>     malicious, and fail to complete WRITE requests.  We don't want unrelated parts
+>>     of the system to grind to a halt in such cases.
+>> </quote>
+>>
+>>
+>> Timing - NFS/cifs/etc have the same issue? Even a local file system has no guarantees
+>> how fast storage is?
+> 
+> I don't have the details but it boils down to the fact that the
+> allocation context provided by GFP_NOFS (PF_MEMALLOC_NOFS) cannot be
+> used by the unprivileged userspace server (and even if it could,
+> there's no guarantee, that it would).
+> 
+> When this mechanism was introduced, the deadlock was a real
+> possibility.  I'm not sure that it can still happen, but proving that
+> it cannot might be difficult.
 
-ICBW but I believe there are still some architectures with clang but not
-lld support where there's a use case for using CC=3Dclang.
+Thanks Miklos!
+I need to go through all of the GFP_NOFS allocation, but I wonder if we
+could introduce cached allocations and fall back to the slow path if
+that didn't work.
 
---LwQaHvdHhiWHyo0G
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZd4g4ACgkQJNaLcl1U
-h9BEXQf/WsN/S/yg0X/HYWR3Takul1/6IMH2x/VHC82HyAOKMHvVPItAmDPw0ZM1
-ubOFi/vRuKTuThZO95BKg8SSMDBty71Hwo8MZCtps7cjrK+3OUXr46IDJNXcu2dN
-6CcRlPBSSJUJG1FcrcgjezJ+KWSJJPbuTkpr+baKpKN4AHdHjIwM/D2v1xWwZDaR
-rt6c0R43kWKBhKRDXaNgbebxbvb7abFK1rnzkZs6W+7Xh0jTf3+GFerai7sF5oKs
-4a0oPQqX3QGDJmndGAvi5uSIQAxHN6m0afLd3FCH4/Vn0NvTu5e0hsd/RJk8A9R1
-u+L6RzjaMPkL2SNIYUL4T8Q1fBas7A==
-=wAUi
------END PGP SIGNATURE-----
-
---LwQaHvdHhiWHyo0G--
+Thanks,
+Bernd
 
