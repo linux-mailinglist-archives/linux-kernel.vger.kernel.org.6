@@ -1,224 +1,106 @@
-Return-Path: <linux-kernel+bounces-199462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EED28D8775
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 18:52:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 056E58D8778
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 18:53:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44C3C1C217B3
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:52:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B54A9289889
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:53:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34BF11369B4;
-	Mon,  3 Jun 2024 16:52:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B43651369BF;
+	Mon,  3 Jun 2024 16:53:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nm7PsrVv"
-Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hgENSSJY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBC9C132811
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 16:52:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E591C4A0A;
+	Mon,  3 Jun 2024 16:53:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717433549; cv=none; b=CO6JhhQChmcNG2RWeZ9iqIS5drzJXUXENlUIq1N7ywpamvUmx3w9XCTI4gP6xG3v2MML5cB2vykt1WlNiwuA+v9O496KEuf71epKX9chisab8hZvjOcXS0iDUHz1K/OgZl0QFR6bAVNRGWg2y8JyEFTecUwh3OZF9fFFwHl+g0k=
+	t=1717433625; cv=none; b=TmQJC42cyE2XRemLe2d946EIw31Kuz/3F6xRIRk9Om3mF1Fp6oGNeinp8lEcCNJT7HBLehv1zpCFVM3eEQX6S5aeeb9uKn+w7YDOJXqTang8br6CR05mDJzlkTAJr4KpRA8H7JqR27uENQl/80F7e1/2+7pwzCV/BPAM94URUUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717433549; c=relaxed/simple;
-	bh=7bbMMx35Lkzpu2sIpK2fSOilM52beTXlFemB8pNEi7U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ddesJw4fgncw0Nc042xLNYZtOgZKDOebGAdVQBqrpvnfKPesIveX2X48P7FgftHXnsLTG6uX/ALxxUT43MZMBntZehqiZFOpIxBRs+1gSOFcGBnq3i9o4Nvzdds6EtVbIpp+8Gmbm76PHU6pJQVFJCR71MaFNdljgXMSuNsS1DM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nm7PsrVv; arc=none smtp.client-ip=209.85.166.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3748a185da1so2775ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 09:52:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717433547; x=1718038347; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rJcLm5ZpSkzvbycg4N/ncJTb6gnjJ0KZfkcYCAHjp+4=;
-        b=nm7PsrVvgvl7nuW3kPwH7oCYnVVVcRKZ4O4l5ob8DM2HtaQ1Tq2LJ7765kzVF8t0CN
-         ZYaHm1LU+IOL9AcrAOMgRi8Yy2KyzWFD8SuN2voGKSqJkodKV6I0dSNn575DJuJTgOqm
-         YG1yS2FlEkNVe5ZBwYprpMNYBA4H8hQnDskZo5CSKstTy3TZqCL1AGN4jQAMvBBRnxwg
-         DSoBN0rs/RJVrvHSe6xlHRmtzg/QkZdDQDwmeSx0KmndhvSPnGsU1KmVbZsfcJYEGpmT
-         5dRTWYr9VEanCH3bYWZq27aOkPxgSpYLuQzeO2dDOwhCh3QQd/VrRIAF9JRPLgMI5jH9
-         lUPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717433547; x=1718038347;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rJcLm5ZpSkzvbycg4N/ncJTb6gnjJ0KZfkcYCAHjp+4=;
-        b=Kxyh8p0MGtlMRNgGr5mQNxCGIyzgV67lTEwhUmWbHQuic2S1jinRiQnxZxvYO19dRr
-         rIhh84K+FcXvGckB+WmFb+3sZPO6nCKVmsGoOVseDH4ltY6Nhqs3PUjSaiLjukszA0D2
-         oF92PSR4RpT5OUMIVt/eT94KEZEpX3hq9mhnJBn2dUer+Clct9EKzUIOYjvArJDcYdmL
-         Gfx0QJC2ttgeEp6mqlcYw3VbyuRudClC4hE7O3jSooUq3CKll3RG8b0ETQxZ2pX+bj9Q
-         AfOpzKdp5dtvue7X9hjsrd2mgcKcY/K9YbwB9cpBxodoDnGZjev+xm44V+9vG1+RbdzZ
-         l5EA==
-X-Forwarded-Encrypted: i=1; AJvYcCVzlTiQErXTZ/wdBO/aXcU5ZDrPsfrNbI2t+N9I3gp4mJ5MATyz/t+DfYmrjd5UOhXdDdZUqn+k7QYMlvNfCXL/Q8Pt35gsk44m+Ejr
-X-Gm-Message-State: AOJu0Yzgm18QkappWd0KrrkZGUpgODLQPwdZ83mdcvCxpdZvqD2Kvcog
-	1OFbiKMv2bWg4+XvlmLCLgoyQaFiBq7v0jngnBUKIhtBsdh9U6gA+K2mLI1gi3YIe9NMlR4hjUt
-	Qu3b9DUav0YdQ1W82ubBEEnHVFXCZPhDJAhIm
-X-Google-Smtp-Source: AGHT+IEsp6V45TBw2JP7tZOMI7fzyinIOWiPjdrnPxAAGdXewgE+WOZ4b0+9mdZyeN9H9AIThrhCqlA1vYPrFURxTSM=
-X-Received: by 2002:a92:c00c:0:b0:373:8081:23d0 with SMTP id
- e9e14a558f8ab-37490ecd770mr4635645ab.18.1717433546712; Mon, 03 Jun 2024
- 09:52:26 -0700 (PDT)
+	s=arc-20240116; t=1717433625; c=relaxed/simple;
+	bh=DyH3gpgi4qx6wflc8epTRwqQEEkxiiw8EGl6bIf3LLo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=oBQkdZ8ww630HEM/aBw1+q6UaQX+BvazJE5Kn///E6FtTCYZlDAdJ33p1rZHLe6OoFX+80W2vwE39/SNRlD5/03i40xjtQRvoasdcSK1qb8Qi7nahggbRVyYMNsWbi3Ael4Go1dRxFApt8eyB9Rzdx4EYKUYTS9xeIrOzySV3Wg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hgENSSJY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CDF7C2BD10;
+	Mon,  3 Jun 2024 16:53:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717433624;
+	bh=DyH3gpgi4qx6wflc8epTRwqQEEkxiiw8EGl6bIf3LLo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=hgENSSJYgdOnCETWiJY9P2q8PiNLuQHrp3hEsrHgzQ0pKYOsoy1fMSyxc5gUiT4/0
+	 kt2eYRaUtxE9GsHNC7+/gjMM0RM/u6RQIc4eF9iHhxJ5BRAbWJKnpGqWAhezsLTw+C
+	 nHXjnjB8jNexooMWyr7gS8s8q3JJQbDN9FbF1QxQhhB+ulwxiYkY+MOpRzqxqZTgVl
+	 Gzcza1nHQ8D9zXVU0+IEe+vV2RFf9V9ARr6yffP4ZMcLvJWczK4XsWtjZTDzZ2vYr5
+	 bflHiaCnK4DHzs3TI9dG5Li2FfJoUHV4VaIYbGmG1jLDDAvLrJYuHQ2KzTnq+/d0oV
+	 /DqEeWnb+bfJA==
+Date: Mon, 3 Jun 2024 11:53:42 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Kalle Valo <kvalo@kernel.org>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-wireless@vger.kernel.org,
+	ath11k@lists.infradead.org, regressions@lists.linux.dev,
+	Jeff Johnson <quic_jjohnson@quicinc.com>,
+	linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Subject: Re: [regression] BUG: KASAN: use-after-free in
+ lockdep_register_key+0x755/0x8f0
+Message-ID: <20240603165342.GA685076@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240603092812.46616-1-yangyicong@huawei.com> <20240603092812.46616-2-yangyicong@huawei.com>
-In-Reply-To: <20240603092812.46616-2-yangyicong@huawei.com>
-From: Ian Rogers <irogers@google.com>
-Date: Mon, 3 Jun 2024 09:52:15 -0700
-Message-ID: <CAP-5=fXNumMLL=_+qXdnQPqgLSwo7Z1BFmPww63NkX5EcDRDsQ@mail.gmail.com>
-Subject: Re: [PATCH 1/3] perf pmu: Limit PMU cpumask to online CPUs
-To: Yicong Yang <yangyicong@huawei.com>
-Cc: will@kernel.org, mark.rutland@arm.com, acme@kernel.org, 
-	namhyung@kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	peterz@infradead.org, mingo@redhat.com, alexander.shishkin@linux.intel.com, 
-	jolsa@kernel.org, james.clark@arm.com, dongli.zhang@oracle.com, 
-	jonathan.cameron@huawei.com, prime.zeng@hisilicon.com, linuxarm@huawei.com, 
-	yangyicong@hisilicon.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87a5k5ukew.fsf@kernel.org>
 
-On Mon, Jun 3, 2024 at 2:33=E2=80=AFAM Yicong Yang <yangyicong@huawei.com> =
-wrote:
->
-> From: Yicong Yang <yangyicong@hisilicon.com>
->
-> We'll initialize the PMU's cpumask from "cpumask" or "cpus" sysfs
-> attributes if provided by the driver without checking the CPUs
-> are online or not. In such case that CPUs provided by the driver
-> contains the offline CPUs, we'll try to open event on the offline
-> CPUs and then rejected by the kernel:
->
-> [root@localhost yang]# echo 0 > /sys/devices/system/cpu/cpu0/online
-> [root@localhost yang]# ./perf_static stat -e armv8_pmuv3_0/cycles/ --time=
-out 100
-> Error:
-> The sys_perf_event_open() syscall returned with 19 (No such device) for e=
-vent (cpu-clock).
-> /bin/dmesg | grep -i perf may provide additional information.
->
-> So it's better to do a double check in the userspace and only include
-> the online CPUs from "cpumask" or "cpus" to avoid opening events on
-> offline CPUs.
+On Sat, Jun 01, 2024 at 11:39:03AM +0300, Kalle Valo wrote:
+> Kalle Valo <kvalo@kernel.org> writes:
+> 
+> > Dan Williams <dan.j.williams@intel.com> writes:
+> >
+> >> Kalle Valo wrote:
+> >> [..]
+> >>> >> The proposed fix for that is here:
+> >>> >>
+> >>> >> http://lore.kernel.org/r/66560aa9dbedb_195e294b0@dwillia2-mobl3.amr.corp.intel.com.notmuch
+> >>> >
+> >>> > I get "Not Found" from that link, is there a typo?
+> >>> 
+> >>> I found this fix from for-linus branch:
+> >>> 
+> >>> # PCI: Fix missing lockdep annotation for pci_cfg_access_trylock()for-linus
+> >>> https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/commit/?h=for-linus&id=f941b9182c54a885a9d5d4cfd97af66873c98560
+> >>> 
+> >>> But at least that doesn't fix my crash.
+> >>
+> >> Sorry for the broken link I mistakenly used a message-id from an
+> >> internal thread with the intel.com reporter. However, it is moot now
+> >> because the new direction is to revert the lockdep infrastructure:
+> >>
+> >> https://lore.kernel.org/r/171711745834.1628941.5259278474013108507.stgit@dwillia2-xfh.jf.intel.com
+> >>
+> >> (that link works...)
+> >
+> > Thanks, that links works :) I did a quick test with the three patches
+> > and I didn't see any crashes anymore. But to be confident I need to run
+> > overnight tests, I'll provide my Tested-by after that.
+> 
+> Ok, I'm now quite confident that the issues I saw are solved so:
+> 
+> Tested-by: Kalle Valo <kvalo@kernel.org>
 
-I see where you are coming from with this but I think it is wrong. The
-cpus for an uncore PMU are a hint of the CPU to open on rather than
-the set of valid CPUs. For example:
-```
-$ cat /sys/devices/uncore_imc_free_running_0/cpumask
-0
-$ perf stat -vv -e uncore_imc_free_running_0/data_read/ -C 1 -a sleep 0.1
-Using CPUID GenuineIntel-6-8D-1
-Attempt to add: uncore_imc_free_running_0/data_read/
-..after resolving event: uncore_imc_free_running_0/event=3D0xff,umask=3D0x2=
-0/
-Control descriptor is not initialized
-------------------------------------------------------------
-perf_event_attr:
-  type                             24 (uncore_imc_free_running_0)
-  size                             136
-  config                           0x20ff (data_read)
-  sample_type                      IDENTIFIER
-  read_format                      TOTAL_TIME_ENABLED|TOTAL_TIME_RUNNING
-  disabled                         1
-  inherit                          1
-  exclude_guest                    1
-------------------------------------------------------------
-sys_perf_event_open: pid -1  cpu 1  group_fd -1  flags 0x8
-sys_perf_event_open failed, error -22
-switching off cloexec flag
-------------------------------------------------------------
-perf_event_attr:
-  type                             24 (uncore_imc_free_running_0)
-  size                             136
-  config                           0x20ff (data_read)
-  sample_type                      IDENTIFIER
-  read_format                      TOTAL_TIME_ENABLED|TOTAL_TIME_RUNNING
-  disabled                         1
-  inherit                          1
-  exclude_guest                    1
-------------------------------------------------------------
-sys_perf_event_open: pid -1  cpu 1  group_fd -1  flags 0
-sys_perf_event_open failed, error -22
-switching off exclude_guest, exclude_host
-------------------------------------------------------------
-perf_event_attr:
-  type                             24 (uncore_imc_free_running_0)
-  size                             136
-  config                           0x20ff (data_read)
-  sample_type                      IDENTIFIER
-  read_format                      TOTAL_TIME_ENABLED|TOTAL_TIME_RUNNING
-  disabled                         1
-  inherit                          1
-------------------------------------------------------------
-sys_perf_event_open: pid -1  cpu 1  group_fd -1  flags 0 =3D 3
-uncore_imc_free_running_0/data_read/: 1: 4005984 102338957 102338957
-uncore_imc_free_running_0/data_read/: 4005984 102338957 102338957
+Thanks for reporting the issue and testing the fix!  Can you please
+respond with your Tested-by to the actual patch(es) you tested?
 
- Performance counter stats for 'system wide':
-
-            244.51 MiB  uncore_imc_free_running_0/data_read/
-
-       0.102320376 seconds time elapsed
-```
-So the CPU mask of the PMU says to open on CPU 0, but on the command
-line when I passed "-C 1" it opened it on CPU 1. If the cpumask file
-contained an offline CPU then this change would make it so the CPU map
-in the tool were empty, however, a different CPU may be programmable
-and online.
-
-Fwiw, the tool will determine whether the mask is for all valid or a
-hint by using the notion of a PMU being "core" or not. That notion
-considers whether the mask was loading from a "cpumask" or "cpus"
-file:
-https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
-ee/tools/perf/util/pmu.c?h=3Dperf-tools-next#n810
-
-Thanks,
-Ian
-
-> Signed-off-by: Yicong Yang <yangyicong@hisilicon.com>
-> ---
->  tools/perf/util/pmu.c | 13 +++++++++++--
->  1 file changed, 11 insertions(+), 2 deletions(-)
->
-> diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
-> index 888ce9912275..51e8d10ee28b 100644
-> --- a/tools/perf/util/pmu.c
-> +++ b/tools/perf/util/pmu.c
-> @@ -771,8 +771,17 @@ static struct perf_cpu_map *pmu_cpumask(int dirfd, c=
-onst char *name, bool is_cor
->                         continue;
->                 cpus =3D perf_cpu_map__read(file);
->                 fclose(file);
-> -               if (cpus)
-> -                       return cpus;
-> +               if (cpus) {
-> +                       struct perf_cpu_map *intersect __maybe_unused;
-> +
-> +                       if (perf_cpu_map__is_subset(cpu_map__online(), cp=
-us))
-> +                               return cpus;
-> +
-> +                       intersect =3D perf_cpu_map__intersect(cpus, cpu_m=
-ap__online());
-> +                       perf_cpu_map__put(cpus);
-> +                       if (intersect)
-> +                               return intersect;
-> +               }
->         }
->
->         /* Nothing found, for core PMUs assume this means all CPUs. */
-> --
-> 2.24.0
->
+Bjorn
 
