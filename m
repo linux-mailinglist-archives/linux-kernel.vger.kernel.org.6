@@ -1,163 +1,168 @@
-Return-Path: <linux-kernel+bounces-198571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6AB28D7A71
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 05:26:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42BD18D7A72
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 05:27:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F7461F213D5
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 03:26:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECE0728098A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 03:26:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDB5A182AF;
-	Mon,  3 Jun 2024 03:26:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="QkHpPYmX"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C54BEEAE6;
+	Mon,  3 Jun 2024 03:26:52 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9655E57B
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 03:26:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B461FEAD7
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 03:26:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717385167; cv=none; b=Zx4T2CJmJ2nm+T+kFpZ4J8NgY9iwLPhacNBIRFT/wjGeRPG++Y14xcFQHFG+wHwTLEL0eLtf1x/5nCcJqoBuM6aBBzk8jWEz0BvrockBfEeaa7BHfd3egE2OOfLggx1p35UeFqVbuEqYELZ3oic7nVVFHzZ1KTi/FPwt/8QDEVg=
+	t=1717385212; cv=none; b=hGsmY4PNKn8yUDPzES5gYt9+iuUgkj3tuCSNGaH3wn8wZLHllohySh2kbQ2bGc/J+U1c2r4Uk1hNA8IYi1Re+ND8om5rU4fD1De/9N1z4M7POv+mF74BZkn77VBbMDixeB1GQz+i8BHL4ZVTTZERqKWHj6za5gWQrog/YZTy9bY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717385167; c=relaxed/simple;
-	bh=yvv+ByU0rbcx7vOWOy8x/ELh363v8vdXoWdPA0FsBRY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NQlzeB2folrIZniKUQIb8zEc+l+zUKg9YnVDjniknIXV/EnO9rE4n/mjvNj9bMy2dC2Q+rL43dlhrcbMmPo0mvgqL/kT18VYp/0dn+n+wyafQ4rvXrL0LX1wwURw9Tjnxolx2cREJK27qRZ2XNb0T8U15I38E420vJHmmx98PXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=QkHpPYmX; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-6c3b5c5e32cso1791762a12.1
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2024 20:26:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1717385164; x=1717989964; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=LwQ1ur+Zw6epC8fpHSOEy3Qv64zBOx9AxtVqgOruovc=;
-        b=QkHpPYmXrasO/8RyRcjZhPSGgPB6j0ZoliQg9ulUvQB6wetMcTmz3wSGkFoxqeXlvc
-         hh7EHYVv6s8DkiwDuG7mpNV8OkJ9+gspYhB/O4jYlJx5jTBhemf4C272sx/8b4K4LvlO
-         O1RUPrJmSlA0lwGyQSJUK46dWLXrZn6B5VYKmT/gGePJo87cS2oeoy7D0Y4MLNYwVFX7
-         Y2Y3DQPVEs3Y7vWak1RTMq7avUVv43bdx1Fu7QoIKszybrTFVTejBPPRk88v8PDIkjv3
-         shwMvQNzxQxrOdij6H4Zoun7wFm44GLhVHbq28mBXaeMfrFLfaTAzKnzJZ5l/ibhLOPi
-         Zkiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717385164; x=1717989964;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LwQ1ur+Zw6epC8fpHSOEy3Qv64zBOx9AxtVqgOruovc=;
-        b=P4Kr+o+4PT85JRabIlDPA6cwdfPpwo8hk0AvwfsAOVTpW0tFeE5WCt+uts3pRu4AhZ
-         SMSITlMVtY9jnfsufHtVoHdQTFO1CkeEHQR15PNg01XCqEq0R4ZX4wn7nTHqBD90f150
-         TwbhEdFB3FUWojhzjooIL27YLltm8i6voI3qdNrjLoQ+RgVwIhkPOqmKm7ke+WKS5lX4
-         jVlG4sxKR2r7nbmw/TVGzJOz8vM505pFtJ9IrP6rBQoegNU3eXvKtsJ1ah0hcLvRVMYb
-         5Apg7X5NPnLgEu+u7c3TQxsyBGFXKF6CQu60EglHNp+2anSUrbWC98xe6jDV3en+OKWW
-         IsWA==
-X-Gm-Message-State: AOJu0YxOWU1q8hS4XCPWbaJQtpelBT9T4duEKdz0tJCjQeO8h/ODX4Ye
-	iEH0CbUOtjyHkszwis5lncXkQqiGRTG4HgzYJzI4WhFvi5PMttYouWlzKIkMC6g=
-X-Google-Smtp-Source: AGHT+IH2Tv4cKiRNQVhD1wf6Teq/PgQ5BlkpaRe+RFniaQBz77llJw3MbV2CLQoabS7NExxdNZni6g==
-X-Received: by 2002:a17:903:2448:b0:1f6:74e6:1ec1 with SMTP id d9443c01a7336-1f674e62022mr24566395ad.68.1717385164007;
-        Sun, 02 Jun 2024 20:26:04 -0700 (PDT)
-Received: from [192.168.6.6] ([61.213.176.58])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f683d1a770sm1403735ad.13.2024.06.02.20.26.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 02 Jun 2024 20:26:03 -0700 (PDT)
-Message-ID: <7ba64e00-373b-4c13-a30a-113646dad588@bytedance.com>
-Date: Mon, 3 Jun 2024 11:25:59 +0800
+	s=arc-20240116; t=1717385212; c=relaxed/simple;
+	bh=4AxKANIPQDldK4oFGsXikmc5DVLnqvzkXVQP6Ec3lKs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=OFYUPlOd3Y7AAa12/QJ9Htr4LPpnhC30fIBEO7cz0qdNDqNRejuUioyddy0zWZcYvb1LO9jJ6RebgjM1pogPABq+HkXMdN/Xu4OETw0ZCnqs58lSM/Tx3zj2EjeqmW2msdtX6eTIrn7MXF4cV84JfrYBZ0HVBVBsKXA2Ufn6+pk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4VszYz3Y5CzxRJd;
+	Mon,  3 Jun 2024 11:22:47 +0800 (CST)
+Received: from kwepemd200013.china.huawei.com (unknown [7.221.188.133])
+	by mail.maildlp.com (Postfix) with ESMTPS id B3C08180085;
+	Mon,  3 Jun 2024 11:26:41 +0800 (CST)
+Received: from [10.67.110.108] (10.67.110.108) by
+ kwepemd200013.china.huawei.com (7.221.188.133) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Mon, 3 Jun 2024 11:26:40 +0800
+Message-ID: <e632a9ed-7659-9336-6e7f-a43c4759a7a3@huawei.com>
+Date: Mon, 3 Jun 2024 11:26:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] lib: test_objpool: add missing MODULE_DESCRIPTION() macro
-To: Jeff Johnson <quic_jjohnson@quicinc.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Masami Hiramatsu <mhiramat@kernel.org>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-References: <20240531-md-lib-test_objpool-v1-1-516efee92a05@quicinc.com>
-Content-Language: en-US
-From: "wuqiang.matt" <wuqiang.matt@bytedance.com>
-Autocrypt: addr=wuqiang.matt@bytedance.com; keydata=
- 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
- 4mCJUdEkdwCS
-In-Reply-To: <20240531-md-lib-test_objpool-v1-1-516efee92a05@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.2
+Subject: Re: [PATCH v3 1/8] arm64/sysreg: Add definitions for immediate
+ versions of MSR ALLINT
+To: Mark Brown <broonie@kernel.org>
+CC: Mark Rutland <mark.rutland@arm.com>, <catalin.marinas@arm.com>,
+	<will@kernel.org>, <maz@kernel.org>, <oliver.upton@linux.dev>,
+	<james.morse@arm.com>, <suzuki.poulose@arm.com>, <yuzenghui@huawei.com>,
+	<tglx@linutronix.de>, <ardb@kernel.org>, <anshuman.khandual@arm.com>,
+	<miguel.luis@oracle.com>, <joey.gouly@arm.com>, <ryan.roberts@arm.com>,
+	<jeremy.linton@arm.com>, <ericchancf@google.com>,
+	<kristina.martsenko@arm.com>, <robh@kernel.org>,
+	<scott@os.amperecomputing.com>, <songshuaishuai@tinylab.org>,
+	<shijie@os.amperecomputing.com>, <akpm@linux-foundation.org>,
+	<bhe@redhat.com>, <horms@kernel.org>, <mhiramat@kernel.org>,
+	<rmk+kernel@armlinux.org.uk>, <shahuang@redhat.com>,
+	<takakura@valinux.co.jp>, <dianders@chromium.org>, <swboyd@chromium.org>,
+	<sumit.garg@linaro.org>, <frederic@kernel.org>, <reijiw@google.com>,
+	<akihiko.odaki@daynix.com>, <ruanjinjie@huawei.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<kvmarm@lists.linux.dev>
+References: <20240415064758.3250209-1-liaochang1@huawei.com>
+ <20240415064758.3250209-2-liaochang1@huawei.com>
+ <ZjUKMWPknEhLYoK8@FVFF77S0Q05N> <Zjjz-tzLRC2nH51A@finisterre.sirena.org.uk>
+ <cde4d448-dc9d-eaad-4a2d-a6d34bda4449@huawei.com>
+ <ZjpALOdSgu-qhshR@finisterre.sirena.org.uk>
+From: "Liao, Chang" <liaochang1@huawei.com>
+In-Reply-To: <ZjpALOdSgu-qhshR@finisterre.sirena.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemd200013.china.huawei.com (7.221.188.133)
 
-On 2024/6/1 08:31, Jeff Johnson wrote:
-> make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_objpool.o
+Hi, Mark
+
+在 2024/5/7 22:52, Mark Brown 写道:
+> On Tue, May 07, 2024 at 03:41:08PM +0800, Liao, Chang wrote:
+>> 在 2024/5/6 23:15, Mark Brown 写道:
+>>> On Fri, May 03, 2024 at 05:00:49PM +0100, Mark Rutland wrote:
 > 
-> Add the missing invocation of the MODULE_DESCRIPTION() macro.
+>>>> +#define set_pstate_allint(x)           asm volatile(SET_PSTATE_ALLINT(x))
 > 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> ---
->   lib/test_objpool.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
+>>> Hrm, those helpers are not ideally discoverable, partly due to the
+>>> system register description for ALLINT not providing any references to
+>>> this being a general scheme (which is fixable there) and partly due to
 > 
-> diff --git a/lib/test_objpool.c b/lib/test_objpool.c
-> index bfdb81599832..5a3f6961a70f 100644
-> --- a/lib/test_objpool.c
-> +++ b/lib/test_objpool.c
-> @@ -687,4 +687,5 @@ static void __exit ot_mod_exit(void)
->   module_init(ot_mod_init);
->   module_exit(ot_mod_exit);
->   
-> -MODULE_LICENSE("GPL");
-> \ No newline at end of file
-> +MODULE_DESCRIPTION("Test module for lockless object pool");
-> +MODULE_LICENSE("GPL");
+>> Based on the Arm ISA reference manual, the instruction accessing the ALLINT
+>> field of PSTATE uses the following encoding:
 > 
-> ---
-> base-commit: b050496579632f86ee1ef7e7501906db579f3457
-> change-id: 20240531-md-lib-test_objpool-338d937f8666
+> I'm not saying the suggestion is wrong, I'm saying that between the ARM
+> and the way the code is written the helpers aren't as discoverable as
+> they should be, like I say from a code point of view that's mainly
+> because...
 > 
+>>                     op0  op1   CRn    CRm    op2
+>> MSR ALLINT, #<imm>  0b00 0b001 0b0100 0b000x 0b000
+> 
+> ...we only have the encoding for the MSR and don't mention the letters
+> 'msr' anywhere.  We should improve that to say what we're encoding in
+> the code (in general I'd say that's true for any __emit_inst(), not just
+> these ones).
 
-Looks good to me. Thanks for the update.
+Oh, I apologize any confusion in my previous message.
 
-I added Masami Hiramatsu and linux-trace in the loop.
+Mark, Is your concern is that the series of pstate related macro name in
+sysregs.h are lack of self-explanatory nature, which make it diffuclt to
+understand their functionality and purpose? If so, I daft some alternative
+macro names in the code below, looking forward to your feedback, or if you
+have any proposal for making these helpers discoverable.
 
-Reviewed-by: Matt Wu <wuqiang.matt@bytedance.com>
+----8<----
+diff --git a/arch/arm64/include/asm/sysreg.h b/arch/arm64/include/asm/sysreg.h
+index 643e2ad73cbd..4f514bdfb1bd 100644
+--- a/arch/arm64/include/asm/sysreg.h
++++ b/arch/arm64/include/asm/sysreg.h
+@@ -90,7 +90,7 @@
+  */
+ #define pstate_field(op1, op2)         ((op1) << Op1_shift | (op2) << Op2_shift)
+ #define PSTATE_Imm_shift               CRm_shift
+-#define SET_PSTATE(x, r)               __emit_inst(0xd500401f | PSTATE_ ## r | ((!!x) << PSTATE_Imm_shift))
++#define MSR_PSTATE_ENCODE(x, r)                __emit_inst(0xd500401f | PSTATE_ ## r | ((!!x) << PSTATE_Imm_shift))
 
-Regards,
-Matt Wu
+ #define PSTATE_PAN                     pstate_field(0, 4)
+ #define PSTATE_UAO                     pstate_field(0, 3)
+@@ -99,18 +99,18 @@
+ #define PSTATE_TCO                     pstate_field(3, 4)
+ #define PSTATE_ALLINT                  pstate_field(1, 0)
 
+-#define SET_PSTATE_PAN(x)              SET_PSTATE((x), PAN)
+-#define SET_PSTATE_UAO(x)              SET_PSTATE((x), UAO)
+-#define SET_PSTATE_SSBS(x)             SET_PSTATE((x), SSBS)
+-#define SET_PSTATE_DIT(x)              SET_PSTATE((x), DIT)
+-#define SET_PSTATE_TCO(x)              SET_PSTATE((x), TCO)
+-#define SET_PSTATE_ALLINT(x)           SET_PSTATE((x), ALLINT)
+-
+-#define set_pstate_pan(x)              asm volatile(SET_PSTATE_PAN(x))
+-#define set_pstate_uao(x)              asm volatile(SET_PSTATE_UAO(x))
+-#define set_pstate_ssbs(x)             asm volatile(SET_PSTATE_SSBS(x))
+-#define set_pstate_dit(x)              asm volatile(SET_PSTATE_DIT(x))
+-#define set_pstate_allint(x)           asm volatile(SET_PSTATE_ALLINT(x))
++#define MSR_PSTATE_PAN(x)              MSR_PSTATE_ENCODE((x), PAN)
++#define MSR_PSTATE_UAO(x)              MSR_PSTATE_ENCODE((x), UAO)
++#define MSR_PSTATE_SSBS(x)             MSR_PSTATE_ENCODE((x), SSBS)
++#define MSR_PSTATE_DIT(x)              MSR_PSTATE_ENCODE((x), DIT)
++#define MSR_PSTATE_TCO(x)              MSR_PSTATE_ENCODE((x), TCO)
++#define MSR_PSTATE_ALLINT(x)           MSR_PSTATE_ENCODE((x), ALLINT)
++
++#define msr_pstate_pan(x)              asm volatile(MSR_PSTATE_PAN(x))
++#define msr_pstate_uao(x)              asm volatile(MSR_PSTATE_UAO(x))
++#define msr_pstate_ssbs(x)             asm volatile(MSR_PSTATE_SSBS(x))
++#define msr_pstate_dit(x)              asm volatile(MSR_PSTATE_DIT(x))
++#define msr_pstate_allint(x)           asm volatile(MSR_PSTATE_ALLINT(x))
+---->8----
+
+Thanks.
+
+-- 
+BR
+Liao, Chang
 
