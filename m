@@ -1,150 +1,204 @@
-Return-Path: <linux-kernel+bounces-198823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED2758D7DF8
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 10:59:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 028BB8D7DFB
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:00:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F5B7B20B43
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 08:59:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60F7EB236BE
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:00:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E596376EEA;
-	Mon,  3 Jun 2024 08:59:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="nCkImw7m"
-Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D771F495CC;
+	Mon,  3 Jun 2024 09:00:20 +0000 (UTC)
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13A0C7604F
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 08:59:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7528C1E49F
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 09:00:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717405151; cv=none; b=pKbFdP0THdBtZmh2/Iim1pa/bLd6wZM4enTf73qKi1UBxPwjzrDFbkxJ9OBmApdQZ0DdKfTj9TAwzSHTAEbVcftQ6g/HPO4Gw8PWlDswkqhiH/kVmqhSWTLrqg/HArPFpD/vJuTCmaO1AT64Woc0uDAgJC4Y8i1EJnXce7TAkvs=
+	t=1717405220; cv=none; b=HBzMJPwSjl+hcXV74+y8sqQM/hlKsNX1FohLEQ1qHnnqJPER2CISoZBY9waXrXba5XSga0XDVyZX5vhxoxuY6Sa4T/g3LGvi6//B7H6sIgMDiRzDq3npmrgAp2EncZiJ+fh9EsHoQQ4G5F1fI10puzlwiwjXE/Z3/F6oWHzaOEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717405151; c=relaxed/simple;
-	bh=W3fg5nl6HNyYLjlSngUjxtPZxz3YW1afDlPZUYbTL5E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Q4hE9RMifqz4EKqoBs+8yv9OgY13o33Ikj+9fdZZ9LQ2GLC8Ll+pJvy+BkJFt1gjqw9nxSYafWjFiQS0qZIXw0vP8/Nue5fTr4hqBimkohNMul6hzfOwmy5GdoREZkKp5A7PmUivRYH4LZd5DAly9q1Pohy63+fVPf7u3XPeU+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=nCkImw7m; arc=none smtp.client-ip=115.124.30.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1717405140; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=TzPdstqt9IZKp/sl6m9OBFjYtVVR9pYii9OkkWcJFLc=;
-	b=nCkImw7mEpRAE+qiSbcFM68Z0cW3cCsPAaCRAAQViiWUdNxgsg9wcUun/LcSydWs2MlQTEsMMiSrRVWmvGsk9FjBfdJOFHe8JA1WSoiS45U7M6ZNUcYM+jHAtiRGdKwx5KKnH2bahSgRlXJv7XBbvyQ3im6NaHwqE9PKt0ioRVI=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R751e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067113;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0W7lDG5c_1717405138;
-Received: from 30.97.56.74(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W7lDG5c_1717405138)
-          by smtp.aliyun-inc.com;
-          Mon, 03 Jun 2024 16:58:59 +0800
-Message-ID: <c925eae9-5c7e-47d2-bab3-708edec88990@linux.alibaba.com>
-Date: Mon, 3 Jun 2024 16:58:58 +0800
+	s=arc-20240116; t=1717405220; c=relaxed/simple;
+	bh=maoAzCa5PCcpwPjTQeNkg11/Jl6/nTwHfVCe+GxTztg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=oQ78Cr28Wem3uvBUL/M3NWZqlz+qWXuB1350P8jbbbGgaJSfy0EC6cdWONO3cwESEblpsiBNIhYO08g6JG/T+64vHx4H2BZNKSAEx9Mv5we7HuuW45M46Mkl/eMKt/eLjQPX/sMRUeoGNesRuu8b5/2+QKYJ2RhqHpP86UzJYpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4Vt6z01tZWz1S673;
+	Mon,  3 Jun 2024 16:56:28 +0800 (CST)
+Received: from dggpemm500022.china.huawei.com (unknown [7.185.36.162])
+	by mail.maildlp.com (Postfix) with ESMTPS id 2BEBE1A0188;
+	Mon,  3 Jun 2024 17:00:08 +0800 (CST)
+Received: from [10.67.110.25] (10.67.110.25) by dggpemm500022.china.huawei.com
+ (7.185.36.162) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 3 Jun
+ 2024 17:00:07 +0800
+Message-ID: <0428528e-d82d-d018-dbe5-77d1314526fb@huawei.com>
+Date: Mon, 3 Jun 2024 17:00:02 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] mm/mlock: implement folio_mlock_step() using
- folio_pte_batch()
-To: Barry Song <21cnbao@gmail.com>, Lance Yang <ioworker0@gmail.com>
-Cc: akpm@linux-foundation.org, ryan.roberts@arm.com, david@redhat.com,
- ziy@nvidia.com, fengwei.yin@intel.com, ying.huang@intel.com,
- libang.li@antgroup.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20240603033118.76457-1-ioworker0@gmail.com>
- <CAGsJ_4wxPk+bk9UM+PvA3x=LJG+mWmTD3e2HSEsS83X3vMWTJQ@mail.gmail.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <CAGsJ_4wxPk+bk9UM+PvA3x=LJG+mWmTD3e2HSEsS83X3vMWTJQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.1.2
+Subject: Re: [PATCH] sched/rt: Fix rt_runtime leaks with cpu hotplug and
+ RT_RUNTIME_SHARE
+To: <mingo@redhat.com>, <peterz@infradead.org>, <juri.lelli@redhat.com>,
+	<vincent.guittot@linaro.org>, <dietmar.eggemann@arm.com>,
+	<rostedt@goodmis.org>, <bsegall@google.com>, <mgorman@suse.de>,
+	<bristot@redhat.com>, <vschneid@redhat.com>, <linux-kernel@vger.kernel.org>
+CC: <tanghui20@huawei.com>
+References: <20240524034227.1871565-1-zhaowenhui8@huawei.com>
+From: "zhaowenhui (A)" <zhaowenhui8@huawei.com>
+In-Reply-To: <20240524034227.1871565-1-zhaowenhui8@huawei.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ dggpemm500022.china.huawei.com (7.185.36.162)
 
+Friendly Ping.
 
+Regards,
+Zhao Wenhui
 
-On 2024/6/3 12:14, Barry Song wrote:
-> On Mon, Jun 3, 2024 at 3:31 PM Lance Yang <ioworker0@gmail.com> wrote:
->>
->> Let's make folio_mlock_step() simply a wrapper around folio_pte_batch(),
->> which will greatly reduce the cost of ptep_get() when scanning a range of
->> contptes.
->>
->> Signed-off-by: Lance Yang <ioworker0@gmail.com>
->> ---
->>   mm/mlock.c | 23 ++++++-----------------
->>   1 file changed, 6 insertions(+), 17 deletions(-)
->>
->> diff --git a/mm/mlock.c b/mm/mlock.c
->> index 30b51cdea89d..1ae6232d38cf 100644
->> --- a/mm/mlock.c
->> +++ b/mm/mlock.c
->> @@ -307,26 +307,15 @@ void munlock_folio(struct folio *folio)
->>   static inline unsigned int folio_mlock_step(struct folio *folio,
->>                  pte_t *pte, unsigned long addr, unsigned long end)
->>   {
->> -       unsigned int count, i, nr = folio_nr_pages(folio);
->> -       unsigned long pfn = folio_pfn(folio);
->> -       pte_t ptent = ptep_get(pte);
->> -
->> -       if (!folio_test_large(folio))
->> +       if (likely(!folio_test_large(folio)))
->>                  return 1;
->>
->> -       count = pfn + nr - pte_pfn(ptent);
->> -       count = min_t(unsigned int, count, (end - addr) >> PAGE_SHIFT);
->> -
->> -       for (i = 0; i < count; i++, pte++) {
->> -               pte_t entry = ptep_get(pte);
->> -
->> -               if (!pte_present(entry))
->> -                       break;
->> -               if (pte_pfn(entry) - pfn >= nr)
->> -                       break;
->> -       }
->> +       const fpb_t fpb_flags = FPB_IGNORE_DIRTY | FPB_IGNORE_SOFT_DIRTY;
->> +       int max_nr = (end - addr) / PAGE_SIZE;
->> +       pte_t ptent = ptep_get(pte);
->>
->> -       return i;
->> +       return folio_pte_batch(folio, addr, pte, ptent, max_nr, fpb_flags, NULL,
->> +                              NULL, NULL);
->>   }
+On 2024/5/24 11:42, Zhao Wenhui Wrote:
+> When using cgroup rt_bandwidth with RT_RUNTIME_SHARE, if there are cpu
+> hotplug and cpu.rt_runtime_us changing concurrently, the warning in
+> __disable_runtime may occur:
+> [  991.697692] WARNING: CPU: 0 PID: 49573 at kernel/sched/rt.c:802
+> rq_offline_rt+0x24d/0x260
+> [  991.697795] CPU: 0 PID: 49573 Comm: kworker/1:0 Kdump: loaded Not
+> tainted 6.9.0-rc1+ #4
+> [  991.697800] Workqueue: events cpuset_hotplug_workfn
+> [  991.697803] RIP: 0010:rq_offline_rt+0x24d/0x260
+> [  991.697825] Call Trace:
+> [  991.697827]  <TASK>
+> [  991.697858]  set_rq_offline.part.125+0x2d/0x70
+> [  991.697864]  rq_attach_root+0xda/0x110
+> [  991.697867]  cpu_attach_domain+0x433/0x860
+> [  991.697880]  partition_sched_domains_locked+0x2a8/0x3a0
+> [  991.697885]  rebuild_sched_domains_locked+0x608/0x800
+> [  991.697895]  rebuild_sched_domains+0x1b/0x30
+> [  991.697897]  cpuset_hotplug_workfn+0x4b6/0x1160
+> [  991.697909]  process_scheduled_works+0xad/0x430
+> [  991.697917]  worker_thread+0x105/0x270
+> [  991.697922]  kthread+0xde/0x110
+> [  991.697928]  ret_from_fork+0x2d/0x50
+> [  991.697935]  ret_from_fork_asm+0x11/0x20
+> [  991.697940]  </TASK>
+> [  991.697941] ---[ end trace 0000000000000000 ]---
 > 
-> what about a minimum change as below?
-> index 30b51cdea89d..e8b98f84fbd2 100644
-> --- a/mm/mlock.c
-> +++ b/mm/mlock.c
-> @@ -307,26 +307,15 @@ void munlock_folio(struct folio *folio)
->   static inline unsigned int folio_mlock_step(struct folio *folio,
->                  pte_t *pte, unsigned long addr, unsigned long end)
+> That's how it happens:
+> CPU0                                   CPU1
+> -----                                  -----
+> 
+> set_rq_offline(rq)
+>      __disable_runtime(rq) (1)
+>                                        tg_set_rt_bandwidth (2)
+>                                        do_balance_runtime  (3)
+> set_rq_online(rq)
+>      __enable_runtime(rq)  (4)
+> 
+> In step(1) rt_rq->rt_runtime is set to RUNTIME_INF, and this rtrq's
+> runtime is not supposed to change until its rq gets online. However,
+> in step(2) tg_set_rt_bandwidth can set rt_rq->rt_runtime to
+> rt_bandwidth.rt_runtime. Then, in step(3) rtrq's runtime is not
+> RUNTIME_INF, so others can borrow rt_runtime from it. Finally, in
+> step(4) the rq gets online, so its rtrq's runtime is set to
+> rt_bandwidth.rt_runtime again, and Since then the total rt_runtime in
+> the domain is increased by this way. After these steps, when offline cpu,
+> rebuilding the sched_domain will offline all rq, and the last rq will
+> find the rt_runtime is increased but nowhere to return.
+> 
+> To fix this, we can add a state RUNTIME_DISABLED, which means the runtime
+> is disabled and should not be used. When rq get offline, we can set its
+> rtrq's rt_runtime to RUNTIME_DISABLED, and when rq get online, reset it.
+> And in tg_set_rt_bandwidth and do_balance_runtime, never change a
+> disabled rt_runtime.
+> 
+> Fixes: 7def2be1dc67 ("sched: fix hotplug cpus on ia64")
+> Closes: https://lore.kernel.org/all/47b4a790-9a27-2fc5-f2aa-f9981c6da015@huawei.com/
+> Co-developed-by: Hui Tang <tanghui20@huawei.com>
+> Signed-off-by: Hui Tang <tanghui20@huawei.com>
+> Signed-off-by: Zhao Wenhui <zhaowenhui8@huawei.com>
+> ---
+>   kernel/sched/rt.c    | 15 +++++++++------
+>   kernel/sched/sched.h |  5 +++++
+>   2 files changed, 14 insertions(+), 6 deletions(-)
+> 
+> diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
+> index aa4c1c874fa4..44b8cc5a2f5f 100644
+> --- a/kernel/sched/rt.c
+> +++ b/kernel/sched/rt.c
+> @@ -704,7 +704,8 @@ static void do_balance_runtime(struct rt_rq *rt_rq)
+>   		 * or __disable_runtime() below sets a specific rq to inf to
+>   		 * indicate its been disabled and disallow stealing.
+>   		 */
+> -		if (iter->rt_runtime == RUNTIME_INF)
+> +		if (iter->rt_runtime == RUNTIME_INF ||
+> +				iter->rt_runtime == RUNTIME_DISABLED)
+>   			goto next;
+>   
+>   		/*
+> @@ -775,7 +776,9 @@ static void __disable_runtime(struct rq *rq)
+>   			/*
+>   			 * Can't reclaim from ourselves or disabled runqueues.
+>   			 */
+> -			if (iter == rt_rq || iter->rt_runtime == RUNTIME_INF)
+> +			if (iter == rt_rq ||
+> +					iter->rt_runtime == RUNTIME_INF ||
+> +					iter->rt_runtime == RUNTIME_DISABLED)
+>   				continue;
+>   
+>   			raw_spin_lock(&iter->rt_runtime_lock);
+> @@ -801,10 +804,9 @@ static void __disable_runtime(struct rq *rq)
+>   		WARN_ON_ONCE(want);
+>   balanced:
+>   		/*
+> -		 * Disable all the borrow logic by pretending we have inf
+> -		 * runtime - in which case borrowing doesn't make sense.
+> +		 * Disable all the borrow logic by marking runtime disabled.
+>   		 */
+> -		rt_rq->rt_runtime = RUNTIME_INF;
+> +		rt_rq->rt_runtime = RUNTIME_DISABLED;
+>   		rt_rq->rt_throttled = 0;
+>   		raw_spin_unlock(&rt_rq->rt_runtime_lock);
+>   		raw_spin_unlock(&rt_b->rt_runtime_lock);
+> @@ -2827,7 +2829,8 @@ static int tg_set_rt_bandwidth(struct task_group *tg,
+>   		struct rt_rq *rt_rq = tg->rt_rq[i];
+>   
+>   		raw_spin_lock(&rt_rq->rt_runtime_lock);
+> -		rt_rq->rt_runtime = rt_runtime;
+> +		if (rt_rq->rt_runtime != RUNTIME_DISABLED)
+> +			rt_rq->rt_runtime = rt_runtime;
+>   		raw_spin_unlock(&rt_rq->rt_runtime_lock);
+>   	}
+>   	raw_spin_unlock_irq(&tg->rt_bandwidth.rt_runtime_lock);
+> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+> index a831af102070..c2ad9102b8fa 100644
+> --- a/kernel/sched/sched.h
+> +++ b/kernel/sched/sched.h
+> @@ -183,6 +183,11 @@ extern struct list_head asym_cap_list;
+>    */
+>   #define RUNTIME_INF		((u64)~0ULL)
+>   
+> +/*
+> + * Single value that denotes runtime is disabled, and it should not be used.
+> + */
+> +#define RUNTIME_DISABLED	(-2ULL)
+> +
+>   static inline int idle_policy(int policy)
 >   {
-> -       unsigned int count, i, nr = folio_nr_pages(folio);
-> -       unsigned long pfn = folio_pfn(folio);
-> +       unsigned int count = (end - addr) >> PAGE_SHIFT;
->          pte_t ptent = ptep_get(pte);
-> +       const fpb_t fpb_flags = FPB_IGNORE_DIRTY | FPB_IGNORE_SOFT_DIRTY;
-> 
->          if (!folio_test_large(folio))
->                  return 1;
-> 
-> -       count = pfn + nr - pte_pfn(ptent);
-> -       count = min_t(unsigned int, count, (end - addr) >> PAGE_SHIFT);
-> -
-> -       for (i = 0; i < count; i++, pte++) {
-> -               pte_t entry = ptep_get(pte);
-> -
-> -               if (!pte_present(entry))
-> -                       break;
-> -               if (pte_pfn(entry) - pfn >= nr)
-> -                       break;
-> -       }
-> -
-> -       return i;
-> +       return folio_pte_batch(folio, addr, pte, ptent, count, fpb_flags, NULL,
-> +                              NULL, NULL);
->   }
+>   	return policy == SCHED_IDLE;
 
-LGTM.
-Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+Ping.
+
+
 
