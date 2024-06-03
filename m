@@ -1,96 +1,91 @@
-Return-Path: <linux-kernel+bounces-199246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BB0A8D8456
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:49:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C87C18D8459
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:49:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2665D2813C0
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:49:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8432C282DB9
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:49:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 293C6839EA;
-	Mon,  3 Jun 2024 13:48:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 361F112DDAF;
+	Mon,  3 Jun 2024 13:49:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="t1dHQY3o"
-Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZisACYn8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B57891E892
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 13:48:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CC0512D775;
+	Mon,  3 Jun 2024 13:49:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717422537; cv=none; b=U1hvMg1MB2B4S/06bhp5OJ6hRyl2TFrJLIKVdtlcfaXgfGNDBHjSV/TMB9gfyyu4rfdSeawQ6HtRW+SxPJjY/XA5FQjc5UJNjUoRbc6Uippp87z5RsTey3aUo84JsgGiP8wOON71CUQwvRf9Bmev4hN50yJXeFI6SJduVMhOoDA=
+	t=1717422551; cv=none; b=fGQJAIcpsfF3WelzFHorWSZVv7iRa/O+Aa2yQ8aKPGTttI41zZ8wDIel7//hoDGqkS6EJxUrpdOOH8z9qnuvjQPru60LWh3XVdCfqh7MldxcwVi4ZxDrioQqBU7mm6QZHRhTP+uaaGlLPkNrDBSHXomgMqIGE1fSQ2f2kRnYGhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717422537; c=relaxed/simple;
-	bh=o82meOjThmRLQUXQbyQGv4ifCD5QZt1UojwgVpF0kno=;
-	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
-	 In-Reply-To:References; b=LR5iADI3WpkW8Zza4lDXlAt+j9RYxaTG25jlHFBJP/zuJCn9o8mrbl/66O/vsh7g//QDgiW2CC1TfTmV+tlMG/yYQqosovzToZjGQvge91fDbxb8HOCGdX6xbdv8IPuzXyY8hRVzh21LaVWwRtcdq3F3vK+HHdLQCFIBJv26+38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=t1dHQY3o; arc=none smtp.client-ip=95.215.58.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: willy@infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1717422532;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jjNZ+oF/vjWCQ/HREQOc/k5mgT/wWmurTJZuPcpHueg=;
-	b=t1dHQY3oVSv8A1WxxJWuZYzI/r63+xFoBv6byEKkCYOb7/4GqdqWiel8RgbTMYfGeEqX90
-	T2rtGURs5Nh6RQozkQumBbbjM7eznegFXWTdIjVTMygEhR2Sz+JV3+fKAaAFJkIPkHG09f
-	S6JWNE+hSHu6BqQXI0vZx0B9+ufgU4M=
-X-Envelope-To: akpm@linux-foundation.org
-X-Envelope-To: rppt@kernel.org
-X-Envelope-To: hannes@cmpxchg.org
-X-Envelope-To: linux-mm@kvack.org
-X-Envelope-To: linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1717422551; c=relaxed/simple;
+	bh=bN6rbFCtnOlzFHmoF0XRZoe/+d54NqkBt6Joc+xkbmA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Po6pxrofGl/gSv+KOBiWgJSGTaPEKRDFQsjN+zFWrYL1T+GIJeuGC1WToCtF39TPbl8MQjUFgB2AcDj1TY+UR0t7aKjeeyBvXEtmXqmHCffVej+lp3SNHhYqTTLYiwKoRq3XgcchuCYv4+ADeF/vsYJGSmq647iKrVwwX2P0t8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZisACYn8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6627EC2BD10;
+	Mon,  3 Jun 2024 13:49:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717422551;
+	bh=bN6rbFCtnOlzFHmoF0XRZoe/+d54NqkBt6Joc+xkbmA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=ZisACYn87/yVDMYuUqZhSnnIDcT1BBhqBJf3pwJ9g36CqBaRd1o++SF7xAIaUJ+yq
+	 A8G6tyhCpv5uvRxScuApOIceS+HbBOShXATC+57sKgqA0H/vFpKtbrGTMozCsNPp27
+	 bK4bHMLMZKGRuiNLQGFWN1my+eqqxbI3otY09ptnkjM4C/08GOvZxOjqUPcsW8ITjr
+	 o4PvmaXrbM4Pa+JerKjE5y5loTi2ClWbVJfm4mz0b/nFx6M7t7+E3vCvMJxvySQSqE
+	 Y+3XPMNxRgxhwkoGw4RD3Cfj1cCUR1fpPg2h5+ltUr9y5mU+lesA/mIrjk3nxmoQ7r
+	 eMSWOd1DP8vuQ==
+From: Christian Brauner <brauner@kernel.org>
+To: Thorsten Blum <thorsten.blum@toblux.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH] readdir: Remove unused header include
+Date: Mon,  3 Jun 2024 15:48:56 +0200
+Message-ID: <20240603-kugel-kopieren-03484dc4daab@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240602101534.348159-2-thorsten.blum@toblux.com>
+References: <20240602101534.348159-2-thorsten.blum@toblux.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 03 Jun 2024 13:48:50 +0000
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Yajun Deng" <yajun.deng@linux.dev>
-Message-ID: <1bb60f7db3a11e86e6f48c1eefe7f27d7d23019c@linux.dev>
-TLS-Required: No
-Subject: Re: [PATCH] mm: pass the pfn to set_pageblock_migratetype
-To: "Matthew Wilcox" <willy@infradead.org>
-Cc: akpm@linux-foundation.org, rppt@kernel.org, hannes@cmpxchg.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-In-Reply-To: <Zl2_N9wHOh9ACQpt@casper.infradead.org>
-References: <20240603124100.2834-1-yajun.deng@linux.dev>
- <Zl2_N9wHOh9ACQpt@casper.infradead.org>
-X-Migadu-Flow: FLOW_OUT
+X-Developer-Signature: v=1; a=openpgp-sha256; l=971; i=brauner@kernel.org; h=from:subject:message-id; bh=bN6rbFCtnOlzFHmoF0XRZoe/+d54NqkBt6Joc+xkbmA=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTFnrwgZMi24qn6h+33ZR5dZcre+S28QLgkziPg4q3k9 dUlPxMKOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACaydinD/8xJ736evPgiT1Vh gcYvqU1WLPtW62xSFvabVe/TVL67VZOR4fzGxutu/1Q6t9gZHVxZc+WnYGii/9t3jw+rhzY855t +nwMA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-June 3, 2024 at 9:03 PM, "Matthew Wilcox" <willy@infradead.org> wrote:
+On Sun, 02 Jun 2024 12:15:35 +0200, Thorsten Blum wrote:
+> Since commit c512c6918719 ("uaccess: implement a proper
+> unsafe_copy_to_user() and switch filldir over to it") the header file is
+> no longer needed.
+> 
+> 
 
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
 
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
->=20
->=20On Mon, Jun 03, 2024 at 08:41:00PM +0800, Yajun Deng wrote:
->=20
->=20>=20
->=20> It is necessary to calculate the pfn in the set_pageblock_migratety=
-pe(),
-> >=20
->=20>  but most of the callers already have the pfn.
-> >=20
->=20>=20=20
->=20>=20
->=20>  To reduce the calculation, pass the pfn to set_pageblock_migratety=
-pe().
-> >=20
->=20
-> It's not exactly a hard computation though. Have you done any
->=20
->=20measurements that show this patch is an improvement?
->
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-No, just view the code. But some callers are in a for loop.
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
+
+[1/1] readdir: Remove unused header include
+      https://git.kernel.org/vfs/vfs/c/c06a4cc368ac
 
