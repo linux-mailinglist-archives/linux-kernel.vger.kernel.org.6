@@ -1,136 +1,106 @@
-Return-Path: <linux-kernel+bounces-198844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C040F8D7E3A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:14:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D3E18D7E3C
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:15:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34C31282447
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:14:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA8C4B2364F
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:15:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 191C97E79F;
-	Mon,  3 Jun 2024 09:14:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JaT8tNYq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C328C7829C;
+	Mon,  3 Jun 2024 09:14:57 +0000 (UTC)
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BDC858AA5;
-	Mon,  3 Jun 2024 09:14:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65C8B770F1
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 09:14:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717406073; cv=none; b=jumGwkFmtWtc4Hg9uYKaqS95iCJn4EWJuqaj8cmrDqdFW1q66uv8yIpWfhBuihmWw4R3ivrmMX5KzXdrDSw0vJTnwNL0QGRYIyAxGd9QbdkAaH38KYVVNLBNypZa4GeBVVZCIPy9BOWUL0uoceZRHvFqIOJlZGyHi9MSl9t3KdQ=
+	t=1717406097; cv=none; b=ZfecDtj9zm1C26y2q2G2PjJbZ+SDCU2IIKKoomF8CkR6h1RLLlxCpLsa2IV1ZLXOZvU5bx1XxESplwXLWTdnwZWrBHcklppEiQ7YEhAK6BTLP0uOCBrhuvSMZ03FqSkJYFc6ZlJixQbq8eMdqjL3OS63Yh7EwWNL4B1G5nZwAto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717406073; c=relaxed/simple;
-	bh=kRaKkGVAxc9uve0nW7HSdUn07QqNL4yoUYMpcu8Ag0I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cUU2tYyT49dhCLwqwFHAE+06xWg1dULDWkykJtrKTule/NFQl0k/fkDlePWLXlT9wMuhwYnQB4xvfOG/h2PSQ8/Duqk7Ebr37gJq4puSvKS9a3SI42L2XLQQCfiT7gfuR6aR4UStL7rA+f0t77guZptorvSOhuxRQ2dpPQmqtnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JaT8tNYq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5334BC2BD10;
-	Mon,  3 Jun 2024 09:14:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717406072;
-	bh=kRaKkGVAxc9uve0nW7HSdUn07QqNL4yoUYMpcu8Ag0I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JaT8tNYq6tChS62uoH5HkxxvhHNt0fq4UqSqXZ2BQ2WvvFHv8FDhVBKzak7GMUXZW
-	 l5oYvRL15/zrdG+1W+v7aU/YY2gfPZu4GTJ272+854ztdXAADOBnuikBvgtfVl8A95
-	 1Mc4udT/IXB2iDuvG/DTa7kP8dqHN/ZOTEmE7oWiSi/xCcjSTUG9D6pKh2L3AxkqnL
-	 B65EAooMZ3t5HXfuCRFz7U329MIdWeTDw/PYVmXdmBKuK6ocIESTkaQ2WXRToAh+g7
-	 7X9cBgt0BDBPmBr1WbeLrVwhX2mMXFO1O5Dc2b8f/aTY6wT3WTXT/DdJxXtPT6yKVQ
-	 /3jcIQvCRvedw==
-Date: Mon, 3 Jun 2024 11:14:30 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Rob Clark <robdclark@gmail.com>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 3/9] drm/bridge-connector: implement glue code for
- HDMI connector
-Message-ID: <20240603-proud-caiman-of-fertility-ceb36a@houat>
-References: <20240531-bridge-hdmi-connector-v4-0-5110f7943622@linaro.org>
- <20240531-bridge-hdmi-connector-v4-3-5110f7943622@linaro.org>
+	s=arc-20240116; t=1717406097; c=relaxed/simple;
+	bh=RBHxbEbPrdDXGVgs9JAV6IdcubHw5Ps3pU1smttww4I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ke/U+H8MY3ylSvy3U/yytkLonGV9B6Ew9QU2WxJQ5rx/Px1lLj6clM2uFeirgxQM9RNWJLoF4Qi3aXcPnAbBoCtj/FctF+ordXKqxU0pvxrqVOx6ZKwVXtltg02IL2ezNUjfwtOIeUOlT/Yel/Z/Dtv4QpVC6Gz6SPqTPGRLn9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 8477CC0005;
+	Mon,  3 Jun 2024 09:14:50 +0000 (UTC)
+Message-ID: <b199fde6-c24e-4c18-9c38-fdc923294551@ghiti.fr>
+Date: Mon, 3 Jun 2024 11:14:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="gko36zr2ozjx53lj"
-Content-Disposition: inline
-In-Reply-To: <20240531-bridge-hdmi-connector-v4-3-5110f7943622@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v0] RISC-V: Use Zkr to seed KASLR base address
+Content-Language: en-US
+To: Conor Dooley <conor@kernel.org>, Jesse Taube <jesse@rivosinc.com>
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ llvm@lists.linux.dev, Alexandre Ghiti <alexghiti@rivosinc.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <ndesaulniers@google.com>,
+ Masahiro Yamada <masahiroy@kernel.org>
+References: <20240531162327.2436962-1-jesse@rivosinc.com>
+ <20240531-uselessly-spied-262ecf44e694@spud>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <20240531-uselessly-spied-262ecf44e694@spud>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: alex@ghiti.fr
+
+Hi Conor,
+
+On 31/05/2024 19:31, Conor Dooley wrote:
+> On Fri, May 31, 2024 at 12:23:27PM -0400, Jesse Taube wrote:
+>> Dectect the Zkr extension and use it to seed the kernel base address.
+>>
+>> Detection of the extension can not be done in the typical fashion, as
+>> this is very early in the boot process. Instead, add a trap handler
+>> and run it to see if the extension is present.
+> You can't rely on the lack of a trap meaning that Zkr is present unless
+> you know that the platform implements Ssstrict. The CSR with that number
+> could do anything if not Ssstrict compliant, so this approach gets a
+> nak from me. Unfortunately, Ssstrict doesn't provide a way to detect
+> it, so you're stuck with getting that information from firmware.
 
 
---gko36zr2ozjx53lj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-Hi,
-
-On Fri, May 31, 2024 at 11:07:26PM GMT, Dmitry Baryshkov wrote:
-> +static int drm_bridge_connector_clear_infoframe(struct drm_connector *connector,
-> +						enum hdmi_infoframe_type type)
-> +{
-> +	struct drm_bridge_connector *bridge_connector =
-> +		to_drm_bridge_connector(connector);
-> +	struct drm_bridge *bridge;
-> +
-> +	bridge = bridge_connector->bridge_hdmi;
-> +	if (!bridge)
-> +		return -EINVAL;
-> +
-> +	if (bridge->funcs->hdmi_clear_infoframe)
-> +		return bridge->funcs->hdmi_clear_infoframe(bridge, type);
-> +	else
-> +		return 0;
-> +}
-> +
-> +static int drm_bridge_connector_write_infoframe(struct drm_connector *connector,
-> +						enum hdmi_infoframe_type type,
-> +						const u8 *buffer, size_t len)
-> +{
-> +	struct drm_bridge_connector *bridge_connector =
-> +		to_drm_bridge_connector(connector);
-> +	struct drm_bridge *bridge;
-> +
-> +	bridge = bridge_connector->bridge_hdmi;
-> +	if (!bridge)
-> +		return -EINVAL;
-> +
-> +	return bridge->funcs->hdmi_write_infoframe(bridge, type, buffer, len);
-> +}
+FYI, this patch is my idea, so I'm the one to blame here :)
 
 
-Sorry, I didn't notice it before, but I think it would be good to try to
-make clear_infoframe mandatory just like write_infoframe. It wasn't
-possible for the main helpers because we didn't have enough info for
-some drivers, but I think we should try to make it mandatory, and be
-prepared to relax it if needs be.
+>
+> For DT systems, you can actually parse the DT in the pi, we do it to get
+> the kaslr seed if present, so you can actually check for Zkr. With ACPI
+> I have no idea how you can get that information, I amn't an ACPI-ist.
 
-With that fixed:
-Acked-by: Maxime Ripard <mripard@kernel.org>
 
-Maxime
+I took a look at how to access ACPI tables this early when implementing 
+the Zabha/Zacas patches, but it seems not possible.
 
---gko36zr2ozjx53lj
-Content-Type: application/pgp-signature; name="signature.asc"
+But I'll look into this more, this is not the first time we need the 
+extensions list very early and since we have no way to detect the 
+presence of an extension at runtime, something needs to be done.
 
------BEGIN PGP SIGNATURE-----
+Thanks,
 
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZl2JdQAKCRAnX84Zoj2+
-dnx8AX9XGJKgzSr6M5O5oiSn0kjo+G4+uANEp9GROPwPZJXKhHgP5Cc1hApfYjTc
-T5Sf7Z8BfR0cMmOS87bWO4k0zBEaJatMc7o2FVqt26H48mFflPAiip89PYJdUOZw
-f+QP0ptGZA==
-=D3hE
------END PGP SIGNATURE-----
+Alex
 
---gko36zr2ozjx53lj--
+
+>
+> Thanks,
+> Conor.
+>
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
