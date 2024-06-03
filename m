@@ -1,170 +1,131 @@
-Return-Path: <linux-kernel+bounces-198706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB6FA8D7C5F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:23:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 094498D7C61
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:24:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13BA0B209BD
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 07:23:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8846280E6C
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 07:24:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F0C743172;
-	Mon,  3 Jun 2024 07:23:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A48A43AA2;
+	Mon,  3 Jun 2024 07:24:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="F8L7w/0E"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ij7qee+2"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5822F482D8
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 07:23:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0B054084D
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 07:24:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717399385; cv=none; b=GoXBsYssfR1hpD1jT7q2LeWjHcKLQIIEpC0E+MB/2WBj1z9XoG4L/FM9vU1cJpZS4IBqXyl+lhYi7iC+pV8710xwyEyWdcO44JVNXx9CCKf87CWtZtjPp3wDKY0SuyNDxmXDf7CG56G5TkNP37FJi81TdTOF1yVVD3EKeOOfQYQ=
+	t=1717399443; cv=none; b=Kdcas7ilTZ+yyAu+TqOncpfmT4Gd8pw+uTR69ItooVKVEUn/AJTvGyGRS2eNAkBTHr1tuU+ta5OvRLLvyz57kJiufAFvIrszOcTzXDlbtlanIWG93fnXSbM1NmTnjB6MSwiFiOHt+E4Vjifa7jXO3OygCrVykUg7LnM69dox6+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717399385; c=relaxed/simple;
-	bh=KQZt4AJ93v3cKSsd9GvzX4O9AJNuGEg5QhKSf/Ku1ZE=;
-	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:References; b=dpEIUS1q2aoYcclA93SVUGAJj5T4zi127NbAEUnTISQHGemCfxUyzbq+WNVn9vONRK4g08qBWAyr43SnZgbmBOq8T34/idaLqjsej/11BIrqHaHpJV2oXnYwxu1CiZvZDsj4XO6Fie+WIUZ7AnRkI5enrTx2xyks3vv7pZNdbhA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=F8L7w/0E; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240603072301euoutp02bc2cde75c6e5b8710bdac3e82af473bc~VbaNrEh5f2835828358euoutp02r
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 07:23:01 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240603072301euoutp02bc2cde75c6e5b8710bdac3e82af473bc~VbaNrEh5f2835828358euoutp02r
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1717399381;
-	bh=EkbmGCzh/nQo6pGVXmEjTKKwDfhlCH+JdFkpa2Tl01Y=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=F8L7w/0EwLsS3cKPKrQqzZQZLof4yLDXFlCS2TxRbTTcUKcd+DIyljYKaM6VnhitO
-	 WMtPBiLWMTm3lhzkN6HYbUr4KleHVcdr9wY50t0vTGZkBMRtjxU4s/KbciEfTFJIOf
-	 ILT5dY22Tcm0KSQUdMYJC/flCrhQdgcYIoCwUG7Q=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20240603072301eucas1p18dffc97ff04d814062ef3d416ec234e8~VbaNgWvFo0801808018eucas1p1F;
-	Mon,  3 Jun 2024 07:23:01 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges3new.samsung.com (EUCPMTA) with SMTP id 62.8B.09620.55F6D566; Mon,  3
-	Jun 2024 08:23:01 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240603072301eucas1p2b3cc1eeb1628118ff9e4c08cd93a3622~VbaNMfbqm0095500955eucas1p2a;
-	Mon,  3 Jun 2024 07:23:01 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240603072301eusmtrp2cfa26f45234bd17b33b2934bdbdd32bd~VbaNL9LWf2227022270eusmtrp2Z;
-	Mon,  3 Jun 2024 07:23:01 +0000 (GMT)
-X-AuditID: cbfec7f5-d1bff70000002594-8f-665d6f55ba45
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id 13.01.08810.45F6D566; Mon,  3
-	Jun 2024 08:23:00 +0100 (BST)
-Received: from CAMSVWEXC01.scsc.local (unknown [106.1.227.71]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240603072300eusmtip1051be470531aafad4a3c8167a42dc23e~VbaM-jKtN1737917379eusmtip1W;
-	Mon,  3 Jun 2024 07:23:00 +0000 (GMT)
-Received: from localhost (106.110.32.44) by CAMSVWEXC01.scsc.local
-	(2002:6a01:e347::6a01:e347) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-	Mon, 3 Jun 2024 08:23:00 +0100
-Date: Mon, 3 Jun 2024 09:22:55 +0200
-From: Joel Granados <j.granados@samsung.com>
-To: Kees Cook <kees@kernel.org>
-CC: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas@t-8ch.de>, Luis Chamberlain
-	<mcgrof@kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: Current state of the sysctl constification effort
-Message-ID: <20240603072255.6i3xqzwjlqk2fi36@joelS2.panther.com>
+	s=arc-20240116; t=1717399443; c=relaxed/simple;
+	bh=jXX8dE7Opa6SPb1eAr4cYkqk9m+6M2AcMLxLfip3H8g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uNNm/SZLAxQF3RyC/n2yogQsK75bxCHqMZrrS7cklJSucKkaoASnKm4KQ24mkE4oJqGAkQ5r/5FIFcdWpXqYklxEip/Vs2tkxWkmV4dQ5310XV9rQfogWY9HYxSvk/ZO26658HZIzvEzG49YmzXpSoa5QN9Kib9lfZ9R88xxkTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ij7qee+2; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717399440;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=p9lkfOb50mYknLTXxEH/1KkxK13NvvMCFt7POCqNueE=;
+	b=Ij7qee+2qiPRiQsIAF7a8f9E7sNEzOXjXDioOZWOQSy9qagYu9J1tC5STCnUqnE2j8F9hb
+	FLWEtt/3bANhKNLYPz8UuoUsqPL2fFR5Dz6acZaOCl30j7jA+/tNOg1MTadgWEKPSsDQFZ
+	NxRVpvs/u9CYERop+N19QNZq7lQnahE=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-394-cH7orArDNtizL7aN-QSWHw-1; Mon, 03 Jun 2024 03:23:58 -0400
+X-MC-Unique: cH7orArDNtizL7aN-QSWHw-1
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a68ad67f110so63317366b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 00:23:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717399437; x=1718004237;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=p9lkfOb50mYknLTXxEH/1KkxK13NvvMCFt7POCqNueE=;
+        b=QBiC+Ejg7JFk5ZZ7j8shdUVqyWtmB7kiGhUl/gHBueKpKFGqm3NesyTy50joTtO8py
+         A8tYwNR2QTW0DmNfUYY7LIiqWL7PdHxipr5KAFUfNnO9phgK1X0KV/g0i/VsJofrZuzc
+         JYPRIYLPppt9c574CYT1QWgc/4dB+N/qYUQdEpwFUJ9795gE0RKdjOA9cnKsakWNMmID
+         S/Fe3oWjXIhY382u6Vic+JFVvaXlZuZYn4hszqsBt/xV05iWFEibsaIEs6afMCs3jPrQ
+         NtSfCvi1dSGOPGjmA3skVQcW/4NNiT7PdUEqtTZW4sjGFGiro9D4m87vCxrYH8bwjvMO
+         /Iew==
+X-Forwarded-Encrypted: i=1; AJvYcCVlQtzLSR0XOdeSCn4uuBIu3VKF03/4DHQimerpuTIlwgxrUKCPev7I4EcYRiXLZH68HJonLfl8bN3MqL5jonyk+pxMXjBuXdrdG9Aa
+X-Gm-Message-State: AOJu0YzWRf5J0OOmr3SCIZqKFDYG1t8CRGoci94Pt7HUZtS0ywPaCHgX
+	GUojea1u2mGqv8HSl9R9Wr9omoOaiXhyjnz3B4jWO0Ibp83eyYEce1MYhAIkRRv2W/A7Bn8ITTv
+	XQFC7mPcviRlEjJfQFJmc6JudBFdK49qnQfHP+rys2OhWqEDCmOSVEHIgz568Ag==
+X-Received: by 2002:a50:934e:0:b0:578:5cbb:7296 with SMTP id 4fb4d7f45d1cf-57a36439beemr7303924a12.36.1717399437045;
+        Mon, 03 Jun 2024 00:23:57 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFriRgQqLA1tuZVgrU6sA/7pisxmgPgYLdViimwhIn5HrCNMkK8cZu2MTkPGVh7h56cgKoC/w==
+X-Received: by 2002:a50:934e:0:b0:578:5cbb:7296 with SMTP id 4fb4d7f45d1cf-57a36439beemr7303908a12.36.1717399436521;
+        Mon, 03 Jun 2024 00:23:56 -0700 (PDT)
+Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e40:14b0:833c:88f3:25a9:d641])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57a5ef86458sm1641846a12.78.2024.06.03.00.23.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Jun 2024 00:23:56 -0700 (PDT)
+From: Lukas Bulwahn <lbulwahn@redhat.com>
+X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+To: =?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas@weissschuh.net>,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Benson Leung <bleung@chromium.org>,
+	chrome-platform@lists.linux.dev,
+	linux-hwmon@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: [PATCH] MAINTAINERS: repair file entry in CHROMEOS EC HARDWARE MONITORING
+Date: Mon,  3 Jun 2024 09:23:43 +0200
+Message-ID: <20240603072352.9396-1-lukas.bulwahn@redhat.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <202405310930.5E2728A@keescook>
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-	CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpjleLIzCtJLcpLzFFi42LZduznOd3Q/Ng0g6YtIhbr3p5ntbi8aw6b
-	xY0JTxktDr2dzubA4rFpVSebx+wlN1g8Pm+SC2CO4rJJSc3JLEst0rdL4Mq4e+whY8ESropl
-	O1+wNDDO5Ohi5OSQEDCROPDsBVMXIxeHkMAKRonJv44yQjhfGCXOfHjBCuF8ZpRo2PWAHabl
-	8d0dUInljBJXVs1hA0mAVZ2/pAmR2MQo8f/uNmaQBIuAikT/7d+MIDabgI7E+Td3wOIiAvIS
-	O+Z9AbOZBeolXjf9ZAKxhQXsJPZsWA62jVfAQWLdressELagxMmZT1gg6jUlWrf/BqrhALKl
-	JZb/44AIy0s0b50NNpITaNWsix+ZIY5WlPi6+B4LhF0rsfbYGXaQOyUELnBIPPnyH6rIReLk
-	0k9QXwpLvDq+BcqWkfi/cz4TRMNkRon9/z5Ada9mlFjW+JUJospaouXKE6gOR4kZK/exglwn
-	IcAnceOtIMR1fBKTtk1nhgjzSnS0CU1gVJmF5LVZSF6bhfDaLCSvLWBkWcUonlpanJueWmyc
-	l1quV5yYW1yal66XnJ+7iRGYVE7/O/51B+OKVx/1DjEycTAeYpTgYFYS4e2ri04T4k1JrKxK
-	LcqPLyrNSS0+xCjNwaIkzquaIp8qJJCeWJKanZpakFoEk2Xi4JRqYBK8/fiXl9CKdpXCltn8
-	0vY7s7bO/9Nzqsx0cXfcp4+vBM+dVCrdUJ3/8bzF35RHeVOWXY22mbvrCNsj8z6TCu9ClY/b
-	FnMfb7JVVlzVHsaTWiUwI256pEWr+6pGt+n6SQeqY/oPsIS5vHnnNSv9T+iOFzIPxTTbzl31
-	bQ15aLTvvNN2bqH969i37+i0OnysLsNQ7r7v77+pXbsz32xdqnRSbPrsi/bm+x7Mnd/S39L2
-	RiDkm8icJxcVmx2d174JZC8KvamYGlil15LBUn43e27i34U2+10dfpz5+/rIYv9AvyfWP9VX
-	f73aOn3P16BXrTptEamXPpydf/Wga+q0dvbAKvXEyM6VzjVM2j+XFCqxFGckGmoxFxUnAgDT
-	4YtKmQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrHIsWRmVeSWpSXmKPExsVy+t/xu7oh+bFpBr/n21ise3ue1eLyrjls
-	FjcmPGW0OPR2OpsDi8emVZ1sHrOX3GDx+LxJLoA5Ss+mKL+0JFUhI7+4xFYp2tDCSM/Q0kLP
-	yMRSz9DYPNbKyFRJ384mJTUnsyy1SN8uQS/j7rGHjAVLuCqW7XzB0sA4k6OLkZNDQsBE4vHd
-	HawgtpDAUkaJo8vzIeIyEhu/XGWFsIUl/lzrYuti5AKq+cgoMWHzcRYIZxOjRMflg+wgVSwC
-	KhL9t38zgthsAjoS59/cYQaxRQTkJXbM+wJmMwvUS7xu+skEYgsL2Ens2bAcrJdXwEFi3a3r
-	UEM3MkpMn3eUBSIhKHFy5hMWiGZNidbtv4EaOIBsaYnl/zggwvISzVtng83nBNo76+JHZoir
-	FSW+Lr7HAmHXSry6v5txAqPILCRTZyGZOgth6iwkUxcwsqxiFEktLc5Nzy021CtOzC0uzUvX
-	S87P3cQIjLhtx35u3sE479VHvUOMTByMhxglOJiVRHj76qLThHhTEiurUovy44tKc1KLDzGa
-	AoNoIrOUaHI+MObzSuINzQxMDU3MLA1MLc2MlcR5PQs6EoUE0hNLUrNTUwtSi2D6mDg4pRqY
-	hCpmmrvF7C25Jp279OqRcsv70bfW7frt+kN0muSCiXFFZ+YoLL18NHJPwWW7CWrR/12Ob5Tv
-	LNm980j2mYsyfDxPm5ScN39MW7CqOvfN9njfZ5Grp+1bZqIV82T9ZT5bpYtHg1WvFH9nzFs4
-	60nhEUmRI8n7Jrr2n9mht/XkT8eIf8dmT0kP5A+KikvQ0iyzuxKus5pFe3a22C+333r7zU+7
-	5ZxoYr8ikLfj9OXne2r6955T02+592PxNRHpZ/VnRI4e3ZWWmflYN3XdytAbJ/QXbpfUvRy4
-	08WmYuoSy+0X5nJUXdL+4e+5yuzknIV8Zx+dci71X7njEbeTDoPTw9bUfRk6zWHcsZGKBYuZ
-	FyixFGckGmoxFxUnAgBZ0tDVQQMAAA==
-X-CMS-MailID: 20240603072301eucas1p2b3cc1eeb1628118ff9e4c08cd93a3622
-X-Msg-Generator: CA
-X-RootMTR: 20240531163128eucas1p20976d08e829373bfa8aa04fda1c7bec4
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240531163128eucas1p20976d08e829373bfa8aa04fda1c7bec4
-References: <7823ff95-1490-4c1b-b489-a9c05adad645@t-8ch.de>
-	<CGME20240531163128eucas1p20976d08e829373bfa8aa04fda1c7bec4@eucas1p2.samsung.com>
-	<202405310930.5E2728A@keescook>
 
-On Fri, May 31, 2024 at 09:31:24AM -0700, Kees Cook wrote:
-> On Fri, May 31, 2024 at 12:50:32PM +0200, Thomas Weiﬂschuh wrote:
-> > Hi Joel, Hi Luis,
-> > 
-> > most of the sysctl handler preparation patches have been picked up by
-> > the subsystem maintainers and are available in -next.
-> > 
-> > Only two are missing:
-> > 
-> > * utsname: constify ctl_table arguments of utility function [0]
-> > * sysctl: constify ctl_table arguments of utility function [1]
-> > 
-> > Both of them are going through the sysctl tree anyways.
-> 
-> This is great! Is the target v6.11 or v6.10 for these?
-I was pulling all this into 6.11.
+From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-> 
-> -Kees
-> 
-> > With this done it should be possible to also queue up 
-> > sysctl: treewide: constify the ctl_table argument of handlers [2]
-> > for the bots to chew on in -next.
-> > 
-> > My local builds are still succeeding on the last submitted version of
-> > the patch.
-> > 
-> > 
-> > Thomas
-> > 
-> > [0] https://lore.kernel.org/lkml/20240518-sysctl-const-handler-utsname-v1-1-27a6c8813620@weissschuh.net/
-> > [1] https://lore.kernel.org/lkml/20240513-jag-constfy_sysctl_proc_args-v1-1-bba870a480d5@samsung.com/
-> > [2] https://lore.kernel.org/lkml/20240423-sysctl-const-handler-v3-11-e0beccb836e2@weissschuh.net/
-> 
-> -- 
-> Kees Cook
+Commit e8665a172378 ("hwmon: add ChromeOS EC driver") adds a driver, some
+documentation and the new section CHROMEOS EC HARDWARE MONITORING in
+MAINTAINERS. The commit adds Documentation/hwmon/cros_ec_hwmon.rst. The
+file entry in the MAINTAINERS section however accidentally refers to
+chros_ec_hwmon.rst.
 
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+broken reference.
+
+Refer to the intended documentation file.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+---
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 3eab6c381a3b..09813e21da27 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -5143,7 +5143,7 @@ M:	Thomas Wei√üschuh <thomas@weissschuh.net>
+ L:	chrome-platform@lists.linux.dev
+ L:	linux-hwmon@vger.kernel.org
+ S:	Maintained
+-F:	Documentation/hwmon/chros_ec_hwmon.rst
++F:	Documentation/hwmon/cros_ec_hwmon.rst
+ F:	drivers/hwmon/cros_ec_hwmon.c
+ 
+ CHROMEOS EC SUBDRIVERS
 -- 
+2.45.1
 
-Joel Granados
 
