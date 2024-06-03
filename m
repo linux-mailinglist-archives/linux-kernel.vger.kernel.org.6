@@ -1,198 +1,140 @@
-Return-Path: <linux-kernel+bounces-199401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9708D8D86D3
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 18:00:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0281D8D86D6
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 18:01:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAF231C21FCE
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:00:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A504B22655
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:01:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19E1012D205;
-	Mon,  3 Jun 2024 16:00:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FF79133993;
+	Mon,  3 Jun 2024 16:01:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="RsnCLtkA"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2062.outbound.protection.outlook.com [40.107.100.62])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="inVrbcEP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C48FE26AD0
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 16:00:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.62
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717430437; cv=fail; b=Gaz/UuF6r5i585OSYLX70AA0B9d0uiDwrzBfbqkzpNH2Sq64TeUxr2EcDkvtJhwNAY5LZRl8zjOUdSFI5zSSLjury9+Jtca53KP0TZQH+gNic0iMfhaL6P8fq2HyM0SRXfowXuZdmqG8rmto/9iGa0Xqizzans2vZctcx0d9vvs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717430437; c=relaxed/simple;
-	bh=VN7PP6zhrnG+GC8Bzt1gBNYKaje1nytSz3p4ROODqdc=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=sbE+Mze+SPzX/6Ym0qHgr09OAOrOT9oAYe2I1byu8/8aeU46gnRKb9+ehnGA5biSHTpGPSb1ESSqzJH8NAzytvvNfM7FiIPyjgS2V4yiEUjSRmKWrRhwDJX4R7GXff/83K4d9+0Y7k+benq3KCwJ6vpnfBk+MwdCYKRUI/1vobc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=RsnCLtkA; arc=fail smtp.client-ip=40.107.100.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=S35Fa43pxzM41Udkd0Ep3OyQPYFgWYmy6zoVHSzt+1YaUAJsWVfPqD59APDdHP1FIv6KmNKU++4i+G/Nw38ni5JzArroxu2iPfE5SVs5WYvBLmG6qZqR5yIS+AwWaRYMb2AdfICHxGrlECIg7cwQjUddl7T1PmX9H2V2wH4M0oq1wRdIwHue0sFDH46s66YImSqHQ4jo3uvaNl48BvVzAUigxndv9TFLIhuoPTtZo3l6BhF1yu6Krtw6bEKpYAyM/M9Psu5YLmVjaCUs9+nKqqiVGmQBxc7pGLsb3MZPX+lvt2VnznD263zyyDEX4uDddGTDiFA8z7f1OYfP4Ag1wA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=brpowqMrq+/kbiC0TDOQYqOnPq5MGkXlCKXuszmyVgw=;
- b=CRR5TGuBN4/mDzzezSJu2p0r+wsp6PGcd4K0dL1DjXXzPDB9brQqx/VeDFthYv/FKNdCMUjJGXug+eJZrzAelTbooYzcyz3zuM4ErRrUZ8wdHAi0acMZJOdVzjPwLxORfcbQESYtgc3y9MxLRQEabOtX1w4Xoa6uN65f0VuIwgxouXvZCvHSJ0IYf+ZRdI+BjtMrkT2BnCEqTHbbujMEnpSJ6HOrbR/uklCHraG4PQAWY1Smv1rlbW0oaGdnoc13opj39utCJCMe5HtZUrslrcIQZ+SRofiJhDEdIpgmuMq9Vn2SOISSfy1c95Lq5mLhMKr6Pp35ulUWwk1xgMoNaA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=brpowqMrq+/kbiC0TDOQYqOnPq5MGkXlCKXuszmyVgw=;
- b=RsnCLtkApJK52PLl5/xbCPkIjBIRNu9w21vbTxSNZUYkUQVRI8VZmH9O9IE7Awy7YeC7gIGJjv2pKi9pfbwiUl955QFYs2/GG9fS/uUaB+8J9bi3FtYG2FWNecuUF5MPXw+/YKbD/+jVD357SNYtar15s3X6PeS+o/tVLLD7+aE=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
- by PH0PR12MB8098.namprd12.prod.outlook.com (2603:10b6:510:29a::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.22; Mon, 3 Jun
- 2024 16:00:25 +0000
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca%7]) with mapi id 15.20.7633.018; Mon, 3 Jun 2024
- 16:00:25 +0000
-Message-ID: <c8d765bc-4e45-40b3-a33d-b4cc1bbd67bd@amd.com>
-Date: Mon, 3 Jun 2024 11:00:22 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/5] platform/chrome: cros_ec_lpc: Add a new quirk for
- ACPI id
-To: Tzung-Bi Shih <tzungbi@kernel.org>, Ben Walsh <ben@jubnut.com>
-Cc: Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
- "Dustin L. Howett" <dustin@howett.net>, Kieran Levin <ktl@frame.work>,
- =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
- chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20240603063834.5580-1-ben@jubnut.com>
- <20240603063834.5580-4-ben@jubnut.com> <Zl2NTbhk96dhTV2n@google.com>
-Content-Language: en-US
-From: Mario Limonciello <mario.limonciello@amd.com>
-In-Reply-To: <Zl2NTbhk96dhTV2n@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: DM6PR06CA0049.namprd06.prod.outlook.com
- (2603:10b6:5:54::26) To MN0PR12MB6101.namprd12.prod.outlook.com
- (2603:10b6:208:3cb::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D59526AD0;
+	Mon,  3 Jun 2024 16:01:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717430473; cv=none; b=bzSTfnFngEAhkUecHZ+x1YEk0ZWbGrEla7j/U+ppaBO/wdQHFSWiabdCuCuSCTAKfRiaotzXc8+orYy2sptfMyykIUC2JR6n/ES79mVbrh2ZIH1bAJYQh+NBBtnhKgjtumX/7NdUMu00eR+g7RPZlRgutQsj+NIX4CcJtt2OQJo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717430473; c=relaxed/simple;
+	bh=Iv1Uc6RhMV8UTtYf+csBgZAea6pO/MLrB9bZpKUWHsw=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PRpj8QVif61eaXBrEWhYtZ/2mHwqASkiS50p2KJGumJIJR53NGJh4S1xBINKF6UNwqtHth175EuCFeYVo6uHN7gMz18geW8QVvJkIWLnUiJeiB0rHtKQ5M86d8B5zreweQfJ4zzc/hT68fpqgw6/eMG5kYNGi9oEddvrjsOaLIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=inVrbcEP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E17E8C2BD10;
+	Mon,  3 Jun 2024 16:01:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717430472;
+	bh=Iv1Uc6RhMV8UTtYf+csBgZAea6pO/MLrB9bZpKUWHsw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=inVrbcEPSdpAHVrE7BOlBkaNG+nL0oLLR9ZPw9KHBGFHot8eCM6ep9LnM9H7WNkPM
+	 BT6Awd0gVdP2AG5W8PTk9E7B6VJKWIq0o0f7Ve/qNRGBvo8pt5xhV7d8tm+AAoaEqX
+	 447D0DasWT/TaXDLSowPzBcnN5i16DuSvy/OYrR1fReSiSp9sL1gJv1QuV5PxHnK9r
+	 VObMyOEdHQrTj09LxO2ZkzaIK0c2KAthaaOTkCCSVmeEtoof3hn0alU29hbzZSJ6qA
+	 N7/3QZCxQ4NcAYqjlZnoEA5/AvpDAovHNbSh9fm8BIM2ydVER7NbaKtoyYLQzFndp+
+	 BmsXHIRLsf0UA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sEA7S-000Hvn-Tk;
+	Mon, 03 Jun 2024 17:01:11 +0100
+Date: Mon, 03 Jun 2024 17:01:10 +0100
+Message-ID: <86h6eakoc9.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: linux-tip-commits@vger.kernel.org,
+	Hagar Hemdan <hagarhem@amazon.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	stable@vger.kernel.org,
+	x86@kernel.org
+Subject: Re: [tip: irq/urgent] irqchip/gic-v3-its: Fix potential race condition in its_vlpi_prop_update()
+In-Reply-To: <171741750653.10875.4371546608500601999.tip-bot2@tip-bot2>
+References: <20240531162144.28650-1-hagarhem@amazon.com>
+	<171741750653.10875.4371546608500601999.tip-bot2@tip-bot2>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.2
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|PH0PR12MB8098:EE_
-X-MS-Office365-Filtering-Correlation-Id: 09c5e1da-fb67-442b-7d8c-08dc83e6481d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|366007|1800799015;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Z3h1SkpxL25Mb1RuUWFhL0ViY25wSE5kQy9NUHZ3SzVzRUdNczdTcEwwTDBS?=
- =?utf-8?B?V2k4em1tL2t1MlU3UjFGOG5YNE9CUjBBYUI5Y2ZhYkd0R3dzOHhwQlNNKzhC?=
- =?utf-8?B?R1Nza2tuZEZiK0lXTUIxT29PYktIYThUM0g5clhZcDBjNU80VXlSTDEzQWRR?=
- =?utf-8?B?SEZuR1l1NWpxU0RXU1MzdjVzS1JadFh5a01tdk5MK1FGZ1hYdXhZdzdTQkZH?=
- =?utf-8?B?d0JEeEVxTmNQV1lzSzZUZmtUNEdKZXMvY1dXcmNYV2hwZERqV1craXlGQTdj?=
- =?utf-8?B?WnQwYTZsWkNoTDd0N1JQK2Q4RitvTGJac3h4MmQzYXYvcktraDBGRzhPSW9D?=
- =?utf-8?B?R0JRUkNNRHJhRHJEWi9CaVl5eHhmWUIwWHo2SGFmOEJOT2crdG9adjFOdlJ2?=
- =?utf-8?B?djRKT09UNGF6S3l4OTNiQm1mUUFxZ3RTUzNIc3U4NERmN2hhN2tQaDJOMTNs?=
- =?utf-8?B?VTdQZTJlR3VLVFpORmdvU1c0ZDd1cEF0UDZhN3FVbUFBMU1SRXdBM2FqbHNw?=
- =?utf-8?B?NjhUeHRqc3RyUS9tQS94MWNpdUMreUkzd2tmei9PTC9reUcvSHUxb2s0V3Bs?=
- =?utf-8?B?SmxITEZHdWZtVFgwRmhvK2tKOFlOQ2JRYm5Zem1vKzFXbXNUcUNzU2FkTjVy?=
- =?utf-8?B?T2lmVU0rQ3UvMlI4WnhrUG1DcHBmblVUekFtdDY5akY1VytXR0E3WDRPZFN1?=
- =?utf-8?B?cnEyTEZqbDEwbkw4VklLbnV5Ymg0Z3FOa1NITWt6dkVEZ1JvbjFPc2RZNzRt?=
- =?utf-8?B?SjRFa1pYUEVJMktyalMyUDdXck1PdmpxcGdoN3NlQlRaeUxSNGZ6T0hLN0VH?=
- =?utf-8?B?dTFjSnBLNmZ3S1c1Mm52bnVWUVBxYWx0WFFaUzJQTGZoN1pmTlRGNmtaRXUx?=
- =?utf-8?B?N2pvay9UWFV0Nnp1NTJNeWhxVUhQL0NqOHcwZE5mTWNtRTg3SnNST0FNZk82?=
- =?utf-8?B?b05HZ2NkSlVqY1VkTjhmdGlaL0lLejZ5M2Vtc3F1bVIyUGxyN3ArcG1IWGRn?=
- =?utf-8?B?SDlCdERJSTFOWHNKTi9aUGhxZUF3dzZ5MnhtSkphZXFtUzdLSzJiWGQyNmNQ?=
- =?utf-8?B?aDNFK0JneEVJYzMwdHNHZHRnM2Z4YXk5QnpjRnBoN3doWU1SeXpVaWppc3U2?=
- =?utf-8?B?dlFhc21TMm9Wd2NwZWFUTUpoNVYvaFhrZ243dGpzeFM5M2pyNmI2SEdhdnFO?=
- =?utf-8?B?bnlSaG1RNnUwVHkxR2JCd013eFo0NzFzY1ZjSWdOK0QvYmJoN0lUVlV6cGVT?=
- =?utf-8?B?THk0Q2Ixd2FGeXJBekxkdmFiSnhwNHRjVlZyeEg3QjBGUSt0dkJFc1FZTHVN?=
- =?utf-8?B?NDI3ekIwZ096UVEydjdFZGUzYWJpTGxNbW9Nb1JDZnA3WnAwOWlESmlaU05x?=
- =?utf-8?B?dC83ckxDMTRWSlQzckJqa1RmZk9BeDZzVlJueUllMnY2MDhyTFZYaHpYaWlK?=
- =?utf-8?B?TGprR0VHWkJsc0RaSTZlR1F1cytFMm40VUZ3U3VCSlY1ZXgxWVl6cldqMFkz?=
- =?utf-8?B?d2dyck04V3o2VGtxYS9ZajNzT0hnOTAySE1GSGZSQ1RpK1c1NjI2T3ljaEdB?=
- =?utf-8?B?S1dyWjRvYVN1dUlMSmt1QUVnakVuVlhZUW5Va1JBNFpOOWd4b1B1Q1Q5MHlX?=
- =?utf-8?B?cHBqREhZU3E2NDRWY25DOEdlVVJZemZRUU5wY1p4VnBHVm1nTWwvWTA3ekVV?=
- =?utf-8?B?UlBtK1ZrMGFqUE5nK1A5cWdUVVNYa3lndXVXemlrT0FsTndKQWtBQnZ3PT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(366007)(1800799015);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NGIrekxzYXBEamR0dW9TUXVQdmlBS3JpeFBqYnoxT1pTUXg0K05DaElSajNH?=
- =?utf-8?B?QUllYmNHME9HNWQwMDBTdHQ5dVcrWTRRVHdvLzcvOHlqYlZXOWR1RWQ3Sm1O?=
- =?utf-8?B?ay9IVUc0WFBHT2gzejBrOUhRKzdGUW5lWW0vYmFhUEZOYlJ2QXdKRWV0K1RO?=
- =?utf-8?B?REpBNmw3U0lXYTZvZFJHcEI2QVVaVW4reWw1cXBCa2RGY1kvVE1SMlE3S2pF?=
- =?utf-8?B?V1ozOTRjOTlSWHlVUUxYZnNvOWFWMFZBSGUxeDNsN3BWMU5aQ1R1S0hQWi90?=
- =?utf-8?B?dWpqMnFSb0w1cEFQNlQyaGVyQXVRcUdkL21NbCttQzIxM0k0LytQV0w2d2wv?=
- =?utf-8?B?eVVlbVo4NktyemFlL1BhdnVCL3hFUmxTYzVJZWNaWk9vTkh0MFpnaXExQnFU?=
- =?utf-8?B?d0RzUnJ1QjhMd2JwL2tUMEJQOFd3aG1meUhndWJZVDhjNG5GV2VHVzlwVVV4?=
- =?utf-8?B?dGZxclZwZlhsci96cHJQQUJmMlhpeWJTWjVOU2p5ZVdaNzZ4aGtpeitOM3hi?=
- =?utf-8?B?RVVXZitaWm02OXV5RjNFUGVCTjlLR0t3YnExU0h0cnEvczRvNVdNWUlreXN6?=
- =?utf-8?B?a3FRMW9pQWdzTE1ZUlVwSVNuYmliQzE2WXBGeE4zRjZUWHBsekhZUVFXNFVk?=
- =?utf-8?B?MS9EWldhYlJrUFU2T1NuRXlDWTFSRStISDYwUHg2OTlaaGh1a3hMWW5xcCsv?=
- =?utf-8?B?VUZiV1J4b25yNFRiaGsyNnFuZndaVlBWU2tib1pLbzAzODRJN3QvQ0d1S1FB?=
- =?utf-8?B?SFI1SGVxcnFiYXphbUdRQmhmL2FDUi9QM2x5U0d2NmRQVjFheFgrZ0tXTjI2?=
- =?utf-8?B?REtHVkZPUjBQaGZTTTBHWjJRcThmME9ZNEtTK0FyN2pFTnNreTVTRHR3YVFT?=
- =?utf-8?B?ckt6MDliTlUvRVlmcHA4TitsWkpJWEdsdTZTTzRjYTBVd0c1NDFpMlQ3KzZa?=
- =?utf-8?B?Vm5YbGFjVHNtckZRaWdDWm80aVI4anl6ZGxuVTdFVjkzVmpqeEtDS1VBTk1G?=
- =?utf-8?B?Yi9SVllmMXpDaTYxM0JhbXByc0dUajZUT0txUm1DOXFwdzZsbVU3ZWwyamhy?=
- =?utf-8?B?UzUrVmFZbWwvdXNtd3VkcklWOEp2NXl3OWZEUnZ4N3ZKZ2xJRXIxLzhDcXpl?=
- =?utf-8?B?eU50MXlYcWtYRENYaG5zMnJOaDM3VTZFWlRnZlYzTDEvb1YyYWROV09YUXFQ?=
- =?utf-8?B?V1lRZU1ScVdCSTc0N2pTVXF5QlhDM0grOGtxcUxNTkREZEtUZkJYMFRnM1lx?=
- =?utf-8?B?UnluVU9BMEJiSTBPYnh0aTlnYnFLaXdkemRRU2duS2RwR2JmZThyL0t2RXpo?=
- =?utf-8?B?TWdwMkxIaGkvQUtpMUNNME0yMENtN0JUQ0d5SEt0eUROTnNRNk4zLzgweFUx?=
- =?utf-8?B?cS9PRkRuZlcyWUVVdWtzT2Mrdm9Jc3BOOVk1L3A4SjRxZ3BQUkNUejlXN2Jz?=
- =?utf-8?B?ZlpJOE1EdHJDNjJVRFUxWnFXRGhHTkI4UWtsT2xRUGh4WTcwL2YvZ0p5QW1k?=
- =?utf-8?B?bXF3RVd0V2t0KzAyNGVweFd5anRRdFJTU0l1S1V2RkV6U3pjNVF5OExudGRB?=
- =?utf-8?B?S053ZmZJajdWZnM3SExjTDAyUFBHWGxXVE91ZVQwcjVGOVhYYndPcjhBRS9I?=
- =?utf-8?B?Z2JLZVI5K0ZXdW5EREVUUzVYTmJ5ZTE2UGR2dDYvaXFremladHNLcmFlaVV6?=
- =?utf-8?B?YjExUXZ5d2J5UFlCd1JHR2R6bGdJVUhTZ2VQUVN6RENGMVVXMHcrWTROcGw2?=
- =?utf-8?B?bTc0QzZCY0w1UTdGQjFzbHNsSmNVR3RUZTJIZEx1NFdCMmc5WEtkYWhPUGpK?=
- =?utf-8?B?SVIyWUtEU3FLY0tXRW9ibysyb3B0aE5hWm14VUcwVE90Y3ZGZlZXM1hwUGwy?=
- =?utf-8?B?aGptem5tL2dETncxVjlJenVDTDZIMGQ4c2ZmcFdVbDdvWjI4TS9pR05scVEw?=
- =?utf-8?B?ZjZCWHdFVXAvQTBhUVRxWDh4dk9ZQzRNRm9TUVVUTUVLeU1uWUtMYXBFWEpq?=
- =?utf-8?B?NUlUQ28xY2luZkdjM0hNWTR2MkxZZEtwUElQYzdWZCtLTm1vaDRmVk9kYkhJ?=
- =?utf-8?B?cmY0SUcrdXhMTVhYclFqVFJ2aWRMUDE0MjF3bldmbkY4b1dnM2pTemxwY1hx?=
- =?utf-8?Q?TyvKTi7FDhgktP3lNyFa9lpqJ?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 09c5e1da-fb67-442b-7d8c-08dc83e6481d
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jun 2024 16:00:25.7052
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 4EmN76CgeWSa76e2jBLU9zccGLa6UX8AIPm/KsDTumE1YDWoXVQyQ8RzTL9vMZIT7DagMi3BFFOXVB2KqqkbPg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB8098
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org, hagarhem@amazon.com, tglx@linutronix.de, stable@vger.kernel.org, x86@kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On 6/3/2024 04:30, Tzung-Bi Shih wrote:
-> On Mon, Jun 03, 2024 at 07:38:32AM +0100, Ben Walsh wrote:
->> @@ -436,6 +463,8 @@ static int cros_ec_lpc_probe(struct platform_device *pdev)
->>   
->>   	ec_lpc->mmio_memory_base = EC_LPC_ADDR_MEMMAP;
->>   
->> +	adev = ACPI_COMPANION(dev);
->> +
+On Mon, 03 Jun 2024 13:25:06 +0100,
+"tip-bot2 for Hagar Hemdan" <tip-bot2@linutronix.de> wrote:
 > 
-> The change is irrelevant to the patch.
+> The following commit has been merged into the irq/urgent branch of tip:
+> 
+> Commit-ID:     8dd4302d37bb2fe842acb3be688d393254b4f126
+> Gitweb:        https://git.kernel.org/tip/8dd4302d37bb2fe842acb3be688d393254b4f126
+> Author:        Hagar Hemdan <hagarhem@amazon.com>
+> AuthorDate:    Fri, 31 May 2024 16:21:44 
+> Committer:     Thomas Gleixner <tglx@linutronix.de>
+> CommitterDate: Mon, 03 Jun 2024 14:19:42 +02:00
+> 
+> irqchip/gic-v3-its: Fix potential race condition in its_vlpi_prop_update()
+> 
+> its_vlpi_prop_update() calls lpi_write_config() which obtains the
+> mapping information for a VLPI without lock held. So it could race
+> with its_vlpi_unmap().
+> 
+> Since all calls from its_irq_set_vcpu_affinity() require the same                                                                                                                                                                                                                                                            
+> lock to be held, hoist the locking there instead of sprinkling the
+> locking all over the place.
+> 
+> This bug was discovered using Coverity Static Analysis Security Testing
+> (SAST) by Synopsys, Inc.
+> 
+> [ tglx: Use guard() instead of goto ]
 
-It looks relevant to me.  The companion needs to get set before the 
-quirk overwrites it.
+Good call. Except that...
 
 > 
->> @@ -538,7 +577,6 @@ static int cros_ec_lpc_probe(struct platform_device *pdev)
->>   	 * Connect a notify handler to process MKBP messages if we have a
->>   	 * companion ACPI device.
->>   	 */
->> -	adev = ACPI_COMPANION(dev);
->>   	if (adev) {
->>   		status = acpi_install_notify_handler(adev->handle,
->>   						     ACPI_ALL_NOTIFY,
+> Fixes: 015ec0386ab6 ("irqchip/gic-v3-its: Add VLPI configuration handling")
+> Suggested-by: Marc Zyngier <maz@kernel.org>
+> Signed-off-by: Hagar Hemdan <hagarhem@amazon.com>
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Cc: stable@vger.kernel.org
+> Reviewed-by: Marc Zyngier <maz@kernel.org>
+> Link: https://lore.kernel.org/r/20240531162144.28650-1-hagarhem@amazon.com
+> ---
+>  drivers/irqchip/irq-gic-v3-its.c | 44 ++++++++-----------------------
+>  1 file changed, 12 insertions(+), 32 deletions(-)
 > 
-> See above comment.
+> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+> index 40ebf17..c696ac9 100644
+> --- a/drivers/irqchip/irq-gic-v3-its.c
+> +++ b/drivers/irqchip/irq-gic-v3-its.c
 
+[...]
+
+> @@ -1992,6 +1970,8 @@ static int its_irq_set_vcpu_affinity(struct irq_data *d, void *vcpu_info)
+>  	if (!is_v4(its_dev->its))
+>  		return -EINVAL;
+>  
+> +	guard(raw_spinlock_irq, &its_dev->event_map.vlpi_lock);
+> +
+
+I don't think this compiles as is, due to the funky syntax required.
+
+Thanks,
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
