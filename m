@@ -1,227 +1,135 @@
-Return-Path: <linux-kernel+bounces-199503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFC7F8D87CF
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:22:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C120F8D87D4
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:22:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65CE7285E35
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:22:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B956B23121
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:22:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D6F2136E3F;
-	Mon,  3 Jun 2024 17:21:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92028137769;
+	Mon,  3 Jun 2024 17:22:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b="ur2g7t4c"
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2086.outbound.protection.outlook.com [40.107.255.86])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ShGdTUIW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3D401366;
-	Mon,  3 Jun 2024 17:21:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.86
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717435315; cv=fail; b=kqoSE+uuoSLs4rUcwNSAnMPXRtalLfSqgLOsoptHRlx3fjT73gy2Uq6SDkVmXi/Wu+YWQZrsWdPOUpejObjCX1kNC/yNRA2kamGEV7I8sKsAeYl22G8aBkzlE92TeHkcibo9I6q1ChGfn2d+vGBqIa5exlI1A5evBMQizOnuXK0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717435315; c=relaxed/simple;
-	bh=M+6B3FJf9LMYJRsNV0UEY98hXGAb7HmQt5g62ixIPsc=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OS4tK7wmx3q/Weyq+sBymZ1pLlujwC2j5F58eeVl4u3Kc50FFzoU4uf97nVX7k/jAsHx8EFZ3pR6+KGZxyjO5iArt7B2mB/pSg3PaQs6cTscMgHZ+W2cwXgAkzh2lTw8Fus1EATYeaKVfPDV6ZVAtKY+qRumSvTAqQ+2KqIZnX4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com; spf=pass smtp.mailfrom=oppo.com; dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b=ur2g7t4c; arc=fail smtp.client-ip=40.107.255.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oppo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=idvHuX358MpsPkIcOtjmop/fd2jzI2fNNxMhSTx7i1G0BrmigpJG+pYamRQFX5Ly3GI/kEs4J74g0S08vYI0l81G/CrreFKTRaZnF+rCSxvLye+O4xBLroftiFyz9BEF9CmnHHCbE+Bi2c9muL88sVsgm9VGOYnOO2GCMbcwOrXMAl4tzDJWfibHOqFyS+uduftbIsviE/zXmGh6DOZ4priX5KvaNRtHzj91X+mZkwBEETx66XKMgNfDtSb60/Bt+aq2Zpy+Nb7N9a0CLB41KNPOEkJ7cKBhD11V3MftDoPPXvBUoukYW7rVl30KRoyNr++923Eun9QXyiFlK9QZbA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=o8IQFPnM4F3yz329uWH6fg+C6coLIJSr27xrEvHGXFk=;
- b=k8AbVY1yPw1KJVPXhZLWmAnHgDgAV20XlzcERXm1TC6kYPQaWjDDuuxSGBjnYIcewiCGzy9t0BbSqoNMJXa2yoptePWGbHLlF1OQsac/kAKnWf1WesHVsILC5U6kpVsqvgKCtjh2lc72FavjWBHbvyxrVk69ylpFZFJ3uCGpaZiUCVtNjS6GDkeWBBpSdUvIIOIJ3OGIQ+GNiNLdIMoZ4+EwM3shQk0ywMp7NC1KiwRnwzO7UJP1Mbwp9GtDHkFXVvhPeR2EOmLvH5CpH8RnZybbLsQ63O1aKXTlLmQauKQtlxSCYc7hkZLVTDYGkYURyr6mrjETcYVNu3NuCvDnKg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 58.252.5.68) smtp.rcpttodomain=google.com smtp.mailfrom=oppo.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=oppo.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oppo.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=o8IQFPnM4F3yz329uWH6fg+C6coLIJSr27xrEvHGXFk=;
- b=ur2g7t4cJJocOVVxtVZuXc6wUpk55qZ4UTA5t/hZhBQGmklnO+FoO0mHHUvdFRKdLvMCQMT86dnn8wAXoQfVQOyICBo7/vwUo9NNMey8dWnmlqAWwIbKbWa3rwJ6HPx4AsCm7V5phq/jC1yKXkUZXWpXhGV4LpjZBm9MqOKmt88=
-Received: from SG2PR01CA0188.apcprd01.prod.exchangelabs.com
- (2603:1096:4:189::10) by KL1PR02MB6627.apcprd02.prod.outlook.com
- (2603:1096:820:112::5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.24; Mon, 3 Jun
- 2024 17:21:50 +0000
-Received: from SG1PEPF000082E2.apcprd02.prod.outlook.com
- (2603:1096:4:189:cafe::83) by SG2PR01CA0188.outlook.office365.com
- (2603:1096:4:189::10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.30 via Frontend
- Transport; Mon, 3 Jun 2024 17:21:50 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 58.252.5.68)
- smtp.mailfrom=oppo.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=oppo.com;
-Received-SPF: Pass (protection.outlook.com: domain of oppo.com designates
- 58.252.5.68 as permitted sender) receiver=protection.outlook.com;
- client-ip=58.252.5.68; helo=mail.oppo.com; pr=C
-Received: from mail.oppo.com (58.252.5.68) by
- SG1PEPF000082E2.mail.protection.outlook.com (10.167.240.5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7633.15 via Frontend Transport; Mon, 3 Jun 2024 17:21:49 +0000
-Received: from oppo.com (172.16.40.118) by mailappw31.adc.com (172.16.56.198)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 4 Jun
- 2024 01:21:49 +0800
-Date: Tue, 4 Jun 2024 01:21:48 +0800
-From: Hailong Liu <hailong.liu@oppo.com>
-To: John Stultz <jstultz@google.com>
-CC: Sumit Semwal <sumit.semwal@linaro.org>, Benjamin Gaignard
-	<benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>,
-	"T.J. Mercier" <tjmercier@google.com>, Christian =?utf-8?B?S8O2bmln?=
-	<christian.koenig@amd.com>, <21cnbao@gmail.com>,
-	<linux-media@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-	<linaro-mm-sig@lists.linaro.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH v1] dma-buf: heaps: move the verification of
- heap_flags to the corresponding heap
-Message-ID: <20240603172148.gb7txpg2ya43jyxn@oppo.com>
-References: <20240603114008.16235-1-hailong.liu@oppo.com>
- <CANDhNCq50zPB+TS+_Oo0HY0aUuBAdik2KrC8eJRTygbis293sw@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE80C1366;
+	Mon,  3 Jun 2024 17:22:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717435360; cv=none; b=DWtorLhX/bCEnlAnjHI0COvSlOKrdLtetpcivTxXu7Wu61y466X76zaP1GSftJh3bh6Jf/dLrupyvnYNzOpJm2uTQC42sKDCpx3B31xAKcExUU2CYOhfZuALGuMzljOqSuXDS4Bm2/Cp6mu0apOKX2y8yqGhWHaoHubtjEmWWTQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717435360; c=relaxed/simple;
+	bh=PAcBig0jr2i/6jcLdHClnRIG0MzC33BZQfOwMSR1CeY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ua7Vu2pnTaNp7oV+s+RiWP6mr1ZMuGrufafjK7/ic6ubQoGII/YKes5+diJMQ6zaQSQoNHXArzOuBc6CGKshGicy4nhmR0z8EjSGNhrP9wlbctm3SCZ2vtno1jxycOpzjrVh9EgCWAD9GN5NU97F+PT/aUuIgwoQYkkQvvMIMSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ShGdTUIW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E2BCC2BD10;
+	Mon,  3 Jun 2024 17:22:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717435360;
+	bh=PAcBig0jr2i/6jcLdHClnRIG0MzC33BZQfOwMSR1CeY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ShGdTUIWtmzffiVjGvECIt5B2x/fwBnoKj6QesSZaUgfY9ZNM4xxYh+FB/v5gNubB
+	 Y6hlpiaX2JT+xl4m9pwrbdO+z9xe1ENN75Wgi/WWNVRWe+LN8IZNjJQuF6umoh2kKN
+	 DaaN2G5lLIXuOoVucv4Rap3sKiGmv7ehqOZG5q4V8RzX3oZgf2J0nut/frhmfVi/Ny
+	 LQctRCkYzDWzYub9hJAGYVrK7+vXbb8jfPN6EDYBbO+4v6/tHW2RBDI5MmrJiDkk+Y
+	 L83CD+yokh0imQYenPefjX+kpnycLECwQ0cJuh9I7ZAG1kvwyXNhhE+XaOj1uMftcN
+	 yfaxAgcuhkzzA==
+Date: Mon, 3 Jun 2024 18:22:32 +0100
+From: Mark Brown <broonie@kernel.org>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jakub Kicinski <kuba@kernel.org>, Kees Cook <keescook@chromium.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Sasha Levin <sashal@kernel.org>,
+	Sean Christopherson <seanjc@google.com>,
+	Shengyu Li <shengyu.li.evgeny@gmail.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Bagas Sanjaya <bagasdotme@gmail.com>,
+	Brendan Higgins <brendanhiggins@google.com>,
+	David Gow <davidgow@google.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	Jon Hunter <jonathanh@nvidia.com>, Ron Economos <re@w6rz.net>,
+	Ronald Warsow <rwarsow@gmx.de>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Will Drewry <wad@chromium.org>,
+	kernel test robot <oliver.sang@intel.com>, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	netdev@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v7 04/10] selftests/harness: Fix interleaved scheduling
+ leading to race conditions
+Message-ID: <9eb1e48e-b273-475a-9740-52deedf11ee2@sirena.org.uk>
+References: <20240511171445.904356-1-mic@digikod.net>
+ <20240511171445.904356-5-mic@digikod.net>
+ <9341d4db-5e21-418c-bf9e-9ae2da7877e1@sirena.org.uk>
+ <187423fb-ec78-4318-9da0-5b27df62b71f@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="46cg5PHekJwEmoXH"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANDhNCq50zPB+TS+_Oo0HY0aUuBAdik2KrC8eJRTygbis293sw@mail.gmail.com>
-X-ClientProxiedBy: mailappw31.adc.com (172.16.56.198) To mailappw31.adc.com
- (172.16.56.198)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SG1PEPF000082E2:EE_|KL1PR02MB6627:EE_
-X-MS-Office365-Filtering-Correlation-Id: fee480b1-7dfa-449c-3053-08dc83f1a771
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|82310400017|7416005|36860700004|376005|1800799015;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MWRxbStURit3bWU5VDA2MW15Vk1nbGtpYXJ0cEx2ZFIrWDNKaERwT1R1R0pJ?=
- =?utf-8?B?cDFjVWI1eXk0eDlGSmpzQm9HZlNmellXZmE1cVJvcnRTN05JRUZXMlQ0Z2xO?=
- =?utf-8?B?QnIrMWVKNTJNZ1ZKZjZvdzJhN0RMUU5YY0gydnNHWUV0Mm9kSGdqeHlwU0tH?=
- =?utf-8?B?TC9ZRnJFR1BOeUhmajVKVkl5S1BmQUxIQkRuMXNWR2dPeTYwb1pUZUN3MnBD?=
- =?utf-8?B?cjJUUFBvTEdvMlNjY3M4emMzckN0VVRyMyt3RjFmK2lIaVQxckFWKzJ6RVJu?=
- =?utf-8?B?Z2RWV2w3L0l6ZEt1MSt3WThGRHdZdDVQZkdhVVFjZm1SNEdSalYxajNxcERO?=
- =?utf-8?B?ZFJobW5UTzJxUVcwL3NGaWpZTS9Dc3RWeGhLTlcxOFNxUyt0cE96NWJqZVdh?=
- =?utf-8?B?dXVHaXhTNGljc0RvdUU4NkRPWXFRUTNlSGFDQkNIcjc2dllPNkt4c3p0c3J3?=
- =?utf-8?B?YkZsa0F2elN1a21ZNUpTOEV1dGJEaktDV0NPRmQ0cUhMRVRTallHT3V0TjYw?=
- =?utf-8?B?eGpQUnpHRXR0c0hPMEROTjgrZUhQUDhYU2hsNUY4MXBWd3J0K0c5ejlzMHhS?=
- =?utf-8?B?TG54OCtROVRBSm9wOW0vYTUvVFlzeFQzNjNuNkFTSmNSSVdGc0ZwSjhDZlBX?=
- =?utf-8?B?bHYxbC9BMkl2dUtoc3k5NFJZVFIxRHoxS3lUSVc2N1ZtOHdEZDUvdFVtTHc4?=
- =?utf-8?B?d0xKL0VvdlNyRzExTVFzVzN1OXBTdWJUV3NPTi9Ka3d3Q3g0YUJ2dTlMSmIy?=
- =?utf-8?B?aVI5MnhuS1pPWnYrV2ZLaCs2bWk0OEh4d2hvdTR1Q0hyZ05ORW96WElPZVIv?=
- =?utf-8?B?My9lRnQ1czhBRTNxZXpaRE1nTER3WXdjenFPR1JPRUd4ck4wVHV5OVRwZzc1?=
- =?utf-8?B?ZENjdzJwdnU4VVEvQ3MzTWZxZUYvZndmdklzaXdScmROdTlRSEo4VVZYUkFO?=
- =?utf-8?B?cjRHQWFDZitiM21WSnRBbW1EWnU3VVhyU3dTSFVjeUEwd2lFN1RHNi9WWTQr?=
- =?utf-8?B?dlNIbUFFTW5PMDYrVHo1NDJtRzI5b2FicHVCbnNaRHlDbXpWUmx4aWZoeDVG?=
- =?utf-8?B?c2FMbHlwUXRFTTNXUG1ycitQVTlXMjR0aEd4SEY5WThZNjVhMDE5U0FYYWJy?=
- =?utf-8?B?Tjd1WVphTW5tdDBjYktKKzRycGlQSm5RUy9GbnlTdUl4dWZDbEpqV2lmNEFa?=
- =?utf-8?B?VEduZit3MzhIbGk1Nk5JeVVEL1N6eVk2OGFFODdRalAvSUhpVkdub0NmSml2?=
- =?utf-8?B?S2I5NzFYNUkzaVVRV3hXNDJJSjlhN3BaMFM1OXM0UWczZjBRZ2tqSVRYOEtH?=
- =?utf-8?B?clpzZmJ6WE9PbjkyY3NiTmpNSHpvc0hBQnQ5VWlXLzcwZU9hWERVY3dOSFlS?=
- =?utf-8?B?Qko5ckpKYW9pdDE2VlJLaG4yZG5kTU9HejBOU2Z3dUpZS2hjOEJ5VGhKcG5u?=
- =?utf-8?B?RDdrOWtvV3g5TzVSdS9GRWFjRkVkcC9URVAwMEh0M0JwenZPeUo5T2p0ZmhY?=
- =?utf-8?B?UlNtaC9peUZtOE1VVDlHK0ZZUndONXd1dkUrTFRTU3hsakE0SS9tNWxTL2E5?=
- =?utf-8?B?eVh4TVF5Zy80eHNqeDdQT3kyYTlyd21XOWM0Nyt0VHRQMndzY1JxMXZmTEwx?=
- =?utf-8?B?M1JjUTFOQXJpUGxNTW1oSE14SW40cEJCVTBnQ2JlbjA3c2hsSmxlVkZ3aElG?=
- =?utf-8?B?ajV4T2JJNTlPdzhNRE0zWHBHdStPNlplTDdpMzU1L0RYaFZVRGk4Sm1sSHB6?=
- =?utf-8?B?eklqL1lmZk53SXFqUkd6MGJxT1pQSWQ4dVRabXNBTzNFUVBwaTdGYjdkbGRF?=
- =?utf-8?B?Nm1yQThTT3hJVmxYUTZ6enprV0g5c1JEZ2drVFFBYTcrSTdnS1k2Y3dhVUxC?=
- =?utf-8?Q?ThFJOzIK539Vo?=
-X-Forefront-Antispam-Report:
-	CIP:58.252.5.68;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.oppo.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(82310400017)(7416005)(36860700004)(376005)(1800799015);DIR:OUT;SFP:1101;
-X-OriginatorOrg: oppo.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jun 2024 17:21:49.8244
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: fee480b1-7dfa-449c-3053-08dc83f1a771
-X-MS-Exchange-CrossTenant-Id: f1905eb1-c353-41c5-9516-62b4a54b5ee6
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f1905eb1-c353-41c5-9516-62b4a54b5ee6;Ip=[58.252.5.68];Helo=[mail.oppo.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SG1PEPF000082E2.apcprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR02MB6627
+In-Reply-To: <187423fb-ec78-4318-9da0-5b27df62b71f@sirena.org.uk>
+X-Cookie: Don't let your status become too quo!
 
-On Mon, 03. Jun 09:01, John Stultz wrote:
-> On Mon, Jun 3, 2024 at 4:40 AM <hailong.liu@oppo.com> wrote:
-> >
-> > From: "Hailong.Liu" <hailong.liu@oppo.com>
-> >
-> > This help module use heap_flags to determine the type of dma-buf,
-> > so that some mechanisms can be used to speed up allocation, such as
-> > memory_pool, to optimize the allocation time of dma-buf.
->
-> This feels like it's trying to introduce heap specific flags, but
-> doesn't introduce any details about what those flags might be?
->
-> This seems like it would re-allow the old opaque vendor specific heap
-> flags that we saw in the ION days, which was problematic as different
-> userspaces would use the same interface with potentially colliding
-> heap flags with different meanings. Resulting in no way to properly
-> move to an upstream solution.
->
-> With the dma-heaps interface, we're trying to make sure it is well
-> defined. One can register a number of heaps with different behaviors,
-> and the heap name is used to differentiate the behavior. Any flags
-> introduced will need to be well defined and behaviorally consistent
-> between heaps. That way when an upstream solution lands, if necessary
-> we can provide backwards compatibility via symlinks.
->
-> So I don't think this is a good direction to go for dma-heaps.
->
-> It would be better if you were able to clarify what flag requirements
-> you need, so we can better understand how they might apply to other
-> heaps, and see if it was something we would want to define as a flag
-> (see the discussion here for similar thoughts:
-> https://lore.kernel.org/lkml/CANDhNCoOKwtpstFE2VDcUvzdXUWkZ-Zx+fz6xrdPWTyciVXMXQ@mail.gmail.com/
-> )
->
-> But if your vendor heap really needs some sort of flags argument that
-> you can't generalize, you can always implement your own dmabuf
-> exporter driver with whatever ioctl interface you'd prefer.
 
-Thanks for your reply. Let’s continue our discussion here instead
-of on android-review. We aim to enhance memory allocation on each
-all heaps. Your pointer towards heap_flags used in /dev/ion for heap
-identification was helpful.
+--46cg5PHekJwEmoXH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-We now aim to improve priority dma-buf allocation. Consider android
-animations scene:
+On Mon, Jun 03, 2024 at 05:27:52PM +0100, Mark Brown wrote:
+> On Mon, May 27, 2024 at 08:07:40PM +0100, Mark Brown wrote:
 
-when device is in low memory, Allocating dma-buf as animation
-buffers enter direct_reclaimation, longer allocation time result in a
-laggy UI. But if we know the usage of the dma-buf, we can use some
-mechanisms to boost, e.g. animation-memory-pool.
+> > This is now in mainline and appears to be causing several tests (at
+> > least the ptrace vmaccess global_attach test on arm64, possibly also
+> > some of the epoll tests) that previously were timed out by the harness
+> > to to hang instead.  A bisect seems to point at this patch in
+> > particular, there was a bunch of discussion of the fallout of these
+> > patches but I'm afraid I lost track of it, is there something in flight
+> > for this?  -next is affected as well from the looks of it.
 
-However, dma-buf usage identification becomes a challenge. A potential
-solution could be heap_flags. the use of heap_flags seems ugly and
-contrary to the intended design as you said, How aboult extending
-dma_heap_allocation_data as follows?
+> FWIW I'm still seeing this on -rc2...
 
-struct dma_heap_allocation_data {
-	__u64 len;
-	__u32 fd;
-	__u32 fd_flags;
-	__u64 heap_flags;
-	__u64 buf_flags: // buf usage
-};
+AFAICT this is due to the switch to using clone3() with CLONE_VFORK
+to start the test which means we never even call alarm() to set up the
+timeout for the test, let alone have the signal for it delivered.  I'm a
+confused about how this could ever work, with clone_vfork() the parent
+shouldn't run until the child execs (which won't happen here) or exits.
+Since we don't call alarm() until after we started the child we never
+actually get that far, but even if we reorder things we'll not get the
+signal for the alarm if the child messes up since the parent is
+suspended.
 
-Do you have any better suggestion?
+I'm not clear what the original race being fixed here was but it seems
+like we should revert this since the timeout functionality is pretty
+important?
 
->
-> thanks
-> -john
+--46cg5PHekJwEmoXH
+Content-Type: application/pgp-signature; name="signature.asc"
 
---
+-----BEGIN PGP SIGNATURE-----
 
-Best Regards,
-Hailong.
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZd+9cACgkQJNaLcl1U
+h9Dq9Qf/ayW5k2h3cIM8VUJF25GNHiI9zuUbaWYwfO31cGn2pVzpron7bMjMPquc
+mSEU7tXShn2QIvp2ihL+DGLgAWH8YPqoE6U47ifgpIU2CNHJhd6kqdqr8gBSqqoh
+qJ6UnxIlpcMRaudyTcBD+6Jp5riheZnt7Fhaiysdlrp0ba8ByRGktZQ6aRWCy0tp
+pRTY1U/MdKZ7dJ7jfNx2fKsmpgZnesoMnCjDePEc4/UqOatbJ8Yug9F1+CgmKM8J
+YPNU9qRl7KqV+1J/FAbSN1Ncla7G24E5xZHk+wlg2+YVfEGSuOqETgviczCbglPs
+u3axeb+jU57c8gYgrDhSASu5UN5IMw==
+=SmQ4
+-----END PGP SIGNATURE-----
+
+--46cg5PHekJwEmoXH--
 
