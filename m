@@ -1,164 +1,123 @@
-Return-Path: <linux-kernel+bounces-199055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B008A8D8154
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:34:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 923C78D815E
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:36:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A0AB1F2257F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:34:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C35EC1C21E82
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:36:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B46684A46;
-	Mon,  3 Jun 2024 11:34:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e/moPXJ0"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9602F84D05;
+	Mon,  3 Jun 2024 11:36:36 +0000 (UTC)
+Received: from SHSQR01.spreadtrum.com (unknown [222.66.158.135])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9527284A23
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 11:34:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A755C288DF
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 11:36:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717414474; cv=none; b=KDIC47ZGogsRI6pQl48EZdTXM3TVg9Ub0GTQ1MPLyXgrfrpYcBiwH5OjA5xGdJSbHEFD7xkPfPlQX4qVwzR6yRVFQqPN9pnGEWFhxAJfeHOapjASDzMV1bT+k2/4I5pXzQpsMdTX5104ZHLKVhdF0uDIEs9pUeuq01DVXCvS+wg=
+	t=1717414596; cv=none; b=XAiqDO4aXpKrHZZK48HdweH/TwrG1Svyd9Q+7d7c3qetg5gz88QEfZDQCCA9X+uAvHhi0PtuCzlnGz3vKynj8i8pgcmtwawUIOjKxWpXGQE6hB5ZySbl/M0Hz3izh5K0VwabtU4PwAiJxMGwduoBqwuxeNJbQG/3Qm2yPoGoXck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717414474; c=relaxed/simple;
-	bh=PYZ3fAE04wecLkCKNrUMiR9WFirhxYWu3OqH0XHIlAI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=ig+7HqLZudzBkYKLh6ggTusWGEOE9yBdhwsxb7uMD1tNbTY0FTHSTpVo1Us32XxzNViPRrIjeOMkhnd3NBqf2RIu34rRXRFNoBlHiqxKbHhkX0ns0tCNmpk0Z7stWPOGK4Ci93HLkvJ1agjGkebrHZFVxue0FPRZ5Vyx/cr3u94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e/moPXJ0; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717414472; x=1748950472;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=PYZ3fAE04wecLkCKNrUMiR9WFirhxYWu3OqH0XHIlAI=;
-  b=e/moPXJ03Jf56LlEwXWIQMU6xEj2COsCht2HFqcldQp5M9cq4gvEOymJ
-   iiXF4IDFoVkIb01VmebBbGlyDRs0nPtWS5e0H9pCbws/SvAN4ErhTbhhz
-   BOqcaeeuwWQct2JzMjjpEWImKasFeWP/A4bPKPsh1lV31CI1HQxGaOpoe
-   ZiSkpGw5xpPW1e66v84wSz2DfB2b1EydbgMJ+6iV3mWQQksPl5zk9zfFa
-   jggXCeSOCQgVi9GX4kgDtBk0YAup5l8wtpFBCBq/2zYrzkH92Ttj5bJYn
-   sjayeqx4forv6a8xNpxIMMtW55uMMaMIDV4dgbgszSgIgNnpXKiiG5aK3
-   Q==;
-X-CSE-ConnectionGUID: hibIbrRaTo+Elkghe77myg==
-X-CSE-MsgGUID: BXcsZNM8QeWTUnfZ97JCVA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11091"; a="13741856"
-X-IronPort-AV: E=Sophos;i="6.08,211,1712646000"; 
-   d="scan'208";a="13741856"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2024 04:34:32 -0700
-X-CSE-ConnectionGUID: 6XvhOL2RRr+HfSf5Mcqyqw==
-X-CSE-MsgGUID: jc1GOTNPRECClW8quqtyTg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,211,1712646000"; 
-   d="scan'208";a="36837724"
-Received: from dev2 (HELO DEV2.igk.intel.com) ([10.237.148.94])
-  by fmviesa008.fm.intel.com with ESMTP; 03 Jun 2024 04:34:30 -0700
-From: =?UTF-8?q?Amadeusz=20S=C5=82awi=C5=84ski?= <amadeuszx.slawinski@linux.intel.com>
-To: Julia Lawall <Julia.Lawall@inria.fr>,
-	Nicolas Palix <nicolas.palix@imag.fr>
-Cc: linux-kernel@vger.kernel.org,
-	cocci@inria.fr,
-	=?UTF-8?q?Amadeusz=20S=C5=82awi=C5=84ski?= <amadeuszx.slawinski@linux.intel.com>,
-	Cezary Rojewski <cezary.rojewski@intel.com>
-Subject: [PATCH] Coccinelle: Add api/list_move.cocci
-Date: Mon,  3 Jun 2024 13:35:13 +0200
-Message-Id: <20240603113513.48045-1-amadeuszx.slawinski@linux.intel.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1717414596; c=relaxed/simple;
+	bh=TwqEhT3Eq9GXxaWgVaAmkXRxpQVBdJZerofTbNCVbDs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=i4qnfMcIEaYAZmkPGm7wY0WQDg/upbxS0V3edFuvic7iSu1YOTea7Pq4aZNK7zuVXKvqSidjLIo7FI5nlsRdvmXYq4TzItHYx6hbw/VqXqWQJJ8exNtOGOWJ/gC3+jujA7iXWu1wpGxNHDLKFM/Z5tIkTTowvi2tF/5nrR9nllc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
+Received: from dlp.unisoc.com ([10.29.3.86])
+	by SHSQR01.spreadtrum.com with ESMTP id 453BZgc6074903;
+	Mon, 3 Jun 2024 19:35:42 +0800 (+08)
+	(envelope-from Zhiguo.Niu@unisoc.com)
+Received: from SHDLP.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
+	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4VtBQ96W5fz2Qn07V;
+	Mon,  3 Jun 2024 19:31:45 +0800 (CST)
+Received: from bj08434pcu.spreadtrum.com (10.0.73.87) by
+ BJMBX02.spreadtrum.com (10.0.64.8) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.23; Mon, 3 Jun 2024 19:35:40 +0800
+From: Zhiguo Niu <zhiguo.niu@unisoc.com>
+To: <jaegeuk@kernel.org>, <chao@kernel.org>
+CC: <linux-f2fs-devel@lists.sourceforge.net>, <linux-kernel@vger.kernel.org>,
+        <niuzhiguo84@gmail.com>, <zhiguo.niu@unisoc.com>, <ke.wang@unisoc.com>
+Subject: [PATCH V2] f2fs: use new ioprio Macro to get ckpt thread ioprio level
+Date: Mon, 3 Jun 2024 19:35:26 +0800
+Message-ID: <1717414526-19658-1-git-send-email-zhiguo.niu@unisoc.com>
+X-Mailer: git-send-email 1.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
+ BJMBX02.spreadtrum.com (10.0.64.8)
+X-MAIL:SHSQR01.spreadtrum.com 453BZgc6074903
 
-Use list_move(_tail) rather than open coding it.
+IOPRIO_PRIO_DATA in the new kernel version includes level and hint,
+So Macro IOPRIO_PRIO_LEVEL is more accurate to get ckpt thread
+ioprio data/level, and it is also consisten with the way setting
+ckpt thread ioprio by IOPRIO_PRIO_VALUE(class, data/level).
 
-Reviewed-by: Cezary Rojewski <cezary.rojewski@intel.com>
-Signed-off-by: Amadeusz Sławiński <amadeuszx.slawinski@linux.intel.com>
+Besides, change variable name from "data" to "level" for more readable.
+
+Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
 ---
- scripts/coccinelle/api/list_move.cocci | 67 ++++++++++++++++++++++++++
- 1 file changed, 67 insertions(+)
- create mode 100644 scripts/coccinelle/api/list_move.cocci
+v2: also change variable name from "data" to "level"
+---
+---
+ fs/f2fs/sysfs.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/scripts/coccinelle/api/list_move.cocci b/scripts/coccinelle/api/list_move.cocci
-new file mode 100644
-index 0000000000000..c157a298cdf57
---- /dev/null
-+++ b/scripts/coccinelle/api/list_move.cocci
-@@ -0,0 +1,67 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+//
-+// Use list_move or list_move_tail rather than list_del or list_del_init
-+// followed by either list_add or list_add_tail.
-+//
-+// Copyright (c) 2023, Intel Corporation
-+// Confidence: High
-+// Options: --no-includes --include-headers
-+//
-+// Keywords: list_move, list_move_tail
-+//
-+
-+virtual context
-+virtual org
-+virtual patch
-+virtual report
-+
-+@rmove depends on !patch@
-+expression E, H;
-+position p;
-+@@
-+
-+(
-+- list_del@p(E);
-+|
-+- list_del_init@p(E);
-+)
-+- list_add(E, H);
-++ list_move(E, H);
-+
-+@rmove_tail depends on !patch@
-+expression E, H;
-+position p;
-+@@
-+
-+(
-+- list_del@p(E);
-+|
-+- list_del_init@p(E);
-+)
-+- list_add_tail(E, H);
-++ list_move_tail(E, H);
-+
-+@script:python depends on report@
-+p << rmove.p;
-+@@
-+
-+coccilib.report.print_report(p[0], "WARNING opportunity for list_move()")
-+
-+@script:python depends on org@
-+p << rmove.p;
-+@@
-+
-+coccilib.org.print_todo(p[0], "WARNING opportunity for list_move()")
-+
-+@script:python depends on report@
-+p << rmove_tail.p;
-+@@
-+
-+coccilib.report.print_report(p[0], "WARNING opportunity for list_move_tail()")
-+
-+@script:python depends on org@
-+p << rmove_tail.p;
-+@@
-+
-+coccilib.org.print_todo(p[0], "WARNING opportunity for list_move_tail()")
-+
+diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+index 72676c5..c0b0468 100644
+--- a/fs/f2fs/sysfs.c
++++ b/fs/f2fs/sysfs.c
+@@ -340,13 +340,13 @@ static ssize_t f2fs_sbi_show(struct f2fs_attr *a,
+ 	if (!strcmp(a->attr.name, "ckpt_thread_ioprio")) {
+ 		struct ckpt_req_control *cprc = &sbi->cprc_info;
+ 		int class = IOPRIO_PRIO_CLASS(cprc->ckpt_thread_ioprio);
+-		int data = IOPRIO_PRIO_DATA(cprc->ckpt_thread_ioprio);
++		int level = IOPRIO_PRIO_LEVEL(cprc->ckpt_thread_ioprio);
+ 
+ 		if (class != IOPRIO_CLASS_RT && class != IOPRIO_CLASS_BE)
+ 			return -EINVAL;
+ 
+ 		return sysfs_emit(buf, "%s,%d\n",
+-			class == IOPRIO_CLASS_RT ? "rt" : "be", data);
++			class == IOPRIO_CLASS_RT ? "rt" : "be", level);
+ 	}
+ 
+ #ifdef CONFIG_F2FS_FS_COMPRESSION
+@@ -450,7 +450,7 @@ static ssize_t __sbi_store(struct f2fs_attr *a,
+ 		const char *name = strim((char *)buf);
+ 		struct ckpt_req_control *cprc = &sbi->cprc_info;
+ 		int class;
+-		long data;
++		long level;
+ 		int ret;
+ 
+ 		if (!strncmp(name, "rt,", 3))
+@@ -461,13 +461,13 @@ static ssize_t __sbi_store(struct f2fs_attr *a,
+ 			return -EINVAL;
+ 
+ 		name += 3;
+-		ret = kstrtol(name, 10, &data);
++		ret = kstrtol(name, 10, &level);
+ 		if (ret)
+ 			return ret;
+-		if (data >= IOPRIO_NR_LEVELS || data < 0)
++		if (level >= IOPRIO_NR_LEVELS || level < 0)
+ 			return -EINVAL;
+ 
+-		cprc->ckpt_thread_ioprio = IOPRIO_PRIO_VALUE(class, data);
++		cprc->ckpt_thread_ioprio = IOPRIO_PRIO_VALUE(class, level);
+ 		if (test_opt(sbi, MERGE_CHECKPOINT)) {
+ 			ret = set_task_ioprio(cprc->f2fs_issue_ckpt,
+ 					cprc->ckpt_thread_ioprio);
 -- 
-2.34.1
+1.9.1
 
 
