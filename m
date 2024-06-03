@@ -1,73 +1,75 @@
-Return-Path: <linux-kernel+bounces-199184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB3A78D8380
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:08:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A8DC8D8383
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:08:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2B15283115
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:08:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E6441C23DC1
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:08:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2117012C528;
-	Mon,  3 Jun 2024 13:08:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFAB412C814;
+	Mon,  3 Jun 2024 13:08:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P7N7YxIX"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BQieuMUj"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8801812C552;
-	Mon,  3 Jun 2024 13:08:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1989512C491
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 13:08:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717420110; cv=none; b=OQF67UyhkDRFNcRZZy/WuC3SNEQSoSnaVDnaFG8u8AmFi9xat1SQZskpCyp97DrbIEboj4Tp0JQDY3QpcGBXS/98EVeSrEzK9arlyfonpodK4gToZVeMFAiTmB4xpygO2jOR6ssBYFv8L9+iBbWXDYDtLB15d9cwUC1fqKH+HGA=
+	t=1717420122; cv=none; b=bM35ZHkCRkt+zurl/pHCmHRRZz7Z73dV9OTDz2m+7EHa47AqgfvNqGn7ekW8iExmQLKSO8OM/IxLXifoufsgXLEK4wYdqVbfy1MlfN6VEBaiproeLVXLWCBNXbV55Gva/27jEVm0BwFk/Azjd2M0OWuIqgmB7isuHJAr+z3xq1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717420110; c=relaxed/simple;
-	bh=d1jKSQXV/+hiSgBSN07jICt/1zBKhvpv+CtvkGHUXBg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dFyxiHB6pybrhOATjyQ2TZIRDtSEU3BXIHjfNPJ6xqkb3uq+irwZzFYR5TOSZvSxv/JmUMSxjLNmqj0b/2SQMbUWzm905YbvjXoIP+BOteSOHKvvLU4Hukb+ftJs8wpzrchhwmDEIzYHH3xLE/tlu70o62kE70Ol/t7BeG9prhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P7N7YxIX; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a6266ffdba8so384890466b.1;
-        Mon, 03 Jun 2024 06:08:28 -0700 (PDT)
+	s=arc-20240116; t=1717420122; c=relaxed/simple;
+	bh=9IDMboTpNoRCtYQ4p427Pn2NpWXZsyWe6afEdc7z5hQ=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=kZ8SApdUvomUwmMov4SoY8rRy041GkZtt+WrVx3+bOVxA1bZvR9ZsB4sCjjLaeVIeWClGfu3Y2rdRAevZcMl51ek3N/VZiWhzdmM8kRJQUeSC9POnNDPYW87LkoJ+7CeEDA+uYbFQyi5benzyQdha93xXMioJWmJSJ6EcfDYTuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BQieuMUj; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4213a496a81so9075325e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 06:08:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717420107; x=1718024907; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qAZowHbU1vntJza1gFJRRVj1jWWarUdVjdkpZ7c+cdY=;
-        b=P7N7YxIXaT2tSImJ8K6UK0JM1X8V99rSvdvRUS1vqR+eozUK8jm0F8mnWk/pXs2sRO
-         1bcqZ9cRYGd5wai8Q/DY9cR7pVXkI7zLW/RVb/7+d+HJqLqXDRUTPfssiLgcQ2Dd3Ta4
-         fCVK1BOQ34YME4V3xVHg/OyvglBDTvLufJOLoTXb6vuwJM5gOXAzIVDj5DDFfLOVHmxC
-         tMj6cbxym16WP1uhKFnSgj9RtL39te86461bzgIJgGvClbEQ2eE3wd0IaaSgNK/9U2FS
-         fdBrn6rTEuSkHFRDZqfXYMWseEZzUid1+Hdbt1YQ1XbzvpmI7ML97aHpjRG+n15+Slqy
-         sKXA==
+        d=linaro.org; s=google; t=1717420119; x=1718024919; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Gx8F+Fp9SWNUY6Yomh+HNjqS3oRk4P5HF08WogPmZDs=;
+        b=BQieuMUjZbH7GiyDd3DxFLMCmSGtdcwkqYEjSlGAb/UULpR7aE7UKrBNbvN8XKQtZm
+         A360/tIQjGxKF1BAg1iBaom1de8OlYKXJLosMf76Y8O0/+ful/1k6ycwU7RifFFEoEgd
+         2dlSnwtu41v6LuuMfefenbju1oswWh4dn3UwLImE+zL+NQiVREGbq2whNw21S2qHM3YP
+         spxC0RaSzMam5yVpMsgqYFn8fvrK70EUoQNOZ4HKlI7AfUSPlghKvKTTEqZT4Es+mvCl
+         /cTFdlcsGg2r/8IQOZgYqO/A+/tFTUTQViuppq7E9Wz9Q5ELYGrmdjiW3u67TM0Njoqy
+         alDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717420107; x=1718024907;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qAZowHbU1vntJza1gFJRRVj1jWWarUdVjdkpZ7c+cdY=;
-        b=M9hGGkFE7YE3yP56Bn7kAlcPS1uKDMu2k0NBEjtiJQIYUyVvDB+BgUYjqz385b3RDx
-         J/DNOYwWQlXDj4iGUdC+YLfDJPG1GOJjeVxKs0yHcqiR6Z4Z/C5eytyqmZ6Tz3WDpkE8
-         SS1LZ8p3AOHovdht9WFLGLUAl6UoypQ9TEDOgNHgcG+uu6rCgvacRqaAKsm8ZjgSJeFC
-         MpF9G+7AgWjvrka58UwyaojWBkKxPeiaN8OB5rK6JZUa86slWURDln0yjBTGGrnrMNzF
-         tdBhJsZxxw52UXGvqDpDMgElDqGTnEwuES13xWnUqOloc195PQ+MqXDUj+TpdJxFFIJi
-         25/A==
-X-Forwarded-Encrypted: i=1; AJvYcCXqBpwbrieEmQfPoDpGTPBNYYBhKNLMNgviR176fGV4RK0qgj0LOZPkjPTD6guWzJE0l+OuplDt0UrGEILIwG99uExLm7M4TxV7emm22/87OoKafM2MLfwustdNnbbi+o48ymLP49uAPgYjMzIoSQ191z4nVFB85qWDK6CYt0MKFJFwbg==
-X-Gm-Message-State: AOJu0YzudqcUVbX+F2RtDsnY5XkxnqFoywCPMhaS/0nP+sNbK6ZqK2fl
-	eTUnF3wh2k2uLertuiC31fOP5p8HQRxWf3m4R5jTAu+zpDv45UaD
-X-Google-Smtp-Source: AGHT+IGnj+9M9LN3jV9fbWA5m/49stg2bFbulep5osCaO0G4XJ06eOYrjW09nbcbn9uMP2k4GUe/dA==
-X-Received: by 2002:a17:906:4e87:b0:a66:d1a1:f92f with SMTP id a640c23a62f3a-a681fe4e434mr635709966b.14.1717420106446;
-        Mon, 03 Jun 2024 06:08:26 -0700 (PDT)
-Received: from [10.76.84.176] ([5.2.194.157])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a68a9fdfb3dsm367032666b.154.2024.06.03.06.08.25
+        d=1e100.net; s=20230601; t=1717420119; x=1718024919;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Gx8F+Fp9SWNUY6Yomh+HNjqS3oRk4P5HF08WogPmZDs=;
+        b=rN/MJIkxDPKiSz498E6OifybowYk6+iW5RYLE9E9ScX9scf6fUtwFV6dJtdKFadQdL
+         Bf9A8D0SfnE0ozZ0390D5cVolxDkZPyEwBQyaRxhWuAzgBvSsmv7rD4FKOA/G5uWllxi
+         PGWjb7ee8MO1zc6wEqWq/HTpKjOybLAELuZElNVm/eE6acariGHeKn7cvNTuXIVwitYp
+         AL4CX+ISTjfXrLk7Onkh+9n8cERzcAH5VmpJNkiRLPIhkWld5OgPF3qS0Aex7Tb9qVlA
+         FGEgDq5LCkNkl5u5LsjqJ/JSdyA94+7Xl63ohTxxA7YOvBdb3LsQdVvzqWZKhifNF+f+
+         F7wQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWyuczrhw5IDde4iJNUN7RH7ruFxmLqL+vE5IupmDwvUbYgJpubws8VmkjqnkFcJg5uUY92xIMG2NSRd3Z8X2aEJi/Ic/iKiFg/WOSF
+X-Gm-Message-State: AOJu0YxVrAS5aQK8ZVkaMDJe99zvyTKCXoSSkTW6ZM6+ziVjdmO4SmWt
+	2pAKPV46sWq5Gk10unl+861tPKoZ/ExD0jDvh1vBiqXelJyGj3XoIXX/6iwlEn8=
+X-Google-Smtp-Source: AGHT+IGk0uTd6E9uGLIil4o8K0nvJynzZnkSYzkdwscvLlhumYGzjCi6eNdCTeQ3QEO7F5aMBDsE0Q==
+X-Received: by 2002:a05:600c:1550:b0:420:1fd2:e611 with SMTP id 5b1f17b1804b1-4212e0adf99mr54609955e9.27.1717420119183;
+        Mon, 03 Jun 2024 06:08:39 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:79fe:b764:2b06:ab4b? ([2a01:e0a:982:cbb0:79fe:b764:2b06:ab4b])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4212b8b76f3sm115776355e9.47.2024.06.03.06.08.37
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Jun 2024 06:08:25 -0700 (PDT)
-Message-ID: <d2370ad2-5fed-41b3-bdd5-c6c895283c18@gmail.com>
-Date: Mon, 3 Jun 2024 16:08:24 +0300
+        Mon, 03 Jun 2024 06:08:38 -0700 (PDT)
+Message-ID: <ef60403f-078f-411a-867b-9b551e863f56@linaro.org>
+Date: Mon, 3 Jun 2024 15:08:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,146 +77,136 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/6] iio: adc: ad7173: refactor ain and vref selection
-To: =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>,
- Jonathan Cameron <jic23@kernel.org>,
- Dumitru Ceclan via B4 Relay <devnull+dumitru.ceclan.analog.com@kernel.org>
-Cc: dumitru.ceclan@analog.com, Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, David Lechner <dlechner@baylibre.com>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240531-ad4111-v4-0-64607301c057@analog.com>
- <20240531-ad4111-v4-3-64607301c057@analog.com>
- <20240601194925.23123071@jic23-huawei>
- <e9ade241e57383d5342d377bc865046e612a7033.camel@gmail.com>
-Content-Language: en-US
-From: "Ceclan, Dumitru" <mitrutzceclan@gmail.com>
-In-Reply-To: <e9ade241e57383d5342d377bc865046e612a7033.camel@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: neil.armstrong@linaro.org
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH 00/14] Add initial support for the Rockchip RK3588 HDMI TX
+ Controller
+To: Heiko Stuebner <heiko@sntech.de>,
+ Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+ Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Sandy Huang <hjc@rock-chips.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Mark Yao <markyao0591@gmail.com>,
+ Andy Yan <andy.yan@rock-chips.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ devicetree@vger.kernel.org, kernel@collabora.com,
+ Alexandre ARNOUD <aarnoud@me.com>, Luis de Arquer <ldearquer@gmail.com>,
+ Algea Cao <algea.cao@rock-chips.com>
+References: <20240601-b4-rk3588-bridge-upstream-v1-0-f6203753232b@collabora.com>
+ <a4b22708-e85d-448a-8145-244b49bca053@linaro.org>
+ <ab0a6372-091b-4293-8907-a4b3ff4845c0@rock-chips.com>
+ <11359776.NyiUUSuA9g@phil>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <11359776.NyiUUSuA9g@phil>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 03/06/2024 16:00, Nuno Sá wrote:
-> On Sat, 2024-06-01 at 19:49 +0100, Jonathan Cameron wrote:
->> On Fri, 31 May 2024 22:42:29 +0300
->> Dumitru Ceclan via B4 Relay <devnull+dumitru.ceclan.analog.com@kernel.org> wrote:
+Hi,
+
+On 03/06/2024 15:03, Heiko Stuebner wrote:
+> Am Montag, 3. Juni 2024, 14:14:17 CEST schrieb Andy Yan:
+>> Hi Neil:
 >>
->>> From: Dumitru Ceclan <dumitru.ceclan@analog.com>
+>> On 6/3/24 16:55, Neil Armstrong wrote:
+>>> Hi Christian,
 >>>
->>> Move validation of analog inputs and reference voltage selection to
->>> separate functions to reduce the size of the channel config parsing
->>> function and improve readability.
->>> Add defines for the number of analog inputs in a channel.
+>>> On 01/06/2024 15:12, Cristian Ciocaltea wrote:
+>>>> The RK3588 SoC family integrates a Quad-Pixel (QP) variant of the
+>>>> Synopsys DesignWare HDMI TX controller used in the previous SoCs.
+>>>>
+>>>> It is HDMI 2.1 compliant and supports the following features, among
+>>>> others:
+>>>>
+>>> .
 >>>
->>> Reviewed-by: David Lechner <dlechner@baylibre.com>
->>> Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
->>> ---
->>>  drivers/iio/adc/ad7173.c | 71 ++++++++++++++++++++++++++++++++++--------------
->>>  1 file changed, 50 insertions(+), 21 deletions(-)
+>>> ..
 >>>
->>> diff --git a/drivers/iio/adc/ad7173.c b/drivers/iio/adc/ad7173.c
->>> index 6e249628bc64..a20831d99aa5 100644
->>> --- a/drivers/iio/adc/ad7173.c
->>> +++ b/drivers/iio/adc/ad7173.c
->>> @@ -60,6 +60,7 @@
->>>  #define AD7173_CH_SETUP_AINPOS_MASK	GENMASK(9, 5)
->>>  #define AD7173_CH_SETUP_AINNEG_MASK	GENMASK(4, 0)
->>>  
->>> +#define AD7173_NO_AINS_PER_CHANNEL	2
->>>  #define AD7173_CH_ADDRESS(pos, neg) \
->>>  	(FIELD_PREP(AD7173_CH_SETUP_AINPOS_MASK, pos) | \
->>>  	 FIELD_PREP(AD7173_CH_SETUP_AINNEG_MASK, neg))
->>> @@ -623,6 +624,7 @@ static int ad7173_setup(struct iio_dev *indio_dev)
->>>  static unsigned int ad7173_get_ref_voltage_milli(struct ad7173_state *st,
->>>  						 u8 reference_select)
->>>  {
->>> +	struct device *dev = &st->sd.spi->dev;
->>>  	int vref;
->>>  
->>>  	switch (reference_select) {
->>> @@ -646,9 +648,11 @@ static unsigned int ad7173_get_ref_voltage_milli(struct
->>> ad7173_state *st,
->>>  		return -EINVAL;
->>>  	}
->>>  
->>> -	if (vref < 0)
->>> +	if (vref < 0) {
->>> +		dev_err(dev, "Cannot use reference %u. Error:%d\n",
->>> +			reference_select, vref);
->>>  		return vref;
->>> -
->>> +	}
->>>  	return vref / (MICRO / MILLI);
->>>  }
->>>  
->>> @@ -905,13 +909,50 @@ static int ad7173_register_clk_provider(struct iio_dev
->>> *indio_dev)
->>>  					   &st->int_clk_hw);
->>>  }
->>>  
->>> +static int ad7173_validate_voltage_ain_inputs(struct ad7173_state *st,
->>> +					      const unsigned int
->>> ain[AD7173_NO_AINS_PER_CHANNEL])
->> I was late to the game in replying to previous thread.
+>>>> * SCDC I2C DDC access
+>>>> * TMDS Scrambler enabling 2160p@60Hz with RGB/YCbCr4:4:4
+>>>> * YCbCr4:2:0 enabling 2160p@60Hz at lower HDMI link speeds
+>>>> * Multi-stream audio
+>>>> * Enhanced Audio Return Channel (EARC)
+>>> -> Those features were already supported by the HDMI 2.0a compliant HW, just
+>>> list the _new_ features for HDMI 2.1
+>>>
+>>> I did a quick review of your patchset and I don't understand why you need
+>>> to add a separate dw-hdmi-qp.c since you only need simple variants of the I2C
+>>> bus, infoframe and bridge setup.
+>>>
+>>> Can you elaborate further ? isn't this Quad-Pixel (QP) TX controller version
+>>> detectable at runtime ?
+>>>
+>>> I would prefer to keep a single dw-hdmi driver if possible.
 >>
->> This is neater without the loop and with 2 parameters.  Anyhow see reply to v3.
 >>
+>>
+>> The QP HDMI controller is a completely different variant with totally different
+>> registers layout, see PATCH 13/14.
+>> I think make it a separate driver will be easier for development and maintenance.
 > 
-> Yeps, even more given that we're passing/copying the complete array which always
-> fells awkward to me :)
+> I'm with Andy here. Trying to navigate a driver for two IP blocks really
+> sounds taxing especially when both are so different.
+
+I agree, I just wanted more details than "variant of the
+Synopsys DesignWare HDMI TX controller", if the register mapping is 100%
+different, and does not match at all with the old IP, then it's indeed time
+to make a brand new driver, but instead of doing a mix up, it's time to extract
+the dw-hdmi code that could be common helpers into a dw-hdmi-common module
+and use them.
+
+As I see, no "driver" code can be shared, only DRM plumbings, so perhaps those
+plumbing code should go into the DRM core ?
+
+In any case, please add more details on the cover letter, including the detailed
+HW differrence and the design you chose so support this new IP.
+
+Neil
+
 > 
-> - Nuno Sá
+> Synopsis also created a new dsi controller for the DSI2 standard, with
+> a vastly different registers layout.
+> 
+> I guess at some point there is time to say this really is a new IP ;-) .
+> 
+> 
+> Though while on that thought, I don't fully understand why both a compiled
+> under the dw_hdmi kconfig symbol. People going for a minimal kernel might
+> want one or the other, but not both for their specific board.
+> 
+> 
+> Heiko
 > 
 > 
 
-I rewrote the function, but it feels a bit awkward, perhaps I could get a bit of
-advice before sending V5:
-
-static int ad7173_validate_voltage_ain_inputs(struct ad7173_state *st,
-					      unsigned int ain0, unsigned int ain1)
-{
-	struct device *dev = &st->sd.spi->dev;
-	bool special_input0, special_input1;
-
-	special_input0 = ain0 == AD7173_AIN_REF_POS || ain0 == AD7173_AIN_REF_NEG ||
-			 ((ain0 == AD7173_AIN_COM_IN_POS || ain0 == AD7173_AIN_COM_IN_NEG) &&
-			 (st->info->has_common_input)) || ain0 == AD4111_VINCOM_INPUT;
-	special_input1 = (ain1 == AD7173_AIN_REF_POS || ain1 == AD7173_AIN_REF_NEG) ||
-			 ((ain1 == AD7173_AIN_COM_IN_POS || ain1 == AD7173_AIN_COM_IN_NEG) &&
-			 (st->info->has_common_input)) || ain1 == AD4111_VINCOM_INPUT;
-
-	if (st->info->has_vincom_input) {
-		if (ain0 == AD4111_VINCOM_INPUT &&
-		    ain1 < st->info->num_voltage_in && /* Normal input */
-		    ain1 >= st->info->num_voltage_in_div) /* Input without divider */
-			return dev_err_probe(dev, -EINVAL,
-				"VINCOM must be paired with inputs having divider.\n");
-
-		if (ain1 == AD4111_VINCOM_INPUT &&
-		    ain0 < st->info->num_voltage_in && /* Normal input */
-		    ain0 >= st->info->num_voltage_in_div) /* Input without divider */
-			return dev_err_probe(dev, -EINVAL,
-				"VINCOM must be paired with inputs having divider.\n");
-	}
-
-	if ((ain0 >= st->info->num_voltage_in && !special_input0) ||
-	    (ain1 >= st->info->num_voltage_in && !special_input1))
-		return dev_err_probe(dev, -EINVAL,
-				     "Input pin number out of range for pair (%d %d).\n",
-				     ain0, ain1);
-
-	if (!special_input0 && !special_input1 &&
-	    ((ain0 >= st->info->num_voltage_in_div) !=
-	     (ain1 >= st->info->num_voltage_in_div)))
-		return dev_err_probe(dev, -EINVAL,
-			"Both inputs must either have a voltage divider or not have: (%d %d).\n",
-			ain0, ain1);
-
-	return 0;
-}
-
-It feels a bit too verbose, but I could not come up with a better way to
-incorporate all those cases.
 
