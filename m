@@ -1,130 +1,179 @@
-Return-Path: <linux-kernel+bounces-198783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 845B88D7D59
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 10:29:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CA3398D7D5B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 10:29:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B599D1C21C0C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 08:29:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECFBE1C21C01
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 08:29:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 483C45B5D3;
-	Mon,  3 Jun 2024 08:28:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBAD65A4FD;
+	Mon,  3 Jun 2024 08:29:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OojbpjCX"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Js8w8dOP"
+Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DA63446CF;
-	Mon,  3 Jun 2024 08:28:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 044575821A
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 08:29:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717403334; cv=none; b=bz/awlw5nxviFSSPyBw0xH3Vp0NcR8qWRoBkDPoJ5gTtP8S6Qdr20lPJdsg61lRF7q0hyEoXXr0pEzcFhxIl0nh7OJ3VHHA0MsvU2jQqzBw0VZoBod2afxDtMhIppSuosAJuDkh6yw/2XHSLeuyQicM6I7BZbzfk1Tavo/W+lrM=
+	t=1717403383; cv=none; b=Zy5zMEofhMye20eoh8B8IawWuE7+wbuId1TQRpm2gqUtVYj/dapIhwL3pVNfQWmv5BAxH0ai+VYBKeB/NL8Ml34PMKREp8XcWWus1U6+efzVWE4EH6nxBd76/WN5VqwGr7dvbMtmyxYJ2xWWfHBpLk25/oYF1ff+8vbBiZT1jWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717403334; c=relaxed/simple;
-	bh=ffVlScCpAYPRmdmKFbEOAujMESyVwditKSQy2fdkHos=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XPGzymmsGnUin+eDl44O2eU3ilLwv6whFK2iHRLS501qdMR1/Z/9HVUtRR3Myc6hka6DP2qxCdUi5xFiMBaxlPMPwuGFrBAlqp0drt6Jjy0QxE2W//Hd+VcH6wOFZwbYHij93SmG7n6/bkA+wPVzokeXlA1cD6rbUl1A9pbHI8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OojbpjCX; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52965199234so4579214e87.2;
-        Mon, 03 Jun 2024 01:28:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717403331; x=1718008131; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=FAQKsZD6ySxnro4HriCuC0HGqYP8pUAOiGJhD7pGAsY=;
-        b=OojbpjCX14hj526jWDGJkwUcjraIjdI7D5TX10RHx6XI7LdAcBKCxmfUsSRMXb/2gC
-         0X5CDMr2ti/CGHhlaUStA0n1tI277VUdpOovu75I49lm1i61LYqOZ4Bc4+Bz4e+iw+34
-         FF1l2Hu3vB4/3PcK0O5NffjIGTr5upahBqkHtnAP7mExX2Adg+T055GMwI6dapL7sFrc
-         N7HxfGwMLeVh9LxoYZzO0p3nQgBXUvDkmYkmO47LCRnY1jelRDVEb12+ueE8PZvO6WSP
-         LKywx80tXUv4Wp3KjRFMvJ/kos8kbzRQvFNZkn89GAgKTPAqXZ5YkjR6VJtZJO5XGqeQ
-         YpzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717403331; x=1718008131;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FAQKsZD6ySxnro4HriCuC0HGqYP8pUAOiGJhD7pGAsY=;
-        b=lqfMoj3EQ+DtHhntZfyMTBT5tk3IKIttG8wiF0V0xelTdwomzvVu+e6jZ6eO8yAq9J
-         6GqjLL6Aj4AmX7TS0Q8BwT7LNjONSY2TCE+VVbtM213gPMr124sSRq2aMFSySufoxfQ7
-         6AR/t6Hr7L0QHNjNLMsMeZU7Dk+DW5+NOmEAaG1+7va9zvFQfow+JVNdlMJ29eAwGaJS
-         SybjcCV4qV84RlsB4WHug0SIS8ETAHk7hgP7aa2vLoq7POE1YwVpnD+oAR7lG0QbSosF
-         oYm9MhdoD2Z76lf0v6MWPy0OkwAkCjcViqIoGDv8S+IcddX6LwP3WDwIZ3wdufOC4Ql3
-         bSQw==
-X-Forwarded-Encrypted: i=1; AJvYcCUBCNjlgRBwWZKy/3tX6dLBBFu5Blbgvf+vsdnmYqdqTPQ/1k9B9catAEu1K4dGlLRCySAknomLFQSKETJjGCiGqsx6o0w92yyB+dy9DFc8i/Ipc0eas0zgJ8tjrONQ+1n7OSzUhWZ2K1FDP7qeqM/rBTqTNW7qnLba5Zc2Vg4P9Qv3BcjbFQ==
-X-Gm-Message-State: AOJu0YzdNbeV8QHm102peZepJsms56yabrp0t2vEspJmWBoyik/T0o8P
-	i1/u9A4z/DtlPvm2/slj3LWVa1OsqCnJV/MFmz54PwLa5wnlx0sa
-X-Google-Smtp-Source: AGHT+IGLymVGTulZH/jz3LCEQ/QQZxXVr2EOUbsidXeOKtvuqSLnZ4TyppGavOqAdilZiEzJ0iuirw==
-X-Received: by 2002:ac2:5f95:0:b0:52b:86cf:91b2 with SMTP id 2adb3069b0e04-52b896bfcf6mr5498131e87.46.1717403330769;
-        Mon, 03 Jun 2024 01:28:50 -0700 (PDT)
-Received: from mobilestation ([178.176.56.174])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52b94c13625sm548697e87.71.2024.06.03.01.28.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Jun 2024 01:28:50 -0700 (PDT)
-Date: Mon, 3 Jun 2024 11:28:47 +0300
-From: Serge Semin <fancer.lancer@gmail.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Mark Brown <broonie@kernel.org>, 
-	Yang Yingliang <yangyingliang@huawei.com>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, 
-	Thangaraj Samynathan <thangaraj.s@microchip.com>, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, Daniel Mack <daniel@zonque.org>, 
-	Haojian Zhuang <haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, 
-	=?utf-8?B?TsOtY29sYXMgRiAuIFIgLiBBIC4=?= Prado <nfraprado@collabora.com>, Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH v1 2/8] spi: dw: Use new spi_xfer_is_dma_mapped() helper
-Message-ID: <4p24kjtplk6bk7amhwsrvvtryeeblitnd46lhlapwqudykayzn@3ki4zl4oknua>
-References: <20240531194723.1761567-1-andriy.shevchenko@linux.intel.com>
- <20240531194723.1761567-3-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1717403383; c=relaxed/simple;
+	bh=Gf44gL9GhWv742wmW6xJd4jWv9SUNPCAH8oNTFWRFy0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ChPnqfb9P1m65KfEnWowOHlg9h/obCufiJQYEWONiFFGTS3tiQvFEezPqvavzia+onftq3em+ZM2diGRpQwFeuMEDrPv5D5wrKqwE0rGYWbGmFMoMl3bPWCqOEJyZPdv8DCsNMqi+pNjGeTSFYRdMayJX/jw8XVHwYSO1M4q1Lo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Js8w8dOP; arc=none smtp.client-ip=115.124.30.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1717403372; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=dIiVItZAj91AE/h8Hfi5v4PdhuYCVz06ZTW0yjoFSKA=;
+	b=Js8w8dOPvqdJnZvStshNJC+U5/qndL6Dg3/sswu1+ScAUkW3nuhyolHk+gjU6xWQ4F83PlF5HDV14LYvaEK7Y/rMBCqcnXyg0pO1D1xhdQoAponsBJrItqeD7WrZh5XHjcOjfTkGpwICE19uHHjLMO0rt3TsxcoF1isgPAC9sbI=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067113;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=15;SR=0;TI=SMTPD_---0W7lD6wK_1717403369;
+Received: from 30.97.56.74(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W7lD6wK_1717403369)
+          by smtp.aliyun-inc.com;
+          Mon, 03 Jun 2024 16:29:30 +0800
+Message-ID: <e05df24a-6254-430e-88ca-6db23e5c6bab@linux.alibaba.com>
+Date: Mon, 3 Jun 2024 16:29:29 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240531194723.1761567-3-andriy.shevchenko@linux.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/6] mm: memory: extend finish_fault() to support large
+ folio
+To: Barry Song <21cnbao@gmail.com>
+Cc: akpm@linux-foundation.org, hughd@google.com, willy@infradead.org,
+ david@redhat.com, wangkefeng.wang@huawei.com, ying.huang@intel.com,
+ ryan.roberts@arm.com, shy828301@gmail.com, ziy@nvidia.com,
+ ioworker0@gmail.com, da.gomez@samsung.com, p.raghav@samsung.com,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <cover.1717033868.git.baolin.wang@linux.alibaba.com>
+ <bf80d4a792ea82ab066f819ad7d10ed22a2f8e66.1717033868.git.baolin.wang@linux.alibaba.com>
+ <CAGsJ_4z60mrjuQ5qKCKn0+knk_M1dy=NsH4nVLqe5Khue_5gFw@mail.gmail.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <CAGsJ_4z60mrjuQ5qKCKn0+knk_M1dy=NsH4nVLqe5Khue_5gFw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, May 31, 2024 at 10:42:34PM +0300, Andy Shevchenko wrote:
-> Replace a few lines of code by calling a spi_xfer_is_dma_mapped() helper.
+
+
+On 2024/6/3 13:28, Barry Song wrote:
+> On Thu, May 30, 2024 at 2:04 PM Baolin Wang
+> <baolin.wang@linux.alibaba.com> wrote:
+>>
+>> Add large folio mapping establishment support for finish_fault() as a preparation,
+>> to support multi-size THP allocation of anonymous shmem pages in the following
+>> patches.
+>>
+>> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+>> ---
+>>   mm/memory.c | 58 ++++++++++++++++++++++++++++++++++++++++++++---------
+>>   1 file changed, 48 insertions(+), 10 deletions(-)
+>>
+>> diff --git a/mm/memory.c b/mm/memory.c
+>> index eef4e482c0c2..435187ff7ea4 100644
+>> --- a/mm/memory.c
+>> +++ b/mm/memory.c
+>> @@ -4831,9 +4831,12 @@ vm_fault_t finish_fault(struct vm_fault *vmf)
+>>   {
+>>          struct vm_area_struct *vma = vmf->vma;
+>>          struct page *page;
+>> +       struct folio *folio;
+>>          vm_fault_t ret;
+>>          bool is_cow = (vmf->flags & FAULT_FLAG_WRITE) &&
+>>                        !(vma->vm_flags & VM_SHARED);
+>> +       int type, nr_pages, i;
+>> +       unsigned long addr = vmf->address;
+>>
+>>          /* Did we COW the page? */
+>>          if (is_cow)
+>> @@ -4864,24 +4867,59 @@ vm_fault_t finish_fault(struct vm_fault *vmf)
+>>                          return VM_FAULT_OOM;
+>>          }
+>>
+>> +       folio = page_folio(page);
+>> +       nr_pages = folio_nr_pages(folio);
+>> +
+>> +       /*
+>> +        * Using per-page fault to maintain the uffd semantics, and same
+>> +        * approach also applies to non-anonymous-shmem faults to avoid
+>> +        * inflating the RSS of the process.
 > 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> I don't feel the comment explains the root cause.
+> For non-shmem, anyway we have allocated the memory? Avoiding inflating
+> RSS seems not so useful as we have occupied the memory. the memory footprint
 
-Nice cleanup. Thanks!
-Reviewed-by: Serge Semin <fancer.lancer@gmail.com>
+This is also to keep the same behavior as before for non-anon-shmem, and 
+will be discussed in the future.
 
--Serge(y)
+> is what we really care about. so we want to rely on read-ahead hints of subpage
+> to determine read-ahead size? that is why we don't map nr_pages for non-shmem
+> files though we can potentially reduce nr_pages - 1 page faults?
 
-> ---
->  drivers/spi/spi-dw-core.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+IMHO, there is 2 cases for non-anon-shmem:
+(1) read mmap() faults: we can rely on the 'fault_around_bytes' 
+interface to determin what size of mapping to build.
+(2) writable mmap() faults: I want to keep the same behavior as before 
+(per-page fault), but we can talk about this when I send new patches to 
+use mTHP to control large folio allocation for writable mmap().
+
+>> +        */
+>> +       if (!vma_is_anon_shmem(vma) || unlikely(userfaultfd_armed(vma))) {
+>> +               nr_pages = 1;
+>> +       } else if (nr_pages > 1) {
+>> +               pgoff_t idx = folio_page_idx(folio, page);
+>> +               /* The page offset of vmf->address within the VMA. */
+>> +               pgoff_t vma_off = vmf->pgoff - vmf->vma->vm_pgoff;
+>> +
+>> +               /*
+>> +                * Fallback to per-page fault in case the folio size in page
+>> +                * cache beyond the VMA limits.
+>> +                */
+>> +               if (unlikely(vma_off < idx ||
+>> +                            vma_off + (nr_pages - idx) > vma_pages(vma))) {
+>> +                       nr_pages = 1;
+>> +               } else {
+>> +                       /* Now we can set mappings for the whole large folio. */
+>> +                       addr = vmf->address - idx * PAGE_SIZE;
+>> +                       page = &folio->page;
+>> +               }
+>> +       }
+>> +
+>>          vmf->pte = pte_offset_map_lock(vma->vm_mm, vmf->pmd,
+>> -                                     vmf->address, &vmf->ptl);
+>> +                                      addr, &vmf->ptl);
+>>          if (!vmf->pte)
+>>                  return VM_FAULT_NOPAGE;
+>>
+>>          /* Re-check under ptl */
+>> -       if (likely(!vmf_pte_changed(vmf))) {
+>> -               struct folio *folio = page_folio(page);
+>> -               int type = is_cow ? MM_ANONPAGES : mm_counter_file(folio);
+>> -
+>> -               set_pte_range(vmf, folio, page, 1, vmf->address);
+>> -               add_mm_counter(vma->vm_mm, type, 1);
+>> -               ret = 0;
+>> -       } else {
+>> -               update_mmu_tlb(vma, vmf->address, vmf->pte);
+>> +       if (nr_pages == 1 && unlikely(vmf_pte_changed(vmf))) {
+>> +               update_mmu_tlb(vma, addr, vmf->pte);
+>>                  ret = VM_FAULT_NOPAGE;
+>> +               goto unlock;
+>> +       } else if (nr_pages > 1 && !pte_range_none(vmf->pte, nr_pages)) {
 > 
-> diff --git a/drivers/spi/spi-dw-core.c b/drivers/spi/spi-dw-core.c
-> index ddfdb903047a..431788dd848c 100644
-> --- a/drivers/spi/spi-dw-core.c
-> +++ b/drivers/spi/spi-dw-core.c
-> @@ -19,6 +19,7 @@
->  #include <linux/string.h>
->  #include <linux/of.h>
->  
-> +#include "internals.h"
->  #include "spi-dw.h"
->  
->  #ifdef CONFIG_DEBUG_FS
-> @@ -438,8 +439,7 @@ static int dw_spi_transfer_one(struct spi_controller *host,
->  	transfer->effective_speed_hz = dws->current_freq;
->  
->  	/* Check if current transfer is a DMA transaction */
-> -	if (host->can_dma && host->can_dma(host, spi, transfer))
-> -		dws->dma_mapped = host->cur_msg_mapped;
-> +	dws->dma_mapped = spi_xfer_is_dma_mapped(host, spi, transfer);
->  
->  	/* For poll mode just disable all interrupts */
->  	dw_spi_mask_intr(dws, 0xff);
-> -- 
-> 2.43.0.rc1.1336.g36b5255a03ac
+> In what case we can't use !pte_range_none(vmf->pte, 1) for nr_pages == 1
+> then unify the code for nr_pages==1 and nr_pages > 1?
 > 
+> It seems this has been discussed before, but I forget the reason.
+
+IIUC, this is for uffd case, which is not a none pte entry.
 
