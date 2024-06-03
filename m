@@ -1,210 +1,211 @@
-Return-Path: <linux-kernel+bounces-199686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B46628D8ADE
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 22:30:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 683E28D8AE0
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 22:30:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89B811C23869
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 20:29:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2073B2539F
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 20:30:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A933D13B5A6;
-	Mon,  3 Jun 2024 20:29:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28C3E13B58A;
+	Mon,  3 Jun 2024 20:30:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CIgKQPSs"
-Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hCt8qbHk"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4028B4BAA6;
-	Mon,  3 Jun 2024 20:29:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CE4613B2B2;
+	Mon,  3 Jun 2024 20:30:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717446588; cv=none; b=YBa3leX5rVfq6oQjWk1FGNcLdvqAN+WhwYuKVAAC9a3xzO7Qg6gQb48UT56mUB353oc3VvnTbmzqIWZZE/uUNMXkv5HjLAGMLUjprGbtK3JvGXmvVKmQ/g29pVJuTLmn/3qfWT9AkYubl89JCufA+TJYny9MP2GW3bcEC6YCPso=
+	t=1717446610; cv=none; b=dkIQASVkHRCiVQI9LAJrTTz7t93Fbaov9YzkASgVXPrXq+GbkXsRbbFCHAe7Av3FQjDhfBuqT5fYPcP7J/o8tMRbC7okguW0yn76yGgyfTvuZTjoZlqn5Ce3IBPxsairSGvZxVt+xbf1ZdHRAIrw9CEuYHXDO7L5xH90SFtBGJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717446588; c=relaxed/simple;
-	bh=j3gfTKddyYWmSxXQuoNeqUkMME14BCZN3zYIx14emZI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u3nYVN5UxhzpfabPNsvmAKlW158Qw2NAtrGWrLD1+whytjN3zGzn/QxqwNkfYKDzQpAks0LALcMaQPckVQGTky/B4OWGQ9V3v4ZD/mLeCFr8I43Vxht9Po6wsFPwhrq5VmL5w3ovZN0s2Hy8VRQfjmp6bDHS0tIi6a4c+vWuD7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CIgKQPSs; arc=none smtp.client-ip=209.85.217.44
+	s=arc-20240116; t=1717446610; c=relaxed/simple;
+	bh=rBEJ6aFn3WtiDOqUov72VDi2kBi3Son3uHAq6f5O7nA=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dHrgLGTfBe65uAPXDOnmt/Prqhq/RT20APe4rvBkK5fl+QcKRciylyheWhiM4RlqkW1a2j1dcHj/klKsKvPqAqorbSeyAHW+ga+H79fJB6n8ifB5NhgeNEVSyH7oz41B9dcqjxhKLy/jpkMsUAQ/YAJ+UnWuCB2+V7LyDuZkY4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hCt8qbHk; arc=none smtp.client-ip=209.85.208.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-48bc4350b19so117088137.2;
-        Mon, 03 Jun 2024 13:29:47 -0700 (PDT)
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2eaae2a6dc1so27125591fa.0;
+        Mon, 03 Jun 2024 13:30:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717446586; x=1718051386; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5X2AoY/lQVZz1FKCa6KHvqy44zzQ3mhz+ruaolMEMaw=;
-        b=CIgKQPSsPWAcarOJaRigCbKR+zq29KpWz8a+jmm17mqJpFPCt/Mqs9mpufx2Qu6sXC
-         nL1bUPZPlBiKAY22lRqq16AWCEsn4IsvD7uVEWWTNaeJPAabCxYVRw1uv5A5ZH2zPfMF
-         o7fwnM2FPZTYlq9izkvEEOT8byIcWkCbJtoFRUtgOcOFK/JsIDY4OIie/fDJzIkmpJv1
-         6eyb7YNbo0r/eZn0zzBgymutBz4QWaIO+lxdzowRKJSA0mhaAwLE52BrsURwnOnE8nFz
-         WlwSUbUq17GrUbf13mUiGkCFlN9W6pkXIlJCmsalk7racxvNuTuTdFu6fpcoPlxR/aNe
-         wa5Q==
+        d=gmail.com; s=20230601; t=1717446607; x=1718051407; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4MNCejFefIj3mRDZiJBBUKRSrQvuyurQnNmolrCC+7o=;
+        b=hCt8qbHk42ix6ZUl5YgZ86FSch/0c6nOOWUeaJ3e2dBlGHKVQsb6xiNfrToYQXxFhZ
+         Osr6vtM576A0ghX2ZxHQaamr7yK0hoIHrCNQNJO39BNYp4Hj7v6qTSA+zDGUfA0rpAsE
+         AENg0/KM7Zp9mJFh/1WcJsvAwWe6fq+IBWMsR13jJTE9LZBWN2aQPp5hpQCP/fxwVzcg
+         hglzotMjpM0q3bU3ySBJLfjj8HCJd+f2bJNzhPPoHBVAwXRzgvZHKlz2Fm9wWdbQGbTr
+         hgJC1eXtXTKCWkwh9EI7xXkR+mqozo0rykGJwN5+ftjfhp8JqmEVubV9nTCadv3nW82Z
+         e50A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717446586; x=1718051386;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5X2AoY/lQVZz1FKCa6KHvqy44zzQ3mhz+ruaolMEMaw=;
-        b=lW39H0rDDt1iD27C0ABZImSJZJOasptR5rropCe5Ia8lKPeaKai6fHpLQnsikXXFuS
-         THFY1ptO7Rf5UdKa5kll5mDG0ERnmBPDr+jukm8sewsnl43ju+443gU9uNAjybG7Rrxs
-         ogC9UQwOGl1nDDp5jNuSreH3Gprue51EhsD6aQzmmQtZtly9g/8c/LvRfWr/ElJh7N2w
-         v6Ejo09zlvl6PHb2hIE0x2BknIZKVDyqJE6Dh0Nw0OMxJngIEPWddDczbuMDqa67/o9q
-         Z7vPP+Ioyx+MQfAXPB//7Rpe/1e63BX1PkSEXk2SqXGU11AD6koX/2T6VPmLj1Y2cLeY
-         mT+A==
-X-Forwarded-Encrypted: i=1; AJvYcCUoMw7bZuaZaa/37v2HyYsn1g3dpSzzG/2v3nI71TD3giDUpqE4Xm2yiNanM95lZuN2LWsSiVRuwpTAkmrnBx98xjCR9wZd8OAu6G907xZF9NKWNWw+jhSxhuxRvEWoB1k+GAarXFx5u/9OSmUKOhNa0URuaqL88HXLfMEJr9GWJQlEO5hm+R8HNFibmzkRgeI+xTqatbX5gQ==
-X-Gm-Message-State: AOJu0YyPLIvIIrfPzjnl/CI9d1WUnI+GqbQ3Rc7uwOJQ7TCnXT4lwUfJ
-	78hXc/9IdsIV37JSNs8+MOz9JEnzBVhHB28ymBE8TZFq4QBQlEJk
-X-Google-Smtp-Source: AGHT+IGWrKHzvzbDJxYZB9izbaKjENhQiSF4aLl0mt855tkbfFf0g9cOXHABW4R9S8b+9ENLJgRQIw==
-X-Received: by 2002:a05:6122:309e:b0:4eb:152e:cf92 with SMTP id 71dfb90a1353d-4eb152ed501mr5250710e0c.0.1717446586037;
-        Mon, 03 Jun 2024 13:29:46 -0700 (PDT)
-Received: from ?IPV6:2a02:2f04:920e:e000:3b36:462:775e:2626? ([2a02:2f04:920e:e000:3b36:462:775e:2626])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-794f2efc67csm311044785a.20.2024.06.03.13.29.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Jun 2024 13:29:45 -0700 (PDT)
-Message-ID: <7edbdb11-5135-4f26-be12-c86f4dc4c0ff@gmail.com>
-Date: Mon, 3 Jun 2024 23:29:38 +0300
+        d=1e100.net; s=20230601; t=1717446607; x=1718051407;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4MNCejFefIj3mRDZiJBBUKRSrQvuyurQnNmolrCC+7o=;
+        b=Vcp15EJ0Z7JwUh/Wmrjx1fN8/auS6nqBpk7zNBzMPwoLHD6xNFAPp1PVxVV19rk7lB
+         pQV/6OQGw1qUfWchIUTGzO/tkxx3NJPXSg0a8k5VL7JWur3k4TXeWW7U2hDwxkw6qS47
+         n74YD4yaV7yZkWvmF9tiuGybc/SCG8BuNx7EnQeZ76ciJpjD6nN72eLPHfATRZ+WsH22
+         pTa4xiccecWL5IW7EZ4GhosEmNGKzlASFYQ7fy3Ik+l75rxuwLyv83LqOLDZz/vUat42
+         IFbvcErlKrCa5jb/+ZqbcjJCdmkYgJOmP3WMcMAqeFpjiij9aiMdOpXAmy/h1RUgMDIz
+         BGWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVR1hQtSzhkH8B4I9wtNJ4azKmFwbyKV+9UNsvdPEx0bYt6xylwz1BkxdxaBjBWujhRy4ZHhkHd2CzmA5JVyrfG1Mlv0nHmc94mxIF+LQbIg5ab2KGkAQJyLe70JXIAqUVHKp/6BQI/
+X-Gm-Message-State: AOJu0YzU422tOx9nBPx+zjal9Tuymb/zIR65N/FAzv8QtK8de3xsjJ4z
+	VkcKynWeeMTugyXewKXmGuy9QjROIEsViMJ0e2pOWgyDtC5yofLG/2ZK6RpV
+X-Google-Smtp-Source: AGHT+IFpaXP6PxTOCLpSrH/20lsvkLCeVFoQroSSDQVeTmfOzuSTDrJLxdG0ElkYM1tWfLwXl/PCfw==
+X-Received: by 2002:a2e:9d88:0:b0:2e1:9c57:195a with SMTP id 38308e7fff4ca-2ea951de27fmr84988791fa.32.1717446606120;
+        Mon, 03 Jun 2024 13:30:06 -0700 (PDT)
+Received: from vamoiridPC ([2a04:ee41:82:7577:c014:12e2:7350:b51b])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a68f39b9294sm284771466b.180.2024.06.03.13.30.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Jun 2024 13:30:05 -0700 (PDT)
+From: Vasileios Amoiridis <vassilisamir@gmail.com>
+X-Google-Original-From: Vasileios Amoiridis <vamoirid@vamoiridPC>
+Date: Mon, 3 Jun 2024 22:30:03 +0200
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Vasileios Amoiridis <vassilisamir@gmail.com>, lars@metafoo.de,
+	himanshujha199640@gmail.com, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 11/17] iio: chemical: bme680: Use bulk reads for
+ calibration data
+Message-ID: <20240603203003.GA444780@vamoiridPC>
+References: <20240527183805.311501-1-vassilisamir@gmail.com>
+ <20240527183805.311501-12-vassilisamir@gmail.com>
+ <20240602135726.2f10fd2b@jic23-huawei>
+ <20240602193023.GD387181@vamoiridPC>
+ <20240603202537.4b40c80a@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 08/12] PCI: imx6: Config look up table(LUT) to support
- MSI ITS and IOMMU for i.MX95
-To: Robin Murphy <robin.murphy@arm.com>, Bjorn Helgaas <helgaas@kernel.org>,
- Frank Li <Frank.Li@nxp.com>
-Cc: Richard Zhu <hongxing.zhu@nxp.com>, Lucas Stach <l.stach@pengutronix.de>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-pci@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
- devicetree@vger.kernel.org, Will Deacon <will@kernel.org>,
- Joerg Roedel <joro@8bytes.org>, Jason Gunthorpe <jgg@ziepe.ca>,
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, Marc Zyngier <maz@kernel.org>
-References: <20240530230832.GA474962@bhelgaas>
- <974f1d23-aba8-432e-85b5-0e4b1c2005e7@arm.com>
-Content-Language: en-US
-From: Laurentiu Tudor <tudor.laurentiu.oss@gmail.com>
-In-Reply-To: <974f1d23-aba8-432e-85b5-0e4b1c2005e7@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240603202537.4b40c80a@jic23-huawei>
 
-
-
-On 5/31/24 17:58, Robin Murphy wrote:
-> On 2024-05-31 12:08 am, Bjorn Helgaas wrote:
->> [+cc IOMMU and pcie-apple.c folks for comment]
->>
->> On Tue, May 28, 2024 at 03:39:21PM -0400, Frank Li wrote:
->>> For the i.MX95, configuration of a LUT is necessary to convert Bus 
->>> Device
->>> Function (BDF) to stream IDs, which are utilized by both IOMMU and ITS.
->>> This involves examining the msi-map and smmu-map to ensure consistent
->>> mapping of PCI BDF to the same stream IDs. Subsequently, LUT-related
->>> registers are configured. In the absence of an msi-map, the built-in MSI
->>> controller is utilized as a fallback.
->>>
->>> Additionally, register a PCI bus notifier to trigger 
->>> imx_pcie_add_device()
->>> upon the appearance of a new PCI device and when the bus is an iMX6 PCI
->>> controller. This function configures the correct LUT based on Device 
->>> Tree
->>> Settings (DTS).
->>
->> This scheme is pretty similar to apple_pcie_bus_notifier().  If we
->> have to do this, I wish it were *more* similar, i.e., copy the
->> function names, bitmap tracking, code structure, etc.
->>
->> I don't really know how stream IDs work, but I assume they are used on
->> most or all arm64 platforms, so I'm a little surprised that of all the
->> PCI host drivers used on arm64, only pcie-apple.c and pci-imx6.c need
->> this notifier.
+On Mon, Jun 03, 2024 at 08:25:37PM +0100, Jonathan Cameron wrote:
+> On Sun, 2 Jun 2024 21:30:23 +0200
+> Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
 > 
-> This is one of those things that's mostly at the mercy of the PCIe root 
-> complex implementation. Typically the SMMU StreamID and/or GIC ITS 
-> DeviceID is derived directly from the PCI RID, sometimes with additional 
-> high-order bits hard-wired to disambiguate PCI segments. I believe this 
-> RID-translation LUT is a particular feature of the the Synopsys IP - I 
-> know there's also one on the NXP Layerscape platforms, but on those it's 
-> programmed by the bootloader, which also generates the appropriate 
-> "msi-map" and "iommu-map" properties to match. Ideally that's what i.MX 
-> should do as well, but hey.
+> > On Sun, Jun 02, 2024 at 01:57:26PM +0100, Jonathan Cameron wrote:
+> > > On Mon, 27 May 2024 20:37:59 +0200
+> > > Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
+> > >   
+> > > > Calibration data are located in contiguous-ish registers
+> > > > inside the chip. For that reason we can use bulk reads as is
+> > > > done as well in the BME68x Sensor API [1].
+> > > > 
+> > > > The arrays that are used for reading the data out of the sensor
+> > > > are located inside DMA safe buffer.  
+> > > 
+> > > See below. I think in this case that isn't necessary.
+> > > However it's a quirk of how the custom regmap works. Whilst
+> > > we can't rely on regmap core spi implementations continuing to
+> > > bounce buffer, we can rely on one local to our particular driver.
+> > >   
+> > 
+> > What about the I2C implementation though? I watched recently a video
+> > from Wolfram Sang [1] and as far as I understood, the buffers are not
+> > provided by the I2C API, but you have to provide them. In any case, I
+> > should maybe check both SPI and I2C reads to understand the internals.
+> > 
+> > [1]: https://www.youtube.com/watch?v=JDwaMClvV-s
+> > 
+> 
+> I'm not sure Wolfram got far with his desire for generally avoiding the
+> bounce buffers for i2c.  I think it's strictly opt in only so don't opt in
+> unless your code is safe for it and regmap never will by default as too
+> many drivers will be subtly broken.
+> 
 
-That's usually fine, except when SRIOV and/or hotplug devices (that is, 
-not discoverable at bootloader time) come into play. We came up with 
-this "solution" to cover these more dynamic scenarios.
+The things that I found about DMA "safety" in I2C are [1] and [2] so I think
+that the IIO_DMA_MINALIGN should remain because in the future, in case it's
+needed for triggered buffers to do buffer reads from the volatile registers
+of the device, then it might be a problem for I2C. 
 
-https://source.denx.de/u-boot/u-boot/-/commit/2a5bbb13cc39102a68fcc31056925427ab44b591
+[1]: https://elixir.bootlin.com/linux/latest/source/drivers/i2c/i2c-core-base.c#L2627
+[2]: https://elixir.bootlin.com/linux/latest/source/include/linux/i2c.h#L92
 
----
-Best Regards, Laurentiu
-
->> There's this path, which is pretty generic and does at least the
->> of_map_id() part of what you're doing in imx_pcie_add_device():
->>
->>      __driver_probe_device
->>        really_probe
->>          pci_dma_configure                       # 
->> pci_bus_type.dma_configure
->>            of_dma_configure
->>              of_dma_configure_id
->>                of_iommu_configure
->>                  of_pci_iommu_init
->>                    of_iommu_configure_dev_id
->>                      of_map_id
->>                      of_iommu_xlate
->>                        ops = iommu_ops_from_fwnode
->>                        iommu_fwspec_init
->>                        ops->of_xlate(dev, iommu_spec)
->>
->> Maybe this needs to be extended somehow with a hook to do the
->> device-specific work like updating the LUT?  Just speculating here,
->> the IOMMU folks will know how this is expected to work.
 > 
-> Note that that particular code path has fundamental issues and much of 
-> it needs to go away (I'm working on it, but it's a rich ~8-year-old pile 
-> of technical debt...). IOMMU configuration needs to be happening at 
-> device_add() time via the IOMMU layer's own bus notifier.
+> > > > 
+> > > > [1]: https://github.com/boschsensortec/BME68x_SensorAPI/blob/v4.4.8/bme68x.c#L1769
+> > > > Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>  
+> > > 
+> > >   
+> > > > diff --git a/drivers/iio/chemical/bme680_core.c b/drivers/iio/chemical/bme680_core.c
+> > > > index 681f271f9b06..ed4cdb4d64af 100644
+> > > > --- a/drivers/iio/chemical/bme680_core.c
+> > > > +++ b/drivers/iio/chemical/bme680_core.c  
+> > >   
+> > > > +
+> > > >  struct bme680_calib {
+> > > >  	u16 par_t1;
+> > > >  	s16 par_t2;
+> > > > @@ -64,6 +109,16 @@ struct bme680_data {
+> > > >  	 * and humidity compensation calculations.
+> > > >  	 */
+> > > >  	s32 t_fine;
+> > > > +
+> > > > +	/*
+> > > > +	 * DMA (thus cache coherency maintenance) may require the
+> > > > +	 * transfer buffers to live in their own cache lines.
+> > > > +	 */
+> > > > +	union {
+> > > > +		u8 bme680_cal_buf_1[BME680_CALIB_RANGE_1_LEN];
+> > > > +		u8 bme680_cal_buf_2[BME680_CALIB_RANGE_2_LEN];
+> > > > +		u8 bme680_cal_buf_3[BME680_CALIB_RANGE_3_LEN];
+> > > > +	} __aligned(IIO_DMA_MINALIGN);  
+> > > Ah! I should have read ahead.  I don't think you need this alignment forcing
+> > > because bme680_regmap_spi_read uses spi_write_then_read() which always
+> > > bounces the data.
+> > >   
+> > 
+> > Same comment. What about I2C?
+> > 
+> > > >  };
+> > > >  
+> > > >  static const struct regmap_range bme680_volatile_ranges[] = {
+> > > > @@ -112,217 +167,73 @@ static int bme680_read_calib(struct bme680_data *data,
+> > > >  			     struct bme680_calib *calib)
+> > > >  {  
+> > > 
+> > >   
+> > > > +	calib->par_h3 = data->bme680_cal_buf_2[H3];
+> > > > +	calib->par_h4 = data->bme680_cal_buf_2[H4];
+> > > > +	calib->par_h5 = data->bme680_cal_buf_2[H5];
+> > > > +	calib->par_h6 = data->bme680_cal_buf_2[H6];
+> > > > +	calib->par_h7 = data->bme680_cal_buf_2[H7];
+> > > > +	calib->par_t1 = get_unaligned_le16(&data->bme680_cal_buf_2[T1_LSB]);
+> > > > +	calib->par_gh2 = get_unaligned_le16(&data->bme680_cal_buf_2[GH2_LSB]);
+> > > > +	calib->par_gh1 = data->bme680_cal_buf_2[GH1];
+> > > > +	calib->par_gh3 = data->bme680_cal_buf_2[GH3];
+> > > >  
+> > > > -	ret = regmap_read(data->regmap, BME680_H7_REG, &tmp);
+> > > > +	ret = regmap_bulk_read(data->regmap, BME680_REG_RES_HEAT_VAL,
+> > > > +			       &data->bme680_cal_buf_3[0],  
+> > > This one is always debated, but personally I'd prefer
+> > > 				data->bme680_cal_buf_3,
+> > >   
+> > 
+> > For me it's the same, I could change it to what you proposed, no problem!
+> > 
+> > Cheers,
+> > Vasilis
+> > 
+> > > for cases like this. Up to you though.  
+> > > > +			       sizeof(data->bme680_cal_buf_3));
+> > > >  	if (ret < 0) {
+> > > > -		dev_err(dev, "failed to read BME680_H7_REG\n");
+> > > > +		dev_err(dev, "failed to read 3rd set of calib data;\n");
+> > > >  		return ret;
+> > > >  	}  
+> > >   
 > 
-> If it's really necessary to do this programming from Linux, then there's 
-> still no point in it being dynamic - the mappings cannot ever change, 
-> since the rest of the kernel believes that what the DT said at boot time 
-> was already a property of the hardware. It would be a lot more logical, 
-> and likely simpler, for the driver to just read the relevant map 
-> property and program the entire LUT to match, all in one go at 
-> controller probe time. Rather like what's already commonly done with the 
-> parsing of "dma-ranges" to program address-translation LUTs for inbound 
-> windows.
-> 
-> Plus that would also give a chance of safely dealing with bad DTs 
-> specifying invalid ID mappings (by refusing to probe at all). As it is, 
-> returning an error from a child's BUS_NOTIFY_ADD_DEVICE does nothing 
-> except prevent any further notifiers from running at that point - the 
-> device will still be added, allowed to bind a driver, and able to start 
-> sending DMA/MSI traffic without the controller being correctly 
-> programmed, which at best won't work and at worst may break the whole 
-> system.
-> 
-> Thanks,
-> Robin.
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
