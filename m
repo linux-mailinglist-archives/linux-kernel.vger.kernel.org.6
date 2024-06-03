@@ -1,99 +1,99 @@
-Return-Path: <linux-kernel+bounces-198769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37C258D7D2B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 10:18:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ABB48D7D2E
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 10:21:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71EC7283124
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 08:18:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CE321F211B3
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 08:21:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60B5B57CAB;
-	Mon,  3 Jun 2024 08:18:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70BC057CAB;
+	Mon,  3 Jun 2024 08:21:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="H+sHq3o2"
-Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="kJcZnF1n"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E013955C0A;
-	Mon,  3 Jun 2024 08:18:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1E854AEF5;
+	Mon,  3 Jun 2024 08:21:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717402713; cv=none; b=ny3jj2q11nIvOFbcevkh69d5p+n53QiTcqXSHzoCts3Bh1EAO2BbkJSWwF6ykBqyE4RJyg725iD4l9dpwcc+It5L9qZ4AuLQiW7veTea1tHuY35ybfvkO8KdBzdUyoU27rLNBPOG0iP8wpZqP7PjqtaOaDJGfQcZJdfoc25HjgI=
+	t=1717402897; cv=none; b=D+KN/cE+PyabmZZanO5OPXQiNN7baGdo0XmRe3egWXDlAHBNesKOU8p+lCl04NfmBig1XOtzpIERVT3TnXYztsDms6u/40uQqvyf1uL97gUgTGK39k89jMlB9RPBG65010Eift2K/nMPJk+pLCymq65McoYXzkrhomdIDvr/mAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717402713; c=relaxed/simple;
-	bh=3AttaUkpZheUTQu4LxQ/6eDePa6nzJciotjCxL/3DuE=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IgRnhFB8JAqG1ILbg+oExxzX7F0AB/bqri5SOghdubpGJ8NWvuxGVLC4tjocuKA8APTDQ0ProNwaqfFRowJtVa+lmjDa+wB87B21rJvloAdQIMUL/KaBJluyM6KOZiVZwjkYRqP9zICtfFZaIl23sw74LmfJ3QR83eil2McofYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=H+sHq3o2; arc=none smtp.client-ip=67.231.152.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4534bd8r027721;
-	Mon, 3 Jun 2024 03:17:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=PODMain02222019; bh=kqzYoKK/xn5/xaTv+q
-	5s3bSIwJX2AbDTSqYAE+s/rc8=; b=H+sHq3o2bsjyseyXQxb45PVyPePoyP0pdd
-	XD+Rok3Gv2wx5qf3sz77FM579CS+XUxQJ0/LIT6xe26drhyjKfuONhebRX/0pc00
-	YYCIrekSk1fs5/ruHaZn8FohS+HhHU94K5hrhoVoxI5w1txZjcyo0xFESt5Fxp7k
-	hojLgKZMpuM88Q0PBVCazUoscG5vrZAoOZRO/owHyznLMwGQx3Mr0Xm91Gk8a+3J
-	5RFvHFVNxlBFFWteUW3lEy4rmL987nIBaZD4ae7gwf9Wl6HCnttz5AqOhsjNPRaO
-	zc3/PogxfjMnlFXnPBCithlziHC3w5xvQb6ZjWfbcfdkSynV/n/Q==
-Received: from ediex02.ad.cirrus.com ([84.19.233.68])
-	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 3yg02hha2f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 03 Jun 2024 03:17:58 -0500 (CDT)
-Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex02.ad.cirrus.com
- (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 3 Jun 2024
- 09:17:56 +0100
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
- 15.2.1544.9 via Frontend Transport; Mon, 3 Jun 2024 09:17:56 +0100
-Received: from opensource.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPS id AB4B8820249;
-	Mon,  3 Jun 2024 08:17:56 +0000 (UTC)
-Date: Mon, 3 Jun 2024 08:17:55 +0000
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-To: <linux@treblig.org>
-CC: <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
-        <tiwai@suse.com>, <srinivas.kandagatla@linaro.org>,
-        <alsa-devel@alsa-project.org>, <patches@opensource.cirrus.com>,
-        <linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/3] ASoC: codecs: wm0010: remove unused struct
- 'wm0010_spi_msg'
-Message-ID: <Zl18MzMHGbE8B7/U@opensource.cirrus.com>
-References: <20240601225446.183505-1-linux@treblig.org>
- <20240601225446.183505-3-linux@treblig.org>
+	s=arc-20240116; t=1717402897; c=relaxed/simple;
+	bh=OfJ1v8LmA6mNpHYBeRjLRPtYp398TYQP1NikawbZ4jY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kuNKzo1raFdgzVgrtYwsSpBfuz5mDBLyC3MZy5AfRHgpeKEi0dM9xE0W8i/R3yodIQNvJGm45O9Vi7gkhnvSJkvvnUr3MDlKjwaE0xJSuxg71xYdJK+oiq5VEkzr52EMx2sDG9gl27aE4crG9NdyntWrO92CpZ+ZWXV+9sSDMoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=kJcZnF1n; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 34227C0011;
+	Mon,  3 Jun 2024 08:21:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1717402888;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Gu2XHe19XSpb+VgVm3wUODziOEYkalPD1w4V/84MF8c=;
+	b=kJcZnF1n3JOnk/MuEuZ3dn0jMOkEUPkoA0y6a3fiqJKuiYG7mKAiV+UysAK0+OFxrnaxam
+	l2zvuoKGM1M6zNAYuzOvd0JeSHuYftBF42IkMbC0RVwM/xiDO7u/7XT3SCB6YCRq2vY2jg
+	o2QqP2QJ8+TAVEUEGnM1P6o3m0OFldV30Zr4jY5qwgLDu2842RzR8bdPlRP2PP7pCUbrqU
+	8lNFn/BN5ZsJKa058PVdubPh7GdONG8ZtmUTqn7oUNPtz+fHAOlojCfXD8BIqhJmECtBoY
+	VKamKtM1e6FWe0b96A7McX9Z9IyHPhFpCpFzHCKJqpwjNDiAt0UwkkycajMwuw==
+From: Thomas Richard <thomas.richard@bootlin.com>
+To: linus.walleij@linaro.org
+Cc: m.nirmaladevi@ltts.com,
+	bhargav.r@ltts.com,
+	lee@kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	u-kumar1@ti.com,
+	gregory.clement@bootlin.com,
+	thomas.petazzoni@bootlin.com,
+	Thomas Richard <thomas.richard@bootlin.com>
+Subject: [PATCH] pinctrl: tps6594: add missing support for LP8764 PMIC
+Date: Mon,  3 Jun 2024 10:21:10 +0200
+Message-Id: <20240603082110.2104977-1-thomas.richard@bootlin.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240601225446.183505-3-linux@treblig.org>
-X-Proofpoint-GUID: -r9T5ub-_Fk7GKDeykYpbbSwa_HlL39h
-X-Proofpoint-ORIG-GUID: -r9T5ub-_Fk7GKDeykYpbbSwa_HlL39h
-X-Proofpoint-Spam-Reason: safe
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: thomas.richard@bootlin.com
 
-On Sat, Jun 01, 2024 at 11:54:45PM +0100, linux@treblig.org wrote:
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> 
-> 'wm0010_spi_msg' has been unused since the original
-> commit e3523e01869d ("ASoC: wm0010: Add initial wm0010 DSP driver").
-> 
-> Remove it.
-> 
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-> ---
+Add missing support for LP8764 PMIC in the probe().
 
-Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Fixes: 208829715917 (pinctrl: pinctrl-tps6594: Add TPS65224 PMIC pinctrl and GPIO)
+Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
+---
 
-Thanks,
-Charles
+Issue detected with v6.10-rc1 (and reproduced with 6.10-rc2) using a TI
+J7200 EVM board.
+
+tps6594-pinctrl tps6594-pinctrl.8.auto: error -EINVAL: Couldn't register gpio_regmap driver
+tps6594-pinctrl tps6594-pinctrl.8.auto: probe with driver tps6594-pinctrl failed with error -22
+
+ drivers/pinctrl/pinctrl-tps6594.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/pinctrl/pinctrl-tps6594.c b/drivers/pinctrl/pinctrl-tps6594.c
+index 085047320853..5e7c7cf93445 100644
+--- a/drivers/pinctrl/pinctrl-tps6594.c
++++ b/drivers/pinctrl/pinctrl-tps6594.c
+@@ -486,6 +486,7 @@ static int tps6594_pinctrl_probe(struct platform_device *pdev)
+ 		break;
+ 	case TPS6593:
+ 	case TPS6594:
++	case LP8764:
+ 		pctrl_desc->pins = tps6594_pins;
+ 		pctrl_desc->npins = ARRAY_SIZE(tps6594_pins);
+ 
+-- 
+2.39.2
+
 
