@@ -1,68 +1,69 @@
-Return-Path: <linux-kernel+bounces-199014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20FC28D8085
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:05:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 224C88D8090
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:07:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43F9B1C21767
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:05:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42834B23FCD
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:07:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE6C883CD9;
-	Mon,  3 Jun 2024 11:04:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F364983CCB;
+	Mon,  3 Jun 2024 11:07:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="BgR0Vy73"
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2079.outbound.protection.outlook.com [40.107.96.79])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="uV3jA9Da"
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2044.outbound.protection.outlook.com [40.107.96.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF69A78C80
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 11:04:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5926980039;
+	Mon,  3 Jun 2024 11:07:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.44
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717412692; cv=fail; b=ShbXqbEhMljzSkuQAcLw6RP0P8ojC/7/XbNDX2MujgFFqmPZNcCkRZgEwghntnyJCBhjGmV/WAs5gZnvh24gnj0BMWy0X/oqqhYPHStnPpuR6MTRbJtUh0tfbb7pJ8i7uR6DG+J2hYoCI1ldIufPjlv0Rx/ycSueo8Y3bXL2F38=
+	t=1717412825; cv=fail; b=CwcBi0UxIV4YYAN/8ZrN8RK0bbGyQXPdBvQywWixcYKoFe8ui+7CMY5Eq0WUblBhAmhKTeyjgpIjEt2GHJbpEDPnjpZo4NDBR0JfPyQj5eA127pMXeqs+mr7Ak2jazbvGXqY5o4SZg7EPdvUIYnZ2GbR0Ils7aAruePENiIkXeI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717412692; c=relaxed/simple;
-	bh=WB6bw6vHSociDxdBpWMmwjNPb5lSZXaqzvGiiDQTqZI=;
-	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=MuJA5eLWKFqdesY3DWEa+V7NMzsnJ6fDiGEsaxaXwwYRU0zbabdw11YsbqgEhm1miu6TDGTIh6cSltFo6l+ghDcUbZVmd5DgQPEY41auFPOKqD2aYRj+3WCnuaGliD0IDRDwwlY3z4ptp8MNucLk+Evy+JYZq6ztB8/ytvpKDEA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=BgR0Vy73; arc=fail smtp.client-ip=40.107.96.79
+	s=arc-20240116; t=1717412825; c=relaxed/simple;
+	bh=Zr+bw3lnitAt2f7xiVFQNxyCzd6h6CrFb3FDJWlx+T8=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=ZayNZcTP2l6s9TvXJd1EuYdhPlPUUBGjCvHP31GTro782jD4MmVXs0sDsXNnU1LXI2LQdJ2+Og4KJ8pLA7EH7lnFYXmwQ/nSi65Ul1of9pXqNL490tEDuYvqgQABlKiwlGZ4DDZrEn3TAxexJ49QeoKkPF6PySD2cyp1/hp0hKU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=uV3jA9Da; arc=fail smtp.client-ip=40.107.96.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=R0SY312GSbXsrCNsHqBDea2iFMg3/vVeGs06LIuZPET0fTeIvbe06xNNw9bsmKZAenyL6K3hFOmYwE6zrVXv5/Tpa3JZiLy9qvMyUAHDxNq4hlLGMhiQ3/ZdRX7jbH71jS5RvMABenm6qljjF/we6XOotpSW+YVGQrMHDK4GNytUNct/TRLym07OwK8TjhwmNv8jWYnc3DVfeMxbeCyE1zOfCSI/3qd396DSKddKjNaDkRaPjw08vTLXWebIEak2ck6gxgFyXoaNTkXBUx8kfLEuTD+Zz+jDHlcAHTZ3AAKzk9b9sfH13ulW74M59/9SAtCdYaSb9ZuIo3/e48tMQQ==
+ b=d4gAG5mzcDuF26vOFa2ENe/iEFTUQWBTOQm8Zm+dcLeGJeRFahDY9uW87yE7vrqHGZEge0kw+NZELZg0z9oZ+jViDOcJtnVZPKs3gPEd/8iDv1iGG1mVNWchFSiM2JGOYHw62YGYpsUry4AjM3H3WhYidCqpeI0myE7/aTAd1hs1Nx5/8UCnZdVnM4AqtST1ioMJXxc/Z7DjUDwu604f/DhdoEEuEeaKpbEw8ZC1QcbJ8yNvxSlQzDi7etP4OdjaXjn/GoxhPnilpZLBbrm0wRBnwTQlGsuZ9tuzFUFq8iGldKFaKH3EiKsFAZVSVC8LnB4OKSZXVvswKR7Yojb1iQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9ZWypXdPCm1RXJBWmvsk02vByxi76xyl3PFdYzn6t3s=;
- b=Wq94a/i5IAjH1FNOwxKxWGsEx+tGNAaXIsZGI3F0KI9snD8W1R7DkJmdfAwVHzKAbsEUu9a1nIU0ffBKIUSnDppSSOgJ8Szz9fqeApTqEi2ppOAZ2WaJIjibsMH9wtaPoBMocMiu+2vLIcsgVm//nENYeCh1km6SGBWHOg5iiD8ik543tx40BA+nGrqHO33xlnWVAoaj2vaIJGQ8Ou0xuQN9dKsXiwYpMdGLv877R/vjwxqVdbeOe+E5YOg6C0faffF+CnybXggiEs+BP4j+0WLTaeWtV0BiQ48hjm1uihIfD/76GdKe9SIzWah6yUgmlZe2LxcggYqOqrhpZc/ucQ==
+ bh=4sOXC2frC3IMWD4he3mrA03Xndrx9JYoJLpX+Ot7TdY=;
+ b=Lr2F6OxtRbu9wxOfCwNlL72BSu/yuT/2KzBU2qbRJSBFKkokvciT6NLYNOZqmoqylr4Va+jSsw0EXThgXCliJzFkhNW/1XAj4KteEGZm5vhXZuFc56GWQDWQ2tjLMCXYZtd2YktE1XyjUXlhjeUJuflqD76Zcbv9esJK3bMReAvajL1UmnQ8SssU9KAnZCnh5eFpStJY8WIZmwZ1KBixe54rE1W7le63rh4dgC/qpW75C3iycWxxDEaaj1jYdC6ahDSNhiPSA+XUwc/xYAdtfpf58OIp9UOsGgQ7zHSQdlwmRshlPlbOrTQjTpQjs9sQsiE4yUC9fUz4IGA+ug1/RQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
  header.d=amd.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9ZWypXdPCm1RXJBWmvsk02vByxi76xyl3PFdYzn6t3s=;
- b=BgR0Vy73zuLwK7CcWSCRHWQIzxQvjF+OrvkncQ2Z5Qwmy7EdA/LWsniVyZGc/9aKwytfYQpmSU7+YhkNtUUx1hSesLbRcSk0L3UKue4oX1pzSkygwNDDcxLmD/PW2/5CEDgPDP2Kl7Kh/TzMFD+j3TbDzSqb5n/a3YWs07IRxG8=
+ bh=4sOXC2frC3IMWD4he3mrA03Xndrx9JYoJLpX+Ot7TdY=;
+ b=uV3jA9Dac17HzsGJJOAhWWN4xApB4A9d4/Gnhf+Z8197lL9H/LeQ3JaSzUMi+mTveZNvbg1TzR3djBEHRrPYoQS/omYI71IfmlzQmy42Hzq/YrjLBqFNLBNjsdK+20bIrm8rx4YUcjMPvC9NOoR5p5kfEBXwB+UW61rBFRjtATk=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=amd.com;
 Received: from SJ2PR12MB8109.namprd12.prod.outlook.com (2603:10b6:a03:4f5::8)
  by DS7PR12MB8231.namprd12.prod.outlook.com (2603:10b6:8:db::14) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.25; Mon, 3 Jun
- 2024 11:04:47 +0000
+ 2024 11:07:01 +0000
 Received: from SJ2PR12MB8109.namprd12.prod.outlook.com
  ([fe80::7f35:efe7:5e82:5e30]) by SJ2PR12MB8109.namprd12.prod.outlook.com
  ([fe80::7f35:efe7:5e82:5e30%6]) with mapi id 15.20.7611.016; Mon, 3 Jun 2024
- 11:04:47 +0000
-Message-ID: <5a7d3d78-f152-466f-90de-e4a781577bb1@amd.com>
-Date: Mon, 3 Jun 2024 13:04:36 +0200
+ 11:07:01 +0000
+Message-ID: <31b120c7-c9d6-4b1e-92c6-e024727a7597@amd.com>
+Date: Mon, 3 Jun 2024 13:06:48 +0200
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] firmware: xilinx: Move FIRMWARE_VERSION_MASK to
- xlnx-zynqmp.h
-To: Ronak Jain <ronak.jain@amd.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20240425095913.919390-1-ronak.jain@amd.com>
+Subject: Re: [PATCH v3] drivers: soc: xilinx: check return status of
+ get_api_version()
+To: Jay Buddhabhatti <jay.buddhabhatti@amd.com>, gregkh@linuxfoundation.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20240515112345.24673-1-jay.buddhabhatti@amd.com>
 Content-Language: en-US
 From: Michal Simek <michal.simek@amd.com>
 Autocrypt: addr=michal.simek@amd.com; keydata=
@@ -109,11 +110,11 @@ Autocrypt: addr=michal.simek@amd.com; keydata=
  y7RkYPOpmElF2pwWI/SXKOgMUgigedGCl1QRUio7iifBmXHkRrTgNT0PWQmeGsWTmfRit2+i
  l2dpB2lxha72cQ6MTEmL65HaoeANhtfO1se2R9dej57g+urO9V2v/UglZG1wsyaP/vOrgs+3
  3i3l5DA=
-In-Reply-To: <20240425095913.919390-1-ronak.jain@amd.com>
+In-Reply-To: <20240515112345.24673-1-jay.buddhabhatti@amd.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: VI1PR0502CA0002.eurprd05.prod.outlook.com
- (2603:10a6:803:1::15) To SJ2PR12MB8109.namprd12.prod.outlook.com
+X-ClientProxiedBy: VI1PR06CA0189.eurprd06.prod.outlook.com
+ (2603:10a6:803:c8::46) To SJ2PR12MB8109.namprd12.prod.outlook.com
  (2603:10b6:a03:4f5::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -123,147 +124,139 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: SJ2PR12MB8109:EE_|DS7PR12MB8231:EE_
-X-MS-Office365-Filtering-Correlation-Id: c019b4c5-5059-4d61-d5a8-08dc83bcfb09
+X-MS-Office365-Filtering-Correlation-Id: aa20eaed-6d94-43ad-ed09-08dc83bd4b02
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|366007|1800799015;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZExHUTA2SlJnZUtLUEpWWmZmdG9YeGtlbFMySmVFZzgxYllyVjYveFZyUzRo?=
- =?utf-8?B?eldGNDVZYXN0SzAzKzMyQndGOEVwQVc0cnB0Qll1OEdGckJGbVErTmZOanF5?=
- =?utf-8?B?MEdFTjUrSzRpUllmL3VQMCtLbDlpWTRoTnFzUzRlSnYwN21HUy94TzIrcyti?=
- =?utf-8?B?bFg1enE4T0lmS2hCdWljNUJnZG5hSm9YRXdDbWVlSFNBL2ZQUGNrK1hIVDU1?=
- =?utf-8?B?RmxJTXJidkhsMS9oUVVsY1NLUzlhUXRwSG1wTk5UTjE5QXZESTB1WEE3bm5m?=
- =?utf-8?B?ZWNoL0Ryc25jcCtGa0VFVWdxdFJDSTFFRnlRM2NsSVV5K3czbUxyYURCVWhV?=
- =?utf-8?B?TFZMWThVK0NHS21lOVFiSFRFZkN5VCtHQytXMkpnYnJaZDQwQkg3KytRcTdp?=
- =?utf-8?B?L3d3S1F5bEUwQm4wSHd2ZHR0VGNmaEhPTDhPYjdUcktsTjFxbGQzL0RuTjZF?=
- =?utf-8?B?czhDZlkySXY3U3EvQ3RDc1ZqVnZYWm55dUgyeTF6RWl1SlA3K0JKOGJVNUxU?=
- =?utf-8?B?V1pPMnJjeTJSeU5ya0dPcUN5aXEzNUNWZmNPZnk3RnVBMElTbG0xckFLdTVn?=
- =?utf-8?B?aG9XSld3SFdoajB5ZUE5YVYzcXMrOC9zOGRRS1IwODYyeGpRVk52MkdsRWxR?=
- =?utf-8?B?VHk3eGJ6M0VFQUEzakhlZHJIenljNENGenVLdHdjRDJ1M1VnV1lteDNPbzFl?=
- =?utf-8?B?eFA0RG5ZZ0ZrUGlwVUx0VVZEbHZHUm04aVkzaHRkd3FhcnNXR1FOTlY5aEhw?=
- =?utf-8?B?TWlWcU1BWTBsdjJPQWJDaFF0M3UweFNYS0hRK2xBakpIemc4YWdobktKZWFR?=
- =?utf-8?B?TS9CV2hBZmpaK1FYQmw3bG5XUFNnWmZvVDkvUXFDYXI3bEZaSmxkOTV5Y2g3?=
- =?utf-8?B?aWt0Vi8xOEJ5b2F1dy9QNG9Xek5oNEN6NW5hZGY4MysvWjJLbkV3N0d5Slll?=
- =?utf-8?B?SGh5MVl3ZFlhbGdxSGpyZ2ErMHJaYkZSUkROTUJqcEpudWVaekxLbE9CbEZ3?=
- =?utf-8?B?Y1ZFeVF5ZXIzMExoUGQ4bkFqT1NjSHpCTzJmWE9TbjNBdFUzQ3hyK0tmdDFw?=
- =?utf-8?B?VU9sYlB4bmRSOWpvN1h1YWgyQ0pJaUkwRzJjQ0svTEs4K20rdlFYbm9BUnB4?=
- =?utf-8?B?K0IxN3duaDFMUkE2WW52NG4rblpaVmxWTytqdlZ0OG84bFJlSkJLQXBTTGZm?=
- =?utf-8?B?SEE5b2FWVmJiZmxUdE1wcU9WU2JWbnI4NVJxb0tCc1dhYkxKVVN0NnRSS1NH?=
- =?utf-8?B?M29wK3BPR29BMVJnbDZTVUFRanhRVm1GZ3V3VHFjODg0SURvME0wbk9YSzhC?=
- =?utf-8?B?SkpabzBzUVFEd01STk1PRXdxWWJWelQvOEk3MzU0S1dFNUV4cGdaSUo4bGo0?=
- =?utf-8?B?b2VxcFl5NWNZWWxZQStFUkxuYVVSNHVYcE5YTUdTbmltOURkUGZVNFJ3RGRK?=
- =?utf-8?B?dTlLQStvR1pMUEZuNTd2Tk9RUFg3eEw4cFRHRVEyMWVTVkFxZ05WaUJDa0lH?=
- =?utf-8?B?Q1pDYmVuQzl5TWlsdUpkeU5NMGd5ZzdhY0M0b29seWpvRlFHL3ZNRm16UnNC?=
- =?utf-8?B?NGZScnN0YlVNaWdTOXJlRHlNZmF1ZjQzMGRzMHFHSUtzWnBXbzltdk9DakZO?=
- =?utf-8?B?V1Y5UTh5V3hlRURTNXV6M1FvV0VXRlpuenF5Qjkrb2dNUXVrcGxBZ0c3N3Zu?=
- =?utf-8?B?QnJMUHN0Mkd2NFg3anFLNENNSWtURSt1dU12RFdEUHkycnhJVlIvOEpnPT0=?=
+	=?utf-8?B?Rk44b2FXL3BLNENnaFIxN295SkU4R0ZXdS81aEFQVVB3U20wcWdteHZFcG5P?=
+ =?utf-8?B?WC9yNnpFbERCWnBwNHNKcSt3MTJ1MTZyMENpMHhhYzFlSTNBMHpaWFpBOXdk?=
+ =?utf-8?B?S2tVNy9aQjZNWS9GaWx6YWEzdERxUGRxaWZqUitveGZ3azlWelBaS2RvWjdm?=
+ =?utf-8?B?WDFnLzJSSzF2WlN6ZktuZ0VVS1ArdXNBdWJPdTY2NEh5Z0E3N0xyYjQwWFJS?=
+ =?utf-8?B?ZkcyQWw2WEVLc3BEWk15NVE4WHkxWlBaTHBLVE90aXRtSzR0Uzg2M3JYRWdy?=
+ =?utf-8?B?WWg4SGNOTThkSDhvcFkzVUg5SGJXZkh5V0lacitqMjgybDB2aTRvQ3FvQ2dh?=
+ =?utf-8?B?Y1A5MDhwazJGTWQ1bU8xKzl0cS82NndYb1llREEzeFR4T0F4NTVxODluaFFS?=
+ =?utf-8?B?TjhuWFgyUXhyTVdVSTNZS0pPdVFuVGV3QkFmYVlMRDY2SThObnVFY0x4Qnhs?=
+ =?utf-8?B?ZFZrREdRMlprTGUyU1ZKZ1BBS2M2RDBzY1U1QjBaQWowNjA4QjQ4b3ZaUVM3?=
+ =?utf-8?B?TXN3VHFHNzdVMWs1c2k4TUd0cHBOQUw0SjFBVXNFejBFRFhQK0hXd0RuNmoz?=
+ =?utf-8?B?eDZxeEx1emZ4M1NJVlArTUMwVUdNNXROdU9EVzRrVVVQS1hCeGwzRXZxalRV?=
+ =?utf-8?B?b1Z1VzZEUlBYRXV0UEg3ZmR3WlNHeGE5NTM5SmNudWh2cGgyWDV1TzhtdUo4?=
+ =?utf-8?B?aThOZnVGT1crSnEvdkFDaXNKL2ZuRDgvRUNjVzFQL0hKSTR1QWlnWUI2UE1p?=
+ =?utf-8?B?Q0xxWC9TZndNdDk4b2cwZ1ZuMkVvRVNlUlV0WHBFUUlXNTJicVhNa3dPdzM3?=
+ =?utf-8?B?WTBDS0w1Q283SW9JRU1rZ2RvT3hGU0JHZVVqREVHVitoSkhWQnR0ZWxPeGt3?=
+ =?utf-8?B?VXhhRmM1alIyS3pCLyszNTdWNEIwLzlOSUNPQThlWkF5MEtLYVJZMXViaVNX?=
+ =?utf-8?B?dEdNM01YVEcyeE9BL1dGRVRGZmNOeVhndDlQVXQxdDcveEhGeG9wRGllOTdJ?=
+ =?utf-8?B?cjRXSlUrRkhxa0trMkU1Y21JZXk2RGdOWCs3eUttR25uQ0RxSnlOSVFobUpz?=
+ =?utf-8?B?VlJSNUNqSklLUzJ1OTNtKzQ3disrTnRBZkY2N2dvNEx5WG1BVkxLZWpYY21l?=
+ =?utf-8?B?L2RQNWdMRG9QaHhWOGNJbjdYV1A3STBUaG55Q1V0N0R3VkV5ci9haU1zNzUw?=
+ =?utf-8?B?MkdlTktGcHpSenE0ZEpLRzk3TjFFNWQrVTNvRzVMWURzT3llTm5RUzZuSGtR?=
+ =?utf-8?B?QlQrSTBocTZtUzFvd2laVDk2UG53Z0k4Y2ErQkV2clBNcUVGVlJYcWd4Y1pW?=
+ =?utf-8?B?bFBFVkE2aHBUOWJvOXZ4cHZxOFFVbFAvU3VMUXFsSHpxTmN3RllLQUR1S1RF?=
+ =?utf-8?B?YmxKSm1ocXVuVDNEaHVoQjcvd1RQZ0pvdFV5TDY0RkczUUVwa0l0V01IanNj?=
+ =?utf-8?B?dDZVdjR0NStWcnpyNCsxMGlvK2JZZTBGQ2pOS0RERGtUcUkxS2dLTWMxT1oy?=
+ =?utf-8?B?WGNqVDNZd2xja1lCTUFpcHE1Q0g3NHljUHFaM2FDS0lTRzV6MFN4VUxXYTVZ?=
+ =?utf-8?B?MFJsSXd0RG9ZcTNSTk9xL2ZndmJGL0RQWGNyUzNDMzg3L25IWTk5ZEs1endn?=
+ =?utf-8?B?eUxBc1pqdW1LbUhPQjcreTRBZ2wzdXVOU2xMa2RIc25LWGR2VldRWTI0NlV3?=
+ =?utf-8?B?S01oQVBweWxwV1BiSHd6QlRLZWRvL0NLcWVzVy9DZHE3b0k0RzMzT3JFWnMx?=
+ =?utf-8?Q?A2UA5B+2DueO8Gehk4=3D?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8109.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(366007)(1800799015);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZlNUdGJCVUlWTXZjdDBXaHBjVnk2cTVqMkhSWk1wbms2QWN5Yk9SRXhBc3pD?=
- =?utf-8?B?R3Y0bFNjanlLWUdWU3o5eDdYR0lITTNjTDRRSDF0eTRSaE1TS3dSZDBza0tC?=
- =?utf-8?B?bGdTYUxzSTNnRjNGVlR5R3VwdjIzY2lQeEhkUSt6M1JWM3JZclhKT1U0OWsv?=
- =?utf-8?B?Y2dLMXdDbHEvSXZ5QlRRWHNOQUNBcC95VXlySlRLZFhVZXhGQ1B5K3laTEJJ?=
- =?utf-8?B?TkhEdE9rQzNwMFRMdmtRb1ZaazRTNEU3ckVWNnBpaVZrQ212c3FyM1JhdlV2?=
- =?utf-8?B?MExnWWRlN08rZUpVU2Rmak50ajhGeFQ1YlA1RXg2eEx2YW4zeUV5a0VnakJK?=
- =?utf-8?B?NlFqeU5xMmxjTEI5dnE3NFYwYUtrdXJBWktaNXYvcEFnaWswczNYNXdPZWt6?=
- =?utf-8?B?VmUzWGhWWExkYyszcVJ6MmJKTFlYOHFYREpkU2Y5NWIzRW84OXRqNFA1QmpN?=
- =?utf-8?B?bkFJODRQRHJJQUtKbzdGMGdGdUdUNG1TVXg0Z0ZKTFplWFMyaktFYnROajkw?=
- =?utf-8?B?TFhmai8ybjZ1YXhEUnI1RlNkK3BOSFZDQzlwU0dpSFFJVHlsYzVWM2dwZmtt?=
- =?utf-8?B?aGpVdFBxVUI2WnVwK2pvNmZiYUR6cjVFVUdCRkRuSEtka1F0em8zRjU4M29y?=
- =?utf-8?B?NThXSjNXenVnRTQvRTVjVmRvdTVBdFNLSVR5aXQwN2JCaDJ1T2prRzZoRGIv?=
- =?utf-8?B?VmlsU21TaWFwSVRFRktZOWpMeUtuaS83cnVaaThpTEdCTU81RDc3OHBPM1M5?=
- =?utf-8?B?aVV5aUw1WWtVRGVHTUp0WWlPb0Q5QlVHbFc5THF5b2VJQjkwL3RqQ05ZQ0g4?=
- =?utf-8?B?d1ZpYWMzSVZzU3JYeWxMdERqODhEankwM1dybXFjM3gzR1VXNHgwNFA3Z3dr?=
- =?utf-8?B?WkRqOTZSazBSajRORG5lM0U5VWpsY3dRdndJSjFucExaTGw3WFFvMldDQmE1?=
- =?utf-8?B?RllZQWxGdW5xbm55dW56UVZDMjhMZW9oaS9xeTBNbDFZSU5ndGJOamxUN2Jo?=
- =?utf-8?B?bVBTd1A5bUtVQUVadm1CTFdwRlpHczJwSjlBcFI3TlMySWlOajJlZFJ0V1Rn?=
- =?utf-8?B?V0dEaGNMSGVTNmlScU0zcWFBSmh5RXlLRDd5aFJWMHRLekY3VnFMR1NYOThP?=
- =?utf-8?B?R2VLWnIwUHB4TC96ekVtOXZ4ck1CMk4xSXNYZ1UxNGF6REE2a0RQWkhXNUQ5?=
- =?utf-8?B?SXdDcVVUTDBTakJjMllkMlMxRFo2L0N0T1l1OWF3V0g4T2h2VG9CNkFLUkJR?=
- =?utf-8?B?eTlMbVpOUVVENCswSCt4ZXR6R0NoelFPZ1Jtc0tDcGhrNXh0YjRaT1lmRmJy?=
- =?utf-8?B?Y3llVXFEVGtkRlA5Wi9lbmJaaDNsTkRTMlg5dmlyNzQweUhTUFY2aXY4Ukwz?=
- =?utf-8?B?NUxHTkV3YmYyUVF1MUh2SlQxNWtOcElsNUpxY1lmSjJmMEZvU2RGZklXMTFr?=
- =?utf-8?B?QmdDNUN3ZitSRTVCWTVkK010OEc0VUtDYnNnUmtocGZVWTBKZFRjWXVBZEJX?=
- =?utf-8?B?c1U1YVFxWVhTdUt0SlZzSEV5MmZTODM4elNVb3ZuUnZaU21adVlBMlA0MmhQ?=
- =?utf-8?B?ckhBWGQrWlRPcHVjVzh5aTk5Wm1JcnRUSnlTSXJCUWZ1TDl4QzhmdmRpZlIv?=
- =?utf-8?B?R2VxYk9tL1dXTFdIdG1waW85cDNGWW96N2s0WmUxa1RUV0FHTGhEcnpSOTBo?=
- =?utf-8?B?U0xnU2kwSmNINU5ZcDNQMVQzdEpEOWlTbjFvbVRET2pKZEgwK2xxU0NZc2x0?=
- =?utf-8?B?RVpQNUNLV1BweHo2NDFqdDZxYWJMNzh1QVFjZnkzVDBXR1RhbVdGalRtUkVR?=
- =?utf-8?B?Z2JQMUljTVcwZDlqcFRnT2s4ZDA1dWlmTHFPUGs1VjBOSndqME14WmdvcFBL?=
- =?utf-8?B?U2ppdzdMbzZZWWhWT1p3RGQrVWdqQkJiMVFMQnFnUkRpUUs2c3UreW54bGZJ?=
- =?utf-8?B?d3diczk4OVJLZHJOQTB3TjgxaWRPc1U1c1ZQL25vdjRpTjNpOXY2YjQ3QkN5?=
- =?utf-8?B?VElFVFNVa1ZiQVdNcGZlQlBvdHBmQ05wTEJ1ZGR6djd4V2NBczg0Tmcyd091?=
- =?utf-8?B?RTJqd012cnRGWElFVTI4bmpxU3hMR09qdDE0ekZTalVkMERlWWlkRkljM0s3?=
- =?utf-8?Q?usfiQwPrzMMdZI9rx/tZtHSSN?=
+	=?utf-8?B?SmkxL0xpWFVGZW43YnBkK2FzNzJWRGgrWHpQUVJ4azB0TXRBSkxVSU9Xcnhz?=
+ =?utf-8?B?SHRKTklWNUtYYm1sM1Evd3dEeXhFa0l0cmZMZ2VKYmUwaVZnT1I2T2RCeUFt?=
+ =?utf-8?B?M0xrNG1lSEkySkVwa2tKK3RNaFFyeVJ3ZW1zSnk1L2xnY3d3a1YzSDV4Ylp3?=
+ =?utf-8?B?c3FPSHNKRWR5S3VLTHNxNUlGVFVlNW9qSk16amlua3pwY2VNZlo2LzlSSFlr?=
+ =?utf-8?B?bkwzd1NNMVN4dXgyc2RxZHBYTXVqckxLaWVyY09KZGIycUx5MmpqQWJtR2xQ?=
+ =?utf-8?B?dnh0SmNTazRmWGJjazA5Ym5VWml1N3NUaUU5VlYxckFVK3p4RzloNktUN3Ev?=
+ =?utf-8?B?cmFpSWgzT0hnbXlCQ1o3NW0rRU1IVXI4ZllwTDlGSW41dGY3TERRYkN0b2p1?=
+ =?utf-8?B?M0VLeUNNTWdSNkRPTmw0b0ZqOXJIQmprakFqbXJva1BWekx4MlBkREhXUmRh?=
+ =?utf-8?B?b0hFTVp3OVVkTVhRS0JCTmVvNS9GL0FWZnlpUHhNQmZ0dE1jSzc4TDdnRnFJ?=
+ =?utf-8?B?OWtWcm93bHkwZTZpYlJBUXJLcTJsS2JBMVk1TjhWdzhEOWVVMG5ua1pxZ0Nr?=
+ =?utf-8?B?UkVFSjdCUUtUTUFvQ2ZKcS9ETnlSVUsyK3FhcTFzRHY5OUxuTkhNWitrV0Jt?=
+ =?utf-8?B?YWZDTUtCZ011ODNtZit0MzJvc25vOU1SQkkyN2hwOWJNYmJtRXpaRnlYUWt5?=
+ =?utf-8?B?R1g4TG9tcG1YMUduOEVOMkxiVVdwWTUxRktWYzJILzlSbVdDSGhienYzUHVl?=
+ =?utf-8?B?aElHcHl0ZjlkMmcwNldzRXFVNWcxTHpXRWdFWGx5clNGUWlNTitnS29ZM3E4?=
+ =?utf-8?B?Mitsc1NXcjFEMzAwTzdmaXhCVityb1U3L1BSaDByWERiOXRSdGwrRXlwVkFR?=
+ =?utf-8?B?UkpQZis5RnVCR1dqZm1RUDMvSVFZWGZRL2l5bEdFaFN5OC96aDlIZ0xWV3Vu?=
+ =?utf-8?B?R0JuV1JUYTljUmhIc2N2VnY2MjdrU2JsWW1NQVZIN0ZDR0xJWWgyZ2tOc0R4?=
+ =?utf-8?B?Zk4wVTFHVEVyTURoemVraXpET0dpTzJRdllucnEvVytLVmk2V2N2VzBFMml2?=
+ =?utf-8?B?T1JNU3ZEb3VMZHh1Wm1IeitZeHMxM2YvS1VKYThJZXBzT3U4RG9rNksrVTlm?=
+ =?utf-8?B?SjUxUzB6UUJubzgxdFl1K2ZMb0JNZFNrTTduQUZYaXBIT3M1VkFHWGdzOUZr?=
+ =?utf-8?B?WTk5TnBDeEM5QlAwUC9tS1lldnRjQW92WWVIQXdKYnc3RzdNcEcrYlR6M2RD?=
+ =?utf-8?B?NzRielhOY2grOUxMb1NYZGVyYzl0Zk9HVkppdmtGMldzK0RiZEJocXZSazNF?=
+ =?utf-8?B?VHowVlFrM1VNVS96K3lEbFRQS3l3RXRVaTk0SkJSUnFrbFNnUlpwKzdJQ3VI?=
+ =?utf-8?B?Z1Fvb2N4bjNtNktzRUtXVzJsdkJmdzlIYjhUQ2FKOGloUmxPOGF4NnRuMDlS?=
+ =?utf-8?B?a05vYXhHdGxkNmljNkI5dzVEUXdtVUdOMmFmTTBOdVl4UWVUSmpQL2YrbkZ3?=
+ =?utf-8?B?eEx4MmZrMXFnajgybFNONGRPNm4wSWdMK2FPT05vMjlyQnEvOHZ6WGNCVW16?=
+ =?utf-8?B?TmJVVDYzVFhOaW5nQkU4SWVvVHAraWdnVkJsd3c1WTJjZ0tCU2w2ZlZ5SzhQ?=
+ =?utf-8?B?MUhOclJyeFhQTnluNjhZS0tVbVpnYlpNcUtBemRxdzRSNzBtVHBmZGVkVnFp?=
+ =?utf-8?B?djFHbkM5a2k3bGROLzhhSXBvTDY2TGNDZ1BUbjZsKy9JWWVKRVByNHRzVEhV?=
+ =?utf-8?B?M24zdHNtL1BjRVRJNUZLT3c5UzJLa1U0SGRpdlN2SFM3L1cxQkw3MDNwTUVN?=
+ =?utf-8?B?Z3hxTUpCRGU0VTVFZDQyaTMxRy9iTTQ2NGs2OTc3Q2VZc3pHQ1psREVaS0xJ?=
+ =?utf-8?B?WmEvSHpXOXFVSU1TS0Z1UktJdkI5d25DTTdSdmwydk05dTBIaFpLa1dqV1kz?=
+ =?utf-8?B?K2FiOXFnQUViVXFaQ0JKTWZLQ3RMYnZtamxZL1BzUzc0ckJtVER3bE50b2JK?=
+ =?utf-8?B?Szk3TUs2OUZKYmFYQlZrZzdjZHR3aXV2RDNNZDRNWVk4clVnc0FnMWI5akRP?=
+ =?utf-8?B?bW9nUmgvVExNdWFNNkhYb25xYjQrUTJPZzEyME5CVTdidFhMMWMvdzdpbEJ5?=
+ =?utf-8?Q?11veLzKf2mLrkt6/Fd82Hyf08?=
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c019b4c5-5059-4d61-d5a8-08dc83bcfb09
+X-MS-Exchange-CrossTenant-Network-Message-Id: aa20eaed-6d94-43ad-ed09-08dc83bd4b02
 X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8109.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jun 2024 11:04:47.1079
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jun 2024 11:07:01.2577
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 3Rrz9cYuT3VU4pn3ZW8BqLK0O7Mai6RP/bEsEZvxPKGkA2Yd29BgNvs/8k9pNx9S
+X-MS-Exchange-CrossTenant-UserPrincipalName: HMcWreHWAhTTcthEkDKuHeyHrMQF263HdDGymIEL1sGBIwqgBZiVWsyvodxZWZhy
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB8231
 
 
 
-On 4/25/24 11:59, Ronak Jain wrote:
-> Move FIRMWARE_VERSION_MASK macro to xlnx-zynqmp.h so that other
-> drivers can use it for verifying the supported firmware version.
+On 5/15/24 13:23, Jay Buddhabhatti wrote:
+> Currently return status is not getting checked for get_api_version
+> and because of that for x86 arch we are getting below smatch error.
 > 
-> Signed-off-by: Ronak Jain <ronak.jain@amd.com>
-> Signed-off-by: Anand Ashok Dumbre <anand.ashok.dumbre@amd.com>
-> Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+>      CC      drivers/soc/xilinx/zynqmp_power.o
+> drivers/soc/xilinx/zynqmp_power.c: In function 'zynqmp_pm_probe':
+> drivers/soc/xilinx/zynqmp_power.c:295:12: warning: 'pm_api_version' is
+> used uninitialized [-Wuninitialized]
+>      295 |         if (pm_api_version < ZYNQMP_PM_VERSION)
+>          |            ^
+>      CHECK   drivers/soc/xilinx/zynqmp_power.c
+> drivers/soc/xilinx/zynqmp_power.c:295 zynqmp_pm_probe() error:
+> uninitialized symbol 'pm_api_version'.
+> 
+> So, check return status of pm_get_api_version and return error in case
+> of failure to avoid checking uninitialized pm_api_version variable.
+> 
+> Fixes: b9b3a8be28b3 ("firmware: xilinx: Remove eemi ops for get_api_version")
+> Signed-off-by: Jay Buddhabhatti <jay.buddhabhatti@amd.com>
+> Cc: stable@vger.kernel.org
 > ---
->   drivers/firmware/xilinx/zynqmp.c        | 3 ---
->   drivers/soc/xilinx/xlnx_event_manager.c | 1 -
->   include/linux/firmware/xlnx-zynqmp.h    | 3 +++
->   3 files changed, 3 insertions(+), 4 deletions(-)
+> V1: https://lore.kernel.org/lkml/20240424063118.23200-1-jay.buddhabhatti@amd.com/
+> V2: https://lore.kernel.org/lkml/20240509045616.22338-1-jay.buddhabhatti@amd.com/
+> V2->V3: Added stable tree email in cc
+> V1->V2: Removed AMD copyright
+> ---
+>   drivers/soc/xilinx/zynqmp_power.c | 4 +++-
+>   1 file changed, 3 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
-> index 9bc45357e1a8..add8acf66a9c 100644
-> --- a/drivers/firmware/xilinx/zynqmp.c
-> +++ b/drivers/firmware/xilinx/zynqmp.c
-> @@ -41,9 +41,6 @@
->   /* IOCTL/QUERY feature payload size */
->   #define FEATURE_PAYLOAD_SIZE		2
+> diff --git a/drivers/soc/xilinx/zynqmp_power.c b/drivers/soc/xilinx/zynqmp_power.c
+> index 965b1143936a..b82c01373f53 100644
+> --- a/drivers/soc/xilinx/zynqmp_power.c
+> +++ b/drivers/soc/xilinx/zynqmp_power.c
+> @@ -190,7 +190,9 @@ static int zynqmp_pm_probe(struct platform_device *pdev)
+>   	u32 pm_api_version;
+>   	struct mbox_client *client;
 >   
-> -/* Firmware feature check version mask */
-> -#define FIRMWARE_VERSION_MASK		GENMASK(15, 0)
-> -
->   static bool feature_check_enabled;
->   static DEFINE_HASHTABLE(pm_api_features_map, PM_API_FEATURE_CHECK_MAX_ORDER);
->   static u32 ioctl_features[FEATURE_PAYLOAD_SIZE];
-> diff --git a/drivers/soc/xilinx/xlnx_event_manager.c b/drivers/soc/xilinx/xlnx_event_manager.c
-> index 253299e4214d..9d89b5a40f97 100644
-> --- a/drivers/soc/xilinx/xlnx_event_manager.c
-> +++ b/drivers/soc/xilinx/xlnx_event_manager.c
-> @@ -35,7 +35,6 @@ static int event_manager_availability = -EACCES;
+> -	zynqmp_pm_get_api_version(&pm_api_version);
+> +	ret = zynqmp_pm_get_api_version(&pm_api_version);
+> +	if (ret)
+> +		return ret;
 >   
->   #define MAX_BITS	(32U) /* Number of bits available for error mask */
->   
-> -#define FIRMWARE_VERSION_MASK			(0xFFFFU)
->   #define REGISTER_NOTIFIER_FIRMWARE_VERSION	(2U)
->   
->   static DEFINE_HASHTABLE(reg_driver_map, REGISTERED_DRIVER_MAX_ORDER);
-> diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
-> index 1a069a56c961..d7d07afc0532 100644
-> --- a/include/linux/firmware/xlnx-zynqmp.h
-> +++ b/include/linux/firmware/xlnx-zynqmp.h
-> @@ -52,6 +52,9 @@
->   #define API_ID_MASK		GENMASK(7, 0)
->   #define MODULE_ID_MASK		GENMASK(11, 8)
->   
-> +/* Firmware feature check version mask */
-> +#define FIRMWARE_VERSION_MASK		0xFFFFU
-> +
->   /* ATF only commands */
->   #define TF_A_PM_REGISTER_SGI		0xa04
->   #define PM_GET_TRUSTZONE_VERSION	0xa03
+>   	/* Check PM API version number */
+>   	if (pm_api_version < ZYNQMP_PM_VERSION)
 
 Applied.
 M
