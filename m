@@ -1,125 +1,154 @@
-Return-Path: <linux-kernel+bounces-198755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 925E78D7D03
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 10:06:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5753E8D7D13
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 10:14:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C311E1C20F54
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 08:06:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C2951F212BD
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 08:14:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F17053E31;
-	Mon,  3 Jun 2024 08:06:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D1B557333;
+	Mon,  3 Jun 2024 08:13:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="FX5i62F8"
-Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="k8EuRzzC"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6505E487BF
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 08:06:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2DF7487BF;
+	Mon,  3 Jun 2024 08:13:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717401977; cv=none; b=Tr9c8yz0Dsg4Xodac2z+dvMYGb/Cifr3AbhRVtAkMR+Rrk85BWD3VK30qzPEIuHvSebprzpO8OPwyref+ydR/Z6H1q3076lQS/A7vpIAOk6leatauhRrepB14nCNUTw+KgM60DVkVkw67yWyPe5jun1ZV6UKkN/qigskYw5eqno=
+	t=1717402431; cv=none; b=Es2dZBjQLmkabrEnIPRuuaZYKoDaykULPLgNqHN4LcfPFRMRsUHF+NXGJmqWT5UCgaqn0BZW5lqwyGFKWp6D5SmOgQ7wm9Eu4OSgPYhSudf8SNzwOS9OUqaW8VKnM4gvJBLodQq9MLtJ2GDhKwRoK5nOtrTlhhsI6+SbIB1XmCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717401977; c=relaxed/simple;
-	bh=MIF84jAmIzDg4Wz6TnMTbmZnsvgXm/Bb1xUd8UhNtFo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jty/hQEF9YAPYRz6uqbcsLGediqVLs80UDaeZ/8njRYmPY8KUIt87bmF3fL0oXvGlICAy+3dHKgMsnECp0J8LwRy4ts6fzjIAai/1lIlaLMzNH0hnjxKQ7aN8M/Ih9hon/vmwaHwOKTJARyb2WEfipFeFBn5fzKw5VPeE+MbSWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=FX5i62F8; arc=none smtp.client-ip=95.215.58.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: vbabka@suse.cz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1717401972;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RzieQJ4BnZ2O+k2Yxxz/okFmp27lskeHqZjRJMv514E=;
-	b=FX5i62F8fKahV2di7nQq0WGf6YGLs0O3dOslRmI/ZZJUdPAXnv0U2qwRCaNzwIoGNu+ZAd
-	UeXA0Zrs/2oNq8IYXl5OEO6CwiyTPMfzKHZNYM8Np5dg8QLl0TzjUhlVkW+aUfNkG682Kv
-	eACi2gCe6KmweGHY9JCpbno0ZJzscWI=
-X-Envelope-To: cl@gentwo.org
-X-Envelope-To: penberg@kernel.org
-X-Envelope-To: rientjes@google.com
-X-Envelope-To: iamjoonsoo.kim@lge.com
-X-Envelope-To: akpm@linux-foundation.org
-X-Envelope-To: roman.gushchin@linux.dev
-X-Envelope-To: 42.hyeyoo@gmail.com
-X-Envelope-To: feng.tang@intel.com
-X-Envelope-To: linux-mm@kvack.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: zhouchengming@bytedance.com
-Message-ID: <0df9277d-6f10-4af6-abd7-50a275489a72@linux.dev>
-Date: Mon, 3 Jun 2024 16:05:41 +0800
+	s=arc-20240116; t=1717402431; c=relaxed/simple;
+	bh=dw35w2HlX6uEnLlGNP7oEeKFfwVxxiVEbHS8HsSh6Pc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RLmtzltzhsC9yqBv6wiGonsf4liBWvELcdn/v2eh9IKa7GR3RdKSoWDSrtMIy8E0kSjDxNKZTgrKfw6v4v052i6Oz0SW9Wci/he1KRN0c1tqAiOdqh6Rba768TqQOMQl3FJBOsu38mZLOyqqYnLHTuRre6WKa/TBxJas6Qon1Ig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=k8EuRzzC; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=59CM1T4kNHLXN8iP2xZIPMYXtUjSOpZ37vbcWdKyQJY=; b=k8EuRzzCfKfASeTkUM2IU1ILOO
+	wJkGORLCBY5HaUOijcxWfp3qDWtOYt2ghO1T3T8m6SHBTf4uYr5NlTmkwQG1F/QCnZH4l8aiw4jPP
+	9Av/CfwaGZWtgawb95ZQt/1ExzH8/nCNWS4Z9AGRzpMQe4gvf7z/i6hqgp/PfZbtGcXStlSnU9EIE
+	VfikzYJdeyrQzEuuVz6X0HL/rfP1aFGjcyvpHOow3m/Xdk+MqpeL03AAUYWNKiIsUPexZ6RY5deUb
+	ybosb0beHgkpRMEIIGgU4EsSIt/Cmxp5Qk1tiImUk5AUp0ZnwzhaYKWAy96LRL/bVAkX8hTH0aqyT
+	ye9H7dLA==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:50452)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sE2hz-0002PF-31;
+	Mon, 03 Jun 2024 09:06:24 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sE2hy-0000Fn-FF; Mon, 03 Jun 2024 09:06:22 +0100
+Date: Mon, 3 Jun 2024 09:06:22 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: SkyLake Huang =?utf-8?B?KOm7g+WVn+a+pCk=?= <SkyLake.Huang@mediatek.com>
+Cc: "andrew@lunn.ch" <andrew@lunn.ch>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+	"kuba@kernel.org" <kuba@kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>,
+	"edumazet@google.com" <edumazet@google.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"dqfext@gmail.com" <dqfext@gmail.com>,
+	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+	Steven Liu =?utf-8?B?KOWKieS6uuixqik=?= <steven.liu@mediatek.com>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+	"angelogioacchino.delregno@collabora.com" <angelogioacchino.delregno@collabora.com>,
+	"daniel@makrotopia.org" <daniel@makrotopia.org>
+Subject: Re: [PATCH net-next v5 4/5] net: phy: mediatek: Extend 1G TX/RX link
+ pulse time
+Message-ID: <Zl15fh7y2oZmFfd7@shell.armlinux.org.uk>
+References: <20240530034844.11176-1-SkyLake.Huang@mediatek.com>
+ <20240530034844.11176-5-SkyLake.Huang@mediatek.com>
+ <ZlhTtSHRVrjWO0KD@shell.armlinux.org.uk>
+ <a6280b885cf1cffa845310e7e565e1dd7421dc66.camel@mediatek.com>
+ <Zlik7TfUsOanlBMV@shell.armlinux.org.uk>
+ <e25de8898d594d14ade148004fdddb1f2c5b47f7.camel@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 1/3] slab: check the return value of
- check_bytes_and_report()
-Content-Language: en-US
-To: Vlastimil Babka <vbabka@suse.cz>,
- "Christoph Lameter (Ampere)" <cl@gentwo.org>
-Cc: Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>,
- Joonsoo Kim <iamjoonsoo.kim@lge.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Hyeonggon Yoo <42.hyeyoo@gmail.com>, Feng Tang <feng.tang@intel.com>,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, zhouchengming@bytedance.com
-References: <20240528-b4-slab-debug-v1-0-8694ef4802df@linux.dev>
- <20240528-b4-slab-debug-v1-1-8694ef4802df@linux.dev>
- <4e4d45b5-c684-2d93-49d2-b179a088c2d5@gentwo.org>
- <dc7181fc-5b16-46f1-a267-0eb5781f692a@linux.dev>
- <2ff52c5e-4b6b-4b3d-9047-f00967315d3e@suse.cz>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Chengming Zhou <chengming.zhou@linux.dev>
-In-Reply-To: <2ff52c5e-4b6b-4b3d-9047-f00967315d3e@suse.cz>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <e25de8898d594d14ade148004fdddb1f2c5b47f7.camel@mediatek.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On 2024/6/3 15:46, Vlastimil Babka wrote:
-> On 5/31/24 10:31 AM, Chengming Zhou wrote:
->> On 2024/5/30 23:20, Christoph Lameter (Ampere) wrote:
->>> On Tue, 28 May 2024, Chengming Zhou wrote:
->>>
->>>> diff --git a/mm/slub.c b/mm/slub.c
->>>> index 0809760cf789..de57512734ac 100644
->>>> --- a/mm/slub.c
->>>> +++ b/mm/slub.c
->>>> @@ -1324,9 +1324,10 @@ static int check_object(struct kmem_cache *s, struct slab *slab,
->>>>         }
->>>>     } else {
->>>>         if ((s->flags & SLAB_POISON) && s->object_size < s->inuse) {
->>>> -            check_bytes_and_report(s, slab, p, "Alignment padding",
->>>> +            if (!check_bytes_and_report(s, slab, p, "Alignment padding",
->>>>                 endobject, POISON_INUSE,
->>>> -                s->inuse - s->object_size);
->>>> +                s->inuse - s->object_size))
->>>> +                return 0;
->>>>         }
->>>>     }
->>>
->>> This change means we will then skip the rest of the checks in check_object() such as the poison check.
->>
->> Yeah, only when this padding checking failed.
->>
->> Now, we always abort checking and return 0 when the first checking error happens,
->> such as redzones checking above.
+On Mon, Jun 03, 2024 at 03:15:36AM +0000, SkyLake Huang (黃啟澤) wrote:
+> On Thu, 2024-05-30 at 17:10 +0100, Russell King (Oracle) wrote:
+> >  	 
+> > External email : Please do not click links or open attachments until
+> > you have verified the sender or the content.
+> >  On Thu, May 30, 2024 at 04:01:08PM +0000, SkyLake Huang (黃啟澤) wrote:
+> > > I'm not going to handle timeout case here. If we can't detect
+> > > MTK_PHY_FINAL_SPEED_1000 in 1 second, let it go and we'll detect it
+> > > next round.
+> > 
+> > With this waiting up to one second for MTK_PHY_FINAL_SPEED_1000 to be
+> > set...
+> > 
+> > > > > +int mtk_gphy_cl22_read_status(struct phy_device *phydev)
+> > > > > +{
+> > > > > +int ret;
+> > > > > +
+> > > > > +ret = genphy_read_status(phydev);
+> > > > > +if (ret)
+> > > > > +return ret;
+> > > > > +
+> > > > > +if (phydev->autoneg == AUTONEG_ENABLE && !phydev-
+> > > > >autoneg_complete) {
+> > 
+> > Are you sure you want this condition like this? When the link is
+> > down,
+> > and 1G speeds are being advertised, it means that you'll call
+> > extend_an_new_lp_cnt_limit(). If MTK_PHY_FINAL_SPEED_1000 doesn't get
+> > set, that'll take one second each and every time we poll the PHY for
+> > its status - which will be done while holding phydev->lock.
+> > 
+> > This doesn't sound very good.
+> > 
+> > -- 
+> > RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+> > FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 > 
-> Yes your patch will make it consistent. But IMHO it would be better to do
-> all the checks without skipping, report their specific error findings in
-> check_bytes_and_report() but not print_trailer(). Once all checks were done,
-> if any found an error, print the trailer once from check_object(). Thoughts?
+> I add another condition to make sure we enter
+> extend_an_new_lp_cnt_limit() only in first few seconds when we plug in
+> cable.
+> 
+> It will look like this:
+> ===============================================================
+> #define MTK_PHY_AUX_CTRL_AND_STATUS		0x14
+> #define   MTK_PHY_LP_DETECTED_MASK		GENMASK(7, 6)
+> 
+> if (phydev->autoneg == AUTONEG_ENABLE && !phydev->autoneg_complete) {
+> 	phy_select_page(phydev, MTK_PHY_PAGE_EXTENDED_1);
+> 	ret = __phy_read(phydev, MTK_PHY_AUX_CTRL_AND_STATUS);
+> 	phy_restore_page(phydev, MTK_PHY_PAGE_STANDARD, 0);
 
-Ok, it's feasible, will change to this.
+We provide a helper for this:
 
-> 
->> Thanks.
-> 
+	ret = phy_read_paged(phydev, MTK_PHY_PAGE_EXTENDED_1,
+			     MTK_PHY_AUX_CTRL_AND_STATUS);
+
+but please check "ret" for errors.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
