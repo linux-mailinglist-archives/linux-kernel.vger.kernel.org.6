@@ -1,87 +1,144 @@
-Return-Path: <linux-kernel+bounces-198664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27D7B8D7BCD
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 08:42:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 133048D7BCE
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 08:43:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 595211C21679
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 06:42:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1D00282717
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 06:43:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAA0A47A57;
-	Mon,  3 Jun 2024 06:40:05 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 087303FB1C
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 06:40:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2597481A7;
+	Mon,  3 Jun 2024 06:40:23 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E914C39850;
+	Mon,  3 Jun 2024 06:40:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717396805; cv=none; b=siKe8jjpGH7uTQfZiulg1Ebr9B4hVz/PvdTx2ZRHTd/rGcS3Vy4+50fllFh8Nfxz2J2tPSdnf0FJQ75aXqxyG58usVq7RfajwKh7ByWq6DfJ6xLjw+xydN20GYrEODren0gm9KkO6qu9yEf7FrZUPWqzAarm3H9yoncGyK9DmV0=
+	t=1717396823; cv=none; b=TRL8e7JtjbOM43LuzQUTvZQXZB+6fOU/3rcwsJKEIcVNPcMxN7X5KPqDqfGxrIgo+QTwY9/zM5ZCic1wZICZSn+UL/bZhr8gJenAjqSOz4qmCthp8A5T1Vqj3CotcLabY/h64g9/diZ+mX7F84CePJKaNlZv/qPcVmVdTNEJxUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717396805; c=relaxed/simple;
-	bh=tCEFDNCtU4kyih6I5/tTRMmRIK4lL5BSpzOjWhYQVqY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Ui3Osld573FLvNux9kc5aNEvYJ2Kacs0i6WTWMqSoIBOwhDE1T0vzkHNsnXsOSwvugQ7kirAFvrF2KdH5zUfZn2YngsC9OxAv1Qia9DGeBu3TufMtG1uQ2dB1WT0lbsYV6qTIFGA1glDD+i2RHuE7GiKhds7gBjt/G3yjW1miyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7eb10ca258eso188979939f.1
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2024 23:40:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717396803; x=1718001603;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=P0t8wwmBsbHGb0/ZeZAIbcOtAtOvGwdxIUvrebAW9I4=;
-        b=Vzx3oQWkvzcppng7OzmW6uAmIXluird1qI5IP+NKRDPQWTznLzMk6iWi+HdOgc+CP3
-         x6MFF1HziVEiaQdxA5ZKQZf3KzyTQ7WyXelUnULDJp7Qn2JxD7nOaNBDeVicheJ8R73N
-         3y6v5svQJT5kEFp/mRKku+sZ+py8fu6mNs7tLne+wunQsJfkCLz+75jbRLKRp8nwv0le
-         SdKoHYfXvDXV10kkGBAglH/y/YPvfuscddDttN3UhC6FDDQdDAYwo8cWmgPGe374dOmw
-         u+ZywBGDozSC8oFbT9Vs+KrAnf2G9VJu+xvWT1Lm17IoqwSudD55WgauKoOrkowvekNu
-         g3Qg==
-X-Gm-Message-State: AOJu0YwsYS3P+lyZq338MSyJqKtTTIUR1vCzHHS3K4Phwr1fxr0c+xl3
-	3QWisrP4K17HeHqrhknsXYgSvAxDQgQMdN5zXe1/ZjYIWcMVU3sESIY80DqbfDLUoW50Y2lOmqh
-	wuC2KEpffBMrCtU9B/A1NXqpRn3BF7kR2Yk18Ape639uQoSpMn4FDInM=
-X-Google-Smtp-Source: AGHT+IHZ5bWxWmd3oHPrq0zW/nUxrCGYc/96WjbGLpuW/bQgh2XevJyqWgV0Y/sCQ4d7S6b9Tro2Z4xh6mloExHnWsXAlZq0a9MX
+	s=arc-20240116; t=1717396823; c=relaxed/simple;
+	bh=4qCOD28+gDDPVxKSgnmdGBRMHQNm8b5CkFtYsnujVjo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cMYB07yG43SDv4mYfFEFt2uT4CGutI2IWoPirCZ/W0vHjOsrbAn4PpVNLuHf2id+zAiYcdLHkX2KrJ7/iQiUsccOxIeiqCjUkYp1cU7PCIrxJ95gtcqqb2WGINdecS9Gtd0MjHc5MvL8M426TQmy/8PODA9mvPVlWPJutFlgQRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 484E11042;
+	Sun,  2 Jun 2024 23:40:44 -0700 (PDT)
+Received: from [10.162.40.16] (a077893.blr.arm.com [10.162.40.16])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 59D243F792;
+	Sun,  2 Jun 2024 23:40:15 -0700 (PDT)
+Message-ID: <8ec0f93a-a1f9-4b04-875c-dd4a9172e339@arm.com>
+Date: Mon, 3 Jun 2024 12:10:12 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:3406:b0:7ea:fcf7:7b2e with SMTP id
- ca18e2360f4ac-7eaffe970ebmr51329339f.1.1717396803318; Sun, 02 Jun 2024
- 23:40:03 -0700 (PDT)
-Date: Sun, 02 Jun 2024 23:40:03 -0700
-In-Reply-To: <CAN-2BNRG3qMSVgBm=6jD3tv=nDAzByebEJF8k2UWUdo=vAEeSw@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000006682760619f69aa8@google.com>
-Subject: Re: [syzbot] [squashfs?] VFS: Close: file count is zero (use-after-free)
-From: syzbot <syzbot+b2cfdac9ae5278d4b621@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, nightu.pwn@gmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot tried to test the proposed patch but the build/boot failed:
-
-failed to apply patch:
-checking file drivers/dma-buf/udmabuf.c
-patch: **** unexpected end of file in patch
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V17 3/9] drivers: perf: arm_pmu: Add infrastructure for
+ branch stack sampling
+Content-Language: en-US
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ will@kernel.org, catalin.marinas@arm.com, Mark Brown <broonie@kernel.org>,
+ James Clark <james.clark@arm.com>, Rob Herring <robh@kernel.org>,
+ Marc Zyngier <maz@kernel.org>, Suzuki Poulose <suzuki.poulose@arm.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>, linux-perf-users@vger.kernel.org
+References: <20240405024639.1179064-1-anshuman.khandual@arm.com>
+ <20240405024639.1179064-4-anshuman.khandual@arm.com>
+ <ZkylUT0R9lwseF4a@J2N7QTR9R3>
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <ZkylUT0R9lwseF4a@J2N7QTR9R3>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
 
-Tested on:
+On 5/21/24 19:14, Mark Rutland wrote:
+> On Fri, Apr 05, 2024 at 08:16:33AM +0530, Anshuman Khandual wrote:
+>> In order to support the Branch Record Buffer Extension (BRBE), we need to
+>> extend the arm_pmu framework with some basic infrastructure for the branch
+>> stack sampling which arm_pmu drivers can opt-in using a new feature flag
+>> called 'has_branch_stack'. Subsequent patches will use this to add support
+>> for BRBE in the PMUv3 driver.
+> 
+> Please, just use ther *exact* wording I asked for last time:
+> 
+> | In order to support the Branch Record Buffer Extension (BRBE), we need to
+> | extend the arm_pmu framework with some basic infrastructure for branch stack
+> | sampling which arm_pmu drivers can opt-in to using. Subsequent patches will
+> | use this to add support for BRBE in the PMUv3 driver.
+> 
+> At this point in the commit message, the 'has_branch_stack' flag doesn't
+> matter, and dropping the 'to' after 'opt-in' makes this painful to read.
 
-commit:         861a3cb5 Add linux-next specific files for 20240603
-git tree:       linux-next
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d9c3ca4e54577b88
-dashboard link: https://syzkaller.appspot.com/bug?extid=b2cfdac9ae5278d4b621
-compiler:       
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=171aa5f2980000
+Okay, will replace with the original paragraph.
 
+> 
+>> Branch stack sampling support i.e capturing branch records during execution
+>> in core perf, rides along with normal HW events being scheduled on the PMU.
+>> This prepares ARMV8 PMU framework for branch stack support on relevant PMUs
+>> with required HW implementation.
+> 
+> Please delete this paragraph.
+
+Done.
+
+> 
+>> With BRBE, the hardware records branches into a hardware FIFO, which will
+>> be sampled by software when perf events overflow. A task may be context-
+>> switched an arbitrary number of times between overflows, and to avoid
+>> losing samples we need to save the current records when a task is context-
+>> switched out. To do these we'll need to use the pmu::sched_task() callback,
+>> and we'll also need to allocate some per-task storage space via event flag
+>> PERF_ATTACH_TASK_DATA.
+> 
+> [...]
+> 
+>>  /* The events for a given PMU register set. */
+>>  struct pmu_hw_events {
+>>  	/*
+>> @@ -66,6 +78,17 @@ struct pmu_hw_events {
+>>  	struct arm_pmu		*percpu_pmu;
+>>  
+>>  	int irq;
+>> +
+>> +	struct branch_records	*branches;
+>> +
+>> +	/* Active context for task events */
+>> +	void			*branch_context;
+>> +
+>> +	/* Active events requesting branch records */
+>> +	unsigned int		branch_users;
+>> +
+>> +	/* Active branch sample type filters */
+>> +	unsigned long		branch_sample_type;
+>>  };
+> 
+> At this point in the series I understand why we have the 'branches' and
+> 'branch_users' fields, but the 'branch_context' and 'branch_sample_type'
+> fields haven't been introduced and are not obvious.
+> 
+> What exactly is branch_context, and why is that a 'void *' ?
+
+branch_context tracks event->ctx which is 'struct perf_event_context *'. The
+'void *' seemed more generic in case this tracking structure changes later.
+But this could be changed as 'struct perf_event_context *' if required.
+
+> 
+> I can understand if that's a PMU-specific structure to track the active
+> branch records, but if so I don't understand why 'branch_sample_type'
+> isn't folded into that.
+
+branch_sample_type is applicable both for cpu and task bound events, where as
+branch_context is applicable only for task bound events tracking their active
+branch records that need to be dropped (or saved), in case a cpu bound event
+comes in.
 
