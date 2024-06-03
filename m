@@ -1,166 +1,96 @@
-Return-Path: <linux-kernel+bounces-198624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4186C8D7B57
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 08:08:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F2008D7B5A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 08:08:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F22B52815AC
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 06:08:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E0BB2814E8
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 06:08:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8546722F03;
-	Mon,  3 Jun 2024 06:07:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="poEldqWu"
-Received: from out-175.mta1.migadu.com (out-175.mta1.migadu.com [95.215.58.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B395A23765;
+	Mon,  3 Jun 2024 06:08:43 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 262DD182DA
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 06:07:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00D8B20DF7
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 06:08:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717394875; cv=none; b=X1BanqONgbl1HO1SYpLAVPLW/8RcbARJ0ZHWh+WxTdd1ntEC4Xir7F4Ir6x5ndlqH9RKS5Uipx3xxFtC5L+7aSMpchjdGdj8jLdlWpxxvIuRR4X8FOzKt1kx4/m7EZd0K8VclGb6+LkGyxI9CisvIYPUM8GJU7FCYkPngWn9nP8=
+	t=1717394923; cv=none; b=aB64t/aCy7QHLfzp/lMs6J3uyNvSmuggPJpP0wiyTZqwC3ys4kyB4BBfeRujtJrJClmKpgLqOjLHPrCIb6+2WKtlRsw3uIMxqQlp6p9iD6w+CgiVF+YjvGJ8loUKdd27diuR2V5XAgR2Qj9Nd1ghPb5rj7mKLN0gcY2Ggs9d2LY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717394875; c=relaxed/simple;
-	bh=pJSZvYQmDGfAvDbPW/s/YHRBMTbJ2fkHfb8pb0gHMGU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jNw+NuQoAlz8zeANZITm0auLhj79HoNzIvo/y2vvPCWx3UG0iGbZU39/hguQXZ6a5knwqS8zjSAM1ZJBoM16QPNSizVHNiv/LTuzFgXkM4DUtYlVZbunlqE42TWThtGeb79jI9Swz2tTS0Ae14g50bcRjFAsWXzX835kSQkIfSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=poEldqWu; arc=none smtp.client-ip=95.215.58.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: yosryahmed@google.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1717394872;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lGrrOJrJBkBQe6EQRvR+Wm4pVmmlK5pjswzRASjAaAk=;
-	b=poEldqWuC5AdILdualjDCyO0jcsQPwB2dNl4E+G+e95RhHOJsHOwh8KbCW1tVMXbpVfTVO
-	XyXWqYAL3HqnVKEY5EeIjkPVSCbEQV9ihMf3yQsCEjxGv6m4hmdqCGmZ90/owkuqmiLCAh
-	cb002kdDSZefBmj0wDmvSfA8odQllqo=
-X-Envelope-To: akpm@linux-foundation.org
-X-Envelope-To: hannes@cmpxchg.org
-X-Envelope-To: nphamcs@gmail.com
-X-Envelope-To: willy@infradead.org
-X-Envelope-To: linux-mm@kvack.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-Message-ID: <85994845-1aad-4142-adb3-91aa231b5a7d@linux.dev>
-Date: Mon, 3 Jun 2024 14:07:40 +0800
+	s=arc-20240116; t=1717394923; c=relaxed/simple;
+	bh=zHlh4bKRq2LBijEFUhBwYnGRQpZxs3DyZQZn9+zx2l4=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
+	 Content-Type; b=suBTC5qfkyTxa4+MKTjxKmj2qohqfOi9tOhJzlDdGXgCl2ZqYbIXqSR129kvSAq/2P2kN3sGNG+Wvxepcr6YRZT6M/Aodb4PPAH+rKVMZaC9b2koB3wCKskHzVnBqAVwHvThbu5wSxKX1/zXGALZiPPCK0ehKvlgAjLEqSAOr54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7e92491e750so372665839f.1
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2024 23:08:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717394921; x=1717999721;
+        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SLRG3RNn6axHhDL6EHJam2Pw75GmrrXwNjgsAijTp38=;
+        b=R1rbgJhOAR2QNmujQm/jD/qSz4Vuy4+YnGdRVvBFiCHh1JxWwMTg75SnLq/fDjrR7G
+         elqF7Vp6stBr+Z+dc8xA9jtSZXBQLtfForq2qCin8DuYAxcFj+3YCxYPgo+h7Jd4H4sJ
+         sw8he68EVx9dhpQV17rqXDWaioDFbowhYyLLafXI8t/P5eUFMCt2naazMSnPdOlk1l0W
+         B+/y2ozd90xfG0+QClP8VqUPawsXJ4G/XF/zQ0E11Na72hWSk0rxMw6XiwxdftUr2XBP
+         Pw8d1yNZC0X1lACCyJfAKgj1vLfcBSWWKqnKcW9LNYcVK8HpskauvH5Kks9pI2JlgkTl
+         upsw==
+X-Forwarded-Encrypted: i=1; AJvYcCXXrrKq4MoMewyNRiEJA8QmOh9T88/UTAoF5FsRHUlRHubOYnhGKGQyjZOALI0XFvLlA/JdvhgRdxUuZcG6iPVW7rHh7W0XcZjAK6E7
+X-Gm-Message-State: AOJu0Yxy9WQVB4BN5A5awixX9+//vaodTEeKRLIMMLUGbdcAPaAgRufi
+	lM0Ao4/QuLVmtyxXgs42Infe0yb5FanEAQ9l8hQ0B5StD30ySeiMyCOZQuCL9UTPwnz84ea1z+u
+	/YlS40v8FdCb60qLeAkG+p7JHg7O921/Bv1TOS9LRYczc0suahAf9OKU=
+X-Google-Smtp-Source: AGHT+IFHALo8Me+kTCpckziJS/W5vC6AoxIejC5IrkjypEFFDIk2HP7+HJ42iYb6CaviwUost2XQPS2KqBlHtbXtHlqBdbFfs20B
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 3/3] mm: zswap: make same_filled functions folio-friendly
-Content-Language: en-US
-To: Yosry Ahmed <yosryahmed@google.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Nhat Pham <nphamcs@gmail.com>,
- Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <20240524033819.1953587-1-yosryahmed@google.com>
- <20240524033819.1953587-4-yosryahmed@google.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Chengming Zhou <chengming.zhou@linux.dev>
-In-Reply-To: <20240524033819.1953587-4-yosryahmed@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+X-Received: by 2002:a05:6638:9804:b0:4b5:a983:16bc with SMTP id
+ 8926c6da1cb9f-4b5a983182cmr327938173.1.1717394921145; Sun, 02 Jun 2024
+ 23:08:41 -0700 (PDT)
+Date: Sun, 02 Jun 2024 23:08:41 -0700
+In-Reply-To: <CAN-2BNQVPdaPb-LryqBLti2EEEm5Svgi559wGeuHN0MO6rr3fg@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000036d5100619f62aba@google.com>
+Subject: Re: [syzbot] [squashfs?] VFS: Close: file count is zero (use-after-free)
+From: syzbot <syzbot+b2cfdac9ae5278d4b621@syzkaller.appspotmail.com>
+To: nightu.pwn@gmail.com
+Cc: nightu.pwn@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 2024/5/24 11:38, Yosry Ahmed wrote:
-> A variable name 'page' is used in zswap_is_folio_same_filled() and
-> zswap_fill_page() to point at the kmapped data in a folio. Use 'data'
-> instead to avoid confusion and stop it from showing up when searching
-> for 'page' references in mm/zswap.c.
-> 
-> While we are at it, move the kmap/kunmap calls into zswap_fill_page(),
-> make it take in a folio, and rename it to zswap_fill_folio().
-> 
-> Signed-off-by: Yosry Ahmed <yosryahmed@google.com>
+> please test file uaf in udmabuf_create
+>
+> #syz test https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
 
-LGTM, thanks!
+want either no args or 2 args (repo, branch), got 1
 
-Reviewed-by: Chengming Zhou <chengming.zhou@linux.dev>
-
+> 0e1980c40b6e
+>
+>
 > ---
->  mm/zswap.c | 30 +++++++++++++-----------------
->  1 file changed, 13 insertions(+), 17 deletions(-)
-> 
-> diff --git a/mm/zswap.c b/mm/zswap.c
-> index bac66991fb14e..b9b35ef86d9be 100644
-> --- a/mm/zswap.c
-> +++ b/mm/zswap.c
-> @@ -1375,35 +1375,35 @@ static void shrink_worker(struct work_struct *w)
->  **********************************/
->  static bool zswap_is_folio_same_filled(struct folio *folio, unsigned long *value)
->  {
-> -	unsigned long *page;
-> +	unsigned long *data;
->  	unsigned long val;
-> -	unsigned int pos, last_pos = PAGE_SIZE / sizeof(*page) - 1;
-> +	unsigned int pos, last_pos = PAGE_SIZE / sizeof(*data) - 1;
->  	bool ret = false;
->  
-> -	page = kmap_local_folio(folio, 0);
-> -	val = page[0];
-> +	data = kmap_local_folio(folio, 0);
-> +	val = data[0];
->  
-> -	if (val != page[last_pos])
-> +	if (val != data[last_pos])
->  		goto out;
->  
->  	for (pos = 1; pos < last_pos; pos++) {
-> -		if (val != page[pos])
-> +		if (val != data[pos])
->  			goto out;
->  	}
->  
->  	*value = val;
->  	ret = true;
->  out:
-> -	kunmap_local(page);
-> +	kunmap_local(data);
->  	return ret;
->  }
->  
-> -static void zswap_fill_page(void *ptr, unsigned long value)
-> +static void zswap_fill_folio(struct folio *folio, unsigned long value)
->  {
-> -	unsigned long *page;
-> +	unsigned long *data = kmap_local_folio(folio, 0);
->  
-> -	page = (unsigned long *)ptr;
-> -	memset_l(page, value, PAGE_SIZE / sizeof(unsigned long));
-> +	memset_l(data, value, PAGE_SIZE / sizeof(unsigned long));
-> +	kunmap_local(data);
->  }
->  
->  /*********************************
-> @@ -1554,7 +1554,6 @@ bool zswap_load(struct folio *folio)
->  	bool swapcache = folio_test_swapcache(folio);
->  	struct xarray *tree = swap_zswap_tree(swp);
->  	struct zswap_entry *entry;
-> -	u8 *dst;
->  
->  	VM_WARN_ON_ONCE(!folio_test_locked(folio));
->  
-> @@ -1580,11 +1579,8 @@ bool zswap_load(struct folio *folio)
->  
->  	if (entry->length)
->  		zswap_decompress(entry, folio);
-> -	else {
-> -		dst = kmap_local_folio(folio, 0);
-> -		zswap_fill_page(dst, entry->value);
-> -		kunmap_local(dst);
-> -	}
-> +	else
-> +		zswap_fill_folio(folio, entry->value);
->  
->  	count_vm_event(ZSWPIN);
->  	if (entry->objcg)
+>  drivers/dma-buf/udmabuf.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/dma-buf/udmabuf.c b/drivers/dma-buf/udmabuf.c
+> index afa8bfd2a2a9..53035c601e92 100644
+> --- a/drivers/dma-buf/udmabuf.c
+> +++ b/drivers/dma-buf/udmabuf.c
+> @@ -382,6 +382,7 @@ static long udmabuf_create(struct miscdevice *device,
+>
+>                 kfree(folios);
+>                 fput(memfd);
+> +               memfd = NULL;
+>         }
+>
+>         flags = head->flags & UDMABUF_FLAGS_CLOEXEC ? O_CLOEXEC : 0;
+> --
 
