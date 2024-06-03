@@ -1,109 +1,130 @@
-Return-Path: <linux-kernel+bounces-198923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF6E48D7F23
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:45:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 178A18D7F39
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:47:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0B1B1C20296
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:45:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C806C2858A2
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:47:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09C90128812;
-	Mon,  3 Jun 2024 09:39:37 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 135BC82487;
-	Mon,  3 Jun 2024 09:39:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85FC58565F;
+	Mon,  3 Jun 2024 09:40:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="k1bopM9b"
+Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 241BD85656
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 09:40:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717407576; cv=none; b=CVCvYaT3h9DIcKGDLaxxDxAz6zXYVaBZhE1uOazcpI/ep0KzQLwIGlYWRHCNI3PU6nNdZt6i9FACzdf6vvuAPk1/mHPaQeDNw3Bkegv9TDK4Wxi0/bktLin90Xkf0PYwwhbLWvcB4RNgW0PJXGR5iQtoT13xR1scqsAWIXaoTDc=
+	t=1717407658; cv=none; b=dyXvC2mzpbhkv0iID3AJeMxPN8cKsteVf1TyP7xF5Yv+GPzJ5fEj1/UXGaVwvJMeIGk3sih4xURU10EvO9oIWKAwfbfQPleEEQnq/FCDAe3i6l9NNrRirx2pDIkYDdrzJ/IgKTDnZtNFGtU3MHNexMLO37CcRn4E9Vpn2OpecgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717407576; c=relaxed/simple;
-	bh=qMkXAFv9lGGixL1rgvPjKdZzgR+KXcK9HaCAo6EOfrs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HXlHCK9QAi74ctmQBKO+MYI4BudjIfZ8cO0axZMnhukxJ1wW0ahUjZ2n1N2KL6AoPH1pPfdi9uV69uS+ddi4iGx1pFbRuDcoVeKJV0fnox5nfs16zeMBIiJHHp7KwoQoBW742c1KxGI2UddDVtI6QVtfqBHqz3mY3HkVwajn9bM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D7C0D1042;
-	Mon,  3 Jun 2024 02:39:58 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6CD153F762;
-	Mon,  3 Jun 2024 02:39:32 -0700 (PDT)
-Date: Mon, 3 Jun 2024 10:39:30 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: James Clark <james.clark@arm.com>, Mark Brown <broonie@kernel.org>,
-	Rob Herring <robh@kernel.org>, Marc Zyngier <maz@kernel.org>,
-	Suzuki Poulose <suzuki.poulose@arm.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	will@kernel.org, catalin.marinas@arm.com
-Subject: Re: [PATCH V17 0/9] arm64/perf: Enable branch stack sampling
-Message-ID: <Zl2PUoGb3lFBRSqo@J2N7QTR9R3>
-References: <20240405024639.1179064-1-anshuman.khandual@arm.com>
- <5f8fdfd2-a4f9-4fde-ad24-3b76231e61c8@arm.com>
- <eab504ab-1563-4235-aef0-62525b2813eb@arm.com>
+	s=arc-20240116; t=1717407658; c=relaxed/simple;
+	bh=7/PBozWCZM+mgFS0nmYdbE6Ut8V9eeR4o/kX9YbofnY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kMUSATPMgKjc4YhVTf4SvRNnUIFkIkE17hGvUtZmJ1+ulw93FtUXd+u5weXEbn/qFvtf0H8VPaeXrZUZwNJUaG10Q3oclrxrdBTNbWW6GxpTs3ptRRpdWEfG8miptv41pae6AWo7qOsHY1n1bMV1Feda10YLCa/VrRp48wnDwJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=k1bopM9b; arc=none smtp.client-ip=95.215.58.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: vbabka@suse.cz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1717407654;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cepglRJZ1mK8dA8kcnRQrvV4Tmkczc4BSDaYLYlAPNA=;
+	b=k1bopM9b1+hOyhZunW8ZQd2QhXGgzm8Jf48bOWur2dYlvOBN/r2gFwzuesMSdeYB8+i/bv
+	mAFoSSRBwj+H47F5ZpUpydINRt/BSs5y19NIjKOHO+oJPVqnjlp2ClcInGXcbI1Z/QBRzB
+	tVM+iWLaFV6nPnCet+3Qi6z76mO5xfM=
+X-Envelope-To: cl@linux.com
+X-Envelope-To: penberg@kernel.org
+X-Envelope-To: rientjes@google.com
+X-Envelope-To: iamjoonsoo.kim@lge.com
+X-Envelope-To: akpm@linux-foundation.org
+X-Envelope-To: roman.gushchin@linux.dev
+X-Envelope-To: 42.hyeyoo@gmail.com
+X-Envelope-To: feng.tang@intel.com
+X-Envelope-To: linux-mm@kvack.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: zhouchengming@bytedance.com
+Message-ID: <4c8406b7-f5eb-4907-8ee1-f997bdeb157c@linux.dev>
+Date: Mon, 3 Jun 2024 17:40:24 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <eab504ab-1563-4235-aef0-62525b2813eb@arm.com>
+Subject: Re: [PATCH 2/3] slab: don't put freepointer outside of object if only
+ orig_size
+Content-Language: en-US
+To: Vlastimil Babka <vbabka@suse.cz>, Christoph Lameter <cl@linux.com>,
+ Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>,
+ Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Hyeonggon Yoo <42.hyeyoo@gmail.com>, Feng Tang <feng.tang@intel.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ zhouchengming@bytedance.com
+References: <20240528-b4-slab-debug-v1-0-8694ef4802df@linux.dev>
+ <20240528-b4-slab-debug-v1-2-8694ef4802df@linux.dev>
+ <5a09e348-9eeb-4502-9aa9-ef5da2f94218@suse.cz>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Chengming Zhou <chengming.zhou@linux.dev>
+In-Reply-To: <5a09e348-9eeb-4502-9aa9-ef5da2f94218@suse.cz>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Jun 03, 2024 at 02:48:58PM +0530, Anshuman Khandual wrote:
+On 2024/6/3 17:25, Vlastimil Babka wrote:
+> On 5/28/24 9:16 AM, Chengming Zhou wrote:
+>> The commit 946fa0dbf2d8 ("mm/slub: extend redzone check to extra
+>> allocated kmalloc space than requested") will extend right redzone
+>> when allocating for orig_size < object_size. So we can't overlay the
+>> freepointer in the object space in this case.
+>>
+>> But the code looks like it forgot to check SLAB_RED_ZONE, since there
+>> won't be extended right redzone if only orig_size enabled.
+>>
+>> Signed-off-by: Chengming Zhou <chengming.zhou@linux.dev>
 > 
+> Seems OK.
 > 
-> On 5/30/24 15:33, James Clark wrote:
-> > 
-> > 
-> > On 05/04/2024 03:46, Anshuman Khandual wrote:
-> >> This series enables perf branch stack sampling support on arm64 platform
-> >> via a new arch feature called Branch Record Buffer Extension (BRBE). All
-> >> the relevant register definitions could be accessed here.
-> >>
-> >> https://developer.arm.com/documentation/ddi0601/2021-12/AArch64-Registers
-> >>
-> >> This series applies on 6.9-rc2.
-> >>
-> >> Also this series is being hosted below for quick access, review and test.
-> >>
-> >> https://git.gitlab.arm.com/linux-arm/linux-anshuman.git (brbe_v17)
-> >>
-> >> There are still some open questions regarding handling multiple perf events
-> >> with different privilege branch filters getting on the same PMU, supporting
-> >> guest branch stack tracing from the host etc. Finally also looking for some
-> >> suggestions regarding supporting BRBE inside the guest. The series has been
-> >> re-organized completely as suggested earlier.
-> > 
-> > For guest support I'm still of this opinion:
-> > 
-> >   * No support for the host looking into guests (the addresses don't
-> >     make sense anyway without also running Perf record in the guest)
-> >   * Save and restore the host buffer and registers on guest switch (if
-> >     it was ever used by either host or guest)
-> >   * Let the guest do whatever it wants with BRBE without any
-> >     virtualisation
-> > 
-> > Merging this with the current PMU virtualistion stuff seems like a lot
-> > of work for no use case (host looking into guests). Having said that, it
-> > might not even be worth discussing on this patchset apart from "no guest
-> > support", and we can do it later to avoid confusion that it's being
-> > proposed for this version.
+>> ---
+>>  mm/slub.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/mm/slub.c b/mm/slub.c
+>> index de57512734ac..b92d9a557852 100644
+>> --- a/mm/slub.c
+>> +++ b/mm/slub.c
+>> @@ -5150,7 +5150,7 @@ static int calculate_sizes(struct kmem_cache *s)
+>>  	 */
+>>  	s->inuse = size;
+>>  
+>> -	if (slub_debug_orig_size(s) ||
+>> +	if (((flags & SLAB_RED_ZONE) && slub_debug_orig_size(s)) ||
+>>  	    (flags & (SLAB_TYPESAFE_BY_RCU | SLAB_POISON)) ||
+>>  	    ((flags & SLAB_RED_ZONE) && s->object_size < sizeof(void *)) ||
 > 
-> Agreed, let's just have "no guest support" for now in this proposed series
-> without any more additional changes to keep things simpler and separated.
-> I will also update the cover letter next time around making this clear.
+> Should we consolidate the two cases with flags & SLAB_RED_ZONE?
 
-FWIW, that sounds good to me.
+Yes, we can.
 
-Mark.
+> 
+> Also below this is a comment that could also mention the slub_debug_orig_size().
+
+Ok, will add.
+
+Thanks.
+
+> 
+>>  	    s->ctor) {
+>>
+> 
 
