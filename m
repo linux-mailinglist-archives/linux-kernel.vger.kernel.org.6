@@ -1,78 +1,89 @@
-Return-Path: <linux-kernel+bounces-199656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00E838D8A6E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 21:47:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6EAF8D8A70
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 21:48:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7EDA3B2313A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:47:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A00AE2866F3
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:48:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7FBF13A41C;
-	Mon,  3 Jun 2024 19:47:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QPmyw51K"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9D5413A879;
+	Mon,  3 Jun 2024 19:48:02 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37C1620ED;
-	Mon,  3 Jun 2024 19:47:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2EAA20ED;
+	Mon,  3 Jun 2024 19:48:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717444040; cv=none; b=AkL8mfQGad28RddTdqpCal5kHA7hkfz0IoZZbr2DK4LKa1ZtdNSWQoBUExJxSh95ea/Y3O1f/bLNxKBJRW5TrRS/SOTzjZOOUDmXa9uFtTsttJp57cFM8aJ/S+n1Vwj5wetRpYzC/qpnBjIXuAIXscHDAaSWWXqm+sywWUGALig=
+	t=1717444082; cv=none; b=NpjLioKzaAavyOfgAY3Ung93Si2yEFpL1rPYQQLzhG5aXRBDZTYDT9AQg2SFDX6wa8lSSEUla3nkpSkLPV9iOQ2BE7aSWeRRZBL6misvaDvzOxZvDWEJG9cW+wfcU4M3/q/WLlvAgr3/ZrZSsVUkGDlVYkPS5tpRFJe/PvZutOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717444040; c=relaxed/simple;
-	bh=v+0RbsfKdGgk/6XvGRknMDTc2wiUcVUl6dcouRw8NJ0=;
+	s=arc-20240116; t=1717444082; c=relaxed/simple;
+	bh=VvvqiFcoU7bNUHX+pwuQRPUA4s1y2fJan5cr8vu4BwI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PsZz++ekOgyEsZFwTkJi7ONr/YQ0PYJEeUSb70SPUgiZoTo4s5Vs3o7ZjLqW/iCCJGrZ5RY5VUkr3Vf/ekSq4VuWE1o6gpO2wUHaX20/JjlRhs1PJEu4qrfonZ0CVpFKHvzheTfEvXjsrm0GvCSVm8b/XVSl859VBjJFxumVMWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QPmyw51K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F955C2BD10;
-	Mon,  3 Jun 2024 19:47:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717444039;
-	bh=v+0RbsfKdGgk/6XvGRknMDTc2wiUcVUl6dcouRw8NJ0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QPmyw51KfG4g3+7Ei/p0tAOrX7io955hQRR8FthZq/gWvI/n9Z4SxaNt68zwa9g2O
-	 6POAii0RDLzdMk6TOEGtP6JwF5VGbu8HblqBBvmbEsCBnq5G9jnhtcvfR9FbQt5J9y
-	 ZzilGkhi05j99m90Sc7r6s825ay12VRbAlQT0PBMtVssCYPiCXhQcNhfeAJ1Z0h73D
-	 Jj1MTDr0pITf2p+a8k0YPApfPUETkikOq2zpjH++zD/cm2JJxJiRZaQa2+Uuv2tzks
-	 wmQnrmI67Ev7VkJhZmKyW1y6pLrq45fYlTzCEDAdFHPdvpqzkjt+Vi3tvASCycWAPE
-	 GrirwzVbQAuKQ==
-Date: Mon, 3 Jun 2024 13:47:17 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: Andreas Hindborg <nmi@metaspace.dk>
-Cc: Jens Axboe <axboe@kernel.dk>, Andreas Hindborg <a.hindborg@samsung.com>,
-	Bart Van Assche <bvanassche@acm.org>,
-	John Garry <john.g.garry@oracle.com>,
-	Damien Le Moal <dlemoal@kernel.org>, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] null_blk: fix validation of block size
-Message-ID: <Zl4dxaQgPbw19Irk@kbusch-mbp.dhcp.thefacebook.com>
-References: <20240603192645.977968-1-nmi@metaspace.dk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=G7YsZxU8GDLOty42jm1Uh7l8Vp7HmypiWUOlOtr9q/2ZCGoXW9kBsmmuFpK6t+C4DUpk4o4F/+GYR7RHGwu/HybrIsGH7eqPMOUhc4xHjJzHHBBXn57mZn5ya30Y2T1nkkXYEQVvC4YeGUh8qxxsUuK17Zu8hZgIzWpUFGrTS3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
+X-CSE-ConnectionGUID: uZncMz9sQ8+yjaQYAlriew==
+X-CSE-MsgGUID: 6eR8Yox8Rqqv3QOxahXjnA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11092"; a="17744822"
+X-IronPort-AV: E=Sophos;i="6.08,212,1712646000"; 
+   d="scan'208";a="17744822"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2024 12:48:01 -0700
+X-CSE-ConnectionGUID: OBAO9a07Ttqim9QBTsOMTA==
+X-CSE-MsgGUID: 29kyABT5TpCUrLH2fUrtgQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,212,1712646000"; 
+   d="scan'208";a="74466476"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2024 12:47:59 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andy@kernel.org>)
+	id 1sEDev-0000000DNG5-02ap;
+	Mon, 03 Jun 2024 22:47:57 +0300
+Date: Mon, 3 Jun 2024 22:47:56 +0300
+From: Andy Shevchenko <andy@kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Jeff Johnson <quic_jjohnson@quicinc.com>, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] auxdisplay: linedisp: add missing MODULE_DESCRIPTION()
+ macro
+Message-ID: <Zl4d7A_uE-PFrlCo@smile.fi.intel.com>
+References: <20240602-md-drivers-auxdisplay-linedisp-v1-1-9895acebf916@quicinc.com>
+ <CAMuHMdV+xKD22ntAeTXUN89agxrjXiu-Nk3uHDvUJDczVpaLgA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240603192645.977968-1-nmi@metaspace.dk>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMuHMdV+xKD22ntAeTXUN89agxrjXiu-Nk3uHDvUJDczVpaLgA@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Mon, Jun 03, 2024 at 09:26:45PM +0200, Andreas Hindborg wrote:
-> -	dev->blocksize = round_down(dev->blocksize, 512);
-> -	dev->blocksize = clamp_t(unsigned int, dev->blocksize, 512, 4096);
-> +	if (blk_validate_block_size(dev->blocksize) != 0) {
-> +		return -EINVAL;
-> +	}
+On Mon, Jun 03, 2024 at 09:53:40AM +0200, Geert Uytterhoeven wrote:
+> On Mon, Jun 3, 2024 at 5:02 AM Jeff Johnson <quic_jjohnson@quicinc.com> wrote:
+> > make allmodconfig && make W=1 C=1 reports:
+> > WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/auxdisplay/line-display.o
+> >
+> > Add the missing invocation of the MODULE_DESCRIPTION() macro.
+> >
+> > Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-No need for the { } brackets for a one-line if.
+Pueshed to my review and testing queue, thanks!
 
-It also looks like a good idea if this check was just done in
-blk_validate_limits() so that each driver doesn't have to do their own
-checks. That block function is kind of recent though. Your patch here
-looks fine if you want stable back-ports, but I haven't heard any
-complaints till recently :)
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
