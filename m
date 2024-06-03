@@ -1,102 +1,198 @@
-Return-Path: <linux-kernel+bounces-198511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E5878D7973
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 02:54:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 530288D7976
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 03:01:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 463E22810EA
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 00:54:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C5432811DA
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 01:01:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62D6320ED;
-	Mon,  3 Jun 2024 00:54:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E40A51C14;
+	Mon,  3 Jun 2024 01:01:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KIWwG/+x"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="tWYufJXx"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A79810E6
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 00:54:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 928B010E6;
+	Mon,  3 Jun 2024 01:01:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717376056; cv=none; b=prRgMCwiSkFr8pwhEZwzsGdmAoSVZOzj4b+afPxOfl7mn8eLE4ARMSmaA1sbsZPbXzIGGaU2UZ36Zu50xgcoZem+imasbi0A9lW6C1sR6gsWFjZL6HKAztmWMlBt4MOn6zx3CR0pYqUddW9qPY63Vkm8qcL9RhjpqcgR+4klvV4=
+	t=1717376482; cv=none; b=jQY9JzdrCOp/qY2El5NInTBgSKnZSEyTBZc1nyZfvprpRQEbA3rMSwZ+YsAx3bwrEyLew0Y7RofZH1+Pa9kCgrrkHMl+l0x2AcWnzEna5YROY5j4aK8qUBo8/nImySTZCtNuVRU1shpHPbTWpp7rUfcEnnwvuPx1SWzJntZk4P8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717376056; c=relaxed/simple;
-	bh=FCG0IEbOfT/bHhxbTtejsIy3REUx0zfjYOoOQ1qBhKQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mcExhYVSmidfyn/mTXrb2OHHEL59kLAhHMMKHIaWmg+DySlR+owB6Ng09YViHszS9391wAjquIE1n2H8dAhCjQ1VpDmo5KWDezY5FrrMedc+1+Ysagup7YROjdAqyW5YnasOixaEV0eyUe2qQ4y7RH2Mik1v1GboBjGq/HEXvM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KIWwG/+x; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717376052;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JwTjl/fChud/3QoHHQ7fbqf2HYYxzvAlq+JNY96sgcY=;
-	b=KIWwG/+xoFx0GKjbWQXxD8x/CkoLHy6IR2WYIF7kc8qy9LColBwzR6vr1IMjn4Mlp0Q1Xn
-	nihLcpV4pj/DWswaiNiXG2NvzCrjfqYZGrASdZeBdad5evL7v3ouugrU9F9BDvPG30TKIo
-	FvUexE/lfI6COOTvMuk3J7sK6aaKKiQ=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-277-EwEXPhcON8iH50r5nD5WZg-1; Sun,
- 02 Jun 2024 20:54:05 -0400
-X-MC-Unique: EwEXPhcON8iH50r5nD5WZg-1
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
+	s=arc-20240116; t=1717376482; c=relaxed/simple;
+	bh=WsxmSnVOfFkU7amu/IfJK6x2Dv1B0lj8Xc7qDr+yCgY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Rw3/YaV/kzSpSvMszqNsAyoK8HekcIcuaHR1y1lAnc1zT5xcZ4SXQEKPAHIE0SgI0SP2Z1++kc6aOWsh8wZT3iraKmxN4SI9BT1iy8Q5mBy3I5moIQKzg+ck13TCCq5YiUh07DFlbfrLjgb5zfYRC4VbDUbL3QBg5iFbXrd0F2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=tWYufJXx; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1717376476;
+	bh=mw8hyXSE9bFJ4MtVqvHaxGbgI57D2tjW39scQTVUe4I=;
+	h=Date:From:To:Cc:Subject:From;
+	b=tWYufJXxbRDZVSOCxft3qnO2eCpy2mpoyD0JSR/Wr8cbM+o9FWJV1M8rsJFnlY8h2
+	 VGZdfi32jpPQUteH1MDesU+o8iMAt48vHB0jzKErNtYfrRithA3O3emQfNoaES7MQo
+	 LFsJIQdKsLaLZ+slMtqSmUngk8jKJNxe36pvU9/77qRXYq29/2GZlDcEgvUu2yOHW3
+	 4rY/YTjqw7R4xHd1jbilHZ1BQ3pIcSlwZyJCxwuewNKV/J5B9lEJwAMgluwMO7m+wO
+	 uz8IKI4F+mdlXUf+UbFLkUvSZFESvANBCwtkJ8MKKiyEzUThqnilr7olzDCuoBBl/B
+	 MVGujOHVX3R5Q==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id C115D1C05129;
-	Mon,  3 Jun 2024 00:54:04 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.18])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id CAF7440D182;
-	Mon,  3 Jun 2024 00:54:01 +0000 (UTC)
-Date: Mon, 3 Jun 2024 08:53:57 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] ublk_drv: add missing MODULE_DESCRIPTION() macro
-Message-ID: <Zl0UJZWx9fyZLzrm@fedora>
-References: <20240602-md-block-ublk_drv-v1-1-995474cafff0@quicinc.com>
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VswQd00Gmz4wc8;
+	Mon,  3 Jun 2024 11:01:12 +1000 (AEST)
+Date: Mon, 3 Jun 2024 11:01:12 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Kalle Valo <kvalo@kernel.org>, Johannes Berg
+ <johannes@sipsolutions.net>, Wireless <linux-wireless@vger.kernel.org>
+Cc: Alexis =?UTF-8?B?TG90aG9yw6k=?= <alexis.lothore@bootlin.com>, Linux
+ Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the wireless-next tree with the
+ wireless tree
+Message-ID: <20240603110023.23572803@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240602-md-block-ublk_drv-v1-1-995474cafff0@quicinc.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.10
+Content-Type: multipart/signed; boundary="Sig_/05OeU/QARN9V22btBlEw4aP";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Sun, Jun 02, 2024 at 05:23:26PM -0700, Jeff Johnson wrote:
-> make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/block/ublk_drv.o
-> 
-> Add the missing invocation of the MODULE_DESCRIPTION() macro.
-> 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> ---
->  drivers/block/ublk_drv.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
-> index 4e159948c912..59916895ee2e 100644
-> --- a/drivers/block/ublk_drv.c
-> +++ b/drivers/block/ublk_drv.c
-> @@ -3017,4 +3017,5 @@ module_param_cb(ublks_max, &ublk_max_ublks_ops, &ublks_max, 0644);
->  MODULE_PARM_DESC(ublks_max, "max number of ublk devices allowed to add(default: 64)");
->  
->  MODULE_AUTHOR("Ming Lei <ming.lei@redhat.com>");
-> +MODULE_DESCRIPTION("Userspace block device");
->  MODULE_LICENSE("GPL");
+--Sig_/05OeU/QARN9V22btBlEw4aP
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Ming Lei <ming.lei@redhat.com>
+Hi all,
 
-Thanks,
-Ming
+Today's linux-next merge of the wireless-next tree got a conflict in:
 
+  drivers/net/wireless/microchip/wilc1000/netdev.c
+
+between commit:
+
+  ebfb5e8fc8b4 ("Revert "wifi: wilc1000: convert list management to RCU"")
+
+from the wireless tree and commit:
+
+  6fe46d5c0a84 ("wifi: wilc1000: set net device registration as last step d=
+uring interface creation")
+
+from the wireless-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/net/wireless/microchip/wilc1000/netdev.c
+index 710e29bea560,4e2698528a49..000000000000
+--- a/drivers/net/wireless/microchip/wilc1000/netdev.c
++++ b/drivers/net/wireless/microchip/wilc1000/netdev.c
+@@@ -679,9 -669,9 +672,9 @@@ static int wilc_set_mac_addr(struct net
+  			return 0;
+  		}
+  	}
+ -	rcu_read_unlock();
+ +	srcu_read_unlock(&wilc->srcu, srcu_idx);
+ =20
+- 	result =3D wilc_set_mac_address(vif, (u8 *)addr->sa_data);
++ 	result =3D wilc_set_mac_address(vif, addr->sa_data);
+  	if (result)
+  		return result;
+ =20
+@@@ -972,6 -959,28 +966,28 @@@ struct wilc_vif *wilc_netdev_ifc_init(s
+  	vif->priv.wdev.iftype =3D type;
+  	vif->priv.dev =3D ndev;
+ =20
++ 	ndev->needs_free_netdev =3D true;
++ 	vif->iftype =3D vif_type;
++ 	vif->idx =3D wilc_get_available_idx(wl);
++ 	vif->mac_opened =3D 0;
++=20
++ 	memcpy(mac_address, wl->nv_mac_address, ETH_ALEN);
++ 	/* WILC firmware uses locally administered MAC address for the
++ 	 * second virtual interface (bit 1 of first byte set), but
++ 	 * since it is possibly not loaded/running yet, reproduce this behavior
++ 	 * in the driver during interface creation.
++ 	 */
++ 	if (vif->idx)
++ 		mac_address[0] |=3D 0x2;
++=20
++ 	eth_hw_addr_set(vif->ndev, mac_address);
++=20
++ 	mutex_lock(&wl->vif_mutex);
++ 	list_add_tail_rcu(&vif->list, &wl->vif_list);
++ 	wl->vif_num +=3D 1;
++ 	mutex_unlock(&wl->vif_mutex);
+ -	synchronize_rcu();
+++	synchronize_srcu(&wl->srcu);
++=20
+  	if (rtnl_locked)
+  		ret =3D cfg80211_register_netdevice(ndev);
+  	else
+@@@ -979,26 -988,17 +995,17 @@@
+ =20
+  	if (ret) {
+  		ret =3D -EFAULT;
+- 		goto error;
++ 		goto error_remove_vif;
+  	}
+ =20
+- 	ndev->needs_free_netdev =3D true;
+- 	vif->iftype =3D vif_type;
+- 	vif->idx =3D wilc_get_available_idx(wl);
+- 	vif->mac_opened =3D 0;
+- 	mutex_lock(&wl->vif_mutex);
+- 	list_add_tail_rcu(&vif->list, &wl->vif_list);
+- 	wl->vif_num +=3D 1;
+- 	mutex_unlock(&wl->vif_mutex);
+- 	synchronize_srcu(&wl->srcu);
+-=20
+  	return vif;
+ =20
+- error:
+- 	if (rtnl_locked)
+- 		cfg80211_unregister_netdevice(ndev);
+- 	else
+- 		unregister_netdev(ndev);
++ error_remove_vif:
++ 	mutex_lock(&wl->vif_mutex);
++ 	list_del_rcu(&vif->list);
++ 	wl->vif_num -=3D 1;
++ 	mutex_unlock(&wl->vif_mutex);
+ -	synchronize_rcu();
+++	synchronize_srcu(&wl->srcu);
+  	free_netdev(ndev);
+  	return ERR_PTR(ret);
+  }
+
+--Sig_/05OeU/QARN9V22btBlEw4aP
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZdFdgACgkQAVBC80lX
+0Gwkfwf/drOmN75fgWcpn3xrxdrqng1PyF0wr1Vp4nKqgNlxKXEmK6jSqh5yDeN+
+6A7OggoDlsGfYAakLCEghJ40a8LIVqEM8oLISXbRVRHi2kHQXt89WLCds3qbcuzS
+dBY2gJWhwuMkGAnQWQ6PXr90atAYI7zZ07zunOX+cHYbYBMr2358SUX+ZaMGWRok
+w3ZQ6ZiJQv3UtYVn3vWi6wsm2jmTIFFDwqF8L2ky0hMsj7/Rv8a4zt2/ebbWOvuB
+BynFvvXX/TYpeluaQ5XEg+1QVO0LnYMmkbzkpiNCyM0iUu45sUUEG+lukgeBjW2a
+3an4E0V8z9vgBG02IYFkk4iXlurb/Q==
+=hvcf
+-----END PGP SIGNATURE-----
+
+--Sig_/05OeU/QARN9V22btBlEw4aP--
 
