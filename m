@@ -1,101 +1,126 @@
-Return-Path: <linux-kernel+bounces-198708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 549A58D7C69
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:24:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A97378D7C6B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:25:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 867F21C21B1B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 07:24:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 475CC1F22B5D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 07:25:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 595344437D;
-	Mon,  3 Jun 2024 07:24:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 592D843AA2;
+	Mon,  3 Jun 2024 07:24:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="itJLId7o"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="G2gDK9AD"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B17E3FBB7;
-	Mon,  3 Jun 2024 07:24:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CB4A42047
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 07:24:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717399482; cv=none; b=cABHJVHUsBihwDj3+sguHhECrcN4y/YZZy0vlkPmSfZ8exRkYXR/shhmMPdjhXGl1tQ2OJfUrH+dBPSLPNmjgNl5FI2r0b5Z1NDofltz5C9o0pQ2lgttZItYRRCnI2c5856CnvZIP2pPHgWH/w+TNahnEbIaqGWbPH5kIh5j+eE=
+	t=1717399489; cv=none; b=rF84TQVby8HTTqBTvu05QHlL6u7Q2+aOUCzbevGlUYI9VATbq5EzOZCJh6YrNlXHNsU3JabXpg6ay/2efWl73CtVeoj59RzP90Npj86gjqXZYkbq1C3bHjqhkiCxtWYFeZEFTpD3hj3EYZK0tUda+qWjUIT4yB3NyaOuDgrmU1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717399482; c=relaxed/simple;
-	bh=FOhXogo/ndaJHFsPJGaYQZam1yDI2Ba7KUL/q8kkfOc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O4QElxgWW69AWOzRWkNi4r0CmLMS1/BZeaCGeABJW1yW2B5z/z/GYtsOoRbV4xsY0MyaNufznH7lUs3VGGbWrRe0FbWwKG03gJgZjs4xpZeBSTn3o7Iu6YD6VBsjmkwiV9/B9vCtuANEH5ge+WwnkVWevM6PyttjyELYtr9yyac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=itJLId7o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35987C2BD10;
-	Mon,  3 Jun 2024 07:24:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717399482;
-	bh=FOhXogo/ndaJHFsPJGaYQZam1yDI2Ba7KUL/q8kkfOc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=itJLId7oTsc8I4+W0j/LT+LHNHvYuxLUUaQSBvnt6A0xYWh08CZ25iXwjnz6QWooM
-	 snTYbJ9dljJg0mh5EZP3WtA+3PoojrAqU+Iva/teaIpqs/AXQC/ix13TNbXhzUhqsK
-	 gX/wBgkM1GqIdYuVLNDHuc/pbC2Oz+mGnL+PrZER11cZgMUdhYx3uTOo+iDfPU+Qg3
-	 0ZF6vy/AosWzFQ+VZFq+DACbnyCKKAhTbDrvkqTZQfP19m18zjyehCdzQQwxvaConQ
-	 M2fdeRMBzUpzvhwudD5WAafus8zYbs664XYhG2I/19gQGzloUUFvI+XsnwZrzxZHVv
-	 DwB6xutZCt0NA==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1sE23a-000000004VU-3wdn;
-	Mon, 03 Jun 2024 09:24:39 +0200
-Date: Mon, 3 Jun 2024 09:24:38 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Johan Hovold <johan+linaro@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Nuno Sa <nuno.sa@analog.com>
-Subject: Re: [PATCH] iio: inkern: fix channel read regression
-Message-ID: <Zl1vttlXz3FRVyYS@hovoldconsulting.com>
-References: <20240530074416.13697-1-johan+linaro@kernel.org>
- <20240601142147.3ac40207@jic23-huawei>
+	s=arc-20240116; t=1717399489; c=relaxed/simple;
+	bh=CFw0jXkCJ2C0wlfWJK24i5rMaTVUzDmZPVQIJxPWnQA=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=DRcVtJApZtyH2UMgEYPsRh75IqQKR91lE4Kt5yg4W8FxKgju14+jw6LHvhWm+foEqXWyg41mhj8roZ6nqZSAFptqI7OqDaWQ9gr9mc5Tb0gjCSwedr+4xeOZ/4G5XL1f6gTZlbSNRSKsFveifz4bk3att3JDSSgvRT+SnZxBGlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=G2gDK9AD; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717399488; x=1748935488;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version:content-id;
+  bh=CFw0jXkCJ2C0wlfWJK24i5rMaTVUzDmZPVQIJxPWnQA=;
+  b=G2gDK9AD0dULbtSNRWzbN1bDwIVT3gGumBWwcNDY2OpXPiz+u778KJZ1
+   yAs7UOeCwVf+xwRfezMf2jPEfHwBOtoWskk2J3hE4okwG+Q7RraD0DBZV
+   JRJUMtPNWVC+1wJ/5gfIOxtQbk7ifSfQA1M9sJ57ZqO8BP2S90/Cxf0jJ
+   53wIOvY8Az5d358a+sL0Ya822RCkn8st//h9B+yYAA4wudGaYpKGoXUER
+   ENYVFDKq6gRlWahUxrz27bgS52AZ4owgfuA1H3eoO3sqRKsrFCbBfGakh
+   GK+19g0gTFgrUkkgVi4zJZVQ8ilLEqy2s3+1xLlMhMyleurbGe64ga8Aj
+   Q==;
+X-CSE-ConnectionGUID: jiMuqrmSR5OiHXB1lp6GdA==
+X-CSE-MsgGUID: zN2aiknTRo+zrIOjJ9xPtQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11091"; a="13824948"
+X-IronPort-AV: E=Sophos;i="6.08,210,1712646000"; 
+   d="scan'208";a="13824948"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2024 00:24:47 -0700
+X-CSE-ConnectionGUID: kxqd9paxTmyZfVioFUTnCg==
+X-CSE-MsgGUID: wgn4h+pnQIKznB3X/28G+A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,210,1712646000"; 
+   d="scan'208";a="36875565"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.161])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2024 00:24:44 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 3 Jun 2024 10:24:39 +0300 (EEST)
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+cc: Chia-I Wu <olvaffe@gmail.com>, amd-gfx@lists.freedesktop.org, 
+    dri-devel@lists.freedesktop.org, christian.koenig@amd.com, 
+    alexander.deucher@amd.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+    Alison Schofield <alison.schofield@intel.com>, 
+    Dave Jiang <dave.jiang@intel.com>, Baoquan He <bhe@redhat.com>, 
+    LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] kernel/resource: optimize find_next_iomem_res
+In-Reply-To: <Zlw1_n20oqchAYxH@smile.fi.intel.com>
+Message-ID: <783e9d9a-e408-c6f0-9a4b-050e1979b919@linux.intel.com>
+References: <20240531053704.2009827-1-olvaffe@gmail.com> <ZlmQ3_wcL3cgp4Hb@smile.fi.intel.com> <CAPaKu7SsD+X7KAO=3vEYU_7YGM_f+7k1fdC9nEK=-NaJw8oYaA@mail.gmail.com> <Zlw1_n20oqchAYxH@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240601142147.3ac40207@jic23-huawei>
+Content-Type: multipart/mixed; BOUNDARY="8323328-947370823-1717399436=:1529"
+Content-ID: <ac58b535-760b-99ee-4936-892d3e4f1ed9@linux.intel.com>
 
-Hi Jonathan,
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-On Sat, Jun 01, 2024 at 02:21:47PM +0100, Jonathan Cameron wrote:
-> On Thu, 30 May 2024 09:44:16 +0200
-> Johan Hovold <johan+linaro@kernel.org> wrote:
-> 
-> > A recent "cleanup" broke IIO channel read outs and thereby thermal
-> > mitigation on the Lenovo ThinkPad X13s by returning zero instead of the
-> > expected IIO value type in iio_read_channel_processed_scale():
-> > 
-> > 	thermal thermal_zone12: failed to read out thermal zone (-22)
-> > 
-> > Fixes: 3092bde731ca ("iio: inkern: move to the cleanup.h magic")
-> > Cc: Nuno Sa <nuno.sa@analog.com>
-> > Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+--8323328-947370823-1717399436=:1529
+Content-Type: text/plain; CHARSET=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-ID: <9a23e7b3-9da0-cdcd-f514-8f55036748af@linux.intel.com>
 
-> In meantime, Nuno please take another look at these and see if
-> we have additional problem cases like this.  Given the patch
-> queue I have and a busy few days it will be a while before I
-> get to it but I'll try and take a close look soon as well.
+On Sun, 2 Jun 2024, Andy Shevchenko wrote:
 
-Please consider getting this one into mainline as soon as possible as it
-breaks thermal mitigation, which can cause literal skin burns, on all
-Qualcomm platforms (and probably other platforms too).
+> On Fri, May 31, 2024 at 02:31:45PM -0700, Chia-I Wu wrote:
+> > On Fri, May 31, 2024 at 1:57=E2=80=AFAM Andy Shevchenko <
+> > andriy.shevchenko@linux.intel.com> wrote:
+> > > On Thu, May 30, 2024 at 10:36:57PM -0700, Chia-I Wu wrote:
+>=20
+> ...
+>=20
+> > > P.S> I'm not so sure about this change. It needs a thoroughly testing=
+, esp.
+> > > in PCI case. Cc'ing to Ilpo.
+>=20
+> > What's special about PCI?
+>=20
+> PCI, due to its nature, may rebuild resources either by shrinking or expa=
+nding
+> of the entire subtree after the PCI bridge in question. And this may happ=
+en at
+> run-time due to hotplug support. But I'm not a deep expert in this area, =
+Ilpo
+> knows much more than me.
 
-> Longer term, in my view the readability and chance of bugs
-> is reduced, but churn always introduces the possibility of
-> issues like this in the short term :(
+There is code which clearly tries to do expanding resource but that=20
+usually fails to work as intended because of a parent resource whose size=
+=20
+is fixed because it's already assigned.
 
-I just worry about some of the cleanup.h conversion I've seen where
-inexperienced developers potentially break tested and reviewed code for
-something which is often not very readable and for very little gain.
+Some other code might block shrinking too under certain conditions.
 
-Johan
+This area would need to be reworked in PCI core but it's massive and=20
+scary looking change.
+
+--=20
+ i.
+--8323328-947370823-1717399436=:1529--
 
