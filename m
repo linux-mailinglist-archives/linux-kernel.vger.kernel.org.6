@@ -1,95 +1,118 @@
-Return-Path: <linux-kernel+bounces-199636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 828DF8D8A08
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 21:23:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 757F88D8A12
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 21:25:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05D2EB27734
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:23:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30E7528AE35
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:25:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EA421386B9;
-	Mon,  3 Jun 2024 19:23:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9DA9137C3F;
+	Mon,  3 Jun 2024 19:25:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FXU/fq+t"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="lntAfzGi"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7036923A0;
-	Mon,  3 Jun 2024 19:23:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26B2823A0
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 19:25:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717442597; cv=none; b=hFaks+mWlRNVsFpEV2O+3OSJ9SvrCYy+TBLYg+yG8qymXC7iJpbS0hiGFSoZ2wt62MD2VXwqlQy5dZa8NlAbzmiFRlzi2K9/6/TwAesRbIvsypbiwaiQedb9to/cHX89hzzsMRCb/l55OEXcLc152llSEaWNaKFRWT2aAZLXLMo=
+	t=1717442713; cv=none; b=hWYQrABmSXKZsBSpEm5AIeECiHrIH98OBZP6MY6t6TsywqkgNC82bDeozjD94xYYXLNKKeKftZyMygDT0hxxFit+ivhG8xTC172DHpmIQYq3tQbBuRxttDnZNbZ44+csltjzf1ATiglimNHRN0HBQICIHlCeH6/tQZJFEGCjugg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717442597; c=relaxed/simple;
-	bh=H7l3b6KtMYvqUP8MJmxyxv5SuPQuY0kBYaeXMcuur24=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FksHA9hZSZwTOHhUSl3P8jC1o16PfdDwNGVVF+X3LAv1EaCYQbkhbNilKcQyb0g07o7IctZ78CpHWmVu8g8ielR48ZU1b9guQ0aKV67VAe/c9Jjd8rOxY4KUxjwcBum4B0m8/dalcIUCV2InC5dUfQXxFfe3/ZnJkFZSf6Uq8yw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FXU/fq+t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C17CDC2BD10;
-	Mon,  3 Jun 2024 19:23:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717442596;
-	bh=H7l3b6KtMYvqUP8MJmxyxv5SuPQuY0kBYaeXMcuur24=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=FXU/fq+tw7WbsPhS6oFRNkDgDNX84HNB5ytDLpDu48awP8ZUKScqIiNE2NrbBKpOZ
-	 XlF+l/ilc8B1pvKEd3uPA91dT5Lrb8XHBghmaHtwJj8ftcW/Lh0mF6XDDe95/D2QY4
-	 dLn2X15Tj1DoOLsdiRqOUpfkCWzyPGFeo/KYzebe8oY2igx1Y447Crr/RoNAGXQ9Xr
-	 H/FXGBh6Q/CyBDMxfmYZjNIpkDUHvJMJQRhKOEEtt000A0KvdTJJdNlJiBaWdH7nRI
-	 tMCO4m0JoLqWe+Y+Lz1MEVmcoskbOWw/CqlqyoJ5NKLc5NejyC6toYx7Boq81SmFMK
-	 S0TdIcwfdedRw==
-Date: Mon, 3 Jun 2024 20:23:03 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Vasileios Amoiridis <vassilisamir@gmail.com>
-Cc: lars@metafoo.de, himanshujha199640@gmail.com, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 04/17] iio: chemical: bme680: Fix sensor data read
- operation
-Message-ID: <20240603202303.0b1054a3@jic23-huawei>
-In-Reply-To: <20240602190015.GA387181@vamoiridPC>
-References: <20240527183805.311501-1-vassilisamir@gmail.com>
-	<20240527183805.311501-5-vassilisamir@gmail.com>
-	<20240602134106.2538471a@jic23-huawei>
-	<20240602190015.GA387181@vamoiridPC>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1717442713; c=relaxed/simple;
+	bh=k7Q39RV/k4W3ar2rZQGujNoiEJGMCkHHKvWYpw2qnjE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oxZE8s4S5dQnS9n1d5F6/tRGLyd9Z9ddS00HL4uCejzyVvojnmMjn8xStwF/VS2OEyQOZrihEXUEwZgnhl/jEja4NG+WByjAOrVFPkmkjtc/j5dAhONrKMgGvPGNWkdBKcuNGq8FYzOf+OgcuCuHlCY5XH5aK6NdLYIhagZLBWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=lntAfzGi; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 453JP3NW010511;
+	Mon, 3 Jun 2024 14:25:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1717442703;
+	bh=ZXsfZWPTOwaqjYCuqVsTH76ZrcLd4yIW97JCMWXnw/0=;
+	h=From:To:CC:Subject:Date;
+	b=lntAfzGi4W8Ajm8c2RdUmvWa82hR9cEXEmMeWmzhiGn/UkjZ65eho6WstetSxDfp2
+	 q5WUWLoa3mXraoelDbG+j0AeCsyhAFqNMMxP3DFm9SYZpsCNFOS/2CTDbaJ9gba80z
+	 lvWeDIm4buGOD6u2udR2QITOLO8xFB4HyE6FHtSY=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 453JP35g128881
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 3 Jun 2024 14:25:03 -0500
+Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 3
+ Jun 2024 14:25:03 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 3 Jun 2024 14:25:03 -0500
+Received: from shree-udc0509427.dhcp.ti.com (shree-udc0509427.dhcp.ti.com [128.247.29.227])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 453JP3Qk057883;
+	Mon, 3 Jun 2024 14:25:03 -0500
+From: Shree Ramamoorthy <s-ramamoorthy@ti.com>
+To: <lgirdwood@gmail.com>, <linux-kernel@vger.kernel.org>
+CC: <m-leonard@ti.com>, <u-kumar1@ti.com>, <n-francis@ti.com>,
+        <bhargav.r@ltts.com>, <m.nirmaladevi@ltts.com>, <vigneshr@ti.com>,
+        Shree
+ Ramamoorthy <s-ramamoorthy@ti.com>
+Subject: [RESEND][PATCH] Fix nr_types assignment for TPS6594/3 and TPS65224
+Date: Mon, 3 Jun 2024 14:25:00 -0500
+Message-ID: <20240603192500.645586-1-s-ramamoorthy@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
+Fixes: 00c826525fba ("regulator: tps6594-regulator: Add TI TPS65224 PMIC regulators")
 
-> > > +}
-> > > +
-> > > +static void bme680_wait_for_eoc(struct bme680_data *data)  
-> > Don't call it wait as that implies something is being checked.
-> > 
-> > bme680_conversion_sleep() or something like that.
-> >   
-> 
-> This sesnor has a sleep mode, so I think calling a function like that might
-> make it a bit confusing, since we are not putting the sensor into sleeping
-> mode but rather actually wait for the eoc.
+Marked as resend to include the correct Fixes: tag.
 
-Hmm. Bikesheding time. I don't like wait because it generally implies a
-condition check.
+TPS6594/3 and TPS65224's nr_types assignment were incorrectly swamped in
+probe(), leading to memory underallocation and a NULL pointer error. 
+Error detected in and solution tested on J7200 EVM.
 
-Maybe just go more explicit
-bme680_suspend_execution_until_conversion_done()
-bme680_suspend_execution_whilst_converting()
-or similar might be overkill but something along those lines.
+Error logs:
+[   13.974024] Call trace:
+[   13.974025]  _regulator_put.part.0+0x40/0x48
+[   13.974028]  regulator_register+0x2b0/0xa00
+[   13.974031]  devm_regulator_register+0x58/0xa0
+[   13.974035]  tps6594_regulator_probe+0x4e0/0x5f0 [tps6594_regulator]
+...
+[   13.974178] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000004
+---
+ drivers/regulator/tps6594-regulator.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-The suspend execution terminology lifted from man usleep
+diff --git a/drivers/regulator/tps6594-regulator.c b/drivers/regulator/tps6594-regulator.c
+index 4a859f4c0f83..b66608ab2546 100644
+--- a/drivers/regulator/tps6594-regulator.c
++++ b/drivers/regulator/tps6594-regulator.c
+@@ -660,11 +660,11 @@ static int tps6594_regulator_probe(struct platform_device *pdev)
+ 	} else if (tps->chip_id == TPS65224) {
+ 		nr_buck = ARRAY_SIZE(tps65224_buck_regs);
+ 		nr_ldo = ARRAY_SIZE(tps65224_ldo_regs);
+-		nr_types = REGS_INT_NB;
++		nr_types = TPS65224_REGS_INT_NB;
+ 	} else {
+ 		nr_buck = ARRAY_SIZE(buck_regs);
+ 		nr_ldo = ARRAY_SIZE(tps6594_ldo_regs);
+-		nr_types = TPS65224_REGS_INT_NB;
++		nr_types = REGS_INT_NB;
+ 	}
+ 
+ 	reg_irq_nb = nr_types * (nr_buck + nr_ldo);
+-- 
+Signed-off-by: Shree Ramamoorthy <s-ramamoorthy@ti.com>
 
-> 
-> > > +{
-> > > +	int wait_eoc = bme680_conversion_time_us(data->oversampling_temp +
-> > > +						 data->oversampling_press +
-> > > +						 data->oversampling_press,
-> > > +						 data->heater_dur);  
 
