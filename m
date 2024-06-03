@@ -1,77 +1,92 @@
-Return-Path: <linux-kernel+bounces-199147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10D7F8D8303
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 14:56:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EE808D8308
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 14:58:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EE281F22C70
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 12:56:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8B6C286048
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 12:58:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EFE412C554;
-	Mon,  3 Jun 2024 12:56:46 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C2A212C482
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 12:56:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21B9912CD88;
+	Mon,  3 Jun 2024 12:58:14 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6115D12C482;
+	Mon,  3 Jun 2024 12:58:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717419405; cv=none; b=QvgDluo41NLZ6QCt3Q6xrSD2UbAJbfkXLuZpila/GXnw7l+cAXlhidwHeP4MJ5iv5tjxQDIgGRTZ4K3PoEsuO6RMWjby61ibuA8u9pjaFFFGhGX/1Uq089J5xbMdovYRVhF0kbfI66Gch0VrDZh7jYLI9wLE0IrBiyOSPi9A8rE=
+	t=1717419493; cv=none; b=XyWy94pNzxa/tumz23tJpy1itdkZcBryTi8nIzn8d3E9s4QMG0acpreceJfUcuc1TPrCIZ7IFfcUJubAZl2x/tSOBhUmoYBSJ+3StFllMeSC+6DGlWX4PY7ZnbosxTTQtjvHlpCwiiiuVnRcEytUyK4IjyyHV6teQlKV4nBA1No=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717419405; c=relaxed/simple;
-	bh=l3eSi6NlZlz5bF1blVV/ATRpnxs0oZeHaZkI7au8cPI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZyK/BVHfEiLLsng0iMjsn2qmp4GzR9nQH2QNfB4RP5pjhicX/WYT3L0UBxpZiU43ohEbCR5SNqHWCcRekujAelzxm5XejV+a8tARfg5L7Xvb8D1y9h82RaSJqY8UAgEoy28pPiAtcNV+3VujoNUMXcNRxPmEq9ZUdpEsxR0n1g0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E90391063;
-	Mon,  3 Jun 2024 05:57:07 -0700 (PDT)
-Received: from bogus (e103737-lin.cambridge.arm.com [10.1.197.49])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 993463F64C;
-	Mon,  3 Jun 2024 05:56:42 -0700 (PDT)
-Date: Mon, 3 Jun 2024 13:56:40 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Russell King <linux@armlinux.org.uk>, Liviu Dudau <liviu.dudau@arm.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	"Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] arm: vexpress: Remove obsolete RTSM DCSCB support
-Message-ID: <Zl29iCHMp4Y2PY8z@bogus>
-References: <20240510123238.3904779-1-robh@kernel.org>
- <171576525046.1945769.9546905970570452026.b4-ty@arm.com>
+	s=arc-20240116; t=1717419493; c=relaxed/simple;
+	bh=OU4mVbRF8T7fGhSRohDJTOAtuVkdmbk3kcb/uJg5Lg0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jDa2VKU3lKRe8af7P66MxAiznGB0u35a1bNIZ8WzQM7+jivCSmjeylWrGB4hsn30p4QJbJBH3f4UyQYSXsnOTxWQHGBrxiYV614UEehH/j0XcOC88J6ds8oxLVccmc1Cp37dKlyV6V1Sy8wNzMkGDmukWA6JLPi34HCpn/KaODk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4VtDFN31XCz1S91T;
+	Mon,  3 Jun 2024 20:54:16 +0800 (CST)
+Received: from kwepemm600009.china.huawei.com (unknown [7.193.23.164])
+	by mail.maildlp.com (Postfix) with ESMTPS id 5D7D2180060;
+	Mon,  3 Jun 2024 20:58:10 +0800 (CST)
+Received: from huawei.com (10.175.104.67) by kwepemm600009.china.huawei.com
+ (7.193.23.164) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 3 Jun
+ 2024 20:58:09 +0800
+From: Yu Kuai <yukuai3@huawei.com>
+To: <agk@redhat.com>, <snitzer@kernel.org>, <mpatocka@redhat.com>,
+	<song@kernel.org>, <xni@redhat.com>, <mariusz.tkaczyk@linux.intel.com>,
+	<l@damenly.org>
+CC: <dm-devel@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<linux-raid@vger.kernel.org>, <yukuai3@huawei.com>,
+	<yukuai1@huaweicloud.com>, <yi.zhang@huawei.com>, <yangerkun@huawei.com>
+Subject: [PATCH 00/12] md: refacotor and some fixes related to sync_thread
+Date: Mon, 3 Jun 2024 20:58:03 +0800
+Message-ID: <20240603125815.2199072-1-yukuai3@huawei.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <171576525046.1945769.9546905970570452026.b4-ty@arm.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemm600009.china.huawei.com (7.193.23.164)
 
-On Wed, May 15, 2024 at 10:30:07AM +0100, Sudeep Holla wrote:
-> On Fri, 10 May 2024 07:32:35 -0500, Rob Herring (Arm) wrote:
-> > The Arm Versatile DCSCB support is unused as the compatible
-> > "arm,rtsm,dcscb" is unused in any .dts file. It was only ever
-> > implemented on a s/w model (RTSM).
-> >
->
-> Applied to sudeep.holla/linux (for-next/vexpress/updates), thanks!
->
+Changes from RFC:
+ - fix some typos;
+ - add patch 7 to prevent some mdadm tests failure;
+ - add patch 12 to fix BUG_ON() panic by mdadm test 07revert-grow;
 
-I have now rebased as it couldn't make it to v6.10-rc1 just for simplicity
-(could have merged v6.10-rc1 though)
+Yu Kuai (12):
+  md: rearrange recovery_flags
+  md: add a new enum type sync_action
+  md: add new helpers for sync_action
+  md: factor out helper to start reshape from action_store()
+  md: replace sysfs api sync_action with new helpers
+  md: remove parameter check_seq for stop_sync_thread()
+  md: don't fail action_store() if sync_thread is not registered
+  md: use new helers in md_do_sync()
+  md: replace last_sync_action with new enum type
+  md: factor out helpers for different sync_action in md_do_sync()
+  md: pass in max_sectors for pers->sync_request()
+  md/raid5: avoid BUG_ON() while continue reshape after reassembling
 
-[1/2] arm: vexpress: Remove obsolete RTSM DCSCB support
-      https://git.kernel.org/sudeep.holla/c/eb3f614ae482
-[2/2] dt-bindings: arm: Remove obsolete RTSM DCSCB binding
-      https://git.kernel.org/sudeep.holla/c/32b0cf0379b6
+ drivers/md/dm-raid.c |   2 +-
+ drivers/md/md.c      | 437 ++++++++++++++++++++++++++-----------------
+ drivers/md/md.h      | 124 +++++++++---
+ drivers/md/raid1.c   |   5 +-
+ drivers/md/raid10.c  |   8 +-
+ drivers/md/raid5.c   |  23 ++-
+ 6 files changed, 388 insertions(+), 211 deletions(-)
 
---
-Regards,
-Sudeep
+-- 
+2.39.2
+
 
