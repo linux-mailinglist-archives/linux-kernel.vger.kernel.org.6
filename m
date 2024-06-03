@@ -1,94 +1,62 @@
-Return-Path: <linux-kernel+bounces-198865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 598958D7E78
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:27:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D1088D7E7C
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:27:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D4121C214F8
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:27:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4236B2824B3
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:27:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4822A81730;
-	Mon,  3 Jun 2024 09:26:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC97D7F7F6;
+	Mon,  3 Jun 2024 09:27:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="BGYyrAyK";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="iktIf95i";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="CRtM5bSS";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="9mUkp0gi"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="PdLafWwM"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 110BF7E578;
-	Mon,  3 Jun 2024 09:26:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E90E757E0;
+	Mon,  3 Jun 2024 09:27:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717406812; cv=none; b=rzXNYOkdDUAo6fXOjh6m+EHX2vV0NkWWjimgp+kKUgYxOgZbCwbMcqaXyk3ig78MIY0ilUnLPOGK6B84T8vYZtq76rSaYWBBXmif/FtrgGuXDbL5t8NN8HQXUPonQcYQ1IQzDRPwxTXnjlmCxWo9Htf5PjYCY4D22jzm+eEDDj4=
+	t=1717406859; cv=none; b=kqnnh95iyNoDPmxe0WLbxAG4TYbBQt5wn1WJq9cxWKYI3uXZCAgs0VYUvRyOYKODOu72WSP7+ERNyZbuoYvD6dCSf3+CsKKZpioxdvguT8+RpvAYIgPQvhdmqsO0zRcI0z14g/ntryWyHoV9uoUNlgPOfwqMxuIfYP70JPE+Nuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717406812; c=relaxed/simple;
-	bh=bIKgTHqqqvNrDn6N46S23oj6Yn8jnVRBUOsZYqWHjnw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Wlx6gu8HpMWFQOzBAsqRg0bdtgEsEQ9SbTRldbFekVCAnY/y5BcDh6yq3+7SYmuf5Ab8s7CiEVt7dvUFBV4RNVz8QOZe0ja5l45F5csuwcWexciwJhTNcrPlhE118YGzOc0s0ja/9o6GJuat9e4MCwNh3NlLRqIKq9zFEtLb85I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=BGYyrAyK; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=iktIf95i; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=CRtM5bSS; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=9mUkp0gi; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 334982001E;
-	Mon,  3 Jun 2024 09:26:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1717406808; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4aiqyGNs4C6F+459GE4XKKIaj4uHNvODVh4oeUc9YQQ=;
-	b=BGYyrAyKVIVppKuFCDEVCQqAMX3+cbzScFb/SmBJE9FsafW60ImLURzecJUbtPj+EU7qd8
-	vkq4XUehN2UOcypeE0ZIW3SwVrqNvJkuFLsuidqJkFvs2knxu+BkLv8kGMMdFOSkNAzf3A
-	W2x/xbKWNR8AJMYK3ikPiqMJa72a2J4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1717406808;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4aiqyGNs4C6F+459GE4XKKIaj4uHNvODVh4oeUc9YQQ=;
-	b=iktIf95ibTh8suh83mbxhsmIwD12npaRJTO3Tel2NYrJdwhvuYQHA99L7p0fgRdDp4/Ue3
-	/wbV33bFzYZ0bKDQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1717406807; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4aiqyGNs4C6F+459GE4XKKIaj4uHNvODVh4oeUc9YQQ=;
-	b=CRtM5bSS3vtA1ctSrWW37O8hx39qarpl0KB1WdfR/cytUAB0x98GLtGwsoz+3wXsVXoPqy
-	sHrlAnlhuzPNMByAZ3blK6KTukZacSrncVwhgoQrfUB+EccNBhJIHpz+SdqGrF7ENHIjCL
-	6XcUDj4wpXXKqHZg8ERCUkXHhrKSxSE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1717406807;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4aiqyGNs4C6F+459GE4XKKIaj4uHNvODVh4oeUc9YQQ=;
-	b=9mUkp0giwL7NhJ1jtx4OC9TvCHau/UID+Bkr+jBA9/Q8H2t9tKpcl4lk0QMUm26ZX0arss
-	4oQV6QFAonOh4hBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E3B1A139CB;
-	Mon,  3 Jun 2024 09:26:46 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id rWTdNlaMXWY6AgAAD6G6ig
-	(envelope-from <hare@suse.de>); Mon, 03 Jun 2024 09:26:46 +0000
-Message-ID: <749f9615-2fd2-49a3-9c9e-c725cb027ad3@suse.de>
-Date: Mon, 3 Jun 2024 11:26:46 +0200
+	s=arc-20240116; t=1717406859; c=relaxed/simple;
+	bh=x9ikFYNncfJUkrFfp9JJ8ryQsRSyVgqBkaGtU/Z/r4g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=otrmccm3c8Kw+kqCXZpcS36j152enVasl3uy6nm2Dgz6vnFU5giHFFQheFfW5wR9LeNHHaN5tk6FPIzubCEo/+NtXl7UYGFwlCY7sHG4dqzHxbsclQQcZ4DI+t6FfgQHyUfQQmwVV+aQukqqsy1uM36BXvPmrxkjfZGCRKZ72so=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=PdLafWwM; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4539R1xf081601;
+	Mon, 3 Jun 2024 04:27:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1717406821;
+	bh=SB5jmnTW30z7D427AIs51/dYcHrGUq+FjEIld/CWbLY=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=PdLafWwMwv4a4/btdJOZNlxq40sxLkDWcVu8S6JJci8GPFuqmKiNi1Zi9ycjoEiy9
+	 KaqJotzBQ8VgW3hK52PLTDCu2zBJ60yxLZzxQfCdz7/5SBaTFBE/5EA9TffFE17Ge4
+	 V8U+2IqNS9TwWaCtaYPGjaxijP8HeoCoOkm6czLM=
+Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4539R1ec110664
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 3 Jun 2024 04:27:01 -0500
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 3
+ Jun 2024 04:27:00 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 3 Jun 2024 04:27:00 -0500
+Received: from [172.24.227.57] (linux-team-01.dhcp.ti.com [172.24.227.57])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4539Qsjq056761;
+	Mon, 3 Jun 2024 04:26:55 -0500
+Message-ID: <c1380aa4-d8ae-4e77-88a8-59555dffdd57@ti.com>
+Date: Mon, 3 Jun 2024 14:56:53 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,311 +64,111 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 4/9] block: Add core atomic write support
-To: John Garry <john.g.garry@oracle.com>, axboe@kernel.dk, kbusch@kernel.org,
- hch@lst.de, sagi@grimberg.me, jejb@linux.ibm.com,
- martin.petersen@oracle.com, djwong@kernel.org, viro@zeniv.linux.org.uk,
- brauner@kernel.org, dchinner@redhat.com, jack@suse.cz
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
- tytso@mit.edu, jbongio@google.com, linux-scsi@vger.kernel.org,
- ojaswin@linux.ibm.com, linux-aio@kvack.org, linux-btrfs@vger.kernel.org,
- io-uring@vger.kernel.org, nilay@linux.ibm.com, ritesh.list@gmail.com,
- willy@infradead.org, Himanshu Madhani <himanshu.madhani@oracle.com>
-References: <20240602140912.970947-1-john.g.garry@oracle.com>
- <20240602140912.970947-5-john.g.garry@oracle.com>
+Subject: Re: [PATCH net-next v2 2/3] net: ethernet: ti: Register the RPMsg
+ driver as network device
+To: kernel test robot <lkp@intel.com>, <schnelle@linux.ibm.com>,
+        <wsa+renesas@sang-engineering.com>, <diogo.ivo@siemens.com>,
+        <rdunlap@infradead.org>, <horms@kernel.org>, <vigneshr@ti.com>,
+        <rogerq@ti.com>, <danishanwar@ti.com>, <pabeni@redhat.com>,
+        <kuba@kernel.org>, <edumazet@google.com>, <davem@davemloft.net>
+CC: <llvm@lists.linux.dev>, <oe-kbuild-all@lists.linux.dev>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <srk@ti.com>,
+        <rogerq@kernel.org>, <s-vadapalli@ti.com>, <y-mallik@ti.com>
+References: <20240531064006.1223417-3-y-mallik@ti.com>
+ <202406011038.AwLZhQpy-lkp@intel.com>
 Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20240602140912.970947-5-john.g.garry@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Yojana Mallik <y-mallik@ti.com>
+In-Reply-To: <202406011038.AwLZhQpy-lkp@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-Spam-Flag: NO
-X-Spam-Score: -2.79
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.79 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	TAGGED_RCPT(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[27];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,lists.infradead.org,mit.edu,google.com,linux.ibm.com,kvack.org,gmail.com,infradead.org,oracle.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	R_RATELIMIT(0.00)[to_ip_from(RLusjj3u5c53i6g8q6enupwtij)]
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On 6/2/24 16:09, John Garry wrote:
-> Add atomic write support, as follows:
-> - add helper functions to get request_queue atomic write limits
-> - report request_queue atomic write support limits to sysfs and update Doc
-> - support to safely merge atomic writes
-> - deal with splitting atomic writes
-> - misc helper functions
-> - add a per-request atomic write flag
-> 
-> New request_queue limits are added, as follows:
-> - atomic_write_hw_max is set by the block driver and is the maximum length
->    of an atomic write which the device may support. It is not
->    necessarily a power-of-2.
-> - atomic_write_max_sectors is derived from atomic_write_hw_max_sectors and
->    max_hw_sectors. It is always a power-of-2. Atomic writes may be merged,
->    and atomic_write_max_sectors would be the limit on a merged atomic write
->    request size. This value is not capped at max_sectors, as the value in
->    max_sectors can be controlled from userspace, and it would only cause
->    trouble if userspace could limit atomic_write_unit_max_bytes and the
->    other atomic write limits.
-> - atomic_write_hw_unit_{min,max} are set by the block driver and are the
->    min/max length of an atomic write unit which the device may support. They
->    both must be a power-of-2. Typically atomic_write_hw_unit_max will hold
->    the same value as atomic_write_hw_max.
-> - atomic_write_unit_{min,max} are derived from
->    atomic_write_hw_unit_{min,max}, max_hw_sectors, and block core limits.
->    Both min and max values must be a power-of-2.
-> - atomic_write_hw_boundary is set by the block driver. If non-zero, it
->    indicates an LBA space boundary at which an atomic write straddles no
->    longer is atomically executed by the disk. The value must be a
->    power-of-2. Note that it would be acceptable to enforce a rule that
->    atomic_write_hw_boundary_sectors is a multiple of
->    atomic_write_hw_unit_max, but the resultant code would be more
->    complicated.
-> 
-> All atomic writes limits are by default set 0 to indicate no atomic write
-> support. Even though it is assumed by Linux that a logical block can always
-> be atomically written, we ignore this as it is not of particular interest.
-> Stacked devices are just not supported either for now.
-> 
-> An atomic write must always be submitted to the block driver as part of a
-> single request. As such, only a single BIO must be submitted to the block
-> layer for an atomic write. When a single atomic write BIO is submitted, it
-> cannot be split. As such, atomic_write_unit_{max, min}_bytes are limited
-> by the maximum guaranteed BIO size which will not be required to be split.
-> This max size is calculated by request_queue max segments and the number
-> of bvecs a BIO can fit, BIO_MAX_VECS. Currently we rely on userspace
-> issuing a write with iovcnt=1 for pwritev2() - as such, we can rely on each
-> segment containing PAGE_SIZE of data, apart from the first+last, which each
-> can fit logical block size of data. The first+last will be LBS
-> length/aligned as we rely on direct IO alignment rules also.
-> 
-> New sysfs files are added to report the following atomic write limits:
-> - atomic_write_unit_max_bytes - same as atomic_write_unit_max_sectors in
-> 				bytes
-> - atomic_write_unit_min_bytes - same as atomic_write_unit_min_sectors in
-> 				bytes
-> - atomic_write_boundary_bytes - same as atomic_write_hw_boundary_sectors in
-> 				bytes
-> - atomic_write_max_bytes      - same as atomic_write_max_sectors in bytes
-> 
-> Atomic writes may only be merged with other atomic writes and only under
-> the following conditions:
-> - total resultant request length <= atomic_write_max_bytes
-> - the merged write does not straddle a boundary
-> 
-> Helper function bdev_can_atomic_write() is added to indicate whether
-> atomic writes may be issued to a bdev. If a bdev is a partition, the
-> partition start must be aligned with both atomic_write_unit_min_sectors
-> and atomic_write_hw_boundary_sectors.
-> 
-> FSes will rely on the block layer to validate that an atomic write BIO
-> submitted will be of valid size, so add blk_validate_atomic_write_op_size()
-> for this purpose. Userspace expects an atomic write which is of invalid
-> size to be rejected with -EINVAL, so add BLK_STS_INVAL for this. Also use
-> BLK_STS_INVAL for when a BIO needs to be split, as this should mean an
-> invalid size BIO.
-> 
-> Flag REQ_ATOMIC is used for indicating an atomic write.
-> 
-> Co-developed-by: Himanshu Madhani <himanshu.madhani@oracle.com>
-> Signed-off-by: Himanshu Madhani <himanshu.madhani@oracle.com>
-> Signed-off-by: John Garry <john.g.garry@oracle.com>
-> ---
->   Documentation/ABI/stable/sysfs-block | 53 ++++++++++++++++
->   block/blk-core.c                     | 19 ++++++
->   block/blk-merge.c                    | 95 +++++++++++++++++++++++++++-
->   block/blk-settings.c                 | 52 +++++++++++++++
->   block/blk-sysfs.c                    | 33 ++++++++++
->   block/blk.h                          |  3 +
->   include/linux/blk_types.h            |  8 ++-
->   include/linux/blkdev.h               | 54 ++++++++++++++++
->   8 files changed, 315 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/ABI/stable/sysfs-block b/Documentation/ABI/stable/sysfs-block
-> index 831f19a32e08..cea8856f798d 100644
-> --- a/Documentation/ABI/stable/sysfs-block
-> +++ b/Documentation/ABI/stable/sysfs-block
-> @@ -21,6 +21,59 @@ Description:
->   		device is offset from the internal allocation unit's
->   		natural alignment.
->   
-> +What:		/sys/block/<disk>/atomic_write_max_bytes
-> +Date:		February 2024
-> +Contact:	Himanshu Madhani <himanshu.madhani@oracle.com>
-> +Description:
-> +		[RO] This parameter specifies the maximum atomic write
-> +		size reported by the device. This parameter is relevant
-> +		for merging of writes, where a merged atomic write
-> +		operation must not exceed this number of bytes.
-> +		This parameter may be greater than the value in
-> +		atomic_write_unit_max_bytes as
-> +		atomic_write_unit_max_bytes will be rounded down to a
-> +		power-of-two and atomic_write_unit_max_bytes may also be
-> +		limited by some other queue limits, such as max_segments.
-> +		This parameter - along with atomic_write_unit_min_bytes
-> +		and atomic_write_unit_max_bytes - will not be larger than
-> +		max_hw_sectors_kb, but may be larger than max_sectors_kb.
-> +
-> +
-> +What:		/sys/block/<disk>/atomic_write_unit_min_bytes
-> +Date:		February 2024
-> +Contact:	Himanshu Madhani <himanshu.madhani@oracle.com>
-> +Description:
-> +		[RO] This parameter specifies the smallest block which can
-> +		be written atomically with an atomic write operation. All
-> +		atomic write operations must begin at a
-> +		atomic_write_unit_min boundary and must be multiples of
-> +		atomic_write_unit_min. This value must be a power-of-two.
-> +
-> +
-> +What:		/sys/block/<disk>/atomic_write_unit_max_bytes
-> +Date:		February 2024
-> +Contact:	Himanshu Madhani <himanshu.madhani@oracle.com>
-> +Description:
-> +		[RO] This parameter defines the largest block which can be
-> +		written atomically with an atomic write operation. This
-> +		value must be a multiple of atomic_write_unit_min and must
-> +		be a power-of-two. This value will not be larger than
-> +		atomic_write_max_bytes.
-> +
-> +
-> +What:		/sys/block/<disk>/atomic_write_boundary_bytes
-> +Date:		February 2024
-> +Contact:	Himanshu Madhani <himanshu.madhani@oracle.com>
-> +Description:
-> +		[RO] A device may need to internally split an atomic write I/O
-> +		which straddles a given logical block address boundary. This
-> +		parameter specifies the size in bytes of the atomic boundary if
-> +		one is reported by the device. This value must be a
-> +		power-of-two and at least the size as in
-> +		atomic_write_unit_max_bytes.
-> +		Any attempt to merge atomic write I/Os must not result in a
-> +		merged I/O which crosses this boundary (if any).
-> +
->   
->   What:		/sys/block/<disk>/diskseq
->   Date:		February 2021
-> diff --git a/block/blk-core.c b/block/blk-core.c
-> index 82c3ae22d76d..d9f58fe71758 100644
-> --- a/block/blk-core.c
-> +++ b/block/blk-core.c
-> @@ -174,6 +174,8 @@ static const struct {
->   	/* Command duration limit device-side timeout */
->   	[BLK_STS_DURATION_LIMIT]	= { -ETIME, "duration limit exceeded" },
->   
-> +	[BLK_STS_INVAL]		= { -EINVAL,	"invalid" },
-> +
->   	/* everything else not covered above: */
->   	[BLK_STS_IOERR]		= { -EIO,	"I/O" },
->   };
-> @@ -739,6 +741,18 @@ void submit_bio_noacct_nocheck(struct bio *bio)
->   		__submit_bio_noacct(bio);
->   }
->   
-> +static blk_status_t blk_validate_atomic_write_op_size(struct request_queue *q,
-> +						 struct bio *bio)
-> +{
-> +	if (bio->bi_iter.bi_size > queue_atomic_write_unit_max_bytes(q))
-> +		return BLK_STS_INVAL;
-> +
-> +	if (bio->bi_iter.bi_size % queue_atomic_write_unit_min_bytes(q))
-> +		return BLK_STS_INVAL;
-> +
-> +	return BLK_STS_OK;
-> +}
-> +
->   /**
->    * submit_bio_noacct - re-submit a bio to the block device layer for I/O
->    * @bio:  The bio describing the location in memory and on the device.
-> @@ -797,6 +811,11 @@ void submit_bio_noacct(struct bio *bio)
->   	switch (bio_op(bio)) {
->   	case REQ_OP_READ:
->   	case REQ_OP_WRITE:
-> +		if (bio->bi_opf & REQ_ATOMIC) {
-> +			status = blk_validate_atomic_write_op_size(q, bio);
-> +			if (status != BLK_STS_OK)
-> +				goto end_io;
-> +		}
->   		break;
->   	case REQ_OP_FLUSH:
->   		/*
-> diff --git a/block/blk-merge.c b/block/blk-merge.c
-> index 8957e08e020c..ad07759ca147 100644
-> --- a/block/blk-merge.c
-> +++ b/block/blk-merge.c
-> @@ -18,6 +18,46 @@
->   #include "blk-rq-qos.h"
->   #include "blk-throttle.h"
->   
-> +/*
-> + * rq_straddles_atomic_write_boundary - check for boundary violation
-> + * @rq: request to check
-> + * @front: data size to be appended to front
-> + * @back: data size to be appended to back
-> + *
-> + * Determine whether merging a request or bio into another request will result
-> + * in a merged request which straddles an atomic write boundary.
-> + *
-> + * The value @front_adjust is the data which would be appended to the front of
-> + * @rq, while the value @back_adjust is the data which would be appended to the
-> + * back of @rq. Callers will typically only have either @front_adjust or
-> + * @back_adjust as non-zero.
-> + *
-> + */
-> +static bool rq_straddles_atomic_write_boundary(struct request *rq,
-> +					unsigned int front_adjust,
-> +					unsigned int back_adjust)
-> +{
-> +	unsigned int boundary = queue_atomic_write_boundary_bytes(rq->q);
-> +	u64 mask, start_rq_pos, end_rq_pos;
-> +
-> +	if (!boundary)
-> +		return false;
-> +
-> +	start_rq_pos = blk_rq_pos(rq) << SECTOR_SHIFT;
-> +	end_rq_pos = start_rq_pos + blk_rq_bytes(rq) - 1;
-> +
-> +	start_rq_pos -= front_adjust;
-> +	end_rq_pos += back_adjust;
-> +
-> +	mask = ~(boundary - 1);
-> +
-> +	/* Top bits are different, so crossed a boundary */
-> +	if ((start_rq_pos & mask) != (end_rq_pos & mask))
-> +		return true;
-> +
-> +	return false;
-> +}
 
-But isn't that precisely what 'chunk_sectors' is doing?
-IE ensuring that requests never cross that boundary?
 
-Q1: Shouldn't we rather use/modify/adapt chunk_sectors for this thing?
-Q2: If we don't, shouldn't we align the atomic write boundary to the 
-chunk_sectors setting to ensure both match up?
+On 6/1/24 08:43, kernel test robot wrote:
+> Hi Yojana,
+> 
+> kernel test robot noticed the following build warnings:
+> 
+> [auto build test WARNING on net-next/main]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Yojana-Mallik/net-ethernet-ti-RPMsg-based-shared-memory-ethernet-driver/20240531-144258
+> base:   net-next/main
+> patch link:    https://lore.kernel.org/r/20240531064006.1223417-3-y-mallik%40ti.com
+> patch subject: [PATCH net-next v2 2/3] net: ethernet: ti: Register the RPMsg driver as network device
+> config: x86_64-allyesconfig (https://download.01.org/0day-ci/archive/20240601/202406011038.AwLZhQpy-lkp@intel.com/config)
+> compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240601/202406011038.AwLZhQpy-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202406011038.AwLZhQpy-lkp@intel.com/
+> 
+> All warnings (new ones prefixed by >>):
+> 
+>>> drivers/net/ethernet/ti/inter_core_virt_eth.c:76:6: warning: variable 'ret' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+>       76 |         if (wait) {
+>          |             ^~~~
+>    drivers/net/ethernet/ti/inter_core_virt_eth.c:87:9: note: uninitialized use occurs here
+>       87 |         return ret;
+>          |                ^~~
+>    drivers/net/ethernet/ti/inter_core_virt_eth.c:76:2: note: remove the 'if' if its condition is always true
+>       76 |         if (wait) {
+>          |         ^~~~~~~~~
+>    drivers/net/ethernet/ti/inter_core_virt_eth.c:65:9: note: initialize the variable 'ret' to silence this warning
+>       65 |         int ret;
+>          |                ^
+>          |                 = 0
+>    drivers/net/ethernet/ti/inter_core_virt_eth.c:330:24: error: use of undeclared identifier 'icve_del_mc_addr'
+>      330 |         __dev_mc_unsync(ndev, icve_del_mc_addr);
+>          |                               ^
+>    drivers/net/ethernet/ti/inter_core_virt_eth.c:331:26: error: no member named 'mc_list' in 'struct icve_common'
+>      331 |         __hw_addr_init(&common->mc_list);
+>          |                         ~~~~~~  ^
+>    drivers/net/ethernet/ti/inter_core_virt_eth.c:337:28: error: no member named 'rx_mode_work' in 'struct icve_common'
+>      337 |         cancel_work_sync(&common->rx_mode_work);
+>          |                           ~~~~~~  ^
+>    1 warning and 3 errors generated.
+> 
+> 
+> vim +76 drivers/net/ethernet/ti/inter_core_virt_eth.c
+> 
+>     59	
+>     60	static int icve_create_send_request(struct icve_common *common,
+>     61					    enum icve_rpmsg_type rpmsg_type,
+>     62					    bool wait)
+>     63	{
+>     64		unsigned long flags;
+>     65		int ret;
+>     66	
+>     67		if (wait)
+>     68			reinit_completion(&common->sync_msg);
+>     69	
+>     70		spin_lock_irqsave(&common->send_msg_lock, flags);
+>     71		create_request(common, rpmsg_type);
+>     72		rpmsg_send(common->rpdev->ept, (void *)(&common->send_msg),
+>     73			   sizeof(common->send_msg));
+>     74		spin_unlock_irqrestore(&common->send_msg_lock, flags);
+>     75	
+>   > 76		if (wait) {
+>     77			ret = wait_for_completion_timeout(&common->sync_msg,
+>     78							  ICVE_REQ_TIMEOUT);
+>     79	
+>     80			if (!ret) {
+>     81				dev_err(common->dev, "Failed to receive response within %ld jiffies\n",
+>     82					ICVE_REQ_TIMEOUT);
+>     83				ret = -ETIMEDOUT;
+>     84				return ret;
+>     85			}
+>     86		}
+>     87		return ret;
+>     88	}
+>     89	
+> 
 
-Cheers,
+I will fix all these issues in v3.
 
-Hannes
-
+Regards,
+Yojana Mallik
 
