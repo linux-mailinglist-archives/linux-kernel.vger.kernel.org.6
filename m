@@ -1,110 +1,75 @@
-Return-Path: <linux-kernel+bounces-199201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECBA88D83BD
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:19:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E3E08D83BF
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:19:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 866571F229A2
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:19:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3BC00B24F24
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:19:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2034512D1F6;
-	Mon,  3 Jun 2024 13:19:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="eYHNDE/7"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4BA959B4A;
-	Mon,  3 Jun 2024 13:19:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 497B112D1FE;
+	Mon,  3 Jun 2024 13:19:23 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DFF059B4A;
+	Mon,  3 Jun 2024 13:19:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717420748; cv=none; b=hopmKHuPk/omAWcQnVMv1eXNWwWCZ+h4KKiKrkheED3ZGAc4CgpSZj4xqDwxetHrQxpQvbOCxU0uKpz92SobyzfQPk1CzJyJsBsUDjhweqvDuw1l/qXq/TxXU+zHytmECirbQ57sop2iXxEEwatE7JBIlBxD6BhSSqBGAKvllr8=
+	t=1717420762; cv=none; b=RoLI54MSgfBWr6K2kqpD46+VRUFGlci2TAOnroG8iLgorVR8gV2QmVbEJDCZvF7a5LTdehB9O1ibGuVC6K0awYdA6HvoHzbIyGHPNDvBqOTwp+NmGWdQIoMcC0yrCNW1thbYrBtZ8oe+IbnBI6j7Dbn6wYi1ipH3Ik3pKXgmKJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717420748; c=relaxed/simple;
-	bh=GK2AfA1M79f2aqpUrI3391kmio+ich9V7b2BHuq700E=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JNK5no9LGGLFQe7BMQF+6Nxf6Tq5dqHPt5iMrOEeowA0NDX9qvyH6gYEkDkGeSxFFGlbaZsPUG99QHTPBfs5Kf44INzZfGGelnkl7dywtM0ru3Godw2SaXw1dcXFC1+Chs7u6EfNuy/GdGO+xfqW2JKpWMbU9E2dYATmDbP+9+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=eYHNDE/7; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 30E74C0003;
-	Mon,  3 Jun 2024 13:18:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1717420744;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JWTAgpYCIu49JLdIyprRH1Zu4acqXIrkyC2difOhhhM=;
-	b=eYHNDE/7/U/qh4LarIt8BnyirHTGA6S+fDK3gaZYjJgV0NYPn3moTUkgEyb4k9iSoaifd0
-	R8X8NIkjxcU3xiGKRl+v6V9p3JMbH1Jg3sKENAL6xIyEBeKHNUJ+B2EFQZ32roQBC9MmR4
-	IA9E35QFDoT8k6luSZ3MrfR22mLrUlNm2HSFVZJtPBA5yqi5oYUjSmM8PO9IpXS1lC19mr
-	ZXWXmDNtePlR1x52h9XrAj+z4q0h0A4boIcqXa+qEmXhjR/MH1u9e1XQhOc8p7BLXrvyDQ
-	8HgtRocYje9zcb3ch8I6vRhLsYJh9yL+XFUTukDZb7Iu+WqfLysVmcFxsbeLsg==
-Date: Mon, 3 Jun 2024 15:18:54 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Cheng Ming Lin <linchengming884@gmail.com>, dwmw2@infradead.org,
- computersforpeace@gmail.com, marek.vasut@gmail.com, vigneshr@ti.com,
- linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org, richard@nod.at, alvinzhou@mxic.com.tw,
- leoyu@mxic.com.tw, Cheng Ming Lin <chengminglin@mxic.com.tw>
-Subject: Re: [PATCH] Documentation: mtd: spinand: macronix: Add support for
- serial NAND flash
-Message-ID: <20240603151854.4db274a6@xps-13>
-In-Reply-To: <2024060337-relatable-ozone-510e@gregkh>
-References: <20240603073953.16399-1-linchengming884@gmail.com>
-	<2024060337-relatable-ozone-510e@gregkh>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1717420762; c=relaxed/simple;
+	bh=4YroT21gJnLZenzG3TScNYnn7yMAq8yFIJmSMtaH100=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nVLhe5C1RTKIMKx5e6mZgvNM6ZLzmFta6JU2OOsC4N6OQ0e/T3stk5PzR8/T7wevTw/2dbCFstRgn+RXpBN1cirX4KDQnxdoIOp8ZgQ0/acNIgQCtAIU2ZSGOAKnezlzUV/YrjcTSIENKqzm75ae9GSmTlBsUXKd5OAtNIW0oEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 444521063;
+	Mon,  3 Jun 2024 06:19:44 -0700 (PDT)
+Received: from bogus (e103737-lin.cambridge.arm.com [10.1.197.49])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CA52A3F64C;
+	Mon,  3 Jun 2024 06:19:18 -0700 (PDT)
+Date: Mon, 3 Jun 2024 14:19:16 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: cristian.marussi@arm.com, ulf.hansson@linaro.org,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH] pmdomain: arm: scmi_pm_domain: set flag
+ GENPD_FLAG_ACTIVE_WAKEUP
+Message-ID: <Zl3C1Gt0-LvLWl4g@bogus>
+References: <20240514131833.911703-1-peng.fan@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240514131833.911703-1-peng.fan@oss.nxp.com>
 
-Hi,
+On Tue, May 14, 2024 at 09:18:33PM +0800, Peng Fan (OSS) wrote:
+> From: Peng Fan <peng.fan@nxp.com>
+>
+> Set flag GENPD_FLAG_ACTIVE_WAKEUP to scmi genpd, then when a device
+> is set as wakeup source using device_set_wakeup_enable, the power
+> domain could be kept on to make sure the device could wakeup the system.
+>
 
-gregkh@linuxfoundation.org wrote on Mon, 3 Jun 2024 09:58:23 +0200:
+I am fine with the change, wonder if it can be made conditional but I can't
+think of a sane way to do so. If Ulf thinks it is harmless to keep it
+unconditional on all the domains, then I am fine with that.
 
-> On Mon, Jun 03, 2024 at 03:39:53PM +0800, Cheng Ming Lin wrote:
-> > From: Cheng Ming Lin <chengminglin@mxic.com.tw>
+I assume Ulf can pick this up directly,
 
-The title prefix contains "Documentation: ", but I don't see anything
-related in the diff.
+Acked-by: Sudeep Holla <sudeep.holla@arm.com>
 
-> >=20
-> > MX35UF{1,2,4}GE4AD and MX35UF{1,2}GE4AC have been merge into=20
-> > Linux kernel mainline.  =20
->=20
-> Trailing whitespace :(
->=20
-> > Commit ID: "c374839f9b4475173e536d1eaddff45cb481dbdf". =20
->=20
-> See the kernel documentation for how to properly reference commits in
-> changelog messages.
->=20
-> > For SPI-NAND flash support on Linux kernel LTS v5.4.y,
-> > add SPI-NAND flash MX35UF{1,2,4}GE4AD and MX35UF{1,2}GE4AC in id tables.
-> >=20
-> > Those five flashes have been validate on Xilinx zynq-picozed board and
-> > Linux kernel LTS v5.4.y. =20
->=20
-> What does 5.4.y have to do with the latest mainline tree?  Is this
-> tested on our latest tree?
->=20
-> thanks,
->=20
-> greg k-h
-
-
-Thanks,
-Miqu=C3=A8l
+--
+Regards,
+Sudeep
 
