@@ -1,169 +1,113 @@
-Return-Path: <linux-kernel+bounces-199457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2AE38D876A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 18:44:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ADA538D876C
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 18:44:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50983283B18
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:44:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66EB2283AF4
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:44:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15DA8136994;
-	Mon,  3 Jun 2024 16:44:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DEC613699F;
+	Mon,  3 Jun 2024 16:44:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rJhXjDmZ"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VpRKLdSB"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6B7B13666D
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 16:44:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D5AA8060D
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 16:44:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717433047; cv=none; b=DNfsCs/lv7eQjWaLpG7djSpsrQ6LuPNiueeH5G8kga86yoxNrj25VL+7jSz5xMbX4wBv89hjuihAKrltkk+3p1QlPJVqt+0D7sSaHOzGNCvZZhSJpAR4C3gYoS2+4QpKprnamTZ1GCwxoQlqkhH4jlbawBFT1SAeREpQWvv5UCY=
+	t=1717433087; cv=none; b=PW6p9K6PaFicX70dWrF0M7n89RdXJKyqHaeicgHTvL+lC99giTSr9m9GzafdXnXxw1GDzbfITbJ55OSFwTSosM2NlnByH/rAwrKTj0ioxcEzNlU8inCM9jbNSMqCTPAS/Tti3TpLcZ5lhqcvRCIpAy3N73nzeZ9Oj4r0XnnLFSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717433047; c=relaxed/simple;
-	bh=j9efUysIbU+0fDZp59JmxjJMpgDLHkYjIzf8rBgtCHo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=A5iE4CR0rlabidOnNFdFqyZ84WMWyNU4i2bQwokCyNeuQ1fqX3ejQ3QK7Ph5Fufs93brU4ni0kWvcKkgdANHXT6HKmL8InOexhY5bUFy81uKPb44QJnGB7sbxJCGMr6huTgqOP/iMN2cPu0G1uEJx1nAACy3jb54PrvasVvYCRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rJhXjDmZ; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1f62fae8c1aso29056925ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 09:44:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717433045; x=1718037845; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=kQJCX2mLLjVwtGvAcK2JVSlXXTTlVczYVL9TcQ37x9I=;
-        b=rJhXjDmZ9qsdMDC3KEeOWHBB/U6XvzuwFHaGSdsPm0HTLjLDItRq4Q5dq1m8P+VxbI
-         J0I+GmHfbtMIl/vDqrVt/KP0VJKH8qK1cozyTuDYusIbzoXjL5Mr8Y/S6ohewV7SSOBP
-         jt41vgl3P50jOkRr7VHfQ7EXTbHYRh759nIRqgJEbMCmABjBf8acO2kObAMr28RZBjfr
-         9bIguu1tdQfEBOHS9L6BOhwxXajnRzXm2ADXtqVSQJnAwkbsYuXQ1sXAzkCDSnR5gwkz
-         OYHs6jivPj7RQ0Dt7FlP6RGLtxmB3hLzcQDyGcCmZESAvK9MhaCsZe0FGLYnAUvoX01/
-         o99Q==
+	s=arc-20240116; t=1717433087; c=relaxed/simple;
+	bh=t4eoPsxvhm/UX72ypmID6dj2keloK0/DxVJPrFRAldI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bqJgL3XRz/3omtoje6ih3vDOQNgGb7ju/Mi8ROsXTGwxehaSgNR5c3Pq7t5WcX2qGRD80IPp8qZXLH/ao9TmY5Qcv4KsaA+dzPcTn0+QNqAyocpS0xUwiOdv52b3ABFGxqjwynNYpTj9CoyDSgeVf41ELZhKBZmrxDFBjtMAqRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VpRKLdSB; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717433085;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zkJhM79a8R11avJivbxxdE1EejxLWPTC2S55x7A+4us=;
+	b=VpRKLdSB3owQrmEgzvT6ABXi1wKxYr2MN2vSa0JBJuFqad+fvhNqq+kk9/mimWHSvTIbSz
+	FhLhVS4QtR1iIcfx4AtUwt8jQbrjOBXf42uFqsZzisPCjCABefNiZmcljQeIKXcoRh3bQ3
+	JLhQlakWgR5En/YDaEe5yhKmnaM5rK4=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-365-errRmU8HPbWczMCWGdT3dw-1; Mon, 03 Jun 2024 12:44:43 -0400
+X-MC-Unique: errRmU8HPbWczMCWGdT3dw-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4213530af1aso12984375e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 09:44:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717433045; x=1718037845;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kQJCX2mLLjVwtGvAcK2JVSlXXTTlVczYVL9TcQ37x9I=;
-        b=iNIpD18on0ZH8eL3yxiLHYywo0zRa57t5uv/o05TaJSXBolw/Br3CKtW72pFBKDvmY
-         MGzIUMlWhKfMWADtRe3Vf2XZnd0BaO5MnnFjv8QRXORBpx38SSDnVML7/9DuUXgtOaNE
-         JpiURdqNpERTzu/+FMi6URPYlMjEX0HlaLFyjU8XBuesUDYYn40Q7BLPdG5rhKL3D/eL
-         +6a4NXvJMp27CAdN1fW1aUL9HFU25y8P0/cVxFMmJZtJOCRUT3+7dUVn+mU37ipj12NJ
-         teqzXyS2RSYY1S4zhQ+Uk1oz1smO5tAw6Uow3TuKc87hGYM1TaOS53Z9fMjwR8AtT/jA
-         hT1A==
-X-Forwarded-Encrypted: i=1; AJvYcCXNwRv2wkXEQ1LABX1EVIWcgTL/tInzPkmQ8DmV6+wy5nzFxj9cHGk0uilrjltM1n6rF9ojTS9o6cMRDrIGyCoSLglYNZFMGAXA6p9H
-X-Gm-Message-State: AOJu0Yxi5jLMM1QrOVDaLmm7T2Qc5dLOXIeA/pl6TjlyrZ1dZOxqoWFc
-	28DnkDIEmPChUzTrLyJ7E4J6y2UYHsPLFGvfQB1vt1GMHIXJHVpCglCCup0jgQ==
-X-Google-Smtp-Source: AGHT+IGYx+sx85xzgEc86M80PuqE2ZoS4273PGYCLxOQNlGQ9YXpPTVaa2w3bk5t3yHX6kqLl4+hdA==
-X-Received: by 2002:a17:902:e546:b0:1f6:5bba:f134 with SMTP id d9443c01a7336-1f65bbaf520mr68933315ad.46.1717433045079;
-        Mon, 03 Jun 2024 09:44:05 -0700 (PDT)
-Received: from localhost.localdomain ([120.60.128.29])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f632401919sm67523825ad.248.2024.06.03.09.44.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Jun 2024 09:44:04 -0700 (PDT)
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: mhi@lists.linux.dev
-Cc: linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	stable@vger.kernel.org
-Subject: [PATCH] bus: mhi: ep: Do not allocate memory for MHI objects from DMA zone
-Date: Mon,  3 Jun 2024 22:13:54 +0530
-Message-Id: <20240603164354.79035-1-manivannan.sadhasivam@linaro.org>
-X-Mailer: git-send-email 2.25.1
+        d=1e100.net; s=20230601; t=1717433081; x=1718037881;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zkJhM79a8R11avJivbxxdE1EejxLWPTC2S55x7A+4us=;
+        b=X9tEhII0QCE46PQ1b77WR0hkKsmxvJOOkX7psEbZo6UiHChzFlefzc4FislKgNtLUG
+         PBxtRBskl2rmKCsr+lu045yG3Z+sGFFrlfyO2756heiUENiJlRXBdpkoTyblMKIgq/Kq
+         0ZlAZkS/8X38KgxyGVrblS8l3RnSOonruFe1KPgBdW1gEJOrtV/9gYVQ444SusYJRgRS
+         D0qyvBjyStT2pg/BAKFwfHq0iT1pzwr+ZSN6mhpW9JO93O/imY6zehkzVrI7qcq4coUj
+         kqAMEGbNQFnGKiM9gHgI/FzA4JVc+6XoooSiaw4nCGk/EtrLLKE2q6dv5dgDKVZjRHrW
+         c69w==
+X-Forwarded-Encrypted: i=1; AJvYcCVLNH+bSLoFLOjWXLmYC5y5XxN3xPdq3tTxueE1XgHc8uNde5V26sgBoLFBN3+00YgzvmBzFxDBkfrQg48KFM/hi8O5VhitQuL0Kr2k
+X-Gm-Message-State: AOJu0YwvmInk5ibjW8OPVXT7mzzGphaKTd35vt+3wxK5juzNWUgY3PWc
+	dZ6Cn1k5zpNIpJVY+XyqHjhQoei8/5H9lZRNP3nvkBNs+UzvrV6C8Dd5wHyLCsnzJmp3H+pMA3i
+	xp7UvWggV4+sXNvdAwpFfiUdGjGz+r59vc28k7qOrxbtBZBC5JHyDouXrMEyenPqf/pPcl7SWbL
+	5TRx+qNHYVHVkJla2+imddyoKbiQf3KaOub2xI
+X-Received: by 2002:a05:600c:4744:b0:420:2983:2229 with SMTP id 5b1f17b1804b1-4212e07530emr82210715e9.22.1717433081463;
+        Mon, 03 Jun 2024 09:44:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFMCnI5M+sIjdtgeYl/SuU7qEpdctfImP4SJ6aepSaIJ9r0QcVVw+D6lCCYSXtw8KRc+Y06WU8alk5VEuqo8TA=
+X-Received: by 2002:a05:600c:4744:b0:420:2983:2229 with SMTP id
+ 5b1f17b1804b1-4212e07530emr82210525e9.22.1717433081090; Mon, 03 Jun 2024
+ 09:44:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240510211024.556136-1-michael.roth@amd.com> <6nby33glecw46wrdws7vuokrqz4b72evrzdujcrsm6pujo62b6@xoxstkzsvwrj>
+In-Reply-To: <6nby33glecw46wrdws7vuokrqz4b72evrzdujcrsm6pujo62b6@xoxstkzsvwrj>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Date: Mon, 3 Jun 2024 18:44:29 +0200
+Message-ID: <CABgObfbT_v23LbP7Mp-PfbnakHYrZ7+g3KfUA_BOnsp+7ivMYQ@mail.gmail.com>
+Subject: Re: [PULL 00/19] KVM: Add AMD Secure Nested Paging (SEV-SNP)
+ Hypervisor Support
+To: Michael Roth <michael.roth@amd.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Sean Christopherson <seanjc@google.com>, linux-coco@lists.linux.dev, jroedel@suse.de, 
+	thomas.lendacky@amd.com, vkuznets@redhat.com, pgonda@google.com, 
+	rientjes@google.com, tobin@ibm.com, bp@alien8.de, vbabka@suse.cz, 
+	alpergun@google.com, ashish.kalra@amd.com, nikunj.dadhania@amd.com, 
+	pankaj.gupta@amd.com, liam.merwick@oracle.com, papaluri@amd.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-MHI endpoint stack accidentally started allocating memory for objects from
-DMA zone since commit 62210a26cd4f ("bus: mhi: ep: Use slab allocator
-where applicable"). But there is no real need to allocate memory from this
-naturally limited DMA zone. This also causes the MHI endpoint stack to run
-out of memory while doing high bandwidth transfers.
+On Fri, May 31, 2024 at 5:23=E2=80=AFAM Michael Roth <michael.roth@amd.com>=
+ wrote:
+> As discussed during the PUCK call, here is a branch with fixup patches
+> that incorporate the additional review/testing that came in after these
+> patches were merged into kvm/next:
+>
+>   https://github.com/mdroth/linux/commits/kvm-next-snp-fixes4/
+>
+> They are intended to be squashed in but can also be applied on top if
+> that's preferable (but in that case the first 2 patches need to be
+> squashed together to maintain build bisectability):
 
-So let's switch over to normal memory.
+Yes, I'd rather not rebase kvm/next again so I applied them on top.
+None of the issues are so egregiously bad.
 
-Cc: stable@vger.kernel.org # 6.8
-Fixes: 62210a26cd4f ("bus: mhi: ep: Use slab allocator where applicable")
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- drivers/bus/mhi/ep/main.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/bus/mhi/ep/main.c b/drivers/bus/mhi/ep/main.c
-index f8f674adf1d4..4acfac73ca9a 100644
---- a/drivers/bus/mhi/ep/main.c
-+++ b/drivers/bus/mhi/ep/main.c
-@@ -90,7 +90,7 @@ static int mhi_ep_send_completion_event(struct mhi_ep_cntrl *mhi_cntrl, struct m
- 	struct mhi_ring_element *event;
- 	int ret;
- 
--	event = kmem_cache_zalloc(mhi_cntrl->ev_ring_el_cache, GFP_KERNEL | GFP_DMA);
-+	event = kmem_cache_zalloc(mhi_cntrl->ev_ring_el_cache, GFP_KERNEL);
- 	if (!event)
- 		return -ENOMEM;
- 
-@@ -109,7 +109,7 @@ int mhi_ep_send_state_change_event(struct mhi_ep_cntrl *mhi_cntrl, enum mhi_stat
- 	struct mhi_ring_element *event;
- 	int ret;
- 
--	event = kmem_cache_zalloc(mhi_cntrl->ev_ring_el_cache, GFP_KERNEL | GFP_DMA);
-+	event = kmem_cache_zalloc(mhi_cntrl->ev_ring_el_cache, GFP_KERNEL);
- 	if (!event)
- 		return -ENOMEM;
- 
-@@ -127,7 +127,7 @@ int mhi_ep_send_ee_event(struct mhi_ep_cntrl *mhi_cntrl, enum mhi_ee_type exec_e
- 	struct mhi_ring_element *event;
- 	int ret;
- 
--	event = kmem_cache_zalloc(mhi_cntrl->ev_ring_el_cache, GFP_KERNEL | GFP_DMA);
-+	event = kmem_cache_zalloc(mhi_cntrl->ev_ring_el_cache, GFP_KERNEL);
- 	if (!event)
- 		return -ENOMEM;
- 
-@@ -146,7 +146,7 @@ static int mhi_ep_send_cmd_comp_event(struct mhi_ep_cntrl *mhi_cntrl, enum mhi_e
- 	struct mhi_ring_element *event;
- 	int ret;
- 
--	event = kmem_cache_zalloc(mhi_cntrl->ev_ring_el_cache, GFP_KERNEL | GFP_DMA);
-+	event = kmem_cache_zalloc(mhi_cntrl->ev_ring_el_cache, GFP_KERNEL);
- 	if (!event)
- 		return -ENOMEM;
- 
-@@ -438,7 +438,7 @@ static int mhi_ep_read_channel(struct mhi_ep_cntrl *mhi_cntrl,
- 		read_offset = mhi_chan->tre_size - mhi_chan->tre_bytes_left;
- 		write_offset = len - buf_left;
- 
--		buf_addr = kmem_cache_zalloc(mhi_cntrl->tre_buf_cache, GFP_KERNEL | GFP_DMA);
-+		buf_addr = kmem_cache_zalloc(mhi_cntrl->tre_buf_cache, GFP_KERNEL);
- 		if (!buf_addr)
- 			return -ENOMEM;
- 
-@@ -1481,14 +1481,14 @@ int mhi_ep_register_controller(struct mhi_ep_cntrl *mhi_cntrl,
- 
- 	mhi_cntrl->ev_ring_el_cache = kmem_cache_create("mhi_ep_event_ring_el",
- 							sizeof(struct mhi_ring_element), 0,
--							SLAB_CACHE_DMA, NULL);
-+							0, NULL);
- 	if (!mhi_cntrl->ev_ring_el_cache) {
- 		ret = -ENOMEM;
- 		goto err_free_cmd;
- 	}
- 
- 	mhi_cntrl->tre_buf_cache = kmem_cache_create("mhi_ep_tre_buf", MHI_EP_DEFAULT_MTU, 0,
--						      SLAB_CACHE_DMA, NULL);
-+						      0, NULL);
- 	if (!mhi_cntrl->tre_buf_cache) {
- 		ret = -ENOMEM;
- 		goto err_destroy_ev_ring_el_cache;
--- 
-2.25.1
+Paolo
 
 
