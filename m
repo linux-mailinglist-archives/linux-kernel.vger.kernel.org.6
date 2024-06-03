@@ -1,102 +1,90 @@
-Return-Path: <linux-kernel+bounces-199478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1260A8D8794
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:03:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 615508D8796
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:04:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4342C1C20E1A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:03:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A8321C21FA3
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:04:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A2F01369B8;
-	Mon,  3 Jun 2024 17:03:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="kWjEhXWY"
-Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6C72136E0F;
+	Mon,  3 Jun 2024 17:04:01 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3318F1304B1;
-	Mon,  3 Jun 2024 17:03:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46170132134;
+	Mon,  3 Jun 2024 17:04:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717434202; cv=none; b=eoSXqPNudZxzrAudHGiABZ8LToddifRjzIJ7nxYpFQTPJ+8ivDkq5H7/z/F9gUYo++LbzZcHi4E564G7v+E+1lTU7D3ZK7upNtV8tYERA3Mwv3xiMxQP0sNlBUK2VqINBtAU29Qfp/tFb3/QgdubPW8mOsXYlv3ZN9Wl31b2VYw=
+	t=1717434241; cv=none; b=hbh1K8s6KavBiswKfzXKRs/lMuINH4qLL8ZwIWgSMUnk7CB3cCamIdP8MsbxQVL4o6g0GXHK5NnhEShtz50TNvNeImNMD9n/a5/IHQWhaWENg7ibA3M38vyQkeeKJVYEVl5ldYPc6LPGv3PaO+z3GMJ16a7CfXk6Pcm3FMC/LU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717434202; c=relaxed/simple;
-	bh=NdEWlc5LadRjjSgK7Y5Tx6FHrF4eTCDLDBNTBsZ5ACg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OWFBRDjQ7gtqJOFG81E57UseBk3/V8aolijPh6GLPeXGrqOe9pmrXLUFQtNdHF+S70gfbK69l85EWvgK9FdwZ3Jr81leIOjcANAuYv5IGB3By+DeNflQuiXu4FjgROW4FR5CsKklMu6DG9egccyEZq2E8Wqnh30HSUb3YScPum4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=kWjEhXWY; arc=none smtp.client-ip=199.89.1.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 009.lax.mailroute.net (Postfix) with ESMTP id 4VtKmm4zlnzlgMVc;
-	Mon,  3 Jun 2024 17:03:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1717434198; x=1720026199; bh=szTW+lKyFEYkP8WzkuWnoEbk
-	PGfA8Q5XnLEea5tZdt0=; b=kWjEhXWYSSJk090al3eaFSa9Ewr5sX87IluLwzcu
-	+6SD7gWwDI+CQRO+4Hm1Xpd071Thd1hx4JHzeo/OWtxxXkXNvlZKeaprFqc8JzAV
-	OZs/Z7ktWBCJXoaU7bjNYji7WM/nKQoSk93zllHcG9ffnxniyFUqqTpt0bMUE6Qp
-	h312oUdCec4QSLft4ZzYs+zHIIE+BSGL4P9vlmi8C9Ws61YKfnsHByhJOHcZ729v
-	X4kC/5PCWcOr2HR1rR9ZrhPfovCwoj8l9IvaMFd9gaGkd8l/Tjd9BnZH5et5bG+p
-	ORk1PQOs/XimhqCv/rL3pN9MVAzao5H9+IDH8V6gblT6sQ==
-X-Virus-Scanned: by MailRoute
-Received: from 009.lax.mailroute.net ([127.0.0.1])
- by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id Gq-q_G1KSLzU; Mon,  3 Jun 2024 17:03:18 +0000 (UTC)
-Received: from [192.168.50.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4VtKmj2lnrzlgMVV;
-	Mon,  3 Jun 2024 17:03:17 +0000 (UTC)
-Message-ID: <66a8c62b-9202-4de8-8789-1f724a5ce5f8@acm.org>
-Date: Mon, 3 Jun 2024 10:03:14 -0700
+	s=arc-20240116; t=1717434241; c=relaxed/simple;
+	bh=G26QvN9xTTTYABXqFBCt3dCEqPCMNmgVPrxa6IIQpDE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=E26njBLYYq6NuGzDE2ymP1a0FyyQgcY6s9Q7SKXi83L9c00HPTqnYsTQVnP9m4SzA7Eenglr0GMBbwBqyOBrc33bxfamZIB23taFv6JEppqGGb9cafrm0R4qwIjjr6wcbrZLaiALI6Go4a66fUB+S0+ymczcXb4aJHrdQhQ8noE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6ADEC2BD10;
+	Mon,  3 Jun 2024 17:03:57 +0000 (UTC)
+Date: Mon, 3 Jun 2024 13:05:04 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Mark
+ Rutland <mark.rutland@arm.com>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Alexei Starovoitov
+ <alexei.starovoitov@gmail.com>, Florent Revest <revest@chromium.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>, bpf <bpf@vger.kernel.org>, Sven
+ Schnelle <svens@linux.ibm.com>, Alexei Starovoitov <ast@kernel.org>, Jiri
+ Olsa <jolsa@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, Daniel
+ Borkmann <daniel@iogearbox.net>, Alan Maguire <alan.maguire@oracle.com>,
+ Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner
+ <tglx@linutronix.de>, Guo Ren <guoren@kernel.org>
+Subject: Re: [PATCH v2 10/27] ftrace: Add subops logic to allow one ops to
+ manage many
+Message-ID: <20240603130504.7c572649@gandalf.local.home>
+In-Reply-To: <20240603114636.63b5abe2189cb732bec2474c@kernel.org>
+References: <20240602033744.563858532@goodmis.org>
+	<20240602033832.709653366@goodmis.org>
+	<20240603103316.3af9dea3214a5d2bde721cd8@kernel.org>
+	<20240602220613.3f9eac04@gandalf.local.home>
+	<20240603114636.63b5abe2189cb732bec2474c@kernel.org>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] null_blk: fix validation of block size
-To: Damien Le Moal <dlemoal@kernel.org>, John Garry
- <john.g.garry@oracle.com>, Andreas Hindborg <nmi@metaspace.dk>,
- Jens Axboe <axboe@kernel.dk>
-Cc: Andreas Hindborg <a.hindborg@samsung.com>, Keith Busch
- <kbusch@kernel.org>, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240601202351.691952-1-nmi@metaspace.dk>
- <d6999fef-aadf-494e-ad58-f27dfd975535@oracle.com>
- <9d68c7c1-b1e6-4f42-8d4b-8c986ab688b5@kernel.org>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <9d68c7c1-b1e6-4f42-8d4b-8c986ab688b5@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 6/2/24 16:59, Damien Le Moal wrote:
-> On 6/2/24 19:57, John Garry wrote:
->> On 01/06/2024 21:23, Andreas Hindborg wrote:
->>> From: Andreas Hindborg <a.hindborg@samsung.com>
->>>
->>> Block size should be between 512
->>> and 4096
->>
->> Or PAGE_SIZE?
+On Mon, 3 Jun 2024 11:46:36 +0900
+Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
+
+> > > at the beginning of the loop.
+> > > Also, at the end of the loop,
+> > > 
+> > > if (ftrace_hash_empty(new_hash)) {
+> > > 	free_ftrace_hash(new_hash);
+> > > 	new_hash = EMPTY_HASH;
+> > > 	break;
+> > > }  
 > 
-> PAGE_SIZE can be larger than 4096. But most drives are 512 or 4096 LBA-sized.
+> And we still need this (I think this should be done in intersect_hash(), we just
+> need to count the number of entries.) 
 
-null_blk is not a physical device. Hence, why not to use 
-blk_validate_block_size() here?
+Ah, I see. if it ends with nothing intersecting it should be empty. I added:
 
-Thanks,
+	/* If nothing intersects, make it the empty set */
+	if (ftrace_hash_empty(*hash)) {
+		free_ftrace_hash(*hash);
+		*hash = EMPTY_HASH;
+	}
 
-Bart.
+to the end of intersect_hash().
 
+-- Steve
 
