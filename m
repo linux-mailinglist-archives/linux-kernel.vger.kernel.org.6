@@ -1,105 +1,134 @@
-Return-Path: <linux-kernel+bounces-199070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89CC28D81AB
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:54:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C4D28D81B6
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:56:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45358284CFE
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:54:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8F301C226CA
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:56:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3871D8626D;
-	Mon,  3 Jun 2024 11:54:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5429D126F0A;
+	Mon,  3 Jun 2024 11:56:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lw0TtGBh"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RIApz2ST"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73A968595B;
-	Mon,  3 Jun 2024 11:54:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E2C886AE9;
+	Mon,  3 Jun 2024 11:56:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717415652; cv=none; b=Kl7Qyn5AX8YfeH8xBhhouVr0RZ/dCBhcVALKv3sovcUt94TFSOkkQtO4oTV7LHM4qCPAilkv4aJpxWHmYzA/l9ulUYGOC41t1UKKU7XL0ujNsnkXQ3FjUDwNS6uS1//HFabqSBw7p4WCCHmFpOlwFiDjIrhKPfrb8lv4DHf/TxY=
+	t=1717415806; cv=none; b=A6cfqExfiKU3tRC4WVeceLV11A6edBdfjiCnRWiU0PzKEeHLeIPypCOkdeYcVtOEgxQBuiY8+bLnaxD4e6Umq5QDWOnPqQ4gq2Qz+28k4blUrQRrqv9gloOjU7SMngQ6bCZ15a8dwjguynPG1shH/bcxEonaVie21qDC3IDs1sk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717415652; c=relaxed/simple;
-	bh=GPMUJJ53l+0ecXS1pAoUJQYrHF+UZHS+9Mt++PXszzU=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=s04M1AUnkBiAJyDhMwQ8TAYVxc2f1bRm7Ss//LTss3YA365RoeqQiLtmLtu5FUIC+g32rC9yVkjcml2GnDO4WkxPPzg3ASBg8Zn9s8QkNLJbr1c0Ic2rsvrswwSutrUVVdI4aRkfHNS9+JdWcp0Rmbd6ysT0/2xT7xx834RDiE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lw0TtGBh; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717415651; x=1748951651;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=GPMUJJ53l+0ecXS1pAoUJQYrHF+UZHS+9Mt++PXszzU=;
-  b=lw0TtGBh+DQXKWh1iIb8hLe1oY/jwgiSCBSdtzV7OnmkHauzTkfDHQvW
-   WuVNnZkLb2LudwyRzIooHNcODTnpZS7YHnZQwkmDhmIZcrRVY4iocy8a/
-   LaEHpqAU0loYeOiJkSXrF5VbkHte99yfms+aThhDCnf0AnQGDRLdfm8n3
-   4JdfDa1Gd5Z1kxUuJFF6iv+iKM1fO9KXYj9KvHag3yEHutIWiQLziiI5d
-   NpfRXt6SjpcATUJrCPZyKJ0nu1TX888C0lMliYlwJ/JhwCO6capW4CBeD
-   1LxupYrzeUlD+cyNE4rwA1DQ4MhiT9gzM5AfqRF7t0Pp938kes2MC5rmm
-   Q==;
-X-CSE-ConnectionGUID: Rr2AK2xvQiCcl4NkXv3hxQ==
-X-CSE-MsgGUID: fzzvlTjCRMySF9qe+lMITg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11091"; a="13650913"
-X-IronPort-AV: E=Sophos;i="6.08,211,1712646000"; 
-   d="scan'208";a="13650913"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2024 04:54:10 -0700
-X-CSE-ConnectionGUID: eHH8JyTaRQ2o1D3/0McGlQ==
-X-CSE-MsgGUID: UO/ceDCRQKu7ajfICb02Yw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,211,1712646000"; 
-   d="scan'208";a="36753925"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.161])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2024 04:54:06 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 3 Jun 2024 14:54:01 +0300 (EEST)
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-cc: Hans de Goede <hdegoede@redhat.com>, Jorge Lopez <jorge.lopez2@hp.com>, 
-    Li Zetao <lizetao1@huawei.com>, 
-    Simon Trimmer <simont@opensource.cirrus.com>, 
-    Mark Pearson <mpearson-lenovo@squebb.ca>, 
-    platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
-    ibm-acpi-devel@lists.sourceforge.net, linux-input@vger.kernel.org, 
-    Corentin Chary <corentin.chary@gmail.com>, 
-    "Luke D. Jones" <luke@ljones.dev>, Mark Pearson <markpearson@lenovo.com>, 
-    Henrique de Moraes Holschuh <hmh@hmh.eng.br>
-Subject: Re: [PATCH v1 0/7] platform/x86: Move to 2-argument strscpy()
-In-Reply-To: <20240602090244.1666360-1-andy.shevchenko@gmail.com>
-Message-ID: <35a722b6-995b-25d9-189c-5283a52a379f@linux.intel.com>
-References: <20240602090244.1666360-1-andy.shevchenko@gmail.com>
+	s=arc-20240116; t=1717415806; c=relaxed/simple;
+	bh=QKTql34O8lDaqYmigvPLMWgqpx5wUV6YZyBk/TNIcmg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=C+sPyG2rREkeJOOavSBhRuOe11LdFK8VqGqo75iyPa78Y+FVAPW66L7a5IXtuDpraGiXwNgUErURXJFcD7b53MIas0gD+uSA1KALMIjl+uiBqyPECi61XaPU3WtWzzqYPnqmJdethuvdh+rXhl4YWnNpnL6mfBtk+GdeDkxys84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RIApz2ST; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a63359aaaa6so558099566b.2;
+        Mon, 03 Jun 2024 04:56:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717415803; x=1718020603; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HArPik3I7izu+6WonMf03QX2STUValM6DQn6IUu4hhc=;
+        b=RIApz2STa+9paTWsNVbMjOckujyMuiSRv1NC34V4NYDUJ5JxjP3VhRzLdUbBkF6pTm
+         lIxiQCa7cUUv5rhynexUCtWkiZVdAQ+95dnQABiJNNApP0X4iJ8XCX3lL5hh+pAJkr8R
+         NhwBV7g70ETcj81MQdO/HrkVWyi183Pg+QlJqEF5kZC3Vp0WMGrVqPaQ3axftcx0kpGB
+         LiMkaCNyyEN84T9f/FNqTC4WwWMBaZOKzJGCTlJo+OnD/Sk2NNQpMtdEt4kGYKy1V2j5
+         7cSMfpgKxiI22m7D2knsjnCIsH3rMuIp/SaK6FxPvoSHIWY/uB/HYS6QQKxoj8P+RsGI
+         GlzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717415803; x=1718020603;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HArPik3I7izu+6WonMf03QX2STUValM6DQn6IUu4hhc=;
+        b=IxQB3SEenqQamvJSWywRBnKf2ZljA/BEhg9drqwlkQHeFUEQHqhklfX5bczzUG2BVA
+         qx/wBYEt8WAxAqXR3cpptfksLHUpkGj60WxZ8A/eGI75tHBAFTXMIK8dAHlmNwD460EU
+         GzN4sAs705mFQmLT/9m+cTmdJNxhVXJ1TQDNdOfha+gzULFTvWB+i+vfiiBwy+j8VLR0
+         KTzgqeGX0ZXA9qXP13axoj9maj3LuIlfp/molMgUcgDUdObjMrfOjNfO51g+DtjjW2Rc
+         lIx/WV3+wAGw6g7oi/SNxdaIuEqqEJQ0FRwO5H4P6IylQpP2wTCAa8luQSmQ3jMIlf+K
+         IMBg==
+X-Forwarded-Encrypted: i=1; AJvYcCW0yODtfH6MjySmVL8ioRAIYtvTXNNeGOhj/QYP7EciLFPFQqG6i8Xn/Vl0ow7BpJ8tPkG18LTvW6xFmw19ge2BfeliqH8VNRy+IoVUfexNyaZRisBfdHA/i9UAHD/xAS0QWzbmInxzJI9uFZDk
+X-Gm-Message-State: AOJu0YxdXMQVb+cMsmlxR2ZT+zTvv0S439Yn4hCzpZUo7QqcBNnKW18J
+	I5jnBvVkS0uKMxClyUj/lYvVVxpP3099/me+5nGqtn65kueaa7Nb
+X-Google-Smtp-Source: AGHT+IFk7AEDri/ImBDfMcpzA1gWV5IU3IKVTQAHuPklUwTdt3eUF3d+bPT7BRbEYly1JFmJtscrPA==
+X-Received: by 2002:a17:906:1dcc:b0:a55:b272:ea02 with SMTP id a640c23a62f3a-a682244a89amr660656166b.75.1717415803420;
+        Mon, 03 Jun 2024 04:56:43 -0700 (PDT)
+Received: from xps-15.. ([91.90.123.30])
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a68f39b9294sm229634166b.180.2024.06.03.04.56.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Jun 2024 04:56:42 -0700 (PDT)
+From: Amer Al Shanawany <amer.shanawany@gmail.com>
+To: Kees Cook <kees@kernel.org>,
+	Andy Lutomirski <luto@amacapital.net>,
+	Will Drewry <wad@chromium.org>,
+	Shuah Khan <shuah@kernel.org>,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Amer Al Shanawany <amer.shanawany@gmail.com>,
+	kernel test robot <lkp@intel.com>
+Subject: [PATCH] selftests: seccomp: fix format-zero-length warnings
+Date: Mon,  3 Jun 2024 13:54:47 +0200
+Message-ID: <20240603115447.30279-1-amer.shanawany@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 
-On Sun, 2 Jun 2024, Andy Shevchenko wrote:
+seccomp_benchmark.c:197:24: warning: zero-length gnu_printf format
+ string [-Wformat-zero-length]
+  197 |         ksft_print_msg("");
+      |                        ^~
+seccomp_benchmark.c:202:24: warning: zero-length gnu_printf format
+ string [-Wformat-zero-length]
+  202 |         ksft_print_msg("");
+      |                        ^~
+seccomp_benchmark.c:204:24: warning: zero-length gnu_printf format
+ string [-Wformat-zero-length]
+  204 |         ksft_print_msg("");
+      |                        ^~
 
-> Move to 2-argument strscpy() to make code shorter and have an additional check.
-> No functional change intended.
-> 
-> Some cases are let untouched where it looks better with the 3rd argument.
-> 
-> Andy Shevchenko (7):
->   platform/x86: asus-tf103c-dock: Use 2-argument strscpy()
->   platform/x86: hp: hp-bioscfg: Use 2-argument strscpy()
->   platform/x86: intel: chtwc_int33fe: Use 2-argument strscpy()
->   platform/x86: serial-multi-instantiate: Use 2-argument strscpy()
->   platform/x86: think-lmi: Use 2-argument strscpy()
->   platform/x86: thinkpad_acpi: Use 2-argument strscpy()
->   platform/x86: touchscreen_dmi: Use 2-argument strscpy()
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202312260235.Uj5ug8K9-lkp@intel.com/
+Signed-off-by: Amer Al Shanawany <amer.shanawany@gmail.com>
+---
+ tools/testing/selftests/seccomp/seccomp_benchmark.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Patches 1-6 applied to review-ilpo branch.
-
+diff --git a/tools/testing/selftests/seccomp/seccomp_benchmark.c b/tools/testing/selftests/seccomp/seccomp_benchmark.c
+index b83099160fbc..ed04b89de9c6 100644
+--- a/tools/testing/selftests/seccomp/seccomp_benchmark.c
++++ b/tools/testing/selftests/seccomp/seccomp_benchmark.c
+@@ -194,14 +194,14 @@ int main(int argc, char *argv[])
+ 	ksft_set_plan(7);
+ 
+ 	ksft_print_msg("Running on:\n");
+-	ksft_print_msg("");
++	ksft_print_msg(" ");
+ 	system("uname -a");
+ 
+ 	ksft_print_msg("Current BPF sysctl settings:\n");
+ 	/* Avoid using "sysctl" which may not be installed. */
+-	ksft_print_msg("");
++	ksft_print_msg(" ");
+ 	system("grep -H . /proc/sys/net/core/bpf_jit_enable");
+-	ksft_print_msg("");
++	ksft_print_msg(" ");
+ 	system("grep -H . /proc/sys/net/core/bpf_jit_harden");
+ 
+ 	affinity();
 -- 
- i.
+2.43.0
 
 
