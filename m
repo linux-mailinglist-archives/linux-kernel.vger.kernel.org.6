@@ -1,203 +1,239 @@
-Return-Path: <linux-kernel+bounces-199399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 565C08D86CC
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:59:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02A498D86D1
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 18:00:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9CF53B21FD9
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:59:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 259CF1C21694
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:00:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F068A13666E;
-	Mon,  3 Jun 2024 15:59:23 +0000 (UTC)
-Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5DD7134409;
+	Mon,  3 Jun 2024 16:00:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="0KWIQ6u7"
+Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7AC5132124
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 15:59:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EE03B65C
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 16:00:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717430363; cv=none; b=HM6byKmN5rK2N9aBfWJVcBS285RgbUSuIVJRjtHO70BZaPq5PTB+EPLKWnf7qGK8W5XyYyuLSOjHWWp8ygFIi6W6SWXn1EpAgGZAYUIV8hjmHueOHtac84GBvT3g7RsP4XmeaRFiDCqYMPK88UJUHw09alpeJTEo7D036rncKlg=
+	t=1717430418; cv=none; b=bU36hNX8VnZsf/HHWYLvZrmsi9gTsYnkG7JRlnzuN0LlJ2j7MIV/yhnf4tJww9Cjyimfs4pKQ/+B7WuRrtAanx0/Fla37SGEqdsb2eonNLjslLxeGqd1tOxFbnHNKZYlDjPw3OA/C2IuV1VHDmNcREGXQNus+edtu8eextkYGX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717430363; c=relaxed/simple;
-	bh=ZS8XNDDIwqbPQNlOt0M8zUcP5ClXieEXFN6pdZB3NGE=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=HrRcw+GlZMgnEmhw11t/xs9Jb3kJdUVQGnqZDlTud5TC6PP4dGilBK+tVslU6mwp23YLsTCDTUJMNBqLAVYBJFoFLFShD0opU4mMwl+zEroDU1ehgzcVM0DAs/aLjEguVY5CXEaG7w/DVwwTPlr6SFkTFfTr7rPB4iZBTz+YseQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-7e8e5d55441so589108339f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 08:59:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717430361; x=1718035161;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+	s=arc-20240116; t=1717430418; c=relaxed/simple;
+	bh=ZVmmqm2gePgCHbgRtZjzvJC1acAthJMX0qTqhdOD0n0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kfrxEBvr7nTmNlT4TZNq4SsH3Bq9wBqmHdmOkV4mFed6XeiY4BQzgaFG+tepfqFQ41R8viIGU1GHDV4snxS3z/8sxVzVv7chca/bs1GQcWvJQqC45jEQvQOgYEr2rV63tYmbZ1AhhIPFKBP0iTFLEO1orpqKRm9/BuavGZ4Y4b4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=0KWIQ6u7; arc=none smtp.client-ip=209.85.210.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-6f12ed79fdfso2653696a34.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 09:00:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1717430414; x=1718035214; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=rOknuMVBkACSavYBD9q8M++Rf/C5mn6knDTAqar4USA=;
-        b=NKXeTfoBR3W/0w+lY5ua6hTu4O8cUUVoRauCM7AMi1YvJNWzQUOOoSMw4vvMbzVE3p
-         B5YGq4CNHyK3srrXtONjVc1REKmeBOOwkMJWHtPP692+2lE58AZqdR67t6IOsdDDaDEZ
-         jtJDExIf96q6Ox/BiV8b/iX51/zTKKJhVgFLaxJQTdAZBzayNW5XxnJupfkRuPaIReZg
-         7uNQkeFt2MkJxmtGMoUot+0gt8xQdS+n8HJs6GmkxgNasnZYzdXrfgofBYOpcOF0ALSv
-         F1x4ZQ81cADq260y0555Be8cknzvDg1ekz4Zszqx54kCLV5pt+h+L5AqU5dn8kqP67N3
-         yM4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXGJTd7E79cKqW6zuBusELJF8Vd72FW2CU+DA0EHjxMv7H9Rmt2I3uTT14h0Sfi03/NLqvdk37C1YOHsdoKold/puuTYxsM3pR03Qot
-X-Gm-Message-State: AOJu0YxKCgilPliKBevOjDcTTMKkDnBye3AAteAg9LmqQzVolDMRETgz
-	cW9+H/uHiVaQIKaXBD6IoYNZnkmcHjz2S0thzROEliUy3dh8fAJ/A0rBoP5N0R4dtBDORSFXr0d
-	WoR8yrEKXPWDi4tVMI4VgxnfxywHUhaeqLjHUdu4upTvnlG60ZfESTFE=
-X-Google-Smtp-Source: AGHT+IGrseyfw7x6vaspKxO0tzZ7g3R4HV8zpSbRtzpepiBtuepTOnVDnPO6UtAowck+qrCh1gb8dkwnx2txh8QCaWrp+RXw6d60
+        bh=GfeQA5RNRJgv87my+Y8NPK/KqfRgxtKa/KFauEIvYss=;
+        b=0KWIQ6u72VDXxwMo44SWqciC/xDHgGgxAPPTWLldVVEvWR/TMxyhUKdpcqBQ7G/xAC
+         +9ukKNBj84OSx2QuegHZiPZm4EL4pywOKUtqNh+cXWLtRh9was3heZpeXIrClHA3VAsj
+         /ohH4a8XGYpRieC03ciZCnyIXLzsY1dC++/USuNkhoP1uSL+3Z/HiN+ac7vzxDVrKITb
+         fe0+NiHlJ1SU5/JX49J3p5SEDm1HtoRLgaIY+jRFG9REIVP/SBfB7TLdivSkdNLeLQWG
+         erJt/krQkDWUGqP3yeKrr7iJacThzpDyb4WrgTnr9Ut9EkzgeIXJYltC3wAo794aH5vN
+         cMeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717430414; x=1718035214;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GfeQA5RNRJgv87my+Y8NPK/KqfRgxtKa/KFauEIvYss=;
+        b=khhvzCMVVMfmGIpomm8R/cazgYXGar6RAz7ivwGxguRnCXIuivcjhfwG4SoHIHGD1E
+         9v+WNSYOyrr1orGTjqYHnUPyXQ5OIOWKClOWEajt1DrmCYCY3fwgoM5NI8gvxjwcij2i
+         M99mI6i+S+xt/rHJC7+I+PS6fsHvNw2Nigv4gUkiT4DzVqk5pu6SjcyXgOVw7/duZf0X
+         fNi3TX/Rm5ol5XoyAy2GBsNc2n15PbFfT3GvdqTBz2wmkFoiW3kUILX6scXzaPldqh/g
+         h+gFhLWPXWXM0mKq8D91bfxgVoWt4dohmTG2vD2Qtpkbo6Srx91I/9eRRYtIw65wTHWS
+         AdWA==
+X-Forwarded-Encrypted: i=1; AJvYcCUGFbalx67ZdSmoQHJ88DuHwU126CbvzlNXcBFG7dwrWZscsMyIUaHllx1PZ+WNBbqKs7H3nkrVXdjdqY+klwPubGQL4yrnA4KFLSI9
+X-Gm-Message-State: AOJu0YynJQDdQ05Bokrnfr665kQevVSaSozYltPwXR/ftTTPl+toFIIR
+	l2lO/aUjbhJYNDJImOGRmWmeu20vkxLX93/Y3Vh94wajfmUJNYvY+JpgUl+3Y+4=
+X-Google-Smtp-Source: AGHT+IGTlHNJVslE6UXb6KM6zbiO1iPpViMFSEIvv4eTobL0M2MR8UH3PgujM5HpvfFAmIPaSVMo3w==
+X-Received: by 2002:a05:6830:1b78:b0:6f1:2215:e1e3 with SMTP id 46e09a7af769-6f911f1fe3emr9493205a34.6.1717430414142;
+        Mon, 03 Jun 2024 09:00:14 -0700 (PDT)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-6f91059ce02sm1491108a34.54.2024.06.03.09.00.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Jun 2024 09:00:13 -0700 (PDT)
+Message-ID: <2df46968-ff5f-43bc-98fd-506840c1aaa9@baylibre.com>
+Date: Mon, 3 Jun 2024 11:00:12 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:6d0b:b0:7de:d6a0:d9c4 with SMTP id
- ca18e2360f4ac-7eafff3deecmr69850139f.2.1717430360954; Mon, 03 Jun 2024
- 08:59:20 -0700 (PDT)
-Date: Mon, 03 Jun 2024 08:59:20 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000009767ec0619fe6a1d@google.com>
-Subject: [syzbot] [net?] UBSAN: array-index-out-of-bounds in
- llc_conn_state_process (2)
-From: syzbot <syzbot+628f93722c08dc5aabe0@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 3/6] iio: adc: ad7173: refactor ain and vref selection
+To: "Ceclan, Dumitru" <mitrutzceclan@gmail.com>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>,
+ Jonathan Cameron <jic23@kernel.org>,
+ Dumitru Ceclan via B4 Relay <devnull+dumitru.ceclan.analog.com@kernel.org>
+Cc: dumitru.ceclan@analog.com, Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240531-ad4111-v4-0-64607301c057@analog.com>
+ <20240531-ad4111-v4-3-64607301c057@analog.com>
+ <20240601194925.23123071@jic23-huawei>
+ <e9ade241e57383d5342d377bc865046e612a7033.camel@gmail.com>
+ <d2370ad2-5fed-41b3-bdd5-c6c895283c18@gmail.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <d2370ad2-5fed-41b3-bdd5-c6c895283c18@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hello,
+On 6/3/24 8:08 AM, Ceclan, Dumitru wrote:
+> On 03/06/2024 16:00, Nuno Sá wrote:
+>> On Sat, 2024-06-01 at 19:49 +0100, Jonathan Cameron wrote:
+>>> On Fri, 31 May 2024 22:42:29 +0300
+>>> Dumitru Ceclan via B4 Relay <devnull+dumitru.ceclan.analog.com@kernel.org> wrote:
+>>>
+>>>> From: Dumitru Ceclan <dumitru.ceclan@analog.com>
+>>>>
+>>>> Move validation of analog inputs and reference voltage selection to
+>>>> separate functions to reduce the size of the channel config parsing
+>>>> function and improve readability.
+>>>> Add defines for the number of analog inputs in a channel.
+>>>>
+>>>> Reviewed-by: David Lechner <dlechner@baylibre.com>
+>>>> Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
+>>>> ---
+>>>>  drivers/iio/adc/ad7173.c | 71 ++++++++++++++++++++++++++++++++++--------------
+>>>>  1 file changed, 50 insertions(+), 21 deletions(-)
+>>>>
+>>>> diff --git a/drivers/iio/adc/ad7173.c b/drivers/iio/adc/ad7173.c
+>>>> index 6e249628bc64..a20831d99aa5 100644
+>>>> --- a/drivers/iio/adc/ad7173.c
+>>>> +++ b/drivers/iio/adc/ad7173.c
+>>>> @@ -60,6 +60,7 @@
+>>>>  #define AD7173_CH_SETUP_AINPOS_MASK	GENMASK(9, 5)
+>>>>  #define AD7173_CH_SETUP_AINNEG_MASK	GENMASK(4, 0)
+>>>>  
+>>>> +#define AD7173_NO_AINS_PER_CHANNEL	2
+>>>>  #define AD7173_CH_ADDRESS(pos, neg) \
+>>>>  	(FIELD_PREP(AD7173_CH_SETUP_AINPOS_MASK, pos) | \
+>>>>  	 FIELD_PREP(AD7173_CH_SETUP_AINNEG_MASK, neg))
+>>>> @@ -623,6 +624,7 @@ static int ad7173_setup(struct iio_dev *indio_dev)
+>>>>  static unsigned int ad7173_get_ref_voltage_milli(struct ad7173_state *st,
+>>>>  						 u8 reference_select)
+>>>>  {
+>>>> +	struct device *dev = &st->sd.spi->dev;
+>>>>  	int vref;
+>>>>  
+>>>>  	switch (reference_select) {
+>>>> @@ -646,9 +648,11 @@ static unsigned int ad7173_get_ref_voltage_milli(struct
+>>>> ad7173_state *st,
+>>>>  		return -EINVAL;
+>>>>  	}
+>>>>  
+>>>> -	if (vref < 0)
+>>>> +	if (vref < 0) {
+>>>> +		dev_err(dev, "Cannot use reference %u. Error:%d\n",
+>>>> +			reference_select, vref);
+>>>>  		return vref;
+>>>> -
+>>>> +	}
+>>>>  	return vref / (MICRO / MILLI);
+>>>>  }
+>>>>  
+>>>> @@ -905,13 +909,50 @@ static int ad7173_register_clk_provider(struct iio_dev
+>>>> *indio_dev)
+>>>>  					   &st->int_clk_hw);
+>>>>  }
+>>>>  
+>>>> +static int ad7173_validate_voltage_ain_inputs(struct ad7173_state *st,
+>>>> +					      const unsigned int
+>>>> ain[AD7173_NO_AINS_PER_CHANNEL])
+>>> I was late to the game in replying to previous thread.
+>>>
+>>> This is neater without the loop and with 2 parameters.  Anyhow see reply to v3.
+>>>
+>>
+>> Yeps, even more given that we're passing/copying the complete array which always
+>> fells awkward to me :)
+>>
+>> - Nuno Sá
+>>
+>>
+> 
+> I rewrote the function, but it feels a bit awkward, perhaps I could get a bit of
+> advice before sending V5:
 
-syzbot found the following issue on:
+Maybe we could make this easier to read with macros?
 
-HEAD commit:    6d7ddd805123 Merge tag 'soc-fixes-6.9-3' of git://git.kern..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12596604980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7144b4fe7fbf5900
-dashboard link: https://syzkaller.appspot.com/bug?extid=628f93722c08dc5aabe0
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> 
+> static int ad7173_validate_voltage_ain_inputs(struct ad7173_state *st,
+> 					      unsigned int ain0, unsigned int ain1)
+> {
+> 	struct device *dev = &st->sd.spi->dev;
+> 	bool special_input0, special_input1;
+> 
+> 	special_input0 = ain0 == AD7173_AIN_REF_POS || ain0 == AD7173_AIN_REF_NEG ||
+> 			 ((ain0 == AD7173_AIN_COM_IN_POS || ain0 == AD7173_AIN_COM_IN_NEG) &&
+> 			 (st->info->has_common_input)) || ain0 == AD4111_VINCOM_INPUT;
+> 	special_input1 = (ain1 == AD7173_AIN_REF_POS || ain1 == AD7173_AIN_REF_NEG) ||
+> 			 ((ain1 == AD7173_AIN_COM_IN_POS || ain1 == AD7173_AIN_COM_IN_NEG) &&
+> 			 (st->info->has_common_input)) || ain1 == AD4111_VINCOM_INPUT;
+> 
 
-Unfortunately, I don't have any reproducer for this issue yet.
+	special_input0 = AD7173_IS_SPECIAL_INPUT(ain0);
+	special_input1 = AD7173_IS_SPECIAL_INPUT(ain1);
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/4d60cb47fbb1/disk-6d7ddd80.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/f3ff90de7db5/vmlinux-6d7ddd80.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/d452970444cd/bzImage-6d7ddd80.xz
+> 	if (st->info->has_vincom_input) {
+> 		if (ain0 == AD4111_VINCOM_INPUT &&
+> 		    ain1 < st->info->num_voltage_in && /* Normal input */
+> 		    ain1 >= st->info->num_voltage_in_div) /* Input without divider */
+> 			return dev_err_probe(dev, -EINVAL,
+> 				"VINCOM must be paired with inputs having divider.\n");
+> 
+> 		if (ain1 == AD4111_VINCOM_INPUT &&
+> 		    ain0 < st->info->num_voltage_in && /* Normal input */
+> 		    ain0 >= st->info->num_voltage_in_div) /* Input without divider */
+> 			return dev_err_probe(dev, -EINVAL,
+> 				"VINCOM must be paired with inputs having divider.\n");
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+628f93722c08dc5aabe0@syzkaller.appspotmail.com
+		if (AD7173_IS_VINCOM_MISMATCH(ain0, ain1) ||
+		    AD7173_IS_VINCOM_MISMATCH(ain1, ain0)) {
+ 			return dev_err_probe(dev, -EINVAL,
+ 				"VINCOM must be paired with inputs having divider.\n");
 
-------------[ cut here ]------------
-UBSAN: array-index-out-of-bounds in net/llc/llc_conn.c:694:24
-index -1 is out of range for type 'int [12][5]'
-CPU: 0 PID: 15346 Comm: syz-executor.4 Not tainted 6.9.0-rc7-syzkaller-00023-g6d7ddd805123 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
-Call Trace:
- <IRQ>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x16c/0x1f0 lib/dump_stack.c:114
- ubsan_epilogue lib/ubsan.c:231 [inline]
- __ubsan_handle_out_of_bounds+0x110/0x150 lib/ubsan.c:429
- llc_find_offset net/llc/llc_conn.c:694 [inline]
- llc_qualify_conn_ev net/llc/llc_conn.c:401 [inline]
- llc_conn_service net/llc/llc_conn.c:366 [inline]
- llc_conn_state_process+0x1381/0x14e0 net/llc/llc_conn.c:72
- llc_process_tmr_ev net/llc/llc_c_ac.c:1445 [inline]
- llc_conn_tmr_common_cb+0x450/0x8e0 net/llc/llc_c_ac.c:1331
- call_timer_fn+0x1a0/0x610 kernel/time/timer.c:1793
- expire_timers kernel/time/timer.c:1844 [inline]
- __run_timers+0x74b/0xaf0 kernel/time/timer.c:2418
- __run_timer_base kernel/time/timer.c:2429 [inline]
- __run_timer_base kernel/time/timer.c:2422 [inline]
- run_timer_base+0x111/0x190 kernel/time/timer.c:2438
- run_timer_softirq+0x1a/0x40 kernel/time/timer.c:2448
- handle_softirqs+0x216/0x8f0 kernel/softirq.c:554
- __do_softirq kernel/softirq.c:588 [inline]
- invoke_softirq kernel/softirq.c:428 [inline]
- __irq_exit_rcu kernel/softirq.c:637 [inline]
- irq_exit_rcu+0xbb/0x120 kernel/softirq.c:649
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1043 [inline]
- sysvec_apic_timer_interrupt+0x95/0xb0 arch/x86/kernel/apic/apic.c:1043
- </IRQ>
- <TASK>
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-RIP: 0010:lock_acquire+0x1f2/0x560 kernel/locking/lockdep.c:5722
-Code: c1 05 0a 93 96 7e 83 f8 01 0f 85 ea 02 00 00 9c 58 f6 c4 02 0f 85 d5 02 00 00 48 85 ed 74 01 fb 48 b8 00 00 00 00 00 fc ff df <48> 01 c3 48 c7 03 00 00 00 00 48 c7 43 08 00 00 00 00 48 8b 84 24
-RSP: 0018:ffffc900033df5e0 EFLAGS: 00000206
-RAX: dffffc0000000000 RBX: 1ffff9200067bebe RCX: ffffffff816b01de
-RDX: 0000000000000001 RSI: ffffffff8b0cb100 RDI: ffffffff8b6f57a0
-RBP: 0000000000000200 R08: 0000000000000000 R09: fffffbfff27bba45
-R10: ffffffff93ddd22f R11: 0000000000000000 R12: 0000000000000001
-R13: 0000000000000000 R14: ffff888073a52d80 R15: 0000000000000000
- __mutex_lock_common kernel/locking/mutex.c:608 [inline]
- __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
- __unix_dgram_recvmsg+0x267/0x1000 net/unix/af_unix.c:2426
- unix_dgram_recvmsg+0xd0/0x110 net/unix/af_unix.c:2531
- sock_recvmsg_nosec net/socket.c:1046 [inline]
- ____sys_recvmsg+0x5fe/0x6b0 net/socket.c:2801
- ___sys_recvmsg+0x115/0x1a0 net/socket.c:2845
- do_recvmmsg+0x2ba/0x750 net/socket.c:2939
- __sys_recvmmsg net/socket.c:3018 [inline]
- __do_sys_recvmmsg net/socket.c:3041 [inline]
- __se_sys_recvmmsg net/socket.c:3034 [inline]
- __x64_sys_recvmmsg+0x239/0x290 net/socket.c:3034
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcf/0x260 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f6eefa7dd69
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 20 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f6ef08350c8 EFLAGS: 00000246 ORIG_RAX: 000000000000012b
-RAX: ffffffffffffffda RBX: 00007f6eefbac050 RCX: 00007f6eefa7dd69
-RDX: 0000000000010106 RSI: 00000000200000c0 RDI: 0000000000000005
-RBP: 00007f6eefaca49e R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000002 R11: 0000000000000246 R12: 0000000000000000
-R13: 000000000000006e R14: 00007f6eefbac050 R15: 00007ffeec7fdc18
- </TASK>
----[ end trace ]---
-----------------
-Code disassembly (best guess):
-   0:	c1 05 0a 93 96 7e 83 	roll   $0x83,0x7e96930a(%rip)        # 0x7e969311
-   7:	f8                   	clc
-   8:	01 0f                	add    %ecx,(%rdi)
-   a:	85 ea                	test   %ebp,%edx
-   c:	02 00                	add    (%rax),%al
-   e:	00 9c 58 f6 c4 02 0f 	add    %bl,0xf02c4f6(%rax,%rbx,2)
-  15:	85 d5                	test   %edx,%ebp
-  17:	02 00                	add    (%rax),%al
-  19:	00 48 85             	add    %cl,-0x7b(%rax)
-  1c:	ed                   	in     (%dx),%eax
-  1d:	74 01                	je     0x20
-  1f:	fb                   	sti
-  20:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
-  27:	fc ff df
-* 2a:	48 01 c3             	add    %rax,%rbx <-- trapping instruction
-  2d:	48 c7 03 00 00 00 00 	movq   $0x0,(%rbx)
-  34:	48 c7 43 08 00 00 00 	movq   $0x0,0x8(%rbx)
-  3b:	00
-  3c:	48                   	rex.W
-  3d:	8b                   	.byte 0x8b
-  3e:	84                   	.byte 0x84
-  3f:	24                   	.byte 0x24
+> 	}
+> 
+> 	if ((ain0 >= st->info->num_voltage_in && !special_input0) ||
+> 	    (ain1 >= st->info->num_voltage_in && !special_input1))
+> 		return dev_err_probe(dev, -EINVAL,
+> 				     "Input pin number out of range for pair (%d %d).\n",
+> 				     ain0, ain1);
+> 
+> 	if (!special_input0 && !special_input1 &&
+> 	    ((ain0 >= st->info->num_voltage_in_div) !=
+> 	     (ain1 >= st->info->num_voltage_in_div)))
+> 		return dev_err_probe(dev, -EINVAL,
+> 			"Both inputs must either have a voltage divider or not have: (%d %d).\n",
+> 			ain0, ain1);
 
+These last two don't seem so bad.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> 	return 0;
+> }
+> 
+> It feels a bit too verbose, but I could not come up with a better way to
+> incorporate all those cases.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
