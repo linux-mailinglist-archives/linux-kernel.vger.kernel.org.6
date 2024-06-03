@@ -1,165 +1,151 @@
-Return-Path: <linux-kernel+bounces-199466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A045A8D877F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 18:55:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BAC38D8782
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 18:56:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D85101C21519
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:55:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7B9C1F2113A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:56:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00717136E1C;
-	Mon,  3 Jun 2024 16:55:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 466831369B8;
+	Mon,  3 Jun 2024 16:55:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OkAGC+Mb"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Xx+PoQf6"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94C3D13699A;
-	Mon,  3 Jun 2024 16:55:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AE8E1369A7;
+	Mon,  3 Jun 2024 16:55:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717433736; cv=none; b=SYrXyNDpbqYGeb6a5r/F0pHr6aQVMcL8pmR03HDlKa9WkoYB7LFH8UYu6A6A0odOCTg+6uyLhPJGex23ziYUToVuSLuBto3L4AkA08dCZ+vWU3g4+RoKf847Rwh0kj+9rUK50COWbwZAh/6qft7wDLZTQPC/VvXZpCLBlMcjnlk=
+	t=1717433752; cv=none; b=qm7Xx743/urlXs0ruvA15u9JKZb7ZTqt2AzqHt1OwHq0ZpiNImYIA4PrsUDDU/6UsU5c0gHG0XC+wXYMD017i+ECBvhznRykUA8HxpD74d9I0pAYSQPI9/cu4XsIpARU/vZIBUqYQ8y1pHsbCFVdZrPL1OBQhCVq6aQd0v6Sht8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717433736; c=relaxed/simple;
-	bh=ods3sryTC/Ft9e0aoXj4dhw/pY8sg2Kv0+NfnehDbZ4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=SQwdtTtuYCsJ05oyMdiLyTpGxTe/1sEwqJ27YbuG6c5lk3KLjrqb+e/sgM6JoWiBTX+fyP+oQohfFk97j4TsuFAxPFCmPLLbJABca6LvMoVsGm27tdaDhRUE9XBk/HnSsZTdVw7ylLF9NlRO6t+2i5i05ydhIh9whjvd7cOdYEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OkAGC+Mb; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 453C87oX032680;
-	Mon, 3 Jun 2024 16:55:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=VueaKyjEH6RqLLRvMnhN1y
-	RPnhwgQQXom/YngbRmc8M=; b=OkAGC+Mb3GqRb1BzkNeZUchJeA6CC4iBX+Vgfi
-	9M1nUVYYCtFklmeoZh5kNZ+0ZVNDW1wLfszLs/dZ87HL83tQEX0y8PZCV5nIhN6E
-	A0PnNio3IP72XiAzMgFeBo5KqGUPNPGtJ5tyX88H5uxKcqFP8GEVpO09MaJu5Yy6
-	KXxNfxHcoCEXHAAWr2K8HUnNCEPMpGNk3cnyI26n9BlWgF4DRusYGAUQ0wAL+aC5
-	sJBcNd98Lx6HeEfolEthyKXO90mPNQ5Jrc5TMdSyEeOSNel8ZgK2eb5SZtP6F7k1
-	nN0NvdizfgfN7yvaKyiouejbw+LOtF8/Q/d5eNfjHUgQMfoQ==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfw5t4a15-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 03 Jun 2024 16:55:30 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 453GtQk7023556
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 3 Jun 2024 16:55:26 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 3 Jun 2024
- 09:55:25 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Mon, 3 Jun 2024 09:55:25 -0700
-Subject: [PATCH] agp: add missing MODULE_DESCRIPTION() macros
+	s=arc-20240116; t=1717433752; c=relaxed/simple;
+	bh=1JY5giR8tigZEuaRc4F7AHu/Puv1SymNII1xdYKwxxc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K0kQr99w6/hgPzO4crL/AMQ7uDhc/8nuE16EWmaA5EPfQDJHgfIuXlDUDG1UDEn3UZVnOE5xEqUnxE6/P+AelfBqUUZ+DxgslVORLw8PCJeqxffIPguI81CKFrIGuRLOmp9ZAr9gGz5ya00rn9MnClzyJJQIt7CvDZYWsGzmfPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Xx+PoQf6; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id D9FF040E016A;
+	Mon,  3 Jun 2024 16:55:47 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 2_HiGnsD6OZb; Mon,  3 Jun 2024 16:55:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1717433743; bh=s5eN5yVkeKGkUm5T3DGoBbn7AsYBRjMyVANCmgwxza0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Xx+PoQf6gJjR0nDXlsJqatrFFhW4C4+tcLSXzrN9w/9cK1ScnE1BG7fQZ2AbVtbWi
+	 M5IeDeN1VfuE3DX2N17/wOGTxJ6XCLpoGS2UCvWeDodTqGQfhXMC4ie7GVEEwtPeyt
+	 LB7qDfabmC0OV8ktkjVTZsi4A/M8i7ObGzzod56Ucq+knkKa13Tsbx/5KhYDouOjTZ
+	 cqDjeOTeAShgIIXAU1GAqizf8JfDdUA2Ymwt4KYDgkjvQJvZ2h7wf2xaUhig9LvoQz
+	 jlcLM7MsnW4/xHGToxUFIcEBxxZUN/4v4v2jwrH4VNKtH6Kmw9XSK/jXgT13LfMC0P
+	 2VY523jHDoSeXrcCfhIks2OFcyT9RYum8/nOG9ijlpXeAC5MAr4jG6YMfWCWfOxl7b
+	 TSRjmDAuqjc9JIPt4EoPbc09ZDDNqwKd3L7YZwBHPIlIVaezVfdbjz7fSF5mlApSEL
+	 f0noRnCO8+5qb5ZZMcQ4N9nOh94XWhTJl/7WIn0QGTE9WxPYKkRQH2Lc1jUwO0HB4O
+	 olLyIXADwmD4Kfsx2H9R46FRScGFWKdJb3SIDcqOx/MeaKLVKQok8mEJp69I4LeoeL
+	 Ei9f8vQ58Hg+cALcu/F8ZXo5FaHCbaNkRNSbpHaYHmrSyJhbN3k6dzs5xYjuqAXpRf
+	 gV2hufwYQvlQaweshQo3KkKo=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id F166B40E0081;
+	Mon,  3 Jun 2024 16:55:35 +0000 (UTC)
+Date: Mon, 3 Jun 2024 18:55:30 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Yazen Ghannam <yazen.ghannam@amd.com>
+Cc: linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+	tony.luck@intel.com, x86@kernel.org, avadhut.naik@amd.com,
+	john.allen@amd.com
+Subject: Re: [PATCH 3/3] x86/mce: Use mce_prep_record() helpers for
+ apei_smca_report_x86_error()
+Message-ID: <20240603165530.GFZl31gtuABwpe1svP@fat_crate.local>
+References: <20240521125434.1555845-1-yazen.ghannam@amd.com>
+ <20240521125434.1555845-4-yazen.ghannam@amd.com>
+ <20240529172809.GJZldlqSr5km0frQ_o@fat_crate.local>
+ <6d508036-befd-4d5c-b02e-abb228ed9144@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240603-md-agp-v1-1-9a1582114ced@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAHz1XWYC/x3MSwqEQAxF0a1IxgZKbfz0VsRB1KgBrZZERRD3b
- rXDA/e9C4xV2OAbXaB8iMnPByRxBN1EfmSUPhhSl35c7jJceqRxxbykirPSJQUNEOJVeZDzPaq
- b4JaMsVXy3fSfz+L3ExeyjRXu+wE+Rsr0dwAAAA==
-To: David Airlie <airlied@redhat.com>
-CC: <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: DmZhTFL3-uMb7zTxA3W4e1Uf5yWYgi1J
-X-Proofpoint-GUID: DmZhTFL3-uMb7zTxA3W4e1Uf5yWYgi1J
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-06-03_13,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 bulkscore=0
- spamscore=0 suspectscore=0 priorityscore=1501 impostorscore=0
- clxscore=1011 malwarescore=0 phishscore=0 mlxscore=0 lowpriorityscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406030139
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <6d508036-befd-4d5c-b02e-abb228ed9144@amd.com>
 
-make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/char/agp/amd64-agp.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/char/agp/intel-agp.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/char/agp/intel-gtt.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/char/agp/sis-agp.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/char/agp/via-agp.o
+On Mon, Jun 03, 2024 at 10:34:10AM -0400, Yazen Ghannam wrote:
+> One day I'll break this habit. Thanks again for the reminder. :)
 
-Add the missing invocations of the MODULE_DESCRIPTION() macro.
+Sure, np. :-)
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/char/agp/amd64-agp.c | 1 +
- drivers/char/agp/intel-agp.c | 1 +
- drivers/char/agp/intel-gtt.c | 1 +
- drivers/char/agp/sis-agp.c   | 1 +
- drivers/char/agp/via-agp.c   | 1 +
- 5 files changed, 5 insertions(+)
+> >>  	for_each_possible_cpu(cpu) {
+> >> -		if (cpu_data(cpu).topo.initial_apicid == lapic_id) {
+> >> -			m.extcpu = cpu;
+> >> -			m.socketid = cpu_data(m.extcpu).topo.pkg_id;
+> >> +		if (cpu_data(cpu).topo.initial_apicid == lapic_id)
+> >>  			break;
+> >> -		}
+> >>  	}
+> >>  
+> >> -	m.apicid = lapic_id;
+> >> +	if (!cpu_possible(cpu))
+> >> +		return -EINVAL;
+> > 
+> > What's that test for? You just iterated over the possible CPUs using
+> > "cpu" as the iterator there...
+> > 
+> 
+> This is to catch the case where there was no break from the loop.
 
-diff --git a/drivers/char/agp/amd64-agp.c b/drivers/char/agp/amd64-agp.c
-index ce8651436609..8e41731d3642 100644
---- a/drivers/char/agp/amd64-agp.c
-+++ b/drivers/char/agp/amd64-agp.c
-@@ -802,4 +802,5 @@ module_exit(agp_amd64_cleanup);
+If the CPU is possible != whether there was a apicid match.
+
+Here's how you do that and I'd let you figure out why yours doesn't
+always work:
+
+diff --git a/arch/x86/kernel/cpu/mce/apei.c b/arch/x86/kernel/cpu/mce/apei.c
+index 0cbadfaf2400..3885fe05f01e 100644
+--- a/arch/x86/kernel/cpu/mce/apei.c
++++ b/arch/x86/kernel/cpu/mce/apei.c
+@@ -66,6 +66,7 @@ EXPORT_SYMBOL_GPL(apei_mce_report_mem_error);
+ int apei_smca_report_x86_error(struct cper_ia_proc_ctx *ctx_info, u64 lapic_id)
+ {
+ 	const u64 *i_mce = ((const u64 *) (ctx_info + 1));
++	bool apicid_found = false;
+ 	unsigned int cpu;
+ 	struct mce m;
  
- MODULE_AUTHOR("Dave Jones, Andi Kleen");
- module_param(agp_try_unsupported, bool, 0);
-+MODULE_DESCRIPTION("GART driver for the AMD Opteron/Athlon64 on-CPU northbridge");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/char/agp/intel-agp.c b/drivers/char/agp/intel-agp.c
-index c518b3a9db04..2c55264a031e 100644
---- a/drivers/char/agp/intel-agp.c
-+++ b/drivers/char/agp/intel-agp.c
-@@ -920,4 +920,5 @@ module_init(agp_intel_init);
- module_exit(agp_intel_cleanup);
+@@ -98,11 +99,13 @@ int apei_smca_report_x86_error(struct cper_ia_proc_ctx *ctx_info, u64 lapic_id)
+ 		return -EINVAL;
  
- MODULE_AUTHOR("Dave Jones, Various @Intel");
-+MODULE_DESCRIPTION("Intel AGPGART routines");
- MODULE_LICENSE("GPL and additional rights");
-diff --git a/drivers/char/agp/intel-gtt.c b/drivers/char/agp/intel-gtt.c
-index bf6716ff863b..e54649027407 100644
---- a/drivers/char/agp/intel-gtt.c
-+++ b/drivers/char/agp/intel-gtt.c
-@@ -1461,4 +1461,5 @@ void intel_gmch_remove(void)
- EXPORT_SYMBOL(intel_gmch_remove);
+ 	for_each_possible_cpu(cpu) {
+-		if (cpu_data(cpu).topo.initial_apicid == lapic_id)
++		if (cpu_data(cpu).topo.initial_apicid == lapic_id) {
++			apicid_found = true;
+ 			break;
++		}
+ 	}
  
- MODULE_AUTHOR("Dave Jones, Various @Intel");
-+MODULE_DESCRIPTION("Intel GTT (Graphics Translation Table) routines");
- MODULE_LICENSE("GPL and additional rights");
-diff --git a/drivers/char/agp/sis-agp.c b/drivers/char/agp/sis-agp.c
-index 484bb101c53b..a0deb97cedb0 100644
---- a/drivers/char/agp/sis-agp.c
-+++ b/drivers/char/agp/sis-agp.c
-@@ -433,4 +433,5 @@ module_param(agp_sis_force_delay, bool, 0);
- MODULE_PARM_DESC(agp_sis_force_delay,"forces sis delay hack");
- module_param(agp_sis_agp_spec, int, 0);
- MODULE_PARM_DESC(agp_sis_agp_spec,"0=force sis init, 1=force generic agp3 init, default: autodetect");
-+MODULE_DESCRIPTION("SiS AGPGART routines");
- MODULE_LICENSE("GPL and additional rights");
-diff --git a/drivers/char/agp/via-agp.c b/drivers/char/agp/via-agp.c
-index bc5140af2dcb..8b19a5d1a09b 100644
---- a/drivers/char/agp/via-agp.c
-+++ b/drivers/char/agp/via-agp.c
-@@ -575,5 +575,6 @@ static void __exit agp_via_cleanup(void)
- module_init(agp_via_init);
- module_exit(agp_via_cleanup);
+-	if (!cpu_possible(cpu))
++	if (!apicid_found)
+ 		return -EINVAL;
  
-+MODULE_DESCRIPTION("VIA AGPGART routines");
- MODULE_LICENSE("GPL");
- MODULE_AUTHOR("Dave Jones");
+ 	mce_prep_record_common(&m);
 
----
-base-commit: a693b9c95abd4947c2d06e05733de5d470ab6586
-change-id: 20240603-md-agp-68a9e38017af
 
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
