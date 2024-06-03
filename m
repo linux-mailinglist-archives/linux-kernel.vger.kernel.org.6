@@ -1,148 +1,132 @@
-Return-Path: <linux-kernel+bounces-199575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02BD98D88CF
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 20:45:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EF098D88D4
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 20:45:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33DB41C21812
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 18:45:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FFDF1C21985
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 18:45:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E2B9139D04;
-	Mon,  3 Jun 2024 18:45:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2E58139D03;
+	Mon,  3 Jun 2024 18:45:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qA754UYK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lgB7SAWG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDDA01386C5;
-	Mon,  3 Jun 2024 18:45:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38EBB13A252;
+	Mon,  3 Jun 2024 18:45:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717440304; cv=none; b=A5FgcTuLMCGAFcHpRPDjwLsbh1c767iDKX+4Ds+XPn6bUh/bP4soIZXpld3DQIPPQ8LTCjmVlc2Cp7h1S6ONrdWs7oiZBjBwbfhlNoiWE000aLDkGYv95V/udCIGGZYnE1JyOYQCQk0ZVly2kgoSQKoF9kdLUJlKqHVfg7SC7JA=
+	t=1717440318; cv=none; b=XedirqdirUs5/v7dbuJR0SOlYBMm75rwy4M3d+FxPmCQgLLmYSpP8hE5ZymjPoP+msDVELtqGNm66R0W9alQPAoZk4YQLkyrIeyL6nx4p3mHpGGZRnssNCg8ccj3mMDpiSFpr7RdalRmkPZD7s8nS7FwsLdNSIOoGeHrLVCxMSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717440304; c=relaxed/simple;
-	bh=VGBp8Um3wObQGvuZF4EnQDH/utHRzJD1Fwno53k5PYo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Q76Kr+kPrszkib3hZrz5xGF+xHfabr6UlyE+JCl5V73hjYMH2D0Mod7FBFin0ffkK3M6bNG+BiAoQdlvnCSv/MgPpKIp8dp9Ui4hR25kjm2D1iJApOI8YytbIXdWfZeJI9819YDYmTU3prihNd9w2Ea2it5w4wu9mYvcpPIpMf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qA754UYK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B89BC2BD10;
-	Mon,  3 Jun 2024 18:45:02 +0000 (UTC)
+	s=arc-20240116; t=1717440318; c=relaxed/simple;
+	bh=CYD9CNW0hZo4GzQTwjKIvClwD4HPTw+g0MIeUFCe3Y0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=VB4PZkykqkW7Kh1bFYCThZo1eNootJI+Y4e9A6l+7N/5bQJ+FxJOCr0IckeBg370O5mZ29jbmdvSuASqlgTdsPiTcwBQK1mXB0d8l16UqXylYYObGo3or9yFcX3+GMG53NgSE5sjtnzCzQQy3FIi4Rxtsx/yjN3LRJtmJnylOVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lgB7SAWG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8F3BC2BD10;
+	Mon,  3 Jun 2024 18:45:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717440303;
-	bh=VGBp8Um3wObQGvuZF4EnQDH/utHRzJD1Fwno53k5PYo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=qA754UYKlUnk+Qhx8Pv/DYBWPN0GFGcXOmvQxad+Kcioj30QdOg5LbY+zGbityjJl
-	 KuZvqZag+8nvXagwiJBC/sibN/A7QgQ50C194DrOudHh4/B0MvKhZ7poMVDtcbIBQA
-	 E6Z4a+KJKq1+neyXoWmZ5MvdrBGwd3SzKjLv66pmoaA+PlacP0ExZGajcqKcQqCr2V
-	 Qx0C4INkmubpZubYdWRLl3wX80XD6wZGlPE08tcId2ZI3GVnF/dE/mGdwJTOr9v5rO
-	 s1A+yIe5Rjfdeh6kG3kBuoxGTA4tdSYHZTxTa/LH1dXDxJVS3yTvEdk/WQrmYrMW9l
-	 CT1hTtvvYRCZA==
-From: SeongJae Park <sj@kernel.org>
-To: Alex Rusuf <yorha.op@gmail.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	damon@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH v2 2/2] mm/damon/core: implement multi-context support
-Date: Mon,  3 Jun 2024 11:45:00 -0700
-Message-Id: <20240603184500.104495-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240602194814.929457-1-yorha.op@gmail.com>
-References: 
+	s=k20201202; t=1717440318;
+	bh=CYD9CNW0hZo4GzQTwjKIvClwD4HPTw+g0MIeUFCe3Y0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=lgB7SAWG7DZyT4ECryCmxnq/4wdodJoEmymX6A+mU2SJNfhdoxiDi9wcUyi0CZbNf
+	 aJrI8sX0L+/RmOMZWOxd/oA4RqT7YdkI3PrOE8mMWb7pyVcLZUDJXqkstRXxyJyv1C
+	 SJn4721FDUz4OXwCW5iVAX/NgAAzCe8G9+tfCvQTvWdBQRiWmKxgrVRGfxffUyck/Q
+	 Fr98dkDZtI8JRN6OqIzXp3AqTbPHgvjAqV1K1xz87DmuZhyHLAbLlFkUDfZZPbuR1D
+	 VCOrRU22ozmOl3skUJcIsz6eg9+cPtpYf7AfCsPT5ChhGL6clybsShOp2aAVUZRRBF
+	 7dcZl2qxjB+6Q==
+Date: Mon, 3 Jun 2024 13:45:16 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Daire McNamara <daire.mcnamara@microchip.com>
+Cc: linux-pci@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH 1/2] PCI: microchip: Fix outbound address translation
+ tables
+Message-ID: <20240603184516.GA687362@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240531085333.2501399-2-daire.mcnamara@microchip.com>
 
-On Sun,  2 Jun 2024 22:48:14 +0300 Alex Rusuf <yorha.op@gmail.com> wrote:
-
-> [...]
+On Fri, May 31, 2024 at 09:53:32AM +0100, Daire McNamara wrote:
+> On Microchip PolarFire SoC (MPFS) the PCIe Root Port can be behind one of
+> three general-purpose Fabric Interface Controller (FIC) buses that
+> encapsulate an AXI-M interface. That FIC is responsible for managing
+> the translations of the upper 32-bits of the AXI-M address. On MPFS,
+> the Root Port driver needs to take account of that outbound address
+> translation done by the parent FIC bus before setting up its own
+> outbound address translation tables.  In all cases on MPFS,
+> the remaining outbound address translation tables are 32-bit only.
 > 
-> > > 
-> > > > 
-> > > > >  
-> > > > >  /* private: */
-> > > > >  	/* for waiting until the execution of the kdamond_fn is started */
-> > > > > @@ -634,7 +632,10 @@ struct damon_ctx {
-> > > > >  	 * update
-> > > > >  	 */
-> > > > >  	unsigned long next_ops_update_sis;
-> > > > > +	/* upper limit for each monitoring region */
-> > > > >  	unsigned long sz_limit;
-> > > > > +	/* marker to check if context is valid */
-> > > > > +	bool valid;
-> > > > 
-> > > > What is the validity?
-> > > 
-> > > This is a "flag" which indicates that the context is "valid" for kdamond
-> > > to be able to call ->check_accesses() on it. Because we have many contexts
-> > > we need a way to identify which context is valid while iterating over
-> > > all of them (please, see kdamond_prepare_access_checks_ctx() function).
-> > 
-> > It's still not very clear to me.  When it is "valid" or not for kdamond to be
-> > able to call ->check_accesses()?  I assume you mean it is valid if the
-> > monitoring operations set's ->target_valid() returns zero?
-> > 
-> > The callback is not for preventing unnecessary ->check_accesses(), but for
-> > knowing if continuing the monitoring makes sense or not.  For example, the
-> > callback of 'vaddr' operation set checks if the virtual address space still
-> > exists (whether the target process is still running)  Calling
-> > ->check_accesses() for ->target_valid() returned non-zero target is totally ok,
-> > though it is meaningless.  And therefore kdamond stops if it returns non-zero.
-> > 
-> > > 
-> > > Maybe name should be changed,
-> > 
-> > At least some more detailed comment would be appreciated, imo.
-> > 
-> > > but now I don't see a way how we could merge
-> > > this into kdamond_valid_ctx() or so, because the main cause of this "valid"
-> > > bit is that there's no more "valid" targets for this context, but also we could
-> > > have ->after_sampling() returned something bad.
-> > 
-> > As mentioned above, calling ->check_accesses() or others towards invalidated
-> > targets (e.g., terminated processes's virtual address spaces) should be ok, if
-> > any of the targets are still valid.  So I don't show special technical
-> > difficulties here.  Please let me know if I'm missing something.
+> Limit the outbound address translation tables to 32-bit only.
 > 
-> This is true in case of only 1 context. kdamond can be stopped if there's
-> no valid targets for this context (e.g. no address space exists anymore),
-> but when there are many contexts we need to check if any of contexts has
-> valid target(s). For example, we have 3 contexts per kdamond, at some
-> point of time we have 1st context having no valid targets (process has been
-> finished), but other 2 contexts do have valid targets, so we don't need
-> to call ->prepare_access_checks() and ->check_accesses() as well for 1st
-> context, but we do need to call them for other contexts.
-
-Yes, we don't need to.  Nonetheless, calling ->prepare_access_checks() is also
-not a big problem, right?  If I'm not wrong, I don't want to add more
-complexity for unclear benefit.  In other words, I think simply letting a
-kdamond continues access monitoring for virtual address space targets even
-after the processes are terminated while there are other contexts that need to
-continue access monitoring is ok, unless it has clear and significant problem.
-
+> Fixes: 6f15a9c9f941 ("PCI: microchip: Add Microchip Polarfire PCIe controller driver")
 > 
-> We can call ->kdamond_valid_ctx() before calling ->check_accesses(),
-> but then we also need to check if nothing bad has been returned from
-> ->after_sampling() call, so that we're allowed to further call
-> ->check_accesses().
+> Signed-off-by: Daire McNamara <daire.mcnamara@microchip.com>
+> ---
+>  drivers/pci/controller/pcie-microchip-host.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
 > 
-> I decided to use a "valid" flag inside damon_ctx structure, so
-> that if this context isn't valid, we will just skip it while
-> iterating over all contexts.
+> diff --git a/drivers/pci/controller/pcie-microchip-host.c b/drivers/pci/controller/pcie-microchip-host.c
+> index 137fb8570ba2..0795cd122a4a 100644
+> --- a/drivers/pci/controller/pcie-microchip-host.c
+> +++ b/drivers/pci/controller/pcie-microchip-host.c
+> @@ -983,7 +983,8 @@ static int mc_pcie_setup_windows(struct platform_device *pdev,
+>  		if (resource_type(entry->res) == IORESOURCE_MEM) {
+>  			pci_addr = entry->res->start - entry->offset;
+>  			mc_pcie_setup_window(bridge_base_addr, index,
+> -					     entry->res->start, pci_addr,
+> +					     entry->res->start & 0xffffffff,
+> +					     pci_addr & 0xffffffff,
+>  					     resource_size(entry->res));
 
-If this is really needed, why don't you simply call ->target_valid() for each
-target for whenever we need to know if the target is valid?
+Is this masking something that the PCI core needs to be aware of when
+it allocates address space for BARs?
 
+The PCI core knows about the CPU physical address range of each bridge
+window and the corresponding PCI address range.  From this patch, it
+looks like only the low 32 bits of the CPU address are used by the
+Root Port.  That might not be a problem as long as the windows
+described by DT are correct and none of them overlap after masking out
+the upper 32 bits.  But for example, if DT has windows like this:
 
-Thanks,
-SJ
+  [mem 0x1'0000'0000-0x1'8000'0000]
+  [mem 0x2'0000'0000-0x2'8000'0000]
 
-[...]
+the PCI core will assume they are valid and non-overlapping, when
+IIUC, they *do* overlap.
+
+But also only the low 32 bits of the PCI address are used, and it
+seems like the PCI core will need to know that so it doesn't program a
+64-bit BAR with a value above 4GB?
+
+>  			index++;
+>  		}
+> @@ -1117,8 +1118,8 @@ static int mc_platform_init(struct pci_config_window *cfg)
+>  	int ret;
+>  
+>  	/* Configure address translation table 0 for PCIe config space */
+> -	mc_pcie_setup_window(bridge_base_addr, 0, cfg->res.start,
+> -			     cfg->res.start,
+> +	mc_pcie_setup_window(bridge_base_addr, 0, cfg->res.start & 0xffffffff,
+> +			     cfg->res.start & 0xffffffff,
+>  			     resource_size(&cfg->res));
+>  
+>  	/* Need some fixups in config space */
+> -- 
+> 2.34.1
+> 
 
