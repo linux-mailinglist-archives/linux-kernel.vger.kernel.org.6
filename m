@@ -1,229 +1,220 @@
-Return-Path: <linux-kernel+bounces-198908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 336E78D7EFF
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:40:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42B628D7F00
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:40:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 858A9B23265
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:40:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF1B21F22DE5
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:40:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F9F185632;
-	Mon,  3 Jun 2024 09:33:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F4D285920;
+	Mon,  3 Jun 2024 09:33:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YhertA0w"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="GJXHNQFy"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3486783CDB;
-	Mon,  3 Jun 2024 09:32:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7CC785659
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 09:33:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717407181; cv=none; b=oPChIxclXtFqMzxFs5wI8G4V7PzxcZmd5GYfiS+Hg4OCHHNU58IvFM6P/lQ9UwyxpD3EBeiPeST3dR2QeCxjPUnf1LZF082JXyOEAybCh8xV4OXR9aDe62HEFd3XmycmeUfTFmotyZdHPeyS5yGt81qNqp32lBdmYF8QncsSkNI=
+	t=1717407196; cv=none; b=QXhZ5Is1TugcIXtTF0Wf8kY7AAanZozXUIp4YgdSZZloGzh4uigvE9I7BmF/l8wOWOmCSHEufMcItbachxjc7QZLdnKbxKEmLxc/sbY5atDShdq5BuEycqJbaEweaPsH8u5RNDV+nURvNwkhQ1GbuYgmEA7ulWsAya0wFGNvzKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717407181; c=relaxed/simple;
-	bh=Vqg/iK/IG3nEf1/cBgSCpTn2REMMEBO9ZyzV++b92qw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=kWOJXWSUqDvkIfGvCDmBlU43kTtO8uuqxwKzMXqDDMXE03j0glqdcBLGd4lygy9GfZSg2G5z3AI/U96maghBwdsnxxq014wyNwfrbn1uK7mpa2WHGF8kXT6Vb0dp67LYSzfmH/cz9TtqUhdpRg0gxnQxyxUQtx1y1Qkf8V0IM98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=YhertA0w; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=MIME-Version:Content-Type:References:
-	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Vqg/iK/IG3nEf1/cBgSCpTn2REMMEBO9ZyzV++b92qw=; b=YhertA0wbZ58x9UF8qOxaM9Vob
-	aIgX4MMjRMAolg70ZQmnlpIiueU7nNJAckFr34WxWAX04XYsLW63gNOwrCvdNvEUeDjY8XLVEp2CB
-	5Artbhnrw0z2rwQ7dmb5SBbxT2YsNHyg2+wkXWN969asxUCHaDtDMpUfJ/ZiNW87ZzvNuDxjcEdcI
-	w/glo8DKZHNfYtn6qLRqETfFG6WBCfVBA0sPUFHg6hFvgFQFCL/PbXWkU9ceEnHEIdnWlqrQm/fHZ
-	rIfof8J62/JnE9Qi/iyHAEkh5oLxJuBXNcLWtRoxSG5tEvmMhuavkPPyJb/sh/PcZI2y3+RsJy4uD
-	7pBLEbXA==;
-Received: from [2001:8b0:10b:5::bb3] (helo=u3832b3a9db3152.infradead.org)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sE43c-0000000E0fI-00im;
-	Mon, 03 Jun 2024 09:32:48 +0000
-Message-ID: <8b08098a38fc6c6351d7f978791273d0e14b831d.camel@infradead.org>
-Subject: Re: [PATCH] vfio/pci: add msi interrupt affinity support
-From: David Woodhouse <dwmw2@infradead.org>
-To: Fred Griffoul <fgriffo@amazon.co.uk>
-Cc: Alex Williamson <alex.williamson@redhat.com>, Kevin Tian
- <kevin.tian@intel.com>, Reinette Chatre <reinette.chatre@intel.com>, Eric
- Auger <eric.auger@redhat.com>, Christian Brauner <brauner@kernel.org>, Ye
- Bin <yebin10@huawei.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Mon, 03 Jun 2024 10:32:47 +0100
-In-Reply-To: <20240530161239.73245-1-fgriffo@amazon.co.uk>
-References: <20240530161239.73245-1-fgriffo@amazon.co.uk>
-Content-Type: multipart/signed; micalg="sha-256"; protocol="application/pkcs7-signature";
-	boundary="=-oPnDOBHGxZqHv7z1WdSs"
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1717407196; c=relaxed/simple;
+	bh=+bApHo/C7mVf5pvNhX4lVTb9hPhQcEeS2ESv644E/vQ=;
+	h=Mime-Version:Subject:From:To:CC:In-Reply-To:Message-ID:Date:
+	 Content-Type:References; b=PD4XofYsx8poL3RTxXJF6CcPiGzWNgUAKuiJ4AHXeBXOmWxgTnzdyb0BuSm06XpvYt9k7dR+P6bOji3vowgMM9sf+r4x/u+qYEMNIDK4Yqq4FirdKe1ZruGKyMMW3bizXHkf52lCu+s5fZ1CRw7QqxLeOBNhWPP4Zu1U+13lzP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=GJXHNQFy; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240603093311epoutp02cdffbd65f76d5d2a2732fa1c41df9c7e~VdL3kB5is0604306043epoutp02U
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 09:33:11 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240603093311epoutp02cdffbd65f76d5d2a2732fa1c41df9c7e~VdL3kB5is0604306043epoutp02U
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1717407191;
+	bh=nP+t4EIY6o5//ZwZPwCa4ZNSh3wzvVaaEWbfgsBy5qA=;
+	h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
+	b=GJXHNQFyCHlZB5yy8LvE/wK2CJ53chHydlv4w+JEKuBkTURdcLbfWKWHMeGTvSBhq
+	 ZujeHbVsr3zDmuXdeYjFFPcbdpCKdBrxXF+7StXJz4t/OfTqPrl1c/NGZLISAExrEh
+	 wXSlIx4Ux9i89BJGqXQZH5F0TUt0YShPBJucHU+o=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20240603093311epcas1p1ac2d110fc8c801da19a85f31110fe080~VdL2zJhwM3008530085epcas1p1I;
+	Mon,  3 Jun 2024 09:33:11 +0000 (GMT)
+Received: from epsmges1p4.samsung.com (unknown [182.195.38.241]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4Vt7nL48lSz4x9Q9; Mon,  3 Jun
+	2024 09:33:10 +0000 (GMT)
+X-AuditID: b6c32a38-ff1fa7000000287a-31-665d8dd6929a
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+	epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+	76.2C.10362.6DD8D566; Mon,  3 Jun 2024 18:33:10 +0900 (KST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+Mime-Version: 1.0
+Subject: RE: (2) (2) [RESEND PATCH 00/10] memblock: introduce memsize
+ showing reserved memory
+Reply-To: jaewon31.kim@samsung.com
+Sender: Jaewon Kim <jaewon31.kim@samsung.com>
+From: Jaewon Kim <jaewon31.kim@samsung.com>
+To: "richard.weiyang@gmail.com" <richard.weiyang@gmail.com>, Jaewon Kim
+	<jaewon31.kim@samsung.com>
+CC: Jaewon Kim <jaewon31.kim@gmail.com>, Mike Rapoport <rppt@kernel.org>,
+	"vbabka@suse.cz" <vbabka@suse.cz>, "akpm@linux-foundation.org"
+	<akpm@linux-foundation.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"tkjos@google.com" <tkjos@google.com>, Pintu Agarwal <pintu.ping@gmail.com>
+X-Priority: 3
+X-Content-Kind-Code: NORMAL
+In-Reply-To: <20240601014045.jkk3ydsu4zns2bfc@master>
+X-Drm-Type: N,general
+X-Msg-Generator: Mail
+X-Msg-Type: PERSONAL
+X-Reply-Demand: N
+Message-ID: <20240603093310epcms1p893f1ed36c0531917b69eb77e3ddfd794@epcms1p8>
+Date: Mon, 03 Jun 2024 18:33:10 +0900
+X-CMS-MailID: 20240603093310epcms1p893f1ed36c0531917b69eb77e3ddfd794
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+X-CPGSPASS: Y
+X-CPGSPASS: Y
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrKJsWRmVeSWpSXmKPExsWy7bCmnu613tg0g7+75C3mrF/DZvHykKZF
+	9+aZjBa9718xWVzeNYfN4t6a/6wW119OY7G40/eKxeLI+u1MFu8nF1vMbuxjdOD22DnrLrvH
+	gk2lHptWdbJ5bPo0id3jxIzfLB59W1YxepxZcITd4/MmuQCOqGybjNTElNQihdS85PyUzLx0
+	WyXv4HjneFMzA0NdQ0sLcyWFvMTcVFslF58AXbfMHKAzlRTKEnNKgUIBicXFSvp2NkX5pSWp
+	Chn5xSW2SqkFKTkFZgV6xYm5xaV56Xp5qSVWhgYGRqZAhQnZGW/33WAteK9QcWq5cQPjX6ku
+	Rk4OCQETiS0vJjJ1MXJxCAnsYJSYunoBkMPBwSsgKPF3hzBIjbBAvETf3FZGEFtIQEni7I8r
+	7BBxXYmm7tUsIDabgLbE+wWTWEFsEYEUidZFh9lBZjILPGaSWLZ+LTPEMl6JGe1PWSBsaYnt
+	y7eCDeUUMJWYMfcxE0RcVOLm6rfsMPb7Y/MZIWwRidZ7Z6HmCEo8+LkbKi4lsezrXKj6Yoll
+	nQ+g5tRIrDi3ig3CNpdoeLsSzOYV8JWY92U6I8iPLAKqEj/mCEKUuEjcWPga7DRmAXmJ7W/n
+	MIOUMAtoSqzfpQ8R5pN497WHFeaTho2/2bGxd8x7AnWBmkTLs69Q9TISf/89g7I9JO5e280y
+	gVFxFiKgZyFZPAth8QJG5lWMYqkFxbnpqcWGBSbwqE3Oz93ECE6vWhY7GOe+/aB3iJGJg/EQ
+	owQHs5IIb19ddJoQb0piZVVqUX58UWlOavEhRlOgjycyS4km5wMTfF5JvKGJpYGJmZGJhbGl
+	sZmSOO+ZK2WpQgLpiSWp2ampBalFMH1MHJxSDUzMou1HNZ5H8Bv7Ll+WHcKkvlLx4HMlv3zm
+	2RnP6u6f4pv4gP1kgA2L1bzdu8ON3RJi6g2WP+1oKmnJm/jgnt61u57Mtw+9UVQSCb96/P9t
+	AWth/b6wzOOS9z/sYXEIdOpxFhC8NOnn3iVX50ysnKTzUPuhn/vmfU+r605K/dl3cNb65pOC
+	T+P3pLG6sO0O5b69JjJOP7svbdKJ/lWSHw4sv2Zg8/R/xnRnzS/ajHoq55szZ62cf73x+skn
+	ea03bv+VCzxzcFra/cvzT+Xd8In5qBqTWJ/ZwXW7+dvD21NmhOjOYG69PnHLm1XLz25lL2UI
+	/ftX8IDos6U/Jt5jqTE8a/Tc2OHgicQfDz7d3Pk9S4mlOCPRUIu5qDgRAPgVaVE4BAAA
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240521024009epcas1p10ed9f9b929203183a29f79508e79bb76
+References: <20240601014045.jkk3ydsu4zns2bfc@master>
+	<20240521025329epcms1p6ce11064c0f0608a0156d82fda7ef285c@epcms1p6>
+	<20240521101753epcms1p50443f6b88adea211dd9bbb417dd57cb1@epcms1p5>
+	<20240524090715epcms1p274939a1d5954be3423f6ce14a3df6f92@epcms1p2>
+	<20240527013504epcms1p22bec7b83f2a42e76877b97ed0d769009@epcms1p2>
+	<20240529095119epcms1p73f0e9ff756bcb2ee6a14db459128a644@epcms1p7>
+	<20240529113519.jupuazcf754zjxzy@master>
+	<CAJrd-UuiDq-o=r7tK=CG6Q3yeARQBEAtaov2yqO6e6tBwJZoqQ@mail.gmail.com>
+	<20240530104928epcms1p8108ece61c39c6e3d0361d445c15352d1@epcms1p8>
+	<20240531082141epcms1p49d8d2048e04e90eca45644723614faa8@epcms1p4>
+	<CGME20240521024009epcas1p10ed9f9b929203183a29f79508e79bb76@epcms1p8>
 
+>On Fri, May 31, 2024 at 05:21:41PM +0900, Jaewon Kim wrote:
+>>>On Thu, May 30, 2024 at 07:49:28PM +0900, Jaewon Kim wrote:
+>>>>>On Wed, May 29, 2024 at 10:10:29PM +0900, Jaewon Kim wrote:
+>>>>>>(Sorry I might forget to change to be plain text)
+>>>>>>
+>>>>>>Oh good thing, I did not know this patch. Thanks.
+>>>>>>
+>>>>>>By the way, I've tried to get memblock/memory and kernel log from a
+>>>>>>device based on
+>>>>>>v6.6.17 kernel device, to see upstream patches above.
+>>>>>>memblok/memory does not show region for
+>>>>>
+>>>>>memblock/memory only shows ranges put in "memory".
+>>>>>memblock/reserved shows ranges put in "reserved".
+>>>>>
+>>>>>If we just put them in "reserved", it will not displayed in "memory".
+>>>>
+>>>>Hi
+>>>>Let me explain more.
+>>>>
+>>>>In this case, the intially passed memory starts from 0000000081960000 so memblock/memory shows as it is.
+>>>>
+>>>># xxd -g 8 /proc/device-tree/memory/reg
+>>>>00000000: 0000000081960000 00000000000a0000  ................
+>>>>00000010: 0000000081a40000 00000000001c0000  ................
+>>>>
+>>>># cat sys/kernel/debug/memblock/memory
+>>>>   0: 0x0000000081960000..0x00000000819fffff    0 NONE
+>>>>   1: 0x0000000081a40000..0x0000000081bfffff    0 NONE
+>>>>
+>>>># cat sys/kernel/debug/memblock/reserved
+>>>>   0: 0x0000000082800000..0x00000000847fffff    0 NONE
+>>>>
+>>>>The memblock information in the kernel log may report like it allocated those memblock regions, as there was not overlapped even though it is already no-map.
+>>>>
+>>>>(I removed the name.)
+>>>><6>[    0.000000][    T0] OF: reserved mem: 0x0000000080000000..0x0000000080dfffff (14336 KiB) nomap non-reusable AAA
+>>>><6>[    0.000000][    T0] OF: reserved mem: 0x0000000080e00000..0x00000000811fffff (4096 KiB) nomap non-reusable BBB
+>>>><6>[    0.000000][    T0] OF: reserved mem: 0x0000000081200000..0x00000000813fffff (2048 KiB) nomap non-reusable CCC
+>>>><6>[    0.000000][    T0] OF: reserved mem: 0x0000000081a00000..0x0000000081a3ffff (256 KiB) nomap non-reusable DDD
+>>>>
+>>>
+>>>This looks not printed by memblock_reserve(), right? It is printed by your own
+>>>driver?
+>>
+>>AFAIK these log came from the commit below.
+>>aeb9267eb6b1 of: reserved-mem: print out reserved-mem details during boot
+>>
+>>>
+>>>>So a smart parser should combine the krenel log and the memblock/memory log.
+>>>>
+>>>>In my memsize feature shows it like this though.
+>>>>
+>>>>0x0000000081400000-0x0000000081960000 0x00560000 (    5504 KB ) nomap unusable unknown
+>>>>
+>>>>BR
+>>>>
+>>>
+>>>I am sorry, I still not catch your point. Let me try to understand your message.
+>>>
+>>>You mentioned several regions, let me put them in order.
+>>>
+>>>(1)   0x0000000080000000..0x0000000080dfffff    printed by driver
+>>>(2)   0x0000000080e00000..0x00000000811fffff    printed by driver
+>>>(3)   0x0000000081200000..0x00000000813fffff    printed by driver
+>>>(4)   0x0000000081400000..0x0000000081960000    expected to print in new debugfs
+>>>(5)   0x0000000081960000..0x00000000819fffff    listed in reg/memory
+>>>(6)   0x0000000081a00000..0x0000000081a3ffff    printed by driver
+>>>(7)   0x0000000081a40000..0x0000000081bfffff    listed in reg/memory
+>>>(8)   0x0000000082800000..0x00000000847fffff    listed in reserved
+>>>
+>>>If you just want information for region (4), sound we can do it in user-space?
+>>>
+>>>BTW, are region 1, 2, 3, 6, reserved in membock?
+>>
+>>Yes correct, I though (4) case could be shown to easily catch these hidden regions.
+>>As I said, I think 1, 2, 3, 6 seem to be not passed to kernel, it was just tried as
+>>they are defined in kernel device tree.
+>>
+>
+>As you mentioned above, 1, 2, 3, 6, is printed by "of" driver. And those
+>information is not shown in memblock/reserve.
+>
+>I am afraid the proper way is to let memblock know those ranges. Sounds "of"
+>driver doesn't tell memblock about these.
+>
 
---=-oPnDOBHGxZqHv7z1WdSs
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Yes that is the reason why I added some code to 'of' driver, too. As I said,
+if we don't change 'of' driver and memblck, we need a smart parser looking into
+kernel log and memblock info, and understand these special cases.
 
-On Thu, 2024-05-30 at 16:12 +0000, Fred Griffoul wrote:
-> The usual way to configure a device interrupt from userland is to write
-> the /proc/irq/<irq>/smp_affinity or smp_affinity_list files. When using
-> vfio to implement a device driver or a virtual machine monitor, this may
-> not be ideal: the process managing the vfio device interrupts may not be
-> granted root privilege, for security reasons. Thus it cannot directly
-> control the interrupt affinity and has to rely on an external command.
->=20
-> This patch extends the VFIO_DEVICE_SET_IRQS ioctl() with a new data flag
-> to specify the affinity of a vfio pci device interrupt.
->=20
-> The affinity argument must be a subset of the process cpuset, otherwise
-> an error -EPERM is returned.
->=20
-> The vfio_irq_set argument shall be set-up in the following way:
->=20
-> - the 'flags' field have the new flag VFIO_IRQ_SET_DATA_AFFINITY set
-> as well as VFIO_IRQ_SET_ACTION_TRIGGER.
->=20
-> - the 'start' field is the device interrupt index. Only one interrupt
-> can be configured per ioctl().
->=20
-> - the variable-length array consists of one or more CPU index
-> encoded as __u32, the number of entries in the array is specified in the
-> 'count' field.
->=20
-> Signed-off-by: Fred Griffoul <fgriffo@amazon.co.uk>
+BR
 
-LGTM in general. This is important to avoid a noisy neighbour effect
-when guests are supposed to be pinned to their *own* set of pCPUs.
-
-I still think I'd prefer the cpumask to be a bitmask like in the
-sys_sched_setaffinity() syscall. Even if we end up making the
-get_user_cpu_mask() function non-static (isn't there already a second
-open-coded version of that somewhere?). But I don't particularly mind.=20
-
-I *do* mind abusing 'count' though, and the various other changes that
-follow from doing so. Could we put the CPU count into the 'data' field
-itself? Or infer it from 'argsz'? We already explicitly calculate
-data_size in order to memdup_user(). Let's just pass it down.
-
-
---=-oPnDOBHGxZqHv7z1WdSs
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEkQw
-ggYQMIID+KADAgECAhBNlCwQ1DvglAnFgS06KwZPMA0GCSqGSIb3DQEBDAUAMIGIMQswCQYDVQQG
-EwJVUzETMBEGA1UECBMKTmV3IEplcnNleTEUMBIGA1UEBxMLSmVyc2V5IENpdHkxHjAcBgNVBAoT
-FVRoZSBVU0VSVFJVU1QgTmV0d29yazEuMCwGA1UEAxMlVVNFUlRydXN0IFJTQSBDZXJ0aWZpY2F0
-aW9uIEF1dGhvcml0eTAeFw0xODExMDIwMDAwMDBaFw0zMDEyMzEyMzU5NTlaMIGWMQswCQYDVQQG
-EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYD
-VQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50
-aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKC
-AQEAyjztlApB/975Rrno1jvm2pK/KxBOqhq8gr2+JhwpKirSzZxQgT9tlC7zl6hn1fXjSo5MqXUf
-ItMltrMaXqcESJuK8dtK56NCSrq4iDKaKq9NxOXFmqXX2zN8HHGjQ2b2Xv0v1L5Nk1MQPKA19xeW
-QcpGEGFUUd0kN+oHox+L9aV1rjfNiCj3bJk6kJaOPabPi2503nn/ITX5e8WfPnGw4VuZ79Khj1YB
-rf24k5Ee1sLTHsLtpiK9OjG4iQRBdq6Z/TlVx/hGAez5h36bBJMxqdHLpdwIUkTqT8se3ed0PewD
-ch/8kHPo5fZl5u1B0ecpq/sDN/5sCG52Ds+QU5O5EwIDAQABo4IBZDCCAWAwHwYDVR0jBBgwFoAU
-U3m/WqorSs9UgOHYm8Cd8rIDZsswHQYDVR0OBBYEFAnA8vwL2pTbX/4r36iZQs/J4K0AMA4GA1Ud
-DwEB/wQEAwIBhjASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEF
-BQcDBDARBgNVHSAECjAIMAYGBFUdIAAwUAYDVR0fBEkwRzBFoEOgQYY/aHR0cDovL2NybC51c2Vy
-dHJ1c3QuY29tL1VTRVJUcnVzdFJTQUNlcnRpZmljYXRpb25BdXRob3JpdHkuY3JsMHYGCCsGAQUF
-BwEBBGowaDA/BggrBgEFBQcwAoYzaHR0cDovL2NydC51c2VydHJ1c3QuY29tL1VTRVJUcnVzdFJT
-QUFkZFRydXN0Q0EuY3J0MCUGCCsGAQUFBzABhhlodHRwOi8vb2NzcC51c2VydHJ1c3QuY29tMA0G
-CSqGSIb3DQEBDAUAA4ICAQBBRHUAqznCFfXejpVtMnFojADdF9d6HBA4kMjjsb0XMZHztuOCtKF+
-xswhh2GqkW5JQrM8zVlU+A2VP72Ky2nlRA1GwmIPgou74TZ/XTarHG8zdMSgaDrkVYzz1g3nIVO9
-IHk96VwsacIvBF8JfqIs+8aWH2PfSUrNxP6Ys7U0sZYx4rXD6+cqFq/ZW5BUfClN/rhk2ddQXyn7
-kkmka2RQb9d90nmNHdgKrwfQ49mQ2hWQNDkJJIXwKjYA6VUR/fZUFeCUisdDe/0ABLTI+jheXUV1
-eoYV7lNwNBKpeHdNuO6Aacb533JlfeUHxvBz9OfYWUiXu09sMAviM11Q0DuMZ5760CdO2VnpsXP4
-KxaYIhvqPqUMWqRdWyn7crItNkZeroXaecG03i3mM7dkiPaCkgocBg0EBYsbZDZ8bsG3a08LwEsL
-1Ygz3SBsyECa0waq4hOf/Z85F2w2ZpXfP+w8q4ifwO90SGZZV+HR/Jh6rEaVPDRF/CEGVqR1hiuQ
-OZ1YL5ezMTX0ZSLwrymUE0pwi/KDaiYB15uswgeIAcA6JzPFf9pLkAFFWs1QNyN++niFhsM47qod
-x/PL+5jR87myx5uYdBEQkkDc+lKB1Wct6ucXqm2EmsaQ0M95QjTmy+rDWjkDYdw3Ms6mSWE3Bn7i
-5ZgtwCLXgAIe5W8mybM2JzCCBhQwggT8oAMCAQICEQDGvhmWZ0DEAx0oURL6O6l+MA0GCSqGSIb3
-DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
-VQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28g
-UlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMB4XDTIyMDEwNzAw
-MDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJARYTZHdtdzJAaW5mcmFkZWFkLm9y
-ZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3GpC2bomUqk+91wLYBzDMcCj5C9m6
-oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZHh7htyAkWYVoFsFPrwHounto8xTsy
-SSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT9YgcBqKCo65pTFmOnR/VVbjJk4K2
-xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNjP+qDrh0db7PAjO1D4d5ftfrsf+kd
-RR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy2U+eITZ5LLE5s45mX2oPFknWqxBo
-bQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3BgBEmfsYWlBXO8rVXfvPgLs32VdV
-NZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/7auNVRmPB3v5SWEsH8xi4Bez2V9U
-KxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmdlFYhAflWKQ03Ufiu8t3iBE3VJbc2
-5oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9aelIl6vtbhMA+l0nfrsORMa4kobqQ5
-C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMBAAGjggHMMIIByDAfBgNVHSMEGDAW
-gBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeDMcimo0oz8o1R1Nver3ZVpSkwDgYD
-VR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYwFAYIKwYBBQUHAwQGCCsGAQUFBwMC
-MEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYBBQUHAgEWF2h0dHBzOi8vc2VjdGln
-by5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9jcmwuc2VjdGlnby5jb20vU2VjdGln
-b1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1haWxDQS5jcmwwgYoGCCsGAQUFBwEB
-BH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdvLmNvbS9TZWN0aWdvUlNBQ2xpZW50
-QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAjBggrBgEFBQcwAYYXaHR0cDovL29j
-c3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkqhkiG9w0B
-AQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQvQ/fzPXmtR9t54rpmI2TfyvcKgOXp
-qa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvIlSPrzIB4Z2wyIGQpaPLlYflrrVFK
-v9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9ChWFfgSXvrWDZspnU3Gjw/rMHrGnql
-Htlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0whpBtXdyDjzBtQTaZJ7zTT/vlehc/
-tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9IzCCBhQwggT8oAMCAQICEQDGvhmW
-Z0DEAx0oURL6O6l+MA0GCSqGSIb3DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3Jl
-YXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0
-ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJl
-IEVtYWlsIENBMB4XDTIyMDEwNzAwMDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJ
-ARYTZHdtdzJAaW5mcmFkZWFkLm9yZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3
-GpC2bomUqk+91wLYBzDMcCj5C9m6oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZH
-h7htyAkWYVoFsFPrwHounto8xTsySSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT
-9YgcBqKCo65pTFmOnR/VVbjJk4K2xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNj
-P+qDrh0db7PAjO1D4d5ftfrsf+kdRR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy
-2U+eITZ5LLE5s45mX2oPFknWqxBobQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3
-BgBEmfsYWlBXO8rVXfvPgLs32VdVNZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/
-7auNVRmPB3v5SWEsH8xi4Bez2V9UKxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmd
-lFYhAflWKQ03Ufiu8t3iBE3VJbc25oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9ae
-lIl6vtbhMA+l0nfrsORMa4kobqQ5C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMB
-AAGjggHMMIIByDAfBgNVHSMEGDAWgBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeD
-Mcimo0oz8o1R1Nver3ZVpSkwDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYw
-FAYIKwYBBQUHAwQGCCsGAQUFBwMCMEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYB
-BQUHAgEWF2h0dHBzOi8vc2VjdGlnby5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9j
-cmwuc2VjdGlnby5jb20vU2VjdGlnb1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1h
-aWxDQS5jcmwwgYoGCCsGAQUFBwEBBH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdv
-LmNvbS9TZWN0aWdvUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAj
-BggrBgEFBQcwAYYXaHR0cDovL29jc3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5m
-cmFkZWFkLm9yZzANBgkqhkiG9w0BAQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQv
-Q/fzPXmtR9t54rpmI2TfyvcKgOXpqa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvI
-lSPrzIB4Z2wyIGQpaPLlYflrrVFKv9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9Ch
-WFfgSXvrWDZspnU3Gjw/rMHrGnqlHtlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0w
-hpBtXdyDjzBtQTaZJ7zTT/vlehc/tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9
-IzGCBMcwggTDAgEBMIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVz
-dGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMT
-NVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEA
-xr4ZlmdAxAMdKFES+jupfjANBglghkgBZQMEAgEFAKCCAeswGAYJKoZIhvcNAQkDMQsGCSqGSIb3
-DQEHATAcBgkqhkiG9w0BCQUxDxcNMjQwNjAzMDkzMjQ3WjAvBgkqhkiG9w0BCQQxIgQgE90z5l3r
-pcTpxU69uBG9Qe/KP1UlXx2sAmEEWz1biA8wgb0GCSsGAQQBgjcQBDGBrzCBrDCBljELMAkGA1UE
-BhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEYMBYG
-A1UEChMPU2VjdGlnbyBMaW1pdGVkMT4wPAYDVQQDEzVTZWN0aWdvIFJTQSBDbGllbnQgQXV0aGVu
-dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIRAMa+GZZnQMQDHShREvo7qX4wgb8GCyqGSIb3
-DQEJEAILMYGvoIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVy
-MRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNl
-Y3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEAxr4Z
-lmdAxAMdKFES+jupfjANBgkqhkiG9w0BAQEFAASCAgBtjFXvtOvHYEUCS31MQ/RPUSEDQlS8UXTD
-wL21NTHvx1CJb8QLta35S7K/t2Mk6JXbG7B2gow3uI08b7pzG96ZTRepAa0Qg7Y5o45wGMCnexb1
-yS84OB4258ju6y22Ngxrn+tMoLVW4xjczc0ST2cs14I7e2hdkcGKn1tt0KFvhJXY7MSg41ncOZUm
-2DyijdBlC4sL1RXAP88yovDLHvqD1xr2kAtOJ37IXnO+UM9UZOp4hTLPeHqVgv+cZYy5KipYoSts
-jkJurAtuiXcvzz5sWcwjelLNavq4Bg7TwS9SPGkh0/gUAQdIMWkxFG9wuXObM6cH+XMuzekC4FUc
-3DLkMgpX6yVYuP5LQaS3VQjKvxbz0U7gOTdDSwoVZTOpdwQrG74Cxp0Nimik2JVNgPye9BG7VdMt
-N7U8e30PpTvDhAvVpNDTMsAdk1+Gsr5n4dYEmql+PZjNzWlyAw0NmrEq6RsyArXvRvMhMQkmAXly
-G/Hc4O7vHTrfiRqzoEYQKbauBPegOP7dySlNhOox9F7dx4Y+g6W5AllcQJAexXl5/PTkyyrrXkXQ
-co+Osvy36Nb0KU5oOuR9uNUtofsZ+q9RT5YkeMgaJfsjHGJxTfBM0CwCLzW0sa252j27JHiuzMBr
-Lls4B82zBXb4qW/mpXSStNExSZOFOQuUqZrsjiBK/QAAAAAAAA==
-
-
---=-oPnDOBHGxZqHv7z1WdSs--
+>>
+>>>
+>>>-- 
+>>>Wei Yang
+>>>Help you, Help me
+>
 
