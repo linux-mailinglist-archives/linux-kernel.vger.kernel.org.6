@@ -1,208 +1,240 @@
-Return-Path: <linux-kernel+bounces-199060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA1BF8D8171
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:41:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93D6A8D816D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:40:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 297C91F25112
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:41:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 188B01F23DF3
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:40:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7F6D84DE8;
-	Mon,  3 Jun 2024 11:40:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B84C84DEC;
+	Mon,  3 Jun 2024 11:40:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b="Q/DFzWx5"
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2068.outbound.protection.outlook.com [40.107.255.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="VaId9LVd"
+Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B934B84D05;
-	Mon,  3 Jun 2024 11:40:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717414852; cv=fail; b=B0AJdcmIwEJTKqkL5iLGxM8KqvABc9wIz9IICiN5UBvIfdWeAssEsabW3FQH6hXRiQdWC1G0QAtLdAxh2mmwrnQxWe5Y9nomWq/V/0VD8KSNq9EKe73czcxXlpWUk+2E0HL+kdIoLf6z68UfnEPl9p/seKZXKAUb/VUUK4Oh38s=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717414852; c=relaxed/simple;
-	bh=VWQXlrWaqgeWJGNJEQGyrWGp5OBw+8/CihEgW72KAz4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ShqrdDxPecjpB/umzCqc9ylLLkXhwhlZIaS2b1QHyJRONaXRkvcTmTwso+pBpZu6IDIflZ1XVPi/ER2rSMMmG1ONyevZWcw5A09yDy09cPuStIBiofrb7sd6YEz8ntEXJj+o+l0+J9bDOpdfT/j9kUBkc8CkV2jd+9ntkl41SlE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com; spf=pass smtp.mailfrom=oppo.com; dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b=Q/DFzWx5; arc=fail smtp.client-ip=40.107.255.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oppo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ReHEXSbxPFaj32VjD0sHxhn8+d/MfQniPC1YN6ycckO/K/OEiWTb4ulgRLGx6InKHs7Df9m1CpCzrr6fwpamT6qndDKEsST5jj8M8mYQzvZlfgSrxS3nTM2h+urmwUDujOwnFs575Mx4FEtWwJIbfjITO08QFEDY/9qP99/po+ZUScJlqHQ6PvfWgnP9L8F3O/FQx8+lvo8hATcnAHmbPuE5G7tHPlGMUc63B4Y5coHTmiwA2XaFrTnMwlqNQWHflf6aTbFek+6GxaQkqbU+TF9U9wx9vTp5YNxIJ6q9GVrodZwUOjaO79/ABt+j+WAFj6ecRAMI2o84N850CF5Akg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=yoIM7lC3W2CmzRv5ldHqXT4NLmee7//rWVqgOuxoapU=;
- b=Jn15r9SryYqAxsdKhMpvALdBExiIthl5c33WVxb1sPy1iESS04xLXbtZO1KWXgk4XDlffdMY28jomNx/Lv4f9ji468zGQl6yMAiOM+46mTD8kVEz+nbcGY+82t4cD02EEJtj3ZyzFuNpTbcVKHz9sVYK5x3IbTsecarccnygVTCgnBl55tyWbSWdrl5iL+iLQzk62oMbKsFPvzD2Ulwsekdhm71PcLvnMnISW1gvIwnBLLlSOerM0lfwLOybLezJpWKewrFmqfxfvr9jfrXYAHm5mXFapY/Mxphpt0EhWj0jO7PJhteYfCgUilbcJrrXgboTyJ2ru/jclq9OS/f7QQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 58.252.5.68) smtp.rcpttodomain=linaro.org smtp.mailfrom=oppo.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=oppo.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oppo.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=yoIM7lC3W2CmzRv5ldHqXT4NLmee7//rWVqgOuxoapU=;
- b=Q/DFzWx5bafjt7/E5pgCq7hcJYc0Dy/FvJe2pjgmDvQzqPkMyJ9Pm3Il9K3RNuHejcR4bUsfO0VyqKT54T6aUGEMWcQ6cq5i4WTTnlV2yMuYz0irHWlkor3g/7kGDTfcf8Fgw7dZiFJhB/LiwvzLCDq8mydg7WvgvFv6musvTgs=
-Received: from SG2PR01CA0134.apcprd01.prod.exchangelabs.com
- (2603:1096:4:8f::14) by TY0PR02MB6803.apcprd02.prod.outlook.com
- (2603:1096:405:b::13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.23; Mon, 3 Jun
- 2024 11:40:47 +0000
-Received: from SG2PEPF000B66D0.apcprd03.prod.outlook.com
- (2603:1096:4:8f:cafe::60) by SG2PR01CA0134.outlook.office365.com
- (2603:1096:4:8f::14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.29 via Frontend
- Transport; Mon, 3 Jun 2024 11:40:47 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 58.252.5.68)
- smtp.mailfrom=oppo.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=oppo.com;
-Received-SPF: Pass (protection.outlook.com: domain of oppo.com designates
- 58.252.5.68 as permitted sender) receiver=protection.outlook.com;
- client-ip=58.252.5.68; helo=mail.oppo.com; pr=C
-Received: from mail.oppo.com (58.252.5.68) by
- SG2PEPF000B66D0.mail.protection.outlook.com (10.167.240.26) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7633.15 via Frontend Transport; Mon, 3 Jun 2024 11:40:46 +0000
-Received: from PH80250894.adc.com (172.16.40.118) by mailappw31.adc.com
- (172.16.56.198) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 3 Jun
- 2024 19:40:46 +0800
-From: <hailong.liu@oppo.com>
-To: Sumit Semwal <sumit.semwal@linaro.org>, Benjamin Gaignard
-	<benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>,
-	John Stultz <jstultz@google.com>, "T.J. Mercier" <tjmercier@google.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
-CC: <21cnbao@gmail.com>, Hailong.Liu <hailong.liu@oppo.com>,
-	<linux-media@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-	<linaro-mm-sig@lists.linaro.org>, <linux-kernel@vger.kernel.org>
-Subject: [RFC PATCH v1] dma-buf: heaps: move the verification of heap_flags to the corresponding heap
-Date: Mon, 3 Jun 2024 19:40:05 +0800
-Message-ID: <20240603114008.16235-1-hailong.liu@oppo.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FA7684A46
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 11:40:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717414824; cv=none; b=vGTYKCMSI9xSTYrO4laSE//3PhV+VaSJM80cydlx7NxnMccEno6HmiupIu8rh/OfTNJ+e+R7WgFvVsNjvhEbhXa1dYE5aPlIn+b6BGhXIRdLKytsmI8x6ITUzOKGuxhK/RxmrQaunzbyjGShIjgy3FmuiHS5u3UJcsG2mlIDMgY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717414824; c=relaxed/simple;
+	bh=RRaEqV7B8iSS7qa/pDOAH3MqYofRF4D4b2oFQnNTQJ0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DIp416/vIhSQSLxkCPjvo1RH/h4jcAAtfyTVh4jAqmKDj/dFTTRHFzdaGXw5dpP0k9e5EOWZd46KxvRbO+N2DG8my8qQChg3AMQ9EYQdA+XENaM/kNWm6B1V/fhxqOCTpcO+iOUd3ALYcaPcWEZGO4Met0aOyJGLa49B2Vk6Rpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=VaId9LVd; arc=none smtp.client-ip=209.85.166.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
+Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-371cc143f6aso19925435ab.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 04:40:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1717414822; x=1718019622; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jznY1UA7/SXmEB87TeYXPvswNX7BAys1PkdQILLo1MY=;
+        b=VaId9LVdcP8LsNBrkeurRiOKNXEeqoKTLyB33jLyIdn7O6HtYPBK04OiLmDKAy8Lvl
+         6XK1tuQtJ5WlNjFpJJ1Xv7+PWr+J1vN5IWD6wp3oOhvx0+jQKCyLkelGK/r9yA09NkRG
+         NqOdZ0QaB+F3JaJmlsxspw/4SDd5kmNb/TMCk344ElII/IND2ynqo8KyTfSZDrhv719B
+         OuSiUqmbgCYkNtH0JHvMMupYxEoO2IesBrecObvfRp2OmtiXPQDcIw8K/asHrpcafQ8h
+         5a0jtAWJ1xt8XIemoN+ldxTsCVBeIK7Cy9touYQwr717IUjBq0E0jBdXMg4VDJxNwQHC
+         usVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717414822; x=1718019622;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jznY1UA7/SXmEB87TeYXPvswNX7BAys1PkdQILLo1MY=;
+        b=eAJZ2IHCd4XUYRwTeAKhnOKpOfWH91h3b8PtcR0GUX0bpYKH5Rw+QXtdB3Y4Hwlie4
+         HTo1aP+Gs9us437Ja0unqIi32zdYuZ6kkNTGbjOtADGiuqjZBjW9Rl20wNcEH5yn4OrZ
+         it3wDnKncoBL0Pexqa9AT7XYxdk8us1MPnQ41w8YcGZfpPRX0dEs5LwxQyZHaOdPeVtA
+         TUVQI4ucrBY6oiD1Ntv7IJDO6LuY1QokxqmjvkEkM9lAJB4xv+LxVujWk03dg+G4anYk
+         sHvOyfzMDS6Uj7hvD/sjyhYiu3bEmeI2F8K98sltpoRJAanNNzy7YvXpiNREk5P/i18i
+         xmVA==
+X-Forwarded-Encrypted: i=1; AJvYcCWFbpmLDuOT2Kn7MHNZDTOx+aZnHYRggF53U/rPMmRGYMfYDXzRGzt/q4U9jkHn6tqxDMiG9eg2nvGqF5mnqBgc1mzx5OhDPt52t86g
+X-Gm-Message-State: AOJu0YydllYtVkhvwE0WMJRgoRiex71P7QgSPO2QC8Vu1lTQJhgUPd9M
+	7aa5srA7RjXq9FgBbx7hcNYJKMPky6V7+1wahZR7MpWtfxUD7JIgxk9r8GWTtXM4MvfzVSlLMz/
+	XUt6UHczETo0TFS7gT5qlN2xZIXUKaunFNrI9qrH++oCc5AOU
+X-Google-Smtp-Source: AGHT+IGJ9Mvf8z85SE/NFg8HuQmyPGDBsDk+Yroy5ITFqpG+kRyKvmd5ME6X9GIu0azVzqIEgdBbQinMEvImFyXLYtw=
+X-Received: by 2002:a05:6e02:216a:b0:374:9995:b369 with SMTP id
+ e9e14a558f8ab-3749995b506mr46562275ab.4.1717414822141; Mon, 03 Jun 2024
+ 04:40:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240524103307.2684-1-yongxuan.wang@sifive.com>
+ <20240524103307.2684-2-yongxuan.wang@sifive.com> <20240527-41b376a2bfedb3b9cf7e9c7b@orel>
+ <ec110587-d557-439b-ae50-f3472535ef3a@ghiti.fr> <20240530-3e5538b8e4dea932e2d3edc4@orel>
+ <3b76c46f-c502-4245-ae58-be3bd3f8a41f@ghiti.fr> <20240530-de1fde9735e6648dc34654f3@orel>
+ <f2016305-e24b-41ea-8c48-cfdeb8ee6b48@ghiti.fr>
+In-Reply-To: <f2016305-e24b-41ea-8c48-cfdeb8ee6b48@ghiti.fr>
+From: Anup Patel <anup@brainfault.org>
+Date: Mon, 3 Jun 2024 17:10:10 +0530
+Message-ID: <CAAhSdy2dJaNWYH88RhjiUktX5n4-ZfFuXsjyYeJ-+Y8qOf7zRA@mail.gmail.com>
+Subject: Re: [RFC PATCH v4 1/5] RISC-V: Detect and Enable Svadu Extension Support
+To: Alexandre Ghiti <alex@ghiti.fr>
+Cc: Andrew Jones <ajones@ventanamicro.com>, Yong-Xuan Wang <yongxuan.wang@sifive.com>, 
+	linux-riscv@lists.infradead.org, kvm-riscv@lists.infradead.org, 
+	kvm@vger.kernel.org, greentime.hu@sifive.com, vincent.chen@sifive.com, 
+	cleger@rivosinc.com, Jinyu Tang <tjytimi@163.com>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor.dooley@microchip.com>, 
+	Mayuresh Chitale <mchitale@ventanamicro.com>, Samuel Holland <samuel.holland@sifive.com>, 
+	Samuel Ortiz <sameo@rivosinc.com>, Evan Green <evan@rivosinc.com>, 
+	Xiao Wang <xiao.w.wang@intel.com>, Alexandre Ghiti <alexghiti@rivosinc.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Kemeng Shi <shikemeng@huaweicloud.com>, 
+	"Mike Rapoport (IBM)" <rppt@kernel.org>, Jisheng Zhang <jszhang@kernel.org>, 
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Charlie Jenkins <charlie@rivosinc.com>, 
+	Leonardo Bras <leobras@redhat.com>, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: mailappw31.adc.com (172.16.56.198) To mailappw31.adc.com
- (172.16.56.198)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SG2PEPF000B66D0:EE_|TY0PR02MB6803:EE_
-X-MS-Office365-Filtering-Correlation-Id: 586d08e1-1f6f-4a70-f977-08dc83c2029d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|7416005|376005|1800799015|36860700004|82310400017;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?QWdWdVYrMU5iTUswc2RHbmJxd2pWR3ZlUGdrZWZMMHFuVVBudUNCSWlyWUt0?=
- =?utf-8?B?bXk2QXdseFFLclZGMnlVZ3BQM1kxMXhMZ1VCN3VRVTJUeDlDakt1VXZQbWJj?=
- =?utf-8?B?aitnbVNwOFFra0pUUm10TmpwcWllNDRoYUlYcEpkMnVVUXM5SFBOdWh4cTAr?=
- =?utf-8?B?UkYySXllbmRWNEV0d0xsV0xRWDBaQzVKeTgxNThTZm9ZYWhtNFlxby9yZzA5?=
- =?utf-8?B?Z0N2VjdBS0RqL3ZPczdGczcvL2h5d0NMZTY1Nkw2T1BtcEt2bUNVMks4VmVz?=
- =?utf-8?B?LzEwSFJWcEZNZ0NTb2ZqS0o4OHdzWjJvdEF0V2tDMjh5T1hLQ29seFZsYUJa?=
- =?utf-8?B?U2szNm5yTkI2WDBKVW9LYmZKK2t3aW1Gb3ZiaGw2SWxXazdnUEFRaitQWEYv?=
- =?utf-8?B?YVBCYUVrT3dGQXdxaTRBK3pZaDlmZTFENGZrWUg3Z2RzNEMrOGFwRCthVG04?=
- =?utf-8?B?SEpVZEJJN2Q1RXhOOUhBL1VtcFduTzJ3aUJtc084ckx5R094TEdDTWpRbGVH?=
- =?utf-8?B?cXpDRHdqQ2o2WEtYZGRwU2pFREpRaWd5SlU2WTdmVDY0TUpGQ3pTaEVSYXBU?=
- =?utf-8?B?UDR2K1VaZ2htOTVoWXRJUlZPam1Bc2MyMnJvRWkvZ1IxL0t1cWFDTmpiMG5j?=
- =?utf-8?B?dURza0k4U3FPd2FSUzIzYUp2VDdram55YTIwVStRcDAwOE53MkVlQlp2aUl1?=
- =?utf-8?B?NDVoZjdQYzFGN2ZidHBKOWFsUU9pcXlKTCtNTEE1OThFUVcvd3NiZkZnUWpW?=
- =?utf-8?B?S2JCY216RkExcStTUzlqY3czQnpQRXRFR1NtRVJIeHYrSll0RU4xb1JjRWo3?=
- =?utf-8?B?OFFuRlRqUUFPVWZvVEoyZkJnemxRU2ppa2Y0OTNndHdBUjl6SGtWTkFGaEhp?=
- =?utf-8?B?dWQyNXZiellYdzBkWUtiOGloaUtmUG93U2xNUWc1MkNhVFdOZVVyMExCN1d6?=
- =?utf-8?B?V1FkNUxpZm1heHp4ZXRESHZtSyttbEd4VVo1TWVLQ3V0ekZybFBPaHY3dnlZ?=
- =?utf-8?B?YUI3MlBlVmYxMGREYUFxbDh1SmNKMjlvNUtzWC9RY3dhUDd3RXNLTEtDY3pk?=
- =?utf-8?B?blBnVzh2NVBoVUpGdkdaUUNFZ3JoaFZhRS9ONWRuakFJNStSMDl5ZklWR0Ez?=
- =?utf-8?B?U0VsWk4vRE5pNW4zZEFnV1pvcW1ZNFMzeXR3RWlaSEs0c0J4UWlpNnJvYnAr?=
- =?utf-8?B?OHZ1NXM3czhLUHJuWUJMUHIzc2hUYklHcnUweCtsY2RNZmxXcUQ5ZWhnWi8x?=
- =?utf-8?B?dklxSkRWVWhpVjFuMDdCdGhvSmhPTzRSQjArQUtxZUhGb3B4KzRMNUxvWnZT?=
- =?utf-8?B?d0JEbnFzRzludzZaZHBPMloxbDBxUXA5TmtYeTZpK0IxM21vQ3RJL0YxWVdH?=
- =?utf-8?B?NmN2K3N1SVA0RG5IdW03K3BQTWcwZUhyMGdBampvekZsTHVSYUNrUUlEcnpP?=
- =?utf-8?B?c2tEbG1ld1Z4dzBDNHNEMFdxZEVzQmRjSDlldnhzVmMvckljT0dERWwxb1B6?=
- =?utf-8?B?WGRuL2k2dXIrRGs5a1VQaHhKdUx3aGJKRTN0YUNrVGVyeWxiS3FFYWtibHk0?=
- =?utf-8?B?dEl4MlkydWxQK0ZKK2pvbHlzWnNtWll1NDRsa2R0VGF6a1p4YWhXSW8yTU90?=
- =?utf-8?B?ejlZSFNOemR5WmNkNFFkODN5aEFzMVVHU1pnMHlqSVRzbGtqbXRLaDMyVE9l?=
- =?utf-8?B?K2pRWm5Jc0pRZEFJcVdpSGxhNTBRNzlTb2xtL3BvL3dHTjFjaFJQQVc2M1NJ?=
- =?utf-8?B?VTBYMnZKY1RFZk51NklMRWdDRTh0L3RaVW40TDBqMWxoWnN3Q0I4OExzbjMw?=
- =?utf-8?B?L2J2RFVZamlpVGxEV1hQREZmcjcrdDN5ZTBNMUJCa0pUYmF1MHBPVnFqOWVv?=
- =?utf-8?Q?7zoKTe01c9Hr9?=
-X-Forefront-Antispam-Report:
-	CIP:58.252.5.68;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.oppo.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(7416005)(376005)(1800799015)(36860700004)(82310400017);DIR:OUT;SFP:1101;
-X-OriginatorOrg: oppo.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jun 2024 11:40:46.9475
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 586d08e1-1f6f-4a70-f977-08dc83c2029d
-X-MS-Exchange-CrossTenant-Id: f1905eb1-c353-41c5-9516-62b4a54b5ee6
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f1905eb1-c353-41c5-9516-62b4a54b5ee6;Ip=[58.252.5.68];Helo=[mail.oppo.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SG2PEPF000B66D0.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY0PR02MB6803
+Content-Transfer-Encoding: quoted-printable
 
-From: "Hailong.Liu" <hailong.liu@oppo.com>
+On Mon, Jun 3, 2024 at 4:59=E2=80=AFPM Alexandre Ghiti <alex@ghiti.fr> wrot=
+e:
+>
+> On 30/05/2024 11:24, Andrew Jones wrote:
+> > On Thu, May 30, 2024 at 11:01:20AM GMT, Alexandre Ghiti wrote:
+> >> Hi Andrew,
+> >>
+> >> On 30/05/2024 10:47, Andrew Jones wrote:
+> >>> On Thu, May 30, 2024 at 10:19:12AM GMT, Alexandre Ghiti wrote:
+> >>>> Hi Yong-Xuan,
+> >>>>
+> >>>> On 27/05/2024 18:25, Andrew Jones wrote:
+> >>>>> On Fri, May 24, 2024 at 06:33:01PM GMT, Yong-Xuan Wang wrote:
+> >>>>>> Svadu is a RISC-V extension for hardware updating of PTE A/D bits.
+> >>>>>>
+> >>>>>> In this patch we detect Svadu extension support from DTB and enabl=
+e it
+> >>>>>> with SBI FWFT extension. Also we add arch_has_hw_pte_young() to en=
+able
+> >>>>>> optimization in MGLRU and __wp_page_copy_user() if Svadu extension=
+ is
+> >>>>>> available.
+> >>>> So we talked about this yesterday during the linux-riscv patchwork m=
+eeting.
+> >>>> We came to the conclusion that we should not wait for the SBI FWFT e=
+xtension
+> >>>> to enable Svadu but instead, it should be enabled by default by open=
+SBI if
+> >>>> the extension is present in the device tree. This is because we did =
+not find
+> >>>> any backward compatibility issues, meaning that enabling Svadu shoul=
+d not
+> >>>> break any S-mode software.
+> >>> Unfortunately I joined yesterday's patchwork call late and missed thi=
+s
+> >>> discussion. I'm still not sure how we avoid concerns with S-mode soft=
+ware
+> >>> expecting exceptions by purposely not setting A/D bits, but then not
+> >>> getting those exceptions.
+> >>
+> >> Most other architectures implement hardware A/D updates, so I don't se=
+e
+> >> what's specific in riscv. In addition, if an OS really needs the excep=
+tions,
+> >> it can always play with the page table permissions to achieve such
+> >> behaviour.
+> > Hmm, yeah we're probably pretty safe since sorting this out is just one=
+ of
+> > many things an OS will have to learn to manage when getting ported. Als=
+o,
+> > handling both svade and svadu at boot is trivial since the OS simply ne=
+eds
+> > to set the A/D bits when creating the PTEs or have exception handlers
+> > which do nothing but set the bits ready just in case.
+> >
+> >>
+> >>>> This is what you did in your previous versions of
+> >>>> this patchset so the changes should be easy. This behaviour must be =
+added to
+> >>>> the dtbinding description of the Svadu extension.
+> >>>>
+> >>>> Another thing that we discussed yesterday. There exist 2 schemes to =
+manage
+> >>>> the A/D bits updates, Svade and Svadu. If a platform supports both
+> >>>> extensions and both are present in the device tree, it is M-mode fir=
+mware's
+> >>>> responsibility to provide a "sane" device tree to the S-mode softwar=
+e,
+> >>>> meaning the device tree can not contain both extensions. And because=
+ on such
+> >>>> platforms, Svadu is more performant than Svade, Svadu should be enab=
+led by
+> >>>> the M-mode firmware and only Svadu should be present in the device t=
+ree.
+> >>> I'm not sure firmware will be able to choose svadu when it's availabl=
+e.
+> >>> For example, platforms which want to conform to the upcoming "Server
+> >>> Platform" specification must also conform to the RVA23 profile, which
+> >>> mandates Svade and lists Svadu as an optional extension. This implies=
+ to
+> >>> me that S-mode should be boot with both svade and svadu in the DT and=
+ with
+> >>> svade being the active one. Then, S-mode can choose to request switch=
+ing
+> >>> to svadu with FWFT.
+> >>
+> >> The problem is that FWFT is not there and won't be there for ~1y (acco=
+rding
+> >> to Anup). So in the meantime, we prevent all uarchs that support Svadu=
+ to
+> >> take advantage of this.
+> > I think we should have documented behaviors for all four possibilities
+> >
+> >   1. Neither svade nor svadu in DT -- current behavior
+> >   2. Only svade in DT -- current behavior
+> >   3. Only svadu in DT -- expect hardware A/D updating
+> >   4. Both svade and svadu in DT -- current behavior, but, if we have FW=
+FT,
+> >      then use it to switch to svadu. If we don't have FWFT, then, oh we=
+ll...
+> >
+> > Platforms/firmwares that aren't concerned with the profiles can choose =
+(3)
+> > and Linux is fine. Those that do want to conform to the profile will
+> > choose (4) but Linux won't get the benefit of svadu until it also gets
+> > FWFT.
+>
+>
+> I think this solution pleases everyone so I'd say we should go for it,
+> thanks Andrew!
 
-This help module use heap_flags to determine the type of dma-buf,
-so that some mechanisms can be used to speed up allocation, such as
-memory_pool, to optimize the allocation time of dma-buf.
+Yes, this looks good to me as well. The key aspect is documenting
+the behaviour of these four possibilities.
 
-Signed-off-by: Hailong.Liu <hailong.liu@oppo.com>
----
- drivers/dma-buf/dma-heap.c          | 3 ---
- drivers/dma-buf/heaps/cma_heap.c    | 3 +++
- drivers/dma-buf/heaps/system_heap.c | 3 +++
- 3 files changed, 6 insertions(+), 3 deletions(-)
+Regards,
+Anup
 
-diff --git a/drivers/dma-buf/dma-heap.c b/drivers/dma-buf/dma-heap.c
-index 84ae708fafe7..6c78ee6c7a58 100644
---- a/drivers/dma-buf/dma-heap.c
-+++ b/drivers/dma-buf/dma-heap.c
-@@ -105,9 +105,6 @@ static long dma_heap_ioctl_allocate(struct file *file, void *data)
- 	if (heap_allocation->fd_flags & ~DMA_HEAP_VALID_FD_FLAGS)
- 		return -EINVAL;
-
--	if (heap_allocation->heap_flags & ~DMA_HEAP_VALID_HEAP_FLAGS)
--		return -EINVAL;
--
- 	fd = dma_heap_buffer_alloc(heap, heap_allocation->len,
- 				   heap_allocation->fd_flags,
- 				   heap_allocation->heap_flags);
-diff --git a/drivers/dma-buf/heaps/cma_heap.c b/drivers/dma-buf/heaps/cma_heap.c
-index 4a63567e93ba..ae4fa974372b 100644
---- a/drivers/dma-buf/heaps/cma_heap.c
-+++ b/drivers/dma-buf/heaps/cma_heap.c
-@@ -288,6 +288,9 @@ static struct dma_buf *cma_heap_allocate(struct dma_heap *heap,
- 	int ret = -ENOMEM;
- 	pgoff_t pg;
-
-+	if (heap_flags & ~DMA_HEAP_VALID_HEAP_FLAGS)
-+		return ERR_PTR(-EINVAL);
-+
- 	buffer = kzalloc(sizeof(*buffer), GFP_KERNEL);
- 	if (!buffer)
- 		return ERR_PTR(-ENOMEM);
-diff --git a/drivers/dma-buf/heaps/system_heap.c b/drivers/dma-buf/heaps/system_heap.c
-index 9076d47ed2ef..80858719a819 100644
---- a/drivers/dma-buf/heaps/system_heap.c
-+++ b/drivers/dma-buf/heaps/system_heap.c
-@@ -347,6 +347,9 @@ static struct dma_buf *system_heap_allocate(struct dma_heap *heap,
- 	struct page *page, *tmp_page;
- 	int i, ret = -ENOMEM;
-
-+	if (heap_flags & ~DMA_HEAP_VALID_HEAP_FLAGS)
-+		return ERR_PTR(-EINVAL);
-+
- 	buffer = kzalloc(sizeof(*buffer), GFP_KERNEL);
- 	if (!buffer)
- 		return ERR_PTR(-ENOMEM);
----
-In fact, there are many differences between the main Linux code and Android
-code, I’m not sure if it’s appropriate to submit here.
---
-2.34.1
+>
+> @Yong-Xuan do you think you can prepare another spin with Andrew's
+> proposal implemented?
+>
+> Thanks,
+>
+> Alex
+>
+>
+> >
+> > IOW, I think your proposal is fine except for wanting to document in th=
+e
+> > DT bindings that only svade or svadu may be provided, since I think we'=
+ll
+> > want both to be allowed eventually.
+> >
+> > Thanks,
+> > drew
+> >
+> > _______________________________________________
+> > linux-riscv mailing list
+> > linux-riscv@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-riscv
 
