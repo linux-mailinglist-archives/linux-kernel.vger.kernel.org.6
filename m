@@ -1,141 +1,265 @@
-Return-Path: <linux-kernel+bounces-199509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 056B68D87EF
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:30:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2982D8D87F1
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:30:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 627F6B21388
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:30:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CAEC1C22062
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:30:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27DC7136E3F;
-	Mon,  3 Jun 2024 17:30:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E048B13777A;
+	Mon,  3 Jun 2024 17:30:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="GBYRi3yR"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="bxCSfKUK"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80CA225622
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 17:29:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CC9A14294
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 17:30:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717435800; cv=none; b=tJ4C/Ga6gzmQul9XMHaGs/wKOTLm5DXFmzy0bnJiWtxfO1EGCkRkXs/U0jFsWUSmGVHN6v91YEQvLKyEAfB6VKB0K3tRW06zCqZMRwTFnryxD1KoLIE09/wtgaHw4DGssl5V97pS0NYFSwQlU1d+36tV9TGRek4KhvQu+rb/JjU=
+	t=1717435812; cv=none; b=meTsF+brEf+19bruYCoA6QQmBSqy49jUrsoA8TT9NQYUpf/1iWg9l8pHc9LJSH1KXuBB8JMvpRvT/Ga/d2Y02PAlgvSyQPogiDvV3eVqxQr7DizzrSNBSsTKxKCQusC33JY+IJPZvjjTPqnHlaJ398oVPYcFK+XBQDNDPnl9Olg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717435800; c=relaxed/simple;
-	bh=ZzxnOGtNW2O6ExH3FSlj2NRoSMcCTYIZdCNOd3pEuL8=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=T5FbgHA3+Br3GMLX+Vcu3i0U16cwWnm17ObAZwCpGJxAu2Uhj2dOQhxgW+mQvXV7mcJTNZVw/2vHr5KdX7gvHhDijryhyW4K1FAEwye4O/d4q7YN7aneqN/yQetgp0TM9cwna7LNce2nlyag93RGIFJnvN/HHdLIE7xa3R0Sn6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=GBYRi3yR; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 453HTptp088167;
-	Mon, 3 Jun 2024 12:29:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1717435791;
-	bh=z08zoGQqJpPUnrI4i9x8DARfEvuyIUnb5LgFpYgkjSo=;
-	h=Date:Subject:From:To:CC:References:In-Reply-To;
-	b=GBYRi3yRVlEAURYpY2oeVWEcdnWvJxWwLclB7yeetOv1mYoIa86VzmcZaE7GhFdhe
-	 IJOlt0e2XrC0cc9Ub4XmS1qvIu5bi9kQ38s1drkYdMcLHRfaCIahmTwcNh+Xu7RHiz
-	 xXHrfvizIDh/TNWjVLYmAjEEPL7hm7I0A/I4KcSo=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 453HTp40060965
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 3 Jun 2024 12:29:51 -0500
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 3
- Jun 2024 12:29:50 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 3 Jun 2024 12:29:50 -0500
-Received: from [10.249.141.75] ([10.249.141.75])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 453HTljl009267;
-	Mon, 3 Jun 2024 12:29:48 -0500
-Message-ID: <b88a7dda-da4d-48df-b878-9dd88ff487e6@ti.com>
-Date: Mon, 3 Jun 2024 22:59:46 +0530
+	s=arc-20240116; t=1717435812; c=relaxed/simple;
+	bh=ltV8MMFtkwHdGR/la1V/bsd2+BUGbuIdSZO4QGmrCZw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=oMXZS/IIaczH1+p/86n9b/66VzD0/rYrIAGd9mbLdVDgFeU2aMmlrlNUhjONCZ4tZk9LzBa/DNgNbHS4we6yHZqcbVf4XcntBZm5jOySvx2rMEk68VZIDdeoRPwHjIQCNKCp29jcl+YOVdbdoskPxsSpnZgARsT/BnUPl4scts8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=bxCSfKUK; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2eaa794eb9fso29377901fa.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 10:30:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1717435809; x=1718040609; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=TP8+QiasuhOdVisljDp2pyOsuEXVypgBBteRkvvRnmM=;
+        b=bxCSfKUKUW5FSAQV/Rz25JjXNjFpaCOZ5j7V8nbso+Pg4QlA5FE3sAyJAv8TI6nS2e
+         HSqCd6iB71oYpqmdx3FZyv5DySEJf8DI2idMHvFfvJ6Xpi+zounoB2RJu4Oco6+U34yB
+         LLK4O9MGTPGUKbv+gihRUPbsKkBMtaD6T3E5nTrkqslSWh6uTL3Oztt4N9kXD4WWmnSZ
+         yDVeIPxPLz0W7BijJtubklvA6f9r1KLK9xZJV/vbpVSoGkwSo6FP7K7FXmofRst1i5gn
+         Zy3nOxRiEbozgoxhKVPl8saxKPONml8/Vs5gUU76oZ5p0kiexiQFUBLDwKeplg1CiKXO
+         UN9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717435809; x=1718040609;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=TP8+QiasuhOdVisljDp2pyOsuEXVypgBBteRkvvRnmM=;
+        b=mIOqIaS5JQjt/lninVOG6kmWK4ZV3mPMkjhA8bZxoJnJJCHOwV+NOqREjtCpK1O07+
+         gC0xfMsQ3tuFXl3BhMScijTGJQ0m5cP139uAawq9NJRUINLLX6AB3RI0IY03HJd8hvgq
+         vY+3i1gglVr+H1ZBFE1JhrNQ9eIgMYZQB6718+SsKUaLPPsCVHfegNMBASAMxmsKROBN
+         Wr1J919Pbj471QsAsIBXwyrSrm0FVYM6Wi0hWR8tr96KiLiBsdzhqnk/KmVY9+dI94tg
+         XgM6DojWL4zarVxz0YaJTO78W4oEn1kHBEkDr9AJNo0N0os7VAo8wi37Hxmaz9oHqVWv
+         w/xQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXNaVOYB9JL5rBwTnQpHFeLk5ghZDlDNzT1xzCJaxtGXYF7i6O+MS56kz4gpwyrceUfLZAkRjH06TWRhP4RZ8rZnaaY76GVkE+UXHn3
+X-Gm-Message-State: AOJu0YytqF16FxVlQpmJMLAesPMIp4DOH5zT4WVLKqKmldA0Ydal/dxJ
+	laTWD9zzoMZeQ7VYlBKQ4lh2FJLqak5ZY31TFSIuXknGinJI+kP5cR3D75Iweh0=
+X-Google-Smtp-Source: AGHT+IE+0wd2FALmz+YEky48ulSljh0Cpqs4+7FYshp7DkFopbgjBfjwqMaPji3bjfHN+riRsojTTQ==
+X-Received: by 2002:a05:651c:1504:b0:2ea:b956:db2b with SMTP id 38308e7fff4ca-2eab956e51amr9894891fa.7.1717435808755;
+        Mon, 03 Jun 2024 10:30:08 -0700 (PDT)
+Received: from ?IPv6:2804:5078:851:4000:58f2:fc97:371f:2? ([2804:5078:851:4000:58f2:fc97:371f:2])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70242c247b0sm5738852b3a.216.2024.06.03.10.30.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Jun 2024 10:30:08 -0700 (PDT)
+Message-ID: <3092cdf003427c6be942d2b8fa0671c084f8ebd9.camel@suse.com>
+Subject: Re: [PATCH v2] selftests: livepatch: Test atomic replace against
+ multiple modules
+From: Marcos Paulo de Souza <mpdesouza@suse.com>
+To: Petr Mladek <pmladek@suse.com>
+Cc: Joe Lawrence <joe.lawrence@redhat.com>, Josh Poimboeuf
+ <jpoimboe@kernel.org>,  Jiri Kosina <jikos@kernel.org>, Miroslav Benes
+ <mbenes@suse.cz>, Shuah Khan <shuah@kernel.org>, 
+ live-patching@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+Date: Mon, 03 Jun 2024 14:29:55 -0300
+In-Reply-To: <Zl28ne_laBawq-KP@pathway.suse.cz>
+References: <20240525-lp-atomic-replace-v2-1-142199bb65a1@suse.com>
+	 <ZloormpDnnc4SDub@redhat.com>
+	 <92d683bd138a76e6c7100f4984be202dd06c9424.camel@suse.com>
+	 <Zl28ne_laBawq-KP@pathway.suse.cz>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.1 (by Flathub.org) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/1] Correct nr_types assignment for TPS6594/3 and
- TPS65224
-From: "Kumar, Udit" <u-kumar1@ti.com>
-To: Shree Ramamoorthy <s-ramamoorthy@ti.com>, <lgirdwood@gmail.com>,
-        <linux-kernel@vger.kernel.org>
-CC: <m-leonard@ti.com>, <n-francis@ti.com>, <bhargav.r@ltts.com>,
-        <m.nirmaladevi@ltts.com>, <vigneshr@ti.com>, <u-kumar1@ti.com>
-References: <20240603170524.643010-1-s-ramamoorthy@ti.com>
- <20240603170524.643010-2-s-ramamoorthy@ti.com>
- <63167c3f-f583-4b2d-83c8-632827594ebb@ti.com>
-Content-Language: en-US
-In-Reply-To: <63167c3f-f583-4b2d-83c8-632827594ebb@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
+On Mon, 2024-06-03 at 14:52 +0200, Petr Mladek wrote:
+> On Fri 2024-05-31 18:06:48, Marcos Paulo de Souza wrote:
+> > On Fri, 2024-05-31 at 15:44 -0400, Joe Lawrence wrote:
+> > > On Sat, May 25, 2024 at 11:34:08AM -0300, Marcos Paulo de Souza
+> > > wrote:
+> > > > Adapt the current test-livepatch.sh script to account the
+> > > > number of
+> > > > applied livepatches and ensure that an atomic replace livepatch
+> > > > disables
+> > > > all previously applied livepatches.
+> > > >=20
+> > > > Signed-off-by: Marcos Paulo de Souza <mpdesouza@suse.com>
+> > > > ---
+> > > > Changes since v1:
+> > > > * Added checks in the existing test-livepatch.sh instead of
+> > > > creating a
+> > > > =C2=A0 new test file. (Joe)
+> > > > * Fixed issues reported by ShellCheck (Joe)
+> > > > ---
+> > > > =C2=A0.../testing/selftests/livepatch/test-livepatch.sh=C2=A0 | 46
+> > > > ++++++++++++++++++++--
+> > > > =C2=A01 file changed, 42 insertions(+), 4 deletions(-)
+> > > >=20
+> > > > diff --git a/tools/testing/selftests/livepatch/test-
+> > > > livepatch.sh
+> > > > b/tools/testing/selftests/livepatch/test-livepatch.sh
+> > > > index e3455a6b1158..d85405d18e54 100755
+> > > > --- a/tools/testing/selftests/livepatch/test-livepatch.sh
+> > > > +++ b/tools/testing/selftests/livepatch/test-livepatch.sh
+> > > > @@ -107,9 +107,12 @@ livepatch: '$MOD_LIVEPATCH': unpatching
+> > > > complete
+> > > > =C2=A0
+> > > > =C2=A0# - load a livepatch that modifies the output from
+> > > > /proc/cmdline
+> > > > and
+> > > > =C2=A0#=C2=A0=C2=A0 verify correct behavior
+> > > > -# - load an atomic replace livepatch and verify that only the
+> > > > second is active
+> > > > -# - remove the first livepatch and verify that the atomic
+> > > > replace
+> > > > livepatch
+> > > > -#=C2=A0=C2=A0 is still active
+> > > > +# - load two addtional livepatches and check the number of
+> > > > livepatch modules
+> > > > +#=C2=A0=C2=A0 applied
+> > > > +# - load an atomic replace livepatch and check that the other
+> > > > three modules were
+> > > > +#=C2=A0=C2=A0 disabled
+> > > > +# - remove all livepatches besides the atomic replace one and
+> > > > verify that the
+> > > > +#=C2=A0=C2=A0 atomic replace livepatch is still active
+> > > > =C2=A0# - remove the atomic replace livepatch and verify that none
+> > > > are
+> > > > active
+> > > > =C2=A0
+> > > > =C2=A0start_test "atomic replace livepatch"
+> > > > @@ -119,12 +122,31 @@ load_lp $MOD_LIVEPATCH
+> > > > =C2=A0grep 'live patched' /proc/cmdline > /dev/kmsg
+> > > > =C2=A0grep 'live patched' /proc/meminfo > /dev/kmsg
+> > > > =C2=A0
+> > > > +for mod in test_klp_syscall test_klp_callbacks_demo; do
+> > >=20
+> > > Slightly nitpicky here, but the tests were originally written
+> > > with
+> > > the
+> > > livepatch module names via variables like $MOD_LIVEPATCH.=C2=A0 Would
+> > > using
+> > > $MOD_LIVEPATCH{1,2,3} help indicate that their specifics aren't
+> > > really
+> > > interesting, that we just need 3 of them?
+> >=20
+> > Makes sense. I thought about it when I was changing the code, but I
+> > didn't want to change it too much, so it was the result. But that
+> > makes
+> > sense to have the modules better named.
+>=20
+> I like this.
+>=20
+> > > > +	load_lp $mod
+> > > > +done
+> > > > +
+> > > > +mods=3D(/sys/kernel/livepatch/*)
+> > > > +nmods=3D${#mods[@]}
+> > > > +if [ "$nmods" -ne 3 ]; then
+> > > > +	die "Expecting three modules listed, found $nmods"
+> > > > +fi
+> > > > +
+> > >=20
+> > > I was going to suggest that we might protect against a situation
+> > > where
+> > > other livepatch modules were active, that a simple count wouldn't
+> > > be
+> > > sufficient.=C2=A0 But then I thought about this test, atomic replace!
+> > > Anything previously loaded is going to be pushed aside anyway.
+> > >=20
+> > > So maybe (in another patch or set) it would be worth enhancing
+> > > functions.sh :: start_test() do a quick sanity check to see that
+> > > the
+> > > initial conditions are safe?=C2=A0 That might also prevent some
+> > > collateral
+> > > damage when test A fails and leaves the world a strange place for
+> > > tests
+> > > B, C, etc.
+> >=20
+> > We have been discussing about start/end functions that would check
+> > for
+> > leftover modules... maybe should be a good think to implement soon
+> > as
+> > we land more tests.
+>=20
+> Makes sense :-)
+>=20
+> > > > =C2=A0load_lp $MOD_REPLACE replace=3D1
+> > > > =C2=A0
+> > > > =C2=A0grep 'live patched' /proc/cmdline > /dev/kmsg
+> > > > =C2=A0grep 'live patched' /proc/meminfo > /dev/kmsg
+> > > > =C2=A0
+> > > > -unload_lp $MOD_LIVEPATCH
+> > > > +mods=3D(/sys/kernel/livepatch/*)
+> > > > +nmods=3D${#mods[@]}
+> > > > +if [ "$nmods" -ne 1 ]; then
+> > > > +	die "Expecting only one moduled listed, found $nmods"
+> > > > +fi
+> > > > +
+> > > > +# These modules were disabled by the atomic replace
+> > > > +for mod in test_klp_callbacks_demo test_klp_syscall
+> > > > $MOD_LIVEPATCH; do
+> > > > +	unload_lp "$mod"
+> > > > +done
+> > > > =C2=A0
+> > > > =C2=A0grep 'live patched' /proc/cmdline > /dev/kmsg
+> > > > =C2=A0grep 'live patched' /proc/meminfo > /dev/kmsg
+> > > > @@ -142,6 +164,20 @@ livepatch: '$MOD_LIVEPATCH': starting
+> > > > patching
+> > > > transition
+> > > > =C2=A0livepatch: '$MOD_LIVEPATCH': completing patching transition
+> > > > =C2=A0livepatch: '$MOD_LIVEPATCH': patching complete
+> > > > =C2=A0$MOD_LIVEPATCH: this has been live patched
+> > > > +% insmod test_modules/test_klp_syscall.ko
+> > >=20
+> > > Similar minor nit here, too.=C2=A0 If we think copy/pasting all the
+> > > $MOD_FOO
+> > > is annoying, I am fine with leaving this as is.=C2=A0 I don't have a
+> > > strong
+> > > opinion other than following some convention.
+> > >=20
+> > > With that, I'm happy to ack as-is or with variable names.
+> >=20
+> > Thanks Joe! I think that is Petr's call, either way I can rework
+> > this
+> > patch, or send additional ones to adjust the tests.
+>=20
+> I would prefer if you did respin this patch. The use of
+> $MOD_LIVEPATCH{1,2,3} would make even the patch easier to follow.
 
-Please ignore below response .
+Done in v3. About the pre-check, I discussed with Miroslav about having
+an easier way to skip tests. The idea was to split each "test" into a
+different file, like fstests already does. Using this approach, each
+start_test function will be placed in a different file to test
+specifically one functionality. This way we can skip a test if we don't
+have some requirements (like a sysfs attribute for example, or the
+there were leftover modules).
 
-Sent by mistake.
+I plan to send a patch starting this move when the v3 of this patchset
+is accepted.
 
+>=20
+> Best Regards,
+> Petr
 
-Thanks
-
-Udit
-
-
-On 6/3/2024 10:46 PM, Kumar, Udit wrote:
->
-> On 6/3/2024 10:35 PM, Shree Ramamoorthy wrote:
->> Swap nr_types assignment for TPS6594/3 and TPS65224.
->> Issue detected with v6.10-rc1 and tested using a TI J7200 EVM board.
->
->
-> Please prefix line, where you want this patch to go
->
-> like tiL6.6 or so
->
->
->> Log:
->> [   13.974024] Call trace:
->> [   13.974025]  _regulator_put.part.0+0x40/0x48
->> [   13.974028]  regulator_register+0x2b0/0xa00
->> [   13.974031]  devm_regulator_register+0x58/0xa0
->> [   13.974035]  tps6594_regulator_probe+0x4e0/0x5f0 [tps6594_regulator]
->> ...
->> [   13.974178] Unable to handle kernel NULL pointer dereference at 
->> virtual address 0000000000000004
->>
->> Signed-off-by: Shree Ramamoorthy <s-ramamoorthy@ti.com>
->> ---
->>   drivers/regulator/tps6594-regulator.c | 4 ++--
->>   1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/regulator/tps6594-regulator.c 
->> b/drivers/regulator/tps6594-regulator.c
->> index 4a859f4c0f83..b66608ab2546 100644
->> --- a/drivers/regulator/tps6594-regulator.c
->> +++ b/drivers/regulator/tps6594-regulator.c
->> @@ -660,11 +660,11 @@ static int tps6594_regulator_probe(struct 
->> platform_device *pdev)
->>       } else if (tps->chip_id == TPS65224) {
->>           nr_buck = ARRAY_SIZE(tps65224_buck_regs);
->>           nr_ldo = ARRAY_SIZE(tps65224_ldo_regs);
->> -        nr_types = REGS_INT_NB;
->> +        nr_types = TPS65224_REGS_INT_NB;
->>       } else {
->>           nr_buck = ARRAY_SIZE(buck_regs);
->>           nr_ldo = ARRAY_SIZE(tps6594_ldo_regs);
->> -        nr_types = TPS65224_REGS_INT_NB;
->> +        nr_types = REGS_INT_NB;
->>       }
->>         reg_irq_nb = nr_types * (nr_buck + nr_ldo);
->> -- 
 
