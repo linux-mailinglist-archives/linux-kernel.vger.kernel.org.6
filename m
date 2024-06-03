@@ -1,174 +1,104 @@
-Return-Path: <linux-kernel+bounces-198639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3A5D8D7B90
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 08:28:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 450FB8D7B99
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 08:29:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 512E7B21777
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 06:28:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D6F51C20CBE
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 06:29:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51B5D2CCC2;
-	Mon,  3 Jun 2024 06:28:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26A0D38382;
+	Mon,  3 Jun 2024 06:29:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="icedoS8t";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Dr3NTjY7";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="bkMILn3a";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="O1enm+Co"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gUiCXzhz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEDEB374C3;
-	Mon,  3 Jun 2024 06:28:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B4A33612D;
+	Mon,  3 Jun 2024 06:29:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717396099; cv=none; b=OUieYiMHvFwAVicvfmEhii+LagV8bjKmqjux8BrS7cNXnwMIKMfnFiUPTExAKesyn02X8n8AGTKMO5wqtU8eF/fRobAZ3bwYsxcBrnPQDBIiDANvbkd27y1T3/KT7U1vznOqa/MSAnttaATO4GbP6uQf9FY+qvMl/lGgvj8n0ho=
+	t=1717396146; cv=none; b=bFB0FdkiGDqsGpIyXfh+o7lS3rRs1f1gMe1Vx8sYyzNKImadlUwZaO4poMPqHSjqf/CtLuiAY5uObW3yDRCJpXK4FHFNygSRtzoBIiMkPPiVhZQFVTxRlk96AaYV1lylJQbz04UM4sWtLTByu2Bf4sg6e24ufePX0/HXJw+z9fs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717396099; c=relaxed/simple;
-	bh=7AaEvVMfY/4GKdSeCZCV1fOqUcNHAMZgXIepet8NVLE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a21IH9G2Her9KM9jspLsQ6m/OOkot/016NRzZXVyWLpoVA1H/fuAYQvcKLOvXJo7GBwKKrkHvq5aSc+v7x+ZR7ikB5cEowfgvTpyUNZKHVGjVPOpBUR4TZMy0Xu4DNF2JfFtZ7mh0d20clV7YpGQoarBy3j6zDTnMYS/ozDyx3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=icedoS8t; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Dr3NTjY7; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=bkMILn3a; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=O1enm+Co; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id C3E9D222D3;
-	Mon,  3 Jun 2024 06:28:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1717396090; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=G4kktwsbW6z/0NnNeugpgEFh8XvGTwwRbkxW1BafLgg=;
-	b=icedoS8tE74qqGZXCIqtKhe2cdZjIqwBGKwvLk5Gl0tXhYgq/PpnmabeIM0HCpfth0iMA8
-	1nLePLBZ6In4scqhcGwb8peKkIOvVTgA+8mzjM5IaThEIX5hhezYRaBW6MeNp7Z2eiFYnG
-	rhn6+JBvhdqjlkjb/XDgf3vpb9NV044=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1717396090;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=G4kktwsbW6z/0NnNeugpgEFh8XvGTwwRbkxW1BafLgg=;
-	b=Dr3NTjY7gE5DszwjwybB1Q8k6oUnim+TIzbFGQ008cbbIHxhpj/U47nEoI4CXLTchFJTMv
-	3Z4AmNaE3qS+AsBg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=bkMILn3a;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=O1enm+Co
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1717396089; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=G4kktwsbW6z/0NnNeugpgEFh8XvGTwwRbkxW1BafLgg=;
-	b=bkMILn3auV3QWoiQ5ga+r46ZiJ+280ioTuMGqZagiAU+5c8RTDw70jvCjmRvnHZsHjzQ/c
-	3Rh+ynPdXvVpoedKoEiS5L0hpdTYve5+UYhJ4tsnv97pc5bR9rsjcobNl74/ydnZ0ozVZ9
-	XBTFf+s+3c+GqYdnZtF17v6xs9/sVBQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1717396089;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=G4kktwsbW6z/0NnNeugpgEFh8XvGTwwRbkxW1BafLgg=;
-	b=O1enm+CoV2gDRN/SuNkMFZv6hZrjo79EFfoVDo0656LVgdlemDUskF5ctP6eMNX9vWdYxu
-	tzfw5l2puMAIEPCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0EA3413A93;
-	Mon,  3 Jun 2024 06:28:09 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id bl1wAHliXWb9RwAAD6G6ig
-	(envelope-from <hare@suse.de>); Mon, 03 Jun 2024 06:28:09 +0000
-Message-ID: <5ace80c8-8b70-4227-aa63-914b69fa32cb@suse.de>
-Date: Mon, 3 Jun 2024 08:28:07 +0200
+	s=arc-20240116; t=1717396146; c=relaxed/simple;
+	bh=hB0J0IVOF/UpXjXGqBI7wM1bGQ+L+7aiaCg9Y6YiGMg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=GA43vceCaQiGvfkwCcMbDLQtVMZn9ydIFzD++F0siyXsN/q5C7DMt6a+NbcOpDLky4+9nJ8gCe6edY7Va+TPxCM6eJgIxgLN9EYSKWPX0LHXAQWvTIonIHbmyeXvf60GjnDqXlqDjURE0bjoryE1KBNrt3uO/pzbroxqvDsIkxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gUiCXzhz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id E9572C2BD10;
+	Mon,  3 Jun 2024 06:29:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717396146;
+	bh=hB0J0IVOF/UpXjXGqBI7wM1bGQ+L+7aiaCg9Y6YiGMg=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=gUiCXzhzSsyji02TQNwqgFLXVi1KLFFts4CSbXjsTCUmGjUdZdAHLrKm8c2vMWvSt
+	 wkOU+5Ae75+yM5ZSa62dwnEiqrlwm1H/NzKihFxAN5kDqbEKDTPXP2M1coc1iGuE9p
+	 oEeVdvtxELz0oVAtbRrF5f1fLrLdzkJZAxxk1gvpm7PPf4ly0r0UpHXOuthT+nipnB
+	 s+oXsQn+9oZNcPVbnl46jmXCgiZ8b/AboJC4UfibI/p3Hdvtz2rNQNL2mRviocc2ub
+	 E3rwf/nTQfWHdKxlL3eVtEV2ECgXZocfEp6ir0tAuzvOTu1ZemA3h3vTGhWVwfa8Wd
+	 MXuu48jBrpu+Q==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB4CDC25B75;
+	Mon,  3 Jun 2024 06:29:05 +0000 (UTC)
+From: Alexandre Messier via B4 Relay <devnull+alex.me.ssier.org@kernel.org>
+Subject: [PATCH 0/2] Add HTC One (M8) support
+Date: Mon, 03 Jun 2024 02:28:55 -0400
+Message-Id: <20240603-m8-support-v1-0-c7b6a1941ed2@me.ssier.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 02/11] fs: Allow fine-grained control of folio sizes
-Content-Language: en-US
-To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>, david@fromorbit.com,
- chandan.babu@oracle.com, akpm@linux-foundation.org, brauner@kernel.org,
- willy@infradead.org, djwong@kernel.org
-Cc: linux-kernel@vger.kernel.org, john.g.garry@oracle.com,
- gost.dev@samsung.com, yang@os.amperecomputing.com, p.raghav@samsung.com,
- cl@os.amperecomputing.com, linux-xfs@vger.kernel.org, hch@lst.de,
- mcgrof@kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-References: <20240529134509.120826-1-kernel@pankajraghav.com>
- <20240529134509.120826-3-kernel@pankajraghav.com>
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20240529134509.120826-3-kernel@pankajraghav.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Flag: NO
-X-Spam-Score: -6.50
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: C3E9D222D3
-X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-6.50 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	XM_UA_NO_VERSION(0.01)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[18];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:email,infradead.org:email];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_TRACE(0.00)[suse.de:+]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKdiXWYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDMwNj3VwL3eLSgoL8ohJdSxNTiyRjc4s0QzMLJaCGgqLUtMwKsGHRsbW
+ 1AA+5+IZcAAAA
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Luca Weiss <luca@z3ntu.xyz>, linux-arm-kernel@lists.infradead.org, 
+ linux-arm-msm@vger.kernel.org, phone-devel@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ ~postmarketos/upstreaming@lists.sr.ht, 
+ Alexandre Messier <alex@me.ssier.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1717396145; l=682;
+ i=alex@me.ssier.org; s=20240603; h=from:subject:message-id;
+ bh=hB0J0IVOF/UpXjXGqBI7wM1bGQ+L+7aiaCg9Y6YiGMg=;
+ b=JqOBv5ncABcnRaUXO918/ItOETjjhRbgnF8IqtnfKb5vSHCHgFit3kNfHqV336ernniM1WHRY
+ Mgmt/Q3vZn6DFUDVsVlSc7a8J5vGxjk0Ce1iyJ06a4jNzCM1MjR6qYP
+X-Developer-Key: i=alex@me.ssier.org; a=ed25519;
+ pk=JjRqVfLd2XLHX2QTylKoROw346/1LOyZJX0q6cfnrKw=
+X-Endpoint-Received: by B4 Relay for alex@me.ssier.org/20240603 with
+ auth_id=168
+X-Original-From: Alexandre Messier <alex@me.ssier.org>
+Reply-To: alex@me.ssier.org
 
-On 5/29/24 15:45, Pankaj Raghav (Samsung) wrote:
-> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-> 
-> We need filesystems to be able to communicate acceptable folio sizes
-> to the pagecache for a variety of uses (e.g. large block sizes).
-> Support a range of folio sizes between order-0 and order-31.
-> 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> Co-developed-by: Pankaj Raghav <p.raghav@samsung.com>
-> Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
-> ---
->   include/linux/pagemap.h | 86 ++++++++++++++++++++++++++++++++++-------
->   mm/filemap.c            |  6 +--
->   mm/readahead.c          |  4 +-
->   3 files changed, 77 insertions(+), 19 deletions(-)
-> 
-Reviewed-by: Hannes Reinecke <hare@suse.de>
+Add an initial device tree to support the HTC One (M8) smartphone,
+aka "htc,m8".
 
-Cheers,
+Signed-off-by: Alexandre Messier <alex@me.ssier.org>
+---
+Alexandre Messier (2):
+      dt-bindings: arm: qcom: add HTC One (M8)
+      ARM: dts: qcom: Add initial support for HTC One (M8)
 
-Hannes
+ Documentation/devicetree/bindings/arm/qcom.yaml   |   1 +
+ arch/arm/boot/dts/qcom/Makefile                   |   1 +
+ arch/arm/boot/dts/qcom/qcom-msm8974pro-htc-m8.dts | 353 ++++++++++++++++++++++
+ 3 files changed, 355 insertions(+)
+---
+base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
+change-id: 20240603-m8-support-9458b378f168
+
+Best regards,
 -- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+Alexandre Messier <alex@me.ssier.org>
+
 
 
