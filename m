@@ -1,110 +1,199 @@
-Return-Path: <linux-kernel+bounces-198981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62D938D8016
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 12:36:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E20698D802B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 12:37:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E117CB254A4
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 10:36:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F0591F2261C
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 10:37:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A99EC83CB7;
-	Mon,  3 Jun 2024 10:35:47 +0000 (UTC)
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7289D83A06;
+	Mon,  3 Jun 2024 10:36:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="E3B7z7lu";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uKNK0vlA"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95E7B839FE;
-	Mon,  3 Jun 2024 10:35:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2F85824AA;
+	Mon,  3 Jun 2024 10:36:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717410947; cv=none; b=WFQPrYDiDuYgBZ/peVSnxgvthMxSxLY3/j0qGv28ru2yKNUwXLbxKQ/uobfdP4zaxX08gQHgBp0ELvrzuoH3DNQfyjAxWGg8rJ7nZP+/yD5Q0O+fTaGSwXD3DUeqVYKUUDrxFsjW6L0+Vgc7dzrof2/XOLdO4OL72DT7YwZWaXU=
+	t=1717410989; cv=none; b=lQHjCb36LDD/O6BK8CH/C20mu2zBNRJVDWOc4xcgeGS3aKMLpeqh+dD/xQVYbsz1rlozwKTFs902OmPhIkzTdBwGgqrAwoEB32guvtQaKPO73nHQPW+L77OCD1z28Ygq7vIUoKiz2GtxBqRB0O7bG6xqdLamy0reLsrnGE9oia4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717410947; c=relaxed/simple;
-	bh=g03U2T+ZSiDQhRck4HsL2XZ+Ag9dfNCNHACg+gxiuJg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=baSubHMeUuZIMlZzsp8c935vNTlG1GbNrpTgjXUfccO4txGGQ1pu+QSxSpqJ06/mMzi7Lx2KAbhbJJcMbnUFNQ19lkZp8I7OylJPF3l1D/hTVuGbqdFVtozOmoY4kO11Nwbw/eLnlQIa3+o3AM/OGBM9dcih5rbvYZyFUpXva7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42137366995so18082315e9.3;
-        Mon, 03 Jun 2024 03:35:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717410944; x=1718015744;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:reply-to:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yQSggjIOQS2XbswQ4LbCkfSppAvW/BDbYHoAyzOGG3A=;
-        b=aToB/5W821gBp/7HH1EFEG9miTXw8FcoCRkyiX7N9YI3J7S3CZe1j8uU+iGFlZYWlx
-         CAp8wpXrl2qW4iit98VlymFPuZmfeLYNePrqOZuM0tXBaoEN0S3v5UDAFe2uSjvzTdEF
-         roWjgWxJa49JwgqZvhX6vAk6zp0KdfgCcwF+sgfCRtY45sMsBi8jmzftHCqfmf/JTudq
-         Sy4nEy/p5tcYIRUeil+X9Vm9BLBiNtLN5TQSuag9VCdzMIfMUnq7xHFNu2QNyhOpChEd
-         2oREhmLakMggYFmBUDdfza6M5TdNVjfYkTqnhHvFu3HXAyMhLdK1xyX04hPrNfxj5vMf
-         AnOw==
-X-Forwarded-Encrypted: i=1; AJvYcCUhjlrdkvSxGVBfdgBVNnKWSbfGZauhFnxjUHIpronZglVUjKQIpxCM27DNotb4I+0DuSUwdsQUAeCYemNgBdTXK3/QIha0l/rvMXDZSvTWragYeCWTPolXWhNOPzZbVHv4P3KPZjauMJ4V+4Db
-X-Gm-Message-State: AOJu0YzdruKvUp9uFa4kwh7g9Ajkyfl59vf4RPNLc+da65T1LAr2pbv7
-	uN6L8iZG3nn+2xLF+e8pE8kHR8dqEFXhbEYEnHPslyERW6QY0bpu
-X-Google-Smtp-Source: AGHT+IH3ijTEeyQxiZtNFYEU1o6Dtn6/zM66j2TUsJDbN6NpiEOXCDlWqxK3e2nmeIy4gb5/k94w/A==
-X-Received: by 2002:a05:600c:4704:b0:41b:eaf2:f7e6 with SMTP id 5b1f17b1804b1-4212e046c83mr84943375e9.2.1717410943697;
-        Mon, 03 Jun 2024 03:35:43 -0700 (PDT)
-Received: from [192.168.1.20] ([31.215.5.80])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4212b83d4e2sm113796005e9.2.2024.06.03.03.35.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Jun 2024 03:35:43 -0700 (PDT)
-Message-ID: <f3a27dbe-091a-43d0-aac8-eebb4e2833d4@linux.com>
-Date: Mon, 3 Jun 2024 14:35:40 +0400
+	s=arc-20240116; t=1717410989; c=relaxed/simple;
+	bh=UhK8pMa60JF30Y6Ipr0e5xfX/FTHilTracTJJHEjBBE=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=k+vCSCqzbFDXqqpeW+J7rsDNW3eL6uXC4n7Nz/t+snUKu5sk2aSiJxV4gN1ieGNnhIiTqceFbwHqNjn7xNj+1LLIHo8fZazp4LpehjnhWDKYFdR58HBzOikWq/uKEuO/5wJa7l8JBoXj/5gas2OaGJhduTJtGTsthlR/owFbUNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=E3B7z7lu; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uKNK0vlA; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 03 Jun 2024 10:36:24 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1717410985;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mOiVkvLmakTsrdzKal91vcIAZuc9+0Alsiu9QzCidlU=;
+	b=E3B7z7lutFSJZQL0vSABYp4nSStUtG2okIbZa9u2G+Rc3tM/aI1faa0bbuD0RLf5m0dAa+
+	lNagoxOw2oX6kH2CFSDBZivPdk/5tUAwWAkPEUKM1vuHtqe6D5TxBUZXa10xVq6eW3b0oI
+	m4aNUaTKVc+OVVX1r10IYYCM8BHGXBQJ7weNUZxkIQYNmXX7QX3ErCtkdVVj6hwHfAkAw+
+	GH0RCnYSfS9P11Z/MJ9wzChLbf/a4gyyV4ctDb99RMm7RFQD+uKrjz3BToBEE0e4le9nsq
+	x6r4578KQa+1hS1/O9XPgqJo00Fh5S3cPW6Eun97Qg3Eg+zHMVfIe612kTw6Vw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1717410985;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mOiVkvLmakTsrdzKal91vcIAZuc9+0Alsiu9QzCidlU=;
+	b=uKNK0vlA2z+SpPDxVavFtQKkI7D3HV67svKnHA6Q7DDNscN9CDyjaH8OIgugN8HbHBoFAz
+	pfsC7yJ+1bUvQZAg==
+From: "tip-bot2 for Jinjie Ruan" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: irq/core] genirq/debugfs: Print irqdomain flags as
+ human-readable strings
+Cc: Jinjie Ruan <ruanjinjie@huawei.com>, Thomas Gleixner <tglx@linutronix.de>,
+ x86@kernel.org, linux-kernel@vger.kernel.org, maz@kernel.org
+In-Reply-To: <20240529091628.3666379-1-ruanjinjie@huawei.com>
+References: <20240529091628.3666379-1-ruanjinjie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: efremov@linux.com
-Subject: Re: [PATCH] floppy: add missing MODULE_DESCRIPTION() macro
-To: Jeff Johnson <quic_jjohnson@quicinc.com>, Jens Axboe <axboe@kernel.dk>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-References: <20240602-md-block-floppy-v1-1-bc628ea5eb84@quicinc.com>
-Content-Language: en-US, ru-RU
-From: "Denis Efremov (Oracle)" <efremov@linux.com>
-In-Reply-To: <20240602-md-block-floppy-v1-1-bc628ea5eb84@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
+Message-ID: <171741098475.10875.417937352199719133.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
-On 6/3/24 04:05, Jeff Johnson wrote:
-> make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/block/floppy.o
-> 
-> Add the missing invocation of the MODULE_DESCRIPTION() macro.
-> 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> ---
->  drivers/block/floppy.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/block/floppy.c b/drivers/block/floppy.c
-> index 25c9d85667f1..854a88cf56bd 100644
-> --- a/drivers/block/floppy.c
-> +++ b/drivers/block/floppy.c
-> @@ -5016,6 +5016,7 @@ module_param(floppy, charp, 0);
->  module_param(FLOPPY_IRQ, int, 0);
->  module_param(FLOPPY_DMA, int, 0);
->  MODULE_AUTHOR("Alain L. Knaff");
-> +MODULE_DESCRIPTION("Normal floppy disk support");
->  MODULE_LICENSE("GPL");
->  
->  /* This doesn't actually get used other than for module information */
-> 
-> ---
-> base-commit: a693b9c95abd4947c2d06e05733de5d470ab6586
-> change-id: 20240602-md-block-floppy-1984117350ec
-> 
+The following commit has been merged into the irq/core branch of tip:
 
-Reviewed-by: Denis Efremov <efremov@linux.com>
+Commit-ID:     cb06c9826991c746039d076df10d40819f88a6bc
+Gitweb:        https://git.kernel.org/tip/cb06c9826991c746039d076df10d40819f88a6bc
+Author:        Jinjie Ruan <ruanjinjie@huawei.com>
+AuthorDate:    Wed, 29 May 2024 09:16:28 
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Mon, 03 Jun 2024 12:24:51 +02:00
 
-Thanks,
-Denis
+genirq/debugfs: Print irqdomain flags as human-readable strings
+
+Improve the readability of irqdomain debugging information in debugfs by
+printing the flags field of domain files as human-readable strings instead
+of a raw bitmask, which aligned with the existing style used for irqchip
+flags in the irq debug files.
+
+Before:
+	#cat :cpus:cpu@0:interrupt-controller
+	name:   :cpus:cpu@0:interrupt-controller
+	 size:   0
+	 mapped: 2
+	 flags:  0x00000003
+
+After:
+	#cat :cpus:cpu@0:interrupt-controller
+	name:   :cpus:cpu@0:interrupt-controller
+	 size:   0
+	 mapped: 3
+	 flags:  0x00000003
+	            IRQ_DOMAIN_FLAG_HIERARCHY
+	            IRQ_DOMAIN_NAME_ALLOCATED
+
+Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lore.kernel.org/r/20240529091628.3666379-1-ruanjinjie@huawei.com
+
+---
+ kernel/irq/debugfs.c   | 10 ++--------
+ kernel/irq/internals.h | 10 ++++++++++
+ kernel/irq/irqdomain.c | 17 +++++++++++++++--
+ 3 files changed, 27 insertions(+), 10 deletions(-)
+
+diff --git a/kernel/irq/debugfs.c b/kernel/irq/debugfs.c
+index aae0402..c6ffb97 100644
+--- a/kernel/irq/debugfs.c
++++ b/kernel/irq/debugfs.c
+@@ -9,14 +9,8 @@
+ 
+ static struct dentry *irq_dir;
+ 
+-struct irq_bit_descr {
+-	unsigned int	mask;
+-	char		*name;
+-};
+-#define BIT_MASK_DESCR(m)	{ .mask = m, .name = #m }
+-
+-static void irq_debug_show_bits(struct seq_file *m, int ind, unsigned int state,
+-				const struct irq_bit_descr *sd, int size)
++void irq_debug_show_bits(struct seq_file *m, int ind, unsigned int state,
++			 const struct irq_bit_descr *sd, int size)
+ {
+ 	int i;
+ 
+diff --git a/kernel/irq/internals.h b/kernel/irq/internals.h
+index ed28059..fe0272c 100644
+--- a/kernel/irq/internals.h
++++ b/kernel/irq/internals.h
+@@ -501,6 +501,16 @@ static inline struct irq_data *irqd_get_parent_data(struct irq_data *irqd)
+ #ifdef CONFIG_GENERIC_IRQ_DEBUGFS
+ #include <linux/debugfs.h>
+ 
++struct irq_bit_descr {
++	unsigned int	mask;
++	char		*name;
++};
++
++#define BIT_MASK_DESCR(m)	{ .mask = m, .name = #m }
++
++void irq_debug_show_bits(struct seq_file *m, int ind, unsigned int state,
++			 const struct irq_bit_descr *sd, int size);
++
+ void irq_add_debugfs_entry(unsigned int irq, struct irq_desc *desc);
+ static inline void irq_remove_debugfs_entry(struct irq_desc *desc)
+ {
+diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
+index aadc889..d937231 100644
+--- a/kernel/irq/irqdomain.c
++++ b/kernel/irq/irqdomain.c
+@@ -1932,13 +1932,26 @@ static void irq_domain_free_one_irq(struct irq_domain *domain, unsigned int virq
+ 
+ static struct dentry *domain_dir;
+ 
+-static void
+-irq_domain_debug_show_one(struct seq_file *m, struct irq_domain *d, int ind)
++static const struct irq_bit_descr irqdomain_flags[] = {
++	BIT_MASK_DESCR(IRQ_DOMAIN_FLAG_HIERARCHY),
++	BIT_MASK_DESCR(IRQ_DOMAIN_NAME_ALLOCATED),
++	BIT_MASK_DESCR(IRQ_DOMAIN_FLAG_IPI_PER_CPU),
++	BIT_MASK_DESCR(IRQ_DOMAIN_FLAG_IPI_SINGLE),
++	BIT_MASK_DESCR(IRQ_DOMAIN_FLAG_MSI),
++	BIT_MASK_DESCR(IRQ_DOMAIN_FLAG_ISOLATED_MSI),
++	BIT_MASK_DESCR(IRQ_DOMAIN_FLAG_NO_MAP),
++	BIT_MASK_DESCR(IRQ_DOMAIN_FLAG_MSI_PARENT),
++	BIT_MASK_DESCR(IRQ_DOMAIN_FLAG_MSI_DEVICE),
++	BIT_MASK_DESCR(IRQ_DOMAIN_FLAG_NONCORE),
++};
++
++static void irq_domain_debug_show_one(struct seq_file *m, struct irq_domain *d, int ind)
+ {
+ 	seq_printf(m, "%*sname:   %s\n", ind, "", d->name);
+ 	seq_printf(m, "%*ssize:   %u\n", ind + 1, "", d->revmap_size);
+ 	seq_printf(m, "%*smapped: %u\n", ind + 1, "", d->mapcount);
+ 	seq_printf(m, "%*sflags:  0x%08x\n", ind +1 , "", d->flags);
++	irq_debug_show_bits(m, ind, d->flags, irqdomain_flags, ARRAY_SIZE(irqdomain_flags));
+ 	if (d->ops && d->ops->debug_show)
+ 		d->ops->debug_show(m, d, NULL, ind + 1);
+ #ifdef	CONFIG_IRQ_DOMAIN_HIERARCHY
 
