@@ -1,129 +1,208 @@
-Return-Path: <linux-kernel+bounces-199192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 559258D8398
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:13:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B1B98D8393
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:12:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87A3A1C2259D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:13:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F6E61C21516
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:12:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA3C112D1FF;
-	Mon,  3 Jun 2024 13:12:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A62F412CD89;
+	Mon,  3 Jun 2024 13:12:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="VZLilN10"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dRRS/NKH"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DAFB12C552;
-	Mon,  3 Jun 2024 13:12:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E62B12C550;
+	Mon,  3 Jun 2024 13:12:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717420372; cv=none; b=DwbnyEHn/Si7puYphvs8oPPwM+awhH/wxGSMThbSp2vXtLZcrEsVddVjs5q7h5Rt0Pb3C6+Jj5W9HBG/a/3aC8AGxzgg5TERoCAiy6Bb/kvsJaY3EdwRh1wHqpOOvJIsZo6lbmdJUr0KedDcDIU8dha8BWFmI1oCkqpxoaLlRR4=
+	t=1717420360; cv=none; b=odXGhT+ye+hftUo82WO3RRv7prB9ZXu8ZMOpjKhpNg6IIDv8N5GypkNzu90djCXluYuhP44qvNqhid56B4diqYJrrOKCGG43wcTkI75xq89QLibYRf0BlF54FnLrRd+BWSci0gXRp7pGWiIoUyG1Ux2V3XvIL7Hc/4+RC9aIcKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717420372; c=relaxed/simple;
-	bh=TPJLmt3ZrmFBEWUtmDZxOS+cU6lfWa/vurifkDD3zBI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mFBmvdX51xd8vxrkSQlDLf6q1XLc8Koux5sqSnmnCNYWxCtQBLSt9RIbmdn2FQ+M5ajphieyQw/Y6OJBEEbK1E0kSRVNY0Fw3J3M/DgJA0zbt7ponLlQoPnqmkFLZ0JGwoRviSe3M5kKtv0sf/Hgfo2ITlgx5di23CJEQcI9OVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=VZLilN10; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=WhhGfCPkfrQU2JoEdJcZxodwFT3ecp3HOxHwD/uFSGM=; b=VZLilN100eULAlRILI4fDmUatt
-	gnST2qjGNUghl9VUfc4/1jsip4W5IzU9dCyX3LAAsluelL06MIRia+4e7YBlpd98Ogv4pNbtG3MR4
-	9mLtW6KfVjHiWinSCQy9pCX7/BXCGapxkz8LjNzvFjGozog+VQmfhcTXZt963k5zKwEDITkmY3MFn
-	4EWCWHSvIMMIiWNZA+C7JCH3uUI4aWGJqaDu6GGREJiAyxr3HAS6Wo2V9Hf2ojr3sfRLuxVs1nJca
-	o/bWHkl3Khb3amJCxKRAAJ8DfJGQWsqtwxIkUsGv7ANoEPOBaudTyqV+u6FjZopVfl8caM3+RtnEz
-	ImLgMosw==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:36062)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sE7UE-0002lD-0z;
-	Mon, 03 Jun 2024 14:12:30 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sE7UC-0000Sh-Sn; Mon, 03 Jun 2024 14:12:28 +0100
-Date: Mon, 3 Jun 2024 14:12:28 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Sneh Shah <quic_snehshah@quicinc.com>
-Cc: Andrew Halaney <ahalaney@redhat.com>, Vinod Koul <vkoul@kernel.org>,
-	Bhupesh Sharma <bhupesh.sharma@linaro.org>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, netdev@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel@quicinc.com
-Subject: Re: [PATCH net-next] net: stmmac: dwmac-qcom-ethqos: Add support for
- 2.5G SGMII
-Message-ID: <Zl3BPHqREyZ5v92U@shell.armlinux.org.uk>
-References: <20231218071118.21879-1-quic_snehshah@quicinc.com>
- <4zbf5fmijxnajk7kygcjrcusf6tdnuzsqqboh23nr6f3rb3c4g@qkfofhq7jmv6>
- <8b80ab09-8444-4c3d-83b0-c7dbf5e58658@quicinc.com>
- <wvzhz4fmtheculsiag4t2pn2kaggyle2mzhvawbs4m5isvqjto@lmaonvq3c3e7>
- <8f94489d-5f0e-4166-a14e-4959098a5c80@quicinc.com>
- <ZlNi11AsdDpKM6AM@shell.armlinux.org.uk>
- <d246bd64-18b3-4002-bc71-eccd67bbd61f@quicinc.com>
- <ZleLb+dtJ8Uspq4S@shell.armlinux.org.uk>
- <0ef00c92-b88f-48df-b9ba-2973c62285af@quicinc.com>
+	s=arc-20240116; t=1717420360; c=relaxed/simple;
+	bh=9vECZuQN9rvTVQ+Bn4+skCJV/m297GeCrufh22rFSi8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=EnnZ5iMCs8XVED5go0Oe4AFV2S+y3pCmUfLMBZBN1qCePwEt0eid7Aa2Fwlx1iAGlO4htaqjIsXvxRaErzKbF9Hmb6g1wUZqjJ7A7zESg5XaBAhZa99evf6qra8yeAz+6ETwYb0Fr8isMQjbuuX84PcW+RE6G4riwEBC7psJ7n4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dRRS/NKH; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a692130eb19so82808866b.2;
+        Mon, 03 Jun 2024 06:12:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717420357; x=1718025157; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=cDFXoPl9QAiD7mft81g/Aw36i+8pqSQZWqXPwJ/7n6I=;
+        b=dRRS/NKHsP7CXAhIcsMx4TmiT0F0QfS/+zFVLoPk18VA7uY/ZN8kmczzXRjrFTnN3K
+         1O9l/98drdKCqk46vH8BcWa4TShZzpmEYHLSeBN0zwdRDnWVd99ymry2scwz6jGoI/eY
+         Na5C5THflRP8xOXF0bYOkOKPL0coUr3p/Ah/rOcG8yGXVKW3ieC88RmwyspEyzmvrXNQ
+         5vjMnNer2bZ/rq/YPod8dWCnuFwYT9xx0WizRFbDQrDftBi0g8Ehl5LNy8X3Gap7gRkt
+         x7N750nnjB4Pt36C0NxM8VkRYPdq9oiwQZteyAfXVOpIfY8Qq3PeXx0NEZgsy2/2CmH2
+         PoIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717420357; x=1718025157;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=cDFXoPl9QAiD7mft81g/Aw36i+8pqSQZWqXPwJ/7n6I=;
+        b=rVEMfUnZH9PklxM2UOEuIXVshG6gy3ivFf6KC9XawHH1JJJ4MPBEbHREYfSRHJSqqI
+         cf65DJc8sXQndbkAyG/hHxlUN/eOUdItVPWjmrAeTa+goOjQm6M4g3ycw7e41j94NCg/
+         W12EoLf8RinVf5TJHfYq+Vu2lo4JvQpwAB3ueiFFk1fWe7XAeC8+3+k7Y9LDTFr4QJ4p
+         JSSFC8p7nGD/6aI6j5uJEEqfUQiD3GjcBLpmquDoSG7TUPmXZDCbp+zdRnszGxWXB+qU
+         ngmHqr5ffNzLL3HM1Sl3GVS8SAv6xTCD/3eWs7HhZhgRLZStHc6Igf4fkbR/yhgcc08K
+         1yBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXH0nVW5gWBRxgE0gwQeYRnJ8rmc3ZXduCxwD6guVuczIn7w+0foEDLKkBwltiHkx5jbwf0FPLo4Er6zatTuS6UuAUxuI9MB6RY0pw2cEo2efNn85dZu/K/Pwfsa+6UbqNWzIqNAnijEy86kvVw/sc4Jt2Nyk69/WC8QquUo9BcEBJ8oQ==
+X-Gm-Message-State: AOJu0Ywz/My7sjW/uL11KiNew4ocx/iX6NM15DE42CwWGZpZM2RiceAP
+	Et/9Fd1xsvuusUuni7ORBlMJnNfq0CZ4mwlFRhv4a0OzN9MguIkH
+X-Google-Smtp-Source: AGHT+IEUVxQ9shjdUvCUFmrhT3joLAoB6rSyyBG57Rf6KbKIeWfvujt8kBwBXijDrUPJI3srZGpdQg==
+X-Received: by 2002:a17:906:aa4d:b0:a63:41e4:ee57 with SMTP id a640c23a62f3a-a681f87e62bmr535222566b.15.1717420357249;
+        Mon, 03 Jun 2024 06:12:37 -0700 (PDT)
+Received: from ?IPv6:2001:a61:35f9:9001:40df:88bb:5090:7ab6? ([2001:a61:35f9:9001:40df:88bb:5090:7ab6])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a690e5ee90esm146062166b.117.2024.06.03.06.12.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Jun 2024 06:12:36 -0700 (PDT)
+Message-ID: <f262dd8884e89bb36a72fe8fd5cb75cd9ae6fa08.camel@gmail.com>
+Subject: Re: [PATCH v3 5/5] iio: dac: ltc2664: Add driver for LTC2664 and
+ LTC2672
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Kim Seer Paller <kimseer.paller@analog.com>,
+ linux-kernel@vger.kernel.org,  linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org
+Cc: Jonathan Cameron <jic23@kernel.org>, David Lechner
+ <dlechner@baylibre.com>,  Lars-Peter Clausen <lars@metafoo.de>, Liam
+ Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Dimitri
+ Fedrau <dima.fedrau@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,  Michael
+ Hennerich <michael.hennerich@analog.com>, kernel test robot <lkp@intel.com>
+Date: Mon, 03 Jun 2024 15:12:36 +0200
+In-Reply-To: <20240603012200.16589-6-kimseer.paller@analog.com>
+References: <20240603012200.16589-1-kimseer.paller@analog.com>
+	 <20240603012200.16589-6-kimseer.paller@analog.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.1 (3.52.1-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0ef00c92-b88f-48df-b9ba-2973c62285af@quicinc.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Mon, Jun 03, 2024 at 04:57:15PM +0530, Sneh Shah wrote:
-> On 5/30/2024 1:39 AM, Russell King (Oracle) wrote:
-> > From what you're saying:
-> > - if using the dwmac1000 core, then for the registers at GMAC_PCS_BASE
-> >   (0xc0 offset)...
-> > - if using the dwmac4 core, then for registers at GMAC_PCS_BASE
-> >   (0xe0 offset)...
-> > ... is it true that only the GMAC_AN_CTRL() register is implemented
-> > and none of the other registers listed in stmmac_pcs.h?
-> > 
-> > In terms of interrupts when the link status changes, how do they
-> > present? Are they through the GMAC_INT_RGSMIIS interrupt only?
-> > What about GMAC_INT_PCS_LINK or GMAC_INT_PCS_ANE? Or in the case
-> > of the other core, is it through the PCS_RGSMIIIS_IRQ interrupt
-> > only? Similarly, what about PCS_LINK_IRQ or PCS_ANE_IRQ?
-> 
-> we only have GMAC_AN_CTRL and GMAC_AN_STATUS register.
-> There is no separate IRQ line for PCS link or autoneg. 
-> It is notified via MAC interrupt line only.
+On Mon, 2024-06-03 at 09:22 +0800, Kim Seer Paller wrote:
+> LTC2664 4 channel, 16 bit Voltage Output SoftSpan DAC
+> LTC2672 5 channel, 16 bit Current Output Softspan DAC
+>=20
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202405241141.kYcxrSem-lkp@i=
+ntel.com/
 
-From the sound of it, this is just the standard PCS that everyone else
-would use in DW ETHQoS, with the exception that you can run it at 2.5G
-without inband signalling.
+The above could be dropped. This is still not merged code :)
 
-Thanks for clarifying that. I think we can just use the phylink PCS
-that I'm proposing for your case, with the exception of also adding
-support for 2.5G speeds, which I will need to sort out.
+> Co-developed-by: Michael Hennerich <michael.hennerich@analog.com>
+> Signed-off-by: Michael Hennerich <michael.hennerich@analog.com>
+> Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com>
+> ---
 
-So, I think I need to get my patch set that query the inband
-capabilities of the PCS and PHY into net-next before we can move
-forward with 2.5G speeds here.
+LGTM... just a couple of minor points/questions that you can maybe take on =
+if a re-
+spin is needed.
 
-Thanks.
+Reviewed-by: Nuno Sa <nuno.sa@analog.com>
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+...
+
+>=20
+> +static int ltc2664_scale_get(const struct ltc2664_state *st, int c)
+> +{
+> +	const struct ltc2664_chan *chan =3D &st->channels[c];
+> +	const int (*span_helper)[2] =3D st->chip_info->span_helper;
+> +	int span, fs;
+> +
+> +	span =3D chan->span;
+> +	if (span < 0)
+> +		return span;
+> +
+> +	fs =3D span_helper[span][1] - span_helper[span][0];
+> +
+> +	return (fs / 2500) * st->vref;
+
+no need for ()
+
+...
+
+>=20
+> +static int ltc2664_channel_config(struct ltc2664_state *st)
+> +{
+> +	const struct ltc2664_chip_info *chip_info =3D st->chip_info;
+> +	struct device *dev =3D &st->spi->dev;
+> +	u32 reg, tmp[2], mspan;
+> +	int ret, span =3D 0;
+> +
+> +	mspan =3D LTC2664_MSPAN_SOFTSPAN;
+> +	ret =3D device_property_read_u32(dev, "adi,manual-span-operation-config=
+",
+> +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 &mspan);
+> +	if (!ret) {
+> +		if (!chip_info->manual_span_support)
+> +			return dev_err_probe(dev, -EINVAL,
+> +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "adi,manual-span-operation-confi=
+g not
+> supported\n");
+> +
+> +		if (mspan > ARRAY_SIZE(ltc2664_mspan_lut))
+> +			return dev_err_probe(dev, -EINVAL,
+> +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "adi,manual-span-operation-confi=
+g not in range\n");
+> +	}
+> +
+> +	st->rfsadj =3D 20000;
+> +	ret =3D device_property_read_u32(dev, "adi,rfsadj-ohms", &st->rfsadj);
+> +	if (!ret) {
+> +		if (!chip_info->rfsadj_support)
+> +			return dev_err_probe(dev, -EINVAL,
+> +					=C2=A0=C2=A0=C2=A0=C2=A0 "adi,rfsadj-ohms not supported\n");
+> +
+> +		if (st->rfsadj < 19000 || st->rfsadj > 41000)
+> +			return dev_err_probe(dev, -EINVAL,
+> +					=C2=A0=C2=A0=C2=A0=C2=A0 "adi,rfsadj-ohms not in range\n");
+> +	}
+> +
+> +	device_for_each_child_node_scoped(dev, child) {
+> +		struct ltc2664_chan *chan;
+> +
+> +		ret =3D fwnode_property_read_u32(child, "reg", &reg);
+> +		if (ret)
+> +			return dev_err_probe(dev, ret,
+> +					=C2=A0=C2=A0=C2=A0=C2=A0 "Failed to get reg property\n");
+> +
+> +		if (reg >=3D chip_info->num_channels)
+> +			return dev_err_probe(dev, -EINVAL,
+> +					=C2=A0=C2=A0=C2=A0=C2=A0 "reg bigger than: %d\n",
+> +					=C2=A0=C2=A0=C2=A0=C2=A0 chip_info->num_channels);
+> +
+> +		chan =3D &st->channels[reg];
+> +
+> +		if (fwnode_property_read_bool(child, "adi,toggle-mode")) {
+> +			chan->toggle_chan =3D true;
+> +			/* assume sw toggle ABI */
+
+Do we have any other option :)? For the ltc2668 driver (where this code cam=
+e from),
+we do have another way (driven by clocks) to toggle between outputs and hen=
+ce the
+comment.
+
+BTW, there's a fair amount of duplicated code between this and ltc2668. At =
+some point
+we may see if it makes sense to add some common module. Anyways, fine for n=
+ow.
+
+- Nuno S=C3=A1
+
+
 
