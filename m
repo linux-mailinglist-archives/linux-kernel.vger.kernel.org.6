@@ -1,127 +1,141 @@
-Return-Path: <linux-kernel+bounces-199370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45B4B8D861A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:33:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 454EF8D8614
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:31:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5B041F22809
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:33:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3BB4285D19
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:31:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 277EF130E4A;
-	Mon,  3 Jun 2024 15:33:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V78vWfJn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B76DC130A53;
+	Mon,  3 Jun 2024 15:31:49 +0000 (UTC)
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 636C012FF73;
-	Mon,  3 Jun 2024 15:33:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 442B0126F1F;
+	Mon,  3 Jun 2024 15:31:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717428793; cv=none; b=IKMCw81AEydc1sWBryQp9ftJhZd/y16HfO7sxqsoBYZFGBfYNg/sbeyK6pfyA7RW3b5sbmzgDh07GTE2sY4y2IsP1T5F0DJKe6OAjgdRYiGC6GtKTIk/93V/m1jRPZCUkoRiY9F/0dAAvmsBa/v34DfHZLwI6RTebzEXMhICIuY=
+	t=1717428709; cv=none; b=lbv85T0kl/zN0T30xH3rJehz9mgzHQtE1fGefB0JhEn5L6DAQOTilccUu5AVV4U2DZMYHWDEshHO7WA6AjQCjr7aA1SVdjntuR+yAz89KZIlE1ZoteX7geBj1yEE8U/YLOmQe4ty3hiiYCRkJnvbWCJc8AhZlXaCgMDkBN1t2vA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717428793; c=relaxed/simple;
-	bh=OgWlnRG7yqy7Yvp/hofY3k+TP4mvTMnfi5TRon+rND4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dZcNkKWNoz1PAwA+QVf0ArVHbuPuEX+9WLgaxH4i54iSlKy8a+90QNnxs40CAsysis5Kp2wJ0uqx64bYFMWQ6smrudRdf9Mk51ZwDm2IMtd+aH9FbFPC+29483ECTGTsD8DtxkYlvY2DbCWqX/RopUUNajeU5NPQ/ixTSkIJUwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V78vWfJn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9E44C2BD10;
-	Mon,  3 Jun 2024 15:33:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717428793;
-	bh=OgWlnRG7yqy7Yvp/hofY3k+TP4mvTMnfi5TRon+rND4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=V78vWfJnvZewwuSibFDHSbCkT7UuQxhh7H/3SePSqXD1IHensUS8575I57nhRRGNm
-	 uDOgM18EICY1RU5BGasMfeKdxeRj3rrm2PDIut5kb5N6LTjgQt4lmtZpEoxnd4D/NG
-	 DFR4YbrHY4UahiNnkq8kYpIUnqE0jLjoUVsHEudhor2/ijmq3hhwTvR/6TzD+CSeXk
-	 70VXT93b0/xJnbu9pKur+08cmupOp+QAg40GAQgg9mAJ18lSAUQwwZQ5MgypDm/HJX
-	 A3mtO4WABeasmB7CgPZkv6Qg4s3KxOUWiaz18mYJUJb7SAL8aYxu1BywfFZ6bIqfaX
-	 CkQFqvbp/2bJA==
-Date: Mon, 3 Jun 2024 18:31:13 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Borislav Petkov <bp@alien8.de>
-Cc: "Kalra, Ashish" <ashish.kalra@amd.com>, tglx@linutronix.de,
-	mingo@redhat.com, dave.hansen@linux.intel.com, x86@kernel.org,
-	rafael@kernel.org, hpa@zytor.com, peterz@infradead.org,
-	adrian.hunter@intel.com, sathyanarayanan.kuppuswamy@linux.intel.com,
-	jun.nakajima@intel.com, rick.p.edgecombe@intel.com,
-	thomas.lendacky@amd.com, michael.roth@amd.com, seanjc@google.com,
-	kai.huang@intel.com, bhe@redhat.com,
-	kirill.shutemov@linux.intel.com, bdas@redhat.com,
-	vkuznets@redhat.com, dionnaglaze@google.com, anisinha@redhat.com,
-	jroedel@suse.de, ardb@kernel.org, kexec@lists.infradead.org,
-	linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 1/3] efi/x86: Fix EFI memory map corruption with kexec
-Message-ID: <Zl3hwYL2GDiyUfGo@kernel.org>
-References: <20240528095522.509667-1-kirill.shutemov@linux.intel.com>
- <cover.1717111180.git.ashish.kalra@amd.com>
- <f4be03b8488665f56a1e5c6e6459f447352dfcf5.1717111180.git.ashish.kalra@amd.com>
- <20240603085654.GBZl2FVjPd-gagt-UA@fat_crate.local>
- <8e3dfc15-f609-4839-85c7-1cc8cefd7acc@amd.com>
- <Zl3HfiQ6oHdTdOdA@kernel.org>
- <1ef36309-8d7f-447b-a54a-3cdafeccca64@amd.com>
- <20240603144639.GCZl3XTwmFHwi-KUZW@fat_crate.local>
+	s=arc-20240116; t=1717428709; c=relaxed/simple;
+	bh=FGEu0jOGMounLvsZRMkDX/bZRfd7rOh4F+HLFoCmdYs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LQb0t66GQu5HANbs85IncgokFtwH4OvCk0RU2mWznz0rrGw9BiohBE3aVbi/ztyy/SXO8sfYNPdpT4RKc4J4+RNmAo3rTWRGUuH+se0OUtkr1Bg3IoXgT91ES7blvqEtMORvwp4YxuiZxNFGS1tu3JXW5dfOca/omGSy1mR6/a0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 9EA2820008;
+	Mon,  3 Jun 2024 15:31:41 +0000 (UTC)
+Message-ID: <f00b1928-3d91-4900-a588-c12c4933c870@ghiti.fr>
+Date: Mon, 3 Jun 2024 17:31:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240603144639.GCZl3XTwmFHwi-KUZW@fat_crate.local>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/7] riscv: Implement cmpxchg8/16() using Zabha
+Content-Language: en-US
+To: Nathan Chancellor <nathan@kernel.org>,
+ Alexandre Ghiti <alexghiti@rivosinc.com>,
+ Conor Dooley <conor.dooley@microchip.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+ Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Arnd Bergmann <arnd@arndb.de>, Leonardo Bras <leobras@redhat.com>,
+ Guo Ren <guoren@kernel.org>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+ linux-arch@vger.kernel.org, llvm@lists.linux.dev
+References: <20240528151052.313031-1-alexghiti@rivosinc.com>
+ <20240528151052.313031-3-alexghiti@rivosinc.com>
+ <20240528193110.GA2196855@thelio-3990X>
+ <CAHVXubjYVjOH8RKaF1h=iogO3xBM6k+xrGwkPnc-md2oRxbxrQ@mail.gmail.com>
+ <20240529155749.GA1339768@thelio-3990X>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <20240529155749.GA1339768@thelio-3990X>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: alex@ghiti.fr
 
-On Mon, Jun 03, 2024 at 04:46:39PM +0200, Borislav Petkov wrote:
-> On Mon, Jun 03, 2024 at 09:01:49AM -0500, Kalra, Ashish wrote:
-> > If we skip efi_arch_mem_reserve() (which should probably be anyway skipped
-> > for kexec case), then for kexec boot, EFI memmap is memremapped in the same
-> > virtual address as the first kernel and not the allocated memblock address.
-> 
-> Are you saying that we should simply do
-> 
-> diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
-> index fdf07dd6f459..410cb0743289 100644
-> --- a/drivers/firmware/efi/efi.c
-> +++ b/drivers/firmware/efi/efi.c
-> @@ -577,6 +577,9 @@ void __init efi_mem_reserve(phys_addr_t addr, u64 size)
->  	if (WARN_ON_ONCE(efi_enabled(EFI_PARAVIRT)))
->  		return;
->  
-> +	if (kexec_in_progress)
-> +		return;
-> +
->  	if (!memblock_is_region_reserved(addr, size))
->  		memblock_reserve(addr, size);
->  
-> and skip that whole call?
+Hi Conor, Nathan,
 
-I think Ashish suggested rather 
+On 29/05/2024 17:57, Nathan Chancellor wrote:
+> On Wed, May 29, 2024 at 02:49:58PM +0200, Alexandre Ghiti wrote:
+>> Then I missed that, I should have checked the generated code. Is the
+>> extension version "1p0" in '-march=' only required for experimental
+>> extensions?
+> I think so, if my understanding of the message is correct.
+>
+>> But from Conor comment here [1], we should not enable extensions that
+>> are only experimental. In that case, we should be good with this.
+>>
+>> [1] https://lore.kernel.org/linux-riscv/20240528151052.313031-1-alexghiti@rivosinc.com/T/#mefb283477bce852f3713cbbb4ff002252281c9d5
+> Yeah, I tend to agree with Conor on that front. I had not noticed that
+> part of the message when I was looking at other parts of this thread. I
+> could see an argument for allowing experimental extensions for
+> qualification purposes but I think it does create a bit of a support
+> nightmare, especially when there are breaking changes across revisions.
+>
+>>> config EXPERIMENTAL_EXTENSIONS
+>>>      bool
+>>>
+>>> config TOOLCHAIN_HAS_ZABHA
+>>>      def_bool y
+>>>      select EXPERIMENTAL_EXETNSIONS if CC_IS_CLANG
+>>>      ...
+>>>
+>>> config TOOLCHAIN_HAS_ZACAS
+>>>      def_bool_y
+>>>      # ZACAS was experimental until Clang 19: https://github.com/llvm/llvm-project/commit/95aab69c109adf29e183090c25dc95c773215746
+>>>      select EXPERIMENTAL_EXETNSIONS if CC_IS_CLANG && CLANG_VERSION < 190000
+>>>      ...
+>>>
+>>> Then in the Makefile:
+>>>
+>>> ifdef CONFIG_EXPERIMENTAL_EXTENSIONS
+>>> KBUILD_AFLAGS += -menable-experimental-extensions
+>>> KBUILD_CFLAGS += -menable-experimental-extensions
+>>> endif
+> Perhaps with that in mind, maybe EXPERIMENTAL_EXTENSIONS (or whatever)
+> should be a user selectable option and the TOOLCHAIN values depend on it
+> when the user has a clang version that does not support the ratified
+> version.
+>
+>> That's a good idea to me, let's see what Conor thinks [2]
+>>
+>> [2] https://lore.kernel.org/linux-riscv/20240528151052.313031-1-alexghiti@rivosinc.com/T/#m1d798dfc4c27e5b6d9e14117d81b577ace123322
+> FWIW, I think your plan of removing support for the experimental version
+> of the extension and pushing to remove the experimental status in LLVM
+> (especially since it seems like it is ratified like zacas?
+> https://jira.riscv.org/browse/RVS-1685) is probably the best thing going
+> forward. If the LLVM folks are made aware soon, it should be easy to get
+> that change into clang-19, which is branching at the end of July I
+> believe.
 
-diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
-index fdf07dd6f459..eccc10ab15a4 100644
---- a/drivers/firmware/efi/efi.c
-+++ b/drivers/firmware/efi/efi.c
-@@ -580,6 +580,9 @@ void __init efi_mem_reserve(phys_addr_t addr, u64 size)
- 	if (!memblock_is_region_reserved(addr, size))
- 		memblock_reserve(addr, size);
- 
-+	if (kexec_in_progress)
-+		return;
-+
- 	/*
- 	 * Some architectures (x86) reserve all boot services ranges
- 	 * until efi_free_boot_services() because of buggy firmware
- 
-> -- 
-> Regards/Gruss,
->     Boris.
-> 
-> https://people.kernel.org/tglx/notes-about-netiquette
 
--- 
-Sincerely yours,
-Mike.
+FYI, it was just merged https://github.com/llvm/llvm-project/pull/93831
+
+Thanks again,
+
+Alex
+
+
+>
+>> Thanks for your thorough review!
+> Thanks for taking LLVM support into consideration :)
+>
+> Cheers,
+> Nathan
+>
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
