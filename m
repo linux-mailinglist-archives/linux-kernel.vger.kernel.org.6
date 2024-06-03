@@ -1,98 +1,169 @@
-Return-Path: <linux-kernel+bounces-199704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BE078D8B19
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 22:56:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 645938D8B20
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 22:59:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D53C1C216CE
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 20:56:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ACA60B219D8
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 20:59:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C418F13B590;
-	Mon,  3 Jun 2024 20:56:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 965A113B5A5;
+	Mon,  3 Jun 2024 20:59:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="R/a8Gh6a"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="PLOGM/Pa"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66AC946436;
-	Mon,  3 Jun 2024 20:56:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60B4546436;
+	Mon,  3 Jun 2024 20:59:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717448199; cv=none; b=VmcUL1pqjt1LgoEhdLOgXrI6jFwAZX+SZyRTaLLdk4TwD4ofr/xS1XWnwPwRGomq2GWtG/ylB/j3Nt0LjSNEeSQvh06wcZfdrOyaDhFiGxCPwpZ7V6kDXUJppK3luWwb2quWthjmhIBBo2Hz1mhQWwBgCO5cOzBFmdtVgf+ycSE=
+	t=1717448370; cv=none; b=KucOdItd2wJmXO+1i/QqRKhvZ2tn2HZbdqvXe0ME6iZeki7vNdlRIxoo/FYowl60JZw+Wf81o+2Z4E/goObYTAUzHrVpDYIVQJ2nyPH2XQkxvHNRHn/xAnRkBFF/D9GxOMpgiZ7e1N9a8rtjF2+jqi01hweC9sQum79Bb3kohk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717448199; c=relaxed/simple;
-	bh=o8F6VoifI7A0oMK0yqKqCVn++NY/J+kNIIIvqg51Pio=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hUGFsBXUW27Ho5CUmQm/2zbTr2mL5lWtg+Q8tnMEfEbeezhicz4BZwqP+r72En5v7zThDwlBVWhAyy9tQ0oEewSS6udzQ2hahqjgkOhwJ7m5D0FI6/Ee2MaVJ26XS7py5EYgvXuT7pE4XpwIIxaMc/N1H1uOQTXe/aqlA3IvuR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=R/a8Gh6a; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1717448187;
-	bh=o8F6VoifI7A0oMK0yqKqCVn++NY/J+kNIIIvqg51Pio=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=R/a8Gh6adcU4G+Fdat0sLVBLpH4mqMpmnLWoXuSeRJrYRQtEDSzU1K5Oz4GOAzScK
-	 vI0quijbumGkVHW3gUV09hAXu12jdm825r5h4rPkoYJQdo2lgIoOauUhJ2xVTYxOfc
-	 k9MEaHMbGkP+KoS4AqTzuijgcBV3dIQqdABgpW6c=
-Date: Mon, 3 Jun 2024 22:56:26 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Dustin Howett <dustin@howett.net>
-Cc: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
-	Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>, 
-	Tzung-Bi Shih <tzungbi@kernel.org>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	chrome-platform@lists.linux.dev, Mario Limonciello <mario.limonciello@amd.com>
-Subject: Re: [PATCH v2 0/5] ChromeOS Embedded Controller LED driver
-Message-ID: <264dd508-93c5-48d6-ac69-27458acd29c5@t-8ch.de>
-References: <20240531-cros_ec-led-v2-0-6cc34408b40d@weissschuh.net>
- <CA+BfgNJf1Av7fRVUjpU3r6aRw6DWTHfkCuOYXP2ykhPzGTVzfw@mail.gmail.com>
+	s=arc-20240116; t=1717448370; c=relaxed/simple;
+	bh=k9trw5fX1GJnQDX8vfMOOmEAoDJ6USuo5vwt5PenN0o=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oKw7Q3oUuNK0Mr7gZ7c92a+V8KTPyhup2HZKyqa7SUG4fm/2yhz1mjNgN419Z/JZUCBD3on8rLBUXpG6/UMZ2nk2ln2aQHOcntlVULDiTAkrMskhj8NAPnIzDJZ/+ma67V9T430Qlk2hxvLwy0HdMRkZ9GK1sKjTifA5OEl2yuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=PLOGM/Pa; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 453BvbVa021204;
+	Mon, 3 Jun 2024 20:59:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=2hC/YgdbSs9m5CwXYV8+2V
+	432HTCViXc+JJs9S2ooSA=; b=PLOGM/PaIZd4UmTr1vM7U8Be2aQbVdz+JIwj8w
+	twCpLUyC4m52O0il/3k+bVk4Ys6tAs4jueSiTV+eEpKHPTXA9ctmXHC+NlZogcrO
+	rOibOJYoJr5tHdQouqIb+3u9i7BDGA9X6huntCTfrMBKBsUXZROyY679u8v00CDa
+	wrD+4d0p89yrJHoWAbGaBstljZILXjcrz+efa3I1oZBg9MMXUFnBdTQ02OJW8hS6
+	C1fccmrr1x7otMvNV1GhYUa96LUmwKbSgAcupEcIobFq2nBj0eYA2c+AADjoXxs9
+	WhjIJTCEd956Vd/HDu2HTSO9H3odxA/IfodXmgRxmlL2WslQ==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfw42vxsc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 03 Jun 2024 20:59:21 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 453KxJlV018029
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 3 Jun 2024 20:59:19 GMT
+Received: from hu-sibis-blr.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 3 Jun 2024 13:59:14 -0700
+From: Sibi Sankar <quic_sibis@quicinc.com>
+To: <sudeep.holla@arm.com>, <cristian.marussi@arm.com>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <jassisinghbrar@gmail.com>,
+        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <dmitry.baryshkov@linaro.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <quic_rgottimu@quicinc.com>,
+        <quic_kshivnan@quicinc.com>, <quic_sibis@quicinc.com>,
+        <conor+dt@kernel.org>, <quic_nkela@quicinc.com>,
+        <quic_psodagud@quicinc.com>, <abel.vesa@linaro.org>
+Subject: [PATCH V5 0/5] qcom: x1e80100: Enable CPUFreq
+Date: Tue, 4 Jun 2024 02:28:54 +0530
+Message-ID: <20240603205859.2212225-1-quic_sibis@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+BfgNJf1Av7fRVUjpU3r6aRw6DWTHfkCuOYXP2ykhPzGTVzfw@mail.gmail.com>
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: A49tXwnNTdQzneeZZOQOGPJx93zfV56j
+X-Proofpoint-ORIG-GUID: A49tXwnNTdQzneeZZOQOGPJx93zfV56j
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-06-03_17,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
+ impostorscore=0 mlxlogscore=999 clxscore=1011 bulkscore=0
+ priorityscore=1501 suspectscore=0 phishscore=0 malwarescore=0 adultscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406030169
 
-On 2024-06-02 18:30:06+0000, Dustin Howett wrote:
-> On Fri, May 31, 2024 at 11:33 AM Thomas Weißschuh <linux@weissschuh.net> wrote:
-> >
-> > Add a LED driver that supports the LED devices exposed by the
-> > ChromeOS Embedded Controller.
-> 
-> I've tested this out on the Framework Laptop 13, 11th gen intel core
-> and AMD Ryzen 7040 editions.
-> 
-> It works fairly well! I found a couple minor issues in day-to-day use:
+This series enables CPUFreq support on the X1E SoC using the SCMI perf
+protocol. This was originally part of the RFC: firmware: arm_scmi:
+Qualcomm Vendor Protocol [1]. I've split it up so that this part can
+land earlier.
 
-Thanks!
+V4:
+* Move val, flag and chan to local loop variables. [Jassi]
+* Add cpucp mailbox to the MAINTAINERS file. [Jassi]
+* Move to core_initcall. [Konrad]
+* Skip explicitly setting txdone_irq/txdone_poll to zero. [Konrad]
 
-> - Restoring the trigger to chromeos-auto does not always put the EC
-> back in control, e.g. the side lights no longer return to reporting
-> charge status.
->   I believe this happens when you move from any trigger except "none"
-> to chromeos-auto, without first setting "none".
+V3:
+* Fix Maintainer info in cpucp mbox bindings. [Bjorn]
+* Fix copyright info in cpucp driver. [Bjorn]
+* Drop unused APSS_CPUCP_TX_MBOX_IDR, value init and drv_data. [Bjorn/Dmitry]
+* Convert to lower case hex. [Bjorn]
+* Convert irq and dev to local variables. [Bjorn]
+* Replace for and if with for_each_set_bit. [Bjorn]
+* Document the need for spinlock. [Bjorn]
+* Add space after " for aesthetics. [Bjorn]
+* Fix err in calc and add fixes tag. [Bjorn]
+* Include io.h and re-order platform_device.h
+* Use GENMASK_ULL to generate APSS_CPUCP_RX_MBOX_CMD_MASK.
 
-Thanks for the report, I'll investigate that.
+V2:
+* Fix series version number [Rob]
+* Pickup Rbs from Dimitry and Rob.
+* Use power-domain instead of clocks. [Sudeep/Ulf]
+* Rename sram sub-nodes according to schema. [Dmitry]
+* Use BIT() instead of manual shift. [Dmitry]
+* Define RX_MBOX_CMD to account for chan calculation. [Dmitry]
+* Clear the bit instead of the entire status within the spinlock. [Dmitry]
+* Use dev_err_probe instead. [Dmitry]
+* Drop superfluous error message while handling errors from get_irq. [Dmitry]
+* Use devm_mbox_controller_register and drop remove path. [Dmitry]
+* Define TX_MBOX_CMD to account for chan calculation.
+* Use cpucp->dev in probe path for conformity.
 
-> - The multicolor intensities report 6x 100 by default; if you set the
-> brightness with the intensities set as such, it becomes only red. I
-> would have
->   expected intensities of 100 0 0 0 0 0 if that were the case
+RFC V1:
+* Use x1e80100 as the fallback for future SoCs using the cpucp-mbox
+  controller. [Krzysztoff/Konrad/Rob]
+* Use chan->lock and chan->cl to detect if the channel is no longer
+  Available. [Dmitry]
+* Use BIT() instead of using manual shifts. [Dmitry]
+* Don't use integer as a pointer value. [Dmitry]
+* Allow it to default to of_mbox_index_xlate. [Dmitry]
+* Use devm_of_iomap. [Dmitry]
+* Use module_platform_driver instead of module init/exit. [Dmitry]
+* Get channel number using mailbox core (like other drivers) and
+  further simplify the driver by dropping setup_mbox func.
 
-The EC will always use the first nonzero intensity for the color
-channel. It isn't a real PWM color mix.
-I don't think there are possibilities in the multicolor API to enforce
-this. For the next revision I'll need to document this properly.
-Also the default intensities could be better indeed.
+[1]: https://lore.kernel.org/lkml/20240117173458.2312669-1-quic_sibis@quicinc.com/#r
 
-> Thomas, I apologize for the duplicate message; my mail client config
-> here defaults to "reply" rather than "reply all."
+Other relevant Links:
+https://lore.kernel.org/lkml/be2e475a-349f-4e98-b238-262dd7117a4e@linaro.org/
 
-No worries!
+Sibi Sankar (5):
+  dt-bindings: mailbox: qcom: Add CPUCP mailbox controller bindings
+  mailbox: Add support for QTI CPUCP mailbox controller
+  arm64: dts: qcom: x1e80100: Resize GIC Redistributor register region
+  arm64: dts: qcom: x1e80100: Add cpucp mailbox and sram nodes
+  arm64: dts: qcom: x1e80100: Enable cpufreq
+
+ .../bindings/mailbox/qcom,cpucp-mbox.yaml     |  49 +++++
+ MAINTAINERS                                   |   7 +
+ arch/arm64/boot/dts/qcom/x1e80100.dtsi        |  91 ++++++---
+ drivers/mailbox/Kconfig                       |   8 +
+ drivers/mailbox/Makefile                      |   2 +
+ drivers/mailbox/qcom-cpucp-mbox.c             | 187 ++++++++++++++++++
+ 6 files changed, 319 insertions(+), 25 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mailbox/qcom,cpucp-mbox.yaml
+ create mode 100644 drivers/mailbox/qcom-cpucp-mbox.c
+
+-- 
+2.34.1
+
 
