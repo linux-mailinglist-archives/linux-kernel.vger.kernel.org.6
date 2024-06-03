@@ -1,227 +1,191 @@
-Return-Path: <linux-kernel+bounces-198976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FB3F8D7FFB
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 12:30:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 10A8A8D8000
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 12:30:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F2BD28623D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 10:30:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC696289DE9
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 10:30:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B172C82D6D;
-	Mon,  3 Jun 2024 10:29:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CADC82D7A;
+	Mon,  3 Jun 2024 10:30:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="NnCqOyCb"
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2074.outbound.protection.outlook.com [40.107.101.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="fVrusnO7";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="DvKDZNoN";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="fVrusnO7";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="DvKDZNoN"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2679881AC7;
-	Mon,  3 Jun 2024 10:29:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.74
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717410596; cv=fail; b=Ov+xZC047indFhCQKKAL1SSvUPGaO8smtVPYrE52noa4QgsSJg+lVGroD3WW1i/gECIq9SpFxnYzWQhSpUY6Af+e+5ohaterFSHl9eUrPJRFxD6hNvctogN1lLzpeybKTwLSSL8WnKsPHc0LuJmVc2TcqGcWeYkM1Tej0COSguA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717410596; c=relaxed/simple;
-	bh=jotlZ6i/lPWnXpPca+pHZCAgmIsgWQTLtVaGPIV5MWc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ej6sRoFMlI9AAl4VX8axdAp4l1mt+u831ZYooUS8xaohwFVIttIZSCBtyXkkXt0KJ1AJ3VPEvlVej1IO3OIiu0DMSlwxB8NDyhIScnMzInkcjmvrnb2aa3YCbI/aSQZ5F3Bnmtc51wTc/8rrrvg1W45EzgE4g85QKpwjf3zOKv4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=NnCqOyCb; arc=fail smtp.client-ip=40.107.101.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=DX5ErCPXESM6oPVtGcwG+Omk7bprc8NwZrIZtmkE73rRq3g7NMmMwSfqLGSU0mkuQB/Dit9salnIl1bSDbBuMYx8iO8IVDQMu7UbPCfA2NTMOUgWirlOEiLUxz0q3XC6vxjTdUrPMhFFaPasPQquWc4HhPRAZEvJFhFiPf2kNS4WusEJJ7KiV/fQSHC6tTHs4lOQUJqF7Hes7M2Q/xIe05Dkfte47XS4mCb4PcM3pnZG9RmyzdPLtQ6yjGmpQqv3QKQCxwU3Ow5drR0kXjDx165MBDIBXC8SQoSXvGnCXf6q5n9D/Yb/D6kDz0cOyY+MLLUgnt/3/HUzogcLCkWBkA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jotlZ6i/lPWnXpPca+pHZCAgmIsgWQTLtVaGPIV5MWc=;
- b=U4hrzXkTkulYIvr+1e5D+PW1mVcAzIYDq4stzat4gQQGs/oCfoXA5H5B8iH7u+nphfC9+W6AJLD50hR+hW1V0D+LXYX+hFA2hLPLLnHf0S+WkMpN8g2XNSMlX18DG9YrPsyLs+t6CjaiwJa/ymFJSTpL0IMx4/Z/qMvQq39sdYAx9WRxJFt+SZ5FyE+KwINaUoWtGgyTZ3oNBtd4dsgmJF4EyjczgplN1aszCMHHWHKi9p4adzx+Q/5OEODtS4lixtYEaMWsrPPqhQCRDYBAEhhZQgM/rPgYkgQpdhL7Tytt8JmH2cqN5vDZtT0iglBF5pr9ONqmO19P22aBCmrBCw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jotlZ6i/lPWnXpPca+pHZCAgmIsgWQTLtVaGPIV5MWc=;
- b=NnCqOyCbsyezfoozUoGT3433k4j5QegKjIR3aEuoaweIsDEpxnpY5aQ1kuX0bD1lOGnqUxMwZVBpBkWpLEBPIQaA8q9WjagIv4hp6YRrm3WkmdpY0d9C8nZv3zsAsJQEwqOzV1oei66Q8YkmqqEAph6iLlU7U9lgDHWiPpNr8OkJGl81rs7OfgQIxiNVRAxEojgujLX8CgJSWGwdAgKZ7DRhfUoXmiNvfCRcdcniBoDoGAqHljMVgge+WWfBjDFVtO9T4cB3slHP0ok+U7lVIyTeS9kVfHO7W0H+Vkyn29BuYXu2PjGItoydgPopXjXkexCXU7zKRmgjsLNplMO4Hw==
-Received: from DM4PR12MB5136.namprd12.prod.outlook.com (2603:10b6:5:393::23)
- by BY5PR12MB4065.namprd12.prod.outlook.com (2603:10b6:a03:202::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.25; Mon, 3 Jun
- 2024 10:29:50 +0000
-Received: from DM4PR12MB5136.namprd12.prod.outlook.com
- ([fe80::bc87:6c1b:cadb:67a]) by DM4PR12MB5136.namprd12.prod.outlook.com
- ([fe80::bc87:6c1b:cadb:67a%5]) with mapi id 15.20.7633.021; Mon, 3 Jun 2024
- 10:29:50 +0000
-From: Shravan Ramani <shravankr@nvidia.com>
-To: =?iso-8859-1?Q?Ilpo_J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-CC: Hans de Goede <hdegoede@redhat.com>, Vadim Pasternak <vadimp@nvidia.com>,
-	David Thompson <davthompson@nvidia.com>,
-	"platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/4] platform/mellanox: mlxbf-pmc: Add support for
- 64-bit counters and cycle count
-Thread-Topic: [PATCH v2 2/4] platform/mellanox: mlxbf-pmc: Add support for
- 64-bit counters and cycle count
-Thread-Index: AQHaqqzUCe6HwhimrEuniPTiRFYZCLGq/5cAgArnmkg=
-Date: Mon, 3 Jun 2024 10:29:50 +0000
-Message-ID:
- <DM4PR12MB513695D2BE98AA46A95B4C60C0FF2@DM4PR12MB5136.namprd12.prod.outlook.com>
-References: <cover.1716205838.git.shravankr@nvidia.com>
- <ce077a0db5d4afdbcc63a635fece9793aaae055f.1716205838.git.shravankr@nvidia.com>
- <70d3c0af-8bf6-2e33-074d-5b1719a5674f@linux.intel.com>
-In-Reply-To: <70d3c0af-8bf6-2e33-074d-5b1719a5674f@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DM4PR12MB5136:EE_|BY5PR12MB4065:EE_
-x-ms-office365-filtering-correlation-id: 73061f76-5ab6-4fd4-5940-08dc83b8194a
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230031|366007|376005|1800799015|38070700009;
-x-microsoft-antispam-message-info:
- =?iso-8859-1?Q?yTvjo6WvvDYXD4xQsej8ejqwBP+a3baO4UoE7zK2nsEROWJxWTvpgBcedu?=
- =?iso-8859-1?Q?DEwkW2m40yxnTP/MRVnqb+SbVsOFQuP2oCNTV5itiWa1bbbs4QYpWhnVXc?=
- =?iso-8859-1?Q?TPskIU2Adwf2SIif0O9xP7bDmU8y7b0HEU10WCN/tONbZwtpWjGsDnuwEg?=
- =?iso-8859-1?Q?+2zsa7e8idQTqw4VuT2+/Jd0BgxMXNlyruNbpEZKvWFcxqUPq3uxby3EZj?=
- =?iso-8859-1?Q?P74WfxaTk5kYWGFcRwsVlMvjm92Vzp2rTL4xIz4g6X0txdjE/h9uGTDU4e?=
- =?iso-8859-1?Q?w20DuRQWE8rRTWTW0VIZRAOUv6KPYl57V+YzDrs0CmxEVpe5aCLuvLhSXc?=
- =?iso-8859-1?Q?uQSlS8cvXmoNf1g3ohz1gMq1Jz/Tg/fxRJjFV9M6dX3x0T63UAf/4tif0n?=
- =?iso-8859-1?Q?bSF5cczEMJnW8E/zAFOndRhdBR/L/Hxxaf+LF3vuplgs6QecZLVcRF3Rk+?=
- =?iso-8859-1?Q?xKx0sLjZSAYQZPVJ8Zq/IScs7oM8NqnZtVYzTeBRZskGVAuMnk+afKkAx4?=
- =?iso-8859-1?Q?JpALkypdrh6ppbvLKiMNNNktnbwYKSswG+ULDPIpBftQ/taR9mlJVV9ghv?=
- =?iso-8859-1?Q?uT+hoII3DefEFqXPraS7mUqjSg17SPKhH3QsA0oC0d+YObElQd/3cVutS0?=
- =?iso-8859-1?Q?XVdPi1/A8ssj+oR5HRtEzDuBb8MUwhOjJDA4lHF+wdnJXpqhr7/GBUlvxr?=
- =?iso-8859-1?Q?r1jHgsTEWDNYRevTe/UNpIGVaLhKInURmjV8ZlPkptuECLoFdsl4Ua3xd4?=
- =?iso-8859-1?Q?Zqw3/k8Cd1Qx+5hS2DPNXIKQCS19KIXOKSXxiKwpV7Ql/FJXUmHFg7SrB1?=
- =?iso-8859-1?Q?cP+loEuiGpE6hxFK3rITYr2CWX3g8wt/j375qHP3tKg3TH0/6sHcBraYN/?=
- =?iso-8859-1?Q?Vo4GRY0yb5f+kZJhd7NaKCmWYqgpbtGgfNauMwbdiusQYs8ZGdNw6DPLIa?=
- =?iso-8859-1?Q?9m230oMaU8eNTjKlUMSNpYr5HMaKOvK/5HjiCFREZYvkx449Z0tMH/lr9E?=
- =?iso-8859-1?Q?GT54MposuYWs3QvZW5tjwjXbWC+zE5RmYF6wL08vEsOYaPzBvsV4gJ745h?=
- =?iso-8859-1?Q?//68xa3Oa3e6GLHqjEchYSV93xdqojF1sCgyX4a/QffaFKrh32Gq+9SyTf?=
- =?iso-8859-1?Q?12wAQcxqZqM/lXadE8M+uekJUOctDwZJAZhk926aGdytyRxcVes+caqOUg?=
- =?iso-8859-1?Q?f7dulqzUbN+DrZHIFTTi/J255g7tLhsRBC/C9tIOtv82CwV+FOYb1rCvQc?=
- =?iso-8859-1?Q?iQz7dEp9EAIPXsAjQ+Q4QJVzDzwRhFzbvPjVmSXXfa5TYXVIZMcv3ocVGm?=
- =?iso-8859-1?Q?zmSkyk5tVSWfkrcQ6D/XWf8PMAe9f0VZbgbB8LUH+vL+sKcEPRxLC71I5J?=
- =?iso-8859-1?Q?yUbx3dBY9YRnZ1xeiul3GttmEru77MKw=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5136.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(1800799015)(38070700009);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?2awbda9SUBuuDlU+UNqxHYNwjNxvca42btFsCkhZ85u9E1PeSzb1M42U1E?=
- =?iso-8859-1?Q?ceNAbGLkgk6KPrsIbEk2gxb0/7rpVttX3Vc66UwAsVUTJEm3PfUqIHgULi?=
- =?iso-8859-1?Q?KDfK3233oy9Hw2chpRkTZCIX/Cj4B0duD2Ol4UBTNE5LUnasUERNd/hYgm?=
- =?iso-8859-1?Q?Pcooh3pSrVdHuXbo70nHF34wZBGck66oahC/mnip4qSd1ML9uisTaDiuib?=
- =?iso-8859-1?Q?GiDkCW/pTuUuy5Gj5oDGXZ8bQAOIRpcx+3D4RS5cx3G0ILSnAVgHKTZg0Y?=
- =?iso-8859-1?Q?x86TWXf/ppE4grgNauGCjL/CQ/NWGodzpICISIrWtP1AbcovmccikovTad?=
- =?iso-8859-1?Q?82hMECnyR23/DMrrWfrtdNPrpzZvKKzxX4mfolshWloh0tgtV9GmEQcMF/?=
- =?iso-8859-1?Q?K8Ni4jqC/xGb3QEXJp04/Wv5JODj2j9xhtOH4mpooIwI3aELzQuQOyoylC?=
- =?iso-8859-1?Q?wbdBvxSTpEbV4LvMSent3bIBe6dN6dnpRBCAGQnDkbZLsKD35YXdoOqtI6?=
- =?iso-8859-1?Q?GXa3Gv9GFHEifKLwMmEkzNx9Hnxt8cM3zxSJbZzymoXDHMYIoaNYdIjrC5?=
- =?iso-8859-1?Q?5MVvyhu1G/zCCtgQstc62cm4fvyMXwS2ITXGBjQ2N3ohHrMAiiNAzBmgAB?=
- =?iso-8859-1?Q?jrM71Vl0wrYnVAsOjf1HLNzKMl3IbaM645LVlHqn1sQ6t6DiEuR9n714++?=
- =?iso-8859-1?Q?jxSwT5Lla/aaC8VjMpFNaFHq9xZCf62+tXpxz02BZwsQcZdzM7EpJcm/yR?=
- =?iso-8859-1?Q?8aBcXXJ/6clfjWgfALFG1NODkdFjAcHkbK1MaLx1m0x1/xaU3Qlz8M3cpo?=
- =?iso-8859-1?Q?11FBYRvrMiQAIgfOnW2e2ltebfkA7KcN3hv6XP4qagAPybpyeFkFq8LjOE?=
- =?iso-8859-1?Q?+5SVFEXEMPAtnIc6ivdnu1DANZg6AvYkXEGwgOd6yh8P7gQ0jFVGixAcXr?=
- =?iso-8859-1?Q?Uqs8hCuJOCkQrE19tt+dMsXUZbAaQQyXP6XoHEkKddIq7hUm3TRYQxo961?=
- =?iso-8859-1?Q?WRsv549irT4XdVIGxnlOazpz1/6ux/ai9o3GfMt5Md/60ZmDMKr1H6NrWl?=
- =?iso-8859-1?Q?UfRMpgiLrF4Q0vh8F6OFE+4/BcG1QIYbr3dujDVv0uiIS7aOz5dHC60Da5?=
- =?iso-8859-1?Q?bHPMz/vh29OQKjkVFBEqqPKygBtJI40FiSp6oXUdroj0NlOqAXCKs/Y8Ws?=
- =?iso-8859-1?Q?9usFbJpw9D7jkyg+BlbHwvVGw0R+zLZPrnyZTofTwF5fcML1UnWRils3uq?=
- =?iso-8859-1?Q?5mRQ1B7hCht+GSpvBNW+yf6ZNxb6/uDgiRpkXmDCq7rp7FhGFFhBNHMCjH?=
- =?iso-8859-1?Q?xdNa9iDzzO5IjCmqYmJxFkf5ESbe4YmSyHZ7Fe2Gnk9Va6yp69DF5HVJTj?=
- =?iso-8859-1?Q?UpEsIGizW+SnrhBxPYh+NGOdqohQhoKTQ6d7x5Kt+uGwI257SJvXqzZsx/?=
- =?iso-8859-1?Q?sue4Rtkpqtp1qflEtxKVo4phl8INdMA3gw4Qh3NTYPsmJ9orlI8mFonXli?=
- =?iso-8859-1?Q?1W2LNRRZZ+zQ5i33BxiqFIwd9DAYlL8kot6MheHQ2hK7ssxzR0AeEBLDZt?=
- =?iso-8859-1?Q?k6H/Iu/YEsVQyjS+R2ef+IFI2aKn14IcLJ5ubwle0AdXc9QIU6BEjAuXM3?=
- =?iso-8859-1?Q?3xf4luyPBXQPc=3D?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82974107A8;
+	Mon,  3 Jun 2024 10:30:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717410632; cv=none; b=OoDbtXPbxRgIHPk2sT07czLtfKBw23EhcVKRhHHE0ahpYgJRJbx3jPc5LG28jbCm6iu/K5esMAvwgC/qvDS6UEot12koXdSD20hsFuGfXF6R5zEqE6GBnaK3edzOjx7fdQFo+I5m8MJ9gTwGwqDSkO/e8bsKjc16Upd8Rc+ZChY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717410632; c=relaxed/simple;
+	bh=8qWOa1I4dRA0wwSvjQqmRvvLXU43Y0o1KGD3d+SozDk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZY69fwR7SBiK0w4QhLKhS3EZgFa0FSvF89IFHRP2u9l/MA/AyfR3HIqDhsCHTa4s6eGzjbMtUqRf4cLSjjR8sMmx7MAG55uDrTDZTamCa8bzM1n10tIb2yD1tMAshT0G7N3dArrVxTieEHf2gM9BT1IgyxqW5NfP5KhQ2AIxAig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=fVrusnO7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=DvKDZNoN; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=fVrusnO7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=DvKDZNoN; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 7DFA520034;
+	Mon,  3 Jun 2024 10:30:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1717410628; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HeD93ByCizJOPJifc4qjUJkUjOsezUwSyhkRRSdDXTI=;
+	b=fVrusnO7cteskuNXJi2yj0cacsltGC1p0Pp8PEfe/nvMDgCPAdOtEjO7ILMdvWGdn9KWKI
+	tuxOHuXQAvpbNQuSS2klTjPrvnVjHN3RmBBkH0HnpJEaKJz2qbKSX+E9B4+udGCtR9dvrF
+	PHw7TuLDKFGLCwZyRifY5MBYFKs9/l8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1717410628;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HeD93ByCizJOPJifc4qjUJkUjOsezUwSyhkRRSdDXTI=;
+	b=DvKDZNoNqfMSQ+/I5NWHq6R5gElN2NQoOmzE91Z70XJZgtUCLvQcP/s6MyRaeyPhuI/4De
+	0o0hKauf7I/iPHAQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1717410628; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HeD93ByCizJOPJifc4qjUJkUjOsezUwSyhkRRSdDXTI=;
+	b=fVrusnO7cteskuNXJi2yj0cacsltGC1p0Pp8PEfe/nvMDgCPAdOtEjO7ILMdvWGdn9KWKI
+	tuxOHuXQAvpbNQuSS2klTjPrvnVjHN3RmBBkH0HnpJEaKJz2qbKSX+E9B4+udGCtR9dvrF
+	PHw7TuLDKFGLCwZyRifY5MBYFKs9/l8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1717410628;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HeD93ByCizJOPJifc4qjUJkUjOsezUwSyhkRRSdDXTI=;
+	b=DvKDZNoNqfMSQ+/I5NWHq6R5gElN2NQoOmzE91Z70XJZgtUCLvQcP/s6MyRaeyPhuI/4De
+	0o0hKauf7I/iPHAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6E41413A93;
+	Mon,  3 Jun 2024 10:30:28 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id POOkGkSbXWZeFgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 03 Jun 2024 10:30:28 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id F12E9A086D; Mon,  3 Jun 2024 12:30:23 +0200 (CEST)
+Date: Mon, 3 Jun 2024 12:30:23 +0200
+From: Jan Kara <jack@suse.cz>
+To: Aleksa Sarai <cyphar@cyphar.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>,
+	Christoph Hellwig <hch@infradead.org>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Alexander Aring <alex.aring@gmail.com>,
+	linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org
+Subject: Re: [PATCH RFC v2] fhandle: expose u64 mount id to
+ name_to_handle_at(2)
+Message-ID: <20240603103023.dh2npfl76wbmyvsx@quack3>
+References: <20240527133430.ifjo2kksoehtuwrn@quack3>
+ <ZlSzotIrVPGrC6vt@infradead.org>
+ <20240528-wachdienst-weitreichend-42f8121bf764@brauner>
+ <ZlWVkJwwJ0-B-Zyl@infradead.org>
+ <20240528-gesell-evakuieren-899c08cbfa06@brauner>
+ <ZlW4IWMYxtwbeI7I@infradead.org>
+ <20240528-gipfel-dilemma-948a590a36fd@brauner>
+ <ZlXaj9Qv0bm9PAjX@infradead.org>
+ <CAJfpegvznUGTYxxTzB5QQHWtNrCfSkWvGscacfZ67Gn+6XoD8w@mail.gmail.com>
+ <20240529.013815-fishy.value.nervous.brutes-FzobWXrzoo2@cyphar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5136.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 73061f76-5ab6-4fd4-5940-08dc83b8194a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Jun 2024 10:29:50.0816
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: DPFrjTZGu6WWttyxE3rii8NKH6S+jp4/esEW1KBMCM9XwryQOcFK+UK6rLQBg8jxTocnyaQHn55xl/8iaCufvA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4065
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240529.013815-fishy.value.nervous.brutes-FzobWXrzoo2@cyphar.com>
+X-Spam-Flag: NO
+X-Spam-Score: -2.30
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TAGGED_RCPT(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[szeredi.hu,infradead.org,kernel.org,suse.cz,zeniv.linux.org.uk,oracle.com,gmail.com,vger.kernel.org];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[infradead.org:email,suse.com:email]
 
-=0A=
-> > Both these features are supported by BlueField-3 PMC hardware, hence=0A=
-> > the required bit-fields are exposed by the driver via sysfs to allow=0A=
-> > the user to configure as needed.=0A=
-> =0A=
-> I'm trying to understand what happens for the other counter, when the=0A=
-> use_odd_counter is enabled? This change also doesn't add code that would=
-=0A=
-> make the other counter -EBUSY, should that be done?=0A=
-=0A=
-When 2 32-bit counters are coupled to form a 64-bit counter using this sett=
-ing,=0A=
-one counter will hold the lower 32 bits while the other will hold the upper=
- 32.=0A=
-So the other counter (or syses corresponding to it) also needs to be access=
-ed.=0A=
-=0A=
-> For 64-bit counter, I suppose the userspace is expected to read the full=
-=0A=
-> counter from two sysfs files and combine the value (your documentation=0A=
-> doesn't explain this)? That seems non-optimal, why cannot kernel just=0A=
-> return the full combined 64-value directly in kernel?=0A=
-=0A=
-I will add more clear comments for this.=0A=
-While it is true that the driver could combine the 2 fields and present a=
-=0A=
-64-bit value via one of the sysfs, the reason for the current approach is t=
-hat=0A=
-there are other interfaces which expose the same counters for our platform=
-=0A=
-and there are tools that are expected to work on top of both interfaces for=
-=0A=
-the purpose of collecting performance stats. The other interfaces follow th=
-is=0A=
-approach of having lower and upper 32-bits separately in each counter, and=
-=0A=
-the tools expect the same. Hence the driver follows this approach to keep=
-=0A=
-things consistent across the BlueField platform.=0A=
-=0A=
-> =0A=
-> Similarly, are these cycle counters occupying the same space as non-cycle=
-=0A=
-> counters (so both can/cannot be used that the same time)? I'm asking this=
-=0A=
-> because you're adding a parallel interface to read the value and if it's=
-=0A=
-> either-or, I don't understand why the value needs to be read from=0A=
-> different file depending on the counter counting in cycles or not.=0A=
-=0A=
-It is the same file. The count_clock sysfs exposes 16 bits, one for each co=
-unter,=0A=
-to allow the user to dedicate any of the 16 counters to counting cycles. On=
-ce=0A=
-set, the corresponding counter can no longer monitor other events, and the=
-=0A=
-same sysfs can be accessed to read the cycle count. Again, I will try captu=
-re=0A=
-this better and more elaborately in the documentation.=0A=
-=0A=
-Thanks,=0A=
-Shravan=
+On Sat 01-06-24 01:12:31, Aleksa Sarai wrote:
+> On 2024-05-28, Miklos Szeredi <miklos@szeredi.hu> wrote:
+> > On Tue, 28 May 2024 at 15:24, Christoph Hellwig <hch@infradead.org> wrote:
+> > >
+> > > On Tue, May 28, 2024 at 02:04:16PM +0200, Christian Brauner wrote:
+> > > > Can you please explain how opening an fd based on a handle returned from
+> > > > name_to_handle_at() and not using a mount file descriptor for
+> > > > open_by_handle_at() would work?
+> > >
+> > > Same as NFS file handles:
+> > >
+> > > name_to_handle_at returns a handle that includes a file system
+> > > identifier.
+> > >
+> > > open_by_handle_at looks up the superblock based on that identifier.
+> > 
+> > The open file needs a specific mount, holding the superblock is not sufficient.
+> 
+> Not to mention that providing a mount fd is what allows for extensions
+> like Christian's proposed method of allowing restricted forms of
+> open_by_handle_at() to be used by unprivileged users.
+> 
+> If file handles really are going to end up being the "correct" mechanism
+> of referencing inodes by userspace, then future API designs really need
+> to stop assuming that the user is capable(CAP_DAC_READ_SEARCH). Being
+> able to open any file in any superblock the kernel knows about
+> (presumably using a kernel-internal mount if we are getting rid of the
+> mount fd) is also capable(CAP_SYS_ADMIN) territory.
+
+Well, but this is already handled - name_to_handle_at() with AT_HANDLE_FID
+is completely unpriviledged operation. Unpriviledged userspace can use
+fhandle for comparisons with other file handles but that's all it is good
+for (similarly as inode number you get from statx(2) but does not have the
+problem with inode number uniqueness on btrfs, bcachefs, etc.). I don't
+expect unpriviledged userspace to be able to more with the fhandle it got.
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
