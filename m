@@ -1,235 +1,146 @@
-Return-Path: <linux-kernel+bounces-198861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 857388D7E6D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:23:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CD5D78D7E55
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:17:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39ACB283219
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:23:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8888D281318
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:17:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 508F77E765;
-	Mon,  3 Jun 2024 09:23:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDC9F7F47B;
+	Mon,  3 Jun 2024 09:16:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=freemail.hu header.i=@freemail.hu header.b="EswRUQok"
-Received: from smtp-out.freemail.hu (fmfe14.freemail.hu [46.107.16.207])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ha02Sbz8"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E0AE53392
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 09:23:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.107.16.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B805C5FDA7
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 09:16:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717406586; cv=none; b=sG9C3emIzHhAtIXDQcUJL2ievPfwq3xPU1THTGrsf2TcGYpR8+v7p8QgWA2FmcrmNi3J6edOqrNi1qRIdNcHk+3twjtvsKtDlNHCa9VHpE1NyP26/NhAYG5JuHvMfC+M150dUQ9E7iRJ++tBf6iqDTolpEJ4UrUljh9KRrJ8TcM=
+	t=1717406203; cv=none; b=GYQLS165jbKNgmWlkh4M53gA5YGkoY7qnQv7RlPD3AE8/oLxnaICnbsGTq7hoc1ztiEooBdt34NEzwz1S/4TizUVtREXBrdGtOliGSV2ojeIJT7uFLXdghZorfYCW0cDpYUUowfmMl696/0s4j7DAcucRS1mQz8rYwLR7wTpluM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717406586; c=relaxed/simple;
-	bh=OzfR7H3OeR2RqQmQTLf2+MCUwPhQROHuvSQDJc/SIiI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=K8ENu7Di9EAXxOtWG3+8UBbi9SIWAMTzQe1FLNnajwdu8JWSvFLPMfKCTQAECma8E/Al7BDM4VvlDbJnoih6x9Foxt4o4ueZPYLwhFmGgGJn6qM51R/cr4LvPh5qedd/CIuex+L2vGDZhJrPhS7/+gFpOIQ2PBwxq3gBQkkLpPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freemail.hu; spf=pass smtp.mailfrom=freemail.hu; dkim=fail (2048-bit key) header.d=freemail.hu header.i=@freemail.hu header.b=EswRUQok reason="signature verification failed"; arc=none smtp.client-ip=46.107.16.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freemail.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freemail.hu
-Received: from fizweb.elte.hu (fizweb.elte.hu [157.181.183.248])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp.freemail.hu (Postfix) with ESMTPSA id 4Vt7Pd3jnlz18V;
-	Mon,  3 Jun 2024 11:16:05 +0200 (CEST)
-From: egyszeregy@freemail.hu
-To: bskeggs@nvidia.com,
-	kherbst@redhat.com,
-	lyude@redhat.com,
-	airlied@gmail.com,
-	daniel@ffwll.ch,
-	dri-devel@lists.freedesktop.org,
-	nouveau@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Benjamin=20Sz=C5=91ke?= <egyszeregy@freemail.hu>
-Subject: [PATCH] drm/nouveau/i2c: rename aux.c and aux.h to auxch.c and auxch.h
-Date: Mon,  3 Jun 2024 11:15:58 +0200
-Message-ID: <20240603091558.35672-1-egyszeregy@freemail.hu>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1717406203; c=relaxed/simple;
+	bh=ImHt7Zo3bC3AcAH6+P9BA7vqDiszxaZntToY+2lkWmo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qe9sVjRtQxqvGe8dgn0Nooc2qqgbgQInBTTR0Zhf2lH4I361+FBq6EEjOkb+oDuqMRrQmIM8GjDmhyfxewj8+Fyg5uTk1oJtnwZyrNgg3tiNKniQsFnvbVGM453SuRhaSL4AKMUAf91dcJIg8BDYsiLntxGvrIF5ZjQcHGNT9tI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ha02Sbz8; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717406200;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ER449LmaSckkw0lE9Rnq7WLr5seCu4LCDcpsoMn1VAg=;
+	b=ha02Sbz8D9KBAremrNqChFdMk11lZVoYY4uwFhc/6WZ6+YFiK+llKtuC/0XrVIkU36V9Zl
+	Ael1dpH0OUCGdOHNkXBguIR813htmmhQ7zZFodoKLhJwmdrr/rhlkE1kxq1voUsOcVSfJD
+	fjaRJJLXUEawLeGyq+kJ7V5knKYH2h8=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-615-9nYSV_c_P02eZer28fdVrQ-1; Mon, 03 Jun 2024 05:16:37 -0400
+X-MC-Unique: 9nYSV_c_P02eZer28fdVrQ-1
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a68e0faf1f6so57759266b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 02:16:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717406196; x=1718010996;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ER449LmaSckkw0lE9Rnq7WLr5seCu4LCDcpsoMn1VAg=;
+        b=I6RZkm6UiTT2qnL0U5yqxx9Xg8Fv4XQlhZE/wlL5VlYdTuP42DoqgaxKra1ptouRkY
+         9IlI1tlmVeyovrg/cUUvOIgmnqpYHVf98BNNEb6cJb+8CdmWuWy0s7pbSHiCBULoCyN/
+         eLQomgu5TwRX9q1RfbUKGWcPIMnOmIvWI83f+PrDtRyqQTwqqPEtWJr2/TZeuAa+7pQx
+         9g80MGzDi+uTXIa3kWMwd+4tTL1EWatwbwOWMhhMyosaf1Dhkv+fsBkd4KskNKAeqavH
+         gRu/uMj0GJrSfkvpSk40jwgi2eoUf+rnYatPlexPvMKgpk6WwA8b82TYKVLmULKYHXa6
+         cD5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXAL8Wx7Zp6YLIovCNRMlVu1yB7W0wqExzCKUgoAx7pw8D5T3hG4uBITcDuZdP3cSoEDEq2cPv85U1JKQH92lsjSfoQ97kKHE6RKSJC
+X-Gm-Message-State: AOJu0YwVK/C6bnoKmEWZamOB4BH8nbI1DJA42YmgHShypf95FxBpQqsC
+	ArdcPL/gQpIfLMrCknxwE/O/F1LvTTx3QbcwZ+rZF7xCLBJt/E9bX0xyxSv0a0KGU7N4moSRHKS
+	JEotDS3ynC9hAeX+1+EQWkclabUIOZUIoIcAUwceCmv+on8wOdTWs3XQz9B0LMg==
+X-Received: by 2002:a17:907:3fa6:b0:a69:180e:9dde with SMTP id a640c23a62f3a-a69180e9e03mr102605066b.26.1717406196040;
+        Mon, 03 Jun 2024 02:16:36 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF7yp9unRJH++xLy+GgIWNG4UQ4k52l26EQdjCKCjPLXFaFHYNHG+T5/e4WkozKTS/UOAX1Wg==
+X-Received: by 2002:a17:907:3fa6:b0:a69:180e:9dde with SMTP id a640c23a62f3a-a69180e9e03mr102603466b.26.1717406195678;
+        Mon, 03 Jun 2024 02:16:35 -0700 (PDT)
+Received: from [10.40.98.157] ([78.108.130.194])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a68fbf068fesm186916366b.26.2024.06.03.02.16.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Jun 2024 02:16:35 -0700 (PDT)
+Message-ID: <6629757d-fa07-450f-9de8-bcda54d42067@redhat.com>
+Date: Mon, 3 Jun 2024 11:16:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 7/7] platform/x86: touchscreen_dmi: Use 2-argument
+ strscpy()
+To: Andy Shevchenko <andy.shevchenko@gmail.com>,
+ Jorge Lopez <jorge.lopez2@hp.com>, Li Zetao <lizetao1@huawei.com>,
+ Simon Trimmer <simont@opensource.cirrus.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Mark Pearson <mpearson-lenovo@squebb.ca>,
+ platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+ ibm-acpi-devel@lists.sourceforge.net, linux-input@vger.kernel.org
+Cc: Corentin Chary <corentin.chary@gmail.com>, "Luke D. Jones"
+ <luke@ljones.dev>, Mark Pearson <markpearson@lenovo.com>,
+ Henrique de Moraes Holschuh <hmh@hmh.eng.br>
+References: <20240602090244.1666360-1-andy.shevchenko@gmail.com>
+ <20240602090244.1666360-8-andy.shevchenko@gmail.com>
+Content-Language: en-US
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20240602090244.1666360-8-andy.shevchenko@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=simple/relaxed; t=1717406166;
-	s=20181004; d=freemail.hu;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
-	l=6337; bh=rijsPYYSbzi73ZsjnyWe6jiHuk3OCHTuD8vMOf/445U=;
-	b=EswRUQokcslT1G+LQHyFiWcRQDM6iHCHBCJnkI5ThJ9yuZXovaAM4OGKMTKeIy8N
-	ZS7ZaMhyPrJjAwxVMfcz9vqbuWjY5IlsIJuM0bbFLubPWXpZZU1DIx1NK5nmXhFatsd
-	u5OOgr+zZzXXuLadvS4ijLtyGtUW81X6xwTqH0Qxn61igzSmqcm6Gz3utPGl8Hhmxb5
-	7C2zK07XLbmeZSUmT9TfRGo4jGyxH6WSHnWlWtBeJ13c8j8ejdg3X+kO8HwugiNGyLD
-	jnlF2xpRJa1Teyu3z2yj5jK1QQfg2WuYa5+XCzb/EH+A16hkqSk7If1DOszoavcHFhl
-	fPls79YWXg==
+Content-Transfer-Encoding: 7bit
 
-From: Benjamin Szőke <egyszeregy@freemail.hu>
+Hi,
 
-The goal is to clean-up Linux repository from AUX file names, because
-the use of such file names is prohibited on other operating systems
-such as Windows, so the Linux repository cannot be cloned and
-edited on them.
+On 6/2/24 10:58 AM, Andy Shevchenko wrote:
+> Use 2-argument strscpy(), which is not only shorter but also provides
+> an additional check that destination buffer is an array.
+> 
+> Signed-off-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-Signed-off-by: Benjamin Szőke <egyszeregy@freemail.hu>
----
- drivers/gpu/drm/nouveau/nvkm/subdev/i2c/Kbuild             | 2 +-
- drivers/gpu/drm/nouveau/nvkm/subdev/i2c/anx9805.c          | 2 +-
- drivers/gpu/drm/nouveau/nvkm/subdev/i2c/{aux.c => auxch.c} | 2 +-
- drivers/gpu/drm/nouveau/nvkm/subdev/i2c/{aux.h => auxch.h} | 0
- drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxg94.c           | 2 +-
- drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxgf119.c         | 2 +-
- drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxgm200.c         | 2 +-
- drivers/gpu/drm/nouveau/nvkm/subdev/i2c/base.c             | 2 +-
- drivers/gpu/drm/nouveau/nvkm/subdev/i2c/padg94.c           | 2 +-
- drivers/gpu/drm/nouveau/nvkm/subdev/i2c/padgf119.c         | 2 +-
- drivers/gpu/drm/nouveau/nvkm/subdev/i2c/padgm200.c         | 2 +-
- 11 files changed, 10 insertions(+), 10 deletions(-)
- rename drivers/gpu/drm/nouveau/nvkm/subdev/i2c/{aux.c => auxch.c} (99%)
- rename drivers/gpu/drm/nouveau/nvkm/subdev/i2c/{aux.h => auxch.h} (100%)
+Since the code being modified only exists on the fixes branch I've merged
+this as a fix now.
 
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/Kbuild b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/Kbuild
-index 819703913a00..2c551bdc9bc9 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/Kbuild
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/Kbuild
-@@ -25,7 +25,7 @@ nvkm-y += nvkm/subdev/i2c/busnv50.o
- nvkm-y += nvkm/subdev/i2c/busgf119.o
- nvkm-y += nvkm/subdev/i2c/bit.o
- 
--nvkm-y += nvkm/subdev/i2c/aux.o
-+nvkm-y += nvkm/subdev/i2c/auxch.o
- nvkm-y += nvkm/subdev/i2c/auxg94.o
- nvkm-y += nvkm/subdev/i2c/auxgf119.o
- nvkm-y += nvkm/subdev/i2c/auxgm200.o
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/anx9805.c b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/anx9805.c
-index dd391809fef7..6c76e5e14b75 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/anx9805.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/anx9805.c
-@@ -24,7 +24,7 @@
- #define anx9805_pad(p) container_of((p), struct anx9805_pad, base)
- #define anx9805_bus(p) container_of((p), struct anx9805_bus, base)
- #define anx9805_aux(p) container_of((p), struct anx9805_aux, base)
--#include "aux.h"
-+#include "auxch.h"
- #include "bus.h"
- 
- struct anx9805_pad {
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/aux.c b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxch.c
-similarity index 99%
-rename from drivers/gpu/drm/nouveau/nvkm/subdev/i2c/aux.c
-rename to drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxch.c
-index d063d0dc13c5..fafc634acbf6 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/aux.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxch.c
-@@ -24,7 +24,7 @@
- 
- #include <linux/string_helpers.h>
- 
--#include "aux.h"
-+#include "auxch.h"
- #include "pad.h"
- 
- static int
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/aux.h b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxch.h
-similarity index 100%
-rename from drivers/gpu/drm/nouveau/nvkm/subdev/i2c/aux.h
-rename to drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxch.h
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxg94.c b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxg94.c
-index 47068f6f9c55..854bb4b5fdb4 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxg94.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxg94.c
-@@ -22,7 +22,7 @@
-  * Authors: Ben Skeggs <bskeggs@redhat.com>
-  */
- #define g94_i2c_aux(p) container_of((p), struct g94_i2c_aux, base)
--#include "aux.h"
-+#include "auxch.h"
- 
- struct g94_i2c_aux {
- 	struct nvkm_i2c_aux base;
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxgf119.c b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxgf119.c
-index dab40cd8fe3a..c17d5647cb99 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxgf119.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxgf119.c
-@@ -19,7 +19,7 @@
-  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-  * OTHER DEALINGS IN THE SOFTWARE.
-  */
--#include "aux.h"
-+#include "auxch.h"
- 
- static const struct nvkm_i2c_aux_func
- gf119_i2c_aux = {
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxgm200.c b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxgm200.c
-index 8bd1d442e465..3c5005e3b330 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxgm200.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxgm200.c
-@@ -22,7 +22,7 @@
-  * Authors: Ben Skeggs <bskeggs@redhat.com>
-  */
- #define gm200_i2c_aux(p) container_of((p), struct gm200_i2c_aux, base)
--#include "aux.h"
-+#include "auxch.h"
- 
- struct gm200_i2c_aux {
- 	struct nvkm_i2c_aux base;
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/base.c b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/base.c
-index 976539de4220..ab86e11e7780 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/base.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/base.c
-@@ -22,7 +22,7 @@
-  * Authors: Ben Skeggs
-  */
- #include "priv.h"
--#include "aux.h"
-+#include "auxch.h"
- #include "bus.h"
- #include "pad.h"
- 
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/padg94.c b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/padg94.c
-index 5904bc5f2d2a..cc26cd677917 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/padg94.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/padg94.c
-@@ -22,7 +22,7 @@
-  * Authors: Ben Skeggs
-  */
- #include "pad.h"
--#include "aux.h"
-+#include "auxch.h"
- #include "bus.h"
- 
- void
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/padgf119.c b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/padgf119.c
-index 3bc4d0310076..1797c6c65979 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/padgf119.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/padgf119.c
-@@ -22,7 +22,7 @@
-  * Authors: Ben Skeggs
-  */
- #include "pad.h"
--#include "aux.h"
-+#include "auxch.h"
- #include "bus.h"
- 
- static const struct nvkm_i2c_pad_func
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/padgm200.c b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/padgm200.c
-index 7d417f6a816e..5afc1bf8e798 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/padgm200.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/padgm200.c
-@@ -22,7 +22,7 @@
-  * Authors: Ben Skeggs
-  */
- #include "pad.h"
--#include "aux.h"
-+#include "auxch.h"
- #include "bus.h"
- 
- static void
--- 
-2.43.0
+I know this is more of a cleanup then a pure fix, but since the DMI quirks
+always get updated through the fixes branch this avoids conflicts.
+
+Thank you for your patch, I've applied this patch to my review-hans 
+branch:
+https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/log/?h=review-hans
+
+Regards,
+
+Hans
+
+
+
+> ---
+>  drivers/platform/x86/touchscreen_dmi.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/platform/x86/touchscreen_dmi.c b/drivers/platform/x86/touchscreen_dmi.c
+> index 2d9ca2292ea1..879a63e4ecd0 100644
+> --- a/drivers/platform/x86/touchscreen_dmi.c
+> +++ b/drivers/platform/x86/touchscreen_dmi.c
+> @@ -1907,7 +1907,7 @@ static int __init ts_parse_props(char *str)
+>  	u32 u32val;
+>  	int i, ret;
+>  
+> -	strscpy(orig_str, str, sizeof(orig_str));
+> +	strscpy(orig_str, str);
+>  
+>  	/*
+>  	 * str is part of the static_command_line from init/main.c and poking
 
 
