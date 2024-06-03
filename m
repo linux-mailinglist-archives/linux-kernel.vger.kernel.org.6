@@ -1,251 +1,154 @@
-Return-Path: <linux-kernel+bounces-198930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3077C8D7F4B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:48:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 376838D7F41
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:48:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 546961C218DB
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:48:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63C8E1C2261D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:48:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 520B584E1E;
-	Mon,  3 Jun 2024 09:44:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E491184D0B;
+	Mon,  3 Jun 2024 09:44:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jGzJgV02"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YLKb/FZg"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB01984D34;
-	Mon,  3 Jun 2024 09:44:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 795F642ABE
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 09:44:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717407864; cv=none; b=aSZNKQT5hbwm+hlmWBGQfIE67Ni1twvH8SOGqoDZdTldy6m3ptvo2qERPf3x2fXWolaOuseS9OQDN/CKsmdpZM76SaKmCJspPLZMcbA+PwrX26KKBxb7+YnEm12h3l7OzultRo2pCBSyRn8cuXLUnTWgoLeaRFXoOV5oEY4nQU8=
+	t=1717407848; cv=none; b=grflrkv9XAATYE1DXMvXrTwfohOlvXfgy901GvPhxLIr85Gyls5PJgET+1DVxGffkXVxMVjSDj7Ekix2UTG+s4/z2rAmivvZFLzCfsCTvTZY+Vb9n3jch6X/nTKopM55huZ8WLFcloVfs+5sZypuBkv9L/6qgOOazaUA8Fduq9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717407864; c=relaxed/simple;
-	bh=7uk/n4LsL4k2D4WNFxDqxya/t5rndF9UtZGej2dqQGs=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BYin+FGaOjigtMvLbSbUCJHHphmZRphnJic1nLYXYlBOZx3HkBUw4UwDRAddrR8Z4abk+it41IL0+r7tobHAR01TvNJXqelwMSYSRLbhMTAm4Yrj7COxT+MU+PIM6CXdpU9VF6EkCxelVkP4LYW4Q0mEVn7dAlp/y0JIhX8BhLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jGzJgV02; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4530TNdb019792;
-	Mon, 3 Jun 2024 09:44:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	fssNGsW5ggA/7sCtA1fwddGw0A0IeOeVDefSmcXfuq0=; b=jGzJgV02dbeiqGQV
-	lEMJgOMimMIJfnSjLnDkX6r3TvUwZIJyuxBDwylXOetAY2nPPijmt5uHI1Z1tE7r
-	KB384c+yJ71taUZfTrtU68MmHqgpCyRU8vDzCUYZfnEDinwZm5qjleEOYg6IDDEP
-	S1SuISjEk64QronTKCY/3AASOVBYO1jGkfLxoGp+FTZhqSC+cQYN4RkLGVwZ8ZlF
-	tCA5pmnt3ofnlC0ifSCJ4LnjuAzaooCt47Vw+s3HHd5vuAsQ+25BIZb/p6MpX2s1
-	hkv7lY7GIzUWkd11MjE5bF3rmY7+3qLp9Ngxzx1bcWm/pG41/nKSVDKFdK44PfUN
-	8VXB4Q==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfw6qkhue-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 03 Jun 2024 09:44:07 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 4539i6T5018047
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 3 Jun 2024 09:44:06 GMT
-Received: from hu-jinlmao-lv.qualcomm.com (10.49.16.6) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 3 Jun 2024 02:44:06 -0700
-From: Mao Jinlong <quic_jinlmao@quicinc.com>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mike Leach
-	<mike.leach@linaro.org>, James Clark <james.clark@arm.com>,
-        Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Mao Jinlong <quic_jinlmao@quicinc.com>,
-        "Alexander
- Shishkin" <alexander.shishkin@linux.intel.com>
-CC: <coresight@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>,
-        Tingwei Zhang <quic_tingweiz@quicinc.com>,
-        Yuanfang Zhang <quic_yuanfang@quicinc.com>,
-        Tao Zhang
-	<quic_taozha@quicinc.com>,
-        songchai <quic_songchai@quicinc.com>
-Subject: [PATCH v2 3/3] coresight: dummy: Add reserve atid support for dummy source
-Date: Mon, 3 Jun 2024 02:43:52 -0700
-Message-ID: <20240603094354.2348-4-quic_jinlmao@quicinc.com>
-X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20240603094354.2348-1-quic_jinlmao@quicinc.com>
-References: <20240603094354.2348-1-quic_jinlmao@quicinc.com>
+	s=arc-20240116; t=1717407848; c=relaxed/simple;
+	bh=nM8uSllZ7RbY1J691S8kJGCcalGOytS3CRH3nRriecg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NEcbDDdm3rGiRuFc9lgTUJGDqzA2D8TTACxsFakL1K/vpO99vMY1Y+nvde4jI+EV2CkbsgvBfSVN2fYAzcv8b85hNBbaaNlFa2XGYSgvNR468trt+hj6AxEEQeJhOL1uteGAFyNi23aZZKF1q5CJzBnOxOAee6cuWP6bgvfLTpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YLKb/FZg; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717407845;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UNeEzqEwDLFqI3mQx5TerVCCfIrf8PlxwIfB2OPQ4fg=;
+	b=YLKb/FZgBuLe7k0JNOs4QpjOTAxixUuSvGe5vdyEqZTecaOalJxDDWUq/apW3XPIeUz+Tu
+	WI/HaziGY4ojBxaL83oyq5E6zRerg+eaOYpEPZnMxd1jO5cGrEwh5ArXtPFc6X1L/AfT0y
+	xpGOq1/GzLrMbZi2osIjRb4YjfCAYe0=
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
+ [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-265-KGKsBgvZOgiAdEwT9p4teA-1; Mon, 03 Jun 2024 05:44:04 -0400
+X-MC-Unique: KGKsBgvZOgiAdEwT9p4teA-1
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-a6861bb1c0bso149719866b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 02:44:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717407843; x=1718012643;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UNeEzqEwDLFqI3mQx5TerVCCfIrf8PlxwIfB2OPQ4fg=;
+        b=WkQE9BRIwNdQD7TamxdYlbB1sjDUSOE7mM5TG70LXdPbcEDvqx44RatxKN4bB5G+qo
+         +BL/xJlXfzAUmuPaup0Nlyx0Uwcw5M6OjDV542BBHZIpN8rdS9IZTOPQR4vVvzs0xDSn
+         CSrQBrKOD3EQ0NqYxulhAEeUI8sHFfnJMZoDqaPwmpq1pw1wV1CCfnDJDUd+D9CNCuGT
+         /bSZHSJAg6ONJYL7l0rSHwnljes9QDLxkkjbo0lDwtcsDq/RjHSI0C6PMI572ovDeY6E
+         rvq/+ujiXZvQKkINQYejYKgoPOXCxKGjjhCW2gVE2w2AxlLUP52M1BDdSdKXQcb9waPn
+         J5aA==
+X-Forwarded-Encrypted: i=1; AJvYcCVh0hYV4gjzAOPgvXZDKnAaL0m8+NRFa8IabMT5YaHnohGmz+1ipA1+B+wMd9vEwELnsTbd6JkrYeGNMYILWVxRW6dGQMGNcdgSC+x8
+X-Gm-Message-State: AOJu0Yw5V66/PV+kgx8f8cvh+Cwh3UHClot9vMmitkUuTCJ2B9Sqvubq
+	4HpoLqmuzIL7unPWhchXUAtn3+x39EPDtetMshzYa5FGMkVJ56mutUxnTp68VTwRcEvmjn0s3Il
+	FM+inQBHZjHPWFJd3N0hlMYxr7olwY1VMxbZjVsUlEhjR5pdUUJGHPSkf/YzUrA==
+X-Received: by 2002:a17:906:1b5b:b0:a68:c672:9ea9 with SMTP id a640c23a62f3a-a68c672a238mr327571166b.28.1717407842985;
+        Mon, 03 Jun 2024 02:44:02 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHL2jVRaMVe/2bPmtGU7yX8A5bJtJXVMPpIgslWnfKfooeBA8Go5dQoxUgh1LEK+9vpH589DQ==
+X-Received: by 2002:a17:906:1b5b:b0:a68:c672:9ea9 with SMTP id a640c23a62f3a-a68c672a238mr327570166b.28.1717407842605;
+        Mon, 03 Jun 2024 02:44:02 -0700 (PDT)
+Received: from [10.40.98.157] ([78.108.130.194])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a68cf23c63esm265077366b.5.2024.06.03.02.44.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Jun 2024 02:44:02 -0700 (PDT)
+Message-ID: <577cc35e-00c6-4893-b917-d3f44bf19191@redhat.com>
+Date: Mon, 3 Jun 2024 11:44:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: H8gMhTBx398ftw-Qs4hryUar8quVlxkP
-X-Proofpoint-ORIG-GUID: H8gMhTBx398ftw-Qs4hryUar8quVlxkP
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-06-03_06,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- bulkscore=0 mlxlogscore=999 clxscore=1015 impostorscore=0 malwarescore=0
- mlxscore=0 adultscore=0 lowpriorityscore=0 suspectscore=0 spamscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406030081
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] platform/x86: yt2-1380: add CONFIG_EXTCON dependency
+To: Arnd Bergmann <arnd@kernel.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Armin Wolf <W_Armin@gmx.de>,
+ SungHwan Jung <onenowy@gmail.com>,
+ Henning Schild <henning.schild@siemens.com>, Ai Chao <aichao@kylinos.cn>,
+ Robert Joslyn <robert.joslyn@redrectangle.org>,
+ Heiner Kallweit <hkallweit1@gmail.com>, platform-driver-x86@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240528115940.3169455-1-arnd@kernel.org>
+Content-Language: en-US
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20240528115940.3169455-1-arnd@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Some dummy source has static trace id configured in HW and it cannot
-be changed via software programming. Configure the trace id in device
-tree and reserve the id when device probe.
+Hi,
 
-Signed-off-by: Mao Jinlong <quic_jinlmao@quicinc.com>
----
- .../sysfs-bus-coresight-devices-dummy-source  | 15 +++++
- drivers/hwtracing/coresight/coresight-dummy.c | 58 +++++++++++++++++--
- 2 files changed, 69 insertions(+), 4 deletions(-)
- create mode 100644 Documentation/ABI/testing/sysfs-bus-coresight-devices-dummy-source
+On 5/28/24 1:59 PM, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> This driver uses the extcon subsystem and fails to build
+> when it cannot call into that subsystem:
+> 
+> x86_64-linux-ld: vmlinux.o: in function `yt2_1380_fc_worker':
+> lenovo-yoga-tab2-pro-1380-fastcharger.c:(.text+0xa9d819): undefined reference to `extcon_get_state'
+> x86_64-linux-ld: lenovo-yoga-tab2-pro-1380-fastcharger.c:(.text+0xa9d853): undefined reference to `extcon_get_state'
+> x86_64-linux-ld: vmlinux.o: in function `yt2_1380_fc_serdev_probe':
+> lenovo-yoga-tab2-pro-1380-fastcharger.c:(.text+0xa9da22): undefined reference to `extcon_get_extcon_dev'
+> x86_64-linux-ld: lenovo-yoga-tab2-pro-1380-fastcharger.c:(.text+0xa9dc0c): undefined reference to `devm_extcon_register_notifier_all'
+> 
+> Add a Kconfig dependency to make it it always builds correctly.
+> 
+> Fixes: b2ed33e8d486 ("platform/x86: Add lenovo-yoga-tab2-pro-1380-fastcharger driver")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-diff --git a/Documentation/ABI/testing/sysfs-bus-coresight-devices-dummy-source b/Documentation/ABI/testing/sysfs-bus-coresight-devices-dummy-source
-new file mode 100644
-index 000000000000..d93c198115c9
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-bus-coresight-devices-dummy-source
-@@ -0,0 +1,15 @@
-+What:		/sys/bus/coresight/devices/dummy_source<N>/enable_source
-+Date:		June 2024
-+KernelVersion:	6.9
-+Contact:	Mao Jinlong <quic_jinlmao@quicinc.com>
-+Description:	(RW) Enable/disable tracing of dummy source. A sink should be activated
-+		before enabling the source. The path of coresight components linking
-+		the source to the sink is configured and managed automatically by the
-+		coresight framework.
-+
-+What:		/sys/bus/coresight/devices/dummy_source<N>/traceid
-+Date:		June 2024
-+KernelVersion:	6.9
-+Contact:	Mao Jinlong <quic_jinlmao@quicinc.com>
-+Description:	(R) Show the trace ID that will appear in the trace stream
-+		coming from this trace entity.
-diff --git a/drivers/hwtracing/coresight/coresight-dummy.c b/drivers/hwtracing/coresight/coresight-dummy.c
-index ac70c0b491be..1f7133ac2c0b 100644
---- a/drivers/hwtracing/coresight/coresight-dummy.c
-+++ b/drivers/hwtracing/coresight/coresight-dummy.c
-@@ -11,10 +11,12 @@
- #include <linux/pm_runtime.h>
- 
- #include "coresight-priv.h"
-+#include "coresight-trace-id.h"
- 
- struct dummy_drvdata {
- 	struct device			*dev;
- 	struct coresight_device		*csdev;
-+	u8				traceid;
- };
- 
- DEFINE_CORESIGHT_DEVLIST(source_devs, "dummy_source");
-@@ -67,6 +69,32 @@ static const struct coresight_ops dummy_sink_cs_ops = {
- 	.sink_ops = &dummy_sink_ops,
- };
- 
-+/* User can get the trace id of dummy source from this node. */
-+static ssize_t traceid_show(struct device *dev,
-+			    struct device_attribute *attr, char *buf)
-+{
-+	unsigned long val;
-+	struct dummy_drvdata *drvdata = dev_get_drvdata(dev->parent);
-+
-+	val = drvdata->traceid;
-+	return scnprintf(buf, PAGE_SIZE, "%#lx\n", val);
-+}
-+static DEVICE_ATTR_RO(traceid);
-+
-+static struct attribute *coresight_dummy_attrs[] = {
-+	&dev_attr_traceid.attr,
-+	NULL,
-+};
-+
-+static const struct attribute_group coresight_dummy_group = {
-+	.attrs = coresight_dummy_attrs,
-+};
-+
-+static const struct attribute_group *coresight_dummy_groups[] = {
-+	&coresight_dummy_group,
-+	NULL,
-+};
-+
- static int dummy_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -74,6 +102,11 @@ static int dummy_probe(struct platform_device *pdev)
- 	struct coresight_platform_data *pdata;
- 	struct dummy_drvdata *drvdata;
- 	struct coresight_desc desc = { 0 };
-+	int ret, trace_id;
-+
-+	drvdata = devm_kzalloc(dev, sizeof(*drvdata), GFP_KERNEL);
-+	if (!drvdata)
-+		return -ENOMEM;
- 
- 	if (of_device_is_compatible(node, "arm,coresight-dummy-source")) {
- 
-@@ -85,6 +118,24 @@ static int dummy_probe(struct platform_device *pdev)
- 		desc.subtype.source_subtype =
- 					CORESIGHT_DEV_SUBTYPE_SOURCE_OTHERS;
- 		desc.ops = &dummy_source_cs_ops;
-+		desc.groups = coresight_dummy_groups;
-+
-+		ret = coresight_get_source_traceid(dev, &trace_id);
-+		if (!ret) {
-+			ret = coresight_trace_id_get_system_id(trace_id);
-+			if (ret < 0)
-+				return ret;
-+
-+			drvdata->traceid = ret;
-+		} else {
-+			trace_id = coresight_trace_id_get_system_id(0);
-+			if (trace_id < 0) {
-+				ret = trace_id;
-+				return ret;
-+			}
-+			drvdata->traceid = (u8)trace_id;
-+		}
-+
- 	} else if (of_device_is_compatible(node, "arm,coresight-dummy-sink")) {
- 		desc.name = coresight_alloc_device_name(&sink_devs, dev);
- 		if (!desc.name)
-@@ -103,10 +154,6 @@ static int dummy_probe(struct platform_device *pdev)
- 		return PTR_ERR(pdata);
- 	pdev->dev.platform_data = pdata;
- 
--	drvdata = devm_kzalloc(dev, sizeof(*drvdata), GFP_KERNEL);
--	if (!drvdata)
--		return -ENOMEM;
--
- 	drvdata->dev = &pdev->dev;
- 	platform_set_drvdata(pdev, drvdata);
- 
-@@ -126,7 +173,10 @@ static void dummy_remove(struct platform_device *pdev)
- {
- 	struct dummy_drvdata *drvdata = platform_get_drvdata(pdev);
- 	struct device *dev = &pdev->dev;
-+	struct device_node *node = dev->of_node;
- 
-+	if (of_device_is_compatible(node, "arm,coresight-dummy-source"))
-+		coresight_trace_id_put_system_id(drvdata->traceid);
- 	pm_runtime_disable(dev);
- 	coresight_unregister(drvdata->csdev);
- }
--- 
-2.41.0
+Thank you for your patch, I've applied this patch to my review-hans 
+branch:
+https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/log/?h=review-hans
+
+Note it will show up in my review-hans branch once I've pushed my
+local branch there, which might take a while.
+
+I will include this patch in my next fixes pull-req to Linus
+for the current kernel development cycle.
+
+Regards,
+
+Hans
+
+
+
+
+> ---
+>  drivers/platform/x86/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+> index 809888e4c1e7..9f850e4617bf 100644
+> --- a/drivers/platform/x86/Kconfig
+> +++ b/drivers/platform/x86/Kconfig
+> @@ -136,6 +136,7 @@ config YOGABOOK
+>  config YT2_1380
+>  	tristate "Lenovo Yoga Tablet 2 1380 fast charge driver"
+>  	depends on SERIAL_DEV_BUS
+> +	depends on EXTCON
+>  	depends on ACPI
+>  	help
+>  	  Say Y here to enable support for the custom fast charging protocol
 
 
