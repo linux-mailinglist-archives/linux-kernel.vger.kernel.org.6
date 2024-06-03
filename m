@@ -1,328 +1,390 @@
-Return-Path: <linux-kernel+bounces-199506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBB018D87DD
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:25:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0CE18D87E2
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:26:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72AFF285402
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:25:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 644FB1F2105D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:26:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1B42136E39;
-	Mon,  3 Jun 2024 17:25:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50E1613698B;
+	Mon,  3 Jun 2024 17:26:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="J+6qR2EH"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="QMv/sq9l";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="aTQMV4Vu"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 305D978283
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 17:25:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2F2A25622;
+	Mon,  3 Jun 2024 17:26:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717435507; cv=none; b=sRVYo/kUGWMdUnstq6/gwaTjbKUD96/zKqJei6ZmDfzqXMQyX0H8mM+up7+WfWqA5uPSg4ylIcCWpcAgC6nhaNs8YYPhAz1NxlOLQ5i9oCZeU6pgtMoW5lk+cHWWmTiNGUEMJsjXF/bcEtSsj+/2TPAznpayTgSHsnF20XZiQHc=
+	t=1717435613; cv=none; b=RIuWc5lDryteDR1ye+Xge3+canpFI188f3ZKP6xXD5hllPCr/p5WTx6AclWdUNBAlIsLqxenZ6omCAq0R66dqUO+nRcZgZA3ASOBGhz1c2AmJW44YFjm/eSVBwTulqguypyKcKbGY9xzGyF5suZJLaUubcoBISetPwTGL7rcQCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717435507; c=relaxed/simple;
-	bh=NfQFmHLQ9shxbIA7d2arj8pts8fHfOHHhoWHnlN8OD0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=c2YAcetApMwy4RCqQjBDtf6NjcP9aU3rJryfwoer9n7Ks+ygcOo9JfkxR9CDhLbfbU1foXLacAilmH3hJQfT+2POTZRgQK2uZpxoi3+k4f5MI0zTKKjiC0dr/iYjaP0Vn+T5KrFGMmwEA5MgQ62fGrxr/JlVl9YkbZ/fyok5h7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=J+6qR2EH; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-62a27e501d4so2927037b3.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 10:25:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717435505; x=1718040305; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=nJyUAlqpuYEaJF6Nwe4vJ3fr4OIvEC2ccjgFqYcQri8=;
-        b=J+6qR2EHBZPQ8JEgRDYR/TcyUBiZR3B9UZzeUjwl50Ibh3w6zf5hZK5HI1gtaPCkWl
-         Y2TL/AgxhRfSsaAi8rFYLYIjbh5j6Cpwpe9ivh9tDaawnzQC0YsSNLT43Yfz6fTySKD5
-         jN7aXjitpaD4xRZLZgXREDi8DQ8fLlt5225l2GvRJqNPuRG2lWclZ2FklSmpHteS9AGX
-         tQuQIDjwuEPyUMoeI0lpnOGWwJhKcp7AR+m1F+TyKp3BTjwelg3En7RyE0r8NbPMBHWo
-         A/qPX/Z4Xbo4a8j6f1pMqFWkGsr/e2ibKismdPHxXDjQeeKCqlrEkUGjDFGABKzSLD4p
-         0DEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717435505; x=1718040305;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nJyUAlqpuYEaJF6Nwe4vJ3fr4OIvEC2ccjgFqYcQri8=;
-        b=KFFYCLTzDXTcoQwh6qm47PKb2wc/Y/+09XVbN8bS4fKCg/2V2fklQq9izhq4shesqX
-         qFhnvIym5+uZFecACi7RroOhtNxzIahrCBowKs4wqVudIbCw2P9sqEEskiaztkhza2ij
-         slpy3ZMfVNIclYsUpWooQpiQ4r8OL4QbIOH1pbpyjFVDDLXxDPXZoOR5JPbEuYdTtcek
-         IMyvkTz2FM7X65BpehAxuppTccWKI1VADfJCCy4btkUW4ktNvO1owAwgGGPJnyPX6i/q
-         qLGY/zlIb4bGYThPIf8sPFyz3muB5FeOaDjQ90Gsw79NBR4SvmHkfERzO3b6XQAZ4Vvn
-         uwBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXv9wyIz9fW9q5WcCJjsmqnIO9928rXNH3722gA5gVN8zW9KOyXz50COG2l+vhM6f228Hux9khHgG7Btg6hJrWcKkMtrRfipbxyR2MB
-X-Gm-Message-State: AOJu0Ywhjcs467EDdfu1LUT1JaXVGDToDeZX3fFbt9+XpDKyi1o2ZU6F
-	BjK7jDl52bJxLBZIQER4jJfOSY91i/moov+weFuVUfw1i4eUV89zv36PzhCnJV8m/4+aNAbk+0R
-	j3w==
-X-Google-Smtp-Source: AGHT+IHIe8ga2jAqd0hP2AuciJDwxJhPSKiPkQ/wlXrjkIvtZ7H/rei4YEFUJU2Gm1PaTMlcVIF5dUcNj2E=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6902:708:b0:df7:9609:4ce2 with SMTP id
- 3f1490d57ef6-dfa73d8da89mr726894276.8.1717435505040; Mon, 03 Jun 2024
- 10:25:05 -0700 (PDT)
-Date: Mon, 3 Jun 2024 10:25:03 -0700
-In-Reply-To: <eac8c5e0431529282e7887aad0ba66506df28e9e.1714081726.git.reinette.chatre@intel.com>
+	s=arc-20240116; t=1717435613; c=relaxed/simple;
+	bh=tohLD1yKYUlomeLNDMncipUmAMreIJUHy9J6Kz4ndEY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=JNPwasXE9gHzTHgZrnnnjezwUadZiqDWE/JUKktzknOaxq5MV9cCoYQ7GgmCkHYv8KB0UeXwcJHjU9jjiOyYGjto1OQI/zznH25c92ghhedU7P+6S42LCB13taOXKqDp6eqRQgW+eLjRq+H7cI0upKWViIUNBbG420HQKk4YiIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=QMv/sq9l; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=aTQMV4Vu; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id A6E9C1F387;
+	Mon,  3 Jun 2024 17:26:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1717435609; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=XqKXNtV1CrsKsGKUGtvKhf9a3rqvl/LN5KF8liPNUjo=;
+	b=QMv/sq9lFk+A8fpKR1w0ZtDWtAy/Y+n5VCPvRAG/dUNffUWhtxFAP5p8CazBByQWUs69aX
+	OQWMAx+fOxTKKHE4DNTSR2U7e2Jvy78+8dFMKjkbOE9Z9aLvNH/Ci+lgAme4RQAMXNq93k
+	Ud6JdlpdksrSe2pJGn5c04EOWGEuE74=
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b=aTQMV4Vu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1717435607; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=XqKXNtV1CrsKsGKUGtvKhf9a3rqvl/LN5KF8liPNUjo=;
+	b=aTQMV4Vuv2NRmgQX/TEupW4Ns9sLTklaJs3VZ0vL/Km5t+EQ0udO82kgG206pCTqwaMHqM
+	f5dhCFOTT6ZMtplcz0/iNNxM3n1+PC5vcxKDvJJDnIGPOWiYUKGLDu+TIviz2c+MMbXkNw
+	rlE4p8Opz0KQNHs+ZS+QmbOD1igJUeI=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2C57213A93;
+	Mon,  3 Jun 2024 17:26:46 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id jOOSOdb8XWYGIAAAD6G6ig
+	(envelope-from <mpdesouza@suse.com>); Mon, 03 Jun 2024 17:26:46 +0000
+From: Marcos Paulo de Souza <mpdesouza@suse.com>
+Date: Mon, 03 Jun 2024 14:26:19 -0300
+Subject: [PATCH v3] selftests: livepatch: Test atomic replace against
+ multiple modules
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1714081725.git.reinette.chatre@intel.com> <eac8c5e0431529282e7887aad0ba66506df28e9e.1714081726.git.reinette.chatre@intel.com>
-Message-ID: <Zl38b3lxLpoBj7pZ@google.com>
-Subject: Re: [PATCH V5 4/4] KVM: selftests: Add test for configure of x86 APIC
- bus frequency
-From: Sean Christopherson <seanjc@google.com>
-To: Reinette Chatre <reinette.chatre@intel.com>
-Cc: isaku.yamahata@intel.com, pbonzini@redhat.com, erdemaktas@google.com, 
-	vkuznets@redhat.com, vannapurve@google.com, jmattson@google.com, 
-	mlevitsk@redhat.com, xiaoyao.li@intel.com, chao.gao@intel.com, 
-	rick.p.edgecombe@intel.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240603-lp-atomic-replace-v3-1-9f3b8ace5c9f@suse.com>
+X-B4-Tracking: v=1; b=H4sIALr8XWYC/33OQQ6CMBAF0KuYrh3TTqkBV97DsChlkCZASVurh
+ nB3Cxt27uYv5v2/sEDeUmC308I8JRusm3KQ5xMzvZ6eBLbNmSHHgitUMMygoxutAU/zoA1BxRs
+ pqeWibA3Lf7Onzn5281Hn3Hk3Quw96UOSAjcp0NBFChEmesN+JAECKlMWklCRLOkeXoEuxo0b3
+ dsQnf/uaxNuBf+GJcyWKFBUVdNclRaHVa/r+gNP3YA+/AAAAA==
+To: Josh Poimboeuf <jpoimboe@kernel.org>, Jiri Kosina <jikos@kernel.org>, 
+ Miroslav Benes <mbenes@suse.cz>, Petr Mladek <pmladek@suse.com>, 
+ Joe Lawrence <joe.lawrence@redhat.com>, Shuah Khan <shuah@kernel.org>
+Cc: live-patching@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Marcos Paulo de Souza <mpdesouza@suse.com>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1717435604; l=10660;
+ i=mpdesouza@suse.com; s=20231031; h=from:subject:message-id;
+ bh=tohLD1yKYUlomeLNDMncipUmAMreIJUHy9J6Kz4ndEY=;
+ b=4M7x2jwB5f1b1Sr/JBs58HJ6Z34OHAKkFCS7Ni/WC9qW7ezL3LEe3fBScNnnlMKDKVJUwe5xc
+ r+Uv0AUwwzEBfjZsPlTQDbWakWun160PGacGRXQE/eTtIOYa1jhX+Nd
+X-Developer-Key: i=mpdesouza@suse.com; a=ed25519;
+ pk=/Ni/TsKkr69EOmdZXkp1Q/BlzDonbOBRsfPa18ySIwU=
+X-Spam-Flag: NO
+X-Spam-Score: -5.51
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: A6E9C1F387
+X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-5.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	DWL_DNSWL_LOW(-1.00)[suse.com:dkim];
+	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MID_RHS_MATCH_FROM(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:dkim,suse.com:email,test-livepatch.sh:url];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_TRACE(0.00)[suse.com:+]
 
-On Thu, Apr 25, 2024, Reinette Chatre wrote:
-> From: Isaku Yamahata <isaku.yamahata@intel.com>
-> 
-> Test if the APIC bus clock frequency is the expected configured value.
+Adapt the current test-livepatch.sh script to account the number of
+applied livepatches and ensure that an atomic replace livepatch disables
+all previously applied livepatches.
 
-This is one of the cases where explicitly calling out "code" by name is extremely
-valuable.  E.g.
+Signed-off-by: Marcos Paulo de Souza <mpdesouza@suse.com>
+---
+Changes since v2:
+* Used variables to stop the name of other livepatches applied to test
+  the atomic replace. (Joe)
 
-    Test if KVM emulates the APIC bus clock at the expected frequency when
-    userspace configures the frequency via KVM_CAP_X86_APIC_BUS_CYCLES_NS.
-    
-    Set APIC timer's initial count to the maximum value and busy wait for 100
-    msec (largely arbitrary) using the TSC. Read the APIC timer's "current
-    count" to calculate the actual APIC bus clock frequency based on TSC
-    frequency.
+Changes since v1:
+* Added checks in the existing test-livepatch.sh instead of creating a
+  new test file. (Joe)
+* Fixed issues reported by ShellCheck (Joe)
+---
+Changes in v3:
+- EDITME: describe what is new in this series revision.
+- EDITME: use bulletpoints and terse descriptions.
+- Link to v2: https://lore.kernel.org/r/20240525-lp-atomic-replace-v2-1-142199bb65a1@suse.com
+---
+ .../testing/selftests/livepatch/test-livepatch.sh  | 138 +++++++++++++--------
+ 1 file changed, 89 insertions(+), 49 deletions(-)
 
-> Set APIC timer's initial count to the maximum value and busy wait for 100
-> msec (any value is okay) with TSC value. Read the APIC timer's "current
-> count" to calculate the actual APIC bus clock frequency based on TSC
-> frequency.
-> 
-> diff --git a/tools/testing/selftests/kvm/x86_64/apic_bus_clock_test.c b/tools/testing/selftests/kvm/x86_64/apic_bus_clock_test.c
-> new file mode 100644
-> index 000000000000..5100b28228af
-> --- /dev/null
-> +++ b/tools/testing/selftests/kvm/x86_64/apic_bus_clock_test.c
-> @@ -0,0 +1,166 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Test configure of APIC bus frequency.
-> + *
-> + * Copyright (c) 2024 Intel Corporation
-> + *
-> + * To verify if the APIC bus frequency can be configured this test starts
-> + * by setting the TSC frequency in KVM, and then:
-> + * For every APIC timer frequency supported:
-> + * * In the guest:
-> + * * * Start the APIC timer by programming the APIC TMICT (initial count
-> + *       register) to the largest value possible to guarantee that it will
-> + *       not expire during the test,
-> + * * * Wait for a known duration based on previously set TSC frequency,
-> + * * * Stop the timer and read the APIC TMCCT (current count) register to
-> + *       determine the count at that time (TMCCT is loaded from TMICT when
-> + *       TMICT is programmed and then starts counting down).
-> + * * In the host:
-> + * * * Determine if the APIC counts close to configured APIC bus frequency
-> + *     while taking into account how the APIC timer frequency was modified
-> + *     using the APIC TDCR (divide configuration register).
+diff --git a/tools/testing/selftests/livepatch/test-livepatch.sh b/tools/testing/selftests/livepatch/test-livepatch.sh
+index e3455a6b1158..ca770b8c62fc 100755
+--- a/tools/testing/selftests/livepatch/test-livepatch.sh
++++ b/tools/testing/selftests/livepatch/test-livepatch.sh
+@@ -4,7 +4,9 @@
+ 
+ . $(dirname $0)/functions.sh
+ 
+-MOD_LIVEPATCH=test_klp_livepatch
++MOD_LIVEPATCH1=test_klp_livepatch
++MOD_LIVEPATCH2=test_klp_syscall
++MOD_LIVEPATCH3=test_klp_callbacks_demo
+ MOD_REPLACE=test_klp_atomic_replace
+ 
+ setup_config
+@@ -16,33 +18,33 @@ setup_config
+ 
+ start_test "basic function patching"
+ 
+-load_lp $MOD_LIVEPATCH
++load_lp $MOD_LIVEPATCH1
+ 
+-if [[ "$(cat /proc/cmdline)" != "$MOD_LIVEPATCH: this has been live patched" ]] ; then
++if [[ "$(cat /proc/cmdline)" != "$MOD_LIVEPATCH1: this has been live patched" ]] ; then
+ 	echo -e "FAIL\n\n"
+ 	die "livepatch kselftest(s) failed"
+ fi
+ 
+-disable_lp $MOD_LIVEPATCH
+-unload_lp $MOD_LIVEPATCH
++disable_lp $MOD_LIVEPATCH1
++unload_lp $MOD_LIVEPATCH1
+ 
+-if [[ "$(cat /proc/cmdline)" == "$MOD_LIVEPATCH: this has been live patched" ]] ; then
++if [[ "$(cat /proc/cmdline)" == "$MOD_LIVEPATCH1: this has been live patched" ]] ; then
+ 	echo -e "FAIL\n\n"
+ 	die "livepatch kselftest(s) failed"
+ fi
+ 
+-check_result "% insmod test_modules/$MOD_LIVEPATCH.ko
+-livepatch: enabling patch '$MOD_LIVEPATCH'
+-livepatch: '$MOD_LIVEPATCH': initializing patching transition
+-livepatch: '$MOD_LIVEPATCH': starting patching transition
+-livepatch: '$MOD_LIVEPATCH': completing patching transition
+-livepatch: '$MOD_LIVEPATCH': patching complete
+-% echo 0 > /sys/kernel/livepatch/$MOD_LIVEPATCH/enabled
+-livepatch: '$MOD_LIVEPATCH': initializing unpatching transition
+-livepatch: '$MOD_LIVEPATCH': starting unpatching transition
+-livepatch: '$MOD_LIVEPATCH': completing unpatching transition
+-livepatch: '$MOD_LIVEPATCH': unpatching complete
+-% rmmod $MOD_LIVEPATCH"
++check_result "% insmod test_modules/$MOD_LIVEPATCH1.ko
++livepatch: enabling patch '$MOD_LIVEPATCH1'
++livepatch: '$MOD_LIVEPATCH1': initializing patching transition
++livepatch: '$MOD_LIVEPATCH1': starting patching transition
++livepatch: '$MOD_LIVEPATCH1': completing patching transition
++livepatch: '$MOD_LIVEPATCH1': patching complete
++% echo 0 > /sys/kernel/livepatch/$MOD_LIVEPATCH1/enabled
++livepatch: '$MOD_LIVEPATCH1': initializing unpatching transition
++livepatch: '$MOD_LIVEPATCH1': starting unpatching transition
++livepatch: '$MOD_LIVEPATCH1': completing unpatching transition
++livepatch: '$MOD_LIVEPATCH1': unpatching complete
++% rmmod $MOD_LIVEPATCH1"
+ 
+ 
+ # - load a livepatch that modifies the output from /proc/cmdline and
+@@ -53,7 +55,7 @@ livepatch: '$MOD_LIVEPATCH': unpatching complete
+ 
+ start_test "multiple livepatches"
+ 
+-load_lp $MOD_LIVEPATCH
++load_lp $MOD_LIVEPATCH1
+ 
+ grep 'live patched' /proc/cmdline > /dev/kmsg
+ grep 'live patched' /proc/meminfo > /dev/kmsg
+@@ -69,26 +71,26 @@ unload_lp $MOD_REPLACE
+ grep 'live patched' /proc/cmdline > /dev/kmsg
+ grep 'live patched' /proc/meminfo > /dev/kmsg
+ 
+-disable_lp $MOD_LIVEPATCH
+-unload_lp $MOD_LIVEPATCH
++disable_lp $MOD_LIVEPATCH1
++unload_lp $MOD_LIVEPATCH1
+ 
+ grep 'live patched' /proc/cmdline > /dev/kmsg
+ grep 'live patched' /proc/meminfo > /dev/kmsg
+ 
+-check_result "% insmod test_modules/$MOD_LIVEPATCH.ko
+-livepatch: enabling patch '$MOD_LIVEPATCH'
+-livepatch: '$MOD_LIVEPATCH': initializing patching transition
+-livepatch: '$MOD_LIVEPATCH': starting patching transition
+-livepatch: '$MOD_LIVEPATCH': completing patching transition
+-livepatch: '$MOD_LIVEPATCH': patching complete
+-$MOD_LIVEPATCH: this has been live patched
++check_result "% insmod test_modules/$MOD_LIVEPATCH1.ko
++livepatch: enabling patch '$MOD_LIVEPATCH1'
++livepatch: '$MOD_LIVEPATCH1': initializing patching transition
++livepatch: '$MOD_LIVEPATCH1': starting patching transition
++livepatch: '$MOD_LIVEPATCH1': completing patching transition
++livepatch: '$MOD_LIVEPATCH1': patching complete
++$MOD_LIVEPATCH1: this has been live patched
+ % insmod test_modules/$MOD_REPLACE.ko replace=0
+ livepatch: enabling patch '$MOD_REPLACE'
+ livepatch: '$MOD_REPLACE': initializing patching transition
+ livepatch: '$MOD_REPLACE': starting patching transition
+ livepatch: '$MOD_REPLACE': completing patching transition
+ livepatch: '$MOD_REPLACE': patching complete
+-$MOD_LIVEPATCH: this has been live patched
++$MOD_LIVEPATCH1: this has been live patched
+ $MOD_REPLACE: this has been live patched
+ % echo 0 > /sys/kernel/livepatch/$MOD_REPLACE/enabled
+ livepatch: '$MOD_REPLACE': initializing unpatching transition
+@@ -96,35 +98,57 @@ livepatch: '$MOD_REPLACE': starting unpatching transition
+ livepatch: '$MOD_REPLACE': completing unpatching transition
+ livepatch: '$MOD_REPLACE': unpatching complete
+ % rmmod $MOD_REPLACE
+-$MOD_LIVEPATCH: this has been live patched
+-% echo 0 > /sys/kernel/livepatch/$MOD_LIVEPATCH/enabled
+-livepatch: '$MOD_LIVEPATCH': initializing unpatching transition
+-livepatch: '$MOD_LIVEPATCH': starting unpatching transition
+-livepatch: '$MOD_LIVEPATCH': completing unpatching transition
+-livepatch: '$MOD_LIVEPATCH': unpatching complete
+-% rmmod $MOD_LIVEPATCH"
++$MOD_LIVEPATCH1: this has been live patched
++% echo 0 > /sys/kernel/livepatch/$MOD_LIVEPATCH1/enabled
++livepatch: '$MOD_LIVEPATCH1': initializing unpatching transition
++livepatch: '$MOD_LIVEPATCH1': starting unpatching transition
++livepatch: '$MOD_LIVEPATCH1': completing unpatching transition
++livepatch: '$MOD_LIVEPATCH1': unpatching complete
++% rmmod $MOD_LIVEPATCH1"
+ 
+ 
+ # - load a livepatch that modifies the output from /proc/cmdline and
+ #   verify correct behavior
+-# - load an atomic replace livepatch and verify that only the second is active
+-# - remove the first livepatch and verify that the atomic replace livepatch
+-#   is still active
++# - load two addtional livepatches and check the number of livepatch modules
++#   applied
++# - load an atomic replace livepatch and check that the other three modules were
++#   disabled
++# - remove all livepatches besides the atomic replace one and verify that the
++#   atomic replace livepatch is still active
+ # - remove the atomic replace livepatch and verify that none are active
+ 
+ start_test "atomic replace livepatch"
+ 
+-load_lp $MOD_LIVEPATCH
++load_lp $MOD_LIVEPATCH1
+ 
+ grep 'live patched' /proc/cmdline > /dev/kmsg
+ grep 'live patched' /proc/meminfo > /dev/kmsg
+ 
++for mod in $MOD_LIVEPATCH2 $MOD_LIVEPATCH3; do
++	load_lp "$mod"
++done
++
++mods=(/sys/kernel/livepatch/*)
++nmods=${#mods[@]}
++if [ "$nmods" -ne 3 ]; then
++	die "Expecting three modules listed, found $nmods"
++fi
++
+ load_lp $MOD_REPLACE replace=1
+ 
+ grep 'live patched' /proc/cmdline > /dev/kmsg
+ grep 'live patched' /proc/meminfo > /dev/kmsg
+ 
+-unload_lp $MOD_LIVEPATCH
++mods=(/sys/kernel/livepatch/*)
++nmods=${#mods[@]}
++if [ "$nmods" -ne 1 ]; then
++	die "Expecting only one moduled listed, found $nmods"
++fi
++
++# These modules were disabled by the atomic replace
++for mod in $MOD_LIVEPATCH3 $MOD_LIVEPATCH2 $MOD_LIVEPATCH1; do
++	unload_lp "$mod"
++done
+ 
+ grep 'live patched' /proc/cmdline > /dev/kmsg
+ grep 'live patched' /proc/meminfo > /dev/kmsg
+@@ -135,13 +159,27 @@ unload_lp $MOD_REPLACE
+ grep 'live patched' /proc/cmdline > /dev/kmsg
+ grep 'live patched' /proc/meminfo > /dev/kmsg
+ 
+-check_result "% insmod test_modules/$MOD_LIVEPATCH.ko
+-livepatch: enabling patch '$MOD_LIVEPATCH'
+-livepatch: '$MOD_LIVEPATCH': initializing patching transition
+-livepatch: '$MOD_LIVEPATCH': starting patching transition
+-livepatch: '$MOD_LIVEPATCH': completing patching transition
+-livepatch: '$MOD_LIVEPATCH': patching complete
+-$MOD_LIVEPATCH: this has been live patched
++check_result "% insmod test_modules/$MOD_LIVEPATCH1.ko
++livepatch: enabling patch '$MOD_LIVEPATCH1'
++livepatch: '$MOD_LIVEPATCH1': initializing patching transition
++livepatch: '$MOD_LIVEPATCH1': starting patching transition
++livepatch: '$MOD_LIVEPATCH1': completing patching transition
++livepatch: '$MOD_LIVEPATCH1': patching complete
++$MOD_LIVEPATCH1: this has been live patched
++% insmod test_modules/$MOD_LIVEPATCH2.ko
++livepatch: enabling patch '$MOD_LIVEPATCH2'
++livepatch: '$MOD_LIVEPATCH2': initializing patching transition
++livepatch: '$MOD_LIVEPATCH2': starting patching transition
++livepatch: '$MOD_LIVEPATCH2': completing patching transition
++livepatch: '$MOD_LIVEPATCH2': patching complete
++% insmod test_modules/$MOD_LIVEPATCH3.ko
++livepatch: enabling patch '$MOD_LIVEPATCH3'
++livepatch: '$MOD_LIVEPATCH3': initializing patching transition
++$MOD_LIVEPATCH3: pre_patch_callback: vmlinux
++livepatch: '$MOD_LIVEPATCH3': starting patching transition
++livepatch: '$MOD_LIVEPATCH3': completing patching transition
++$MOD_LIVEPATCH3: post_patch_callback: vmlinux
++livepatch: '$MOD_LIVEPATCH3': patching complete
+ % insmod test_modules/$MOD_REPLACE.ko replace=1
+ livepatch: enabling patch '$MOD_REPLACE'
+ livepatch: '$MOD_REPLACE': initializing patching transition
+@@ -149,7 +187,9 @@ livepatch: '$MOD_REPLACE': starting patching transition
+ livepatch: '$MOD_REPLACE': completing patching transition
+ livepatch: '$MOD_REPLACE': patching complete
+ $MOD_REPLACE: this has been live patched
+-% rmmod $MOD_LIVEPATCH
++% rmmod $MOD_LIVEPATCH3
++% rmmod $MOD_LIVEPATCH2
++% rmmod $MOD_LIVEPATCH1
+ $MOD_REPLACE: this has been live patched
+ % echo 0 > /sys/kernel/livepatch/$MOD_REPLACE/enabled
+ livepatch: '$MOD_REPLACE': initializing unpatching transition
 
-I find the asterisks super hard to parse.  And I honestly wouldn't bother breaking
-things down by guest vs. host.  History has shown that file comments that are *too*
-specific eventually become stale, often sooner than later.  E.g. it's entirely
-feasible to do the checking in the guest, not the host.
+---
+base-commit: 6d69b6c12fce479fde7bc06f686212451688a102
+change-id: 20240525-lp-atomic-replace-90b33ed018dc
 
-How about this?
+Best regards,
+-- 
+Marcos Paulo de Souza <mpdesouza@suse.com>
 
-/*
- * Copyright (c) 2024 Intel Corporation
- *
- * Verify KVM correctly emulates the APIC bus frequency when the VMM configures
- * the frequency via KVM_CAP_X86_APIC_BUS_CYCLES_NS.  Start the APIC timer by
- * programming TMICT (timer initial count) to the largest value possible (so
- * that the timer will not expire during the test).  Then, after an arbitrary
- * amount of time has elapsed, verify TMCCT (timer current count) is within 1%
- * of the expected value based on the time elapsed, the APIC bus frequency, and
- * the programmed TDCR (timer divide configuration register).
- */
-
-> + */
-> +#define _GNU_SOURCE /* for program_invocation_short_name */
-
-This can now be dropped.
-
-> +#include "apic.h"
-> +#include "test_util.h"
-> +
-> +/*
-> + * Pick one convenient value, 1.5GHz. No special meaning and different from
-> + * the default value, 1GHz.
-
-I have no idea where the 1GHz comes from.  KVM doesn't force a default TSC, KVM
-uses the underlying CPU's frequency.  Peeking further ahead, I don't understand
-why this test sets KVM_SET_TSC_KHZ.  That brings in a whole different set of
-behavior, and that behavior is already verified by tsc_scaling_sync.c.
-
-I suspect/assume this test forces a frequency so that it can hardcode the math,
-but (a) that's odd and (b) x86 selftests really should provide a udelay() so that
-goofy stuff like this doesn't end up in random tests.
-
-> + */
-> +#define TSC_HZ			(1500 * 1000 * 1000ULL)
-
-Definitely do not call this TSC_HZ.  Yeah, it's local to this file, but defining
-generic macros like this is just asking for conflicts, and the value itself has
-nothing to do with the TSC (it's a raw value).  E.g. _if_ we need to keep this,
-something like
-
-  #define FREQ_1_5_GHZ		(1500 * 1000 * 1000ULL)
-
-> +
-> +/* Wait for 100 msec, not too long, not too short value. */
-> +#define LOOP_MSEC		100ULL
-> +#define TSC_WAIT_DELTA		(TSC_HZ / 1000 * LOOP_MSEC)
-
-These shouldn't exist.
-
-
-> +
-> +/*
-> + * Pick a typical value, 25MHz. Different enough from the default value, 1GHz.
-> + */
-> +#define APIC_BUS_CLOCK_FREQ	(25 * 1000 * 1000ULL)
-
-Rather than hardcode a single frequency, use 25MHz as the default value but let
-the user override it via command line.
-
-> +	asm volatile("cli");
-
-Unless I'm misremembering, the timer still counts when the LVT entry is masked
-so just mask the IRQ in the LVT. Or rather, keep the entry masked in the LVT.
-
-FWIW, you _could_ simply leave APIC_LVT0 at its default value to verify KVM
-correctly emulates that reset value (masked, one-shot).  That'd be mildly amusing,
-but possibly a net negative from readability, so
-
-> +
-> +	xapic_enable();
-
-What about x2APIC?  Arguably that's _more_ interesting since it's required for
-TDX.
-
-> +	/*
-> +	 * Setup one-shot timer.  The vector does not matter because the
-> +	 * interrupt does not fire.
-
-_should_ not fire.
-
-> +	 */
-> +	xapic_write_reg(APIC_LVT0, APIC_LVT_TIMER_ONESHOT);
-> +
-> +	for (i = 0; i < ARRAY_SIZE(tdcrs); i++) {
-> +		xapic_write_reg(APIC_TDCR, tdcrs[i].tdcr);
-> +
-> +		/* Set the largest value to not trigger the interrupt. */
-> +		tmict = ~0;
-> +		xapic_write_reg(APIC_TMICT, tmict);
-> +
-> +		/* Busy wait for LOOP_MSEC */
-> +		tsc0 = rdtsc();
-> +		tsc1 = tsc0;
-> +		while (tsc1 - tsc0 < TSC_WAIT_DELTA)
-> +			tsc1 = rdtsc();
-> +
-> +		/* Read APIC timer and TSC */
-> +		tmcct = xapic_read_reg(APIC_TMCCT);
-> +		tsc1 = rdtsc();
-> +
-> +		/* Stop timer */
-> +		xapic_write_reg(APIC_TMICT, 0);
-> +
-> +		/* Report it. */
-> +		GUEST_SYNC_ARGS(tdcrs[i].divide_count, tmict - tmcct,
-> +				tsc1 - tsc0, 0, 0);
-
-Why punt to the host?  I don't see any reason why GUEST_ASSERT() wouldn't work
-here.
-
-> +	}
-> +
-> +	GUEST_DONE();
-> +}
-> +
-> +void test_apic_bus_clock(struct kvm_vcpu *vcpu)
-> +{
-> +	bool done = false;
-> +	struct ucall uc;
-> +
-> +	while (!done) {
-> +		vcpu_run(vcpu);
-> +		TEST_ASSERT_KVM_EXIT_REASON(vcpu, KVM_EXIT_IO);
-> +
-> +		switch (get_ucall(vcpu, &uc)) {
-> +		case UCALL_DONE:
-> +			done = true;
-> +			break;
-> +		case UCALL_ABORT:
-> +			REPORT_GUEST_ASSERT(uc);
-> +			break;
-> +		case UCALL_SYNC: {
-> +			u32 divide_counter = uc.args[1];
-> +			u32 apic_cycles = uc.args[2];
-> +			u64 tsc_cycles = uc.args[3];
-> +			u64 freq;
-> +
-> +			TEST_ASSERT(tsc_cycles > 0,
-> +				    "TSC cycles must not be zero.");
-> +
-> +			/* Allow 1% slack. */
-> +			freq = apic_cycles * divide_counter * TSC_HZ / tsc_cycles;
-> +			TEST_ASSERT(freq < APIC_BUS_CLOCK_FREQ * 101 / 100,
-> +				    "APIC bus clock frequency is too large");
-> +			TEST_ASSERT(freq > APIC_BUS_CLOCK_FREQ * 99 / 100,
-> +				    "APIC bus clock frequency is too small");
-> +			break;
-> +		}
-> +		default:
-> +			TEST_FAIL("Unknown ucall %lu", uc.cmd);
-> +			break;
-> +		}
-> +	}
-> +}
-> +
-> +int main(int argc, char *argv[])
-> +{
-> +	struct kvm_vcpu *vcpu;
-> +	struct kvm_vm *vm;
-> +
-> +	TEST_REQUIRE(kvm_has_cap(KVM_CAP_X86_APIC_BUS_CYCLES_NS));
-> +
-> +	vm = __vm_create(VM_SHAPE_DEFAULT, 1, 0);
-> +	vm_ioctl(vm, KVM_SET_TSC_KHZ, (void *)(TSC_HZ / 1000));
-> +	/*
-> +	 * KVM_CAP_X86_APIC_BUS_CYCLES_NS expects APIC bus clock rate in
-> +	 * nanoseconds and requires that no vCPU is created.
-
-Meh, I'd drop this comment.  It should be quite obvious that the rate is in
-nanoseconds.  And instead of adding a comment for the vCPU creation, do
-__vm_enable_cap() again _after_ creating a vCPU and verify it fails with -EINVAL.
-
-> +	 */
-> +	vm_enable_cap(vm, KVM_CAP_X86_APIC_BUS_CYCLES_NS,
-> +		      NSEC_PER_SEC / APIC_BUS_CLOCK_FREQ);
-> +	vcpu = vm_vcpu_add(vm, 0, guest_code);
-> +
-> +	virt_pg_map(vm, APIC_DEFAULT_GPA, APIC_DEFAULT_GPA);
-> +
-> +	test_apic_bus_clock(vcpu);
-> +	kvm_vm_free(vm);
-> +}
-> -- 
-> 2.34.1
-> 
 
