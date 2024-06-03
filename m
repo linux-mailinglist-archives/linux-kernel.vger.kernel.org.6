@@ -1,113 +1,148 @@
-Return-Path: <linux-kernel+bounces-198837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0AE98D7E22
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:08:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0A068D7E27
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:09:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABBBA281B13
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:08:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4E9C282301
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:09:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 621D180049;
-	Mon,  3 Jun 2024 09:08:04 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62C5E7E79F;
-	Mon,  3 Jun 2024 09:08:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41B247829C;
+	Mon,  3 Jun 2024 09:09:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T648A4jU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 801154DA06;
+	Mon,  3 Jun 2024 09:09:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717405684; cv=none; b=LzaHCRZgrqXfMfQfQE5G4oBSqq7ygvmedboAHXmgHkJJv0tXlAdV9GR8jqWOsS1xuzaeGr+J6rUvLthcAhBBJSGSkWFMyABeDisXHeaFEBSIostLccLYDuKlUGelAkiGBR1e+UeVPfuKEwCDuLWmAyqp7rb6rsx5wtYDz8Ptpxg=
+	t=1717405783; cv=none; b=M4qvbCtIXrk5iYp1QjDCi8S/dgdWIVo5iRKRhk7R8y03mq71+7czsTbTbrjcrLl9R0Jqazq1wb71SwXXw0R2teXV3xQ8hVPGA75FrgacryR93h73sG2zFpVqh9u4N4mjvkyDZF7CCruARb9Xi19FEEdcH08Y6UybTLmEpoL4B1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717405684; c=relaxed/simple;
-	bh=LYGMtMXJ4+xgoBe7UhVjgwM1rB/tgrzSyhDMb9CnrCg=;
+	s=arc-20240116; t=1717405783; c=relaxed/simple;
+	bh=zts/QRsUM8k00Nfd4l4iKWD2XkKbZM/dD/eqgptURNI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ix0OOZgAS6xNQXXmflEW6u6flGV3sIoChvO+3bOenvdAW23JUWTW9d3wqacqIT1Q8arey8pjkGm797aVGS5BCFnrUut78NrslgXU5G7lM0g7OVKMKxndSva6RTsbmC7b6nWst7poVcTLFjsKRK4JMGZQ2/iBWDSW5tyvnHB2xWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B29A51042;
-	Mon,  3 Jun 2024 02:08:25 -0700 (PDT)
-Received: from bogus (e103737-lin.cambridge.arm.com [10.1.197.49])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4761C3F762;
-	Mon,  3 Jun 2024 02:08:00 -0700 (PDT)
-Date: Mon, 3 Jun 2024 10:07:57 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: admiyo@os.amperecomputing.com
-Cc: Jassi Brar <jassisinghbrar@gmail.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Robert Moore <robert.moore@intel.com>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Len Brown <lenb@kernel.org>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] mctp pcc: Check before sending MCTP PCC response
- ACK
-Message-ID: <Zl2H7QVuu0WDlFOS@bogus>
-References: <20240513173546.679061-1-admiyo@os.amperecomputing.com>
- <20240528191823.17775-1-admiyo@os.amperecomputing.com>
- <20240528191823.17775-2-admiyo@os.amperecomputing.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=TLi0TwBCml6yxAfelvfWHovUKPGLBq3t05BCuFDyAwEbHX7BRahymfCyjiHvPBozlqxv31JEAy4qKUIzMAzpynC0TvZNS/4UFnem8NGpvz9MZAEZqWm52SxnH9saUg6u3464IXJM9UZM71CAb/21vI13M5iFENcEr7fNZyv6Rsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T648A4jU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E1C2C2BD10;
+	Mon,  3 Jun 2024 09:09:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717405783;
+	bh=zts/QRsUM8k00Nfd4l4iKWD2XkKbZM/dD/eqgptURNI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=T648A4jUN6PelkRNGIl7hxRPXuYGfhKc0w4IhBdXrxin6cs+UrZQ3iATqdbNlnwO/
+	 KxPcKK6ZCShnQ+GaQC9n4ex2n28ltok8NIJ0V6EW3e5v0aeJ5IiClJmujEzx+TQ0+h
+	 MdNWLKLm+Y90vuEh2SCvq/zRyhx6SMrakl0xnH5uxMsRGDdKPYTn1eXvCNhUCML2GX
+	 Uw3VAizHiVNE0Di3sUDp6fp+o6LOQH/4uWYxowr8Cwj9t37ro+AAZMe665XGis/Zo/
+	 3uVRKrB0nlv0jcHFZUcP9ITZznCVPZYLtDhwhYOUqjxAqrDTksyuEDzOUnq4TpKu3T
+	 Wa/Ig9liJjoyw==
+Date: Mon, 3 Jun 2024 11:09:40 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Rob Clark <robdclark@gmail.com>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/9] drm/connector: hdmi: accept NULL for Audio
+ Infoframe
+Message-ID: <20240603-therapeutic-warm-fox-890bee@houat>
+References: <20240531-bridge-hdmi-connector-v4-0-5110f7943622@linaro.org>
+ <20240531-bridge-hdmi-connector-v4-1-5110f7943622@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="cjo537cz6gzry5k7"
+Content-Disposition: inline
+In-Reply-To: <20240531-bridge-hdmi-connector-v4-1-5110f7943622@linaro.org>
+
+
+--cjo537cz6gzry5k7
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240528191823.17775-2-admiyo@os.amperecomputing.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 28, 2024 at 03:18:21PM -0400, admiyo@os.amperecomputing.com wrote:
-> From: Adam Young <admiyo@amperecomputing.com>
-> 
-> Type 4 PCC channels have an option to send back a response
-> to the platform when they are done processing the request.
-> The flag to indicate whether or not to respond is inside
-> the message body, and thus is not available to the pcc
-> mailbox.  Since only one message can be processed at once per
-> channel, the value of this flag is checked during message processing
-> and passed back via the channels global structure.
-> 
-> Ideally, the mailbox callback function would return a value
-> indicating whether the message requires an ACK, but that
-> would be a change to the mailbox API.  That would involve
-> some change to all (about 12) of the mailbox based drivers,
-> and the majority of them would not need to know about the
-> ACK call.
->
+Hi,
 
-I don't have all the 3 patches. Is this sent by error or am I expected
-to just review this patch while other 2 are not mailbox related ?
+Sorry for not answering your mail on the previous version sooner.
 
-> Signed-off-by: Adam Young <admiyo@os.amperecomputing.com>
+On Fri, May 31, 2024 at 11:07:24PM GMT, Dmitry Baryshkov wrote:
+> Allow passing NULL as audio infoframe as a way to disable Audio
+> Infoframe generation.
+>=20
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 > ---
->  drivers/mailbox/pcc.c | 5 ++++-
->  include/acpi/pcc.h    | 1 +
->  2 files changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mailbox/pcc.c b/drivers/mailbox/pcc.c
-> index 94885e411085..774727b89693 100644
-> --- a/drivers/mailbox/pcc.c
-> +++ b/drivers/mailbox/pcc.c
-> @@ -280,6 +280,7 @@ static irqreturn_t pcc_mbox_irq(int irq, void *p)
->  {
->  	struct pcc_chan_info *pchan;
->  	struct mbox_chan *chan = p;
-> +	struct pcc_mbox_chan *pmchan;
->  	u64 val;
->  	int ret;
->  
-> @@ -304,6 +305,8 @@ static irqreturn_t pcc_mbox_irq(int irq, void *p)
->  	if (pcc_chan_reg_read_modify_write(&pchan->plat_irq_ack))
->  		return IRQ_NONE;
->  
-> +	pmchan = &pchan->chan;
-> +	pmchan->ack_rx = true;  //TODO default to False
+>  drivers/gpu/drm/display/drm_hdmi_state_helper.c | 14 ++++++++++----
+>  1 file changed, 10 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/display/drm_hdmi_state_helper.c b/drivers/gp=
+u/drm/display/drm_hdmi_state_helper.c
+> index ce96837eea65..5356723d21f5 100644
+> --- a/drivers/gpu/drm/display/drm_hdmi_state_helper.c
+> +++ b/drivers/gpu/drm/display/drm_hdmi_state_helper.c
+> @@ -681,7 +681,7 @@ EXPORT_SYMBOL(drm_atomic_helper_connector_hdmi_update=
+_infoframes);
+>  /**
+>   * drm_atomic_helper_connector_hdmi_update_audio_infoframe - Update the =
+Audio Infoframe
+>   * @connector: A pointer to the HDMI connector
+> - * @frame: A pointer to the audio infoframe to write
+> + * @frame: A pointer to the audio infoframe to write or NULL to disable =
+sending the frame
 
-We need to remove this and detect when it can be true if the default expected
-is false.
+I'm still two-minded about this. I think I would like a separate helper
+better, to also make things consistent with the HDMI helpers.
 
--- 
-Regards,
-Sudeep
+Most importantly, it looks like you're not using it at all in your series?
+
+>   * This function is meant for HDMI connector drivers to update their
+>   * audio infoframe. It will typically be used in one of the ALSA hooks
+> @@ -704,10 +704,16 @@ drm_atomic_helper_connector_hdmi_update_audio_infof=
+rame(struct drm_connector *co
+> =20
+>  	mutex_lock(&connector->hdmi.infoframes.lock);
+> =20
+> -	memcpy(&infoframe->data, frame, sizeof(infoframe->data));
+> -	infoframe->set =3D true;
+> +	if (frame) {
+> +		memcpy(&infoframe->data, frame, sizeof(infoframe->data));
+> +		infoframe->set =3D true;
+> +
+> +		ret =3D write_infoframe(connector, infoframe);
+> +	} else {
+> +		infoframe->set =3D false;
+> =20
+> -	ret =3D write_infoframe(connector, infoframe);
+> +		ret =3D clear_infoframe(connector, infoframe);
+> +	}
+
+We should probably clear infoframe->data here too
+
+Maxime
+
+--cjo537cz6gzry5k7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZl2ITQAKCRAnX84Zoj2+
+dqkOAX9UmBzsHTKxHZS1nYELnt3AKt9186dxlneShEm4OxdrXK29/MwOCb+UL69k
+SkvYtVkBfiYyBRgWMuoXlPMgdMZe/SKJIwO19JoO1q6utvRCW6k9RMmkiAFCjD1d
+J6ZyAccWMA==
+=wp6q
+-----END PGP SIGNATURE-----
+
+--cjo537cz6gzry5k7--
 
