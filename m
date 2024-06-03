@@ -1,266 +1,227 @@
-Return-Path: <linux-kernel+bounces-198581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D35488D7A8C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 05:49:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D1B88D7A93
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 05:50:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E0331F21963
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 03:49:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD578281602
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 03:50:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D3BA17BA1;
-	Mon,  3 Jun 2024 03:49:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nJr9U5dv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47A9B1B7E4;
+	Mon,  3 Jun 2024 03:50:21 +0000 (UTC)
+Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89ADC2231F;
-	Mon,  3 Jun 2024 03:49:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18467101F4
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 03:50:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717386560; cv=none; b=AHHTIN/gOuzvxGJwidLGusF4ywN/lm3xQIFjtPi2Bq7r7Etup/479hzOuBqYLOV8qqeuR8pQW4xTiG228kCQOe2NBDPE/mKH+B4S5NIHC+oZy7O+02IIQm7L+r0JZQDHlM3uc3yhD9DF5atg0Rs3mFQn5jhm9uipFSSTWJt4B9M=
+	t=1717386620; cv=none; b=oMZKmmT+94fOXKKJ3JtmJwhyfCz+6DHkVJHaGpp7A5MC+94r7aNCDbjXqnPfU7kXdSdWDt7U83ENRLBZZC2+Jj+Jjdr3FLWmUUznfiGE7Y464ysKnubXV1uVzx3IwB0D4q1y5Il9Yn5EPCTEiKxtRjW6I3mggXC9gTbD0wS1CX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717386560; c=relaxed/simple;
-	bh=z5mvz1lfU07jZ9iUZyD5kFk1KnR8RI60n0qB14ClCu4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YNWPLk/c3I7886wBmGaM5VsSw5FGgw31QuP6hhbWFCL+a7A+goVejX924rkli7sWYAlsK14fsM34lHhhsaW7SMgFEpm64a/DAVPeJ0qgdRCncxFZ4TmC1XJnVsGHO2jGICDGEyEDX3A/rbgQi8e24SbjeXBIAr6+A2YsvO6X39A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nJr9U5dv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 124F0C4AF0A;
-	Mon,  3 Jun 2024 03:49:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717386560;
-	bh=z5mvz1lfU07jZ9iUZyD5kFk1KnR8RI60n0qB14ClCu4=;
-	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
-	b=nJr9U5dvWsJGp1yXIScseBNGOHsplw9c4KuJi91Sred1RJiDqHgD/ep8QQEctNssz
-	 FJJxTWaZ7Lzvtdi1ByGOBqOsKIpdau6v2ltwmMDbbsHBmZSunzFF51ZRztiO4bNN9+
-	 f1u9ZrP1kHoOunz1zK5e0TjS0JRL0AAPjjqvlO0eTrO8JYhZiaQpbn33Qfc7YY354N
-	 Z6ZSfK01Z4uWajSUpSM1/UczxLX5hbEh2bGAGccKrETs+ujtIurn6GeUO5BwGPQwFi
-	 8wNi24KM315TmeFnt78tgc079mBNpBkxkjik6t6WrZ55+q8DJ50S5iL31QsXLkr+bS
-	 FUG0yKedcz2eg==
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2e6f2534e41so31293581fa.0;
-        Sun, 02 Jun 2024 20:49:19 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWCW08ENm0wIZ1A+Lc2kohqfY0TCVKwU5Yz7bZwGQmAkjIWu3sW1OFjioYZlFvUeHlrIT6ejAw1jaXJ9uHrb9vbCMv28fjRTPzCwen60sio3UmMi/no/rHoWuVLbN/2F3jk1eTJJSGwy0Ha73jeTUsVD2axZ+pIFHwfg6gVlT0Vhg==
-X-Gm-Message-State: AOJu0YwnGLLLjFuitHPiI2vrypbwItWi3jaHp1XVFMWlZisTPZTETlWz
-	fyeL2mZ5Kt8WrSOCxI3yyRLmhNXJot2q9Q2D524H/+yEcV8ZJlqw0SVGwSz4pfah2w2lCiE/q0V
-	heHHkV4Tcv6ic4KHnGkhI4WCS+Bw=
-X-Google-Smtp-Source: AGHT+IGeqKCFJubYk+BuVV24uz6Hs7s17epjkgBlNhlX+930U/YvE3OiynaVsYGHCA80uyovp6h4bbLGr3JfLlvXaVs=
-X-Received: by 2002:a05:651c:1a28:b0:2ea:7a2a:4d0b with SMTP id
- 38308e7fff4ca-2ea950e63b5mr60506571fa.17.1717386558327; Sun, 02 Jun 2024
- 20:49:18 -0700 (PDT)
+	s=arc-20240116; t=1717386620; c=relaxed/simple;
+	bh=1ANqzlXN6QgBixaS4MFELMZPKLeuCh49qwYRXIlJhpI=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=F/6TREpYhPdPqk8OUdhfQOJ5j0pN4VAOeIPZrdbEHYd5/gYlXNwMKXnb25PcoxElKolKhTVpmg1SqzmQ6j/F/xc/F/jrx6IlZrzIz/lKZK7jsI/PA84/SblXZUwUss1RUaskCAnJXDIjHmrcJ0BZiT2t5VBzBREbH82QoI6Muvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-7eb01189491so352013139f.1
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2024 20:50:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717386618; x=1717991418;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VSPZMKkBI7zfCYDgVMujOuceO46eKVRs+W67esEnsuc=;
+        b=mV3cENQZmZBIcqe8k94uGsd9AbBTENs48g84P+7G3jGtymlfH1S0l0xJ36KomEdRtR
+         KX4lYIEVgNi5Z3EN+dOzq1a4Nemw34T4+5UY/4Ni/pZwArkUNgVfP3zsc/SpQMBR4XyH
+         NDi/RJtrxBPjXwgotnKs0utMG0jIuJJid094KKpqtbj2e9s+y8trwKBc+N0T86If4jxh
+         leHDC4p7pl5p7eWlNnNAJ2X1XcnHCVsv/GNIuKyZPHKkQuJIjgbNGkk+gOlDLoMXf5kb
+         PiApFrqRWkqFbrbnKog4Joi1Ty84VapDf05WeJZRvWV8vr9hbvG+YnEnNB84yO5svG3u
+         HWFg==
+X-Forwarded-Encrypted: i=1; AJvYcCUT/8z9IQjCzUrplqPO3bw5mh24ESMDHmAkh77sSsyWCLxQ32VvTKVdeh7FeFDMyQBTA5woZw4EDCftKzz6zyatTQMgWwX3FhQ46ut+
+X-Gm-Message-State: AOJu0Yzn0fwlvuclfq5NqGlFrw4Ffk1X2Oj+QmmixsYn54uOjlXUMpwe
+	RHYM2vNoZRli2ap+75XQN6gUe1Z4dDHMz1BqdGyjIyN/T47P8UwRodTYWMWUc0gtsV+0MuEvQCa
+	FTxzfjo4zAdoRUqEIM7tLZNtxoiKDmkuQA2/UWx150jyi2o5LGszh82A=
+X-Google-Smtp-Source: AGHT+IGa4Lb4g7P/F4jS2dEzIBFVKP7gDDPixQ3bGVBxtyr6zPWaUvpH71Hv4MOPdEo+HeiMh2iQMJguBmY/mfjgX8ctZO/yGGvG
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <e70742ea2df432bf57b3f7de542d81ca22b0da2f.1716225483.git.dsimic@manjaro.org>
- <CAGb2v66DPvvRcq+98vF2mCF8URW_qys1+B_FM9kcm6ppuPvyeg@mail.gmail.com>
- <20cf041dcd6f752174bf29d2a53c61b3@manjaro.org> <1994616.CrzyxZ31qj@diego> <99ea0e0053d3ada3325bdfaec7a937f0@manjaro.org>
-In-Reply-To: <99ea0e0053d3ada3325bdfaec7a937f0@manjaro.org>
-Reply-To: wens@kernel.org
-From: Chen-Yu Tsai <wens@kernel.org>
-Date: Mon, 3 Jun 2024 11:49:05 +0800
-X-Gmail-Original-Message-ID: <CAGb2v64K7fgeV9GVNnpoZ_4BZU7JKXHSCYU0hKxHmnyojFRu7g@mail.gmail.com>
-Message-ID: <CAGb2v64K7fgeV9GVNnpoZ_4BZU7JKXHSCYU0hKxHmnyojFRu7g@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: rockchip: Fix the DCDC_REG2 minimum voltage
- on Quartz64 Model B
-To: Dragan Simic <dsimic@manjaro.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
-Cc: linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	devicetree@vger.kernel.org, robh+dt@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
-	Diederik de Haas <didi.debian@cknow.org>
+X-Received: by 2002:a05:6602:6412:b0:7da:bccd:c3e3 with SMTP id
+ ca18e2360f4ac-7eaffe9573emr44749139f.1.1717386618389; Sun, 02 Jun 2024
+ 20:50:18 -0700 (PDT)
+Date: Sun, 02 Jun 2024 20:50:18 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000054d8540619f43b86@google.com>
+Subject: [syzbot] [ext4?] INFO: task hung in vfs_rmdir (2)
+From: syzbot <syzbot+42986aeeddfd7ed93c8b@syzkaller.appspotmail.com>
+To: brauner@kernel.org, jack@suse.cz, linux-ext4@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Sat, Jun 1, 2024 at 6:41=E2=80=AFAM Dragan Simic <dsimic@manjaro.org> wr=
-ote:
->
-> Hello Heiko,
->
-> On 2024-05-31 20:40, Heiko St=C3=BCbner wrote:
-> > Am Freitag, 31. Mai 2024, 00:48:45 CEST schrieb Dragan Simic:
-> >> On 2024-05-29 18:27, Chen-Yu Tsai wrote:
-> >> > On Tue, May 21, 2024 at 1:20=E2=80=AFAM Dragan Simic <dsimic@manjaro=
-.org>
-> >> > wrote:
-> >> >>
-> >> >> Correct the specified regulator-min-microvolt value for the buck
-> >> >> DCDC_REG2
-> >> >> regulator, which is part of the Rockchip RK809 PMIC, in the Pine64
-> >> >> Quartz64
-> >> >> Model B board dts.  According to the RK809 datasheet, version 1.01,
-> >> >> this
-> >> >> regulator is capable of producing voltages as low as 0.5 V on its
-> >> >> output,
-> >> >> instead of going down to 0.9 V only, which is additionally confirme=
-d
-> >> >> by the
-> >> >> regulator-min-microvolt values found in the board dts files for the
-> >> >> other
-> >> >> supported boards that use the same RK809 PMIC.
-> >> >>
-> >> >> This allows the DVFS to clock the GPU on the Quartz64 Model B below
-> >> >> 700 MHz,
-> >> >> all the way down to 200 MHz, which saves some power and reduces the
-> >> >> amount of
-> >> >> generated heat a bit, improving the thermal headroom and possibly
-> >> >> improving
-> >> >> the bursty CPU and GPU performance on this board.
-> >> >>
-> >> >> This also eliminates the following warnings in the kernel log:
-> >> >>
-> >> >>   core: _opp_supported_by_regulators: OPP minuV: 825000 maxuV: 8250=
-00,
-> >> >> not supported by regulator
-> >> >>   panfrost fde60000.gpu: _opp_add: OPP not supported by regulators
-> >> >> (200000000)
-> >> >>   core: _opp_supported_by_regulators: OPP minuV: 825000 maxuV: 8250=
-00,
-> >> >> not supported by regulator
-> >> >>   panfrost fde60000.gpu: _opp_add: OPP not supported by regulators
-> >> >> (300000000)
-> >> >>   core: _opp_supported_by_regulators: OPP minuV: 825000 maxuV: 8250=
-00,
-> >> >> not supported by regulator
-> >> >>   panfrost fde60000.gpu: _opp_add: OPP not supported by regulators
-> >> >> (400000000)
-> >> >>   core: _opp_supported_by_regulators: OPP minuV: 825000 maxuV: 8250=
-00,
-> >> >> not supported by regulator
-> >> >>   panfrost fde60000.gpu: _opp_add: OPP not supported by regulators
-> >> >> (600000000)
-> >> >>
-> >> >> Fixes: dcc8c66bef79 ("arm64: dts: rockchip: add Pine64 Quartz64-B
-> >> >> device tree")
-> >> >> Cc: stable@vger.kernel.org
-> >> >> Reported-By: Diederik de Haas <didi.debian@cknow.org>
-> >> >> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
-> >> >> ---
-> >> >>  arch/arm64/boot/dts/rockchip/rk3566-quartz64-b.dts | 2 +-
-> >> >>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >> >>
-> >> >> diff --git a/arch/arm64/boot/dts/rockchip/rk3566-quartz64-b.dts
-> >> >> b/arch/arm64/boot/dts/rockchip/rk3566-quartz64-b.dts
-> >> >> index 26322a358d91..b908ce006c26 100644
-> >> >> --- a/arch/arm64/boot/dts/rockchip/rk3566-quartz64-b.dts
-> >> >> +++ b/arch/arm64/boot/dts/rockchip/rk3566-quartz64-b.dts
-> >> >> @@ -289,7 +289,7 @@ vdd_gpu: DCDC_REG2 {
-> >> >>                                 regulator-name =3D "vdd_gpu";
-> >> >>                                 regulator-always-on;
-> >> >>                                 regulator-boot-on;
-> >> >> -                               regulator-min-microvolt =3D <900000=
->;
-> >> >> +                               regulator-min-microvolt =3D <500000=
->;
-> >> >
-> >> > The constraints here are supposed to be the constraints of the
-> >> > consumer,
-> >> > not the provider. The latter is already known by the implementation.
-> >> >
-> >> > So if the GPU can go down to 0.825V or 0.81V even (based on the
-> >> > datasheet),
-> >> > this should say the corresponding value. Surely the GPU can't go dow=
-n
-> >> > to
-> >> > 0.5V?
-> >> >
-> >> > Can you send another fix for it?
-> >>
-> >> I can confirm that the voltage of the power supply of GPU found inside
-> >> the RK3566 can be as low as 0.81 V, according to the datasheet, or as
-> >> low as 0.825 V, according to the GPU OPPs found in rk356x.dtsi.
-> >>
-> >> If we want the regulator-min-microvolt parameter to reflect the
-> >> contraint
-> >> of the GPU as the consumer, which I agree with, we should do that for
-> >> other
-> >> RK3566-based boards as well, and almost surely for the boards based on
-> >> the
-> >> RK3568, too.
-> >
-> > Hmm, I'm not so sure about that.
-> >
-> > The binding does define:
-> >       regulator-min-microvolt:
-> >           description: smallest voltage consumers may set
-> >
-> > This does not seem to describe it as a constraint solely of the
-> > consumer.
-> > At least the wording sounds way more flexible there.
-> >
-> > Also any regulator _could_ have multiple consumers, whose value would
-> > it need then.
->
-> The way I see it, the regulator-min-microvolt and
-> regulator-max-microvolt
-> parameters should be configured in a way that protects the consumer(s)
-> of the particular voltage regulator against undervoltage and overvoltage
-> conditions, which may be useful in some corner cases.
->
-> If there are multiple consumers, which in this case may actually happen
-> (IIRC, some boards use the same regulator for the GPU and NPU portions
-> of the SoC), the situation becomes far from ideal, because the consumers
-> might have different voltage requirements, but that's pretty much an
-> unavoidable compromise.
+Hello,
 
-As Dragan mentioned, the min/max voltage constraints are there to prevent
-the implementation from setting a voltage that would make the hardware
-inoperable, either temporarily or permanently. So the range set here
-should be the intersection of the permitted ranges of all consumers on
-that power rail.
+syzbot found the following issue on:
 
-Now if that intersection happens to be an empty set, then it would up
-to the implementation to do proper lock-outs. Hopefully no one designs
-such hardware as it's too easy to fry some part of the hardware.
+HEAD commit:    4a4be1ad3a6e Revert "vfs: Delete the associated dentry whe..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=1466269a980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=47d282ddffae809f
+dashboard link: https://syzkaller.appspot.com/bug?extid=42986aeeddfd7ed93c8b
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12a5b3ec980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=103820f2980000
 
-> > While true, setting it to the lowest the regulator can do in the
-> > original
-> > fix patch, might've been a bit much and a saner value might be better.
->
-> Agreed, but the value was selected according to what the other
-> RK3566-based
-> boards use, to establish some kind of consistency.  Now, there's a good
-> chance for the second pass, so to speak, which should establish another
-> different state, but also consistent. :)
->
-> >> This would ensure consistency, but I'd like to know are all those
-> >> resulting
-> >> patches going to be accepted before starting to prepare them?  There
-> >> will
-> >> be a whole bunch of small patches.
-> >
-> > Hmm, though I'd say that would be one patch per soc?
-> >
-> > I.e. you're setting the min-voltage of _one_ regulator used
-> > on each board to a value to support the defined OPPs.
-> >
-> > I.e. in my mind you'd end up with:
-> >       arm64: dts: rockchip: set better min voltage for vdd_gpu on rk356=
-x
-> > boards
-> >
-> > And setting the lower voltage to reach that lower OPP on all affected
-> > rk356x boards.
->
-> Yes, the same thoughts have already crossed my mind, but I thought we'd
-> like those patches to also include Fixes tags, so they also get
-> propagated
-> into the long-term kernel versions?  In that case, we'd need one patch
-> per
-> board, to have a clear relation to the commits referenced in the Fixes
-> tags.
->
-> OTOH, if we don't want the patches to be propagated into the long-term
-> kernel
-> versions, then having one patch per SoC would be perfectly fine.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/91325320f37c/disk-4a4be1ad.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/49af253b674e/vmlinux-4a4be1ad.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/04d26ea378d5/bzImage-4a4be1ad.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/2643c2ec211c/mount_0.gz
 
-It's really up to Heiko, but personally I don't think it's that important
-to have them backported. These would be correctness patches, but don't
-really affect functionality.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+42986aeeddfd7ed93c8b@syzkaller.appspotmail.com
 
-Regards
-ChenYu
+INFO: task syz-executor150:5089 blocked for more than 143 seconds.
+      Not tainted 6.10.0-rc1-syzkaller-00027-g4a4be1ad3a6e #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor150 state:D stack:24224 pid:5089  tgid:5087  ppid:5086   flags:0x00004006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5408 [inline]
+ __schedule+0x1796/0x49d0 kernel/sched/core.c:6745
+ __schedule_loop kernel/sched/core.c:6822 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6837
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6894
+ rwsem_down_write_slowpath+0xeeb/0x13b0 kernel/locking/rwsem.c:1178
+ __down_write_common+0x1af/0x200 kernel/locking/rwsem.c:1306
+ inode_lock include/linux/fs.h:791 [inline]
+ vfs_rmdir+0x101/0x510 fs/namei.c:4203
+ do_rmdir+0x3b5/0x580 fs/namei.c:4273
+ __do_sys_rmdir fs/namei.c:4292 [inline]
+ __se_sys_rmdir fs/namei.c:4290 [inline]
+ __x64_sys_rmdir+0x49/0x60 fs/namei.c:4290
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f9b91eaed89
+RSP: 002b:00007f9b91e65168 EFLAGS: 00000246 ORIG_RAX: 0000000000000054
+RAX: ffffffffffffffda RBX: 00007f9b91f375e8 RCX: 00007f9b91eaed89
+RDX: ffffffffffffffb0 RSI: e0f7bef392ce73bd RDI: 0000000020000180
+RBP: 00007f9b91f375e0 R08: 00007f9b91e656c0 R09: 0000000000000000
+R10: 00007f9b91e656c0 R11: 0000000000000246 R12: 00007f9b91f375ec
+R13: 0000000000000006 R14: 00007fff5a763930 R15: 00007fff5a763a18
+ </TASK>
+
+Showing all locks held in the system:
+1 lock held by khungtaskd/30:
+ #0: ffffffff8e333f60 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:329 [inline]
+ #0: ffffffff8e333f60 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:781 [inline]
+ #0: ffffffff8e333f60 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6614
+2 locks held by getty/4840:
+ #0: ffff88802afc40a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
+ #1: ffffc90002f0e2f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0x6b5/0x1e10 drivers/tty/n_tty.c:2201
+3 locks held by syz-executor150/5089:
+ #0: ffff88807cf1a420 (sb_writers#9){.+.+}-{0:0}, at: mnt_want_write+0x3f/0x90 fs/namespace.c:409
+ #1: ffff88807a2d9650 (&sb->s_type->i_mutex_key#14/1){+.+.}-{3:3}, at: inode_lock_nested include/linux/fs.h:826 [inline]
+ #1: ffff88807a2d9650 (&sb->s_type->i_mutex_key#14/1){+.+.}-{3:3}, at: do_rmdir+0x263/0x580 fs/namei.c:4261
+ #2: ffff88807a2d9650 (&sb->s_type->i_mutex_key#15){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:791 [inline]
+ #2: ffff88807a2d9650 (&sb->s_type->i_mutex_key#15){+.+.}-{3:3}, at: vfs_rmdir+0x101/0x510 fs/namei.c:4203
+
+=============================================
+
+NMI backtrace for cpu 0
+CPU: 0 PID: 30 Comm: khungtaskd Not tainted 6.10.0-rc1-syzkaller-00027-g4a4be1ad3a6e #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+ nmi_cpu_backtrace+0x49c/0x4d0 lib/nmi_backtrace.c:113
+ nmi_trigger_cpumask_backtrace+0x198/0x320 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:223 [inline]
+ watchdog+0xfde/0x1020 kernel/hung_task.c:379
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+Sending NMI from CPU 0 to CPUs 1:
+NMI backtrace for cpu 1
+CPU: 1 PID: 1093 Comm: kworker/u8:7 Not tainted 6.10.0-rc1-syzkaller-00027-g4a4be1ad3a6e #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+Workqueue: events_unbound toggle_allocation_gate
+RIP: 0010:hlock_class kernel/locking/lockdep.c:228 [inline]
+RIP: 0010:check_wait_context kernel/locking/lockdep.c:4798 [inline]
+RIP: 0010:__lock_acquire+0x876/0x1fd0 kernel/locking/lockdep.c:5087
+Code: 8b 5d 00 81 e3 ff 1f 00 00 48 89 d8 48 c1 e8 06 48 8d 3c c5 80 15 f7 92 be 08 00 00 00 e8 c2 2b 86 00 48 0f a3 1d ca b2 84 11 <73> 1a 48 69 c3 c8 00 00 00 48 8d 98 80 74 c5 92 48 ba 00 00 00 00
+RSP: 0018:ffffc900047af3d0 EFLAGS: 00000057
+RAX: 0000000000000001 RBX: 0000000000000021 RCX: ffffffff817262ae
+RDX: 0000000000000000 RSI: 0000000000000008 RDI: ffffffff92f71580
+RBP: 0000000000000003 R08: ffffffff92f71587 R09: 1ffffffff25ee2b0
+R10: dffffc0000000000 R11: fffffbfff25ee2b1 R12: 0000000000000005
+R13: ffff8880223f8bc8 R14: 0000000000000005 R15: ffff8880223f8bc8
+FS:  0000000000000000(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055e370ade680 CR3: 000000000e132000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <NMI>
+ </NMI>
+ <TASK>
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
+ __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
+ _raw_spin_lock+0x2e/0x40 kernel/locking/spinlock.c:154
+ spin_lock include/linux/spinlock.h:351 [inline]
+ __pte_offset_map_lock+0x1ba/0x300 mm/pgtable-generic.c:375
+ get_locked_pte include/linux/mm.h:2744 [inline]
+ __text_poke+0x2c5/0xd30 arch/x86/kernel/alternative.c:1883
+ text_poke arch/x86/kernel/alternative.c:1968 [inline]
+ text_poke_bp_batch+0x8cd/0xb30 arch/x86/kernel/alternative.c:2357
+ text_poke_flush arch/x86/kernel/alternative.c:2470 [inline]
+ text_poke_finish+0x30/0x50 arch/x86/kernel/alternative.c:2477
+ arch_jump_label_transform_apply+0x1c/0x30 arch/x86/kernel/jump_label.c:146
+ static_key_enable_cpuslocked+0x136/0x260 kernel/jump_label.c:205
+ static_key_enable+0x1a/0x20 kernel/jump_label.c:218
+ toggle_allocation_gate+0xb5/0x250 mm/kfence/core.c:826
+ process_one_work kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
+ worker_thread+0x86d/0xd70 kernel/workqueue.c:3393
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+INFO: NMI handler (nmi_cpu_backtrace_handler) took too long to run: 1.739 msecs
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
