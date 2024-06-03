@@ -1,161 +1,132 @@
-Return-Path: <linux-kernel+bounces-199274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BCFC8D84C1
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:17:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A92FE8D84B5
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:17:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A7AFB21401
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 14:17:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A5751F23A36
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 14:17:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5177912FB2F;
-	Mon,  3 Jun 2024 14:17:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC7CC12E1DD;
+	Mon,  3 Jun 2024 14:17:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rLzUrvJN"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="f60kxw0t"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46FFC757E0
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 14:17:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A159C1D54B
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 14:17:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717424245; cv=none; b=YCpK2LyRx+qAMFZzd8DxKI9M/DK/8jagggb37kTCJuNAma22EjccpclU8RH4QZeGGWVHrgkx2DSM1CWzkW+8trPhK4gXWfqVkaSooTaReFAMwhNX1wdpnOmVnkhUBBrYSolDCv1j5hUUwfc/2neqno35/RfSlfsAJqSXsBsZUjM=
+	t=1717424237; cv=none; b=g9hOr9ytNlJex1h/xsqxKyj7ipVyla1vdxiBMuiKm460HDWHWE7r2y1X1LPc3wEWkNbv5vC++qYeTfsXByxE+40YKcFcU6s2D4z5D5J/rg1vfozxAZtu2+EXWRBBebrEoGBG+YsGIvxeH1JNK01M4908g9hEdYcuimpjTfYAVvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717424245; c=relaxed/simple;
-	bh=HKIk/fziZZuLGu58aSs/+3iSct4B2ZtBElSDQxdl5rg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Sn59ClksE7Y/E/n9SK/UK1dHj9P9dBPkxjL1FCIy60JT7FQsQw/yT4CjTaBu14CQsyU09ASki+JC4xThukPCmjb13oAT5tj8cEW4FERyimp2PmymxGRc5MEaj1dwrnvyL2jwTsPa8QZ2Id5aNHc4R/kaxBmgriBpFri2j4N7SjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rLzUrvJN; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a68b41ef3f6so199921366b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 07:17:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717424241; x=1718029041; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hX960fiFK86sEZShyroAmINX+eMw+I3MOlcUpYKxHw8=;
-        b=rLzUrvJNelG5IifUyrBqPAuZ27DXkGZdNLTVIgE2RqSs5A9CsgD5a0aaaIiKhm2CJ7
-         XSfqjyqppFk6v7c+gwrCBqMQoS1VNXZnknkjzOy6lORVOYwDrFYiGULyBnhFNNeiqSVM
-         ZtsYYdsil+io5g5BBgmWVjP4z3BMxEL7J8+gPKJ/9HdCDUV4IyE9094HWD/Bo/SrM1a8
-         fRPXzYAQHspXUsJcY1dNhiLnldU7POcqj89aVM7MPFMdukQSSPLkyqGgOdueDXL2AxHd
-         ya/iH/QiL7ZR1wMDVu/LdOm3wLpPYIYoDzqcaBmc+Uaoas13AP0GYWillEcgKkRA/G3K
-         6c5A==
+	s=arc-20240116; t=1717424237; c=relaxed/simple;
+	bh=mB42GeWihI/UnySxYDKsPF06FNhZIZVrKClUa6ZXkK4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qzsdJ3FueR0jhR0261A7bltNLoAaYNxBbcEX/EhPugrO9mzlmltPqKY7rlQJos4LzdT5hDUb6Fmt0Pcf8IzskAa59A315al8AtoSihly9NcSNtdPNaGy6FL/sANrXRaylWUXagsNYXeAVo5oHGVTeFJ2UU/OF2AK1qYKutuST3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=f60kxw0t; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717424234;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZLk9HWXXmuijfDLUc7HCk2M98+TmBAchEzBPpKKETig=;
+	b=f60kxw0twgK7HfJe8hMvgrKoQu7Ubjbse6TJ9FqJHRKsNPUXir0P2fe6qtByBV0Qxs2Dgw
+	GIA2dihdT2s8Et0lNdB/sxCG1utnkQhYXXQFzXuuT2KNRat6cHhb1pTQoyo7goP3HUAqnX
+	T1mem2eP3ICmSdKQiDbeo/HVVetBDt8=
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com
+ [209.85.166.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-258-9MTR0zIvMFu9AA5lLeyJtw-1; Mon, 03 Jun 2024 10:17:13 -0400
+X-MC-Unique: 9MTR0zIvMFu9AA5lLeyJtw-1
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7e212ee8008so556617139f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 07:17:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717424242; x=1718029042;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hX960fiFK86sEZShyroAmINX+eMw+I3MOlcUpYKxHw8=;
-        b=IObKN/cG3Hxe7/UhZ6nSvUZVwSre2de54WDEMQyArOiZXaq2d1HhA6GxzE21WfppC8
-         7PoXQBmI68A3kshnld51dtbSoo44Drv0pnyDITdgyXpB7UKhB7G5Ja8CVzEnEAplHHAn
-         KWO5x1hDOstPJsE76Af7teU99nmOCTQ4J38mmcPhfbbaJMVond9ScRad9Js6ZbDRRVtB
-         BGi9BklYjSjaKm6t684ThM8GNOM4I3lb2H9xlbQU05KGWBfDTYA4AKAzd5RRIdGNZN0f
-         momvnvMHtcsqErbxo2tsOVwIwNsh45ALmBP87r/NA4ihjFie5hIBvQd66dxjBsXpt+ws
-         8UaA==
-X-Forwarded-Encrypted: i=1; AJvYcCWSIOgPVD/XdfhPqn+w1BwQxfgD8QX3cCiQaHtkd8dID6J4WtMkKCD9amdhvEX/YohVLKpn4rngZwwqg9gpXUxV39axLnTFMCpLpHnx
-X-Gm-Message-State: AOJu0YwIaEmlYOdi+wszT86Oyewjw8ZGb04GwWdAQ1e5G90Hu3nJcjJo
-	Umzyp7WhQYReN3k1pvjEyGV50cIym0wFfZY7AsBpieRvgOtrIlCABctfkkqC3TkiYR6GNoeotdE
-	l+Bvf2ddN4r9MVEyAC6UCHr+aSvKx9kqMXinN
-X-Google-Smtp-Source: AGHT+IF2dM971g+G40jgbxNlCnWLD2vDmcmV06zLLO0GJhjluR0VCD0WMHMSdMpVvOnlSN5qx4LmzaU7Z6g2TUlHcjM=
-X-Received: by 2002:a17:907:914e:b0:a68:9621:a93c with SMTP id
- a640c23a62f3a-a689621ab6fmr371329366b.8.1717424241215; Mon, 03 Jun 2024
- 07:17:21 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717424232; x=1718029032;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZLk9HWXXmuijfDLUc7HCk2M98+TmBAchEzBPpKKETig=;
+        b=Tjepy4tymo6dbqUbBdjTo81497Gwty9aFFIve6XgQIUzcnSTh09YZyPpGxMn9fZTp4
+         bmyssDXyhBrHGwLIhmLy1hM7KXXC0FcFoP4NABCddRZXJCrUIbDuXELOPh4fPzZ7C0uW
+         fIrl1eLiigqVMkUeFaf1I8eMDFWObul9fpXfByedmBu7jKqq80lFykfP1GyQIF1gCZaA
+         QgYtRv+nlrDQKUDgsjv5Qdy6YS3k0IDrFo3/WF4/jyPH2rJ7gDhcwAk1iTPzKNdQq/gO
+         afKu5+OeGJYb5oSL2mxIa5IX3d1rW2RKUS13hkqCLIA+BV+uGlHjBkffGi+EDUw6IUjw
+         xn+A==
+X-Forwarded-Encrypted: i=1; AJvYcCX6HVX9licaYeOuDp+EXuIDQfJvBi5de/845d6PHQ2uBgBqNsziKqx73R+/Ndohzw8FMO5QP4jQZPsvHYnCwOD5RPmyz/TYfcMuGGcc
+X-Gm-Message-State: AOJu0Yw+7XqwSgmoybG2l1mTslJtd4rw0u56udls+LH3L+6X/0eQS8mV
+	XTnfAIWWxLvdq9uX/3spZI9AnAbPt/Yoykyv6e0EjjpTb2aCulK6YvvIiUHw/eu7lsHZ5r9bZ9W
+	th+B9xqcH+lr2llIiCHYXq8MfeHd8/Lg+tunVzVdbociw4VVPOFogrgKdFT5txA==
+X-Received: by 2002:a05:6602:1603:b0:7ea:f970:36d9 with SMTP id ca18e2360f4ac-7eaffeac9aemr1169893239f.12.1717424232576;
+        Mon, 03 Jun 2024 07:17:12 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFSK0JZd22UF2ZfugGWJ6NPGbhYoYtjjYlIjpAxF42ITiFy/yYyDhpybZ0dOX6ZyTHfgp5QxA==
+X-Received: by 2002:a05:6602:1603:b0:7ea:f970:36d9 with SMTP id ca18e2360f4ac-7eaffeac9aemr1169887339f.12.1717424231706;
+        Mon, 03 Jun 2024 07:17:11 -0700 (PDT)
+Received: from [10.0.0.71] (sandeen.net. [63.231.237.45])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4b5f1291571sm131336173.16.2024.06.03.07.17.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Jun 2024 07:17:11 -0700 (PDT)
+Message-ID: <7e8f8a6c-0f8e-4237-9048-a504c8174363@redhat.com>
+Date: Mon, 3 Jun 2024 09:17:10 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240530201616.1316526-1-almasrymina@google.com>
- <20240530201616.1316526-3-almasrymina@google.com> <ZlqzER_ufrhlB28v@infradead.org>
-In-Reply-To: <ZlqzER_ufrhlB28v@infradead.org>
-From: Mina Almasry <almasrymina@google.com>
-Date: Mon, 3 Jun 2024 07:17:05 -0700
-Message-ID: <CAHS8izMU_nMEr04J9kXiX6rJqK4nQKA+W-enKLhNxvK7=H2pgA@mail.gmail.com>
-Subject: Re: [PATCH net-next v10 02/14] net: page_pool: create hooks for
- custom page providers
-To: Christoph Hellwig <hch@infradead.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org, 
-	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
-	sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	linux-arch@vger.kernel.org, bpf@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-media@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Donald Hunter <donald.hunter@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Richard Henderson <richard.henderson@linaro.org>, Ivan Kokshaysky <ink@jurassic.park.msu.ru>, 
-	Matt Turner <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
-	Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer <hawk@kernel.org>, 
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Steffen Klassert <steffen.klassert@secunet.com>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, 
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan <shuah@kernel.org>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Pavel Begunkov <asml.silence@gmail.com>, David Wei <dw@davidwei.uk>, Jason Gunthorpe <jgg@ziepe.ca>, 
-	Yunsheng Lin <linyunsheng@huawei.com>, Shailend Chand <shailend@google.com>, 
-	Harshitha Ramamurthy <hramamurthy@google.com>, Shakeel Butt <shakeel.butt@linux.dev>, 
-	Jeroen de Borst <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] debugfs: ignore auto and noauto options if given
+To: Christian Brauner <brauner@kernel.org>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, David Howells
+ <dhowells@redhat.com>, linux-kernel@vger.kernel.org
+References: <20240522083851.37668-1-wsa+renesas@sang-engineering.com>
+ <20240524-glasfaser-gerede-fdff887f8ae2@brauner>
+ <20240527100618.np2wqiw5mz7as3vk@ninjato>
+ <20240527-pittoresk-kneipen-652000baed56@brauner>
+ <nr46caxz7tgxo6q6t2puoj36onat65pt7fcgsvjikyaid5x2lt@gnw5rkhq2p5r>
+ <20240603-holzschnitt-abwaschen-2f5261637ca8@brauner>
+Content-Language: en-US
+From: Eric Sandeen <sandeen@redhat.com>
+In-Reply-To: <20240603-holzschnitt-abwaschen-2f5261637ca8@brauner>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, May 31, 2024 at 10:35=E2=80=AFPM Christoph Hellwig <hch@infradead.o=
-rg> wrote:
->
-> On Thu, May 30, 2024 at 08:16:01PM +0000, Mina Almasry wrote:
-> > I'm unsure if the discussion has been resolved yet. Sending the series
-> > anyway to get reviews/feedback on the (unrelated) rest of the series.
->
-> As far as I'm concerned it is not.  I've not seen any convincing
-> argument for more than page/folio allocator including larger order /
-> huge page and dmabuf.
->
+On 6/3/24 8:31 AM, Christian Brauner wrote:
+> On Mon, Jun 03, 2024 at 09:24:50AM +0200, Wolfram Sang wrote:
+>>
+>>>>> Does that fix it for you?
+>>>>
+>>>> Yes, it does, thank you.
+>>>>
+>>>> Reported-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>>>> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>>>
+>>> Thanks, applied. Should be fixed by end of the week.
+>>
+>> It is in -next but not in rc2. rc3 then?
+> 
+> Yes, it wasn't ready when I sent the fixes for -rc2 as I just put it in
+> that day.
+> 
 
-Thanks Christoph, this particular patch series adds dmabuf, so I
-assume no objection there. I assume the objection is that you want the
-generic, extensible hooks removed.
+See my other reply, are you sure we should make this change? From a
+"keep the old behavior" POV maybe so, but this looks to me like a
+bug in busybox, passing fstab hint "options" like "auto" as actual mount
+options being the root cause of the problem. debugfs isn't uniquely
+affected by this behavior.
 
-To be honest, I don't think the hooks are an integral part of the
-design, and at this point I think we've argued for them enough. I
-think we can easily achieve the same thing with just raw if statements
-in a couple of places. We can always add the hooks if and only if we
-actually justify many memory providers.
+I'm not dead set against the change, just wanted to point this out.
 
-Any objections to me removing the hooks and directing to memory
-allocations via simple if statements? Something like (very rough
-draft, doesn't compile):
-
-diff --git a/net/core/page_pool.c b/net/core/page_pool.c
-index 92be1aaf18ccc..2cc986455bce6 100644
---- a/net/core/page_pool.c
-+++ b/net/core/page_pool.c
-@@ -557,8 +557,8 @@ netmem_ref page_pool_alloc_netmem(struct page_pool
-*pool, gfp_t gfp)
-                return netmem;
-
-        /* Slow-path: cache empty, do real allocation */
--       if (static_branch_unlikely(&page_pool_mem_providers) && pool->mp_op=
-s)
--               netmem =3D pool->mp_ops->alloc_pages(pool, gfp);
-+       if (unlikely(page_pool_is_dmabuf(pool)))
-+               netmem =3D mp_dmabuf_devmem_alloc_pages():
-        else
-                netmem =3D __page_pool_alloc_pages_slow(pool, gfp);
-        return netmem;
-
-
---=20
 Thanks,
-Mina
+-Eric
+
 
