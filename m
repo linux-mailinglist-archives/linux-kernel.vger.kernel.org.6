@@ -1,203 +1,267 @@
-Return-Path: <linux-kernel+bounces-199581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12FAC8D88EF
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 20:51:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 642A38D8867
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 20:06:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 924B51F25A8E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 18:51:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFB7D1C2208A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 18:05:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF8AA139CE3;
-	Mon,  3 Jun 2024 18:51:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ED16137C36;
+	Mon,  3 Jun 2024 18:05:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="T42Oqge3"
-Received: from mail-m1027.netease.com (mail-m1027.netease.com [154.81.10.27])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b="gKk3BG8Z"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CD51F9E9;
-	Mon,  3 Jun 2024 18:51:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=154.81.10.27
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 574FA136E1D
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 18:05:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717440672; cv=none; b=A1azOuSjrtaPawRfLR3HWxpenT8V486AyDQUH9VkPa4UB020S/8mX2sNRZTXjGMBr98OQHP5Vkah4GUyTFej6UGafVqZzzX1eM+hFzD760Ak8ChKv398Jt7YbzNlNklTHZbSRNSWe6A6IFjPHoxukCU8ogTBRR0OAEkdoMX31zQ=
+	t=1717437953; cv=none; b=KlyO5sb7ehkqFCa5YhMknEd/UTZMrZjRa6yBwsJY4ZvCne+u0AFFfEJsuTppmwqxMMNgY1E52L8JrMRvfc+PfsmKml+icUlMesMGZY+602zQZf66gtrFTZHeJ2RsqQuClB/G2YjClPy0Bec5M71yrkwKCWrPjyi7K189L2p1eNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717440672; c=relaxed/simple;
-	bh=Ao8aNrolKuITBT7pf5WIDPS3xcO1DyqIzHe1q+0Yd78=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fHqHt3cNQ7wxC2bSbtzF/siiF0bOCMlhCrrKtB7fUza6KA8AOOcVVasVGxEcLM0PZ02bW38WktytcCWpue4HO+bE9HamTX/rMuZfGqWewJD7EL/hfdIVS2d8x585/FAmFSmGfPDv34GBxBw70Z1ySTlW8zqiau7jcApzgwRYeAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=T42Oqge3; arc=none smtp.client-ip=154.81.10.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-DKIM-Signature: a=rsa-sha256;
-	b=T42Oqge3PEKYoJZXUq145DpeXsYrv+O067D/RS3vs6er2i0GA9sHqtmJ2luQq/kKwOfxPS4hp4qOSW9yZB4mpzODOhjHcaPwF8cFq4XoUwB2wrjOg9yyike18UrWIT+DWHb0ioInMIqp8AxgUWvkFrJYqgAxDQ7A7XzlBa2y6jI=;
-	c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=G3q+TZ2VuSr0ymGPTBfWfAom9TrDoxMifWuUO2g/VJI=;
-	h=date:mime-version:subject:message-id:from;
-Received: from [172.16.12.141] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTPA id A0E6F840DD8;
-	Mon,  3 Jun 2024 20:14:33 +0800 (CST)
-Message-ID: <ab0a6372-091b-4293-8907-a4b3ff4845c0@rock-chips.com>
-Date: Mon, 3 Jun 2024 20:14:17 +0800
+	s=arc-20240116; t=1717437953; c=relaxed/simple;
+	bh=UYSnHjuXzxeSHt5cSAE1g0Y2V5QexSEt9S9IHF3Ofys=;
+	h=Date:Subject:In-Reply-To:CC:From:To:Message-ID; b=Av9kZfg5PE1WkHFSP5qp9sCF5L5SORqaAarNijzv8JgMpws1epIR0UTZ+XQvOyzw0ZbJk2AIJB9vZS1I7XtEfUVbzy/Atu6KlXpE24Ccayn0E0aRo5E967CTtuMONrjXnNqVcAa+wzyl7cfnaSr+baalcnl8wl1lq0szVLnxbIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com; spf=pass smtp.mailfrom=dabbelt.com; dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b=gKk3BG8Z; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dabbelt.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1f44b45d6abso2208645ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 11:05:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dabbelt-com.20230601.gappssmtp.com; s=20230601; t=1717437950; x=1718042750; darn=vger.kernel.org;
+        h=message-id:to:from:cc:in-reply-to:subject:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=3jcvQIjFY4g0Y2/xyHIexxJ5t7wWhmDVa3Fa+B/xds4=;
+        b=gKk3BG8ZVMVE/Qpkzjg2LUpp1yBLrBQnOSDQXoOWtxmhpIJV5V7zJdOsj325fXaXcm
+         QSgXvgIKAv+iScx4NKxuQLBczBcUFpbZ32WzC3d8tW918vpjEfCzXg9gtyu+rBGua+/G
+         +ZGEOEo5pcabCwQZWE7iPp5VpVxgLXh5KGuOFcqQ5WRvMdffL/Q2mHv8EYbu3f4j7flc
+         d1Ea5aUkvNHyyijyTWKIsGGEMj+qWi6BPbtlxKSfyRhIUYIHjsy2oMbWRgUQRgdkhTHz
+         YZh2dEi/T6ciJbB7JzKq5i/Cn6+jFTIGseWT0hotQRqKBCEn0cyzG3LNyrPLmj3Zobt9
+         3Jew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717437950; x=1718042750;
+        h=message-id:to:from:cc:in-reply-to:subject:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3jcvQIjFY4g0Y2/xyHIexxJ5t7wWhmDVa3Fa+B/xds4=;
+        b=hySAbtZZ5Q8syMRHNraLEjcVSjxwZHXUwBpWTZWmf9VrSG+DtbiKjnMd/lGOI7BlZP
+         xEFdge7FKtEh2czkzv3IUzfScx4YNqZS/Pe+Darf6UVeEQHw622+b77hMVKT4PPWIAgb
+         X1dOTnrN31xZ86kccpBzCll95stlILD8u1g23YCoRQWceEP0FiBqN94L0pMJ7Y2wRcb5
+         t/zURniW2cgnuGVMOJo0L0RSImJFULUTntQUmJ8hPNkD6FCOqifFc1T7VkseIB0cZYDM
+         rF8eZttqW0SEm6P8RF331IZyBNOBAa1zBz+KxXhyghs6jjmPtb5REOvVp5NEYio9/Rc2
+         I6sw==
+X-Forwarded-Encrypted: i=1; AJvYcCVxmtYarrgX1s3ND04FQ2pFJwgT/pki3/UsVgDiGUtG+88sE+l0W9UvO/CrhXuUkWoc9c+W/vw/5BBw7Ce3yW+zx36970XwrDXD0HCA
+X-Gm-Message-State: AOJu0YybSMTWmiEIWBUb6ouHRIsp/EzTsK7i0h5kKszcj6m7mRRB75iW
+	gibGCtlzQcuvmx8IEOcSB0paOySvVWo7sr3ZwFKBH+jPkofhvOluSB/t7zijyzw=
+X-Google-Smtp-Source: AGHT+IHwQFobE9n13KkLj2Qbao87xXsCVoxnr+pQNLpQazxLn18PWQTeqJ84RfHijPQlzzGG5ZTI7g==
+X-Received: by 2002:a17:903:22cf:b0:1f6:7cc9:fb2c with SMTP id d9443c01a7336-1f67cc9fd61mr37287145ad.49.1717437949140;
+        Mon, 03 Jun 2024 11:05:49 -0700 (PDT)
+Received: from localhost ([192.184.165.199])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6323e3c33sm67722815ad.176.2024.06.03.11.05.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Jun 2024 11:05:47 -0700 (PDT)
+Date: Mon, 03 Jun 2024 11:05:47 -0700 (PDT)
+X-Google-Original-Date: Mon, 03 Jun 2024 11:05:41 PDT (-0700)
+Subject:     Re: [PATCH] RISC-V: hwprobe: Add MISALIGNED_PERF key
+In-Reply-To: <mhng-d3cf0bb4-4881-4f71-b1d1-6bb756d5c4ef@palmer-ri-x1c9>
+CC: cyy@cyyself.name, Evan Green <evan@rivosinc.com>, aou@eecs.berkeley.edu,
+  ajones@ventanamicro.com, andy.chiu@sifive.com, cleger@rivosinc.com,
+  Conor Dooley <conor.dooley@microchip.com>, costa.shul@redhat.com, corbet@lwn.net,
+  Paul Walmsley <paul.walmsley@sifive.com>, samitolvanen@google.com, linux-doc@vger.kernel.org,
+  linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+From: Palmer Dabbelt <palmer@dabbelt.com>
+To: jesse@rivosinc.com
+Message-ID: <mhng-16df84df-80ef-44a9-8f04-18d81b914b24@palmer-ri-x1c9>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/14] Add initial support for the Rockchip RK3588 HDMI TX
- Controller
-To: neil.armstrong@linaro.org,
- Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
- Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Sandy Huang <hjc@rock-chips.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?=
- <heiko@sntech.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Mark Yao <markyao0591@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- devicetree@vger.kernel.org, kernel@collabora.com,
- Alexandre ARNOUD <aarnoud@me.com>, Luis de Arquer <ldearquer@gmail.com>,
- Algea Cao <algea.cao@rock-chips.com>
-References: <20240601-b4-rk3588-bridge-upstream-v1-0-f6203753232b@collabora.com>
- <a4b22708-e85d-448a-8145-244b49bca053@linaro.org>
-Content-Language: en-US
-From: Andy Yan <andy.yan@rock-chips.com>
-In-Reply-To: <a4b22708-e85d-448a-8145-244b49bca053@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQkJJSlZKQ0sYTh4eQk9PQ0tVEwETFh
-	oSFyQUDg9ZV1kYEgtZQVlOQ1VJSVVMVUpKT1lXWRYaDxIVHRRZQVlPS0hVSk1PSU5JVUpLS1VKQl
-	kG
-X-HM-Tid: 0a8fde05d55303a4kunma0e6f840dd8
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Nxg6Fww6EzMCEjghC00pNxhP
-	NDkwFChVSlVKTEpMT0pNQ0xOQ0pNVTMWGhIXVRoVHwJVAhoVOwkUGBBWGBMSCwhVGBQWRVlXWRIL
-	WUFZTkNVSUlVTFVKSk9ZV1kIAVlBQ09PTTcG
 
-Hi Neil:
+On Mon, 03 Jun 2024 10:57:21 PDT (-0700), Palmer Dabbelt wrote:
+> On Wed, 29 May 2024 20:36:45 PDT (-0700), cyy@cyyself.name wrote:
+>> On 2024/5/30 02:26, Evan Green wrote:
+>>> RISCV_HWPROBE_KEY_CPUPERF_0 was mistakenly flagged as a bitmask in
+>>> hwprobe_key_is_bitmask(), when in reality it was an enum value. This
+>>> causes problems when used in conjunction with RISCV_HWPROBE_WHICH_CPUS,
+>>> since SLOW, FAST, and EMULATED have values whose bits overlap with
+>>> each other. If the caller asked for the set of CPUs that was SLOW or
+>>> EMULATED, the returned set would also include CPUs that were FAST.
+>>>
+>>> Introduce a new hwprobe key, RISCV_HWPROBE_KEY_MISALIGNED_PERF, which
+>>> returns the same values in response to a direct query (with no flags),
+>>> but is properly handled as an enumerated value. As a result, SLOW,
+>>> FAST, and EMULATED are all correctly treated as distinct values under
+>>> the new key when queried with the WHICH_CPUS flag.
+>>>
+>>> Leave the old key in place to avoid disturbing applications which may
+>>> have already come to rely on the broken behavior.
+>>>
+>>> Fixes: e178bf146e4b ("RISC-V: hwprobe: Introduce which-cpus flag")
+>>> Signed-off-by: Evan Green <evan@rivosinc.com>
+>>>
+>>> ---
+>>>
+>>>
+>>> Note: Yangyu also has a fix out for this issue at [1]. That fix is much
+>>> tidier, but comes with the slight risk that some very broken userspace
+>>> application may break now that FAST cpus are not included for the query
+>>> of which cpus are SLOW or EMULATED.
+>>
+>> Indeed. Since the value of FAST is 0b11, the SLOW and EMULATED are 0b10 and
+>> 0b01 respectively.
+>>
+>> When this key is treated as a bitmask and query with
+>> RISCV_HWPROBE_WHICH_CPUS if a CPU has a superset bitmask of the requested
+>> value on the requested key, it will remain in the CPU mask. Otherwise, the
+>> CPU will be clear in the CPU mask. But when a key is treated as a value, we
+>> will just do a comparison. if it is not equal, then the CPU will be clear
+>> in the CPU. That's why FAST cpus are included when querying with SLOW or
+>> EMULATED with RISCV_HWPROBE_KEY_CPUPERF_0 key now.
+>>
+>> For me, deprecating the original hwprobe key and introducing a new key
+>> would be a better solution than changing the behavior as my patch did.
+>
+> OK.  I don't have a strong feeling either way: if someone has code that
+> tries to read this as a btimask then it'd be broken, but it would
+> technically be following the docs.
+>
+> That said, we're relying on this as a pretty core userspace portability
+> construct.  So maybe the right answer here is to just be really strict
+> about compatibility and eat the pain when we make a mistake, just to
+> make sure we set the right example about not breaking stuff.
+>
+> So unless anyone's opposed, I'll pick this up for 6.11.
 
-On 6/3/24 16:55, Neil Armstrong wrote:
-> Hi Christian,
-> 
-> On 01/06/2024 15:12, Cristian Ciocaltea wrote:
->> The RK3588 SoC family integrates a Quad-Pixel (QP) variant of the
->> Synopsys DesignWare HDMI TX controller used in the previous SoCs.
->>
->> It is HDMI 2.1 compliant and supports the following features, among
->> others:
->>
-> .
-> 
-> ..
-> 
->> * SCDC I2C DDC access
->> * TMDS Scrambler enabling 2160p@60Hz with RGB/YCbCr4:4:4
->> * YCbCr4:2:0 enabling 2160p@60Hz at lower HDMI link speeds
->> * Multi-stream audio
->> * Enhanced Audio Return Channel (EARC)
-> -> Those features were already supported by the HDMI 2.0a compliant HW, just
-> list the _new_ features for HDMI 2.1
-> 
-> I did a quick review of your patchset and I don't understand why you need
-> to add a separate dw-hdmi-qp.c since you only need simple variants of the I2C
-> bus, infoframe and bridge setup.
-> 
-> Can you elaborate further ? isn't this Quad-Pixel (QP) TX controller version
-> detectable at runtime ?
-> 
-> I would prefer to keep a single dw-hdmi driver if possible.
+Though a few of us were talking and it looks like it's probably best to 
+just make this extensible and put the vector stuff in here too.  So 
+something like
 
+diff --git a/Documentation/arch/riscv/hwprobe.rst b/Documentation/arch/riscv/hwprobe.rst
+index df5045103e73..e74727e1b7c0 100644
+--- a/Documentation/arch/riscv/hwprobe.rst
++++ b/Documentation/arch/riscv/hwprobe.rst
+@@ -211,25 +211,30 @@ The following keys are defined:
+      :c:macro:`RISCV_HWPROBE_KEY_MISALIGNED_PERF`, but the key was mistakenly
+      classified as a bitmask rather than a value.
 
+-* :c:macro:`RISCV_HWPROBE_KEY_MISALIGNED_PERF`: An enum value describing the
+-  performance of misaligned scalar accesses on the selected set of processors.
++* :c:macro:`RISCV_HWPROBE_KEY_MISALIGNED_PERF`: An set of enum values describing the
++  performance of misaligned accesses on the selected set of processors.
 
-The QP HDMI controller is a completely different variant with totally different
-registers layout, see PATCH 13/14.
-I think make it a separate driver will be easier for development and maintenance.
-> 
-> Thanks,
-> Neil
-> 
+-  * :c:macro:`RISCV_HWPROBE_MISALIGNED_UNKNOWN`: The performance of misaligned
++  * :c:macro: `RISCV_HWPROBE_SCALAR_MISALIGNED_MASK`: Describes the performance
++    of scalar misaligned accesses.
++
++  * :c:macro:`RISCV_HWPROBE_SCALAR_MISALIGNED_UNKNOWN`: The performance of misaligned
+     accesses is unknown.
+
+-  * :c:macro:`RISCV_HWPROBE_MISALIGNED_EMULATED`: Misaligned accesses are
++  * :c:macro:`RISCV_HWPROBE_SCALAR_MISALIGNED_EMULATED`: Misaligned accesses are
+     emulated via software, either in or below the kernel.  These accesses are
+     always extremely slow.
+
+-  * :c:macro:`RISCV_HWPROBE_MISALIGNED_SLOW`: Misaligned accesses are slower
++  * :c:macro:`RISCV_HWPROBE_SCALAR_MISALIGNED_SLOW`: Misaligned accesses are slower
+     than equivalent byte accesses.  Misaligned accesses may be supported
+     directly in hardware, or trapped and emulated by software.
+
+-  * :c:macro:`RISCV_HWPROBE_MISALIGNED_FAST`: Misaligned accesses are faster
++  * :c:macro:`RISCV_HWPROBE_SCALAR_MISALIGNED_FAST`: Misaligned accesses are faster
+     than equivalent byte accesses.
+
+-  * :c:macro:`RISCV_HWPROBE_MISALIGNED_UNSUPPORTED`: Misaligned accesses are
++  * :c:macro:`RISCV_HWPROBE_SCALAR_MISALIGNED_UNSUPPORTED`: Misaligned accesses are
+     not supported at all and will generate a misaligned address fault.
+
++  * :c:macro: `RISCV_HWPROBE_VECTOR_MISALIGNED_MASK`: ... vector ...
++
+ * :c:macro:`RISCV_HWPROBE_KEY_ZICBOZ_BLOCK_SIZE`: An unsigned int which
+   represents the size of the Zicboz block in bytes.
+
+Jesse is looking at the vector misaligned stuff that's showing up on the 
+hardware, so I'll just hold off on this for a bit -- that way we can get 
+the vector stuff sorted out at the same time.
+
+>
+>>> I wanted to get this fix out so that
+>>> we have both as options, and can discuss. These fixes are mutually
+>>> exclusive, don't take both.
 >>
->> This is the last required component that needs to be supported in order
->> to enable the HDMI output functionality on the RK3588 based SBCs, such
->> as the RADXA Rock 5B. The other components are the Video Output
->> Processor (VOP2) and the Samsung IP based HDMI/eDP TX Combo PHY, for
->> which basic support has been already made available via [1] and [2],
->> respectively.
+>> It's better to note this strange behavior on
+>> Documentation/arch/riscv/hwprobe.rst so users can quickly understand the
+>> differences on the behavior of these two keys.
 >>
->> The patches are grouped as follows:
->> * PATCH 1..7: DW HDMI TX driver refactor to minimize code duplication in
->>    the new QP driver (no functional changes intended)
+>> The C code part looks good to me.
 >>
->> * PATCH 8..11: Rockchip DW HDMI glue driver cleanup/improvements (no
->>    functional changes intended)
->>
->> * PATCH 12..13: The new DW HDMI QP TX driver reusing the previously
->>    exported functions and structs from existing DW HDMI TX driver
->>
->> * PATCH 14: Rockchip DW HDMI glue driver update to support RK3588 and
->>    make use of DW HDMI QP TX
->>
->> They provide just the basic HDMI support for now, i.e. RGB output up to
->> 4K@60Hz, without audio, CEC or any of the HDMI 2.1 specific features.
->> Also note the vop2 driver is currently not able to properly handle all
->> display modes supported by the connected screens, e.g. it doesn't cope
->> with non-integer refresh rates.
->>
->> A possible workaround consists of enabling the display controller to
->> make use of the clock provided by the HDMI PHY PLL. This is still work
->> in progress and will be submitted later, as well as the required DTS
->> updates.
->>
->> To facilitate testing and experimentation, all HDMI output related
->> patches, including those part of this series, are available at [3].
->> So far I could only verify this on the RADXA Rock 3A and 5B boards.
->>
->> Thanks,
->> Cristian
->>
->> [1]: 5a028e8f062f ("drm/rockchip: vop2: Add support for rk3588")
->> [2]: 553be2830c5f ("phy: rockchip: Add Samsung HDMI/eDP Combo PHY driver")
->> [3]: https://gitlab.collabora.com/hardware-enablement/rockchip-3588/linux/-/commits/rk3588-hdmi-bridge-v6.10-rc1
->>
->> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
->> ---
->> Cristian Ciocaltea (14):
->>        drm/bridge: dw-hdmi: Simplify clock handling
->>        drm/bridge: dw-hdmi: Add dw-hdmi-common.h header
->>        drm/bridge: dw-hdmi: Commonize dw_hdmi_i2c_adapter()
->>        drm/bridge: dw-hdmi: Factor out AVI infoframe setup
->>        drm/bridge: dw-hdmi: Factor out vmode setup
->>        drm/bridge: dw-hdmi: Factor out hdmi_data_info setup
->>        drm/bridge: dw-hdmi: Commonize dw_hdmi_connector_create()
->>        drm/rockchip: dw_hdmi: Use modern drm_device based logging
->>        drm/rockchip: dw_hdmi: Simplify clock handling
->>        drm/rockchip: dw_hdmi: Use devm_regulator_get_enable()
->>        drm/rockchip: dw_hdmi: Drop superfluous assignments of mpll_cfg, cur_ctr and phy_config
->>        dt-bindings: display: rockchip,dw-hdmi: Add compatible for RK3588
->>        drm/bridge: synopsys: Add DW HDMI QP TX controller driver
->>        drm/rockchip: dw_hdmi: Add basic RK3588 support
->>
->>   .../display/rockchip/rockchip,dw-hdmi.yaml         | 127 +++-
->>   drivers/gpu/drm/bridge/synopsys/Makefile           |   2 +-
->>   drivers/gpu/drm/bridge/synopsys/dw-hdmi-common.h   | 179 +++++
->>   drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.c       | 787 +++++++++++++++++++
->>   drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.h       | 831 +++++++++++++++++++++
->>   drivers/gpu/drm/bridge/synopsys/dw-hdmi.c          | 353 +++------
->>   drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c        | 351 +++++++--
->>   include/drm/bridge/dw_hdmi.h                       |   8 +
->>   8 files changed, 2290 insertions(+), 348 deletions(-)
->> ---
->> base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
->> change-id: 20240601-b4-rk3588-bridge-upstream-a27baff1b8fc
->>
-> 
+>>>
+>>> [1] https://lore.kernel.org/linux-riscv/tencent_01F8E0050FB4B11CC170C3639E43F41A1709@qq.com/
+>>>
+>>> ---
+>>> Documentation/arch/riscv/hwprobe.rst | 8 ++++++--
+>>> arch/riscv/include/asm/hwprobe.h | 2 +-
+>>> arch/riscv/include/uapi/asm/hwprobe.h | 1 +
+>>> arch/riscv/kernel/sys_hwprobe.c | 1 +
+>>> 4 files changed, 9 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/Documentation/arch/riscv/hwprobe.rst b/Documentation/arch/riscv/hwprobe.rst
+>>> index 204cd4433af5..616ee372adaf 100644
+>>> --- a/Documentation/arch/riscv/hwprobe.rst
+>>> +++ b/Documentation/arch/riscv/hwprobe.rst
+>>> @@ -192,8 +192,12 @@ The following keys are defined:
+>>> supported as defined in the RISC-V ISA manual starting from commit
+>>> d8ab5c78c207 ("Zihintpause is ratified").
+>>>
+>>> -* :c:macro:`RISCV_HWPROBE_KEY_CPUPERF_0`: A bitmask that contains performance
+>>> - information about the selected set of processors.
+>>> +* :c:macro:`RISCV_HWPROBE_KEY_CPUPERF_0`: Deprecated. Returns similar values to
+>>> + :c:macro:`RISCV_HWPROBE_KEY_MISALIGNED_PERF`, but the key was mistakenly
+>>> + classified as a bitmask rather than a value.
+>>> +
+>>> +* :c:macro:`RISCV_HWPROBE_KEY_MISALIGNED_PERF`: An enum value describing the
+>>> + performance of misaligned scalar accesses on the selected set of processors.
+>>>
+>>> * :c:macro:`RISCV_HWPROBE_MISALIGNED_UNKNOWN`: The performance of misaligned
+>>> accesses is unknown.
+>>> diff --git a/arch/riscv/include/asm/hwprobe.h b/arch/riscv/include/asm/hwprobe.h
+>>> index 630507dff5ea..150a9877b0af 100644
+>>> --- a/arch/riscv/include/asm/hwprobe.h
+>>> +++ b/arch/riscv/include/asm/hwprobe.h
+>>> @@ -8,7 +8,7 @@
+>>>
+>>> #include <uapi/asm/hwprobe.h>
+>>>
+>>> -#define RISCV_HWPROBE_MAX_KEY 6
+>>> +#define RISCV_HWPROBE_MAX_KEY 7
+>>>
+>>> static inline bool riscv_hwprobe_key_is_valid(__s64 key)
+>>> {
+>>> diff --git a/arch/riscv/include/uapi/asm/hwprobe.h b/arch/riscv/include/uapi/asm/hwprobe.h
+>>> index dda76a05420b..bc34e33fef23 100644
+>>> --- a/arch/riscv/include/uapi/asm/hwprobe.h
+>>> +++ b/arch/riscv/include/uapi/asm/hwprobe.h
+>>> @@ -68,6 +68,7 @@ struct riscv_hwprobe {
+>>> #define RISCV_HWPROBE_MISALIGNED_UNSUPPORTED (4 << 0)
+>>> #define RISCV_HWPROBE_MISALIGNED_MASK (7 << 0)
+>>> #define RISCV_HWPROBE_KEY_ZICBOZ_BLOCK_SIZE 6
+>>> +#define RISCV_HWPROBE_KEY_MISALIGNED_PERF 7
+>>> /* Increase RISCV_HWPROBE_MAX_KEY when adding items. */
+>>>
+>>> /* Flags */
+>>> diff --git a/arch/riscv/kernel/sys_hwprobe.c b/arch/riscv/kernel/sys_hwprobe.c
+>>> index 969ef3d59dbe..c8b7d57eb55e 100644
+>>> --- a/arch/riscv/kernel/sys_hwprobe.c
+>>> +++ b/arch/riscv/kernel/sys_hwprobe.c
+>>> @@ -208,6 +208,7 @@ static void hwprobe_one_pair(struct riscv_hwprobe *pair,
+>>> break;
+>>>
+>>> case RISCV_HWPROBE_KEY_CPUPERF_0:
+>>> + case RISCV_HWPROBE_KEY_MISALIGNED_PERF:
+>>> pair->value = hwprobe_misaligned(cpus);
+>>> break;
+>>>
 
