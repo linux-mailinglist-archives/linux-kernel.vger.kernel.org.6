@@ -1,147 +1,93 @@
-Return-Path: <linux-kernel+bounces-198660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9AFC8D7BC7
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 08:42:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4FAB8D7BC8
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 08:42:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20A9FB219D0
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 06:41:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 986851F22559
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 06:42:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 311C14084D;
-	Mon,  3 Jun 2024 06:39:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DF6D7D096;
+	Mon,  3 Jun 2024 06:39:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="Wj3ii0ir"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F6Wjim7A"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFD773D0D9
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 06:39:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94B5F364A0
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 06:39:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717396789; cv=none; b=QjuU41sCDId4LN7bwWps/klk/zQpHrQauxH9r0SRlr5Sk9lt3LuM4X5Q9ITQpPfwyWE9X4x8WIjMHwszmNN+REc3n1tIwRDBgUAdfGKLZS7RXRkmcVK4ptioyFfOtR8BmCtN/xnD7GpOWnBxJDCdu0I++EINQv9hcHr0z7MMSBc=
+	t=1717396797; cv=none; b=DNQzrArbLj0UDHpXnbBdWZgeVvv5jYobm/7m9oddYvsKzCENIrciT8Zo4vTMOmTnlMxJWntXGS7coSgoQj1ckAHUoa2+L5TjXZgLJtpA1w4uVUSyHGW+6cPSJsVmlEp9NkfdH7jQtcWMafTuRUf76ZXxrlDzXVw9N/t0CP9r0gU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717396789; c=relaxed/simple;
-	bh=6zIG1+ce+MFr3YKcNcxLW9ehBTfd0YUfDO7c/QJPUfc=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=JPUmgOzfZTy8iV2fj23uMBa5m3SofTI8BDZECP1fbJ+rXWITSQ4w76vD8v4S0zYmGP+XhtZVHWSM1mJxWYrWppxiHx4Dj0TIlp1Y0cwB24rvx2qlsgRG5eBm4bh7UojPK/4kJuUKalpdWvciqAEov6H62gKeJEUCGAdjRkFNim8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=Wj3ii0ir; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-57a196134d1so4431026a12.2
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2024 23:39:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1717396785; x=1718001585; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4/kSWlsZgItMKs0n3WD4Nrf7fVlEdWxgIbQ1jzkl5d4=;
-        b=Wj3ii0irnq4Z9rAan3f6ck/rRUr308vMh2w808luWnsz6kErhJ/vcaf+q+QxQWco5U
-         hWbguK9Ich9Ac+qIwNqGoqqxCbKelhpqB42vpR/mrTX5/YWx24FnOcWe6ePzrhJRsW/m
-         c70RfESusN8DRhTcchefkuQp+gQ6vQtBd7R1zAIu+NvQZ2dhskmquek2SJ/YqUKdm+c0
-         9waOd4iKez4bMc4qfaMOeWtQIG66tcAQz3zChCkn7lUD+RPcxDndj8ZK9TLum3u3JQzw
-         gs8ksD2bus8gXQZbv7i+Lt9kVpokJqnMpPrP4xB9Vyd1tjDFQhhriDd/gOGs5VGnp8df
-         uRWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717396785; x=1718001585;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=4/kSWlsZgItMKs0n3WD4Nrf7fVlEdWxgIbQ1jzkl5d4=;
-        b=Smz9e6ifvD/1ITyv5UwD9zfd13PDqjeM94Dszyw/AYH1rH6WC9NIOuzK38ieYgF7cw
-         UraAVQ4SoTrD7MaeFBlW9s9osfDuSUDHOKECpR4rTrVWp6LzN+IJBQRJQIrdxwAThM2W
-         uqXWb3TLB+xR88u/kMTcal5EI3i6fVJ7gFLEB47mxRKeVVpPrEhrc7ZnLANJtal2x7l2
-         T3a8p6X6AVpg5QgmnSuuvB8EhcpfY09b0CqMZ7LgM+aiG7V2+BNWyiyt0aClIJiRFKHD
-         PPpeEag/unOJdFlGJeLELeQ4NHgP51WP+IitKHRE1OwJr5GiPQNFuTbAi9lC/GixTUwG
-         KwEA==
-X-Forwarded-Encrypted: i=1; AJvYcCUKhTMEBaOIFgaWHJDSR8el0RKZKmy/kMfljXpRlowjiGL/GOyQMw3FQROezdTcqdfzDoDimgIApSIUheaesVxC9XmXcywFQNRGiXvS
-X-Gm-Message-State: AOJu0YziKZD+c+Hk2rL0cxaZda5CEqQZBGx8uIBCUBhQJiNtGyOTxNUp
-	yHMkBduIBMOxwLXcUDn6NZ8LsVXKXu4SL4XBQ7ADOeO7ZyeCJSUXncokN2XB2p8=
-X-Google-Smtp-Source: AGHT+IHPI42I+wiDmrMQUuBnkODfjkjRd3F/AhQNQPxFvtXVyYyNTCx5IjDc+RZbp/mfvvWlLxUi5w==
-X-Received: by 2002:a17:906:15db:b0:a68:a2d7:3872 with SMTP id a640c23a62f3a-a68a2d73920mr313157566b.45.1717396785032;
-        Sun, 02 Jun 2024 23:39:45 -0700 (PDT)
-Received: from localhost (144-178-202-138.static.ef-service.nl. [144.178.202.138])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a68e2d1333fsm234930866b.219.2024.06.02.23.39.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 02 Jun 2024 23:39:44 -0700 (PDT)
+	s=arc-20240116; t=1717396797; c=relaxed/simple;
+	bh=yMVHDPZTk2KiIA4M5duiDTFOwyQCPZJ4+zZKOyjLkCQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cT4zevaL+Fd9yGmVByEk4W3YHflun7J164NvdDF+7yHU3lVfPpHFL/9gzLFQrm7fESJI5Jf2WaDtfWdJiK53TzWIKalJOPquntdW8DnxpWgE76X55wcwZPr7AOoe2D03FX/nQe4xhscmYz/n9E3vfNNknZ5nyXIrWKByOxe90x8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F6Wjim7A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A936DC2BD10;
+	Mon,  3 Jun 2024 06:39:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717396797;
+	bh=yMVHDPZTk2KiIA4M5duiDTFOwyQCPZJ4+zZKOyjLkCQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=F6Wjim7ABkZMuZmkWslsUYfIjuqeMGoOQ5VHlSs7N4rpNsgE09DypCXPvJb51g3kt
+	 UoBg/grrCvrX7PT5SkbG/8O50M9pL0eIRFfrGY8TKPkeVduPouTL4t2a+AcI+mj7+Y
+	 +cgwyWZKKEaE3Njox0+uxrz5kIMd+r/AnF/n3bWnZE2feQquAY7bTxaZPTJ45uTYGS
+	 +c9YAe77T8hz9SvEtxtuv5ibtGbk+f8yIYJVSbPzh20nsi7XOeTScdv+xFA34iz/2Y
+	 3mPkXf++5nxkgtDbHzvjuxAMetR3bQ4cqdhOfnF3T1vrdHM7IUz0u7jM8lsqsfI3Sb
+	 Mj5y4ewYMOIVg==
+Message-ID: <b0c9f3dc-417a-4891-bdf0-25b849828e3b@kernel.org>
+Date: Mon, 3 Jun 2024 14:39:53 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 03 Jun 2024 08:39:44 +0200
-Message-Id: <D1Q6CMZM78VI.ABYGRRV5E61B@fairphone.com>
-Cc: <~postmarketos/upstreaming@lists.sr.ht>, <phone-devel@vger.kernel.org>,
- "Stanimir Varbanov" <stanimir.varbanov@linaro.org>,
- <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Krzysztof
- Kozlowski" <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v2] media: dt-bindings: qcom,sc7280-venus: Allow one
- IOMMU entry
-From: "Luca Weiss" <luca.weiss@fairphone.com>
-To: "Luca Weiss" <luca.weiss@fairphone.com>, "Bjorn Andersson"
- <andersson@kernel.org>, "Konrad Dybcio" <konrad.dybcio@linaro.org>,
- "Stanimir Varbanov" <stanimir.k.varbanov@gmail.com>, "Vikash Garodia"
- <quic_vgarodia@quicinc.com>, "Bryan O'Donoghue"
- <bryan.odonoghue@linaro.org>, "Mauro Carvalho Chehab" <mchehab@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>
-X-Mailer: aerc 0.17.0
-References: <20240412-sc7280-venus-bindings-v2-1-48ca8c2ec532@fairphone.com>
-In-Reply-To: <20240412-sc7280-venus-bindings-v2-1-48ca8c2ec532@fairphone.com>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] f2fs: use new ioprio Macro to get ckpt thread ioprio data
+To: Zhiguo Niu <zhiguo.niu@unisoc.com>, jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+ niuzhiguo84@gmail.com, ke.wang@unisoc.com
+References: <1717146645-18829-1-git-send-email-zhiguo.niu@unisoc.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <1717146645-18829-1-git-send-email-zhiguo.niu@unisoc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri Apr 12, 2024 at 4:19 PM CEST, Luca Weiss wrote:
-> Some SC7280-based boards crash when providing the "secure_non_pixel"
-> context bank, so allow only one iommu in the bindings also.
-
-Hi all,
-
-This patch is still pending and not having it causes dt validation
-warnings for some qcom-sc7280 boards.
-
-Regards
-Luca
-
->
-> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+On 2024/5/31 17:10, Zhiguo Niu wrote:
+> Use new Macro IOPRIO_PRIO_LEVEL to get ckpt thread ioprio data(level),
+> it is more accurate and consisten with the way setting ckpt thread
+> ioprio(IOPRIO_PRIO_VALUE(class, data)).
+> 
+> Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
 > ---
-> Reference:
-> https://lore.kernel.org/linux-arm-msm/20231201-sc7280-venus-pas-v3-2-bc13=
-2dc5fc30@fairphone.com/
-> ---
-> Changes in v2:
-> - Pick up tags
-> - Otherwise just a resend, v1 was sent in January
-> - Link to v1: https://lore.kernel.org/r/20240129-sc7280-venus-bindings-v1=
--1-20a9ba194c60@fairphone.com
-> ---
->  Documentation/devicetree/bindings/media/qcom,sc7280-venus.yaml | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/Documentation/devicetree/bindings/media/qcom,sc7280-venus.ya=
-ml b/Documentation/devicetree/bindings/media/qcom,sc7280-venus.yaml
-> index 8f9b6433aeb8..10c334e6b3dc 100644
-> --- a/Documentation/devicetree/bindings/media/qcom,sc7280-venus.yaml
-> +++ b/Documentation/devicetree/bindings/media/qcom,sc7280-venus.yaml
-> @@ -43,6 +43,7 @@ properties:
->        - const: vcodec_bus
-> =20
->    iommus:
-> +    minItems: 1
->      maxItems: 2
-> =20
->    interconnects:
->
-> ---
-> base-commit: 9ed46da14b9b9b2ad4edb3b0c545b6dbe5c00d39
-> change-id: 20240129-sc7280-venus-bindings-6e62a99620de
->
-> Best regards,
+>   fs/f2fs/sysfs.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+> index 72676c5..55d46da 100644
+> --- a/fs/f2fs/sysfs.c
+> +++ b/fs/f2fs/sysfs.c
+> @@ -340,7 +340,7 @@ static ssize_t f2fs_sbi_show(struct f2fs_attr *a,
+>   	if (!strcmp(a->attr.name, "ckpt_thread_ioprio")) {
+>   		struct ckpt_req_control *cprc = &sbi->cprc_info;
+>   		int class = IOPRIO_PRIO_CLASS(cprc->ckpt_thread_ioprio);
+> -		int data = IOPRIO_PRIO_DATA(cprc->ckpt_thread_ioprio);
+> +		int data = IOPRIO_PRIO_LEVEL(cprc->ckpt_thread_ioprio);
+
+So, can you please use 'level' to instead 'data' in f2fs_sbi_show() and
+__sbi_store()?
+
+Thanks,
+
+>   
+>   		if (class != IOPRIO_CLASS_RT && class != IOPRIO_CLASS_BE)
+>   			return -EINVAL;
 
 
