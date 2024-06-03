@@ -1,33 +1,34 @@
-Return-Path: <linux-kernel+bounces-199819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88A3C8FA667
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 01:25:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9B948FA669
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 01:25:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14CC01F21C49
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 23:25:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18BF11F235F0
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 23:25:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB54A13D29B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4FC213D2A4;
 	Mon,  3 Jun 2024 23:24:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nkm/6N/z";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="/EjlJVvg"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oghpHSL8";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nfih29kq"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A00983CD8;
-	Mon,  3 Jun 2024 23:24:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59FC483CD6
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 23:24:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717457098; cv=none; b=ZUu9dx42BmMJO99SUzrYEf3gcazN0sx/7VxXs+Vig3gCZ+8j2PI/kFUmS3krP5Kflb9iokX8eHK/CF8W14q99phCPx7bAuiG3QeYzPpoY3uDJ4dWP2oF526Kd2Fgufl4IRdjCFKe776+o9OAKSg96Sa6QV8upVuedeMy0jQ6rLk=
+	t=1717457098; cv=none; b=BnFI+ldy/U4X+3MXH0aXgrDpdUBPLbW06QDtpyK5gFJSQCbMQFsQizllMZLNR/sgG7AtPI49n8snsipQXOLPA902L+SvT1XLs+50DiCIFwznc3OJFtTWEHgYRTX0NDFWhtqxmgCVDqwy8C78C9R54deKOTsAcI4SNp1CNU9C2jI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1717457098; c=relaxed/simple;
-	bh=xEijcAO2AhGEVfNLJuthJe2r8sxc48zcP+LRMU6em88=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GJqWrzhDHA4rB1iRcQojPTF6mkIba633EOPnrq5WcE1x1po94bRUS9qJ6/CAH2JVcfAloJmd7Uhgcw4jtU4/7YvusDZ7kNxtlutXP/Z+EQOM4I5Xci9vd0/lfQAwPTlkbfcfEbskQ4tuQt8g+KXfSwbZEbNg/UEJ7YLgqVdtUOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nkm/6N/z; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=/EjlJVvg; arc=none smtp.client-ip=193.142.43.55
+	bh=cECa+3SjdlOTE2gX/SC6RHnlgdcMpIyIzBaHEsoCoOg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=dwe+wQqqVRlI00fELzY9FbXyQN6VgZgtY2eQ4swd0TbzgJ/YhhvLwvu0JyyoL493gd4/VxVh5Z3HIDtdN1PA2/9bm4f3IqgAKJaWhAQisDO+B28QIIJcUIB5oLflbZuaI8HIjjU2YTsSr9FvCo8w2DsjfNY99c91hJuoi9PpGNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oghpHSL8; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nfih29kq; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: John Ogness <john.ogness@linutronix.de>
@@ -35,42 +36,36 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020; t=1717457094;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=LeID2lqZO2NfvUDbTydXHW7F5KBd3prAyYph5If2D2k=;
-	b=nkm/6N/zwJHmyPt6qIc5rDHq38x2vgLf4FBqzcs5Od8hS7gRsAorY6cIRVEWI7iuLRMfqm
-	n1XN2ogwQ+5Pr3NcoqsHiJcLGNGWiFjTO6sbTnmf5rPIuno98QCV3ytdXHJOJ9u7x4coQl
-	wmzsAf7n7DiVN27PNt24lJBOb8kJTtj7wQaE+XMXMMUza4irxMjbC5Cz2JvrMBLlav2Qno
-	ALabOpQCHumIWbhN+70/fDh8VO3TVyuJu9Q7Hh7rt399lAQXFB6WKfUCp4XPeUJ2YwIQ2A
-	amMVUigMEf6GH5PQJE01w73Fa/11KSthkG86fNkpNldw8dEfdPcXE+fxVsCGjg==
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MagFz0dSmih1ouwvcZhD1e4AjKfdqWGnWa+U9V8bzUA=;
+	b=oghpHSL8Md05RhYJnw+s1/rEBskGHpRL4CtGg+kzqFfDlUBPBUbXvFvvl0np/HA07I5S7o
+	Od0/3yUeJPufENXQ8eWiiHYzTJRQvXsx1XIi/wsw2i5aD3sCVRhDkEDUftJDwOtU5i9/aS
+	eefYElhpq6uQD0ikIcd11yH9w5a9KhBypdBBiAnvKMfC1suHySxT0cggNRbhGll2+zrDH+
+	RdNvJDsSXEypdV3NJ1lHJxAvFDCEIcJJIwevnlxLM0zRWiq6YGoCdDHuVc9wuCT/Jcoqc2
+	99/UJZIr7Wky6r4Xob7JxbxrXmTLMnt3k8rThBBHTzlNu38voBNEUs5W923DTg==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1717457094;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=LeID2lqZO2NfvUDbTydXHW7F5KBd3prAyYph5If2D2k=;
-	b=/EjlJVvgqFM8pAjjycMP/r4jHdn7kuIzmk8rkU2X/AM16jN+Sz775gDOBWcLZxA/CTkBUd
-	90+xxfvxfd54iwAw==
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MagFz0dSmih1ouwvcZhD1e4AjKfdqWGnWa+U9V8bzUA=;
+	b=nfih29kqBhIy6PnEMCliMKzgUbUGMU03eZS9z2x6RzAbHs4eVTWrXtMSWx6XjxW67QOxEh
+	zXbOOy2vhPeJUOBQ==
 To: Petr Mladek <pmladek@suse.com>
 Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
 	Steven Rostedt <rostedt@goodmis.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	linux-kernel@vger.kernel.org,
-	Jonathan Corbet <corbet@lwn.net>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
 	Sreenath Vijayan <sreenath.vijayan@sony.com>,
 	Shimoyashiki Taichi <taichi.shimoyashiki@sony.com>,
-	Tomas Mudrunka <tomas.mudrunka@gmail.com>,
-	linux-doc@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	"Borislav Petkov (AMD)" <bp@alien8.de>,
-	Xiongwei Song <xiongwei.song@windriver.com>
-Subject: [PATCH printk v2 00/18] add threaded printing + the rest
-Date: Tue,  4 Jun 2024 01:30:35 +0206
-Message-Id: <20240603232453.33992-1-john.ogness@linutronix.de>
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH printk v2 01/18] printk: Add function to replay kernel log on consoles
+Date: Tue,  4 Jun 2024 01:30:36 +0206
+Message-Id: <20240603232453.33992-2-john.ogness@linutronix.de>
+In-Reply-To: <20240603232453.33992-1-john.ogness@linutronix.de>
+References: <20240603232453.33992-1-john.ogness@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,111 +74,167 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hi,
+From: Sreenath Vijayan <sreenath.vijayan@sony.com>
 
-This is v2 of a series to implement threaded console printing as well
-as some other minor pieces (such as proc and sysfs support). This
-series is only a subset of the original v1 [0]. In particular, this
-series represents patches 11, 12, 15 of the v1 series. For information
-about the motivation of the nbcon consoles, please read the cover
-letter of v1.
+Add a generic function console_replay_all() for replaying
+the kernel log on consoles, in any context. It would allow
+viewing the logs on an unresponsive terminal via sysrq.
 
-This series provides the remaining pieces of the printk rework. All
-other components are either already mainline or are currently in
-linux-next. In particular this series does:
+Reuse the existing code from console_flush_on_panic() for
+resetting the sequence numbers, by introducing a new helper
+function __console_rewind_all(). It is safe to be called
+under console_lock().
 
-- Implement dedicated printing threads per nbcon console.
+Try to acquire lock on the console subsystem without waiting.
+If successful, reset the sequence number to oldest available
+record on all consoles and call console_unlock() which will
+automatically flush the messages to the consoles.
 
-- Implement "threadprintk" boot argument to force threading of legacy
-  consoles.
+Suggested-by: John Ogness <john.ogness@linutronix.de>
+Suggested-by: Petr Mladek <pmladek@suse.com>
+Signed-off-by: Shimoyashiki Taichi <taichi.shimoyashiki@sony.com>
+Reviewed-by: John Ogness <john.ogness@linutronix.de>
+Signed-off-by: Sreenath Vijayan <sreenath.vijayan@sony.com>
+Link: https://lore.kernel.org/r/90ee131c643a5033d117b556c0792de65129d4c3.1710220326.git.sreenath.vijayan@sony.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ include/linux/printk.h |  6 +++-
+ kernel/printk/printk.c | 77 +++++++++++++++++++++++++++++-------------
+ 2 files changed, 58 insertions(+), 25 deletions(-)
 
-- Implement nbcon support for proc and sysfs console-related files.
-
-- Provide a new helper function nbcon_reacquire() to allow nbcon
-  console drivers to reacquire ownership.
-
-Note that this series does *not* provide an nbcon console driver. That
-will come in a follow-up series.
-
-Also note that the first 3 patches of the series are either already
-mainline or are queued for 6.11. They are included in this series for
-completeness when applied to the printk for-next branch.
-
-Much has changed since v1 and the patches no longer correlate
-1:1. Here is an attempt to list the changes:
-
-- Implement a special dedicated thread to force threading of legacy
-  console drivers.
-
-- Add "threadprintk" boot argument to force threading of legacy
-  console drivers. (For PREEMPT_RT, this is automatically enabled.)
-
-- Add sparse notation for console_srcu_read_lock/unlock().
-
-- Define a dedicated wait queue for the legacy thread.
-
-- Stop threads on shutdown/reboot for a clean transition to atomic
-  printing.
-
-- Print a replay message when a higher priority printer context takes
-  over another printer context.
-
-- Reset lockdep context for legacy printing on !PREEMPT_RT to avoid
-  false positive lockdep splats.
-
-- Use write_thread() callback if printing from console_flush_all() and
-  @do_cond_resched is 1.
-
-- Do not allocate separate pbufs for printing threads. Use the same
-  pbufs that the atomic printer uses.
-
-- Wake printing threads without considering nbcon lock state.
-
-- Implement rcuwait_has_sleeper() to check for waiting tasks instead
-  of using a custom atomic variable @kthread_waiting.
-
-John Ogness
-
-[0] https://lore.kernel.org/lkml/20230302195618.156940-1-john.ogness@linutronix.de
-
-John Ogness (13):
-  printk: Atomic print in printk context on shutdown
-  printk: nbcon: Add context to console_is_usable()
-  printk: nbcon: Stop threads on shutdown/reboot
-  printk: nbcon: Start printing threads
-  printk: Provide helper for message prepending
-  printk: nbcon: Show replay message on takeover
-  printk: Add kthread for all legacy consoles
-  proc: consoles: Add notation to c_start/c_stop
-  proc: Add nbcon support for /proc/consoles
-  tty: sysfs: Add nbcon support for 'active'
-  printk: Provide threadprintk boot argument
-  printk: Avoid false positive lockdep report for legacy printing
-  printk: nbcon: Add function for printers to reacquire ownership
-
-Sreenath Vijayan (3):
-  printk: Add function to replay kernel log on consoles
-  tty/sysrq: Replay kernel log messages on consoles via sysrq
-  printk: Rename console_replay_all() and update context
-
-Thomas Gleixner (2):
-  printk: nbcon: Introduce printing kthreads
-  printk: nbcon: Add printer thread wakeups
-
- .../admin-guide/kernel-parameters.txt         |  12 +
- Documentation/admin-guide/sysrq.rst           |   9 +
- drivers/tty/sysrq.c                           |  13 +-
- drivers/tty/tty_io.c                          |   9 +-
- fs/proc/consoles.c                            |  16 +-
- include/linux/console.h                       |  38 ++
- include/linux/printk.h                        |   6 +-
- kernel/printk/internal.h                      |  55 +-
- kernel/printk/nbcon.c                         | 421 ++++++++++++++-
- kernel/printk/printk.c                        | 482 +++++++++++++++---
- 10 files changed, 945 insertions(+), 116 deletions(-)
-
-
-base-commit: f3760c80d06a838495185c0fe341c043e6495142
+diff --git a/include/linux/printk.h b/include/linux/printk.h
+index 69f40a71c438..784d2298f4cf 100644
+--- a/include/linux/printk.h
++++ b/include/linux/printk.h
+@@ -195,6 +195,7 @@ void show_regs_print_info(const char *log_lvl);
+ extern asmlinkage void dump_stack_lvl(const char *log_lvl) __cold;
+ extern asmlinkage void dump_stack(void) __cold;
+ void printk_trigger_flush(void);
++void console_replay_all(void);
+ void printk_legacy_allow_panic_sync(void);
+ extern bool nbcon_device_try_acquire(struct console *con);
+ extern void nbcon_device_release(struct console *con);
+@@ -279,6 +280,10 @@ static inline void printk_trigger_flush(void)
+ {
+ }
+ 
++static inline void console_replay_all(void)
++{
++}
++
+ static inline void printk_legacy_allow_panic_sync(void)
+ {
+ }
+@@ -295,7 +300,6 @@ static inline void nbcon_device_release(struct console *con)
+ static inline void nbcon_atomic_flush_unsafe(void)
+ {
+ }
+-
+ #endif
+ 
+ bool this_cpu_in_panic(void);
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index b4a202591e06..b3fe1b6d7dbd 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -3201,6 +3201,40 @@ void console_unblank(void)
+ 		pr_flush(1000, true);
+ }
+ 
++/*
++ * Rewind all consoles to the oldest available record.
++ *
++ * IMPORTANT: The function is safe only when called under
++ *            console_lock(). It is not enforced because
++ *            it is used as a best effort in panic().
++ */
++static void __console_rewind_all(void)
++{
++	struct console *c;
++	short flags;
++	int cookie;
++	u64 seq;
++
++	seq = prb_first_valid_seq(prb);
++
++	cookie = console_srcu_read_lock();
++	for_each_console_srcu(c) {
++		flags = console_srcu_read_flags(c);
++
++		if (flags & CON_NBCON) {
++			nbcon_seq_force(c, seq);
++		} else {
++			/*
++			 * This assignment is safe only when called under
++			 * console_lock(). On panic, legacy consoles are
++			 * only best effort.
++			 */
++			c->seq = seq;
++		}
++	}
++	console_srcu_read_unlock(cookie);
++}
++
+ /**
+  * console_flush_on_panic - flush console content on panic
+  * @mode: flush all messages in buffer or just the pending ones
+@@ -3229,30 +3263,8 @@ void console_flush_on_panic(enum con_flush_mode mode)
+ 	 */
+ 	console_may_schedule = 0;
+ 
+-	if (mode == CONSOLE_REPLAY_ALL) {
+-		struct console *c;
+-		short flags;
+-		int cookie;
+-		u64 seq;
+-
+-		seq = prb_first_valid_seq(prb);
+-
+-		cookie = console_srcu_read_lock();
+-		for_each_console_srcu(c) {
+-			flags = console_srcu_read_flags(c);
+-
+-			if (flags & CON_NBCON) {
+-				nbcon_seq_force(c, seq);
+-			} else {
+-				/*
+-				 * This is an unsynchronized assignment. On
+-				 * panic legacy consoles are only best effort.
+-				 */
+-				c->seq = seq;
+-			}
+-		}
+-		console_srcu_read_unlock(cookie);
+-	}
++	if (mode == CONSOLE_REPLAY_ALL)
++		__console_rewind_all();
+ 
+ 	nbcon_atomic_flush_pending();
+ 
+@@ -4447,6 +4459,23 @@ void kmsg_dump_rewind(struct kmsg_dump_iter *iter)
+ }
+ EXPORT_SYMBOL_GPL(kmsg_dump_rewind);
+ 
++/**
++ * console_replay_all - replay kernel log on consoles
++ *
++ * Try to obtain lock on console subsystem and replay all
++ * available records in printk buffer on the consoles.
++ * Does nothing if lock is not obtained.
++ *
++ * Context: Any context.
++ */
++void console_replay_all(void)
++{
++	if (console_trylock()) {
++		__console_rewind_all();
++		/* Consoles are flushed as part of console_unlock(). */
++		console_unlock();
++	}
++}
+ #endif
+ 
+ #ifdef CONFIG_SMP
 -- 
 2.39.2
 
