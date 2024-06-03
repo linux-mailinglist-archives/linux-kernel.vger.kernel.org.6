@@ -1,80 +1,81 @@
-Return-Path: <linux-kernel+bounces-199718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C1F08D8B43
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 23:05:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D53808D8B48
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 23:06:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F7B31C22211
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 21:05:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B85D1F22EC7
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 21:06:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEE6C13B58D;
-	Mon,  3 Jun 2024 21:05:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2D7013B5A0;
+	Mon,  3 Jun 2024 21:06:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fQVtYwdh"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="lkq0VYc5"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2075.outbound.protection.outlook.com [40.107.220.75])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35C7E134409
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 21:05:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717448751; cv=none; b=Ytf/lxTByRA0Can71Ew2u3rn5pSUauW6wWt1twiSQWk6weHERlAuAulyLnZSe8eB4b2bgTZdqb5cJBhoWz2rARPj2nmbjh3HQEy6ovX9d8+O+NJHxqBEPtrzM4Ha35AKc9xgsUAu1XyhaucK4npuCegYHS6+LhpZM5KDWKo4xl8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717448751; c=relaxed/simple;
-	bh=Q7EHytajxBwK4kbSGoc3l+3jiK4Hu7v5QPdkitgPZB8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hYk7pFA9CS9IU8wusoTcUzr+i5KbjCXiQbdbECJZA+ZEZpMnoixTQJNTLnW1pTHRWhlnvLkg7kPueTGemB8HDr6YpwMnZl6Q4Sc5zLlBKLmePlug5wpj/BWUOjTG7tBzavtVwXLKEZv1DQlAEJwnEGVHj0r/do7y8ZWjiR08r4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fQVtYwdh; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717448749;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=UJgT/cnaSQmGF8SBb4Dtq0AmHEbwAi/yOwU2N8vRP3I=;
-	b=fQVtYwdhKUYSEHt4w/q5qTr7HSFBNL+fV0VrqFP//CT7u9J0tLZw3H2n96zGk5phOOowYU
-	XI5TscZkqTu7aqP2raHIL+GnK8OV5YU8F+j7n3WzV/a2/11ZEnVor+PHBUpF1uMzgwEJCV
-	F5St0rU+GhWBacfDR/73fpPi3LfQV2M=
-Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
- [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-235-fhaH5vUOOz60FLgGmqE3dA-1; Mon, 03 Jun 2024 17:05:47 -0400
-X-MC-Unique: fhaH5vUOOz60FLgGmqE3dA-1
-Received: by mail-lf1-f70.google.com with SMTP id 2adb3069b0e04-52b91439ad0so1767731e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 14:05:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717448746; x=1718053546;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=UJgT/cnaSQmGF8SBb4Dtq0AmHEbwAi/yOwU2N8vRP3I=;
-        b=bR7G4Qc1pp5iiYb7ZCyCLeOfYAhsmKmZFHhd5S5GCYq7rwVIgvpO8U7TVy+bwmQrXY
-         uefRPguXqzRy3875PA0ksHwzeUwTebDDGdGM22isPhkEfm9vqzAnP6q7UPvo03xIlnEm
-         HUtfERxZ0JKU4itNnr5kFxQ3UsjcBqgZLysXxC96taoZ/CmKFrkGPU2Rz/IQrxjEYwyp
-         mk8QZPK9S9Jelu3rOhpN/2rpn+hnVXnTuHa3j6lqEkSm1Na/EA/nuYv86f68eYwFdu1W
-         H5DtaWXqhMTbabjeAyaPCZV+Ueo3Mv4L4+5tcfBy3/a7pqCX2gyq3L3LYBXx+42Nh6tS
-         YtMg==
-X-Forwarded-Encrypted: i=1; AJvYcCX/D7/QDUSWwl3JoGdNTwypwrMHTcaTybku3QfPoKPnrlJFZOCAYXRuW7ha1d0bt58x7z5wbcOdaEQvm0hbVYNISlTCT9DYCs4P3HLn
-X-Gm-Message-State: AOJu0Yx2WwhH5o9idoeJeTTY4nrRZyf+9pqD6X2S7pTqHGxL8JsopIXY
-	SLdJAX47w3j2q5KiRb4W4xqueZVScXr+Up98GwOBeNFxukXuWm7Uh2Q+YFz23w3M5LmcItk2CPZ
-	8ymn8vj+pJEpSbntgie/nIAMldT5UkEQid7ETJkND9Sh+HCECID/JYR+GHO92gg==
-X-Received: by 2002:a05:6512:74c:b0:52b:38e8:db1b with SMTP id 2adb3069b0e04-52b896d9161mr6109887e87.65.1717448746218;
-        Mon, 03 Jun 2024 14:05:46 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEdTIf5KUUYaY5/SyxKEFIs98LowwF7Wk0ISgtF/E057yLZw7OKYCTsublUCEwZIh564M28Kw==
-X-Received: by 2002:a05:6512:74c:b0:52b:38e8:db1b with SMTP id 2adb3069b0e04-52b896d9161mr6109870e87.65.1717448745790;
-        Mon, 03 Jun 2024 14:05:45 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c731:3d00:918f:ce94:4280:80f0? (p200300cbc7313d00918fce94428080f0.dip0.t-ipconnect.de. [2003:cb:c731:3d00:918f:ce94:4280:80f0])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35dd04cb1e7sm9742014f8f.43.2024.06.03.14.05.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Jun 2024 14:05:45 -0700 (PDT)
-Message-ID: <54ce029f-b16f-4607-bdf1-a1efe904029a@redhat.com>
-Date: Mon, 3 Jun 2024 23:05:44 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59B46131182;
+	Mon,  3 Jun 2024 21:06:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.75
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717448806; cv=fail; b=nCaetNMMplTERyOOUdcPlnv3hKrrL6J9OCnsNvs5RPDVw9XHMOXdw6d84BfTyKVR3gZISXa7TbE3yIYtzkylI8U3+P+HPm7HFkMvsV1tMxjZUKPVohdCvX7RCwpk+a5+Lcl1ZuBLrT7KkKHn3gbvCTFLIdvRCLJVMPjPVJIrpT4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717448806; c=relaxed/simple;
+	bh=qWeJxRKbDwY92uYHGjJZ+HVapxS+pTClxOoFOiLGwTw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=KwXRl4osLhaypK2A8Y1K+Nzf9JzfwcwxLAJJfikI5zkdccySoRmeBOd0vNKq8OSxQAdYWa+SHWt7KdSvspTbNpriH0HtXZ6GrlwAkB6EvRsx7t33Vzk9F+OntkCONmUumOa5LZq9FKL3erw9OScmmP4XXu5PIAETZ669NZJSWXs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=lkq0VYc5; arc=fail smtp.client-ip=40.107.220.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=DHfJTUHtcL3Zf/X0PVKdjAbhESUXD47r0RQSNIN9EfYpsJi0gEmzsW016TldgFQWLpQ2QPY22ECSk8CsFwyWU6wiVJo71QUv6ci4TC7E3HuUT45N6aRYUTqWDjEwwW/7XDdRWeMy4q3cQ9FjOLAgoWWaYm8pD1i+mWakg5dxxTho5WUnFJ1Jg2NlHQ7/fp4ha1xYx2t+oE/iem6OnVy1MrQVYOnaAuzNUeoammz9uLULIVz2PHPvOiWjzxtoTJBqCqVzNImcslTeTeB3tYTxwEgArn3vnYniYGueSijxXqLxKEIuE/kuJE+q5u0ymcL+iSYje3P06ZSGBEWq8vFUoQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9d8laI4QXPJ6bZi75jewfwfk2a5/H8yWV1zQnus8arw=;
+ b=ja00GK7tfq+WKho23cj5jUfF7po/hcHLRxT4Z5R/BmPHukCgq34HTDDKJi3wY2o5PTPDAA4cEtCZ6iVQ/v/+nqU4yodBPxDIPfGiHdXee4BijhXfbkBmJlQXR+nitzwokArJ2HlmoAvyXjQec8Q7tHBmzbzsYwwKmOfg6F8bAycNSnLO+DjDYAzUY9oWizFdvMXxT7T2p9Z8a4be7nha9PIDg3Z3sOii9RGdCoILeundz5tvXGamlMdfS79fR/BB2SIX8GR3CrUFJI281ao+BXJaqSNr7CQA1s3dOWgCuJO7jF+Y3wDspbjf8Hz7Jg2Ff0NbjUlV09RTF3izanm7tQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9d8laI4QXPJ6bZi75jewfwfk2a5/H8yWV1zQnus8arw=;
+ b=lkq0VYc53nP52Dq5CS+lg3fmXfEZMkhczSJmEbBXng4KKFan9CAeHPYTFMXa312YGFIDsiT3TNJ3aOudRnDhYog4DClVNF9dFRPbFpJ2C/r3V2EuoZZXFtHHDybFSyFLKsZWIi59iLRFBAno5gbqYNWnOsVZleDHaPtCIsMYsvdoFKvIGM5d8cenMohN5Xe9bJpDBWgoDsw6XKlHARExzZv+HeLIdxsRKqlWe+WhAx/vK2/d7BCfdKhzqDTvlh5UxIhjl3gMVgC6W0H8XJgT2P4Y9KDTPt3k172D0PsgBpC0hyJ3GflJnGGCREprlOSJG9BB1AvapoI7FwZ3GaMEVg==
+Received: from BN9PR03CA0497.namprd03.prod.outlook.com (2603:10b6:408:130::22)
+ by DS0PR12MB9274.namprd12.prod.outlook.com (2603:10b6:8:1a9::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.26; Mon, 3 Jun
+ 2024 21:06:42 +0000
+Received: from BN3PEPF0000B373.namprd21.prod.outlook.com
+ (2603:10b6:408:130:cafe::43) by BN9PR03CA0497.outlook.office365.com
+ (2603:10b6:408:130::22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.30 via Frontend
+ Transport; Mon, 3 Jun 2024 21:06:42 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ BN3PEPF0000B373.mail.protection.outlook.com (10.167.243.170) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7677.0 via Frontend Transport; Mon, 3 Jun 2024 21:06:42 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 3 Jun 2024
+ 14:06:20 -0700
+Received: from [10.110.48.28] (10.126.231.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 3 Jun 2024
+ 14:06:19 -0700
+Message-ID: <7abbc35e-1399-4d05-90b5-6c048ff4de14@nvidia.com>
+Date: Mon, 3 Jun 2024 14:06:19 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,243 +83,139 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [linus:master] [mm] efa7df3e3b:
- kernel_BUG_at_include/linux/page_ref.h
-To: Peter Xu <peterx@redhat.com>
-Cc: Yang Shi <shy828301@gmail.com>, kernel test robot
- <oliver.sang@intel.com>, Jason Gunthorpe <jgg@nvidia.com>,
- Vivek Kasireddy <vivek.kasireddy@intel.com>, Rik van Riel
- <riel@surriel.com>, oe-lkp@lists.linux.dev, lkp@intel.com,
- linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
- Matthew Wilcox <willy@infradead.org>, Christopher Lameter <cl@linux.com>,
- linux-mm@kvack.org, "Paul E . McKenney" <paulmck@kernel.org>
-References: <CAHbLzkpMhEuGkQDGWrK1LhvZ-ZxTJkV1xjmn-nRGZMH4U+F5ZA@mail.gmail.com>
- <890e5a79-8574-4a24-90ab-b9888968d5e5@redhat.com> <ZlpcRnuZUEYJJ0JA@x1n>
- <CAHbLzkrRw-xf819gYJwRQ=-u971LQYnB2FNJMkN=s6u-pJ4Z8g@mail.gmail.com>
- <CAHbLzkoB+oFTxtVYpeXQvko2q9HUVzUYrr83S6M6PUmXDQpkag@mail.gmail.com>
- <0edfcfed-e8c4-4c46-bbce-528c07084792@redhat.com> <Zl3cakfiRsPQDb8q@x1n>
- <8da12503-839d-459f-a2fa-4abd6d21935d@redhat.com> <Zl4m-sAhZknHOHdb@x1n>
- <9d9a5730-161b-4a9d-a696-1cf6d0c5123c@redhat.com> <Zl4vlGJsbHiahYil@x1n>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH v2 2/2] selftests/lib.mk: silence some clang warnings that
+ gcc already ignores
+To: Shuah Khan <shuah@kernel.org>, Muhammad Usama Anjum
+	<usama.anjum@collabora.com>
+CC: Beau Belgrave <beaub@linux.microsoft.com>, Steven Rostedt
+	<rostedt@goodmis.org>, Mark Brown <broonie@kernel.org>, Naresh Kamboju
+	<naresh.kamboju@linaro.org>, Nick Desaulniers <ndesaulniers@google.com>,
+	Justin Stitt <justinstitt@google.com>, Bill Wendling <morbo@google.com>,
+	sunliming <sunliming@kylinos.cn>, Masami Hiramatsu <mhiramat@kernel.org>,
+	Valentin Obst <kernel@valentinobst.de>, <linux-kselftest@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>, <llvm@lists.linux.dev>, "Nathan
+ Chancellor" <nathan@kernel.org>
+References: <20240531183751.100541-1-jhubbard@nvidia.com>
+ <20240531183751.100541-3-jhubbard@nvidia.com>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <Zl4vlGJsbHiahYil@x1n>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: John Hubbard <jhubbard@nvidia.com>
+In-Reply-To: <20240531183751.100541-3-jhubbard@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN3PEPF0000B373:EE_|DS0PR12MB9274:EE_
+X-MS-Office365-Filtering-Correlation-Id: 30df030a-e1e1-4f5b-736c-08dc84111186
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|82310400017|376005|1800799015|36860700004|7416005;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?enR2ZW1zbnlvbWt3M0JsU0Q4b2VSQXRMN0VtYWpLcWFwSUhpSjdnUDkwbk5U?=
+ =?utf-8?B?aC9vdU1kNXFyMjBEWGgyZXM2blZsOEpxeE5aTmxPZHQ4cllmd2gvUzY3TFBm?=
+ =?utf-8?B?QzdsNytXRjMrWU00YThHeUMzTTI0aDE0MXFiYmwzaWRxanc1T0p1SU9ybnE5?=
+ =?utf-8?B?SG80K3p4Qk9XWWNPQitWUFUvYU0yaDZWeXFJOXpOT293UkEzeFA2dlN4QjFH?=
+ =?utf-8?B?RWdONmV6RDFUTGhDZlBaM2FpZXJicE9VS3hZanp6eitLcVZGdlJkMHFTanoy?=
+ =?utf-8?B?THpSd0xOY1pnc2ZjVkUzaFYxSm1QQXdTV1VFS3ZFTFBnZlRjWTkwbDVYNzhu?=
+ =?utf-8?B?Tk94WW9pMHFxWWNGQWFZb0ppL013K2F5eWtFV3F4a3JiR1lQTXJwazlLajVU?=
+ =?utf-8?B?bGduYjN3bGpzU0FLRC9aTVZxUS9BdmFiWUlKTHdaSkRCT0s3TjkvSlM4a0No?=
+ =?utf-8?B?V0loVkNiS0oyaUdFMTQrRDBGd0JYaEZaNFNabVBBNm5USVlFTG5WSDBzbHJk?=
+ =?utf-8?B?NVA5QzBGbStlMjY5ckJwL1F6K01sWXhiZlFvMVc1Wk5HbGlCUnNHWHZDRVlH?=
+ =?utf-8?B?ZVpkblA4QVNYL2FMUWhQclJCaU5GSnVlSHM3SDFWQ1I2S1RLMXZJQnhIY3N4?=
+ =?utf-8?B?KzRZcW1qNS9ZYVJVWTA1MHo1OG9MQUZ0RUh5OHRHMUdKUDE1M2l3YUM3YVZw?=
+ =?utf-8?B?UXFkd0lKV1NVQ1IyeG5TMjBjUGFVeGp1NTA0NjBzZitQclZHcjdUZmVxV3d4?=
+ =?utf-8?B?NE1YU3FKeHc2dWNDbjNXTFI4RUpPdzNkZE91cTM0Z3JUZm5wVlF1MW9ka2tk?=
+ =?utf-8?B?ZkhuaytaTHN4UlpvWG1weEQyMjFmWFcrZ3RlYjZVeGhQcDIyL2txSmVKbUs4?=
+ =?utf-8?B?Ymw4dUV6ZlJNVXZhK2FiOUJJazlZbDF0Y3JaN3VCRnR6ODBKNEZJNGpCV1F6?=
+ =?utf-8?B?VmFXYUlkQ2N6YVZFa0xlc3M1a1FPSlR0Znl2U3JIN29WblUxc0NzR3pDbzRx?=
+ =?utf-8?B?TThBU0p2blJFenhLdjBtTjRqU09sczdpd0c4WkR0RHcrakxzTHB4U1hzYmZR?=
+ =?utf-8?B?TGJVcVRMRVFnWGM2Y0pqYTgxY0g2bTV1aFJYMzd5RFVRT1RmMm5MaVQ2cFBq?=
+ =?utf-8?B?bUdhTEZ6MEZxdkdTc0NWcFVIUVg0Z0l0R2pwbnZWSHFpVWVoMUI3TEhZbGJ0?=
+ =?utf-8?B?U0xrWlUwd3B6dnBZL0RQSVp5NEVPU1IvY0N5VEtadjVhL1JpVGpydDNyZHcr?=
+ =?utf-8?B?K2FnN3o2ZjZTYitWMllnUTIyTFhPTXZWZDJvT2ZYN21kT0dnNE53WDdIZ29x?=
+ =?utf-8?B?VTZ6M1owRTBzdmVjYVcxQTl4Sjhxd1pFRWhBVGZWZ2RMZ0ZMcGJSRFkzcmdJ?=
+ =?utf-8?B?ZWVra3ZIano0ei9mdHY3VFFyRVJyTXNWT1lod0FWU2RML3IrREdVYmdaeDJV?=
+ =?utf-8?B?STFDUUJReTZ3aEZqZFNNa2RBU1N2Unk0STM1eEhIYzd0NUxCMmgrUnUwVVFH?=
+ =?utf-8?B?Z1RlRlRFSG5WeExlaXVBQmN6K1YrMlhDVldYT3dHNGtlczF5QVZ6dHpYUWhl?=
+ =?utf-8?B?Y2dYc013aUFpUUFEYWdSelZKbjFWb29peGdkeDRQdDNzeWpPdktXZnA5NDc4?=
+ =?utf-8?B?TTh2eUF0blYxNnhkemFCQ3lMdHRhb3NubUdmQURzN2NKdWFTRTZqWENPby9y?=
+ =?utf-8?B?Si9VSitDYnYxTC9oK0FaeFNhZ1k5b1E2STlTZ2djOHpVcDdyMmMydktjSUo2?=
+ =?utf-8?B?N3liTVZORlY1ZmlYNnZ2Vkt0SHVtWW40cUZGODMyOUFza0o2STF5alhZZjB3?=
+ =?utf-8?B?ZmpyQldjWFgrWjRabng3a01nU01vdVoweE1QZnJWR0d6YU91NWswRkVxaHgy?=
+ =?utf-8?Q?CM4LuzQmgNBQK?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230031)(82310400017)(376005)(1800799015)(36860700004)(7416005);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jun 2024 21:06:42.1227
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 30df030a-e1e1-4f5b-736c-08dc84111186
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN3PEPF0000B373.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB9274
 
-On 03.06.24 23:03, Peter Xu wrote:
-> On Mon, Jun 03, 2024 at 10:37:55PM +0200, David Hildenbrand wrote:
->>>> try_get_folio() is all about grabbing a folio that might get freed
->>>> concurrently. That's why it calls folio_ref_try_add_rcu() and does
->>>> complicated stuff.
->>>
->>> IMHO we can define it.. e.g. try_get_page() wasn't defined as so.
->>>
->>> If we want to be crystal clear on that and if we think that's what we want,
->>> again I would suggest we rename it differently from try_get_page() to avoid
->>> future misuses, then add documents. We may want to also even assert the
->>
->> Yes, absolutely.
->>
->>> rcu/irq implications in try_get_folio() at entrance, then that'll be
->>> detected even without TINY_RCU config.
->>>
->>>>
->>>> On !CONFIG_TINY_RCU, it performs a folio_ref_add_unless(). That's
->>>> essentially a atomic_add_unless(), which in the worst case ends up being a
->>>> cmpxchg loop.
->>>>
->>>>
->>>> Stating that we should be using try_get_folio() in paths where we are sure
->>>> the folio refcount is not 0 is the same as using folio_try_get() where
->>>> folio_get() would be sufficient.
->>>>
->>>> The VM_BUG_ON in folio_ref_try_add_rcu() really tells us here that we are
->>>> using a function in the wrong context, although in our case, it is safe to
->>>> use (there is now BUG). Which is true, because we know we have a folio
->>>> reference and can simply use a simple folio_ref_add().
->>>>
->>>> Again, just like we have folio_get() and folio_try_get(), we should
->>>> distinguish in GUP whether we are adding more reference to a folio (and
->>>> effectively do what folio_get() would), or whether we are actually grabbing
->>>> a folio that could be freed concurrently (what folio_try_get() would do).
->>>
->>> Yes we can.  Again, IMHO it's a matter of whether it will worth it.
->>>
->>> Note that even with SMP and even if we keep this code, the
->>> atomic_add_unless only affects gup slow on THP only, and even with that
->>> overhead it is much faster than before when that path was introduced.. and
->>> per my previous experience we don't care too much there, really.
->>>
->>> So it's literally only three paths that are relevant here on the "unless"
->>> overhead:
->>>
->>>     - gup slow on THP (I just added it; used to be even slower..)
->>>
->>>     - vivik's new path
->>>
->>>     - hugepd (which may be gone for good in a few months..)
->>> IMHO none of them has perf concerns.  The real perf concern paths is
->>> gup-fast when pgtable entry existed, but that must use atomic_add_unless()
->>> anyway.  Even gup-slow !thp case won't regress as that uses try_get_page().
->>
->> My point is primarily that we should be clear that the one thing is
->> GUP-fast, and the other is for GUP-slow.
+On 5/31/24 11:37 AM, John Hubbard wrote:
+> gcc defaults to silence (off) for the following warnings, but clang
+> defaults to the opposite. The warnings are not useful for the kernel
+> itself, which is why they have remained disabled in gcc for the main
+> kernel build. And it is only due to including kernel data structures in
+> the selftests, that we get the warnings from clang.
 > 
-> Yes, understood.
-> 
->>
->> Sooner or later we'll see more code that uses try_grab_page() to be
->> converted to folios, and people might naturally use try_grab_folio(), just
->> like we did with Vivik's code.
->>
->> And I don't think we'll want to make GUP-slow in general using
->> try_grab_folio() in the future.
->>
->> So ...
->>
->>>
->>> So again, IMHO the easist way to fix this WARN is we drop the TINY_RCU bit,
->>> if nobody worries on UP perf.
->>>
->>> I don't have a strong opinion, if any of us really worry about above three
->>> use cases on "unless" overhead, and think it worthwhile to add the code to
->>> support it, I won't object. But to me it's adding pain with no real benefit
->>> we could ever measure, and adding complexity to backport too since we'll
->>> need a fix for as old as 6.6.
->>
->> ... for the sake of fixing this WARN, I don't primarily care. Adjusting the
->> TINY_RCU feels wrong because I suspect somebody had good reasons to do it
->> like that, and it actually reported something valuable (using the wrong
->> function for the job).
->>
->> In any case, if we take the easy route to fix the WARN, I'll come back and
->> clean the functions here up properly.
-> 
-> Definitely, then there can also be some measurements which will be even
-> better.  I mean, if the diff is minimal, we can be clearer on the path we
-> choose; while if it shows improvements we have more solid results than
-> predictions and discussions.
-> 
-> Yes I do worry about the UP change too, hence I sincerely was trying to
-> collect some feedback.  My current guess is the UP was still important in
-> 2008 when the code first wrote, and maybe it changed over the 16 years. I
-> just notice Nicolas wrote it; I know he's still active so I've added him
-> into the loop too.
-> 
-> Just for easier reference, the commit introduced the UP change is:
-> 
-> commit e286781d5f2e9c846e012a39653a166e9d31777d
-> Author: Nicholas Piggin <npiggin@gmail.com>
-> Date:   Fri Jul 25 19:45:30 2008 -0700
-> 
->      mm: speculative page references
-> 
-> +static inline int page_cache_get_speculative(struct page *page)
-> +{
-> +       VM_BUG_ON(in_interrupt());
-> +
-> +#if !defined(CONFIG_SMP) && defined(CONFIG_CLASSIC_RCU)
-> +# ifdef CONFIG_PREEMPT
-> +       VM_BUG_ON(!in_atomic());
-> +# endif
-> +       /*
-> +        * Preempt must be disabled here - we rely on rcu_read_lock doing
-> +        * this for us.
-> +        *
-> +        * Pagecache won't be truncated from interrupt context, so if we have
-> +        * found a page in the radix tree here, we have pinned its refcount by
-> +        * disabling preempt, and hence no need for the "speculative get" that
-> +        * SMP requires.
-> +        */
-> +       VM_BUG_ON(page_count(page) == 0);
-> +       atomic_inc(&page->_count);
-> +
-> +#else
-> +       if (unlikely(!get_page_unless_zero(page))) {
-> +               /*
-> +                * Either the page has been freed, or will be freed.
-> +                * In either case, retry here and the caller should
-> +                * do the right thing (see comments above).
-> +                */
-> +               return 0;
-> +       }
-> +#endif
-> +       VM_BUG_ON(PageTail(page));
-> +
-> +       return 1;
-> +}
-> 
-> Thanks,
-> 
+>      -Waddress-of-packed-member
+>      -Wgnu-variable-sized-type-not-at-end
 
-I chased it further to:
+Even if patch 1/1 here is not merged, I would still like to get this
+one reviewed and merged. It still solves the problem for LLVM=1 builds.
 
-commit 8375ad98cc1defc36adf4a77d9ea1e71db51a371
-Author: Paul E. McKenney <paulmck@kernel.org>
-Date:   Mon Apr 29 15:06:13 2013 -0700
-
-     vm: adjust ifdef for TINY_RCU
-     
-     There is an ifdef in page_cache_get_speculative() that checks for !SMP
-     and TREE_RCU, which has been an impossible combination since the advent
-     of TINY_RCU.  The ifdef enables a fastpath that is valid when preemption
-     is disabled by rcu_read_lock() in UP systems, which is the case when
-     TINY_RCU is enabled.  This commit therefore adjusts the ifdef to
-     generate the fastpath when TINY_RCU is enabled.
-
-
-Where Paul explicitly restored that fastpath for TINY_RCU instead of removing that code.
-
-So maybe Paul can comment if that is still worth having. CCing him.
-
+thanks,
 -- 
-Cheers,
+John Hubbard
+NVIDIA
 
-David / dhildenb
+> 
+> In other words, the warnings are not unique to the selftests: there is
+> nothing that the selftests' code does that triggers these warnings,
+> other than the act of including the kernel's data structures. Therefore,
+> silence them for the clang builds as well.
+> 
+> This eliminates warnings for the net/ and user_events/ kselftest
+> subsystems, in these files:
+> 
+>      ./net/af_unix/scm_rights.c
+>      ./net/timestamping.c
+>      ./net/ipsec.c
+>      ./user_events/perf_test.c
+> 
+> Cc: Nathan Chancellor <nathan@kernel.org>
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+> ---
+>   tools/testing/selftests/lib.mk | 8 ++++++++
+>   1 file changed, 8 insertions(+)
+> 
+> diff --git a/tools/testing/selftests/lib.mk b/tools/testing/selftests/lib.mk
+> index 2902787b89b2..c179c02281e9 100644
+> --- a/tools/testing/selftests/lib.mk
+> +++ b/tools/testing/selftests/lib.mk
+> @@ -50,6 +50,14 @@ else
+>   CLANG_FLAGS     += --target=$(notdir $(CROSS_COMPILE:%-=%))
+>   endif # CROSS_COMPILE
+>   
+> +# gcc defaults to silence (off) for the following warnings, but clang defaults
+> +# to the opposite. The warnings are not useful for the kernel itself, which is
+> +# why they have remained disabled in gcc for the main kernel build. And it is
+> +# only due to including kernel data structures in the selftests, that we get the
+> +# warnings from clang. Therefore, disable the warnings for clang builds.
+> +CFLAGS += -Wno-address-of-packed-member
+> +CFLAGS += -Wno-gnu-variable-sized-type-not-at-end
+> +
+>   CC := $(CLANG) $(CLANG_FLAGS) -fintegrated-as
+>   else
+>   CC := $(CROSS_COMPILE)gcc
+
 
 
