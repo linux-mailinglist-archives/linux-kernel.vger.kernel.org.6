@@ -1,103 +1,113 @@
-Return-Path: <linux-kernel+bounces-199658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17C838D8A73
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 21:48:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A63F18D8A78
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 21:49:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C42AB1F23AFF
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:48:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D11B28A3B8
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:49:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A55113B58F;
-	Mon,  3 Jun 2024 19:48:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EAF013A87C;
+	Mon,  3 Jun 2024 19:49:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y0zgcopp"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="yKeDYqzn"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3627120ED;
-	Mon,  3 Jun 2024 19:48:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D21020ED;
+	Mon,  3 Jun 2024 19:49:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717444085; cv=none; b=nTGFIMcqeBHzFVJ/CwlbH5EBETAnL3D6b4KVXR3py7/cHtPV1VsWo8LR2T7WDKBZ87Ci3g0Nqg20V5OLJEIFXv97RxyEVnVYqCrCPEtB/BfemCP3fkQnKzvXZGVEcWPHWD+DYLMJEuQEVQhOAArCltbcZ3Vq5SuoJtZO9GvaG0s=
+	t=1717444151; cv=none; b=At1lxF4rDyu541txfux6P/C1aBYnH43r5+v/9TbouAi5aFL/b5+P3zupr2lYWtr2W3UzthY60RXwO9l31dewLfCvOli6I4N3sVb/T4rVtgQnvpxtX7R0MFzT/TB7pi99ZQ9ccnB2O762NQsdD5m168SukPZpvb7fkubOPBSE2r4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717444085; c=relaxed/simple;
-	bh=TjefhdPRAzXqj17OvT/X7NOgycIndaeg1sEXUfVpxIQ=;
+	s=arc-20240116; t=1717444151; c=relaxed/simple;
+	bh=u+LtdUKeIquPtM3Gzq7t7e3fZ4iyQFikAJZQBux6nk0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vGAKro3ybLDR2T4Skl6Y+4ucfGoEXqioFXa3oHq8LjOkQoXuRfOcUQNLNz3KwU22EKS7Gz6/0V+Aa8M0IeDiiVWv2dr/YoB7WLVSMzEeKtPm2pz8kzy8Zpys78s/kHCFjC+gK8Efs2IXcUXxm21WQDAYOihUa7YE9rIsHWTASj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y0zgcopp; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-652fd0bb5e6so3830449a12.0;
-        Mon, 03 Jun 2024 12:48:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717444083; x=1718048883; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PhCEH+hBS2EbWbRsasg0/V0BTvrNPYqT4/1Nc1PfZqk=;
-        b=Y0zgcopprhEagX9H7gVulkIqd4Pmd/3TEiMCFWpWjK4T016sLC97YKU5g/EvBmCtcP
-         lNptmcUpJyRDa/MVffxPqGa1z/nA2dZzxNVZ1YNC2pWJoKiEcfOQeu6KnrNKJ+nby0Fy
-         MJe9y7Deq193PjtW1U1HUTBgYuQksG9yqVKoyf5B26G7RNCnrPuq8JnoIbqTMSNlJzOp
-         yIV18JMGW6LQUNChqfTf2afX3lixBbk9u33zyrzpeCaNctfhzW1fVvlsXjtfOPHnOL1G
-         IeoDRBIOUVryPlbrqaPUa+HeazMve8F+sgqI06n/4dviLmBI882CL0IrWBYS4mb6uyCf
-         c8MA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717444083; x=1718048883;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PhCEH+hBS2EbWbRsasg0/V0BTvrNPYqT4/1Nc1PfZqk=;
-        b=pIOJlbEgQXDKjPGjpQDNDF9Z7dJZ0lsFG4Oea1o999Cjd4v44gPaA0a1uJKT87qveB
-         pQ04Cm495M2uOXCdcSL6Ayq8E05sQHRB8TDfeDHpIFG9/nGJJzJuKNJeLv7zoO/ah9Gb
-         VYVVTyUbJ74kIAo3UbHbbP9pVbTBVN4Cx+GAnvYEiLJOWROr5vMLUQ9Z8TNTASgvak2c
-         aN6nq6xqJCP/oBkDq16tbA8jTYJ4uvVYvuKnnK4YPQkI75br61JrQMtN2iCzO/0wks9Z
-         maW1d+S4o+CbJey+1mFj+w5E9EIqQqUEwlawGvord5dc7EecCFJnEJvh7lFTfACWhlRd
-         QS5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWsb9j1JfZGeF0Sw2c1Cb9rVh5RrqLjsG3oi2Hm/EVGHc+k1dXJ8kEAeuVqTJLuQjmO/b/QHGmtiZGe0juekDL9DHq48sMKC7jPhK+ynJVQd/+FuhrM4I1prrqnN94O/FJ7jR9WcQ==
-X-Gm-Message-State: AOJu0YxObU7E6d4lKEv3pV9Ce94ClvbSWuLQudasmyTflURAFNJWj8sv
-	GUaCKBuljTaR+xl6HuzvvrA2pzZAPCfDT2S9m2onGm3AB78PEw0v
-X-Google-Smtp-Source: AGHT+IEfqySC0xccz4s2MeJX/QR09dCSuq8yIiL3aIG9pyu7DFm0/4/OrXL/Bjfr+rsieLU4aRcWdA==
-X-Received: by 2002:a17:90b:118f:b0:2b6:c650:fb54 with SMTP id 98e67ed59e1d1-2c1dc5df200mr7941276a91.49.1717444083401;
-        Mon, 03 Jun 2024 12:48:03 -0700 (PDT)
-Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c1a77af9b0sm8908912a91.45.2024.06.03.12.48.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Jun 2024 12:48:03 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Mon, 3 Jun 2024 09:48:01 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Waiman Long <longman@redhat.com>
-Cc: Zefan Li <lizefan.x@bytedance.com>,
-	Johannes Weiner <hannes@cmpxchg.org>, cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Xavier <ghostxavier@sina.com>
-Subject: Re: [PATCH-cgroup] cgroup/cpuset: Optimize isolated partition only
- generate_sched_domains() calls
-Message-ID: <Zl4d8Yz-rlc0FUWq@slm.duckdns.org>
-References: <20240603193822.1209999-1-longman@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=NNTZVYd3ItNgcPTAKQr7zS79pzrDqe+mZ+em6DaaTYj2DW73OfYWux7JJ+gB8jjrLgzGJlTyamAGmftNy+0M2EfKTpWu1NjtYC/WsxDieZA+Tj1PEaoOjPSs+06kwhbw5FGNC/HicITayqhJhR/oQb+XLmT5wNdv4nffBN2iSvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=yKeDYqzn; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1717444148;
+	bh=u+LtdUKeIquPtM3Gzq7t7e3fZ4iyQFikAJZQBux6nk0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=yKeDYqznxvMlnDjCxJ5nvSbpUHVOSiOzhSxfdZodzshS1XyCtvr2/mNnzmOl2VTqJ
+	 s6bdjQYz6QiDp0PlUQ8zhJSN3+pc2X4U4vX1XzNTSacxJhxxAQ1eP+muwLboz/uqdG
+	 mDdQDJLLiklJcdt2zmhtEAUTfzuxOwaDy77O7J6HgGQ109k6lAUBbX+f5ztj/0S/MS
+	 HOHaWHihp2yZU+3riG0wuSzPi1z4s4LzEuw83cEC+j4H75LOsuVS8/h8T0edyAokC8
+	 gCtlROFmbMUfE0fTeML5G3DptKY6VQKZbcn61iWuFvwnqqCy9DxwS22gPTku4IKPB8
+	 KJiWYYzJDB0Hw==
+Received: from notapiano (zone.collabora.co.uk [167.235.23.81])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nfraprado)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 2FA1E3782192;
+	Mon,  3 Jun 2024 19:49:06 +0000 (UTC)
+Date: Mon, 3 Jun 2024 15:49:04 -0400
+From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Mark Brown <broonie@kernel.org>,
+	Yang Yingliang <yangyingliang@huawei.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Thangaraj Samynathan <thangaraj.s@microchip.com>,
+	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	Serge Semin <fancer.lancer@gmail.com>,
+	Daniel Mack <daniel@zonque.org>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH v1 0/8] spi: Rework DMA mapped flag
+Message-ID: <e9f6e8fe-7147-4caf-a7fc-e612069c2eaf@notapiano>
+References: <20240531194723.1761567-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20240603193822.1209999-1-longman@redhat.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240531194723.1761567-1-andriy.shevchenko@linux.intel.com>
 
-On Mon, Jun 03, 2024 at 03:38:22PM -0400, Waiman Long wrote:
-> If only isolated partitions are being created underneath the cgroup root,
-> there will only be one sched domain with top_cpuset.effective_cpus. We can
-> skip the unnecessary sched domains scanning code and save some cycles.
+On Fri, May 31, 2024 at 10:42:32PM +0300, Andy Shevchenko wrote:
+> The first part of the series (patches 1 to 7) is an introduction
+> of a new helper followed by the user conversion.
 > 
-> Signed-off-by: Waiman Long <longman@redhat.com>
+> This consolidates the same code and also makes patch 8 (last one)
+> be localised to the SPI core part.
+> 
+> The last patch is the main rework to get rid of a recently introduced
+> hack with a dummy SG list and move to the transfer-based DMA mapped
+> flag. 
+> 
+> That said, the patches 1 to 7 may be applied right away since they
+> have no functional change intended, while the last one needs more
+> testing and reviewing.
+> 
+> Andy Shevchenko (8):
+>   spi: Introduce internal spi_xfer_is_dma_mapped() helper
+>   spi: dw: Use new spi_xfer_is_dma_mapped() helper
+>   spi: ingenic: Use new spi_xfer_is_dma_mapped() helper
+>   spi: omap2-mcspi: Use new spi_xfer_is_dma_mapped() helper
+>   spi: pxa2xx: Use new spi_xfer_is_dma_mapped() helper
+>   spi: pci1xxxx: Use new spi_xfer_is_dma_mapped() helper
+>   spi: qup: Use new spi_xfer_is_dma_mapped() helper
+>   spi: Rework per message DMA mapped flag to be per transfer
 
-Applied to cgroup/for-6.11.
+Tested on next-20240603. No issue noticed on sc7180-trogdor-kingoftown and
+sc7180-trogdor-lazor-limozeen. So,
 
-Thanks.
+Tested-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
 
--- 
-tejun
+Although patch 5 (pxa2xx) didn't apply, so I skipped it (but it's not used on
+my platforms).
+
+Thanks,
+Nícolas
 
