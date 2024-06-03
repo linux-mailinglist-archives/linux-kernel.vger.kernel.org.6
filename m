@@ -1,88 +1,57 @@
-Return-Path: <linux-kernel+bounces-199234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDE648D8436
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:41:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5E148D8430
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:41:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B3951C21B62
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:41:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02BC31C21DA5
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:41:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AD0812F37F;
-	Mon,  3 Jun 2024 13:41:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F4BD12E1C2;
+	Mon,  3 Jun 2024 13:41:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hkl8LqJi"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h6mfXiT4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C347312DDAE;
-	Mon,  3 Jun 2024 13:41:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D46D12DD9D
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 13:41:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717422066; cv=none; b=VCjlDR0Q51ig4Bfy8pieOyhHeE+kzcSw1ThH4r6JzujZbH9mNp2EgK51vSyVa+8qo6LKh+N+yHi1AiSHP9mRVia3axsR7qGzXlKyupdYPXN7zqIOeZl/YYaFRshqstxIKzJxFOzzqkF7LDrUOgZ3cGIQtl7ZilkwR+0mygmfeKg=
+	t=1717422064; cv=none; b=rBPjtojrPeR0C++IH6111awJ44Wva8T3Y28wFF2BPWbtfiIP6kauF6myFxPYiNpKxBhj47G/hTW9N7FIvselcBWwe8eLMoWKcX2wVlsM8G6COF9zav9Zql3aunbL0oePsBLIvkYmcNTqHMtzGlvZkJlBbIuW/xOb7BYPYSrV83w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717422066; c=relaxed/simple;
-	bh=r5pwoduVxbJX4Ywc5rdi0LpioEmEMdP+bmmKp5Fr1CI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TkvbieZgYRRUMM0Z2eb78pE08b07KR74GgfxgOxm8VeiTvxQCBKV1Rl29xCI4C210YgPT4CZA8vuKRtVGFG4n3u6cji0RfNQJCwOORH5s6cWKTqw45fMeJhfpgpap5apo/xFjI49kAT7IXRTHka3K5giMtkZpwaLYl1NycCfcH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hkl8LqJi; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-35dca73095aso3629300f8f.0;
-        Mon, 03 Jun 2024 06:41:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717422063; x=1718026863; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nksobxv4wDiGzDjs9z1NAwTrGKR9f/JDq3ZaL9PNEKw=;
-        b=hkl8LqJiH/FDXe4qunKwzwYjR6O7lNxLeyHqhSSqDML/2yEUR++luiYsz1X9TCQM56
-         jtZi2Ov5XKN3FTlImGIl/HV6lBWf8JPtW8dNRY7q8OLOwhlIIE1CYYlg7SM3IhatGfsE
-         382fvr4gZ/vu1SU3Vm3/dqb5jvt2/oDDM0CwgzsAjOIeSEY0IYbh00MNAoO54eaAFEQD
-         U6jWIb+mjy5rd8wH3g2Vp+AsoyU3kD/YZg0vdq9KhvMLV2en41NKPGra2SnzH7sSz4h4
-         KjcKhQv5U4Q2gFSRv6/EZg6pNFjva+9LD0lvfVjCOWJeixXq1hcsjcCSNh3bf40jVBDQ
-         i6PA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717422063; x=1718026863;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nksobxv4wDiGzDjs9z1NAwTrGKR9f/JDq3ZaL9PNEKw=;
-        b=WsCtgDyZMPCigN7sbi5k64k6I96BPzula1Ljsv+gRLl2evgUEmR2aSvKMwCeDfpxeh
-         SNSQ0JRTf0B4LJTnAP7pTT8IxMLZQa5MuMH3IW2LC/hyGUknmN0i9T8mRdr6ZdC2fgl0
-         ac5mqprUO4GflRNCgueQCrg97hxq47/Zlso6mhXEJ4i2C1lEJJ4mMwfKMS2uEYpzjnUm
-         xJzxtLOtZo4a2Qsp/wTlMPKTAkKK5fikVQcJvUYJi+iLVzxXABBNOFB9CqXoaCEgElwe
-         4z76NwgVpZnK+1C4mVqw2hn/EyOu3/2fUIeyWb90X3w9H6BHFuHjhzPFAZkLIrkK7y+v
-         CI0w==
-X-Forwarded-Encrypted: i=1; AJvYcCXMT8x3nG4ijTMbn0Dy/FQ71YlYkLy7nOfgXvpMpZcOpYNcmIkG4xgqvzi7I5xd1boSc+8Y2EK1A52f6u8P1RSBABvLQUMLBKmibENSM9okZZIbAGgxWaChyW9M8t1nmWmuHW3Ew6yaB5os1Qu3DVpfgC/31EjT45OI9yI1tyIdpDGcWg==
-X-Gm-Message-State: AOJu0YymySMyS1+hT/0pnNCH4E4cKaeg01/gHL5vdvW/Na68mYv5b7rC
-	fYdup0yUXs6iSS0CBAnucsBiTaio9LEPuGT8dPJcY2hGfruS52dU
-X-Google-Smtp-Source: AGHT+IF0VMa8sCOW1Xdd+cQOW+CCAJRSpmGwhO221NJKn9VSaj/y8ESRMClIsFwMsvbT8BXo2TGKlg==
-X-Received: by 2002:adf:ef0c:0:b0:357:8fe9:4d6c with SMTP id ffacd0b85a97d-35e0f30dfb1mr6555108f8f.49.1717422062952;
-        Mon, 03 Jun 2024 06:41:02 -0700 (PDT)
-Received: from localhost.localdomain ([167.98.27.226])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35e5e3d1902sm1868361f8f.32.2024.06.03.06.41.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Jun 2024 06:41:02 -0700 (PDT)
-From: Mudit Sharma <muditsharma.info@gmail.com>
-To: ivan.orlov0322@gmail.com,
-	jic23@kernel.org,
-	lars@metafoo.de,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	robh@kernel.org
-Cc: Mudit Sharma <muditsharma.info@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH 3/3] MAINTAINERS: Add maintainer for ROHM BH1745
-Date: Mon,  3 Jun 2024 14:40:15 +0100
-Message-ID: <20240603134015.70388-3-muditsharma.info@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240603134015.70388-1-muditsharma.info@gmail.com>
-References: <20240603134015.70388-1-muditsharma.info@gmail.com>
+	s=arc-20240116; t=1717422064; c=relaxed/simple;
+	bh=Up225fPrblCk8vyakWXB0/yPHz5gAz1M47n4JUzhfjk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gQ539ipfR961aBI1AEZtYAj4mPg15aGXRw8GVeo3imaGoA5x15yPUM0/e0yenV9Bw4j3E0TaNmsGeak6wOFjjwYR+Vh0Rj52aI7qWf3QTm3VfExaGdP2s92qiDx7ilFhoQ27BmGDyCtvMvtAP5/InQNS8lU+r8C26R5y2jbrc0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h6mfXiT4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46EA5C2BD10;
+	Mon,  3 Jun 2024 13:41:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717422063;
+	bh=Up225fPrblCk8vyakWXB0/yPHz5gAz1M47n4JUzhfjk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=h6mfXiT4Wx8nQ/F3zZbIjuPJn7F0/oQ0WKqJ3/5tgr4AwAa/PWsGpOpy75Wr5vGus
+	 2yilPSnU3BcK0GbHpTa6tTz/MJIflbzNCGkixAoczqN11vcB2qNDV4Bzue+vs3M42J
+	 TfmqPQrR3Qs47NBFTWy8a1XG+LQZNmCdYgKoOqkk3IcUBAM1ENo3APBrnXZIBlhrzE
+	 pS6WCPJcxTBDvObJTiQmxAmYvBpCWRi4aTShELTy3+JaKwo6VbE99VM+1la7kqwWwX
+	 gre9endQ1POpewU+qIqg3VP3oVOrxBL9jvPA2RWk5Zb9plhqzpicUxbSmU4UJOgj+a
+	 lyO67RfnXfiog==
+From: Michael Walle <mwalle@kernel.org>
+To: Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Pratyush Yadav <pratyush@kernel.org>,
+	Michael Walle <mwalle@kernel.org>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>
+Cc: linux-mtd@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3] mtd: spi-nor: simplify spi_nor_get_flash_info()
+Date: Mon,  3 Jun 2024 15:40:55 +0200
+Message-Id: <20240603134055.1859863-1-mwalle@kernel.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,32 +60,77 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add myself as maintainer for ROHM BH1745 colour sensor driver.
+Rework spi_nor_get_flash_info() to make it look more straight forward
+and esp. don't return early. The latter is a preparation to check for
+deprecated flashes.
 
-Signed-off-by: Mudit Sharma <muditsharma.info@gmail.com>
+Signed-off-by: Michael Walle <mwalle@kernel.org>
 ---
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
+v3:
+ - rework the handling quite a bit, thanks Tudor.
+ - drop the spurious comment about the partitions, it goes way back
+   until the initial support. I don't think it's accurate anymore.
+   If the flash has the same size, the partitions can be trusted. If
+   not, anything can happen.. We don't know.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index d6c90161c7bf..945873321fef 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -19407,6 +19407,13 @@ S:	Supported
- F:	drivers/power/supply/bd99954-charger.c
- F:	drivers/power/supply/bd99954-charger.h
+v2/v1:
+ - none, this is a remaining patch of my spring cleanup series.
+
+ drivers/mtd/spi-nor/core.c | 32 ++++++++++++++------------------
+ 1 file changed, 14 insertions(+), 18 deletions(-)
+
+diff --git a/drivers/mtd/spi-nor/core.c b/drivers/mtd/spi-nor/core.c
+index 7128d45870d4..e0c4efc424f4 100644
+--- a/drivers/mtd/spi-nor/core.c
++++ b/drivers/mtd/spi-nor/core.c
+@@ -3298,32 +3298,28 @@ static const struct flash_info *spi_nor_get_flash_info(struct spi_nor *nor,
  
-+ROHM BH1745 COLOUR SENSOR
-+M:	Mudit Sharma <muditsharma.info@gmail.com>
-+L:	linux-iio@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/iio/light/rohm,bh1745.yaml
-+F:	drivers/iio/light/bh1745.c
+ 	if (name)
+ 		info = spi_nor_match_name(nor, name);
+-	/* Try to auto-detect if chip name wasn't specified or not found */
+-	if (!info)
+-		return spi_nor_detect(nor);
+-
+ 	/*
+-	 * If caller has specified name of flash model that can normally be
+-	 * detected using JEDEC, let's verify it.
++	 * Auto-detect if chip name wasn't specified or not found, or the chip
++	 * has an ID. If the chip supposedly has an ID, we also do an
++	 * auto-detection to compare it later.
+ 	 */
+-	if (name && info->id) {
++	if (!info || info->id) {
+ 		const struct flash_info *jinfo;
+ 
+ 		jinfo = spi_nor_detect(nor);
+-		if (IS_ERR(jinfo)) {
++		if (IS_ERR(jinfo))
+ 			return jinfo;
+-		} else if (jinfo != info) {
+-			/*
+-			 * JEDEC knows better, so overwrite platform ID. We
+-			 * can't trust partitions any longer, but we'll let
+-			 * mtd apply them anyway, since some partitions may be
+-			 * marked read-only, and we don't want to loose that
+-			 * information, even if it's not 100% accurate.
+-			 */
 +
- ROHM BH1750 AMBIENT LIGHT SENSOR DRIVER
- M:	Tomasz Duszynski <tduszyns@gmail.com>
- S:	Maintained
++		/*
++		 * If caller has specified name of flash model that can normally
++		 * be detected using JEDEC, let's verify it.
++		 */
++		if (info && jinfo != info)
+ 			dev_warn(nor->dev, "found %s, expected %s\n",
+ 				 jinfo->name, info->name);
+-			info = jinfo;
+-		}
++
++		/* If info was set before, JEDEC knows better. */
++		info = jinfo;
+ 	}
+ 
+ 	return info;
 -- 
-2.43.0
+2.39.2
 
 
