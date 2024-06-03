@@ -1,62 +1,58 @@
-Return-Path: <linux-kernel+bounces-198792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B8C58D7D77
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 10:36:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E2838D7D76
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 10:36:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D6091C2223E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 08:36:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFDA91C2231C
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 08:36:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B9137640E;
-	Mon,  3 Jun 2024 08:36:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7A5274069;
+	Mon,  3 Jun 2024 08:36:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="gIbqLe0e"
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="z7L+3c+Z"
 Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE6D95BACF;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE69C5B5D3;
 	Mon,  3 Jun 2024 08:36:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717403784; cv=none; b=f68pdk4H1MXqblsz6gd6huDWARkPyEcE/Pl5Oioz0KNFfcUpyGxC+NAtsieTXL4LiwfgYX+7NjavyJgFxHNhrP6eVSMr+n4zW+UfVrt/ING8qBz5s6gUfjec/KRs2Ep6vZcsv8u/aWt+r9m1sOQV68Pj0IVovWo0P/VePuC9tps=
+	t=1717403784; cv=none; b=dnsPGcTGnFyK96xndrQ/+E6je+21I6efaPbZuUAliRiQhST/P32Qiu4/nWRrMyS7YHbQ2f0AK9gwk8a4u54nenMpNY1Or2lE2qBasFsbRml0liqmuTec3VL6SKsthEtqCXIUsoABB0Chxr8LdQULk78bkJZY2ViNxT62xXqf9Lg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1717403784; c=relaxed/simple;
-	bh=SGwxwn3cOl8zFt9eXkbF3zSBc4VgSBmVKp+8BzEACxA=;
+	bh=SjSnyJI/iMOQgwnrgExy7VarJd7DNOzblUnaTzUdmOo=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=BRyhE06YRyNwwVdJpI6tOEBHtOu4e/644vQAG8jFbpg+DiD+U7mfL9ZRFCPStGXnWl2/cjxRy2YdiPoVHbszHf51cdyfkFz1PE/hVsnRJraRFYj6RyL4tNafyir2etJ5kHKr+EWpIVF5NyiBOEnlEkH7kC+zOMJJW4FmUe/SA9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=gIbqLe0e; arc=none smtp.client-ip=217.194.8.81
+	 MIME-Version; b=IH8ifG58sn95szchzaDqt6MM17Ygteb4O2ivVmgimZpyU9MSX29dWvYfUw2Nf04XRpUOvb7DqtFBxS2mVgUe6RMtfoIkJn3V2CnuIVD7d8CrsMiOZjNUnsbXLnn+MZQYb8h5PjcnfTbYWHLdvKxW3Jx0FhjHRGJrPBhNyh9TUeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=z7L+3c+Z; arc=none smtp.client-ip=217.194.8.81
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
 Received: from francesco-nb.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id 68B791F9E3;
-	Mon,  3 Jun 2024 10:36:12 +0200 (CEST)
+	by mail11.truemail.it (Postfix) with ESMTPA id 324531FA0A;
+	Mon,  3 Jun 2024 10:36:13 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
 	s=default; t=1717403773;
-	bh=9ZZDZ+bxHkd4WidkWmCQRH6wA+PqO66eywpfwGMP14k=; h=From:To:Subject;
-	b=gIbqLe0emVKFLpueRF5AUeYxoTOQrEdXnAKRoGsm+T5sb86OZD64US9/I3ld9nbBh
-	 lk3wvea1BmyC7wYuUgvdIgTkyxxUMYL01KJ/kLiRCucMwWfm5RZKYKM3ZBrIxuPr8v
-	 U72JRWYcnf/Oa4HPkt0eh1RS5kQGYqSry+WgRtIYNfv48u07K9Mz4cG7Ln4MN05jnV
-	 JV3R7yRXU8JAUNpczhLfTvqZRfDry1qSN3YuijPMGbmZ2fAYVhjUkhILfFLT2i5r6J
-	 5OabgTXf2jOH7uoMoaSbXmNmgE9Qj4je/3ihP4gms0iWz2cyM13zAuStlQp7JUiJtI
-	 Pt37eqrV15afQ==
+	bh=FvTv0UUCUSa1ZKHUBhrFYAND7vgH3Rp2IDvUAdHC24A=; h=From:To:Subject;
+	b=z7L+3c+Z9u/PkRfVuGZLUkBKXzzdDABDCTJeQqijXnxHptNkSBaPbGRNlfgubJT0N
+	 oWc+XqQK/dhTDmoCd6mMPdPqGFGZEAERIc4k5QdRm1kh3/qpBCFJFFRBMJSDkKBYGP
+	 w36p15bGGt9XwXqtu/xmKk+TLfpK4xnnPm/Z531j6QGlcV3CFXyVPQiduP5Yjtg1Ym
+	 Av2KTbAQvZFbzcrgC1UGWS1UTsjULuMKzSGlkFouHeHkO5iKDUgUJm99RJa7hXex6+
+	 wCSreLzJM5lyisF36GsFvQKWJ8nkAdp6ruJ2EdCFcBfL0ZsdmLmfBe6h8yYEYSnP+E
+	 j/U/nC/Fcfy4w==
 From: Francesco Dolcini <francesco@dolcini.it>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Francesco Dolcini <francesco.dolcini@toradex.com>,
 	linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: [PATCH v2 1/2] dt-bindings: usb: gpio-sbu-mux: Make 'enable-gpios' optional
-Date: Mon,  3 Jun 2024 10:35:57 +0200
-Message-Id: <20240603083558.9629-2-francesco@dolcini.it>
+	Bjorn Andersson <andersson@kernel.org>
+Subject: [PATCH v2 2/2] usb: typec: mux: gpio-sbu: Make enable gpio optional
+Date: Mon,  3 Jun 2024 10:35:58 +0200
+Message-Id: <20240603083558.9629-3-francesco@dolcini.it>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240603083558.9629-1-francesco@dolcini.it>
 References: <20240603083558.9629-1-francesco@dolcini.it>
@@ -71,42 +67,40 @@ Content-Transfer-Encoding: 8bit
 From: Francesco Dolcini <francesco.dolcini@toradex.com>
 
 The enable gpio is not required when the SBU mux is used only for
-orientation, make enable-gpios required only for alternate mode
-switch use case.
+orientation, make it optional.
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
 Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
 ---
 v2:
- - add Acked-by: Conor Dooley
+ - removed useless NULL check for optional enable gpio
 ---
- Documentation/devicetree/bindings/usb/gpio-sbu-mux.yaml | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/usb/typec/mux/gpio-sbu-mux.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/usb/gpio-sbu-mux.yaml b/Documentation/devicetree/bindings/usb/gpio-sbu-mux.yaml
-index 88e1607cf053..30edcce82f97 100644
---- a/Documentation/devicetree/bindings/usb/gpio-sbu-mux.yaml
-+++ b/Documentation/devicetree/bindings/usb/gpio-sbu-mux.yaml
-@@ -44,13 +44,18 @@ properties:
+diff --git a/drivers/usb/typec/mux/gpio-sbu-mux.c b/drivers/usb/typec/mux/gpio-sbu-mux.c
+index 374168482d36..8902102c05a8 100644
+--- a/drivers/usb/typec/mux/gpio-sbu-mux.c
++++ b/drivers/usb/typec/mux/gpio-sbu-mux.c
+@@ -66,6 +66,9 @@ static int gpio_sbu_mux_set(struct typec_mux_dev *mux,
+ {
+ 	struct gpio_sbu_mux *sbu_mux = typec_mux_get_drvdata(mux);
  
- required:
-   - compatible
--  - enable-gpios
-   - select-gpios
-   - orientation-switch
-   - port
++	if (!sbu_mux->enable_gpio)
++		return -EOPNOTSUPP;
++
+ 	mutex_lock(&sbu_mux->lock);
  
- allOf:
-   - $ref: usb-switch.yaml#
-+  - if:
-+      required:
-+        - mode-switch
-+    then:
-+      required:
-+        - enable-gpios
+ 	switch (state->mode) {
+@@ -102,7 +105,8 @@ static int gpio_sbu_mux_probe(struct platform_device *pdev)
  
- additionalProperties: false
+ 	mutex_init(&sbu_mux->lock);
  
+-	sbu_mux->enable_gpio = devm_gpiod_get(dev, "enable", GPIOD_OUT_LOW);
++	sbu_mux->enable_gpio = devm_gpiod_get_optional(dev, "enable",
++						       GPIOD_OUT_LOW);
+ 	if (IS_ERR(sbu_mux->enable_gpio))
+ 		return dev_err_probe(dev, PTR_ERR(sbu_mux->enable_gpio),
+ 				     "unable to acquire enable gpio\n");
 -- 
 2.39.2
 
