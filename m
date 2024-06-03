@@ -1,186 +1,137 @@
-Return-Path: <linux-kernel+bounces-199364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA8B48D860D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:29:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CE2E8D8610
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:31:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61B801F23496
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:29:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48F60282007
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:31:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 298B7130A40;
-	Mon,  3 Jun 2024 15:28:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6009E130A46;
+	Mon,  3 Jun 2024 15:31:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aYs+R2d+"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OHlX5b47"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 649EB12F596
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 15:28:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A37A126F1F;
+	Mon,  3 Jun 2024 15:31:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717428535; cv=none; b=ZbXHwvyAdgune5NcU+sxlwzicckVDPFp77636S0L006nBSCe4pc9DwV/YJDq4sFlqujlfPkdo6Wzfvqwc9rOlhjuwNBbXDCxwIvJDkgBaEnz2u+EBf75CpjWpGbSyP/1gWlw5McG4YTuKoVzzGr0C5K1p1ZaS5HgsJikebXX+tI=
+	t=1717428662; cv=none; b=r027nUcWBGcrIngpGDAViAhhBso13SiBWFgMe2JjsoPf5PTh6yidyuYkajjwsftEUuQkDkKveR45MARNyGSadC//C7+XeM0ssnwm8ZwJjodnnzsPXSaxPBMK4Vq8fvyHUOsbwS+jddEC/TcYOKPwQ7Qxfdx7JB0WfE+LmbS+svE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717428535; c=relaxed/simple;
-	bh=jgd88n1fpOCFhS0XRFLq5gBP6vDKq95S79LnrkHYpH4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EJTIZ2h3dyyRGn34mS99fvwhqgJjkCwzJyEEBH7AkdDm9wCQCjRPV2ndM4U2PK5YND2WTJXjkpzBloaYi4C0SD8uazQWO5buLirD1GgYoKZztZtoKPMTeDTc/xdtiHOuFW+RS5Te370x9zL7NEvCwa4cX1ORepkn/evHIAb26XI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aYs+R2d+; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717428527;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ar9gzrik4rhckEVRPLbE8X2OcbLolgrz1g9vN29eeQg=;
-	b=aYs+R2d+gbC30DA6kMYBzxB9FjoLfxwTUrIx/S7ofhZWwjmbecQxrNhJhhrERsDyTNMUav
-	ecgYUfz64a/f7o55PgCCRQr11IkUtg15dISRDDHu2HnhM0kpAj7cD7FpWNF+fOpxfOcqnX
-	HG7u6wp8zzRcMoIL71KJj+SDq322sWY=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-117-mVkyJwYbOEyO-MWxEc83YQ-1; Mon, 03 Jun 2024 11:27:42 -0400
-X-MC-Unique: mVkyJwYbOEyO-MWxEc83YQ-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4212941e244so10177225e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 08:27:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717428447; x=1718033247;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ar9gzrik4rhckEVRPLbE8X2OcbLolgrz1g9vN29eeQg=;
-        b=F9eML21knqN1rZRbG2MQnStT/LKvxP9yNot1T8XzlMOIMwSTzuHyum5o8e6A4rnz20
-         GRg+uJtEBRRUekuPdT2G74MpJ7BxRqgB/b7wvLcKKv2jMVEyzcMaVhT84GdcAoygCnjh
-         BrOXczga3eOhrSUcxOuVI/StzBiewhCbN3u+Sxap6VB+j/IgXPToNrjINavqHEtH2E4t
-         kTepd+Peqj3Kn54bAiJnKYDKJQY5KEIErpA1VHAAYaTxfJ8C6CFP7tXdoHWY4Imz2++O
-         gkkERlwuE85igjdccbwUnmcN581uyRhlBFMvFcXoJURLLrPfjDy9HrBDWrIjV25SNlhl
-         VsCA==
-X-Forwarded-Encrypted: i=1; AJvYcCU8tsTyrhfNNLZhefrar5D3LB7hZkTV0K1ngeQwfdVpzqbUx+CWZztdQOlMxjjUyViSkM57AiKb1Afqvx4p+Hr9gQvw74fC9K3+VyEc
-X-Gm-Message-State: AOJu0Yx9as7QHRrajrXC3pQLgx5m/sEYXziWpaYcO62dqBBBU+rpsU5z
-	jeoWgfgr1KM2TyveOK78qvE+fo6V6W0F8cAnO//e4Un13wXI4uiJuD153YwetGmKUedZE5Fz7ng
-	nyAKBw9wREVcVw4jeHW0YJ7Lu7fFTSMV/VEnrdxqpv11Qh9mgoxJtGNcVNE3Ceg==
-X-Received: by 2002:a05:600c:3d8c:b0:420:fcd:10e0 with SMTP id 5b1f17b1804b1-4212e05dfa2mr72664665e9.15.1717428447502;
-        Mon, 03 Jun 2024 08:27:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFpBRQbamqxXLfeZ0zqOXC87vSWhwtU762ZehParQC2zaOtREMaeN0/9mqa3qf0Xr6Fcsku9w==
-X-Received: by 2002:a05:600c:3d8c:b0:420:fcd:10e0 with SMTP id 5b1f17b1804b1-4212e05dfa2mr72664475e9.15.1717428447161;
-        Mon, 03 Jun 2024 08:27:27 -0700 (PDT)
-Received: from ?IPV6:2a01:599:908:c963:af9b:c64c:dfd8:5999? ([2a01:599:908:c963:af9b:c64c:dfd8:5999])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4212b83d4e2sm121728565e9.2.2024.06.03.08.27.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Jun 2024 08:27:26 -0700 (PDT)
-Message-ID: <f85228ee-5e81-43ac-96c5-9687fc0c596f@redhat.com>
-Date: Mon, 3 Jun 2024 17:27:25 +0200
+	s=arc-20240116; t=1717428662; c=relaxed/simple;
+	bh=odR2yE0PrRaovS85NwYBENVHPZalKhxFjP3osPFtmGI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EPEhuZtmf5qH8xN3dpYKnzFc4nX5G/7o6022T5x1ewAgFEv3aO9t4y2UbUJDxWLoPVK5s/nSf6WmPbUiAD1DydI7StVR910ZySWnEt21wsJ/kIxRLbloqTmSllfEJhTgKbsXhHb3T36LJlbeUJ+aeXtyShYtpBQ762OjOcoY1qg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OHlX5b47; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6CFBC2BD10;
+	Mon,  3 Jun 2024 15:30:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717428662;
+	bh=odR2yE0PrRaovS85NwYBENVHPZalKhxFjP3osPFtmGI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OHlX5b47nBaH+NbFGZWsM5ISVowFzvmzrSp6y4oP/rXvG5yYP6L8HH2LG6uKupMz5
+	 tXCTbOgWYebcYp+bv2SlxdC1QnUrmnM15cvJaB5TrIyeEeQa2b7jHgACz39soaomFg
+	 czTkykzix1LIgAv4l04GRBPZZF/bISMNW6FumlIKXv4+q3MWD0/Aa16hh5Qq1QTrlc
+	 GLd2HPiz+KJJTTvCq+LHa2KNUPmLzVuc1WNSDZwtcYPeRaWQIwHnNEeWy8vcIGMGwa
+	 tggzcPBCL+1/NVikvspB//QMd31Jcf7dvIpxmL+QStiyrMo4rpj2BxxCUq8/bVf4C9
+	 uvJRpjW0kmoDw==
+Date: Mon, 3 Jun 2024 18:29:01 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: "Kalra, Ashish" <ashish.kalra@amd.com>
+Cc: Borislav Petkov <bp@alien8.de>, tglx@linutronix.de, mingo@redhat.com,
+	dave.hansen@linux.intel.com, x86@kernel.org, rafael@kernel.org,
+	hpa@zytor.com, peterz@infradead.org, adrian.hunter@intel.com,
+	sathyanarayanan.kuppuswamy@linux.intel.com, jun.nakajima@intel.com,
+	rick.p.edgecombe@intel.com, thomas.lendacky@amd.com,
+	michael.roth@amd.com, seanjc@google.com, kai.huang@intel.com,
+	bhe@redhat.com, kirill.shutemov@linux.intel.com, bdas@redhat.com,
+	vkuznets@redhat.com, dionnaglaze@google.com, anisinha@redhat.com,
+	jroedel@suse.de, ardb@kernel.org, kexec@lists.infradead.org,
+	linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 1/3] efi/x86: Fix EFI memory map corruption with kexec
+Message-ID: <Zl3hPefvOwPv0Mjn@kernel.org>
+References: <20240528095522.509667-1-kirill.shutemov@linux.intel.com>
+ <cover.1717111180.git.ashish.kalra@amd.com>
+ <f4be03b8488665f56a1e5c6e6459f447352dfcf5.1717111180.git.ashish.kalra@amd.com>
+ <20240603085654.GBZl2FVjPd-gagt-UA@fat_crate.local>
+ <8e3dfc15-f609-4839-85c7-1cc8cefd7acc@amd.com>
+ <Zl3HfiQ6oHdTdOdA@kernel.org>
+ <1ef36309-8d7f-447b-a54a-3cdafeccca64@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] mm/mlock: implement folio_mlock_step() using
- folio_pte_batch()
-To: Lance Yang <ioworker0@gmail.com>
-Cc: Matthew Wilcox <willy@infradead.org>, akpm@linux-foundation.org,
- ryan.roberts@arm.com, 21cnbao@gmail.com, baolin.wang@linux.alibaba.com,
- ziy@nvidia.com, fengwei.yin@intel.com, ying.huang@intel.com,
- libang.li@antgroup.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20240603140745.83880-1-ioworker0@gmail.com>
- <Zl3Wjh9_aGY8Xxm7@casper.infradead.org>
- <c0309ab6-8bae-42b7-8d27-1df895689fb8@redhat.com>
- <CAK1f24n9UB=Xqj23vLG7fYKUfvZgLqFVF-tsyc_nDrwAKC98CQ@mail.gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <CAK1f24n9UB=Xqj23vLG7fYKUfvZgLqFVF-tsyc_nDrwAKC98CQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1ef36309-8d7f-447b-a54a-3cdafeccca64@amd.com>
 
-On 03.06.24 17:08, Lance Yang wrote:
-> On Mon, Jun 3, 2024 at 10:56 PM David Hildenbrand <david@redhat.com> wrote:
->>
->> On 03.06.24 16:43, Matthew Wilcox wrote:
->>> On Mon, Jun 03, 2024 at 10:07:45PM +0800, Lance Yang wrote:
->>>> +++ b/mm/mlock.c
->>>> @@ -307,26 +307,15 @@ void munlock_folio(struct folio *folio)
->>>>    static inline unsigned int folio_mlock_step(struct folio *folio,
->>>>               pte_t *pte, unsigned long addr, unsigned long end)
->>>>    {
->>>> -    unsigned int count, i, nr = folio_nr_pages(folio);
->>>> -    unsigned long pfn = folio_pfn(folio);
->>>> +    const fpb_t fpb_flags = FPB_IGNORE_DIRTY | FPB_IGNORE_SOFT_DIRTY;
->>>> +    unsigned int count = (end - addr) >> PAGE_SHIFT;
->>>
->>> This is a pre-existing bug, but ... what happens if you're on a 64-bit
->>> system and you mlock() a range that is exactly 2^44 bytes?  Seems to me
->>> that count becomes 0.  Why not use an unsigned long here and avoid the
->>> problem entirely?
->>>
->>> folio_pte_batch() also needs to take an unsigned long max_nr in that
->>> case, because you aren't restricting it to folio_nr_pages().
->>
->> Yeah, likely we should also take a look at other folio_pte_batch() users
->> like copy_present_ptes() that pass the count as an int. Nothing should
->> really be broken, but we might not batch as much as we could, which is
->> unfortunate.
+On Mon, Jun 03, 2024 at 09:01:49AM -0500, Kalra, Ashish wrote:
+> On 6/3/2024 8:39 AM, Mike Rapoport wrote:
 > 
-> Could I change folio_pte_batch() to take an unsigned long max_nr?
+> > On Mon, Jun 03, 2024 at 08:06:56AM -0500, Kalra, Ashish wrote:
+> > > On 6/3/2024 3:56 AM, Borislav Petkov wrote
+> > > 
+> > > > > EFI memory map and due to early allocation it uses memblock allocation.
+> > > > > 
+> > > > > Later during boot, efi_enter_virtual_mode() calls kexec_enter_virtual_mode()
+> > > > > in case of a kexec-ed kernel boot.
+> > > > > 
+> > > > > This function kexec_enter_virtual_mode() installs the new EFI memory map by
+> > > > > calling efi_memmap_init_late() which remaps the efi_memmap physically allocated
+> > > > > in efi_arch_mem_reserve(), but this remapping is still using memblock allocation.
+> > > > > 
+> > > > > Subsequently, when memblock is freed later in boot flow, this remapped
+> > > > > efi_memmap will have random corruption (similar to a use-after-free scenario).
+> > > > > 
+> > > > > The corrupted EFI memory map is then passed to the next kexec-ed kernel
+> > > > > which causes a panic when trying to use the corrupted EFI memory map.
+> > > > This sounds fishy: memblock allocated memory is not freed later in the
+> > > > boot - it remains reserved. Only free memory is freed from memblock to
+> > > > the buddy allocator.
+> > > > 
+> > > > Or is the problem that memblock-allocated memory cannot be memremapped
+> > > > because *raisins*?
+> > > This is what seems to be happening:
+> > > 
+> > > efi_arch_mem_reserve() calls efi_memmap_alloc() to allocate memory for
+> > > EFI memory map and due to early allocation it uses memblock allocation.
+> > > 
+> > > And later efi_enter_virtual_mode() calls kexec_enter_virtual_mode()
+> > > in case of a kexec-ed kernel boot.
+> > > 
+> > > This function kexec_enter_virtual_mode() installs the new EFI memory map by
+> > > calling efi_memmap_init_late() which does memremap() on memblock-allocated memory.
+> > Does the issue happen only with SNP?
+> 
+> This is observed under SNP as efi_arch_mem_reserve() is only being called
+> with SNP enabled and then efi_arch_mem_reserve() allocates EFI memory map
+> using memblock.
 
-It might be more future proof; see my other mail, I think currently all 
-is fine, because "end" is not the end of the VMA but the end of the PMD. 
-Please double-check.
+I don't see how efi_arch_mem_reserve() is only called with SNP. What did I
+miss?
+ 
+> If we skip efi_arch_mem_reserve() (which should probably be anyway skipped
+> for kexec case), then for kexec boot, EFI memmap is memremapped in the same
+> virtual address as the first kernel and not the allocated memblock address.
+
+Maybe we should skip efi_arch_mem_reserve() for kexec case, but I think we
+still need to understand what's causing memory corruption.
+
+> Thanks, Ashish
+> 
+> > 
+> > I didn't really dig, but my theory would be that it has something to do
+> > with arch_memremap_can_ram_remap() in arch/x86/mm/ioremap.c
+> > > Thanks, Ashish
 
 -- 
-Cheers,
-
-David / dhildenb
-
+Sincerely yours,
+Mike.
 
