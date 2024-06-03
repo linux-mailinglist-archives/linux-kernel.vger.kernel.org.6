@@ -1,161 +1,108 @@
-Return-Path: <linux-kernel+bounces-198813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2ABBC8D7DD3
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 10:48:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B82148D7DCF
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 10:48:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A80FC1C21BA0
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 08:48:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72C2C2847A8
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 08:48:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8170476EEA;
-	Mon,  3 Jun 2024 08:48:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E7EA74E0C;
+	Mon,  3 Jun 2024 08:48:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="sZi5ZUBc"
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rUHoZvRg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EFBE74069;
-	Mon,  3 Jun 2024 08:48:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A56D93D551;
+	Mon,  3 Jun 2024 08:48:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717404515; cv=none; b=HRNvL+WzR60MgUxq+C0AfCotHlbFoP/3KwFUytpYOop7lyvgHWDh7852mZYB2XHhdaj4ebJRHXR2CvC2+F2Ft8Ahp3tI/N+5U7z7knV5AuD1kavehD+BXzbf29PVNQh4IBtSlFiV5hNcYtYM2PNPYhr0gXzoErlrakDJu/fEE4E=
+	t=1717404500; cv=none; b=K/62TFicGr/D29YRvm+hg4DcefKRR8/9dYMtuB7LZseeijizLjgAIWJGnn4wiFR2XZTkoEQGb0lMr5FIwZwngo5PSR8HJfSlr1qNHj6zR8Liufm8Smf2Zw205YJ54KVEBtYuymoRNEIgX7AbCnhx3Pp1/s/9xXLL1EeBXqOt2L8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717404515; c=relaxed/simple;
-	bh=i/u0QhpikUU4tvXKtYsvQ33uX864CvXsbVERvLau4hQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=AjJ21Mfu8Qm1bUuqZyXQxDr7Q6rQJQJFDHuyXVErrOb723+ze61FKlQl5a9+wFL4Us0zn98hhaypRjJjKbvalrb0QeT8qmgyHKUdWXDD9osjbkKNCMsZyx2X3o6MxHoUSYN35w0SR+vXpXTlu4D9wJ0376tFgQdPycu6CaeusAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=sZi5ZUBc; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45383dHK009667;
-	Mon, 3 Jun 2024 10:48:24 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	xDFSp0bgHGnb5uhcwyLxi6wynGhrBTigGpLIvo69kPg=; b=sZi5ZUBc0IpoX7Uv
-	+UNd3CMChGZLD5/e2d6zXG4yZ4Ic8jUqNoAePYfGj+BAR3pRXGEGWkgN0xEMut5Z
-	HeFAhp76T1+bKQ2GcYIXlJcuO4yToJqOa3bwcvgsN/DwtbORWLxLxi5TcViayop/
-	+Y6m7E3/NEFOCLvX5ZyYNgYPHT7GngsOahD5BhO6DoC4l9SvjCSFT2P+GB0i6WKm
-	QEmbt3qCsp+a3mmEMkziSL6ZS2OT0eDG+O18IH+ex2g37zjmJMcAmt51YhJ3ZHqo
-	Dmy0GHBEaF0+6KRlvEMxveKwK2KYabqrafIIzj0neOrUcGK/XBxL7iFzK7I3mSXF
-	Aq4L8g==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3ygekhkq90-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 03 Jun 2024 10:48:24 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 38FBC40046;
-	Mon,  3 Jun 2024 10:48:20 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 9B607215BDB;
-	Mon,  3 Jun 2024 10:47:15 +0200 (CEST)
-Received: from [10.131.140.24] (10.131.140.24) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Mon, 3 Jun
- 2024 10:47:14 +0200
-Message-ID: <5e21a6a5-0003-4b6c-a051-25ebeb38e676@foss.st.com>
-Date: Mon, 3 Jun 2024 10:47:14 +0200
+	s=arc-20240116; t=1717404500; c=relaxed/simple;
+	bh=u56cQQyMmZ3JOBwf5RvEi1tVKT1f2xyCDIc7eW/pGqI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AsaVsUvG6v+ZXi8d8ub3ruqe6aS8I8Ubl8MBr6XGm1BhgXUcNyEOCOMWTZjcE4bhHUygSfYWe986nzalGUYRFk+n5v6T2RP+Rzos9x+Bj8QaP9bO/kLv2MZTeQt/yes6FWG9voWdtZs9AIFyCMmi5kyp8GOQIYNwQIFQxwjUTeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rUHoZvRg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AEDFC2BD10;
+	Mon,  3 Jun 2024 08:48:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717404500;
+	bh=u56cQQyMmZ3JOBwf5RvEi1tVKT1f2xyCDIc7eW/pGqI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rUHoZvRgYkMgQFilzW1kNsTwulNMZ6G7id+p04gQc+4FfxaYqRGxYNAHaBmdHb7Sx
+	 g0MDQH7PSRPgUH/3JthcwLhpImsFH1EdILhJ3dFBeU881CD0LCekAe1kNg0qeO+ARU
+	 XzX60mvv+dqRhE405fxY6GlbFd6jCY2udGPzLlqACRtqwnSxXQpfw7nLIryj8R8UEA
+	 F0gIWGG/lIGwaj0dIQ/+nLKUJOqLEhrtMjuPosLZhRlY3wmAd42CCkKLiDYH+aIVzq
+	 +Om5/89OWCBM5Q5hDBSFOpnv6wuuhadpjvL3akvUqMBtTEQugDL7t8pwSV1iefAhUN
+	 eBwvabFNDWHwA==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1sE3MX-000000007TS-3GLQ;
+	Mon, 03 Jun 2024 10:48:17 +0200
+Date: Mon, 3 Jun 2024 10:48:17 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Abel Vesa <abel.vesa@linaro.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] arm64: dts: qcom: x1e80100-crd: Add pmic-glink node
+ with all 3 connectors
+Message-ID: <Zl2DUXWUN0088-Af@hovoldconsulting.com>
+References: <20240527-x1e80100-dts-pmic-glink-v1-0-7ea5c8eb4d2b@linaro.org>
+ <20240527-x1e80100-dts-pmic-glink-v1-2-7ea5c8eb4d2b@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] media: dt-bindings: Add ST VD56G3 camera sensor
- binding
-To: Sakari Ailus <sakari.ailus@iki.fi>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski@linaro.org>
-CC: <benjamin.mugnier@foss.st.com>, <mchehab@kernel.org>, <robh@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20240521162950.6987-1-sylvain.petinot@foss.st.com>
- <20240521162950.6987-2-sylvain.petinot@foss.st.com>
- <8afe1888-5886-45fc-b576-98db3d392d37@linaro.org>
- <ZlWiQTfag5yTA4YM@valkosipuli.retiisi.eu>
- <b6d3d336-5999-424a-9e38-3cf793b6627e@linaro.org>
- <ZlWrcTCNBWEz67Tj@valkosipuli.retiisi.eu>
-From: Sylvain Petinot <sylvain.petinot@foss.st.com>
-Content-Language: en-US
-In-Reply-To: <ZlWrcTCNBWEz67Tj@valkosipuli.retiisi.eu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-06-03_05,2024-05-30_01,2024-05-17_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240527-x1e80100-dts-pmic-glink-v1-2-7ea5c8eb4d2b@linaro.org>
 
-Hi Krzysztof, Sakari
-
-On 5/28/2024 12:01 PM, Sakari Ailus wrote:
-> Hi Krzysztof,
+On Mon, May 27, 2024 at 11:07:28AM +0300, Abel Vesa wrote:
+> Add the pmic-glink node and describe all 3 USB Type-C connectors. Do this
+> for USB only, for now. The DP port will come at a later stage since it
+> uses a retimer.
 > 
-> On Tue, May 28, 2024 at 11:46:00AM +0200, Krzysztof Kozlowski wrote:
->> On 28/05/2024 11:22, Sakari Ailus wrote:
->>> Hi Krzysztof,
->>>
->>> On Mon, May 27, 2024 at 09:04:38PM +0200, Krzysztof Kozlowski wrote:
->>>> On 21/05/2024 18:29, Sylvain Petinot wrote:
->>>>> Add devicetree bindings Documentation for ST VD56G3 & ST VD66GY camera
->>>>> sensors. Update MAINTAINERS file.
->>>>>
->>>>> Signed-off-by: Sylvain Petinot <sylvain.petinot@foss.st.com>
->>>>
->>>>
->>>>> diff --git a/MAINTAINERS b/MAINTAINERS
->>>>> index ef6be9d95143..554e6861425b 100644
->>>>> --- a/MAINTAINERS
->>>>> +++ b/MAINTAINERS
->>>>> @@ -20885,6 +20885,15 @@ S:	Maintained
->>>>>  F:	Documentation/hwmon/stpddc60.rst
->>>>>  F:	drivers/hwmon/pmbus/stpddc60.c
->>>>>  
->>>>> +ST VD56G3 DRIVER
->>>
->>> I might add this is a sensor, i.e. "ST VD653G IMAGE SENSOR DRIVER".
->>>
->>>>> +M:	Benjamin Mugnier <benjamin.mugnier@foss.st.com>
->>>>> +M:	Sylvain Petinot <sylvain.petinot@foss.st.com>
->>>>> +L:	linux-media@vger.kernel.org
->>>>> +S:	Maintained
->>>>> +T:	git git://linuxtv.org/media_tree.git
->>>>
->>>> This is a friendly reminder during the review process.
->>>>
->>>> It seems my or other reviewer's previous comments were not fully
->>>> addressed. Maybe the feedback got lost between the quotes, maybe you
->>>> just forgot to apply it. Please go back to the previous discussion and
->>>> either implement all requested changes or keep discussing them.
->>>
->>> The above MAINTAINERS entry is roughly in line with what else we have for
->>> the Media tree. I'm in favour of listing the people who would look after
->>> the driver, not just those who merge the patches (or even send PRs to
->>> Linus).
->>
->> I did not propose to drop the entry.
->>
->>>
->>> In other words, I think the above entry is fine as-is.
->>
->> I propose to drop duplicated, redundant git entry. Maintainer of this
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> ---
+>  arch/arm64/boot/dts/qcom/x1e80100-crd.dts | 143 ++++++++++++++++++++++++++++++
+>  1 file changed, 143 insertions(+)
 > 
-> Ah, I agree, that makes sense.
+> diff --git a/arch/arm64/boot/dts/qcom/x1e80100-crd.dts b/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
+> index c5c2895b37c7..2fcc994cbb89 100644
+> --- a/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
+> +++ b/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
+> @@ -49,6 +49,101 @@ chosen {
+>  		stdout-path = "serial0:115200n8";
+>  	};
+>  
+> +	pmic-glink {
+> +		compatible = "qcom,x1e80100-pmic-glink",
+> +			     "qcom,sm8550-pmic-glink",
+> +			     "qcom,pmic-glink";
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +		orientation-gpios = <&tlmm 121 GPIO_ACTIVE_HIGH>,
+> +				    <&tlmm 123 GPIO_ACTIVE_HIGH>,
+> +				    <&tlmm 125 GPIO_ACTIVE_HIGH>;
 
-Thanks for clarifying, git entry will be drop in V3.
+With this series applied, I'm getting the following error on boot of the
+CRD:
 
-> 
->> driver does not have access to git tree and the git tree is already
->> explained in media subsystem entry. If you ever update the git tree, you
->> need to update 100 driver entries which is meaningless...
-> 
+	ucsi_glink.pmic_glink_ucsi pmic_glink.ucsi.0: PPM init failed, stop trying
 
---
-Sylvain
+Known issue? Do you need to enable some quirk in the UCSI driver?
+
+Johan
 
