@@ -1,126 +1,147 @@
-Return-Path: <linux-kernel+bounces-198663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDF418D7BCC
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 08:42:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9AFC8D7BC7
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 08:42:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1838A2828C6
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 06:42:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20A9FB219D0
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 06:41:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F15DB80624;
-	Mon,  3 Jun 2024 06:40:03 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 311C14084D;
+	Mon,  3 Jun 2024 06:39:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="Wj3ii0ir"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B92F17F7EF;
-	Mon,  3 Jun 2024 06:40:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFD773D0D9
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 06:39:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717396803; cv=none; b=T5Mbu2UCxFpBHbI2S4dNi9/GPZvl1ERb2ZiUfcs4Jsz0aoUI0MClqx1SPK0lnu6n4aLOJxdh0NDyGhZZK9tPmHEdz2ALzWJbSmOZ5bJVE6Vf1nQv2BtcbR5y34TwbVzT8v9DrOVhJWkfM7XAv6x2WtfXuegSiakOFpoXATyxp0k=
+	t=1717396789; cv=none; b=QjuU41sCDId4LN7bwWps/klk/zQpHrQauxH9r0SRlr5Sk9lt3LuM4X5Q9ITQpPfwyWE9X4x8WIjMHwszmNN+REc3n1tIwRDBgUAdfGKLZS7RXRkmcVK4ptioyFfOtR8BmCtN/xnD7GpOWnBxJDCdu0I++EINQv9hcHr0z7MMSBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717396803; c=relaxed/simple;
-	bh=lets7R8QabYAyvZ/BA5K2o0vh78I6YznD7kMrzkB61s=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=VlG1MVP24LrkCGn7rilBQeD6N6QSadJ2VXIlYD2FVx1WG0E9UqvZziaNHXr6HGMY4MnNMrlVhs2gZrjuRT3miTJqF4Z4syTP1w1gKw1QUJ3ffEVFDZtFh/ZHFPOoJx0ZjpfLvrKrZInjQO0FHB3cDubNbOizJblcIhw6U5/i4Yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Vt3xH0P3hz4f3jrn;
-	Mon,  3 Jun 2024 14:39:47 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 9AACF1A0189;
-	Mon,  3 Jun 2024 14:39:56 +0800 (CST)
-Received: from [10.174.178.129] (unknown [10.174.178.129])
-	by APP1 (Coremail) with SMTP id cCh0CgAnQAk8ZV1mZHu+OQ--.43911S2;
-	Mon, 03 Jun 2024 14:39:56 +0800 (CST)
-Subject: Re: [PATCH v2 8/8] writeback: factor out balance_wb_limits to remove
- repeated code
-To: Tejun Heo <tj@kernel.org>
-Cc: willy@infradead.org, akpm@linux-foundation.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <20240514125254.142203-1-shikemeng@huaweicloud.com>
- <20240514125254.142203-9-shikemeng@huaweicloud.com>
- <ZljGiunxmVAlW6EE@slm.duckdns.org>
-From: Kemeng Shi <shikemeng@huaweicloud.com>
-Message-ID: <cfbbcc80-7db1-8277-98ab-1f32c3a629ab@huaweicloud.com>
-Date: Mon, 3 Jun 2024 14:39:18 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+	s=arc-20240116; t=1717396789; c=relaxed/simple;
+	bh=6zIG1+ce+MFr3YKcNcxLW9ehBTfd0YUfDO7c/QJPUfc=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=JPUmgOzfZTy8iV2fj23uMBa5m3SofTI8BDZECP1fbJ+rXWITSQ4w76vD8v4S0zYmGP+XhtZVHWSM1mJxWYrWppxiHx4Dj0TIlp1Y0cwB24rvx2qlsgRG5eBm4bh7UojPK/4kJuUKalpdWvciqAEov6H62gKeJEUCGAdjRkFNim8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=Wj3ii0ir; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-57a196134d1so4431026a12.2
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2024 23:39:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fairphone.com; s=fair; t=1717396785; x=1718001585; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4/kSWlsZgItMKs0n3WD4Nrf7fVlEdWxgIbQ1jzkl5d4=;
+        b=Wj3ii0irnq4Z9rAan3f6ck/rRUr308vMh2w808luWnsz6kErhJ/vcaf+q+QxQWco5U
+         hWbguK9Ich9Ac+qIwNqGoqqxCbKelhpqB42vpR/mrTX5/YWx24FnOcWe6ePzrhJRsW/m
+         c70RfESusN8DRhTcchefkuQp+gQ6vQtBd7R1zAIu+NvQZ2dhskmquek2SJ/YqUKdm+c0
+         9waOd4iKez4bMc4qfaMOeWtQIG66tcAQz3zChCkn7lUD+RPcxDndj8ZK9TLum3u3JQzw
+         gs8ksD2bus8gXQZbv7i+Lt9kVpokJqnMpPrP4xB9Vyd1tjDFQhhriDd/gOGs5VGnp8df
+         uRWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717396785; x=1718001585;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=4/kSWlsZgItMKs0n3WD4Nrf7fVlEdWxgIbQ1jzkl5d4=;
+        b=Smz9e6ifvD/1ITyv5UwD9zfd13PDqjeM94Dszyw/AYH1rH6WC9NIOuzK38ieYgF7cw
+         UraAVQ4SoTrD7MaeFBlW9s9osfDuSUDHOKECpR4rTrVWp6LzN+IJBQRJQIrdxwAThM2W
+         uqXWb3TLB+xR88u/kMTcal5EI3i6fVJ7gFLEB47mxRKeVVpPrEhrc7ZnLANJtal2x7l2
+         T3a8p6X6AVpg5QgmnSuuvB8EhcpfY09b0CqMZ7LgM+aiG7V2+BNWyiyt0aClIJiRFKHD
+         PPpeEag/unOJdFlGJeLELeQ4NHgP51WP+IitKHRE1OwJr5GiPQNFuTbAi9lC/GixTUwG
+         KwEA==
+X-Forwarded-Encrypted: i=1; AJvYcCUKhTMEBaOIFgaWHJDSR8el0RKZKmy/kMfljXpRlowjiGL/GOyQMw3FQROezdTcqdfzDoDimgIApSIUheaesVxC9XmXcywFQNRGiXvS
+X-Gm-Message-State: AOJu0YziKZD+c+Hk2rL0cxaZda5CEqQZBGx8uIBCUBhQJiNtGyOTxNUp
+	yHMkBduIBMOxwLXcUDn6NZ8LsVXKXu4SL4XBQ7ADOeO7ZyeCJSUXncokN2XB2p8=
+X-Google-Smtp-Source: AGHT+IHPI42I+wiDmrMQUuBnkODfjkjRd3F/AhQNQPxFvtXVyYyNTCx5IjDc+RZbp/mfvvWlLxUi5w==
+X-Received: by 2002:a17:906:15db:b0:a68:a2d7:3872 with SMTP id a640c23a62f3a-a68a2d73920mr313157566b.45.1717396785032;
+        Sun, 02 Jun 2024 23:39:45 -0700 (PDT)
+Received: from localhost (144-178-202-138.static.ef-service.nl. [144.178.202.138])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a68e2d1333fsm234930866b.219.2024.06.02.23.39.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 02 Jun 2024 23:39:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <ZljGiunxmVAlW6EE@slm.duckdns.org>
-Content-Type: text/plain; charset=gbk
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:cCh0CgAnQAk8ZV1mZHu+OQ--.43911S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7ArWDJr1UtFy7KrW3AryfCrg_yoW8Jw1fpr
-	WIyanFyF4DtF4Ig3ZxCayxZr9IqrsxZry3JryrJrs3tr1a9rn7KF9xZrWruFy7Cr1DGa15
-	Zr4DKas7Gws5CFDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyEb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij
-	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE
-	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42
-	xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
-	c7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU1wL05UUUUU==
-X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 03 Jun 2024 08:39:44 +0200
+Message-Id: <D1Q6CMZM78VI.ABYGRRV5E61B@fairphone.com>
+Cc: <~postmarketos/upstreaming@lists.sr.ht>, <phone-devel@vger.kernel.org>,
+ "Stanimir Varbanov" <stanimir.varbanov@linaro.org>,
+ <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Krzysztof
+ Kozlowski" <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v2] media: dt-bindings: qcom,sc7280-venus: Allow one
+ IOMMU entry
+From: "Luca Weiss" <luca.weiss@fairphone.com>
+To: "Luca Weiss" <luca.weiss@fairphone.com>, "Bjorn Andersson"
+ <andersson@kernel.org>, "Konrad Dybcio" <konrad.dybcio@linaro.org>,
+ "Stanimir Varbanov" <stanimir.k.varbanov@gmail.com>, "Vikash Garodia"
+ <quic_vgarodia@quicinc.com>, "Bryan O'Donoghue"
+ <bryan.odonoghue@linaro.org>, "Mauro Carvalho Chehab" <mchehab@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>, "Rob Herring" <robh@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>
+X-Mailer: aerc 0.17.0
+References: <20240412-sc7280-venus-bindings-v2-1-48ca8c2ec532@fairphone.com>
+In-Reply-To: <20240412-sc7280-venus-bindings-v2-1-48ca8c2ec532@fairphone.com>
 
+On Fri Apr 12, 2024 at 4:19 PM CEST, Luca Weiss wrote:
+> Some SC7280-based boards crash when providing the "secure_non_pixel"
+> context bank, so allow only one iommu in the bindings also.
 
-Hello,
-on 5/31/2024 2:33 AM, Tejun Heo wrote:
-> Hello,
-> 
-> On Tue, May 14, 2024 at 08:52:54PM +0800, Kemeng Shi wrote:
->> +static void balance_wb_limits(struct dirty_throttle_control *dtc,
->> +			      bool strictlimit)
->> +{
->> +	wb_dirty_freerun(dtc, strictlimit);
->> +	if (dtc->freerun)
->> +		return;
->> +
->> +	wb_dirty_exceeded(dtc, strictlimit);
->> +	wb_position_ratio(dtc);
->> +}
-> ...
->> @@ -1869,12 +1880,9 @@ static int balance_dirty_pages(struct bdi_writeback *wb,
->>  		 * Calculate global domain's pos_ratio and select the
->>  		 * global dtc by default.
->>  		 */
->> -		wb_dirty_freerun(gdtc, strictlimit);
->> +		balance_wb_limits(gdtc, strictlimit);
->>  		if (gdtc->freerun)
->>  			goto free_running;
->> -
->> -		wb_dirty_exceeded(gdtc, strictlimit);
->> -		wb_position_ratio(gdtc);
->>  		sdtc = gdtc;
-> 
-> Isn't this a bit nasty? The helper skips updating states because it knows
-> the caller is not going to use them? I'm not sure the slight code reduction
-> justifies the added subtlety.
+Hi all,
 
-It's a general rule that wb should not be limited if the wb is in freerun state.
-So I think it's intuitive to obey the rule in both balance_wb_limits and it's
-caller in which case balance_wb_limits and it's caller should stop to do anything
-when freerun state of wb is first seen.
-But no insistant on this...
+This patch is still pending and not having it causes dt validation
+warnings for some qcom-sc7280 boards.
 
-Thanks.
-> 
-> Thanks.
-> 
+Regards
+Luca
+
+>
+> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+> ---
+> Reference:
+> https://lore.kernel.org/linux-arm-msm/20231201-sc7280-venus-pas-v3-2-bc13=
+2dc5fc30@fairphone.com/
+> ---
+> Changes in v2:
+> - Pick up tags
+> - Otherwise just a resend, v1 was sent in January
+> - Link to v1: https://lore.kernel.org/r/20240129-sc7280-venus-bindings-v1=
+-1-20a9ba194c60@fairphone.com
+> ---
+>  Documentation/devicetree/bindings/media/qcom,sc7280-venus.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/Documentation/devicetree/bindings/media/qcom,sc7280-venus.ya=
+ml b/Documentation/devicetree/bindings/media/qcom,sc7280-venus.yaml
+> index 8f9b6433aeb8..10c334e6b3dc 100644
+> --- a/Documentation/devicetree/bindings/media/qcom,sc7280-venus.yaml
+> +++ b/Documentation/devicetree/bindings/media/qcom,sc7280-venus.yaml
+> @@ -43,6 +43,7 @@ properties:
+>        - const: vcodec_bus
+> =20
+>    iommus:
+> +    minItems: 1
+>      maxItems: 2
+> =20
+>    interconnects:
+>
+> ---
+> base-commit: 9ed46da14b9b9b2ad4edb3b0c545b6dbe5c00d39
+> change-id: 20240129-sc7280-venus-bindings-6e62a99620de
+>
+> Best regards,
 
 
