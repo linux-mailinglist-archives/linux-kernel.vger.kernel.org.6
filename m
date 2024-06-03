@@ -1,151 +1,140 @@
-Return-Path: <linux-kernel+bounces-198732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47E018D7CAB
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:43:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AA038D7CAE
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:45:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7896E1C21CC0
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 07:43:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE65F1F22DFB
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 07:45:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42DC14C61C;
-	Mon,  3 Jun 2024 07:43:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d5CisiQy"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E54C647A4C;
-	Mon,  3 Jun 2024 07:43:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A7904C62E;
+	Mon,  3 Jun 2024 07:45:08 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 923714C61C;
+	Mon,  3 Jun 2024 07:45:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717400623; cv=none; b=OHPnB0Bn3CdZsnp7hz9bBJ4HuS20B9Ctp43vVmDmadb4LgTIUWcgWiW/5encBgi1klPj4to3FBgSd79XMy38S5hh7IWVOAi2sI62QgDBFESGtEscEU2G+9fepiYvDuwUyXHVXb2X8/0JGXlGoUbULypnR3CrdCwEgGBA0lRVhTA=
+	t=1717400708; cv=none; b=MKULBggTAdf+hNWPP2qoJD7wcnq9efAuEAS3Z2yn5R34iouB13H5g406+6Ncc3nOHuSUrM7HSEhCpE7T9Knzy0Q9hKaXVfqyDciPQmt1mBxtg6eXa5DfdPdxpb0J32Ey7cQVzSSrJQmzFGpvq8+/SbFK4d5xWC8whqudXO6rGTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717400623; c=relaxed/simple;
-	bh=m1D/sHfPfHRZFlkY+CEB8mS07gtrCM2m0LDbYaEiwPU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X7hoZzSJNgkWzLOHLw5PdbgfY1OZ7LYzoF1ZDMTQZQDkwb3LpgTwRTNFmEFl03v/eutuk6nDFWmgjyy44i1wCBX+JGw5OfzPjFOn+0tWz5m6lR92f51ij1UDbX3wY6g3RPrzjhKPnEpgtLq2E4o/oHt12rAA5SI0/zeyLneBPNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d5CisiQy; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-35dc9cef36dso3226587f8f.3;
-        Mon, 03 Jun 2024 00:43:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717400619; x=1718005419; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9+3KpBVqTTJeo965A1KR/YlsEUxQQiOfIdsh4+kRbIs=;
-        b=d5CisiQyz5aEuNDdgQYZxzAdrMN7b+Je01hVu17jqWlO/zqC8yKbzff4ySJc4Rb1B/
-         BFlUHb7i3bB97TWz3QhDnvA1cvvOWHZBiH/xHeLbojpBW3p+CE2CqDjz1JL0G+H4cjgk
-         77HpLgi2EgUrtCyjf3pfFKPysmpCTlnv0pP8zApuVTr5Z6yLeeLra5KsvbQpT5oVJ4If
-         s2GyacdrzUGFMtoAETThS/ml1hK1QXK5I4H5Bf9VNtWUfq85rrinXAerjKDh7JW0Posz
-         x5cYR3y9bzVDkhcjtk4abC01CTApxnFNMGZleUPMLDoW2e1xRwTYJFGU6cm3tJuO34+n
-         pwuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717400619; x=1718005419;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9+3KpBVqTTJeo965A1KR/YlsEUxQQiOfIdsh4+kRbIs=;
-        b=UXKWbyVHZVB2uY+KH+qkkTn21Yg0o/lf8SDbIt1E583e+5z+a2taDDA3q5YWeHSJMB
-         DRv3M38U1ep/vanSZQTV+ODNHV+Rwf/A3lZsITSvRl33wtwW2n44uHVaff74A+sgtZ6F
-         sDsNr3egT46I1IbG/EDqmyCo0A/IlFw3amovbBrPswmmLRatyGQUJ1shfi/L4f9paihK
-         fy+YyCqbEuip4u4iGD2DLVJn8TM3BPEWxTtkqTvT8dWpN4ojTc6KNU4J2aYF2roU0K0L
-         OU0gg4gkYZ8hNdSx5JZwDQrahf7WkPy53CxuksHpXqpYnlvDLHBqriITqfDjobs3QZz0
-         vNWw==
-X-Forwarded-Encrypted: i=1; AJvYcCVN+EXTg9sUZWcvgRizGPiGQGoT44Cx5OZnbs+ebUIRCzjimlJHwi6QlKlVPHB8VXGA2Y0uNbeSJa6pnhp2u2CIbLuFnr+leG/ByNxL6MPRHbHZ1EnnAnpv87aFwBrs6l9CL/1SyWpvLaK8lf22W9yYFjOTDjvipt09OD7pxMh1VNQc
-X-Gm-Message-State: AOJu0YzIzujgGJkOHZ8QUVOsUDn30D3UK6sYrPZsR+zTnyff3I5bzoCh
-	PuW/hVAn/jlbgH8Head7rPqEp+4KT38rcR25Fcho7gN7CpBzr+7f
-X-Google-Smtp-Source: AGHT+IEanqGnQyE0VRVI9jQex6bQ4+XQs3Oue5+MhhMZ/CjI0wOwj0rSpqUdBr/gjbzmQgzPke+uJA==
-X-Received: by 2002:a05:6000:1944:b0:34c:cca6:3d18 with SMTP id ffacd0b85a97d-35e0f333b6emr5523593f8f.68.1717400619152;
-        Mon, 03 Jun 2024 00:43:39 -0700 (PDT)
-Received: from eichest-laptop ([2a02:168:af72:0:2b03:375:843f:be9d])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35dd062ea66sm7981749f8f.78.2024.06.03.00.43.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Jun 2024 00:43:37 -0700 (PDT)
-Date: Mon, 3 Jun 2024 09:43:35 +0200
-From: Stefan Eichenberger <eichest@gmail.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: o.rempel@pengutronix.de, kernel@pengutronix.de, andi.shyti@kernel.org,
-	shawnguo@kernel.org, s.hauer@pengutronix.de, festevam@gmail.com,
-	jic23@kernel.org, lars@metafoo.de, nuno.sa@analog.com,
-	u.kleine-koenig@pengutronix.de, marcelo.schmitt@analog.com,
-	gnstark@salutedevices.com, francesco.dolcini@toradex.com,
-	linux-i2c@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org,
-	Stefan Eichenberger <stefan.eichenberger@toradex.com>
-Subject: Re: [RFC PATCH] i2c: imx: avoid rescheduling when waiting for bus
- not busy
-Message-ID: <Zl10J9H+8k0KXAPR@eichest-laptop>
-References: <20240531142437.74831-1-eichest@gmail.com>
- <Zlnidi62gEWwdQ3U@smile.fi.intel.com>
+	s=arc-20240116; t=1717400708; c=relaxed/simple;
+	bh=jG2Qkqno7nw2YxAPdMySz0EFNj7Gm9u4EtZnUecdAN8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NMBOLY3VoegoXfHQR0RLJT9pifQHD8S+EzPdcqSeprXtKwgOQApJJvRMShyzcVEMMSK/y0aBYJgIWDlbHbifWjnhfwb41jx8zlMrL1V36lmZ3M5pLaBrkE3SXqtzhdNTHL8wf5qx8xlcJeic8Efjd1obNU6OK2O/zWMJIcU6YV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C66D81042;
+	Mon,  3 Jun 2024 00:45:28 -0700 (PDT)
+Received: from [10.57.39.221] (unknown [10.57.39.221])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 522F83F762;
+	Mon,  3 Jun 2024 00:45:00 -0700 (PDT)
+Message-ID: <ebcbc9c6-d858-4774-be48-857b7d446e15@arm.com>
+Date: Mon, 3 Jun 2024 08:45:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zlnidi62gEWwdQ3U@smile.fi.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/6] drm/imagination: Add compatible string entry for
+ Series6XT
+To: Chen-Yu Tsai <wenst@chromium.org>, Frank Binns <Frank.Binns@imgtec.com>
+Cc: "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+ "tzimmermann@suse.de" <tzimmermann@suse.de>,
+ Matt Coster <Matt.Coster@imgtec.com>, "sboyd@kernel.org" <sboyd@kernel.org>,
+ "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+ <krzk+dt@kernel.org>,
+ "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+ "mripard@kernel.org" <mripard@kernel.org>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "angelogioacchino.delregno@collabora.com"
+ <angelogioacchino.delregno@collabora.com>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "airlied@gmail.com" <airlied@gmail.com>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+ "daniel@ffwll.ch" <daniel@ffwll.ch>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ Boris Brezillon <boris.brezillon@collabora.com>
+References: <20240530083513.4135052-1-wenst@chromium.org>
+ <20240530083513.4135052-5-wenst@chromium.org>
+ <efdacd820d13368816973f57c4a817e039ec4a2d.camel@imgtec.com>
+ <CAGXv+5EMMNCbxaBqiBSQwGrQt-0KXWAtJU54K20sUU8PBh8faQ@mail.gmail.com>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <CAGXv+5EMMNCbxaBqiBSQwGrQt-0KXWAtJU54K20sUU8PBh8faQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, May 31, 2024 at 05:45:10PM +0300, Andy Shevchenko wrote:
-> On Fri, May 31, 2024 at 04:24:37PM +0200, Stefan Eichenberger wrote:
-> > From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
-> > 
-> > On our i.MX8M Mini based module we have an ADS1015 I2C ADC connected to
-> > the I2C bus. The ADS1015 I2C ADC will timeout after 25ms when the I2C
-> > bus is idle. The imx i2c driver will call schedule when waiting for the
-> > bus to become idle after switching to master mode. When the i2c
-> > controller switches to master mode it pulls SCL and SDA low, if the
-> > ADS1015 I2C ADC sees this for more than 25 ms without seeing SCL
-> > clocking, it will timeout and ignore all signals until the next start
-> > condition occurs (SCL and SDA low). This can occur when the system load
-> > is high and schedule returns after more than 25 ms.
-> > 
-> > This rfc tries to solve the problem by using a udelay for the first 10
-> > ms before calling schedule. This reduces the chance that we will
-> > reschedule. However, it is still theoretically possible for the problem
-> > to occur. To properly solve the problem, we would also need to disable
-> > interrupts during the transfer.
-> > 
-> > After some internal discussion, we see three possible solutions:
-> > 1. Use udelay as shown in this rfc and also disable the interrupts
-> >    during the transfer. This would solve the problem but disable the
-> >    interrupts. Also, we would have to re-enable the interrupts if the
-> >    timeout is longer than 1ms (TBD).
-> > 2. We use a retry mechanism in the ti-ads1015 driver. When we see a
-> >    timeout, we try again.
-> > 3. We use the suggested solution and accept that there is an edge case
-> >    where the timeout can happen.
-> > 
-> > There may be a better way to do this, which is why this is an RFC.
+On 03/06/2024 04:29, Chen-Yu Tsai wrote:
+> On Fri, May 31, 2024 at 7:18 PM Frank Binns <Frank.Binns@imgtec.com> wrote:
+>>
+>> On Thu, 2024-05-30 at 16:35 +0800, Chen-Yu Tsai wrote:
+>>> The MediaTek MT8173 comes with a PowerVR Rogue GX6250, which is part
+>>> of the Series6XT, another variation of the Rogue family of GPUs.
+>>>
+>>> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+>>> ---
+>>>  drivers/gpu/drm/imagination/pvr_drv.c | 1 +
+>>>  1 file changed, 1 insertion(+)
+>>>
+>>> diff --git a/drivers/gpu/drm/imagination/pvr_drv.c b/drivers/gpu/drm/imagination/pvr_drv.c
+>>> index 5c3b2d58d766..3d1a933c8303 100644
+>>> --- a/drivers/gpu/drm/imagination/pvr_drv.c
+>>> +++ b/drivers/gpu/drm/imagination/pvr_drv.c
+>>> @@ -1475,6 +1475,7 @@ pvr_remove(struct platform_device *plat_dev)
+>>>
+>>>  static const struct of_device_id dt_match[] = {
+>>>       { .compatible = "img,img-axe", .data = NULL },
+>>> +     { .compatible = "img,powervr-6xt", .data = NULL },
+>>
+>> I assume that by adding this to the list of supported devices we're essentially
+>> freezing the existing uapi. This concerns me, as we've not yet started running
+>> Vulkan conformance on any Series6XT GPUs and there's a chance we may need to
+>> make some tweaks.
+>>
+>> I'm not really sure what the accepted approach is to hardware enablement /
+>> experimental support. I'm not sure if it's sufficient to hide support behind a
+>> Kconfig option and/or module parameter or whether we just have to hold this
+>> patch back for the time being.
 > 
-> ...
-> 
-> > +			/*
-> > +			 * Avoid rescheduling in the first 10 ms to avoid
-> > +			 * timeouts for SMBus like devices
-> > +			 */
-> > +			if (time_before(jiffies, orig_jiffies + msecs_to_jiffies(10)))
-> > +				udelay(10);
-> > +			else
-> > +				schedule();
-> 
-> Isn't there cond_resched() or so for such things?
-> More info here: 494e46d08d35 ("airo: Replace in_atomic() usage.")
+> I guess this is more of a question for the DRM maintainers.
+> Added a couple Panfrost/Panthor folks for ideas.
 
-The problem would be that I have to disable preemption during the
-transfer, then cond_resched would do nothing if I understand it
-correctly. However, an I2C transfer @100kHz for 3 bytes takes at least
-240us + overhead (e.g. waiting for the bus idle) which might end in a
-close to ms ranage. This is what concerns me.
+I'm not sure quite what scale of "tweaks" you are expecting. Obviously
+adding new uAPI is possible at any time - the only requirement is "don't
+break user space" - i.e. don't remove old uAPI. Although obviously you
+want to be careful about adding it because that means supporting it
+forever more.
 
-Regards,
-Stefan
+Panfrost has had an "unstable_ioctls" module parameter that we've hidden
+performance counters behind. (Performance counters are hard from a uAPI
+perspective - Panthor has similar issues).
 
+We've also added support for GPUs in a deliberately "crippled" manner
+(e.g. only one core group - see panfrost_get_core_mask()). I think we're
+mostly just hoping those 'awkward' GPUs are not interesting enough and
+we'll never implement full support for them - but if we did I expect
+we'd implement support by providing a new uAPI for enabling the second
+core group so old user space can continue working with just the single
+core group.
+
+Of course if the support for this platform is actually 'broken' (the
+talk of GPU resets makes me think so - on Mali requiring a reset is a
+"should never happen" situation, but we do have errata...) then it's
+probably best holding off merging this until you've got something which
+is minimally functional and then add support as necessary. For Vulkan
+you can always have user space require a particular DRM kernel version
+if you discover extra uAPI is needed.
+
+Steve
 
 
