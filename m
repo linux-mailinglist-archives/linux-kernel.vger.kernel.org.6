@@ -1,93 +1,158 @@
-Return-Path: <linux-kernel+bounces-199521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47E748D8816
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:37:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 208E28D8818
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:37:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE462B215EF
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:37:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8B431F22B5D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:37:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89B56137902;
-	Mon,  3 Jun 2024 17:37:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23BB8137902;
+	Mon,  3 Jun 2024 17:37:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="wCwpL04X"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="W1d4dOyI"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7166E1366;
-	Mon,  3 Jun 2024 17:37:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39F0328382;
+	Mon,  3 Jun 2024 17:37:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717436229; cv=none; b=B+a98InNCLNeX7Vczxz4QKYoIN54WsGQEcAYk5esgEoqhb5XlIHO1eBPFD8NE4+HnSkhvgGCIC0JkRWsUWoClD9m3veg/cuMZYxjU70QsVYOGw5/TbaKhAUPzXzhBBFw7RLscXvvfrB2Mi6HyLCb/tvQBM5F1q9MB7U06DhAF3s=
+	t=1717436268; cv=none; b=lOjPIIelohdHKdjdwVWJWae9Fp/eQ+VOyxu/55Huf7J72ZXnI12cKxKBUSPfAAOxVwnnsZl2mDKI+FlnGl/S5oHQkX2zjEa4nkxefxxxaK5Pm6L4zK2Dk6c/zyTc4DYbp/Zmm4eJjNeCk6Ox3Eya5/I0Xkmaza+0OJ7Aehykf6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717436229; c=relaxed/simple;
-	bh=ZW1DatwdmRH9cZ/B4K/8KuBW3OJWeP+G7l9i6th87d0=;
+	s=arc-20240116; t=1717436268; c=relaxed/simple;
+	bh=jVYpDKFsAQoVl6zoNLBDteeJmjYcmSe5lrpmSH4vu1Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eSbTmJn4h+lIizloxNtcAM+t+TxFgjPfJyOofk0lCTenS+MnjGadfrOrJso0LlHcBcACq0LVLl1yr6dHcgznyfV3pJgTRXNL7J4XOeghFJLR/uybni/Yk/+93QuxiwP0o70ifuqx/Mhsj7NBb6eVG0QRCbsTdiyd2SQTRS3XpEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=wCwpL04X; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1717436226;
-	bh=ZW1DatwdmRH9cZ/B4K/8KuBW3OJWeP+G7l9i6th87d0=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=WT2xOflguyOo6NATrGmU46r8vgbTM3QEeCFd7UDCoswBS/Nb1Mo5+R6wSeDlvkoCHn88iw0rgvtpGIKQbK2EdElEPGJ37Wt9OAX0ek4pWbTI6klsTre6iIiif/2ZObts2Lm/uYsFnlNVQMwoM/XYebhHgLYPCNEt2OyBtkFv77w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=W1d4dOyI; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 15BC440E016A;
+	Mon,  3 Jun 2024 17:37:44 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id G0wd4BSyBX0M; Mon,  3 Jun 2024 17:37:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1717436260; bh=hpYIA2DA+gPQxWdwquhJ9GCmfI5W+kioR5xvfct83vg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=wCwpL04X/I9ceMURLK4cpP/NGOR1Y/mvirXFNTmLl4xP1FwHJ3h3RseqTgaOpn8SM
-	 y0JZLpgzNfn2qhjS0HZmypbD3jsYMTQjb9DDsDcZJBi6gN5drToesOmr6zP43P/Ldw
-	 RL69PJqB+D+p/td6E+cgX/yOR5quN24okAb3nGLMVTWwLnVOCRWErJH5D+Tr9IvC5N
-	 4bcGm7iX+Aj7mZYCsGNdZ75qRA4kOwbz/3fJvafdy5tgkZrDwZ47N3hN7PaAyB+7dx
-	 ZPeBLCDjud+wtqidLXCm0XQvv8OyfwutR9HrwAPZ5IPXD2u42xwPl1PLt6kUjxyA78
-	 KYoLIUSuX7aLg==
-Received: from notapiano (zone.collabora.co.uk [167.235.23.81])
+	b=W1d4dOyIVmtZOVL7jYc/a+ptiZvBitggW6+IGai6I05/WZLTltDl/cdFieQN4iX0k
+	 Kk2Rq66y7bPwGYBpq70+nb6kPGyyM68RmoRK0aD/a8IRjAnMoVkpZvsnU9uGH2RqJE
+	 PZc3mvJUjRaNVgbohpZJsdkGjFbfVRHoU3aFZN+8rZnnqUWMm0NUIakC90O0rl/f1H
+	 q/AatCU9/JcAANx4/uOOVknU7MRqKOlqt8D921ucdX5j6u0AINuqHB2xVBMwFo9OOV
+	 68WPKPZ42x4PQAcz3l4F2L/PTPPsW9mc1G3sTF9p1spb0gi4hBJYp7d4LxDXpX9Gpe
+	 bHoRmHy/F03+mC7sjK5/S5sJMswXbWVKUquHYtg583DvHwSVBEGSsuuEq4BCs2q4ST
+	 l8j6VOIe/Qsie/YIfbqzZZ/45p1qKCL4QoLpuRxpwrXjGW8v7vdO+xc3sGpqoFHGUU
+	 O4f+5Hm5JOls3u7SYHw1R1iOrzPN8rHtkb88n/CcucQTK918WZZQhk2xB4hUl09OQI
+	 ICbR1Pu2jmAUt9lVR3hDJHfNpdTzjHrmCLSgr8hzYbdU31lG7iNE8G2OL3ZBjt+ncX
+	 B2mHAKVxLEShK6WaHm4jwfA2zxtMIkpWy8pXrhPXfvzcw1XRrablua7mTtRaFladGR
+	 c5Fs0W3EGsvffxG2kWIum5o0=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 1BF3C3782109;
-	Mon,  3 Jun 2024 17:37:04 +0000 (UTC)
-Date: Mon, 3 Jun 2024 13:37:02 -0400
-From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH v1 0/2] spi: Make dummy SG handling robust
-Message-ID: <e5c5edcb-e07b-4400-86ca-4d9a7fe4fc0c@notapiano>
-References: <20240531094658.1598969-1-andy.shevchenko@gmail.com>
- <1ea41944-a107-4528-8e8d-559c06907e3f@notapiano>
- <CAHp75VeG9K3Ar4UJnGxus3zz_vtt4QfFdkYQ8=6D8pt2aB8kmA@mail.gmail.com>
- <CAHp75VcHsE_vb12rwgf6f3q4V_wUVq5tckA5QgFhwUHaYKjwWg@mail.gmail.com>
- <3f0606f3-c781-49e1-a946-dc9aea77f835@notapiano>
- <CAHp75VehYoEFPV4jTdXh4D5DSGUkHzska6tuvB=BrZDpZhiv5Q@mail.gmail.com>
- <c258a169-cdbc-4a92-bae6-46bd38df86fb@sirena.org.uk>
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 480E340E016C;
+	Mon,  3 Jun 2024 17:37:33 +0000 (UTC)
+Date: Mon, 3 Jun 2024 19:37:27 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Yazen Ghannam <yazen.ghannam@amd.com>
+Cc: linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+	tony.luck@intel.com, x86@kernel.org, avadhut.naik@amd.com,
+	john.allen@amd.com
+Subject: Re: [PATCH 4/9] x86/mce: Move machine_check_poll() status checks to
+ helper functions
+Message-ID: <20240603173727.GOZl3_V9eVbm0184Wi@fat_crate.local>
+References: <20240523155641.2805411-1-yazen.ghannam@amd.com>
+ <20240523155641.2805411-5-yazen.ghannam@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c258a169-cdbc-4a92-bae6-46bd38df86fb@sirena.org.uk>
+In-Reply-To: <20240523155641.2805411-5-yazen.ghannam@amd.com>
 
-On Mon, Jun 03, 2024 at 01:26:36PM +0100, Mark Brown wrote:
-> On Sat, Jun 01, 2024 at 12:45:30AM +0300, Andy Shevchenko wrote:
-> 
-> > I have sent a new series where the last patch has a massive rework of
-> > the cur_msg_mapped flag. Would be nice to see if it passes your tests.
-> > The main idea there is to actually move to per transfer flag(s) from
-> > per message one.
-> 
-> That feels like a sensible cleanup but also a bit much for a fix with
-> all the driver updates...
+On Thu, May 23, 2024 at 10:56:36AM -0500, Yazen Ghannam wrote:
+> @@ -709,48 +747,9 @@ void machine_check_poll(enum mcp_flags flags, mce_banks_t *b)
+>  		if (!mca_cfg.cmci_disabled)
+>  			mce_track_storm(&m);
+>  
+> -		/* If this entry is not valid, ignore it */
+> -		if (!(m.status & MCI_STATUS_VAL))
+> +		if (!log_poll_error(flags, &m))
+>  			continue;
+>  
+> -		/*
+> -		 * If we are logging everything (at CPU online) or this
+> -		 * is a corrected error, then we must log it.
+> -		 */
+> -		if ((flags & MCP_UC) || !(m.status & MCI_STATUS_UC))
+> -			goto log_it;
+> -
+> -		/*
+> -		 * Newer Intel systems that support software error
+> -		 * recovery need to make additional checks. Other
+> -		 * CPUs should skip over uncorrected errors, but log
+> -		 * everything else.
+> -		 */
 
-The current state of linux-next works fine, so there's nothing to fix. That
-series is really a cleanup series, since the fix merged wasn't the cleanest
-solution possible. (I'll be testing it shortly and posting the feedback there)
+You lost that comment.
 
-Thanks,
-Nícolas
+> -		if (!mca_cfg.ser) {
+> -			if (m.status & MCI_STATUS_UC)
+> -				continue;
+> -			goto log_it;
+> -		}
+> -
+> -		/* Log "not enabled" (speculative) errors */
+> -		if (!(m.status & MCI_STATUS_EN))
+> -			goto log_it;
+> -
+> -		/*
+> -		 * Log UCNA (SDM: 15.6.3 "UCR Error Classification")
+> -		 * UC == 1 && PCC == 0 && S == 0
+> -		 */
+> -		if (!(m.status & MCI_STATUS_PCC) && !(m.status & MCI_STATUS_S))
+> -			goto log_it;
+> -
+> -		/*
+> -		 * Skip anything else. Presumption is that our read of this
+> -		 * bank is racing with a machine check. Leave the log alone
+> -		 * for do_machine_check() to deal with it.
+> -		 */
+> -		continue;
+> -
+> -log_it:
+>  		if (flags & MCP_DONTLOG)
+>  			goto clear_it;
+
+Btw, the code looks really weird now:
+
+                if (!log_poll_error(flags, &m))
+                        continue;
+
+                if (flags & MCP_DONTLOG)
+                        goto clear_it;
+
+i.e.,
+
+1. Should I log it?
+
+2. Should I not log it?
+
+Oh well, it was like that before logically so...
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
