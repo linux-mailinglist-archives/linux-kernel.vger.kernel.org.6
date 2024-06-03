@@ -1,73 +1,37 @@
-Return-Path: <linux-kernel+bounces-198859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DD5E8D7E64
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:20:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A62CF8D7E6A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:22:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 407F51C21061
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:20:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C2111F2683E
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:22:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E5CD7E77B;
-	Mon,  3 Jun 2024 09:20:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="epSDWs5n"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6E127A140;
+	Mon,  3 Jun 2024 09:22:08 +0000 (UTC)
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FB4E77F32
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 09:20:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECF556BFA7;
+	Mon,  3 Jun 2024 09:22:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717406413; cv=none; b=En1RVQYkTsj/H7JCRRv7+H0IWxkHQ2CjZYAfYxvO8rcbiTL1t2zB/iifQ6upM939NDmfnhbusaB3LCAu+CyHQc6oM8bSM07sy1yxxAtcSByXzRLd9kZlahpQSjUMj3wzH67AcrMMrvnjBmJM306RmPiIK2WPCO8y6MHqfPJRr2g=
+	t=1717406527; cv=none; b=R1I5K6p4qkrbrXPJGibPppYpDT3a0zqhPU0VwV5iAXjBb/CidRNnDDkQL/09xx8p0KfDfdcs4tcqHx2iVL1/RlpoSvSqugP0s470myTQR8jrQJ4TBV6VS/mC0mI6HMqVeEnrVF2hFre10KnOyk2d6RYErOJ6DCtpioqJBznld+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717406413; c=relaxed/simple;
-	bh=Ha8VBm8OFXpm7Pbma5iEOhMzm/NDJlVK2JhSWKzDmto=;
+	s=arc-20240116; t=1717406527; c=relaxed/simple;
+	bh=eO007ahsU76TA5vzcldIle7ry1ZjCcPqs5Xf2h+2Ff8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ioWio2xh3sJLnuK/n1rnwbPT3zAzsTRcNmI7VzL+SBQUs81Y1yzsDuytAuYYQ/3OQ2iA1H/Col41vkD3g646g/JCjYJm1WKEXFyl9Hq+g6RT7P5N4XapQO/dyA492/ehsaVCUKRHyGMaj78Qj9ASAEUynR5dWmEsWZvz/DiaIrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=epSDWs5n; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a63359aaaa6so531714766b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 02:20:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717406409; x=1718011209; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mHZqFaN5bKSTWMNSSR+7cQHbzwfkO0znNAJUpVvLcOw=;
-        b=epSDWs5n2U8RsCgdBngeAy7Ibn5gI+tUyUGCIsCuYewx6MURM/ZPfCCjneJdbbQo6c
-         8TGdSttNU/E/WnE8dai9m0kajegh8w4CAOPn59y+V/FvaFhBuBGr7boX7JkL/e/lzGbo
-         vFOy7VsiRiTGSLp8BfTP8/D1I4pzsn4wgKPX8pLxeUeKBFFdAwsX/DyHjp3YBstrOJ6h
-         dvL57HA2DMoa9ZZzTDUMsI5vsdDX1QhtMNEL0xE307hXN3dAW+cft7ebu3npYxfa47yQ
-         r7iQqznYVdywJf/wEeWeRNRkG4E4R1cD74SRdwBHtcTV+kfnRMlKsz/7BgazNc5fSGJa
-         YsOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717406409; x=1718011209;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mHZqFaN5bKSTWMNSSR+7cQHbzwfkO0znNAJUpVvLcOw=;
-        b=OPSxLMXSqJv8j77/7ZuW9NJMHYtkheVB8Vi0Ra5BTpIbRtJ+V7bbgimManzVhtVDSz
-         89h3vP7cFLThrkvqG/j6P2hDTIEehXf15LT9nbYeWIzx6Tkj/tWllRu9/FOFpQBofNsD
-         iaG0UTMxU73a/VJBZlSTsdwRD9GVm8xBm3NzFMrwy0YZDlT3ZOy4g1/0Y73BxGPOxZA8
-         q5qdFgvC0X9V2wNbUXlH1DG8vEb5xMDlxfejkianDP99k38WtOY4hAWGcuK4SzY6v9oI
-         ZgKl1HwOy32bcyeihXRe2u+r+2dDJq5kTKPNFYGTRL/Cb8IjM52Lo9bMzsB0mzSQGAyg
-         cDsw==
-X-Forwarded-Encrypted: i=1; AJvYcCVXZskuJcmMxzMjPPef7lJZNU7Lk314NaRg7DSqJEwjgSvHF2fgPKi1EKEaQMRW5U+QK/bchF2qVU9L7IZtOE+jYLbmiLwii1y8jmsK
-X-Gm-Message-State: AOJu0YyLAWB7khIm2/S4+KSgKEGx8WsJu+sTz1hAyxSReWOt1YRxJZuX
-	bBBzpUwmfSoI7YYLY9zX5CUI9azr+ALRo4w2ygl2aUlPm3BRPOneb+3WAN6TLAo=
-X-Google-Smtp-Source: AGHT+IHN5YrEtskx+Hnw7hMtvOeOP7AZi8z1fe6A5/NPEPlUuxqnrVNod+3lqTlUDpQ4VmL4P+6Lcw==
-X-Received: by 2002:a17:906:f6cd:b0:a68:5b93:594e with SMTP id a640c23a62f3a-a685b935b09mr442343266b.39.1717406409346;
-        Mon, 03 Jun 2024 02:20:09 -0700 (PDT)
-Received: from ?IPV6:2a02:8109:aa0d:be00::8090? ([2a02:8109:aa0d:be00::8090])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a68e2d1333fsm253066666b.219.2024.06.03.02.20.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Jun 2024 02:20:08 -0700 (PDT)
-Message-ID: <a95fed63-f48d-42c6-856b-0636a50c9dd4@linaro.org>
-Date: Mon, 3 Jun 2024 11:20:07 +0200
+	 In-Reply-To:Content-Type; b=fJV4pLRuAR0hCqoTabO8i17SZ/bJyLLUPezEOgw2Qv84UzxAWkrH+sxmAVFMEXYgqiY1VSbzL4LIMQkV8c7tE4R9CdGoODJEP+F7iBg0sL7en9ou76n3ud0v9H/ZoORdzsMS/CzOb50wztP9WkSQjXhlhlRTnTCcPZ/WDVTIqPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 7DDDAFF80F;
+	Mon,  3 Jun 2024 09:21:54 +0000 (UTC)
+Message-ID: <6adf71fb-287b-490c-b7b0-4f8fa4fc1560@ghiti.fr>
+Date: Mon, 3 Jun 2024 11:21:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,257 +39,331 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 2/4] arm64: dts: qcom: qcs8550: introduce qcs8550 dtsi
-To: Tengfei Fan <quic_tengfan@quicinc.com>, andersson@kernel.org,
- konrad.dybcio@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, dmitry.baryshkov@linaro.org
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel@quicinc.com
-References: <20240529100926.3166325-1-quic_tengfan@quicinc.com>
- <20240529100926.3166325-3-quic_tengfan@quicinc.com>
+Subject: Re: [PATCH 7/7] riscv: Add qspinlock support based on Zabha extension
 Content-Language: en-US
-From: Caleb Connolly <caleb.connolly@linaro.org>
-In-Reply-To: <20240529100926.3166325-3-quic_tengfan@quicinc.com>
+To: Guo Ren <guoren@kernel.org>, Alexandre Ghiti <alexghiti@rivosinc.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+ Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Arnd Bergmann <arnd@arndb.de>, Leonardo Bras <leobras@redhat.com>,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-riscv@lists.infradead.org, linux-arch@vger.kernel.org
+References: <20240528151052.313031-1-alexghiti@rivosinc.com>
+ <20240528151052.313031-8-alexghiti@rivosinc.com>
+ <CAJF2gTQgg-7Fzoz9TsjWD-_8ABbS7M66aEztCsZ9Ejk8LOvmiQ@mail.gmail.com>
+ <CAHVXubg=T3AMER0z8-iRqqFmDQp8iEM92cXwPZcW2Sfm=_KOHQ@mail.gmail.com>
+ <CAJF2gTRWSZsD3vDcXvawCxt665PZcbwurUqXx3juaoZaDrdttQ@mail.gmail.com>
+ <CAHVXubiE2_MJgTj4nq7Vkv0D60niRgZ0QkCXNz6PiNQ8h+Wy1A@mail.gmail.com>
+ <CAJF2gTTM1=cP9yB_3xs20pN_vscEe+WzuOUyTMB1UPU3aYMZEQ@mail.gmail.com>
+ <CAHVXubh+mK3VHT3zB=9MDudNd5gDQLbT0NqfEedqY=dG43or6A@mail.gmail.com>
+ <CAJF2gTR6y3K3RGE_n_Efr=LasYtCK9dHE5VPscbzz7P9yHHHww@mail.gmail.com>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <CAJF2gTR6y3K3RGE_n_Efr=LasYtCK9dHE5VPscbzz7P9yHHHww@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: alex@ghiti.fr
 
-Hi Tengfei,
+Hi Guo,
 
-On 29/05/2024 12:09, Tengfei Fan wrote:
-> QCS8550 is derived from SM8550. The difference between SM8550 and
-> QCS8550 is QCS8550 doesn't have modem RF system. QCS8550 is mainly used
-> in IoT products.
-> QCS8550 firmware has different memory map compared to SM8550.
-> The memory map will be runtime added through bootloader.
-> There are 3 types of reserved memory regions here:
-> 1. Firmware related regions which aren't shared with kernel.
->      The device tree source in kernel doesn't need to have node to indicate
-> the firmware related reserved information. Bootloader converys the
-> information by updating devicetree at runtime.
->      This will be described as: UEFI saves the physical address of the
-> UEFI System Table to dts file's chosen node. Kernel read this table and
-> add reserved memory regions to efi config table. Current reserved memory
-> region may have reserved region which was not yet used, release note of
-> the firmware have such kind of information.
+On 31/05/2024 08:42, Guo Ren wrote:
+> On Fri, May 31, 2024 at 2:22 PM Alexandre Ghiti <alexghiti@rivosinc.com> wrote:
+>> On Fri, May 31, 2024 at 3:57 AM Guo Ren <guoren@kernel.org> wrote:
+>>> On Thu, May 30, 2024 at 1:30 PM Alexandre Ghiti <alexghiti@rivosinc.com> wrote:
+>>>> Hi Guo,
+>>>>
+>>>> On Thu, May 30, 2024 at 3:55 AM Guo Ren <guoren@kernel.org> wrote:
+>>>>> On Wed, May 29, 2024 at 9:03 PM Alexandre Ghiti <alexghiti@rivosinc.com> wrote:
+>>>>>> Hi Guo,
+>>>>>>
+>>>>>> On Wed, May 29, 2024 at 11:24 AM Guo Ren <guoren@kernel.org> wrote:
+>>>>>>> On Tue, May 28, 2024 at 11:18 PM Alexandre Ghiti <alexghiti@rivosinc.com> wrote:
+>>>>>>>> In order to produce a generic kernel, a user can select
+>>>>>>>> CONFIG_QUEUED_SPINLOCKS which will fallback at runtime to the ticket
+>>>>>>>> spinlock implementation if Zabha is not present.
+>>>>>>>>
+>>>>>>>> Note that we can't use alternatives here because the discovery of
+>>>>>>>> extensions is done too late and we need to start with the qspinlock
+>>>>>>>> implementation because the ticket spinlock implementation would pollute
+>>>>>>>> the spinlock value, so let's use static keys.
+>>>>>>>>
+>>>>>>>> This is largely based on Guo's work and Leonardo reviews at [1].
+>>>>>>>>
+>>>>>>>> Link: https://lore.kernel.org/linux-riscv/20231225125847.2778638-1-guoren@kernel.org/ [1]
+>>>>>>>> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+>>>>>>>> ---
+>>>>>>>>   .../locking/queued-spinlocks/arch-support.txt |  2 +-
+>>>>>>>>   arch/riscv/Kconfig                            |  1 +
+>>>>>>>>   arch/riscv/include/asm/Kbuild                 |  4 +-
+>>>>>>>>   arch/riscv/include/asm/spinlock.h             | 39 +++++++++++++++++++
+>>>>>>>>   arch/riscv/kernel/setup.c                     | 18 +++++++++
+>>>>>>>>   include/asm-generic/qspinlock.h               |  2 +
+>>>>>>>>   include/asm-generic/ticket_spinlock.h         |  2 +
+>>>>>>>>   7 files changed, 66 insertions(+), 2 deletions(-)
+>>>>>>>>   create mode 100644 arch/riscv/include/asm/spinlock.h
+>>>>>>>>
+>>>>>>>> diff --git a/Documentation/features/locking/queued-spinlocks/arch-support.txt b/Documentation/features/locking/queued-spinlocks/arch-support.txt
+>>>>>>>> index 22f2990392ff..cf26042480e2 100644
+>>>>>>>> --- a/Documentation/features/locking/queued-spinlocks/arch-support.txt
+>>>>>>>> +++ b/Documentation/features/locking/queued-spinlocks/arch-support.txt
+>>>>>>>> @@ -20,7 +20,7 @@
+>>>>>>>>       |    openrisc: |  ok  |
+>>>>>>>>       |      parisc: | TODO |
+>>>>>>>>       |     powerpc: |  ok  |
+>>>>>>>> -    |       riscv: | TODO |
+>>>>>>>> +    |       riscv: |  ok  |
+>>>>>>>>       |        s390: | TODO |
+>>>>>>>>       |          sh: | TODO |
+>>>>>>>>       |       sparc: |  ok  |
+>>>>>>>> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+>>>>>>>> index 184a9edb04e0..ccf1703edeb9 100644
+>>>>>>>> --- a/arch/riscv/Kconfig
+>>>>>>>> +++ b/arch/riscv/Kconfig
+>>>>>>>> @@ -59,6 +59,7 @@ config RISCV
+>>>>>>>>          select ARCH_SUPPORTS_SHADOW_CALL_STACK if HAVE_SHADOW_CALL_STACK
+>>>>>>>>          select ARCH_USE_MEMTEST
+>>>>>>>>          select ARCH_USE_QUEUED_RWLOCKS
+>>>>>>>> +       select ARCH_USE_QUEUED_SPINLOCKS if TOOLCHAIN_HAS_ZABHA
+>>>>>>> Using qspinlock or not depends on real hardware capabilities, not the
+>>>>>>> compiler flag. That's why I introduced combo-spinlock, ticket-spinlock
+>>>>>>> & qspinlock three Kconfigs, and the combo-spinlock would compat all
+>>>>>>> hardware platforms but waste some qspinlock code size.
+>>>>>> You're right, and I think your comment matches what Conor mentioned
+>>>>>> about the lack of clarity with some extensions: TOOLCHAIN_HAS_ZABHA
+>>>>>> will allow a platform with Zabha capability to use qspinlocks. But if
+>>>>>> the hardware does not, it will fallback to the ticket spinlocks.
+>>>>>>
+>>>>>> But I agree that looking at the config alone may be misleading, even
+>>>>>> though it will work as expected at runtime. So I agree with you:
+>>>>>> unless anyone is strongly against the combo spinlocks, I will do what
+>>>>>> you suggest and add them.
+>>>>> The problem with the v12 combo-spinlock is using a static_branch
+>>>>> instead of the full ALTERNATIVE. Frankly, that's a bad example that
+>>>>> costs more code space. I found that your cmpxchg32/64 also uses a
+>>>>> condition branch, which has a similar problem, right?
+>>>>>
+>>>>> Anyway, your patch series inspired me to update the v13
+>>>>> combo-spinlock. My plan is:
+>>>>> 1. Separate native-qspinlock out of paravirt-qspinlock.
+>>>>> 2. Re-design an ALTERNATIVE(asm) code instead of static_branch generic
+>>>>> ticket-lock or qspinlock.
+>>>> What's your plan to make use of alternatives here? The alternatives
+>>>> patching depends on the discovery of the extensions, which is done too
+>>>> late, at least after the first use of a spinlock (the printk
+>>>> spinlock). So you'd need to find a way to first use qspinlocks (but
+>>>> without knowing Zabha is available) and then do the correct patching:
+>>> I do that in v12:
+>>> 1. Use qspinlock as init.
+>>> 2. Change to ticket-lock or not.
+>>> (Only qspinlock -> ticket-lock, No reverse direction)
+>>>
+>>> If there is no contention, Qspinlock is okay for all platforms before
+>>> smp bringup & no-irq environment.
+>>>
+>> Yes, by using static keys not alternatives. My question was: how do
+>> you plan to use alternatives here instead of static keys? To me, it's
+>> not that simple, hence my suggestions in my previous answer.
+> Yes, it's not that simple. The current framework doesn't support that
+> and has two problems:
+> 1. We need to re-implement ticket-lock & qspinlock-fast-path with assembly code.
+> 2. Current alternatives patching only for extensions, but qspinlock is
+> not a formal extension. Could we accept
+> __RISCV_ISA_EXT_DATA(xqspinlock, RISCV_ISA_EXT_XQSPINLOCK)?
 
-Are you describing some particular quirk of the platform here, or just 
-standard UEFI booting?
 
-When booting with UEFI, the memory map is passed via the ESRT, so having 
-memory that the kernel shouldn't use it pretty simple (and typical).
-> 2. Firmware related memory regions which are shared with Kernel
->      The device tree source in the kernel needs to include nodes that
-> indicate fimware-related shared information. A label name is suggested
-> because this type of shared information needs to be referenced by
-> specific drivers for handling purposes.
+But the problem is that the alternatives needs to patch the code very 
+early in the boot process which is not possible since we don't have the 
+list of extensions yet (for ACPI systems), so your 
+RISCV_ISA_EXT_XQSPINLOCK proposal would not help.
 
-Again, is there something non-standard here? If not I would suggest 
-dropping these detail comments as they might be misleading.
+Thanks,
 
-Thanks and regards,
-> 3. Remoteproc regions.
->      Remoteproc regions will be reserved and then assigned to subsystem
-> firmware later.
-> Here is a reserved memory map for this platform:
-> 0x100000000 +-------------------+
->              |                   |
->              | Firmware Related  |
->              |                   |
->   0xd4d00000 +-------------------+
->              |                   |
->              | Kernel Available  |
->              |                   |
->   0xa7000000 +-------------------+
->              |                   |
->              | Remoteproc Region |
->              |                   |
->   0x8a800000 +-------------------+
->              |                   |
->              | Firmware Related  |
->              |                   |
->   0x80000000 +-------------------+
-> 
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
-> ---
->   arch/arm64/boot/dts/qcom/qcs8550.dtsi | 167 ++++++++++++++++++++++++++
->   1 file changed, 167 insertions(+)
->   create mode 100644 arch/arm64/boot/dts/qcom/qcs8550.dtsi
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/qcs8550.dtsi b/arch/arm64/boot/dts/qcom/qcs8550.dtsi
-> new file mode 100644
-> index 000000000000..685668c6ad14
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/qcom/qcs8550.dtsi
-> @@ -0,0 +1,167 @@
-> +// SPDX-License-Identifier: BSD-3-Clause
-> +/*
-> + * Copyright (c) 2023-2024, Qualcomm Innovation Center, Inc. All rights reserved.
-> + */
-> +
-> +#include "sm8550.dtsi"
-> +
-> +/delete-node/ &reserved_memory;
-> +
-> +/ {
-> +	reserved_memory: reserved-memory {
-> +		#address-cells = <2>;
-> +		#size-cells = <2>;
-> +		ranges;
-> +
-> +
-> +		/* These are 3 types of reserved memory regions here:
-> +		 * 1. Firmware related regions which aren't shared with kernel.
-> +		 *     The device tree source in kernel doesn't need to have node to
-> +		 * indicate the firmware related reserved information. Bootloader
-> +		 * conveys the information by updating devicetree at runtime.
-> +		 *     This will be described as: UEFI saves the physical address of
-> +		 * the UEFI System Table to dts file's chosen node. Kernel read this
-> +		 * table and add reserved memory regions to efi config table. Current
-> +		 * reserved memory region may have reserved region which was not yet
-> +		 * used, release note of the firmware have such kind of information.
-> +		 * 2. Firmware related memory regions which are shared with Kernel
-> +		 *     The device tree source in the kernel needs to include nodes
-> +		 * that indicate fimware-related shared information. A label name
-> +		 * is suggested because this type of shared information needs to
-> +		 * be referenced by specific drivers for handling purposes.
-> +		 * 3. Remoteproc regions.
-> +		 *     Remoteproc regions will be reserved and then assigned to
-> +		 * subsystem firmware later.
-> +		 * Here is a reserved memory map for this platform:
-> +		 * 0x100000000 +-------------------+
-> +		 *             |                   |
-> +		 *             | Firmware Related  |
-> +		 *             |                   |
-> +		 *  0xd4d00000 +-------------------+
-> +		 *             |                   |
-> +		 *             | Kernel Available  |
-> +		 *             |                   |
-> +		 *  0xa7000000 +-------------------+
-> +		 *             |                   |
-> +		 *             | Remoteproc Region |
-> +		 *             |                   |
-> +		 *  0x8a800000 +-------------------+
-> +		 *             |                   |
-> +		 *             | Firmware Related  |
-> +		 *             |                   |
-> +		 *  0x80000000 +-------------------+
-> +		 */
-> +
-> +		/*
-> +		 * Firmware related regions, bootloader will possible reserve parts of
-> +		 * region from 0x80000000..0x8a800000.
-> +		 */
-> +		aop_image_mem: aop-image-region@81c00000 {
-> +			reg = <0x0 0x81c00000 0x0 0x60000>;
-> +			no-map;
-> +		};
-> +
-> +		aop_cmd_db_mem: aop-cmd-db-region@81c60000 {
-> +			compatible = "qcom,cmd-db";
-> +			reg = <0x0 0x81c60000 0x0 0x20000>;
-> +			no-map;
-> +		};
-> +
-> +		aop_config_mem: aop-config-region@81c80000 {
-> +			no-map;
-> +			reg = <0x0 0x81c80000 0x0 0x20000>;
-> +		};
-> +
-> +		smem_mem: smem-region@81d00000 {
-> +			compatible = "qcom,smem";
-> +			reg = <0x0 0x81d00000 0x0 0x200000>;
-> +			hwlocks = <&tcsr_mutex 3>;
-> +			no-map;
-> +		};
-> +
-> +		adsp_mhi_mem: adsp-mhi-region@81f00000 {
-> +			reg = <0x0 0x81f00000 0x0 0x20000>;
-> +			no-map;
-> +		};
-> +
-> +		/* PIL region */
-> +		mpss_mem: mpss-region@8a800000 {
-> +			reg = <0x0 0x8a800000 0x0 0x10800000>;
-> +			no-map;
-> +		};
-> +
-> +		q6_mpss_dtb_mem: q6-mpss-dtb-region@9b000000 {
-> +			reg = <0x0 0x9b000000 0x0 0x80000>;
-> +			no-map;
-> +		};
-> +
-> +		ipa_fw_mem: ipa-fw-region@9b080000 {
-> +			reg = <0x0 0x9b080000 0x0 0x10000>;
-> +			no-map;
-> +		};
-> +
-> +		ipa_gsi_mem: ipa-gsi-region@9b090000 {
-> +			reg = <0x0 0x9b090000 0x0 0xa000>;
-> +			no-map;
-> +		};
-> +
-> +		gpu_micro_code_mem: gpu-micro-code-region@9b09a000 {
-> +			reg = <0x0 0x9b09a000 0x0 0x2000>;
-> +			no-map;
-> +		};
-> +
-> +		spss_region_mem: spss-region@9b100000 {
-> +			reg = <0x0 0x9b100000 0x0 0x180000>;
-> +			no-map;
-> +		};
-> +
-> +		spu_secure_shared_memory_mem: spu-secure-shared-memory-region@9b280000 {
-> +			reg = <0x0 0x9b280000 0x0 0x80000>;
-> +			no-map;
-> +		};
-> +
-> +		camera_mem: camera-region@9b300000 {
-> +			reg = <0x0 0x9b300000 0x0 0x800000>;
-> +			no-map;
-> +		};
-> +
-> +		video_mem: video-region@9bb00000 {
-> +			reg = <0x0 0x9bb00000 0x0 0x700000>;
-> +			no-map;
-> +		};
-> +
-> +		cvp_mem: cvp-region@9c200000 {
-> +			reg = <0x0 0x9c200000 0x0 0x700000>;
-> +			no-map;
-> +		};
-> +
-> +		cdsp_mem: cdsp-region@9c900000 {
-> +			reg = <0x0 0x9c900000 0x0 0x2000000>;
-> +			no-map;
-> +		};
-> +
-> +		q6_cdsp_dtb_mem: q6-cdsp-dtb-region@9e900000 {
-> +			reg = <0x0 0x9e900000 0x0 0x80000>;
-> +			no-map;
-> +		};
-> +
-> +		q6_adsp_dtb_mem: q6-adsp-dtb-region@9e980000 {
-> +			reg = <0x0 0x9e980000 0x0 0x80000>;
-> +			no-map;
-> +		};
-> +
-> +		adspslpi_mem: adspslpi-region@9ea00000 {
-> +			reg = <0x0 0x9ea00000 0x0 0x4080000>;
-> +			no-map;
-> +		};
-> +
-> +		/*
-> +		 * Firmware related regions, bootloader will possible reserve parts of
-> +		 * region from 0xd8000000..0x100000000.
-> +		 */
-> +		mpss_dsm_mem: mpss_dsm_region@d4d00000 {
-> +			reg = <0x0 0xd4d00000 0x0 0x3300000>;
-> +			no-map;
-> +		};
-> +	};
-> +};
+Alex
 
--- 
-// Caleb (they/them)
+
+>
+>> Thanks,
+>>
+>> Alex
+>>
+>>>> an idea here could be to add an "init" value to the alternatives and
+>>>> let the patching process do the right thing when the extensions are
+>>>> known.
+>>>>
+>>>> Another solution would be the early discovery of the extensions, but I
+>>>> took a look and it's easy with a device tree, but not with ACPI.
+>>>>
+>>>> Let me know what you plan to do and how I can help!
+>>>>
+>>>> Thanks,
+>>>>
+>>>> Alex
+>>>>
+>>>>> What do you think?
+>>>>>
+>>>>>
+>>>>>> Thanks again for your initial work,
+>>>>>>
+>>>>>> Alex
+>>>>>>
+>>>>>>>>          select ARCH_USES_CFI_TRAPS if CFI_CLANG
+>>>>>>>>          select ARCH_WANT_BATCHED_UNMAP_TLB_FLUSH if SMP && MMU
+>>>>>>>>          select ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT if MMU
+>>>>>>>> diff --git a/arch/riscv/include/asm/Kbuild b/arch/riscv/include/asm/Kbuild
+>>>>>>>> index 504f8b7e72d4..ad72f2bd4cc9 100644
+>>>>>>>> --- a/arch/riscv/include/asm/Kbuild
+>>>>>>>> +++ b/arch/riscv/include/asm/Kbuild
+>>>>>>>> @@ -2,10 +2,12 @@
+>>>>>>>>   generic-y += early_ioremap.h
+>>>>>>>>   generic-y += flat.h
+>>>>>>>>   generic-y += kvm_para.h
+>>>>>>>> +generic-y += mcs_spinlock.h
+>>>>>>>>   generic-y += parport.h
+>>>>>>>> -generic-y += spinlock.h
+>>>>>>>>   generic-y += spinlock_types.h
+>>>>>>>> +generic-y += ticket_spinlock.h
+>>>>>>>>   generic-y += qrwlock.h
+>>>>>>>>   generic-y += qrwlock_types.h
+>>>>>>>> +generic-y += qspinlock.h
+>>>>>>>>   generic-y += user.h
+>>>>>>>>   generic-y += vmlinux.lds.h
+>>>>>>>> diff --git a/arch/riscv/include/asm/spinlock.h b/arch/riscv/include/asm/spinlock.h
+>>>>>>>> new file mode 100644
+>>>>>>>> index 000000000000..e00429ac20ed
+>>>>>>>> --- /dev/null
+>>>>>>>> +++ b/arch/riscv/include/asm/spinlock.h
+>>>>>>>> @@ -0,0 +1,39 @@
+>>>>>>>> +/* SPDX-License-Identifier: GPL-2.0 */
+>>>>>>>> +
+>>>>>>>> +#ifndef __ASM_RISCV_SPINLOCK_H
+>>>>>>>> +#define __ASM_RISCV_SPINLOCK_H
+>>>>>>>> +
+>>>>>>>> +#ifdef CONFIG_QUEUED_SPINLOCKS
+>>>>>>>> +#define _Q_PENDING_LOOPS       (1 << 9)
+>>>>>>>> +
+>>>>>>>> +#define __no_arch_spinlock_redefine
+>>>>>>>> +#include <asm/ticket_spinlock.h>
+>>>>>>>> +#include <asm/qspinlock.h>
+>>>>>>>> +#include <asm/alternative.h>
+>>>>>>>> +
+>>>>>>>> +DECLARE_STATIC_KEY_TRUE(qspinlock_key);
+>>>>>>>> +
+>>>>>>>> +#define SPINLOCK_BASE_DECLARE(op, type, type_lock)                     \
+>>>>>>>> +static __always_inline type arch_spin_##op(type_lock lock)             \
+>>>>>>>> +{                                                                      \
+>>>>>>>> +       if (static_branch_unlikely(&qspinlock_key))                     \
+>>>>>>>> +               return queued_spin_##op(lock);                          \
+>>>>>>>> +       return ticket_spin_##op(lock);                                  \
+>>>>>>>> +}
+>>>>>>>> +
+>>>>>>>> +SPINLOCK_BASE_DECLARE(lock, void, arch_spinlock_t *)
+>>>>>>>> +SPINLOCK_BASE_DECLARE(unlock, void, arch_spinlock_t *)
+>>>>>>>> +SPINLOCK_BASE_DECLARE(is_locked, int, arch_spinlock_t *)
+>>>>>>>> +SPINLOCK_BASE_DECLARE(is_contended, int, arch_spinlock_t *)
+>>>>>>>> +SPINLOCK_BASE_DECLARE(trylock, bool, arch_spinlock_t *)
+>>>>>>>> +SPINLOCK_BASE_DECLARE(value_unlocked, int, arch_spinlock_t)
+>>>>>>>> +
+>>>>>>>> +#else
+>>>>>>>> +
+>>>>>>>> +#include <asm/ticket_spinlock.h>
+>>>>>>>> +
+>>>>>>>> +#endif
+>>>>>>>> +
+>>>>>>>> +#include <asm/qrwlock.h>
+>>>>>>>> +
+>>>>>>>> +#endif /* __ASM_RISCV_SPINLOCK_H */
+>>>>>>>> diff --git a/arch/riscv/kernel/setup.c b/arch/riscv/kernel/setup.c
+>>>>>>>> index 4f73c0ae44b2..31ce75522fd4 100644
+>>>>>>>> --- a/arch/riscv/kernel/setup.c
+>>>>>>>> +++ b/arch/riscv/kernel/setup.c
+>>>>>>>> @@ -244,6 +244,23 @@ static void __init parse_dtb(void)
+>>>>>>>>   #endif
+>>>>>>>>   }
+>>>>>>>>
+>>>>>>>> +DEFINE_STATIC_KEY_TRUE(qspinlock_key);
+>>>>>>>> +EXPORT_SYMBOL(qspinlock_key);
+>>>>>>>> +
+>>>>>>>> +static void __init riscv_spinlock_init(void)
+>>>>>>>> +{
+>>>>>>>> +       asm goto(ALTERNATIVE("nop", "j %[qspinlock]", 0, RISCV_ISA_EXT_ZABHA, 1)
+>>>>>>>> +                : : : : qspinlock);
+>>>>>>>> +
+>>>>>>>> +       static_branch_disable(&qspinlock_key);
+>>>>>>>> +       pr_info("Ticket spinlock: enabled\n");
+>>>>>>>> +
+>>>>>>>> +       return;
+>>>>>>>> +
+>>>>>>>> +qspinlock:
+>>>>>>>> +       pr_info("Queued spinlock: enabled\n");
+>>>>>>>> +}
+>>>>>>>> +
+>>>>>>>>   extern void __init init_rt_signal_env(void);
+>>>>>>>>
+>>>>>>>>   void __init setup_arch(char **cmdline_p)
+>>>>>>>> @@ -295,6 +312,7 @@ void __init setup_arch(char **cmdline_p)
+>>>>>>>>          riscv_set_dma_cache_alignment();
+>>>>>>>>
+>>>>>>>>          riscv_user_isa_enable();
+>>>>>>>> +       riscv_spinlock_init();
+>>>>>>>>   }
+>>>>>>>>
+>>>>>>>>   bool arch_cpu_is_hotpluggable(int cpu)
+>>>>>>>> diff --git a/include/asm-generic/qspinlock.h b/include/asm-generic/qspinlock.h
+>>>>>>>> index 0655aa5b57b2..bf47cca2c375 100644
+>>>>>>>> --- a/include/asm-generic/qspinlock.h
+>>>>>>>> +++ b/include/asm-generic/qspinlock.h
+>>>>>>>> @@ -136,6 +136,7 @@ static __always_inline bool virt_spin_lock(struct qspinlock *lock)
+>>>>>>>>   }
+>>>>>>>>   #endif
+>>>>>>>>
+>>>>>>>> +#ifndef __no_arch_spinlock_redefine
+>>>>>>>>   /*
+>>>>>>>>    * Remapping spinlock architecture specific functions to the corresponding
+>>>>>>>>    * queued spinlock functions.
+>>>>>>>> @@ -146,5 +147,6 @@ static __always_inline bool virt_spin_lock(struct qspinlock *lock)
+>>>>>>>>   #define arch_spin_lock(l)              queued_spin_lock(l)
+>>>>>>>>   #define arch_spin_trylock(l)           queued_spin_trylock(l)
+>>>>>>>>   #define arch_spin_unlock(l)            queued_spin_unlock(l)
+>>>>>>>> +#endif
+>>>>>>>>
+>>>>>>>>   #endif /* __ASM_GENERIC_QSPINLOCK_H */
+>>>>>>>> diff --git a/include/asm-generic/ticket_spinlock.h b/include/asm-generic/ticket_spinlock.h
+>>>>>>>> index cfcff22b37b3..325779970d8a 100644
+>>>>>>>> --- a/include/asm-generic/ticket_spinlock.h
+>>>>>>>> +++ b/include/asm-generic/ticket_spinlock.h
+>>>>>>>> @@ -89,6 +89,7 @@ static __always_inline int ticket_spin_is_contended(arch_spinlock_t *lock)
+>>>>>>>>          return (s16)((val >> 16) - (val & 0xffff)) > 1;
+>>>>>>>>   }
+>>>>>>>>
+>>>>>>>> +#ifndef __no_arch_spinlock_redefine
+>>>>>>>>   /*
+>>>>>>>>    * Remapping spinlock architecture specific functions to the corresponding
+>>>>>>>>    * ticket spinlock functions.
+>>>>>>>> @@ -99,5 +100,6 @@ static __always_inline int ticket_spin_is_contended(arch_spinlock_t *lock)
+>>>>>>>>   #define arch_spin_lock(l)              ticket_spin_lock(l)
+>>>>>>>>   #define arch_spin_trylock(l)           ticket_spin_trylock(l)
+>>>>>>>>   #define arch_spin_unlock(l)            ticket_spin_unlock(l)
+>>>>>>>> +#endif
+>>>>>>>>
+>>>>>>>>   #endif /* __ASM_GENERIC_TICKET_SPINLOCK_H */
+>>>>>>>> --
+>>>>>>>> 2.39.2
+>>>>>>>>
+>>>>>>>
+>>>>>>> --
+>>>>>>> Best Regards
+>>>>>>>   Guo Ren
+>>>>>
+>>>>>
+>>>>> --
+>>>>> Best Regards
+>>>>>   Guo Ren
+>>>
+>>>
+>>> --
+>>> Best Regards
+>>>   Guo Ren
+>
+>
 
