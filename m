@@ -1,154 +1,169 @@
-Return-Path: <linux-kernel+bounces-199683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B20188D8AD3
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 22:19:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF65E8D8AD7
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 22:20:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EA532834D7
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 20:19:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13958B23D94
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 20:20:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80F4513B28D;
-	Mon,  3 Jun 2024 20:19:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="ibAw2Iff"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E94364BAA6
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 20:19:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C5EB13B59C;
+	Mon,  3 Jun 2024 20:20:12 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE4CA136E17;
+	Mon,  3 Jun 2024 20:20:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717445961; cv=none; b=ULLU+wzKMNC/s5slPrAoiktWPHeXtIVBlFi8tI+eDjA4hh0yhnvYSWBTM1ptFiLO2bdhfCq7qFKS5jSERmGIMVr9n37HiKEzuNrNDwt+0vhMgUbVq3iD3zRXbcsFehBM/bJFQ+nvIZrRDdMX9zzDjuxStKoX+YLAMaEWNFsGLaM=
+	t=1717446011; cv=none; b=QEqFy1V7fNhaObjvhVeG3DZo6g8AY7+wKpFAJwyg61AqATDz2py8bBV1+kJJrPdybkX5vvVVyPu5jFhZ4Tis3ANf2JuNsH0aWx/1fYaHCn9PldsFY73YPFSztpRtbS7FLWOWUWDyk8W30RnnJeoh2fCfXJgpes5PO3WNtqQ1Tfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717445961; c=relaxed/simple;
-	bh=FSLO+d4F1dv+klupvQtAZTClWMiTIDukqWdU6ZYMums=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=S00FWeIm0OWbSdmBivPD5M6efCFEKAgpatZOiiDr4GwC9eDYXqkYg5MuKSdW+6CwXOOFrd4Deqg0AV6VbF4XEBu2k0G7LAxYNSeyqrL5Q0Cr1m4a1HbLUNu6yZD0wBTNdRyRJECI9cXgJKAXxVbc4ALK+nQBD6fIlPfm770feEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=ibAw2Iff; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-57a033c2e9fso6093700a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 13:19:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1717445958; x=1718050758; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NE9jYYLZ0PrSccgsEhjOgnrd5/z1uEs9526Bwz64hQs=;
-        b=ibAw2IffHcp+i5KrioL5AHBSH+HKiMGO6REuLPXzH9+7RBmtDPWMYNdxaap7TreiEh
-         4InBerosOT1DAidnXiaiqJJ7fp+/7DL+djeWN6HBzSFeMepWc3EdqCAZDTzd3jSpbISO
-         /xnLc96ISNNgnn1CAeDTHYmP7m2p8Wacg11dFAPD1gQ/ZLmBCaMesqvJqOVqyUCLeJjN
-         Y+xy3kfv51ehqEgZcylW2LhCG3uzIWntzdKazbTvJz0bEIh03eNiBsLUOez7boHSJbKt
-         UK8nTYUHESJLzDDS6jZJJiIgomD9Y99hZDsQowMf+dzp7HuovUfOZEQHBZROHq7NOoNx
-         H5ag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717445958; x=1718050758;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NE9jYYLZ0PrSccgsEhjOgnrd5/z1uEs9526Bwz64hQs=;
-        b=ekSrlFMZllWHiniLzPjp2wR4uueruB0tNUFjeZfBHHuEli6D4L8mjdmoH7HotcsIQI
-         5ghmH4Ab1dl1nYm6Q6EXaVL1OuvuvGa5f3cS8AEe1fk/25lsRi+5YUXqgjmS+zNB11kO
-         vyKe3Zz0pHWnJF+CIOYLBayvK0KfPPSgK808WhluIyxYnWrqUcsFaD00M0X33iVBqyrI
-         ZBiltfvzlf+bV/OjRwTMKVz7KsgQZCtFqUryd+MSv1FAuwb+YNTXbEYp1KSu+QwcmI1X
-         UHQT2XwgLY0OzdwVBflJnyiF3MgwEJ9dCmGQqAUoynrQHxiJ8OJ3Iz/defKf7IHiESE/
-         WcfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUJv+huiNWJlnqtfBJs2ZRC8Uvl6tkKV76H4e8s48i7CdkzGB6a6X4gclTA/ELZz5XvflZK0+6CmuX69R+U7rme1JKoTaZezBCfPpLv
-X-Gm-Message-State: AOJu0Yw7iWIqhb20bUqaBihKIPJORgaLMZr0mBXmfjwSZQKSPOwiy3/K
-	VH+gB3fKkifPcyZTwut5i3JhDkQwyvbcOIzsesy8+BHZV53x9MheQSlD7GmOemzhwRmmNMXVUxi
-	jlv8=
-X-Google-Smtp-Source: AGHT+IGCGZ7cF+tHbsfD6KOVH6D6GrgBTp1TEU5e+4nXy9DMXeQtp8U//GR6FwSKI00bG8jWZoX3Eg==
-X-Received: by 2002:a50:cc9a:0:b0:579:a956:76fd with SMTP id 4fb4d7f45d1cf-57a363eb01dmr8280627a12.8.1717445957901;
-        Mon, 03 Jun 2024 13:19:17 -0700 (PDT)
-Received: from smtpclient.apple ([2001:a61:1083:f101:b82c:e1f8:a3c2:1047])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57a3173c8c3sm5888800a12.0.2024.06.03.13.19.16
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Jun 2024 13:19:17 -0700 (PDT)
-Content-Type: text/plain;
-	charset=us-ascii
+	s=arc-20240116; t=1717446011; c=relaxed/simple;
+	bh=D2aVJoazwYvNwijy23VBiIfNUOdprfvCGR7+xleba5M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=C77wdQjByaV28B3H8rnxTFFVyeIfZMWI9V5ZelSeg8xF3GABXLf7UNhL5kic8fh0EzEr1fI4GMKMkJUa2NAbeEZYC4k8D/Hu2ka7A1cxnCI5y9RB9OQl4SHIje+jyFDuibPFVGxyW08NUBXWAMa891nJrrOGxGXYflGLRjMGuhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 29BE41042;
+	Mon,  3 Jun 2024 13:20:33 -0700 (PDT)
+Received: from [10.57.71.49] (unknown [10.57.71.49])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 736993F792;
+	Mon,  3 Jun 2024 13:20:04 -0700 (PDT)
+Message-ID: <3d24fecf-1fdb-4804-9a51-d6c34a9d65c6@arm.com>
+Date: Mon, 3 Jun 2024 21:20:03 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
-Subject: Re: [PATCH] drm: Combine identical if/elif code blocks
-From: Thorsten Blum <thorsten.blum@toblux.com>
-In-Reply-To: <CAB3Z9RJ3RXOMc887N3cJntC1U24HXLkS4jm72xZtcDxNawRN3Q@mail.gmail.com>
-Date: Mon, 3 Jun 2024 22:19:05 +0200
-Cc: David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>,
- dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <6365BD12-0283-4FCA-B84B-95DD6ADB5438@toblux.com>
-References: <20240513212836.292589-3-thorsten.blum@toblux.com>
- <CAB3Z9RJ+VVAvVfKWF2LCzH3288vi6CF7uv+g+qbeu_L0c_k0Nw@mail.gmail.com>
- <60613D48-7C93-4B9F-894C-CE70E5F8D123@toblux.com>
- <227C6981-AFFC-4E0E-A95F-BF8979D5AD2A@toblux.com>
- <CAB3Z9RJ3RXOMc887N3cJntC1U24HXLkS4jm72xZtcDxNawRN3Q@mail.gmail.com>
-To: Luc Ma <onion0709@gmail.com>
-X-Mailer: Apple Mail (2.3774.600.62)
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 08/12] PCI: imx6: Config look up table(LUT) to support
+ MSI ITS and IOMMU for i.MX95
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Frank Li <Frank.Li@nxp.com>, Richard Zhu <hongxing.zhu@nxp.com>,
+ Lucas Stach <l.stach@pengutronix.de>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-pci@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+ devicetree@vger.kernel.org, Will Deacon <will@kernel.org>,
+ Joerg Roedel <joro@8bytes.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Alyssa Rosenzweig <alyssa@rosenzweig.io>, Marc Zyngier <maz@kernel.org>
+References: <20240603171921.GA685838@bhelgaas>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20240603171921.GA685838@bhelgaas>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 16. May 2024, at 03:24, Luc Ma <onion0709@gmail.com> wrote:
-> On Wed, 15 May 2024 at 17:31, Thorsten Blum <thorsten.blum@toblux.com> =
-wrote:
->> On 15. May 2024, at 11:22, Thorsten Blum <thorsten.blum@toblux.com> =
-wrote:
->>> On 15. May 2024, at 09:43, Luc Ma <onion0709@gmail.com> wrote:
->>>> On Tue, 14 May 2024 at 19:37, Thorsten Blum =
-<thorsten.blum@toblux.com> wrote:
->>>>>=20
->>>>> Merge the identical if/elif code blocks and remove the following =
-two
->>>>> warnings reported by make includecheck:
->>>>>=20
->>>>>     asm/ioctl.h is included more than once
->>>>>     linux/types.h is included more than once
->>>>>=20
->>>>> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
->>>>> ---
->>>>> include/uapi/drm/drm.h | 8 +-------
->>>>> 1 file changed, 1 insertion(+), 7 deletions(-)
->>>>>=20
->>>>> diff --git a/include/uapi/drm/drm.h b/include/uapi/drm/drm.h
->>>>> index 16122819edfe..315af7b19c97 100644
->>>>> --- a/include/uapi/drm/drm.h
->>>>> +++ b/include/uapi/drm/drm.h
->>>>> @@ -35,13 +35,7 @@
->>>>> #ifndef _DRM_H_
->>>>> #define _DRM_H_
->>>>>=20
->>>>> -#if defined(__KERNEL__)
->>>>> -
->>>>> -#include <linux/types.h>
->>>>> -#include <asm/ioctl.h>
->>>>> -typedef unsigned int drm_handle_t;
->>>>> -
->>>>> -#elif defined(__linux__)
->>>>=20
->>>> I think it is intentionally like that. Please see
->>>> https://patchwork.freedesktop.org/patch/78747/
->>>=20
->>> Thank you for the link.
->>>=20
->>> Does anyone know if the reason for the change from 2016 ("make
->>> headers_install can't handle fancy conditions, ...") is still valid?
->=20
-> I guess it is. If you can try ./scripts/unifdef as below[1], you might
-> find out the thing.
->=20
-> =
-[1]https://elixir.bootlin.com/linux/v6.9/source/scripts/headers_install.sh=
-#L41
+On 2024-06-03 6:19 pm, Bjorn Helgaas wrote:
+> On Fri, May 31, 2024 at 03:58:49PM +0100, Robin Murphy wrote:
+>> On 2024-05-31 12:08 am, Bjorn Helgaas wrote:
+>>> [+cc IOMMU and pcie-apple.c folks for comment]
+>>>
+>>> On Tue, May 28, 2024 at 03:39:21PM -0400, Frank Li wrote:
+>>>> For the i.MX95, configuration of a LUT is necessary to convert Bus Device
+>>>> Function (BDF) to stream IDs, which are utilized by both IOMMU and ITS.
+>>>> This involves examining the msi-map and smmu-map to ensure consistent
+>>>> mapping of PCI BDF to the same stream IDs. Subsequently, LUT-related
+>>>> registers are configured. In the absence of an msi-map, the built-in MSI
+>>>> controller is utilized as a fallback.
+>>>>
+>>>> Additionally, register a PCI bus notifier to trigger imx_pcie_add_device()
+>>>> upon the appearance of a new PCI device and when the bus is an iMX6 PCI
+>>>> controller. This function configures the correct LUT based on Device Tree
+>>>> Settings (DTS).
+>>>
+>>> This scheme is pretty similar to apple_pcie_bus_notifier().  If we
+>>> have to do this, I wish it were *more* similar, i.e., copy the
+>>> function names, bitmap tracking, code structure, etc.
+>>>
+>>> I don't really know how stream IDs work, but I assume they are used on
+>>> most or all arm64 platforms, so I'm a little surprised that of all the
+>>> PCI host drivers used on arm64, only pcie-apple.c and pci-imx6.c need
+>>> this notifier.
+>>
+>> This is one of those things that's mostly at the mercy of the PCIe root
+>> complex implementation. Typically the SMMU StreamID and/or GIC ITS DeviceID
+>> is derived directly from the PCI RID, sometimes with additional high-order
+>> bits hard-wired to disambiguate PCI segments. I believe this RID-translation
+>> LUT is a particular feature of the the Synopsys IP - I know there's also one
+>> on the NXP Layerscape platforms, but on those it's programmed by the
+>> bootloader, which also generates the appropriate "msi-map" and "iommu-map"
+>> properties to match. Ideally that's what i.MX should do as well, but hey.
+> 
+> Maybe this RID-translation is a feature of i.MX, not of Synopsys?  I
+> see that the LUT CSR accesses use IMX95_* definitions.
 
-I just tested it with make headers_install and it worked fine.
+Well, it's not unreasonable to call things "IMX95" in this context if 
+they are only relevant to the configuration used by i.MX95, and not to 
+the other i.MX SoCs which this driver also supports. However the data 
+register fields certainly look suspiciously similar to those used on 
+Layerscape[1], although I guess that still doesn't rule out it being 
+NXP's own widget either. Anyway, the exact details aren't really 
+significant, the point was really just to say don't expect this to 
+generalise much beyond what you've seen already, and that there's 
+precedent for bootloaders doing this for us.
 
-Thorsten=
+>> If it's really necessary to do this programming from Linux, then there's
+>> still no point in it being dynamic - the mappings cannot ever change, since
+>> the rest of the kernel believes that what the DT said at boot time was
+>> already a property of the hardware. It would be a lot more logical, and
+>> likely simpler, for the driver to just read the relevant map property and
+>> program the entire LUT to match, all in one go at controller probe time.
+>> Rather like what's already commonly done with the parsing of "dma-ranges" to
+>> program address-translation LUTs for inbound windows.
+>>
+>> Plus that would also give a chance of safely dealing with bad DTs specifying
+>> invalid ID mappings (by refusing to probe at all). As it is, returning an
+>> error from a child's BUS_NOTIFY_ADD_DEVICE does nothing except prevent any
+>> further notifiers from running at that point - the device will still be
+>> added, allowed to bind a driver, and able to start sending DMA/MSI traffic
+>> without the controller being correctly programmed, which at best won't work
+>> and at worst may break the whole system.
+> 
+> Frank, could the imx LUT be programmed once at boot-time instead of at
+> device-add time?  I'm guessing maybe not because apparently there is a
+> risk of running out of LUT entries?
+
+The risk still exists just as much either way - if we have a bogus DT 
+and/or just more PCI RIDs present than we can handle, we're going to 
+have a bad time. There's no advantage to only finding that out once we 
+try to add the 33rd device and it's too late to even do anything about it.
+
+In fact if anything, this notifier approach exacerbates that risk the 
+most by consuming one LUT entry per PCI RID regardless of whether an 
+"iommu-map-mask" is involved. Assuming the IMX95_PE0_LUT_MASK field is 
+the same as its Layerscape counterpart, we could support >32 RIDs if the 
+map and mask are constructed to squash multiple RIDs onto each StreamID 
+(the SMMU driver supports this), and we have the up-front information to 
+easily configure hardware masking in the LUT itself. It's not 
+necessarily possible to reconstruct such mappings from only seeing 
+individual input and output values one-by-one.
+
+Thanks,
+Robin.
+
+[1] 
+https://source.denx.de/u-boot/u-boot/-/blob/master/drivers/pci/pcie_layerscape_fixup.c?ref_type=heads#L83
+
+> It sounds like the consequences of running out of LUT entries are
+> catastrophic, e.g., memory corruption from mis-directed DMA?  If
+> that's possible, I think we need to figure out how to prevent the
+> device from being used, not just dev_warn() about it.
+> 
+> Bjorn
 
