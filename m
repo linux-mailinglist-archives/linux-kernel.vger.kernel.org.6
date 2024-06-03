@@ -1,174 +1,109 @@
-Return-Path: <linux-kernel+bounces-199638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C8F78D8A17
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 21:25:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F1748D8A1A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 21:26:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DF5E1C20D3C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:25:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A8392841FC
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:26:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59D411386D2;
-	Mon,  3 Jun 2024 19:25:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC0861386B9;
+	Mon,  3 Jun 2024 19:26:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j/akP1vO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=jubnut.com header.i=@jubnut.com header.b="V3qgGZXR"
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98C1723A0;
-	Mon,  3 Jun 2024 19:25:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CC23137748
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 19:26:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717442749; cv=none; b=sfI4ap2dZIndCBr9CAv1TrFd/JFErlZBguG86bLreJ9C45rf6Vk1j96GnBFRR3noL/xktXh/hO4KGaBC0OvZ08PexlpPUyLF+Ryp6Pxzjt/55vN0nT8hDcXJF99MMeemzf0/gad1vboM6OuzQnhnkFY5K07uYRvNdWLkjrfy9gY=
+	t=1717442789; cv=none; b=FqOVvpQE2YOVGeyiip3DUYIjoBX+qUzPMKm8yDI8LU7QcSkM2UmL+JQjwW8APwNiLDJu8oe8w2+3cYCMEDpkwdNfrMtplluewRFLUoRpXqceShfw4yYBit/KlPPssHJ6e9Da12ptACBvl9XTg+umeM/30OLe1C0EWZr9pDTJExA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717442749; c=relaxed/simple;
-	bh=93vibPm/pqhSswaWzN5lU8ohUUXoe+TYWErjrRk6dg0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dqQmZLrPnYCMxur6/RmyvIzp1oz121QEPm8B45q6bOEPwqiWcRy6Mi5c0Uxz6MlnimD4tXn0DmZv2/8EbHz2FW05KfH5w3QH7+vXcbge4KK4FuLDreYDeNhMyUomg9HEk/5Rsgn+vFc98mYlruULNv/VzZ3uGMIFbjrVgMi6KtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j/akP1vO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E48E9C2BD10;
-	Mon,  3 Jun 2024 19:25:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717442749;
-	bh=93vibPm/pqhSswaWzN5lU8ohUUXoe+TYWErjrRk6dg0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=j/akP1vO4DOtnsO7GnJVIkS6aL+LD78ULrfHNvX0Iu0qns9yzjiYA+nnhBsUzTfcn
-	 LPRnhiqopIE/9zpUW3te4ChhtOdAGwwBiK0QsPH8C6S3pI95HqYhdb4BjMlw569Bv6
-	 vFVisHNOPXSn03QshkcTFSzFK4Cv8fafyhPdlz6toOccxGbptfliJ9g/NiAkWn4sy0
-	 NzhQTFzJ4r94DLSFw2jQg/lEcxGH1fD3HGPAn6rV+OZgtxC3l93mjZUYeAk7t241Qk
-	 Cm5U8qK3EDjdG5NvSEiQ5OHS2JuZbR8LwJWxgYkVWKKjwtxnzqhXecHH3O0Fp2ebA3
-	 U6hVKWoGWB1Bw==
-Date: Mon, 3 Jun 2024 20:25:37 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Vasileios Amoiridis <vassilisamir@gmail.com>
-Cc: lars@metafoo.de, himanshujha199640@gmail.com, linux-iio@vger.kernel.org,
+	s=arc-20240116; t=1717442789; c=relaxed/simple;
+	bh=d0aIKj9hD9AEClfSD2ht6q5cfgkUkDFP5cQwyrie3II=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=btpQtYkVFIzhpqSzkmC/rAAbZStp8/yLM+2sph7ix315M4rgJQ5mXh0heijRMv9D9q9Hs56i1qdhVR3BmpFW4cdfJyp4CaZ7sMMroYKaFwn7orBIyIBLiesbGKgk1+cF+RO3vf2p2Fc/LWpL0BkhlQzKpKaoFU36EjpDJJ+RKcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jubnut.com; spf=pass smtp.mailfrom=jubnut.com; dkim=pass (2048-bit key) header.d=jubnut.com header.i=@jubnut.com header.b=V3qgGZXR; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jubnut.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jubnut.com
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4VtNxq0SV9z9sQb;
+	Mon,  3 Jun 2024 21:26:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jubnut.com; s=MBO0001;
+	t=1717442783;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=x5XGR3aSMREVjpnJPLS8gCmXguO6yjczNgEYlWmCxUU=;
+	b=V3qgGZXR4DEpLmYZq1YGI/CFTPLNLZZZYJXrwhRn8IU/BTLoBnGQ41D8L6rQtDX6hZDm73
+	mLISi21yq0bib2XurB7v+2acJJLDzIXgRWatCuPmB9Ukz/6WUZz6uvKdlqJbfMq9nkVpz2
+	fAdFH+QmFrB6gWxtJpO8/AwiWJRqnd7MTSgzS0aZLe0A8bm3VlR0mjaPUj+KTPXho8ptv0
+	jn0pxU3dTFfPPUctlYjKs1tT9DvKyMrX7OXr6gOZUclHFG1nW6eheXHrohIcSA1pOjWMgp
+	A6GCcAiK9kQ/eDUYKfUIbF4qDylMGNH7t894kCQxmdRDwJpO9t2uiQe6Dnix4A==
+From: Ben Walsh <ben@jubnut.com>
+To: Tzung-Bi Shih <tzungbi@kernel.org>
+Cc: Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
+ "Dustin L. Howett" <dustin@howett.net>, Kieran Levin <ktl@frame.work>,
+ Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, Mario Limonciello
+ <mario.limonciello@amd.com>, chrome-platform@lists.linux.dev,
  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 11/17] iio: chemical: bme680: Use bulk reads for
- calibration data
-Message-ID: <20240603202537.4b40c80a@jic23-huawei>
-In-Reply-To: <20240602193023.GD387181@vamoiridPC>
-References: <20240527183805.311501-1-vassilisamir@gmail.com>
-	<20240527183805.311501-12-vassilisamir@gmail.com>
-	<20240602135726.2f10fd2b@jic23-huawei>
-	<20240602193023.GD387181@vamoiridPC>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+Subject: Re: [PATCH v2 1/5] platform/chrome: cros_ec_lpc: MEC access can
+ return error code
+In-Reply-To: <Zl2NMG3NdQHPfe7s@google.com>
+References: <20240603063834.5580-1-ben@jubnut.com>
+ <20240603063834.5580-2-ben@jubnut.com> <Zl2NMG3NdQHPfe7s@google.com>
+Date: Mon, 03 Jun 2024 20:26:19 +0100
+Message-ID: <87le3l25gk.fsf@jubnut.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On Sun, 2 Jun 2024 21:30:23 +0200
-Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
+Tzung-Bi Shih <tzungbi@kernel.org> writes:
 
-> On Sun, Jun 02, 2024 at 01:57:26PM +0100, Jonathan Cameron wrote:
-> > On Mon, 27 May 2024 20:37:59 +0200
-> > Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
-> >   
-> > > Calibration data are located in contiguous-ish registers
-> > > inside the chip. For that reason we can use bulk reads as is
-> > > done as well in the BME68x Sensor API [1].
-> > > 
-> > > The arrays that are used for reading the data out of the sensor
-> > > are located inside DMA safe buffer.  
-> > 
-> > See below. I think in this case that isn't necessary.
-> > However it's a quirk of how the custom regmap works. Whilst
-> > we can't rely on regmap core spi implementations continuing to
-> > bounce buffer, we can rely on one local to our particular driver.
-> >   
-> 
-> What about the I2C implementation though? I watched recently a video
-> from Wolfram Sang [1] and as far as I understood, the buffers are not
-> provided by the I2C API, but you have to provide them. In any case, I
-> should maybe check both SPI and I2C reads to understand the internals.
-> 
-> [1]: https://www.youtube.com/watch?v=JDwaMClvV-s
-> 
+> On Mon, Jun 03, 2024 at 07:38:30AM +0100, Ben Walsh wrote:
+>> @@ -425,8 +469,8 @@ static int cros_ec_lpc_probe(struct platform_device *pdev)
+>>  	 */
+>>  	cros_ec_lpc_ops.read = cros_ec_lpc_mec_read_bytes;
+>>  	cros_ec_lpc_ops.write = cros_ec_lpc_mec_write_bytes;
+>> -	cros_ec_lpc_ops.read(EC_LPC_ADDR_MEMMAP + EC_MEMMAP_ID, 2, buf);
+>> -	if (buf[0] != 'E' || buf[1] != 'C') {
+>> +	ret = cros_ec_lpc_ops.read(EC_LPC_ADDR_MEMMAP + EC_MEMMAP_ID, 2, buf);
+>> +	if (ret < 0 || buf[0] != 'E' || buf[1] != 'C') {
+>
+> Slight concern: if the read failed (-EBUSY, because of the lock contention
+> failed for example), does it still need to probe for non-MEC devices?
 
-I'm not sure Wolfram got far with his desire for generally avoiding the
-bounce buffers for i2c.  I think it's strictly opt in only so don't opt in
-unless your code is safe for it and regmap never will by default as too
-many drivers will be subtly broken.
+That's a very good point! Negative ret here means there's really an
+error, not just "no MEC".
 
+I think it's better to return early with the return code (not -ENODEV)
+in these cases.
 
-> > > 
-> > > [1]: https://github.com/boschsensortec/BME68x_SensorAPI/blob/v4.4.8/bme68x.c#L1769
-> > > Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>  
-> > 
-> >   
-> > > diff --git a/drivers/iio/chemical/bme680_core.c b/drivers/iio/chemical/bme680_core.c
-> > > index 681f271f9b06..ed4cdb4d64af 100644
-> > > --- a/drivers/iio/chemical/bme680_core.c
-> > > +++ b/drivers/iio/chemical/bme680_core.c  
-> >   
-> > > +
-> > >  struct bme680_calib {
-> > >  	u16 par_t1;
-> > >  	s16 par_t2;
-> > > @@ -64,6 +109,16 @@ struct bme680_data {
-> > >  	 * and humidity compensation calculations.
-> > >  	 */
-> > >  	s32 t_fine;
-> > > +
-> > > +	/*
-> > > +	 * DMA (thus cache coherency maintenance) may require the
-> > > +	 * transfer buffers to live in their own cache lines.
-> > > +	 */
-> > > +	union {
-> > > +		u8 bme680_cal_buf_1[BME680_CALIB_RANGE_1_LEN];
-> > > +		u8 bme680_cal_buf_2[BME680_CALIB_RANGE_2_LEN];
-> > > +		u8 bme680_cal_buf_3[BME680_CALIB_RANGE_3_LEN];
-> > > +	} __aligned(IIO_DMA_MINALIGN);  
-> > Ah! I should have read ahead.  I don't think you need this alignment forcing
-> > because bme680_regmap_spi_read uses spi_write_then_read() which always
-> > bounces the data.
-> >   
-> 
-> Same comment. What about I2C?
-> 
-> > >  };
-> > >  
-> > >  static const struct regmap_range bme680_volatile_ranges[] = {
-> > > @@ -112,217 +167,73 @@ static int bme680_read_calib(struct bme680_data *data,
-> > >  			     struct bme680_calib *calib)
-> > >  {  
-> > 
-> >   
-> > > +	calib->par_h3 = data->bme680_cal_buf_2[H3];
-> > > +	calib->par_h4 = data->bme680_cal_buf_2[H4];
-> > > +	calib->par_h5 = data->bme680_cal_buf_2[H5];
-> > > +	calib->par_h6 = data->bme680_cal_buf_2[H6];
-> > > +	calib->par_h7 = data->bme680_cal_buf_2[H7];
-> > > +	calib->par_t1 = get_unaligned_le16(&data->bme680_cal_buf_2[T1_LSB]);
-> > > +	calib->par_gh2 = get_unaligned_le16(&data->bme680_cal_buf_2[GH2_LSB]);
-> > > +	calib->par_gh1 = data->bme680_cal_buf_2[GH1];
-> > > +	calib->par_gh3 = data->bme680_cal_buf_2[GH3];
-> > >  
-> > > -	ret = regmap_read(data->regmap, BME680_H7_REG, &tmp);
-> > > +	ret = regmap_bulk_read(data->regmap, BME680_REG_RES_HEAT_VAL,
-> > > +			       &data->bme680_cal_buf_3[0],  
-> > This one is always debated, but personally I'd prefer
-> > 				data->bme680_cal_buf_3,
-> >   
-> 
-> For me it's the same, I could change it to what you proposed, no problem!
-> 
-> Cheers,
-> Vasilis
-> 
-> > for cases like this. Up to you though.  
-> > > +			       sizeof(data->bme680_cal_buf_3));
-> > >  	if (ret < 0) {
-> > > -		dev_err(dev, "failed to read BME680_H7_REG\n");
-> > > +		dev_err(dev, "failed to read 3rd set of calib data;\n");
-> > >  		return ret;
-> > >  	}  
-> >   
+>> @@ -436,9 +480,9 @@ static int cros_ec_lpc_probe(struct platform_device *pdev)
+>>  		/* Re-assign read/write operations for the non MEC variant */
+>>  		cros_ec_lpc_ops.read = cros_ec_lpc_read_bytes;
+>>  		cros_ec_lpc_ops.write = cros_ec_lpc_write_bytes;
+>> -		cros_ec_lpc_ops.read(ec_lpc->mmio_memory_base + EC_MEMMAP_ID, 2,
+>> -				     buf);
+>> -		if (buf[0] != 'E' || buf[1] != 'C') {
+>> +		ret = cros_ec_lpc_ops.read(ec_lpc->mmio_memory_base + EC_MEMMAP_ID, 2,
+>> +					   buf);
+>> +		if (ret < 0 || buf[0] != 'E' || buf[1] != 'C') {
+>>  			dev_err(dev, "EC ID not detected\n");
+>>  			return -ENODEV;
+>
+> Similar concern here: should `ret < 0` see as a -ENODEV?
 
+As above, I think it should "return ret".
 
