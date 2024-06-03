@@ -1,119 +1,283 @@
-Return-Path: <linux-kernel+bounces-198952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C080E8D7FA0
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 12:04:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F0528D7FA5
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 12:05:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BDB728D595
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 10:04:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03FB91F239D6
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 10:05:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44285823A6;
-	Mon,  3 Jun 2024 10:04:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jitBqWF1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86FEC7E796;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D93918289E;
+	Mon,  3 Jun 2024 10:04:40 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 672B9763E4;
 	Mon,  3 Jun 2024 10:04:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717409077; cv=none; b=IPvmU9ztC57nEmn4TEyPVl8qkbW7Qon5gU5C0kdBPE5RXB/vNVnBM6/erXORA9ArZdAKcQphv8ixyngSHyDRWlNSv/PsSgb8mvx4p6QEfk/RTrOCAZG6xUnDbuMwgs/dD8hEExTzRAoX8tADV5EGeXblhUdhjf/1Z4OnTnbSjCY=
+	t=1717409080; cv=none; b=mgPT7AX94oXaYcGHogrCOyt7+9gLFh706QB1uTkdVMp0Vr86mRIlWGiMFYudK0wi0ScZsO0lcxPDg/H74D+ziawn+F0pOF88CUsqEmJ76sXMAMUwhMJ2DnGTcAKv9Y+/7x9VkbDSmSpqRbLYgET8mSMw+rNasi8JW5Tg5sqRT5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717409077; c=relaxed/simple;
-	bh=Wlp7cZUIlE4IOHsusBnYh5vU2mzpL9FERd+nACxXsNk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=UewtMI66+QzqNePQaPlWoT61VlaUQmvLG0+SGxGv/Tc6DWhGK4wGPAlxjyrbGhNrbYhAvmm+9I/1kTPNWFTWbuOa4SAvSFgQzi54jJFQbM3MghdtKssCcSRq32UQzOVizg614GEdDQUrM6bTKfjt3agSDwZA4q9nihL947vmrfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jitBqWF1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id E3BE1C2BD10;
-	Mon,  3 Jun 2024 10:04:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717409077;
-	bh=Wlp7cZUIlE4IOHsusBnYh5vU2mzpL9FERd+nACxXsNk=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=jitBqWF1HmyfocksqKrVWvoUdLzYHte1P62IPlwRvfzXXcj+S+Ew3u5pSPaWdaPqC
-	 TnDYquRgSjqKGrddFCEt7XSQ2cu5R1FDLVNrI8HO+NJ4M7EQof9EPK/ATJ8PRsLXYI
-	 19qmKeJBi2NkOyLWdIMmyOSP2tCMrawtG9YrDEO4G9FzMfqjlDJHj0fPqvnfP3hANW
-	 BrPlGxBnGwWfVQhdCf/hCRbjjoXK2VyZThPXUOTq2ZISjEA1N7gooblakjh0z3oZPZ
-	 AbfyUkJVJvQMLuOJKYLmKsjRanem+wocNewNB2m5Yx6jyx1zCDLIMBMSvl74XkSBpQ
-	 9ZV3CNB1BrPlA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9170C27C44;
-	Mon,  3 Jun 2024 10:04:36 +0000 (UTC)
-From: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>
-Date: Mon, 03 Jun 2024 18:04:33 +0800
-Subject: [PATCH] clk: meson: s4: fix fixed_pll_dco clock
+	s=arc-20240116; t=1717409080; c=relaxed/simple;
+	bh=Yyjamq5fVatfQkYUI37mqc24+Gk56/U8JLXV7g9veNs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LaU8cRJmkRYmbjdMfBuvvYasEBSl7DVpYKZstKhUa+erqLqFMFbsQ4qU+bocU7CFb3E/vZhhSC17XFByLh5Ljv6p2XDnkkPsqMmqYBG0VoTTXNRG36B046nURyzG+xEYg1dfPKOp70f2OB+jZURux2YvoUk1Tw6Ir06AqCUbigQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D12B71042;
+	Mon,  3 Jun 2024 03:05:00 -0700 (PDT)
+Received: from [192.168.1.100] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6EA083F792;
+	Mon,  3 Jun 2024 03:04:34 -0700 (PDT)
+Message-ID: <e7c641ee-205f-46ef-9990-90414e50b485@arm.com>
+Date: Mon, 3 Jun 2024 11:04:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] coresight: Add support to get preferred id for
+ system trace sources
+To: Mao Jinlong <quic_jinlmao@quicinc.com>
+Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, Tingwei Zhang <quic_tingweiz@quicinc.com>,
+ Yuanfang Zhang <quic_yuanfang@quicinc.com>,
+ Tao Zhang <quic_taozha@quicinc.com>, songchai <quic_songchai@quicinc.com>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
+ <mike.leach@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>
+References: <20240603094354.2348-1-quic_jinlmao@quicinc.com>
+ <20240603094354.2348-3-quic_jinlmao@quicinc.com>
+Content-Language: en-US
+From: James Clark <james.clark@arm.com>
+In-Reply-To: <20240603094354.2348-3-quic_jinlmao@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240603-s4_fixedpll-v1-1-2b2a98630841@amlogic.com>
-X-B4-Tracking: v=1; b=H4sIADCVXWYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDMwNj3WKT+LTMitSUgpwcXWNLo6QkM6PUZEtzCyWgjoKiVJAcyLTo2Np
- aAPgIUCtdAAAA
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Jerome Brunet <jbrunet@baylibre.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Yu Tu <yu.tu@amlogic.com>
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Xianwei Zhao <xianwei.zhao@amlogic.com>
-X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1717409074; l=969;
- i=xianwei.zhao@amlogic.com; s=20231208; h=from:subject:message-id;
- bh=SOD0rIzjB9of1yjvijBbI9sErwBPGjkFM4JLYIAkE/M=;
- b=EWCSOcnNVVrdnL4wLFgNl2+yIEH8TlQrvcy01wiM/tm0IMyHU3b5njMf9swxD3EF8sp0fC7I7
- SQIYVaOz7myArhV3xPZMCbNAf8qNc/P/MP4qsyCyZEF6SHCnNBeF3vx
-X-Developer-Key: i=xianwei.zhao@amlogic.com; a=ed25519;
- pk=o4fDH8ZXL6xQg5h17eNzRljf6pwZHWWjqcOSsj3dW24=
-X-Endpoint-Received: by B4 Relay for xianwei.zhao@amlogic.com/20231208 with
- auth_id=107
-X-Original-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
-Reply-To: xianwei.zhao@amlogic.com
-
-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
-
-The fixed_pll_dco output frequency is not accurate,
-add frac factor for fixed_pll_dco clk to fix it.
-
-Fixes: 57b55c76aaf1 ("clk: meson: S4: add support for Amlogic S4 SoC peripheral clock controller")
-Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
----
- drivers/clk/meson/s4-pll.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/drivers/clk/meson/s4-pll.c b/drivers/clk/meson/s4-pll.c
-index 8dfaeccaadc2..47c0c105e32d 100644
---- a/drivers/clk/meson/s4-pll.c
-+++ b/drivers/clk/meson/s4-pll.c
-@@ -38,6 +38,11 @@ static struct clk_regmap s4_fixed_pll_dco = {
- 			.shift   = 0,
- 			.width   = 8,
- 		},
-+		.frac = {
-+			.reg_off = ANACTRL_FIXPLL_CTRL1,
-+			.shift   = 0,
-+			.width   = 17,
-+		},
- 		.n = {
- 			.reg_off = ANACTRL_FIXPLL_CTRL0,
- 			.shift   = 10,
-
----
-base-commit: ba535bce57e71463a86f8b33a0ea88c26e3a6418
-change-id: 20240603-s4_fixedpll-392bb62ec978
-
-Best regards,
--- 
-Xianwei Zhao <xianwei.zhao@amlogic.com>
 
 
+
+On 03/06/2024 10:43, Mao Jinlong wrote:
+> Dynamic trace id was introduced in coresight subsystem, so trace id is
+> allocated dynamically. However, some hardware ATB source has static trace
+> id and it cannot be changed via software programming. For such source,
+> it can call coresight_get_source_traceid to get the fixed trace id from
+> device node and pass id to coresight_trace_id_get_system_id to reserve
+> the id.
+> 
+> Signed-off-by: Mao Jinlong <quic_jinlmao@quicinc.com>
+> ---
+>  .../hwtracing/coresight/coresight-platform.c  | 26 +++++++++++++++
+>  drivers/hwtracing/coresight/coresight-stm.c   |  2 +-
+>  .../hwtracing/coresight/coresight-trace-id.c  | 32 ++++++++++++-------
+>  .../hwtracing/coresight/coresight-trace-id.h  |  5 ++-
+>  include/linux/coresight.h                     |  1 +
+>  5 files changed, 53 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/hwtracing/coresight/coresight-platform.c b/drivers/hwtracing/coresight/coresight-platform.c
+> index 9d550f5697fa..8dd3cbd676b8 100644
+> --- a/drivers/hwtracing/coresight/coresight-platform.c
+> +++ b/drivers/hwtracing/coresight/coresight-platform.c
+> @@ -183,6 +183,17 @@ static int of_coresight_get_cpu(struct device *dev)
+>  	return cpu;
+>  }
+>  
+> +/*
+> + * of_coresight_get_trace_id: Get the atid of a source device.
+> + *
+> + * Returns 0 on success.
+> + */
+> +static int of_coresight_get_trace_id(struct device *dev, u32 *id)
+> +{
+> +
+> +	return of_property_read_u32(dev->of_node, "trace-id", id);
+> +}
+> +
+>  /*
+>   * of_coresight_parse_endpoint : Parse the given output endpoint @ep
+>   * and fill the connection information in @pdata->out_conns
+> @@ -782,6 +793,12 @@ static inline int acpi_coresight_get_cpu(struct device *dev)
+>  {
+>  	return -ENODEV;
+>  }
+> +
+> +static int of_coresight_get_trace_id(struct device *dev, u32 *id)
+> +{
+> +	return -ENODEV;
+> +}
+> +
+>  #endif
+>  
+>  int coresight_get_cpu(struct device *dev)
+> @@ -794,6 +811,15 @@ int coresight_get_cpu(struct device *dev)
+>  }
+>  EXPORT_SYMBOL_GPL(coresight_get_cpu);
+>  
+> +int coresight_get_source_traceid(struct device *dev, u32 *id)
+> +{
+> +	if (!is_of_node(dev->fwnode))
+> +		return -EINVAL;
+> +
+> +	return of_coresight_get_trace_id(dev, id);
+> +}
+> +EXPORT_SYMBOL_GPL(coresight_get_source_traceid);
+> +
+>  struct coresight_platform_data *
+>  coresight_get_platform_data(struct device *dev)
+>  {
+> diff --git a/drivers/hwtracing/coresight/coresight-stm.c b/drivers/hwtracing/coresight/coresight-stm.c
+> index e1c62820dfda..802f9e4ae570 100644
+> --- a/drivers/hwtracing/coresight/coresight-stm.c
+> +++ b/drivers/hwtracing/coresight/coresight-stm.c
+> @@ -901,7 +901,7 @@ static int __stm_probe(struct device *dev, struct resource *res)
+>  		goto stm_unregister;
+>  	}
+>  
+> -	trace_id = coresight_trace_id_get_system_id();
+> +	trace_id = coresight_trace_id_get_system_id(0);
+
+I would #define 0 to "TRACE_ID_ANY" or something like that so it's
+obvious what it means.
+
+>  	if (trace_id < 0) {
+>  		ret = trace_id;
+>  		goto cs_unregister;
+> diff --git a/drivers/hwtracing/coresight/coresight-trace-id.c b/drivers/hwtracing/coresight/coresight-trace-id.c
+> index af5b4ef59cea..5c25c75a2f08 100644
+> --- a/drivers/hwtracing/coresight/coresight-trace-id.c
+> +++ b/drivers/hwtracing/coresight/coresight-trace-id.c
+> @@ -75,20 +75,23 @@ static int coresight_trace_id_find_odd_id(struct coresight_trace_id_map *id_map)
+>   * Allocate new ID and set in use
+>   *
+>   * if @preferred_id is a valid id then try to use that value if available.
+> + * if @only_preferred is true, if @preferred_id is used, return error EINVAL.
+
+if @only_preferred is true @preferred_id must be free, otherwise return
+error -EINVAL
+
+>   * if @preferred_id is not valid and @prefer_odd_id is true, try for odd id.
+>   *
+>   * Otherwise allocate next available ID.
+>   */
+>  static int coresight_trace_id_alloc_new_id(struct coresight_trace_id_map *id_map,
+> -					   int preferred_id, bool prefer_odd_id)
+> +			   int preferred_id, bool prefer_odd_id, bool only_preferred)
+>  {
+>  	int id = 0;
+>  
+>  	/* for backwards compatibility, cpu IDs may use preferred value */
+> -	if (IS_VALID_CS_TRACE_ID(preferred_id) &&
+> -	    !test_bit(preferred_id, id_map->used_ids)) {
+> -		id = preferred_id;
+> -		goto trace_id_allocated;
+> +	if (IS_VALID_CS_TRACE_ID(preferred_id)) {
+> +		if (!test_bit(preferred_id, id_map->used_ids)) {
+> +			id = preferred_id;
+> +			goto trace_id_allocated;
+> +		} else if (WARN(only_preferred, "Trace ID %d is used.\n", preferred_id))
+> +			return -EINVAL;
+>  	} else if (prefer_odd_id) {
+>  	/* may use odd ids to avoid preferred legacy cpu IDs */
+>  		id = coresight_trace_id_find_odd_id(id_map);
+> @@ -175,7 +178,7 @@ static int coresight_trace_id_map_get_cpu_id(int cpu, struct coresight_trace_id_
+>  	 */
+>  	id = coresight_trace_id_alloc_new_id(id_map,
+>  					     CORESIGHT_LEGACY_CPU_TRACE_ID(cpu),
+> -					     false);
+> +					     false, false);
+>  	if (!IS_VALID_CS_TRACE_ID(id))
+>  		goto get_cpu_id_out_unlock;
+>  
+> @@ -222,14 +225,21 @@ static void coresight_trace_id_map_put_cpu_id(int cpu, struct coresight_trace_id
+>  	DUMP_ID_MAP(id_map);
+>  }
+>  
+> -static int coresight_trace_id_map_get_system_id(struct coresight_trace_id_map *id_map)
+> +static int coresight_trace_id_map_get_system_id(struct coresight_trace_id_map *id_map,
+> +				int preferred_id, bool only_preferred)
+
+Looks like "only_preferred" was left on here by mistake and it's not
+used. For this function preferred_id != 0 means the same.
+
+>  {
+>  	unsigned long flags;
+>  	int id;
+>  
+>  	spin_lock_irqsave(&id_map_lock, flags);
+> -	/* prefer odd IDs for system components to avoid legacy CPU IDS */
+> -	id = coresight_trace_id_alloc_new_id(id_map, 0, true);
+> +
+> +	if (preferred_id > 0) {
+> +		/* use preferred id if it is available */
+> +		id = coresight_trace_id_alloc_new_id(id_map, preferred_id, false, true);
+> +	} else {
+> +		/* prefer odd IDs for system components to avoid legacy CPU IDS */
+> +		id = coresight_trace_id_alloc_new_id(id_map, 0, true, false);
+
+prefer_odd_id is different in each of these calls which I think is a
+mistake?
+
+You could do one function call to avoid that:
+
+  only_preferred = preferred_id > 0
+  coresight_trace_id_alloc_new_id(id_map, preferred_id, true,
+                                  only_preferred);
+
+
+> +	}
+>  	spin_unlock_irqrestore(&id_map_lock, flags);
+>  
+>  	DUMP_ID(id);
+> @@ -269,9 +279,9 @@ int coresight_trace_id_read_cpu_id(int cpu)
+>  }
+>  EXPORT_SYMBOL_GPL(coresight_trace_id_read_cpu_id);
+>  
+> -int coresight_trace_id_get_system_id(void)
+> +int coresight_trace_id_get_system_id(int id)
+>  {
+> -	return coresight_trace_id_map_get_system_id(&id_map_default);
+> +	return coresight_trace_id_map_get_system_id(&id_map_default, id, true);
+>  }
+>  EXPORT_SYMBOL_GPL(coresight_trace_id_get_system_id);
+>  
+> diff --git a/drivers/hwtracing/coresight/coresight-trace-id.h b/drivers/hwtracing/coresight/coresight-trace-id.h
+> index 3797777d367e..9189a33c5857 100644
+> --- a/drivers/hwtracing/coresight/coresight-trace-id.h
+> +++ b/drivers/hwtracing/coresight/coresight-trace-id.h
+> @@ -118,9 +118,12 @@ int coresight_trace_id_read_cpu_id(int cpu);
+>   *
+>   * Used to allocate IDs for system trace sources such as STM.
+>   *
+> + * @id: Preferred id value. If id is 0, get a free id from id map. If id is greater
+
+0 -> TRACE_ID_ANY
+
+> + *      than 0, get a preferred id.
+> + *
+>   * return: Trace ID or -EINVAL if allocation is impossible.
+>   */
+> -int coresight_trace_id_get_system_id(void);
+> +int coresight_trace_id_get_system_id(int id);
+>  
+>  /**
+>   * Release an allocated system trace ID.
+> diff --git a/include/linux/coresight.h b/include/linux/coresight.h
+> index f09ace92176e..0599303be326 100644
+> --- a/include/linux/coresight.h
+> +++ b/include/linux/coresight.h
+> @@ -643,6 +643,7 @@ void coresight_relaxed_write64(struct coresight_device *csdev,
+>  void coresight_write64(struct coresight_device *csdev, u64 val, u32 offset);
+>  
+>  extern int coresight_get_cpu(struct device *dev);
+> +extern int coresight_get_source_traceid(struct device *dev, u32 *id);
+>  
+>  struct coresight_platform_data *coresight_get_platform_data(struct device *dev);
+>  struct coresight_connection *
 
