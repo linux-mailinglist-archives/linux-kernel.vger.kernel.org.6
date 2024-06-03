@@ -1,104 +1,155 @@
-Return-Path: <linux-kernel+bounces-198537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEA6D8D79F8
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 03:49:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C79D28D79FC
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 03:54:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76DB0B21278
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 01:49:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 644C01F21875
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 01:54:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56E3E4A3F;
-	Mon,  3 Jun 2024 01:49:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 978BB4C8A;
+	Mon,  3 Jun 2024 01:54:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qpmR0ZX/"
-Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qOcSQl4V"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08DB44696
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 01:49:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBC974696;
+	Mon,  3 Jun 2024 01:54:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717379348; cv=none; b=oo9JkHH2NcerZCaYHXdvu+PB6vXPY9PTco6NWB/jjv4b8nKfciwtDq7EGjH1bnokiFlkYGnT6e4Bm2JFrwSRiU1JeFyulgjf1+jo0ruhnCfL+71jVwvohW9lE7iplz5UNVkyq+fGDwX6ag4j4rnAwPp49TbS8HOjxV0cg/2fOxE=
+	t=1717379673; cv=none; b=XGXKj3cGyTGdsCw6cD5OFC59ensplBGlMg8stegYzSyd6NnC0CKhPrgVVcqQDNFQY2xTal23+nMJebrtJn75TtPiTVH9WahIMu+AhKFKF5spVz+V5UpYw2iSJtIrbCvm7QPrSLr93WvbA3CywvJ79bKpmvmtW43LAna3hE3Rpg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717379348; c=relaxed/simple;
-	bh=sg/MaKEkNTcSYkhOqzw6C30ReoEJBzAJpq6wC5MeBZ0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=R9nYHx+yxDil3WNmVg7IzS73EqT7holwth8WqlbP+89HW4l4Fx8JmzAkw+knaKFSDS9RCXeiTJ84d7lUSqL0NAAkeQzugi7WJJcOn1zvFIy67LyhPjUR67vrhH5/YVCdDeruCI0HevOzHWB+zC9ZXWB503PLMda8oDu1xrRlBVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qpmR0ZX/; arc=none smtp.client-ip=95.215.58.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: viro@zeniv.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1717379343;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=IuEN8PuEp5zAf5cuG+NcBuj/QAlTcY1rhuZq1w0IU2M=;
-	b=qpmR0ZX/ZxljhCkopWDzQMovYtPE8Grn4aPV3cqGFGeCLNHckmBGNuCfdTW/qYso+DIoRf
-	CpwJM8nBd/6wGl3MWtXHlSx02xDTZCmtggJzndpCA7sB+pV7bNr7ow4PMn/2bEwoNA4L0d
-	zqXUSh3z1GYsqECwvr5fu0d/AXcPGGA=
-X-Envelope-To: brauner@kernel.org
-X-Envelope-To: jack@suse.cz
-X-Envelope-To: linux-fsdevel@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: tangyouling@kylinos.cn
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Youling Tang <youling.tang@linux.dev>
-To: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Youling Tang <tangyouling@kylinos.cn>
-Subject: [PATCH] fs/direct-io: Remove linux/prefetch.h include
-Date: Mon,  3 Jun 2024 09:48:34 +0800
-Message-Id: <20240603014834.45294-1-youling.tang@linux.dev>
+	s=arc-20240116; t=1717379673; c=relaxed/simple;
+	bh=hMsbcjB+aZSQFprtJrmCsK/CYdACyU8P6CaHxqgJLFg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oMm4NhUesHrh7XWqHyahO4M6TtKhNFcB6TDoy4wvqDJX99OKIlo81gFLhnnmeqOGPMSh8qYF6UrFc0lZpsgFtaO8hfdW6wQFl4XplQNCm2iF9d2VP1rgyOLPlFi9nZpjAr4ZOfKWX1fzgzD9oEzh3z7nW/hLVLFAUCEXDhQa7tc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qOcSQl4V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87522C2BBFC;
+	Mon,  3 Jun 2024 01:54:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717379673;
+	bh=hMsbcjB+aZSQFprtJrmCsK/CYdACyU8P6CaHxqgJLFg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qOcSQl4V1Y3Hkv/l8RT1lkEhhWoLjVeywWPA1rpZ4B5PuvsbU2ZNjApHA8UMyCtYu
+	 g3uUg85YZVmH3xSfpV3abASaw20bjsy79S7uSDlx3/P5Zcmj06c1DKs3KKbb9ZYLHE
+	 U0Go7YxKVs5RUq6O4KCvkFg6/auaIHGkp/sEtfc9ZtjuFJT6td0SOXPsWeof6Iq0Ai
+	 6LRZTk1Wy/ngVfkPfjMLk0WLBuaneHFCSMh74w/WgNdsfpTDxyEiY58A02KYIkUZY5
+	 FOWoKfUrhAMwUu5wHVHdLK7VaYORm+4CWjVredH5KUnQ1wXosAPz6zCkoZYVjcMV62
+	 4t2IVVejAvwQA==
+Date: Mon, 3 Jun 2024 01:54:29 +0000
+From: Tzung-Bi Shih <tzungbi@kernel.org>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc: Lee Jones <lee@kernel.org>, Benson Leung <bleung@chromium.org>,
+	Guenter Roeck <groeck@chromium.org>, Pavel Machek <pavel@ucw.cz>,
+	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Dustin Howett <dustin@howett.net>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	linux-leds@vger.kernel.org,
+	Rajas Paranjpe <paranjperajas@gmail.com>
+Subject: Re: [PATCH v3 0/4] cros_kbd_led_backlight: allow binding through
+ cros_ec mfd device
+Message-ID: <Zl0iVcb0ChMbiWzS@google.com>
+References: <20240526-cros_ec-kbd-led-framework-v3-0-ee577415a521@weissschuh.net>
+ <20240531153530.GP1005600@google.com>
+ <0172f4a6-27da-43ca-8df3-93279d1ef903@t-8ch.de>
+ <20240531155356.GR1005600@google.com>
+ <edc637ff-d26d-4500-8ad3-23bf7a9d527e@t-8ch.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <edc637ff-d26d-4500-8ad3-23bf7a9d527e@t-8ch.de>
 
-From: Youling Tang <tangyouling@kylinos.cn>
+On Fri, May 31, 2024 at 05:59:01PM +0200, Thomas Weiﬂschuh wrote:
+> On 2024-05-31 16:53:56+0000, Lee Jones wrote:
+> > On Fri, 31 May 2024, Thomas Weiﬂschuh wrote:
+> > 
+> > > On 2024-05-31 16:35:30+0000, Lee Jones wrote:
+> > > > On Sun, 26 May 2024, Thomas Weiﬂschuh wrote:
+> > > > 
+> > > > > Extend the cros_ec MFD device to also load cros_kbd_led_backlight
+> > > > > when the EC reports EC_FEATURE_PWM_KEYB.
+> > > > > As the driver can now be probed multiple times, some preparation in the
+> > > > > LED core is necessary to avoid name collisions.
+> > > > > 
+> > > > > Patch 1 is a general cleanup for the LED core.
+> > > > > Patch 2 modifies the LED core to skip the default collision handling.
+> > > > > Patch 3 adds the new probing logic to cros_kbd_led_backlight.
+> > > > > Patch 4 wires up the driver to the cros_ec mfd devices.
+> > > > > 
+> > > > > The helper keyboard_led_is_mfd_device is a bit iffy.
+> > > > > But using match data doesn't work.
+> > > > > 
+> > > > > * driver_data from platform_device_id is overwritten by the mfd platform data
+> > > > > * Setting the driver_data in drivers/mfd/cros_ec_dev.c would expose the
+> > > > > internals of cros_kbd_led_backlight
+> > > > > 
+> > > > > Tested on a Framework 13 AMD, Firmware 3.05, and a Jinlon Chromebook.
+> > > > > 
+> > > > > To: Lee Jones <lee@kernel.org>
+> > > > > To: Benson Leung <bleung@chromium.org>
+> > > > > To: Guenter Roeck <groeck@chromium.org>
+> > > > > To: Tzung-Bi Shih <tzungbi@kernel.org>
+> > > > > To: Pavel Machek <pavel@ucw.cz>
+> > > > > Cc: chrome-platform@lists.linux.dev
+> > > > > Cc: linux-kernel@vger.kernel.org
+> > > > > Cc: Dustin Howett <dustin@howett.net>
+> > > > > Cc: Mario Limonciello <mario.limonciello@amd.com>
+> > > > > Cc: linux-leds@vger.kernel.org
+> > > > > Cc: Rajas Paranjpe <paranjperajas@gmail.com>
+> > > > > Signed-off-by: Thomas Weiﬂschuh <linux@weissschuh.net>
+> > > > > 
+> > > > > Changes in v3:
+> > > > > - Avoid probing multiple times (Confirmed by Rajas)
+> > > > > - Add Kconfig dependency on MFD_CROS_EC_DEV
+> > > > > - Link to v2: https://lore.kernel.org/r/20240511-cros_ec-kbd-led-framework-v2-0-b20c48109e46@weissschuh.net
+> > > > > 
+> > > > > Changes in v2:
+> > > > > - Fix build with CONFIG_MFD_CROS_EC_DEV=n (kernel test robot)
+> > > > > - Split out mfd registration into own commit (Lee)
+> > > > > - Simplify keyboard_led_is_mfd_device() with mfd_get_cell()
+> > > > > - Link to v1: https://lore.kernel.org/r/20240505-cros_ec-kbd-led-framework-v1-1-bfcca69013d2@weissschuh.net
+> > > > > 
+> > > > > ---
+> > > > > Thomas Weiﬂschuh (4):
+> > > > >       leds: class: warn about name collisions earlier
+> > > > >       leds: add flag to avoid automatic renaming of led devices
+> > > > >       platform/chrome: cros_kbd_led_backlight: allow binding through mfd device
+> > > > >       mfd: cros_ec: Register keyboard backlight subdevice
+> > > > > 
+> > > > >  drivers/leds/led-class.c                         |  9 +++---
+> > > > >  drivers/mfd/cros_ec_dev.c                        |  9 ++++++
+> > > > >  drivers/platform/chrome/Kconfig                  |  2 +-
+> > > > >  drivers/platform/chrome/cros_kbd_led_backlight.c | 40 ++++++++++++++++++++++--
+> > > > >  include/linux/leds.h                             |  1 +
+> > > > >  5 files changed, 54 insertions(+), 7 deletions(-)
+> > > > 
+> > > > Looks okay.
+> > > 
+> > > Thanks.
+> > > 
+> > > > Does the platform patch need to be applied with the others?
+> > > 
+> > > Each patch depends on all its predecessors.
+> > > (but I'm not sure I understood your question)
+> > 
+> > Does the Platform patch have 'build-time' deps on the others?
+> 
+> Yes.
+> 
+> Patch 3 makes use of LED_REJECT_NAME_CONFLICT which was introduced in Patch 2.
+> 
+> Patch 1, 2, 3 have build-time deps on their predecessors.
+> Patch 4 has a run-time deps on Patch 3.
 
-After commit c22198e78d52 ("direct-io: remove random prefetches"), Nothing
-in this file needs anything from `linux/prefetch.h`.
-
-Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
----
- fs/direct-io.c | 6 ------
- 1 file changed, 6 deletions(-)
-
-diff --git a/fs/direct-io.c b/fs/direct-io.c
-index b0aafe640fa4..bbd05f1a2145 100644
---- a/fs/direct-io.c
-+++ b/fs/direct-io.c
-@@ -37,7 +37,6 @@
- #include <linux/rwsem.h>
- #include <linux/uio.h>
- #include <linux/atomic.h>
--#include <linux/prefetch.h>
- 
- #include "internal.h"
- 
-@@ -1121,11 +1120,6 @@ ssize_t __blockdev_direct_IO(struct kiocb *iocb, struct inode *inode,
- 	struct blk_plug plug;
- 	unsigned long align = offset | iov_iter_alignment(iter);
- 
--	/*
--	 * Avoid references to bdev if not absolutely needed to give
--	 * the early prefetch in the caller enough time.
--	 */
--
- 	/* watch out for a 0 len io from a tricksy fs */
- 	if (iov_iter_rw(iter) == READ && !count)
- 		return 0;
--- 
-2.34.1
-
+Patch 1 is independent actually.
 
