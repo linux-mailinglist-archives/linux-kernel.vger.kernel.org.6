@@ -1,71 +1,166 @@
-Return-Path: <linux-kernel+bounces-199838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7B408FA68A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 01:32:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A63B88FA690
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 01:35:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74C9C283DF4
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 23:32:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E3F4EB22955
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 23:35:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77F9A13CABC;
-	Mon,  3 Jun 2024 23:32:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MoD3XhQP"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0237E13D258;
+	Mon,  3 Jun 2024 23:35:21 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B086A8BFD;
-	Mon,  3 Jun 2024 23:32:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D58A8BFD;
+	Mon,  3 Jun 2024 23:35:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717457530; cv=none; b=S6CxXL5lprDu1EIhp2XrEOgJgj3peh+xtXKQN+teYV6h+F3zTO1hUgTrs2gGLzN9WCJ4AGDa91WLzoK8icoDpUcK0hWx7uM51sQYm3eshq5Z4v7oaEbflDXfuyFDwHoWeuHMUh/XnFKhbO0BPyzBjw2L7XE5T1zM4rzBJ4mMayo=
+	t=1717457720; cv=none; b=tzEFvilbnMntgBDqfWCc8VcKywZ0tl5dR7o+IMmNJRUEioO/9EhNLhx+mK+0q0i/CgqWeHGPIkxCVatl8/iFBGtMhR1R3j0oAllwwSM0hAFA3MMOjsgTHUkXMqAhlXg4ihIUj/9s9XoQohncoaV4tVcKPjvUEBVfOZ5rxv8e8V0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717457530; c=relaxed/simple;
-	bh=C9/b3v+iQM6ptoygrYk9aICPX+fjJ6hghC75IEZA4as=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=mIdsEoOcrbsQBX9/7QRLEKNvDY/yAxemQbT9oTA70Rp43QqUa3nY6w9jOX/MS/RhPU6HMMVp31t30oI3He4qqBalygQ+TjZoRyLyUxbfx6+j+COXRjJP0rbUi2TBT8twMEorqQFH3/5moRtKCgKlmnpodSRKbGitPbZNzu+PlE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MoD3XhQP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 173B6C2BD10;
-	Mon,  3 Jun 2024 23:32:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717457530;
-	bh=C9/b3v+iQM6ptoygrYk9aICPX+fjJ6hghC75IEZA4as=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=MoD3XhQPNrbVQpvZ9FRX8/9wMre/Q3XSo+or52yzGTV3AtfPHXB+SFVCnFgHcOJBV
-	 0mK3Wy+ipJIJbLQ3/nwVtLoM1Uer2Fe3HvOLmLM66kpFJq/jG/MgEgwRGX3x+FFnoL
-	 HJHmDY16iaZ2qSlvEQAhZyREQ2z9Vdg/NZDIrOivKYqksotgVBcBW1rKHwxX2Ff24q
-	 V8B9URNEE5SAta23Dq69zxqfYwuHcjnCejV5qRcLeQ3ilI1iJ7PH+YiHtxw8jjxxPZ
-	 LqVBreT9KSX/mkP/TVgn6mMVwO2aMN4eExaUPCkjGkAftIMzuhiSJQaxaEXyksbEwQ
-	 7UMQzTAylKcnw==
-Message-ID: <2f9c1628cb01727e2df49287c445190d.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1717457720; c=relaxed/simple;
+	bh=1dMFOe+xbS+TUyK3xZQGgujFUJjG1tCcfG92qGYpPpo=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=sEgRpk3VPRGiHCRoa1DUE5mlY5TP1nvPMPUFl+Vg6VrmJKYnmwDDApaFI2pbcYG+7MWnzmZpgaaF2tPC5+k6YB0dIBnkbdK+8zlba3fx8r0X+yx+CnFUBz4BWxXAx5uXGdJYcSF6gXzpzrhM7wdl1DJYjFo23ZfOiFgok93KFVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21208C2BD10;
+	Mon,  3 Jun 2024 23:35:20 +0000 (UTC)
+Received: from rostedt by gandalf with local (Exim 4.97)
+	(envelope-from <rostedt@goodmis.org>)
+	id 1sEHE7-00000009cuy-1lvA;
+	Mon, 03 Jun 2024 19:36:31 -0400
+Message-ID: <20240603233330.801075898@goodmis.org>
+User-Agent: quilt/0.68
+Date: Mon, 03 Jun 2024 19:33:30 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>,
+ Lorenzo Stoakes <lstoakes@gmail.com>,
+ linux-mm@kvack.org,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Kees Cook <keescook@chromium.org>,
+ Tony Luck <tony.luck@intel.com>,
+ "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+ linux-hardening@vger.kernel.org,
+ Guenter Roeck <linux@roeck-us.net>,
+ Ross Zwisler <zwisler@google.com>,
+ wklin@google.com,
+ Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ Suleiman Souhlal <suleiman@google.com>,
+ Linus Torvalds <torvalds@linuxfoundation.org>,
+ Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>
+Subject: [PATCH 0/2] mm/pstore: Reserve named unspecified memory across boots
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240520222646.1741958-1-robh@kernel.org>
-References: <20240520222646.1741958-1-robh@kernel.org>
-Subject: Re: [PATCH] dt-bindings: clock: milbeaut: Drop providers and consumers from example
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-To: Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Rob Herring (Arm) <robh@kernel.org>, Taichi Sugaya <sugaya.taichi@socionext.com>, Takao Orito <orito.takao@socionext.com>
-Date: Mon, 03 Jun 2024 16:32:07 -0700
-User-Agent: alot/0.10
 
-Quoting Rob Herring (Arm) (2024-05-20 15:26:45)
-> Convention for examples is to only show what's covered by the binding,
-> so drop the consumer "socionext,milbeaut-usio-uart" and input clock
-> provider "fixed-clock" from the example. "socionext,milbeaut-usio-uart"
-> is also not documented by a schema which caused a warning.
->=20
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
+Reserve unspecified location of physical memory from kernel command line
 
-Applied to clk-next
+Background:
+
+In ChromeOS, we have 1 MB of pstore ramoops reserved so that we can extract
+dmesg output and some other information when a crash happens in the field.
+(This is only done when the user selects "Allow Google to collect data for
+ improving the system"). But there are cases when there's a bug that
+requires more data to be retrieved to figure out what is happening. We would
+like to increase the pstore size, either temporarily, or maybe even
+permanently. The pstore on these devices are at a fixed location in RAM (as
+the RAM is not cleared on soft reboots nor crashes). The location is chosen
+by the BIOS (coreboot) and passed to the kernel via ACPI tables on x86.
+There's a driver that queries for this to initialize the pstore for
+ChromeOS:
+
+  See drivers/platform/chrome/chromeos_pstore.c
+
+Problem:
+
+The problem is that, even though there's a process to change the kernel on
+these systems, and is done regularly to install updates, the firmware is
+updated much less frequently. Choosing the place in RAM also takes special
+care, and may be in a different address for different boards. Updating the
+size via firmware is a large effort and not something that many are willing
+to do for a temporary pstore size change.
+
+Requirement:
+
+Need a way to reserve memory that will be at a consistent location for
+every boot, if the kernel and system are the same. Does not need to work
+if rebooting to a different kernel, or if the system can change the
+memory layout between boots.
+
+The reserved memory can not be an hard coded address, as the same kernel /
+command line needs to run on several different machines. The picked memory
+reservation just needs to be the same for a given machine, but may be
+different for different machines.
+
+Solution:
+
+The solution I have come up with is to introduce a new "reserve_mem=" kernel
+command line. This parameter takes the following format:
+
+  reserve_mem=nn:align:label
+
+Where nn is the size of memory to reserve, the align is the alignment of
+that memory, and label is the way for other sub-systems to find that memory.
+This way the kernel command line could have:
+
+  reserve_mem=12M:4096:oops   ramoops.mem_name=oops
+
+At boot up, the kernel will search for 12 megabytes in usable memory regions
+with an alignment of 4096. It will start at the highest regions and work its
+way down (for those old devices that want access to lower address DMA). When
+it finds a region, it will save it off in a small table and mark it with the
+"oops" label. Then the pstore ramoops sub-system could ask for that memory
+and location, and it will map itself there.
+
+This prototype allows for 8 different mappings (which may be overkill, 4 is
+probably plenty) with 16 byte size to store the label.
+
+I have tested this and it works for us to solve the above problem. We can
+update the kernel and command line and increase the size of pstore without
+needing to update the firmware, or knowing every memory layout of each
+board. I only tested this locally, it has not been tested in the field.
+
+Changes since the POC: https://lore.kernel.org/all/20240409210254.660888920@goodmis.org/
+
+- Used Mike Rapoport's suggesting to use the later call to
+  memblock_phys_alloc() instead of messing with the e820 tables.
+
+- No longer uses the " memmap" kernel command line and instead uses
+  "reserve_mem". This also removes the issue of booting a kernel without it
+  crashing due to "memmap" defaulting to using only the specified memory
+  when it doesn't know what the extra option is.
+
+- No longer keeping the table as __initdata so that pstore can use it via
+  a module.
+
+- This is no longer a proof of concept patch series.
+
+Steven Rostedt (Google) (2):
+      mm/memblock: Add "reserve_mem" to reserved named memory at boot up
+      pstore/ramoops: Add ramoops.mem_name= command line option
+
+----
+ fs/pstore/ram.c    | 15 +++++++++
+ include/linux/mm.h |  2 ++
+ mm/memblock.c      | 97 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 114 insertions(+)
 
