@@ -1,504 +1,1152 @@
-Return-Path: <linux-kernel+bounces-198715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0655E8D7C77
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:30:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B63728D7C75
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:29:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2EF4AB22CA4
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 07:30:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0FB89B214AD
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 07:29:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E605547F45;
-	Mon,  3 Jun 2024 07:29:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5545A481D0;
+	Mon,  3 Jun 2024 07:29:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=endlessos.org header.i=@endlessos.org header.b="VQG/WwcL"
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gKqZh5YF"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C6EB4D10A
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 07:29:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76A353FB1C;
+	Mon,  3 Jun 2024 07:29:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717399789; cv=none; b=M/EW3Li44+IDXSuDd4jBnq08phrLrEIC+vsk+LD/7CG2wzH3vkRg3RfrSBLF/3lmy+5cBcBYQn2vfw9faGflsjYLi6A0sbkQ73rQwFld4/qf0+ApFXj4fDSsl7GYjjp+uSx3QMM5ajQzgvLs5XcUjPKj+SqsLD9ZljcCQqknRZE=
+	t=1717399773; cv=none; b=IXULzHuW75H8n+TQdZu0jPtmElgrZckOHJApT2M6gAF4OcOcsIaKECH8oh7p0u1ffkMKYUBCAnO51Xz7olD52CXlVqMYcNnjY8bwsO+qT1GOfkTiT4S9xaFsfx07nSOVISx8M9xy3FnTRuQzneel8I8O/BPf+nHbKYsbseunx/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717399789; c=relaxed/simple;
-	bh=FQcaGvqxHgAWtH/m1ETOvuY4XHfiqtWUGWeGThQtu6g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hMF9pRQJCjCXJhp/lJgMNHsENYZJlnEA9dRoFwyyiKG5VMljjSbllYLjwTBm86dztSM8QO9ZNnzPcFcE+J7jAIwIbI1wSuoJx1z6c3iWTrxo9eqtAkhrbpuclE4AT9VjLhMJqKHdaTMDKG7NYAK6NlWRXiPFIyATeLEqFhqR/FI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=endlessos.org; spf=pass smtp.mailfrom=endlessos.org; dkim=pass (2048-bit key) header.d=endlessos.org header.i=@endlessos.org header.b=VQG/WwcL; arc=none smtp.client-ip=209.85.219.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=endlessos.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=endlessos.org
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-dfa6e0add60so3071807276.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 00:29:47 -0700 (PDT)
+	s=arc-20240116; t=1717399773; c=relaxed/simple;
+	bh=8C9jbhauqGCvUi76wZl84OLMh0IOS2NE9f4AFn46ZjY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cz1rstC+Y3Jwgc6RSGeD36OJedwdFJgATPLOxdpD/9DHNGhcTner3z9/0RZsoJsHDd67qaYeryS2Q0eqgWnPlR3vrt7jek5Rt5XRpE96WxW6IcI/ULisJBF63kwyNdNP79odlF4GY9s8agq4jj7PgVcd5DmBHSZwXtcXUiu5V+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gKqZh5YF; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52b950aa47bso1635199e87.1;
+        Mon, 03 Jun 2024 00:29:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=endlessos.org; s=google; t=1717399786; x=1718004586; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cvOcvTxOe86cH/fhIth8mSwHCM4OmKwF1BNDBKgFY24=;
-        b=VQG/WwcL/ssf+9doCUgLph5DmuGUzf6WOY8pG+fegWr6fcXmeK0vpGU3T8Q2e2WG0E
-         A7tcP58ooKvHlIVwgkZqYTE/jhlCtcrmt+Bh06kPUYTZwg6qNpfi9QFe3G7Km4YqSsUQ
-         gjtgZLVczLcoTpOWMvQHscSAqQaiUhPeer9ir7Dp2fnjtOPAR32yXMQ1er6l0rV59LEe
-         q6V/QN084Nclozhgmto4wjpFCOu9DiCCOKORPaxVgfpW/v8kBJVceeh14rfhbyXZkeJJ
-         DTovQmo4i5RlLgbngBuLuOwViFQtODSMby0uCZw+cC8XZxzS6K/eTyV1C1SDknC354kX
-         OJXw==
+        d=gmail.com; s=20230601; t=1717399768; x=1718004568; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=5CV0DITLnlYog0aW3mrfFR9Sqc6k7+AuAv9jTPdoSwc=;
+        b=gKqZh5YFPchQdHY6qR2YwwXrd3lKHOOMWU6kIwpG6CLy0hx/gDvkv3l472x/wacNO6
+         fVw2Wk5KlROUpmjTGr/C1yQwxeDhsCfj9KV34k5kmRlETqluTfPnOH/4lOJRs1XdgH2U
+         HUsmCH02O2UtlFgvs/RVJ2G6z4XauwB89bsM33Woek8ZQ/6mYXZvmXa6prKy5r9Zdzzt
+         rNtPPpwf5ejNxcNV9Kw03F7hccMXgnKCtwLDAvtKgjoEZJckCw6qZW8OohFaWYsJpICt
+         23qKZ6E+xaCk0OeOOIPoEiziB8jsqTKpqrRZd+W7+fI+8+4nxdqWiZdhEMaEV8UUyCEp
+         WFog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717399786; x=1718004586;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cvOcvTxOe86cH/fhIth8mSwHCM4OmKwF1BNDBKgFY24=;
-        b=xCg3rSa4aQYklZAMGUcSvnNcVjskIv6TySoQH5TDFPqsqf0LHTfSDFu2BxYRvaA7sL
-         st/9aMnODjEERhHT888GM3M1GQDAEfMC3ATmOHVytVjphlCAoAY5KnxfB0gXz/LCbB7i
-         zVujr/IMpHrdVqMDzu8ymOS3FnVaXaVouXdxfX9CtyH44VMiNmmpewfeqKupgKc22syG
-         oaOKjdiSazjGBPzVpHBfSV5cU8nfig+gx+BlmpZvG6YhxYxJOl1LKbrcCkUgPPajW7Y/
-         xXo8uuh95Dn6B9fyCeH2LMk+Eh7axI0d3f7TBRhkS//N0TzDTvyWI02gDN2kijzRV50A
-         jUGA==
-X-Forwarded-Encrypted: i=1; AJvYcCV0sZ/7cgOTXS07/ZEuqdZjBwqJU7iUmjvWoANehVJK9p2Eq0pJ4ARPEWoCl9r6fmzzOf02uqwaRSQhEc2A6Umc6OeblIti/qsgA7a4
-X-Gm-Message-State: AOJu0YzT1uiq/lGaiDGu+RtmApE9OgjmsDiLojwZzKljVtYxbW9tpeVt
-	bKsOJBlzdWsy0g9tRIneRTJwqyPViMQMrJDS0qpwwqlk1mgHxNvXjJwlrEjZcNuIAFuhdZcJwbM
-	h6TfJclNYRV6JiIOEmuJpBtm6O83c1XnE/4eyvQ==
-X-Google-Smtp-Source: AGHT+IEX2Evxyflw/CMHyoRJQLoVCR2jENihjiIc1hKIoKNsqbbPOIWHyMXEQKyDnuNQA4sZF5AXtFcqOGTkk0FvuqE=
-X-Received: by 2002:a25:af4a:0:b0:dfa:72d1:e296 with SMTP id
- 3f1490d57ef6-dfa73c3dfb3mr7814417276.35.1717399786078; Mon, 03 Jun 2024
- 00:29:46 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717399768; x=1718004568;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5CV0DITLnlYog0aW3mrfFR9Sqc6k7+AuAv9jTPdoSwc=;
+        b=Pwy7qis9oZ6ls2DeDya8ue9tx7Y34NP+HvKAi1ZS8FKYPHDQAW6zzaky3wvMlxXfoR
+         qBjDo6rvKzm/hcDJLmM0f+ZKpP+fQGOLWhXxk5uj2VKbNW6wDqc5e41jH3Trs0YkF1IC
+         Luk7Lft0AfhNA21PVb7pr0hOXZ3Ag0b3qTmP22KFLuWzzZ4b6HkkIQrTldTvuVXnkdaA
+         fBJmY1ZeH0oaw3DVglx9Ed/wCF4yZIkr4ekqjUHQpaJRLMr5I4ebaTpYYU99iNMQNWus
+         wnGxAKy1YN25jYTyavuGalGYZBIc2LdP7R40D9R0OJFUTF6GHSCjw5FZtawe0UhK+WK4
+         yyVA==
+X-Forwarded-Encrypted: i=1; AJvYcCW6w3+evhLEPnoGeRB93wIOP5ZtSdX9DmNneIpErmjq/2jDzQOcqLksXPVgUOvE+Uqy3UB1S4uNAAj1EUNexTN3N3BgPhbfMhD6UP6bXs4Gw8G2NzH1g12BKWQUGKXA9uPVYFIK8PkItA==
+X-Gm-Message-State: AOJu0YxFnv7dcQfzANxmWn/EcpPYE9KeKfmHTNASNINTzyipFLCOqMVl
+	re4RGtQnJGLSJL9a3veUUg5O2Nty3UQX7JBC3zeSQhU519YlcVy22JNmIQ==
+X-Google-Smtp-Source: AGHT+IHRE0ZXAvzhvkVwHg7dP2OatHYfbLqi25/XkuPrFg9Ixn7cmSqVsbm7b8+D62DNCxu3kOawJw==
+X-Received: by 2002:a05:6512:312a:b0:520:36bb:a6e1 with SMTP id 2adb3069b0e04-52b896b3d30mr5757187e87.29.1717399768066;
+        Mon, 03 Jun 2024 00:29:28 -0700 (PDT)
+Received: from tom-HP-ZBook-Fury-15-G7-Mobile-Workstation (net-188-217-58-5.cust.vodafonedsl.it. [188.217.58.5])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-421386d858esm58077415e9.48.2024.06.03.00.29.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Jun 2024 00:29:27 -0700 (PDT)
+Date: Mon, 3 Jun 2024 09:29:25 +0200
+From: Tommaso Merciai <tomm.merciai@gmail.com>
+To: Julien Massot <julien.massot@collabora.com>
+Cc: linux-media@vger.kernel.org, sakari.ailus@iki.fi,
+	devicetree@vger.kernel.org, kernel@collabora.com,
+	linux-kernel@vger.kernel.org, mchehab@kernel.org,
+	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org
+Subject: Re: [PATCH v7 3/5] media: i2c: add MAX96717 driver
+Message-ID: <Zl1w1YGqFJIBKYUm@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
+References: <20240430131931.166012-1-julien.massot@collabora.com>
+ <20240430131931.166012-4-julien.massot@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <876d19b7702dc16010b56bce049e2ab60bf68e3b.camel@linux.intel.com> <20240503222803.GA1608065@bhelgaas>
-In-Reply-To: <20240503222803.GA1608065@bhelgaas>
-From: Jian-Hong Pan <jhp@endlessos.org>
-Date: Mon, 3 Jun 2024 15:29:10 +0800
-Message-ID: <CAPpJ_ecZKXL1w8CvNf-48sPuH4XXCE5afB3fJG2c+g2JNX0FEQ@mail.gmail.com>
-Subject: Re: [PATCH v5 4/4] PCI/ASPM: Fix L1.2 parameters when enable link state
-To: Francisco Munoz <francisco.munoz.ruiz@linux.intel.com>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, "David E. Box" <david.e.box@linux.intel.com>, 
-	Nirmal Patel <nirmal.patel@linux.intel.com>, Johan Hovold <johan@kernel.org>, 
-	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>, 
-	Mika Westerberg <mika.westerberg@linux.intel.com>, Damien Le Moal <dlemoal@kernel.org>, 
-	Jonathan Derrick <jonathan.derrick@linux.dev>, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240430131931.166012-4-julien.massot@collabora.com>
 
-Bjorn Helgaas <helgaas@kernel.org> =E6=96=BC 2024=E5=B9=B45=E6=9C=884=E6=97=
-=A5 =E9=80=B1=E5=85=AD =E4=B8=8A=E5=8D=886:28=E5=AF=AB=E9=81=93=EF=BC=9A
->
-> [+cc Francisco]
->
-> On Fri, May 03, 2024 at 12:15:49PM -0700, David E. Box wrote:
-> > On Fri, 2024-05-03 at 17:45 +0800, Jian-Hong Pan wrote:
-> > > David E. Box <david.e.box@linux.intel.com> =E6=96=BC 2024=E5=B9=B45=
-=E6=9C=881=E6=97=A5 =E9=80=B1=E4=B8=89 =E4=B8=8A=E5=8D=882:26=E5=AF=AB=E9=
-=81=93=EF=BC=9A
-> > > > On Tue, 2024-04-30 at 15:46 +0800, Jian-Hong Pan wrote:
-> > > > > David E. Box <david.e.box@linux.intel.com> =E6=96=BC 2024=E5=B9=
-=B44=E6=9C=8827=E6=97=A5 =E9=80=B1=E5=85=AD =E4=B8=8A=E5=8D=888:03=E5=AF=AB=
-=E9=81=93=EF=BC=9A
-> > > > > > On Wed, 2024-04-24 at 19:02 +0800, Jian-Hong Pan wrote:
-> > > > > > > Currently, when enable link's L1.2 features with
-> > > > > > > __pci_enable_link_state(),
-> > > > > > > it configs the link directly without ensuring related L1.2 pa=
-rameters,
-> > > > > > > such
-> > > > > > > as T_POWER_ON, Common_Mode_Restore_Time, and LTR_L1.2_THRESHO=
-LD have
-> > > > > > > been
-> > > > > > > programmed.
-> > > > > > >
-> > > > > > > This leads the link's L1.2 between PCIe Root Port and child d=
-evice
-> > > > > > > gets
-> > > > > > > wrong configs when a caller tries to enabled it.
-> > > > > > >
-> > > > > > > Here is a failed example on ASUS B1400CEAE with enabled VMD:
-> > > > > > >
-> > > > > > > 10000:e0:06.0 PCI bridge: Intel Corporation 11th Gen Core Pro=
-cessor
-> > > > > > > PCIe
-> > > > > > > Controller (rev 01) (prog-if 00 [Normal decode])
-> > > > > > >     ...
-> > > > > > >     Capabilities: [200 v1] L1 PM Substates
-> > > > > > >         L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1+ ASPM_L1.2+ ASPM_L=
-1.1+
-> > > > > > > L1_PM_Substates+
-> > > > > > >                   PortCommonModeRestoreTime=3D45us PortTPower=
-OnTime=3D50us
-> > > > > > >         L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_=
-L1.1-
-> > > > > > >                    T_CommonMode=3D45us LTR1.2_Threshold=3D101=
-376ns
-> > > > > > >         L1SubCtl2: T_PwrOn=3D50us
-> > > > > > >
-> > > > > > > 10000:e1:00.0 Non-Volatile memory controller: Sandisk Corp WD=
- Blue
-> > > > > > > SN550
-> > > > > > > NVMe
-> > > > > > > SSD (rev 01) (prog-if 02 [NVM Express])
-> > > > > > >     ...
-> > > > > > >     Capabilities: [900 v1] L1 PM Substates
-> > > > > > >         L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1- ASPM_L1.2+ ASPM_L=
-1.1-
-> > > > > > > L1_PM_Substates+
-> > > > > > >                   PortCommonModeRestoreTime=3D32us PortTPower=
-OnTime=3D10us
-> > > > > > >         L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_=
-L1.1-
-> > > > > > >                    T_CommonMode=3D0us LTR1.2_Threshold=3D0ns
-> > > > > > >         L1SubCtl2: T_PwrOn=3D10us
-> > > > > > >
-> > > > > > > According to "PCIe r6.0, sec 5.5.4", before enabling ASPM L1.=
-2 on the
-> > > > > > > PCIe
-> > > > > > > Root Port and the child NVMe, they should be programmed with =
-the same
-> > > > > > > LTR1.2_Threshold value. However, they have different values i=
-n this
-> > > > > > > case.
-> > > > > > >
-> > > > > > > Invoke aspm_calc_l12_info() to program the L1.2 parameters pr=
-operly
-> > > > > > > before
-> > > > > > > enable L1.2 bits of L1 PM Substates Control Register in
-> > > > > > > __pci_enable_link_state().
-> > > > > > >
-> > > > > > > Link: https://bugzilla.kernel.org/show_bug.cgi?id=3D218394
-> > > > > > > Signed-off-by: Jian-Hong Pan <jhp@endlessos.org>
-> > > > > > > ---
-> > > > > > > v2:
-> > > > > > > - Prepare the PCIe LTR parameters before enable L1 Substates
-> > > > > > >
-> > > > > > > v3:
-> > > > > > > - Only enable supported features for the L1 Substates part
-> > > > > > >
-> > > > > > > v4:
-> > > > > > > - Focus on fixing L1.2 parameters, instead of re-initializing=
- whole
-> > > > > > > L1SS
-> > > > > > >
-> > > > > > > v5:
-> > > > > > > - Fix typo and commit message
-> > > > > > > - Split introducing aspm_get_l1ss_cap() to "PCI/ASPM: Introdu=
-ce
-> > > > > > >   aspm_get_l1ss_cap()"
-> > > > > > >
-> > > > > > >  drivers/pci/pcie/aspm.c | 12 ++++++++++++
-> > > > > > >  1 file changed, 12 insertions(+)
-> > > > > > >
-> > > > > > > diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.=
-c
-> > > > > > > index c55ac11faa73..553327dee991 100644
-> > > > > > > --- a/drivers/pci/pcie/aspm.c
-> > > > > > > +++ b/drivers/pci/pcie/aspm.c
-> > > > > > > @@ -1402,6 +1402,8 @@ EXPORT_SYMBOL(pci_disable_link_state);
-> > > > > > >  static int __pci_enable_link_state(struct pci_dev *pdev, int=
- state,
-> > > > > > > bool
-> > > > > > > locked)
-> > > > > > >  {
-> > > > > > >         struct pcie_link_state *link =3D pcie_aspm_get_link(p=
-dev);
-> > > > > > > +       struct pci_dev *child =3D link->downstream, *parent =
-=3D link-
-> > > > > > > >pdev;
-> > > > > > > +       u32 parent_l1ss_cap, child_l1ss_cap;
-> > > > > > >
-> > > > > > >         if (!link)
-> > > > > > >                 return -EINVAL;
-> > > > > > > @@ -1433,6 +1435,16 @@ static int __pci_enable_link_state(str=
-uct
-> > > > > > > pci_dev
-> > > > > > > *pdev, int state, bool locked)
-> > > > > > >                 link->aspm_default |=3D ASPM_STATE_L1_1_PCIPM=
- |
-> > > > > > > ASPM_STATE_L1;
-> > > > > > >         if (state & PCIE_LINK_STATE_L1_2_PCIPM)
-> > > > > > >                 link->aspm_default |=3D ASPM_STATE_L1_2_PCIPM=
- |
-> > > > > > > ASPM_STATE_L1;
-> > > > > > > +       /*
-> > > > > > > +        * Ensure L1.2 parameters: Common_Mode_Restore_Times,
-> > > > > > > T_POWER_ON
-> > > > > > > and
-> > > > > > > +        * LTR_L1.2_THRESHOLD are programmed properly before =
-enable
-> > > > > > > bits
-> > > > > > > for
-> > > > > > > +        * L1.2, per PCIe r6.0, sec 5.5.4.
-> > > > > > > +        */
-> > > > > > > +       if (state & link->aspm_capable & ASPM_STATE_L1_2_MASK=
-) {
-> > > > > >
-> > > > > > This is still mixing PCIE_LINK_STATE flags with ASPM_STATE flag=
-s.
->
-> FWIW, Ilpo has removed the ASPM_STATE flags, so eventually this would
-> have to be updated to apply on the current pci/aspm branch.  We're at
-> rc6 already, so likely this will end up being v6.11 material so you'll
-> be able to rebase on v6.10-rc1 when it comes out.
->
-> > > > > Thanks for your review, but I notice some description in PCIe spe=
-c,
-> > > > > 5.5.4 L1 PM Substates Configuration:
-> > > > > "Prior to setting either or both of the enable bits for L1.2, the
-> > > > > values for TPOWER_ON, Common_Mode_Restore_Time, and, if the ASPM =
-L1.2
-> > > > > Enable bit is to be Set, the LTR_L1.2_THRESHOLD (both Value and S=
-cale
-> > > > > fields) must be programmed." =3D> I think this includes both "ASP=
-M L1.2
-> > > > > Enable" and "PCI-PM L1.2 Enable" bits.
-> > > >
-> > > > That's fine. While the spec clearly calls out the ASPM L1.2 Enable =
-bit here,
-> > > > I
-> > > > see no harm in including PCI-PM L1.2 in that check. This is what th=
-e code
-> > > > already does in aspm_l1ss_init().
-> > > >
-> > > > The issue is the mixed used of two different types of flags that do=
-n't have
-> > > > the
-> > > > same meaning. 'state' contains PCIE_LINK_STATE flags which are part=
- of the
-> > > > caller API to the pci_<enabled/disable>_link_state() functions. The
-> > > > ASPM_STATE
-> > > > flags are used internally to aspm.c to track all states and their m=
-eaningful
-> > > > combinations such as ASPM_STATE_L1_2_MASK which includes ASPM L1.2 =
-and PCI-
-> > > > PM
-> > > > L1.2. You should not do bit operations between them.
-> > > >
-> > > > Also, you should not require that the timings be calculated only if=
- L1_2 is
-> > > > enabled. You should calculate the timings as long as it's capable. =
-This is
-> > > > also
-> > > > what aspm_l1ss_init() does.
-> > > >
-> > > > The confusion might be over the fact that you are having
-> > > > __pci_enable_link_state() call aspm_calc_l12_info(). This should ha=
-ve been
-> > > > handled during initialization of the link in aspm_l1ss_init() and I=
-'m not
-> > > > sure
-> > > > why it didn't. Maybe it's because, for VMD, ASPM default state woul=
-d have
-> > > > started out all disabled and this somehow led to aspm_l1ss_init() n=
-ot
-> > > > getting
-> > > > called. But looking through the code I don't see it. It would be gr=
-eat if
-> > > > you
-> > > > can confirm why they weren't calculated before.
-> > >
-> > > I debug it again.  If I delete the pci_reset_bus() in vmd controller =
-like:
-> > >
-> > > diff --git a/drivers/pci/controller/vmd.c b/drivers/pci/controller/vm=
-d.c
-> > > index 87b7856f375a..39bfda4350bf 100644
-> > > --- a/drivers/pci/controller/vmd.c
-> > > +++ b/drivers/pci/controller/vmd.c
-> > > @@ -930,25 +930,6 @@ static int vmd_enable_domain(struct vmd_dev *vmd=
-,
-> > > unsigned long features)
-> > >         pci_scan_child_bus(vmd->bus);
-> > >         vmd_domain_reset(vmd);
-> > >
-> > > -       /* When Intel VMD is enabled, the OS does not discover the Ro=
-ot Ports
-> > > -        * owned by Intel VMD within the MMCFG space. pci_reset_bus()=
- applies
-> > > -        * a reset to the parent of the PCI device supplied as argume=
-nt. This
-> > > -        * is why we pass a child device, so the reset can be trigger=
-ed at
-> > > -        * the Intel bridge level and propagated to all the children =
-in the
-> > > -        * hierarchy.
-> > > -        */
-> > > -       list_for_each_entry(child, &vmd->bus->children, node) {
-> > > -               if (!list_empty(&child->devices)) {
-> > > -                       dev =3D list_first_entry(&child->devices,
-> > > -                                              struct pci_dev, bus_li=
-st);
-> > > -                       ret =3D pci_reset_bus(dev);
-> >
-> > Hi Nirmal. It's not clear to me from the comment why there's a need to =
-do a bus
-> > reset. It looks like it is causing misconfiguration of the ASPM L1.2 ti=
-mings
-> > which would have been done above in pci_scan_child_bus(). Jian-Hong dis=
-covered
-> > that without the above reset code, the timings are correct.
->
-> I don't understand that comment either.  If we don't enumerate the
-> Root Ports below VMD, it sounds like something is wrong, and reset
-> doesn't seem like the right fix.
->
-> The reset was added by 0a584655ef89 ("PCI: vmd: Fix secondary bus
-> reset for Intel bridges") for guest reboots.  Maybe Francisco can shed
-> more light on it.
+Hi Julien,
 
-Hi Francisco,
+On Tue, Apr 30, 2024 at 03:19:29PM +0200, Julien Massot wrote:
+> This driver handles the MAX96717 serializer in tunnel mode.
+> All incoming CSI traffic will be tunneled through the GMSL2
+> link.
+> 
+> The MAX96717 driver can handle MAX96717 and MAX96717F variants
+> with the same "maxim,max96717f" compatible.
+> 
+> Signed-off-by: Julien Massot <julien.massot@collabora.com>
+> ---
+> Change since v6:
+>  - Kconfig select MEDIA_CONTROLLER, V4L2_FWNODE and VIDEO_V4L2_SUBDEV_API
+>  - rename 'REG3' register to 'MAX96717_REG3'
+>  - Initialized 'ret' variable in 'max96717_gpiochip_probe'
+>  - remove max96714_v4l2_notifier_unregister and call the function directly
+>  - Do not store private pointer with i2c_set_clientdata since the v4l2-i2c
+>    uses it to store the subdev pointer
+>  - use dev_err_probe at gpio chip initialization
+> 
+> Change since v5:
+>  - set the driver compatible back to MAX96717F that can be used as a fallback for MAX96717
+> 
+> Change since v4:
+>  - make the driver compatible with MAX96717 instead of MAX96717F
+>  - Add the device id for the MAX96717
+>  - remove hw_data structure for now, it can be usefull later for handling different serializers e.g max9295
+> 
+> Change since v3:
+>  - Maintainers: align to the new binding path
+>  - Kconfig: better describe the symbol
+>  - store the v4l2_mbus_config_mipi_csi2 structure instead of the full endpoint in the driver private structure
+>  - use MAX96717_PAD_SINK/SOURCE instead of 0/1 for pad intialization
+>  - Removed incorrect call to fwnode_handle_put(priv->sd.fwnode)
+>  - Use unsigned int instead of u8
+>  - Allocate clk name out of the clk struct initialization
+>  - fixed multiline comment
+>  - Removed one unnecessary goto at the end of the probe function
+> 
+> Change since v2:
+>  - Use CCI helpers instead of recoding register access
+>  - add missing bitfield header
+> ---
+>  MAINTAINERS                  |   7 +
+>  drivers/media/i2c/Kconfig    |  17 +
+>  drivers/media/i2c/Makefile   |   1 +
+>  drivers/media/i2c/max96717.c | 928 +++++++++++++++++++++++++++++++++++
+>  4 files changed, 953 insertions(+)
+>  create mode 100644 drivers/media/i2c/max96717.c
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index eea74166a2d9..cfaa904ace59 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -13426,6 +13426,13 @@ S:	Maintained
+>  F:	Documentation/devicetree/bindings/media/i2c/maxim,max96712.yaml
+>  F:	drivers/staging/media/max96712/max96712.c
+>  
+> +MAX96717 GMSL2 SERIALIZER DRIVER
+> +M:	Julien Massot <julien.massot@collabora.com>
+> +L:	linux-media@vger.kernel.org
+> +S:	Maintained
+> +F:	Documentation/devicetree/bindings/media/i2c/maxim,max96717.yaml
+> +F:	drivers/media/i2c/max96717.c
+> +
+>  MAX9860 MONO AUDIO VOICE CODEC DRIVER
+>  M:	Peter Rosin <peda@axentia.se>
+>  L:	alsa-devel@alsa-project.org (moderated for non-subscribers)
+> diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
+> index c6d3ee472d81..9918195e09ba 100644
+> --- a/drivers/media/i2c/Kconfig
+> +++ b/drivers/media/i2c/Kconfig
+> @@ -1575,6 +1575,23 @@ config VIDEO_DS90UB960
+>  	  Device driver for the Texas Instruments DS90UB960
+>  	  FPD-Link III Deserializer and DS90UB9702 FPD-Link IV Deserializer.
+>  
+> +config VIDEO_MAX96717
+> +	tristate "Maxim MAX96717 GMSL2 Serializer support"
+> +	depends on OF && I2C && VIDEO_DEV && COMMON_CLK
+> +	select I2C_MUX
+> +	select MEDIA_CONTROLLER
+> +	select GPIOLIB
+> +	select V4L2_CCI_I2C
+> +	select V4L2_FWNODE
+> +	select VIDEO_V4L2_SUBDEV_API
+> +	help
+> +	  Device driver for the Maxim MAX96717 GMSL2 Serializer.
+> +	  MAX96717 serializers convert video on a MIPI CSI-2
+> +	  input to a GMSL2 output.
+> +
+> +	  To compile this driver as a module, choose M here: the
+> +	  module will be called max96717.
+> +
+>  endmenu
+>  
+>  endif # VIDEO_DEV
+> diff --git a/drivers/media/i2c/Makefile b/drivers/media/i2c/Makefile
+> index dfbe6448b549..9e007116f929 100644
+> --- a/drivers/media/i2c/Makefile
+> +++ b/drivers/media/i2c/Makefile
+> @@ -64,6 +64,7 @@ obj-$(CONFIG_VIDEO_LM3646) += lm3646.o
+>  obj-$(CONFIG_VIDEO_M52790) += m52790.o
+>  obj-$(CONFIG_VIDEO_MAX9271_LIB) += max9271.o
+>  obj-$(CONFIG_VIDEO_MAX9286) += max9286.o
+> +obj-$(CONFIG_VIDEO_MAX96717) += max96717.o
+>  obj-$(CONFIG_VIDEO_ML86V7667) += ml86v7667.o
+>  obj-$(CONFIG_VIDEO_MSP3400) += msp3400.o
+>  obj-$(CONFIG_VIDEO_MT9M001) += mt9m001.o
+> diff --git a/drivers/media/i2c/max96717.c b/drivers/media/i2c/max96717.c
+> new file mode 100644
+> index 000000000000..1ea76f922bdb
+> --- /dev/null
+> +++ b/drivers/media/i2c/max96717.c
+> @@ -0,0 +1,928 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Maxim GMSL2 Serializer Driver
+> + *
+> + * Copyright (C) 2024 Collabora Ltd.
+> + */
+> +
+> +#include <linux/bitfield.h>
+> +#include <linux/clk.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/delay.h>
+> +#include <linux/fwnode.h>
+> +#include <linux/gpio/driver.h>
+> +#include <linux/i2c-mux.h>
+> +#include <linux/i2c.h>
+> +#include <linux/regmap.h>
+> +
+> +#include <media/v4l2-cci.h>
+> +#include <media/v4l2-fwnode.h>
+> +#include <media/v4l2-subdev.h>
+> +
+> +#define MAX96717_DEVICE_ID  0xbf
+> +#define MAX96717F_DEVICE_ID 0xc8
+> +#define MAX96717_PORTS      2
+> +#define MAX96717_PAD_SINK   0
+> +#define MAX96717_PAD_SOURCE 1
+> +
+> +#define MAX96717_DEFAULT_CLKOUT_RATE	24000000UL
+> +
+> +/* DEV */
+> +#define MAX96717_REG3    CCI_REG8(0x3)
+> +#define MAX96717_RCLKSEL GENMASK(1, 0)
+> +#define RCLKSEL_REF_PLL  CCI_REG8(0x3)
+> +#define MAX96717_REG6    CCI_REG8(0x6)
+> +#define RCLKEN           BIT(5)
+> +#define MAX96717_DEV_ID  CCI_REG8(0xd)
+> +#define MAX96717_DEV_REV CCI_REG8(0xe)
+> +#define MAX96717_DEV_REV_MASK GENMASK(3, 0)
+> +
+> +/* VID_TX Z */
+> +#define MAX96717_VIDEO_TX2 CCI_REG8(0x112)
+> +#define MAX96717_VIDEO_PCLKDET BIT(7)
+> +
+> +/* GPIO */
+> +#define MAX96717_NUM_GPIO         11
+> +#define MAX96717_GPIO_REG_A(gpio) CCI_REG8(0x2be + (gpio) * 3)
+> +#define MAX96717_GPIO_OUT         BIT(4)
+> +#define MAX96717_GPIO_IN          BIT(3)
+> +#define MAX96717_GPIO_RX_EN       BIT(2)
+> +#define MAX96717_GPIO_TX_EN       BIT(1)
+> +#define MAX96717_GPIO_OUT_DIS     BIT(0)
+> +
+> +/* FRONTTOP */
+> +/* MAX96717 only have CSI port 'B' */
+> +#define MAX96717_FRONTOP0     CCI_REG8(0x308)
+> +#define MAX96717_START_PORT_B BIT(5)
+> +
+> +/* MIPI_RX */
+> +#define MAX96717_MIPI_RX1       CCI_REG8(0x331)
+> +#define MAX96717_MIPI_LANES_CNT GENMASK(5, 4)
+> +#define MAX96717_MIPI_RX2       CCI_REG8(0x332) /* phy1 Lanes map */
+> +#define MAX96717_PHY2_LANES_MAP GENMASK(7, 4)
+> +#define MAX96717_MIPI_RX3       CCI_REG8(0x333) /* phy2 Lanes map */
+> +#define MAX96717_PHY1_LANES_MAP GENMASK(3, 0)
+> +#define MAX96717_MIPI_RX4       CCI_REG8(0x334) /* phy1 lane polarities */
+> +#define MAX96717_PHY1_LANES_POL GENMASK(6, 4)
+> +#define MAX96717_MIPI_RX5       CCI_REG8(0x335) /* phy2 lane polarities */
+> +#define MAX96717_PHY2_LANES_POL GENMASK(2, 0)
+> +
+> +/* MIPI_RX_EXT */
+> +#define MAX96717_MIPI_RX_EXT11 CCI_REG8(0x383)
+> +#define MAX96717_TUN_MODE      BIT(7)
+> +
+> +/* REF_VTG */
+> +#define REF_VTG0                CCI_REG8(0x3f0)
+> +#define REFGEN_PREDEF_EN        BIT(6)
+> +#define REFGEN_PREDEF_FREQ_MASK GENMASK(5, 4)
+> +#define REFGEN_PREDEF_FREQ_ALT  BIT(3)
+> +#define REFGEN_RST              BIT(1)
+> +#define REFGEN_EN               BIT(0)
+> +
+> +/* MISC */
+> +#define PIO_SLEW_1 CCI_REG8(0x570)
+> +
+> +struct max96717_priv {
+> +	struct i2c_client		  *client;
+> +	struct regmap			  *regmap;
+> +	struct i2c_mux_core		  *mux;
+> +	struct v4l2_mbus_config_mipi_csi2 mipi_csi2;
+> +	struct v4l2_subdev                sd;
+> +	struct media_pad                  pads[MAX96717_PORTS];
+> +	struct v4l2_async_notifier        notifier;
+> +	struct v4l2_subdev                *source_sd;
+> +	u16                               source_sd_pad;
+> +	u64			          enabled_source_streams;
+> +	u8                                pll_predef_index;
+> +	struct clk_hw                     clk_hw;
+> +	struct gpio_chip                  gpio_chip;
+> +};
+> +
+> +static inline struct max96717_priv *sd_to_max96717(struct v4l2_subdev *sd)
+> +{
+> +	return container_of(sd, struct max96717_priv, sd);
+> +}
+> +
+> +static inline struct max96717_priv *clk_hw_to_max96717(struct clk_hw *hw)
+> +{
+> +	return container_of(hw, struct max96717_priv, clk_hw);
+> +}
+> +
+> +static int max96717_i2c_mux_select(struct i2c_mux_core *mux, u32 chan)
+> +{
+> +	return 0;
+> +}
+> +
+> +static int max96717_i2c_mux_init(struct max96717_priv *priv)
+> +{
+> +	priv->mux = i2c_mux_alloc(priv->client->adapter, &priv->client->dev,
+> +				  1, 0, I2C_MUX_LOCKED | I2C_MUX_GATE,
+> +				  max96717_i2c_mux_select, NULL);
+> +	if (!priv->mux)
+> +		return -ENOMEM;
+> +
+> +	return i2c_mux_add_adapter(priv->mux, 0, 0, 0);
 
-We found: the VMD remapped PCI devices' (PCIe bridge and NVMe SSD)
-PCIe LTR1.2_Threshold is correct originally, but becomes misconfigured
-after "pci_reset_bus()" in "vmd_enable_domain()".
+Rebasing the driver on top of linux 6.10.0-rc1 I'm getting the following
+error:
 
-Here is an example that the PCI bridge and its child NVMe SSD have
-different LTR1.2_Threshold:
+error: too many arguments to function ‘i2c_mux_add_adapter’
 
-10000:e0:06.0 PCI bridge: Intel Corporation 11th Gen Core Processor
-PCIe Controller (rev 01) (prog-if 00 [Normal decode])
-    ...
-    Capabilities: [200 v1] L1 PM Substates
-        L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1+ ASPM_L1.2+ ASPM_L1.1+
-L1_PM_Substates+
-                  PortCommonModeRestoreTime=3D45us PortTPowerOnTime=3D50us
-        L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
-                   T_CommonMode=3D45us LTR1.2_Threshold=3D101376ns
-        L1SubCtl2: T_PwrOn=3D50us
+Please fix that: i2c_mux_add_adapter(priv->mux, 0, 0);
 
-10000:e1:00.0 Non-Volatile memory controller: Sandisk Corp WD Blue
-SN550 NVMe SSD (rev 01) (prog-if 02 [NVM Express])
-    ...
-    Capabilities: [900 v1] L1 PM Substates
-        L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
-L1_PM_Substates+
-                  PortCommonModeRestoreTime=3D32us PortTPowerOnTime=3D10us
-        L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
-                   T_CommonMode=3D0us LTR1.2_Threshold=3D0ns
-        L1SubCtl2: T_PwrOn=3D10us
+Same for the max96714.c driver.
 
-It will be great to have your knowledge: Is resetting a PCI device at
-bridge level still needed here?
+Thanks & Regards,
+Tommaso
 
-Thanks,
-Jian-Hong Pan
-
-> > This patch recalculates the timings during the call to pci_enable_link_=
-state()
-> > which is called during pci_bus_walk() below. Originally I thought the
-> > recalculation might have been needed by all callers to pci_enabled_link=
-_state()
-> > since it changes the default BIOS configuration. But it looks like the =
-reset is
-> > the cause and only the VMD driver would need the recalculation as a res=
-ult. I
-> > don't see qcom doing a reset.
-> >
-> > Jian-Hong, given this (and assuming the reset is needed) I would not ca=
-ll
-> > aspm_calc_l12_info() from pci_enable_link_state() but instead try redoi=
-ng the
-> > whole ASPM initialization right after the resets are done, maybe by cal=
-ling
-> > pci_scan_child_bus() again. What do you think Bjorn?
->
-> I would expect pci_reset_bus() to save and restore config space, but
-> if we don't enumerate all the devices correctly, I suppose we wouldn't
-> do that for devices we don't know about.
->
-> > > -                       if (ret)
-> > > -                               pci_warn(dev, "can't reset device: %d=
-\n",
-> > > ret);
-> > > -
-> > > -                       break;
-> > > -               }
-> > > -       }
-> > > -
-> > >         pci_assign_unassigned_bus_resources(vmd->bus);
-> > >
-> > >         pci_walk_bus(vmd->bus, vmd_pm_enable_quirk, &features);
-> > >
-> > > Although PCI-PM_L1.2 is disabled, both PCI bridge and the NVMe's
-> > > LTR1.2_Threshold are configured as 101376ns:
-> > >
-> > > 10000:e0:06.0 PCI bridge [0604]: Intel Corporation 11th Gen Core
-> > > Processor PCIe Controller [8086:9a09] (rev 01) (prog-if 00 [Normal
-> > > decode])
-> > > ...
-> > >   Capabilities: [200 v1] L1 PM Substates
-> > >   L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1+ ASPM_L1.2+ ASPM_L1.1+ L1_PM_Sub=
-states+
-> > >     PortCommonModeRestoreTime=3D45us PortTPowerOnTime=3D50us
-> > >   L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
-> > >      T_CommonMode=3D45us LTR1.2_Threshold=3D101376ns
-> > >   L1SubCtl2: T_PwrOn=3D50us
-> > >
-> > > 10000:e1:00.0 Non-Volatile memory controller [0108]: Sandisk Corp WD
-> > > Blue SN550 NVMe SSD [15b7:5009] (rev 01) (prog-if 02 [NVM Express])
-> > > ...
-> > >   Capabilities: [900 v1] L1 PM Substates
-> > >   L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1- L1_PM_Sub=
-states+
-> > >     PortCommonModeRestoreTime=3D32us PortTPowerOnTime=3D10us
-> > >   L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
-> > >      T_CommonMode=3D0us LTR1.2_Threshold=3D101376ns
-> > >   L1SubCtl2: T_PwrOn=3D50us
-> > >
-> > > Then, I apply the patch "PCI: vmd: Set PCI devices to D0 before enabl=
-e
-> > > PCI PM's L1 substates".  Both PCI bridge and the NVMe's PCI-PM_L1.2 i=
-s
-> > > enabled and LTR1.2_Threshold is configured as 101376ns.
-> > >
-> > > 10000:e0:06.0 PCI bridge [0604]: Intel Corporation 11th Gen Core
-> > > Processor PCIe Controller [8086:9a09] (rev 01) (prog-if 00 [Normal
-> > > decode])
-> > > ...
-> > >   Capabilities: [200 v1] L1 PM Substates
-> > >   L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1+ ASPM_L1.2+ ASPM_L1.1+ L1_PM_Sub=
-states+
-> > >     PortCommonModeRestoreTime=3D45us PortTPowerOnTime=3D50us
-> > >   L1SubCtl1: PCI-PM_L1.2+ PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
-> > >      T_CommonMode=3D45us LTR1.2_Threshold=3D101376ns
-> > >   L1SubCtl2: T_PwrOn=3D50us
-> > >
-> > > 10000:e1:00.0 Non-Volatile memory controller [0108]: Sandisk Corp WD
-> > > Blue SN550 NVMe SSD [15b7:5009] (rev 01) (prog-if 02 [NVM Express])
-> > > ...
-> > >   Capabilities: [900 v1] L1 PM Substates
-> > >   L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1- L1_PM_Sub=
-states+
-> > >     PortCommonModeRestoreTime=3D32us PortTPowerOnTime=3D10us
-> > >   L1SubCtl1: PCI-PM_L1.2+ PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
-> > >      T_CommonMode=3D0us LTR1.2_Threshold=3D101376ns
-> > >   L1SubCtl2: T_PwrOn=3D50us
-> > >
-> > > I do not know VMD very much.  However, from the test result, it looks
-> > > like LTR1.2_Threshold has been configured properly originally.  But,
-> > > LTR1.2_Threshold is misconfigured by 'pci_reset_bus()'.
-> > > ...
-> > > > > > 'state' should not even matter.
-> > > > > > The timings should always be calculated and programmed as long
-> > > > > > as L1_2 is capable. That way the timings are ready even if L1_2=
- isn't
-> > > > > > being
-> > > > > > enabled now (in case the user enables it later).
-> > > > > >
-> > > > > > > +               parent_l1ss_cap =3D aspm_get_l1ss_cap(parent)=
-;
-> > > > > > > +               child_l1ss_cap =3D aspm_get_l1ss_cap(child);
-> > > > > > > +               aspm_calc_l12_info(link, parent_l1ss_cap,
-> > > > > > > child_l1ss_cap);
-> > > > > > > +       }
-> > > > > > >         pcie_config_aspm_link(link, policy_to_aspm_state(link=
-));
-> > > > > > >
-> > > > > > >         link->clkpm_default =3D (state & PCIE_LINK_STATE_CLKP=
-M) ? 1 : 0;
-> > > > > >
-> > > >
-> >
+> +}
+> +
+> +static inline int max96717_start_csi(struct max96717_priv *priv, bool start)
+> +{
+> +	return cci_update_bits(priv->regmap, MAX96717_FRONTOP0,
+> +			       MAX96717_START_PORT_B,
+> +			       start ? MAX96717_START_PORT_B : 0, NULL);
+> +}
+> +
+> +static int max96717_gpiochip_get(struct gpio_chip *gpiochip,
+> +				 unsigned int offset)
+> +{
+> +	struct max96717_priv *priv = gpiochip_get_data(gpiochip);
+> +	u64 val;
+> +	int ret;
+> +
+> +	ret = cci_read(priv->regmap, MAX96717_GPIO_REG_A(offset),
+> +		       &val, NULL);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (val & MAX96717_GPIO_OUT_DIS)
+> +		return !!(val & MAX96717_GPIO_IN);
+> +	else
+> +		return !!(val & MAX96717_GPIO_OUT);
+> +}
+> +
+> +static void max96717_gpiochip_set(struct gpio_chip *gpiochip,
+> +				  unsigned int offset, int value)
+> +{
+> +	struct max96717_priv *priv = gpiochip_get_data(gpiochip);
+> +
+> +	cci_update_bits(priv->regmap, MAX96717_GPIO_REG_A(offset),
+> +			MAX96717_GPIO_OUT, MAX96717_GPIO_OUT, NULL);
+> +}
+> +
+> +static int max96717_gpio_get_direction(struct gpio_chip *gpiochip,
+> +				       unsigned int offset)
+> +{
+> +	struct max96717_priv *priv = gpiochip_get_data(gpiochip);
+> +	u64 val;
+> +	int ret;
+> +
+> +	ret = cci_read(priv->regmap, MAX96717_GPIO_REG_A(offset), &val, NULL);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	return !!(val & MAX96717_GPIO_OUT_DIS);
+> +}
+> +
+> +static int max96717_gpio_direction_out(struct gpio_chip *gpiochip,
+> +				       unsigned int offset, int value)
+> +{
+> +	struct max96717_priv *priv = gpiochip_get_data(gpiochip);
+> +
+> +	return cci_update_bits(priv->regmap, MAX96717_GPIO_REG_A(offset),
+> +			       MAX96717_GPIO_OUT_DIS | MAX96717_GPIO_OUT,
+> +			       value ? MAX96717_GPIO_OUT : 0, NULL);
+> +}
+> +
+> +static int max96717_gpio_direction_in(struct gpio_chip *gpiochip,
+> +				      unsigned int offset)
+> +{
+> +	struct max96717_priv *priv = gpiochip_get_data(gpiochip);
+> +
+> +	return cci_update_bits(priv->regmap, MAX96717_GPIO_REG_A(offset),
+> +			       MAX96717_GPIO_OUT_DIS, MAX96717_GPIO_OUT_DIS,
+> +			       NULL);
+> +}
+> +
+> +static int max96717_gpiochip_probe(struct max96717_priv *priv)
+> +{
+> +	struct device *dev = &priv->client->dev;
+> +	struct gpio_chip *gc = &priv->gpio_chip;
+> +	int i, ret = 0;
+> +
+> +	gc->label = dev_name(dev);
+> +	gc->parent = dev;
+> +	gc->owner = THIS_MODULE;
+> +	gc->ngpio = MAX96717_NUM_GPIO;
+> +	gc->base = -1;
+> +	gc->can_sleep = true;
+> +	gc->get_direction = max96717_gpio_get_direction;
+> +	gc->direction_input = max96717_gpio_direction_in;
+> +	gc->direction_output = max96717_gpio_direction_out;
+> +	gc->set = max96717_gpiochip_set;
+> +	gc->get = max96717_gpiochip_get;
+> +	gc->of_gpio_n_cells = 2;
+> +
+> +	/* Disable GPIO forwarding */
+> +	for (i = 0; i < gc->ngpio; i++)
+> +		cci_update_bits(priv->regmap, MAX96717_GPIO_REG_A(i),
+> +				MAX96717_GPIO_RX_EN | MAX96717_GPIO_TX_EN,
+> +				0, &ret);
+> +
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = devm_gpiochip_add_data(dev, gc, priv);
+> +	if (ret) {
+> +		dev_err(dev, "Unable to create gpio_chip\n");
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int _max96717_set_routing(struct v4l2_subdev *sd,
+> +				 struct v4l2_subdev_state *state,
+> +				 struct v4l2_subdev_krouting *routing)
+> +{
+> +	static const struct v4l2_mbus_framefmt format = {
+> +		.width = 1280,
+> +		.height = 1080,
+> +		.code = MEDIA_BUS_FMT_Y8_1X8,
+> +		.field = V4L2_FIELD_NONE,
+> +	};
+> +	int ret;
+> +
+> +	ret = v4l2_subdev_routing_validate(sd, routing,
+> +					   V4L2_SUBDEV_ROUTING_ONLY_1_TO_1);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = v4l2_subdev_set_routing_with_fmt(sd, state, routing, &format);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return 0;
+> +}
+> +
+> +static int max96717_set_routing(struct v4l2_subdev *sd,
+> +				struct v4l2_subdev_state *state,
+> +				enum v4l2_subdev_format_whence which,
+> +				struct v4l2_subdev_krouting *routing)
+> +{
+> +	struct max96717_priv *priv = sd_to_max96717(sd);
+> +
+> +	if (which == V4L2_SUBDEV_FORMAT_ACTIVE && priv->enabled_source_streams)
+> +		return -EBUSY;
+> +
+> +	return _max96717_set_routing(sd, state, routing);
+> +}
+> +
+> +static int max96717_set_fmt(struct v4l2_subdev *sd,
+> +			    struct v4l2_subdev_state *state,
+> +			    struct v4l2_subdev_format *format)
+> +{
+> +	struct max96717_priv *priv = sd_to_max96717(sd);
+> +	struct v4l2_mbus_framefmt *fmt;
+> +	u64 stream_source_mask;
+> +
+> +	if (format->which == V4L2_SUBDEV_FORMAT_ACTIVE &&
+> +	    priv->enabled_source_streams)
+> +		return -EBUSY;
+> +
+> +	/* No transcoding, source and sink formats must match. */
+> +	if (format->pad == MAX96717_PAD_SOURCE)
+> +		return v4l2_subdev_get_fmt(sd, state, format);
+> +
+> +	/* Set sink format */
+> +	fmt = v4l2_subdev_state_get_format(state, format->pad, format->stream);
+> +	if (!fmt)
+> +		return -EINVAL;
+> +
+> +	*fmt = format->format;
+> +
+> +	/* Propagate to source format */
+> +	fmt = v4l2_subdev_state_get_opposite_stream_format(state, format->pad,
+> +							   format->stream);
+> +	if (!fmt)
+> +		return -EINVAL;
+> +	*fmt = format->format;
+> +
+> +	stream_source_mask = BIT(format->stream);
+> +
+> +	return v4l2_subdev_state_xlate_streams(state, MAX96717_PAD_SOURCE,
+> +					       MAX96717_PAD_SINK,
+> +					       &stream_source_mask);
+> +}
+> +
+> +static int max96717_init_state(struct v4l2_subdev *sd,
+> +			       struct v4l2_subdev_state *state)
+> +{
+> +	struct v4l2_subdev_route routes[] = {
+> +		{
+> +			.sink_pad = MAX96717_PAD_SINK,
+> +			.sink_stream = 0,
+> +			.source_pad = MAX96717_PAD_SOURCE,
+> +			.source_stream = 0,
+> +			.flags = V4L2_SUBDEV_ROUTE_FL_ACTIVE,
+> +		},
+> +	};
+> +	struct v4l2_subdev_krouting routing = {
+> +		.num_routes = ARRAY_SIZE(routes),
+> +		.routes = routes,
+> +	};
+> +
+> +	return _max96717_set_routing(sd, state, &routing);
+> +}
+> +
+> +static bool max96717_pipe_pclkdet(struct max96717_priv *priv)
+> +{
+> +	u64 val = 0;
+> +
+> +	cci_read(priv->regmap, MAX96717_VIDEO_TX2, &val, NULL);
+> +
+> +	return val & MAX96717_VIDEO_PCLKDET;
+> +}
+> +
+> +static int max96717_log_status(struct v4l2_subdev *sd)
+> +{
+> +	struct max96717_priv *priv = sd_to_max96717(sd);
+> +	struct device *dev = &priv->client->dev;
+> +
+> +	dev_info(dev, "Serializer: max96717\n");
+> +	dev_info(dev, "Pipe: pclkdet:%d\n", max96717_pipe_pclkdet(priv));
+> +
+> +	return 0;
+> +}
+> +
+> +static int max96717_enable_streams(struct v4l2_subdev *sd,
+> +				   struct v4l2_subdev_state *state, u32 pad,
+> +				   u64 streams_mask)
+> +{
+> +	struct max96717_priv *priv = sd_to_max96717(sd);
+> +	struct device *dev = &priv->client->dev;
+> +	u64 sink_streams;
+> +	int ret;
+> +
+> +	sink_streams = v4l2_subdev_state_xlate_streams(state,
+> +						       MAX96717_PAD_SOURCE,
+> +						       MAX96717_PAD_SINK,
+> +						       &streams_mask);
+> +
+> +	if (!priv->enabled_source_streams)
+> +		max96717_start_csi(priv, true);
+> +
+> +	ret = v4l2_subdev_enable_streams(priv->source_sd, priv->source_sd_pad,
+> +					 sink_streams);
+> +	if (ret) {
+> +		dev_err(dev, "Fail to start streams:%llu on remote subdev\n",
+> +			sink_streams);
+> +		goto stop_csi;
+> +	}
+> +
+> +	priv->enabled_source_streams |= streams_mask;
+> +
+> +	return 0;
+> +
+> +stop_csi:
+> +	if (!priv->enabled_source_streams)
+> +		max96717_start_csi(priv, false);
+> +	return ret;
+> +}
+> +
+> +static int max96717_disable_streams(struct v4l2_subdev *sd,
+> +				    struct v4l2_subdev_state *state, u32 pad,
+> +				    u64 streams_mask)
+> +{
+> +	struct max96717_priv *priv = sd_to_max96717(sd);
+> +	u64 sink_streams;
+> +	int ret;
+> +
+> +	sink_streams = v4l2_subdev_state_xlate_streams(state,
+> +						       MAX96717_PAD_SOURCE,
+> +						       MAX96717_PAD_SINK,
+> +						       &streams_mask);
+> +
+> +	ret = v4l2_subdev_disable_streams(priv->source_sd, priv->source_sd_pad,
+> +					  sink_streams);
+> +	if (ret)
+> +		return ret;
+> +
+> +	priv->enabled_source_streams &= ~streams_mask;
+> +
+> +	if (!priv->enabled_source_streams)
+> +		max96717_start_csi(priv, false);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct v4l2_subdev_pad_ops max96717_pad_ops = {
+> +	.enable_streams = max96717_enable_streams,
+> +	.disable_streams = max96717_disable_streams,
+> +	.set_routing = max96717_set_routing,
+> +	.get_fmt = v4l2_subdev_get_fmt,
+> +	.set_fmt = max96717_set_fmt,
+> +};
+> +
+> +static const struct v4l2_subdev_core_ops max96717_subdev_core_ops = {
+> +	.log_status = max96717_log_status,
+> +};
+> +
+> +static const struct v4l2_subdev_internal_ops max96717_internal_ops = {
+> +	.init_state = max96717_init_state,
+> +};
+> +
+> +static const struct v4l2_subdev_ops max96717_subdev_ops = {
+> +	.core = &max96717_subdev_core_ops,
+> +	.pad = &max96717_pad_ops,
+> +};
+> +
+> +static const struct media_entity_operations max96717_entity_ops = {
+> +	.link_validate = v4l2_subdev_link_validate,
+> +};
+> +
+> +static int max96717_notify_bound(struct v4l2_async_notifier *notifier,
+> +				 struct v4l2_subdev *source_subdev,
+> +				 struct v4l2_async_connection *asd)
+> +{
+> +	struct max96717_priv *priv = sd_to_max96717(notifier->sd);
+> +	struct device *dev = &priv->client->dev;
+> +	int ret;
+> +
+> +	ret = media_entity_get_fwnode_pad(&source_subdev->entity,
+> +					  source_subdev->fwnode,
+> +					  MEDIA_PAD_FL_SOURCE);
+> +	if (ret < 0) {
+> +		dev_err(dev, "Failed to find pad for %s\n",
+> +			source_subdev->name);
+> +		return ret;
+> +	}
+> +
+> +	priv->source_sd = source_subdev;
+> +	priv->source_sd_pad = ret;
+> +
+> +	ret = media_create_pad_link(&source_subdev->entity, priv->source_sd_pad,
+> +				    &priv->sd.entity, 0,
+> +				    MEDIA_LNK_FL_ENABLED |
+> +				    MEDIA_LNK_FL_IMMUTABLE);
+> +	if (ret) {
+> +		dev_err(dev, "Unable to link %s:%u -> %s:0\n",
+> +			source_subdev->name, priv->source_sd_pad,
+> +			priv->sd.name);
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct v4l2_async_notifier_operations max96717_notify_ops = {
+> +	.bound = max96717_notify_bound,
+> +};
+> +
+> +static int max96717_v4l2_notifier_register(struct max96717_priv *priv)
+> +{
+> +	struct device *dev = &priv->client->dev;
+> +	struct v4l2_async_connection *asd;
+> +	struct fwnode_handle *ep_fwnode;
+> +	int ret;
+> +
+> +	ep_fwnode = fwnode_graph_get_endpoint_by_id(dev_fwnode(dev),
+> +						    MAX96717_PAD_SINK, 0, 0);
+> +	if (!ep_fwnode) {
+> +		dev_err(dev, "No graph endpoint\n");
+> +		return -ENODEV;
+> +	}
+> +
+> +	v4l2_async_subdev_nf_init(&priv->notifier, &priv->sd);
+> +
+> +	asd = v4l2_async_nf_add_fwnode_remote(&priv->notifier, ep_fwnode,
+> +					      struct v4l2_async_connection);
+> +
+> +	fwnode_handle_put(ep_fwnode);
+> +
+> +	if (IS_ERR(asd)) {
+> +		dev_err(dev, "Failed to add subdev: %ld", PTR_ERR(asd));
+> +		v4l2_async_nf_cleanup(&priv->notifier);
+> +		return PTR_ERR(asd);
+> +	}
+> +
+> +	priv->notifier.ops = &max96717_notify_ops;
+> +
+> +	ret = v4l2_async_nf_register(&priv->notifier);
+> +	if (ret) {
+> +		dev_err(dev, "Failed to register subdev_notifier");
+> +		v4l2_async_nf_cleanup(&priv->notifier);
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int max96717_subdev_init(struct max96717_priv *priv)
+> +{
+> +	struct device *dev = &priv->client->dev;
+> +	int ret;
+> +
+> +	v4l2_i2c_subdev_init(&priv->sd, priv->client, &max96717_subdev_ops);
+> +	priv->sd.internal_ops = &max96717_internal_ops;
+> +
+> +	priv->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE | V4L2_SUBDEV_FL_STREAMS;
+> +	priv->sd.entity.function = MEDIA_ENT_F_VID_IF_BRIDGE;
+> +	priv->sd.entity.ops = &max96717_entity_ops;
+> +
+> +	priv->pads[MAX96717_PAD_SINK].flags = MEDIA_PAD_FL_SINK;
+> +	priv->pads[MAX96717_PAD_SOURCE].flags = MEDIA_PAD_FL_SOURCE;
+> +
+> +	ret = media_entity_pads_init(&priv->sd.entity, 2, priv->pads);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Failed to init pads\n");
+> +
+> +	ret = v4l2_subdev_init_finalize(&priv->sd);
+> +	if (ret) {
+> +		dev_err_probe(dev, ret,
+> +			      "v4l2 subdev init finalized failed\n");
+> +		goto err_entity_cleanup;
+> +	}
+> +	ret = max96717_v4l2_notifier_register(priv);
+> +	if (ret) {
+> +		dev_err_probe(dev, ret,
+> +			      "v4l2 subdev notifier register failed\n");
+> +		goto err_free_state;
+> +	}
+> +
+> +	ret = v4l2_async_register_subdev(&priv->sd);
+> +	if (ret) {
+> +		dev_err_probe(dev, ret, "v4l2_async_register_subdev error\n");
+> +		goto err_unreg_notif;
+> +	}
+> +
+> +	return 0;
+> +
+> +err_unreg_notif:
+> +	v4l2_async_nf_unregister(&priv->notifier);
+> +	v4l2_async_nf_cleanup(&priv->notifier);
+> +err_free_state:
+> +	v4l2_subdev_cleanup(&priv->sd);
+> +err_entity_cleanup:
+> +	media_entity_cleanup(&priv->sd.entity);
+> +
+> +	return ret;
+> +}
+> +
+> +static void max96717_subdev_uninit(struct max96717_priv *priv)
+> +{
+> +	v4l2_async_unregister_subdev(&priv->sd);
+> +	v4l2_async_nf_unregister(&priv->notifier);
+> +	v4l2_async_nf_cleanup(&priv->notifier);
+> +	v4l2_subdev_cleanup(&priv->sd);
+> +	media_entity_cleanup(&priv->sd.entity);
+> +}
+> +
+> +struct max96717_pll_predef_freq {
+> +	unsigned long freq;
+> +	bool is_alt;
+> +	u8 val;
+> +};
+> +
+> +static const struct max96717_pll_predef_freq max96717_predef_freqs[] = {
+> +	{ 13500000, true,  0 }, { 19200000, false, 0 },
+> +	{ 24000000, true,  1 }, { 27000000, false, 1 },
+> +	{ 37125000, false, 2 }, { 74250000, false, 3 },
+> +};
+> +
+> +static unsigned long
+> +max96717_clk_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
+> +{
+> +	struct max96717_priv *priv = clk_hw_to_max96717(hw);
+> +
+> +	return max96717_predef_freqs[priv->pll_predef_index].freq;
+> +}
+> +
+> +static unsigned int max96717_clk_find_best_index(struct max96717_priv *priv,
+> +						 unsigned long rate)
+> +{
+> +	unsigned int i, idx;
+> +	unsigned long diff_new, diff_old;
+> +
+> +	diff_old = U32_MAX;
+> +	idx = 0;
+> +
+> +	for (i = 0; i < ARRAY_SIZE(max96717_predef_freqs); i++) {
+> +		diff_new = abs(rate - max96717_predef_freqs[i].freq);
+> +		if (diff_new < diff_old) {
+> +			diff_old = diff_new;
+> +			idx = i;
+> +		}
+> +	}
+> +
+> +	return idx;
+> +}
+> +
+> +static long max96717_clk_round_rate(struct clk_hw *hw, unsigned long rate,
+> +				    unsigned long *parent_rate)
+> +{
+> +	struct max96717_priv *priv = clk_hw_to_max96717(hw);
+> +	struct device *dev = &priv->client->dev;
+> +	unsigned int idx;
+> +
+> +	idx = max96717_clk_find_best_index(priv, rate);
+> +
+> +	if (rate != max96717_predef_freqs[idx].freq) {
+> +		dev_warn(dev, "Request CLK freq:%lu, found CLK freq:%lu\n",
+> +			 rate, max96717_predef_freqs[idx].freq);
+> +	}
+> +
+> +	return max96717_predef_freqs[idx].freq;
+> +}
+> +
+> +static int max96717_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+> +				 unsigned long parent_rate)
+> +{
+> +	struct max96717_priv *priv = clk_hw_to_max96717(hw);
+> +	unsigned int val, idx;
+> +	int ret = 0;
+> +
+> +	idx = max96717_clk_find_best_index(priv, rate);
+> +
+> +	val = FIELD_PREP(REFGEN_PREDEF_FREQ_MASK,
+> +			 max96717_predef_freqs[idx].val);
+> +
+> +	if (max96717_predef_freqs[idx].is_alt)
+> +		val |= REFGEN_PREDEF_FREQ_ALT;
+> +
+> +	val |= REFGEN_RST | REFGEN_PREDEF_EN;
+> +
+> +	cci_write(priv->regmap, REF_VTG0, val, &ret);
+> +	cci_update_bits(priv->regmap, REF_VTG0, REFGEN_RST | REFGEN_EN,
+> +			REFGEN_EN, &ret);
+> +	if (ret)
+> +		return ret;
+> +
+> +	priv->pll_predef_index = idx;
+> +
+> +	return 0;
+> +}
+> +
+> +static int max96717_clk_prepare(struct clk_hw *hw)
+> +{
+> +	struct max96717_priv *priv = clk_hw_to_max96717(hw);
+> +
+> +	return cci_update_bits(priv->regmap, MAX96717_REG6, RCLKEN,
+> +			       RCLKEN, NULL);
+> +}
+> +
+> +static void max96717_clk_unprepare(struct clk_hw *hw)
+> +{
+> +	struct max96717_priv *priv = clk_hw_to_max96717(hw);
+> +
+> +	cci_update_bits(priv->regmap, MAX96717_REG6, RCLKEN, 0, NULL);
+> +}
+> +
+> +static const struct clk_ops max96717_clk_ops = {
+> +	.prepare     = max96717_clk_prepare,
+> +	.unprepare   = max96717_clk_unprepare,
+> +	.set_rate    = max96717_clk_set_rate,
+> +	.recalc_rate = max96717_clk_recalc_rate,
+> +	.round_rate  = max96717_clk_round_rate,
+> +};
+> +
+> +static int max96717_register_clkout(struct max96717_priv *priv)
+> +{
+> +	struct device *dev = &priv->client->dev;
+> +	struct clk_init_data init = { .ops = &max96717_clk_ops };
+> +	int ret;
+> +
+> +	init.name = kasprintf(GFP_KERNEL, "max96717.%s.clk_out",
+> +			      dev_name(dev));
+> +	if (!init.name)
+> +		return -ENOMEM;
+> +
+> +	/* RCLKSEL Reference PLL output */
+> +	ret = cci_update_bits(priv->regmap, MAX96717_REG3, MAX96717_RCLKSEL,
+> +			      MAX96717_RCLKSEL, NULL);
+> +	/* MFP4 fastest slew rate */
+> +	cci_update_bits(priv->regmap, PIO_SLEW_1, BIT(5) | BIT(4), 0, &ret);
+> +	if (ret)
+> +		goto free_init_name;
+> +
+> +	priv->clk_hw.init = &init;
+> +
+> +	/* Initialize to 24 MHz */
+> +	ret = max96717_clk_set_rate(&priv->clk_hw,
+> +				    MAX96717_DEFAULT_CLKOUT_RATE, 0);
+> +	if (ret < 0)
+> +		goto free_init_name;
+> +
+> +	ret = devm_clk_hw_register(dev, &priv->clk_hw);
+> +	kfree(init.name);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Cannot register clock HW\n");
+> +
+> +	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get,
+> +					  &priv->clk_hw);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret,
+> +				     "Cannot add OF clock provider\n");
+> +
+> +	return 0;
+> +
+> +free_init_name:
+> +	kfree(init.name);
+> +	return ret;
+> +}
+> +
+> +static int max96717_init_csi_lanes(struct max96717_priv *priv)
+> +{
+> +	struct v4l2_mbus_config_mipi_csi2 *mipi = &priv->mipi_csi2;
+> +	unsigned long lanes_used = 0;
+> +	unsigned int nlanes, lane, val = 0;
+> +	int ret;
+> +
+> +	nlanes = mipi->num_data_lanes;
+> +
+> +	ret = cci_update_bits(priv->regmap, MAX96717_MIPI_RX1,
+> +			      MAX96717_MIPI_LANES_CNT,
+> +			      FIELD_PREP(MAX96717_MIPI_LANES_CNT,
+> +					 nlanes - 1), NULL);
+> +
+> +	/* lanes polarity */
+> +	for (lane = 0; lane < nlanes + 1; lane++) {
+> +		if (!mipi->lane_polarities[lane])
+> +			continue;
+> +		/* Clock lane */
+> +		if (lane == 0)
+> +			val |= BIT(2);
+> +		else if (lane < 3)
+> +			val |= BIT(lane - 1);
+> +		else
+> +			val |= BIT(lane);
+> +	}
+> +
+> +	cci_update_bits(priv->regmap, MAX96717_MIPI_RX5,
+> +			MAX96717_PHY2_LANES_POL,
+> +			FIELD_PREP(MAX96717_PHY2_LANES_POL, val), &ret);
+> +
+> +	cci_update_bits(priv->regmap, MAX96717_MIPI_RX4,
+> +			MAX96717_PHY1_LANES_POL,
+> +			FIELD_PREP(MAX96717_PHY1_LANES_POL,
+> +				   val >> 3), &ret);
+> +	/* lanes mapping */
+> +	for (lane = 0, val = 0; lane < nlanes; lane++) {
+> +		val |= (mipi->data_lanes[lane] - 1) << (lane * 2);
+> +		lanes_used |= BIT(mipi->data_lanes[lane] - 1);
+> +	}
+> +
+> +	/*
+> +	 * Unused lanes need to be mapped as well to not have
+> +	 * the same lanes mapped twice.
+> +	 */
+> +	for (; lane < 4; lane++) {
+> +		unsigned int idx = find_first_zero_bit(&lanes_used, 4);
+> +
+> +		val |= idx << (lane * 2);
+> +		lanes_used |= BIT(idx);
+> +	}
+> +
+> +	cci_update_bits(priv->regmap, MAX96717_MIPI_RX3,
+> +			MAX96717_PHY1_LANES_MAP,
+> +			FIELD_PREP(MAX96717_PHY1_LANES_MAP, val), &ret);
+> +
+> +	return cci_update_bits(priv->regmap, MAX96717_MIPI_RX2,
+> +			       MAX96717_PHY2_LANES_MAP,
+> +			       FIELD_PREP(MAX96717_PHY2_LANES_MAP, val >> 4),
+> +			       &ret);
+> +}
+> +
+> +static int max96717_hw_init(struct max96717_priv *priv)
+> +{
+> +	struct device *dev = &priv->client->dev;
+> +	u64 dev_id, val;
+> +	int ret;
+> +
+> +	ret = cci_read(priv->regmap, MAX96717_DEV_ID, &dev_id, NULL);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret,
+> +				     "Fail to read the device id\n");
+> +
+> +	if (dev_id != MAX96717_DEVICE_ID && dev_id != MAX96717F_DEVICE_ID)
+> +		return dev_err_probe(dev, -EOPNOTSUPP,
+> +				     "Unsupported device id got %x\n", (u8)dev_id);
+> +
+> +	ret = cci_read(priv->regmap, MAX96717_DEV_REV, &val, NULL);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret,
+> +				     "Fail to read device revision");
+> +
+> +	dev_dbg(dev, "Found %x (rev %lx)\n", (u8)dev_id,
+> +		(u8)val & MAX96717_DEV_REV_MASK);
+> +
+> +	ret = cci_read(priv->regmap, MAX96717_MIPI_RX_EXT11, &val, NULL);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret,
+> +				     "Fail to read mipi rx extension");
+> +
+> +	if (!(val & MAX96717_TUN_MODE))
+> +		return dev_err_probe(dev, -EOPNOTSUPP,
+> +				     "Only supporting tunnel mode");
+> +
+> +	return max96717_init_csi_lanes(priv);
+> +}
+> +
+> +static int max96717_parse_dt(struct max96717_priv *priv)
+> +{
+> +	struct device *dev = &priv->client->dev;
+> +	struct v4l2_fwnode_endpoint vep = {
+> +		.bus_type = V4L2_MBUS_CSI2_DPHY
+> +	};
+> +	struct fwnode_handle *ep_fwnode;
+> +	unsigned char num_data_lanes;
+> +	int ret;
+> +
+> +	ep_fwnode = fwnode_graph_get_endpoint_by_id(dev_fwnode(dev),
+> +						    MAX96717_PAD_SINK, 0, 0);
+> +	if (!ep_fwnode)
+> +		return dev_err_probe(dev, -ENOENT, "no endpoint found\n");
+> +
+> +	ret = v4l2_fwnode_endpoint_parse(ep_fwnode, &vep);
+> +
+> +	fwnode_handle_put(ep_fwnode);
+> +
+> +	if (ret < 0)
+> +		return dev_err_probe(dev, ret, "Failed to parse sink endpoint");
+> +
+> +	num_data_lanes = vep.bus.mipi_csi2.num_data_lanes;
+> +	if (num_data_lanes < 1 || num_data_lanes > 4)
+> +		return dev_err_probe(dev, -EINVAL,
+> +				     "Invalid data lanes must be 1 to 4\n");
+> +
+> +	memcpy(&priv->mipi_csi2, &vep.bus.mipi_csi2, sizeof(priv->mipi_csi2));
+> +
+> +	return 0;
+> +}
+> +
+> +static int max96717_probe(struct i2c_client *client)
+> +{
+> +	struct device *dev = &client->dev;
+> +	struct max96717_priv *priv;
+> +	int ret;
+> +
+> +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> +	if (!priv)
+> +		return -ENOMEM;
+> +
+> +	priv->client = client;
+> +	priv->regmap = devm_cci_regmap_init_i2c(client, 16);
+> +	if (IS_ERR(priv->regmap)) {
+> +		ret = PTR_ERR(priv->regmap);
+> +		return dev_err_probe(dev, ret, "Failed to init regmap\n");
+> +	}
+> +
+> +	ret = max96717_parse_dt(priv);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Failed to parse the dt\n");
+> +
+> +	ret = max96717_hw_init(priv);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret,
+> +				     "Failed to initialize the hardware\n");
+> +
+> +	ret = max96717_gpiochip_probe(priv);
+> +	if (ret)
+> +		return dev_err_probe(&client->dev, ret,
+> +				     "Failed to init gpiochip\n");
+> +
+> +	ret = max96717_register_clkout(priv);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Failed to register clkout\n");
+> +
+> +	ret = max96717_subdev_init(priv);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret,
+> +				     "Failed to initialize v4l2 subdev\n");
+> +
+> +	ret = max96717_i2c_mux_init(priv);
+> +	if (ret) {
+> +		dev_err_probe(dev, ret, "failed to add remote i2c adapter\n");
+> +		max96717_subdev_uninit(priv);
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +static void max96717_remove(struct i2c_client *client)
+> +{
+> +	struct v4l2_subdev *sd = i2c_get_clientdata(client);
+> +	struct max96717_priv *priv = sd_to_max96717(sd);
+> +
+> +	max96717_subdev_uninit(priv);
+> +	i2c_mux_del_adapters(priv->mux);
+> +}
+> +
+> +static const struct of_device_id max96717_of_ids[] = {
+> +	{ .compatible = "maxim,max96717f" },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(of, max96717_of_ids);
+> +
+> +static struct i2c_driver max96717_i2c_driver = {
+> +	.driver	= {
+> +		.name		= "max96717",
+> +		.of_match_table	= max96717_of_ids,
+> +	},
+> +	.probe		= max96717_probe,
+> +	.remove		= max96717_remove,
+> +};
+> +
+> +module_i2c_driver(max96717_i2c_driver);
+> +
+> +MODULE_DESCRIPTION("Maxim GMSL2 MAX96717 Serializer Driver");
+> +MODULE_AUTHOR("Julien Massot <julien.massot@collabora.com>");
+> +MODULE_LICENSE("GPL");
+> -- 
+> 2.44.0
+> 
+> 
 
