@@ -1,151 +1,253 @@
-Return-Path: <linux-kernel+bounces-198877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E35DF8D7EA7
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:31:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 171C68D7EC3
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:33:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 612B5B2341B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:31:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A7681C21505
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:33:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D01884FBF;
-	Mon,  3 Jun 2024 09:29:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEB4885C62;
+	Mon,  3 Jun 2024 09:30:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lFilpSOG"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="c41ndSlt";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="11JNGyiK"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A03A184FD0;
-	Mon,  3 Jun 2024 09:29:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5435185928;
+	Mon,  3 Jun 2024 09:30:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717406946; cv=none; b=AKkyemBnzMke2tYvbwlzWFFojKap+ndUiZ9JAIeqtiMq7Xng5EOO5JbqKWNhTHnWW2txQyQ07mmeG4TkfVm0kKQoZrDHgFQLjdW6uW1jGp8eEigX3D3i0GTBguQ6cT9TUHpxwTrOQK4H+xHXrsJl3IWKkB+n+odovdv0JjOxJN8=
+	t=1717407012; cv=none; b=fEbLqe3dtbtRrHzXj7VT/bopaIz8nqdCyFczmVIsxV7DVUJSfdDEu5mtGzfRp8rV9SaEAYp37jxOp55gBGREcD2S3SoD19dzFW68e4Ynd+TvCvWN7T4EYQKpY8llRshMR0SecrFUW24CSbzR1GUJWz8wRnRRoMWCE6Sh5oCvl5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717406946; c=relaxed/simple;
-	bh=j4w9K5djQp5xn5C5Ueh22RoGjSGi1Sn90cfAUmAMli4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=hn1GpXlDpekCemwUwWcF5Es6pC7i5CcPe34v6cW5eXZb9twHqjIR6qRhDUwcmbIdjsjXw70t/Wi0JLdO5g4P6FUwqDgHSvNcRbJuGnqNDYThFXzwbRRW66s2h+cZGRgvgbtp6waLppNpMAM/YAO7HGU3bW+50icCHjC1d2l+O5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lFilpSOG; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717406945; x=1748942945;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=j4w9K5djQp5xn5C5Ueh22RoGjSGi1Sn90cfAUmAMli4=;
-  b=lFilpSOGxrfLNOKxpc/CNnfBwzqocMvPZR4dSypSOU3DjhubFaCLzd8N
-   4Z7n5+YKAuLe4z8KUXvdYUTBQ6Yvk3JcUwQZ/6gzH2Pay74xm22hd4s4F
-   csy/NN8tK+Gwao6uYf4N1+Uv85fh3m5aNklZ7uyAKdkW1nLr+joPJhgpN
-   CFFEqfIpPUrYqJCNkfDwWRn0uXfaFAR15xWRj5ktXGkAcmhNPS6hGyqgJ
-   RnKUU2uifJm+4SB4ysKZS1a0CpdEhoqeCFFo5aq5IPt5+GEr/wLBkF01d
-   GemgXgIKWj7isaMD0wROVkhlCKy33U3qOeOD8KdOFBAAffA+cQ8FVfAjx
-   w==;
-X-CSE-ConnectionGUID: ukm52QiCTa+NpmU/vXCI3Q==
-X-CSE-MsgGUID: pSBL4CKcRxSDAxLyy8fRPQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11091"; a="17731587"
-X-IronPort-AV: E=Sophos;i="6.08,211,1712646000"; 
-   d="scan'208";a="17731587"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2024 02:29:04 -0700
-X-CSE-ConnectionGUID: eWA6METETtCUr4cLJQgSJw==
-X-CSE-MsgGUID: MRakdQpsR5CfCmhg/Ux7PQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,211,1712646000"; 
-   d="scan'208";a="37444940"
-Received: from slindbla-desk.ger.corp.intel.com (HELO localhost) ([10.245.246.39])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2024 02:28:54 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
- <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter
- <daniel@ffwll.ch>, Jonathan Corbet <corbet@lwn.net>, Sandy Huang
- <hjc@rock-chips.com>, Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>,
- Chen-Yu Tsai
- <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland
- <samuel@sholland.org>, Andy Yan <andy.yan@rock-chips.com>, Hans Verkuil
- <hverkuil@xs4all.nl>, Sebastian Wick <sebastian.wick@redhat.com>, Ville
- =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
- dri-devel@lists.freedesktop.org,
- linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-sunxi@lists.linux.dev, Dave
- Stevenson <dave.stevenson@raspberrypi.com>, Sui Jingfeng
- <sui.jingfeng@linux.dev>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Pekka Paalanen <pekka.paalanen@collabora.com>, =?utf-8?Q?Ma=C3=ADra?= Canal
- <mcanal@igalia.com>, Andy Yan <andyshrk@163.com>
-Subject: Re: [PATCH v15 00/29] drm/connector: Create HDMI Connector
- infrastructure
-In-Reply-To: <20240603-nippy-ludicrous-caracara-e02e3c@houat>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20240527-kms-hdmi-connector-state-v15-0-c5af16c3aae2@kernel.org>
- <874jadesaj.fsf@intel.com>
- <20240603-nippy-ludicrous-caracara-e02e3c@houat>
-Date: Mon, 03 Jun 2024 12:28:51 +0300
-Message-ID: <87zfs2cr3g.fsf@intel.com>
+	s=arc-20240116; t=1717407012; c=relaxed/simple;
+	bh=9MTQrwzkD9pYsjn+hfo3EjM7hxX+lCcbpkbaAzoiwFA=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=nNyj29u5REvxb3MXA4SBlYUmgn4a7V4sdP4qo0RgGggSFh3b/m29/CkttICJOklPhRmVTANMy+vRQsXZq2ANospAC5R7knB9w1ylRv6zFsV48FhUKTh7riWACSyU9wz6RGEi1hhHQjVXK7ZVhRssUfOCbRjiAeh8gnEJcPPJQqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=c41ndSlt; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=11JNGyiK; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 03 Jun 2024 09:30:07 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1717407008;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JWzFvI1IdX1Ff6cp99AHs3tSAAGsWrvDrbhgbqDKY5Q=;
+	b=c41ndSltGkml1JlQobzjXdm/wDsaTq7/ylxYUcfMZhvatYLSFYnmpl569TotqCcrSGxEpm
+	U9pz7XOdXIOpOIu8/W/wmXUNS98xUBQi9BZWgRD5akrFuYd6smSqSeWAgbafTFLCbeVpqN
+	fSFCMJduONFjfF2Tfvfmf80M3iudi81F0V3DqA2jW6XwYk0UWOtW6HAHftsX6zgXQtzX6I
+	/xgH/hyAU0s0hRkOy2qEnHYs7nApF6xajsph3hdV56qeeAScV8PdA1Z3PBkpUb/gMhTDAK
+	Qs+69VZSbTJaBPJrX2/5L2CmlDyn8GkJJ3+3YpbAvlt3Wf9OgiTMo3/fCE6jhw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1717407008;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JWzFvI1IdX1Ff6cp99AHs3tSAAGsWrvDrbhgbqDKY5Q=;
+	b=11JNGyiKrH955nQUFGAgscSpHi+KreC3S16bS2ocGeKoqIp+HuvfdYrbcyNfoQhVJVg/cK
+	bQsgOJESfNdpiIBQ==
+From: "tip-bot2 for Lakshmi Sowjanya D" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: timers/core] timekeeping: Add function to convert realtime to
+ base clock
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+ "Christopher S. Hall" <christopher.s.hall@intel.com>,
+ Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240513103813.5666-10-lakshmi.sowjanya.d@intel.com>
+References: <20240513103813.5666-10-lakshmi.sowjanya.d@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Message-ID: <171740700790.10875.12830194730255026022.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Mon, 03 Jun 2024, Maxime Ripard <mripard@kernel.org> wrote:
-> Hi Jani,
->
-> On Fri, May 31, 2024 at 09:43:16PM GMT, Jani Nikula wrote:
->> On Mon, 27 May 2024, Maxime Ripard <mripard@kernel.org> wrote:
->> > Let me know what you think,
->> 
->> Sorry to report that this series generates a bunch of kernel-doc
->> warnings in include/drm/drm_connector.h. Documenting nested struct
->> members doesn't work as smoothly as you'd expect:
->>
->> ../include/drm/drm_connector.h:1138: warning: Excess struct member 'broadcast_rgb' description in 'drm_connector_state'
->> ../include/drm/drm_connector.h:1138: warning: Excess struct member 'infoframes' description in 'drm_connector_state'
->> ../include/drm/drm_connector.h:1138: warning: Excess struct member 'avi' description in 'drm_connector_state'
->> ../include/drm/drm_connector.h:1138: warning: Excess struct member 'hdr_drm' description in 'drm_connector_state'
->> ../include/drm/drm_connector.h:1138: warning: Excess struct member 'spd' description in 'drm_connector_state'
->> ../include/drm/drm_connector.h:1138: warning: Excess struct member 'vendor' description in 'drm_connector_state'
->> ../include/drm/drm_connector.h:1138: warning: Excess struct member 'is_limited_range' description in 'drm_connector_state'
->> ../include/drm/drm_connector.h:1138: warning: Excess struct member 'output_bpc' description in 'drm_connector_state'
->> ../include/drm/drm_connector.h:1138: warning: Excess struct member 'output_format' description in 'drm_connector_state'
->> ../include/drm/drm_connector.h:1138: warning: Excess struct member 'tmds_char_rate' description in 'drm_connector_state'
->> ../include/drm/drm_connector.h:2112: warning: Excess struct member 'vendor' description in 'drm_connector'
->> ../include/drm/drm_connector.h:2112: warning: Excess struct member 'product' description in 'drm_connector'
->> ../include/drm/drm_connector.h:2112: warning: Excess struct member 'supported_formats' description in 'drm_connector'
->> ../include/drm/drm_connector.h:2112: warning: Excess struct member 'infoframes' description in 'drm_connector'
->> ../include/drm/drm_connector.h:2112: warning: Excess struct member 'lock' description in 'drm_connector'
->> ../include/drm/drm_connector.h:2112: warning: Excess struct member 'audio' description in 'drm_connector'
->> 
->> Noticed this when I was rebasing [1]. Having that merged would find
->> issues in headers at build time instead of 'make htmldocs'.
->> 
->> In the mean time, this is the quick reproducer:
->> 
->> $ scripts/kernel-doc -none include/drm/drm_connector.h
->
-> Thanks for the report and the reproducer. I have to admit I have no idea
-> how to fix it, do you have a suggestion?
+The following commit has been merged into the timers/core branch of tip:
 
-Some of them can be fixed by adding the parent struct name, like so:
+Commit-ID:     02ecee07ca30f76f2a0f1381661a688b8e501ab0
+Gitweb:        https://git.kernel.org/tip/02ecee07ca30f76f2a0f1381661a688b8e501ab0
+Author:        Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>
+AuthorDate:    Mon, 13 May 2024 16:08:10 +05:30
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Mon, 03 Jun 2024 11:18:51 +02:00
 
--                * @broadcast_rgb: Connector property to pass the
-+                * @hdmi.broadcast_rgb: Connector property to pass the
+timekeeping: Add function to convert realtime to base clock
 
-but I think even that falls apart at some point. :(
+PPS (Pulse Per Second) generates a hardware pulse every second based on
+CLOCK_REALTIME. This works fine when the pulse is generated in software
+from a hrtimer callback function.
 
-In the end might be easier to separate the struct definitions to reduce
-nesting.
+For hardware which generates the pulse by programming a timer it is
+required to convert CLOCK_REALTIME to the underlying hardware clock.
 
+The X86 Timed IO device is based on the Always Running Timer (ART), which
+is the base clock of the TSC, which is usually the system clocksource on
+X86.
 
-BR,
-Jani.
+The core code already has functionality to convert base clock timestamps to
+system clocksource timestamps, but there is no support for converting the
+other way around.
 
+Provide the required functionality to support such devices in a generic
+way to avoid code duplication in drivers:
 
--- 
-Jani Nikula, Intel
+  1) ktime_real_to_base_clock() to convert a CLOCK_REALTIME timestamp to a
+     base clock timestamp
+
+  2) timekeeping_clocksource_has_base() to allow drivers to validate that
+     the system clocksource is based on a particular clocksource ID.
+
+[ tglx: Simplify timekeeping_clocksource_has_base() and add missing READ_ONCE() ]
+
+Co-developed-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Co-developed-by: Christopher S. Hall <christopher.s.hall@intel.com>
+Signed-off-by: Christopher S. Hall <christopher.s.hall@intel.com>
+Signed-off-by: Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lore.kernel.org/r/20240513103813.5666-10-lakshmi.sowjanya.d@intel.com
+
+---
+ include/linux/timekeeping.h |  4 ++-
+ kernel/time/timekeeping.c   | 86 ++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 90 insertions(+)
+
+diff --git a/include/linux/timekeeping.h b/include/linux/timekeeping.h
+index b2ee182..fc12a9b 100644
+--- a/include/linux/timekeeping.h
++++ b/include/linux/timekeeping.h
+@@ -318,6 +318,10 @@ struct system_counterval_t {
+ 	bool			use_nsecs;
+ };
+ 
++extern bool ktime_real_to_base_clock(ktime_t treal,
++				     enum clocksource_ids base_id, u64 *cycles);
++extern bool timekeeping_clocksource_has_base(enum clocksource_ids id);
++
+ /*
+  * Get cross timestamp between system clock and device clock
+  */
+diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
+index 3096e10..da984a3 100644
+--- a/kernel/time/timekeeping.c
++++ b/kernel/time/timekeeping.c
+@@ -1235,6 +1235,68 @@ static bool convert_base_to_cs(struct system_counterval_t *scv)
+ 	return true;
+ }
+ 
++static bool convert_cs_to_base(u64 *cycles, enum clocksource_ids base_id)
++{
++	struct clocksource *cs = tk_core.timekeeper.tkr_mono.clock;
++	struct clocksource_base *base;
++
++	/*
++	 * Check whether base_id matches the base clock. Prevent the compiler from
++	 * re-evaluating @base as the clocksource might change concurrently.
++	 */
++	base = READ_ONCE(cs->base);
++	if (!base || base->id != base_id)
++		return false;
++
++	*cycles -= base->offset;
++	if (!convert_clock(cycles, base->denominator, base->numerator))
++		return false;
++	return true;
++}
++
++static bool convert_ns_to_cs(u64 *delta)
++{
++	struct tk_read_base *tkr = &tk_core.timekeeper.tkr_mono;
++
++	if (BITS_TO_BYTES(fls64(*delta) + tkr->shift) >= sizeof(*delta))
++		return false;
++
++	*delta = div_u64((*delta << tkr->shift) - tkr->xtime_nsec, tkr->mult);
++	return true;
++}
++
++/**
++ * ktime_real_to_base_clock() - Convert CLOCK_REALTIME timestamp to a base clock timestamp
++ * @treal:	CLOCK_REALTIME timestamp to convert
++ * @base_id:	base clocksource id
++ * @cycles:	pointer to store the converted base clock timestamp
++ *
++ * Converts a supplied, future realtime clock value to the corresponding base clock value.
++ *
++ * Return:  true if the conversion is successful, false otherwise.
++ */
++bool ktime_real_to_base_clock(ktime_t treal, enum clocksource_ids base_id, u64 *cycles)
++{
++	struct timekeeper *tk = &tk_core.timekeeper;
++	unsigned int seq;
++	u64 delta;
++
++	do {
++		seq = read_seqcount_begin(&tk_core.seq);
++		if ((u64)treal < tk->tkr_mono.base_real)
++			return false;
++		delta = (u64)treal - tk->tkr_mono.base_real;
++		if (!convert_ns_to_cs(&delta))
++			return false;
++		*cycles = tk->tkr_mono.cycle_last + delta;
++		if (!convert_cs_to_base(cycles, base_id))
++			return false;
++	} while (read_seqcount_retry(&tk_core.seq, seq));
++
++	return true;
++}
++EXPORT_SYMBOL_GPL(ktime_real_to_base_clock);
++
+ /**
+  * get_device_system_crosststamp - Synchronously capture system/device timestamp
+  * @get_time_fn:	Callback to get simultaneous device time and
+@@ -1347,6 +1409,30 @@ int get_device_system_crosststamp(int (*get_time_fn)
+ EXPORT_SYMBOL_GPL(get_device_system_crosststamp);
+ 
+ /**
++ * timekeeping_clocksource_has_base - Check whether the current clocksource
++ *				      is based on given a base clock
++ * @id:		base clocksource ID
++ *
++ * Note:	The return value is a snapshot which can become invalid right
++ *		after the function returns.
++ *
++ * Return:	true if the timekeeper clocksource has a base clock with @id,
++ *		false otherwise
++ */
++bool timekeeping_clocksource_has_base(enum clocksource_ids id)
++{
++	/*
++	 * This is a snapshot, so no point in using the sequence
++	 * count. Just prevent the compiler from re-evaluating @base as the
++	 * clocksource might change concurrently.
++	 */
++	struct clocksource_base *base = READ_ONCE(tk_core.timekeeper.tkr_mono.clock->base);
++
++	return base ? base->id == id : false;
++}
++EXPORT_SYMBOL_GPL(timekeeping_clocksource_has_base);
++
++/**
+  * do_settimeofday64 - Sets the time of day.
+  * @ts:     pointer to the timespec64 variable containing the new time
+  *
 
