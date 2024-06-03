@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-198630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D46DE8D7B75
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 08:16:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78CC28D7B7B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 08:17:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D49F91C20B90
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 06:16:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 335E0281723
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 06:17:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37AAA28385;
-	Mon,  3 Jun 2024 06:15:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16BDB29413;
+	Mon,  3 Jun 2024 06:17:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lTlcYo9V"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="iZ1bS3v6"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1A534A15;
-	Mon,  3 Jun 2024 06:15:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 666221862;
+	Mon,  3 Jun 2024 06:17:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717395354; cv=none; b=U5jATzS/YS64iBCCbStScww5e5cJMGVNgXh6qJaTs40p8gH/sC3rIEvEazqC5s8Riq8zSpxpgIwOJwgMfQRV5FmY0mAEcmkADrwksU9ilZ3XBdi8V/AekLMbvaJSnTjjMQYC01iMs/6LnVQXYLhcylVjN+8YpP5Wa9pQZaf2MFk=
+	t=1717395442; cv=none; b=uQVT767bd+NeT2hzedxLYcSdw/stLTTGDsC0a2H1cG/5Zv6UIZE5LEuDO7noQRubQzzbqhBOcKl7mqWSwB7w7Lky5SP3lGoC3pUBF+xwMiIkW5HXlsWt8RNY/fQZxiL3AnL5PMhmTOcbtF5WTuWttfeaQGmiS2kbRIDB9u+KK3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717395354; c=relaxed/simple;
-	bh=7rrHgbScJvACEsDGihRWGyEvBnuyBR/5wuEU9HPnbKQ=;
+	s=arc-20240116; t=1717395442; c=relaxed/simple;
+	bh=+OIrHNz0AajsxeSP6vAxqcIqVhsqMUTZ3wg1DMQkyk4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=s94JrW++swytiLKBLunsSZmOjsptqpLrSQEIKb7EnShjcv7q9gAx7O3HAQOiv6ZJBl4j6ouyPWOTeAGxR8dAeuXN2Uuv8lC6iwWAD685Zwp/kHD5CXWcvay2YAoouZp0Ec9Yd5NBKNNNgfKWvdP1sBhZG49qOvu5RXDzNw7N5GM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lTlcYo9V; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 452NYVSs009764;
-	Mon, 3 Jun 2024 06:15:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	YT1OBLKs1hF7MPhZTiwA1boBt4jDphai78AphG4pTfI=; b=lTlcYo9V/+cgKuJR
-	hz/bYjSjXi0HorZnf3ahZYYWbAZXlw+3g438LJx7Oey2dCYwMxKnZpAVaxulmw6o
-	isvqoysxh/i36RrsnJvBMpEGA8HlRkcQJLY0ScPBmcA+XBMXW0Uy/bHgF1D3HzAS
-	IazqqCSs9x7BvL/JBJ02Vd2usWDmi1iSxETTGiHdx454HgaH/ZiszAriK16tj1sg
-	i5YZZvV5cdpZse4qlf49DRIVjenXTrPVYjyvVeuA/zl0SIuCmUL40fUs3m8hakhc
-	1A7pCZYjl1nw7trq19qDbWMhhjj//VPjD23iINSuyLzMnPqZRd+Um5PSx51Bhq4/
-	rDOOyA==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfw3r3ad6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 03 Jun 2024 06:15:43 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 4536FW90008660
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 3 Jun 2024 06:15:32 GMT
-Received: from [10.204.67.150] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 2 Jun 2024
- 23:15:29 -0700
-Message-ID: <1272b70e-fe2f-47cd-af77-6d3461b8596c@quicinc.com>
-Date: Mon, 3 Jun 2024 11:45:26 +0530
+	 In-Reply-To:Content-Type; b=ZsR/kIZgeadpwSX86yNTuAd14Rq60V165BtEoaWJPG56HWkLZ/eYB384h4NnJ+uLjDRtqg/PMGW1z3AGW3AW2m3t3LammR4kQVWWVkUsVRgyMelASWqk+VD2hP7Lf+Dv97pEiEu3zANG9l/gehsT9WqIagh4pi10N77yb7O1IGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=iZ1bS3v6; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4536GpAk023607;
+	Mon, 3 Jun 2024 01:16:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1717395411;
+	bh=wq6ldKfefDDO6VjHb1eaLgPU/SA77amif7dpZA3xt+o=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=iZ1bS3v6V3YQD0ghl8j9rnYF0Rp1NtcaFfu1tpS/zGYWJHIlKzGmfUgZVfCoeO4ZI
+	 LsSrfwfYs2yCn0UxWevHl6RWk2b44wG0SJus7q7UXWqEYXDeeQNdBTbTgGkjrsEyRA
+	 2iQ/DX2KnbSQH2iJQckGtJIZYeATkgoMKDi6zc74=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4536GpxH113657
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 3 Jun 2024 01:16:51 -0500
+Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 3
+ Jun 2024 01:16:50 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 3 Jun 2024 01:16:51 -0500
+Received: from [172.24.227.57] (linux-team-01.dhcp.ti.com [172.24.227.57])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4536Gj9n047204;
+	Mon, 3 Jun 2024 01:16:46 -0500
+Message-ID: <d0fffc06-cc00-43ab-af16-947392732e1b@ti.com>
+Date: Mon, 3 Jun 2024 11:46:45 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,114 +64,73 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/9] misc: fastrpc: Fix DSP capabilities request
+Subject: Re: [PATCH net-next v2 1/3] net: ethernet: ti: RPMsg based shared
+ memory ethernet driver
+To: Siddharth Vadapalli <s-vadapalli@ti.com>
+CC: <schnelle@linux.ibm.com>, <wsa+renesas@sang-engineering.com>,
+        <diogo.ivo@siemens.com>, <rdunlap@infradead.org>, <horms@kernel.org>,
+        <vigneshr@ti.com>, <rogerq@ti.com>, <danishanwar@ti.com>,
+        <pabeni@redhat.com>, <kuba@kernel.org>, <edumazet@google.com>,
+        <davem@davemloft.net>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <srk@ti.com>, <rogerq@kernel.org>,
+        <y-mallik@ti.com>
+References: <20240531064006.1223417-1-y-mallik@ti.com>
+ <20240531064006.1223417-2-y-mallik@ti.com>
+ <f13bf55e-9cc6-42dc-a32d-41bbbd8358e7@ti.com>
 Content-Language: en-US
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <gregkh@linuxfoundation.org>, <quic_bkumar@quicinc.com>,
-        <linux-kernel@vger.kernel.org>, <quic_chennak@quicinc.com>,
-        stable
-	<stable@kernel.org>
-References: <20240530102032.27179-1-quic_ekangupt@quicinc.com>
- <20240530102032.27179-3-quic_ekangupt@quicinc.com>
- <zcqc4dgc6pippwiysybmkbvogfd6gbinnrw65kiulie3wlup5y@wq4dexvamo7t>
-From: Ekansh Gupta <quic_ekangupt@quicinc.com>
-In-Reply-To: <zcqc4dgc6pippwiysybmkbvogfd6gbinnrw65kiulie3wlup5y@wq4dexvamo7t>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+From: Yojana Mallik <y-mallik@ti.com>
+In-Reply-To: <f13bf55e-9cc6-42dc-a32d-41bbbd8358e7@ti.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: L8whYWb62P4Lhj66hceOxwq6i9V7tdh_
-X-Proofpoint-GUID: L8whYWb62P4Lhj66hceOxwq6i9V7tdh_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-06-02_15,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
- lowpriorityscore=0 suspectscore=0 adultscore=0 spamscore=0 mlxscore=0
- clxscore=1015 priorityscore=1501 malwarescore=0 mlxlogscore=999
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406030051
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
 
-On 5/30/2024 4:29 PM, Dmitry Baryshkov wrote:
-> On Thu, May 30, 2024 at 03:50:20PM +0530, Ekansh Gupta wrote:
->> Incorrect remote arguments are getting passed when requesting for
->> capabilities from DSP.
-> Describe why and how they are incorrect.
 
-Sure, I'll update this information in the next spin.
-
->
->> Also there is no requirement to update the
->> PD type as it might cause problems for any PD other than user PD.
-> Also... means that these are two separate issues. There should be two
-> separate commits.
-
-Okay, I'll separate out the PD type change.
-
->
->> In addition to this, the collected capability information is not
->> getting copied properly to user. Add changes to address these
->> problems and get correct DSP capabilities.
+On 6/2/24 12:31, Siddharth Vadapalli wrote:
+> On Fri, May 31, 2024 at 12:10:04PM +0530, Yojana Mallik wrote:
+>> From: Ravi Gunasekaran <r-gunasekaran@ti.com>
 >>
->> Fixes: 6c16fd8bdd40 ("misc: fastrpc: Add support to get DSP capabilities")
->> Cc: stable <stable@kernel.org>
->> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
+>> TI's K3 SoCs comprises heterogeneous processors (Cortex A, Cortex R).
+>> When the ethernet controller is completely managed by a core (Cortex R)
+>> running a flavor of RTOS, in a non virtualized environment, network traffic
+>> tunnelling between heterogeneous processors can be realized by means of
+>> RPMsg based shared memory ethernet driver. With the shared memory used
+>> for the data plane and the RPMsg end point channel used for control plane.
+>>
+>> inter-core-virt-eth driver is modelled as a RPMsg based shared
+>> memory ethernet driver for such an use case.
+>>
+>> As a first step, register the inter-core-virt-eth as a RPMsg driver.
+>> And introduce basic control messages for querying and responding.
+>>
+> 
+> Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+> 
+> My "Signed-off-by" tag was present in the RFC patch at:
+> https://lore.kernel.org/r/20240130110944.26771-2-r-gunasekaran@ti.com/
+> 
+
+Sorry for the mistake. I will add it.
+
+> Any reason for dropping it? Also, I was in the Cc list of the RFC series.
+> Please ensure that you don't drop emails which were present in earlier
+> versions of the series (unless the email is no longer valid), and also
+> ensure that you Cc all individuals who have commented on the series when
+> you post a new version of the series.
+> 
+
+Sorry for the mistake. I will ensure that I Cc all the necessary individuals.
+
+>> Signed-off-by: Ravi Gunasekaran <r-gunasekaran@ti.com>
+>> Signed-off-by: Yojana Mallik <y-mallik@ti.com>
 >> ---
->>   drivers/misc/fastrpc.c | 7 +++----
->>   1 file changed, 3 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
->> index 4028cb96bcf2..61389795f498 100644
->> --- a/drivers/misc/fastrpc.c
->> +++ b/drivers/misc/fastrpc.c
->> @@ -1700,9 +1700,8 @@ static int fastrpc_get_info_from_dsp(struct fastrpc_user *fl, uint32_t *dsp_attr
->>   	args[0].length = sizeof(dsp_attr_buf_len);
->>   	args[0].fd = -1;
->>   	args[1].ptr = (u64)(uintptr_t)&dsp_attr_buf[1];
->> -	args[1].length = dsp_attr_buf_len;
->> +	args[1].length = dsp_attr_buf_len * sizeof(uint32_t);
-> As you are skipping first entry, should there be (dsp_attr_buf_len - 1)
-> * sizeof(uint32_t).
-
-This was done in the next patch of the series, I'll bring it here.
-
->
->>   	args[1].fd = -1;
->> -	fl->pd = USER_PD;
->>   
->>   	return fastrpc_internal_invoke(fl, true, FASTRPC_DSP_UTILITIES_HANDLE,
->>   				       FASTRPC_SCALARS(0, 1, 1), args);
->> @@ -1730,7 +1729,7 @@ static int fastrpc_get_info_from_kernel(struct fastrpc_ioctl_capability *cap,
->>   	if (!dsp_attributes)
->>   		return -ENOMEM;
->>   
->> -	err = fastrpc_get_info_from_dsp(fl, dsp_attributes, FASTRPC_MAX_DSP_ATTRIBUTES_LEN);
->> +	err = fastrpc_get_info_from_dsp(fl, dsp_attributes, FASTRPC_MAX_DSP_ATTRIBUTES);
-> So it looks like the argument was correct. It was passing length, not
-> the number of attributes. The only thing to fix is that args[1].length
-> should be dsp_attr_buf_len - sizeof(*dsp_attr_buf).
-
-args[0] is expected to carry the information about the total number of attributes to be copied from DSP
-and not the information about the size to be copied. Passing the size information leads to a failure
-suggesting bad arguments passed to DSP.
-
->
->>   	if (err == DSP_UNSUPPORTED_API) {
->>   		dev_info(&cctx->rpdev->dev,
->>   			 "Warning: DSP capabilities not supported on domain: %d\n", domain);
->> @@ -1783,7 +1782,7 @@ static int fastrpc_get_dsp_info(struct fastrpc_user *fl, char __user *argp)
->>   	if (err)
->>   		return err;
->>   
->> -	if (copy_to_user(argp, &cap.capability, sizeof(cap.capability)))
->> +	if (copy_to_user(argp, &cap, sizeof(cap)))
->>   		return -EFAULT;
->>   
->>   	return 0;
->> -- 
->> 2.43.0
->>
+>>  drivers/net/ethernet/ti/Kconfig               |  9 +++
+>>  drivers/net/ethernet/ti/Makefile              |  1 +
+>>  drivers/net/ethernet/ti/icve_rpmsg_common.h   | 47 +++++++++++
+>>  drivers/net/ethernet/ti/inter_core_virt_eth.c | 81 +++++++++++++++++++
+> 
+> [...]
+> 
+> Regards,
+> Siddharth.
 
