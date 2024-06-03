@@ -1,168 +1,145 @@
-Return-Path: <linux-kernel+bounces-198572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42BD18D7A72
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 05:27:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4B448D7A76
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 05:29:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECE0728098A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 03:26:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80D231F21411
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 03:29:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C54BEEAE6;
-	Mon,  3 Jun 2024 03:26:52 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA09DBE6F;
+	Mon,  3 Jun 2024 03:29:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GlPyku4v"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B461FEAD7
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 03:26:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9777AB67D
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 03:29:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717385212; cv=none; b=hGsmY4PNKn8yUDPzES5gYt9+iuUgkj3tuCSNGaH3wn8wZLHllohySh2kbQ2bGc/J+U1c2r4Uk1hNA8IYi1Re+ND8om5rU4fD1De/9N1z4M7POv+mF74BZkn77VBbMDixeB1GQz+i8BHL4ZVTTZERqKWHj6za5gWQrog/YZTy9bY=
+	t=1717385357; cv=none; b=euy9zaABOOJZQXNnrc7Bc98TgAjySN+W+WJBTGt0KVv6KI+UakoLVZTbL7XfW4yCpBUb/wwFo5fVVPPWmKqkUU0YH+XJUDUpH2GfSwUiE5Po4/YL3yYDXG8SgQe1+PeeqXTLyCWMDx+4A4jotLHQtveGsyNucpJKQrMXTLviwo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717385212; c=relaxed/simple;
-	bh=4AxKANIPQDldK4oFGsXikmc5DVLnqvzkXVQP6Ec3lKs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=OFYUPlOd3Y7AAa12/QJ9Htr4LPpnhC30fIBEO7cz0qdNDqNRejuUioyddy0zWZcYvb1LO9jJ6RebgjM1pogPABq+HkXMdN/Xu4OETw0ZCnqs58lSM/Tx3zj2EjeqmW2msdtX6eTIrn7MXF4cV84JfrYBZ0HVBVBsKXA2Ufn6+pk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4VszYz3Y5CzxRJd;
-	Mon,  3 Jun 2024 11:22:47 +0800 (CST)
-Received: from kwepemd200013.china.huawei.com (unknown [7.221.188.133])
-	by mail.maildlp.com (Postfix) with ESMTPS id B3C08180085;
-	Mon,  3 Jun 2024 11:26:41 +0800 (CST)
-Received: from [10.67.110.108] (10.67.110.108) by
- kwepemd200013.china.huawei.com (7.221.188.133) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Mon, 3 Jun 2024 11:26:40 +0800
-Message-ID: <e632a9ed-7659-9336-6e7f-a43c4759a7a3@huawei.com>
-Date: Mon, 3 Jun 2024 11:26:39 +0800
+	s=arc-20240116; t=1717385357; c=relaxed/simple;
+	bh=Itozid0Uq5J7jjr3EzC4B5DvjdhT5De96tQux4vbmo0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tEvzAUTvSuF+yIQmSbQ/XygLPjSf1Nye1mJQ3GH93OZQPHVvdWhEM/yu9/dyoNsD/9N3RUaIfECr03vzgO5eYPd8X06Afse89ZZZZs4w5eUQQkZpO41KPtB9l5ngoNtBv505VEqcDmFrazCYtUhvgHY+Qf5aWpBeNc4fWpLQnGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=GlPyku4v; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52b9dda4906so75884e87.2
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2024 20:29:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1717385354; x=1717990154; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gqoXXfkLNaBeFUlnpo3xHv3wq1HsyXPs641ijeJqfYU=;
+        b=GlPyku4vIgAWQTU5d1BOgnsLpQ9wR/wZR3KuT9Cef3UNruXlz4dgVHvFks7E4ZN+Lp
+         M5fBxc3Cjjm6qYpXP993phl0LzP0pypxkVNyf1htr5KHmz0gn0Rzs3HjH6RwgZgLH9WY
+         aCzeqrG1WWaq5j7U4QBY/63PhOZ3jIAPMZhhw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717385354; x=1717990154;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gqoXXfkLNaBeFUlnpo3xHv3wq1HsyXPs641ijeJqfYU=;
+        b=Tssgt/gqZ4QFhtSsL0yrvwcQ14Ho9YgqV4sjlPsHGaYZOrkaSYC4GpmIJ5XoWrsd61
+         d1jW7BBWK5As3y0CuxU3u6rUYPIW0u+lnkKF9/MCy3oS0dsvkwP+rVfbr3H/o654unBr
+         0WlN8SgI1ErS/RNOlcoyDWfYgJBXXKSUVunwSSlvX+SPva8tMSlEZyZjxM1eymhAH6Kg
+         mwQKJXj5bLWuyiR9aIFp67UCAvVq8Z9taLDidGNY/GqKOGtwZO74/TRUfOqf+xtqFgBq
+         MuxACcp9jp1T2bMUQvKETE1SdiYK8ReoccnNCA9Nrgo9vg6IBHN0B/KZI4hZZrdrIKsc
+         JvMg==
+X-Forwarded-Encrypted: i=1; AJvYcCVmDO3njo/+kIR0ThSATQi7MRTBTre5P1zlwxU+84TlP+gruzAYj94VUff/Ylzfg4AopxbqM2V2iN2t3Kv10cLd1yJEe0FIxcH7ulLp
+X-Gm-Message-State: AOJu0YzXfDOj3g9nA06XzWOdPbwEVi+OcsveGmIDusz5EflyfLk5+0X1
+	Y3BO3iUyYJEItbRvJdZjELq9bsW8sLrZXyLxbOlDpjIZonS9Jwj8TnyxY1HrnJUaLnlE+blXOhG
+	Ws1iLl5AFSh6lncBiT9Htqzkpr4mBtQ35jzsLEiMw89ApFMA=
+X-Google-Smtp-Source: AGHT+IEDtRtBaOGSJnBChD4ejorRQ3d5tt8uQF6LU8aQIF4mUQzWnXLmkerka4FGapEkwbPEkl429n/sIzWje66CjaU=
+X-Received: by 2002:a05:6512:3145:b0:52b:7a3d:1e12 with SMTP id
+ 2adb3069b0e04-52b896d9115mr5870986e87.65.1717385353646; Sun, 02 Jun 2024
+ 20:29:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.2
-Subject: Re: [PATCH v3 1/8] arm64/sysreg: Add definitions for immediate
- versions of MSR ALLINT
-To: Mark Brown <broonie@kernel.org>
-CC: Mark Rutland <mark.rutland@arm.com>, <catalin.marinas@arm.com>,
-	<will@kernel.org>, <maz@kernel.org>, <oliver.upton@linux.dev>,
-	<james.morse@arm.com>, <suzuki.poulose@arm.com>, <yuzenghui@huawei.com>,
-	<tglx@linutronix.de>, <ardb@kernel.org>, <anshuman.khandual@arm.com>,
-	<miguel.luis@oracle.com>, <joey.gouly@arm.com>, <ryan.roberts@arm.com>,
-	<jeremy.linton@arm.com>, <ericchancf@google.com>,
-	<kristina.martsenko@arm.com>, <robh@kernel.org>,
-	<scott@os.amperecomputing.com>, <songshuaishuai@tinylab.org>,
-	<shijie@os.amperecomputing.com>, <akpm@linux-foundation.org>,
-	<bhe@redhat.com>, <horms@kernel.org>, <mhiramat@kernel.org>,
-	<rmk+kernel@armlinux.org.uk>, <shahuang@redhat.com>,
-	<takakura@valinux.co.jp>, <dianders@chromium.org>, <swboyd@chromium.org>,
-	<sumit.garg@linaro.org>, <frederic@kernel.org>, <reijiw@google.com>,
-	<akihiko.odaki@daynix.com>, <ruanjinjie@huawei.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<kvmarm@lists.linux.dev>
-References: <20240415064758.3250209-1-liaochang1@huawei.com>
- <20240415064758.3250209-2-liaochang1@huawei.com>
- <ZjUKMWPknEhLYoK8@FVFF77S0Q05N> <Zjjz-tzLRC2nH51A@finisterre.sirena.org.uk>
- <cde4d448-dc9d-eaad-4a2d-a6d34bda4449@huawei.com>
- <ZjpALOdSgu-qhshR@finisterre.sirena.org.uk>
-From: "Liao, Chang" <liaochang1@huawei.com>
-In-Reply-To: <ZjpALOdSgu-qhshR@finisterre.sirena.org.uk>
+References: <20240530083513.4135052-1-wenst@chromium.org> <20240530083513.4135052-5-wenst@chromium.org>
+ <efdacd820d13368816973f57c4a817e039ec4a2d.camel@imgtec.com>
+In-Reply-To: <efdacd820d13368816973f57c4a817e039ec4a2d.camel@imgtec.com>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Mon, 3 Jun 2024 11:29:02 +0800
+Message-ID: <CAGXv+5EMMNCbxaBqiBSQwGrQt-0KXWAtJU54K20sUU8PBh8faQ@mail.gmail.com>
+Subject: Re: [PATCH 4/6] drm/imagination: Add compatible string entry for Series6XT
+To: Frank Binns <Frank.Binns@imgtec.com>
+Cc: "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>, "tzimmermann@suse.de" <tzimmermann@suse.de>, 
+	Matt Coster <Matt.Coster@imgtec.com>, "sboyd@kernel.org" <sboyd@kernel.org>, 
+	"robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>, 
+	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>, 
+	"mripard@kernel.org" <mripard@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>, 
+	"angelogioacchino.delregno@collabora.com" <angelogioacchino.delregno@collabora.com>, 
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "airlied@gmail.com" <airlied@gmail.com>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>, "daniel@ffwll.ch" <daniel@ffwll.ch>, 
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Boris Brezillon <boris.brezillon@collabora.com>, 
+	Steven Price <steven.price@arm.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemd200013.china.huawei.com (7.221.188.133)
+Content-Transfer-Encoding: quoted-printable
 
-Hi, Mark
+On Fri, May 31, 2024 at 7:18=E2=80=AFPM Frank Binns <Frank.Binns@imgtec.com=
+> wrote:
+>
+> On Thu, 2024-05-30 at 16:35 +0800, Chen-Yu Tsai wrote:
+> > The MediaTek MT8173 comes with a PowerVR Rogue GX6250, which is part
+> > of the Series6XT, another variation of the Rogue family of GPUs.
+> >
+> > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+> > ---
+> >  drivers/gpu/drm/imagination/pvr_drv.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> >
+> > diff --git a/drivers/gpu/drm/imagination/pvr_drv.c b/drivers/gpu/drm/im=
+agination/pvr_drv.c
+> > index 5c3b2d58d766..3d1a933c8303 100644
+> > --- a/drivers/gpu/drm/imagination/pvr_drv.c
+> > +++ b/drivers/gpu/drm/imagination/pvr_drv.c
+> > @@ -1475,6 +1475,7 @@ pvr_remove(struct platform_device *plat_dev)
+> >
+> >  static const struct of_device_id dt_match[] =3D {
+> >       { .compatible =3D "img,img-axe", .data =3D NULL },
+> > +     { .compatible =3D "img,powervr-6xt", .data =3D NULL },
+>
+> I assume that by adding this to the list of supported devices we're essen=
+tially
+> freezing the existing uapi. This concerns me, as we've not yet started ru=
+nning
+> Vulkan conformance on any Series6XT GPUs and there's a chance we may need=
+ to
+> make some tweaks.
+>
+> I'm not really sure what the accepted approach is to hardware enablement =
+/
+> experimental support. I'm not sure if it's sufficient to hide support beh=
+ind a
+> Kconfig option and/or module parameter or whether we just have to hold th=
+is
+> patch back for the time being.
 
-在 2024/5/7 22:52, Mark Brown 写道:
-> On Tue, May 07, 2024 at 03:41:08PM +0800, Liao, Chang wrote:
->> 在 2024/5/6 23:15, Mark Brown 写道:
->>> On Fri, May 03, 2024 at 05:00:49PM +0100, Mark Rutland wrote:
-> 
->>>> +#define set_pstate_allint(x)           asm volatile(SET_PSTATE_ALLINT(x))
-> 
->>> Hrm, those helpers are not ideally discoverable, partly due to the
->>> system register description for ALLINT not providing any references to
->>> this being a general scheme (which is fixable there) and partly due to
-> 
->> Based on the Arm ISA reference manual, the instruction accessing the ALLINT
->> field of PSTATE uses the following encoding:
-> 
-> I'm not saying the suggestion is wrong, I'm saying that between the ARM
-> and the way the code is written the helpers aren't as discoverable as
-> they should be, like I say from a code point of view that's mainly
-> because...
-> 
->>                     op0  op1   CRn    CRm    op2
->> MSR ALLINT, #<imm>  0b00 0b001 0b0100 0b000x 0b000
-> 
-> ...we only have the encoding for the MSR and don't mention the letters
-> 'msr' anywhere.  We should improve that to say what we're encoding in
-> the code (in general I'd say that's true for any __emit_inst(), not just
-> these ones).
+I guess this is more of a question for the DRM maintainers.
+Added a couple Panfrost/Panthor folks for ideas.
 
-Oh, I apologize any confusion in my previous message.
 
-Mark, Is your concern is that the series of pstate related macro name in
-sysregs.h are lack of self-explanatory nature, which make it diffuclt to
-understand their functionality and purpose? If so, I daft some alternative
-macro names in the code below, looking forward to your feedback, or if you
-have any proposal for making these helpers discoverable.
+ChenYu
 
-----8<----
-diff --git a/arch/arm64/include/asm/sysreg.h b/arch/arm64/include/asm/sysreg.h
-index 643e2ad73cbd..4f514bdfb1bd 100644
---- a/arch/arm64/include/asm/sysreg.h
-+++ b/arch/arm64/include/asm/sysreg.h
-@@ -90,7 +90,7 @@
-  */
- #define pstate_field(op1, op2)         ((op1) << Op1_shift | (op2) << Op2_shift)
- #define PSTATE_Imm_shift               CRm_shift
--#define SET_PSTATE(x, r)               __emit_inst(0xd500401f | PSTATE_ ## r | ((!!x) << PSTATE_Imm_shift))
-+#define MSR_PSTATE_ENCODE(x, r)                __emit_inst(0xd500401f | PSTATE_ ## r | ((!!x) << PSTATE_Imm_shift))
-
- #define PSTATE_PAN                     pstate_field(0, 4)
- #define PSTATE_UAO                     pstate_field(0, 3)
-@@ -99,18 +99,18 @@
- #define PSTATE_TCO                     pstate_field(3, 4)
- #define PSTATE_ALLINT                  pstate_field(1, 0)
-
--#define SET_PSTATE_PAN(x)              SET_PSTATE((x), PAN)
--#define SET_PSTATE_UAO(x)              SET_PSTATE((x), UAO)
--#define SET_PSTATE_SSBS(x)             SET_PSTATE((x), SSBS)
--#define SET_PSTATE_DIT(x)              SET_PSTATE((x), DIT)
--#define SET_PSTATE_TCO(x)              SET_PSTATE((x), TCO)
--#define SET_PSTATE_ALLINT(x)           SET_PSTATE((x), ALLINT)
--
--#define set_pstate_pan(x)              asm volatile(SET_PSTATE_PAN(x))
--#define set_pstate_uao(x)              asm volatile(SET_PSTATE_UAO(x))
--#define set_pstate_ssbs(x)             asm volatile(SET_PSTATE_SSBS(x))
--#define set_pstate_dit(x)              asm volatile(SET_PSTATE_DIT(x))
--#define set_pstate_allint(x)           asm volatile(SET_PSTATE_ALLINT(x))
-+#define MSR_PSTATE_PAN(x)              MSR_PSTATE_ENCODE((x), PAN)
-+#define MSR_PSTATE_UAO(x)              MSR_PSTATE_ENCODE((x), UAO)
-+#define MSR_PSTATE_SSBS(x)             MSR_PSTATE_ENCODE((x), SSBS)
-+#define MSR_PSTATE_DIT(x)              MSR_PSTATE_ENCODE((x), DIT)
-+#define MSR_PSTATE_TCO(x)              MSR_PSTATE_ENCODE((x), TCO)
-+#define MSR_PSTATE_ALLINT(x)           MSR_PSTATE_ENCODE((x), ALLINT)
-+
-+#define msr_pstate_pan(x)              asm volatile(MSR_PSTATE_PAN(x))
-+#define msr_pstate_uao(x)              asm volatile(MSR_PSTATE_UAO(x))
-+#define msr_pstate_ssbs(x)             asm volatile(MSR_PSTATE_SSBS(x))
-+#define msr_pstate_dit(x)              asm volatile(MSR_PSTATE_DIT(x))
-+#define msr_pstate_allint(x)           asm volatile(MSR_PSTATE_ALLINT(x))
----->8----
-
-Thanks.
-
--- 
-BR
-Liao, Chang
+> Thanks
+> Frank
+>
+> >       {}
+> >  };
+> >  MODULE_DEVICE_TABLE(of, dt_match);
 
