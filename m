@@ -1,180 +1,154 @@
-Return-Path: <linux-kernel+bounces-199582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2D318D8910
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 20:56:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 683D28D8914
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 20:57:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 725361F261B5
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 18:56:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3AC91F26164
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 18:57:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBD3013A271;
-	Mon,  3 Jun 2024 18:56:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5767713A240;
+	Mon,  3 Jun 2024 18:57:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IFOI3/OU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VHhHqSZj"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7C57139568;
-	Mon,  3 Jun 2024 18:56:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26BAC139CEE
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 18:57:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717440990; cv=none; b=ri0mX0RRVy4vzOgDWr+tFwIx3q3XpuXT8/vgPiXmIqCbZ6dxYrGHcHJvCJC3HQM6iBW/YVhRnY2t1HqfNUBUJJ5a59zaPcGYrd106K9cN7TtdMi+7nJ73WeBLc03+kTRatWVM79NPuKvLq9ShE7oofUVKx7ygmQnWQxBDx7RacI=
+	t=1717441028; cv=none; b=h315TVe8hE8WMtYmUu62XeLzyse+/JdwapYOglWGoQSGEGbTAJwWgmyeW08zoBCifnBUIGBRbjqS+xCpJPWnxyAXZMKnExDuCEoth1ecQ3OAyxYClsBx6S6bM6aXi6LYgxrLLAY36/c+yLhHODg1gw45Bjtat6zty4FOGMQF4zU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717440990; c=relaxed/simple;
-	bh=mQUeynsA1hCoLIuqXaZMidYcSSx7+hiPX4gB4B5Gzxc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=BeJyBNVe+GZUVYbpCTikK+vDc01rPJrPEo9ZPPfYh/wzb375w0swd36izf3JBL494Uthx8nCuPTgJPTMWcyPCYGJgzghoK/mtNYwCTpEnucylelh5gjtCLccgas477zHPd+mkVKli0R7Eq1AgsAbOjF04xwq3ps/STOyuFjPW98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IFOI3/OU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40310C2BD10;
-	Mon,  3 Jun 2024 18:56:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717440989;
-	bh=mQUeynsA1hCoLIuqXaZMidYcSSx7+hiPX4gB4B5Gzxc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=IFOI3/OUiur+QsHtc/r94fWKtsR/eV5g7H6lneT+e8Q6UGHWjG7VzprEPHZwzw0zF
-	 ww0VmfJoWXQfc6FCQMeTeeyrsfuTvJhEsFuOPL6p35jzp0IgEPJEV4qm73aaUrOpGx
-	 fC1l6Dyj0AEc+YWWIsdgr4g2fGCi12XJS3Vf6hT6ULEkLMjaZUrmdabaF72vyKoZxU
-	 yi04hMmPlrrkle2UK1PzKO9oV/2V8Y1db8hfz5iyOs579XcJnO0Zajp4rA/5nbJ8tK
-	 UjYE/igET+Aw+ZEvxuGwjh5CKP9IxavCTk1E9q+TBGo5rHkXbM3kpDLKucKndBwV8a
-	 w3eo8Q99kG26w==
-Date: Mon, 3 Jun 2024 13:56:27 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Robin Murphy <robin.murphy@arm.com>, Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	NXP Linux Team <linux-imx@nxp.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-pci@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	devicetree@vger.kernel.org, Will Deacon <will@kernel.org>,
-	Joerg Roedel <joro@8bytes.org>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Marc Zyngier <maz@kernel.org>
-Subject: Re: [PATCH v5 08/12] PCI: imx6: Config look up table(LUT) to support
- MSI ITS and IOMMU for i.MX95
-Message-ID: <20240603185627.GA687746@bhelgaas>
+	s=arc-20240116; t=1717441028; c=relaxed/simple;
+	bh=Ct9vywJmGK1CJloPL/bRZTZdgNRV/LmvFmSZ5WDVHwA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=I1QVEA3xV6d4ItLKEVbinMA39FwKZd5Aa2emWls95Sj4YgiHXiWyEj7aRC7RNM8tLkaO9KBVa91J+d0R8VeKxecZHT2GJCNE9ubQTUQT2FlVEZQs/MCBHNPJ7Izp+qiu/mSBp2Poa8oNgAfHOVJ1PKQm9cCpg4TQ1BxZMTQpaBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VHhHqSZj; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717441026;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FIDPi7gUErWP223w2FklBtvKymIuybnwzHfEv4BqDmM=;
+	b=VHhHqSZjUmA7mC9ymjWIrTwKPvSzJ8OIIeNchvoWVASNjKwnsV+nnlXImeYK+qgjltu5Bj
+	21wRvsJRYYHgrZmzj+e4NHvPhEJUqW1/U8FRMCogcutXZL0klMqANriAuGsEWCvaKqWm+p
+	VTEg/kDz5VRGHfMow0jW31DmVDDTgTc=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-530-_gplJciDNQavFqhIJSVcGw-1; Mon,
+ 03 Jun 2024 14:56:59 -0400
+X-MC-Unique: _gplJciDNQavFqhIJSVcGw-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 359E81913F40;
+	Mon,  3 Jun 2024 18:56:58 +0000 (UTC)
+Received: from antares.redhat.com (unknown [10.39.193.112])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 3A0AF190DB3B;
+	Mon,  3 Jun 2024 18:56:52 +0000 (UTC)
+From: Adrian Moreno <amorenoz@redhat.com>
+To: netdev@vger.kernel.org
+Cc: aconole@redhat.com,
+	echaudro@redhat.com,
+	horms@kernel.org,
+	i.maximets@ovn.org,
+	dev@openvswitch.org,
+	Adrian Moreno <amorenoz@redhat.com>,
+	Yotam Gigi <yotam.gi@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next v2 1/9] net: psample: add user cookie
+Date: Mon,  3 Jun 2024 20:56:35 +0200
+Message-ID: <20240603185647.2310748-2-amorenoz@redhat.com>
+In-Reply-To: <20240603185647.2310748-1-amorenoz@redhat.com>
+References: <20240603185647.2310748-1-amorenoz@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zl4OpTfcfqMHELiX@lizhi-Precision-Tower-5810>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Mon, Jun 03, 2024 at 02:42:45PM -0400, Frank Li wrote:
-> On Mon, Jun 03, 2024 at 12:19:21PM -0500, Bjorn Helgaas wrote:
-> > On Fri, May 31, 2024 at 03:58:49PM +0100, Robin Murphy wrote:
-> > > On 2024-05-31 12:08 am, Bjorn Helgaas wrote:
-> > > > [+cc IOMMU and pcie-apple.c folks for comment]
-> > > > 
-> > > > On Tue, May 28, 2024 at 03:39:21PM -0400, Frank Li wrote:
-> > > > > For the i.MX95, configuration of a LUT is necessary to convert Bus Device
-> > > > > Function (BDF) to stream IDs, which are utilized by both IOMMU and ITS.
-> > > > > This involves examining the msi-map and smmu-map to ensure consistent
-> > > > > mapping of PCI BDF to the same stream IDs. Subsequently, LUT-related
-> > > > > registers are configured. In the absence of an msi-map, the built-in MSI
-> > > > > controller is utilized as a fallback.
-> > > > > 
-> > > > > Additionally, register a PCI bus notifier to trigger imx_pcie_add_device()
-> > > > > upon the appearance of a new PCI device and when the bus is an iMX6 PCI
-> > > > > controller. This function configures the correct LUT based on Device Tree
-> > > > > Settings (DTS).
-> > > > 
-> > > > This scheme is pretty similar to apple_pcie_bus_notifier().  If we
-> > > > have to do this, I wish it were *more* similar, i.e., copy the
-> > > > function names, bitmap tracking, code structure, etc.
-> > > > 
-> > > > I don't really know how stream IDs work, but I assume they are used on
-> > > > most or all arm64 platforms, so I'm a little surprised that of all the
-> > > > PCI host drivers used on arm64, only pcie-apple.c and pci-imx6.c need
-> > > > this notifier.
-> > > 
-> > > This is one of those things that's mostly at the mercy of the PCIe root
-> > > complex implementation. Typically the SMMU StreamID and/or GIC ITS DeviceID
-> > > is derived directly from the PCI RID, sometimes with additional high-order
-> > > bits hard-wired to disambiguate PCI segments. I believe this RID-translation
-> > > LUT is a particular feature of the the Synopsys IP - I know there's also one
-> > > on the NXP Layerscape platforms, but on those it's programmed by the
-> > > bootloader, which also generates the appropriate "msi-map" and "iommu-map"
-> > > properties to match. Ideally that's what i.MX should do as well, but hey.
-> > 
-> > Maybe this RID-translation is a feature of i.MX, not of Synopsys?  I
-> > see that the LUT CSR accesses use IMX95_* definitions.
-> 
-> Yes, it convert 16bit RID to 6bit stream id.
+Add a user cookie to the sample metadata so that sample emitters can
+provide more contextual information to samples.
 
-IIUC, you're saying this is not a Synopsys feature, it's an i.MX
-feature.
+If present, send the user cookie in a new attribute:
+PSAMPLE_ATTR_USER_COOKIE.
 
-> > > If it's really necessary to do this programming from Linux, then there's
-> > > still no point in it being dynamic - the mappings cannot ever change, since
-> > > the rest of the kernel believes that what the DT said at boot time was
-> > > already a property of the hardware. It would be a lot more logical, and
-> > > likely simpler, for the driver to just read the relevant map property and
-> > > program the entire LUT to match, all in one go at controller probe time.
-> > > Rather like what's already commonly done with the parsing of "dma-ranges" to
-> > > program address-translation LUTs for inbound windows.
-> > > 
-> > > Plus that would also give a chance of safely dealing with bad DTs specifying
-> > > invalid ID mappings (by refusing to probe at all). As it is, returning an
-> > > error from a child's BUS_NOTIFY_ADD_DEVICE does nothing except prevent any
-> > > further notifiers from running at that point - the device will still be
-> > > added, allowed to bind a driver, and able to start sending DMA/MSI traffic
-> > > without the controller being correctly programmed, which at best won't work
-> > > and at worst may break the whole system.
-> > 
-> > Frank, could the imx LUT be programmed once at boot-time instead of at
-> > device-add time?  I'm guessing maybe not because apparently there is a
-> > risk of running out of LUT entries?
-> 
-> It is not good idea to depend on boot loader so much.
+Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
+---
+ include/net/psample.h        | 2 ++
+ include/uapi/linux/psample.h | 1 +
+ net/psample/psample.c        | 9 ++++++++-
+ 3 files changed, 11 insertions(+), 1 deletion(-)
 
-I meant "could this be programmed once when the Linux imx host
-controller driver is probed?"  But from the below, it sounds like
-that's not possible in general because you don't have enough stream
-IDs to do that.
+diff --git a/include/net/psample.h b/include/net/psample.h
+index 0509d2d6be67..2ac71260a546 100644
+--- a/include/net/psample.h
++++ b/include/net/psample.h
+@@ -25,6 +25,8 @@ struct psample_metadata {
+ 	   out_tc_occ_valid:1,
+ 	   latency_valid:1,
+ 	   unused:5;
++	const u8 *user_cookie;
++	u32 user_cookie_len;
+ };
+ 
+ struct psample_group *psample_group_get(struct net *net, u32 group_num);
+diff --git a/include/uapi/linux/psample.h b/include/uapi/linux/psample.h
+index e585db5bf2d2..e80637e1d97b 100644
+--- a/include/uapi/linux/psample.h
++++ b/include/uapi/linux/psample.h
+@@ -19,6 +19,7 @@ enum {
+ 	PSAMPLE_ATTR_LATENCY,		/* u64, nanoseconds */
+ 	PSAMPLE_ATTR_TIMESTAMP,		/* u64, nanoseconds */
+ 	PSAMPLE_ATTR_PROTO,		/* u16 */
++	PSAMPLE_ATTR_USER_COOKIE,	/* binary, user provided data */
+ 
+ 	__PSAMPLE_ATTR_MAX
+ };
+diff --git a/net/psample/psample.c b/net/psample/psample.c
+index a5d9b8446f77..b37488f426bc 100644
+--- a/net/psample/psample.c
++++ b/net/psample/psample.c
+@@ -386,7 +386,9 @@ void psample_sample_packet(struct psample_group *group, struct sk_buff *skb,
+ 		   nla_total_size(sizeof(u32)) +	/* group_num */
+ 		   nla_total_size(sizeof(u32)) +	/* seq */
+ 		   nla_total_size_64bit(sizeof(u64)) +	/* timestamp */
+-		   nla_total_size(sizeof(u16));		/* protocol */
++		   nla_total_size(sizeof(u16)) +	/* protocol */
++		   (md->user_cookie_len ?
++		    nla_total_size(md->user_cookie_len) : 0); /* user cookie */
+ 
+ #ifdef CONFIG_INET
+ 	tun_info = skb_tunnel_info(skb);
+@@ -486,6 +488,11 @@ void psample_sample_packet(struct psample_group *group, struct sk_buff *skb,
+ 	}
+ #endif
+ 
++	if (md->user_cookie && md->user_cookie_len &&
++	    nla_put(nl_skb, PSAMPLE_ATTR_USER_COOKIE, md->user_cookie_len,
++		    md->user_cookie))
++		goto error;
++
+ 	genlmsg_end(nl_skb, data);
+ 	genlmsg_multicast_netns(&psample_nl_family, group->net, nl_skb, 0,
+ 				PSAMPLE_NL_MCGRP_SAMPLE, GFP_ATOMIC);
+-- 
+2.45.1
 
-> Some hot plug devics
-> (SD7.0) may plug after system boot. Two PCIe instances shared one set
-> of 6bits stream id (total 64). Assume total 16 assign to two PCIe
-> controllers. each have 8 stream id. If use uboot assign it static, each
-> PCIe controller have below 8 devices.  It will be failrue one controller
-> connect 7, another connect 9. but if dynamtic alloc when devices add, both
-> controller can work.
-> 
-> Although we have not so much devices now,  this way give us possility to
-> improve it in future.
-> 
-> > It sounds like the consequences of running out of LUT entries are
-> > catastrophic, e.g., memory corruption from mis-directed DMA?  If
-> > that's possible, I think we need to figure out how to prevent the
-> > device from being used, not just dev_warn() about it.
-> 
-> Yes, but so far, we have not met such problem now. We can improve it when
-> we really face such problem.
-
-If this controller can only support DMA from a limited number of
-endpoints below it, I think we should figure out how to enforce that
-directly.  Maybe we can prevent drivers from enabling bus mastering or
-something.  I'm not happy with the idea of waiting for and debugging a
-report of data corruption.
-
-Bjorn
 
