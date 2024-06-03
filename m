@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-198648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B48588D7BAB
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 08:38:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 867ED8D7BBB
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 08:40:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D1B12817DA
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 06:38:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9D411C215E9
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 06:40:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82E132C859;
-	Mon,  3 Jun 2024 06:38:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B67BC2C1AC;
+	Mon,  3 Jun 2024 06:39:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iDt2XIKu"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q8knMSnV"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E841A1799B
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 06:38:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BE005BACF
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 06:39:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717396700; cv=none; b=Ntd2vdGikfZYtd7OowkFmUkVcFwr8foSa567MVMPrICB+PLpIP8zpfLLQS3bQUANf7ngDjCWqdlZv6eeQnRI82F5DTBowzGN0y96dMt8dyE3UzhC1ccBmOGbdXd2zCTVz7BqIFVtTeuHs3XfFzSEoCSjgpX8PRZ12yRukxau9II=
+	t=1717396771; cv=none; b=VhD+1PFgPUgZL20S8rU6R83gAFnLxPIFLWJfmJGH5bBi1KRBunYfjjucwKov4hLCPJc9pTD0cWooAic48iCk/TFIxesCfrMWwENpA81lCsAXsvhOYuCD+/e8kCx4EU08ruK1uT03pfWrjPo3G51KL9NZgdtPt7y6Axw2la17c7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717396700; c=relaxed/simple;
-	bh=sWk1wjilan0FFkoMfarqiXPdTbXDabBugnGDpneW2S0=;
+	s=arc-20240116; t=1717396771; c=relaxed/simple;
+	bh=1BZZMsPFwPpGXIX87G1hn2zFFzt5yAvYEmZSxoqHeTY=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=NLZZGpTmZLvNVbWFoMH1PEI9PFIRDjfTlTTovqjp395lqYJ45UbxcXwZDV/FdaK7OUkhOSrcKX60U9ioU0II6bRBXxsY4ntV2LDXfHnhwubHvLFxyZQ7nayoFrSp7CEQvzj0+KmBbRehRBCIm9kVDFOMsfHcyEKsWaPuOLsSUaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iDt2XIKu; arc=none smtp.client-ip=198.175.65.11
+	 Content-Disposition; b=qxRUzstZmK953IU9IA1ZlyKcK69BHIiRenjaeSmkpH9OHWpABTJLam3YWecDQLCdWR7Akbi/PVDj7T2D8QSvAjeUlWsZerU/ugLsoRDZvw/tew6gqdVzCkP6NYRGc5cfb6ycZez7R23oOozNs0gdzMfjD+8CcKNXbvH9eJ31yTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q8knMSnV; arc=none smtp.client-ip=192.198.163.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717396698; x=1748932698;
+  t=1717396769; x=1748932769;
   h=date:from:to:cc:subject:message-id:mime-version;
-  bh=sWk1wjilan0FFkoMfarqiXPdTbXDabBugnGDpneW2S0=;
-  b=iDt2XIKuLmqfIPMz9OdEzxKFbGqSj0MkHrylYdUiQdsZg5rytjoSxtdr
-   vCbyNNVBX1fe1LX5d/KYHtTdAe13ifgSS1Oqh56dKas+FJsxVf6T93QxK
-   Z+aPT217z2mpn3THc+DH/w+TmVxlNBl86PR0fvU92skjAX43KAQma2u/D
-   8adzqUUvRzM9mHX7nf2MZz+JVApXfplzCpRz1uJgLdffAIBdqHtOAuHGj
-   UbSZfbSC86Z05bOw2guW1A4CF42mSn9OfHCQzDyG7CGCiFggBaLpK9W9U
-   oorctdw6lB7suJNylpHGz10xQzkRswqc3JX5yr9lc5C3oTIkk5cjRoVgT
-   A==;
-X-CSE-ConnectionGUID: PAzzZ8H2Qn+oPV4d0MBeYg==
-X-CSE-MsgGUID: K+XXk+UGROiUdfU+l3nJdA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11091"; a="24450898"
+  bh=1BZZMsPFwPpGXIX87G1hn2zFFzt5yAvYEmZSxoqHeTY=;
+  b=Q8knMSnVetlThnqiYaWV3F49036J00hOWopd26+VQkgXcHKDwwLXTvRB
+   ZcbjIwIb9SYA7PbqBiO9U00VeYIwAz5ALKBZgk5+jHAxAyK3gKz7sc2Cf
+   VOjTAyunMwakTsYVbgiBGBvZCcEvQk9Tt6SMy4NTBdzNKFPXXJSKirhtB
+   /moTQhc7b2WuEnQdfv4tNNUUjgxEemHUYh1abJNlSgwNZoF1PbnokmaZV
+   sDjUwamQISL/sHtDYeKib4jQIB9rPLjwcpLxO/ZRqGotFgXQy05knzOC9
+   Fj2VVl89fWnrBdpf6glh9zem12aTtfweEMJFVPrSLBOnCUqfDKcniXatw
+   w==;
+X-CSE-ConnectionGUID: 8Af6wzbVRiennJ1AsZmS6Q==
+X-CSE-MsgGUID: pcltKiBYS+q+vrf/pTQR7A==
+X-IronPort-AV: E=McAfee;i="6600,9927,11091"; a="13688998"
 X-IronPort-AV: E=Sophos;i="6.08,210,1712646000"; 
-   d="scan'208";a="24450898"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2024 23:38:17 -0700
-X-CSE-ConnectionGUID: 0LpvD4CmR6efmfyTX6pFjg==
-X-CSE-MsgGUID: cfxoBYY6Ql25MZ5fM1ITyQ==
+   d="scan'208";a="13688998"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2024 23:39:28 -0700
+X-CSE-ConnectionGUID: erGpIcptQAe/GvypGlxCfw==
+X-CSE-MsgGUID: PAgDW9EuQvaGNOEDNgbZOg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,210,1712646000"; 
-   d="scan'208";a="67620487"
+   d="scan'208";a="36704400"
 Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
-  by orviesa002.jf.intel.com with ESMTP; 02 Jun 2024 23:38:16 -0700
+  by orviesa010.jf.intel.com with ESMTP; 02 Jun 2024 23:39:27 -0700
 Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1sE1KX-000L6z-16;
-	Mon, 03 Jun 2024 06:38:10 +0000
-Date: Mon, 3 Jun 2024 14:37:54 +0800
+	id 1sE1Lp-000L7C-07;
+	Mon, 03 Jun 2024 06:39:25 +0000
+Date: Mon, 3 Jun 2024 14:38:04 +0800
 From: kernel test robot <lkp@intel.com>
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Peter Zijlstra <peterz@infradead.org>,
-	Kees Cook <keescook@chromium.org>
-Subject: drivers/iommu/io-pgtable-arm.c:330:13: error: void value not ignored
- as it ought to be
-Message-ID: <202406031408.wNSVlKLV-lkp@intel.com>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: [paulmck-rcu:dev.2024.05.30a 5/50]
+ arch/arm/include/asm/cmpxchg.h:167:12: error: call to undeclared function
+ 'cmpxchg_emu_u8'; ISO C99 and later do not support implicit function
+ declarations
+Message-ID: <202406031410.LcIbbCfd-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,80 +78,109 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Hi Mark,
-
-FYI, the error/warning was bisected to this commit, please ignore it if it's irrelevant.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   c3f38fa61af77b49866b006939479069cd451173
-commit: 9257959a6e5b4fca6fc8e985790bff62c2046f20 locking/atomic: scripts: restructure fallback ifdeffery
-date:   12 months ago
-config: arc-randconfig-r022-20230104 (https://download.01.org/0day-ci/archive/20240603/202406031408.wNSVlKLV-lkp@intel.com/config)
-compiler: arc-elf-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240603/202406031408.wNSVlKLV-lkp@intel.com/reproduce)
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git dev.2024.05.30a
+head:   3d08b2c4a149fdf966e1b0768c14bbf4048e4070
+commit: 6ba3d5014d24a46ed329fc567e554c218eb62cfa [5/50] ARM: Emulate one-byte cmpxchg
+config: arm-randconfig-r052-20240603 (https://download.01.org/0day-ci/archive/20240603/202406031410.LcIbbCfd-lkp@intel.com/config)
+compiler: clang version 15.0.7 (https://github.com/llvm/llvm-project 8dfdcc7b7bf66834a761bd8de445840ef68e4d1a)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240603/202406031410.LcIbbCfd-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406031408.wNSVlKLV-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406031410.LcIbbCfd-lkp@intel.com/
+
+Note: the paulmck-rcu/dev.2024.05.30a HEAD 3d08b2c4a149fdf966e1b0768c14bbf4048e4070 builds fine.
+      It only hurts bisectability.
 
 All errors (new ones prefixed by >>):
 
-   drivers/iommu/io-pgtable-arm.c: In function 'arm_lpae_install_table':
->> drivers/iommu/io-pgtable-arm.c:330:13: error: void value not ignored as it ought to be
-     330 |         old = cmpxchg64_relaxed(ptep, curr, new);
-         |             ^
---
-   drivers/iommu/io-pgtable-dart.c: In function 'dart_install_table':
->> drivers/iommu/io-pgtable-dart.c:168:13: error: void value not ignored as it ought to be
-     168 |         old = cmpxchg64_relaxed(ptep, curr, new);
-         |             ^
-   drivers/iommu/io-pgtable-dart.c:157:25: warning: variable 'new' set but not used [-Wunused-but-set-variable]
-     157 |         dart_iopte old, new;
-         |                         ^~~
+   In file included from kernel/bounds.c:13:
+   In file included from include/linux/log2.h:12:
+   In file included from include/linux/bitops.h:63:
+   In file included from arch/arm/include/asm/bitops.h:245:
+   In file included from include/asm-generic/bitops/lock.h:5:
+   In file included from include/linux/atomic.h:7:
+   In file included from arch/arm/include/asm/atomic.h:16:
+>> arch/arm/include/asm/cmpxchg.h:167:12: error: call to undeclared function 'cmpxchg_emu_u8'; ISO C99 and later do not support implicit function declarations [-Werror,-Wimplicit-function-declaration]
+                   oldval = cmpxchg_emu_u8((volatile u8 *)ptr, old, new);
+                            ^
+   1 error generated.
+   make[3]: *** [scripts/Makefile.build:117: kernel/bounds.s] Error 1
+   make[3]: Target 'prepare' not remade because of errors.
+   make[2]: *** [Makefile:1208: prepare0] Error 2
+   make[2]: Target 'prepare' not remade because of errors.
+   make[1]: *** [Makefile:240: __sub-make] Error 2
+   make[1]: Target 'prepare' not remade because of errors.
+   make: *** [Makefile:240: __sub-make] Error 2
+   make: Target 'prepare' not remade because of errors.
 
 
-vim +330 drivers/iommu/io-pgtable-arm.c
+vim +/cmpxchg_emu_u8 +167 arch/arm/include/asm/cmpxchg.h
 
-c896c132b01895 Laurent Pinchart   2014-12-14  310  
-fb3a95795da53d Robin Murphy       2017-06-22  311  static arm_lpae_iopte arm_lpae_install_table(arm_lpae_iopte *table,
-fb3a95795da53d Robin Murphy       2017-06-22  312  					     arm_lpae_iopte *ptep,
-2c3d273eabe8b1 Robin Murphy       2017-06-22  313  					     arm_lpae_iopte curr,
-9abe2ac834851a Hector Martin      2021-11-20  314  					     struct arm_lpae_io_pgtable *data)
-fb3a95795da53d Robin Murphy       2017-06-22  315  {
-2c3d273eabe8b1 Robin Murphy       2017-06-22  316  	arm_lpae_iopte old, new;
-9abe2ac834851a Hector Martin      2021-11-20  317  	struct io_pgtable_cfg *cfg = &data->iop.cfg;
-e1d3c0fd701df8 Will Deacon        2014-11-14  318  
-9abe2ac834851a Hector Martin      2021-11-20  319  	new = paddr_to_iopte(__pa(table), data) | ARM_LPAE_PTE_TYPE_TABLE;
-fb3a95795da53d Robin Murphy       2017-06-22  320  	if (cfg->quirks & IO_PGTABLE_QUIRK_ARM_NS)
-fb3a95795da53d Robin Murphy       2017-06-22  321  		new |= ARM_LPAE_PTE_NSTABLE;
-e1d3c0fd701df8 Will Deacon        2014-11-14  322  
-77f3445866c39d Will Deacon        2017-06-23  323  	/*
-77f3445866c39d Will Deacon        2017-06-23  324  	 * Ensure the table itself is visible before its PTE can be.
-77f3445866c39d Will Deacon        2017-06-23  325  	 * Whilst we could get away with cmpxchg64_release below, this
-77f3445866c39d Will Deacon        2017-06-23  326  	 * doesn't have any ordering semantics when !CONFIG_SMP.
-77f3445866c39d Will Deacon        2017-06-23  327  	 */
-77f3445866c39d Will Deacon        2017-06-23  328  	dma_wmb();
-2c3d273eabe8b1 Robin Murphy       2017-06-22  329  
-2c3d273eabe8b1 Robin Murphy       2017-06-22 @330  	old = cmpxchg64_relaxed(ptep, curr, new);
-2c3d273eabe8b1 Robin Murphy       2017-06-22  331  
-4f41845b340783 Will Deacon        2019-06-25  332  	if (cfg->coherent_walk || (old & ARM_LPAE_PTE_SW_SYNC))
-2c3d273eabe8b1 Robin Murphy       2017-06-22  333  		return old;
-2c3d273eabe8b1 Robin Murphy       2017-06-22  334  
-2c3d273eabe8b1 Robin Murphy       2017-06-22  335  	/* Even if it's not ours, there's no point waiting; just kick it */
-41e1eb2546e9c8 Isaac J. Manjarres 2021-06-16  336  	__arm_lpae_sync_pte(ptep, 1, cfg);
-2c3d273eabe8b1 Robin Murphy       2017-06-22  337  	if (old == curr)
-2c3d273eabe8b1 Robin Murphy       2017-06-22  338  		WRITE_ONCE(*ptep, new | ARM_LPAE_PTE_SW_SYNC);
-2c3d273eabe8b1 Robin Murphy       2017-06-22  339  
-2c3d273eabe8b1 Robin Murphy       2017-06-22  340  	return old;
-e1d3c0fd701df8 Will Deacon        2014-11-14  341  }
-e1d3c0fd701df8 Will Deacon        2014-11-14  342  
-
-:::::: The code at line 330 was first introduced by commit
-:::::: 2c3d273eabe8b1ed3b3cffe2c79643b1bf7e2d4a iommu/io-pgtable-arm: Support lockless operation
-
-:::::: TO: Robin Murphy <robin.murphy@arm.com>
-:::::: CC: Will Deacon <will.deacon@arm.com>
+   152	
+   153	/*
+   154	 * cmpxchg only support 32-bits operands on ARMv6.
+   155	 */
+   156	
+   157	static inline unsigned long __cmpxchg(volatile void *ptr, unsigned long old,
+   158					      unsigned long new, int size)
+   159	{
+   160		unsigned long oldval, res;
+   161	
+   162		prefetchw((const void *)ptr);
+   163	
+   164		switch (size) {
+   165	#ifdef CONFIG_CPU_V6	/* min ARCH >= ARMv6K */
+   166		case 1:
+ > 167			oldval = cmpxchg_emu_u8((volatile u8 *)ptr, old, new);
+   168			break;
+   169	#else
+   170		case 1:
+   171			do {
+   172				asm volatile("@ __cmpxchg1\n"
+   173				"	ldrexb	%1, [%2]\n"
+   174				"	mov	%0, #0\n"
+   175				"	teq	%1, %3\n"
+   176				"	strexbeq %0, %4, [%2]\n"
+   177					: "=&r" (res), "=&r" (oldval)
+   178					: "r" (ptr), "Ir" (old), "r" (new)
+   179					: "memory", "cc");
+   180			} while (res);
+   181			break;
+   182		case 2:
+   183			do {
+   184				asm volatile("@ __cmpxchg1\n"
+   185				"	ldrexh	%1, [%2]\n"
+   186				"	mov	%0, #0\n"
+   187				"	teq	%1, %3\n"
+   188				"	strexheq %0, %4, [%2]\n"
+   189					: "=&r" (res), "=&r" (oldval)
+   190					: "r" (ptr), "Ir" (old), "r" (new)
+   191					: "memory", "cc");
+   192			} while (res);
+   193			break;
+   194	#endif
+   195		case 4:
+   196			do {
+   197				asm volatile("@ __cmpxchg4\n"
+   198				"	ldrex	%1, [%2]\n"
+   199				"	mov	%0, #0\n"
+   200				"	teq	%1, %3\n"
+   201				"	strexeq %0, %4, [%2]\n"
+   202					: "=&r" (res), "=&r" (oldval)
+   203					: "r" (ptr), "Ir" (old), "r" (new)
+   204					: "memory", "cc");
+   205			} while (res);
+   206			break;
+   207		default:
+   208			__bad_cmpxchg(ptr, size);
+   209			oldval = 0;
+   210		}
+   211	
+   212		return oldval;
+   213	}
+   214	
 
 -- 
 0-DAY CI Kernel Test Service
