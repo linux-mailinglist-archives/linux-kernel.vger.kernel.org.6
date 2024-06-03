@@ -1,147 +1,270 @@
-Return-Path: <linux-kernel+bounces-199416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC1E68D86F0
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 18:11:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B59028D86F3
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 18:11:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C47E1F2283A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:11:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06C8DB21730
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:11:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38682134414;
-	Mon,  3 Jun 2024 16:11:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="ec1EpI/Z"
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 430EF12DDAF
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 16:10:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 747C613666D;
+	Mon,  3 Jun 2024 16:11:09 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C6C512DDAF;
+	Mon,  3 Jun 2024 16:11:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717431062; cv=none; b=PQPpi1Euo1ZlRZI4IKNxTRCS6lLxOz3Pitz9EjNV6siDQ0m3nBrPUPc/2VrEQSV2Dp2WwVNv7D/5HDg7xHiREe9tAucfDpga/ifLNeVtpubKn7RpORGPli1sOQ3KPUmzTyFdZf0l7HiW/2ZzqFedU4rwAyAsnr38kJKD9qJNdPY=
+	t=1717431068; cv=none; b=b9jM8Tqb9chgY4PuuxijUZgTxrB6CTjmjRkXH3QxmRQYaV6wMBwMBo2ayRTl5OmNUDK2bHu9QQrNIYnXog2zP26pAWxDVpz2YdkOmB56HNrt21bZE2dvIGbqrvbKjb9K1q95tlqt9WRq9lDmKxA+3dE2TzQPfzqpk6uKxQxRJ4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717431062; c=relaxed/simple;
-	bh=a7HaajZH1onoF7BEaMl7LJMhcs+YBupE9HdQ0Tm2cnM=;
-	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=I2IPVg2O7TOxnrf0VrOyaVw6RD+iBL7VIpktyWpSO3Ehk4Y3W2NVl79rIIL1P9ZQGd7XhWZDZuYtWsZtGwDcNevo+GPT1eWdSSm8s6lNaGuK6PnEC5NwYCrKI3r7uG0A9q41UKCmf6Q+YsxSfZeQPtnOLXCIcbXIL7hPufsQ8ms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=ec1EpI/Z; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com [209.85.167.71])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id B10193FE68
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 16:10:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1717431055;
-	bh=vU5/sQdk1KvDzjQYZ2m7el5n+WnYafJy1tTstO9fsbo=;
-	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=ec1EpI/ZnZaNbFyYaw4OdNLdGqXvgn6mGAIQ1UC4SOr3yCDJptgd9SvQTRbaIP9tj
-	 s5WJrzfcHSevqUltFPJMOJd0iNhnYx2/8U9lhvKrxtSRO70wGy+KCmY8IYVzRzmA1R
-	 Ce9it4n46vEenC1MbmoAslYw2fJ9JYR7CzoTaDmByZOkw1xg7e4lzRDlIGBQPhO2s/
-	 K/WqnohGFITONnOswA+BAtqtjfOr6l0663tkYKTBMuqsAhaEtYL/n0XxZFt79iz+jh
-	 ioBUoEAjTrSbA3Uluu5YCkb/hHTGthcq+G7qp0mdQ9gXnl6V3xLfoXrZc6svUv3hq6
-	 FsKmjGFoZhXRA==
-Received: by mail-lf1-f71.google.com with SMTP id 2adb3069b0e04-5234e83c4a6so40237e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 09:10:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717431055; x=1718035855;
-        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vU5/sQdk1KvDzjQYZ2m7el5n+WnYafJy1tTstO9fsbo=;
-        b=O5EoELR98MENI07WTPS5r5C5nzsvKPmTfNaMrdENsyKIgNbonHWOhAFh2QddgUmgUR
-         +EcE+xvUW0ufTF5Ofg5ut6jTOrmciKtdcTUL5BdJImA89kLaGuRGyKDlSwQlapAnYtl4
-         c5QKRWm+cPBdCrG+Tgr+mfojp5IJ/GtrwmeNMd0qKgOTsUp7MKtrnKrTihB4VF8TDAoD
-         YPl+mlw9lNDQeMokdWdlLSevuy7Vg4lEOt/SJCjBqV4hnOwfYhvqbFQuA2iSTzrP6gm/
-         kxBRBGO1QkpVM+AhmjHq+N/dNu+9o4hbapD4YJm0qIKwUf3mbxgTYSk8F5nOqY/qHHbR
-         qdIg==
-X-Forwarded-Encrypted: i=1; AJvYcCWFUaUb5/Q8SzAUxHBmN72BeNyyscexuK5rjLPN1hJvvzIxPd8JA9xFv8xrafZeuXNVsKEdaEAKSjU4vf59P1hydg1yL51LIeAwYTQ5
-X-Gm-Message-State: AOJu0Yy43dyLnrNfAAQNRb6FzJaHkBIa/1ggsOMphcotC8RUMuR89Eqx
-	ddHQLIhXykfnQjjxP/944QtQIyWZh1/wsAIZ7v4JufK+ZVydzAsH+ptPqyE1+lSyOf3DOxtdrhw
-	5IIeTumLgzBATmG8hX8/A4E21fqu8tur2g1Blybj5ADL0X+0vfQlaZmyuSb4KgVoVwG6gH54OiX
-	PFusB0LniJQkUWVAaxmskGOweRyXHApdTXuoOrtDOM83vaDM9k36x/
-X-Received: by 2002:a19:7604:0:b0:529:b9ad:52b5 with SMTP id 2adb3069b0e04-52b896c1655mr5647289e87.41.1717431055148;
-        Mon, 03 Jun 2024 09:10:55 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFX6z4960cX+FBq7s+WxsbEO4lbLdIqqK/67kXSz/Vcjt4Ec0DAtIzwSWZ6eBsX3hWA66D8uBk/mSKdElTxnrs=
-X-Received: by 2002:a19:7604:0:b0:529:b9ad:52b5 with SMTP id
- 2adb3069b0e04-52b896c1655mr5647266e87.41.1717431054746; Mon, 03 Jun 2024
- 09:10:54 -0700 (PDT)
-Received: from 348282803490 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 3 Jun 2024 16:10:52 +0000
-From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-In-Reply-To: <20240603150759.9643-1-matthias.bgg@kernel.org>
-References: <20240603150759.9643-1-matthias.bgg@kernel.org>
+	s=arc-20240116; t=1717431068; c=relaxed/simple;
+	bh=9TtpEg0d9jwyQuUY93dODJHGQxosbUK9a3fXAOtQvA0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cscFbmLZpdHu1KDwfG1zWnOVvdBB1vqhWB2kfXbq9rkyGk+/ZXTRB//9hfDhBJFx80oTVCTUUyuFAu217iKHtXRF8VmEbnVbdKpf1X/yu5BHClSlR505HrWFZIBrVAQ3ZQ6z2Lqti0RJ5bA4QDgaJKdqkTKPzyI01WI7IkyqQ3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 49D2F1042;
+	Mon,  3 Jun 2024 09:11:30 -0700 (PDT)
+Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5615D3F64C;
+	Mon,  3 Jun 2024 09:11:04 -0700 (PDT)
+Date: Mon, 3 Jun 2024 17:11:01 +0100
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH v2 2/2] firmware: arm_scmi: mailbox: support P2A channel
+ completion
+Message-ID: <Zl3rFTKrctdWcDBZ@pluto>
+References: <20240510-scmi-notify-v2-0-e994cf14ef86@nxp.com>
+ <20240510-scmi-notify-v2-2-e994cf14ef86@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Date: Mon, 3 Jun 2024 16:10:52 +0000
-Message-ID: <CAJM55Z82+_RL1Z+DCW+_xgE7ZMmiWdPekCt6qtREPXg1jB+68g@mail.gmail.com>
-Subject: Re: [PATCH] riscv: dts: starfive: Update flash partition layout
-To: matthias.bgg@kernel.org, kernel@esmil.dk, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: devicetree@vger.kernel.org, aou@eecs.berkeley.edu, duwe@suse.de, 
-	linux-kernel@vger.kernel.org, palmer@dabbelt.com, 
-	heinrich.schuchardt@canonical.com, paul.walmsley@sifive.com, 
-	linux-riscv@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240510-scmi-notify-v2-2-e994cf14ef86@nxp.com>
 
-matthias.bgg@ wrote:
-> From: Matthias Brugger <matthias.bgg@gmail.com>
->
-> Up to now, the describe flash partition layout has some gaps.
-> Use the whole flash chip by getting rid of the gaps.
->
-> Suggested-by: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
-> Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
+On Fri, May 10, 2024 at 11:19:48AM +0800, Peng Fan (OSS) wrote:
+> From: Peng Fan <peng.fan@nxp.com>
+> 
+> i.MX95 System Manager firmware is fully interrupt driven. The notification
+> channel needs completion interrupt to drive its notification queue. Without
+> completion interrupt, the notification will work abnormal.
+> 
 
-Hi Matthias,
+Hi Peng,
 
-Thanks for the patch.
+Thanks to have addressed also the case of mailbox controllers with unidirectional
+channels for P2A completion, but I have a further observation down
+below, which I missed last time.
 
->
+> - Add an optional unidirectional mailbox channel. If the channel flag has
+>   INTR set, and the completion interrupt channel is provided, issue the
+>   mbox message to Platform after the channel is freed.
+> - Support bidirectional channel completion interrupt.
+> 
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 > ---
->
->  arch/riscv/boot/dts/starfive/jh7110-common.dtsi | 7 ++-----
->  1 file changed, 2 insertions(+), 5 deletions(-)
->
-> diff --git a/arch/riscv/boot/dts/starfive/jh7110-common.dtsi b/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
-> index 8ff6ea64f0489..37b4c294ffcc5 100644
-> --- a/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
-> +++ b/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
-> @@ -321,16 +321,13 @@ partitions {
->  			#size-cells = <1>;
->
->  			spl@0 {
-> -				reg = <0x0 0x80000>;
-> +				reg = <0x0 0xf0000>;
+>  drivers/firmware/arm_scmi/common.h  |  1 +
+>  drivers/firmware/arm_scmi/mailbox.c | 60 +++++++++++++++++++++++++++++++++----
+>  drivers/firmware/arm_scmi/shmem.c   |  5 ++++
+>  3 files changed, 60 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/firmware/arm_scmi/common.h b/drivers/firmware/arm_scmi/common.h
+> index b5ac25dbc1ca..4b8c5250cdb5 100644
+> --- a/drivers/firmware/arm_scmi/common.h
+> +++ b/drivers/firmware/arm_scmi/common.h
+> @@ -326,6 +326,7 @@ void shmem_clear_channel(struct scmi_shared_mem __iomem *shmem);
+>  bool shmem_poll_done(struct scmi_shared_mem __iomem *shmem,
+>  		     struct scmi_xfer *xfer);
+>  bool shmem_channel_free(struct scmi_shared_mem __iomem *shmem);
+> +bool shmem_channel_intr_enabled(struct scmi_shared_mem __iomem *shmem);
+>  
+>  /* declarations for message passing transports */
+>  struct scmi_msg_payld;
+> diff --git a/drivers/firmware/arm_scmi/mailbox.c b/drivers/firmware/arm_scmi/mailbox.c
+> index 615a3b2ad83d..adb69a6a0223 100644
+> --- a/drivers/firmware/arm_scmi/mailbox.c
+> +++ b/drivers/firmware/arm_scmi/mailbox.c
+> @@ -21,6 +21,7 @@
+>   * @cl: Mailbox Client
+>   * @chan: Transmit/Receive mailbox uni/bi-directional channel
+>   * @chan_receiver: Optional Receiver mailbox unidirectional channel
+> + * @chan_platform_receiver: Optional Platform Receiver mailbox unidirectional channel
+>   * @cinfo: SCMI channel info
+>   * @shmem: Transmit/Receive shared memory area
+>   */
+> @@ -28,6 +29,7 @@ struct scmi_mailbox {
+>  	struct mbox_client cl;
+>  	struct mbox_chan *chan;
+>  	struct mbox_chan *chan_receiver;
+> +	struct mbox_chan *chan_platform_receiver;
+>  	struct scmi_chan_info *cinfo;
+>  	struct scmi_shared_mem __iomem *shmem;
+>  };
+> @@ -91,6 +93,8 @@ static bool mailbox_chan_available(struct device_node *of_node, int idx)
+>   *		 for replies on the a2p channel. Set as zero if not present.
+>   * @p2a_chan: A reference to the optional p2a channel.
+>   *	      Set as zero if not present.
+> + * @p2a_rx_chan: A reference to the optional p2a completion channel.
+> + *	      Set as zero if not present.
+>   *
+>   * At first, validate the transport configuration as described in terms of
+>   * 'mboxes' and 'shmem', then determin which mailbox channel indexes are
+> @@ -98,8 +102,8 @@ static bool mailbox_chan_available(struct device_node *of_node, int idx)
+>   *
+>   * Return: 0 on Success or error
+>   */
+> -static int mailbox_chan_validate(struct device *cdev,
+> -				 int *a2p_rx_chan, int *p2a_chan)
+> +static int mailbox_chan_validate(struct device *cdev, int *a2p_rx_chan,
+> +				 int *p2a_chan, int *p2a_rx_chan)
+>  {
+>  	int num_mb, num_sh, ret = 0;
+>  	struct device_node *np = cdev->of_node;
+> @@ -109,8 +113,9 @@ static int mailbox_chan_validate(struct device *cdev,
+>  	dev_dbg(cdev, "Found %d mboxes and %d shmems !\n", num_mb, num_sh);
+>  
+>  	/* Bail out if mboxes and shmem descriptors are inconsistent */
+> -	if (num_mb <= 0 || num_sh <= 0 || num_sh > 2 || num_mb > 3 ||
+> -	    (num_mb == 1 && num_sh != 1) || (num_mb == 3 && num_sh != 2)) {
+> +	if (num_mb <= 0 || num_sh <= 0 || num_sh > 2 || num_mb > 4 ||
+> +	    (num_mb == 1 && num_sh != 1) || (num_mb == 3 && num_sh != 2) ||
+> +	    (num_mb == 4 && num_sh != 2)) {
+>  		dev_warn(cdev,
+>  			 "Invalid channel descriptor for '%s' - mbs:%d  shm:%d\n",
+>  			 of_node_full_name(np), num_mb, num_sh);
+> @@ -139,6 +144,7 @@ static int mailbox_chan_validate(struct device *cdev,
+>  		case 1:
+>  			*a2p_rx_chan = 0;
+>  			*p2a_chan = 0;
+> +			*p2a_rx_chan = 0;
+>  			break;
+>  		case 2:
+>  			if (num_sh == 2) {
+> @@ -148,10 +154,17 @@ static int mailbox_chan_validate(struct device *cdev,
+>  				*a2p_rx_chan = 1;
+>  				*p2a_chan = 0;
+>  			}
+> +			*p2a_rx_chan = 0;
+>  			break;
+>  		case 3:
+>  			*a2p_rx_chan = 1;
+>  			*p2a_chan = 2;
+> +			*p2a_rx_chan = 0;
+> +			break;
+> +		case 4:
+> +			*a2p_rx_chan = 1;
+> +			*p2a_chan = 2;
+> +			*p2a_rx_chan = 3;
+>  			break;
+>  		}
+>  	}
+> @@ -166,12 +179,12 @@ static int mailbox_chan_setup(struct scmi_chan_info *cinfo, struct device *dev,
+>  	struct device *cdev = cinfo->dev;
+>  	struct scmi_mailbox *smbox;
+>  	struct device_node *shmem;
+> -	int ret, a2p_rx_chan, p2a_chan, idx = tx ? 0 : 1;
+> +	int ret, a2p_rx_chan, p2a_chan, p2a_rx_chan, idx = tx ? 0 : 1;
+>  	struct mbox_client *cl;
+>  	resource_size_t size;
+>  	struct resource res;
+>  
+> -	ret = mailbox_chan_validate(cdev, &a2p_rx_chan, &p2a_chan);
+> +	ret = mailbox_chan_validate(cdev, &a2p_rx_chan, &p2a_chan, &p2a_rx_chan);
+>  	if (ret)
+>  		return ret;
+>  
+> @@ -229,6 +242,17 @@ static int mailbox_chan_setup(struct scmi_chan_info *cinfo, struct device *dev,
+>  		}
+>  	}
+>  
+> +	if (!tx && p2a_rx_chan) {
+> +		smbox->chan_platform_receiver = mbox_request_channel(cl, p2a_rx_chan);
+> +		if (IS_ERR(smbox->chan_platform_receiver)) {
+> +			ret = PTR_ERR(smbox->chan_platform_receiver);
+> +			if (ret != -EPROBE_DEFER)
+> +				dev_err(cdev, "failed to request SCMI P2A Receiver mailbox\n");
+> +			return ret;
+> +		}
+> +	}
+> +
+> +
+>  	cinfo->transport_info = smbox;
+>  	smbox->cinfo = cinfo;
+>  
+> @@ -243,9 +267,11 @@ static int mailbox_chan_free(int id, void *p, void *data)
+>  	if (smbox && !IS_ERR(smbox->chan)) {
+>  		mbox_free_channel(smbox->chan);
+>  		mbox_free_channel(smbox->chan_receiver);
+> +		mbox_free_channel(smbox->chan_platform_receiver);
+>  		cinfo->transport_info = NULL;
+>  		smbox->chan = NULL;
+>  		smbox->chan_receiver = NULL;
+> +		smbox->chan_platform_receiver = NULL;
+>  		smbox->cinfo = NULL;
+>  	}
+>  
+> @@ -300,8 +326,30 @@ static void mailbox_fetch_notification(struct scmi_chan_info *cinfo,
+>  static void mailbox_clear_channel(struct scmi_chan_info *cinfo)
+>  {
+>  	struct scmi_mailbox *smbox = cinfo->transport_info;
+> +	struct device *cdev = cinfo->dev;
+> +	struct mbox_chan *intr;
+> +	int ret;
+>  
+>  	shmem_clear_channel(smbox->shmem);
+> +
+> +	if (!shmem_channel_intr_enabled(smbox->shmem))
+> +		return;
+> +
+> +	if (smbox->chan_platform_receiver)
+> +		intr = smbox->chan_platform_receiver;
+> +	else if (smbox->chan)
+> +		intr = smbox->chan;
+> +	else {
+> +		dev_err(cdev, "Channel INTR wrongly set?\n");
+> +		return;
+> +	}
+> +
+> +	ret = mbox_send_message(intr, NULL);
+> +	/* mbox_send_message returns non-negative value on success, so reset */
+> +	if (ret > 0)
+> +		ret = 0;
+> +
+> +	mbox_client_txdone(intr, ret);
 
-..this is definitely fine, but..
+Looking at mbox_client_txdone() implementation this call is allowed only
+if the txdone_method is TXDONE_BY_ACK, which in turn depend on the type of
+underlying mbox controller that you are using AND/OR the SCMI client configuration
+(knows_tx_done), so I dont think you can call this unconditionally without the
+risk of hitting the related dev_err() in mbox_client_txdone if the underlying
+mbox controller was instead supposed to issue an mbox_chan_txdone() on its own.
 
->  			};
->  			uboot-env@f0000 {
->  				reg = <0xf0000 0x10000>;
->  			};
->  			uboot@100000 {
-> -				reg = <0x100000 0x400000>;
-> -			};
-> -			reserved-data@600000 {
-> -				reg = <0x600000 0xa00000>;
-> +				reg = <0x100000 0xf00000>;
+IOW, if the mbox controller is operating in TXDONE_BY_IRQ mode or in
+TXDONE_BY_POLL (and that would be the case if polling is used since the RX channel
+does NOT set the client flag cl->knows_txdone to true, so TXDONE_BY_ACK is not used
+as an override) this should hit the dev_err() mentioned above...
 
-Do we know that all of the VF2 1.2A, VF2 1.3B and Milk-V Mars boards have at
-least 15kB SPI flash chips? In other words were there a reason this previously
-ended at 10kB?
+dont you see any error ?
 
-Also it looks like my Mars board and VF2 1.3B both report discovering a
-"gd25lq128d" chip of 16kB, so why stop at 15kB?
+which mailbox controller do you use ?
 
-/Emil
+does your mailbox controller NOT set txdone_irq and NEITHER txdone_poll ? 
+(so defaulting to TDONE_BY_ACK in your case ?)
+
+Thanks,
+Cristian
+
 
