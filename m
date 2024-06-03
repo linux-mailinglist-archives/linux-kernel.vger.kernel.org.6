@@ -1,192 +1,313 @@
-Return-Path: <linux-kernel+bounces-199279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C1B28D84D5
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:22:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5C418D84DE
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:24:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16CD71F239EB
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 14:22:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C32CFB2444A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 14:24:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F0A412E1FF;
-	Mon,  3 Jun 2024 14:22:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A879012E1FF;
+	Mon,  3 Jun 2024 14:24:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Mi3zd3Yg"
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2066.outbound.protection.outlook.com [40.107.212.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="c2NIJJ2b"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29D8A12EBD3;
-	Mon,  3 Jun 2024 14:22:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717424551; cv=fail; b=KPuhO6qrgJuB+/2KJ1+SEGfJwrsu6nn9TIuvhDMcGoqyE2+gOFNLZTvh79zyh01pxeDcA1DYGPw4HoNRyBvBoDjN6Paykt9CYV5MD9Ks0PJbLislY/Bz9m3MNVzSYd3ewTFL6jTgDGHdBmGaJhmGJZb6RCKZz74jgjSSeg9zL9Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717424551; c=relaxed/simple;
-	bh=KqSfQG1ciyxgY4Hmaz99xlAG2xniGeiHsray4VAsqqU=;
-	h=Message-ID:Date:Cc:Subject:To:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=ZIDz089awVDejObhkVngHsSplB0eEfEqLunovxLZLfjZ5eN4AVfDH3ZUjU6YmgxMBjHlTdS5w6JoqjZ9XpBkV9x+56qKwX94qkrPUUGW0QwnkHBRfR42JUALeKlta+MxKAuMkApQyhhtAFrrsyCD67COZj7mPZR5Qk9iFh/bMZg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Mi3zd3Yg; arc=fail smtp.client-ip=40.107.212.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=M7Up5psk4q2BzRbfAjWLA14kSQd0UmNAfpv+IcKul31ZAsDd/AAORs78D5YJEWC8o2zLQilkoOEaoBtgMLS8yBcHTBUJvTsSjLu7tAPqnCs5ngcDuLyvdv9P7iD5xW1Xycn096q0MK3lWgxz5j9CTLyPyO4/DUNfoDLldK0eyxyJmHMWZQkm+rSEShW8ZK/2APYLQINloEf4GKG91VXX0aGuBzpZtko5u2YscYPF7OqprhDrKKV0q7uoaGIO27Wbdg2UNEqjnXURbhZGBGXE39mBzt342kchYFq+uicKWGGelV2nfbE+yjnnD0xOOWdXSmxSW9LyxlnaDti6+aPY9w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=UksDgjYE1E+zG79+4IbMa9gxmiYh8FwJV8aNoIKmG7c=;
- b=MAU0EmgjlOQ/sjlt5Jg9y4CoFWn8ypkVb4kRE7RtqLgmdvXk1rfLPZjUV3bQzW0l7aFDXYrxKo3KBj523gN3DtBgakPnKUqGyOG/p+obiylAAO0z+XbJaR409zbIGBB4yNk6CiyL34LgEUdQqxs9XQQMssSymD4aVbp5tIitvj9YfLf07moU+cPPrckZI4zsqi3v7IgFXRDjjZETa9PwojtWUlw7JD80wQyUdWHT/Fd8d2P+jqR1jn/YdZf7CsSyH/5KDFW1uDRwhFRU/murO+1cTM3j9/koofMyW8cQVmRtGlaIx96vGIk/tRq3if63RtiJWWiKLh8PrpZlQ6DcRg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UksDgjYE1E+zG79+4IbMa9gxmiYh8FwJV8aNoIKmG7c=;
- b=Mi3zd3YgzYJDfy0qHgauM3vie1lQL5d9ln0yPKrfImSvVL65iFxVv3cMqV8FeQ0WDx2dzEF0KrOSgU1naFxCS++B6G2CvdLxrdymiqIydtgWrBXMJXfdZJ0/6TAz94n7W2qfmW7yjJS3r5qblwWxbgcummvSunh7EcPPKTWGXBU=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from BN8PR12MB3108.namprd12.prod.outlook.com (2603:10b6:408:40::20)
- by MN0PR12MB6200.namprd12.prod.outlook.com (2603:10b6:208:3c3::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.22; Mon, 3 Jun
- 2024 14:22:24 +0000
-Received: from BN8PR12MB3108.namprd12.prod.outlook.com
- ([fe80::43a5:ed10:64c2:aba3]) by BN8PR12MB3108.namprd12.prod.outlook.com
- ([fe80::43a5:ed10:64c2:aba3%6]) with mapi id 15.20.7633.021; Mon, 3 Jun 2024
- 14:22:24 +0000
-Message-ID: <3990ab6d-6217-4e10-bda9-6b5c7bd668c0@amd.com>
-Date: Mon, 3 Jun 2024 10:22:22 -0400
-User-Agent: Mozilla Thunderbird
-Cc: yazen.ghannam@amd.com, linux-edac@vger.kernel.org,
- linux-kernel@vger.kernel.org, tony.luck@intel.com, x86@kernel.org,
- avadhut.naik@amd.com, john.allen@amd.com
-Subject: Re: [PATCH 3/9] x86/mce: Increment MCP count only for timer calls
-To: Borislav Petkov <bp@alien8.de>
-References: <20240523155641.2805411-1-yazen.ghannam@amd.com>
- <20240523155641.2805411-4-yazen.ghannam@amd.com>
- <20240524145335.GAZlCp7wAO22acrGyP@fat_crate.local>
-Content-Language: en-US
-From: Yazen Ghannam <yazen.ghannam@amd.com>
-In-Reply-To: <20240524145335.GAZlCp7wAO22acrGyP@fat_crate.local>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA1PR04CA0005.namprd04.prod.outlook.com
- (2603:10b6:806:2ce::14) To BN8PR12MB3108.namprd12.prod.outlook.com
- (2603:10b6:408:40::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB6F612C554
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 14:24:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717424678; cv=none; b=mf8TzzFvyK93mb0fSunyx+zgSzwBCk9fFBv+fWgQQNl1hA/09HMvkDHCfPHg8lw/uDczAjK36Fcnu/l7CDUXv74qOdAxpbTAbofQ/Kba7P3zj2agNM+3tac5uPO4bra9IPM10Jnv7oElaz+E2erpDV/GHElhpSAfnhbVEhCkkRA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717424678; c=relaxed/simple;
+	bh=fGz33xrm67s/3xOHzi6aui49BF2BT8E4NGLtM0smGzk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XIYeEPpDpAQ4UeGUX/AgynkT6jxLb3WqDpgDom0pmJbBXHsvMANwF82sS/TE5whHeerE73ZzQObBRXdUiMQPSsNdxDi9fuy6I01TPa7O4Pvb4gZWpfRioZwOxbXxt6NkKZ1HyYjUexD5RPIFrXAC8XN24xWyHeE1oLEGuqg8y8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=c2NIJJ2b; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52b7c82e39eso4378696e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 07:24:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717424674; x=1718029474; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=HU67Frz4KLIhKgIgnFIoqv4QJpo9MobOI1TbJCtTOKA=;
+        b=c2NIJJ2bK6WqFv5Qsf+bO2Hy4ysU3AeoCalAlQzXTPBf8V/hxBvFzh0ElSRO06L3ch
+         nrd6xg6TXKupXMuEnvjDnuporii6fkRuNDdfhP4DxhS5B34hCcAHabRhuRGQNlBwLe+w
+         UZXAhIkIJWSvj+HwAywJz1lt7JLLz9Cv7JwgnK9qUbaLgjS1e/ghn1RgxeLWDhvP5G7u
+         /jnbUz7xEJKtjAttA2PJKeYewMT1VFxw6uiv434iQwCiEP0CwDKB5CP3kZYd/zHHJCB0
+         VwzUHdlDA3M6GxoQ3cPjzKVF4te4inkPr4UzZoXR3yt5Q2ybGfLj3onripX3JtOnjJ20
+         AoVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717424674; x=1718029474;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HU67Frz4KLIhKgIgnFIoqv4QJpo9MobOI1TbJCtTOKA=;
+        b=PfpI4gb3wpTdLikLgeCJ+HIBzvZ1Do80wMJYD8lnLSZcZDnEWo77rCXFUq0vQqx8di
+         gliyVLRbWj7AJaS+WLRToAxJOFFA8BEbz75CL4AUsp81NqdPFVNYIkUHGwfxVN8L5Gff
+         xmi/TdrwBuERNgT5AEAOE1ZL4bqziRoHlmr/KLNLJHMJCdYmNprqf2IoSp68TgTwwP65
+         LfzkSH9CGpQWtvX0n8781GumEIt6xmkEaA24v2Ii8aDacln2qZRGIDKLNFkc0PwYdHmn
+         CFFfw5EzVoTmmMkxOCEavhuum4VpXjkYxHaSnW6sQkcSWSMbLc30EQ0Xc7KQeRrvRYJF
+         mscw==
+X-Forwarded-Encrypted: i=1; AJvYcCUrfyuUmw+8rXnsm2seIlZ/RSmQWidwAG243uZ+o1P0PsuuhIEuyp1KnQKn4eYNZFaKb9zVL+6PlVv26B+2S/b3TuKl+RcS2VYhGfX5
+X-Gm-Message-State: AOJu0YyD+S8hjYASlGl6FEQESOAepX6YKeKrOPd02lphBatY/ZBk8xwt
+	EARhn/sy3cGA9my7olPZ2LdVu/TjHNnlerQOhJgVvO7uHZAItyXnF2Ot4ccj841LSX/kmirAzCu
+	+VK5TkWySDGGeUNfGHMrDa2qWTN3JJ3JplPNWEQ==
+X-Google-Smtp-Source: AGHT+IFSkxpmdDquL3WnBhvl8mkF9cp/jBUTPsK7w7Fy+lvXPrOrD8Bxo9GvPPtUOX2jGfVSOpcaXCUHE8mly6n5yrM=
+X-Received: by 2002:a19:8c1e:0:b0:522:34a9:a7e7 with SMTP id
+ 2adb3069b0e04-52b89576a71mr6693705e87.22.1717424673764; Mon, 03 Jun 2024
+ 07:24:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN8PR12MB3108:EE_|MN0PR12MB6200:EE_
-X-MS-Office365-Filtering-Correlation-Id: ef79ecde-713c-4817-3eb4-08dc83d896bd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|1800799015|366007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?S1h4blJSNUpQRTV0U2JTSmpPSGl0TVBBdXZvZVBtdVhoSU4xRWlnaG1JVW9j?=
- =?utf-8?B?NmdIUTJsbHpnV2xQRlZ2eTJqT3VqY1lsYVJ4RTJzQVFmVkVwU25lK29kUktl?=
- =?utf-8?B?SWIvYVJJVy95bFY1bzMzV0RqZ2VzWTBCdy9EMHZ5cnZjTnM5R3FVKzltMDFa?=
- =?utf-8?B?Z1JwcWRnRWJaSEdnaHVUc3BaMFNOaUYrbzl2QjhLckFQcTgzdmliVU9Ed2o4?=
- =?utf-8?B?aGxGS3o1QzRqYjJOWHFZM1ZQVFpNdFp3NGdrNXA1T0hPK0IwZ0FFRW5hZW1U?=
- =?utf-8?B?QitWMlhHM1I2dGErQTNpbjgweWtkS3RJSHhlMzQ1MVpSSmdDTXNlelk5ck93?=
- =?utf-8?B?WndGM2dXNXBkZW9SNGZVajgxT2Y5a3M3YlVVQUM0SkVSVGhubmFIMzhHY3Bv?=
- =?utf-8?B?T0lpTmZRYVNteXA0OXdmcHdjbzZBNDdjN3I4ZVh0ZXpvSjZ2eUMzbXU1TitQ?=
- =?utf-8?B?d2dBSjY1NllRelVadS8wZ0dGZkFwa2Y4RXVxTkFvMTdnckZab2s4bllsSjIy?=
- =?utf-8?B?bGxIdzNGUFltY3JFWnVwczhtQndXcXBTSUFOZW9uejVEbkhBeEVyMlpBUmpx?=
- =?utf-8?B?TDZVSjYwUU8rK3FPVytiMVl0c0NaUGZnV2xZNGlKRDBZUE4xc2dpb0dZZmhD?=
- =?utf-8?B?U2JHaFFES1IxZXlwWElNanRXb3RoRGpWMUxKYm5GN1FEQVNpS1BCbnNBSzZs?=
- =?utf-8?B?b1JHWTlwWlpGVngraDgvTmlkK0g0RGMrNFU3SnI4RThFS0xLMmtubU9yVlJk?=
- =?utf-8?B?Q3k4d044SzVJVXBGa0k4TmpCOXZkQTBiVHVYcmxDZHVFK3o5dm1KWEtwMmtM?=
- =?utf-8?B?OTNmY2lpNG50ZVd0ZkpCOVdQWHRrNG1iKzFuM25kbmJkTWtxVmRWYldiUjhQ?=
- =?utf-8?B?aEsyNkJZeXE1YVVIbTRDUU5qaXltUGRaQmFKRnhseTdUSnkzZE9TTHhVci9R?=
- =?utf-8?B?dHNqdVJQbWd3bUhEcDY0eFpuWXplVVhueU5VSjJHb2xzVGo1RUxSMTgvbWlu?=
- =?utf-8?B?U1grdFJ3a0FjMlNyWDlrNzNwdXlVMHZtU3dZcnNDWW9LejBZbUxxcVVVazFx?=
- =?utf-8?B?R01MVUxyckIrT1JTRWtTRlI3SDQ2dTZTampVV3E4VFE2WTc2NVBKbFk4ZXlp?=
- =?utf-8?B?Wi9nK3VncHRhUHhFSVBrUjk4RGN5QXNyb0dpSUkyaXlBT1FKTGVka09Ib1pK?=
- =?utf-8?B?NmtKb1I1UU1JNTJBY0JhSUxOVEs4WHo4U1ZGSG1qb1kzOFdYRUdHTTFBTUlv?=
- =?utf-8?B?bEo1L0Mxb3JwNHQyMmFCQktjdXpTY0oxNGFOK0JEVks4c1BUK3FHYUljYUxk?=
- =?utf-8?B?QzJBU1hvTzEyS1VTS2Vib1FzR05rUFJHQ25XOXBLVEJCcWhBSVFFZFNHaGtC?=
- =?utf-8?B?ekU1cnUxTHcxTUZnaHpzWmJEUzF6bVJzTW1HSG5zOXVVdCtJTjNKVGl2blVk?=
- =?utf-8?B?a25VWmdpL0pGakhWaXpxSm05WG1DcG5kTlo3emtvc1ZrRjlhelZFZnhaQ1RO?=
- =?utf-8?B?Z245WWRTeVZHUjFKYk5td2lyM1RibElVb0M4VTN2WEgwOG1qdkhLbG5UaWg2?=
- =?utf-8?B?c2svY3FYWHp2U0Uyakp3eEl2ZFp0MUhzNllTa2ZwSUZrYkl5TEpJWUptNHEv?=
- =?utf-8?B?ZXFUTVdmMkU4L2xQcjZGWml1SGgzVVZJUVpqa3lxOU5FL2pzQUJTcFRET0JY?=
- =?utf-8?B?Z05FZmh2OXAvSjQ2VUJpVzdJT1ovaTNTdDBhVUEvM0M3dTdacGVOV0hRPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN8PR12MB3108.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(1800799015)(366007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?aHdCQ1ZPajB3OUhsVkFZTGFJbXFDaGtsdFpKZDhVZHU2UFhNcFZJaFgwcG1M?=
- =?utf-8?B?TUF4dkM3YU1jK3RnaDBnOVQ3c1VKcWlMMEs5ay9VUjFuZldyWWl1T2xEYkdh?=
- =?utf-8?B?Z2t6L1dpMHMrR0x2dm9LVGdYUlhEM3lMSm9GelhJMExBQWRRbXBPdDg1TWk0?=
- =?utf-8?B?cXlJclAvNkE3R3g1azdyV2s4ZDBVY1dlVVd1SVFpUEpQVmdlbXJqN25vbzk2?=
- =?utf-8?B?QWhtRkFnd1dSM3VIc2VEdU42dHpQdS92bjNJWVpvM2NBZXlGbEduY21DUU5V?=
- =?utf-8?B?dHVTZkVTQ21ONkFtcXl2dlZHR1VPdVZGWDhndG9EMjdVOVRvYU4xdVVmWlBZ?=
- =?utf-8?B?WGpxUUlHRElDMUt3M3VHRHo1MDI4UGxtYUZUTWlUSnZQQzI1UVdKZjgySXNn?=
- =?utf-8?B?UGEvQlI4NHZ4dDVrNjFKQVlWUVRjU2JnRzg2TkZhMjVhOFhSN0RoT3JtY3Qw?=
- =?utf-8?B?Y2RGd0NxWVdKYmQydnU1YUk5UmJPbmNleXZjdndBVWJIZjlMVW9vNTRtc01E?=
- =?utf-8?B?Mk9FZ3c0SGRPVzJLbFQ0ek00eDc1MFVKQ2FDQnd1YjFCalZmVyszazdZaTN1?=
- =?utf-8?B?aURiK0FHc3c1WWIxVUF2SllrUVhnNDhTQ3VBNXA1TTNEcXB3MHU1YVlmSVVu?=
- =?utf-8?B?SzltY3F4b1FJZUV2RDA1a3J3SU5VOEV5SDRlRVRpSVlnU3JCNGF6Y09oTFBC?=
- =?utf-8?B?SE5zelYxclBIOURyb3hxOWlXc2hOaVc2bVVDU1poMlVocjZEaFc2d0RkQ1li?=
- =?utf-8?B?RGVYVEJwTEtFdGVTaHpxK0tWVnRES1dBOGNtWjVQQ3NUOHZBNUlEc2NmYkJp?=
- =?utf-8?B?VnJiS2tGV0h0WnIyTE9pZVBORXBGZ3dNT0JmTEFjNU93MDhoWGNoaTRMdHB4?=
- =?utf-8?B?b3o0SW85ZjNFS0M3ZjIwNmdzNTNpdmtKUUhSWVZEb2VhQ2hvY1R4MkNmWUJh?=
- =?utf-8?B?aUJMRlhlYzRHcjhPN3J0UkdOSW93NmRoQmRMOUR2MjJKVVZpcnpTQUlBSU1C?=
- =?utf-8?B?YzRoQnpVTUhwM1B6bnpMdEg3S2xLQ2RHVmxHOE9rUUJBWWlQNkRJcEFkTmRa?=
- =?utf-8?B?ajlVWDRFc2NqaUxaTVNnM3M3UTJvUElHTWNlMmJZU3ZDczhnYi9kOXBReERk?=
- =?utf-8?B?ZUFlTnJ1M2JHUWVmSDhZUUVPakd2elFvaGZsekY2NXFSajUyb1BhemxPSEJR?=
- =?utf-8?B?K01nb3JxdTdKanR1YSt6ZW5rNmYwY1RxSXd0eVM4c3IrODRPSWk4T2w1Z3dZ?=
- =?utf-8?B?NUsyUFlPTHFJWUdpMVFlbmZrbVlTMDdJa24zblZhNFBxREdNdVVpTzF3MkFw?=
- =?utf-8?B?am0xZnl1SnNwVDQwSlQycE1kRHh3M1dEdjl1bUhMVXA0akg2VmcycGppTFBs?=
- =?utf-8?B?NlgxSmJJcGxOT3U2U2VIUUlLU2RmRnlnSnNqeDZSOTJLeTVPUGNsK2EzcFNL?=
- =?utf-8?B?Yno0SSs0THNiRWxnSGI0cC9ZenpON1h6MTFQNWJxcjdHdVF5aC9VVjJjeDlS?=
- =?utf-8?B?SkNOR2xoTzYxMjVLbml2dnhVTVdIZElhREk0bW9MbVJGSHNRNVRtWGdhcUNp?=
- =?utf-8?B?MXp1eTBXRmRSaWNScEJDL0t3R1JNeTlnUUNEbUMzK2VGTXJLZDlaQm95bTdJ?=
- =?utf-8?B?TmwwTVY2QTA0WnI2Y2RxSi9SVkJCWUJINTFLeGVPU25uTjBSZVdZbmJYQ3Ru?=
- =?utf-8?B?Z1EzWE9iY0M2b0NJYjA1MWdWMnNWdjlPY3JCcXJESms3R2ZwOENOWkw2N2Nv?=
- =?utf-8?B?azEybHBOcHZWbklwZW5mMGpkeDVJeWUrNXJPMzY2Y2FzejcrVkRIT1gyNjVt?=
- =?utf-8?B?OUpSaVlEZDFCU0h2dVZ0QVNWMVJ3ZXFYc1EyYTRTaDA1WGg1NW14Qm96bXJh?=
- =?utf-8?B?RitnRU5vN0Z6eUZQSlR0cEV1Rkg0S2RLYjArRlBsTFQxdnhBZFlxbmkraHBD?=
- =?utf-8?B?K2xhYUQ4VEtTVUhzakJDZDN2dVZNMFZzNDR3Y2JLdUpzek9iTnRQdTBNN0wy?=
- =?utf-8?B?QkZKL3l3ZlRnNE12UGUwMStCdzJ0TUorWUVwMW90Z3J0bldKRmtvWHJDRVlX?=
- =?utf-8?B?SU9TeUxoSlFiMGJ4WUZDallQU0FZYmI3ZzZYU1Q3RGtLR1ZHWTF1cjU1QjVl?=
- =?utf-8?Q?O0pEq5zWzCs7oA+V5DCrZRMCu?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ef79ecde-713c-4817-3eb4-08dc83d896bd
-X-MS-Exchange-CrossTenant-AuthSource: BN8PR12MB3108.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jun 2024 14:22:24.6924
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: QwsLgIRxd43rzI5IIycIHSumSHBAvkDDr1LZQRdp/WeNGaIUpG1xjc2HkUUS+49MmzGx0kO+8S0AK/shTcopgA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6200
+References: <20240521081001.2989417-1-arnaud.pouliquen@foss.st.com>
+ <20240521081001.2989417-6-arnaud.pouliquen@foss.st.com> <ZlZM/hgSO4EeRVqS@p14s>
+ <d9e1356a-d8bf-40a3-9a78-424ead8089a9@foss.st.com> <ZleReEIgD8O5zATO@p14s>
+ <5b3f8346-d6db-4da3-9613-20cf9f3c226b@foss.st.com> <ZloIwfFwkpKYLU9k@p14s> <047e31c6-1b6d-4792-a913-4197e2e53b32@foss.st.com>
+In-Reply-To: <047e31c6-1b6d-4792-a913-4197e2e53b32@foss.st.com>
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Mon, 3 Jun 2024 08:24:22 -0600
+Message-ID: <CANLsYkx4MeUwoFF9aUutdQxOaLbbJ7q0cWw+EMVDXoprnm8QLA@mail.gmail.com>
+Subject: Re: [PATCH v5 5/7] remoteproc: core: support of the tee interface
+To: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, linux-remoteproc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 5/24/24 10:53 AM, Borislav Petkov wrote:
-> On Thu, May 23, 2024 at 10:56:35AM -0500, Yazen Ghannam wrote:
->> MCP count is currently incremented for any call to machine_check_poll().
->> Therefore, the count includes calls from the timer, boot-time polling,
->> and interrupt handlers.
->>
->> Only increment the MCP count when called from the timer so as to avoid
->> double counting the interrupt handlers.
-> 
-> Well, but, every time the function is called, we did poll the banks.
-> Sure, the count is part of /proc/interrupts but we did poll the banks in
-> those other cases too. So I think showing an accurate poll number is
-> actually representing the truth, no matter where it is shown...
-> 
+On Mon, 3 Jun 2024 at 02:22, Arnaud POULIQUEN
+<arnaud.pouliquen@foss.st.com> wrote:
+>
+> Hello Mathieu,
+>
+> On 5/31/24 19:28, Mathieu Poirier wrote:
+> > On Thu, May 30, 2024 at 09:42:26AM +0200, Arnaud POULIQUEN wrote:
+> >> Hello Mathieu,
+> >>
+> >> On 5/29/24 22:35, Mathieu Poirier wrote:
+> >>> On Wed, May 29, 2024 at 09:13:26AM +0200, Arnaud POULIQUEN wrote:
+> >>>> Hello Mathieu,
+> >>>>
+> >>>> On 5/28/24 23:30, Mathieu Poirier wrote:
+> >>>>> On Tue, May 21, 2024 at 10:09:59AM +0200, Arnaud Pouliquen wrote:
+> >>>>>> 1) on start:
+> >>>>>> - Using the TEE loader, the resource table is loaded by an external entity.
+> >>>>>> In such case the resource table address is not find from the firmware but
+> >>>>>> provided by the TEE remoteproc framework.
+> >>>>>> Use the rproc_get_loaded_rsc_table instead of rproc_find_loaded_rsc_table
+> >>>>>> - test that rproc->cached_table is not null before performing the memcpy
+> >>>>>>
+> >>>>>> 2)on stop
+> >>>>>> The use of the cached_table seems mandatory:
+> >>>>>> - during recovery sequence to have a snapshot of the resource table
+> >>>>>>   resources used,
+> >>>>>> - on stop to allow  for the deinitialization of resources after the
+> >>>>>>   the remote processor has been shutdown.
+> >>>>>> However if the TEE interface is being used, we first need to unmap the
+> >>>>>> table_ptr before setting it to rproc->cached_table.
+> >>>>>> The update of rproc->table_ptr to rproc->cached_table is performed in
+> >>>>>> tee_remoteproc.
+> >>>>>>
+> >>>>>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> >>>>>> ---
+> >>>>>>  drivers/remoteproc/remoteproc_core.c | 31 +++++++++++++++++++++-------
+> >>>>>>  1 file changed, 23 insertions(+), 8 deletions(-)
+> >>>>>>
+> >>>>>> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> >>>>>> index 42bca01f3bde..3a642151c983 100644
+> >>>>>> --- a/drivers/remoteproc/remoteproc_core.c
+> >>>>>> +++ b/drivers/remoteproc/remoteproc_core.c
+> >>>>>> @@ -1267,6 +1267,7 @@ EXPORT_SYMBOL(rproc_resource_cleanup);
+> >>>>>>  static int rproc_set_rsc_table_on_start(struct rproc *rproc, const struct firmware *fw)
+> >>>>>>  {
+> >>>>>>          struct resource_table *loaded_table;
+> >>>>>> +        struct device *dev = &rproc->dev;
+> >>>>>>
+> >>>>>>          /*
+> >>>>>>           * The starting device has been given the rproc->cached_table as the
+> >>>>>> @@ -1276,12 +1277,21 @@ static int rproc_set_rsc_table_on_start(struct rproc *rproc, const struct firmwa
+> >>>>>>           * this information to device memory. We also update the table_ptr so
+> >>>>>>           * that any subsequent changes will be applied to the loaded version.
+> >>>>>>           */
+> >>>>>> -        loaded_table = rproc_find_loaded_rsc_table(rproc, fw);
+> >>>>>> -        if (loaded_table) {
+> >>>>>> -                memcpy(loaded_table, rproc->cached_table, rproc->table_sz);
+> >>>>>> -                rproc->table_ptr = loaded_table;
+> >>>>>> +        if (rproc->tee_interface) {
+> >>>>>> +                loaded_table = rproc_get_loaded_rsc_table(rproc, &rproc->table_sz);
+> >>>>>> +                if (IS_ERR(loaded_table)) {
+> >>>>>> +                        dev_err(dev, "can't get resource table\n");
+> >>>>>> +                        return PTR_ERR(loaded_table);
+> >>>>>> +                }
+> >>>>>> +        } else {
+> >>>>>> +                loaded_table = rproc_find_loaded_rsc_table(rproc, fw);
+> >>>>>>          }
+> >>>>>>
+> >>>>>> +        if (loaded_table && rproc->cached_table)
+> >>>>>> +                memcpy(loaded_table, rproc->cached_table, rproc->table_sz);
+> >>>>>> +
+> >>>>>
+> >>>>> Why is this not part of the else {} above as it was the case before this patch?
+> >>>>> And why was an extra check for ->cached_table added?
+> >>>>
+> >>>> Here we have to cover 2 use cases if rproc->tee_interface is set.
+> >>>> 1) The remote processor is in stop state
+> >>>>      - loaded_table points to the resource table in the remote memory and
+> >>>>      -  rproc->cached_table is null
+> >>>>      => no memcopy
+> >>>> 2) crash recovery
+> >>>>      - loaded_table points to the resource table in the remote memory
+> >>>>      - rproc-cached_table point to a copy of the resource table
+> >>>
+> >>> A cached_table exists because it was created in rproc_reset_rsc_table_on_stop().
+> >>> But as the comment says [1], that part of the code was meant to be used for the
+> >>> attach()/detach() use case.  Mixing both will become extremely confusing and
+> >>> impossible to maintain.
+> >>
+> >> i am not sure to understand your point here... the cached_table table was
+> >> already existing for the "normal" case[2]. Seems to me that the cache table is
+> >> needed on stop in all scenarios.
+> >>
+> >> [2]
+> >> https://elixir.bootlin.com/linux/v4.20.17/source/drivers/remoteproc/remoteproc_core.c#L1402
+> >>
+> >>>
+> >>> I think the TEE scenario should be as similar as the "normal" one where TEE is
+> >>> not involved.  To that end, I suggest to create a cached_table in
+> >>> tee_rproc_parse_fw(), exactly the same way it is done in
+> >>> rproc_elf_load_rsc_table().  That way the code path in
+> >>> rproc_set_rsc_table_on_start() become very similar and we have a cached_table to
+> >>> work with when the remote processor is recovered.  In fact we may not need
+> >>> rproc_set_rsc_table_on_start() at all but that needs to be asserted.
+> >>
+> >> This is was I proposed in my V4 [3]. Could you please confirm that this aligns
+> >> with what you have in mind?
+> >
+> > After spending more time on this I have the following 3 observations:
+> >
+> > 1) We need a ->cached_table, otherwise the crash recovery path gets really
+> > messy.
+> >
+> > 2) It _might_ be a good idea to rename tee_rproc_get_loaded_rsc_table() to
+> > tee_rproc_find_loaded_rsc_table() to be aligned with the scenario where the
+> > firmware is loaded by the remoteproc core.  I think you had
+> > tee_rproc_find_loaded_rsc_table() in the first place and I asked you to change
+> > it.  If so, apologies - reviewing patches isn't an exact science.
+> >
+> > 3) The same way ->cached_table is created in rproc_elf_load_rsc_table(), which
+> > is essentially ops::parse_fw(), we should create one in tee_rproc_parse_fw()
+> > with a kmemdup().  Exactly the same as in rproc_elf_load_rsc_table().  In
+> > tee_rproc_parse_fw(), @rsc_table should be iounmap'ed right away so that we
+> > don't need to keep a local variable to free it later.  In rproc_start() the call
+> > to rproc_find_loaded_rsc_table() will get another mapped handle to the resource
+> > table in memory.  It might be a little unefficient but it sure beats doing a lot
+> > of modifications in the core.
+>
+> Remapping the resource table in rproc_find_loaded_rsc_table will require that we
+> unmap it on rproc_stop before updating rproc->table_ptr to rproc->cached_table.
+>
 
-Okay, fair enough.
+Exactly.
 
-In this case, should we also increment the count in __mc_scan_banks()?
+> On the other hand, I wonder if declaring the memory region in the stm32-rproc DT
+> node would address this second mapping and avoid a map in
+> rproc_find_loaded_rsc_table().
+>
 
-Thanks,
-Yazen
+That would be even better.
+
+> I will do the V6 integrating your suggestions and having a deeper look on the
+> resource table map/unmap.
+>
+> >
+> > As I said above this isn't an exact science and we may need to changes more
+> > things but at least it should take us a little further.
+>
+> That seems to me reasonable and part of the normal upstream process :)
+>
+>
+> Thanks,
+> Arnaud
+>
+> >
+> > Thanks,
+> > Mathieu
+> >
+> >> In such a case, should I keep the updates below in
+> >> rproc_reset_rsc_table_on_stop(), or should I revert to using rproc->rsc_table to
+> >> store the pointer to the resource table in tee_remoteproc for the associated
+> >> memory map/unmap?"
+> >>
+> >> [3]
+> >> https://patchwork.kernel.org/project/linux-remoteproc/patch/20240308144708.62362-2-arnaud.pouliquen@foss.st.com/
+> >>
+> >> Thanks,
+> >> Arnaud
+> >>
+> >>>
+> >>> [1]. https://elixir.bootlin.com/linux/v6.10-rc1/source/drivers/remoteproc/remoteproc_core.c#L1565
+> >>>
+> >>>>      => need to perform the memcpy to reapply settings in the resource table
+> >>>>
+> >>>> I can duplicate the memcpy in if{} and else{} but this will be similar code
+> >>>> as needed in both case.
+> >>>> Adding rproc->cached_table test if proc->tee_interface=NULL seems also
+> >>>> reasonable as a memcpy from 0 should not be performed.
+> >>>>
+> >>>>
+> >>>>>
+> >>>>> This should be a simple change, i.e introduce an if {} else {} block to take
+> >>>>> care of the two scenarios.  Plus the comment is misplaced now.
+> >>>>
+> >>>> What about split it in 2 patches?
+> >>>> - one adding the test on rproc->cached_table for the memcpy
+> >>>> - one adding the if {} else {}?
+> >>>>
+> >>>> Thanks,
+> >>>> Arnaud
+> >>>>
+> >>>>
+> >>>>>
+> >>>>> More comments tomorrow.
+> >>>>>
+> >>>>> Thanks,
+> >>>>> Mathieu
+> >>>>>
+> >>>>>> +        rproc->table_ptr = loaded_table;
+> >>>>>> +
+> >>>>>>          return 0;
+> >>>>>>  }
+> >>>>>>
+> >>>>>> @@ -1318,11 +1328,16 @@ static int rproc_reset_rsc_table_on_stop(struct rproc *rproc)
+> >>>>>>          kfree(rproc->clean_table);
+> >>>>>>
+> >>>>>>  out:
+> >>>>>> -        /*
+> >>>>>> -         * Use a copy of the resource table for the remainder of the
+> >>>>>> -         * shutdown process.
+> >>>>>> +        /* If the remoteproc_tee interface is used, then we have first to unmap the resource table
+> >>>>>> +         * before updating the proc->table_ptr reference.
+> >>>>>>           */
+> >>>>>> -        rproc->table_ptr = rproc->cached_table;
+> >>>>>> +        if (!rproc->tee_interface) {
+> >>>>>> +                /*
+> >>>>>> +                 * Use a copy of the resource table for the remainder of the
+> >>>>>> +                 * shutdown process.
+> >>>>>> +                 */
+> >>>>>> +                rproc->table_ptr = rproc->cached_table;
+> >>>>>> +        }
+> >>>>>>          return 0;
+> >>>>>>  }
+> >>>>>>
+> >>>>>> --
+> >>>>>> 2.25.1
+> >>>>>>
 
