@@ -1,79 +1,74 @@
-Return-Path: <linux-kernel+bounces-198961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC0D88D7FBD
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 12:09:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC6348D7FBF
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 12:10:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2858A1C21372
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 10:09:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E5BB1F21254
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 10:10:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87152824B1;
-	Mon,  3 Jun 2024 10:09:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79490824AB;
+	Mon,  3 Jun 2024 10:10:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qWmpd119"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gjQRRJRM"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2816E7FBA3
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 10:09:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C39D81735;
+	Mon,  3 Jun 2024 10:10:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717409375; cv=none; b=bqwGWXAqmH2SOqBvgJIsVw+iT9yrdJSpOHQl58MpO9CF4O8cpm9eshROXIv+n7yzdckSyAzLkqRpjhJR1CnvjxojJZ9QtUgFHegNj1Opb057Sn7uOLnvY4KlxLjmZeK0zgphWL5WApqhc/TCM+OwD6NjE54JbqiniFOwLjrL2wE=
+	t=1717409404; cv=none; b=Jprnb4mYFzxGcsOEHOATVdoNaASPDEZb3tIrr5UU1uZznnFLVRIyP3IZ2c8pWYFZo244/A7C5gqCsT1OudLLwWnCgw/FueoaXF6rSNxrJEyZluSmhfMWVgZwqX2k5SsfFF+26/aSMuEFcFjelP/mYYg7qERWDqOOya/uGk0uC28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717409375; c=relaxed/simple;
-	bh=8BHuRrOCb7HqxYBRn8MN8jOZMiTqLn7G0LCNqkdK4g4=;
+	s=arc-20240116; t=1717409404; c=relaxed/simple;
+	bh=LkYwNLsQN08KA07aWVeaexXqORXA0nPpRiIBfLn5iMI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tGb3e2pg235BNCTPVr0QR5ThZv05PMMNtKYzMb+q9GYUi56u7Ft/wklnwuIvex7vpjO3BQav3RekKs/BMNr81wyI9tNRQu4wwIoxH6FWHR+JcG9oqNXG0QNC5bQKctSszREeUL5sUb2SAk11jkcDFCry1bLi+doDqlL1Xc1932E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qWmpd119; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52b87e8ba1eso3960264e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 03:09:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717409372; x=1718014172; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bJLtTZK6q2KW9686AABWiaK/qwi0Q/2bFgFZ6sr25AY=;
-        b=qWmpd119ZH9IJUIJaWrZ0wjy8WLax/tvBVJa/rZUwAKzdG5HQDz9ES8UgRT4R5SnNA
-         d/xu7fdN3gpMY5N5R1K6EqGRUsBtCPWdacDXsf6gTXoSndtGCnvL3u9w7p1rSikFI0GG
-         1K/Qc2vyjvwTC6ctwDAfUAjoc3KF4z+GK9NEmSP7hV5JlEZSiyvFvUZ9WW28OCn8QSbB
-         5b3BRgvqLhHVh9rLbJEyFiybJ7lSc92nvUcBnNT+/rr4ss7iqil/2D+21UNiEo49w0os
-         1TV+kzkoSLHu9JAaPZh63oIg8HFA2shsZXtXvoATD3+bk27w5jtzD/BGXF4L2Wd/finU
-         JwBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717409372; x=1718014172;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bJLtTZK6q2KW9686AABWiaK/qwi0Q/2bFgFZ6sr25AY=;
-        b=tnoIHH4541pzSTmBFeBDC/XgFkWOsbwgaLsqSJCxn02PRj9prf1oLGcgILie9KUhIq
-         2YQ0fqdx7G9slX3KzNRA+i65jLfIySMUxwjATwn9pJfcLrk4lcbaN/WcFVK36D/t9ncY
-         lSNJn6sIR7rYuf7O9MhlyvDnhu/GlTOHVQN3dH8LGwuysF9FZHvHdazQK8MhL2GwseT8
-         LjRxmOJ2X9Tg84tS6qVSaqn0lC9LKd3lfnUh3rZBrMzYMr1N/A//c9d06xF82i6Yyj5F
-         mcz2X++mcgdqyMgAcc9pPksUVlo5wq+qCMNb4t2OfsBKdFnFZatA8+BHkXIOt4GEgnvw
-         OqWA==
-X-Forwarded-Encrypted: i=1; AJvYcCUAdGVXLOYBcY1xz7uOAeKBd0TWLc7c8OjlOB9XG1MVEsXdfJHrjIJTIAC1zsbswJtb4UtTdC8qnefmfnrvomi6+trur6ZAl+2xuV14
-X-Gm-Message-State: AOJu0YzCyNfaPwUawV5J7VyS6NM2tJTf8Pxlw7Nimfb79HKcAQxWgT4V
-	PQn/92eQGpYV5AykfiW7rt8zsOOWfZiToSjvb+MrrIzA2DI0q6+07oV8cdsodGE=
-X-Google-Smtp-Source: AGHT+IGCq8KtySBjiO3I17k/w9tsAcyJFI+HJb53zZa5FlUDBMyLfUGxolu/CGhhXVOn0KcBxeTPXw==
-X-Received: by 2002:ac2:58d8:0:b0:52b:82d5:b361 with SMTP id 2adb3069b0e04-52b8959629amr6345911e87.37.1717409372262;
-        Mon, 03 Jun 2024 03:09:32 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52b90b6b142sm739556e87.247.2024.06.03.03.09.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Jun 2024 03:09:31 -0700 (PDT)
-Date: Mon, 3 Jun 2024 13:09:30 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Johan Hovold <johan+linaro@kernel.org>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Abel Vesa <abel.vesa@linaro.org>, linux-usb@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] usb: typec: ucsi: glink: increase max ports for x1e80100
-Message-ID: <xpknnz3qjtm2t3hazvx67c5flob25vg6jek2w7frxotmp22qym@lqexbdtynl7o>
-References: <20240603100007.10236-1-johan+linaro@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=U4HQPKgV06+iqayyi14Mvm6+2HLVvHbuS6twNYsPHJ5KLc9YTHkmrKN4zez7Sgy2PdhNttfae1Oqe3uLkRAgtmP5AuWi7b4Z9SAIcOL1/R1Pf6vny92i0EcbU3bWDBOGlgWgtXHJcHqmTmgheDnuSfGxnwnAuBnBkfNXvu84sfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gjQRRJRM; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717409402; x=1748945402;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=LkYwNLsQN08KA07aWVeaexXqORXA0nPpRiIBfLn5iMI=;
+  b=gjQRRJRMwtAdrN+uOB4TCRuZIUDXvz93iUNEkHPwt40wGtZB8rMceuEE
+   91/ztzPnhMeaFBgD277ZbFDjsT2DipKzvmqUYYFGM5cAsetkODGV8SnEU
+   eU7YP/z18Y3Kvh90/Gif3aaJw+r4gvUCEXAYNvObRJDtuB5Zr98c5jCq+
+   6Fp2fO7gn47Kx7mhppA5a8PUg6zt4sa24ux52Lo0pIBg2Vc3MANKP9/jQ
+   MnZZ/QIDEZogtP0JyqeMey7VC7+dDWCbyBZB6ViGzMjSgxapJ8i6yca0m
+   fsX1yWl+Fsg8JBsh8+irLBJGLrI+oAMuJmg0WNd4hep1drkILBW+uNhJz
+   Q==;
+X-CSE-ConnectionGUID: AXiKss46TqW5pVlNApj0dg==
+X-CSE-MsgGUID: FLcs+WHdTzCKF5c01bMjMw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11091"; a="13643358"
+X-IronPort-AV: E=Sophos;i="6.08,211,1712646000"; 
+   d="scan'208";a="13643358"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2024 03:10:01 -0700
+X-CSE-ConnectionGUID: C+srMFuLQUWFU9oKCIwsiA==
+X-CSE-MsgGUID: UZXocqB+RRSE0wKkuLywYQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,211,1712646000"; 
+   d="scan'208";a="68000287"
+Received: from kuha.fi.intel.com ([10.237.72.185])
+  by fmviesa001.fm.intel.com with SMTP; 03 Jun 2024 03:09:58 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 03 Jun 2024 13:09:56 +0300
+Date: Mon, 3 Jun 2024 13:09:56 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+Cc: gregkh@linuxfoundation.org, dmitry.baryshkov@linaro.org,
+	jthies@google.com, bleung@chromium.org, abhishekpandit@chromium.org,
+	saranya.gopal@intel.com, lk@c--e.de, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, pmalani@chromium.org
+Subject: Re: [PATCH 1/2] usb: typec: ucsi: Add new capability bits
+Message-ID: <Zl2WdKqjQXVyQ6O9@kuha.fi.intel.com>
+References: <20240524105837.15342-1-diogo.ivo@tecnico.ulisboa.pt>
+ <20240524105837.15342-2-diogo.ivo@tecnico.ulisboa.pt>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,22 +77,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240603100007.10236-1-johan+linaro@kernel.org>
+In-Reply-To: <20240524105837.15342-2-diogo.ivo@tecnico.ulisboa.pt>
 
-On Mon, Jun 03, 2024 at 12:00:07PM +0200, Johan Hovold wrote:
-> The new X Elite (x1e80100) platform has three ports so increase the
-> maximum so that all ports can be registered.
+On Fri, May 24, 2024 at 11:58:20AM +0100, Diogo Ivo wrote:
+> Newer UCSI versions defined additional optional capability bits. Add
+> their definitions.
 > 
-> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+> Signed-off-by: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+
 > ---
->  drivers/usb/typec/ucsi/ucsi_glink.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/usb/typec/ucsi/ucsi.h | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
 > 
-
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-
+> diff --git a/drivers/usb/typec/ucsi/ucsi.h b/drivers/usb/typec/ucsi/ucsi.h
+> index e70cf5b15562..ca4a879d9606 100644
+> --- a/drivers/usb/typec/ucsi/ucsi.h
+> +++ b/drivers/usb/typec/ucsi/ucsi.h
+> @@ -225,7 +225,13 @@ struct ucsi_capability {
+>  #define UCSI_CAP_CABLE_DETAILS			BIT(5)
+>  #define UCSI_CAP_EXT_SUPPLY_NOTIFICATIONS	BIT(6)
+>  #define UCSI_CAP_PD_RESET			BIT(7)
+> -#define UCSI_CAP_GET_PD_MESSAGE		BIT(8)
+> +#define UCSI_CAP_GET_PD_MESSAGE			BIT(8)
+> +#define UCSI_CAP_GET_ATTENTION_VDO		BIT(9)
+> +#define UCSI_CAP_FW_UPDATE_REQUEST		BIT(10)
+> +#define UCSI_CAP_NEGOTIATED_PWR_LEVEL_CHANGE	BIT(11)
+> +#define UCSI_CAP_SECURITY_REQUEST		BIT(12)
+> +#define UCSI_CAP_SET_RETIMER_MODE		BIT(13)
+> +#define UCSI_CAP_CHUNKING_SUPPORT		BIT(14)
+>  	u8 reserved_1;
+>  	u8 num_alt_modes;
+>  	u8 reserved_2;
+> -- 
+> 2.45.1
 
 -- 
-With best wishes
-Dmitry
+heikki
 
