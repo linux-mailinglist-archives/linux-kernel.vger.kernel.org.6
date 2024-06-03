@@ -1,120 +1,894 @@
-Return-Path: <linux-kernel+bounces-199087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B81E8D81F8
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 14:12:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3E268D81FF
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 14:13:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 090A528A335
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 12:12:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 497EA1F21BDC
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 12:13:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4BD712880D;
-	Mon,  3 Jun 2024 12:12:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B188612B159;
+	Mon,  3 Jun 2024 12:12:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J+nACH0N"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Vchlq1sv"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10D5012838F
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 12:12:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1237E1292D5;
+	Mon,  3 Jun 2024 12:12:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717416720; cv=none; b=cEelh6xnyb8WXIIVtsB/isXIH9PNgt6ybhoAiRKM2Kn6Qo/XGNPub4LBBO/sM+SpXprs68JXDTjvZgcq/V0nKqEMYAZdohLs0h6PQ5S+qIaaT0u5XAf0Z1825QAgHFS7jODGkdl9ry37AJECq5S4qku+JPWwUEOY+8og+9PQack=
+	t=1717416772; cv=none; b=fBDSnD+cglmI//+wWmhmQ8y++3v06iZv1Z2LaIKWUKCefRnzdkBm+iRzjhUW8qZblHVLvgLkw9CvNfvR6fATnSL5MUYE5/uEU2ly+ibMSzVBTIkimLadEfcjqRf4ZPYzYgdT4EZfZXHSXeFp8cp6nZMxsBQK8adq1YaSw5TbNm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717416720; c=relaxed/simple;
-	bh=lfdsBvkspToag3c/bUTNykKvotNjW4bx0y0kYS1g6DI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H+72syTeY9r8qs2PD5ZrEV1qxdqH3baPnE4ft8P1pyqnb6cVXdCtrEBdaMGEVCCbGiwAJVcV8Nh4wPKSe0YfFxiipLZAG0siHOO943XtzW76gcq3RAJwVXFScIE2dJKOeLOZZ4fkYFxdIbvqSPsOloB2MspNGOTOrP4u1WLo3nM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J+nACH0N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59BD0C32789;
-	Mon,  3 Jun 2024 12:11:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717416719;
-	bh=lfdsBvkspToag3c/bUTNykKvotNjW4bx0y0kYS1g6DI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=J+nACH0N3OERh+uTdpTd1+TVluP5kqPo1Oo6tP+KKUeE9/WuE3z4YTlDgEbmH21BT
-	 y05bLUgOC9kWbCtFyTKUHDjyCuOp76EPRI4Ek1Elm8x73DFX4vxQNCam2Z5iNfe/i7
-	 DgK57ezDygRoz1qvg80prkeWuwYbsAGEM/lw1FSZtn0IwWGS6V5bpELYdRihxIuEDu
-	 yCzNwpkOKwxFA4Gpe4aTKPPb0fS8fagSmk8H+u+G4evgQcpDec454LGPaiDVosjDoD
-	 L4lo8iXqMi9pGez80iYHdgyfF6yzIpwYJRPND3ajsezj5jioK2gwh6xO5byJJnE0Ob
-	 flE6jrZ1Z5vbQ==
-Date: Mon, 3 Jun 2024 13:11:53 +0100
-From: Mark Brown <broonie@kernel.org>
-To: "Ding, Shenghao" <shenghao-ding@ti.com>
-Cc: "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
-	"lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-	"perex@perex.cz" <perex@perex.cz>,
-	"pierre-louis.bossart@linux.intel.com" <pierre-louis.bossart@linux.intel.com>,
-	"13916275206@139.com" <13916275206@139.com>,
-	"alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"liam.r.girdwood@intel.com" <liam.r.girdwood@intel.com>,
-	"tiwai@suse.de" <tiwai@suse.de>, "Xu, Baojun" <baojun.xu@ti.com>,
-	"soyer@irl.hu" <soyer@irl.hu>,
-	"Baojun.Xu@fpt.com" <Baojun.Xu@fpt.com>,
-	"yuhsuan@google.com" <yuhsuan@google.com>,
-	"Yue, Jaden" <jaden-yue@ti.com>, "Lo, Henry" <henry.lo@ti.com>,
-	"Navada Kanyana, Mukund" <navada@ti.com>,
-	"Hari, Raj" <s-hari@ti.com>,
-	"zhourui@huaqin.com" <zhourui@huaqin.com>
-Subject: Re: [EXTERNAL] Re: [PATCH v6] ASoC: tas2781: Fix wrong loading
- calibrated data sequence
-Message-ID: <90d891b7-1978-4a6c-86c6-bb693ce764d0@sirena.org.uk>
-References: <20240518141546.1742-1-shenghao-ding@ti.com>
- <171623322336.94469.13172149100331733795.b4-ty@kernel.org>
- <138b621eeccc47329ec5fc808790667f@ti.com>
+	s=arc-20240116; t=1717416772; c=relaxed/simple;
+	bh=YVPvCJMy5qsnekeKA4vXQvmEGfVKV8WJ5R5mOO6J5UY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=bxn3gHw0cAlgRCzAR2EG6Tx98WxwxsvWnMron2rQPjmNxjK/SvpSULj6V17IEqxK1qI137jnO+NAL7S7J+01wnGM58fWKO3v4U7ziQu2HfFw6kBhmWHCyAqx8f0NUPYY1bMxC5CnQbhC/csQ8JFhHsgI6s4MoGVjj0r+8xtjhnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Vchlq1sv; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 453CCFD7012910;
+	Mon, 3 Jun 2024 07:12:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1717416735;
+	bh=vL4fUwhsGdC8iMcNqwtCrFhQs8iKL9HeoibEwTqFKL4=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=Vchlq1svEN0/CROV24RrQS1qSKpv9B3xT3ygf43QspzieRlfOFqZExCrhdEVRY/mY
+	 QGlF6eR2OO22lGs9oTnWBn9TrKm6Ms3wo6ZWK4Pykp3mMVDM5mygmUZJqAvJn9hwMf
+	 wWzyVy96R+tWqQo9SeY0sLVvoETgNBqXFKVCplLw=
+Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 453CCFee011193
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 3 Jun 2024 07:12:15 -0500
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 3
+ Jun 2024 07:12:14 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 3 Jun 2024 07:12:14 -0500
+Received: from [10.24.69.25] (danish-tpc.dhcp.ti.com [10.24.69.25])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 453CC7or087029;
+	Mon, 3 Jun 2024 07:12:08 -0500
+Message-ID: <9bcc04a9-645a-4571-a679-ffe67300877a@ti.com>
+Date: Mon, 3 Jun 2024 17:42:06 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="t56nSOAk9HiTDqnB"
-Content-Disposition: inline
-In-Reply-To: <138b621eeccc47329ec5fc808790667f@ti.com>
-X-Cookie: Don't let your status become too quo!
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v9 2/2] net: ti: icssg_prueth: add TAPRIO offload
+ support
+Content-Language: en-US
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+CC: Jan Kiszka <jan.kiszka@siemens.com>,
+        Dan Carpenter
+	<dan.carpenter@linaro.org>,
+        Andrew Lunn <andrew@lunn.ch>, Simon Horman
+	<horms@kernel.org>,
+        Diogo Ivo <diogo.ivo@siemens.com>,
+        Wolfram Sang
+	<wsa+renesas@sang-engineering.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Niklas Schnelle <schnelle@linux.ibm.com>,
+        Vignesh Raghavendra
+	<vigneshr@ti.com>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Roger Quadros
+	<rogerq@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+        Jakub Kicinski
+	<kuba@kernel.org>, Eric Dumazet <edumazet@google.com>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <srk@ti.com>,
+        Jacob
+ Keller <jacob.e.keller@intel.com>,
+        Roger Quadros <rogerq@ti.com>
+References: <20240531044512.981587-1-danishanwar@ti.com>
+ <20240531044512.981587-1-danishanwar@ti.com>
+ <20240531044512.981587-3-danishanwar@ti.com>
+ <20240531044512.981587-3-danishanwar@ti.com>
+ <20240531135157.aaxgslyur5br6zkb@skbuf>
+From: MD Danish Anwar <danishanwar@ti.com>
+In-Reply-To: <20240531135157.aaxgslyur5br6zkb@skbuf>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+
+Hi Vladimir,
+
+On 31/05/24 7:21 pm, Vladimir Oltean wrote:
+> On Fri, May 31, 2024 at 10:15:12AM +0530, MD Danish Anwar wrote:
+>> From: Roger Quadros <rogerq@ti.com>
+>>
+>> The ICSSG dual-emac / switch firmware supports Enhanced Scheduled Traffic
+>> (EST – defined in P802.1Qbv/D2.2 that later got included in IEEE
+>> 802.1Q-2018) configuration. EST allows express queue traffic to be
+>> scheduled (placed) on the wire at specific repeatable time intervals. In
+>> Linux kernel, EST configuration is done through tc command and the taprio
+>> scheduler in the net core implements a software only scheduler
+>> (SCH_TAPRIO). If the NIC is capable of EST configuration,user indicate
+>> "flag 2" in the command which is then parsed by taprio scheduler in net
+>> core and indicate that the command is to be offloaded to h/w. taprio then
+>> offloads the command to the driver by calling ndo_setup_tc() ndo ops. This
+>> patch implements ndo_setup_tc() to offload EST configuration to ICSSG.
+> 
+> This is all a lot of verbiage about generic tc-taprio and nothing
+> concrete about the ICSSG implementation... It is useless, sorry.
+> 
+
+I will try to add more information about ICSSG and remove generic
+tc-taprio details.
+
+>>
+>> Signed-off-by: Roger Quadros <rogerq@ti.com>
+>> Signed-off-by: Vignesh Raghavendra <vigneshr@ti.com>
+>> Reviewed-by: Simon Horman <horms@kernel.org>
+>> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+>> ---
+>>  drivers/net/ethernet/ti/Kconfig              |   1 +
+>>  drivers/net/ethernet/ti/Makefile             |   1 +
+>>  drivers/net/ethernet/ti/icssg/icssg_prueth.c |   3 +
+>>  drivers/net/ethernet/ti/icssg/icssg_prueth.h |   2 +
+>>  drivers/net/ethernet/ti/icssg/icssg_qos.c    | 288 +++++++++++++++++++
+>>  drivers/net/ethernet/ti/icssg/icssg_qos.h    | 113 ++++++++
+>>  6 files changed, 408 insertions(+)
+>>  create mode 100644 drivers/net/ethernet/ti/icssg/icssg_qos.c
+>>  create mode 100644 drivers/net/ethernet/ti/icssg/icssg_qos.h
+>>
+>> diff --git a/drivers/net/ethernet/ti/Kconfig b/drivers/net/ethernet/ti/Kconfig
+>> index f160a3b71499..6deac9035610 100644
+>> --- a/drivers/net/ethernet/ti/Kconfig
+>> +++ b/drivers/net/ethernet/ti/Kconfig
+>> @@ -190,6 +190,7 @@ config TI_ICSSG_PRUETH
+>>  	depends on PRU_REMOTEPROC
+>>  	depends on ARCH_K3 && OF && TI_K3_UDMA_GLUE_LAYER
+>>  	depends on PTP_1588_CLOCK_OPTIONAL
+>> +	depends on NET_SCH_TAPRIO
+> 
+> I think the pattern should be "depends on NET_SCH_TAPRIO || NET_SCH_TAPRIO=n".
+> What you want is to be built as a module when taprio is a module,
+> because you use symbols exported by it (taprio_offload_get(), taprio_offload_free()).
+> 
+
+Sure.
+
+>>  	help
+>>  	  Support dual Gigabit Ethernet ports over the ICSSG PRU Subsystem.
+>>  	  This subsystem is available starting with the AM65 platform.
+>> diff --git a/drivers/net/ethernet/ti/Makefile b/drivers/net/ethernet/ti/Makefile
+>> index 59cd20a38267..0a86311bd170 100644
+>> --- a/drivers/net/ethernet/ti/Makefile
+>> +++ b/drivers/net/ethernet/ti/Makefile
+>> @@ -35,6 +35,7 @@ obj-$(CONFIG_TI_ICSSG_PRUETH) += icssg-prueth.o
+>>  icssg-prueth-y := icssg/icssg_prueth.o \
+>>  		  icssg/icssg_common.o \
+>>  		  icssg/icssg_classifier.o \
+>> +		  icssg/icssg_qos.o \
+>>  		  icssg/icssg_queues.o \
+>>  		  icssg/icssg_config.o \
+>>  		  icssg/icssg_mii_cfg.o \
+>> diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.c b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+>> index d159bdf7dd9d..8982ecb8a43d 100644
+>> --- a/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+>> +++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+>> @@ -706,6 +706,7 @@ static const struct net_device_ops emac_netdev_ops = {
+>>  	.ndo_eth_ioctl = emac_ndo_ioctl,
+>>  	.ndo_get_stats64 = emac_ndo_get_stats64,
+>>  	.ndo_get_phys_port_name = emac_ndo_get_phys_port_name,
+>> +	.ndo_setup_tc = icssg_qos_ndo_setup_tc,
+>>  };
+>>  
+>>  static int prueth_netdev_init(struct prueth *prueth,
+>> @@ -840,6 +841,8 @@ static int prueth_netdev_init(struct prueth *prueth,
+>>  	emac->rx_hrtimer.function = &emac_rx_timer_callback;
+>>  	prueth->emac[mac] = emac;
+>>  
+>> +	icssg_qos_tas_init(ndev);
+>> +
+>>  	return 0;
+>>  
+>>  free:
+>> diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.h b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
+>> index fab2428de78b..c6851546e6c5 100644
+>> --- a/drivers/net/ethernet/ti/icssg/icssg_prueth.h
+>> +++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
+>> @@ -37,6 +37,7 @@
+>>  #include "icssg_config.h"
+>>  #include "icss_iep.h"
+>>  #include "icssg_switch_map.h"
+>> +#include "icssg_qos.h"
+>>  
+>>  #define PRUETH_MAX_MTU          (2000 - ETH_HLEN - ETH_FCS_LEN)
+>>  #define PRUETH_MIN_PKT_SIZE     (VLAN_ETH_ZLEN)
+>> @@ -195,6 +196,7 @@ struct prueth_emac {
+>>  	/* RX IRQ Coalescing Related */
+>>  	struct hrtimer rx_hrtimer;
+>>  	unsigned long rx_pace_timeout_ns;
+>> +	struct prueth_qos qos;
+>>  };
+>>  
+>>  /**
+>> diff --git a/drivers/net/ethernet/ti/icssg/icssg_qos.c b/drivers/net/ethernet/ti/icssg/icssg_qos.c
+>> new file mode 100644
+>> index 000000000000..5e93b1b9ca43
+>> --- /dev/null
+>> +++ b/drivers/net/ethernet/ti/icssg/icssg_qos.c
+>> @@ -0,0 +1,288 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/* Texas Instruments ICSSG PRUETH QoS submodule
+>> + * Copyright (C) 2023 Texas Instruments Incorporated - http://www.ti.com/
+>> + */
+>> +
+>> +#include <linux/printk.h>
+>> +#include "icssg_prueth.h"
+>> +#include "icssg_switch_map.h"
+>> +
+>> +static void tas_update_fw_list_pointers(struct prueth_emac *emac)
+>> +{
+>> +	struct tas_config *tas = &emac->qos.tas.config;
+>> +
+>> +	if ((readb(tas->active_list)) == TAS_LIST0) {
+> 
+> Who and when updates tas->active_list from TAS_LIST0 to TAS_LIST1?
+>
+
+->emac_taprio_replace()
+	-> tas_update_oper_list()
+		-> tas_set_trigger_list_change()
+
+This API send a r30 command to firmware to trigger the list change
+`emac_set_port_state(emac, ICSSG_EMAC_PORT_TAS_TRIGGER);`
+
+This once firmware recives this command, it swaps the active and shadow
+list.
+
+emac_taprio_replace() calls tas_update_oper_list()
+
+In tas_update_oper_list() in the beginning active_list is 0 i.e.
+TAS_LIST0, tas_update_fw_list_pointers() is called which configures the
+active and shadow list pointers. TAS_LIST0 becomes the active_list and
+TAS_LIST1 becomes the shadow list.
+
+Let's say before this API was called, active_list is TAS_LIST0 (0) and
+shadow_list is TAS_LIST1.
+
+After getting the shadow_list we fill three different arrays,
+1. gate_mask_list[]
+2. win_end_time_list[]
+3. gate_close_time_list[][] - 2D array with size = num_entries * num_queues
+
+Driver only updates the shadow_list. Once shadow list is filled, we call
+tas_set_trigger_list_change() and ask firmware to change the active
+list. Now the shadow_list that we had filled (TAS_LIST1) will become
+active list and vice versa. We will again update our pointers
+
+This is how list is changed by calling tas_update_fw_list_pointers.
+
+>> +		tas->fw_active_list = emac->dram.va + TAS_GATE_MASK_LIST0;
+>> +		tas->fw_shadow_list = emac->dram.va + TAS_GATE_MASK_LIST1;
+>> +	} else {
+>> +		tas->fw_active_list = emac->dram.va + TAS_GATE_MASK_LIST1;
+>> +		tas->fw_shadow_list = emac->dram.va + TAS_GATE_MASK_LIST0;
+>> +	}
+>> +}
+>> +
+>> +static void tas_update_maxsdu_table(struct prueth_emac *emac)
+>> +{
+>> +	struct tas_config *tas = &emac->qos.tas.config;
+>> +	u16 __iomem *max_sdu_tbl_ptr;
+>> +	u8 gate_idx;
+>> +
+>> +	/* update the maxsdu table */
+>> +	max_sdu_tbl_ptr = emac->dram.va + TAS_QUEUE_MAX_SDU_LIST;
+>> +
+>> +	for (gate_idx = 0; gate_idx < TAS_MAX_NUM_QUEUES; gate_idx++)
+>> +		writew(tas->max_sdu_table.max_sdu[gate_idx], &max_sdu_tbl_ptr[gate_idx]);
+>> +}
+>> +
+>> +static void tas_reset(struct prueth_emac *emac)
+>> +{
+>> +	struct tas_config *tas = &emac->qos.tas.config;
+>> +	int i;
+>> +
+>> +	for (i = 0; i < TAS_MAX_NUM_QUEUES; i++)
+>> +		tas->max_sdu_table.max_sdu[i] = 2048;
+> 
+> Macro + short comment for the magic number, please.
+> 
+
+Sure I will add it. Each elements in this array is a 2 byte value
+showing the maximum length of frame to be allowed through each gate.
+
+>> +
+>> +	tas_update_maxsdu_table(emac);
+>> +
+>> +	writeb(TAS_LIST0, tas->active_list);
+>> +
+>> +	memset_io(tas->fw_active_list, 0, sizeof(*tas->fw_active_list));
+>> +	memset_io(tas->fw_shadow_list, 0, sizeof(*tas->fw_shadow_list));
+>> +}
+>> +
+>> +static int tas_set_state(struct prueth_emac *emac, enum tas_state state)
+>> +{
+>> +	struct tas_config *tas = &emac->qos.tas.config;
+>> +	int ret;
+>> +
+>> +	if (tas->state == state)
+>> +		return 0;
+>> +
+>> +	switch (state) {
+>> +	case TAS_STATE_RESET:
+>> +		tas_reset(emac);
+>> +		ret = emac_set_port_state(emac, ICSSG_EMAC_PORT_TAS_RESET);
+>> +		tas->state = TAS_STATE_RESET;
+>> +		break;
+>> +	case TAS_STATE_ENABLE:
+>> +		ret = emac_set_port_state(emac, ICSSG_EMAC_PORT_TAS_ENABLE);
+>> +		tas->state = TAS_STATE_ENABLE;
+>> +		break;
+>> +	case TAS_STATE_DISABLE:
+>> +		ret = emac_set_port_state(emac, ICSSG_EMAC_PORT_TAS_DISABLE);
+>> +		tas->state = TAS_STATE_DISABLE;
+> 
+> This can be expressed as just "tas->state = state" outside the switch statement.
+> But probably shouldn't be, if "ret != 0".
+
+Yes we shouldn't do that as we are sending the r30 command to firmware
+in each case.
+
+> 
+>> +		break;
+>> +	default:
+>> +		netdev_err(emac->ndev, "%s: unsupported state\n", __func__);
+> 
+> There are two levels of logging for this error, and this particular one
+> isn't useful. We can infer it went through the "default" case when the
+> printk below returned -EINVAL, because if that -EINVAL came from
+> emac_set_port_state(), that would have printed, in turn, "invalid port command".
+> 
+
+But, the enum tas_state and enum icssg_port_state_cmd are not 1-1 mapped.
+
+emac_set_port_state() will only return -EINVAL when `cmd >=
+ICSSG_EMAC_PORT_MAX_COMMANDS` which is 19. But a tas_state value of 3 is
+also invalid as we only support value of 0,1 and 2 so I think this print
+shoudl be okay
+
+enum tas_state {
+	TAS_STATE_DISABLE = 0,
+	TAS_STATE_ENABLE = 1,
+	TAS_STATE_RESET = 2,
+};
 
 
---t56nSOAk9HiTDqnB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> I don't think that a "default" case is needed here, as long as all enum
+> values are handled, and the input is sanitized everywhere (which it is).
+> 
 
-On Sun, Jun 02, 2024 at 01:11:39PM +0000, Ding, Shenghao wrote:
+I think the default case should remain. Without default case the
+function will return 0 even for invalid sates. By default ret = 0, in
+the tas_state passed to API is not valid, none of the case will be
+called, ret will remaing zero. No error will be printed and the function
+will return 0. Keeping default case makes sure that the wrong state was
+requested.
 
-> One of my customers requested tas2781 driver in kernel 6.10 to be merged =
-into kernel 6.1.=20
-> I wondered how I  can handle this. May I resubmit the whole code into lat=
-est 6.1 branch?
-> Looking forward to your reply. Thanks.
+>> +		ret = -EINVAL;
+>> +		break;
+>> +	}
+>> +
+>> +	if (ret)
+>> +		netdev_err(emac->ndev, "TAS set state failed %d\n", ret);
+> 
+> FWIW, emac_set_port_state() has its own logging. I don't necessarily see
+> the need for this print.
+> 
 
-You'd need to do something yourself - the stable kernels themselves
-don't add new features, and I think v6.1 is not updated any more anyway.
-The usual thing would be to do a backport and then publish it somehow,
-some vendors have git trees they use (some use github), some share
-patches via e-mail but there's a bunch of options there.
+This print we can remove. I don't see any need to keep this print as
+emac_set_port_state() will anyways print a ndetdev_err() if the cmd fails.
 
-If this is for some OS vendor (or for use with a specific OS) you may be
-able to work directly with them to add the driver, some OSs are open to
-that but some aren't.
+>> +	return ret;
+>> +}
+>> +
+>> +static int tas_set_trigger_list_change(struct prueth_emac *emac)
+>> +{
+>> +	struct tc_taprio_qopt_offload *admin_list = emac->qos.tas.taprio_admin;
+>> +	struct tas_config *tas = &emac->qos.tas.config;
+>> +	struct ptp_system_timestamp sts;
+>> +	u32 change_cycle_count;
+>> +	u32 cycle_time;
+>> +	u64 base_time;
+>> +	u64 cur_time;
+>> +
+>> +	/* IEP clock has a hardware errata due to which it wraps around exactly
+>> +	 * once every taprio cycle. To compensate for that, adjust cycle time
+>> +	 * by the wrap around time which is stored in emac->iep->def_inc
+>> +	 */
+>> +	cycle_time = admin_list->cycle_time - emac->iep->def_inc;
+>> +	base_time = admin_list->base_time;
+>> +	cur_time = prueth_iep_gettime(emac, &sts);
+>> +
+>> +	if (base_time > cur_time)
+>> +		change_cycle_count = DIV_ROUND_UP_ULL(base_time - cur_time, cycle_time);
+>> +	else
+>> +		change_cycle_count = 1;
+>> +
+>> +	writel(cycle_time, emac->dram.va + TAS_ADMIN_CYCLE_TIME);
+>> +	writel(change_cycle_count, emac->dram.va + TAS_CONFIG_CHANGE_CYCLE_COUNT);
+>> +	writeb(admin_list->num_entries, emac->dram.va + TAS_ADMIN_LIST_LENGTH);
+>> +
+>> +	/* config_change cleared by f/w to ack reception of new shadow list */
+>> +	writeb(1, &tas->config_list->config_change);
+>> +	/* config_pending cleared by f/w when new shadow list is copied to active list */
+>> +	writeb(1, &tas->config_list->config_pending);
+>> +
+>> +	return emac_set_port_state(emac, ICSSG_EMAC_PORT_TAS_TRIGGER);
+> 
+> The call path here is:
+> 
+> emac_taprio_replace()
+> -> tas_update_oper_list()
+>    -> tas_set_trigger_list_change()
+>       -> emac_set_port_state(emac, ICSSG_EMAC_PORT_TAS_TRIGGER);
+> -> tas_set_state(emac, TAS_STATE_ENABLE);
+>    -> emac_set_port_state(emac, ICSSG_EMAC_PORT_TAS_ENABLE);
+> 
+> I'm surprised by the calls to emac_set_port_state() in such a quick
+> succession? Is there any firmware requirement for how much should the
+> port stay in the TAS_TRIGGER state? Or is it not really a state, despite
+> it being an argument to a function named emac_set_port_state()?
+> 
 
---t56nSOAk9HiTDqnB
-Content-Type: application/pgp-signature; name="signature.asc"
+ICSSG_EMAC_PORT_TAS_TRIGGER is not a state. emac_set_port_state() sends
+a command to firmware, we call it r30 command. Driver then waits for the
+response for some time. If a successfull response is recived the
+function return 0 otherwise error.
 
------BEGIN PGP SIGNATURE-----
+Here first `emac_set_port_state(emac, ICSSG_EMAC_PORT_TAS_TRIGGER)` is
+called which will ask firmware to swap the active_list and shadow_list
+as explained above.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZdswgACgkQJNaLcl1U
-h9DcVgf/RD2+kBh2SKALVqSZ99xuZFSd990nWdqi3Aim8rirFq0UVLho/uxX8/9+
-+LdSe+lxv7oe6obTwdi+HHSOGc6dT21CKgpTXNLEyMid6W44zfVbSJdD6f7g4CXD
-35MolBudlb3YCMfWttDYYeLzeBH1WG2dT9v1CK5R5zbhUGStgkU3ckg/QStOV0n6
-0yLlupgJnhL+VeBtqvxaqgj7DMbDcoyKK4Fo5z1R2/fyJt0pJey7fzk2vUZVwH62
-Zg0P7cGy3P+T58UnYIrkLWOFxdQ4V3X67q10waHTOFk/X3pkS0zqsavhxBE4R+Bp
-fWaKvle81uJXipvaT4SJs34ce76yfA==
-=cwAZ
------END PGP SIGNATURE-----
+After that ICSSG_EMAC_PORT_TAS_ENABLE cmd is sent. Upon recievinig this
+command firmware will Enable TAS for the particular port. (port is part
+of emac structure).
 
---t56nSOAk9HiTDqnB--
+I can see how that can be confusing given the API name is
+emac_set_port_state(). Some of the cmds infact triggers a state change
+eg. ICSSG_EMAC_PORT_DISABLE, ICSSG_EMAC_PORT_BLOCK,
+ICSSG_EMAC_PORT_FORWARD but some of the commands just triggers some
+action on the firmware side. Based on the command firmware does some
+actions.
+
+
+>> +}
+> 
+> There's something extremely elementary about this function which I still
+> don't understand.
+> 
+> When does the schedule actually _start_? Can that be controlled by the
+> driver with the high (nanosecond) precision necessary in order for the
+> ICSSG to synchronize with the schedule of other equipment in the LAN?
+> 
+> You never pass the base time per se to the firmware. Just a number of
+> cycles from now. I guess that number of cycles decides when the schedule
+> starts, but what are those cycles relative to?
+>
+
+Once the shadow list is updated, the trigger is set in the firmware and
+for that API tas_set_trigger_list_change() is called.
+
+The following three offsets are configured in this function,
+1. TAS_ADMIN_CYCLE_TIME → admin cycle time
+2. TAS_CONFIG_CHANGE_CYCLE_COUNT → number of cycles after which the
+admin list is taken as operating list.
+This parameter is calculated based on the base_time, cur_time and
+cycle_time. If the base_time is in past (already passed) the
+TAS_CONFIG_CHANGE_CYCLE_COUNT is set to 1. If the base_time is in
+future, TAS_CONFIG_CHANGE_CYCLE_COUNT is calculated using
+DIV_ROUND_UP_ULL(base_time - cur_time, cycle_time)
+3. TAS_ADMIN_LIST_LENGTH → Number of window entries in the admin list.
+
+After configuring the above three parameters, the driver gives the
+trigger signal to the firmware using the R30 command interface with
+ICSSG_EMAC_PORT_TAS_TRIGGER command.
+
+The schedule starts based on TAS_CONFIG_CHANGE_CYCLE_COUNT. Those cycles
+are relative to time remaining in the base_time from now i.e. base_time
+- cur_time.
+
+>> +
+>> +static int tas_update_oper_list(struct prueth_emac *emac)
+>> +{
+>> +	struct tc_taprio_qopt_offload *admin_list = emac->qos.tas.taprio_admin;
+>> +	struct tas_config *tas = &emac->qos.tas.config;
+>> +	u32 tas_acc_gate_close_time = 0;
+>> +	u8 idx, gate_idx, val;
+>> +	int ret;
+>> +
+>> +	if (admin_list->cycle_time > TAS_MAX_CYCLE_TIME)
+>> +		return -EINVAL;
+>> +
+>> +	tas_update_fw_list_pointers(emac);
+>> +
+>> +	for (idx = 0; idx < admin_list->num_entries; idx++) {
+>> +		writeb(admin_list->entries[idx].gate_mask,
+>> +		       &tas->fw_shadow_list->gate_mask_list[idx]);
+>> +		tas_acc_gate_close_time += admin_list->entries[idx].interval;
+>> +
+>> +		/* extend last entry till end of cycle time */
+>> +		if (idx == admin_list->num_entries - 1)
+>> +			writel(admin_list->cycle_time,
+>> +			       &tas->fw_shadow_list->win_end_time_list[idx]);
+>> +		else
+>> +			writel(tas_acc_gate_close_time,
+>> +			       &tas->fw_shadow_list->win_end_time_list[idx]);
+>> +	}
+>> +
+>> +	/* clear remaining entries */
+>> +	for (idx = admin_list->num_entries; idx < TAS_MAX_CMD_LISTS; idx++) {
+>> +		writeb(0, &tas->fw_shadow_list->gate_mask_list[idx]);
+>> +		writel(0, &tas->fw_shadow_list->win_end_time_list[idx]);
+>> +	}
+>> +
+>> +	/* update the Array of gate close time for each queue in each window */
+>> +	for (idx = 0 ; idx < admin_list->num_entries; idx++) {
+>> +		/* On Linux, only PRUETH_MAX_TX_QUEUES are supported per port */
+>> +		for (gate_idx = 0; gate_idx < PRUETH_MAX_TX_QUEUES; gate_idx++) {
+>> +			u8 gate_mask_list_idx = readb(&tas->fw_shadow_list->gate_mask_list[idx]);
+>> +			u32 gate_close_time = 0;
+>> +
+>> +			if (gate_mask_list_idx & BIT(gate_idx))
+>> +				gate_close_time = readl(&tas->fw_shadow_list->win_end_time_list[idx]);
+>> +
+>> +			writel(gate_close_time,
+>> +			       &tas->fw_shadow_list->gate_close_time_list[idx][gate_idx]);
+>> +		}
+> 
+> An implementation which operates per TX queues rather than per traffic
+> classes should report caps->gate_mask_per_txq = true in TC_QUERY_CAPS.
+> 
+
+Sure I will add this implementation.
+
+>> +	}
+>> +
+>> +	/* tell f/w to swap active & shadow list */
+>> +	ret = tas_set_trigger_list_change(emac);
+>> +	if (ret) {
+>> +		netdev_err(emac->ndev, "failed to swap f/w config list: %d\n", ret);
+>> +		return ret;
+>> +	}
+>> +
+>> +	/* Wait for completion */
+>> +	ret = readb_poll_timeout(&tas->config_list->config_change, val, !val,
+>> +				 USEC_PER_MSEC, 10 * USEC_PER_MSEC);
+>> +	if (ret) {
+>> +		netdev_err(emac->ndev, "TAS list change completion time out\n");
+>> +		return ret;
+>> +	}
+>> +
+>> +	tas_update_fw_list_pointers(emac);
+> 
+> Calling this twice in the same function? Explanation?
+> 
+
+As explained earlier tas_update_fw_list_pointers() is called in the
+beginning to set the active and shadow_list. After that we fill the
+shadow list and then send commmand to swap the active and shadow list.
+As the list are swapped we will call tas_update_fw_list_pointers() to
+update the list pointers.
+
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int emac_taprio_replace(struct net_device *ndev,
+>> +			       struct tc_taprio_qopt_offload *taprio)
+>> +{
+>> +	struct prueth_emac *emac = netdev_priv(ndev);
+>> +	int ret;
+>> +
+>> +	if (taprio->cycle_time_extension) {
+>> +		NL_SET_ERR_MSG_MOD(taprio->extack, "Cycle time extension not supported");
+>> +		return -EOPNOTSUPP;
+>> +	}
+>> +
+>> +	if (taprio->cycle_time < TAS_MIN_CYCLE_TIME) {
+>> +		NL_SET_ERR_MSG_FMT_MOD(taprio->extack, "cycle_time %llu is less than min supported cycle_time %d",
+>> +				       taprio->cycle_time, TAS_MIN_CYCLE_TIME);
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	if (taprio->num_entries > TAS_MAX_CMD_LISTS) {
+>> +		NL_SET_ERR_MSG_FMT_MOD(taprio->extack, "num_entries %lu is more than max supported entries %d",
+>> +				       taprio->num_entries, TAS_MAX_CMD_LISTS);
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	if (emac->qos.tas.taprio_admin)
+>> +		taprio_offload_free(emac->qos.tas.taprio_admin);
+>> +
+>> +	emac->qos.tas.taprio_admin = taprio_offload_get(taprio);
+>> +	ret = tas_update_oper_list(emac);
+> 
+> If this fails and there was a previous emac->qos.tas.taprio_admin
+> schedule present, you just broke it. In particular, the
+> "if (admin_list->cycle_time > TAS_MAX_CYCLE_TIME)" bounds check really
+> doesn't belong there; it should have been done much earlier, to avoid a
+> complete offload breakage for such a silly thing (replacing a working
+> taprio schedule with a new one that has too large cycle breaks the old
+> schedule).
+> 
+
+Will adding the check "if (admin_list->cycle_time > TAS_MAX_CYCLE_TIME)"
+in emac_taprio_replace() along with the all the checks be OK?
+
+
+>> +	if (ret)
+>> +		goto clear_taprio;
+>> +
+>> +	ret = tas_set_state(emac, TAS_STATE_ENABLE);
+>> +	if (ret)
+>> +		goto clear_taprio;
+>> +
+>> +clear_taprio:
+>> +	emac->qos.tas.taprio_admin = NULL;
+>> +	taprio_offload_free(taprio);
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +static int emac_taprio_destroy(struct net_device *ndev,
+>> +			       struct tc_taprio_qopt_offload *taprio)
+>> +{
+>> +	struct prueth_emac *emac = netdev_priv(ndev);
+>> +	int ret;
+>> +
+>> +	taprio_offload_free(taprio);
+>> +
+>> +	ret = tas_set_state(emac, TAS_STATE_RESET);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	return tas_set_state(emac, TAS_STATE_DISABLE);
+> 
+> Again, any timing requirements for the state transitions? Why not
+> directly do TAS_STATE_DISABLE? It's not very clear what they do
+> different, despite of the attempt to document these firmware states.
+> 
+
+Doing a TAS_STATE_RESET resets all the configurations done previously.
+Disable only disables the state but the configuration remains. When we
+destroy the taprio I think we should clear out everything thus reset is
+needed.
+
+However I think the sequence is not correct here. It should be
+TAS_STATE_DISABLE first and then TAS_STATE_RESET.
+
+>> +}
+>> +
+>> +static int emac_setup_taprio(struct net_device *ndev, void *type_data)
+>> +{
+>> +	struct tc_taprio_qopt_offload *taprio = type_data;
+>> +	int ret;
+>> +
+>> +	switch (taprio->cmd) {
+>> +	case TAPRIO_CMD_REPLACE:
+>> +		ret = emac_taprio_replace(ndev, taprio);
+>> +		break;
+>> +	case TAPRIO_CMD_DESTROY:
+>> +		ret = emac_taprio_destroy(ndev, taprio);
+>> +		break;
+>> +	default:
+>> +		ret = -EOPNOTSUPP;
+>> +	}
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +int icssg_qos_ndo_setup_tc(struct net_device *ndev, enum tc_setup_type type,
+>> +			   void *type_data)
+>> +{
+>> +	switch (type) {
+>> +	case TC_SETUP_QDISC_TAPRIO:
+>> +		return emac_setup_taprio(ndev, type_data);
+>> +	default:
+>> +		return -EOPNOTSUPP;
+>> +	}
+>> +}
+>> +
+>> +void icssg_qos_tas_init(struct net_device *ndev)
+>> +{
+>> +	struct prueth_emac *emac = netdev_priv(ndev);
+>> +	struct tas_config *tas;
+>> +
+>> +	tas = &emac->qos.tas.config;
+>> +
+>> +	tas->config_list = emac->dram.va + TAS_CONFIG_CHANGE_TIME;
+>> +	tas->active_list = emac->dram.va + TAS_ACTIVE_LIST_INDEX;
+>> +
+>> +	tas_update_fw_list_pointers(emac);
+>> +
+>> +	tas_set_state(emac, TAS_STATE_RESET);
+> 
+> Why leave it in TAS_STATE_RESET and not TAS_STATE_DISABLE? The firmware
+> state at probe time is not idempotent with its state after a
+> emac_taprio_replace() -> emac_taprio_destroy() sequence, which is not
+> good.
+> 
+
+During init the we want the TAS to be completely cleaned. So if there is
+any residual configurations left we want that to be cleared thus
+TAS_STATE_RESET is called.
+
+When tas_set_state(emac, TAS_STATE_RESET) or tas_set_state(emac,
+TAS_STATE_DISABLE) is called a r30 cmd is sent to firmware to reset /
+disable the tas.
+
+As explained above the emac_taprio_destroy() sequence should be
+TAS_STATE_DISABLE and then TAS_STATE_RESET.
+
+Here in probe also we are setting the state to TAS_STATE_RESET. Now the
+firmware state at probe time will be idempotent with its state after a
+emac_taprio_replace() -> emac_taprio_destroy() sequence.
+
+>> +}
+>> diff --git a/drivers/net/ethernet/ti/icssg/icssg_qos.h b/drivers/net/ethernet/ti/icssg/icssg_qos.h
+>> new file mode 100644
+>> index 000000000000..25baccdd1ce5
+>> --- /dev/null
+>> +++ b/drivers/net/ethernet/ti/icssg/icssg_qos.h
+>> @@ -0,0 +1,113 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +/* Copyright (C) 2023 Texas Instruments Incorporated - http://www.ti.com/
+>> + */
+>> +
+>> +#ifndef __NET_TI_ICSSG_QOS_H
+>> +#define __NET_TI_ICSSG_QOS_H
+>> +
+>> +#include <linux/atomic.h>
+>> +#include <linux/netdevice.h>
+>> +#include <net/pkt_sched.h>
+>> +
+>> +/* Maximum number of gate command entries in each list. */
+>> +#define TAS_MAX_CMD_LISTS   (16)
+>> +
+>> +/* Maximum number of transmit queues supported by implementation */
+>> +#define TAS_MAX_NUM_QUEUES  (8)
+>> +
+>> +/* Minimum cycle time supported by implementation (in ns) */
+>> +#define TAS_MIN_CYCLE_TIME  (1000000)
+>> +
+>> +/* Minimum cycle time supported by implementation (in ns) */
+>> +#define TAS_MAX_CYCLE_TIME  (4000000000)
+>> +
+>> +/* Minimum TAS window duration supported by implementation (in ns) */
+>> +#define TAS_MIN_WINDOW_DURATION  (10000)
+>> +
+>> +/**
+>> + * enum tas_list_num - TAS list number
+>> + * @TAS_LIST0: TAS list number is 0
+>> + * @TAS_LIST1: TAS list number is 1
+>> + */
+>> +enum tas_list_num {
+>> +	TAS_LIST0 = 0,
+>> +	TAS_LIST1 = 1
+>> +};
+>> +
+>> +/**
+>> + * enum tas_state - State of TAS in firmware
+>> + * @TAS_STATE_DISABLE: TAS state machine is disabled.
+>> + * @TAS_STATE_ENABLE: TAS state machine is enabled.
+>> + * @TAS_STATE_RESET: TAS state machine is reset.
+>> + */
+>> +enum tas_state {
+>> +	TAS_STATE_DISABLE = 0,
+>> +	TAS_STATE_ENABLE = 1,
+>> +	TAS_STATE_RESET = 2,
+>> +};
+>> +
+>> +/**
+>> + * struct tas_config_list - Config state machine variables
+>> + * @config_change_time: New list is copied at this time
+>> + * @config_change_error_counter: Incremented if admin->BaseTime < current time
+>> + *				 and TAS_enabled is true
+>> + * @config_pending: True if list update is pending
+>> + * @config_change: Set to true when application trigger updating of admin list
+>> + *		   to active list, cleared when configChangeTime is updated
+>> + */
+>> +struct tas_config_list {
+>> +	u64 config_change_time;
+>> +	u32 config_change_error_counter;
+>> +	u8 config_pending;
+>> +	u8 config_change;
+>> +};
+> 
+> Should be __packed since it maps over a firmware-defined __iomem memory
+> region. The compiler is not free to pad as it wishes.
+> 
+
+Sure.
+
+>> +
+>> +/* Max SDU table. See IEEE Std 802.1Q-2018 12.29.1.1 */
+>> +struct tas_max_sdu_table {
+>> +	u16 max_sdu[TAS_MAX_NUM_QUEUES];
+>> +};
+>> +
+>> +/**
+>> + * struct tas_firmware_list - TAS List Structure based on firmware memory map
+>> + * @gate_mask_list: Window gate mask list
+>> + * @win_end_time_list: Window end time list
+>> + * @gate_close_time_list: Array of gate close time for each queue in each window
+>> + */
+>> +struct tas_firmware_list {
+>> +	u8 gate_mask_list[TAS_MAX_CMD_LISTS];
+>> +	u32 win_end_time_list[TAS_MAX_CMD_LISTS];
+>> +	u32 gate_close_time_list[TAS_MAX_CMD_LISTS][TAS_MAX_NUM_QUEUES];
+>> +};
+> 
+> Should be __packed.
+> 
+
+Sure.
+
+>> +
+>> +/**
+>> + * struct tas_config - Main Time Aware Shaper Handle
+>> + * @state: TAS state
+>> + * @max_sdu_table: Max SDU table
+>> + * @config_list: Config change variables
+>> + * @active_list: Current operating list operating list
+>> + * @fw_active_list: Active List pointer, used by firmware
+>> + * @fw_shadow_list: Shadow List pointer, used by driver
+>> + */
+>> +struct tas_config {
+>> +	enum tas_state state;
+>> +	struct tas_max_sdu_table max_sdu_table;
+>> +	struct tas_config_list __iomem *config_list;
+>> +	u8 __iomem *active_list;
+>> +	struct tas_firmware_list __iomem *fw_active_list;
+>> +	struct tas_firmware_list __iomem *fw_shadow_list;
+>> +};
+>> +
+>> +struct prueth_qos_tas {
+>> +	struct tc_taprio_qopt_offload *taprio_admin;
+>> +	struct tc_taprio_qopt_offload *taprio_oper;
+> 
+> "taprio_oper" is unused.
+> 
+
+I'll remove this.
+
+>> +	struct tas_config config;
+>> +};
+>> +
+>> +struct prueth_qos {
+>> +	struct prueth_qos_tas tas;
+>> +};
+>> +
+>> +void icssg_qos_tas_init(struct net_device *ndev);
+>> +int icssg_qos_ndo_setup_tc(struct net_device *ndev, enum tc_setup_type type,
+>> +			   void *type_data);
+>> +#endif /* __NET_TI_ICSSG_QOS_H */
+>> -- 
+>> 2.34.1
+>>
+
+Thanks for your feedback. I will do the changes mentioned in this mail.
+Apart from these if any other change is needed please let me know.
+
+Also please let me know if you have any more queries.
+
+-- 
+Thanks and Regards,
+Danish
 
